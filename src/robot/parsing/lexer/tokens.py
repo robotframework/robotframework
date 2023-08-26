@@ -80,7 +80,7 @@ class Token:
     RETURN_SETTING = RETURN
 
     # TODO: Change WITH_NAME value to AS in RF 7.0. Remove WITH_NAME in RF 8.
-    WITH_NAME = 'WITH NAME'
+    WITH_NAME = 'AS'
     AS = 'AS'
 
     NAME = 'NAME'
@@ -174,7 +174,7 @@ class Token:
                 Token.TRY: 'TRY', Token.EXCEPT: 'EXCEPT', Token.FINALLY: 'FINALLY',
                 Token.END: 'END', Token.CONTINUE: 'CONTINUE', Token.BREAK: 'BREAK',
                 Token.RETURN_STATEMENT: 'RETURN', Token.CONTINUATION: '...',
-                Token.EOL: '\n', Token.WITH_NAME: 'WITH NAME', Token.AS: 'AS'
+                Token.EOL: '\n', Token.WITH_NAME: 'AS', Token.AS: 'AS'
             }.get(type, '')    # type: ignore
         self.value = cast(str, value)
         self.lineno = lineno

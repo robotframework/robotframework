@@ -344,7 +344,7 @@ class LibraryImport(Statement):
                            Token(Token.ARGUMENT, arg)])
         if alias is not None:
             tokens.extend([Token(Token.SEPARATOR, separator),
-                           Token(Token.WITH_NAME),
+                           Token(Token.AS),
                            Token(Token.SEPARATOR, separator),
                            Token(Token.NAME, alias)])
         tokens.append(Token(Token.EOL, eol))
@@ -360,7 +360,7 @@ class LibraryImport(Statement):
 
     @property
     def alias(self) -> 'str|None':
-        separator = self.get_token(Token.WITH_NAME)
+        separator = self.get_token(Token.AS)
         return self.get_tokens(Token.NAME)[-1].value if separator else None
 
 

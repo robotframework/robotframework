@@ -132,7 +132,7 @@ class Settings(ABC):
         self._lex_name_and_arguments(tokens)
         if len(tokens) > 1 and \
                 normalize_whitespace(tokens[-2].value) in ('WITH NAME', 'AS'):
-            tokens[-2].type = Token.WITH_NAME
+            tokens[-2].type = Token.AS
             tokens[-1].type = Token.NAME
 
     def _lex_arguments(self, tokens: StatementTokens):

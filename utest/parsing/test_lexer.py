@@ -229,37 +229,37 @@ VariAbles         variables.py    arg
         assert_tokens(data, expected, get_init_tokens, data_only=True)
         assert_tokens(data, expected, get_resource_tokens, data_only=True)
 
-    def test_with_name(self):
+    def test_aliasing_with_as(self):
         data = '''\
 *** Settings ***
-Library         Easter                       WITH NAME    Christmas
-Library         Arguments    arg             WITH NAME    One argument
+Library         Easter                       AS    Christmas
+Library         Arguments    arg             AS    One argument
 Library         Arguments    arg1    arg2
-...                          arg3    arg4    WITH NAME    Four arguments
+...                          arg3    arg4    AS    Four arguments
 '''
         expected = [
             (T.SETTING_HEADER, '*** Settings ***', 1, 0),
             (T.EOS, '', 1, 16),
             (T.LIBRARY, 'Library', 2, 0),
             (T.NAME, 'Easter', 2, 16),
-            (T.WITH_NAME, 'WITH NAME', 2, 45),
-            (T.NAME, 'Christmas', 2, 58),
-            (T.EOS, '', 2, 67),
+            (T.AS, 'AS', 2, 45),
+            (T.NAME, 'Christmas', 2, 51),
+            (T.EOS, '', 2, 60),
             (T.LIBRARY, 'Library', 3, 0),
             (T.NAME, 'Arguments', 3, 16),
             (T.ARGUMENT, 'arg', 3, 29),
-            (T.WITH_NAME, 'WITH NAME', 3, 45),
-            (T.NAME, 'One argument', 3, 58),
-            (T.EOS, '', 3, 70),
+            (T.AS, 'AS', 3, 45),
+            (T.NAME, 'One argument', 3, 51),
+            (T.EOS, '', 3, 63),
             (T.LIBRARY, 'Library', 4, 0),
             (T.NAME, 'Arguments', 4, 16),
             (T.ARGUMENT, 'arg1', 4, 29),
             (T.ARGUMENT, 'arg2', 4, 37),
             (T.ARGUMENT, 'arg3', 5, 29),
             (T.ARGUMENT, 'arg4', 5, 37),
-            (T.WITH_NAME, 'WITH NAME', 5, 45),
-            (T.NAME, 'Four arguments', 5, 58),
-            (T.EOS, '', 5, 72)
+            (T.AS, 'AS', 5, 45),
+            (T.NAME, 'Four arguments', 5, 51),
+            (T.EOS, '', 5, 65)
         ]
         assert_tokens(data, expected, get_tokens, data_only=True)
         assert_tokens(data, expected, get_init_tokens, data_only=True)
@@ -1685,7 +1685,7 @@ class TestTokenizeVariables(unittest.TestCase):
     def test_settings(self):
         data = '''\
 *** Settings ***
-Library       My${Name}    my ${arg}    ${x}[0]    WITH NAME    Your${Name}
+Library       My${Name}    my ${arg}    ${x}[0]    AS    Your${Name}
 ${invalid}    ${usage}
 '''
         expected = [(T.SETTING_HEADER, '*** Settings ***', 1, 0),
@@ -1696,10 +1696,10 @@ ${invalid}    ${usage}
                     (T.ARGUMENT, 'my ', 2, 27),
                     (T.VARIABLE, '${arg}', 2, 30),
                     (T.VARIABLE, '${x}[0]', 2, 40),
-                    (T.WITH_NAME, 'WITH NAME', 2, 51),
-                    (T.NAME, 'Your', 2, 64),
-                    (T.VARIABLE, '${Name}', 2, 68),
-                    (T.EOS, '', 2, 75),
+                    (T.AS, 'AS', 2, 51),
+                    (T.NAME, 'Your', 2, 57),
+                    (T.VARIABLE, '${Name}', 2, 61),
+                    (T.EOS, '', 2, 68),
                     (T.ERROR, '${invalid}', 3, 0, "Non-existing setting '${invalid}'."),
                     (T.EOS, '', 3, 10)]
         assert_tokens(data, expected, get_tokens=get_tokens,

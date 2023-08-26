@@ -336,13 +336,13 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             name='library_name.py'
         )
 
-        # Library    library_name.py    WITH NAME    anothername
+        # Library    library_name.py    AS    anothername
         tokens = [
             Token(Token.LIBRARY, 'Library'),
             Token(Token.SEPARATOR, '    '),
             Token(Token.NAME, 'library_name.py'),
             Token(Token.SEPARATOR, '    '),
-            Token(Token.WITH_NAME),
+            Token(Token.AS),
             Token(Token.SEPARATOR, '    '),
             Token(Token.NAME, 'anothername'),
             Token(Token.EOL, '\n')
