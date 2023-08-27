@@ -19,7 +19,7 @@ Some process
     [Arguments]    ${alias}=${null}    ${stderr}=STDOUT
     Remove File    ${STARTED}
     ${handle}=    Start Python Process    open(r'${STARTED}', 'w').close(); print(input())
-    ...    alias=${alias}    stderr=${stderr}
+    ...    alias=${alias}    stderr=${stderr}    stdin=PIPE
     Wait Until Created    ${STARTED}    timeout=10s
     Process Should Be Running
     [Return]    ${handle}
@@ -65,9 +65,9 @@ Script result should equal
     Result should equal    ${result}    ${stdout}    ${stderr}    ${rc}
 
 Start Python Process
-    [Arguments]    ${command}    ${alias}=${NONE}    ${stdout}=${NONE}    ${stderr}=${NONE}    ${shell}=False
+    [Arguments]    ${command}    ${alias}=${NONE}    ${stdout}=${NONE}    ${stderr}=${NONE}    ${stdin}=None    ${shell}=False
     ${handle}=    Start Process    python    -c    ${command}
-    ...    alias=${alias}    stdout=${stdout}    stderr=${stderr}    shell=${shell}
+    ...    alias=${alias}    stdout=${stdout}    stderr=${stderr}    stdin=${stdin}    shell=${shell}
     [Return]    ${handle}
 
 Run Python Process

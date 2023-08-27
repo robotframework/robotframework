@@ -3,15 +3,14 @@ Suite Setup       Run Tests    ${EMPTY}    standard_libraries/process/stdin.robo
 Resource          atest_resource.robot
 
 *** Test Cases ***
-Stdin is PIPE by defauls
+Stdin is NONE by default
     Check Test Case    ${TESTNAME}
 
-Stdin as PIPE explicitly
+Stdin can be set to PIPE
     Check Test Case    ${TESTNAME}
 
-Stdin can be disabled
-    Check Test Case    ${TESTNAME} 1
-    Check Test Case    ${TESTNAME} 2
+Stdin can be disabled explicitly
+    Check Test Case    ${TESTNAME}
 
 Stdin can be disabled with None object
     Check Test Case    ${TESTNAME}

@@ -191,8 +191,8 @@ class Process:
     explained in the table below.
 
     | = Value =        | = Explanation = |
-    | String ``PIPE``  | Make stdin a pipe that can be written to. This is the default. |
-    | String ``NONE``  | Inherit stdin from the parent process. This value is case-insensitive. |
+    | String ``NONE``  | Inherit stdin from the parent process. This is the default. This value is case-insensitive. |
+    | String ``PIPE``  | Make stdin a pipe that can be written to. |
     | Path to a file   | Open the specified file and use it as the stdin. |
     | Any other string | Create a temporary file with the text as its content and use it as the stdin. |
     | Any non-string value | Used as-is. Could be a file descriptor, stdout of another process, etc. |
@@ -200,12 +200,9 @@ class Process:
     Values ``PIPE`` and ``NONE`` are internally mapped directly to
     ``subprocess.PIPE`` and ``None``, respectively, when calling
     [https://docs.python.org/3/library/subprocess.html#subprocess.Popen|subprocess.Popen].
-    The default behavior may change from ``PIPE`` to ``NONE`` in future
-    releases. If you depend on the ``PIPE`` behavior, it is a good idea to use
-    it explicitly.
 
     Examples:
-    | `Run Process` | command | stdin=NONE |
+    | `Run Process` | command | stdin=PIPE |
     | `Run Process` | command | stdin=${CURDIR}/stdin.txt |
     | `Run Process` | command | stdin=Stdin as text. |
 
@@ -337,7 +334,7 @@ class Process:
         configuration` for more details about configuration related to starting
         processes. Configuration related to waiting for processes consists of
         ``timeout`` and ``on_timeout`` arguments that have same semantics as
-        with `Wait For Process` keyword. By default there is no timeout, and
+        with `Wait For Process` keyword. By default, there is no timeout, and
         if timeout is defined the default action on timeout is ``terminate``.
 
         Returns a `result object` containing information about the execution.
@@ -882,7 +879,7 @@ class ExecutionResult:
 
 class ProcessConfiguration:
 
-    def __init__(self, cwd=None, shell=False, stdout=None, stderr=None, stdin='PIPE',
+    def __init__(self, cwd=None, shell=False, stdout=None, stderr=None, stdin='NONE',
                  output_encoding='CONSOLE', alias=None, env=None, **rest):
         self.cwd = os.path.normpath(cwd) if cwd else os.path.abspath('.')
         self.shell = is_truthy(shell)
