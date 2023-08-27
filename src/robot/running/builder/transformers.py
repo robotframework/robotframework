@@ -61,7 +61,7 @@ class SettingsBuilder(NodeVisitor):
     def visit_DefaultTags(self, node):
         self.settings.default_tags = node.values
 
-    def visit_ForceTags(self, node):
+    def visit_TestTags(self, node):
         self.settings.test_tags = node.values
 
     def visit_KeywordTags(self, node):

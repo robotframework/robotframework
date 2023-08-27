@@ -519,7 +519,7 @@ from robot.parsing.model.statements import (
     TestTeardown,
     TestTemplate,
     TestTimeout,
-    ForceTags,
+    TestTags,
     DefaultTags,
     KeywordTags,
     Variable,

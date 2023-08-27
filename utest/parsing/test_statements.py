@@ -534,7 +534,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
 
     def test_ForceTags(self):
         tokens = [
-            Token(Token.FORCE_TAGS, 'Force Tags'),
+            Token(Token.TEST_TAGS, 'Force Tags'),
             Token(Token.SEPARATOR, '    '),
             Token(Token.ARGUMENT, 'some tag'),
             Token(Token.SEPARATOR, '    '),
@@ -543,7 +543,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
         ]
         assert_created_statement(
             tokens,
-            ForceTags,
+            TestTags,
             values=['some tag', 'another_tag']
         )
 

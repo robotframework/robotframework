@@ -467,13 +467,13 @@ class Metadata(DocumentationOrMetadata):
 
 
 @Statement.register
-class ForceTags(MultiValue):
-    type = Token.FORCE_TAGS
+class TestTags(MultiValue):
+    type = Token.TEST_TAGS
 
     @classmethod
     def from_params(cls, values: 'Sequence[str]', separator: str = FOUR_SPACES,
-                    eol: str = EOL) -> 'ForceTags':
-        tokens = [Token(Token.FORCE_TAGS, 'Force Tags')]
+                    eol: str = EOL) -> 'TestTags':
+        tokens = [Token(Token.TEST_TAGS, 'Force Tags')]
         for tag in values:
             tokens.extend([Token(Token.SEPARATOR, separator),
                            Token(Token.ARGUMENT, tag)])

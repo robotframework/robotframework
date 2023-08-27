@@ -112,8 +112,7 @@ class Settings(ABC):
             token.type = Token.COMMENT
 
     def _lex_setting(self, statement: StatementTokens, name: str):
-        # TODO: Change token type from 'FORCE TAGS' to 'TEST TAGS' in RF 7.0.
-        statement[0].type = {'Test Tags': Token.FORCE_TAGS,
+        statement[0].type = {'Test Tags': Token.TEST_TAGS,
                              'Name': Token.SUITE_NAME}.get(name, name.upper())
         self.settings[name] = values = statement[1:]
         if name in self.name_and_arguments:
