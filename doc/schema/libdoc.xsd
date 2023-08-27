@@ -9,9 +9,6 @@
             <xs:element name="tags" type="Tags" minOccurs="0" />
             <xs:element name="inits" type="Inits" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="keywords" type="Keywords" minOccurs="0" maxOccurs="unbounded" />
-            <!-- 'datatypes' was deprecated in RF 5.0. -->
-            <xs:element name="datatypes" type="DataTypes" minOccurs="0" maxOccurs="unbounded" />
-            <!-- 'typedocs' should be used instead. -->
             <xs:element name="typedocs" type="TypeDocs" minOccurs="0" maxOccurs="unbounded" />
         </xs:sequence>
         <xs:attribute name="name" type="xs:string" use="required" />
@@ -66,12 +63,6 @@
             <xs:element name="arg" type="Argument" minOccurs="0" maxOccurs="unbounded" />
         </xs:sequence>
         <xs:attribute name="repr" type="xs:string" use="required" />
-    </xs:complexType>
-    <xs:complexType name="DataTypes">
-        <xs:sequence>
-            <xs:element name="enums" type="EnumList" minOccurs="0" />
-            <xs:element name="typeddicts" type="TypedDictList" minOccurs="0" />
-        </xs:sequence>
     </xs:complexType>
     <xs:complexType name="EnumList">
         <xs:sequence>

@@ -64,12 +64,6 @@
         "$ref": "#/definitions/Keyword"
       }
     },
-    "dataTypes": {
-      "title": "Datatypes",
-      "description": "Deprecated. Use 'typedocs' instead.",
-      "default": {},
-      "type": "object"
-    },
     "typedocs": {
       "title": "Typedocs",
       "type": "array",
