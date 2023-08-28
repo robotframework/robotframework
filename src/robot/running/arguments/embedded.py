@@ -19,8 +19,7 @@ from robot.errors import DataError
 from robot.utils import get_error_message, is_string
 from robot.variables import VariableIterator
 
-
-ENABLE_STRICT_ARGUMENT_VALIDATION = False
+from ..context import EXECUTION_CONTEXTS
 
 
 class EmbeddedArguments:
@@ -42,31 +41,27 @@ class EmbeddedArguments:
         return list(zip(self.args, values))
 
     def validate(self, values):
-        # Validating that embedded args match custom regexps also if args are
-        # given as variables was initially implemented in RF 6.0. It needed
-        # to be reverted due to backwards incompatibility reasons but the plan
-        # is to enable it again in RF 7.0:
-        # https://github.com/robotframework/robotframework/issues/4069
-        #
-        # TODO: Emit deprecation warnings if patterns don't match in RF 6.1:
-        # https://github.com/robotframework/robotframework/issues/4524
-        #
-        # Because the plan is to add validation back, the code was not removed
-        # but the `ENABLE_STRICT_ARGUMENT_VALIDATION` guard was added instead.
-        # Enabling validation requires only removing the following two lines
-        # (along with this comment). If someone wants to enable strict validation
-        # already now, they set `ENABLE_STRICT_ARGUMENT_VALIDATION` to True
-        # before running tests.
-        if not ENABLE_STRICT_ARGUMENT_VALIDATION:
-            return
+        """Validate that embedded args match custom regexps.
+
+        Initial validation is done already when matching keywords, but this
+        validation makes sure arguments match also if they are given as variables.
+
+        Currently, argument not matching only causes a deprecation warning, but
+        that will be changed to an actual failure in RF 8.0:
+        https://github.com/robotframework/robotframework/issues/4069
+        """
         if not self.custom_patterns:
             return
         for arg, value in zip(self.args, values):
             if arg in self.custom_patterns and is_string(value):
                 pattern = self.custom_patterns[arg]
                 if not re.fullmatch(pattern, value):
-                    raise ValueError(f"Embedded argument '{arg}' got value '{value}' "
-                                     f"that does not match custom pattern '{pattern}'.")
+                    # TODO: Change to `raise ValueError(...)` in RF 8.0.
+                    context = EXECUTION_CONTEXTS.current
+                    context.warn(f"Embedded argument '{arg}' got value {value!r} "
+                                 f"that does not match custom pattern {pattern!r}. "
+                                 f"The argument is still accepted, but this behavior "
+                                 f"will change in Robot Framework 8.0.")
 
     def __bool__(self):
         return self.name is not None
