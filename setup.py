@@ -22,8 +22,6 @@ License :: OSI Approved :: Apache Software License
 Operating System :: OS Independent
 Programming Language :: Python :: 3
 Programming Language :: Python :: 3 :: Only
-Programming Language :: Python :: 3.6
-Programming Language :: Python :: 3.7
 Programming Language :: Python :: 3.8
 Programming Language :: Python :: 3.9
 Programming Language :: Python :: 3.10
@@ -66,7 +64,7 @@ setup(
     long_description_content_type = 'text/x-rst',
     keywords     = KEYWORDS,
     platforms    = 'any',
-    python_requires='>=3.6',
+    python_requires='>=3.8',
     classifiers  = CLASSIFIERS,
     package_dir  = {'': 'src'},
     package_data = {'robot': PACKAGE_DATA},

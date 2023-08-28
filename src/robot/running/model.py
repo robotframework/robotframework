@@ -34,18 +34,15 @@ __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#
 __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#listener-interface
 """
 
-import sys
 import warnings
 from pathlib import Path
-from typing import Any, Mapping, Sequence, TYPE_CHECKING, Union
-if sys.version_info >= (3, 8):
-    from typing import Literal
+from typing import Any, Literal, Mapping, Sequence, TYPE_CHECKING, Union
 
 from robot import model
 from robot.conf import RobotSettings
 from robot.errors import BreakLoop, ContinueLoop, DataError, ReturnFromKeyword
 from robot.model import (BodyItem, create_fixture, DataDict, Keywords, ModelObject,
-                         TestCases, TestSuites)
+                         TestSuites)
 from robot.output import LOGGER, Output, pyloggingconf
 from robot.result import (Break as BreakResult, Continue as ContinueResult,
                           Error as ErrorResult, Return as ReturnResult)

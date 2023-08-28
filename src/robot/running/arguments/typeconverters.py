@@ -151,9 +151,10 @@ class TypeConverter:
 
     def _get_nested_types(self, type_hint, expected_count=None):
         types = getattr(type_hint, '__args__', ())
-        # With generics from typing like Dict, __args__ is None with Python 3.6 and
-        # contains TypeVars with 3.7-3.8. Newer versions don't have __args__ at all.
-        # Subscripted usages like Dict[x, y].__args__ work fine with all.
+        # `__args__` contains TypeVars when accessed directly from `typing.List` and
+        # other such types with Python 3.8. Python 3.9+ don't have `__args__` at all.
+        # Parameterize usages like `List[int].__args__` always work the same way.
+        # The TypeVar check can be removed when we don't support Python 3.8 anymore.
         if not types or all(isinstance(a, TypeVar) for a in types):
             return ()
         if expected_count and len(types) != expected_count:
@@ -456,8 +457,7 @@ class ListConverter(TypeConverter):
 
     @classmethod
     def handles(cls, type_):
-        # `type_ is not Tuple` is needed with Python 3.6.
-        return super().handles(type_) and type_ is not Tuple
+        return super().handles(type_)
 
     def no_conversion_needed(self, value):
         if isinstance(value, str) or not super().no_conversion_needed(value):

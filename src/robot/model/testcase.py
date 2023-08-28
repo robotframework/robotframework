@@ -13,7 +13,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import sys
 from pathlib import Path
 from typing import Any, Generic, Sequence, Type, TYPE_CHECKING, TypeVar
 
@@ -35,7 +34,7 @@ TC = TypeVar('TC', bound='TestCase')
 KW = TypeVar('KW', bound='Keyword', covariant=True)
 
 
-class TestCase(ModelObject, Generic[KW] if sys.version_info >= (3, 7) else object):
+class TestCase(ModelObject, Generic[KW]):
     """Base model for a single test case.
 
     Extended by :class:`robot.running.model.TestCase` and
@@ -43,7 +42,7 @@ class TestCase(ModelObject, Generic[KW] if sys.version_info >= (3, 7) else objec
     """
     body_class = Body
     # See model.TestSuite on removing the type ignore directive
-    fixture_class: Type[KW] = Keyword # type: ignore
+    fixture_class: Type[KW] = Keyword    # type: ignore
     repr_args = ('name',)
     __slots__ = ['parent', 'name', 'doc', 'timeout', 'lineno', '_setup', '_teardown']
 

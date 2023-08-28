@@ -35,21 +35,17 @@ __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#
 
 """
 
-import sys
 import warnings
 from collections import OrderedDict
 from datetime import datetime, timedelta
 from itertools import chain
 from pathlib import Path
-from typing import Generic, Mapping, Sequence, Type, Union, TypeVar
-
-if sys.version_info >= (3, 8):
-    from typing import Literal
+from typing import Generic, Literal, Mapping, Sequence, Type, Union, TypeVar
 
 from robot import model
 from robot.model import (BodyItem, create_fixture, DataDict, Keywords, Tags,
                          SuiteVisitor, TotalStatistics, TotalStatisticsBuilder,
-                         TestCases, TestSuites)
+                         TestSuites)
 from robot.utils import copy_signature, get_elapsed_time, KnownAtRuntime, setter
 
 from .configurer import SuiteConfigurer

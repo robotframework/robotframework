@@ -17,30 +17,25 @@ from collections.abc import Iterable, Mapping
 from collections import UserString
 from io import IOBase
 from os import PathLike
-from typing import Any, TypeVar
+from typing import Union, TypedDict, TypeVar
 try:
     from types import UnionType
 except ImportError:    # Python < 3.10
     UnionType = ()
-from typing import Union
-try:
-    from typing import TypedDict
-except ImportError:    # Python < 3.8
-    typeddict_types = ()
-else:
-    typeddict_types = (type(TypedDict('Dummy', {})),)
+
 try:
     from typing_extensions import TypedDict as ExtTypedDict
 except ImportError:
-    pass
-else:
-    typeddict_types += (type(ExtTypedDict('Dummy', {})),)
+    ExtTypedDict = None
 
 from .platform import PY_VERSION
 
 
 TRUE_STRINGS = {'TRUE', 'YES', 'ON', '1'}
 FALSE_STRINGS = {'FALSE', 'NO', 'OFF', '0', 'NONE', ''}
+typeddict_types = (type(TypedDict('Dummy', {})),)
+if ExtTypedDict:
+    typeddict_types += (type(ExtTypedDict('Dummy', {})),)
 
 
 def is_integer(item):
@@ -99,12 +94,6 @@ def type_name(item, capitalize=False):
         named_types = {str: 'string', bool: 'boolean', int: 'integer',
                        type(None): 'None', dict: 'dictionary'}
         name = named_types.get(typ, typ.__name__.strip('_'))
-        # Generics from typing. With newer versions we get "real" type via __origin__.
-        if PY_VERSION < (3, 7):
-            if name in ('List', 'Set', 'Tuple'):
-                name = name.lower()
-            elif name == 'Dict':
-                name = 'dictionary'
     return name.capitalize() if capitalize and name.islower() else name
 
 
@@ -118,8 +107,6 @@ def type_repr(typ, nested=True):
         return 'None'
     if typ is Ellipsis:
         return '...'
-    if typ is Any:  # Needed with Python 3.6, with newer `Any._name` exists.
-        return 'Any'
     if is_union(typ):
         return ' | '.join(type_repr(a) for a in typ.__args__) if nested else 'Union'
     name = _get_type_name(typ)
@@ -140,10 +127,9 @@ def _get_type_name(typ):
 def has_args(type):
     """Helper to check has type valid ``__args__``.
 
-    ``__args__`` contains TypeVars when accessed directly from ``typing.List`` and
-    other such types with Python 3.7-3.8. With Python 3.6 ``__args__`` is None
-    in that case and with Python 3.9+ it doesn't exist at all. When using like
-    ``List[int].__args__``, everything works the same way regardless the version.
+   ``__args__`` contains TypeVars when accessed directly from ``typing.List`` and
+   other such types with Python 3.8. Python 3.9+ don't have ``__args__`` at all.
+   Parameterize usages like ``List[int].__args__`` always work the same way.
 
     This helper can be removed in favor of using ``hasattr(type, '__args__')``
     when we support only Python 3.9 and newer.

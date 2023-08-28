@@ -43,9 +43,6 @@ class Asynchronous:
         return inspect.iscoroutine(obj) and not self._is_loop_running()
 
     def _is_loop_running(self):
-        # ensure 3.6 compatibility
-        if sys.version_info.minor == 6:
-            return asyncio._get_running_loop() is not None
         try:
             asyncio.get_running_loop()
         except RuntimeError:

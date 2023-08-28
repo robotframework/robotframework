@@ -13,10 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import sys
-from typing import Any, cast, Sequence, TypeVar, TYPE_CHECKING
-if sys.version_info >= (3, 8):
-    from typing import Literal
+from typing import Any, cast, Literal, Sequence, TypeVar, TYPE_CHECKING
 
 from robot.utils import setter
 

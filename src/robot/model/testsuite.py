@@ -13,7 +13,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import sys
 from collections.abc import Mapping
 from pathlib import Path
 from typing import Any, Generic, Iterator, Sequence, Type, TypeVar
@@ -37,14 +36,14 @@ KW = TypeVar('KW', bound=Keyword, covariant=True)
 TC = TypeVar('TC', bound=TestCase, covariant=True)
 
 
-class TestSuite(ModelObject, Generic[KW, TC] if sys.version_info >= (3, 7)  else object):
+class TestSuite(ModelObject, Generic[KW, TC]):
     """Base model for single suite.
 
     Extended by :class:`robot.running.model.TestSuite` and
     :class:`robot.result.model.TestSuite`.
     """
     # FIXME: Type Ignore declarations: Typevars only accept subclasses of the bound class
-    # assiging `Type[KW]` to `Keyword` results in an error. In RF 7 the class should be
+    # assigning `Type[KW]` to `Keyword` results in an error. In RF 7 the class should be
     # made impossible to instantiate directly, and the assignments can be replaced with
     # KnownAtRuntime
     fixture_class: Type[KW] = Keyword  # type: ignore
