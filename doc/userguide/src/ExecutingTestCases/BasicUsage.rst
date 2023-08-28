@@ -459,10 +459,10 @@ the option :option:`--version`. This information also contains Python
 version and the platform type::
 
    $ robot --version
-   Robot Framework 5.0 (Python 3.8.12 on darwin)
+   Robot Framework 7.0 (Python 3.12.1 on darwin)
 
    C:\>rebot --version
-   Rebot 5.0 (Python 3.7.0 on win32)
+   Rebot 6.1.1 (Python 3.11.0 on win32)
 
 .. _start-up script:
 .. _start-up scripts:

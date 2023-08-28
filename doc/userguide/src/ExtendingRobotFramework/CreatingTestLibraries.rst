@@ -916,13 +916,12 @@ Example:
        Sort Words    Foo    bar    baZ    case_sensitive=True
        Strip Spaces    ${word}    left=False
 
-
 __ https://www.python.org/dev/peps/pep-3102
 
 Positional-only arguments
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Python 3.8 introduced `positional-only arguments`__ that make it possible to
+Python supports so called `positional-only arguments`__ that make it possible to
 specify that an argument can only be given as a `positional argument`_, not as
 a `named argument`_ like `name=value`. Positional-only arguments are specified
 before normal arguments and a special `/` marker must be used after them:
