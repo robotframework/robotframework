@@ -48,27 +48,16 @@ Invalid Output Directory
     ...    -d %{TEMPDIR}/not-dir/dir -o out.xml -l none -r none
 
 Invalid --SuiteStatLevel
-    Option '--suitestatlevel' expected integer value but got 'not_int'.
+    Invalid value for option '--suitestatlevel': Expected integer, got 'not_int'.
     ...    --suitestatlevel not_int
 
 Invalid --TagStatLink
-    Invalid format for option '--tagstatlink'. Expected 'tag:link:title' but got 'less_than_3x_:'.
+    Invalid value for option '--tagstatlink': Expected format 'tag:link:title', got 'less_than_3x_:'.
     ...    --tagstatlink a:b:c --TagStatLink less_than_3x_:
 
 Invalid --RemoveKeywords
-    Invalid value for option '--removekeywords'. Expected 'ALL', 'PASSED', 'NAME:<pattern>', 'TAG:<pattern>', 'FOR', or 'WUKS' but got 'Invalid'.
+    Invalid value for option '--removekeywords': Expected 'ALL', 'PASSED', 'NAME:<pattern>', 'TAG:<pattern>', 'FOR' or 'WUKS', got 'Invalid'.
     ...    --removekeywords wuks --removek name:xxx --RemoveKeywords Invalid
-
---critical and --noncritical are deprecated
-    [Template]    NONE
-    ${result} =    Run Rebot    --critical pass --noncritical fail    ${INPUT}
-    ${messsage} =    Catenate
-    ...    Command line options --critical and --noncritical have been deprecated and have no effect with Rebot.
-    ...    Use --skiponfailure when starting execution instead.
-    Should Be Equal    ${result.stderr}    [ WARN ] ${messsage}
-    Should Be Equal As Integers   ${result.rc}    1
-    Check Test Case    Pass
-    Check Test Case    Fail
 
 *** Keywords ***
 Rebot Should Fail

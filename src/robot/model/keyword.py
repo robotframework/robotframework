@@ -13,14 +13,15 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from typing import cast, Sequence, Type, TYPE_CHECKING
 import warnings
 
-from robot.utils import setter
-
-from .body import Body, BodyItem
-from .fixture import create_fixture
+from .body import Body, BodyItem, BodyItemParent
 from .itemlist import ItemList
-from .tags import Tags
+from .modelobject import DataDict
+
+if TYPE_CHECKING:
+    from .visitor import SuiteVisitor
 
 
 @Body.register
@@ -31,98 +32,56 @@ class Keyword(BodyItem):
     :class:`robot.result.model.Keyword`.
     """
     repr_args = ('name', 'args', 'assign')
-    __slots__ = ['_name', 'doc', 'args', 'assign', 'timeout', 'type', '_teardown']
+    __slots__ = ['_name', 'args', 'assign', 'type']
 
-    def __init__(self, name='', doc='', args=(), assign=(), tags=(),
-                 timeout=None, type=BodyItem.KEYWORD, parent=None):
-        self._name = name
-        self.doc = doc
-        self.args = args
-        self.assign = assign
-        self.tags = tags
-        self.timeout = timeout
+    def __init__(self, name: 'str|None' = '',
+                 args: Sequence[str] = (),
+                 assign: Sequence[str] = (),
+                 type: str = BodyItem.KEYWORD,
+                 parent: BodyItemParent = None):
+        self.name = name
+        self.args = tuple(args)
+        self.assign = tuple(assign)
         self.type = type
-        self._teardown = None
         self.parent = parent
 
     @property
-    def name(self):
+    def name(self) -> 'str|None':
         return self._name
 
     @name.setter
-    def name(self, name):
+    def name(self, name: 'str|None'):
         self._name = name
 
-    @property    # Cannot use @setter because it would create teardowns recursively.
-    def teardown(self):
-        """Keyword teardown as a :class:`Keyword` object.
-
-        Teardown can be modified by setting attributes directly::
-
-            keyword.teardown.name = 'Example'
-            keyword.teardown.args = ('First', 'Second')
-
-        Alternatively the :meth:`config` method can be used to set multiple
-        attributes in one call::
-
-            keyword.teardown.config(name='Example', args=('First', 'Second'))
-
-        The easiest way to reset the whole teardown is setting it to ``None``.
-        It will automatically recreate the underlying ``Keyword`` object::
-
-            keyword.teardown = None
-
-        This attribute is a ``Keyword`` object also when a keyword has no teardown
-        but in that case its truth value is ``False``. If there is a need to just
-        check does a keyword have a teardown, using the :attr:`has_teardown`
-        attribute avoids creating the ``Keyword`` object and is thus more memory
-        efficient.
-
-        New in Robot Framework 4.0. Earlier teardown was accessed like
-        ``keyword.keywords.teardown``. :attr:`has_teardown` is new in Robot
-        Framework 4.1.2.
-        """
-        if self._teardown is None and self:
-            self._teardown = create_fixture(None, self, self.TEARDOWN)
-        return self._teardown
-
-    @teardown.setter
-    def teardown(self, teardown):
-        self._teardown = create_fixture(teardown, self, self.TEARDOWN)
-
     @property
-    def has_teardown(self):
-        """Check does a keyword have a teardown without creating a teardown object.
+    def id(self) -> 'str|None':
+        if not self:
+            return None
+        return super().id
 
-        A difference between using ``if kw.has_teardown:`` and ``if kw.teardown:``
-        is that accessing the :attr:`teardown` attribute creates a :class:`Keyword`
-        object representing a teardown even when the keyword actually does not
-        have one. This typically does not matter, but with bigger suite structures
-        having lot of keywords it can have a considerable effect on memory usage.
-
-        New in Robot Framework 4.1.2.
-        """
-        return bool(self._teardown)
-
-    @setter
-    def tags(self, tags):
-        """Keyword tags as a :class:`~.model.tags.Tags` object."""
-        return Tags(tags)
-
-    def visit(self, visitor):
+    def visit(self, visitor: 'SuiteVisitor'):
         """:mod:`Visitor interface <robot.model.visitor>` entry-point."""
         if self:
             visitor.visit_keyword(self)
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         return self.name is not None
 
-    def __str__(self):
+    def __str__(self) -> str:
         parts = list(self.assign) + [self.name] + list(self.args)
         return '    '.join(str(p) for p in parts)
 
+    def to_dict(self) -> DataDict:
+        data: DataDict = {'name': self.name}
+        if self.args:
+            data['args'] = self.args
+        if self.assign:
+            data['assign'] = self.assign
+        return data
 
-class Keywords(ItemList):
+
+# FIXME: Remote in RF 7.
+class Keywords(ItemList[BodyItem]):
     """A list-like object representing keywords in a suite, a test or a keyword.
 
     Read-only and deprecated since Robot Framework 4.0.
@@ -133,15 +92,18 @@ class Keywords(ItemList):
         "Use 'body', 'setup' or 'teardown' instead."
     )
 
-    def __init__(self, parent=None, keywords=None):
+    def __init__(self, parent: BodyItemParent = None,
+                 keywords: Sequence[BodyItem] = ()):
         warnings.warn(self.deprecation_message, UserWarning)
         ItemList.__init__(self, object, {'parent': parent})
         if keywords:
             ItemList.extend(self, keywords)
 
     @property
-    def setup(self):
-        return self[0] if (self and self[0].type == 'SETUP') else None
+    def setup(self) -> 'Keyword|None':
+        if self and self[0].type == 'SETUP':
+            return cast(Keyword, self[0])
+        return None
 
     @setup.setter
     def setup(self, kw):
@@ -151,51 +113,53 @@ class Keywords(ItemList):
         self.raise_deprecation_error()
 
     @property
-    def teardown(self):
-        return self[-1] if (self and self[-1].type == 'TEARDOWN') else None
+    def teardown(self) -> 'Keyword|None':
+        if self and self[-1].type == 'TEARDOWN':
+            return cast(Keyword, self[-1])
+        return None
 
     @teardown.setter
-    def teardown(self, kw):
+    def teardown(self, kw: Keyword):
         self.raise_deprecation_error()
 
     def create_teardown(self, *args, **kwargs):
         self.raise_deprecation_error()
 
     @property
-    def all(self):
+    def all(self) -> 'Keywords':
         """Iterates over all keywords, including setup and teardown."""
         return self
 
     @property
-    def normal(self):
+    def normal(self) -> 'list[BodyItem]':
         """Iterates over normal keywords, omitting setup and teardown."""
         return [kw for kw in self if kw.type not in ('SETUP', 'TEARDOWN')]
 
-    def __setitem__(self, index, item):
+    def __setitem__(self, index: int, item: Keyword):
         self.raise_deprecation_error()
 
     def create(self, *args, **kwargs):
         self.raise_deprecation_error()
 
-    def append(self, item):
+    def append(self, item: Keyword):
         self.raise_deprecation_error()
 
-    def extend(self, items):
+    def extend(self, items: Sequence[Keyword]):
         self.raise_deprecation_error()
 
-    def insert(self, index, item):
+    def insert(self, index: int, item: Keyword):
         self.raise_deprecation_error()
 
-    def pop(self, *index):
+    def pop(self, *index: int):
         self.raise_deprecation_error()
 
-    def remove(self, item):
+    def remove(self, item: Keyword):
         self.raise_deprecation_error()
 
     def clear(self):
         self.raise_deprecation_error()
 
-    def __delitem__(self, index):
+    def __delitem__(self, index: int):
         self.raise_deprecation_error()
 
     def sort(self):
@@ -205,5 +169,5 @@ class Keywords(ItemList):
         self.raise_deprecation_error()
 
     @classmethod
-    def raise_deprecation_error(cls):
+    def raise_deprecation_error(cls: 'Type[Keywords]'):
         raise AttributeError(cls.deprecation_message)

@@ -32,34 +32,50 @@ XUnit Option Given
     ${failures} =    Get Elements    ${suites}[0]    testcase/failure
     Length Should Be    ${failures}    4
     Element Attribute Should be    ${failures}[0]    message    ${MESSAGES}
+    ${properties} =    Get Elements    ${suites}[1]    testsuite[6]/properties/property
+    Length Should Be    ${properties}    2
+    Element Attribute Should be    ${properties}[0]    name     Documentation
+    Element Attribute Should be    ${properties}[0]    value    Normal test cases
 
 Suite Stats
     [Template]    Suite Stats Should Be
-    19    5
+    21    5
     8     4    xpath=testsuite[1]
-    11    1    xpath=testsuite[2]
-    1     1    xpath=testsuite[2]/testsuite[1]
-    2     0    xpath=testsuite[2]/testsuite[2]
-    1     0    xpath=testsuite[2]/testsuite[2]/testsuite[1]
-    1     0    xpath=testsuite[2]/testsuite[2]/testsuite[2]
-    3     0    xpath=testsuite[2]/testsuite[3]
+    13    1    xpath=testsuite[2]
+    1     1    xpath=testsuite[2]/testsuite[2]
+    2     0    xpath=testsuite[2]/testsuite[3]
     1     0    xpath=testsuite[2]/testsuite[3]/testsuite[1]
-    2     0    xpath=testsuite[2]/testsuite[3]/testsuite[2]
+    1     0    xpath=testsuite[2]/testsuite[3]/testsuite[2]
     3     0    xpath=testsuite[2]/testsuite[4]
-    1     0    xpath=testsuite[2]/testsuite[5]
-    1     0    xpath=testsuite[2]/testsuite[6]
+    1     0    xpath=testsuite[2]/testsuite[4]/testsuite[1]
+    2     0    xpath=testsuite[2]/testsuite[4]/testsuite[2]
+    3     0    xpath=testsuite[2]/testsuite[6]
+    1     0    xpath=testsuite[2]/testsuite[7]
+    1     0    xpath=testsuite[2]/testsuite[8]
 
 Times in xUnit output
     Previous Test Should Have Passed    Suite Stats
     ${suite} =    Parse XML    ${OUTDIR}/xunit.xml
     Element Attribute Should Match    ${suite}    time    ?.???
     Element Attribute Should Match    ${suite}    time    ?.???    xpath=testsuite[1]
-    Element Attribute Should Match    ${suite}    time    ?.???    xpath=testsuite[1]/testcase[1]
-    Element Attribute Should Match    ${suite}    time    ?.???    xpath=testsuite[2]/testsuite[1]/testcase[1]
+    Element Attribute Should Match    ${suite}    time    ?.???    xpath=testsuite[1]/testcase[2]
+    Element Attribute Should Match    ${suite}    time    ?.???    xpath=testsuite[2]/testsuite[2]/testcase[1]
 
-XUnit skip non-criticals is deprecated
-    Run Rebot    --xUnit xunit.xml --xUnitSkipNonCritical     ${INPUT FILE}
-    Stderr Should Contain   Command line option --xunitskipnoncritical has been deprecated and has no effect.
+Suite Properties
+    [Template]    Suite Properties Should Be
+    0
+    0     xpath=testsuite[1]
+    0     xpath=testsuite[2]
+    2     xpath=testsuite[2]/testsuite[2]
+    0     xpath=testsuite[2]/testsuite[3]
+    2     xpath=testsuite[2]/testsuite[3]/testsuite[1]
+    2     xpath=testsuite[2]/testsuite[3]/testsuite[2]
+    0     xpath=testsuite[2]/testsuite[4]
+    0     xpath=testsuite[2]/testsuite[4]/testsuite[1]
+    2     xpath=testsuite[2]/testsuite[4]/testsuite[2]
+    2     xpath=testsuite[2]/testsuite[6]
+    2     xpath=testsuite[2]/testsuite[7]
+    2     xpath=testsuite[2]/testsuite[8]
 
 Invalid XUnit File
     Create Directory    ${INVALID}
@@ -72,11 +88,41 @@ Invalid XUnit File
 
 Merge outputs
     Run Rebot    -x xunit.xml    ${INPUT FILE} ${INPUT FILE}
-    Suite Stats Should Be     38    10    0    timestamp=${EMPTY}
+    Suite Stats Should Be     42    10    0    timestamp=${EMPTY}
+
+Merged Suite properties
+    [Template]    Suite Properties Should Be
+    0
+    0     xpath=testsuite[1]
+    0     xpath=testsuite[1]/testsuite[1]
+    0     xpath=testsuite[1]/testsuite[2]
+    2     xpath=testsuite[1]/testsuite[2]/testsuite[2]
+    0     xpath=testsuite[1]/testsuite[2]/testsuite[3]
+    2     xpath=testsuite[1]/testsuite[2]/testsuite[3]/testsuite[1]
+    2     xpath=testsuite[1]/testsuite[2]/testsuite[3]/testsuite[2]
+    0     xpath=testsuite[1]/testsuite[2]/testsuite[4]
+    0     xpath=testsuite[1]/testsuite[2]/testsuite[4]/testsuite[1]
+    2     xpath=testsuite[1]/testsuite[2]/testsuite[4]/testsuite[2]
+    2     xpath=testsuite[1]/testsuite[2]/testsuite[6]
+    2     xpath=testsuite[1]/testsuite[2]/testsuite[7]
+    2     xpath=testsuite[1]/testsuite[2]/testsuite[8]
+    0     xpath=testsuite[2]
+    0     xpath=testsuite[2]/testsuite[1]
+    0     xpath=testsuite[2]/testsuite[2]
+    2     xpath=testsuite[2]/testsuite[2]/testsuite[2]
+    0     xpath=testsuite[2]/testsuite[2]/testsuite[3]
+    2     xpath=testsuite[2]/testsuite[2]/testsuite[3]/testsuite[1]
+    2     xpath=testsuite[2]/testsuite[2]/testsuite[3]/testsuite[2]
+    0     xpath=testsuite[2]/testsuite[2]/testsuite[4]
+    0     xpath=testsuite[2]/testsuite[2]/testsuite[4]/testsuite[1]
+    2     xpath=testsuite[2]/testsuite[2]/testsuite[4]/testsuite[2]
+    2     xpath=testsuite[2]/testsuite[2]/testsuite[6]
+    2     xpath=testsuite[2]/testsuite[2]/testsuite[7]
+    2     xpath=testsuite[2]/testsuite[2]/testsuite[8]
 
 Start and end time
     Run Rebot    -x xunit.xml --starttime 20211215-12:11:10.456 --endtime 20211215-12:13:10.556    ${INPUT FILE}
-    Suite Stats Should Be     19    5    0    120.100    2021-12-15T12:11:10.456000
+    Suite Stats Should Be     21    5    0    120.100    2021-12-15T12:11:10.456000
 
 *** Keywords ***
 Create Input File
@@ -98,3 +144,15 @@ Suite Stats Should Be
     Element Attribute Should Be       ${suite}    errors      0
     Element Attribute Should Match    ${suite}    time        ${time}
     Element Attribute Should Match    ${suite}    timestamp   ${timestamp}
+
+Suite Properties Should Be
+    [Arguments]    ${property_count}    ${xpath}=.
+    ${suite} =    Get Element    ${OUTDIR}/xunit.xml    xpath=${xpath}
+    ${properties_element} =    Get Elements    ${suite}    properties
+    IF    ${property_count}
+        Length Should Be    ${properties_element}    1
+        ${property_elements} =    Get Elements    ${properties_element}[0]    property
+        Length Should Be    ${property_elements}    ${property_count}
+    ELSE
+        Length Should Be    ${properties_element}    0
+    END

@@ -28,6 +28,13 @@ class TestTags(unittest.TestCase):
     def test_init_with_none(self):
         assert_equal(list(Tags(None)), [])
 
+    def test_robot(self):
+        assert_equal(Tags().robot('x'), False)
+        assert_equal(Tags('robot:x').robot('x'), True)
+        assert_equal(Tags(['ROBOT : X']).robot('x'), True)
+        assert_equal(Tags('robot:x:y').robot('x:y'), True)
+        assert_equal(Tags('robot:x').robot('y'), False)
+
     def test_add_string(self):
         tags = Tags(['Y'])
         tags.add('x')
@@ -143,9 +150,17 @@ class TestTags(unittest.TestCase):
     def test__eq__(self):
         assert_equal(Tags(['x']), Tags(['x']))
         assert_equal(Tags(['X']), Tags(['x']))
-        assert_equal(Tags(['X']), Tags(('x',)))
-        assert_not_equal(Tags(['X']), ['x'])
-        assert_not_equal(Tags(['X']), ('x',))
+        assert_equal(Tags(['X', 'YZ']), Tags(('x', 'y_z')))
+        assert_not_equal(Tags(['X']), Tags(['Y']))
+
+    def test__eq__converts_other_to_tags(self):
+        assert_equal(Tags(['X']), ['x'])
+        assert_equal(Tags(['X']), 'x')
+        assert_not_equal(Tags(['X']), 'y')
+
+    def test__eq__with_other_that_cannot_be_converted_to_tags(self):
+        assert_not_equal(Tags(), 1)
+        assert_not_equal(Tags(), None)
 
     def test__eq__normalized(self):
         assert_equal(Tags(['Hello world', 'Foo', 'Not_world']),
@@ -235,7 +250,7 @@ class TestTagPatterns(unittest.TestCase):
     def test_ands_and_ors(self):
         for pattern in AndOrPatternGenerator(max_length=5):
             expected = eval(pattern.lower())
-            assert_equal(TagPattern(pattern).match('1'), expected)
+            assert_equal(TagPattern.from_string(pattern).match('1'), expected)
 
     def test_not(self):
         patterns = TagPatterns(['xNOTy', '???NOT?'])

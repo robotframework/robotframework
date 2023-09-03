@@ -70,7 +70,7 @@ def today_is(date):
     should_be_equal(date, "2011-06-21")
 
 
-@keyword(name=r"Today is ${day1:\w\{6,9\}} and tomorrow is ${day2:\w{6,9}}")
+@keyword(name=r"Today is ${day1:\w{6,9}} and tomorrow is ${day2:\w{6,9}}")
 def today_is_and_tomorrow_is(day1, day2):
     should_be_equal(day1, "Tuesday")
     should_be_equal(day2, "Wednesday")
@@ -86,32 +86,37 @@ def literal_closing_curly_brace(curly):
     should_be_equal(curly, "}")
 
 
-@keyword(name=r"Custom Regexp With Escape Chars e.g. ${1E:\\\\}, "
-              r"${2E:\\\\\\\\} and ${PATH:c:\\\\temp\\.*}")
+@keyword(name="Literal ${Curly:{}} Braces")
+def literal_curly_braces(curly):
+    should_be_equal(curly, "{}")
+
+
+@keyword(name=r"Custom Regexp With Escape Chars e.g. ${1E:\\}, "
+              r"${2E:\\\\} and ${PATH:c:\\temp\\.*}")
 def custom_regexp_with_escape_chars(e1, e2, path):
     should_be_equal(e1, "\\")
     should_be_equal(e2, "\\\\")
     should_be_equal(path, "c:\\temp\\test.txt")
 
 
-@keyword(name=r"Custom Regexp With ${escapes:\\\\\}}")
+@keyword(name=r"Custom Regexp With ${escapes:\\\}}")
 def custom_regexp_with_escapes_1(escapes):
     should_be_equal(escapes, r'\}')
 
 
-@keyword(name=r"Custom Regexp With ${escapes:\\\\\{}")
+@keyword(name=r"Custom Regexp With ${escapes:\\\{}")
 def custom_regexp_with_escapes_2(escapes):
     should_be_equal(escapes, r'\{')
 
 
-@keyword(name=r"Custom Regexp With ${escapes:\\\\{}}")
+@keyword(name=r"Custom Regexp With ${escapes:\\{}}")
 def custom_regexp_with_escapes_3(escapes):
     should_be_equal(escapes, r'\{}')
 
 
 @keyword(name=r"Grouping ${x:Cu(st|ts)(om)?} ${y:Regexp\(?erts\)?}")
 def grouping(x, y):
-    return "%s-%s" % (x, y)
+    return f'{x}-{y}'
 
 
 @keyword(name="Wrong ${number} of embedded ${args}")
@@ -124,8 +129,8 @@ def optional_args_are_okay(nonembedded=1, okay=2, indeed=3):
     pass
 
 
-@keyword(name="Star Args With ${embedded} Args Are ${okay}")
-def star_args_are_okay(*args):
+@keyword(name="Varargs With ${embedded} Args Are ${okay}")
+def varargs_are_okay(*args):
     return args
 
 

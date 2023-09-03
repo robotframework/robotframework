@@ -20,11 +20,12 @@ from .typeconverters import TypeConverter
 
 class ArgumentConverter:
 
-    def __init__(self, argspec, converters, dry_run=False):
+    def __init__(self, argspec, converters, dry_run=False, languages=None):
         """:type argspec: :py:class:`robot.running.arguments.ArgumentSpec`"""
         self._argspec = argspec
         self._converters = converters
         self._dry_run = dry_run
+        self._languages = languages
 
     def convert(self, positional, named):
         return self._convert_positional(positional), self._convert_named(named)
@@ -50,15 +51,23 @@ class ArgumentConverter:
                 or self._dry_run and contains_variable(value, identifiers='$@&%')):
             return value
         conversion_error = None
+        # Don't convert None if argument has None as a default value.
+        # Python < 3.11 adds None to type hints automatically when using None as
+        # a default value which preserves None automatically. This code keeps
+        # the same behavior also with newer Python versions.
+        if value is None and name in spec.defaults and spec.defaults[name] is None:
+            return value
         if name in spec.types:
-            converter = TypeConverter.converter_for(spec.types[name], self._converters)
+            converter = TypeConverter.converter_for(spec.types[name], self._converters,
+                                                    self._languages)
             if converter:
                 try:
                     return converter.convert(name, value)
                 except ValueError as err:
                     conversion_error = err
         if name in spec.defaults:
-            converter = TypeConverter.converter_for(type(spec.defaults[name]))
+            converter = TypeConverter.converter_for(type(spec.defaults[name]),
+                                                    languages=self._languages)
             if converter:
                 try:
                     return converter.convert(name, value, explicit_type=False,

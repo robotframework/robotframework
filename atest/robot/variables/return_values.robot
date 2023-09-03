@@ -225,3 +225,89 @@ Invalid assign with assign mark
 
 Too many assign marks
     Check Test Case    ${TESTNAME}
+
+Item assign to scalar dictionary
+    ${tc}=  Check Test Case    ${TESTNAME}
+    Check Log Message          ${tc.kws[1].msgs[0]}    \${dict_variable}[key_str1] = replaced_value
+    Check Log Message          ${tc.kws[2].msgs[0]}    \${dict_variable}[\${0}] = 100
+    Check Log Message          ${tc.kws[3].msgs[0]}    \${dict_variable}[0] = new_value
+
+Nested item assign
+    ${tc}=  Check Test Case    ${TESTNAME}
+    Check Log Message          ${tc.kws[2].msgs[0]}    \${dict_variable}[list][0] = 101
+    Check Log Message          ${tc.kws[3].msgs[0]}    \${dict_variable}[list][\${1}] = 102
+    Check Log Message          ${tc.kws[4].msgs[0]}    \${dict_variable}[list][-1] = 103
+
+Item assign to scalar list
+    ${tc}=  Check Test Case    ${TESTNAME}
+    Check Log Message          ${tc.kws[1].msgs[0]}    \${list_variable}[0] = 100
+    Check Log Message          ${tc.kws[2].msgs[0]}    \${list_variable}[\${1}] = 101
+    Check Log Message          ${tc.kws[3].msgs[0]}    \${list_variable}[-1] = 102
+
+Slice assign to scalar list
+    ${tc}=  Check Test Case    ${TESTNAME}
+    Check Log Message          ${tc.kws[3].msgs[0]}    \${list_variable}[:2] = ['101', '102', '103']
+    Check Log Message          ${tc.kws[4].msgs[0]}    \${list_variable}[-2:] = ['104']
+
+Item assign using variable as index
+    ${tc}=  Check Test Case    ${TESTNAME}
+    Check Log Message          ${tc.kws[5].msgs[0]}    \${list_variable}[\${int_variable}] = 105
+    Check Log Message          ${tc.kws[5].msgs[1]}    \${list_variable}[\${str_variable}] = 101
+    Check Log Message          ${tc.kws[5].msgs[2]}    \${list_variable}[\${slice_variable}] = [102]
+    Check Log Message          ${tc.kws[5].msgs[3]}    \${list_variable}[\${strslice_variable}] = [103, 104]
+
+Item assign to object with setitem capability
+    Check Test Case    ${TESTNAME}
+
+Item assign to object without setitem capability fails
+    Check Test Case    ${TESTNAME}
+
+Item assign to immutable object fails
+    Check Test Case    ${TESTNAME}
+
+Item assign expects iterable fails
+    Check Test Case    ${TESTNAME}
+
+Index not found error when item assign to list
+    Check Test Case    ${TESTNAME}
+
+Item assign to undeclared scalar fails
+    Check Test Case    ${TESTNAME}
+
+Item assign to undeclared dict fails
+    Check Test Case    ${TESTNAME}
+
+Item assign to undeclared list fails
+    Check Test Case    ${TESTNAME}
+
+Empty item assign to list fails
+    Check Test Case    ${TESTNAME}
+
+Empty item assign to dictionary
+    Check Test Case    ${TESTNAME}
+
+Multiple item assigns to scalars only
+    Check Test Case    ${TESTNAME}
+
+Multiple item assigns to scalars and list
+    Check Test Case    ${TESTNAME}
+
+Multiple item assigns to scalars and list slice
+    Check Test Case    ${TESTNAME}
+
+Item assign without assign mark
+    Check Test Case    ${TESTNAME}
+
+Single item assign to list
+    ${tc}=  Check Test Case    ${TESTNAME}
+    Check Log Message          ${tc.kws[1].msgs[0]}    \@{list_variable}[1] = [ a | b | c ]
+
+Single item assign to dict
+    ${tc}=  Check Test Case    ${TESTNAME}
+    Check Log Message          ${tc.kws[1].msgs[0]}    \&{dict_variable}[a] = { 0=1 | 2=3 }
+
+Single item assign to list should fail if value is not list
+    Check Test Case    ${TESTNAME}
+
+Single item assign to dict should fail if value is not dict
+    Check Test Case    ${TESTNAME}

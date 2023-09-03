@@ -32,9 +32,7 @@ that can be used programmatically. Other code is for internal usage.
 
 import sys
 
-# Allows running as a script. __name__ check needed with multiprocessing:
-# https://github.com/robotframework/robotframework/issues/1137
-if 'robot' not in sys.modules and __name__ == '__main__':
+if __name__ == '__main__' and 'robot' not in sys.modules:
     import pythonpathsetter
 
 from robot.conf import RebotSettings
@@ -81,7 +79,7 @@ Options
     --rpa                 Turn on the generic automation mode. Mainly affects
                           terminology so that "test" is replaced with "task"
                           in logs and reports. By default the mode is got
-                          from the processed output files. New in RF 3.1.
+                          from the processed output files.
  -R --merge               When combining results, merge outputs together
                           instead of putting them under a new top level suite.
                           Example: rebot --merge orig.xml rerun.xml
@@ -124,8 +122,6 @@ Options
     --processemptysuite   Processes output also if the top level suite is
                           empty. Useful e.g. with --include/--exclude when it
                           is not an error that there are no matches.
- -c --critical tag *      Deprecated since RF 4.0 and has no effect anymore.
- -n --noncritical tag *   Deprecated since RF 4.0 and has no effect anymore.
                           Use --skiponfailure when starting execution instead.
  -d --outputdir dir       Where to create output files. The default is the
                           directory where Rebot is run from and the given path
@@ -141,7 +137,6 @@ Options
                           similarly as --log. Default: report.html
  -x --xunit file          xUnit compatible result file. Not created unless this
                           option is specified.
-    --xunitskipnoncritical  Deprecated since RF 4.0 and has no effect anymore.
  -T --timestampoutputs    When this option is used, timestamp in a format
                           `YYYYMMDD-hhmmss` is added to all generated output
                           files between their basename and extension. For
@@ -151,13 +146,14 @@ Options
     --splitlog            Split the log file into smaller pieces that open in
                           browsers transparently.
     --logtitle title      Title for the generated log file. The default title
-                          is `<SuiteName> Test Log`.
+                          is `<SuiteName> Log`.
     --reporttitle title   Title for the generated report file. The default
-                          title is `<SuiteName> Test Report`.
+                          title is `<SuiteName> Report`.
     --reportbackground colors  Background colors to use in the report file.
-                          Either `all_passed:critical_passed:failed` or
-                          `passed:failed`. Both color names and codes work.
-                          Examples: --reportbackground green:yellow:red
+                          Given in format `passed:failed:skipped` where the
+                          `:skipped` part can be omitted. Both color names and
+                          codes work.
+                          Examples: --reportbackground green:red:yellow
                                     --reportbackground #00E:#E00
  -L --loglevel level      Threshold for selecting messages. Available levels:
                           TRACE (default), DEBUG, INFO, WARN, NONE (no msgs).
@@ -201,7 +197,6 @@ Options
                           work using same rules as with --removekeywords.
                           Examples: --expandkeywords name:BuiltIn.Log
                                     --expandkeywords tag:expand
-                          New in RF 3.2.
     --removekeywords all|passed|for|wuks|name:<pattern>|tag:<pattern> *
                           Remove keyword data from all generated outputs.
                           Keywords containing warnings are not removed except
@@ -210,6 +205,7 @@ Options
                           passed:  remove data only from keywords in passed
                                    test cases and suites
                           for:     remove passed iterations from for loops
+                          while:   remove passed iterations from while loops
                           wuks:    remove all but the last failing keyword
                                    inside `BuiltIn.Wait Until Keyword Succeeds`
                           name:<pattern>:  remove data from keywords that match
@@ -228,12 +224,14 @@ Options
                                    `OR`, and `NOT` operators.
                                    Examples: --removekeywords foo
                                              --removekeywords fooANDbar*
-    --flattenkeywords for|foritem|name:<pattern>|tag:<pattern> *
+    --flattenkeywords for|while|iteration|name:<pattern>|tag:<pattern> *
                           Flattens matching keywords in all generated outputs.
                           Matching keywords get all log messages from their
                           child keywords and children are discarded otherwise.
-                          for:     flatten for loops fully
-                          foritem: flatten individual for loop iterations
+                          for:     flatten FOR loops fully
+                          while:   flatten WHILE loops fully
+                          iteration: flatten FOR/WHILE loop iterations
+                          foritem: deprecated alias for `iteration`
                           name:<pattern>:  flatten matched keywords using same
                                    matching rules as with
                                    `--removekeywords name:<pattern>`
@@ -287,11 +285,9 @@ has precedence regardless of how many times options are used. For example,
 `--merge --merge --nomerge --nostatusrc --statusrc` would not activate the
 merge mode and would return a normal return code.
 
-Long option format is case-insensitive. For example, --SuiteStatLevel is
-equivalent to but easier to read than --suitestatlevel. Long options can
-also be shortened as long as they are unique. For example, `--logti Title`
-works while `--lo log.html` does not because the former matches only --logtitle
-but the latter matches both --log and --logtitle.
+Long option names are case and hyphen insensitive. For example, --TagStatLink
+and --tag-stat-link are equivalent to, but easier to read than, --tagstatlink.
+Long options can also be shortened as long as they are unique.
 
 Environment Variables
 =====================
@@ -325,19 +321,19 @@ $ python -m robot.rebot --name Combined outputs/*.xml
 class Rebot(RobotFramework):
 
     def __init__(self):
-        Application.__init__(self, USAGE, arg_limits=(1,),
-                             env_options='REBOT_OPTIONS', logger=LOGGER)
+        Application.__init__(self, USAGE, arg_limits=(1,), env_options='REBOT_OPTIONS',
+                             logger=LOGGER)
 
     def main(self, datasources, **options):
-        settings = RebotSettings(options)
+        try:
+            settings = RebotSettings(options)
+        except:
+            LOGGER.register_console_logger(stdout=options.get('stdout'),
+                                           stderr=options.get('stderr'))
+            raise
         LOGGER.register_console_logger(**settings.console_output_config)
-        if settings['Critical'] or settings['NonCritical']:
-            LOGGER.warn("Command line options --critical and --noncritical have been "
-                        "deprecated and have no effect with Rebot. Use --skiponfailure "
-                        "when starting execution instead.")
-        if settings['XUnitSkipNonCritical']:
-            LOGGER.warn("Command line option --xunitskipnoncritical has been "
-                        "deprecated and has no effect.")
+        if settings.pythonpath:
+            sys.path = settings.pythonpath + sys.path
         LOGGER.disable_message_cache()
         rc = ResultWriter(*datasources).write_results(settings)
         if rc < 0:
@@ -349,7 +345,7 @@ def rebot_cli(arguments=None, exit=True):
     """Command line execution entry point for post-processing outputs.
 
     :param arguments: Command line options and arguments as a list of strings.
-        Starting from RF 3.1, defaults to ``sys.argv[1:]`` if not given.
+        Defaults to ``sys.argv[1:]`` if not given.
     :param exit: If ``True``, call ``sys.exit`` with the return code denoting
         execution status, otherwise just return the rc.
 

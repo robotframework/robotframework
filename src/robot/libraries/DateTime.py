@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-"""A test library for handling date and time values.
+"""A library for handling date and time values.
 
 ``DateTime`` is a Robot Framework standard library that supports creating and
 converting date and time values (e.g. `Get Current Date`, `Convert Time`),
@@ -27,11 +27,11 @@ also be used by other libraries programmatically.
 
 = Terminology =
 
-In the context of this library, ``date`` and ``time`` generally have following
+In the context of this library, ``date`` and ``time`` generally have the following
 meanings:
 
 - ``date``: An entity with both date and time components but without any
-   timezone information. For example, ``2014-06-11 10:07:42``.
+   time zone information. For example, ``2014-06-11 10:07:42``.
 - ``time``: A time interval. For example, ``1 hour 20 minutes`` or ``01:20:00``.
 
 This terminology differs from what Python's standard
@@ -43,7 +43,7 @@ objects match ``date`` and ``time`` as defined by this library.
 
 = Date formats =
 
-Dates can given to and received from keywords in `timestamp`, `custom
+Dates can be given to and received from keywords in `timestamp`, `custom
 timestamp`, `Python datetime` and `epoch time` formats. These formats are
 discussed thoroughly in subsequent sections.
 
@@ -119,17 +119,19 @@ Examples:
 
 Epoch time is the time in seconds since the
 [http://en.wikipedia.org/wiki/Unix_time|UNIX epoch] i.e. 00:00:00.000 (UTC)
-1 January 1970. To give a date in epoch time, it must be given as a number
-(integer or float), not as a string. To return a date in epoch time,
+January 1, 1970. To give a date as an epoch time, it must be given as a number
+(integer or float), not as a string. To return a date as an epoch time,
 it is possible to use ``epoch`` value with ``result_format`` argument.
-Epoch time is returned as a floating point number.
+Epoch times are returned as floating point numbers.
 
-Notice that epoch time itself is independent on timezones and thus same
-around the world at a certain time. What local time a certain epoch time
-matches obviously then depends on the timezone. For example, examples below
-were tested in Finland but verifications would fail on other timezones.
+Notice that epoch times are independent on time zones and thus same
+around the world at a certain time. For example, epoch times returned
+by `Get Current Date` are not affected by the ``time_zone`` argument.
+What local time a certain epoch time matches then depends on the time zone.
 
-Examples:
+Following examples demonstrate using epoch times. They are tested in Finland,
+and due to the reasons explained above they would fail on other time zones.
+
 | ${date} =       | Convert Date | ${1000000000}           |
 | Should Be Equal | ${date}      | 2001-09-09 04:46:40.000 |
 | ${date} =       | Convert Date | 2014-06-12 13:27:59.279 | epoch |
@@ -184,6 +186,8 @@ times. The available time specifiers are:
 - ``minutes``, ``minute``, ``mins``, ``min``, ``m``
 - ``seconds``, ``second``, ``secs``, ``sec``, ``s``
 - ``milliseconds``, ``millisecond``, ``millis``, ``ms``
+- ``microseconds``, ``microsecond``, ``us``, ``μs`` (new in RF 6.0)
+- ``nanoseconds``, ``nanosecond``, ``ns`` (new in RF 6.0)
 
 When returning a time string, it is possible to select between ``verbose``
 and ``compact`` representations using ``result_format`` argument. The verbose
@@ -294,7 +298,7 @@ import time
 
 from robot.version import get_version
 from robot.utils import (elapsed_time_to_string, is_falsy, is_number, is_string,
-                         roundup, secs_to_timestr, timestr_to_secs, type_name)
+                         secs_to_timestr, timestr_to_secs, type_name)
 
 __version__ = get_version()
 __all__ = ['convert_time', 'convert_date', 'subtract_date_from_date',
@@ -309,6 +313,7 @@ def get_current_date(time_zone='local', increment=0,
     Arguments:
     - ``time_zone:``      Get the current time on this time zone. Currently only
                           ``local`` (default) and ``UTC`` are supported.
+                          Has no effect if date is returned as an `epoch time`.
     - ``increment:``      Optional time increment to add to the returned date in
                           one of the supported `time formats`. Can be negative.
     - ``result_format:``  Format of the returned date (see `date formats`).
@@ -518,17 +523,10 @@ class Date:
         if isinstance(date, datetime):
             return date
         if is_number(date):
-            return self._seconds_to_datetime(date)
+            return datetime.fromtimestamp(date)
         if is_string(date):
             return self._string_to_datetime(date, input_format)
         raise ValueError("Unsupported input '%s'." % date)
-
-    def _seconds_to_datetime(self, secs):
-        # Workaround microsecond rounding errors with IronPython:
-        # https://github.com/IronLanguages/main/issues/1170
-        # TODO: can this be simplified now
-        dt = datetime.fromtimestamp(secs)
-        return dt.replace(microsecond=roundup(secs % 1 * 1e6))
 
     def _string_to_datetime(self, ts, input_format):
         if not input_format:
@@ -566,7 +564,7 @@ class Date:
     def _convert_to_timestamp(self, dt, millis=True):
         if not millis:
             return dt.strftime('%Y-%m-%d %H:%M:%S')
-        ms = roundup(dt.microsecond / 1000.0)
+        ms = round(dt.microsecond / 1000)
         if ms == 1000:
             dt += timedelta(seconds=1)
             ms = 0
@@ -608,7 +606,7 @@ class Time:
             result_converter = getattr(self, '_convert_to_%s' % format.lower())
         except AttributeError:
             raise ValueError("Unknown format '%s'." % format)
-        seconds = self.seconds if millis else float(roundup(self.seconds))
+        seconds = self.seconds if millis else float(round(self.seconds))
         return result_converter(seconds, millis)
 
     def _convert_to_number(self, seconds, millis=True):

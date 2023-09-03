@@ -14,9 +14,10 @@
 #  limitations under the License.
 
 import fnmatch
-import re
 import glob
 import os
+import pathlib
+import re
 import shutil
 import tempfile
 import time
@@ -35,7 +36,7 @@ PROCESSES = ConnectionCache('No active processes.')
 
 
 class OperatingSystem:
-    r"""A test library providing keywords for OS related tasks.
+    r"""A library providing keywords for operating system related tasks.
 
     ``OperatingSystem`` is Robot Framework's standard library that
     enables various operating system related tasks to be performed in
@@ -67,7 +68,7 @@ class OperatingSystem:
 
     = Pattern matching =
 
-    Many keywords accepts arguments as either _glob_ or _regular expression_ patterns.
+    Many keywords accept arguments as either _glob_ or _regular expression_ patterns.
 
     == Glob patterns ==
 
@@ -106,6 +107,15 @@ class OperatingSystem:
     specified user's home directory, respectively. The resulting path is
     operating system dependent, but typically e.g. ``~/robot`` is expanded to
     ``C:\Users\<user>\robot`` on Windows and ``/home/<user>/robot`` on Unixes.
+
+    = ``pathlib.Path`` support =
+
+    Starting from Robot Framework 6.0, arguments representing paths can be given
+    as [https://docs.python.org/3/library/pathlib.html pathlib.Path] instances
+    in addition to strings.
+
+    All keywords returning paths return them as strings. This may change in
+    the future so that the return value type matches the argument type.
 
     = Boolean arguments =
 
@@ -549,7 +559,7 @@ class OperatingSystem:
         self._link("File '%s' is empty.", path)
 
     def file_should_not_be_empty(self, path, msg=None):
-        """Fails if the specified directory is empty.
+        """Fails if the specified file is empty.
 
         The default error message can be overridden with the ``msg`` argument.
         """
@@ -780,6 +790,8 @@ class OperatingSystem:
         return source
 
     def _normalize_copy_and_move_destination(self, destination):
+        if isinstance(destination, pathlib.Path):
+            destination = str(destination)
         is_dir = os.path.isdir(destination) or destination.endswith(('/', '\\'))
         destination = self._absnorm(destination)
         directory = destination if is_dir else os.path.dirname(destination)
@@ -943,8 +955,8 @@ class OperatingSystem:
     def get_environment_variable(self, name, default=None):
         """Returns the value of an environment variable with the given name.
 
-        If no such environment variable is set, returns the default value, if
-        given. Otherwise fails the test case.
+        If no environment variable is found, returns possible default value.
+        If no default value is given, the keyword fails.
 
         Returned variables are automatically decoded to Unicode using
         the system encoding.
@@ -1077,9 +1089,9 @@ class OperatingSystem:
         - ${p4} = '/path'
         - ${p5} = '/my/path2'
         """
-        base = base.replace('/', os.sep)
-        parts = [p.replace('/', os.sep) for p in parts]
-        return self.normalize_path(os.path.join(base, *parts))
+        parts = [str(p) if isinstance(p, pathlib.Path) else p.replace('/', os.sep)
+                 for p in (base,) + parts]
+        return self.normalize_path(os.path.join(*parts))
 
     def join_paths(self, base, *paths):
         """Joins given paths with base and returns resulted paths.
@@ -1105,6 +1117,7 @@ class OperatingSystem:
         - Replaces initial ``~`` or ``~user`` by that user's home directory.
         - If ``case_normalize`` is given a true value (see `Boolean arguments`)
           on Windows, converts the path to all lowercase.
+        - Converts ``pathlib.Path`` instances to ``str``.
 
         Examples:
         | ${path1} = | Normalize Path | abc/           |
@@ -1120,7 +1133,11 @@ class OperatingSystem:
         On Windows result would use ``\\`` instead of ``/`` and home directory
         would be different.
         """
-        path = os.path.normpath(os.path.expanduser(path.replace('/', os.sep)))
+        if isinstance(path, pathlib.Path):
+            path = str(path)
+        else:
+            path = path.replace('/', os.sep)
+        path = os.path.normpath(os.path.expanduser(path))
         # os.path.normcase doesn't normalize on OSX which also, by default,
         # has case-insensitive file system. Our robot.utils.normpath would
         # do that, but it's not certain would that, or other things that the

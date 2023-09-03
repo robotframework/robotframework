@@ -207,6 +207,7 @@ Statements:
 - :class:`~robot.parsing.model.statements.Metadata`
 - :class:`~robot.parsing.model.statements.ForceTags`
 - :class:`~robot.parsing.model.statements.DefaultTags`
+- :class:`~robot.parsing.model.statements.SuiteName`
 - :class:`~robot.parsing.model.statements.SuiteSetup`
 - :class:`~robot.parsing.model.statements.SuiteTeardown`
 - :class:`~robot.parsing.model.statements.TestSetup`
@@ -222,7 +223,8 @@ Statements:
 - :class:`~robot.parsing.model.statements.Template`
 - :class:`~robot.parsing.model.statements.Timeout`
 - :class:`~robot.parsing.model.statements.Arguments`
-- :class:`~robot.parsing.model.statements.Return`
+- :class:`~robot.parsing.model.statements.Return` (deprecated, will mean ``ReturnStatement`` in RF 7.0)
+- :class:`~robot.parsing.model.statements.ReturnSetting` (alias for ``Return``, new in RF 6.1)
 - :class:`~robot.parsing.model.statements.KeywordCall`
 - :class:`~robot.parsing.model.statements.TemplateArguments`
 - :class:`~robot.parsing.model.statements.IfHeader`
@@ -239,6 +241,7 @@ Statements:
 - :class:`~robot.parsing.model.statements.Break`
 - :class:`~robot.parsing.model.statements.Continue`
 - :class:`~robot.parsing.model.statements.Comment`
+- :class:`~robot.parsing.model.statements.Config` (new in RF 6.0)
 - :class:`~robot.parsing.model.statements.Error`
 - :class:`~robot.parsing.model.statements.EmptyLine`
 
@@ -257,7 +260,7 @@ case file contains::
     class TestNamePrinter(ModelVisitor):
 
         def visit_File(self, node):
-            print(f"File '{node.source}' has following tests:")
+            print(f"File '{node.source}' has the following tests:")
             # Call `generic_visit` to visit also child nodes.
             self.generic_visit(node)
 
@@ -272,7 +275,7 @@ case file contains::
 When the above code is run using the earlier :file:`example.robot`, the
 output is this::
 
-    File 'example.robot' has following tests:
+    File 'example.robot' has the following tests:
     - Example (on line 2)
     - Second example (on line 5)
 
@@ -509,14 +512,16 @@ from robot.parsing.model.statements import (
     VariablesImport,
     Documentation,
     Metadata,
-    ForceTags,
-    DefaultTags,
+    SuiteName,
     SuiteSetup,
     SuiteTeardown,
     TestSetup,
     TestTeardown,
     TestTemplate,
     TestTimeout,
+    TestTags,
+    DefaultTags,
+    KeywordTags,
     Variable,
     TestCaseName,
     KeywordName,
@@ -527,6 +532,7 @@ from robot.parsing.model.statements import (
     Timeout,
     Arguments,
     Return,
+    ReturnSetting,
     KeywordCall,
     TemplateArguments,
     IfHeader,
@@ -543,6 +549,7 @@ from robot.parsing.model.statements import (
     Continue,
     Break,
     Comment,
+    Config,
     Error,
     EmptyLine
 )

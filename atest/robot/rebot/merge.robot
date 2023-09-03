@@ -12,12 +12,14 @@ ${MERGE 1}        %{TEMPDIR}/merge-1.xml
 ${MERGE 2}        %{TEMPDIR}/merge-2.xml
 @{ALL TESTS}      Suite4 First             SubSuite1 First    SubSuite2 First
 ...               Test From Sub Suite 4    SubSuite3 First    SubSuite3 Second
-...               Suite1 First             Suite1 Second      Third In Suite1
+...               Suite1 First             Suite1 Second
+...               Test With Double Underscore    Test With Prefix    Third In Suite1
 ...               Suite2 First             Suite3 First
-@{ALL SUITES}     Fourth                   Subsuites          Subsuites2
+@{ALL SUITES}     Fourth                   Subsuites          Custom name for 📂 'subsuites2'
+...               Suite With Double Underscore    Suite With Prefix
 ...               Tsuite1                  Tsuite2            Tsuite3
 @{SUB SUITES 1}   Sub1                     Sub2
-@{SUB SUITES 2}   Sub.suite.4              Subsuite3
+@{SUB SUITES 2}   Sub.suite.4              Custom name for 📜 'subsuite3.robot'
 @{RERUN TESTS}    Suite4 First             SubSuite1 First
 @{RERUN SUITES}   Fourth                   Subsuites
 
@@ -30,6 +32,10 @@ Merge re-executed tests
 Merge suite setup and teardown
     [Setup]   Should Be Equal    ${PREV_TEST_STATUS}    PASS
     Suite setup and teardown should have been merged
+
+Merge suite documentation and metadata
+    [Setup]   Should Be Equal    ${PREV_TEST_STATUS}    PASS
+    Suite documentation and metadata should have been merged
 
 Merge re-executed and re-re-executed tests
     Re-run tests
@@ -76,26 +82,33 @@ Merge ignores skip
     ...    *HTML* Test has been re-executed and results merged.
     ...    Latter result had <span class="skip">SKIP</span> status and was ignored. Message:
     Should Contain Tests    ${SUITE}
-    ...    Pass=PASS:${prefix}\nTest skipped with '--skip' command line option.
-    ...    Fail=FAIL:${prefix}\nTest skipped with '--skip' command line option.<hr>Original message:\nNot &lt;b&gt;HTML&lt;/b&gt; fail
+    ...    Pass=PASS:${prefix}\nTest skipped using '--skip' command line option.
+    ...    Fail=FAIL:${prefix}\nTest skipped using '--skip' command line option.<hr>Original message:\nNot &lt;b&gt;HTML&lt;/b&gt; fail
     ...    Skip=SKIP:${prefix}\n<b>HTML</b> skip<hr>Original message:\n<b>HTML</b> skip
 
 *** Keywords ***
 Run original tests
-    Create Output With Robot    ${ORIGINAL}    --variable FAIL:YES --variable LEVEL:WARN    ${SUITES}
+    ${options} =    Catenate
+    ...    --variable FAIL:YES
+    ...    --variable LEVEL:WARN
+    ...    --doc "Doc for original run"
+    ...    --metadata Original:True
+    Create Output With Robot    ${ORIGINAL}    ${options}    ${SUITES}
     Verify original tests
 
 Verify original tests
     Should Be Equal    ${SUITE.name}    Suites
     Should Contain Suites    ${SUITE}    @{ALL SUITES}
-    Should Contain Suites    ${SUITE.suites[1]}    @{SUB SUITES 1}
-    Should Contain Suites    ${SUITE.suites[2]}    @{SUB SUITES 2}
+    Should Contain Suites    ${SUITE.suites[2]}    @{SUB SUITES 1}
+    Should Contain Suites    ${SUITE.suites[3]}    @{SUB SUITES 2}
     Should Contain Tests    ${SUITE}    @{ALL TESTS}
     ...    SubSuite1 First=FAIL:This test was doomed to fail: YES != NO
 
 Re-run tests
     [Arguments]    ${options}=
     ${options} =    Catenate
+    ...    --doc "Doc for re-run"
+    ...    --metadata ReRun:True
     ...    --variable SUITE_SETUP:NoOperation  # Affects misc/suites/__init__.robot
     ...    --variable SUITE_TEARDOWN:NONE      #           -- ;; --
     ...    --variable SETUP_MSG:Rerun!         # Affects misc/suites/fourth.robot
@@ -138,8 +151,8 @@ Test merge should have been successful
     ...    ${status 2}=PASS    ${message 2}=
     Should Be Equal    ${SUITE.name}    ${suite name}
     Should Contain Suites    ${SUITE}    @{ALL SUITES}
-    Should Contain Suites    ${SUITE.suites[1]}    @{SUB SUITES 1}
-    Should Contain Suites    ${SUITE.suites[2]}    @{SUB SUITES 2}
+    Should Contain Suites    ${SUITE.suites[2]}    @{SUB SUITES 1}
+    Should Contain Suites    ${SUITE.suites[3]}    @{SUB SUITES 2}
     ${message 1} =    Create expected merge message    ${message 1}
     ...    FAIL    Expected    FAIL    Expected
     ${message 2} =    Create expected merge message    ${message 2}
@@ -149,33 +162,38 @@ Test merge should have been successful
     ...    SubSuite1 First=${status 2}:${message 2}
     Timestamps should be cleared
     ...    ${SUITE}
-    ...    ${SUITE.suites[0]}
     ...    ${SUITE.suites[1]}
-    ...    ${SUITE.suites[1].suites[0]}
-    Timestamps should be set
-    ...    ${SUITE.suites[1].suites[1]}
     ...    ${SUITE.suites[2]}
     ...    ${SUITE.suites[2].suites[0]}
+    Timestamps should be set
     ...    ${SUITE.suites[2].suites[1]}
     ...    ${SUITE.suites[3]}
+    ...    ${SUITE.suites[3].suites[0]}
+    ...    ${SUITE.suites[3].suites[1]}
     ...    ${SUITE.suites[4]}
-    ...    ${SUITE.suites[5]}
+    ...    ${SUITE.suites[6]}
+    ...    ${SUITE.suites[7]}
 
 Suite setup and teardown should have been merged
     Should Be Equal      ${SUITE.setup.name}                           BuiltIn.No Operation
     Should Be Equal      ${SUITE.teardown.name}                        ${NONE}
-    Should Be Equal      ${SUITE.suites[0].name}                       Fourth
-    Check Log Message    ${SUITE.suites[0].setup.msgs[0]}              Rerun!
-    Check Log Message    ${SUITE.suites[0].teardown.msgs[0]}           New!
-    Should Be Equal      ${SUITE.suites[1].suites[0].name}             Sub1
-    Should Be Equal      ${SUITE.suites[1].suites[0].setup.name}       ${NONE}
-    Should Be Equal      ${SUITE.suites[1].suites[0].teardown.name}    ${NONE}
+    Should Be Equal      ${SUITE.suites[1].name}                       Fourth
+    Check Log Message    ${SUITE.suites[1].setup.msgs[0]}              Rerun!
+    Check Log Message    ${SUITE.suites[1].teardown.msgs[0]}           New!
+    Should Be Equal      ${SUITE.suites[2].suites[0].name}             Sub1
+    Should Be Equal      ${SUITE.suites[2].suites[0].setup.name}       ${NONE}
+    Should Be Equal      ${SUITE.suites[2].suites[0].teardown.name}    ${NONE}
+
+Suite documentation and metadata should have been merged
+    Should Be Equal      ${SUITE.doc}                                  Doc for re-run
+    Should Be Equal      ${SUITE.metadata}[ReRun]                      True
+    Should Be Equal      ${SUITE.metadata}[Original]                   True
 
 Test add should have been successful
     Should Be Equal    ${SUITE.name}    Suites
     Should Contain Suites    ${SUITE}    @{ALL SUITES}
-    Should Contain Suites    ${SUITE.suites[1]}    @{SUB SUITES 1}
-    Should Contain Suites    ${SUITE.suites[2]}    @{SUB SUITES 2}
+    Should Contain Suites    ${SUITE.suites[2]}    @{SUB SUITES 1}
+    Should Contain Suites    ${SUITE.suites[3]}    @{SUB SUITES 2}
     Should Contain Tests    ${SUITE}    @{ALL TESTS}
     ...    SubSuite1 First=FAIL:This test was doomed to fail: YES != NO
     ...    Pass=PASS:*HTML* Test added from merged output.
@@ -183,42 +201,42 @@ Test add should have been successful
     Timestamps should be cleared
     ...    ${SUITE}
     Timestamps should be set
-    ...    ${SUITE.suites[0]}
     ...    ${SUITE.suites[1]}
-    ...    ${SUITE.suites[1].suites[0]}
-    ...    ${SUITE.suites[1].suites[1]}
     ...    ${SUITE.suites[2]}
     ...    ${SUITE.suites[2].suites[0]}
     ...    ${SUITE.suites[2].suites[1]}
     ...    ${SUITE.suites[3]}
+    ...    ${SUITE.suites[3].suites[0]}
+    ...    ${SUITE.suites[3].suites[1]}
     ...    ${SUITE.suites[4]}
-    ...    ${SUITE.suites[5]}
+    ...    ${SUITE.suites[6]}
+    ...    ${SUITE.suites[7]}
 
 Suite add should have been successful
     Should Be Equal    ${SUITE.name}    Suites
     Should Contain Suites    ${SUITE}    @{ALL SUITES}    Pass And Fail
-    Should Contain Suites    ${SUITE.suites[1]}    @{SUB SUITES 1}
-    Should Contain Suites    ${SUITE.suites[2]}    @{SUB SUITES 2}
+    Should Contain Suites    ${SUITE.suites[2]}    @{SUB SUITES 1}
+    Should Contain Suites    ${SUITE.suites[3]}    @{SUB SUITES 2}
     Should Contain Tests    ${SUITE}    @{ALL TESTS}
     ...    Pass    Fail
     ...    SubSuite1 First=FAIL:This test was doomed to fail: YES != NO
-    Should Be Equal    ${SUITE.suites[6].name}    Pass And Fail
-    Should Contain Tests    ${SUITE.suites[6]}    Pass    Fail
-    Should Be Equal    ${SUITE.suites[6].message}    *HTML* Suite added from merged output.
+    Should Be Equal    ${SUITE.suites[8].name}    Pass And Fail
+    Should Contain Tests    ${SUITE.suites[8]}    Pass    Fail
+    Should Be Equal    ${SUITE.suites[8].message}    *HTML* Suite added from merged output.
     Timestamps should be cleared
     ...    ${SUITE}
     Timestamps should be set
-    ...    ${SUITE.suites[0]}
     ...    ${SUITE.suites[1]}
-    ...    ${SUITE.suites[1].suites[0]}
-    ...    ${SUITE.suites[1].suites[1]}
     ...    ${SUITE.suites[2]}
     ...    ${SUITE.suites[2].suites[0]}
     ...    ${SUITE.suites[2].suites[1]}
     ...    ${SUITE.suites[3]}
+    ...    ${SUITE.suites[3].suites[0]}
+    ...    ${SUITE.suites[3].suites[1]}
     ...    ${SUITE.suites[4]}
-    ...    ${SUITE.suites[5]}
     ...    ${SUITE.suites[6]}
+    ...    ${SUITE.suites[7]}
+    ...    ${SUITE.suites[8]}
 
 Warnings should have been merged
     Length Should Be    ${ERRORS}    2
@@ -301,4 +319,4 @@ Create expected multi-merge message
 Log should have been created with all Log keywords flattened
     ${log} =    Get File    ${OUTDIR}/log.html
     Should Not Contain    ${log}    "*<p>Logs the given message with the given level.\\x3c/p>"
-    Should Contain    ${log}    "*<p>Logs the given message with the given level.\\x3c/p>\\n<p><i><b>Keyword content flattened.\\x3c/b>\\x3c/i>\\x3c/p>"
+    Should Contain    ${log}    "*<p>Logs the given message with the given level.\\x3c/p>\\n<p><i><b>Content flattened.\\x3c/b>\\x3c/i>\\x3c/p>"

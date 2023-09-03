@@ -1,9 +1,12 @@
 *** Settings ***
 Library              OperatingSystem
+Library              embedded_args.py
+Variables            variable.py
 
 *** Variables ***
 @{NEEDS ESCAPING}    c:\\temp\\foo    \${notvar}    ${42}
 ${FAIL KW}           Fail
+${VARIABLE}          value
 
 *** Test Cases ***
 Run Keyword
@@ -47,6 +50,28 @@ Run Keyword In Multiple Levels And With UK
     [Documentation]    FAIL Expected Failure
     Run Keyword    Run Keyword    Run Keyword    My UK    Run Keyword
     ...    My UK    My UK    My UK    Run Keyword    Fail    Expected Failure
+
+With keyword accepting embedded arguments
+    Run Keyword    Embedded "arg"
+
+With library keyword accepting embedded arguments
+    Run Keyword    Embedded "arg" in library
+
+With keyword accepting embedded arguments as variables
+    Run Keyword    Embedded "${VARIABLE}"
+    Run Keyword    Embedded "${1}"
+
+With library keyword accepting embedded arguments as variables
+    Run Keyword    Embedded "${VARIABLE}" in library
+    Run Keyword    Embedded "${1}" in library
+
+With keyword accepting embedded arguments as variables containing objects
+    Run Keyword    Embedded "${OBJECT}"
+    Run Keyword    Embedded object "${OBJECT}"
+
+With library keyword accepting embedded arguments as variables containing objects
+    Run Keyword    Embedded "${OBJECT}" in library
+    Run Keyword    Embedded object "${OBJECT}" in library
 
 Run Keyword In For Loop
     [Documentation]    FAIL Expected failure in For Loop
@@ -99,3 +124,10 @@ Timeoutted UK Passing
 Timeoutted UK Timeouting
     [Timeout]    300 milliseconds
     Sleep    1 second
+
+Embedded "${arg}"
+    Log    ${arg}
+
+Embedded object "${obj}"
+    Log    ${obj}
+    Should Be Equal    ${obj.name}    Robot

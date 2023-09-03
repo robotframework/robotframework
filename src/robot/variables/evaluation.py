@@ -15,29 +15,41 @@
 
 import builtins
 import token
-from collections.abc import Mapping
+from collections.abc import MutableMapping
 from io import StringIO
 from tokenize import generate_tokens, untokenize
 
 from robot.errors import DataError
 from robot.utils import get_error_message, type_name
 
+from .search import search_variable
 from .notfound import variable_not_found
 
 
 PYTHON_BUILTINS = set(builtins.__dict__)
 
 
-def evaluate_expression(expression, variable_store, modules=None, namespace=None):
+def evaluate_expression(expression, variables, modules=None, namespace=None,
+                        resolve_variables=False):
+    original = expression
     try:
         if not isinstance(expression, str):
             raise TypeError(f'Expression must be string, got {type_name(expression)}.')
+        if resolve_variables:
+            expression = variables.replace_scalar(expression)
+            if not isinstance(expression, str):
+                return expression
         if not expression:
             raise ValueError('Expression cannot be empty.')
-        return _evaluate(expression, variable_store, modules, namespace)
+        return _evaluate(expression, variables.store, modules, namespace)
+    except DataError as err:
+        error = str(err)
+        recommendation = ''
     except Exception:
-        raise DataError(f"Evaluating expression '{expression}' failed: "
-                        f"{get_error_message()}")
+        error = get_error_message()
+        recommendation = _recommend_special_variables(original)
+    raise DataError(f"Evaluating expression '{expression}' failed: {error}\n\n"
+                    f"{recommendation}".strip())
 
 
 def _evaluate(expression, variable_store, modules=None, namespace=None):
@@ -48,7 +60,7 @@ def _evaluate(expression, variable_store, modules=None, namespace=None):
     # automatically as modules. It must be also be used as the global namespace
     # with `eval()` because lambdas and possibly other special constructs don't
     # see the local namespace at all.
-    namespace = dict(namespace) if namespace else {}
+    namespace = dict(namespace or ())
     if modules:
         namespace.update(_import_modules(modules))
     local_ns = EvaluationNamespace(variable_store, namespace)
@@ -59,20 +71,22 @@ def _decorate_variables(expression, variable_store):
     variable_started = False
     variable_found = False
     tokens = []
+    prev_toknum = None
     for toknum, tokval, _, _, _ in generate_tokens(StringIO(expression).readline):
         if variable_started:
             if toknum == token.NAME:
                 if tokval not in variable_store:
-                    variable_not_found('$%s' % tokval,
+                    variable_not_found(f'${tokval}',
                                        variable_store.as_dict(decoration=False),
                                        deco_braces=False)
                 tokval = 'RF_VAR_' + tokval
                 variable_found = True
             else:
-                tokens.append((token.ERRORTOKEN, '$'))
+                tokens.append((prev_toknum, '$'))
             variable_started = False
-        if toknum == token.ERRORTOKEN and tokval == '$':
+        if tokval == '$':
             variable_started = True
+            prev_toknum = toknum
         else:
             tokens.append((toknum, tokval))
     return untokenize(tokens).strip() if variable_found else expression
@@ -91,7 +105,25 @@ def _import_modules(module_names):
     return modules
 
 
-class EvaluationNamespace(Mapping):
+def _recommend_special_variables(expression):
+    example = []
+    remaining = expression
+    while True:
+        match = search_variable(remaining)
+        if not match:
+            break
+        example[-1:] = [match.before, match.identifier, match.base, match.after]
+        remaining = example[-1]
+    if not example:
+        return ''
+    example = ''.join(example)
+    return (f"Variables in the original expression '{expression}' were resolved "
+            f"before the expression was evaluated. Try using '{example}' "
+            f"syntax to avoid that. See Evaluating Expressions appendix in "
+            f"Robot Framework User Guide for more details.")
+
+
+class EvaluationNamespace(MutableMapping):
 
     def __init__(self, variable_store, namespace):
         self.namespace = namespace
@@ -103,6 +135,12 @@ class EvaluationNamespace(Mapping):
         if key in self.namespace:
             return self.namespace[key]
         return self._import_module(key)
+
+    def __setitem__(self, key, value):
+        self.namespace[key] = value
+
+    def __delitem__(self, key):
+        self.namespace.pop(key)
 
     def _import_module(self, name):
         if name in PYTHON_BUILTINS:

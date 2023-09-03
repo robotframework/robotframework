@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import getdoc, is_union, type_name
+from robot.utils import getdoc, is_union, seq2str, type_name
 
 from .argumentparser import PythonArgumentParser
 
@@ -24,13 +24,13 @@ class CustomArgumentConverters:
         self.converters = converters
 
     @classmethod
-    def from_dict(cls, converters, error_reporter):
+    def from_dict(cls, converters, library):
         valid = []
         for type_, conv in converters.items():
             try:
-                info = ConverterInfo.for_converter(type_, conv)
+                info = ConverterInfo.for_converter(type_, conv, library)
             except TypeError as err:
-                error_reporter(str(err))
+                library.report_error(str(err))
             else:
                 valid.append(info)
         return cls(valid)
@@ -51,10 +51,11 @@ class CustomArgumentConverters:
 
 class ConverterInfo:
 
-    def __init__(self, type, converter, value_types):
+    def __init__(self, type, converter, value_types, library=None):
         self.type = type
         self.converter = converter
         self.value_types = value_types
+        self.library = library
 
     @property
     def name(self):
@@ -65,22 +66,19 @@ class ConverterInfo:
         return getdoc(self.converter) or getdoc(self.type)
 
     @classmethod
-    def for_converter(cls, type_, converter):
+    def for_converter(cls, type_, converter, library):
         if not isinstance(type_, type):
             raise TypeError(f'Custom converters must be specified using types, '
                             f'got {type_name(type_)} {type_!r}.')
+        if converter is None:
+            def converter(arg):
+                raise TypeError(f'Only {type_.__name__} instances are accepted, '
+                                f'got {type_name(arg)}.')
         if not callable(converter):
             raise TypeError(f'Custom converters must be callable, converter for '
                             f'{type_name(type_)} is {type_name(converter)}.')
-        spec = PythonArgumentParser(type='Converter').parse(converter)
-        if len(spec.positional) != 1:
-            raise TypeError(f'Custom converters must accept exactly one positional '
-                            f'argument, converter {converter.__name__!r} accepts '
-                            f'{len(spec.positional)}.')
-        if len(spec.named_only):
-            raise TypeError(f'Custom converter {converter.__name__!r} accepts '
-                            f'keyword-only arguments which is not supported.')
-        arg_type = spec.types.get(spec.positional[0])
+        spec = cls._get_arg_spec(converter)
+        arg_type = spec.types.get(spec.positional and spec.positional[0] or spec.var_positional)
         if arg_type is None:
             accepts = ()
         elif is_union(arg_type):
@@ -89,4 +87,27 @@ class ConverterInfo:
             accepts = (arg_type.__origin__,)
         else:
             accepts = (arg_type,)
-        return cls(type_, converter, accepts)
+        pass_library = spec.minargs == 2 or spec.var_positional
+        return cls(type_, converter, accepts, library if pass_library else None)
+
+    @classmethod
+    def _get_arg_spec(cls, converter):
+        spec = PythonArgumentParser(type='Converter').parse(converter)
+        if spec.minargs > 2:
+            required = seq2str([a for a in spec.positional if a not in spec.defaults])
+            raise TypeError(f"Custom converters cannot have more than two mandatory "
+                            f"arguments, '{converter.__name__}' has {required}.")
+        if not spec.maxargs:
+            raise TypeError(f"Custom converters must accept one positional argument, "
+                            f"'{converter.__name__}' accepts none.")
+        if spec.named_only and set(spec.named_only) - set(spec.defaults):
+            required = seq2str(sorted(set(spec.named_only) - set(spec.defaults)))
+            raise TypeError(f"Custom converters cannot have mandatory keyword-only "
+                            f"arguments, '{converter.__name__}' has {required}.")
+        return spec
+
+    def convert(self, value):
+        if not self.library:
+            return self.converter(value)
+        return self.converter(value, self.library.get_instance())
+

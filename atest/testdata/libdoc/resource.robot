@@ -26,9 +26,11 @@ Keyword with some "stuff" to <escape>
 kw 3
     [Documentation]   literal\nnewline
     [Arguments]  ${a1}   @{a2}
+    No Operation
 
 kw 4  [Arguments]  ${positional}=default  @{varargs}  &{kwargs}
       [Tags]    kw4    Has    tags    ?!?!??
+      No Operation
 
 kw 5  [DocumeNtation]   foo bar `kw`.
       ...
@@ -48,24 +50,35 @@ kw 5  [DocumeNtation]   foo bar `kw`.
       ...  | foo       |    bar     |
       ...
       ...  tags: a, b, ${3}
+  No Operation
 
 kw 6
     [Documentation]    Summary line
     ...
-    ...                 Another line.
-    ...                 Tags: foo, bar
-    [Tags]              foo    dar
+    ...                Another line.
+    ...                Tags: foo, bar
+    [Tags]             foo    dar
+    No Operation
 
 Different argument types
     [Arguments]    ${mandatory}    ${optional}=default    @{varargs}
     ...            ${kwo}=default    ${another}    &{kwargs}
+    No Operation
 
 Embedded ${arguments}
+    No Operation
 
 curdir  [Documentation]  ${CURDIR}
+    No Operation
 
 non ascii doc
     [Documentation]    Hyvää yötä.\n\nСпасибо!
+    No Operation
 
 Deprecation
     [Documentation]    *DEPRECATED* for some reason.
+    No Operation
+
+Private
+    [Tags]    robot:private
+    No Operation

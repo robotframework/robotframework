@@ -46,7 +46,7 @@ class DottedOutput:
             self._stdout.write('.')
         elif test.skipped:
             self._stdout.highlight('s', 'SKIP')
-        elif 'robot:exit' in test.tags:
+        elif test.tags.robot('exit'):
             self._stdout.write('x')
         else:
             self._stdout.highlight('F', 'FAIL')
@@ -79,11 +79,11 @@ class StatusReporter(SuiteVisitor):
                               'test' if not suite.rpa else 'task',
                               plural_or_not(stats.total),
                               secs_to_timestr(suite.elapsedtime/1000.0)))
-        self._stream.highlight(suite.status + 'ED', suite.status)
+        self._stream.highlight(suite.status + ('PED' if suite.status == 'SKIP' else 'ED'), suite.status)
         self._stream.write('\n%s\n' % stats.message)
 
     def visit_test(self, test):
-        if test.failed and 'robot:exit' not in test.tags:
+        if test.failed and not test.tags.robot('exit'):
             self._stream.write('-' * self._width + '\n')
             self._stream.highlight('FAIL')
             self._stream.write(': %s\n%s\n' % (test.longname,

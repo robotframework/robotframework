@@ -1,64 +1,31 @@
 import unittest
 
+from robot.parsing.model.statements import *
 from robot.parsing import Token
-from robot.parsing.model.statements import (
-    Statement,
-    SectionHeader,
-    LibraryImport,
-    ResourceImport,
-    VariablesImport,
-    Documentation,
-    Metadata,
-    Tags,
-    TestCaseName,
-    KeywordName,
-    ForceTags,
-    DefaultTags,
-    SuiteSetup,
-    SuiteTeardown,
-    TestSetup,
-    TestTeardown,
-    TestTemplate,
-    TestTimeout,
-    Variable,
-    Setup,
-    Teardown,
-    Template,
-    Timeout,
-    Arguments,
-    Return,
-    ReturnStatement,
-    KeywordCall,
-    TemplateArguments,
-    ForHeader,
-    IfHeader,
-    InlineIfHeader,
-    Continue,
-    Break,
-    ElseHeader,
-    ElseIfHeader,
-    End,
-    Comment,
-    EmptyLine
-)
 from robot.utils.asserts import assert_equal, assert_true
 from robot.utils import type_name
 
 
 def assert_created_statement(tokens, base_class, **params):
-    new_statement = base_class.from_params(**params)
+    statement = base_class.from_params(**params)
     assert_statements(
-        new_statement,
+        statement,
         base_class(tokens)
     )
     assert_statements(
-        new_statement,
+        statement,
         base_class.from_tokens(tokens)
     )
     assert_statements(
-        new_statement,
+        statement,
         Statement.from_tokens(tokens)
     )
+    if len(set(id(t) for t in statement.tokens)) != len(tokens):
+        lines = '\n'.join(f'{i:18}{t}' for i, t in
+                          [('ID', 'TOKEN')] +
+                          [(str(id(t)), repr(t)) for t in statement.tokens])
+        raise AssertionError(f'Tokens should not be reused!\n\n{lines}')
+    return statement
 
 
 def compare_statements(first, second):
@@ -68,14 +35,45 @@ def compare_statements(first, second):
 
 
 def assert_statements(st1, st2):
+    assert_equal(len(st1), len(st2),
+                 f'Statement lengths are not equal:\n'
+                 f'{len(st1)} for {st1}\n'
+                 f'{len(st2)} for {st2}')
     for t1, t2 in zip(st1, st2):
         assert_equal(t1, t2, formatter=repr)
-    assert_true(
-        compare_statements(st1, st2),
-        'Statements are not equal. %s (%s) != %s (%s)' % (st1, type_name(st1),
-                                                          st2, type_name(st2))
-    )
-    assert_equal(len(st1), len(st2))
+    assert_true(compare_statements(st1, st2),
+                f'Statements are not equal:\n'
+                f'{st1} {type_name(st1)}\n'
+                f'{st2} {type_name(st2)}')
+
+
+class TestStatementFromTokens(unittest.TestCase):
+
+    def test_keyword_call_with_assignment(self):
+        tokens = [Token(Token.SEPARATOR, '  '),
+                  Token(Token.ASSIGN, '${var}'),
+                  Token(Token.SEPARATOR, '  '),
+                  Token(Token.KEYWORD, 'Keyword'),
+                  Token(Token.SEPARATOR, '  '),
+                  Token(Token.ARGUMENT, 'arg'),
+                  Token(Token.EOL)]
+        assert_statements(Statement.from_tokens(tokens), KeywordCall(tokens))
+
+    def test_inline_if_with_assignment(self):
+        tokens = [Token(Token.SEPARATOR, '  '),
+                  Token(Token.ASSIGN, '${var}'),
+                  Token(Token.SEPARATOR, '  '),
+                  Token(Token.INLINE_IF, 'IF'),
+                  Token(Token.SEPARATOR, '  '),
+                  Token(Token.ARGUMENT, 'True'),
+                  Token(Token.EOL)]
+        assert_statements(Statement.from_tokens(tokens), InlineIfHeader(tokens))
+
+    def test_assign_only(self):
+        tokens = [Token(Token.SEPARATOR, '  '),
+                  Token(Token.ASSIGN, '${var}'),
+                  Token(Token.EOL)]
+        assert_statements(Statement.from_tokens(tokens), KeywordCall(tokens))
 
 
 class TestCreateStatementsFromParams(unittest.TestCase):
@@ -88,6 +86,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             Token.SETTING_HEADER: 'Settings',
             Token.VARIABLE_HEADER: 'Variables',
             Token.TESTCASE_HEADER: 'Test Cases',
+            Token.TASK_HEADER: 'Tasks',
             Token.KEYWORD_HEADER: 'Keywords',
             Token.COMMENT_HEADER: 'Comments'
         }
@@ -191,7 +190,6 @@ class TestCreateStatementsFromParams(unittest.TestCase):
         )
 
     def test_TestTemplate(self):
-        # *** Settings ***
         # Test Template    Keyword Template
         tokens = [
             Token(Token.TEST_TEMPLATE, 'Test Template'),
@@ -206,7 +204,6 @@ class TestCreateStatementsFromParams(unittest.TestCase):
         )
 
     def test_TestTimeout(self):
-        # *** Settings ***
         # Test Timeout    1 min
         tokens = [
             Token(Token.TEST_TIMEOUT, 'Test Timeout'),
@@ -218,6 +215,22 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             tokens,
             TestTimeout,
             value='1 min'
+        )
+
+    def test_KeywordTags(self):
+        # Keyword Tags    first    second
+        tokens = [
+            Token(Token.KEYWORD_TAGS, 'Keyword Tags'),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.ARGUMENT, 'first'),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.ARGUMENT, 'second'),
+            Token(Token.EOL, '\n')
+        ]
+        assert_created_statement(
+            tokens,
+            KeywordTags,
+            values=['first', 'second']
         )
 
     def test_Variable(self):
@@ -234,6 +247,26 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             name='${variable_name}',
             value="{'a': 4, 'b': 'abc'}"
         )
+        # ${var}    first    second    third
+        # @{var}    first    second    third
+        # &{var}    first    second    third
+        for name in ['${var}', '@{var}', '&{var}']:
+            tokens = [
+                Token(Token.VARIABLE, name),
+                Token(Token.SEPARATOR, '    '),
+                Token(Token.ARGUMENT, 'first'),
+                Token(Token.SEPARATOR, '    '),
+                Token(Token.ARGUMENT, 'second'),
+                Token(Token.SEPARATOR, '    '),
+                Token(Token.ARGUMENT, 'third'),
+                Token(Token.EOL, '\n')
+            ]
+            assert_created_statement(
+                tokens,
+                Variable,
+                name=name,
+                value=['first', 'second', 'third']
+            )
 
     def test_TestCaseName(self):
         tokens = [Token(Token.TESTCASE_NAME, 'Example test case name'), Token(Token.EOL, '\n')]
@@ -303,25 +336,13 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             name='library_name.py'
         )
 
-        # Library    library_name.py    127.0.0.1    8080
+        # Library    library_name.py    AS    anothername
         tokens = [
             Token(Token.LIBRARY, 'Library'),
             Token(Token.SEPARATOR, '    '),
             Token(Token.NAME, 'library_name.py'),
             Token(Token.SEPARATOR, '    '),
-            Token(Token.ARGUMENT, '127.0.0.1'),
-            Token(Token.SEPARATOR, '    '),
-            Token(Token.ARGUMENT, '8080'),
-            Token(Token.EOL, '\n')
-        ]
-
-        # Library    library_name.py    WITH NAME    anothername
-        tokens = [
-            Token(Token.LIBRARY, 'Library'),
-            Token(Token.SEPARATOR, '    '),
-            Token(Token.NAME, 'library_name.py'),
-            Token(Token.SEPARATOR, '    '),
-            Token(Token.WITH_NAME),
+            Token(Token.AS),
             Token(Token.SEPARATOR, '    '),
             Token(Token.NAME, 'anothername'),
             Token(Token.EOL, '\n')
@@ -387,11 +408,12 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             Token(Token.ARGUMENT, 'Example documentation'),
             Token(Token.EOL, '\n')
         ]
-        assert_created_statement(
+        doc = assert_created_statement(
             tokens,
             Documentation,
             value='Example documentation'
         )
+        assert_equal(doc.value, 'Example documentation')
 
         # Documentation    First line.
         # ...              Second line aligned.
@@ -407,17 +429,19 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             Token(Token.ARGUMENT, 'Second line aligned.'),
             Token(Token.EOL),
             Token(Token.CONTINUATION),
+            Token(Token.ARGUMENT, ''),
             Token(Token.EOL),
             Token(Token.CONTINUATION),
             Token(Token.SEPARATOR, '              '),
             Token(Token.ARGUMENT, 'Second paragraph.'),
             Token(Token.EOL),
         ]
-        assert_created_statement(
+        doc = assert_created_statement(
             tokens,
             Documentation,
             value='First line.\nSecond line aligned.\n\nSecond paragraph.'
         )
+        assert_equal(doc.value, 'First line.\nSecond line aligned.\n\nSecond paragraph.')
 
         # Test/Keyword
         #     [Documentation]      First line
@@ -437,6 +461,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             Token(Token.EOL),
             Token(Token.SEPARATOR, '  '),
             Token(Token.CONTINUATION),
+            Token(Token.ARGUMENT, ''),
             Token(Token.EOL),
             Token(Token.SEPARATOR, '  '),
             Token(Token.CONTINUATION),
@@ -444,7 +469,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             Token(Token.ARGUMENT, 'Second paragraph.'),
             Token(Token.EOL),
         ]
-        assert_created_statement(
+        doc = assert_created_statement(
             tokens,
             Documentation,
             value='First line.\nSecond line aligned.\n\nSecond paragraph.\n',
@@ -452,6 +477,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             separator='      ',
             settings_section=False
         )
+        assert_equal(doc.value, 'First line.\nSecond line aligned.\n\nSecond paragraph.')
 
     def test_Metadata(self):
         tokens = [
@@ -508,7 +534,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
 
     def test_ForceTags(self):
         tokens = [
-            Token(Token.FORCE_TAGS, 'Force Tags'),
+            Token(Token.TEST_TAGS, 'Force Tags'),
             Token(Token.SEPARATOR, '    '),
             Token(Token.ARGUMENT, 'some tag'),
             Token(Token.SEPARATOR, '    '),
@@ -517,7 +543,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
         ]
         assert_created_statement(
             tokens,
-            ForceTags,
+            TestTags,
             values=['some tag', 'another_tag']
         )
 
@@ -586,7 +612,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             args=['${arg1}', '${arg2}=4']
         )
 
-    def test_Return(self):
+    def test_ReturnSetting(self):
         # Keyword
         #     [Return]    ${arg1}    ${arg2}=4
         tokens = [
@@ -600,7 +626,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
         ]
         assert_created_statement(
             tokens,
-            Return,
+            ReturnSetting,
             args=['${arg1}', '${arg2}=4']
         )
 
@@ -652,9 +678,9 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             Token(Token.SEPARATOR, '    '),
             Token(Token.FOR),
             Token(Token.SEPARATOR, '  '),
-            Token(Token.VARIABLE, '${value1}'),
+            Token(Token.ASSIGN, '${value1}'),
             Token(Token.SEPARATOR, '  '),
-            Token(Token.VARIABLE, '${value2}'),
+            Token(Token.ASSIGN, '${value2}'),
             Token(Token.SEPARATOR, '  '),
             Token(Token.FOR_SEPARATOR, 'IN ZIP'),
             Token(Token.SEPARATOR, '  '),
@@ -703,6 +729,24 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             condition='$x > 0'
         )
 
+    def test_InlineIfHeader_with_assign(self):
+        # Test/Keyword
+        #     ${y} =    IF    $x > 0
+        tokens = [
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.ASSIGN, '${y}'),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.INLINE_IF),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.ARGUMENT, '$x > 0')
+        ]
+        assert_created_statement(
+            tokens,
+            InlineIfHeader,
+            condition='$x > 0',
+            assign=['${y}']
+        )
+
     def test_ElseIfHeader(self):
         # Test/Keyword
         #     ELSE IF    ${var} not in [@{list}]
@@ -732,6 +776,163 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             ElseHeader
         )
 
+    def test_TryHeader(self):
+        # TRY
+        tokens = [
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.TRY),
+            Token(Token.EOL, '\n')
+        ]
+        assert_created_statement(
+            tokens,
+            TryHeader
+        )
+
+    def test_ExceptHeader(self):
+        # EXCEPT
+        tokens = [
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.EXCEPT),
+            Token(Token.EOL, '\n')
+        ]
+        assert_created_statement(
+            tokens,
+            ExceptHeader
+        )
+        # EXCEPT    one
+        tokens = [
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.EXCEPT),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.ARGUMENT, 'one'),
+            Token(Token.EOL, '\n')
+        ]
+        assert_created_statement(
+            tokens,
+            ExceptHeader,
+            patterns=['one']
+        )
+        # EXCEPT    one    two    AS    ${var}
+        tokens = [
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.EXCEPT),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.ARGUMENT, 'one'),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.ARGUMENT, 'two'),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.AS, 'AS'),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.ASSIGN, '${var}'),
+            Token(Token.EOL, '\n')
+        ]
+        assert_created_statement(
+            tokens,
+            ExceptHeader,
+            patterns=['one', 'two'],
+            variable='${var}'
+        )
+        # EXCEPT    Example: *    type=glob
+        tokens = [
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.EXCEPT),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.ARGUMENT, 'Example: *'),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.OPTION, 'type=glob'),
+            Token(Token.EOL, '\n')
+        ]
+        assert_created_statement(
+            tokens,
+            ExceptHeader,
+            patterns=['Example: *'],
+            type='glob'
+        )
+        # EXCEPT    Error \\d    (x|y)    type=regexp    AS    ${var}
+        tokens = [
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.EXCEPT),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.ARGUMENT, 'Error \\d'),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.ARGUMENT, '(x|y)'),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.OPTION, 'type=regexp'),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.AS, 'AS'),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.ASSIGN, '${var}'),
+            Token(Token.EOL, '\n')]
+        assert_created_statement(
+            tokens,
+            ExceptHeader,
+            patterns=['Error \\d', '(x|y)'],
+            type='regexp',
+            variable='${var}'
+        )
+
+    def test_FinallyHeader(self):
+        # FINALLY
+        tokens = [
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.FINALLY),
+            Token(Token.EOL, '\n')
+        ]
+        assert_created_statement(
+            tokens,
+            FinallyHeader
+        )
+
+    def test_WhileHeader(self):
+        # WHILE    $cond
+        tokens = [
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.WHILE),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.ARGUMENT, '$cond'),
+            Token(Token.EOL, '\n')
+        ]
+        assert_created_statement(
+            tokens,
+            WhileHeader,
+            condition='$cond'
+        )
+        # WHILE    $cond    limit=100s
+        tokens = [
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.WHILE),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.ARGUMENT, '$cond'),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.OPTION, 'limit=100s'),
+            Token(Token.EOL, '\n')
+        ]
+        assert_created_statement(
+            tokens,
+            WhileHeader,
+            condition='$cond',
+            limit='100s'
+        )
+        # WHILE    $cond    limit=10    on_limit_message=Error message
+        tokens = [
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.WHILE),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.ARGUMENT, '$cond'),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.OPTION, 'limit=10'),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.OPTION, 'on_limit_message=Error message'),
+            Token(Token.EOL, '\n')
+        ]
+        assert_created_statement(
+            tokens,
+            WhileHeader,
+            condition='$cond',
+            limit='10',
+            on_limit_message='Error message'
+        )
+
     def test_End(self):
         tokens = [
             Token(Token.SEPARATOR, '    '),
@@ -743,7 +944,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             End
         )
 
-    def test_Return(self):
+    def test_ReturnStatement(self):
         tokens = [
             Token(Token.SEPARATOR, '    '),
             Token(Token.RETURN_STATEMENT),

@@ -29,20 +29,18 @@ This module also provides :func:`testdoc` and :func:`testdoc_cli` functions
 that can be used programmatically. Other code is for internal usage.
 """
 
-import os.path
 import sys
 import time
+from pathlib import Path
 
-# Allows running as a script. __name__ check needed with multiprocessing:
-# https://github.com/robotframework/robotframework/issues/1137
-if 'robot' not in sys.modules and __name__ == '__main__':
+if __name__ == '__main__' and 'robot' not in sys.modules:
     import pythonpathsetter
 
 from robot.conf import RobotSettings
 from robot.htmldata import HtmlFileWriter, ModelWriter, JsonWriter, TESTDOC
 from robot.running import TestSuiteBuilder
 from robot.utils import (abspath, Application, file_writer, get_link_path,
-                         html_escape, html_format, is_string, secs_to_timestr,
+                         html_escape, html_format, is_list_like, secs_to_timestr,
                          seq2str2, timestr_to_secs, unescape)
 
 
@@ -130,7 +128,7 @@ class TestDoc(Application):
 
 def TestSuiteFactory(datasources, **options):
     settings = RobotSettings(options)
-    if is_string(datasources):
+    if not is_list_like(datasources):
         datasources = [datasources]
     suite = TestSuiteBuilder(process_curdir=False).build(*datasources)
     suite.configure(**settings.suite_config)
@@ -169,7 +167,7 @@ class JsonConverter:
 
     def _convert_suite(self, suite):
         return {
-            'source': suite.source or '',
+            'source': str(suite.source or ''),
             'relativeSource': self._get_relative_source(suite.source),
             'id': suite.id,
             'name': self._escape(suite.name),
@@ -186,7 +184,7 @@ class JsonConverter:
     def _get_relative_source(self, source):
         if not source or not self._output_path:
             return ''
-        return get_link_path(source, os.path.dirname(self._output_path))
+        return get_link_path(source, Path(self._output_path).parent)
 
     def _escape(self, item):
         return html_escape(item)

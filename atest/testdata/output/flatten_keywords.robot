@@ -6,7 +6,8 @@ Flatten stuff
     Keyword calling others
     Log    Flatten me too!!
     Keyword with tags not flatten
-    Keyword with fags flatten
+    Keyword with tags and doc flatten
+    Keyword with tags and no doc flatten
 
 For loop
     FOR    ${i}    IN RANGE    10
@@ -15,8 +16,18 @@ For loop
         Keyword 2
     END
 
-Flatten IF in keyword
-    Flatten IF in keyword
+WHILE loop
+    ${i}=    Set variable    ${0}
+    WHILE    $i < 10
+        Log   index: ${i}
+        Keyword 3
+        Keyword 2
+        ${i}=    Evaluate    $i + 1
+    END
+
+Flatten controls in keyword
+    Flatten controls in keyword
+
 
 *** Keywords ***
 Keyword 3
@@ -43,15 +54,20 @@ Keyword with tags not flatten
     [Tags]   hello    kitty
     Keyword 1
 
-Keyword with fags flatten
-    [Documentation]    Doc of flat tag
+Keyword with tags and doc flatten
+    [Documentation]    Doc of flat keyword.
     [Tags]   hello    flatten
     Keyword 1
 
-Flatten IF in keyword
+Keyword with tags and no doc flatten
+    [Tags]   hello    flatten
+    Keyword 1
+
+Flatten controls in keyword
     Log    Outside IF
     IF    True
         Log    Inside IF
+        Keyword 1
     ELSE IF    True
         Fail    Not run
     ELSE
@@ -62,6 +78,24 @@ Flatten IF in keyword
             Log    Nested IF
             Countdown
         END
+    END
+    FOR    ${i}    IN RANGE    3
+        Log   FOR: ${i}
+        Keyword 1
+    END
+    WHILE    $i > 0
+        Log   WHILE: ${i}
+        Keyword 1
+        ${i}=    Evaluate    $i - 1
+        IF    $i >= 1    CONTINUE
+        BREAK
+    END
+    TRY
+        Fail
+    EXCEPT
+        Keyword 1
+    FINALLY
+        Log    finally
     END
 
 Countdown

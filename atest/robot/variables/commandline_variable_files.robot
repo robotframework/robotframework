@@ -22,6 +22,12 @@ Variable File From PYTHONPATH
 Variable File From PYTHONPATH with arguments
     Check Test Case  ${TEST NAME}
 
+Variable File From PYTHONPATH as module
+    Check Test Case  ${TEST NAME}
+
+Variable File From PYTHONPATH as submodule
+    Check Test Case  ${TEST NAME}
+
 Non-Existing Variable File
     Stderr Should Contain  [ ERROR ] Variable file '${VF3}' does not exist.
     Stderr Should Contain  [ ERROR ] Variable file '${VF4}' does not exist.
@@ -54,6 +60,8 @@ Run Test Data
     ...  --VARIABLEFILE ${VF4}
     ...  --VariableFile pythonpath_varfile.py
     ...  --VariableFile pythonpath_varfile.py:1:2:3
+    ...  --VariableFile pythonpath_varfile:as:module
+    ...  -V package.submodule
     ...  --pythonpath ${VARFILEDIR}/pythonpath_dir
     Run Tests  ${options}  variables/commandline_variable_files.robot
     ${VF2} =  Normalize Path  ${VARFILEDIR}/cli_vars_2.py

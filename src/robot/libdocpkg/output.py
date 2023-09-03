@@ -13,7 +13,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import datetime
 import os
+import time
 
 from robot.utils import file_writer
 
@@ -40,3 +42,14 @@ class LibdocOutput:
                 os.remove(self._output_path)
             except OSError:
                 pass
+
+
+def get_generation_time():
+    """Return a timestamp that honors `SOURCE_DATE_EPOCH`.
+
+    This timestamp is to be used for embedding in output files, so
+    that builds can be made reproducible.
+    """
+    ts = float(os.getenv('SOURCE_DATE_EPOCH', time.time()))
+    dt = datetime.datetime.fromtimestamp(round(ts), datetime.timezone.utc)
+    return dt.isoformat()

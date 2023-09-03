@@ -49,6 +49,8 @@ Should Match Regexp
     [Template]    Should Match Regexp
     Foo: 42        \\w+: \\d{2}
     IGNORE CASE    (?i)case
+    IGNORE CASE    case    flags=IGNORECASE
+    abc\nDEFG      ab.*fg  flags=IGNORECASE|DOTALL
     ${EMPTY}       whatever    Something failed    No values
 
 Should Match Regexp returns match and groups
@@ -59,6 +61,9 @@ Should Match Regexp returns match and groups
     ${match}    @{groups} =    Should Match Regexp    Foo: 42 (xxx)    ^(Fo+)([:.;]) (\\d+?)
     Should Be Equal    ${match}    Foo: 4
     Should Be True    @{groups} == ['Foo', ':', '4']
+    ${match}    @{groups} =    Should Match Regexp    FOO: 42 (xxx)    ^(fo+)([:.;]) (\\d+?)    flags=I
+    Should Be Equal    ${match}    FOO: 4
+    Should Be True    @{groups} == ['FOO', ':', '4']
     ${match}    ${group1}    ${group2} =    Should Match Regexp    Hello, (my) World!!!!!    (?ix)^hel+o,\\s # Comment \n\\((my|your)\\)\\ WORLD(!*)$
     Should Be Equal    ${match}    Hello, (my) World!!!!!
     Should Be Equal    ${group1}    my
@@ -74,3 +79,4 @@ Should Not Match Regexp
     [Template]    Should Not Match Regexp
     this string does not    match this pattern
     James Bond 007          ^J\\w{4}\\sB[donkey]+ \\d*$
+    this string does not    match this pattern    flags=DOTALL

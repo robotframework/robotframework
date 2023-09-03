@@ -8,7 +8,7 @@ ${TESTFILE}       %{TEMPDIR}${/}robot-os-tests${/}f1.txt
 *** Test Cases ***
 Get Modified Time As Timestamp
     ${tc} =    Check Test Case    ${TESTNAME}
-    Should Match Regexp    ${tc.kws[0].msgs[0].message}    Last modified time of '<a href=.*</a>' is 20\\d\\d-\\d\\d-\\d\\d \\d\\d:\\d\\d:\\d\\d
+    Should Match Regexp    ${tc.kws[0].msgs[0].message}    Last modified time of '<a href=.*</a>' is \\d\\d\\d\\d-\\d\\d-\\d\\d \\d\\d:\\d\\d:\\d\\d
 
 Get Modified Time As Seconds After Epoch
     ${tc} =    Check Test Case    ${TESTNAME}
@@ -53,4 +53,7 @@ Set And Get Modified Time Of Non-ASCII File
     Check Test Case    ${TESTNAME}
 
 Set And Get Modified Time Of File With Spaces In Name
+    Check Test Case    ${TESTNAME}
+
+Path as `pathlib.Path`
     Check Test Case    ${TESTNAME}

@@ -31,7 +31,7 @@ class Variables:
 
     def __init__(self):
         self.store = VariableStore(self)
-        self._replacer = VariableReplacer(self.store)
+        self._replacer = VariableReplacer(self)
 
     def __setitem__(self, name, value):
         self.store.add(name, value)

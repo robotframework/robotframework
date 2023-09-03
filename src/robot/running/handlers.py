@@ -45,6 +45,7 @@ def InitHandler(library, method=None, docgetter=None):
 
 
 class _RunnableHandler:
+    supports_embedded_args = False
 
     def __init__(self, library, handler_name, handler_method, doc='', tags=None):
         self.library = library
@@ -73,8 +74,7 @@ class _RunnableHandler:
     def _get_tags_from_attribute(self, handler_method):
         tags = getattr(handler_method, 'robot_tags', ())
         if not is_list_like(tags):
-            raise DataError("Expected tags to be list-like, got %s."
-                            % type_name(tags))
+            raise DataError(f"Expected tags to be list-like, got {type_name(tags)}.")
         return tags
 
     def _get_initial_handler(self, library, name, method):
@@ -82,8 +82,9 @@ class _RunnableHandler:
             return self._get_global_handler(method, name)
         return None
 
-    def resolve_arguments(self, args, variables=None):
-        return self.arguments.resolve(args, variables, self.library.converters)
+    def resolve_arguments(self, args, variables=None, languages=None):
+        return self.arguments.resolve(args, variables, self.library.converters,
+                                      languages=languages)
 
     @property
     def doc(self):
@@ -91,7 +92,7 @@ class _RunnableHandler:
 
     @property
     def longname(self):
-        return '%s.%s' % (self.library.name, self.name)
+        return f'{self.library.name}.{self.name}'
 
     @property
     def shortdoc(self):
@@ -109,8 +110,8 @@ class _RunnableHandler:
     def lineno(self):
         return -1
 
-    def create_runner(self, name):
-        return LibraryKeywordRunner(self)
+    def create_runner(self, name, languages=None):
+        return LibraryKeywordRunner(self, languages=languages)
 
     def current_handler(self):
         if self._method:
@@ -133,8 +134,7 @@ class _RunnableHandler:
 class _PythonHandler(_RunnableHandler):
 
     def __init__(self, library, handler_name, handler_method):
-        _RunnableHandler.__init__(self, library, handler_name, handler_method,
-                                  getdoc(handler_method))
+        super().__init__(library, handler_name, handler_method, getdoc(handler_method))
 
     def _parse_arguments(self, handler_method):
         return PythonArgumentParser().parse(handler_method, self.longname)
@@ -164,25 +164,26 @@ class _PythonHandler(_RunnableHandler):
 
 class _DynamicHandler(_RunnableHandler):
 
-    def __init__(self, library, handler_name, dynamic_method, doc='',
-                 argspec=None, tags=None):
+    def __init__(self, library, handler_name, dynamic_method, doc='', argspec=None,
+                 tags=None):
         self._argspec = argspec
         self._run_keyword_method_name = dynamic_method.name
         self._supports_kwargs = dynamic_method.supports_kwargs
-        _RunnableHandler.__init__(self, library, handler_name,
-                                  dynamic_method.method, doc, tags)
+        # Cannot use super() here due to multi-inheritance in _DynamicRunKeywordHandler
+        _RunnableHandler.__init__(self, library, handler_name, dynamic_method.method,
+                                  doc, tags)
         self._source_info = None
 
     def _parse_arguments(self, handler_method):
         spec = DynamicArgumentParser().parse(self._argspec, self.longname)
         if not self._supports_kwargs:
+            name = self._run_keyword_method_name
             if spec.var_named:
-                raise DataError("Too few '%s' method parameters for **kwargs "
-                                "support." % self._run_keyword_method_name)
+                raise DataError(f"Too few '{name}' method parameters for "
+                                f"**kwargs support.")
             if spec.named_only:
-                raise DataError("Too few '%s' method parameters for "
-                                "keyword-only arguments support."
-                                % self._run_keyword_method_name)
+                raise DataError(f"Too few '{name}' method parameters for "
+                                f"keyword-only arguments support.")
         get_keyword_types = GetKeywordTypes(self.library.get_instance())
         spec.types = get_keyword_types(self._handler_name)
         return spec
@@ -199,19 +200,16 @@ class _DynamicHandler(_RunnableHandler):
             source = get_keyword_source(self._handler_name)
         except DataError as err:
             self.library.report_error(
-                "Getting source information for keyword '%s' failed: %s"
-                % (self.name, err.message), err.details
+                f"Getting source information for keyword '{self.name}' failed: {err}",
+                err.details
             )
-            return None, -1
-        if not source:
-            return self.library.source, -1
-        if ':' not in source:
-            return source, -1
-        path, lineno = source.rsplit(':', 1)
-        try:
-            return path or self.library.source, int(lineno)
-        except ValueError:
-            return source, -1
+            source = None
+        if source and ':' in source and source.rsplit(':', 1)[1].isdigit():
+            source, lineno = source.rsplit(':', 1)
+            lineno = int(lineno)
+        else:
+            lineno = -1
+        return normpath(source) if source else self.library.source, lineno
 
     @property
     def lineno(self):
@@ -219,8 +217,8 @@ class _DynamicHandler(_RunnableHandler):
             self._source_info = self._get_source_info()
         return self._source_info[1]
 
-    def resolve_arguments(self, arguments, variables=None):
-        positional, named = super().resolve_arguments(arguments, variables)
+    def resolve_arguments(self, arguments, variables=None, languages=None):
+        positional, named = super().resolve_arguments(arguments, variables, languages)
         if not self._supports_kwargs:
             positional, named = self.arguments.map(positional, named)
         return positional, named
@@ -243,17 +241,15 @@ class _DynamicHandler(_RunnableHandler):
 
 class _RunKeywordHandler(_PythonHandler):
 
-    def create_runner(self, name):
-        default_dry_run_keywords = ('name' in self.arguments.positional and
-                                    self._args_to_process)
-        return RunKeywordRunner(self, default_dry_run_keywords)
+    def create_runner(self, name, languages=None):
+        dry_run = RUN_KW_REGISTER.get_dry_run(self.library.orig_name, self.name)
+        return RunKeywordRunner(self, execute_in_dry_run=dry_run)
 
     @property
     def _args_to_process(self):
-        return RUN_KW_REGISTER.get_args_to_process(self.library.orig_name,
-                                                   self.name)
+        return RUN_KW_REGISTER.get_args_to_process(self.library.orig_name, self.name)
 
-    def resolve_arguments(self, args, variables=None):
+    def resolve_arguments(self, args, variables=None, languages=None):
         return self.arguments.resolve(args, variables, self.library.converters,
                                       resolve_named=False,
                                       resolve_variables_until=self._args_to_process)
@@ -267,8 +263,11 @@ class _DynamicRunKeywordHandler(_DynamicHandler, _RunKeywordHandler):
 class _PythonInitHandler(_PythonHandler):
 
     def __init__(self, library, handler_name, handler_method, docgetter):
-        _PythonHandler.__init__(self, library, handler_name, handler_method)
+        super().__init__(library, handler_name, handler_method)
         self._docgetter = docgetter
+
+    def _get_name(self, handler_name, handler_method):
+        return '__init__'
 
     @property
     def doc(self):
@@ -283,10 +282,11 @@ class _PythonInitHandler(_PythonHandler):
 
 
 class EmbeddedArgumentsHandler:
+    supports_embedded_args = True
 
-    def __init__(self, name_regexp, orig_handler):
+    def __init__(self, embedded, orig_handler):
         self.arguments = ArgumentSpec()  # Show empty argument spec for Libdoc
-        self.name_regexp = name_regexp
+        self.embedded = embedded
         self._orig_handler = orig_handler
 
     def __getattr__(self, item):
@@ -301,11 +301,21 @@ class EmbeddedArgumentsHandler:
         self._orig_handler.library = library
 
     def matches(self, name):
-        return self.name_regexp.match(name) is not None
+        return self.embedded.match(name) is not None
 
-    def create_runner(self, name):
+    def create_runner(self, name, languages=None):
         return EmbeddedArgumentsRunner(self, name)
 
+    def resolve_arguments(self, args, variables=None, languages=None):
+        argspec = self._orig_handler.arguments
+        if variables:
+            if argspec.var_positional:
+                args = variables.replace_list(args)
+            else:
+                args = [variables.replace_scalar(a) for a in args]
+            self.embedded.validate(args)
+        return argspec.convert(args, named={}, converters=self.library.converters,
+                               dry_run=not variables)
+
     def __copy__(self):
-        orig_handler = copy(self._orig_handler)
-        return EmbeddedArgumentsHandler(self.name_regexp, orig_handler)
+        return EmbeddedArgumentsHandler(self.embedded, copy(self._orig_handler))

@@ -97,7 +97,7 @@ Failed Impors Are Listed In Errors
     ...    Importing library 'LibraryThatDoesNotExist' failed: *
     ...    traceback=None
     Error in file    2    ${path}    11
-    ...    Variable file 'variables which dont exist' does not exist.
+    ...    Variable file 'variables which dont exist.py' does not exist.
 
 *** Keywords ***
 Init expect

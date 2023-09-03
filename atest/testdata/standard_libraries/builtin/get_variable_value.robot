@@ -1,6 +1,10 @@
+*** Settings ***
+Library         OperatingSystem
+
 *** Variables ***
 ${VAR}            var table
 @{LIST}           1    2
+&{DICT}           a=1    1=b
 ${EMBEDDED 1}     embedded 1
 ${EMBEDDED 2}     embedded 2
 
@@ -50,12 +54,36 @@ Extended variable syntax
     Should Be Equal    ${x}    VAR TABLE
     ${x} =    Get Variable Value    ${VAR.nonex}    default
     Should Be Equal    ${x}    default
+    ${x} =    Get Variable Value    ${LIST[0]}
+    Should Be Equal    ${x}    1
+    ${x} =    Get Variable Value    ${DICT['a']}
+    Should Be Equal    ${x}    1
+    ${x} =    Get Variable Value    ${LIST[2]}    default
+    Should Be Equal    ${x}    default
+    ${x} =    Get Variable Value    ${DICT['c']}    default
+    Should Be Equal    ${x}    default
 
-Embedded variable
+Nested variable
     ${x} =    Get Variable Value    ${EMBEDDED ${1}}
     Should Be Equal    ${x}    embedded 1
     ${x} =    Get Variable Value    ${EMBEDDED ${LIST}[1]}
     Should Be Equal    ${x}    embedded 2
+    ${x} =    Get Variable Value    ${EMBEDDED ${LIST}[5]}    default
+    Should Be Equal    ${x}    default
+    ${x} =    Get Variable Value    ${DICT['${DICT['a']}']}
+    Should Be Equal    ${x}    b
+    ${x} =    Get Variable Value    ${DICT['${DICT['nonex']}']}    default
+    Should Be Equal    ${x}    default
+
+List and dict variable items
+    ${x} =    Get Variable Value    ${LIST}[0]
+    Should Be Equal    ${x}    1
+    ${x} =    Get Variable Value    ${DICT}[a]
+    Should Be Equal    ${x}    1
+    ${x} =    Get Variable Value    ${LIST}[2]    default
+    Should Be Equal    ${x}    default
+    ${x} =    Get Variable Value    ${DICT}[c]    default
+    Should Be Equal    ${x}    default
 
 Invalid variable syntax 1
     [Documentation]    FAIL Invalid variable name 'notvar'.

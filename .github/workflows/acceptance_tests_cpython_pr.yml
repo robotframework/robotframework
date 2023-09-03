@@ -1,4 +1,4 @@
-name: Acceptance tests (CPython + PyPy)
+name: Acceptance tests (CPython)
 
 on:
   pull_request:
@@ -15,32 +15,23 @@ jobs:
       fail-fast: true
       matrix:
         os: [ 'ubuntu-latest', 'windows-latest' ]
-        python-version: [ '3.6', '3.9' ]
+        python-version: [ '3.8', '3.11' ]
         include:
           - os: ubuntu-latest
             set_display: export DISPLAY=:99; Xvfb :99 -screen 0 1024x768x24 -ac -noreset & sleep 3
           - os: windows-latest
             set_codepage: chcp 850
-          - os: windows-latest
-            python-version: '3.9'
-            set_codepage: chcp 850
-            atest_args: --exclude require-lxml --exclude require-screenshot
-        exclude:
-          - os: windows-latest
-            python-version: 'pypy2'
-          - os: windows-latest
-            python-version: 'pypy3'
 
     runs-on: ${{ matrix.os }}
 
     name: Python ${{ matrix.python-version }} on ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Setup python for starting the tests
-        uses: actions/setup-python@v2.3.1
+        uses: actions/setup-python@v4.6.1
         with:
-          python-version: 3.6
+          python-version: '3.11'
           architecture: 'x64'
 
       - name: Get test starter Python at Windows
@@ -52,7 +43,7 @@ jobs:
         if: runner.os != 'Windows'
 
       - name: Setup python ${{ matrix.python-version }} for running the tests
-        uses: actions/setup-python@v2.3.1
+        uses: actions/setup-python@v4.6.1
         with:
           python-version: ${{ matrix.python-version }}
           architecture: 'x64'
@@ -70,12 +61,6 @@ jobs:
           choco install curl -y --no-progress
           choco install zip -y --no-progress
         if: runner.os == 'Windows'
-
-      - name: Install Ubuntu PyPy dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get -y -q install libxslt-dev libxml2-dev
-        if: contains(matrix.python-version, 'pypy') && contains(matrix.os, 'ubuntu')
 
       - name: Install screen and report handling tools, and other required libraries to Linux
         run: |
@@ -102,7 +87,7 @@ jobs:
         if: always() && runner.os != 'Windows'
 
       - name: Archive acceptances test results
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: at-results-${{ matrix.python-version }}-${{ matrix.os }}
           path: atest/results
@@ -126,7 +111,7 @@ jobs:
           echo "JOB_STATUS=$(python -c "print('${{ job.status }}'.lower())")" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
         if: always() && job.status == 'failure' && runner.os == 'Windows'
 
-      - uses: octokit/request-action@7e93b91076fad3920c29d44eb2a6311d929db3dd
+      - uses: octokit/request-action@89697eb6635e52c6e1e5559f15b5c91ba5100cb0
         name: Update status with Github Status API
         id: update_status
         with:

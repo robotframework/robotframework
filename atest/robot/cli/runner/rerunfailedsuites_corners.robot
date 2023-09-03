@@ -7,7 +7,7 @@ ${RUN FAILED FROM}    %{TEMPDIR}${/}run-failed-output.xml
 
 *** Test Cases ***
 Runs everything when output is set to NONE
-    Run Tests  --ReRunFailedSuites NoNe  cli/runfailed/onlypassing
+    Run Tests  --Re-Run-Failed-Suites NoNe  cli/runfailed/onlypassing
     File Should Exist  ${OUTFILE}
     Check Test Case    Passing
 
@@ -16,6 +16,13 @@ Stops on error when output contains only passing test cases
     Run Tests Without Processing Output  -S ${RUN FAILED FROM}  cli/runfailed/onlypassing
     Stderr Should Be Equal To
     ...  [ ERROR ] Collecting failed suites from '${RUN FAILED FROM}' failed: All suites passed.${USAGE TIP}\n
+
+Runs when there are only passing tests and using --RunEmptySuite
+    [Setup]    File Should Exist    ${RUN FAILED FROM}
+    Run Tests    -S ${RUN FAILED FROM} --RunEmpty    cli/runfailed/onlypassing
+    Should Be Equal     ${SUITE.status}    SKIP
+    Length Should Be    ${SUITE.suites}    0
+    Length Should Be    ${SUITE.tests}     0
 
 Stops on error when output contains only non-existing failing test cases
     Generate output  cli/runfailed/runfailed1.robot

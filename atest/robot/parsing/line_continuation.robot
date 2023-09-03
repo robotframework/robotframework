@@ -50,7 +50,7 @@ Multiline test settings
     ${tc} =    Check Test Case    ${TEST NAME}
     @{expected} =   Evaluate    ['my'+str(i) for i in range(1,6)]
     Should Contain Tags   ${tc}    @{expected}
-    Should Be Equal    ${tc.doc}    One.\nTwo.\nThree.\n\nSecond paragraph.
+    Should Be Equal    ${tc.doc}    One.\nTwo.\nThree.\n\n${SPACE*32}Second paragraph.
     Check Log Message    ${tc.setup.msgs[0]}    first
     Check Log Message    ${tc.setup.msgs[1]}    ${EMPTY}
     Check Log Message    ${tc.setup.msgs[2]}    last

@@ -36,9 +36,9 @@ Many steps are automated using the generic `Invoke <http://pyinvoke.org>`_
 tool with a help by our `rellu <https://github.com/robotframework/rellu>`_
 utilities, but also other tools and modules are needed. A pre-condition is
 installing all these, and that's easiest done using `pip
-<http://pip-installer.org>`_ and the provided `<requirements-build.txt>`_ file::
+<http://pip-installer.org>`_ and the provided `<requirements-dev.txt>`_ file::
 
-    pip install -r requirements-build.txt
+    pip install -r requirements-dev.txt
 
 Using Invoke
 ~~~~~~~~~~~~
@@ -65,6 +65,13 @@ Testing
 
 Make sure that adequate tests are executed before releases are created.
 See `<atest/README.rst>`_ for details.
+
+If output.xml `schema <doc/schema/README.rst>`_ has changed, remember to
+run tests also with `full schema validation`__ enabled::
+
+    atest/run.py --schema-validation
+
+__ https://github.com/robotframework/robotframework/tree/master/atest#schema-validation
 
 Preparation
 -----------
@@ -147,14 +154,13 @@ __ https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-gith
 Set version
 -----------
 
-1. Set version information in `<src/robot/version.py>`_, `<setup.py>`_ and
-   `<pom.xml>`_::
+1. Set version information in `<src/robot/version.py>`_ and `<setup.py>`_::
 
       invoke set-version $VERSION
 
 2. Commit and push changes::
 
-      git commit -m "Updated version to $VERSION" src/robot/version.py setup.py pom.xml
+      git commit -m "Updated version to $VERSION" src/robot/version.py setup.py
       git push
 
 Tagging
@@ -205,6 +211,12 @@ Creating distributions
 
 7. Documentation
 
+   - For a reproducible build, set the ``SOURCE_DATE_EPOCH``
+     environment variable to a constant value, corresponding to the
+     date in seconds since the Epoch (also known as Epoch time).  For
+     more information regarding this environment variable, see
+     https://reproducible-builds.org/docs/source-date-epoch/.
+
    - Generate library documentation::
 
        invoke library-docs all
@@ -229,7 +241,7 @@ Post actions
 2. Set dev version based on the previous version::
 
       invoke set-version dev
-      git commit -m "Back to dev version" src/robot/version.py setup.py pom.xml
+      git commit -m "Back to dev version" src/robot/version.py setup.py
       git push
 
    For example, ``1.2.3`` is changed to ``1.2.4.dev1`` and ``2.0.1a1``

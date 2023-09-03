@@ -36,6 +36,10 @@ Touch When Parent Does Not Exist Fails
     Directory Should Not Exist    ${TESTDIR}
     Touch    ${TESTDIR}/file.txt
 
+Path as `pathlib.Path`
+    Touch    ${PATH/'file.txt'}
+    File Should Be Empty    ${BASE}/file.txt
+
 *** Keywords ***
 Remove Temps
     Remove File    ${TESTFILE}

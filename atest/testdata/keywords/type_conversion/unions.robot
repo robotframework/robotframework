@@ -24,6 +24,7 @@ Union with None and str
     1          1
     NONE       NONE
     ${2}       ${2}
+    ${2.0}     ${2}
     ${None}    ${None}
     three      three
 
@@ -60,17 +61,26 @@ Argument not matching union
     [Template]    Conversion Should Fail
     Union of int and float             not a number    type=integer or float
     Union of int and float             ${NONE}         type=integer or float    arg_type=None
-    Union of int and float             ${{type('Custom', (), {})()}}
-    ...                                                type=integer or float    arg_type=Custom
+    Union of int and float             ${CUSTOM}       type=integer or float    arg_type=Custom
     Union with int and None            invalid         type=integer or None
+    Union with int and None            ${1.1}          type=integer or None     arg_type=float
     Union with subscripted generics    invalid         type=list or integer
 
-Union with custom type
+Union with unrecognized type
     ${myobject}=    Create my object
-    ${object}=    Create unexpected object
-    Custom type in union    my string      str
-    Custom type in union    ${myobject}    MyObject
-    Custom type in union    ${object}      UnexpectedObject
+    Unrecognized type    my string      str
+    Unrecognized type    ${myobject}    MyObject
+    Unrecognized type    ${42}          str
+    Unrecognized type    ${CUSTOM}      str
+    Unrecognized type    ${{type('StrFails', (), {'__str__': lambda self: 1/0})()}}
+    ...                  StrFails
+
+Union with only unrecognized types
+    ${myobject}=    Create my object
+    Only unrecognized types    my string      str
+    Only unrecognized types    ${myobject}    MyObject
+    Only unrecognized types    ${42}          int
+    Only unrecognized types    ${CUSTOM}      Custom
 
 Multiple types using tuple
     [Template]    Tuple of int float and string
@@ -84,8 +94,7 @@ Argument not matching tuple types
     [Template]    Conversion Should Fail
     Tuple of int and float    not a number    type=integer or float
     Tuple of int and float    ${NONE}         type=integer or float    arg_type=None
-    Tuple of int and float    ${{type('Custom', (), {})()}}
-    ...                                       type=integer or float    arg_type=Custom
+    Tuple of int and float    ${CUSTOM}       type=integer or float    arg_type=Custom
 
 Optional argument
     [Template]    Optional argument
@@ -134,6 +143,16 @@ Avoid unnecessary conversion with ABC
     ${1}                             ${1}
     ${{fractions.Fraction(1, 3)}}    ${{fractions.Fraction(1, 3)}}
 
+Default value type
+    [Documentation]    Default value type is used if conversion fails.
+    Incompatible default    1      ${1}
+    Incompatible default    1.2    ${1.2}
+
+Default value type with unrecognized type
+    [Documentation]    Default value type is never used because conversion cannot fail.
+    Unrecognized type with incompatible default    1      ${1}
+    Unrecognized type with incompatible default    1.2    1.2
+
 Union with invalid types
     [Template]    Union with invalid types
     xxx      xxx
@@ -143,3 +162,8 @@ Tuple with invalid types
     [Template]    Tuple with invalid types
     xxx      xxx
     ${42}    ${42}
+
+Union without types
+    [Template]    Conversion should fail
+    Union without types    whatever    error=Cannot have union without types.    type=union
+    Empty tuple            ${666}      error=Cannot have union without types.    type=union    arg_type=integer

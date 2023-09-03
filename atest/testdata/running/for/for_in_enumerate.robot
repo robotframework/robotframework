@@ -21,7 +21,7 @@ Start
     FOR    ${index}    ${item}    IN ENUMERATE    ${1}    ${2}    ${3}    ${4}    ${5}    start=1
         Should Be Equal    ${index}    ${item}
     END
-    FOR    ${index}    ${item}    IN ENUMERATE    xxx    start=xxx    start=${100}
+    FOR    ${index}    ${item}    IN ENUMERATE    xxx    start\=xxx    start=${100}
         @{result} =     Create List    @{result}    ${index}:${item}
     END
     Should Be True    ${result} == ['100:xxx', '101:start=xxx']
@@ -34,14 +34,20 @@ Escape start
     Should Be True    ${result} == [0, 1]
 
 Invalid start
-    [Documentation]    FAIL    ValueError: Invalid FOR IN ENUMERATE start value 'invalid'.
+    [Documentation]    FAIL    Invalid start value: Start value must be an integer, got 'invalid'.
     FOR    ${index}    ${item}    IN ENUMERATE    xxx    start=invalid
         Fail    Should not be executed
     END
 
 Invalid variable in start
-    [Documentation]    FAIL    Variable '${invalid}' not found.
+    [Documentation]    FAIL    Invalid start value: Variable '\${invalid}' not found.
     FOR    ${index}    ${item}    IN ENUMERATE    xxx    start=${invalid}
+        Fail    Should not be executed
+    END
+
+Start multiple times
+    [Documentation]    FAIL    Option 'start' allowed only once, got values '1', '2' and '3'.
+    FOR    ${index}    ${item}    IN ENUMERATE    xxx    start=1    start=2    start=3
         Fail    Should not be executed
     END
 

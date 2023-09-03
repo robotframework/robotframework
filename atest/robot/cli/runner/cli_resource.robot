@@ -36,8 +36,12 @@ Tests Should Pass Without Errors
     [Return]    ${result}
 
 Run Should Fail
-    [Arguments]    ${options}    ${error}
+    [Arguments]    ${options}    ${error}    ${regexp}=False
     ${result} =    Run Tests    ${options}    default options=    output=
     Should Be Equal As Integers    ${result.rc}    252
     Should Be Empty    ${result.stdout}
-    Should Match Regexp    ${result.stderr}    ^\\[ .*ERROR.* \\] ${error}${USAGETIP}$
+    IF    ${regexp}
+        Should Match Regexp    ${result.stderr}    ^\\[ ERROR \\] ${error}${USAGETIP}$
+    ELSE
+        Should Be Equal    ${result.stderr}    [ ERROR ] ${error}${USAGETIP}
+    END

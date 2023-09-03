@@ -82,6 +82,14 @@ Copying Non-Existing Directory Fails
     [Documentation]    FAIL Source '${EXECDIR}${/}non-existing-dir' does not exist.
     Copy Directory    non-existing-dir    whatever
 
+Path as `pathlib.Path`
+    Create Directory              ${BASE}/dir
+    Move Directory                ${PATH/'dir'}    ${PATH/'new'}
+    Copy Directory                ${PATH/'new'}    ${PATH/'copy'}
+    Directory Should Not Exist    ${BASE}/dir
+    Directory Should Exist        ${BASE}/new
+    Directory Should Exist        ${BASE}/copy
+
 *** Keywords ***
 Remove Just Name Dirs
     Remove Directory    rf_test_1    recursive

@@ -17,8 +17,8 @@ from robot.errors import DataError, VariableError
 from robot.utils import DotDict, is_dict_like, is_list_like, NormalizedDict, type_name
 
 from .notfound import variable_not_found
+from .resolvable import GlobalVariableValue, Resolvable
 from .search import is_assign
-from .tablesetter import VariableTableValueBase
 
 
 NOT_SET = object()
@@ -54,7 +54,7 @@ class VariableStore:
 
     def _is_resolvable(self, value):
         try:
-            return isinstance(value, VariableTableValueBase)
+            return isinstance(value, Resolvable)
         except Exception:
             return False
 
@@ -82,7 +82,9 @@ class VariableStore:
     def add(self, name, value, overwrite=True, decorated=True):
         if decorated:
             name, value = self._undecorate_and_validate(name, value)
-        if overwrite or name not in self.data:
+        if (overwrite
+                or name not in self.data
+                or isinstance(self.data[name], GlobalVariableValue)):
             self.data[name] = value
 
     def _undecorate(self, name):

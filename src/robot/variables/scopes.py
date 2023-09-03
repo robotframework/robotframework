@@ -16,10 +16,12 @@
 import os
 import tempfile
 
-from robot.errors import DataError
+from robot.errors import VariableError
+from robot.model import Tags
 from robot.output import LOGGER
-from robot.utils import abspath, find_file, get_error_details, NormalizedDict
+from robot.utils import abspath, find_file, get_error_details, DotDict, NormalizedDict
 
+from .resolvable import GlobalVariableValue
 from .variables import Variables
 
 
@@ -143,7 +145,7 @@ class VariableScopes:
 
     def set_test(self, name, value):
         if self._test is None:
-            raise DataError('Cannot set test variable when no test is started.')
+            raise VariableError('Cannot set test variable when no test is started.')
         for scope in self._scopes_until_test:
             name, value = self._set_global_suite_or_test(scope, name, value)
         self._variables_set.set_test(name, value)
@@ -160,17 +162,19 @@ class VariableScopes:
 
 
 class GlobalVariables(Variables):
+    _import_by_path_ends = ('.py', '/', os.sep, '.yaml', '.yml', '.json')
 
     def __init__(self, settings):
-        Variables.__init__(self)
-        self._set_cli_variables(settings)
+        super().__init__()
         self._set_built_in_variables(settings)
+        self._set_cli_variables(settings)
 
     def _set_cli_variables(self, settings):
-        for path, args in settings.variable_files:
+        for name, args in settings.variable_files:
             try:
-                path = find_file(path, file_type='Variable file')
-                self.set_from_file(path, args)
+                if name.lower().endswith(self._import_by_path_ends):
+                    name = find_file(name, file_type='Variable file')
+                self.set_from_file(name, args)
             except:
                 msg, details = get_error_details()
                 LOGGER.error(msg)
@@ -185,6 +189,12 @@ class GlobalVariables(Variables):
     def _set_built_in_variables(self, settings):
         for name, value in [('${TEMPDIR}', abspath(tempfile.gettempdir())),
                             ('${EXECDIR}', abspath('.')),
+                            ('${OPTIONS}', DotDict({
+                                'include': Tags(settings.include),
+                                'exclude': Tags(settings.exclude),
+                                'skip': Tags(settings.skip),
+                                'skip_on_failure': Tags(settings.skip_on_failure)
+                            })),
                             ('${/}', os.sep),
                             ('${:}', os.pathsep),
                             ('${\\n}', os.linesep),
@@ -202,7 +212,7 @@ class GlobalVariables(Variables):
                             ('${PREV_TEST_NAME}', ''),
                             ('${PREV_TEST_STATUS}', ''),
                             ('${PREV_TEST_MESSAGE}', '')]:
-            self[name] = value
+            self[name] = GlobalVariableValue(value)
 
 
 class SetVariables:

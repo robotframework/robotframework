@@ -4,7 +4,7 @@ Remote library interface
 The remote library interface provides means for having test libraries
 on different machines than where Robot Framework itself is running,
 and also for implementing libraries using other languages than the
-natively supported Python and Java. For a test library, user remote
+natively supported Python. For a test library, user remote
 libraries look pretty much the same as any other test library, and
 developing test libraries using the remote library interface is also
 very close to creating `normal test libraries`__.
@@ -58,15 +58,15 @@ Importing Remote library
 The Remote library needs to know the address of the remote server but
 otherwise importing it and using keywords that it provides is no
 different to how other libraries are used. If you need to use the Remote
-library multiple times in a test suite, or just want to give it a more
-descriptive name, you can import it using the `WITH NAME syntax`_.
+library multiple times in a suite, or just want to give it a more
+descriptive name, you can give it an `alias when importing it`__.
 
 .. sourcecode:: robotframework
 
    *** Settings ***
-   Library    Remote    http://127.0.0.1:8270       WITH NAME    Example1
-   Library    Remote    http://example.com:8080/    WITH NAME    Example2
-   Library    Remote    http://10.0.0.2/example    1 minute    WITH NAME    Example3
+   Library    Remote    http://127.0.0.1:8270       AS    Example1
+   Library    Remote    http://example.com:8080/    AS    Example2
+   Library    Remote    http://10.0.0.2/example    1 minute    AS    Example3
 
 The URL used by the first example above is also the default address
 that the Remote library uses if no address is given.
@@ -77,8 +77,7 @@ to the server and if a connection accidentally closes. Timeout can be
 given in Robot Framework `time format`_ like `60s` or `2 minutes 10 seconds`.
 The default timeout is typically several minutes, but it depends on the
 operating system and its configuration. Notice that setting a timeout that
-is shorter than keyword execution time will interrupt the keyword. Setting
-a custom timeout does not work with IronPython.
+is shorter than keyword execution time will interrupt the keyword.
 
 .. note:: Port `8270` is the default port that remote servers are expected
           to use and it has been `registered by IANA`__ for this purpose.
@@ -99,6 +98,7 @@ a custom timeout does not work with IronPython.
           `http://127.0.0.1:8270/` nor `http://127.0.0.1:8270/my/path` will be
           modified.
 
+__ `Setting custom name to library`_
 __ http://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml?search=8270
 __ http://stackoverflow.com/questions/14504450/pythons-xmlrpc-extremely-slow-one-second-per-call
 

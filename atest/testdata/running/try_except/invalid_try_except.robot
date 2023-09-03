@@ -1,6 +1,6 @@
 *** Test Cases ***
 TRY without END
-    [Documentation]    FAIL    TRY has no closing END.
+    [Documentation]    FAIL    TRY must have closing END.
     TRY
         Fail   Should not be executed
     EXCEPT    Error
@@ -32,7 +32,7 @@ TRY with ELSE without EXCEPT or FINALLY
     END
 
 TRY with argument
-    [Documentation]    FAIL    TRY does not accept arguments.
+    [Documentation]    FAIL    TRY does not accept arguments, got 'I should not be here'.
     TRY    I should not be here
         Fail   Should not be executed
     EXCEPT    Error
@@ -76,8 +76,16 @@ Multiple default EXCEPTs
         Fail   Should not be executed
     END
 
-AS not the second last token
-    [Documentation]    FAIL    EXCEPT's AS marker must be second to last.
+AS requires variable
+    [Documentation]    FAIL    EXCEPT's AS requires variable.
+    TRY
+        Fail   Should not be executed
+    EXCEPT    AS
+        Fail   Should not be executed
+    END
+
+AS accepts only one variable
+    [Documentation]    FAIL    EXCEPT's AS accepts only one variable.
     TRY
         Fail   Should not be executed
     EXCEPT    AS    foo    ${foo}
@@ -93,7 +101,7 @@ Invalid AS variable
     END
 
 ELSE with argument
-    [Documentation]    FAIL    ELSE does not accept arguments.
+    [Documentation]    FAIL    ELSE does not accept arguments, got 'I should not be here'.
     TRY
         Fail   Should not be executed
     EXCEPT    Error
@@ -130,12 +138,12 @@ Multiple ELSE blocks
     END
 
 FINALLY with argument
-    [Documentation]    FAIL    FINALLY does not accept arguments.
+    [Documentation]    FAIL    FINALLY does not accept arguments, got 'ooops', 'i', 'did', 'it' and 'again'.
     TRY
         Fail   Should not be executed
     EXCEPT    Error
         Fail   Should not be executed
-    FINALLY    I should not be here
+    FINALLY    ooops    i    did    it    again
         Fail   Should not be executed
     END
 
@@ -219,7 +227,7 @@ Template with TRY inside IF
 Template with IF inside TRY
     [Documentation]    FAIL
     ...    Multiple errors:
-    ...    - TRY has no closing END.
+    ...    - TRY must have closing END.
     ...    - Templates cannot be used with TRY.
     [Template]    Log many
     TRY
@@ -228,3 +236,54 @@ Template with IF inside TRY
         END
     FINALLY
         No Operation
+
+BREAK in FINALLY
+    [Documentation]    FAIL    BREAK cannot be used in FINALLY branch.
+    WHILE    True
+        TRY
+            No Operation
+        FINALLY
+            BREAK
+        END
+    END
+
+CONTINUE in FINALLY
+    [Documentation]    FAIL    CONTINUE cannot be used in FINALLY branch.
+    FOR    ${i}    IN    some    values
+        TRY
+            No Operation
+        FINALLY
+            CONTINUE
+        END
+    END
+
+RETURN in FINALLY
+    [Documentation]    FAIL    RETURN cannot be used in FINALLY branch.
+    RETURN in FINALLY
+
+Invalid TRY/EXCEPT causes syntax error that cannot be caught
+    [Documentation]    FAIL    TRY branch cannot be empty.
+    TRY
+        TRY
+        EXCEPT
+            Fail    Not run
+        END
+    EXCEPT
+        Fail    Not run because error cannot be caught
+    ELSE
+        Fail    Not run either
+    END
+
+Dangling FINALLY
+    [Documentation]    FAIL FINALLY is not allowed in this context.
+    IF    ${True}
+        FINALLY
+    END
+
+*** Keywords ***
+RETURN in FINALLY
+    TRY
+        No Operation
+    FINALLY
+        RETURN
+    END

@@ -4,6 +4,10 @@ Library        resources/embedded_args_in_lk_2.py
 
 *** Variables ***
 ${INDENT}         ${SPACE * 4}
+${foo}            foo
+${bar}            bar
+${zap}            zap
+@{list}           first    ${2}    third
 
 *** Test Cases ***
 Embedded Arguments In Library Keyword Name
@@ -36,7 +40,13 @@ Embedded Arguments as Variables
     Should Be Equal    ${name}-${item}    42-${SPACE*10}
     ${name}    ${item} =    User ${name} Selects ${TEST TAGS} From Webshop
     Should Be Equal    ${name}    ${42}
-    Should Be True    ${item} == []
+    Should Be Equal    ${item}    ${{[]}}
+
+Embedded Arguments as List And Dict Variables
+    ${i1}    ${i2} =    Evaluate    [1, 2, 3, 'neljä'], {'a': 1, 'b': 2}
+    ${o1}    ${o2} =    User @{i1} Selects &{i2} From Webshop
+    Should Be Equal    ${o1}    ${i1}
+    Should Be Equal    ${o2}    ${i2}
 
 Non-Existing Variable in Embedded Arguments
     [Documentation]    FAIL Variable '${non existing}' not found.
@@ -55,6 +65,7 @@ Custom Regexp With Curly Braces
     Today is Tuesday and tomorrow is Wednesday
     Literal { Brace
     Literal } Brace
+    Literal {} Braces
 
 Custom Regexp With Escape Chars
     Custom Regexp With Escape Chars e.g. \\, \\\\ and c:\\temp\\test.txt
@@ -69,17 +80,24 @@ Grouping Custom Regexp
     Should Be Equal    ${matches}    Cuts-Regexperts
 
 Custom Regexp Matching Variables
-    [Documentation]    FAIL 42 != foo
-    ${foo}    ${bar}    ${zap} =    Create List    foo    bar    zap
+    [Documentation]    FAIL bar != foo
     I execute "${foo}"
     I execute "${bar}" with "${zap}"
-    I execute "${42}"
+    I execute "${bar}"
 
-Custom Regexp Matching Variables When Regexp Does No Match Them
+Non Matching Variable Is Accepted With Custom Regexp (But Not For Long)
+    [Documentation]    FAIL    foo != bar    # ValueError: Embedded argument 'x' got value 'foo' that does not match custom pattern 'bar'.
+    I execute "${foo}" with "${bar}"
+
+Partially Matching Variable Is Accepted With Custom Regexp (But Not For Long)
+    [Documentation]    FAIL     ba != bar    # ValueError: Embedded argument 'x' got value 'ba' that does not match custom pattern 'bar'.
+    I execute "${bar[:2]}" with "${zap * 2}"
+
+Non String Variable Is Accepted With Custom Regexp
+    [Documentation]    FAIL 42 != foo
     Result of ${3} + ${-1} is ${2}
     Result of ${40} - ${-2} is ${42}
-    ${s42} =    Set Variable    42
-    I want ${42} and ${s42} as variables
+    I execute "${42}"
 
 Escaping Values Given As Embedded Arguments
     ${name}    ${item} =    User \${nonex} Selects \\ From Webshop
@@ -98,19 +116,20 @@ Embedded Arguments Syntax is Underscore Sensitive
     User Janne Selects x from_webshop
 
 Keyword Matching Multiple Keywords In Library File
-    [Documentation]    FAIL Test library 'embedded_args_in_lk_1' contains multiple keywords matching name 'foo+lib+bar-lib-zap':
-    ...    ${INDENT}\${a}+lib+\${b}
-    ...    ${INDENT}\${a}-lib-\${b}
+    [Documentation]    FAIL
+    ...    Multiple keywords matching name 'foo+lib+bar-lib-zap' found:
+    ...    ${INDENT}embedded_args_in_lk_1.\${a}+lib+\${b}
+    ...    ${INDENT}embedded_args_in_lk_1.\${a}-lib-\${b}
     foo+lib+bar
     foo-lib-bar
     foo+lib+bar+lib+zap
     foo+lib+bar-lib-zap
 
 Keyword Matching Multiple Keywords In Different Library Files
-    [Documentation]    FAIL Multiple keywords with name 'foo*lib*bar' found. \
-    ...    Give the full name of the keyword you want to use:
-    ...    ${INDENT}embedded_args_in_lk_1.foo*lib*bar
-    ...    ${INDENT}embedded_args_in_lk_2.foo*lib*bar
+    [Documentation]    FAIL
+    ...    Multiple keywords matching name 'foo*lib*bar' found:
+    ...    ${INDENT}embedded_args_in_lk_1.\${a}*lib*\${b}
+    ...    ${INDENT}embedded_args_in_lk_2.\${a}*lib*\${b}
     foo*lib*bar
 
 Embedded And Positional Arguments Do Not Work Together
@@ -129,10 +148,17 @@ Embedded argument count must match accepted arguments
 Optional Non-Embedded Args Are Okay
     Optional Non-Embedded Args Are Okay
 
-Star Args With Embedded Args Are Okay
-    @{ret} =    Star Args With Embedded Args are Okay
-    @{args} =    Create List    Embedded    Okay
-    Should Be Equal    ${ret}    ${args}
+Varargs With Embedded Args Are Okay
+    @{ret} =    Varargs With Embedded Args are Okay
+    Should Be Equal    ${ret}    ${{['Embedded', 'Okay']}}
+
+List variable is expanded when keyword accepts varargs
+    @{ret} =    Varargs With @{list} Args are Okay
+    Should Be Equal    ${ret}    ${{['first', 2, 'third', 'Okay']}}
+
+Scalar variable containing list is not expanded when keyword accepts varargs
+    @{ret} =    Varargs With ${list} Args are Okay
+    Should Be Equal    ${ret}    ${{[['first', 2, 'third'], 'Okay']}}
 
 Same name with different regexp works
     It is a car
@@ -141,14 +167,14 @@ Same name with different regexp works
 
 Same name with different regexp matching multiple fails
     [Documentation]    FAIL
-    ...    Test library 'embedded_args_in_lk_1' contains multiple keywords matching name 'It is a cat':
-    ...    ${INDENT}It is ${animal:a (cat|cow)}
-    ...    ${INDENT}It is ${animal:a (dog|cat)}
+    ...    Multiple keywords matching name 'It is a cat' found:
+    ...    ${INDENT}embedded_args_in_lk_1.It is \${animal:a (cat|cow)}
+    ...    ${INDENT}embedded_args_in_lk_1.It is \${animal:a (dog|cat)}
     It is a cat
 
 Same name with same regexp fails
     [Documentation]    FAIL
-    ...    Test library 'embedded_args_in_lk_1' contains multiple keywords matching name 'It is totally same':
-    ...    ${INDENT}It is totally ${same}
-    ...    ${INDENT}It is totally ${same}
+    ...    Multiple keywords matching name 'It is totally same' found:
+    ...    ${INDENT}embedded_args_in_lk_1.It is totally ${same}
+    ...    ${INDENT}embedded_args_in_lk_1.It is totally ${same}
     It is totally same

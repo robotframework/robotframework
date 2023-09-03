@@ -15,3 +15,14 @@ WHILE
     END
     While Loop in UK
     This is validated
+
+WHILE with BREAK and CONTINUE
+    ${i} =    Set variable     ${1}
+    WHILE    $i != 5
+        ${i}=    Evaluate     $i + ${1}
+        CONTINUE
+    END
+    WHILE    True
+        BREAK
+    END
+    This is validated

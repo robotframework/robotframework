@@ -1,6 +1,6 @@
 import unittest
 
-from robot.model import For, If, IfBranch, TestCase, Try, TryBranch
+from robot.model import For, If, IfBranch, TestCase, Try, TryBranch, While
 from robot.utils.asserts import assert_equal
 
 
@@ -17,7 +17,7 @@ class TestFor(unittest.TestCase):
     def test_string_reprs(self):
         for for_, exp_str, exp_repr in [
             (For(),
-             'FOR        IN    ',
+             'FOR    IN',
              "For(variables=(), flavor='IN', values=())"),
             (For(('${x}',), 'IN RANGE', ('10',)),
              'FOR    ${x}    IN RANGE    10',
@@ -25,12 +25,33 @@ class TestFor(unittest.TestCase):
             (For(('${x}', '${y}'), 'IN ENUMERATE', ('a', 'b')),
              'FOR    ${x}    ${y}    IN ENUMERATE    a    b',
              "For(variables=('${x}', '${y}'), flavor='IN ENUMERATE', values=('a', 'b'))"),
-            (For([u'${\xfc}'], 'IN', [u'f\xf6\xf6']),
-             u'FOR    ${\xfc}    IN    f\xf6\xf6',
-             u"For(variables=[%r], flavor='IN', values=[%r])" % (u'${\xfc}', u'f\xf6\xf6'))
+            (For(['${x}'], 'IN ENUMERATE', ['@{stuff}'], start='1'),
+             'FOR    ${x}    IN ENUMERATE    @{stuff}    start=1',
+             "For(variables=('${x}',), flavor='IN ENUMERATE', values=('@{stuff}',), start='1')"),
+            (For(('${x}', '${y}'), 'IN ZIP', ('${xs}', '${ys}'), mode='LONGEST', fill='-'),
+             'FOR    ${x}    ${y}    IN ZIP    ${xs}    ${ys}    mode=LONGEST    fill=-',
+             "For(variables=('${x}', '${y}'), flavor='IN ZIP', values=('${xs}', '${ys}'), mode='LONGEST', fill='-')"),
+            (For(['${ü}'], 'IN', ['föö']),
+             'FOR    ${ü}    IN    föö',
+             "For(variables=('${ü}',), flavor='IN', values=('föö',))")
         ]:
             assert_equal(str(for_), exp_str)
             assert_equal(repr(for_), 'robot.model.' + exp_repr)
+
+
+class TestWhile(unittest.TestCase):
+
+    def test_string_reprs(self):
+        for while_, exp_str, exp_repr in [
+            (While(),
+             'WHILE',
+             "While(condition=None)"),
+            (While('$x', limit='100'),
+             'WHILE    $x    limit=100',
+             "While(condition='$x', limit='100')")
+        ]:
+            assert_equal(str(while_), exp_str)
+            assert_equal(repr(while_), 'robot.model.' + exp_repr)
 
 
 class TestIf(unittest.TestCase):
@@ -59,10 +80,21 @@ class TestIf(unittest.TestCase):
         assert_equal(root.body.create_branch().id, 'k1')
         assert_equal(root.body.create_branch().id, 'k2')
 
+    def test_branch_id_with_only_root_when_branch_not_in_root(self):
+        assert_equal(IfBranch(parent=If()).id, 'k1')
+
     def test_branch_id_with_real_parent(self):
         root = TestCase().body.create_if()
         assert_equal(root.body.create_branch().id, 't1-k1')
         assert_equal(root.body.create_branch().id, 't1-k2')
+
+    def test_branch_id_when_parent_has_setup(self):
+        tc = TestCase()
+        assert_equal(tc.setup.config(name='X').id, 't1-k1')
+        assert_equal(tc.body.create_keyword().id, 't1-k2')
+        assert_equal(tc.body.create_if().body.create_branch().id, 't1-k3')
+        assert_equal(tc.body.create_keyword().id, 't1-k4')
+        assert_equal(tc.body.create_if().body.create_branch().id, 't1-k5')
 
     def test_string_reprs(self):
         for if_, exp_str, exp_repr in [
@@ -114,10 +146,21 @@ class TestTry(unittest.TestCase):
         assert_equal(root.body.create_branch().id, 'k1')
         assert_equal(root.body.create_branch().id, 'k2')
 
+    def test_branch_id_with_only_root_when_branch_not_in_root(self):
+        assert_equal(TryBranch(parent=Try()).id, 'k1')
+
     def test_branch_id_with_real_parent(self):
         root = TestCase().body.create_try()
         assert_equal(root.body.create_branch().id, 't1-k1')
         assert_equal(root.body.create_branch().id, 't1-k2')
+
+    def test_branch_id_when_parent_has_setup(self):
+        tc = TestCase()
+        assert_equal(tc.setup.config(name='X').id, 't1-k1')
+        assert_equal(tc.body.create_keyword().id, 't1-k2')
+        assert_equal(tc.body.create_try().body.create_branch().id, 't1-k3')
+        assert_equal(tc.body.create_keyword().id, 't1-k4')
+        assert_equal(tc.body.create_try().body.create_branch().id, 't1-k5')
 
     def test_string_reprs(self):
         for try_, exp_str, exp_repr in [
@@ -126,19 +169,19 @@ class TestTry(unittest.TestCase):
              "TryBranch(type='TRY')"),
             (TryBranch(EXCEPT),
              'EXCEPT',
-             "TryBranch(type='EXCEPT', patterns=(), variable=None)"),
+             "TryBranch(type='EXCEPT')"),
             (TryBranch(EXCEPT, ('Message',)),
              'EXCEPT    Message',
-             "TryBranch(type='EXCEPT', patterns=('Message',), variable=None)"),
+             "TryBranch(type='EXCEPT', patterns=('Message',))"),
             (TryBranch(EXCEPT, ('M', 'S', 'G', 'S')),
              'EXCEPT    M    S    G    S',
-             "TryBranch(type='EXCEPT', patterns=('M', 'S', 'G', 'S'), variable=None)"),
-            (TryBranch(EXCEPT, (), '${x}'),
+             "TryBranch(type='EXCEPT', patterns=('M', 'S', 'G', 'S'))"),
+            (TryBranch(EXCEPT, (), None, '${x}'),
              'EXCEPT    AS    ${x}',
-             "TryBranch(type='EXCEPT', patterns=(), variable='${x}')"),
-            (TryBranch(EXCEPT, ('Message',), '${x}'),
-             'EXCEPT    Message    AS    ${x}',
-             "TryBranch(type='EXCEPT', patterns=('Message',), variable='${x}')"),
+             "TryBranch(type='EXCEPT', variable='${x}')"),
+            (TryBranch(EXCEPT, ('Message',), 'glob', '${x}'),
+             'EXCEPT    Message    type=glob    AS    ${x}',
+             "TryBranch(type='EXCEPT', patterns=('Message',), pattern_type='glob', variable='${x}')"),
             (TryBranch(ELSE),
              'ELSE',
              "TryBranch(type='ELSE')"),

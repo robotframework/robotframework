@@ -13,78 +13,133 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from .sections import (InitFileSections, TestCaseFileSections,
-                       ResourceFileSections)
-from .settings import (InitFileSettings, TestCaseFileSettings,
+from robot.conf import Languages, LanguageLike, LanguagesLike
+from robot.utils import normalize_whitespace
+
+from .settings import (InitFileSettings, FileSettings, Settings, SuiteFileSettings,
                        ResourceFileSettings, TestCaseSettings, KeywordSettings)
+from .tokens import StatementTokens, Token
 
 
 class LexingContext:
-    settings_class = None
 
-    def __init__(self, settings=None):
-        self.settings = settings or self.settings_class()
+    def __init__(self, settings: Settings, languages: Languages):
+        self.settings = settings
+        self.languages = languages
 
-    def lex_setting(self, statement):
+    def lex_setting(self, statement: StatementTokens):
         self.settings.lex(statement)
 
 
 class FileContext(LexingContext):
-    sections_class = None
+    settings: FileSettings
 
-    def __init__(self, settings=None):
-        LexingContext.__init__(self, settings)
-        self.sections = self.sections_class()
+    def __init__(self, lang: LanguagesLike = None):
+        languages = lang if isinstance(lang, Languages) else Languages(lang)
+        settings_class: 'type[FileSettings]' = type(self).__annotations__['settings']
+        settings = settings_class(languages)
+        super().__init__(settings, languages)
 
-    def setting_section(self, statement):
-        return self.sections.setting(statement)
+    def add_language(self, lang: LanguageLike):
+        self.languages.add_language(lang)
 
-    def variable_section(self, statement):
-        return self.sections.variable(statement)
+    def keyword_context(self) -> 'KeywordContext':
+        return KeywordContext(KeywordSettings(self.settings))
 
-    def test_case_section(self, statement):
-        return self.sections.test_case(statement)
+    def setting_section(self, statement: StatementTokens) -> bool:
+        return self._handles_section(statement, 'Settings')
 
-    def keyword_section(self, statement):
-        return self.sections.keyword(statement)
+    def variable_section(self, statement: StatementTokens) -> bool:
+        return self._handles_section(statement, 'Variables')
 
-    def comment_section(self, statement):
-        return self.sections.comment(statement)
+    def test_case_section(self, statement: StatementTokens) -> bool:
+        return False
 
-    def keyword_context(self):
-        return KeywordContext(settings=KeywordSettings())
+    def task_section(self, statement: StatementTokens) -> bool:
+        return False
 
-    def lex_invalid_section(self, statement):
-        self.sections.lex_invalid(statement)
+    def keyword_section(self, statement: StatementTokens) -> bool:
+        return self._handles_section(statement, 'Keywords')
+
+    def comment_section(self, statement: StatementTokens) -> bool:
+        return self._handles_section(statement, 'Comments')
+
+    def lex_invalid_section(self, statement: StatementTokens):
+        header = statement[0]
+        header.type = Token.INVALID_HEADER
+        header.error = self._get_invalid_section_error(header.value)
+        for token in statement[1:]:
+            token.type = Token.COMMENT
+
+    def _get_invalid_section_error(self, header: str) -> str:
+        raise NotImplementedError
+
+    def _handles_section(self, statement: StatementTokens, header: str) -> bool:
+        marker = statement[0].value
+        return bool(marker and marker[0] == '*' and
+                    self.languages.headers.get(self._normalize(marker)) == header)
+
+    def _normalize(self, marker: str) -> str:
+        return normalize_whitespace(marker).strip('* ').title()
 
 
-class TestCaseFileContext(FileContext):
-    sections_class = TestCaseFileSections
-    settings_class = TestCaseFileSettings
+class SuiteFileContext(FileContext):
+    settings: SuiteFileSettings
 
-    def test_case_context(self):
-        return TestCaseContext(settings=TestCaseSettings(self.settings))
+    def test_case_context(self) -> 'TestCaseContext':
+        return TestCaseContext(TestCaseSettings(self.settings))
+
+    def test_case_section(self, statement: StatementTokens) -> bool:
+        return self._handles_section(statement, 'Test Cases')
+
+    def task_section(self, statement: StatementTokens) -> bool:
+        return self._handles_section(statement, 'Tasks')
+
+    def _get_invalid_section_error(self, header: str) -> str:
+        return (f"Unrecognized section header '{header}'. Valid sections: "
+                f"'Settings', 'Variables', 'Test Cases', 'Tasks', 'Keywords' "
+                f"and 'Comments'.")
 
 
 class ResourceFileContext(FileContext):
-    sections_class = ResourceFileSections
-    settings_class = ResourceFileSettings
+    settings: ResourceFileSettings
+
+    def _get_invalid_section_error(self, header: str) -> str:
+        name = self._normalize(header)
+        if self.languages.headers.get(name) in ('Test Cases', 'Tasks'):
+            return f"Resource file with '{name}' section is invalid."
+        return (f"Unrecognized section header '{header}'. Valid sections: "
+                f"'Settings', 'Variables', 'Keywords' and 'Comments'.")
 
 
 class InitFileContext(FileContext):
-    sections_class = InitFileSections
-    settings_class = InitFileSettings
+    settings: InitFileSettings
+
+    def _get_invalid_section_error(self, header: str) -> str:
+        name = self._normalize(header)
+        if self.languages.headers.get(name) in ('Test Cases', 'Tasks'):
+            return f"'{name}' section is not allowed in suite initialization file."
+        return (f"Unrecognized section header '{header}'. Valid sections: "
+                f"'Settings', 'Variables', 'Keywords' and 'Comments'.")
 
 
 class TestCaseContext(LexingContext):
+    settings: TestCaseSettings
+
+    def __init__(self, settings: TestCaseSettings):
+        super().__init__(settings, settings.languages)
 
     @property
-    def template_set(self):
+    def template_set(self) -> bool:
         return self.settings.template_set
 
 
 class KeywordContext(LexingContext):
+    settings: KeywordSettings
+
+    def __init__(self, settings: KeywordSettings):
+        super().__init__(settings, settings.languages)
 
     @property
-    def template_set(self):
+    def template_set(self) -> bool:
         return False

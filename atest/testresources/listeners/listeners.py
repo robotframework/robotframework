@@ -40,14 +40,21 @@ class WithArgConversion:
 class SuiteAndTestCounts:
     ROBOT_LISTENER_API_VERSION = '2'
     exp_data = {
-        'Subsuites & Subsuites2': ([], ['Subsuites', 'Subsuites2'], 5),
-        'Subsuites':              ([], ['Sub1', 'Sub2'], 2),
-        'Sub1':                   (['SubSuite1 First'], [], 1),
-        'Sub2':                   (['SubSuite2 First'], [], 1),
-        'Subsuites2':             ([], ['Sub.Suite.4', 'Subsuite3'], 3),
-        'Subsuite3':              (['SubSuite3 First', 'SubSuite3 Second'], [], 2),
-        'Sub.Suite.4':            (['Test From Sub Suite 4'], [], 1)
-        }
+        "Subsuites & Custom name for 📂 'subsuites2'":
+            ([], ['Subsuites', "Custom name for 📂 'subsuites2'"], 5),
+        'Subsuites':
+            ([], ['Sub1', 'Sub2'], 2),
+        'Sub1':
+            (['SubSuite1 First'], [], 1),
+        'Sub2':
+            (['SubSuite2 First'], [], 1),
+        "Custom name for 📂 'subsuites2'":
+            ([], ['Sub.Suite.4', "Custom name for 📜 'subsuite3.robot'"], 3),
+        "Custom name for 📜 'subsuite3.robot'":
+            (['SubSuite3 First', 'SubSuite3 Second'], [], 2),
+        'Sub.Suite.4':
+            (['Test From Sub Suite 4'], [], 1)
+    }
 
     def start_suite(self, name, attrs):
         data = attrs['tests'], attrs['suites'], attrs['totaltests']
@@ -78,7 +85,7 @@ class KeywordType:
             if kwname == '':
                 source = os.path.basename(source)
                 if source == 'for_loops.robot':
-                    return 'BREAK' if lineno == 10 else 'CONTINUE'
+                    return 'BREAK' if lineno == 14 else 'CONTINUE'
                 return 'ELSE'
         expected = args[0] if libname == 'BuiltIn' else kwname
         return {'Suite Setup': 'SETUP', 'Suite Teardown': 'TEARDOWN',

@@ -12,23 +12,26 @@ __ `Creating test cases`_
    :depth: 2
    :local:
 
-Test case files
----------------
+Suite files
+-----------
 
 Robot Framework test cases `are created`__ using test case sections in
-test case files. Such a file automatically creates a test suite from
+suite files, also known as test case files. Such a file automatically creates
+a test suite from
 all the test cases it contains. There is no upper limit for how many
 test cases there can be, but it is recommended to have less than ten,
 unless the `data-driven approach`_ is used, where one test case consists of
 only one high-level keyword.
 
-The following settings in the Setting section can be used to customize the
-test suite:
+The following settings in the Setting section can be used to customize the suite:
 
+`Name`:setting:
+   Used for setting a custom `suite name`_. The default name is created based
+   on the file or directory name.
 `Documentation`:setting:
-   Used for specifying a `test suite documentation`_
+   Used for specifying a `suite documentation`_.
 `Metadata`:setting:
-   Used for setting `free test suite metadata`_ as name-value pairs.
+   Used for setting `free suite metadata`_ as name-value pairs.
 `Suite Setup`:setting:, `Suite Teardown`:setting:
    Specify `suite setup and teardown`_.
 
@@ -36,8 +39,8 @@ test suite:
 
 __ `Creating test cases`_
 
-Test suite directories
-----------------------
+Suite directories
+-----------------
 
 Test case files can be organized into directories, and these
 directories create higher-level test suites. A test suite created from
@@ -60,8 +63,8 @@ If a file or directory that is processed does not contain any test
 cases, it is silently ignored (a message is written to the syslog_)
 and the processing continues.
 
-Initialization files
-~~~~~~~~~~~~~~~~~~~~
+Suite initialization files
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 A test suite created from a directory can have similar settings as a suite
 created from a test case file. Because a directory alone cannot have that
@@ -72,6 +75,10 @@ file formats`_ (typically :file:`__init__.robot`).
 The name format is borrowed from Python, where files named in this manner
 denote that a directory is a module.
 
+Starting from Robot Framework 6.1, it is also possible to define a suite
+initialization file for automatically created suite when starting the test
+execution by giving multiple paths__.
+
 Initialization files have the same structure and syntax as test case files,
 except that they cannot have test case sections and not all settings are
 supported. Variables and keywords created or imported in initialization files
@@ -80,23 +87,25 @@ variables or keywords, you can put them into `resource files`_ that can be
 imported both by initialization and test case files.
 
 The main usage for initialization files is specifying test suite related
-settings similarly as in `test case files`_, but setting some `test case
+settings similarly as in `suite files`_, but setting some `test case
 related settings`__ is also possible. How to use different settings in the
 initialization files is explained below.
 
-`Documentation`:setting:, `Metadata`:setting:, `Suite Setup`:setting:, `Suite Teardown`:setting:
-   These test suite specific settings work the same way as in test case files.
-`Force Tags`:setting:
-   Specified tags are unconditionally set to all test cases in all test case files
-   this directory contains directly or recursively.
+`Name`:setting:, `Documentation`:setting:, `Metadata`:setting:, `Suite Setup`:setting:, `Suite Teardown`:setting:
+   These suite specific settings work the same way in suite initialization files
+   as in suite files.
+`Test Tags`:setting:
+   Specified tags are unconditionally set to all tests in all suite files
+   this directory contains, recursively. New in Robot Framework 6.1. The
+   deprecated `Force Tags`:setting: needs to be used with older versions.
 `Test Setup`:setting:, `Test Teardown`:setting:, `Test Timeout`:setting:
    Set the default value for test setup/teardown or test timeout to all test
    cases this directory contains. Can be overridden on lower level.
    Notice that keywords used as setups and teardowns must be available in
    test case files where tests using them are. Defining keywords in the
    initialization file itself is not enough.
-`Task Setup`:setting:, `Task Teardown`:setting:, `Task Timeout`:setting:
-   Aliases for `Test Setup`:setting:, `Test Teardown`:setting:,
+`Task Setup`:setting:, `Task Teardown`:setting:, `Task Tags`:setting:, `Task Timeout`:setting:
+   Aliases for `Test Setup`:setting:, `Test Teardown`:setting:, `Test Tags`:setting:
    and `Test Timeout`:setting:, respectively, that can be used when
    `creating tasks`_, not tests.
 `Default Tags`:setting:, `Test Template`:setting:
@@ -107,7 +116,7 @@ initialization files is explained below.
    *** Settings ***
    Documentation    Example suite
    Suite Setup      Do Something    ${MESSAGE}
-   Force Tags       example
+   Test Tags        example
    Library          SomeLibrary
 
    *** Variables ***
@@ -119,13 +128,14 @@ initialization files is explained below.
        Some Keyword    ${arg}
        Another Keyword
 
+__ `Specifying test data to be executed`_
 __ `Test case related settings in the Setting section`_
 
-Test suite name and documentation
----------------------------------
+Suite name
+----------
 
-The test suite name is constructed from the file or directory name. The name
-is created so that the extension is ignored, possible underscores are
+The test suite name is constructed from the file or directory name by default.
+The name is created so that the extension is ignored, possible underscores are
 replaced with spaces, and names fully in lower case are title cased. For
 example, :file:`some_tests.robot` becomes :name:`Some Tests` and
 :file:`My_test_directory` becomes :name:`My test directory`.
@@ -138,50 +148,68 @@ the prefix and underscores are removed. For example files
 suites :name:`Some Tests` and :name:`More Tests`, respectively, and
 the former is executed before the latter.
 
-The documentation for a test suite is set using the :setting:`Documentation`
-setting in the Setting section. It can be used in test case files
-or, with higher-level suites, in test suite initialization files. Test
-suite documentation has exactly the same characteristics regarding to where
-it is shown and how it can be created as `test case
-documentation`_.
+Starting from Robot Framework 6.1, it is also possible to give a custom name
+to a suite by using the :setting:`Name` setting in the Setting section:
 
 .. sourcecode:: robotframework
 
    *** Settings ***
-   Documentation    An example test suite documentation with *some* _formatting_.
-   ...              See test documentation for more documentation examples.
+   Name            Custom suite name
 
-Both the name and documentation of the top-level test suite can be
-overridden in test execution. This can be done with the command line
-options :option:`--name` and :option:`--doc`, respectively, as
-explained in section `Setting metadata`_.
+The name of the top-level suite `can be overridden`__ from the command line with
+the :option:`--name` option.
 
-Free test suite metadata
-------------------------
+__ `Setting suite name`_
 
-Test suites can also have other metadata than the documentation. This metadata
-is defined in the Setting section using the :setting:`Metadata` setting. Metadata
-set in this manner is shown in test reports and logs.
+Suite documentation
+-------------------
 
-The name and value for the metadata are located in the columns following
-:setting:`Metadata`. The value is handled similarly as documentation, which means
-that it can be split `into several cells`__ (joined together with spaces)
-or `into several rows`__ (joined together with newlines),
-simple `HTML formatting`_ works and even variables_ can be used.
+The documentation for a test suite is set using the :setting:`Documentation`
+setting in the Settings section. It can be used both in `suite files`_
+and in `suite initialization files`_. Suite documentation has exactly
+the same characteristics regarding to where it is shown and how it can
+be created as `test case documentation`_. For details about the syntax
+see the `Documentation formatting`_ appendix.
+
+.. sourcecode:: robotframework
+
+   *** Settings ***
+   Documentation    An example suite documentation with *some* _formatting_.
+   ...              Long documentation can be split into multiple lines.
+
+The documentation of the top-level suite `can be overridden`__ from
+the command line with the :option:`--doc` option.
+
+__ `Setting suite documentation`_
+
+Free suite metadata
+-------------------
+
+In addition to documentation, suites can also have free metadata. This metadata
+is defined as name-value pairs in the Settings section using the :setting:`Metadata`
+setting. It is shown in reports and logs similarly as documentation.
+
+Name of the metadata is the first argument given to the :setting:`Metadata` setting
+and the remaining arguments specify its value. The value is handled similarly as
+documentation, which means that it supports `HTML formatting`_ and variables_, and
+that longer values can be `split into multiple rows`__.
 
 __ `Dividing data to several rows`_
-__ `Newlines in test data`_
 
 .. sourcecode:: robotframework
 
    *** Settings ***
-   Metadata    Version        2.0
-   Metadata    More Info      For more information about *Robot Framework* see http://robotframework.org
-   Metadata    Executed At    ${HOST}
+   Metadata        Version            2.0
+   Metadata        Robot Framework    http://robotframework.org
+   Metadata        Platform           ${PLATFORM}
+   Metadata        Longer Value
+   ...             Longer metadata values can be split into multiple
+   ...             rows. Also *simple* _formatting_ is supported.
 
-For top-level test suites, it is possible to set metadata also with the
-:option:`--metadata` command line option. This is discussed in more
-detail in section `Setting metadata`_.
+The free metadata of the top-level suite `can be set`__ from
+the command line with the :option:`--metadata` option.
+
+__ `Setting free suite metadata`_
 
 Suite setup and teardown
 ------------------------
@@ -190,8 +218,7 @@ Not only `test cases`__ but also test suites can have a setup and
 a teardown. A suite setup is executed before running any of the suite's
 test cases or child test suites, and a test teardown is executed after
 them. All test suites can have a setup and a teardown; with suites created
-from a directory they must be specified in a `test suite
-initialization file`_.
+from a directory they must be specified in a `suite initialization file`_.
 
 __ `Test setup and teardown`_
 

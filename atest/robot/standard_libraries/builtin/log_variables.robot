@@ -22,6 +22,7 @@ Log Variables In Suite Setup
     Check Variable Message    \${LOG_LEVEL} = INFO
     Check Variable Message    \${None} = None
     Check Variable Message    \${null} = None
+    Check Variable Message    \&{OPTIONS} = { include=[] | exclude=[] | skip=[] | skip_on_failure=[] }
     Check Variable Message    \${OUTPUT_DIR} = *    pattern=yes
     Check Variable Message    \${OUTPUT_FILE} = *    pattern=yes
     Check Variable Message    \${PREV_TEST_MESSAGE} =
@@ -41,7 +42,7 @@ Log Variables In Suite Setup
     Check Variable Message    \${SUITE_SOURCE} = *    pattern=yes
     Check Variable Message    \${TEMPDIR} = *    pattern=yes
     Check Variable Message    \${True} = *    pattern=yes
-    Should Be Equal As Integers    ${kw.message_count}    34    Wrong total message count
+    Should Be Equal As Integers    ${kw.message_count}    35    Wrong total message count
 
 Log Variables In Test
     ${test} =    Check Test Case    Log Variables
@@ -62,6 +63,7 @@ Log Variables In Test
     Check Variable Message    \${LOG_LEVEL} = TRACE
     Check Variable Message    \${None} = None
     Check Variable Message    \${null} = None
+    Check Variable Message    \&{OPTIONS} = { include=[] | exclude=[] | skip=[] | skip_on_failure=[] }
     Check Variable Message    \${OUTPUT_DIR} = *    pattern=yes
     Check Variable Message    \${OUTPUT_FILE} = *    pattern=yes
     Check Variable Message    \${PREV_TEST_MESSAGE} =
@@ -83,7 +85,7 @@ Log Variables In Test
     Check Variable Message    \${TEST_NAME} = Log Variables
     Check Variable Message    \@{TEST_TAGS} = [ ]
     Check Variable Message    \${True} = *    pattern=yes
-    Should Be Equal As Integers    ${kw.message_count}    38    Wrong total message count
+    Should Be Equal As Integers    ${kw.message_count}    39    Wrong total message count
 
 Log Variables After Setting New Variables
     ${test} =    Check Test Case    Log Variables
@@ -106,6 +108,7 @@ Log Variables After Setting New Variables
     Check Variable Message    \${LOG_LEVEL} = TRACE    DEBUG
     Check Variable Message    \${None} = None    DEBUG
     Check Variable Message    \${null} = None    DEBUG
+    Check Variable Message    \&{OPTIONS} = { include=[] | exclude=[] | skip=[] | skip_on_failure=[] }    DEBUG
     Check Variable Message    \${OUTPUT_DIR} = *    DEBUG    pattern=yes
     Check Variable Message    \${OUTPUT_FILE} = *    DEBUG    pattern=yes
     Check Variable Message    \${PREV_TEST_MESSAGE} =    DEBUG
@@ -128,7 +131,7 @@ Log Variables After Setting New Variables
     Check Variable Message    \@{TEST_TAGS} = [ ]    DEBUG
     Check Variable Message    \${True} = *    DEBUG    pattern=yes
     Check Variable Message    \${var} = Hello    DEBUG
-    Should Be Equal As Integers    ${kw.message_count}    41    Wrong total message count
+    Should Be Equal As Integers    ${kw.message_count}    42    Wrong total message count
 
 Log Variables In User Keyword
     ${test} =    Check Test Case    Log Variables
@@ -149,6 +152,7 @@ Log Variables In User Keyword
     Check Variable Message    \${LOG_LEVEL} = TRACE
     Check Variable Message    \${None} = None
     Check Variable Message    \${null} = None
+    Check Variable Message    \&{OPTIONS} = { include=[] | exclude=[] | skip=[] | skip_on_failure=[] }
     Check Variable Message    \${OUTPUT_DIR} = *    pattern=yes
     Check Variable Message    \${OUTPUT_FILE} = *    pattern=yes
     Check Variable Message    \${PREV_TEST_MESSAGE} =
@@ -171,7 +175,7 @@ Log Variables In User Keyword
     Check Variable Message    \@{TEST_TAGS} = [ ]
     Check Variable Message    \${True} = *    pattern=yes
     Check Variable Message    \${ukvar} = Value of an uk variable
-    Should Be Equal As Integers    ${kw.message_count}    39    Wrong total message count
+    Should Be Equal As Integers    ${kw.message_count}    40    Wrong total message count
 
 List and dict variables failing during iteration
     Check Test Case    ${TEST NAME}

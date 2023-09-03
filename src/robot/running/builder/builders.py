@@ -13,14 +13,23 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import os
+import warnings
+from itertools import chain
+from os.path import normpath
+from pathlib import Path
+from typing import cast, Sequence
 
+from robot.conf import LanguagesLike
 from robot.errors import DataError
 from robot.output import LOGGER
-from robot.parsing import SuiteStructureBuilder, SuiteStructureVisitor
+from robot.parsing import (SuiteFile, SuiteDirectory, SuiteStructure,
+                           SuiteStructureBuilder, SuiteStructureVisitor)
+from robot.utils import Importer, seq2str, split_args_from_name_or_path, type_name
 
-from .parsers import RobotParser, NoInitFileDirectoryParser, RestParser
-from .testsettings import TestDefaults
+from ..model import ResourceFile, TestSuite
+from .parsers import (CustomParser, JsonParser, NoInitFileDirectoryParser, Parser,
+                      RestParser, RobotParser)
+from .settings import TestDefaults
 
 
 class TestSuiteBuilder:
@@ -32,178 +41,261 @@ class TestSuiteBuilder:
 
     - Execute the created suite by using its
       :meth:`~robot.running.model.TestSuite.run` method. The suite can be
-      can be modified before execution if needed.
+      modified before execution if needed.
 
     - Inspect the suite to see, for example, what tests it has or what tags
       tests have. This can be more convenient than using the lower level
-      :mod:`~robot.parsing` APIs but does not allow saving modified data
-      back to the disk.
+      :mod:`~robot.parsing` APIs.
 
     Both modifying the suite and inspecting what data it contains are easiest
     done by using the :mod:`~robot.model.visitor` interface.
 
     This class is part of the public API and should be imported via the
-    :mod:`robot.api` package.
+    :mod:`robot.api` package. An alternative is using the
+    :meth:`TestSuite.from_file_system <robot.running.model.TestSuite.from_file_system>`
+    classmethod that uses this class internally.
     """
 
-    def __init__(self, included_suites=None, included_extensions=('robot',),
-                 rpa=None, allow_empty_suite=False, process_curdir=True):
+    def __init__(self, included_suites: str = 'DEPRECATED',
+                 included_extensions: Sequence[str] = ('.robot', '.rbt', '.robot.rst'),
+                 included_files: Sequence[str] = (),
+                 custom_parsers: Sequence[str] = (),
+                 defaults: 'TestDefaults|None' = None,
+                 rpa: 'bool|None' = None,
+                 lang: LanguagesLike = None,
+                 allow_empty_suite: bool = False,
+                 process_curdir: bool = True):
         """
-        :param include_suites:
-            List of suite names to include. If ``None`` or an empty list, all
-            suites are included. Same as using `--suite` on the command line.
+        :param included_suites:
+            This argument used to be used for limiting what suite file to parse.
+            It is deprecated and has no effect starting from RF 6.1. Use the
+            new ``included_files`` argument or filter the created suite after
+            parsing instead.
         :param included_extensions:
-            List of extensions of files to parse. Same as `--extension`.
-        :param rpa: Explicit test execution mode. ``True`` for RPA and
-           ``False`` for test automation. By default mode is got from data file
-           headers and possible conflicting headers cause an error.
-           Same as `--rpa` or `--norpa`.
+            List of extensions of files to parse. Same as ``--extension``.
+        :param included_files:
+            List of names, paths or directory paths of files to parse. All files
+            are parsed by default. Same as `--parse-include`. New in RF 6.1.
+        :param custom_parsers:
+            Custom parsers as names or paths (same as ``--parser``) or as
+            parser objects. New in RF 6.1.
+        :param defaults:
+            Possible test specific defaults from suite initialization files.
+            New in RF 6.1.
+        :param rpa:
+            Explicit execution mode. ``True`` for RPA and ``False`` for test
+            automation. By default, mode is got from data file headers.
+            Same as ``--rpa`` or ``--norpa``.
+        :param lang:
+            Additional languages to be supported during parsing.
+            Can be a string matching any of the supported language codes or names,
+            an initialized :class:`~robot.conf.languages.Language` subclass,
+            a list containing such strings or instances, or a
+            :class:`~robot.conf.languages.Languages` instance.
         :param allow_empty_suite:
             Specify is it an error if the built suite contains no tests.
-            Same as `--runemptysuite`.
+            Same as ``--runemptysuite``.
         :param process_curdir:
             Control processing the special ``${CURDIR}`` variable. It is
             resolved already at parsing time by default, but that can be
             changed by giving this argument ``False`` value.
         """
+        self.standard_parsers = self._get_standard_parsers(lang, process_curdir)
+        self.custom_parsers = self._get_custom_parsers(custom_parsers)
+        self.defaults = defaults
+        self.included_extensions = tuple(included_extensions or ())
+        self.included_files = tuple(included_files or ())
         self.rpa = rpa
-        self.included_suites = included_suites
-        self.included_extensions = included_extensions
         self.allow_empty_suite = allow_empty_suite
-        self.process_curdir = process_curdir
+        # TODO: Remove in RF 7.
+        if included_suites != 'DEPRECATED':
+            warnings.warn("'TestSuiteBuilder' argument 'included_suites' is deprecated "
+                          "and has no effect. Use the new 'included_files' argument "
+                          "or filter the created suite instead.")
 
-    def build(self, *paths):
+    def _get_standard_parsers(self, lang: LanguagesLike,
+                              process_curdir: bool) -> 'dict[str, Parser]':
+        robot_parser = RobotParser(lang, process_curdir)
+        rest_parser = RestParser(lang, process_curdir)
+        json_parser = JsonParser()
+        return {
+            'robot': robot_parser,
+            'rst': rest_parser,
+            'rest': rest_parser,
+            'robot.rst': rest_parser,
+            'rbt': json_parser,
+            'json': json_parser
+        }
+
+    def _get_custom_parsers(self, parsers: Sequence[str]) -> 'dict[str, CustomParser]':
+        custom_parsers = {}
+        importer = Importer('parser', LOGGER)
+        for parser in parsers:
+            if isinstance(parser, (str, Path)):
+                name, args = split_args_from_name_or_path(parser)
+                parser = importer.import_class_or_module(name, args)
+            else:
+                name = type_name(parser)
+            try:
+                custom_parser = CustomParser(parser)
+            except TypeError as err:
+                raise DataError(f"Importing parser '{name}' failed: {err}")
+            for ext in custom_parser.extensions:
+                custom_parsers[ext] = custom_parser
+        return custom_parsers
+
+    def build(self, *paths: 'Path|str') -> TestSuite:
         """
         :param paths: Paths to test data files or directories.
         :return: :class:`~robot.running.model.TestSuite` instance.
         """
-        structure = SuiteStructureBuilder(self.included_extensions,
-                                          self.included_suites).build(paths)
-        parser = SuiteStructureParser(self.included_extensions,
-                                      self.rpa, self.process_curdir)
-        suite = parser.parse(structure)
-        if not self.included_suites and not self.allow_empty_suite:
-            self._validate_test_counts(suite, multisource=len(paths) > 1)
+        paths = self._normalize_paths(paths)
+        extensions = self.included_extensions + tuple(self.custom_parsers)
+        structure = SuiteStructureBuilder(extensions,
+                                          self.included_files).build(*paths)
+        suite = SuiteStructureParser(self._get_parsers(paths), self.defaults,
+                                     self.rpa).parse(structure)
+        if not self.allow_empty_suite:
+            self._validate_not_empty(suite, multi_source=len(paths) > 1)
         suite.remove_empty_suites(preserve_direct_children=len(paths) > 1)
         return suite
 
-    def _validate_test_counts(self, suite, multisource=False):
-        def validate(suite):
-            if not suite.has_tests:
-                raise DataError("Suite '%s' contains no tests or tasks."
-                                % suite.name)
-        if not multisource:
-            validate(suite)
-        else:
-            for s in suite.suites:
-                validate(s)
+    def _normalize_paths(self, paths: 'Sequence[Path|str]') -> 'tuple[Path, ...]':
+        if not paths:
+            raise DataError('One or more source paths required.')
+        # Cannot use `Path.resolve()` here because it resolves all symlinks which
+        # isn't desired. `Path` doesn't have any methods for normalizing paths
+        # so need to use `os.path.normpath()`. Also that _may_ resolve symlinks,
+        # but we need to do it for backwards compatibility.
+        paths = [Path(normpath(p)).absolute() for p in paths]
+        non_existing = [p for p in paths if not p.exists()]
+        if non_existing:
+            raise DataError(f"Parsing {seq2str(non_existing)} failed: "
+                            f"File or directory to execute does not exist.")
+        return tuple(paths)
+
+    def _get_parsers(self, paths: 'Sequence[Path]') -> 'dict[str|None, Parser]':
+        parsers = {None: NoInitFileDirectoryParser(), **self.custom_parsers}
+        robot_parser = self.standard_parsers['robot']
+        for ext in chain(self.included_extensions,
+                         [self._get_ext(pattern) for pattern in self.included_files],
+                         [self._get_ext(pth) for pth in paths if pth.is_file()]):
+            ext = ext.lstrip('.').lower()
+            if ext not in parsers and ext.replace('.', '').isalnum():
+                parsers[ext] = self.standard_parsers.get(ext, robot_parser)
+        return parsers
+
+    def _get_ext(self, path: 'str|Path') -> str:
+        if not isinstance(path, Path):
+            path = Path(path)
+        return ''.join(path.suffixes)
+
+    def _validate_not_empty(self, suite: TestSuite, multi_source: bool = False):
+        if multi_source:
+            for child in suite.suites:
+                self._validate_not_empty(child)
+        elif not suite.has_tests:
+            raise DataError(f"Suite '{suite.name}' contains no tests or tasks.")
 
 
 class SuiteStructureParser(SuiteStructureVisitor):
 
-    def __init__(self, included_extensions, rpa=None, process_curdir=True):
+    def __init__(self, parsers: 'dict[str|None, Parser]',
+                 defaults: 'TestDefaults|None' = None,
+                 rpa: 'bool|None' = None):
+        self.parsers = parsers
         self.rpa = rpa
-        self._rpa_given = rpa is not None
-        self.suite = None
-        self._stack = []
-        self.parsers = self._get_parsers(included_extensions, process_curdir)
+        self.defaults = defaults
+        self.suite: 'TestSuite|None' = None
+        self._stack: 'list[tuple[TestSuite, TestDefaults]]' = []
 
-    def _get_parsers(self, extensions, process_curdir):
-        robot_parser = RobotParser(process_curdir)
-        rest_parser = RestParser(process_curdir)
-        parsers = {
-            None: NoInitFileDirectoryParser(),
-            'robot': robot_parser,
-            'rst': rest_parser,
-            'rest': rest_parser
-        }
-        for ext in extensions:
-            if ext not in parsers:
-                parsers[ext] = robot_parser
-        return parsers
+    @property
+    def parent_defaults(self) -> 'TestDefaults|None':
+        return self._stack[-1][-1] if self._stack else self.defaults
 
-    def _get_parser(self, extension):
-        try:
-            return self.parsers[extension]
-        except KeyError:
-            return self.parsers['robot']
-
-    def parse(self, structure):
+    def parse(self, structure: SuiteStructure) -> TestSuite:
         structure.visit(self)
-        self.suite.rpa = self.rpa
-        return self.suite
+        return cast(TestSuite, self.suite)
 
-    def visit_file(self, structure):
-        LOGGER.info("Parsing file '%s'." % structure.source)
-        suite, _ = self._build_suite(structure)
-        if self._stack:
-            self._stack[-1][0].suites.append(suite)
-        else:
+    def visit_file(self, structure: SuiteFile):
+        LOGGER.info(f"Parsing file '{structure.source}'.")
+        suite = self._build_suite_file(structure)
+        if self.rpa is not None:
+            suite.rpa = self.rpa
+        if self.suite is None:
             self.suite = suite
+        else:
+            self._stack[-1][0].suites.append(suite)
 
-    def start_directory(self, structure):
+    def start_directory(self, structure: SuiteDirectory):
         if structure.source:
-            LOGGER.info("Parsing directory '%s'." % structure.source)
-        suite, defaults = self._build_suite(structure)
+            LOGGER.info(f"Parsing directory '{structure.source}'.")
+        suite, defaults = self._build_suite_directory(structure)
         if self.suite is None:
             self.suite = suite
         else:
             self._stack[-1][0].suites.append(suite)
         self._stack.append((suite, defaults))
 
-    def end_directory(self, structure):
+    def end_directory(self, structure: SuiteDirectory):
         suite, _ = self._stack.pop()
-        if suite.rpa is None and suite.suites:
-            suite.rpa = suite.suites[0].rpa
-
-    def _build_suite(self, structure):
-        parent_defaults = self._stack[-1][-1] if self._stack else None
-        source = structure.source
-        defaults = TestDefaults(parent_defaults)
-        parser = self._get_parser(structure.extension)
-        try:
-            if structure.is_directory:
-                suite = parser.parse_init_file(structure.init_file or source, defaults)
-            else:
-                suite = parser.parse_suite_file(source, defaults)
-                if not suite.tests:
-                    LOGGER.info("Data source '%s' has no tests or tasks." % source)
-            self._validate_execution_mode(suite)
-        except DataError as err:
-            raise DataError("Parsing '%s' failed: %s" % (source, err.message))
-        return suite, defaults
-
-    def _validate_execution_mode(self, suite):
-        if self._rpa_given:
+        if self.rpa is not None:
             suite.rpa = self.rpa
-        elif suite.rpa is None:
-            pass
-        elif self.rpa is None:
-            self.rpa = suite.rpa
-        elif self.rpa is not suite.rpa:
-            this, that = ('tasks', 'tests') if suite.rpa else ('tests', 'tasks')
-            raise DataError("Conflicting execution modes. File has %s "
-                            "but files parsed earlier have %s. Fix headers "
-                            "or use '--rpa' or '--norpa' options to set the "
-                            "execution mode explicitly." % (this, that))
+        elif suite.rpa is None and suite.suites:
+            if all(s.rpa is False for s in suite.suites):
+                suite.rpa = False
+            elif all(s.rpa is True for s in suite.suites):
+                suite.rpa = True
+
+    def _build_suite_file(self, structure: SuiteFile):
+        source = cast(Path, structure.source)
+        defaults = self.parent_defaults or TestDefaults()
+        parser = self.parsers[structure.extension]
+        try:
+            suite = parser.parse_suite_file(source, defaults)
+            if not suite.tests:
+                LOGGER.info(f"Data source '{source}' has no tests or tasks.")
+        except DataError as err:
+            raise DataError(f"Parsing '{source}' failed: {err.message}")
+        return suite
+
+    def _build_suite_directory(self, structure: SuiteDirectory):
+        source = cast(Path, structure.init_file or structure.source)
+        defaults = TestDefaults(self.parent_defaults)
+        parser = self.parsers[structure.extension]
+        try:
+            suite = parser.parse_init_file(source, defaults)
+            if structure.is_multi_source:
+                suite.config(name='', source=None)
+        except DataError as err:
+            raise DataError(f"Parsing '{source}' failed: {err.message}")
+        return suite, defaults
 
 
 class ResourceFileBuilder:
 
-    def __init__(self, process_curdir=True):
+    def __init__(self, lang: LanguagesLike = None, process_curdir: bool = True):
+        self.lang = lang
         self.process_curdir = process_curdir
 
-    def build(self, source):
-        LOGGER.info("Parsing resource file '%s'." % source)
+    def build(self, source: Path) -> ResourceFile:
+        if not isinstance(source, Path):
+            source = Path(source)
+        LOGGER.info(f"Parsing resource file '{source}'.")
         resource = self._parse(source)
         if resource.imports or resource.variables or resource.keywords:
-            LOGGER.info("Imported resource file '%s' (%d keywords)."
-                        % (source, len(resource.keywords)))
+            LOGGER.info(f"Imported resource file '{source}' ({len(resource.keywords)} "
+                        f"keywords).")
         else:
-            LOGGER.warn("Imported resource file '%s' is empty." % source)
+            LOGGER.warn(f"Imported resource file '{source}' is empty.")
         return resource
 
-    def _parse(self, source):
-        if os.path.splitext(source)[1].lower() in ('.rst', '.rest'):
-            return RestParser(self.process_curdir).parse_resource_file(source)
-        return RobotParser(self.process_curdir).parse_resource_file(source)
+    def _parse(self, source: Path) -> ResourceFile:
+        suffix = source.suffix.lower()
+        if suffix in ('.rst', '.rest'):
+            parser = RestParser(self.lang, self.process_curdir)
+        elif suffix in ('.json', '.rsrc'):
+            parser = JsonParser()
+        else:
+            parser = RobotParser(self.lang, self.process_curdir)
+        return parser.parse_resource_file(source)

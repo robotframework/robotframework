@@ -33,7 +33,7 @@ Argument File
 Two Argument Files
     Create Argument File    ${ARGFILE}    --metadata A1:Value1    --metadata A2:to be overridden
     Create Argument File    ${ARGFILE2}    --metadata A2:Value2
-    ${result} =    Run Tests    -A ${ARGFILE} --ArgumentFile ${ARGFILE2}    ${TESTFILE}
+    ${result} =    Run Tests    -A ${ARGFILE} --Argument-File ${ARGFILE2}    ${TESTFILE}
     Execution Should Have Succeeded    ${result}
     Should Be Equal    ${SUITE.metadata['A1']}    Value1
     Should Be Equal    ${SUITE.metadata['A2']}    Value2

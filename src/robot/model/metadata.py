@@ -13,20 +13,27 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import is_string, NormalizedDict
+from collections.abc import Iterable, Mapping
+
+from robot.utils import NormalizedDict
 
 
-class Metadata(NormalizedDict):
+class Metadata(NormalizedDict[str]):
+    """Free suite metadata as a mapping.
 
-    def __init__(self, initial=None):
+    Keys are case, space, and underscore insensitive.
+    """
+
+    def __init__(self, initial: 'Mapping[str, str]|Iterable[tuple[str, str]]|None' = None):
         super().__init__(initial, ignore='_')
 
-    def __setitem__(self, key, value):
-        if not is_string(key):
+    def __setitem__(self, key: str, value: str):
+        if not isinstance(key, str):
             key = str(key)
-        if not is_string(value):
+        if not isinstance(value, str):
             value = str(value)
         super().__setitem__(key, value)
 
     def __str__(self):
-        return '{%s}' % ', '.join('%s: %s' % (k, self[k]) for k in self)
+        items = ', '.join(f'{key}: {self[key]}' for key in self)
+        return f'{{{items}}}'

@@ -65,6 +65,8 @@ class Interpreter:
             yield 'require-windows'
         if self.is_osx:
             yield 'no-osx'
+        if not self.is_linux:
+            yield 'require-linux'
 
     @property
     def is_python(self):

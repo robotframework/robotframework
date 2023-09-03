@@ -1,65 +1,9 @@
+import re
 import unittest
 
-from robot.utils.asserts import assert_equal
-from robot.utils import printable_name, seq2str, roundup, plural_or_not, test_or_task
-
-
-class TestRoundup(unittest.TestCase):
-
-    def test_basics(self):
-        for number in range(1000):
-            for extra in range(5):
-                extra /= 10.0
-                assert_equal(roundup(number + extra), number, +extra)
-                assert_equal(roundup(number - extra), number, -extra)
-            assert_equal(roundup(number + 0.5), number+1)
-
-    def test_negative(self):
-        for number in range(1000):
-            number *= -1
-            for extra in range(5):
-                extra /= 10.0
-                assert_equal(roundup(number + extra), number)
-                assert_equal(roundup(number - extra), number)
-            assert_equal(roundup(number - 0.5), number-1)
-
-    def test_ndigits_below_zero(self):
-        assert_equal(roundup(7, -1), 10)
-        assert_equal(roundup(77, -1), 80)
-        assert_equal(roundup(123, -2), 100)
-        assert_equal(roundup(-1234, -2), -1200)
-        assert_equal(roundup(9999, -2), 10000)
-
-    def test_ndigits_above_zero(self):
-        assert_equal(roundup(0.1234, 1), 0.1)
-        assert_equal(roundup(0.9999, 1), 1.0)
-        assert_equal(roundup(0.9876, 3), 0.988)
-
-    def test_round_even_up(self):
-        assert_equal(roundup(0.5), 1)
-        assert_equal(roundup(5, -1), 10)
-        assert_equal(roundup(500, -3), 1000)
-        assert_equal(roundup(0.05, 1), 0.1)
-        assert_equal(roundup(0.49951, 3), 0.5)
-
-    def test_round_even_down_when_negative(self):
-        assert_equal(roundup(-0.5), -1)
-        assert_equal(roundup(-5, -1), -10)
-        assert_equal(roundup(-5.0, -1), -10)
-        assert_equal(roundup(-500, -3), -1000)
-        assert_equal(roundup(-0.05, 1), -0.1)
-        assert_equal(roundup(-0.49951, 3), -0.5)
-
-    def test_return_type(self):
-        for n in [1, 1000, 0.1, 0.001]:
-            for d in [-3, -2, -1, 0, 1, 2, 3]:
-                assert_equal(type(roundup(n, d)), float if d > 0 else int)
-                assert_equal(type(roundup(n, d, return_type=int)), int)
-                assert_equal(type(roundup(n, d, return_type=float)), float)
-
-    def test_problems(self):
-        assert_equal(roundup(59.85, 1), 59.9)    # This caused #2872
-        assert_equal(roundup(1.15, 1), 1.1)      # 1.15 is actually 1.49999..
+from robot.utils import (classproperty, parse_re_flags, plural_or_not, printable_name,
+                         seq2str, test_or_task)
+from robot.utils.asserts import assert_equal, assert_raises, assert_raises_with_msg
 
 
 class TestSeg2Str(unittest.TestCase):
@@ -152,12 +96,11 @@ class TestPluralOrNot(unittest.TestCase):
             assert_equal(plural_or_not(plural), 's')
 
 
-
 class TestTestOrTask(unittest.TestCase):
 
     def test_no_match(self):
         for inp in ['', 'No match', 'No {match}', '{No} {task} {match}']:
-            assert_equal(test_or_task(inp), inp)
+            assert_equal(test_or_task(inp, rpa=False), inp)
             assert_equal(test_or_task(inp, rpa=True), inp)
 
     def test_match(self):
@@ -174,6 +117,99 @@ class TestTestOrTask(unittest.TestCase):
                      'Contains test, TEST and TesT')
         assert_equal(test_or_task('Contains {test}, {TEST} and {TesT}', True),
                      'Contains task, TASK and TasK')
+
+    def test_test_without_curlies(self):
+        for test, task in [('test', 'task'),
+                           ('Test', 'Task'),
+                           ('TEST', 'TASK'),
+                           ('tESt', 'tASk')]:
+            assert_equal(test_or_task(test, rpa=False), test)
+            assert_equal(test_or_task(test, rpa=True), task)
+
+
+class TestParseReFlags(unittest.TestCase):
+
+    def test_parse(self):
+        for inp, exp in [('DOTALL', re.DOTALL),
+                         ('I', re.I),
+                         ('IGNORECASE|dotall', re.IGNORECASE | re.DOTALL),
+                         (' MULTILINE ', re.MULTILINE)]:
+            assert_equal(parse_re_flags(inp), exp)
+
+    def test_parse_empty(self):
+        for inp in ['', None]:
+            assert_equal(parse_re_flags(inp), 0)
+
+    def test_parse_negative(self):
+        for inp, exp_msg in [('foo', 'Unknown regexp flag: foo'),
+                             ('IGNORECASE|foo', 'Unknown regexp flag: foo'),
+                             ('compile', 'Unknown regexp flag: compile')]:
+            assert_raises_with_msg(ValueError, exp_msg, parse_re_flags, inp)
+
+
+class TestClassProperty(unittest.TestCase):
+
+    def setUp(self):
+        class Class:
+            @classproperty
+            def p(cls):
+                assert cls is Class
+                return 1
+        self.cls = Class
+
+    def test_get_from_class(self):
+        assert self.cls.p == 1
+
+    def test_get_from_instance(self):
+        assert self.cls().p == 1
+
+    def test_set_in_class_overrides(self):
+        # This cannot be avoided without using metaclasses.
+        self.cls.p = 2
+        assert self.cls.p == 2
+        assert self.cls().p == 2
+
+    def test_set_in_instance_fails(self):
+        assert_raises(AttributeError, setattr, self.cls(), 'p', 2)
+
+    def test_cannot_have_setter(self):
+        code = '''
+class Class:
+    @classproperty
+    def p(cls):
+        pass
+    @p.setter
+    def p(cls):
+        pass
+'''
+        assert_raises_with_msg(TypeError, 'Setters are not supported.',
+                               exec, code, globals())
+        assert_raises_with_msg(TypeError, 'Setters are not supported.',
+                               classproperty, lambda c: None, lambda c, v: None)
+
+    def test_cannot_have_deleter(self):
+        code = '''
+class Class:
+    @classproperty
+    def p(cls):
+        pass
+    @p.deleter
+    def p(cls):
+        pass
+'''
+        assert_raises_with_msg(TypeError, 'Deleters are not supported.',
+                               exec, code, globals())
+        assert_raises_with_msg(TypeError, 'Deleters are not supported.',
+                               classproperty, lambda c: None, None, lambda c, v: None)
+
+    def test_doc(self):
+        class Class(self.cls):
+            @classproperty
+            def p(cls):
+                """Doc for p."""
+            q = classproperty(lambda cls: None, doc='Doc for q.')
+        assert_equal(Class.__dict__['p'].__doc__, 'Doc for p.')
+        assert_equal(Class.__dict__['q'].__doc__, 'Doc for q.')
 
 
 if __name__ == "__main__":

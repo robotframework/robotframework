@@ -1,5 +1,7 @@
 *** Setting ***
-Suite Setup       Run Tests    ${EMPTY}    variables/automatic_variables/
+Suite Setup       Run Tests
+...               --exclude exclude -e e2 --include include_this_test --skip skip_me --skiponfailure sof
+...               variables/automatic_variables/
 Resource          atest_resource.robot
 
 *** Test Case ***
@@ -14,10 +16,10 @@ Test Documentation
     Should Be Equal    ${tc.doc}    My doc.\nIn 2 lines! And with variable value!!
 
 Test Tags
-    Check Test Tags    ${TEST NAME}    Force 1    Hello, world!    id-42    variable value
+    Check Test Tags    ${TEST NAME}    Force 1    Hello, world!    id-42    include this test    variable value
 
 Modifying \${TEST TAGS} does not affect actual tags test has
-    Check Test Tags    ${TEST NAME}    Force 1    mytag
+    Check Test Tags    ${TEST NAME}    Force 1    mytag    include this test
 
 Suite Name
     Check Test Case    ${TEST NAME}
@@ -67,3 +69,6 @@ Suite And Prev Test Variables Work Correctly In Setup
 Suite And Prev Test Variables Work Correctly In Teardown
     Should Be Equal    ${SUITE.suites[0].teardown.status}    PASS
     Should Be Equal    ${SUITE.suites[1].teardown.status}    PASS
+
+\&{OPTIONS}
+    Check Test Case    ${TEST NAME}

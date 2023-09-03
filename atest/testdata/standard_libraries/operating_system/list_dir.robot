@@ -59,11 +59,15 @@ Create Test Directories
     Create File    ${BASE}/${F2}
 
 List And Count Directory
-    [Arguments]    @{expected}
-    @{items} =    List Directory    ${BASE}
-    ${count} =    Count Items In Directory    ${BASE}
+    [Arguments]    @{expected}    ${directory}=${BASE}
+    @{items} =    List Directory    ${directory}
+    ${count} =    Count Items In Directory    ${directory}
     Lists Should Be Equal    ${items}    ${expected}
     Length Should Be    ${items}    ${count}
+    # Test also with pathlib.Path instance.
+    IF    $directory == $BASE
+        List And Count Directory    @{expected}    directory=${PATH}
+    END
 
 List And Count Directory With Pattern
     [Arguments]    ${pattern}    @{expected}

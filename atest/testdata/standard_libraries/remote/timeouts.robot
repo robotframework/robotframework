@@ -3,18 +3,13 @@ Library           DateTime
 
 *** Variables ***
 ${PORT}           8270
-${SUPPORTED}      sys.platform != 'cli'
 
 *** Test Cases ***
 Initial connection failure
-    Run Keyword If    ${SUPPORTED}
-    ...    Test initial connection failure
-    ...    ELSE
-    ...    Timeouts are not supported on IronPython
+    Test initial connection failure
 
 Too long keyword execution time
-    Run Keyword If    ${SUPPORTED}
-    ...    Test too long keyword execution time
+    Test too long keyword execution time
 
 *** Keywords ***
 Test initial connection failure
@@ -36,8 +31,3 @@ Test too long keyword execution time
     Run Keyword And Expect Error
     ...    GLOB: Connection to remote server broken:* timed out
     ...    Remote.Sleep    2
-
-Timeouts are not supported on IronPython
-    Run Keyword And Expect Error
-    ...    *Timeouts are not supported on IronPython.*
-    ...    Import Library    Remote    10.82.70.0:666    timeout=0.2 seconds

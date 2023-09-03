@@ -27,6 +27,8 @@ Passing keywords
 Keywords with embedded arguments
     Embedded arguments here
     Embedded args rock here
+    Some embedded and normal args    42
+    Some embedded and normal args    ${does not exist}
     This is validated
 
 Library keyword with embedded arguments
@@ -51,6 +53,14 @@ List variables are not checked in keyword arguments
     Anarchy in the UK    @{list}
     Anarchy in the UK    @{nonex}
     Fail    @{list}    @{nonex}
+    This is validated
+
+Dict variables are not checked in keyword arguments
+    [Documentation]    See the doc of the previous test
+    &{dict} =    Create Dictionary    a1=1    a2=2    a3=3
+    Anarchy in the UK    &{dict}
+    Anarchy in the UK    &{nonex}
+    Fail    &{list}    &{nonex}
     This is validated
 
 Variables are not checked in when arguments are embedded
@@ -130,6 +140,10 @@ Avoid keyword in dry-run
 
 *** Keywords ***
 Embedded ${args} here
+    No Operation
+
+Some ${type} and normal args
+    [Arguments]    ${meaning of life}
     No Operation
 
 Keyword with Teardown

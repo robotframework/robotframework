@@ -4,6 +4,7 @@ import tempfile
 from io import StringIO
 from pathlib import Path
 
+from robot.conf import Language, Languages
 from robot.utils.asserts import assert_equal
 from robot.parsing import get_tokens, get_init_tokens, get_resource_tokens, Token
 
@@ -41,6 +42,8 @@ Test Setup        None Shall Pass    ${NONE}
 TEST TEARDOWN     No Operation
 Test Timeout      1 day
 Force Tags        foo    bar
+Keyword Tags      tag
+Name              Custom Suite Name
 '''
         expected = [
             (T.SETTING_HEADER, '*** Settings ***', 1, 0),
@@ -79,10 +82,16 @@ Force Tags        foo    bar
             (T.TEST_TIMEOUT, 'Test Timeout', 10, 0),
             (T.ARGUMENT, '1 day', 10, 18),
             (T.EOS, '', 10, 23),
-            (T.FORCE_TAGS, 'Force Tags', 11, 0),
+            (T.TEST_TAGS, 'Force Tags', 11, 0),
             (T.ARGUMENT, 'foo', 11, 18),
             (T.ARGUMENT, 'bar', 11, 25),
             (T.EOS, '', 11, 28),
+            (T.KEYWORD_TAGS, 'Keyword Tags', 12, 0),
+            (T.ARGUMENT, 'tag', 12, 18),
+            (T.EOS, '', 12, 21),
+            (T.SUITE_NAME, 'Name', 13, 0),
+            (T.ARGUMENT, 'Custom Suite Name', 13, 18),
+            (T.EOS, '', 13, 35)
         ]
         assert_tokens(data, expected, get_tokens, data_only=True)
         assert_tokens(data, expected, get_init_tokens, data_only=True)
@@ -100,7 +109,7 @@ Default Tags      Not allowed in init file
             (T.TEST_TEMPLATE, 'Test Template', 2, 0),
             (T.NAME, 'Not allowed in init file', 2, 18),
             (T.EOS, '', 2, 42),
-            (T.FORCE_TAGS, 'Force Tags', 3, 0),
+            (T.TEST_TAGS, 'Force Tags', 3, 0),
             (T.ARGUMENT, 'Allowed in both', 3, 18),
             (T.EOS, '', 3, 33),
             (T.DEFAULT_TAGS, 'Default Tags', 4, 0),
@@ -115,7 +124,7 @@ Default Tags      Not allowed in init file
             (T.ERROR, 'Test Template', 2, 0,
              "Setting 'Test Template' is not allowed in suite initialization file."),
             (T.EOS, '', 2, 13),
-            (T.FORCE_TAGS, 'Force Tags', 3, 0),
+            (T.TEST_TAGS, 'Force Tags', 3, 0),
             (T.ARGUMENT, 'Allowed in both', 3, 18),
             (T.EOS, '', 3, 33),
             (T.ERROR, 'Default Tags', 4, 0,
@@ -136,7 +145,9 @@ Test Template     NONE
 Test Timeout      1 day
 Force Tags        foo    bar
 Default Tags      zap
+Task Tags         quux
 Documentation     Valid in all data files.
+Name              Bad Resource Name
 '''
         # Values of invalid settings are ignored with `data_only=True`.
         expected = [
@@ -169,9 +180,15 @@ Documentation     Valid in all data files.
             (T.ERROR, 'Default Tags', 10, 0,
              "Setting 'Default Tags' is not allowed in resource file."),
             (T.EOS, '', 10, 12),
-            (T.DOCUMENTATION, 'Documentation', 11, 0),
-            (T.ARGUMENT, 'Valid in all data files.', 11, 18),
-            (T.EOS, '', 11, 42)
+            (T.ERROR, 'Task Tags', 11, 0,
+             "Setting 'Task Tags' is not allowed in resource file."),
+            (T.EOS, '', 11, 9),
+            (T.DOCUMENTATION, 'Documentation', 12, 0),
+            (T.ARGUMENT, 'Valid in all data files.', 12, 18),
+            (T.EOS, '', 12, 42),
+            (T.ERROR, "Name", 13, 0,
+             "Setting 'Name' is not allowed in resource file."),
+            (T.EOS, '', 13, 4)
         ]
         assert_tokens(data, expected, get_resource_tokens, data_only=True)
 
@@ -212,37 +229,37 @@ VariAbles         variables.py    arg
         assert_tokens(data, expected, get_init_tokens, data_only=True)
         assert_tokens(data, expected, get_resource_tokens, data_only=True)
 
-    def test_with_name(self):
+    def test_aliasing_with_as(self):
         data = '''\
 *** Settings ***
-Library         Easter                       WITH NAME    Christmas
-Library         Arguments    arg             WITH NAME    One argument
+Library         Easter                       AS    Christmas
+Library         Arguments    arg             AS    One argument
 Library         Arguments    arg1    arg2
-...                          arg3    arg4    WITH NAME    Four arguments
+...                          arg3    arg4    AS    Four arguments
 '''
         expected = [
             (T.SETTING_HEADER, '*** Settings ***', 1, 0),
             (T.EOS, '', 1, 16),
             (T.LIBRARY, 'Library', 2, 0),
             (T.NAME, 'Easter', 2, 16),
-            (T.WITH_NAME, 'WITH NAME', 2, 45),
-            (T.NAME, 'Christmas', 2, 58),
-            (T.EOS, '', 2, 67),
+            (T.AS, 'AS', 2, 45),
+            (T.NAME, 'Christmas', 2, 51),
+            (T.EOS, '', 2, 60),
             (T.LIBRARY, 'Library', 3, 0),
             (T.NAME, 'Arguments', 3, 16),
             (T.ARGUMENT, 'arg', 3, 29),
-            (T.WITH_NAME, 'WITH NAME', 3, 45),
-            (T.NAME, 'One argument', 3, 58),
-            (T.EOS, '', 3, 70),
+            (T.AS, 'AS', 3, 45),
+            (T.NAME, 'One argument', 3, 51),
+            (T.EOS, '', 3, 63),
             (T.LIBRARY, 'Library', 4, 0),
             (T.NAME, 'Arguments', 4, 16),
             (T.ARGUMENT, 'arg1', 4, 29),
             (T.ARGUMENT, 'arg2', 4, 37),
             (T.ARGUMENT, 'arg3', 5, 29),
             (T.ARGUMENT, 'arg4', 5, 37),
-            (T.WITH_NAME, 'WITH NAME', 5, 45),
-            (T.NAME, 'Four arguments', 5, 58),
-            (T.EOS, '', 5, 72)
+            (T.AS, 'AS', 5, 45),
+            (T.NAME, 'Four arguments', 5, 51),
+            (T.EOS, '', 5, 65)
         ]
         assert_tokens(data, expected, get_tokens, data_only=True)
         assert_tokens(data, expected, get_init_tokens, data_only=True)
@@ -281,6 +298,7 @@ Libra ry      Smallish typo gives us recommendations!
 Resource         Too    many   values
 Test Timeout     Too    much
 Test Template    1    2    3    4    5
+NaMe             This    is    an    invalid    name
 '''
         # Values of invalid settings are ignored with `data_only=True`.
         expected = [
@@ -295,6 +313,9 @@ Test Template    1    2    3    4    5
             (T.ERROR, 'Test Template', 4, 0,
              "Setting 'Test Template' accepts only one value, got 5."),
             (T.EOS, '', 4, 13),
+            (T.ERROR, 'NaMe', 5, 0,
+             "Setting 'NaMe' accepts only one value, got 5."),
+            (T.EOS, '', 5, 4),
         ]
         assert_tokens(data, expected, data_only=True)
 
@@ -319,6 +340,8 @@ Force Tags        Used
 Force Tags        Ignored
 Default Tags      Used
 Default Tags      Ignored
+Name              Used
+Name              Ignored
 '''
         # Values of invalid settings are ignored with `data_only=True`.
         expected = [
@@ -366,7 +389,7 @@ Default Tags      Ignored
             (T.ERROR, 'Test Timeout', 15, 0,
              "Setting 'Test Timeout' is allowed only once. Only the first value is used."),
             (T.EOS, '', 15, 12),
-            (T.FORCE_TAGS, 'Force Tags', 16, 0),
+            (T.TEST_TAGS, 'Force Tags', 16, 0),
             (T.ARGUMENT, 'Used', 16, 18),
             (T.EOS, '', 16, 22),
             (T.ERROR, 'Force Tags', 17, 0,
@@ -377,7 +400,13 @@ Default Tags      Ignored
             (T.EOS, '', 18, 22),
             (T.ERROR, 'Default Tags', 19, 0,
              "Setting 'Default Tags' is allowed only once. Only the first value is used."),
-            (T.EOS, '', 19, 12)
+            (T.EOS, '', 19, 12),
+            ("SUITE NAME", 'Name', 20, 0),
+            (T.ARGUMENT, 'Used', 20, 18),
+            (T.EOS, '', 20, 22),
+            (T.ERROR, 'Name', 21, 0,
+             "Setting 'Name' is allowed only once. Only the first value is used."),
+            (T.EOS, '', 21, 4)
         ]
         assert_tokens(data, expected, data_only=True)
 
@@ -684,21 +713,21 @@ class TestSectionHeaders(unittest.TestCase):
 
     def test_case_section_causes_error_in_init_file(self):
         assert_tokens('*** Test Cases ***', [
-            (T.ERROR, '*** Test Cases ***', 1, 0,
+            (T.INVALID_HEADER, '*** Test Cases ***', 1, 0,
              "'Test Cases' section is not allowed in suite initialization file."),
             (T.EOS, '', 1, 18),
         ], get_init_tokens, data_only=True)
 
     def test_case_section_causes_fatal_error_in_resource_file(self):
         assert_tokens('*** Test Cases ***', [
-            (T.FATAL_ERROR, '*** Test Cases ***', 1, 0,
+            (T.INVALID_HEADER, '*** Test Cases ***', 1, 0,
              "Resource file with 'Test Cases' section is invalid."),
             (T.EOS, '', 1, 18),
         ], get_resource_tokens, data_only=True)
 
     def test_invalid_section_in_test_case_file(self):
         assert_tokens('*** Invalid ***', [
-            (T.ERROR, '*** Invalid ***', 1, 0,
+            (T.INVALID_HEADER, '*** Invalid ***', 1, 0,
              "Unrecognized section header '*** Invalid ***'. Valid sections: "
              "'Settings', 'Variables', 'Test Cases', 'Tasks', 'Keywords' and 'Comments'."),
             (T.EOS, '', 1, 15),
@@ -706,7 +735,7 @@ class TestSectionHeaders(unittest.TestCase):
 
     def test_invalid_section_in_init_file(self):
         assert_tokens('*** S e t t i n g s ***', [
-            (T.ERROR, '*** S e t t i n g s ***', 1, 0,
+            (T.INVALID_HEADER, '*** S e t t i n g s ***', 1, 0,
              "Unrecognized section header '*** S e t t i n g s ***'. Valid sections: "
              "'Settings', 'Variables', 'Keywords' and 'Comments'."),
             (T.EOS, '', 1, 23),
@@ -714,7 +743,7 @@ class TestSectionHeaders(unittest.TestCase):
 
     def test_invalid_section_in_resource_file(self):
         assert_tokens('*', [
-            (T.ERROR, '*', 1, 0,
+            (T.INVALID_HEADER, '*', 1, 0,
              "Unrecognized section header '*'. Valid sections: "
              "'Settings', 'Variables', 'Keywords' and 'Comments'."),
             (T.EOS, '', 1, 1),
@@ -910,7 +939,7 @@ class TestForLoop(unittest.TestCase):
         header = 'FOR    ${i}    IN    foo    bar'
         expected = [
             (T.FOR, 'FOR', 3, 4),
-            (T.VARIABLE, '${i}', 3, 11),
+            (T.ASSIGN, '${i}', 3, 11),
             (T.FOR_SEPARATOR, 'IN', 3, 19),
             (T.ARGUMENT, 'foo', 3, 25),
             (T.ARGUMENT, 'bar', 3, 32),
@@ -1195,6 +1224,68 @@ class TestInlineIf(unittest.TestCase):
         ]
         self._verify(header, expected)
 
+    def test_empty_else(self):
+        header = '    IF    e    K    ELSE'
+        expected = [
+            (T.SEPARATOR, '    ', 3, 0),
+            (T.INLINE_IF, 'IF', 3, 4),
+            (T.SEPARATOR, '    ', 3, 6),
+            (T.ARGUMENT, 'e', 3, 10),
+            (T.EOS, '', 3, 11),
+            (T.SEPARATOR, '    ', 3, 11),
+            (T.KEYWORD, 'K', 3, 15),
+            (T.SEPARATOR, '    ', 3, 16),
+            (T.EOS, '', 3, 20),
+            (T.ELSE, 'ELSE', 3, 20),
+            (T.EOL, '\n', 3, 24),
+            (T.EOS, '', 3, 25),
+            (T.END, '', 3, 25),
+            (T.EOS, '', 3, 25)
+        ]
+        self._verify(header, expected)
+
+    def test_empty_else_if(self):
+        header = '    IF    e    K    ELSE IF'
+        expected = [
+            (T.SEPARATOR, '    ', 3, 0),
+            (T.INLINE_IF, 'IF', 3, 4),
+            (T.SEPARATOR, '    ', 3, 6),
+            (T.ARGUMENT, 'e', 3, 10),
+            (T.EOS, '', 3, 11),
+            (T.SEPARATOR, '    ', 3, 11),
+            (T.KEYWORD, 'K', 3, 15),
+            (T.SEPARATOR, '    ', 3, 16),
+            (T.EOS, '', 3, 20),
+            (T.ELSE_IF, 'ELSE IF', 3, 20),
+            (T.EOL, '\n', 3, 27),
+            (T.EOS, '', 3, 28),
+            (T.END, '', 3, 28),
+            (T.EOS, '', 3, 28)
+        ]
+        self._verify(header, expected)
+
+    def test_else_if_with_only_expression(self):
+        header = '    IF    e    K    ELSE IF    e'
+        expected = [
+            (T.SEPARATOR, '    ', 3, 0),
+            (T.INLINE_IF, 'IF', 3, 4),
+            (T.SEPARATOR, '    ', 3, 6),
+            (T.ARGUMENT, 'e', 3, 10),
+            (T.EOS, '', 3, 11),
+            (T.SEPARATOR, '    ', 3, 11),
+            (T.KEYWORD, 'K', 3, 15),
+            (T.SEPARATOR, '    ', 3, 16),
+            (T.EOS, '', 3, 20),
+            (T.ELSE_IF, 'ELSE IF', 3, 20),
+            (T.SEPARATOR, '    ', 3, 27),
+            (T.ARGUMENT, 'e', 3, 31),
+            (T.EOL, '\n', 3, 32),
+            (T.EOS, '', 3, 33),
+            (T.END, '', 3, 33),
+            (T.EOS, '', 3, 33)
+        ]
+        self._verify(header, expected)
+
     def test_assign(self):
         #             4         14    20      28    34      42
         header = '    ${x} =    IF    True    K1    ELSE    K2'
@@ -1218,6 +1309,29 @@ class TestInlineIf(unittest.TestCase):
             (T.EOS, '', 3, 45),
             (T.END, '', 3, 45),
             (T.EOS, '', 3, 45),
+        ]
+        self._verify(header, expected)
+
+    def test_assign_with_empty_else(self):
+        #             4         14    20      28    34
+        header = '    ${x} =    IF    True    K1    ELSE'
+        expected = [
+            (T.SEPARATOR, '    ', 3, 0),
+            (T.ASSIGN, '${x} =', 3, 4),
+            (T.SEPARATOR, '    ', 3, 10),
+            (T.INLINE_IF, 'IF', 3, 14),
+            (T.SEPARATOR, '    ', 3, 16),
+            (T.ARGUMENT, 'True', 3, 20),
+            (T.EOS, '', 3, 24),
+            (T.SEPARATOR, '    ', 3, 24),
+            (T.KEYWORD, 'K1', 3, 28),
+            (T.SEPARATOR, '    ', 3, 30),
+            (T.EOS, '', 3, 34),
+            (T.ELSE, 'ELSE', 3, 34),
+            (T.EOL, '\n', 3, 38),
+            (T.EOS, '', 3, 39),
+            (T.END, '', 3, 39),
+            (T.EOS, '', 3, 39),
         ]
         self._verify(header, expected)
 
@@ -1571,7 +1685,7 @@ class TestTokenizeVariables(unittest.TestCase):
     def test_settings(self):
         data = '''\
 *** Settings ***
-Library       My${Name}    my ${arg}    ${x}[0]    WITH NAME    Your${Name}
+Library       My${Name}    my ${arg}    ${x}[0]    AS    Your${Name}
 ${invalid}    ${usage}
 '''
         expected = [(T.SETTING_HEADER, '*** Settings ***', 1, 0),
@@ -1582,10 +1696,10 @@ ${invalid}    ${usage}
                     (T.ARGUMENT, 'my ', 2, 27),
                     (T.VARIABLE, '${arg}', 2, 30),
                     (T.VARIABLE, '${x}[0]', 2, 40),
-                    (T.WITH_NAME, 'WITH NAME', 2, 51),
-                    (T.NAME, 'Your', 2, 64),
-                    (T.VARIABLE, '${Name}', 2, 68),
-                    (T.EOS, '', 2, 75),
+                    (T.AS, 'AS', 2, 51),
+                    (T.NAME, 'Your', 2, 57),
+                    (T.VARIABLE, '${Name}', 2, 61),
+                    (T.EOS, '', 2, 68),
                     (T.ERROR, '${invalid}', 3, 0, "Non-existing setting '${invalid}'."),
                     (T.EOS, '', 3, 10)]
         assert_tokens(data, expected, get_tokens=get_tokens,
@@ -1811,9 +1925,8 @@ class TestReturn(unittest.TestCase):
         self._verify(data, expected)
 
     def test_in_test(self):
-        # This is not valid usage but that's not recognized during lexing.
         data = '    RETURN'
-        expected = [(T.RETURN_STATEMENT, 'RETURN', 3, 4),
+        expected = [(T.ERROR, 'RETURN', 3, 4,  'RETURN is not allowed in this context.'),
                     (T.EOS, '', 3, 10)]
         self._verify(data, expected, test=True)
 
@@ -1840,7 +1953,7 @@ class TestReturn(unittest.TestCase):
     END
 '''
             expected = [(T.FOR, 'FOR', 3, 4),
-                        (T.VARIABLE, '${x}', 3, 11),
+                        (T.ASSIGN, '${x}', 3, 11),
                         (T.FOR_SEPARATOR, 'IN', 3, 19),
                         (T.ARGUMENT, '@{STUFF}', 3, 25),
                         (T.EOS, '', 3, 33),
@@ -1872,13 +1985,13 @@ class TestContinue(unittest.TestCase):
 
     def test_in_keyword(self):
         data = '    CONTINUE'
-        expected = [(T.KEYWORD, 'CONTINUE', 3, 4),
+        expected = [(T.ERROR, 'CONTINUE', 3, 4,  'CONTINUE is not allowed in this context.'),
                     (T.EOS, '', 3, 12)]
         self._verify(data, expected)
 
     def test_in_test(self):
         data = '    CONTINUE'
-        expected = [(T.KEYWORD, 'CONTINUE', 3, 4),
+        expected = [(T.ERROR, 'CONTINUE', 3, 4,  'CONTINUE is not allowed in this context.'),
                     (T.EOS, '', 3, 12)]
         self._verify(data, expected, test=True)
 
@@ -1891,7 +2004,7 @@ class TestContinue(unittest.TestCase):
     END
 '''
         expected = [(T.FOR, 'FOR', 3, 4),
-                    (T.VARIABLE, '${x}', 3, 11),
+                    (T.ASSIGN, '${x}', 3, 11),
                     (T.FOR_SEPARATOR, 'IN', 3, 19),
                     (T.ARGUMENT, '@{STUFF}', 3, 25),
                     (T.EOS, '', 3, 33),
@@ -1917,7 +2030,7 @@ class TestContinue(unittest.TestCase):
     END
 '''
         expected = [(T.FOR, 'FOR', 3, 4),
-                    (T.VARIABLE, '${x}', 3, 11),
+                    (T.ASSIGN, '${x}', 3, 11),
                     (T.FOR_SEPARATOR, 'IN', 3, 19),
                     (T.ARGUMENT, '@{STUFF}', 3, 25),
                     (T.EOS, '', 3, 33),
@@ -1942,7 +2055,7 @@ class TestContinue(unittest.TestCase):
     END
 '''
         expected = [(T.FOR, 'FOR', 3, 4),
-                    (T.VARIABLE, '${x}', 3, 11),
+                    (T.ASSIGN, '${x}', 3, 11),
                     (T.FOR_SEPARATOR, 'IN', 3, 19),
                     (T.ARGUMENT, '@{STUFF}', 3, 25),
                     (T.EOS, '', 3, 33),
@@ -1988,13 +2101,13 @@ class TestBreak(unittest.TestCase):
 
     def test_in_keyword(self):
         data = '    BREAK'
-        expected = [(T.KEYWORD, 'BREAK', 3, 4),
+        expected = [(T.ERROR, 'BREAK', 3, 4,  'BREAK is not allowed in this context.'),
                     (T.EOS, '', 3, 9)]
         self._verify(data, expected)
 
     def test_in_test(self):
         data = '    BREAK'
-        expected = [(T.KEYWORD, 'BREAK', 3, 4),
+        expected = [(T.ERROR, 'BREAK', 3, 4,  'BREAK is not allowed in this context.'),
                     (T.EOS, '', 3, 9)]
         self._verify(data, expected, test=True)
 
@@ -2007,7 +2120,7 @@ class TestBreak(unittest.TestCase):
     END
 '''
         expected = [(T.FOR, 'FOR', 3, 4),
-                    (T.VARIABLE, '${x}', 3, 11),
+                    (T.ASSIGN, '${x}', 3, 11),
                     (T.FOR_SEPARATOR, 'IN', 3, 19),
                     (T.ARGUMENT, '@{STUFF}', 3, 25),
                     (T.EOS, '', 3, 33),
@@ -2029,7 +2142,7 @@ class TestBreak(unittest.TestCase):
     END
 '''
         expected = [(T.FOR, 'FOR', 3, 4),
-                    (T.VARIABLE, '${x}', 3, 11),
+                    (T.ASSIGN, '${x}', 3, 11),
                     (T.FOR_SEPARATOR, 'IN', 3, 19),
                     (T.ARGUMENT, '@{STUFF}', 3, 25),
                     (T.EOS, '', 3, 33),
@@ -2065,7 +2178,7 @@ class TestBreak(unittest.TestCase):
     END
 '''
         expected = [(T.FOR, 'FOR', 3, 4),
-                    (T.VARIABLE, '${x}', 3, 11),
+                    (T.ASSIGN, '${x}', 3, 11),
                     (T.FOR_SEPARATOR, 'IN', 3, 19),
                     (T.ARGUMENT, '@{STUFF}', 3, 25),
                     (T.EOS, '', 3, 33),
@@ -2098,6 +2211,130 @@ class TestBreak(unittest.TestCase):
                     (name_type, 'Name', 2, 0),
                     (T.EOS, '', 2, 4)] + expected
         assert_tokens(data, expected, data_only=True)
+
+
+class TestLanguageConfig(unittest.TestCase):
+
+    def test_lang_as_code(self):
+        self._test_explicit_config('fi')
+        self._test_explicit_config('F-I')
+
+    def test_lang_as_name(self):
+        self._test_explicit_config('Finnish')
+        self._test_explicit_config('FINNISH')
+
+    def test_lang_as_Language(self):
+        self._test_explicit_config(Language.from_name('fi'))
+
+    def test_lang_as_list(self):
+        self._test_explicit_config(['fi', Language.from_name('de')])
+        self._test_explicit_config([Language.from_name('fi'), 'de'])
+
+    def test_lang_as_tuple(self):
+        self._test_explicit_config(('f-i', Language.from_name('de')))
+        self._test_explicit_config((Language.from_name('fi'), 'de'))
+
+    def test_lang_as_Languages(self):
+        self._test_explicit_config(Languages('fi'))
+
+    def _test_explicit_config(self, lang):
+        data = '''\
+*** Asetukset ***
+Dokumentaatio    Documentation
+'''
+        expected = [
+            (T.SETTING_HEADER, '*** Asetukset ***', 1, 0),
+            (T.EOL, '\n', 1, 17),
+            (T.EOS, '', 1, 18),
+            (T.DOCUMENTATION, 'Dokumentaatio', 2, 0),
+            (T.SEPARATOR, '    ', 2, 13),
+            (T.ARGUMENT, 'Documentation', 2, 17),
+            (T.EOL, '\n', 2, 30),
+            (T.EOS, '', 2, 31),
+        ]
+        assert_tokens(data, expected, get_tokens, lang=lang)
+        assert_tokens(data, expected, get_init_tokens, lang=lang)
+        assert_tokens(data, expected, get_resource_tokens, lang=lang)
+
+    def test_per_file_config(self):
+        data = '''\
+language: pt    not recognized
+language: fi
+ignored    language: pt
+Language:German    # ok!
+*** Asetukset ***
+Dokumentaatio    Documentation
+'''
+        expected = [
+            (T.COMMENT, 'language: pt', 1, 0),
+            (T.SEPARATOR, '    ', 1, 12),
+            (T.COMMENT, 'not recognized', 1, 16),
+            (T.EOL, '\n', 1, 30),
+            (T.EOS, '', 1, 31),
+            (T.CONFIG, 'language: fi', 2, 0),
+            (T.EOL, '\n', 2, 12),
+            (T.EOS, '', 2, 13),
+            (T.COMMENT, 'ignored', 3, 0),
+            (T.SEPARATOR, '    ', 3, 7),
+            (T.COMMENT, 'language: pt', 3, 11),
+            (T.EOL, '\n', 3, 23),
+            (T.EOS, '', 3, 24),
+            (T.CONFIG, 'Language:German', 4, 0),
+            (T.SEPARATOR, '    ', 4, 15),
+            (T.COMMENT, '# ok!', 4, 19),
+            (T.EOL, '\n', 4, 24),
+            (T.EOS, '', 4, 25),
+            (T.SETTING_HEADER, '*** Asetukset ***', 5, 0),
+            (T.EOL, '\n', 5, 17),
+            (T.EOS, '', 5, 18),
+            (T.DOCUMENTATION, 'Dokumentaatio', 6, 0),
+            (T.SEPARATOR, '    ', 6, 13),
+            (T.ARGUMENT, 'Documentation', 6, 17),
+            (T.EOL, '\n', 6, 30),
+            (T.EOS, '', 6, 31),
+        ]
+        assert_tokens(data, expected, get_tokens)
+        lang = Languages()
+        assert_tokens(data, expected, get_init_tokens, lang=lang)
+        assert_equal(lang.languages,
+                     [Language.from_name(lang) for lang in ('en', 'fi', 'de')])
+
+    def test_invalid_per_file_config(self):
+        data = '''\
+language: in:va:lid
+language: bad again    but not recognized as config and ignored
+Language: Finnish
+*** Asetukset ***
+Dokumentaatio    Documentation
+'''
+        expected = [
+            (T.ERROR, 'language: in:va:lid', 1, 0,
+             "Invalid language configuration: Language 'in:va:lid' not found "
+             "nor importable as a language module."),
+            (T.EOL, '\n', 1, 19),
+            (T.EOS, '', 1, 20),
+            (T.COMMENT, 'language: bad again', 2, 0),
+            (T.SEPARATOR, '    ', 2, 19),
+            (T.COMMENT, 'but not recognized as config and ignored', 2, 23),
+            (T.EOL, '\n', 2, 63),
+            (T.EOS, '', 2, 64),
+            (T.CONFIG, 'Language: Finnish', 3, 0),
+            (T.EOL, '\n', 3, 17),
+            (T.EOS, '', 3, 18),
+            (T.SETTING_HEADER, '*** Asetukset ***', 4, 0),
+            (T.EOL, '\n', 4, 17),
+            (T.EOS, '', 4, 18),
+            (T.DOCUMENTATION, 'Dokumentaatio', 5, 0),
+            (T.SEPARATOR, '    ', 5, 13),
+            (T.ARGUMENT, 'Documentation', 5, 17),
+            (T.EOL, '\n', 5, 30),
+            (T.EOS, '', 5, 31),
+        ]
+        assert_tokens(data, expected, get_tokens)
+        lang = Languages()
+        assert_tokens(data, expected, get_init_tokens, lang=lang)
+        assert_equal(lang.languages,
+                     [Language.from_name(lang) for lang in ('en', 'fi')])
 
 
 if __name__ == '__main__':

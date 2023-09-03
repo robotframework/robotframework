@@ -1,3 +1,9 @@
+Language: French
+Language: Polish
+Language: Turkish
+Language: Bulgarian
+Language: Romanian
+
 *** Settings ***
 Resource        resources/optional_given_when_then.robot
 
@@ -42,6 +48,29 @@ Keyword can be used with and without prefix
     Then we are in Berlin city
     we are in Berlin city
 
+Localized prefixes
+    Oletetaan we don't drink too many beers
+    Kun we are in  museum  cafe
+    mutta we don't drink too many beers
+    Ja time  does  not  run  out
+    Niin we get this feature ready today
+    ja we don't drink too many beers
+
+Prefix consisting of multiple words
+    Étant donné multipart prefixes didn't work with RF 6.0
+    Zakładając, że multipart prefixes didn't work with RF 6.0
+    Diyelim ki multipart prefixes didn't work with RF 6.0
+    Eğer ki multipart prefixes didn't work with RF 6.0
+    O zaman multipart prefixes didn't work with RF 6.0
+    В случай че multipart prefixes didn't work with RF 6.0
+    Fie ca multipart prefixes didn't work with RF 6.0
+
+Prefix must be followed by space
+    [Documentation]  FAIL
+    ...    No keyword with name 'Givenwe don't drink too many beers' found. Did you mean:
+    ...    ${SPACE*4}We Don't Drink Too Many Beers
+    Givenwe don't drink too many beers
+
 *** Keywords ***
 We don't drink too many beers
     No Operation
@@ -69,3 +98,5 @@ We ${x} This ${thing} Implemented
 We Go To ${somewhere}
     Should Be Equal  ${somewhere}  walking tour
 
+Multipart prefixes didn't work with RF 6.0
+    No Operation

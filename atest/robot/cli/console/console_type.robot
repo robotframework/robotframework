@@ -17,6 +17,11 @@ Dotted with skip
     Stdout Should Be    dotted_with_skip.txt
     Stderr Should Be    empty.txt
 
+Dotted with skip only
+    Run tests    -. --skipon fail --skip pass    misc/pass_and_fail.robot
+    Stdout Should Be    dotted_with_skip_only.txt
+    Stderr Should Be    empty.txt
+
 Dotted with width
     Run tests    --Console dotted --ConsoleWidth 10    misc/suites misc/suites
     Stdout Should Be    warnings_and_errors_stdout_dotted_10.txt
@@ -44,7 +49,7 @@ Invalid
 --dotted with --rpa
     Run and verify tests    --dotted --rpa
     Stdout Should Be    warnings_and_errors_stdout_dotted.txt    tests=tasks
-    Stderr Should Be    warnings_and_errors_stderr.txt
+    Stderr Should Be    warnings_and_errors_stderr.txt    tests=tasks
 
 --quiet
     Run and verify tests    --Quiet
@@ -64,7 +69,7 @@ Dotted does not show details for skipped after fatal error
 --Dotted --ExitOnFailure with empty test case
     Run tests    -X.    core/empty_testcase_and_uk.robot
     Stdout Should Be    dotted_exitonfailure_empty_test.txt
-    Stderr Should Be    empty.txt
+    Stderr Should Be    dotted_exitonfailure_empty_test_stderr.txt
     Check test tags    ${EMPTY}
     ${tc} =    Check test case    Empty Test Case    FAIL
     ...    Failure occurred and exit-on-failure mode is in use.

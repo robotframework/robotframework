@@ -14,13 +14,22 @@
 #  limitations under the License.
 
 import copy
-import re
 import os
+import re
 
 try:
     from lxml import etree as lxml_etree
 except ImportError:
     lxml_etree = None
+else:
+    # `lxml.etree._Attrib` doesn't extend `Mapping` and thus our `is_dict_like`
+    # doesn't recognize it unless we register it ourselves. Fixed in lxml 4.9.2:
+    # https://bugs.launchpad.net/lxml/+bug/1981760
+    from collections.abc import MutableMapping
+    Attrib = getattr(lxml_etree, '_Attrib', None)
+    if Attrib and not isinstance(Attrib, MutableMapping):
+        MutableMapping.register(Attrib)
+    del Attrib, MutableMapping
 
 from robot.api import logger
 from robot.api.deco import keyword
@@ -35,10 +44,10 @@ should_match = BuiltIn().should_match
 
 
 class XML:
-    """Robot Framework test library for verifying and modifying XML documents.
+    """Robot Framework library for verifying and modifying XML documents.
 
-    As the name implies, _XML_ is a test library for verifying contents of XML
-    files. In practice it is a pretty thin wrapper on top of Python's
+    As the name implies, _XML_ is a library for verifying contents of XML files.
+    In practice, it is a pretty thin wrapper on top of Python's
     [http://docs.python.org/library/xml.etree.elementtree.html|ElementTree XML API].
 
     The library has the following main usages:
@@ -77,12 +86,12 @@ class XML:
     structure, other keywords also accept paths to XML files and strings
     containing XML similarly as `Parse XML`. Notice that keywords that modify
     XML do not write those changes back to disk even if the source would be
-    given as a path to a file. Changes must always saved explicitly using
+    given as a path to a file. Changes must always be saved explicitly using
     `Save XML` keyword.
 
     When the source is given as a path to a file, the forward slash character
     (``/``) can be used as the path separator regardless the operating system.
-    On Windows also the backslash works, but it the test data it needs to be
+    On Windows also the backslash works, but in the data it needs to be
     escaped by doubling it (``\\\\``). Using the built-in variable ``${/}``
     naturally works too.
 
@@ -90,7 +99,7 @@ class XML:
 
     = Using lxml =
 
-    By default this library uses Python's standard
+    By default, this library uses Python's standard
     [http://docs.python.org/library/xml.etree.elementtree.html|ElementTree]
     module for parsing XML, but it can be configured to use
     [http://lxml.de|lxml] module instead when `importing` the library.
@@ -244,10 +253,10 @@ class XML:
     contain several useful attributes that can be accessed directly using
     the extended variable syntax.
 
-    The attributes that are both useful and convenient to use in the test
-    data are explained below. Also other attributes, including methods, can
+    The attributes that are both useful and convenient to use in the data
+    are explained below. Also other attributes, including methods, can
     be accessed, but that is typically better to do in custom libraries than
-    directly in the test data.
+    directly in the data.
 
     The examples use the same ``${XML}`` structure as the earlier examples.
 
@@ -447,20 +456,19 @@ class XML:
     """
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
     ROBOT_LIBRARY_VERSION = get_version()
-    _xml_declaration = re.compile('^<\?xml .*\?>')
 
     def __init__(self, use_lxml=False):
         """Import library with optionally lxml mode enabled.
 
-        By default this library uses Python's standard
+        This library uses Python's standard
         [http://docs.python.org/library/xml.etree.elementtree.html|ElementTree]
-        module for parsing XML. If ``use_lxml`` argument is given a true value
-        (see `Boolean arguments`), the library will use [http://lxml.de|lxml]
-        module instead. See `Using lxml` section for benefits provided by lxml.
+        module for parsing XML by default. If ``use_lxml`` argument is given
+        a true value (see `Boolean arguments`), the [http://lxml.de|lxml] module
+        is used instead. See the `Using lxml` section for benefits provided by lxml.
 
         Using lxml requires that the lxml module is installed on the system.
         If lxml mode is enabled but the module is not installed, this library
-        will emit a warning and revert back to using the standard ElementTree.
+        emits a warning and reverts back to using the standard ElementTree.
         """
         use_lxml = is_truthy(use_lxml)
         if use_lxml and lxml_etree:
@@ -507,6 +515,8 @@ class XML:
         the whole structure. See `Parsing XML` section for more details and
         examples.
         """
+        if isinstance(source, os.PathLike):
+            source = str(source)
         with ETSource(source) as source:
             tree = self.etree.parse(source)
         if self.lxml_etree:
@@ -577,7 +587,7 @@ class XML:
         | ${children} =    | Get Elements | ${XML} | first/child |
         | Should Be Empty  |  ${children} |        |             |
         """
-        if is_string(source) or is_bytes(source):
+        if isinstance(source, (str, bytes, os.PathLike)):
             source = self.parse_xml(source)
         finder = ElementFinder(self.etree, self.modern_etree, self.lxml_etree)
         return finder.find_all(source, xpath)
@@ -848,7 +858,7 @@ class XML:
         should_match(attr, pattern, message, values=False)
 
     def element_should_not_have_attribute(self, source, name, xpath='.', message=None):
-        """Verifies that the specified element does not have  attribute ``name``.
+        """Verifies that the specified element does not have attribute ``name``.
 
         The element whose attribute is verified is specified using ``source``
         and ``xpath``. They have exactly the same semantics as with
@@ -965,8 +975,10 @@ class XML:
         Like `Set Element Tag` but sets the tag of all elements matching
         the given ``xpath``.
         """
+        source = self.get_element(source)
         for elem in self.get_elements(source, xpath):
             self.set_element_tag(elem, tag)
+        return source
 
     @keyword(types=None)
     def set_element_text(self, source, text=None, tail=None, xpath='.'):
@@ -1007,8 +1019,10 @@ class XML:
         Like `Set Element Text` but sets the text or tail of all elements
         matching the given ``xpath``.
         """
+        source = self.get_element(source)
         for elem in self.get_elements(source, xpath):
             self.set_element_text(elem, text, tail)
+        return source
 
     def set_element_attribute(self, source, name, value, xpath='.'):
         """Sets attribute ``name`` of the specified element to ``value``.
@@ -1043,8 +1057,10 @@ class XML:
         Like `Set Element Attribute` but sets the attribute of all elements
         matching the given ``xpath``.
         """
+        source = self.get_element(source)
         for elem in self.get_elements(source, xpath):
             self.set_element_attribute(elem, name, value)
+        return source
 
     def remove_element_attribute(self, source, name, xpath='.'):
         """Removes attribute ``name`` from the specified element.
@@ -1077,8 +1093,10 @@ class XML:
         Like `Remove Element Attribute` but removes the attribute of all
         elements matching the given ``xpath``.
         """
+        source = self.get_element(source)
         for elem in self.get_elements(source, xpath):
             self.remove_element_attribute(elem, name)
+        return source
 
     def remove_element_attributes(self, source, xpath='.'):
         """Removes all attributes from the specified element.
@@ -1108,8 +1126,10 @@ class XML:
         Like `Remove Element Attributes` but removes all attributes of all
         elements matching the given ``xpath``.
         """
+        source = self.get_element(source)
         for elem in self.get_elements(source, xpath):
             self.remove_element_attributes(elem)
+        return source
 
     def add_element(self, source, element, index=None, xpath='.'):
         """Adds a child element to the specified element.
@@ -1281,7 +1301,7 @@ class XML:
         ``xpath``. They have exactly the same semantics as with `Get Element`
         keyword.
 
-        By default the string is returned as Unicode. If ``encoding`` argument
+        The string is returned as Unicode by default. If ``encoding`` argument
         is given any value, the string is returned as bytes in the specified
         encoding. The resulting string never contains the XML declaration.
 
@@ -1289,7 +1309,7 @@ class XML:
         """
         source = self.get_element(source, xpath)
         string = self.etree.tostring(source, encoding='UTF-8').decode('UTF-8')
-        string = self._xml_declaration.sub('', string).strip()
+        string = re.sub(r'^<\?xml .*\?>', '', string).strip()
         if encoding:
             string = string.encode(encoding)
         return string
@@ -1327,7 +1347,8 @@ class XML:
         Use `Element To String` if you just need a string representation of
         the element.
         """
-        path = os.path.abspath(path.replace('/', os.sep))
+        path = os.path.abspath(str(path) if isinstance(path, os.PathLike)
+                               else path.replace('/', os.sep))
         elem = self.get_element(source)
         tree = self.etree.ElementTree(elem)
         config = {'encoding': encoding}

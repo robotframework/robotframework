@@ -25,6 +25,14 @@ robot.api.exceptions module
    :undoc-members:
    :show-inheritance:
 
+robot.api.interfaces module
+---------------------------
+
+.. automodule:: robot.api.interfaces
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 robot.api.logger module
 -----------------------
 

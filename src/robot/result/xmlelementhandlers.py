@@ -48,9 +48,8 @@ class ElementHandler:
     def get_child_handler(self, tag):
         if tag not in self.children:
             if not self.tag:
-                raise DataError("Incompatible root element '%s'." % tag)
-            raise DataError("Incompatible child element '%s' for '%s'."
-                            % (tag, self.tag))
+                raise DataError(f"Incompatible root element '{tag}'.")
+            raise DataError(f"Incompatible child element '{tag}' for '{self.tag}'.")
         return self.element_handlers[tag]
 
     def start(self, elem, result):
@@ -107,10 +106,13 @@ class TestHandler(ElementHandler):
     tag = 'test'
     # 'tags' is for RF < 4 compatibility.
     children = frozenset(('doc', 'tags', 'tag', 'timeout', 'status', 'kw', 'if', 'for',
-                          'try', 'while', 'msg'))
+                          'try', 'while', 'return', 'break', 'continue', 'error', 'msg'))
 
     def start(self, elem, result):
-        return result.tests.create(name=elem.get('name', ''))
+        lineno = elem.get('line')
+        if lineno:
+            lineno = int(lineno)
+        return result.tests.create(name=elem.get('name', ''), lineno=lineno)
 
 
 @ElementHandler.register
@@ -119,23 +121,20 @@ class KeywordHandler(ElementHandler):
     # 'arguments', 'assign' and 'tags' are for RF < 4 compatibility.
     children = frozenset(('doc', 'arguments', 'arg', 'assign', 'var', 'tags', 'tag',
                           'timeout', 'status', 'msg', 'kw', 'if', 'for', 'try',
-                          'while', 'return'))
+                          'while', 'return', 'break', 'continue', 'error'))
 
     def start(self, elem, result):
         elem_type = elem.get('type')
         if not elem_type:
             creator = self._create_keyword
         else:
-            creator = getattr(self, '_create_%s' % elem_type.lower().replace(' ', '_'))
+            creator = getattr(self, '_create_' + elem_type.lower())
         return creator(elem, result)
 
     def _create_keyword(self, elem, result):
         try:
             body = result.body
         except AttributeError:
-            # Ignore keywords under RETURN etc. They can only be run by listeners.
-            if getattr(result, 'type', '') in ('RETURN', 'CONTINUE', 'BREAK'):
-                return None
             body = self._get_body_for_suite_level_keyword(result)
         return body.create_keyword(kwname=elem.get('name', ''),
                                    libname=elem.get('library'),
@@ -150,7 +149,7 @@ class KeywordHandler(ElementHandler):
         kw_type = 'teardown' if result.tests or result.suites else 'setup'
         keyword = getattr(result, kw_type)
         if not keyword:
-            keyword.config(kwname='Implicit %s' % kw_type, status=keyword.PASS)
+            keyword.config(kwname=f'Implicit {kw_type}', status=keyword.PASS)
         return keyword.body
 
     def _create_setup(self, elem, result):
@@ -175,26 +174,34 @@ class KeywordHandler(ElementHandler):
 @ElementHandler.register
 class ForHandler(ElementHandler):
     tag = 'for'
-    children = frozenset(('var', 'value', 'doc', 'status', 'iter', 'msg', 'kw'))
+    children = frozenset(('var', 'value', 'iter', 'status', 'doc', 'msg', 'kw'))
 
     def start(self, elem, result):
-        return result.body.create_for(flavor=elem.get('flavor'))
+        return result.body.create_for(flavor=elem.get('flavor'),
+                                      start=elem.get('start'),
+                                      mode=elem.get('mode'),
+                                      fill=elem.get('fill'))
 
 
 @ElementHandler.register
 class WhileHandler(ElementHandler):
     tag = 'while'
-    children = frozenset(('doc', 'status', 'iter', 'msg', 'kw'))
+    children = frozenset(('iter', 'status', 'doc', 'msg', 'kw'))
 
     def start(self, elem, result):
-        return result.body.create_while(condition=elem.get('condition'))
+        return result.body.create_while(
+            condition=elem.get('condition'),
+            limit=elem.get('limit'),
+            on_limit=elem.get('on_limit'),
+            on_limit_message=elem.get('on_limit_message')
+        )
 
 
 @ElementHandler.register
 class IterationHandler(ElementHandler):
     tag = 'iter'
     children = frozenset(('var', 'doc', 'status', 'kw', 'if', 'for', 'msg', 'try',
-                          'while', 'return', 'break', 'continue'))
+                          'while', 'return', 'break', 'continue', 'error'))
 
     def start(self, elem, result):
         return result.body.create_iteration()
@@ -203,7 +210,7 @@ class IterationHandler(ElementHandler):
 @ElementHandler.register
 class IfHandler(ElementHandler):
     tag = 'if'
-    children = frozenset(('status', 'branch', 'msg', 'doc'))
+    children = frozenset(('branch', 'status', 'doc', 'msg', 'kw'))
 
     def start(self, elem, result):
         return result.body.create_if()
@@ -212,8 +219,8 @@ class IfHandler(ElementHandler):
 @ElementHandler.register
 class BranchHandler(ElementHandler):
     tag = 'branch'
-    children = frozenset(('status', 'kw', 'if', 'for', 'try', 'while', 'msg',
-                          'doc', 'return', 'pattern', 'break', 'continue'))
+    children = frozenset(('status', 'kw', 'if', 'for', 'try', 'while', 'msg', 'doc',
+                          'return', 'pattern', 'break', 'continue', 'error'))
 
     def start(self, elem, result):
         return result.body.create_branch(**elem.attrib)
@@ -222,7 +229,7 @@ class BranchHandler(ElementHandler):
 @ElementHandler.register
 class TryHandler(ElementHandler):
     tag = 'try'
-    children = frozenset(('status', 'branch', 'msg', 'doc'))
+    children = frozenset(('branch', 'status', 'doc', 'msg', 'kw'))
 
     def start(self, elem, result):
         return result.body.create_try()
@@ -265,13 +272,19 @@ class BreakHandler(ElementHandler):
 
 
 @ElementHandler.register
+class ErrorHandler(ElementHandler):
+    tag = 'error'
+    children = frozenset(('status', 'msg', 'value'))
+
+    def start(self, elem, result):
+        return result.body.create_error()
+
+
+@ElementHandler.register
 class MessageHandler(ElementHandler):
     tag = 'msg'
 
     def end(self, elem, result):
-        # Ignore messages under RETURN etc. They can only be logged by listeners.
-        if getattr(result, 'type', '') in ('RETURN', 'CONTINUE', 'BREAK'):
-            return
         html_true = ('true', 'yes')    # 'yes' is compatibility for RF < 4.
         result.body.create_message(elem.text or '',
                                    elem.get('level', 'INFO'),
@@ -366,7 +379,7 @@ class VarHandler(ElementHandler):
         elif result.type == result.ITERATION:
             result.variables[elem.get('name')] = value
         else:
-            raise DataError("Invalid element '%s' for result '%r'." % (elem, result))
+            raise DataError(f"Invalid element '{elem}' for result '{result!r}'.")
 
 
 @ElementHandler.register

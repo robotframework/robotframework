@@ -64,39 +64,41 @@ Randomizing suites and tests with seed
     Order should be same    ${tests1}    ${tests2}
 
 Last option overrides all previous
-    [Setup]  Run Tests  --randomize suites --randomize tests --randomize none  misc/multiple_suites
+    [Setup]    Run Tests    --randomize suites --randomize tests --randomize none    misc/multiple_suites
     Suites should be in default order
     Tests should be in default order
 
 Invalid option value
-    Run Should Fail  --randomize INVALID ${TESTFILE}  Option '--randomize' does not support value 'INVALID'.
+    Run Should Fail    --randomize INVALID ${TESTFILE}
+    ...    Invalid value for option '--randomize': Expected 'TESTS', 'SUITES', 'ALL' or 'NONE', got 'INVALID'.
 
 Invalid seed value
-    Run Should Fail  --randomize all:test ${TESTFILE}  Option '--randomize' does not support value 'all:test'.
+    Run Should Fail    --randomize all:bad ${TESTFILE}
+    ...    Invalid value for option '--randomize': Seed should be integer, got 'BAD'.
 
 *** Keywords ***
 Check That Default Orders Are Correct
-    Run Tests  ${EMPTY}  misc/multiple_suites
+    Run Tests    ${EMPTY}    misc/multiple_suites
     Suites should be in default order
     Tests should be in default order
 
 Suites Should Be Randomized
     Should Not Be Equal    ${{[suite.name for suite in $SUITE.suites]}}    ${DEFAULT SUITE ORDER}
-    [Return]  ${SUITE.suites}
+    RETURN    ${SUITE.suites}
 
 Suites should be in default order
     Should Be Equal    ${{[suite.name for suite in $SUITE.suites]}}    ${DEFAULT SUITE ORDER}
-    [Return]  ${SUITE.suites}
+    RETURN    ${SUITE.suites}
 
 Tests Should Be Randomized
     ${tests} =  Get Tests
     Should Not Be Equal    ${{[test.name for test in $tests]}}    ${DEFAULT TEST ORDER}
-    [Return]  ${tests}
+    RETURN    ${tests}
 
 Tests should be in default order
     ${tests} =  Get Tests
     Should Be Equal    ${{[test.name for test in $tests]}}    ${DEFAULT TEST ORDER}
-    [Return]  ${tests}
+    RETURN    ${tests}
 
 Order should be same
     [Arguments]    ${first}    ${second}
@@ -105,10 +107,11 @@ Order should be same
 Get Tests
     # This keyword is needed because 'Sub.Suite.1' is directory and thus doesn't itself have tests
     ${tests} =  Set Variable If  '${SUITE.suites[0].name}' == 'Sub.Suite.1'  ${SUITE.suites[0].suites[0].tests}  ${SUITE.suites[0].tests}
-    [Return]  ${tests}
+    RETURN    ${tests}
 
 Randomized metadata is added
     [Arguments]    ${what}    ${seed}=*
     Should Match    ${SUITE.metadata['Randomized']}    ${what} (seed ${seed})
-    Run Keyword If    ${SUITE.suites}
-    ...    Should Be Equal    ${SUITE.suites[0].metadata.get('Randomized')}    ${NONE}
+    FOR    ${child}    IN    @{SUITE.suites}
+        Should Not Contain    ${child.metadata}    Randomized
+    END

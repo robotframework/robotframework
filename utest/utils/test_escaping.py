@@ -157,7 +157,7 @@ class TestEscape(unittest.TestCase):
             assert_equal(escape(inp), exp, inp)
 
     def test_escape_control_words(self):
-        for inp in ['ELSE', 'ELSE IF', 'AND']:
+        for inp in ['ELSE', 'ELSE IF', 'AND', 'WITH NAME', 'AS']:
             assert_equal(escape(inp), '\\' + inp)
             assert_equal(escape(inp.lower()), inp.lower())
             assert_equal(escape('other' + inp), 'other' + inp)

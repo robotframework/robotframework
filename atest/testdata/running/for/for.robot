@@ -7,7 +7,7 @@ Variables         binary_list.py
 @{RESULT}
 ${WRONG VALUES}   Number of FOR loop values should be multiple of its variables.
 ${INVALID FOR}    'For' is a reserved keyword. It must be an upper case 'FOR' when used as a marker.
-${INVALID END}    'End' is a reserved keyword. It must be an upper case 'END' when used as a marker to close a block.
+${INVALID END}    END is not allowed in this context.
 
 *** Test Cases ***
 Simple loop
@@ -276,7 +276,7 @@ Characters that are illegal in XML
 
 Old :FOR syntax is not supported
     [Documentation]    FAIL
-    ...    Support for the old for loop syntax has been removed. Replace ':FOR' with 'FOR', end the loop with 'END', and remove escaping backslashes.
+    ...    Support for the old FOR loop syntax has been removed. Replace ':FOR' with 'FOR', end the loop with 'END', and remove escaping backslashes.
     :FOR    ${x}    IN    a    b    c
        Fail    Should not be executed
     END
@@ -284,7 +284,7 @@ Old :FOR syntax is not supported
 
 Escaping with backslash is not supported
     [Documentation]    FAIL
-    ...    No keyword with name '\\' found.  If it is used inside a for loop, remove escaping backslashes and end the loop with 'END'.
+    ...    No keyword with name '\\' found. If it is used inside a for loop, remove escaping backslashes and end the loop with 'END'.
     FOR    ${var}    IN    one    two
     \    Fail    Should not be executed
     END
@@ -312,18 +312,18 @@ Invalid END usage 2
     Invalid END usage in UK
 
 Empty body
-    [Documentation]    FAIL    FOR loop has empty body.
+    [Documentation]    FAIL    FOR loop cannot be empty.
     FOR    ${var}    IN    one    two
     END
     Fail    Not executed
 
 No END
-    [Documentation]    FAIL    FOR loop has no closing END.
+    [Documentation]    FAIL    FOR loop must have closing END.
     FOR    ${var}    IN    one    two
     Fail    Not executed
 
 Invalid END
-    [Documentation]    FAIL    END does not accept arguments.
+    [Documentation]    FAIL    END does not accept arguments, got 'ooops'.
     FOR    ${var}    IN    one    two
         Fail    Not executed
     END    ooops
@@ -437,7 +437,7 @@ Syntax error in nested loop 1
     END
 
 Syntax error in nested loop 2
-    [Documentation]    FAIL    FOR loop has no closing END.
+    [Documentation]    FAIL    FOR loop must have closing END.
     FOR    ${x}    IN    end    missing
         FOR    ${y}    IN    ok
             Fail    Should not be executed
@@ -465,8 +465,8 @@ Unexecuted
 Header at the end of file
     [Documentation]    FAIL
     ...    Multiple errors:
-    ...    - FOR loop has empty body.
-    ...    - FOR loop has no closing END.
+    ...    - FOR loop cannot be empty.
+    ...    - FOR loop must have closing END.
     Header at the end of file
 
 *** Keywords ***
@@ -520,6 +520,7 @@ Nested For In UK 2
     Fail    This ought to be enough
 
 Invalid END usage in UK
+    No Operation
     END
 
 Header at the end of file

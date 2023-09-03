@@ -41,7 +41,7 @@ Non-ASCII Failure in Keyword Teardown
     Non-ASCII Failure in Keyword Teardown
 
 Keyword cannot have only teardown
-    [Documentation]  FAIL User keyword 'Keyword cannot have only teardown' contains no keywords.
+    [Documentation]  FAIL User keyword cannot be empty.
     Keyword cannot have only teardown
 
 Replacing Variables in Keyword Teardown Fails
@@ -59,11 +59,11 @@ Failing Keyword with Teardown
     Log   Executed if in nested Teardown
     [Teardown]  Log  In Failing UK Teardown
 
-Keyword with Teardown and ${embedded} ${arguments:a.*}
+Keyword with Teardown and ${embedded} ${arguments:A.*}
     Log  In UK with ${embedded} ${arguments}
     [Teardown]  Log  In Teardown of UK with ${embedded} ${arguments}
 
-Failing Keyword with Teardown and ${embedded} ${arguments:a.*}
+Failing Keyword with Teardown and ${embedded} ${arguments:[Aa].*}
     Fail  Expected Failure in UK with ${embedded} ${arguments}
     [Teardown]  Log  In Teardown of Failing UK with ${embedded} ${arguments}
 

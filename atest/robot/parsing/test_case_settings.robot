@@ -42,17 +42,21 @@ Documentation
     Verify Documentation    Documentation in single line and column.
 
 Documentation in multiple columns
-    Verify Documentation    Documentation for this test case in multiple columns
+    Verify Documentation    Documentation${SPACE*4}for this test case${SPACE*4}in multiple columns
 
 Documentation in multiple rows
     Verify Documentation    1st logical line
     ...    is shortdoc.
     ...
     ...    This documentation has multiple rows
-    ...    and also multiple columns.
+    ...    and also${SPACE*4}multiple columns.
+    ...
+    ...    Newlines can also be added literally with "\n".
+    ...    If a row ends with a newline
+    ...    or backslash no automatic newline is added.
     ...
     ...    | table | =header= |
-    ...    | foo | bar |
+    ...    | foo${SPACE*3}|${SPACE*4}bar${SPACE*3}|
     ...    | ragged |
 
 Documentation with variables
@@ -87,7 +91,7 @@ Empty and NONE tags are ignored
 
 Duplicate tags are ignored and first used format has precedence
     [Documentation]    Case, space and underscore insensitive
-    Verify Tags        FORCE-1    Test_1    test 2
+    Verify Tags        force-1    Test_1    test 2
 
 Tags in multiple rows
     Verify Tags        force-1    test-0    test-1    test-2    test-3    test-4    test-5
@@ -147,11 +151,6 @@ Template
 Timeout
     Verify Timeout    1 day
 
-Timeout with message
-    Verify Timeout    1 minute 39 seconds 999 milliseconds
-    Error In File    0    parsing/test_case_settings.robot    184
-    ...    Setting 'Timeout' accepts only one value, got 2.
-
 Default timeout
     Verify Timeout    1 minute 39 seconds 999 milliseconds
 
@@ -176,15 +175,13 @@ Multiple settings
 
 Invalid setting
     Check Test Case    ${TEST NAME}
-    Error In File    1    parsing/test_case_settings.robot    217
-    ...    Non-existing setting 'Invalid'.
+
+Setting not valid with tests
+    Check Test Case    ${TEST NAME}
 
 Small typo should provide recommendation
-    Check Test Doc    ${TEST NAME}
-    Error In File    2    parsing/test_case_settings.robot    221
-    ...    SEPARATOR=\n
-    ...    Non-existing setting 'Doc U ment a tion'. Did you mean:
-    ...    ${SPACE*4}Documentation
+    Check Test Case    ${TEST NAME}
+
 
 *** Keywords ***
 Verify Documentation

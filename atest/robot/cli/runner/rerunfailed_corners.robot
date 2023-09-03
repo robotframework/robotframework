@@ -17,6 +17,13 @@ Stops on error when output contains only passing test cases
     Stderr Should Be Equal To
     ...  [ ERROR ] Collecting failed tests from '${RUN FAILED FROM}' failed: All tests passed.${USAGE TIP}\n
 
+Runs when there are only passing tests and using --RunEmptySuite
+    [Setup]    File Should Exist    ${RUN FAILED FROM}
+    Run Tests    -R ${RUN FAILED FROM} --runemptysuite    cli/runfailed/onlypassing
+    Should Be Equal     ${SUITE.status}    SKIP
+    Length Should Be    ${SUITE.suites}    0
+    Length Should Be    ${SUITE.tests}     0
+
 Stops on error when output contains only passing tasks
     Generate output  cli/runfailed/onlypassing    options=--rpa
     Run Tests Without Processing Output  -R ${RUN FAILED FROM}  cli/runfailed/onlypassing

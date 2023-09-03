@@ -19,9 +19,10 @@ Logging with levels
     Check Log Message    ${tc.kws[0].msgs[1]}    Trace message    TRACE
     Check Log Message    ${tc.kws[0].msgs[2]}    Debug message    DEBUG
     Check Log Message    ${tc.kws[0].msgs[3]}    Info message     INFO
-    Check Log Message    ${tc.kws[0].msgs[4]}    Html message     INFO    html=True
-    Check Log Message    ${tc.kws[0].msgs[5]}    Warn message     WARN
-    Check Log Message    ${tc.kws[0].msgs[6]}    Error message    ERROR
+    Check Log Message    ${tc.kws[0].msgs[4]}    Console message     INFO
+    Check Log Message    ${tc.kws[0].msgs[5]}    Html message     INFO    html=True
+    Check Log Message    ${tc.kws[0].msgs[6]}    Warn message     WARN
+    Check Log Message    ${tc.kws[0].msgs[7]}    Error message    ERROR
     Check Log Message    ${ERRORS[0]}    Warn message     WARN
     Check Log Message    ${ERRORS[1]}    Error message    ERROR
 
@@ -63,6 +64,12 @@ Logging HTML
     Check Log Message    ${tc.kws[1].msgs[2]}    This is not html <br>    INFO
     Check Log Message    ${tc.kws[2].msgs[0]}    <i>Hello, stderr!!</i>    HTML
     Stderr Should Contain    *HTML* <i>Hello, stderr!!</i>
+
+Logging CONSOLE
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.kws[0].msgs[0]}    Hello info and console!
+    Check Log Message    ${tc.kws[1].msgs[0]}    Hello info and console!
+    Stdout Should Contain    Hello info and console!\nHello info and console!\n
 
 FAIL is not valid log level
     ${tc} =    Check Test Case    ${TEST NAME}

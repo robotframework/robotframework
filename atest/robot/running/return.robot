@@ -46,15 +46,19 @@ In nested FOR/IF structure
     Check Test Case    ${TESTNAME}
 
 In test
-    ${tc} =    Check Test Case    ${TESTNAME}
-    Check Keyword Data    ${tc.body[0]}    Reserved.Return    status=FAIL
+    Check Test Case    ${TESTNAME}
 
 In test with values
-    ${tc} =    Check Test Case    ${TESTNAME}
-    Check Keyword Data    ${tc.body[0]}    Reserved.Return    status=FAIL    args=v1, v2
+    Check Test Case    ${TESTNAME}
 
 In test inside IF
     Check Test Case    ${TESTNAME}
 
 In test inside FOR
+    Check Test Case    ${TESTNAME}
+
+In test inside WHILE
+    Check Test Case    ${TESTNAME}
+
+In test inside TRY
     Check Test Case    ${TESTNAME}

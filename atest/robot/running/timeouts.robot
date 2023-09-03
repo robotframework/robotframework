@@ -16,14 +16,14 @@ Timeouted Test Passes
 Timeouted Test Fails Before Timeout
     Check Test Case    Failing Before Timeout
 
-Show Correct Trace Back When Failing Before Timeout
+Show Correct Traceback When Failing Before Timeout
     ${tc} =    Check Test Case    ${TEST NAME}
     ${expected} =    Catenate    SEPARATOR=\n
     ...    Traceback (most recent call last):
     ...    ${SPACE*2}File "*", line *, in exception
     ...    ${SPACE*4}raise exception(msg)
     ...    RuntimeError: Failure before timeout
-    Check Log Message    ${tc.kws[0].msgs[-1]}    ${expected}    pattern=yes    level=DEBUG
+    Check Log Message    ${tc.kws[0].msgs[-1]}    ${expected}    DEBUG    pattern=True    traceback=True
 
 Timeouted Test Timeouts
     Check Test Case    Sleeping And Timeouting

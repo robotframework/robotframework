@@ -1,4 +1,5 @@
 *** Settings ***
+Library           OperatingSystem
 Suite Setup       Run Libdoc And Parse Output    ${TESTDATADIR}/ExampleSpec.xml
 Resource          libdoc_resource.robot
 
@@ -69,17 +70,31 @@ Keyword Documentation
     ...    | Your Keyword | yyy |
     ...
     ...    See `My Keyword` for no more information.
+    Keyword Short Doc Should be    0    Takes one `arg` and *does nothing* with it.
     Keyword Doc Should Be          1
     ...    Does nothing & <doc> has "stuff" to 'escape'!! and ignored indentation
     ...    Tags: in spec these wont become tags
+    Keyword Short Doc Should be    1
+    ...    Does nothing & <doc> has "stuff" to 'escape'!! and ignored indentation Tags: in spec these wont become tags
 
 Non ASCII
     Keyword Doc Should Be          2    Hyvää yötä.\n\nСпасибо!
+    Keyword Shortdoc Should Be     2    Hyvää yötä.
 
 Keyword Tags
     Keyword Tags Should Be         0    tag1    tag2
     Keyword Tags Should Be         1
     Keyword Tags Should Be         2
+
+Private Keywords
+    Keyword Should Not Be Private       0
+    Keyword Should Be Private           1
+    Keyword Should Not Be Private       2
+
+Keyword Deprecation
+    Keyword Should Not Be Deprecated    0
+    Keyword Should Be Deprecated        1
+    Keyword Should Not Be Deprecated    2
 
 Keyword Source Info
     Keyword Should Not Have Source    0
@@ -93,6 +108,13 @@ Keyword Source Info
     Copy File    ${TESTDATADIR}/ExampleSpec.xml    %{TEMPDIR}/Example.libspec
     Run Libdoc And Parse Output    %{TEMPDIR}/Example.libspec
     Test Everything
+
+SOURCE_DATE_EPOCH is honored in Libdoc output
+    [Setup]    Set Environment Variable    SOURCE_DATE_EPOCH    0
+    Copy File    ${TESTDATADIR}/ExampleSpec.xml    %{TEMPDIR}/Example.libspec
+    Run Libdoc And Parse Output    %{TEMPDIR}/Example.libspec
+    Generated Should Be    1970-01-01T00:00:00+00:00
+    [Teardown]    Remove Environment Variable    SOURCE_DATE_EPOCH
 
 *** Keywords ***
 Test Everything
@@ -126,6 +148,12 @@ Test Everything
     Keyword Tags Should Be            0    tag1    tag2
     Keyword Tags Should Be            1
     Keyword Tags Should Be            2
+    Keyword Should Not Be Private     0
+    Keyword Should Be Private         1
+    Keyword Should Not Be Private     2
+    Keyword Should Not Be Deprecated  0
+    Keyword Should Be Deprecated      1
+    Keyword Should Not Be Deprecated  2
     Keyword Should Not Have Source    0
     Keyword Should Not Have Lineno    0
     Keyword Should Not Have Source    1

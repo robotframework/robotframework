@@ -2,7 +2,6 @@
 Resource         libdoc_resource.robot
 Test Setup       Remove File    ${OUT HTML}
 Test Template    Run libdoc and verify error
-Test Teardown    Should Not Exist    ${OUT HTML}
 
 *** Test Cases ***
 No arguments
@@ -22,6 +21,7 @@ Invalid format
     --format XML:XXX BuiltIn ${OUT HTML}     Format must be 'HTML', 'XML', 'JSON' or 'LIBSPEC', got 'XML:XXX'.
     --format XML:HTML BuiltIn ${OUT HTML}    Format must be 'HTML', 'XML', 'JSON' or 'LIBSPEC', got 'XML:HTML'.
     BuiltIn out.ext                          Format must be 'HTML', 'XML', 'JSON' or 'LIBSPEC', got 'EXT'.
+    BuiltIn BuiltIn                          Format must be 'HTML', 'XML', 'JSON' or 'LIBSPEC', got ''.
 
 Invalid specdocformat
     -s XXX BuiltIn ${OUT HTML}                Spec doc format must be 'RAW' or 'HTML', got 'XXX'.
@@ -35,6 +35,10 @@ Invalid doc format
 
 Invalid doc format in library
     ${TESTDATADIR}/DocFormatInvalid.py ${OUT HTML}   Invalid documentation format 'INVALID'.
+
+Invalid theme
+    --theme bad String ${OUT XML}                    Theme must be 'DARK', 'LIGHT' or 'NONE', got 'BAD'.
+    --theme light --format xml String ${OUT XML}     The --theme option is only applicable with HTML outputs.
 
 Non-existing library
     NonExistingLib ${OUT HTML}   Importing library 'NonExistingLib' failed: *
@@ -53,11 +57,17 @@ Non-XML spec
     [Teardown]    Remove File    ${OUT XML}
 
 Invalid resource
-    ${CURDIR}/invalid_usage.robot ${OUT HTML}
-    ...   ? ERROR ? Error in file '*' on line 3: Setting 'Test Setup' is not allowed in resource file.
-    ...   ? ERROR ? Error in file '*' on line 4: Setting 'Test Template' is not allowed in resource file.
-    ...   ? ERROR ? Error in file '*' on line 5: Setting 'Test Teardown' is not allowed in resource file.
-    ...   Error in file '*[/\\]invalid_usage.robot' on line 7: Resource file with 'Test Cases' section is invalid.
+    ${TESTDATADIR}/invalid_resource.resource ${OUT HTML}
+    ...   ? ERROR ? Error in file '*[/\\]invalid_resource.resource' on line 2: Setting 'Metadata' is not allowed in resource file.
+    ...   ? ERROR ? Error in file '*[/\\]invalid_resource.resource' on line 3: Setting 'Test Setup' is not allowed in resource file.
+    ...   Error in file '*[/\\]invalid_resource.resource' on line 5: Resource file with 'Test Cases' section is invalid.
+
+Invalid resource with '.robot' extension
+    ${TESTDATADIR}/invalid_resource.robot ${OUT HTML}
+    ...   ? ERROR ? Error in file '*[/\\]invalid_resource.robot' on line 2: Setting 'Metadata' is not allowed in resource file.
+    ...   ? ERROR ? Error in file '*[/\\]invalid_resource.robot' on line 3: Setting 'Test Setup' is not allowed in resource file.
+    ...   ${OUT HTML}
+    ...   fatal=False
 
 Invalid output file
     [Setup]    Run Keywords
@@ -70,10 +80,16 @@ Invalid output file
     ...    Remove Directory    ${OUT HTML}    AND
     ...    Remove Directory    ${OUT XML}
 
-invalid Spec File version
-    ${TESTDATADIR}/OldSpec.xml ${OUT XML}    Invalid spec file version 'None'. Supported versions are 3 and 4.
+Invalid Spec File version
+    ${TESTDATADIR}/OldSpec.xml ${OUT XML}    Invalid spec file version 'None'. Supported versions are 3, 4 and 5.
 
 *** Keywords ***
 Run libdoc and verify error
-    [Arguments]    ${args}    @{error}
-    Run libdoc and verify output    ${args}    @{error}    ${USAGE TIP[1:]}
+    [Arguments]    ${args}    @{error}    ${fatal}=True
+    IF    ${fatal}
+        Run Libdoc And Verify Output    ${args}    @{error}    ${USAGE TIP[1:]}
+        File Should Not Exist    ${OUT HTML}
+    ELSE
+        Run Libdoc And Verify Output    ${args}    @{error}
+        File Should Exist    ${OUT HTML}
+    END

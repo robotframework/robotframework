@@ -1,11 +1,12 @@
 import unittest
 import warnings
-from robot.utils.asserts import (assert_equal, assert_true, assert_raises,
-                                 assert_raises_with_msg)
+from pathlib import Path
 
 from robot.model import TestSuite
 from robot.running import TestSuite as RunningTestSuite
 from robot.result import TestSuite as ResultTestSuite
+from robot.utils.asserts import (assert_equal, assert_true, assert_raises,
+                                 assert_raises_with_msg)
 
 
 class TestTestSuite(unittest.TestCase):
@@ -39,7 +40,40 @@ class TestTestSuite(unittest.TestCase):
         assert_true(s2.parent is self.suite)
         assert_equal(list(self.suite.suites), [s1, s2])
 
-    def test_suite_name(self):
+    def test_name_from_source(self):
+        for inp, exp in [(None, ''), ('', ''), ('name', 'Name'), ('name.robot', 'Name'),
+                         ('naMe', 'naMe'), ('na_me', 'Na Me'), ('na_M_e_', 'na M e'),
+                         ('prefix__name', 'Name'), ('__n', 'N'), ('naMe__', 'naMe')]:
+            assert_equal(TestSuite.name_from_source(inp), exp)
+            suite = TestSuite(source=inp)
+            assert_equal(suite.name, exp)
+            suite.suites.create(name='xxx')
+            assert_equal(suite.name, exp or 'xxx')
+            suite.name = 'new name'
+            assert_equal(suite.name, 'new name')
+            if inp:
+                assert_equal(TestSuite(source=Path(inp)).name, exp)
+                assert_equal(TestSuite(source=Path(inp).absolute()).name, exp)
+
+    def test_name_from_source_with_extensions(self):
+        for ext, exp in [('z', 'X.Y'), ('.z', 'X.Y'), ('Z', 'X.Y'), ('y.z', 'X'),
+                         ('Y.z', 'X'), (['x', 'y', 'z'], 'X.Y')]:
+            assert_equal(TestSuite.name_from_source('x.y.z', ext), exp)
+            assert_equal(TestSuite.name_from_source('X.Y.Z', ext), exp)
+
+    def test_name_from_source_with_bad_extensions(self):
+        assert_raises_with_msg(
+            ValueError,
+            "File 'x.y' does not have extension 'z'.",
+            TestSuite.name_from_source, 'x.y', extension='z'
+        )
+        assert_raises_with_msg(
+            ValueError,
+            "File 'x.y' does not have extension 'a', 'b' or 'c'.",
+            TestSuite.name_from_source, 'x.y', ('a', 'b', 'c')
+        )
+
+    def test_suite_name_from_child_suites(self):
         suite = TestSuite()
         assert_equal(suite.name, '')
         assert_equal(suite.suites.create(name='foo').name, 'foo')
@@ -56,6 +90,50 @@ class TestTestSuite(unittest.TestCase):
         sub2 = sub1.suites.create(name='sub2')
         assert_equal(list(suite.suites), [sub1])
         assert_equal(list(sub1.suites), [sub2])
+
+    def test_adjust_source(self):
+        absolute = Path('.').absolute()
+        suite = TestSuite(source='dir')
+        suite.suites = [TestSuite(source='dir/x.robot'),
+                        TestSuite(source='dir/y.robot')]
+        assert_equal(suite.source, Path('dir'))
+        assert_equal(suite.suites[0].source, Path('dir/x.robot'))
+        assert_equal(suite.suites[1].source, Path('dir/y.robot'))
+        suite.adjust_source(root=absolute)
+        assert_equal(suite.source, absolute / 'dir')
+        assert_equal(suite.suites[0].source, absolute / 'dir/x.robot')
+        assert_equal(suite.suites[1].source, absolute / 'dir/y.robot')
+        suite.adjust_source(relative_to=absolute)
+        assert_equal(suite.source, Path('dir'))
+        assert_equal(suite.suites[0].source, Path('dir/x.robot'))
+        assert_equal(suite.suites[1].source, Path('dir/y.robot'))
+        suite.adjust_source(root='relative')
+        assert_equal(suite.source, Path('relative/dir'))
+        assert_equal(suite.suites[0].source, Path('relative/dir/x.robot'))
+        assert_equal(suite.suites[1].source, Path('relative/dir/y.robot'))
+        suite.adjust_source(relative_to='relative/dir', root=str(absolute))
+        assert_equal(suite.source, absolute)
+        assert_equal(suite.suites[0].source, absolute / 'x.robot')
+        assert_equal(suite.suites[1].source, absolute / 'y.robot')
+
+    def test_adjust_source_failures(self):
+        absolute = Path('x.robot').absolute()
+        assert_raises_with_msg(
+            ValueError, 'Suite has no source.',
+            TestSuite().adjust_source
+        )
+        assert_raises_with_msg(
+            ValueError, f"Cannot set root for absolute source '{absolute}'.",
+            TestSuite(source=absolute).adjust_source, root='whatever'
+        )
+        assert_raises(
+            ValueError,
+            TestSuite(source=absolute).adjust_source, relative_to='relative'
+        )
+        assert_raises(
+            ValueError,
+            TestSuite(source='relative').adjust_source, relative_to=absolute,
+        )
 
     def test_set_tags(self):
         suite = TestSuite()
@@ -79,6 +157,22 @@ class TestTestSuite(unittest.TestCase):
         assert_equal(list(suite.tests[1].tags), ['a', 't1'])
         assert_equal(list(suite.tests[2].tags), ['a'])
         assert_equal(list(suite.suites[0].tests[0].tags), ['a'])
+
+    def test_all_tests_and_test_count(self):
+        root = TestSuite()
+        assert_equal(root.has_tests, False)
+        assert_equal(root.test_count, 0)
+        assert_equal(list(root.all_tests), [])
+        for i in range(10):
+            suite = root.suites.create()
+            for j in range(100):
+                suite.tests.create()
+        assert_equal(root.has_tests, True)
+        assert_equal(root.test_count, 1000)
+        assert_equal(len(list(root.all_tests)), 1000)
+        for suite in root.suites:
+            assert_equal(suite.has_tests, True)
+            assert_equal(list(suite.all_tests), list(suite.tests))
 
     def test_configure_only_works_with_root_suite(self):
         for Suite in TestSuite, RunningTestSuite, ResultTestSuite:
@@ -129,18 +223,18 @@ class TestStringRepresentation(unittest.TestCase):
     def setUp(self):
         self.empty = TestSuite()
         self.ascii = TestSuite(name='Kekkonen')
-        self.non_ascii = TestSuite(name=u'hyv\xe4 nimi')
+        self.non_ascii = TestSuite(name='hyvä nimi')
 
     def test_str(self):
         for tc, expected in [(self.empty, ''),
                              (self.ascii, 'Kekkonen'),
-                             (self.non_ascii, u'hyv\xe4 nimi')]:
+                             (self.non_ascii, 'hyvä nimi')]:
             assert_equal(str(tc), expected)
 
     def test_repr(self):
         for tc, expected in [(self.empty, "TestSuite(name='')"),
                              (self.ascii, "TestSuite(name='Kekkonen')"),
-                             (self.non_ascii, u"TestSuite(name=%r)" % u'hyv\xe4 nimi')]:
+                             (self.non_ascii, "TestSuite(name='hyvä nimi')")]:
             assert_equal(repr(tc), 'robot.model.' + expected)
 
 

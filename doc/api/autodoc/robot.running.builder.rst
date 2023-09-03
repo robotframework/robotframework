@@ -25,10 +25,10 @@ robot.running.builder.parsers module
    :undoc-members:
    :show-inheritance:
 
-robot.running.builder.testsettings module
------------------------------------------
+robot.running.builder.settings module
+-------------------------------------
 
-.. automodule:: robot.running.builder.testsettings
+.. automodule:: robot.running.builder.settings
    :members:
    :undoc-members:
    :show-inheritance:

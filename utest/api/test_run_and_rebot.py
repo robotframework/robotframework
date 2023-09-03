@@ -101,10 +101,9 @@ class TestRun(RunningTestCase):
         self._assert_outputs()
 
     def test_multi_options_as_single_string(self):
-        assert_equal(run_without_outputs(self.data, exclude='fail', skip='pass',
-                                         skiponfailure='xxx'), 0)
-        self._assert_outputs([('FAIL', 0)])
-        self._assert_outputs([('1 test, 0 passed, 0 failed, 1 skipped', 1)])
+        assert_equal(run_without_outputs(self.data, include='?a??', skip='pass',
+                                         skiponfailure='fail'), 0)
+        self._assert_outputs([('2 tests, 0 passed, 0 failed, 2 skipped', 1)])
 
     def test_multi_options_as_tuples(self):
         assert_equal(run_without_outputs(self.data, exclude=('fail',), skip=('pass',),
@@ -115,7 +114,7 @@ class TestRun(RunningTestCase):
     def test_listener_gets_notification_about_log_report_and_output(self):
         listener = join(ROOT, 'utest', 'resources', 'Listener.py')
         assert_equal(run(self.data, output=OUTPUT_PATH, report=REPORT_PATH,
-                          log=LOG_PATH, listener=listener), 1)
+                         log=LOG_PATH, listener=listener), 1)
         self._assert_outputs(stdout=[('[output {0}]'.format(OUTPUT_PATH), 1),
                                      ('[report {0}]'.format(REPORT_PATH), 1),
                                      ('[log {0}]'.format(LOG_PATH), 1),
@@ -158,6 +157,19 @@ class TestRun(RunningTestCase):
         self._assert_outputs([('Pass       ', 1), ('Fail :: FAIL', 1)],
                              [("[ ERROR ] Executing model modifier 'integer' "
                                "failed: AttributeError: ", 1)])
+
+    def test_invalid_option_value(self):
+        stderr = StringIO()
+        assert_equal(run(self.data, loglevel='INV', stderr=stderr), 252)
+        self._assert_output(stderr, [("[ ERROR ] Invalid value for option '--loglevel': "
+                                      "Invalid level 'INV'.", 1)])
+        self._assert_outputs()
+
+    def test_invalid_option(self):
+        stderr = StringIO()
+        assert_equal(run(self.data, invalid=True, stderr=stderr), 252)
+        self._assert_output(stderr, [("[ ERROR ] Invalid option 'invalid'.", 1)])
+        self._assert_outputs()
 
     def test_run_cli_system_exits_by_default(self):
         exit = assert_raises(SystemExit, run_cli, ['-d', TEMP, self.data])
@@ -218,6 +230,19 @@ class TestRebot(RunningTestCase):
         assert_equal(rebot(self.data, outputdir=TEMP,
                            prerebotmodifier=modifier), 3)
         assert_equal(modifier.tests, ['Test 1.1', 'Test 1.2', 'Test 2.1'])
+
+    def test_invalid_option_value(self):
+        stderr = StringIO()
+        assert_equal(rebot(self.data, loglevel='INFO:INV', stderr=stderr), 252)
+        self._assert_output(stderr, [("[ ERROR ] Invalid value for option '--loglevel': "
+                                      "Invalid level 'INV'.", 1)])
+        self._assert_outputs()
+
+    def test_invalid_option(self):
+        stderr = StringIO()
+        assert_equal(rebot(self.data, inv=True, stderr=stderr, bad=-1), 252)
+        self._assert_output(stderr, [("[ ERROR ] Invalid options 'inv' and 'bad'.", 1)])
+        self._assert_outputs()
 
     def test_rebot_cli_system_exits_by_default(self):
         exit = assert_raises(SystemExit, rebot_cli, ['-d', TEMP, self.data])

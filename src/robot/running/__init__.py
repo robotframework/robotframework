@@ -15,20 +15,34 @@
 
 """Implements the core test execution logic.
 
-The main public entry points of this package are of the following two classes:
-
-* :class:`~robot.running.builder.builders.TestSuiteBuilder` for creating
-  executable test suites based on existing test case files and directories.
+The public API of this module consists of the following objects:
 
 * :class:`~robot.running.model.TestSuite` for creating an executable
   test suite structure programmatically.
 
-It is recommended to import both of these classes via the :mod:`robot.api`
-package like in the examples below. Also :class:`~robot.running.model.TestCase`
-and :class:`~robot.running.model.Keyword` classes used internally by the
-:class:`~robot.running.model.TestSuite` class are part of the public API.
-In those rare cases where these classes are needed directly, they can be
-imported from this package.
+* :class:`~robot.running.builder.builders.TestSuiteBuilder` for creating
+  executable test suites based on data on a file system.
+  Instead of using this class directly, it is possible to use the
+  :meth:`TestSuite.from_file_system <robot.running.model.TestSuite.from_file_system>`
+  classmethod that uses it internally.
+
+* Classes used by :class:`~robot.running.model.TestSuite`, such as
+  :class:`~robot.running.model.TestCase`, :class:`~robot.running.model.Keyword`
+  and :class:`~robot.running.model.If` that are defined in the
+  :mod:`robot.running.model` module. These classes are typically only needed
+  in type hints.
+
+* :class:`~robot.running.builder.settings.TestDefaults` that is part of the
+  `external parsing API`__ and also typically needed only in type hints.
+
+__ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#parser-interface
+
+:class:`~robot.running.model.TestSuite` and
+:class:`~robot.running.builder.builders.TestSuiteBuilder` can be imported also via
+the :mod:`robot.api` package.
+
+.. note:: Prior to Robot Framework 6.1, only some classes in
+          :mod:`robot.running.model` were exposed via :mod:`robot.running`.
 
 Examples
 --------
@@ -45,23 +59,21 @@ First, let's assume we have the following test suite in file
         [Setup]    Set Environment Variable    SKYNET    activated
         Environment Variable Should Be Set    SKYNET
 
-We can easily parse and create an executable test suite based on the above file
-using the :class:`~robot.running.builder.TestSuiteBuilder` class as follows::
+We can easily create an executable test suite based on the above file::
 
-    from robot.api import TestSuiteBuilder
+    from robot.api import TestSuite
 
-    suite = TestSuiteBuilder().build('path/to/activate_skynet.robot')
+    suite = TestSuite.from_file_system('path/to/activate_skynet.robot')
 
-That was easy. Let's next generate the same test suite from scratch
-using the :class:`~robot.running.model.TestSuite` class::
+That was easy. Let's next generate the same test suite from scratch::
 
     from robot.api import TestSuite
 
     suite = TestSuite('Activate Skynet')
     suite.resource.imports.library('OperatingSystem')
     test = suite.tests.create('Should Activate Skynet', tags=['smoke'])
-    test.setup.config('Set Environment Variable', args=['SKYNET', 'activated'])
-    test.keywords.create('Environment Variable Should Be Set', args=['SKYNET'])
+    test.setup.config(name='Set Environment Variable', args=['SKYNET', 'activated'])
+    test.body.create_keyword('Environment Variable Should Be Set', args=['SKYNET'])
 
 Not that complicated either, especially considering the flexibility. Notice
 that the suite created based on the file could also be edited further using
@@ -80,7 +92,7 @@ information::
     assert test.name == 'Should Activate Skynet'
     assert test.passed
     stats = result.suite.statistics
-    assert stats.total == 1 and stats.failed == 0
+    assert stats.total == 1 and stats.passed == 1 and stats.failed == 0
 
 Running the suite generates a normal output XML file, unless it is disabled
 by using ``output=None``. Generating log, report, and xUnit files based on
@@ -95,11 +107,12 @@ the results is possible using the
     ResultWriter('skynet.xml').write_results()
 """
 
-from .arguments import ArgInfo, ArgumentSpec, TypeConverter
-from .builder import TestSuiteBuilder, ResourceFileBuilder
+from .arguments import ArgInfo, ArgumentSpec, TypeConverter, TypeInfo
+from .builder import ResourceFileBuilder, TestDefaults, TestSuiteBuilder
 from .context import EXECUTION_CONTEXTS
-from .model import Keyword, TestCase, TestSuite
+from .model import (Break, Continue, Error, For, If, IfBranch, Keyword, Return,
+                    ResourceFile, TestCase, TestSuite, Try, TryBranch, While)
+from .runkwregister import RUN_KW_REGISTER
 from .testlibraries import TestLibrary
 from .usererrorhandler import UserErrorHandler
 from .userkeyword import UserLibrary
-from .runkwregister import RUN_KW_REGISTER

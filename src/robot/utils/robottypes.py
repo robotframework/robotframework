@@ -17,29 +17,25 @@ from collections.abc import Iterable, Mapping
 from collections import UserString
 from io import IOBase
 from os import PathLike
+from typing import Union, TypedDict, TypeVar
 try:
     from types import UnionType
 except ImportError:    # Python < 3.10
     UnionType = ()
-from typing import Union
-try:
-    from typing import TypedDict
-except ImportError:    # Python < 3.8
-    typeddict_types = ()
-else:
-    typeddict_types = (type(TypedDict('Dummy', {})),)
+
 try:
     from typing_extensions import TypedDict as ExtTypedDict
 except ImportError:
-    pass
-else:
-    typeddict_types += (type(ExtTypedDict('Dummy', {})),)
+    ExtTypedDict = None
 
 from .platform import PY_VERSION
 
 
 TRUE_STRINGS = {'TRUE', 'YES', 'ON', '1'}
 FALSE_STRINGS = {'FALSE', 'NO', 'OFF', '0', 'NONE', ''}
+typeddict_types = (type(TypedDict('Dummy', {})),)
+if ExtTypedDict:
+    typeddict_types += (type(ExtTypedDict('Dummy', {})),)
 
 
 def is_integer(item):
@@ -75,16 +71,22 @@ def is_dict_like(item):
 def is_union(item, allow_tuple=False):
     return (isinstance(item, UnionType)
             or getattr(item, '__origin__', None) is Union
-            or allow_tuple and isinstance(item, tuple))
+            or (allow_tuple and isinstance(item, tuple)))
 
 
 def type_name(item, capitalize=False):
+    """Return "non-technical" type name for objects and types.
+
+    For example, 'integer' instead of 'int' and 'file' instead of 'TextIOWrapper'.
+    """
     if getattr(item, '__origin__', None):
         item = item.__origin__
     if hasattr(item, '_name') and item._name:
         # Union, Any, etc. from typing have real name in _name and __name__ is just
-        # generic `SpecialForm`. Also pandas.Series has _name but it's None.
+        # generic `SpecialForm`. Also, pandas.Series has _name but it's None.
         name = item._name
+    elif is_union(item):
+        name = 'Union'
     elif isinstance(item, IOBase):
         name = 'file'
     else:
@@ -92,17 +94,52 @@ def type_name(item, capitalize=False):
         named_types = {str: 'string', bool: 'boolean', int: 'integer',
                        type(None): 'None', dict: 'dictionary'}
         name = named_types.get(typ, typ.__name__.strip('_'))
-        # Generics from typing. With newer versions we get "real" type via __origin__.
-        if PY_VERSION < (3, 7):
-            if name in ('List', 'Set', 'Tuple'):
-                name = name.lower()
-            elif name == 'Dict':
-                name = 'dictionary'
     return name.capitalize() if capitalize and name.islower() else name
 
 
+def type_repr(typ, nested=True):
+    """Return string representation for types.
+
+    Aims to look as much as the source code as possible. For example, 'List[Any]'
+    instead of 'typing.List[typing.Any]'.
+    """
+    if typ is type(None):
+        return 'None'
+    if typ is Ellipsis:
+        return '...'
+    if is_union(typ):
+        return ' | '.join(type_repr(a) for a in typ.__args__) if nested else 'Union'
+    name = _get_type_name(typ)
+    if nested and has_args(typ):
+        args = ', '.join(type_repr(a) for a in typ.__args__)
+        return f'{name}[{args}]'
+    return name
+
+
+def _get_type_name(typ):
+    for attr in '__name__', '_name':
+        name = getattr(typ, attr, None)
+        if name:
+            return name
+    return str(typ)
+
+
+def has_args(type):
+    """Helper to check has type valid ``__args__``.
+
+   ``__args__`` contains TypeVars when accessed directly from ``typing.List`` and
+   other such types with Python 3.8. Python 3.9+ don't have ``__args__`` at all.
+   Parameterize usages like ``List[int].__args__`` always work the same way.
+
+    This helper can be removed in favor of using ``hasattr(type, '__args__')``
+    when we support only Python 3.9 and newer.
+    """
+    args = getattr(type, '__args__', None)
+    return args and not all(isinstance(a, TypeVar) for a in args)
+
+
 def is_truthy(item):
-    """Returns `True` or `False` depending is the item considered true or not.
+    """Returns `True` or `False` depending on is the item considered true or not.
 
     Validation rules:
 

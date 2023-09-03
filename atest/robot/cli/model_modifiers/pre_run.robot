@@ -49,12 +49,12 @@ Modifiers are used before normal configuration
     ...    --include added --prerun ${CURDIR}/ModelModifier.py:CREATE:name=Created:tags=added    ${TEST DATA}
     Stderr Should Be Empty
     Length Should Be    ${SUITE.tests}    1
-    ${tc} =    Check test case    Created    FAIL    Test contains no keywords.
+    ${tc} =    Check test case    Created
     Lists should be equal    ${tc.tags}    ${{['added']}}
 
 Modify FOR and IF
     Run Tests    --prerun ${CURDIR}/ModelModifier.py    misc/for_loops.robot misc/if_else.robot
-    ${tc} =    Check Test Case    For In Range Loop In Test
+    ${tc} =    Check Test Case    FOR IN RANGE
     Check Log Message    ${tc.body[0].body[0].body[0].msgs[0]}   FOR
     Check Log Message    ${tc.body[0].body[1].body[0].msgs[0]}   is
     Check Log Message    ${tc.body[0].body[2].body[0].msgs[0]}   modified!

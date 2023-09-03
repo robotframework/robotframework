@@ -14,12 +14,14 @@
 #  limitations under the License.
 
 import getopt
+import glob
 import os
 import re
 import shlex
 import sys
-import glob
 import string
+import warnings
+from pathlib import Path
 
 from robot.errors import DataError, Information, FrameworkError
 from robot.version import get_full_version
@@ -31,6 +33,8 @@ from .robottypes import is_falsy, is_integer, is_string
 
 
 def cmdline2list(args, escaping=False):
+    if isinstance(args, Path):
+        return [str(args)]
     lexer = shlex.shlex(args, posix=True)
     if is_falsy(escaping):
         lexer.escape = ''
@@ -54,7 +58,7 @@ class ArgumentParser:
 
     def __init__(self, usage, name=None, version=None, arg_limits=None,
                  validator=None, env_options=None, auto_help=True,
-                 auto_version=True, auto_pythonpath=True,
+                 auto_version=True, auto_pythonpath='DEPRECATED',
                  auto_argumentfile=True):
         """Available options and tool name are read from the usage.
 
@@ -70,6 +74,11 @@ class ArgumentParser:
         self._validator = validator
         self._auto_help = auto_help
         self._auto_version = auto_version
+        if auto_pythonpath == 'DEPRECATED':
+            auto_pythonpath = False
+        else:
+            warnings.warn("ArgumentParser option 'auto_pythonpath' is deprecated "
+                          "since Robot Framework 5.0.")
         self._auto_pythonpath = auto_pythonpath
         self._auto_argumentfile = auto_argumentfile
         self._env_options = env_options
@@ -113,6 +122,7 @@ class ArgumentParser:
         stdin instead of a file.
 
         --pythonpath can be used to add extra path(s) to sys.path.
+        This functionality was deprecated in Robot Framework 5.0.
 
         --help and --version automatically generate help and version messages.
         Version is generated based on the tool name and version -- see __init__
@@ -158,20 +168,20 @@ class ArgumentParser:
         return opts, args
 
     def _parse_args(self, args):
-        args = [self._lowercase_long_option(a) for a in args]
+        args = [self._normalize_long_option(a) for a in args]
         try:
             opts, args = getopt.getopt(args, self._short_opts, self._long_opts)
         except getopt.GetoptError as err:
             raise DataError(err.msg)
         return self._process_opts(opts), self._glob_args(args)
 
-    def _lowercase_long_option(self, opt):
+    def _normalize_long_option(self, opt):
         if not opt.startswith('--'):
             return opt
         if '=' not in opt:
-            return opt.lower()
+            return '--%s' % opt.lower().replace('-', '')
         opt, value = opt.split('=', 1)
-        return '%s=%s' % (opt.lower(), value)
+        return '--%s=%s' % (opt.lower().replace('-', ''), value)
 
     def _process_possible_argfile(self, args):
         options = ['--argumentfile']
@@ -225,7 +235,7 @@ class ArgumentParser:
             res = self._opt_line_re.match(line)
             if res:
                 self._create_option(short_opts=[o[1] for o in res.group(1).split()],
-                                    long_opt=res.group(3).lower(),
+                                    long_opt=res.group(3).lower().replace('-', ''),
                                     takes_arg=bool(res.group(4)),
                                     is_multi=bool(res.group(5)))
 
@@ -349,7 +359,9 @@ class ArgFileParser:
         for opt in self._options:
             start = opt + '=' if opt.startswith('--') else opt
             for index, arg in enumerate(args):
-                normalized_arg = arg.lower() if opt.startswith('--') else arg
+                normalized_arg = (
+                    '--' + arg.lower().replace('-', '') if opt.startswith('--') else arg
+                )
                 # Handles `--argumentfile foo` and `-A foo`
                 if normalized_arg == opt and index + 1 < len(args):
                     return args[index+1], slice(index, index+2)

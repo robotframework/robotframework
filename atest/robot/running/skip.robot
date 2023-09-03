@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  --skip skip-this --SkipOnFailure skip-on-failure --noncritical non-crit    running/skip/
+Suite Setup     Run Tests  --skip skip-this --SkipOnFailure skip-on-failure    running/skip/
 Resource        atest_resource.robot
 
 *** Test Cases ***
@@ -91,6 +91,10 @@ Skip In Suite Teardown After Fail In Setup
 Skip In Directory Suite Teardown
     Check Test Case    ${TEST NAME}
 
+Tests have correct status if suite has nothing to run and directory suite setup uses skip
+    Check Test Case    `robot:skip` with skip in directory suite setup
+    Check Test Case    `--skip` with skip in directory suite setup
+
 Skip with Run Keyword and Ignore Error
     Check Test Case    ${TEST NAME}
 
@@ -106,6 +110,9 @@ Skip with Wait Until Keyword Succeeds
 Skipped with --skip
     Check Test Case    ${TEST NAME}
 
+Skipped when test is tagged with robot:skip
+    Check Test Case    ${TEST NAME}
+
 Skipped with --SkipOnFailure
     Check Test Case    ${TEST NAME}
 
@@ -116,29 +123,19 @@ Skipped with --SkipOnFailure when Failure in Test Teardown
     Check Test Case    ${TEST NAME}
 
 Skipped with --SkipOnFailure when Set Tags Used in Teardown
-    Check Test Case    Skipped with --SkipOnFailure when Set Tags Used in Teardown
+    Check Test Case    ${TEST NAME}
+
+Skipped although test fails since test is tagged with robot:skip-on-failure
+    Check Test Case    ${TEST NAME}
 
 Using Skip Does Not Affect Passing And Failing Tests
     Check Test Case    Passing Test
     Check Test Case    Failing Test
 
---NonCritical Is an Alias for --SkipOnFailure
-    Check Test Case    ${TEST NAME}
-
---Critical Is a Negative Alias for --SkipOnFailure
-    Run Tests    --critical pass    misc/pass_and_fail.robot
-    ${message} =    Catenate    SEPARATOR=\n
-    ...    Test failed but its tags matched '--SkipOnFailure' and it was marked skipped.
-    ...
-    ...    Original failure:
-    ...    Expected failure
-    Check Test Case    Fail    SKIP    ${message}
-
---Critical and --NonCritical together
-    Run Tests    --critical force --noncritical fail    misc/pass_and_fail.robot
-    ${message} =    Catenate    SEPARATOR=\n
-    ...    Test failed but its tags matched '--SkipOnFailure' and it was marked skipped.
-    ...
-    ...    Original failure:
-    ...    Expected failure
-    Check Test Case    Fail    SKIP    ${message}
+Suite setup and teardown are not run if all tests are unconditionally skipped or excluded
+    ${suite} =    Get Test Suite    All Skipped
+    Should Be True      not ($suite.setup or $suite.teardown)
+    Should Be True      not ($suite.suites[0].setup or $suite.suites[0].teardown)
+    Check Test Case     Skip using robot:skip
+    Check Test Case     Skip using --skip
+    Length Should Be    ${suite.suites[0].tests}    2

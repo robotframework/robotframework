@@ -40,14 +40,17 @@ Should Be Equal As Numbers
     1    1.0001    Only this message    False
 
 Should Be Equal As Numbers with precision
-    [Documentation]    FAIL Failure: 110.0 != 150.0
+    [Documentation]    FAIL Failure: 120.0 != 140.0
     [Template]    Should Be Equal As Numbers
     1.123       1.456      precision=0
     1.123       ${1.1}     precision=1
     ${1.123}    ${1.12}    precision=2
     1123        1456       precision=-3
     112         145        precision=-2
-    112         145        precision=-1    msg=Failure
+    # Due to "bankers rounding" algorithm used by `round`, 145 is rounded to 140,
+    # not to 150, as we learned in school.
+    135         145        precision=-1
+    115         145        precision=-1    msg=Failure
 
 Should Not Be Equal As Numbers
     [Documentation]    FAIL Fails again: 1.0 == 1.0
@@ -146,11 +149,11 @@ Should Be Equal As Strings multiline
     ...    --- first
     ...    +++ second
     ...    @@ -1,3 +1,4 @@
-    ...   \ foo
+    ...     foo
     ...    -bar
     ...    +bar
     ...    +gar
-    ...   \ dar
+    ...     dar
     Should Be Equal As Strings    foo\nbar\r\ndar    foo\nbar\ngar\ndar
 
 Should Be Equal As Strings multiline with custom message
@@ -159,11 +162,11 @@ Should Be Equal As Strings multiline with custom message
     ...    --- first
     ...    +++ second
     ...    @@ -1,3 +1,4 @@
-    ...   \ foo
+    ...     foo
     ...    -bar
     ...    +bar
     ...    +gar
-    ...   \ dar
+    ...     dar
     Should Be Equal As Strings    foo\nbar\r\ndar    foo\nbar\ngar\ndar
     ...    msg=Custom message of mine
 
@@ -173,11 +176,11 @@ Should Be Equal As Strings repr multiline
     ...    --- first
     ...    +++ second
     ...    @@ -1,3 +1,4 @@
-    ...   \ 'foo\\n'
+    ...     'foo\\n'
     ...    -'bar\\r\\n'
     ...    +'bar\\n'
     ...    +'gar\\n'
-    ...   \ 'dar'
+    ...     'dar'
     Should Be Equal As Strings    foo\nbar\r\ndar    foo\nbar\ngar\ndar    formatter=repr
 
 Should Not Be Equal As Strings

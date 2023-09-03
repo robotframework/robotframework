@@ -28,10 +28,11 @@ from .statusreporter import StatusReporter
 
 class LibraryKeywordRunner:
 
-    def __init__(self, handler, name=None):
+    def __init__(self, handler, name=None, languages=None):
         self._handler = handler
         self.name = name or handler.name
-        self.pre_run_messages = None
+        self.pre_run_messages = ()
+        self.languages = languages
 
     @property
     def library(self):
@@ -70,8 +71,10 @@ class LibraryKeywordRunner:
             for message in self.pre_run_messages:
                 context.output.message(message)
         variables = context.variables if not context.dry_run else None
-        positional, named = self._handler.resolve_arguments(args, variables)
-        context.output.trace(lambda: self._trace_log_args(positional, named))
+        positional, named = self._handler.resolve_arguments(args, variables,
+                                                            self.languages)
+        context.output.trace(lambda: self._trace_log_args(positional, named),
+                             write_if_flat=False)
         runner = self._runner_for(context, self._handler.current_handler(),
                                   positional, dict(named))
         return self._run_with_output_captured_and_signal_monitor(runner, context)
@@ -101,7 +104,10 @@ class LibraryKeywordRunner:
     def _run_with_signal_monitoring(self, runner, context):
         try:
             STOP_SIGNAL_MONITOR.start_running_keyword(context.in_teardown)
-            return runner()
+            runner_result = runner()
+            if context.asynchronous.is_loop_required(runner_result):
+                return context.asynchronous.run_until_complete(runner_result)
+            return runner_result
         finally:
             STOP_SIGNAL_MONITOR.stop_running_keyword()
 
@@ -116,7 +122,7 @@ class LibraryKeywordRunner:
         if self._executed_in_dry_run(self._handler):
             self._run(context, args)
         else:
-            self._handler.resolve_arguments(args)
+            self._handler.resolve_arguments(args, languages=self.languages)
 
     def _executed_in_dry_run(self, handler):
         keywords_to_execute = ('BuiltIn.Import Library',
@@ -130,53 +136,54 @@ class LibraryKeywordRunner:
 class EmbeddedArgumentsRunner(LibraryKeywordRunner):
 
     def __init__(self, handler, name):
-        LibraryKeywordRunner.__init__(self, handler, name)
-        self._embedded_args = handler.name_regexp.match(name).groups()
+        super().__init__(handler, name)
+        self.embedded_args = handler.embedded.match(name).groups()
 
     def _run(self, context, args):
         if args:
             raise DataError("Positional arguments are not allowed when using "
                             "embedded arguments.")
-        return LibraryKeywordRunner._run(self, context, self._embedded_args)
+        return super()._run(context, self.embedded_args)
 
     def _dry_run(self, context, args):
-        return LibraryKeywordRunner._dry_run(self, context, self._embedded_args)
+        return super()._dry_run(context, self.embedded_args)
 
     def _get_result(self, kw, assignment):
-        result = LibraryKeywordRunner._get_result(self, kw, assignment)
+        result = super()._get_result(kw, assignment)
         result.sourcename = self._handler.name
         return result
 
 
 class RunKeywordRunner(LibraryKeywordRunner):
 
-    def __init__(self, handler, default_dry_run_keywords=False):
-        LibraryKeywordRunner.__init__(self, handler)
-        self._default_dry_run_keywords = default_dry_run_keywords
+    def __init__(self, handler, execute_in_dry_run=False):
+        super().__init__(handler)
+        self.execute_in_dry_run = execute_in_dry_run
 
     def _get_timeout(self, context):
+        # These keywords are not affected by timeouts. Keywords they execute are.
         return None
 
     def _run_with_output_captured_and_signal_monitor(self, runner, context):
         return self._run_with_signal_monitoring(runner, context)
 
     def _dry_run(self, context, args):
-        LibraryKeywordRunner._dry_run(self, context, args)
+        super()._dry_run(context, args)
         keywords = [kw for kw in self._get_dry_run_keywords(args)
                     if not contains_variable(kw.name)]
         BodyRunner(context).run(keywords)
 
     def _get_dry_run_keywords(self, args):
+        if not self.execute_in_dry_run:
+            return []
         name = self._handler.name
         if name == 'Run Keyword If':
-            return self._get_run_kw_if_keywords(args)
+            return self._get_dry_run_keywords_for_run_keyword_if(args)
         if name == 'Run Keywords':
-            return self._get_run_kws_keywords(args)
-        if self._default_dry_run_keywords:
-            return self._get_default_run_kw_keywords(args)
-        return []
+            return self._get_dry_run_keywords_for_run_keyword(args)
+        return self._get_dry_run_keywords_based_on_name_argument(args)
 
-    def _get_run_kw_if_keywords(self, given_args):
+    def _get_dry_run_keywords_for_run_keyword_if(self, given_args):
         for kw_call in self._get_run_kw_if_calls(given_args):
             if kw_call:
                 yield Keyword(name=kw_call[0], args=kw_call[1:])
@@ -199,7 +206,7 @@ class RunKeywordRunner(LibraryKeywordRunner):
         expr_and_call = given_args[:index]
         remaining = given_args[index+1:]
         if not (self._validate_kw_call(expr_and_call) and
-                    self._validate_kw_call(remaining, required_after)):
+                self._validate_kw_call(remaining, required_after)):
             raise DataError("Invalid 'Run Keyword If' usage.")
         if is_list_variable(expr_and_call[0]):
             return (), remaining
@@ -210,7 +217,7 @@ class RunKeywordRunner(LibraryKeywordRunner):
             return True
         return any(is_list_variable(item) for item in kw_call)
 
-    def _get_run_kws_keywords(self, given_args):
+    def _get_dry_run_keywords_for_run_keyword(self, given_args):
         for kw_call in self._get_run_kws_calls(given_args):
             yield Keyword(name=kw_call[0], args=kw_call[1:])
 
@@ -226,6 +233,6 @@ class RunKeywordRunner(LibraryKeywordRunner):
             if given_args:
                 yield given_args
 
-    def _get_default_run_kw_keywords(self, given_args):
+    def _get_dry_run_keywords_based_on_name_argument(self, given_args):
         index = list(self._handler.arguments.positional).index('name')
         return [Keyword(name=given_args[index], args=given_args[index+1:])]

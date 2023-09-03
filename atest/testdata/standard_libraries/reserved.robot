@@ -3,7 +3,7 @@ Markers should get note about case 1
     [Documentation]    FAIL 'For' is a reserved keyword. It must be an upper case 'FOR' when used as a marker.
     For    ${var}    IN    some    items
         Log    ${var}
-    END
+    EnD
 
 Markers should get note about case 2
     [Documentation]     FAIL 'If' is a reserved keyword. It must be an upper case 'IF' when used as a marker.
@@ -19,15 +19,15 @@ Others should just be reserved 2
 
 'End' gets extra note
     [Documentation]    FAIL 'End' is a reserved keyword. It must be an upper case 'END' when used as a marker to close a block.
-    END
+    End
 
 'Else' gets extra note
     [Documentation]     FAIL 'Else' is a reserved keyword. It must be an upper case 'ELSE' and follow an opening 'IF' when used as a marker.
-    ELSE    Log    ${message}
+    Else    Log    ${message}
 
 'Else if' gets extra note
     [Documentation]     FAIL 'Else If' is a reserved keyword. It must be an upper case 'ELSE IF' and follow an opening 'IF' when used as a marker.
-    ELSE if    Log    ${message}
+    Else if    Log    ${message}
 
 'Elif' gets extra note
     [Documentation]    FAIL 'Elif' is a reserved keyword. The marker to use with 'IF' is 'ELSE IF'.

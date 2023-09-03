@@ -2,7 +2,7 @@
 
 """A script for running Robot Framework's own acceptance tests.
 
-Usage:  atest/run.py [--interpreter interpreter] [options] [data]
+Usage:  atest/run.py [--interpreter name] [--schema-validation [options] [data]
 
 `data` is path (or paths) of the file or directory under the `atest/robot`
 folder to execute. If `data` is not given, all tests except for tests tagged
@@ -11,11 +11,16 @@ with `no-ci` are executed.
 Available `options` are the same that can be used with Robot Framework.
 See its help (e.g. `robot --help`) for more information.
 
-By default uses the same Python interpreter for running tests that is used
-for running this script. That can be changed by using the `--interpreter` (`-I`)
-option. It can be the name of the interpreter (e.g. `pypy3`) or a path to the
-selected interpreter (e.g. `/usr/bin/python39`). If the interpreter itself needs
-arguments, the interpreter and its arguments need to be quoted (e.g. `"py -3"`).
+By default, uses the same Python interpreter for running tests that is used
+for running this script. That can be changed by using the `--interpreter`
+(`-I`) option. It can be the name of the interpreter like `pypy3` or a path
+to the selected interpreter like `/usr/bin/python39`. If the interpreter
+itself needs arguments, the interpreter and its arguments need to be quoted
+like `"py -3.9"`.
+
+To enable schema validation for all suites, use `--schema-validation` (`-S`)
+option. This is same as setting `ATEST_VALIDATE_OUTPUT` environment variable
+to `TRUE`.
 
 Examples:
 $ atest/run.py
@@ -43,24 +48,28 @@ CURDIR = Path(__file__).parent
 ARGUMENTS = '''
 --doc Robot Framework acceptance tests
 --metadata interpreter:{interpreter}
---variablefile {variable_file};{interpreter.path};{interpreter.name};{interpreter.version}
+--variable-file {variable_file};{interpreter.path};{interpreter.name};{interpreter.version}
 --pythonpath {pythonpath}
---outputdir {outputdir}
+--output-dir {outputdir}
 --splitlog
 --console dotted
---consolewidth 100
---SuiteStatLevel 3
+--console-width 100
+--suite-stat-Level 3
+--log NONE
+--report NONE
 '''.strip()
 
 
-def atests(interpreter, arguments):
+def atests(interpreter, arguments, schema_validation=False):
     try:
         interpreter = Interpreter(interpreter)
     except ValueError as err:
         sys.exit(err)
     outputdir, tempdir = _get_directories(interpreter)
     arguments = list(_get_arguments(interpreter, outputdir)) + list(arguments)
-    return _run(arguments, tempdir, interpreter)
+    rc = _run(arguments, tempdir, interpreter, schema_validation)
+    _rebot(rc, outputdir)
+    return rc
 
 
 def _get_directories(interpreter):
@@ -87,12 +96,14 @@ def _get_arguments(interpreter, outputdir):
         yield exclude
 
 
-def _run(args, tempdir, interpreter):
+def _run(args, tempdir, interpreter, schema_validation):
     command = [sys.executable, str(CURDIR.parent / 'src/robot/run.py')] + args
     environ = dict(os.environ,
                    TEMPDIR=str(tempdir),
                    PYTHONCASEOK='True',
                    PYTHONIOENCODING='')
+    if schema_validation:
+        environ['ATEST_VALIDATE_OUTPUT'] = 'TRUE'
     print('%s\n%s\n' % (interpreter, '-' * len(str(interpreter))))
     print('Running command:\n%s\n' % ' '.join(command))
     sys.stdout.flush()
@@ -100,9 +111,19 @@ def _run(args, tempdir, interpreter):
     return subprocess.call(command, env=environ)
 
 
+def _rebot(rc, outputdir):
+    if rc == 0:
+        print('All tests passed, not generating log or report.')
+    elif rc < 251:
+        command = [sys.executable, str(CURDIR.parent / 'src/robot/rebot.py'),
+                   '--output-dir', str(outputdir), str(outputdir / 'output.xml')]
+        subprocess.call(command)
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(add_help=False)
     parser.add_argument('-I', '--interpreter', default=sys.executable)
+    parser.add_argument('-S', '--schema-validation', action='store_true')
     parser.add_argument('-h', '--help', action='store_true')
     options, robot_args = parser.parse_known_args()
     if not robot_args or not Path(robot_args[-1]).exists():
@@ -111,5 +132,5 @@ if __name__ == '__main__':
         print(__doc__)
         rc = 251
     else:
-        rc = atests(options.interpreter, robot_args)
+        rc = atests(options.interpreter, robot_args, options.schema_validation)
     sys.exit(rc)

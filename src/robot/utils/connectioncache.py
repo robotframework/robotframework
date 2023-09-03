@@ -18,16 +18,15 @@ from .robottypes import is_string
 
 
 class ConnectionCache:
-    """Cache for test libs to use with concurrent connections, processes, etc.
+    """Cache for libraries to use with concurrent connections, processes, etc.
 
     The cache stores the registered connections (or other objects) and allows
     switching between them using generated indices or user given aliases.
-    This is useful with any test library where there's need for multiple
-    concurrent connections, processes, etc.
+    This is useful with any library where there's need for multiple concurrent
+    connections, processes, etc.
 
-    This class can, and is, used also outside the core framework by SSHLibrary,
-    Selenium(2)Library, etc. Backwards compatibility is thus important when
-    doing changes.
+    This class is used also outside the core framework by SeleniumLibrary,
+    SSHLibrary, etc. Backwards compatibility is thus important when doing changes.
     """
 
     def __init__(self, no_current_msg='No open connection.'):

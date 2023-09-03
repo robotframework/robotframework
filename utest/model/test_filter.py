@@ -29,7 +29,10 @@ class TestFilterByIncludeTags(FilterBaseTest):
 
     def test_no_filtering(self):
         self._test(Filter(), ['t1', 't2', 't3'], ['t1'])
-        self._test(Filter(include_tags=[]), ['t1', 't2', 't3'], ['t1'])
+        self._test(Filter(include_tags=None), ['t1', 't2', 't3'], ['t1'])
+
+    def test_empty_list_matches_none(self):
+        self._test(Filter(include_tags=[]), [], [])
 
     def test_no_match(self):
         self._test(Filter(include_tags=['no', 'match']), [], [])
@@ -58,6 +61,9 @@ class TestFilterByExcludeTags(FilterBaseTest):
 
     def test_no_filtering(self):
         self._test(Filter(), ['t1', 't2', 't3'], ['t1'])
+        self._test(Filter(exclude_tags=None), ['t1', 't2', 't3'], ['t1'])
+
+    def test_empty_list_matches_none(self):
         self._test(Filter(exclude_tags=[]), ['t1', 't2', 't3'], ['t1'])
 
     def test_no_match(self):
@@ -87,7 +93,10 @@ class TestFilterByTestName(FilterBaseTest):
 
     def test_no_filtering(self):
         self._test(Filter(), ['t1', 't2', 't3'], ['t1'])
-        self._test(Filter(include_tests=[]), ['t1', 't2', 't3'], ['t1'])
+        self._test(Filter(include_tests=None), ['t1', 't2', 't3'], ['t1'])
+
+    def test_empty_list_matches_none(self):
+        self._test(Filter(include_tests=[]), [], [])
 
     def test_no_match(self):
         self._test(Filter(include_tests=['no match']), [], [])
@@ -114,7 +123,10 @@ class TestFilterBySuiteName(FilterBaseTest):
 
     def test_no_filtering(self):
         self._test(Filter(), ['t1', 't2', 't3'], ['t1'])
-        self._test(Filter(include_suites=[]), ['t1', 't2', 't3'], ['t1'])
+        self._test(Filter(include_suites=None), ['t1', 't2', 't3'], ['t1'])
+
+    def test_empty_list_matches_none(self):
+        self._test(Filter(include_suites=[]), [], [])
 
     def test_no_match(self):
         self._test(Filter(include_suites=['no match']), [], [])

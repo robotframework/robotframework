@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Any, List, Union
+from typing import Any, Dict, List, Union, Tuple
 
 
 class UnknownType:
@@ -64,4 +64,31 @@ def G_non_type_annotations(arg: 'One of the usages in PEP-3107',
 
 
 def H_drop_typing_prefix(a: Any, b: List, c: Union[Any, List]):
+    pass
+
+
+def I_union_from_typing(a: Union[int, str, Union[list, tuple]]):
+    pass
+
+
+def J_union_from_typing_with_default(a: Union[int, str, Union[list, tuple]] = None):
+    pass
+
+
+def K_nested(a: List[int],
+             b: List[Union[int, float]],
+             c: Tuple[Tuple[UnknownType], Dict[str, Tuple[float]]]):
+    pass
+
+
+try:
+    exec('''
+def L_union_syntax(a: int | str | list | tuple):
+    pass
+
+
+def M_union_syntax_with_default(a: int | str | list | tuple = None):
+    pass
+''')
+except TypeError:    # Python < 3.10
     pass

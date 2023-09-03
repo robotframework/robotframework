@@ -14,11 +14,15 @@ Passing keywords
 
 Keywords with embedded arguments
     ${tc}=    Check Test Case    ${TESTNAME}
-    Length Should Be      ${tc.kws}              3
+    Length Should Be      ${tc.kws}              5
     Check Keyword Data    ${tc.kws[0]}           Embedded arguments here
     Check Keyword Data    ${tc.kws[0].kws[0]}    BuiltIn.No Operation    status=NOT RUN
     Check Keyword Data    ${tc.kws[1]}           Embedded args rock here
     Check Keyword Data    ${tc.kws[1].kws[0]}    BuiltIn.No Operation    status=NOT RUN
+    Check Keyword Data    ${tc.kws[2]}           Some embedded and normal args    args=42
+    Check Keyword Data    ${tc.kws[2].kws[0]}    BuiltIn.No Operation    status=NOT RUN
+    Check Keyword Data    ${tc.kws[3]}           Some embedded and normal args    args=\${does not exist}
+    Check Keyword Data    ${tc.kws[3].kws[0]}    BuiltIn.No Operation    status=NOT RUN
 
 Library keyword with embedded arguments
     ${tc}=    Check Test Case    ${TESTNAME}
@@ -41,6 +45,10 @@ Scalar variables are not checked in keyword arguments
     Check Keyword Data    ${tc.kws[1]}    BuiltIn.Log    status=NOT RUN    args=\${this does not exist}
 
 List variables are not checked in keyword arguments
+    [Documentation]    See the doc of the previous test
+    Check Test Case    ${TESTNAME}
+
+Dict variables are not checked in keyword arguments
     [Documentation]    See the doc of the previous test
     Check Test Case    ${TESTNAME}
 
@@ -94,13 +102,10 @@ Non-existing keyword name
 
 Invalid syntax in UK
     Check Test Case    ${TESTNAME}
-    ${source} =    Normalize Path    ${DATADIR}/cli/dryrun/dryrun.robot
-    ${message} =    Catenate
-    ...    Error in test case file '${source}':
+    Error In File    0    cli/dryrun/dryrun.robot    161
     ...    Creating keyword 'Invalid Syntax UK' failed:
     ...    Invalid argument specification:
     ...    Invalid argument syntax '\${arg'.
-    Check Log Message    ${ERRORS[0]}    ${message}    ERROR
 
 Multiple Failures
     Check Test Case    ${TESTNAME}

@@ -1,0 +1,209 @@
+{
+  "name": "BackwardsCompatibility",
+  "doc": "Library for testing backwards compatibility.\n\nEspecially testing argument type information that has been changing after RF 4.\nExamples are only using features compatible with all tested versions.",
+  "version": "1.0",
+  "generated": "2023-02-28 18:30:35",
+  "type": "LIBRARY",
+  "scope": "GLOBAL",
+  "docFormat": "ROBOT",
+  "source": "BackwardsCompatibility.py",
+  "lineno": 1,
+  "tags": [
+    "example"
+  ],
+  "inits": [],
+  "keywords": [
+    {
+      "name": "Arguments",
+      "args": [
+        {
+          "name": "a",
+          "types": [],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "a"
+        },
+        {
+          "name": "b",
+          "types": [],
+          "defaultValue": "2",
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": false,
+          "repr": "b=2"
+        },
+        {
+          "name": "c",
+          "types": [],
+          "defaultValue": null,
+          "kind": "VAR_POSITIONAL",
+          "required": false,
+          "repr": "*c"
+        },
+        {
+          "name": "d",
+          "types": [],
+          "defaultValue": "4",
+          "kind": "NAMED_ONLY",
+          "required": false,
+          "repr": "d=4"
+        },
+        {
+          "name": "e",
+          "types": [],
+          "defaultValue": null,
+          "kind": "NAMED_ONLY",
+          "required": true,
+          "repr": "e"
+        },
+        {
+          "name": "f",
+          "types": [],
+          "defaultValue": null,
+          "kind": "VAR_NAMED",
+          "required": false,
+          "repr": "**f"
+        }
+      ],
+      "doc": "",
+      "shortdoc": "",
+      "tags": [],
+      "source": "BackwardsCompatibility.py",
+      "lineno": 42
+    },
+    {
+      "name": "Simple",
+      "args": [],
+      "doc": "Some doc.",
+      "shortdoc": "Some doc.",
+      "tags": [
+        "example"
+      ],
+      "source": "BackwardsCompatibility.py",
+      "lineno": 34
+    },
+    {
+      "name": "Special Types",
+      "args": [
+        {
+          "name": "a",
+          "types": [
+            "Color"
+          ],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "a: Color"
+        },
+        {
+          "name": "b",
+          "types": [
+            "Size"
+          ],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "b: Size"
+        }
+      ],
+      "doc": "",
+      "shortdoc": "",
+      "tags": [],
+      "source": "BackwardsCompatibility.py",
+      "lineno": 50
+    },
+    {
+      "name": "Types",
+      "args": [
+        {
+          "name": "a",
+          "types": [
+            "int"
+          ],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "a: int"
+        },
+        {
+          "name": "b",
+          "types": [
+            "bool"
+          ],
+          "defaultValue": "True",
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": false,
+          "repr": "b: bool = True"
+        }
+      ],
+      "doc": "",
+      "shortdoc": "",
+      "tags": [],
+      "source": "BackwardsCompatibility.py",
+      "lineno": 46
+    },
+    {
+      "name": "Union",
+      "args": [
+        {
+          "name": "a",
+          "types": [
+            "int",
+            "float"
+          ],
+          "defaultValue": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "a: int | float"
+        }
+      ],
+      "doc": "",
+      "shortdoc": "",
+      "tags": [],
+      "source": "BackwardsCompatibility.py",
+      "lineno": 54
+    }
+  ],
+  "dataTypes": {
+    "enums": [
+      {
+        "name": "Color",
+        "type": "Enum",
+        "doc": "RGB colors.",
+        "members": [
+          {
+            "name": "RED",
+            "value": "R"
+          },
+          {
+            "name": "GREEN",
+            "value": "G"
+          },
+          {
+            "name": "BLUE",
+            "value": "B"
+          }
+        ]
+      }
+    ],
+    "typedDicts": [
+      {
+        "name": "Size",
+        "type": "TypedDict",
+        "doc": "Some size.",
+        "items": [
+          {
+            "key": "width",
+            "type": "int",
+            "required": true
+          },
+          {
+            "key": "height",
+            "type": "int",
+            "required": true
+          }
+        ]
+      }
+    ]
+  }
+}

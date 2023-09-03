@@ -47,16 +47,13 @@ Caller does not see modifications to kwargs
 
 Invalid arguments spec
     [Template]    Verify Invalid Argument Spec
-    0    Positional after kwargs    Only last argument can be kwargs.
-    1    Varargs after kwargs    Only last argument can be kwargs.
+    0    181    Positional after kwargs    Only last argument can be kwargs.
+    1    185    Varargs after kwargs       Only last argument can be kwargs.
 
 *** Keywords ***
 Verify Invalid Argument Spec
-    [Arguments]    ${index}    ${name}    ${error}
+    [Arguments]    ${index}    ${lineno}    ${name}    ${error}
     Check Test Case    ${TEST NAME}: ${name}
-    ${source} =    Normalize Path    ${DATADIR}/keywords/user_keyword_kwargs.robot
-    ${message} =    Catenate
-    ...    Error in test case file '${source}':
+    Error In File    ${index}    keywords/user_keyword_kwargs.robot    ${lineno}
     ...    Creating keyword '${name}' failed:
     ...    Invalid argument specification: ${error}
-    Check Log Message    ${ERRORS[${index}]}    ${message}    ERROR

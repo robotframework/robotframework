@@ -31,7 +31,10 @@ Union with item not liking isinstance
 Argument not matching union
     Check Test Case    ${TESTNAME}
 
-Union with custom type
+Union with unrecognized type
+    Check Test Case    ${TESTNAME}
+
+Union with only unrecognized types
     Check Test Case    ${TESTNAME}
 
 Avoid unnecessary conversion

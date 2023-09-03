@@ -217,10 +217,6 @@ Similar To Really Long Keyword
     ...    ${INDENT}Really Long Keyword That Does Not End For Quite A While
     Reallly Long Keyword that doesn't end for a while
 
-Keyword With Arguments Without Correct Spacing
-    [Documentation]    FAIL    No keyword with name 'Record message=hello world level=WARN' found.
-    Record message=hello world level=WARN
-
 Misspelled Keyword With Arguments
     [Documentation]    FAIL
     ...    No keyword with name 'recoord' found. Did you mean:
@@ -308,6 +304,21 @@ Implicit Substring Of Many Keywords
     ...    ${INDENT}RecLibrary1.Get Data
     ...    ${INDENT}RecLibrary1.Read Data
     Data
+
+Missing separator between keyword and arguments
+    [Documentation]    FAIL
+    ...    No keyword with name 'Should Be Equal ${variable} 42' found. \
+    ...    Did you try using keyword 'BuiltIn.Should Be Equal' and \
+    ...    forgot to use enough whitespace between keyword and arguments?
+    Should Be Equal ${variable} 42
+
+Missing separator between keyword and arguments with multiple matches
+    [Documentation]    FAIL
+    ...    No keyword with name 'Should Be Equal As Integers ${variable} 42' found. \
+    ...    Did you try using keyword 'BuiltIn.Should Be Equal' or \
+    ...    'BuiltIn.Should Be Equal As Integers' and \
+    ...    forgot to use enough whitespace between keyword and arguments?
+    Should Be Equal As Integers ${variable} 42
 
 *** Keywords ***
 A User Keyword

@@ -15,8 +15,8 @@
 
 import os
 import sys
+import importlib
 import inspect
-from importlib import invalidate_caches as invalidate_import_caches
 
 from robot.errors import DataError
 
@@ -59,7 +59,7 @@ class Importer:
             using them.
         :param return_source:
             When true, returns a tuple containing the imported module or class
-            and a path to it. By default returns only the imported module or class.
+            and a path to it. By default, returns only the imported module or class.
 
         The class or module to import can be specified either as a name, in which
         case it must be in the module search path, or as a path to the file or
@@ -80,9 +80,11 @@ class Importer:
         the name or path like ``Example:arg1:arg2``, separate
         :func:`~robot.utils.text.split_args_from_name_or_path` function can be
         used to split them before calling this method.
+
+        Use :meth:`import_module` if only a module needs to be imported.
         """
         try:
-            imported, source = self._import_class_or_module(name_or_path)
+            imported, source = self._import(name_or_path)
             self._log_import_succeeded(imported, name_or_path, source)
             imported = self._instantiate_if_needed(imported, instantiate_with_args)
         except DataError as err:
@@ -90,10 +92,34 @@ class Importer:
         else:
             return self._handle_return_values(imported, source, return_source)
 
-    def _import_class_or_module(self, name):
+    def import_module(self, name_or_path):
+        """Imports Python module based on the given name or path.
+
+        :param name_or_path:
+            Name or path of the module to import.
+
+        The module to import can be specified either as a name, in which
+        case it must be in the module search path, or as a path to the file or
+        directory implementing the module. See :meth:`import_class_or_module_by_path`
+        for more information about importing modules by path.
+
+        Use :meth:`import_class_or_module` if it is desired to get a class
+        from the imported module automatically.
+
+        New in Robot Framework 6.0.
+        """
+        try:
+            imported, source = self._import(name_or_path, get_class=False)
+            self._log_import_succeeded(imported, name_or_path, source)
+        except DataError as err:
+            self._raise_import_failed(name_or_path, err)
+        else:
+            return imported
+
+    def _import(self, name, get_class=True):
         for importer in self._importers:
             if importer.handles(name):
-                return importer.import_(name)
+                return importer.import_(name, get_class)
 
     def _handle_return_values(self, imported, source, return_source=False):
         if not return_source:
@@ -186,7 +212,7 @@ class _Importer:
         if name in sys.builtin_module_names:
             raise DataError('Cannot import custom module with same name as '
                             'Python built-in module.')
-        invalidate_import_caches()
+        importlib.invalidate_caches()
         try:
             return __import__(name, fromlist=fromlist)
         except:
@@ -217,11 +243,12 @@ class ByPathImporter(_Importer):
     def handles(self, path):
         return os.path.isabs(path)
 
-    def import_(self, path):
+    def import_(self, path, get_class=True):
         self._verify_import_path(path)
         self._remove_wrong_module_from_sys_modules(path)
-        module = self._import_by_path(path)
-        imported = self._get_class_from_module(module) or module
+        imported = self._import_by_path(path)
+        if get_class:
+            imported = self._get_class_from_module(imported) or imported
         return self._verify_type(imported), path
 
     def _verify_import_path(self, path):
@@ -277,9 +304,10 @@ class NonDottedImporter(_Importer):
     def handles(self, name):
         return '.' not in name
 
-    def import_(self, name):
-        module = self._import(name)
-        imported = self._get_class_from_module(module) or module
+    def import_(self, name, get_class=True):
+        imported = self._import(name)
+        if get_class:
+            imported = self._get_class_from_module(imported) or imported
         return self._verify_type(imported), self._get_source(imported)
 
 
@@ -288,7 +316,7 @@ class DottedImporter(_Importer):
     def handles(self, name):
         return '.' in name
 
-    def import_(self, name):
+    def import_(self, name, get_class=True):
         parent_name, lib_name = name.rsplit('.', 1)
         parent = self._import(parent_name, fromlist=[str(lib_name)])
         try:
@@ -296,7 +324,8 @@ class DottedImporter(_Importer):
         except AttributeError:
             raise DataError("Module '%s' does not contain '%s'."
                             % (parent_name, lib_name))
-        imported = self._get_class_from_module(imported, lib_name) or imported
+        if get_class:
+            imported = self._get_class_from_module(imported, lib_name) or imported
         return self._verify_type(imported), self._get_source(imported)
 
 

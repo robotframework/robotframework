@@ -10,8 +10,8 @@ options:
     -d, --doc       Show test's doc string instead of name and class
                     (implies verbosity)
     -h, --help      Show help
-    
-`directory` is the path of the directory under the `utest` folder to execute. 
+
+`directory` is the path of the directory under the `utest` folder to execute.
 If no value is given all tests are run
 
 examples:
@@ -32,12 +32,12 @@ if not sys.warnoptions:
 
 
 base = os.path.abspath(os.path.normpath(os.path.split(sys.argv[0])[0]))
-for path in ['../src', '../atest/testresources/testlibs']:
+for path in ['../src', '../atest/testresources/testlibs', '../utest/resources']:
     path = os.path.join(base, path.replace('/', os.sep))
     if path not in sys.path:
         sys.path.insert(0, path)
 
-testfile = re.compile("^test_.*\.py$", re.IGNORECASE)
+testfile = re.compile(r"^test_.*\.py$", re.IGNORECASE)
 imported = {}
 
 
@@ -86,6 +86,7 @@ if __name__ == "__main__":
     parser.add_argument("-q", "--quiet", dest="vrbst", action="store_const", const=0)
     parser.add_argument("-v", "--verbose",dest="vrbst", action="store_const", const=2)
     parser.add_argument("-d", "--doc", dest="docs", action="store_true")
+    parser.add_argument("-x", "--exit-on-failure", dest="failfast", action="store_true")
     parser.add_argument(dest="directory", nargs="?", action="store", default=None)
     parser.set_defaults(vrbst=1)
 
@@ -97,7 +98,8 @@ if __name__ == "__main__":
 
     tests = get_tests(args.directory)
     suite = unittest.TestSuite(tests)
-    runner = unittest.TextTestRunner(descriptions=args.docs, verbosity=args.vrbst)
+    runner = unittest.TextTestRunner(descriptions=args.docs, verbosity=args.vrbst,
+                                     failfast=args.failfast)
     result = runner.run(suite)
     rc = len(result.failures) + len(result.errors)
     if rc > 250:

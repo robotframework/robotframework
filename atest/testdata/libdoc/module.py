@@ -39,7 +39,7 @@ def multiline_doc_with_split_short_doc():
     """This is short doc.
     It can span multiple
     physical
-    lines.
+    lines and contain *formatting*.
 
     This is body. It can naturally also
     contain multiple lines.

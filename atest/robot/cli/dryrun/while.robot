@@ -14,3 +14,8 @@ WHILE
     Length should be    ${tc.body[3].body[0].body}     0
     Length should be    ${tc.body[3].body[1].body}     1
     Length should be    ${tc.body[3].body[2].body}     0
+
+WHILE with BREAK and CONTINUE
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Length should be    ${tc.body[1].body}             1
+    Length should be    ${tc.body[2].body}             1

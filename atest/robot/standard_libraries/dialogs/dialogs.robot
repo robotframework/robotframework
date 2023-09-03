@@ -1,6 +1,6 @@
 *** Settings ***
 Suite Setup       Run Tests    ${EMPTY}    standard_libraries/dialogs/dialogs.robot
-Force Tags        manual    no-ci
+Test Tags         manual    no-ci
 Resource          atest_resource.robot
 
 *** Test Cases ***
@@ -38,6 +38,9 @@ Get Value From User Cancelled
     Check Test Case    ${TESTNAME}
 
 Get Value From User Exited
+    Check Test Case    ${TESTNAME}
+
+Get Value From User Shortcuts
     Check Test Case    ${TESTNAME}
 
 Get Selection From User

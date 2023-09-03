@@ -81,14 +81,6 @@ robot.running.arguments.typeconverters module
    :undoc-members:
    :show-inheritance:
 
-robot.running.arguments.typeinfo module
----------------------------------------
-
-.. automodule:: robot.running.arguments.typeinfo
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 robot.running.arguments.typevalidator module
 --------------------------------------------
 

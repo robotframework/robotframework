@@ -17,7 +17,7 @@ Console Colors On
     Outputs should have ANSI colors when not on Windows
 
 Console Colors ANSI
-    Run Tests With Colors    --ConsoleColors AnSi
+    Run Tests With Colors    --Console-Colors AnSi
     Outputs should have ANSI colors
 
 Invalid Console Colors
@@ -41,7 +41,7 @@ Console Width
 
 Invalid Width
     Run Tests Without Processing Output    -W InVaLid    misc/pass_and_fail.robot
-    Stderr Should Be Equal To    [ ERROR ] Option '--consolewidth' expected integer value but got 'InVaLid'.${USAGE TIP}\n
+    Stderr Should Be Equal To    [ ERROR ] Invalid value for option '--consolewidth': Expected integer, got 'InVaLid'.${USAGE TIP}\n
 
 *** Keywords ***
 Run Tests With Colors
@@ -54,8 +54,11 @@ Outputs should not have ANSI colors
     Stderr Should Contain    [ WARN ]
 
 Outputs should have ANSI colors when not on Windows
-    Run Keyword If    os.sep == '/'    Outputs should have ANSI colors
-    Run Keyword Unless    os.sep == '/'    Outputs should not have ANSI colors
+    IF    os.sep == '/'
+        Outputs should have ANSI colors
+    ELSE
+       Outputs should not have ANSI colors
+    END
 
 Outputs should have ANSI colors
     Stdout Should Not Contain    | PASS |

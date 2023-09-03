@@ -75,7 +75,7 @@ In start_keyword and end_keyword with user keyword
     Length Should Be      ${tc.body[3].body}                       3
 
 In start_keyword and end_keyword with FOR loop
-    ${tc} =               Check Test Case                          FOR loop in test
+    ${tc} =               Check Test Case                          FOR
     ${for} =              Set Variable                             ${tc.body[1]}
     Should Be Equal       ${for.type}                              FOR
     Length Should Be      ${for.body}                              5
@@ -114,6 +114,29 @@ In start_keyword and end_keyword with TRY/EXCEPT
     Validate FOR branch   ${tc.body[1].body[3]}                    ELSE       NOT RUN
     Validate FOR branch   ${tc.body[1].body[4]}                    FINALLY    PASS
 
+In start_keyword and end_keyword with BREAK and CONTINUE
+    ${tc} =                   Check Test Case                                    WHILE loop in keyword
+    FOR    ${iter}     IN     @{tc.body[1].body[2].body[1:-1]}
+        Should Be Equal       ${iter.body[3].body[0].body[1].type}               CONTINUE
+        Should Be Equal       ${iter.body[3].body[0].body[1].body[0].name}       BuiltIn.Log
+        Check Log Message     ${iter.body[3].body[0].body[1].body[0].body[0]}    start_keyword
+        Should Be Equal       ${iter.body[3].body[0].body[1].body[1].name}       BuiltIn.Log
+        Check Log Message     ${iter.body[3].body[0].body[1].body[1].body[0]}    end_keyword
+        Should Be Equal       ${iter.body[4].body[0].body[1].type}               BREAK
+        Should Be Equal       ${iter.body[4].body[0].body[1].body[0].name}       BuiltIn.Log
+        Check Log Message     ${iter.body[4].body[0].body[1].body[0].body[0]}    start_keyword
+        Should Be Equal       ${iter.body[4].body[0].body[1].body[1].name}       BuiltIn.Log
+        Check Log Message     ${iter.body[4].body[0].body[1].body[1].body[0]}    end_keyword
+    END
+
+In start_keyword and end_keyword with RETURN
+    ${tc} =               Check Test Case                                          Second One
+    Should Be Equal       ${tc.body[3].body[1].body[1].body[2].type}               RETURN
+    Should Be Equal       ${tc.body[3].body[1].body[1].body[2].body[0].name}       BuiltIn.Log
+    Check Log Message     ${tc.body[3].body[1].body[1].body[2].body[0].body[0]}    start_keyword
+    Should Be Equal       ${tc.body[3].body[1].body[1].body[2].body[1].name}       BuiltIn.Log
+    Check Log Message     ${tc.body[3].body[1].body[1].body[2].body[1].body[0]}    end_keyword
+
 *** Keywords ***
 Run Tests With Keyword Running Listener
     ${path} =    Normalize Path    ${LISTENER DIR}/keyword_running_listener.py
@@ -124,9 +147,7 @@ Run Tests With Keyword Running Listener
     ...    misc/while.robot
     ...    misc/if_else.robot
     ...    misc/try_except.robot
-    # Cannot validate output because listeners create keywords and messages to places
-    # where schema doesn't allow them.
-    Run Tests    --listener ${path}    ${files}    validate output=False
+    Run Tests    --listener ${path}    ${files}    validate output=True
     Should Be Empty    ${ERRORS}
 
 Validate IF branch

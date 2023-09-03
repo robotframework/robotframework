@@ -86,11 +86,11 @@ Multiline comparison uses diff
     ...    --- first
     ...    +++ second
     ...    @@ -1,3 +1,6 @@
-    ...    \ foo
-    ...    \ bar
+    ...     foo
+    ...     bar
     ...    +gar
     ...    +
-    ...    \ dar
+    ...     dar
     ...    +
     foo\nbar\ndar\n    foo\nbar\ngar\n\ndar\n\n
 
@@ -100,11 +100,11 @@ Multiline comparison with custom message
     ...    --- first
     ...    +++ second
     ...    @@ -1,3 +1,6 @@
-    ...    \ foo
-    ...    \ bar
+    ...     foo
+    ...     bar
     ...    +gar
     ...    +
-    ...    \ dar
+    ...     dar
     ...    +
     foo\nbar\ndar\n    foo\nbar\ngar\n\ndar\n\n    msg=Custom message of mine
 
@@ -172,22 +172,22 @@ formatter=repr with multiline
     ...    --- first
     ...    +++ second
     ...    @@ -1,3 +1,6 @@
-    ...   \ foo
-    ...   \ bar
+    ...     foo
+    ...     bar
     ...    +gar
     ...    +
-    ...   \ dar
+    ...     dar
     ...    +
     ...
     ...    2) Multiline strings are different:
     ...    --- first
     ...    +++ second
     ...    @@ -1,3 +1,6 @@
-    ...   \ 'foo\\n'
-    ...   \ 'bar\\n'
+    ...     'foo\\n'
+    ...     'bar\\n'
     ...    +'gar\\n'
     ...    +'\\n'
-    ...   \ 'dar\\n'
+    ...     'dar\\n'
     ...    +'\\n'
     foo\nbar\ndar\n    foo\nbar\ngar\n\ndar\n\n
     foo\nbar\ndar\n    foo\nbar\ngar\n\ndar\n\n   formatter=repr
@@ -226,28 +226,28 @@ formatter=repr/ascii with multiline and non-ASCII characters
     ...    --- first
     ...    +++ second
     ...    @@ -1,3 +1,3 @@
-    ...   \ Å
+    ...     Å
     ...    -Ä
     ...    +Ä
-    ...   \ Ö
+    ...     Ö
     ...
     ...    2) Multiline strings are different:
     ...    --- first
     ...    +++ second
     ...    @@ -1,3 +1,3 @@
-    ...   \ 'Å\\n'
+    ...     'Å\\n'
     ...    -'Ä\\n'
     ...    +'Ä\\n'
-    ...   \ 'Ö\\n'
+    ...     'Ö\\n'
     ...
     ...    3) Multiline strings are different:
     ...    --- first
     ...    +++ second
     ...    @@ -1,3 +1,3 @@
-    ...   \ '\\xc5\\n'
+    ...     '\\xc5\\n'
     ...    -'\\xc4\\n'
     ...    +'A\\u0308\\n'
-    ...   \ '\\xd6\\n'
+    ...     '\\xd6\\n'
     Å\nÄ\n\Ö\n    Å\nA\u0308\n\Ö\n
     Å\nÄ\n\Ö\n    Å\nA\u0308\n\Ö\n    formatter=repr
     Å\nÄ\n\Ö\n    Å\nA\u0308\n\Ö\n    formatter=ascii

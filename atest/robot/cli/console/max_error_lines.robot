@@ -27,9 +27,9 @@ Max Error Lines None
 
 Invalid Values
     Run Tests Without Processing Output    --maxerrorlines InVaLid    misc/pass_and_fail.robot
-    Stderr Should Be Equal To    [ ERROR ] Option '--maxerrorlines' expected integer value but got 'InVaLid'.${USAGE TIP}\n
+    Stderr Should Be Equal To    [ ERROR ] Invalid value for option '--maxerrorlines': Expected integer, got 'InVaLid'.${USAGE TIP}\n
     Run Tests Without Processing Output    --maxerrorlines -100    misc/pass_and_fail.robot
-    Stderr Should Be Equal To    [ ERROR ] Option '--maxerrorlines' expected an integer value greater that 10 but got '-100'.${USAGE TIP}\n
+    Stderr Should Be Equal To    [ ERROR ] Invalid value for option '--maxerrorlines': Expected integer greater than 10, got -100.${USAGE TIP}\n
 
 *** Keywords ***
 Has Been Cut
@@ -51,7 +51,7 @@ Error Message In Log Should Not Have Been Cut
 
 Should Match Non Empty Regexp
     [Arguments]    ${message}    ${pattern}
-    Run Keyword If    '${pattern}'    Should Match Regexp    ${message}    ${pattern}
+    IF    $pattern    Should Match Regexp    ${message}    ${pattern}
 
 Has Not Been Cut
     [Arguments]    ${testname}

@@ -34,3 +34,6 @@ Non-ASCII
 
 With Space
     Check testcase    ${TESTNAME}
+
+Path as `pathlib.Path`
+    Check Test Case    ${TESTNAME}

@@ -1,5 +1,8 @@
 *** Setting ***
 Variables         resvarfiles/variables.py
+Variables         pythonpath_varfile.py    imported by path
+Variables         pythonpath_varfile       imported     as module
+Variables         package.submodule
 
 *** Variable ***
 ${DEFINITION IN VARIABLE FILE 1}    ${STRING}
@@ -94,6 +97,17 @@ Variables From Variable Files Can Be Used In Local Variable Table
     Should Be Equal    ${DEFINITION IN VARIABLE FILE 2}    Hello! Hello again?
     Test List With Escapes    @{DEFINITION IN VARIABLE FILE 3}
     Test List With Escapes    @{DEFINITION IN VARIABLE FILE 4}
+
+Variable file from PYTHONPATH imported by path
+    Should be Equal    ${PYTHONPATH VAR 1}     Varfile found from PYTHONPATH
+    Should be Equal    ${PYTHONPATH ARGS 1}    imported by path
+
+Variable file from PYTHONPATH imported as module
+    Should be Equal    ${PYTHONPATH VAR 2}     Varfile found from PYTHONPATH
+    Should be Equal    ${PYTHONPATH ARGS 2}    imported-as module
+
+Variable file from PYTHONPATH imported as sub module
+    Should be Equal    ${VARIABLE IN SUBMODULE}    VALUE IN SUBMODULE
 
 *** Keywords ***
 Test List With Escapes

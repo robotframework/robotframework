@@ -15,7 +15,7 @@
 
 from robot.errors import DataError
 from robot.utils import plural_or_not, seq2str
-from robot.variables import is_list_variable
+from robot.variables import is_dict_variable, is_list_variable
 
 
 class ArgumentValidator:
@@ -25,9 +25,10 @@ class ArgumentValidator:
         self._argspec = argspec
 
     def validate(self, positional, named, dryrun=False):
-        if dryrun and any(is_list_variable(arg) for arg in positional):
-            return
         named = set(name for name, value in named)
+        if dryrun and (any(is_list_variable(arg) for arg in positional) or
+                       any(is_dict_variable(arg) for arg in named)):
+            return
         self._validate_no_multiple_values(positional, named, self._argspec)
         self._validate_no_positional_only_as_named(named, self._argspec)
         self._validate_positional_limits(positional, named, self._argspec)

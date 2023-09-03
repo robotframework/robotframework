@@ -1,7 +1,8 @@
 import unittest
 import re
 import time
-import datetime
+import warnings
+from datetime import datetime, timedelta
 
 from robot.utils.asserts import (assert_equal, assert_raises_with_msg,
                                  assert_true, assert_not_none)
@@ -12,7 +13,7 @@ from robot.utils.robottime import (timestr_to_secs, secs_to_timestr, get_time,
                                    elapsed_time_to_string, _get_timetuple)
 
 
-EXAMPLE_TIME = time.mktime(datetime.datetime(2007, 9, 20, 16, 15, 14).timetuple())
+EXAMPLE_TIME = time.mktime(datetime(2007, 9, 20, 16, 15, 14).timetuple())
 
 
 class TestTime(unittest.TestCase):
@@ -51,10 +52,14 @@ class TestTime(unittest.TestCase):
             if not isinstance(inp, str):
                 assert_equal(timestr_to_secs(str(inp)), exp, inp)
 
-    def test_timestr_to_secs_rounds_up(self):
-        assert_equal(timestr_to_secs(0.5, 0), 1)
-        assert_equal(timestr_to_secs(0.9, 0), 1)
+    def test_timestr_to_secs_uses_bankers_rounding(self):
         assert_equal(timestr_to_secs(0.1, 0), 0)
+        assert_equal(timestr_to_secs(0.5, 0), 0)
+        assert_equal(timestr_to_secs(0.51, 0), 1)
+        assert_equal(timestr_to_secs(0.99, 0), 1)
+        assert_equal(timestr_to_secs(1.0, 0), 1)
+        assert_equal(timestr_to_secs(1.499, 0), 1)
+        assert_equal(timestr_to_secs(1.5, 0), 2)
 
     def test_timestr_to_secs_with_time_string(self):
         for inp, exp in [('1s', 1),
@@ -96,6 +101,20 @@ class TestTime(unittest.TestCase):
                          ('0day 0hour 0minute 0seconds 0millisecond', 0)]:
             assert_equal(timestr_to_secs(inp), exp, inp)
 
+    def test_timestr_to_secs_with_time_string_ns_accuracy(self):
+        for input, expected in [("1 us", 1E-6),
+                                ("1 μs", 1E-6),
+                                ("1 microsecond", 1E-6),
+                                ("1 microseconds", 1E-6),
+                                ("2 us", 2E-6),
+                                ("1 ns", 1E-9),
+                                ("1 nanosecond", 1E-9),
+                                ("1 nanoseconds", 1E-9),
+                                ("2 ns", 2E-9),
+                                ("-100 ns", -100E-9),
+                                ("1.2us", 1.2E-6)]:
+            assert_equal(timestr_to_secs(input, round_to=9), expected)
+
     def test_timestr_to_secs_with_timer_string(self):
         for inp, exp in [('00:00:00', 0),
                          ('00:00:01', 1),
@@ -136,6 +155,10 @@ class TestTime(unittest.TestCase):
                 exp += 0.5 if inp[0] != '-' else -0.5
                 assert_equal(timestr_to_secs(inp), exp, inp)
 
+    def test_timestr_to_secs_with_timedelta(self):
+        assert_equal(timestr_to_secs(timedelta(minutes=1)), 60)
+        assert_equal(timestr_to_secs(timedelta(microseconds=1000)), 0.001)
+
     def test_timestr_to_secs_custom_rounding(self):
         secs = 0.123456789
         for round_to in 0, 1, 6:
@@ -153,6 +176,13 @@ class TestTime(unittest.TestCase):
                     '01:02:03:04', '01:02:03foo', 'foo01:02:03', None]:
             assert_raises_with_msg(ValueError, "Invalid time string '%s'." % inv,
                                    timestr_to_secs, inv)
+
+    def test_timestr_to_secs_accept_plain_values(self):
+        with warnings.catch_warnings(record=True) as w:
+            assert_raises_with_msg(ValueError, "Invalid time string '100'.",
+                                   timestr_to_secs, '100', accept_plain_values=False)
+            assert_equal(str(w[-1].message),
+                         "'accept_plain_values' is deprecated and will be removed in RF 7.0.")
 
     def test_secs_to_timestr(self):
         for inp, compact, verbose in [
@@ -247,9 +277,10 @@ class TestTime(unittest.TestCase):
     def test_elapsed_time_to_string(self):
         for elapsed, expected in [(0, '00:00:00.000'),
                                   (0.1, '00:00:00.000'),
-                                  (0.49999, '00:00:00.000'),
-                                  (0.5, '00:00:00.001'),
+                                  (0.5, '00:00:00.000'),
+                                  (0.50001, '00:00:00.001'),
                                   (1, '00:00:00.001'),
+                                  (1.5, '00:00:00.002'),
                                   (42, '00:00:00.042'),
                                   (999, '00:00:00.999'),
                                   (999.9, '00:00:01.000'),
@@ -262,8 +293,8 @@ class TestTime(unittest.TestCase):
                                   (3600000, '01:00:00.000'),
                                   (36000000, '10:00:00.000'),
                                   (360000000, '100:00:00.000'),
-                                  (360000000 + 36000000 + 3600000 +
-                                   660000 + 11111, '111:11:11.111')]:
+                                  (360000000 + 36000000 + 3600000 + 660000 + 11111,
+                                   '111:11:11.111')]:
             assert_equal(elapsed_time_to_string(elapsed), expected, elapsed)
             if expected != '00:00:00.000':
                 assert_equal(elapsed_time_to_string(-1 * elapsed),
@@ -272,23 +303,25 @@ class TestTime(unittest.TestCase):
     def test_elapsed_time_to_string_without_millis(self):
         for elapsed, expected in [(0, '00:00:00'),
                                   (1, '00:00:00'),
-                                  (499, '00:00:00'),
-                                  (499.999, '00:00:00'),
-                                  (500, '00:00:01'),
+                                  (500, '00:00:00'),
+                                  (500.001, '00:00:01'),
                                   (999, '00:00:01'),
                                   (1000, '00:00:01'),
-                                  (1499, '00:00:01'),
+                                  (1499.999, '00:00:01'),
+                                  (1500, '00:00:02'),
                                   (59499.9, '00:00:59'),
                                   (59500.0, '00:01:00'),
                                   (59999, '00:01:00'),
                                   (60000, '00:01:00'),
                                   (654321, '00:10:54'),
-                                  (654500, '00:10:55'),
+                                  (654500, '00:10:54'),
+                                  (654501, '00:10:55'),
                                   (3599999, '01:00:00'),
                                   (3600000, '01:00:00'),
                                   (359999999, '100:00:00'),
                                   (360000000, '100:00:00'),
-                                  (360000500, '100:00:01')]:
+                                  (360000500, '100:00:00'),
+                                  (360000500.001, '100:00:01')]:
             assert_equal(elapsed_time_to_string(elapsed, include_millis=False),
                          expected, elapsed)
             if expected != '00:00:00':
@@ -311,13 +344,20 @@ class TestTime(unittest.TestCase):
                                 ('now - 1 day 100 seconds', -86500),
                                 ('now + 1day 10hours 1minute 10secs', 122470),
                                 ('NOW - 1D 10H 1MIN 10S', -122470)]:
-            expected = get_time('epoch') + adjusted
+            now = int(time.time())
             parsed = parse_time(input)
-            assert_true(expected <= parsed <= expected + 1),
+            expected = now + adjusted
+            if time.localtime(now).tm_isdst is not time.localtime(expected).tm_isdst:
+                dst_diff = time.timezone - time.altzone
+                expected += dst_diff if time.localtime(now).tm_isdst else -dst_diff
+            assert_true(expected - parsed < 0.1)
             parsed = parse_time(input.upper().replace('NOW', 'UtC'))
-            zone = time.altzone if time.localtime().tm_isdst else time.timezone
+            zone = time.altzone if time.localtime(now).tm_isdst else time.timezone
             expected += zone
-            assert_true(expected <= parsed <= expected + 1),
+            assert_true(expected - parsed < 0.1)
+
+    def test_get_time_with_zero(self):
+        assert_equal(get_time('epoch', 0), 0)
 
     def test_parse_modified_time_with_invalid_times(self):
         for value, msg in [("-100", "Epoch time must be positive (got -100)."),

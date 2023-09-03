@@ -20,7 +20,7 @@ Documentation
     Verify Documentation    Documentation for this user keyword
 
 Documentation in multiple columns
-    Verify Documentation    Documentation for this user keyword in multiple columns
+    Verify Documentation    Documentation${SPACE * 4}for this user keyword${SPACE*10}in multiple columns
 
 Documentation in multiple rows
     Verify Documentation    1st line is shortdoc.
@@ -94,17 +94,17 @@ Multiple settings
 
 Invalid setting
     Check Test Case    ${TEST NAME}
-    Error In File    0    parsing/user_keyword_settings.robot    195
-    ...    Non-existing setting 'Invalid Setting'.
-    Error In File    1    parsing/user_keyword_settings.robot    199
-    ...    Non-existing setting 'invalid'.
+
+Setting not valid with user keywords
+    Check Test Case    ${TEST NAME}
 
 Small typo should provide recommendation
     Check Test Case    ${TEST NAME}
-    Error In File    2    parsing/user_keyword_settings.robot    203
-    ...    SEPARATOR=\n
-    ...    Non-existing setting 'Doc Umentation'. Did you mean:
-    ...    ${SPACE*4}Documentation
+
+Invalid empty line continuation in arguments should throw an error
+    Error in File    0    parsing/user_keyword_settings.robot    214
+    ...    Creating keyword 'Invalid empty line continuation in arguments should throw an error' failed:
+    ...    Invalid argument specification: Invalid argument syntax ''.
 
 *** Keywords ***
 Verify Documentation

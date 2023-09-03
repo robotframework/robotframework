@@ -50,3 +50,6 @@ Wait Until File With Glob Like Name
 
 Wait Until Removed File With Glob Like Name
     Check Test Case    ${TESTNAME}
+
+Path as `pathlib.Path`
+    Check Test Case    ${TESTNAME}

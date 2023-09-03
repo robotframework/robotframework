@@ -98,6 +98,13 @@ Wait Until Removed File With Glob Like Name
     Create Items
     Wait Until Removed    ${FILE WITH GLOB}    0.042
 
+Path as `pathlib.Path`
+    Create Items
+    Remove After Sleeping    ${FILE}
+    Wait Until Removed    ${{pathlib.Path($FILE)}}    5 second
+    Remove After Sleeping    ${DIR}
+    Wait Until Removed    ${{pathlib.Path($DIR)}}    32 seconds 44 millis
+
 *** Keywords ***
 Remove Items
     Remove File    ${FILE WITH GLOB}

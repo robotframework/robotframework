@@ -17,7 +17,7 @@ No tests in directory
      [Teardown]    Remove directory    ${NO TESTS DIR}
 
 Empty suite after filtering by tags
-     Run empty suite   --RunEmptySuite --include nonex   ${TEST FILE}
+     Run empty suite   --Run-Empty-Suite --include nonex   ${TEST FILE}
 
 Empty suite after filtering by names
      Run empty suite   --RunEmptySuite --test nonex   ${TEST FILE}

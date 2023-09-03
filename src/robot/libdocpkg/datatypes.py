@@ -13,149 +13,108 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from inspect import getdoc, isclass
+from inspect import isclass
 from enum import Enum
 
-from robot.utils import Sortable, typeddict_types
+from robot.utils import getdoc, Sortable, typeddict_types, type_name
 from robot.running import TypeConverter
+
+from .standardtypes import STANDARD_TYPE_DOCS
 
 
 EnumType = type(Enum)
 
 
-class DataTypeCatalog:
+class TypeDoc(Sortable):
+    ENUM = 'Enum'
+    TYPED_DICT = 'TypedDict'
+    CUSTOM = 'Custom'
+    STANDARD = 'Standard'
 
-    def __init__(self, converters=None):
-        self._converters = converters
-        self._customs = set()
-        self._enums = set()
-        self._typed_dicts = set()
-
-    def __iter__(self):
-        return iter(sorted(self._customs | self._enums | self._typed_dicts))
-
-    def __bool__(self):
-        return next(iter(self), None) is not None
-
-    @property
-    def customs(self):
-        return sorted(self._customs)
-
-    @property
-    def enums(self):
-        return sorted(self._enums)
-
-    @property
-    def typed_dicts(self):
-        return sorted(self._typed_dicts)
-
-    def update(self, types):
-        storages = {CustomDoc: self._customs,
-                    EnumDoc: self._enums,
-                    TypedDictDoc: self._typed_dicts}
-        for typ in types:
-            type_doc = self._get_type_doc_object(typ)
-            for type_cls in storages:
-                if isinstance(type_doc, type_cls):
-                    storages[type_cls].add(type_doc)
-
-    def _get_type_doc_object(self, typ):
-        if isinstance(typ, DataType):
-            return typ
-        if isinstance(typ, EnumType):
-            return EnumDoc.from_type(typ)
-        if isinstance(typ, typeddict_types):
-            return TypedDictDoc.from_type(typ)
-        info = TypeConverter.type_info_for(typ, self._converters)
-        if info:
-            return CustomDoc(info.name, info.doc)
-        if isinstance(typ, dict) and 'type' in typ:
-            cls = {EnumDoc.type: EnumDoc,
-                   TypedDictDoc.type: TypedDictDoc,
-                   CustomDoc.type: CustomDoc}.get(typ['type'])
-            if cls:
-                typ.pop('type')
-                return cls(**typ)
-        return None
-
-    def to_dictionary(self):
-        return {
-            'customs': [t.to_dictionary() for t in self.customs],
-            'enums': [t.to_dictionary() for t in self.enums],
-            'typedDicts': [t.to_dictionary() for t in self.typed_dicts]
-        }
-
-
-class DataType(Sortable):
-    type = None
-
-    def __init__(self, name, doc):
+    def __init__(self, type, name, doc, accepts=(), usages=None,
+                 members=None, items=None):
+        self.type = type
         self.name = name
-        self.doc = doc
+        self.doc = doc or ''    # doc parsed from XML can be None.
+        self.accepts = [type_name(t) if not isinstance(t, str) else t for t in accepts]
+        self.usages = usages or []
+        # Enum members and TypedDict items are used only with appropriate types.
+        self.members = members
+        self.items = items
 
     @property
     def _sort_key(self):
         return self.name.lower()
 
-    def to_dictionary(self):
-        return {
-            'type': self.type,
-            'name': self.name,
-            'doc': self.doc,
-        }
-
-
-class TypedDictDoc(DataType):
-    type = 'TypedDict'
-
-    def __init__(self, name, doc, items=None):
-        super().__init__(name, doc)
-        self.items = items or []
+    @classmethod
+    def for_type(cls, type_hint, converters):
+        if isinstance(type_hint, EnumType):
+            return cls.for_enum(type_hint)
+        if isinstance(type_hint, typeddict_types):
+            return cls.for_typed_dict(type_hint)
+        converter = TypeConverter.converter_for(type_hint, converters)
+        if not converter:
+            return None
+        elif not converter.type:
+            return cls(cls.CUSTOM, converter.type_name, converter.doc,
+                       converter.value_types)
+        else:
+            # Get `type_name` from class, not from instance, to get the original
+            # name with generics like `list[int]` that override it in instance.
+            return cls(cls.STANDARD, type(converter).type_name,
+                       STANDARD_TYPE_DOCS[converter.type], converter.value_types)
 
     @classmethod
-    def from_type(cls, typed_dict):
+    def for_enum(cls, enum):
+        accepts = (str, int) if issubclass(enum, int) else (str,)
+        return cls(cls.ENUM, enum.__name__, getdoc(enum), accepts,
+                   members=[EnumMember(name, str(member.value))
+                            for name, member in enum.__members__.items()])
+
+    @classmethod
+    def for_typed_dict(cls, typed_dict):
         items = []
         required_keys = list(getattr(typed_dict, '__required_keys__', []))
         optional_keys = list(getattr(typed_dict, '__optional_keys__', []))
         for key, value in typed_dict.__annotations__.items():
             typ = value.__name__ if isclass(value) else str(value)
             required = key in required_keys if required_keys or optional_keys else None
-            items.append({'key': key, 'type': typ, 'required': required})
-        return cls(name=typed_dict.__name__,
-                   doc=getdoc(typed_dict) or '',
-                   items=items)
+            items.append(TypedDictItem(key, typ, required))
+        return cls(cls.TYPED_DICT, typed_dict.__name__, getdoc(typed_dict),
+                   accepts=(str, 'Mapping'), items=items)
 
-    def to_dictionary(self):
-        return {
+    def to_dictionary(self, legacy=False):
+        data = {
             'type': self.type,
             'name': self.name,
             'doc': self.doc,
-            'items': self.items
         }
+        if not legacy:
+            data['usages'] = self.usages
+            data['accepts'] = self.accepts
+        if self.members is not None:
+            data['members'] = [m.to_dictionary() for m in self.members]
+        if self.items is not None:
+            data['items'] = [i.to_dictionary() for i in self.items]
+        return data
 
 
-class EnumDoc(DataType):
-    type = 'Enum'
+class TypedDictItem:
 
-    def __init__(self, name, doc, members=None):
-        super().__init__(name, doc)
-        self.members = members or []
-
-    @classmethod
-    def from_type(cls, enum_type):
-        return cls(name=enum_type.__name__,
-                   doc=getdoc(enum_type) or '',
-                   members=[{'name': name, 'value': str(member.value)}
-                            for name, member in enum_type.__members__.items()])
+    def __init__(self, key, type, required=None):
+        self.key = key
+        self.type = type
+        self.required = required
 
     def to_dictionary(self):
-        return {
-            'type': self.type,
-            'name': self.name,
-            'doc': self.doc,
-            'members': self.members
-        }
+        return {'key': self.key, 'type': self.type, 'required': self.required}
 
 
-class CustomDoc(DataType):
-    type = 'Custom'
+class EnumMember:
+
+    def __init__(self, name, value):
+        self.name = name
+        self.value = value
+
+    def to_dictionary(self):
+        return {'name': self.name, 'value': self.value}

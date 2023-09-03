@@ -1,5 +1,4 @@
 import unittest
-import warnings
 
 from robot.variables import (contains_variable,
                              is_variable, is_assign,
@@ -7,7 +6,6 @@ from robot.variables import (contains_variable,
                              is_list_variable, is_list_assign,
                              is_dict_variable, is_dict_assign,
                              search_variable)
-from robot.utils.asserts import assert_equal
 
 
 SCALARS = ['${var}', '${  v A  R }']
@@ -15,9 +13,9 @@ LISTS = ['@{var}', '@{  v A  R }']
 DICTS = ['&{var}', '&{  v A  R }']
 NOKS = ['', 'nothing', '$not', '${not', '@not', '&{not', '${not}[oops',
         '%{not}', '*{not}', r'\${var}', r'\\\${var}', 42, None, ['${var}']]
-NOK_ASSIGNS = NOKS + ['${${internal}}', '${var}[item]',
-                      '@{${internal}}', '@{var}[item]',
-                      '&{${internal}}', '&{var}[item]']
+NOK_ASSIGNS = NOKS + ['${${internal}}',
+                      '@{${internal}}',
+                      '&{${internal}}']
 
 
 class TestIsVariable(unittest.TestCase):
@@ -80,20 +78,6 @@ class TestIsVariable(unittest.TestCase):
         for nok in NOKS:
             assert not contains_variable(nok)
 
-    def test_deprecated_utils(self):
-        from robot.variables import (is_var, is_scalar_var, is_list_var,
-                                     is_dict_var, contains_var)
-        for util, inp in [(is_var, '${x}'),
-                          (is_scalar_var, '${x}'),
-                          (is_list_var, '@{x}'),
-                          (is_dict_var, '&{x}'),
-                          (contains_var, 'x${x}x')]:
-            with warnings.catch_warnings(record=True) as w:
-                assert util(inp)
-                assert not util('xxx')
-                assert_equal(w[0].message.args[0], util.__doc__)
-                assert_equal(w[0].category, UserWarning)
-
 
 class TestIsAssign(unittest.TestCase):
 
@@ -103,8 +87,12 @@ class TestIsAssign(unittest.TestCase):
             assert search_variable(ok).is_assign()
             assert is_assign(ok + '=', allow_assign_mark=True)
             assert is_assign(ok + ' =', allow_assign_mark=True)
-            assert not is_assign(ok + '[item]')
             assert not is_assign(' ' + ok)
+        for ok in SCALARS + LISTS + DICTS:
+            assert is_assign(ok + '[item]' + '[ i t e m ]' + '[${item}]', allow_items=True)
+            assert not is_assign(ok + '[item]' + '[ i t e m ]' + '[${item}]')
+            assert is_assign(ok + '[item]' + '[ i t e m ]' + '[${item}]', allow_items=True)
+            assert not is_assign(ok + '[item]' + '[ i t e m ]' + '[${item}]')
         for nok in NOK_ASSIGNS:
             assert not is_assign(nok)
             assert not search_variable(nok, ignore_errors=True).is_assign()
@@ -115,7 +103,10 @@ class TestIsAssign(unittest.TestCase):
             assert search_variable(ok).is_scalar_assign()
             assert is_scalar_assign(ok + '=', allow_assign_mark=True)
             assert is_scalar_assign(ok + ' =', allow_assign_mark=True)
+            assert is_scalar_assign(ok + '[item]', allow_items=True)
+            assert is_scalar_assign(ok + '[item1][item2]', allow_items=True)
             assert not is_scalar_assign(ok + '[item]')
+            assert not is_scalar_assign(ok + '[item1][item2]')
             assert not is_scalar_assign(' ' + ok)
         for nok in NOK_ASSIGNS + LISTS + DICTS:
             assert not is_scalar_assign(nok)
@@ -127,7 +118,10 @@ class TestIsAssign(unittest.TestCase):
             assert search_variable(ok).is_list_assign()
             assert is_list_assign(ok + '=', allow_assign_mark=True)
             assert is_list_assign(ok + ' =', allow_assign_mark=True)
+            assert is_list_assign(ok + '[item]', allow_items=True)
+            assert is_list_assign(ok + '[item1][item2]', allow_items=True)
             assert not is_list_assign(ok + '[item]')
+            assert not is_list_assign(ok + '[item1][item2]')
             assert not is_list_assign(' ' + ok)
         for nok in NOK_ASSIGNS + SCALARS + DICTS:
             assert not is_list_assign(nok)
@@ -139,7 +133,10 @@ class TestIsAssign(unittest.TestCase):
             assert search_variable(ok).is_dict_assign()
             assert is_dict_assign(ok + '=', allow_assign_mark=True)
             assert is_dict_assign(ok + ' =', allow_assign_mark=True)
+            assert is_dict_assign(ok + '[item]', allow_items=True)
+            assert is_dict_assign(ok + '[item1][item2]', allow_items=True)
             assert not is_dict_assign(ok + '[item]')
+            assert not is_dict_assign(ok + '[item1][item2]')
             assert not is_dict_assign(' ' + ok)
         for nok in NOK_ASSIGNS + SCALARS + LISTS:
             assert not is_dict_assign(nok)

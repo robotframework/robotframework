@@ -11,6 +11,7 @@ ${TEMPFILE}       %{TEMPDIR}${/}terminate-process-temp.txt
 ${STARTED}        %{TEMPDIR}${/}some-process-started.txt
 ${STDOUT}         %{TEMPDIR}/process-stdout-file.txt
 ${STDERR}         %{TEMPDIR}/process-stderr-file.txt
+${STDIN}          %{TEMPDIR}/process-stdin-file.txt
 ${CWD}            %{TEMPDIR}/process-cwd
 
 *** Keywords ***
@@ -18,7 +19,7 @@ Some process
     [Arguments]    ${alias}=${null}    ${stderr}=STDOUT
     Remove File    ${STARTED}
     ${handle}=    Start Python Process    open(r'${STARTED}', 'w').close(); print(input())
-    ...    alias=${alias}    stderr=${stderr}
+    ...    alias=${alias}    stderr=${stderr}    stdin=PIPE
     Wait Until Created    ${STARTED}    timeout=10s
     Process Should Be Running
     [Return]    ${handle}
@@ -64,9 +65,9 @@ Script result should equal
     Result should equal    ${result}    ${stdout}    ${stderr}    ${rc}
 
 Start Python Process
-    [Arguments]    ${command}    ${alias}=${NONE}    ${stdout}=${NONE}    ${stderr}=${NONE}    ${shell}=False
+    [Arguments]    ${command}    ${alias}=${NONE}    ${stdout}=${NONE}    ${stderr}=${NONE}    ${stdin}=None    ${shell}=False
     ${handle}=    Start Process    python    -c    ${command}
-    ...    alias=${alias}    stdout=${stdout}    stderr=${stderr}    shell=${shell}
+    ...    alias=${alias}    stdout=${stdout}    stderr=${stderr}    stdin=${stdin}    shell=${shell}
     [Return]    ${handle}
 
 Run Python Process
@@ -77,7 +78,6 @@ Run Python Process
 
 Safe Remove File
     [Documentation]    Ignore errors caused by process being locked.
-    ...                That happens at least with IronPython.
     [Arguments]    @{paths}
     Run Keyword And Ignore Error    Remove Files    @{paths}
 
@@ -87,13 +87,7 @@ Safe Remove Directory
 
 Check Precondition
     [Arguments]    ${precondition}
-    ${ok} =    Evaluate    ${precondition}    modules=sys,os,signal
-    Run Keyword If    not ${ok}
-    ...    Fail    Precondition '${precondition}' was not true.    precondition-fail
-
-Precondition not OSX
-    Run Keyword If    ${{sys.platform == 'darwin'}}
-    ...    Fail    Platform is OSX, where this test wont work.    precondition-fail
+    Should Be True    ${precondition}    Precondition '${precondition}' was not true.
 
 Wait until countdown started
     Wait Until Created    ${TEMPFILE}

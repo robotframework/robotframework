@@ -32,8 +32,7 @@ class ArgumentResolver:
 
     def resolve(self, arguments, variables=None):
         positional, named = self._named_resolver.resolve(arguments, variables)
-        positional, named = self._variable_replacer.replace(positional, named,
-                                                            variables)
+        positional, named = self._variable_replacer.replace(positional, named, variables)
         positional, named = self._dict_to_kwargs.handle(positional, named)
         self._argument_validator.validate(positional, named,
                                           dryrun=variables is None)
@@ -114,8 +113,8 @@ class VariableReplacer:
             positional = variables.replace_list(positional, self._resolve_until)
             named = list(self._replace_named(named, variables.replace_scalar))
         else:
-            positional = list(positional)
-            named = [item for item in named if isinstance(item, tuple)]
+            # If `var` isn't a tuple, it's a &{dict} variables.
+            named = [var if isinstance(var, tuple) else (var, var) for var in named]
         return positional, named
 
     def _replace_named(self, named, replace_scalar):

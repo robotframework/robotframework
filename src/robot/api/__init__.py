@@ -30,6 +30,9 @@ Currently exposed APIs are:
   reporting failures and other events. These exceptions can be imported also directly
   via :mod:`robot.api` like ``from robot.api import SkipExecution``.
 
+* :mod:`.interfaces` module containing optional base classes that can be used
+  when creating libraries and other extensions. New in Robot Framework 6.1.
+
 * :mod:`.parsing` module exposing the parsing APIs. This module is new in Robot
   Framework 4.0. Various parsing related functions and classes were exposed
   directly via :mod:`robot.api` already in Robot Framework 3.2, but they are
@@ -58,9 +61,13 @@ Currently exposed APIs are:
   returned by the :func:`~robot.result.resultbuilder.ExecutionResult` or
   an executed :class:`~robot.running.model.TestSuite`.
 
-All of the above names can be imported like::
+* :class:`~robot.conf.languages.Languages` and :class:`~robot.conf.languages.Language`
+  classes for external tools that need to work with different translations.
+  The latter is also the base class to use with custom translations.
 
-    from robot.api import ApiName
+All of the above classes can be imported like::
+
+    from robot.api import ClassName
 
 See documentations of the individual APIs for more details.
 
@@ -68,10 +75,10 @@ See documentations of the individual APIs for more details.
         via the :mod:`robot` root package.
 """
 
+from robot.conf.languages import Language, Languages
 from robot.model import SuiteVisitor
 from robot.parsing import (get_tokens, get_resource_tokens, get_init_tokens,
-                           get_model, get_resource_model, get_init_model,
-                           Token)
+                           get_model, get_resource_model, get_init_model, Token)
 from robot.reporting import ResultWriter
 from robot.result import ExecutionResult, ResultVisitor
 from robot.running import TestSuite, TestSuiteBuilder

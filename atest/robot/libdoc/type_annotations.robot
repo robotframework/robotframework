@@ -22,7 +22,7 @@ Varargs and kwargs
     Keyword Arguments Should Be     4    *varargs: int    **kwargs: bool
 
 Unknown types
-    Keyword Arguments Should Be     5    unknown: UnknownType    unrecognized: Ellipsis
+    Keyword Arguments Should Be     5    unknown: UnknownType    unrecognized: ...
 
 Non-type annotations
     Keyword Arguments Should Be     6    arg: One of the usages in PEP-3107
@@ -30,3 +30,15 @@ Non-type annotations
 
 Drop `typing.` prefix
     Keyword Arguments Should Be     7    a: Any    b: List    c: Any | List
+
+Union from typing
+    Keyword Arguments Should Be     8    a: int | str | list | tuple
+    Keyword Arguments Should Be     9    a: int | str | list | tuple | None = None
+
+Nested
+    Keyword Arguments Should Be    10    a: List[int]    b: List[int | float]    c: Tuple[Tuple[UnknownType], Dict[str, Tuple[float]]]
+
+Union syntax
+    [Tags]    require-py3.10
+    Keyword Arguments Should Be    11    a: int | str | list | tuple
+    Keyword Arguments Should Be    12    a: int | str | list | tuple | None = None

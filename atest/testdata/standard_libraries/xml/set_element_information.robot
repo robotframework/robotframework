@@ -28,6 +28,13 @@ Set Elements Tag
     Should Be Equal    ${texts}   child 1 text::child 2 text grand child text more text::
     Set Elements Tag    ${XML}    new    xpath=non-existing
 
+Set Elements Tag returns root element
+    ${root} =    Set Elements Tag    ${SIMPLE}    new
+    Should Be Equal    ${root.tag}    new
+    ${root} =    Set Elements Tag    ${SIMPLE}    new    xpath=child
+    Should Be Equal    ${root.tag}       root
+    Should Be Equal    ${root[0].tag}    new
+
 Set Element Text
     Set Element Text    ${XML}    new    xpath=child
     Element Text Should Be    ${XML}    new    xpath=child
@@ -63,11 +70,16 @@ Set Elements Text
     Should Be Equal    ${texts}   child 1 text::child 2 text new text new tail::new text new tail
     Set Elements Text    ${XML}    new text    xpath=non-existing
 
+Set Elements Text Returns Root Element
+    ${root} =    Set Elements Text    ${SIMPLE}    new    xpath=child
+    Should Be Equal    ${root.text}    ${NONE}
+    Element Text Should Be    ${root}    new    xpath=child
+
 Set Element Attribute
     Set Element Attribute    ${XML}    attr    value
     Element Attribute Should Be    ${XML}    attr    value
 
-Set element Attribute should fail with empty name
+Set Element Attribute should fail with empty name
     [Documentation]    FAIL    Attribute name can not be empty.
     Set Element Attribute    ${XML}    ${EMPTY}    value
 
@@ -88,6 +100,11 @@ Set Elements Attribute
     Element Attribute Should Be    ${elements[1]}    a2    new value
     Element Attribute Should Be    ${elements[2]}    a2    new value
     Set Elements Attribute    ${XML}    a2    new value   xpath=non-existing
+
+Set Elements Attribute Returns Root Element
+    ${root} =    Set Elements Attribute    ${SIMPLE}    new    value    xpath=c2
+    Should Be Empty    ${root.attrib}
+    Element Attribute Should Be    ${root}    new    value    xpath=c2
 
 Remove Element Attribute
     Remove Element Attribute    ${XML}    id    xpath=child
@@ -110,6 +127,10 @@ Remove Elements Attribute
     Element Should Not Have Attribute    ${elements[2]}    id
     Remove Elements Attribute    ${XML}    id    xpath=non-existing
 
+Remove Elements Attribute Returns Root Element
+    ${root} =    Remove Elements Attribute    ${SIMPLE}    id    xpath=child
+    Element Attribute Should Be    ${root}    id    ${NONE}    xpath=child
+
 Remove Element Attributes
     Remove Element Attributes    ${XML}
     Should Be Empty    ${XML.attrib}
@@ -129,3 +150,7 @@ Remove Elements Attributes
     Should Be Empty    ${elements[1].attrib}
     Should Be Empty    ${elements[2].attrib}
     Remove Elements Attributes    ${XML}    xpath=non-existing
+
+Remove Elements Attributes Returns Root Element
+    ${root} =    Remove Elements Attributes    ${SIMPLE}    xpath=child
+    Element Attribute Should Be    ${root}    id    ${NONE}    xpath=child

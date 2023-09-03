@@ -6,47 +6,47 @@ Suite Setup       Check Variables In Suite Setup    ${EXP_SUITE_NAME}
 ...               ${EXP_SUITE_DOC}    ${EXP_SUITE_META}
 Suite Teardown    Check Variables In Suite Teardown    ${EXP_SUITE_NAME}
 ...               FAIL    ${EXP_SUITE_STATS}    @{LAST_TEST}
-Force Tags        Force 1
+Force Tags        Force 1    include this test
 Resource          resource.robot
 Library           Collections
-Library           HelperLib.py    ${SUITE SOURCE}    ${SUITE NAME}
-...               ${SUITE DOCUMENTATION}    ${SUITE METADATA}
+Library           HelperLib.py    ${SUITE NAME}    ${SUITE DOCUMENTATION}
+...               ${SUITE METADATA}    ${SUITE SOURCE}    ${OPTIONS}
 
 *** Variable ***
 ${VARIABLE}          variable value
 ${EXP_SUITE_NAME}    Automatic Variables.Auto1
 ${EXP_SUITE_DOC}     This is suite documentation. With ${VARIABLE}.
 ${EXP_SUITE_META}    {'MeTa1': 'Value', 'meta2': '${VARIABLE}'}
-${EXP_SUITE_STATS}   16 tests, 14 passed, 2 failed
-@{LAST_TEST}         Previous Test Variables Should Have Correct Values When That Test Fails    PASS
+${EXP_SUITE_STATS}   17 tests, 15 passed, 2 failed
+@{LAST_TEST}         \&{OPTIONS}    PASS
 
 *** Test Case ***
 Previous Test Variables Should Have Default Values
     Check Previous Test Variables
 
 Test Name
-    [Setup]    Should Be Equal    ${TEST_NAME}    Test Name
-    Should Be Equal    ${TEST_NAME}    Test Name
+    [Setup]       Should Be Equal    ${TEST_NAME}    Test Name
+                  Should Be Equal    ${TEST_NAME}    Test Name
     [Teardown]    Should Be Equal    ${TEST_NAME}    Test Name
 
 Test Documentation
     [Documentation]    My doc.
     ...                In 2 lines! And with ${VARIABLE}!!
-    [Setup]    Should Be Equal    ${TEST DOCUMENTATION}    My doc.\nIn 2 lines! And with ${VARIABLE}!!
-    Should Be Equal    ${TEST DOCUMENTATION}    My doc.\nIn 2 lines! And with ${VARIABLE}!!
+    [Setup]       Should Be Equal    ${TEST DOCUMENTATION}    My doc.\nIn 2 lines! And with ${VARIABLE}!!
+                  Should Be Equal    ${TEST DOCUMENTATION}    My doc.\nIn 2 lines! And with ${VARIABLE}!!
     [Teardown]    Should Be Equal    ${TEST DOCUMENTATION}    My doc.\nIn 2 lines! And with ${VARIABLE}!!
 
 Test Tags
     [Tags]    id-${42}    Hello, world!    ${VARIABLE}
-    [Setup]    Check Test Tags    Force 1    Hello, world!    id-42    ${VARIABLE}
-    Check Test Tags    Force 1    Hello, world!    id-42    ${VARIABLE}
-    [Teardown]    Check Test Tags    Force 1    Hello, world!    id-42    ${VARIABLE}
+    [Setup]       Check Test Tags    Force 1    Hello, world!    id-42    include this test    ${VARIABLE}
+                  Check Test Tags    Force 1    Hello, world!    id-42    include this test    ${VARIABLE}
+    [Teardown]    Check Test Tags    Force 1    Hello, world!    id-42    include this test    ${VARIABLE}
 
-Modifying ${TEST TAGS} does not affect actual tags test has
+Modifying \${TEST TAGS} does not affect actual tags test has
     [Documentation]    The variable is changed but not "real" tags
     [Tags]    mytag
     Append To List    ${TEST TAGS}    not really added
-    Check Test Tags    Force 1    mytag    not really added
+    Check Test Tags    Force 1    include this test    mytag    not really added
 
 Suite Name
     Should Be Equal    ${SUITE_NAME}    ${EXP_SUITE_NAME}
@@ -72,10 +72,12 @@ Modifying \&{SUITE METADATA} does not affect actual metadata suite has
 
 Suite Variables Are Available At Import Time
     [Documentation]    Possible variables in them are not resolved, though.
-    Source Should Be    ${CURDIR}${/}auto1.robot
-    Name Should Be    Automatic Variables.Auto1
-    Documentation Should Be    This is suite documentation. With \${VARIABLE}.
-    Metadata Should Be    {'MeTa1': 'Value', 'meta2': '\${VARIABLE}'}
+    [Template]         Import time value should be
+    source      ${CURDIR}${/}auto1.robot
+    name        Automatic Variables.Auto1
+    doc         This is suite documentation. With \${VARIABLE}.
+    metadata    {'MeTa1': 'Value', 'meta2': '\${VARIABLE}'}
+    options     {'include': ['include this test'], 'exclude': ['exclude', 'e2'], 'skip': ['skip_me'], 'skip_on_failure': ['sof']}
 
 Suite Status And Suite Message Are Not Visible In Tests
     Variable Should Not Exist    $SUITE_STATUS
@@ -106,3 +108,18 @@ Previous Test Variables Should Have Correct Values When That Test Fails
     [Setup]    Check Previous Test variables    Test Status When Setup Fails    FAIL    Setup failed:\nExpected failure in setup
     Check Previous Test variables    Test Status When Setup Fails    FAIL    Setup failed:\nExpected failure in setup
     [Teardown]    Check Previous Test variables    Test Status When Setup Fails    FAIL    Setup failed:\nExpected failure in setup
+
+\&{OPTIONS}
+    FOR    ${name}    ${expected}    IN
+    ...    include    include this test
+    ...    exclude    exclude, e2
+    ...    skip       Skip Me
+    ...    skip_on_failure    s o f
+        ${expected} =    Evaluate    $expected.split(', ')
+        Should Be Equal    ${OPTIONS.${name}}     ${expected}
+        Should Be Equal    ${OPTIONS}[${name}]    ${{[exp.upper() for exp in $expected]}}
+        FOR    ${exp}    IN    @{expected}
+            Should Contain    ${OPTIONS}[${name}]    ${exp}
+            Should Contain    ${OPTIONS.${name}}     ${exp.upper()}
+        END
+    END

@@ -55,6 +55,10 @@ Invalid get_keyword_names
     ...    Calling dynamic method 'get_keyword_names' failed:
     ...    Return value must be a list of strings.
 
+__init__ exposed as keyword
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Should Be Equal    ${tc.body[0].kwname}    Init
+
 *** Keywords ***
 Adding keyword failed
     [Arguments]    ${index}    ${name}    @{error}    ${pattern}=False

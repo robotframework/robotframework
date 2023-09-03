@@ -59,7 +59,7 @@ Modifiers are used before normal configuration
 
 Modify FOR
     [Setup]    Modify FOR and IF
-    ${tc} =    Check Test Case    For In Range Loop In Test
+    ${tc} =    Check Test Case    FOR IN RANGE
     Should Be Equal      ${tc.body[0].flavor}                        IN
     Should Be Equal      ${tc.body[0].values}                        ${{('FOR', 'is', 'modified!')}}
     Should Be Equal      ${tc.body[0].body[0].variables['\${i}']}    0 (modified)

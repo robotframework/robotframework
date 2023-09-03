@@ -21,7 +21,7 @@ from .loggerhelper import AbstractLogger
 class FileLogger(AbstractLogger):
 
     def __init__(self, path, level):
-        AbstractLogger.__init__(self, level)
+        super().__init__(level)
         self._writer = self._get_writer(path)  # unit test hook
 
     def _get_writer(self, path):
@@ -34,22 +34,22 @@ class FileLogger(AbstractLogger):
             self._writer.write(entry)
 
     def start_suite(self, suite):
-        self.info("Started test suite '%s'" % suite.name)
+        self.info("Started suite '%s'." % suite.name)
 
     def end_suite(self, suite):
-        self.info("Ended test suite '%s'" % suite.name)
+        self.info("Ended suite '%s'." % suite.name)
 
     def start_test(self, test):
-        self.info("Started test case '%s'" % test.name)
+        self.info("Started test '%s'." % test.name)
 
     def end_test(self, test):
-        self.info("Ended test case '%s'" % test.name)
+        self.info("Ended test '%s'." % test.name)
 
     def start_keyword(self, kw):
-        self.debug(lambda: "Started keyword '%s'" % kw.name)
+        self.debug(lambda: "Started keyword '%s'." % kw.name)
 
     def end_keyword(self, kw):
-        self.debug(lambda: "Ended keyword '%s'" % kw.name)
+        self.debug(lambda: "Ended keyword '%s'." % kw.name)
 
     def output_file(self, name, path):
         self.info('%s: %s' % (name, path))

@@ -1,0 +1,451 @@
+{
+  "title": "Libdoc",
+  "description": "Libdoc JSON spec file schema.\n\nCompatible with JSON Schema Draft 2020-12.",
+  "type": "object",
+  "properties": {
+    "specversion": {
+      "$ref": "#/definitions/SpecVersion"
+    },
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "doc": {
+      "title": "Doc",
+      "type": "string"
+    },
+    "version": {
+      "title": "Version",
+      "type": "string"
+    },
+    "generated": {
+      "title": "Generated",
+      "type": "string",
+      "format": "date-time"
+    },
+    "type": {
+      "$ref": "#/definitions/DocumentationType"
+    },
+    "scope": {
+      "$ref": "#/definitions/LibraryScope"
+    },
+    "docFormat": {
+      "$ref": "#/definitions/DocumentationFormat"
+    },
+    "source": {
+      "title": "Source",
+      "type": "string",
+      "format": "path"
+    },
+    "lineno": {
+      "title": "Lineno",
+      "exclusiveMinimum": 0,
+      "type": "integer"
+    },
+    "tags": {
+      "title": "Tags",
+      "description": "List of all tags used by keywords.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "inits": {
+      "title": "Inits",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Keyword"
+      }
+    },
+    "keywords": {
+      "title": "Keywords",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Keyword"
+      }
+    },
+    "typedocs": {
+      "title": "Typedocs",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/TypeDoc"
+      }
+    }
+  },
+  "required": [
+    "specversion",
+    "name",
+    "doc",
+    "version",
+    "generated",
+    "type",
+    "scope",
+    "docFormat",
+    "source",
+    "lineno",
+    "tags",
+    "inits",
+    "keywords",
+    "typedocs"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "definitions": {
+    "SpecVersion": {
+      "title": "SpecVersion",
+      "description": "Version of the spec.",
+      "enum": [
+        2
+      ],
+      "type": "integer"
+    },
+    "DocumentationType": {
+      "title": "DocumentationType",
+      "description": "Type of the doc: LIBRARY or RESOURCE.",
+      "enum": [
+        "LIBRARY",
+        "RESOURCE",
+        "SUITE"
+      ],
+      "type": "string"
+    },
+    "LibraryScope": {
+      "title": "LibraryScope",
+      "description": "Library scope: GLOBAL, SUITE or TEST.",
+      "enum": [
+        "GLOBAL",
+        "SUITE",
+        "TEST"
+      ],
+      "type": "string"
+    },
+    "DocumentationFormat": {
+      "title": "DocumentationFormat",
+      "description": "Documentation format, typically HTML.",
+      "enum": [
+        "ROBOT",
+        "HTML",
+        "TEXT",
+        "REST"
+      ],
+      "type": "string"
+    },
+    "ArgumentType": {
+      "title": "ArgumentType",
+      "type": "object",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "typedoc": {
+          "title": "Typedoc",
+          "description": "Map type to info in 'typedocs'.",
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "nested": {
+          "title": "Nested",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ArgumentType"
+          }
+        },
+        "union": {
+          "title": "Union",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name",
+        "nested",
+        "union"
+      ]
+    },
+    "ArgumentKind": {
+      "title": "ArgumentKind",
+      "description": "Argument kind: positional, named, vararg, etc.",
+      "enum": [
+        "POSITIONAL_ONLY",
+        "POSITIONAL_ONLY_MARKER",
+        "POSITIONAL_OR_NAMED",
+        "VAR_POSITIONAL",
+        "NAMED_ONLY_MARKER",
+        "NAMED_ONLY",
+        "VAR_NAMED"
+      ],
+      "type": "string"
+    },
+    "Argument": {
+      "title": "Argument",
+      "description": "Keyword argument.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "type": {
+          "title": "ArgumentType",
+          "anyOf": [
+            {
+              "$ref": "#/definitions/ArgumentType"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "types": {
+          "title": "Types",
+          "description": "Deprecated. Use 'type' instead.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "typedocs": {
+          "title": "Typedocs",
+          "description": "Deprecated. Use 'type' instead.",
+          "type": "object"
+        },
+        "defaultValue": {
+          "title": "Defaultvalue",
+          "description": "Possible default value or 'null'.",
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "kind": {
+          "$ref": "#/definitions/ArgumentKind"
+        },
+        "required": {
+          "title": "Required",
+          "type": "boolean"
+        },
+        "repr": {
+          "title": "Repr",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "types",
+        "typedocs",
+        "kind",
+        "required",
+        "repr"
+      ]
+    },
+    "Keyword": {
+      "title": "Keyword",
+      "type": "object",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "args": {
+          "title": "Args",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Argument"
+          }
+        },
+        "doc": {
+          "title": "Doc",
+          "type": "string"
+        },
+        "shortdoc": {
+          "title": "Shortdoc",
+          "type": "string"
+        },
+        "tags": {
+          "title": "Tags",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "private": {
+          "title": "Private",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "deprecated": {
+          "title": "Deprecated",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "source": {
+          "title": "Source",
+          "type": "string",
+          "format": "path"
+        },
+        "lineno": {
+          "title": "Lineno",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "name",
+        "args",
+        "doc",
+        "shortdoc",
+        "tags",
+        "source",
+        "lineno"
+      ]
+    },
+    "TypeDocType": {
+      "title": "TypeDocType",
+      "description": "Type of the type: Standard, Enum, TypedDict or Custom.",
+      "enum": [
+        "Standard",
+        "Enum",
+        "TypedDict",
+        "Custom"
+      ],
+      "type": "string"
+    },
+    "EnumMember": {
+      "title": "EnumMember",
+      "type": "object",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "value"
+      ]
+    },
+    "TypedDictItem": {
+      "title": "TypedDictItem",
+      "type": "object",
+      "properties": {
+        "key": {
+          "title": "Key",
+          "type": "string"
+        },
+        "type": {
+          "title": "Type",
+          "type": "string"
+        },
+        "required": {
+          "title": "Required",
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "key",
+        "type"
+      ]
+    },
+    "TypeDoc": {
+      "title": "TypeDoc",
+      "type": "object",
+      "properties": {
+        "type": {
+          "$ref": "#/definitions/TypeDocType"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "doc": {
+          "title": "Doc",
+          "type": "string"
+        },
+        "usages": {
+          "title": "Usages",
+          "description": "List of keywords using this type.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "accepts": {
+          "title": "Accepts",
+          "description": "List of accepted argument types.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "members": {
+          "title": "Members",
+          "description": "Used only with Enum type.",
+          "items": {
+            "$ref": "#/definitions/EnumMember"
+          },
+          "anyOf": [
+            {
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "items": {
+          "title": "Items",
+          "description": "Used only with TypedDict type.",
+          "items": {
+            "$ref": "#/definitions/TypedDictItem"
+          },
+          "anyOf": [
+            {
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "type",
+        "name",
+        "doc",
+        "usages",
+        "accepts"
+      ]
+    }
+  }
+}

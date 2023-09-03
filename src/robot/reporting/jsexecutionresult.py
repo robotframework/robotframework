@@ -14,7 +14,6 @@
 #  limitations under the License.
 
 import time
-from collections import OrderedDict
 
 from .stringcache import StringIndex
 
@@ -26,25 +25,21 @@ class JsExecutionResult:
         self.suite = suite
         self.strings = strings
         self.min_level = min_level
-        self.data = self._get_data(statistics, errors, basemillis or 0,
-                                   expand_keywords)
+        self.data = self._get_data(statistics, errors, basemillis or 0, expand_keywords)
         self.split_results = split_results or []
 
     def _get_data(self, statistics, errors, basemillis, expand_keywords):
-        return OrderedDict([
-            ('stats', statistics),
-            ('errors', errors),
-            ('baseMillis', basemillis),
-            ('generated', int(time.time() * 1000) - basemillis),
-            ('expand_keywords', expand_keywords)
-        ])
+        return {'stats': statistics,
+                'errors': errors,
+                'baseMillis': basemillis,
+                'generated': int(time.time() * 1000) - basemillis,
+                'expand_keywords': expand_keywords}
 
     def remove_data_not_needed_in_report(self):
         self.data.pop('errors')
         remover = _KeywordRemover()
         self.suite = remover.remove_keywords(self.suite)
-        self.suite, self.strings \
-                = remover.remove_unused_strings(self.suite, self.strings)
+        self.suite, self.strings = remover.remove_unused_strings(self.suite, self.strings)
 
 
 class _KeywordRemover:

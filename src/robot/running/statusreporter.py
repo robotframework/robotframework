@@ -14,7 +14,7 @@
 #  limitations under the License.
 
 from robot.errors import (ExecutionFailed, ExecutionStatus, DataError,
-                          HandlerExecutionFailed, KeywordError, VariableError)
+                          HandlerExecutionFailed)
 from robot.utils import ErrorDetails, get_timestamp
 
 from .modelcombiner import ModelCombiner
@@ -38,7 +38,8 @@ class StatusReporter:
         context = self.context
         result = self.result
         self.initial_test_status = context.test.status if context.test else None
-        result.starttime = get_timestamp()
+        if not result.starttime:
+            result.starttime = get_timestamp()
         context.start_keyword(ModelCombiner(self.data, result))
         self._warn_if_deprecated(result.doc, result.name)
         return self
@@ -62,7 +63,7 @@ class StatusReporter:
             context.test.status = result.status
         result.endtime = get_timestamp()
         context.end_keyword(ModelCombiner(self.data, result))
-        if failure is not exc_val:
+        if failure is not exc_val and not self.suppress:
             raise failure
         return self.suppress
 
@@ -74,8 +75,7 @@ class StatusReporter:
         if isinstance(exc_value, DataError):
             msg = exc_value.message
             context.fail(msg)
-            syntax = not isinstance(exc_value, (KeywordError, VariableError))
-            return ExecutionFailed(msg, syntax=syntax)
+            return ExecutionFailed(msg, syntax=exc_value.syntax)
         error = ErrorDetails(exc_value)
         failure = HandlerExecutionFailed(error)
         if failure.timeout:

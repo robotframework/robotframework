@@ -3,6 +3,10 @@ Test Template     Run And Check Include And Exclude
 Resource          atest_resource.robot
 
 *** Variables ***
+# Note: The test case Robot-exclude in
+# atest\testdata\tags\include_and_exclude.robot
+# should always be automatically excluded since it
+# uses the robot:exclude tag
 ${DATA SOURCES}   tags/include_and_exclude.robot
 @{INCL_ALL}       Incl-1    Incl-12    Incl-123
 @{EXCL_ALL}       excl-1    Excl-12    Excl-123
@@ -11,6 +15,9 @@ ${DATA SOURCES}   tags/include_and_exclude.robot
 *** Test Cases ***
 No Includes Or Excludes
     ${EMPTY}    @{ALL}
+
+Empty iclude and exclude are ignored
+    --include= --exclude=    @{ALL}
 
 One Include
     --include incl1    @{INCL_ALL}
@@ -105,10 +112,14 @@ Non Matching When Running Multiple Suites
     --include nonex    tag 'nonex'    Pass And Fail & Normal
     --include nonex --name MyName   tag 'nonex'    MyName
 
+Suite containing tasks is ok if only tests are selected
+    --include test    Test    sources=rpa/tasks rpa/tests.robot
+    --exclude task    Test    sources=rpa/tasks rpa/tests.robot
+
 *** Keywords ***
 Run And Check Include And Exclude
-    [Arguments]    ${params}    @{tests}
-    Run Tests    ${params}    ${DATA SOURCES}
+    [Arguments]    ${params}    @{tests}    ${sources}=${DATA SOURCES}
+    Run Tests    ${params}    ${sources}
     Stderr Should Be Empty
     Should Contain Tests    ${SUITE}    @{tests}
 

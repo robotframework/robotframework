@@ -28,7 +28,10 @@ Default EXCEPT not last
 Multiple default EXCEPTs
     TRY:FAIL    EXCEPT:NOT RUN    EXCEPT:NOT RUN    ELSE:NOT RUN
 
-AS not the second last token
+AS requires variable
+    TRY:FAIL    EXCEPT:NOT RUN
+
+AS accepts only one variable
     TRY:FAIL    EXCEPT:NOT RUN
 
 Invalid AS variable
@@ -69,3 +72,19 @@ Template with TRY inside IF
 
 Template with IF inside TRY
     TRY:FAIL    FINALLY:NOT RUN
+
+BREAK in FINALLY
+    TRY:PASS    FINALLY:FAIL    path=body[0].body[0].body[0]
+
+CONTINUE in FINALLY
+    TRY:PASS    FINALLY:FAIL    path=body[0].body[0].body[0]
+
+RETURN in FINALLY
+    TRY:PASS    FINALLY:FAIL    path=body[0].body[0]
+
+Invalid TRY/EXCEPT causes syntax error that cannot be caught
+    TRY:FAIL    EXCEPT:NOT RUN    ELSE:NOT RUN
+
+Dangling FINALLY
+    [Template]    Check Test Case
+    ${TEST NAME}

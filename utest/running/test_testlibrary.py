@@ -355,7 +355,7 @@ class TestHandlers(unittest.TestCase):
         assert_equal(instance.kw_accessed, 1)
         assert_equal(instance.kw_called, 0)
         for _ in range(5):
-            lib.handlers.create_runner('kw')._run(_FakeContext(), [])
+            lib.handlers['kw'].create_runner('kw')._run(_FakeContext(), [])
         assert_true(lib._libinst is instance)
         assert_equal(instance.kw_accessed, 1)
         assert_equal(instance.kw_called, 5)
@@ -526,10 +526,15 @@ class _FakeVariableScope:
 
 
 class _FakeOutput:
-    def trace(self, str):
+    def trace(self, str, write_if_flat=True):
         pass
     def log_output(self, output):
         pass
+
+
+class _FakeAsynchronous:
+    def is_loop_required(self, obj):
+        return False
 
 
 class _FakeContext:
@@ -541,6 +546,7 @@ class _FakeContext:
         self.variables = _FakeVariableScope()
         self.timeouts = set()
         self.test = None
+        self.asynchronous = _FakeAsynchronous()
 
 
 if __name__ == '__main__':

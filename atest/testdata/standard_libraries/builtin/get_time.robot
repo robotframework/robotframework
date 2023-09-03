@@ -1,5 +1,6 @@
 *** Settings ***
 Library           times.py
+Library           DateTime
 
 *** Test Cases ***
 Get Time As Timestamp
@@ -10,18 +11,18 @@ Get Time As Timestamp
 
 Get Time As Seconds After Epoch
     ${time} =    Get Time    epoch
-    Should Be True    1000000000 < ${time} < 2000000000
+    Should Be True    0 < ${time}
 
 Get Time As Parts
     @{time} =    Get Time    year, month, day, hour, min, sec
-    Should Be True    2000 < ${time}[0] < 2100
+    Should Match Regexp    ${time}[0]    \\d{4}
     Should Be True    1 <= int('${time}[1]') <= 12
     Should Be True    1 <= int('${time}[2]') <= 31
     Should Be True    0 <= int('${time}[3]') <= 23
     Should Be True    0 <= int('${time}[4]') <= 59
     Should Be True    0 <= int('${time}[5]') <= 59
     ${year}    ${min}    ${sec} =    Get Time    seconds and minutes and year and whatnot
-    Should Be True    2000 < ${year} < 2100
+    Should Match Regexp    ${year}    \\d{4}
     Should Be True    0 <= int('${min}') <= 59
     Should Be True    0 <= int('${sec}') <= 59
 
@@ -71,3 +72,19 @@ When Time Is UTC +- Something
     ${time minus} =    Get Time    epoch    UTC - 1 hour
     ${time plus} =    Get Time    epoch    UTC + 2 minutes 1 second
     Should Be True    ${time minus} < ${time} < ${time plus}
+
+DST is handled correctly when adding or substracting time
+    FOR    ${i}    IN    91    183    274
+        WHILE    True
+            ${now}=      Get Time   time_=now
+            ${past}=     Get Time   time_=now - ${i}day
+            ${future}=   Get Time   time_=now + ${i}day
+            ${now2}=     Get Time   time_=now
+            # Make sure seconds did not change between Get Time calls.
+            IF    '${now}' == '${now2}'    BREAK
+        END
+        ${delta}=   Subtract Date From Date   ${now}   ${past}   compact
+        Should Be Equal   ${delta}   ${i}d
+        ${delta}=   Subtract Date From Date   ${now}   ${future}   compact
+        Should Be Equal   ${delta}   - ${i}d
+    END

@@ -13,13 +13,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import re
 import sys
 from enum import Enum
-from inspect import isclass
-from typing import Union
+from typing import Union, Tuple
 
-from robot.utils import safe_str, setter
+from robot.utils import has_args, is_union, safe_str, setter, type_repr
 
 from .argumentconverter import ArgumentConverter
 from .argumentmapper import ArgumentMapper
@@ -68,12 +66,16 @@ class ArgumentSpec:
 
     def resolve(self, arguments, variables=None, converters=None,
                 resolve_named=True, resolve_variables_until=None,
-                dict_to_kwargs=False):
+                dict_to_kwargs=False, languages=None):
         resolver = ArgumentResolver(self, resolve_named,
                                     resolve_variables_until, dict_to_kwargs)
         positional, named = resolver.resolve(arguments, variables)
+        return self.convert(positional, named, converters, dry_run=not variables,
+                            languages=languages)
+
+    def convert(self, positional, named, converters=None, dry_run=False, languages=None):
         if self.types or self.defaults:
-            converter = ArgumentConverter(self, converters, dry_run=not variables)
+            converter = ArgumentConverter(self, converters, dry_run, languages)
             positional, named = converter.convert(positional, named)
         return positional, named
 
@@ -114,6 +116,7 @@ class ArgumentSpec:
 
 
 class ArgInfo:
+    """Contains argument information. Only used by Libdoc."""
     NOTSET = object()
     POSITIONAL_ONLY = 'POSITIONAL_ONLY'
     POSITIONAL_ONLY_MARKER = 'POSITIONAL_ONLY_MARKER'
@@ -123,21 +126,11 @@ class ArgInfo:
     NAMED_ONLY = 'NAMED_ONLY'
     VAR_NAMED = 'VAR_NAMED'
 
-    def __init__(self, kind, name='', types=NOTSET, default=NOTSET):
+    def __init__(self, kind, name='', type=NOTSET, default=NOTSET):
         self.kind = kind
         self.name = name
-        self.types = types
+        self.type = TypeInfo.from_type(type)
         self.default = default
-
-    @setter
-    def types(self, typ):
-        if not typ or typ is self.NOTSET:
-            return tuple()
-        if isinstance(typ, tuple):
-            return typ
-        if getattr(typ, '__origin__', None) is Union:
-            return typ.__args__
-        return (typ,)
 
     @property
     def required(self):
@@ -149,14 +142,12 @@ class ArgInfo:
 
     @property
     def types_reprs(self):
-        return [self._type_repr(t) for t in self.types]
-
-    def _type_repr(self, typ):
-        if typ is type(None):
-            return 'None'
-        if isclass(typ):
-            return typ.__name__
-        return re.sub(r'^typing\.(.+)', r'\1', str(typ))
+        """Deprecated. Use :attr:`type` instead."""
+        if not self.type:
+            return []
+        if self.type.is_union:
+            return [str(t) for t in self.type.nested]
+        return [str(self.type)]
 
     @property
     def default_repr(self):
@@ -176,11 +167,76 @@ class ArgInfo:
             ret = '*' + ret
         elif self.kind == self.VAR_NAMED:
             ret = '**' + ret
-        if self.types:
-            ret = '%s: %s' % (ret, ' | '.join(self.types_reprs))
+        if self.type:
+            ret = f'{ret}: {self.type}'
             default_sep = ' = '
         else:
             default_sep = '='
         if self.default is not self.NOTSET:
-            ret = '%s%s%s' % (ret, default_sep, self.default_repr)
+            ret = f'{ret}{default_sep}{self.default_repr}'
         return ret
+
+
+Type = Union[type, str, tuple, type(ArgInfo.NOTSET)]
+
+
+class TypeInfo:
+    """Represents argument type. Only used by Libdoc.
+
+    With unions and parametrized types, :attr:`nested` contains nested types.
+    """
+    NOTSET = ArgInfo.NOTSET
+
+    def __init__(self, type: Type = NOTSET, nested: Tuple['TypeInfo'] = ()):
+        self.type = type
+        self.nested = nested
+
+    @property
+    def name(self) -> str:
+        if isinstance(self.type, str):
+            return self.type
+        return type_repr(self.type, nested=False)
+
+    @property
+    def is_union(self) -> bool:
+        if isinstance(self.type, str):
+            return self.type == 'Union'
+        return is_union(self.type, allow_tuple=True)
+
+    @classmethod
+    def from_type(cls, type: Type) -> 'TypeInfo':
+        if type is cls.NOTSET:
+            return cls()
+        if isinstance(type, dict):
+            return cls.from_dict(type)
+        if isinstance(type, (tuple, list)):
+            if not type:
+                return cls()
+            if len(type) == 1:
+                return cls(type[0])
+            nested = tuple(cls.from_type(t) for t in type)
+            return cls('Union', nested)
+        if has_args(type):
+            nested = tuple(cls.from_type(t) for t in type.__args__)
+            return cls(type, nested)
+        return cls(type)
+
+    @classmethod
+    def from_dict(cls, data: dict) -> 'TypeInfo':
+        if not data:
+            return cls()
+        nested = tuple(cls.from_dict(n) for n in data['nested'])
+        return cls(data['name'], nested)
+
+    def __str__(self):
+        if self.is_union:
+            return ' | '.join(str(n) for n in self.nested)
+        if isinstance(self.type, str):
+            if self.nested:
+                nested = ', '.join(str(n) for n in self.nested)
+                return f'{self.name}[{nested}]'
+            return self.name
+        return type_repr(self.type)
+
+    def __bool__(self):
+        return self.type is not self.NOTSET

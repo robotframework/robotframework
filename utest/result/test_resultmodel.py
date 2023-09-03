@@ -1,8 +1,10 @@
 import unittest
 import warnings
+from datetime import datetime
 
 from robot.model import Tags
-from robot.result import For, If, IfBranch, Keyword, Message, TestCase, TestSuite
+from robot.result import (Break, Continue, Error, For, If, IfBranch, Keyword, Message,
+                          Return, TestCase, TestSuite, Try, While)
 from robot.utils.asserts import (assert_equal, assert_false, assert_raises,
                                  assert_raises_with_msg, assert_true)
 
@@ -119,23 +121,40 @@ class TestSuiteStatus(unittest.TestCase):
             assert_raises(AttributeError, setattr, suite, attr, True)
 
 
-class TestElapsedTime(unittest.TestCase):
+class TestTimes(unittest.TestCase):
 
     def test_suite_elapsed_time_when_start_and_end_given(self):
         suite = TestSuite()
         suite.starttime = '20010101 10:00:00.000'
         suite.endtime = '20010101 10:00:01.234'
-        assert_equal(suite.elapsedtime, 1234)
+        self.assert_elapsed(suite, 1234)
+
+    def assert_elapsed(self, obj, expected):
+        assert_equal(obj.elapsedtime, expected)
+        assert_equal(obj.elapsed_time.total_seconds() * 1000, expected)
 
     def test_suite_elapsed_time_is_zero_by_default(self):
-        suite = TestSuite()
-        assert_equal(suite.elapsedtime, 0)
+        self.assert_elapsed(TestSuite(), 0)
 
-    def _test_suite_elapsed_time_is_test_time(self):
+    def test_suite_elapsed_time_is_got_from_childen_if_suite_does_not_have_times(self):
         suite = TestSuite()
         suite.tests.create(starttime='19991212 12:00:00.010',
-                           endtime='19991212 13:00:01.010')
-        assert_equal(suite.elapsedtime, 3610000)
+                           endtime='19991212 12:00:00.011')
+        self.assert_elapsed(suite, 1)
+        assert_equal(suite.elapsedtime, 1)
+        suite.starttime = '19991212 12:00:00.010'
+        suite.endtime = '19991212 12:00:01.010'
+        self.assert_elapsed(suite, 1000)
+
+    def test_forward_compatibility(self):
+        for cls in (TestSuite, TestCase, Keyword, If, IfBranch, Try, For, While,
+                    Break, Continue, Return, Error):
+            obj = cls(starttime='20230512 16:40:00.001', endtime='20230512 16:40:01.001')
+            assert_equal(obj.starttime, '20230512 16:40:00.001')
+            assert_equal(obj.endtime, '20230512 16:40:01.001')
+            assert_equal(obj.start_time, datetime(2023, 5, 12, 16, 40, 0, 1000))
+            assert_equal(obj.end_time, datetime(2023, 5, 12, 16, 40, 1, 1000))
+            self.assert_elapsed(obj, 1000)
 
 
 class TestSlots(unittest.TestCase):
@@ -151,9 +170,26 @@ class TestSlots(unittest.TestCase):
 
     def test_if(self):
         self._verify(If())
+        self._verify(If().body.create_branch())
 
     def test_for(self):
         self._verify(For())
+        self._verify(For().body.create_iteration())
+
+    def test_try(self):
+        self._verify(Try())
+        self._verify(Try().body.create_branch())
+
+    def test_while(self):
+        self._verify(While())
+        self._verify(While().body.create_iteration())
+
+    def test_break_continue_return(self):
+        for cls in Break, Continue, Return:
+            self._verify(cls())
+
+    def test_error(self):
+        self._verify(Error())
 
     def test_message(self):
         self._verify(Message())
@@ -182,8 +218,13 @@ class TestModel(unittest.TestCase):
     def test_status_propertys_with_keyword(self):
         self._verify_status_propertys(Keyword())
 
-    def test_status_propertys_with_if(self):
-        self._verify_status_propertys(If())
+    def test_status_propertys_with_control_structures(self):
+        for obj in (Break(), Continue(), Return(), Error(),
+                    For(), For().body.create_iteration(),
+                    If(), If().body.create_branch(),
+                    Try(), Try().body.create_branch(),
+                    While(), While().body.create_iteration()):
+            self._verify_status_propertys(obj)
 
     def test_keyword_passed_after_dry_run(self):
         self._verify_status_propertys(Keyword(status=Keyword.NOT_RUN),
@@ -241,6 +282,25 @@ class TestModel(unittest.TestCase):
             assert_equal(item.status, 'NOT RUN')
             assert_raises(ValueError, setattr, item, 'not_run', False)
 
+    def test_keyword_teardown(self):
+        kw = Keyword()
+        assert_true(not kw.has_teardown)
+        assert_true(not kw.teardown)
+        assert_equal(kw.teardown.name, None)
+        assert_equal(kw.teardown.type, 'TEARDOWN')
+        assert_true(not kw.has_teardown)
+        assert_true(not kw.teardown)
+        kw.teardown = Keyword()
+        assert_true(kw.has_teardown)
+        assert_true(kw.teardown)
+        assert_equal(kw.teardown.name, '')
+        assert_equal(kw.teardown.type, 'TEARDOWN')
+        kw.teardown = None
+        assert_true(not kw.has_teardown)
+        assert_true(not kw.teardown)
+        assert_equal(kw.teardown.name, None)
+        assert_equal(kw.teardown.type, 'TEARDOWN')
+
     def test_keywords_deprecation(self):
         kw = Keyword()
         kw.body = [Keyword(), Message(), Keyword(), Keyword(), Message()]
@@ -281,6 +341,18 @@ class TestModel(unittest.TestCase):
         assert_equal(branch.parent, if_)
         kw = branch.body.create_keyword()
         assert_equal(kw.parent, branch)
+
+    def test_while_name(self):
+        assert_equal(While().name, '')
+        assert_equal(While('$x > 0').name, '$x > 0')
+        assert_equal(While('True', '1 minute').name, 'True | limit=1 minute')
+        assert_equal(While(limit='1 minute').name, 'limit=1 minute')
+        assert_equal(While('True', '1 s', on_limit_message='Error message').name,
+                     'True | limit=1 s | on_limit_message=Error message')
+        assert_equal(While(on_limit='pass').name,
+                     'on_limit=pass')
+        assert_equal(While(on_limit_message='Error message').name,
+                     'on_limit_message=Error message')
 
 
 class TestBody(unittest.TestCase):
@@ -334,25 +406,48 @@ class TestBody(unittest.TestCase):
         assert_equal(kw.body[2].body[2].id, 's1-t1-k1-k2-m2')
 
 
-class TestForIterations(unittest.TestCase):
+class TestIterations(unittest.TestCase):
 
     def test_create_supported(self):
-        for_ = For()
-        iterations = for_.body
-        for creator in (iterations.create_iteration,
-                        iterations.create_message,
-                        iterations.create_keyword):
-            item = creator()
-            assert_equal(item.parent, for_)
+        for parent in For(), While():
+            iterations = parent.body
+            for creator in (iterations.create_iteration,
+                            iterations.create_message,
+                            iterations.create_keyword):
+                item = creator()
+                assert_equal(item.parent, parent)
 
     def test_create_not_supported(self):
-        iterations = For().body
-        for creator in (iterations.create_for,
-                        iterations.create_if,
-                        iterations.create_try,
-                        iterations.create_return):
-            msg = "'Iterations' object does not support '%s'." % creator.__name__
-            assert_raises_with_msg(TypeError, msg, creator)
+        msg = "'robot.result.Iterations' object does not support '{}'."
+        for parent in For(), While():
+            iterations = parent.body
+            for creator in (iterations.create_for,
+                            iterations.create_if,
+                            iterations.create_try,
+                            iterations.create_return):
+                assert_raises_with_msg(TypeError, msg.format(creator.__name__), creator)
+
+
+class TestBranches(unittest.TestCase):
+
+    def test_create_supported(self):
+        for parent in If(), Try():
+            branches = parent.body
+            for creator in (branches.create_branch,
+                            branches.create_message,
+                            branches.create_keyword):
+                item = creator()
+                assert_equal(item.parent, parent)
+
+    def test_create_not_supported(self):
+        msg = "'robot.result.Branches' object does not support '{}'."
+        for parent in If(), Try():
+            branches = parent.body
+            for creator in (branches.create_for,
+                            branches.create_if,
+                            branches.create_try,
+                            branches.create_return):
+                assert_raises_with_msg(TypeError, msg.format(creator.__name__), creator)
 
 
 class TestDeprecatedKeywordSpecificAttributes(unittest.TestCase):

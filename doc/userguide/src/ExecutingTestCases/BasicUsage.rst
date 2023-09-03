@@ -22,30 +22,23 @@ Synopsis
 
 ::
 
-    robot [options] data_sources
-    python|jython|ipy|pypy -m robot [options] data_sources
-    python|jython|ipy|pypy path/to/robot/ [options] data_sources
-    java -jar robotframework.jar [options] data_sources
+    robot [options] data
+    python -m robot [options] data
+    python path/to/robot/ [options] data
 
-Test execution is normally started using the ``robot`` `runner script`_.
-Alternatively it is possible to execute the installed `robot module`__ or
-`robot directory`__ directly using the selected interpreter. The final
-alternative is using the `standalone JAR distribution`_.
-
-.. note::
-    The ``robot`` script is new in Robot Framework 3.0. Prior to that,
-    there were ``pybot``, ``jybot`` and ``ipybot`` scripts that
-    executed tests using Python, Jython and IronPython, respectively.
-    These scripts were removed in Robot Framework 3.1 and nowadays
-    ``robot`` must be used regardless the interpreter.
+Execution is normally started using the ``robot`` command created as part of
+installation__. Alternatively it is possible to execute the installed ``robot``
+module using the selected Python interpreter. This is especially convenient
+if Robot Framework has been installed under multiple Python versions.
+Finally, if you know where the installed ``robot`` directory exists, it can
+be executed using Python as well.
 
 Regardless of execution approach, the path (or paths) to the test data to be
 executed is given as an argument after the command. Additionally, different
 command line options can be used to alter the test execution or generated
 outputs in many ways.
 
-__ `Executing installed robot module`_
-__ `Executing installed robot directory`_
+__ `Installation instructions`_
 
 Specifying test data to be executed
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -55,8 +48,8 @@ and they are executed by giving the path to the file or directory in
 question to the selected runner script. The path can be absolute or,
 more commonly, relative to the directory where tests are executed
 from. The given file or directory creates the top-level test suite,
-which gets its name, unless overridden with the :option:`--name` option__,
-from the `file or directory name`__. Different execution possibilities
+which, by default, gets its name from the `file or directory name`__.
+Different execution possibilities
 are illustrated in the examples below. Note that in these examples, as
 well as in other examples in this section, only the ``robot`` script
 is used, but other execution approaches could be used similarly.
@@ -77,7 +70,7 @@ directories at once, separated with spaces. In this case, Robot
 Framework creates the top-level test suite automatically, and
 the specified files and directories become its child test suites. The name
 of the created test suite is got from child suite names by
-catenating them together with an ampersand (&) and spaces. For example,
+concatenating them together with an ampersand (&) and spaces. For example,
 the name of the top-level suite in the first example below is
 :name:`My Tests & Your Tests`. These automatically created names are
 often quite long and complicated. In most cases, it is thus better to
@@ -87,11 +80,18 @@ example below::
    robot my_tests.robot your_tests.robot
    robot --name Example path/to/tests/pattern_*.robot
 
-__ `Test case files`_
-__ `Test suite directories`_
-__ `Setting the name`_
-__ `Test suite name and documentation`_
-__ `Test suite directories`_
+Starting from Robot Framework 6.1, it is also possible to define a
+`test suite initialisation file`__ for the automatically created top-level
+suite. The path to the init file is given similarly to the
+test case files::
+
+    robot __init__.robot my_tests.robot other_tests.robot
+
+__ `Suite files`_
+__ `Suite directories`_
+__ `Suite name`_
+__ `Suite directories`_
+__ `Suite initialization files`_
 
 Using command line options
 --------------------------
@@ -124,9 +124,12 @@ and shortened options are practical when executing test cases
 manually, but long options are recommended in `start-up scripts`_,
 because they are easier to understand.
 
-The long option format is case-insensitive, which facilitates writing option
-names in an easy-to-read format. For example, :option:`--SuiteStatLevel`
-is equivalent to, but easier to read than :option:`--suitestatlevel`.
+The long option names are case-insensitive and hyphen-insensitive,
+which facilitates writing option names in an easy-to-read format.
+For example, :option:`--SuiteStatLevel` and :option:`--suite-stat-level`
+are equivalent to, but easier to read than, :option:`--suitestatlevel`.
+
+.. note:: Long options being hyphen-insensitive is new in Robot Framework 6.1.
 
 Setting option values
 ~~~~~~~~~~~~~~~~~~~~~
@@ -257,7 +260,7 @@ avoid the need to repeat them every time tests are run or Rebot used.
 
    export ROBOT_OPTIONS="--outputdir results --tagdoc 'mytag:Example doc with spaces'"
    robot tests.robot
-   export REBOT_OPTIONS="--reportbackground green:yellow:red"
+   export REBOT_OPTIONS="--reportbackground blue:red:yellow"
    rebot --name example output.xml
 
 __ `Post-processing outputs`_
@@ -453,13 +456,13 @@ briefly explain the available command line options.
 
 All runner scripts also support getting the version information with
 the option :option:`--version`. This information also contains Python
-or Jython version and the platform type::
+version and the platform type::
 
    $ robot --version
-   Robot Framework 3.1 (Jython 2.7.0 on java1.7.0_45)
+   Robot Framework 7.0 (Python 3.12.1 on darwin)
 
    C:\>rebot --version
-   Rebot 3.1 (Python 3.7.0 on win32)
+   Rebot 6.1.1 (Python 3.11.0 on win32)
 
 .. _start-up script:
 .. _start-up scripts:
@@ -550,23 +553,6 @@ available in ``sys.argv``:
 
 __ https://docs.python.org/library/subprocess.html
 __ https://robot-framework.readthedocs.io
-
-Modifying Java startup parameters
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Sometimes when using Jython there is need to alter the Java startup parameters.
-The most common use case is increasing the JVM maximum memory size as the
-default value may not be enough for creating reports and logs when
-outputs are very big. There are two easy ways to configure JVM options:
-
-1. Set ``JYTHON_OPTS`` environment variable. This can be done permanently
-   in operating system level or per execution in a custom start-up script.
-
-2. Pass the needed Java parameters with :option:`-J` option to Jython that
-   will pass them forward to Java. This is especially easy when `executing
-   installed robot module`_ directly::
-
-      jython -J-Xmx1024m -m robot tests.robot
 
 Making :file:`*.robot` files executable
 ---------------------------------------

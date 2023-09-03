@@ -38,3 +38,10 @@ If failing in keyword
 
 If failing in else keyword
     Check Test Case    ${TESTNAME}
+
+Expression evaluation time is included in elapsed time
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Should Be True    ${tc.body[0].elapsedtime} >= 200
+    Should Be True    ${tc.body[0].body[0].elapsedtime} >= 100
+    Should Be True    ${tc.body[0].body[1].elapsedtime} >= 100
+    Should Be True    ${tc.body[0].body[2].elapsedtime} < 1000

@@ -1,17 +1,17 @@
 import unittest
-from os.path import abspath, dirname, normpath, join
+from pathlib import Path
 
 from robot.errors import DataError
+from robot.utils import Importer
 from robot.utils.asserts import assert_equal, assert_raises, assert_true
 from robot.running import TestSuite, TestSuiteBuilder
 
 
-CURDIR = dirname(abspath(__file__))
-DATADIR = join(CURDIR, '..', '..', 'atest', 'testdata', 'misc')
+DATADIR = (Path(__file__).parent / '../../atest/testdata/misc').resolve()
 
 
 def build(*paths, **config):
-    paths = [normpath(join(DATADIR, p)) for p in paths]
+    paths = [Path(DATADIR, p).resolve() for p in paths]
     suite = TestSuiteBuilder(**config).build(*paths)
     assert_true(isinstance(suite, TestSuite))
     assert_equal(suite.source, paths[0] if len(paths) == 1 else None)
@@ -35,7 +35,7 @@ class TestBuilding(unittest.TestCase):
 
     def test_imports(self):
         imp = build('dummy_lib_test.robot').resource.imports[0]
-        assert_equal(imp.type, 'Library')
+        assert_equal(imp.type, 'LIBRARY')
         assert_equal(imp.name, 'DummyLib')
         assert_equal(imp.args, ())
 
@@ -70,11 +70,14 @@ class TestBuilding(unittest.TestCase):
     def test_directory_suite(self):
         suite = build('suites')
         assert_equal(suite.name, 'Suites')
-        assert_equal(suite.suites[1].name, 'Subsuites')
+        assert_equal(suite.suites[0].name, 'Suite With Prefix')
+        assert_equal(suite.suites[2].name, 'Subsuites')
+        assert_equal(suite.suites[4].name, 'Suite With Double Underscore')
+        assert_equal(suite.suites[4].suites[0].name, 'Tests With Double Underscore')
         assert_equal(suite.suites[-1].name, 'Tsuite3')
-        assert_equal(suite.suites[1].suites[1].name, 'Sub2')
-        assert_equal(len(suite.suites[1].suites[1].tests), 1)
-        assert_equal(suite.suites[1].suites[1].tests[0].id, 's1-s2-s2-t1')
+        assert_equal(suite.suites[2].suites[1].name, 'Sub2')
+        assert_equal(len(suite.suites[2].suites[1].tests), 1)
+        assert_equal(suite.suites[2].suites[1].tests[0].id, 's1-s3-s2-t1')
 
     def test_multiple_inputs(self):
         suite = build('pass_and_fail.robot', 'normal.robot')
@@ -92,8 +95,6 @@ class TestBuilding(unittest.TestCase):
         test = build('setups_and_teardowns.robot').tests[0]
         assert_keyword(test.setup, name='${TEST SETUP}', type='SETUP')
         assert_keyword(test.teardown, name='${TEST TEARDOWN}', type='TEARDOWN')
-        assert_equal([kw.name for kw in test.body],
-                      ['Keyword'])
         assert_equal([kw.name for kw in test.body], ['Keyword'])
 
     def test_test_timeout(self):
@@ -113,12 +114,45 @@ class TestBuilding(unittest.TestCase):
             self._validate_rpa(build(*paths, rpa=True), True)
         self._validate_rpa(build('../rpa/tasks1.robot'), True)
         self._validate_rpa(build('../rpa/', rpa=False), False)
-        assert_raises(DataError, build, '../rpa')
+        suite = build('../rpa/')
+        assert_equal(suite.rpa, None)
+        for child in suite.suites:
+            self._validate_rpa(child, child.name != 'Tests')
 
     def _validate_rpa(self, suite, expected):
         assert_equal(suite.rpa, expected, suite.name)
         for child in suite.suites:
             self._validate_rpa(child, expected)
+
+    def test_custom_parser(self):
+        path = DATADIR / '../parsing/custom/CustomParser.py'
+        for parser in [path, str(path)]:
+            suite = build('../parsing/custom/tests.custom', custom_parsers=[parser])
+            assert_equal(suite.name, 'Tests')
+            assert_equal([t.name for t in suite.tests], ['Passing', 'Failing', 'Empty'])
+
+    def test_custom_parser_with_args(self):
+        path = DATADIR / '../parsing/custom/CustomParser.py:custom'
+        for parser in [path, str(path)]:
+            suite = build('../parsing/custom/tests.custom', custom_parsers=[parser])
+            assert_equal(suite.name, 'Tests')
+            assert_equal([t.name for t in suite.tests], ['Passing', 'Failing', 'Empty'])
+
+    def test_custom_parser_as_object(self):
+        path = DATADIR / '../parsing/custom/CustomParser.py'
+        parser = Importer().import_class_or_module(path, instantiate_with_args=())
+        suite = build('../parsing/custom/tests.custom', custom_parsers=[parser])
+        assert_equal(suite.name, 'Tests')
+        assert_equal([t.name for t in suite.tests], ['Passing', 'Failing', 'Empty'])
+
+    def test_failing_parser_import(self):
+        err = assert_raises(DataError, build, custom_parsers=['non_existing_mod'])
+        assert_true(err.message.startswith("Importing parser 'non_existing_mod' failed:"))
+
+    def test_incompatible_parser_object(self):
+        err = assert_raises(DataError, build, custom_parsers=[42])
+        assert_equal(err.message, "Importing parser 'integer' failed: "
+                                  "'integer' does not have mandatory 'parse' method.")
 
 
 class TestTemplates(unittest.TestCase):

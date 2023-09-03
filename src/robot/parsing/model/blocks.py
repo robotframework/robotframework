@@ -13,64 +13,67 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import ast
+from abc import ABC
+from contextlib import contextmanager
+from pathlib import Path
+from typing import cast, Iterator, Sequence, TextIO, Union
 
-from robot.utils import file_writer, is_pathlike, is_string
+from robot.utils import file_writer, test_or_task
 
+from .statements import (Break, Continue, ElseHeader, ElseIfHeader, End, ExceptHeader,
+                         Error, FinallyHeader, ForHeader, IfHeader, KeywordCall,
+                         KeywordName, Node, ReturnSetting, ReturnStatement,
+                         SectionHeader, Statement, TemplateArguments, TestCaseName,
+                         TryHeader, WhileHeader)
 from .visitor import ModelVisitor
 from ..lexer import Token
 
 
-class Block(ast.AST):
-    _fields = ()
-    _attributes = ('lineno', 'col_offset', 'end_lineno', 'end_col_offset', 'errors')
-    errors = ()
+Body = Sequence[Union[Statement, 'Block']]
+Errors = Sequence[str]
+
+
+class Container(Node, ABC):
 
     @property
-    def lineno(self):
+    def lineno(self) -> int:
         statement = FirstStatementFinder.find_from(self)
         return statement.lineno if statement else -1
 
     @property
-    def col_offset(self):
+    def col_offset(self) -> int:
         statement = FirstStatementFinder.find_from(self)
         return statement.col_offset if statement else -1
 
     @property
-    def end_lineno(self):
+    def end_lineno(self) -> int:
         statement = LastStatementFinder.find_from(self)
         return statement.end_lineno if statement else -1
 
     @property
-    def end_col_offset(self):
+    def end_col_offset(self) -> int:
         statement = LastStatementFinder.find_from(self)
         return statement.end_col_offset if statement else -1
 
     def validate_model(self):
         ModelValidator().visit(self)
 
-    def validate(self):
+    def validate(self, ctx: 'ValidationContext'):
         pass
 
 
-class HeaderAndBody(Block):
-    _fields = ('header', 'body')
-
-    def __init__(self, header, body=None, errors=()):
-        self.header = header
-        self.body = body or []
-        self.errors = errors
-
-
-class File(Block):
+class File(Container):
     _fields = ('sections',)
-    _attributes = ('source',) + Block._attributes
+    _attributes = ('source', 'languages') + Container._attributes
 
-    def __init__(self, sections=None, source=None):
-        self.sections = sections or []
+    def __init__(self, sections: 'Sequence[Section]' = (), source: 'Path|None' = None,
+                 languages: Sequence[str] = ()):
+        super().__init__()
+        self.sections = list(sections)
         self.source = source
+        self.languages = list(languages)
 
-    def save(self, output=None):
+    def save(self, output: 'Path|str|TextIO|None' = None):
         """Save model to the given ``output`` or to the original source file.
 
         The ``output`` can be a path to a file or an already opened file
@@ -84,89 +87,123 @@ class File(Block):
         ModelWriter(output).write(self)
 
 
-class Section(Block):
+class Block(Container, ABC):
     _fields = ('header', 'body')
 
-    def __init__(self, header=None, body=None):
+    def __init__(self, header: 'Statement|None', body: Body = (), errors: Errors = ()):
         self.header = header
-        self.body = body or []
+        self.body = list(body)
+        self.errors = tuple(errors)
+
+    def _body_is_empty(self):
+        # This works with tests, keywords, and blocks inside them, not with sections.
+        valid = (KeywordCall, TemplateArguments, Continue, Break, ReturnSetting,
+                 ReturnStatement, NestedBlock, Error)
+        return not any(isinstance(node, valid) for node in self.body)
+
+
+class Section(Block):
+    header: 'SectionHeader|None'
 
 
 class SettingSection(Section):
-    pass
+    header: SectionHeader
 
 
 class VariableSection(Section):
-    pass
+    header: SectionHeader
 
 
+# TODO: should there be a separate TaskSection?
 class TestCaseSection(Section):
+    header: SectionHeader
 
     @property
-    def tasks(self):
-        return self.header.name.upper() in ('TASKS', 'TASK')
+    def tasks(self) -> bool:
+        return self.header.type == Token.TASK_HEADER
 
 
 class KeywordSection(Section):
-    pass
+    header: SectionHeader
 
 
 class CommentSection(Section):
+    header: 'SectionHeader|None'
+
+
+class ImplicitCommentSection(CommentSection):
+    header: None
+
+    def __init__(self, header: 'Statement|None' = None, body: Body = (),
+                 errors: Errors = ()):
+        body = ([header] if header is not None else []) + list(body)
+        super().__init__(None, body, errors)
+
+
+class InvalidSection(Section):
     pass
 
 
 class TestCase(Block):
-    _fields = ('header', 'body')
-
-    def __init__(self, header, body=None):
-        self.header = header
-        self.body = body or []
+    header: TestCaseName
 
     @property
-    def name(self):
+    def name(self) -> str:
         return self.header.name
+
+    def validate(self, ctx: 'ValidationContext'):
+        if self._body_is_empty():
+            self.errors += (test_or_task('{Test} cannot be empty.', ctx.tasks),)
 
 
 class Keyword(Block):
-    _fields = ('header', 'body')
-
-    def __init__(self, header, body=None):
-        self.header = header
-        self.body = body or []
+    header: KeywordName
 
     @property
-    def name(self):
+    def name(self) -> str:
         return self.header.name
 
+    def validate(self, ctx: 'ValidationContext'):
+        if self._body_is_empty():
+            self.errors += ("User keyword cannot be empty.",)
 
-class If(Block):
+
+class NestedBlock(Block):
+    _fields = ('header', 'body', 'end')
+
+    def __init__(self, header: Statement, body: Body = (), end: 'End|None' = None,
+                 errors: Errors = ()):
+        super().__init__(header, body, errors)
+        self.end = end
+
+
+class If(NestedBlock):
     """Represents IF structures in the model.
 
     Used with IF, Inline IF, ELSE IF and ELSE nodes. The :attr:`type` attribute
     specifies the type.
     """
     _fields = ('header', 'body', 'orelse', 'end')
+    header: 'IfHeader|ElseIfHeader|ElseHeader'
 
-    def __init__(self, header, body=None, orelse=None, end=None, errors=()):
-        self.header = header
-        self.body = body or []
+    def __init__(self, header: Statement, body: Body = (), orelse: 'If|None' = None,
+                 end: 'End|None' = None, errors: Errors = ()):
+        super().__init__(header, body, end, errors)
         self.orelse = orelse
-        self.end = end
-        self.errors = errors
 
     @property
-    def type(self):
+    def type(self) -> str:
         return self.header.type
 
     @property
-    def condition(self):
+    def condition(self) -> 'str|None':
         return self.header.condition
 
     @property
-    def assign(self):
+    def assign(self) -> 'tuple[str, ...]':
         return self.header.assign
 
-    def validate(self):
+    def validate(self, ctx: 'ValidationContext'):
         self._validate_body()
         if self.type == Token.IF:
             self._validate_structure()
@@ -176,7 +213,7 @@ class If(Block):
             self._validate_inline_if()
 
     def _validate_body(self):
-        if not self.body:
+        if self._body_is_empty():
             type = self.type if self.type != Token.INLINE_IF else 'IF'
             self.errors += (f'{type} branch cannot be empty.',)
 
@@ -186,9 +223,9 @@ class If(Block):
         while orelse:
             if else_seen:
                 if orelse.type == Token.ELSE:
-                    error = 'Multiple ELSE branches.'
+                    error = 'Only one ELSE allowed.'
                 else:
-                    error = 'ELSE IF after ELSE.'
+                    error = 'ELSE IF not allowed after ELSE.'
                 if error not in self.errors:
                     self.errors += (error,)
             else_seen = else_seen or orelse.type == Token.ELSE
@@ -196,14 +233,14 @@ class If(Block):
 
     def _validate_end(self):
         if not self.end:
-            self.errors += ('IF has no closing END.',)
+            self.errors += ('IF must have closing END.',)
 
     def _validate_inline_if(self):
         branch = self
         assign = branch.assign
         while branch:
             if branch.body:
-                item = branch.body[0]
+                item = cast(Statement, branch.body[0])
                 if assign and item.type != Token.KEYWORD:
                     self.errors += ('Inline IF with assignment can only contain '
                                     'keyword calls.',)
@@ -214,64 +251,73 @@ class If(Block):
             branch = branch.orelse
 
 
-class For(Block):
-    _fields = ('header', 'body', 'end')
-
-    def __init__(self, header, body=None, end=None, errors=()):
-        self.header = header
-        self.body = body or []
-        self.end = end
-        self.errors = errors
+class For(NestedBlock):
+    header: ForHeader
 
     @property
-    def variables(self):
+    def variables(self) -> 'tuple[str, ...]':
         return self.header.variables
 
     @property
-    def values(self):
+    def values(self) -> 'tuple[str, ...]':
         return self.header.values
 
     @property
-    def flavor(self):
+    def flavor(self) -> 'str|None':
         return self.header.flavor
 
-    def validate(self):
-        if not self.body:
-            self.errors += ('FOR loop has empty body.',)
-        if not self.end:
-            self.errors += ('FOR loop has no closing END.',)
-
-
-class Try(Block):
-    _fields = ('header', 'body', 'next', 'end')
-
-    def __init__(self, header, body=None, next=None, end=None, errors=()):
-        self.header = header
-        self.body = body or []
-        self.next = next
-        self.end = end
-        self.errors = errors
+    @property
+    def start(self) -> 'str|None':
+        return self.header.start
 
     @property
-    def type(self):
+    def mode(self) -> 'str|None':
+        return self.header.mode
+
+    @property
+    def fill(self) -> 'str|None':
+        return self.header.fill
+
+    def validate(self, ctx: 'ValidationContext'):
+        if self._body_is_empty():
+            self.errors += ('FOR loop cannot be empty.',)
+        if not self.end:
+            self.errors += ('FOR loop must have closing END.',)
+
+
+class Try(NestedBlock):
+    _fields = ('header', 'body', 'next', 'end')
+    header: 'TryHeader|ExceptHeader|ElseHeader|FinallyHeader'
+
+    def __init__(self, header: Statement, body: Body = (), next: 'Try|None' = None,
+                 end: 'End|None' = None, errors: Errors = ()):
+        super().__init__(header, body, end, errors)
+        self.next = next
+
+    @property
+    def type(self) -> str:
         return self.header.type
 
     @property
-    def patterns(self):
+    def patterns(self) -> 'tuple[str, ...]':
         return getattr(self.header, 'patterns', ())
 
     @property
-    def variable(self):
+    def pattern_type(self) -> 'str|None':
+        return getattr(self.header, 'pattern_type', None)
+
+    @property
+    def variable(self) -> 'str|None':
         return getattr(self.header, 'variable', None)
 
-    def validate(self):
+    def validate(self, ctx: 'ValidationContext'):
         self._validate_body()
         if self.type == Token.TRY:
             self._validate_structure()
             self._validate_end()
 
     def _validate_body(self):
-        if not self.body:
+        if self._body_is_empty():
             self.errors += (f'{self.type} branch cannot be empty.',)
 
     def _validate_structure(self):
@@ -309,92 +355,139 @@ class Try(Block):
 
     def _validate_end(self):
         if not self.end:
-            self.errors += ('TRY has no closing END.',)
+            self.errors += ('TRY must have closing END.',)
 
 
-class While(Block):
-    _fields = ('header', 'body', 'end')
-
-    def __init__(self, header, body=None, end=None, errors=()):
-        self.header = header
-        self.body = body or []
-        self.end = end
-        self.errors = errors
+class While(NestedBlock):
+    header: WhileHeader
 
     @property
-    def condition(self):
+    def condition(self) -> str:
         return self.header.condition
 
-    def validate(self):
-        if not self.body:
-            self.errors += ('WHILE loop has empty body.',)
+    @property
+    def limit(self) -> 'str|None':
+        return self.header.limit
+
+    @property
+    def on_limit(self) -> 'str|None':
+        return self.header.on_limit
+
+    @property
+    def on_limit_message(self) -> 'str|None':
+        return self.header.on_limit_message
+
+    def validate(self, ctx: 'ValidationContext'):
+        if self._body_is_empty():
+            self.errors += ('WHILE loop cannot be empty.',)
         if not self.end:
-            self.errors += ('WHILE loop has no closing END.',)
+            self.errors += ('WHILE loop must have closing END.',)
 
 
 class ModelWriter(ModelVisitor):
 
-    def __init__(self, output):
-        if is_string(output) or is_pathlike(output):
+    def __init__(self, output: 'Path|str|TextIO'):
+        if isinstance(output, (Path, str)):
             self.writer = file_writer(output)
             self.close_writer = True
         else:
             self.writer = output
             self.close_writer = False
 
-    def write(self, model):
+    def write(self, model: Node):
         try:
             self.visit(model)
         finally:
             if self.close_writer:
                 self.writer.close()
 
-    def visit_Statement(self, statement):
-        for token in statement.tokens:
+    def visit_Statement(self, statement: Statement):
+        for token in statement:
             self.writer.write(token.value)
 
 
 class ModelValidator(ModelVisitor):
 
-    def visit_Block(self, node):
-        node.validate()
-        ModelVisitor.generic_visit(self, node)
+    def __init__(self):
+        self.ctx = ValidationContext()
 
-    def visit_Statement(self, node):
-        node.validate()
-        ModelVisitor.generic_visit(self, node)
+    def visit_Block(self, node: Block):
+        with self.ctx.block(node):
+            node.validate(self.ctx)
+            super().generic_visit(node)
+
+    def visit_Statement(self, node: Statement):
+        node.validate(self.ctx)
+
+
+class ValidationContext:
+
+    def __init__(self):
+        self.blocks = []
+
+    @contextmanager
+    def block(self, node: Block) -> Iterator[None]:
+        self.blocks.append(node)
+        try:
+            yield
+        finally:
+            self.blocks.pop()
+
+    @property
+    def parent_block(self) -> 'Block|None':
+        return self.blocks[-1] if self.blocks else None
+
+    @property
+    def tasks(self) -> bool:
+        for parent in self.blocks:
+            if isinstance(parent, TestCaseSection):
+                return parent.tasks
+        return False
+
+    @property
+    def in_keyword(self) -> bool:
+        return any(isinstance(b, Keyword) for b in self.blocks)
+
+    @property
+    def in_loop(self) -> bool:
+        return any(isinstance(b, (For, While)) for b in self.blocks)
+
+    @property
+    def in_finally(self) -> bool:
+        parent = self.parent_block
+        return isinstance(parent, Try) and parent.header.type == Token.FINALLY
 
 
 class FirstStatementFinder(ModelVisitor):
 
     def __init__(self):
-        self.statement = None
+        self.statement: 'Statement|None' = None
 
     @classmethod
-    def find_from(cls, model):
+    def find_from(cls, model: Node) -> 'Statement|None':
         finder = cls()
         finder.visit(model)
         return finder.statement
 
-    def visit_Statement(self, statement):
+    def visit_Statement(self, statement: Statement):
         if self.statement is None:
             self.statement = statement
 
-    def generic_visit(self, node):
+    def generic_visit(self, node: Node):
         if self.statement is None:
-            ModelVisitor.generic_visit(self, node)
+            super().generic_visit(node)
 
 
 class LastStatementFinder(ModelVisitor):
 
     def __init__(self):
-        self.statement = None
+        self.statement: 'Statement|None' = None
 
     @classmethod
-    def find_from(cls, model):
+    def find_from(cls, model: Node) -> 'Statement|None':
         finder = cls()
         finder.visit(model)
         return finder.statement
 
-    def visit_Statement(self, statement):
+    def visit_Statement(self, statement: Statement):
         self.statement = statement

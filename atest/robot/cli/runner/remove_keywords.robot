@@ -7,6 +7,8 @@ ${PASS MESSAGE}    -PASSED -ALL
 ${FAIL MESSAGE}    -ALL +PASSED
 ${REMOVED FOR MESSAGE}     -FOR -ALL
 ${KEPT FOR MESSAGE}        +FOR -ALL
+${REMOVED WHILE MESSAGE}     -WHILE -ALL
+${KEPT WHILE MESSAGE}        +WHILE -ALL
 ${REMOVED WUKS MESSAGE}    -WUKS -ALL
 ${KEPT WUKS MESSAGE}       +WUKS -ALL
 ${REMOVED BY NAME MESSAGE}    -BYNAME -ALL
@@ -27,6 +29,11 @@ FOR option
     Log should not contain    ${REMOVED FOR MESSAGE}
     Log should contain    ${KEPT FOR MESSAGE}
     Output should contain for messages
+
+WHILE option
+    Log should not contain    ${REMOVED WHILE MESSAGE}
+    Log should contain    ${KEPT WHILE MESSAGE}
+    Output should contain while messages
 
 WUKS option
     Log should not contain    ${REMOVED WUKS MESSAGE}
@@ -57,6 +64,7 @@ Run tests and remove keywords
     ${opts} =    Catenate
     ...    --removekeywords passed
     ...    --RemoveKeywords FoR
+    ...    --RemoveKeywords whiLE
     ...    --removek WUKS
     ...    --removekeywords name:RemoveByName
     ...    --removekeywords name:Thisshouldbe*
@@ -84,17 +92,30 @@ Output should contain fail message
     Check Log Message    ${tc.kws[0].msgs[0]}    ${FAIL MESSAGE}
 
 Output should contain for messages
-    Test should contain for messages    For when test passes
-    Test should contain for messages    For when test fails
+    Test should contain for messages    FOR when test passes
+    Test should contain for messages    FOR when test fails
 
 Test should contain for messages
     [Arguments]    ${name}
     ${tc} =    Check test case    ${name}
     ${for} =    Set Variable    ${tc.kws[0].kws[0]}
-    Check log message    ${for.kws[0].kws[0].kws[0].msgs[0]}    ${REMOVED FOR MESSAGE} one
-    Check log message    ${for.kws[1].kws[0].kws[0].msgs[0]}    ${REMOVED FOR MESSAGE} two
-    Check log message    ${for.kws[2].kws[0].kws[0].msgs[0]}    ${REMOVED FOR MESSAGE} three
-    Check log message    ${for.kws[3].kws[0].kws[0].msgs[0]}    ${KEPT FOR MESSAGE} LAST
+    Check log message    ${for.body[0].body[0].body[1].body[0].body[0]}    ${REMOVED FOR MESSAGE} one
+    Check log message    ${for.body[1].body[0].body[1].body[0].body[0]}    ${REMOVED FOR MESSAGE} two
+    Check log message    ${for.body[2].body[0].body[1].body[0].body[0]}    ${REMOVED FOR MESSAGE} three
+    Check log message    ${for.body[3].body[0].body[0].body[0].body[0]}    ${KEPT FOR MESSAGE} LAST
+
+Output should contain while messages
+    Test should contain while messages    WHILE when test passes
+    Test should contain while messages    WHILE when test fails
+
+Test should contain while messages
+    [Arguments]    ${name}
+    ${tc} =    Check test case    ${name}
+    ${while} =    Set Variable    ${tc.kws[0].kws[1]}
+    Check log message    ${while.body[0].body[0].body[1].body[0].body[0]}    ${REMOVED WHILE MESSAGE} 1
+    Check log message    ${while.body[1].body[0].body[1].body[0].body[0]}    ${REMOVED WHILE MESSAGE} 2
+    Check log message    ${while.body[2].body[0].body[1].body[0].body[0]}    ${REMOVED WHILE MESSAGE} 3
+    Check log message    ${while.body[3].body[0].body[0].body[0].body[0]}    ${KEPT WHILE MESSAGE} 4
 
 Output should contain WUKS messages
     Test should contain WUKS messages    WUKS when test passes

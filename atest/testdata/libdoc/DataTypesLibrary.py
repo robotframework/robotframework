@@ -1,5 +1,5 @@
 from enum import Enum, IntEnum
-from typing import Optional, Union, Dict, Any, List
+from typing import Any, Dict, List, Optional, Union
 try:
     from typing_extensions import TypedDict
 except ImportError:
@@ -71,6 +71,10 @@ class CustomType2:
         self.value = value
 
 
+class Unknown:
+    pass
+
+
 class A:
     @classmethod
     def not_used_converter_should_not_be_documented(cls, value):
@@ -95,7 +99,7 @@ class DataTypesLibrary:
 
         It links to `Set Location` keyword and to `GeoLocation` data type.
         """
-        print(type(credentials))
+        pass
 
     def set_location(self, location: GeoLocation):
         pass
@@ -103,7 +107,7 @@ class DataTypesLibrary:
     def assert_something(self, value, operator: Optional[AssertionOperator] = None, exp: str = 'something?'):
         """This links to `AssertionOperator` .
 
-        This is the next Line that links to 'Set Location` .
+        This is the next Line that links to `Set Location` .
         """
         pass
 
@@ -121,8 +125,8 @@ class DataTypesLibrary:
                              None]] = AssertionOperator.equal):
         pass
 
-    def typing_types(self, list_of_str: List[str], dict_str_int: Dict[str, int], Whatever: Any, *args: List[Any]):
+    def typing_types(self, list_of_str: List[str], dict_str_int: Dict[str, int], whatever: Any, *args: List[Any]):
         pass
 
-    def custom(self, arg: CustomType, arg2: 'CustomType2'):
+    def custom(self, arg: CustomType, arg2: 'CustomType2', arg3: CustomType, arg4: Unknown):
         pass

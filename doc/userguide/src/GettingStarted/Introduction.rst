@@ -39,14 +39,14 @@ Why Robot Framework?
 - Is platform and application independent.
 
 - Provides a simple `library API`_ for creating customized test libraries
-  which can be implemented natively with either Python or Java.
+  which can be implemented natively with Python.
 
 - Provides a `command line interface`__ and XML based `output files`_  for
   integration into existing build infrastructure (continuous integration
   systems).
 
-- Provides support for Selenium for web testing, Java GUI testing, running
-  processes, Telnet, SSH, and so on.
+- Provides support for testing web applications, rest APIs, mobile applications,
+  running processes, connecting to remote systems via Telnet or SSH, and so on.
 
 - Supports creating `data-driven test cases`__.
 
@@ -101,7 +101,7 @@ reports_ and logs_.
 
 .. figure:: src/GettingStarted/testdata_screenshots.png
 
-   Test case files
+   Test case file
 
 .. figure:: src/GettingStarted/screenshots.png
 

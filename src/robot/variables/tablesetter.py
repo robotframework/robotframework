@@ -18,6 +18,7 @@ from contextlib import contextmanager
 from robot.errors import DataError
 from robot.utils import DotDict, is_string, split_from_equals
 
+from .resolvable import Resolvable
 from .search import is_assign, is_list_variable, is_dict_variable
 
 
@@ -53,7 +54,7 @@ def VariableTableValue(value, name, error_reporter=None):
     return VariableTableValue(value, error_reporter)
 
 
-class VariableTableValueBase:
+class VariableTableValueBase(Resolvable):
 
     def __init__(self, values, error_reporter=None):
         self._values = self._format_values(values)

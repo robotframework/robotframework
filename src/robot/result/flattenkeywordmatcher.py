@@ -21,11 +21,14 @@ from robot.utils import MultiMatcher, is_list_like
 def validate_flatten_keyword(options):
     for opt in options:
         low = opt.lower()
-        if not (low in ('for', 'foritem') or
+        # TODO: Deprecate 'foritem' in RF 6.1!
+        if low == 'foritem':
+            low = 'iteration'
+        if not (low in ('for', 'while', 'iteration') or
                 low.startswith('name:') or
                 low.startswith('tag:')):
-            raise DataError("Expected 'FOR', 'FORITEM', 'TAG:<pattern>', or "
-                            "'NAME:<pattern>' but got '%s'." % opt)
+            raise DataError(f"Expected 'FOR', 'WHILE', 'ITERATION', 'TAG:<pattern>' or "
+                            f"'NAME:<pattern>', got '{opt}'.")
 
 
 class FlattenByTypeMatcher:
@@ -37,7 +40,9 @@ class FlattenByTypeMatcher:
         self.types = set()
         if 'for' in flatten:
             self.types.add('for')
-        if 'foritem' in flatten:
+        if 'while' in flatten:
+            self.types.add('while')
+        if 'iteration' in flatten or 'foritem' in flatten:
             self.types.add('iter')
 
     def match(self, tag):

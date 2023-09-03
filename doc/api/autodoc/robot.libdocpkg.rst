@@ -89,10 +89,10 @@ robot.libdocpkg.robotbuilder module
    :undoc-members:
    :show-inheritance:
 
-robot.libdocpkg.specbuilder module
-----------------------------------
+robot.libdocpkg.standardtypes module
+------------------------------------
 
-.. automodule:: robot.libdocpkg.specbuilder
+.. automodule:: robot.libdocpkg.standardtypes
    :members:
    :undoc-members:
    :show-inheritance:
@@ -101,6 +101,14 @@ robot.libdocpkg.writer module
 -----------------------------
 
 .. automodule:: robot.libdocpkg.writer
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+robot.libdocpkg.xmlbuilder module
+---------------------------------
+
+.. automodule:: robot.libdocpkg.xmlbuilder
    :members:
    :undoc-members:
    :show-inheritance:

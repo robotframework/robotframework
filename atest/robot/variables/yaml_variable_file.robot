@@ -20,6 +20,12 @@ Non-ASCII strings
 Dictionary is dot-accessible
     Check Test Case    ${TESTNAME}
 
+Nested dictionary is dot-accessible
+    Check Test Case    ${TESTNAME}
+
+Dictionary inside list is dot-accessible
+    Check Test Case    ${TESTNAME}
+
 YAML file in PYTHONPATH
     Check Test Case    ${TESTNAME}
 

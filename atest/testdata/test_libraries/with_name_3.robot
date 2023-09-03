@@ -3,6 +3,7 @@ Library           OperatingSystem
 Library           ParameterLibrary    after1with    after2with    WITH NAME    Params
 Library           ParameterLibrary    after1    after2
 Library           ParameterLibrary    xxx    yyy    with name    Won't work
+Library           ParameterLibrary    xxx    yyy    zzz    as    Won't work
 
 *** Test Cases ***
 Import Library Normally After Importing With Name In Another Suite

@@ -5,15 +5,24 @@ Resource          atest_resource.robot
 *** Test Case ***
 Variable Values Should Not Be Visible As Keyword's Arguments
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Keyword Data    ${tc.kws[0]}    BuiltIn.Run Keyword    args=My UK, Log, \${OBJECT}
-    Check Keyword Data    ${tc.kws[0].kws[0]}    My UK    args=Log, \${OBJECT}
-    Check Keyword Data    ${tc.kws[0].kws[0].kws[0]}    BuiltIn.Run Keyword    args=\${name}, \@{args}
-    Check Keyword Data    ${tc.kws[0].kws[0].kws[0].kws[0]}    BuiltIn.Log    args=\@{args}
+    Check Keyword Data    ${tc.kws[0]}                                 BuiltIn.Run Keyword    args=My UK, Log, \${OBJECT}
+    Check Keyword Data    ${tc.kws[0].kws[0]}                          My UK    args=Log, \${OBJECT}
+    Check Keyword Data    ${tc.kws[0].kws[0].kws[0]}                   BuiltIn.Run Keyword    args=\${name}, \@{args}
+    Check Keyword Data    ${tc.kws[0].kws[0].kws[0].kws[0]}            BuiltIn.Log    args=\@{args}
+    Check Log Message     ${tc.kws[0].kws[0].kws[0].kws[0].msgs[0]}    Robot
+    Check Keyword Data    ${tc.kws[0].kws[0].kws[1].kws[0]}            BuiltIn.Log    args=\${args}[0]
+    Check Log Message     ${tc.kws[0].kws[0].kws[1].kws[0].msgs[0]}    Robot
 
 Run Keyword When Keyword and Arguments Are in List Variable
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Keyword Data    ${tc.kws[0].kws[0]}    \\Log Many    args=c:\\\\temp\\\\foo, \\\${notvar}
     Check Keyword Data    ${tc.kws[1].kws[0]}    \\Log Many    args=\\\${notvar}
+
+Run Keyword With Empty List Variable
+    Check Test Case    ${TEST NAME}
+
+Run Keyword With Multiple Empty List Variables
+    Check Test Case    ${TEST NAME}
 
 Run Keyword If When Arguments are In Multiple List
     ${tc} =    Check Test Case    ${TEST NAME}

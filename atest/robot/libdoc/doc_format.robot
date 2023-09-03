@@ -4,8 +4,7 @@ Test Setup       Remove Output Files
 Test Template    Test Format in HTML
 
 *** Variables ***
-${EXAMPLE URL}     http://example.com
-${EXAMPLE LINK}    <a href="${EXAMPLE URL}">${EXAMPLE URL}</a>
+${EXAMPLE LINK}    <a href="http://example.com">http://example.com</a>
 ${RAW DOC}         *bold* or <b>bold</b> http://example.com
 ${HTML DOC}        <b>bold</b> or &lt;b&gt;bold&lt;/b&gt; ${EXAMPLE LINK}
 
@@ -17,20 +16,20 @@ Text format
     *bold* or &lt;b&gt;bold&lt;/b&gt; ${EXAMPLE LINK}    --DocFormat TEXT
 
 HTML format
-    *bold* or <b>bold</b> ${EXAMPLE URL}    -F html
+    *bold* or <b>bold</b> http://example.com    -F html    shortdoc=*bold* or *bold* http://example.com
 
 reST format
     [Template]    NONE
     [Tags]    require-docutils    require-pygments
     Test Format in HTML    <em>bold</em> or &lt;b&gt;bold&lt;/b&gt; <a
-    ...    --docformat rest    expected2=Link to <cite>Keyword</cite>.
+    ...    --docformat rest    doc2=Link to <cite>Keyword</cite>.
     Should Contain    ${MODEL}[keywords][2][doc]
     ...    This link to <a href="#Keyword" class="name">Keyword</a>
     Should Contain    ${MODEL}[keywords][2][doc]
     ...    <span class=\"gh\">*** Test Cases ***\x3c/span>
 
 Format from Python library
-    *bold* or <b>bold</b> ${EXAMPLE URL}    lib=DocFormatHtml.py
+    *bold* or <b>bold</b> http://example.com    lib=DocFormatHtml.py    shortdoc=*bold* or *bold* http://example.com
 
 Format from CLI overrides format from library
     ${HTML DOC}    -F robot    DocFormatHtml.py
@@ -93,13 +92,15 @@ Compare HTML from LIBSPEC
 
 *** Keywords ***
 Test Format In HTML
-    [Arguments]    ${expected}    ${cli}=    ${lib}=DocFormat.py
-    ...    ${expected2}=Link to <a href="#Keyword" class="name">Keyword</a>.
+    [Arguments]    ${doc}    ${cli}=    ${lib}=DocFormat.py
+    ...    ${doc2}=Link to <a href="#Keyword" class="name">Keyword</a>.
+    ...    ${shortdoc}=*bold* or <b>bold</b> http://example.com
     ${lib} =    Join Path    ${TESTDATADIR}    ${lib}
     Run Libdoc And Parse Model From HTML    ${cli} ${lib}
-    Should Contain    ${MODEL}[doc]                 ${expected}
-    Should Contain    ${MODEL}[keywords][0][doc]    ${expected}
-    Should Contain    ${MODEL}[keywords][1][doc]    ${expected2}
+    Should Contain     ${MODEL}[doc]                      ${doc}
+    Should Contain     ${MODEL}[keywords][0][doc]         ${doc}
+    Should Contain     ${MODEL}[keywords][1][doc]         ${doc2}
+    Should Be Equal    ${MODEL}[keywords][0][shortdoc]    ${shortdoc}
 
 Test Format In XML
     [Arguments]    ${expected}    ${format}    ${cli}=    ${lib}=DocFormat.py

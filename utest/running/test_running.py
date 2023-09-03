@@ -98,7 +98,7 @@ class TestRunning(unittest.TestCase):
 
     def test_variables(self):
         suite = TestSuite(name='Suite')
-        suite.resource.variables.create('${ERROR}', 'Error message')
+        suite.resource.variables.create('${ERROR}', ['Error message'])
         suite.resource.variables.create('@{LIST}', ['Error', 'added tag'])
         suite.tests.create(name='T1').body.create_keyword('Fail', args=['${ERROR}'])
         suite.tests.create(name='T2').body.create_keyword('Fail', args=['@{LIST}'])
@@ -106,6 +106,18 @@ class TestRunning(unittest.TestCase):
         assert_suite(result, 'Suite', 'FAIL', tests=2)
         assert_test(result.tests[0], 'T1', 'FAIL', msg='Error message')
         assert_test(result.tests[1], 'T2', 'FAIL', ('added tag',), 'Error')
+
+    def test_test_cannot_be_empty(self):
+        suite = TestSuite()
+        suite.tests.create(name='Empty')
+        result = run(suite)
+        assert_test(result.tests[0], 'Empty', 'FAIL', msg='Test cannot be empty.')
+
+    def test_name_cannot_be_empty(self):
+        suite = TestSuite()
+        suite.tests.create().body.create_keyword('Not executed')
+        result = run(suite)
+        assert_test(result.tests[0], '', 'FAIL', msg='Test name cannot be empty.')
 
     def test_modifiers_are_not_used(self):
         # These options are valid but not used. Modifiers can be passed to
@@ -228,7 +240,7 @@ class TestCustomStreams(RunningTestCase):
 
     def _run(self, stdout=None, stderr=None, **options):
         suite = TestSuite(name='My Suite')
-        suite.resource.variables.create('${MESSAGE}', 'Hello, world!')
+        suite.resource.variables.create('${MESSAGE}', ['Hello, world!'])
         suite.tests.create(name='My Test')\
             .body.create_keyword('Log', args=['${MESSAGE}', 'WARN'])
         run(suite, stdout=stdout, stderr=stderr, **options)

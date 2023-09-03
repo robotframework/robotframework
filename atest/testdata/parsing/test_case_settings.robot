@@ -1,12 +1,12 @@
-*** Setting ***
+*** Settings ***
 Test Setup        Log    Default setup
 Test Teardown     Log    Default teardown    INFO
 Force Tags        \    force-1       # Empty tags should be ignored
 Default Tags      @{DEFAULT TAGS}    \    default-3
 Test Timeout      ${TIMEOUT} milliseconds
 
-*** Variable ***
-${VARIABLE}           variable
+*** Variables ***
+${VARIABLE}           variable
 ${DOC VERSION}        1.2
 @{DEFAULT TAGS}       default-1    default-2    # default-3 added separately
 ${TAG BASE}           test
@@ -14,7 +14,7 @@ ${TAG BASE}           test
 ${LOG}                Log
 ${TIMEOUT}            99999
 
-*** Test Case ***
+*** Test Cases ***
 Normal name
     No Operation
 
@@ -53,6 +53,11 @@ Documentation in multiple rows
     ...
     ...                This documentation has multiple rows
     ...                and also    multiple columns.
+    ...
+    ...                Newlines can also be added literally with "\n".
+    ...                If a row ends with a newline\n
+    ...                or backslash \
+    ...                no automatic newline is added.
     ...
     ...                | table | =header= |
     ...                | foo   |    bar   |
@@ -180,10 +185,6 @@ Timeout
     [Timeout]    1d
     No Operation
 
-Timeout with message
-    [Timeout]    666    Message not supported since RF 3.2
-    No Operation
-
 Default timeout
     No Operation
 
@@ -203,7 +204,7 @@ Invalid timeout
     [Documentation]    FAIL Setup failed:
     ...    Setting test timeout failed: Invalid time string 'invalid'.
     [Timeout]    invalid
-    No Operation
+    Fail    Should not be run
 
 Multiple settings
     [Documentation]    Documentation for this test case
@@ -214,9 +215,19 @@ Multiple settings
     [Teardown]    Log    Test case teardown
 
 Invalid setting
+    [Documentation]    FAIL Non-existing setting 'Invalid'.
     [Invalid]    This is invalid
-    No Operation
+    Fail    Should not be run
+
+Setting not valid with tests
+    [Documentation]    FAIL Setting 'Metadata' is not allowed with tests or tasks.
+    [Metadata]    Not valid.
+    [Arguments]    Not valid.
+    Fail    Should not be run
 
 Small typo should provide recommendation
+    [Documentation]    FAIL
+    ...    Non-existing setting 'Doc U ment a tion'. Did you mean:
+    ...    ${SPACE*4}Documentation
     [Doc U ment a tion]    This actually worked before RF 3.2.
-    No Operation
+    Fail    Should not be run

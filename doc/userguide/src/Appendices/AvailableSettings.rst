@@ -1,5 +1,10 @@
-All available settings in test data
-===================================
+Available settings
+==================
+
+This appendix lists all settings that can be used in different sections.
+
+.. note:: Settings can be localized_. See the Translations_ appendix for
+          supported translations.
 
 .. contents::
    :depth: 2
@@ -8,7 +13,7 @@ All available settings in test data
 Setting section
 ---------------
 
-The Setting section is used to import test libraries, resource files and
+The Setting section is used to import libraries, resource files and
 variable files and to define metadata for test suites and test
 cases. It can be included in test case files and resource files. Note
 that in a resource file, a Setting section can only include settings for
@@ -26,20 +31,25 @@ importing libraries, resources, and variables.
    +-----------------+--------------------------------------------------------+
    | Variables       | Used for `taking variable files into use`_.            |
    +-----------------+--------------------------------------------------------+
-   | Documentation   | Used for specifying a `test suite`__ or                |
+   | Name            | Used for setting a custom `suite name`_.               |
+   +-----------------+--------------------------------------------------------+
+   | Documentation   | Used for specifying a `suite`__ or                     |
    |                 | `resource file`__ documentation.                       |
    +-----------------+--------------------------------------------------------+
-   | Metadata        | Used for setting `free test suite metadata`_.          |
+   | Metadata        | Used for setting `free suite metadata`_.               |
    +-----------------+--------------------------------------------------------+
    | Suite Setup     | Used for specifying the `suite setup`_.                |
    +-----------------+--------------------------------------------------------+
    | Suite Teardown  | Used for specifying the `suite teardown`_.             |
    +-----------------+--------------------------------------------------------+
-   | Force Tags      | Used for specifying forced values for tags when        |
-   |                 | `tagging test cases`_.                                 |
+   | Test  Tags      | Used for specifying `test case tags`_ for all tests    |
+   |                 | in a suite.                                            |
    +-----------------+--------------------------------------------------------+
-   | Default Tags    | Used for specifying default values for tags when       |
-   |                 | `tagging test cases`_.                                 |
+   | Force Tags,     | `Deprecated settings`__ for specifying test case tags. |
+   | Default Tags    |                                                        |
+   +-----------------+--------------------------------------------------------+
+   | Keyword Tags    | User for specifying `user keyword tags`_ for all       |
+   |                 | keywords in a certain file.                            |
    +-----------------+--------------------------------------------------------+
    | Test Setup      | Used for specifying a default `test setup`_.           |
    +-----------------+--------------------------------------------------------+
@@ -56,8 +66,9 @@ importing libraries, resources, and variables.
    | Task Timeout    |                                                        |
    +-----------------+--------------------------------------------------------+
 
-__ `Test suite documentation`_
+__ `Suite documentation`_
 __ `Documenting resource files`_
+__ `Deprecation of Force Tags and Default Tags`_
 
 Test Case section
 -----------------

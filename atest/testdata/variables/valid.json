@@ -1,0 +1,55 @@
+{
+  "string": "Hello, YAML!",
+  "non": "äscii",
+  "nön": "äscii",
+  "integer": 42,
+  "float": 3.14,
+  "bool": true,
+  "null": null,
+  "list": [
+    "one",
+    2
+  ],
+  "dict": {
+    "a": "1",
+    "b": 2,
+    "3": [
+      "one",
+      2
+    ],
+    "key with spaces": "value with spaces"
+  },
+  "nested dict": {
+    "dict": {
+      "a": "1",
+      "b": 2,
+      "3": [
+        "one",
+        2
+      ],
+      "key with spaces": "value with spaces"
+    }
+  },
+  "list with dict": [
+    "scalar",
+    {
+      "key": "value"
+    },
+    {
+      "dict": {
+        "a": "1",
+        "b": 2,
+        "3": [
+          "one",
+          2
+        ],
+        "key with spaces": "value with spaces"
+      },
+      "nested": [
+        {
+          "leaf": "value"
+        }
+      ]
+    }
+  ]
+}

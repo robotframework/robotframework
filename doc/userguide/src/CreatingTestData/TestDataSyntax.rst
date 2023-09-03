@@ -15,11 +15,11 @@ Files and directories
 
 The hierarchical structure for arranging test cases is built as follows:
 
-- Test cases are created in `test case files`_.
+- Test cases are created in `suite files`_.
 - A test case file automatically creates a `test suite`_ containing
   the test cases in that file.
 - A directory containing test case files forms a higher-level test
-  suite. Such a `test suite directory`_ has suites created from test
+  suite. Such a `suite directory`_ has suites created from test
   case files as its child test suites.
 - A test suite directory can also contain other test suite directories,
   and this hierarchical structure can be as deeply nested as needed.
@@ -77,10 +77,13 @@ called tables, listed below:
 Different sections are recognized by their header row. The recommended
 header format is `*** Settings ***`, but the header is case-insensitive,
 surrounding spaces are optional, and the number of asterisk characters can
-vary as long as there is one asterisk in the beginning. In addition to using
-the plural format, also singular variants like `Setting` and `Test Case` are
-accepted. In other words, also `*setting` would be recognized as a section
-header.
+vary as long as there is at least one asterisk in the beginning. For example,
+also `*settings` would be recognized as a section header.
+
+Robot Framework also supports the singular form with headers like
+`*** Setting ***,` but that support is deprecated. There are no visible
+deprecation warnings yet, but warnings will emitted in the future and
+singular headers will eventually not be supported at all.
 
 The header row can contain also other data than the actual section header.
 The extra data must be separated from the section header using the data
@@ -91,13 +94,8 @@ purposes. This is especially useful when creating test cases using the
 
 Possible data before the first section is ignored.
 
-.. note:: Section names used to be space-insensitive, but that was deprecated
-          in Robot Framework 3.1 and trying to use something like `TestCases`
-          or `S e t t i n g s` causes an error in Robot Framework 3.2.
-
-.. note:: Prior to Robot Framework 3.1, all unrecognized sections were silently
-          ignored but nowadays they cause an error. `Comments` sections can
-          be used if sections not containing actual test data are needed.
+.. note:: Section headers can be localized_. See the Translations_ appendix for
+          supported translations.
 
 Supported file formats
 ----------------------
@@ -108,17 +106,21 @@ and their arguments, are separated from each others with two or more spaces.
 An alternative is using the `pipe separated format`_ where the separator is
 the pipe character surrounded with spaces (:codesc:`\ |\ `).
 
-Executed files typically use the :file:`.robot` extension, but that `can be
-configured`__ with the :option:`--extension` option. `Resource files`_
-can use the :file:`.robot` extension as well, but using the dedicated
-:file:`.resource` extension is recommended. Files containing non-ASCII
+Suite files typically use the :file:`.robot` extension, but what files are
+parsed `can be configured`__. `Resource files`_ can use the :file:`.robot`
+extension as well, but using the dedicated :file:`.resource` extension is
+recommended and may be mandated in the future. Files containing non-ASCII
 characters must be saved using the UTF-8 encoding.
 
-Robot Framework also supports reStructuredText_ files so that normal
-Robot Framework data is `embedded into code blocks`__. It is possible to
-use either :file:`.rst` or :file:`.rest` extension with reStructuredText
-files, but the aforementioned :option:`--extension` option `must be used`__
-to enable parsing them when executing a directory.
+Robot Framework supports also reStructuredText_ files so that normal
+Robot Framework data is `embedded into code blocks`__. Only files with
+the :file:`.robot.rst` extension are parsed by default. If you would
+rather use just :file:`.rst` or :file:`.rest` extension, that needs to be
+configured separately.
+
+Robot Framework data can also be created in `JSON format`_ that is targeted
+more for tool developers than normal Robot Framework users. Only JSON files
+with the custom :file:`.rbt` extension are parsed by default.
 
 Earlier Robot Framework versions supported data also in HTML and TSV formats.
 The TSV format still works if the data is compatible with the `space separated
@@ -131,9 +133,9 @@ format at all.
 
 __ `Selecting files to parse`_
 __ `reStructuredText format`_
-__ `Selecting files to parse`_
 
 .. _space separated plain text format:
+.. _plain text format:
 
 Space separated format
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -286,9 +288,9 @@ marked using the `code` directive, but Robot Framework supports also
 
        # Both space and pipe separated formats are supported.
 
-       | *** Keyword ***  |                        |         |
-       | My Keyword       | [Arguments]            | ${path} |
-       |                  | Directory Should Exist | ${path} |
+       | *** Keywords ***  |                        |         |
+       | My Keyword        | [Arguments]            | ${path} |
+       |                   | Directory Should Exist | ${path} |
 
     .. code:: python
 
@@ -296,10 +298,12 @@ marked using the `code` directive, but Robot Framework supports also
        def example():
            print('Hello, world!')
 
-Robot Framework supports reStructuredText files using both :file:`.rst` and
-:file:`.rest` extension. When executing a directory containing reStucturedText
-files, the :option:`--extension` option must be used to explicitly tell that
-`these files should be parsed`__.
+Robot Framework supports reStructuredText files using :file:`.robot.rst`,
+:file:`.rst` and :file:`.rest` extensions. To avoid parsing unrelated
+reStructuredText files, only files with the :file:`.robot.rst` extension
+are parsed by default when executing a directory. Parsing files with
+other extensions `can be enabled`__ by using either :option:`--parseinclude`
+or :option:`--extension` option.
 
 __ `Selecting files to parse`_
 
@@ -307,6 +311,135 @@ When Robot Framework parses reStructuredText files, errors below level
 `SEVERE` are ignored to avoid noise about possible non-standard directives
 and other such markup. This may hide also real errors, but they can be seen
 when processing files using reStructuredText tooling normally.
+
+.. note:: Parsing :file:`.robot.rst` files automatically is new in
+          Robot Framework 6.1.
+
+JSON format
+~~~~~~~~~~~
+
+Robot Framework supports data also in JSON_ format. This format is designed
+more for tool developers than for regular Robot Framework users and it is not
+meant to be edited manually. Its most important use cases are:
+
+- Transferring data between processes and machines. A suite can be converted
+  to JSON in one machine and recreated somewhere else.
+- Saving a suite, possibly a nested suite, constructed from normal Robot Framework
+  data into a single JSON file that is faster to parse.
+- Alternative data format for external tools generating tests or tasks.
+
+.. note:: The JSON data support is new in Robot Framework 6.1 and it can be
+          enhanced in future Robot Framework versions. If you have an enhancement
+          idea or believe you have encountered a bug, please submit an issue__
+          or start a discussion thread on the `#devel` channel on our Slack_.
+
+__ https://issues.robotframework.org
+
+Converting suite to JSON
+''''''''''''''''''''''''
+
+A suite structure can be serialized into JSON by using the `TestSuite.to_json`__
+method. When used without arguments, it returns JSON data as a string, but
+it also accepts a path or an open file where to write JSON data along with
+configuration options related to JSON formatting:
+
+.. sourcecode:: python
+
+   from robot.running import TestSuite
+
+
+   # Create suite based on data on the file system.
+   suite = TestSuite.from_file_system('/path/to/data')
+
+   # Get JSON data as a string.
+   data = suite.to_json()
+
+   # Save JSON data to a file with custom indentation.
+   suite.to_json('data.rbt', indent=2)
+
+If you would rather work with Python data and then convert that to JSON
+or some other format yourself, you can use `TestSuite.to_dict`__ instead.
+
+__ https://robot-framework.readthedocs.io/en/master/autodoc/robot.running.html#robot.running.model.TestSuite.to_json
+__ https://robot-framework.readthedocs.io/en/master/autodoc/robot.running.html#robot.running.model.TestSuite.to_dict
+
+Creating suite from JSON
+''''''''''''''''''''''''
+
+A suite can be constructed from JSON data using the `TestSuite.from_json`__
+method. It works both with JSON strings and paths to JSON files:
+
+.. sourcecode:: python
+
+   from robot.running import TestSuite
+
+
+   # Create suite from JSON data in a file.
+   suite = TestSuite.from_json('data.rbt')
+
+   # Create suite from a JSON string.
+   suite = TestSuite.from_json('{"name": "Suite", "tests": [{"name": "Test"}]}')
+
+   # Execute suite. Notice that log and report needs to be created separately.
+   suite.run(output='example.xml')
+
+If you have data as a Python dictionary, you can use `TestSuite.from_dict`__
+instead. Regardless of how a suite is recreated, it exists only in memory and
+original data files on the file system are not recreated.
+
+As the above example demonstrates, the created suite can be executed using
+the `TestSuite.run`__ method. It may, however, be easier to execute a JSON file
+directly as explained in the following section.
+
+__ https://robot-framework.readthedocs.io/en/master/autodoc/robot.running.html#robot.running.model.TestSuite.from_json
+__ https://robot-framework.readthedocs.io/en/master/autodoc/robot.running.html#robot.running.model.TestSuite.from_dict
+__ https://robot-framework.readthedocs.io/en/master/autodoc/robot.running.html#robot.running.model.TestSuite.run
+
+Executing JSON files
+''''''''''''''''''''
+
+When executing tests or tasks using the `robot` command, JSON files with
+the custom :file:`.rbt` extension are parsed automatically. This includes
+running individual JSON files like `robot tests.rbt` and running directories
+containing :file:`.rbt` files. If you would rather use the standard
+:file:`.json` extension, you need to `configure which files are parsed`__.
+
+__ `Selecting files to parse`_
+
+Adjusting suite source
+''''''''''''''''''''''
+
+Suite source in the data got from `TestSuite.to_json` and `TestSuite.to_dict`
+is in absolute format. If a suite is recreated later on a different machine,
+the source may thus not match the directory structure on that machine. To
+avoid that, it is possible to use the `TestSuite.adjust_source`__ method to
+make the suite source relative before getting the data and add a correct root
+directory after the suite is recreated:
+
+.. sourcecode:: python
+
+   from robot.running import TestSuite
+
+
+   # Create a suite, adjust source and convert to JSON.
+   suite = TestSuite.from_file_system('/path/to/data')
+   suite.adjust_source(relative_to='/path/to')
+   suite.to_json('data.rbt')
+
+   # Recreate suite elsewhere and adjust source accordingly.
+   suite = TestSuite.from_json('data.rbt')
+   suite.adjust_source(root='/new/path/to')
+
+__ https://robot-framework.readthedocs.io/en/master/autodoc/robot.running.html#robot.running.model.TestSuite.adjust_source
+
+JSON structure
+''''''''''''''
+
+Imports, variables and keywords created in suite files are included in the
+generated JSON along with tests and tasks. The exact JSON structure is documented
+in the :file:`running.json` `schema file`__.
+
+__ https://github.com/robotframework/robotframework/tree/master/doc/schema#readme
 
 Rules for parsing the data
 --------------------------
@@ -495,11 +628,11 @@ a space by default, but that can be changed by starting the value with
 Splitting lines is illustrated in the following two examples containing
 exactly same data without and with splitting.
 
-__ `Test suite documentation`_
+__ `Suite documentation`_
 __ `Test case documentation`_
 __ `User keyword documentation`_
-__ `Free test suite metadata`_
-__ `Newlines in test data`_
+__ `Free suite metadata`_
+__ `Newlines`_
 
 .. sourcecode:: robotframework
 
@@ -507,7 +640,7 @@ __ `Newlines in test data`_
    Documentation      Here we have documentation for this suite.\nDocumentation is often quite long.\n\nIt can also contain multiple paragraphs.
    Default Tags       default tag 1    default tag 2    default tag 3    default tag 4    default tag 5
 
-   *** Variable ***
+   *** Variables ***
    ${STRING}          This is a long string. It has multiple sentences. It does not have newlines.
    ${MULTILINE}       This is a long multiline string.\nThis is the second line.\nThis is the third and the last line.
    @{LIST}            this     list     is    quite    long     and    items in it can also be long
@@ -529,7 +662,7 @@ __ `Newlines in test data`_
    Default Tags       default tag 1    default tag 2    default tag 3
    ...                default tag 4    default tag 5
 
-   *** Variable ***
+   *** Variables ***
    ${STRING}          This is a long string.
    ...                It has multiple sentences.
    ...                It does not have newlines.
@@ -551,3 +684,158 @@ __ `Newlines in test data`_
        ${var} =    Get X
        ...    first argument passed to this keyword is pretty long
        ...    second argument passed to this keyword is long too
+
+Localization
+------------
+
+Robot Framework localization efforts were started in Robot Framework 6.0
+that allowed translation of `section headers`_, settings_,
+`Given/When/Then prefixes`__ used in Behavior Driven Development (BDD), and
+`true and false strings`__ used in automatic Boolean argument conversion.
+The plan is to extend localization support in the future, for example,
+to log and report and possibly also to control structures.
+
+This section explains how to `activate languages`__, what `built-in languages`_
+are supported, how to create `custom language files`_ and how new translations
+can be contributed__.
+
+__ `Enabling languages`_
+__ `Behavior-driven style`_
+__ `Supported conversions`_
+__ `Contributing translations`_
+
+Enabling languages
+~~~~~~~~~~~~~~~~~~
+
+Using command line option
+'''''''''''''''''''''''''
+
+The main mechanism to activate languages is specifying them from the command line
+using the :option:`--language` option. When enabling `built-in languages`_,
+it is possible to use either the language name like `Finnish` or the language
+code like `fi`. Both names and codes are case and space insensitive and also
+the hyphen (`-`) is ignored. To enable multiple languages, the
+:option:`--language` option needs to be used multiple times::
+
+    robot --language Finnish testit.robot
+    robot --language pt --language ptbr testes.robot
+
+The same :option:`--language` option is also used when activating
+`custom language files`_. With them the value can be either a path to the file or,
+if the file is in the `module search path`_, the module name::
+
+    robot --language Custom.py tests.robot
+    robot --language MyLang tests.robot
+
+For backwards compatibility reasons, and to support partial translations,
+English is always activated automatically. Future versions may allow disabling
+it.
+
+Pre-file configuration
+''''''''''''''''''''''
+
+It is also possible to enable languages directly in data files by having
+a line `Language: <value>` (case-insensitive) before any of the section
+headers. The value after the colon is interpreted the same way as with
+the :option:`--language` option::
+
+    Language: Finnish
+
+    *** Asetukset ***
+    Dokumentaatio        Example using Finnish.
+
+If there is a need to enable multiple languages, the `Language:` line
+can be repeated. These configuration lines cannot be in comments so something like
+`# Language: Finnish` has no effect.
+
+Due to technical limitations, the per-file language configuration affects also
+parsing subsequent files as well as the whole execution. This
+behavior is likely to change in the future and *should not* be relied upon.
+If you use per-file configuration, use it with all files or enable languages
+globally with the :option:`--language` option.
+
+Built-in languages
+~~~~~~~~~~~~~~~~~~
+
+The following languages are supported out-of-the-box. Click the language name
+to see the actual translations:
+
+.. START GENERATED CONTENT
+.. Generated by translations.py used by ug2html.py.
+
+- `Bulgarian (bg)`_
+- `Bosnian (bs)`_
+- `Czech (cs)`_
+- `German (de)`_
+- `Spanish (es)`_
+- `Finnish (fi)`_
+- `French (fr)`_
+- `Hindi (hi)`_
+- `Italian (it)`_
+- `Dutch (nl)`_
+- `Polish (pl)`_
+- `Portuguese (pt)`_
+- `Brazilian Portuguese (pt-BR)`_
+- `Romanian (ro)`_
+- `Russian (ru)`_
+- `Swedish (sv)`_
+- `Thai (th)`_
+- `Turkish (tr)`_
+- `Ukrainian (uk)`_
+- `Vietnamese (vi)`_
+- `Chinese Simplified (zh-CN)`_
+- `Chinese Traditional (zh-TW)`_
+
+.. END GENERATED CONTENT
+
+All these translations have been provided by the awesome Robot Framework
+community. If a language you are interested in is not included, you can
+consider contributing__ it!
+
+__ `Contributing translations`_
+
+Custom language files
+~~~~~~~~~~~~~~~~~~~~~
+
+If a language you would need is not available as a built-in language, or you
+want to create a totally custom language for some specific need, you can easily
+create a custom language file. Language files are Python files that contain
+one or more language definitions that are all loaded when the language file
+is taken into use. Language definitions are created by extending the
+`robot.api.Language` base class and overriding class attributes as needed:
+
+.. sourcecode:: python
+
+    from robot.api import Language
+
+
+    class Example(Language):
+        test_cases_header = 'Validations'
+        tags_setting = 'Labels'
+        given_prefixes = ['Assuming']
+        true_strings = ['OK', '\N{THUMBS UP SIGN}']
+
+Assuming the above code would be in file :file:`example.py`, a path to that
+file or just the module name `example` could be used when the language file
+is activated__.
+
+The above example adds only some of the possible translations. That is fine
+because English is automatically enabled anyway. Most values must be specified
+as strings, but BDD prefixes and true/false strings allow more than one value
+and must be given as lists. For more examples, see Robot Framework's internal
+languages__ module that contains the `Language` class as well as all built-in
+language definitions.
+
+__ `Enabling languages`_
+__ https://github.com/robotframework/robotframework/blob/master/src/robot/conf/languages.py
+
+Contributing translations
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If you want to add translation for a new language or enhance existing, head
+to Crowdin__ that we use for collaboration. For more details, see the
+separate Localization__ project, and for questions and free discussion join
+the `#localization` channel on our Slack_.
+
+__ https://robotframework.crowdin.com
+__ https://github.com/MarketSquare/localization

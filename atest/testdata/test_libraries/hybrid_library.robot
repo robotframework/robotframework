@@ -43,3 +43,6 @@ Embedded Keyword Arguments
 
 Name starting with an underscore is OK
     Starting with underscore is OK
+
+__init__ exposed as keyword
+    Init

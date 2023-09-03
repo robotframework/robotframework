@@ -1,0 +1,1 @@
+'.multi.part.ext' files should be parsed but '.ext' files not.

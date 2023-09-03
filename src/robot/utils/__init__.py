@@ -43,14 +43,14 @@ from .encoding import (CONSOLE_ENCODING, SYSTEM_ENCODING, console_decode,
 from .error import (get_error_message, get_error_details, ErrorDetails)
 from .escaping import escape, glob_escape, unescape, split_from_equals
 from .etreewrapper import ET, ETSource
-from .filereader import FileReader
+from .filereader import FileReader, Source
 from .frange import frange
 from .markuputils import html_format, html_escape, xml_escape, attribute_escape
 from .markupwriters import HtmlWriter, XmlWriter, NullMarkupWriter
 from .importer import Importer
 from .match import eq, Matcher, MultiMatcher
-from .misc import (isatty, plural_or_not, printable_name, roundup, seq2str, seq2str2,
-                   test_or_task)
+from .misc import (classproperty, isatty, parse_re_flags, plural_or_not,
+                   printable_name, seq2str, seq2str2, test_or_task)
 from .normalizing import normalize, normalize_whitespace, NormalizedDict
 from .platform import PY_VERSION, PYPY, UNIXY, WINDOWS, RERAISED_EXCEPTIONS
 from .recommendations import RecommendationFinder
@@ -62,14 +62,15 @@ from .robottime import (elapsed_time_to_string, format_time, get_elapsed_time,
                         get_time, get_timestamp, secs_to_timestamp,
                         secs_to_timestr, timestamp_to_secs, timestr_to_secs,
                         parse_time)
-from .robottypes import (FALSE_STRINGS, TRUE_STRINGS, is_bytes, is_dict_like,
-                         is_falsy, is_integer, is_list_like, is_number, is_pathlike,
-                         is_string, is_truthy, is_union, type_name, typeddict_types)
+from .robottypes import (has_args, is_bytes, is_dict_like, is_falsy, is_integer,
+                         is_list_like, is_number, is_pathlike, is_string, is_truthy,
+                         is_union, type_name, type_repr, typeddict_types)
 from .setter import setter, SetterAwareType
 from .sortable import Sortable
 from .text import (cut_assign_value, cut_long_message, format_assign_message,
                    get_console_length, getdoc, getshortdoc, pad_console_length,
                    split_tags_from_doc, split_args_from_name_or_path)
+from .typehints import copy_signature, KnownAtRuntime
 from .unic import prepr, safe_str
 
 
@@ -78,10 +79,16 @@ def read_rest_data(rstfile):
     return read_rest_data(rstfile)
 
 
+# Quietly deprecated utils. Should be deprecated loudly in RF 7.0.
+# https://github.com/robotframework/robotframework/issues/4501
+
+from .robottypes import FALSE_STRINGS, TRUE_STRINGS
+
+
 # Deprecated Python 2/3 compatibility layer. Not needed by Robot Framework itself
-# since Python 2 support was dropped in RF 5. Preserved at least until RF 5.2
-# to avoid breaking external libraries and tools that use it.
-# https://github.com/robotframework/robotframework/issues/4150
+# after RF 5.0 when Python 2 support was dropped. Should be deprecated loudly in
+# RF 7.0. Notice that there's also `PY2` in the `platform` submodule.
+# https://github.com/robotframework/robotframework/issues/4501
 
 from io import StringIO
 
@@ -91,6 +98,7 @@ PY2 = JYTHON = IRONPYTHON = False
 is_unicode = is_string
 unicode = str
 unic = safe_str
+roundup = round
 
 
 def py2to3(cls):

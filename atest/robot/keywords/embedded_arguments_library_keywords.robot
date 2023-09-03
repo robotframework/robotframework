@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  ${EMPTY}  keywords/embedded_arguments_library_keywords.robot
+Suite Setup     Run Tests    ${EMPTY}    keywords/embedded_arguments_library_keywords.robot
 Resource        atest_resource.robot
 
 *** Test Cases ***
@@ -22,7 +22,7 @@ Complex Embedded Arguments
     Check Log Message    ${tc.kws[0].msgs[0]}    feature-works
     Check Log Message    ${tc.kws[1].msgs[0]}    test case-is *executed*
     Check Log Message    ${tc.kws[2].msgs[0]}    issue-is about to be done!
-    File Should Contain    ${OUTFILE}    sourcename="\${prefix:Given|When|Then} this 
+    File Should Contain    ${OUTFILE}    sourcename="\${prefix:Given|When|Then} this
     File Should Not Contain    ${OUTFILE}    sourcename="Log"
 
 Embedded Arguments with BDD Prefixes
@@ -54,6 +54,10 @@ Embedded Arguments as Variables
     ...    name="User \${name} Selects \${SPACE * 10} From Webshop"
     File Should Not Contain    ${OUTFILE}    sourcename="Log"
 
+Embedded Arguments as List And Dict Variables
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Keyword Data    ${tc.kws[1]}    embedded_args_in_lk_1.User \@{i1} Selects \&{i2} From Webshop    \${o1}, \${o2}
+
 Non-Existing Variable in Embedded Arguments
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Keyword Data    ${tc.kws[0]}    embedded_args_in_lk_1.User \${non existing} Selects \${variables} From Webshop    status=FAIL
@@ -73,7 +77,19 @@ Grouping Custom Regexp
 Custom Regexp Matching Variables
     Check Test Case    ${TEST NAME}
 
-Custom Regexp Matching Variables When Regexp Does No Match Them
+Non Matching Variable Is Accepted With Custom Regexp (But Not For Long)
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.body[0].msgs[0]}
+    ...    Embedded argument 'x' got value 'foo' that does not match custom pattern 'bar'. The argument is still accepted, but this behavior will change in Robot Framework 8.0.    WARN
+
+Partially Matching Variable Is Accepted With Custom Regexp (But Not For Long)
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.body[0].msgs[0]}
+    ...    Embedded argument 'x' got value 'ba' that does not match custom pattern 'bar'. The argument is still accepted, but this behavior will change in Robot Framework 8.0.    WARN
+    Check Log Message    ${tc.body[0].msgs[1]}
+    ...    Embedded argument 'y' got value 'zapzap' that does not match custom pattern '...'. The argument is still accepted, but this behavior will change in Robot Framework 8.0.    WARN
+
+Non String Variable Is Accepted With Custom Regexp
     Check Test Case    ${TEST NAME}
 
 Embedded Arguments Syntax is Space Sensitive
@@ -106,7 +122,13 @@ Embedded argument count must match accepted arguments
 Optional Non-Embedded Args Are Okay
     Check Test Case    ${TESTNAME}
 
-Star Args With Embedded Args Are Okay
+Varargs With Embedded Args Are Okay
+    Check Test Case    ${TESTNAME}
+
+List variable is expanded when keyword accepts varargs
+    Check Test Case    ${TESTNAME}
+
+Scalar variable containing list is not expanded when keyword accepts varargs
     Check Test Case    ${TESTNAME}
 
 Same name with different regexp works

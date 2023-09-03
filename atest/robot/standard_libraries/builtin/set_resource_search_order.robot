@@ -38,3 +38,9 @@ Resource Search Order Is Case Insensitive
 
 Default Resource Order Should Be Suite Specific
     Check Test Case  ${TEST NAME}
+
+Search Order Controlled Match Containing Embedded Arguments Wins Over Exact Match
+    Check Test Case  ${TEST NAME}
+
+Best Search Order Controlled Match Wins In Resource
+    Check Test Case  ${TEST NAME}

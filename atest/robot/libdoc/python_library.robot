@@ -8,12 +8,12 @@ Name
 
 Documentation
     Doc Should Start With
-    ...    A test library providing communication over Telnet connections.
+    ...    A library providing communication over Telnet connections.
     ...
     ...    ``Telnet`` is Robot Framework's standard library that makes it possible to
 
 Version
-    Version Should Match             [345].*
+    Version Should Match             [6789].*
 
 Type
     Type Should Be                   LIBRARY
@@ -53,10 +53,10 @@ Keyword Names
 
 Keyword Arguments
     Keyword Arguments Should Be      0
-    Keyword Arguments Should Be      1     loglevel=None
+    Keyword Arguments Should Be      1    loglevel=None
 
 Keyword Documentation
-    Keyword Doc Should Start With    0   Closes all open connections
+    Keyword Doc Should Start With    0    Closes all open connections
     Keyword Doc Should Start With    2
     ...    Executes the given ``command`` and reads, logs, and returns everything until the prompt.
     ...
@@ -80,7 +80,7 @@ Keyword Source Info
     # This keyword is from an external library component.
     Keyword Name Should Be           7    Read Until Prompt
     Keyword Should Not Have Source   7
-    Keyword Lineno Should Be         7    1011
+    Keyword Lineno Should Be         7    1009
 
 KwArgs and VarArgs
     Run Libdoc And Parse Output      Process
@@ -113,6 +113,11 @@ Decorators
 Documentation set in __init__
     Run Libdoc And Parse Output      ${TESTDATADIR}/DocSetInInit.py
     Doc Should Be                    Doc set in __init__!!
+
+__init__ with only named-only arguments
+    Run Libdoc And Parse Output      ${TESTDATADIR}/InitWithOnlyNamedOnlyArgs.py::b=2
+    Init Arguments Should Be         0    *    a=1    b
+    Init Doc Should Be               0    xxx
 
 Deprecation
     Run Libdoc And Parse Output          ${TESTDATADIR}/Deprecation.py

@@ -39,3 +39,8 @@ Library Search Order Is Space Insensitive
 Library Search Order Is Case Insensitive
     Check Test Case  ${TEST NAME}
 
+Search Order Controlled Match Containing Embedded Arguments Wins Over Exact Match
+    Check Test Case  ${TEST NAME}
+    
+Best Search Order Controlled Match Wins In Library
+    Check Test Case  ${TEST NAME}

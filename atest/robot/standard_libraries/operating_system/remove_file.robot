@@ -31,3 +31,6 @@ Removing Directory As A File Fails
 
 Remove file containing glob pattern
     Check Test Case    ${TESTNAME}
+
+Path as `pathlib.Path`
+    Check Test Case    ${TESTNAME}

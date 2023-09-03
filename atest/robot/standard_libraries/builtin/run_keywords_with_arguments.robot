@@ -1,4 +1,6 @@
 *** Settings ***
+Documentation   Testing Run Keywords when used with AND. Tests without AND are in
+...             run_keywords.robot.
 Suite Setup     Run Tests  ${EMPTY}  standard_libraries/builtin/run_keywords_with_arguments.robot
 Resource        atest_resource.robot
 
@@ -54,3 +56,15 @@ Consecutive AND's
 
 AND as first argument should raise an error
     Check Test Case  ${TESTNAME}
+
+Keywords names needing escaping
+    Test Should Have Correct Keywords
+    ...    Needs \\escaping \\\${notvar}    Needs \\escaping \\\${notvar}
+
+Keywords names needing escaping as variable
+    Test Should Have Correct Keywords
+    ...    Needs \\escaping \\\${notvar}    Needs \\escaping \\\${notvar}
+    ...    kw_index=1
+
+In test teardown with non-existing variable in keyword name
+    Check Test Case    ${TESTNAME}

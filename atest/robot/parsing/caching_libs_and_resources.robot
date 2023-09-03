@@ -7,12 +7,12 @@ Import Libraries Only Once
     FOR    ${name}    IN    Test 1.1    Test 1.2    Test 2.1    Test 2.2
         Check Test Case    ${name}
     END
-    Should Contain X Times    ${SYSLOG}    Imported library 'BuiltIn' with arguments [ ]    1
-    Should Contain X Times    ${SYSLOG}    Found test library 'BuiltIn' with arguments [ ] from cache    2
-    Should Contain X Times    ${SYSLOG}    Imported library 'OperatingSystem' with arguments [ ]    1
-    Should Contain X Times    ${SYSLOG}    Found test library 'OperatingSystem' with arguments [ ] from cache    3
-    Syslog Should Contain    | INFO \ |    Test library 'OperatingSystem' already imported by suite 'Library Caching.File1'
-    Syslog Should Contain    | INFO \ |    Test library 'OperatingSystem' already imported by suite 'Library Caching.File2'
+    Should Contain X Times    ${SYSLOG}    Imported library 'BuiltIn' with arguments [ ] (version    1
+    Should Contain X Times    ${SYSLOG}    Found library 'BuiltIn' with arguments [ ] from cache.    2
+    Should Contain X Times    ${SYSLOG}    Imported library 'OperatingSystem' with arguments [ ] (version    1
+    Should Contain X Times    ${SYSLOG}    Found library 'OperatingSystem' with arguments [ ] from cache.    3
+    Syslog Should Contain    | INFO \ |    Library 'OperatingSystem' already imported by suite 'Library Caching.File1'.
+    Syslog Should Contain    | INFO \ |    Library 'OperatingSystem' already imported by suite 'Library Caching.File2'.
 
 Process Resource Files Only Once
     [Setup]    Run Tests And Set $SYSLOG    parsing/resource_parsing
@@ -39,7 +39,7 @@ Process Resource Files Only Once
     Syslog File Should Contain In Order    Data source '${dir}${/}02_resource.robot' has no tests or tasks.
     Syslog File Should Contain In Order    Data source '${dir}${/}03_resource.robot' has no tests or tasks.
     Syslog File Should Contain In Order    Parsing file '${dir}${/}04_tests.robot'.
-    Syslog File Should Contain In Order    Started test suite 'Resource Parsing'
+    Syslog File Should Contain In Order    Started suite 'Resource Parsing'
     Syslog File Should Contain In Order    Imported resource file '${dir}${/}02_resource.robot'
     Syslog File Should Contain In Order    Imported resource file '${dir}${/}03_resource.robot'
     Syslog File Should Contain In Order    Found resource file '${dir}${/}02_resource.robot' from cache

@@ -24,7 +24,10 @@ List variables
 Extended variable syntax
     Check Test Case  ${TESTNAME}
 
-Embedded variable
+Nested variable
+    Check Test Case  ${TESTNAME}
+
+List and dict variable items
     Check Test Case  ${TESTNAME}
 
 Invalid variable syntax

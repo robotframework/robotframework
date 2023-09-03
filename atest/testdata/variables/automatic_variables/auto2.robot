@@ -4,10 +4,11 @@ Suite Setup       Check Variables In Suite Setup    Automatic Variables.Auto2
 Suite Teardown    Check Variables In Suite Teardown    Automatic Variables.Auto2    FAIL
 ...               1 test, 0 passed, 1 failed
 ...               @{LAST_TEST}
+Force Tags        include this test
 Resource          resource.robot
 
 *** Variable ***
-@{PREV_TEST}      Previous Test Variables Should Have Correct Values When That Test Fails    PASS
+@{PREV_TEST}      \&{OPTIONS}    PASS
 @{LAST_TEST}      Previous Test Variables Should Have Default Values From Previous Suite    FAIL    Expected failure
 
 *** Test Case ***

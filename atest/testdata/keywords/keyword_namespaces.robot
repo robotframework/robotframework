@@ -56,9 +56,34 @@ Keyword From Test Case File Overrides Keywords From Resources And Libraries
 Keyword From Resource Overrides Keywords From Libraries
     Keyword In Resource Overrides Libraries
 
+Keyword From Test Case File Overriding Local Keyword In Resource File Is Deprecated
+    Use test case file keyword even when local keyword with same name exists
+
+Local keyword in resource file has precedence over keywords in other resource files
+    Use local keyword that exists also in another resource 1
+    Use local keyword that exists also in another resource 2
+
+Search order has precedence over local keyword in resource file
+    [Setup]    Set library search order    my_resource_1
+    Use local keyword that exists also in another resource 1
+    Use local keyword that exists also in another resource 2
+    [Teardown]    Set library search order
+
 Keyword From Custom Library Overrides Keywords From Standard Library
     Comment
     Copy Directory
+
+Search order can give presedence to standard library keyword over custom keyword
+    Set Library Search Order    BuiltIn
+    Comment    Used from BuiltIn
+    Copy Directory
+    [Teardown]    Set Library Search Order
+
+Search order can give presedence to custom keyword over standard library keyword
+    Set Library Search Order    MyLibrary1
+    Comment
+    Copy Directory
+    [Teardown]    Set Library Search Order
 
 Keyword From Custom Library Overrides Keywords From Standard Library Even When Std Lib Imported With Different Name
     ${ret} =    Replace String

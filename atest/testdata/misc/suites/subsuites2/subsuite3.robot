@@ -1,4 +1,5 @@
 *** Setting ***
+Name              Custom name for 📜 'subsuite3.robot'
 Documentation     Normal test cases
 Force Tags        f1
 Default Tags      d1    d2

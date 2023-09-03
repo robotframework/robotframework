@@ -37,20 +37,21 @@ class Merger(SuiteVisitor):
             old = self._find(self.current.suites, suite.name)
         if old is not None:
             old.starttime = old.endtime = None
+            old.doc = suite.doc
+            old.metadata.update(suite.metadata)
             old.setup = suite.setup
             old.teardown = suite.teardown
             self.current = old
         else:
             suite.message = self._create_add_message(suite, suite=True)
             self.current.suites.append(suite)
-        return bool(old)
+        return old is not None
 
     def _find_root(self, name):
         root = self.result.suite
         if root.name != name:
-            raise DataError("Cannot merge outputs containing different root suites. "
-                            "Original suite is '%s' and merged is '%s'."
-                            % (root.name, name))
+            raise DataError(f"Cannot merge outputs containing different root suites. "
+                            f"Original suite is '{root.name}' and merged is '{name}'.")
         return root
 
     def _find(self, items, name):
@@ -75,8 +76,8 @@ class Merger(SuiteVisitor):
             self.current.tests[index] = test
 
     def _create_add_message(self, item, suite=False):
-        item_type = 'Suite' if suite else test_or_task('{Test}', self.rpa)
-        prefix = '*HTML* %s added from merged output.' % item_type
+        item_type = 'Suite' if suite else test_or_task('Test', self.rpa)
+        prefix = f'*HTML* {item_type} added from merged output.'
         if not item.message:
             return prefix
         return ''.join([prefix, '<hr>', self._html(item.message)])
@@ -87,9 +88,8 @@ class Merger(SuiteVisitor):
         return html_escape(message)
 
     def _create_merge_message(self, new, old):
-        header = test_or_task('*HTML* <span class="merge">'
-                              '{Test} has been re-executed and results merged.'
-                              '</span>', self.rpa)
+        header = (f'*HTML* <span class="merge">{test_or_task("Test", self.rpa)} '
+                  f'has been re-executed and results merged.</span>')
         return ''.join([
             header,
             '<hr>',
@@ -99,21 +99,19 @@ class Merger(SuiteVisitor):
         ])
 
     def _format_status_and_message(self, state, test):
-        message = '%s %s<br>' % (self._status_header(state),
-                                 self._status_text(test.status))
+        msg = f'{self._status_header(state)} {self._status_text(test.status)}<br>'
         if test.message:
-            message += '%s %s<br>' % (self._message_header(state),
-                                      self._html(test.message))
-        return message
+            msg += f'{self._message_header(state)} {self._html(test.message)}<br>'
+        return msg
 
     def _status_header(self, state):
-        return '<span class="%s-status">%s status:</span>' % (state.lower(), state)
+        return f'<span class="{state.lower()}-status">{state} status:</span>'
 
     def _status_text(self, status):
-        return '<span class="%s">%s</span>' % (status.lower(), status)
+        return f'<span class="{status.lower()}">{status}</span>'
 
     def _message_header(self, state):
-        return '<span class="%s-message">%s message:</span>' % (state.lower(), state)
+        return f'<span class="{state.lower()}-message">{state} message:</span>'
 
     def _format_old_status_and_message(self, test, merge_header):
         if not test.message.startswith(merge_header):
@@ -126,9 +124,9 @@ class Merger(SuiteVisitor):
         )
 
     def _create_skip_message(self, test, new):
-        msg = test_or_task('*HTML* {Test} has been re-executed and results merged. '
-                           'Latter result had %s status and was ignored. Message:\n%s'
-                           % (self._status_text('SKIP'), self._html(new.message)))
-        if not test.message:
-            return msg
-        return '%s<hr>Original message:\n%s' % (msg, self._html(test.message))
+        msg = (f'*HTML* {test_or_task("Test", self.rpa)} has been re-executed and '
+               f'results merged. Latter result had {self._status_text("SKIP")} status '
+               f'and was ignored. Message:\n{self._html(new.message)}')
+        if test.message:
+            msg += f'<hr>Original message:\n{self._html(test.message)}'
+        return msg

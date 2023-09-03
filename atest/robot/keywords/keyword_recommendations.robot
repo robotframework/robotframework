@@ -112,9 +112,6 @@ Substring of Long Keyword
 Similar To Really Long Keyword
     Check Test Case    ${TESTNAME}
 
-Keyword With Arguments Without Correct Spacing
-    Check Test Case    ${TESTNAME}
-
 Misspelled Keyword With Arguments
     Check Test Case    ${TESTNAME}
 
@@ -161,4 +158,10 @@ Explicit Substring Of Many Keywords
     Check Test Case    ${TESTNAME}
 
 Implicit Substring Of Many Keywords
+    Check Test Case    ${TESTNAME}
+
+Missing separator between keyword and arguments
+    Check Test Case    ${TESTNAME}
+
+Missing separator between keyword and arguments with multiple matches
     Check Test Case    ${TESTNAME}

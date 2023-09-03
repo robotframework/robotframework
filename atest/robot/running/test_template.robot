@@ -116,7 +116,7 @@ Templated test with for loop continues after keyword timeout
 Templated test ends after syntax errors
     Check Test Case    ${TESTNAME}
 
-Templated test continues after variable error
+Templated test continues after non-syntax errors
     Check Test Case    ${TESTNAME}
 
 Templates and fatal errors

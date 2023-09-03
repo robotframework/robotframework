@@ -15,7 +15,7 @@ Version
 
 Generated
     [Template]    Should Match Regexp
-    ${MODEL}[generated]     \\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}
+    ${MODEL}[generated]     \\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}[+-]\\d{2}:\\d{2}
 
 Scope
     ${MODEL}[scope]         GLOBAL
@@ -52,7 +52,7 @@ Keyword Documentation
     ...    <p>Get hello.</p>
     ...    <p>See <a href="#Importing" class="name">importing</a> for explanation of nothing and <a href="#Introduction" class="name">introduction</a> for no more information.</p>
     ${MODEL}[keywords][5][doc]
-    ...    <p>This is short doc. It can span multiple physical lines.</p>
+    ...    <p>This is short doc. It can span multiple physical lines and contain <b>formatting</b>.</p>
     ...    <p>This is body. It can naturally also contain multiple lines.</p>
     ...    <p>And paragraphs.</p>
 
@@ -67,7 +67,7 @@ Keyword Short Doc
     ${MODEL}[keywords][8][shortdoc]    Hyvää yötä.
 
 Keyword Short Doc Spanning Multiple Physical Lines
-    ${MODEL}[keywords][5][shortdoc]    This is short doc. It can span multiple physical lines.
+    ${MODEL}[keywords][5][shortdoc]    This is short doc. It can span multiple physical lines and contain *formatting*.
 
 Keyword tags
     [Template]    Should Be Equal As Strings
@@ -104,6 +104,13 @@ User keyword documentation formatting
     ...    <td>bar</td>
     ...    </tr>
     ...    </table>
+
+Private keyword should be excluded
+    [Setup]    Run Libdoc And Parse Model From HTML    ${TESTDATADIR}/resource.robot
+    [Template]    None
+    FOR    ${keyword}    IN    @{MODEL}[keywords]
+        Should Not Be Equal    ${keyword}[name]    Private
+    END
 
 *** Keywords ***
 Verify Argument Models

@@ -57,6 +57,9 @@ class DataError(RobotError):
     DataErrors are not caught by keywords that run other keywords
     (e.g. `Run Keyword And Expect Error`).
     """
+    def __init__(self, message='', details='', syntax=False):
+        super().__init__(message, details)
+        self.syntax = syntax
 
 
 class VariableError(DataError):
@@ -65,6 +68,8 @@ class VariableError(DataError):
     VariableErrors are caught by keywords that run other keywords
     (e.g. `Run Keyword And Expect Error`).
     """
+    def __init__(self, message='', details=''):
+        super().__init__(message, details)
 
 
 class KeywordError(DataError):
@@ -73,6 +78,8 @@ class KeywordError(DataError):
     KeywordErrors are caught by keywords that run other keywords
     (e.g. `Run Keyword And Expect Error`).
     """
+    def __init__(self, message='', details=''):
+        super().__init__(message, details)
 
 
 class TimeoutError(RobotError):
@@ -139,14 +146,12 @@ class ExecutionStatus(RobotError):
         if self.syntax or self.exit or self.skip or self.test_timeout:
             return False
         if templated:
-            return True
+            return context.continue_on_failure(default=True)
         if self.keyword_timeout:
             if context.in_teardown:
                 self.keyword_timeout = False
             return False
-        if context.in_teardown or context.continue_on_failure:
-            return True
-        return self.continue_on_failure
+        return self.continue_on_failure or context.continue_on_failure()
 
     def get_errors(self):
         return [self]
@@ -167,8 +172,7 @@ class HandlerExecutionFailed(ExecutionFailed):
         timeout = isinstance(error, TimeoutError)
         test_timeout = timeout and error.test_timeout
         keyword_timeout = timeout and error.keyword_timeout
-        syntax = (isinstance(error, DataError)
-                  and not isinstance(error, (KeywordError, VariableError)))
+        syntax = isinstance(error, DataError) and error.syntax
         exit_on_failure = self._get(error, 'EXIT_ON_FAILURE')
         continue_on_failure = self._get(error, 'CONTINUE_ON_FAILURE')
         skip = self._get(error, 'SKIP_EXECUTION')
@@ -284,15 +288,15 @@ class PassExecution(ExecutionPassed):
         super().__init__(message)
 
 
-class ContinueForLoop(ExecutionPassed):
-    """Used by 'CONTINUE' keyword."""
+class ContinueLoop(ExecutionPassed):
+    """Used by CONTINUE statement."""
 
     def __init__(self):
         super().__init__("Invalid 'CONTINUE' usage.")
 
 
-class ExitForLoop(ExecutionPassed):
-    """Used by 'BREAK' keyword."""
+class BreakLoop(ExecutionPassed):
+    """Used by BREAK statement."""
 
     def __init__(self):
         super().__init__("Invalid 'BREAK' usage.")
