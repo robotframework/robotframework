@@ -11,6 +11,7 @@
     --warn-color: #fed84f;
     --pass-link-color: #098a09;
     --warn-link-color: #927201;
+    --fail-link-color: #ce3e01;
     --ascending-icon: url(data:image/gif;base64,R0lGODlhCwAJAKEAAAAAAH9/fwAAAAAAACH5BAEAAAIALAAAAAALAAkAAAIUlBWnFr3cnIr0WQOyBmvzp13CpxQAOw==);
     --descending-icon: url(data:image/gif;base64,R0lGODlhCwAJAKEAAAAAAH9/fwAAAAAAACH5BAEAAAIALAAAAAALAAkAAAIUlAWnBr3cnIr0WROyDmvzp13CpxQAOw==);
 }
@@ -21,11 +22,12 @@
         --background-color: #1c2227;
         --primary-color: #26373b;
         --secondary-color: #424f5a;
-        --link-color: #52adff;
+        --link-color: #8cc4ff;
         --link-hover-color: #bb86fc;
         --highlight-color: #242b31;
         --pass-link-color: #97bd61;
         --warn-link-color: #fed84f;
+        --fail-link-color: #ff9b8f;
         --ascending-icon: url(data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAAJAgMAAACZCj6+AAAAAXNSR0IB2cksfwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAlQTFRFAAAAfn5+////f/cqYgAAAAN0Uk5TAP//RFDWIQAAACdJREFUeJxjYHBgYGAMYGBgDWFgEA1lAAOtVQwMXCsYGJgWADkNDAA78QP9oKr7vwAAAABJRU5ErkJggg==);
         --descending-icon: url(data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAAJAgMAAACZCj6+AAAAAXNSR0IB2cksfwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAlQTFRFAAAA////fn5+K6jOaAAAAAN0Uk5TAP//RFDWIQAAACdJREFUeJxjYHBgYGAMYGBgDWFgEA1lAAOtVQwMXCsYGJgWADkNDAA78QP9oKr7vwAAAABJRU5ErkJggg==);
     }
@@ -112,7 +114,7 @@ h2 {
 }
 /* Status text colors -- !important allows using them in links */
 .fail {
-    color: var(--fail-color) !important;
+    color: var(--fail-link-color) !important;
     font-weight: bold;
 }
 .pass {
