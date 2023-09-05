@@ -302,6 +302,8 @@ class ForInZipRunner(ForInRunner):
             return zip_longest(*values, fillvalue=self._fill)
         if self._mode == 'STRICT':
             self._validate_strict_lengths(values)
+        if self._mode is None:
+            self._deprecate_different_lengths(values)
         return zip(*values)
 
     def _validate_types(self, values):
@@ -316,11 +318,20 @@ class ForInZipRunner(ForInRunner):
             try:
                 lengths.append(len(item))
             except TypeError:
-                raise DataError(f"FOR IN ZIP items should have length in STRICT mode, "
-                                f"but item {index} does not.")
+                raise DataError(f"FOR IN ZIP items must have length in the STRICT "
+                                f"mode, but item {index} does not.")
         if len(set(lengths)) > 1:
-            raise DataError(f"FOR IN ZIP items should have equal lengths in STRICT "
+            raise DataError(f"FOR IN ZIP items must have equal lengths in the STRICT "
                             f"mode, but lengths are {seq2str(lengths, quote='')}.")
+
+    def _deprecate_different_lengths(self, values):
+        try:
+            self._validate_strict_lengths(values)
+        except DataError as err:
+            logger.warn(f"FOR IN ZIP default mode will be changed from SHORTEST to "
+                        f"STRICT in Robot Framework 8.0. Use 'mode=SHORTEST' to keep "
+                        f"using the SHORTEST mode. If the mode is not changed, "
+                        f"execution will fail like this in the future: {err}")
 
 
 class ForInEnumerateRunner(ForInRunner):
