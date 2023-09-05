@@ -534,7 +534,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
 
     def test_ForceTags(self):
         tokens = [
-            Token(Token.TEST_TAGS, 'Force Tags'),
+            Token(Token.TEST_TAGS, 'Test Tags'),
             Token(Token.SEPARATOR, '    '),
             Token(Token.ARGUMENT, 'some tag'),
             Token(Token.SEPARATOR, '    '),

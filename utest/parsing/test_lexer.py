@@ -41,7 +41,7 @@ suite teardown    Log    <b>The End.</b>    WARN    html=True
 Test Setup        None Shall Pass    ${NONE}
 TEST TEARDOWN     No Operation
 Test Timeout      1 day
-Force Tags        foo    bar
+Test Tags         foo    bar
 Keyword Tags      tag
 Name              Custom Suite Name
 '''
@@ -82,7 +82,7 @@ Name              Custom Suite Name
             (T.TEST_TIMEOUT, 'Test Timeout', 10, 0),
             (T.ARGUMENT, '1 day', 10, 18),
             (T.EOS, '', 10, 23),
-            (T.TEST_TAGS, 'Force Tags', 11, 0),
+            (T.TEST_TAGS, 'Test Tags', 11, 0),
             (T.ARGUMENT, 'foo', 11, 18),
             (T.ARGUMENT, 'bar', 11, 25),
             (T.EOS, '', 11, 28),
@@ -100,7 +100,7 @@ Name              Custom Suite Name
         data = '''\
 *** Settings ***
 Test Template     Not allowed in init file
-Force Tags        Allowed in both
+Test Tags         Allowed in both
 Default Tags      Not allowed in init file
 '''
         expected = [
@@ -109,7 +109,7 @@ Default Tags      Not allowed in init file
             (T.TEST_TEMPLATE, 'Test Template', 2, 0),
             (T.NAME, 'Not allowed in init file', 2, 18),
             (T.EOS, '', 2, 42),
-            (T.TEST_TAGS, 'Force Tags', 3, 0),
+            (T.TEST_TAGS, 'Test Tags', 3, 0),
             (T.ARGUMENT, 'Allowed in both', 3, 18),
             (T.EOS, '', 3, 33),
             (T.DEFAULT_TAGS, 'Default Tags', 4, 0),
@@ -124,7 +124,7 @@ Default Tags      Not allowed in init file
             (T.ERROR, 'Test Template', 2, 0,
              "Setting 'Test Template' is not allowed in suite initialization file."),
             (T.EOS, '', 2, 13),
-            (T.TEST_TAGS, 'Force Tags', 3, 0),
+            (T.TEST_TAGS, 'Test Tags', 3, 0),
             (T.ARGUMENT, 'Allowed in both', 3, 18),
             (T.EOS, '', 3, 33),
             (T.ERROR, 'Default Tags', 4, 0,
@@ -143,7 +143,7 @@ Test Setup        None Shall Pass    ${NONE}
 TEST TEARDOWN     No Operation
 Test Template     NONE
 Test Timeout      1 day
-Force Tags        foo    bar
+Test Tags         foo    bar
 Default Tags      zap
 Task Tags         quux
 Documentation     Valid in all data files.
@@ -174,9 +174,9 @@ Name              Bad Resource Name
             (T.ERROR, 'Test Timeout', 8, 0,
              "Setting 'Test Timeout' is not allowed in resource file."),
             (T.EOS, '', 8, 12),
-            (T.ERROR, 'Force Tags', 9, 0,
-             "Setting 'Force Tags' is not allowed in resource file."),
-            (T.EOS, '', 9, 10),
+            (T.ERROR, 'Test Tags', 9, 0,
+             "Setting 'Test Tags' is not allowed in resource file."),
+            (T.EOS, '', 9, 9),
             (T.ERROR, 'Default Tags', 10, 0,
              "Setting 'Default Tags' is not allowed in resource file."),
             (T.EOS, '', 10, 12),
@@ -336,8 +336,8 @@ Test Template     Used
 Test Template     Ignored
 Test Timeout      Used
 Test Timeout      Ignored
-Force Tags        Used
-Force Tags        Ignored
+Test Tags         Used
+Test Tags         Ignored
 Default Tags      Used
 Default Tags      Ignored
 Name              Used
@@ -389,12 +389,12 @@ Name              Ignored
             (T.ERROR, 'Test Timeout', 15, 0,
              "Setting 'Test Timeout' is allowed only once. Only the first value is used."),
             (T.EOS, '', 15, 12),
-            (T.TEST_TAGS, 'Force Tags', 16, 0),
+            (T.TEST_TAGS, 'Test Tags', 16, 0),
             (T.ARGUMENT, 'Used', 16, 18),
             (T.EOS, '', 16, 22),
-            (T.ERROR, 'Force Tags', 17, 0,
-             "Setting 'Force Tags' is allowed only once. Only the first value is used."),
-            (T.EOS, '', 17, 10),
+            (T.ERROR, 'Test Tags', 17, 0,
+             "Setting 'Test Tags' is allowed only once. Only the first value is used."),
+            (T.EOS, '', 17, 9),
             (T.DEFAULT_TAGS, 'Default Tags', 18, 0),
             (T.ARGUMENT, 'Used', 18, 18),
             (T.EOS, '', 18, 22),

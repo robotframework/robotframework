@@ -473,7 +473,7 @@ class TestTags(MultiValue):
     @classmethod
     def from_params(cls, values: 'Sequence[str]', separator: str = FOUR_SPACES,
                     eol: str = EOL) -> 'TestTags':
-        tokens = [Token(Token.TEST_TAGS, 'Force Tags')]
+        tokens = [Token(Token.TEST_TAGS, 'Test Tags')]
         for tag in values:
             tokens.extend([Token(Token.SEPARATOR, separator),
                            Token(Token.ARGUMENT, tag)])
