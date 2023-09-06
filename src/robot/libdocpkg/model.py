@@ -113,7 +113,7 @@ class LibraryDoc:
 
     def to_dictionary(self, include_private=False, theme=None):
         data = {
-            'specversion': 2,
+            'specversion': 3,
             'name': self.name,
             'doc': self.doc,
             'version': self.version,
@@ -127,21 +127,11 @@ class LibraryDoc:
             'inits': [init.to_dictionary() for init in self.inits],
             'keywords': [kw.to_dictionary() for kw in self.keywords
                          if include_private or not kw.private],
-            # 'dataTypes' was deprecated in RF 5, 'typedoc' should be used instead.
-            'dataTypes': self._get_data_types(self.type_docs),
             'typedocs': [t.to_dictionary() for t in sorted(self.type_docs)]
         }
         if theme:
             data['theme'] = theme.lower()
         return data
-
-    def _get_data_types(self, types):
-        enums = sorted(t for t in types if t.type == 'Enum')
-        typed_dicts = sorted(t for t in types if t.type == 'TypedDict')
-        return {
-            'enums': [t.to_dictionary(legacy=True) for t in enums],
-            'typedDicts': [t.to_dictionary(legacy=True) for t in typed_dicts]
-        }
 
     def to_json(self, indent=None, include_private=True, theme=None):
         data = self.to_dictionary(include_private, theme)

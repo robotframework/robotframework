@@ -41,7 +41,7 @@ class BaseModel(PydanticBaseModel):
 
 class SpecVersion(int, Enum):
     """Version of the spec."""
-    VERSION = 2
+    VERSION = 3
 
 
 class DocumentationType(str, Enum):
@@ -155,7 +155,6 @@ class Libdoc(BaseModel):
     tags: List[str] = Field(description='List of all tags used by keywords.')
     inits: List[Keyword]
     keywords: List[Keyword]
-    dataTypes: dict = Field({}, description="Deprecated. Use 'typedocs' instead.")
     typedocs: List[TypeDoc]
 
     # pydantic doesn't add schema version automatically.

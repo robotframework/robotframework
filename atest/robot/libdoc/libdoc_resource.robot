@@ -102,7 +102,7 @@ Generated Should Be
     Element Attribute Should Be    ${LIBDOC}    generated    ${generated}
 
 Spec version should be correct
-    Element Attribute Should Be    ${LIBDOC}    specversion    5
+    Element Attribute Should Be    ${LIBDOC}    specversion    6
 
 Should Have No Init
     ${inits} =    Get Elements    ${LIBDOC}    xpath=inits/init

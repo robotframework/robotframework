@@ -94,7 +94,7 @@
       "title": "SpecVersion",
       "description": "Version of the spec.",
       "enum": [
-        2
+        3
       ],
       "type": "integer"
     },

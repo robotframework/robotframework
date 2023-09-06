@@ -1,5 +1,5 @@
 {
-  "specversion": 2,
+  "specversion": 3,
   "name": "DynamicLibrary",
   "doc": "<p>Dummy documentation for <span class=\"name\">__intro__</span>.</p>",
   "version": "0.1",
@@ -693,10 +693,6 @@
       "lineno": -1
     }
   ],
-  "dataTypes": {
-    "enums": [],
-    "typedDicts": []
-  },
   "typedocs": [
     {
       "type": "Standard",

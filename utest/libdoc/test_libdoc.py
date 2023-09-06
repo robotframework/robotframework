@@ -269,7 +269,7 @@ class TestLibdocTypedDictKeys(unittest.TestCase):
     def test_typed_dict_keys(self):
         library = DATADIR / 'DataTypesLibrary.py'
         spec = LibraryDocumentation(library).to_json()
-        current_items = json.loads(spec)['dataTypes']['typedDicts'][0]['items']
+        current_items = json.loads(spec)['typedocs'][7]['items']
         expected_items = [
             {
                 "key": "longitude",

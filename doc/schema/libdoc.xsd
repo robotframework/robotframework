@@ -165,8 +165,8 @@
     </xs:simpleType>
     <xs:simpleType name="SpecVersion">
         <xs:restriction base="xs:integer">
-            <xs:minInclusive value="5" />
-            <xs:maxInclusive value="5" />
+            <xs:minInclusive value="6" />
+            <xs:maxInclusive value="6" />
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="LibraryScope">

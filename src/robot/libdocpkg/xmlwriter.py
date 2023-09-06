@@ -26,8 +26,6 @@ class LibdocXmlWriter:
         self._write_start(libdoc, writer)
         self._write_keywords('inits', 'init', libdoc.inits, libdoc.source, writer)
         self._write_keywords('keywords', 'kw', libdoc.keywords, libdoc.source, writer)
-        # Write deprecated '<datatypes>' element.
-        self._write_data_types(libdoc.type_docs, writer)
         # Write new '<types>' element.
         self._write_type_docs(libdoc.type_docs, writer)
         self._write_end(writer)
@@ -38,7 +36,7 @@ class LibdocXmlWriter:
                  'format': libdoc.doc_format,
                  'scope': libdoc.scope,
                  'generated': get_generation_time(),
-                 'specversion': '5'}
+                 'specversion': '6'}
         self._add_source_info(attrs, libdoc)
         writer.start('keywordspec', attrs)
         writer.element('version', libdoc.version)

@@ -52,9 +52,9 @@ class XmlDocBuilder:
         if root.tag != 'keywordspec':
             raise DataError(f"Invalid spec file '{path}'.")
         version = root.get('specversion')
-        if version not in ('3', '4', '5'):
+        if version not in ('3', '4', '5', '6'):
             raise DataError(f"Invalid spec file version '{version}'. "
-                            f"Supported versions are 3, 4 and 5.")
+                            f"Supported versions are 3, 4, 5, and 6.")
         return root
 
     def _create_keywords(self, spec, path, lib_source):
