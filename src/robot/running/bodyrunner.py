@@ -101,7 +101,7 @@ class ForInRunner:
                 error = DataError(data.error, syntax=True)
             else:
                 run = True
-        result = ForResult(data.variables, data.flavor, data.values, data.start,
+        result = ForResult(data.assign, data.flavor, data.values, data.start,
                            data.mode, data.fill)
         with StatusReporter(data, result, self._context, run) as status:
             if run:
@@ -143,7 +143,7 @@ class ForInRunner:
     def _get_values_for_rounds(self, data):
         if self._context.dry_run:
             return [None]
-        values_per_round = len(data.variables)
+        values_per_round = len(data.assign)
         if self._is_dict_iteration(data.values):
             values = self._resolve_dict_values(data.values)
             values = self._map_dict_values_to_rounds(values, values_per_round)
@@ -218,10 +218,10 @@ class ForInRunner:
             variables = self._context.variables
         else:    # Not really run (earlier failure, unexecuted IF branch, dry-run)
             variables = {}
-            values = [''] * len(data.variables)
-        for name, value in self._map_variables_and_values(data.variables, values):
+            values = [''] * len(data.assign)
+        for name, value in self._map_variables_and_values(data.assign, values):
             variables[name] = value
-            result.variables[name] = cut_assign_value(value)
+            result.assign[name] = cut_assign_value(value)
         runner = BodyRunner(self._context, run, self._templated)
         with StatusReporter(data, result, self._context, run):
             runner.run(data.body)
@@ -556,7 +556,7 @@ class TryRunner:
         error_reported = False
         for branch in data.body:
             result = TryBranchResult(branch.type, branch.patterns, branch.pattern_type,
-                                     branch.variable)
+                                     branch.assign)
             with StatusReporter(branch, result, self._context, run=False, suppress=True):
                 runner = BodyRunner(self._context, run=False, templated=self._templated)
                 runner.run(branch.body)
@@ -598,10 +598,10 @@ class TryRunner:
             else:
                 pattern_error = None
             result = TryBranchResult(branch.type, branch.patterns,
-                                     branch.pattern_type, branch.variable)
+                                     branch.pattern_type, branch.assign)
             if run_branch:
-                if branch.variable:
-                    self._context.variables[branch.variable] = str(error)
+                if branch.assign:
+                    self._context.variables[branch.assign] = str(error)
                 error = self._run_branch(branch, result, error=pattern_error)
                 run = False
             else:

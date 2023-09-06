@@ -65,7 +65,7 @@ class TestVisitingSuite(unittest.TestCase):
             in_for = False
 
             def start_for(self, for_):
-                for_.variables = ['${y}']
+                for_.assign = ['${y}']
                 for_.flavor = 'IN RANGE'
                 self.in_for = True
 

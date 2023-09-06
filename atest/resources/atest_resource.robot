@@ -122,6 +122,14 @@ Check Keyword Data
     Should Be Equal    ${{', '.join($kw.tags)}}      ${tags}
     Should Be Equal    ${kw.type}                    ${type}
 
+Check TRY Data
+    [Arguments]    ${try}    ${patterns}=    ${pattern_type}=${None}    ${assign}=${None}    ${status}=PASS
+    Should Be Equal    ${try.type}                      TRY
+    Should Be Equal    ${{', '.join($try.patterns)}}    ${patterns}
+    Should Be Equal    ${try.pattern_type}              ${pattern_type}
+    Should Be Equal    ${try.assign}                    ${assign}
+    Should Be Equal    ${try.status}                    ${status}
+
 Test And All Keywords Should Have Passed
     [Arguments]    ${name}=${TESTNAME}    ${allow not run}=False
     ${tc} =    Check Test Case    ${name}

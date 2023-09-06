@@ -18,22 +18,22 @@ class TestFor(unittest.TestCase):
         for for_, exp_str, exp_repr in [
             (For(),
              'FOR    IN',
-             "For(variables=(), flavor='IN', values=())"),
+             "For(assign=(), flavor='IN', values=())"),
             (For(('${x}',), 'IN RANGE', ('10',)),
              'FOR    ${x}    IN RANGE    10',
-             "For(variables=('${x}',), flavor='IN RANGE', values=('10',))"),
+             "For(assign=('${x}',), flavor='IN RANGE', values=('10',))"),
             (For(('${x}', '${y}'), 'IN ENUMERATE', ('a', 'b')),
              'FOR    ${x}    ${y}    IN ENUMERATE    a    b',
-             "For(variables=('${x}', '${y}'), flavor='IN ENUMERATE', values=('a', 'b'))"),
+             "For(assign=('${x}', '${y}'), flavor='IN ENUMERATE', values=('a', 'b'))"),
             (For(['${x}'], 'IN ENUMERATE', ['@{stuff}'], start='1'),
              'FOR    ${x}    IN ENUMERATE    @{stuff}    start=1',
-             "For(variables=('${x}',), flavor='IN ENUMERATE', values=('@{stuff}',), start='1')"),
+             "For(assign=('${x}',), flavor='IN ENUMERATE', values=('@{stuff}',), start='1')"),
             (For(('${x}', '${y}'), 'IN ZIP', ('${xs}', '${ys}'), mode='LONGEST', fill='-'),
              'FOR    ${x}    ${y}    IN ZIP    ${xs}    ${ys}    mode=LONGEST    fill=-',
-             "For(variables=('${x}', '${y}'), flavor='IN ZIP', values=('${xs}', '${ys}'), mode='LONGEST', fill='-')"),
+             "For(assign=('${x}', '${y}'), flavor='IN ZIP', values=('${xs}', '${ys}'), mode='LONGEST', fill='-')"),
             (For(['${ü}'], 'IN', ['föö']),
              'FOR    ${ü}    IN    föö',
-             "For(variables=('${ü}',), flavor='IN', values=('föö',))")
+             "For(assign=('${ü}',), flavor='IN', values=('föö',))")
         ]:
             assert_equal(str(for_), exp_str)
             assert_equal(repr(for_), 'robot.model.' + exp_repr)
@@ -178,10 +178,10 @@ class TestTry(unittest.TestCase):
              "TryBranch(type='EXCEPT', patterns=('M', 'S', 'G', 'S'))"),
             (TryBranch(EXCEPT, (), None, '${x}'),
              'EXCEPT    AS    ${x}',
-             "TryBranch(type='EXCEPT', variable='${x}')"),
+             "TryBranch(type='EXCEPT', assign='${x}')"),
             (TryBranch(EXCEPT, ('Message',), 'glob', '${x}'),
              'EXCEPT    Message    type=glob    AS    ${x}',
-             "TryBranch(type='EXCEPT', patterns=('Message',), pattern_type='glob', variable='${x}')"),
+             "TryBranch(type='EXCEPT', patterns=('Message',), pattern_type='glob', assign='${x}')"),
             (TryBranch(ELSE),
              'ELSE',
              "TryBranch(type='ELSE')"),

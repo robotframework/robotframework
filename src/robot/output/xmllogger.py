@@ -35,7 +35,7 @@ class XmlLogger(ResultVisitor):
         writer.start('robot', {'generator': get_full_version(generator),
                                'generated': get_timestamp(),
                                'rpa': 'true' if rpa else 'false',
-                               'schemaversion': '4'})
+                               'schemaversion': '5'})
         return writer
 
     def close(self):
@@ -104,7 +104,7 @@ class XmlLogger(ResultVisitor):
                                    'start': for_.start,
                                    'mode': for_.mode,
                                    'fill': for_.fill})
-        for name in for_.variables:
+        for name in for_.assign:
             self._writer.element('var', name)
         for value in for_.values:
             self._writer.element('value', value)
@@ -116,7 +116,7 @@ class XmlLogger(ResultVisitor):
 
     def start_for_iteration(self, iteration):
         self._writer.start('iter')
-        for name, value in iteration.variables.items():
+        for name, value in iteration.assign.items():
             self._writer.element('var', value, {'name': name})
         self._writer.element('doc', iteration.doc)
 
@@ -134,8 +134,9 @@ class XmlLogger(ResultVisitor):
     def start_try_branch(self, branch):
         if branch.type == branch.EXCEPT:
             self._writer.start('branch', attrs={
-                'type': 'EXCEPT', 'variable': branch.variable,
-                'pattern_type': branch.pattern_type
+                'type': 'EXCEPT',
+                'pattern_type': branch.pattern_type,
+                'assign': branch.assign
             })
             self._write_list('pattern', branch.patterns)
         else:

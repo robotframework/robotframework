@@ -456,7 +456,6 @@ class TestDeprecatedKeywordSpecificAttributes(unittest.TestCase):
         for_ = For(['${x}', '${y}'], 'IN', ['a', 'b', 'c', 'd'])
         for name, expected in [('name', '${x} | ${y} IN [ a | b | c | d ]'),
                                ('args', ()),
-                               ('assign', ()),
                                ('tags', Tags()),
                                ('timeout', None)]:
             assert_equal(getattr(for_, name), expected)

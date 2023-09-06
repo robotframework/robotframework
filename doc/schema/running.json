@@ -170,8 +170,8 @@
           "title": "Pattern Type",
           "type": "string"
         },
-        "variable": {
-          "title": "Variable",
+        "assign": {
+          "title": "Assign",
           "type": "string"
         },
         "body": {
@@ -427,8 +427,8 @@
           "title": "Error",
           "type": "string"
         },
-        "variables": {
-          "title": "Variables",
+        "assign": {
+          "title": "Assign",
           "type": "array",
           "items": {
             "type": "string"
@@ -500,7 +500,7 @@
         }
       },
       "required": [
-        "variables",
+        "assign",
         "flavor",
         "values",
         "body"

@@ -223,6 +223,8 @@ class BranchHandler(ElementHandler):
                           'return', 'pattern', 'break', 'continue', 'error'))
 
     def start(self, elem, result):
+        if 'variable' in elem.attrib:    # RF < 7.0 compatibility.
+            elem.attrib['assign'] = elem.attrib.pop('variable')
         return result.body.create_branch(**elem.attrib)
 
 
@@ -372,12 +374,10 @@ class VarHandler(ElementHandler):
 
     def end(self, elem, result):
         value = elem.text or ''
-        if result.type == result.KEYWORD:
+        if result.type in (result.KEYWORD, result.FOR):
             result.assign += (value,)
-        elif result.type == result.FOR:
-            result.variables += (value,)
         elif result.type == result.ITERATION:
-            result.variables[elem.get('name')] = value
+            result.assign[elem.get('name')] = value
         else:
             raise DataError(f"Invalid element '{elem}' for result '{result!r}'.")
 

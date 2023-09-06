@@ -47,7 +47,7 @@ class Keyword(BodyItem):
 
 class For(BodyItem):
     type = Field('FOR', const=True)
-    variables: Sequence[str]
+    assign: Sequence[str]
     flavor: str
     values: Sequence[str]
     start: str | None
@@ -80,7 +80,7 @@ class TryBranch(BodyItem):
     type: Literal['TRY', 'EXCEPT', 'ELSE', 'FINALLY']
     patterns: Sequence[str] | None
     pattern_type: str | None
-    variable: str | None
+    assign: str | None
     body: list['Keyword | For | While | If | Try | Error | Break | Continue | Return']
 
 

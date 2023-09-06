@@ -78,10 +78,10 @@ class TestBuildingSuiteExecutionResult(unittest.TestCase):
     def test_for_is_built(self):
         for_ = self.test.body[2]
         assert_equal(for_.flavor, 'IN')
-        assert_equal(for_.variables, ('${x}',))
+        assert_equal(for_.assign, ('${x}',))
         assert_equal(for_.values, ('not in source',))
         assert_equal(len(for_.body), 1)
-        assert_equal(for_.body[0].variables, {'${x}': 'not in source'})
+        assert_equal(for_.body[0].assign, {'${x}': 'not in source'})
         assert_equal(len(for_.body[0].body), 1)
         kw = for_.body[0].body[0]
         assert_equal(kw.name, 'BuiltIn.Log')

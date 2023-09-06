@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" version="4">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" version="5">
     <xs:annotation>
         <xs:documentation xml:lang="en">
             = Robot Framework output.xml schema =
@@ -33,7 +33,7 @@
     <xs:simpleType name="SpecVersion">
         <xs:restriction base="xs:integer">
             <xs:minInclusive value="3" />
-            <xs:maxInclusive value="4" />
+            <xs:maxInclusive value="5" />
         </xs:restriction>
     </xs:simpleType>
     <xs:complexType name="Suite">
@@ -220,7 +220,7 @@
         </xs:choice>
         <xs:attribute name="type" type="TryType" use="required" />
         <xs:attribute name="pattern_type" type="xs:string" />
-        <xs:attribute name="variable" type="xs:string" />
+        <xs:attribute name="assign" type="xs:string" />
     </xs:complexType>
     <xs:simpleType name="TryType">
         <xs:restriction base="xs:string">

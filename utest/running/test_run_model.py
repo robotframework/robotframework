@@ -292,13 +292,16 @@ class TestToFromDictAndJson(unittest.TestCase):
                      name='Setup', lineno=1)
 
     def test_for(self):
-        self._verify(For(), type='FOR', variables=(), flavor='IN', values=(), body=[])
+        self._verify(For(), type='FOR', assign=(), flavor='IN', values=(), body=[])
         self._verify(For(['${i}'], 'IN RANGE', ['10'], lineno=2),
-                     type='FOR', variables=('${i}',), flavor='IN RANGE', values=('10',),
+                     type='FOR', assign=('${i}',), flavor='IN RANGE', values=('10',),
                      body=[], lineno=2)
         self._verify(For(['${i}', '${a}'], 'IN ENUMERATE', ['cat', 'dog'], start='1'),
-                     type='FOR', variables=('${i}', '${a}'), flavor='IN ENUMERATE',
+                     type='FOR', assign=('${i}', '${a}'), flavor='IN ENUMERATE',
                      values=('cat', 'dog'), start='1', body=[])
+
+    def test_old_for_json(self):
+        assert_equal(For.from_dict({'variables': ('${x}',)}).assign, ('${x}',))
 
     def test_while(self):
         self._verify(While(), type='WHILE', body=[])
@@ -352,9 +355,12 @@ class TestToFromDictAndJson(unittest.TestCase):
         self._verify(TryBranch(), type='TRY', body=[])
         self._verify(TryBranch(Try.EXCEPT), type='EXCEPT', patterns=(), body=[])
         self._verify(TryBranch(Try.EXCEPT, ['Pa*'], 'glob', '${err}'), type='EXCEPT',
-                     patterns=('Pa*',), pattern_type='glob', variable='${err}', body=[])
+                     patterns=('Pa*',), pattern_type='glob', assign='${err}', body=[])
         self._verify(TryBranch(Try.ELSE, lineno=7), type='ELSE', body=[], lineno=7)
         self._verify(TryBranch(Try.FINALLY, lineno=8), type='FINALLY', body=[], lineno=8)
+
+    def test_old_try_branch_json(self):
+        assert_equal(TryBranch.from_dict({'variable': '${x}'}).assign, '${x}')
 
     def test_try_structure(self):
         root = Try()

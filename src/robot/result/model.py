@@ -216,22 +216,29 @@ class ForIteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
     """Represents one FOR loop iteration."""
     type = BodyItem.ITERATION
     body_class = Body
-    repr_args = ('variables',)
-    __slots__ = ['variables', 'status', 'starttime', 'endtime', 'doc']
+    repr_args = ('assign',)
+    __slots__ = ['assign', 'status', 'starttime', 'endtime', 'doc']
 
-    def __init__(self, variables: 'Mapping[str, str]|None' = None,
+    def __init__(self, assign: 'Mapping[str, str]|None' = None,
                  status: str = 'FAIL',
                  starttime: 'str|None' = None,
                  endtime: 'str|None' = None,
                  doc: str = '',
                  parent: BodyItemParent = None):
-        self.variables = OrderedDict(variables or ())
+        self.assign = OrderedDict(assign or ())
         self.parent = parent
         self.status = status
         self.starttime = starttime
         self.endtime = endtime
         self.doc = doc
         self.body = []
+
+    @property
+    def variables(self) -> 'Mapping[str, str]':    # TODO: Remove in RF 8.0.
+        """Deprecated since Robot Framework 7.0. Use :attr:`assign` instead."""
+        warnings.warn("'ForIteration.variables' is deprecated and will be removed in "
+                      "Robot Framework 8.0. Use 'ForIteration.assign' instead.")
+        return self.assign
 
     @setter
     def body(self, body: 'Sequence[BodyItem|DataDict]') -> Body:
@@ -243,7 +250,7 @@ class ForIteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
     @property
     @deprecated
     def name(self) -> str:
-        return ', '.join('%s = %s' % item for item in self.variables.items())
+        return ', '.join('%s = %s' % item for item in self.assign.items())
 
 
 @Body.register
@@ -252,7 +259,7 @@ class For(model.For, StatusMixin, DeprecatedAttributesMixin):
     iterations_class = Iterations[iteration_class]
     __slots__ = ['status', 'starttime', 'endtime', 'doc']
 
-    def __init__(self, variables: Sequence[str] = (),
+    def __init__(self, assign: Sequence[str] = (),
                  flavor: "Literal['IN', 'IN RANGE', 'IN ENUMERATE', 'IN ZIP']" = 'IN',
                  values: Sequence[str] = (),
                  start: 'str|None' = None,
@@ -263,7 +270,7 @@ class For(model.For, StatusMixin, DeprecatedAttributesMixin):
                  endtime: 'str|None' = None,
                  doc: str = '',
                  parent: BodyItemParent = None):
-        super().__init__(variables, flavor, values, start, mode, fill, parent)
+        super().__init__(assign, flavor, values, start, mode, fill, parent)
         self.status = status
         self.starttime = starttime
         self.endtime = endtime
@@ -276,14 +283,14 @@ class For(model.For, StatusMixin, DeprecatedAttributesMixin):
     @property
     @deprecated
     def name(self) -> str:
-        variables = ' | '.join(self.variables)
+        assign = ' | '.join(self.assign)
         values = ' | '.join(self.values)
         for name, value in [('start', self.start),
                             ('mode', self.mode),
                             ('fill', self.fill)]:
             if value is not None:
                 values += f' | {name}={value}'
-        return f'{variables} {self.flavor} [ {values} ]'
+        return f'{assign} {self.flavor} [ {values} ]'
 
 
 class WhileIteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
@@ -405,13 +412,13 @@ class TryBranch(model.TryBranch, StatusMixin, DeprecatedAttributesMixin):
     def __init__(self, type: str = BodyItem.TRY,
                  patterns: Sequence[str] = (),
                  pattern_type: 'str|None' = None,
-                 variable: 'str|None' = None,
+                 assign: 'str|None' = None,
                  status: str = 'FAIL',
                  starttime: 'str|None' = None,
                  endtime: 'str|None' = None,
                  doc: str = '',
                  parent: BodyItemParent = None):
-        super().__init__(type, patterns, pattern_type, variable, parent)
+        super().__init__(type, patterns, pattern_type, assign, parent)
         self.status = status
         self.starttime = starttime
         self.endtime = endtime
@@ -426,8 +433,8 @@ class TryBranch(model.TryBranch, StatusMixin, DeprecatedAttributesMixin):
         parts = []
         if patterns:
             parts.append(' | '.join(patterns))
-        if self.variable:
-            parts.append(f'AS {self.variable}')
+        if self.assign:
+            parts.append(f'AS {self.assign}')
         return ' '.join(parts)
 
 

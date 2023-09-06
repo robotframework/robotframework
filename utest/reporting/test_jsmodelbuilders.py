@@ -185,7 +185,7 @@ class TestBuildTestSuite(unittest.TestCase):
 
     def test_for(self):
         test = TestSuite().tests.create()
-        test.body.create_for(variables=['${x}'], values=['a', 'b'])
+        test.body.create_for(assign=['${x}'], values=['a', 'b'])
         test.body.create_for(['${x}'], 'IN ENUMERATE', ['a', 'b'], start='1')
         end = ('', '', '', '', '', '', (0, None, 0), ())
         exp_f1 = (3, '${x} IN [ a | b ]', *end)
