@@ -106,29 +106,6 @@ class LibdocXmlWriter:
         self._add_source_info(attrs, kw, lib_source)
         return attrs
 
-    # Write legacy 'datatypes'. TODO: Remove in RF 7.
-    def _write_data_types(self, types, writer):
-        enums = sorted(t for t in types if t.type == 'Enum')
-        typed_dicts = sorted(t for t in types if t.type == 'TypedDict')
-        writer.start('datatypes')
-        if enums:
-            writer.start('enums')
-            for enum in enums:
-                writer.start('enum', {'name': enum.name})
-                writer.element('doc', enum.doc)
-                self._write_enum_members(enum, writer)
-                writer.end('enum')
-            writer.end('enums')
-        if typed_dicts:
-            writer.start('typeddicts')
-            for typ_dict in typed_dicts:
-                writer.start('typeddict', {'name': typ_dict.name})
-                writer.element('doc', typ_dict.doc)
-                self._write_typed_dict_items(typ_dict, writer)
-                writer.end('typeddict')
-            writer.end('typeddicts')
-        writer.end('datatypes')
-
     def _write_type_docs(self, type_docs, writer):
         writer.start('typedocs')
         for doc in sorted(type_docs):
