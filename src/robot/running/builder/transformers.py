@@ -347,7 +347,7 @@ class ForBuilder(NodeVisitor):
     def build(self, node):
         error = format_error(self._get_errors(node))
         self.model = self.parent.body.create_for(
-            node.variables, node.flavor, node.values, node.start, node.mode, node.fill,
+            node.assign, node.flavor, node.values, node.start, node.mode, node.fill,
             lineno=node.lineno, error=error
         )
         for step in node.body:
@@ -483,7 +483,7 @@ class TryBuilder(NodeVisitor):
         errors = self._get_errors(node)
         while node:
             self.model = root.body.create_branch(node.type, node.patterns,
-                                                 node.pattern_type, node.variable,
+                                                 node.pattern_type, node.assign,
                                                  lineno=node.lineno)
             for step in node.body:
                 self.visit(step)

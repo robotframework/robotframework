@@ -693,7 +693,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             tokens,
             ForHeader,
             flavor='IN ZIP',
-            variables=['${value1}', '${value2}'],
+            assign=['${value1}', '${value2}'],
             values=['${list1}', '${list2}'],
             separator='  '
         )
@@ -830,7 +830,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             tokens,
             ExceptHeader,
             patterns=['one', 'two'],
-            variable='${var}'
+            assign='${var}'
         )
         # EXCEPT    Example: *    type=glob
         tokens = [
@@ -868,7 +868,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             ExceptHeader,
             patterns=['Error \\d', '(x|y)'],
             type='regexp',
-            variable='${var}'
+            assign='${var}'
         )
 
     def test_FinallyHeader(self):
