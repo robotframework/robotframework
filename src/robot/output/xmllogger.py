@@ -13,7 +13,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import get_timestamp, NullMarkupWriter, safe_str, XmlWriter
+from datetime import datetime
+
+from robot.utils import NullMarkupWriter, safe_str, XmlWriter
 from robot.version import get_full_version
 from robot.result.visitor import ResultVisitor
 
@@ -33,7 +35,7 @@ class XmlLogger(ResultVisitor):
             return NullMarkupWriter()
         writer = XmlWriter(path, write_empty=False, usage='output')
         writer.start('robot', {'generator': get_full_version(generator),
-                               'generated': get_timestamp(),
+                               'generated': datetime.now().isoformat(),
                                'rpa': 'true' if rpa else 'false',
                                'schemaversion': '5'})
         return writer
@@ -263,10 +265,9 @@ class XmlLogger(ResultVisitor):
             self._writer.element(tag, item)
 
     def _write_status(self, item):
-        attrs = {'status': item.status, 'starttime': item.starttime or 'N/A',
-                 'endtime': item.endtime or 'N/A'}
-        if not (item.starttime and item.endtime):
-            attrs['elapsedtime'] = str(item.elapsedtime)
+        attrs = {'status': item.status,
+                 'start': item.start_time.isoformat() if item.start_time else None,
+                 'elapsed': str(item.elapsed_time.total_seconds())}
         self._writer.element('status', item.message, attrs)
 
 

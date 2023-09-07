@@ -304,8 +304,12 @@ class StatusHandler(ElementHandler):
     def end(self, elem, result):
         if self.set_status:
             result.status = elem.get('status', 'FAIL')
-        result.starttime = self._timestamp(elem, 'starttime')
-        result.endtime = self._timestamp(elem, 'endtime')
+        if 'start' in elem.attrib:
+            result.start_time = elem.attrib['start']
+            result.elapsed_time = float(elem.attrib['elapsed'])
+        else:    # RF < 7.0 compatibility
+            result.starttime = self._timestamp(elem, 'starttime')
+            result.endtime = self._timestamp(elem, 'endtime')
         if elem.text:
             result.message = elem.text
 

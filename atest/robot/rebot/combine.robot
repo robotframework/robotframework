@@ -115,16 +115,6 @@ Suite Times In Recombine
     Elapsed Time Should Be Valid    ${SUITE4.suites[1].suites[1].elapsedtime}
     Should Be Equal    ${SUITE4.suites[1].suites[1].elapsedtime}    ${MILLIS2}
 
-Elapsed Time Should Be Written To Output When Start And End Time Are Not Known
-    ${combined} =    Get Element    ${COMB OUT 1}    suite/status
-    Element Attribute Should Be    ${combined}    starttime    N/A
-    Element Attribute Should Be    ${combined}    endtime    N/A
-    Should Be True    int($combined.get('elapsedtime')) >= 0
-    ${originals} =    Get Elements    ${COMB OUT 1}    suite/suite/status
-    Element Attribute Should Match    ${originals[0]}    starttime    20?????? ??:??:??.???
-    Element Attribute Should Match    ${originals[0]}    endtime    20?????? ??:??:??.???
-    Element Should Not Have Attribute    ${originals[0]}    elapsedtime
-
 Combined Suite Names Are Correct In Statistics
     ${suites} =    Get Suite Stat Nodes    ${COMB OUT 1}
     Should Be Equal    ${suites[0].text}    Pass And Fail & Normal

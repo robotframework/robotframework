@@ -18,7 +18,7 @@ from datetime import datetime
 from robot.errors import ExecutionFailed, ExecutionStatus, DataError, PassExecution
 from robot.model import SuiteVisitor, TagPatterns
 from robot.result import TestSuite, Result
-from robot.utils import get_timestamp, is_list_like, NormalizedDict, test_or_task
+from robot.utils import is_list_like, NormalizedDict, test_or_task
 from robot.variables import VariableScopes
 
 from .bodyrunner import BodyRunner, KeywordRunner

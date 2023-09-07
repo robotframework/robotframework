@@ -224,7 +224,7 @@ class StatusMixin:
         Considered deprecated starting from Robot Framework 7.0.
         :attr:`elapsed_time` should be used instead.
         """
-        return int(round(self.elapsed_time.total_seconds() * 1000))
+        return round(self.elapsed_time.total_seconds() * 1000)
 
     def _timestr_to_datetime(self, ts: 'str|None') -> 'datetime|None':
         if not ts:
@@ -236,12 +236,7 @@ class StatusMixin:
     def _datetime_to_timestr(self, dt: 'datetime|None') -> 'str|None':
         if not dt:
             return None
-        millis = round(dt.microsecond, -3) // 1000
-        if millis > 999:
-            dt = dt.replace(microsecond=0) + timedelta(seconds=1)
-            millis = 0
-        return (f'{dt.year}{dt.month:02}{dt.day:02} '
-                f'{dt.hour:02}:{dt.minute:02}:{dt.second:02}.{millis:03}')
+        return dt.isoformat(' ', timespec='milliseconds').replace('-', '')
 
     @property
     def passed(self) -> bool:

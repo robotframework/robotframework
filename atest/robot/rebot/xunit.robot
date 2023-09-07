@@ -135,7 +135,7 @@ Remove Temps
 
 Suite Stats Should Be
     [Arguments]    ${tests}    ${failures}    ${skipped}=0
-    ...    ${time}=?.???    ${timestamp}=20??-??-??T??:??:??.???000
+    ...    ${time}=?.???    ${timestamp}=20??-??-??T??:??:??.??????
     ...    ${xpath}=.
     ${suite} =    Get Element    ${OUTDIR}/xunit.xml    xpath=${xpath}
     Element Attribute Should Be       ${suite}    tests       ${tests}

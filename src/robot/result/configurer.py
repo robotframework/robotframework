@@ -68,6 +68,10 @@ class SuiteConfigurer(model.SuiteConfigurer):
 
     def _set_times(self, suite):
         if self.start_time:
+            suite.end_time = suite.end_time    # Preserve original value.
+            suite.elapsed_time = None          # Force re-calculation.
             suite.start_time = self.start_time
         if self.end_time:
+            suite.start_time = suite.start_time
+            suite.elapsed_time = None
             suite.end_time = self.end_time

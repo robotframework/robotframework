@@ -158,14 +158,14 @@ class TestTimes(unittest.TestCase):
             obj.config(start_time='2023-09-07 20:33:44.444444',
                        end_time=datetime(2023, 9, 7, 20, 33, 44, 999999))
             assert_equal(obj.starttime, '20230907 20:33:44.444')
-            assert_equal(obj.endtime, '20230907 20:33:45.000')
+            assert_equal(obj.endtime, '20230907 20:33:44.999')
             assert_equal(obj.start_time, datetime(2023, 9, 7, 20, 33, 44, 444444))
             assert_equal(obj.end_time, datetime(2023, 9, 7, 20, 33, 44, 999999))
             self.assert_elapsed(obj, 0.555555)
             obj.config(starttime='20230907 20:33:44.555555',
                        endtime='20230907 20:33:44.999999')
-            assert_equal(obj.starttime, '20230907 20:33:44.556')
-            assert_equal(obj.endtime, '20230907 20:33:45.000')
+            assert_equal(obj.starttime, '20230907 20:33:44.555')
+            assert_equal(obj.endtime, '20230907 20:33:44.999')
             assert_equal(obj.start_time, datetime(2023, 9, 7, 20, 33, 44, 555555))
             assert_equal(obj.end_time, datetime(2023, 9, 7, 20, 33, 44, 999999))
             self.assert_elapsed(obj, 0.444444)
