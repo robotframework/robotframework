@@ -1,4 +1,4 @@
-*** Setting ***
+*** Settings ***
 Documentation     Normal test cases
 Suite Setup       Log    Setup
 Suite Teardown    No operation
@@ -6,7 +6,7 @@ Force Tags        f1
 Default Tags      d1    d2
 Metadata          Something    My Value
 
-*** Test Case ***
+*** Test Cases ***
 First
     [Tags]    t1    t2
     Log    Test 1

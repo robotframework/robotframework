@@ -1,8 +1,8 @@
-*** Setting ***
+*** Settings ***
 Suite Setup       Run Tests    ${EMPTY}    standard_libraries/builtin/run_keyword_variants_variable_handling.robot
 Resource          atest_resource.robot
 
-*** Test Case ***
+*** Test Cases ***
 Variable Values Should Not Be Visible As Keyword's Arguments
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Keyword Data    ${tc.kws[0]}                                 BuiltIn.Run Keyword    args=My UK, Log, \${OBJECT}
@@ -54,7 +54,7 @@ Run Keyword If With List And One Argument That needs to Be Processed
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Keyword Arguments And Messages    ${tc}
 
-*** Keyword ***
+*** Keywords ***
 Check Keyword Arguments And Messages
     [Arguments]    ${tc}
     Check Keyword Data    ${tc.kws[0].kws[0]}    \\Log Many    args=\@{ARGS}

@@ -1,10 +1,10 @@
-*** Setting ***
+*** Settings ***
 Suite Setup       Run Tests
 ...               --exclude exclude -e e2 --include include_this_test --skip skip_me --skiponfailure sof
 ...               variables/automatic_variables/
 Resource          atest_resource.robot
 
-*** Test Case ***
+*** Test Cases ***
 Previous Test Variables Should Have Default Values
     Check test case    ${TEST NAME}
 

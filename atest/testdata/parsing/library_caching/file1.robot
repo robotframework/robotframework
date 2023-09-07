@@ -1,8 +1,8 @@
-*** Setting ***
+*** Settings ***
 Library           OperatingSystem
 Resource          resource.robot
 
-*** Test Case ***
+*** Test Cases ***
 Test 1.1
     No Operation
     Directory Should Exist    ${CURDIR}

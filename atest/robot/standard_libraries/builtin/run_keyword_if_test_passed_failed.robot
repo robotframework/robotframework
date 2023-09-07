@@ -1,8 +1,8 @@
-*** Setting ***
+*** Settings ***
 Suite Setup       Run Tests    ${EMPTY}    standard_libraries/builtin/run_keyword_if_test_passed_failed
 Resource          atest_resource.robot
 
-*** Test Case ***
+*** Test Cases ***
 Run Keyword If Test Failed when test fails
     ${tc} =    Check Test Case    ${TEST NAME}
     Should Be Equal    ${tc.teardown.body[0].name}    BuiltIn.Log

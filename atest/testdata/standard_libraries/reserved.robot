@@ -1,4 +1,4 @@
-*** Test Case ***
+*** Test Cases ***
 Markers should get note about case 1
     [Documentation]    FAIL 'For' is a reserved keyword. It must be an upper case 'FOR' when used as a marker.
     For    ${var}    IN    some    items
@@ -37,6 +37,6 @@ Reserved in user keyword
     [Documentation]    FAIL 'While' is a reserved keyword.
     User keyword with reserved keyword
 
-*** Keyword ***
+*** Keywords ***
 User keyword with reserved keyword
     While

@@ -671,35 +671,35 @@ class TestSectionHeaders(unittest.TestCase):
     def test_headers_allowed_everywhere(self):
         data = '''\
 *** Settings ***
-*** Setting ***
+*** SETTINGS ***
 ***variables***
-*VARIABLE*    ARGS    ARGH
+*VARIABLES*    ARGS    ARGH
 *Keywords     ***    ...
 ...           ***
-*** Keyword ***      # Comment
+*** Keywords ***      # Comment
 *** Comments ***
-*** Comment ***    1    2
+*** CommentS ***    1    2
 ...    3    4
 ...    5
 '''
         expected = [
             (T.SETTING_HEADER, '*** Settings ***', 1, 0),
             (T.EOS, '', 1, 16),
-            (T.SETTING_HEADER, '*** Setting ***', 2, 0),
-            (T.EOS, '', 2, 15),
+            (T.SETTING_HEADER, '*** SETTINGS ***', 2, 0),
+            (T.EOS, '', 2, 16),
             (T.VARIABLE_HEADER, '***variables***', 3, 0),
             (T.EOS, '', 3, 15),
-            (T.VARIABLE_HEADER, '*VARIABLE*', 4, 0),
-            (T.VARIABLE_HEADER, 'ARGS', 4, 14),
-            (T.VARIABLE_HEADER, 'ARGH', 4, 22),
-            (T.EOS, '', 4, 26),
+            (T.VARIABLE_HEADER, '*VARIABLES*', 4, 0),
+            (T.VARIABLE_HEADER, 'ARGS', 4, 15),
+            (T.VARIABLE_HEADER, 'ARGH', 4, 23),
+            (T.EOS, '', 4, 27),
             (T.KEYWORD_HEADER, '*Keywords', 5, 0),
             (T.KEYWORD_HEADER, '***', 5, 14),
             (T.KEYWORD_HEADER, '...', 5, 21),
             (T.KEYWORD_HEADER, '***', 6, 14),
             (T.EOS, '', 6, 17),
-            (T.KEYWORD_HEADER, '*** Keyword ***', 7, 0),
-            (T.EOS, '', 7, 15)
+            (T.KEYWORD_HEADER, '*** Keywords ***', 7, 0),
+            (T.EOS, '', 7, 16)
         ]
         assert_tokens(data, expected, get_tokens, data_only=True)
         assert_tokens(data, expected, get_init_tokens, data_only=True)
@@ -1633,16 +1633,16 @@ Example
 
 class TestGetResourceTokensSourceFormats(TestGetTokensSourceFormats):
     data = '''\
-*** Variable ***
+*** Variables ***
 ${VAR}    Value
 
-*** KEYWORD ***
+*** KEYWORDS ***
 NOOP    No Operation
 '''
     tokens = [
-        (T.VARIABLE_HEADER, '*** Variable ***', 1, 0),
-        (T.EOL, '\n', 1, 16),
-        (T.EOS, '', 1, 17),
+        (T.VARIABLE_HEADER, '*** Variables ***', 1, 0),
+        (T.EOL, '\n', 1, 17),
+        (T.EOS, '', 1, 18),
         (T.VARIABLE, '${VAR}', 2, 0),
         (T.SEPARATOR, '    ', 2, 6),
         (T.ARGUMENT, 'Value', 2, 10),
@@ -1650,9 +1650,9 @@ NOOP    No Operation
         (T.EOS, '', 2, 16),
         (T.EOL, '\n', 3, 0),
         (T.EOS, '', 3, 1),
-        (T.KEYWORD_HEADER, '*** KEYWORD ***', 4, 0),
-        (T.EOL, '\n', 4, 15),
-        (T.EOS, '', 4, 16),
+        (T.KEYWORD_HEADER, '*** KEYWORDS ***', 4, 0),
+        (T.EOL, '\n', 4, 16),
+        (T.EOS, '', 4, 17),
         (T.KEYWORD_NAME, 'NOOP', 5, 0),
         (T.EOS, '', 5, 4),
         (T.SEPARATOR, '    ', 5, 4),
@@ -1661,13 +1661,13 @@ NOOP    No Operation
         (T.EOS, '', 5, 21)
     ]
     data_tokens = [
-        (T.VARIABLE_HEADER, '*** Variable ***', 1, 0),
-        (T.EOS, '', 1, 16),
+        (T.VARIABLE_HEADER, '*** Variables ***', 1, 0),
+        (T.EOS, '', 1, 17),
         (T.VARIABLE, '${VAR}', 2, 0),
         (T.ARGUMENT, 'Value', 2, 10),
         (T.EOS, '', 2, 15),
-        (T.KEYWORD_HEADER, '*** KEYWORD ***', 4, 0),
-        (T.EOS, '', 4, 15),
+        (T.KEYWORD_HEADER, '*** KEYWORDS ***', 4, 0),
+        (T.EOS, '', 4, 16),
         (T.KEYWORD_NAME, 'NOOP', 5, 0),
         (T.EOS, '', 5, 4),
         (T.KEYWORD, 'No Operation', 5, 8),

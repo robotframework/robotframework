@@ -1,10 +1,10 @@
-*** Setting ***
+*** Settings ***
 Library           OperatingSystem
 
-*** Variable ***
+*** Variables ***
 @{LIST}           Hello    world
 
-*** Test Case ***
+*** Test Cases ***
 Replace Variables
     ${template} =    Get File    ${CURDIR}${/}template.txt
     Replace Variables And Verify Content    ${template}    Pekka    fine    morning
@@ -49,7 +49,7 @@ Replace Variables With List Variable
     Should Be Equal    ${replaced}[2]    xxx
     Should Be Equal    ${replaced}[3]    ${LIST}
 
-*** Keyword ***
+*** Keywords ***
 Replace Variables And Verify Content
     [Arguments]    ${template}    ${name}    @{occasion}
     ${replaced} =    Replace Variables    ${template}

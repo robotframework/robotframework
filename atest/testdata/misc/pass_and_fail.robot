@@ -1,14 +1,14 @@
-*** Setting ***
+*** Settings ***
 Documentation     Some tests here
 Suite Setup       My Keyword    Suite Setup
 Force Tags        force
 Library           String
 
-*** Variable ***
+*** Variables ***
 ${LEVEL1}         INFO
 ${LEVEL2}         DEBUG
 
-*** Test Case ***
+*** Test Cases ***
 Pass
     [Tags]    pass
     # I am a comment. Please ignore me.
@@ -20,7 +20,7 @@ Fail
     My Keyword    Fail
     Fail    Expected failure
 
-*** Keyword ***
+*** Keywords ***
 My Keyword
     [Arguments]    ${who}
     [Tags]    keyword    tags    force

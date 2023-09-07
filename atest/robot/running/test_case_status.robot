@@ -1,11 +1,11 @@
-*** Setting ***
+*** Settings ***
 Documentation     Tests for setting test case status correctly when test passes
 ...               and when a failure or error occurs. Also includes test cases
 ...               for running test setup and teardown in different situations.
 Suite Setup       Run Tests    ${EMPTY}    running/test_case_status.robot
 Resource          atest_resource.robot
 
-*** Test Case ***
+*** Test Cases ***
 Test Passes
     Check Test Case    ${TEST NAME}
 

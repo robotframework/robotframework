@@ -1,11 +1,11 @@
-*** Setting ***
+*** Settings ***
 Suite Setup       Run Tests    ${EMPTY}    standard_libraries/builtin/run_keyword_if_unless.robot
 Resource          atest_resource.robot
 
-*** Variable ***
+*** Variables ***
 ${EXECUTED}       This is executed
 
-*** Test Case ***
+*** Test Cases ***
 Run Keyword If With True Expression
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.body[0].body[0].msgs[0]}    ${EXECUTED}

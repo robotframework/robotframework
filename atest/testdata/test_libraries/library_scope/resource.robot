@@ -1,4 +1,4 @@
-*** Setting ***
+*** Settings ***
 Library           libraryscope.Global
 Library           libraryscope.Suite
 Library           libraryscope.Test
@@ -7,7 +7,7 @@ Library           libraryscope.InvalidEmpty
 Library           libraryscope.InvalidMethod
 Library           libraryscope.InvalidNone
 
-*** Keyword ***
+*** Keywords ***
 Register All
     [Arguments]    ${name}
     libraryscope.Global.Register    ${name}

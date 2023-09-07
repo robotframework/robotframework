@@ -1,9 +1,9 @@
-*** Setting ***
+*** Settings ***
 Resource          common_resource.robot
 
-*** Variable ***
+*** Variables ***
 ${RESOURCE_INDEX}    1
 
-*** Test Case ***
+*** Test Cases ***
 Test 1
     UK From Resource 1    ${GREETINGS}

@@ -1,7 +1,7 @@
-*** Setting ***
+*** Settings ***
 Suite Teardown    Fail    Leaf suite failed
 
-*** Test Case ***
+*** Test Cases ***
 PTD FTD Passing
     [Documentation]    FAIL
     ...    Parent suite teardown failed:

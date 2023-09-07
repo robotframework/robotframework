@@ -1,12 +1,12 @@
-*** Setting ***
+*** Settings ***
 Resource          atest_resource.robot
 
-*** Variable ***
+*** Variables ***
 ${ORIG_START}     Set in Create Output With Robot
 ${ORIG_END}       -- ;; --
 ${ORIG_ELAPSED}   -- ;; --
 
-*** Keyword ***
+*** Keywords ***
 Create Output With Robot
     [Arguments]    ${outputname}    ${options}    ${sources}
     Run Tests    ${options}    ${sources}

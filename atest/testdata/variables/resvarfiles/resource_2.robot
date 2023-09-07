@@ -1,4 +1,4 @@
-*** Variable ***
+*** Variables ***
 ${PRIORITIES_1}    Second Resource File
 ${PRIORITIES_2}    Second Resource File
 ${PRIORITIES_3}    Second Resource File

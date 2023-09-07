@@ -1,8 +1,8 @@
-*** Setting ***
+*** Settings ***
 Suite Setup       Run Tests    --exclude exclude    running/duplicate_test_name.robot
 Resource          atest_resource.robot
 
-*** Test Case ***
+*** Test Cases ***
 Tests with same name should be executed
     Should Contain Tests    ${SUITE}
     ...    Same Test Multiple Times

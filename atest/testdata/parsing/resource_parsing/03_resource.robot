@@ -1,10 +1,10 @@
-*** Setting ***
+*** Settings ***
 Resource          02_resource.robot
 
-*** Variable ***
+*** Variables ***
 ${var_from_03_resource}    variable value from 03 resource
 
-*** Keyword ***
+*** Keywords ***
 Keyword From 03 Resource
     Log    ${var_from_03_resource}
     Log    ${var_from_02_resource}

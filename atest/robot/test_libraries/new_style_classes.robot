@@ -1,8 +1,8 @@
-*** Setting ***
+*** Settings ***
 Suite Setup       Run Tests    ${EMPTY}    test_libraries/new_style_classes.robot
 Resource          atest_resource.robot
 
-*** Test Case ***
+*** Test Cases ***
 Keyword From New Style Class Library
     Check Test Case    Keyword From New Style Class Library
     Syslog Should Contain    Imported library 'newstyleclasses.NewStyleClassLibrary' with arguments [ ] (version <unknown>, class type, TEST scope, 1 keywords

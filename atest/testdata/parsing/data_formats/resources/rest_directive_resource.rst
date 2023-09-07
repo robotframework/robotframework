@@ -1,9 +1,9 @@
 .. code:: robotframework
 
-    *** Setting ***
+    *** Settings ***
     Resource                rest_directive_resource2.rest
 
-    *** Variable ***
+    *** Variables ***
     ${rest_resource_var}    ReST Resource Variable
 
 

@@ -1,4 +1,4 @@
-*** Test Case ***
+*** Test Cases ***
 Variables Set In One Test Are Not Visible In Another 1
     ${test_var} =      Set Variable    Variable in test level
     Set Test Variable    ${test_var_2}    Variable in test level
@@ -25,7 +25,7 @@ Set test variable
     Should be equal   ${test}    kw2
     Should be equal   ${kw}    kw2
 
-*** Keyword ***
+*** Keywords ***
 Keyword should not see local variables
     Variable should not exist    ${test}
     ${kw}=    Set variable    local

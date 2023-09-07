@@ -1,8 +1,8 @@
-*** Setting ***
+*** Settings ***
 Suite Setup       Run Tests    ${EMPTY}    standard_libraries/builtin/run_keyword_based_on_suite_stats
 Resource          atest_resource.robot
 
-*** Test Case ***
+*** Test Cases ***
 Run Keyword If All Tests Passed
     ${suite} =    Get Test Suite    Run Keyword If All Tests Passed When All Pass
     Should Be Equal As Integers    ${suite.statistics.failed}    0

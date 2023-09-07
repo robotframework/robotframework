@@ -1,13 +1,13 @@
-*** Setting ***
+*** Settings ***
 Suite Setup       Run Tests And Read Outputs
 Suite Teardown    Remove Files    ${INFILE1}    ${INFILE2}
 Resource          atest_resource.robot
 
-*** Variable ***
+*** Variables ***
 ${INFILE1}        %{TEMPDIR}${/}rebot-test-1.xml
 ${INFILE2}        %{TEMPDIR}${/}rebot-test-2.xml
 
-*** Test Case ***
+*** Test Cases ***
 Tags Defined With Robot Set Tag Should Be Preserved
     Run Rebot    \    ${INFILE1}
     Check Test Tags    First One    f1    robottag    t1    t2
@@ -30,7 +30,7 @@ Process Multiple Files Using set Tag
     Check Test Tags    First One    f1    rebottag    robottag    t1    t2
     Check Test Tags    SubSuite1 First    f1    rebottag    t1
 
-*** Keyword ***
+*** Keywords ***
 Run Tests And Read Outputs
     Run Tests Without Processing Output    --settag robottag    misc${/}normal.robot
     Move File    ${OUT_FILE}    ${INFILE1}

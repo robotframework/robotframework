@@ -1,9 +1,9 @@
-*** Setting ***
+*** Settings ***
 Suite Setup       Run Tests    --loglevel DEBUG    test_libraries/error_msg_and_details.robot
 Resource          atest_resource.robot
 Test Template     Verify Test Case And Error In Log
 
-*** Test Case ***
+*** Test Cases ***
 Exception Type is Removed From Generic Failures
     Generic Failure    foo != bar
 
@@ -92,7 +92,7 @@ Include internal traces when ROBOT_INTERNAL_TRACE is set
     Should Be True       len($tb.splitlines()) > 5
     [Teardown]    Remove Environment Variable    ROBOT_INTERNAL_TRACES
 
-*** Keyword ***
+*** Keywords ***
 Verify Test Case And Error In Log
     [Arguments]    ${name}    ${error}    ${index}=0    ${msg}=0
     ${tc} =    Check Test Case    ${name}

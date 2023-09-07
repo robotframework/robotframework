@@ -1,4 +1,4 @@
-*** Setting ***
+*** Settings ***
 Test Setup        Login and set prompt
 Test Teardown     Close All Connections
 Library           Telnet    3.142    CRLF    $    REGEXP    ASCII    strict    DeBuG    terminal_emulation=yes   terminal_type=vt100

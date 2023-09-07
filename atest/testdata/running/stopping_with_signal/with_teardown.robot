@@ -3,7 +3,7 @@ Suite Teardown    My Suite Teardown
 Library           Library.py
 Library           OperatingSystem
 
-*** Test Case ***
+*** Test Cases ***
 Test
     [Documentation]    FAIL Execution terminated by signal
     Create File    ${TESTSIGNALFILE}

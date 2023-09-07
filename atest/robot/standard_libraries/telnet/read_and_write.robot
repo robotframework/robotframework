@@ -1,8 +1,8 @@
-*** Setting ***
+*** Settings ***
 Suite Setup       Run Tests    --loglevel DEBUG    standard_libraries/telnet/read_and_write.robot
 Resource          telnet_resource.robot
 
-*** Test Case ***
+*** Test Cases ***
 Write & Read
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].msgs[0]}    pwd

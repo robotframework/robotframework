@@ -1,4 +1,4 @@
-*** Setting ***
+*** Settings ***
 Documentation     Normal test cases
 Force Tags        f1
 Default Tags      d1    d_2
@@ -7,7 +7,7 @@ Metadata          Something    My Value
 *** Variables ***
 ${DELAY}          0.01    # Make sure elapsed time > 0
 
-*** Test Case ***
+*** Test Cases ***
 First One
     [Tags]    t1    t2
     Log    Test 1
@@ -22,7 +22,7 @@ Second One
     Nested keyword
     Nested keyword 2
 
-*** Keyword ***
+*** Keywords ***
 logs on trace
     [Timeout]    1 hour
     [Tags]    kw    tags

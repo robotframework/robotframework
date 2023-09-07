@@ -1,16 +1,16 @@
-*** Setting ***
+*** Settings ***
 Documentation     Some of these tests are testing same features as tests under core/resource_and_variable_imports.html. These tests should all be gone through and all tests moved under variables/.
 Resource          resvarfiles/resource.robot
 Variables         resvarfiles/variables.py
 Variables         resvarfiles/variables_2.py
 Resource          resvarfiles/resource_3.robot
 
-*** Variable ***
+*** Variables ***
 ${PRIORITIES_1}    Variable Table in Test Case File
 ${PRIORITIES_2}    Variable Table in Test Case File
 ${PRIORITIES_3}    Variable Table in Test Case File
 
-*** Test Case ***
+*** Test Cases ***
 Individual CLI Variables Override All Other Variables
     Should Be Equal    ${PRIORITIES_1}    CLI
 
@@ -48,7 +48,7 @@ Variables Set During Test Execution Override All Variables In Their Scope
     Should Be Equal    ${PRIORITIES_4}    Set during execution
     Set Variables In User Keyword
 
-*** Keyword ***
+*** Keywords ***
 Check Variables In User Keyword
     Should Be Equal    ${PRIORITIES_1}    CLI
     Should Be Equal    ${PRIORITIES_2}    Variable File from CLI

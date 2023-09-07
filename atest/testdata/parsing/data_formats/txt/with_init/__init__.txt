@@ -1,4 +1,4 @@
-*Setting        Value
+*Settings        Value
 Suite Setup     Suite Setup     
 Documentation   Testing suite init file    
 

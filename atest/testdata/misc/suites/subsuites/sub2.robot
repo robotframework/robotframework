@@ -1,13 +1,13 @@
-*** Setting ***
+*** Settings ***
 Documentation     Normal test cases
 Force Tags        f1
 Default Tags      d1    d2
 Metadata          Something    My Value
 
-*** Variable ***
+*** Variables ***
 ${SLEEP}          0.1
 
-*** Test Case ***
+*** Test Cases ***
 SubSuite2 First
     [Tags]
     Log    SubSuite2_First

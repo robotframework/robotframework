@@ -1,4 +1,4 @@
-*** Test Case ***
+*** Test Cases ***
 Run Keyword If All Critical Tests Passed Can't be Used In Test
     [Documentation]    FAIL Keyword 'Run Keyword If All Critical Tests Passed' can only be used in suite teardown.
     Run Keyword If All Critical Tests Passed    Fail    ${NON EXISTING}    #Should not be executed nor evaluated

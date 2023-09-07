@@ -1,4 +1,4 @@
-*** Setting ***
+*** Settings ***
 Suite Setup       Check Variables In Suite Setup    Automatic Variables.Auto2
 ...               ${EMPTY}    {}    @{PREV_TEST}
 Suite Teardown    Check Variables In Suite Teardown    Automatic Variables.Auto2    FAIL
@@ -7,11 +7,11 @@ Suite Teardown    Check Variables In Suite Teardown    Automatic Variables.Auto2
 Force Tags        include this test
 Resource          resource.robot
 
-*** Variable ***
+*** Variables ***
 @{PREV_TEST}      \&{OPTIONS}    PASS
 @{LAST_TEST}      Previous Test Variables Should Have Default Values From Previous Suite    FAIL    Expected failure
 
-*** Test Case ***
+*** Test Cases ***
 Previous Test Variables Should Have Default Values From Previous Suite
     [Documentation]    FAIL Expected failure
     Check Previous Test Variables    @{PREV_TEST}

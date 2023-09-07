@@ -1,4 +1,4 @@
-*** Test Case ***
+*** Test Cases ***
 test1
     No Operation
 

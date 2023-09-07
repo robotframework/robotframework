@@ -1,4 +1,4 @@
-*** Setting ***
+*** Settings ***
 Suite Setup       Log    Suite setup executed
 Suite Teardown    Run Keywords    Fail    first    AND    Fail    second
 Default Tags      tag1    tag2
@@ -9,7 +9,7 @@ ${TEARDOWN FAILURES}    SEPARATOR=\n\n
 ...    1) first
 ...    2) second
 
-*** Test Case ***
+*** Test Cases ***
 Passing
     [Documentation]    FAIL
     ...    Parent suite teardown failed:
@@ -33,7 +33,7 @@ Skipping
     ...    ${TEARDOWN FAILURES}
     Skip    Expected skip
 
-*** Keyword ***
+*** Keywords ***
 My Keyword
     Log    User keywords work normally
     No Operation

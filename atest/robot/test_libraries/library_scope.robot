@@ -1,7 +1,7 @@
-*** Setting ***
+*** Settings ***
 Resource          atest_resource.robot
 
-*** Test Case ***
+*** Test Cases ***
 Python Library Scopes
     Run Tests    sources=test_libraries/library_scope
     Check Test Case    Test 1.1
