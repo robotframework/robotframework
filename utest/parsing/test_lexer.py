@@ -678,9 +678,9 @@ class TestSectionHeaders(unittest.TestCase):
 ...           ***
 *** Keywords ***      # Comment
 *** Comments ***
-*** CommentS ***    1    2
-...    3    4
-...    5
+Hello, I'm a comment!
+*** COMMENTS ***    1    2
+...    3
 '''
         expected = [
             (T.SETTING_HEADER, '*** Settings ***', 1, 0),
@@ -699,7 +699,14 @@ class TestSectionHeaders(unittest.TestCase):
             (T.KEYWORD_HEADER, '***', 6, 14),
             (T.EOS, '', 6, 17),
             (T.KEYWORD_HEADER, '*** Keywords ***', 7, 0),
-            (T.EOS, '', 7, 16)
+            (T.EOS, '', 7, 16),
+            (T.COMMENT_HEADER, '*** Comments ***', 8, 0),
+            (T.EOS, '', 8, 16),
+            (T.COMMENT_HEADER, '*** COMMENTS ***', 10, 0),
+            (T.COMMENT_HEADER, '1', 10, 20),
+            (T.COMMENT_HEADER, '2', 10, 25),
+            (T.COMMENT_HEADER, '3', 11, 7),
+            (T.EOS, '', 11, 8)
         ]
         assert_tokens(data, expected, get_tokens, data_only=True)
         assert_tokens(data, expected, get_init_tokens, data_only=True)
@@ -748,6 +755,46 @@ class TestSectionHeaders(unittest.TestCase):
              "'Settings', 'Variables', 'Keywords' and 'Comments'."),
             (T.EOS, '', 1, 1),
         ], get_resource_tokens, data_only=True)
+
+    def test_singular_headers_are_deprecated(self):
+        data = '''\
+*** Setting ***
+***variable***
+*Keyword
+*** Comment ***
+'''
+        expected = [
+            (T.SETTING_HEADER, '*** Setting ***', 1, 0,
+             "Singular section headers like '*** Setting ***' are deprecated. "
+             "Use plural format like '*** Settings ***' instead."),
+            (T.EOL, '\n', 1, 15),
+            (T.EOS, '', 1, 16),
+            (T.VARIABLE_HEADER, '***variable***', 2, 0,
+             "Singular section headers like '***variable***' are deprecated. "
+             "Use plural format like '*** Variables ***' instead."),
+            (T.EOL, '\n', 2, 14),
+            (T.EOS, '', 2, 15),
+            (T.KEYWORD_HEADER, '*Keyword', 3, 0,
+             "Singular section headers like '*Keyword' are deprecated. "
+             "Use plural format like '*** Keywords ***' instead."),
+            (T.EOL, '\n', 3, 8),
+            (T.EOS, '', 3, 9),
+            (T.COMMENT_HEADER, '*** Comment ***', 4, 0,
+             "Singular section headers like '*** Comment ***' are deprecated. "
+             "Use plural format like '*** Comments ***' instead."),
+            (T.EOL, '\n', 4, 15),
+            (T.EOS, '', 4, 16)
+        ]
+        assert_tokens(data, expected, get_tokens)
+        assert_tokens(data, expected, get_init_tokens)
+        assert_tokens(data, expected, get_resource_tokens)
+        assert_tokens('*** Test Case ***', [
+            (T.TESTCASE_HEADER, '*** Test Case ***', 1, 0,
+             "Singular section headers like '*** Test Case ***' are deprecated. "
+             "Use plural format like '*** Test Cases ***' instead."),
+            (T.EOL, '', 1, 17),
+            (T.EOS, '', 1, 17),
+        ])
 
 
 class TestName(unittest.TestCase):

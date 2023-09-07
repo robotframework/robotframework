@@ -1,38 +1,38 @@
-*** Setting ***
-Documentation    Testing different ways to write "Setting(s)".
+*** Settings ***
+Documentation    Testing different ways to write "Settings".
 
-*** Comment ***
+*** Comments ***
 This table is accepted and data here ignored.
 
 ***SETTINGS***
-Default Tags    Settings
+Test Tags       Settings
 Library         OperatingSystem
 
-***Variable***
-${VARIABLE}  Variable
+***Variables***
+${V1}           Variables
 
 *** VARIABLES ***
-${VARIABLES}  Variables
+${V2}           VARIABLES
 
-***Test Case***
+***Test Cases***
 Test Case
-    Log  ${VARIABLE}
+    Log    ${V1}
     Keyword
 
 ***COMMENTS***
-Comment tables are case (and space) insensitive like any other table and
-both singular and plural formats are fine.
+Comment headers are case insensitive like all other headers.
 ***COMMENTS***
 
-*** Test Cases ***
+*** Test CASES ***
 Test Cases
-    Log  ${VARIABLES}
+    Log    ${V2}
 
-Comment tables exist
+Comment section exist
     ${content} =    Get File    ${CURDIR}/table_names.robot
-    Should Contain    ${content}    \n*** Comment ***\n
+    Should Contain    ${content}    \n*** Comments ***\n
+    Should Contain    ${content}    \n***COMMENTS***\n
 
-*** Keyword ***
+*** Keywords ***
 Keyword
     Keywords
 
@@ -43,3 +43,16 @@ Keywords
 * * * K e y w o r d * * *
 Keyword
     Fail    Should not be executed (or even parsed)
+
+*** Setting ***
+Metadata     Singular headers    Deprecated
+*** variable ***
+${V3}        Deprecated
+*** TEST CASE ***
+Singular headers are deprecated
+    Singular headers are deprecated
+*keyword
+Singular headers are deprecated
+    Should Be Equal    ${V3}    Deprecated
+*** Comment ***
+Yes, singular headers are deprecated.

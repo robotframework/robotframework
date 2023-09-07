@@ -130,15 +130,6 @@ class Languages:
             languages = [languages]
         if add_english:
             languages.append(En())
-            # The English singular forms are added for backwards compatibility
-            self.headers = {
-                'Setting': 'Settings',
-                'Variable': 'Variables',
-                'Test Case': 'Test Cases',
-                'Task': 'Tasks',
-                'Keyword': 'Keywords',
-                'Comment': 'Comments'
-            }
         return languages
 
     def _get_available_languages(self) -> 'dict[str, type[Language]]':

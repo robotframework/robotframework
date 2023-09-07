@@ -80,10 +80,10 @@ surrounding spaces are optional, and the number of asterisk characters can
 vary as long as there is at least one asterisk in the beginning. For example,
 also `*settings` would be recognized as a section header.
 
-Robot Framework also supports the singular form with headers like
-`*** Setting ***,` but that support is deprecated. There are no visible
-deprecation warnings yet, but warnings will emitted in the future and
-singular headers will eventually not be supported at all.
+Robot Framework supports also singular headers like `*** Setting ***,` but that
+support was deprecated in Robot Framework 6.0. There is a visible deprecation
+warning starting from Robot Framework 7.0 and singular headers will eventually
+not be supported at all.
 
 The header row can contain also other data than the actual section header.
 The extra data must be separated from the section header using the data

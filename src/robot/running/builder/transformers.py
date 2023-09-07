@@ -627,12 +627,20 @@ class ErrorReporter(NodeVisitor):
         pass
 
     def visit_SectionHeader(self, node):
-        token = node.get_token(Token.INVALID_HEADER)
-        if token:
+        token = node.get_token(*Token.HEADER_TOKENS)
+        if not token.error:
+            return
+        message = self._format_message(token)
+        if token.type == Token.INVALID_HEADER:
             if self.raise_on_invalid_header:
-                raise DataError(self._format_message(token))
+                raise DataError(message)
             else:
-                LOGGER.error(self._format_message(token))
+                LOGGER.error(message)
+        else:
+            # Errors, other than totally invalid headers, can occur only with
+            # deprecated singular headers, and we want to report them as warnings.
+            # A more generic solution for separating errors and warnings would be good.
+            LOGGER.warn(self._format_message(token))
 
     def visit_Error(self, node):
         for error in node.get_tokens(Token.ERROR):
