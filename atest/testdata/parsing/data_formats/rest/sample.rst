@@ -27,6 +27,7 @@ We have a devious plan to rule the world with robots.
    Resource       ../resources/rest_directive_resource.rst
    | Variables  | ../resources/variables.py
    | Library    | OperatingSystem | | | | | | | | | | | | | | | |
+   Invalid    Setting
 
 .. csv-table:: cannot and should not be parsed
    :file: not/a/real/path.csv
