@@ -21,7 +21,7 @@ and the :mod:`result model <robot.result.model>`, but the objects passed to
 the visitor methods are slightly different depending on the model they are
 used with. The main differences are that on the execution side keywords do
 not have child keywords nor messages, and that only the result objects have
-status related attributes like :attr:`status` and :attr:`starttime`.
+status related attributes like :attr:`status` and :attr:`start_time`.
 
 This module contains :class:`SuiteVisitor` that implements the core logic to
 visit a test suite structure, and the :mod:`~robot.result` package contains

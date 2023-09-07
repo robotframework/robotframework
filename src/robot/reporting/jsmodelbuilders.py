@@ -57,7 +57,7 @@ class _Builder:
 
     def _get_status(self, item):
         model = (STATUSES[item.status],
-                 self._timestamp(item.starttime),
+                 self._timestamp(item.starttime),    # TODO: Use `start_time` instead.
                  item.elapsedtime)
         msg = getattr(item, 'message', '')
         if not msg:

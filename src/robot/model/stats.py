@@ -83,7 +83,7 @@ class Stat(Sortable):
             self.failed += 1
 
     def _update_elapsed(self, test):
-        self.elapsed += test.elapsedtime
+        self.elapsed += test.elapsedtime    # TODO: Use `test.elapsed_time` instead.
 
     @property
     def _sort_key(self):
@@ -111,7 +111,7 @@ class SuiteStat(Stat):
         self.id = suite.id
         #: Number of milliseconds it took to execute this suite,
         #: including sub-suites.
-        self.elapsed = suite.elapsedtime
+        self.elapsed = suite.elapsedtime    # TODO: Use `suite.elapsed_time` instead.
         self._name = suite.name
 
     def _get_custom_attrs(self):

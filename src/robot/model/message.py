@@ -39,7 +39,7 @@ class Message(BodyItem):
         #: ``True`` if the content is in HTML, ``False`` otherwise.
         self.html = html
         #: Timestamp in format ``%Y%m%d %H:%M:%S.%f``.
-        self.timestamp = timestamp
+        self.timestamp = timestamp    # FIXME: Change to datetime!
         #: The object this message was triggered by.
         self.parent = parent
 

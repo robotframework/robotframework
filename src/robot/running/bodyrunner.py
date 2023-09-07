@@ -13,11 +13,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from collections import OrderedDict
-from contextlib import contextmanager
-from itertools import zip_longest
 import re
 import time
+from collections import OrderedDict
+from contextlib import contextmanager
+from datetime import datetime
+from itertools import zip_longest
 
 from robot.errors import (BreakLoop, ContinueLoop, DataError, ExecutionFailed,
                           ExecutionFailures, ExecutionPassed, ExecutionStatus)
@@ -25,9 +26,9 @@ from robot.result import (For as ForResult, While as WhileResult, If as IfResult
                           IfBranch as IfBranchResult, Try as TryResult,
                           TryBranch as TryBranchResult)
 from robot.output import librarylogger as logger
-from robot.utils import (cut_assign_value, frange, get_error_message, get_timestamp,
-                         is_list_like, is_number, plural_or_not as s, secs_to_timestr,
-                         seq2str, split_from_equals, type_name, Matcher, timestr_to_secs)
+from robot.utils import (cut_assign_value, frange, get_error_message, is_list_like,
+                         is_number, plural_or_not as s, secs_to_timestr, seq2str,
+                         split_from_equals, type_name, Matcher, timestr_to_secs)
 from robot.variables import is_dict_variable, evaluate_expression
 
 from .statusreporter import StatusReporter
@@ -386,10 +387,12 @@ class WhileRunner:
         error = None
         run = False
         limit = None
-        loop_result = WhileResult(data.condition, data.limit,
-                                  data.on_limit, data.on_limit_message,
-                                  starttime=get_timestamp())
-        iter_result = loop_result.body.create_iteration(starttime=get_timestamp())
+        loop_result = WhileResult(data.condition,
+                                  data.limit,
+                                  data.on_limit,
+                                  data.on_limit_message,
+                                  start_time=datetime.now())
+        iter_result = loop_result.body.create_iteration(start_time=datetime.now())
         if self._run:
             if data.error:
                 error = DataError(data.error, syntax=True)
@@ -431,7 +434,7 @@ class WhileRunner:
                     errors.extend(failed.get_errors())
                     if not failed.can_continue(ctx, self._templated):
                         break
-                iter_result = loop_result.body.create_iteration(starttime=get_timestamp())
+                iter_result = loop_result.body.create_iteration(start_time=datetime.now())
                 if not self._should_run(data.condition, ctx.variables):
                     break
             if errors:
@@ -491,7 +494,7 @@ class IfRunner:
 
     def _run_if_branch(self, branch, recursive_dry_run=False, syntax_error=None):
         context = self._context
-        result = IfBranchResult(branch.type, branch.condition, starttime=get_timestamp())
+        result = IfBranchResult(branch.type, branch.condition, start_time=datetime.now())
         error = None
         if syntax_error:
             run_branch = False

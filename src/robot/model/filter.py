@@ -80,8 +80,8 @@ class Filter(EmptySuiteRemover):
     def start_suite(self, suite: 'TestSuite'):
         if not self:
             return False
-        if hasattr(suite, 'starttime'):
-            suite.starttime = suite.endtime = None
+        if hasattr(suite, 'start_time'):
+            suite.start_time = suite.end_time = None
         if self.include_suites is not None:
             if self.include_suites.match(suite.name, suite.longname):
                 suite.visit(Filter(include_tests=self.include_tests,
