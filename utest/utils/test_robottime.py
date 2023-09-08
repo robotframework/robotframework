@@ -177,13 +177,6 @@ class TestTime(unittest.TestCase):
             assert_raises_with_msg(ValueError, "Invalid time string '%s'." % inv,
                                    timestr_to_secs, inv)
 
-    def test_timestr_to_secs_accept_plain_values(self):
-        with warnings.catch_warnings(record=True) as w:
-            assert_raises_with_msg(ValueError, "Invalid time string '100'.",
-                                   timestr_to_secs, '100', accept_plain_values=False)
-            assert_equal(str(w[-1].message),
-                         "'accept_plain_values' is deprecated and will be removed in RF 7.0.")
-
     def test_secs_to_timestr(self):
         for inp, compact, verbose in [
             (0.001, '1ms', '1 millisecond'),

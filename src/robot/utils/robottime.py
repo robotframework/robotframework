@@ -40,7 +40,7 @@ def _float_secs_to_secs_and_millis(secs):
     return (isecs, millis) if millis < 1000 else (isecs+1, 0)
 
 
-def timestr_to_secs(timestr, round_to=3, accept_plain_values=True):
+def timestr_to_secs(timestr, round_to=3):
     """Parses time strings like '1h 10s', '01:00:10' and '42' and returns seconds.
 
     Time can also be given as an integer or float or, starting from RF 6.0.1,
@@ -48,23 +48,16 @@ def timestr_to_secs(timestr, round_to=3, accept_plain_values=True):
 
     The result is rounded according to the `round_to` argument.
     Use `round_to=None` to disable rounding altogether.
-
-    `accept_plain_values` is considered deprecated and should not be used.
     """
     if is_string(timestr) or is_number(timestr):
-        if accept_plain_values:
-            converters = [_number_to_secs, _timer_to_secs, _time_string_to_secs]
-        else:
-            # TODO: Remove 'accept_plain_values' in 7.0
-            warnings.warn("'accept_plain_values' is deprecated and will be removed in RF 7.0.")
-            converters = [_timer_to_secs, _time_string_to_secs]
+        converters = [_number_to_secs, _timer_to_secs, _time_string_to_secs]
         for converter in converters:
             secs = converter(timestr)
             if secs is not None:
                 return secs if round_to is None else round(secs, round_to)
     if isinstance(timestr, timedelta):
         return timestr.total_seconds()
-    raise ValueError("Invalid time string '%s'." % timestr)
+    raise ValueError(f"Invalid time string '{timestr}'.")
 
 
 def _number_to_secs(number):
