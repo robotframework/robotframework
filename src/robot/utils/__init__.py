@@ -61,7 +61,7 @@ from .robotpath import abspath, find_file, get_link_path, normpath
 from .robottime import (elapsed_time_to_string, format_time, get_elapsed_time,
                         get_time, get_timestamp, secs_to_timestamp,
                         secs_to_timestr, timestamp_to_secs, timestr_to_secs,
-                        parse_time)
+                        parse_time, parse_timestamp)
 from .robottypes import (has_args, is_bytes, is_dict_like, is_falsy, is_integer,
                          is_list_like, is_number, is_pathlike, is_string, is_truthy,
                          is_union, type_name, type_repr, typeddict_types)

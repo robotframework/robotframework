@@ -18,8 +18,7 @@ from contextlib import contextmanager
 from pathlib import Path
 
 from robot.output.loggerhelper import LEVELS
-from robot.utils import (attribute_escape, get_link_path, html_escape, safe_str,
-                         timestamp_to_secs)
+from robot.utils import attribute_escape, get_link_path, html_escape, safe_str
 
 from .expandkeywordmatcher import ExpandKeywordMatcher
 from .stringcache import StringCache

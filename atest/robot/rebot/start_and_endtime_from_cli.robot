@@ -11,7 +11,7 @@ ${COMBINED}       %{TEMPDIR}${/}combined.xml
 *** Test Cases ***
 Combine with both start time and end time
     Log Many    ${INPUT1}    ${INPUT2}
-    Run Rebot    --starttime 2007:09:25:21:51 --endtime 2007:09:26:01:12:30.200    ${INPUT1} ${INPUT2}
+    Run Rebot    --starttime 2007:09:25:21:51 --endtime 2007-09-26T01:12:30.200    ${INPUT1} ${INPUT2}
     Should Be Equal    ${SUITE.start_time}      ${datetime(2007, 9, 25, 21, 51)}
     Should Be Equal    ${SUITE.end_time}        ${datetime(2007, 9, 26, 1, 12, 30, 200000)}
     Should Be Equal    ${SUITE.elapsed_time}    ${timedelta(seconds=3*60*60 + 21*60 + 30.2)}
