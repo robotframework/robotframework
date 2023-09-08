@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from datetime import datetime
 from contextlib import contextmanager
 from pathlib import Path
 
@@ -64,10 +65,10 @@ class JsBuildingContext:
             if self._log_dir and source and source.exists() else ''
         return self.string(rel_source)
 
-    def timestamp(self, time):
-        if not time:
+    def timestamp(self, ts: datetime) -> 'int|None':
+        if not ts:
             return None
-        millis = int(timestamp_to_secs(time) * 1000)
+        millis = round(ts.timestamp() * 1000)
         if self.basemillis is None:
             self.basemillis = millis
         return millis - self.basemillis

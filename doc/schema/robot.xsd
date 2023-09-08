@@ -284,7 +284,7 @@
     <xs:complexType name="Message">
         <xs:simpleContent>
             <xs:extension base="xs:string">
-                <xs:attribute name="timestamp" type="xs:string" use="required" />
+                <xs:attribute name="time" type="xs:dateTime" use="required" />
                 <xs:attribute name="level" type="MessageLevel" use="required" />
                 <xs:attribute name="html" type="xs:boolean" />
             </xs:extension>

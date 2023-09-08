@@ -17,7 +17,7 @@ from datetime import datetime
 
 from robot.errors import (ExecutionFailed, ExecutionStatus, DataError,
                           HandlerExecutionFailed)
-from robot.utils import ErrorDetails, get_timestamp
+from robot.utils import ErrorDetails
 
 from .modelcombiner import ModelCombiner
 

@@ -1,4 +1,5 @@
 import unittest
+from datetime import datetime
 
 from robot.model import Message
 from robot.result import Keyword
@@ -7,6 +8,17 @@ from robot.utils.asserts import assert_equal, assert_raises
 
 
 class TestMessage(unittest.TestCase):
+
+    def test_timestamp(self):
+        dt = datetime.now()
+        assert_equal(Message().timestamp, None)
+        assert_equal(Message(timestamp=dt).timestamp, dt)
+        assert_equal(Message(timestamp=dt.isoformat()).timestamp, dt)
+        msg = Message()
+        msg.timestamp = dt
+        assert_equal(msg.timestamp, dt)
+        msg.timestamp = dt.isoformat()
+        assert_equal(msg.timestamp, dt)
 
     def test_slots(self):
         assert_raises(AttributeError, setattr, Message(), 'attr', 'value')

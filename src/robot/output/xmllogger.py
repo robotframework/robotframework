@@ -60,7 +60,8 @@ class XmlLogger(ResultVisitor):
             self._write_message(msg)
 
     def _write_message(self, msg):
-        attrs = {'timestamp': msg.timestamp or 'N/A', 'level': msg.level}
+        attrs = {'time': msg.timestamp.isoformat() if msg.timestamp else None,
+                 'level': msg.level}
         if msg.html:
             attrs['html'] = 'true'
         self._writer.element('msg', msg.message, attrs)

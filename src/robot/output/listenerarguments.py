@@ -56,7 +56,9 @@ class ListenerArguments:
 class MessageArguments(ListenerArguments):
 
     def _get_version2_arguments(self, msg):
-        attributes = {'timestamp': msg.timestamp,
+        # Timestamp in our legacy format.
+        timestamp = msg.timestamp.isoformat(' ', timespec='milliseconds').replace('-', '')
+        attributes = {'timestamp': timestamp,
                       'message': msg.message,
                       'level': msg.level,
                       'html': 'yes' if msg.html else 'no'}

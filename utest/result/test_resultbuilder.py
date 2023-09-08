@@ -1,6 +1,7 @@
 import os
 import unittest
 import tempfile
+from datetime import datetime
 from io import StringIO
 from pathlib import Path
 
@@ -73,7 +74,7 @@ class TestBuildingSuiteExecutionResult(unittest.TestCase):
         message = self.test.body[0].messages[0]
         assert_equal(message.message, 'Test 1')
         assert_equal(message.level, 'INFO')
-        assert_equal(message.timestamp, '20111024 13:41:20.927')
+        assert_equal(message.timestamp, datetime(2011, 10, 24, 13, 41, 20, 927000))
 
     def test_for_is_built(self):
         for_ = self.test.body[2]

@@ -1,5 +1,6 @@
 import unittest
 import time
+from datetime import datetime
 
 from robot.utils.asserts import assert_equal
 from robot.utils import format_time
@@ -78,8 +79,7 @@ class TestOutputSplitter(unittest.TestCase):
         assert_equal(message.level, level)
         assert_equal(message.html, html)
         if timestamp:
-            assert_equal(message.timestamp,
-                          format_time(timestamp, millissep='.'))
+            assert_equal(message.timestamp, datetime.fromtimestamp(timestamp))
 
 
 if __name__ == '__main__':

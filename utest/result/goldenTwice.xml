@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<robot generator="Rebot 7.0.dev1 (Python 3.12.0rc2 on linux)" generated="20230908 00:09:51.199" rpa="false" schemaversion="5">
+<robot generator="Rebot 7.0.dev1 (Python 3.12.0rc2 on linux)" generated="2023-09-08T12:01:30.419054" rpa="false" schemaversion="5">
 <suite id="s1" name="Normal &amp; Normal">
 <suite id="s1-s1" name="Normal" source="normal.html">
 <kw name="my setup" type="SETUP">
@@ -10,7 +10,7 @@
 <kw name="Log" library="BuiltIn">
 <arg>Test 1</arg>
 <doc>Logs the given message with the given level.</doc>
-<msg timestamp="20111024 13:41:20.927" level="INFO">Test 1</msg>
+<msg time="2011-10-24T13:41:20.927000" level="INFO">Test 1</msg>
 <status status="PASS" start="2011-10-24T13:41:20.926000" elapsed="0.002"/>
 </kw>
 <kw name="logs on trace">
@@ -32,7 +32,7 @@
 <kw name="Log" library="BuiltIn">
 <arg>${x}</arg>
 <doc>Logs the given message with the given level.</doc>
-<msg timestamp="20210329 17:05:45.267" level="INFO">not in source</msg>
+<msg time="2021-03-29T17:05:45.267000" level="INFO">not in source</msg>
 <status status="PASS" start="2021-03-29T17:05:45.266000" elapsed="0.001"/>
 </kw>
 <status status="PASS" start="2021-03-29T17:05:45.266000" elapsed="0.001"/>
@@ -74,7 +74,7 @@
 <kw name="Log" library="BuiltIn">
 <arg>Test 1</arg>
 <doc>Logs the given message with the given level.</doc>
-<msg timestamp="20111024 13:41:20.927" level="INFO">Test 1</msg>
+<msg time="2011-10-24T13:41:20.927000" level="INFO">Test 1</msg>
 <status status="PASS" start="2011-10-24T13:41:20.926000" elapsed="0.002"/>
 </kw>
 <kw name="logs on trace">
@@ -96,7 +96,7 @@
 <kw name="Log" library="BuiltIn">
 <arg>${x}</arg>
 <doc>Logs the given message with the given level.</doc>
-<msg timestamp="20210329 17:05:45.267" level="INFO">not in source</msg>
+<msg time="2021-03-29T17:05:45.267000" level="INFO">not in source</msg>
 <status status="PASS" start="2021-03-29T17:05:45.266000" elapsed="0.001"/>
 </kw>
 <status status="PASS" start="2021-03-29T17:05:45.266000" elapsed="0.001"/>
@@ -145,7 +145,7 @@
 </suite>
 </statistics>
 <errors>
-<msg timestamp="20111024 13:41:20.873" level="ERROR">Error in file 'normal.html' in table 'Settings': Resource file 'nope' does not exist.</msg>
-<msg timestamp="20111024 13:41:20.873" level="ERROR">Error in file 'normal.html' in table 'Settings': Resource file 'nope' does not exist.</msg>
+<msg time="2011-10-24T13:41:20.873000" level="ERROR">Error in file 'normal.html' in table 'Settings': Resource file 'nope' does not exist.</msg>
+<msg time="2011-10-24T13:41:20.873000" level="ERROR">Error in file 'normal.html' in table 'Settings': Resource file 'nope' does not exist.</msg>
 </errors>
 </robot>

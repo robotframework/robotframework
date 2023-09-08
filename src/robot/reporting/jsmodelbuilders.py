@@ -49,7 +49,7 @@ class JsModelBuilder:
 
 class _Builder:
 
-    def __init__(self, context):
+    def __init__(self, context: JsBuildingContext):
         self._context = context
         self._string = self._context.string
         self._html = self._context.html
@@ -57,8 +57,8 @@ class _Builder:
 
     def _get_status(self, item):
         model = (STATUSES[item.status],
-                 self._timestamp(item.starttime),    # TODO: Use `start_time` instead.
-                 item.elapsedtime)
+                 self._timestamp(item.start_time),
+                 round(item.elapsed_time.total_seconds() * 1000))
         msg = getattr(item, 'message', '')
         if not msg:
             return model

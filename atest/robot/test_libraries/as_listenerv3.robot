@@ -30,10 +30,10 @@ Metadata can be modified
 Log messages and timestamps can be changed
    ${tc}=   Get test case    Pass
    Check log message    ${tc.kws[0].msgs[0]}    Passing [log_message]
-   Should be equal    ${tc.kws[0].msgs[0].timestamp}    20151216 15:51:20.141
+   Should be equal    ${tc.kws[0].msgs[0].timestamp}    ${datetime(2015, 12, 16, 15, 51,20, 141000)}
 
 Message to syslog can be changed
-   Syslog Should Contain    20151216 15:51:20.141 | WARN \ | Foo [log_message] [message]
+   Syslog Should Contain    2015-12-16 15:51:20.141000 | WARN \ | Foo [log_message] [message]
    Check log message    ${ERRORS[0]}    Foo [log_message] [message]    WARN
 
 Close is called
