@@ -253,15 +253,15 @@ Merge should have failed
 Timestamps should be cleared
     [Arguments]    @{suites}
     FOR    ${suite}    IN    @{suites}
-        Should Be Equal    ${suite.starttime}    ${None}
-        Should Be Equal    ${suite.endtime}    ${None}
+        Should Be Equal    ${suite.start_time}    ${None}
+        Should Be Equal    ${suite.end_time}    ${None}
     END
 
 Timestamps should be set
     [Arguments]    @{suites}
     FOR    ${suite}    IN    @{suites}
-        Timestamp Should Be Valid    ${suite.starttime}
-        Timestamp Should Be Valid    ${suite.endtime}
+        Timestamp Should Be Valid    ${suite.start_time}
+        Timestamp Should Be Valid    ${suite.end_time}
     END
 
 Create expected merge message header

@@ -24,5 +24,4 @@ Invalid Time Does Not Cause Uncatchable Error
 
 Can Stop Sleep With Timeout
     ${tc}=    Check Test Case    ${TESTNAME}
-    Should Be True    ${tc.elapsedtime} < 10000
-
+    Elapsed Time Should Be Valid    ${tc.elapsed_time}    maximum=10

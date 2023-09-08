@@ -128,21 +128,21 @@ Elapsed Time
     [Template]    NONE
     # Rebot hand-edited output with predefined times and check that times are read correctly.
     Run Rebot    ${EMPTY}    rebot/times.xml
-    Check Times    ${SUITE.tests[0]}    20061227 12:00:00.000    20061227 12:00:01.000    1000
-    Check Times    ${SUITE.tests[1]}    20061227 12:00:01.000    20061227 12:00:03.000    2000
-    Check Times    ${SUITE.tests[2]}    20061227 12:00:03.000    20061227 12:00:07.000    4000
-    Check Times    ${SUITE.tests[3]}    20061227 12:00:07.000    20061227 12:00:07.001    0001
-    Check Times    ${SUITE.tests[4]}    20061227 12:00:07.001    20061227 12:00:07.003    0002
-    Check Times    ${SUITE.tests[5]}    20061227 12:00:07.003    20061227 12:00:07.007    0004
-    Check Times    ${SUITE}    20061227 11:59:59.000    20061227 12:00:08.999    9999
+    Times Should Be    ${SUITE.tests[0]}    2006-12-27 12:00:00.000    2006-12-27 12:00:01.000    1.000
+    Times Should Be    ${SUITE.tests[1]}    2006-12-27 12:00:01.000    2006-12-27 12:00:03.000    2.000
+    Times Should Be    ${SUITE.tests[2]}    2006-12-27 12:00:03.000    2006-12-27 12:00:07.000    4.000
+    Times Should Be    ${SUITE.tests[3]}    2006-12-27 12:00:07.000    2006-12-27 12:00:07.001    0.001
+    Times Should Be    ${SUITE.tests[4]}    2006-12-27 12:00:07.001    2006-12-27 12:00:07.003    0.002
+    Times Should Be    ${SUITE.tests[5]}    2006-12-27 12:00:07.003    2006-12-27 12:00:07.007    0.004
+    Times Should Be    ${SUITE}             2006-12-27 11:59:59.000    2006-12-27 12:00:08.999    9.999
     Length Should Be    ${SUITE.tests}    6
     # Filter ouput created in earlier step and check that times are set accordingly.
     Copy Previous Outfile
     Run Rebot    --include incl2 --include excl3    ${OUTFILE COPY}
-    Check Times    ${SUITE}    ${NONE}    ${NONE}    6004
-    Check Times    ${SUITE.tests[0]}    20061227 12:00:01.000    20061227 12:00:03.000    2000
-    Check Times    ${SUITE.tests[1]}    20061227 12:00:03.000    20061227 12:00:07.000    4000
-    Check Times    ${SUITE.tests[2]}    20061227 12:00:07.003    20061227 12:00:07.007    004
+    Times Should Be    ${SUITE}             ${NONE}                    ${NONE}                    6.004
+    Times Should Be    ${SUITE.tests[0]}    2006-12-27 12:00:01.000    2006-12-27 12:00:03.000    2.000
+    Times Should Be    ${SUITE.tests[1]}    2006-12-27 12:00:03.000    2006-12-27 12:00:07.000    4.000
+    Times Should Be    ${SUITE.tests[2]}    2006-12-27 12:00:07.003    2006-12-27 12:00:07.007    0.004
     Length Should Be    ${SUITE.tests}    3
 
 *** Keywords ***
@@ -158,14 +158,13 @@ Run And Check Include And Exclude
     Should Be True    $SUITE.statistics.passed == len($tests)
     Should Be True    $SUITE.statistics.failed == 0
     IF    ${times_are_none}
-        Should Be Equal    ${SUITE.starttime}    ${None}
-        Should Be Equal    ${SUITE.endtime}      ${None}
+        Should Be Equal    ${SUITE.start_time}    ${None}
+        Should Be Equal    ${SUITE.end_time}      ${None}
     ELSE
-        Should Be Equal    ${SUITE.starttime}    ${ORIG_START}
-        Should Be Equal    ${SUITE.endtime}      ${ORIG_END}
+        Should Be Equal    ${SUITE.start_time}    ${ORIG_START}
+        Should Be Equal    ${SUITE.end_time}      ${ORIG_END}
     END
-    Elapsed Time Should Be Valid    ${SUITE.elapsedtime}
-    Should Be True    $SUITE.elapsedtime <= $ORIG_ELAPSED + 1
+    Elapsed Time Should Be Valid    ${SUITE.elapsed_time}    maximum=${ORIG_ELAPSED.total_seconds()} + 1
 
 Run And Check Error
     [Arguments]    ${params}    ${filter msg}    ${suite name}=Include And Exclude

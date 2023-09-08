@@ -50,5 +50,5 @@ With RETURN
 
 Condition evaluation time is included in elapsed time
     ${loop} =    Check WHILE loop    PASS    1
-    Should Be True    ${loop.elapsedtime} >= 200
-    Should Be True    ${loop.body[0].elapsedtime} >= 100
+    Elapsed Time Should Be Valid    ${loop.elapsed_time}            minimum=0.2
+    Elapsed Time Should Be Valid    ${loop.body[0].elapsed_time}    minimum=0.1
