@@ -97,12 +97,12 @@ class TestBuildTestSuite(unittest.TestCase):
         self._verify_min_message_level('INFO')
 
     def test_message_with_values(self):
-        msg = Message('Message', 'DEBUG', timestamp='20111204 22:04:03.210')
+        msg = Message('Message', 'DEBUG', timestamp='2011-12-04 22:04:03.210')
         self._verify_message(msg, 'Message', 1, 0)
         self._verify_min_message_level('DEBUG')
 
     def test_warning_linking(self):
-        msg = Message('Message', 'WARN', timestamp='20111204 22:04:03.210',
+        msg = Message('Message', 'WARN', timestamp='2011-12-04 22:04:03.210',
                       parent=TestCase().body.create_keyword())
         self._verify_message(msg, 'Message', 3, 0)
         links = self.context._msg_links
@@ -111,7 +111,7 @@ class TestBuildTestSuite(unittest.TestCase):
         assert_equal(remap(links[key], self.context.strings), 't1-k1')
 
     def test_error_linking(self):
-        msg = Message('ERROR Message', 'ERROR', timestamp='20150609 01:02:03.004',
+        msg = Message('ERROR Message', 'ERROR', timestamp='2015-06-09 01:02:03.004',
                       parent=TestCase().body.create_keyword().body.create_keyword())
         self._verify_message(msg, 'ERROR Message', 4, 0)
         links = self.context._msg_links
@@ -153,8 +153,8 @@ class TestBuildTestSuite(unittest.TestCase):
     def test_timestamps(self):
         suite = TestSuite(start_time='2011-12-05 00:33:33.333')
         suite.setup.config(kwname='s1', start_time='2011-12-05 00:33:33.334')
-        suite.setup.body.create_message('Message', timestamp='20111205 00:33:33.343')
-        suite.setup.body.create_message(level='DEBUG', timestamp='20111205 00:33:33.344')
+        suite.setup.body.create_message('Message', timestamp='2011-12-05 00:33:33.343')
+        suite.setup.body.create_message(level='DEBUG', timestamp='2011-12-05 00:33:33.344')
         suite.tests.create(start_time='2011-12-05 00:33:34.333')
         context = JsBuildingContext()
         model = SuiteBuilder(context).build(suite)
@@ -331,10 +331,10 @@ class TestSplitting(unittest.TestCase):
     def test_message_linking(self):
         suite = self._get_suite_with_keywords()
         msg1 = suite.setup.body[0].body.create_message(
-            'Message 1', 'WARN', timestamp='20111204 22:04:03.210'
+            'Message 1', 'WARN', timestamp='2011-12-04 22:04:03.210'
         )
         msg2 = suite.tests.create().body.create_keyword().body.create_message(
-            'Message 2', 'ERROR', timestamp='20111204 22:04:04.210'
+            'Message 2', 'ERROR', timestamp='2011-12-04 22:04:04.210'
         )
         context = JsBuildingContext(split_log=True)
         SuiteBuilder(context).build(suite)
@@ -483,8 +483,8 @@ class TestBuildStatistics(unittest.TestCase):
 class TestBuildErrors(unittest.TestCase):
 
     def setUp(self):
-        msgs = [Message('Error', 'ERROR', timestamp='20111206 14:33:00.000'),
-                Message('Warning', 'WARN', timestamp='20111206 14:33:00.042')]
+        msgs = [Message('Error', 'ERROR', timestamp='2011-12-06 14:33:00.000'),
+                Message('Warning', 'WARN', timestamp='2011-12-06 14:33:00.042')]
         self.errors = ExecutionErrors(msgs)
 
     def test_errors(self):
@@ -495,10 +495,10 @@ class TestBuildErrors(unittest.TestCase):
 
     def test_linking(self):
         self.errors.messages.create('Linkable', 'WARN',
-                                    timestamp='20111206 14:33:00.001')
+                                    timestamp='2011-12-06 14:33:00.001')
         context = JsBuildingContext()
         msg = TestSuite().tests.create().body.create_keyword().body.create_message(
-            'Linkable', 'WARN', timestamp='20111206 14:33:00.001'
+            'Linkable', 'WARN', timestamp='2011-12-06 14:33:00.001'
         )
         MessageBuilder(context).build(msg)
         model = ErrorsBuilder(context).build(self.errors)

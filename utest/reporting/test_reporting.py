@@ -86,10 +86,10 @@ class TestReporting(unittest.TestCase):
         tc = suite.tests.create(name=self.EXPECTED_FAILING_TEST)
         kw = tc.body.create_keyword(kwname=self.EXPECTED_KEYWORD_NAME)
         kw.body.create_message(message=self.EXPECTED_DEBUG_MESSAGE,
-                               level='DEBUG', timestamp='20201212 12:12:12.000')
+                               level='DEBUG', timestamp='2020-12-12 12:12:12.000')
         errors = ExecutionErrors()
         errors.messages.create(message=self.EXPECTED_ERROR_MESSAGE,
-                               level='ERROR', timestamp='20201212 12:12:12.000')
+                               level='ERROR', timestamp='2020-12-12 12:12:12.000')
         return Result(root_suite=suite, errors=errors)
 
     def _verify_output(self, content):
