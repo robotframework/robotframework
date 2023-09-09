@@ -1,7 +1,7 @@
 import unittest
 import warnings
 
-from robot.model import TestSuite, TestCase, Keyword, Keywords
+from robot.model import TestSuite, TestCase, Keyword
 from robot.utils.asserts import (assert_equal, assert_not_equal, assert_true,
                                  assert_raises)
 
@@ -120,14 +120,6 @@ class TestKeyword(unittest.TestCase):
     def test_copy_and_deepcopy_with_non_existing_attributes(self):
         assert_raises(AttributeError, Keyword().copy, bad='attr')
         assert_raises(AttributeError, Keyword().deepcopy, bad='attr')
-
-
-class TestKeywords(unittest.TestCase):
-
-    def test_deprecation(self):
-        with warnings.catch_warnings(record=True) as w:
-            Keywords()
-            assert_true('deprecated' in str(w[0].message))
 
 
 if __name__ == '__main__':

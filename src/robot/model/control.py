@@ -19,7 +19,6 @@ from typing import Any, cast, Literal, Sequence, TypeVar, TYPE_CHECKING
 from robot.utils import setter
 
 from .body import Body, BodyItem, BodyItemParent, BaseBranches
-from .keyword import Keywords
 from .modelobject import DataDict
 from .visitor import SuiteVisitor
 
@@ -78,15 +77,6 @@ class For(BodyItem):
     @setter
     def body(self, body: 'Sequence[BodyItem|DataDict]') -> Body:
         return self.body_class(self, body)
-
-    @property
-    def keywords(self):
-        """Deprecated since Robot Framework 4.0. Use :attr:`body` instead."""
-        return Keywords(self, self.body)
-
-    @keywords.setter
-    def keywords(self, keywords):
-        Keywords.raise_deprecation_error()
 
     def visit(self, visitor: SuiteVisitor):
         visitor.visit_for(self)

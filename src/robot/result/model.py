@@ -43,7 +43,7 @@ from pathlib import Path
 from typing import Generic, Literal, Mapping, Sequence, Type, Union, TypeVar
 
 from robot import model
-from robot.model import (BodyItem, create_fixture, DataDict, Keywords, Tags,
+from robot.model import (BodyItem, create_fixture, DataDict, Tags,
                          SuiteVisitor, TotalStatistics, TotalStatisticsBuilder,
                          TestSuites)
 from robot.utils import copy_signature, KnownAtRuntime, setter
@@ -762,21 +762,6 @@ class Keyword(model.Keyword, StatusMixin):
         return self.body_class(self, body)
 
     @property
-    def keywords(self) -> Keywords:    # FIXME: Remove in RF 7.
-        """Deprecated since Robot Framework 4.0.
-
-        Use :attr:`body` or :attr:`teardown` instead.
-        """
-        keywords = self.body.filter(messages=False)
-        if self.teardown:
-            keywords.append(self.teardown)
-        return Keywords(self, keywords)
-
-    @keywords.setter
-    def keywords(self, keywords):
-        Keywords.raise_deprecation_error()
-
-    @property
     def messages(self) -> 'list[Message]':
         """Keyword's messages.
 
@@ -784,15 +769,6 @@ class Keyword(model.Keyword, StatusMixin):
         in :attr:`body`.
         """
         return self.body.filter(messages=True)    # type: ignore
-
-    @property
-    def children(self) -> 'list[BodyItem]':    # FIXME: Remove in RF 7.
-        """List of child keywords and messages in creation order.
-
-        Deprecated since Robot Framework 4.0. Use :attr:`body` instead.
-        """
-        warnings.warn("'Keyword.children' is deprecated. Use 'Keyword.body' instead.")
-        return list(self.body)
 
     @property
     def name(self) -> 'str|None':
@@ -920,11 +896,6 @@ class TestCase(model.TestCase[Keyword], StatusMixin):
     @property
     def not_run(self) -> bool:
         return False
-
-    @property
-    def critical(self) -> bool:    # FIXME: Remove in RF 7.
-        warnings.warn("'TestCase.critical' is deprecated and always returns 'True'.")
-        return True
 
     @setter
     def body(self, body: 'Sequence[BodyItem|DataDict]') -> Body:
