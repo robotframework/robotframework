@@ -41,8 +41,7 @@ from typing import Any, Literal, Mapping, Sequence, TYPE_CHECKING, Union
 from robot import model
 from robot.conf import RobotSettings
 from robot.errors import BreakLoop, ContinueLoop, DataError, ReturnFromKeyword
-from robot.model import (BodyItem, create_fixture, DataDict, Keywords, ModelObject,
-                         TestSuites)
+from robot.model import (BodyItem, create_fixture, DataDict, ModelObject, TestSuites)
 from robot.output import LOGGER, Output, pyloggingconf
 from robot.result import (Break as BreakResult, Continue as ContinueResult,
                           Error as ErrorResult, Return as ReturnResult)
@@ -786,21 +785,6 @@ class UserKeyword(ModelObject):
     @setter
     def body(self, body: 'Sequence[BodyItem|DataDict]') -> Body:
         return Body(self, body)
-
-    @property
-    def keywords(self) -> Keywords:
-        """Deprecated since Robot Framework 4.0.
-
-        Use :attr:`body` or :attr:`teardown` instead.
-        """
-        kws = list(self.body)
-        if self.teardown:
-            kws.append(self.teardown)
-        return Keywords(self, kws)
-
-    @keywords.setter
-    def keywords(self, keywords):
-        Keywords.raise_deprecation_error()
 
     @property
     def teardown(self) -> Keyword:

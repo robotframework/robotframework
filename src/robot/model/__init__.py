@@ -30,7 +30,7 @@ from .configurer import SuiteConfigurer
 from .control import Break, Continue, Error, For, If, IfBranch, Return, Try, TryBranch, While
 from .fixture import create_fixture
 from .itemlist import ItemList
-from .keyword import Keyword, Keywords
+from .keyword import Keyword
 from .message import Message, MessageLevel, Messages
 from .modelobject import DataDict, ModelObject
 from .modifier import ModelModifier

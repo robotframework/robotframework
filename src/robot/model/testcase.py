@@ -21,7 +21,7 @@ from robot.utils import setter
 from .body import Body, BodyItem
 from .fixture import create_fixture
 from .itemlist import ItemList
-from .keyword import Keyword, Keywords
+from .keyword import Keyword
 from .modelobject import DataDict, ModelObject
 from .tags import Tags
 
@@ -142,19 +142,6 @@ class TestCase(ModelObject, Generic[KW]):
         New in Robot Framework 5.0.
         """
         return bool(self._teardown)
-
-    @property
-    def keywords(self) -> Keywords:
-        """Deprecated since Robot Framework 4.0
-
-        Use :attr:`body`, :attr:`setup` or :attr:`teardown` instead.
-        """
-        keywords = [self.setup] + list(self.body) + [self.teardown]
-        return Keywords(self, [kw for kw in keywords if kw])
-
-    @keywords.setter
-    def keywords(self, keywords):
-        Keywords.raise_deprecation_error()
 
     @property
     def id(self) -> str:

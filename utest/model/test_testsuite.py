@@ -189,15 +189,6 @@ class TestTestSuite(unittest.TestCase):
     def test_slots(self):
         assert_raises(AttributeError, setattr, self.suite, 'attr', 'value')
 
-    def test_keywords_deprecation(self):
-        self.suite.setup.config(name='S')
-        with warnings.catch_warnings(record=True) as w:
-            kws = self.suite.keywords
-            assert_equal(len(kws), 1)
-            assert_true('deprecated' in str(w[0].message))
-        assert_raises(AttributeError, kws.extend, ())
-        assert_raises(AttributeError, setattr, self.suite, 'keywords', [])
-
 
 class TestSuiteId(unittest.TestCase):
 

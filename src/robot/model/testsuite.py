@@ -24,7 +24,7 @@ from .configurer import SuiteConfigurer
 from .filter import Filter, EmptySuiteRemover
 from .fixture import create_fixture
 from .itemlist import ItemList
-from .keyword import Keyword, Keywords
+from .keyword import Keyword
 from .metadata import Metadata
 from .modelobject import DataDict, ModelObject
 from .tagsetter import TagSetter
@@ -307,19 +307,6 @@ class TestSuite(ModelObject, Generic[KW, TC]):
         New in Robot Framework 5.0.
         """
         return bool(self._teardown)
-
-    @property
-    def keywords(self) -> Keywords:
-        """Deprecated since Robot Framework 4.0.
-
-        Use :attr:`setup` or :attr:`teardown` instead.
-        """
-        keywords = [self.setup, self.teardown]
-        return Keywords(self, [kw for kw in keywords if kw])
-
-    @keywords.setter
-    def keywords(self, keywords):
-        Keywords.raise_deprecation_error()
 
     @property
     def id(self) -> str:

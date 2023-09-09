@@ -407,17 +407,6 @@ class TestModel(unittest.TestCase):
         assert_equal(kw.teardown.name, None)
         assert_equal(kw.teardown.type, 'TEARDOWN')
 
-    def test_keywords_deprecation(self):
-        kw = Keyword()
-        kw.body = [Keyword(), Message(), Keyword(), Keyword(), Message()]
-        kw.teardown.config(kwname='T')
-        with warnings.catch_warnings(record=True) as w:
-            kws = kw.keywords
-            assert_equal(list(kws), [kw.body[0], kw.body[2], kw.body[3], kw.teardown])
-            assert_true('deprecated' in str(w[0].message))
-        assert_raises(AttributeError, kws.append, Keyword())
-        assert_raises(AttributeError, setattr, kw, 'keywords', [])
-
     def test_for_parents(self):
         test = TestCase()
         for_ = test.body.create_for()

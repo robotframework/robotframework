@@ -43,19 +43,6 @@ class TestModelTypes(unittest.TestCase):
         assert_not_equal(type(kw), model.Keyword)
 
 
-class TestUserKeyword(unittest.TestCase):
-
-    def test_keywords_deprecation(self):
-        uk = UserKeyword('Name')
-        uk.body.create_keyword()
-        uk.teardown.config(name='T')
-        with warnings.catch_warnings(record=True) as w:
-            kws = uk.keywords
-            assert_equal(len(kws), 2)
-            assert_true('deprecated' in str(w[0].message))
-        assert_raises(AttributeError, kws.append, Keyword())
-        assert_raises(AttributeError, setattr, uk, 'keywords', [])
-
 
 class TestSuiteFromSources(unittest.TestCase):
     path = Path(os.getenv('TEMPDIR') or tempfile.gettempdir(),
