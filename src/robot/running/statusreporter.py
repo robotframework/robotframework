@@ -63,7 +63,7 @@ class StatusReporter:
                 result.message = failure.message
         if self.initial_test_status == 'PASS':
             context.test.status = result.status
-        result.end_time = datetime.now()
+        result.elapsed_time = datetime.now() - result.start_time
         context.end_keyword(ModelCombiner(self.data, result))
         if failure is not exc_val and not self.suppress:
             raise failure
