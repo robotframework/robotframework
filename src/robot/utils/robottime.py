@@ -240,26 +240,37 @@ def get_time(format='timestamp', time_=None):
         return parts
 
 
-def parse_timestamp(timestamp: str) -> datetime:
+def parse_timestamp(timestamp: 'str|datetime') -> datetime:
     """Parse timestamp in ISO 8601-like formats into a ``datetime``.
 
     Months, days, hours, minutes and seconds must use two digits and
     year must use four. Microseconds can use up to six digits. All time
     parts can be omitted.
 
-    Timestamps can use separators '-', '_', ' ', 'T', ':' and '.' between
-    date and time components. Separators can also be omitted.
+    Separators '-', '_', ' ', 'T', ':' and '.' between date and time components.
+    Separators can also be omitted altogether.
 
-    Examples:
+    Examples::
+
         2023-09-08T14:34:42.123456
         2023-09-08 14:34:42.123
         20230908 143442
-        2023-09-08
+        2023_09_08
+
+    This is similar to ``datetime.fromisoformat``, but a little less strict.
+    The standard function is recommended if the input format is known to be
+    accepted.
+
+    If the input is a ``datetime``, it is returned as-is.
 
     New in Robot Framework 7.0.
     """
     if isinstance(timestamp, datetime):
         return timestamp
+    try:
+        return datetime.fromisoformat(timestamp)
+    except ValueError:
+        pass
     orig = timestamp
     for sep in ('-', '_', ' ', 'T', ':', '.'):
         if sep in timestamp:

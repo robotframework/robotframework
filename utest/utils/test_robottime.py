@@ -344,6 +344,8 @@ class TestTime(unittest.TestCase):
     def test_parse_timestamp(self):
         for timestamp in ['2023-09-08 23:34:45.123456',
                           '2023-09-08T23:34:45.123456',
+                          '2023-09-08 23:34:45:123456',
+                          '2023:09:08:23:34:45:123456',
                           '20230908 23:34:45.123456',
                           '2023_09_08 233445.123456',
                           '20230908233445123456']:
@@ -360,6 +362,10 @@ class TestTime(unittest.TestCase):
         ]:
             assert_equal(parse_timestamp(timestamp),
                          datetime.fromisoformat(expected))
+
+    def test_parse_timestamp_with_datetime(self):
+        dt = datetime.now()
+        assert_equal(parse_timestamp(dt), dt)
 
     def test_parse_timestamp_invalid(self):
         assert_raises_with_msg(ValueError,
