@@ -181,7 +181,6 @@ Get Type
         ${args} =    Catenate    SEPARATOR=,${SPACE}    @{nested}
         ${type} =    Set Variable    ${type}\[${args}]
     END
-    Should Be Equal    ${elem.text}    ${type}
     RETURN    ${type}
 
 Get Element Optional Text

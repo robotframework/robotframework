@@ -89,10 +89,7 @@ class LibdocXmlWriter:
             attrs['union'] = 'true'
         if type_info.name in type_docs:
             attrs['typedoc'] = type_docs[type_info.name]
-        # Writing content, and omitting newlines, is backwards compatibility with
-        # specs created using RF < 6.1. TODO: Remove in RF 7.
-        writer.start('type', attrs, newline=False)
-        writer.content(str(type_info))
+        writer.start('type', attrs)
         for nested in type_info.nested:
             self._write_type_info(nested, type_docs, writer, top=False)
         writer.end('type', newline=top)
