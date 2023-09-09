@@ -270,59 +270,76 @@ class TestTime(unittest.TestCase):
 
     def test_elapsed_time_to_string(self):
         for elapsed, expected in [(0, '00:00:00.000'),
-                                  (0.1, '00:00:00.000'),
-                                  (0.5, '00:00:00.000'),
-                                  (0.501, '00:00:00.001'),
-                                  (1, '00:00:00.001'),
-                                  (1.5, '00:00:00.002'),
-                                  (42, '00:00:00.042'),
-                                  (999, '00:00:00.999'),
-                                  (999.9, '00:00:01.000'),
-                                  (1000, '00:00:01.000'),
-                                  (1001, '00:00:01.001'),
-                                  (60000, '00:01:00.000'),
-                                  (600000, '00:10:00.000'),
-                                  (654321, '00:10:54.321'),
-                                  (660000, '00:11:00.000'),
-                                  (3600000, '01:00:00.000'),
-                                  (36000000, '10:00:00.000'),
-                                  (360000000, '100:00:00.000'),
-                                  (360000000 + 36000000 + 3600000 + 660000 + 11111,
+                                  (0.0001, '00:00:00.000'),
+                                  (0.00049, '00:00:00.000'),
+                                  (0.00050, '00:00:00.001'),
+                                  (0.00051, '00:00:00.001'),
+                                  (0.001, '00:00:00.001'),
+                                  (0.0015, '00:00:00.002'),
+                                  (0.042, '00:00:00.042'),
+                                  (0.999, '00:00:00.999'),
+                                  (0.9999, '00:00:01.000'),
+                                  (1.0, '00:00:01.000'),
+                                  (1, '00:00:01.000'),
+                                  (1.001, '00:00:01.001'),
+                                  (60, '00:01:00.000'),
+                                  (600, '00:10:00.000'),
+                                  (654.321, '00:10:54.321'),
+                                  (660, '00:11:00.000'),
+                                  (3600, '01:00:00.000'),
+                                  (36000, '10:00:00.000'),
+                                  (360000, '100:00:00.000'),
+                                  (360000 + 36000 + 3600 + 660 + 11.111,
                                    '111:11:11.111')]:
-            td = timedelta(seconds=elapsed / 1000)
-            assert_equal(elapsed_time_to_string(elapsed), expected, elapsed)
-            assert_equal(elapsed_time_to_string(td), expected, elapsed)
-            if expected != '00:00:00.000':
-                assert_equal(elapsed_time_to_string(-1 * elapsed),
+            assert_equal(elapsed_time_to_string(elapsed, seconds=True),
+                         expected, elapsed)
+            assert_equal(elapsed_time_to_string(timedelta(seconds=elapsed)),
+                         expected, elapsed)
+            if elapsed != 0:
+                assert_equal(elapsed_time_to_string(-elapsed, seconds=True),
+                             '-' + expected, elapsed)
+                assert_equal(elapsed_time_to_string(timedelta(seconds=-elapsed)),
                              '-' + expected, elapsed)
 
     def test_elapsed_time_to_string_without_millis(self):
         for elapsed, expected in [(0, '00:00:00'),
-                                  (1, '00:00:00'),
-                                  (500, '00:00:00'),
-                                  (500.001, '00:00:01'),
-                                  (999, '00:00:01'),
-                                  (1000, '00:00:01'),
-                                  (1499.999, '00:00:01'),
-                                  (1500, '00:00:02'),
-                                  (59499.9, '00:00:59'),
-                                  (59500.0, '00:01:00'),
-                                  (59999, '00:01:00'),
-                                  (60000, '00:01:00'),
-                                  (654321, '00:10:54'),
-                                  (654500, '00:10:54'),
-                                  (654501, '00:10:55'),
-                                  (3599999, '01:00:00'),
-                                  (3600000, '01:00:00'),
-                                  (359999999, '100:00:00'),
-                                  (360000000, '100:00:00'),
-                                  (360000500, '100:00:00'),
-                                  (360000500.001, '100:00:01')]:
-            assert_equal(elapsed_time_to_string(elapsed, include_millis=False),
+                                  (0.001, '00:00:00'),
+                                  (0.5, '00:00:00'),
+                                  (0.501, '00:00:01'),
+                                  (0.999, '00:00:01'),
+                                  (1.0, '00:00:01'),
+                                  (1, '00:00:01'),
+                                  (1.4999, '00:00:01'),
+                                  (1.500, '00:00:02'),
+                                  (59.4999, '00:00:59'),
+                                  (59.5, '00:01:00'),
+                                  (59.999, '00:01:00'),
+                                  (60, '00:01:00'),
+                                  (654.321, '00:10:54'),
+                                  (654.500, '00:10:54'),
+                                  (654.501, '00:10:55'),
+                                  (3599.999, '01:00:00'),
+                                  (3600, '01:00:00'),
+                                  (359999.999, '100:00:00'),
+                                  (360000, '100:00:00'),
+                                  (360000.5, '100:00:00'),
+                                  (360000.501, '100:00:01')]:
+            assert_equal(elapsed_time_to_string(elapsed, include_millis=False,
+                                                seconds=True),
                          expected, elapsed)
             if expected != '00:00:00':
-                assert_equal(elapsed_time_to_string(-1 * elapsed, False),
+                assert_equal(elapsed_time_to_string(-1 * elapsed, False, True),
                              '-' + expected, elapsed)
+
+    def test_elapsed_time_default_input_is_deprecated(self):
+        with warnings.catch_warnings(record=True) as w:
+            assert_equal(elapsed_time_to_string(1000), '00:00:01.000')
+        assert_equal(str(w[0].message),
+                     "'robot.utils.elapsed_time_to_string' currently accepts input "
+                     "as milliseconds, but that will be changed to seconds in "
+                     "Robot Framework 8.0. Use 'seconds=True' to change the behavior "
+                     "already now and to avoid this warning. Alternatively pass "
+                     "the elapsed time as a 'timedelta'.")
 
     def test_parse_timestamp(self):
         for timestamp in ['2023-09-08 23:34:45.123456',

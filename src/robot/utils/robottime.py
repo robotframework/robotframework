@@ -403,37 +403,54 @@ def get_elapsed_time(start_time, end_time):
 
 
 def elapsed_time_to_string(elapsed: 'int|float|timedelta',
-                           include_millis: bool = True):
+                           include_millis: bool = True,
+                           seconds: bool = False):
     """Converts elapsed time to format 'hh:mm:ss.mil'.
 
-    Elapsed time can be given as milliseconds either as an integer or
-    as a float. Alternatively it can be given as a ``timedelta``.
+    Elapsed time as an integer or as a float is currently considered to be
+    milliseconds, but that will be changed to seconds in Robot Framework 8.0.
+    Use ``seconds=True`` to change the behavior already now and to avoid the
+    deprecation warning. An alternative is giving the elapsed time as
+    a ``timedelta``.
 
     If `include_millis` is True, '.mil' part is omitted.
+
+    Support for giving the elapsed time as a ``timedelta`` and the ``seconds``
+    argument are new in Robot Framework 7.0.
     """
+    # TODO: Change the default input to seconds in RF 8.0.
     if isinstance(elapsed, timedelta):
-        elapsed = round(elapsed.total_seconds() * 1000)
+        elapsed = elapsed.total_seconds()
+    elif not seconds:
+        elapsed /= 1000
+        warnings.warn("'robot.utils.elapsed_time_to_string' currently accepts "
+                      "input as milliseconds, but that will be changed to seconds "
+                      "in Robot Framework 8.0. Use 'seconds=True' to change the "
+                      "behavior already now and to avoid this warning. Alternatively "
+                      "pass the elapsed time as a 'timedelta'.")
     prefix = ''
     if elapsed < 0:
         prefix = '-'
         elapsed = abs(elapsed)
     if include_millis:
-        return prefix + _elapsed_time_to_string(elapsed)
+        return prefix + _elapsed_time_to_string_with_millis(elapsed)
     return prefix + _elapsed_time_to_string_without_millis(elapsed)
 
 
-def _elapsed_time_to_string(elapsed):
-    secs, millis = divmod(round(elapsed), 1000)
+def _elapsed_time_to_string_with_millis(elapsed):
+    elapsed = round(elapsed, 3)
+    secs = int(elapsed)
+    millis = round((elapsed - secs) * 1000)
     mins, secs = divmod(secs, 60)
     hours, mins = divmod(mins, 60)
-    return '%02d:%02d:%02d.%03d' % (hours, mins, secs, millis)
+    return f'{hours:02}:{mins:02}:{secs:02}.{millis:03}'
 
 
 def _elapsed_time_to_string_without_millis(elapsed):
-    secs = round(elapsed, ndigits=-3) // 1000
+    secs = round(elapsed)
     mins, secs = divmod(secs, 60)
     hours, mins = divmod(mins, 60)
-    return '%02d:%02d:%02d' % (hours, mins, secs)
+    return f'{hours:02}:{mins:02}:{secs:02}'
 
 
 def _timestamp_to_millis(timestamp, seps=None):
