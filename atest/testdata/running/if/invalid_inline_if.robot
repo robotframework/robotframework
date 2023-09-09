@@ -100,7 +100,7 @@ Nested IF 3
     ...    ELSE               IF    True    Not run
 
 Nested FOR
-    [Documentation]    FAIL    'For' is a reserved keyword. It must be an upper case 'FOR' when used as a marker.
+    [Documentation]    FAIL    Support for the old FOR loop syntax has been removed. Replace 'FOR' with 'FOR', end the loop with 'END', and remove escaping backslashes.
     IF    True    FOR    ${x}    IN    @{stuff}
 
 Unnecessary END
