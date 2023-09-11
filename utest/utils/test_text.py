@@ -145,28 +145,31 @@ class TestVirtualLineLength(unittest.TestCase):
 
 
 class TestConsoleWidth(unittest.TestCase):
-    len16_asian = u'\u6c49\u5b57\u5e94\u8be5\u6b63\u786e\u5bf9\u9f50'
-    ten_normal = u'1234567890'
-    mixed_26 = u'012345\u6c49\u5b57\u5e94\u8be5\u6b63\u786e\u5bf9\u9f567890'
-    nfd = u'A\u030Abo'
+    ascii_10 = '1234567890'
+    asian_16 = '汉字应该正确对齐'
+    combining_3 = 'A\u030Abo'    # Åbo in NFD
+    mixed_27 = '012345汉字应该正确对齖7890A\u030A'
 
-    def test_console_width(self):
-        assert_equal(get_console_length(self.ten_normal), 10)
+    def test_ascii(self):
+        assert_equal(get_console_length(self.ascii_10), 10)
 
-    def test_east_asian_width(self):
-        assert_equal(get_console_length(self.len16_asian), 16)
+    def test_asian(self):
+        assert_equal(get_console_length(self.asian_16), 16)
 
-    def test_combining_width(self):
-        assert_equal(get_console_length(self.nfd), 3)
+    def test_combining(self):
+        assert_equal(get_console_length(self.combining_3), 3)
 
-    def test_cut_right(self):
-        assert_equal(pad_console_length(self.ten_normal, 5), '12...')
-        assert_equal(pad_console_length(self.ten_normal, 15), self.ten_normal+' '*5)
-        assert_equal(pad_console_length(self.ten_normal, 10), self.ten_normal)
+    def test_mixed(self):
+        assert_equal(get_console_length(self.mixed_27), 27)
 
-    def test_cut_east_asian(self):
-        assert_equal(pad_console_length(self.len16_asian, 10), u'\u6c49\u5b57\u5e94... ')
-        assert_equal(pad_console_length(self.mixed_26, 11), u'012345\u6c49...')
+    def test_pad_ascii(self):
+        assert_equal(pad_console_length(self.ascii_10, 5), '12...')
+        assert_equal(pad_console_length(self.ascii_10, 15), self.ascii_10 + ' ' * 5)
+        assert_equal(pad_console_length(self.ascii_10, 10), self.ascii_10)
+
+    def test_pad_asian(self):
+        assert_equal(pad_console_length(self.asian_16, 10), '汉字应... ')
+        assert_equal(pad_console_length(self.mixed_27, 11), '012345汉...')
 
 
 class TestDocSplitter(unittest.TestCase):
@@ -242,18 +245,18 @@ class TestSplitArgsFromNameOrPath(unittest.TestCase):
     def test_windows_path_with_args(self):
         assert_equal(self.method('C:\\name.py:arg1'), ('C:\\name.py', ['arg1']))
         assert_equal(self.method('D:\\APPS\\listener:v1:b2:z3'),
-                      ('D:\\APPS\\listener', ['v1', 'b2', 'z3']))
+                     ('D:\\APPS\\listener', ['v1', 'b2', 'z3']))
         assert_equal(self.method('C:/varz.py:arg'), ('C:/varz.py', ['arg']))
         assert_equal(self.method('C:\\file.py:arg;with;alternative;separator'),
-                      ('C:\\file.py', ['arg;with;alternative;separator']))
+                     ('C:\\file.py', ['arg;with;alternative;separator']))
 
     def test_windows_path_with_semicolon_separator(self):
         assert_equal(self.method('C:\\name.py;arg1'), ('C:\\name.py', ['arg1']))
         assert_equal(self.method('D:\\APPS\\listener;v1;b2;z3'),
-                      ('D:\\APPS\\listener', ['v1', 'b2', 'z3']))
+                     ('D:\\APPS\\listener', ['v1', 'b2', 'z3']))
         assert_equal(self.method('C:/varz.py;arg'), ('C:/varz.py', ['arg']))
         assert_equal(self.method('C:\\file.py;arg:with:alternative:separator'),
-                      ('C:\\file.py', ['arg:with:alternative:separator']))
+                     ('C:\\file.py', ['arg:with:alternative:separator']))
 
     def test_existing_paths_are_made_absolute(self):
         path = 'robot-framework-unit-test-file-12q3405909qasf'
@@ -297,11 +300,11 @@ class TestGetdoc(unittest.TestCase):
         assert_equal(getdoc(Class), 'My doc.\n\nIn multiple lines.')
         assert_equal(getdoc(Class), getdoc(Class()))
 
-    def test_unicode_doc(self):
+    def test_non_ascii_doc(self):
         class Class:
             def meth(self):
-                u"""Hyv\xe4 \xe4iti!"""
-        assert_equal(getdoc(Class.meth), u'Hyv\xe4 \xe4iti!')
+                """Hyvä äiti!"""
+        assert_equal(getdoc(Class.meth), 'Hyvä äiti!')
         assert_equal(getdoc(Class.meth), getdoc(Class().meth))
 
 

@@ -110,9 +110,9 @@ class TestIf(unittest.TestCase):
             (IfBranch(ELSE),
              'ELSE',
              "IfBranch(type='ELSE', condition=None)"),
-            (IfBranch(condition=u'$x == "\xe4iti"'),
-             u'IF    $x == "\xe4iti"',
-             u"IfBranch(type='IF', condition=%r)" % u'$x == "\xe4iti"'),
+            (IfBranch(condition='$x == "äiti"'),
+             'IF    $x == "äiti"',
+             "IfBranch(type='IF', condition='$x == \"äiti\"')"),
         ]:
             assert_equal(str(if_), exp_str)
             assert_equal(repr(if_), 'robot.model.' + exp_repr)

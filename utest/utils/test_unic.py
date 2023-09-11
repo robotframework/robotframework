@@ -9,19 +9,19 @@ class TestSafeStr(unittest.TestCase):
 
     def test_unicode_nfc_and_nfd_decomposition_equality(self):
         import unicodedata
-        text = 'Hyv\xe4'
+        text = 'Hyvä'
         assert_equal(safe_str(unicodedata.normalize('NFC', text)), text)
         # In Mac filesystem umlaut characters are presented in NFD-format.
         # This is to check that unic normalizes all strings to NFC
         assert_equal(safe_str(unicodedata.normalize('NFD', text)), text)
 
     def test_object_containing_unicode_repr(self):
-        assert_equal(safe_str(UnicodeRepr()), 'Hyv\xe4')
+        assert_equal(safe_str(UnicodeRepr()), 'Hyvä')
 
     def test_list_with_objects_containing_unicode_repr(self):
         objects = [UnicodeRepr(), UnicodeRepr()]
         result = safe_str(objects)
-        assert_equal(result, '[Hyv\xe4, Hyv\xe4]')
+        assert_equal(result, '[Hyvä, Hyvä]')
 
     def test_bytes_below_128(self):
         assert_equal(safe_str('\x00-\x01-\x02-\x7f'), '\x00-\x01-\x02-\x7f')
@@ -60,10 +60,10 @@ class TestPrettyRepr(unittest.TestCase):
         self._verify("f'o'o", "\"f'o'o\"")
 
     def test_non_ascii_unicode(self):
-        self._verify('hyv\xe4', "'hyv\xe4'")
+        self._verify('hyvä', "'hyvä'")
 
     def test_unicode_in_nfd(self):
-        self._verify('hyva\u0308', "'hyv\xe4'")
+        self._verify('hyva\u0308', "'hyvä'")
 
     def test_ascii_bytes(self):
         self._verify(b'ascii', "b'ascii'")
@@ -84,7 +84,7 @@ class TestPrettyRepr(unittest.TestCase):
 
     def test_unicode_repr(self):
         obj = UnicodeRepr()
-        self._verify(obj, 'Hyv\xe4')
+        self._verify(obj, 'Hyvä')
 
     def test_bytes_repr(self):
         obj = BytesRepr()
@@ -94,8 +94,8 @@ class TestPrettyRepr(unittest.TestCase):
         self._verify(['foo', b'bar', 3], "['foo', b'bar', 3]")
         self._verify(['foo', b'b\xe4r', ('x', b'y')], "['foo', b'b\\xe4r', ('x', b'y')]")
         self._verify({'x': b'\xe4'}, "{'x': b'\\xe4'}")
-        self._verify(['\xe4'], "['\xe4']")
-        self._verify({'\xe4'}, "{'\xe4'}")
+        self._verify(['ä'], "['ä']")
+        self._verify({'ä'}, "{'ä'}")
 
     def test_dotdict(self):
         self._verify(DotDict({'x': b'\xe4'}), "{'x': b'\\xe4'}")
@@ -153,10 +153,10 @@ class UnicodeRepr(UnRepr):
         try:
             repr(self)
         except UnicodeEncodeError as err:
-            self.error = 'UnicodeEncodeError: %s' % err
+            self.error = f'UnicodeEncodeError: {err}'
 
     def __repr__(self):
-        return 'Hyv\xe4'
+        return 'Hyvä'
 
 
 class BytesRepr(UnRepr):
@@ -165,7 +165,7 @@ class BytesRepr(UnRepr):
         try:
             repr(self)
         except TypeError as err:
-            self.error = 'TypeError: %s' % err
+            self.error = f'TypeError: {err}'
 
     def __repr__(self):
         return b'Hyv\xe4'

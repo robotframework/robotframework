@@ -68,19 +68,18 @@ class TestStringRepresentation(unittest.TestCase):
     def setUp(self):
         self.empty = Message()
         self.ascii = Message('Kekkonen', level='WARN')
-        self.non_ascii = Message(u'hyv\xe4 nimi')
+        self.non_ascii = Message('hyvä')
 
     def test_str(self):
         for tc, expected in [(self.empty, ''),
                              (self.ascii, 'Kekkonen'),
-                             (self.non_ascii, u'hyv\xe4 nimi')]:
+                             (self.non_ascii, 'hyvä')]:
             assert_equal(str(tc), expected)
 
     def test_repr(self):
         for tc, expected in [(self.empty, "Message(message='', level='INFO')"),
                              (self.ascii, "Message(message='Kekkonen', level='WARN')"),
-                             (self.non_ascii, u"Message(message=%r, level='INFO')"
-                                              % u'hyv\xe4 nimi')]:
+                             (self.non_ascii, "Message(message='hyvä', level='INFO')")]:
             assert_equal(repr(tc), 'robot.model.' + expected)
 
 

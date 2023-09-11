@@ -97,10 +97,10 @@ class TestImports(unittest.TestCase):
                                TestLibrary, 'pythonmodule.some_object')
 
     def test_import_with_unicode_name(self):
-        self._verify_lib(TestLibrary(u"BuiltIn"), "BuiltIn", default_keywords)
-        self._verify_lib(TestLibrary(u"robot.libraries.BuiltIn.BuiltIn"),
+        self._verify_lib(TestLibrary("BuiltIn"), "BuiltIn", default_keywords)
+        self._verify_lib(TestLibrary("robot.libraries.BuiltIn.BuiltIn"),
                          "robot.libraries.BuiltIn.BuiltIn", default_keywords)
-        self._verify_lib(TestLibrary(u"pythonmodule.library"), "pythonmodule.library",
+        self._verify_lib(TestLibrary("pythonmodule.library"), "pythonmodule.library",
                          [("keyword from submodule", None)])
 
     def test_global_scope(self):
@@ -131,8 +131,7 @@ class TestImports(unittest.TestCase):
         assert_equal(libname, lib.name)
         for name, _ in keywords:
             handler = lib.handlers[name]
-            exp = "%s.%s" % (libname, name)
-            assert_equal(normalize(handler.longname), normalize(exp))
+            assert_equal(normalize(handler.longname), normalize(f"{libname}.{name}"))
 
 
 class TestLibraryInit(unittest.TestCase):
@@ -316,7 +315,7 @@ class TestHandlers(unittest.TestCase):
 
     def test_get_handlers(self):
         for lib in [NameLibrary, DocLibrary, ArgInfoLibrary, GetattrLibrary, SynonymLibrary]:
-            handlers = TestLibrary('classes.%s' % lib.__name__).handlers
+            handlers = TestLibrary(f'classes.{lib.__name__}').handlers
             assert_equal(lib.handler_count, len(handlers), lib.__name__)
             for handler in handlers:
                 assert_false(handler._handler_name.startswith('_'))
@@ -345,7 +344,7 @@ class TestHandlers(unittest.TestCase):
         for handler in testlib.handlers:
             # test 'handler_name' -- raises ValueError if it isn't in 'names'
             names.remove(handler._handler_name)
-        assert_equal(len(names), 0, 'handlers %s not created' % names, False)
+        assert_equal(len(names), 0, f'handlers {names} not created', False)
 
     def test_global_handlers_are_created_only_once(self):
         lib = TestLibrary('classes.RecordingLibrary')
@@ -518,7 +517,7 @@ class _FakeVariableScope:
         try:
             return self.variables[variable]
         except KeyError:
-            raise DataError("Non-existing variable '%s'" % variable)
+            raise DataError(f"Non-existing variable '{variable}'")
     def __setitem__(self, key, value):
         self.variables.__setitem__(key, value)
     def __getitem__(self, key):

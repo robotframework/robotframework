@@ -44,18 +44,18 @@ class TestETSource(unittest.TestCase):
 
     def test_byte_string(self):
         self._test_string(b'\n<tag>content</tag>')
-        self._test_string('<tag>hyv\xe4</tag>'.encode('utf8'))
+        self._test_string('<tag>hyvä</tag>'.encode('utf8'))
         self._test_string('<?xml version="1.0" encoding="Latin1"?>\n'
-                          '<tag>hyv\xe4</tag>'.encode('latin-1'), 'latin-1')
+                          '<tag>hyvä</tag>'.encode('latin-1'), 'latin-1')
 
     def test_unicode_string(self):
-        self._test_string('\n<tag>hyv\xe4</tag>\n')
+        self._test_string('\n<tag>hyvä</tag>\n')
         self._test_string('<?xml version="1.0" encoding="latin1"?>\n'
-                          '<tag>hyv\xe4</tag>', 'latin-1')
+                          '<tag>hyvä</tag>', 'latin-1')
         self._test_string("<?xml version='1.0' encoding='iso-8859-1' standalone='yes'?>\n"
-                          "<tag>hyv\xe4</tag>", 'latin-1')
+                          "<tag>hyvä</tag>", 'latin-1')
 
-    def _test_string(self, xml, encoding='UTF-8'):
+    def _test_string(self, xml: 'str|bytes', encoding='UTF-8'):
         source = ETSource(xml)
         with source as src:
             content = src.read()
@@ -67,11 +67,11 @@ class TestETSource(unittest.TestCase):
             assert_equal(ET.parse(src).getroot().tag, 'tag')
 
     def test_non_ascii_string_repr(self):
-        self._verify_string_representation(ETSource('\xe4'), '\xe4')
+        self._verify_string_representation(ETSource('ä'), 'ä')
 
     def _verify_string_representation(self, source, expected):
         assert_equal(str(source), expected)
-        assert_equal('-%s-' % source, '-%s-' % expected)
+        assert_equal(f'-{source}-', f'-{source}-')
 
 
 if __name__ == '__main__':

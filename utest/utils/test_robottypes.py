@@ -106,7 +106,7 @@ class TestDictLike(unittest.TestCase):
             assert_equal(is_dict_like(thing), True, thing)
 
     def test_others(self):
-        for thing in ['', u'', 1, None, True, object(), [], (), set()]:
+        for thing in ['', b'', 1, None, True, object(), [], (), set()]:
             assert_equal(is_dict_like(thing), False, thing)
 
 
@@ -114,7 +114,6 @@ class TestTypeName(unittest.TestCase):
 
     def test_base_types(self):
         for item, exp in [('x', 'string'),
-                          (u'x', 'string'),
                           (b'x', 'bytes'),
                           (bytearray(), 'bytearray'),
                           (1, 'integer'),

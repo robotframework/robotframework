@@ -11,7 +11,7 @@ from robot.utils.asserts import assert_equal, assert_raises
 
 TEMPDIR = os.getenv('TEMPDIR') or tempfile.gettempdir()
 PATH = os.path.join(TEMPDIR, 'filereader.test')
-STRING = u'Hyv\xe4\xe4\nty\xf6t\xe4\nC\u043f\u0430\u0441\u0438\u0431\u043e\n'
+STRING = 'Hyvää\ntyötä\nCпасибо\n'
 
 
 def assert_reader(reader, name=PATH):

@@ -93,7 +93,7 @@ class TestXmlWriter(unittest.TestCase):
         assert_equal(len(lines), 5)
 
     def test_none_content(self):
-        self.writer.element(u'robot-log', None)
+        self.writer.element('robot-log', None)
         self._verify_node(None, 'robot-log')
 
     def test_none_and_empty_attrs(self):
@@ -105,25 +105,25 @@ class TestXmlWriter(unittest.TestCase):
         self._verify_node(None, 'robot-log', '[31m[32m[33m[m')
 
     def test_content_with_invalid_command_char_unicode(self):
-        self.writer.element('robot-log', u'\x1b[31m\x1b[32m\x1b[33m\x1b[m')
+        self.writer.element('robot-log', '\x1b[31m\x1b[32m\x1b[33m\x1b[m')
         self._verify_node(None, 'robot-log', '[31m[32m[33m[m')
 
     def test_content_with_non_ascii(self):
         self.writer.start('root')
-        self.writer.element(u'e', u'Circle is 360\xB0')
-        self.writer.element(u'f', u'Hyv\xE4\xE4 \xFC\xF6t\xE4')
+        self.writer.element('e', 'Circle is 360°')
+        self.writer.element('f', 'Hyvää üötä')
         self.writer.end('root')
         root = self._get_root()
-        self._verify_node(root.find('e'), 'e', u'Circle is 360\xB0')
-        self._verify_node(root.find('f'), 'f', u'Hyv\xE4\xE4 \xFC\xF6t\xE4')
+        self._verify_node(root.find('e'), 'e', 'Circle is 360°')
+        self._verify_node(root.find('f'), 'f', 'Hyvää üötä')
 
     def test_content_with_entities(self):
         self.writer.element('I', 'Me, Myself & I > you')
         self._verify_content('<I>Me, Myself &amp; I &gt; you</I>\n')
 
     def test_remove_illegal_chars(self):
-        assert_equal(self.writer._escape(u'\x1b[31m'), '[31m')
-        assert_equal(self.writer._escape(u'\x00'), '')
+        assert_equal(self.writer._escape('\x1b[31m'), '[31m')
+        assert_equal(self.writer._escape('\x00'), '')
 
     def test_dataerror_when_file_is_invalid(self):
         err = assert_raises(DataError, XmlWriter, os.path.dirname(__file__))

@@ -22,8 +22,8 @@ class TestCompress(unittest.TestCase):
                    'Rsakjaf AdfSasda  asldjfaerew lasldjf awlkr aslk sd rl')
 
     def test_non_ascii(self):
-        self._test('hyv\xe4')
-        self._test('\u4e2d\u6587')
+        self._test('hyvä')
+        self._test('中文')
 
 
 if __name__ == '__main__':
