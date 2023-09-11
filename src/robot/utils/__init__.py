@@ -33,6 +33,8 @@ or::
     assert Matcher('H?llo').match('Hillo')
 """
 
+import warnings
+
 from .argumentparser import ArgumentParser, cmdline2list
 from .application import Application
 from .compress import compress_text
@@ -79,37 +81,49 @@ def read_rest_data(rstfile):
     return read_rest_data(rstfile)
 
 
-# Quietly deprecated utils. Should be deprecated loudly in RF 7.0.
-# https://github.com/robotframework/robotframework/issues/4501
-
-from .robottypes import FALSE_STRINGS, TRUE_STRINGS
-
-
-# Deprecated Python 2/3 compatibility layer. Not needed by Robot Framework itself
-# after RF 5.0 when Python 2 support was dropped. Should be deprecated loudly in
-# RF 7.0. Notice that there's also `PY2` in the `platform` submodule.
-# https://github.com/robotframework/robotframework/issues/4501
-
-from io import StringIO
+def unic(item):
+    # Cannot be deprecated using '__getattr__' because a module with same name exists.
+    warnings.warn("'robot.utils.unic' is deprecated and will be removed in "
+                  "Robot Framework 8.0.")
+    return safe_str(item)
 
 
-PY3 = True
-PY2 = JYTHON = IRONPYTHON = False
-is_unicode = is_string
-unicode = str
-unic = safe_str
-roundup = round
+def __getattr__(name):
+    # Deprecated utils mostly related to the old Python 2/3 compatibility layer.
+    # See also 'unic' above 'PY2' in the 'platform' module. TODO: Remove in RF 8.0.
+    # https://github.com/robotframework/robotframework/issues/4501
 
+    from io import StringIO
+    from .robottypes import FALSE_STRINGS, TRUE_STRINGS
 
-def py2to3(cls):
-    """Deprecated since RF 5.0. Use Python 3 features directly instead."""
-    if hasattr(cls, '__unicode__'):
-        cls.__str__ = lambda self: self.__unicode__()
-    if hasattr(cls, '__nonzero__'):
-        cls.__bool__ = lambda self: self.__nonzero__()
-    return cls
+    def py2to3(cls):
+        if hasattr(cls, '__unicode__'):
+            cls.__str__ = lambda self: self.__unicode__()
+        if hasattr(cls, '__nonzero__'):
+            cls.__bool__ = lambda self: self.__nonzero__()
+        return cls
 
+    def py3to2(cls):
+        return cls
 
-def py3to2(cls):
-    """Deprecated since RF 5.0. Never done anything when used on Python 3."""
-    return cls
+    deprecated = {
+        'FALSE_STRINGS': FALSE_STRINGS,
+        'TRUE_STRINGS': TRUE_STRINGS,
+        'StringIO': StringIO,
+        'PY3': True,
+        'PY2': False,
+        'JYTHON': False,
+        'IRONPYTHON': False,
+        'is_unicode': is_string,
+        'unicode': str,
+        'roundup': round,
+        'py2to3': py2to3,
+        'py3to2': py3to2,
+    }
+
+    if name in deprecated:
+        warnings.warn(f"'robot.utils.{name}' is deprecated and will be removed in "
+                      f"Robot Framework 8.0.")
+        return deprecated[name]
+
+    raise AssertionError(f"'robot.utils' has no attribute '{name}'.")
