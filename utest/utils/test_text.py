@@ -4,10 +4,9 @@ from os.path import abspath
 
 from robot.utils.asserts import assert_equal, assert_true
 from robot.utils.text import (
-    cut_long_message, get_console_length, getdoc, getshortdoc,
-    pad_console_length, split_tags_from_doc, split_args_from_name_or_path,
-    _count_line_lengths, MAX_ERROR_LINES, _MAX_ERROR_LINE_LENGTH,
-    _ERROR_CUT_EXPLN
+    cut_long_message, get_console_length, _get_virtual_line_length, getdoc,
+    getshortdoc, pad_console_length, split_tags_from_doc, split_args_from_name_or_path,
+    MAX_ERROR_LINES, _MAX_ERROR_LINE_LENGTH, _ERROR_CUT_EXPLN
 )
 
 
@@ -59,7 +58,7 @@ class TestCutting(unittest.TestCase):
 class TestCuttingWithLinesLongerThanMax(unittest.TestCase):
 
     def setUp(self):
-        self.lines = ['line %d' % i for i in range(MAX_ERROR_LINES-1)]
+        self.lines = [f'line {i}' for i in range(MAX_ERROR_LINES-1)]
         self.lines.append('x' * (_MAX_ERROR_LINE_LENGTH+1))
         self.result = cut_long_message('\n'.join(self.lines)).splitlines()
 
@@ -67,7 +66,8 @@ class TestCuttingWithLinesLongerThanMax(unittest.TestCase):
         assert_true(_ERROR_CUT_EXPLN in self.result)
 
     def test_correct_number_of_lines(self):
-        assert_equal(sum(_count_line_lengths(self.result)), MAX_ERROR_LINES+1)
+        line_count = sum(_get_virtual_line_length(line) for line in self.result)
+        assert_equal(line_count, MAX_ERROR_LINES+1)
 
     def test_correct_lines(self):
         expected = self.lines[:_HALF_ERROR_LINES] + [_ERROR_CUT_EXPLN] \
@@ -76,12 +76,13 @@ class TestCuttingWithLinesLongerThanMax(unittest.TestCase):
 
     def test_every_line_longer_than_limit(self):
         # sanity check
-        lines = [('line %d' % i) * _MAX_ERROR_LINE_LENGTH for i in range(MAX_ERROR_LINES+2)]
+        lines = [f'line {i}' * _MAX_ERROR_LINE_LENGTH for i in range(MAX_ERROR_LINES+2)]
         result = cut_long_message('\n'.join(lines)).splitlines()
         assert_true(_ERROR_CUT_EXPLN in result)
         assert_equal(result[0], lines[0])
         assert_equal(result[-1], lines[-1])
-        assert_true(sum(_count_line_lengths(result)) <= MAX_ERROR_LINES+1)
+        line_count = sum(_get_virtual_line_length(line) for line in result)
+        assert_true(line_count <= MAX_ERROR_LINES+1)
 
 
 class TestCutHappensInsideLine(unittest.TestCase):
@@ -112,35 +113,35 @@ class TestCutHappensInsideLine(unittest.TestCase):
         assert_true('...\n'+_ERROR_CUT_EXPLN+'\n...' in result)
 
     def _assert_basics(self, result, input=None):
-        assert_equal(sum(_count_line_lengths(result)), MAX_ERROR_LINES+1)
+        line_count = sum(_get_virtual_line_length(line) for line in result)
+        assert_equal(line_count, MAX_ERROR_LINES+1)
         assert_true(_ERROR_CUT_EXPLN in result)
         if input:
             assert_equal(result[0], input[0])
             assert_equal(result[-1], input[-1])
 
 
-class TestCountLines(unittest.TestCase):
-
-    def test_no_lines(self):
-        assert_equal(_count_line_lengths([]), [])
+class TestVirtualLineLength(unittest.TestCase):
 
     def test_empty_line(self):
-        assert_equal(_count_line_lengths(['']), [1])
+        assert_equal(_get_virtual_line_length(''), 1)
 
     def test_shorter_than_max_lines(self):
-        lines = ['', '1', 'foo', 'barz and fooz', '', 'a bit longer line', '',
-                 'This is a somewhat longer (but not long enough) error message']
-        assert_equal(_count_line_lengths(lines), [1] * len(lines))
+        for line in ['1', 'foo', 'barz and fooz', 'a bit longer line',
+                     'This is a somewhat longer, but not long enough, line']:
+            assert_equal(_get_virtual_line_length(line), 1)
 
     def test_longer_than_max_lines(self):
-        lines = [ '1' * i * (_MAX_ERROR_LINE_LENGTH+3) for i in range(4) ]
-        assert_equal(_count_line_lengths(lines), [1,2,3,4])
+        for i in range(10):
+            length = i * (_MAX_ERROR_LINE_LENGTH+3)
+            assert_equal(_get_virtual_line_length('x' * length), i+1)
 
     def test_boundary(self):
-        b = _MAX_ERROR_LINE_LENGTH
-        lengths = [b-1, b, b+1, 2*b-1, 2*b, 2*b+1, 7*b-1, 7*b, 7*b+1]
-        lines = [ 'e'*length for length in lengths ]
-        assert_equal(_count_line_lengths(lines), [1, 1, 2, 2, 2, 3, 7, 7, 8])
+        m = _MAX_ERROR_LINE_LENGTH
+        for length, expected in [(m-1, 1), (m, 1), (m+1, 2),
+                                 (2*m-1, 2), (2*m, 2), (2*m+1, 3),
+                                 (7*m-1, 7), (7*m, 7), (7*m+1, 8)]:
+            assert_equal(_get_virtual_line_length('x' * length), expected)
 
 
 class TestConsoleWidth(unittest.TestCase):

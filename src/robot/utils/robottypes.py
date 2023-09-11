@@ -28,8 +28,6 @@ try:
 except ImportError:
     ExtTypedDict = None
 
-from .platform import PY_VERSION
-
 
 TRUE_STRINGS = {'TRUE', 'YES', 'ON', '1'}
 FALSE_STRINGS = {'FALSE', 'NO', 'OFF', '0', 'NONE', ''}
