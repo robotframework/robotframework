@@ -51,10 +51,11 @@ ${INPUT FILE}     %{TEMPDIR}${/}robot-test-file.xml
     Should Contain Suites    ${SUITE}    Suites
     Should Contain Suites    ${SUITE.suites[0].suites[0]}    Sub1    Sub2
 
---suite with end of long name
-    Run And Check Suites    --suite suites.subsuites    Subsuites
-    Should Contain Suites    ${SUITE}    Suites
-    Should Contain Suites    ${SUITE.suites[0].suites[0]}    Sub1    Sub2
+--suite matching end of long name is not enough anymore
+    [Documentation]    This was supported until RF 7.0.
+    Failing Rebot
+    ...    Suite 'Root' contains no tests in suite 'suites.subsuites'.
+    ...    --suite suites.subsuites    ${INPUT FILE}
 
 --suite not matching
     Failing Rebot

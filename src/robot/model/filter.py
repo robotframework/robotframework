@@ -18,7 +18,7 @@ from typing import Sequence, TYPE_CHECKING
 from robot.utils import setter
 
 from .tags import TagPatterns
-from .namepatterns import SuiteNamePatterns, TestNamePatterns
+from .namepatterns import NamePatterns
 from .visitor import SuiteVisitor
 
 if TYPE_CHECKING:
@@ -46,8 +46,8 @@ class EmptySuiteRemover(SuiteVisitor):
 class Filter(EmptySuiteRemover):
 
     def __init__(self,
-                 include_suites: 'SuiteNamePatterns|Sequence[str]|None' = None,
-                 include_tests: 'TestNamePatterns|Sequence[str]|None' = None,
+                 include_suites: 'NamePatterns|Sequence[str]|None' = None,
+                 include_tests: 'NamePatterns|Sequence[str]|None' = None,
                  include_tags: 'TagPatterns|Sequence[str]|None' = None,
                  exclude_tags: 'TagPatterns|Sequence[str]|None' = None):
         super().__init__()
@@ -57,12 +57,12 @@ class Filter(EmptySuiteRemover):
         self.exclude_tags = exclude_tags
 
     @setter
-    def include_suites(self, suites) -> 'SuiteNamePatterns|None':
-        return self._patterns_or_none(suites, SuiteNamePatterns)
+    def include_suites(self, suites) -> 'NamePatterns|None':
+        return self._patterns_or_none(suites, NamePatterns)
 
     @setter
-    def include_tests(self, tests) -> 'TestNamePatterns|None':
-        return self._patterns_or_none(tests, TestNamePatterns)
+    def include_tests(self, tests) -> 'NamePatterns|None':
+        return self._patterns_or_none(tests, NamePatterns)
 
     @setter
     def include_tags(self, tags) -> 'TagPatterns|None':

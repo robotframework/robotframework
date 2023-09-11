@@ -78,10 +78,11 @@ Parent suite init files are processed
     Should Contain Tests   ${SUITE}    Test From Sub Suite 4
     Should Not Contain Tests    ${SUITE}   SubSuite3 First    SubSuite3 Second
 
---suite with end of long name
-    Run Suites    --suite Subsuites.Sub?
-    Should Contain Suites    ${SUITE}    Subsuites
-    Should Contain Tests   ${SUITE}   SubSuite1 First    SubSuite2 First
+--suite matching end of long name is not enough anymore
+    [Documentation]    This was supported until RF 7.0.
+    Run Failing Test
+    ...    Suite 'Suites' contains no tests in suite 'Subsuites.Sub?'.
+    ...    --suite Subsuites.Sub?    ${SUITE DIR}
 
 --suite with long name when executing multiple suites
     Run Suites    -s "Suite With Prefix & Subsuites.Subsuites.Sub1"    misc/suites/01__suite_with_prefix misc/suites/subsuites
@@ -129,7 +130,7 @@ Parent suite init files are processed
     Should Contain Tests    ${SUITE}    SubSuite1 First
 
 --suite with long name and other filters
-    Run Suites    --suite suites.fourth --suite tsuite1 -s Subsuites.Sub1 --test *first* --exclude none
+    Run Suites    --suite suites.fourth --suite tsuite1 -s *.Subsuites.Sub1 --test *first* --exclude none
     Should Contain Suites    ${SUITE}   Fourth    Subsuites    Tsuite1
     Should Contain Tests   ${SUITE}    Suite4 First    Suite1 First    SubSuite1 First
 
