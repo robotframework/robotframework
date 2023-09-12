@@ -1,5 +1,8 @@
 *** Settings ***
-Documentation     Testing rebot's include/exclude functionality. Tests also include/exclude first during test execution and then with rebot.
+Documentation     Test --include and --exclude with Rebot.
+...
+...               These options working together with --suite and --test
+...               is tested in filter_by_names.robot suite file.
 Suite Setup       Create Input Files
 Suite Teardown    Remove File    ${INPUT FILE}
 Test Template     Run And Check Include And Exclude
@@ -9,7 +12,7 @@ Resource          rebot_resource.robot
 ${TEST FILE}      tags/include_and_exclude.robot
 ${TEST FILE2}     tags/no_force_no_default_tags.robot
 ${INPUT FILE}     %{TEMPDIR}/robot-tags-input.xml
-${INPUT FILE 2}    %{TEMPDIR}/robot-tags-input-2.xml
+${INPUT FILE 2}   %{TEMPDIR}/robot-tags-input-2.xml
 ${INPUT FILES}    ${INPUT FILE}
 @{INCL_ALL}       Incl-1    Incl-12    Incl-123
 @{EXCL_ALL}       excl-1    Excl-12    Excl-123

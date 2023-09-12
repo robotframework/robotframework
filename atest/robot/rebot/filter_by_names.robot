@@ -22,6 +22,12 @@ ${INPUT FILE}     %{TEMPDIR}${/}robot-test-file.xml
     Run And Check Tests    --test *one --test Fi?st    First    Second One    Third One
     Run And Check Tests    --test [Great]Lob[sterB]estCase[!3-9]    GlobTestCase1    GlobTestCase2
 
+--test is cumulative with --include
+    Run And Check Tests    --test fifth --include t2      First    Fifth    Suite1 Second    SubSuite3 Second
+
+--exclude wins ovet --test
+    Run And Check Tests    --test fi* --exclude t1    Fifth
+
 --test not matching
     Failing Rebot
     ...    Suite 'Root' contains no tests matching name 'nonex'.
@@ -71,12 +77,29 @@ ${INPUT FILE}     %{TEMPDIR}${/}robot-test-file.xml
     ...    --name CustomName --suite nonex    ${INPUT FILE} ${INPUT FILE}
 
 --suite and --test together
-    Run And Check Suites and Tests    --suite tsuite1 --suite tsuite3 --test *1first --test nomatch    Tsuite1    Suite1 First
+    [Documentation]    Validate that only tests matching --test under suites matching --suite are selected.
+    Run Suites    --suite root.*.tsuite2 --suite manytests --test *first* --test nomatch --log log
+    Should Contain Suites    ${SUITE}              Many Tests    Suites
+    Should Contain Tests     ${SUITE.suites[0]}    First
+    Should Contain Tests     ${SUITE.suites[1]}    Suite2 First
+    Check Stats
 
 --suite and --test together not matching
     Failing Rebot
     ...     Suite 'Root' contains no tests matching name 'first', 'nonex' or '*one' in suites 'nonex' or 'suites'.
     ...    --suite nonex --suite suites --test first --test nonex --test *one    ${INPUT FILE}
+
+--suite with --include/--exclude
+    Run Suites    --suite tsuite[13] --include t? --exclude t2
+    Should Contain Suites    ${SUITE}              Suites
+    Should Contain Suites    ${SUITE.suites[0]}    Tsuite1    Tsuite3
+    Should Contain Tests     ${SUITE}              Suite1 First    Suite3 First
+
+--suite, --test, --include and --exclude
+    Run Suites    --suite sub* --suite "custom name *" --test *first -s nomatch -t nomatch --include sub3 --exclude t1
+    Should Contain Suites    ${SUITE}              Suites
+    Should Contain Suites    ${SUITE.suites[0]}    Custom name for 📂 'subsuites2'    Subsuites
+    Should Contain Tests     ${SUITE}              SubSuite2 First    SubSuite3 Second
 
 Elapsed Time
     [Documentation]    Test setting start, end and elapsed times correctly when filtering by tags
@@ -127,14 +150,6 @@ Run and Check Suites
     [Arguments]    ${params}    @{suites}
     Run Suites    ${params}
     Should Contain Suites    ${SUITE.suites[0]}    @{suites}
-    Check Stats
-
-Run And Check Suites and Tests
-    [Arguments]    ${params}    ${subsuite}    @{tests}
-    Run Suites    ${params}
-    Should Contain Suites    ${SUITE.suites[0]}   ${subsuite}
-    Should Contain Tests    ${SUITE}    @{tests}
-    Should Be True    ${SUITE.statistics.passed} == len(@{tests})
     Check Stats
 
 Run Suites

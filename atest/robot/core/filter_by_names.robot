@@ -17,6 +17,12 @@ ${SUITE DIR}       misc/suites
     Run And Check Tests    --test *one --test Fi?st    First    Second One    Third One
     Run And Check Tests    --test [Great]Lob[sterB]estCase[!3-9]    GlobTestCase1    GlobTestCase2
 
+--test is cumulative with --include
+    Run And Check Tests    --test fifth --include t1      First    Fifth
+
+--exclude wins ovet --test
+    Run And Check Tests    --test fi* --exclude t1    Fifth
+
 --test not matching
     Run Failing Test
     ...    Suite 'Many Tests' contains no tests matching name 'notexists'.
@@ -109,10 +115,10 @@ Parent suite init files are processed
     ...    --suite xxx -N Custom    ${SUITE DIR} ${SUITE FILE}
 
 --suite and --test together
-    [Documentation]    Testing that only tests matching --test which are under suite matching --suite are run.
-    Run Suites    --suite subsuites --suite tsuite3 --test SubSuite1First
-    Should Contain Suites    ${SUITE}    Subsuites
-    Should Contain Tests   ${SUITE}    SubSuite1 First
+    [Documentation]    Validate that only tests matching --test under suites matching --suite are selected.
+    Run Suites    --suite suites.subsuites.sub2 --suite tsuite3 --test *First
+    Should Contain Suites    ${SUITE}    Subsuites    Tsuite3
+    Should Contain Tests     ${SUITE}    SubSuite2 First    Suite3 First
 
 --suite and --test together not matching
     Run Failing Test
@@ -120,14 +126,14 @@ Parent suite init files are processed
     ...    --suite subsuites -s nomatch --test Suite1* -t nomatch    ${SUITE DIR}
 
 --suite with --include/--exclude
-    Run Suites    --suite tsuite? --include t? --exclude t2
-    Should Contain Suites    ${SUITE}    Tsuite1    Tsuite2    Tsuite3
-    Should Contain Tests    ${SUITE}    Suite1 First    Suite2 First    Suite3 First
+    Run Suites    --suite tsuite[13] --include t? --exclude t2
+    Should Contain Suites    ${SUITE}    Tsuite1    Tsuite3
+    Should Contain Tests     ${SUITE}    Suite1 First    Suite3 First
 
---suite, --test, --inculde and --exclude
-    Run Suites    --suite sub* --test *first -s nosuite -t notest --include t1 --exclude sub3
-    Should Contain Suites   ${SUITE}    Subsuites
-    Should Contain Tests    ${SUITE}    SubSuite1 First
+--suite, --test, --include and --exclude
+    Run Suites    --suite sub* --suite "custom name *" --test *first -s nomatch -t nomatch --include sub3 --exclude t1
+    Should Contain Suites    ${SUITE}    Custom name for 📂 'subsuites2'    Subsuites
+    Should Contain Tests     ${SUITE}    SubSuite2 First    SubSuite3 Second
 
 --suite with long name and other filters
     Run Suites    --suite suites.fourth --suite tsuite1 -s *.Subsuites.Sub1 --test *first* --exclude none

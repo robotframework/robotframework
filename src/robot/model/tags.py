@@ -105,7 +105,7 @@ class Tags(Sequence[str]):
 
 class TagPatterns(Sequence['TagPattern']):
 
-    def __init__(self, patterns: Iterable[str]):
+    def __init__(self, patterns: Iterable[str] = ()):
         self._patterns = tuple(TagPattern.from_string(p) for p in Tags(patterns))
 
     def match(self, tags: Iterable[str]) -> bool:
