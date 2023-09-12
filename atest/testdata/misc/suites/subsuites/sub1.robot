@@ -7,7 +7,7 @@ Suite Setup       ${SETUP}
 Suite Teardown    ${TEARDOWN}
 
 *** Variables ***
-${SLEEP}          0.1
+${SLEEP}          0.001
 ${FAIL}           NO
 ${MESSAGE}        Original message
 ${LEVEL}          INFO

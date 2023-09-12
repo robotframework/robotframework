@@ -5,7 +5,7 @@ Default Tags      d1    d2
 Metadata          Something    My Value
 
 *** Variables ***
-${SLEEP}          0.1
+${SLEEP}          0.001
 
 *** Test Cases ***
 SubSuite2 First

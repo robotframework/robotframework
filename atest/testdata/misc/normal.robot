@@ -5,7 +5,7 @@ Default Tags      d1    d_2
 Metadata          Something    My Value
 
 *** Variables ***
-${DELAY}          0.01    # Make sure elapsed time > 0
+${DELAY}          0.001    # Make sure elapsed time > 0
 
 *** Test Cases ***
 First One
