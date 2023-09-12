@@ -14,8 +14,8 @@ from robot.utils.asserts import (assert_equal, assert_raises, assert_raises_with
 from robot.utils.importer import ByPathImporter, Importer
 
 
-CURDIR = Path(__file__).resolve().parent
-LIBDIR = (CURDIR / '../../atest/testresources/testlibs').resolve()
+CURDIR = Path(__file__).absolute().parent
+LIBDIR = CURDIR.parent.parent / 'atest/testresources/testlibs'
 TEMPDIR = Path(tempfile.gettempdir())
 TESTDIR = TEMPDIR / 'robot-importer-testing'
 WINDOWS_PATH_IN_ERROR = re.compile(r"'\w:\\")
@@ -128,7 +128,7 @@ class test:
         assert_equal(module.attr, attr)
         assert_equal(module.func(), attr)
         if hasattr(module, '__file__'):
-            assert_equal(Path(module.__file__).resolve().parent, directory)
+            assert_true(Path(module.__file__).parent.samefile(directory))
 
     def _import(self, path, name=None, remove=None):
         if remove and remove in sys.modules:
