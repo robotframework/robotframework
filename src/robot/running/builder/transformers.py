@@ -167,7 +167,7 @@ class TestCaseBuilder(NodeVisitor):
         self.suite = suite
         self.settings = settings
         self.test = None
-        self.tags = None
+        self._test_has_tags = False
 
     def visit_TestCase(self, node):
         error = format_error(node.errors + node.header.errors)
@@ -183,9 +183,8 @@ class TestCaseBuilder(NodeVisitor):
         if settings.test_teardown:
             self.test.teardown.config(**settings.test_teardown)
         self.generic_visit(node)
-        tags = self.tags if self.tags is not None else settings.default_tags
-        if tags:
-            self.test.tags.add(tags)
+        if not self._test_has_tags:
+            self.test.tags.add(settings.default_tags)
         if self.test.template:
             self._set_template(self.test, self.test.template)
 
@@ -240,8 +239,12 @@ class TestCaseBuilder(NodeVisitor):
         self.test.timeout = node.value
 
     def visit_Tags(self, node):
-        deprecate_tags_starting_with_hyphen(node, self.suite.source)
-        self.tags = node.values
+        for tag in node.values:
+            if tag.startswith('-'):
+                self.test.tags.remove(tag[1:])
+            else:
+                self.test.tags.add(tag)
+        self._test_has_tags = True
 
     def visit_Template(self, node):
         self.test.template = node.value
@@ -292,8 +295,11 @@ class KeywordBuilder(NodeVisitor):
             self.kw.error = f'Invalid argument specification: {error}'
 
     def visit_Tags(self, node):
-        deprecate_tags_starting_with_hyphen(node, self.resource.source)
-        self.kw.tags.add(node.values)
+        for tag in node.values:
+            if tag.startswith('-'):
+                self.kw.tags.remove(tag[1:])
+            else:
+                self.kw.tags.add(tag)
 
     def visit_Return(self, node):
         self.kw.return_ = node.values
@@ -600,18 +606,6 @@ def format_error(errors):
     if len(errors) == 1:
         return errors[0]
     return '\n- '.join(('Multiple errors:',) + errors)
-
-
-def deprecate_tags_starting_with_hyphen(node, source):
-    for tag in node.values:
-        if tag.startswith('-'):
-            LOGGER.warn(
-                f"Error in file '{source}' on line {node.lineno}: "
-                f"Settings tags starting with a hyphen using the '[Tags]' setting "
-                f"is deprecated. In Robot Framework 7.0 this syntax will be used "
-                f"for removing tags. Escape '{tag}' like '\\{tag}' to use the "
-                f"literal value and to avoid this warning."
-            )
 
 
 class ErrorReporter(NodeVisitor):
