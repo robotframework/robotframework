@@ -334,6 +334,12 @@ class Process:
         with `Wait For Process` keyword. By default, there is no timeout, and
         if timeout is defined the default action on timeout is ``terminate``.
 
+        Process outputs are, by default, written into in-memory buffers.
+        If there is a lot of output, these buffers may get full causing
+        the process to hang. To avoid that, process outputs can be redirected
+        using the ``stdout`` and ``stderr`` configuration parameters. For more
+        information see the `Standard output and error streams` section.
+
         Returns a `result object` containing information about the execution.
 
         Note that possible equal signs in ``*arguments`` must be escaped
@@ -343,7 +349,7 @@ class Process:
         Examples:
         | ${result} = | Run Process | python | -c | print('Hello, world!') |
         | Should Be Equal | ${result.stdout} | Hello, world! |
-        | ${result} = | Run Process | ${command} | stderr=STDOUT | timeout=10s |
+        | ${result} = | Run Process | ${command} | stdout=${CURDIR}/stdout.txt | stderr=STDOUT |
         | ${result} = | Run Process | ${command} | timeout=1min | on_timeout=continue |
         | ${result} = | Run Process | java -Dname\\=value Example | shell=True | cwd=${EXAMPLE} |
 
@@ -363,11 +369,13 @@ class Process:
 
         See `Specifying command and arguments` and `Process configuration`
         for more information about the arguments, and `Run Process` keyword
-        for related examples.
+        for related examples. This includes information about redirecting
+        process outputs to avoid process handing due to output buffers getting
+        full.
 
         Makes the started process new `active process`. Returns the created
         [https://docs.python.org/3/library/subprocess.html#popen-constructor |
-        subprocess.Popen] object which can be be used later to active this
+        subprocess.Popen] object which can be used later to activate this
         process. ``Popen`` attributes like ``pid`` can also be accessed directly.
 
         Processes are started so that they create a new process group. This
@@ -375,7 +383,7 @@ class Process:
 
         Examples:
 
-        Start process and wait for it to end later using alias:
+        Start process and wait for it to end later using an alias:
         | `Start Process` | ${command} | alias=example |
         | # Other keywords |
         | ${result} = | `Wait For Process` | example |
