@@ -3,7 +3,7 @@
   "name": "DataTypesLibrary",
   "doc": "<p>This Library has Data Types.</p>\n<p>It has some in <code>__init__</code> and others in the <a href=\"#Keywords\" class=\"name\">Keywords</a>.</p>\n<p>The DataTypes are the following that should be linked. <span class=\"name\">HttpCredentials</span> , <a href=\"#type-GeoLocation\" class=\"name\">GeoLocation</a> , <a href=\"#type-Small\" class=\"name\">Small</a> and <a href=\"#type-AssertionOperator\" class=\"name\">AssertionOperator</a>.</p>",
   "version": "",
-  "generated": "2023-02-27T14:41:19+00:00",
+  "generated": "2023-09-14T19:27:00+00:00",
   "type": "LIBRARY",
   "scope": "TEST",
   "docFormat": "HTML",
@@ -21,12 +21,6 @@
             "typedoc": "Small",
             "nested": [],
             "union": false
-          },
-          "types": [
-            "Small"
-          ],
-          "typedocs": {
-            "Small": "Small"
           },
           "defaultValue": "one",
           "kind": "POSITIONAL_OR_NAMED",
@@ -48,8 +42,6 @@
         {
           "name": "value",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -76,14 +68,6 @@
             ],
             "union": true
           },
-          "types": [
-            "AssertionOperator",
-            "None"
-          ],
-          "typedocs": {
-            "AssertionOperator": "AssertionOperator",
-            "None": "None"
-          },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -96,12 +80,6 @@
             "typedoc": "string",
             "nested": [],
             "union": false
-          },
-          "types": [
-            "str"
-          ],
-          "typedocs": {
-            "str": "string"
           },
           "defaultValue": "something?",
           "kind": "POSITIONAL_OR_NAMED",
@@ -126,12 +104,6 @@
             "nested": [],
             "union": false
           },
-          "types": [
-            "CustomType"
-          ],
-          "typedocs": {
-            "CustomType": "CustomType"
-          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -144,12 +116,6 @@
             "typedoc": "CustomType2",
             "nested": [],
             "union": false
-          },
-          "types": [
-            "CustomType2"
-          ],
-          "typedocs": {
-            "CustomType2": "CustomType2"
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -164,12 +130,6 @@
             "nested": [],
             "union": false
           },
-          "types": [
-            "CustomType"
-          ],
-          "typedocs": {
-            "CustomType": "CustomType"
-          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -183,10 +143,6 @@
             "nested": [],
             "union": false
           },
-          "types": [
-            "Unknown"
-          ],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -259,26 +215,6 @@
             ],
             "union": true
           },
-          "types": [
-            "bool",
-            "int",
-            "float",
-            "str",
-            "AssertionOperator",
-            "Small",
-            "GeoLocation",
-            "None"
-          ],
-          "typedocs": {
-            "bool": "boolean",
-            "int": "integer",
-            "float": "float",
-            "str": "string",
-            "AssertionOperator": "AssertionOperator",
-            "Small": "Small",
-            "GeoLocation": "GeoLocation",
-            "None": "None"
-          },
           "defaultValue": "equal",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -301,12 +237,6 @@
             "typedoc": "GeoLocation",
             "nested": [],
             "union": false
-          },
-          "types": [
-            "GeoLocation"
-          ],
-          "typedocs": {
-            "GeoLocation": "GeoLocation"
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -338,13 +268,6 @@
             ],
             "union": false
           },
-          "types": [
-            "List[str]"
-          ],
-          "typedocs": {
-            "List": "list",
-            "str": "string"
-          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -371,14 +294,6 @@
             ],
             "union": false
           },
-          "types": [
-            "Dict[str, int]"
-          ],
-          "typedocs": {
-            "Dict": "dictionary",
-            "str": "string",
-            "int": "integer"
-          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -391,12 +306,6 @@
             "typedoc": "Any",
             "nested": [],
             "union": false
-          },
-          "types": [
-            "Any"
-          ],
-          "typedocs": {
-            "Any": "Any"
           },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
@@ -417,13 +326,6 @@
               }
             ],
             "union": false
-          },
-          "types": [
-            "List[Any]"
-          ],
-          "typedocs": {
-            "List": "list",
-            "Any": "Any"
           },
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
@@ -556,7 +458,8 @@
         "Set Location"
       ],
       "accepts": [
-        "string"
+        "string",
+        "Mapping"
       ],
       "items": [
         {

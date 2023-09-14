@@ -3,7 +3,7 @@
   "name": "DynamicLibrary",
   "doc": "<p>Dummy documentation for <span class=\"name\">__intro__</span>.</p>",
   "version": "0.1",
-  "generated": "2023-02-27T15:47:24+00:00",
+  "generated": "2023-09-14T19:25:28+00:00",
   "type": "LIBRARY",
   "scope": "TEST",
   "docFormat": "HTML",
@@ -22,8 +22,6 @@
         {
           "name": "arg1",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -32,8 +30,6 @@
         {
           "name": "arg2",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": "These args are shown in docs",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -63,8 +59,6 @@
         {
           "name": "old",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": "style",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -73,8 +67,6 @@
         {
           "name": "new",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": "style",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -83,8 +75,6 @@
         {
           "name": "cool",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": "True",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -121,8 +111,6 @@
         {
           "name": "varargs",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
@@ -131,8 +119,6 @@
         {
           "name": "kwargs",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_NAMED",
           "required": false,
@@ -151,8 +137,6 @@
         {
           "name": "arg1",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -171,8 +155,6 @@
         {
           "name": "",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "NAMED_ONLY_MARKER",
           "required": false,
@@ -181,8 +163,6 @@
         {
           "name": "kwo",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "NAMED_ONLY",
           "required": true,
@@ -191,8 +171,6 @@
         {
           "name": "another",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": "default",
           "kind": "NAMED_ONLY",
           "required": false,
@@ -211,8 +189,6 @@
         {
           "name": "arg1",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -221,8 +197,6 @@
         {
           "name": "arg2",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -241,8 +215,6 @@
         {
           "name": "varargs",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
@@ -251,8 +223,6 @@
         {
           "name": "a",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "NAMED_ONLY",
           "required": true,
@@ -261,8 +231,6 @@
         {
           "name": "b",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": "2",
           "kind": "NAMED_ONLY",
           "required": false,
@@ -271,8 +239,6 @@
         {
           "name": "c",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "NAMED_ONLY",
           "required": true,
@@ -281,8 +247,6 @@
         {
           "name": "kws",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_NAMED",
           "required": false,
@@ -301,8 +265,6 @@
         {
           "name": "varargs",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
@@ -311,8 +273,6 @@
         {
           "name": "kwargs",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_NAMED",
           "required": false,
@@ -331,8 +291,6 @@
         {
           "name": "varargs",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
@@ -341,8 +299,6 @@
         {
           "name": "kwargs",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_NAMED",
           "required": false,
@@ -361,8 +317,6 @@
         {
           "name": "varargs",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
@@ -371,8 +325,6 @@
         {
           "name": "kwargs",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_NAMED",
           "required": false,
@@ -391,8 +343,6 @@
         {
           "name": "varargs",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
@@ -401,8 +351,6 @@
         {
           "name": "kwargs",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_NAMED",
           "required": false,
@@ -424,8 +372,6 @@
         {
           "name": "arg1",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -434,8 +380,6 @@
         {
           "name": "arg2",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -444,8 +388,6 @@
         {
           "name": "arg3",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -454,8 +396,6 @@
         {
           "name": "arg4",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -464,8 +404,6 @@
         {
           "name": "arg5",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -474,8 +412,6 @@
         {
           "name": "arg6",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -484,8 +420,6 @@
         {
           "name": "arg7",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -494,8 +428,6 @@
         {
           "name": "arg8",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -517,8 +449,6 @@
         {
           "name": "varargs",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
@@ -527,8 +457,6 @@
         {
           "name": "kwargs",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_NAMED",
           "required": false,
@@ -547,8 +475,6 @@
         {
           "name": "varargs",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
@@ -557,8 +483,6 @@
         {
           "name": "kwargs",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_NAMED",
           "required": false,
@@ -577,8 +501,6 @@
         {
           "name": "varargs",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
@@ -587,8 +509,6 @@
         {
           "name": "kwargs",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_NAMED",
           "required": false,
@@ -607,8 +527,6 @@
         {
           "name": "varargs",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
@@ -617,8 +535,6 @@
         {
           "name": "kwargs",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_NAMED",
           "required": false,
@@ -645,12 +561,6 @@
             "nested": [],
             "union": false
           },
-          "types": [
-            "int"
-          ],
-          "typedocs": {
-            "int": "integer"
-          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -659,8 +569,6 @@
         {
           "name": "no type",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -673,12 +581,6 @@
             "typedoc": "boolean",
             "nested": [],
             "union": false
-          },
-          "types": [
-            "bool"
-          ],
-          "typedocs": {
-            "bool": "boolean"
           },
           "defaultValue": "True",
           "kind": "POSITIONAL_OR_NAMED",

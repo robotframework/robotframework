@@ -88,6 +88,7 @@
     "keywords",
     "typedocs"
   ],
+  "additionalProperties": false,
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "definitions": {
     "SpecVersion": {
@@ -165,7 +166,8 @@
         "name",
         "nested",
         "union"
-      ]
+      ],
+      "additionalProperties": false
     },
     "ArgumentKind": {
       "title": "ArgumentKind",
@@ -201,19 +203,6 @@
             }
           ]
         },
-        "types": {
-          "title": "Types",
-          "description": "Deprecated. Use 'type' instead.",
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "typedocs": {
-          "title": "Typedocs",
-          "description": "Deprecated. Use 'type' instead.",
-          "type": "object"
-        },
         "defaultValue": {
           "title": "Defaultvalue",
           "description": "Possible default value or 'null'.",
@@ -240,12 +229,11 @@
       },
       "required": [
         "name",
-        "types",
-        "typedocs",
         "kind",
         "required",
         "repr"
-      ]
+      ],
+      "additionalProperties": false
     },
     "Keyword": {
       "title": "Keyword",
@@ -317,7 +305,8 @@
         "tags",
         "source",
         "lineno"
-      ]
+      ],
+      "additionalProperties": false
     },
     "TypeDocType": {
       "title": "TypeDocType",
@@ -346,7 +335,8 @@
       "required": [
         "name",
         "value"
-      ]
+      ],
+      "additionalProperties": false
     },
     "TypedDictItem": {
       "title": "TypedDictItem",
@@ -375,7 +365,8 @@
       "required": [
         "key",
         "type"
-      ]
+      ],
+      "additionalProperties": false
     },
     "TypeDoc": {
       "title": "TypeDoc",
@@ -445,7 +436,8 @@
         "doc",
         "usages",
         "accepts"
-      ]
+      ],
+      "additionalProperties": false
     }
   }
 }

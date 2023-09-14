@@ -196,8 +196,6 @@ class KeywordDoc(Sortable):
         return {
             'name': arg.name,
             'type': self._type_to_dict(arg.type, type_docs),
-            'types': arg.types_reprs,
-            'typedocs': type_docs,
             'defaultValue': arg.default_repr,
             'kind': arg.kind,
             'required': arg.required,

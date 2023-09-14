@@ -83,10 +83,10 @@ class JsonDocBuilder:
             default = arg.get('defaultValue')
             if default is not None:
                 spec.defaults[name] = default
-            if arg.get('type'):
+            if 'type' in arg:    # RF >= 6.1
                 type_docs = {}
                 type_info = self._parse_modern_type_info(arg['type'], type_docs)
-            else:    # Compatibility with RF < 6.1.
+            else:                # RF < 6.1
                 type_docs = arg.get('typedocs', {})
                 type_info = tuple(arg['types'])
             if type_info:
@@ -96,6 +96,8 @@ class JsonDocBuilder:
             kw.type_docs[name] = type_docs
 
     def _parse_modern_type_info(self, data, type_docs):
+        if not data:
+            return {}
         if data.get('typedoc'):
             type_docs[data['name']] = data['typedoc']
         return {'name': data['name'],

@@ -13,14 +13,17 @@ from enum import Enum
 from pathlib import Path
 from typing import List, Optional, Union
 
-from pydantic import BaseModel as PydanticBaseModel, Field, PositiveInt
+from pydantic import BaseModel as PydanticBaseModel, Extra, Field, PositiveInt
 
 
 class BaseModel(PydanticBaseModel):
 
-    # Workaround for Pydantic not supporting nullable types.
-    # https://github.com/pydantic/pydantic/issues/1270#issuecomment-729555558
     class Config:
+        # Do not allow extra attributes.
+        extra = Extra.forbid
+
+        # Workaround for Pydantic not supporting nullable types.
+        # https://github.com/pydantic/pydantic/issues/1270#issuecomment-729555558
         @staticmethod
         def schema_extra(schema, model):
             for prop, value in schema.get('properties', {}).items():
@@ -88,8 +91,6 @@ class Argument(BaseModel):
     """Keyword argument."""
     name: str
     type: Union[ArgumentType, None]
-    types: List[str] = Field(description="Deprecated. Use 'type' instead.")
-    typedocs: dict = Field(description="Deprecated. Use 'type' instead.")
     defaultValue: Union[str, None] = Field(description="Possible default value or 'null'.")
     kind: ArgumentKind
     required: bool
@@ -157,9 +158,9 @@ class Libdoc(BaseModel):
     keywords: List[Keyword]
     typedocs: List[TypeDoc]
 
-    # pydantic doesn't add schema version automatically.
-    # https://github.com/samuelcolvin/pydantic/issues/1478
     class Config:
+        # pydantic doesn't add schema version automatically.
+        # https://github.com/samuelcolvin/pydantic/issues/1478
         schema_extra = {
             '$schema': 'https://json-schema.org/draft/2020-12/schema'
         }

@@ -26,7 +26,6 @@ class LibdocXmlWriter:
         self._write_start(libdoc, writer)
         self._write_keywords('inits', 'init', libdoc.inits, libdoc.source, writer)
         self._write_keywords('keywords', 'kw', libdoc.keywords, libdoc.source, writer)
-        # Write new '<types>' element.
         self._write_type_docs(libdoc.type_docs, writer)
         self._write_end(writer)
 
