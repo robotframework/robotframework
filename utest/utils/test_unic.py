@@ -16,10 +16,10 @@ class TestSafeStr(unittest.TestCase):
         assert_equal(safe_str(unicodedata.normalize('NFD', text)), text)
 
     def test_object_containing_unicode_repr(self):
-        assert_equal(safe_str(UnicodeRepr()), 'Hyvä')
+        assert_equal(safe_str(NonAsciiRepr()), 'Hyvä')
 
     def test_list_with_objects_containing_unicode_repr(self):
-        objects = [UnicodeRepr(), UnicodeRepr()]
+        objects = [NonAsciiRepr(), NonAsciiRepr()]
         result = safe_str(objects)
         assert_equal(result, '[Hyvä, Hyvä]')
 
@@ -55,14 +55,14 @@ class TestPrettyRepr(unittest.TestCase):
             assert_equal(prepr({item: item}), '{%s: %s}' % (expected, expected))
             assert_equal(prepr({item}), '{%s}' % expected)
 
-    def test_ascii_unicode(self):
+    def test_ascii_string(self):
         self._verify('foo', "'foo'")
         self._verify("f'o'o", "\"f'o'o\"")
 
-    def test_non_ascii_unicode(self):
+    def test_non_ascii_string(self):
         self._verify('hyvä', "'hyvä'")
 
-    def test_unicode_in_nfd(self):
+    def test_string_in_nfd(self):
         self._verify('hyva\u0308', "'hyvä'")
 
     def test_ascii_bytes(self):
@@ -82,8 +82,8 @@ class TestPrettyRepr(unittest.TestCase):
         failing = ReprFails()
         self._verify(failing, failing.unrepr)
 
-    def test_unicode_repr(self):
-        obj = UnicodeRepr()
+    def test_non_ascii_repr(self):
+        obj = NonAsciiRepr()
         self._verify(obj, 'Hyvä')
 
     def test_bytes_repr(self):
@@ -96,6 +96,16 @@ class TestPrettyRepr(unittest.TestCase):
         self._verify({'x': b'\xe4'}, "{'x': b'\\xe4'}")
         self._verify(['ä'], "['ä']")
         self._verify({'ä'}, "{'ä'}")
+
+    def test_dont_sort_dicts_by_default(self):
+        self._verify({'x': 1, 'D': 2, 'ä': 3, 'G': 4, 'a': 5},
+                     "{'x': 1, 'D': 2, 'ä': 3, 'G': 4, 'a': 5}")
+        self._verify({'a': 1, 1: 'a'}, "{'a': 1, 1: 'a'}")
+
+    def test_allow_sorting_dicts(self):
+        self._verify({'x': 1, 'D': 2, 'ä': 3, 'G': 4, 'a': 5},
+                     "{'D': 2, 'G': 4, 'a': 5, 'x': 1, 'ä': 3}", sort_dicts=True)
+        self._verify({'a': 1, 1: 'a'}, "{1: 'a', 'a': 1}", sort_dicts=True)
 
     def test_dotdict(self):
         self._verify(DotDict({'x': b'\xe4'}), "{'x': b'\\xe4'}")
@@ -147,7 +157,7 @@ class ReprFails(UnRepr):
         raise RuntimeError(self.error)
 
 
-class UnicodeRepr(UnRepr):
+class NonAsciiRepr(UnRepr):
 
     def __init__(self):
         try:

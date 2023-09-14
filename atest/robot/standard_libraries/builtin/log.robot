@@ -58,7 +58,7 @@ CONSOLE pseudo level
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].msgs[0]}    Hello, info and console!
     Stdout Should Contain    Hello, info and console!\n
-    
+
 repr=True
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].msgs[0]}    The 'repr' argument of 'BuiltIn.Log' is deprecated. Use 'formatter=repr' instead.    WARN
@@ -96,13 +96,13 @@ formatter=str
 formatter=repr pretty prints
     ${tc} =    Check Test Case    ${TEST NAME}
     ${long string} =    Evaluate    ' '.join(['Robot Framework'] * 1000)
-    ${small dict} =    Set Variable    {3: b'items', 'a': 'sorted', 'small': 'dict'}
+    ${small dict} =    Set Variable    {'small': 'dict', 3: b'items', 'NOT': 'sorted'}
     ${small list} =    Set Variable    ['small', b'list', 'not sorted', 4]
     Check Log Message    ${tc.kws[1].msgs[0]}    '${long string}'
     Check Log Message    ${tc.kws[3].msgs[0]}    ${small dict}
-    Check Log Message    ${tc.kws[5].msgs[0]}    {'big': 'dict',\n\ 'list': [1, 2, 3],\n\ 'long': '${long string}',\n\ 'nested': ${small dict}}
+    Check Log Message    ${tc.kws[5].msgs[0]}    {'big': 'dict',\n 'long': '${long string}',\n 'nested': ${small dict},\n 'list': [1, 2, 3],\n 'sorted': False}
     Check Log Message    ${tc.kws[7].msgs[0]}    ${small list}
-    Check Log Message    ${tc.kws[9].msgs[0]}    ['big',\n\ 'list',\n\ '${long string}',\n\ b'${long string}',\n\ ['nested', ('tuple', 2)],\n\ ${small dict}]
+    Check Log Message    ${tc.kws[9].msgs[0]}    ['big',\n 'list',\n '${long string}',\n b'${long string}',\n ['nested', ('tuple', 2)],\n ${small dict}]
     Check Log Message    ${tc.kws[11].msgs[0]}    ['hyvä', b'hyv\\xe4', {'☃': b'\\x00\\xff'}]
     Stdout Should Contain    ${small dict}
     Stdout Should Contain    ${small list}
