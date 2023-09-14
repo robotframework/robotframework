@@ -324,7 +324,10 @@ class ForIteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
 
     @property
     @deprecated
-    def name(self) -> str:
+    def name(self):
+        return str(self)
+
+    def __str__(self):
         return ', '.join('%s = %s' % item for item in self.assign.items())
 
 
@@ -359,7 +362,10 @@ class For(model.For, StatusMixin, DeprecatedAttributesMixin):
 
     @property
     @deprecated
-    def name(self) -> str:
+    def name(self):
+        return str(self)
+
+    def __str__(self):
         assign = ' | '.join(self.assign)
         values = ' | '.join(self.values)
         for name, value in [('start', self.start),
@@ -397,11 +403,6 @@ class WhileIteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
     def visit(self, visitor: SuiteVisitor):
         visitor.visit_while_iteration(self)
 
-    @property
-    @deprecated
-    def name(self) -> str:
-        return ''
-
 
 @Body.register
 class While(model.While, StatusMixin, DeprecatedAttributesMixin):
@@ -430,9 +431,7 @@ class While(model.While, StatusMixin, DeprecatedAttributesMixin):
     def body(self, iterations: 'Sequence[WhileIteration|DataDict]') -> iterations_class:
         return self.iterations_class(self.iteration_class, self, iterations)
 
-    @property
-    @deprecated
-    def name(self) -> str:
+    def __str__(self):
         parts = []
         if self.condition:
             parts.append(self.condition)
@@ -513,7 +512,10 @@ class TryBranch(model.TryBranch, StatusMixin, DeprecatedAttributesMixin):
 
     @property
     @deprecated
-    def name(self) -> str:
+    def name(self):
+        return str(self)
+
+    def __str__(self):
         patterns = list(self.patterns)
         if self.pattern_type:
             patterns.append(f'type={self.pattern_type}')
@@ -523,7 +525,6 @@ class TryBranch(model.TryBranch, StatusMixin, DeprecatedAttributesMixin):
         if self.assign:
             parts.append(f'AS {self.assign}')
         return ' '.join(parts)
-
 
 @Body.register
 class Try(model.Try, StatusMixin, DeprecatedAttributesMixin):
@@ -575,11 +576,6 @@ class Return(model.Return, StatusMixin, DeprecatedAttributesMixin):
 
     @property
     @deprecated
-    def args(self) -> 'tuple[str, ...]':
-        return self.values
-
-    @property
-    @deprecated
     def doc(self) -> str:
         return ''
 
@@ -610,11 +606,6 @@ class Continue(model.Continue, StatusMixin, DeprecatedAttributesMixin):
         keywords.
         """
         return self.body_class(self, body)
-
-    @property
-    @deprecated
-    def args(self) -> 'tuple[str, ...]':
-        return ()
 
     @property
     @deprecated
@@ -651,11 +642,6 @@ class Break(model.Break, StatusMixin, DeprecatedAttributesMixin):
 
     @property
     @deprecated
-    def args(self) -> 'tuple[str, ...]':
-        return ()
-
-    @property
-    @deprecated
     def doc(self) -> str:
         return ''
 
@@ -685,16 +671,6 @@ class Error(model.Error, StatusMixin, DeprecatedAttributesMixin):
         Typically contains the message that caused the error.
         """
         return self.body_class(self, body)
-
-    @property
-    @deprecated
-    def kwname(self) -> str:
-        return self.values[0]
-
-    @property
-    @deprecated
-    def args(self) -> 'tuple[str, ...]':
-        return self.values[1:]
 
     @property
     @deprecated

@@ -437,16 +437,16 @@ class TestModel(unittest.TestCase):
         kw = branch.body.create_keyword()
         assert_equal(kw.parent, branch)
 
-    def test_while_name(self):
-        assert_equal(While().name, '')
-        assert_equal(While('$x > 0').name, '$x > 0')
-        assert_equal(While('True', '1 minute').name, 'True | limit=1 minute')
-        assert_equal(While(limit='1 minute').name, 'limit=1 minute')
-        assert_equal(While('True', '1 s', on_limit_message='Error message').name,
+    def test_while_str(self):
+        assert_equal(str(While()), '')
+        assert_equal(str(While('$x > 0')), '$x > 0')
+        assert_equal(str(While('True', '1 minute')), 'True | limit=1 minute')
+        assert_equal(str(While(limit='1 minute')), 'limit=1 minute')
+        assert_equal(str(While('True', '1 s', on_limit_message='Error message')),
                      'True | limit=1 s | on_limit_message=Error message')
-        assert_equal(While(on_limit='pass').name,
+        assert_equal(str(While(on_limit='pass')),
                      'on_limit=pass')
-        assert_equal(While(on_limit_message='Error message').name,
+        assert_equal(str(While(on_limit_message='Error message')),
                      'on_limit_message=Error message')
 
 
@@ -549,28 +549,17 @@ class TestDeprecatedKeywordSpecificAttributes(unittest.TestCase):
 
     def test_deprecated_keyword_specific_properties(self):
         for_ = For(['${x}', '${y}'], 'IN', ['a', 'b', 'c', 'd'])
-        for name, expected in [('name', '${x} | ${y} IN [ a | b | c | d ]'),
-                               ('args', ()),
+        for name, expected in [('args', ()),
                                ('tags', Tags()),
                                ('timeout', None)]:
             assert_equal(getattr(for_, name), expected)
 
     def test_if(self):
-        for name, expected in [('name', ''),
-                               ('args', ()),
+        for name, expected in [('args', ()),
                                ('assign', ()),
                                ('tags', Tags()),
                                ('timeout', None)]:
             assert_equal(getattr(If(), name), expected)
-
-    def test_if_branch(self):
-        branch = IfBranch(IfBranch.IF, '$x > 0')
-        for name, expected in [('name', '$x > 0'),
-                               ('args', ()),
-                               ('assign', ()),
-                               ('tags', Tags()),
-                               ('timeout', None)]:
-            assert_equal(getattr(branch, name), expected)
 
 
 if __name__ == '__main__':
