@@ -10,7 +10,7 @@ from robot.utils import PY_VERSION
 from robot.utils.asserts import assert_equal
 from robot.libdocpkg import LibraryDocumentation
 from robot.libdocpkg.model import LibraryDoc, KeywordDoc
-from robot.libdocpkg.htmlutils import HtmlToText, DocToHtml
+from robot.libdocpkg.htmlutils import HtmlToText
 
 get_shortdoc = HtmlToText().get_shortdoc_from_html
 get_text = HtmlToText().html_to_plain_text
