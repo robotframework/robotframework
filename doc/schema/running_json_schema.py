@@ -2,10 +2,10 @@
 
 """JSON schema for ``robot.running.TestSuite`` model structure.
 
-The schema is modeled using pydantic in this file. After updating the model,
+The schema is modeled using Pydantic in this file. After updating the model,
 execute this file to regenerate the actual schema file in ``running.json``.
 
-https://pydantic-docs.helpmanual.io/usage/schema/
+Requires Pydantic 1.10. https://docs.pydantic.dev/1.10/
 """
 
 from collections.abc import Sequence

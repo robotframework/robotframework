@@ -2,10 +2,10 @@
 
 """Libdoc JSON schema model definition.
 
-The schema is modeled using pydantic in this file. After updating the model,
-execute this file to regenerate the actual schema file in libdoc.json.
+The schema is modeled using Pydantic in this file. After updating the model,
+execute this file to regenerate the actual schema file in ``libdoc.json``.
 
-https://pydantic-docs.helpmanual.io/usage/schema/
+Requires Pydantic 1.10. https://docs.pydantic.dev/1.10/
 """
 
 from datetime import datetime
