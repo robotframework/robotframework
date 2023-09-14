@@ -4,7 +4,7 @@ import zlib
 from pathlib import Path
 
 from robot.utils.asserts import assert_equal, assert_true
-from robot.result import Keyword, Message, TestCase, TestSuite
+from robot.result import Keyword, Message, TestCase, TestSuite, For
 from robot.result.executionerrors import ExecutionErrors
 from robot.model import Statistics, BodyItem
 from robot.reporting.jsmodelbuilders import (
@@ -135,11 +135,11 @@ class TestBuildTestSuite(unittest.TestCase):
         suite.tests = [TestCase(), TestCase(status='PASS')]
         S1 = self._verify_suite(suite.suites[0],
                                 status=0, tests=(t,), stats=(1, 0, 1, 0))
-        suite.tests[0].body = [Keyword(type=Keyword.FOR), Keyword()]
+        suite.tests[0].body = [For(assign=['${x}'], flavor='IN', values=['1', '2']), Keyword()]
         suite.tests[0].body[0].body = [Keyword(type=Keyword.ITERATION), Message()]
         k = self._verify_keyword(suite.tests[0].body[0].body[0], type=4)
-        m = self._verify_message(suite.tests[0].body[0].messages[0])
-        k1 = self._verify_keyword(suite.tests[0].body[0], type=3, body=(k, m))
+        m = self._verify_message(suite.tests[0].body[0].body[1])
+        k1 = self._verify_keyword(suite.tests[0].body[0], type=3, body=(k, m), kwname='${x} IN [ 1 | 2 ]')
         suite.tests[0].body[1].body = [Message(), Message('msg', level='TRACE')]
         m1 = self._verify_message(suite.tests[0].body[1].messages[0])
         m2 = self._verify_message(suite.tests[0].body[1].messages[1], 'msg', level=0)
