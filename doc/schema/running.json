@@ -34,7 +34,8 @@
       },
       "required": [
         "name"
-      ]
+      ],
+      "additionalProperties": false
     },
     "Error": {
       "title": "Error",
@@ -65,7 +66,8 @@
       "required": [
         "error",
         "values"
-      ]
+      ],
+      "additionalProperties": false
     },
     "Break": {
       "title": "Break",
@@ -85,7 +87,8 @@
           "const": "BREAK",
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "Continue": {
       "title": "Continue",
@@ -105,7 +108,8 @@
           "const": "CONTINUE",
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "Return": {
       "title": "Return",
@@ -135,7 +139,8 @@
       },
       "required": [
         "values"
-      ]
+      ],
+      "additionalProperties": false
     },
     "TryBranch": {
       "title": "TryBranch",
@@ -213,7 +218,8 @@
       "required": [
         "type",
         "body"
-      ]
+      ],
+      "additionalProperties": false
     },
     "Try": {
       "title": "Try",
@@ -243,7 +249,8 @@
       },
       "required": [
         "body"
-      ]
+      ],
+      "additionalProperties": false
     },
     "IfBranch": {
       "title": "IfBranch",
@@ -309,7 +316,8 @@
       "required": [
         "type",
         "body"
-      ]
+      ],
+      "additionalProperties": false
     },
     "If": {
       "title": "If",
@@ -339,7 +347,8 @@
       },
       "required": [
         "body"
-      ]
+      ],
+      "additionalProperties": false
     },
     "While": {
       "title": "While",
@@ -413,7 +422,8 @@
       },
       "required": [
         "body"
-      ]
+      ],
+      "additionalProperties": false
     },
     "For": {
       "title": "For",
@@ -504,7 +514,8 @@
         "flavor",
         "values",
         "body"
-      ]
+      ],
+      "additionalProperties": false
     },
     "TestCase": {
       "title": "TestCase",
@@ -577,7 +588,8 @@
       "required": [
         "name",
         "body"
-      ]
+      ],
+      "additionalProperties": false
     },
     "Import": {
       "title": "Import",
@@ -615,7 +627,8 @@
       "required": [
         "type",
         "name"
-      ]
+      ],
+      "additionalProperties": false
     },
     "Variable": {
       "title": "Variable",
@@ -644,7 +657,8 @@
       "required": [
         "name",
         "value"
-      ]
+      ],
+      "additionalProperties": false
     },
     "UserKeyword": {
       "title": "UserKeyword",
@@ -691,6 +705,9 @@
           "title": "Error",
           "type": "string"
         },
+        "teardown": {
+          "$ref": "#/definitions/Keyword"
+        },
         "body": {
           "title": "Body",
           "type": "array",
@@ -724,7 +741,8 @@
       "required": [
         "name",
         "body"
-      ]
+      ],
+      "additionalProperties": false
     },
     "Resource": {
       "title": "Resource",
@@ -760,7 +778,8 @@
             "$ref": "#/definitions/UserKeyword"
           }
         }
-      }
+      },
+      "additionalProperties": false
     },
     "TestSuite": {
       "title": "TestSuite",

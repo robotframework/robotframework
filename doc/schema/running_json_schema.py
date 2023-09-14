@@ -12,7 +12,14 @@ from collections.abc import Sequence
 from pathlib import Path
 from typing import Literal
 
-from pydantic import BaseModel, Extra, Field
+from pydantic import BaseModel as PydanticBaseModel, Extra, Field
+
+
+class BaseModel(PydanticBaseModel):
+
+    class Config:
+        # Do not allow extra attributes.
+        extra = Extra.forbid
 
 
 class BodyItem(BaseModel):
@@ -119,8 +126,6 @@ class TestSuite(BaseModel):
     resource: 'Resource | None'
 
     class Config:
-        # Do not allow extra attributes.
-        extra = Extra.forbid
         # pydantic doesn't add schema version automatically.
         # https://github.com/samuelcolvin/pydantic/issues/1478
         schema_extra = {
@@ -152,6 +157,7 @@ class UserKeyword(BaseModel):
     timeout: str | None
     lineno: int | None
     error: str | None
+    teardown: Keyword | None
     body: list[Keyword | For | While | If | Try | Error | Return]
 
 
