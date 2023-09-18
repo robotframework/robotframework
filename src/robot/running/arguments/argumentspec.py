@@ -141,15 +141,6 @@ class ArgInfo:
         return False
 
     @property
-    def types_reprs(self):
-        """Deprecated. Use :attr:`type` instead."""
-        if not self.type:
-            return []
-        if self.type.is_union:
-            return [str(t) for t in self.type.nested]
-        return [str(self.type)]
-
-    @property
     def default_repr(self):
         if self.default is self.NOTSET:
             return None
