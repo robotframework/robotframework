@@ -64,7 +64,7 @@ class TestOutputSplitter(unittest.TestCase):
         assert_equal(len(splitter), 3)
 
     def test_timestamp_given_as_float(self):
-        now = float(time.time())
+        now = round(time.time(), 6)
         splitter = Splitter(f'*INFO:1x2* No timestamp\n'
                             f'*HTML:1000.123456789* X\n'
                             f'*INFO:12345678.9*X\n'
@@ -81,7 +81,7 @@ class TestOutputSplitter(unittest.TestCase):
         assert_equal(message.level, level)
         assert_equal(message.html, html)
         if timestamp:
-            assert_equal(message.timestamp, datetime.fromtimestamp(timestamp))
+            assert_equal(message.timestamp, datetime.fromtimestamp(timestamp), timestamp)
 
 
 if __name__ == '__main__':
