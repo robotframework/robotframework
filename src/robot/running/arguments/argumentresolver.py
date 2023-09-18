@@ -13,37 +13,43 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from typing import TYPE_CHECKING
+
 from robot.errors import DataError
 from robot.utils import is_string, is_dict_like, split_from_equals
 from robot.variables import is_dict_variable
 
 from .argumentvalidator import ArgumentValidator
 
+if TYPE_CHECKING:
+    from .argumentspec import ArgumentSpec
+
 
 class ArgumentResolver:
 
-    def __init__(self, argspec, resolve_named=True,
-                 resolve_variables_until=None, dict_to_kwargs=False):
-        self._named_resolver = NamedArgumentResolver(argspec) \
-            if resolve_named else NullNamedArgumentResolver()
-        self._variable_replacer = VariableReplacer(resolve_variables_until)
-        self._dict_to_kwargs = DictToKwargs(argspec, dict_to_kwargs)
-        self._argument_validator = ArgumentValidator(argspec)
+    def __init__(self, arg_spec: 'ArgumentSpec',
+                 resolve_named: bool = True,
+                 resolve_variables_until: 'int|None' = None,
+                 dict_to_kwargs: bool = False):
+        self.named_resolver = NamedArgumentResolver(arg_spec) \
+              if resolve_named else NullNamedArgumentResolver()
+        self.variable_replacer = VariableReplacer(resolve_variables_until)
+        self.dict_to_kwargs = DictToKwargs(arg_spec, dict_to_kwargs)
+        self.argument_validator = ArgumentValidator(arg_spec)
 
     def resolve(self, arguments, variables=None):
-        positional, named = self._named_resolver.resolve(arguments, variables)
-        positional, named = self._variable_replacer.replace(positional, named, variables)
-        positional, named = self._dict_to_kwargs.handle(positional, named)
-        self._argument_validator.validate(positional, named,
-                                          dryrun=variables is None)
+        positional, named = self.named_resolver.resolve(arguments, variables)
+        positional, named = self.variable_replacer.replace(positional, named, variables)
+        positional, named = self.dict_to_kwargs.handle(positional, named)
+        self.argument_validator.validate(positional, named,
+                                         dryrun=variables is None)
         return positional, named
 
 
 class NamedArgumentResolver:
 
-    def __init__(self, argspec):
-        """:type argspec: :py:class:`robot.running.arguments.ArgumentSpec`"""
-        self._argspec = argspec
+    def __init__(self, arg_spec: 'ArgumentSpec'):
+        self.arg_spec = arg_spec
 
     def resolve(self, arguments, variables=None):
         positional = []
@@ -68,15 +74,15 @@ class NamedArgumentResolver:
                 name = variables.replace_scalar(name)
             except DataError:
                 return False
-        spec = self._argspec
+        spec = self.arg_spec
         return bool(previous_named or
                     spec.var_named or
                     name in spec.positional_or_named or
                     name in spec.named_only)
 
     def _raise_positional_after_named(self):
-        raise DataError("%s '%s' got positional argument after named arguments."
-                        % (self._argspec.type.capitalize(), self._argspec.name))
+        raise DataError(f"{self.arg_spec.type.capitalize()} '{self.arg_spec.name}' "
+                        f"got positional argument after named arguments.")
 
 
 class NullNamedArgumentResolver:
@@ -87,30 +93,30 @@ class NullNamedArgumentResolver:
 
 class DictToKwargs:
 
-    def __init__(self, argspec, enabled=False):
-        self._maxargs = argspec.maxargs
-        self._enabled = enabled and bool(argspec.var_named)
+    def __init__(self, arg_spec: 'ArgumentSpec', enabled: bool = False):
+        self.maxargs = arg_spec.maxargs
+        self.enabled = enabled and bool(arg_spec.var_named)
 
     def handle(self, positional, named):
-        if self._enabled and self._extra_arg_has_kwargs(positional, named):
+        if self.enabled and self._extra_arg_has_kwargs(positional, named):
             named = positional.pop().items()
         return positional, named
 
     def _extra_arg_has_kwargs(self, positional, named):
-        if named or len(positional) != self._maxargs + 1:
+        if named or len(positional) != self.maxargs + 1:
             return False
         return is_dict_like(positional[-1])
 
 
 class VariableReplacer:
 
-    def __init__(self, resolve_until=None):
-        self._resolve_until = resolve_until
+    def __init__(self, resolve_until: 'int|None' = None):
+        self.resolve_until = resolve_until
 
     def replace(self, positional, named, variables=None):
         # `variables` is None in dry-run mode and when using Libdoc.
         if variables:
-            positional = variables.replace_list(positional, self._resolve_until)
+            positional = variables.replace_list(positional, self.resolve_until)
             named = list(self._replace_named(named, variables.replace_scalar))
         else:
             # If `var` isn't a tuple, it's a &{dict} variables.

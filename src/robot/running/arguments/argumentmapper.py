@@ -13,17 +13,21 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from typing import TYPE_CHECKING
+
 from robot.errors import DataError
+
+if TYPE_CHECKING:
+    from .argumentspec import ArgumentSpec
 
 
 class ArgumentMapper:
 
-    def __init__(self, argspec):
-        """:type argspec: :py:class:`robot.running.arguments.ArgumentSpec`"""
-        self._argspec = argspec
+    def __init__(self, arg_spec: 'ArgumentSpec'):
+        self.arg_spec = arg_spec
 
     def map(self, positional, named, replace_defaults=True):
-        template = KeywordCallTemplate(self._argspec)
+        template = KeywordCallTemplate(self.arg_spec)
         template.fill_positional(positional)
         template.fill_named(named)
         if replace_defaults:
@@ -33,19 +37,18 @@ class ArgumentMapper:
 
 class KeywordCallTemplate:
 
-    def __init__(self, argspec):
-        """:type argspec: :py:class:`robot.running.arguments.ArgumentSpec`"""
-        self._argspec = argspec
-        self.args = [None if arg not in argspec.defaults
-                     else DefaultValue(argspec.defaults[arg])
-                     for arg in argspec.positional]
+    def __init__(self, arg_spec: 'ArgumentSpec'):
+        self.arg_spec = arg_spec
+        self.args = [None if arg not in arg_spec.defaults
+                     else DefaultValue(arg_spec.defaults[arg])
+                     for arg in arg_spec.positional]
         self.kwargs = []
 
     def fill_positional(self, positional):
         self.args[:len(positional)] = positional
 
     def fill_named(self, named):
-        spec = self._argspec
+        spec = self.arg_spec
         for name, value in named:
             if name in spec.positional_or_named:
                 index = spec.positional_or_named.index(name)
@@ -53,7 +56,7 @@ class KeywordCallTemplate:
             elif spec.var_named or name in spec.named_only:
                 self.kwargs.append((name, value))
             else:
-                raise DataError("Non-existing named argument '%s'." % name)
+                raise DataError(f"Non-existing named argument '{name}'.")
         named_names = {name for name, _ in named}
         for name in spec.named_only:
             if name not in named_names:
@@ -77,5 +80,4 @@ class DefaultValue:
         try:
             return variables.replace_scalar(self.value)
         except DataError as err:
-            raise DataError('Resolving argument default values failed: %s'
-                            % err.message)
+            raise DataError(f'Resolving argument default values failed: {err}')

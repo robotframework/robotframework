@@ -22,7 +22,7 @@ from enum import Enum
 from numbers import Integral, Real
 from os import PathLike
 from pathlib import Path, PurePath
-from typing import Any, Tuple, TypeVar, Union
+from typing import Any, TypeVar, Union
 
 from robot.conf import Languages
 from robot.libraries.DateTime import convert_date, convert_time
