@@ -9,7 +9,7 @@ from jsonschema import Draft202012Validator
 from xmlschema import XMLSchema
 
 from robot.api import logger
-from robot.utils import SYSTEM_ENCODING
+from robot.utils import NOT_SET, SYSTEM_ENCODING
 from robot.running.arguments import ArgInfo
 
 
@@ -66,11 +66,11 @@ class LibDocLib:
     def get_repr_from_arg_model(self, model):
         return str(ArgInfo(kind=model['kind'],
                            name=model['name'],
-                           type=model['type'] or ArgInfo.NOTSET,
-                           default=model['default'] or ArgInfo.NOTSET))
+                           type=model['type'] or NOT_SET,
+                           default=model['default'] or NOT_SET))
 
     def get_repr_from_json_arg_model(self, model):
         return str(ArgInfo(kind=model['kind'],
                            name=model['name'],
-                           type=model['type'] or ArgInfo.NOTSET,
-                           default=model['defaultValue'] or ArgInfo.NOTSET))
+                           type=model['type'] or NOT_SET,
+                           default=model['defaultValue'] or NOT_SET))

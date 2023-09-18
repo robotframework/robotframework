@@ -17,7 +17,7 @@ import sys
 from enum import Enum
 from typing import Union, Tuple
 
-from robot.utils import has_args, is_union, safe_str, setter, type_repr
+from robot.utils import has_args, is_union, NOT_SET, safe_str, setter, type_repr
 
 from .argumentconverter import ArgumentConverter
 from .argumentmapper import ArgumentMapper
@@ -84,28 +84,27 @@ class ArgumentSpec:
         return mapper.map(positional, named, replace_defaults)
 
     def __iter__(self):
-        notset = ArgInfo.NOTSET
         get_type = (self.types or {}).get
         get_default = self.defaults.get
         for arg in self.positional_only:
             yield ArgInfo(ArgInfo.POSITIONAL_ONLY, arg,
-                          get_type(arg, notset), get_default(arg, notset))
+                          get_type(arg, NOT_SET), get_default(arg, NOT_SET))
         if self.positional_only:
             yield ArgInfo(ArgInfo.POSITIONAL_ONLY_MARKER)
         for arg in self.positional_or_named:
             yield ArgInfo(ArgInfo.POSITIONAL_OR_NAMED, arg,
-                          get_type(arg, notset), get_default(arg, notset))
+                          get_type(arg, NOT_SET), get_default(arg, NOT_SET))
         if self.var_positional:
             yield ArgInfo(ArgInfo.VAR_POSITIONAL, self.var_positional,
-                          get_type(self.var_positional, notset))
+                          get_type(self.var_positional, NOT_SET))
         elif self.named_only:
             yield ArgInfo(ArgInfo.NAMED_ONLY_MARKER)
         for arg in self.named_only:
             yield ArgInfo(ArgInfo.NAMED_ONLY, arg,
-                          get_type(arg, notset), get_default(arg, notset))
+                          get_type(arg, NOT_SET), get_default(arg, NOT_SET))
         if self.var_named:
             yield ArgInfo(ArgInfo.VAR_NAMED, self.var_named,
-                          get_type(self.var_named, notset))
+                          get_type(self.var_named, NOT_SET))
 
     def __bool__(self):
         return any([self.positional_only, self.positional_or_named, self.var_positional,
@@ -117,7 +116,6 @@ class ArgumentSpec:
 
 class ArgInfo:
     """Contains argument information. Only used by Libdoc."""
-    NOTSET = object()
     POSITIONAL_ONLY = 'POSITIONAL_ONLY'
     POSITIONAL_ONLY_MARKER = 'POSITIONAL_ONLY_MARKER'
     POSITIONAL_OR_NAMED = 'POSITIONAL_OR_NAMED'
@@ -126,7 +124,7 @@ class ArgInfo:
     NAMED_ONLY = 'NAMED_ONLY'
     VAR_NAMED = 'VAR_NAMED'
 
-    def __init__(self, kind, name='', type=NOTSET, default=NOTSET):
+    def __init__(self, kind, name='', type=NOT_SET, default=NOT_SET):
         self.kind = kind
         self.name = name
         self.type = TypeInfo.from_type(type)
@@ -137,12 +135,12 @@ class ArgInfo:
         if self.kind in (self.POSITIONAL_ONLY,
                          self.POSITIONAL_OR_NAMED,
                          self.NAMED_ONLY):
-            return self.default is self.NOTSET
+            return self.default is NOT_SET
         return False
 
     @property
     def default_repr(self):
-        if self.default is self.NOTSET:
+        if self.default is NOT_SET:
             return None
         if isinstance(self.default, Enum):
             return self.default.name
@@ -163,12 +161,12 @@ class ArgInfo:
             default_sep = ' = '
         else:
             default_sep = '='
-        if self.default is not self.NOTSET:
+        if self.default is not NOT_SET:
             ret = f'{ret}{default_sep}{self.default_repr}'
         return ret
 
 
-Type = Union[type, str, tuple, type(ArgInfo.NOTSET)]
+Type = Union[type, str, tuple, type(NOT_SET)]
 
 
 class TypeInfo:
@@ -176,9 +174,8 @@ class TypeInfo:
 
     With unions and parametrized types, :attr:`nested` contains nested types.
     """
-    NOTSET = ArgInfo.NOTSET
 
-    def __init__(self, type: Type = NOTSET, nested: Tuple['TypeInfo'] = ()):
+    def __init__(self, type: Type = NOT_SET, nested: Tuple['TypeInfo'] = ()):
         self.type = type
         self.nested = nested
 
@@ -196,7 +193,7 @@ class TypeInfo:
 
     @classmethod
     def from_type(cls, type: Type) -> 'TypeInfo':
-        if type is cls.NOTSET:
+        if type is NOT_SET:
             return cls()
         if isinstance(type, dict):
             return cls.from_dict(type)
@@ -230,4 +227,4 @@ class TypeInfo:
         return type_repr(self.type)
 
     def __bool__(self):
-        return self.type is not self.NOTSET
+        return self.type is not NOT_SET

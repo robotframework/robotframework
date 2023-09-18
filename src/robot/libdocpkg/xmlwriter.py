@@ -14,7 +14,7 @@
 #  limitations under the License.
 
 from robot.running import TypeInfo
-from robot.utils import XmlWriter
+from robot.utils import NOT_SET, XmlWriter
 
 from .output import get_generation_time
 
@@ -77,7 +77,7 @@ class LibdocXmlWriter:
                 writer.element('name', arg.name)
             if arg.type:
                 self._write_type_info(arg.type, kw.type_docs[arg.name], writer)
-            if arg.default is not arg.NOTSET:
+            if arg.default is not NOT_SET:
                 writer.element('default', arg.default_repr)
             writer.end('arg')
         writer.end('arguments')
