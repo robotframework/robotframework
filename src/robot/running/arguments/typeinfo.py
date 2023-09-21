@@ -13,6 +13,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from enum import auto, Enum
+from collections.abc import Sequence
+from dataclasses import dataclass
 from typing import Union
 
 from robot.utils import has_args, is_union, NOT_SET, type_repr
@@ -28,9 +31,11 @@ class TypeInfo:
     """
     __slots__ = ('type', 'nested')
 
-    def __init__(self, type: Type = NOT_SET, nested: 'tuple[TypeInfo]' = ()):
-        self.type = type
-        self.nested = nested
+    def __init__(self, type: Type = NOT_SET, nested: 'Sequence[TypeInfo]' = ()):
+        # TODO: Fix type hint of `type`.
+        # TODO: Handle type aliases here.
+        self.type = type if type != '...' else Ellipsis
+        self.nested = tuple(nested)
 
     @property
     def name(self) -> str:
@@ -74,13 +79,17 @@ class TypeInfo:
 
     @classmethod
     def from_sting(cls, hint: str) -> 'TypeInfo':
-        return cls(hint)
+        try:
+            return TypeInfoParser(hint).parse()
+        except ValueError:
+            # Would be nice to report the error somewhere.
+            return cls(hint)
 
     @classmethod
     def from_dict(cls, data: dict) -> 'TypeInfo':
         if not data:
             return cls()
-        nested = tuple(cls.from_dict(n) for n in data['nested'])
+        nested = [cls.from_dict(n) for n in data['nested']]
         return cls(data['name'], nested)
 
     def __str__(self):
@@ -93,3 +102,141 @@ class TypeInfo:
 
     def __bool__(self):
         return self.type is not NOT_SET
+
+
+class TypeInfoTokenType(Enum):
+    NAME = auto()
+    LEFT_SQUARE = auto()
+    RIGHT_SQUARE = auto()
+    PIPE = auto()
+    COMMA = auto()
+
+    def __repr__(self):
+        return str(self)
+
+
+@dataclass
+class TypeInfoToken:
+    type: TypeInfoTokenType
+    value: str
+    position: int = -1
+
+
+class TypeInfoTokenizer:
+    markers = {
+        '[': TypeInfoTokenType.LEFT_SQUARE,
+        ']': TypeInfoTokenType.RIGHT_SQUARE,
+        '|': TypeInfoTokenType.PIPE,
+        ',': TypeInfoTokenType.COMMA,
+    }
+
+    def __init__(self, source: str):
+        self.source = source
+        self.tokens: 'list[TypeInfoToken]' = []
+        self.start = 0
+        self.current = 0
+
+    @property
+    def at_end(self) -> bool:
+        return self.current >= len(self.source)
+
+    def tokenize(self) -> 'list[TypeInfoToken]':
+        while not self.at_end:
+            self.start = self.current
+            char = self.advance()
+            if char in self.markers:
+                self.add_token(self.markers[char])
+            elif char.strip():
+                self.name()
+        return self.tokens
+
+    def advance(self) -> str:
+        char = self.source[self.current]
+        self.current += 1
+        return char
+
+    def peek(self) -> 'str|None':
+        try:
+            return self.source[self.current]
+        except IndexError:
+            return None
+
+    def name(self):
+        end_at = set(self.markers) | {None}
+        while self.peek() not in end_at:
+            self.current += 1
+        self.add_token(TypeInfoTokenType.NAME)
+
+    def add_token(self, type: TypeInfoTokenType):
+        value = self.source[self.start:self.current].strip()
+        self.tokens.append(TypeInfoToken(type, value, self.start))
+
+
+class TypeInfoParser:
+
+    def __init__(self, source: str):
+        self.source = source
+        self.tokens: 'list[TypeInfoToken]' = []
+        self.current = 0
+
+    @property
+    def at_end(self) -> bool:
+        return self.peek() is None
+
+    def parse(self) -> 'TypeInfo':
+        self.tokens = TypeInfoTokenizer(self.source).tokenize()
+        info = self.type()
+        if not self.at_end:
+            self.error('Tokens remaining.')
+        return info
+
+    def type(self) -> 'TypeInfo':
+        if not self.check(TypeInfoTokenType.NAME):
+            self.error('Token name missing.')
+        info = TypeInfo(self.advance().value)
+        if self.match(TypeInfoTokenType.LEFT_SQUARE):
+            info.nested = tuple(self.nested())
+        if self.check(TypeInfoTokenType.PIPE):
+            nested = [info]
+            while self.match(TypeInfoTokenType.PIPE):
+                nested.append(self.type())
+            info = TypeInfo('Union', nested)
+        return info
+
+    def nested(self) -> 'list[TypeInfo]':
+        nested = []
+        while not nested or self.match(TypeInfoTokenType.COMMA):
+            nested.append(self.type())
+        if not self.check(TypeInfoTokenType.RIGHT_SQUARE):
+            self.error("']' missing.")
+        self.advance()
+        return nested
+
+    def match(self, *types: TypeInfoTokenType) -> bool:
+        for typ in types:
+            if self.check(typ):
+                self.advance()
+                return True
+        return False
+
+    def check(self, expected: TypeInfoTokenType) -> bool:
+        peeked = self.peek()
+        return peeked and peeked.type == expected
+
+    def advance(self) -> 'TypeInfoToken|None':
+        token = self.peek()
+        if token:
+            self.current += 1
+        return token
+
+    def peek(self) -> 'TypeInfoToken|None':
+        try:
+            return self.tokens[self.current]
+        except IndexError:
+            return None
+
+    def error(self, message: str):
+        token = self.peek()
+        position = f'in index {token.position}' if token else 'at end'
+        raise ValueError(f"Parsing type info {self.source!r} failed: "
+                         f"Error {position}: {message}")

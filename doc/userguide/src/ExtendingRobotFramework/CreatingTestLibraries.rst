@@ -1379,6 +1379,15 @@ syntax instead:
   def example(length: int | float, padding: int | str | None = None):
       ...
 
+Robot Framework 7.0 enhanced the support for the union syntax so that also
+"stringly typed" unions like `'type1 | type2'` work. This syntax works also
+with older Python versions:
+
+.. sourcecode:: python
+
+  def example(length: 'int | float', padding: 'int | str | None' = None):
+      ...
+
 An alternative is specifying types as a tuple. It is not recommended with annotations,
 because that syntax is not supported by other tools, but it works well with
 the `@keyword` decorator:
@@ -1470,14 +1479,18 @@ with different generic types works according to these rules:
 - With sets there can be exactly one type like `set[float]`. Conversion logic
   is the same as with lists.
 
+Using the native `list[int]` syntax requires `Python 3.9`__ or newer. If there
+is a need to support also earlier Python versions, it is possible to either use
+matching types from the typing_ module like `List[int]` or use the "stringly typed"
+syntax like `'list[int]'`.
+
 .. note:: Support for converting nested types with generics is new in
           Robot Framework 6.0. Same syntax works also with earlier versions,
           but arguments are only converted to the base type and nested types
           are not used for anything.
 
-.. note:: Using generics with Python standard types like `list[int]` is new
-          in `Python 3.9`__. With earlier versions matching types from
-          the typing_ module can be used like `List[int]`.
+.. note:: Support for "stringly typed" parameterized generics is new in
+          Robot Framework 7.0.
 
 __ https://peps.python.org/pep-0585/
 
