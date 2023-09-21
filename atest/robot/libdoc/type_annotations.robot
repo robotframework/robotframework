@@ -29,14 +29,14 @@ Non-type annotations
     ...                                  *varargs: But surely feels odd...
 
 Drop `typing.` prefix
-    Keyword Arguments Should Be     7    a: Any    b: List    c: Any | List
+    Keyword Arguments Should Be     7    a: Any    b: list    c: Any | list
 
 Union from typing
     Keyword Arguments Should Be     8    a: int | str | list | tuple
     Keyword Arguments Should Be     9    a: int | str | list | tuple | None = None
 
 Nested
-    Keyword Arguments Should Be    10    a: List[int]    b: List[int | float]    c: Tuple[Tuple[UnknownType], Dict[str, Tuple[float]]]
+    Keyword Arguments Should Be    10    a: list[int]    b: list[int | float]    c: tuple[tuple[UnknownType], dict[str, tuple[float]]]
 
 Union syntax
     [Tags]    require-py3.10

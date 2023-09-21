@@ -41,7 +41,7 @@ class ArgumentSpec:
         self.types = types
 
     @setter
-    def types(self, types):
+    def types(self, types) -> 'dict[str, TypeInfo]':
         return TypeValidator(self).validate(types)
 
     @property
@@ -127,7 +127,7 @@ class ArgInfo:
     def __init__(self, kind, name='', type=NOT_SET, default=NOT_SET):
         self.kind = kind
         self.name = name
-        self.type = TypeInfo.from_type(type)
+        self.type = TypeInfo.from_type_hint(type)
         self.default = default
 
     @property

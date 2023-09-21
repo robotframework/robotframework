@@ -20,16 +20,16 @@ List with types
 
 List with incompatible types
     [Template]                Conversion Should Fail
-    List with types           ['foo', 'bar']              type=List[int]                error=Item '0' got value 'foo' that cannot be converted to integer.
-    List with types           [0, 1, 2, 3, 4, 5, 6.1]     type=List[int]                error=Item '6' got value '6.1' (float) that cannot be converted to integer: Conversion would lose precision.
-    List with types           ${{[0.0, 1.1]}}             type=List[int]                error=Item '1' got value '1.1' (float) that cannot be converted to integer: Conversion would lose precision.
+    List with types           ['foo', 'bar']              type=list[int]                error=Item '0' got value 'foo' that cannot be converted to integer.
+    List with types           [0, 1, 2, 3, 4, 5, 6.1]     type=list[int]                error=Item '6' got value '6.1' (float) that cannot be converted to integer: Conversion would lose precision.
+    List with types           ${{[0.0, 1.1]}}             type=list[int]                error=Item '1' got value '1.1' (float) that cannot be converted to integer: Conversion would lose precision.
     ...                       arg_type=list
 
 Invalid list
     [Template]                Conversion Should Fail
     List                      [1, oops]                                                 error=Invalid expression.
     List                      ()                                                        error=Value is tuple, not list.
-    List with types           ooops                       type=List[int]                error=Invalid expression.
+    List with types           ooops                       type=list[int]                error=Invalid expression.
 
 Tuple
     Tuple                     ()                          ()
@@ -55,21 +55,21 @@ Tuple with homogenous types
 
 Tuple with incompatible types
     [Template]                Conversion Should Fail
-    Tuple with types          ('bad', 'values')           type=Tuple[bool, int]         error=Item '1' got value 'values' that cannot be converted to integer.
-    Homogenous tuple          ('bad', 'values')           type=Tuple[int, ...]          error=Item '0' got value 'bad' that cannot be converted to integer.
-    Tuple with types          ${{('bad', 'values')}}      type=Tuple[bool, int]         error=Item '1' got value 'values' that cannot be converted to integer.
+    Tuple with types          ('bad', 'values')           type=tuple[bool, int]         error=Item '1' got value 'values' that cannot be converted to integer.
+    Homogenous tuple          ('bad', 'values')           type=tuple[int, ...]          error=Item '0' got value 'bad' that cannot be converted to integer.
+    Tuple with types          ${{('bad', 'values')}}      type=tuple[bool, int]         error=Item '1' got value 'values' that cannot be converted to integer.
     ...                       arg_type=tuple
 
 Tuple with wrong number of values
     [Template]                Conversion Should Fail
-    Tuple with types          ('false',)                  type=Tuple[bool, int]         error=Expected 2 items, got 1.
-    Tuple with types          ('too', 'many', '!')        type=Tuple[bool, int]         error=Expected 2 items, got 3.
+    Tuple with types          ('false',)                  type=tuple[bool, int]         error=Expected 2 items, got 1.
+    Tuple with types          ('too', 'many', '!')        type=tuple[bool, int]         error=Expected 2 items, got 3.
 
 Invalid tuple
     [Template]                Conversion Should Fail
     Tuple                     (1, oops)                                                 error=Invalid expression.
-    Tuple with types          []                          type=Tuple[bool, int]         error=Value is list, not tuple.
-    Homogenous tuple          ooops                       type=Tuple[int, ...]          error=Invalid expression.
+    Tuple with types          []                          type=tuple[bool, int]         error=Value is list, not tuple.
+    Homogenous tuple          ooops                       type=tuple[int, ...]          error=Invalid expression.
 
 Sequence
     Sequence                  []                          []
@@ -109,16 +109,16 @@ Dict with types
 
 Dict with incompatible types
     [Template]                Conversion Should Fail
-    Dict with types           {1: 2, 'bad': 3}            type=Dict[int, float]         error=Key 'bad' cannot be converted to integer.
-    Dict with types           {None: 0}                   type=Dict[int, float]         error=Key 'None' (None) cannot be converted to integer.
-    Dict with types           {666: 'bad'}                type=Dict[int, float]         error=Item '666' got value 'bad' that cannot be converted to float.
-    Dict with types           {0: None}                   type=Dict[int, float]         error=Item '0' got value 'None' (None) that cannot be converted to float.
+    Dict with types           {1: 2, 'bad': 3}            type=dict[int, float]         error=Key 'bad' cannot be converted to integer.
+    Dict with types           {None: 0}                   type=dict[int, float]         error=Key 'None' (None) cannot be converted to integer.
+    Dict with types           {666: 'bad'}                type=dict[int, float]         error=Item '666' got value 'bad' that cannot be converted to float.
+    Dict with types           {0: None}                   type=dict[int, float]         error=Item '0' got value 'None' (None) that cannot be converted to float.
 
 Invalid dictionary
     [Template]                Conversion Should Fail
     Dict                      {1: ooops}                  type=dictionary               error=Invalid expression.
     Dict                      []                          type=dictionary               error=Value is list, not dict.
-    Dict with types           ooops                       type=Dict[int, float]         error=Invalid expression.
+    Dict with types           ooops                       type=dict[int, float]         error=Invalid expression.
 
 Mapping
     Mapping                   {}                          {}
@@ -192,7 +192,7 @@ Set with types
 
 Set with incompatible types
     [Template]                Conversion Should Fail
-    Set with types            {1, 2.0, 'three'}           type=Set[int]                 error=Item 'three' cannot be converted to integer.
+    Set with types            {1, 2.0, 'three'}           type=set[int]                 error=Item 'three' cannot be converted to integer.
     Mutable set with types    {1, 2.0, 'three'}           type=MutableSet[float]        error=Item 'three' cannot be converted to float.
 
 Invalid Set

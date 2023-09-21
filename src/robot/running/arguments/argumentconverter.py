@@ -17,6 +17,7 @@ from typing import TYPE_CHECKING
 
 from robot.variables import contains_variable
 
+from .typeinfo import TypeInfo
 from .typeconverters import TypeConverter
 
 if TYPE_CHECKING:
@@ -77,8 +78,8 @@ class ArgumentConverter:
                 except ValueError as err:
                     conversion_error = err
         if name in spec.defaults:
-            converter = TypeConverter.converter_for(type(spec.defaults[name]),
-                                                    languages=self.languages)
+            type_info = TypeInfo.from_type_hint(type(spec.defaults[name]))
+            converter = TypeConverter.converter_for(type_info, languages=self.languages)
             if converter:
                 try:
                     return converter.convert(name, value, explicit_type=False,

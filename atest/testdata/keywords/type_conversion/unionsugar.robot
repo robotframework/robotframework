@@ -63,7 +63,7 @@ Argument not matching union
     Union of int and float             ${NONE}         type=integer or float    arg_type=None
     Union of int and float             ${CUSTOM}       type=integer or float    arg_type=Custom
     Union with int and None            invalid         type=integer or None
-    Union with subscripted generics    invalid         type=list or integer
+    Union with subscripted generics    invalid         type=list[int] or integer
 
 Union with unrecognized type
     ${myobject}=    Create my object

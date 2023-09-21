@@ -74,3 +74,6 @@ Tuple with invalid types
 
 Union without types
     Check Test Case    ${TESTNAME}
+
+Empty tuple
+    Check Test Case    ${TESTNAME}

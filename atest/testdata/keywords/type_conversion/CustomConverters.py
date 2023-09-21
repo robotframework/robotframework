@@ -88,7 +88,6 @@ class OnlyVarArg:
             raise AssertionError(f'Expected library to be instance of {ModuleType}, was {type(library)}')
 
 
-
 class Strict:
     pass
 

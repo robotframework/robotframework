@@ -26,6 +26,7 @@ class TypeInfo:
 
     With unions and parametrized types, :attr:`nested` contains nested types.
     """
+    __slots__ = ('type', 'nested')
 
     def __init__(self, type: Type = NOT_SET, nested: 'tuple[TypeInfo]' = ()):
         self.type = type
@@ -37,6 +38,7 @@ class TypeInfo:
             return self.type
         return type_repr(self.type, nested=False)
 
+    # TODO: Add `union=False` to `__init__` and remove this property.
     @property
     def is_union(self) -> bool:
         if isinstance(self.type, str):
@@ -44,22 +46,35 @@ class TypeInfo:
         return is_union(self.type, allow_tuple=True)
 
     @classmethod
-    def from_type(cls, type: Type) -> 'TypeInfo':
-        if type is NOT_SET:
+    def from_type_hint(cls, hint: Type) -> 'TypeInfo':
+        if isinstance(hint, TypeInfo):
+            return hint
+        if hint is NOT_SET:
             return cls()
-        if isinstance(type, dict):
-            return cls.from_dict(type)
-        if isinstance(type, (tuple, list)):
-            if not type:
-                return cls()
-            if len(type) == 1:
-                return cls(type[0])
-            nested = tuple(cls.from_type(t) for t in type)
+        if isinstance(hint, str):
+            return cls.from_sting(hint)
+        if isinstance(hint, dict):
+            return cls.from_dict(hint)
+        if isinstance(hint, (tuple, list)):
+            if len(hint) == 1:
+                return cls(hint[0])
+            nested = tuple(cls.from_type_hint(t) for t in hint)
             return cls('Union', nested)
-        if has_args(type):
-            nested = tuple(cls.from_type(t) for t in type.__args__)
-            return cls(type, nested)
-        return cls(type)
+        return cls.from_type(hint)
+
+    @classmethod
+    def from_type(cls, hint: type):
+        if has_args(hint):
+            nested = tuple(cls.from_type_hint(t) for t in hint.__args__)
+        else:
+            nested = ()
+        if hasattr(hint, '__origin__') and not is_union(hint):
+            hint = hint.__origin__
+        return cls(hint, nested)
+
+    @classmethod
+    def from_sting(cls, hint: str) -> 'TypeInfo':
+        return cls(hint)
 
     @classmethod
     def from_dict(cls, data: dict) -> 'TypeInfo':
@@ -71,12 +86,10 @@ class TypeInfo:
     def __str__(self):
         if self.is_union:
             return ' | '.join(str(n) for n in self.nested)
-        if isinstance(self.type, str):
-            if self.nested:
-                nested = ', '.join(str(n) for n in self.nested)
-                return f'{self.name}[{nested}]'
-            return self.name
-        return type_repr(self.type)
+        if self.nested:
+            nested = ', '.join(str(n) for n in self.nested)
+            return f'{self.name}[{nested}]'
+        return self.name
 
     def __bool__(self):
         return self.type is not NOT_SET
