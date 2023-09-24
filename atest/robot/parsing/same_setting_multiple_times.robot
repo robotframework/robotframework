@@ -36,7 +36,8 @@ Test Timeout
 
 Test [Documentation]
     ${tc} =    Check Test Case    Test Settings
-    Check Keyword Data     ${tc.kws[0]}    ${EMPTY}    type=ERROR    status=FAIL
+    Should Be Equal    ${tc.kws[0].type}    ERROR
+    Should Be Equal    ${tc.kws[0].status}    FAIL
     Should Be Equal     ${tc.kws[0].values[0]}    [Documentation]
 
 Test [Tags]

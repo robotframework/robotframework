@@ -13,12 +13,14 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import warnings
 from robot.model import Tags
 
 
 def deprecated(method):
     def wrapper(self, *args, **kws):
         """Deprecated."""
+        warnings.warn(f"{type(self).__name__}, {method.__name__}", stacklevel=1)
         return method(self, *args, **kws)
     return wrapper
 
@@ -62,6 +64,6 @@ class DeprecatedAttributesMixin:
         return None
 
     @property
-    @deprecated
+    # FIXME @deprecated
     def message(self):
         return ''

@@ -68,7 +68,8 @@ Invalid END after inline header
     Check IF/ELSE Status    PASS    root=${tc.body[0]}
     Check Log Message     ${tc.body[0].body[0].body[0].body[0]}   Executed inside inline IF
     Check Log Message     ${tc.body[1].body[0]}                   Executed outside IF
-    Check Keyword Data    ${tc.body[2]}                           ${EMPTY}    type=ERROR    status=FAIL
+    Should Be Equal       ${tc.body[2].type}                      ERROR
+    Should Be Equal       ${tc.body[2].status}                    FAIL
 
 Assign in IF branch
     FAIL

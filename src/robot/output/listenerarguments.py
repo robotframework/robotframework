@@ -149,10 +149,18 @@ class StartKeywordArguments(_ListenerArgumentsFromItem):
     def _get_extra_attributes(self, kw):
         # FOR and TRY model objects use `assign` starting from RF 7.0, but for
         # backwards compatibility reasons we pass them as `variable(s)`.
-        assign = kw.assign if kw.type in ('KEYWORD', 'SETUP', 'TEARDOWN') else ()
-        attrs = {'kwname': kw.kwname or '',
-                 'libname': kw.libname or '',
-                 'args': [a if is_string(a) else safe_str(a) for a in kw.args],
+        assign = kw.assign if kw.type in kw.keyword_types else ()
+        if kw.type in ('FOR', 'ITERATION', 'TRY', 'EXCEPT', 'FINALLY'):
+            kwname = str(kw.result)
+            libname = ''
+            args = []
+        else:
+            kwname = kw.kwname or ''
+            libname = kw.libname or ''
+            args = [a if is_string(a) else safe_str(a) for a in kw.args]
+        attrs = {'kwname': kwname,
+                 'libname': libname,
+                 'args': args,
                  'assign': list(assign),
                  'source': str(kw.source or '')}
         if kw.type in self._type_attributes:

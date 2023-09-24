@@ -552,14 +552,20 @@ class TestDeprecatedKeywordSpecificAttributes(unittest.TestCase):
         for name, expected in [('args', ()),
                                ('tags', Tags()),
                                ('timeout', None)]:
-            assert_equal(getattr(for_, name), expected)
+            with warnings.catch_warnings(record=True) as w:
+                assert_equal(getattr(for_, name), expected)
+                assert_true(issubclass(w[-1].category, UserWarning))
+                assert_true(f'For, {name}' in str(w[-1].message))
 
     def test_if(self):
         for name, expected in [('args', ()),
                                ('assign', ()),
                                ('tags', Tags()),
                                ('timeout', None)]:
-            assert_equal(getattr(If(), name), expected)
+            with warnings.catch_warnings(record=True) as w:
+                assert_equal(getattr(If(), name), expected)
+                assert_true(issubclass(w[-1].category, UserWarning))
+                assert_true(f'If, {name}' in str(w[-1].message))
 
 
 if __name__ == '__main__':
