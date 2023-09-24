@@ -322,11 +322,6 @@ class ForIteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
     def visit(self, visitor: SuiteVisitor):
         visitor.visit_for_iteration(self)
 
-    @property
-    @deprecated
-    def name(self):
-        return str(self)
-
     def __str__(self):
         return ', '.join('%s = %s' % item for item in self.assign.items())
 
@@ -359,11 +354,6 @@ class For(model.For, StatusMixin, DeprecatedAttributesMixin):
     @setter
     def body(self, iterations: 'Sequence[ForIteration|DataDict]') -> iterations_class:
         return self.iterations_class(self.iteration_class, self, iterations)
-
-    @property
-    @deprecated
-    def name(self):
-        return str(self)
 
     def __str__(self):
         assign = ' | '.join(self.assign)
@@ -510,11 +500,6 @@ class TryBranch(model.TryBranch, StatusMixin, DeprecatedAttributesMixin):
         self.elapsed_time = elapsed_time
         self.doc = doc
 
-    @property
-    @deprecated
-    def name(self):
-        return str(self)
-
     def __str__(self):
         patterns = list(self.patterns)
         if self.pattern_type:
@@ -525,6 +510,7 @@ class TryBranch(model.TryBranch, StatusMixin, DeprecatedAttributesMixin):
         if self.assign:
             parts.append(f'AS {self.assign}')
         return ' '.join(parts)
+
 
 @Body.register
 class Try(model.Try, StatusMixin, DeprecatedAttributesMixin):
@@ -575,7 +561,7 @@ class Return(model.Return, StatusMixin, DeprecatedAttributesMixin):
         return self.body_class(self, body)
 
     @property
-    @deprecated
+    # FIXME @deprecated
     def doc(self) -> str:
         return ''
 
@@ -608,7 +594,7 @@ class Continue(model.Continue, StatusMixin, DeprecatedAttributesMixin):
         return self.body_class(self, body)
 
     @property
-    @deprecated
+    # FIXME @deprecated
     def doc(self) -> str:
         return ''
 
@@ -641,7 +627,7 @@ class Break(model.Break, StatusMixin, DeprecatedAttributesMixin):
         return self.body_class(self, body)
 
     @property
-    @deprecated
+    # FIXME @deprecated
     def doc(self) -> str:
         return ''
 
@@ -673,7 +659,7 @@ class Error(model.Error, StatusMixin, DeprecatedAttributesMixin):
         return self.body_class(self, body)
 
     @property
-    @deprecated
+    # FIXME @deprecated
     def doc(self) -> 'str':
         return ''
 

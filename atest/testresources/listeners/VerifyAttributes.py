@@ -120,7 +120,8 @@ class VerifyAttributes:
         if type_ == 'FOR':
             extra += FOR_FLAVOR_EXTRA.get(attrs['flavor'], '')
         verify_attrs('START ' + type_, attrs, START + KW + extra)
-        verify_name(name, **attrs)
+        if type_ in ('KEYWORD', 'SETUP', 'TEARDOWN'):
+            verify_name(name, **attrs)
         self._keyword_stack.append(type_)
 
     def end_keyword(self, name, attrs):
@@ -132,7 +133,8 @@ class VerifyAttributes:
         if type_ == 'FOR':
             extra += FOR_FLAVOR_EXTRA.get(attrs['flavor'], '')
         verify_attrs('END ' + type_, attrs, END + KW + extra)
-        verify_name(name, **attrs)
+        if type_ in ('KEYWORD', 'SETUP', 'TEARDOWN'):
+            verify_name(name, **attrs)
 
     def close(self):
         OUTFILE.close()

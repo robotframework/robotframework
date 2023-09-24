@@ -13,6 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import warnings
+
 
 class ModelCombiner:
     __slots__ = ['data', 'result', 'priority']
@@ -23,10 +25,12 @@ class ModelCombiner:
         self.priority = priority
 
     def __getattr__(self, name):
-        if name in self.priority:
-            return self.priority[name]
-        if hasattr(self.result, name):
-            return getattr(self.result, name)
-        if hasattr(self.data, name):
-            return getattr(self.data, name)
-        raise AttributeError(name)
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            if name in self.priority:
+                return self.priority[name]
+            if hasattr(self.result, name):
+                return getattr(self.result, name)
+            if hasattr(self.data, name):
+                return getattr(self.data, name)
+            raise AttributeError(name)

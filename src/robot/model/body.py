@@ -107,6 +107,10 @@ class BodyItem(ModelObject):
         parent_id = getattr(parent, 'id', None)
         return f'{parent_id}-k{index + 1}' if parent_id else f'k{index + 1}'
 
+    @property
+    def keyword_types(self):
+        return self.KEYWORD, self.SETUP, self.TEARDOWN
+
     def to_dict(self) -> DataDict:
         raise NotImplementedError
 
