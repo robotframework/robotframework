@@ -78,15 +78,16 @@ class KeywordType:
         if ' = ' in kwname:
             return 'ITERATION'
         if not args:
-            if kwname in ("'IF' == 'WRONG'", '${i} == 9'):
+            if "'IF' == 'WRONG'" in kwname or '${i} == 9' in kwname:
                 return 'IF'
-            if kwname == "'ELSE IF' == 'ELSE IF'":
+            if "'ELSE IF' == 'ELSE IF'" in kwname:
                 return 'ELSE IF'
+            if kwname == 'ELSE':
+                return 'ELSE'
             if kwname == '':
                 source = os.path.basename(source)
                 if source == 'for_loops.robot':
                     return 'BREAK' if lineno == 14 else 'CONTINUE'
-                return 'ELSE'
         expected = args[0] if libname == 'BuiltIn' else kwname
         return {'Suite Setup': 'SETUP', 'Suite Teardown': 'TEARDOWN',
                 'Test Setup': 'SETUP', 'Test Teardown': 'TEARDOWN',

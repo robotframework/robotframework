@@ -565,6 +565,9 @@ class Return(model.Return, StatusMixin, DeprecatedAttributesMixin):
     def doc(self) -> str:
         return ''
 
+    def __str__(self):
+        return ''
+
 
 @Body.register
 class Continue(model.Continue, StatusMixin, DeprecatedAttributesMixin):
@@ -598,6 +601,9 @@ class Continue(model.Continue, StatusMixin, DeprecatedAttributesMixin):
     def doc(self) -> str:
         return ''
 
+    def __str__(self):
+        return ''
+
 
 @Body.register
 class Break(model.Break, StatusMixin, DeprecatedAttributesMixin):
@@ -629,6 +635,9 @@ class Break(model.Break, StatusMixin, DeprecatedAttributesMixin):
     @property
     # FIXME @deprecated
     def doc(self) -> str:
+        return ''
+
+    def __str__(self):
         return ''
 
 
