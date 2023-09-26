@@ -1,5 +1,6 @@
 import unittest
 
+from robot.model import BodyItem
 from robot.output.listeners import Listeners, LibraryListeners
 from robot.output import LOGGER
 from robot.running.outputcapture import OutputCapturer
@@ -42,14 +43,14 @@ class TestMock(Mock):
         self.data = DotDict({'name':self.name})
 
 
-class KwMock(Mock):
+class KwMock(Mock, BodyItem):
     non_existing = ('branch_status',)
 
     def __init__(self):
         self.name = 'kwmock'
         self.args = ['a1', 'a2']
         self.status = 'PASS'
-        self.type = 'kw'
+        self.type = BodyItem.KEYWORD
 
 
 class ListenOutputs:

@@ -150,14 +150,14 @@ class StartKeywordArguments(_ListenerArgumentsFromItem):
         # FOR and TRY model objects use `assign` starting from RF 7.0, but for
         # backwards compatibility reasons we pass them as `variable(s)`.
         assign = kw.assign if kw.type in kw.keyword_types else ()
-        if kw.type in ('FOR', 'ITERATION', 'TRY', 'EXCEPT', 'FINALLY'):
-            kwname = str(kw.result)
-            libname = ''
-            args = []
-        else:
+        if kw.type in kw.keyword_types:
             kwname = kw.kwname or ''
             libname = kw.libname or ''
             args = [a if is_string(a) else safe_str(a) for a in kw.args]
+        else:
+            kwname = str(kw.result)
+            libname = ''
+            args = []
         attrs = {'kwname': kwname,
                  'libname': libname,
                  'args': args,
