@@ -23,3 +23,9 @@ Union
 
 Nested
     Check Test Case    ${TESTNAME}
+
+Invalid
+    Check Test Case    ${TESTNAME}
+    Check Log Message    ${ERRORS[0]}
+    ...    Error in library 'StringlyTypes': Adding keyword 'invalid' failed: Parsing type 'bad[info' failed: Error at end: Closing ']' missing.
+    ...    ERROR

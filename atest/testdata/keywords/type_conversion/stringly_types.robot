@@ -11,8 +11,6 @@ Parameterized list
     ...    type=list[int]
     ...    error=Item '1' got value 'kaksi' that cannot be converted to integer.
 
-
-
 Parameterized dict
     Parameterized dict    {}    {}
     Parameterized dict    {1: 2, 3.0: 4.5}    {1: 2.0, 3: 4.5}
@@ -59,3 +57,7 @@ Nested
     ...    Nested    {1: (), 2: (1.1, 2.2, 3.3)}
     ...    type=dict[int | float, tuple[int, ...] | tuple[int, float]]
     ...    error=Item '2' got value '(1.1, 2.2, 3.3)' (tuple) that cannot be converted to tuple[int, ...] or tuple[int, float].
+
+Invalid
+    [Documentation]    FAIL    No keyword with name 'Invalid' found.
+    Invalid    whatever

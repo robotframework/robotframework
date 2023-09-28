@@ -18,6 +18,7 @@ from collections.abc import Sequence
 from dataclasses import dataclass
 from typing import Union
 
+from robot.errors import DataError
 from robot.utils import has_args, is_union, NOT_SET, type_repr
 
 
@@ -81,9 +82,8 @@ class TypeInfo:
     def from_sting(cls, hint: str) -> 'TypeInfo':
         try:
             return TypeInfoParser(hint).parse()
-        except ValueError:
-            # FIXME: Make it an error to use invalid string as type hint.
-            return cls(hint)
+        except ValueError as err:
+            raise DataError(str(err))
 
     @classmethod
     def from_dict(cls, data: dict) -> 'TypeInfo':
@@ -245,5 +245,5 @@ class TypeInfoParser:
     def error(self, message: str):
         token = self.peek()
         position = f'index {token.position}' if token else 'end'
-        raise ValueError(f"Parsing type info {self.source!r} failed: "
+        raise ValueError(f"Parsing type {self.source!r} failed: "
                          f"Error at {position}: {message}")

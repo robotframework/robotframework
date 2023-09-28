@@ -79,7 +79,7 @@ class TestTypeInfoParser(unittest.TestCase):
             position = f'index {position}' if isinstance(position, int) else position
             assert_raises_with_msg(
                 ValueError,
-                f"Parsing type info '{info}' failed: Error at {position}: {error}",
+                f"Parsing type '{info}' failed: Error at {position}: {error}",
                 TypeInfoParser(info).parse
             )
 

@@ -24,3 +24,7 @@ def union(argument: 'int | float', expected=None):
 
 def nested(argument: 'dict[int|float, tuple[int, ...] | tuple[int, float]]', expected=None):
     assert argument == eval(expected), repr(argument)
+
+
+def invalid(argument: 'bad[info'):
+    assert False
