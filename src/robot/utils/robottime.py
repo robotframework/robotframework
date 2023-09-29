@@ -370,7 +370,8 @@ def get_timestamp(daysep='', daytimesep=' ', timesep=':', millissep='.'):
     parts = [str(dt.year), daysep, f'{dt.month:02}', daysep, f'{dt.day:02}', daytimesep,
              f'{dt.hour:02}', timesep, f'{dt.minute:02}', timesep, f'{dt.second:02}']
     if millissep:
-        millis = round(dt.microsecond, -3) // 1000
+        # Make sure milliseconds is < 1000. Good enough for a deprecated function.
+        millis = min(round(dt.microsecond, -3) // 1000, 999)
         parts.extend([millissep, f'{millis:03}'])
     return ''.join(parts)
 
