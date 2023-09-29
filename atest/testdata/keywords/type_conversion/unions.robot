@@ -64,7 +64,7 @@ Argument not matching union
     Union of int and float             ${CUSTOM}       type=integer or float    arg_type=Custom
     Union with int and None            invalid         type=integer or None
     Union with int and None            ${1.1}          type=integer or None     arg_type=float
-    Union with subscripted generics    invalid         type=list[int] or integer
+    Union with subscripted generics    invalid         type=List[int] or integer
 
 Union with unrecognized type
     ${myobject}=    Create my object
@@ -164,9 +164,9 @@ Tuple with invalid types
     ${42}    ${42}
 
 Union without types
-    [Documentation]    FAIL    TypeError: Union used as a type hint cannot be empty.
+    [Documentation]    FAIL    No keyword with name 'Union without types' found.
     Union without types    whatever
 
 Empty tuple
-    [Documentation]    FAIL    TypeError: Union used as a type hint cannot be empty.
+    [Documentation]    FAIL    No keyword with name 'Empty tuple' found.
     Empty tuple            ${666}

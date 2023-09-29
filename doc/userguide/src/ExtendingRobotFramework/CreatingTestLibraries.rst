@@ -1270,7 +1270,7 @@ Other types cause conversion failures.
    |              |               |            |              |                                                                | | `1` (PowerState.ON)                |
    |              |               |            |              | Support for IntEnum_ and IntFlag_ is new in RF 4.1.            |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | None_        |               | NoneType   | str_         | String `NONE` (case-insensitive) is converted to the Python    | | `None`                             |
+   | None_        |               |            | str_         | String `NONE` (case-insensitive) is converted to the Python    | | `None`                             |
    |              |               |            |              | `None` object. Other values cause an error.                    |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | Any_         |               |            | Any          | Any value is accepted. No conversion is done.                  |                                      |
@@ -1279,7 +1279,7 @@ Other types cause conversion failures.
    |              |               |            |              | but conversion may have been done based on `default values     |                                      |
    |              |               |            |              | <Implicit argument types based on default values_>`__.         |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | list_        | Sequence_     |            | str_,        | Strings must be Python list literals. They are converted       | | `['one', 'two']`                   |
+   | list_        | Sequence_     | sequence   | str_,        | Strings must be Python list literals. They are converted       | | `['one', 'two']`                   |
    |              |               |            | Sequence_    | to actual lists using the `ast.literal_eval`_ function.        | | `[('one', 1), ('two', 2)]`         |
    |              |               |            |              | They can contain any values `ast.literal_eval` supports,       |                                      |
    |              |               |            |              | including lists and other containers.                          |                                      |
@@ -1287,6 +1287,8 @@ Other types cause conversion failures.
    |              |               |            |              | If the used type hint is list_ (e.g. `arg: list`), sequences   |                                      |
    |              |               |            |              | that are not lists are converted to lists. If the type hint is |                                      |
    |              |               |            |              | generic Sequence_, sequences are used without conversion.      |                                      |
+   |              |               |            |              |                                                                |                                      |
+   |              |               |            |              | Alias `sequence` is new in RF 7.0.                             |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | tuple_       |               |            | str_,        | Same as `list`, but string arguments must tuple literals.      | | `('one', 'two')`                   |
    |              |               |            | Sequence_    |                                                                |                                      |
@@ -1298,7 +1300,9 @@ Other types cause conversion failures.
    |              |               |            | Container_   |                                                                | | `frozenset()`                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | dict_        | Mapping_      | dictionary,| str_,        | Same as `list`, but string arguments must be dictionary        | | `{'a': 1, 'b': 2}`                 |
-   |              |               | map        | Mapping_     | literals.                                                      | | `{'key': 1, 'nested': {'key': 2}}` |
+   |              |               | mapping,   | Mapping_     | literals.                                                      | | `{'key': 1, 'nested': {'key': 2}}` |
+   |              |               | map        |              |                                                                |                                      |
+   |              |               |            |              | Alias `mapping` is new in RF 7.0.                              |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | TypedDict_   |               |            | str_,        | Same as `dict`, but dictionary items are also converted        | .. sourcecode:: python               |
    |              |               |            | Mapping_     | to the specified types and items not included in the type      |                                      |

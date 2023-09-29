@@ -15,68 +15,108 @@
 
 from enum import auto, Enum
 from collections.abc import Sequence
+from datetime import date, datetime, timedelta
+from decimal import Decimal
 from dataclasses import dataclass
-from typing import Union
+from pathlib import Path
+from typing import Any, Union
 
 from robot.errors import DataError
-from robot.utils import has_args, is_union, NOT_SET, type_repr
+from robot.utils import has_args, is_union, NOT_SET, type_repr, typeddict_types
 
 
-Type = Union[type, str, tuple, type(NOT_SET)]
+TYPE_NAMES = {
+    '...': Ellipsis,
+    'any': Any,
+    'str': str,
+    'string': str,
+    'unicode': str,
+    'bool': bool,
+    'boolean': bool,
+    'int': int,
+    'integer': int,
+    'long': int,
+    'float': float,
+    'double': float,
+    'decimal': Decimal,
+    'bytes': bytes,
+    'bytearray': bytearray,
+    'datetime': datetime,
+    'date': date,
+    'timedelta': timedelta,
+    'path': Path,
+    'none': type(None),
+    'list': list,
+    'sequence': list,
+    'tuple': tuple,
+    'dictionary': dict,
+    'dict': dict,
+    'mapping': dict,
+    'map': dict,
+    'set': set,
+    'frozenset': frozenset,
+    'union': Union
+}
 
 
 class TypeInfo:
-    """Represents argument type. Only used by Libdoc.
+    """Represents argument type.
 
     With unions and parametrized types, :attr:`nested` contains nested types.
     """
-    __slots__ = ('type', 'nested')
+    __slots__ = ('name', 'type', 'nested')
 
-    def __init__(self, type: Type = NOT_SET, nested: 'Sequence[TypeInfo]' = ()):
-        # TODO: Fix type hint of `type`.
-        # TODO: Handle type aliases here.
-        self.type = type if type != '...' else Ellipsis
+    def __init__(self, name: 'str|None' = None,
+                 type: 'type|None' = None,
+                 nested: 'Sequence[TypeInfo]' = ()):
+        if name and not type:
+            type = TYPE_NAMES.get(name.lower())
+        self.name = name
+        self.type = type
         self.nested = tuple(nested)
+        if self.is_union and not nested:
+            raise DataError('Union used as a type hint cannot be empty.')
 
     @property
-    def name(self) -> str:
-        if isinstance(self.type, str):
-            return self.type
-        return type_repr(self.type, nested=False)
-
-    # TODO: Add `union=False` to `__init__` and remove this property.
-    @property
-    def is_union(self) -> bool:
-        if isinstance(self.type, str):
-            return self.type == 'Union'
-        return is_union(self.type, allow_tuple=True)
+    def is_union(self):
+        return self.name == 'Union'
 
     @classmethod
-    def from_type_hint(cls, hint: Type) -> 'TypeInfo':
+    def from_type_hint(cls, hint: Any) -> 'TypeInfo':
         if isinstance(hint, TypeInfo):
             return hint
         if hint is NOT_SET:
             return cls()
+        if isinstance(hint, type):
+            return cls(type_repr(hint), hint)
+        if hint is None:
+            return cls('None', type(None))
         if isinstance(hint, str):
             return cls.from_sting(hint)
         if isinstance(hint, dict):
             return cls.from_dict(hint)
+        if is_union(hint):
+            nested = [cls.from_type_hint(typ) for typ in hint.__args__]
+            return cls('Union', nested=nested)
         if isinstance(hint, (tuple, list)):
-            if len(hint) == 1:
-                return cls(hint[0])
-            nested = tuple(cls.from_type_hint(t) for t in hint)
-            return cls('Union', nested)
-        return cls.from_type(hint)
+            return cls._from_sequence(hint)
+        if hasattr(hint, '__origin__'):
+            if has_args(hint):
+                nested = [cls.from_type_hint(t) for t in hint.__args__]
+            else:
+                nested = []
+            return cls(type_repr(hint, nested=False), hint.__origin__, nested)
+        if hint is Union:
+            return cls('Union')
+        if hint is Any:
+            return cls('Any', hint)
+        if hint is Ellipsis:
+            return cls('...', hint)
+        return cls(str(hint))
 
     @classmethod
-    def from_type(cls, hint: type):
-        if has_args(hint):
-            nested = tuple(cls.from_type_hint(t) for t in hint.__args__)
-        else:
-            nested = ()
-        if hasattr(hint, '__origin__') and not is_union(hint):
-            hint = hint.__origin__
-        return cls(hint, nested)
+    def from_type(cls, hint: type) -> 'TypeInfo':
+        return cls(type_repr(hint), hint)
 
     @classmethod
     def from_sting(cls, hint: str) -> 'TypeInfo':
@@ -89,8 +129,21 @@ class TypeInfo:
     def from_dict(cls, data: dict) -> 'TypeInfo':
         if not data:
             return cls()
-        nested = [cls.from_dict(n) for n in data['nested']]
-        return cls(data['name'], nested)
+        nested = [cls.from_type_hint(n) for n in data['nested']]
+        return cls(data['name'], nested=nested)
+
+    @classmethod
+    def _from_sequence(cls, sequence: 'tuple|list') -> 'TypeInfo':
+        infos = []
+        for typ in sequence:
+            info = cls.from_type_hint(typ)
+            if info.is_union:
+                infos.extend(info.nested)
+            else:
+                infos.append(info)
+        if len(infos) == 1:
+            return infos[0]
+        return cls('Union', nested=infos)
 
     def __str__(self):
         if self.is_union:
@@ -98,10 +151,10 @@ class TypeInfo:
         if self.nested:
             nested = ', '.join(str(n) for n in self.nested)
             return f'{self.name}[{nested}]'
-        return self.name
+        return self.name or ''
 
     def __bool__(self):
-        return self.type is not NOT_SET
+        return self.name is not None
 
 
 class TypeInfoTokenType(Enum):
@@ -198,7 +251,7 @@ class TypeInfoParser:
             info.nested = self.params()
         if self.match(TypeInfoTokenType.PIPE):
             nested = [info] + self.union()
-            info = TypeInfo('Union', nested)
+            info = TypeInfo('Union', nested=nested)
         return info
 
     def params(self) -> 'list[TypeInfo]':

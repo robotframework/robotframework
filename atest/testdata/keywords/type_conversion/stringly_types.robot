@@ -58,6 +58,9 @@ Nested
     ...    type=dict[int | float, tuple[int, ...] | tuple[int, float]]
     ...    error=Item '2' got value '(1.1, 2.2, 3.3)' (tuple) that cannot be converted to tuple[int, ...] or tuple[int, float].
 
+Aliases
+    Aliases    [1, 2, '3']    {'1': 1.1, 2: '2.2', '': 'NONE'}
+
 Invalid
     [Documentation]    FAIL    No keyword with name 'Invalid' found.
     Invalid    whatever

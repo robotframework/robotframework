@@ -221,7 +221,7 @@ class TestLibdocJsonWriter(unittest.TestCase):
     def test_DataTypesLibrary_py(self):
         run_libdoc_and_validate_json('DataTypesLibrary.py')
 
-    def test_DataTypesLibrary_libspex(self):
+    def test_DataTypesLibrary_libspec(self):
         run_libdoc_and_validate_json('DataTypesLibrary.libspec')
 
 

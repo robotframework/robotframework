@@ -26,5 +26,10 @@ def nested(argument: 'dict[int|float, tuple[int, ...] | tuple[int, float]]', exp
     assert argument == eval(expected), repr(argument)
 
 
+def aliases(a: 'sequence[integer]', b: 'MAPPING[STRING, DOUBLE|None]'):
+    assert a == [1, 2, 3]
+    assert b == {'1': 1.1, '2': 2.2, '': None}
+
+
 def invalid(argument: 'bad[info'):
     assert False

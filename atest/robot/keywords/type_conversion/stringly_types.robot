@@ -24,6 +24,9 @@ Union
 Nested
     Check Test Case    ${TESTNAME}
 
+Aliases
+    Check Test Case    ${TESTNAME}
+
 Invalid
     Check Test Case    ${TESTNAME}
     Check Log Message    ${ERRORS[0]}

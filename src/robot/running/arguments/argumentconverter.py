@@ -78,7 +78,7 @@ class ArgumentConverter:
                 except ValueError as err:
                     conversion_error = err
         if name in spec.defaults:
-            type_info = TypeInfo.from_type_hint(type(spec.defaults[name]))
+            type_info = TypeInfo.from_type(type(spec.defaults[name]))
             converter = TypeConverter.converter_for(type_info, languages=self.languages)
             if converter:
                 try:

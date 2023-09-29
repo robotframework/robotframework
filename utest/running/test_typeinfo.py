@@ -1,13 +1,96 @@
 import unittest
+from datetime import date, datetime, timedelta
+from decimal import Decimal
+from pathlib import Path
+from typing import Any, Union
 
-from robot.running.arguments.typeinfo import TypeInfoParser
+from robot.errors import DataError
+from robot.running.arguments.typeinfo import TypeInfo, TypeInfoParser
 from robot.utils.asserts import assert_equal, assert_raises_with_msg
+
+
+class TestTypeInfo(unittest.TestCase):
+
+    def test_ellipsis_conversion(self):
+        assert_equal(TypeInfo('...').type, Ellipsis)
+        assert_equal(TypeInfo('...').name, '...')
+
+    def test_type_from_name(self):
+        for name, expected in [('...', Ellipsis),
+                               ('any', Any),
+                               ('str', str),
+                               ('string', str),
+                               ('unicode', str),
+                               ('boolean', bool),
+                               ('bool', bool),
+                               ('int', int),
+                               ('integer', int),
+                               ('long', int),
+                               ('float', float),
+                               ('double', float),
+                               ('decimal', Decimal),
+                               ('bytes', bytes),
+                               ('bytearray', bytearray),
+                               ('datetime', datetime),
+                               ('date', date),
+                               ('timedelta', timedelta),
+                               ('path', Path),
+                               ('none', type(None)),
+                               ('list', list),
+                               ('sequence', list),
+                               ('tuple', tuple),
+                               ('dictionary', dict),
+                               ('dict', dict),
+                               ('map', dict),
+                               ('mapping', dict),
+                               ('set', set),
+                               ('frozenset', frozenset),
+                               ('union', Union)]:
+            for name in name, name.upper():
+                assert_equal(TypeInfo(name).type, expected)
+                assert_equal(TypeInfo(name).name, name)
+
+    def test_union(self):
+        for union in [Union[int, str, float],
+                      (int, str, float),
+                      [int, str, float],
+                      Union[int, Union[str, float]],
+                      (int, [str, float])]:
+            info = TypeInfo.from_type_hint(union)
+            assert_equal(info.name, 'Union')
+            assert_equal(info.is_union, True)
+            assert_equal(info.nested[0].type, int)
+            assert_equal(info.nested[0].name, 'int')
+            assert_equal(info.nested[1].type, str)
+            assert_equal(info.nested[1].name, 'str')
+            assert_equal(info.nested[2].type, float)
+            assert_equal(info.nested[2].name, 'float')
+            assert_equal(len(info.nested), 3)
+
+    def test_union_with_one_type_is_reduced_to_the_type(self):
+        for union in Union[int], (int,):
+            info = TypeInfo.from_type_hint(union)
+            assert_equal(info.type, int)
+            assert_equal(info.name, 'int')
+            assert_equal(info.is_union, False)
+            assert_equal(len(info.nested), 0)
+
+    def test_empty_union_not_allowed(self):
+        for union in Union, ():
+            assert_raises_with_msg(DataError, 'Union used as a type hint cannot be empty.',
+                                   TypeInfo.from_type_hint, union)
+
+    def test_non_type(self):
+        for item in 42, object(), set(), b'hello':
+            info = TypeInfo.from_type_hint(item)
+            assert_equal(info.name, str(item))
+            assert_equal(info.type, None)
 
 
 class TestTypeInfoParser(unittest.TestCase):
 
     def test_simple(self):
-        for name in 'str', 'Integer', 'whatever', 'two parts':
+        for name in 'str', 'Integer', 'whatever', 'two parts', 'non-alpha!?':
             info = TypeInfoParser(name).parse()
             assert_equal(info.name, name)
 

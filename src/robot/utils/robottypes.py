@@ -66,10 +66,9 @@ def is_dict_like(item):
     return isinstance(item, Mapping)
 
 
-def is_union(item, allow_tuple=False):
+def is_union(item):
     return (isinstance(item, UnionType)
-            or getattr(item, '__origin__', None) is Union
-            or (allow_tuple and isinstance(item, tuple)))
+            or getattr(item, '__origin__', None) is Union)
 
 
 def type_name(item, capitalize=False):
@@ -80,8 +79,9 @@ def type_name(item, capitalize=False):
     if getattr(item, '__origin__', None):
         item = item.__origin__
     if hasattr(item, '_name') and item._name:
-        # Union, Any, etc. from typing have real name in _name and __name__ is just
-        # generic `SpecialForm`. Also, pandas.Series has _name but it's None.
+        # Prior to Python 3.10 Union, Any, etc. from typing didn't have `__name__`.
+        # but instead had `_name`. Python 3.10 has both and newer only `__name__`.
+        # Also, pandas.Series has `_name` but it's None.
         name = item._name
     elif is_union(item):
         name = 'Union'
@@ -115,6 +115,7 @@ def type_repr(typ, nested=True):
 
 
 def _get_type_name(typ):
+    # See comment in `type_name` for explanation about `_name`.
     for attr in '__name__', '_name':
         name = getattr(typ, attr, None)
         if name:

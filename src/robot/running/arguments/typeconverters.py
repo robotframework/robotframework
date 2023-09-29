@@ -42,11 +42,9 @@ class TypeConverter:
     type = None
     type_name = None
     abc = None
-    aliases = ()
     value_types = (str,)
     doc = None
     _converters = OrderedDict()
-    _type_aliases = {}
 
     def __init__(self, type_info: TypeInfo,
                  custom_converters: 'CustomArgumentConverters|None' = None,
@@ -58,27 +56,14 @@ class TypeConverter:
     @classmethod
     def register(cls, converter):
         cls._converters[converter.type] = converter
-        for name in (converter.type_name,) + converter.aliases:
-            if name is not None and not isinstance(name, property):
-                cls._type_aliases[name.lower()] = converter.type
         return converter
 
     @classmethod
     def converter_for(cls, type_info: TypeInfo,
                       custom_converters: 'CustomArgumentConverters|None' = None,
                       languages: LanguagesLike = None):
-        # TODO: Move some/most of type inspection logic to TypeInfo
-        if not type_info:
+        if type_info.type is None:
             return None
-        try:
-            hash(type_info.type)
-        except TypeError:
-            return None
-        if isinstance(type_info.type, str) and not type_info.is_union:
-            try:
-                type_info.type = cls._type_aliases[type_info.type.lower()]
-            except KeyError:
-                return None
         if custom_converters:
             info = custom_converters.get_converter_info(type_info.type)
             if info:
@@ -224,7 +209,6 @@ class EnumConverter(TypeConverter):
 class AnyConverter(TypeConverter):
     type = Any
     type_name = 'Any'
-    aliases = ('any',)
     value_types = (Any,)
 
     @classmethod
@@ -245,7 +229,6 @@ class AnyConverter(TypeConverter):
 class StringConverter(TypeConverter):
     type = str
     type_name = 'string'
-    aliases = ('string', 'str', 'unicode')
     value_types = (Any,)
 
     def _handles_value(self, value):
@@ -264,7 +247,6 @@ class StringConverter(TypeConverter):
 class BooleanConverter(TypeConverter):
     type = bool
     type_name = 'boolean'
-    aliases = ('bool',)
     value_types = (str, int, float, NoneType)
 
     def _non_string_convert(self, value, explicit_type=True):
@@ -286,7 +268,6 @@ class IntegerConverter(TypeConverter):
     type = int
     abc = Integral
     type_name = 'integer'
-    aliases = ('int', 'long')
     value_types = (str, float)
 
     def _non_string_convert(self, value, explicit_type=True):
@@ -322,7 +303,6 @@ class FloatConverter(TypeConverter):
     type = float
     abc = Real
     type_name = 'float'
-    aliases = ('double',)
     value_types = (str, Real)
 
     def _convert(self, value, explicit_type=True):
@@ -592,7 +572,6 @@ class DictionaryConverter(TypeConverter):
     type = dict
     abc = Mapping
     type_name = 'dictionary'
-    aliases = ('dict', 'map')
     value_types = (str, Mapping)
 
     def __init__(self, type_info: TypeInfo,
@@ -694,7 +673,7 @@ class FrozenSetConverter(SetConverter):
 
 
 @TypeConverter.register
-class CombinedConverter(TypeConverter):
+class UnionConverter(TypeConverter):
     type = Union
 
     def __init__(self, type_info: TypeInfo,
