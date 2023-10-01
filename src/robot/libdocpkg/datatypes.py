@@ -83,15 +83,14 @@ class TypeDoc(Sortable):
         return cls(cls.TYPED_DICT, typed_dict.__name__, getdoc(typed_dict),
                    accepts=(str, 'Mapping'), items=items)
 
-    def to_dictionary(self, legacy=False):
+    def to_dictionary(self):
         data = {
             'type': self.type,
             'name': self.name,
             'doc': self.doc,
+            'usages': self.usages,
+            'accepts': self.accepts
         }
-        if not legacy:
-            data['usages'] = self.usages
-            data['accepts'] = self.accepts
         if self.members is not None:
             data['members'] = [m.to_dictionary() for m in self.members]
         if self.items is not None:
