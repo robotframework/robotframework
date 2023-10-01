@@ -83,8 +83,6 @@ class TypeInfo:
 
     @classmethod
     def from_type_hint(cls, hint: Any) -> 'TypeInfo':
-        if isinstance(hint, TypeInfo):
-            return hint
         if hint is NOT_SET:
             return cls()
         if isinstance(hint, type):
@@ -92,14 +90,14 @@ class TypeInfo:
         if hint is None:
             return cls('None', type(None))
         if isinstance(hint, str):
-            return cls.from_sting(hint)
+            return cls.from_string(hint)
         if isinstance(hint, dict):
             return cls.from_dict(hint)
         if is_union(hint):
             nested = [cls.from_type_hint(typ) for typ in hint.__args__]
             return cls('Union', nested=nested)
         if isinstance(hint, (tuple, list)):
-            return cls._from_sequence(hint)
+            return cls.from_sequence(hint)
         if hasattr(hint, '__origin__'):
             if has_args(hint):
                 nested = [cls.from_type_hint(t) for t in hint.__args__]
@@ -119,7 +117,7 @@ class TypeInfo:
         return cls(type_repr(hint), hint)
 
     @classmethod
-    def from_sting(cls, hint: str) -> 'TypeInfo':
+    def from_string(cls, hint: str) -> 'TypeInfo':
         try:
             return TypeInfoParser(hint).parse()
         except ValueError as err:
@@ -133,7 +131,7 @@ class TypeInfo:
         return cls(data['name'], nested=nested)
 
     @classmethod
-    def _from_sequence(cls, sequence: 'tuple|list') -> 'TypeInfo':
+    def from_sequence(cls, sequence: 'tuple|list') -> 'TypeInfo':
         infos = []
         for typ in sequence:
             info = cls.from_type_hint(typ)

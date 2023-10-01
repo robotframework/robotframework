@@ -148,7 +148,7 @@ Verify Arguments Structure
         ${name}=        Get Element Optional Text    ${arg_elem}    name
         ${types}=       Get Elements                 ${arg_elem}    type
         IF    not $types
-            ${type}=    Set Variable                 ${EMPTY}
+            ${type}=    Set Variable                 ${None}
         ELSE IF    len($types) == 1
             ${type}=    Get Type                     ${types}[0]
         ELSE

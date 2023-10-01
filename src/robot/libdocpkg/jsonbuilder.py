@@ -16,7 +16,7 @@
 import json
 import os.path
 
-from robot.running import ArgInfo
+from robot.running import ArgInfo, TypeInfo
 from robot.errors import DataError
 
 from .datatypes import EnumMember, TypedDictItem, TypeDoc
@@ -85,24 +85,26 @@ class JsonDocBuilder:
                 spec.defaults[name] = default
             if 'type' in arg:    # RF >= 6.1
                 type_docs = {}
-                type_info = self._parse_modern_type_info(arg['type'], type_docs)
+                type_info = self._parse_type_info(arg['type'], type_docs)
             else:                # RF < 6.1
                 type_docs = arg.get('typedocs', {})
-                type_info = tuple(arg['types'])
+                type_info = self._parse_legacy_type_info(arg['types'])
             if type_info:
                 if not spec.types:
                     spec.types = {}
                 spec.types[name] = type_info
             kw.type_docs[name] = type_docs
 
-    def _parse_modern_type_info(self, data, type_docs):
+    def _parse_type_info(self, data, type_docs):
         if not data:
-            return {}
+            return None
         if data.get('typedoc'):
             type_docs[data['name']] = data['typedoc']
-        return {'name': data['name'],
-                'nested': [self._parse_modern_type_info(nested, type_docs)
-                           for nested in data.get('nested', ())]}
+        nested = [self._parse_type_info(typ, type_docs) for typ in data.get('nested', ())]
+        return TypeInfo(data['name'], nested=nested)
+
+    def _parse_legacy_type_info(self, types):
+        return TypeInfo.from_sequence(types) if types else None
 
     def _parse_type_docs(self, type_docs):
         for data in type_docs:

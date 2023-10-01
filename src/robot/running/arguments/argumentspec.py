@@ -15,6 +15,7 @@
 
 import sys
 from enum import Enum
+from typing import Any
 
 from robot.utils import NOT_SET, safe_str, setter
 
@@ -88,23 +89,23 @@ class ArgumentSpec:
         get_default = self.defaults.get
         for arg in self.positional_only:
             yield ArgInfo(ArgInfo.POSITIONAL_ONLY, arg,
-                          get_type(arg, NOT_SET), get_default(arg, NOT_SET))
+                          get_type(arg), get_default(arg, NOT_SET))
         if self.positional_only:
             yield ArgInfo(ArgInfo.POSITIONAL_ONLY_MARKER)
         for arg in self.positional_or_named:
             yield ArgInfo(ArgInfo.POSITIONAL_OR_NAMED, arg,
-                          get_type(arg, NOT_SET), get_default(arg, NOT_SET))
+                          get_type(arg), get_default(arg, NOT_SET))
         if self.var_positional:
             yield ArgInfo(ArgInfo.VAR_POSITIONAL, self.var_positional,
-                          get_type(self.var_positional, NOT_SET))
+                          get_type(self.var_positional))
         elif self.named_only:
             yield ArgInfo(ArgInfo.NAMED_ONLY_MARKER)
         for arg in self.named_only:
             yield ArgInfo(ArgInfo.NAMED_ONLY, arg,
-                          get_type(arg, NOT_SET), get_default(arg, NOT_SET))
+                          get_type(arg), get_default(arg, NOT_SET))
         if self.var_named:
             yield ArgInfo(ArgInfo.VAR_NAMED, self.var_named,
-                          get_type(self.var_named, NOT_SET))
+                          get_type(self.var_named))
 
     def __bool__(self):
         return any([self.positional_only, self.positional_or_named, self.var_positional,
@@ -124,10 +125,13 @@ class ArgInfo:
     NAMED_ONLY = 'NAMED_ONLY'
     VAR_NAMED = 'VAR_NAMED'
 
-    def __init__(self, kind, name='', type=NOT_SET, default=NOT_SET):
+    def __init__(self, kind: str,
+                 name: str = '',
+                 type: 'TypeInfo|None' = None,
+                 default: Any = NOT_SET):
         self.kind = kind
         self.name = name
-        self.type = TypeInfo.from_type_hint(type)
+        self.type = type or TypeInfo()
         self.default = default
 
     @property

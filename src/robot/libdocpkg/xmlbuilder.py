@@ -16,7 +16,7 @@
 import os.path
 
 from robot.errors import DataError
-from robot.running import ArgInfo
+from robot.running import ArgInfo, TypeInfo
 from robot.utils import ET, ETSource
 
 from .datatypes import EnumMember, TypedDictItem, TypeDoc
@@ -108,9 +108,9 @@ class XmlDocBuilder:
         name = type_elem.get('name')
         if type_elem.get('typedoc'):
             type_docs[name] = type_elem.get('typedoc')
-        nested = tuple(self._parse_modern_type_info(child, type_docs)
-                       for child in type_elem.findall('type'))
-        return {'name': name, 'nested': nested}
+        nested = [self._parse_modern_type_info(child, type_docs)
+                  for child in type_elem.findall('type')]
+        return TypeInfo(name, nested=nested)
 
     def _parse_legacy_type_info(self, type_elems, type_docs):
         types = []
@@ -119,7 +119,7 @@ class XmlDocBuilder:
             types.append(name)
             if elem.get('typedoc'):
                 type_docs[name] = elem.get('typedoc')
-        return types
+        return TypeInfo.from_sequence(types) if types else None
 
     def _parse_type_docs(self, spec):
         for elem in spec.findall('typedocs/type'):
