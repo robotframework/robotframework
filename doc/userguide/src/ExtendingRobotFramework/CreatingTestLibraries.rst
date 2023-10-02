@@ -1160,6 +1160,15 @@ __ `Specifying argument types using function annotations`_
 __ `Specifying argument types using @keyword decorator`_
 __ `Implicit argument types based on default values`_
 
+.. note:: If an argument has both a type hint and a default value, conversion is
+          first attempted based on the type hint and then, if that fails, based on
+          the default value type. This behavior is likely to change in the future
+          so that conversion based on the default value is done *only* if the argument
+          does not have a type hint. That will change conversion behavior in cases
+          like `arg: list = None` where `None` conversion will not be attempted
+          anymore. Library creators are strongly recommended to specify the default
+          value type explicitly like `arg: Union[list, None] = None` already now.
+
 The type to use can be specified either using concrete types (e.g. list_),
 by using Abstract Base Classes (ABC) (e.g. Sequence_), or by using sub
 classes of these types (e.g. MutableSequence_). Also types in in the typing_
