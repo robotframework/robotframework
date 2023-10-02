@@ -78,11 +78,17 @@ class ArgumentConverter:
                 except ValueError as err:
                     conversion_error = err
         if name in spec.defaults:
-            type_info = TypeInfo.from_type(type(spec.defaults[name]))
+            typ = type(spec.defaults[name])
+            if typ == str:      # No conversion.
+                type_info = TypeInfo()
+            elif typ == int:    # Try also conversion to float.
+                type_info = TypeInfo.from_sequence([int, float])
+            else:
+                type_info = TypeInfo.from_type(typ)
             converter = TypeConverter.converter_for(type_info, languages=self.languages)
             if converter:
                 try:
-                    return converter.convert(name, value, explicit_type=False)
+                    return converter.convert(name, value)
                 except ValueError:
                     pass
         if conversion_error:
