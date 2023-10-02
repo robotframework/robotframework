@@ -82,10 +82,9 @@ class ArgumentConverter:
             converter = TypeConverter.converter_for(type_info, languages=self.languages)
             if converter:
                 try:
-                    return converter.convert(name, value, explicit_type=False,
-                                             strict=bool(conversion_error))
-                except ValueError as err:
-                    conversion_error = conversion_error or err
+                    return converter.convert(name, value, explicit_type=False)
+                except ValueError:
+                    pass
         if conversion_error:
             raise conversion_error
         return value

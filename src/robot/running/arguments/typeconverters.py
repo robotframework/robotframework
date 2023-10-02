@@ -80,17 +80,17 @@ class TypeConverter:
         handled = (cls.type, cls.abc) if cls.abc else cls.type
         return isinstance(type_info.type, type) and issubclass(type_info.type, handled)
 
-    def convert(self, name, value, explicit_type=True, strict=True, kind='Argument'):
+    def convert(self, name, value, explicit_type=True, kind='Argument'):
         if self.no_conversion_needed(value):
             return value
         if not self._handles_value(value):
-            return self._handle_error(name, value, kind, strict=strict)
+            return self._handle_error(name, value, kind)
         try:
             if not isinstance(value, str):
                 return self._non_string_convert(value, explicit_type)
             return self._convert(value, explicit_type)
         except ValueError as error:
-            return self._handle_error(name, value, kind, error, strict)
+            return self._handle_error(name, value, kind, error)
 
     def no_conversion_needed(self, value):
         try:
@@ -110,9 +110,7 @@ class TypeConverter:
     def _convert(self, value, explicit_type=True):
         raise NotImplementedError
 
-    def _handle_error(self, name, value, kind, error=None, strict=True):
-        if not strict:
-            return value
+    def _handle_error(self, name, value, kind, error=None):
         value_type = '' if isinstance(value, str) else f' ({type_name(value)})'
         value = safe_str(value)
         ending = f': {error}' if (error and error.args) else '.'
@@ -760,7 +758,7 @@ class CustomConverter(TypeConverter):
 
 class NullConverter:
 
-    def convert(self, name, value, explicit_type=True, strict=True, kind='Argument'):
+    def convert(self, name, value, explicit_type=True, kind='Argument'):
         return value
 
     def no_conversion_needed(self, value):
