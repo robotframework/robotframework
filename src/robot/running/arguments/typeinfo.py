@@ -23,8 +23,8 @@ from typing import Any, Union
 
 from robot.conf import LanguagesLike
 from robot.errors import DataError
-from robot.utils import (has_args, is_union, NOT_SET, plural_or_not as s,
-                         setter, SetterAwareType, type_repr)
+from robot.utils import (has_args, is_union, NOT_SET, plural_or_not as s, setter,
+                         SetterAwareType, type_repr, typeddict_types)
 
 from .customconverters import CustomArgumentConverters
 from .typeconverters import TypeConverter
@@ -70,6 +70,7 @@ class TypeInfo(metaclass=SetterAwareType):
 
     With unions and parametrized types, :attr:`nested` contains nested types.
     """
+    is_typed_dict = False
     __slots__ = ('name', 'type')
 
     def __init__(self, name: 'str|None' = None,
@@ -125,6 +126,8 @@ class TypeInfo(metaclass=SetterAwareType):
     def from_type_hint(cls, hint: Any) -> 'TypeInfo':
         if hint is NOT_SET:
             return cls()
+        if isinstance(hint, typeddict_types):
+            return TypedDictInfo(hint.__name__, hint)
         if isinstance(hint, type):
             return cls(type_repr(hint), hint)
         if hint is None:
@@ -205,6 +208,18 @@ class TypeInfo(metaclass=SetterAwareType):
 
     def __bool__(self):
         return self.name is not None
+
+
+class TypedDictInfo(TypeInfo):
+    is_typed_dict = True
+    __slots__ = ('annotations', 'required')
+
+    def __init__(self, name: str, type: type):
+        super().__init__(name, type)
+        self.annotations = {n: TypeInfo.from_type_hint(t)
+                            for n, t in type.__annotations__.items()}
+        # __required_keys__ is new in Python 3.9.
+        self.required = getattr(type, '__required_keys__', frozenset())
 
 
 class TypeInfoTokenType(Enum):

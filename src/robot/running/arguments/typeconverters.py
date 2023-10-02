@@ -27,12 +27,12 @@ from typing import Any, TYPE_CHECKING, Union
 from robot.conf import Languages, LanguagesLike
 from robot.libraries.DateTime import convert_date, convert_time
 from robot.utils import (eq, get_error_message, is_string, plural_or_not as s,
-                         safe_str, seq2str, type_name, typeddict_types)
+                         safe_str, seq2str, type_name)
 
 
 if TYPE_CHECKING:
     from .customconverters import ConverterInfo, CustomArgumentConverters
-    from .typeinfo import TypeInfo
+    from .typeinfo import TypeInfo, TypedDictInfo
 
 
 NoneType = type(None)
@@ -503,23 +503,19 @@ class TupleConverter(TypeConverter):
 class TypedDictConverter(TypeConverter):
     type = 'TypedDict'
     value_types = (str, Mapping)
+    type_info: 'TypedDictInfo'
 
-    def __init__(self, type_info: 'TypeInfo',
+    def __init__(self, type_info: 'TypedDictInfo',
                  custom_converters: 'CustomArgumentConverters|None' = None,
                  languages: LanguagesLike = None):
         super().__init__(type_info, custom_converters, languages)
-        # FIXME: Handle TypedDict in TypeInfo
-        from .typeinfo import TypeInfo
-        self.converters = {n: self.converter_for(TypeInfo.from_type_hint(t),
-                                                 custom_converters, languages)
-                           for n, t in type_info.type.__annotations__.items()}
+        self.converters = {n: self.converter_for(t, custom_converters, languages)
+                           for n, t in type_info.annotations.items()}
         self.type_name = type_info.name
-        # __required_keys__ is new in Python 3.9.
-        self.required_keys = getattr(type_info.type, '__required_keys__', frozenset())
 
     @classmethod
     def handles(cls, type_info: 'TypeInfo') -> bool:
-        return isinstance(type_info.type, typeddict_types)
+        return type_info.is_typed_dict
 
     def no_conversion_needed(self, value):
         return False
@@ -546,7 +542,7 @@ class TypedDictConverter(TypeConverter):
             if available:
                 error += f' Available item{s(available)}: {seq2str(sorted(available))}'
             raise ValueError(error)
-        missing = [key for key in self.required_keys if key not in value]
+        missing = [key for key in self.type_info.required if key not in value]
         if missing:
             raise ValueError(f"Required item{s(missing)} "
                              f"{seq2str(sorted(missing))} missing.")
