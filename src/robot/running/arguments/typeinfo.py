@@ -21,8 +21,12 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Union
 
+from robot.conf import LanguagesLike
 from robot.errors import DataError
-from robot.utils import has_args, is_union, NOT_SET, type_repr, typeddict_types
+from robot.utils import has_args, is_union, NOT_SET, type_repr
+
+from .customconverters import CustomArgumentConverters
+from .typeconverters import TypeConverter
 
 
 TYPE_NAMES = {
@@ -142,6 +146,19 @@ class TypeInfo:
         if len(infos) == 1:
             return infos[0]
         return cls('Union', nested=infos)
+
+    def convert(self, value: Any,
+                name: 'str|None' = None,
+                custom_converters: 'CustomArgumentConverters|dict|None' = None,
+                languages: 'LanguagesLike' = None,
+                kind: str = 'Argument'):
+        if isinstance(custom_converters, dict):
+            custom_converters = CustomArgumentConverters.from_dict(custom_converters)
+        converter = TypeConverter.converter_for(self, custom_converters, languages)
+        if not converter:
+            # FIXME: Change to TypeError
+            raise RuntimeError(f"No converter found for '{self}'.")
+        return converter.convert(value, name, kind)
 
     def __str__(self):
         if self.is_union:

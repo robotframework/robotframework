@@ -71,14 +71,13 @@ class ArgumentConverter:
             return value
         # Primarily convert arguments based on type hints.
         if name in spec.types:
-            converter = TypeConverter.converter_for(spec.types[name],
-                                                    self.custom_converters,
-                                                    self.languages)
-            if converter:
-                try:
-                    return converter.convert(name, value)
-                except ValueError as err:
-                    conversion_error = err
+            info: TypeInfo = spec.types[name]
+            try:
+                return info.convert(value, name, self.custom_converters, self.languages)
+            except ValueError as err:
+                conversion_error = err
+            except RuntimeError:
+                pass
         # Try conversion also based on the default value type. We probably should
         # do this only if there is no explicit type hint, but Python < 3.11
         # handling `arg: type = None` differently than newer versions would mean
@@ -88,17 +87,15 @@ class ArgumentConverter:
         if name in spec.defaults:
             typ = type(spec.defaults[name])
             if typ == str:      # Don't convert arguments to strings.
-                type_info = TypeInfo()
+                info = TypeInfo()
             elif typ == int:    # Try also conversion to float.
-                type_info = TypeInfo.from_sequence([int, float])
+                info = TypeInfo.from_sequence([int, float])
             else:
-                type_info = TypeInfo.from_type(typ)
-            converter = TypeConverter.converter_for(type_info, languages=self.languages)
-            if converter:
-                try:
-                    return converter.convert(name, value)
-                except ValueError:
-                    pass
+                info = TypeInfo.from_type(typ)
+            try:
+                return info.convert(value, name, languages=self.languages)
+            except (ValueError, RuntimeError):
+                pass
         if conversion_error:
             raise conversion_error
         return value

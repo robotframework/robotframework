@@ -15,8 +15,6 @@
 
 from robot.utils import getdoc, seq2str, type_name
 
-from .argumentparser import PythonArgumentParser
-
 
 class CustomArgumentConverters:
 
@@ -24,12 +22,14 @@ class CustomArgumentConverters:
         self.converters = converters
 
     @classmethod
-    def from_dict(cls, converters, library):
+    def from_dict(cls, converters, library=None):
         valid = []
         for type_, conv in converters.items():
             try:
                 info = ConverterInfo.for_converter(type_, conv, library)
             except TypeError as err:
+                if library is None:
+                    raise
                 library.report_error(str(err))
             else:
                 valid.append(info)
@@ -92,6 +92,9 @@ class ConverterInfo:
 
     @classmethod
     def _get_arg_spec(cls, converter):
+        # Avoid cyclic import. Yuck.
+        from .argumentparser import PythonArgumentParser
+
         spec = PythonArgumentParser(type='Converter').parse(converter)
         if spec.minargs > 2:
             required = seq2str([a for a in spec.positional if a not in spec.defaults])
