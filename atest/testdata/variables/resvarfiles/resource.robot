@@ -1,7 +1,7 @@
-*** Setting ***
+*** Settings ***
 Resource          resource_2.robot
 
-*** Variable ***
+*** Variables ***
 ${STRING}         Hello world!
 ${INTEGER}        ${42}
 ${FLOAT}          ${-1.2}

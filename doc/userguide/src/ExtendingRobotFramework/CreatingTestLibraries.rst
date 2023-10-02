@@ -1160,6 +1160,15 @@ __ `Specifying argument types using function annotations`_
 __ `Specifying argument types using @keyword decorator`_
 __ `Implicit argument types based on default values`_
 
+.. note:: If an argument has both a type hint and a default value, conversion is
+          first attempted based on the type hint and then, if that fails, based on
+          the default value type. This behavior is likely to change in the future
+          so that conversion based on the default value is done *only* if the argument
+          does not have a type hint. That will change conversion behavior in cases
+          like `arg: list = None` where `None` conversion will not be attempted
+          anymore. Library creators are strongly recommended to specify the default
+          value type explicitly like `arg: Union[list, None] = None` already now.
+
 The type to use can be specified either using concrete types (e.g. list_),
 by using Abstract Base Classes (ABC) (e.g. Sequence_), or by using sub
 classes of these types (e.g. MutableSequence_). Also types in in the typing_
@@ -1270,7 +1279,7 @@ Other types cause conversion failures.
    |              |               |            |              |                                                                | | `1` (PowerState.ON)                |
    |              |               |            |              | Support for IntEnum_ and IntFlag_ is new in RF 4.1.            |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | None_        |               | NoneType   | str_         | String `NONE` (case-insensitive) is converted to the Python    | | `None`                             |
+   | None_        |               |            | str_         | String `NONE` (case-insensitive) is converted to the Python    | | `None`                             |
    |              |               |            |              | `None` object. Other values cause an error.                    |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | Any_         |               |            | Any          | Any value is accepted. No conversion is done.                  |                                      |
@@ -1279,7 +1288,7 @@ Other types cause conversion failures.
    |              |               |            |              | but conversion may have been done based on `default values     |                                      |
    |              |               |            |              | <Implicit argument types based on default values_>`__.         |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | list_        | Sequence_     |            | str_,        | Strings must be Python list literals. They are converted       | | `['one', 'two']`                   |
+   | list_        | Sequence_     | sequence   | str_,        | Strings must be Python list literals. They are converted       | | `['one', 'two']`                   |
    |              |               |            | Sequence_    | to actual lists using the `ast.literal_eval`_ function.        | | `[('one', 1), ('two', 2)]`         |
    |              |               |            |              | They can contain any values `ast.literal_eval` supports,       |                                      |
    |              |               |            |              | including lists and other containers.                          |                                      |
@@ -1287,6 +1296,8 @@ Other types cause conversion failures.
    |              |               |            |              | If the used type hint is list_ (e.g. `arg: list`), sequences   |                                      |
    |              |               |            |              | that are not lists are converted to lists. If the type hint is |                                      |
    |              |               |            |              | generic Sequence_, sequences are used without conversion.      |                                      |
+   |              |               |            |              |                                                                |                                      |
+   |              |               |            |              | Alias `sequence` is new in RF 7.0.                             |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | tuple_       |               |            | str_,        | Same as `list`, but string arguments must tuple literals.      | | `('one', 'two')`                   |
    |              |               |            | Sequence_    |                                                                |                                      |
@@ -1298,7 +1309,9 @@ Other types cause conversion failures.
    |              |               |            | Container_   |                                                                | | `frozenset()`                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | dict_        | Mapping_      | dictionary,| str_,        | Same as `list`, but string arguments must be dictionary        | | `{'a': 1, 'b': 2}`                 |
-   |              |               | map        | Mapping_     | literals.                                                      | | `{'key': 1, 'nested': {'key': 2}}` |
+   |              |               | mapping,   | Mapping_     | literals.                                                      | | `{'key': 1, 'nested': {'key': 2}}` |
+   |              |               | map        |              |                                                                |                                      |
+   |              |               |            |              | Alias `mapping` is new in RF 7.0.                              |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | TypedDict_   |               |            | str_,        | Same as `dict`, but dictionary items are also converted        | .. sourcecode:: python               |
    |              |               |            | Mapping_     | to the specified types and items not included in the type      |                                      |
@@ -1377,6 +1390,15 @@ syntax instead:
 .. sourcecode:: python
 
   def example(length: int | float, padding: int | str | None = None):
+      ...
+
+Robot Framework 7.0 enhanced the support for the union syntax so that also
+"stringly typed" unions like `'type1 | type2'` work. This syntax works also
+with older Python versions:
+
+.. sourcecode:: python
+
+  def example(length: 'int | float', padding: 'int | str | None' = None):
       ...
 
 An alternative is specifying types as a tuple. It is not recommended with annotations,
@@ -1470,14 +1492,18 @@ with different generic types works according to these rules:
 - With sets there can be exactly one type like `set[float]`. Conversion logic
   is the same as with lists.
 
+Using the native `list[int]` syntax requires `Python 3.9`__ or newer. If there
+is a need to support also earlier Python versions, it is possible to either use
+matching types from the typing_ module like `List[int]` or use the "stringly typed"
+syntax like `'list[int]'`.
+
 .. note:: Support for converting nested types with generics is new in
           Robot Framework 6.0. Same syntax works also with earlier versions,
           but arguments are only converted to the base type and nested types
           are not used for anything.
 
-.. note:: Using generics with Python standard types like `list[int]` is new
-          in `Python 3.9`__. With earlier versions matching types from
-          the typing_ module can be used like `List[int]`.
+.. note:: Support for "stringly typed" parameterized generics is new in
+          Robot Framework 7.0.
 
 __ https://peps.python.org/pep-0585/
 

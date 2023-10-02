@@ -101,17 +101,17 @@ Variable Values Should Not Be Visible In Keyword Arguments
 Strict retry interval
     ${tc} =    Check Test Case    ${TESTNAME}
     Length Should Be    ${tc.body[0].kws}    4
-    Should Be True    300 <= ${tc.body[0].elapsedtime} < 900
+    Elapsed Time Should Be Valid    ${tc.body[0].elapsed_time}    minimum=0.3    maximum=0.9
 
 Fail with strict retry interval
     ${tc} =    Check Test Case    ${TESTNAME}
     Length Should Be    ${tc.body[0].kws}    3
-    Should Be True    200 <= ${tc.body[0].elapsedtime} < 600
+    Elapsed Time Should Be Valid    ${tc.body[0].elapsed_time}    minimum=0.2    maximum=0.6
 
 Strict retry interval violation
     ${tc} =    Check Test Case    ${TESTNAME}
     Length Should Be    ${tc.body[0].kws}    4
-    Should Be True    400 <= ${tc.body[0].elapsedtime} < 1200
+    Elapsed Time Should Be Valid    ${tc.body[0].elapsed_time}    minimum=0.4    maximum=1.2
     FOR    ${index}    IN    1    3    5    7
         Check Log Message    ${tc.body[0].body[${index}]}
         ...    Keyword execution time ??? milliseconds is longer than retry interval 100 milliseconds.

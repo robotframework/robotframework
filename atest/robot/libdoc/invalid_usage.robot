@@ -81,7 +81,7 @@ Invalid output file
     ...    Remove Directory    ${OUT XML}
 
 Invalid Spec File version
-    ${TESTDATADIR}/OldSpec.xml ${OUT XML}    Invalid spec file version 'None'. Supported versions are 3, 4 and 5.
+    ${TESTDATADIR}/OldSpec.xml ${OUT XML}    Invalid spec file version 'None'. Supported versions are 3, 4, 5, and 6.
 
 *** Keywords ***
 Run libdoc and verify error

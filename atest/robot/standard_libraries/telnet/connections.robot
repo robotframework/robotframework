@@ -1,8 +1,8 @@
-*** Setting ***
+*** Settings ***
 Suite Setup       Run Tests    ${EMPTY}    standard_libraries/telnet/connections.robot
 Resource          telnet_resource.robot
 
-*** Test Case ***
+*** Test Cases ***
 Open Connection
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].msgs[0]}    Opening connection to localhost:23 with prompt: xxx

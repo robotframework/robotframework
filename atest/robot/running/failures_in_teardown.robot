@@ -22,7 +22,7 @@ Failure In For Loop
 
 Execution Continues After Test Timeout
     ${tc} =    Check Test Case    ${TESTNAME}
-    Should Be True    ${tc.elapsedtime} >= 300
+    Elapsed Time Should Be Valid    ${tc.elapsed_time}    minimum=0.3
 
 Execution Stops After Keyword Timeout
     ${tc} =    Check Test Case    ${TESTNAME}

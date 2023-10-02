@@ -1,4 +1,4 @@
-*** Setting ***
+*** Settings ***
 Suite Setup       Log    Setup of test case file
 Suite Teardown    Log    Teardown of test case file
 Test Setup        Log    Default setup from test file
@@ -7,7 +7,7 @@ Force Tags        test force
 Default Tags      test default
 Test Timeout      7 hour 8 minutes 9 seconds
 
-*** Test Case ***
+*** Test Cases ***
 S2TC1 No metadata
     No Operation
 

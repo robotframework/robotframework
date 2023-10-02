@@ -120,7 +120,7 @@ class TestCase(ModelObject, Generic[KW]):
         return bool(self._setup)
 
     @property
-    def teardown(self) -> Keyword:
+    def teardown(self) -> KW:
         """Test teardown as a :class:`~.model.keyword.Keyword` object.
 
         See :attr:`setup` for more information.

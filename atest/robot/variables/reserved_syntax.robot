@@ -1,8 +1,8 @@
-*** Setting ***
+*** Settings ***
 Suite Setup       Run Tests    ${EMPTY}    variables/reserved_syntax.robot
 Resource          atest_resource.robot
 
-*** Test Case ***
+*** Test Cases ***
 Reserved Syntax \*{var}
     Check Test Case    ${TEST NAME}
 

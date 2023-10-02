@@ -21,7 +21,7 @@ and the :mod:`result model <robot.result.model>`, but the objects passed to
 the visitor methods are slightly different depending on the model they are
 used with. The main differences are that on the execution side keywords do
 not have child keywords nor messages, and that only the result objects have
-status related attributes like :attr:`status` and :attr:`starttime`.
+status related attributes like :attr:`status` and :attr:`start_time`.
 
 This module contains :class:`SuiteVisitor` that implements the core logic to
 visit a test suite structure, and the :mod:`~robot.result` package contains
@@ -80,13 +80,13 @@ Type hints
 
 Visitor methods have type hints to give more information about the model objects
 they receive to editors. Because visitors can be used with both running and result
-models, the types that are used are base classes from the :mod:`robot.model`
-module. Actual visitors may want to import appropriate types from
-:mod:`robot.running.model` or from :mod:`robot.result.model` modules instead.
-For example, this code that prints failed tests uses result side model objects::
+models, the types that are used as type hints are base classes from the
+:mod:`robot.model` module. Actual visitor implementations can import appropriate
+types from the :mod:`robot.running` or the :mod:`robot.result` module instead.
+For example, this visitor uses the result side model objects::
 
     from robot.api import SuiteVisitor
-    from robot.result.model import TestCase, TestSuite
+    from robot.result import TestCase, TestSuite
 
 
     class FailurePrinter(SuiteVisitor):

@@ -8,10 +8,10 @@ Resource          resource_with_testcase_table.robot
 Test Setup        Not allowed in resources
 Non Existing
 
-*** Variable ***
+*** Variables ***
 ${resources}      Variable from resources.robot
 
-*** Keyword ***
+*** Keywords ***
 resources
     [Documentation]    Keyword from resources.robot
     Resources Imported By Resource

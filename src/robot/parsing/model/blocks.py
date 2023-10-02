@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import warnings
 from abc import ABC
 from contextlib import contextmanager
 from pathlib import Path
@@ -255,8 +256,14 @@ class For(NestedBlock):
     header: ForHeader
 
     @property
-    def variables(self) -> 'tuple[str, ...]':
-        return self.header.variables
+    def assign(self) -> 'tuple[str, ...]':
+        return self.header.assign
+
+    @property
+    def variables(self) -> 'tuple[str, ...]':    # TODO: Remove in RF 8.0.
+        warnings.warn("'For.variables' is deprecated and will be removed in "
+                      "Robot Framework 8.0. Use 'For.assign' instead.")
+        return self.assign
 
     @property
     def values(self) -> 'tuple[str, ...]':
@@ -307,8 +314,14 @@ class Try(NestedBlock):
         return getattr(self.header, 'pattern_type', None)
 
     @property
-    def variable(self) -> 'str|None':
-        return getattr(self.header, 'variable', None)
+    def assign(self) -> 'str|None':
+        return getattr(self.header, 'assign', None)
+
+    @property
+    def variable(self) -> 'str|None':    # TODO: Remove in RF 8.0.
+        warnings.warn("'Try.variable' is deprecated and will be removed in "
+                      "Robot Framework 8.0. Use 'Try.assign' instead.")
+        return self.assign
 
     def validate(self, ctx: 'ValidationContext'):
         self._validate_body()

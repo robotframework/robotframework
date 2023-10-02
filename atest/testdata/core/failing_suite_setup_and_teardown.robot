@@ -1,8 +1,8 @@
-*** Setting ***
+*** Settings ***
 Suite Setup       Fail    Setup failure\nin two lines
 Suite Teardown    Fail    Teardown failure\nin two lines
 
-*** Test Case ***
+*** Test Cases ***
 Test 1
     [Documentation]    FAIL Parent suite setup failed:
     ...    Setup failure

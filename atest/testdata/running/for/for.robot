@@ -6,7 +6,7 @@ Variables         binary_list.py
 @{NUMS}           1    2    3    4    5
 @{RESULT}
 ${WRONG VALUES}   Number of FOR loop values should be multiple of its variables.
-${INVALID FOR}    'For' is a reserved keyword. It must be an upper case 'FOR' when used as a marker.
+${INVALID FOR}    Support for the old FOR loop syntax has been removed. Replace 'For' with 'FOR', end the loop with 'END', and remove escaping backslashes.
 ${INVALID END}    END is not allowed in this context.
 
 *** Test Cases ***
@@ -297,7 +297,8 @@ FOR is case and space sensitive 1
     END
 
 FOR is case and space sensitive 2
-    [Documentation]    FAIL    ${INVALID FOR}
+    [Documentation]    FAIL    No keyword with name 'F O R' found. Did you mean:\n${SPACE}${SPACE}${SPACE}${SPACE}For In UK
+
     F O R    ${var}    IN    one    two
         Fail    Should not be executed
     END

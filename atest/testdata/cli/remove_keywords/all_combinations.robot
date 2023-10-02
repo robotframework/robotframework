@@ -13,7 +13,7 @@ ${KEPT BY NAME MESSAGE}    +BYNAME -ALL
 ${REMOVED BY PATTERN MESSAGE}    -BYPATTERN -ALL
 ${KEPT BY PATTERN MESSAGE}    +BYPATTERN -ALL
 
-*** Test Case ***
+*** Test Cases ***
 Passing
     Log    ${PASS MESSAGE}
 

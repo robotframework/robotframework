@@ -122,6 +122,14 @@ Check Keyword Data
     Should Be Equal    ${{', '.join($kw.tags)}}      ${tags}
     Should Be Equal    ${kw.type}                    ${type}
 
+Check TRY Data
+    [Arguments]    ${try}    ${patterns}=    ${pattern_type}=${None}    ${assign}=${None}    ${status}=PASS
+    Should Be Equal    ${try.type}                      TRY
+    Should Be Equal    ${{', '.join($try.patterns)}}    ${patterns}
+    Should Be Equal    ${try.pattern_type}              ${pattern_type}
+    Should Be Equal    ${try.assign}                    ${assign}
+    Should Be Equal    ${try.status}                    ${status}
+
 Test And All Keywords Should Have Passed
     [Arguments]    ${name}=${TESTNAME}    ${allow not run}=False
     ${tc} =    Check Test Case    ${name}
@@ -296,19 +304,34 @@ Check Names
     Should Be Equal    ${item.longname}    ${longprefix}${name}
 
 Timestamp Should Be Valid
-    [Arguments]    ${time}
-    Log    ${time}
-    Should Not Be Equal    ${time}    ${None}
-    Should Match Regexp    ${time}    ^20\\d{6} \\d{2}:\\d{2}:\\d{2}\\.\\d{3}$    Not valid timestamp
+    [Arguments]    ${timestamp}
+    Should Be True    isinstance($timestamp, datetime.datetime) and $timestamp.year > 2000
+
+Timestamp Should Be
+    [Arguments]    ${timestamp}    ${expected}
+    IF    $expected is not None
+        ${expected} =    Evaluate    datetime.datetime.fromisoformat('${expected}')
+    END
+    Should Be Equal    ${timestamp}    ${expected}
 
 Elapsed Time Should Be Valid
-    [Arguments]    ${time}
-    Log    ${time}
-    Should Be True    isinstance($time, int)    Not valid elapsed time: ${time}
-    # On CI elapsed time has sometimes been negative. We cannot control system time there,
-    # so better to log a warning than fail the test in that case.
-    IF    $time < 0
-    ...    Log    Negative elapsed time '${time}'. Someone messing with system time?    WARN
+    [Arguments]    ${elapsed}    ${minimum}=0    ${maximum}=${{sys.maxsize}}
+    Should Be True    isinstance($elapsed, datetime.timedelta)
+    Should Be True    $elapsed.total_seconds() >= ${minimum}
+    Should Be True    $elapsed.total_seconds() <= ${maximum}
+
+Elapsed Time Should Be
+    [Arguments]    ${elapsed}    ${expected}
+    IF    isinstance($expected, str)
+        ${expected} =    Evaluate    ${expected}
+    END
+    Should Be Equal As Numbers    ${elapsed.total_seconds()}    ${expected}
+
+Times Should Be
+    [Arguments]    ${item}    ${start}    ${end}    ${elapsed}
+    Timestamp Should Be       ${item.start_time}      ${start}
+    Timestamp Should Be       ${item.end_time}        ${end}
+    Elapsed Time Should Be    ${item.elapsed_time}    ${elapsed}
 
 Previous test should have passed
     [Arguments]    ${name}

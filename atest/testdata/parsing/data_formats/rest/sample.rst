@@ -16,7 +16,7 @@ We have a devious plan to rule the world with robots.
 
 .. code:: robotframework
 
-   *Setting*      *Value*
+   *Settings*      *Value*
 
    Documentation  A complex testdata file in rst format.
    # Default Tags are in include.rst
@@ -27,6 +27,7 @@ We have a devious plan to rule the world with robots.
    Resource       ../resources/rest_directive_resource.rst
    | Variables  | ../resources/variables.py
    | Library    | OperatingSystem | | | | | | | | | | | | | | | |
+   Invalid    Setting
 
 .. csv-table:: cannot and should not be parsed
    :file: not/a/real/path.csv
@@ -65,7 +66,7 @@ def ignore_me_or_die():
 
 .. code:: robotframework
 
-          * Variable
+          * Variables
 
           ${table_var}   foo
           @{table_listvar}   bar   ${table_var}
@@ -76,7 +77,7 @@ We support also `code-block` and `sourcecode` directives as alias for `code`.
 
 .. code-block:: robotframework
 
-   ***Test Case***
+   ***Test Cases***
 
    Passing   Log   Passing test case.
 

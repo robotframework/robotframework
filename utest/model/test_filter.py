@@ -1,8 +1,8 @@
 import unittest
 
-from robot.utils.asserts import assert_equal
 from robot.model import TestSuite
 from robot.model.filter import Filter
+from robot.utils.asserts import assert_equal
 
 
 class FilterBaseTest(unittest.TestCase):
@@ -146,11 +146,11 @@ class TestFilterBySuiteName(FilterBaseTest):
         self._test(filter, [], ['t1'])
         self._test(filter, [], ['t1'])
 
-    def test_parent_name(self):
+    def test_longname(self):
         self._test(Filter(include_suites=['s1.s21.s31']), ['t1', 't2', 't3'], [])
-        self._test(Filter(include_suites=['s2?.s31']), ['t1', 't2', 't3'], [])
+        self._test(Filter(include_suites=['*.s2?.s31']), ['t1', 't2', 't3'], [])
         self._test(Filter(include_suites=['*.s22']), [], ['t1'])
-        self._test(Filter(include_suites=['xxx.s22']), [], [])
+        self._test(Filter(include_suites=['nonex.s22']), [], [])
 
     def test_normalization(self):
         self._test(Filter(include_suites=['_S 2 2_', 'xxx']), [], ['t1'])

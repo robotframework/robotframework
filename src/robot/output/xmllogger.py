@@ -13,7 +13,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import get_timestamp, NullMarkupWriter, safe_str, XmlWriter
+from datetime import datetime
+
+from robot.utils import NullMarkupWriter, safe_str, XmlWriter
 from robot.version import get_full_version
 from robot.result.visitor import ResultVisitor
 
@@ -33,9 +35,9 @@ class XmlLogger(ResultVisitor):
             return NullMarkupWriter()
         writer = XmlWriter(path, write_empty=False, usage='output')
         writer.start('robot', {'generator': get_full_version(generator),
-                               'generated': get_timestamp(),
+                               'generated': datetime.now().isoformat(),
                                'rpa': 'true' if rpa else 'false',
-                               'schemaversion': '4'})
+                               'schemaversion': '5'})
         return writer
 
     def close(self):
@@ -58,7 +60,8 @@ class XmlLogger(ResultVisitor):
             self._write_message(msg)
 
     def _write_message(self, msg):
-        attrs = {'timestamp': msg.timestamp or 'N/A', 'level': msg.level}
+        attrs = {'time': msg.timestamp.isoformat() if msg.timestamp else None,
+                 'level': msg.level}
         if msg.html:
             attrs['html'] = 'true'
         self._writer.element('msg', msg.message, attrs)
@@ -104,7 +107,7 @@ class XmlLogger(ResultVisitor):
                                    'start': for_.start,
                                    'mode': for_.mode,
                                    'fill': for_.fill})
-        for name in for_.variables:
+        for name in for_.assign:
             self._writer.element('var', name)
         for value in for_.values:
             self._writer.element('value', value)
@@ -116,7 +119,7 @@ class XmlLogger(ResultVisitor):
 
     def start_for_iteration(self, iteration):
         self._writer.start('iter')
-        for name, value in iteration.variables.items():
+        for name, value in iteration.assign.items():
             self._writer.element('var', value, {'name': name})
         self._writer.element('doc', iteration.doc)
 
@@ -134,8 +137,9 @@ class XmlLogger(ResultVisitor):
     def start_try_branch(self, branch):
         if branch.type == branch.EXCEPT:
             self._writer.start('branch', attrs={
-                'type': 'EXCEPT', 'variable': branch.variable,
-                'pattern_type': branch.pattern_type
+                'type': 'EXCEPT',
+                'pattern_type': branch.pattern_type,
+                'assign': branch.assign
             })
             self._write_list('pattern', branch.patterns)
         else:
@@ -262,10 +266,9 @@ class XmlLogger(ResultVisitor):
             self._writer.element(tag, item)
 
     def _write_status(self, item):
-        attrs = {'status': item.status, 'starttime': item.starttime or 'N/A',
-                 'endtime': item.endtime or 'N/A'}
-        if not (item.starttime and item.endtime):
-            attrs['elapsedtime'] = str(item.elapsedtime)
+        attrs = {'status': item.status,
+                 'start': item.start_time.isoformat() if item.start_time else None,
+                 'elapsed': str(item.elapsed_time.total_seconds())}
         self._writer.element('status', item.message, attrs)
 
 

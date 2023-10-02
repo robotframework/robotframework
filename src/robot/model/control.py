@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import warnings
 from typing import Any, cast, Literal, Sequence, TypeVar, TYPE_CHECKING
 
 from robot.utils import setter
@@ -42,17 +43,17 @@ class For(BodyItem):
     """
     type = BodyItem.FOR
     body_class = Body
-    repr_args = ('variables', 'flavor', 'values', 'start', 'mode', 'fill')
-    __slots__ = ['variables', 'flavor', 'values', 'start', 'mode', 'fill']
+    repr_args = ('assign', 'flavor', 'values', 'start', 'mode', 'fill')
+    __slots__ = ['assign', 'flavor', 'values', 'start', 'mode', 'fill']
 
-    def __init__(self, variables: Sequence[str] = (),
+    def __init__(self, assign: Sequence[str] = (),
                  flavor: "Literal['IN', 'IN RANGE', 'IN ENUMERATE', 'IN ZIP']" = 'IN',
                  values: Sequence[str] = (),
                  start: 'str|None' = None,
                  mode: 'str|None' = None,
                  fill: 'str|None' = None,
                  parent: BodyItemParent = None):
-        self.variables = tuple(variables)
+        self.assign = tuple(assign)
         self.flavor = flavor
         self.values = tuple(values)
         self.start = start
@@ -60,6 +61,19 @@ class For(BodyItem):
         self.fill = fill
         self.parent = parent
         self.body = ()
+
+    @property
+    def variables(self) -> 'tuple[str, ...]':    # TODO: Remove in RF 8.0.
+        """Deprecated since Robot Framework 7.0. Use :attr:`assign` instead."""
+        warnings.warn("'For.variables' is deprecated and will be removed in "
+                      "Robot Framework 8.0. Use 'For.assign' instead.")
+        return self.assign
+
+    @variables.setter
+    def variables(self, assign: 'tuple[str, ...]'):
+        warnings.warn("'For.variables' is deprecated and will be removed in "
+                      "Robot Framework 8.0. Use 'For.assign' instead.")
+        self.assign = assign
 
     @setter
     def body(self, body: 'Sequence[BodyItem|DataDict]') -> Body:
@@ -78,7 +92,7 @@ class For(BodyItem):
         visitor.visit_for(self)
 
     def __str__(self):
-        parts = ['FOR', *self.variables, self.flavor, *self.values]
+        parts = ['FOR', *self.assign, self.flavor, *self.values]
         for name, value in [('start', self.start),
                             ('mode', self.mode),
                             ('fill', self.fill)]:
@@ -91,7 +105,7 @@ class For(BodyItem):
 
     def to_dict(self) -> DataDict:
         data = {'type': self.type,
-                'variables': self.variables,
+                'assign': self.assign,
                 'flavor': self.flavor,
                 'values': self.values}
         for name, value in [('start', self.start),
@@ -234,22 +248,35 @@ class If(BodyItem):
 class TryBranch(BodyItem):
     """Represents individual ``TRY``, ``EXCEPT``, ``ELSE`` or ``FINALLY`` branch."""
     body_class = Body
-    repr_args = ('type', 'patterns', 'pattern_type', 'variable')
-    __slots__ = ['type', 'patterns', 'pattern_type', 'variable']
+    repr_args = ('type', 'patterns', 'pattern_type', 'assign')
+    __slots__ = ['type', 'patterns', 'pattern_type', 'assign']
 
     def __init__(self, type: str = BodyItem.TRY,
                  patterns: Sequence[str] = (),
                  pattern_type: 'str|None' = None,
-                 variable: 'str|None' = None,
+                 assign: 'str|None' = None,
                  parent: BodyItemParent = None):
-        if (patterns or pattern_type or variable) and type != BodyItem.EXCEPT:
-            raise TypeError(f"'{type}' branches do not accept patterns or variables.")
+        if (patterns or pattern_type or assign) and type != BodyItem.EXCEPT:
+            raise TypeError(f"'{type}' branches do not accept patterns or assignment.")
         self.type = type
         self.patterns = tuple(patterns)
         self.pattern_type = pattern_type
-        self.variable = variable
+        self.assign = assign
         self.parent = parent
         self.body = ()
+
+    @property
+    def variable(self) -> 'str|None':    # TODO: Remove in RF 8.0.
+        """Deprecated since Robot Framework 7.0. Use :attr:`assign` instead."""
+        warnings.warn("'TryBranch.variable' is deprecated and will be removed in "
+                      "Robot Framework 8.0. Use 'TryBranch.assign' instead.")
+        return self.assign
+
+    @variable.setter
+    def variable(self, assign: 'str|None'):
+        warnings.warn("'TryBranch.variable' is deprecated and will be removed in "
+                      "Robot Framework 8.0. Use 'TryBranch.assign' instead.")
+        self.assign = assign
 
     @setter
     def body(self, body: 'Sequence[BodyItem|DataDict]') -> Body:
@@ -270,8 +297,8 @@ class TryBranch(BodyItem):
         parts = ['EXCEPT', *self.patterns]
         if self.pattern_type:
             parts.append(f'type={self.pattern_type}')
-        if self.variable:
-            parts.extend(['AS', self.variable])
+        if self.assign:
+            parts.extend(['AS', self.assign])
         return '    '.join(parts)
 
     def _include_in_repr(self, name: str, value: Any) -> bool:
@@ -286,8 +313,8 @@ class TryBranch(BodyItem):
             data['patterns'] = self.patterns
             if self.pattern_type:
                 data['pattern_type'] = self.pattern_type
-            if self.variable:
-                data['variable'] = self.variable
+            if self.assign:
+                data['assign'] = self.assign
         data['body'] = self.body.to_dicts()
         return data
 

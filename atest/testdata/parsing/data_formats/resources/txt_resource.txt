@@ -1,9 +1,9 @@
-*Setting*  Value  Value  Value  Value
+*Settings*  Value  Value  Value  Value
 
 Resource   txt_resource2.txt      
 
 
-*Variable*  Value  Value  Value  Value
+*Variables*  Value  Value  Value  Value
 ${txt_resource_var}  TXT Resource Variable      
 
 

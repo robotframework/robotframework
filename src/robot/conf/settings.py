@@ -20,13 +20,14 @@ import string
 import sys
 import time
 import warnings
+from datetime import datetime
 from pathlib import Path
 
 from robot.errors import DataError, FrameworkError
 from robot.output import LOGGER, loggerhelper
 from robot.result.keywordremover import KeywordRemover
 from robot.result.flattenkeywordmatcher import validate_flatten_keyword
-from robot.utils import (abspath, create_destination_directory, escape, format_time,
+from robot.utils import (abspath, create_destination_directory, escape,
                          get_link_path, html_escape, is_list_like, plural_or_not as s,
                          seq2str, split_args_from_name_or_path)
 
@@ -73,7 +74,7 @@ class _BaseSettings:
     _output_opts = ['Output', 'Log', 'Report', 'XUnit', 'DebugFile']
 
     def __init__(self, options=None, **extra_options):
-        self.start_timestamp = format_time(time.time(), '', '-', '')
+        self.start_time = datetime.now()
         self._opts = {}
         self._cli_opts = self._cli_opts.copy()
         self._cli_opts.update(self._extra_cli_opts)
@@ -230,7 +231,9 @@ class _BaseSettings:
     def _process_output_name(self, option, name):
         base, ext = os.path.splitext(name)
         if self['TimestampOutputs']:
-            base = f'{base}-{self.start_timestamp}'
+            s = self.start_time
+            base = (f'{base}-{s.year}{s.month:02}{s.day:02}-'
+                    f'{s.hour:02}{s.minute:02}{s.second:02}')
         ext = self._get_output_extension(ext, option)
         return base + ext
 
@@ -488,7 +491,7 @@ class RobotSettings(_BaseSettings):
 
     def get_rebot_settings(self):
         settings = RebotSettings()
-        settings.start_timestamp = self.start_timestamp
+        settings.start_time = self.start_time
         not_copied = {'Include', 'Exclude', 'TestNames', 'SuiteNames', 'ParseInclude',
                       'Name', 'Doc', 'Metadata', 'SetTag', 'Output', 'LogLevel',
                       'TimestampOutputs'}

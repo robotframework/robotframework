@@ -22,7 +22,7 @@ Empty 'robot_tags' means no tags
 'robot_tags' and doc tags
     bar    foo    zap
 
-*** Keyword ***
+*** Keywords ***
 Keyword tags should be
     [Arguments]    @{tags}
     ${tc} =    Check Test Case    ${TESTNAME}

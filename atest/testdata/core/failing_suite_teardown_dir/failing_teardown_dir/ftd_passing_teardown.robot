@@ -1,4 +1,4 @@
-*** Test Case ***
+*** Test Cases ***
 FTD PTD Passing
     [Documentation]    FAIL
     ...    Parent suite teardown failed:

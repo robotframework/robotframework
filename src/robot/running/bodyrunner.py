@@ -13,11 +13,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from collections import OrderedDict
-from contextlib import contextmanager
-from itertools import zip_longest
 import re
 import time
+from collections import OrderedDict
+from contextlib import contextmanager
+from datetime import datetime
+from itertools import zip_longest
 
 from robot.errors import (BreakLoop, ContinueLoop, DataError, ExecutionFailed,
                           ExecutionFailures, ExecutionPassed, ExecutionStatus)
@@ -25,9 +26,9 @@ from robot.result import (For as ForResult, While as WhileResult, If as IfResult
                           IfBranch as IfBranchResult, Try as TryResult,
                           TryBranch as TryBranchResult)
 from robot.output import librarylogger as logger
-from robot.utils import (cut_assign_value, frange, get_error_message, get_timestamp,
-                         is_list_like, is_number, plural_or_not as s, secs_to_timestr,
-                         seq2str, split_from_equals, type_name, Matcher, timestr_to_secs)
+from robot.utils import (cut_assign_value, frange, get_error_message, is_list_like,
+                         is_number, plural_or_not as s, secs_to_timestr, seq2str,
+                         split_from_equals, type_name, Matcher, timestr_to_secs)
 from robot.variables import is_dict_variable, evaluate_expression
 
 from .statusreporter import StatusReporter
@@ -101,7 +102,7 @@ class ForInRunner:
                 error = DataError(data.error, syntax=True)
             else:
                 run = True
-        result = ForResult(data.variables, data.flavor, data.values, data.start,
+        result = ForResult(data.assign, data.flavor, data.values, data.start,
                            data.mode, data.fill)
         with StatusReporter(data, result, self._context, run) as status:
             if run:
@@ -143,7 +144,7 @@ class ForInRunner:
     def _get_values_for_rounds(self, data):
         if self._context.dry_run:
             return [None]
-        values_per_round = len(data.variables)
+        values_per_round = len(data.assign)
         if self._is_dict_iteration(data.values):
             values = self._resolve_dict_values(data.values)
             values = self._map_dict_values_to_rounds(values, values_per_round)
@@ -218,10 +219,10 @@ class ForInRunner:
             variables = self._context.variables
         else:    # Not really run (earlier failure, unexecuted IF branch, dry-run)
             variables = {}
-            values = [''] * len(data.variables)
-        for name, value in self._map_variables_and_values(data.variables, values):
+            values = [''] * len(data.assign)
+        for name, value in self._map_variables_and_values(data.assign, values):
             variables[name] = value
-            result.variables[name] = cut_assign_value(value)
+            result.assign[name] = cut_assign_value(value)
         runner = BodyRunner(self._context, run, self._templated)
         with StatusReporter(data, result, self._context, run):
             runner.run(data.body)
@@ -302,6 +303,8 @@ class ForInZipRunner(ForInRunner):
             return zip_longest(*values, fillvalue=self._fill)
         if self._mode == 'STRICT':
             self._validate_strict_lengths(values)
+        if self._mode is None:
+            self._deprecate_different_lengths(values)
         return zip(*values)
 
     def _validate_types(self, values):
@@ -316,11 +319,20 @@ class ForInZipRunner(ForInRunner):
             try:
                 lengths.append(len(item))
             except TypeError:
-                raise DataError(f"FOR IN ZIP items should have length in STRICT mode, "
-                                f"but item {index} does not.")
+                raise DataError(f"FOR IN ZIP items must have length in the STRICT "
+                                f"mode, but item {index} does not.")
         if len(set(lengths)) > 1:
-            raise DataError(f"FOR IN ZIP items should have equal lengths in STRICT "
+            raise DataError(f"FOR IN ZIP items must have equal lengths in the STRICT "
                             f"mode, but lengths are {seq2str(lengths, quote='')}.")
+
+    def _deprecate_different_lengths(self, values):
+        try:
+            self._validate_strict_lengths(values)
+        except DataError as err:
+            logger.warn(f"FOR IN ZIP default mode will be changed from SHORTEST to "
+                        f"STRICT in Robot Framework 8.0. Use 'mode=SHORTEST' to keep "
+                        f"using the SHORTEST mode. If the mode is not changed, "
+                        f"execution will fail like this in the future: {err}")
 
 
 class ForInEnumerateRunner(ForInRunner):
@@ -375,10 +387,12 @@ class WhileRunner:
         error = None
         run = False
         limit = None
-        loop_result = WhileResult(data.condition, data.limit,
-                                  data.on_limit, data.on_limit_message,
-                                  starttime=get_timestamp())
-        iter_result = loop_result.body.create_iteration(starttime=get_timestamp())
+        loop_result = WhileResult(data.condition,
+                                  data.limit,
+                                  data.on_limit,
+                                  data.on_limit_message,
+                                  start_time=datetime.now())
+        iter_result = loop_result.body.create_iteration(start_time=datetime.now())
         if self._run:
             if data.error:
                 error = DataError(data.error, syntax=True)
@@ -420,7 +434,7 @@ class WhileRunner:
                     errors.extend(failed.get_errors())
                     if not failed.can_continue(ctx, self._templated):
                         break
-                iter_result = loop_result.body.create_iteration(starttime=get_timestamp())
+                iter_result = loop_result.body.create_iteration(start_time=datetime.now())
                 if not self._should_run(data.condition, ctx.variables):
                     break
             if errors:
@@ -480,7 +494,7 @@ class IfRunner:
 
     def _run_if_branch(self, branch, recursive_dry_run=False, syntax_error=None):
         context = self._context
-        result = IfBranchResult(branch.type, branch.condition, starttime=get_timestamp())
+        result = IfBranchResult(branch.type, branch.condition, start_time=datetime.now())
         error = None
         if syntax_error:
             run_branch = False
@@ -545,7 +559,7 @@ class TryRunner:
         error_reported = False
         for branch in data.body:
             result = TryBranchResult(branch.type, branch.patterns, branch.pattern_type,
-                                     branch.variable)
+                                     branch.assign)
             with StatusReporter(branch, result, self._context, run=False, suppress=True):
                 runner = BodyRunner(self._context, run=False, templated=self._templated)
                 runner.run(branch.body)
@@ -587,10 +601,10 @@ class TryRunner:
             else:
                 pattern_error = None
             result = TryBranchResult(branch.type, branch.patterns,
-                                     branch.pattern_type, branch.variable)
+                                     branch.pattern_type, branch.assign)
             if run_branch:
-                if branch.variable:
-                    self._context.variables[branch.variable] = str(error)
+                if branch.assign:
+                    self._context.variables[branch.assign] = str(error)
                 error = self._run_branch(branch, result, error=pattern_error)
                 run = False
             else:

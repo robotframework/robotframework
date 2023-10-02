@@ -1,5 +1,5 @@
 .. code:: robotframework
 
-  *Test Case*     Whatever
+  *Test Cases*     Whatever
   Suite1 Test                                   No Operation
 

@@ -81,7 +81,7 @@ Invalid END
     END    this    is    invalid
 
 IF with wrong case
-    [Documentation]    FAIL    'If' is a reserved keyword. It must be an upper case 'IF' when used as a marker.
+    [Documentation]    FAIL    No keyword with name 'if' found.
     if    ${True}
         Fail    Should not be run
     END

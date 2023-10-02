@@ -129,8 +129,7 @@ class LibraryKeywordRunner:
                                'BuiltIn.Set Library Search Order',
                                'BuiltIn.Set Tags',
                                'BuiltIn.Remove Tags')
-        return (handler.libname == 'Reserved' or
-                handler.longname in keywords_to_execute)
+        return handler.longname in keywords_to_execute
 
 
 class EmbeddedArgumentsRunner(LibraryKeywordRunner):

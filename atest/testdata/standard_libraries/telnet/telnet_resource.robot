@@ -1,7 +1,7 @@
 *** Settings ***
 Variables         telnet_variables.py
 
-*** Keyword ***
+*** Keywords ***
 Login and set prompt
     [Arguments]    ${alias}=${NONE}    ${encoding}=${NONE}    ${terminal_emulation}=${NONE}    ${window_size}=${NONE}   ${terminal_type}=${NONE}
     ${index} =    Open Connection    ${HOST}    prompt=${PROMPT}

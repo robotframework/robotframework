@@ -10,7 +10,7 @@ from robot.utils import PY_VERSION
 from robot.utils.asserts import assert_equal
 from robot.libdocpkg import LibraryDocumentation
 from robot.libdocpkg.model import LibraryDoc, KeywordDoc
-from robot.libdocpkg.htmlutils import HtmlToText, DocToHtml
+from robot.libdocpkg.htmlutils import HtmlToText
 
 get_shortdoc = HtmlToText().get_shortdoc_from_html
 get_text = HtmlToText().html_to_plain_text
@@ -221,7 +221,7 @@ class TestLibdocJsonWriter(unittest.TestCase):
     def test_DataTypesLibrary_py(self):
         run_libdoc_and_validate_json('DataTypesLibrary.py')
 
-    def test_DataTypesLibrary_libspex(self):
+    def test_DataTypesLibrary_libspec(self):
         run_libdoc_and_validate_json('DataTypesLibrary.libspec')
 
 
@@ -269,7 +269,7 @@ class TestLibdocTypedDictKeys(unittest.TestCase):
     def test_typed_dict_keys(self):
         library = DATADIR / 'DataTypesLibrary.py'
         spec = LibraryDocumentation(library).to_json()
-        current_items = json.loads(spec)['dataTypes']['typedDicts'][0]['items']
+        current_items = json.loads(spec)['typedocs'][7]['items']
         expected_items = [
             {
                 "key": "longitude",

@@ -1,4 +1,8 @@
 *** Settings ***
+Documentation     Test --include and --exclude with Robot.
+...
+...               These options working together with --suite and --test
+...               is tested in filter_by_names.robot suite file.
 Test Template     Run And Check Include And Exclude
 Resource          atest_resource.robot
 

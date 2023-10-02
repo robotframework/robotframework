@@ -1,6 +1,6 @@
-*** Setting ***
+*** Settings ***
 Library           DummyLib
 
-*** Test Case ***
+*** Test Cases ***
 Dummy Test
     dummykw

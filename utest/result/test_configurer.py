@@ -89,20 +89,23 @@ class TestFiltering(unittest.TestCase):
                                      include_suites='s', include_tests='t')
         assert_raises_with_msg(
             DataError,
-            "Suite 'root' contains no tests matching tag 'i', "
-            "not matching tag 'e' and matching name 't' in suite 's'.",
+            "Suite 'root' contains no tests matching name 't' "
+            "or matching tag 'i' "
+            "and not matching tag 'e' "
+            "in suite 's'.",
             self.suite.visit, configurer
         )
 
     def test_no_matching_tests_with_multiple_selectors(self):
-        configurer = SuiteConfigurer(include_tags=['i1', 'i2'],
+        configurer = SuiteConfigurer(include_tags=['i1', 'i2', 'i3'],
                                      exclude_tags=['e1', 'e2'],
                                      include_suites=['s1', 's2', 's3'],
                                      include_tests=['t1', 't2'])
         assert_raises_with_msg(
             DataError,
-            "Suite 'root' contains no tests matching tags 'i1' or 'i2', "
-            "not matching tags 'e1' or 'e2' and matching name 't1' or 't2' "
+            "Suite 'root' contains no tests matching name 't1' or 't2' "
+            "or matching tags 'i1', 'i2' or 'i3' "
+            "and not matching tags 'e1' or 'e2' "
             "in suites 's1', 's2' or 's3'.",
             self.suite.visit, configurer
         )

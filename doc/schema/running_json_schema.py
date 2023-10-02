@@ -2,17 +2,24 @@
 
 """JSON schema for ``robot.running.TestSuite`` model structure.
 
-The schema is modeled using pydantic in this file. After updating the model,
+The schema is modeled using Pydantic in this file. After updating the model,
 execute this file to regenerate the actual schema file in ``running.json``.
 
-https://pydantic-docs.helpmanual.io/usage/schema/
+Requires Pydantic 1.10. https://docs.pydantic.dev/1.10/
 """
 
 from collections.abc import Sequence
 from pathlib import Path
 from typing import Literal
 
-from pydantic import BaseModel, Extra, Field
+from pydantic import BaseModel as PydanticBaseModel, Extra, Field
+
+
+class BaseModel(PydanticBaseModel):
+
+    class Config:
+        # Do not allow extra attributes.
+        extra = Extra.forbid
 
 
 class BodyItem(BaseModel):
@@ -47,7 +54,7 @@ class Keyword(BodyItem):
 
 class For(BodyItem):
     type = Field('FOR', const=True)
-    variables: Sequence[str]
+    assign: Sequence[str]
     flavor: str
     values: Sequence[str]
     start: str | None
@@ -80,7 +87,7 @@ class TryBranch(BodyItem):
     type: Literal['TRY', 'EXCEPT', 'ELSE', 'FINALLY']
     patterns: Sequence[str] | None
     pattern_type: str | None
-    variable: str | None
+    assign: str | None
     body: list['Keyword | For | While | If | Try | Error | Break | Continue | Return']
 
 
@@ -119,8 +126,6 @@ class TestSuite(BaseModel):
     resource: 'Resource | None'
 
     class Config:
-        # Do not allow extra attributes.
-        extra = Extra.forbid
         # pydantic doesn't add schema version automatically.
         # https://github.com/samuelcolvin/pydantic/issues/1478
         schema_extra = {
@@ -152,6 +157,7 @@ class UserKeyword(BaseModel):
     timeout: str | None
     lineno: int | None
     error: str | None
+    teardown: Keyword | None
     body: list[Keyword | For | While | If | Try | Error | Return]
 
 

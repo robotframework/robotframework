@@ -35,7 +35,7 @@ IMPORTER = Importer()
 
 
 class Namespace:
-    _default_libraries = ('BuiltIn', 'Reserved', 'Easter')
+    _default_libraries = ('BuiltIn', 'Easter')
     _library_import_by_path_ends = ('.py', '/', os.sep)
     _variables_import_by_path_ends = _library_import_by_path_ends + ('.yaml', '.yml') + ('.json',)
 
@@ -511,9 +511,8 @@ class KeywordRecommendationFinder:
         handlers = [('', printable_name(handler.name, True))
                     for handler in self.user_keywords.handlers]
         for library in chain(self.libraries.values(), self.resources.values()):
-            if library.name != 'Reserved':
-                handlers.extend(
-                    ((library.name or '',
-                      printable_name(handler.name, code_style=True))
-                     for handler in library.handlers))
+            handlers.extend(
+                ((library.name or '',
+                  printable_name(handler.name, code_style=True))
+                 for handler in library.handlers))
         return sorted(handlers)

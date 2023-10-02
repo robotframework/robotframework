@@ -11,8 +11,8 @@ class TestToken(unittest.TestCase):
         for token, exp_str, exp_repr in [
             ((Token.ELSE_IF, 'ELSE IF', 6, 4), 'ELSE IF',
              "Token(ELSE_IF, 'ELSE IF', 6, 4)"),
-            ((Token.KEYWORD, u'Hyv\xe4', 6, 4), u'Hyv\xe4',
-             u"Token(KEYWORD, %r, 6, 4)" % u'Hyv\xe4'),
+            ((Token.KEYWORD, 'Hyvä', 6, 4), 'Hyvä',
+             "Token(KEYWORD, 'Hyvä', 6, 4)"),
             ((Token.ERROR, 'bad value', 6, 4, 'The error.'), 'bad value',
              "Token(ERROR, 'bad value', 6, 4, 'The error.')"),
             (((), '',

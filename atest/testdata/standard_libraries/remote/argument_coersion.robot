@@ -58,6 +58,15 @@ Boolean
 None
     None    ''
 
+Datetime
+    datetime.datetime(2023, 9, 12, 16, 8)    datetime(2023, 9, 12, 16, 8)
+
+Date
+    datetime.date(2023, 9, 12)               datetime(2023, 9, 12)
+
+Timedelta
+    datetime.timedelta(seconds=3.14)         3.14
+
 Custom object
     [Documentation]    Arbitrary objects cannot be transferred over XML-RPC and thus only their string presentation is used
     MyObject()    '<MyObject>'

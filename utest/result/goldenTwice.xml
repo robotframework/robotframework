@@ -1,151 +1,151 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<robot generated="20111027 10:11:57.563" generator="Rebot trunk 20111007 (Python 2.7.2+ on linux2)">
+<robot generator="Rebot 7.0.dev1 (Python 3.12.0rc2 on linux)" generated="2023-09-08T12:01:30.419054" rpa="false" schemaversion="5">
 <suite id="s1" name="Normal &amp; Normal">
 <suite id="s1-s1" name="Normal" source="normal.html">
 <kw name="my setup" type="SETUP">
 <timeout value="1 year"/>
-<status endtime="20111024 13:41:20.888" starttime="20111024 13:41:20.886" status="PASS"/>
+<status status="PASS" start="2011-10-24T13:41:20.886000" elapsed="0.002"/>
 </kw>
 <test id="s1-s1-t1" name="First One">
-<kw library="BuiltIn" name="Log">
+<kw name="Log" library="BuiltIn">
 <arg>Test 1</arg>
 <doc>Logs the given message with the given level.</doc>
-<msg level="INFO" timestamp="20111024 13:41:20.927">Test 1</msg>
-<status endtime="20111024 13:41:20.928" starttime="20111024 13:41:20.926" status="PASS"/>
+<msg time="2011-10-24T13:41:20.927000" level="INFO">Test 1</msg>
+<status status="PASS" start="2011-10-24T13:41:20.926000" elapsed="0.002"/>
 </kw>
 <kw name="logs on trace">
 <var>${not really in source}</var>
 <tag>tag not in source</tag>
-<kw library="BuiltIn" name="Log">
+<kw name="Log" library="BuiltIn">
 <arg>Log on ${TEST NAME}</arg>
 <arg>TRACE</arg>
 <doc>Logs the given message with the given level.</doc>
-<status endtime="20111024 13:41:20.932" starttime="20111024 13:41:20.931" status="PASS"/>
+<status status="PASS" start="2011-10-24T13:41:20.931000" elapsed="0.001"/>
 </kw>
-<status endtime="20111024 13:41:20.933" starttime="20111024 13:41:20.930" status="PASS"/>
+<status status="PASS" start="2011-10-24T13:41:20.930000" elapsed="0.003"/>
 </kw>
 <for flavor="IN">
 <var>${x}</var>
 <value>not in source</value>
 <iter>
 <var name="${x}">not in source</var>
-<kw library="BuiltIn" name="Log">
+<kw name="Log" library="BuiltIn">
 <arg>${x}</arg>
 <doc>Logs the given message with the given level.</doc>
-<msg level="INFO" timestamp="20210329 17:05:45.267">not in source</msg>
-<status endtime="20210329 17:05:45.267" starttime="20210329 17:05:45.266" status="PASS"/>
+<msg time="2021-03-29T17:05:45.267000" level="INFO">not in source</msg>
+<status status="PASS" start="2021-03-29T17:05:45.266000" elapsed="0.001"/>
 </kw>
-<status endtime="20210329 17:05:45.267" starttime="20210329 17:05:45.266" status="PASS"/>
+<status status="PASS" start="2021-03-29T17:05:45.266000" elapsed="0.001"/>
 </iter>
-<status endtime="20210329 17:05:45.267" starttime="20210329 17:05:45.266" status="PASS"/>
+<status status="PASS" start="2021-03-29T17:05:45.266000" elapsed="0.001"/>
 </for>
 <if>
-<branch condition="'IF' == 'WRONG'" type="IF">
-<kw library="BuiltIn" name="Fail">
+<branch type="IF" condition="'IF' == 'WRONG'">
+<kw name="Fail" library="BuiltIn">
 <arg>not going here</arg>
 <doc>Fails the test with the given message and optionally alters its tags.</doc>
-<status endtime="20210329 17:05:45.267" starttime="20210329 17:05:45.266" status="NOT RUN"/>
+<status status="NOT RUN" start="2021-03-29T17:05:45.266000" elapsed="0.001"/>
 </kw>
-<status endtime="20210329 17:05:45.267" starttime="20210329 17:05:45.266" status="NOT RUN"/>
+<status status="NOT RUN" start="2021-03-29T17:05:45.266000" elapsed="0.001"/>
 </branch>
 <branch type="ELSE">
-<kw library="BuiltIn" name="No Operation">
+<kw name="No Operation" library="BuiltIn">
 <doc>Not in source.</doc>
-<status endtime="20210329 17:05:45.267" starttime="20210329 17:05:45.266" status="PASS"/>
+<status status="PASS" start="2021-03-29T17:05:45.266000" elapsed="0.001"/>
 </kw>
-<status endtime="20210329 17:05:45.267" starttime="20210329 17:05:45.266" status="PASS"/>
+<status status="PASS" start="2021-03-29T17:05:45.266000" elapsed="0.001"/>
 </branch>
-<status endtime="20210329 17:05:45.267" starttime="20210329 17:05:45.266" status="PASS"/>
+<status status="PASS" start="2021-03-29T17:05:45.266000" elapsed="0.001"/>
 </if>
 <doc>Test case documentation</doc>
 <tag>t1</tag>
-<status endtime="20111024 13:41:20.934" starttime="20111024 13:41:20.925" status="PASS"/>
+<status status="PASS" start="2011-10-24T13:41:20.925000" elapsed="0.009"/>
 </test>
 <doc>Normal test cases</doc>
 <meta name="Something">My Value</meta>
-<status endtime="20111024 13:41:20.952" starttime="20111024 13:41:20.873" status="PASS"/>
+<status status="PASS" start="2011-10-24T13:41:20.873000" elapsed="0.079"/>
 </suite>
 <suite id="s1-s2" name="Normal" source="normal.html">
 <kw name="my setup" type="SETUP">
 <timeout value="1 year"/>
-<status endtime="20111024 13:41:20.888" starttime="20111024 13:41:20.886" status="PASS"/>
+<status status="PASS" start="2011-10-24T13:41:20.886000" elapsed="0.002"/>
 </kw>
 <test id="s1-s2-t1" name="First One">
-<kw library="BuiltIn" name="Log">
+<kw name="Log" library="BuiltIn">
 <arg>Test 1</arg>
 <doc>Logs the given message with the given level.</doc>
-<msg level="INFO" timestamp="20111024 13:41:20.927">Test 1</msg>
-<status endtime="20111024 13:41:20.928" starttime="20111024 13:41:20.926" status="PASS"/>
+<msg time="2011-10-24T13:41:20.927000" level="INFO">Test 1</msg>
+<status status="PASS" start="2011-10-24T13:41:20.926000" elapsed="0.002"/>
 </kw>
 <kw name="logs on trace">
 <var>${not really in source}</var>
 <tag>tag not in source</tag>
-<kw library="BuiltIn" name="Log">
+<kw name="Log" library="BuiltIn">
 <arg>Log on ${TEST NAME}</arg>
 <arg>TRACE</arg>
 <doc>Logs the given message with the given level.</doc>
-<status endtime="20111024 13:41:20.932" starttime="20111024 13:41:20.931" status="PASS"/>
+<status status="PASS" start="2011-10-24T13:41:20.931000" elapsed="0.001"/>
 </kw>
-<status endtime="20111024 13:41:20.933" starttime="20111024 13:41:20.930" status="PASS"/>
+<status status="PASS" start="2011-10-24T13:41:20.930000" elapsed="0.003"/>
 </kw>
 <for flavor="IN">
 <var>${x}</var>
 <value>not in source</value>
 <iter>
 <var name="${x}">not in source</var>
-<kw library="BuiltIn" name="Log">
+<kw name="Log" library="BuiltIn">
 <arg>${x}</arg>
 <doc>Logs the given message with the given level.</doc>
-<msg level="INFO" timestamp="20210329 17:05:45.267">not in source</msg>
-<status endtime="20210329 17:05:45.267" starttime="20210329 17:05:45.266" status="PASS"/>
+<msg time="2021-03-29T17:05:45.267000" level="INFO">not in source</msg>
+<status status="PASS" start="2021-03-29T17:05:45.266000" elapsed="0.001"/>
 </kw>
-<status endtime="20210329 17:05:45.267" starttime="20210329 17:05:45.266" status="PASS"/>
+<status status="PASS" start="2021-03-29T17:05:45.266000" elapsed="0.001"/>
 </iter>
-<status endtime="20210329 17:05:45.267" starttime="20210329 17:05:45.266" status="PASS"/>
+<status status="PASS" start="2021-03-29T17:05:45.266000" elapsed="0.001"/>
 </for>
 <if>
-<branch condition="'IF' == 'WRONG'" type="IF">
-<kw library="BuiltIn" name="Fail">
+<branch type="IF" condition="'IF' == 'WRONG'">
+<kw name="Fail" library="BuiltIn">
 <arg>not going here</arg>
 <doc>Fails the test with the given message and optionally alters its tags.</doc>
-<status endtime="20210329 17:05:45.267" starttime="20210329 17:05:45.266" status="NOT RUN"/>
+<status status="NOT RUN" start="2021-03-29T17:05:45.266000" elapsed="0.001"/>
 </kw>
-<status endtime="20210329 17:05:45.267" starttime="20210329 17:05:45.266" status="NOT RUN"/>
+<status status="NOT RUN" start="2021-03-29T17:05:45.266000" elapsed="0.001"/>
 </branch>
 <branch type="ELSE">
-<kw library="BuiltIn" name="No Operation">
+<kw name="No Operation" library="BuiltIn">
 <doc>Not in source.</doc>
-<status endtime="20210329 17:05:45.267" starttime="20210329 17:05:45.266" status="PASS"/>
+<status status="PASS" start="2021-03-29T17:05:45.266000" elapsed="0.001"/>
 </kw>
-<status endtime="20210329 17:05:45.267" starttime="20210329 17:05:45.266" status="PASS"/>
+<status status="PASS" start="2021-03-29T17:05:45.266000" elapsed="0.001"/>
 </branch>
-<status endtime="20210329 17:05:45.267" starttime="20210329 17:05:45.266" status="PASS"/>
+<status status="PASS" start="2021-03-29T17:05:45.266000" elapsed="0.001"/>
 </if>
 <doc>Test case documentation</doc>
 <tag>t1</tag>
-<status endtime="20111024 13:41:20.934" starttime="20111024 13:41:20.925" status="PASS"/>
+<status status="PASS" start="2011-10-24T13:41:20.925000" elapsed="0.009"/>
 </test>
 <doc>Normal test cases</doc>
 <meta name="Something">My Value</meta>
-<status endtime="20111024 13:41:20.952" starttime="20111024 13:41:20.873" status="PASS"/>
+<status status="PASS" start="2011-10-24T13:41:20.873000" elapsed="0.079"/>
 </suite>
-<status elapsedtime="158" endtime="N/A" starttime="N/A" status="PASS"/>
+<status status="PASS" elapsed="0.158"/>
 </suite>
 <statistics>
 <total>
-<stat fail="0" pass="2" skip="0">All Tests</stat>
+<stat pass="2" fail="0" skip="0">All Tests</stat>
 </total>
 <tag>
-<stat fail="0" pass="2" skip="0">t1</stat>
+<stat pass="2" fail="0" skip="0">t1</stat>
 </tag>
 <suite>
-<stat fail="0" id="s1" name="Normal &amp; Normal" pass="2" skip="0">Normal &amp; Normal</stat>
-<stat fail="0" id="s1-s1" name="Normal" pass="1" skip="0">Normal &amp; Normal.Normal</stat>
-<stat fail="0" id="s1-s2" name="Normal" pass="1" skip="0">Normal &amp; Normal.Normal</stat>
+<stat pass="2" fail="0" skip="0" id="s1" name="Normal &amp; Normal">Normal &amp; Normal</stat>
+<stat pass="1" fail="0" skip="0" id="s1-s1" name="Normal">Normal &amp; Normal.Normal</stat>
+<stat pass="1" fail="0" skip="0" id="s1-s2" name="Normal">Normal &amp; Normal.Normal</stat>
 </suite>
 </statistics>
 <errors>
-<msg level="ERROR" timestamp="20111024 13:41:20.873">Error in file 'normal.html' in table 'Settings': Resource file 'nope' does not exist.</msg>
-<msg level="ERROR" timestamp="20111024 13:41:20.873">Error in file 'normal.html' in table 'Settings': Resource file 'nope' does not exist.</msg>
+<msg time="2011-10-24T13:41:20.873000" level="ERROR">Error in file 'normal.html' in table 'Settings': Resource file 'nope' does not exist.</msg>
+<msg time="2011-10-24T13:41:20.873000" level="ERROR">Error in file 'normal.html' in table 'Settings': Resource file 'nope' does not exist.</msg>
 </errors>
 </robot>

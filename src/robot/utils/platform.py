@@ -23,11 +23,6 @@ UNIXY = os.sep == '/'
 WINDOWS = not UNIXY
 RERAISED_EXCEPTIONS = (KeyboardInterrupt, SystemExit, MemoryError)
 
-# Part of the deprecated Python 2/3 compatibility layer. For more details see
-# the comment in `utils/__init__.py`. This constant was added to support
-# SSHLibrary: https://github.com/robotframework/SSHLibrary/issues/401
-PY2 = False
-
 
 def isatty(stream):
     # first check if buffer was detached
@@ -39,3 +34,18 @@ def isatty(stream):
         return stream.isatty()
     except ValueError:  # Occurs if file is closed.
         return False
+
+
+def __getattr__(name):
+    # Part of the deprecated Python 2/3 compatibility layer. For more details see
+    # the comment in `utils/__init__.py`. The 'PY2' constant exists here to support
+    # SSHLibrary: https://github.com/robotframework/SSHLibrary/issues/401
+
+    import warnings
+
+    if name == 'PY2':
+        warnings.warn("'robot.utils.platform.PY2' is deprecated and will be removed "
+                      "in Robot Framework 8.0.")
+        return False
+
+    raise AttributeError(f"'robot.utils.platform' has no attribute '{name}'.")

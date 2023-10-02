@@ -78,11 +78,11 @@ below and explained later in this section.
 `[Documentation]`:setting:
     Used for specifying a `test case documentation`_.
 
-`[Tags]`:setting:
-    Used for `tagging test cases`_.
-
 `[Setup]`:setting:, `[Teardown]`:setting:
    Specify `test setup and teardown`_.
+
+`[Tags]`:setting:
+    Used for `tagging test cases`_.
 
 `[Template]`:setting:
    Specifies the `template keyword`_ to use. The test itself will contain only
@@ -115,11 +115,11 @@ The Setting section can have the following test case related
 settings. These settings are mainly default values for the
 test case specific settings listed earlier.
 
-`Force Tags`:setting:, `Default Tags`:setting:
-   The forced and default values for tags_.
-
 `Test Setup`:setting:, `Test Teardown`:setting:
    The default values for `test setup and teardown`_.
+
+`Test Tags`:setting:
+   Tags_ all tests in the suite will get in addition to their possible own tags.
 
 `Test Template`:setting:
    The default `template keyword`_ to use.
@@ -601,14 +601,15 @@ __ `By tag names`_
 
 There are multiple ways how to specify tags for test cases explained below:
 
-`Test Tags`:setting: in the Setting section
+`Test Tags`:setting: setting in the Settings section
    All tests in a test case file with this setting always get specified tags.
    If this setting is used in a `suite initialization file`_, all tests
    in child suites get these tags.
 
-`[Tags]`:setting: with each test case
-   Tests get these tags in addition to tags specified using the
-   :setting:`Test Tags` setting.
+`[Tags]`:setting: setting with each test case
+   Tests get these tags in addition to tags specified using the :setting:`Test Tags`
+   setting. The :setting:`[Tags]` setting also allows removing tags set with
+   :setting:`Test Tags` by using the `-tag` syntax.
 
 `--settag`:option: command line option
    All tests get tags set with this option in addition to tags they got elsewhere.
@@ -629,17 +630,27 @@ Example:
 
    *** Test Cases ***
    No own tags
-       [Documentation]    This test has tags 'requirement: 42' and 'smoke'.
+       [Documentation]    Test has tags 'requirement: 42' and 'smoke'.
        No Operation
 
    Own tags
-       [Documentation]    This test has tags 'requirement: 42', 'smoke' and 'not ready'.
+       [Documentation]    Test has tags 'requirement: 42', 'smoke' and 'not ready'.
        [Tags]    not ready
        No Operation
 
    Own tags with variable
-       [Documentation]    This test has tags 'requirement: 42', 'smoke' and 'host: 10.0.1.42'.
+       [Documentation]    Test has tags 'requirement: 42', 'smoke' and 'host: 10.0.1.42'.
        [Tags]    host: ${HOST}
+       No Operation
+
+   Remove common tag
+       [Documentation]    Test has only tag 'requirement: 42'.
+       [Tags]    -smoke
+       No Operation
+
+   Remove common tag using a pattern
+       [Documentation]    Test has only tag 'smoke'.
+       [Tags]    -requirement: *
        No Operation
 
    Set Tags and Remove Tags keywords
@@ -652,9 +663,19 @@ preserve the exact name used in the data. When tags are compared, for example,
 to collect statistics, to select test to be executed, or to remove duplicates,
 comparisons are case, space and underscore insensitive.
 
+As demonstrated by the above examples, removing tags using `-tag` syntax supports
+`simple patterns`_ like `-requirement: *`. Tags starting with a hyphen have no
+special meaning otherwise than with the :setting:`[Tags]` setting. If there is
+a need to set a tag starting with a hyphen with :setting:`[Tags]`, it is possible
+to use the escaped__ format like `\-tag`.
+
 .. note:: The :setting:`Test Tags` setting is new in Robot Framework 6.0.
           Earlier versions support :setting:`Force Tags` and :setting:`Default Tags`
-          settings discussed below.
+          settings discussed in the next section.
+
+.. note:: The `-tag` syntax for removing common tags is new in Robot Framework 7.0.
+
+__ escaping
 
 Deprecation of :setting:`Force Tags` and :setting:`Default Tags`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -671,23 +692,61 @@ using two different settings:
     it will not get these tags.
 
 Both of these settings still work, but they are considered deprecated.
-A visible deprecation warning will be added in the future, possibly
-already in Robot Framework 7.0, and eventually these settings will be removed.
+A visible deprecation warning will be added in the future, most likely
+in Robot Framework 8.0, and eventually these settings will be removed.
 Tools like Tidy__ can be used to ease transition.
 
-Robot Framework 7.0 will introduce a new way for tests to indicate they
-`should not get certain globally specified tags`__. Instead of using a separate
-setting that tests can override, tests can use the `-tag` syntax with their
-:setting:`[Tags]` setting to tell they should not get a tag named `tag`.
-This syntax *does not* yet work in Robot Framework 6.x series, but using
-:setting:`[Tags]` with a literal value like `-tag` `is already deprecated`__.
-If such tags are needed, it is possible to use the :setting:`Test Tags`
-setting or escape__ the hyphen like `\-tag`.
+Updating :setting:`Force Tags` requires only renaming it to :setting:`Test Tags`.
+The :setting:`Default Tags` setting will be removed altogether, but the `-tag`
+functionality introduced in Robot Framework 7.0 provides same underlying
+functionality. The following examples demonstrate the needed changes.
+
+Old syntax:
+
+.. sourcecode:: robotframework
+
+    *** Settings ***
+    Force Tags      all
+    Default Tags    default
+
+    *** Test Cases ***
+    Common only
+        [Documentation]    Test has tags 'all' and 'default'.
+        No Operation
+
+    No default
+        [Documentation]    Test has only tag 'all'.
+        [Tags]
+        No Operation
+
+    Own and no default
+        [Documentation]    Test has tags 'all' and 'own'.
+        [Tags]    own
+        No Operation
+
+New syntax:
+
+.. sourcecode:: robotframework
+
+    *** Settings ***
+    Test Tags      all    default
+
+    *** Test Cases ***
+    Common only
+        [Documentation]    Test has tags 'all' and 'default'.
+        No Operation
+
+    No default
+        [Documentation]    Test has only tag 'all'.
+        [Tags]    -default
+        No Operation
+
+    Own and no default
+        [Documentation]    Test has tags 'all' and 'own'.
+        [Tags]    own    -default
+        No Operation
 
 __ https://robotidy.readthedocs.io
-__ https://github.com/robotframework/robotframework/issues/4374
-__ https://github.com/robotframework/robotframework/issues/4380
-__ escaping_
 
 Reserved tags
 ~~~~~~~~~~~~~

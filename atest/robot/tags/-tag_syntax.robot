@@ -3,34 +3,22 @@ Suite Setup       Run Tests    ${EMPTY}    tags/-tag_syntax.robot
 Resource          atest_resource.robot
 
 *** Test Cases ***
-Deprecation warning with test
-    Check Test Tags    Deprecation warning    -literal-with-force    -warn-with-test
-    Check Deprecation Warning    0    tags/-tag_syntax.robot    11    -warn-with-test
+Remove from test
+    Check Test Tags   ${TEST NAME}    tag1    tag3    tag4
 
-Deprecation warning with keyword
-    ${tc} =    Check Test Case    Deprecation warning
-    Check Keyword Data    ${tc.kws[0]}    Keyword    tags=-warn-with-keyword
-    Check Deprecation Warning    1    tags/-tag_syntax.robot    25    -warn-with-keyword
+Remove from test using pattern
+    Check Test Tags   ${TEST NAME}    -in-settings    tag    tag3
 
-Deprecation warning with keyword in resource
-    ${tc} =    Check Test Case    Deprecation warning
-    Check Keyword Data    ${tc.kws[1]}    -tag_syntax.Keyword In Resource    tags=-warn-with-keyword-in-resource
-    Check Deprecation Warning    2    tags/-tag_syntax.resource    3    -warn-with-keyword-in-resource
+Remove from keyword
+    ${tc} =    Check Test Case    Remove from test
+    Check Keyword Data    ${tc.kws[0]}    ${TEST NAME}    tags=-in-settings, kw2
 
-No deprecation warning from Settings, when escaped, or with variables
-    Length Should Be    ${ERRORS}    3
+Remove from keyword using pattern
+    ${tc} =    Check Test Case    Remove from test using pattern
+    Check Keyword Data    ${tc.kws[0]}    -tag_syntax.${TEST NAME}    tags=r1, r5, r6
 
 Escaped
-    Check Test Tags    ${TESTNAME}    -literal-escaped    -literal-with-force
+    Check Test Tags    ${TESTNAME}    -escaped    -in-settings    tag    tag1    tag2    tag3
 
 Variable
-    Check Test Tags    ${TESTNAME}    -literal-with-force    -literal-with-variable
-
-*** Keywords ***
-Check Deprecation Warning
-    [Arguments]    ${index}    ${source}    ${lineno}    ${tag}
-    Error in file    ${index}    ${source}    ${lineno}
-    ...    Settings tags starting with a hyphen using the '[Tags]' setting is deprecated.
-    ...    In Robot Framework 7.0 this syntax will be used for removing tags.
-    ...    Escape '${tag}' like '\\${tag}' to use the literal value and to avoid this warning.
-    ...    level=WARN    pattern=False
+    Check Test Tags    ${TESTNAME}    -in-settings    -variable    tag    tag1    tag2    tag3

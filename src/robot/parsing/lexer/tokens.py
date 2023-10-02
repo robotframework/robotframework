@@ -63,6 +63,7 @@ class Token:
     TEST_TEMPLATE = 'TEST TEMPLATE'
     TEST_TIMEOUT = 'TEST TIMEOUT'
     TEST_TAGS = 'TEST TAGS'
+    FORCE_TAGS = TEST_TAGS    # TODO: Remove FORCE_TAGS in RF 8.
     DEFAULT_TAGS = 'DEFAULT TAGS'
     KEYWORD_TAGS = 'KEYWORD TAGS'
     LIBRARY = 'LIBRARY'
@@ -79,9 +80,8 @@ class Token:
     RETURN = 'RETURN'
     RETURN_SETTING = RETURN
 
-    # TODO: Change WITH_NAME value to AS in RF 7.0. Remove WITH_NAME in RF 8.
-    WITH_NAME = 'AS'
     AS = 'AS'
+    WITH_NAME = AS    # TODO: Remove WITH_NAME in RF 8.
 
     NAME = 'NAME'
     VARIABLE = 'VARIABLE'

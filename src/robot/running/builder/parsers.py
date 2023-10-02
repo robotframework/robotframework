@@ -53,23 +53,21 @@ class RobotParser(Parser):
     def parse_suite_file(self, source: Path, defaults: TestDefaults) -> TestSuite:
         model = get_model(self._get_source(source), data_only=True,
                           curdir=self._get_curdir(source), lang=self.lang)
-        suite = TestSuite(name=TestSuite.name_from_source(source, self.extensions),
-                          source=source)
-        SuiteBuilder(suite, FileSettings(defaults)).build(model)
-        return suite
+        model.source = source
+        return self.parse_model(model, defaults)
 
     def parse_init_file(self, source: Path, defaults: TestDefaults) -> TestSuite:
         model = get_init_model(self._get_source(source), data_only=True,
                                curdir=self._get_curdir(source), lang=self.lang)
-        directory = source.parent
-        suite = TestSuite(name=TestSuite.name_from_source(directory),
-                          source=directory, rpa=None)
+        model.source = source
+        suite = TestSuite(name=TestSuite.name_from_source(source.parent),
+                          source=source.parent, rpa=None)
         SuiteBuilder(suite, InitFileSettings(defaults)).build(model)
         return suite
 
     def parse_model(self, model: File, defaults: 'TestDefaults|None' = None) -> TestSuite:
-        source = model.source
-        suite = TestSuite(name=TestSuite.name_from_source(source), source=source)
+        name = TestSuite.name_from_source(model.source, self.extensions)
+        suite = TestSuite(name=name, source=model.source)
         SuiteBuilder(suite, FileSettings(defaults)).build(model)
         return suite
 
@@ -82,8 +80,8 @@ class RobotParser(Parser):
     def parse_resource_file(self, source: Path) -> ResourceFile:
         model = get_resource_model(self._get_source(source), data_only=True,
                                    curdir=self._get_curdir(source), lang=self.lang)
+        model.source = source
         resource = self.parse_resource_model(model)
-        resource.source = source
         return resource
 
     def parse_resource_model(self, model: File) -> ResourceFile:

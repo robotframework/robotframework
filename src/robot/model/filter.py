@@ -18,7 +18,7 @@ from typing import Sequence, TYPE_CHECKING
 from robot.utils import setter
 
 from .tags import TagPatterns
-from .namepatterns import SuiteNamePatterns, TestNamePatterns
+from .namepatterns import NamePatterns
 from .visitor import SuiteVisitor
 
 if TYPE_CHECKING:
@@ -46,8 +46,8 @@ class EmptySuiteRemover(SuiteVisitor):
 class Filter(EmptySuiteRemover):
 
     def __init__(self,
-                 include_suites: 'SuiteNamePatterns|Sequence[str]|None' = None,
-                 include_tests: 'TestNamePatterns|Sequence[str]|None' = None,
+                 include_suites: 'NamePatterns|Sequence[str]|None' = None,
+                 include_tests: 'NamePatterns|Sequence[str]|None' = None,
                  include_tags: 'TagPatterns|Sequence[str]|None' = None,
                  exclude_tags: 'TagPatterns|Sequence[str]|None' = None):
         super().__init__()
@@ -57,12 +57,12 @@ class Filter(EmptySuiteRemover):
         self.exclude_tags = exclude_tags
 
     @setter
-    def include_suites(self, suites) -> 'SuiteNamePatterns|None':
-        return self._patterns_or_none(suites, SuiteNamePatterns)
+    def include_suites(self, suites) -> 'NamePatterns|None':
+        return self._patterns_or_none(suites, NamePatterns)
 
     @setter
-    def include_tests(self, tests) -> 'TestNamePatterns|None':
-        return self._patterns_or_none(tests, TestNamePatterns)
+    def include_tests(self, tests) -> 'NamePatterns|None':
+        return self._patterns_or_none(tests, NamePatterns)
 
     @setter
     def include_tags(self, tags) -> 'TagPatterns|None':
@@ -80,26 +80,32 @@ class Filter(EmptySuiteRemover):
     def start_suite(self, suite: 'TestSuite'):
         if not self:
             return False
-        if hasattr(suite, 'starttime'):
-            suite.starttime = suite.endtime = None
+        if hasattr(suite, 'start_time'):
+            suite.start_time = suite.end_time = suite.elapsed_time = None
         if self.include_suites is not None:
-            if self.include_suites.match(suite.name, suite.longname):
-                suite.visit(Filter(include_tests=self.include_tests,
-                                   include_tags=self.include_tags,
-                                   exclude_tags=self.exclude_tags))
-                return False
-            suite.tests = []
-            return True
-        if self.include_tests is not None:
-            suite.tests = [t for t in suite.tests
-                           if self.include_tests.match(t.name, t.longname)]
-        if self.include_tags is not None:
-            suite.tests = [t for t in suite.tests
-                           if self.include_tags.match(t.tags)]
-        if self.exclude_tags is not None:
-            suite.tests = [t for t in suite.tests
-                           if not self.exclude_tags.match(t.tags)]
+            return self._filter_based_on_suite_name(suite)
+        suite.tests = [t for t in suite.tests if self._test_included(t)]
         return bool(suite.suites)
+
+    def _filter_based_on_suite_name(self, suite: 'TestSuite') -> bool:
+        if self.include_suites.match(suite.name, suite.longname):
+            suite.visit(Filter(include_tests=self.include_tests,
+                               include_tags=self.include_tags,
+                               exclude_tags=self.exclude_tags))
+            return False
+        suite.tests = []
+        return True
+
+    def _test_included(self, test: 'TestCase') -> bool:
+        tests, include, exclude \
+                = self.include_tests, self.include_tags, self.exclude_tags
+        if exclude is not None and exclude.match(test.tags):
+            return False
+        if include is not None and include.match(test.tags):
+            return True
+        if tests is not None and tests.match(test.name, test.longname):
+            return True
+        return include is None and tests is None
 
     def __bool__(self) -> bool:
         return bool(self.include_suites is not None or

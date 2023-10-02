@@ -39,7 +39,7 @@ ${NONEX 3}        This ${NON EXISTING VARIABLE} is used in imports.
 Resource          ${NONEX 3}
 Library           ${NONEX 3}
 
-*** Test Case ***
+*** Test Cases ***
 Scalar String
     Should Be Equal    ${STRING}    Hello world!
     Should Be Equal    I said: "${STRING}"    I said: "Hello world!"

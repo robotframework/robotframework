@@ -10,12 +10,14 @@ Two variables and lists
     Should be FOR iteration    ${loop.body[1]}    \${x}=b    \${y}=y
     Should be FOR iteration    ${loop.body[2]}    \${x}=c    \${y}=z
 
-Uneven lists
+Uneven lists cause deprecation warning by default
     ${loop} =    Check test and get loop    ${TEST NAME}
     Should be IN ZIP loop      ${loop}            3
-    Should be FOR iteration    ${loop.body[0]}    \${x}=a    \${y}=1
-    Should be FOR iteration    ${loop.body[1]}    \${x}=b    \${y}=2
-    Should be FOR iteration    ${loop.body[2]}    \${x}=c    \${y}=3
+    Check Log Message          ${loop.body[0]}
+    ...    FOR IN ZIP default mode will be changed from SHORTEST to STRICT in Robot Framework 8.0. Use 'mode=SHORTEST' to keep using the SHORTEST mode. If the mode is not changed, execution will fail like this in the future: FOR IN ZIP items must have equal lengths in the STRICT mode, but lengths are 3 and 5.    WARN
+    Should be FOR iteration    ${loop.body[1]}    \${x}=a    \${y}=1
+    Should be FOR iteration    ${loop.body[2]}    \${x}=b    \${y}=2
+    Should be FOR iteration    ${loop.body[3]}    \${x}=c    \${y}=3
 
 Three variables and lists
     ${loop} =    Check test and get loop    ${TEST NAME}
@@ -56,7 +58,7 @@ Other iterables
     Check Test Case    ${TEST NAME}
 
 List variable containing iterables
-    ${loop} =    Check test and get loop    ${TEST NAME}    2
+    ${loop} =    Check test and get loop    ${TEST NAME}    1
     Should be IN ZIP loop      ${loop}            3
     Should be FOR iteration    ${loop.body[0]}    \${x}=a    \${y}=x    \${z}=f
     Should be FOR iteration    ${loop.body[1]}    \${x}=b    \${y}=y    \${z}=o
@@ -86,7 +88,7 @@ Shortest mode
 
 Shortest mode supports infinite iterators
     ${tc} =    Check Test Case    ${TEST NAME}
-    Should be IN ZIP loop      ${tc.body[0]}    5   PASS    mode=SHORTEST
+    Should be IN ZIP loop      ${tc.body[0]}    3   PASS    mode=SHORTEST
 
 Longest mode
     ${tc} =    Check Test Case    ${TEST NAME}
@@ -96,7 +98,7 @@ Longest mode
 Longest mode with custom fill value
     ${tc} =    Check Test Case    ${TEST NAME}
     Should be IN ZIP loop      ${tc.body[0]}    5   PASS    mode=longest    fill=?
-    Should be IN ZIP loop      ${tc.body[3]}    5   PASS    mode=longest    fill=\${0}
+    Should be IN ZIP loop      ${tc.body[3]}    3   PASS    mode=longest    fill=\${0}
 
 Invalid mode
     ${tc} =    Check Test Case    ${TEST NAME}

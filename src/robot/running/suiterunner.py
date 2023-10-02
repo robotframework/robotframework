@@ -13,10 +13,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from datetime import datetime
+
 from robot.errors import ExecutionFailed, ExecutionStatus, DataError, PassExecution
 from robot.model import SuiteVisitor, TagPatterns
 from robot.result import TestSuite, Result
-from robot.utils import get_timestamp, is_list_like, NormalizedDict, test_or_task
+from robot.utils import is_list_like, NormalizedDict, test_or_task
 from robot.variables import VariableScopes
 
 from .bodyrunner import BodyRunner, KeywordRunner
@@ -54,7 +56,7 @@ class SuiteRunner(SuiteVisitor):
                            name=suite.name,
                            doc=suite.doc,
                            metadata=suite.metadata,
-                           starttime=get_timestamp(),
+                           start_time=datetime.now(),
                            rpa=self._settings.rpa)
         if not self.result:
             self.result = Result(root_suite=result, rpa=self._settings.rpa)
@@ -113,7 +115,7 @@ class SuiteRunner(SuiteVisitor):
                     self._suite.suite_teardown_skipped(str(failure))
                 else:
                     self._suite.suite_teardown_failed(str(failure))
-        self._suite.endtime = get_timestamp()
+        self._suite.end_time = datetime.now()
         self._suite.message = self._suite_status.message
         self._context.end_suite(ModelCombiner(suite, self._suite))
         self._executed.pop()
@@ -135,7 +137,7 @@ class SuiteRunner(SuiteVisitor):
                                           self._resolve_setting(test.tags),
                                           self._get_timeout(test),
                                           test.lineno,
-                                          starttime=get_timestamp())
+                                          start_time=datetime.now())
         self._context.start_test(result)
         self._output.start_test(ModelCombiner(test, result))
         status = TestStatus(self._suite_status, result, settings.skip_on_failure,
@@ -187,7 +189,7 @@ class SuiteRunner(SuiteVisitor):
         if status.skip_on_failure_after_tag_changes:
             result.message = status.message or result.message
         result.status = status.status
-        result.endtime = get_timestamp()
+        result.end_time = datetime.now()
         failed_before_listeners = result.failed
         self._output.end_test(ModelCombiner(test, result))
         if result.failed and not failed_before_listeners:

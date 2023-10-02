@@ -1,4 +1,4 @@
-*** Setting ***
+*** Settings ***
 Documentation     Setting metadata for test suite directory
 Suite Setup       My Setup    Setup of test suite directory
 Suite Teardown    My Teardown    Teardown of    test suite directory
@@ -11,11 +11,11 @@ Invalid
 Default Tags      Not allowed
 Test Template     Not allowed
 
-*** Variable ***
+*** Variables ***
 ${default}        default
 ${default_tag_2}    suite${default}2
 
-*** Keyword ***
+*** Keywords ***
 My Setup
     [Arguments]    ${msg}
     Log    ${msg}

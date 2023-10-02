@@ -1,11 +1,11 @@
-*** Setting ***
+*** Settings ***
 Documentation     See also variables2.robot
 Suite Setup       My Suite Setup
 Suite Teardown    My Suite Teardown
 Library           OperatingSystem
 Library           Collections
 
-*** Variable ***
+*** Variables ***
 ${SCALAR}         Hi tellus
 @{LIST}           Hello    world
 &{DICT}           key=value    foo=bar
@@ -14,7 +14,7 @@ ${SCALAR LIST ERROR}
 ...               Setting list value to scalar variable '\${SCALAR}' is not
 ...               supported anymore. Create list variable '\@{SCALAR}' instead.
 
-*** Test Case ***
+*** Test Cases ***
 Set Variable
     ${var} =    Set Variable    Hello
     Should Be Equal    ${var}    Hello
@@ -539,7 +539,7 @@ Setting scalar global variable with list value is not possible 2
     [Documentation]    FAIL ${SCALAR LIST ERROR}
     Set Global Variable    ${SCALAR}    @{EMPTY}
 
-*** Keyword ***
+*** Keywords ***
 My Suite Setup
     ${suite_setup_local_var} =    Set Variable    Variable available only locally    in suite setup
     Set Suite Variable    $suite_setup_suite_var    Suite var set in suite setup

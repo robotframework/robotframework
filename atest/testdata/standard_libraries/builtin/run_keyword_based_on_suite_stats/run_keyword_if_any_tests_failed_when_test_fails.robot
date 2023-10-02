@@ -1,13 +1,13 @@
-*** Setting ***
+*** Settings ***
 Suite Teardown    Run Keyword If Any Tests Failed    My Teardown
 
-*** Variable ***
+*** Variables ***
 ${MESSAGE}        Suite teardown message
 
-*** Test Case ***
+*** Test Cases ***
 Failing Non Critical test
     Fail    Expected failure
 
-*** Keyword ***
+*** Keywords ***
 My Teardown
     Log    ${MESSAGE}

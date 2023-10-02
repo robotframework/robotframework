@@ -49,7 +49,7 @@ class JsModelBuilder:
 
 class _Builder:
 
-    def __init__(self, context):
+    def __init__(self, context: JsBuildingContext):
         self._context = context
         self._string = self._context.string
         self._html = self._context.html
@@ -57,8 +57,8 @@ class _Builder:
 
     def _get_status(self, item):
         model = (STATUSES[item.status],
-                 self._timestamp(item.starttime),
-                 item.elapsedtime)
+                 self._timestamp(item.start_time),
+                 round(item.elapsed_time.total_seconds() * 1000))
         msg = getattr(item, 'message', '')
         if not msg:
             return model
@@ -70,7 +70,7 @@ class _Builder:
 
     def _build_keywords(self, steps, split=False):
         splitting = self._context.start_splitting_if_needed(split)
-        # tuple([<listcomp>>]) is faster than tuple(<genex>) with short lists.
+        # tuple([<listcomp>]) is faster than tuple(<genex>) with short lists.
         model = tuple([self._build_keyword(step) for step in steps])
         return model if not splitting else self._context.end_splitting(model)
 
@@ -155,13 +155,16 @@ class KeywordBuilder(_Builder):
         if getattr(kw, 'has_teardown', False):
             items.append(kw.teardown)
         with self._context.prune_input(kw.body):
+            # Hack to avoid new `For.assign` or `Try.assign` to be used here.
+            # Can be removed when building doesn't expect everything to be keywords.
+            assign = kw.assign if kw.type in ('KEYWORD', 'SETUP', 'TEARDOWN') else ()
             return (KEYWORD_TYPES[kw.type],
                     self._string(kw.kwname, attr=True),
                     self._string(kw.libname, attr=True),
                     self._string(kw.timeout),
                     self._html(kw.doc),
                     self._string(', '.join(kw.args)),
-                    self._string(', '.join(kw.assign)),
+                    self._string(', '.join(assign)),
                     self._string(', '.join(kw.tags)),
                     self._get_status(kw),
                     self._build_keywords(items, split))

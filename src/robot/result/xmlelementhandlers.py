@@ -13,6 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from datetime import datetime
+
 from robot.errors import DataError
 
 
@@ -58,9 +60,13 @@ class ElementHandler:
     def end(self, elem, result):
         pass
 
-    def _timestamp(self, elem, attr_name):
-        timestamp = elem.get(attr_name)
-        return timestamp if timestamp != 'N/A' else None
+    def _legacy_timestamp(self, elem, attr_name):
+        ts = elem.get(attr_name)
+        if ts == 'N/A' or not ts:
+            return None
+        ts = ts.ljust(24, '0')
+        return datetime(int(ts[:4]), int(ts[4:6]), int(ts[6:8]),
+                        int(ts[9:11]), int(ts[12:14]), int(ts[15:17]), int(ts[18:24]))
 
 
 class RootHandler(ElementHandler):
@@ -223,6 +229,8 @@ class BranchHandler(ElementHandler):
                           'return', 'pattern', 'break', 'continue', 'error'))
 
     def start(self, elem, result):
+        if 'variable' in elem.attrib:    # RF < 7.0 compatibility.
+            elem.attrib['assign'] = elem.attrib.pop('variable')
         return result.body.create_branch(**elem.attrib)
 
 
@@ -285,11 +293,23 @@ class MessageHandler(ElementHandler):
     tag = 'msg'
 
     def end(self, elem, result):
-        html_true = ('true', 'yes')    # 'yes' is compatibility for RF < 4.
-        result.body.create_message(elem.text or '',
-                                   elem.get('level', 'INFO'),
-                                   elem.get('html') in html_true,
-                                   self._timestamp(elem, 'timestamp'))
+        self._create_message(elem, result.body.create_message)
+
+    def _create_message(self, elem, creator):
+        if 'time' in elem.attrib:    # RF >= 7
+            timestamp = elem.attrib['time']
+        else:                        # RF < 7
+            timestamp = self._legacy_timestamp(elem, 'timestamp')
+        creator(elem.text or '',
+                elem.get('level', 'INFO'),
+                elem.get('html') in ('true', 'yes'),   # 'yes' is RF < 4 compatibility
+                timestamp)
+
+
+class ErrorMessageHandler(MessageHandler):
+
+    def end(self, elem, result):
+        self._create_message(elem, result.messages.create)
 
 
 @ElementHandler.register
@@ -302,8 +322,12 @@ class StatusHandler(ElementHandler):
     def end(self, elem, result):
         if self.set_status:
             result.status = elem.get('status', 'FAIL')
-        result.starttime = self._timestamp(elem, 'starttime')
-        result.endtime = self._timestamp(elem, 'endtime')
+        if 'start' in elem.attrib:    # RF >= 7
+            result.start_time = elem.attrib['start']
+            result.elapsed_time = float(elem.attrib['elapsed'])
+        else:                         # RF < 7
+            result.start_time = self._legacy_timestamp(elem, 'starttime')
+            result.end_time = self._legacy_timestamp(elem, 'endtime')
         if elem.text:
             result.message = elem.text
 
@@ -372,12 +396,10 @@ class VarHandler(ElementHandler):
 
     def end(self, elem, result):
         value = elem.text or ''
-        if result.type == result.KEYWORD:
+        if result.type in (result.KEYWORD, result.FOR):
             result.assign += (value,)
-        elif result.type == result.FOR:
-            result.variables += (value,)
         elif result.type == result.ITERATION:
-            result.variables[elem.get('name')] = value
+            result.assign[elem.get('name')] = value
         else:
             raise DataError(f"Invalid element '{elem}' for result '{result!r}'.")
 
@@ -413,16 +435,6 @@ class ErrorsHandler(ElementHandler):
 
     def get_child_handler(self, tag):
         return ErrorMessageHandler()
-
-
-class ErrorMessageHandler(ElementHandler):
-
-    def end(self, elem, result):
-        html_true = ('true', 'yes')    # 'yes' is compatibility for RF < 4.
-        result.messages.create(elem.text or '',
-                               elem.get('level', 'INFO'),
-                               elem.get('html') in html_true,
-                               self._timestamp(elem, 'timestamp'))
 
 
 @ElementHandler.register

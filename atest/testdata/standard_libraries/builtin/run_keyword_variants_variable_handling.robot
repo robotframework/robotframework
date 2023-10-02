@@ -1,8 +1,8 @@
-*** Setting ***
+*** Settings ***
 Library           RegisteringLibrary.py
 Variables         variable.py
 
-*** Variable ***
+*** Variables ***
 @{NEEDS ESCAPING}    c:\\temp\\foo    \${notvar}
 @{KEYWORD AND ARG WHICH NEEDS ESCAPING}    \\Log Many    \${notvar}
 @{KEYWORD AND ARGS WHICH NEEDS ESCAPING}    \\Log Many    @{NEEDS ESCAPING}
@@ -11,7 +11,7 @@ Variables         variable.py
 ${KEYWORD}        \\Log Many
 @{KEYWORD LIST}   ${KEYWORD}
 
-*** Test Case ***
+*** Test Cases ***
 Variable Values Should Not Be Visible As Keyword's Arguments
     Run Keyword    My UK    Log    ${OBJECT}
 
@@ -55,7 +55,7 @@ Run Keyword If With List And Two Arguments That needs to Be Processed
 Run Keyword If With List And One Argument That needs to Be Processed
     Run Keyword If    @{EXPRESSION}    \\Log Many    @{ARGS}
 
-*** Keyword ***
+*** Keywords ***
 My UK
     [Arguments]    ${name}    @{args}
     Run Keyword    ${name}    @{args}

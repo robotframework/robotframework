@@ -46,7 +46,7 @@ from robot import model
 from robot.model import (BodyItem, create_fixture, DataDict, Keywords, Tags,
                          SuiteVisitor, TotalStatistics, TotalStatisticsBuilder,
                          TestSuites)
-from robot.utils import copy_signature, get_elapsed_time, KnownAtRuntime, setter
+from robot.utils import copy_signature, KnownAtRuntime, setter
 
 from .configurer import SuiteConfigurer
 from .messagefilter import MessageFilter
@@ -105,65 +105,138 @@ class StatusMixin:
     SKIP = 'SKIP'
     NOT_RUN = 'NOT RUN'
     NOT_SET = 'NOT SET'
-    starttime: 'str|None'
-    endtime: 'str|None'
     __slots__ = ()
 
     @property
-    def elapsedtime(self) -> int:
-        """Total execution time in milliseconds.
+    def start_time(self) -> 'datetime|None':
+        """Execution start time as a ``datetime`` or as a ``None`` if not set.
 
-        This attribute will be replaced by :attr:`elapsed_time` in the future.
+        If start time is not set, it is calculated based :attr:`end_time`
+        and :attr:`elapsed_time` if possible.
+
+        Can be set either directly as a ``datetime`` or as a string in ISO 8601
+        format.
+
+        New in Robot Framework 6.1. Heavily enhanced in Robot Framework 7.0.
         """
-        return get_elapsed_time(self.starttime, self.endtime)
+        if self._start_time:
+            return self._start_time
+        if self._end_time:
+            return self._end_time - self.elapsed_time
+        return None
+
+    @start_time.setter
+    def start_time(self, start_time: 'datetime|str|None'):
+        if isinstance(start_time, str):
+            start_time = datetime.fromisoformat(start_time)
+        self._start_time = start_time
+
+    @property
+    def end_time(self) -> 'datetime|None':
+        """Execution end time as a ``datetime`` or as a ``None`` if not set.
+
+        If end time is not set, it is calculated based :attr:`start_time`
+        and :attr:`elapsed_time` if possible.
+
+        Can be set either directly as a ``datetime`` or as a string in ISO 8601
+        format.
+
+        New in Robot Framework 6.1. Heavily enhanced in Robot Framework 7.0.
+        """
+        if self._end_time:
+            return self._end_time
+        if self._start_time:
+            return self._start_time + self.elapsed_time
+        return None
+
+    @end_time.setter
+    def end_time(self, end_time: 'datetime|str|None'):
+        if isinstance(end_time, str):
+            end_time = datetime.fromisoformat(end_time)
+        self._end_time = end_time
 
     @property
     def elapsed_time(self) -> timedelta:
         """Total execution time as a ``timedelta``.
 
-        This attribute will replace :attr:`elapsedtime` in the future.
+        If not set, calculated based on :attr:`start_time` and :attr:`end_time`
+        if possible. If that fails, calculated based on the elapsed time of
+        child items.
 
-        New in Robot Framework 6.1.
+        Can be set either directly as a ``timedelta`` or as an integer or a float
+        representing seconds.
+
+        New in Robot Framework 6.1. Heavily enhanced in Robot Framework 7.0.
         """
-        return timedelta(milliseconds=self.elapsedtime)
+        if self._elapsed_time is not None:
+            return self._elapsed_time
+        if self._start_time and self._end_time:
+            return self._end_time - self._start_time
+        return self._elapsed_time_from_children()
+
+    def _elapsed_time_from_children(self) -> timedelta:
+        elapsed = timedelta()
+        for child in self.body:
+            if hasattr(child, 'elapsed_time'):
+                elapsed += child.elapsed_time
+        return elapsed
+
+    @elapsed_time.setter
+    def elapsed_time(self, elapsed_time: 'timedelta|int|float|None'):
+        if isinstance(elapsed_time, (int, float)):
+            elapsed_time = timedelta(seconds=elapsed_time)
+        self._elapsed_time = elapsed_time
 
     @property
-    def start_time(self) -> 'datetime|None':
-        """Execution start time as a ``datetime`` or as ``None`` if not set.
+    def starttime(self) -> 'str|None':
+        """Execution start time as a string or as a ``None`` if not set.
 
-        This attribute will replace :attr:`starttime` in the future.
+        The string format is ``%Y%m%d %H:%M:%S.%f``.
 
-        New in Robot Framework 6.1.
+        Considered deprecated starting from Robot Framework 7.0.
+        :attr:`start_time` should be used instead.
         """
-        return self._timestr_to_datetime(self.starttime) if self.starttime else None
+        return self._datetime_to_timestr(self.start_time)
 
-    @start_time.setter
-    def start_time(self, start_time: 'datetime|None'):
-        self.starttime = self._datetime_to_timestr(start_time) if start_time else None
+    @starttime.setter
+    def starttime(self, starttime: 'str|None'):
+        self.start_time = self._timestr_to_datetime(starttime)
 
     @property
-    def end_time(self) -> 'datetime|None':
-        """Execution end time as a ``datetime`` or as ``None`` if not set.
+    def endtime(self) -> 'str|None':
+        """Execution end time as a string or as a ``None`` if not set.
 
-        This attribute will replace :attr:`endtime` in the future.
+        The string format is ``%Y%m%d %H:%M:%S.%f``.
 
-        New in Robot Framework 6.1.
+        Considered deprecated starting from Robot Framework 7.0.
+        :attr:`end_time` should be used instead.
         """
-        return self._timestr_to_datetime(self.endtime) if self.endtime else None
+        return self._datetime_to_timestr(self.end_time)
 
-    @end_time.setter
-    def end_time(self, end_time: 'datetime|None'):
-        self.endtime = self._datetime_to_timestr(end_time) if end_time else None
+    @endtime.setter
+    def endtime(self, endtime: 'str|None'):
+        self.end_time = self._timestr_to_datetime(endtime)
 
-    def _timestr_to_datetime(self, ts: str) -> datetime:
-        micro = int(ts[18:]) * 1000
+    @property
+    def elapsedtime(self) -> int:
+        """Total execution time in milliseconds.
+
+        Considered deprecated starting from Robot Framework 7.0.
+        :attr:`elapsed_time` should be used instead.
+        """
+        return round(self.elapsed_time.total_seconds() * 1000)
+
+    def _timestr_to_datetime(self, ts: 'str|None') -> 'datetime|None':
+        if not ts:
+            return None
+        ts = ts.ljust(24, '0')
         return datetime(int(ts[:4]), int(ts[4:6]), int(ts[6:8]),
-                        int(ts[9:11]), int(ts[12:14]), int(ts[15:17]), micro)
+                        int(ts[9:11]), int(ts[12:14]), int(ts[15:17]), int(ts[18:24]))
 
-    def _datetime_to_timestr(self, dt: datetime) -> str:
-        millis = int(round(dt.microsecond, -3) / 1000)
-        return (f'{dt.year}{dt.month:02}{dt.day:02} '
-                f'{dt.hour:02}:{dt.minute:02}.{dt.second:02}.{millis}')
+    def _datetime_to_timestr(self, dt: 'datetime|None') -> 'str|None':
+        if not dt:
+            return None
+        return dt.isoformat(' ', timespec='milliseconds').replace('-', '')
 
     @property
     def passed(self) -> bool:
@@ -192,7 +265,7 @@ class StatusMixin:
         return self.status == self.SKIP
 
     @skipped.setter
-    def skipped(self, skipped: 'Literal[True]'):
+    def skipped(self, skipped: Literal[True]):
         if not skipped:
             raise ValueError(f"`skipped` value must be truthy, got '{skipped}'.")
         self.status = self.SKIP
@@ -206,7 +279,7 @@ class StatusMixin:
         return self.status == self.NOT_RUN
 
     @not_run.setter
-    def not_run(self, not_run: 'Literal[True]'):
+    def not_run(self, not_run: Literal[True]):
         if not not_run:
             raise ValueError(f"`not_run` value must be truthy, got '{not_run}'.")
         self.status = self.NOT_RUN
@@ -216,22 +289,31 @@ class ForIteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
     """Represents one FOR loop iteration."""
     type = BodyItem.ITERATION
     body_class = Body
-    repr_args = ('variables',)
-    __slots__ = ['variables', 'status', 'starttime', 'endtime', 'doc']
+    repr_args = ('assign',)
+    __slots__ = ['assign', 'status', '_start_time', '_end_time', '_elapsed_time', 'doc']
 
-    def __init__(self, variables: 'Mapping[str, str]|None' = None,
+    def __init__(self, assign: 'Mapping[str, str]|None' = None,
                  status: str = 'FAIL',
-                 starttime: 'str|None' = None,
-                 endtime: 'str|None' = None,
+                 start_time: 'datetime|str|None' = None,
+                 end_time: 'datetime|str|None' = None,
+                 elapsed_time: 'timedelta|int|float|None' = None,
                  doc: str = '',
                  parent: BodyItemParent = None):
-        self.variables = OrderedDict(variables or ())
+        self.assign = OrderedDict(assign or ())
         self.parent = parent
         self.status = status
-        self.starttime = starttime
-        self.endtime = endtime
+        self.start_time = start_time
+        self.end_time = end_time
+        self.elapsed_time = elapsed_time
         self.doc = doc
-        self.body = []
+        self.body = ()
+
+    @property
+    def variables(self) -> 'Mapping[str, str]':    # TODO: Remove in RF 8.0.
+        """Deprecated since Robot Framework 7.0. Use :attr:`assign` instead."""
+        warnings.warn("'ForIteration.variables' is deprecated and will be removed in "
+                      "Robot Framework 8.0. Use 'ForIteration.assign' instead.")
+        return self.assign
 
     @setter
     def body(self, body: 'Sequence[BodyItem|DataDict]') -> Body:
@@ -243,30 +325,32 @@ class ForIteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
     @property
     @deprecated
     def name(self) -> str:
-        return ', '.join('%s = %s' % item for item in self.variables.items())
+        return ', '.join('%s = %s' % item for item in self.assign.items())
 
 
 @Body.register
 class For(model.For, StatusMixin, DeprecatedAttributesMixin):
     iteration_class = ForIteration
     iterations_class = Iterations[iteration_class]
-    __slots__ = ['status', 'starttime', 'endtime', 'doc']
+    __slots__ = ['status', '_start_time', '_end_time', '_elapsed_time', 'doc']
 
-    def __init__(self, variables: Sequence[str] = (),
-                 flavor: "Literal['IN', 'IN RANGE', 'IN ENUMERATE', 'IN ZIP']" = 'IN',
+    def __init__(self, assign: Sequence[str] = (),
+                 flavor: Literal['IN', 'IN RANGE', 'IN ENUMERATE', 'IN ZIP'] = 'IN',
                  values: Sequence[str] = (),
                  start: 'str|None' = None,
                  mode: 'str|None' = None,
                  fill: 'str|None' = None,
                  status: str = 'FAIL',
-                 starttime: 'str|None' = None,
-                 endtime: 'str|None' = None,
+                 start_time: 'datetime|str|None' = None,
+                 end_time: 'datetime|str|None' = None,
+                 elapsed_time: 'timedelta|int|float|None' = None,
                  doc: str = '',
                  parent: BodyItemParent = None):
-        super().__init__(variables, flavor, values, start, mode, fill, parent)
+        super().__init__(assign, flavor, values, start, mode, fill, parent)
         self.status = status
-        self.starttime = starttime
-        self.endtime = endtime
+        self.start_time = start_time
+        self.end_time = end_time
+        self.elapsed_time = elapsed_time
         self.doc = doc
 
     @setter
@@ -276,31 +360,33 @@ class For(model.For, StatusMixin, DeprecatedAttributesMixin):
     @property
     @deprecated
     def name(self) -> str:
-        variables = ' | '.join(self.variables)
+        assign = ' | '.join(self.assign)
         values = ' | '.join(self.values)
         for name, value in [('start', self.start),
                             ('mode', self.mode),
                             ('fill', self.fill)]:
             if value is not None:
                 values += f' | {name}={value}'
-        return f'{variables} {self.flavor} [ {values} ]'
+        return f'{assign} {self.flavor} [ {values} ]'
 
 
 class WhileIteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
     """Represents one WHILE loop iteration."""
     type = BodyItem.ITERATION
     body_class = Body
-    __slots__ = ['status', 'starttime', 'endtime', 'doc']
+    __slots__ = ['status', '_start_time', '_end_time', '_elapsed_time', 'doc']
 
     def __init__(self, status: str = 'FAIL',
-                 starttime: 'str|None' = None,
-                 endtime: 'str|None' = None,
+                 start_time: 'datetime|str|None' = None,
+                 end_time: 'datetime|str|None' = None,
+                 elapsed_time: 'timedelta|int|float|None' = None,
                  doc: str = '',
                  parent: BodyItemParent = None):
         self.parent = parent
         self.status = status
-        self.starttime = starttime
-        self.endtime = endtime
+        self.start_time = start_time
+        self.end_time = end_time
+        self.elapsed_time = elapsed_time
         self.doc = doc
         self.body = ()
 
@@ -321,21 +407,23 @@ class WhileIteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
 class While(model.While, StatusMixin, DeprecatedAttributesMixin):
     iteration_class = WhileIteration
     iterations_class = Iterations[iteration_class]
-    __slots__ = ['status', 'starttime', 'endtime', 'doc']
+    __slots__ = ['status', '_start_time', '_end_time', '_elapsed_time', 'doc']
 
     def __init__(self, condition: 'str|None' = None,
                  limit: 'str|None' = None,
                  on_limit: 'str|None' = None,
                  on_limit_message: 'str|None' = None,
                  status: str = 'FAIL',
-                 starttime: 'str|None' = None,
-                 endtime: 'str|None' = None,
+                 start_time: 'datetime|str|None' = None,
+                 end_time: 'datetime|str|None' = None,
+                 elapsed_time: 'timedelta|int|float|None' = None,
                  doc: str = '',
                  parent: BodyItemParent = None):
         super().__init__(condition, limit, on_limit, on_limit_message, parent)
         self.status = status
-        self.starttime = starttime
-        self.endtime = endtime
+        self.start_time = start_time
+        self.end_time = end_time
+        self.elapsed_time = elapsed_time
         self.doc = doc
 
     @setter
@@ -359,19 +447,21 @@ class While(model.While, StatusMixin, DeprecatedAttributesMixin):
 
 class IfBranch(model.IfBranch, StatusMixin, DeprecatedAttributesMixin):
     body_class = Body
-    __slots__ = ['status', 'starttime', 'endtime', 'doc']
+    __slots__ = ['status', '_start_time', '_end_time', '_elapsed_time', 'doc']
 
     def __init__(self, type: str = BodyItem.IF,
                  condition: 'str|None' = None,
                  status: str = 'FAIL',
-                 starttime: 'str|None' = None,
-                 endtime: 'str|None' = None,
+                 start_time: 'datetime|str|None' = None,
+                 end_time: 'datetime|str|None' = None,
+                 elapsed_time: 'timedelta|int|float|None' = None,
                  doc: str = '',
                  parent: BodyItemParent = None):
         super().__init__(type, condition, parent)
         self.status = status
-        self.starttime = starttime
-        self.endtime = endtime
+        self.start_time = start_time
+        self.end_time = end_time
+        self.elapsed_time = elapsed_time
         self.doc = doc
 
     @property
@@ -384,37 +474,41 @@ class IfBranch(model.IfBranch, StatusMixin, DeprecatedAttributesMixin):
 class If(model.If, StatusMixin, DeprecatedAttributesMixin):
     branch_class = IfBranch
     branches_class = Branches[branch_class]
-    __slots__ = ['status', 'starttime', 'endtime', 'doc']
+    __slots__ = ['status', '_start_time', '_end_time', '_elapsed_time', 'doc']
 
     def __init__(self, status: str = 'FAIL',
-                 starttime: 'str|None' = None,
-                 endtime: 'str|None' = None,
+                 start_time: 'datetime|str|None' = None,
+                 end_time: 'datetime|str|None' = None,
+                 elapsed_time: 'timedelta|int|float|None' = None,
                  doc: str = '',
                  parent: BodyItemParent = None):
         super().__init__(parent)
         self.status = status
-        self.starttime = starttime
-        self.endtime = endtime
+        self.start_time = start_time
+        self.end_time = end_time
+        self.elapsed_time = elapsed_time
         self.doc = doc
 
 
 class TryBranch(model.TryBranch, StatusMixin, DeprecatedAttributesMixin):
     body_class = Body
-    __slots__ = ['status', 'starttime', 'endtime', 'doc']
+    __slots__ = ['status', '_start_time', '_end_time', '_elapsed_time', 'doc']
 
     def __init__(self, type: str = BodyItem.TRY,
                  patterns: Sequence[str] = (),
                  pattern_type: 'str|None' = None,
-                 variable: 'str|None' = None,
+                 assign: 'str|None' = None,
                  status: str = 'FAIL',
-                 starttime: 'str|None' = None,
-                 endtime: 'str|None' = None,
+                 start_time: 'datetime|str|None' = None,
+                 end_time: 'datetime|str|None' = None,
+                 elapsed_time: 'timedelta|int|float|None' = None,
                  doc: str = '',
                  parent: BodyItemParent = None):
-        super().__init__(type, patterns, pattern_type, variable, parent)
+        super().__init__(type, patterns, pattern_type, assign, parent)
         self.status = status
-        self.starttime = starttime
-        self.endtime = endtime
+        self.start_time = start_time
+        self.end_time = end_time
+        self.elapsed_time = elapsed_time
         self.doc = doc
 
     @property
@@ -426,8 +520,8 @@ class TryBranch(model.TryBranch, StatusMixin, DeprecatedAttributesMixin):
         parts = []
         if patterns:
             parts.append(' | '.join(patterns))
-        if self.variable:
-            parts.append(f'AS {self.variable}')
+        if self.assign:
+            parts.append(f'AS {self.assign}')
         return ' '.join(parts)
 
 
@@ -435,34 +529,38 @@ class TryBranch(model.TryBranch, StatusMixin, DeprecatedAttributesMixin):
 class Try(model.Try, StatusMixin, DeprecatedAttributesMixin):
     branch_class = TryBranch
     branches_class = Branches[branch_class]
-    __slots__ = ['status', 'starttime', 'endtime', 'doc']
+    __slots__ = ['status', '_start_time', '_end_time', '_elapsed_time', 'doc']
 
     def __init__(self, status: str = 'FAIL',
-                 starttime: 'str|None' = None,
-                 endtime: 'str|None' = None,
+                 start_time: 'datetime|str|None' = None,
+                 end_time: 'datetime|str|None' = None,
+                 elapsed_time: 'timedelta|int|float|None' = None,
                  doc: str = '',
                  parent: BodyItemParent = None):
         super().__init__(parent)
         self.status = status
-        self.starttime = starttime
-        self.endtime = endtime
+        self.start_time = start_time
+        self.end_time = end_time
+        self.elapsed_time = elapsed_time
         self.doc = doc
 
 
 @Body.register
 class Return(model.Return, StatusMixin, DeprecatedAttributesMixin):
-    __slots__ = ['status', 'starttime', 'endtime']
+    __slots__ = ['status', '_start_time', '_end_time', '_elapsed_time']
     body_class = Body
 
     def __init__(self, values: Sequence[str] = (),
                  status: str = 'FAIL',
-                 starttime: 'str|None' = None,
-                 endtime: 'str|None' = None,
+                 start_time: 'datetime|str|None' = None,
+                 end_time: 'datetime|str|None' = None,
+                 elapsed_time: 'timedelta|int|float|None' = None,
                  parent: BodyItemParent = None):
         super().__init__(values, parent)
         self.status = status
-        self.starttime = starttime
-        self.endtime = endtime
+        self.start_time = start_time
+        self.end_time = end_time
+        self.elapsed_time = elapsed_time
         self.body = ()
 
     @setter
@@ -488,17 +586,19 @@ class Return(model.Return, StatusMixin, DeprecatedAttributesMixin):
 
 @Body.register
 class Continue(model.Continue, StatusMixin, DeprecatedAttributesMixin):
-    __slots__ = ['status', 'starttime', 'endtime']
+    __slots__ = ['status', '_start_time', '_end_time', '_elapsed_time']
     body_class = Body
 
     def __init__(self, status: str = 'FAIL',
-                 starttime: 'str|None' = None,
-                 endtime: 'str|None' = None,
+                 start_time: 'datetime|str|None' = None,
+                 end_time: 'datetime|str|None' = None,
+                 elapsed_time: 'timedelta|int|float|None' = None,
                  parent: BodyItemParent = None):
         super().__init__(parent)
         self.status = status
-        self.starttime = starttime
-        self.endtime = endtime
+        self.start_time = start_time
+        self.end_time = end_time
+        self.elapsed_time = elapsed_time
         self.body = ()
 
     @setter
@@ -524,17 +624,19 @@ class Continue(model.Continue, StatusMixin, DeprecatedAttributesMixin):
 
 @Body.register
 class Break(model.Break, StatusMixin, DeprecatedAttributesMixin):
-    __slots__ = ['status', 'starttime', 'endtime']
+    __slots__ = ['status', '_start_time', '_end_time', '_elapsed_time']
     body_class = Body
 
     def __init__(self, status: str = 'FAIL',
-                 starttime: 'str|None' = None,
-                 endtime: 'str|None' = None,
+                 start_time: 'datetime|str|None' = None,
+                 end_time: 'datetime|str|None' = None,
+                 elapsed_time: 'timedelta|int|float|None' = None,
                  parent: BodyItemParent = None):
         super().__init__(parent)
         self.status = status
-        self.starttime = starttime
-        self.endtime = endtime
+        self.start_time = start_time
+        self.end_time = end_time
+        self.elapsed_time = elapsed_time
         self.body = ()
 
     @setter
@@ -560,18 +662,20 @@ class Break(model.Break, StatusMixin, DeprecatedAttributesMixin):
 
 @Body.register
 class Error(model.Error, StatusMixin, DeprecatedAttributesMixin):
-    __slots__ = ['status', 'starttime', 'endtime']
+    __slots__ = ['status', '_start_time', '_end_time', '_elapsed_time']
     body_class = Body
 
     def __init__(self, values: Sequence[str] = (),
                  status: str = 'FAIL',
-                 starttime: 'str|None' = None,
-                 endtime: 'str|None' = None,
+                 start_time: 'datetime|str|None' = None,
+                 end_time: 'datetime|str|None' = None,
+                 elapsed_time: 'timedelta|int|float|None' = None,
                  parent: BodyItemParent = None):
         super().__init__(values, parent)
         self.status = status
-        self.starttime = starttime
-        self.endtime = endtime
+        self.start_time = start_time
+        self.end_time = end_time
+        self.elapsed_time = elapsed_time
         self.body = ()
 
     @setter
@@ -605,7 +709,7 @@ class Keyword(model.Keyword, StatusMixin):
     """Represents an executed library or user keyword."""
     body_class = Body
     __slots__ = ['kwname', 'libname', 'doc', 'timeout', 'status', '_teardown',
-                 'starttime', 'endtime', 'message', 'sourcename']
+                 '_start_time', '_end_time', '_elapsed_time', 'message', 'sourcename']
 
     def __init__(self, kwname: str = '',
                  libname: str = '',
@@ -616,8 +720,9 @@ class Keyword(model.Keyword, StatusMixin):
                  timeout: 'str|None' = None,
                  type: str = BodyItem.KEYWORD,
                  status: str = 'FAIL',
-                 starttime: 'str|None' = None,
-                 endtime: 'str|None' = None,
+                 start_time: 'datetime|str|None' = None,
+                 end_time: 'datetime|str|None' = None,
+                 elapsed_time: 'timedelta|int|float|None' = None,
                  sourcename: 'str|None' = None,
                  parent: BodyItemParent = None):
         super().__init__(None, args, assign, type, parent)
@@ -629,14 +734,23 @@ class Keyword(model.Keyword, StatusMixin):
         self.tags = tags
         self.timeout = timeout
         self.status = status
-        self.starttime = starttime
-        self.endtime = endtime
+        self.start_time = start_time
+        self.end_time = end_time
+        self.elapsed_time = elapsed_time
         #: Keyword status message. Used only if suite teardowns fails.
         self.message = ''
         #: Original name of keyword with embedded arguments.
         self.sourcename = sourcename
         self._teardown = None
         self.body = ()
+
+    def _elapsed_time_from_children(self) -> timedelta:
+        elapsed = super()._elapsed_time_from_children()
+        if self.has_setup:
+            elapsed += self.setup.elapsed_time
+        if self.has_teardown:
+            elapsed += self.teardown.elapsed_time
+        return elapsed
 
     @setter
     def body(self, body: 'Sequence[BodyItem|DataDict]') -> Body:
@@ -648,7 +762,7 @@ class Keyword(model.Keyword, StatusMixin):
         return self.body_class(self, body)
 
     @property
-    def keywords(self) -> Keywords:
+    def keywords(self) -> Keywords:    # FIXME: Remove in RF 7.
         """Deprecated since Robot Framework 4.0.
 
         Use :attr:`body` or :attr:`teardown` instead.
@@ -672,7 +786,7 @@ class Keyword(model.Keyword, StatusMixin):
         return self.body.filter(messages=True)    # type: ignore
 
     @property
-    def children(self) -> 'list[BodyItem]':
+    def children(self) -> 'list[BodyItem]':    # FIXME: Remove in RF 7.
         """List of child keywords and messages in creation order.
 
         Deprecated since Robot Framework 4.0. Use :attr:`body` instead.
@@ -736,6 +850,11 @@ class Keyword(model.Keyword, StatusMixin):
             self._teardown = create_fixture(self.__class__, None, self, self.TEARDOWN)
         return self._teardown
 
+    @property
+    def has_setup(self):
+        # Placeholder until keyword setup is added in RF 7.
+        return False
+
     @teardown.setter
     def teardown(self, teardown: 'Keyword|DataDict|None'):
         self._teardown = create_fixture(self.__class__, teardown, self, self.TEARDOWN)
@@ -765,7 +884,7 @@ class TestCase(model.TestCase[Keyword], StatusMixin):
 
     See the base class for documentation of attributes not documented here.
     """
-    __slots__ = ['status', 'message', 'starttime', 'endtime']
+    __slots__ = ['status', 'message', '_start_time', '_end_time', '_elapsed_time']
     body_class = Body
     fixture_class = Keyword
 
@@ -776,8 +895,9 @@ class TestCase(model.TestCase[Keyword], StatusMixin):
                  lineno: 'int|None' = None,
                  status: str = 'FAIL',
                  message: str = '',
-                 starttime: 'str|None' = None,
-                 endtime: 'str|None' = None,
+                 start_time: 'datetime|str|None' = None,
+                 end_time: 'datetime|str|None' = None,
+                 elapsed_time: 'timedelta|int|float|None' = None,
                  parent: 'TestSuite|None' = None):
         super().__init__(name, doc, tags, timeout, lineno, parent)
         #: Status as a string ``PASS`` or ``FAIL``. See also :attr:`passed`.
@@ -785,17 +905,24 @@ class TestCase(model.TestCase[Keyword], StatusMixin):
         #: Test message. Typically a failure message but can be set also when
         #: test passes.
         self.message = message
-        #: Test case execution start time in format ``%Y%m%d %H:%M:%S.%f``.
-        self.starttime = starttime
-        #: Test case execution end time in format ``%Y%m%d %H:%M:%S.%f``.
-        self.endtime = endtime
+        self.start_time = start_time
+        self.end_time = end_time
+        self.elapsed_time = elapsed_time
+
+    def _elapsed_time_from_children(self) -> timedelta:
+        elapsed = super()._elapsed_time_from_children()
+        if self.has_setup:
+            elapsed += self.setup.elapsed_time
+        if self.has_teardown:
+            elapsed += self.teardown.elapsed_time
+        return elapsed
 
     @property
     def not_run(self) -> bool:
         return False
 
     @property
-    def critical(self) -> bool:
+    def critical(self) -> bool:    # FIXME: Remove in RF 7.
         warnings.warn("'TestCase.critical' is deprecated and always returns 'True'.")
         return True
 
@@ -810,7 +937,7 @@ class TestSuite(model.TestSuite[Keyword, TestCase], StatusMixin):
 
     See the base class for documentation of attributes not documented here.
     """
-    __slots__ = ['message', 'starttime', 'endtime']
+    __slots__ = ['message', '_start_time', '_end_time', '_elapsed_time']
     test_class = TestCase
     fixture_class = Keyword
 
@@ -820,16 +947,26 @@ class TestSuite(model.TestSuite[Keyword, TestCase], StatusMixin):
                  source: 'Path|str|None' = None,
                  rpa: bool = False,
                  message: str = '',
-                 starttime: 'str|None' = None,
-                 endtime: 'str|None' = None,
+                 start_time: 'datetime|str|None' = None,
+                 end_time: 'datetime|str|None' = None,
+                 elapsed_time: 'timedelta|int|float|None' = None,
                  parent: 'TestSuite|None' = None):
         super().__init__(name, doc, metadata, source, rpa, parent)
         #: Possible suite setup or teardown error message.
         self.message = message
-        #: Suite execution start time in format ``%Y%m%d %H:%M:%S.%f``.
-        self.starttime = starttime
-        #: Suite execution end time in format ``%Y%m%d %H:%M:%S.%f``.
-        self.endtime = endtime
+        self.start_time = start_time
+        self.end_time = end_time
+        self.elapsed_time = elapsed_time
+
+    def _elapsed_time_from_children(self) -> timedelta:
+        elapsed = timedelta()
+        if self.has_setup:
+            elapsed += self.setup.elapsed_time
+        if self.has_teardown:
+            elapsed += self.teardown.elapsed_time
+        for child in chain(self.suites, self.tests):
+            elapsed += child.elapsed_time
+        return elapsed
 
     @property
     def passed(self) -> bool:
@@ -851,7 +988,7 @@ class TestSuite(model.TestSuite[Keyword, TestCase], StatusMixin):
         return False
 
     @property
-    def status(self) -> "Literal['PASS', 'SKIP', 'FAIL']":
+    def status(self) -> Literal['PASS', 'SKIP', 'FAIL']:
         """'PASS', 'FAIL' or 'SKIP' depending on test statuses.
 
         - If any test has failed, status is 'FAIL'.
@@ -891,14 +1028,6 @@ class TestSuite(model.TestSuite[Keyword, TestCase], StatusMixin):
     def stat_message(self) -> str:
         """String representation of the :attr:`statistics`."""
         return self.statistics.message
-
-    @property
-    def elapsedtime(self) -> int:
-        """Total execution time in milliseconds."""
-        if self.starttime and self.endtime:
-            return get_elapsed_time(self.starttime, self.endtime)
-        return sum(child.elapsedtime for child in
-                   chain(self.suites, self.tests, (self.setup, self.teardown)))
 
     @setter
     def suites(self, suites: 'Sequence[TestSuite|DataDict]') -> TestSuites['TestSuite']:

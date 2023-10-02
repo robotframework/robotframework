@@ -208,7 +208,7 @@ def unknown(argument, expected=None):
     _validate_type(argument, expected)
 
 
-@keyword(types={'argument': 'this is string, not type'})
+@keyword(types={'argument': 'this is just a random string'})
 def non_type(argument, expected=None):
     _validate_type(argument, expected)
 

@@ -1,9 +1,9 @@
-*** Setting ***
+*** Settings ***
 Suite Setup       Keyword
 Library           AvoidProperties.py
 Test Template     Attribute value should be
 
-*** Test Case ***
+*** Test Cases ***
 Property
     normal_property    1
 

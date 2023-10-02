@@ -1,10 +1,10 @@
 import unittest
 import warnings
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from robot.model import Tags
 from robot.result import (Break, Continue, Error, For, If, IfBranch, Keyword, Message,
-                          Return, TestCase, TestSuite, Try, While)
+                          Return, TestCase, TestSuite, Try, TryBranch, While)
 from robot.utils.asserts import (assert_equal, assert_false, assert_raises,
                                  assert_raises_with_msg, assert_true)
 
@@ -125,36 +125,142 @@ class TestTimes(unittest.TestCase):
 
     def test_suite_elapsed_time_when_start_and_end_given(self):
         suite = TestSuite()
-        suite.starttime = '20010101 10:00:00.000'
-        suite.endtime = '20010101 10:00:01.234'
-        self.assert_elapsed(suite, 1234)
+        suite.start_time = '2001-01-01 10:00:00.000'
+        suite.end_time = '2001-01-01 10:00:01.234'
+        self.assert_elapsed(suite, 1.234)
 
     def assert_elapsed(self, obj, expected):
-        assert_equal(obj.elapsedtime, expected)
-        assert_equal(obj.elapsed_time.total_seconds() * 1000, expected)
+        assert_equal(obj.elapsedtime, round(expected * 1000))
+        assert_equal(obj.elapsed_time.total_seconds(), expected)
 
     def test_suite_elapsed_time_is_zero_by_default(self):
         self.assert_elapsed(TestSuite(), 0)
 
-    def test_suite_elapsed_time_is_got_from_childen_if_suite_does_not_have_times(self):
+    def test_suite_elapsed_time_is_got_from_children_if_suite_does_not_have_times(self):
         suite = TestSuite()
-        suite.tests.create(starttime='19991212 12:00:00.010',
-                           endtime='19991212 12:00:00.011')
+        suite.tests.create(start_time='1999-12-12 12:00:00.010',
+                           end_time='1999-12-12 12:00:00.011')
+        self.assert_elapsed(suite, 0.001)
+        suite.start_time = '1999-12-12 12:00:00.010'
+        suite.end_time = '1999-12-12 12:00:01.010'
         self.assert_elapsed(suite, 1)
-        assert_equal(suite.elapsedtime, 1)
-        suite.starttime = '19991212 12:00:00.010'
-        suite.endtime = '19991212 12:00:01.010'
-        self.assert_elapsed(suite, 1000)
 
-    def test_forward_compatibility(self):
-        for cls in (TestSuite, TestCase, Keyword, If, IfBranch, Try, For, While,
-                    Break, Continue, Return, Error):
-            obj = cls(starttime='20230512 16:40:00.001', endtime='20230512 16:40:01.001')
+    def test_datetime_and_string(self):
+        for cls in (TestSuite, TestCase, Keyword, If, IfBranch, Try, TryBranch,
+                    For, While, Break, Continue, Return, Error):
+            obj = cls(start_time='2023-05-12T16:40:00.001',
+                      end_time='2023-05-12 16:40:01.123456')
             assert_equal(obj.starttime, '20230512 16:40:00.001')
-            assert_equal(obj.endtime, '20230512 16:40:01.001')
+            assert_equal(obj.endtime, '20230512 16:40:01.123')
             assert_equal(obj.start_time, datetime(2023, 5, 12, 16, 40, 0, 1000))
-            assert_equal(obj.end_time, datetime(2023, 5, 12, 16, 40, 1, 1000))
-            self.assert_elapsed(obj, 1000)
+            assert_equal(obj.end_time, datetime(2023, 5, 12, 16, 40, 1, 123456))
+            self.assert_elapsed(obj, 1.122456)
+            obj.config(start_time='2023-09-07 20:33:44.444444',
+                       end_time=datetime(2023, 9, 7, 20, 33, 44, 999999))
+            assert_equal(obj.starttime, '20230907 20:33:44.444')
+            assert_equal(obj.endtime, '20230907 20:33:44.999')
+            assert_equal(obj.start_time, datetime(2023, 9, 7, 20, 33, 44, 444444))
+            assert_equal(obj.end_time, datetime(2023, 9, 7, 20, 33, 44, 999999))
+            self.assert_elapsed(obj, 0.555555)
+            obj.config(starttime='20230907 20:33:44.555555',
+                       endtime='20230907 20:33:44.999999')
+            assert_equal(obj.starttime, '20230907 20:33:44.555')
+            assert_equal(obj.endtime, '20230907 20:33:44.999')
+            assert_equal(obj.start_time, datetime(2023, 9, 7, 20, 33, 44, 555555))
+            assert_equal(obj.end_time, datetime(2023, 9, 7, 20, 33, 44, 999999))
+            self.assert_elapsed(obj, 0.444444)
+
+    def test_times_are_calculated_if_not_set(self):
+        for cls in (TestSuite, TestCase, Keyword, If, IfBranch, Try, TryBranch,
+                    For, While, Break, Continue, Return, Error):
+            obj = cls()
+            assert_equal(obj.start_time, None)
+            assert_equal(obj.end_time, None)
+            assert_equal(obj.elapsed_time, timedelta())
+            obj.config(start_time='2023-09-07 12:34:56',
+                       end_time='2023-09-07T12:34:57',
+                       elapsed_time=42)
+            assert_equal(obj.start_time, datetime(2023, 9, 7, 12, 34, 56))
+            assert_equal(obj.end_time, datetime(2023, 9, 7, 12, 34, 57))
+            assert_equal(obj.elapsed_time, timedelta(seconds=42))
+            obj.config(elapsed_time=None)
+            assert_equal(obj.start_time, datetime(2023, 9, 7, 12, 34, 56))
+            assert_equal(obj.end_time, datetime(2023, 9, 7, 12, 34, 57))
+            assert_equal(obj.elapsed_time, timedelta(seconds=1))
+            obj.config(elapsed_time=0)
+            assert_equal(obj.start_time, datetime(2023, 9, 7, 12, 34, 56))
+            assert_equal(obj.end_time, datetime(2023, 9, 7, 12, 34, 57))
+            assert_equal(obj.elapsed_time, timedelta(seconds=0))
+            obj.config(end_time=None,
+                       elapsed_time=timedelta(seconds=2))
+            assert_equal(obj.start_time, datetime(2023, 9, 7, 12, 34, 56))
+            assert_equal(obj.end_time, datetime(2023, 9, 7, 12, 34, 58))
+            assert_equal(obj.elapsed_time, timedelta(seconds=2))
+            obj.config(start_time=None,
+                       end_time=obj.start_time,
+                       elapsed_time=timedelta(seconds=10))
+            assert_equal(obj.start_time, datetime(2023, 9, 7, 12, 34, 46))
+            assert_equal(obj.end_time, datetime(2023, 9, 7, 12, 34, 56))
+            assert_equal(obj.elapsed_time, timedelta(seconds=10))
+            obj.config(start_time=None,
+                       end_time=None)
+            assert_equal(obj.start_time, None)
+            assert_equal(obj.end_time, None)
+            assert_equal(obj.elapsed_time, timedelta(seconds=10))
+
+    def test_suite_elapsed_time(self):
+        suite = TestSuite()
+        suite.tests.create(elapsed_time=1)
+        suite.suites.create(elapsed_time=2)
+        assert_equal(suite.elapsed_time, timedelta(seconds=3))
+        suite.setup.config(kwname='S', elapsed_time=0.1)
+        suite.teardown.config(kwname='T', elapsed_time=0.2)
+        assert_equal(suite.elapsed_time, timedelta(seconds=3.3))
+        suite.config(start_time=datetime(2023, 9, 7, 20, 33, 44),
+                     end_time=datetime(2023, 9, 7, 20, 33, 45),)
+        assert_equal(suite.elapsed_time, timedelta(seconds=1))
+        suite.elapsed_time = 42
+        assert_equal(suite.elapsed_time, timedelta(seconds=42))
+
+    def test_test_elapsed_time(self):
+        test = TestCase()
+        test.body.create_keyword(elapsed_time=1)
+        test.body.create_if(elapsed_time=2)
+        assert_equal(test.elapsed_time, timedelta(seconds=3))
+        test.setup.config(kwname='S', elapsed_time=0.1)
+        test.teardown.config(kwname='T', elapsed_time=0.2)
+        assert_equal(test.elapsed_time, timedelta(seconds=3.3))
+        test.config(start_time=datetime(2023, 9, 7, 20, 33, 44),
+                    end_time=datetime(2023, 9, 7, 20, 33, 45),)
+        assert_equal(test.elapsed_time, timedelta(seconds=1))
+        test.elapsed_time = 42
+        assert_equal(test.elapsed_time, timedelta(seconds=42))
+
+    def test_keyword_elapsed_time(self):
+        kw = Keyword()
+        kw.body.create_keyword(elapsed_time=1)
+        kw.body.create_if(elapsed_time=2)
+        assert_equal(kw.elapsed_time, timedelta(seconds=3))
+        kw.teardown.config(kwname='T', elapsed_time=0.2)
+        assert_equal(kw.elapsed_time, timedelta(seconds=3.2))
+        kw.config(start_time=datetime(2023, 9, 7, 20, 33, 44),
+                  end_time=datetime(2023, 9, 7, 20, 33, 45),)
+        assert_equal(kw.elapsed_time, timedelta(seconds=1))
+        kw.elapsed_time = 42
+        assert_equal(kw.elapsed_time, timedelta(seconds=42))
+
+    def test_control_structure_elapsed_time(self):
+        for cls in (If, IfBranch, Try, TryBranch, For, While, Break, Continue,
+                    Return, Error):
+            obj = cls()
+            obj.body.create_keyword(elapsed_time=1)
+            obj.body.create_keyword(elapsed_time=2)
+            assert_equal(obj.elapsed_time, timedelta(seconds=3))
+            obj.config(start_time=datetime(2023, 9, 7, 20, 33, 44),
+                       end_time=datetime(2023, 9, 7, 20, 33, 45),)
+            assert_equal(obj.elapsed_time, timedelta(seconds=1))
+            obj.elapsed_time = 42
+            assert_equal(obj.elapsed_time, timedelta(seconds=42))
 
 
 class TestSlots(unittest.TestCase):
@@ -456,7 +562,6 @@ class TestDeprecatedKeywordSpecificAttributes(unittest.TestCase):
         for_ = For(['${x}', '${y}'], 'IN', ['a', 'b', 'c', 'd'])
         for name, expected in [('name', '${x} | ${y} IN [ a | b | c | d ]'),
                                ('args', ()),
-                               ('assign', ()),
                                ('tags', Tags()),
                                ('timeout', None)]:
             assert_equal(getattr(for_, name), expected)

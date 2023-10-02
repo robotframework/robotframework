@@ -52,10 +52,10 @@ class TestSearchVariable(unittest.TestCase):
         for inp in ['${x', '${x:{}', '${y:{{}}', 'xx${z:{}xx', '{${{}{{}}{{',
                     r'${x\}', r'${x\\\}', r'${x\\\\\\\}']:
             for identifier in '$@&%':
+                variable = identifier + inp.split('$')[1]
                 assert_raises_with_msg(
                     DataError,
-                    "Variable '%s%s' was not closed properly."
-                    % (identifier, inp.split('$')[1]),
+                    f"Variable '{variable}' was not closed properly.",
                     search_variable, inp.replace('$', identifier)
                 )
                 self._test(inp.replace('$', identifier), ignore_errors=True)
@@ -108,13 +108,13 @@ class TestSearchVariable(unittest.TestCase):
     def test_incomplete_internal_vars(self):
         for inp in ['${var$', '${var${', '${var${int}']:
             for identifier in '$@&%':
+                variable = inp.replace('$', identifier)
                 assert_raises_with_msg(
                     DataError,
-                    "Variable '%s' was not closed properly."
-                    % inp.replace('$', identifier),
-                    search_variable, inp.replace('$', identifier)
+                    f"Variable '{variable}' was not closed properly.",
+                    search_variable, variable
                 )
-                self._test(inp.replace('$', identifier), ignore_errors=True)
+                self._test(variable, ignore_errors=True)
         self._test('}{${xx:{}}}}}', '${xx:{}}', start=2)
 
     def test_item_access(self):
@@ -151,7 +151,7 @@ class TestSearchVariable(unittest.TestCase):
 
     def test_unclosed_item(self):
         for inp in ['${x}[0', '${x}[0][key', r'${x}[0\]']:
-            msg = "Variable item '%s' was not closed properly." % inp
+            msg = f"Variable item '{inp}' was not closed properly."
             assert_raises_with_msg(DataError, msg, search_variable, inp)
             self._test(inp, ignore_errors=True)
         self._test('[${var}[i]][', '${var}', start=1, items='i')
@@ -224,21 +224,21 @@ class TestSearchVariable(unittest.TestCase):
             end = start + len(variable)
             is_var = inp == variable
             if items:
-                items_str = ''.join('[%s]' % i for i in items)
+                items_str = ''.join(f'[{i}]' for i in items)
                 end += len(items_str)
-                is_var = inp == '%s%s' % (variable, items_str)
+                is_var = inp == f'{variable}{items_str}'
             is_list_var = is_var and inp[0] == '@'
             is_dict_var = is_var and inp[0] == '&'
             is_scal_var = is_var and inp[0] == '$'
         match = search_variable(inp, identifiers, ignore_errors)
-        assert_equal(match.base, base, '%r base' % inp)
-        assert_equal(match.start, start, '%r start' % inp)
-        assert_equal(match.end, end, '%r end' % inp)
+        assert_equal(match.base, base, f'{inp!r} base')
+        assert_equal(match.start, start, f'{inp!r} start')
+        assert_equal(match.end, end, f'{inp!r} end')
         assert_equal(match.before, inp[:start] if start != -1 else inp)
         assert_equal(match.match, inp[start:end] if end != -1 else None)
         assert_equal(match.after, inp[end:] if end != -1 else None)
-        assert_equal(match.identifier, identifier, '%r identifier' % inp)
-        assert_equal(match.items, items, '%r item' % inp)
+        assert_equal(match.identifier, identifier, f'{inp!r} identifier')
+        assert_equal(match.items, items, f'{inp!r} item')
         assert_equal(match.is_variable(), is_var)
         assert_equal(match.is_scalar_variable(), is_scal_var)
         assert_equal(match.is_list_variable(), is_list_var)
@@ -308,9 +308,9 @@ class TestUnescapeVariableSyntax(unittest.TestCase):
             self._test(inp)
 
     def test_no_variable(self):
-        for inp in ['\\', r'\n', r'\d+', r'\u2603', r'\$', r'\@', r'\&']:
+        for inp in ['\\', r'\n', r'\d+', '☃', r'\$', r'\@', r'\&']:
             self._test(inp)
-            self._test('Hello, %s!' % inp)
+            self._test(f'Hello, {inp}!')
 
     def test_unescape_variable(self):
         for i in '$@&%':

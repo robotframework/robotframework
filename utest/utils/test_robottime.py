@@ -9,7 +9,7 @@ from robot.utils.asserts import (assert_equal, assert_raises_with_msg,
 
 from robot.utils.robottime import (timestr_to_secs, secs_to_timestr, get_time,
                                    parse_time, format_time, get_elapsed_time,
-                                   get_timestamp, timestamp_to_secs,
+                                   get_timestamp, timestamp_to_secs, parse_timestamp,
                                    elapsed_time_to_string, _get_timetuple)
 
 
@@ -177,13 +177,6 @@ class TestTime(unittest.TestCase):
             assert_raises_with_msg(ValueError, "Invalid time string '%s'." % inv,
                                    timestr_to_secs, inv)
 
-    def test_timestr_to_secs_accept_plain_values(self):
-        with warnings.catch_warnings(record=True) as w:
-            assert_raises_with_msg(ValueError, "Invalid time string '100'.",
-                                   timestr_to_secs, '100', accept_plain_values=False)
-            assert_equal(str(w[-1].message),
-                         "'accept_plain_values' is deprecated and will be removed in RF 7.0.")
-
     def test_secs_to_timestr(self):
         for inp, compact, verbose in [
             (0.001, '1ms', '1 millisecond'),
@@ -218,7 +211,8 @@ class TestTime(unittest.TestCase):
         for seps, exp in [(('-',' ',':'), '2005-11-02 14:23:12'),
                           (('', '-', ''), '20051102-142312'),
                           (('-',' ',':','.'), '2005-11-02 14:23:12.123')]:
-            assert_equal(format_time(timetuple, *seps), exp)
+            with warnings.catch_warnings(record=True):
+                assert_equal(format_time(timetuple, *seps), exp)
 
     def test_get_timestamp(self):
         for seps, pattern in [
@@ -227,20 +221,18 @@ class TestTime(unittest.TestCase):
             (('', '', '', None), r'^\d{14}$'),
             (('-', '&nbsp;', ':', ';'), r'^\d{4}-\d\d-\d\d&nbsp;\d\d:\d\d:\d\d;\d\d\d$')
         ]:
-            ts = get_timestamp(*seps)
+            with warnings.catch_warnings(record=True):
+                ts = get_timestamp(*seps)
             assert_not_none(re.search(pattern, ts),
                             "'%s' didn't match '%s'" % (ts, pattern), False)
 
-    def test_timestamp_to_secs_with_default(self):
-        assert_equal(timestamp_to_secs('20070920 16:15:14.123'), EXAMPLE_TIME+0.123)
-
-    def test_timestamp_to_secs_with_seps(self):
-        result = timestamp_to_secs('2007-09-20#16x15x14M123', ('-','#','x','M'))
-        assert_equal(result, EXAMPLE_TIME+0.123)
-
-    def test_timestamp_to_secs_with_millis(self):
-        result = timestamp_to_secs('20070920 16:15:14.123')
-        assert_equal(result, EXAMPLE_TIME+0.123)
+    def test_timestamp_to_secs(self):
+        with warnings.catch_warnings(record=True):
+            assert_equal(timestamp_to_secs('20070920 16:15:14.123'), EXAMPLE_TIME+0.123)
+            assert_equal(timestamp_to_secs('20070920T16:15:14.123'), EXAMPLE_TIME+0.123)
+            assert_equal(timestamp_to_secs('2007-09-20#16x15x14M123', ('-','#','x','M')),
+                         EXAMPLE_TIME+0.123)
+            assert_equal(timestamp_to_secs('20070920 16:15:14.123'), EXAMPLE_TIME+0.123)
 
     def test_get_elapsed_time(self):
         starttime = '20060526 14:01:10.500'
@@ -260,7 +252,8 @@ class TestTime(unittest.TestCase):
                                   ('20060601 14:01:10.499', 518399999),
                                   ('20060601 14:01:10.500', 518400000),
                                   ('20060601 14:01:10.501', 518400001)]:
-            actual = get_elapsed_time(starttime, endtime)
+            with warnings.catch_warnings(record=True):
+                actual = get_elapsed_time(starttime, endtime)
             assert_equal(actual, expected, endtime)
 
     def test_get_elapsed_time_negative(self):
@@ -271,62 +264,114 @@ class TestTime(unittest.TestCase):
                                   ('20060526 14:01:09.501', -999),
                                   ('20060526 14:01:09.500', -1000),
                                   ('20060526 14:01:09.499', -1001)]:
-            actual = get_elapsed_time(starttime, endtime)
+            with warnings.catch_warnings(record=True):
+                actual = get_elapsed_time(starttime, endtime)
             assert_equal(actual, expected, endtime)
 
     def test_elapsed_time_to_string(self):
         for elapsed, expected in [(0, '00:00:00.000'),
-                                  (0.1, '00:00:00.000'),
-                                  (0.5, '00:00:00.000'),
-                                  (0.50001, '00:00:00.001'),
-                                  (1, '00:00:00.001'),
-                                  (1.5, '00:00:00.002'),
-                                  (42, '00:00:00.042'),
-                                  (999, '00:00:00.999'),
-                                  (999.9, '00:00:01.000'),
-                                  (1000, '00:00:01.000'),
-                                  (1001, '00:00:01.001'),
-                                  (60000, '00:01:00.000'),
-                                  (600000, '00:10:00.000'),
-                                  (654321, '00:10:54.321'),
-                                  (660000, '00:11:00.000'),
-                                  (3600000, '01:00:00.000'),
-                                  (36000000, '10:00:00.000'),
-                                  (360000000, '100:00:00.000'),
-                                  (360000000 + 36000000 + 3600000 + 660000 + 11111,
+                                  (0.0001, '00:00:00.000'),
+                                  (0.00049, '00:00:00.000'),
+                                  (0.00050, '00:00:00.001'),
+                                  (0.00051, '00:00:00.001'),
+                                  (0.001, '00:00:00.001'),
+                                  (0.0015, '00:00:00.002'),
+                                  (0.042, '00:00:00.042'),
+                                  (0.999, '00:00:00.999'),
+                                  (0.9999, '00:00:01.000'),
+                                  (1.0, '00:00:01.000'),
+                                  (1, '00:00:01.000'),
+                                  (1.001, '00:00:01.001'),
+                                  (60, '00:01:00.000'),
+                                  (600, '00:10:00.000'),
+                                  (654.321, '00:10:54.321'),
+                                  (660, '00:11:00.000'),
+                                  (3600, '01:00:00.000'),
+                                  (36000, '10:00:00.000'),
+                                  (360000, '100:00:00.000'),
+                                  (360000 + 36000 + 3600 + 660 + 11.111,
                                    '111:11:11.111')]:
-            assert_equal(elapsed_time_to_string(elapsed), expected, elapsed)
-            if expected != '00:00:00.000':
-                assert_equal(elapsed_time_to_string(-1 * elapsed),
+            assert_equal(elapsed_time_to_string(elapsed, seconds=True),
+                         expected, elapsed)
+            assert_equal(elapsed_time_to_string(timedelta(seconds=elapsed)),
+                         expected, elapsed)
+            if elapsed != 0:
+                assert_equal(elapsed_time_to_string(-elapsed, seconds=True),
+                             '-' + expected, elapsed)
+                assert_equal(elapsed_time_to_string(timedelta(seconds=-elapsed)),
                              '-' + expected, elapsed)
 
     def test_elapsed_time_to_string_without_millis(self):
         for elapsed, expected in [(0, '00:00:00'),
-                                  (1, '00:00:00'),
-                                  (500, '00:00:00'),
-                                  (500.001, '00:00:01'),
-                                  (999, '00:00:01'),
-                                  (1000, '00:00:01'),
-                                  (1499.999, '00:00:01'),
-                                  (1500, '00:00:02'),
-                                  (59499.9, '00:00:59'),
-                                  (59500.0, '00:01:00'),
-                                  (59999, '00:01:00'),
-                                  (60000, '00:01:00'),
-                                  (654321, '00:10:54'),
-                                  (654500, '00:10:54'),
-                                  (654501, '00:10:55'),
-                                  (3599999, '01:00:00'),
-                                  (3600000, '01:00:00'),
-                                  (359999999, '100:00:00'),
-                                  (360000000, '100:00:00'),
-                                  (360000500, '100:00:00'),
-                                  (360000500.001, '100:00:01')]:
-            assert_equal(elapsed_time_to_string(elapsed, include_millis=False),
+                                  (0.001, '00:00:00'),
+                                  (0.5, '00:00:00'),
+                                  (0.501, '00:00:01'),
+                                  (0.999, '00:00:01'),
+                                  (1.0, '00:00:01'),
+                                  (1, '00:00:01'),
+                                  (1.4999, '00:00:01'),
+                                  (1.500, '00:00:02'),
+                                  (59.4999, '00:00:59'),
+                                  (59.5, '00:01:00'),
+                                  (59.999, '00:01:00'),
+                                  (60, '00:01:00'),
+                                  (654.321, '00:10:54'),
+                                  (654.500, '00:10:54'),
+                                  (654.501, '00:10:55'),
+                                  (3599.999, '01:00:00'),
+                                  (3600, '01:00:00'),
+                                  (359999.999, '100:00:00'),
+                                  (360000, '100:00:00'),
+                                  (360000.5, '100:00:00'),
+                                  (360000.501, '100:00:01')]:
+            assert_equal(elapsed_time_to_string(elapsed, include_millis=False,
+                                                seconds=True),
                          expected, elapsed)
             if expected != '00:00:00':
-                assert_equal(elapsed_time_to_string(-1 * elapsed, False),
+                assert_equal(elapsed_time_to_string(-1 * elapsed, False, True),
                              '-' + expected, elapsed)
+
+    def test_elapsed_time_default_input_is_deprecated(self):
+        with warnings.catch_warnings(record=True) as w:
+            assert_equal(elapsed_time_to_string(1000), '00:00:01.000')
+        assert_equal(str(w[0].message),
+                     "'robot.utils.elapsed_time_to_string' currently accepts input "
+                     "as milliseconds, but that will be changed to seconds in "
+                     "Robot Framework 8.0. Use 'seconds=True' to change the behavior "
+                     "already now and to avoid this warning. Alternatively pass "
+                     "the elapsed time as a 'timedelta'.")
+
+    def test_parse_timestamp(self):
+        for timestamp in ['2023-09-08 23:34:45.123456',
+                          '2023-09-08T23:34:45.123456',
+                          '2023-09-08 23:34:45:123456',
+                          '2023:09:08:23:34:45:123456',
+                          '20230908 23:34:45.123456',
+                          '2023_09_08 233445.123456',
+                          '20230908233445123456']:
+            assert_equal(parse_timestamp(timestamp),
+                         datetime(2023, 9, 8, 23, 34, 45, 123456))
+
+    def test_parse_timestamp_fill_missing(self):
+        for timestamp, expected in [
+            ('2023-09-08 23:34:45.123', '2023-09-08 23:34:45.123'),
+            ('2023-09-08 23:34:45', '2023-09-08 23:34:45'),
+            ('20230908 23:34:45', '2023-09-08 23:34:45'),
+            ('2023-09-08 23:34', '2023-09-08 23:34:00'),
+            ('20230101', '2023-01-01 00:00:00')
+        ]:
+            assert_equal(parse_timestamp(timestamp),
+                         datetime.fromisoformat(expected))
+
+    def test_parse_timestamp_with_datetime(self):
+        dt = datetime.now()
+        assert_equal(parse_timestamp(dt), dt)
+
+    def test_parse_timestamp_invalid(self):
+        assert_raises_with_msg(ValueError,
+                               "Invalid timestamp 'bad'.",
+                               parse_timestamp,
+                               'bad')
 
     def test_parse_time_with_valid_times(self):
         for input, expected in [('100', 100),
@@ -386,11 +431,6 @@ class TestTime(unittest.TestCase):
         if secs() == start_secs:
             assert_equal(gt_result, '%02d' % start_secs)
             assert_equal(pt_result, start_secs)
-
-    def test_get_timestamp_without_millis(self):
-        # Need to test twice to verify also possible cached timestamp
-        assert_true(re.match(r'\d{8} \d\d:\d\d:\d\d', get_timestamp(millissep=None)))
-        assert_true(re.match(r'\d{8} \d\d:\d\d:\d\d', get_timestamp(millissep=None)))
 
 
 if __name__ == "__main__":

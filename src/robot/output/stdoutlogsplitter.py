@@ -14,8 +14,8 @@
 #  limitations under the License.
 
 import re
+from datetime import datetime
 
-from robot.utils import format_time
 from .loggerhelper import Message, write_to_console
 
 
@@ -36,7 +36,7 @@ class StdoutLogSplitter:
                 write_to_console(msg.lstrip())
                 level = 'INFO'
             if timestamp:
-                timestamp = self._format_timestamp(timestamp[1:])
+                timestamp = datetime.fromtimestamp(float(timestamp[1:]) / 1000)
             yield Message(msg.strip(), level, timestamp=timestamp)
 
     def _split_output(self, output):
@@ -53,8 +53,11 @@ class StdoutLogSplitter:
     def _output_started_with_level(self, tokens):
         return tokens[0] == ''
 
-    def _format_timestamp(self, millis):
-        return format_time(float(millis)/1000, millissep='.')
-
     def __iter__(self):
         return iter(self._messages)
+
+    def __len__(self):
+        return len(self._messages)
+
+    def __getitem__(self, item):
+        return self._messages[item]

@@ -1,16 +1,16 @@
-*** Setting ***
+*** Settings ***
 Variables         resvarfiles/variables.py
 Variables         pythonpath_varfile.py    imported by path
 Variables         pythonpath_varfile       imported     as module
 Variables         package.submodule
 
-*** Variable ***
+*** Variables ***
 ${DEFINITION IN VARIABLE FILE 1}    ${STRING}
 ${DEFINITION IN VARIABLE FILE 2}    ${LIST[0]}! ${ONE ITEM[0]}
 ${DEFINITION IN VARIABLE FILE 3}    ${LIST WITH ESCAPES}
 @{DEFINITION IN VARIABLE FILE 4}    @{LIST WITH ESCAPES 2}
 
-*** Test Case ***
+*** Test Cases ***
 Scalar String
     Should Be Equal    ${STRING}    Hello world!
     Should Be Equal    I said: "${STRING}"    I said: "Hello world!"

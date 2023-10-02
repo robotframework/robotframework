@@ -1,4 +1,4 @@
-*** Setting ***
+*** Settings ***
 Force Tags        01    ${EMPTY}    02    @{EMPTY}
 Default Tags      @{DEFAULTS}
 
@@ -6,7 +6,7 @@ Default Tags      @{DEFAULTS}
 @{DEFAULTS}       03    ${EMPTY}    four
 
 
-*** Test Case ***
+*** Test Cases ***
 No Own Tags
     No Operation
 

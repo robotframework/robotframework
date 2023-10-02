@@ -61,16 +61,15 @@ Check Minimal Suite Defaults
 
 Check Normal Suite Times
     [Arguments]    ${suite}
-    Timestamp Should Be Valid    ${suite.starttime}
-    Timestamp Should Be Valid    ${suite.endtime}
-    Elapsed Time Should Be Valid    ${suite.elapsedtime}
-    Should Be True    ${suite.elapsedtime} >= 1
+    Timestamp Should Be Valid       ${suite.start_time}
+    Timestamp Should Be Valid       ${suite.end_time}
+    Elapsed Time Should Be Valid    ${suite.elapsed_time}    minimum=0.001
 
 Check Minimal Suite Times
     [Arguments]    ${suite}
-    Should Be Equal    ${suite.starttime}      ${NONE}
-    Should Be Equal    ${suite.endtime}        ${NONE}
-    Should Be Equal    ${suite.elapsedtime}    ${0}
+    Should Be Equal           ${suite.start_time}      ${NONE}
+    Should Be Equal           ${suite.end_time}        ${NONE}
+    Elapsed Time Should Be    ${suite.elapsed_time}    0
 
 Check Suite Defaults
     [Arguments]    ${suite}    ${message}=    ${setup}=${None}    ${teardown}=${None}

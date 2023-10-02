@@ -162,13 +162,13 @@ Zero timeout is ignored
     ${tc} =    Check Test Case    ${TEST NAME}
     Should Be Equal    ${tc.timeout}    0 seconds
     Should Be Equal    ${tc.kws[0].timeout}    0 seconds
-    Should Be True     ${tc.kws[0].elapsedtime} > 99
+    Elapsed Time Should Be Valid    ${tc.kws[0].elapsed_time}    minimum=0.099
 
 Negative timeout is ignored
     ${tc} =    Check Test Case    ${TEST NAME}
     Should Be Equal    ${tc.kws[0].timeout}    - 1 second
     Should Be Equal    ${tc.kws[0].timeout}    - 1 second
-    Should Be True     ${tc.kws[0].elapsedtime} > 99
+    Elapsed Time Should Be Valid    ${tc.kws[0].elapsed_time}    minimum=0.099
 
 Invalid test timeout
     Check Test Case    ${TEST NAME}
@@ -181,8 +181,7 @@ Timeout should have been active
     [Arguments]    ${kw}    ${timeout}    ${msg count}    ${exceeded}=False    ${type}=Test
     Check Log Message    ${kw.msgs[0]}    ${type} timeout ${timeout} active. * left.    DEBUG    pattern=True
     Length Should Be     ${kw.msgs}       ${msg count}
-    Run Keyword If    ${exceeded}
-    ...    Timeout should have exceeded    ${kw}    ${timeout}    ${type}
+    IF    ${exceeded}    Timeout should have exceeded    ${kw}    ${timeout}    ${type}
 
 Keyword timeout should have been active
     [Arguments]    ${kw}    ${timeout}    ${msg count}    ${exceeded}=False

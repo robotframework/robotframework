@@ -1,6 +1,6 @@
 "This text should be ignored, even though it's not a comment."				
 We have a devious plan to rule the world with robots.				
-*Setting*	*Value*	*Value*	*Value*	*Value*
+*Settings*	*Value*	*Value*	*Value*	*Value*
 
 Documentation	A complex testdata file in tsv format.
 Default Tags	default1			
@@ -13,14 +13,14 @@ Variables	../resources/variables.py
 Library	OperatingSystem			
 
 
-*Variable*	*Value*	*Value*	*Value*	*Value*
+*Variables*	*Value*	*Value*	*Value*	*Value*
 
 ${table_var}	foo			
 @{table_listvar}	bar	${table_var}		
 ${quoted}	"""this has """"many "" quotes """""			
 ${single_quoted}	s'ingle'qu'ot'es''			
 
-*Test Case*	*Action*	*Argument*	*Argument*	*Argument*
+*Test Cases*	*Action*	*Argument*	*Argument*	*Argument*
 
 Passing	Log	Passing test case.		
 

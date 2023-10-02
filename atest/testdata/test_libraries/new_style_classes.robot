@@ -1,8 +1,8 @@
-*** Setting ***
+*** Settings ***
 Library           newstyleclasses.NewStyleClassLibrary
 Library           newstyleclasses.MetaClassLibrary
 
-*** Test Case ***
+*** Test Cases ***
 Keyword From New Style Class Library
     ${ret} =    Mirror    Hello
     Should Be Equal    ${ret}    olleH

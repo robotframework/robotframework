@@ -15,6 +15,7 @@
 
 import ast
 import re
+import warnings
 from abc import ABC, abstractmethod
 from collections.abc import Iterator, Sequence
 from typing import cast, ClassVar, overload, TYPE_CHECKING, Type, TypeVar
@@ -473,7 +474,7 @@ class TestTags(MultiValue):
     @classmethod
     def from_params(cls, values: 'Sequence[str]', separator: str = FOUR_SPACES,
                     eol: str = EOL) -> 'TestTags':
-        tokens = [Token(Token.TEST_TAGS, 'Force Tags')]
+        tokens = [Token(Token.TEST_TAGS, 'Test Tags')]
         for tag in values:
             tokens.extend([Token(Token.SEPARATOR, separator),
                            Token(Token.ARGUMENT, tag)])
@@ -910,13 +911,13 @@ class ForHeader(Statement):
     type = Token.FOR
 
     @classmethod
-    def from_params(cls, variables: 'Sequence[str]', values: 'Sequence[str]',
+    def from_params(cls, assign: 'Sequence[str]', values: 'Sequence[str]',
                     flavor: str = 'IN', indent: str = FOUR_SPACES,
                     separator: str = FOUR_SPACES, eol: str = EOL) -> 'ForHeader':
         tokens = [Token(Token.SEPARATOR, indent),
                   Token(Token.FOR),
                   Token(Token.SEPARATOR, separator)]
-        for variable in variables:
+        for variable in assign:
             tokens.extend([Token(Token.ASSIGN, variable),
                            Token(Token.SEPARATOR, separator)])
         tokens.append(Token(Token.FOR_SEPARATOR, flavor))
@@ -927,8 +928,14 @@ class ForHeader(Statement):
         return cls(tokens)
 
     @property
-    def variables(self) -> 'tuple[str, ...]':
+    def assign(self) -> 'tuple[str, ...]':
         return self.get_values(Token.ASSIGN)
+
+    @property
+    def variables(self) -> 'tuple[str, ...]':    # TODO: Remove in RF 8.0.
+        warnings.warn("'ForHeader.variables' is deprecated and will be removed in "
+                      "Robot Framework 8.0. Use 'ForHeader.assign' instead.")
+        return self.assign
 
     @property
     def values(self) -> 'tuple[str, ...]':
@@ -953,12 +960,12 @@ class ForHeader(Statement):
 
     def validate(self, ctx: 'ValidationContext'):
         self._validate_options()
-        if not self.variables:
+        if not self.assign:
             self._add_error('no loop variables')
         if not self.flavor:
             self._add_error("no 'IN' or other valid separator")
         else:
-            for var in self.variables:
+            for var in self.assign:
                 if not is_scalar_assign(var):
                     self._add_error(f"invalid loop variable '{var}'")
             if not self.values:
@@ -1087,7 +1094,7 @@ class ExceptHeader(Statement):
 
     @classmethod
     def from_params(cls, patterns: 'Sequence[str]' = (), type: 'str|None' = None,
-                    variable: 'str|None' = None, indent: str = FOUR_SPACES,
+                    assign: 'str|None' = None, indent: str = FOUR_SPACES,
                     separator: str = FOUR_SPACES, eol: str = EOL) -> 'ExceptHeader':
         tokens = [Token(Token.SEPARATOR, indent),
                   Token(Token.EXCEPT)]
@@ -1097,11 +1104,11 @@ class ExceptHeader(Statement):
         if type:
             tokens.extend([Token(Token.SEPARATOR, separator),
                            Token(Token.OPTION, f'type={type}')])
-        if variable:
+        if assign:
             tokens.extend([Token(Token.SEPARATOR, separator),
                            Token(Token.AS),
                            Token(Token.SEPARATOR, separator),
-                           Token(Token.ASSIGN, variable)])
+                           Token(Token.ASSIGN, assign)])
         tokens.append(Token(Token.EOL, eol))
         return cls(tokens)
 
@@ -1114,8 +1121,14 @@ class ExceptHeader(Statement):
         return self.get_option('type')
 
     @property
-    def variable(self) -> 'str|None':
+    def assign(self) -> 'str|None':
         return self.get_value(Token.ASSIGN)
+
+    @property
+    def variable(self) -> 'str|None':    # TODO: Remove in RF 8.0.
+        warnings.warn("'ExceptHeader.variable' is deprecated and will be removed in "
+                      "Robot Framework 8.0. Use 'ExceptHeader.assigns' instead.")
+        return self.assign
 
     def validate(self, ctx: 'ValidationContext'):
         self._validate_options()

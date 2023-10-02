@@ -1,9 +1,9 @@
-*** Setting ***
+*** Settings ***
 Documentation     How variables from CLI override other variables is tested in variable_priorities.robot
 Suite Setup       Run Tests With Variables
 Resource          atest_resource.robot
 
-*** Test Case ***
+*** Test Cases ***
 Normal Text
     Check Test Case    ${TEST NAME}
 
@@ -13,7 +13,7 @@ Special Characters
 No Colon In Variable
     Check Test Case    ${TEST NAME}
 
-*** Keyword ***
+*** Keywords ***
 Run Tests With Variables
     ${options} =    Catenate
     ...    --variable NORMAL_TEXT:Hello

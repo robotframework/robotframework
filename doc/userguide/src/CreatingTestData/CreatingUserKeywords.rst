@@ -143,31 +143,40 @@ User keyword tags
 Both user keywords and `library keywords`_ can have tags. Similarly as when
 `tagging test cases`_, there are two settings affecting user keyword tags:
 
-`Keyword Tags`:setting: in the Setting section
+`Keyword Tags`:setting: setting in the Settings section
    All keywords in a file with this setting always get specified tags.
 
-`[Tags]`:setting: with each keyword
+`[Tags]`:setting: setting with each keyword
    Keywords get these tags in addition to possible tags specified using the
-   :setting:`Keyword Tags` setting.
+   :setting:`Keyword Tags` setting. The :setting:`[Tags]` setting also allows
+   removing tags set with :setting:`Keyword Tags` by using the `-tag` syntax.
 
 .. sourcecode:: robotframework
 
    *** Settings ***
-   Keyword Tags       gui
+   Keyword Tags       gui    html
 
    *** Keywords ***
    No own tags
-       [Documentation]    This keyword has tag 'gui'.
+       [Documentation]    Keyword has tags 'gui' and 'html'.
        No Operation
 
    Own tags
-       [Documentation]    This keyword has tags 'gui', 'own' and 'tags'.
+       [Documentation]    Keyword has tags 'gui', 'html', 'own' and 'tags'.
        [Tags]    own    tags
        No Operation
 
-Additionally, keyword tags can be specified on the last line of the documentation
-with `Tags:` prefix so that tags are separated with a comma. For example,
-following two keywords get same three tags:
+   Remove common tag
+       [Documentation]    Test has tags 'gui' and 'own'.
+       [Tags]    own    -html
+       No Operation
+
+Keyword tags can be specified using variables, the `-tag` syntax supports
+patterns, and so on, exactly as `test case tags`_.
+
+In addition to using the dedicated settings, keyword tags can be specified on
+the last line of the documentation with `Tags:` prefix so that tags are separated
+with a comma. For example, following two keywords get same three tags:
 
 .. sourcecode:: robotframework
 
@@ -197,18 +206,11 @@ reserved tag `robot:flatten`.
           versions all keyword tags need to be specified using the
           :setting:`[Tags]` setting.
 
-.. note:: Robot Framework 6.1 will support `removing globally set tags`__ using
-          the `-tag` syntax with the :setting:`[Tags]` setting. Creating tags
-          with literal value like `-tag` `is deprecated`__ in Robot Framework 6.0
-          and escaped__ syntax `\-tag` must be used if such tags are actually
-          needed.
+.. note:: The `-tag` syntax for removing common tags is new in Robot Framework 7.0.
 
 __ `Removing keywords`_
 __ `Flattening keywords`_
 __ `Reserved tags`_
-__ https://github.com/robotframework/robotframework/issues/4374
-__ https://github.com/robotframework/robotframework/issues/4380
-__ escaping_
 
 User keyword arguments
 ----------------------

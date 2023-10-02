@@ -13,9 +13,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from datetime import datetime
+
 from robot.errors import (ExecutionFailed, ExecutionStatus, DataError,
                           HandlerExecutionFailed)
-from robot.utils import ErrorDetails, get_timestamp
+from robot.utils import ErrorDetails
 
 from .modelcombiner import ModelCombiner
 
@@ -38,8 +40,8 @@ class StatusReporter:
         context = self.context
         result = self.result
         self.initial_test_status = context.test.status if context.test else None
-        if not result.starttime:
-            result.starttime = get_timestamp()
+        if not result.start_time:
+            result.start_time = datetime.now()
         context.start_keyword(ModelCombiner(self.data, result))
         self._warn_if_deprecated(result.doc, result.name)
         return self
@@ -61,7 +63,7 @@ class StatusReporter:
                 result.message = failure.message
         if self.initial_test_status == 'PASS':
             context.test.status = result.status
-        result.endtime = get_timestamp()
+        result.elapsed_time = datetime.now() - result.start_time
         context.end_keyword(ModelCombiner(self.data, result))
         if failure is not exc_val and not self.suppress:
             raise failure

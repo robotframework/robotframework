@@ -183,7 +183,7 @@ def unknown(argument: Unknown, expected=None):
     _validate_type(argument, expected)
 
 
-def non_type(argument: 'this is string, not type', expected=None):
+def non_type(argument: 'this is just a random string', expected=None):
     _validate_type(argument, expected)
 
 

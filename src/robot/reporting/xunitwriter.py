@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.result import ResultVisitor
+from robot.result import ResultVisitor, TestCase, TestSuite
 from robot.utils import XmlWriter
 
 
@@ -38,32 +38,34 @@ class XUnitFileWriter(ResultVisitor):
     def __init__(self, xml_writer):
         self._writer = xml_writer
 
-    def start_suite(self, suite):
+    def start_suite(self, suite: TestSuite):
         stats = suite.statistics  # Accessing property only once.
         attrs = {'name': suite.name,
-                 'tests': f'{stats.total}',
+                 'tests': str(stats.total),
                  'errors': '0',
-                 'failures': f'{stats.failed}',
-                 'skipped': f'{stats.skipped}',
-                 'time': self._time_as_seconds(suite.elapsedtime),
-                 'timestamp' : self._starttime_to_isoformat(suite.starttime)}
+                 'failures': str(stats.failed),
+                 'skipped': str(stats.skipped),
+                 'time': format(suite.elapsed_time.total_seconds(), '.3f'),
+                 'timestamp': suite.start_time.isoformat() if suite.start_time else None}
         self._writer.start('testsuite', attrs)
 
-    def end_suite(self, suite):
+    def end_suite(self, suite: TestSuite):
         if suite.metadata or suite.doc:
             self._writer.start('properties')
             if suite.doc:
-                self._writer.element('property', attrs={'name': 'Documentation', 'value': suite.doc})
+                self._writer.element('property', attrs={'name': 'Documentation',
+                                                        'value': suite.doc})
             for meta_name, meta_value in suite.metadata.items():
-                self._writer.element('property', attrs={'name': meta_name, 'value': meta_value})
+                self._writer.element('property', attrs={'name': meta_name,
+                                                        'value': meta_value})
             self._writer.end('properties')
         self._writer.end('testsuite')
 
-    def visit_test(self, test):
+    def visit_test(self, test: TestCase):
         self._writer.start('testcase',
                            {'classname': test.parent.longname,
                             'name': test.name,
-                            'time': self._time_as_seconds(test.elapsedtime)})
+                            'time': format(test.elapsed_time.total_seconds(), '.3f')})
         if test.failed:
             self._writer.element('failure', attrs={'message': test.message,
                                                    'type': 'AssertionError'})
@@ -71,9 +73,6 @@ class XUnitFileWriter(ResultVisitor):
             self._writer.element('skipped', attrs={'message': test.message,
                                                    'type': 'SkipExecution'})
         self._writer.end('testcase')
-
-    def _time_as_seconds(self, millis):
-        return format(millis / 1000, '.3f')
 
     def visit_keyword(self, kw):
         pass
@@ -86,8 +85,3 @@ class XUnitFileWriter(ResultVisitor):
 
     def end_result(self, result):
         self._writer.close()
-
-    def _starttime_to_isoformat(self, stime):
-        if not stime:
-            return None
-        return f'{stime[:4]}-{stime[4:6]}-{stime[6:8]}T{stime[9:22]}000'

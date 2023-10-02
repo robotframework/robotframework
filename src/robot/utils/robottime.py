@@ -16,7 +16,7 @@
 import re
 import time
 import warnings
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 from .normalizing import normalize
 from .misc import plural_or_not
@@ -40,7 +40,7 @@ def _float_secs_to_secs_and_millis(secs):
     return (isecs, millis) if millis < 1000 else (isecs+1, 0)
 
 
-def timestr_to_secs(timestr, round_to=3, accept_plain_values=True):
+def timestr_to_secs(timestr, round_to=3):
     """Parses time strings like '1h 10s', '01:00:10' and '42' and returns seconds.
 
     Time can also be given as an integer or float or, starting from RF 6.0.1,
@@ -48,23 +48,16 @@ def timestr_to_secs(timestr, round_to=3, accept_plain_values=True):
 
     The result is rounded according to the `round_to` argument.
     Use `round_to=None` to disable rounding altogether.
-
-    `accept_plain_values` is considered deprecated and should not be used.
     """
     if is_string(timestr) or is_number(timestr):
-        if accept_plain_values:
-            converters = [_number_to_secs, _timer_to_secs, _time_string_to_secs]
-        else:
-            # TODO: Remove 'accept_plain_values' in 7.0
-            warnings.warn("'accept_plain_values' is deprecated and will be removed in RF 7.0.")
-            converters = [_timer_to_secs, _time_string_to_secs]
+        converters = [_number_to_secs, _timer_to_secs, _time_string_to_secs]
         for converter in converters:
             secs = converter(timestr)
             if secs is not None:
                 return secs if round_to is None else round(secs, round_to)
     if isinstance(timestr, timedelta):
         return timestr.total_seconds()
-    raise ValueError("Invalid time string '%s'." % timestr)
+    raise ValueError(f"Invalid time string '{timestr}'.")
 
 
 def _number_to_secs(number):
@@ -195,17 +188,9 @@ class _SecsToTimestrHelper:
 
 def format_time(timetuple_or_epochsecs, daysep='', daytimesep=' ', timesep=':',
                 millissep=None):
-    """Returns a timestamp formatted from given time using separators.
-
-    Time can be given either as a timetuple or seconds after epoch.
-
-    Timetuple is (year, month, day, hour, min, sec[, millis]), where parts must
-    be integers and millis is required only when millissep is not None.
-    Notice that this is not 100% compatible with standard Python timetuples
-    which do not have millis.
-
-    Seconds after epoch can be either an integer or a float.
-    """
+    """Deprecated in Robot Framework 7.0. Will be removed in Robot Framework 8.0."""
+    warnings.warn("'robot.utils.format_time' is deprecated and will be "
+                  "removed in Robot Framework 8.0.")
     if is_number(timetuple_or_epochsecs):
         timetuple = _get_timetuple(timetuple_or_epochsecs)
     else:
@@ -239,19 +224,64 @@ def get_time(format='timestamp', time_=None):
     # 1) Return time in seconds since epoc
     if 'epoch' in format:
         return time_
-    timetuple = time.localtime(time_)
+    dt = datetime.fromtimestamp(time_)
     parts = []
-    for i, match in enumerate('year month day hour min sec'.split()):
-        if match in format:
-            parts.append('%.2d' % timetuple[i])
+    for part, name in [(dt.year, 'year'), (dt.month, 'month'), (dt.day, 'day'),
+                       (dt.hour, 'hour'), (dt.minute, 'min'), (dt.second, 'sec')]:
+        if name in format:
+            parts.append(f'{part:02}')
     # 2) Return time as timestamp
     if not parts:
-        return format_time(timetuple, daysep='-')
+        return dt.isoformat(' ', timespec='seconds')
     # Return requested parts of the time
     elif len(parts) == 1:
         return parts[0]
     else:
         return parts
+
+
+def parse_timestamp(timestamp: 'str|datetime') -> datetime:
+    """Parse timestamp in ISO 8601-like formats into a ``datetime``.
+
+    Months, days, hours, minutes and seconds must use two digits and
+    year must use four. Microseconds can use up to six digits. All time
+    parts can be omitted.
+
+    Separators '-', '_', ' ', 'T', ':' and '.' between date and time components.
+    Separators can also be omitted altogether.
+
+    Examples::
+
+        2023-09-08T14:34:42.123456
+        2023-09-08 14:34:42.123
+        20230908 143442
+        2023_09_08
+
+    This is similar to ``datetime.fromisoformat``, but a little less strict.
+    The standard function is recommended if the input format is known to be
+    accepted.
+
+    If the input is a ``datetime``, it is returned as-is.
+
+    New in Robot Framework 7.0.
+    """
+    if isinstance(timestamp, datetime):
+        return timestamp
+    try:
+        return datetime.fromisoformat(timestamp)
+    except ValueError:
+        pass
+    orig = timestamp
+    for sep in ('-', '_', ' ', 'T', ':', '.'):
+        if sep in timestamp:
+            timestamp = timestamp.replace(sep, '')
+    timestamp = timestamp.ljust(20, '0')
+    try:
+        return datetime(int(timestamp[0:4]), int(timestamp[4:6]), int(timestamp[6:8]),
+                        int(timestamp[8:10]), int(timestamp[10:12]), int(timestamp[12:14]),
+                        int(timestamp[14:20]))
+    except ValueError:
+        raise ValueError(f"Invalid timestamp '{orig}'.")
 
 
 def parse_time(timestr):
@@ -290,7 +320,7 @@ def _parse_time_epoch(timestr):
 
 def _parse_time_timestamp(timestr):
     try:
-        return timestamp_to_secs(timestr, (' ', ':', '-', '.'))
+        return parse_timestamp(timestr).timestamp()
     except ValueError:
         return None
 
@@ -333,10 +363,23 @@ def _get_dst_difference(time1, time2):
 
 
 def get_timestamp(daysep='', daytimesep=' ', timesep=':', millissep='.'):
-    return TIMESTAMP_CACHE.get_timestamp(daysep, daytimesep, timesep, millissep)
+    """Deprecated in Robot Framework 7.0. Will be removed in Robot Framework 8.0."""
+    warnings.warn("'robot.utils.get_timestamp' is deprecated and will be "
+                  "removed in Robot Framework 8.0.")
+    dt = datetime.now()
+    parts = [str(dt.year), daysep, f'{dt.month:02}', daysep, f'{dt.day:02}', daytimesep,
+             f'{dt.hour:02}', timesep, f'{dt.minute:02}', timesep, f'{dt.second:02}']
+    if millissep:
+        # Make sure milliseconds is < 1000. Good enough for a deprecated function.
+        millis = min(round(dt.microsecond, -3) // 1000, 999)
+        parts.extend([millissep, f'{millis:03}'])
+    return ''.join(parts)
 
 
 def timestamp_to_secs(timestamp, seps=None):
+    """Deprecated in Robot Framework 7.0. Will be removed in Robot Framework 8.0."""
+    warnings.warn("'robot.utils.timestamp_to_secs' is deprecated and will be "
+                  "removed in Robot Framework 8.0. User 'parse_timestamp' instead.")
     try:
         secs = _timestamp_to_millis(timestamp, seps) / 1000.0
     except (ValueError, OverflowError):
@@ -346,6 +389,9 @@ def timestamp_to_secs(timestamp, seps=None):
 
 
 def secs_to_timestamp(secs, seps=None, millis=False):
+    """Deprecated in Robot Framework 7.0. Will be removed in Robot Framework 8.0."""
+    warnings.warn("'robot.utils.secs_to_timestamp' is deprecated and will be "
+                  "removed in Robot Framework 8.0.")
     if not seps:
         seps = ('', ' ', ':', '.' if millis else None)
     ttuple = time.localtime(secs)[:6]
@@ -356,43 +402,67 @@ def secs_to_timestamp(secs, seps=None, millis=False):
 
 
 def get_elapsed_time(start_time, end_time):
-    """Returns the time between given timestamps in milliseconds."""
+    """Deprecated in Robot Framework 7.0. Will be removed in Robot Framework 8.0."""
+    warnings.warn("'robot.utils.get_elapsed_time' is deprecated and will be "
+                  "removed in Robot Framework 8.0.")
     if start_time == end_time or not (start_time and end_time):
         return 0
     if start_time[:-4] == end_time[:-4]:
         return int(end_time[-3:]) - int(start_time[-3:])
     start_millis = _timestamp_to_millis(start_time)
     end_millis = _timestamp_to_millis(end_time)
-    # start/end_millis can be long but we want to return int when possible
-    return int(end_millis - start_millis)
+    return end_millis - start_millis
 
 
-def elapsed_time_to_string(elapsed, include_millis=True):
-    """Converts elapsed time in milliseconds to format 'hh:mm:ss.mil'.
+def elapsed_time_to_string(elapsed: 'int|float|timedelta',
+                           include_millis: bool = True,
+                           seconds: bool = False):
+    """Converts elapsed time to format 'hh:mm:ss.mil'.
+
+    Elapsed time as an integer or as a float is currently considered to be
+    milliseconds, but that will be changed to seconds in Robot Framework 8.0.
+    Use ``seconds=True`` to change the behavior already now and to avoid the
+    deprecation warning. An alternative is giving the elapsed time as
+    a ``timedelta``.
 
     If `include_millis` is True, '.mil' part is omitted.
+
+    Support for giving the elapsed time as a ``timedelta`` and the ``seconds``
+    argument are new in Robot Framework 7.0.
     """
+    # TODO: Change the default input to seconds in RF 8.0.
+    if isinstance(elapsed, timedelta):
+        elapsed = elapsed.total_seconds()
+    elif not seconds:
+        elapsed /= 1000
+        warnings.warn("'robot.utils.elapsed_time_to_string' currently accepts "
+                      "input as milliseconds, but that will be changed to seconds "
+                      "in Robot Framework 8.0. Use 'seconds=True' to change the "
+                      "behavior already now and to avoid this warning. Alternatively "
+                      "pass the elapsed time as a 'timedelta'.")
     prefix = ''
     if elapsed < 0:
         prefix = '-'
         elapsed = abs(elapsed)
     if include_millis:
-        return prefix + _elapsed_time_to_string(elapsed)
+        return prefix + _elapsed_time_to_string_with_millis(elapsed)
     return prefix + _elapsed_time_to_string_without_millis(elapsed)
 
 
-def _elapsed_time_to_string(elapsed):
-    secs, millis = divmod(round(elapsed), 1000)
+def _elapsed_time_to_string_with_millis(elapsed):
+    elapsed = round(elapsed, 3)
+    secs = int(elapsed)
+    millis = round((elapsed - secs) * 1000)
     mins, secs = divmod(secs, 60)
     hours, mins = divmod(mins, 60)
-    return '%02d:%02d:%02d.%03d' % (hours, mins, secs, millis)
+    return f'{hours:02}:{mins:02}:{secs:02}.{millis:03}'
 
 
 def _elapsed_time_to_string_without_millis(elapsed):
-    secs = round(elapsed, ndigits=-3) // 1000
+    secs = round(elapsed)
     mins, secs = divmod(secs, 60)
     hours, mins = divmod(mins, 60)
-    return '%02d:%02d:%02d' % (hours, mins, secs)
+    return f'{hours:02}:{mins:02}:{secs:02}'
 
 
 def _timestamp_to_millis(timestamp, seps=None):
@@ -420,42 +490,3 @@ def _split_timestamp(timestamp):
     secs = int(timestamp[15:17])
     millis = int(timestamp[18:21])
     return years, mons, days, hours, mins, secs, millis
-
-
-class TimestampCache:
-
-    def __init__(self):
-        self._previous_secs = None
-        self._previous_separators = None
-        self._previous_timestamp = None
-
-    def get_timestamp(self, daysep='', daytimesep=' ', timesep=':', millissep='.'):
-        epoch = self._get_epoch()
-        secs, millis = _float_secs_to_secs_and_millis(epoch)
-        if self._use_cache(secs, daysep, daytimesep, timesep):
-            return self._cached_timestamp(millis, millissep)
-        timestamp = format_time(epoch, daysep, daytimesep, timesep, millissep)
-        self._cache_timestamp(secs, timestamp, daysep, daytimesep, timesep, millissep)
-        return timestamp
-
-    # Seam for mocking
-    def _get_epoch(self):
-        return time.time()
-
-    def _use_cache(self, secs, *separators):
-        return self._previous_timestamp \
-            and self._previous_secs == secs \
-            and self._previous_separators == separators
-
-    def _cached_timestamp(self, millis, millissep):
-        if millissep:
-            return self._previous_timestamp + millissep + format(millis, '03d')
-        return self._previous_timestamp
-
-    def _cache_timestamp(self, secs, timestamp, daysep, daytimesep, timesep, millissep):
-        self._previous_secs = secs
-        self._previous_separators = (daysep, daytimesep, timesep)
-        self._previous_timestamp = timestamp[:-4] if millissep else timestamp
-
-
-TIMESTAMP_CACHE = TimestampCache()

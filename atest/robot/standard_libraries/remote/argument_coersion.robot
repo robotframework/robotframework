@@ -33,6 +33,15 @@ Boolean
 None
     Check Test Case    ${TESTNAME}
 
+Datetime
+    Check Test Case    ${TESTNAME}
+
+Date
+    Check Test Case    ${TESTNAME}
+
+Timedelta
+    Check Test Case    ${TESTNAME}
+
 Custom object
     Check Test Case    ${TESTNAME}
 

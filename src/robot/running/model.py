@@ -114,7 +114,7 @@ class For(model.For, WithSource):
     __slots__ = ['lineno', 'error']
     body_class = Body
 
-    def __init__(self, variables: Sequence[str] = (),
+    def __init__(self, assign: Sequence[str] = (),
                  flavor: "Literal['IN', 'IN RANGE', 'IN ENUMERATE', 'IN ZIP']" = 'IN',
                  values: Sequence[str] = (),
                  start: 'str|None' = None,
@@ -123,9 +123,16 @@ class For(model.For, WithSource):
                  parent: BodyItemParent = None,
                  lineno: 'int|None' = None,
                  error: 'str|None' = None):
-        super().__init__(variables, flavor, values, start, mode, fill, parent)
+        super().__init__(assign, flavor, values, start, mode, fill, parent)
         self.lineno = lineno
         self.error = error
+
+    @classmethod
+    def from_dict(cls, data: DataDict) -> 'For':
+        # RF 6.1 compatibility
+        if 'variables' in data:
+            data['assign'] = data.pop('variables')
+        return super().from_dict(data)
 
     def to_dict(self) -> DataDict:
         data = super().to_dict()
@@ -216,11 +223,18 @@ class TryBranch(model.TryBranch, WithSource):
     def __init__(self, type: str = BodyItem.TRY,
                  patterns: Sequence[str] = (),
                  pattern_type: 'str|None' = None,
-                 variable: 'str|None' = None,
+                 assign: 'str|None' = None,
                  parent: BodyItemParent = None,
                  lineno: 'int|None' = None):
-        super().__init__(type, patterns, pattern_type, variable, parent)
+        super().__init__(type, patterns, pattern_type, assign, parent)
         self.lineno = lineno
+
+    @classmethod
+    def from_dict(cls, data: DataDict) -> 'TryBranch':
+        # RF 6.1 compatibility.
+        if 'variable' in data:
+            data['assign'] = data.pop('variable')
+        return super().from_dict(data)
 
     def to_dict(self) -> DataDict:
         data = super().to_dict()

@@ -1,8 +1,8 @@
-*** Setting ***
+*** Settings ***
 Suite Setup       Run Tests    --loglevel DEBUG    standard_libraries/telnet/configuration.robot
 Resource          telnet_resource.robot
 
-*** Test Case ***
+*** Test Cases ***
 Library Default Window Size
     Check Test Case    ${TEST NAME}
 

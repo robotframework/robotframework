@@ -3,7 +3,7 @@ Suite Teardown    Sleep    ${TEARDOWN SLEEP}
 Library           Library.py
 Library           OperatingSystem
 
-*** Test Case ***
+*** Test Cases ***
 Test
     [Documentation]    FAIL Execution terminated by signal
     Create File    ${TESTSIGNALFILE}

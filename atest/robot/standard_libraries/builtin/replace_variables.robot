@@ -1,8 +1,8 @@
-*** Setting ***
+*** Settings ***
 Suite Setup       Run Tests    ${EMPTY}    standard_libraries/builtin/replace_variables.robot
 Resource          atest_resource.robot
 
-*** Test Case ***
+*** Test Cases ***
 Replace Variables
     Check Test Case    ${TESTNAME}
 

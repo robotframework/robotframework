@@ -13,6 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from datetime import timedelta
+
 from robot.utils import (Sortable, elapsed_time_to_string, html_escape,
                          is_string, normalize)
 
@@ -31,14 +33,10 @@ class Stat(Sortable):
         #: or name of the tag for
         #: :class:`~robot.model.tagstatistics.TagStatistics`
         self.name = name
-        #: Number of passed tests.
         self.passed = 0
-        #: Number of failed tests.
         self.failed = 0
-        #: Number of skipped tests.
         self.skipped = 0
-        #: Number of milliseconds it took to execute.
-        self.elapsed = 0
+        self.elapsed = timedelta()
         self._norm_name = normalize(name, ignore='_')
 
     def get_attributes(self, include_label=False, include_elapsed=False,
@@ -49,8 +47,7 @@ class Stat(Sortable):
         if include_label:
             attrs['label'] = self.name
         if include_elapsed:
-            attrs['elapsed'] = elapsed_time_to_string(self.elapsed,
-                                                      include_millis=False)
+            attrs['elapsed'] = elapsed_time_to_string(self.elapsed, include_millis=False)
         if exclude_empty:
             attrs = dict((k, v) for k, v in attrs.items() if v not in ('', None))
         if values_as_strings:
@@ -83,7 +80,7 @@ class Stat(Sortable):
             self.failed += 1
 
     def _update_elapsed(self, test):
-        self.elapsed += test.elapsedtime
+        self.elapsed += test.elapsed_time
 
     @property
     def _sort_key(self):
@@ -106,12 +103,9 @@ class SuiteStat(Stat):
     type = 'suite'
 
     def __init__(self, suite):
-        Stat.__init__(self, suite.longname)
-        #: Identifier of the suite, e.g. `s1-s2`.
+        super().__init__(suite.longname)
         self.id = suite.id
-        #: Number of milliseconds it took to execute this suite,
-        #: including sub-suites.
-        self.elapsed = suite.elapsedtime
+        self.elapsed = suite.elapsed_time
         self._name = suite.name
 
     def _get_custom_attrs(self):
@@ -131,7 +125,7 @@ class TagStat(Stat):
     type = 'tag'
 
     def __init__(self, name, doc='', links=None, combined=None):
-        Stat.__init__(self, name)
+        super().__init__(name)
         #: Documentation of tag as a string.
         self.doc = doc
         #: List of tuples in which the first value is the link URL and
@@ -164,7 +158,7 @@ class TagStat(Stat):
 class CombinedTagStat(TagStat):
 
     def __init__(self, pattern, name=None, doc='', links=None):
-        TagStat.__init__(self, name or pattern, doc, links, combined=pattern)
+        super().__init__(name or pattern, doc, links, combined=pattern)
         self.pattern = TagPattern.from_string(pattern)
 
     def match(self, tags):

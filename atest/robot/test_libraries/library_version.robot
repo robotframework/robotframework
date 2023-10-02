@@ -1,8 +1,8 @@
-*** Setting ***
+*** Settings ***
 Suite Setup       Run Tests    ${EMPTY}    test_libraries/library_version.robot
 Resource          atest_resource.robot
 
-*** Test Case ***
+*** Test Cases ***
 Python Library Version
     Syslog Should Contain    Imported library 'classes.VersionLibrary' with arguments [ ] (version 0.1, class type,
 

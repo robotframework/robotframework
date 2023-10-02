@@ -1,18 +1,18 @@
 U T F 8   D A T A
 
-*Setting*	*Value*	*Value*	*Value*	*Value*	*Value*	*Value*	*Value*	
+*Settings*	*Value*	*Value*	*Value*	*Value*	*Value*	*Value*	*Value*	
 Documentation	Testing that reading and writing of Unicode (äöå §½€ etc.) works properly.							
 Default Tags	tag-äöå							
 Force Tags	tag-§							
 Metadata	Ä	§							
 								
 
-*Variable*	*Value*	*Value*	*Value*	*Value*	*Value*	*Value*	*Value*	
+*Variables*	*Value*	*Value*	*Value*	*Value*	*Value*	*Value*	*Value*	
 ${UNICODE}	äöå §½€							
 ${UTF NAME öäå §½€}	value							
 								
 
-*Test Case*	*Action*	*Argument*	*Argument*	*Argument*	*Argument*	*Argument*	*Argument*	
+*Test Cases*	*Action*	*Argument*	*Argument*	*Argument*	*Argument*	*Argument*	*Argument*	
 UTF-8	[Documentation]	äöå §½€						
 	[Setup]	Log	äöå					
 	[Tags]	tag-€						
@@ -29,7 +29,7 @@ UTF-8 Name Äöå §½€"	[Documentation]	Quote is actually plain ASCII but the
 	Log	${UTF NAME öäå §½€}						
 	Fail	Virheessäkin on ääkkösiä: Äöå §½€"
 
-*Keyword*	*Action*	*Argument*	*Argument*	*Argument*	*Argument*	*Argument*	*Argument*	
+*Keywords*	*Action*	*Argument*	*Argument*	*Argument*	*Argument*	*Argument*	*Argument*	
 Logging Keyword	[Arguments]	${value}						
 	Log	${value}						
 	Log	${UNICODE}						

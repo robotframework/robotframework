@@ -1,7 +1,7 @@
-*** Setting ***
+*** Settings ***
 Variables         escaping_variables.py
 
-*** Variable ***
+*** Variables ***
 ${MY SPACE}       \ \
 ${TWO SPACES}     ${MY SPACE}${MY SPACE}
 ${FOUR SPACES}    \ \ \ \ \
@@ -18,7 +18,7 @@ ${NOT VAR 2}      ${NOT VAR}
 @{LIST}           \ \    c:\\temp\\    \n    \${xxx}
 ${NON STRING}     ${None}
 
-*** Test Case ***
+*** Test Cases ***
 Spaces In Variable Table
     Should Be Equal    ${MY SPACE}    ${SP}
     Should Be Equal    ${MY SPACE}${MY SPACE}    ${SP}${SP}
@@ -174,7 +174,7 @@ Pipe
 | | Should Be Equal | \| | ${PIPE} |
 | | Should Be Equal | \||| | ${PIPE * 3} |
 
-*** Keyword ***
+*** Keywords ***
 User keyword
     [Arguments]    ${a1}    ${a2}
     Should Contain    ${a1}    ${a2}

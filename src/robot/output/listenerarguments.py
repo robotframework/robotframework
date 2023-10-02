@@ -56,7 +56,9 @@ class ListenerArguments:
 class MessageArguments(ListenerArguments):
 
     def _get_version2_arguments(self, msg):
-        attributes = {'timestamp': msg.timestamp,
+        # Timestamp in our legacy format.
+        timestamp = msg.timestamp.isoformat(' ', timespec='milliseconds').replace('-', '')
+        attributes = {'timestamp': timestamp,
                       'message': msg.message,
                       'level': msg.level,
                       'html': 'yes' if msg.html else 'no'}
@@ -130,15 +132,14 @@ class EndTestArguments(StartTestArguments):
 
 
 class StartKeywordArguments(_ListenerArgumentsFromItem):
-    _attribute_names = ('doc', 'assign', 'tags', 'lineno', 'type', 'status', 'starttime')
+    _attribute_names = ('doc', 'tags', 'lineno', 'type', 'status', 'starttime')
     _type_attributes = {
         BodyItem.FOR: ('variables', 'flavor', 'values'),
         BodyItem.IF: ('condition',),
         BodyItem.ELSE_IF: ('condition',),
         BodyItem.EXCEPT: ('patterns', 'pattern_type', 'variable'),
-        BodyItem.WHILE: ('condition', 'limit', 'on_limit_message'),
+        BodyItem.WHILE: ('condition', 'limit', 'on_limit_message'),    # FIXME: Add 'on_limit'
         BodyItem.RETURN: ('values',),
-        BodyItem.ITERATION: ('variables',)
     }
     _for_flavor_attributes = {
         'IN ENUMERATE': ('start',),
@@ -146,14 +147,23 @@ class StartKeywordArguments(_ListenerArgumentsFromItem):
     }
 
     def _get_extra_attributes(self, kw):
+        # FOR and TRY model objects use `assign` starting from RF 7.0, but for
+        # backwards compatibility reasons we pass them as `variable(s)`.
+        assign = kw.assign if kw.type in ('KEYWORD', 'SETUP', 'TEARDOWN') else ()
         attrs = {'kwname': kw.kwname or '',
                  'libname': kw.libname or '',
                  'args': [a if is_string(a) else safe_str(a) for a in kw.args],
+                 'assign': list(assign),
                  'source': str(kw.source or '')}
         if kw.type in self._type_attributes:
             for name in self._type_attributes[kw.type]:
-                if hasattr(kw, name):
-                    attrs[name] = self._get_attribute_value(kw, name)
+                # FOR and TRY model objects use `assign` instead of `variable(s)`
+                # starting from RF 7.0, but we want to use old names with listeners.
+                model_name = name if name not in ('variables', 'variable') else 'assign'
+                if hasattr(kw, model_name):
+                    attrs[name] = self._get_attribute_value(kw, model_name)
+        elif kw.type == BodyItem.ITERATION and kw.parent.type == BodyItem.FOR:
+            attrs['variables'] = dict(kw.assign)
         if kw.type == BodyItem.FOR:
             for name in self._for_flavor_attributes.get(kw.flavor, ()):
                 attrs[name] = self._get_attribute_value(kw, name)

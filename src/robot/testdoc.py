@@ -233,7 +233,7 @@ class JsonConverter:
                 yield self._convert_keyword(kw, 'KEYWORD')
 
     def _convert_for(self, data):
-        name = '%s %s %s' % (', '.join(data.variables), data.flavor,
+        name = '%s %s %s' % (', '.join(data.assign), data.flavor,
                              seq2str2(data.values))
         return {'type': 'FOR', 'name': self._escape(name), 'arguments': ''}
 
@@ -250,7 +250,7 @@ class JsonConverter:
         for branch in data.body:
             if branch.type == branch.EXCEPT:
                 patterns = ', '.join(branch.patterns)
-                as_var = f'AS {branch.variable}' if branch.variable else ''
+                as_var = f'AS {branch.assign}' if branch.assign else ''
                 name = f'{patterns} {as_var}'.strip()
             else:
                 name = ''

@@ -1,7 +1,7 @@
 *** Settings ***
 Resource          resource_for_variable_table_in_resource_file.robot
 
-*** Test Case ***
+*** Test Cases ***
 Scalar String
     Should Be Equal    ${STRING}    Hello world!
     Should Be Equal    I said: "${STRING}"    I said: "Hello world!"

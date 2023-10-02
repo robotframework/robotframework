@@ -3,7 +3,7 @@ ${VARIABLE TABLE IN VARIABLES 2 (1)}         Initial value
 ${VARIABLE TABLE IN VARIABLES 2 (2)}         Initial value
 ${VARIABLE TABLE IN VARIABLES 2 (3)}         Initial value
 
-*** Test Case ***
+*** Test Cases ***
 Test Variables Set In One Suite Are Not Available In Another
     [Documentation]    Also checks that variables created in the variable table of the other suite are not available here.
     Variable Should Not Exist    $new_var

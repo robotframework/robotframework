@@ -92,9 +92,9 @@ formatter=str
 formatter=repr pretty prints
     ${long string} =    Evaluate    ' '.join(['Robot Framework'] * 1000)
     Log    ${long string}    formatter=repr
-    ${small dict} =    Evaluate    {'small': 'dict', 3: b'items', 'a': 'sorted'}
+    ${small dict} =    Evaluate    {'small': 'dict', 3: b'items', 'NOT': 'sorted'}
     Log    ${small dict}    formatter=repr    console=TRUE
-    ${big dict} =    Evaluate    {'big': 'dict', 'long': '${long string}', 'nested': ${small dict}, 'list': [1, 2, 3]}
+    ${big dict} =    Evaluate    {'big': 'dict', 'long': '${long string}', 'nested': ${small dict}, 'list': [1, 2, 3], 'sorted': False}
     Log    ${big dict}    html=NO    formatter=repr
     ${small list} =    Evaluate    ['small', b'list', 'not sorted', 4]
     Log    ${small list}    console=gyl    formatter=repr

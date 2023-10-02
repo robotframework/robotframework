@@ -18,7 +18,7 @@ import sys
 import re
 
 from robot.errors import DataError
-from robot.running import (ArgInfo, ResourceFileBuilder, TestLibrary, TestSuiteBuilder,
+from robot.running import (ResourceFileBuilder, TestLibrary, TestSuiteBuilder,
                            TypeInfo, UserLibrary, UserErrorHandler)
 from robot.utils import is_string, split_tags_from_doc, unescape
 from robot.variables import search_variable
@@ -71,7 +71,7 @@ class LibraryDocBuilder:
             for arg in kw.args:
                 kw.type_docs[arg.name] = {}
                 for type_info in self._yield_type_info(arg.type):
-                    type_doc = TypeDoc.for_type(type_info.type, custom_converters)
+                    type_doc = TypeDoc.for_type(type_info, custom_converters)
                     if type_doc:
                         kw.type_docs[arg.name][type_info.name] = type_doc.name
                         type_docs.setdefault(type_doc, set()).add(kw.name)
