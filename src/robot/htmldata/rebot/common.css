@@ -36,8 +36,10 @@
 body {
     font-family: Helvetica, sans-serif;
     font-size: 0.8em;
+    color: black; /* Fallback value */
     color: var(--text-color);
     padding: 6px;
+    background: white; /* Fallback value */
     background: var(--background-color);
     margin-left: 15px;
 }
@@ -54,25 +56,36 @@ br {
     mso-data-placement: same-cell; /* maintain line breaks in Excel */
 }
 hr {
+    background: #ccc; /* Fallback value */
     background: var(--secondary-color);
     height: 1px;
     border: 0;
 }
 a, a:link, a:visited {
     text-decoration: none;
+    color: #15c; /* Fallback value */
     color: var(--link-color);
 }
 a > img {
-    border: 1px solid var(--link-color) !important;
+    border-width: 1px !important;
+    border-style: solid !important;
+    border-color: #15c !important; /* Fallback value */
+    border-color: var(--link-color) !important;
 }
 a:hover, a:active {
     text-decoration: underline;
+    color: #61c; /* Fallback value */
     color: var(--link-hover-color);
 }
 select {
+    background-color: white; /* Fallback value */
     background-color: var(--background-color);
+    color: black; /* Fallback value */
     color: var(--text-color);
-    border: 2px solid var(--secondary-color);
+    border-width: 2px;
+    border-style: solid;
+    border-color: #ccc; /* Fallback value */
+    border-color: var(--secondary-color);
     border-radius: 4px;
 }
 .parent-name {
@@ -114,13 +127,16 @@ h2 {
 }
 /* Status text colors -- !important allows using them in links */
 .fail {
+    color: #ce3e01 !important; /* Fallback value */
     color: var(--fail-link-color) !important;
     font-weight: bold;
 }
 .pass {
+    color: #098a09 !important; /* Fallback value */
     color: var(--pass-link-color) !important;
 }
 .skip {
+    color: #927201 !important; /* Fallback value */
     color: var(--warn-link-color) !important;
     font-weight: bold;
 }
@@ -129,7 +145,9 @@ h2 {
     font-size: 0.75em;
     letter-spacing: 1px;
     white-space: nowrap;
+    color: black; /* Fallback value */
     color: var(--text-color);
+    background-color: #ddd; /* Fallback value */
     background-color: var(--primary-color);
     border-radius: 3px;
 }
@@ -140,14 +158,17 @@ h2 {
     font-weight: bold;
 }
 .label.pass {
+    background-color: #97bd61; /* Fallback value */
     background-color: var(--pass-color);
     color: #000 !important;
 }
 .label.fail, .label.error {
+    background-color: #ce3e01; /* Fallback value */
     background-color: var(--fail-color);
     color: #fff !important;
 }
 .label.skip, .label.warn {
+    background-color: #fed84f; /* Fallback value */
     background-color: var(--warn-color);
     color: #000 !important;
 }
@@ -177,6 +198,7 @@ h2 {
     padding: 0.3em 0;
     font-size: 0.9em;
     border-bottom-left-radius: 4px;
+    background: #ddd; /* Fallback value */
     background: var(--primary-color);
 }
 /* Statistics table */
@@ -187,14 +209,19 @@ h2 {
     margin-bottom: 1em;
 }
 .statistics tr:hover {
+    background: #f4f4f4; /* Fallback value */
     background: var(--highlight-color);
     cursor: pointer;
 }
 .statistics th, .statistics td {
-    border: 1px solid var(--secondary-color);
+    border-width: 1px;
+    border-style: solid;
+    border-color: #ccc; /* Fallback value */
+    border-color: var(--secondary-color);
     padding: 0.1em 0.3em;
 }
 .statistics th {
+    background-color: #ddd; /* Fallback value */
     background-color: var(--primary-color);
     padding: 0.2em 0.3em;
 }
@@ -231,13 +258,17 @@ th.stats-col-graph:hover {
 }
 /* Statistics graph */
 .graph, .empty-graph {
-    border: 1px solid var(--secondary-color);
+    border-width: 1px;
+    border-style: solid;
+    border-color: #ccc; /* Fallback value */
+    border-color: var(--secondary-color);
     width: auto;
     height: 7px;
     padding: 0;
     background: #aaa;
 }
 .empty-graph {
+    background: #f4f4f4; /* Fallback value */
     background: var(--highlight-color);
 }
 .pass-bar, .fail-bar, .skip-bar {
@@ -245,12 +276,15 @@ th.stats-col-graph:hover {
     height: 100%;
 }
 .fail-bar {
+    background: #ce3e01; /* Fallback value */
     background: var(--fail-color);
 }
 .pass-bar {
+    background: #97bd61; /* Fallback value */
     background: var(--pass-color);
 }
 .skip-bar {
+    background: #fed84f; /* Fallback value */
     background: var(--warn-color);
 }
 /* Tablesorter - adapted from provided Blue Skin */
@@ -261,14 +295,19 @@ th.stats-col-graph:hover {
     cursor: pointer;
 }
 .tablesorter-header:hover {
+    background-color: #ccc; /* Fallback value */
     background-color: var(--secondary-color);
 }
 .tablesorter-headerAsc {
+    background-image: url(data:image/gif;base64,R0lGODlhCwAJAKEAAAAAAH9/fwAAAAAAACH5BAEAAAIALAAAAAALAAkAAAIUlBWnFr3cnIr0WQOyBmvzp13CpxQAOw==); /* Fallback value */
     background-image: var(--ascending-icon);
+    background-color: #ccc !important; /* Fallback value */
     background-color: var(--secondary-color) !important;
 }
 .tablesorter-headerDesc {
+    background-image: url(data:image/gif;base64,R0lGODlhCwAJAKEAAAAAAH9/fwAAAAAAACH5BAEAAAIALAAAAAALAAkAAAIUlAWnBr3cnIr0WROyDmvzp13CpxQAOw==); /* Fallback value */
     background-image: var(--descending-icon);
+    background-color: #ccc !important; /* Fallback value */
     background-color: var(--secondary-color) !important;
 }
 .sorter-false {
@@ -276,5 +315,6 @@ th.stats-col-graph:hover {
     cursor: default;
 }
 .sorter-false:hover {
+    background-color: #ddd; /* Fallback value */
     background-color: var(--primary-color);
 }
