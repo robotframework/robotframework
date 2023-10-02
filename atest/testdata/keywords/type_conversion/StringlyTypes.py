@@ -33,3 +33,7 @@ def aliases(a: 'sequence[integer]', b: 'MAPPING[STRING, DOUBLE|None]'):
 
 def invalid(argument: 'bad[info'):
     assert False
+
+
+def bad_params(argument: 'list[int, str]'):
+    assert False

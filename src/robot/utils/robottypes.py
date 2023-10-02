@@ -134,7 +134,7 @@ def has_args(type):
     when we support only Python 3.9 and newer.
     """
     args = getattr(type, '__args__', None)
-    return args and not all(isinstance(a, TypeVar) for a in args)
+    return bool(args and not all(isinstance(a, TypeVar) for a in args))
 
 
 def is_truthy(item):

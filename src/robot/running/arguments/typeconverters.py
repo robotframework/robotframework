@@ -141,16 +141,6 @@ class TypeConverter:
             raise ValueError(f'Value is {type_name(value)}, not {expected.__name__}.')
         return value
 
-    def _get_nested_types(self, type_info: 'TypeInfo',
-                          expected_count: 'int|None' = None):
-        nested = type_info.nested
-        # FIXME: Handle nested type validation in TypeInfo.
-        if nested and expected_count and len(nested) != expected_count:
-            raise TypeError(f'{type_info.name}[] construct used as a type hint '
-                            f'requires exactly {expected_count} nested '
-                            f'type{s(expected_count)}, got {len(nested)}.')
-        return nested
-
     def _remove_number_separators(self, value):
         if is_string(value):
             for sep in ' ', '_':
@@ -426,7 +416,7 @@ class ListConverter(TypeConverter):
                  custom_converters: 'CustomArgumentConverters|None' = None,
                  languages: LanguagesLike = None):
         super().__init__(type_info, custom_converters, languages)
-        nested = self._get_nested_types(type_info, expected_count=1)
+        nested = type_info.nested
         if not nested:
             self.converter = None
         else:
@@ -465,7 +455,7 @@ class TupleConverter(TypeConverter):
         super().__init__(type_info, custom_converters, languages)
         self.converters = ()
         self.homogenous = False
-        nested = self._get_nested_types(type_info)
+        nested = type_info.nested
         if not nested:
             return
         if nested[-1].type is Ellipsis:
@@ -574,7 +564,7 @@ class DictionaryConverter(TypeConverter):
                  custom_converters: 'CustomArgumentConverters|None' = None,
                  languages: LanguagesLike = None):
         super().__init__(type_info, custom_converters, languages)
-        nested = self._get_nested_types(type_info, expected_count=2)
+        nested = type_info.nested
         if not nested:
             self.converters = ()
         else:
@@ -625,7 +615,7 @@ class SetConverter(TypeConverter):
                  custom_converters: 'CustomArgumentConverters|None' = None,
                  languages: LanguagesLike = None):
         super().__init__(type_info, custom_converters, languages)
-        nested = self._get_nested_types(type_info, expected_count=1)
+        nested = type_info.nested
         if not nested:
             self.converter = None
         else:

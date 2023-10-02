@@ -150,17 +150,17 @@ Incompatible nested generics
     ...    error=Item '0' got value '(1, 'x')' (tuple) that cannot be converted to tuple[int, int]: Item '1' got value 'x' that cannot be converted to integer.
 
 Invalid list
-    [Documentation]                  FAIL    TypeError: list[] construct used as a type hint requires exactly 1 nested type, got 2.
-    Invalid List                     whatever
+    [Documentation]    FAIL    No keyword with name 'Invalid List' found.
+    Invalid List    whatever
 
 Invalid tuple
-    [Documentation]                  FAIL    TypeError: Homogenous tuple used as a type hint requires exactly one nested type, got 2.
-    Invalid Tuple                    whatever
+    [Documentation]    FAIL    No keyword with name 'Invalid Tuple' found.
+    Invalid Tuple    whatever
 
 Invalid dict
-    [Documentation]                  FAIL    TypeError: dict[] construct used as a type hint requires exactly 2 nested types, got 1.
-    Invalid Dict                     whatever
+    [Documentation]    FAIL    No keyword with name 'Invalid Dict' found.
+    Invalid Dict    whatever
 
 Invalid set
-    [Documentation]                  FAIL    TypeError: set[] construct used as a type hint requires exactly 1 nested type, got 2.
-    Invalid set                      whatever
+    [Documentation]    FAIL    No keyword with name 'Invalid Set' found.
+    Invalid Set    whatever

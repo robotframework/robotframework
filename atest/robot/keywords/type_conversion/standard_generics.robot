@@ -69,12 +69,24 @@ Incompatible nested generics
 
 Invalid list
     Check Test Case    ${TESTNAME}
+    Check Log Message    ${ERRORS[1]}
+    ...    Error in library 'StandardGenerics': Adding keyword 'invalid_list' failed: 'list[]' requires exactly 1 argument, 'list[int, float]' has 2.
+    ...    ERROR
 
 Invalid tuple
     Check Test Case    ${TESTNAME}
+    Check Log Message    ${ERRORS[3]}
+    ...    Error in library 'StandardGenerics': Adding keyword 'invalid_tuple' failed: Homogenous tuple requires exactly 1 argument, 'tuple[int, float, ...]' has 2.
+    ...    ERROR
 
 Invalid dict
     Check Test Case    ${TESTNAME}
+    Check Log Message    ${ERRORS[0]}
+    ...    Error in library 'StandardGenerics': Adding keyword 'invalid_dict' failed: 'dict[]' requires exactly 2 arguments, 'dict[int]' has 1.
+    ...    ERROR
 
 Invalid set
     Check Test Case    ${TESTNAME}
+    Check Log Message    ${ERRORS[2]}
+    ...    Error in library 'StandardGenerics': Adding keyword 'invalid_set' failed: 'set[]' requires exactly 1 argument, 'set[int, float]' has 2.
+    ...    ERROR

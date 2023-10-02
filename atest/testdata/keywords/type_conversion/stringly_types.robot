@@ -64,3 +64,7 @@ Aliases
 Invalid
     [Documentation]    FAIL    No keyword with name 'Invalid' found.
     Invalid    whatever
+
+Bad parameters
+    [Documentation]    FAIL    No keyword with name 'Bad Params' found.
+    Bad Params    whatever

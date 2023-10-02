@@ -14,7 +14,7 @@
 #  limitations under the License.
 
 from enum import auto, Enum
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence, Set
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 from dataclasses import dataclass
@@ -23,7 +23,8 @@ from typing import Any, Union
 
 from robot.conf import LanguagesLike
 from robot.errors import DataError
-from robot.utils import has_args, is_union, NOT_SET, type_repr
+from robot.utils import (has_args, is_union, NOT_SET, plural_or_not as s,
+                         setter, SetterAwareType, type_repr)
 
 from .customconverters import CustomArgumentConverters
 from .typeconverters import TypeConverter
@@ -31,6 +32,7 @@ from .typeconverters import TypeConverter
 
 TYPE_NAMES = {
     '...': Ellipsis,
+    'ellipsis': Ellipsis,
     'any': Any,
     'str': str,
     'string': str,
@@ -63,12 +65,12 @@ TYPE_NAMES = {
 }
 
 
-class TypeInfo:
+class TypeInfo(metaclass=SetterAwareType):
     """Represents argument type.
 
     With unions and parametrized types, :attr:`nested` contains nested types.
     """
-    __slots__ = ('name', 'type', 'nested')
+    __slots__ = ('name', 'type')
 
     def __init__(self, name: 'str|None' = None,
                  type: 'type|None' = None,
@@ -77,9 +79,43 @@ class TypeInfo:
             type = TYPE_NAMES.get(name.lower())
         self.name = name
         self.type = type
-        self.nested = tuple(nested)
-        if self.is_union and not nested:
-            raise DataError('Union used as a type hint cannot be empty.')
+        self.nested = nested
+
+    @setter
+    def nested(self, nested: 'Sequence[TypeInfo]') -> 'tuple[TypeInfo, ...]':
+        if self.is_union:
+            if not nested:
+                raise DataError('Union used as a type hint cannot be empty.')
+            return tuple(nested)
+        typ = self.type
+        if typ is None or not nested:
+            return tuple(nested)
+        if not isinstance(typ, type):
+            self._report_nested_error(nested, 0)
+        elif issubclass(typ, tuple):
+            if nested[-1].type is Ellipsis and len(nested) != 2:
+                self._report_nested_error(nested, 1, 'Homogenous tuple', -1)
+        elif issubclass(typ, Sequence) and not issubclass(typ, (str, bytes, bytearray)):
+            if len(nested) != 1:
+                self._report_nested_error(nested, 1)
+        elif issubclass(typ, Set):
+            if len(nested) != 1:
+                self._report_nested_error(nested, 1)
+        elif issubclass(typ, Mapping):
+            if len(nested) != 2:
+                self._report_nested_error(nested, 2)
+        elif typ in TYPE_NAMES.values():
+            self._report_nested_error(nested, 0)
+        return tuple(nested)
+
+    def _report_nested_error(self, nested, expected, kind=None, offset=0):
+        args = ', '.join(str(n) for n in nested)
+        kind = kind or f"'{self.name}{'[]' if expected > 0 else ''}'"
+        if expected == 0:
+            raise DataError(f"{kind} does not accept arguments, "
+                            f"'{self.name}[{args}]' has {len(nested) + offset}.")
+        raise DataError(f"{kind} requires exactly {expected} argument{s(expected)}, "
+                        f"'{self.name}[{args}]' has {len(nested) + offset}.")
 
     @property
     def is_union(self):
@@ -156,8 +192,7 @@ class TypeInfo:
             custom_converters = CustomArgumentConverters.from_dict(custom_converters)
         converter = TypeConverter.converter_for(self, custom_converters, languages)
         if not converter:
-            # FIXME: Change to TypeError
-            raise RuntimeError(f"No converter found for '{self}'.")
+            raise TypeError(f"No converter found for '{self}'.")
         return converter.convert(value, name, kind)
 
     def __str__(self):

@@ -29,6 +29,12 @@ Aliases
 
 Invalid
     Check Test Case    ${TESTNAME}
-    Check Log Message    ${ERRORS[0]}
+    Check Log Message    ${ERRORS[1]}
     ...    Error in library 'StringlyTypes': Adding keyword 'invalid' failed: Parsing type 'bad[info' failed: Error at end: Closing ']' missing.
+    ...    ERROR
+
+Bad parameters
+    Check Test Case    ${TESTNAME}
+    Check Log Message    ${ERRORS[0]}
+    ...    Error in library 'StringlyTypes': Adding keyword 'bad_params' failed: 'list[]' requires exactly 1 argument, 'list[int, str]' has 2.
     ...    ERROR

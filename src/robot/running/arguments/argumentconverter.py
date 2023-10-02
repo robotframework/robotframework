@@ -76,7 +76,7 @@ class ArgumentConverter:
                 return info.convert(value, name, self.custom_converters, self.languages)
             except ValueError as err:
                 conversion_error = err
-            except RuntimeError:
+            except TypeError:
                 pass
         # Try conversion also based on the default value type. We probably should
         # do this only if there is no explicit type hint, but Python < 3.11
@@ -94,7 +94,7 @@ class ArgumentConverter:
                 info = TypeInfo.from_type(typ)
             try:
                 return info.convert(value, name, languages=self.languages)
-            except (ValueError, RuntimeError):
+            except (ValueError, TypeError):
                 pass
         if conversion_error:
             raise conversion_error
