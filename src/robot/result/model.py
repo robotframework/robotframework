@@ -453,11 +453,6 @@ class IfBranch(model.IfBranch, StatusMixin, DeprecatedAttributesMixin):
         self.elapsed_time = elapsed_time
         self.doc = doc
 
-    @property
-    @deprecated
-    def name(self) -> str:
-        return self.condition or ''
-
 
 @Body.register
 class If(model.If, StatusMixin, DeprecatedAttributesMixin):
