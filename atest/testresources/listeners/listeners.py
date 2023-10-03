@@ -82,12 +82,11 @@ class KeywordType:
                 return 'IF'
             if "'ELSE IF' == 'ELSE IF'" in kwname:
                 return 'ELSE IF'
-            if kwname == 'ELSE':
-                return 'ELSE'
             if kwname == '':
                 source = os.path.basename(source)
                 if source == 'for_loops.robot':
                     return 'BREAK' if lineno == 14 else 'CONTINUE'
+                return 'ELSE'
         expected = args[0] if libname == 'BuiltIn' else kwname
         return {'Suite Setup': 'SETUP', 'Suite Teardown': 'TEARDOWN',
                 'Test Setup': 'SETUP', 'Test Teardown': 'TEARDOWN',

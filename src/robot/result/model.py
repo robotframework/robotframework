@@ -322,7 +322,8 @@ class ForIteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
     def visit(self, visitor: SuiteVisitor):
         visitor.visit_for_iteration(self)
 
-    def __str__(self):
+    @property
+    def _name(self):
         return ', '.join('%s = %s' % item for item in self.assign.items())
 
 
@@ -355,7 +356,8 @@ class For(model.For, StatusMixin, DeprecatedAttributesMixin):
     def body(self, iterations: 'Sequence[ForIteration|DataDict]') -> iterations_class:
         return self.iterations_class(self.iteration_class, self, iterations)
 
-    def __str__(self):
+    @property
+    def _name(self):
         assign = ' | '.join(self.assign)
         values = ' | '.join(self.values)
         for name, value in [('start', self.start),
@@ -421,7 +423,8 @@ class While(model.While, StatusMixin, DeprecatedAttributesMixin):
     def body(self, iterations: 'Sequence[WhileIteration|DataDict]') -> iterations_class:
         return self.iterations_class(self.iteration_class, self, iterations)
 
-    def __str__(self):
+    @property
+    def _name(self):
         parts = []
         if self.condition:
             parts.append(self.condition)
@@ -452,6 +455,10 @@ class IfBranch(model.IfBranch, StatusMixin, DeprecatedAttributesMixin):
         self.end_time = end_time
         self.elapsed_time = elapsed_time
         self.doc = doc
+
+    @property
+    def _name(self):
+        return self.condition or ''
 
 
 @Body.register
@@ -495,7 +502,8 @@ class TryBranch(model.TryBranch, StatusMixin, DeprecatedAttributesMixin):
         self.elapsed_time = elapsed_time
         self.doc = doc
 
-    def __str__(self):
+    @property
+    def _name(self):
         patterns = list(self.patterns)
         if self.pattern_type:
             patterns.append(f'type={self.pattern_type}')
@@ -560,9 +568,6 @@ class Return(model.Return, StatusMixin, DeprecatedAttributesMixin):
     def doc(self) -> str:
         return ''
 
-    def __str__(self):
-        return ''
-
 
 @Body.register
 class Continue(model.Continue, StatusMixin, DeprecatedAttributesMixin):
@@ -594,9 +599,6 @@ class Continue(model.Continue, StatusMixin, DeprecatedAttributesMixin):
     @property
     # FIXME @deprecated
     def doc(self) -> str:
-        return ''
-
-    def __str__(self):
         return ''
 
 
@@ -632,9 +634,6 @@ class Break(model.Break, StatusMixin, DeprecatedAttributesMixin):
     def doc(self) -> str:
         return ''
 
-    def __str__(self):
-        return ''
-
 
 @Body.register
 class Error(model.Error, StatusMixin, DeprecatedAttributesMixin):
@@ -666,6 +665,10 @@ class Error(model.Error, StatusMixin, DeprecatedAttributesMixin):
     # FIXME @deprecated
     def doc(self) -> 'str':
         return ''
+
+    @property
+    def _name(self):
+        return self.values[0]
 
 
 @Body.register

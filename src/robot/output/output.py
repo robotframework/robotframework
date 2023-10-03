@@ -69,13 +69,13 @@ class Output(AbstractLogger):
 
     def start_keyword(self, kw):
         LOGGER.start_keyword(kw)
-        if kw.type in kw.keyword_types and kw.tags.robot('flatten'):
+        if kw.type in kw.KEYWORD_TYPES and kw.tags.robot('flatten'):
             self._flatten_level += 1
             if self._flatten_level == 1:
                 LOGGER._xml_logger = LoggerProxy(self.flat_xml_logger)
 
     def end_keyword(self, kw):
-        if kw.type in kw.keyword_types and kw.tags.robot('flatten'):
+        if kw.type in kw.KEYWORD_TYPES and kw.tags.robot('flatten'):
             self._flatten_level -= 1
             if not self._flatten_level:
                 LOGGER._xml_logger = LoggerProxy(self._xmllogger)

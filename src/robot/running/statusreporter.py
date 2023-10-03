@@ -43,7 +43,7 @@ class StatusReporter:
         if not result.start_time:
             result.start_time = datetime.now()
         context.start_keyword(ModelCombiner(self.data, result))
-        if result.type in result.keyword_types:
+        if result.type in result.KEYWORD_TYPES:
             self._warn_if_deprecated(result.doc, result.name)
         return self
 

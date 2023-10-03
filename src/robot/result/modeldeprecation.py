@@ -27,16 +27,17 @@ def deprecated(method):
 
 class DeprecatedAttributesMixin:
     __slots__ = []
+    _name = ''
 
     @property
     @deprecated
     def name(self):
-        return ''
+        return self._name
 
     @property
     @deprecated
     def kwname(self):
-        return self.name
+        return self._name
 
     @property
     @deprecated

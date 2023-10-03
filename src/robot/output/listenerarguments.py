@@ -149,14 +149,14 @@ class StartKeywordArguments(_ListenerArgumentsFromItem):
     def _get_extra_attributes(self, kw):
         # FOR and TRY model objects use `assign` starting from RF 7.0, but for
         # backwards compatibility reasons we pass them as `variable(s)`.
-        if kw.type in kw.keyword_types:
+        if kw.type in kw.KEYWORD_TYPES:
             assign = list(kw.assign)
             kwname = kw.kwname or ''
             libname = kw.libname or ''
             args = [a if is_string(a) else safe_str(a) for a in kw.args]
         else:
             assign = []
-            kwname = str(kw.result)
+            kwname = kw._name
             libname = ''
             args = []
         attrs = {'kwname': kwname,

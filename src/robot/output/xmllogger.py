@@ -12,7 +12,7 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-import warnings
+
 from datetime import datetime
 
 from robot.utils import NullMarkupWriter, safe_str, XmlWriter
@@ -266,12 +266,10 @@ class XmlLogger(ResultVisitor):
             self._writer.element(tag, item)
 
     def _write_status(self, item):
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
-            attrs = {'status': item.status,
-                     'start': item.start_time.isoformat() if item.start_time else None,
-                     'elapsed': str(item.elapsed_time.total_seconds())}
-            self._writer.element('status', item.message, attrs)
+        attrs = {'status': item.status,
+                 'start': item.start_time.isoformat() if item.start_time else None,
+                 'elapsed': str(item.elapsed_time.total_seconds())}
+        self._writer.element('status', item.message, attrs)
 
 
 class FlatXmlLogger(XmlLogger):

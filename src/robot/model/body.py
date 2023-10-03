@@ -70,6 +70,7 @@ class BodyItem(ModelObject):
     BREAK = 'BREAK'
     ERROR = 'ERROR'
     MESSAGE = 'MESSAGE'
+    KEYWORD_TYPES = (KEYWORD, SETUP, TEARDOWN)
     type = None
     __slots__ = ['parent']
 
@@ -106,10 +107,6 @@ class BodyItem(ModelObject):
         index = steps.index(self) if self in steps else len(steps)
         parent_id = getattr(parent, 'id', None)
         return f'{parent_id}-k{index + 1}' if parent_id else f'k{index + 1}'
-
-    @property
-    def keyword_types(self):
-        return self.KEYWORD, self.SETUP, self.TEARDOWN
 
     def to_dict(self) -> DataDict:
         raise NotImplementedError

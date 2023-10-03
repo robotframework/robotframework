@@ -21,7 +21,7 @@ Failed Steps Are Not Removed
     ${tc}=    Check Test Case    Failure inside FOR 2
     Length Should Be    ${tc.kws[0].kws}                      1
     Should Be Equal     ${tc.kws[0].doc}                      ${3 REMOVED}
-    Should Be Equal     ${tc.kws[0].kws[0].__str__()}         \${num} = 4
+    Should Be Equal     ${tc.kws[0].kws[0]._name}             \${num} = 4
     Should Be Equal     ${tc.kws[0].kws[0].type}              ITERATION
     Should Be Equal     ${tc.kws[0].kws[0].status}            FAIL
     Length Should Be    ${tc.kws[0].kws[0].kws}               3
