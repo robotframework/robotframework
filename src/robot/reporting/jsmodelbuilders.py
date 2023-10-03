@@ -12,7 +12,6 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-from typing import Sequence
 
 from robot.output import LEVELS
 from robot.result import (Break, Continue, Error, For, ForIteration, IfBranch,
@@ -71,7 +70,7 @@ class _Builder:
             msg = self._string(msg)
         return model + (msg,)
 
-    def _build_keywords(self, steps, split=False):
+    def _build_body(self, steps, split=False):
         splitting = self._context.start_splitting_if_needed(split)
         # tuple([<listcomp>]) is faster than tuple(<genex>) with short lists.
         model = tuple([self._build_keyword(step) for step in steps])
@@ -121,16 +120,16 @@ class TestBuilder(_Builder):
         self._build_keyword = KeywordBuilder(context).build
 
     def build(self, test):
-        kws = self._get_keywords(test)
+        items = self._get_body_items(test)
         with self._context.prune_input(test.body):
             return (self._string(test.name, attr=True),
                     self._string(test.timeout),
                     self._html(test.doc),
                     tuple(self._string(t) for t in test.tags),
                     self._get_status(test),
-                    self._build_keywords(kws, split=True))
+                    self._build_body(items, split=True))
 
-    def _get_keywords(self, test):
+    def _get_body_items(self, test):
         kws = []
         if test.setup:
             kws.append(test.setup)
@@ -150,77 +149,35 @@ class KeywordBuilder(_Builder):
     def build(self, item, split=False):
         if item.type == item.MESSAGE:
             return self._build_message(item)
-        return self.build_keyword(item, split)
+        return self.build_body_item(item, split)
 
-    def build_keyword(self, kw, split=False):
-        self._context.check_expansion(kw)
-        with self._context.prune_input(kw.body):
-            if isinstance (kw, Keyword):
-                return self.build_kw(kw, split)
-            elif isinstance(kw, For):
-                return self.build_for(kw, split)
-            elif isinstance(kw, ForIteration):
-                return self.build_for_iteration(kw, split)
-            elif isinstance(kw, IfBranch):
-                return self.build_if_branch(kw, split)
-            elif isinstance(kw, Return):
-                return self.build_return(kw, split)
-            elif isinstance(kw, TryBranch):
-                return self.build_try_branch(kw, split)
-            elif isinstance(kw, While):
-                return self.build_while(kw, split)
-            elif isinstance(kw, WhileIteration):
-                return self._build(kw, split=split)
-            elif isinstance(kw, Continue):
-                return self._build(kw, split=split)
-            elif isinstance(kw, Break):
-                return self._build(kw, split=split)
-            elif isinstance(kw, Error):
-                return self.build_error(kw, split=split)
+    def build_body_item(self, item, split=False):
+        self._context.check_expansion(item)
+        with self._context.prune_input(item.body):
+            if isinstance (item, Keyword):
+                items = item.body.flatten()
+                if item.has_teardown:
+                    items.append(item.teardown)
+                return self._build(item, item.kwname, item.libname, item.timeout, item.doc, item.args,
+                                   item.assign, item.tags, split=split)
+            if isinstance(item, Return):
+                return self._build(item, args=item.values, split=split)
+            if isinstance(item, Error):
+                return self._build(item, item._name, args=item.values[1:], split=split)
+            return self._build(item, item._name, split=split)
 
-    def build_kw(self, kw: Keyword, split: bool):
-        items = kw.body.flatten()
-        if kw.has_teardown:
-            items.append(kw.teardown)
-        return self._build(kw, kw.kwname, kw.libname, kw.timeout, kw.doc, kw.args, kw.assign, kw.tags, split=split)
-
-    def build_for(self, for_: For, split: bool):
-        return self._build(for_, str(for_), split=split)
-
-    def build_for_iteration(self, iter: ForIteration, split: bool):
-        return self._build(iter, str(iter), split=split)
-
-    def build_if_branch(self, if_: IfBranch, split: bool):
-        return self._build(if_, if_.condition or '', split=split)
-
-    def build_return(self, return_: Return, split: bool):
-        return self._build(return_, args=return_.values, split=split)
-
-    def build_try_branch(self, branch: TryBranch, split: bool):
-        return self._build(branch, str(branch), split=split)
-
-    def build_while(self, while_: While, split: bool):
-        return self._build(while_, str(while_), split=split)
-
-    def build_while_iteration(self, iter: WhileIteration, split: bool):
-        return self._build(iter, split=split)
-
-    def build_error(self, error: Error, split: bool):
-        return self._build(error, error.values[0], args=error.values[1:], split=split)
-
-    def _build(self, kw, kwname: str = '', libname: str = '', timeout: str = '', doc: str = '',
-               args: Sequence[str] = (), assign: Sequence[str] = (), tags: Sequence[str] = (),
-               items: 'Sequence[BodyItem]|None' = None, split: bool = False):
-        return (KEYWORD_TYPES[kw.type],
+    def _build(self, item, kwname='', libname='', timeout='', doc='', args=(), assign=(),
+               tags=(), items=None, split =False):
+        return (KEYWORD_TYPES[item.type],
                 self._string(kwname, attr=True),
                 self._string(libname, attr=True),
                 self._string(timeout),
-                self._html(kw.doc),
+                self._html(item.doc),
                 self._string(', '.join(args)),
                 self._string(', '.join(assign)),
                 self._string(', '.join(tags)),
-                self._get_status(kw),
-                self._build_keywords(items if items is not None else kw.body.flatten(), split))
+                self._get_status(item),
+                self._build_body(items if items is not None else item.body.flatten(), split))
 
 
 class MessageBuilder(_Builder):

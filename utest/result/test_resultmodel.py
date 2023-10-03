@@ -437,16 +437,15 @@ class TestModel(unittest.TestCase):
         kw = branch.body.create_keyword()
         assert_equal(kw.parent, branch)
 
-    def test_while_str(self):
-        assert_equal(str(While()), '')
-        assert_equal(str(While('$x > 0')), '$x > 0')
-        assert_equal(str(While('True', '1 minute')), 'True | limit=1 minute')
-        assert_equal(str(While(limit='1 minute')), 'limit=1 minute')
-        assert_equal(str(While('True', '1 s', on_limit_message='Error message')),
+    def test_while_name(self):
+        assert_equal(While()._name, '')
+        assert_equal(While('$x > 0')._name, '$x > 0')
+        assert_equal(While('True', '1 minute')._name, 'True | limit=1 minute')
+        assert_equal(While(limit='1 minute')._name, 'limit=1 minute')
+        assert_equal(While('True', '1 s', on_limit_message='Error message')._name,
                      'True | limit=1 s | on_limit_message=Error message')
-        assert_equal(str(While(on_limit='pass')),
-                     'on_limit=pass')
-        assert_equal(str(While(on_limit_message='Error message')),
+        assert_equal(While(on_limit='pass')._name, 'on_limit=pass')
+        assert_equal(While(on_limit_message='Error message')._name,
                      'on_limit_message=Error message')
 
 

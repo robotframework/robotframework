@@ -59,14 +59,14 @@ FOR in keyword
     \END      KEYWORD          FOR In Keyword                 26    PASS
 
 FOR in IF
-    START    IF               IF \ \ \ True                  29    NOT SET
+    START    IF               True                          29    NOT SET
     START    FOR              \${x} | \${y} IN [ x | y ]     30    NOT SET
     START    ITERATION        \${x} = x, \${y} = y           30    NOT SET
     START    KEYWORD          No Operation                   31    NOT SET
     \END      KEYWORD          No Operation                   31    PASS
     \END      ITERATION        \${x} = x, \${y} = y           30    PASS
     \END      FOR              \${x} | \${y} IN [ x | y ]     30    PASS
-    \END      IF               IF \ \ \ True                  29    PASS
+    \END      IF               True                          29    PASS
 
 FOR in resource
     START    KEYWORD          FOR In Resource                36    NOT SET
@@ -79,59 +79,59 @@ FOR in resource
     \END      KEYWORD          FOR In Resource                36    PASS
 
 IF
-    START   IF                IF \ \ \ 1 > 2                 39    NOT RUN
+    START   IF                1 > 2                          39    NOT RUN
     START   KEYWORD           Fail                           40    NOT RUN
     \END     KEYWORD           Fail                           40    NOT RUN
-    \END     IF               IF \ \ \ 1 > 2                39    NOT RUN
-    START   ELSE IF           ELSE IF \ \ \ 1 < 2                          41    NOT SET
+    \END     IF               1 > 2                           39    NOT RUN
+    START   ELSE IF           1 < 2                          41    NOT SET
     START   KEYWORD           No Operation                   42    NOT SET
     \END     KEYWORD           No Operation                   42    PASS
-    \END     ELSE IF          ELSE IF \ \ \ 1 < 2                          41    PASS
-    START   ELSE              ELSE                       43    NOT RUN
+    \END     ELSE IF          1 < 2                          41    PASS
+    START   ELSE              \                               43    NOT RUN
     START   KEYWORD           Fail                           44    NOT RUN
     \END     KEYWORD           Fail                           44    NOT RUN
-    \END     ELSE              ELSE                       43    NOT RUN
+    \END     ELSE             \                              43    NOT RUN
 
 IF in keyword
     START    KEYWORD           IF In Keyword                 48    NOT SET
-    START    IF                IF \ \ \ True                         110    NOT SET
+    START    IF                True                         110    NOT SET
     START    KEYWORD           No Operation                 111    NOT SET
     \END      KEYWORD           No Operation                 111    PASS
     START    RETURN            ${EMPTY}                     112    NOT SET
     \END      RETURN            ${EMPTY}                     112    PASS
-    \END      IF                IF \ \ \ True                         110    PASS
+    \END      IF                True                         110    PASS
     \END      KEYWORD           IF In Keyword                 48    PASS
 
 IF in FOR
     START   FOR               \${x} IN [ 1 | 2 ]             52    NOT SET
     START   ITERATION         \${x} = 1                      52    NOT SET
-    START   IF                IF \ \ \ \${x} == 1                     53    NOT SET
+    START   IF                \${x} == 1                     53    NOT SET
     START   KEYWORD           Log                            54    NOT SET
     \END     KEYWORD           Log                            54    PASS
-    \END     IF                IF \ \ \ \${x} == 1                     53    PASS
-    START   ELSE              ELSE                      55    NOT RUN
+    \END     IF               \${x} == 1                     53    PASS
+    START   ELSE              \                             55    NOT RUN
     START   KEYWORD           Fail                           56    NOT RUN
     \END     KEYWORD           Fail                           56    NOT RUN
-    \END     ELSE              ELSE                       55    NOT RUN
+    \END     ELSE              \                          55    NOT RUN
     \END     ITERATION         \${x} = 1                      52    PASS
     START   ITERATION         \${x} = 2                      52    NOT SET
-    START   IF                IF \ \ \ \${x} == 1                     53    NOT RUN
+    START   IF                \${x} == 1                     53    NOT RUN
     START   KEYWORD           Log                            54    NOT RUN
     \END     KEYWORD           Log                            54    NOT RUN
-    \END     IF                IF \ \ \ \${x} == 1                     53    NOT RUN
-    START   ELSE              ELSE                      55    NOT SET
+    \END     IF               \${x} == 1                     53    NOT RUN
+    START   ELSE              \                          55    NOT SET
     START   KEYWORD           Fail                           56    NOT SET
     \END     KEYWORD           Fail                           56    FAIL
-    \END     ELSE             ELSE                      55    FAIL
+    \END     ELSE             \                          55    FAIL
     \END     ITERATION         \${x} = 2                      52    FAIL
     \END     FOR               \${x} IN [ 1 | 2 ]             52    FAIL
 
 IF in resource
     START   KEYWORD           IF In Resource                 61    NOT SET
-    START   IF                IF \ \ \ True                           11    NOT SET    source=${RESOURCE FILE}
+    START   IF                True                           11    NOT SET    source=${RESOURCE FILE}
     START   KEYWORD           No Operation                   12    NOT SET    source=${RESOURCE FILE}
     \END     KEYWORD           No Operation                   12    PASS       source=${RESOURCE FILE}
-    \END     IF                IF \ \ \ True                           11    PASS       source=${RESOURCE FILE}
+    \END     IF                True                           11    PASS       source=${RESOURCE FILE}
     \END     KEYWORD           IF In Resource                 61    PASS
 
 TRY
