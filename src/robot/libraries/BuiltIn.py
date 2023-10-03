@@ -1870,7 +1870,7 @@ class _RunKeyword(_BuiltInBase):
         ctx = self._context
         if not (ctx.dry_run or self._accepts_embedded_arguments(name, ctx)):
             name, args = self._replace_variables_in_name([name] + list(args))
-        parent = ctx.steps[-1] if ctx.steps else (ctx.test or ctx.suite)
+        parent = ctx.steps[-1][0] if ctx.steps else (ctx.test or ctx.suite)
         kw = Keyword(name, args=args, parent=parent,
                      lineno=getattr(parent, 'lineno', None))
         return kw.run(ctx)

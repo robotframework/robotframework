@@ -20,8 +20,11 @@ from robot.errors import DataError
 
 from .console import ConsoleOutput
 from .filelogger import FileLogger
+from .loggerapi import LoggerApi
 from .loggerhelper import AbstractLogger, AbstractLoggerProxy
+from .modelcombiner import ModelCombiner
 from .stdoutlogsplitter import StdoutLogSplitter
+from ..result import ResultVisitor
 
 
 class Logger(AbstractLogger):
@@ -83,7 +86,8 @@ class Logger(AbstractLogger):
         self._console_logger = self._wrap_and_relay(logger)
 
     def _wrap_and_relay(self, logger):
-        logger = LoggerProxy(logger)
+        if not isinstance(logger, LoggerApi):
+            logger = LoggerProxy(logger)
         self._relay_cached_messages(logger)
         return logger
 
@@ -196,33 +200,79 @@ class Logger(AbstractLogger):
     def disable_library_import_logging(self):
         self.log_message = self._prev_log_message_handlers.pop()
 
-    def start_suite(self, suite):
+    def start_suite(self, data, result):
+        suite = ModelCombiner(data, result,
+                              tests=data.tests,
+                              suites=data.suites,
+                              test_count=data.test_count)
         for logger in self.start_loggers:
-            logger.start_suite(suite)
+            if isinstance(logger, LoggerApi):
+                logger.start_suite(data, result)
+            else:
+                logger.start_suite(suite)
 
-    def end_suite(self, suite):
+    def end_suite(self, data, result):
+        suite = ModelCombiner(data, result)
         for logger in self.end_loggers:
-            logger.end_suite(suite)
+            if isinstance(logger, LoggerApi):
+                logger.end_suite(data, result)
+            else:
+                logger.end_suite(suite)
 
-    def start_test(self, test):
+    def start_test(self, data, result):
+        test = ModelCombiner(data, result)
         for logger in self.start_loggers:
-            logger.start_test(test)
+            if isinstance(logger, LoggerApi):
+                logger.start_test(data, result)
+            else:
+                logger.start_test(test)
 
-    def end_test(self, test):
+    def end_test(self, data, result):
+        test = ModelCombiner(data, result)
         for logger in self.end_loggers:
-            logger.end_test(test)
+            if isinstance(logger, LoggerApi):
+                logger.end_test(data, result)
+            else:
+                logger.end_test(test)
 
-    def start_keyword(self, keyword):
+    def start_keyword(self, data, result):
+        keyword = ModelCombiner(data, result)
         # TODO: Could _prev_log_message_handlers be used also here?
         self._started_keywords += 1
         self.log_message = self._log_message
         for logger in self.start_loggers:
-            logger.start_keyword(keyword)
+            if isinstance(logger, LoggerApi):
+                logger.start_keyword(data, result)
+            else:
+                logger.start_keyword(keyword)
 
-    def end_keyword(self, keyword):
+    def end_keyword(self, data, result):
+        keyword = ModelCombiner(data, result)
         self._started_keywords -= 1
         for logger in self.end_loggers:
-            logger.end_keyword(keyword)
+            if isinstance(logger, LoggerApi):
+                logger.end_keyword(data, result)
+            else:
+                logger.end_keyword(keyword)
+        if not self._started_keywords:
+            self.log_message = self.message
+
+    def start_for(self, data, result):
+        self._started_keywords += 1
+        self.log_message = self._log_message
+        for logger in self.start_loggers:
+            if isinstance(logger, LoggerApi):
+                logger.start_for(data, result)
+            else:
+                logger.start_keyword(ModelCombiner(data, result))
+
+    def end_for(self, data, result):
+        self._started_keywords -= 1
+        for logger in self.end_loggers:
+            if isinstance(logger, LoggerApi):
+                logger.end_for(data, result)
+            else:
+                logger.end_keyword(ModelCombiner(data, result))
         if not self._started_keywords:
             self.log_message = self.message
 

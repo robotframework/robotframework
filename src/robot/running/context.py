@@ -180,20 +180,20 @@ class _ExecutionContext:
 
     @property
     def allow_loop_control(self):
-        for step in reversed(self.steps):
+        for _, step in reversed(self.steps):
             if step.type == 'ITERATION':
                 return True
             if step.type == 'KEYWORD' and step.owner != 'BuiltIn':
                 return False
         return False
 
-    def end_suite(self, suite):
+    def end_suite(self, data, result):
         for name in ['${PREV_TEST_NAME}',
                      '${PREV_TEST_STATUS}',
                      '${PREV_TEST_MESSAGE}']:
             self.variables.set_global(name, self.variables[name])
-        self.output.end_suite(suite)
-        self.namespace.end_suite(suite)
+        self.output.end_suite(data, result)
+        self.namespace.end_suite(data)
         EXECUTION_CONTEXTS.end_suite()
 
     def set_suite_variables(self, suite):
@@ -206,13 +206,14 @@ class _ExecutionContext:
         self.variables['${SUITE_STATUS}'] = status
         self.variables['${SUITE_MESSAGE}'] = message
 
-    def start_test(self, test):
-        self.test = test
-        self._add_timeout(test.timeout)
+    def start_test(self, data, result):
+        self.test = result
+        self._add_timeout(result.timeout)
         self.namespace.start_test()
-        self.variables.set_test('${TEST_NAME}', test.name)
-        self.variables.set_test('${TEST_DOCUMENTATION}', test.doc)
-        self.variables.set_test('@{TEST_TAGS}', list(test.tags))
+        self.variables.set_test('${TEST_NAME}', result.name)
+        self.variables.set_test('${TEST_DOCUMENTATION}', result.doc)
+        self.variables.set_test('@{TEST_TAGS}', list(result.tags))
+        self.output.start_test(data, result)
 
     def _add_timeout(self, timeout):
         if timeout:
@@ -232,15 +233,75 @@ class _ExecutionContext:
         self.variables.set_suite('${PREV_TEST_MESSAGE}', test.message)
         self.timeout_occurred = False
 
-    def start_keyword(self, keyword):
-        self.steps.append(keyword)
+    def start_body_item(self, data, result):
+        self.steps.append((data, result))
         if len(self.steps) > self._started_keywords_threshold:
             raise DataError('Maximum limit of started keywords and control '
                             'structures exceeded.')
-        self.output.start_keyword(keyword)
+        if result.type == result.ELSE:
+            method = {
+                result.IF_ELSE_ROOT: self.output.start_if_branch,
+                result.TRY_EXCEPT_ROOT: self.output.start_try_branch,
+            }[result.parent.type]
+        elif result.type == result.ITERATION:
+            method = {
+                result.FOR: self.output.start_for_iteration,
+                result.WHILE: self.output.start_while_iteration,
+            }[result.parent.type]
+        else:
+            method = {
+                result.KEYWORD: self.output.start_keyword,
+                result.SETUP: self.output.start_keyword,
+                result.TEARDOWN: self.output.start_keyword,
+                result.FOR: self.output.start_for,
+                result.WHILE: self.output.start_while,
+                result.IF_ELSE_ROOT: self.output.start_if,
+                result.IF: self.output.start_if_branch,
+                result.ELSE: self.output.start_if_branch,
+                result.ELSE_IF: self.output.start_if_branch,
+                result.TRY_EXCEPT_ROOT: self.output.start_try,
+                result.TRY: self.output.start_try_branch,
+                result.EXCEPT: self.output.start_try_branch,
+                result.FINALLY: self.output.start_try_branch,
+                result.BREAK: self.output.start_break,
+                result.CONTINUE: self.output.start_continue,
+                result.RETURN: self.output.start_return,
+                result.ERROR: self.output.start_error,
+            }[result.type]
+        method(data, result)
 
-    def end_keyword(self, keyword):
-        self.output.end_keyword(keyword)
+    def end_body_item(self, data, result):
+        if result.type == result.ELSE:
+            method = {
+                result.IF_ELSE_ROOT: self.output.end_if_branch,
+                result.TRY_EXCEPT_ROOT: self.output.end_try_branch,
+            }[result.parent.type]
+        elif result.type == result.ITERATION:
+            method = {
+                result.FOR: self.output.end_for_iteration,
+                result.WHILE: self.output.end_while_iteration,
+            }[result.parent.type]
+        else:
+            method = {
+                result.KEYWORD: self.output.end_keyword,
+                result.SETUP: self.output.end_keyword,
+                result.TEARDOWN: self.output.end_keyword,
+                result.FOR: self.output.end_for,
+                result.WHILE: self.output.end_while,
+                result.IF_ELSE_ROOT: self.output.end_if,
+                result.IF: self.output.end_if_branch,
+                result.ELSE: self.output.end_if_branch,
+                result.ELSE_IF: self.output.end_if_branch,
+                result.TRY_EXCEPT_ROOT: self.output.end_try,
+                result.TRY: self.output.end_try_branch,
+                result.EXCEPT: self.output.end_try_branch,
+                result.FINALLY: self.output.end_try_branch,
+                result.BREAK: self.output.end_break,
+                result.CONTINUE: self.output.end_continue,
+                result.RETURN: self.output.end_return,
+                result.ERROR: self.output.end_error,
+            }[result.type]
+        method(data, result)
         self.steps.pop()
 
     def get_runner(self, name):

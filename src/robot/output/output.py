@@ -17,11 +17,12 @@ from . import pyloggingconf
 from .debugfile import DebugFile
 from .listeners import LibraryListeners, Listeners
 from .logger import LOGGER, LoggerProxy
+from .loggerapi import LoggerApi
 from .loggerhelper import AbstractLogger
 from .xmllogger import XmlLogger, FlatXmlLogger
 
 
-class Output(AbstractLogger):
+class Output(AbstractLogger, LoggerApi):
 
     def __init__(self, settings):
         AbstractLogger.__init__(self)
@@ -55,31 +56,103 @@ class Output(AbstractLogger):
         LOGGER.unregister_xml_logger()
         LOGGER.output_file('Output', self._settings['Output'])
 
-    def start_suite(self, suite):
-        LOGGER.start_suite(suite)
+    def start_suite(self, data, result):
+        LOGGER.start_suite(data, result)
 
-    def end_suite(self, suite):
-        LOGGER.end_suite(suite)
+    def end_suite(self, data, result):
+        LOGGER.end_suite(data, result)
 
-    def start_test(self, test):
-        LOGGER.start_test(test)
+    def start_test(self, data, result):
+        LOGGER.start_test(data, result)
 
-    def end_test(self, test):
-        LOGGER.end_test(test)
+    def end_test(self, data, result):
+        LOGGER.end_test(data, result)
 
-    def start_keyword(self, kw):
-        LOGGER.start_keyword(kw)
-        if kw.type in kw.KEYWORD_TYPES and kw.tags.robot('flatten'):
+    def start_keyword(self, data, result):
+        LOGGER.start_keyword(data, result)
+        if result.type in result.KEYWORD_TYPES and result.tags.robot('flatten'):
             self._flatten_level += 1
             if self._flatten_level == 1:
                 LOGGER._xml_logger = LoggerProxy(self.flat_xml_logger)
 
-    def end_keyword(self, kw):
-        if kw.type in kw.KEYWORD_TYPES and kw.tags.robot('flatten'):
+    def end_keyword(self, data, result):
+        if result.type in result.KEYWORD_TYPES and result.tags.robot('flatten'):
             self._flatten_level -= 1
             if not self._flatten_level:
                 LOGGER._xml_logger = LoggerProxy(self._xmllogger)
-        LOGGER.end_keyword(kw)
+        LOGGER.end_keyword(data, result)
+
+    def start_for(self, data, result):
+        LOGGER.start_for(data, result)
+
+    def end_for(self, data, result):
+        LOGGER.end_for(data, result)
+
+    def start_for_iteration(self, data, result):
+        LOGGER.start_keyword(data, result)
+
+    def end_for_iteration(self, data, result):
+        LOGGER.end_keyword(data, result)
+
+    def start_while(self, data, result):
+        LOGGER.start_keyword(data, result)
+
+    def end_while(self, data, result):
+        LOGGER.end_keyword(data, result)
+
+    def start_while_iteration(self, data, result):
+        LOGGER.start_keyword(data, result)
+
+    def end_while_iteration(self, data, result):
+        LOGGER.end_keyword(data, result)
+
+    def start_if(self, data, result):
+        LOGGER.start_keyword(data, result)
+
+    def end_if(self, data, result):
+        LOGGER.end_keyword(data, result)
+
+    def start_if_branch(self, data, result):
+        LOGGER.start_keyword(data, result)
+
+    def end_if_branch(self, data, result):
+        LOGGER.end_keyword(data, result)
+
+    def start_try(self, data, result):
+        LOGGER.start_keyword(data, result)
+
+    def end_try(self, data, result):
+        LOGGER.end_keyword(data, result)
+
+    def start_try_branch(self, data, result):
+        LOGGER.start_keyword(data, result)
+
+    def end_try_branch(self, data, result):
+        LOGGER.end_keyword(data, result)
+
+    def start_break(self, data, result):
+        LOGGER.start_keyword(data, result)
+
+    def end_break(self, data, result):
+        LOGGER.end_keyword(data, result)
+
+    def start_continue(self, data, result):
+        LOGGER.start_keyword(data, result)
+
+    def end_continue(self, data, result):
+        LOGGER.end_keyword(data, result)
+
+    def start_return(self, data, result):
+        LOGGER.start_keyword(data, result)
+
+    def end_return(self, data, result):
+        LOGGER.end_keyword(data, result)
+
+    def start_error(self, data, result):
+        LOGGER.start_keyword(data, result)
+
+    def end_error(self, data, result):
+        LOGGER.end_keyword(data, result)
 
     def message(self, msg):
         LOGGER.log_message(msg)

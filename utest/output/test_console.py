@@ -10,7 +10,7 @@ class TestKeywordNotification(unittest.TestCase):
         self.stream = StreamStub(isatty)
         self.console = VerboseOutput(width=16, colors='off', markers=markers,
                                      stdout=self.stream, stderr=self.stream)
-        self.console.start_test(Stub())
+        self.console.start_test(Stub(), Stub())
 
     def test_write_pass_marker(self):
         self._write_marker()
@@ -39,7 +39,7 @@ class TestKeywordNotification(unittest.TestCase):
 
     def test_clear_markers_when_test_status_is_written(self):
         self._write_marker(count=5)
-        self.console.end_test(Stub())
+        self.console.end_test(Stub(), Stub())
         self._verify('| PASS |\n%s\n' % ('-'*self.console.writer.width))
 
     def test_clear_markers_when_there_are_warnings(self):
@@ -69,8 +69,8 @@ class TestKeywordNotification(unittest.TestCase):
 
     def _write_marker(self, status='PASS', count=1):
         for i in range(count):
-            self.console.start_keyword(Stub())
-            self.console.end_keyword(Stub(status=status))
+            self.console.start_keyword(Stub(), Stub())
+            self.console.end_keyword(Stub(), Stub(status=status))
 
     def _verify(self, after='', before=''):
         assert_equal(str(self.stream), '%sX :: D  %s' % (before, after))

@@ -467,10 +467,11 @@ class IfRunner:
     def run(self, data):
         with self._dry_run_recursion_detection(data) as recursive_dry_run:
             error = None
-            with StatusReporter(data, IfResult(), self._context, self._run):
+            result = IfResult()
+            with StatusReporter(data, result, self._context, self._run):
                 for branch in data.body:
                     try:
-                        if self._run_if_branch(branch, recursive_dry_run, data.error):
+                        if self._run_if_branch(branch, result, recursive_dry_run, data.error):
                             self._run = False
                     except ExecutionStatus as err:
                         error = err
@@ -492,9 +493,9 @@ class IfRunner:
             if dry_run:
                 self._dry_run_stack.pop()
 
-    def _run_if_branch(self, branch, recursive_dry_run=False, syntax_error=None):
+    def _run_if_branch(self, branch, result, recursive_dry_run=False, syntax_error=None):
         context = self._context
-        result = IfBranchResult(branch.type, branch.condition, start_time=datetime.now())
+        result = result.body.create_branch(branch.type, branch.condition, start_time=datetime.now())
         error = None
         if syntax_error:
             run_branch = False
@@ -539,28 +540,29 @@ class TryRunner:
 
     def run(self, data):
         run = self._run
-        with StatusReporter(data, TryResult(), self._context, run):
+        result = TryResult()
+        with StatusReporter(data, result, self._context, run):
             if data.error:
-                self._run_invalid(data)
+                self._run_invalid(data, result)
                 return
-            error = self._run_try(data, run)
+            error = self._run_try(data, result, run)
             run_excepts_or_else = self._should_run_excepts_or_else(error, run)
             if error:
-                error = self._run_excepts(data, error, run=run_excepts_or_else)
-                self._run_else(data, run=False)
+                error = self._run_excepts(data, result, error, run=run_excepts_or_else)
+                self._run_else(data, result, run=False)
             else:
-                self._run_excepts(data, error, run=False)
-                error = self._run_else(data, run=run_excepts_or_else)
-            error = self._run_finally(data, run) or error
+                self._run_excepts(data, result, error, run=False)
+                error = self._run_else(data, result, run=run_excepts_or_else)
+            error = self._run_finally(data, result, run) or error
             if error:
                 raise error
 
-    def _run_invalid(self, data):
+    def _run_invalid(self, data, result):
         error_reported = False
         for branch in data.body:
-            result = TryBranchResult(branch.type, branch.patterns, branch.pattern_type,
-                                     branch.assign)
-            with StatusReporter(branch, result, self._context, run=False, suppress=True):
+            branch_result = result.body.create_branch(branch.type, branch.patterns,
+                                                      branch.pattern_type, branch.assign)
+            with StatusReporter(branch, branch_result, self._context, run=False, suppress=True):
                 runner = BodyRunner(self._context, run=False, templated=self._templated)
                 runner.run(branch.body)
                 if not error_reported:
@@ -568,8 +570,8 @@ class TryRunner:
                     raise DataError(data.error, syntax=True)
         raise ExecutionFailed(data.error, syntax=True)
 
-    def _run_try(self, data, run):
-        result = TryBranchResult(data.TRY)
+    def _run_try(self, data, result, run):
+        result = result.body.create_branch(data.TRY)
         return self._run_branch(data.try_branch, result, run)
 
     def _should_run_excepts_or_else(self, error, run):
@@ -591,7 +593,7 @@ class TryRunner:
         else:
             return None
 
-    def _run_excepts(self, data, error, run):
+    def _run_excepts(self, data, result, error, run):
         for branch in data.except_branches:
             try:
                 run_branch = run and self._should_run_except(branch, error)
@@ -600,15 +602,15 @@ class TryRunner:
                 pattern_error = err
             else:
                 pattern_error = None
-            result = TryBranchResult(branch.type, branch.patterns,
-                                     branch.pattern_type, branch.assign)
+            branch_result = result.body.create_branch(branch.type, branch.patterns,
+                                                      branch.pattern_type, branch.assign)
             if run_branch:
                 if branch.assign:
                     self._context.variables[branch.assign] = str(error)
-                error = self._run_branch(branch, result, error=pattern_error)
+                error = self._run_branch(branch, branch_result, error=pattern_error)
                 run = False
             else:
-                self._run_branch(branch, result, run=False)
+                self._run_branch(branch, branch_result, run=False)
         return error
 
     def _should_run_except(self, branch, error):
@@ -633,14 +635,14 @@ class TryRunner:
                 return True
         return False
 
-    def _run_else(self, data, run):
+    def _run_else(self, data, result, run):
         if data.else_branch:
-            result = TryBranchResult(data.ELSE)
+            result = result.body.create_branch(data.ELSE)
             return self._run_branch(data.else_branch, result, run)
 
-    def _run_finally(self, data, run):
+    def _run_finally(self, data, result, run):
         if data.finally_branch:
-            result = TryBranchResult(data.FINALLY)
+            result = result.body.create_branch(data.FINALLY)
             try:
                 with StatusReporter(data.finally_branch, result, self._context, run):
                     runner = BodyRunner(self._context, run, self._templated)
