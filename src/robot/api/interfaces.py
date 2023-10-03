@@ -519,7 +519,7 @@ class ListenerV3:
         """Called when a test or task starts."""
 
     def end_test(self, data: running.TestCase, result: result.TestCase):
-        """Called when a test or ends starts."""
+        """Called when a test or tasks ends."""
 
     def log_message(self, message: Message):
         """Called when a normal log message are emitted.

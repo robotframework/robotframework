@@ -114,7 +114,7 @@ class For(model.For, WithSource):
     body_class = Body
 
     def __init__(self, assign: Sequence[str] = (),
-                 flavor: "Literal['IN', 'IN RANGE', 'IN ENUMERATE', 'IN ZIP']" = 'IN',
+                 flavor: Literal['IN', 'IN RANGE', 'IN ENUMERATE', 'IN ZIP'] = 'IN',
                  values: Sequence[str] = (),
                  start: 'str|None' = None,
                  mode: 'str|None' = None,
@@ -840,7 +840,7 @@ class Import(ModelObject):
     RESOURCE = 'RESOURCE'
     VARIABLES = 'VARIABLES'
 
-    def __init__(self, type: "Literal['LIBRARY', 'RESOURCE', 'VARIABLES']",
+    def __init__(self, type: Literal['LIBRARY', 'RESOURCE', 'VARIABLES'],
                  name: str,
                  args: Sequence[str] = (),
                  alias: 'str|None' = None,

@@ -128,6 +128,9 @@ class TypeInfo(metaclass=SetterAwareType):
             return cls()
         if isinstance(hint, typeddict_types):
             return TypedDictInfo(hint.__name__, hint)
+        if is_union(hint):
+            nested = [cls.from_type_hint(typ) for typ in hint.__args__]
+            return cls('Union', nested=nested)
         if hasattr(hint, '__origin__'):
             if has_args(hint):
                 nested = [cls.from_type_hint(t) for t in hint.__args__]
@@ -142,9 +145,6 @@ class TypeInfo(metaclass=SetterAwareType):
             return cls.from_string(hint)
         if isinstance(hint, dict):
             return cls.from_dict(hint)
-        if is_union(hint):
-            nested = [cls.from_type_hint(typ) for typ in hint.__args__]
-            return cls('Union', nested=nested)
         if isinstance(hint, (tuple, list)):
             return cls.from_sequence(hint)
         if hint is Union:

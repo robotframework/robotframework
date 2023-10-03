@@ -35,18 +35,14 @@ class Branches(BaseBranches['Keyword', 'For', 'While', 'If', 'Try', 'Return', 'C
 
 @Body.register
 class For(BodyItem):
-    """Represents ``FOR`` loops.
-
-    :attr:`flavor` specifies the flavor, and it can be ``IN``, ``IN RANGE``,
-    ``IN ENUMERATE`` or ``IN ZIP``.
-    """
+    """Represents ``FOR`` loops."""
     type = BodyItem.FOR
     body_class = Body
     repr_args = ('assign', 'flavor', 'values', 'start', 'mode', 'fill')
     __slots__ = ['assign', 'flavor', 'values', 'start', 'mode', 'fill']
 
     def __init__(self, assign: Sequence[str] = (),
-                 flavor: "Literal['IN', 'IN RANGE', 'IN ENUMERATE', 'IN ZIP']" = 'IN',
+                 flavor: Literal['IN', 'IN RANGE', 'IN ENUMERATE', 'IN ZIP'] = 'IN',
                  values: Sequence[str] = (),
                  start: 'str|None' = None,
                  mode: 'str|None' = None,

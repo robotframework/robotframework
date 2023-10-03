@@ -617,7 +617,7 @@ class TryRunner:
         matchers = {
             'GLOB': lambda m, p: Matcher(p, spaceless=False, caseless=False).match(m),
             'LITERAL': lambda m, p: m == p,
-            'REGEXP': lambda m, p: re.match(rf'{p}\Z', m) is not None,
+            'REGEXP': lambda m, p: re.fullmatch(p, m) is not None,
             'START': lambda m, p: m.startswith(p)
         }
         if branch.pattern_type:
