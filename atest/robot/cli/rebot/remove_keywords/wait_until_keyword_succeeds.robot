@@ -2,27 +2,27 @@
 Suite Setup       Remove Wait Until Keyword Succeeds with Rebot
 Resource          remove_keywords_resource.robot
 
-*** Variables ***
-${DOC}            Runs the specified keyword and retries if it fails.
-
 *** Test Cases ***
 Last failing Step is not removed
     ${tc}=    Check Number Of Keywords     Fail Until The End    1
-    Should Match    ${tc.kws[0].doc}    ${DOC}\n\n_? failing step* removed using --RemoveKeywords option._
+    ${expected} =    Catenate
+    ...    [*]HTML[*] Keyword 'Fail' failed after retrying for 50 milliseconds.
+    ...    The last error was: Not gonna happen<hr><i>? failing step* removed using --RemoveKeywords option.</i>
+    Should Match    ${tc.body[0].message}    ${expected}
 
 Last passing Step is not removed
     ${tc}=    Check Number Of Keywords    Passes before timeout    2
-    Should Be Equal    ${tc.kws[0].doc}    ${DOC}\n\n_1 failing step removed using --RemoveKeywords option._
+    Should Be Equal    ${tc.body[0].message}    *HTML* <i>1 failing step removed using --RemoveKeywords option.</i>
 
 Steps containing warnings are not removed
     ${tc}=   Check Number Of Keywords    Warnings    3
-    Should be Equal    ${tc.kws[0].doc}    ${DOC}
+    Should be Equal    ${tc.body[0].message}    ${EMPTY}
     Check Number Of Keywords    One Warning    2
 
 Nested Wait Until keywords are removed
     ${tc}=    Check Test Case    Nested
-    Length Should Be    ${tc.kws[0].kws}    1
-    Length Should Be    ${tc.kws[0].kws[0].kws}    1
+    Length Should Be    ${tc.body[0].body.filter(messages=False)}    1
+    Length Should Be    ${tc.body[0].body[0].body}                   1
 
 *** Keywords ***
 Remove Wait Until Keyword Succeeds with Rebot
@@ -30,8 +30,8 @@ Remove Wait Until Keyword Succeeds with Rebot
     Run Rebot    --removekeywords wuKs    ${INPUTFILE}
 
 Check Number Of Keywords
-    [Arguments]    ${test name}    ${expected number}
-    ${tc}=    Check Test Case    ${test name}
-    Length Should Be    ${tc.kws[0].kws}    ${expected number}
-    [Return]    ${tc}
+    [Arguments]    ${name}    ${expected}
+    ${tc}=    Check Test Case    ${name}
+    Length Should Be    ${tc.body[0].body.filter(messages=False)}    ${expected}
+    RETURN    ${tc}
 

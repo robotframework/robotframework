@@ -65,6 +65,5 @@ class DeprecatedAttributesMixin:
         return None
 
     @property
-    # FIXME @deprecated
-    def message(self):
+    def doc(self):
         return ''

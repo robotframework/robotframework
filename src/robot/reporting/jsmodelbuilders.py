@@ -14,12 +14,10 @@
 #  limitations under the License.
 
 from robot.output import LEVELS
-from robot.result import (Break, Continue, Error, For, ForIteration, IfBranch,
-                          Keyword, Return, TryBranch, While, WhileIteration)
+from robot.result import Error, Keyword, Return
 
 from .jsbuildingcontext import JsBuildingContext
 from .jsexecutionresult import JsExecutionResult
-from ..model import BodyItem
 
 STATUSES = {'FAIL': 0, 'PASS': 1, 'SKIP': 2, 'NOT RUN': 3}
 KEYWORD_TYPES = {'KEYWORD': 0, 'SETUP': 1, 'TEARDOWN': 2,
@@ -61,7 +59,7 @@ class _Builder:
         model = (STATUSES[item.status],
                  self._timestamp(item.start_time),
                  round(item.elapsed_time.total_seconds() * 1000))
-        msg = getattr(item, 'message', '')
+        msg = item.message
         if not msg:
             return model
         elif msg.startswith('*HTML*'):

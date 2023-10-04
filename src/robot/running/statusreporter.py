@@ -60,8 +60,7 @@ class StatusReporter:
             result.status = self.pass_status
         else:
             result.status = failure.status
-            if result.type == result.TEARDOWN:
-                result.message = failure.message
+            result.message = failure.message
         if self.initial_test_status == 'PASS':
             context.test.status = result.status
         result.elapsed_time = datetime.now() - result.start_time

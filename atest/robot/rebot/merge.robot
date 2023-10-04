@@ -70,9 +70,9 @@ Using other options
     ...              --merge. Most importantly verify that options handled
     ...              by ExecutionResult (--flattenkeyword) work correctly.
     Re-run tests
-    Run merge    --nomerge --log log.html --merge --flattenkeyword name:BuiltIn.Log --name Custom
+    Run merge    --nomerge --log log.html --merge --flattenkeyword name:BuiltIn.Fail --name Custom
     Test merge should have been successful    suite name=Custom
-    Log should have been created with all Log keywords flattened
+    Log should have been created with Fail keywords flattened
 
 Merge ignores skip
     Create Output With Robot    ${ORIGINAL}    ${EMPTY}    rebot/merge_statuses.robot
@@ -316,7 +316,6 @@ Create expected multi-merge message
     ...    ${message 1}
     ...    <hr>${message 2}
 
-Log should have been created with all Log keywords flattened
+Log should have been created with Fail keywords flattened
     ${log} =    Get File    ${OUTDIR}/log.html
-    Should Not Contain    ${log}    "*<p>Logs the given message with the given level.\\x3c/p>"
-    Should Contain    ${log}    "*<p>Logs the given message with the given level.\\x3c/p>\\n<p><i><b>Content flattened.\\x3c/b>\\x3c/i>\\x3c/p>"
+    Should Contain    ${log}    "*Expected<hr><i>Content flattened.\\x3c/i>"

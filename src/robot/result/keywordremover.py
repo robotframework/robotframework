@@ -15,7 +15,7 @@
 
 from robot.errors import DataError
 from robot.model import SuiteVisitor, TagPattern
-from robot.utils import Matcher, plural_or_not
+from robot.utils import html_escape, Matcher, plural_or_not
 
 
 def KeywordRemover(how):
@@ -36,7 +36,7 @@ def KeywordRemover(how):
 
 
 class _KeywordRemover(SuiteVisitor):
-    _message = 'Keyword data removed using --RemoveKeywords option.'
+    _message = 'Data removed using --RemoveKeywords option.'
 
     def __init__(self):
         self._removal_message = RemovalMessage(self._message)
@@ -179,5 +179,11 @@ class RemovalMessage:
         if removed:
             self.set(kw, self._message % (removed, plural_or_not(removed)))
 
-    def set(self, kw, message=None):
-        kw.doc = ('%s\n\n_%s_' % (kw.doc, message or self._message)).strip()
+    def set(self, item, message=None):
+        if not item.message:
+            start = ''
+        elif item.message.startswith('*HTML*'):
+            start = item.message[6:].strip() + '<hr>'
+        else:
+            start = html_escape(item.message) + '<hr>'
+        item.message = f'*HTML* {start}<i>{message or self._message}</i>'

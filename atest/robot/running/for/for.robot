@@ -122,7 +122,7 @@ Failure inside FOR
     Should be equal       ${loop.kws[1].status}            PASS
     Should be equal       ${loop.kws[2].status}            PASS
     Check log message     ${loop.kws[3].kws[0].msgs[0]}    Before Check
-    Check log message     ${loop.kws[3].kws[1].msgs[0]}    Failure with 4    FAIL
+    Check log message     ${loop.kws[3].kws[1].msgs[0]}    Failure with <4>    FAIL
     Should be equal       ${loop.kws[3].kws[2].status}     NOT RUN
     Length should be      ${loop.kws[3].kws}               3
     Should be equal       ${loop.kws[3].status}            FAIL

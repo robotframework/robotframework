@@ -132,10 +132,10 @@ Failure inside FOR 1
     Fail    Not executed
 
 Failure inside FOR 2
-    [Documentation]    FAIL    Failure with 4
+    [Documentation]    FAIL    Failure with <4>
     FOR    ${num}    IN    @{NUMS}
         Log    Before Check
-        Should Not Be Equal    ${num}    4    Failure with ${num}    no values
+        Should Not Be Equal    ${num}    4    Failure with <${num}>    no values
         Log    After Check
     END
     Fail    Not executed

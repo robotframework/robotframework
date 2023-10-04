@@ -4,7 +4,7 @@ import zlib
 from pathlib import Path
 
 from robot.utils.asserts import assert_equal, assert_true
-from robot.result import Keyword, Message, TestCase, TestSuite, For
+from robot.result import Keyword, Message, TestCase, TestSuite, For, ForIteration
 from robot.result.executionerrors import ExecutionErrors
 from robot.model import Statistics, BodyItem
 from robot.reporting.jsmodelbuilders import (
@@ -85,12 +85,12 @@ class TestBuildTestSuite(unittest.TestCase):
 
     def test_keyword_with_values(self):
         kw = Keyword('KW Name', 'libname', 'http://doc', ('arg1', 'arg2'),
-                     ('${v1}', '${v2}'), ('tag1', 'tag2'), '1 second', 'SETUP',
-                     'PASS', '2011-12-04 19:42:42.000', '2011-12-04 19:42:42.042')
+                     ('${v1}', '${v2}'), ('tag1', 'tag2'), '1 second', 'SETUP', 'FAIL',
+                     'message', '2011-12-04 19:42:42.000', '2011-12-04 19:42:42.042')
         self._verify_keyword(kw, 1, 'KW Name', 'libname',
                              '<a href="http://doc">http://doc</a>',
                              'arg1, arg2', '${v1}, ${v2}', 'tag1, tag2',
-                             '1 second', 1, 0, 42)
+                             '1 second', 0, 0, 42, 'message')
 
     def test_default_message(self):
         self._verify_message(Message())
@@ -135,11 +135,11 @@ class TestBuildTestSuite(unittest.TestCase):
         suite.tests = [TestCase(), TestCase(status='PASS')]
         S1 = self._verify_suite(suite.suites[0],
                                 status=0, tests=(t,), stats=(1, 0, 1, 0))
-        suite.tests[0].body = [For(assign=['${x}'], flavor='IN', values=['1', '2']), Keyword()]
-        suite.tests[0].body[0].body = [Keyword(type=Keyword.ITERATION), Message()]
+        suite.tests[0].body = [For(assign=['${x}'], values=['1', '2'], message='x'), Keyword()]
+        suite.tests[0].body[0].body = [ForIteration(), Message()]
         k = self._verify_keyword(suite.tests[0].body[0].body[0], type=4)
         m = self._verify_message(suite.tests[0].body[0].body[1])
-        k1 = self._verify_keyword(suite.tests[0].body[0], type=3, body=(k, m), kwname='${x} IN [ 1 | 2 ]')
+        k1 = self._verify_keyword(suite.tests[0].body[0], type=3, body=(k, m), kwname='${x} IN [ 1 | 2 ]', message='x')
         suite.tests[0].body[1].body = [Message(), Message('msg', level='TRACE')]
         m1 = self._verify_message(suite.tests[0].body[1].messages[0])
         m2 = self._verify_message(suite.tests[0].body[1].messages[1], 'msg', level=0)
@@ -211,7 +211,7 @@ class TestBuildTestSuite(unittest.TestCase):
                       suites=(), tests=(), keywords=(), stats=(0, 0, 0, 0)):
         status = (status, start, elapsed, message) \
                 if message else (status, start, elapsed)
-        doc = '<p>%s</p>' % doc if doc else ''
+        doc = f'<p>{doc}</p>' if doc else ''
         return self._build_and_verify(SuiteBuilder, suite, name, source,
                                       relsource, doc, metadata, status,
                                       suites, tests, keywords, stats)
@@ -223,15 +223,16 @@ class TestBuildTestSuite(unittest.TestCase):
                      status=0, message='', start=None, elapsed=0, body=()):
         status = (status, start, elapsed, message) \
                 if message else (status, start, elapsed)
-        doc = '<p>%s</p>' % doc if doc else ''
+        doc = f'<p>{doc}</p>' if doc else ''
         return self._build_and_verify(TestBuilder, test, name, timeout,
                                       doc, tags, status, body)
 
     def _verify_keyword(self, keyword, type=0, kwname='', libname='', doc='',
                         args='', assign='', tags='', timeout='', status=0,
-                        start=None, elapsed=0, body=()):
-        status = (status, start, elapsed)
-        doc = '<p>%s</p>' % doc if doc else ''
+                        start=None, elapsed=0, message='', body=()):
+        status = (status, start, elapsed, message) \
+                if message else (status, start, elapsed)
+        doc = f'<p>{doc}</p>' if doc else ''
         return self._build_and_verify(KeywordBuilder, keyword, type, kwname,
                                       libname, timeout, doc, args, assign, tags,
                                       status, body)

@@ -87,7 +87,6 @@ class XmlLogger(ResultVisitor):
 
     def start_if(self, if_):
         self._writer.start('if')
-        self._writer.element('doc', if_.doc)
 
     def end_if(self, if_):
         self._write_status(if_)
@@ -96,7 +95,6 @@ class XmlLogger(ResultVisitor):
     def start_if_branch(self, branch):
         self._writer.start('branch', {'type': branch.type,
                                       'condition': branch.condition})
-        self._writer.element('doc', branch.doc)
 
     def end_if_branch(self, branch):
         self._write_status(branch)
@@ -111,7 +109,6 @@ class XmlLogger(ResultVisitor):
             self._writer.element('var', name)
         for value in for_.values:
             self._writer.element('value', value)
-        self._writer.element('doc', for_.doc)
 
     def end_for(self, for_):
         self._write_status(for_)
@@ -121,7 +118,6 @@ class XmlLogger(ResultVisitor):
         self._writer.start('iter')
         for name, value in iteration.assign.items():
             self._writer.element('var', value, {'name': name})
-        self._writer.element('doc', iteration.doc)
 
     def end_for_iteration(self, iteration):
         self._write_status(iteration)
@@ -156,7 +152,6 @@ class XmlLogger(ResultVisitor):
             'on_limit': while_.on_limit,
             'on_limit_message': while_.on_limit_message
         })
-        self._writer.element('doc', while_.doc)
 
     def end_while(self, while_):
         self._write_status(while_)
@@ -164,7 +159,6 @@ class XmlLogger(ResultVisitor):
 
     def start_while_iteration(self, iteration):
         self._writer.start('iter')
-        self._writer.element('doc', iteration.doc)
 
     def end_while_iteration(self, iteration):
         self._write_status(iteration)

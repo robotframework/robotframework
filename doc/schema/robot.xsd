@@ -120,7 +120,6 @@
             <xs:element name="iter" type="ForIteration" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="kw" type="Keyword" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="msg" type="Message" minOccurs="0" maxOccurs="unbounded" />
-            <xs:element name="doc" type="xs:string" minOccurs="0" />
             <xs:element name="status" type="Status" />
         </xs:choice>
         <xs:attribute name="flavor" type="ForFlavor" />
@@ -150,7 +149,6 @@
             <xs:element name="continue" type="Continue" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="error" type="Error" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="msg" type="Message" minOccurs="0" maxOccurs="unbounded" />
-            <xs:element name="doc" type="xs:string" minOccurs="0" />
             <xs:element name="status" type="Status" />
         </xs:choice>
     </xs:complexType>
@@ -165,7 +163,6 @@
         <xs:choice maxOccurs="unbounded">
             <xs:element name="branch" type="IfBranch" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="msg" type="Message" minOccurs="0" maxOccurs="unbounded" />
-            <xs:element name="doc" type="xs:string" minOccurs="0" />
             <xs:element name="status" type="Status" />
         </xs:choice>
     </xs:complexType>
@@ -181,7 +178,6 @@
             <xs:element name="continue" type="Continue" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="error" type="Error" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="msg" type="Message" minOccurs="0" maxOccurs="unbounded" />
-            <xs:element name="doc" type="xs:string" minOccurs="0" />
             <xs:element name="status" type="Status" />
         </xs:choice>
         <xs:attribute name="type" type="IfType" use="required" />
@@ -198,7 +194,6 @@
         <xs:choice maxOccurs="unbounded">
             <xs:element name="branch" type="TryBranch" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="msg" type="Message" minOccurs="0" maxOccurs="unbounded" />
-            <xs:element name="doc" type="xs:string" minOccurs="0" />
             <xs:element name="status" type="Status" />
         </xs:choice>
     </xs:complexType>
@@ -215,7 +210,6 @@
             <xs:element name="continue" type="Continue" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="error" type="Error" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="msg" type="Message" minOccurs="0" maxOccurs="unbounded" />
-            <xs:element name="doc" type="xs:string" minOccurs="0" />
             <xs:element name="status" type="Status" />
         </xs:choice>
         <xs:attribute name="type" type="TryType" use="required" />
@@ -235,7 +229,6 @@
             <xs:element name="iter" type="WhileIteration" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="kw" type="Keyword" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="msg" type="Message" minOccurs="0" maxOccurs="unbounded" />
-            <xs:element name="doc" type="xs:string" minOccurs="0" />
             <xs:element name="status" type="Status" />
         </xs:choice>
         <xs:attribute name="condition" type="xs:string" />
@@ -255,7 +248,6 @@
             <xs:element name="continue" type="Continue" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="error" type="Error" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="msg" type="Message" minOccurs="0" maxOccurs="unbounded" />
-            <xs:element name="doc" type="xs:string" minOccurs="0" />
             <xs:element name="status" type="Status" />
         </xs:choice>
     </xs:complexType>

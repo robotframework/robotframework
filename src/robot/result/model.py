@@ -290,22 +290,23 @@ class ForIteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
     type = BodyItem.ITERATION
     body_class = Body
     repr_args = ('assign',)
-    __slots__ = ['assign', 'status', '_start_time', '_end_time', '_elapsed_time', 'doc']
+    __slots__ = ['assign', 'message', 'status', '_start_time', '_end_time',
+                 '_elapsed_time']
 
     def __init__(self, assign: 'Mapping[str, str]|None' = None,
                  status: str = 'FAIL',
+                 message: str = '',
                  start_time: 'datetime|str|None' = None,
                  end_time: 'datetime|str|None' = None,
                  elapsed_time: 'timedelta|int|float|None' = None,
-                 doc: str = '',
                  parent: BodyItemParent = None):
         self.assign = OrderedDict(assign or ())
         self.parent = parent
         self.status = status
+        self.message = message
         self.start_time = start_time
         self.end_time = end_time
         self.elapsed_time = elapsed_time
-        self.doc = doc
         self.body = ()
 
     @property
@@ -331,7 +332,7 @@ class ForIteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
 class For(model.For, StatusMixin, DeprecatedAttributesMixin):
     iteration_class = ForIteration
     iterations_class = Iterations[iteration_class]
-    __slots__ = ['status', '_start_time', '_end_time', '_elapsed_time', 'doc']
+    __slots__ = ['status', 'message', '_start_time', '_end_time', '_elapsed_time']
 
     def __init__(self, assign: Sequence[str] = (),
                  flavor: Literal['IN', 'IN RANGE', 'IN ENUMERATE', 'IN ZIP'] = 'IN',
@@ -340,17 +341,17 @@ class For(model.For, StatusMixin, DeprecatedAttributesMixin):
                  mode: 'str|None' = None,
                  fill: 'str|None' = None,
                  status: str = 'FAIL',
+                 message: str = '',
                  start_time: 'datetime|str|None' = None,
                  end_time: 'datetime|str|None' = None,
                  elapsed_time: 'timedelta|int|float|None' = None,
-                 doc: str = '',
                  parent: BodyItemParent = None):
         super().__init__(assign, flavor, values, start, mode, fill, parent)
         self.status = status
+        self.message = message
         self.start_time = start_time
         self.end_time = end_time
         self.elapsed_time = elapsed_time
-        self.doc = doc
 
     @setter
     def body(self, iterations: 'Sequence[ForIteration|DataDict]') -> iterations_class:
@@ -372,20 +373,20 @@ class WhileIteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
     """Represents one WHILE loop iteration."""
     type = BodyItem.ITERATION
     body_class = Body
-    __slots__ = ['status', '_start_time', '_end_time', '_elapsed_time', 'doc']
+    __slots__ = ['status', 'message', '_start_time', '_end_time', '_elapsed_time']
 
     def __init__(self, status: str = 'FAIL',
+                 message: str = '',
                  start_time: 'datetime|str|None' = None,
                  end_time: 'datetime|str|None' = None,
                  elapsed_time: 'timedelta|int|float|None' = None,
-                 doc: str = '',
                  parent: BodyItemParent = None):
         self.parent = parent
         self.status = status
+        self.message = message
         self.start_time = start_time
         self.end_time = end_time
         self.elapsed_time = elapsed_time
-        self.doc = doc
         self.body = ()
 
     @setter
@@ -400,24 +401,24 @@ class WhileIteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
 class While(model.While, StatusMixin, DeprecatedAttributesMixin):
     iteration_class = WhileIteration
     iterations_class = Iterations[iteration_class]
-    __slots__ = ['status', '_start_time', '_end_time', '_elapsed_time', 'doc']
+    __slots__ = ['status', 'message', '_start_time', '_end_time', '_elapsed_time']
 
     def __init__(self, condition: 'str|None' = None,
                  limit: 'str|None' = None,
                  on_limit: 'str|None' = None,
                  on_limit_message: 'str|None' = None,
                  status: str = 'FAIL',
+                 message: str = '',
                  start_time: 'datetime|str|None' = None,
                  end_time: 'datetime|str|None' = None,
                  elapsed_time: 'timedelta|int|float|None' = None,
-                 doc: str = '',
                  parent: BodyItemParent = None):
         super().__init__(condition, limit, on_limit, on_limit_message, parent)
         self.status = status
+        self.message = message
         self.start_time = start_time
         self.end_time = end_time
         self.elapsed_time = elapsed_time
-        self.doc = doc
 
     @setter
     def body(self, iterations: 'Sequence[WhileIteration|DataDict]') -> iterations_class:
@@ -439,22 +440,22 @@ class While(model.While, StatusMixin, DeprecatedAttributesMixin):
 
 class IfBranch(model.IfBranch, StatusMixin, DeprecatedAttributesMixin):
     body_class = Body
-    __slots__ = ['status', '_start_time', '_end_time', '_elapsed_time', 'doc']
+    __slots__ = ['status', 'message', '_start_time', '_end_time', '_elapsed_time']
 
     def __init__(self, type: str = BodyItem.IF,
                  condition: 'str|None' = None,
                  status: str = 'FAIL',
+                 message: str = '',
                  start_time: 'datetime|str|None' = None,
                  end_time: 'datetime|str|None' = None,
                  elapsed_time: 'timedelta|int|float|None' = None,
-                 doc: str = '',
                  parent: BodyItemParent = None):
         super().__init__(type, condition, parent)
         self.status = status
+        self.message = message
         self.start_time = start_time
         self.end_time = end_time
         self.elapsed_time = elapsed_time
-        self.doc = doc
 
     @property
     def _name(self):
@@ -465,42 +466,42 @@ class IfBranch(model.IfBranch, StatusMixin, DeprecatedAttributesMixin):
 class If(model.If, StatusMixin, DeprecatedAttributesMixin):
     branch_class = IfBranch
     branches_class = Branches[branch_class]
-    __slots__ = ['status', '_start_time', '_end_time', '_elapsed_time', 'doc']
+    __slots__ = ['status', 'message', '_start_time', '_end_time', '_elapsed_time']
 
     def __init__(self, status: str = 'FAIL',
+                 message: str = '',
                  start_time: 'datetime|str|None' = None,
                  end_time: 'datetime|str|None' = None,
                  elapsed_time: 'timedelta|int|float|None' = None,
-                 doc: str = '',
                  parent: BodyItemParent = None):
         super().__init__(parent)
         self.status = status
+        self.message = message
         self.start_time = start_time
         self.end_time = end_time
         self.elapsed_time = elapsed_time
-        self.doc = doc
 
 
 class TryBranch(model.TryBranch, StatusMixin, DeprecatedAttributesMixin):
     body_class = Body
-    __slots__ = ['status', '_start_time', '_end_time', '_elapsed_time', 'doc']
+    __slots__ = ['status', 'message', '_start_time', '_end_time', '_elapsed_time']
 
     def __init__(self, type: str = BodyItem.TRY,
                  patterns: Sequence[str] = (),
                  pattern_type: 'str|None' = None,
                  assign: 'str|None' = None,
                  status: str = 'FAIL',
+                 message: str = '',
                  start_time: 'datetime|str|None' = None,
                  end_time: 'datetime|str|None' = None,
                  elapsed_time: 'timedelta|int|float|None' = None,
-                 doc: str = '',
                  parent: BodyItemParent = None):
         super().__init__(type, patterns, pattern_type, assign, parent)
         self.status = status
+        self.message = message
         self.start_time = start_time
         self.end_time = end_time
         self.elapsed_time = elapsed_time
-        self.doc = doc
 
     @property
     def _name(self):
@@ -519,35 +520,37 @@ class TryBranch(model.TryBranch, StatusMixin, DeprecatedAttributesMixin):
 class Try(model.Try, StatusMixin, DeprecatedAttributesMixin):
     branch_class = TryBranch
     branches_class = Branches[branch_class]
-    __slots__ = ['status', '_start_time', '_end_time', '_elapsed_time', 'doc']
+    __slots__ = ['status', 'message', '_start_time', '_end_time', '_elapsed_time']
 
     def __init__(self, status: str = 'FAIL',
+                 message: str = '',
                  start_time: 'datetime|str|None' = None,
                  end_time: 'datetime|str|None' = None,
                  elapsed_time: 'timedelta|int|float|None' = None,
-                 doc: str = '',
                  parent: BodyItemParent = None):
         super().__init__(parent)
         self.status = status
+        self.message = message
         self.start_time = start_time
         self.end_time = end_time
         self.elapsed_time = elapsed_time
-        self.doc = doc
 
 
 @Body.register
 class Return(model.Return, StatusMixin, DeprecatedAttributesMixin):
-    __slots__ = ['status', '_start_time', '_end_time', '_elapsed_time']
+    __slots__ = ['status', 'message', '_start_time', '_end_time', '_elapsed_time']
     body_class = Body
 
     def __init__(self, values: Sequence[str] = (),
                  status: str = 'FAIL',
+                 message: str = '',
                  start_time: 'datetime|str|None' = None,
                  end_time: 'datetime|str|None' = None,
                  elapsed_time: 'timedelta|int|float|None' = None,
                  parent: BodyItemParent = None):
         super().__init__(values, parent)
         self.status = status
+        self.message = message
         self.start_time = start_time
         self.end_time = end_time
         self.elapsed_time = elapsed_time
@@ -571,16 +574,18 @@ class Return(model.Return, StatusMixin, DeprecatedAttributesMixin):
 
 @Body.register
 class Continue(model.Continue, StatusMixin, DeprecatedAttributesMixin):
-    __slots__ = ['status', '_start_time', '_end_time', '_elapsed_time']
+    __slots__ = ['status', 'message', '_start_time', '_end_time', '_elapsed_time']
     body_class = Body
 
     def __init__(self, status: str = 'FAIL',
+                 message: str = '',
                  start_time: 'datetime|str|None' = None,
                  end_time: 'datetime|str|None' = None,
                  elapsed_time: 'timedelta|int|float|None' = None,
                  parent: BodyItemParent = None):
         super().__init__(parent)
         self.status = status
+        self.message = message
         self.start_time = start_time
         self.end_time = end_time
         self.elapsed_time = elapsed_time
@@ -604,16 +609,18 @@ class Continue(model.Continue, StatusMixin, DeprecatedAttributesMixin):
 
 @Body.register
 class Break(model.Break, StatusMixin, DeprecatedAttributesMixin):
-    __slots__ = ['status', '_start_time', '_end_time', '_elapsed_time']
+    __slots__ = ['status', 'message', '_start_time', '_end_time', '_elapsed_time']
     body_class = Body
 
     def __init__(self, status: str = 'FAIL',
+                 message: str = '',
                  start_time: 'datetime|str|None' = None,
                  end_time: 'datetime|str|None' = None,
                  elapsed_time: 'timedelta|int|float|None' = None,
                  parent: BodyItemParent = None):
         super().__init__(parent)
         self.status = status
+        self.message = message
         self.start_time = start_time
         self.end_time = end_time
         self.elapsed_time = elapsed_time
@@ -637,17 +644,19 @@ class Break(model.Break, StatusMixin, DeprecatedAttributesMixin):
 
 @Body.register
 class Error(model.Error, StatusMixin, DeprecatedAttributesMixin):
-    __slots__ = ['status', '_start_time', '_end_time', '_elapsed_time']
+    __slots__ = ['status', 'message', '_start_time', '_end_time', '_elapsed_time']
     body_class = Body
 
     def __init__(self, values: Sequence[str] = (),
                  status: str = 'FAIL',
+                 message: str = '',
                  start_time: 'datetime|str|None' = None,
                  end_time: 'datetime|str|None' = None,
                  elapsed_time: 'timedelta|int|float|None' = None,
                  parent: BodyItemParent = None):
         super().__init__(values, parent)
         self.status = status
+        self.message = message
         self.start_time = start_time
         self.end_time = end_time
         self.elapsed_time = elapsed_time
@@ -677,8 +686,8 @@ class Error(model.Error, StatusMixin, DeprecatedAttributesMixin):
 class Keyword(model.Keyword, StatusMixin):
     """Represents an executed library or user keyword."""
     body_class = Body
-    __slots__ = ['kwname', 'libname', 'doc', 'timeout', 'status', '_teardown',
-                 '_start_time', '_end_time', '_elapsed_time', 'message', 'sourcename']
+    __slots__ = ['kwname', 'libname', 'sourcename', 'doc', 'timeout', 'status',
+                 'message', '_start_time', '_end_time', '_elapsed_time', '_teardown']
 
     def __init__(self, kwname: str = '',
                  libname: str = '',
@@ -689,6 +698,7 @@ class Keyword(model.Keyword, StatusMixin):
                  timeout: 'str|None' = None,
                  type: str = BodyItem.KEYWORD,
                  status: str = 'FAIL',
+                 message: str = '',
                  start_time: 'datetime|str|None' = None,
                  end_time: 'datetime|str|None' = None,
                  elapsed_time: 'timedelta|int|float|None' = None,
@@ -699,17 +709,16 @@ class Keyword(model.Keyword, StatusMixin):
         self.kwname = kwname
         #: Name of the library or resource containing this keyword.
         self.libname = libname
+        #: Original name of keyword with embedded arguments.
+        self.sourcename = sourcename
         self.doc = doc
         self.tags = tags
         self.timeout = timeout
         self.status = status
+        self.message = message
         self.start_time = start_time
         self.end_time = end_time
         self.elapsed_time = elapsed_time
-        #: Keyword status message. Used only if suite teardowns fails.
-        self.message = ''
-        #: Original name of keyword with embedded arguments.
-        self.sourcename = sourcename
         self._teardown = None
         self.body = ()
 

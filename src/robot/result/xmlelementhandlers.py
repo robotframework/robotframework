@@ -337,7 +337,13 @@ class DocHandler(ElementHandler):
     tag = 'doc'
 
     def end(self, elem, result):
-        result.doc = elem.text or ''
+        try:
+            result.doc = elem.text or ''
+        except AttributeError:
+            # With RF < 7 control structures can have `<doc>` containing information
+            # about flattening or removing date. Nowadays, they don't have `doc`
+            # attribute at all and `message` is used for this information.
+            result.message = elem.text or ''
 
 
 @ElementHandler.register
