@@ -15,22 +15,23 @@
 
 from robot.utils import compress_text, html_format
 
+
 # TODO: can this be removed?
 class StringIndex(int):
     pass
 
 
 class StringCache:
+    empty = StringIndex(0)
     _compress_threshold = 80
     _use_compressed_threshold = 1.1
-    _zero_index = StringIndex(0)
 
     def __init__(self):
-        self._cache = {('', False): self._zero_index}
+        self._cache = {('', False): self.empty}
 
     def add(self, text, html=False):
         if not text:
-            return self._zero_index
+            return self.empty
         key = (text, html)
         if key not in self._cache:
             self._cache[key] = StringIndex(len(self._cache))

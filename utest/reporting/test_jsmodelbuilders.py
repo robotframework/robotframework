@@ -43,8 +43,10 @@ class TestBuildTestSuite(unittest.TestCase):
     def test_suite_with_values(self):
         suite = TestSuite('Name', 'Doc', {'m1': 'v1', 'M2': 'V2'}, None, False, 'Message',
                           '2011-12-04 19:00:00.000', '2011-12-04 19:00:42.001')
+        s = self._verify_keyword(suite.setup.config(name='S'), type=1, name='S')
+        t = self._verify_keyword(suite.teardown.config(name='T'), type=2, name='T')
         self._verify_suite(suite, 'Name', 'Doc', ('m1', '<p>v1</p>', 'M2', '<p>V2</p>'),
-                           message='Message', start=0, elapsed=42001)
+                           message='Message', start=0, elapsed=42001, keywords=(s, t))
 
     def test_relative_source(self):
         self._verify_suite(TestSuite(source='non-existing'),
@@ -65,12 +67,11 @@ class TestBuildTestSuite(unittest.TestCase):
     def test_test_with_values(self):
         test = TestCase('Name', '*Doc*', ['t1', 't2'], '1 minute', 42, 'PASS', 'Msg',
                         '2011-12-04 19:22:22.222', '2011-12-04 19:22:22.333')
-        test.setup.config(name='setup')
-        test.teardown.config(name='td')
-        k1 = self._verify_keyword(test.setup, type=1, name='setup')
-        k2 = self._verify_keyword(test.teardown, type=2, name='td')
+        k = self._verify_keyword(test.body.create_keyword('K'), name='K')
+        s = self._verify_keyword(test.setup.config(name='S'), type=1, name='S')
+        t = self._verify_keyword(test.teardown.config(name='T'), type=2, name='T')
         self._verify_test(test, 'Name', '<b>Doc</b>', ('t1', 't2'),
-                          '1 minute', 1, 'Msg', 0, 111, (k1, k2))
+                          '1 minute', 1, 'Msg', 0, 111, (s, k, t))
 
     def test_name_escaping(self):
         kw = Keyword('quote:"', 'and *url* https://url.com', doc='*"Doc"*',)
@@ -91,6 +92,19 @@ class TestBuildTestSuite(unittest.TestCase):
                              '<a href="http://doc">http://doc</a>',
                              'arg1, arg2', '${v1}, ${v2}', 'tag1, tag2',
                              '1 second', 0, 0, 42, 'message')
+
+    def test_keyword_with_body(self):
+        root = Keyword('Root')
+        exp1 = self._verify_keyword(root.body.create_keyword('C1'), name='C1')
+        exp2 = self._verify_keyword(root.body.create_keyword('C2'), name='C2')
+        self._verify_keyword(root, name='Root', body=(exp1, exp2))
+
+    def test_keyword_with_teardown(self):
+        root = Keyword('Root')
+        t = self._verify_keyword(root.teardown.config(name='T'), type=2, name='T')
+        self._verify_keyword(root, name='Root', body=(t,))
+        k = self._verify_keyword(root.body.create_keyword('K'), name='K')
+        self._verify_keyword(root, name='Root', body=(k, t))
 
     def test_default_message(self):
         self._verify_message(Message())

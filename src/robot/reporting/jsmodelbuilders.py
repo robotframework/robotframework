@@ -153,11 +153,11 @@ class KeywordBuilder(_Builder):
         with self._context.prune_input(item.body):
             if isinstance (item, Keyword):
                 self._context.check_expansion(item)
-                items = item.body.flatten()
+                body = item.body.flatten()
                 if item.has_teardown:
-                    items.append(item.teardown)
+                    body.append(item.teardown)
                 return self._build(item, item.name, item.owner, item.timeout, item.doc, item.args,
-                                   item.assign, item.tags, split=split)
+                                   item.assign, item.tags, body, split=split)
             if isinstance(item, Return):
                 return self._build(item, args=item.values, split=split)
             if isinstance(item, Error):
@@ -165,17 +165,19 @@ class KeywordBuilder(_Builder):
             return self._build(item, item._name, split=split)
 
     def _build(self, item, name='', owner='', timeout='', doc='', args=(), assign=(),
-               tags=(), items=None, split =False):
+               tags=(), body=None, split =False):
+        if body is None:
+            body = item.body.flatten()
         return (KEYWORD_TYPES[item.type],
                 self._string(name, attr=True),
                 self._string(owner, attr=True),
                 self._string(timeout),
-                self._html(item.doc),
+                self._html(doc),
                 self._string(', '.join(args)),
                 self._string(', '.join(assign)),
                 self._string(', '.join(tags)),
                 self._get_status(item),
-                self._build_body(items if items is not None else item.body.flatten(), split))
+                self._build_body(body, split))
 
 
 class MessageBuilder(_Builder):

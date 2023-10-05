@@ -48,7 +48,9 @@ class JsBuildingContext:
         return None
 
     def string(self, string, escape=True, attr=False):
-        if escape and string:
+        if not string:
+            return self._strings.empty
+        if escape:
             if not isinstance(string, str):
                 string = safe_str(string)
             string = (html_escape if not attr else attribute_escape)(string)
