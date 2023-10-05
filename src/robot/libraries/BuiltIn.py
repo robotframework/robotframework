@@ -153,8 +153,8 @@ class _Converter(_BuiltInBase):
                 return int(item, self._convert_to_integer(base))
             return int(item)
         except:
-            raise RuntimeError("'%s' cannot be converted to an integer: %s"
-                               % (orig, get_error_message()))
+            raise RuntimeError(f"'{orig}' cannot be converted to an integer: "
+                               f"{get_error_message()}")
 
     def _get_base(self, item, base):
         if not is_string(item):
@@ -300,8 +300,8 @@ class _Converter(_BuiltInBase):
             try:
                 return float(self._convert_to_integer(item))
             except RuntimeError:
-                raise RuntimeError("'%s' cannot be converted to a floating "
-                                   "point number: %s" % (item, error))
+                raise RuntimeError(f"'{item}' cannot be converted to a floating "
+                                   f"point number: {error}")
 
     def convert_to_string(self, item):
         """Converts the given item to a Unicode string.
@@ -380,12 +380,12 @@ class _Converter(_BuiltInBase):
         """
         try:
             try:
-                ordinals = getattr(self, '_get_ordinals_from_%s' % input_type)
+                ordinals = getattr(self, f'_get_ordinals_from_{input_type}')
             except AttributeError:
-                raise RuntimeError("Invalid input type '%s'." % input_type)
+                raise RuntimeError(f"Invalid input type '{input_type}'.")
             return bytes(bytearray(o for o in ordinals(input)))
         except:
-            raise RuntimeError("Creating bytes failed: %s" % get_error_message())
+            raise RuntimeError("Creating bytes failed: " + get_error_message())
 
     def _get_ordinals_from_text(self, input):
         for char in input:
@@ -395,8 +395,7 @@ class _Converter(_BuiltInBase):
     def _test_ordinal(self, ordinal, original, type):
         if 0 <= ordinal <= 255:
             return ordinal
-        raise RuntimeError("%s '%s' cannot be represented as a byte."
-                           % (type, original))
+        raise RuntimeError(f"{type} '{original}' cannot be represented as a byte.")
 
     def _get_ordinals_from_int(self, input):
         if is_string(input):
@@ -422,7 +421,7 @@ class _Converter(_BuiltInBase):
             return input
         input = ''.join(input.split())
         if len(input) % length != 0:
-            raise RuntimeError('Expected input to be multiple of %d.' % length)
+            raise RuntimeError(f'Expected input to be multiple of {length}.')
         return (input[i:i+length] for i in range(0, len(input), length))
 
     def create_list(self, *items):
@@ -488,8 +487,8 @@ class _Converter(_BuiltInBase):
     def _format_separate_dict_items(self, separate):
         separate = self._variables.replace_list(separate)
         if len(separate) % 2 != 0:
-            raise DataError('Expected even number of keys and values, got %d.'
-                            % len(separate))
+            raise DataError(f'Expected even number of keys and values, '
+                            f'got {len(separate)}.')
         return [separate[i:i+2] for i in range(0, len(separate), 2)]
 
 
@@ -549,7 +548,7 @@ class _Verify(_BuiltInBase):
         and how ``msg`` can be used to override the default error message.
         """
         if self._is_true(condition):
-            raise AssertionError(msg or "'%s' should not be true." % condition)
+            raise AssertionError(msg or f"'{condition}' should not be true.")
 
     def should_be_true(self, condition, msg=None):
         """Fails if the given condition is not true.
@@ -580,7 +579,7 @@ class _Verify(_BuiltInBase):
         | Should Be True | $status == 'PASS' | # Expected string must be quoted |
         """
         if not self._is_true(condition):
-            raise AssertionError(msg or "'%s' should be true." % condition)
+            raise AssertionError(msg or f"'{condition}' should be true.")
 
     def should_be_equal(self, first, second, msg=None, values=True,
                         ignore_case=False, formatter='str', strip_spaces=False,
@@ -655,14 +654,14 @@ class _Verify(_BuiltInBase):
         second_lines = second.splitlines(True)
         if len(first_lines) < 3 or len(second_lines) < 3:
             return
-        self.log("%s\n\n!=\n\n%s" % (first.rstrip(), second.rstrip()))
+        self.log(f"{first.rstrip()}\n\n!=\n\n{second.rstrip()}")
         diffs = list(difflib.unified_diff(first_lines, second_lines,
                                           fromfile='first', tofile='second',
                                           lineterm=''))
         diffs[3:] = [item[0] + formatter(item[1:]).rstrip() for item in diffs[3:]]
         prefix = 'Multiline strings are different:'
         if msg:
-            prefix = '%s: %s' % (msg, prefix)
+            prefix = f'{msg}: {prefix}'
         raise AssertionError('\n'.join([prefix] + diffs))
 
     def _include_values(self, values):
@@ -1123,8 +1122,8 @@ class _Verify(_BuiltInBase):
         strip_spaces = configuration.pop('strip_spaces', False)
         collapse_spaces = is_truthy(configuration.pop('collapse_spaces', False))
         if configuration:
-            raise RuntimeError("Unsupported configuration parameter%s: %s."
-                               % (s(configuration), seq2str(sorted(configuration))))
+            raise RuntimeError(f"Unsupported configuration parameter{s(configuration)}: "
+                               f"{seq2str(sorted(configuration))}.")
         if not items:
             raise RuntimeError('One or more items required.')
         orig_container = container
@@ -1181,8 +1180,8 @@ class _Verify(_BuiltInBase):
         strip_spaces = configuration.pop('strip_spaces', False)
         collapse_spaces = is_truthy(configuration.pop('collapse_spaces', False))
         if configuration:
-            raise RuntimeError("Unsupported configuration parameter%s: %s."
-                               % (s(configuration), seq2str(sorted(configuration))))
+            raise RuntimeError(f"Unsupported configuration parameter{s(configuration)}: "
+                               f"{seq2str(sorted(configuration))}.")
         if not items:
             raise RuntimeError('One or more items required.')
         orig_container = container
@@ -1266,8 +1265,8 @@ class _Verify(_BuiltInBase):
                     container = [self._collapse_spaces(x) for x in container]
         x = self.get_count(container, item)
         if not msg:
-            msg = "%r contains '%s' %d time%s, not %d time%s." \
-                    % (orig_container, item, x, s(x), count, s(count))
+            msg = (f"{orig_container!r} contains '{item}' {x} time{s(x)}, "
+                   f"not {count} time{s(count)}.")
         self.should_be_equal_as_integers(x, count, msg, values=False)
 
     def get_count(self, container, item):
@@ -1284,10 +1283,10 @@ class _Verify(_BuiltInBase):
             try:
                 container = list(container)
             except:
-                raise RuntimeError("Converting '%s' to list failed: %s"
-                                   % (container, get_error_message()))
+                raise RuntimeError(f"Converting '{container}' to list failed: "
+                                   f"{get_error_message()}")
         count = container.count(item)
-        self.log('Item found from container %d time%s.' % (count, s(count)))
+        self.log(f'Item found from container {count} time{s(count)}.')
         return count
 
     def should_not_match(self, string, pattern, msg=None, values=True,
@@ -1407,7 +1406,7 @@ class _Verify(_BuiltInBase):
         Empty`.
         """
         length = self._get_length(item)
-        self.log('Length is %d' % length)
+        self.log(f'Length is {length}.')
         return length
 
     def _get_length(self, item):
@@ -1431,7 +1430,7 @@ class _Verify(_BuiltInBase):
                     except RERAISED_EXCEPTIONS:
                         raise
                     except:
-                        raise RuntimeError("Could not get length of '%s'." % item)
+                        raise RuntimeError(f"Could not get length of '{item}'.")
 
     def length_should_be(self, item, length, msg=None):
         """Verifies that the length of the given item is correct.
@@ -1442,8 +1441,8 @@ class _Verify(_BuiltInBase):
         length = self._convert_to_integer(length)
         actual = self.get_length(item)
         if actual != length:
-            raise AssertionError(msg or "Length of '%s' should be %d but is %d."
-                                        % (item, length, actual))
+            raise AssertionError(msg or f"Length of '{item}' should be {length} "
+                                        f"but is {actual}.")
 
     def should_be_empty(self, item, msg=None):
         """Verifies that the given item is empty.
@@ -1452,7 +1451,7 @@ class _Verify(_BuiltInBase):
         default error message can be overridden with the ``msg`` argument.
         """
         if self.get_length(item) > 0:
-            raise AssertionError(msg or "'%s' should be empty." % (item,))
+            raise AssertionError(msg or f"'{item}' should be empty.")
 
     def should_not_be_empty(self, item, msg=None):
         """Verifies that the given item is not empty.
@@ -1461,18 +1460,18 @@ class _Verify(_BuiltInBase):
         default error message can be overridden with the ``msg`` argument.
         """
         if self.get_length(item) == 0:
-            raise AssertionError(msg or "'%s' should not be empty." % (item,))
+            raise AssertionError(msg or f"'{item}' should not be empty.")
 
     def _get_string_msg(self, item1, item2, custom_message, include_values,
                         delimiter, quote_item1=True, quote_item2=True):
         if custom_message and not self._include_values(include_values):
             return custom_message
-        item1 = "'%s'" % safe_str(item1) if quote_item1 else safe_str(item1)
-        item2 = "'%s'" % safe_str(item2) if quote_item2 else safe_str(item2)
-        default_message = '%s %s %s' % (item1, delimiter, item2)
+        item1 = f"'{safe_str(item1)}'" if quote_item1 else safe_str(item1)
+        item2 = f"'{safe_str(item2)}'" if quote_item2 else safe_str(item2)
+        default_message = f'{item1} {delimiter} {item2}'
         if not custom_message:
             return default_message
-        return '%s: %s' % (custom_message, default_message)
+        return f'{custom_message}: {default_message}'
 
 
 class _Variables(_BuiltInBase):
@@ -1569,7 +1568,7 @@ class _Variables(_BuiltInBase):
             self._variables.replace_scalar(name)
         except VariableError:
             raise AssertionError(self._variables.replace_string(msg)
-                                 if msg else "Variable '%s' does not exist." % name)
+                                 if msg else f"Variable '{name}' does not exist.")
 
     @run_keyword_variant(resolve=0)
     def variable_should_not_exist(self, name, msg=None):
@@ -1591,14 +1590,14 @@ class _Variables(_BuiltInBase):
             pass
         else:
             raise AssertionError(self._variables.replace_string(msg)
-                                 if msg else "Variable '%s' exists." % name)
+                                 if msg else f"Variable '{name}' exists.")
 
     def replace_variables(self, text):
         """Replaces variables in the given text with their current values.
 
         If the text contains undefined variables, this keyword fails.
         If the given ``text`` contains only a single variable, its value is
-        returned as-is and it can be any object. Otherwise this keyword
+        returned as-is and it can be any object. Otherwise, this keyword
         always returns a string.
 
         Example:
@@ -1814,7 +1813,7 @@ class _Variables(_BuiltInBase):
         match.resolve_base(self._variables)
         valid = match.is_assign() if require_assign else match.is_variable()
         if not valid:
-            raise DataError("Invalid variable name '%s'." % name)
+            raise DataError(f"Invalid variable name '{name}'.")
         return str(match)
 
     def _resolve_var_name(self, name):
@@ -1823,7 +1822,7 @@ class _Variables(_BuiltInBase):
         if len(name) < 2 or name[0] not in '$@&':
             raise ValueError
         if name[1] != '{':
-            name = '%s{%s}' % (name[0], name[1:])
+            name = f'{name[0]}{{{name[1:]}}}'
         match = search_variable(name, identifiers='$@&', ignore_errors=True)
         match.resolve_base(self._variables)
         if not match.is_assign():
@@ -1839,9 +1838,9 @@ class _Variables(_BuiltInBase):
             # handling non-string values somehow. For details see
             # https://github.com/robotframework/robotframework/issues/1919
             if len(values) != 1 or is_list_variable(values[0]):
-                raise DataError("Setting list value to scalar variable '%s' "
-                                "is not supported anymore. Create list "
-                                "variable '@%s' instead." % (name, name[1:]))
+                raise DataError(f"Setting list value to scalar variable '{name}' "
+                                f"is not supported anymore. Create list variable "
+                                f"'@{name[1:]}' instead.")
             return self._variables.replace_scalar(values[0])
         return VariableTableValue(values, name).resolve(self._variables)
 
@@ -2048,7 +2047,7 @@ class _RunKeyword(_BuiltInBase):
         index = list(args).index(control_word)
         branch = self._variables.replace_list(args[index+1:], required)
         if len(branch) < required:
-            raise DataError('%s requires %s.' % (control_word, required_error))
+            raise DataError(f'{control_word} requires {required_error}.')
         return args[:index], branch
 
     @run_keyword_variant(resolve=1, dry_run=True)
@@ -2105,7 +2104,7 @@ class _RunKeyword(_BuiltInBase):
         """
         status, message = self.run_keyword_and_ignore_error(name, *args)
         if status == 'FAIL':
-            logger.warn("Executing keyword '%s' failed:\n%s" % (name, message))
+            logger.warn(f"Executing keyword '{name}' failed:\n{message}")
         return status, message
 
     @run_keyword_variant(resolve=0, dry_run=True)
@@ -2206,11 +2205,9 @@ class _RunKeyword(_BuiltInBase):
                 raise
             error = err.message
         else:
-            raise AssertionError("Expected error '%s' did not occur."
-                                 % expected_error)
+            raise AssertionError(f"Expected error '{expected_error}' did not occur.")
         if not self._error_is_expected(error, expected_error):
-            raise AssertionError("Expected error '%s' but got '%s'."
-                                 % (expected_error, error))
+            raise AssertionError(f"Expected error '{expected_error}' but got '{error}'.")
         return error
 
     def _error_is_expected(self, error, expected_error):
@@ -2218,7 +2215,7 @@ class _RunKeyword(_BuiltInBase):
         matchers = {'GLOB': glob,
                     'EQUALS': lambda s, p: s == p,
                     'STARTS': lambda s, p: s.startswith(p),
-                    'REGEXP': lambda s, p: re.match(p + r'\Z', s) is not None}
+                    'REGEXP': lambda s, p: re.fullmatch(p, s) is not None}
         prefixes = tuple(prefix + ':' for prefix in matchers)
         if not expected_error.startswith(prefixes):
             return glob(error, expected_error)
@@ -2287,21 +2284,20 @@ class _RunKeyword(_BuiltInBase):
 
     def _keywords_repeated_by_count(self, count, name, args):
         if count <= 0:
-            self.log("Keyword '%s' repeated zero times." % name)
+            self.log(f"Keyword '{name}' repeated zero times.")
         for i in range(count):
-            self.log("Repeating keyword, round %d/%d." % (i + 1, count))
+            self.log(f"Repeating keyword, round {i+1}/{count}.")
             yield name, args
 
     def _keywords_repeated_by_timeout(self, timeout, name, args):
         if timeout <= 0:
-            self.log("Keyword '%s' repeated zero times." % name)
-        repeat_round = 0
+            self.log(f"Keyword '{name}' repeated zero times.")
+        round = 0
         maxtime = time.time() + timeout
         while time.time() < maxtime:
-            repeat_round += 1
-            self.log("Repeating keyword, round %d, %s remaining."
-                     % (repeat_round,
-                        secs_to_timestr(maxtime - time.time(), compact=True)))
+            round += 1
+            remaining = secs_to_timestr(maxtime - time.time(), compact=True)
+            self.log(f"Repeating keyword, round {round}, {remaining} remaining.")
             yield name, args
 
     @run_keyword_variant(resolve=2, dry_run=True)
@@ -2354,11 +2350,11 @@ class _RunKeyword(_BuiltInBase):
         except ValueError:
             timeout = timestr_to_secs(retry)
             maxtime = time.time() + timeout
-            message = 'for %s' % secs_to_timestr(timeout)
+            message = f'for {secs_to_timestr(timeout)}'
         else:
             if count <= 0:
-                raise ValueError('Retry count %d is not positive.' % count)
-            message = '%d time%s' % (count, s(count))
+                raise ValueError(f'Retry count {count} is not positive.')
+            message = f'{count} time{s(count)}'
         if is_string(retry_interval) and normalize(retry_interval).startswith('strict:'):
             retry_interval = retry_interval.split(':', 1)[1].strip()
             strict_interval = True
@@ -2374,16 +2370,18 @@ class _RunKeyword(_BuiltInBase):
                     raise
                 count -= 1
                 if time.time() > maxtime > 0 or count == 0:
-                    raise AssertionError("Keyword '%s' failed after retrying %s. "
-                                         "The last error was: %s" % (name, message, err))
+                    raise AssertionError(f"Keyword '{name}' failed after retrying "
+                                         f"{message}. The last error was: {err}")
             finally:
                 if strict_interval:
-                    keyword_runtime = time.time() - start_time
-                    sleep_time = retry_interval - keyword_runtime
+                    execution_time = time.time() - start_time
+                    sleep_time = retry_interval - execution_time
                     if sleep_time < 0:
-                        logger.warn("Keyword execution time %s is longer than retry "
-                                    "interval %s." % (secs_to_timestr(keyword_runtime),
-                                                      secs_to_timestr(retry_interval)))
+                        logger.warn(
+                            f"Keyword execution time {secs_to_timestr(execution_time)} "
+                            f"is longer than retry interval "
+                            f"{secs_to_timestr(retry_interval)}."
+                        )
             self._sleep_in_parts(sleep_time)
 
     @run_keyword_variant(resolve=1)
@@ -2520,10 +2518,9 @@ class _RunKeyword(_BuiltInBase):
         if suite.statistics.failed > 0:
             return self.run_keyword(name, *args)
 
-    def _get_suite_in_teardown(self, kwname):
+    def _get_suite_in_teardown(self, kw):
         if not self._context.in_suite_teardown:
-            raise RuntimeError("Keyword '%s' can only be used in suite teardown."
-                               % kwname)
+            raise RuntimeError(f"Keyword '{kw}' can only be used in suite teardown.")
         return self._context.suite
 
 
@@ -2872,7 +2869,7 @@ class _Control(_BuiltInBase):
         Passing execution in the middle of a test, setup or teardown should be
         used with care. In the worst case it leads to tests that skip all the
         parts that could actually uncover problems in the tested application.
-        In cases where execution cannot continue do to external factors,
+        In cases where execution cannot continue due to external factors,
         it is often safer to fail the test case and make it non-critical.
         """
         message = message.strip()
@@ -2880,7 +2877,7 @@ class _Control(_BuiltInBase):
             raise RuntimeError('Message cannot be empty.')
         self._set_and_remove_tags(tags)
         log_message, level = self._get_logged_test_message_and_level(message)
-        self.log('Execution passed with message:\n%s' % log_message, level)
+        self.log(f'Execution passed with message:\n{log_message}', level)
         raise PassExecution(message)
 
     @run_keyword_variant(resolve=1)
@@ -2931,7 +2928,7 @@ class _Misc(_BuiltInBase):
         if seconds < 0:
             seconds = 0
         self._sleep_in_parts(seconds)
-        self.log('Slept %s' % secs_to_timestr(seconds))
+        self.log(f'Slept {secs_to_timestr(seconds)}.')
         if reason:
             self.log(reason)
 
@@ -3050,8 +3047,8 @@ class _Misc(_BuiltInBase):
                     'len': len,
                     'type': lambda x: type(x).__name__}[formatter.lower()]
         except KeyError:
-            raise ValueError("Invalid formatter '%s'. Available "
-                             "'str', 'repr', 'ascii', 'len', and 'type'." % formatter)
+            raise ValueError(f"Invalid formatter '{formatter}'. Available "
+                             f"'str', 'repr', 'ascii', 'len', and 'type'.")
 
     @run_keyword_variant(resolve=0)
     def log_many(self, *messages):
@@ -3078,7 +3075,7 @@ class _Misc(_BuiltInBase):
                     yield item
             elif match.is_dict_variable():
                 for name, value in value.items():
-                    yield '%s=%s' % (name, value)
+                    yield f'{name}={value}'
             else:
                 yield value
 
@@ -3142,7 +3139,7 @@ class _Misc(_BuiltInBase):
         except DataError as err:
             raise RuntimeError(str(err))
         self._namespace.variables.set_global('${LOG_LEVEL}', level.upper())
-        self.log('Log level changed from %s to %s.' % (old, level.upper()))
+        self.log(f'Log level changed from {old} to {level.upper()}.')
         return old
 
     def reload_library(self, name_or_instance):
@@ -3156,8 +3153,7 @@ class _Misc(_BuiltInBase):
         calls this keyword as a method.
         """
         library = self._namespace.reload_library(name_or_instance)
-        self.log('Reloaded library %s with %s keywords.' % (library.name,
-                                                            len(library)))
+        self.log(f'Reloaded library {library.name} with {len(library)} keywords.')
 
     @run_keyword_variant(resolve=0)
     def import_library(self, name, *args):
@@ -3523,7 +3519,7 @@ class _Misc(_BuiltInBase):
         if self._context.in_test_teardown:
             self._variables.set_test("${TEST_MESSAGE}", test.message)
         message, level = self._get_logged_test_message_and_level(test.message)
-        self.log('Set test message to:\n%s' % message, level)
+        self.log(f'Set test message to:\n{message}', level)
 
     def _get_new_text(self, old, new, append, handle_html=False):
         if not is_string(new):
@@ -3534,10 +3530,10 @@ class _Misc(_BuiltInBase):
             if new.startswith('*HTML*'):
                 new = new[6:].lstrip()
                 if not old.startswith('*HTML*'):
-                    old = '*HTML* %s' % html_escape(old)
+                    old = f'*HTML* {html_escape(old)}'
             elif old.startswith('*HTML*'):
                 new = html_escape(new)
-        return '%s %s' % (old, new)
+        return f'{old} {new}'
 
     def _get_logged_test_message_and_level(self, message):
         if message.startswith('*HTML*'):
@@ -3561,12 +3557,12 @@ class _Misc(_BuiltInBase):
                                "used in suite setup or teardown.")
         test.doc = self._get_new_text(test.doc, doc, append)
         self._variables.set_test('${TEST_DOCUMENTATION}', test.doc)
-        self.log('Set test documentation to:\n%s' % test.doc)
+        self.log(f'Set test documentation to:\n{test.doc}')
 
     def set_suite_documentation(self, doc, append=False, top=False):
         """Sets documentation for the current test suite.
 
-        By default the possible existing documentation is overwritten, but
+        By default, the possible existing documentation is overwritten, but
         this can be changed using the optional ``append`` argument similarly
         as with `Set Test Message` keyword.
 
@@ -3581,12 +3577,12 @@ class _Misc(_BuiltInBase):
         suite = self._get_context(top).suite
         suite.doc = self._get_new_text(suite.doc, doc, append)
         self._variables.set_suite('${SUITE_DOCUMENTATION}', suite.doc, top)
-        self.log('Set suite documentation to:\n%s' % suite.doc)
+        self.log(f'Set suite documentation to:\n{suite.doc}')
 
     def set_suite_metadata(self, name, value, append=False, top=False):
         """Sets metadata for the current test suite.
 
-        By default possible existing metadata values are overwritten, but
+        By default, possible existing metadata values are overwritten, but
         this can be changed using the optional ``append`` argument similarly
         as with `Set Test Message` keyword.
 
@@ -3604,7 +3600,7 @@ class _Misc(_BuiltInBase):
         original = metadata.get(name, '')
         metadata[name] = self._get_new_text(original, value, append)
         self._variables.set_suite('${SUITE_METADATA}', metadata.copy(), top)
-        self.log("Set suite metadata '%s' to value '%s'." % (name, metadata[name]))
+        self.log(f"Set suite metadata '{name}' to value '{metadata[name]}'.")
 
     def set_tags(self, *tags):
         """Adds given ``tags`` for the current test or all tests in a suite.
@@ -3629,7 +3625,7 @@ class _Misc(_BuiltInBase):
             ctx.suite.set_tags(tags, persist=True)
         else:
             raise RuntimeError("'Set Tags' cannot be used in suite teardown.")
-        self.log('Set tag%s %s.' % (s(tags), seq2str(tags)))
+        self.log(f'Set tag{s(tags)} {seq2str((tags))}.')
 
     def remove_tags(self, *tags):
         """Removes given ``tags`` from the current test or all tests in a suite.
@@ -3657,7 +3653,7 @@ class _Misc(_BuiltInBase):
             ctx.suite.set_tags(remove=tags, persist=True)
         else:
             raise RuntimeError("'Remove Tags' cannot be used in suite teardown.")
-        self.log('Removed tag%s %s.' % (s(tags), seq2str(tags)))
+        self.log(f'Removed tag{s(tags)} {seq2str((tags))}.')
 
     def get_library_instance(self, name=None, all=False):
         """Returns the currently active instance of the specified library.
@@ -3672,8 +3668,7 @@ class _Misc(_BuiltInBase):
         |     seleniumlib = BuiltIn().get_library_instance('SeleniumLibrary')
         |     title = seleniumlib.get_title()
         |     if not title.startswith(expected):
-        |         raise AssertionError("Title '%s' did not start with '%s'"
-        |                              % (title, expected))
+        |         raise AssertionError(f"Title '{title}' did not start with '{expected}'.")
 
         It is also possible to use this keyword in the test data and
         pass the returned library instance to another keyword. If a

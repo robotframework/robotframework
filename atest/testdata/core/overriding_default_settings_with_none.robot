@@ -2,7 +2,7 @@
 Test Setup  Log  Default Setup
 Test Teardown  Log  Default Teardown
 Test Template  Log
-Test Timeout   200 ms
+Test Timeout   100 ms
 Default Tags   d1  d2
 
 *** Test Cases ***
@@ -34,12 +34,12 @@ Overriding Test Template
 Overriding Test Timeout
     [Timeout]  NONE
     [Template]  NONE
-    Sleep  300ms
+    Sleep  123ms
 
 Overriding Test Timeout from Command Line
     [Timeout]  ${CONFIG}
     [Template]  NONE
-    Sleep  300ms
+    Sleep  123ms
 
 Overriding Default Tags
     [Tags]  NONE

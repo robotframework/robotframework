@@ -5,16 +5,16 @@ Resource          builtin_resource.robot
 *** Test Cases ***
 Get Length
     ${tc} =    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc.kws[0].kws[0].msgs[0]}    Length is 0
-    Check Log Message    ${tc.kws[1].kws[0].msgs[0]}    Length is 1
-    Check Log Message    ${tc.kws[2].kws[0].msgs[0]}    Length is 2
-    Check Log Message    ${tc.kws[3].kws[0].msgs[0]}    Length is 3
-    Check Log Message    ${tc.kws[4].kws[0].msgs[0]}    Length is 11
-    Check Log Message    ${tc.kws[5].kws[0].msgs[0]}    Length is 0
+    Check Log Message    ${tc.kws[0].kws[0].msgs[0]}    Length is 0.
+    Check Log Message    ${tc.kws[1].kws[0].msgs[0]}    Length is 1.
+    Check Log Message    ${tc.kws[2].kws[0].msgs[0]}    Length is 2.
+    Check Log Message    ${tc.kws[3].kws[0].msgs[0]}    Length is 3.
+    Check Log Message    ${tc.kws[4].kws[0].msgs[0]}    Length is 11.
+    Check Log Message    ${tc.kws[5].kws[0].msgs[0]}    Length is 0.
 
 Length Should Be
     ${tc} =    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc.kws[-1].msgs[0]}    Length is 2
+    Check Log Message    ${tc.kws[-1].msgs[0]}    Length is 2.
     Check Log Message    ${tc.kws[-1].msgs[1]}    Length of '*' should be 3 but is 2.    FAIL    pattern=yep
     Check Log Message    ${tc.kws[-1].msgs[2]}    Traceback*    DEBUG    pattern=yep
     Length Should Be    ${tc.kws[-1].msgs}    3
