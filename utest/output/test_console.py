@@ -40,7 +40,7 @@ class TestKeywordNotification(unittest.TestCase):
     def test_clear_markers_when_test_status_is_written(self):
         self._write_marker(count=5)
         self.console.end_test(Stub())
-        self._verify('| PASS |\n%s\n' % ('-'*self.console._writer._width))
+        self._verify('| PASS |\n%s\n' % ('-'*self.console.writer.width))
 
     def test_clear_markers_when_there_are_warnings(self):
         self._write_marker(count=5)

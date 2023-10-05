@@ -16,8 +16,8 @@
 import sys
 
 from robot.errors import DataError
-from robot.utils import (get_console_length, getshortdoc, isatty,
-                         pad_console_length)
+from robot.result import Keyword, TestCase, TestSuite
+from robot.utils import get_console_length, getshortdoc, isatty, pad_console_length
 
 from .highlighting import HighlightingStream
 
@@ -26,48 +26,48 @@ class VerboseOutput:
 
     def __init__(self, width=78, colors='AUTO', markers='AUTO', stdout=None,
                  stderr=None):
-        self._writer = VerboseWriter(width, colors, markers, stdout, stderr)
-        self._started = False
-        self._started_keywords = 0
-        self._running_test = False
+        self.writer = VerboseWriter(width, colors, markers, stdout, stderr)
+        self.started = False
+        self.started_keywords = 0
+        self.running_test = False
 
-    def start_suite(self, suite):
-        if not self._started:
-            self._writer.suite_separator()
-            self._started = True
-        self._writer.info(suite.longname, suite.doc, start_suite=True)
-        self._writer.suite_separator()
+    def start_suite(self, suite: TestSuite):
+        if not self.started:
+            self.writer.suite_separator()
+            self.started = True
+        self.writer.info(suite.longname, suite.doc, start_suite=True)
+        self.writer.suite_separator()
 
-    def end_suite(self, suite):
-        self._writer.info(suite.longname, suite.doc)
-        self._writer.status(suite.status)
-        self._writer.message(suite.full_message)
-        self._writer.suite_separator()
+    def end_suite(self, suite: TestSuite):
+        self.writer.info(suite.longname, suite.doc)
+        self.writer.status(suite.status)
+        self.writer.message(suite.full_message)
+        self.writer.suite_separator()
 
-    def start_test(self, test):
-        self._writer.info(test.name, test.doc)
-        self._running_test = True
+    def start_test(self, test: TestCase):
+        self.writer.info(test.name, test.doc)
+        self.running_test = True
 
-    def end_test(self, test):
-        self._writer.status(test.status, clear=True)
-        self._writer.message(test.message)
-        self._writer.test_separator()
-        self._running_test = False
+    def end_test(self, test: TestCase):
+        self.writer.status(test.status, clear=True)
+        self.writer.message(test.message)
+        self.writer.test_separator()
+        self.running_test = False
 
-    def start_keyword(self, kw):
-        self._started_keywords += 1
+    def start_keyword(self, kw: Keyword):
+        self.started_keywords += 1
 
-    def end_keyword(self, kw):
-        self._started_keywords -= 1
-        if self._running_test and not self._started_keywords:
-            self._writer.keyword_marker(kw.status)
+    def end_keyword(self, kw: Keyword):
+        self.started_keywords -= 1
+        if self.running_test and not self.started_keywords:
+            self.writer.keyword_marker(kw.status)
 
     def message(self, msg):
         if msg.level in ('WARN', 'ERROR'):
-            self._writer.error(msg.message, msg.level, clear=self._running_test)
+            self.writer.error(msg.message, msg.level, clear=self.running_test)
 
     def output_file(self, name, path):
-        self._writer.output(name, path)
+        self.writer.output(name, path)
 
 
 class VerboseWriter:
@@ -75,10 +75,10 @@ class VerboseWriter:
 
     def __init__(self, width=78, colors='AUTO', markers='AUTO', stdout=None,
                  stderr=None):
-        self._width = width
-        self._stdout = HighlightingStream(stdout or sys.__stdout__, colors)
-        self._stderr = HighlightingStream(stderr or sys.__stderr__, colors)
-        self._keyword_marker = KeywordMarker(self._stdout, markers)
+        self.width = width
+        self.stdout = HighlightingStream(stdout or sys.__stdout__, colors)
+        self.stderr = HighlightingStream(stderr or sys.__stderr__, colors)
+        self._keyword_marker = KeywordMarker(self.stdout, markers)
         self._last_info = None
 
     def info(self, name, doc, start_suite=False):
@@ -88,18 +88,18 @@ class VerboseWriter:
         self._keyword_marker.reset_count()
 
     def _write_info(self):
-        self._stdout.write(self._last_info)
+        self.stdout.write(self._last_info)
 
     def _get_info_width_and_separator(self, start_suite):
         if start_suite:
-            return self._width, '\n'
-        return self._width - self._status_length - 1, ' '
+            return self.width, '\n'
+        return self.width - self._status_length - 1, ' '
 
     def _get_info(self, name, doc, width):
         if get_console_length(name) > width:
             return pad_console_length(name, width)
         doc = getshortdoc(doc, linesep=' ')
-        info = '%s :: %s' % (name, doc) if doc else name
+        info = f'{name} :: {doc}' if doc else name
         return pad_console_length(info, width)
 
     def suite_separator(self):
@@ -109,14 +109,14 @@ class VerboseWriter:
         self._fill('-')
 
     def _fill(self, char):
-        self._stdout.write('%s\n' % (char * self._width))
+        self.stdout.write(f'{char * self.width}\n')
 
     def status(self, status, clear=False):
         if self._should_clear_markers(clear):
             self._clear_status()
-        self._stdout.write('| ', flush=False)
-        self._stdout.highlight(status, flush=False)
-        self._stdout.write(' |\n')
+        self.stdout.write('| ', flush=False)
+        self.stdout.highlight(status, flush=False)
+        self.stdout.write(' |\n')
 
     def _should_clear_markers(self, clear):
         return clear and self._keyword_marker.marking_enabled
@@ -126,12 +126,12 @@ class VerboseWriter:
         self._write_info()
 
     def _clear_info(self):
-        self._stdout.write('\r%s\r' % (' ' * self._width))
+        self.stdout.write(f"\r{' ' * self.width}\r")
         self._keyword_marker.reset_count()
 
     def message(self, message):
         if message:
-            self._stdout.write(message.strip() + '\n')
+            self.stdout.write(message.strip() + '\n')
 
     def keyword_marker(self, status):
         if self._keyword_marker.marker_count == self._status_length:
@@ -142,18 +142,18 @@ class VerboseWriter:
     def error(self, message, level, clear=False):
         if self._should_clear_markers(clear):
             self._clear_info()
-        self._stderr.error(message, level)
+        self.stderr.error(message, level)
         if self._should_clear_markers(clear):
             self._write_info()
 
     def output(self, name, path):
-        self._stdout.write('%-8s %s\n' % (name+':', path))
+        self.stdout.write(f"{name+':':8} {path}\n")
 
 
 class KeywordMarker:
 
     def __init__(self, highlighter, markers):
-        self._highlighter = highlighter
+        self.highlighter = highlighter
         self.marking_enabled = self._marking_enabled(markers, highlighter)
         self.marker_count = 0
 
@@ -164,13 +164,13 @@ class KeywordMarker:
         try:
             return options[markers.upper()]
         except KeyError:
-            raise DataError("Invalid console marker value '%s'. Available "
-                            "'AUTO', 'ON' and 'OFF'." % markers)
+            raise DataError(f"Invalid console marker value '{markers}'. "
+                            f"Available 'AUTO', 'ON' and 'OFF'.")
 
     def mark(self, status):
         if self.marking_enabled:
             marker, status = ('.', 'PASS') if status != 'FAIL' else ('F', 'FAIL')
-            self._highlighter.highlight(marker, status)
+            self.highlighter.highlight(marker, status)
             self.marker_count += 1
 
     def reset_count(self):

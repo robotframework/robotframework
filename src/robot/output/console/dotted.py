@@ -16,7 +16,8 @@
 import sys
 
 from robot.model import SuiteVisitor
-from robot.utils import plural_or_not, secs_to_timestr
+from robot.result import TestCase, TestSuite
+from robot.utils import plural_or_not as s, secs_to_timestr
 
 from .highlighting import HighlightingStream
 
@@ -24,67 +25,65 @@ from .highlighting import HighlightingStream
 class DottedOutput:
 
     def __init__(self, width=78, colors='AUTO', stdout=None, stderr=None):
-        self._width = width
-        self._stdout = HighlightingStream(stdout or sys.__stdout__, colors)
-        self._stderr = HighlightingStream(stderr or sys.__stderr__, colors)
-        self._markers_on_row = 0
+        self.width = width
+        self.stdout = HighlightingStream(stdout or sys.__stdout__, colors)
+        self.stderr = HighlightingStream(stderr or sys.__stderr__, colors)
+        self.markers_on_row = 0
 
-    def start_suite(self, suite):
+    def start_suite(self, suite: TestSuite):
         if not suite.parent:
-            self._stdout.write("Running suite '%s' with %d %s%s.\n"
-                               % (suite.name, suite.test_count,
-                                  'test' if not suite.rpa else 'task',
-                                  plural_or_not(suite.test_count)))
-            self._stdout.write('=' * self._width + '\n')
+            count = suite.test_count
+            ts = ('test' if not suite.rpa else 'task') + s(count)
+            self.stdout.write(f"Running suite '{suite.name}' with {count} {ts}.\n")
+            self.stdout.write('=' * self.width + '\n')
 
-    def end_test(self, test):
-        if self._markers_on_row == self._width:
-            self._stdout.write('\n')
-            self._markers_on_row = 0
-        self._markers_on_row += 1
+    def end_test(self, test: TestCase):
+        if self.markers_on_row == self.width:
+            self.stdout.write('\n')
+            self.markers_on_row = 0
+        self.markers_on_row += 1
         if test.passed:
-            self._stdout.write('.')
+            self.stdout.write('.')
         elif test.skipped:
-            self._stdout.highlight('s', 'SKIP')
+            self.stdout.highlight('s', 'SKIP')
         elif test.tags.robot('exit'):
-            self._stdout.write('x')
+            self.stdout.write('x')
         else:
-            self._stdout.highlight('F', 'FAIL')
+            self.stdout.highlight('F', 'FAIL')
 
-    def end_suite(self, suite):
+    def end_suite(self, suite: TestSuite):
         if not suite.parent:
-            self._stdout.write('\n')
-            StatusReporter(self._stdout, self._width).report(suite)
-            self._stdout.write('\n')
+            self.stdout.write('\n')
+            StatusReporter(self.stdout, self.width).report(suite)
+            self.stdout.write('\n')
 
     def message(self, msg):
         if msg.level in ('WARN', 'ERROR'):
-            self._stderr.error(msg.message, msg.level)
+            self.stderr.error(msg.message, msg.level)
 
     def output_file(self, name, path):
-        self._stdout.write('%-8s %s\n' % (name+':', path))
+        self.stdout.write(f"{name+':':8} {path}\n")
 
 
 class StatusReporter(SuiteVisitor):
 
     def __init__(self, stream, width):
-        self._stream = stream
-        self._width = width
+        self.stream = stream
+        self.width = width
 
-    def report(self, suite):
+    def report(self, suite: TestSuite):
         suite.visit(self)
         stats = suite.statistics
-        self._stream.write("%s\nRun suite '%s' with %d %s%s in %s.\n\n"
-                           % ('=' * self._width, suite.name, stats.total,
-                              'test' if not suite.rpa else 'task',
-                              plural_or_not(stats.total),
-                              secs_to_timestr(suite.elapsedtime/1000.0)))
-        self._stream.highlight(suite.status + ('PED' if suite.status == 'SKIP' else 'ED'), suite.status)
-        self._stream.write('\n%s\n' % stats.message)
+        ts = ('test' if not suite.rpa else 'task') + s(stats.total)
+        elapsed = secs_to_timestr(suite.elapsed_time)
+        self.stream.write(f"{'=' * self.width}\nRun suite '{suite.name}' with "
+                          f"{stats.total} {ts} in {elapsed}.\n\n")
+        ed = 'ED' if suite.status != 'SKIP' else 'PED'
+        self.stream.highlight(suite.status + ed, suite.status)
+        self.stream.write(f'\n{stats.message}\n')
 
-    def visit_test(self, test):
+    def visit_test(self, test: TestCase):
         if test.failed and not test.tags.robot('exit'):
-            self._stream.write('-' * self._width + '\n')
-            self._stream.highlight('FAIL')
-            self._stream.write(': %s\n%s\n' % (test.longname,
-                                               test.message.strip()))
+            self.stream.write('-' * self.width + '\n')
+            self.stream.highlight('FAIL')
+            self.stream.write(f': {test.longname}\n{test.message.strip()}\n')
