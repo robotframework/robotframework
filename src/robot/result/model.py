@@ -686,11 +686,12 @@ class Error(model.Error, StatusMixin, DeprecatedAttributesMixin):
 class Keyword(model.Keyword, StatusMixin):
     """Represents an executed library or user keyword."""
     body_class = Body
-    __slots__ = ['kwname', 'libname', 'sourcename', 'doc', 'timeout', 'status',
-                 'message', '_start_time', '_end_time', '_elapsed_time', '_teardown']
+    __slots__ = ['owner', 'source_name', 'doc', 'timeout', 'status', 'message',
+                 '_start_time', '_end_time', '_elapsed_time', '_teardown']
 
-    def __init__(self, kwname: str = '',
-                 libname: str = '',
+    def __init__(self, name: 'str|None' = '',
+                 owner: 'str|None' = None,
+                 source_name: 'str|None' = None,
                  doc: str = '',
                  args: Sequence[str] = (),
                  assign: Sequence[str] = (),
@@ -702,15 +703,12 @@ class Keyword(model.Keyword, StatusMixin):
                  start_time: 'datetime|str|None' = None,
                  end_time: 'datetime|str|None' = None,
                  elapsed_time: 'timedelta|int|float|None' = None,
-                 sourcename: 'str|None' = None,
                  parent: BodyItemParent = None):
-        super().__init__(None, args, assign, type, parent)
-        #: Name of the keyword without library or resource name.
-        self.kwname = kwname
+        super().__init__(name, args, assign, type, parent)
         #: Name of the library or resource containing this keyword.
-        self.libname = libname
+        self.owner = owner
         #: Original name of keyword with embedded arguments.
-        self.sourcename = sourcename
+        self.source_name = source_name
         self.doc = doc
         self.tags = tags
         self.timeout = timeout
@@ -749,27 +747,48 @@ class Keyword(model.Keyword, StatusMixin):
         return self.body.filter(messages=True)    # type: ignore
 
     @property
-    def name(self) -> 'str|None':
-        """Keyword name in format ``libname.kwname``.
+    def full_name(self) -> 'str|None':
+        """Keyword name in format ``owner.name``.
 
-        Just ``kwname`` if :attr:`libname` is empty. In practice that is the
-        case only with user keywords in the same file as the executed test case
-        or test suite.
+        Just ``name`` if :attr:`owner` is not set. In practice this is the
+        case only with user keywords in the suite file.
 
-        Cannot be set directly. Set :attr:`libname` and :attr:`kwname`
-        separately instead.
+        Cannot be set directly. Set :attr:`name` and :attr:`owner` separately
+        instead.
+
+        Notice that prior to Robot Framework 7.0, the ``name`` attribute contained
+        the full name and keyword and owner names were in ``kwname`` and ``libname``,
+        respectively.
         """
-        if not self.libname:
-            return self.kwname
-        return f'{self.libname}.{self.kwname}'
+        return f'{self.owner}.{self.name}' if self.owner else self.name
 
-    @name.setter
-    def name(self, name):
-        if name is not None:
-            raise AttributeError("Cannot set 'name' attribute directly. "
-                                 "Set 'kwname' and 'libname' separately instead.")
-        self.kwname = None
-        self.libname = None
+    # TODO: Deprecate 'kwname', 'libname' and 'sourcename' loudly in RF 8.
+    @property
+    def kwname(self) -> 'str|None':
+        """Deprecated since Robot Framework 7.0. Use :attr:``name` instead."""
+        return self.name
+
+    @kwname.setter
+    def kwname(self, name: 'str|None'):
+        self.name = name
+
+    @property
+    def libname(self) -> 'str|None':
+        """Deprecated since Robot Framework 7.0. Use :attr:``owner` instead."""
+        return self.owner
+
+    @libname.setter
+    def libname(self, name: 'str|None'):
+        self.owner = name
+
+    @property
+    def sourcename(self) -> str:
+        """Deprecated since Robot Framework 7.0. Use :attr:``source_name` instead."""
+        return self.source_name
+
+    @sourcename.setter
+    def sourcename(self, name: str):
+        self.source_name = name
 
     @property    # Cannot use @setter because it would create teardowns recursively.
     def teardown(self) -> 'Keyword':

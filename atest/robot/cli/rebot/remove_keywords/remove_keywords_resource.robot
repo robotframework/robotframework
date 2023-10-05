@@ -35,5 +35,5 @@ Keyword Should Not Be Empty
 
 Check Keyword Name And Args
     [Arguments]    ${kw}    ${name}    @{args}
-    Should Be Equal    ${kw.name}    ${name}
+    Should Be Equal    ${kw.full_name}    ${name}
     Lists Should Be Equal    ${kw.args}    ${args}

@@ -44,13 +44,13 @@ class StatusReporter:
             result.start_time = datetime.now()
         context.start_keyword(ModelCombiner(self.data, result))
         if result.type in result.KEYWORD_TYPES:
-            self._warn_if_deprecated(result.doc, result.name)
+            self._warn_if_deprecated(result.doc, result.full_name)
         return self
 
     def _warn_if_deprecated(self, doc, name):
         if doc.startswith('*DEPRECATED') and '*' in doc[1:]:
             message = ' ' + doc.split('*', 2)[-1].strip()
-            self.context.warn("Keyword '%s' is deprecated.%s" % (name, message))
+            self.context.warn(f"Keyword '{name}' is deprecated.{message}")
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         context = self.context

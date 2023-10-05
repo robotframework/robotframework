@@ -155,7 +155,8 @@ class ExecutionResultBuilder:
                     inside += 1
                     if started >= 0:
                         started += 1
-                    elif by_name and name_match(elem.get('name', ''), elem.get('library')):
+                    elif by_name and name_match(elem.get('name', ''), elem.get('owner')
+                                                or elem.get('library')):
                         started = 0
                     elif by_type and type_match(tag):
                         started = 0

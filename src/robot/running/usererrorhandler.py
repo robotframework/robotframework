@@ -63,8 +63,8 @@ class UserErrorHandler:
         return self
 
     def run(self, kw, context, run=True):
-        result = KeywordResult(kwname=self.name,
-                               libname=self.libname,
+        result = KeywordResult(name=self.name,
+                               owner=self.libname,
                                args=kw.args,
                                assign=tuple(VariableAssignment(kw.assign)),
                                type=kw.type)

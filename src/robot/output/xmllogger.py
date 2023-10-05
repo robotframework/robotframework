@@ -67,11 +67,11 @@ class XmlLogger(ResultVisitor):
         self._writer.element('msg', msg.message, attrs)
 
     def start_keyword(self, kw):
-        attrs = {'name': kw.kwname, 'library': kw.libname}
+        attrs = {'name': kw.name, 'owner': kw.owner}
         if kw.type != 'KEYWORD':
             attrs['type'] = kw.type
-        if kw.sourcename:
-            attrs['sourcename'] = kw.sourcename
+        if kw.source_name:
+            attrs['source_name'] = kw.source_name
         self._writer.start('kw', attrs)
         self._write_list('var', kw.assign)
         self._write_list('arg', [safe_str(a) for a in kw.args])

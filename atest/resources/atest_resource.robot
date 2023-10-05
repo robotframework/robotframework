@@ -115,7 +115,7 @@ Check Test Tags
 
 Check Keyword Data
     [Arguments]    ${kw}    ${name}    ${assign}=    ${args}=    ${status}=PASS    ${tags}=    ${type}=KEYWORD
-    Should Be Equal    ${kw.name}                    ${name}
+    Should Be Equal    ${kw.full_name}               ${name}
     Should Be Equal    ${{', '.join($kw.assign)}}    ${assign}
     Should Be Equal    ${{', '.join($kw.args)}}      ${args}
     Should Be Equal    ${kw.status}                  ${status}

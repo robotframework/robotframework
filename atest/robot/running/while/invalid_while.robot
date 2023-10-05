@@ -46,7 +46,7 @@ Check Invalid WHILE Test Case
     Should Be Equal    ${tc.body[0].body[0].type}      ITERATION
     Should Be Equal    ${tc.body[0].body[0].status}    NOT RUN
     IF    ${body}
-        Should Be Equal    ${tc.body[0].body[0].body[0].name}      BuiltIn.Fail
-        Should Be Equal    ${tc.body[0].body[0].body[0].status}    NOT RUN
+        Should Be Equal    ${tc.body[0].body[0].body[0].full_name}      BuiltIn.Fail
+        Should Be Equal    ${tc.body[0].body[0].body[0].status}         NOT RUN
     END
     RETURN    ${tc}

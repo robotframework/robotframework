@@ -65,15 +65,15 @@ class TestBuildTestSuite(unittest.TestCase):
     def test_test_with_values(self):
         test = TestCase('Name', '*Doc*', ['t1', 't2'], '1 minute', 42, 'PASS', 'Msg',
                         '2011-12-04 19:22:22.222', '2011-12-04 19:22:22.333')
-        test.setup.config(kwname='setup')
-        test.teardown.config(kwname='td')
-        k1 = self._verify_keyword(test.setup, type=1, kwname='setup')
-        k2 = self._verify_keyword(test.teardown, type=2, kwname='td')
+        test.setup.config(name='setup')
+        test.teardown.config(name='td')
+        k1 = self._verify_keyword(test.setup, type=1, name='setup')
+        k2 = self._verify_keyword(test.teardown, type=2, name='td')
         self._verify_test(test, 'Name', '<b>Doc</b>', ('t1', 't2'),
                           '1 minute', 1, 'Msg', 0, 111, (k1, k2))
 
     def test_name_escaping(self):
-        kw = Keyword('quote:"', 'and *url* https://url.com', '*"Doc"*',)
+        kw = Keyword('quote:"', 'and *url* https://url.com', doc='*"Doc"*',)
         self._verify_keyword(kw, 0, 'quote:&quot;', 'and *url* https://url.com', '<b>"Doc"</b>')
         test = TestCase('quote:" and *url* https://url.com', '*"Doc"*',)
         self._verify_test(test, 'quote:&quot; and *url* https://url.com', '<b>"Doc"</b>')
@@ -84,7 +84,7 @@ class TestBuildTestSuite(unittest.TestCase):
         self._verify_keyword(Keyword())
 
     def test_keyword_with_values(self):
-        kw = Keyword('KW Name', 'libname', 'http://doc', ('arg1', 'arg2'),
+        kw = Keyword('KW Name', 'libname', '', 'http://doc', ('arg1', 'arg2'),
                      ('${v1}', '${v2}'), ('tag1', 'tag2'), '1 second', 'SETUP', 'FAIL',
                      'message', '2011-12-04 19:42:42.000', '2011-12-04 19:42:42.042')
         self._verify_keyword(kw, 1, 'KW Name', 'libname',
@@ -125,10 +125,10 @@ class TestBuildTestSuite(unittest.TestCase):
 
     def test_nested_structure(self):
         suite = TestSuite()
-        suite.setup.config(kwname='setup')
-        suite.teardown.config(kwname='td')
-        K1 = self._verify_keyword(suite.setup, type=1, kwname='setup')
-        K2 = self._verify_keyword(suite.teardown, type=2, kwname='td')
+        suite.setup.config(name='setup')
+        suite.teardown.config(name='td')
+        K1 = self._verify_keyword(suite.setup, type=1, name='setup')
+        K2 = self._verify_keyword(suite.teardown, type=2, name='td')
         suite.suites = [TestSuite()]
         suite.suites[0].tests = [TestCase(tags=['crit', 'xxx'])]
         t = self._verify_test(suite.suites[0].tests[0], tags=('crit', 'xxx'))
@@ -139,7 +139,7 @@ class TestBuildTestSuite(unittest.TestCase):
         suite.tests[0].body[0].body = [ForIteration(), Message()]
         k = self._verify_keyword(suite.tests[0].body[0].body[0], type=4)
         m = self._verify_message(suite.tests[0].body[0].body[1])
-        k1 = self._verify_keyword(suite.tests[0].body[0], type=3, body=(k, m), kwname='${x} IN [ 1 | 2 ]', message='x')
+        k1 = self._verify_keyword(suite.tests[0].body[0], type=3, body=(k, m), name='${x} IN [ 1 | 2 ]', message='x')
         suite.tests[0].body[1].body = [Message(), Message('msg', level='TRACE')]
         m1 = self._verify_message(suite.tests[0].body[1].messages[0])
         m2 = self._verify_message(suite.tests[0].body[1].messages[1], 'msg', level=0)
@@ -152,7 +152,7 @@ class TestBuildTestSuite(unittest.TestCase):
 
     def test_timestamps(self):
         suite = TestSuite(start_time='2011-12-05 00:33:33.333')
-        suite.setup.config(kwname='s1', start_time='2011-12-05 00:33:33.334')
+        suite.setup.config(name='s1', start_time='2011-12-05 00:33:33.334')
         suite.setup.body.create_message('Message', timestamp='2011-12-05 00:33:33.343')
         suite.setup.body.create_message(level='DEBUG', timestamp='2011-12-05 00:33:33.344')
         suite.tests.create(start_time='2011-12-05 00:33:34.333')
@@ -227,15 +227,14 @@ class TestBuildTestSuite(unittest.TestCase):
         return self._build_and_verify(TestBuilder, test, name, timeout,
                                       doc, tags, status, body)
 
-    def _verify_keyword(self, keyword, type=0, kwname='', libname='', doc='',
+    def _verify_keyword(self, keyword, type=0, name='', owner='', doc='',
                         args='', assign='', tags='', timeout='', status=0,
                         start=None, elapsed=0, message='', body=()):
         status = (status, start, elapsed, message) \
                 if message else (status, start, elapsed)
         doc = f'<p>{doc}</p>' if doc else ''
-        return self._build_and_verify(KeywordBuilder, keyword, type, kwname,
-                                      libname, timeout, doc, args, assign, tags,
-                                      status, body)
+        return self._build_and_verify(KeywordBuilder, keyword, type, name, owner,
+                                      timeout, doc, args, assign, tags, status, body)
 
     def _verify_message(self, msg, message='', level=2, timestamp=None):
         return self._build_and_verify(MessageBuilder, msg, timestamp, level, message)
@@ -301,8 +300,8 @@ class TestSplitting(unittest.TestCase):
 
     def _get_suite_with_keywords(self):
         suite = TestSuite(name='root')
-        suite.setup.config(kwname='k1')
-        suite.teardown.config(kwname='k2')
+        suite.setup.config(name='k1')
+        suite.teardown.config(name='k2')
         suite.setup.body.create_keyword('k1-k2')
         return suite
 
@@ -324,7 +323,7 @@ class TestSplitting(unittest.TestCase):
         suite = self._get_suite_with_keywords()
         sub = TestSuite(name='suite2')
         suite.suites = [self._get_suite_with_tests(), sub]
-        sub.setup.config(kwname='kw')
+        sub.setup.config(name='kw')
         sub.setup.body.create_keyword('skw').body.create_message('Message')
         sub.tests.create('test', doc='tdoc').body.create_keyword('koowee', doc='kdoc')
         return suite
@@ -356,16 +355,16 @@ class TestPruneInput(unittest.TestCase):
 
     def setUp(self):
         self.suite = TestSuite()
-        self.suite.setup.config(kwname='s')
-        self.suite.teardown.config(kwname='t')
+        self.suite.setup.config(name='s')
+        self.suite.teardown.config(name='t')
         s1 = self.suite.suites.create()
-        s1.setup.config(kwname='s1')
+        s1.setup.config(name='s1')
         tc = s1.tests.create()
-        tc.setup.config(kwname='tcs')
-        tc.teardown.config(kwname='tct')
+        tc.setup.config(name='tcs')
+        tc.teardown.config(name='tct')
         tc.body = [Keyword(), Keyword(), Keyword()]
         tc.body[0].body = [Keyword(), Keyword(), Message(), Message(), Message()]
-        tc.body[0].teardown.config(kwname='kt')
+        tc.body[0].teardown.config(name='kt')
         s2 = self.suite.suites.create()
         t1 = s2.tests.create()
         t2 = s2.tests.create()
@@ -374,16 +373,16 @@ class TestPruneInput(unittest.TestCase):
 
     def test_no_pruning(self):
         SuiteBuilder(JsBuildingContext(prune_input=False)).build(self.suite)
-        assert_equal(self.suite.setup.kwname, 's')
-        assert_equal(self.suite.teardown.kwname, 't')
-        assert_equal(self.suite.suites[0].setup.kwname, 's1')
-        assert_equal(self.suite.suites[0].teardown.kwname, None)
-        assert_equal(self.suite.suites[0].tests[0].setup.kwname, 'tcs')
-        assert_equal(self.suite.suites[0].tests[0].teardown.kwname, 'tct')
+        assert_equal(self.suite.setup.name, 's')
+        assert_equal(self.suite.teardown.name, 't')
+        assert_equal(self.suite.suites[0].setup.name, 's1')
+        assert_equal(self.suite.suites[0].teardown.name, None)
+        assert_equal(self.suite.suites[0].tests[0].setup.name, 'tcs')
+        assert_equal(self.suite.suites[0].tests[0].teardown.name, 'tct')
         assert_equal(len(self.suite.suites[0].tests[0].body), 3)
         assert_equal(len(self.suite.suites[0].tests[0].body[0].body), 5)
         assert_equal(len(self.suite.suites[0].tests[0].body[0].messages), 3)
-        assert_equal(self.suite.suites[0].tests[0].body[0].teardown.kwname, 'kt')
+        assert_equal(self.suite.suites[0].tests[0].body[0].teardown.name, 'kt')
         assert_equal(len(self.suite.suites[1].tests[0].body), 1)
         assert_equal(len(self.suite.suites[1].tests[1].body), 2)
 

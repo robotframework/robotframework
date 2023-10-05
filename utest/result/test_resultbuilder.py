@@ -46,7 +46,7 @@ class TestBuildingSuiteExecutionResult(unittest.TestCase):
 
     def test_keyword_is_built(self):
         keyword = self.test.body[0]
-        assert_equal(keyword.name, 'BuiltIn.Log')
+        assert_equal(keyword.full_name, 'BuiltIn.Log')
         assert_equal(keyword.doc, 'Logs the given message with the given level.')
         assert_equal(keyword.args, ('Test 1',))
         assert_equal(keyword.assign, ())
@@ -85,7 +85,7 @@ class TestBuildingSuiteExecutionResult(unittest.TestCase):
         assert_equal(for_.body[0].assign, {'${x}': 'not in source'})
         assert_equal(len(for_.body[0].body), 1)
         kw = for_.body[0].body[0]
-        assert_equal(kw.name, 'BuiltIn.Log')
+        assert_equal(kw.full_name, 'BuiltIn.Log')
         assert_equal(kw.args, ('${x}',))
         assert_equal(len(kw.body), 1)
         assert_equal(kw.body[0].message, 'not in source')
@@ -97,13 +97,13 @@ class TestBuildingSuiteExecutionResult(unittest.TestCase):
         assert_equal(if_.status, if_.NOT_RUN)
         assert_equal(len(if_.body), 1)
         kw = if_.body[0]
-        assert_equal(kw.name, 'BuiltIn.Fail')
+        assert_equal(kw.full_name, 'BuiltIn.Fail')
         assert_equal(kw.status, kw.NOT_RUN)
         assert_equal(else_.condition, None)
         assert_equal(else_.status, else_.PASS)
         assert_equal(len(else_.body), 1)
         kw = else_.body[0]
-        assert_equal(kw.name, 'BuiltIn.No Operation')
+        assert_equal(kw.full_name, 'BuiltIn.No Operation')
         assert_equal(kw.status, kw.PASS)
 
     def test_suite_setup_is_built(self):

@@ -86,18 +86,18 @@ class PassedKeywordRemover(_KeywordRemover):
 class ByNameKeywordRemover(_KeywordRemover):
 
     def __init__(self, pattern):
-        _KeywordRemover.__init__(self)
+        super().__init__()
         self._matcher = Matcher(pattern, ignore='_')
 
     def start_keyword(self, kw):
-        if self._matcher.match(kw.name) and not self._warning_or_error(kw):
+        if self._matcher.match(kw.full_name) and not self._warning_or_error(kw):
             self._clear_content(kw)
 
 
 class ByTagKeywordRemover(_KeywordRemover):
 
     def __init__(self, pattern):
-        _KeywordRemover.__init__(self)
+        super().__init__()
         self._pattern = TagPattern.from_string(pattern)
 
     def start_keyword(self, kw):
@@ -136,7 +136,7 @@ class WaitUntilKeywordSucceedsRemover(_KeywordRemover):
     _message = '%d failing step%s removed using --RemoveKeywords option.'
 
     def start_keyword(self, kw):
-        if kw.libname == 'BuiltIn' and kw.kwname == 'Wait Until Keyword Succeeds':
+        if kw.owner == 'BuiltIn' and kw.name == 'Wait Until Keyword Succeeds':
             before = len(kw.body)
             self._remove_keywords(kw.body)
             self._removal_message.set_if_removed(kw, before)

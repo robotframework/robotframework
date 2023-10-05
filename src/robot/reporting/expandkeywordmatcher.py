@@ -33,6 +33,6 @@ class ExpandKeywordMatcher:
         self._match_tags = MultiMatcher(tags).match_any
 
     def match(self, kw: Keyword):
-        if (self._match_name(kw.name or '')
+        if (self._match_name(kw.full_name or '')
                 or self._match_tags(kw.tags)) and not kw.not_run:
             self.matched_ids.append(kw.id)

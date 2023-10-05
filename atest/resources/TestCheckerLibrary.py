@@ -223,9 +223,9 @@ class TestCheckerLibrary:
             start = self._get_pattern(test, 'STARTS:')
             if test.message.startswith(start):
                 return
-        raise AssertionError("Test '%s' had wrong message.\n\n"
-                             "Expected:\n%s\n\nActual:\n%s\n"
-                             % (test.name, test.exp_message, test.message))
+        raise AssertionError(f"Test '{test.name}' had wrong message.\n\n"
+                             f"Expected:\n{test.exp_message}\n\n"
+                             f"Actual:\n{test.message}\n")
 
     def _get_pattern(self, test, prefix):
         pattern = test.exp_message[len(prefix):].strip()
@@ -253,12 +253,12 @@ class TestCheckerLibrary:
         if len(tests) != len(expected):
             raise AssertionError("Wrong number of tests." + tests_msg)
         for test in tests:
-            logger.info("Verifying test '%s'" % test.name)
+            logger.info(f"Verifying test '{test.name}'")
             try:
                 status = self._find_expected_status(test.name, expected)
             except IndexError:
-                raise AssertionError("Test '%s' was not expected to be run.%s"
-                                     % (test.name, tests_msg))
+                raise AssertionError(f"Test '{test.name}' was not expected to be run."
+                                     + tests_msg)
             expected.pop(expected.index((test.name, status)))
             if status and ':' in status:
                 status, message = status.split(':', 1)
@@ -284,14 +284,12 @@ class TestCheckerLibrary:
         expected = sorted(expected)
         actual = sorted(s.name for s in suite.suites)
         if len(actual) != len(expected):
-            raise AssertionError("Wrong number of suites.\n"
-                                 "Expected (%d): %s\n"
-                                 "Actual   (%d): %s"
-                                 % (len(expected), ', '.join(expected),
-                                    len(actual), ', '.join(actual)))
+            raise AssertionError(f"Wrong number of suites.\n"
+                                 f"Expected ({len(expected)}): {', '.join(expected)}\n"
+                                 f"Actual   ({len(actual)}): {', '.join(actual)}")
         for name in expected:
             if not utils.Matcher(name).match_any(actual):
-                raise AssertionError('Suite %s not found' % name)
+                raise AssertionError(f'Suite {name} not found.')
 
     def should_contain_tags(self, test, *tags):
         logger.info('Test has tags', test.tags)
@@ -301,7 +299,7 @@ class TestCheckerLibrary:
             assert_equal(act, exp)
 
     def should_contain_keywords(self, item, *kw_names):
-        actual_names = [kw.name for kw in item.kws]
+        actual_names = [kw.full_name for kw in item.kws]
         assert_equal(len(actual_names), len(kw_names), 'Wrong number of keywords')
         for act, exp in zip(actual_names, kw_names):
             assert_equal(act, exp)

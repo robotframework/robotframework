@@ -5,12 +5,12 @@ Resource          atest_resource.robot
 *** Test Cases ***
 Name
     ${tc} =    Check Test Case    Normal name
-    Should Be Equal  ${tc.kws[0].name}    Normal name
+    Should Be Equal  ${tc.kws[0].full_name}    Normal name
 
 Names are not formatted
     ${tc} =    Check Test Case    Names are not formatted
     FOR    ${kw}    IN    @{tc.kws}
-        Should Be Equal    ${kw.name}  user_keyword nameS _are_not_ FORmatted
+        Should Be Equal    ${kw.full_name}  user_keyword nameS _are_not_ FORmatted
     END
 
 No documentation
@@ -115,7 +115,7 @@ Verify Documentation
 Verify Teardown
     [Arguments]    ${message}
     ${tc} =    Check Test Case    ${TEST NAME}
-    Should Be Equal    ${tc.kws[0].teardown.name}    BuiltIn.Log
+    Should Be Equal    ${tc.kws[0].teardown.full_name}    BuiltIn.Log
     Check Log Message    ${tc.kws[0].teardown.msgs[0]}    ${message}
 
 Verify Timeout

@@ -47,7 +47,7 @@ class KwMock(Mock, BodyItem):
     non_existing = ('branch_status',)
 
     def __init__(self):
-        self.name = 'kwmock'
+        self.full_name = self.name = 'kwmock'
         self.args = ['a1', 'a2']
         self.status = 'PASS'
         self.type = BodyItem.KEYWORD

@@ -103,12 +103,13 @@
             <xs:element name="status" type="Status" />
         </xs:choice>
         <xs:attribute name="name" type="xs:string" />
-        <xs:attribute name="library" type="xs:string" />
-        <xs:attribute name="sourcename" type="xs:string" />  <!-- Original name with embedded arguments. Not used otherwise. -->
-        <xs:attribute name="type" type="KeywordType" />      <!-- Only used with setups and teardowns. -->
+        <xs:attribute name="owner" type="xs:string" />        <!-- Library or resource file name. -->
+        <xs:attribute name="source_name" type="xs:string" />  <!-- Original name with embedded arguments. Not used otherwise. -->
+        <xs:attribute name="type" type="KeywordType" />       <!-- Only used with setups and teardowns. -->
     </xs:complexType>
     <xs:simpleType name="KeywordType">
         <xs:restriction base="xs:string">
+            <xs:enumeration value="KEYWORD" />    <!-- Default when the attribute is not set. -->
             <xs:enumeration value="SETUP" />
             <xs:enumeration value="TEARDOWN" />
         </xs:restriction>

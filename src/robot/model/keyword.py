@@ -13,11 +13,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from typing import cast, Sequence, Type, TYPE_CHECKING
-import warnings
+from typing import Sequence, TYPE_CHECKING
 
 from .body import Body, BodyItem, BodyItemParent
-from .itemlist import ItemList
 from .modelobject import DataDict
 
 if TYPE_CHECKING:
@@ -32,7 +30,7 @@ class Keyword(BodyItem):
     :class:`robot.result.model.Keyword`.
     """
     repr_args = ('name', 'args', 'assign')
-    __slots__ = ['_name', 'args', 'assign', 'type']
+    __slots__ = ['name', 'args', 'assign', 'type']
 
     def __init__(self, name: 'str|None' = '',
                  args: Sequence[str] = (),
@@ -44,14 +42,6 @@ class Keyword(BodyItem):
         self.assign = tuple(assign)
         self.type = type
         self.parent = parent
-
-    @property
-    def name(self) -> 'str|None':
-        return self._name
-
-    @name.setter
-    def name(self, name: 'str|None'):
-        self._name = name
 
     @property
     def id(self) -> 'str|None':

@@ -12,16 +12,16 @@ Embedded Arguments In User Keyword Name
     File Should Contain    ${OUTFILE}
     ...    name="User Peke Selects Advanced Python From Webshop"
     File Should Contain    ${OUTFILE}
-    ...    sourcename="User \${user} Selects \${item} From Webshop"
-    File Should Not Contain    ${OUTFILE}    sourcename="Log"
+    ...    source_name="User \${user} Selects \${item} From Webshop"
+    File Should Not Contain    ${OUTFILE}    source_name="Log"
 
 Complex Embedded Arguments
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].kws[0].msgs[0]}    feature-works
     Check Log Message    ${tc.kws[1].kws[0].msgs[0]}    test case-is *executed*
     Check Log Message    ${tc.kws[2].kws[0].msgs[0]}    issue-is about to be done!
-    File Should Contain    ${OUTFILE}    sourcename="\${prefix:Given|When|Then} this
-    File Should Not Contain    ${OUTFILE}    sourcename="Log"
+    File Should Contain    ${OUTFILE}    source_name="\${prefix:Given|When|Then} this
+    File Should Not Contain    ${OUTFILE}    source_name="Log"
 
 Embedded Arguments with BDD Prefixes
     ${tc} =    Check Test Case    ${TEST NAME}
@@ -31,14 +31,14 @@ Embedded Arguments with BDD Prefixes
     File Should Contain    ${OUTFILE}
     ...    name="Given user x selects y from webshop"
     File Should Contain    ${OUTFILE}
-    ...    sourcename="User \${user} Selects \${item} From Webshop"
-    File Should Not Contain    ${OUTFILE}    sourcename="Log"
+    ...    source_name="User \${user} Selects \${item} From Webshop"
+    File Should Not Contain    ${OUTFILE}    source_name="Log"
 
 Argument Namespaces with Embedded Arguments
     Check Test Case    ${TEST NAME}
     File Should Contain    ${OUTFILE}    name="My embedded warrior"
-    File Should Contain    ${OUTFILE}    sourcename="My embedded \${var}"
-    File Should Not Contain    ${OUTFILE}    sourcename="Log"
+    File Should Contain    ${OUTFILE}    source_name="My embedded \${var}"
+    File Should Not Contain    ${OUTFILE}    source_name="Log"
 
 Embedded Arguments as Variables
     ${tc} =    Check Test Case    ${TEST NAME}
@@ -47,12 +47,12 @@ Embedded Arguments as Variables
     File Should Contain    ${OUTFILE}
     ...    name="User \${42} Selects \${EMPTY} From Webshop"
     File Should Contain    ${OUTFILE}
-    ...    sourcename="User \${user} Selects \${item} From Webshop"
+    ...    source_name="User \${user} Selects \${item} From Webshop"
     File Should Contain    ${OUTFILE}
     ...    name="User \${name} Selects \${SPACE * 10} From Webshop"
     File Should Contain    ${OUTFILE}
-    ...    sourcename="User \${user} Selects \${item} From Webshop"
-    File Should Not Contain    ${OUTFILE}    sourcename="Log">
+    ...    source_name="User \${user} Selects \${item} From Webshop"
+    File Should Not Contain    ${OUTFILE}    source_name="Log">
 
 Embedded Arguments as List And Dict Variables
     ${tc} =    Check Test Case    ${TEST NAME}

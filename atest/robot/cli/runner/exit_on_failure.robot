@@ -38,9 +38,9 @@ Imports in subsequent suites are skipped
 Correct Suite Teardown Is Executed When ExitOnFailure Is Used
     [Setup]    Run Tests    -X    misc/suites
     ${tsuite} =    Get Test Suite    Suites
-    Should Be Equal    ${tsuite.teardown.name}    BuiltIn.Log
+    Should Be Equal    ${tsuite.teardown.full_name}    BuiltIn.Log
     ${tsuite} =    Get Test Suite    Fourth
-    Should Be Equal    ${tsuite.teardown.name}    BuiltIn.Log
+    Should Be Equal    ${tsuite.teardown.full_name}    BuiltIn.Log
     ${tsuite} =    Get Test Suite    Tsuite3
     Teardown Should Not Be Defined    ${tsuite}
 

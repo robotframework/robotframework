@@ -58,7 +58,7 @@ Erroring Suite Setup
     Length Should Be    ${td.kws[0].msgs}    1
     Check Log Message    ${td.kws[0].msgs[0]}    Hello from suite teardown!
     Should Be Empty    ${td.kws[0].kws}
-    Should Be Equal    ${td.kws[1].name}    BuiltIn.No Operation
+    Should Be Equal    ${td.kws[1].full_name}    BuiltIn.No Operation
 
 Failing Higher Level Suite Setup
     Run Tests    ${EMPTY}    core/failing_higher_level_suite_setup

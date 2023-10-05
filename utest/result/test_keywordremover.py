@@ -33,7 +33,7 @@ class TestWUKSRemover(unittest.TestCase):
     def _assert_removed(self, failing=0, passing=0, messages=0, expected=0):
         suite = TestSuite()
         kw = suite.tests.create().body.create_keyword(
-            libname='BuiltIn', kwname='Wait Until Keyword Succeeds'
+            owner='BuiltIn', name='Wait Until Keyword Succeeds'
         )
         for i in range(failing):
             kw.body.create_keyword(status='FAIL')

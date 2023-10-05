@@ -74,5 +74,5 @@ Verify Teardown
 
 Verify Fixture
     [Arguments]    ${fixture}    ${expected_name}    ${expected_message}
-    Should be Equal    ${fixture.name}    ${expected_name}
+    Should be Equal    ${fixture.full_name}    ${expected_name}
     Check Log Message    ${fixture.messages[0]}    ${expected_message}

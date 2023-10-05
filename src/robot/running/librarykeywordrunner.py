@@ -58,8 +58,8 @@ class LibraryKeywordRunner:
 
     def _get_result(self, kw, assignment):
         handler = self._handler
-        return KeywordResult(kwname=self.name,
-                             libname=handler.libname,
+        return KeywordResult(name=self.name,
+                             owner=handler.libname,
                              doc=handler.shortdoc,
                              args=kw.args,
                              assign=tuple(assignment),
@@ -149,7 +149,7 @@ class EmbeddedArgumentsRunner(LibraryKeywordRunner):
 
     def _get_result(self, kw, assignment):
         result = super()._get_result(kw, assignment)
-        result.sourcename = self._handler.name
+        result.source_name = self._handler.name
         return result
 
 

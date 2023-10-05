@@ -75,7 +75,10 @@ class _ListenerArgumentsFromItem(ListenerArguments):
         attributes = dict((name, self._get_attribute_value(item, name))
                           for name in self._attribute_names)
         attributes.update(self._get_extra_attributes(item))
-        return item.name or '', attributes
+        return self._get_name(item) or '', attributes
+
+    def _get_name(self, item):
+        return item.name
 
     def _get_attribute_value(self, item, name):
         value = getattr(item, name)
@@ -146,21 +149,24 @@ class StartKeywordArguments(_ListenerArgumentsFromItem):
         'IN ZIP': ('mode', 'fill')
     }
 
+    def _get_name(self, kw):
+        return kw.full_name if kw.type in kw.KEYWORD_TYPES else kw._name
+
     def _get_extra_attributes(self, kw):
         # FOR and TRY model objects use `assign` starting from RF 7.0, but for
         # backwards compatibility reasons we pass them as `variable(s)`.
         if kw.type in kw.KEYWORD_TYPES:
             assign = list(kw.assign)
-            kwname = kw.kwname or ''
-            libname = kw.libname or ''
+            name = kw.name or ''
+            owner = kw.owner or ''
             args = [a if is_string(a) else safe_str(a) for a in kw.args]
         else:
             assign = []
-            kwname = kw._name
-            libname = ''
+            name = kw._name
+            owner = ''
             args = []
-        attrs = {'kwname': kwname,
-                 'libname': libname,
+        attrs = {'kwname': name,
+                 'libname': owner,
                  'args': args,
                  'assign': assign,
                  'source': str(kw.source or '')}

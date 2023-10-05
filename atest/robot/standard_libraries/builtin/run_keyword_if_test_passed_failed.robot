@@ -5,7 +5,7 @@ Resource          atest_resource.robot
 *** Test Cases ***
 Run Keyword If Test Failed when test fails
     ${tc} =    Check Test Case    ${TEST NAME}
-    Should Be Equal    ${tc.teardown.body[0].name}    BuiltIn.Log
+    Should Be Equal    ${tc.teardown.body[0].full_name}    BuiltIn.Log
     Check Log Message    ${tc.teardown.body[0].msgs[0]}    Hello from teardown!
 
 Run Keyword If Test Failed in user keyword when test fails

@@ -213,8 +213,8 @@ class TestTimes(unittest.TestCase):
         suite.tests.create(elapsed_time=1)
         suite.suites.create(elapsed_time=2)
         assert_equal(suite.elapsed_time, timedelta(seconds=3))
-        suite.setup.config(kwname='S', elapsed_time=0.1)
-        suite.teardown.config(kwname='T', elapsed_time=0.2)
+        suite.setup.config(name='S', elapsed_time=0.1)
+        suite.teardown.config(name='T', elapsed_time=0.2)
         assert_equal(suite.elapsed_time, timedelta(seconds=3.3))
         suite.config(start_time=datetime(2023, 9, 7, 20, 33, 44),
                      end_time=datetime(2023, 9, 7, 20, 33, 45),)
@@ -227,8 +227,8 @@ class TestTimes(unittest.TestCase):
         test.body.create_keyword(elapsed_time=1)
         test.body.create_if(elapsed_time=2)
         assert_equal(test.elapsed_time, timedelta(seconds=3))
-        test.setup.config(kwname='S', elapsed_time=0.1)
-        test.teardown.config(kwname='T', elapsed_time=0.2)
+        test.setup.config(name='S', elapsed_time=0.1)
+        test.teardown.config(name='T', elapsed_time=0.2)
         assert_equal(test.elapsed_time, timedelta(seconds=3.3))
         test.config(start_time=datetime(2023, 9, 7, 20, 33, 44),
                     end_time=datetime(2023, 9, 7, 20, 33, 45),)
@@ -241,7 +241,7 @@ class TestTimes(unittest.TestCase):
         kw.body.create_keyword(elapsed_time=1)
         kw.body.create_if(elapsed_time=2)
         assert_equal(kw.elapsed_time, timedelta(seconds=3))
-        kw.teardown.config(kwname='T', elapsed_time=0.2)
+        kw.teardown.config(name='T', elapsed_time=0.2)
         assert_equal(kw.elapsed_time, timedelta(seconds=3.2))
         kw.config(start_time=datetime(2023, 9, 7, 20, 33, 44),
                   end_time=datetime(2023, 9, 7, 20, 33, 45),)
@@ -309,14 +309,32 @@ class TestModel(unittest.TestCase):
     def test_keyword_name(self):
         kw = Keyword('keyword')
         assert_equal(kw.name, 'keyword')
-        kw = Keyword('keyword', 'lib')
-        assert_equal(kw.name, 'lib.keyword')
-        kw.kwname = 'Kekkonen'
-        kw.libname = 'Urho'
-        assert_equal(kw.name, 'Urho.Kekkonen')
+        assert_equal(kw.owner, None)
+        assert_equal(kw.full_name, 'keyword')
+        assert_equal(kw.source_name, None)
+        kw = Keyword('keyword', 'library', 'key${x}')
+        assert_equal(kw.name, 'keyword')
+        assert_equal(kw.owner, 'library')
+        assert_equal(kw.full_name, 'library.keyword')
+        assert_equal(kw.source_name, 'key${x}')
 
-    def test_keyword_name_cannot_be_set_directly(self):
-        assert_raises(AttributeError, setattr, Keyword(), 'name', 'value')
+    def test_full_name_cannot_be_set_directly(self):
+        assert_raises(AttributeError, setattr, Keyword(), 'full_name', 'value')
+
+    def test_deprecated_names(self):
+        # These aren't loudly deprecated yet.
+        kw = Keyword('k', 'l', 's')
+        assert_equal(kw.kwname, 'k')
+        assert_equal(kw.libname, 'l')
+        assert_equal(kw.sourcename, 's')
+        kw.kwname, kw.libname, kw.sourcename = 'K', 'L', 'S'
+        assert_equal(kw.kwname, 'K')
+        assert_equal(kw.libname, 'L')
+        assert_equal(kw.sourcename, 'S')
+        assert_equal(kw.name, 'K')
+        assert_equal(kw.owner, 'L')
+        assert_equal(kw.source_name, 'S')
+        assert_equal(kw.full_name, 'L.K')
 
     def test_status_propertys_with_test(self):
         self._verify_status_propertys(TestCase())

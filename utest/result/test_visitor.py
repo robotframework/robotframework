@@ -43,12 +43,12 @@ class TestVisitingSuite(unittest.TestCase):
 
     def test_visit_keyword_teardown(self):
         suite = ResultSuite()
-        suite.setup.config(kwname='SS')
-        suite.teardown.config(kwname='ST')
+        suite.setup.config(name='SS')
+        suite.teardown.config(name='ST')
         test = suite.tests.create()
-        test.setup.config(kwname='TS')
-        test.teardown.config(kwname='TT')
-        test.body.create_keyword().teardown.config(kwname='KT')
+        test.setup.config(name='TS')
+        test.teardown.config(name='TT')
+        test.body.create_keyword().teardown.config(name='KT')
         visitor = VisitSetupsAndTeardowns()
         suite.visit(visitor)
         assert_equal(visitor.visited, ['SS', 'TS', 'KT', 'TT', 'ST'])
@@ -203,9 +203,9 @@ END IF/ELSE ROOT
 
     def test_visit_return_continue_and_break(self):
         suite = ResultSuite()
-        suite.tests.create().body.create_return().body.create_keyword(kwname='R')
+        suite.tests.create().body.create_return().body.create_keyword(name='R')
         suite.tests.create().body.create_continue().body.create_message(message='C')
-        suite.tests.create().body.create_break().body.create_keyword(kwname='B')
+        suite.tests.create().body.create_break().body.create_keyword(name='B')
 
         class Visitor(SuiteVisitor):
             visited_return = visited_continue = visited_break = False
@@ -310,12 +310,12 @@ class ItemAdder(SuiteVisitor):
 
     def start_keyword(self, keyword):
         if self.test_started and not self.kw_added:
-            keyword.parent.body.create_keyword(kwname='Added by start_keyword')
+            keyword.parent.body.create_keyword(name='Added by start_keyword')
             self.kw_added = True
 
     def end_keyword(self, keyword):
         if keyword.name == 'Added by start_keyword':
-            keyword.parent.body.create_keyword(kwname='Added by end_keyword')
+            keyword.parent.body.create_keyword(name='Added by end_keyword')
 
 
 if __name__ == '__main__':

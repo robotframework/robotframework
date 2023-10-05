@@ -6,7 +6,7 @@
 <status status="PASS" start="2011-10-24T13:41:20.886000" elapsed="0.002"/>
 </kw>
 <test id="s1-t1" name="First One">
-<kw name="Log" library="BuiltIn">
+<kw name="Log" owner="BuiltIn">
 <arg>Test 1</arg>
 <doc>Logs the given message with the given level.</doc>
 <msg time="2011-10-24T13:41:20.927000" level="INFO">Test 1</msg>
@@ -15,7 +15,7 @@
 <kw name="logs on trace">
 <var>${not really in source}</var>
 <tag>tag not in source</tag>
-<kw name="Log" library="BuiltIn">
+<kw name="Log" owner="BuiltIn">
 <arg>Log on ${TEST NAME}</arg>
 <arg>TRACE</arg>
 <doc>Logs the given message with the given level.</doc>
@@ -28,7 +28,7 @@
 <value>not in source</value>
 <iter>
 <var name="${x}">not in source</var>
-<kw name="Log" library="BuiltIn">
+<kw name="Log" owner="BuiltIn">
 <arg>${x}</arg>
 <doc>Logs the given message with the given level.</doc>
 <msg time="2021-03-29T17:05:45.267000" level="INFO">not in source</msg>
@@ -40,7 +40,7 @@
 </for>
 <if>
 <branch type="IF" condition="'IF' == 'WRONG'">
-<kw name="Fail" library="BuiltIn">
+<kw name="Fail" owner="BuiltIn">
 <arg>not going here</arg>
 <doc>Fails the test with the given message and optionally alters its tags.</doc>
 <status status="NOT RUN" start="2021-03-29T17:05:45.266000" elapsed="0.001"/>
@@ -48,7 +48,7 @@
 <status status="NOT RUN" start="2021-03-29T17:05:45.266000" elapsed="0.001"/>
 </branch>
 <branch type="ELSE">
-<kw name="No Operation" library="BuiltIn">
+<kw name="No Operation" owner="BuiltIn">
 <doc>Not in source.</doc>
 <status status="PASS" start="2021-03-29T17:05:45.266000" elapsed="0.001"/>
 </kw>

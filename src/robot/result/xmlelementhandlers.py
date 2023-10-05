@@ -142,9 +142,15 @@ class KeywordHandler(ElementHandler):
             body = result.body
         except AttributeError:
             body = self._get_body_for_suite_level_keyword(result)
-        return body.create_keyword(kwname=elem.get('name', ''),
-                                   libname=elem.get('library'),
-                                   sourcename=elem.get('sourcename'))
+        return body.create_keyword(**self._get_keyword_attrs(elem))
+
+    def _get_keyword_attrs(self, elem):
+        # 'library' and 'sourcename' are RF < 7 compatibility.
+        return {
+            'name': elem.get('name', ''),
+            'owner': elem.get('owner') or elem.get('library'),
+            'source_name': elem.get('source_name') or elem.get('sourcename')
+        }
 
     def _get_body_for_suite_level_keyword(self, result):
         # Someone, most likely a listener, has created a `<kw>` element on suite level.
@@ -155,24 +161,22 @@ class KeywordHandler(ElementHandler):
         kw_type = 'teardown' if result.tests or result.suites else 'setup'
         keyword = getattr(result, kw_type)
         if not keyword:
-            keyword.config(kwname=f'Implicit {kw_type}', status=keyword.PASS)
+            keyword.config(name=f'Implicit {kw_type}', status=keyword.PASS)
         return keyword.body
 
     def _create_setup(self, elem, result):
-        return result.setup.config(kwname=elem.get('name', ''),
-                                   libname=elem.get('library'))
+        return result.setup.config(**self._get_keyword_attrs(elem))
 
     def _create_teardown(self, elem, result):
-        return result.teardown.config(kwname=elem.get('name', ''),
-                                      libname=elem.get('library'))
+        return result.teardown.config(**self._get_keyword_attrs(elem))
 
     # RF < 4 compatibility.
 
     def _create_for(self, elem, result):
-        return result.body.create_keyword(kwname=elem.get('name'), type='FOR')
+        return result.body.create_keyword(name=elem.get('name'), type='FOR')
 
     def _create_foritem(self, elem, result):
-        return result.body.create_keyword(kwname=elem.get('name'), type='ITERATION')
+        return result.body.create_keyword(name=elem.get('name'), type='ITERATION')
 
     _create_iteration = _create_foritem
 

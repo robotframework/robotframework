@@ -50,7 +50,6 @@ My Run Robot And Rebot
 
 Check Normal Suite Defaults
     [Arguments]    ${suite}    ${message}=    ${setup}=${None}    ${teardown}=${None}
-    Log    ${suite.name}
     Check Suite Defaults    ${suite}    ${message}    ${setup}    ${teardown}
     Check Normal Suite Times    ${suite}
 
@@ -73,9 +72,9 @@ Check Minimal Suite Times
 
 Check Suite Defaults
     [Arguments]    ${suite}    ${message}=    ${setup}=${None}    ${teardown}=${None}
-    Should Be Equal    ${suite.message}          ${message}
-    Should Be Equal    ${suite.setup.name}       ${setup}
-    Should Be Equal    ${suite.teardown.name}    ${teardown}
+    Should Be Equal    ${suite.message}               ${message}
+    Should Be Equal    ${suite.setup.full_name}       ${setup}
+    Should Be Equal    ${suite.teardown.full_name}    ${teardown}
 
 Check Suite Got From Misc/suites/ Directory
     Check Normal Suite Defaults    ${SUITE}    teardown=BuiltIn.Log

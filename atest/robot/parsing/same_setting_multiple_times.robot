@@ -10,17 +10,17 @@ Suite Metadata
     Should Be Equal    ${SUITE.metadata['Foo']}    M2
 
 Suite Setup
-    Should Be Equal    ${SUITE.setup.name}    BuiltIn.Log Many
+    Should Be Equal    ${SUITE.setup.full_name}    BuiltIn.Log Many
 
 Suite Teardown
-    Should Be Equal    ${SUITE.teardown.name}    BuiltIn.Comment
+    Should Be Equal    ${SUITE.teardown.full_name}    BuiltIn.Comment
 
 Force and Default Tags
     Check Test Tags    Use Defaults    D1
 
 Test Setup
     ${tc} =    Check Test Case    Use Defaults
-    Should Be Equal    ${tc.setup.name}    BuiltIn.Log Many
+    Should Be Equal    ${tc.setup.full_name}    BuiltIn.Log Many
 
 Test Teardown
     ${tc} =    Check Test Case    Use Defaults
@@ -45,7 +45,7 @@ Test [Tags]
 
 Test [Setup]
     ${tc} =    Check Test Case    Test Settings
-    Should Be Equal    ${tc.setup.name}    BuiltIn.Log Many
+    Should Be Equal    ${tc.setup.full_name}    BuiltIn.Log Many
 
 Test [Teardown]
     ${tc} =    Check Test Case    Test Settings

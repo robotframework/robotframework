@@ -70,11 +70,13 @@ class _DebugFileWriter:
     def start_keyword(self, kw):
         if self._kw_level == 0:
             self._separator('KEYWORD')
-        self._start(kw.type, kw.name, kw.start_time, seq2str2(kw.args))
+        name = kw.full_name if kw.type in kw.KEYWORD_TYPES else kw._name
+        self._start(kw.type, name, kw.start_time, seq2str2(kw.args))
         self._kw_level += 1
 
     def end_keyword(self, kw):
-        self._end(kw.type, kw.name, kw.end_time, kw.elapsed_time)
+        name = kw.full_name if kw.type in kw.KEYWORD_TYPES else kw._name
+        self._end(kw.type, name, kw.end_time, kw.elapsed_time)
         self._kw_level -= 1
 
     def log_message(self, msg):

@@ -98,5 +98,5 @@ Check Repeated Keyword Name
     [Arguments]    ${kw}    ${count}    ${name}=${None}
     Should Be Equal As Integers    ${kw.kw_count}    ${count}
     FOR    ${i}    IN RANGE    ${count}
-        Should Be Equal    ${kw.kws[${i}].name}    ${name}
+        Should Be Equal    ${kw.kws[${i}].full_name}    ${name}
     END

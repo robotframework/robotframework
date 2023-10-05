@@ -175,7 +175,7 @@ Test merge should have been successful
     ...    ${SUITE.suites[7]}
 
 Suite setup and teardown should have been merged
-    Should Be Equal      ${SUITE.setup.name}                           BuiltIn.No Operation
+    Should Be Equal      ${SUITE.setup.full_name}                      BuiltIn.No Operation
     Should Be Equal      ${SUITE.teardown.name}                        ${NONE}
     Should Be Equal      ${SUITE.suites[1].name}                       Fourth
     Check Log Message    ${SUITE.suites[1].setup.msgs[0]}              Rerun!

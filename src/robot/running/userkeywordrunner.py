@@ -74,8 +74,8 @@ class UserKeywordRunner:
         doc = variables.replace_string(handler.doc, ignore_errors=True)
         doc, tags = split_tags_from_doc(doc)
         tags = variables.replace_list(handler.tags, ignore_errors=True) + tags
-        return KeywordResult(kwname=self.name,
-                             libname=handler.libname,
+        return KeywordResult(name=self.name,
+                             owner=handler.libname,
                              doc=getshortdoc(doc),
                              args=kw.args,
                              assign=tuple(assignment),
@@ -270,5 +270,5 @@ class EmbeddedArgumentsRunner(UserKeywordRunner):
 
     def _get_result(self, kw, assignment, variables):
         result = UserKeywordRunner._get_result(self, kw, assignment, variables)
-        result.sourcename = self._handler.name
+        result.source_name = self._handler.name
         return result
