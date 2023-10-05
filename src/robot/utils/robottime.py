@@ -128,7 +128,7 @@ def _normalize_timestr(timestr):
     return timestr
 
 
-def secs_to_timestr(secs, compact=False):
+def secs_to_timestr(secs: 'int|float|timedelta', compact=False) -> str:
     """Converts time in seconds to a string representation.
 
     Returned string is in format like
@@ -136,12 +136,14 @@ def secs_to_timestr(secs, compact=False):
 
     - Time parts having zero value are not included (e.g. '3 minutes 4 seconds'
       instead of '0 days 0 hours 3 minutes 4 seconds')
-    - Hour part has a maximun of 23 and minutes and seconds both have 59
+    - Hour part has a maximum of 23 and minutes and seconds both have 59
       (e.g. '1 minute 40 seconds' instead of '100 seconds')
 
     If compact has value 'True', short suffixes are used.
     (e.g. 1d 2h 3min 4s 5ms)
     """
+    if isinstance(secs, timedelta):
+        secs = secs.total_seconds()
     return _SecsToTimestrHelper(secs, compact).get_value()
 
 
@@ -150,13 +152,12 @@ class _SecsToTimestrHelper:
     def __init__(self, float_secs, compact):
         self._compact = compact
         self._ret = []
-        self._sign, millis, secs, mins, hours, days \
-                = self._secs_to_components(float_secs)
-        self._add_item(days, 'd', 'day')
-        self._add_item(hours, 'h', 'hour')
-        self._add_item(mins, 'min', 'minute')
-        self._add_item(secs, 's', 'second')
-        self._add_item(millis, 'ms', 'millisecond')
+        self._sign, ms, sec, min, hour, day = self._secs_to_components(float_secs)
+        self._add_item(day, 'd', 'day')
+        self._add_item(hour, 'h', 'hour')
+        self._add_item(min, 'min', 'minute')
+        self._add_item(sec, 's', 'second')
+        self._add_item(ms, 'ms', 'millisecond')
 
     def get_value(self):
         if len(self._ret) > 0:

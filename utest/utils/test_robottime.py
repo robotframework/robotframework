@@ -205,6 +205,7 @@ class TestTime(unittest.TestCase):
              '- 1 day 23 hours 46 minutes 7 seconds 667 milliseconds')]:
             assert_equal(secs_to_timestr(inp, compact=True), compact, inp)
             assert_equal(secs_to_timestr(inp), verbose, inp)
+            assert_equal(secs_to_timestr(timedelta(seconds=inp)), verbose, inp)
 
     def test_format_time(self):
         timetuple = (2005, 11, 2, 14, 23, 12, 123)
