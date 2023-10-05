@@ -50,7 +50,7 @@ from robot.utils import copy_signature, KnownAtRuntime, setter
 
 from .configurer import SuiteConfigurer
 from .messagefilter import MessageFilter
-from .modeldeprecation import deprecated, DeprecatedAttributesMixin
+from .modeldeprecation import DeprecatedAttributesMixin
 from .keywordremover import KeywordRemover
 from .suiteteardownfailed import SuiteTeardownFailed, SuiteTeardownFailureHandler
 
@@ -566,11 +566,6 @@ class Return(model.Return, StatusMixin, DeprecatedAttributesMixin):
         """
         return self.body_class(self, body)
 
-    @property
-    # FIXME @deprecated
-    def doc(self) -> str:
-        return ''
-
 
 @Body.register
 class Continue(model.Continue, StatusMixin, DeprecatedAttributesMixin):
@@ -600,11 +595,6 @@ class Continue(model.Continue, StatusMixin, DeprecatedAttributesMixin):
         keywords.
         """
         return self.body_class(self, body)
-
-    @property
-    # FIXME @deprecated
-    def doc(self) -> str:
-        return ''
 
 
 @Body.register
@@ -636,11 +626,6 @@ class Break(model.Break, StatusMixin, DeprecatedAttributesMixin):
         """
         return self.body_class(self, body)
 
-    @property
-    # FIXME @deprecated
-    def doc(self) -> str:
-        return ''
-
 
 @Body.register
 class Error(model.Error, StatusMixin, DeprecatedAttributesMixin):
@@ -669,11 +654,6 @@ class Error(model.Error, StatusMixin, DeprecatedAttributesMixin):
         Typically contains the message that caused the error.
         """
         return self.body_class(self, body)
-
-    @property
-    # FIXME @deprecated
-    def doc(self) -> 'str':
-        return ''
 
     @property
     def _name(self):
@@ -765,7 +745,7 @@ class Keyword(model.Keyword, StatusMixin):
     # TODO: Deprecate 'kwname', 'libname' and 'sourcename' loudly in RF 8.
     @property
     def kwname(self) -> 'str|None':
-        """Deprecated since Robot Framework 7.0. Use :attr:``name` instead."""
+        """Deprecated since Robot Framework 7.0. Use :attr:`name` instead."""
         return self.name
 
     @kwname.setter
@@ -774,7 +754,7 @@ class Keyword(model.Keyword, StatusMixin):
 
     @property
     def libname(self) -> 'str|None':
-        """Deprecated since Robot Framework 7.0. Use :attr:``owner` instead."""
+        """Deprecated since Robot Framework 7.0. Use :attr:`owner` instead."""
         return self.owner
 
     @libname.setter
@@ -783,7 +763,7 @@ class Keyword(model.Keyword, StatusMixin):
 
     @property
     def sourcename(self) -> str:
-        """Deprecated since Robot Framework 7.0. Use :attr:``source_name` instead."""
+        """Deprecated since Robot Framework 7.0. Use :attr:`source_name` instead."""
         return self.source_name
 
     @sourcename.setter
