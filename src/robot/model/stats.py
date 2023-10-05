@@ -103,7 +103,7 @@ class SuiteStat(Stat):
     type = 'suite'
 
     def __init__(self, suite):
-        super().__init__(suite.longname)
+        super().__init__(suite.full_name)
         self.id = suite.id
         self.elapsed = suite.elapsed_time
         self._name = suite.name

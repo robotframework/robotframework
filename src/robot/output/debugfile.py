@@ -46,12 +46,12 @@ class _DebugFileWriter:
 
     def start_suite(self, suite):
         self._separator('SUITE')
-        self._start('SUITE', suite.longname, suite.start_time)
+        self._start('SUITE', suite.full_name, suite.start_time)
         self._separator('SUITE')
 
     def end_suite(self, suite):
         self._separator('SUITE')
-        self._end('SUITE', suite.longname, suite.end_time, suite.elapsed_time)
+        self._end('SUITE', suite.full_name, suite.end_time, suite.elapsed_time)
         self._separator('SUITE')
         if self._indent == 0:
             LOGGER.output_file('Debug', self._outfile.name)

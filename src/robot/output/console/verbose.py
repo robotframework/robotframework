@@ -35,11 +35,11 @@ class VerboseOutput:
         if not self.started:
             self.writer.suite_separator()
             self.started = True
-        self.writer.info(suite.longname, suite.doc, start_suite=True)
+        self.writer.info(suite.full_name, suite.doc, start_suite=True)
         self.writer.suite_separator()
 
     def end_suite(self, suite: TestSuite):
-        self.writer.info(suite.longname, suite.doc)
+        self.writer.info(suite.full_name, suite.doc)
         self.writer.status(suite.status)
         self.writer.message(suite.full_message)
         self.writer.suite_separator()

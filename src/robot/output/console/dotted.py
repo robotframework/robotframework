@@ -86,4 +86,4 @@ class StatusReporter(SuiteVisitor):
         if test.failed and not test.tags.robot('exit'):
             self.stream.write('-' * self.width + '\n')
             self.stream.highlight('FAIL')
-            self.stream.write(f': {test.longname}\n{test.message.strip()}\n')
+            self.stream.write(f': {test.full_name}\n{test.message.strip()}\n')

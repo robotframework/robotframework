@@ -40,13 +40,13 @@ class Namespace:
     _variables_import_by_path_ends = _library_import_by_path_ends + ('.yaml', '.yml') + ('.json',)
 
     def __init__(self, variables, suite, resource, languages):
-        LOGGER.info(f"Initializing namespace for suite '{suite.longname}'.")
+        LOGGER.info(f"Initializing namespace for suite '{suite.full_name}'.")
         self.variables = variables
         self.languages = languages
         self._imports = resource.imports
         self._kw_store = KeywordStore(resource, languages)
         self._imported_variable_files = ImportCache()
-        self._suite_name = suite.longname
+        self._suite_name = suite.full_name
         self._running_test = False
 
     @property

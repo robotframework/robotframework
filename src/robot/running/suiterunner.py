@@ -48,7 +48,7 @@ class SuiteRunner(SuiteVisitor):
     def start_suite(self, suite):
         if suite.name in self._executed[-1] and suite.parent.source:
             self._output.warn(f"Multiple suites with name '{suite.name}' executed in "
-                              f"suite '{suite.parent.longname}'.")
+                              f"suite '{suite.parent.full_name}'.")
         self._executed[-1][suite.name] = True
         self._executed.append(NormalizedDict(ignore='_'))
         self._output.library_listeners.new_suite_scope()
@@ -130,7 +130,7 @@ class SuiteRunner(SuiteVisitor):
         if test.name in self._executed[-1]:
             self._output.warn(
                 test_or_task(f"Multiple {{test}}s with name '{test.name}' executed in "
-                             f"suite '{test.parent.longname}'.", settings.rpa))
+                             f"suite '{test.parent.full_name}'.", settings.rpa))
         self._executed[-1][test.name] = True
         result = self._suite.tests.create(self._resolve_setting(test.name),
                                           self._resolve_setting(test.doc),

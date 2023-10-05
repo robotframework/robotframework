@@ -101,17 +101,18 @@ class _ListenerArgumentsFromItem(ListenerArguments):
 
 
 class StartSuiteArguments(_ListenerArgumentsFromItem):
-    _attribute_names = ('id', 'longname', 'doc', 'metadata', 'starttime')
+    _attribute_names = ('id', 'doc', 'metadata', 'starttime')
 
     def _get_extra_attributes(self, suite):
-        return {'tests': [t.name for t in suite.tests],
+        return {'longname': suite.full_name,
+                'tests': [t.name for t in suite.tests],
                 'suites': [s.name for s in suite.suites],
                 'totaltests': suite.test_count,
                 'source': str(suite.source or '')}
 
 
 class EndSuiteArguments(StartSuiteArguments):
-    _attribute_names = ('id', 'longname', 'doc', 'metadata', 'starttime',
+    _attribute_names = ('id', 'doc', 'metadata', 'starttime',
                         'endtime', 'elapsedtime', 'status', 'message')
 
     def _get_extra_attributes(self, suite):
@@ -121,16 +122,17 @@ class EndSuiteArguments(StartSuiteArguments):
 
 
 class StartTestArguments(_ListenerArgumentsFromItem):
-    _attribute_names = ('id', 'longname', 'doc', 'tags', 'lineno', 'starttime')
+    _attribute_names = ('id', 'doc', 'tags', 'lineno', 'starttime')
 
     def _get_extra_attributes(self, test):
-        return {'source': str(test.source or ''),
+        return {'longname': test.full_name,
+                'source': str(test.source or ''),
                 'template': test.template or '',
                 'originalname': test.data.name}
 
 
 class EndTestArguments(StartTestArguments):
-    _attribute_names = ('id', 'longname', 'doc', 'tags', 'lineno', 'starttime',
+    _attribute_names = ('id', 'doc', 'tags', 'lineno', 'starttime',
                         'endtime', 'elapsedtime', 'status', 'message')
 
 

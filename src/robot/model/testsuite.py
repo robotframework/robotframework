@@ -191,11 +191,19 @@ class TestSuite(ModelObject, Generic[KW, TC]):
             suite.adjust_source(relative_to, root)
 
     @property
-    def longname(self) -> str:
-        """Suite name prefixed with the long name of the parent suite."""
+    def full_name(self) -> str:
+        """Suite name prefixed with the full name of the possible parent suite.
+
+        Just :attr:`name` of the suite if it has no :attr:`parent`.
+        """
         if not self.parent:
             return self.name
-        return f'{self.parent.longname}.{self.name}'
+        return f'{self.parent.full_name}.{self.name}'
+
+    @property
+    def longname(self) -> str:
+        """Deprecated since Robot Framework 7.0. Use :attr:`full_name` instead."""
+        return self.full_name
 
     @setter
     def metadata(self, metadata: 'Mapping[str, str]|None') -> Metadata:
@@ -216,12 +224,12 @@ class TestSuite(ModelObject, Generic[KW, TC]):
                 suite.validate_execution_mode()
                 if rpa is None:
                     rpa = suite.rpa
-                    name = suite.longname
+                    name = suite.full_name
                 elif rpa is not suite.rpa:
                     mode1, mode2 = ('tasks', 'tests') if rpa else ('tests', 'tasks')
                     raise DataError(
                         f"Conflicting execution modes: Suite '{name}' has {mode1} but "
-                        f"suite '{suite.longname}' has {mode2}. Resolve the conflict "
+                        f"suite '{suite.full_name}' has {mode2}. Resolve the conflict "
                         f"or use '--rpa' or '--norpa' options to set the execution "
                         f"mode explicitly."
                     )

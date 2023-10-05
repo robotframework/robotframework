@@ -63,7 +63,7 @@ class XUnitFileWriter(ResultVisitor):
 
     def visit_test(self, test: TestCase):
         self._writer.start('testcase',
-                           {'classname': test.parent.longname,
+                           {'classname': test.parent.full_name,
                             'name': test.name,
                             'time': format(test.elapsed_time.total_seconds(), '.3f')})
         if test.failed:

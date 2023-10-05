@@ -197,7 +197,7 @@ class _ExecutionContext:
         EXECUTION_CONTEXTS.end_suite()
 
     def set_suite_variables(self, suite):
-        self.variables['${SUITE_NAME}'] = suite.longname
+        self.variables['${SUITE_NAME}'] = suite.full_name
         self.variables['${SUITE_SOURCE}'] = str(suite.source or '')
         self.variables['${SUITE_DOCUMENTATION}'] = suite.doc
         self.variables['${SUITE_METADATA}'] = suite.metadata.copy()

@@ -88,7 +88,7 @@ class Filter(EmptySuiteRemover):
         return bool(suite.suites)
 
     def _filter_based_on_suite_name(self, suite: 'TestSuite') -> bool:
-        if self.include_suites.match(suite.name, suite.longname):
+        if self.include_suites.match(suite.name, suite.full_name):
             suite.visit(Filter(include_tests=self.include_tests,
                                include_tags=self.include_tags,
                                exclude_tags=self.exclude_tags))
@@ -103,7 +103,7 @@ class Filter(EmptySuiteRemover):
             return False
         if include is not None and include.match(test.tags):
             return True
-        if tests is not None and tests.match(test.name, test.longname):
+        if tests is not None and tests.match(test.name, test.full_name):
             return True
         return include is None and tests is None
 

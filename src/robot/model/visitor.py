@@ -92,7 +92,7 @@ For example, this visitor uses the result side model objects::
     class FailurePrinter(SuiteVisitor):
 
         def start_suite(self, suite: TestSuite):
-            print(f"{suite.longname}: {suite.statistics.failed} failed")
+            print(f"{suite.full_name}: {suite.statistics.failed} failed")
 
         def visit_test(self, test: TestCase):
             if test.failed:

@@ -157,11 +157,16 @@ class TestCase(ModelObject, Generic[KW]):
         return f'{self.parent.id}-t{index + 1}'
 
     @property
-    def longname(self) -> str:
-        """Test name prefixed with the long name of the parent suite."""
+    def full_name(self) -> str:
+        """Test name prefixed with the full name of the parent suite."""
         if not self.parent:
             return self.name
-        return f'{self.parent.longname}.{self.name}'
+        return f'{self.parent.full_name}.{self.name}'
+
+    @property
+    def longname(self) -> str:
+        """Deprecated since Robot Framework 7.0. Use :attr:`full_name` instead."""
+        return self.full_name
 
     @property
     def source(self) -> 'Path|None':

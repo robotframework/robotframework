@@ -171,11 +171,11 @@ class JsonConverter:
             'relativeSource': self._get_relative_source(suite.source),
             'id': suite.id,
             'name': self._escape(suite.name),
-            'fullName': self._escape(suite.longname),
+            'fullName': self._escape(suite.full_name),
             'doc': self._html(suite.doc),
             'metadata': [(self._escape(name), self._html(value))
                          for name, value in suite.metadata.items()],
-            'numberOfTests': suite.test_count   ,
+            'numberOfTests': suite.test_count,
             'suites': self._convert_suites(suite),
             'tests': self._convert_tests(suite),
             'keywords': list(self._convert_keywords((suite.setup, suite.teardown)))
@@ -205,7 +205,7 @@ class JsonConverter:
             test.body.append(test.teardown)
         return {
             'name': self._escape(test.name),
-            'fullName': self._escape(test.longname),
+            'fullName': self._escape(test.full_name),
             'id': test.id,
             'doc': self._html(test.doc),
             'tags': [self._escape(t) for t in test.tags],

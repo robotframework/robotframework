@@ -23,9 +23,9 @@ class NamePatterns(Iterable[str]):
     def __init__(self, patterns: Sequence[str] = (), ignore: Sequence[str] = '_'):
         self.matcher = MultiMatcher(patterns, ignore)
 
-    def match(self, name: str, longname: 'str|None' = None) -> bool:
+    def match(self, name: str, full_name: 'str|None' = None) -> bool:
         match = self.matcher.match
-        return bool(match(name) or longname and match(longname))
+        return bool(match(name) or full_name and match(full_name))
 
     def __bool__(self) -> bool:
         return bool(self.matcher)
