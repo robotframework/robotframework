@@ -57,7 +57,7 @@ class JsonDocBuilder:
     def _create_keyword(self, data):
         kw = KeywordDoc(name=data.get('name'),
                         doc=data['doc'],
-                        shortdoc=data['shortdoc'],
+                        short_doc=data['shortdoc'],
                         tags=data['tags'],
                         private=data.get('private', False),
                         deprecated=data.get('deprecated', False),

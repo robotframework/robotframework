@@ -39,12 +39,8 @@ class LibraryKeywordRunner:
         return self._handler.library
 
     @property
-    def libname(self):
-        return self._handler.library.name
-
-    @property
-    def longname(self):
-        return '%s.%s' % (self.library.name, self.name)
+    def full_name(self):
+        return f'{self.library.name}.{self.name}'
 
     def run(self, kw, context, run=True):
         assignment = VariableAssignment(kw.assign)
@@ -59,8 +55,8 @@ class LibraryKeywordRunner:
     def _get_result(self, kw, assignment):
         handler = self._handler
         return KeywordResult(name=self.name,
-                             owner=handler.libname,
-                             doc=handler.shortdoc,
+                             owner=handler.owner,
+                             doc=handler.short_doc,
                              args=kw.args,
                              assign=tuple(assignment),
                              tags=handler.tags,
@@ -129,7 +125,7 @@ class LibraryKeywordRunner:
                                'BuiltIn.Set Library Search Order',
                                'BuiltIn.Set Tags',
                                'BuiltIn.Remove Tags')
-        return handler.longname in keywords_to_execute
+        return handler.full_name in keywords_to_execute
 
 
 class EmbeddedArgumentsRunner(LibraryKeywordRunner):

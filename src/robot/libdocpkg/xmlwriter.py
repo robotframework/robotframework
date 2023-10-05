@@ -55,7 +55,7 @@ class LibdocXmlWriter:
             writer.start(kw_type, attrs)
             self._write_arguments(kw, writer)
             writer.element('doc', kw.doc)
-            writer.element('shortdoc', kw.shortdoc)
+            writer.element('shortdoc', kw.short_doc)
             if kw_type == 'kw' and kw.tags:
                 self._write_tags(kw.tags, writer)
             writer.end(kw_type)

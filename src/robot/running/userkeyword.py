@@ -67,26 +67,26 @@ class UserLibrary:
 class UserKeywordHandler:
     supports_embedded_args = False
 
-    def __init__(self, keyword, libname):
+    def __init__(self, keyword, owner):
         self.name = keyword.name
-        self.libname = libname
+        self.owner = owner
         self.doc = keyword.doc
         self.source = keyword.source
         self.lineno = keyword.lineno
         self.tags = keyword.tags
         self.arguments = UserKeywordArgumentParser().parse(tuple(keyword.args),
-                                                           self.longname)
+                                                           self.full_name)
         self.timeout = keyword.timeout
         self.body = keyword.body
         self.return_value = tuple(keyword.return_)
         self.teardown = keyword.teardown if keyword.has_teardown else None
 
     @property
-    def longname(self):
-        return '%s.%s' % (self.libname, self.name) if self.libname else self.name
+    def full_name(self):
+        return f'{self.owner}.{self.name}' if self.owner else self.name
 
     @property
-    def shortdoc(self):
+    def short_doc(self):
         return getshortdoc(self.doc)
 
     @property
@@ -100,8 +100,8 @@ class UserKeywordHandler:
 class EmbeddedArgumentsHandler(UserKeywordHandler):
     supports_embedded_args = True
 
-    def __init__(self, keyword, libname, embedded):
-        super().__init__(keyword, libname)
+    def __init__(self, keyword, owner, embedded):
+        super().__init__(keyword, owner)
         self.embedded = embedded
 
     def matches(self, name):

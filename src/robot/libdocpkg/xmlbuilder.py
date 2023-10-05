@@ -63,7 +63,7 @@ class XmlDocBuilder:
     def _create_keyword(self, elem, lib_source):
         kw = KeywordDoc(name=elem.get('name', ''),
                         doc=elem.find('doc').text or '',
-                        shortdoc=elem.find('shortdoc').text or '',
+                        short_doc=elem.find('shortdoc').text or '',
                         tags=[t.text for t in elem.findall('tags/tag')],
                         private=elem.get('private', 'false') == 'true',
                         deprecated=elem.get('deprecated', 'false') == 'true',

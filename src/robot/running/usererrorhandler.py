@@ -30,17 +30,17 @@ class UserErrorHandler:
     """
     supports_embedded_arguments = False
 
-    def __init__(self, error, name, libname=None, source=None, lineno=None):
+    def __init__(self, error, name, owner=None, source=None, lineno=None):
         """
         :param robot.errors.DataError error: Occurred error.
         :param str name: Name of the affected keyword.
-        :param str libname: Name of the affected library or resource.
+        :param str owner: Name of the affected library or resource.
         :param str source: Path to the source file.
         :param int lineno: Line number of the failing keyword.
         """
         self.error = error
         self.name = name
-        self.libname = libname
+        self.owner = owner
         self.source = source
         self.lineno = lineno
         self.arguments = ArgumentSpec()
@@ -48,15 +48,15 @@ class UserErrorHandler:
         self.tags = Tags()
 
     @property
-    def longname(self):
-        return f'{self.libname}.{self.name}' if self.libname else self.name
+    def full_name(self):
+        return f'{self.owner}.{self.name}' if self.owner else self.name
 
     @property
     def doc(self):
         return f'*Creating keyword failed:* {self.error}'
 
     @property
-    def shortdoc(self):
+    def short_doc(self):
         return self.doc.splitlines()[0]
 
     def create_runner(self, name, languages=None):
@@ -64,7 +64,7 @@ class UserErrorHandler:
 
     def run(self, kw, context, run=True):
         result = KeywordResult(name=self.name,
-                               owner=self.libname,
+                               owner=self.owner,
                                args=kw.args,
                                assign=tuple(VariableAssignment(kw.assign)),
                                type=kw.type)

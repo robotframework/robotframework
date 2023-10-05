@@ -36,13 +36,9 @@ class UserKeywordRunner:
         self.pre_run_messages = ()
 
     @property
-    def longname(self):
-        libname = self._handler.libname
-        return f'{libname}.{self.name}' if libname else self.name
-
-    @property
-    def libname(self):
-        return self._handler.libname
+    def full_name(self):
+        owner = self._handler.owner
+        return f'{owner}.{self.name}' if owner else self.name
 
     @property
     def tags(self):
@@ -75,7 +71,7 @@ class UserKeywordRunner:
         doc, tags = split_tags_from_doc(doc)
         tags = variables.replace_list(handler.tags, ignore_errors=True) + tags
         return KeywordResult(name=self.name,
-                             owner=handler.libname,
+                             owner=handler.owner,
                              doc=getshortdoc(doc),
                              args=kw.args,
                              assign=tuple(assignment),

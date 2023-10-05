@@ -12,7 +12,7 @@ from robot.libdocpkg import LibraryDocumentation
 from robot.libdocpkg.model import LibraryDoc, KeywordDoc
 from robot.libdocpkg.htmlutils import HtmlToText
 
-get_shortdoc = HtmlToText().get_shortdoc_from_html
+get_short_doc = HtmlToText().get_short_doc_from_html
 get_text = HtmlToText().html_to_plain_text
 
 CURDIR = Path(__file__).resolve().parent
@@ -30,15 +30,15 @@ else:
     TYPEDDICT_SUPPORTS_REQUIRED_KEYS = True
 
 
-def verify_shortdoc_output(doc_input, expected):
-    current = get_shortdoc(doc_input)
+def verify_short_doc_output(doc_input, expected):
+    current = get_short_doc(doc_input)
     assert_equal(current, expected)
 
 
-def verify_keyword_shortdoc(doc_format, doc_input, expected):
+def verify_keyword_short_doc(doc_format, doc_input, expected):
     libdoc = LibraryDoc(doc_format=doc_format)
     libdoc.keywords = [KeywordDoc(doc=doc_input)]
-    assert_equal(libdoc.keywords[0].shortdoc, expected)
+    assert_equal(libdoc.keywords[0].short_doc, expected)
 
 
 def run_libdoc_and_validate_json(filename):
@@ -49,37 +49,37 @@ def run_libdoc_and_validate_json(filename):
 
 class TestHtmlToDoc(unittest.TestCase):
 
-    def test_shortdoc_firstline(self):
+    def test_short_doc_first_line(self):
         doc = """<p>This is the first line</p>
         <p>This is the second one</p>"""
         exp = "This is the first line"
-        verify_shortdoc_output(doc, exp)
+        verify_short_doc_output(doc, exp)
 
-    def test_shortdoc_replace_format(self):
+    def test_short_doc_replace_format(self):
         doc = "<p>This is <b>bold</b> or <i>italic</i> or <i><b>italicbold</b></i> and code.</p>"
         exp = "This is *bold* or _italic_ or _*italicbold*_ and code."
-        verify_shortdoc_output(doc, exp)
+        verify_short_doc_output(doc, exp)
 
-    def test_shortdoc_replace_format_multiline(self):
+    def test_short_doc_replace_format_multiline(self):
         doc = """<p>This is <b>bold</b>
         or <i>italic</i> or <i><b>italic
         bold</b></i> and <code>code</code>.</p>"""
         exp = """This is *bold*
         or _italic_ or _*italic
         bold*_ and ``code``."""
-        verify_shortdoc_output(doc, exp)
+        verify_short_doc_output(doc, exp)
 
-    def test_shortdoc_unexcape_html(self):
+    def test_short_doc_unexcape_html(self):
         doc = """<p>This &amp; &quot;<b>&lt;b&gt;is&lt;/b&gt;</b>&quot;
         &lt;i&gt;the&lt;/i&gt; &lt;/p&gt;&apos;first&apos; line</p>"""
         exp = """This & "*<b>is</b>*"
         <i>the</i> </p>'first' line"""
-        verify_shortdoc_output(doc, exp)
+        verify_short_doc_output(doc, exp)
 
 
 class TestKeywordShortDoc(unittest.TestCase):
 
-    def test_shortdoc_with_multiline_plain_text(self):
+    def test_short_doc_with_multiline_plain_text(self):
         doc = """Writes the message to the console.
 
     If the ``newline`` argument is ``True``, a newline character is
@@ -89,12 +89,12 @@ class TestKeywordShortDoc(unittest.TestCase):
     Using the standard error stream is possibly by giving the ``stream``
     argument value ``'stderr'``."""
         exp = "Writes the message to the console."
-        verify_keyword_shortdoc('TEXT', doc, exp)
+        verify_keyword_short_doc('TEXT', doc, exp)
 
-    def test_shortdoc_with_empty_plain_text(self):
-        verify_keyword_shortdoc('TEXT', '', '')
+    def test_short_doc_with_empty_plain_text(self):
+        verify_keyword_short_doc('TEXT', '', '')
 
-    def test_shortdoc_with_multiline_robot_format(self):
+    def test_short_doc_with_multiline_robot_format(self):
         doc = """Writes the
 *message* to
 _the_ ``console``.
@@ -106,12 +106,12 @@ By default the message is written to the standard output stream.
 Using the standard error stream is possibly by giving the ``stream``
 argument value ``'stderr'``."""
         exp = "Writes the *message* to _the_ ``console``."
-        verify_keyword_shortdoc('ROBOT', doc, exp)
+        verify_keyword_short_doc('ROBOT', doc, exp)
 
-    def test_shortdoc_with_empty_robot_format(self):
-        verify_keyword_shortdoc('ROBOT', '', '')
+    def test_short_doc_with_empty_robot_format(self):
+        verify_keyword_short_doc('ROBOT', '', '')
 
-    def test_shortdoc_with_multiline_HTML_format(self):
+    def test_short_doc_with_multiline_HTML_format(self):
         doc = """<p><strong>Writes</strong><br><em>the</em> <b>message</b>
 to <i>the</i> <code>console</code>.<br><br>
 If the <code>newline</code> argument is <code>True</code>, a newline character is
@@ -120,9 +120,9 @@ automatically added to the message.</p>
 Using the standard error stream is possibly by giving the <code>stream</code>
 argument value ``'stderr'``."""
         exp = "*Writes* _the_ *message* to _the_ ``console``."
-        verify_keyword_shortdoc('HTML', doc, exp)
+        verify_keyword_short_doc('HTML', doc, exp)
 
-    def test_shortdoc_with_nonclosing_p_HTML_format(self):
+    def test_short_doc_with_nonclosing_p_HTML_format(self):
         doc = """<p><strong>Writes</strong><br><em>the</em> <b>message</b>
 to <i>the</i> <code>console</code>.<br><br>
 If the <code>newline</code> argument is <code>True</code>, a newline character is
@@ -131,12 +131,12 @@ automatically added to the message.
 Using the standard error stream is possibly by giving the <code>stream</code>
 argument value ``'stderr'``."""
         exp = "*Writes* _the_ *message* to _the_ ``console``."
-        verify_keyword_shortdoc('HTML', doc, exp)
+        verify_keyword_short_doc('HTML', doc, exp)
 
-    def test_shortdoc_with_empty_HTML_format(self):
-        verify_keyword_shortdoc('HTML', '', '')
+    def test_short_doc_with_empty_HTML_format(self):
+        verify_keyword_short_doc('HTML', '', '')
 
-    def test_shortdoc_with_multiline_reST_format(self):
+    def test_short_doc_with_multiline_reST_format(self):
         doc = """Writes the **message**
 to *the* console.
 
@@ -147,10 +147,10 @@ By default the message is written to the standard output stream.
 Using the standard error stream is possibly by giving the ``stream``
 argument value ``'stderr'``."""
         exp = "Writes the **message** to *the* console."
-        verify_keyword_shortdoc('REST', doc, exp)
+        verify_keyword_short_doc('REST', doc, exp)
 
-    def test_shortdoc_with_empty_reST_format(self):
-        verify_keyword_shortdoc('REST', '', '')
+    def test_short_doc_with_empty_reST_format(self):
+        verify_keyword_short_doc('REST', '', '')
 
 
 class TestLibdocJsonWriter(unittest.TestCase):

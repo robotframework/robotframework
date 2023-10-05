@@ -203,15 +203,15 @@ class Namespace:
     def end_user_keyword(self):
         self.variables.end_keyword()
 
-    def get_library_instance(self, libname):
-        return self._kw_store.get_library(libname).get_instance()
+    def get_library_instance(self, name):
+        return self._kw_store.get_library(name).get_instance()
 
     def get_library_instances(self):
         return dict((name, lib.get_instance())
                     for name, lib in self._kw_store.libraries.items())
 
-    def reload_library(self, libname_or_instance):
-        library = self._kw_store.get_library(libname_or_instance)
+    def reload_library(self, name_or_instance):
+        library = self._kw_store.get_library(name_or_instance)
         library.reload()
         return library
 
@@ -328,7 +328,7 @@ class KeywordStore:
         if caller and runner.source != caller.source:
             if self._exists_in_resource_file(name, caller.source):
                 message = (
-                    f"Keyword '{caller.longname}' called keyword '{name}' that exists "
+                    f"Keyword '{caller.full_name}' called keyword '{name}' that exists "
                     f"both in the same resource file as the caller and in the suite "
                     f"file using that resource. The keyword in the suite file is used "
                     f"now, but this will change in Robot Framework 7.0."
@@ -409,8 +409,8 @@ class KeywordStore:
         return matches or handlers
 
     def _filter_based_on_search_order(self, handlers):
-        for libname in self.search_order:
-            matches = [hand for hand in handlers if eq(libname, hand.libname)]
+        for name in self.search_order:
+            matches = [hand for hand in handlers if eq(name, hand.owner)]
             if matches:
                 return matches
         return handlers
@@ -441,7 +441,7 @@ class KeywordStore:
             f"'{custom.library.orig_name}'{custom_with_name} and a standard library "
             f"'{standard.library.orig_name}'{standard_with_name}. The custom keyword "
             f"is used. To select explicitly, and to get rid of this warning, use "
-            f"either '{custom.longname}' or '{standard.longname}'.", level='WARN'
+            f"either '{custom.full_name}' or '{standard.full_name}'.", level='WARN'
         )
 
     def _get_explicit_runner(self, name):
@@ -475,7 +475,7 @@ class KeywordStore:
             error = f"Multiple keywords with name '{name}' found"
             if implicit:
                 error += ". Give the full name of the keyword you want to use"
-        names = sorted(hand.longname for hand in handlers)
+        names = sorted(hand.full_name for hand in handlers)
         raise KeywordError('\n    '.join([error+':'] + names))
 
 

@@ -5,8 +5,7 @@ from robot.errors import DataError
 from robot.model import Body
 from robot.running.userkeyword import EmbeddedArgumentsHandler
 from robot.running.arguments import EmbeddedArguments, UserKeywordArgumentParser
-from robot.utils.asserts import (assert_equal, assert_true, assert_raises,
-                                 assert_raises_with_msg)
+from robot.utils.asserts import assert_equal, assert_true, assert_raises_with_msg
 
 
 class Fake:
@@ -77,11 +76,11 @@ class TestEmbeddedArgs(unittest.TestCase):
         runner = self.tmp1.create_runner('User selects book from list')
         assert_equal(runner.embedded_args, ('book',))
         assert_equal(runner.name, 'User selects book from list')
-        assert_equal(runner.longname, 'resource.User selects book from list')
+        assert_equal(runner.full_name, 'resource.User selects book from list')
         runner = self.tmp1.create_runner('User selects radio from list')
         assert_equal(runner.embedded_args, ('radio',))
         assert_equal(runner.name, 'User selects radio from list')
-        assert_equal(runner.longname, 'resource.User selects radio from list')
+        assert_equal(runner.full_name, 'resource.User selects radio from list')
 
     def test_create_runner_with_many_embedded_args(self):
         runner = self.tmp2.create_runner('User * book from "list"')
@@ -109,7 +108,7 @@ class TestEmbeddedArgs(unittest.TestCase):
         runner = self.tmp1.create_runner('User SELECts book frOm liST')
         assert_equal(runner.embedded_args, ('book',))
         assert_equal(runner.name, 'User SELECts book frOm liST')
-        assert_equal(runner.longname, 'resource.User SELECts book frOm liST')
+        assert_equal(runner.full_name, 'resource.User SELECts book frOm liST')
 
 
 class TestGetArgSpec(unittest.TestCase):

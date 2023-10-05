@@ -131,7 +131,7 @@ class TestImports(unittest.TestCase):
         assert_equal(libname, lib.name)
         for name, _ in keywords:
             handler = lib.handlers[name]
-            assert_equal(normalize(handler.longname), normalize(f"{libname}.{name}"))
+            assert_equal(normalize(handler.full_name), normalize(f"{libname}.{name}"))
 
 
 class TestLibraryInit(unittest.TestCase):

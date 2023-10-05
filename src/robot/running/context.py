@@ -146,7 +146,7 @@ class _ExecutionContext:
     def warn_on_invalid_private_call(self, handler):
         parent = self.user_keywords[-1] if self.user_keywords else None
         if not parent or parent.source != handler.source:
-            self.warn(f"Keyword '{handler.longname}' is private and should only "
+            self.warn(f"Keyword '{handler.full_name}' is private and should only "
                       f"be called by keywords in the same file.")
 
     @contextmanager
@@ -183,7 +183,7 @@ class _ExecutionContext:
         for step in reversed(self.steps):
             if step.type == 'ITERATION':
                 return True
-            if step.type == 'KEYWORD' and step.libname != 'BuiltIn':
+            if step.type == 'KEYWORD' and step.owner != 'BuiltIn':
                 return False
         return False
 
