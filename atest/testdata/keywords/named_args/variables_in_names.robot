@@ -65,4 +65,4 @@ Equal sign in variable name
 *** Keywords ***
 User Keyword
     [Arguments]    ${first arg}    ${a-b-c}=default
-    [Return]    ${first arg}, ${a-b-c}
+    RETURN    ${first arg}, ${a-b-c}

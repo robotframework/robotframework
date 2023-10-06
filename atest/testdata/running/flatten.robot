@@ -27,8 +27,9 @@ Nested UK
     Nest
 
 Nest
-    [Return]      foo
     Log    from nested kw
+    RETURN      foo
+    Log    not logged
 
 Loops and stuff
     [Tags]    robot:flatten
@@ -47,10 +48,10 @@ Loops and stuff
     IF    True
         Log    inside if
     ELSE
-        Fail
+        Fail    not run
     END
     TRY
-        Fail
+        Fail    fail inside try
     EXCEPT
         Log    inside except
     END

@@ -45,14 +45,14 @@ Keyword should see passed values
     Variable should not exist    ${test}
     ${arg}=   Set variable    kw
     ${arg}=   Keyword should see passed values 2    ${arg}
-    [Return]    ${arg}
+    RETURN    ${arg}
 
 Keyword should see passed values 2
     [Arguments]    ${arg2}
     Should be equal   ${arg2}    kw
     Variable should not exist    ${test}
     Variable should not exist    ${arg}
-    [Return]    kw2
+    RETURN    kw2
 
 Keyword should see test scope variables
     Should be equal   ${test}    test

@@ -35,4 +35,4 @@ UTF-8 Name Äöå §½€"
 |                 | Log         | ${value}   |
 |                 | Log         | ${UNICODE} |
 |                 | Log         | §½€        |
-| Äöå §½€         | [Return]    | äöå §½€    |
+| Äöå §½€         | RETURN      | äöå §½€    |

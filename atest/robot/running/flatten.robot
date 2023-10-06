@@ -17,6 +17,7 @@ Loops and stuff
     Check Log Message    ${tc.body[0].messages[0]}     inside for 0
     Check Log Message    ${tc.body[0].messages[5]}     inside while 0
     Check Log Message    ${tc.body[0].messages[15]}     inside if
+    Check Log Message    ${tc.body[0].messages[16]}     fail inside try    FAIL
     Check Log Message    ${tc.body[0].messages[18]}     inside except
 
 Recursion

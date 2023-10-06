@@ -97,7 +97,7 @@ Verify Test Case And Error In Log
     [Arguments]    ${name}    ${error}    ${index}=0    ${msg}=0
     ${tc} =    Check Test Case    ${name}
     Check Log Message    ${tc.kws[${index}].msgs[${msg}]}    ${error}    FAIL
-    [Return]    ${tc}
+    RETURN    ${tc}
 
 Verify Test Case, Error In Log And No Details
     [Arguments]    ${name}    ${error}    ${msg_index}=${0}

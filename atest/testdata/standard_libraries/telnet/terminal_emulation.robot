@@ -132,7 +132,7 @@ Run with timeout 0.5
     [Arguments]    ${kw}    @{args}
     [Timeout]     0.5
     ${res}=   Run keyword    ${kw}    @{args}
-    [Return]    ${res}
+    RETURN    ${res}
 
 Read until should match
     [Arguments]    ${expected}   ${match}

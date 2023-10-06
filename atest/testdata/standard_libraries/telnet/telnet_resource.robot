@@ -8,7 +8,7 @@ Login and set prompt
     ...    alias=${alias}    encoding=${encoding}    terminal_emulation=${terminal_emulation}
     ...    window_size=${window_size}     terminal_type=${terminal_type}
     Login and wait
-    [Return]    ${index}
+    RETURN    ${index}
 
 Login and wait
     Login    ${USERNAME}    ${PASSWORD}

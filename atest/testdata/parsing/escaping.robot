@@ -178,7 +178,7 @@ Pipe
 User keyword
     [Arguments]    ${a1}    ${a2}
     Should Contain    ${a1}    ${a2}
-    [Return]    ${a1}\${${a2}}
+    RETURN    ${a1}\${${a2}}
 
 User keyword 2
     [Arguments]    ${a1}    ${a2}

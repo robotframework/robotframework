@@ -266,7 +266,7 @@ Timeouted Keyword Passes
     [Timeout]    5 seconds
     Log    Testing logging in timeouted keyword
     Sleep Without Logging    ${secs}
-    [Return]    Slept ${secs}s
+    RETURN    Slept ${secs}s
 
 Timeouted Keyword Fails Before Timeout
     [Timeout]    9000
@@ -275,7 +275,7 @@ Timeouted Keyword Fails Before Timeout
 Timeouted Keyword Timeouts
     [Timeout]    99 milliseconds
     Sleep Without Logging    2
-    [Return]    Nothing, really
+    RETURN    Nothing, really
 
 Timeouted Keyword Timeouts Due To Total Time
     [Timeout]    0.3 seconds

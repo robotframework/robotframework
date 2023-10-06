@@ -147,7 +147,7 @@ Varags and kwargs
         Append To List    ${items}    ${key}: ${value}
     END
     ${result} =    Catenate    SEPARATOR=,${SPACE}    @{items}
-    [Return]    ${result}
+    RETURN    ${result}
 
 Positional, varargs and kwargs
     [Arguments]    ${arg}    @{varargs}    &{kwargs}
@@ -161,13 +161,13 @@ Kwargs are ordered
     [Arguments]    &{kwargs}
     ${values} =    Catenate    @{kwargs.values()}
     Should Be Equal    ${values}    1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
-    [Return]    &{kwargs}
+    RETURN    &{kwargs}
 
 Kwargs are dot-accessible
     [Arguments]    &{kwargs}
     Should Be Equal    ${kwargs.key}    value
     Should Be Equal    ${kwargs.second}    ${2}
-    [Return]    &{kwargs}
+    RETURN    &{kwargs}
 
 Mutate Dictionaries
     [Arguments]    ${dict1}    &{dict2}

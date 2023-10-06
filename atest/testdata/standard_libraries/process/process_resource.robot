@@ -22,7 +22,7 @@ Some process
     ...    alias=${alias}    stderr=${stderr}    stdin=PIPE
     Wait Until Created    ${STARTED}    timeout=10s
     Process Should Be Running
-    [Return]    ${handle}
+    RETURN    ${handle}
 
 Stop some process
     [Arguments]    ${handle}=${NONE}    ${message}=
@@ -30,7 +30,7 @@ Stop some process
     Return From Keyword If    not $running
     ${process}=    Get Process Object    ${handle}
     ${stdout}    ${_} =    Call Method    ${process}    communicate    ${message.encode('ASCII') + b'\n'}
-    [Return]    ${stdout.decode('ASCII').rstrip()}
+    RETURN    ${stdout.decode('ASCII').rstrip()}
 
 Result should equal
     [Arguments]    ${result}    ${stdout}=    ${stderr}=    ${rc}=0
@@ -57,7 +57,7 @@ Custom stream should contain
     ${path} =    Normalize Path    ${path}
     ${content} =    Get File    ${path}    encoding=CONSOLE
     Should Be Equal    ${content.rstrip()}    ${expected}
-    [Return]    ${path}
+    RETURN    ${path}
 
 Script result should equal
     [Documentation]    These are default results by ${SCRIPT}
@@ -68,13 +68,13 @@ Start Python Process
     [Arguments]    ${command}    ${alias}=${NONE}    ${stdout}=${NONE}    ${stderr}=${NONE}    ${stdin}=None    ${shell}=False
     ${handle}=    Start Process    python    -c    ${command}
     ...    alias=${alias}    stdout=${stdout}    stderr=${stderr}    stdin=${stdin}    shell=${shell}
-    [Return]    ${handle}
+    RETURN    ${handle}
 
 Run Python Process
     [Arguments]    ${command}    ${alias}=${NONE}    ${stdout}=${NONE}    ${stderr}=${NONE}
     ${result}=    Run Process    python    -c    ${command}
     ...    alias=${alias}    stdout=${stdout}    stderr=${stderr}
-    [Return]    ${result}
+    RETURN    ${result}
 
 Safe Remove File
     [Documentation]    Ignore errors caused by process being locked.

@@ -1,3 +1,3 @@
 *** Keywords ***
 Get Name
-    [Return]    resource2
+    RETURN    resource2

@@ -60,4 +60,4 @@ Get Long Message
     ${msg} =    Evaluate    "END\\n".join($lines)
     ${total_chars} =    Evaluate    ${line_length} * ${line_count}
     ${msg} =    Evaluate    $msg[:-len("${total_chars}")] + " " * 4 + "${total_chars}"
-    [Return]    ${msg}
+    RETURN    ${msg}

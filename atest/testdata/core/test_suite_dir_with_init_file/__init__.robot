@@ -29,5 +29,5 @@ My Teardown
 Create Message
     [Arguments]    @{msg_parts}
     ${msg} =    Catenate    @{msg_parts}
-    [Return]    ${msg}
+    RETURN    ${msg}
 

@@ -100,4 +100,4 @@ UK With Environment Variables In Metadata
     [Arguments]  ${mypath}=%{TEMPDIR}
     [Documentation]  %{THIS_ENV_VAR_IS_SET} in a uk doc
     Should Contain  ${mypath}  ${/}
-    [Return]  %{THIS_ENV_VAR_IS_SET}
+    RETURN  %{THIS_ENV_VAR_IS_SET}

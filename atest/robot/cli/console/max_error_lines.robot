@@ -39,7 +39,7 @@ Has Been Cut
     Should Match Non Empty Regexp    ${test.message}    ${eol_dots}
     Should Match Non Empty Regexp    ${test.message}    ${bol_dots}
     Error Message In Log Should Not Have Been Cut    ${test.kws}
-    [Return]    ${test}
+    RETURN    ${test}
 
 Error Message In Log Should Not Have Been Cut
     [Arguments]    ${kws}

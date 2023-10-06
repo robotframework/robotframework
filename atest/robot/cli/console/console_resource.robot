@@ -13,7 +13,7 @@ ${MSG_110}        1 test, 1 passed, 0 failed
 *** Keywords ***
 Create Status Line
     [Arguments]    ${name}    ${padding}    ${status}
-    [Return]    ${name}${SPACE * ${padding}}| ${status} |
+    RETURN    ${name}${SPACE * ${padding}}| ${status} |
 
 Stdout Should Be
     [Arguments]    ${expected}    &{replaced}

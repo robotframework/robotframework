@@ -48,4 +48,4 @@ Create environ
     ${path} =    Get Environment Variable    PATH    default=.
     ${systemroot} =    Get Environment Variable    SYSTEMROOT    default=.
     ${environ} =    Create Dictionary    @{environ}    PATH=${path}    SYSTEMROOT=${SYSTEMROOT}
-    [Return]    ${environ}
+    RETURN    ${environ}

@@ -44,4 +44,4 @@ Get JS model
     ${file} =    Get File    ${OUTDIR}/${type}.html
     ${strings} =    Get Lines Matching Pattern    ${file}    window.output?"strings"?*
     ${settings} =    Get Lines Matching Pattern    ${file}    window.settings =*
-    [Return]    ${strings}    ${settings}
+    RETURN    ${strings}    ${settings}

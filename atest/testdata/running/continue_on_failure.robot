@@ -221,10 +221,10 @@ Continuable failure in user keyword returning value
     Run Keyword And Continue On Failure   Fail    Continuable failure
     ${ret} =    Set Variable    return value
     Should Be Equal    ${ret}    return value
-    [Return]    ${ret}
+    RETURN    ${ret}
 
 Continuable failure in nested user keyword returning value
     Run Keyword And Continue On Failure   Fail    Another continuable failure
     ${ret} =    Continuable failure in user keyword returning value
     Should Be Equal    ${ret}    return value
-    [Return]    ${ret} 2
+    RETURN    ${ret} 2

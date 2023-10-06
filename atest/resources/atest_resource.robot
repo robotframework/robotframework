@@ -41,14 +41,14 @@ Run Tests
     ${result} =    Execute    ${INTERPRETER.runner}   ${options}    ${sources}    ${default options}
     Log Many    RC: ${result.rc}    STDERR:\n${result.stderr}    STDOUT:\n${result.stdout}
     Process Output    ${output}    validate=${validate output}
-    [Return]    ${result}
+    RETURN    ${result}
 
 Run Tests Without Processing Output
     [Arguments]    ${options}=    ${sources}=    ${default options}=${RUNNER DEFAULTS}
     [Documentation]    *OUTDIR:* file://${OUTDIR} (regenerated for every run)
     ${result} =    Execute    ${INTERPRETER.runner}   ${options}    ${sources}    ${default options}
     Log Many    RC: ${result.rc}    STDERR:\n${result.stderr}    STDOUT:\n${result.stdout}
-    [Return]    ${result}
+    RETURN    ${result}
 
 Run Rebot
     [Arguments]    ${options}=    ${sources}=    ${default options}=${COMMON DEFAULTS}    ${output}=${OUTFILE}    ${validate output}=None
@@ -56,14 +56,14 @@ Run Rebot
     ${result} =    Execute    ${INTERPRETER.rebot}   ${options}    ${sources}    ${default options}
     Log Many    RC: ${result.rc}    STDERR:\n${result.stderr}    STDOUT:\n${result.stdout}
     Process Output    ${output}    validate=${validate output}
-    [Return]    ${result}
+    RETURN    ${result}
 
 Run Rebot Without Processing Output
     [Arguments]    ${options}=    ${sources}=    ${default options}=${COMMON DEFAULTS}
     [Documentation]    *OUTDIR:* file://${OUTDIR} (regenerated for every run)
     ${result} =    Execute    ${INTERPRETER.rebot}   ${options}    ${sources}    ${default options}
     Log Many    RC: ${result.rc}    STDERR:\n${result.stderr}    STDOUT:\n${result.stdout}
-    [Return]    ${result}
+    RETURN    ${result}
 
 Execute
     [Arguments]    ${executor}    ${options}    ${sources}    ${default options}=
@@ -72,14 +72,14 @@ Execute
     ${result} =    Run Process    @{executor}    @{arguments}
     ...    stdout=${STDOUTFILE}    stderr=${STDERRFILE}    output_encoding=SYSTEM
     ...    timeout=5min    on_timeout=terminate
-    [Return]    ${result}
+    RETURN    ${result}
 
 Get Execution Arguments
     [Arguments]    ${options}    ${sources}    ${default options}
     @{options} =    Split command line    --outputdir ${OUTDIR} ${default options} ${options}
     @{sources} =    Split command line    ${sources}
     @{sources} =    Join Paths    ${DATADIR}    @{sources}
-    [Return]    @{options}    @{sources}
+    RETURN    @{options}    @{sources}
 
 Set Execution Environment
     Remove Directory    ${OUTDIR}    recursive
@@ -98,20 +98,20 @@ Check Test Suite
     IF    $status is not None
     ...    Should Be Equal    ${suite.status}    ${status}
     Should Be Equal    ${suite.full_message}    ${message}
-    [Return]    ${suite}
+    RETURN    ${suite}
 
 Check Test Doc
     [Arguments]    ${name}    @{expected}
     ${tc} =    Check Test Case    ${name}
     ${expected} =    Catenate    @{expected}
     Should Be Equal    ${tc.doc}    ${expected}
-    [Return]    ${tc}
+    RETURN    ${tc}
 
 Check Test Tags
     [Arguments]    ${name}    @{expected}
     ${tc} =    Check Test Case    ${name}
     Should Contain Tags    ${tc}    @{expected}
-    [Return]    ${tc}
+    RETURN    ${tc}
 
 Check Keyword Data
     [Arguments]    ${kw}    ${name}    ${assign}=    ${args}=    ${status}=PASS    ${tags}=    ${type}=KEYWORD
@@ -153,7 +153,7 @@ Get Output File
     [Documentation]    Output encoding avare helper
     ${encoding} =    Set Variable If    r'${path}' in [r'${STDERR FILE}', r'${STDOUT FILE}']    SYSTEM    UTF-8
     ${file} =    Get File    ${path}    ${encoding}
-    [Return]    ${file}
+    RETURN    ${file}
 
 File Should Contain
     [Arguments]    ${path}    @{expected}    ${count}=None
@@ -263,15 +263,15 @@ Stdout Should Contain Regexp
 
 Get Syslog
     ${file} =    Get Output File    ${SYSLOG_FILE}
-    [Return]    ${file}
+    RETURN    ${file}
 
 Get Stderr
     ${file} =    Get Output File    ${STDERR_FILE}
-    [Return]    ${file}
+    RETURN    ${file}
 
 Get Stdout
     ${file} =    Get Output File    ${STDOUT_FILE}
-    [Return]    ${file}
+    RETURN    ${file}
 
 Syslog Should Contain Match
     [Arguments]    @{expected}
@@ -340,22 +340,22 @@ Previous test should have passed
 Get Stat Nodes
     [Arguments]    ${type}    ${output}=${OUTFILE}
     ${nodes} =    Get Elements    ${output}    statistics/${type}/stat
-    [Return]    ${nodes}
+    RETURN    ${nodes}
 
 Get Tag Stat Nodes
     [Arguments]    ${output}=${OUTFILE}
     ${nodes} =    Get Stat Nodes    tag    ${output}
-    [Return]    ${nodes}
+    RETURN    ${nodes}
 
 Get Total Stat Nodes
     [Arguments]    ${output}=${OUTFILE}
     ${nodes} =    Get Stat Nodes    total    ${output}
-    [Return]    ${nodes}
+    RETURN    ${nodes}
 
 Get Suite Stat Nodes
     [Arguments]    ${output}=${OUTFILE}
     ${nodes} =    Get Stat Nodes    suite    ${output}
-    [Return]    ${nodes}
+    RETURN    ${nodes}
 
 Tag Statistics Should Be
     [Arguments]    ${tag}    ${pass}    ${fail}

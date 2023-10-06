@@ -61,10 +61,10 @@ Python script should be run and arguments logged
     [Arguments]    ${arguments}    ${script}=script.py    ${index}=0
     ${script} =    Normalize Path    ${DATADIR}/standard_libraries/process/files/${script}
     ${tc} =    Arguments should be logged    python ${script} ${arguments}    ${index}
-    [Return]    ${tc}
+    RETURN    ${tc}
 
 Arguments should be logged
     [Arguments]    ${message}    ${index}=0
     ${tc} =    Check Test Case    ${TESTNAME}
     Check Log Message    ${tc.kws[${index}].msgs[0]}    Starting process:\n${message}
-    [Return]    ${tc}
+    RETURN    ${tc}
