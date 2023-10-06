@@ -12,12 +12,12 @@ Run Keyword If With True Expression
 
 Run Keyword If With False Expression
     ${tc} =    Check Test Case    ${TEST NAME}
-    Should Be Equal As Integers    ${tc.body[0].keyword_count}    0
+    Should Be Empty    ${tc.body[0].body}
 
 Run Keyword In User Keyword
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.body[0].body[0].body[0].msgs[0]}    ${EXECUTED}
-    Should Be Equal As Integers    ${tc.body[1].body[0].keyword_count}    0
+    Should Be Empty    ${tc.body[1].body[0].body}
 
 Run Keyword With ELSE
     ${tc} =    Check Test Case    ${TEST NAME}

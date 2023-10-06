@@ -42,7 +42,7 @@ Log Variables In Suite Setup
     Check Variable Message    \${SUITE_SOURCE} = *    pattern=yes
     Check Variable Message    \${TEMPDIR} = *    pattern=yes
     Check Variable Message    \${True} = *    pattern=yes
-    Should Be Equal As Integers    ${kw.message_count}    35    Wrong total message count
+    Length Should Be    ${kw.messages}    35
 
 Log Variables In Test
     ${test} =    Check Test Case    Log Variables
@@ -85,7 +85,7 @@ Log Variables In Test
     Check Variable Message    \${TEST_NAME} = Log Variables
     Check Variable Message    \@{TEST_TAGS} = [ ]
     Check Variable Message    \${True} = *    pattern=yes
-    Should Be Equal As Integers    ${kw.message_count}    39    Wrong total message count
+    Length Should Be    ${kw.messages}    39
 
 Log Variables After Setting New Variables
     ${test} =    Check Test Case    Log Variables
@@ -131,7 +131,7 @@ Log Variables After Setting New Variables
     Check Variable Message    \@{TEST_TAGS} = [ ]    DEBUG
     Check Variable Message    \${True} = *    DEBUG    pattern=yes
     Check Variable Message    \${var} = Hello    DEBUG
-    Should Be Equal As Integers    ${kw.message_count}    42    Wrong total message count
+    Length Should Be    ${kw.messages}    42
 
 Log Variables In User Keyword
     ${test} =    Check Test Case    Log Variables
@@ -175,7 +175,7 @@ Log Variables In User Keyword
     Check Variable Message    \@{TEST_TAGS} = [ ]
     Check Variable Message    \${True} = *    pattern=yes
     Check Variable Message    \${ukvar} = Value of an uk variable
-    Should Be Equal As Integers    ${kw.message_count}    40    Wrong total message count
+    Length Should Be    ${kw.messages}    40
 
 List and dict variables failing during iteration
     Check Test Case    ${TEST NAME}

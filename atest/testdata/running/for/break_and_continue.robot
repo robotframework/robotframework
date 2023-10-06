@@ -31,8 +31,9 @@ With CONTINUE inside TRY
 With CONTINUE inside EXCEPT and TRY-ELSE
     FOR    ${i}     IN RANGE    6
         TRY
-            Should not be equal    ${variable}    ${4}
-        EXCEPT
+            Should not be equal    ${i}    ${4}
+        EXCEPT    AS    ${error}
+            Log    ${error}
             CONTINUE
         ELSE
             CONTINUE
@@ -156,8 +157,9 @@ With CONTINUE inside TRY in UK
 With CONTINUE inside EXCEPT and TRY-ELSE in UK
     FOR    ${i}     IN RANGE    6
         TRY
-            Should not be equal    ${variable}    ${4}
-        EXCEPT
+            Should not be equal    ${i}    ${4}
+        EXCEPT    AS    ${error}
+            Log    ${error}
             CONTINUE
         ELSE
             CONTINUE

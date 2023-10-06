@@ -5,12 +5,13 @@ from xmlschema import XMLSchema
 
 from robot import utils
 from robot.api import logger
-from robot.utils.asserts import assert_equal
-from robot.result import (ExecutionResultBuilder, Result, ResultVisitor,
-                          For, ForIteration, While, WhileIteration, Return, Break, Continue,
-                          If, IfBranch, Try, TryBranch, Keyword, TestCase, TestSuite)
-from robot.result.model import Body, Iterations
 from robot.libraries.BuiltIn import BuiltIn
+from robot.result import (Break, Continue, Error, ExecutionResultBuilder, For,
+                          ForIteration, If, IfBranch, Keyword, Result, ResultVisitor,
+                          Return, TestCase, TestSuite, Try, TryBranch, While,
+                          WhileIteration)
+from robot.result.model import Body, Iterations
+from robot.utils.asserts import assert_equal
 
 
 class NoSlotsKeyword(Keyword):
@@ -45,6 +46,10 @@ class NoSlotsContinue(Continue):
     pass
 
 
+class NoSlotsError(Error):
+    pass
+
+
 class NoSlotsBody(Body):
     keyword_class = NoSlotsKeyword
     for_class = NoSlotsFor
@@ -54,6 +59,7 @@ class NoSlotsBody(Body):
     return_class = NoSlotsReturn
     break_class = NoSlotsBreak
     continue_class = NoSlotsContinue
+    error_class = NoSlotsError
 
 
 class NoSlotsIfBranch(IfBranch):
@@ -77,8 +83,8 @@ class NoSlotsIterations(Iterations):
 
 
 NoSlotsKeyword.body_class = NoSlotsReturn.body_class = NoSlotsBreak.body_class \
-    = NoSlotsContinue.body_class = NoSlotsBody
-NoSlotsFor.iterations_class = NoSlotsWhile.iterations_class =NoSlotsIterations
+    = NoSlotsContinue.body_class = NoSlotsError.body_class = NoSlotsBody
+NoSlotsFor.iterations_class = NoSlotsWhile.iterations_class = NoSlotsIterations
 NoSlotsFor.iteration_class = NoSlotsForIteration
 NoSlotsWhile.iteration_class = NoSlotsWhileIteration
 NoSlotsIf.branch_class = NoSlotsIfBranch
@@ -340,43 +346,17 @@ class ProcessResults(ResultVisitor):
             test.exp_status = 'PASS'
             test.exp_message = ''
         test.kws = list(test.body)
-        test.keyword_count = test.kw_count = len(test.kws)
 
-    def start_keyword(self, kw):
-        self._add_kws_and_msgs(kw)
-
-    def _add_kws_and_msgs(self, item):
-        # TODO: Consider not setting these special attributes:
-        # - Using normal `body` instead of special `kws` in tests would be better.
-        # - `msgs` isn't that much shorter than normal `messages`.
-        # - Counts likely not needed often enough. There are other ways to get them.
-        # - No need to construct "NoSlots" variants for all model objects.
+    def start_body_item(self, item):
+        # TODO: Consider not setting these attributes to avoid "NoSlots" variants.
+        # - Using normal `body` and `messages` would in general be cleaner.
+        # - If `kws` is preserved, it should only contain keywords, not controls.
+        # - `msgs` isn't that much shorter than `messages`.
         item.kws = item.body.filter(messages=False)
         item.msgs = item.body.filter(messages=True)
-        item.keyword_count = item.kw_count = len(item.kws)
-        item.message_count = item.msg_count = len(item.msgs)
 
-    def start_for(self, for_):
-        self._add_kws_and_msgs(for_)
-
-    def start_for_iteration(self, iteration):
-        self._add_kws_and_msgs(iteration)
-
-    def start_if(self, if_):
-        self._add_kws_and_msgs(if_)
-
-    def start_if_branch(self, branch):
-        self._add_kws_and_msgs(branch)
-
-    def start_while(self, while_):
-        self._add_kws_and_msgs(while_)
-
-    def start_while_iteration(self, iteration):
-        self._add_kws_and_msgs(iteration)
-
-    def visit_error(self, error):
+    def visit_message(self, message):
         pass
 
     def visit_errors(self, errors):
         errors.msgs = errors.messages
-        errors.message_count = errors.msg_count = len(errors.messages)
