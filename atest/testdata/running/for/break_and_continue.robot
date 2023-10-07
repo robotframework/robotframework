@@ -1,11 +1,11 @@
 *** Test Cases ***
-With CONTINUE
+CONTINUE
     FOR    ${i}    IN     2     3     4
         CONTINUE
         Fail    should not be executed
     END
 
-With CONTINUE inside IF
+CONTINUE inside IF
     [Documentation]    FAIL Oh no, got 4
     FOR    ${i}     IN RANGE    6
         IF    $i == 4
@@ -16,7 +16,7 @@ With CONTINUE inside IF
         Fail    should not be executed
     END
 
-With CONTINUE inside TRY
+CONTINUE inside TRY
     FOR    ${i}     IN RANGE    6
         TRY
             CONTINUE
@@ -28,7 +28,7 @@ With CONTINUE inside TRY
         END
     END
 
-With CONTINUE inside EXCEPT and TRY-ELSE
+CONTINUE inside EXCEPT and TRY-ELSE
     FOR    ${i}     IN RANGE    6
         TRY
             Should not be equal    ${i}    ${4}
@@ -41,14 +41,14 @@ With CONTINUE inside EXCEPT and TRY-ELSE
         Fail    should not be executed
     END
 
-With BREAK
+BREAK
     FOR    ${i}     IN RANGE    1000
         BREAK
         Fail    should not be executed
     END
     Should be equal    ${i}    ${0}
 
-With BREAK inside IF
+BREAK inside IF
     FOR    ${i}     IN RANGE    6
         IF    $i == 3
             BREAK
@@ -56,7 +56,7 @@ With BREAK inside IF
         END
     END
 
-With BREAK inside TRY
+BREAK inside TRY
     FOR    ${i}     IN RANGE    6
         TRY
             BREAK
@@ -70,7 +70,7 @@ With BREAK inside TRY
     Should be equal    ${i}    ${0}
     END
 
-With BREAK inside EXCEPT
+BREAK inside EXCEPT
     FOR    ${i}     IN RANGE    6
         TRY
             Fail    This is excepted!
@@ -83,7 +83,7 @@ With BREAK inside EXCEPT
     END
     Should be equal    ${i}    ${0}
 
-With BREAK inside TRY-ELSE
+BREAK inside TRY-ELSE
     FOR    ${i}     IN RANGE    6
         TRY
             No operation
@@ -96,42 +96,42 @@ With BREAK inside TRY-ELSE
     END
     Should be equal    ${i}    ${0}
 
-With CONTINUE in UK
-    With CONTINUE in UK
+CONTINUE in UK
+    CONTINUE in UK
 
-With CONTINUE inside IF in UK
+CONTINUE inside IF in UK
     [Documentation]    FAIL Oh no, got 4
-    With CONTINUE inside IF in UK
+    CONTINUE inside IF in UK
 
-With CONTINUE inside TRY in UK
-    With CONTINUE inside TRY in UK
+CONTINUE inside TRY in UK
+    CONTINUE inside TRY in UK
 
-With CONTINUE inside EXCEPT and TRY-ELSE in UK
-    With CONTINUE inside EXCEPT and TRY-ELSE in UK
+CONTINUE inside EXCEPT and TRY-ELSE in UK
+    CONTINUE inside EXCEPT and TRY-ELSE in UK
 
-With BREAK in UK
-    With BREAK in UK
+BREAK in UK
+    BREAK in UK
 
-With BREAK inside IF in UK
-    With BREAK inside IF in UK
+BREAK inside IF in UK
+    BREAK inside IF in UK
 
-With BREAK inside TRY in UK
-    With BREAK inside TRY in UK
+BREAK inside TRY in UK
+    BREAK inside TRY in UK
 
-With BREAK inside EXCEPT in UK
-    With BREAK inside EXCEPT in UK
+BREAK inside EXCEPT in UK
+    BREAK inside EXCEPT in UK
 
-With BREAK inside TRY-ELSE in UK
-    With BREAK inside TRY-ELSE in UK
+BREAK inside TRY-ELSE in UK
+    BREAK inside TRY-ELSE in UK
 
 *** Keywords ***
-With CONTINUE in UK
+CONTINUE in UK
     FOR    ${i}    IN     2     3     4
         CONTINUE
         Fail    should not be executed
     END
 
-With CONTINUE inside IF in UK
+CONTINUE inside IF in UK
     [Documentation]    FAIL Oh no, got 4
     FOR    ${i}     IN RANGE    6
         IF    $i == 4
@@ -142,7 +142,7 @@ With CONTINUE inside IF in UK
         Fail    should not be executed
     END
 
-With CONTINUE inside TRY in UK
+CONTINUE inside TRY in UK
     FOR    ${i}     IN RANGE    6
         TRY
             CONTINUE
@@ -154,7 +154,7 @@ With CONTINUE inside TRY in UK
         END
     END
 
-With CONTINUE inside EXCEPT and TRY-ELSE in UK
+CONTINUE inside EXCEPT and TRY-ELSE in UK
     FOR    ${i}     IN RANGE    6
         TRY
             Should not be equal    ${i}    ${4}
@@ -167,14 +167,14 @@ With CONTINUE inside EXCEPT and TRY-ELSE in UK
         Fail    should not be executed
     END
 
-With BREAK in UK
+BREAK in UK
     FOR    ${i}     IN RANGE    1000
         BREAK
         Fail    should not be executed
     END
     Should be equal    ${i}    ${0}
 
-With BREAK inside IF in UK
+BREAK inside IF in UK
     FOR    ${i}     IN RANGE    6
         IF    $i == 3
             BREAK
@@ -182,7 +182,7 @@ With BREAK inside IF in UK
         END
     END
 
-With BREAK inside TRY in UK
+BREAK inside TRY in UK
     FOR    ${i}     IN RANGE    6
         TRY
             BREAK
@@ -196,7 +196,7 @@ With BREAK inside TRY in UK
     Should be equal    ${i}    ${0}
     END
 
-With BREAK inside EXCEPT in UK
+BREAK inside EXCEPT in UK
     FOR    ${i}     IN RANGE    6
         TRY
             Fail    This is excepted!
@@ -209,7 +209,7 @@ With BREAK inside EXCEPT in UK
     END
     Should be equal    ${i}    ${0}
 
-With BREAK inside TRY-ELSE in UK
+BREAK inside TRY-ELSE in UK
     FOR    ${i}     IN RANGE    6
         TRY
             No operation
