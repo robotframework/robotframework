@@ -17,6 +17,7 @@ from robot.errors import DataError
 from robot.utils import file_writer, seq2str2
 
 from .logger import LOGGER
+from .loggerapi import LoggerApi
 from .loggerhelper import IsLogged
 
 
@@ -34,7 +35,7 @@ def DebugFile(path):
         return _DebugFileWriter(outfile)
 
 
-class _DebugFileWriter:
+class _DebugFileWriter(LoggerApi):
     _separators = {'SUITE': '=', 'TEST': '-', 'KEYWORD': '~'}
 
     def __init__(self, outfile):
@@ -44,39 +45,47 @@ class _DebugFileWriter:
         self._outfile = outfile
         self._is_logged = IsLogged('DEBUG')
 
-    def start_suite(self, suite):
+    def start_suite(self, data, result):
         self._separator('SUITE')
-        self._start('SUITE', suite.full_name, suite.start_time)
+        self._start('SUITE', data.full_name, result.start_time)
         self._separator('SUITE')
 
-    def end_suite(self, suite):
+    def end_suite(self, data, result):
         self._separator('SUITE')
-        self._end('SUITE', suite.full_name, suite.end_time, suite.elapsed_time)
+        self._end('SUITE', data.full_name, result.end_time, result.elapsed_time)
         self._separator('SUITE')
         if self._indent == 0:
             LOGGER.output_file('Debug', self._outfile.name)
             self.close()
 
-    def start_test(self, test):
+    def start_test(self, data, result):
         self._separator('TEST')
-        self._start('TEST', test.name, test.start_time)
-        self._separator('TEST')
-
-    def end_test(self, test):
-        self._separator('TEST')
-        self._end('TEST', test.name, test.end_time, test.elapsed_time)
+        self._start('TEST', result.name, result.start_time)
         self._separator('TEST')
 
-    def start_keyword(self, kw):
+    def end_test(self, data, result):
+        self._separator('TEST')
+        self._end('TEST', result.name, result.end_time, result.elapsed_time)
+        self._separator('TEST')
+
+    def start_keyword(self, data, result):
         if self._kw_level == 0:
             self._separator('KEYWORD')
-        name = kw.full_name if kw.type in kw.KEYWORD_TYPES else kw._name
-        self._start(kw.type, name, kw.start_time, seq2str2(kw.args))
+        self._start(result.type, result.full_name, result.start_time, seq2str2(result.args))
         self._kw_level += 1
 
-    def end_keyword(self, kw):
-        name = kw.full_name if kw.type in kw.KEYWORD_TYPES else kw._name
-        self._end(kw.type, name, kw.end_time, kw.elapsed_time)
+    def end_keyword(self, data, result):
+        self._end(result.type, result.full_name, result.end_time, result.elapsed_time)
+        self._kw_level -= 1
+
+    def start_body_item(self, data, result):
+        if self._kw_level == 0:
+            self._separator('KEYWORD')
+        self._start(result.type, result._name, result.start_time)
+        self._kw_level += 1
+
+    def end_body_item(self, data, result):
+        self._end(result.type, result._name, result.end_time, result.elapsed_time)
         self._kw_level -= 1
 
     def log_message(self, msg):
