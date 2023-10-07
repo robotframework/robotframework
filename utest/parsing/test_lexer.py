@@ -494,7 +494,8 @@ Name
             (T.TIMEOUT, '[Timeout]', 8, 4),
             (T.ARGUMENT, '${TIMEOUT}', 8, 23),
             (T.EOS, '', 8, 33),
-            (T.RETURN, '[Return]', 9, 4),
+            (T.RETURN, '[Return]', 9, 4,
+             "The '[Return]' setting is deprecated. Use the 'RETURN' statement instead."),
             (T.ARGUMENT, 'Value', 9, 23),
             (T.EOS, '', 9, 28)
         ]
@@ -656,7 +657,8 @@ Name
             (T.ERROR, '[Timeout]', 12, 4,
              "Setting 'Timeout' is allowed only once. Only the first value is used."),
             (T.EOS, '', 12, 13),
-            (T.RETURN, '[Return]', 13, 4),
+            (T.RETURN, '[Return]', 13, 4,
+             "The '[Return]' setting is deprecated. Use the 'RETURN' statement instead."),
             (T.ARGUMENT, 'Used', 13, 23),
             (T.EOS, '', 13, 27),
             (T.ERROR, '[Return]', 14, 4,

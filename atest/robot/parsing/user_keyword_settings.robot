@@ -68,15 +68,23 @@ Teardown with escaping
 
 Return
     Check Test Case    ${TEST NAME}
+    Error in File    0    parsing/user_keyword_settings.robot    167
+    ...    The '[[]Return]' setting is deprecated. Use the 'RETURN' statement instead.    level=WARN
 
 Return using variables
     Check Test Case    ${TEST NAME}
+    Error in File    1    parsing/user_keyword_settings.robot    171
+    ...    The '[[]Return]' setting is deprecated. Use the 'RETURN' statement instead.    level=WARN
 
 Return multiple
     Check Test Case    ${TEST NAME}
+    Error in File    2    parsing/user_keyword_settings.robot    176
+    ...    The '[[]Return]' setting is deprecated. Use the 'RETURN' statement instead.    level=WARN
 
 Return with escaping
     Check Test Case    ${TEST NAME}
+    Error in File    3    parsing/user_keyword_settings.robot    179
+    ...    The '[[]Return]' setting is deprecated. Use the 'RETURN' statement instead.    level=WARN
 
 Timeout
     Verify Timeout    2 minutes 3 seconds
@@ -102,7 +110,7 @@ Small typo should provide recommendation
     Check Test Case    ${TEST NAME}
 
 Invalid empty line continuation in arguments should throw an error
-    Error in File    0    parsing/user_keyword_settings.robot    214
+    Error in File    4    parsing/user_keyword_settings.robot    213
     ...    Creating keyword 'Invalid empty line continuation in arguments should throw an error' failed:
     ...    Invalid argument specification: Invalid argument syntax ''.
 

@@ -302,6 +302,7 @@ class KeywordBuilder(NodeVisitor):
                 self.kw.tags.add(tag)
 
     def visit_Return(self, node):
+        ErrorReporter(self.resource.source).visit(node)
         self.kw.return_ = node.values
 
     def visit_Timeout(self, node):
@@ -399,7 +400,8 @@ class ForBuilder(NodeVisitor):
 
     def visit_Error(self, node):
         self.model.body.create_error(lineno=node.lineno,
-                                    values=node.values, error=format_error(node.errors))
+                                     values=node.values,
+                                     error=format_error(node.errors))
 
 
 class IfBuilder(NodeVisitor):
@@ -619,6 +621,11 @@ class ErrorReporter(NodeVisitor):
 
     def visit_Keyword(self, node):
         pass
+
+    def visit_Return(self, node):
+        # Empty 'visit_Keyword' above prevents calling this when visiting the whole
+        # model, but 'KeywordBuilder.visit_Return' visits the node it gets.
+        LOGGER.warn(self._format_message(node.get_token(Token.RETURN_SETTING)))
 
     def visit_SectionHeader(self, node):
         token = node.get_token(*Token.HEADER_TOKENS)

@@ -194,9 +194,8 @@ Multiple settings
     [Arguments]    ${name}
     [Documentation]    Documentation for a user keyword
     [Timeout]    0.1 hours
-    No Operation
     [Teardown]    Log    Teardown ${name}
-    [Return]    Hello ${name}!!
+    RETURN    Hello ${name}!!
 
 Invalid
     [Invalid Setting]    This is invalid

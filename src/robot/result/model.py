@@ -32,7 +32,6 @@ be imported via the :mod:`robot.running` module.
 
 __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#listener-interface
 __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#programmatic-modification-of-results
-
 """
 
 import warnings

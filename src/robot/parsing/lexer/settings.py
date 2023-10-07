@@ -121,6 +121,9 @@ class Settings(ABC):
             self._lex_name_arguments_and_with_name(values)
         else:
             self._lex_arguments(values)
+        if name == 'Return':
+            statement[0].error = ("The '[Return]' setting is deprecated. "
+                                  "Use the 'RETURN' statement instead.")
 
     def _lex_name_and_arguments(self, tokens: StatementTokens):
         if tokens:

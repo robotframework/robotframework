@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  ${EMPTY}  parsing/line_continuation.robot
+Suite Setup     Run Tests    ${EMPTY}    parsing/line_continuation.robot
 Resource        atest_resource.robot
 
 *** Test Cases ***
@@ -55,13 +55,16 @@ Multiline test settings
     Check Log Message    ${tc.setup.msgs[1]}    ${EMPTY}
     Check Log Message    ${tc.setup.msgs[2]}    last
 
-Multiline user keyword settings
+Multiline user keyword settings and control structures
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Keyword Data    ${tc.kws[0]}    Multiline user keyword settings and control structures
+    ...    \${x}    1, 2    tags=keyword, tags
+    Check Log Message    ${tc.kws[0].teardown.msgs[0]}    Bye!
+
+Multiline FOR Loop declaration
     Check Test Case    ${TEST NAME}
 
-Multiline for Loop declaration
-    Check Test Case    ${TEST NAME}
-
-Multiline in for loop body
+Multiline in FOR loop body
     Check Test Case    ${TEST NAME}
 
 Escaped empty cells before line continuation do not work
