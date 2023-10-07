@@ -144,6 +144,8 @@ All Keywords Should Have Passed
             Fail    ${item.type} was not run.
         ELSE IF    $item.skipped
             Fail    ${item.type} was skipped.
+        ELSE IF    $item.passed and $item.message
+            Fail    ${item.type} has unexpected message: ${item.message}
         END
         All Keywords Should Have Passed    ${item}    ${allow not run}    ${allowed failure}
     END

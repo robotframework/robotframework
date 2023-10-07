@@ -15,8 +15,8 @@
 
 from datetime import datetime
 
-from robot.errors import (ExecutionFailed, ExecutionStatus, DataError,
-                          HandlerExecutionFailed)
+from robot.errors import (BreakLoop, ContinueLoop, DataError, ExecutionFailed,
+                          ExecutionStatus, HandlerExecutionFailed, ReturnFromKeyword)
 from robot.utils import ErrorDetails
 
 from .modelcombiner import ModelCombiner
@@ -60,7 +60,8 @@ class StatusReporter:
             result.status = self.pass_status
         else:
             result.status = failure.status
-            result.message = failure.message
+            if not isinstance(failure, (BreakLoop, ContinueLoop, ReturnFromKeyword)):
+                result.message = failure.message
         if self.initial_test_status == 'PASS':
             context.test.status = result.status
         result.elapsed_time = datetime.now() - result.start_time
