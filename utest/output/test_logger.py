@@ -29,6 +29,9 @@ class LoggerMock:
     def copy(self):
         return LoggerMock(*self.expected)
 
+    def close(self):
+        pass
+
 
 class LoggerMock2(LoggerMock):
 
@@ -81,12 +84,6 @@ class TestLogger(unittest.TestCase):
         self.logger.close()
         assert_equal(logger.output_file, ('name', 'path'))
         assert_true(logger.closed)
-
-    def test_registered_logger_does_not_need_all_methods(self):
-        logger = LoggerMock(('Hello, world!', 'INFO'))
-        self.logger.register_logger(logger)
-        self.logger.output_file('name', 'path')
-        self.logger.close()
 
     def test_close_removes_registered_loggers(self):
         logger = LoggerMock(('Hello, world!', 'INFO'))
