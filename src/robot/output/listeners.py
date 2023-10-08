@@ -19,8 +19,10 @@ from robot.errors import DataError
 from robot.utils import Importer, is_string, split_args_from_name_or_path, type_name
 
 from .listenermethods import ListenerMethods, LibraryListenerMethods
+from .loggerapi import LoggerApi
 from .loggerhelper import AbstractLoggerProxy, IsLogged
 from .logger import LOGGER
+from .modelcombiner import ModelCombiner
 
 
 class Listeners:
@@ -172,3 +174,133 @@ class ListenerProxy(AbstractLoggerProxy):
                     raise DataError(msg)
                 LOGGER.error(msg)
         return imported
+
+
+class ListenerAdapter(LoggerApi):
+
+    def __init__(self, listener):
+        self.listener = listener
+
+    def register(self, listeners, library):
+        self.listener.register(listeners, library)
+
+    def unregister(self, library, close=False):
+        self.listener.unregister(library, close)
+
+    def new_suite_scope(self):
+        self.listener.new_suite_scope()
+
+    def discard_suite_scope(self):
+        self.listener.discard_suite_scope()
+
+    def message(self, message: 'model.Message'):
+        self.listener.message(message)
+
+    def log_message(self, message: 'model.Message'):
+        self.listener.log_message(message)
+
+    def set_log_level(self, level):
+        self.listener.set_log_level(level)
+
+    def start_suite(self, data: 'running.TestSuite', result: 'result.TestSuite'):
+        suite = ModelCombiner(data, result,
+                              tests=data.tests,
+                              suites=data.suites,
+                              test_count=data.test_count)
+        self.listener.start_suite(suite)
+
+    def end_suite(self, data: 'running.TestSuite', result: 'result.TestSuite'):
+        self.listener.end_suite(ModelCombiner(data, result))
+
+    def start_test(self, data: 'running.TestCase', result: 'result.TestCase'):
+        self.listener.start_test(ModelCombiner(data, result))
+
+    def end_test(self, data: 'running.TestCase', result: 'result.TestCase'):
+        self.listener.end_test(ModelCombiner(data, result))
+
+    def start_keyword(self, data: 'running.Keyword', result: 'result.Keyword'):
+        self.listener.start_keyword(ModelCombiner(data, result))
+
+    def end_keyword(self, data: 'running.Keyword', result: 'result.Keyword'):
+        self.listener.end_keyword(ModelCombiner(data, result))
+
+    def start_for(self, data: 'running.For', result: 'result.For'):
+        self.listener.start_keyword(ModelCombiner(data, result))
+
+    def end_for(self, data: 'running.For', result: 'result.For'):
+        self.listener.end_keyword(ModelCombiner(data, result))
+
+    def start_for_iteration(self, data: 'running.For', result: 'result.ForIteration'):
+        self.listener.start_keyword(ModelCombiner(data, result))
+
+    def end_for_iteration(self, data: 'running.For', result: 'result.ForIteration'):
+        self.listener.end_keyword(ModelCombiner(data, result))
+
+    def start_while(self, data: 'running.While', result: 'result.While'):
+        self.listener.start_keyword(ModelCombiner(data, result))
+
+    def end_while(self, data: 'running.While', result: 'result.While'):
+        self.listener.end_keyword(ModelCombiner(data, result))
+
+    def start_while_iteration(self, data: 'running.While', result: 'result.WhileIteration'):
+        self.listener.start_keyword(ModelCombiner(data, result))
+
+    def end_while_iteration(self, data: 'running.While', result: 'result.WhileIteration'):
+        self.listener.end_keyword(ModelCombiner(data, result))
+
+    def start_if(self, data: 'running.If', result: 'result.If'):
+        self.listener.start_keyword(ModelCombiner(data, result))
+
+    def end_if(self, data: 'running.If', result: 'result.If'):
+        self.listener.end_keyword(ModelCombiner(data, result))
+
+    def start_if_branch(self, data: 'running.If', result: 'result.IfBranch'):
+        self.listener.start_keyword(ModelCombiner(data, result))
+
+    def end_if_branch(self, data: 'running.If', result: 'result.IfBranch'):
+        self.listener.end_keyword(ModelCombiner(data, result))
+
+    def start_try(self, data: 'running.Try', result: 'result.Try'):
+        self.listener.start_keyword(ModelCombiner(data, result))
+
+    def end_try(self, data: 'running.Try', result: 'result.Try'):
+        self.listener.end_keyword(ModelCombiner(data, result))
+
+    def start_try_branch(self, data: 'running.Try', result: 'result.TryBranch'):
+        self.listener.start_keyword(ModelCombiner(data, result))
+
+    def end_try_branch(self, data: 'running.Try', result: 'result.TryBranch'):
+        self.listener.end_keyword(ModelCombiner(data, result))
+
+    def start_break(self, data, result):
+        self.listener.start_keyword(ModelCombiner(data, result))
+
+    def end_break(self, data, result):
+        self.listener.end_keyword(ModelCombiner(data, result))
+
+    def start_continue(self, data, result):
+        self.listener.start_keyword(ModelCombiner(data, result))
+
+    def end_continue(self, data, result):
+        self.listener.end_keyword(ModelCombiner(data, result))
+
+    def start_return(self, data, result):
+        self.listener.start_keyword(ModelCombiner(data, result))
+
+    def end_return(self, data, result):
+        self.listener.end_keyword(ModelCombiner(data, result))
+
+    def start_error(self, data, result):
+        self.listener.start_keyword(ModelCombiner(data, result))
+
+    def end_error(self, data, result):
+        self.listener.end_keyword(ModelCombiner(data, result))
+
+    def imported(self, import_type: str, name: str, attrs):
+        self.listener.imported(import_type, name, attrs)
+
+    def output_file(self, type_: str, path: str):
+        self.listener.output_file(type_, path)
+
+    def close(self):
+        self.listener.close()

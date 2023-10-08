@@ -2,7 +2,8 @@ import unittest
 
 from robot.utils.asserts import assert_equal, assert_true, assert_false
 
-from robot.output.logger import Logger, LoggerApi
+from robot.output.logger import Logger
+from robot.output.loggerapi import LoggerApi
 from robot.output.console.verbose import VerboseOutput
 
 

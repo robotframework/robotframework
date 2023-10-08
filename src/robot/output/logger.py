@@ -20,9 +20,7 @@ from robot.errors import DataError
 
 from .console import ConsoleOutput
 from .filelogger import FileLogger
-from .loggerapi import LoggerApi
 from .loggerhelper import AbstractLogger
-from .modelcombiner import ModelCombiner
 from .stdoutlogsplitter import StdoutLogSplitter
 from ..result import ResultVisitor
 
@@ -217,251 +215,150 @@ class Logger(AbstractLogger):
         self.log_message = self._prev_log_message_handlers.pop()
 
     def start_suite(self, data, result):
-        suite = ModelCombiner(data, result,
-                              tests=data.tests,
-                              suites=data.suites,
-                              test_count=data.test_count)
         for logger in self.start_loggers:
-            if isinstance(logger, LoggerApi):
-                logger.start_suite(data, result)
-            else:
-                logger.start_suite(suite)
+            logger.start_suite(data, result)
 
     def end_suite(self, data, result):
-        suite = ModelCombiner(data, result)
         for logger in self.end_loggers:
-            if isinstance(logger, LoggerApi):
-                logger.end_suite(data, result)
-            else:
-                logger.end_suite(suite)
+            logger.end_suite(data, result)
 
     def start_test(self, data, result):
-        test = ModelCombiner(data, result)
         for logger in self.start_loggers:
-            if isinstance(logger, LoggerApi):
-                logger.start_test(data, result)
-            else:
-                logger.start_test(test)
+            logger.start_test(data, result)
 
     def end_test(self, data, result):
-        test = ModelCombiner(data, result)
         for logger in self.end_loggers:
-            if isinstance(logger, LoggerApi):
-                logger.end_test(data, result)
-            else:
-                logger.end_test(test)
+            logger.end_test(data, result)
 
     @start_body_item
     def start_keyword(self, data, result):
-        keyword = ModelCombiner(data, result)
         for logger in self.start_loggers:
-            if isinstance(logger, LoggerApi):
-                logger.start_keyword(data, result)
-            else:
-                logger.start_keyword(keyword)
+            logger.start_keyword(data, result)
 
     @end_body_item
     def end_keyword(self, data, result):
-        keyword = ModelCombiner(data, result)
         for logger in self.end_loggers:
-            if isinstance(logger, LoggerApi):
-                logger.end_keyword(data, result)
-            else:
-                logger.end_keyword(keyword)
+            logger.end_keyword(data, result)
 
     @start_body_item
     def start_for(self, data, result):
         for logger in self.start_loggers:
-            if isinstance(logger, LoggerApi):
-                logger.start_for(data, result)
-            else:
-                logger.start_keyword(ModelCombiner(data, result))
+            logger.start_for(data, result)
 
     @end_body_item
     def end_for(self, data, result):
         for logger in self.end_loggers:
-            if isinstance(logger, LoggerApi):
-                logger.end_for(data, result)
-            else:
-                logger.end_keyword(ModelCombiner(data, result))
+            logger.end_for(data, result)
 
     @start_body_item
     def start_for_iteration(self, data, result):
         for logger in self.start_loggers:
-            if isinstance(logger, LoggerApi):
-                logger.start_for_iteration(data, result)
-            else:
-                logger.start_keyword(ModelCombiner(data, result))
+            logger.start_for_iteration(data, result)
 
     @end_body_item
     def end_for_iteration(self, data, result):
         for logger in self.end_loggers:
-            if isinstance(logger, LoggerApi):
-                logger.end_for_iteration(data, result)
-            else:
-                logger.end_keyword(ModelCombiner(data, result))
+            logger.end_for_iteration(data, result)
 
     @start_body_item
     def start_while(self, data, result):
         for logger in self.start_loggers:
-            if isinstance(logger, LoggerApi):
-                logger.start_while(data, result)
-            else:
-                logger.start_keyword(ModelCombiner(data, result))
+            logger.start_while(data, result)
 
     @end_body_item
     def end_while(self, data, result):
         for logger in self.end_loggers:
-            if isinstance(logger, LoggerApi):
-                logger.end_while(data, result)
-            else:
-                logger.end_keyword(ModelCombiner(data, result))
+            logger.end_while(data, result)
 
     @start_body_item
     def start_while_iteration(self, data, result):
         for logger in self.start_loggers:
-            if isinstance(logger, LoggerApi):
-                logger.start_while_iteration(data, result)
-            else:
-                logger.start_keyword(ModelCombiner(data, result))
+            logger.start_while_iteration(data, result)
 
     @end_body_item
     def end_while_iteration(self, data, result):
         for logger in self.end_loggers:
-            if isinstance(logger, LoggerApi):
-                logger.end_while_iteration(data, result)
-            else:
-                logger.end_keyword(ModelCombiner(data, result))
+            logger.end_while_iteration(data, result)
 
     @start_body_item
     def start_if(self, data, result):
         for logger in self.start_loggers:
-            if isinstance(logger, LoggerApi):
-                logger.start_if(data, result)
-            else:
-                logger.start_keyword(ModelCombiner(data, result))
+            logger.start_if(data, result)
 
     @end_body_item
     def end_if(self, data, result):
         for logger in self.end_loggers:
-            if isinstance(logger, LoggerApi):
-                logger.end_if(data, result)
-            else:
-                logger.end_keyword(ModelCombiner(data, result))
+            logger.end_if(data, result)
 
     @start_body_item
     def start_if_branch(self, data, result):
         for logger in self.start_loggers:
-            if isinstance(logger, LoggerApi):
-                logger.start_if_branch(data, result)
-            else:
-                logger.start_keyword(ModelCombiner(data, result))
+            logger.start_if_branch(data, result)
 
     @end_body_item
     def end_if_branch(self, data, result):
         for logger in self.end_loggers:
-            if isinstance(logger, LoggerApi):
-                logger.end_if_branch(data, result)
-            else:
-                logger.end_keyword(ModelCombiner(data, result))
+            logger.end_if_branch(data, result)
 
     @start_body_item
     def start_try(self, data, result):
         for logger in self.start_loggers:
-            if isinstance(logger, LoggerApi):
-                logger.start_try(data, result)
-            else:
-                logger.start_keyword(ModelCombiner(data, result))
+            logger.start_try(data, result)
 
     @end_body_item
     def end_try(self, data, result):
         for logger in self.end_loggers:
-            if isinstance(logger, LoggerApi):
-                logger.end_try(data, result)
-            else:
-                logger.end_keyword(ModelCombiner(data, result))
+            logger.end_try(data, result)
 
     @start_body_item
     def start_try_branch(self, data, result):
         for logger in self.start_loggers:
-            if isinstance(logger, LoggerApi):
-                logger.start_try_branch(data, result)
-            else:
-                logger.start_keyword(ModelCombiner(data, result))
+            logger.start_try_branch(data, result)
 
     @end_body_item
     def end_try_branch(self, data, result):
         for logger in self.end_loggers:
-            if isinstance(logger, LoggerApi):
-                logger.end_try_branch(data, result)
-            else:
-                logger.end_keyword(ModelCombiner(data, result))
+            logger.end_try_branch(data, result)
 
     @start_body_item
     def start_break(self, data, result):
         for logger in self.start_loggers:
-            if isinstance(logger, LoggerApi):
-                logger.start_break(data, result)
-            else:
-                logger.start_keyword(ModelCombiner(data, result))
+            logger.start_break(data, result)
 
     @end_body_item
     def end_break(self, data, result):
         for logger in self.end_loggers:
-            if isinstance(logger, LoggerApi):
-                logger.end_break(data, result)
-            else:
-                logger.end_keyword(ModelCombiner(data, result))
+            logger.end_break(data, result)
 
     @start_body_item
     def start_continue(self, data, result):
         for logger in self.start_loggers:
-            if isinstance(logger, LoggerApi):
-                logger.start_continue(data, result)
-            else:
-                logger.start_keyword(ModelCombiner(data, result))
+            logger.start_continue(data, result)
 
     @end_body_item
     def end_continue(self, data, result):
         for logger in self.end_loggers:
-            if isinstance(logger, LoggerApi):
-                logger.end_continue(data, result)
-            else:
-                logger.end_keyword(ModelCombiner(data, result))
+            logger.end_continue(data, result)
 
     @start_body_item
     def start_return(self, data, result):
-        keyword = ModelCombiner(data, result)
         for logger in self.start_loggers:
-            if isinstance(logger, LoggerApi):
-                logger.start_return(data, result)
-            else:
-                logger.start_keyword(keyword)
+            logger.start_return(data, result)
 
     @end_body_item
     def end_return(self, data, result):
-        keyword = ModelCombiner(data, result)
         for logger in self.end_loggers:
-            if isinstance(logger, LoggerApi):
-                logger.end_return(data, result)
-            else:
-                logger.end_keyword(keyword)
+            logger.end_return(data, result)
 
     @start_body_item
     def start_error(self, data, result):
         for logger in self.start_loggers:
-            if isinstance(logger, LoggerApi):
-                logger.start_error(data, result)
-            else:
-                logger.start_keyword(ModelCombiner(data, result))
+            logger.start_error(data, result)
 
     @end_body_item
     def end_error(self, data, result):
         for logger in self.end_loggers:
-            if isinstance(logger, LoggerApi):
-                logger.end_error(data, result)
-            else:
-                logger.end_keyword(ModelCombiner(data, result))
+            logger.end_error(data, result)
 
     def imported(self, import_type, name, **attrs):
         for logger in self:

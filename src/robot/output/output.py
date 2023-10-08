@@ -15,11 +15,11 @@
 
 from . import pyloggingconf
 from .debugfile import DebugFile
-from .listeners import LibraryListeners, Listeners
+from .listeners import LibraryListeners, Listeners, ListenerAdapter
 from .logger import LOGGER
 from .loggerapi import LoggerApi
 from .loggerhelper import AbstractLogger
-from .xmllogger import XmlLogger, FlatXmlLogger, XmlLoggerFacade
+from .xmllogger import XmlLoggerFacade
 
 
 class Output(AbstractLogger, LoggerApi):
@@ -28,8 +28,8 @@ class Output(AbstractLogger, LoggerApi):
         AbstractLogger.__init__(self)
         self._xml_logger = XmlLoggerFacade(settings.output, settings.log_level,
                                            settings.rpa)
-        self.listeners = Listeners(settings.listeners, settings.log_level)
-        self.library_listeners = LibraryListeners(settings.log_level)
+        self.listeners = ListenerAdapter(Listeners(settings.listeners, settings.log_level))
+        self.library_listeners = ListenerAdapter(LibraryListeners(settings.log_level))
         self._register_loggers(DebugFile(settings.debug_file))
         self._settings = settings
         self._flatten_level = 0
