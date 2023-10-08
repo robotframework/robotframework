@@ -19,15 +19,15 @@ from .listeners import LibraryListeners, Listeners, ListenerAdapter
 from .logger import LOGGER
 from .loggerapi import LoggerApi
 from .loggerhelper import AbstractLogger
-from .xmllogger import XmlLoggerFacade
+from .xmllogger import XmlLoggerAdapter
 
 
 class Output(AbstractLogger, LoggerApi):
 
     def __init__(self, settings):
         AbstractLogger.__init__(self)
-        self._xml_logger = XmlLoggerFacade(settings.output, settings.log_level,
-                                           settings.rpa)
+        self._xml_logger = XmlLoggerAdapter(settings.output, settings.log_level,
+                                            settings.rpa)
         self.listeners = ListenerAdapter(Listeners(settings.listeners, settings.log_level))
         self.library_listeners = ListenerAdapter(LibraryListeners(settings.log_level))
         self._register_loggers(DebugFile(settings.debug_file))
@@ -44,7 +44,7 @@ class Output(AbstractLogger, LoggerApi):
         LOGGER.register_error_listener(listener)
 
     def close(self, result):
-        self._xml_logger.visit_statistics(result.statistics)
+        self._xml_logger.logger.visit_statistics(result.statistics)
         self._xml_logger.close()
         LOGGER.unregister_xml_logger()
         LOGGER.output_file('Output', self._settings['Output'])

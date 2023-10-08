@@ -68,28 +68,28 @@ class LoggerApi:
     def end_try_branch(self, data: 'running.Try', result: 'result.TryBranch'):
         self.end_body_item(data, result)
 
-    def start_break(self, data, result):
+    def start_break(self, data: 'running.Break', result: 'result.Break'):
         self.start_body_item(data, result)
 
-    def end_break(self, data, result):
+    def end_break(self, data: 'running.Break', result: 'result.Break'):
         self.end_body_item(data, result)
 
-    def start_continue(self, data, result):
+    def start_continue(self, data: 'running.Continue', result: 'result.Continue'):
         self.start_body_item(data, result)
 
-    def end_continue(self, data, result):
+    def end_continue(self, data: 'running.Continue', result: 'result.Continue'):
         self.end_body_item(data, result)
 
-    def start_return(self, data, result):
+    def start_return(self, data: 'running.Return', result: 'result.Return'):
         self.start_body_item(data, result)
 
-    def end_return(self, data, result):
+    def end_return(self, data: 'running.Return', result: 'result.Return'):
         self.end_body_item(data, result)
 
-    def start_error(self, data, result):
+    def start_error(self, data: 'running.Error', result: 'result.Error'):
         self.start_body_item(data, result)
 
-    def end_error(self, data, result):
+    def end_error(self, data: 'running.Error', result: 'result.Error'):
         self.end_body_item(data, result)
 
     def start_body_item(self, data, result):
@@ -104,7 +104,7 @@ class LoggerApi:
     def message(self, message: 'model.Message'):
         pass
 
-    # FIXME:
+    # FIXME: This should probably be removed?
     def output_file(self, type_: str, path: str):
         pass
 

@@ -22,7 +22,6 @@ from .console import ConsoleOutput
 from .filelogger import FileLogger
 from .loggerhelper import AbstractLogger
 from .stdoutlogsplitter import StdoutLogSplitter
-from ..result import ResultVisitor
 
 
 def start_body_item(method):

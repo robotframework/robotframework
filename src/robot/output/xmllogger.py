@@ -23,177 +23,126 @@ from .loggerapi import LoggerApi
 from .loggerhelper import IsLogged
 
 
-class XmlLoggerFacade(LoggerApi):
+class XmlLoggerAdapter(LoggerApi):
 
     def __init__(self, path, log_level='TRACE', rpa=False, generator='Robot'):
         self._xml_logger = XmlLogger(path, log_level, rpa, generator)
         self._flat_xml_logger = None
-        self._logger = self._xml_logger
+        self.logger = self._xml_logger
 
     @property
     def flat_xml_logger(self):
         if self._flat_xml_logger is None:
-            self._flat_xml_logger = FlatXmlLogger(self._logger)
+            self._flat_xml_logger = FlatXmlLogger(self.logger)
         return self._flat_xml_logger
 
     def flatten(self, flatten):
         if flatten:
-            self._logger = self.flat_xml_logger
+            self.logger = self.flat_xml_logger
         else:
-            self._logger = self._xml_logger
+            self.logger = self._xml_logger
 
     def close(self):
-        self._logger.close()
+        self.logger.close()
 
     def set_log_level(self, level):
-        return self._logger.set_log_level(level)
+        return self.logger.set_log_level(level)
 
     def start_suite(self, data, result):
-        self._logger.start_suite(result)
+        self.logger.start_suite(result)
 
     def end_suite(self, data, result):
-        self._logger.end_suite(result)
+        self.logger.end_suite(result)
 
     def start_test(self, data, result):
-        self._logger.start_test(result)
+        self.logger.start_test(result)
 
     def end_test(self, data, result):
-        self._logger.end_test(result)
+        self.logger.end_test(result)
 
     def start_keyword(self, data, result):
-        self._logger.start_keyword(result)
+        self.logger.start_keyword(result)
 
     def end_keyword(self, data, result):
-        self._logger.end_keyword(result)
+        self.logger.end_keyword(result)
 
     def start_for(self, data, result):
-        self._logger.start_for(result)
+        self.logger.start_for(result)
 
     def end_for(self, data, result):
-        self._logger.end_for(result)
+        self.logger.end_for(result)
 
     def start_for_iteration(self, data, result):
-        self._logger.start_for_iteration(result)
+        self.logger.start_for_iteration(result)
 
     def end_for_iteration(self, data, result):
-        self._logger.end_for_iteration(result)
+        self.logger.end_for_iteration(result)
 
     def start_while(self, data, result):
-        self._logger.start_while(result)
+        self.logger.start_while(result)
 
     def end_while(self, data, result):
-        self._logger.end_while(result)
+        self.logger.end_while(result)
 
     def start_while_iteration(self, data, result):
-        self._logger.start_while_iteration(result)
+        self.logger.start_while_iteration(result)
 
     def end_while_iteration(self, data, result):
-        self._logger.end_while_iteration(result)
+        self.logger.end_while_iteration(result)
 
     def start_if(self, data, result):
-        self._logger.start_if(result)
+        self.logger.start_if(result)
 
     def end_if(self, data, result):
-        self._logger.end_if(result)
+        self.logger.end_if(result)
 
     def start_if_branch(self, data, result):
-        self._logger.start_if_branch(result)
+        self.logger.start_if_branch(result)
 
     def end_if_branch(self, data, result):
-        self._logger.end_if_branch(result)
+        self.logger.end_if_branch(result)
 
     def start_try(self, data, result):
-        self._logger.start_try(result)
+        self.logger.start_try(result)
 
     def end_try(self, data, result):
-        self._logger.end_try(result)
+        self.logger.end_try(result)
 
     def start_try_branch(self, data, result):
-        self._logger.start_try_branch(result)
+        self.logger.start_try_branch(result)
 
     def end_try_branch(self, data, result):
-        self._logger.end_try_branch(result)
+        self.logger.end_try_branch(result)
 
     def start_break(self, data, result):
-        self._logger.start_break(result)
+        self.logger.start_break(result)
 
     def end_break(self, data, result):
-        self._logger.end_break(result)
+        self.logger.end_break(result)
 
     def start_continue(self, data, result):
-        self._logger.start_continue(result)
+        self.logger.start_continue(result)
 
     def end_continue(self, data, result):
-        self._logger.end_continue(result)
+        self.logger.end_continue(result)
 
     def start_return(self, data, result):
-        self._logger.start_return(result)
+        self.logger.start_return(result)
 
     def end_return(self, data, result):
-        self._logger.end_return(result)
+        self.logger.end_return(result)
 
     def start_error(self, data, result):
-        self._logger.start_error(result)
+        self.logger.start_error(result)
 
     def end_error(self, data, result):
-        self._logger.end_error(result)
+        self.logger.end_error(result)
 
     def log_message(self, message):
-        self._logger.log_message(message)
+        self.logger.log_message(message)
 
     def message(self, message):
-        self._logger.message(message)
-
-    def start_statistics(self, stats):
-        self._logger.start_statistics(stats)
-
-    def end_statistics(self, stats):
-        self._logger.end_statistics(stats)
-
-    def start_total_statistics(self, total_stats):
-        self._logger.start_total_statistics(total_stats)
-
-    def end_total_statistics(self, total_stats):
-        self._logger.end_total_statistics(total_stats)
-
-    def start_tag_statistics(self, tag_stats):
-        self._logger.start_tag_statistics(tag_stats)
-
-    def end_tag_statistics(self, tag_stats):
-        self._logger.end_tag_statistics(tag_stats)
-
-    def start_suite_statistics(self, suite_stats):
-        self._logger.start_suite_statistics(suite_stats)
-
-    def end_suite_statistics(self, suite_stats):
-        self._logger.end_suite_statistics(suite_stats)
-
-    def visit_statistics(self, stats):
-        if self.start_statistics(stats) is not False:
-            stats.total.visit(self)
-            stats.tags.visit(self)
-            stats.suite.visit(self)
-            self.end_statistics(stats)
-
-    def visit_total_statistics(self, stats):
-        if self.start_total_statistics(stats) is not False:
-            stats.visit(self)
-            self.end_total_statistics(stats)
-
-    def visit_tag_statistics(self, stats):
-        if self.start_tag_statistics(stats) is not False:
-            for stat in stats:
-                stat.visit(self)
-            self.end_tag_statistics(stats)
-
-    def visit_suite_statistics(self, stats):
-        if self.start_suite_statistics(stats) is not False:
-            for stat in stats:
-                stat.visit(self)
-            self.end_suite_statistics(stats)
-
-    def visit_stat(self, stat):
-        self._logger.visit_stat(stat)
+        self.logger.message(message)
 
 
 class XmlLogger(ResultVisitor):
