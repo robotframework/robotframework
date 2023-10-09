@@ -22,7 +22,18 @@ class ModelModifier(SuiteVisitor):
             suite.tests = [t for t in suite.tests if not t.tags.match('fail')]
 
     def start_test(self, test):
+        self.make_non_empty(test, 'Test')
+        if hasattr(test.parent, 'resource'):
+            for kw in test.parent.resource.keywords:
+                self.make_non_empty(kw, 'Keyword')
         test.tags.add(self.config)
+
+    def make_non_empty(self, item, kind):
+        if not item.name:
+            item.name = f'{kind} name made non-empty by modifier'
+            item.body.clear()
+        if not item.body:
+            item.body.create_keyword('Log', [f'{kind} body made non-empty by modifier'])
 
     def start_for(self, for_):
         if for_.parent.name == 'FOR IN RANGE':

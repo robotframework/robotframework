@@ -18,10 +18,11 @@ Empty User Keyword
     Empty UK
 
 User Keyword With Only Non-Empty [Return] Works
-    UK With Return
+    Empty UK With Return
 
 User Keyword With Empty [Return] Does Not Work
-    UK With Empty Return
+    [Documentation]  FAIL User keyword cannot be empty.
+    Empty UK With Empty Return
 
 Empty User Keyword With Other Settings Than [Return]
     [Documentation]  FAIL User keyword cannot be empty.
@@ -55,8 +56,8 @@ Non Empty UK Using Empty UK
 UK
     Log  In UK
 
-UK With Return
+Empty UK With Return
     [Return]  This is a return value
 
-UK With Empty Return
+Empty UK With Empty Return
     [Return]

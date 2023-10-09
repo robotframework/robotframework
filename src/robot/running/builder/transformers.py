@@ -170,14 +170,16 @@ class TestCaseBuilder(NodeVisitor):
         self._test_has_tags = False
 
     def visit_TestCase(self, node):
-        error = format_error(node.errors + node.header.errors)
         settings = self.settings
+        # Possible parsing errors aren't reported further with tests because:
+        # - We only validate that test body or name isn't empty.
+        # - That is validated again during execution.
+        # - This way e.g. model modifiers can add content to body.
         self.test = self.suite.tests.create(name=node.name,
                                             lineno=node.lineno,
                                             tags=settings.test_tags,
                                             timeout=settings.test_timeout,
-                                            template=settings.test_template,
-                                            error=error)
+                                            template=settings.test_template)
         if settings.test_setup:
             self.test.setup.config(**settings.test_setup)
         if settings.test_teardown:
@@ -278,11 +280,13 @@ class KeywordBuilder(NodeVisitor):
         self.kw = None
 
     def visit_Keyword(self, node):
-        error = format_error(node.errors + node.header.errors)
+        # Possible parsing errors aren't reported further because:
+        # - We only validate that keyword body or name isn't empty.
+        # - That is validated again during execution.
+        # - This way e.g. model modifiers can add content to body.
         self.kw = self.resource.keywords.create(name=node.name,
                                                 tags=self.settings.keyword_tags,
-                                                lineno=node.lineno,
-                                                error=error)
+                                                lineno=node.lineno)
         self.generic_visit(node)
 
     def visit_Documentation(self, node):

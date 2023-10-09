@@ -213,3 +213,4 @@ Small typo should provide recommendation
 Invalid empty line continuation in arguments should throw an error
     [Arguments]
     ...
+    No Operation

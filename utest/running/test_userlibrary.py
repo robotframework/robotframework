@@ -120,7 +120,10 @@ class TestUserLibrary(unittest.TestCase):
 
     def _get_userlibrary(self, *keywords, **conf):
         resource = ResourceFile(**conf)
-        resource.keywords = [UserKeyword(name) for name in keywords]
+        for name in keywords:
+            kw = UserKeyword(name)
+            kw.body.create_keyword('No Operation')
+            resource.keywords.append(kw)
         return UserLibrary(resource, resource_file='source' in conf)
 
     def _lib_has_embedded_arg_keyword(self, lib, count=1):

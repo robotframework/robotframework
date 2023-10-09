@@ -44,6 +44,15 @@ Error if all tests removed
     Stderr Should Be Empty
     Length Should Be    ${SUITE.tests}    0
 
+Modifier can fix empty test and keyword
+    Run Tests    --RunEmptySuite --PreRun ${CURDIR}/ModelModifier.py    core/empty_testcase_and_uk.robot
+    ${tc} =    Check Test Case    Empty Test Case    PASS    ${EMPTY}
+    Check Log Message    ${tc.body[0].msgs[0]}    Test body made non-empty by modifier
+    ${tc} =    Check Test Case    Empty User Keyword    PASS    ${EMPTY}
+    Check Log Message    ${tc.body[0].body[0].msgs[0]}    Keyword body made non-empty by modifier
+    Check Test Case    Test name made non-empty by modifier    PASS    ${EMPTY}
+
+
 Modifiers are used before normal configuration
     ${result} =    Run Tests
     ...    --include added --prerun ${CURDIR}/ModelModifier.py:CREATE:name=Created:tags=added    ${TEST DATA}
