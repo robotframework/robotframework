@@ -54,6 +54,7 @@ Keyword
     [a]      ${arg}
     [ta]     own tag
     [tI]     1h
+    [S]      Log    Hello, setup!
     Should Be Equal    ${arg}    ${VARIABLE}
     [TEA]    No Operation
 

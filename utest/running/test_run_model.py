@@ -15,8 +15,7 @@ from robot.running import (Break, Continue, Error, For, If, IfBranch, Keyword,
                            Return, ResourceFile, TestCase, TestDefaults, TestSuite,
                            Try, TryBranch, While)
 from robot.running.model import UserKeyword
-from robot.utils.asserts import (assert_equal, assert_false, assert_not_equal,
-                                 assert_raises, assert_true)
+from robot.utils.asserts import assert_equal, assert_false, assert_not_equal
 
 
 CURDIR = Path(__file__).resolve().parent
@@ -436,10 +435,12 @@ class TestToFromDictAndJson(unittest.TestCase):
 
     def test_user_keyword_structure(self):
         uk = UserKeyword('UK')
+        uk.setup.config(name='Setup', args=('New', 'in', 'RF 7'))
         uk.body.create_keyword('K1')
         uk.body.create_if().body.create_branch(condition='$c').body.create_keyword('K2')
         uk.teardown.config(name='Teardown')
         self._verify(uk, name='UK',
+                     setup={'name': 'Setup', 'args': ('New', 'in', 'RF 7')},
                      body=[{'name': 'K1'},
                            {'type': 'IF/ELSE ROOT',
                             'body': [{'type': 'IF', 'condition': '$c',

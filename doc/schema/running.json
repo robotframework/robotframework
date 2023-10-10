@@ -705,6 +705,9 @@
           "title": "Error",
           "type": "string"
         },
+        "setup": {
+          "$ref": "#/definitions/Keyword"
+        },
         "teardown": {
           "$ref": "#/definitions/Keyword"
         },

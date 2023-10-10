@@ -145,10 +145,8 @@
 .. _test case documentation: `Test case name and documentation`_
 .. _test setup: `Test setup and teardown`_
 .. _test teardown: `Test setup and teardown`_
-.. _test teardowns: `Test teardown`_
 .. _suite setup: `Suite setup and teardown`_
 .. _suite teardown: `Suite setup and teardown`_
-.. _keyword teardowns: `Keyword teardown`_
 .. _teardown: `Test teardown`_
 .. _teardowns: teardown_
 .. _tag: `Tagging test cases`_

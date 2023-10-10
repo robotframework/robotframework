@@ -41,6 +41,7 @@ class HandlerDataMock:
         self.timeout = Fake()
         self.return_ = Fake()
         self.tags = ()
+        self.has_setup = False
         self.has_teardown = False
 
 

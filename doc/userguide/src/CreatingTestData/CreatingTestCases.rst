@@ -810,7 +810,7 @@ that is executed before a test case, and a test teardown is executed
 after a test case. In Robot Framework setups and teardowns are just
 normal keywords with possible arguments.
 
-Setup and teardown are always a single keyword. If they need to take care
+A setup and a teardown are always a single keyword. If they need to take care
 of multiple separate tasks, it is possible to create higher-level `user
 keywords`_ for that purpose. An alternative solution is executing multiple
 keywords using the BuiltIn_ keyword :name:`Run Keywords`.

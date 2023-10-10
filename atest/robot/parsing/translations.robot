@@ -86,6 +86,7 @@ Validate Translations
     Should Be Equal    ${tc.body[0].doc}                   Keyword documentation.
     Should Be Equal    ${tc.body[0].tags}                  ${{['keyword', 'tags', 'own tag']}}
     Should Be Equal    ${tc.body[0].timeout}               1 hour
+    Should Be Equal    ${tc.body[0].setup.full_name}       BuiltIn.Log
     Should Be Equal    ${tc.body[0].teardown.full_name}    BuiltIn.No Operation
 
 Validate Task Translations

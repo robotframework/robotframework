@@ -56,6 +56,7 @@ Keyword
     [Argumentit]       ${arg}
     [Tagit]            own tag
     [Aikaraja]         1h
+    [Alustus]          Log    Hello, setup!
     Should Be Equal    ${arg}    ${VARIABLE}
     [Alasajo]          No Operation
 

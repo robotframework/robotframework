@@ -259,6 +259,7 @@ class KeywordSettings(Settings):
     names = (
         'Documentation',
         'Arguments',
+        'Setup',
         'Teardown',
         'Timeout',
         'Tags',

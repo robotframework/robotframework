@@ -666,7 +666,7 @@ class Keyword(model.Keyword, StatusMixin):
     """Represents an executed library or user keyword."""
     body_class = Body
     __slots__ = ['owner', 'source_name', 'doc', 'timeout', 'status', 'message',
-                 '_start_time', '_end_time', '_elapsed_time', '_teardown']
+                 '_start_time', '_end_time', '_elapsed_time', '_setup', '_teardown']
 
     def __init__(self, name: 'str|None' = '',
                  owner: 'str|None' = None,
@@ -696,6 +696,7 @@ class Keyword(model.Keyword, StatusMixin):
         self.start_time = start_time
         self.end_time = end_time
         self.elapsed_time = elapsed_time
+        self._setup = None
         self._teardown = None
         self.body = ()
 
@@ -769,7 +770,29 @@ class Keyword(model.Keyword, StatusMixin):
     def sourcename(self, name: str):
         self.source_name = name
 
-    @property    # Cannot use @setter because it would create teardowns recursively.
+    @property
+    def setup(self) -> 'Keyword':
+        """Keyword setup as a :class:`Keyword` object.
+
+        See :attr:`teardown` for more information. New in Robot Framework 7.0.
+        """
+        if self._setup is None:
+            self.setup = None
+        return self._setup
+
+    @setup.setter
+    def setup(self, setup: 'Keyword|DataDict|None'):
+        self._setup = create_fixture(self.__class__, setup, self, self.SETUP)
+
+    @property
+    def has_setup(self) -> bool:
+        """Check does a keyword have a setup without creating a setup object.
+
+        See :attr:`has_teardown` for more information. New in Robot Framework 7.0.
+        """
+        return bool(self._setup)
+
+    @property
     def teardown(self) -> 'Keyword':
         """Keyword teardown as a :class:`Keyword` object.
 
@@ -799,13 +822,8 @@ class Keyword(model.Keyword, StatusMixin):
         Framework 4.1.2.
         """
         if self._teardown is None:
-            self._teardown = create_fixture(self.__class__, None, self, self.TEARDOWN)
+            self.teardown = None
         return self._teardown
-
-    @property
-    def has_setup(self):
-        # Placeholder until keyword setup is added in RF 7.
-        return False
 
     @teardown.setter
     def teardown(self, teardown: 'Keyword|DataDict|None'):

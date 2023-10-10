@@ -154,6 +154,8 @@ class KeywordBuilder(_Builder):
             if isinstance (item, Keyword):
                 self._context.check_expansion(item)
                 body = item.body.flatten()
+                if item.has_setup:
+                    body.insert(0, item.setup)
                 if item.has_teardown:
                     body.append(item.teardown)
                 return self._build(item, item.name, item.owner, item.timeout, item.doc, item.args,

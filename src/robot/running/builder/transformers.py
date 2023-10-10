@@ -312,9 +312,11 @@ class KeywordBuilder(NodeVisitor):
     def visit_Timeout(self, node):
         self.kw.timeout = node.value
 
+    def visit_Setup(self, node):
+        self.kw.setup.config(name=node.name, args=node.args, lineno=node.lineno)
+
     def visit_Teardown(self, node):
-        self.kw.teardown.config(name=node.name, args=node.args,
-                                lineno=node.lineno)
+        self.kw.teardown.config(name=node.name, args=node.args, lineno=node.lineno)
 
     def visit_KeywordCall(self, node):
         self.kw.body.create_keyword(name=node.keyword, args=node.args,

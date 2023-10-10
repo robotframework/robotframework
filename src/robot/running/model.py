@@ -759,7 +759,7 @@ class UserKeyword(ModelObject):
     repr_args = ('name', 'args')
     fixture_class = Keyword
     __slots__ = ['name', 'args', 'doc', 'return_', 'timeout', 'lineno', 'parent',
-                 'error', '_teardown']
+                 'error', '_setup', '_teardown']
 
     def __init__(self, name: str = '',
                  args: Sequence[str] = (),
@@ -780,6 +780,7 @@ class UserKeyword(ModelObject):
         self.parent = parent
         self.error = error
         self.body = []
+        self._setup = None
         self._teardown = None
 
     @setter
@@ -787,9 +788,32 @@ class UserKeyword(ModelObject):
         return Body(self, body)
 
     @property
+    def setup(self) -> Keyword:
+        """User keyword setup as a :class:`Keyword` object.
+
+        New in Robot Framework 7.0.
+        """
+        if self._setup is None:
+            self.setup = None
+        return self._setup
+
+    @setup.setter
+    def setup(self, setup: 'Keyword|DataDict|None'):
+        self._setup = create_fixture(self.fixture_class, setup, self, Keyword.SETUP)
+
+    @property
+    def has_setup(self) -> bool:
+        """Check does a keyword have a setup without creating a setup object.
+
+        See :attr:`has_teardown` for more information. New in Robot Framework 7.0.
+        """
+        return bool(self._setup)
+
+    @property
     def teardown(self) -> Keyword:
+        """User keyword teardown as a :class:`Keyword` object."""
         if self._teardown is None:
-            self._teardown = create_fixture(self.fixture_class, None, self, Keyword.TEARDOWN)
+            self.teardown = None
         return self._teardown
 
     @teardown.setter
@@ -800,7 +824,7 @@ class UserKeyword(ModelObject):
     def has_teardown(self) -> bool:
         """Check does a keyword have a teardown without creating a teardown object.
 
-        A difference between using ``if uk.has_teardown:`` and ``if uk.teardown:``
+        A difference between using ``if kw.has_teardown:`` and ``if kw.teardown:``
         is that accessing the :attr:`teardown` attribute creates a :class:`Keyword`
         object representing the teardown even when the user keyword actually does
         not have one. This can have an effect on memory usage.
@@ -828,6 +852,8 @@ class UserKeyword(ModelObject):
                             ('error', self.error)]:
             if value:
                 data[name] = value
+        if self.has_setup:
+            data['setup'] = self.setup.to_dict()
         data['body'] = self.body.to_dicts()
         if self.has_teardown:
             data['teardown'] = self.teardown.to_dict()

@@ -157,6 +157,7 @@ class UserKeyword(BaseModel):
     timeout: str | None
     lineno: int | None
     error: str | None
+    setup: Keyword | None
     teardown: Keyword | None
     body: list[Keyword | For | While | If | Try | Return | Error]
 

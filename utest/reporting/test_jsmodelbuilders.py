@@ -99,6 +99,13 @@ class TestBuildTestSuite(unittest.TestCase):
         exp2 = self._verify_keyword(root.body.create_keyword('C2'), name='C2')
         self._verify_keyword(root, name='Root', body=(exp1, exp2))
 
+    def test_keyword_with_setup(self):
+        root = Keyword('Root')
+        s = self._verify_keyword(root.setup.config(name='S'), type=1, name='S')
+        self._verify_keyword(root, name='Root', body=(s,))
+        k = self._verify_keyword(root.body.create_keyword('K'), name='K')
+        self._verify_keyword(root, name='Root', body=(s, k))
+
     def test_keyword_with_teardown(self):
         root = Keyword('Root')
         t = self._verify_keyword(root.teardown.config(name='T'), type=2, name='T')

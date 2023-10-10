@@ -68,8 +68,9 @@ this section.
 `[Arguments]`:setting:
    Specifies `user keyword arguments`_.
 
-`[Teardown]`:setting:
-   Specify `user keyword teardown`_.
+`[Setup]`:setting:, `[Teardown]`:setting:
+   Specify `user keyword setup and teardown`_. `[Setup]`:setting: is new in
+   Robot Framework 7.0.
 
 `[Timeout]`:setting:
    Sets the possible `user keyword timeout`_. Timeouts_ are discussed
@@ -1046,33 +1047,47 @@ ones are more verbose:
           5.0. There is no visible deprecation warning when using these keywords yet, but
           they will be loudly deprecated and eventually removed in the future.
 
-User keyword teardown
----------------------
+User keyword setup and teardown
+-------------------------------
 
-User keywords may have a teardown defined using :setting:`[Teardown]` setting.
+A user keyword can have a setup and a teardown similarly as tests__.
+They are specified using :setting:`[Setup]` and :setting:`[Teardown]`
+settings, respectively, directly to the keyword having them. Unlike with
+tests, it is not possible to specify a common setup or teardown to all
+keywords in a certain file.
 
-Keyword teardown works much in the same way as a `test case
-teardown`__.  Most importantly, the teardown is always a single
-keyword, although it can be another user keyword, and it gets executed
-also when the user keyword fails. In addition, all steps of the
-teardown are executed even if one of them fails. However, a failure in
-keyword teardown will fail the test case and subsequent steps in the
-test are not run. The name of the keyword to be executed as a teardown
-can also be a variable.
+A setup and a teardown are always a single keyword, but they can themselves be
+user keywords executing multiple keywords internally. It is possible to specify
+them as variables, and using a special `NONE` value (case-insensitive) is
+the same as not having a setup or a teardown at all.
+
+User keyword setup is not much different to the first keyword inside the created
+user keyword. The only functional difference is that a setup can be specified as
+a variable, but it can also be useful to be able to explicitly mark a keyword
+to be a setup.
+
+User keyword teardowns are, exactly as test teardowns, executed also if the user
+keyword fails. They are thus very useful when needing to do something at the
+end of the keyword regardless of its status. To ensure that all cleanup activities
+are done, the `continue on failure`_ mode is enabled by default with user keyword
+teardowns the same way as with test teardowns.
 
 .. sourcecode:: robotframework
 
    *** Keywords ***
-   With Teardown
+   Setup and teardown
+       [Setup]       Log    New in RF 7!
        Do Something
-       [Teardown]    Log    keyword teardown
+       [Teardown]    Log    Old feature.
 
    Using variables
-       [Documentation]    Teardown given as variable
+       [Setup]       ${SETUP}
        Do Something
        [Teardown]    ${TEARDOWN}
 
 __ `test setup and teardown`_
+
+.. note:: User keyword setups are new in Robot Framework 7.0.
 
 Private user keywords
 ---------------------

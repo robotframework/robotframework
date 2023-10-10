@@ -464,6 +464,7 @@ Name
     [Documentation]    Doc    in multiple
     ...                parts
     [Tags]             first    second
+    [Setup]            Log    New in RF 7!
     [Teardown]         No Operation
     [Timeout]          ${TIMEOUT}
     [Return]           Value
@@ -488,16 +489,20 @@ Name
             (T.ARGUMENT, 'first', 6, 23),
             (T.ARGUMENT, 'second', 6, 32),
             (T.EOS, '', 6, 38),
-            (T.TEARDOWN, '[Teardown]', 7, 4),
-            (T.NAME, 'No Operation', 7, 23),
-            (T.EOS, '', 7, 35),
-            (T.TIMEOUT, '[Timeout]', 8, 4),
-            (T.ARGUMENT, '${TIMEOUT}', 8, 23),
-            (T.EOS, '', 8, 33),
-            (T.RETURN, '[Return]', 9, 4,
+            (T.SETUP, '[Setup]', 7, 4),
+            (T.NAME, 'Log', 7, 23),
+            (T.ARGUMENT, 'New in RF 7!', 7, 30),
+            (T.EOS, '', 7, 42),
+            (T.TEARDOWN, '[Teardown]', 8, 4),
+            (T.NAME, 'No Operation', 8, 23),
+            (T.EOS, '', 8, 35),
+            (T.TIMEOUT, '[Timeout]', 9, 4),
+            (T.ARGUMENT, '${TIMEOUT}', 9, 23),
+            (T.EOS, '', 9, 33),
+            (T.RETURN, '[Return]', 10, 4,
              "The '[Return]' setting is deprecated. Use the 'RETURN' statement instead."),
-            (T.ARGUMENT, 'Value', 9, 23),
-            (T.EOS, '', 9, 28)
+            (T.ARGUMENT, 'Value', 10, 23),
+            (T.EOS, '', 10, 28)
         ]
         assert_tokens(data, expected, get_tokens, data_only=True)
         assert_tokens(data, expected, get_resource_tokens, data_only=True)

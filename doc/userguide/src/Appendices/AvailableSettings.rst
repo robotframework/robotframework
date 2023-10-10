@@ -48,7 +48,7 @@ importing libraries, resources, and variables.
    | Force Tags,     | `Deprecated settings`__ for specifying test case tags. |
    | Default Tags    |                                                        |
    +-----------------+--------------------------------------------------------+
-   | Keyword Tags    | User for specifying `user keyword tags`_ for all       |
+   | Keyword Tags    | Used for specifying `user keyword tags`_ for all       |
    |                 | keywords in a certain file.                            |
    +-----------------+--------------------------------------------------------+
    | Test Setup      | Used for specifying a default `test setup`_.           |
@@ -116,9 +116,14 @@ which they are defined.
    +-----------------+--------------------------------------------------------+
    | [Arguments]     | Used for specifying `user keyword arguments`_.         |
    +-----------------+--------------------------------------------------------+
-   | [Return]        | Used for specifying `user keyword return values`_.     |
+   | [Setup]         | Used for specifying a `user keyword setup`_.           |
+   |                 | New in Robot Framework 7.0.                            |
    +-----------------+--------------------------------------------------------+
    | [Teardown]      | Used for specifying `user keyword teardown`_.          |
    +-----------------+--------------------------------------------------------+
    | [Timeout]       | Used for specifying a `user keyword timeout`_.         |
+   +-----------------+--------------------------------------------------------+
+   | [Return]        | Used for specifying `user keyword return values`_.     |
+   |                 | Deprecated in Robot Framework 7.0. Use the RETURN_     |
+   |                 | statement instead.                                     |
    +-----------------+--------------------------------------------------------+

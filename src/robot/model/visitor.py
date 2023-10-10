@@ -178,9 +178,14 @@ class SuiteVisitor:
         the body of the keyword
         """
         if self.start_keyword(keyword) is not False:
+            self._possible_setup(keyword)
             self._possible_body(keyword)
             self._possible_teardown(keyword)
             self.end_keyword(keyword)
+
+    def _possible_setup(self, item: 'BodyItem'):
+        if getattr(item, 'has_setup', False):
+            item.setup.visit(self)    # type: ignore
 
     def _possible_body(self, item: 'BodyItem'):
         if hasattr(item, 'body'):

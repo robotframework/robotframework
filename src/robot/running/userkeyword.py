@@ -83,6 +83,7 @@ class UserKeywordHandler:
         self.timeout = keyword.timeout
         self.body = keyword.body
         self.return_value = tuple(keyword.return_)
+        self.setup = keyword.setup if keyword.has_setup else None
         self.teardown = keyword.teardown if keyword.has_teardown else None
 
     @property
