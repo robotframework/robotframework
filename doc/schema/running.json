@@ -37,38 +37,6 @@
       ],
       "additionalProperties": false
     },
-    "Error": {
-      "title": "Error",
-      "type": "object",
-      "properties": {
-        "lineno": {
-          "title": "Lineno",
-          "type": "integer"
-        },
-        "error": {
-          "title": "Error",
-          "type": "string"
-        },
-        "values": {
-          "title": "Values",
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "type": {
-          "title": "Type",
-          "default": "ERROR",
-          "const": "ERROR",
-          "type": "string"
-        }
-      },
-      "required": [
-        "error",
-        "values"
-      ],
-      "additionalProperties": false
-    },
     "Break": {
       "title": "Break",
       "type": "object",
@@ -142,6 +110,38 @@
       ],
       "additionalProperties": false
     },
+    "Error": {
+      "title": "Error",
+      "type": "object",
+      "properties": {
+        "lineno": {
+          "title": "Lineno",
+          "type": "integer"
+        },
+        "error": {
+          "title": "Error",
+          "type": "string"
+        },
+        "values": {
+          "title": "Values",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "type": {
+          "title": "Type",
+          "default": "ERROR",
+          "const": "ERROR",
+          "type": "string"
+        }
+      },
+      "required": [
+        "error",
+        "values"
+      ],
+      "additionalProperties": false
+    },
     "TryBranch": {
       "title": "TryBranch",
       "type": "object",
@@ -200,9 +200,6 @@
                 "$ref": "#/definitions/Try"
               },
               {
-                "$ref": "#/definitions/Error"
-              },
-              {
                 "$ref": "#/definitions/Break"
               },
               {
@@ -210,6 +207,9 @@
               },
               {
                 "$ref": "#/definitions/Return"
+              },
+              {
+                "$ref": "#/definitions/Error"
               }
             ]
           }
@@ -298,9 +298,6 @@
                 "$ref": "#/definitions/Try"
               },
               {
-                "$ref": "#/definitions/Error"
-              },
-              {
                 "$ref": "#/definitions/Break"
               },
               {
@@ -308,6 +305,9 @@
               },
               {
                 "$ref": "#/definitions/Return"
+              },
+              {
+                "$ref": "#/definitions/Error"
               }
             ]
           }
@@ -399,9 +399,6 @@
                 "$ref": "#/definitions/Try"
               },
               {
-                "$ref": "#/definitions/Error"
-              },
-              {
                 "$ref": "#/definitions/Break"
               },
               {
@@ -409,6 +406,9 @@
               },
               {
                 "$ref": "#/definitions/Return"
+              },
+              {
+                "$ref": "#/definitions/Error"
               }
             ]
           }
@@ -488,9 +488,6 @@
                 "$ref": "#/definitions/Try"
               },
               {
-                "$ref": "#/definitions/Error"
-              },
-              {
                 "$ref": "#/definitions/Break"
               },
               {
@@ -498,6 +495,9 @@
               },
               {
                 "$ref": "#/definitions/Return"
+              },
+              {
+                "$ref": "#/definitions/Error"
               }
             ]
           }
@@ -729,10 +729,10 @@
                 "$ref": "#/definitions/Try"
               },
               {
-                "$ref": "#/definitions/Error"
+                "$ref": "#/definitions/Return"
               },
               {
-                "$ref": "#/definitions/Return"
+                "$ref": "#/definitions/Error"
               }
             ]
           }

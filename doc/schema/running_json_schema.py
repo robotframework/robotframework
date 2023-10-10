@@ -60,7 +60,7 @@ class For(BodyItem):
     start: str | None
     mode: str | None
     fill: str | None
-    body: list['Keyword | For | While | If | Try | Error | Break | Continue | Return']
+    body: list['Keyword | For | While | If | Try | Break | Continue | Return | Error']
 
 
 class While(BodyItem):
@@ -69,13 +69,13 @@ class While(BodyItem):
     limit: str | None
     on_limit: str | None
     on_limit_message: str | None
-    body: list['Keyword | For | While | If | Try | Error | Break | Continue | Return']
+    body: list['Keyword | For | While | If | Try | Break | Continue | Return | Error']
 
 
 class IfBranch(BodyItem):
     type: Literal['IF', 'ELSE IF', 'ELSE']
     condition: str | None
-    body: list['Keyword | For | While | If | Try | Error | Break | Continue | Return']
+    body: list['Keyword | For | While | If | Try | Break | Continue | Return | Error']
 
 
 class If(BodyItem):
@@ -88,7 +88,7 @@ class TryBranch(BodyItem):
     patterns: Sequence[str] | None
     pattern_type: str | None
     assign: str | None
-    body: list['Keyword | For | While | If | Try | Error | Break | Continue | Return']
+    body: list['Keyword | For | While | If | Try | Break | Continue | Return | Error']
 
 
 class Try(BodyItem):
@@ -158,7 +158,7 @@ class UserKeyword(BaseModel):
     lineno: int | None
     error: str | None
     teardown: Keyword | None
-    body: list[Keyword | For | While | If | Try | Error | Return]
+    body: list[Keyword | For | While | If | Try | Return | Error]
 
 
 class Resource(BaseModel):
