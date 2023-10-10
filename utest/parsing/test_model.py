@@ -13,7 +13,7 @@ from robot.parsing.model.statements import (
     Arguments, Break, Comment, Config, Continue, Documentation, ForHeader, End, ElseHeader,
     ElseIfHeader, EmptyLine, Error, IfHeader, InlineIfHeader, TryHeader, ExceptHeader,
     FinallyHeader, KeywordCall, KeywordName, Return, ReturnSetting, ReturnStatement,
-    SectionHeader, TestCaseName, Variable, WhileHeader
+    SectionHeader, TestCaseName, Var, Variable, WhileHeader
 )
 from robot.utils.asserts import assert_equal, assert_raises_with_msg
 
@@ -139,6 +139,7 @@ def get_and_assert_model(data, expected, depth=2):
         for _ in range(depth):
             node = node.body[0]
         assert_model(node, expected)
+    return node
 
 
 class TestGetModel(unittest.TestCase):
@@ -982,6 +983,127 @@ ${not     closed
             ]
         )
         get_and_assert_model(data, expected, depth=0)
+
+
+class TestVar(unittest.TestCase):
+
+    def test_valid(self):
+        data = '''
+*** Test Cases ***
+Test
+    VAR    ${x}        value
+    VAR    @{y}        two    values
+    VAR    &{z}        one=item
+    VAR    ${x${y}}    nested name
+'''
+        expected = TestCase(
+            header=TestCaseName([Token(Token.TESTCASE_NAME, 'Test', 2, 0)]),
+            body=[
+                Var([Token(Token.VAR, 'VAR', 3, 4),
+                     Token(Token.VARIABLE, '${x}', 3, 11),
+                     Token(Token.ARGUMENT, 'value', 3, 23)]),
+                Var([Token(Token.VAR, 'VAR', 4, 4),
+                     Token(Token.VARIABLE, '@{y}', 4, 11),
+                     Token(Token.ARGUMENT, 'two', 4, 23),
+                     Token(Token.ARGUMENT, 'values', 4, 30)]),
+                Var([Token(Token.VAR, 'VAR', 5, 4),
+                     Token(Token.VARIABLE, '&{z}', 5, 11),
+                     Token(Token.ARGUMENT, 'one=item', 5, 23)]),
+                Var([Token(Token.VAR, 'VAR', 6, 4),
+                     Token(Token.VARIABLE, '${x${y}}', 6, 11),
+                     Token(Token.ARGUMENT, 'nested name', 6, 23)])
+            ]
+        )
+        test = get_and_assert_model(data, expected, depth=1)
+        assert_equal([v.name for v in test.body], ['${x}', '@{y}', '&{z}', '${x${y}}'])
+
+    def test_options(self):
+        data = r'''
+*** Test Cases ***
+Test
+    VAR    ${a}    a         scope=TEST
+    VAR    ${b}    a    b    separator=\n    scope=${scope}
+    VAR    @{c}    a    b    separator=normal item    scope=global
+    VAR    &{d}    k=v       separator=normal item    scope=LoCaL
+    VAR    ${e}              separator=-
+'''
+        expected = TestCase(
+            header=TestCaseName([Token(Token.TESTCASE_NAME, 'Test', 2, 0)]),
+            body=[
+                Var([Token(Token.VAR, 'VAR', 3, 4),
+                     Token(Token.VARIABLE, '${a}', 3, 11),
+                     Token(Token.ARGUMENT, 'a', 3, 19),
+                     Token(Token.OPTION, 'scope=TEST', 3, 29)]),
+                Var([Token(Token.VAR, 'VAR', 4, 4),
+                     Token(Token.VARIABLE, '${b}', 4, 11),
+                     Token(Token.ARGUMENT, 'a', 4, 19),
+                     Token(Token.ARGUMENT, 'b', 4, 24),
+                     Token(Token.OPTION, r'separator=\n', 4, 29),
+                     Token(Token.OPTION, 'scope=${scope}', 4, 45)]),
+                Var([Token(Token.VAR, 'VAR', 5, 4),
+                     Token(Token.VARIABLE, '@{c}', 5, 11),
+                     Token(Token.ARGUMENT, 'a', 5, 19),
+                     Token(Token.ARGUMENT, 'b', 5, 24),
+                     Token(Token.ARGUMENT, 'separator=normal item', 5, 29),
+                     Token(Token.OPTION, 'scope=global', 5, 54)]),
+                Var([Token(Token.VAR, 'VAR', 6, 4),
+                     Token(Token.VARIABLE, '&{d}', 6, 11),
+                     Token(Token.ARGUMENT, 'k=v', 6, 19),
+                     Token(Token.ARGUMENT, 'separator=normal item', 6, 29),
+                     Token(Token.OPTION, 'scope=LoCaL', 6, 54)]),
+                Var([Token(Token.VAR, 'VAR', 7, 4),
+                     Token(Token.VARIABLE, '${e}', 7, 11),
+                     Token(Token.OPTION, 'separator=-', 7, 29)]),
+            ]
+        )
+        test = get_and_assert_model(data, expected, depth=1)
+        assert_equal([(v.scope, v.separator) for v in test.body],
+                     [('TEST', None), ('${scope}', r'\n'), ('global', None),
+                      ('LoCaL', None), (None, '-')])
+
+    def test_invalid(self):
+        data = '''
+*** Keywords ***
+Keyword
+    VAR    bad      name
+    VAR    ${not    closed
+    VAR    ${x}=    = not accepted
+    VAR
+    VAR    &{d}     o=k    bad
+    VAR    ${x}     ok     scope=bad
+'''
+        expected = Keyword(
+            header=KeywordName([Token(Token.KEYWORD_NAME, 'Keyword', 2, 0)]),
+            body=[
+                Var([Token(Token.VAR, 'VAR', 3, 4),
+                     Token(Token.VARIABLE, 'bad', 3, 11),
+                     Token(Token.ARGUMENT, 'name', 3, 20)],
+                    ["Invalid variable name 'bad'."]),
+                Var([Token(Token.VAR, 'VAR', 4, 4),
+                     Token(Token.VARIABLE, '${not', 4, 11),
+                     Token(Token.ARGUMENT, 'closed', 4, 20)],
+                    ["Invalid variable name '${not'."]),
+                Var([Token(Token.VAR, 'VAR', 5, 4),
+                     Token(Token.VARIABLE, '${x}=', 5, 11),
+                     Token(Token.ARGUMENT, '= not accepted', 5, 20)],
+                    ["Invalid variable name '${x}='."]),
+                Var([Token(Token.VAR, 'VAR', 6, 4)],
+                    ["Invalid variable name ''."]),
+                Var([Token(Token.VAR, 'VAR', 7, 4),
+                     Token(Token.VARIABLE, '&{d}', 7, 11),
+                     Token(Token.ARGUMENT, 'o=k', 7, 20),
+                     Token(Token.ARGUMENT, 'bad', 7, 27)],
+                    ["Invalid dictionary variable item 'bad'. Items must use "
+                     "'name=value' syntax or be dictionary variables themselves."]),
+                Var([Token(Token.VAR, 'VAR', 8, 4),
+                     Token(Token.VARIABLE, '${x}', 8, 11),
+                     Token(Token.ARGUMENT, 'ok', 8, 20),
+                     Token(Token.OPTION, 'scope=bad', 8, 27)],
+                    ["VAR option 'scope' does not accept value 'bad'. "
+                     "Valid values are 'GLOBAL', 'SUITE', 'TEST' and 'LOCAL'."]),
+            ]
+        )
+        get_and_assert_model(data, expected, depth=1)
 
 
 class TestTestCase(unittest.TestCase):

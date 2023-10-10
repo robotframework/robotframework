@@ -99,6 +99,7 @@ class Token:
     EXCEPT = 'EXCEPT'
     FINALLY = 'FINALLY'
     WHILE = 'WHILE'
+    VAR = 'VAR'
     RETURN_STATEMENT = 'RETURN STATEMENT'
     CONTINUE = 'CONTINUE'
     BREAK = 'BREAK'
@@ -172,9 +173,10 @@ class Token:
                 Token.IF: 'IF', Token.INLINE_IF: 'IF', Token.ELSE_IF: 'ELSE IF',
                 Token.ELSE: 'ELSE', Token.FOR: 'FOR', Token.WHILE: 'WHILE',
                 Token.TRY: 'TRY', Token.EXCEPT: 'EXCEPT', Token.FINALLY: 'FINALLY',
-                Token.END: 'END', Token.CONTINUE: 'CONTINUE', Token.BREAK: 'BREAK',
-                Token.RETURN_STATEMENT: 'RETURN', Token.CONTINUATION: '...',
-                Token.EOL: '\n', Token.WITH_NAME: 'AS', Token.AS: 'AS'
+                Token.END: 'END', Token.VAR: 'VAR', Token.CONTINUE: 'CONTINUE',
+                Token.BREAK: 'BREAK', Token.RETURN_STATEMENT: 'RETURN',
+                Token.CONTINUATION: '...', Token.EOL: '\n', Token.WITH_NAME: 'AS',
+                Token.AS: 'AS'
             }.get(type, '')    # type: ignore
         self.value = cast(str, value)
         self.lineno = lineno

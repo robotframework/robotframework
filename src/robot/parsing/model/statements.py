@@ -676,26 +676,8 @@ class Variable(Statement):
         return self.get_option('separator')
 
     def validate(self, ctx: 'ValidationContext'):
-        name = self.get_value(Token.VARIABLE)
-        match = search_variable(name, ignore_errors=True)
-        if not match.is_assign(allow_assign_mark=True, allow_nested=True):
-            self.errors += (f"Invalid variable name '{name}'.",)
-        if match.is_dict_assign(allow_assign_mark=True):
-            self._validate_dict_items()
+        VariableValidator(allow_assign_mark=True).validate(self)
         self._validate_options()
-
-    def _validate_dict_items(self):
-        for item in self.get_values(Token.ARGUMENT):
-            if not self._is_valid_dict_item(item):
-                self.errors += (
-                    f"Invalid dictionary variable item '{item}'. "
-                    f"Items must use 'name=value' syntax or be dictionary "
-                    f"variables themselves.",
-                )
-
-    def _is_valid_dict_item(self, item: str) -> bool:
-        name, value = split_from_equals(item)
-        return value is not None or is_dict_variable(item)
 
 
 @Statement.register
@@ -1246,6 +1228,60 @@ class WhileHeader(Statement):
 
 
 @Statement.register
+class Var(Statement):
+    type = Token.VAR
+    options = {
+        'scope': ('GLOBAL', 'SUITE', 'TEST', 'LOCAL'),
+        'separator': None
+    }
+
+    @classmethod
+    def from_params(cls, name: str,
+                    value: 'str|Sequence[str]',
+                    scope: 'str|None' = None,
+                    value_separator: 'str|None' = None,
+                    indent: str = FOUR_SPACES,
+                    separator: str = FOUR_SPACES,
+                    eol: str = EOL) -> 'Var':
+        tokens = [Token(Token.SEPARATOR, indent),
+                  Token(Token.VAR),
+                  Token(Token.SEPARATOR, separator),
+                  Token(Token.VARIABLE, name)]
+        values = [value] if isinstance(value, str) else value
+        for value in values:
+            tokens.extend([Token(Token.SEPARATOR, separator),
+                           Token(Token.ARGUMENT, value)])
+        if scope:
+            tokens.extend([Token(Token.SEPARATOR, separator),
+                           Token(Token.OPTION, f'scope={scope}')])
+        if value_separator:
+            tokens.extend([Token(Token.SEPARATOR, separator),
+                           Token(Token.OPTION, f'separator={value_separator}')])
+        tokens.append(Token(Token.EOL, eol))
+        return cls(tokens)
+
+    @property
+    def name(self) -> str:
+        return self.get_value(Token.VARIABLE, '')
+
+    @property
+    def value(self) -> 'tuple[str, ...]':
+        return self.get_values(Token.ARGUMENT)
+
+    @property
+    def scope(self) -> 'str|None':
+        return self.get_option('scope')
+
+    @property
+    def separator(self) -> 'str|None':
+        return self.get_option('separator')
+
+    def validate(self, ctx: 'ValidationContext'):
+        VariableValidator().validate(self)
+        self._validate_options()
+
+
+@Statement.register
 class ReturnStatement(Statement):
     type = Token.RETURN_STATEMENT
 
@@ -1361,3 +1397,30 @@ class EmptyLine(Statement):
     @classmethod
     def from_params(cls, eol: str = EOL):
         return cls([Token(Token.EOL, eol)])
+
+
+class VariableValidator:
+
+    def __init__(self, allow_assign_mark: bool = False):
+        self.allow_assign_mark = allow_assign_mark
+
+    def validate(self, statement: Statement):
+        name = statement.get_value(Token.VARIABLE, '')
+        match = search_variable(name, ignore_errors=True)
+        if not match.is_assign(allow_assign_mark=self.allow_assign_mark,
+                               allow_nested=True):
+            statement.errors += (f"Invalid variable name '{name}'.",)
+        if match.identifier == '&':
+            self._validate_dict_items(statement)
+
+    def _validate_dict_items(self, statement: Statement):
+        for item in statement.get_values(Token.ARGUMENT):
+            if not self._is_valid_dict_item(item):
+                statement.errors += (
+                    f"Invalid dictionary variable item '{item}'. Items must use "
+                    f"'name=value' syntax or be dictionary variables themselves.",
+                )
+
+    def _is_valid_dict_item(self, item: str) -> bool:
+        name, value = split_from_equals(item)
+        return value is not None or is_dict_variable(item)

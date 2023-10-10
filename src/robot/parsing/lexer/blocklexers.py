@@ -29,8 +29,9 @@ from .statementlexers import (BreakLexer, CommentLexer, CommentSectionHeaderLexe
                               KeywordSettingLexer, Lexer, ReturnLexer, SettingLexer,
                               SettingSectionHeaderLexer, SyntaxErrorLexer,
                               TaskSectionHeaderLexer, TestCaseSectionHeaderLexer,
-                              TestCaseSettingLexer, TryHeaderLexer, VariableLexer,
-                              VariableSectionHeaderLexer, WhileHeaderLexer)
+                              TestCaseSettingLexer, TryHeaderLexer, VarLexer,
+                              VariableLexer, VariableSectionHeaderLexer,
+                              WhileHeaderLexer)
 from .tokens import StatementTokens, Token
 
 
@@ -200,8 +201,8 @@ class TestCaseLexer(TestOrKeywordLexer):
         self._lex_with_priority(priority=TestCaseSettingLexer)
 
     def lexer_classes(self) -> 'tuple[type[Lexer], ...]':
-        return (TestCaseSettingLexer, ForLexer, InlineIfLexer, IfLexer,
-                TryLexer, WhileLexer, SyntaxErrorLexer, KeywordCallLexer)
+        return (TestCaseSettingLexer, ForLexer, InlineIfLexer, IfLexer, TryLexer,
+                WhileLexer, VarLexer, SyntaxErrorLexer, KeywordCallLexer)
 
 
 class KeywordLexer(TestOrKeywordLexer):
@@ -211,8 +212,8 @@ class KeywordLexer(TestOrKeywordLexer):
         super().__init__(ctx.keyword_context())
 
     def lexer_classes(self) -> 'tuple[type[Lexer], ...]':
-        return (KeywordSettingLexer, ForLexer, InlineIfLexer, IfLexer, ReturnLexer,
-                TryLexer, WhileLexer, SyntaxErrorLexer, KeywordCallLexer)
+        return (KeywordSettingLexer, ForLexer, InlineIfLexer, IfLexer, TryLexer,
+                WhileLexer, VarLexer, ReturnLexer, SyntaxErrorLexer, KeywordCallLexer)
 
 
 class NestedBlockLexer(BlockLexer, ABC):
@@ -242,7 +243,8 @@ class ForLexer(NestedBlockLexer):
 
     def lexer_classes(self) -> 'tuple[type[Lexer], ...]':
         return (ForHeaderLexer, InlineIfLexer, IfLexer, TryLexer, WhileLexer, EndLexer,
-                ReturnLexer, ContinueLexer, BreakLexer, SyntaxErrorLexer, KeywordCallLexer)
+                VarLexer, ReturnLexer, ContinueLexer, BreakLexer, SyntaxErrorLexer,
+                KeywordCallLexer)
 
 
 class WhileLexer(NestedBlockLexer):
@@ -252,7 +254,8 @@ class WhileLexer(NestedBlockLexer):
 
     def lexer_classes(self) -> 'tuple[type[Lexer], ...]':
         return (WhileHeaderLexer, ForLexer, InlineIfLexer, IfLexer, TryLexer, EndLexer,
-                ReturnLexer, ContinueLexer, BreakLexer, SyntaxErrorLexer, KeywordCallLexer)
+                VarLexer, ReturnLexer, ContinueLexer, BreakLexer, SyntaxErrorLexer,
+                KeywordCallLexer)
 
 
 class TryLexer(NestedBlockLexer):
@@ -262,8 +265,9 @@ class TryLexer(NestedBlockLexer):
 
     def lexer_classes(self) -> 'tuple[type[Lexer], ...]':
         return (TryHeaderLexer, ExceptHeaderLexer, ElseHeaderLexer, FinallyHeaderLexer,
-                ForLexer, InlineIfLexer, IfLexer, WhileLexer, EndLexer, ReturnLexer,
-                BreakLexer, ContinueLexer, SyntaxErrorLexer, KeywordCallLexer)
+                ForLexer, InlineIfLexer, IfLexer, WhileLexer, EndLexer, VarLexer,
+                ReturnLexer, BreakLexer, ContinueLexer, SyntaxErrorLexer,
+                KeywordCallLexer)
 
 
 class IfLexer(NestedBlockLexer):
@@ -273,8 +277,8 @@ class IfLexer(NestedBlockLexer):
 
     def lexer_classes(self) -> 'tuple[type[Lexer], ...]':
         return (InlineIfLexer, IfHeaderLexer, ElseIfHeaderLexer, ElseHeaderLexer,
-                ForLexer, TryLexer, WhileLexer, EndLexer, ReturnLexer, ContinueLexer,
-                BreakLexer, SyntaxErrorLexer, KeywordCallLexer)
+                ForLexer, TryLexer, WhileLexer, EndLexer, VarLexer, ReturnLexer,
+                ContinueLexer, BreakLexer, SyntaxErrorLexer, KeywordCallLexer)
 
 
 class InlineIfLexer(NestedBlockLexer):
@@ -288,7 +292,7 @@ class InlineIfLexer(NestedBlockLexer):
         return False
 
     def lexer_classes(self) -> 'tuple[type[Lexer], ...]':
-        return (InlineIfHeaderLexer, ElseIfHeaderLexer, ElseHeaderLexer,
+        return (InlineIfHeaderLexer, ElseIfHeaderLexer, ElseHeaderLexer, VarLexer,
                 ReturnLexer, ContinueLexer, BreakLexer, KeywordCallLexer)
 
     def input(self, statement: StatementTokens):

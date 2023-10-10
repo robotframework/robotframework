@@ -334,6 +334,23 @@ class EndLexer(TypeAndArguments):
         return statement[0].value == 'END'
 
 
+class VarLexer(StatementLexer):
+    token_type = Token.VAR
+
+    def handles(self, statement: StatementTokens) -> bool:
+        return statement[0].value == 'VAR'
+
+    def lex(self):
+        self.statement[0].type = Token.VAR
+        if len(self.statement) > 1:
+            name, *values = self.statement[1:]
+            name.type = Token.VARIABLE
+            for value in values:
+                value.type = Token.ARGUMENT
+            options = ['scope', 'separator'] if name.value[0] == '$' else ['scope']
+            self._lex_options(*options)
+
+
 class ReturnLexer(TypeAndArguments):
     token_type = Token.RETURN_STATEMENT
 
