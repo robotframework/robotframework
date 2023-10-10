@@ -68,16 +68,16 @@ this section.
 `[Arguments]`:setting:
    Specifies `user keyword arguments`_.
 
-`[Return]`:setting:
-   Specifies `user keyword return values`_. `RETURN` statement (new in RF 5.0)
-   should be used instead.
-
 `[Teardown]`:setting:
    Specify `user keyword teardown`_.
 
 `[Timeout]`:setting:
    Sets the possible `user keyword timeout`_. Timeouts_ are discussed
    in a section of their own.
+
+`[Return]`:setting:
+   Specifies `user keyword return values`_. Deprecated in Robot Framework 7.0,
+   the RETURN_ statement should be used instead.
 
 .. note:: The format used above is recommended, but setting names are
           case-insensitive and spaces are allowed between brackets and the name.
@@ -890,10 +890,10 @@ User keyword return values
 
 Similarly as library keywords, also user keywords can return values.
 When using Robot Framework 5.0 or newer, the recommended approach is
-using the native `RETURN` statement. Old :setting:`[Return]`
-setting and BuiltIn_ keywords :name:`Return From Keyword` and
-:name:`Return From Keyword If` still work but they will be deprecated
-and removed in the future.
+using the native RETURN_ statement. The old :setting:`[Return]`
+setting was deprecated in Robot Framework 7.0 and also BuiltIn_ keywords
+:name:`Return From Keyword` and :name:`Return From Keyword If` are considered
+deprecated.
 
 Regardless how values are returned, they can be `assigned to variables`__
 in test cases and in other user keywords.
@@ -969,7 +969,6 @@ If you want to test the above examples yourself, you can use them with these tes
        ${index} =    Find Index    non existing    ${list}
        Should Be Equal    ${index}    ${-1}
 
-
 .. note:: `RETURN` syntax is case-sensitive similarly as IF_ and FOR_.
 
 .. note:: `RETURN` is new in Robot Framework 5.0. Use approaches explained
@@ -997,11 +996,10 @@ can be created using it.
    Return Three Values
        [Return]    a    b    c
 
-.. note:: The :setting:`[Return]` setting is effectively deprecated and the `RETURN`
-          statement should be used unless there is a need to support also older
-          versions than Robot Framework 5.0. There is no visible deprecation warning
-          when using the setting yet, but it will be loudly deprecated and eventually
-          removed in the future.
+.. note:: The :setting:`[Return]` setting was deprecated in Robot Framework 7.0
+          and the `RETURN` statement should be used instead. If there is a need
+          to support older Robot Framework versions that do not support `RETURN`,
+          it is possible to use the special keywords discussed in the next section.
 
 Using special keywords to return
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
