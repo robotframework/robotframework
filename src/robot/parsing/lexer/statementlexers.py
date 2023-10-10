@@ -14,7 +14,6 @@
 #  limitations under the License.
 
 from abc import ABC, abstractmethod
-from typing import List
 
 from robot.errors import DataError
 from robot.utils import normalize_whitespace
@@ -58,14 +57,16 @@ class StatementLexer(Lexer, ABC):
     def input(self, statement: StatementTokens):
         self.statement = statement
 
+    @abstractmethod
     def lex(self):
         raise NotImplementedError
 
     def _lex_options(self, *names: str, end_index: 'int|None' = None):
         for token in reversed(self.statement[:end_index]):
-            if not token.value.startswith(names):
+            if '=' in token.value and token.value.split('=')[0] in names:
+                token.type = Token.OPTION
+            else:
                 break
-            token.type = Token.OPTION
 
 
 class SingleType(StatementLexer, ABC):
@@ -225,9 +226,9 @@ class ForHeaderLexer(StatementLexer):
             else:
                 token.type = Token.ASSIGN
         if separator == 'IN ENUMERATE':
-            self._lex_options('start=')
+            self._lex_options('start')
         elif separator == 'IN ZIP':
-            self._lex_options('mode=', 'fill=')
+            self._lex_options('mode', 'fill')
 
 
 class IfHeaderLexer(TypeAndArguments):
@@ -298,7 +299,7 @@ class ExceptHeaderLexer(StatementLexer):
                 token.type = Token.ASSIGN
             else:
                 token.type = Token.ARGUMENT
-        self._lex_options('type=', end_index=as_index)
+        self._lex_options('type', end_index=as_index)
 
 
 class FinallyHeaderLexer(TypeAndArguments):
@@ -318,7 +319,7 @@ class WhileHeaderLexer(StatementLexer):
         self.statement[0].type = Token.WHILE
         for token in self.statement[1:]:
             token.type = Token.ARGUMENT
-        self._lex_options('limit=', 'on_limit=', 'on_limit_message=')
+        self._lex_options('limit', 'on_limit', 'on_limit_message')
 
 
 class EndLexer(TypeAndArguments):

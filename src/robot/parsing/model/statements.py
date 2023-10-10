@@ -18,7 +18,7 @@ import re
 import warnings
 from abc import ABC, abstractmethod
 from collections.abc import Iterator, Sequence
-from typing import cast, ClassVar, overload, TYPE_CHECKING, Type, TypeVar
+from typing import cast, ClassVar, Literal, overload, TYPE_CHECKING, Type, TypeVar
 
 from robot.conf import Language
 from robot.running.arguments import UserKeywordArgumentParser
@@ -911,9 +911,12 @@ class ForHeader(Statement):
     type = Token.FOR
 
     @classmethod
-    def from_params(cls, assign: 'Sequence[str]', values: 'Sequence[str]',
-                    flavor: str = 'IN', indent: str = FOUR_SPACES,
-                    separator: str = FOUR_SPACES, eol: str = EOL) -> 'ForHeader':
+    def from_params(cls, assign: 'Sequence[str]',
+                    values: 'Sequence[str]',
+                    flavor: Literal['IN', 'IN RANGE', 'IN ENUMERATE', 'IN ZIP'] = 'IN',
+                    indent: str = FOUR_SPACES,
+                    separator: str = FOUR_SPACES,
+                    eol: str = EOL) -> 'ForHeader':
         tokens = [Token(Token.SEPARATOR, indent),
                   Token(Token.FOR),
                   Token(Token.SEPARATOR, separator)]
@@ -1167,13 +1170,13 @@ class WhileHeader(Statement):
                   Token(Token.SEPARATOR, separator),
                   Token(Token.ARGUMENT, condition)]
         if limit:
-            tokens.extend([Token(Token.SEPARATOR, indent),
+            tokens.extend([Token(Token.SEPARATOR, separator),
                            Token(Token.OPTION, f'limit={limit}')])
         if on_limit:
-            tokens.extend([Token(Token.SEPARATOR, indent),
+            tokens.extend([Token(Token.SEPARATOR, separator),
                            Token(Token.OPTION, f'on_limit={on_limit}')])
         if on_limit_message:
-            tokens.extend([Token(Token.SEPARATOR, indent),
+            tokens.extend([Token(Token.SEPARATOR, separator),
                            Token(Token.OPTION, f'on_limit_message={on_limit_message}')])
         tokens.append(Token(Token.EOL, eol))
         return cls(tokens)
@@ -1211,10 +1214,6 @@ class WhileHeader(Statement):
 class ReturnStatement(Statement):
     type = Token.RETURN_STATEMENT
 
-    @property
-    def values(self):
-        return self.get_values(Token.ARGUMENT)
-
     @classmethod
     def from_params(cls, values: 'Sequence[str]' = (), indent: str = FOUR_SPACES,
                     separator: str = FOUR_SPACES, eol: str = EOL) -> 'ReturnStatement':
@@ -1225,6 +1224,10 @@ class ReturnStatement(Statement):
                            Token(Token.ARGUMENT, value)])
         tokens.append(Token(Token.EOL, eol))
         return cls(tokens)
+
+    @property
+    def values(self) -> 'tuple[str, ...]':
+        return self.get_values(Token.ARGUMENT)
 
     def validate(self, ctx: 'ValidationContext'):
         if not ctx.in_keyword:
