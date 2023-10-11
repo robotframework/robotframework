@@ -12,12 +12,16 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+import warnings
+from importlib.metadata import entry_points
 
 from robot.errors import DataError
 
 from .dotted import DottedOutput
 from .quiet import NoOutput, QuietOutput
 from .verbose import VerboseOutput
+
+ENTRY_POINT_GROUP = 'robot.output.console'
 
 
 def ConsoleOutput(type='verbose', width=78, colors='AUTO', markers='AUTO',
@@ -31,5 +35,21 @@ def ConsoleOutput(type='verbose', width=78, colors='AUTO', markers='AUTO',
         return QuietOutput(colors, stderr)
     if upper == 'NONE':
         return NoOutput()
-    raise DataError("Invalid console output type '%s'. Available "
-                    "'VERBOSE', 'DOTTED', 'QUIET' and 'NONE'." % type)
+
+    discoveries = entry_points(group=ENTRY_POINT_GROUP, name=type)
+
+    if discoveries:
+        if len(discoveries) > 1:
+            warnings.warn("Multiple console outputs with name '%s' found. "
+                          "Using first entry (%s)."
+                          % (type, discoveries[0].value))
+
+        constructor = discoveries[0].load()
+        return constructor(width, colors, markers, stdout, stderr)
+
+    values = ["VERBOSE", "DOTTED", "QUIET", "NONE"]
+    discoveries = entry_points(group=ENTRY_POINT_GROUP)
+    values.extend(discovery.name for discovery in discoveries)
+
+    raise DataError("Invalid console output type '%s'. Available: %s."
+                    % (type, ', '.join(values)))
