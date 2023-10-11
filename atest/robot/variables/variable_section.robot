@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run tests  ${EMPTY}  variables/variable_table.robot
+Suite Setup     Run tests  ${EMPTY}  variables/variable_section.robot
 Resource        atest_resource.robot
 
 *** Test Cases ***
@@ -78,18 +78,18 @@ Using variable created from non-existing variable in imports fails
 *** Keywords ***
 Parsing Variable Should Have Failed
     [Arguments]    ${index}    ${lineno}    ${name}
-    Error In File    ${index}    variables/variable_table.robot    ${lineno}
+    Error In File    ${index}    variables/variable_section.robot    ${lineno}
     ...    Setting variable '${name}' failed:
     ...    Invalid variable name '${name}'.
 
 Creating Variable Should Have Failed
     [Arguments]    ${index}    ${name}    ${lineno}    @{message}
-    Error In File    ${index}    variables/variable_table.robot    ${lineno}
+    Error In File    ${index}    variables/variable_section.robot    ${lineno}
     ...    Setting variable '${name}' failed:
     ...    @{message}
 
 Import Should Have Failed
     [Arguments]    ${index}    ${name}    ${lineno}    @{message}
-    Error In File    ${index}    variables/variable_table.robot    ${lineno}
+    Error In File    ${index}    variables/variable_section.robot    ${lineno}
     ...    Replacing variables from setting '${name}' failed:
     ...    @{message}
