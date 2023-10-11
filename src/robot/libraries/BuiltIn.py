@@ -1409,9 +1409,10 @@ class _Verify(_BuiltInBase):
         self.log(f'Length is {length}.')
         return length
 
+
     def _get_length(self, item):
         try:
-            return len(item)
+            return self._robot_len(item)
         except RERAISED_EXCEPTIONS:
             raise
         except:
@@ -1431,6 +1432,19 @@ class _Verify(_BuiltInBase):
                         raise
                     except:
                         raise RuntimeError(f"Could not get length of '{item}'.")
+
+
+    def _robot_len(self, item):
+        for_check = item
+        count = 0
+        if type(for_check) == int:
+            while for_check > 0:
+                count += 1
+                for_check //= 10
+        else:
+            count = len(str(for_check))
+        return count
+
 
     def length_should_be(self, item, length, msg=None):
         """Verifies that the length of the given item is correct.
