@@ -624,15 +624,17 @@ class TestSuite(model.TestSuite[Keyword, TestCase]):
 
 
 class Variable(ModelObject):
-    repr_args = ('name', 'value')
+    repr_args = ('name', 'value', 'separator')
 
     def __init__(self, name: str = '',
                  value: Sequence[str] = (),
+                 separator: 'str|None' = None,
                  parent: 'ResourceFile|None' = None,
                  lineno: 'int|None' = None,
                  error: 'str|None' = None):
         self.name = name
         self.value = tuple(value)
+        self.separator = separator
         self.parent = parent
         self.lineno = lineno
         self.error = error

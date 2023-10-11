@@ -182,6 +182,11 @@ class VariableLexer(TypeAndArguments):
     ctx: FileContext
     token_type = Token.VARIABLE
 
+    def lex(self):
+        super().lex()
+        if self.statement[0].value[:1] == '$':
+            self._lex_options('separator')
+
 
 class KeywordCallLexer(StatementLexer):
     ctx: 'TestCaseContext|KeywordContext'

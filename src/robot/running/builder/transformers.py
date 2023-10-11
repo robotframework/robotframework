@@ -109,6 +109,7 @@ class SuiteBuilder(NodeVisitor):
     def visit_Variable(self, node):
         self.suite.resource.variables.create(name=node.name,
                                              value=node.value,
+                                             separator=node.separator,
                                              lineno=node.lineno,
                                              error=format_error(node.errors))
 
@@ -154,6 +155,7 @@ class ResourceBuilder(NodeVisitor):
     def visit_Variable(self, node):
         self.resource.variables.create(name=node.name,
                                        value=node.value,
+                                       separator=node.separator,
                                        lineno=node.lineno,
                                        error=format_error(node.errors))
 

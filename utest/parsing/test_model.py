@@ -908,6 +908,28 @@ ${x${y}}  nested name
         )
         get_and_assert_model(data, expected, depth=0)
 
+    def test_separator(self):
+        data = '''
+*** Variables ***
+${x}      a    b    c    separator=-
+${y}      separator=
+'''
+        expected = VariableSection(
+            header=SectionHeader(
+                tokens=[Token(Token.VARIABLE_HEADER, '*** Variables ***', 1, 0)]
+            ),
+            body=[
+                Variable([Token(Token.VARIABLE, '${x}', 2, 0),
+                          Token(Token.ARGUMENT, 'a', 2, 10),
+                          Token(Token.ARGUMENT, 'b', 2, 15),
+                          Token(Token.ARGUMENT, 'c', 2, 20),
+                          Token(Token.OPTION, 'separator=-', 2, 25)]),
+                Variable([Token(Token.VARIABLE, '${y}', 3, 0),
+                          Token(Token.OPTION, 'separator=', 3, 10)]),
+            ]
+        )
+        get_and_assert_model(data, expected, depth=0)
+
     def test_invalid(self):
         data = '''
 *** Variables ***

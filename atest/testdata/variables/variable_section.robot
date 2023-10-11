@@ -28,8 +28,10 @@ ${ASSING MARK} =  This syntax works starting from 1.8
 @{ASSIGN MARK LIST}=   This syntax works    starting    from    ${1.8}
 ${THREE DOTS}     ...
 @{3DOTS LIST}     ...   ...
-${CATENATED}      I    am    a    scalar     catenated     from    many     items
-${CATENATED W/ SEP}    SEPARATOR=-    I    can    haz    custom    separator
+${CATENATED}            By    default    values    are    joined    with    a    space
+${SEPARATOR VALUE}      SEPARATOR=-    Special    SEPARATOR    marker    as    ${1}    st    value
+${SEPARATOR OPTION}     Explicit    separator    option    works    since    RF    ${7.0}    separator=-
+${BOTH SEPARATORS}      SEPARATOR=marker    has    lower    precedence    than    option    separator=:
 ${NONEX 1}        Creating variable based on ${NON EXISTING} variable fails.
 ${NONEX 2A}       This ${NON EX} is used for creating another variable.
 ${NONEX 2B}       ${NONEX 2A}
@@ -125,9 +127,15 @@ Three dots on the same line should be interpreted as string
     ${sos} =    Catenate    SEPARATOR=---    @{3DOTS LIST}
     Should Be Equal    ${sos}    ...---...
 
-Scalar catenated from multile values
-    Should Be Equal    ${CATENATED}      I am a scalar catenated from many items
-    Should Be Equal    ${CATENATED W/ SEP}    I-can-haz-custom-separator
+Scalar catenated from multiple values
+    Should Be Equal    ${CATENATED}           By default values are joined with a space
+
+Scalar catenated from multiple values with 'SEPARATOR' marker
+    Should Be Equal    ${SEPARATOR VALUE}     Special-SEPARATOR-marker-as-1-st-value
+
+Scalar catenated from multiple values with 'separator' option
+    Should Be Equal    ${SEPARATOR OPTION}    Explicit-separator-option-works-since-RF-7.0
+    Should Be Equal    ${BOTH SEPARATORS}     SEPARATOR=marker:has:lower:precedence:than:option
 
 Creating variable using non-existing variable fails
     Variable Should Not Exist    ${NONEX 1}

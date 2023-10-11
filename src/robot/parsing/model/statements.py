@@ -639,15 +639,24 @@ class TestTimeout(SingleValue):
 @Statement.register
 class Variable(Statement):
     type = Token.VARIABLE
+    options = {
+        'separator': None
+    }
 
     @classmethod
-    def from_params(cls, name: str, value: 'str|Sequence[str]',
-                    separator: str = FOUR_SPACES, eol: str = EOL) -> 'Variable':
+    def from_params(cls, name: str,
+                    value: 'str|Sequence[str]',
+                    value_separator: 'str|None' = None,
+                    separator: str = FOUR_SPACES,
+                    eol: str = EOL) -> 'Variable':
         values = [value] if isinstance(value, str) else value
         tokens = [Token(Token.VARIABLE, name)]
         for value in values:
             tokens.extend([Token(Token.SEPARATOR, separator),
                            Token(Token.ARGUMENT, value)])
+        if value_separator is not None:
+            tokens.extend([Token(Token.SEPARATOR, separator),
+                           Token(Token.OPTION, f'separator={value_separator}')])
         tokens.append(Token(Token.EOL, eol))
         return cls(tokens)
 
@@ -662,6 +671,10 @@ class Variable(Statement):
     def value(self) -> 'tuple[str, ...]':
         return self.get_values(Token.ARGUMENT)
 
+    @property
+    def separator(self) -> 'str|None':
+        return self.get_option('separator')
+
     def validate(self, ctx: 'ValidationContext'):
         name = self.get_value(Token.VARIABLE)
         match = search_variable(name, ignore_errors=True)
@@ -669,6 +682,7 @@ class Variable(Statement):
             self.errors += (f"Invalid variable name '{name}'.",)
         if match.is_dict_assign(allow_assign_mark=True):
             self._validate_dict_items()
+        self._validate_options()
 
     def _validate_dict_items(self):
         for item in self.get_values(Token.ARGUMENT):
