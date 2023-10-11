@@ -46,7 +46,7 @@ class VariableStore:
             # Recursive resolving may have already removed variable.
             if name in self.data:
                 self.data.pop(name)
-                value.report_error(err)
+                value.report_error(str(err))
             variable_not_found('${%s}' % name, self.data)
         return self.data[name]
 

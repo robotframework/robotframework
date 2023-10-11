@@ -641,7 +641,7 @@ class Variable(ModelObject):
     def source(self) -> 'Path|None':
         return self.parent.source if self.parent is not None else None
 
-    def report_invalid_syntax(self, message: str, level: str = 'ERROR'):
+    def report_error(self, message: str, level: str = 'ERROR'):
         source = self.source or '<unknown>'
         line = f' on line {self.lineno}' if self.lineno else ''
         LOGGER.write(f"Error in file '{source}'{line}: "
@@ -900,7 +900,7 @@ class Import(ModelObject):
                 self.RESOURCE: resource,
                 self.VARIABLES: variables}[self.type]
 
-    def report_invalid_syntax(self, message: str, level: str = 'ERROR'):
+    def report_error(self, message: str, level: str = 'ERROR'):
         source = self.source or '<unknown>'
         line = f' on line {self.lineno}' if self.lineno else ''
         LOGGER.write(f"Error in file '{source}'{line}: {message}", level)

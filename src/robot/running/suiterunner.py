@@ -71,7 +71,7 @@ class SuiteRunner(SuiteVisitor):
                                          self._settings.skip_teardown_on_exit)
         ns = Namespace(self._variables, result, suite.resource, self._settings.languages)
         ns.start_suite()
-        ns.variables.set_from_variable_table(suite.resource.variables)
+        ns.variables.set_from_variable_section(suite.resource.variables)
         EXECUTION_CONTEXTS.start_suite(result, ns, self._output,
                                        self._settings.dry_run)
         self._context.set_suite_variables(result)

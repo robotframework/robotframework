@@ -36,7 +36,7 @@ from robot.utils import (DotDict, escape, format_assign_message, get_error_messa
 from robot.utils.asserts import assert_equal, assert_not_equal
 from robot.variables import (evaluate_expression, is_dict_variable,
                              is_list_variable, search_variable,
-                             DictVariableTableValue, VariableTableValue)
+                             DictVariableResolver, VariableResolver)
 from robot.version import get_version
 
 
@@ -471,7 +471,7 @@ class _Converter(_BuiltInBase):
         """
         separate, combined = self._split_dict_items(items)
         result = DotDict(self._format_separate_dict_items(separate))
-        combined = DictVariableTableValue(combined).resolve(self._variables)
+        combined = DictVariableResolver(combined).resolve(self._variables)
         result.update(combined)
         return result
 
@@ -1842,7 +1842,8 @@ class _Variables(_BuiltInBase):
                                 f"is not supported anymore. Create list variable "
                                 f"'@{name[1:]}' instead.")
             return self._variables.replace_scalar(values[0])
-        return VariableTableValue(values, name).resolve(self._variables)
+        resolver = VariableResolver.from_name_and_value(name, values)
+        return resolver.resolve(self._variables)
 
     def _log_set_variable(self, name, value):
         self.log(format_assign_message(name, value))

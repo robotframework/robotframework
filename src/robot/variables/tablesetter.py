@@ -14,6 +14,7 @@
 #  limitations under the License.
 
 from contextlib import contextmanager
+from typing import Sequence, TYPE_CHECKING
 
 from robot.errors import DataError
 from robot.utils import DotDict, is_string, split_from_equals
@@ -21,52 +22,58 @@ from robot.utils import DotDict, is_string, split_from_equals
 from .resolvable import Resolvable
 from .search import is_assign, is_list_variable, is_dict_variable
 
+if TYPE_CHECKING:
+    from robot.running.model import Variable
+
 
 class VariableTableSetter:
 
     def __init__(self, store):
         self._store = store
 
-    def set(self, variables, overwrite=False):
+    def set(self, variables: 'Sequence[Variable]', overwrite: bool = False):
         for name, value in self._get_items(variables):
             self._store.add(name, value, overwrite, decorated=False)
 
-    def _get_items(self, variables):
+    def _get_items(self, variables: 'Sequence[Variable]'):
         for var in variables:
-            if var.error:
-                var.report_invalid_syntax(var.error)
-                continue
             try:
-                value = VariableTableValue(var.value, var.name,
-                                           var.report_invalid_syntax)
+                value = VariableResolver.from_variable(var)
             except DataError as err:
-                var.report_invalid_syntax(err)
+                var.report_error(str(err))
             else:
                 yield var.name[2:-1], value
 
 
-def VariableTableValue(value, name, error_reporter=None):
-    if not is_assign(name):
-        raise DataError("Invalid variable name '%s'." % name)
-    VariableTableValue = {'$': ScalarVariableTableValue,
-                          '@': ListVariableTableValue,
-                          '&': DictVariableTableValue}[name[0]]
-    return VariableTableValue(value, error_reporter)
+class VariableResolver(Resolvable):
 
-
-class VariableTableValueBase(Resolvable):
-
-    def __init__(self, values, error_reporter=None):
-        self._values = self._format_values(values)
-        self._error_reporter = error_reporter
+    def __init__(self, value: 'str|Sequence[str]', error_reporter=None):
+        self.value = self._format_value(value)
+        self.error_reporter = error_reporter
         self._resolving = False
 
-    def _format_values(self, values):
-        return values
+    def _format_value(self, value):
+        return value
+
+    @classmethod
+    def from_name_and_value(cls, name: str, value: 'str|Sequence[str]',
+                            error_reporter=None) -> 'VariableResolver':
+        if not is_assign(name):
+            raise DataError(f"Invalid variable name '{name}'.")
+        klass = {'$': ScalarVariableResolver,
+                 '@': ListVariableResolver,
+                 '&': DictVariableResolver}[name[0]]
+        return klass(value, error_reporter)
+
+    @classmethod
+    def from_variable(cls, var: 'Variable') -> 'VariableResolver':
+        if var.error:
+            raise DataError(var.error)
+        return cls.from_name_and_value(var.name, var.value, var.report_error)
 
     def resolve(self, variables):
         with self._avoid_recursion:
-            return self._replace_variables(self._values, variables)
+            return self._replace_variables(self.value, variables)
 
     @property
     @contextmanager
@@ -83,13 +90,15 @@ class VariableTableValueBase(Resolvable):
         raise NotImplementedError
 
     def report_error(self, error):
-        if self._error_reporter:
-            self._error_reporter(str(error))
+        if self.error_reporter:
+            self.error_reporter(error)
+        else:
+            raise DataError(f'Error reported not set. Reported error was: {error}')
 
 
-class ScalarVariableTableValue(VariableTableValueBase):
+class ScalarVariableResolver(VariableResolver):
 
-    def _format_values(self, values):
+    def _format_value(self, values):
         separator = None
         if is_string(values):
             values = [values]
@@ -114,15 +123,15 @@ class ScalarVariableTableValue(VariableTableValueBase):
                 not is_list_variable(values[0]))
 
 
-class ListVariableTableValue(VariableTableValueBase):
+class ListVariableResolver(VariableResolver):
 
     def _replace_variables(self, values, variables):
         return variables.replace_list(values)
 
 
-class DictVariableTableValue(VariableTableValueBase):
+class DictVariableResolver(VariableResolver):
 
-    def _format_values(self, values):
+    def _format_value(self, values):
         return list(self._yield_formatted(values))
 
     def _yield_formatted(self, values):
@@ -133,18 +142,16 @@ class DictVariableTableValue(VariableTableValueBase):
                 name, value = split_from_equals(item)
                 if value is None:
                     raise DataError(
-                        "Invalid dictionary variable item '%s'. "
-                        "Items must use 'name=value' syntax or be dictionary "
-                        "variables themselves." % item
+                        f"Invalid dictionary variable item '{item}'. Items must use "
+                        f"'name=value' syntax or be dictionary variables themselves."
                     )
                 yield name, value
 
     def _replace_variables(self, values, variables):
         try:
-            return DotDict(self._yield_replaced(values,
-                                                variables.replace_scalar))
+            return DotDict(self._yield_replaced(values, variables.replace_scalar))
         except TypeError as err:
-            raise DataError('Creating dictionary failed: %s' % err)
+            raise DataError(f'Creating dictionary failed: {err}')
 
     def _yield_replaced(self, values, replace_scalar):
         for item in values:
