@@ -23,7 +23,8 @@ from typing import cast, ClassVar, Literal, overload, TYPE_CHECKING, Type, TypeV
 from robot.conf import Language
 from robot.running.arguments import UserKeywordArgumentParser
 from robot.utils import normalize_whitespace, seq2str, split_from_equals, test_or_task
-from robot.variables import is_scalar_assign, is_dict_variable, search_variable
+from robot.variables import (contains_variable, is_scalar_assign, is_dict_variable,
+                             search_variable)
 
 from ..lexer import Token
 
@@ -50,6 +51,9 @@ class Statement(Node, ABC):
     type: str
     handles_types: 'ClassVar[tuple[str, ...]]' = ()
     statement_handlers: 'ClassVar[dict[str, Type[Statement]]]' = {}
+    # Accepted configuration options. If the value is a tuple, it lists accepted
+    # values. If the used value contains a variable, it cannot be validated.
+    options: 'dict[str, tuple|None]' = {}
 
     def __init__(self, tokens: 'Sequence[Token]', errors: 'Sequence[str]' = ()):
         self.tokens = tuple(tokens)
@@ -191,9 +195,16 @@ class Statement(Node, ABC):
 
     def _validate_options(self):
         for name, values in self._get_options().items():
-            if len(values) > 1:
-                self.errors += (f"Option '{name}' allowed only once, got values "
-                                f"{seq2str(values)}.",)
+            if len(values) != 1:
+                self.errors += (f"{self.type} option '{name}' is accepted only once, "
+                                f"got {len(values)} values {seq2str(values)}.",)
+            elif self.options[name] is not None:
+                value = values[0]
+                expected = self.options[name]
+                if value.upper() not in expected and not contains_variable(value):
+                    self.errors += (f"{self.type} option '{name}' does not accept "
+                                    f"value '{value}'. Valid values are "
+                                    f"{seq2str(expected)}.",)
 
     def __iter__(self) -> 'Iterator[Token]':
         return iter(self.tokens)
@@ -909,6 +920,11 @@ class TemplateArguments(Statement):
 @Statement.register
 class ForHeader(Statement):
     type = Token.FOR
+    options = {
+        'start': None,
+        'mode': ('STRICT', 'SHORTEST', 'LONGEST'),
+        'fill': None
+    }
 
     @classmethod
     def from_params(cls, assign: 'Sequence[str]',
@@ -962,7 +978,6 @@ class ForHeader(Statement):
         return self.get_option('fill') if self.flavor == 'IN ZIP' else None
 
     def validate(self, ctx: 'ValidationContext'):
-        self._validate_options()
         if not self.assign:
             self._add_error('no loop variables')
         if not self.flavor:
@@ -973,6 +988,7 @@ class ForHeader(Statement):
                     self._add_error(f"invalid loop variable '{var}'")
             if not self.values:
                 self._add_error('no loop values')
+        self._validate_options()
 
     def _add_error(self, error: str):
         self.errors += (f'FOR loop has {error}.',)
@@ -1094,6 +1110,9 @@ class TryHeader(NoArgumentHeader):
 @Statement.register
 class ExceptHeader(Statement):
     type = Token.EXCEPT
+    options = {
+        'type': ('GLOB', 'REGEXP', 'START', 'LITERAL')
+    }
 
     @classmethod
     def from_params(cls, patterns: 'Sequence[str]' = (), type: 'str|None' = None,
@@ -1134,7 +1153,6 @@ class ExceptHeader(Statement):
         return self.assign
 
     def validate(self, ctx: 'ValidationContext'):
-        self._validate_options()
         as_token = self.get_token(Token.AS)
         if as_token:
             variables = self.get_tokens(Token.ASSIGN)
@@ -1144,6 +1162,7 @@ class ExceptHeader(Statement):
                 self.errors += ("EXCEPT's AS accepts only one variable.",)
             elif not is_scalar_assign(variables[0].value):
                 self.errors += (f"EXCEPT's AS variable '{variables[0].value}' is invalid.",)
+        self._validate_options()
 
 
 @Statement.register
@@ -1159,6 +1178,11 @@ class End(NoArgumentHeader):
 @Statement.register
 class WhileHeader(Statement):
     type = Token.WHILE
+    options = {
+        'limit': None,
+        'on_limit': ('PASS', 'FAIL'),
+        'on_limit_message': None
+    }
 
     @classmethod
     def from_params(cls, condition: str, limit: 'str|None' = None,
@@ -1198,16 +1222,13 @@ class WhileHeader(Statement):
         return self.get_option('on_limit_message')
 
     def validate(self, ctx: 'ValidationContext'):
-        conditions = self.get_tokens(Token.ARGUMENT)
+        conditions = self.get_values(Token.ARGUMENT)
         if len(conditions) > 1:
-            self._add_error(f'cannot have more than one condition, got '
-                            f'{seq2str(c.value for c in conditions)}')
+            self.errors += (f"WHILE accepts only one condition, got {len(conditions)} "
+                            f"conditions {seq2str(conditions)}.",)
         if self.on_limit and not self.limit:
-            self._add_error("'on_limit' option cannot be used without 'limit'")
+            self.errors += ("WHILE option 'on_limit' cannot be used without 'limit'.",)
         self._validate_options()
-
-    def _add_error(self, error: str):
-        self.errors += (f'WHILE loop {error}.',)
 
 
 @Statement.register

@@ -275,13 +275,13 @@ class ForInZipRunner(ForInRunner):
         if not mode or self._context.dry_run:
             return None
         try:
-            mode = self._context.variables.replace_string(mode).upper()
-            if mode in ('STRICT', 'SHORTEST', 'LONGEST'):
-                return mode
-            raise DataError(f"Mode must be 'STRICT', 'SHORTEST' or 'LONGEST', "
-                            f"got '{mode}'.")
+            mode = self._context.variables.replace_string(mode)
+            if mode.upper() in ('STRICT', 'SHORTEST', 'LONGEST'):
+                return mode.upper()
+            raise DataError(f"Value '{mode}' is not accepted. Valid values "
+                            f"are 'STRICT', 'SHORTEST' and 'LONGEST'.")
         except DataError as err:
-            raise DataError(f'Invalid mode: {err}')
+            raise DataError(f'Invalid FOR IN ZIP mode: {err}')
 
     def _resolve_fill(self, fill):
         if not fill or self._context.dry_run:
@@ -289,7 +289,7 @@ class ForInZipRunner(ForInRunner):
         try:
             return self._context.variables.replace_scalar(fill)
         except DataError as err:
-            raise DataError(f'Invalid fill value: {err}')
+            raise DataError(f'Invalid FOR IN ZIP fill value: {err}')
 
     def _resolve_dict_values(self, values):
         raise DataError('FOR IN ZIP loops do not support iterating over dictionaries.',
@@ -351,9 +351,9 @@ class ForInEnumerateRunner(ForInRunner):
             try:
                 return int(start)
             except ValueError:
-                raise DataError(f"Start value must be an integer, got '{start}'.")
+                raise DataError(f"Value must be an integer, got '{start}'.")
         except DataError as err:
-            raise DataError(f'Invalid start value: {err}')
+            raise DataError(f'Invalid FOR IN ENUMERATE start value: {err}')
 
     def _map_dict_values_to_rounds(self, values, per_round):
         if per_round > 3:
@@ -616,9 +616,9 @@ class TryRunner:
             return True
         matchers = {
             'GLOB': lambda m, p: Matcher(p, spaceless=False, caseless=False).match(m),
-            'LITERAL': lambda m, p: m == p,
             'REGEXP': lambda m, p: re.fullmatch(p, m) is not None,
-            'START': lambda m, p: m.startswith(p)
+            'START': lambda m, p: m.startswith(p),
+            'LITERAL': lambda m, p: m == p,
         }
         if branch.pattern_type:
             pattern_type = self._context.variables.replace_string(branch.pattern_type)
@@ -626,8 +626,8 @@ class TryRunner:
             pattern_type = 'LITERAL'
         matcher = matchers.get(pattern_type.upper())
         if not matcher:
-            raise DataError(f"Invalid EXCEPT pattern type '{pattern_type}', "
-                            f"expected {seq2str(matchers, lastsep=' or ')}.")
+            raise DataError(f"Invalid EXCEPT pattern type '{pattern_type}'. "
+                            f"Valid values are {seq2str(matchers)}.")
         for pattern in branch.patterns:
             if matcher(error.message, self._context.variables.replace_string(pattern)):
                 return True
@@ -693,15 +693,15 @@ class WhileLimit:
             return None
         try:
             on_limit = variables.replace_string(on_limit)
-            if on_limit.upper() not in ['PASS', 'FAIL']:
-                raise DataError("Value must be 'PASS' or 'FAIL'.")
+            if on_limit.upper() in ('PASS', 'FAIL'):
+                return on_limit.upper()
+            raise DataError(f"Value '{on_limit}' is not accepted. Valid values "
+                            f"are 'PASS' and 'FAIL'.")
         except DataError as err:
-            raise DataError(f"Invalid WHILE loop 'on_limit' value '{on_limit}': {err}")
-        else:
-            return on_limit.lower()
+            raise DataError(f"Invalid WHILE loop 'on_limit' value: {err}")
 
     def limit_exceeded(self):
-        on_limit_pass = self.on_limit == 'pass'
+        on_limit_pass = self.on_limit == 'PASS'
         if self.on_limit_message:
             raise LimitExceeded(on_limit_pass, self.on_limit_message)
         else:

@@ -107,23 +107,33 @@ Invalid variable in pattern type
     END
 
 Invalid pattern type
-    [Documentation]    FAIL    Invalid EXCEPT pattern type 'invalid', expected 'GLOB', 'LITERAL', 'REGEXP' or 'START'.
+    [Documentation]    FAIL    EXCEPT option 'type' does not accept value 'invalid'. Valid values are 'GLOB', 'REGEXP', 'START' and 'LITERAL'.
     TRY
+        Fail   Should not be executed
+    EXCEPT    *    type=glob
         Fail   Should not be executed
     EXCEPT    x    type=invalid
         Fail   Should not be executed
     END
 
-Non-string pattern type
-    [Documentation]    FAIL    Invalid EXCEPT pattern type '42', expected 'GLOB', 'LITERAL', 'REGEXP' or 'START'.
+Invalid pattern type from variable
+    [Documentation]    FAIL    Invalid EXCEPT pattern type 'invalid'. Valid values are 'GLOB', 'REGEXP', 'START' and 'LITERAL'.
     TRY
-        Fail    failure
+        Fail   Executed
+    EXCEPT    x    type=${{'invalid'}}
+        Fail   Should not be executed
+    END
+
+Non-string pattern type
+    [Documentation]    FAIL    Invalid EXCEPT pattern type '42'. Valid values are 'GLOB', 'REGEXP', 'START' and 'LITERAL'.
+    TRY
+        Fail    Executed
     EXCEPT    x    type=${42}
         Fail   Should not be executed
     END
 
 Pattern type multiple times
-    [Documentation]    FAIL    Option 'type' allowed only once, got values 'glob' and 'start'.
+    [Documentation]    FAIL    EXCEPT option 'type' is accepted only once, got 2 values 'glob' and 'start'.
     TRY
         Fail    failure
     EXCEPT    x    type=glob    type=start

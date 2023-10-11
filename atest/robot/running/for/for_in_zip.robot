@@ -104,6 +104,10 @@ Invalid mode
     ${tc} =    Check Test Case    ${TEST NAME}
     Should be IN ZIP loop      ${tc.body[0]}    1   FAIL    mode=bad
 
+Invalid mode from variable
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Should be IN ZIP loop      ${tc.body[0]}    1   FAIL    mode=\${{'bad'}}
+
 Config more than once
     ${tc} =    Check Test Case    ${TEST NAME} 1
     Should be IN ZIP loop      ${tc.body[0]}    1   FAIL    mode=longest, shortest

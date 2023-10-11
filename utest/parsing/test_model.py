@@ -430,7 +430,7 @@ Example
         data = '''
 *** Test Cases ***
 Example
-    WHILE    too    many    values    !
+    WHILE    too    many    values    !    limit=1    on_limit=bad
         # Empty body
     END
 '''
@@ -440,9 +440,15 @@ Example
                         Token(Token.ARGUMENT, 'too', 3, 13),
                         Token(Token.ARGUMENT, 'many', 3, 20),
                         Token(Token.ARGUMENT, 'values', 3, 28),
-                        Token(Token.ARGUMENT, '!', 3, 38)],
-                errors=("WHILE loop cannot have more than one condition, "
-                        "got 'too', 'many', 'values' and '!'.",)
+                        Token(Token.ARGUMENT, '!', 3, 38),
+                        Token(Token.OPTION, 'limit=1', 3, 43),
+                        Token(Token.OPTION, 'on_limit=bad', 3, 54)],
+                errors=(
+                    "WHILE accepts only one condition, got 4 conditions 'too', "
+                    "'many', 'values' and '!'.",
+                    "WHILE option 'on_limit' does not accept value 'bad'. "
+                    "Valid values are 'PASS' and 'FAIL'."
+                )
             ),
             end=End([
                 Token(Token.END, 'END', 5, 4)
@@ -790,18 +796,18 @@ Example
                                      Token(Token.ARGUMENT, 'does not match', 5, 14)]),
                 body=[KeywordCall((Token(Token.KEYWORD, 'No operation', 6, 8),))],
                 next=Try(
-                    header=ExceptHeader((Token(Token.EXCEPT, 'EXCEPT', 7, 4),
+                    header=ExceptHeader([Token(Token.EXCEPT, 'EXCEPT', 7, 4),
                                          Token(Token.AS, 'AS', 7, 14),
-                                         Token(Token.ASSIGN, '${exp}', 7, 20))),
-                    body=[KeywordCall((Token(Token.KEYWORD, 'Log', 8, 8),
-                                       Token(Token.ARGUMENT, 'Catch', 8, 15)))],
+                                         Token(Token.ASSIGN, '${exp}', 7, 20)]),
+                    body=[KeywordCall([Token(Token.KEYWORD, 'Log', 8, 8),
+                                       Token(Token.ARGUMENT, 'Catch', 8, 15)])],
                     next=Try(
-                        header=ElseHeader((Token(Token.ELSE, 'ELSE', 9, 4),)),
-                        body=[KeywordCall((Token(Token.KEYWORD, 'No operation', 10, 8),))],
+                        header=ElseHeader([Token(Token.ELSE, 'ELSE', 9, 4)]),
+                        body=[KeywordCall([Token(Token.KEYWORD, 'No operation', 10, 8)])],
                         next=Try(
-                            header=FinallyHeader((Token(Token.FINALLY, 'FINALLY', 11, 4),)),
-                            body=[KeywordCall((Token(Token.KEYWORD, 'Log', 12, 8),
-                                               Token(Token.ARGUMENT, 'finally here!', 12, 15)))]
+                            header=FinallyHeader([Token(Token.FINALLY, 'FINALLY', 11, 4)]),
+                            body=[KeywordCall([Token(Token.KEYWORD, 'Log', 12, 8),
+                                               Token(Token.ARGUMENT, 'finally here!', 12, 15)])]
                         )
                     )
                 )
@@ -820,6 +826,7 @@ Example
     FINALLY         invalid
     #
     EXCEPT    AS    invalid
+    EXCEPT    xx    type=invalid
 '''
         expected = Try(
             header=TryHeader(
@@ -848,13 +855,26 @@ Example
                                     Token(Token.ASSIGN, 'invalid', 8, 20)],
                             errors=("EXCEPT's AS variable 'invalid' is invalid.",)
                         ),
-                        errors=('EXCEPT branch cannot be empty.',)
+                        errors=('EXCEPT branch cannot be empty.',),
+                        next=Try(
+                            header=ExceptHeader(
+                                tokens=[Token(Token.EXCEPT, 'EXCEPT', 9, 4),
+                                        Token(Token.ARGUMENT, 'xx', 9, 14),
+                                        Token(Token.OPTION, 'type=invalid', 9, 20)],
+                                errors=("EXCEPT option 'type' does not accept value 'invalid'. "
+                                        "Valid values are 'GLOB', 'REGEXP', 'START' and 'LITERAL'.",)
+                            ),
+                            errors=('EXCEPT branch cannot be empty.',),
+                        )
                     )
                 ),
             ),
             errors=('TRY branch cannot be empty.',
                     'EXCEPT not allowed after ELSE.',
                     'EXCEPT not allowed after FINALLY.',
+                    'EXCEPT not allowed after ELSE.',
+                    'EXCEPT not allowed after FINALLY.',
+                    'EXCEPT without patterns must be last.',
                     'TRY must have closing END.')
         )
         get_and_assert_model(data, expected)
