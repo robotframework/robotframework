@@ -30,7 +30,7 @@ class ArgumentSpec:
 
     def __init__(self, name=None, type='Keyword', positional_only=None,
                  positional_or_named=None, var_positional=None, named_only=None,
-                 var_named=None, defaults=None, types=None):
+                 var_named=None, defaults=None, types=None, overloads=()):
         self.name = name
         self.type = type
         self.positional_only = positional_only or []
@@ -40,6 +40,7 @@ class ArgumentSpec:
         self.var_named = var_named
         self.defaults = defaults or {}
         self.types = types
+        self.overloads = overloads
 
     @setter
     def types(self, types) -> 'dict[str, TypeInfo]':

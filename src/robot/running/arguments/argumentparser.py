@@ -22,6 +22,13 @@ from robot.utils import is_string, split_from_equals
 from robot.variables import is_assign, is_scalar_assign
 
 from .argumentspec import ArgumentSpec
+try:
+    from typing import get_overloads
+except ImportError:
+    try:
+        from typing_extensions import get_overloads
+    except ImportError:
+        get_overloads = None
 
 
 class ArgumentParser(ABC):
@@ -43,8 +50,16 @@ class ArgumentParser(ABC):
 
 class PythonArgumentParser(ArgumentParser):
 
-    def parse(self, handler, name=None):
-        spec = ArgumentSpec(name, self._type)
+    def parse(self, handler, name=None, parse_overloads=True):
+        try:
+            overloads = get_overloads(handler)
+        except Exception:  # < 3.10 doesn't work with `functools.partial` objects
+            overloads = []
+        spec_overloads = (
+            tuple(self.parse(overload, name, False) for overload in overloads)
+            if get_overloads and parse_overloads else ()
+        )
+        spec = ArgumentSpec(name, self._type, overloads=spec_overloads)
         self._set_args(spec, handler)
         self._set_types(spec, handler)
         return spec
