@@ -359,6 +359,38 @@ class Try(BodyItem):
 
 
 @Body.register
+class Var(BodyItem):
+    """Represents ``VAR``."""
+    type = BodyItem.VAR
+    repr_args = ('name', 'value', 'scope', 'separator')
+    __slots__ = ['name', 'value', 'scope', 'separator']
+
+    def __init__(self, name: str = '',
+                 value: 'str|Sequence[str]' = (),
+                 scope: 'str|None' = None,
+                 separator: 'str|None' = None,
+                 parent: BodyItemParent = None):
+        self.name = name
+        self.value = (value,) if isinstance(value, str) else tuple(value)
+        self.scope = scope
+        self.separator = separator
+        self.parent = parent
+
+    def visit(self, visitor: SuiteVisitor):
+        visitor.visit_var(self)
+
+    def to_dict(self) -> DataDict:
+        data = {'type': self.type,
+                'name': self.name,
+                'value': self.value}
+        if self.scope is not None:
+            data['scope'] = self.scope
+        if self.separator is not None:
+            data['separator'] = self.separator
+        return data
+
+
+@Body.register
 class Return(BodyItem):
     """Represents ``RETURN``."""
     type = BodyItem.RETURN

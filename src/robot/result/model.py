@@ -42,9 +42,8 @@ from pathlib import Path
 from typing import Generic, Literal, Mapping, Sequence, Type, Union, TypeVar
 
 from robot import model
-from robot.model import (BodyItem, create_fixture, DataDict, Tags,
-                         SuiteVisitor, TotalStatistics, TotalStatisticsBuilder,
-                         TestSuites)
+from robot.model import (BodyItem, create_fixture, DataDict, SuiteVisitor, Tags,
+                         TestSuites, TotalStatistics, TotalStatisticsBuilder)
 from robot.utils import copy_signature, KnownAtRuntime, setter
 
 from .configurer import SuiteConfigurer
@@ -53,19 +52,19 @@ from .modeldeprecation import DeprecatedAttributesMixin
 from .keywordremover import KeywordRemover
 from .suiteteardownfailed import SuiteTeardownFailed, SuiteTeardownFailureHandler
 
+
 IT = TypeVar('IT', bound='IfBranch|TryBranch')
 FW = TypeVar('FW', bound='ForIteration|WhileIteration')
+BodyItemParent = Union['TestSuite', 'TestCase', 'Keyword', 'For', 'ForIteration', 'If',
+                       'IfBranch', 'Try', 'TryBranch', 'While', 'WhileIteration', None]
 
-BodyItemParent = Union['TestSuite', 'TestCase', 'For', 'ForIteration', 'If', 'IfBranch',
-                       'Try', 'TryBranch', 'While', 'WhileIteration', None]
 
-
-class Body(model.BaseBody['Keyword', 'For', 'While', 'If', 'Try', 'Return', 'Continue',
-                          'Break', 'Message', 'Error']):
+class Body(model.BaseBody['Keyword', 'For', 'While', 'If', 'Try', 'Var', 'Return',
+                          'Continue', 'Break', 'Message', 'Error']):
     __slots__ = []
 
 
-class Branches(model.BaseBranches['Keyword', 'For', 'While', 'If', 'Try', 'Return',
+class Branches(model.BaseBranches['Keyword', 'For', 'While', 'If', 'Try', 'Var', 'Return',
                                   'Continue', 'Break', 'Message', 'Error', IT]):
     __slots__ = []
 
@@ -178,6 +177,10 @@ class StatusMixin:
         for child in self.body:
             if hasattr(child, 'elapsed_time'):
                 elapsed += child.elapsed_time
+        if getattr(self, 'has_setup', False):
+            elapsed += self.setup.elapsed_time
+        if getattr(self, 'has_teardown', False):
+            elapsed += self.teardown.elapsed_time
         return elapsed
 
     @elapsed_time.setter
@@ -536,6 +539,40 @@ class Try(model.Try, StatusMixin, DeprecatedAttributesMixin):
 
 
 @Body.register
+class Var(model.Var, StatusMixin, DeprecatedAttributesMixin):
+    __slots__ = ['status', 'message', '_start_time', '_end_time', '_elapsed_time']
+    body_class = Body
+
+    def __init__(self, name: str = '',
+                 value: 'str|Sequence[str]' = (),
+                 scope: 'str|None' = None,
+                 separator: 'str|None' = None,
+                 status: str = 'FAIL',
+                 message: str = '',
+                 start_time: 'datetime|str|None' = None,
+                 end_time: 'datetime|str|None' = None,
+                 elapsed_time: 'timedelta|int|float|None' = None,
+                 parent: BodyItemParent = None):
+        super().__init__(name, value, scope, separator, parent)
+        self.status = status
+        self.message = message
+        self.start_time = start_time
+        self.end_time = end_time
+        self.elapsed_time = elapsed_time
+        self.body = ()
+
+    @setter
+    def body(self, body: 'Sequence[BodyItem|DataDict]') -> Body:
+        """Child keywords and messages as a :class:`~.Body` object.
+
+        Typically empty. Only contains something if running VAR has failed
+        due to a syntax error or listeners have logged messages or executed
+        keywords.
+        """
+        return self.body_class(self, body)
+
+
+@Body.register
 class Return(model.Return, StatusMixin, DeprecatedAttributesMixin):
     __slots__ = ['status', 'message', '_start_time', '_end_time', '_elapsed_time']
     body_class = Body
@@ -700,14 +737,6 @@ class Keyword(model.Keyword, StatusMixin):
         self._teardown = None
         self.body = ()
 
-    def _elapsed_time_from_children(self) -> timedelta:
-        elapsed = super()._elapsed_time_from_children()
-        if self.has_setup:
-            elapsed += self.setup.elapsed_time
-        if self.has_teardown:
-            elapsed += self.teardown.elapsed_time
-        return elapsed
-
     @setter
     def body(self, body: 'Sequence[BodyItem|DataDict]') -> Body:
         """Possible keyword body as a :class:`~.Body` object.
@@ -870,22 +899,11 @@ class TestCase(model.TestCase[Keyword], StatusMixin):
                  elapsed_time: 'timedelta|int|float|None' = None,
                  parent: 'TestSuite|None' = None):
         super().__init__(name, doc, tags, timeout, lineno, parent)
-        #: Status as a string ``PASS`` or ``FAIL``. See also :attr:`passed`.
         self.status = status
-        #: Test message. Typically a failure message but can be set also when
-        #: test passes.
         self.message = message
         self.start_time = start_time
         self.end_time = end_time
         self.elapsed_time = elapsed_time
-
-    def _elapsed_time_from_children(self) -> timedelta:
-        elapsed = super()._elapsed_time_from_children()
-        if self.has_setup:
-            elapsed += self.setup.elapsed_time
-        if self.has_teardown:
-            elapsed += self.teardown.elapsed_time
-        return elapsed
 
     @property
     def not_run(self) -> bool:

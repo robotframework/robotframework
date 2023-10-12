@@ -257,6 +257,10 @@ class TestCaseBuilder(NodeVisitor):
         self.test.body.create_keyword(name=node.keyword, args=node.args,
                                       assign=node.assign, lineno=node.lineno)
 
+    def visit_Var(self, node):
+        self.test.body.create_var(node.name, node.value, node.scope, node.separator,
+                                  lineno=node.lineno, error=format_error(node.errors))
+
     def visit_ReturnStatement(self, node):
         self.test.body.create_return(node.values, lineno=node.lineno,
                                      error=format_error(node.errors))
@@ -324,6 +328,10 @@ class KeywordBuilder(NodeVisitor):
         self.kw.body.create_keyword(name=node.keyword, args=node.args,
                                     assign=node.assign, lineno=node.lineno)
 
+    def visit_Var(self, node):
+        self.kw.body.create_var(node.name, node.value, node.scope, node.separator,
+                                  lineno=node.lineno, error=format_error(node.errors))
+
     def visit_ReturnStatement(self, node):
         self.kw.body.create_return(node.values, lineno=node.lineno,
                                    error=format_error(node.errors))
@@ -381,6 +389,10 @@ class ForBuilder(NodeVisitor):
 
     def visit_TemplateArguments(self, node):
         self.model.body.create_keyword(args=node.args, lineno=node.lineno)
+
+    def visit_Var(self, node):
+        self.model.body.create_var(node.name, node.value, node.scope, node.separator,
+                                   lineno=node.lineno, error=format_error(node.errors))
 
     def visit_For(self, node):
         ForBuilder(self.model).build(node)
@@ -457,6 +469,10 @@ class IfBuilder(NodeVisitor):
 
     def visit_TemplateArguments(self, node):
         self.model.body.create_keyword(args=node.args, lineno=node.lineno)
+
+    def visit_Var(self, node):
+        self.model.body.create_var(node.name, node.value, node.scope, node.separator,
+                                   lineno=node.lineno, error=format_error(node.errors))
 
     def visit_For(self, node):
         ForBuilder(self.model).build(node)
@@ -546,6 +562,10 @@ class TryBuilder(NodeVisitor):
         self.model.body.create_keyword(name=node.keyword, args=node.args,
                                        assign=node.assign, lineno=node.lineno)
 
+    def visit_Var(self, node):
+        self.model.body.create_var(node.name, node.value, node.scope, node.separator,
+                                   lineno=node.lineno, error=format_error(node.errors))
+
     def visit_TemplateArguments(self, node):
         self.template_error = 'Templates cannot be used with TRY.'
 
@@ -579,6 +599,10 @@ class WhileBuilder(NodeVisitor):
     def visit_KeywordCall(self, node):
         self.model.body.create_keyword(name=node.keyword, args=node.args,
                                        assign=node.assign, lineno=node.lineno)
+
+    def visit_Var(self, node):
+        self.model.body.create_var(node.name, node.value, node.scope, node.separator,
+                                   lineno=node.lineno, error=format_error(node.errors))
 
     def visit_TemplateArguments(self, node):
         self.model.body.create_keyword(args=node.args, lineno=node.lineno)

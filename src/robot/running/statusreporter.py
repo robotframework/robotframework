@@ -40,7 +40,8 @@ class StatusReporter:
         self.initial_test_status = context.test.status if context.test else None
         if not result.start_time:
             result.start_time = datetime.now()
-        context.start_body_item(self.data, result)
+        if result.type != result.VAR:
+            context.start_body_item(self.data, result)
         if result.type in result.KEYWORD_TYPES:
             self._warn_if_deprecated(result.doc, result.full_name)
         return self
@@ -63,7 +64,8 @@ class StatusReporter:
         if self.initial_test_status == 'PASS':
             context.test.status = result.status
         result.elapsed_time = datetime.now() - result.start_time
-        context.end_body_item(self.data, result)
+        if result.type != result.VAR:
+            context.end_body_item(self.data, result)
         if failure is not exc_val and not self.suppress:
             raise failure
         return self.suppress

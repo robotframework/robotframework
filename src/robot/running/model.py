@@ -41,11 +41,12 @@ from typing import Any, Literal, Mapping, Sequence, TYPE_CHECKING, Union
 from robot import model
 from robot.conf import RobotSettings
 from robot.errors import BreakLoop, ContinueLoop, DataError, ReturnFromKeyword
-from robot.model import (BodyItem, create_fixture, DataDict, ModelObject, TestSuites)
+from robot.model import BodyItem, create_fixture, DataDict, ModelObject, TestSuites
 from robot.output import LOGGER, Output, pyloggingconf
 from robot.result import (Break as BreakResult, Continue as ContinueResult,
-                          Error as ErrorResult, Return as ReturnResult)
+                          Error as ErrorResult, Return as ReturnResult, Var as VarResult)
 from robot.utils import setter
+from robot.variables import VariableResolver
 
 from .bodyrunner import ForRunner, IfRunner, KeywordRunner, TryRunner, WhileRunner
 from .randomizer import Randomizer
@@ -60,8 +61,8 @@ BodyItemParent = Union['TestSuite', 'TestCase', 'UserKeyword', 'For', 'If', 'IfB
                        'Try', 'TryBranch', 'While', None]
 
 
-class Body(model.BaseBody['Keyword', 'For', 'While', 'If', 'Try', 'Return', 'Continue',
-                          'Break', 'model.Message', 'Error']):
+class Body(model.BaseBody['Keyword', 'For', 'While', 'If', 'Try', 'Var', 'Return',
+                          'Continue', 'Break', 'model.Message', 'Error']):
     __slots__ = []
 
 
@@ -256,6 +257,59 @@ class Try(model.Try, WithSource):
 
     def run(self, context, run=True, templated=False):
         return TryRunner(context, run, templated).run(self)
+
+    def to_dict(self) -> DataDict:
+        data = super().to_dict()
+        if self.lineno:
+            data['lineno'] = self.lineno
+        if self.error:
+            data['error'] = self.error
+        return data
+
+
+@Body.register
+class Var(model.Var, WithSource):
+    __slots__ = ['lineno', 'error']
+
+    def __init__(self, name: str = '',
+                 value: 'str|Sequence[str]' = (),
+                 scope: 'str|None' = None,
+                 separator: 'str|None' = None,
+                 parent: BodyItemParent = None,
+                 lineno: 'int|None' = None,
+                 error: 'str|None' = None):
+        super().__init__(name, value, scope, separator, parent)
+        self.lineno = lineno
+        self.error = error
+
+    def run(self, context, run=True, templated=False):
+        result = VarResult(self.name, self.value, self.scope, self.separator)
+        with StatusReporter(self, result, context, run):
+            if run:
+                if self.error:
+                    raise DataError(self.error, syntax=True)
+                if not context.dry_run:
+                    scope = self._get_scope(context.variables)
+                    setter = getattr(context.variables, f'set_{scope}')
+                    resolver = VariableResolver.from_variable(self)
+                    try:
+                        setter(self.name, resolver.resolve(context.variables))
+                    except DataError as err:
+                        raise DataError(f"Setting variable '{self.name} failed: {err}")
+
+    def _get_scope(self, variables):
+        if not self.scope:
+            return 'local'
+        try:
+            scope = variables.replace_string(self.scope)
+            if scope.upper() == 'TASK':
+                return 'test'
+            if scope.upper() in ('GLOBAL', 'SUITE', 'TEST', 'LOCAL'):
+                return scope.lower()
+            raise DataError(f"Value '{scope}' is not accepted. Valid values are "
+                            f"'GLOBAL', 'SUITE', 'TEST', 'TASK' and 'LOCAL'.")
+        except DataError as err:
+            raise DataError(f"Invalid VAR scope: {err}")
 
     def to_dict(self) -> DataDict:
         data = super().to_dict()

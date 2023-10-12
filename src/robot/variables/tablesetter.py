@@ -23,7 +23,7 @@ from .resolvable import Resolvable
 from .search import is_assign, is_list_variable, is_dict_variable
 
 if TYPE_CHECKING:
-    from robot.running.model import Variable
+    from robot.running.model import Var, Variable
 
 
 class VariableTableSetter:
@@ -67,11 +67,11 @@ class VariableResolver(Resolvable):
         return klass(value, error_reporter)
 
     @classmethod
-    def from_variable(cls, var: 'Variable') -> 'VariableResolver':
+    def from_variable(cls, var: 'Var|Variable') -> 'VariableResolver':
         if var.error:
             raise DataError(var.error)
         return cls.from_name_and_value(var.name, var.value, var.separator,
-                                       var.report_error)
+                                       getattr(var, 'report_error', None))
 
     def resolve(self, variables):
         with self._avoid_recursion:

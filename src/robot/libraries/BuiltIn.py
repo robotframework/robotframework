@@ -1672,7 +1672,7 @@ class _Variables(_BuiltInBase):
         """
         name = self._get_var_name(name)
         value = self._get_var_value(name, values)
-        self._variables.set_local_variable(name, value)
+        self._variables.set_local(name, value)
         self._log_set_variable(name, value)
 
     @run_keyword_variant(resolve=0)
