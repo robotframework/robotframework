@@ -1,9 +1,9 @@
-*Setting*  Value  Value  Value  Value
+*Settings*  Value  Value  Value  Value
 
 Resource   robot_resource2.robot      
 
 
-*Variable*  Value  Value  Value  Value
+*Variables*  Value  Value  Value  Value
 ${ROBOT RESOURCE VAR}  ROBOT Resource Variable      
 
 

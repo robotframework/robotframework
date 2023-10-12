@@ -1,8 +1,8 @@
-*** Variable ***
+*** Variables ***
 ${EXPECTED FAILURE}    Expected failure
 ${TEARDOWN MESSAGE}    Teardown message
 
-*** Test Case ***
+*** Test Cases ***
 Run Keyword If Test Failed when test fails
     [Documentation]    FAIL Expected failure
     Fail    ${EXPECTED FAILURE}
@@ -144,7 +144,7 @@ Continuable Failure In Teardown
     No Operation
     [Teardown]    Continuable Failure In Teardown
 
-*** Keyword ***
+*** Keywords ***
 Run Keyword If Test Failed in user keyword
     Log    Want to have some keyword before Run Keyword If Test Failed
     Run Keyword If Test Failed    Fail    Apparently test failed!

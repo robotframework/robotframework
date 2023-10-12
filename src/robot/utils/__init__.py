@@ -33,6 +33,8 @@ or::
     assert Matcher('H?llo').match('Hillo')
 """
 
+import warnings
+
 from .argumentparser import ArgumentParser, cmdline2list
 from .application import Application
 from .compress import compress_text
@@ -52,6 +54,7 @@ from .match import eq, Matcher, MultiMatcher
 from .misc import (classproperty, isatty, parse_re_flags, plural_or_not,
                    printable_name, seq2str, seq2str2, test_or_task)
 from .normalizing import normalize, normalize_whitespace, NormalizedDict
+from .notset import NOT_SET
 from .platform import PY_VERSION, PYPY, UNIXY, WINDOWS, RERAISED_EXCEPTIONS
 from .recommendations import RecommendationFinder
 from .robotenv import get_env_var, set_env_var, del_env_var, get_env_vars
@@ -61,7 +64,7 @@ from .robotpath import abspath, find_file, get_link_path, normpath
 from .robottime import (elapsed_time_to_string, format_time, get_elapsed_time,
                         get_time, get_timestamp, secs_to_timestamp,
                         secs_to_timestr, timestamp_to_secs, timestr_to_secs,
-                        parse_time)
+                        parse_time, parse_timestamp)
 from .robottypes import (has_args, is_bytes, is_dict_like, is_falsy, is_integer,
                          is_list_like, is_number, is_pathlike, is_string, is_truthy,
                          is_union, type_name, type_repr, typeddict_types)
@@ -79,37 +82,49 @@ def read_rest_data(rstfile):
     return read_rest_data(rstfile)
 
 
-# Quietly deprecated utils. Should be deprecated loudly in RF 7.0.
-# https://github.com/robotframework/robotframework/issues/4501
-
-from .robottypes import FALSE_STRINGS, TRUE_STRINGS
-
-
-# Deprecated Python 2/3 compatibility layer. Not needed by Robot Framework itself
-# after RF 5.0 when Python 2 support was dropped. Should be deprecated loudly in
-# RF 7.0. Notice that there's also `PY2` in the `platform` submodule.
-# https://github.com/robotframework/robotframework/issues/4501
-
-from io import StringIO
+def unic(item):
+    # Cannot be deprecated using '__getattr__' because a module with same name exists.
+    warnings.warn("'robot.utils.unic' is deprecated and will be removed in "
+                  "Robot Framework 8.0.")
+    return safe_str(item)
 
 
-PY3 = True
-PY2 = JYTHON = IRONPYTHON = False
-is_unicode = is_string
-unicode = str
-unic = safe_str
-roundup = round
+def __getattr__(name):
+    # Deprecated utils mostly related to the old Python 2/3 compatibility layer.
+    # See also 'unic' above 'PY2' in the 'platform' module. TODO: Remove in RF 8.0.
+    # https://github.com/robotframework/robotframework/issues/4501
 
+    from io import StringIO
+    from .robottypes import FALSE_STRINGS, TRUE_STRINGS
 
-def py2to3(cls):
-    """Deprecated since RF 5.0. Use Python 3 features directly instead."""
-    if hasattr(cls, '__unicode__'):
-        cls.__str__ = lambda self: self.__unicode__()
-    if hasattr(cls, '__nonzero__'):
-        cls.__bool__ = lambda self: self.__nonzero__()
-    return cls
+    def py2to3(cls):
+        if hasattr(cls, '__unicode__'):
+            cls.__str__ = lambda self: self.__unicode__()
+        if hasattr(cls, '__nonzero__'):
+            cls.__bool__ = lambda self: self.__nonzero__()
+        return cls
 
+    def py3to2(cls):
+        return cls
 
-def py3to2(cls):
-    """Deprecated since RF 5.0. Never done anything when used on Python 3."""
-    return cls
+    deprecated = {
+        'FALSE_STRINGS': FALSE_STRINGS,
+        'TRUE_STRINGS': TRUE_STRINGS,
+        'StringIO': StringIO,
+        'PY3': True,
+        'PY2': False,
+        'JYTHON': False,
+        'IRONPYTHON': False,
+        'is_unicode': is_string,
+        'unicode': str,
+        'roundup': round,
+        'py2to3': py2to3,
+        'py3to2': py3to2,
+    }
+
+    if name in deprecated:
+        warnings.warn(f"'robot.utils.{name}' is deprecated and will be removed in "
+                      f"Robot Framework 8.0.")
+        return deprecated[name]
+
+    raise AssertionError(f"'robot.utils' has no attribute '{name}'.")

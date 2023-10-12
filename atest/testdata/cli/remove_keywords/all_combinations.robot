@@ -13,7 +13,7 @@ ${KEPT BY NAME MESSAGE}    +BYNAME -ALL
 ${REMOVED BY PATTERN MESSAGE}    -BYPATTERN -ALL
 ${KEPT BY PATTERN MESSAGE}    +BYPATTERN -ALL
 
-*** Test Case ***
+*** Test Cases ***
 Passing
     Log    ${PASS MESSAGE}
 
@@ -123,7 +123,7 @@ My WUKS
 Remove By Name
     [Arguments]    ${whatever}=default
     Log    ${REMOVED BY NAME MESSAGE}
-    [Return]    ${whatever}
+    RETURN    ${whatever}
 
 Do not remove by name
     Remove By Name
@@ -132,7 +132,7 @@ Do not remove by name
 This should be removed
     [Arguments]    ${whatever}=default
     Log    ${REMOVED BY PATTERN MESSAGE}
-    [Return]    ${whatever}
+    RETURN    ${whatever}
 
 This should be removed also
     Log    ${REMOVED BY PATTERN MESSAGE}

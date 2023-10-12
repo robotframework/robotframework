@@ -79,4 +79,4 @@ FAIL is not valid log level
 Get Expected Bytes
     [Arguments]    ${string}
     ${bytes} =    Encode String To Bytes    ${string}    ${CONSOLE_ENCODING}
-    [Return]    b'${bytes}'
+    RETURN    b'${bytes}'

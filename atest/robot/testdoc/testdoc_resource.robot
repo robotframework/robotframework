@@ -9,7 +9,7 @@ ${OUTFILE}          %{TEMPDIR}/testdoc-output.html
 ${ARGFILE 1}        %{TEMPDIR}/testdoc_argfile_1.txt
 ${ARGFILE 2}        %{TEMPDIR}/testdoc_argfile_2.txt
 
-*** Keyword ***
+*** Keywords ***
 Run TestDoc
     [Arguments]    @{args}    ${rc}=0    ${remove_outfile}=True
     Run Keyword If    ${remove outfile}    Remove File    ${OUTFILE}

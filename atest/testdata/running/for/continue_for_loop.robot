@@ -120,7 +120,7 @@ With Continuable Failure In User Keyword
     Should Be Equal    ${var}    ö
     Fail    The End
 
-*** Keyword ***
+*** Keywords ***
 With Loop
     FOR    ${var}    IN    one    two
         Continue For Loop

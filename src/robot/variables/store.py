@@ -14,14 +14,12 @@
 #  limitations under the License.
 
 from robot.errors import DataError, VariableError
-from robot.utils import DotDict, is_dict_like, is_list_like, NormalizedDict, type_name
+from robot.utils import (DotDict, is_dict_like, is_list_like, NormalizedDict, NOT_SET,
+                         type_name)
 
 from .notfound import variable_not_found
 from .resolvable import GlobalVariableValue, Resolvable
 from .search import is_assign
-
-
-NOT_SET = object()
 
 
 class VariableStore:
@@ -48,7 +46,7 @@ class VariableStore:
             # Recursive resolving may have already removed variable.
             if name in self.data:
                 self.data.pop(name)
-                value.report_error(err)
+                value.report_error(str(err))
             variable_not_found('${%s}' % name, self.data)
         return self.data[name]
 

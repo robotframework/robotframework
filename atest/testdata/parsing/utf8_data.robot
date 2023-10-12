@@ -1,16 +1,16 @@
 U T F 8   D A T A
 
-***Setting***
+*** Settings ***
 Documentation   Testing that reading and writing of Unicode (äöå §½€ etc.) works properly.
 Default Tags    tag-äöå
 Force Tags      tag-§
 MetaData        Ä         §
 
-|      *Variable*     | *Value* |
+|    * Variables *    | *Value* |
 | ${UNICODE}          | äöå §½€ |
 | ${UTF NAME öäå §½€} | value   |
 
-**Test Cases***
+*** Test Cases ***
 UTF-8   [Documentation]  äöå §½€
         [Setup]          Log  äöå
         [Tags]           tag-€
@@ -35,4 +35,4 @@ UTF-8 Name Äöå §½€"
 |                 | Log         | ${value}   |
 |                 | Log         | ${UNICODE} |
 |                 | Log         | §½€        |
-| Äöå §½€         | [Return]    | äöå §½€    |
+| Äöå §½€         | RETURN      | äöå §½€    |

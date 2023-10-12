@@ -1,11 +1,11 @@
-*** Setting ***
+*** Settings ***
 Suite Teardown    Run Keyword If All Tests Passed    My Teardown
 Default Tags      critical
 
-*** Variable ***
+*** Variables ***
 ${MESSAGE}        Suite teardown message
 
-*** Test Case ***
+*** Test Cases ***
 Passing Critical
     No Operation
 
@@ -13,6 +13,6 @@ Passing Non-critical
     [Tags]    non-critical
     No Operation
 
-*** Keyword ***
+*** Keywords ***
 My Teardown
     Log    ${MESSAGE}

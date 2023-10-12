@@ -36,12 +36,13 @@ def cut_long_message(msg):
     if MAX_ERROR_LINES is None:
         return msg
     lines = msg.splitlines()
-    lengths = _count_line_lengths(lines)
+    lengths = [_get_virtual_line_length(line) for line in lines]
     if sum(lengths) <= MAX_ERROR_LINES:
         return msg
     start = _prune_excess_lines(lines, lengths)
     end = _prune_excess_lines(lines, lengths, from_end=True)
     return '\n'.join(start + [_ERROR_CUT_EXPLN] + end)
+
 
 def _prune_excess_lines(lines, lengths, from_end=False):
     if from_end:
@@ -60,6 +61,7 @@ def _prune_excess_lines(lines, lengths, from_end=False):
         ret.reverse()
     return ret
 
+
 def _cut_long_line(line, used, from_end):
     available_lines = MAX_ERROR_LINES // 2 - used
     available_chars = available_lines * _MAX_ERROR_LINE_LENGTH - 3
@@ -70,10 +72,8 @@ def _cut_long_line(line, used, from_end):
             line = '...' + line[-available_chars:]
     return line
 
-def _count_line_lengths(lines):
-    return [ _count_virtual_line_length(line) for line in lines ]
 
-def _count_virtual_line_length(line):
+def _get_virtual_line_length(line):
     if not line:
         return 1
     lines, remainder = divmod(len(line), _MAX_ERROR_LINE_LENGTH)
@@ -87,6 +87,7 @@ def format_assign_message(variable, value, items=None, cut_long=True):
         value = cut_assign_value(value)
     decorated_items = ''.join(f'[{item}]' for item in items) if items else ''
     return f'{variable}{decorated_items} = {value}'
+
 
 def _dict_to_str(d):
     if not d:
@@ -114,9 +115,11 @@ def pad_console_length(text, width):
         text = _lose_width(text, diff+3) + '...'
     return _pad_width(text, width)
 
+
 def _pad_width(text, width):
     more = width - get_console_length(text)
     return text + ' ' * more
+
 
 def _lose_width(text, diff):
     lost = 0

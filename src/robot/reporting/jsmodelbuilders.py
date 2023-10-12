@@ -14,10 +14,10 @@
 #  limitations under the License.
 
 from robot.output import LEVELS
+from robot.result import Error, Keyword, Return
 
 from .jsbuildingcontext import JsBuildingContext
 from .jsexecutionresult import JsExecutionResult
-
 
 STATUSES = {'FAIL': 0, 'PASS': 1, 'SKIP': 2, 'NOT RUN': 3}
 KEYWORD_TYPES = {'KEYWORD': 0, 'SETUP': 1, 'TEARDOWN': 2,
@@ -49,7 +49,7 @@ class JsModelBuilder:
 
 class _Builder:
 
-    def __init__(self, context):
+    def __init__(self, context: JsBuildingContext):
         self._context = context
         self._string = self._context.string
         self._html = self._context.html
@@ -57,9 +57,9 @@ class _Builder:
 
     def _get_status(self, item):
         model = (STATUSES[item.status],
-                 self._timestamp(item.starttime),
-                 item.elapsedtime)
-        msg = getattr(item, 'message', '')
+                 self._timestamp(item.start_time),
+                 round(item.elapsed_time.total_seconds() * 1000))
+        msg = item.message
         if not msg:
             return model
         elif msg.startswith('*HTML*'):
@@ -68,9 +68,9 @@ class _Builder:
             msg = self._string(msg)
         return model + (msg,)
 
-    def _build_keywords(self, steps, split=False):
+    def _build_body(self, steps, split=False):
         splitting = self._context.start_splitting_if_needed(split)
-        # tuple([<listcomp>>]) is faster than tuple(<genex>) with short lists.
+        # tuple([<listcomp>]) is faster than tuple(<genex>) with short lists.
         model = tuple([self._build_keyword(step) for step in steps])
         return model if not splitting else self._context.end_splitting(model)
 
@@ -118,16 +118,16 @@ class TestBuilder(_Builder):
         self._build_keyword = KeywordBuilder(context).build
 
     def build(self, test):
-        kws = self._get_keywords(test)
+        items = self._get_body_items(test)
         with self._context.prune_input(test.body):
             return (self._string(test.name, attr=True),
                     self._string(test.timeout),
                     self._html(test.doc),
                     tuple(self._string(t) for t in test.tags),
                     self._get_status(test),
-                    self._build_keywords(kws, split=True))
+                    self._build_body(items, split=True))
 
-    def _get_keywords(self, test):
+    def _get_body_items(self, test):
         kws = []
         if test.setup:
             kws.append(test.setup)
@@ -147,24 +147,39 @@ class KeywordBuilder(_Builder):
     def build(self, item, split=False):
         if item.type == item.MESSAGE:
             return self._build_message(item)
-        return self.build_keyword(item, split)
+        return self.build_body_item(item, split)
 
-    def build_keyword(self, kw, split=False):
-        self._context.check_expansion(kw)
-        items = kw.body.flatten()
-        if getattr(kw, 'has_teardown', False):
-            items.append(kw.teardown)
-        with self._context.prune_input(kw.body):
-            return (KEYWORD_TYPES[kw.type],
-                    self._string(kw.kwname, attr=True),
-                    self._string(kw.libname, attr=True),
-                    self._string(kw.timeout),
-                    self._html(kw.doc),
-                    self._string(', '.join(kw.args)),
-                    self._string(', '.join(kw.assign)),
-                    self._string(', '.join(kw.tags)),
-                    self._get_status(kw),
-                    self._build_keywords(items, split))
+    def build_body_item(self, item, split=False):
+        with self._context.prune_input(item.body):
+            if isinstance (item, Keyword):
+                self._context.check_expansion(item)
+                body = item.body.flatten()
+                if item.has_setup:
+                    body.insert(0, item.setup)
+                if item.has_teardown:
+                    body.append(item.teardown)
+                return self._build(item, item.name, item.owner, item.timeout, item.doc, item.args,
+                                   item.assign, item.tags, body, split=split)
+            if isinstance(item, Return):
+                return self._build(item, args=item.values, split=split)
+            if isinstance(item, Error):
+                return self._build(item, item._name, args=item.values[1:], split=split)
+            return self._build(item, item._name, split=split)
+
+    def _build(self, item, name='', owner='', timeout='', doc='', args=(), assign=(),
+               tags=(), body=None, split =False):
+        if body is None:
+            body = item.body.flatten()
+        return (KEYWORD_TYPES[item.type],
+                self._string(name, attr=True),
+                self._string(owner, attr=True),
+                self._string(timeout),
+                self._html(doc),
+                self._string(', '.join(args)),
+                self._string(', '.join(assign)),
+                self._string(', '.join(tags)),
+                self._get_status(item),
+                self._build_body(body, split))
 
 
 class MessageBuilder(_Builder):

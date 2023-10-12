@@ -46,8 +46,8 @@ Embedded Keyword Arguments
 
 Name starting with an underscore is OK
     ${tc} =    Check Test Case    ${TESTNAME}
-    Should be equal    ${tc.kws[0].name}    GetKeywordNamesLibrary.Starting With Underscore Is Ok
-    Check log message    ${tc.kws[0].msgs[0]}    This is explicitly returned from 'get_keyword_names' anyway.
+    Check Keyword Data    ${tc.body[0]}            GetKeywordNamesLibrary.Starting With Underscore Is Ok
+    Check Log Message     ${tc.body[0].msgs[0]}    This is explicitly returned from 'get_keyword_names' anyway.
 
 Invalid get_keyword_names
     Error in file    3    test_libraries/hybrid_library.robot    3

@@ -357,6 +357,12 @@ function addExecutionLog(main) {
           <th>Start / End / Elapsed:</th>
           <td>${times.startTime} / ${times.endTime} / ${times.elapsedTime}</td>
         </tr>
+        {{if message()}}
+        <tr>
+          <th>Message:</th>
+          <td class="message">{{html message()}}</td>
+        </tr>
+        {{/if}}
       </table>
     </div>
   </div>

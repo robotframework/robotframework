@@ -60,17 +60,17 @@ Modifiers are used before normal configuration
 Modify FOR
     [Setup]    Modify FOR and IF
     ${tc} =    Check Test Case    FOR IN RANGE
-    Should Be Equal      ${tc.body[0].flavor}                        IN
-    Should Be Equal      ${tc.body[0].values}                        ${{('FOR', 'is', 'modified!')}}
-    Should Be Equal      ${tc.body[0].body[0].variables['\${i}']}    0 (modified)
-    Should Be Equal      ${tc.body[0].body[0].variables['\${x}']}    new
-    Check Log Message    ${tc.body[0].body[0].body[0].msgs[0]}       0
-    Should Be Equal      ${tc.body[0].body[1].variables['\${i}']}    1 (modified)
-    Should Be Equal      ${tc.body[0].body[1].variables['\${x}']}    new
-    Check Log Message    ${tc.body[0].body[1].body[0].msgs[0]}       1
-    Should Be Equal      ${tc.body[0].body[2].variables['\${i}']}    2 (modified)
-    Should Be Equal      ${tc.body[0].body[2].variables['\${x}']}    new
-    Check Log Message    ${tc.body[0].body[2].body[0].msgs[0]}       2
+    Should Be Equal      ${tc.body[0].flavor}                     IN
+    Should Be Equal      ${tc.body[0].values}                     ${{('FOR', 'is', 'modified!')}}
+    Should Be Equal      ${tc.body[0].body[0].assign['\${i}']}    0 (modified)
+    Should Be Equal      ${tc.body[0].body[0].assign['\${x}']}    new
+    Check Log Message    ${tc.body[0].body[0].body[0].msgs[0]}    0
+    Should Be Equal      ${tc.body[0].body[1].assign['\${i}']}    1 (modified)
+    Should Be Equal      ${tc.body[0].body[1].assign['\${x}']}    new
+    Check Log Message    ${tc.body[0].body[1].body[0].msgs[0]}    1
+    Should Be Equal      ${tc.body[0].body[2].assign['\${i}']}    2 (modified)
+    Should Be Equal      ${tc.body[0].body[2].assign['\${x}']}    new
+    Check Log Message    ${tc.body[0].body[2].body[0].msgs[0]}    2
 
 Modify IF
     [Setup]    Should Be Equal    ${PREV TEST NAME}    Modify FOR

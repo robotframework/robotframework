@@ -1,23 +1,23 @@
-import unittest
-import tempfile
 import inspect
-import shutil
-import sys
 import os
 import re
-from os.path import basename, dirname, exists, join, normpath
+import shutil
+import sys
+import tempfile
+import unittest
+from pathlib import Path
 
 from robot.errors import DataError
 from robot.utils import abspath, WINDOWS
-from robot.utils.importer import Importer, ByPathImporter
-from robot.utils.asserts import (assert_equal, assert_true, assert_raises,
-                                 assert_raises_with_msg)
+from robot.utils.asserts import (assert_equal, assert_raises, assert_raises_with_msg,
+                                 assert_true)
+from robot.utils.importer import ByPathImporter, Importer
 
 
-CURDIR = dirname(abspath(__file__))
-LIBDIR = normpath(join(CURDIR, '..', '..', 'atest', 'testresources', 'testlibs'))
-TEMPDIR = tempfile.gettempdir()
-TESTDIR = join(TEMPDIR, 'robot-importer-testing')
+CURDIR = Path(__file__).absolute().parent
+LIBDIR = CURDIR.parent.parent / 'atest/testresources/testlibs'
+TEMPDIR = Path(tempfile.gettempdir())
+TESTDIR = TEMPDIR / 'robot-importer-testing'
 WINDOWS_PATH_IN_ERROR = re.compile(r"'\w:\\")
 
 
@@ -29,15 +29,14 @@ def assert_prefix(error, expected):
 
 
 def create_temp_file(name, attr=42, extra_content=''):
-    if not exists(TESTDIR):
-        os.mkdir(TESTDIR)
-    path = join(TESTDIR, name)
+    TESTDIR.mkdir(exist_ok=True)
+    path = TESTDIR / name
     with open(path, 'w') as file:
-        file.write('''
-attr = %r
+        file.write(f'''
+attr = {attr}
 def func():
     return attr
-''' % attr)
+''')
         file.write(extra_content)
     return path
 
@@ -69,7 +68,7 @@ class TestImportByPath(unittest.TestCase):
         self.tearDown()
 
     def tearDown(self):
-        if exists(TESTDIR):
+        if TESTDIR.exists():
             shutil.rmtree(TESTDIR)
 
     def test_python_file(self):
@@ -79,9 +78,8 @@ class TestImportByPath(unittest.TestCase):
 
     def test_python_directory(self):
         create_temp_file('__init__.py')
-        module_name = basename(TESTDIR)
-        self._import_and_verify(TESTDIR, remove=module_name)
-        self._assert_imported_message(module_name, TESTDIR)
+        self._import_and_verify(TESTDIR, remove=TESTDIR.name)
+        self._assert_imported_message(TESTDIR.name, TESTDIR)
 
     def test_import_same_file_multiple_times(self):
         path = create_temp_file('test.py')
@@ -96,13 +94,13 @@ class TestImportByPath(unittest.TestCase):
         path1 = create_temp_file('test.py', attr=1)
         self._import_and_verify(path1, attr=1, remove='test')
         self._assert_imported_message('test', path1)
-        path2 = join(TESTDIR, 'test')
-        os.mkdir(path2)
-        create_temp_file(join(path2, '__init__.py'), attr=2)
+        path2 = TESTDIR / 'test'
+        path2.mkdir()
+        create_temp_file(path2 / '__init__.py', attr=2)
         self._import_and_verify(path2, attr=2, directory=path2)
         self._assert_removed_message('test')
         self._assert_imported_message('test', path2, index=1)
-        path3 = create_temp_file(join(path2, 'test.py'), attr=3)
+        path3 = create_temp_file(path2 / 'test.py', attr=3)
         self._import_and_verify(path3, attr=3, directory=path2)
         self._assert_removed_message('test')
         self._assert_imported_message('test', path3, index=1)
@@ -122,7 +120,7 @@ class test:
     def test_invalid_python_file(self):
         path = create_temp_file('test.py', extra_content='invalid content')
         error = assert_raises(DataError, self._import_and_verify, path, remove='test')
-        assert_prefix(error, "Importing '%s' failed: SyntaxError:" % path)
+        assert_prefix(error, f"Importing '{path}' failed: SyntaxError:")
 
     def _import_and_verify(self, path, attr=42, directory=TESTDIR,
                            name=None, remove=None):
@@ -130,7 +128,7 @@ class test:
         assert_equal(module.attr, attr)
         assert_equal(module.func(), attr)
         if hasattr(module, '__file__'):
-            assert_equal(dirname(abspath(module.__file__)), directory)
+            assert_true(Path(module.__file__).parent.samefile(directory))
 
     def _import(self, path, name=None, remove=None):
         if remove and remove in sys.modules:
@@ -144,11 +142,11 @@ class test:
             assert_equal(sys.path, sys_path_before)
 
     def _assert_imported_message(self, name, source, type='module', index=0):
-        msg = "Imported %s '%s' from '%s'." % (type, name, source)
+        msg = f"Imported {type} '{name}' from '{source}'."
         self.logger.assert_message(msg, index=index)
 
     def _assert_removed_message(self, name, index=0):
-        msg = "Removed module '%s' from sys.modules to import fresh module." % name
+        msg = f"Removed module '{name}' from sys.modules to import fresh module."
         self.logger.assert_message(msg, index=index)
 
 
@@ -158,13 +156,13 @@ class TestInvalidImportPath(unittest.TestCase):
         path = 'non-existing.py'
         assert_raises_with_msg(
             DataError,
-            "Importing '%s' failed: File or directory does not exist." % path,
+            f"Importing '{path}' failed: File or directory does not exist.",
             Importer().import_class_or_module_by_path, path
         )
         path = abspath(path)
         assert_raises_with_msg(
             DataError,
-            "Importing test file '%s' failed: File or directory does not exist." % path,
+            f"Importing test file '{path}' failed: File or directory does not exist.",
             Importer('test file').import_class_or_module_by_path, path
         )
 
@@ -172,25 +170,25 @@ class TestInvalidImportPath(unittest.TestCase):
         path = os.listdir('.')[0]
         assert_raises_with_msg(
             DataError,
-            "Importing '%s' failed: Import path must be absolute." % path,
+            f"Importing '{path}' failed: Import path must be absolute.",
             Importer().import_class_or_module_by_path, path
         )
         assert_raises_with_msg(
             DataError,
-            "Importing file '%s' failed: Import path must be absolute." % path,
+            f"Importing file '{path}' failed: Import path must be absolute.",
             Importer('file').import_class_or_module_by_path, path
         )
 
     def test_invalid_format(self):
-        path = join(CURDIR, '..', '..', 'README.rst')
+        path = CURDIR / '../../README.rst'
         assert_raises_with_msg(
             DataError,
-            "Importing '%s' failed: Not a valid file or directory to import." % path,
+            f"Importing '{path}' failed: Not a valid file or directory to import.",
             Importer().import_class_or_module_by_path, path
         )
         assert_raises_with_msg(
             DataError,
-            "Importing xxx '%s' failed: Not a valid file or directory to import." % path,
+            f"Importing xxx '{path}' failed: Not a valid file or directory to import.",
             Importer('xxx').import_class_or_module_by_path, path
         )
 
@@ -255,37 +253,37 @@ class TestImportClassOrModule(unittest.TestCase):
 
     def test_import_file_by_path(self):
         import module_library as expected
-        module = self._import_module(join(LIBDIR, 'module_library.py'))
+        module = self._import_module(LIBDIR / 'module_library.py')
         assert_equal(module.__name__, expected.__name__)
-        assert_equal(dirname(normpath(module.__file__)),
-                     dirname(normpath(expected.__file__)))
+        assert_equal(Path(module.__file__).resolve().parent,
+                     Path(expected.__file__).resolve().parent)
         assert_equal(dir(module), dir(expected))
 
     def test_import_class_from_file_by_path(self):
-        klass = self._import_class(join(LIBDIR, 'ExampleLibrary.py'))
+        klass = self._import_class(LIBDIR / 'ExampleLibrary.py')
         assert_equal(klass().return_string_from_library('test'), 'test')
 
     def test_invalid_file_by_path(self):
-        path = join(TEMPDIR, 'robot_import_invalid_test_file.py')
+        path = TEMPDIR / 'robot_import_invalid_test_file.py'
         try:
             with open(path, 'w') as file:
                 file.write('invalid content')
             error = assert_raises(DataError, self._import, path)
-            assert_prefix(error, "Importing '%s' failed: SyntaxError:" % path)
+            assert_prefix(error, f"Importing '{path}' failed: SyntaxError:")
         finally:
             os.remove(path)
 
     def test_logging_when_importing_module(self):
         logger = LoggerStub(remove_extension=True)
         self._import_module('classes', 'test library', logger)
-        logger.assert_message("Imported test library module 'classes' from '%s'."
-                              % join(LIBDIR, 'classes'))
+        logger.assert_message(f"Imported test library module 'classes' from "
+                              f"'{LIBDIR / 'classes'}'.")
 
     def test_logging_when_importing_python_class(self):
         logger = LoggerStub(remove_extension=True)
         self._import_class('ExampleLibrary', logger=logger)
-        logger.assert_message("Imported class 'ExampleLibrary' from '%s'."
-                              % join(LIBDIR, 'ExampleLibrary'))
+        logger.assert_message(f"Imported class 'ExampleLibrary' from "
+                              f"'{LIBDIR / 'ExampleLibrary'}'.")
 
     def _import_module(self, name, type=None, logger=None):
         module = self._import(name, type, logger)
@@ -310,8 +308,8 @@ class TestImportModule(unittest.TestCase):
     def test_logging(self):
         logger = LoggerStub(remove_extension=True)
         Importer(logger=logger).import_module('ExampleLibrary')
-        logger.assert_message("Imported module 'ExampleLibrary' from '%s'."
-                              % join(LIBDIR, 'ExampleLibrary'))
+        logger.assert_message(f"Imported module 'ExampleLibrary' from "
+                              f"'{LIBDIR / 'ExampleLibrary'}'.")
 
 
 class TestErrorDetails(unittest.TestCase):
@@ -327,10 +325,10 @@ class TestErrorDetails(unittest.TestCase):
             error = self._failing_import(path)
         finally:
             shutil.rmtree(TESTDIR)
-        assert_equal(self._get_traceback(error), '''\
+        assert_equal(self._get_traceback(error), f'''\
 Traceback (most recent call last):
-  File "%s", line 5, in <module>
-    import nonex''' % path)
+  File "{path}", line 5, in <module>
+    import nonex''')
 
     def test_pythonpath(self):
         error = self._failing_import('NoneExisting')
@@ -340,7 +338,7 @@ Traceback (most recent call last):
             assert_true(line.startswith('  '))
 
     def test_non_ascii_entry_in_pythonpath(self):
-        sys.path.append('hyv\xe4')
+        sys.path.append('hyvä')
         try:
             error = self._failing_import('NoneExisting')
         finally:
@@ -380,9 +378,9 @@ Traceback (most recent call last):
 class TestSplitPathToModule(unittest.TestCase):
 
     def _verify(self, file_name, expected_name):
-        path = abspath(file_name)
+        path = Path(file_name).absolute()
         actual = ByPathImporter(None)._split_path_to_module(path)
-        assert_equal(actual, (dirname(path), expected_name))
+        assert_equal(actual, (str(path.parent), expected_name))
 
     def test_normal_file(self):
         self._verify('hello.py', 'hello')
@@ -399,7 +397,7 @@ class TestInstantiation(unittest.TestCase):
         self.tearDown()
 
     def tearDown(self):
-        if exists(TESTDIR):
+        if TESTDIR.exists():
             shutil.rmtree(TESTDIR)
 
     def test_when_importing_by_name(self):
@@ -465,17 +463,18 @@ class conversion:
         assert_equal(lib.arg, 42)
         assert_raises_with_msg(
             DataError,
-            "Importing xxx '%s' failed: "
-            "Argument 'arg' got value 'invalid' that cannot be converted to integer." % path,
+            f"Importing xxx '{path}' failed: "
+            f"Argument 'arg' got value 'invalid' that cannot be converted to integer.",
             Importer('XXX').import_class_or_module, path, ['invalid']
         )
 
     def test_modules_do_not_take_arguments(self):
         path = create_temp_file('no_args_allowed.py')
-        assert_raises_with_msg(DataError,
-                               "Importing '%s' failed: Modules do not take arguments." % path,
-                               Importer().import_class_or_module_by_path,
-                               path, ['invalid'])
+        assert_raises_with_msg(
+            DataError,
+            f"Importing '{path}' failed: Modules do not take arguments.",
+            Importer().import_class_or_module_by_path, path, ['invalid']
+        )
 
 
 if __name__ == '__main__':

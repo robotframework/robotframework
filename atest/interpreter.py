@@ -104,5 +104,9 @@ class Interpreter:
     def testdoc(self):
         return self.interpreter + [str(ROBOT_DIR / 'testdoc.py')]
 
+    @property
+    def underline(self):
+        return '-' * len(str(self))
+
     def __str__(self):
         return f'{self.name} {self.version} on {self.os}'

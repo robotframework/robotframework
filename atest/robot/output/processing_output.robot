@@ -50,7 +50,6 @@ My Run Robot And Rebot
 
 Check Normal Suite Defaults
     [Arguments]    ${suite}    ${message}=    ${setup}=${None}    ${teardown}=${None}
-    Log    ${suite.name}
     Check Suite Defaults    ${suite}    ${message}    ${setup}    ${teardown}
     Check Normal Suite Times    ${suite}
 
@@ -61,22 +60,21 @@ Check Minimal Suite Defaults
 
 Check Normal Suite Times
     [Arguments]    ${suite}
-    Timestamp Should Be Valid    ${suite.starttime}
-    Timestamp Should Be Valid    ${suite.endtime}
-    Elapsed Time Should Be Valid    ${suite.elapsedtime}
-    Should Be True    ${suite.elapsedtime} >= 1
+    Timestamp Should Be Valid       ${suite.start_time}
+    Timestamp Should Be Valid       ${suite.end_time}
+    Elapsed Time Should Be Valid    ${suite.elapsed_time}    minimum=0.001
 
 Check Minimal Suite Times
     [Arguments]    ${suite}
-    Should Be Equal    ${suite.starttime}      ${NONE}
-    Should Be Equal    ${suite.endtime}        ${NONE}
-    Should Be Equal    ${suite.elapsedtime}    ${0}
+    Should Be Equal           ${suite.start_time}      ${NONE}
+    Should Be Equal           ${suite.end_time}        ${NONE}
+    Elapsed Time Should Be    ${suite.elapsed_time}    0
 
 Check Suite Defaults
     [Arguments]    ${suite}    ${message}=    ${setup}=${None}    ${teardown}=${None}
-    Should Be Equal    ${suite.message}          ${message}
-    Should Be Equal    ${suite.setup.name}       ${setup}
-    Should Be Equal    ${suite.teardown.name}    ${teardown}
+    Should Be Equal    ${suite.message}               ${message}
+    Should Be Equal    ${suite.setup.full_name}       ${setup}
+    Should Be Equal    ${suite.teardown.full_name}    ${teardown}
 
 Check Suite Got From Misc/suites/ Directory
     Check Normal Suite Defaults    ${SUITE}    teardown=BuiltIn.Log

@@ -13,8 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from copy import copy
 import inspect
+from copy import copy
 
 from robot.utils import (getdoc, getshortdoc, is_list_like, normpath, printable_name,
                          split_tags_from_doc, type_name)
@@ -91,15 +91,15 @@ class _RunnableHandler:
         return self._doc
 
     @property
-    def longname(self):
+    def full_name(self):
         return f'{self.library.name}.{self.name}'
 
     @property
-    def shortdoc(self):
+    def short_doc(self):
         return getshortdoc(self.doc)
 
     @property
-    def libname(self):
+    def owner(self):
         return self.library.name
 
     @property
@@ -137,7 +137,7 @@ class _PythonHandler(_RunnableHandler):
         super().__init__(library, handler_name, handler_method, getdoc(handler_method))
 
     def _parse_arguments(self, handler_method):
-        return PythonArgumentParser().parse(handler_method, self.longname)
+        return PythonArgumentParser().parse(handler_method, self.full_name)
 
     @property
     def source(self):
@@ -175,7 +175,7 @@ class _DynamicHandler(_RunnableHandler):
         self._source_info = None
 
     def _parse_arguments(self, handler_method):
-        spec = DynamicArgumentParser().parse(self._argspec, self.longname)
+        spec = DynamicArgumentParser().parse(self._argspec, self.full_name)
         if not self._supports_kwargs:
             name = self._run_keyword_method_name
             if spec.var_named:

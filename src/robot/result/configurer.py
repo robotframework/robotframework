@@ -14,7 +14,7 @@
 #  limitations under the License.
 
 from robot import model
-from robot.utils import is_string, secs_to_timestamp, timestamp_to_secs
+from robot.utils import is_string, parse_timestamp
 
 
 class SuiteConfigurer(model.SuiteConfigurer):
@@ -32,11 +32,11 @@ class SuiteConfigurer(model.SuiteConfigurer):
 
     def __init__(self, remove_keywords=None, log_level=None, start_time=None,
                  end_time=None, **base_config):
-        model.SuiteConfigurer.__init__(self, **base_config)
+        super().__init__(**base_config)
         self.remove_keywords = self._get_remove_keywords(remove_keywords)
         self.log_level = log_level
-        self.start_time = self._get_time(start_time)
-        self.end_time = self._get_time(end_time)
+        self.start_time = self._to_datetime(start_time)
+        self.end_time = self._to_datetime(end_time)
 
     def _get_remove_keywords(self, value):
         if value is None:
@@ -45,14 +45,13 @@ class SuiteConfigurer(model.SuiteConfigurer):
             return [value]
         return value
 
-    def _get_time(self, timestamp):
+    def _to_datetime(self, timestamp):
         if not timestamp:
             return None
         try:
-            secs = timestamp_to_secs(timestamp, seps=' :.-_')
+            return parse_timestamp(timestamp)
         except ValueError:
             return None
-        return secs_to_timestamp(secs, millis=True)
 
     def visit_suite(self, suite):
         model.SuiteConfigurer.visit_suite(self, suite)
@@ -66,6 +65,10 @@ class SuiteConfigurer(model.SuiteConfigurer):
 
     def _set_times(self, suite):
         if self.start_time:
-            suite.starttime = self.start_time
+            suite.end_time = suite.end_time    # Preserve original value.
+            suite.elapsed_time = None          # Force re-calculation.
+            suite.start_time = self.start_time
         if self.end_time:
-            suite.endtime = self.end_time
+            suite.start_time = suite.start_time
+            suite.elapsed_time = None
+            suite.end_time = self.end_time

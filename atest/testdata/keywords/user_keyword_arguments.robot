@@ -230,45 +230,45 @@ Invalid Arguments Spec - Multiple errors
 
 *** Keywords ***
 A 0
-    [Return]    a_0
+    RETURN    a_0
 
 A 0 B
-    [Return]    a_0_b
+    RETURN    a_0_b
 
 A 1
     [Arguments]    ${arg}
-    [Return]    a_1: ${arg}
+    RETURN    a_1: ${arg}
 
 A 3
     [Arguments]    ${arg1}    ${arg2}    ${arg3}
-    [Return]    a_3: ${arg1} ${arg2} ${arg3}
+    RETURN    a_3: ${arg1} ${arg2} ${arg3}
 
 A 0 1
     [Arguments]    ${arg}=default
-    [Return]    a_0_1: ${arg}
+    RETURN    a_0_1: ${arg}
 
 A 1 3
     [Arguments]    ${arg1}    ${arg2}=default    ${arg3}=default
-    [Return]    a_1_3: ${arg1} ${arg2} ${arg3}
+    RETURN    a_1_3: ${arg1} ${arg2} ${arg3}
 
 A 0 N
     [Arguments]    @{args}
     ${ret} =    Catenate    @{args}
-    [Return]    a_0_n: ${ret}
+    RETURN    a_0_n: ${ret}
 
 A 1 N
     [Arguments]    ${arg}    @{args}
     ${ret} =    Catenate    @{args}
-    [Return]    a_1_n: ${arg} ${ret}
+    RETURN    a_1_n: ${arg} ${ret}
 
 A 1 2 N
     [Arguments]    ${arg1}    ${arg2}=default    @{args}
     ${ret} =    Catenate    @{args}
-    [Return]    a_1_2_n: ${arg1} ${arg2} ${ret}
+    RETURN    a_1_2_n: ${arg1} ${arg2} ${ret}
 
 Default With Variable
     [Arguments]    ${arg}=${VAR}
-    [Return]    ${arg}
+    RETURN    ${arg}
 
 Default With Non-Existing Variable
     [Arguments]    ${arg}=${NON EXISTING}
@@ -276,15 +276,15 @@ Default With Non-Existing Variable
 
 Default With None Variable
     [Arguments]    ${arg}=${None}
-    [Return]    ${arg}
+    RETURN    ${arg}
 
 Default With Number Variable
     [Arguments]    ${arg}=${1e3}
-    [Return]    ${arg}
+    RETURN    ${arg}
 
 Default With Extended Variable Syntax
     [Arguments]    ${arg}=${VAR.upper()}
-    [Return]    ${arg}
+    RETURN    ${arg}
 
 Default With Variable Based On Earlier Argument
     [Arguments]    ${a}=a    ${b}=b    ${c}=${a}+${b}    ${d}=${c.upper()}    ${e}=\${d}on\\t escape (\\${a})
@@ -300,7 +300,7 @@ Default With List Variable
     Append To List    ${b}    foo
     Should Be True    $a == ['foo']
     Should Be True    $b == ['With', 'three', 'values', 'foo'] != $LIST
-    [Return]    ${a}
+    RETURN    ${a}
 
 Default With Invalid List Variable
     [Arguments]    ${invalid}=@{VAR}
@@ -315,7 +315,7 @@ Default With Dict Variable
     ${b.c} =    Set Variable    value
     Should Be True    $a == {'new': 'value'}
     Should Be True    $b == {'a': 'override', 'b': 2, 'c': 'value'} != $DICT
-    [Return]    ${a}
+    RETURN    ${a}
 
 Default With Invalid Dict Variable
     [Arguments]    ${invalid}=&{VAR}
@@ -323,7 +323,7 @@ Default With Invalid Dict Variable
 
 Argument With `=` In Name
     [Arguments]    ${=}    ${==}==    ${===}=${=}
-    [Return]    ${=}-${==}-${===}
+    RETURN    ${=}-${==}-${===}
 
 Mutate Lists
     [Arguments]    ${list1}    @{list2}

@@ -1,4 +1,4 @@
-*** Setting ***
+*** Settings ***
 Documentation     Merge test cases for test doc HTML formatting
 
 *** Variables ***
@@ -6,7 +6,7 @@ ${USE_HTML}       ${false}
 ${TEXT MESSAGE}   Test message
 ${HTML MESSAGE}   *HTML* <b>Test</b> message
 
-*** Test Case ***
+*** Test Cases ***
 Html1
     Set Test Documentation   FAIL ${TEXT MESSAGE}
     Fail    ${TEXT MESSAGE}

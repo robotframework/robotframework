@@ -114,7 +114,15 @@ class TestBuilding(unittest.TestCase):
             self._validate_rpa(build(*paths, rpa=True), True)
         self._validate_rpa(build('../rpa/tasks1.robot'), True)
         self._validate_rpa(build('../rpa/', rpa=False), False)
-        assert_raises(DataError, build, '../rpa')
+        suite = build('../rpa/')
+        assert_equal(suite.rpa, None)
+        for child in suite.suites:
+            self._validate_rpa(child, child.name != 'Tests')
+
+    def _validate_rpa(self, suite, expected):
+        assert_equal(suite.rpa, expected, suite.name)
+        for child in suite.suites:
+            self._validate_rpa(child, expected)
 
     def test_custom_parser(self):
         path = DATADIR / '../parsing/custom/CustomParser.py'
@@ -145,11 +153,6 @@ class TestBuilding(unittest.TestCase):
         err = assert_raises(DataError, build, custom_parsers=[42])
         assert_equal(err.message, "Importing parser 'integer' failed: "
                                   "'integer' does not have mandatory 'parse' method.")
-
-    def _validate_rpa(self, suite, expected):
-        assert_equal(suite.rpa, expected, suite.name)
-        for child in suite.suites:
-            self._validate_rpa(child, expected)
 
 
 class TestTemplates(unittest.TestCase):

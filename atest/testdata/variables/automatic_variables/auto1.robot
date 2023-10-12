@@ -1,4 +1,4 @@
-*** Setting ***
+*** Settings ***
 Documentation     This is suite documentation. With ${VARIABLE}.
 Metadata          MeTa1    Value
 Metadata          meta2    ${VARIABLE}
@@ -12,7 +12,7 @@ Library           Collections
 Library           HelperLib.py    ${SUITE NAME}    ${SUITE DOCUMENTATION}
 ...               ${SUITE METADATA}    ${SUITE SOURCE}    ${OPTIONS}
 
-*** Variable ***
+*** Variables ***
 ${VARIABLE}          variable value
 ${EXP_SUITE_NAME}    Automatic Variables.Auto1
 ${EXP_SUITE_DOC}     This is suite documentation. With ${VARIABLE}.
@@ -20,7 +20,7 @@ ${EXP_SUITE_META}    {'MeTa1': 'Value', 'meta2': '${VARIABLE}'}
 ${EXP_SUITE_STATS}   17 tests, 15 passed, 2 failed
 @{LAST_TEST}         \&{OPTIONS}    PASS
 
-*** Test Case ***
+*** Test Cases ***
 Previous Test Variables Should Have Default Values
     Check Previous Test Variables
 

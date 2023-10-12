@@ -14,10 +14,7 @@
 #  limitations under the License.
 
 import re
-try:
-    from urllib import quote
-except ImportError:
-    from urllib.parse import quote
+from urllib.parse import quote
 
 from robot.errors import DataError
 from robot.utils import html_escape, html_format, NormalizedDict
@@ -97,10 +94,10 @@ class DocToHtml:
                     'HTML': lambda doc: doc,
                     'REST': self._format_rest}[doc_format]
         except KeyError:
-            raise DataError("Invalid documentation format '%s'." % doc_format)
+            raise DataError(f"Invalid documentation format '{doc_format}'.")
 
     def _format_text(self, doc):
-        return '<p style="white-space: pre-wrap">%s</p>' % html_escape(doc)
+        return f'<p style="white-space: pre-wrap">{html_escape(doc)}</p>'
 
     def _format_rest(self, doc):
         try:
@@ -133,7 +130,7 @@ class HtmlToText:
         '&apos;': "'"
     }
 
-    def get_shortdoc_from_html(self, doc):
+    def get_short_doc_from_html(self, doc):
         match = re.search(r'<p.*?>(.*?)</?p>', doc, re.DOTALL)
         if match:
             doc = match.group(1)

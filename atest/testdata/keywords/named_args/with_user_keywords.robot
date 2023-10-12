@@ -136,37 +136,37 @@ Execute illegal named combination
 Mandatory, Named and varargs
     [Arguments]    ${a}    ${b}=default    @{varargs}
     ${res}=    pretty    ${a}    ${b}    @{varargs}
-    [Return]    ${res}
+    RETURN    ${res}
 
 Mandatory and Named
     [Arguments]    ${a}    ${b}=default
     ${res}=    pretty    ${a}    ${b}
-    [Return]    ${res}
+    RETURN    ${res}
 
 One Kwarg
     [Arguments]    ${kwarg}=
-    [Return]    ${kwarg}
+    RETURN    ${kwarg}
 
 Two Kwargs
     [Arguments]    ${first}=    ${second}=
-    [Return]    ${first}, ${second}
+    RETURN    ${first}, ${second}
 
 Four Kw Args
     [Arguments]    ${a}=default    ${b}=default    ${c}=default    ${d}=default
-    [Return]    ${a}, ${b}, ${c}, ${d}
+    RETURN    ${a}, ${b}, ${c}, ${d}
 
 Mandatory And Kwargs
     [Arguments]    ${man1}    ${man2}    ${kwarg}=KWARG VALUE
-    [Return]    ${man1}, ${man2}, ${kwarg}
+    RETURN    ${man1}, ${man2}, ${kwarg}
 
 Escaped default value
     [Arguments]    ${d1}=\${notvariable}    ${d2}=\\\\    ${d3}=\n    ${d4}=\t
-    [Return]    ${d1} ${d2} ${d3} ${d4}
+    RETURN    ${d1} ${d2} ${d3} ${d4}
 
 Named arguments with varargs
     [Arguments]    ${a}=default    ${b}=default    @{varargs}
-    [Return]    ${a}    ${b}    @{varargs}
+    RETURN    ${a}    ${b}    @{varargs}
 
 Named arguments with nönäscii
     [Arguments]    ${nönäscii}=
-    [Return]       ${nönäscii}
+    RETURN       ${nönäscii}

@@ -70,6 +70,7 @@ class BodyItem(ModelObject):
     BREAK = 'BREAK'
     ERROR = 'ERROR'
     MESSAGE = 'MESSAGE'
+    KEYWORD_TYPES = (KEYWORD, SETUP, TEARDOWN)
     type = None
     __slots__ = ['parent']
 

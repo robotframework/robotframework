@@ -1,7 +1,7 @@
-*** Setting ***
+*** Settings ***
 
-*** Variable ***
+*** Variables ***
 
-*** Test Case ***
+*** Test Cases ***
 
-*** Keyword ***
+*** Keywords ***

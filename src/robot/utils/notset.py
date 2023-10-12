@@ -13,20 +13,21 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+class NotSet:
+    """Represents value that is not set.
 
-class ModelCombiner:
-    __slots__ = ['data', 'result', 'priority']
+    Can be used instead of the standard ``None`` in cases where ``None``
+    itself is a valid value.
 
-    def __init__(self, data, result, **priority):
-        self.data = data
-        self.result = result
-        self.priority = priority
+    Use the constant ``robot.utils.NOT_SET`` instead of creating new instances
+    of the class.
 
-    def __getattr__(self, name):
-        if name in self.priority:
-            return self.priority[name]
-        if hasattr(self.result, name):
-            return getattr(self.result, name)
-        if hasattr(self.data, name):
-            return getattr(self.data, name)
-        raise AttributeError(name)
+    New in Robot Framework 7.0.
+    """
+
+    def __repr__(self):
+        return ''
+
+
+NOT_SET = NotSet()
+

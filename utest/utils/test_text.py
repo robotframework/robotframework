@@ -4,10 +4,9 @@ from os.path import abspath
 
 from robot.utils.asserts import assert_equal, assert_true
 from robot.utils.text import (
-    cut_long_message, get_console_length, getdoc, getshortdoc,
-    pad_console_length, split_tags_from_doc, split_args_from_name_or_path,
-    _count_line_lengths, MAX_ERROR_LINES, _MAX_ERROR_LINE_LENGTH,
-    _ERROR_CUT_EXPLN
+    cut_long_message, get_console_length, _get_virtual_line_length, getdoc,
+    getshortdoc, pad_console_length, split_tags_from_doc, split_args_from_name_or_path,
+    MAX_ERROR_LINES, _MAX_ERROR_LINE_LENGTH, _ERROR_CUT_EXPLN
 )
 
 
@@ -59,7 +58,7 @@ class TestCutting(unittest.TestCase):
 class TestCuttingWithLinesLongerThanMax(unittest.TestCase):
 
     def setUp(self):
-        self.lines = ['line %d' % i for i in range(MAX_ERROR_LINES-1)]
+        self.lines = [f'line {i}' for i in range(MAX_ERROR_LINES-1)]
         self.lines.append('x' * (_MAX_ERROR_LINE_LENGTH+1))
         self.result = cut_long_message('\n'.join(self.lines)).splitlines()
 
@@ -67,7 +66,8 @@ class TestCuttingWithLinesLongerThanMax(unittest.TestCase):
         assert_true(_ERROR_CUT_EXPLN in self.result)
 
     def test_correct_number_of_lines(self):
-        assert_equal(sum(_count_line_lengths(self.result)), MAX_ERROR_LINES+1)
+        line_count = sum(_get_virtual_line_length(line) for line in self.result)
+        assert_equal(line_count, MAX_ERROR_LINES+1)
 
     def test_correct_lines(self):
         expected = self.lines[:_HALF_ERROR_LINES] + [_ERROR_CUT_EXPLN] \
@@ -76,12 +76,13 @@ class TestCuttingWithLinesLongerThanMax(unittest.TestCase):
 
     def test_every_line_longer_than_limit(self):
         # sanity check
-        lines = [('line %d' % i) * _MAX_ERROR_LINE_LENGTH for i in range(MAX_ERROR_LINES+2)]
+        lines = [f'line {i}' * _MAX_ERROR_LINE_LENGTH for i in range(MAX_ERROR_LINES+2)]
         result = cut_long_message('\n'.join(lines)).splitlines()
         assert_true(_ERROR_CUT_EXPLN in result)
         assert_equal(result[0], lines[0])
         assert_equal(result[-1], lines[-1])
-        assert_true(sum(_count_line_lengths(result)) <= MAX_ERROR_LINES+1)
+        line_count = sum(_get_virtual_line_length(line) for line in result)
+        assert_true(line_count <= MAX_ERROR_LINES+1)
 
 
 class TestCutHappensInsideLine(unittest.TestCase):
@@ -112,60 +113,63 @@ class TestCutHappensInsideLine(unittest.TestCase):
         assert_true('...\n'+_ERROR_CUT_EXPLN+'\n...' in result)
 
     def _assert_basics(self, result, input=None):
-        assert_equal(sum(_count_line_lengths(result)), MAX_ERROR_LINES+1)
+        line_count = sum(_get_virtual_line_length(line) for line in result)
+        assert_equal(line_count, MAX_ERROR_LINES+1)
         assert_true(_ERROR_CUT_EXPLN in result)
         if input:
             assert_equal(result[0], input[0])
             assert_equal(result[-1], input[-1])
 
 
-class TestCountLines(unittest.TestCase):
-
-    def test_no_lines(self):
-        assert_equal(_count_line_lengths([]), [])
+class TestVirtualLineLength(unittest.TestCase):
 
     def test_empty_line(self):
-        assert_equal(_count_line_lengths(['']), [1])
+        assert_equal(_get_virtual_line_length(''), 1)
 
     def test_shorter_than_max_lines(self):
-        lines = ['', '1', 'foo', 'barz and fooz', '', 'a bit longer line', '',
-                 'This is a somewhat longer (but not long enough) error message']
-        assert_equal(_count_line_lengths(lines), [1] * len(lines))
+        for line in ['1', 'foo', 'barz and fooz', 'a bit longer line',
+                     'This is a somewhat longer, but not long enough, line']:
+            assert_equal(_get_virtual_line_length(line), 1)
 
     def test_longer_than_max_lines(self):
-        lines = [ '1' * i * (_MAX_ERROR_LINE_LENGTH+3) for i in range(4) ]
-        assert_equal(_count_line_lengths(lines), [1,2,3,4])
+        for i in range(10):
+            length = i * (_MAX_ERROR_LINE_LENGTH+3)
+            assert_equal(_get_virtual_line_length('x' * length), i+1)
 
     def test_boundary(self):
-        b = _MAX_ERROR_LINE_LENGTH
-        lengths = [b-1, b, b+1, 2*b-1, 2*b, 2*b+1, 7*b-1, 7*b, 7*b+1]
-        lines = [ 'e'*length for length in lengths ]
-        assert_equal(_count_line_lengths(lines), [1, 1, 2, 2, 2, 3, 7, 7, 8])
+        m = _MAX_ERROR_LINE_LENGTH
+        for length, expected in [(m-1, 1), (m, 1), (m+1, 2),
+                                 (2*m-1, 2), (2*m, 2), (2*m+1, 3),
+                                 (7*m-1, 7), (7*m, 7), (7*m+1, 8)]:
+            assert_equal(_get_virtual_line_length('x' * length), expected)
 
 
 class TestConsoleWidth(unittest.TestCase):
-    len16_asian = u'\u6c49\u5b57\u5e94\u8be5\u6b63\u786e\u5bf9\u9f50'
-    ten_normal = u'1234567890'
-    mixed_26 = u'012345\u6c49\u5b57\u5e94\u8be5\u6b63\u786e\u5bf9\u9f567890'
-    nfd = u'A\u030Abo'
+    ascii_10 = '1234567890'
+    asian_16 = '汉字应该正确对齐'
+    combining_3 = 'A\u030Abo'    # Åbo in NFD
+    mixed_27 = '012345汉字应该正确对齖7890A\u030A'
 
-    def test_console_width(self):
-        assert_equal(get_console_length(self.ten_normal), 10)
+    def test_ascii(self):
+        assert_equal(get_console_length(self.ascii_10), 10)
 
-    def test_east_asian_width(self):
-        assert_equal(get_console_length(self.len16_asian), 16)
+    def test_asian(self):
+        assert_equal(get_console_length(self.asian_16), 16)
 
-    def test_combining_width(self):
-        assert_equal(get_console_length(self.nfd), 3)
+    def test_combining(self):
+        assert_equal(get_console_length(self.combining_3), 3)
 
-    def test_cut_right(self):
-        assert_equal(pad_console_length(self.ten_normal, 5), '12...')
-        assert_equal(pad_console_length(self.ten_normal, 15), self.ten_normal+' '*5)
-        assert_equal(pad_console_length(self.ten_normal, 10), self.ten_normal)
+    def test_mixed(self):
+        assert_equal(get_console_length(self.mixed_27), 27)
 
-    def test_cut_east_asian(self):
-        assert_equal(pad_console_length(self.len16_asian, 10), u'\u6c49\u5b57\u5e94... ')
-        assert_equal(pad_console_length(self.mixed_26, 11), u'012345\u6c49...')
+    def test_pad_ascii(self):
+        assert_equal(pad_console_length(self.ascii_10, 5), '12...')
+        assert_equal(pad_console_length(self.ascii_10, 15), self.ascii_10 + ' ' * 5)
+        assert_equal(pad_console_length(self.ascii_10, 10), self.ascii_10)
+
+    def test_pad_asian(self):
+        assert_equal(pad_console_length(self.asian_16, 10), '汉字应... ')
+        assert_equal(pad_console_length(self.mixed_27, 11), '012345汉...')
 
 
 class TestDocSplitter(unittest.TestCase):
@@ -241,18 +245,18 @@ class TestSplitArgsFromNameOrPath(unittest.TestCase):
     def test_windows_path_with_args(self):
         assert_equal(self.method('C:\\name.py:arg1'), ('C:\\name.py', ['arg1']))
         assert_equal(self.method('D:\\APPS\\listener:v1:b2:z3'),
-                      ('D:\\APPS\\listener', ['v1', 'b2', 'z3']))
+                     ('D:\\APPS\\listener', ['v1', 'b2', 'z3']))
         assert_equal(self.method('C:/varz.py:arg'), ('C:/varz.py', ['arg']))
         assert_equal(self.method('C:\\file.py:arg;with;alternative;separator'),
-                      ('C:\\file.py', ['arg;with;alternative;separator']))
+                     ('C:\\file.py', ['arg;with;alternative;separator']))
 
     def test_windows_path_with_semicolon_separator(self):
         assert_equal(self.method('C:\\name.py;arg1'), ('C:\\name.py', ['arg1']))
         assert_equal(self.method('D:\\APPS\\listener;v1;b2;z3'),
-                      ('D:\\APPS\\listener', ['v1', 'b2', 'z3']))
+                     ('D:\\APPS\\listener', ['v1', 'b2', 'z3']))
         assert_equal(self.method('C:/varz.py;arg'), ('C:/varz.py', ['arg']))
         assert_equal(self.method('C:\\file.py;arg:with:alternative:separator'),
-                      ('C:\\file.py', ['arg:with:alternative:separator']))
+                     ('C:\\file.py', ['arg:with:alternative:separator']))
 
     def test_existing_paths_are_made_absolute(self):
         path = 'robot-framework-unit-test-file-12q3405909qasf'
@@ -296,11 +300,11 @@ class TestGetdoc(unittest.TestCase):
         assert_equal(getdoc(Class), 'My doc.\n\nIn multiple lines.')
         assert_equal(getdoc(Class), getdoc(Class()))
 
-    def test_unicode_doc(self):
+    def test_non_ascii_doc(self):
         class Class:
             def meth(self):
-                u"""Hyv\xe4 \xe4iti!"""
-        assert_equal(getdoc(Class.meth), u'Hyv\xe4 \xe4iti!')
+                """Hyvä äiti!"""
+        assert_equal(getdoc(Class.meth), 'Hyvä äiti!')
         assert_equal(getdoc(Class.meth), getdoc(Class().meth))
 
 

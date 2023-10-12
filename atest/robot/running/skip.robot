@@ -91,6 +91,10 @@ Skip In Suite Teardown After Fail In Setup
 Skip In Directory Suite Teardown
     Check Test Case    ${TEST NAME}
 
+Tests have correct status if suite has nothing to run and directory suite setup uses skip
+    Check Test Case    `robot:skip` with skip in directory suite setup
+    Check Test Case    `--skip` with skip in directory suite setup
+
 Skip with Run Keyword and Ignore Error
     Check Test Case    ${TEST NAME}
 

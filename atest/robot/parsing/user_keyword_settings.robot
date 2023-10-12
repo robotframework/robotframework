@@ -5,12 +5,12 @@ Resource          atest_resource.robot
 *** Test Cases ***
 Name
     ${tc} =    Check Test Case    Normal name
-    Should Be Equal  ${tc.kws[0].name}    Normal name
+    Should Be Equal  ${tc.kws[0].full_name}    Normal name
 
 Names are not formatted
     ${tc} =    Check Test Case    Names are not formatted
     FOR    ${kw}    IN    @{tc.kws}
-        Should Be Equal    ${kw.name}  user_keyword nameS _are_not_ FORmatted
+        Should Be Equal    ${kw.full_name}  user_keyword nameS _are_not_ FORmatted
     END
 
 No documentation
@@ -68,15 +68,23 @@ Teardown with escaping
 
 Return
     Check Test Case    ${TEST NAME}
+    Error in File    0    parsing/user_keyword_settings.robot    167
+    ...    The '[[]Return]' setting is deprecated. Use the 'RETURN' statement instead.    level=WARN
 
 Return using variables
     Check Test Case    ${TEST NAME}
+    Error in File    1    parsing/user_keyword_settings.robot    171
+    ...    The '[[]Return]' setting is deprecated. Use the 'RETURN' statement instead.    level=WARN
 
 Return multiple
     Check Test Case    ${TEST NAME}
+    Error in File    2    parsing/user_keyword_settings.robot    176
+    ...    The '[[]Return]' setting is deprecated. Use the 'RETURN' statement instead.    level=WARN
 
 Return with escaping
     Check Test Case    ${TEST NAME}
+    Error in File    3    parsing/user_keyword_settings.robot    179
+    ...    The '[[]Return]' setting is deprecated. Use the 'RETURN' statement instead.    level=WARN
 
 Timeout
     Verify Timeout    2 minutes 3 seconds
@@ -102,7 +110,7 @@ Small typo should provide recommendation
     Check Test Case    ${TEST NAME}
 
 Invalid empty line continuation in arguments should throw an error
-    Error in File    0    parsing/user_keyword_settings.robot    214
+    Error in File    4    parsing/user_keyword_settings.robot    213
     ...    Creating keyword 'Invalid empty line continuation in arguments should throw an error' failed:
     ...    Invalid argument specification: Invalid argument syntax ''.
 
@@ -115,7 +123,7 @@ Verify Documentation
 Verify Teardown
     [Arguments]    ${message}
     ${tc} =    Check Test Case    ${TEST NAME}
-    Should Be Equal    ${tc.kws[0].teardown.name}    BuiltIn.Log
+    Should Be Equal    ${tc.kws[0].teardown.full_name}    BuiltIn.Log
     Check Log Message    ${tc.kws[0].teardown.msgs[0]}    ${message}
 
 Verify Timeout

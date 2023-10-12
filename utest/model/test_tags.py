@@ -99,10 +99,10 @@ class TestTags(unittest.TestCase):
     def test_str(self):
         assert_equal(str(Tags()), '[]')
         assert_equal(str(Tags(['y', "X'X", 'Y'])), "[X'X, y]")
-        assert_equal(str(Tags(['\xe4', 'a'])), '[a, \xe4]')
+        assert_equal(str(Tags(['ä', 'a'])), '[a, ä]')
 
     def test_repr(self):
-        for tags in ([], ['y', "X'X"], ['\xe4', 'a']):
+        for tags in ([], ['y', "X'X"], ['ä', 'a']):
             assert_equal(repr(Tags(tags)), repr(sorted(tags)))
 
     def test__add__list(self):
@@ -340,21 +340,21 @@ class TestTagPatterns(unittest.TestCase):
         for pattern in ['a', 'NOT a', 'a NOT b', 'a AND b', 'a OR b', 'a*',
                         'a OR b NOT c OR d AND e OR ??']:
             assert_equal(str(TagPatterns(pattern)),
-                         '[%s]' % pattern)
+                         f'[{pattern}]')
             assert_equal(str(TagPatterns(pattern.replace(' ', ''))),
-                         '[%s]' % pattern)
+                         f'[{pattern}]')
             assert_equal(str(TagPatterns([pattern, 'x', pattern, 'y'])),
-                         '[%s, x, y]' % pattern)
+                         f'[{pattern}, x, y]')
 
-    def test_unicode(self):
-        pattern = '\xe4 OR \xe5 NOT \xe6 AND \u2603 OR ??'
-        expected = '[%s]' % pattern
+    def test_non_ascii(self):
+        pattern = 'ä OR å NOT æ AND ☃ OR ??'
+        expected = f'[{pattern}]'
         assert_equal(str(TagPatterns(pattern)), expected)
         assert_equal(str(TagPatterns(pattern.replace(' ', ''))), expected)
 
     def test_seq2str(self):
-        patterns = TagPatterns(['is\xe4', '\xe4iti'])
-        assert_equal(seq2str(patterns), "'is\xe4' and '\xe4iti'")
+        patterns = TagPatterns(['isä', 'äiti'])
+        assert_equal(seq2str(patterns), "'isä' and 'äiti'")
 
 
 class AndOrPatternGenerator:

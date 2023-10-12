@@ -990,7 +990,7 @@ Other ways to execute keywords conditionally
 
 There are also other methods to execute keywords conditionally:
 
-- The name of the keyword used as a setup or a teardown with tests__, suites__ or
+- The name of the keyword used as a setup or a teardown with suites__, tests__ and
   keywords__ can be specified using a variable. This facilitates changing them,
   for example, from the command line.
 
@@ -1009,10 +1009,9 @@ There are also other methods to execute keywords conditionally:
 - There are several BuiltIn_ keywords that allow executing a named
   keyword only if a test case or test suite has failed or passed.
 
-__ `Test setup and teardown`_
 __ `Suite setup and teardown`_
-__ `Keyword teardown`_
-
+__ `Test setup and teardown`_
+__ `User keyword setup and teardown`_
 
 .. _try/except:
 
@@ -1291,9 +1290,12 @@ There are also other methods to execute keywords conditionally:
   aforementioned :name:`Run Keyword And Ignore Error`. The native syntax is
   nowadays recommended instead.
 
-- `Test teardowns`_ and `keyword teardowns`_ can be used for cleaning up activities
+- `Test teardowns`__ and `keyword teardowns`__ can be used for cleaning up activities
   similarly as `FINALLY` branches.
 
 - When keywords are implemented in Python based libraries_, all Python's error
   handling features are readily available. This is the recommended approach
   especially if needed logic gets more complicated.
+
+__ `Test teardown`_
+__ `User keyword teardown`_

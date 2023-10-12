@@ -1,25 +1,19 @@
-*** Setting ***
+*** Settings ***
 Resource          atest_resource.robot
 
-*** Variable ***
+*** Variables ***
 ${ORIG_START}     Set in Create Output With Robot
 ${ORIG_END}       -- ;; --
 ${ORIG_ELAPSED}   -- ;; --
 
-*** Keyword ***
+*** Keywords ***
 Create Output With Robot
     [Arguments]    ${outputname}    ${options}    ${sources}
     Run Tests    ${options}    ${sources}
-    Timestamp Should Be Valid    ${SUITE.starttime}
-    Timestamp Should Be Valid    ${SUITE.endtime}
-    Elapsed Time Should Be Valid    ${SUITE.elapsedtime}
-    Set Suite Variable    $ORIG_START    ${SUITE.starttime}
-    Set Suite Variable    $ORIG_END    ${SUITE.endtime}
-    Set Suite Variable    $ORIG_ELAPSED    ${SUITE.elapsedtime}
-    Run Keyword If    $outputname    Move File    ${OUTFILE}    ${outputname}
-
-Check times
-    [Arguments]    ${item}    ${start}    ${end}    ${elapsed}
-    Should Be Equal    ${item.starttime}    ${start}
-    Should Be Equal    ${item.endtime}    ${end}
-    Should Be Equal As Integers    ${item.elapsedtime}    ${elapsed}
+    Timestamp Should Be Valid       ${SUITE.start_time}
+    Timestamp Should Be Valid       ${SUITE.end_time}
+    Elapsed Time Should Be Valid    ${SUITE.elapsed_time}
+    Set Suite Variable    $ORIG_START      ${SUITE.start_time}
+    Set Suite Variable    $ORIG_END        ${SUITE.end_time}
+    Set Suite Variable    $ORIG_ELAPSED    ${SUITE.elapsed_time}
+    IF    $outputname    Move File    ${OUTFILE}    ${outputname}

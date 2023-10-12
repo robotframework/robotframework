@@ -1,7 +1,8 @@
 import random
 import unittest
-from robot.output.loggerhelper import LEVELS
+from datetime import datetime
 
+from robot.output.loggerhelper import LEVELS
 from robot.reporting.jsmodelbuilders import JsBuildingContext
 from robot.utils.asserts import assert_equal
 
@@ -43,12 +44,12 @@ class TestTimestamp(unittest.TestCase):
         self._context = JsBuildingContext()
 
     def test_timestamp(self):
-        assert_equal(self._context.timestamp('20110603 12:00:00.042'), 0)
-        assert_equal(self._context.timestamp('20110603 12:00:00.043'), 1)
-        assert_equal(self._context.timestamp('20110603 12:00:00.000'), -42)
-        assert_equal(self._context.timestamp('20110603 12:00:01.041'), 999)
-        assert_equal(self._context.timestamp('20110604 12:00:00.042'),
-                      24 * 60 * 60 * 1000)
+        assert_equal(self._context.timestamp(datetime(2011, 6, 3, 12, 0, 0, 42000)), 0)
+        assert_equal(self._context.timestamp(datetime(2011, 6, 3, 12, 0, 0, 43000)), 1)
+        assert_equal(self._context.timestamp(datetime(2011, 6, 3, 12, 0, 0, 0)), -42)
+        assert_equal(self._context.timestamp(datetime(2011, 6, 3, 12, 0, 1, 41000)), 999)
+        assert_equal(self._context.timestamp(datetime(2011, 6, 4, 12, 0, 0, 42000)),
+                     24 * 60 * 60 * 1000)
 
     def test_none_timestamp(self):
         assert_equal(self._context.timestamp(None), None)

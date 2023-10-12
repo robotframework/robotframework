@@ -239,13 +239,31 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             Token(Token.VARIABLE, '${variable_name}'),
             Token(Token.SEPARATOR, '    '),
             Token(Token.ARGUMENT, "{'a': 4, 'b': 'abc'}"),
-            Token(Token.EOL, '\n')
+            Token(Token.EOL)
         ]
         assert_created_statement(
             tokens,
             Variable,
             name='${variable_name}',
             value="{'a': 4, 'b': 'abc'}"
+        )
+        # ${x}    a    b    separator=-
+        tokens = [
+            Token(Token.VARIABLE, '${x}'),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.ARGUMENT, 'a'),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.ARGUMENT, 'b'),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.OPTION, 'separator=-'),
+            Token(Token.EOL)
+        ]
+        assert_created_statement(
+            tokens,
+            Variable,
+            name='${x}',
+            value=['a', 'b'],
+            value_separator='-'
         )
         # ${var}    first    second    third
         # @{var}    first    second    third
@@ -259,7 +277,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
                 Token(Token.ARGUMENT, 'second'),
                 Token(Token.SEPARATOR, '    '),
                 Token(Token.ARGUMENT, 'third'),
-                Token(Token.EOL, '\n')
+                Token(Token.EOL)
             ]
             assert_created_statement(
                 tokens,
@@ -336,13 +354,13 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             name='library_name.py'
         )
 
-        # Library    library_name.py    WITH NAME    anothername
+        # Library    library_name.py    AS    anothername
         tokens = [
             Token(Token.LIBRARY, 'Library'),
             Token(Token.SEPARATOR, '    '),
             Token(Token.NAME, 'library_name.py'),
             Token(Token.SEPARATOR, '    '),
-            Token(Token.WITH_NAME),
+            Token(Token.AS),
             Token(Token.SEPARATOR, '    '),
             Token(Token.NAME, 'anothername'),
             Token(Token.EOL, '\n')
@@ -534,7 +552,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
 
     def test_ForceTags(self):
         tokens = [
-            Token(Token.FORCE_TAGS, 'Force Tags'),
+            Token(Token.TEST_TAGS, 'Test Tags'),
             Token(Token.SEPARATOR, '    '),
             Token(Token.ARGUMENT, 'some tag'),
             Token(Token.SEPARATOR, '    '),
@@ -543,7 +561,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
         ]
         assert_created_statement(
             tokens,
-            ForceTags,
+            TestTags,
             values=['some tag', 'another_tag']
         )
 
@@ -678,9 +696,9 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             Token(Token.SEPARATOR, '    '),
             Token(Token.FOR),
             Token(Token.SEPARATOR, '  '),
-            Token(Token.VARIABLE, '${value1}'),
+            Token(Token.ASSIGN, '${value1}'),
             Token(Token.SEPARATOR, '  '),
-            Token(Token.VARIABLE, '${value2}'),
+            Token(Token.ASSIGN, '${value2}'),
             Token(Token.SEPARATOR, '  '),
             Token(Token.FOR_SEPARATOR, 'IN ZIP'),
             Token(Token.SEPARATOR, '  '),
@@ -693,7 +711,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             tokens,
             ForHeader,
             flavor='IN ZIP',
-            variables=['${value1}', '${value2}'],
+            assign=['${value1}', '${value2}'],
             values=['${list1}', '${list2}'],
             separator='  '
         )
@@ -823,14 +841,14 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             Token(Token.SEPARATOR, '    '),
             Token(Token.AS, 'AS'),
             Token(Token.SEPARATOR, '    '),
-            Token(Token.VARIABLE, '${var}'),
+            Token(Token.ASSIGN, '${var}'),
             Token(Token.EOL, '\n')
         ]
         assert_created_statement(
             tokens,
             ExceptHeader,
             patterns=['one', 'two'],
-            variable='${var}'
+            assign='${var}'
         )
         # EXCEPT    Example: *    type=glob
         tokens = [
@@ -861,14 +879,14 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             Token(Token.SEPARATOR, '    '),
             Token(Token.AS, 'AS'),
             Token(Token.SEPARATOR, '    '),
-            Token(Token.VARIABLE, '${var}'),
+            Token(Token.ASSIGN, '${var}'),
             Token(Token.EOL, '\n')]
         assert_created_statement(
             tokens,
             ExceptHeader,
             patterns=['Error \\d', '(x|y)'],
             type='regexp',
-            variable='${var}'
+            assign='${var}'
         )
 
     def test_FinallyHeader(self):

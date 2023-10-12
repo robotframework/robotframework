@@ -13,11 +13,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.errors import (ExecutionFailed, ExecutionStatus, DataError,
-                          HandlerExecutionFailed)
-from robot.utils import ErrorDetails, get_timestamp
+from datetime import datetime
 
-from .modelcombiner import ModelCombiner
+from robot.errors import (BreakLoop, ContinueLoop, DataError, ExecutionFailed,
+                          ExecutionStatus, HandlerExecutionFailed, ReturnFromKeyword)
+from robot.utils import ErrorDetails
 
 
 class StatusReporter:
@@ -38,16 +38,17 @@ class StatusReporter:
         context = self.context
         result = self.result
         self.initial_test_status = context.test.status if context.test else None
-        if not result.starttime:
-            result.starttime = get_timestamp()
-        context.start_keyword(ModelCombiner(self.data, result))
-        self._warn_if_deprecated(result.doc, result.name)
+        if not result.start_time:
+            result.start_time = datetime.now()
+        context.start_body_item(self.data, result)
+        if result.type in result.KEYWORD_TYPES:
+            self._warn_if_deprecated(result.doc, result.full_name)
         return self
 
     def _warn_if_deprecated(self, doc, name):
         if doc.startswith('*DEPRECATED') and '*' in doc[1:]:
             message = ' ' + doc.split('*', 2)[-1].strip()
-            self.context.warn("Keyword '%s' is deprecated.%s" % (name, message))
+            self.context.warn(f"Keyword '{name}' is deprecated.{message}")
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         context = self.context
@@ -57,12 +58,12 @@ class StatusReporter:
             result.status = self.pass_status
         else:
             result.status = failure.status
-            if result.type == result.TEARDOWN:
+            if not isinstance(failure, (BreakLoop, ContinueLoop, ReturnFromKeyword)):
                 result.message = failure.message
         if self.initial_test_status == 'PASS':
             context.test.status = result.status
-        result.endtime = get_timestamp()
-        context.end_keyword(ModelCombiner(self.data, result))
+        result.elapsed_time = datetime.now() - result.start_time
+        context.end_body_item(self.data, result)
         if failure is not exc_val and not self.suppress:
             raise failure
         return self.suppress

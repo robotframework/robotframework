@@ -13,18 +13,18 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import sys
 from collections.abc import Mapping
 from pathlib import Path
 from typing import Any, Generic, Iterator, Sequence, Type, TypeVar
 
+from robot.errors import DataError
 from robot.utils import seq2str, setter
 
 from .configurer import SuiteConfigurer
 from .filter import Filter, EmptySuiteRemover
 from .fixture import create_fixture
 from .itemlist import ItemList
-from .keyword import Keyword, Keywords
+from .keyword import Keyword
 from .metadata import Metadata
 from .modelobject import DataDict, ModelObject
 from .tagsetter import TagSetter
@@ -36,14 +36,14 @@ KW = TypeVar('KW', bound=Keyword, covariant=True)
 TC = TypeVar('TC', bound=TestCase, covariant=True)
 
 
-class TestSuite(ModelObject, Generic[KW, TC] if sys.version_info >= (3, 7)  else object):
+class TestSuite(ModelObject, Generic[KW, TC]):
     """Base model for single suite.
 
     Extended by :class:`robot.running.model.TestSuite` and
     :class:`robot.result.model.TestSuite`.
     """
     # FIXME: Type Ignore declarations: Typevars only accept subclasses of the bound class
-    # assiging `Type[KW]` to `Keyword` results in an error. In RF 7 the class should be
+    # assigning `Type[KW]` to `Keyword` results in an error. In RF 7 the class should be
     # made impossible to instantiate directly, and the assignments can be replaced with
     # KnownAtRuntime
     fixture_class: Type[KW] = Keyword  # type: ignore
@@ -56,7 +56,7 @@ class TestSuite(ModelObject, Generic[KW, TC] if sys.version_info >= (3, 7)  else
                  doc: str = '',
                  metadata: 'Mapping[str, str]|None' = None,
                  source: 'Path|str|None' = None,
-                 rpa: 'bool|None' = None,
+                 rpa: 'bool|None' = False,
                  parent: 'TestSuite|None' = None):
         self._name = name
         self.doc = doc
@@ -191,16 +191,50 @@ class TestSuite(ModelObject, Generic[KW, TC] if sys.version_info >= (3, 7)  else
             suite.adjust_source(relative_to, root)
 
     @property
-    def longname(self) -> str:
-        """Suite name prefixed with the long name of the parent suite."""
+    def full_name(self) -> str:
+        """Suite name prefixed with the full name of the possible parent suite.
+
+        Just :attr:`name` of the suite if it has no :attr:`parent`.
+        """
         if not self.parent:
             return self.name
-        return f'{self.parent.longname}.{self.name}'
+        return f'{self.parent.full_name}.{self.name}'
+
+    @property
+    def longname(self) -> str:
+        """Deprecated since Robot Framework 7.0. Use :attr:`full_name` instead."""
+        return self.full_name
 
     @setter
     def metadata(self, metadata: 'Mapping[str, str]|None') -> Metadata:
         """Free suite metadata as a :class:`~.metadata.Metadata` object."""
         return Metadata(metadata)
+
+    def validate_execution_mode(self) -> 'bool|None':
+        """Validate that suite execution mode is set consistently.
+
+        Raise an exception if the execution mode is not set (i.e. the :attr:`rpa`
+        attribute is ``None``) and child suites have conflicting execution modes.
+
+        The execution mode is returned. New in RF 6.1.1.
+        """
+        if self.rpa is None:
+            rpa = name = None
+            for suite in self.suites:
+                suite.validate_execution_mode()
+                if rpa is None:
+                    rpa = suite.rpa
+                    name = suite.full_name
+                elif rpa is not suite.rpa:
+                    mode1, mode2 = ('tasks', 'tests') if rpa else ('tests', 'tasks')
+                    raise DataError(
+                        f"Conflicting execution modes: Suite '{name}' has {mode1} but "
+                        f"suite '{suite.full_name}' has {mode2}. Resolve the conflict "
+                        f"or use '--rpa' or '--norpa' options to set the execution "
+                        f"mode explicitly."
+                    )
+            self.rpa = rpa
+        return self.rpa
 
     @setter
     def suites(self, suites: 'Sequence[TestSuite|DataDict]') -> 'TestSuites[TestSuite[KW, TC]]':
@@ -281,19 +315,6 @@ class TestSuite(ModelObject, Generic[KW, TC] if sys.version_info >= (3, 7)  else
         New in Robot Framework 5.0.
         """
         return bool(self._teardown)
-
-    @property
-    def keywords(self) -> Keywords:
-        """Deprecated since Robot Framework 4.0.
-
-        Use :attr:`setup` or :attr:`teardown` instead.
-        """
-        keywords = [self.setup, self.teardown]
-        return Keywords(self, [kw for kw in keywords if kw])
-
-    @keywords.setter
-    def keywords(self, keywords):
-        Keywords.raise_deprecation_error()
 
     @property
     def id(self) -> str:
@@ -409,7 +430,7 @@ class TestSuite(ModelObject, Generic[KW, TC] if sys.version_info >= (3, 7)  else
             data['metadata'] = dict(self.metadata)
         if self.source:
             data['source'] = str(self.source)
-        if self.rpa is not None:
+        if self.rpa:
             data['rpa'] = self.rpa
         if self.has_setup:
             data['setup'] = self.setup.to_dict()

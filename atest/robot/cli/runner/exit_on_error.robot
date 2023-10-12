@@ -64,6 +64,6 @@ Teardowns not executed
 Teardowns executed
     [Arguments]    ${name}
     ${suite} =    Get Test Suite    ${name}
-    Should Be Equal    ${suite.teardown.name}    BuiltIn.No Operation
+    Should Be Equal    ${suite.teardown.full_name}    BuiltIn.No Operation
     ${tc} =    Check Test Case    ${name}    FAIL    ${MESSAGE}
-    Should Be Equal    ${tc.teardown.name}    BuiltIn.No Operation
+    Should Be Equal    ${tc.teardown.full_name}    BuiltIn.No Operation

@@ -36,8 +36,8 @@ def _safe_str(item):
         return _unrepresentable_object(item)
 
 
-def prepr(item, width=80):
-    return safe_str(PrettyRepr(width=width).pformat(item))
+def prepr(item, width=80, sort_dicts=False):
+    return safe_str(PrettyRepr(width=width, sort_dicts=sort_dicts).pformat(item))
 
 
 class PrettyRepr(PrettyPrinter):

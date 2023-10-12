@@ -47,12 +47,12 @@ class TypeDoc(Sortable):
         return self.name.lower()
 
     @classmethod
-    def for_type(cls, type_hint, converters):
-        if isinstance(type_hint, EnumType):
-            return cls.for_enum(type_hint)
-        if isinstance(type_hint, typeddict_types):
-            return cls.for_typed_dict(type_hint)
-        converter = TypeConverter.converter_for(type_hint, converters)
+    def for_type(cls, type_info, converters):
+        if isinstance(type_info.type, EnumType):
+            return cls.for_enum(type_info.type)
+        if isinstance(type_info.type, typeddict_types):
+            return cls.for_typed_dict(type_info.type)
+        converter = TypeConverter.converter_for(type_info, converters)
         if not converter:
             return None
         elif not converter.type:
@@ -83,15 +83,14 @@ class TypeDoc(Sortable):
         return cls(cls.TYPED_DICT, typed_dict.__name__, getdoc(typed_dict),
                    accepts=(str, 'Mapping'), items=items)
 
-    def to_dictionary(self, legacy=False):
+    def to_dictionary(self):
         data = {
             'type': self.type,
             'name': self.name,
             'doc': self.doc,
+            'usages': self.usages,
+            'accepts': self.accepts
         }
-        if not legacy:
-            data['usages'] = self.usages
-            data['accepts'] = self.accepts
         if self.members is not None:
             data['members'] = [m.to_dictionary() for m in self.members]
         if self.items is not None:

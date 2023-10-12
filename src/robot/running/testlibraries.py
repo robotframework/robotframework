@@ -289,11 +289,10 @@ class _BaseTestLibrary:
         except Exception:
             message, details = get_error_details()
             raise DataError(f'Getting handler method failed: {message}', details)
-        self._validate_handler_method(method)
-        return method
+        return self._validate_handler_method(method)
 
     def _validate_handler_method(self, method):
-        # isroutine returns false for partial objects. This may change in Python 3.11.
+        # isroutine returns false for partial objects. This may change in the future.
         if not (inspect.isroutine(method) or isinstance(method, partial)):
             raise DataError('Not a method or function.')
         if getattr(method, 'robot_not_keyword', False):
@@ -341,14 +340,18 @@ class _BaseTestLibrary:
 class _ClassLibrary(_BaseTestLibrary):
 
     def _get_handler_method(self, libinst, name):
-        # Type is checked before using getattr to avoid calling properties.
         for item in (libinst,) + inspect.getmro(libinst.__class__):
-            if item is object:
-                continue
-            if hasattr(item, '__dict__') and name in item.__dict__:
-                self._validate_handler_method(item.__dict__[name])
-                return getattr(libinst, name)
-        raise DataError('No non-implicit implementation found.')
+            # `isroutine` is used before `getattr` to avoid calling properties.
+            if (name in getattr(item, '__dict__', ())
+                    and inspect.isroutine(item.__dict__[name])):
+                try:
+                    method = getattr(libinst, name)
+                except Exception:
+                    message, traceback = get_error_details()
+                    raise DataError(f'Getting handler method failed: {message}',
+                                    traceback)
+                return self._validate_handler_method(method)
+        raise DataError('Not a method or function.')
 
 
 class _ModuleLibrary(_BaseTestLibrary):

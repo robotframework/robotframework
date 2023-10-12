@@ -1,8 +1,8 @@
-*** Setting ***
+*** Settings ***
 Suite Setup       Run Tests    ${EMPTY}    tags/default_and_force_tags.robot
 Resource          atest_resource.robot
 
-*** Test Case ***
+*** Test Cases ***
 No Own Tags
     Check Test Tags    No Own Tags    01    02    03    four
 

@@ -1,9 +1,10 @@
 .. code:: robotframework
 
-    *** Setting ***
+    *** Settings ***
     Resource                rest_directive_resource2.rest
+    Invalid Resource        Setting
 
-    *** Variable ***
+    *** Variables ***
     ${rest_resource_var}    ReST Resource Variable
 
 

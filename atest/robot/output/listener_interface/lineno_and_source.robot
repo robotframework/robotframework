@@ -59,14 +59,14 @@ FOR in keyword
     \END      KEYWORD          FOR In Keyword                 26    PASS
 
 FOR in IF
-    START    IF               True                           29    NOT SET
+    START    IF               True                          29    NOT SET
     START    FOR              \${x} | \${y} IN [ x | y ]     30    NOT SET
     START    ITERATION        \${x} = x, \${y} = y           30    NOT SET
     START    KEYWORD          No Operation                   31    NOT SET
     \END      KEYWORD          No Operation                   31    PASS
     \END      ITERATION        \${x} = x, \${y} = y           30    PASS
     \END      FOR              \${x} | \${y} IN [ x | y ]     30    PASS
-    \END      IF               True                           29    PASS
+    \END      IF               True                          29    PASS
 
 FOR in resource
     START    KEYWORD          FOR In Resource                36    NOT SET
@@ -82,15 +82,15 @@ IF
     START   IF                1 > 2                          39    NOT RUN
     START   KEYWORD           Fail                           40    NOT RUN
     \END     KEYWORD           Fail                           40    NOT RUN
-    \END     IF                1 > 2                          39    NOT RUN
+    \END     IF               1 > 2                           39    NOT RUN
     START   ELSE IF           1 < 2                          41    NOT SET
     START   KEYWORD           No Operation                   42    NOT SET
     \END     KEYWORD           No Operation                   42    PASS
-    \END     ELSE IF           1 < 2                          41    PASS
-    START   ELSE              ${EMPTY}                       43    NOT RUN
+    \END     ELSE IF          1 < 2                          41    PASS
+    START   ELSE              \                               43    NOT RUN
     START   KEYWORD           Fail                           44    NOT RUN
     \END     KEYWORD           Fail                           44    NOT RUN
-    \END     ELSE              ${EMPTY}                       43    NOT RUN
+    \END     ELSE             \                              43    NOT RUN
 
 IF in keyword
     START    KEYWORD           IF In Keyword                 48    NOT SET
@@ -108,21 +108,21 @@ IF in FOR
     START   IF                \${x} == 1                     53    NOT SET
     START   KEYWORD           Log                            54    NOT SET
     \END     KEYWORD           Log                            54    PASS
-    \END     IF                \${x} == 1                     53    PASS
-    START   ELSE              ${EMPTY}                       55    NOT RUN
+    \END     IF               \${x} == 1                     53    PASS
+    START   ELSE              \                             55    NOT RUN
     START   KEYWORD           Fail                           56    NOT RUN
     \END     KEYWORD           Fail                           56    NOT RUN
-    \END     ELSE              ${EMPTY}                       55    NOT RUN
+    \END     ELSE              \                          55    NOT RUN
     \END     ITERATION         \${x} = 1                      52    PASS
     START   ITERATION         \${x} = 2                      52    NOT SET
     START   IF                \${x} == 1                     53    NOT RUN
     START   KEYWORD           Log                            54    NOT RUN
     \END     KEYWORD           Log                            54    NOT RUN
-    \END     IF                \${x} == 1                     53    NOT RUN
-    START   ELSE              ${EMPTY}                       55    NOT SET
+    \END     IF               \${x} == 1                     53    NOT RUN
+    START   ELSE              \                          55    NOT SET
     START   KEYWORD           Fail                           56    NOT SET
     \END     KEYWORD           Fail                           56    FAIL
-    \END     ELSE              ${EMPTY}                       55    FAIL
+    \END     ELSE             \                          55    FAIL
     \END     ITERATION         \${x} = 2                      52    FAIL
     \END     FOR               \${x} IN [ 1 | 2 ]             52    FAIL
 

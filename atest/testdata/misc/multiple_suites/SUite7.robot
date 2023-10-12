@@ -1,7 +1,7 @@
-*** Setting ***
+*** Settings ***
 Library           Non Existing
 
-*** Test Case ***
+*** Test Cases ***
 test1
     No Operation
 

@@ -197,13 +197,13 @@ Verify Tags
 Verify Setup
     [Arguments]    ${message}
     ${tc} =    Check Test Case    ${TEST NAME}
-    Should Be Equal    ${tc.setup.name}    BuiltIn.Log
+    Should Be Equal    ${tc.setup.full_name}    BuiltIn.Log
     Check Log Message    ${tc.setup.msgs[0]}    ${message}
 
 Verify Teardown
     [Arguments]    ${message}
     ${tc} =    Check Test Case    ${TEST NAME}
-    Should Be Equal    ${tc.teardown.name}    BuiltIn.Log
+    Should Be Equal    ${tc.teardown.full_name}    BuiltIn.Log
     Check Log Message    ${tc.teardown.msgs[0]}    ${message}
 
 Verify Timeout

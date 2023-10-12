@@ -91,7 +91,7 @@ Non Matching Variable Is Accepted With Custom Regexp (But Not For Long)
 
 Partially Matching Variable Is Accepted With Custom Regexp (But Not For Long)
     [Documentation]    FAIL     ba != bar    # ValueError: Embedded argument 'x' got value 'ba' that does not match custom pattern 'bar'.
-    I execute "${bar[:2]}" with "${zap}"
+    I execute "${bar[:2]}" with "${zap * 2}"
 
 Non String Variable Is Accepted With Custom Regexp
     [Documentation]    FAIL 42 != foo

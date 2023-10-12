@@ -1,4 +1,5 @@
 import unittest
+from datetime import datetime
 
 from robot.model import Message
 from robot.result import Keyword
@@ -7,6 +8,17 @@ from robot.utils.asserts import assert_equal, assert_raises
 
 
 class TestMessage(unittest.TestCase):
+
+    def test_timestamp(self):
+        dt = datetime.now()
+        assert_equal(Message().timestamp, None)
+        assert_equal(Message(timestamp=dt).timestamp, dt)
+        assert_equal(Message(timestamp=dt.isoformat()).timestamp, dt)
+        msg = Message()
+        msg.timestamp = dt
+        assert_equal(msg.timestamp, dt)
+        msg.timestamp = dt.isoformat()
+        assert_equal(msg.timestamp, dt)
 
     def test_slots(self):
         assert_raises(AttributeError, setattr, Message(), 'attr', 'value')
@@ -56,19 +68,18 @@ class TestStringRepresentation(unittest.TestCase):
     def setUp(self):
         self.empty = Message()
         self.ascii = Message('Kekkonen', level='WARN')
-        self.non_ascii = Message(u'hyv\xe4 nimi')
+        self.non_ascii = Message('hyvä')
 
     def test_str(self):
         for tc, expected in [(self.empty, ''),
                              (self.ascii, 'Kekkonen'),
-                             (self.non_ascii, u'hyv\xe4 nimi')]:
+                             (self.non_ascii, 'hyvä')]:
             assert_equal(str(tc), expected)
 
     def test_repr(self):
         for tc, expected in [(self.empty, "Message(message='', level='INFO')"),
                              (self.ascii, "Message(message='Kekkonen', level='WARN')"),
-                             (self.non_ascii, u"Message(message=%r, level='INFO')"
-                                              % u'hyv\xe4 nimi')]:
+                             (self.non_ascii, "Message(message='hyvä', level='INFO')")]:
             assert_equal(repr(tc), 'robot.model.' + expected)
 
 

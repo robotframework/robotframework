@@ -15,8 +15,7 @@ from robot.running import (Break, Continue, Error, For, If, IfBranch, Keyword,
                            Return, ResourceFile, TestCase, TestDefaults, TestSuite,
                            Try, TryBranch, While)
 from robot.running.model import UserKeyword
-from robot.utils.asserts import (assert_equal, assert_false, assert_not_equal,
-                                 assert_raises, assert_true)
+from robot.utils.asserts import assert_equal, assert_false, assert_not_equal
 
 
 CURDIR = Path(__file__).resolve().parent
@@ -43,19 +42,6 @@ class TestModelTypes(unittest.TestCase):
         assert_not_equal(type(kw), model.Keyword)
 
 
-class TestUserKeyword(unittest.TestCase):
-
-    def test_keywords_deprecation(self):
-        uk = UserKeyword('Name')
-        uk.body.create_keyword()
-        uk.teardown.config(name='T')
-        with warnings.catch_warnings(record=True) as w:
-            kws = uk.keywords
-            assert_equal(len(kws), 2)
-            assert_true('deprecated' in str(w[0].message))
-        assert_raises(AttributeError, kws.append, Keyword())
-        assert_raises(AttributeError, setattr, uk, 'keywords', [])
-
 
 class TestSuiteFromSources(unittest.TestCase):
     path = Path(os.getenv('TEMPDIR') or tempfile.gettempdir(),
@@ -76,7 +62,7 @@ Example
 
 *** Keywords ***
 Keyword
-    Log    Hello!
+    Log    ${CURDIR}
 '''
 
     @classmethod
@@ -90,22 +76,23 @@ Keyword
 
     def test_from_file_system(self):
         suite = TestSuite.from_file_system(self.path)
-        self._verify_suite(suite)
+        self._verify_suite(suite, curdir=str(self.path.parent))
 
     def test_from_file_system_with_multiple_paths(self):
         suite = TestSuite.from_file_system(self.path, self.path)
         assert_equal(suite.name, 'Test Run Model & Test Run Model')
-        self._verify_suite(suite.suites[0])
-        self._verify_suite(suite.suites[1])
+        self._verify_suite(suite.suites[0], curdir=str(self.path.parent))
+        self._verify_suite(suite.suites[1], curdir=str(self.path.parent))
 
     def test_from_file_system_with_config(self):
-        suite = TestSuite.from_file_system(self.path, rpa=True)
-        self._verify_suite(suite, rpa=True)
+        suite = TestSuite.from_file_system(self.path, process_curdir=False)
+        self._verify_suite(suite)
 
     def test_from_file_system_with_defaults(self):
         defaults = TestDefaults(tags=('from defaults',), timeout='10s')
         suite = TestSuite.from_file_system(self.path, defaults=defaults)
-        self._verify_suite(suite, tags=('from defaults', 'tag'), timeout='10s')
+        self._verify_suite(suite, tags=('from defaults', 'tag'), timeout='10s',
+                           curdir=str(self.path.parent))
 
     def test_from_model(self):
         model = api.get_model(self.data)
@@ -140,7 +127,7 @@ Keyword
     def test_from_string_with_config(self):
         suite = TestSuite.from_string(self.data.replace('Test Cases', 'Testit'),
                                       lang='Finnish', curdir='.')
-        self._verify_suite(suite, name='')
+        self._verify_suite(suite, name='', curdir='.')
 
     def test_from_string_with_defaults(self):
         defaults = TestDefaults(tags=('from defaults',), timeout='10s')
@@ -148,17 +135,18 @@ Keyword
         self._verify_suite(suite, name='', tags=('from defaults', 'tag'), timeout='10s')
 
     def _verify_suite(self, suite, name='Test Run Model', tags=('tag',),
-                      timeout=None, rpa=False):
+                      timeout=None, curdir='${CURDIR}'):
+        curdir = curdir.replace('\\', '\\\\')
         assert_equal(suite.name, name)
         assert_equal(suite.doc, 'Some text.')
-        assert_equal(suite.rpa, rpa)
+        assert_equal(suite.rpa, False)
         assert_equal(suite.resource.imports[0].type, 'LIBRARY')
         assert_equal(suite.resource.imports[0].name, 'ExampleLibrary')
         assert_equal(suite.resource.variables[0].name, '${VAR}')
         assert_equal(suite.resource.variables[0].value, ('Value',))
         assert_equal(suite.resource.keywords[0].name, 'Keyword')
         assert_equal(suite.resource.keywords[0].body[0].name, 'Log')
-        assert_equal(suite.resource.keywords[0].body[0].args, ('Hello!',))
+        assert_equal(suite.resource.keywords[0].body[0].args, (curdir,))
         assert_equal(suite.tests[0].name, 'Example')
         assert_equal(suite.tests[0].tags, tags)
         assert_equal(suite.tests[0].timeout, timeout)
@@ -290,13 +278,16 @@ class TestToFromDictAndJson(unittest.TestCase):
                      name='Setup', lineno=1)
 
     def test_for(self):
-        self._verify(For(), type='FOR', variables=(), flavor='IN', values=(), body=[])
+        self._verify(For(), type='FOR', assign=(), flavor='IN', values=(), body=[])
         self._verify(For(['${i}'], 'IN RANGE', ['10'], lineno=2),
-                     type='FOR', variables=('${i}',), flavor='IN RANGE', values=('10',),
+                     type='FOR', assign=('${i}',), flavor='IN RANGE', values=('10',),
                      body=[], lineno=2)
         self._verify(For(['${i}', '${a}'], 'IN ENUMERATE', ['cat', 'dog'], start='1'),
-                     type='FOR', variables=('${i}', '${a}'), flavor='IN ENUMERATE',
+                     type='FOR', assign=('${i}', '${a}'), flavor='IN ENUMERATE',
                      values=('cat', 'dog'), start='1', body=[])
+
+    def test_old_for_json(self):
+        assert_equal(For.from_dict({'variables': ('${x}',)}).assign, ('${x}',))
 
     def test_while(self):
         self._verify(While(), type='WHILE', body=[])
@@ -350,9 +341,12 @@ class TestToFromDictAndJson(unittest.TestCase):
         self._verify(TryBranch(), type='TRY', body=[])
         self._verify(TryBranch(Try.EXCEPT), type='EXCEPT', patterns=(), body=[])
         self._verify(TryBranch(Try.EXCEPT, ['Pa*'], 'glob', '${err}'), type='EXCEPT',
-                     patterns=('Pa*',), pattern_type='glob', variable='${err}', body=[])
+                     patterns=('Pa*',), pattern_type='glob', assign='${err}', body=[])
         self._verify(TryBranch(Try.ELSE, lineno=7), type='ELSE', body=[], lineno=7)
         self._verify(TryBranch(Try.FINALLY, lineno=8), type='FINALLY', body=[], lineno=8)
+
+    def test_old_try_branch_json(self):
+        assert_equal(TryBranch.from_dict({'variable': '${x}'}).assign, '${x}')
 
     def test_try_structure(self):
         root = Try()
@@ -441,10 +435,12 @@ class TestToFromDictAndJson(unittest.TestCase):
 
     def test_user_keyword_structure(self):
         uk = UserKeyword('UK')
+        uk.setup.config(name='Setup', args=('New', 'in', 'RF 7'))
         uk.body.create_keyword('K1')
         uk.body.create_if().body.create_branch(condition='$c').body.create_keyword('K2')
         uk.teardown.config(name='Teardown')
         self._verify(uk, name='UK',
+                     setup={'name': 'Setup', 'args': ('New', 'in', 'RF 7')},
                      body=[{'name': 'K1'},
                            {'type': 'IF/ELSE ROOT',
                             'body': [{'type': 'IF', 'condition': '$c',

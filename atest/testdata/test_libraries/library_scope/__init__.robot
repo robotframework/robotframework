@@ -1,9 +1,9 @@
-*** Setting ***
+*** Settings ***
 Suite Setup       My Setup
 Suite Teardown    My Teardown
 Resource          resource.robot
 
-*** Keyword ***
+*** Keywords ***
 My Setup
     Register All    Suite 0
     libraryscope.Global.Should Be Registered    Suite 0

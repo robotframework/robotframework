@@ -64,7 +64,7 @@ def end_test(data, result):
 
 def log_message(msg):
     msg.message = msg.message.upper()
-    msg.timestamp = '20151216 15:51:20.141'
+    msg.timestamp = '2015-12-16 15:51:20.141'
 
 
 message = log_message

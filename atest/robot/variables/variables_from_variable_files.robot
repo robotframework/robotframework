@@ -1,11 +1,11 @@
-*** Setting ***
+*** Settings ***
 Suite Setup       Run Tests    --pythonpath ${PYTHONPATH DIR}    variables/variables_from_variable_files.robot
 Resource          atest_resource.robot
 
 *** Variables ***
 ${PYTHONPATH DIR}    ${DATADIR}/variables/resvarfiles/pythonpath_dir
 
-*** Test Case ***
+*** Test Cases ***
 Scalar String
     Check Test Case    ${TEST NAME}
 

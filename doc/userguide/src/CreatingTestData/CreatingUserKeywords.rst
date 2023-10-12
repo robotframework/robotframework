@@ -68,16 +68,17 @@ this section.
 `[Arguments]`:setting:
    Specifies `user keyword arguments`_.
 
-`[Return]`:setting:
-   Specifies `user keyword return values`_. `RETURN` statement (new in RF 5.0)
-   should be used instead.
-
-`[Teardown]`:setting:
-   Specify `user keyword teardown`_.
+`[Setup]`:setting:, `[Teardown]`:setting:
+   Specify `user keyword setup and teardown`_. `[Setup]`:setting: is new in
+   Robot Framework 7.0.
 
 `[Timeout]`:setting:
    Sets the possible `user keyword timeout`_. Timeouts_ are discussed
    in a section of their own.
+
+`[Return]`:setting:
+   Specifies `user keyword return values`_. Deprecated in Robot Framework 7.0,
+   the RETURN_ statement should be used instead.
 
 .. note:: The format used above is recommended, but setting names are
           case-insensitive and spaces are allowed between brackets and the name.
@@ -143,31 +144,40 @@ User keyword tags
 Both user keywords and `library keywords`_ can have tags. Similarly as when
 `tagging test cases`_, there are two settings affecting user keyword tags:
 
-`Keyword Tags`:setting: in the Setting section
+`Keyword Tags`:setting: setting in the Settings section
    All keywords in a file with this setting always get specified tags.
 
-`[Tags]`:setting: with each keyword
+`[Tags]`:setting: setting with each keyword
    Keywords get these tags in addition to possible tags specified using the
-   :setting:`Keyword Tags` setting.
+   :setting:`Keyword Tags` setting. The :setting:`[Tags]` setting also allows
+   removing tags set with :setting:`Keyword Tags` by using the `-tag` syntax.
 
 .. sourcecode:: robotframework
 
    *** Settings ***
-   Keyword Tags       gui
+   Keyword Tags       gui    html
 
    *** Keywords ***
    No own tags
-       [Documentation]    This keyword has tag 'gui'.
+       [Documentation]    Keyword has tags 'gui' and 'html'.
        No Operation
 
    Own tags
-       [Documentation]    This keyword has tags 'gui', 'own' and 'tags'.
+       [Documentation]    Keyword has tags 'gui', 'html', 'own' and 'tags'.
        [Tags]    own    tags
        No Operation
 
-Additionally, keyword tags can be specified on the last line of the documentation
-with `Tags:` prefix so that tags are separated with a comma. For example,
-following two keywords get same three tags:
+   Remove common tag
+       [Documentation]    Test has tags 'gui' and 'own'.
+       [Tags]    own    -html
+       No Operation
+
+Keyword tags can be specified using variables, the `-tag` syntax supports
+patterns, and so on, exactly as `test case tags`_.
+
+In addition to using the dedicated settings, keyword tags can be specified on
+the last line of the documentation with `Tags:` prefix so that tags are separated
+with a comma. For example, following two keywords get same three tags:
 
 .. sourcecode:: robotframework
 
@@ -197,18 +207,11 @@ reserved tag `robot:flatten`.
           versions all keyword tags need to be specified using the
           :setting:`[Tags]` setting.
 
-.. note:: Robot Framework 6.1 will support `removing globally set tags`__ using
-          the `-tag` syntax with the :setting:`[Tags]` setting. Creating tags
-          with literal value like `-tag` `is deprecated`__ in Robot Framework 6.0
-          and escaped__ syntax `\-tag` must be used if such tags are actually
-          needed.
+.. note:: The `-tag` syntax for removing common tags is new in Robot Framework 7.0.
 
 __ `Removing keywords`_
 __ `Flattening keywords`_
 __ `Reserved tags`_
-__ https://github.com/robotframework/robotframework/issues/4374
-__ https://github.com/robotframework/robotframework/issues/4380
-__ escaping_
 
 User keyword arguments
 ----------------------
@@ -888,10 +891,10 @@ User keyword return values
 
 Similarly as library keywords, also user keywords can return values.
 When using Robot Framework 5.0 or newer, the recommended approach is
-using the native `RETURN` statement. Old :setting:`[Return]`
-setting and BuiltIn_ keywords :name:`Return From Keyword` and
-:name:`Return From Keyword If` still work but they will be deprecated
-and removed in the future.
+using the native RETURN_ statement. The old :setting:`[Return]`
+setting was deprecated in Robot Framework 7.0 and also BuiltIn_ keywords
+:name:`Return From Keyword` and :name:`Return From Keyword If` are considered
+deprecated.
 
 Regardless how values are returned, they can be `assigned to variables`__
 in test cases and in other user keywords.
@@ -967,7 +970,6 @@ If you want to test the above examples yourself, you can use them with these tes
        ${index} =    Find Index    non existing    ${list}
        Should Be Equal    ${index}    ${-1}
 
-
 .. note:: `RETURN` syntax is case-sensitive similarly as IF_ and FOR_.
 
 .. note:: `RETURN` is new in Robot Framework 5.0. Use approaches explained
@@ -995,11 +997,10 @@ can be created using it.
    Return Three Values
        [Return]    a    b    c
 
-.. note:: The :setting:`[Return]` setting is effectively deprecated and the `RETURN`
-          statement should be used unless there is a need to support also older
-          versions than Robot Framework 5.0. There is no visible deprecation warning
-          when using the setting yet, but it will be loudly deprecated and eventually
-          removed in the future.
+.. note:: The :setting:`[Return]` setting was deprecated in Robot Framework 7.0
+          and the `RETURN` statement should be used instead. If there is a need
+          to support older Robot Framework versions that do not support `RETURN`,
+          it is possible to use the special keywords discussed in the next section.
 
 Using special keywords to return
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1046,33 +1047,47 @@ ones are more verbose:
           5.0. There is no visible deprecation warning when using these keywords yet, but
           they will be loudly deprecated and eventually removed in the future.
 
-User keyword teardown
----------------------
+User keyword setup and teardown
+-------------------------------
 
-User keywords may have a teardown defined using :setting:`[Teardown]` setting.
+A user keyword can have a setup and a teardown similarly as tests__.
+They are specified using :setting:`[Setup]` and :setting:`[Teardown]`
+settings, respectively, directly to the keyword having them. Unlike with
+tests, it is not possible to specify a common setup or teardown to all
+keywords in a certain file.
 
-Keyword teardown works much in the same way as a `test case
-teardown`__.  Most importantly, the teardown is always a single
-keyword, although it can be another user keyword, and it gets executed
-also when the user keyword fails. In addition, all steps of the
-teardown are executed even if one of them fails. However, a failure in
-keyword teardown will fail the test case and subsequent steps in the
-test are not run. The name of the keyword to be executed as a teardown
-can also be a variable.
+A setup and a teardown are always a single keyword, but they can themselves be
+user keywords executing multiple keywords internally. It is possible to specify
+them as variables, and using a special `NONE` value (case-insensitive) is
+the same as not having a setup or a teardown at all.
+
+User keyword setup is not much different to the first keyword inside the created
+user keyword. The only functional difference is that a setup can be specified as
+a variable, but it can also be useful to be able to explicitly mark a keyword
+to be a setup.
+
+User keyword teardowns are, exactly as test teardowns, executed also if the user
+keyword fails. They are thus very useful when needing to do something at the
+end of the keyword regardless of its status. To ensure that all cleanup activities
+are done, the `continue on failure`_ mode is enabled by default with user keyword
+teardowns the same way as with test teardowns.
 
 .. sourcecode:: robotframework
 
    *** Keywords ***
-   With Teardown
+   Setup and teardown
+       [Setup]       Log    New in RF 7!
        Do Something
-       [Teardown]    Log    keyword teardown
+       [Teardown]    Log    Old feature.
 
    Using variables
-       [Documentation]    Teardown given as variable
+       [Setup]       ${SETUP}
        Do Something
        [Teardown]    ${TEARDOWN}
 
 __ `test setup and teardown`_
+
+.. note:: User keyword setups are new in Robot Framework 7.0.
 
 Private user keywords
 ---------------------

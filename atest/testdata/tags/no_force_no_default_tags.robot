@@ -1,4 +1,4 @@
-*** Test Case ***
+*** Test Cases ***
 No Own Tags No Force Nor Default
     No Operation
 

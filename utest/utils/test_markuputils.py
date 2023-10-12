@@ -848,7 +848,7 @@ class TestAttributeEscape(unittest.TestCase):
             assert_equal(attribute_escape(inp), exp)
 
     def test_illegal_chars_in_xml(self):
-        for c in u'\x00\x08\x0B\x0C\x0E\x1F\uFFFE\uFFFF':
+        for c in '\x00\x08\x0B\x0C\x0E\x1F\uFFFE\uFFFF':
             assert_equal(attribute_escape(c), '')
 
 

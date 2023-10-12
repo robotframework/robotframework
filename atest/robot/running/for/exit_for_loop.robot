@@ -29,7 +29,7 @@ Exit For Loop In User Keyword Without For Loop Should Fail
 
 Exit For Loop Keyword Should Log Info
     ${tc} =    Check Test Case    Simple Exit For Loop
-    Should Be Equal    ${tc.kws[0].kws[0].kws[0].name}    BuiltIn.Exit For Loop
+    Should Be Equal    ${tc.kws[0].kws[0].kws[0].full_name}    BuiltIn.Exit For Loop
     Check Log Message   ${tc.kws[0].kws[0].kws[0].msgs[0]}   Exiting for loop altogether.
 
 Exit For Loop In Test Teardown

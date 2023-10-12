@@ -10,9 +10,9 @@ Import Library
 
 Set Library Search Order
     ${tc} =    Check Test Case    ${TESTNAME}
-    Should Be Equal    ${tc.kws[1].name}    Second.Parameters
-    Should Be Equal    ${tc.kws[2].name}    First.Parameters
-    Should Be Equal    ${tc.kws[4].name}    Dynamic.Parameters
+    Should Be Equal    ${tc.kws[1].full_name}    Second.Parameters
+    Should Be Equal    ${tc.kws[2].full_name}    First.Parameters
+    Should Be Equal    ${tc.kws[4].full_name}    Dynamic.Parameters
 
 Set Tags
     Check Test Tags    ${TESTNAME}    \${2}    \${var}    Tag0    Tag1    Tag2

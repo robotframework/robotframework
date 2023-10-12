@@ -8,4 +8,4 @@ Metadata          Something    My Value
 Suite3 First
     [Tags]    t1
     Log    Suite3_First
-    Sleep    0.01    Make sure elapsed time > 0
+    Sleep    0.001    Make sure elapsed time > 0

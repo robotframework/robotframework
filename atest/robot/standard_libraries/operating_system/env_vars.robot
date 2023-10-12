@@ -1,8 +1,8 @@
-*** Setting ***
+*** Settings ***
 Suite Setup       Run Tests With Environment Variables
 Resource          atest_resource.robot
 
-*** Test Case ***
+*** Test Cases ***
 Get Environment Variable
     Check test case    ${TEST NAME}
 

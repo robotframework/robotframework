@@ -15,7 +15,7 @@
 
 from robot.errors import DataError
 from robot.model import SuiteVisitor
-from robot.utils import ET, ETSource, get_error_message
+from robot.utils import ET, ETSource, get_error_message, html_escape
 
 from .executionresult import Result, CombinedResult
 from .flattenkeywordmatcher import (FlattenByNameMatcher, FlattenByTypeMatcher,
@@ -144,49 +144,47 @@ class ExecutionResultBuilder:
         name_match, by_name = self._get_matcher(FlattenByNameMatcher, flattened)
         type_match, by_type = self._get_matcher(FlattenByTypeMatcher, flattened)
         tags_match, by_tags = self._get_matcher(FlattenByTagMatcher, flattened)
-        started = -1  # if 0 or more, we are flattening
+        started = -1    # if 0 or more, we are flattening
         tags = []
         containers = {'kw', 'for', 'while', 'iter', 'if', 'try'}
-        inside_kw = 0  # to make sure we don't read tags from a test
-        seen_doc = False
+        inside = 0    # to make sure we don't read tags from a test
         for event, elem in context:
             tag = elem.tag
-            start = event == 'start'
-            end = not start
-            if start:
+            if event == 'start':
                 if tag in containers:
-                    inside_kw += 1
+                    inside += 1
                     if started >= 0:
                         started += 1
-                    elif by_name and name_match(elem.get('name', ''), elem.get('library')):
+                    elif by_name and name_match(elem.get('name', ''), elem.get('owner')
+                                                or elem.get('library')):
                         started = 0
-                        seen_doc = False
                     elif by_type and type_match(tag):
                         started = 0
-                        seen_doc = False
                     tags = []
             else:
                 if tag in containers:
-                    inside_kw -= 1
-                    if started == 0 and not seen_doc:
-                        doc = ET.Element('doc')
-                        doc.text = '_*Content flattened.*_'
-                        yield 'start', doc
-                        yield 'end', doc
-                elif by_tags and inside_kw and started < 0 and tag == 'tag':
+                    inside -= 1
+                elif by_tags and inside and started < 0 and tag == 'tag':
                     tags.append(elem.text or '')
                     if tags_match(tags):
                         started = 0
-                        seen_doc = False
-                elif started == 0 and tag == 'doc':
-                    seen_doc = True
-                    elem.text = f"{elem.text or ''}\n\n_*Content flattened.*_".strip()
+                elif started == 0 and tag == 'status':
+                    elem.text = self._create_flattened_message(elem.text)
             if started <= 0 or tag == 'msg':
                 yield event, elem
             else:
                 elem.clear()
-            if started >= 0 and end and tag in containers:
+            if started >= 0 and event == 'end' and tag in containers:
                 started -= 1
+
+    def _create_flattened_message(self, original):
+        if not original:
+            start = ''
+        elif original.startswith('*HTML*'):
+            start = original[6:].strip() + '<hr>'
+        else:
+            start = html_escape(original) + '<hr>'
+        return f'*HTML* {start}<i>Content flattened.</i>'
 
     def _get_matcher(self, matcher_class, flattened):
         matcher = matcher_class(flattened)

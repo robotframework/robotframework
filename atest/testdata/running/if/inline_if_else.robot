@@ -1,4 +1,4 @@
-*** Variable ***
+*** Variables ***
 &{dict}
 
 *** Test Cases ***

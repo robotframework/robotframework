@@ -9,8 +9,8 @@ from jsonschema import Draft202012Validator
 from xmlschema import XMLSchema
 
 from robot.api import logger
-from robot.utils import SYSTEM_ENCODING
-from robot.running.arguments import ArgInfo
+from robot.utils import NOT_SET, SYSTEM_ENCODING
+from robot.running.arguments import ArgInfo, TypeInfo
 
 
 ROOT = Path(__file__).absolute().parent.parent.parent.parent
@@ -64,13 +64,15 @@ class LibDocLib:
             self.json_schema.validate(json.load(f))
 
     def get_repr_from_arg_model(self, model):
+        type_info = TypeInfo.from_type_hint(model['type']) if model['type'] else None
         return str(ArgInfo(kind=model['kind'],
                            name=model['name'],
-                           type=model['type'] or ArgInfo.NOTSET,
-                           default=model['default'] or ArgInfo.NOTSET))
+                           type=type_info,
+                           default=model['default'] or NOT_SET))
 
     def get_repr_from_json_arg_model(self, model):
+        type_info = TypeInfo.from_type_hint(model['type']) if model['type'] else None
         return str(ArgInfo(kind=model['kind'],
                            name=model['name'],
-                           type=model['type'] or ArgInfo.NOTSET,
-                           default=model['defaultValue'] or ArgInfo.NOTSET))
+                           type=type_info,
+                           default=model['defaultValue'] or NOT_SET))

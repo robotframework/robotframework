@@ -1,4 +1,8 @@
 *** Settings ***
+Documentation     Test --include and --exclude with Robot.
+...
+...               These options working together with --suite and --test
+...               is tested in filter_by_names.robot suite file.
 Test Template     Run And Check Include And Exclude
 Resource          atest_resource.robot
 
@@ -112,10 +116,14 @@ Non Matching When Running Multiple Suites
     --include nonex    tag 'nonex'    Pass And Fail & Normal
     --include nonex --name MyName   tag 'nonex'    MyName
 
+Suite containing tasks is ok if only tests are selected
+    --include test    Test    sources=rpa/tasks rpa/tests.robot
+    --exclude task    Test    sources=rpa/tasks rpa/tests.robot
+
 *** Keywords ***
 Run And Check Include And Exclude
-    [Arguments]    ${params}    @{tests}
-    Run Tests    ${params}    ${DATA SOURCES}
+    [Arguments]    ${params}    @{tests}    ${sources}=${DATA SOURCES}
+    Run Tests    ${params}    ${sources}
     Stderr Should Be Empty
     Should Contain Tests    ${SUITE}    @{tests}
 

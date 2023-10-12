@@ -52,9 +52,11 @@ class PythonArgumentParser(ArgumentParser):
     def _set_args(self, spec, handler):
         try:
             sig = signature(handler)
-        except ValueError:  # Can occur w/ C functions (incl. many builtins).
+        except ValueError:        # Can occur with C functions (incl. many builtins).
             spec.var_positional = 'args'
             return
+        except TypeError as err:  # Occurs if handler isn't actually callable.
+            raise DataError(str(err))
         parameters = list(sig.parameters.values())
         # `inspect.signature` drops `self` with bound methods and that's the case when
         # inspecting keywords. `__init__` is got directly from class (i.e. isn't bound)

@@ -78,9 +78,9 @@ class KeywordType:
         if ' = ' in kwname:
             return 'ITERATION'
         if not args:
-            if kwname in ("'IF' == 'WRONG'", '${i} == 9'):
+            if "'IF' == 'WRONG'" in kwname or '${i} == 9' in kwname:
                 return 'IF'
-            if kwname == "'ELSE IF' == 'ELSE IF'":
+            if "'ELSE IF' == 'ELSE IF'" in kwname:
                 return 'ELSE IF'
             if kwname == '':
                 source = os.path.basename(source)

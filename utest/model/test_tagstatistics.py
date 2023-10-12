@@ -2,22 +2,21 @@ import unittest
 
 from robot.utils.asserts import assert_equal, assert_none
 from robot.model.tagstatistics import TagStatisticsBuilder, TagStatLink
-from robot.model import Tags
 from robot.result import TestCase
 from robot.utils import MultiMatcher
 
 
 class TestTagStatistics(unittest.TestCase):
     _incl_excl_data = [([], []),
-                       ([], ['t1','t2']),
-                       (['t1'], ['t1','t2']),
-                       (['t1','t2'], ['t1','t2','t3','t4']),
-                       (['UP'], ['t1','t2','up']),
-                       (['not','not2'], ['t1','t2','t3']),
-                       (['t*'], ['t1','s1','t2','t3','s2','s3']),
-                       (['T*','r'], ['t1','t2','r','teeeeeeee']),
-                       (['*'], ['t1','t2','s1','tag']),
-                       (['t1','t2','t3','not'], ['t1','t2','t3','t4','s1','s2'])]
+                       ([], ['t1', 't2']),
+                       (['t1'], ['t1', 't2']),
+                       (['t1', 't2'], ['t1', 't2', 't3', 't4']),
+                       (['UP'], ['t1', 't2', 'up']),
+                       (['not', 'not2'], ['t1', 't2', 't3']),
+                       (['t*'], ['t1', 's1', 't2', 't3', 's2', 's3']),
+                       (['T*', 'r'], ['t1', 't2', 'r', 'teeeeeeee']),
+                       (['*'], ['t1', 't2', 's1', 'tag']),
+                       (['t1', 't2', 't3', 'not'], ['t1', 't2', 't3', 't4', 's1', 's2'])]
 
     def test_include(self):
         for incl, tags in self._incl_excl_data:
@@ -37,13 +36,13 @@ class TestTagStatistics(unittest.TestCase):
 
     def test_include_and_exclude(self):
         for incl, excl, tags, exp in [
-               ([], [], ['t0','t1','t2'], ['t0','t1','t2']),
-               (['t1'], ['t2'], ['t0','t1','t2'], ['t1']),
-               (['t?'], ['t2'], ['t0','t1','t2','x'], ['t0','t1']),
-               (['t?'], ['*2'], ['t0','t1','t2','x2'], ['t0','t1']),
-               (['t1','t2'], ['t2'], ['t0','t1','t2'], ['t1']),
-               (['t1','t2','t3','not'], ['t2','t0'],
-                ['t0','t1','t2','t3','x'], ['t1','t3'] )
+               ([], [], ['t0', 't1', 't2'], ['t0', 't1', 't2']),
+               (['t1'], ['t2'], ['t0', 't1', 't2'], ['t1']),
+               (['t?'], ['t2'], ['t0', 't1', 't2', 'x'], ['t0', 't1']),
+               (['t?'], ['*2'], ['t0', 't1', 't2', 'x2'], ['t0', 't1']),
+               (['t1', 't2'], ['t2'], ['t0', 't1', 't2'], ['t1']),
+               (['t1', 't2', 't3', 'not'], ['t2', 't0'],
+                ['t0', 't1', 't2', 't3', 'x'], ['t1', 't3'] )
               ]:
             builder = TagStatisticsBuilder(included=incl, excluded=excl)
             builder.add_test(TestCase(status='PASS', tags=tags))
@@ -68,12 +67,12 @@ class TestTagStatistics(unittest.TestCase):
                 ('t1', ['t1'], 1),
                 ('t1', ['t2'], 0),
                 ('t1&t2', ['t1'], 0),
-                ('t1&t2', ['t1','t2'], 1),
-                ('t1&t2', ['T1','t 2','t3'], 1),
-                ('t*', ['s','t','u'], 1),
-                ('t*', ['s','tee','t'], 1),
-                ('t*&s', ['s','tee','t'], 1),
-                ('t*&s&non', ['s','tee','t'], 0)
+                ('t1&t2', ['t1', 't2'], 1),
+                ('t1&t2', ['T1', 't 2', 't3'], 1),
+                ('t*', ['s', 't', 'u'], 1),
+                ('t*', ['s', 'tee', 't'], 1),
+                ('t*&s', ['s', 'tee', 't'], 1),
+                ('t*&s&non', ['s', 'tee', 't'], 0)
                ]:
             self._verify_combined_statistics(comb_tags, test_tags, expected_count)
 
@@ -86,9 +85,9 @@ class TestTagStatistics(unittest.TestCase):
         for comb_tags, test_tags, expected_count in [
                 ('t1NOTt2', [], 0),
                 ('t1NOTt2', ['t1'], 1),
-                ('t1NOTt2', ['t1','t2'], 0),
+                ('t1NOTt2', ['t1', 't2'], 0),
                 ('t1NOTt2', ['t3'], 0),
-                ('t1NOTt2', ['t3','t2'], 0),
+                ('t1NOTt2', ['t3', 't2'], 0),
                 ('t*NOTt2', ['t1'], 1),
                 ('t*NOTt2', ['t'], 1),
                 ('t*NOTt2', ['TEE'], 1),
@@ -96,12 +95,12 @@ class TestTagStatistics(unittest.TestCase):
                 ('T*NOTT?', ['t'], 1),
                 ('T*NOTT?', ['tt'], 0),
                 ('T*NOTT?', ['ttt'], 1),
-                ('T*NOTT?', ['tt','t'], 0),
-                ('T*NOTT?', ['ttt','something'], 1),
+                ('T*NOTT?', ['tt', 't'], 0),
+                ('T*NOTT?', ['ttt', 'something'], 1),
                 ('tNOTs*NOTr', ['t'], 1),
-                ('tNOTs*NOTr', ['t','s'], 0),
-                ('tNOTs*NOTr', ['S','T'], 0),
-                ('tNOTs*NOTr', ['R','T','s'], 0),
+                ('tNOTs*NOTr', ['t', 's'], 0),
+                ('tNOTs*NOTr', ['S', 'T'], 0),
+                ('tNOTs*NOTr', ['R', 'T', 's'], 0),
                 ('*NOTt', ['t'], 0),
                 ('*NOTt', ['e'], 1),
                 ('*NOTt', [], 0),
@@ -167,15 +166,15 @@ class TestTagStatistics(unittest.TestCase):
     def test_combine(self):
         # This is more like an acceptance test than a unit test ...
         for comb_tags, tests_tags in [
-                (['t1&t2'], [['t1','t2','t3'],['t1','t3']]),
-                (['1&2&3'], [['1','2','3'],['1','2','3','4']]),
-                (['1&2','1&3'], [['1','2','3'],['1','3'],['1']]),
-                (['t*'], [['t1','x','y'],['tee','z'],['t']]),
-                (['t?&s'], [['t1','s'],['tt','s','u'],['tee','s']]),
-                (['t*&s','*'], [['s','t','u'],['tee','s'],[],['x']]),
-                (['tNOTs'], [['t','u'],['t','s']]),
-                (['tNOTs','t&s','tNOTsNOTu', 't&sNOTu'],
-                  [['t','u'],['t','s'],['s','t','u'],['t'],['t','v']]),
+                (['t1&t2'], [['t1', 't2', 't3'],['t1', 't3']]),
+                (['1&2&3'], [['1', '2', '3'],['1', '2', '3', '4']]),
+                (['1&2', '1&3'], [['1', '2', '3'],['1', '3'],['1']]),
+                (['t*'], [['t1', 'x', 'y'],['tee', 'z'],['t']]),
+                (['t?&s'], [['t1', 's'],['tt', 's', 'u'],['tee', 's']]),
+                (['t*&s', '*'], [['s', 't', 'u'],['tee', 's'],[],['x']]),
+                (['tNOTs'], [['t', 'u'],['t', 's']]),
+                (['tNOTs', 't&s', 'tNOTsNOTu', 't&sNOTu'],
+                 [['t', 'u'],['t', 's'],['s', 't', 'u'],['t'],['t', 'v']]),
                 (['nonex'], [['t1'],['t1,t2'],[]])
                 ]:
             # 1) Create tag stats
@@ -228,10 +227,8 @@ class TestTagStatLink(unittest.TestCase):
     def test_valid_string_is_parsed_correctly(self):
         for arg, exp in [(('Tag', 'bar/foo.html', 'foobar'),
                           ('^Tag$', 'bar/foo.html', 'foobar')),
-                         (('hello', 'gopher://hello.world:8090/hello.html',
-                           'Hello World'),
-                          ('^hello$', 'gopher://hello.world:8090/hello.html',
-                           'Hello World'))]:
+                         (('hi', 'gopher://hi.world:8090/hi.html', 'Hi World'),
+                          ('^hi$', 'gopher://hi.world:8090/hi.html', 'Hi World'))]:
             link = TagStatLink(*arg)
             assert_equal(exp[0], link._regexp.pattern)
             assert_equal(exp[1], link._link)
@@ -282,14 +279,14 @@ class TestTagStatLink(unittest.TestCase):
     def test_pattern_substitution_with_one_match(self):
         link = TagStatLink('tag-*', 'http://tracker/?id=%1', 'Tracker')
         for id in ['1', '23', '456']:
-            exp = ('http://tracker/?id=%s' % id, 'Tracker')
-            assert_equal(exp, link.get_link('tag-%s' % id))
+            exp = (f'http://tracker/?id={id}', 'Tracker')
+            assert_equal(exp, link.get_link(f'tag-{id}'))
 
     def test_pattern_substitution_with_multiple_matches(self):
         link = TagStatLink('?-*', 'http://tracker/?id=%1-%2', 'Tracker')
         for id1, id2 in [('1', '2'), ('3', '45'), ('f', 'bar')]:
-            exp = ('http://tracker/?id=%s-%s' % (id1, id2), 'Tracker')
-            assert_equal(exp, link.get_link('%s-%s' % (id1, id2)))
+            exp = (f'http://tracker/?id={id1}-{id2}', 'Tracker')
+            assert_equal(exp, link.get_link(f'{id1}-{id2}'))
 
     def test_pattern_substitution_with_multiple_substitutions(self):
         link = TagStatLink('??-?-*', '%3-%3-%1-%2-%3', 'Tracker')

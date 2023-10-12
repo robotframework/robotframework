@@ -32,7 +32,7 @@ Kill process when terminate fails
     Check Log Message    ${tc.kws[5].msgs[0]}    Gracefully terminating process.
     Check Log Message    ${tc.kws[5].msgs[1]}    Graceful termination failed.
     Check Log Message    ${tc.kws[5].msgs[2]}    Forcefully killing process.
-    Should Be True    ${tc.elapsedtime} >= 2000
+    Elapsed Time Should Be Valid    ${tc.elapsed_time}    minimum=2
 
 Terminating already terminated process is ok
     Check Test Case    ${TESTNAME}

@@ -155,7 +155,7 @@ Strict and invalid retry interval
 *** Keywords ***
 User Keyword
     ${value} =    Fail Until Retried Often Enough    From User Keyword
-    [Return]    ${value}
+    RETURN    ${value}
 
 Wait Until Inside User Keyword
     Wait Until Keyword Succeeds    3.99 seconds    0.1    Fail Until Retried Often Enough

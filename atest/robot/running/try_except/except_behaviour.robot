@@ -35,19 +35,22 @@ Non-string pattern
     FAIL    NOT RUN    NOT RUN    NOT RUN    NOT RUN
 
 Variable in pattern type
-    FAIL    PASS               pattern_types=['\${regexp}']
+    FAIL    PASS                  pattern_types=['\${regexp}']
 
 Invalid variable in pattern type
-    FAIL    FAIL    PASS       pattern_types=['\${does not exist}']
+    FAIL    FAIL    PASS          pattern_types=['\${does not exist}']
 
 Invalid pattern type
-    FAIL    FAIL               pattern_types=['invalid']
+    FAIL    NOT RUN    NOT RUN    pattern_types=['glob', 'invalid']
+
+Invalid pattern type from variable
+    FAIL    FAIL                  pattern_types=["\${{'invalid'}}"]
 
 Non-string pattern type
-    FAIL    FAIL               pattern_types=['\${42}']
+    FAIL    FAIL                  pattern_types=['\${42}']
 
 Pattern type multiple times
-    FAIL    NOT RUN            pattern_types=['glob, start']
+    FAIL    NOT RUN               pattern_types=['glob, start']
 
 Pattern type without patterns
     FAIL    PASS

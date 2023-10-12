@@ -42,4 +42,4 @@ Get Listener File
     [Arguments]    ${file}
     ${path} =    Join Path    %{TEMPDIR}    ${file}
     ${content} =    Get File    ${path}
-    [Return]    ${content}
+    RETURN    ${content}

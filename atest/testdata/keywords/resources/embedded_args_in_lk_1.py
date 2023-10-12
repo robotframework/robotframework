@@ -3,6 +3,7 @@ from robot.api.deco import keyword
 from robot.libraries.BuiltIn import BuiltIn
 
 
+ROBOT_AUTO_KEYWORDS = False
 should_be_equal = BuiltIn().should_be_equal
 log = logger.write
 
@@ -81,7 +82,7 @@ def literal_opening_curly_brace(curly):
     should_be_equal(curly, "{")
 
 
-@keyword(name="Literal ${Curly:\}} Brace")
+@keyword(name=r"Literal ${Curly:\}} Brace")
 def literal_closing_curly_brace(curly):
     should_be_equal(curly, "}")
 

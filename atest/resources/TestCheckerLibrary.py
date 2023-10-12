@@ -5,12 +5,13 @@ from xmlschema import XMLSchema
 
 from robot import utils
 from robot.api import logger
-from robot.utils.asserts import assert_equal
-from robot.result import (ExecutionResultBuilder, Result, ResultVisitor,
-                          For, ForIteration, While, WhileIteration, Return, Break, Continue,
-                          If, IfBranch, Try, TryBranch, Keyword, TestCase, TestSuite)
-from robot.result.model import Body, Iterations
 from robot.libraries.BuiltIn import BuiltIn
+from robot.result import (Break, Continue, Error, ExecutionResultBuilder, For,
+                          ForIteration, If, IfBranch, Keyword, Result, ResultVisitor,
+                          Return, TestCase, TestSuite, Try, TryBranch, While,
+                          WhileIteration)
+from robot.result.model import Body, Iterations
+from robot.utils.asserts import assert_equal
 
 
 class NoSlotsKeyword(Keyword):
@@ -45,6 +46,10 @@ class NoSlotsContinue(Continue):
     pass
 
 
+class NoSlotsError(Error):
+    pass
+
+
 class NoSlotsBody(Body):
     keyword_class = NoSlotsKeyword
     for_class = NoSlotsFor
@@ -54,6 +59,7 @@ class NoSlotsBody(Body):
     return_class = NoSlotsReturn
     break_class = NoSlotsBreak
     continue_class = NoSlotsContinue
+    error_class = NoSlotsError
 
 
 class NoSlotsIfBranch(IfBranch):
@@ -77,8 +83,8 @@ class NoSlotsIterations(Iterations):
 
 
 NoSlotsKeyword.body_class = NoSlotsReturn.body_class = NoSlotsBreak.body_class \
-    = NoSlotsContinue.body_class = NoSlotsBody
-NoSlotsFor.iterations_class = NoSlotsWhile.iterations_class =NoSlotsIterations
+    = NoSlotsContinue.body_class = NoSlotsError.body_class = NoSlotsBody
+NoSlotsFor.iterations_class = NoSlotsWhile.iterations_class = NoSlotsIterations
 NoSlotsFor.iteration_class = NoSlotsForIteration
 NoSlotsWhile.iteration_class = NoSlotsWhileIteration
 NoSlotsIf.branch_class = NoSlotsIfBranch
@@ -223,9 +229,9 @@ class TestCheckerLibrary:
             start = self._get_pattern(test, 'STARTS:')
             if test.message.startswith(start):
                 return
-        raise AssertionError("Test '%s' had wrong message.\n\n"
-                             "Expected:\n%s\n\nActual:\n%s\n"
-                             % (test.name, test.exp_message, test.message))
+        raise AssertionError(f"Test '{test.name}' had wrong message.\n\n"
+                             f"Expected:\n{test.exp_message}\n\n"
+                             f"Actual:\n{test.message}\n")
 
     def _get_pattern(self, test, prefix):
         pattern = test.exp_message[len(prefix):].strip()
@@ -253,12 +259,12 @@ class TestCheckerLibrary:
         if len(tests) != len(expected):
             raise AssertionError("Wrong number of tests." + tests_msg)
         for test in tests:
-            logger.info("Verifying test '%s'" % test.name)
+            logger.info(f"Verifying test '{test.name}'")
             try:
                 status = self._find_expected_status(test.name, expected)
             except IndexError:
-                raise AssertionError("Test '%s' was not expected to be run.%s"
-                                     % (test.name, tests_msg))
+                raise AssertionError(f"Test '{test.name}' was not expected to be run."
+                                     + tests_msg)
             expected.pop(expected.index((test.name, status)))
             if status and ':' in status:
                 status, message = status.split(':', 1)
@@ -284,14 +290,12 @@ class TestCheckerLibrary:
         expected = sorted(expected)
         actual = sorted(s.name for s in suite.suites)
         if len(actual) != len(expected):
-            raise AssertionError("Wrong number of suites.\n"
-                                 "Expected (%d): %s\n"
-                                 "Actual   (%d): %s"
-                                 % (len(expected), ', '.join(expected),
-                                    len(actual), ', '.join(actual)))
+            raise AssertionError(f"Wrong number of suites.\n"
+                                 f"Expected ({len(expected)}): {', '.join(expected)}\n"
+                                 f"Actual   ({len(actual)}): {', '.join(actual)}")
         for name in expected:
             if not utils.Matcher(name).match_any(actual):
-                raise AssertionError('Suite %s not found' % name)
+                raise AssertionError(f'Suite {name} not found.')
 
     def should_contain_tags(self, test, *tags):
         logger.info('Test has tags', test.tags)
@@ -301,7 +305,7 @@ class TestCheckerLibrary:
             assert_equal(act, exp)
 
     def should_contain_keywords(self, item, *kw_names):
-        actual_names = [kw.name for kw in item.kws]
+        actual_names = [kw.full_name for kw in item.kws]
         assert_equal(len(actual_names), len(kw_names), 'Wrong number of keywords')
         for act, exp in zip(actual_names, kw_names):
             assert_equal(act, exp)
@@ -342,43 +346,17 @@ class ProcessResults(ResultVisitor):
             test.exp_status = 'PASS'
             test.exp_message = ''
         test.kws = list(test.body)
-        test.keyword_count = test.kw_count = len(test.kws)
 
-    def start_keyword(self, kw):
-        self._add_kws_and_msgs(kw)
-
-    def _add_kws_and_msgs(self, item):
-        # TODO: Consider not setting these special attributes:
-        # - Using normal `body` instead of special `kws` in tests would be better.
-        # - `msgs` isn't that much shorter than normal `messages`.
-        # - Counts likely not needed often enough. There are other ways to get them.
-        # - No need to construct "NoSlots" variants for all model objects.
+    def start_body_item(self, item):
+        # TODO: Consider not setting these attributes to avoid "NoSlots" variants.
+        # - Using normal `body` and `messages` would in general be cleaner.
+        # - If `kws` is preserved, it should only contain keywords, not controls.
+        # - `msgs` isn't that much shorter than `messages`.
         item.kws = item.body.filter(messages=False)
         item.msgs = item.body.filter(messages=True)
-        item.keyword_count = item.kw_count = len(item.kws)
-        item.message_count = item.msg_count = len(item.msgs)
 
-    def start_for(self, for_):
-        self._add_kws_and_msgs(for_)
-
-    def start_for_iteration(self, iteration):
-        self._add_kws_and_msgs(iteration)
-
-    def start_if(self, if_):
-        self._add_kws_and_msgs(if_)
-
-    def start_if_branch(self, branch):
-        self._add_kws_and_msgs(branch)
-
-    def start_while(self, while_):
-        self._add_kws_and_msgs(while_)
-
-    def start_while_iteration(self, iteration):
-        self._add_kws_and_msgs(iteration)
-
-    def visit_error(self, error):
+    def visit_message(self, message):
         pass
 
     def visit_errors(self, errors):
         errors.msgs = errors.messages
-        errors.message_count = errors.msg_count = len(errors.messages)

@@ -76,8 +76,18 @@ class FileContext(LexingContext):
 
     def _handles_section(self, statement: StatementTokens, header: str) -> bool:
         marker = statement[0].value
-        return bool(marker and marker[0] == '*' and
-                    self.languages.headers.get(self._normalize(marker)) == header)
+        if not marker or marker[0] != '*':
+            return False
+        normalized = self._normalize(marker)
+        if self.languages.headers.get(normalized) == header:
+            return True
+        if normalized == header[:-1]:
+            statement[0].error = (
+                f"Singular section headers like '{marker}' are deprecated. "
+                f"Use plural format like '*** {header} ***' instead."
+            )
+            return True
+        return False
 
     def _normalize(self, marker: str) -> str:
         return normalize_whitespace(marker).strip('* ').title()

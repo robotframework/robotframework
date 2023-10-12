@@ -22,7 +22,7 @@ class TestJsonDumper(unittest.TestCase):
         self._test('123', '"123"')
 
     def test_dump_non_ascii_string(self):
-        self._test(u'hyv\xe4', u'"hyv\xe4"')
+        self._test('hyvä', '"hyvä"')
 
     def test_escape_string(self):
         self._test('"-\\-\n-\t-\r', '"\\"-\\\\-\\n-\\t-\\r"')

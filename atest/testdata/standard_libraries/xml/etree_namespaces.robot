@@ -74,7 +74,7 @@ Get Expected Etree 1.3 Output
     ...    ${INDENT}</ns3:another>
     ...    ${INDENT}<ns0:back>back in default</ns0:back>
     ...    </ns0:test>
-    [Return]    @{expected}
+    RETURN    @{expected}
 
 Get Expected Etree 1.2 Output
     @{expected} =    Create List
@@ -94,4 +94,4 @@ Get Expected Etree 1.2 Output
     ...    ${INDENT}</ns1:another>
     ...    ${INDENT}<ns0:back>back in default</ns0:back>
     ...    </ns0:test>
-    [Return]    @{expected}
+    RETURN    @{expected}

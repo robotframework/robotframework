@@ -1,9 +1,9 @@
-*** Setting ***
+*** Settings ***
 Test Teardown     Close All Connections
 Library           Telnet
 Resource          telnet_resource.robot
 
-*** Test Case ***
+*** Test Cases ***
 
 Successful login without prompt
     Open Connection    ${HOST}

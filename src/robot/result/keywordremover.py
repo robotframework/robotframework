@@ -15,7 +15,7 @@
 
 from robot.errors import DataError
 from robot.model import SuiteVisitor, TagPattern
-from robot.utils import Matcher, plural_or_not
+from robot.utils import html_escape, Matcher, plural_or_not
 
 
 def KeywordRemover(how):
@@ -36,7 +36,7 @@ def KeywordRemover(how):
 
 
 class _KeywordRemover(SuiteVisitor):
-    _message = 'Keyword data removed using --RemoveKeywords option.'
+    _message = 'Data removed using --RemoveKeywords option.'
 
     def __init__(self):
         self._removal_message = RemovalMessage(self._message)
@@ -86,18 +86,18 @@ class PassedKeywordRemover(_KeywordRemover):
 class ByNameKeywordRemover(_KeywordRemover):
 
     def __init__(self, pattern):
-        _KeywordRemover.__init__(self)
+        super().__init__()
         self._matcher = Matcher(pattern, ignore='_')
 
     def start_keyword(self, kw):
-        if self._matcher.match(kw.name) and not self._warning_or_error(kw):
+        if self._matcher.match(kw.full_name) and not self._warning_or_error(kw):
             self._clear_content(kw)
 
 
 class ByTagKeywordRemover(_KeywordRemover):
 
     def __init__(self, pattern):
-        _KeywordRemover.__init__(self)
+        super().__init__()
         self._pattern = TagPattern.from_string(pattern)
 
     def start_keyword(self, kw):
@@ -136,7 +136,7 @@ class WaitUntilKeywordSucceedsRemover(_KeywordRemover):
     _message = '%d failing step%s removed using --RemoveKeywords option.'
 
     def start_keyword(self, kw):
-        if kw.libname == 'BuiltIn' and kw.kwname == 'Wait Until Keyword Succeeds':
+        if kw.owner == 'BuiltIn' and kw.name == 'Wait Until Keyword Succeeds':
             before = len(kw.body)
             self._remove_keywords(kw.body)
             self._removal_message.set_if_removed(kw, before)
@@ -179,5 +179,11 @@ class RemovalMessage:
         if removed:
             self.set(kw, self._message % (removed, plural_or_not(removed)))
 
-    def set(self, kw, message=None):
-        kw.doc = ('%s\n\n_%s_' % (kw.doc, message or self._message)).strip()
+    def set(self, item, message=None):
+        if not item.message:
+            start = ''
+        elif item.message.startswith('*HTML*'):
+            start = item.message[6:].strip() + '<hr>'
+        else:
+            start = html_escape(item.message) + '<hr>'
+        item.message = f'*HTML* {start}<i>{message or self._message}</i>'

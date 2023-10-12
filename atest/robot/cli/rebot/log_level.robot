@@ -40,7 +40,7 @@ Configure visible log level
 Rebot
     [Arguments]    ${options}=${EMPTY}
     Run Rebot    ${options} --log ${LOGNAME}    ${INPUT FILE}
-    [Return]    ${SUITE.tests[0]}
+    RETURN    ${SUITE.tests[0]}
 
 Min level should be '${min}' and default '${default}'
     ${log}=    Get file    ${OUTDIR}/${LOG NAME}

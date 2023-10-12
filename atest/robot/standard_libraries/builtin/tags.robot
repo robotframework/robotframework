@@ -73,11 +73,11 @@ Tags Should Have Been Added
     @{tags} =  Create List  @{SUITE_TAGS}  @{added}
     Sort List  ${tags}
     ${tc} =  Check Test Tags  ${testname}  @{tags}
-    [Return]  ${tc}
+    RETURN  ${tc}
 
 Tags Should Have Been Removed
     [Arguments]  ${testname}  @{removed}
     @{tags} =  Copy List  ${SUITE_TAGS}
     Remove Values From List  ${tags}  @{removed}
     ${tc} =  Check Test Tags  ${testname}  @{tags}
-    [Return]  ${tc}
+    RETURN  ${tc}

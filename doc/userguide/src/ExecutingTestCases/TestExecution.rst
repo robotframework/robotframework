@@ -45,9 +45,9 @@ Setups and teardowns
 Setups and teardowns can be used on `test suite`__, `test case`__ and
 `user keyword`__ levels.
 
-__ `Test setup and teardown`_
 __ `Suite setup and teardown`_
-__ `User keyword teardown`_
+__ `Test setup and teardown`_
+__ `User keyword setup and teardown`_
 
 Suite setup
 '''''''''''
@@ -98,13 +98,21 @@ Similarly as suite teardown, test teardowns are used mainly for
 cleanup activities. Also they are executed fully even if some of their
 keywords fail.
 
-Keyword teardown
-''''''''''''''''
+User keyword setup
+''''''''''''''''''
 
-`User keywords`_ cannot have setups, but they can have teardowns that work
-exactly like other teardowns. Keyword teardowns are run after the keyword is
-executed otherwise, regardless the status, and they are executed fully even
-if some of their keywords fail.
+User keyword setup is executed before the keyword body. If the setup fails,
+the body is not executed. There is not much difference between the keyword
+setup and the first keyword in the body.
+
+.. note:: User keyword setups are new in Robot Framework 7.0.
+
+User keyword teardown
+'''''''''''''''''''''
+
+User keyword teardown is run after the keyword is executed otherwise, regardless
+the status. User keyword teardowns are executed fully even if some of their
+keywords would fail.
 
 Execution order
 ~~~~~~~~~~~~~~~

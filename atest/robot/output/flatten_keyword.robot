@@ -9,61 +9,61 @@ ${FLATTEN}      --FlattenKeywords NAME:Keyword3
 ...             --flat TAG:flattenNOTkitty
 ...             --flatten "name:Flatten controls in keyword"
 ...             --log log.html
-${FLAT TEXT}    _*Content flattened.*_
-${FLAT HTML}    <p><i><b>Content flattened.\\x3c/b>\\x3c/i>\\x3c/p>
+${FLATTENED}    <i>Content flattened.</i>
 ${ERROR}        [ ERROR ] Invalid value for option '--flattenkeywords': Expected 'FOR', 'WHILE', 'ITERATION', 'TAG:<pattern>' or 'NAME:<pattern>', got 'invalid'.${USAGE TIP}\n
 
 *** Test Cases ***
 Non-matching keyword is not flattened
-    Should Be Equal    ${TC.kws[0].doc}    Doc of keyword 2
-    Length Should Be    ${TC.kws[0].kws}    2
-    Length Should Be    ${TC.kws[0].msgs}    0
-    Check Log Message    ${TC.kws[0].kws[0].msgs[0]}    2
-    Check Log Message    ${TC.kws[0].kws[1].kws[0].msgs[0]}    1
+    Should Be Equal      ${TC.kws[0].message}                  ${EMPTY}
+    Should Be Equal      ${TC.kws[0].doc}                      Doc of keyword 2
+    Length Should Be     ${TC.kws[0].kws}                      2
+    Length Should Be     ${TC.kws[0].msgs}                     0
+    Check Log Message    ${TC.kws[0].kws[0].msgs[0]}           2
+    Check Log Message    ${TC.kws[0].kws[1].kws[1].msgs[0]}    1
 
 Exact match
-    Should Be Equal    ${TC.kws[1].doc}    Doc of keyword 3\n\n${FLAT TEXT}
-    Length Should Be    ${TC.kws[1].kws}    0
-    Length Should Be    ${TC.kws[1].msgs}    3
-    Check Log Message    ${TC.kws[1].msgs[0]}    3
-    Check Log Message    ${TC.kws[1].msgs[1]}    2
-    Check Log Message    ${TC.kws[1].msgs[2]}    1
+    Should Be Equal      ${TC.kws[1].message}     *HTML* ${FLATTENED}
+    Should Be Equal      ${TC.kws[1].doc}         Doc of keyword 3
+    Length Should Be     ${TC.kws[1].kws}         0
+    Length Should Be     ${TC.kws[1].msgs}        3
+    Check Log Message    ${TC.kws[1].msgs[0]}     3
+    Check Log Message    ${TC.kws[1].msgs[1]}     2
+    Check Log Message    ${TC.kws[1].msgs[2]}     1
 
 Pattern match
-    Should Be Equal    ${TC.kws[2].doc}    ${FLAT TEXT}
-    Length Should Be    ${TC.kws[2].kws}    0
-    Length Should Be    ${TC.kws[2].msgs}    6
-    Check Log Message    ${TC.kws[2].msgs[0]}    3
-    Check Log Message    ${TC.kws[2].msgs[1]}    2
-    Check Log Message    ${TC.kws[2].msgs[2]}    1
-    Check Log Message    ${TC.kws[2].msgs[3]}    2
-    Check Log Message    ${TC.kws[2].msgs[4]}    1
-    Check Log Message    ${TC.kws[2].msgs[5]}    1
+    Should Be Equal      ${TC.kws[2].message}     *HTML* ${FLATTENED}
+    Should Be Equal      ${TC.kws[2].doc}         ${EMPTY}
+    Length Should Be     ${TC.kws[2].kws}         0
+    Length Should Be     ${TC.kws[2].msgs}        6
+    Check Log Message    ${TC.kws[2].msgs[0]}     3
+    Check Log Message    ${TC.kws[2].msgs[1]}     2
+    Check Log Message    ${TC.kws[2].msgs[2]}     1
+    Check Log Message    ${TC.kws[2].msgs[3]}     2
+    Check Log Message    ${TC.kws[2].msgs[4]}     1
+    Check Log Message    ${TC.kws[2].msgs[5]}     1
 
-Tag match when keyword has documentation
-    Should Be Equal     ${TC.kws[5].doc}     Doc of flat keyword.\n\n${FLAT TEXT}
-    Length Should Be    ${TC.kws[5].kws}     0
-    Length Should Be    ${TC.kws[5].msgs}    1
+Tag match when keyword has no message
+    Should Be Equal     ${TC.kws[5].message}     *HTML* ${FLATTENED}
+    Should Be Equal     ${TC.kws[5].doc}         ${EMPTY}
+    Length Should Be    ${TC.kws[5].kws}         0
+    Length Should Be    ${TC.kws[5].msgs}        1
 
-Tag match when keyword has no documentation
-    Should Be Equal     ${TC.kws[6].doc}     ${FLAT TEXT}
-    Length Should Be    ${TC.kws[6].kws}     0
-    Length Should Be    ${TC.kws[6].msgs}    1
+Tag match when keyword has message
+    Should Be Equal     ${TC.kws[6].message}     *HTML* Expected e&amp;&lt;aped failure!<hr>${FLATTENED}
+    Should Be Equal     ${TC.kws[6].doc}         Doc of flat keyword.
+    Length Should Be    ${TC.kws[6].kws}         0
+    Length Should Be    ${TC.kws[6].msgs}        1
 
 Match full name
-    Should Be Equal    ${TC.kws[3].doc}    Logs the given message with the given level.\n\n${FLAT TEXT}
-    Length Should Be    ${TC.kws[3].kws}    0
-    Length Should Be    ${TC.kws[3].msgs}    1
+    Should Be Equal      ${TC.kws[3].message}    *HTML* ${FLATTENED}
+    Should Be Equal      ${TC.kws[3].doc}        Logs the given message with the given level.
+    Length Should Be     ${TC.kws[3].kws}        0
+    Length Should Be     ${TC.kws[3].msgs}       1
     Check Log Message    ${TC.kws[3].msgs[0]}    Flatten me too!!
 
 Flattened in log after execution
-    Should Contain X Times    ${LOG}    Doc of keyword 3    1
-    Should Contain X Times    ${LOG}    Doc of keyword 2    1
-    Should Contain X Times    ${LOG}    Doc of keyword 1    1
-    Should Contain X Times    ${LOG}    ${FLAT HTML}        6
-    Should Contain    ${LOG}    *<p>Doc of keyword 3\\x3c/p>\\n${FLAT HTML}
-    Should Contain    ${LOG}    *${FLAT HTML}
-    Should Contain    ${LOG}    *<p>Logs the given message with the given level.\\x3c/p>\\n${FLAT HTML}
+    Should Contain    ${LOG}    "*<i>Content flattened.\\x3c/i>"
+    Should Contain    ${LOG}    "*Expected e&amp;&lt;aped failure!<hr><i>Content flattened.\\x3c/i>"
 
 Flatten controls in keyword
     ${tc} =    Check Test Case    ${TEST NAME}
@@ -80,13 +80,13 @@ Flatten controls in keyword
         Check Log Message    ${msg}    ${exp}    level=IGNORE
     END
 
-Flatten for loops
+Flatten FOR
     Run Rebot    --flatten For    ${OUTFILE COPY}
-    ${tc} =    Check Test Case    For loop
-    Should Be Equal    ${tc.kws[0].type}    FOR
-    Should Be Equal    ${tc.kws[0].doc}    ${FLAT TEXT}
-    Length Should Be    ${tc.kws[0].kws}    0
-    Length Should Be    ${tc.kws[0].msgs}    60
+    ${tc} =    Check Test Case    FOR loop
+    Should Be Equal     ${tc.kws[0].type}       FOR
+    Should Be Equal     ${tc.kws[0].message}    *HTML* ${FLATTENED}
+    Length Should Be    ${tc.kws[0].kws}        0
+    Length Should Be    ${tc.kws[0].msgs}       60
     FOR    ${index}    IN RANGE    10
         Check Log Message    ${tc.kws[0].msgs[${index * 6 + 0}]}    index: ${index}
         Check Log Message    ${tc.kws[0].msgs[${index * 6 + 1}]}    3
@@ -96,18 +96,18 @@ Flatten for loops
         Check Log Message    ${tc.kws[0].msgs[${index * 6 + 5}]}    1
     END
 
-Flatten for loop iterations
+Flatten FOR iterations
     Run Rebot    --flatten ForItem    ${OUTFILE COPY}
-    ${tc} =    Check Test Case    For loop
-    Should Be Equal    ${tc.kws[0].type}    FOR
-    Should Be Empty    ${tc.kws[0].doc}
-    Length Should Be    ${tc.kws[0].kws}    10
+    ${tc} =    Check Test Case    FOR loop
+    Should Be Equal    ${tc.kws[0].type}       FOR
+    Should Be Equal    ${tc.kws[0].message}    ${EMPTY}
+    Length Should Be    ${tc.kws[0].kws}       10
     Should Be Empty    ${tc.kws[0].msgs}
     FOR    ${index}    IN RANGE    10
-        Should Be Equal      ${tc.kws[0].kws[${index}].type}    ITERATION
-        Should Be Equal      ${tc.kws[0].kws[${index}].doc}    ${FLAT TEXT}
-        Should Be Empty      ${tc.kws[0].kws[${index}].kws}
-        Length Should Be     ${tc.kws[0].kws[${index}].msgs}    6
+        Should Be Equal      ${tc.kws[0].kws[${index}].type}       ITERATION
+        Should Be Equal      ${tc.kws[0].kws[${index}].message}    *HTML* ${FLATTENED}
+        Length Should Be     ${tc.kws[0].kws[${index}].kws}        0
+        Length Should Be     ${tc.kws[0].kws[${index}].msgs}       6
         Check Log Message    ${tc.kws[0].kws[${index}].msgs[0]}    index: ${index}
         Check Log Message    ${tc.kws[0].kws[${index}].msgs[1]}    3
         Check Log Message    ${tc.kws[0].kws[${index}].msgs[2]}    2
@@ -116,13 +116,13 @@ Flatten for loop iterations
         Check Log Message    ${tc.kws[0].kws[${index}].msgs[5]}    1
     END
 
-Flatten while loops
+Flatten WHILE
     Run Rebot    --flatten WHile    ${OUTFILE COPY}
     ${tc} =    Check Test Case    WHILE loop
-    Should Be Equal    ${tc.body[1].type}    WHILE
-    Should Be Equal    ${tc.body[1].doc}    ${FLAT TEXT}
-    Length Should Be    ${tc.body[1].kws}    0
-    Length Should Be    ${tc.body[1].msgs}    70
+    Should Be Equal     ${tc.body[1].type}       WHILE
+    Should Be Equal     ${tc.body[1].message}    *HTML* ${FLATTENED}
+    Length Should Be    ${tc.body[1].kws}        0
+    Length Should Be    ${tc.body[1].msgs}       70
     FOR    ${index}    IN RANGE    10
         Check Log Message    ${tc.body[1].msgs[${index * 7 + 0}]}    index: ${index}
         Check Log Message    ${tc.body[1].msgs[${index * 7 + 1}]}    3
@@ -134,18 +134,18 @@ Flatten while loops
         Check Log Message    ${tc.body[1].msgs[${index * 7 + 6}]}    \${i} = ${i}
     END
 
-Flatten while loop iterations
+Flatten WHILE iterations
     Run Rebot    --flatten iteration    ${OUTFILE COPY}
     ${tc} =    Check Test Case    WHILE loop
-    Should Be Equal    ${tc.body[1].type}    WHILE
-    Should Be Empty    ${tc.body[1].doc}
-    Length Should Be    ${tc.body[1].body}    10
+    Should Be Equal    ${tc.body[1].type}       WHILE
+    Should Be Equal    ${tc.body[1].message}    ${EMPTY}
+    Length Should Be    ${tc.body[1].body}      10
     Should Be Empty    ${tc.body[1].msgs}
     FOR    ${index}    IN RANGE    10
-        Should Be Equal      ${tc.kws[1].kws[${index}].type}    ITERATION
-        Should Be Equal      ${tc.kws[1].kws[${index}].doc}    ${FLAT TEXT}
-        Should Be Empty      ${tc.kws[1].kws[${index}].kws}
-        Length Should Be     ${tc.kws[1].kws[${index}].msgs}    7
+        Should Be Equal      ${tc.kws[1].kws[${index}].type}       ITERATION
+        Should Be Equal      ${tc.kws[1].kws[${index}].message}    *HTML* ${FLATTENED}
+        Length Should Be     ${tc.kws[1].kws[${index}].kws}        0
+        Length Should Be     ${tc.kws[1].kws[${index}].msgs}       7
         Check Log Message    ${tc.kws[1].kws[${index}].msgs[0]}    index: ${index}
         Check Log Message    ${tc.kws[1].kws[${index}].msgs[1]}    3
         Check Log Message    ${tc.kws[1].kws[${index}].msgs[2]}    2

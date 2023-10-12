@@ -1,4 +1,4 @@
-*** Setting ***
+*** Settings ***
 Suite Setup       Log    Setup of test case file
 Suite Teardown    Log    Teardown of test case file
 Test Setup        Log    Default setup from test file
@@ -7,7 +7,7 @@ Force Tags        test force
 Default Tags      test default
 Test Timeout      4 h 5 m 6 s
 
-*** Test Case ***
+*** Test Cases ***
 S1TC1 No metadata
     No Operation
 

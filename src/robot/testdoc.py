@@ -171,11 +171,11 @@ class JsonConverter:
             'relativeSource': self._get_relative_source(suite.source),
             'id': suite.id,
             'name': self._escape(suite.name),
-            'fullName': self._escape(suite.longname),
+            'fullName': self._escape(suite.full_name),
             'doc': self._html(suite.doc),
             'metadata': [(self._escape(name), self._html(value))
                          for name, value in suite.metadata.items()],
-            'numberOfTests': suite.test_count   ,
+            'numberOfTests': suite.test_count,
             'suites': self._convert_suites(suite),
             'tests': self._convert_tests(suite),
             'keywords': list(self._convert_keywords((suite.setup, suite.teardown)))
@@ -205,7 +205,7 @@ class JsonConverter:
             test.body.append(test.teardown)
         return {
             'name': self._escape(test.name),
-            'fullName': self._escape(test.longname),
+            'fullName': self._escape(test.full_name),
             'id': test.id,
             'doc': self._html(test.doc),
             'tags': [self._escape(t) for t in test.tags],
@@ -233,7 +233,7 @@ class JsonConverter:
                 yield self._convert_keyword(kw, 'KEYWORD')
 
     def _convert_for(self, data):
-        name = '%s %s %s' % (', '.join(data.variables), data.flavor,
+        name = '%s %s %s' % (', '.join(data.assign), data.flavor,
                              seq2str2(data.values))
         return {'type': 'FOR', 'name': self._escape(name), 'arguments': ''}
 
@@ -250,7 +250,7 @@ class JsonConverter:
         for branch in data.body:
             if branch.type == branch.EXCEPT:
                 patterns = ', '.join(branch.patterns)
-                as_var = f'AS {branch.variable}' if branch.variable else ''
+                as_var = f'AS {branch.assign}' if branch.assign else ''
                 name = f'{patterns} {as_var}'.strip()
             else:
                 name = ''

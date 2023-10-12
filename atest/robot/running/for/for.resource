@@ -39,6 +39,6 @@ Should be IN ENUMERATE loop
     Should Be FOR Loop   ${loop}    ${iterations}    ${status}    IN ENUMERATE    start=${start}
 
 Should be FOR iteration
-    [Arguments]    ${iteration}    &{variables}
+    [Arguments]    ${iteration}    &{assign}
     Should Be Equal    ${iteration.type}    ITERATION
-    Should Be Equal    ${iteration.variables}    ${variables}
+    Should Be Equal    ${iteration.assign}    ${assign}

@@ -36,13 +36,9 @@ class UserKeywordRunner:
         self.pre_run_messages = ()
 
     @property
-    def longname(self):
-        libname = self._handler.libname
-        return f'{libname}.{self.name}' if libname else self.name
-
-    @property
-    def libname(self):
-        return self._handler.libname
+    def full_name(self):
+        owner = self._handler.owner
+        return f'{owner}.{self.name}' if owner else self.name
 
     @property
     def tags(self):
@@ -74,8 +70,8 @@ class UserKeywordRunner:
         doc = variables.replace_string(handler.doc, ignore_errors=True)
         doc, tags = split_tags_from_doc(doc)
         tags = variables.replace_list(handler.tags, ignore_errors=True) + tags
-        return KeywordResult(kwname=self.name,
-                             libname=handler.libname,
+        return KeywordResult(name=self.name,
+                             owner=handler.owner,
                              doc=getshortdoc(doc),
                              args=kw.args,
                              assign=tuple(assignment),
@@ -167,8 +163,10 @@ class UserKeywordRunner:
         if context.dry_run and handler.tags.robot('no-dry-run'):
             return None, None
         error = return_ = pass_ = None
+        if handler.setup:
+            error = self._run_setup_or_teardown(handler.setup, context)
         try:
-            BodyRunner(context).run(handler.body)
+            BodyRunner(context, run=not error).run(handler.body)
         except ReturnFromKeyword as exception:
             return_ = exception
             error = exception.earlier_failures
@@ -183,7 +181,7 @@ class UserKeywordRunner:
             error = exception
         if handler.teardown:
             with context.keyword_teardown(error):
-                td_error = self._run_teardown(handler.teardown, context)
+                td_error = self._run_setup_or_teardown(handler.teardown, context)
         else:
             td_error = None
         if error or td_error:
@@ -204,9 +202,9 @@ class UserKeywordRunner:
             return ret
         return ret[0]
 
-    def _run_teardown(self, teardown, context):
+    def _run_setup_or_teardown(self, item, context):
         try:
-            name = context.variables.replace_string(teardown.name)
+            name = context.variables.replace_string(item.name)
         except DataError as err:
             if context.dry_run:
                 return None
@@ -214,7 +212,7 @@ class UserKeywordRunner:
         if name.upper() in ('', 'NONE'):
             return None
         try:
-            KeywordRunner(context).run(teardown, name)
+            KeywordRunner(context).run(item, name)
         except PassExecution:
             return None
         except ExecutionStatus as err:
@@ -270,5 +268,5 @@ class EmbeddedArgumentsRunner(UserKeywordRunner):
 
     def _get_result(self, kw, assignment, variables):
         result = UserKeywordRunner._get_result(self, kw, assignment, variables)
-        result.sourcename = self._handler.name
+        result.source_name = self._handler.name
         return result

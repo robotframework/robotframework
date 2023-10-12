@@ -1,7 +1,7 @@
 This text should be ignored, even though it's no a comment.
 We have a devious plan to rule the world with robots.
 
-*Setting*      *Value*
+*Settings*      *Value*
 
 Documentation  A complex testdata file in robot format.
 Default Tags   default1
@@ -20,7 +20,7 @@ Library       OperatingSystem
     # as
      # well
 
-* Variable    # comment
+* Variables    # comment
 
 ${table_var}   foo
 @{table_listvar}   bar   ${table_var}
@@ -28,7 +28,7 @@ ${quoted}   """this has """"many "" quotes """""
 ${single_quoted}   s'ingle'qu'ot'es''
 
 
-***Test Case***
+***Test Cases***
 
 Passing   Log   Passing test case.
 

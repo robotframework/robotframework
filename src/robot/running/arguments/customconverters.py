@@ -13,9 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import getdoc, is_union, seq2str, type_name
-
-from .argumentparser import PythonArgumentParser
+from robot.utils import getdoc, seq2str, type_name
 
 
 class CustomArgumentConverters:
@@ -24,12 +22,14 @@ class CustomArgumentConverters:
         self.converters = converters
 
     @classmethod
-    def from_dict(cls, converters, library):
+    def from_dict(cls, converters, library=None):
         valid = []
         for type_, conv in converters.items():
             try:
                 info = ConverterInfo.for_converter(type_, conv, library)
             except TypeError as err:
+                if library is None:
+                    raise
                 library.report_error(str(err))
             else:
                 valid.append(info)
@@ -78,20 +78,23 @@ class ConverterInfo:
             raise TypeError(f'Custom converters must be callable, converter for '
                             f'{type_name(type_)} is {type_name(converter)}.')
         spec = cls._get_arg_spec(converter)
-        arg_type = spec.types.get(spec.positional and spec.positional[0] or spec.var_positional)
-        if arg_type is None:
+        type_info = spec.types.get(spec.positional[0] if spec.positional
+                                   else spec.var_positional)
+        if type_info is None:
             accepts = ()
-        elif is_union(arg_type):
-            accepts = arg_type.__args__
-        elif hasattr(arg_type, '__origin__'):
-            accepts = (arg_type.__origin__,)
+        elif type_info.is_union:
+            accepts = type_info.nested
         else:
-            accepts = (arg_type,)
+            accepts = (type_info,)
+        accepts = tuple(info.type for info in accepts)
         pass_library = spec.minargs == 2 or spec.var_positional
         return cls(type_, converter, accepts, library if pass_library else None)
 
     @classmethod
     def _get_arg_spec(cls, converter):
+        # Avoid cyclic import. Yuck.
+        from .argumentparser import PythonArgumentParser
+
         spec = PythonArgumentParser(type='Converter').parse(converter)
         if spec.minargs > 2:
             required = seq2str([a for a in spec.positional if a not in spec.defaults])

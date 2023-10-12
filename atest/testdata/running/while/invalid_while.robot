@@ -1,6 +1,6 @@
 *** Test Cases ***
 Multiple conditions
-    [Documentation]    FAIL    WHILE loop cannot have more than one condition, got 'Too', 'many', 'conditions' and '!'.
+    [Documentation]    FAIL    WHILE accepts only one condition, got 4 conditions 'Too', 'many', 'conditions' and '!'.
     WHILE    Too    many    conditions    !
         Fail    Not executed!
     END
@@ -34,7 +34,7 @@ Recommend $var syntax if invalid condition contains ${var}
     ...    Try using '$x == 'x'' syntax to avoid that. See Evaluating Expressions appendix in Robot Framework User Guide for more details.
     ${x} =    Set Variable    x
     WHILE    ${x} == 'x'
-        Fail    Shouldn't be run
+        Fail    Not executed!
     END
 
 Invalid condition on second round

@@ -1,4 +1,4 @@
-*** Setting ***
+*** Settings ***
 Documentation     Passing suite setup and teardon using user keywords.
 Suite Setup       My Setup
 Suite Teardown    My Teardown
@@ -7,12 +7,12 @@ Library           OperatingSystem
 *** Variables ***
 ${TEARDOWN FILE}    %{TEMPDIR}/robot-suite-teardown-executed.txt
 
-*** Test Case ***
+*** Test Cases ***
 Verify Suite Setup
     [Documentation]    PASS
     Should Be Equal    ${SUITE SETUP}    Suite Setup Executed
 
-*** Keyword ***
+*** Keywords ***
 My Setup
     Comment    Testing that suite setup can be also a user keyword
     My Keyword

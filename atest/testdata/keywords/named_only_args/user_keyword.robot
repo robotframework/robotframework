@@ -100,29 +100,29 @@ With positional argument containing equal sign
 *** Keywords ***
 Kw Only Arg
     [Arguments]    @{}    ${kwo}
-    [Return]    ${kwo}
+    RETURN    ${kwo}
 
 Many Kw Only Args
     [Arguments]    @{}    ${first}    ${second}    ${third}
     ${result} =    Evaluate    $first + $second + $third
-    [Return]    ${result}
+    RETURN    ${result}
 
 Kw Only Arg With Default
     [Arguments]    @{}    ${kwo}=default    ${another}=another
-    [Return]    ${kwo}-${another}
+    RETURN    ${kwo}-${another}
 
 Mandatory After Defaults
     [Arguments]    @{}    ${default1}=xxx    ${mandatory}    ${default2}=zzz
-    [Return]    ${default1}-${mandatory}-${default2}
+    RETURN    ${default1}-${mandatory}-${default2}
 
 Kw Only Arg With Variable In Default
     [Arguments]    @{}    ${ko1}=${1}    ${ko2}=${VAR}    ${ko3}=${ko1}
-    [Return]    ${ko1}-${ko2}-${ko3}
+    RETURN    ${ko1}-${ko2}-${ko3}
 
 Kw Only Arg With Varargs
     [Arguments]    @{varargs}    ${kwo}
     ${result} =    Catenate    SEPARATOR=-    @{varargs}    ${kwo}
-    [Return]    ${result}
+    RETURN    ${result}
 
 All Arg Types
     [Arguments]    ${pos_req}    ${pos_def}=pd    @{varargs}
@@ -131,4 +131,4 @@ All Arg Types
     ${result} =    Catenate    SEPARATOR=-
     ...    ${pos_req}    ${pos_def}    @{varargs}
     ...    ${kwo_req}    ${kwo_def}    @{kwargs}
-    [Return]    ${result}
+    RETURN    ${result}

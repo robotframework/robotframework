@@ -20,8 +20,26 @@ from robot.errors import DataError
 
 from .console import ConsoleOutput
 from .filelogger import FileLogger
-from .loggerhelper import AbstractLogger, AbstractLoggerProxy
+from .loggerhelper import AbstractLogger
 from .stdoutlogsplitter import StdoutLogSplitter
+
+
+def start_body_item(method):
+    def wrapper(self, *args):
+        # TODO: Could _prev_log_message_handlers be used also here?
+        self._started_keywords += 1
+        self.log_message = self._log_message
+        method(self, *args)
+    return wrapper
+
+
+def end_body_item(method):
+    def wrapper(self, *args):
+        self._started_keywords -= 1
+        method(self, *args)
+        if not self._started_keywords:
+            self.log_message = self.message
+    return wrapper
 
 
 class Logger(AbstractLogger):
@@ -83,7 +101,6 @@ class Logger(AbstractLogger):
         self._console_logger = self._wrap_and_relay(logger)
 
     def _wrap_and_relay(self, logger):
-        logger = LoggerProxy(logger)
         self._relay_cached_messages(logger)
         return logger
 
@@ -127,8 +144,8 @@ class Logger(AbstractLogger):
 
     def unregister_logger(self, *loggers):
         for logger in loggers:
-            self._other_loggers = [proxy for proxy in self._other_loggers
-                                   if proxy.logger is not logger]
+            self._other_loggers = [l for l in self._other_loggers
+                                   if l is not logger]
 
     def disable_message_cache(self):
         self._message_cache = None
@@ -196,35 +213,151 @@ class Logger(AbstractLogger):
     def disable_library_import_logging(self):
         self.log_message = self._prev_log_message_handlers.pop()
 
-    def start_suite(self, suite):
+    def start_suite(self, data, result):
         for logger in self.start_loggers:
-            logger.start_suite(suite)
+            logger.start_suite(data, result)
 
-    def end_suite(self, suite):
+    def end_suite(self, data, result):
         for logger in self.end_loggers:
-            logger.end_suite(suite)
+            logger.end_suite(data, result)
 
-    def start_test(self, test):
+    def start_test(self, data, result):
         for logger in self.start_loggers:
-            logger.start_test(test)
+            logger.start_test(data, result)
 
-    def end_test(self, test):
+    def end_test(self, data, result):
         for logger in self.end_loggers:
-            logger.end_test(test)
+            logger.end_test(data, result)
 
-    def start_keyword(self, keyword):
-        # TODO: Could _prev_log_message_handlers be used also here?
-        self._started_keywords += 1
-        self.log_message = self._log_message
+    @start_body_item
+    def start_keyword(self, data, result):
         for logger in self.start_loggers:
-            logger.start_keyword(keyword)
+            logger.start_keyword(data, result)
 
-    def end_keyword(self, keyword):
-        self._started_keywords -= 1
+    @end_body_item
+    def end_keyword(self, data, result):
         for logger in self.end_loggers:
-            logger.end_keyword(keyword)
-        if not self._started_keywords:
-            self.log_message = self.message
+            logger.end_keyword(data, result)
+
+    @start_body_item
+    def start_for(self, data, result):
+        for logger in self.start_loggers:
+            logger.start_for(data, result)
+
+    @end_body_item
+    def end_for(self, data, result):
+        for logger in self.end_loggers:
+            logger.end_for(data, result)
+
+    @start_body_item
+    def start_for_iteration(self, data, result):
+        for logger in self.start_loggers:
+            logger.start_for_iteration(data, result)
+
+    @end_body_item
+    def end_for_iteration(self, data, result):
+        for logger in self.end_loggers:
+            logger.end_for_iteration(data, result)
+
+    @start_body_item
+    def start_while(self, data, result):
+        for logger in self.start_loggers:
+            logger.start_while(data, result)
+
+    @end_body_item
+    def end_while(self, data, result):
+        for logger in self.end_loggers:
+            logger.end_while(data, result)
+
+    @start_body_item
+    def start_while_iteration(self, data, result):
+        for logger in self.start_loggers:
+            logger.start_while_iteration(data, result)
+
+    @end_body_item
+    def end_while_iteration(self, data, result):
+        for logger in self.end_loggers:
+            logger.end_while_iteration(data, result)
+
+    @start_body_item
+    def start_if(self, data, result):
+        for logger in self.start_loggers:
+            logger.start_if(data, result)
+
+    @end_body_item
+    def end_if(self, data, result):
+        for logger in self.end_loggers:
+            logger.end_if(data, result)
+
+    @start_body_item
+    def start_if_branch(self, data, result):
+        for logger in self.start_loggers:
+            logger.start_if_branch(data, result)
+
+    @end_body_item
+    def end_if_branch(self, data, result):
+        for logger in self.end_loggers:
+            logger.end_if_branch(data, result)
+
+    @start_body_item
+    def start_try(self, data, result):
+        for logger in self.start_loggers:
+            logger.start_try(data, result)
+
+    @end_body_item
+    def end_try(self, data, result):
+        for logger in self.end_loggers:
+            logger.end_try(data, result)
+
+    @start_body_item
+    def start_try_branch(self, data, result):
+        for logger in self.start_loggers:
+            logger.start_try_branch(data, result)
+
+    @end_body_item
+    def end_try_branch(self, data, result):
+        for logger in self.end_loggers:
+            logger.end_try_branch(data, result)
+
+    @start_body_item
+    def start_break(self, data, result):
+        for logger in self.start_loggers:
+            logger.start_break(data, result)
+
+    @end_body_item
+    def end_break(self, data, result):
+        for logger in self.end_loggers:
+            logger.end_break(data, result)
+
+    @start_body_item
+    def start_continue(self, data, result):
+        for logger in self.start_loggers:
+            logger.start_continue(data, result)
+
+    @end_body_item
+    def end_continue(self, data, result):
+        for logger in self.end_loggers:
+            logger.end_continue(data, result)
+
+    @start_body_item
+    def start_return(self, data, result):
+        for logger in self.start_loggers:
+            logger.start_return(data, result)
+
+    @end_body_item
+    def end_return(self, data, result):
+        for logger in self.end_loggers:
+            logger.end_return(data, result)
+
+    @start_body_item
+    def start_error(self, data, result):
+        for logger in self.start_loggers:
+            logger.start_error(data, result)
+
+    @end_body_item
+    def end_error(self, data, result):
+        for logger in self.end_loggers:
+            logger.end_error(data, result)
 
     def imported(self, import_type, name, **attrs):
         for logger in self:
@@ -239,61 +372,6 @@ class Logger(AbstractLogger):
         for logger in self:
             logger.close()
         self.__init__(register_console_logger=False)
-
-
-class LoggerProxy(AbstractLoggerProxy):
-    _methods = ('start_suite', 'end_suite', 'start_test', 'end_test',
-                'start_keyword', 'end_keyword', 'message', 'log_message',
-                'imported', 'output_file', 'close')
-
-    _start_keyword_methods = {
-        'For': 'start_for',
-        'ForIteration': 'start_for_iteration',
-        'While': 'start_while',
-        'WhileIteration': 'start_while_iteration',
-        'If': 'start_if',
-        'IfBranch': 'start_if_branch',
-        'Try': 'start_try',
-        'TryBranch': 'start_try_branch',
-        'Return': 'start_return',
-        'Continue': 'start_continue',
-        'Break': 'start_break',
-        'Error': 'start_error'
-    }
-    _end_keyword_methods = {
-        'For': 'end_for',
-        'ForIteration': 'end_for_iteration',
-        'While': 'end_while',
-        'WhileIteration': 'end_while_iteration',
-        'If': 'end_if',
-        'IfBranch': 'end_if_branch',
-        'Try': 'end_try',
-        'TryBranch': 'end_try_branch',
-        'Return': 'end_return',
-        'Continue': 'end_continue',
-        'Break': 'end_break',
-        'Error': 'end_error'
-    }
-
-    def start_keyword(self, kw):
-        # Dispatch start_keyword calls to more precise methods when logger
-        # implements them. This horrible hack is needed because internal logger
-        # knows only about keywords. It should be rewritten.
-        name = self._start_keyword_methods.get(type(kw.result).__name__)
-        if name and hasattr(self.logger, name):
-            method = getattr(self.logger, name)
-        else:
-            method = self.logger.start_keyword
-        method(kw)
-
-    def end_keyword(self, kw):
-        # See start_keyword comment for explanation of this horrible hack.
-        name = self._end_keyword_methods.get(type(kw.result).__name__)
-        if name and hasattr(self.logger, name):
-            method = getattr(self.logger, name)
-        else:
-            method = self.logger.end_keyword
-        method(kw)
 
 
 LOGGER = Logger()

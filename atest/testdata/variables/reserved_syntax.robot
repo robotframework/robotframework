@@ -1,4 +1,4 @@
-*** Test Case ***
+*** Test Cases ***
 Reserved Syntax *{var}
     ${*} =    Set Variable    *
     Should Be Equal    *{this_causes_warning}    ${*}{this_causes_warning}

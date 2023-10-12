@@ -113,9 +113,9 @@ class VariableScopes:
             else:
                 scope.set_from_file(variables, overwrite=overwrite)
 
-    def set_from_variable_table(self, variables, overwrite=False):
+    def set_from_variable_section(self, variables, overwrite=False):
         for scope in self._scopes_until_suite:
-            scope.set_from_variable_table(variables, overwrite)
+            scope.set_from_variable_section(variables, overwrite)
 
     def resolve_delayed(self):
         for scope in self._scopes_until_suite:

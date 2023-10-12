@@ -316,62 +316,62 @@ class TestSplitFromPipes(unittest.TestCase):
 
 
 class TestNonAsciiSpaces(unittest.TestCase):
-    spaces = (u'\N{NO-BREAK SPACE}\N{OGHAM SPACE MARK}\N{EN QUAD}'
-              u'\N{EM SPACE}\N{HAIR SPACE}\N{IDEOGRAPHIC SPACE}')
+    spaces = ('\N{NO-BREAK SPACE}\N{OGHAM SPACE MARK}\N{EN QUAD}'
+              '\N{EM SPACE}\N{HAIR SPACE}\N{IDEOGRAPHIC SPACE}')
     data = '-' + '-'.join(spaces) + '-'
 
     def test_as_separator(self):
-        spaces = self.spaces
-        ls = len(spaces)
-        verify_split(u'Hello{s}world\n{s}!!!{s}\n'.format(s=spaces),
+        s = self.spaces
+        ls = len(s)
+        verify_split(f'Hello{s}world\n{s}!!!{s}\n',
                      [(DATA, 'Hello', 1, 0),
-                      (SEPA, spaces, 1, 5),
+                      (SEPA, s, 1, 5),
                       (DATA, 'world', 1, 5+ls),
                       (EOL, '\n', 1, 5+ls+5)],
                      [(DATA, '', 2, 0),
-                      (SEPA, spaces, 2, 0),
+                      (SEPA, s, 2, 0),
                       (DATA, '!!!', 2, ls),
-                      (EOL, spaces+'\n', 2, ls+3)])
+                      (EOL, s+'\n', 2, ls+3)])
 
     def test_as_separator_with_pipes(self):
-        spaces = self.spaces
-        ls = len(spaces)
-        verify_split(u'|{s}Hello{s}world{s}|{s}!\n|{s}|{s}!!!{s}|{s}\n'.format(s=spaces),
-                     [(SEPA, '|'+spaces, 1, 0),
-                      (DATA, 'Hello'+spaces+'world', 1, 1+ls),
-                      (SEPA, spaces+'|'+spaces, 1, 1+ls+5+ls+5),
+        s = self.spaces
+        ls = len(s)
+        verify_split(f'|{s}Hello{s}world{s}|{s}!\n|{s}|{s}!!!{s}|{s}\n',
+                     [(SEPA, '|'+s, 1, 0),
+                      (DATA, 'Hello'+s+'world', 1, 1+ls),
+                      (SEPA, s+'|'+s, 1, 1+ls+5+ls+5),
                       (DATA, '!', 1, 1+ls+5+ls+5+ls+1+ls),
                       (EOL, '\n', 1, 1+ls+5+ls+5+ls+1+ls+1)],
-                     [(SEPA, '|'+spaces, 2, 0),
+                     [(SEPA, '|'+s, 2, 0),
                       (DATA, '', 2, 1+ls),
-                      (SEPA, '|'+spaces, 2, 1+ls),
+                      (SEPA, '|'+s, 2, 1+ls),
                       (DATA, '!!!', 2, 1+ls+1+ls),
-                      (SEPA, spaces+'|', 2, 1+ls+1+ls+3),
-                      (EOL, spaces+'\n', 2, 1+ls+1+ls+3+ls+1)])
+                      (SEPA, s+'|', 2, 1+ls+1+ls+3),
+                      (EOL, s+'\n', 2, 1+ls+1+ls+3+ls+1)])
 
     def test_in_data(self):
-        data = self.data
-        spaces = self.spaces
-        ld = len(data)
-        ls = len(spaces)
-        verify_split(u'{d}{s}{d}{s}{d}'.format(d=data, s=spaces),
-                     [(DATA, data, 1, 0),
-                      (SEPA, spaces, 1, ld),
-                      (DATA, data, 1, ld+ls),
-                      (SEPA, spaces, 1, ld+ls+ld),
-                      (DATA, data, 1, ld+ls+ld+ls),
+        d = self.data
+        s = self.spaces
+        ld = len(d)
+        ls = len(s)
+        verify_split(f'{d}{s}{d}{s}{d}',
+                     [(DATA, d, 1, 0),
+                      (SEPA, s, 1, ld),
+                      (DATA, d, 1, ld+ls),
+                      (SEPA, s, 1, ld+ls+ld),
+                      (DATA, d, 1, ld+ls+ld+ls),
                       (EOL, '', 1, ld+ls+ld+ls+ld)])
 
     def test_in_data_with_pipes(self):
-        data = self.data
-        spaces = self.spaces
-        ld = len(data)
-        ls = len(spaces)
-        verify_split(u'|{s}{d}{s}|{s}{d}'.format(d=data, s=spaces),
-                     [(SEPA, '|'+spaces, 1, 0),
-                      (DATA, data, 1, 1+ls),
-                      (SEPA, spaces+'|'+spaces, 1, 1+ls+ld),
-                      (DATA, data, 1, 1+ls+ld+ls+1+ls),
+        d = self.data
+        s = self.spaces
+        ld = len(d)
+        ls = len(s)
+        verify_split(f'|{s}{d}{s}|{s}{d}',
+                     [(SEPA, '|'+s, 1, 0),
+                      (DATA, d, 1, 1+ls),
+                      (SEPA, s+'|'+s, 1, 1+ls+ld),
+                      (DATA, d, 1, 1+ls+ld+ls+1+ls),
                       (EOL, '', 1, 1+ls+ld+ls+1+ls+ld)])
 
 

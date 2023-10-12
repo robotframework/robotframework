@@ -1,7 +1,7 @@
-*** Setting ***
+*** Settings ***
 Force Tags        01    02
 
-*** Test Case ***
+*** Test Cases ***
 No Own Tags With Force Tags
     No Operation
 

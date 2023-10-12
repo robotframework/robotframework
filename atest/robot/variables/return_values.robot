@@ -83,9 +83,9 @@ Unrepresentable objects to list variables
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].msgs[0]}    \@{unrepr} = ? ${UNREPR} | ${UNREPR} ?    pattern=yes
     Check Log Message    ${tc.kws[0].msgs[0]}    \@{unrepr} = ? ${UNREPR} | ${UNREPR} ?    pattern=yes
-    Should Match         ${tc.kws[2].kws[0].name}    \${obj} = ${UNREPR}
+    Should Match         ${tc.kws[2].kws[0]._name}    \${obj} = ${UNREPR}
     Check Log Message    ${tc.kws[2].kws[0].kws[1].msgs[0]}    $\{var} = ${UNREPR}    pattern=yes
-    Should Match         ${tc.kws[2].kws[1].name}    \${obj} = ${UNREPR}
+    Should Match         ${tc.kws[2].kws[1]._name}    \${obj} = ${UNREPR}
     Check Log Message    ${tc.kws[2].kws[1].kws[1].msgs[0]}    $\{var} = ${UNREPR}    pattern=yes
 
 None To List Variable

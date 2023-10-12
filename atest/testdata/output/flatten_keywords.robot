@@ -1,15 +1,16 @@
 *** Test Cases ***
 Flatten stuff
+    [Documentation]    FAIL    Expected e&<aped failure!
     [Tags]    test case tags should not match    flatten
     Keyword 2
     Keyword 3
     Keyword calling others
     Log    Flatten me too!!
     Keyword with tags not flatten
-    Keyword with tags and doc flatten
     Keyword with tags and no doc flatten
+    Keyword with tags and message flatten
 
-For loop
+FOR loop
     FOR    ${i}    IN RANGE    10
         Log   index: ${i}
         Keyword 3
@@ -28,7 +29,6 @@ WHILE loop
 Flatten controls in keyword
     Flatten controls in keyword
 
-
 *** Keywords ***
 Keyword 3
     [Documentation]    Doc of keyword 3
@@ -41,7 +41,9 @@ Keyword 2
     Keyword 1
 
 Keyword 1
+    [Arguments]    ${error}=
     [Documentation]    Doc of keyword 1
+    IF    $error    Fail    ${error}
     Log    1
 
 Keyword calling others
@@ -54,10 +56,10 @@ Keyword with tags not flatten
     [Tags]   hello    kitty
     Keyword 1
 
-Keyword with tags and doc flatten
+Keyword with tags and message flatten
     [Documentation]    Doc of flat keyword.
     [Tags]   hello    flatten
-    Keyword 1
+    Keyword 1    error=Expected e&<aped failure!
 
 Keyword with tags and no doc flatten
     [Tags]   hello    flatten

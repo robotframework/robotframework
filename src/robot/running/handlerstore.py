@@ -35,7 +35,7 @@ class HandlerStore:
         else:
             error = DataError('Keyword with same name defined multiple times.')
             self._normal[handler.name] = UserErrorHandler(error, handler.name,
-                                                          handler.libname)
+                                                          handler.owner)
             raise error
 
     def __iter__(self):

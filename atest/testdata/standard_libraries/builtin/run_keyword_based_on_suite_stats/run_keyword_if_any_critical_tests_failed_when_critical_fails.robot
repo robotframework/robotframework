@@ -1,14 +1,14 @@
-*** Setting ***
+*** Settings ***
 Suite Teardown    Run Keyword If Any Critical Tests Failed    My Teardown
 Default Tags      critical
 
-*** Variable ***
+*** Variables ***
 ${MESSAGE}        Suite teardown message
 
-*** Test Case ***
+*** Test Cases ***
 Failing Critical test
     Fail    Expected failure
 
-*** Keyword ***
+*** Keywords ***
 My Teardown
     Log    ${MESSAGE}

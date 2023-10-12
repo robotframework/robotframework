@@ -227,7 +227,7 @@ Example
         expected = For(
             header=ForHeader([
                 Token(Token.FOR, 'FOR', 3, 4),
-                Token(Token.VARIABLE, '${x}', 3, 11),
+                Token(Token.ASSIGN, '${x}', 3, 11),
                 Token(Token.FOR_SEPARATOR, 'IN', 3, 19),
                 Token(Token.ARGUMENT, 'a', 3, 25),
                 Token(Token.ARGUMENT, 'b', 3, 30),
@@ -254,7 +254,7 @@ Example
         expected = For(
             header=ForHeader([
                 Token(Token.FOR, 'FOR', 3, 4),
-                Token(Token.VARIABLE, '${x}', 3, 11),
+                Token(Token.ASSIGN, '${x}', 3, 11),
                 Token(Token.FOR_SEPARATOR, 'IN ENUMERATE', 3, 19),
                 Token(Token.ARGUMENT, '@{stuff}', 3, 35),
                 Token(Token.OPTION, 'start=1', 3, 47),
@@ -282,7 +282,7 @@ Example
         expected = For(
             header=ForHeader([
                 Token(Token.FOR, 'FOR', 3, 4),
-                Token(Token.VARIABLE, '${x}', 3, 11),
+                Token(Token.ASSIGN, '${x}', 3, 11),
                 Token(Token.FOR_SEPARATOR, 'IN', 3, 19),
                 Token(Token.ARGUMENT, '1', 3, 25),
                 Token(Token.ARGUMENT, 'start=has no special meaning here', 3, 30),
@@ -291,7 +291,7 @@ Example
                 For(
                     header=ForHeader([
                         Token(Token.FOR, 'FOR', 4, 8),
-                        Token(Token.VARIABLE, '${y}', 4, 15),
+                        Token(Token.ASSIGN, '${y}', 4, 15),
                         Token(Token.FOR_SEPARATOR, 'IN RANGE', 4, 23),
                         Token(Token.ARGUMENT, '${x}', 4, 35),
                     ]),
@@ -339,7 +339,7 @@ Example
         expected2 = For(
             header=ForHeader(
                 tokens=[Token(Token.FOR, 'FOR', 3, 4),
-                        Token(Token.VARIABLE, 'wrong', 3, 11),
+                        Token(Token.ASSIGN, 'wrong', 3, 11),
                         Token(Token.FOR_SEPARATOR, 'IN', 3, 20)],
                 errors=("FOR loop has invalid loop variable 'wrong'.",
                         "FOR loop has no loop values."),
@@ -430,7 +430,7 @@ Example
         data = '''
 *** Test Cases ***
 Example
-    WHILE    too    many    values    !
+    WHILE    too    many    values    !    limit=1    on_limit=bad
         # Empty body
     END
 '''
@@ -440,9 +440,15 @@ Example
                         Token(Token.ARGUMENT, 'too', 3, 13),
                         Token(Token.ARGUMENT, 'many', 3, 20),
                         Token(Token.ARGUMENT, 'values', 3, 28),
-                        Token(Token.ARGUMENT, '!', 3, 38)],
-                errors=("WHILE loop cannot have more than one condition, "
-                        "got 'too', 'many', 'values' and '!'.",)
+                        Token(Token.ARGUMENT, '!', 3, 38),
+                        Token(Token.OPTION, 'limit=1', 3, 43),
+                        Token(Token.OPTION, 'on_limit=bad', 3, 54)],
+                errors=(
+                    "WHILE accepts only one condition, got 4 conditions 'too', "
+                    "'many', 'values' and '!'.",
+                    "WHILE option 'on_limit' does not accept value 'bad'. "
+                    "Valid values are 'PASS' and 'FAIL'."
+                )
             ),
             end=End([
                 Token(Token.END, 'END', 5, 4)
@@ -790,18 +796,18 @@ Example
                                      Token(Token.ARGUMENT, 'does not match', 5, 14)]),
                 body=[KeywordCall((Token(Token.KEYWORD, 'No operation', 6, 8),))],
                 next=Try(
-                    header=ExceptHeader((Token(Token.EXCEPT, 'EXCEPT', 7, 4),
+                    header=ExceptHeader([Token(Token.EXCEPT, 'EXCEPT', 7, 4),
                                          Token(Token.AS, 'AS', 7, 14),
-                                         Token(Token.VARIABLE, '${exp}', 7, 20))),
-                    body=[KeywordCall((Token(Token.KEYWORD, 'Log', 8, 8),
-                                       Token(Token.ARGUMENT, 'Catch', 8, 15)))],
+                                         Token(Token.ASSIGN, '${exp}', 7, 20)]),
+                    body=[KeywordCall([Token(Token.KEYWORD, 'Log', 8, 8),
+                                       Token(Token.ARGUMENT, 'Catch', 8, 15)])],
                     next=Try(
-                        header=ElseHeader((Token(Token.ELSE, 'ELSE', 9, 4),)),
-                        body=[KeywordCall((Token(Token.KEYWORD, 'No operation', 10, 8),))],
+                        header=ElseHeader([Token(Token.ELSE, 'ELSE', 9, 4)]),
+                        body=[KeywordCall([Token(Token.KEYWORD, 'No operation', 10, 8)])],
                         next=Try(
-                            header=FinallyHeader((Token(Token.FINALLY, 'FINALLY', 11, 4),)),
-                            body=[KeywordCall((Token(Token.KEYWORD, 'Log', 12, 8),
-                                               Token(Token.ARGUMENT, 'finally here!', 12, 15)))]
+                            header=FinallyHeader([Token(Token.FINALLY, 'FINALLY', 11, 4)]),
+                            body=[KeywordCall([Token(Token.KEYWORD, 'Log', 12, 8),
+                                               Token(Token.ARGUMENT, 'finally here!', 12, 15)])]
                         )
                     )
                 )
@@ -820,6 +826,7 @@ Example
     FINALLY         invalid
     #
     EXCEPT    AS    invalid
+    EXCEPT    xx    type=invalid
 '''
         expected = Try(
             header=TryHeader(
@@ -845,16 +852,29 @@ Example
                         header=ExceptHeader(
                             tokens=[Token(Token.EXCEPT, 'EXCEPT', 8, 4),
                                     Token(Token.AS, 'AS', 8, 14),
-                                    Token(Token.VARIABLE, 'invalid', 8, 20)],
+                                    Token(Token.ASSIGN, 'invalid', 8, 20)],
                             errors=("EXCEPT's AS variable 'invalid' is invalid.",)
                         ),
-                        errors=('EXCEPT branch cannot be empty.',)
+                        errors=('EXCEPT branch cannot be empty.',),
+                        next=Try(
+                            header=ExceptHeader(
+                                tokens=[Token(Token.EXCEPT, 'EXCEPT', 9, 4),
+                                        Token(Token.ARGUMENT, 'xx', 9, 14),
+                                        Token(Token.OPTION, 'type=invalid', 9, 20)],
+                                errors=("EXCEPT option 'type' does not accept value 'invalid'. "
+                                        "Valid values are 'GLOB', 'REGEXP', 'START' and 'LITERAL'.",)
+                            ),
+                            errors=('EXCEPT branch cannot be empty.',),
+                        )
                     )
                 ),
             ),
             errors=('TRY branch cannot be empty.',
                     'EXCEPT not allowed after ELSE.',
                     'EXCEPT not allowed after FINALLY.',
+                    'EXCEPT not allowed after ELSE.',
+                    'EXCEPT not allowed after FINALLY.',
+                    'EXCEPT without patterns must be last.',
                     'TRY must have closing END.')
         )
         get_and_assert_model(data, expected)
@@ -884,6 +904,28 @@ ${x${y}}  nested name
                           Token(Token.ARGUMENT, 'one=item', 4, 10)]),
                 Variable([Token(Token.VARIABLE, '${x${y}}', 5, 0),
                           Token(Token.ARGUMENT, 'nested name', 5, 10)]),
+            ]
+        )
+        get_and_assert_model(data, expected, depth=0)
+
+    def test_separator(self):
+        data = '''
+*** Variables ***
+${x}      a    b    c    separator=-
+${y}      separator=
+'''
+        expected = VariableSection(
+            header=SectionHeader(
+                tokens=[Token(Token.VARIABLE_HEADER, '*** Variables ***', 1, 0)]
+            ),
+            body=[
+                Variable([Token(Token.VARIABLE, '${x}', 2, 0),
+                          Token(Token.ARGUMENT, 'a', 2, 10),
+                          Token(Token.ARGUMENT, 'b', 2, 15),
+                          Token(Token.ARGUMENT, 'c', 2, 20),
+                          Token(Token.OPTION, 'separator=-', 2, 25)]),
+                Variable([Token(Token.VARIABLE, '${y}', 3, 0),
+                          Token(Token.OPTION, 'separator=', 3, 10)]),
             ]
         )
         get_and_assert_model(data, expected, depth=0)
@@ -1121,7 +1163,7 @@ Name
 '''
         expected = For(
             header=ForHeader([Token(Token.FOR, 'FOR', 3, 4),
-                              Token(Token.VARIABLE, '${x}', 3, 11),
+                              Token(Token.ASSIGN, '${x}', 3, 11),
                               Token(Token.FOR_SEPARATOR, 'IN', 3, 19),
                               Token(Token.ARGUMENT, '@{stuff}', 3, 25)]),
             body=[KeywordCall([Token(Token.KEYWORD, 'Continue', 4, 8),

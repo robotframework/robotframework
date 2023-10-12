@@ -21,4 +21,4 @@ Run rebot and return outputs
     ${result} =    Run Rebot    --outputdir ${CLI OUTDIR} ${options}    ${INPUT FILE}    default options=    output=
     Should Be Equal    ${result.rc}    ${0}
     @{outputs} =    List Directory    ${CLI OUTDIR}
-    [Return]    @{outputs}
+    RETURN    @{outputs}

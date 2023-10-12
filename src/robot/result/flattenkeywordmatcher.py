@@ -15,7 +15,7 @@
 
 from robot.errors import DataError
 from robot.model import TagPatterns
-from robot.utils import MultiMatcher, is_list_like
+from robot.utils import MultiMatcher
 
 
 def validate_flatten_keyword(options):
@@ -34,7 +34,7 @@ def validate_flatten_keyword(options):
 class FlattenByTypeMatcher:
 
     def __init__(self, flatten):
-        if not is_list_like(flatten):
+        if isinstance(flatten, str):
             flatten = [flatten]
         flatten = [f.lower() for f in flatten]
         self.types = set()
@@ -55,13 +55,13 @@ class FlattenByTypeMatcher:
 class FlattenByNameMatcher:
 
     def __init__(self, flatten):
-        if not is_list_like(flatten):
+        if isinstance(flatten, str):
             flatten = [flatten]
         names = [n[5:] for n in flatten if n[:5].lower() == 'name:']
         self._matcher = MultiMatcher(names)
 
-    def match(self, kwname, libname=None):
-        name = '%s.%s' % (libname, kwname) if libname else kwname
+    def match(self, name, owner=None):
+        name = f'{owner}.{name}' if owner else name
         return self._matcher.match(name)
 
     def __bool__(self):
@@ -71,13 +71,13 @@ class FlattenByNameMatcher:
 class FlattenByTagMatcher:
 
     def __init__(self, flatten):
-        if not is_list_like(flatten):
+        if isinstance(flatten, str):
             flatten = [flatten]
         patterns = [p[4:] for p in flatten if p[:4].lower() == 'tag:']
         self._matcher = TagPatterns(patterns)
 
-    def match(self, kwtags):
-        return self._matcher.match(kwtags)
+    def match(self, tags):
+        return self._matcher.match(tags)
 
     def __bool__(self):
         return bool(self._matcher)

@@ -20,6 +20,7 @@ import re
 import socket
 import sys
 import xmlrpc.client
+from datetime import date, datetime, timedelta
 from xml.parsers.expat import ExpatError
 
 from robot.errors import RemoteError
@@ -59,8 +60,8 @@ class Remote:
         try:
             return self._client.get_keyword_names()
         except TypeError as error:
-            raise RuntimeError('Connecting remote server at %s failed: %s'
-                               % (self._uri, error))
+            raise RuntimeError(f'Connecting remote server at {self._uri} '
+                               f'failed: {error}')
 
     def _is_lib_info_available(self):
         if not self._lib_info_initialized:
@@ -107,47 +108,53 @@ class Remote:
 
 class ArgumentCoercer:
     binary = re.compile('[\x00-\x08\x0B\x0C\x0E-\x1F]')
-    non_ascii = re.compile('[\x80-\xff]')
 
     def coerce(self, argument):
         for handles, handler in [(is_string, self._handle_string),
-                                 (is_bytes, self._handle_bytes),
-                                 (is_number, self._pass_through),
+                                 (self._no_conversion_needed, self._pass_through),
+                                 (self._is_date, self._handle_date),
+                                 (self._is_timedelta, self._handle_timedelta),
                                  (is_dict_like, self._coerce_dict),
-                                 (is_list_like, self._coerce_list),
-                                 (lambda arg: True, self._to_string)]:
+                                 (is_list_like, self._coerce_list)]:
             if handles(argument):
                 return handler(argument)
+        return self._to_string(argument)
+
+    def _no_conversion_needed(self, arg):
+        return is_number(arg) or is_bytes(arg) or isinstance(arg, datetime)
 
     def _handle_string(self, arg):
-        if self._string_contains_binary(arg):
+        if self.binary.search(arg):
             return self._handle_binary_in_string(arg)
         return arg
 
-    def _string_contains_binary(self, arg):
-        return (self.binary.search(arg) or
-                is_bytes(arg) and self.non_ascii.search(arg))
-
     def _handle_binary_in_string(self, arg):
         try:
-            if not is_bytes(arg):
-                # Map Unicode code points to bytes directly
-                arg = arg.encode('latin-1')
+            # Map Unicode code points to bytes directly
+            return arg.encode('latin-1')
         except UnicodeError:
-            raise ValueError('Cannot represent %r as binary.' % arg)
-        return xmlrpc.client.Binary(arg)
-
-    def _handle_bytes(self, arg):
-        return xmlrpc.client.Binary(arg)
+            raise ValueError(f'Cannot represent {arg!r} as binary.')
 
     def _pass_through(self, arg):
         return arg
+
+    def _is_date(self, arg):
+        return isinstance(arg, date)
+
+    def _handle_date(self, arg):
+        return datetime(arg.year, arg.month, arg.day)
+
+    def _is_timedelta(self, arg):
+        return isinstance(arg, timedelta)
+
+    def _handle_timedelta(self, arg):
+        return arg.total_seconds()
 
     def _coerce_list(self, arg):
         return [self.coerce(item) for item in arg]
 
     def _coerce_dict(self, arg):
-        return dict((self._to_key(key), self.coerce(arg[key])) for key in arg)
+        return {self._to_key(key): self.coerce(arg[key]) for key in arg}
 
     def _to_key(self, item):
         item = self._to_string(item)
@@ -159,15 +166,15 @@ class ArgumentCoercer:
         return self._handle_string(item)
 
     def _validate_key(self, key):
-        if isinstance(key, xmlrpc.client.Binary):
-            raise ValueError('Dictionary keys cannot be binary. Got %r.' % (key.data,))
+        if isinstance(key, bytes):
+            raise ValueError(f'Dictionary keys cannot be binary. Got {key!r}.')
 
 
 class RemoteResult:
 
     def __init__(self, result):
         if not (is_dict_like(result) and 'status' in result):
-            raise RuntimeError('Invalid remote result dictionary: %s' % result)
+            raise RuntimeError(f'Invalid remote result dictionary: {result!r}')
         self.status = result['status']
         self.output = safe_str(self._get(result, 'output'))
         self.return_ = self._get(result, 'return')
@@ -181,8 +188,6 @@ class RemoteResult:
         return self._convert(value)
 
     def _convert(self, value):
-        if isinstance(value, xmlrpc.client.Binary):
-            return bytes(value.data)
         if is_dict_like(value):
             return DotDict((k, self._convert(v)) for k, v in value.items())
         if is_list_like(value):
@@ -204,6 +209,7 @@ class XmlRpcRemoteClient:
         else:
             transport = TimeoutHTTPTransport(timeout=self.timeout)
         server = xmlrpc.client.ServerProxy(self.uri, encoding='UTF-8',
+                                           use_builtin_types=True,
                                            transport=transport)
         try:
             yield server
@@ -244,12 +250,12 @@ class XmlRpcRemoteClient:
             except xmlrpc.client.Fault as err:
                 message = err.faultString
             except socket.error as err:
-                message = 'Connection to remote server broken: %s' % err
+                message = f'Connection to remote server broken: {err}'
             except ExpatError as err:
-                message = ('Processing XML-RPC return value failed. '
-                           'Most often this happens when the return value '
-                           'contains characters that are not valid in XML. '
-                           'Original error was: ExpatError: %s' % err)
+                message = (f'Processing XML-RPC return value failed. '
+                           f'Most often this happens when the return value '
+                           f'contains characters that are not valid in XML. '
+                           f'Original error was: ExpatError: {err}')
             raise RuntimeError(message)
 
 
@@ -259,11 +265,9 @@ class XmlRpcRemoteClient:
 class TimeoutHTTPTransport(xmlrpc.client.Transport):
     _connection_class = http.client.HTTPConnection
 
-    def __init__(self, use_datetime=0, timeout=None):
-        xmlrpc.client.Transport.__init__(self, use_datetime)
-        if not timeout:
-            timeout = socket._GLOBAL_DEFAULT_TIMEOUT
-        self.timeout = timeout
+    def __init__(self, timeout=None):
+        super().__init__(use_builtin_types=True)
+        self.timeout = timeout or socket._GLOBAL_DEFAULT_TIMEOUT
 
     def make_connection(self, host):
         if self._connection and host == self._connection[0]:

@@ -41,7 +41,7 @@ suite teardown    Log    <b>The End.</b>    WARN    html=True
 Test Setup        None Shall Pass    ${NONE}
 TEST TEARDOWN     No Operation
 Test Timeout      1 day
-Force Tags        foo    bar
+Test Tags         foo    bar
 Keyword Tags      tag
 Name              Custom Suite Name
 '''
@@ -82,7 +82,7 @@ Name              Custom Suite Name
             (T.TEST_TIMEOUT, 'Test Timeout', 10, 0),
             (T.ARGUMENT, '1 day', 10, 18),
             (T.EOS, '', 10, 23),
-            (T.FORCE_TAGS, 'Force Tags', 11, 0),
+            (T.TEST_TAGS, 'Test Tags', 11, 0),
             (T.ARGUMENT, 'foo', 11, 18),
             (T.ARGUMENT, 'bar', 11, 25),
             (T.EOS, '', 11, 28),
@@ -100,7 +100,7 @@ Name              Custom Suite Name
         data = '''\
 *** Settings ***
 Test Template     Not allowed in init file
-Force Tags        Allowed in both
+Test Tags         Allowed in both
 Default Tags      Not allowed in init file
 '''
         expected = [
@@ -109,7 +109,7 @@ Default Tags      Not allowed in init file
             (T.TEST_TEMPLATE, 'Test Template', 2, 0),
             (T.NAME, 'Not allowed in init file', 2, 18),
             (T.EOS, '', 2, 42),
-            (T.FORCE_TAGS, 'Force Tags', 3, 0),
+            (T.TEST_TAGS, 'Test Tags', 3, 0),
             (T.ARGUMENT, 'Allowed in both', 3, 18),
             (T.EOS, '', 3, 33),
             (T.DEFAULT_TAGS, 'Default Tags', 4, 0),
@@ -124,7 +124,7 @@ Default Tags      Not allowed in init file
             (T.ERROR, 'Test Template', 2, 0,
              "Setting 'Test Template' is not allowed in suite initialization file."),
             (T.EOS, '', 2, 13),
-            (T.FORCE_TAGS, 'Force Tags', 3, 0),
+            (T.TEST_TAGS, 'Test Tags', 3, 0),
             (T.ARGUMENT, 'Allowed in both', 3, 18),
             (T.EOS, '', 3, 33),
             (T.ERROR, 'Default Tags', 4, 0,
@@ -143,7 +143,7 @@ Test Setup        None Shall Pass    ${NONE}
 TEST TEARDOWN     No Operation
 Test Template     NONE
 Test Timeout      1 day
-Force Tags        foo    bar
+Test Tags         foo    bar
 Default Tags      zap
 Task Tags         quux
 Documentation     Valid in all data files.
@@ -174,9 +174,9 @@ Name              Bad Resource Name
             (T.ERROR, 'Test Timeout', 8, 0,
              "Setting 'Test Timeout' is not allowed in resource file."),
             (T.EOS, '', 8, 12),
-            (T.ERROR, 'Force Tags', 9, 0,
-             "Setting 'Force Tags' is not allowed in resource file."),
-            (T.EOS, '', 9, 10),
+            (T.ERROR, 'Test Tags', 9, 0,
+             "Setting 'Test Tags' is not allowed in resource file."),
+            (T.EOS, '', 9, 9),
             (T.ERROR, 'Default Tags', 10, 0,
              "Setting 'Default Tags' is not allowed in resource file."),
             (T.EOS, '', 10, 12),
@@ -229,37 +229,37 @@ VariAbles         variables.py    arg
         assert_tokens(data, expected, get_init_tokens, data_only=True)
         assert_tokens(data, expected, get_resource_tokens, data_only=True)
 
-    def test_with_name(self):
+    def test_aliasing_with_as(self):
         data = '''\
 *** Settings ***
-Library         Easter                       WITH NAME    Christmas
-Library         Arguments    arg             WITH NAME    One argument
+Library         Easter                       AS    Christmas
+Library         Arguments    arg             AS    One argument
 Library         Arguments    arg1    arg2
-...                          arg3    arg4    WITH NAME    Four arguments
+...                          arg3    arg4    AS    Four arguments
 '''
         expected = [
             (T.SETTING_HEADER, '*** Settings ***', 1, 0),
             (T.EOS, '', 1, 16),
             (T.LIBRARY, 'Library', 2, 0),
             (T.NAME, 'Easter', 2, 16),
-            (T.WITH_NAME, 'WITH NAME', 2, 45),
-            (T.NAME, 'Christmas', 2, 58),
-            (T.EOS, '', 2, 67),
+            (T.AS, 'AS', 2, 45),
+            (T.NAME, 'Christmas', 2, 51),
+            (T.EOS, '', 2, 60),
             (T.LIBRARY, 'Library', 3, 0),
             (T.NAME, 'Arguments', 3, 16),
             (T.ARGUMENT, 'arg', 3, 29),
-            (T.WITH_NAME, 'WITH NAME', 3, 45),
-            (T.NAME, 'One argument', 3, 58),
-            (T.EOS, '', 3, 70),
+            (T.AS, 'AS', 3, 45),
+            (T.NAME, 'One argument', 3, 51),
+            (T.EOS, '', 3, 63),
             (T.LIBRARY, 'Library', 4, 0),
             (T.NAME, 'Arguments', 4, 16),
             (T.ARGUMENT, 'arg1', 4, 29),
             (T.ARGUMENT, 'arg2', 4, 37),
             (T.ARGUMENT, 'arg3', 5, 29),
             (T.ARGUMENT, 'arg4', 5, 37),
-            (T.WITH_NAME, 'WITH NAME', 5, 45),
-            (T.NAME, 'Four arguments', 5, 58),
-            (T.EOS, '', 5, 72)
+            (T.AS, 'AS', 5, 45),
+            (T.NAME, 'Four arguments', 5, 51),
+            (T.EOS, '', 5, 65)
         ]
         assert_tokens(data, expected, get_tokens, data_only=True)
         assert_tokens(data, expected, get_init_tokens, data_only=True)
@@ -336,8 +336,8 @@ Test Template     Used
 Test Template     Ignored
 Test Timeout      Used
 Test Timeout      Ignored
-Force Tags        Used
-Force Tags        Ignored
+Test Tags         Used
+Test Tags         Ignored
 Default Tags      Used
 Default Tags      Ignored
 Name              Used
@@ -389,12 +389,12 @@ Name              Ignored
             (T.ERROR, 'Test Timeout', 15, 0,
              "Setting 'Test Timeout' is allowed only once. Only the first value is used."),
             (T.EOS, '', 15, 12),
-            (T.FORCE_TAGS, 'Force Tags', 16, 0),
+            (T.TEST_TAGS, 'Test Tags', 16, 0),
             (T.ARGUMENT, 'Used', 16, 18),
             (T.EOS, '', 16, 22),
-            (T.ERROR, 'Force Tags', 17, 0,
-             "Setting 'Force Tags' is allowed only once. Only the first value is used."),
-            (T.EOS, '', 17, 10),
+            (T.ERROR, 'Test Tags', 17, 0,
+             "Setting 'Test Tags' is allowed only once. Only the first value is used."),
+            (T.EOS, '', 17, 9),
             (T.DEFAULT_TAGS, 'Default Tags', 18, 0),
             (T.ARGUMENT, 'Used', 18, 18),
             (T.EOS, '', 18, 22),
@@ -464,6 +464,7 @@ Name
     [Documentation]    Doc    in multiple
     ...                parts
     [Tags]             first    second
+    [Setup]            Log    New in RF 7!
     [Teardown]         No Operation
     [Timeout]          ${TIMEOUT}
     [Return]           Value
@@ -488,15 +489,20 @@ Name
             (T.ARGUMENT, 'first', 6, 23),
             (T.ARGUMENT, 'second', 6, 32),
             (T.EOS, '', 6, 38),
-            (T.TEARDOWN, '[Teardown]', 7, 4),
-            (T.NAME, 'No Operation', 7, 23),
-            (T.EOS, '', 7, 35),
-            (T.TIMEOUT, '[Timeout]', 8, 4),
-            (T.ARGUMENT, '${TIMEOUT}', 8, 23),
-            (T.EOS, '', 8, 33),
-            (T.RETURN, '[Return]', 9, 4),
-            (T.ARGUMENT, 'Value', 9, 23),
-            (T.EOS, '', 9, 28)
+            (T.SETUP, '[Setup]', 7, 4),
+            (T.NAME, 'Log', 7, 23),
+            (T.ARGUMENT, 'New in RF 7!', 7, 30),
+            (T.EOS, '', 7, 42),
+            (T.TEARDOWN, '[Teardown]', 8, 4),
+            (T.NAME, 'No Operation', 8, 23),
+            (T.EOS, '', 8, 35),
+            (T.TIMEOUT, '[Timeout]', 9, 4),
+            (T.ARGUMENT, '${TIMEOUT}', 9, 23),
+            (T.EOS, '', 9, 33),
+            (T.RETURN, '[Return]', 10, 4,
+             "The '[Return]' setting is deprecated. Use the 'RETURN' statement instead."),
+            (T.ARGUMENT, 'Value', 10, 23),
+            (T.EOS, '', 10, 28)
         ]
         assert_tokens(data, expected, get_tokens, data_only=True)
         assert_tokens(data, expected, get_resource_tokens, data_only=True)
@@ -656,7 +662,8 @@ Name
             (T.ERROR, '[Timeout]', 12, 4,
              "Setting 'Timeout' is allowed only once. Only the first value is used."),
             (T.EOS, '', 12, 13),
-            (T.RETURN, '[Return]', 13, 4),
+            (T.RETURN, '[Return]', 13, 4,
+             "The '[Return]' setting is deprecated. Use the 'RETURN' statement instead."),
             (T.ARGUMENT, 'Used', 13, 23),
             (T.EOS, '', 13, 27),
             (T.ERROR, '[Return]', 14, 4,
@@ -671,35 +678,42 @@ class TestSectionHeaders(unittest.TestCase):
     def test_headers_allowed_everywhere(self):
         data = '''\
 *** Settings ***
-*** Setting ***
+*** SETTINGS ***
 ***variables***
-*VARIABLE*    ARGS    ARGH
+*VARIABLES*    ARGS    ARGH
 *Keywords     ***    ...
 ...           ***
-*** Keyword ***      # Comment
+*** Keywords ***      # Comment
 *** Comments ***
-*** Comment ***    1    2
-...    3    4
-...    5
+Hello, I'm a comment!
+*** COMMENTS ***    1    2
+...    3
 '''
         expected = [
             (T.SETTING_HEADER, '*** Settings ***', 1, 0),
             (T.EOS, '', 1, 16),
-            (T.SETTING_HEADER, '*** Setting ***', 2, 0),
-            (T.EOS, '', 2, 15),
+            (T.SETTING_HEADER, '*** SETTINGS ***', 2, 0),
+            (T.EOS, '', 2, 16),
             (T.VARIABLE_HEADER, '***variables***', 3, 0),
             (T.EOS, '', 3, 15),
-            (T.VARIABLE_HEADER, '*VARIABLE*', 4, 0),
-            (T.VARIABLE_HEADER, 'ARGS', 4, 14),
-            (T.VARIABLE_HEADER, 'ARGH', 4, 22),
-            (T.EOS, '', 4, 26),
+            (T.VARIABLE_HEADER, '*VARIABLES*', 4, 0),
+            (T.VARIABLE_HEADER, 'ARGS', 4, 15),
+            (T.VARIABLE_HEADER, 'ARGH', 4, 23),
+            (T.EOS, '', 4, 27),
             (T.KEYWORD_HEADER, '*Keywords', 5, 0),
             (T.KEYWORD_HEADER, '***', 5, 14),
             (T.KEYWORD_HEADER, '...', 5, 21),
             (T.KEYWORD_HEADER, '***', 6, 14),
             (T.EOS, '', 6, 17),
-            (T.KEYWORD_HEADER, '*** Keyword ***', 7, 0),
-            (T.EOS, '', 7, 15)
+            (T.KEYWORD_HEADER, '*** Keywords ***', 7, 0),
+            (T.EOS, '', 7, 16),
+            (T.COMMENT_HEADER, '*** Comments ***', 8, 0),
+            (T.EOS, '', 8, 16),
+            (T.COMMENT_HEADER, '*** COMMENTS ***', 10, 0),
+            (T.COMMENT_HEADER, '1', 10, 20),
+            (T.COMMENT_HEADER, '2', 10, 25),
+            (T.COMMENT_HEADER, '3', 11, 7),
+            (T.EOS, '', 11, 8)
         ]
         assert_tokens(data, expected, get_tokens, data_only=True)
         assert_tokens(data, expected, get_init_tokens, data_only=True)
@@ -748,6 +762,46 @@ class TestSectionHeaders(unittest.TestCase):
              "'Settings', 'Variables', 'Keywords' and 'Comments'."),
             (T.EOS, '', 1, 1),
         ], get_resource_tokens, data_only=True)
+
+    def test_singular_headers_are_deprecated(self):
+        data = '''\
+*** Setting ***
+***variable***
+*Keyword
+*** Comment ***
+'''
+        expected = [
+            (T.SETTING_HEADER, '*** Setting ***', 1, 0,
+             "Singular section headers like '*** Setting ***' are deprecated. "
+             "Use plural format like '*** Settings ***' instead."),
+            (T.EOL, '\n', 1, 15),
+            (T.EOS, '', 1, 16),
+            (T.VARIABLE_HEADER, '***variable***', 2, 0,
+             "Singular section headers like '***variable***' are deprecated. "
+             "Use plural format like '*** Variables ***' instead."),
+            (T.EOL, '\n', 2, 14),
+            (T.EOS, '', 2, 15),
+            (T.KEYWORD_HEADER, '*Keyword', 3, 0,
+             "Singular section headers like '*Keyword' are deprecated. "
+             "Use plural format like '*** Keywords ***' instead."),
+            (T.EOL, '\n', 3, 8),
+            (T.EOS, '', 3, 9),
+            (T.COMMENT_HEADER, '*** Comment ***', 4, 0,
+             "Singular section headers like '*** Comment ***' are deprecated. "
+             "Use plural format like '*** Comments ***' instead."),
+            (T.EOL, '\n', 4, 15),
+            (T.EOS, '', 4, 16)
+        ]
+        assert_tokens(data, expected, get_tokens)
+        assert_tokens(data, expected, get_init_tokens)
+        assert_tokens(data, expected, get_resource_tokens)
+        assert_tokens('*** Test Case ***', [
+            (T.TESTCASE_HEADER, '*** Test Case ***', 1, 0,
+             "Singular section headers like '*** Test Case ***' are deprecated. "
+             "Use plural format like '*** Test Cases ***' instead."),
+            (T.EOL, '', 1, 17),
+            (T.EOS, '', 1, 17),
+        ])
 
 
 class TestName(unittest.TestCase):
@@ -939,7 +993,7 @@ class TestForLoop(unittest.TestCase):
         header = 'FOR    ${i}    IN    foo    bar'
         expected = [
             (T.FOR, 'FOR', 3, 4),
-            (T.VARIABLE, '${i}', 3, 11),
+            (T.ASSIGN, '${i}', 3, 11),
             (T.FOR_SEPARATOR, 'IN', 3, 19),
             (T.ARGUMENT, 'foo', 3, 25),
             (T.ARGUMENT, 'bar', 3, 32),
@@ -1633,16 +1687,16 @@ Example
 
 class TestGetResourceTokensSourceFormats(TestGetTokensSourceFormats):
     data = '''\
-*** Variable ***
+*** Variables ***
 ${VAR}    Value
 
-*** KEYWORD ***
+*** KEYWORDS ***
 NOOP    No Operation
 '''
     tokens = [
-        (T.VARIABLE_HEADER, '*** Variable ***', 1, 0),
-        (T.EOL, '\n', 1, 16),
-        (T.EOS, '', 1, 17),
+        (T.VARIABLE_HEADER, '*** Variables ***', 1, 0),
+        (T.EOL, '\n', 1, 17),
+        (T.EOS, '', 1, 18),
         (T.VARIABLE, '${VAR}', 2, 0),
         (T.SEPARATOR, '    ', 2, 6),
         (T.ARGUMENT, 'Value', 2, 10),
@@ -1650,9 +1704,9 @@ NOOP    No Operation
         (T.EOS, '', 2, 16),
         (T.EOL, '\n', 3, 0),
         (T.EOS, '', 3, 1),
-        (T.KEYWORD_HEADER, '*** KEYWORD ***', 4, 0),
-        (T.EOL, '\n', 4, 15),
-        (T.EOS, '', 4, 16),
+        (T.KEYWORD_HEADER, '*** KEYWORDS ***', 4, 0),
+        (T.EOL, '\n', 4, 16),
+        (T.EOS, '', 4, 17),
         (T.KEYWORD_NAME, 'NOOP', 5, 0),
         (T.EOS, '', 5, 4),
         (T.SEPARATOR, '    ', 5, 4),
@@ -1661,13 +1715,13 @@ NOOP    No Operation
         (T.EOS, '', 5, 21)
     ]
     data_tokens = [
-        (T.VARIABLE_HEADER, '*** Variable ***', 1, 0),
-        (T.EOS, '', 1, 16),
+        (T.VARIABLE_HEADER, '*** Variables ***', 1, 0),
+        (T.EOS, '', 1, 17),
         (T.VARIABLE, '${VAR}', 2, 0),
         (T.ARGUMENT, 'Value', 2, 10),
         (T.EOS, '', 2, 15),
-        (T.KEYWORD_HEADER, '*** KEYWORD ***', 4, 0),
-        (T.EOS, '', 4, 15),
+        (T.KEYWORD_HEADER, '*** KEYWORDS ***', 4, 0),
+        (T.EOS, '', 4, 16),
         (T.KEYWORD_NAME, 'NOOP', 5, 0),
         (T.EOS, '', 5, 4),
         (T.KEYWORD, 'No Operation', 5, 8),
@@ -1685,7 +1739,7 @@ class TestTokenizeVariables(unittest.TestCase):
     def test_settings(self):
         data = '''\
 *** Settings ***
-Library       My${Name}    my ${arg}    ${x}[0]    WITH NAME    Your${Name}
+Library       My${Name}    my ${arg}    ${x}[0]    AS    Your${Name}
 ${invalid}    ${usage}
 '''
         expected = [(T.SETTING_HEADER, '*** Settings ***', 1, 0),
@@ -1696,10 +1750,10 @@ ${invalid}    ${usage}
                     (T.ARGUMENT, 'my ', 2, 27),
                     (T.VARIABLE, '${arg}', 2, 30),
                     (T.VARIABLE, '${x}[0]', 2, 40),
-                    (T.WITH_NAME, 'WITH NAME', 2, 51),
-                    (T.NAME, 'Your', 2, 64),
-                    (T.VARIABLE, '${Name}', 2, 68),
-                    (T.EOS, '', 2, 75),
+                    (T.AS, 'AS', 2, 51),
+                    (T.NAME, 'Your', 2, 57),
+                    (T.VARIABLE, '${Name}', 2, 61),
+                    (T.EOS, '', 2, 68),
                     (T.ERROR, '${invalid}', 3, 0, "Non-existing setting '${invalid}'."),
                     (T.EOS, '', 3, 10)]
         assert_tokens(data, expected, get_tokens=get_tokens,
@@ -1953,7 +2007,7 @@ class TestReturn(unittest.TestCase):
     END
 '''
             expected = [(T.FOR, 'FOR', 3, 4),
-                        (T.VARIABLE, '${x}', 3, 11),
+                        (T.ASSIGN, '${x}', 3, 11),
                         (T.FOR_SEPARATOR, 'IN', 3, 19),
                         (T.ARGUMENT, '@{STUFF}', 3, 25),
                         (T.EOS, '', 3, 33),
@@ -2004,7 +2058,7 @@ class TestContinue(unittest.TestCase):
     END
 '''
         expected = [(T.FOR, 'FOR', 3, 4),
-                    (T.VARIABLE, '${x}', 3, 11),
+                    (T.ASSIGN, '${x}', 3, 11),
                     (T.FOR_SEPARATOR, 'IN', 3, 19),
                     (T.ARGUMENT, '@{STUFF}', 3, 25),
                     (T.EOS, '', 3, 33),
@@ -2030,7 +2084,7 @@ class TestContinue(unittest.TestCase):
     END
 '''
         expected = [(T.FOR, 'FOR', 3, 4),
-                    (T.VARIABLE, '${x}', 3, 11),
+                    (T.ASSIGN, '${x}', 3, 11),
                     (T.FOR_SEPARATOR, 'IN', 3, 19),
                     (T.ARGUMENT, '@{STUFF}', 3, 25),
                     (T.EOS, '', 3, 33),
@@ -2055,7 +2109,7 @@ class TestContinue(unittest.TestCase):
     END
 '''
         expected = [(T.FOR, 'FOR', 3, 4),
-                    (T.VARIABLE, '${x}', 3, 11),
+                    (T.ASSIGN, '${x}', 3, 11),
                     (T.FOR_SEPARATOR, 'IN', 3, 19),
                     (T.ARGUMENT, '@{STUFF}', 3, 25),
                     (T.EOS, '', 3, 33),
@@ -2120,7 +2174,7 @@ class TestBreak(unittest.TestCase):
     END
 '''
         expected = [(T.FOR, 'FOR', 3, 4),
-                    (T.VARIABLE, '${x}', 3, 11),
+                    (T.ASSIGN, '${x}', 3, 11),
                     (T.FOR_SEPARATOR, 'IN', 3, 19),
                     (T.ARGUMENT, '@{STUFF}', 3, 25),
                     (T.EOS, '', 3, 33),
@@ -2142,7 +2196,7 @@ class TestBreak(unittest.TestCase):
     END
 '''
         expected = [(T.FOR, 'FOR', 3, 4),
-                    (T.VARIABLE, '${x}', 3, 11),
+                    (T.ASSIGN, '${x}', 3, 11),
                     (T.FOR_SEPARATOR, 'IN', 3, 19),
                     (T.ARGUMENT, '@{STUFF}', 3, 25),
                     (T.EOS, '', 3, 33),
@@ -2178,7 +2232,7 @@ class TestBreak(unittest.TestCase):
     END
 '''
         expected = [(T.FOR, 'FOR', 3, 4),
-                    (T.VARIABLE, '${x}', 3, 11),
+                    (T.ASSIGN, '${x}', 3, 11),
                     (T.FOR_SEPARATOR, 'IN', 3, 19),
                     (T.ARGUMENT, '@{STUFF}', 3, 25),
                     (T.EOS, '', 3, 33),

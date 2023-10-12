@@ -1,4 +1,4 @@
-*** Setting ***
+*** Settings ***
 Test Setup        Login And Set Prompt
 Test Teardown     Close All Connections
 Library           Telnet    newline=CRLF
@@ -8,7 +8,7 @@ Resource          telnet_resource.robot
 *** Variables ***
 ${TIMEOUT}        300 milliseconds
 
-*** Test Case ***
+*** Test Cases ***
 Write & Read
     ${text} =    Write    pwd
     Should Be Equal    ${text}    pwd\r\n

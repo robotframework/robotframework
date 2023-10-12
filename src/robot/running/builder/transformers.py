@@ -61,7 +61,7 @@ class SettingsBuilder(NodeVisitor):
     def visit_DefaultTags(self, node):
         self.settings.default_tags = node.values
 
-    def visit_ForceTags(self, node):
+    def visit_TestTags(self, node):
         self.settings.test_tags = node.values
 
     def visit_KeywordTags(self, node):
@@ -109,6 +109,7 @@ class SuiteBuilder(NodeVisitor):
     def visit_Variable(self, node):
         self.suite.resource.variables.create(name=node.name,
                                              value=node.value,
+                                             separator=node.separator,
                                              lineno=node.lineno,
                                              error=format_error(node.errors))
 
@@ -154,6 +155,7 @@ class ResourceBuilder(NodeVisitor):
     def visit_Variable(self, node):
         self.resource.variables.create(name=node.name,
                                        value=node.value,
+                                       separator=node.separator,
                                        lineno=node.lineno,
                                        error=format_error(node.errors))
 
@@ -167,25 +169,26 @@ class TestCaseBuilder(NodeVisitor):
         self.suite = suite
         self.settings = settings
         self.test = None
-        self.tags = None
+        self._test_has_tags = False
 
     def visit_TestCase(self, node):
-        error = format_error(node.errors + node.header.errors)
         settings = self.settings
+        # Possible parsing errors aren't reported further with tests because:
+        # - We only validate that test body or name isn't empty.
+        # - That is validated again during execution.
+        # - This way e.g. model modifiers can add content to body.
         self.test = self.suite.tests.create(name=node.name,
                                             lineno=node.lineno,
                                             tags=settings.test_tags,
                                             timeout=settings.test_timeout,
-                                            template=settings.test_template,
-                                            error=error)
+                                            template=settings.test_template)
         if settings.test_setup:
             self.test.setup.config(**settings.test_setup)
         if settings.test_teardown:
             self.test.teardown.config(**settings.test_teardown)
         self.generic_visit(node)
-        tags = self.tags if self.tags is not None else settings.default_tags
-        if tags:
-            self.test.tags.add(tags)
+        if not self._test_has_tags:
+            self.test.tags.add(settings.default_tags)
         if self.test.template:
             self._set_template(self.test, self.test.template)
 
@@ -240,8 +243,12 @@ class TestCaseBuilder(NodeVisitor):
         self.test.timeout = node.value
 
     def visit_Tags(self, node):
-        deprecate_tags_starting_with_hyphen(node, self.suite.source)
-        self.tags = node.values
+        for tag in node.values:
+            if tag.startswith('-'):
+                self.test.tags.remove(tag[1:])
+            else:
+                self.test.tags.add(tag)
+        self._test_has_tags = True
 
     def visit_Template(self, node):
         self.test.template = node.value
@@ -275,11 +282,13 @@ class KeywordBuilder(NodeVisitor):
         self.kw = None
 
     def visit_Keyword(self, node):
-        error = format_error(node.errors + node.header.errors)
+        # Possible parsing errors aren't reported further because:
+        # - We only validate that keyword body or name isn't empty.
+        # - That is validated again during execution.
+        # - This way e.g. model modifiers can add content to body.
         self.kw = self.resource.keywords.create(name=node.name,
                                                 tags=self.settings.keyword_tags,
-                                                lineno=node.lineno,
-                                                error=error)
+                                                lineno=node.lineno)
         self.generic_visit(node)
 
     def visit_Documentation(self, node):
@@ -292,18 +301,24 @@ class KeywordBuilder(NodeVisitor):
             self.kw.error = f'Invalid argument specification: {error}'
 
     def visit_Tags(self, node):
-        deprecate_tags_starting_with_hyphen(node, self.resource.source)
-        self.kw.tags.add(node.values)
+        for tag in node.values:
+            if tag.startswith('-'):
+                self.kw.tags.remove(tag[1:])
+            else:
+                self.kw.tags.add(tag)
 
     def visit_Return(self, node):
+        ErrorReporter(self.resource.source).visit(node)
         self.kw.return_ = node.values
 
     def visit_Timeout(self, node):
         self.kw.timeout = node.value
 
+    def visit_Setup(self, node):
+        self.kw.setup.config(name=node.name, args=node.args, lineno=node.lineno)
+
     def visit_Teardown(self, node):
-        self.kw.teardown.config(name=node.name, args=node.args,
-                                lineno=node.lineno)
+        self.kw.teardown.config(name=node.name, args=node.args, lineno=node.lineno)
 
     def visit_KeywordCall(self, node):
         self.kw.body.create_keyword(name=node.keyword, args=node.args,
@@ -347,7 +362,7 @@ class ForBuilder(NodeVisitor):
     def build(self, node):
         error = format_error(self._get_errors(node))
         self.model = self.parent.body.create_for(
-            node.variables, node.flavor, node.values, node.start, node.mode, node.fill,
+            node.assign, node.flavor, node.values, node.start, node.mode, node.fill,
             lineno=node.lineno, error=error
         )
         for step in node.body:
@@ -393,7 +408,8 @@ class ForBuilder(NodeVisitor):
 
     def visit_Error(self, node):
         self.model.body.create_error(lineno=node.lineno,
-                                    values=node.values, error=format_error(node.errors))
+                                     values=node.values,
+                                     error=format_error(node.errors))
 
 
 class IfBuilder(NodeVisitor):
@@ -483,7 +499,7 @@ class TryBuilder(NodeVisitor):
         errors = self._get_errors(node)
         while node:
             self.model = root.body.create_branch(node.type, node.patterns,
-                                                 node.pattern_type, node.variable,
+                                                 node.pattern_type, node.assign,
                                                  lineno=node.lineno)
             for step in node.body:
                 self.visit(step)
@@ -602,18 +618,6 @@ def format_error(errors):
     return '\n- '.join(('Multiple errors:',) + errors)
 
 
-def deprecate_tags_starting_with_hyphen(node, source):
-    for tag in node.values:
-        if tag.startswith('-'):
-            LOGGER.warn(
-                f"Error in file '{source}' on line {node.lineno}: "
-                f"Settings tags starting with a hyphen using the '[Tags]' setting "
-                f"is deprecated. In Robot Framework 7.0 this syntax will be used "
-                f"for removing tags. Escape '{tag}' like '\\{tag}' to use the "
-                f"literal value and to avoid this warning."
-            )
-
-
 class ErrorReporter(NodeVisitor):
 
     def __init__(self, source, raise_on_invalid_header=False):
@@ -626,13 +630,26 @@ class ErrorReporter(NodeVisitor):
     def visit_Keyword(self, node):
         pass
 
+    def visit_Return(self, node):
+        # Empty 'visit_Keyword' above prevents calling this when visiting the whole
+        # model, but 'KeywordBuilder.visit_Return' visits the node it gets.
+        LOGGER.warn(self._format_message(node.get_token(Token.RETURN_SETTING)))
+
     def visit_SectionHeader(self, node):
-        token = node.get_token(Token.INVALID_HEADER)
-        if token:
+        token = node.get_token(*Token.HEADER_TOKENS)
+        if not token.error:
+            return
+        message = self._format_message(token)
+        if token.type == Token.INVALID_HEADER:
             if self.raise_on_invalid_header:
-                raise DataError(self._format_message(token))
+                raise DataError(message)
             else:
-                LOGGER.error(self._format_message(token))
+                LOGGER.error(message)
+        else:
+            # Errors, other than totally invalid headers, can occur only with
+            # deprecated singular headers, and we want to report them as warnings.
+            # A more generic solution for separating errors and warnings would be good.
+            LOGGER.warn(self._format_message(token))
 
     def visit_Error(self, node):
         for error in node.get_tokens(Token.ERROR):

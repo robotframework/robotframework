@@ -1,8 +1,8 @@
-*** Setting ***
+*** Settings ***
 Suite Setup       Run tests    ${EMPTY}    variables/variables_from_resource_files.robot
 Resource          atest_resource.robot
 
-*** Test Case ***
+*** Test Cases ***
 Scalar String
     Check Test Case    ${TEST NAME}
 

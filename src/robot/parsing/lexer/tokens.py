@@ -62,7 +62,8 @@ class Token:
     TEST_TEARDOWN = 'TEST TEARDOWN'
     TEST_TEMPLATE = 'TEST TEMPLATE'
     TEST_TIMEOUT = 'TEST TIMEOUT'
-    FORCE_TAGS = 'FORCE TAGS'
+    TEST_TAGS = 'TEST TAGS'
+    FORCE_TAGS = TEST_TAGS    # TODO: Remove FORCE_TAGS in RF 8.
     DEFAULT_TAGS = 'DEFAULT TAGS'
     KEYWORD_TAGS = 'KEYWORD TAGS'
     LIBRARY = 'LIBRARY'
@@ -79,9 +80,8 @@ class Token:
     RETURN = 'RETURN'
     RETURN_SETTING = RETURN
 
-    # TODO: Change WITH_NAME value to AS in RF 7.0. Remove WITH_NAME in RF 8.
-    WITH_NAME = 'WITH NAME'
     AS = 'AS'
+    WITH_NAME = AS    # TODO: Remove WITH_NAME in RF 8.
 
     NAME = 'NAME'
     VARIABLE = 'VARIABLE'
@@ -132,7 +132,7 @@ class Token:
         TEST_TEARDOWN,
         TEST_TEMPLATE,
         TEST_TIMEOUT,
-        FORCE_TAGS,
+        TEST_TAGS,
         DEFAULT_TAGS,
         KEYWORD_TAGS,
         LIBRARY,
@@ -174,7 +174,7 @@ class Token:
                 Token.TRY: 'TRY', Token.EXCEPT: 'EXCEPT', Token.FINALLY: 'FINALLY',
                 Token.END: 'END', Token.CONTINUE: 'CONTINUE', Token.BREAK: 'BREAK',
                 Token.RETURN_STATEMENT: 'RETURN', Token.CONTINUATION: '...',
-                Token.EOL: '\n', Token.WITH_NAME: 'WITH NAME', Token.AS: 'AS'
+                Token.EOL: '\n', Token.WITH_NAME: 'AS', Token.AS: 'AS'
             }.get(type, '')    # type: ignore
         self.value = cast(str, value)
         self.lineno = lineno

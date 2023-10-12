@@ -15,7 +15,7 @@ All Mode
     Length Should Be    ${tc2.body}    2
     Keyword Should Be Empty    ${tc2.body[0]}    My Keyword    Fail
     Keyword Should Be Empty    ${tc2.body[1]}    BuiltIn.Fail    Expected failure
-    Keyword Should Contain Removal Message    ${tc2.body[1]}   Fails the test with the given message and optionally alters its tags.
+    Keyword Should Contain Removal Message    ${tc2.body[1]}   Expected failure
 
 Warnings Are Removed In All Mode
     [Setup]    Verify previous test and set My Suite    All Mode    1
@@ -169,9 +169,11 @@ Verify previous test and set My Suite
     Set Test Variable    ${MY SUITE}    ${SUITE.suites[${suite index}]}
 
 Keyword Should Contain Removal Message
-    [Arguments]    ${keyword}    ${doc}=${EMPTY}
-    ${expected} =    Set Variable    ${doc}\n\n_Keyword data removed using --RemoveKeywords option._
-    Should Be Equal  ${keyword.doc}  ${expected.strip()}
+    [Arguments]    ${keyword}    ${message}=
+    IF    $message
+        ${message} =    Set Variable    ${message}<hr>
+    END
+    Should Be Equal    ${keyword.message}    *HTML* ${message}<i>Data removed using --RemoveKeywords option.</i>
 
 Logged Warnings Are Preserved In Execution Errors
     Check Log Message    ${ERRORS[1]}    Warning in suite setup    WARN

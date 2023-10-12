@@ -80,10 +80,10 @@ surrounding spaces are optional, and the number of asterisk characters can
 vary as long as there is at least one asterisk in the beginning. For example,
 also `*settings` would be recognized as a section header.
 
-Robot Framework also supports the singular form with headers like
-`*** Setting ***,` but that support is deprecated. There are no visible
-deprecation warnings yet, but warnings will emitted in the future and
-singular headers will eventually not be supported at all.
+Robot Framework supports also singular headers like `*** Setting ***,` but that
+support was deprecated in Robot Framework 6.0. There is a visible deprecation
+warning starting from Robot Framework 7.0 and singular headers will eventually
+not be supported at all.
 
 The header row can contain also other data than the actual section header.
 The extra data must be separated from the section header using the data
@@ -380,11 +380,20 @@ method. It works both with JSON strings and paths to JSON files:
    # Create suite from a JSON string.
    suite = TestSuite.from_json('{"name": "Suite", "tests": [{"name": "Test"}]}')
 
+   # Execute suite. Notice that log and report needs to be created separately.
+   suite.run(output='example.xml')
+
 If you have data as a Python dictionary, you can use `TestSuite.from_dict`__
-instead.
+instead. Regardless of how a suite is recreated, it exists only in memory and
+original data files on the file system are not recreated.
+
+As the above example demonstrates, the created suite can be executed using
+the `TestSuite.run`__ method. It may, however, be easier to execute a JSON file
+directly as explained in the following section.
 
 __ https://robot-framework.readthedocs.io/en/master/autodoc/robot.running.html#robot.running.model.TestSuite.from_json
 __ https://robot-framework.readthedocs.io/en/master/autodoc/robot.running.html#robot.running.model.TestSuite.from_dict
+__ https://robot-framework.readthedocs.io/en/master/autodoc/robot.running.html#robot.running.model.TestSuite.run
 
 Executing JSON files
 ''''''''''''''''''''

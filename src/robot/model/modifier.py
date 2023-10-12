@@ -35,7 +35,7 @@ class ModelModifier(SuiteVisitor):
                 message, details = get_error_details()
                 self._log_error(f"Executing model modifier '{type_name(visitor)}' "
                                 f"failed: {message}\n{details}")
-        if not (suite.test_count or self._empty_suite_ok):
+        if not (suite.has_tests or self._empty_suite_ok):
             raise DataError(f"Suite '{suite.name}' contains no tests after "
                             f"model modifiers.")
 

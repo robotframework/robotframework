@@ -16,9 +16,10 @@
 from robot.utils import file_writer
 
 from .loggerhelper import AbstractLogger
+from .loggerapi import LoggerApi
 
 
-class FileLogger(AbstractLogger):
+class FileLogger(AbstractLogger, LoggerApi):
 
     def __init__(self, path, level):
         super().__init__(level)
@@ -33,23 +34,23 @@ class FileLogger(AbstractLogger):
                                         msg.message)
             self._writer.write(entry)
 
-    def start_suite(self, suite):
-        self.info("Started suite '%s'." % suite.name)
+    def start_suite(self, data, result):
+        self.info("Started suite '%s'." % result.name)
 
-    def end_suite(self, suite):
-        self.info("Ended suite '%s'." % suite.name)
+    def end_suite(self, data, result):
+        self.info("Ended suite '%s'." % result.name)
 
-    def start_test(self, test):
-        self.info("Started test '%s'." % test.name)
+    def start_test(self, data, result):
+        self.info("Started test '%s'." % result.name)
 
-    def end_test(self, test):
-        self.info("Ended test '%s'." % test.name)
+    def end_test(self, data, result):
+        self.info("Ended test '%s'." % result.name)
 
-    def start_keyword(self, kw):
-        self.debug(lambda: "Started keyword '%s'." % kw.name)
+    def start_body_item(self, data, result):
+        self.debug(lambda: "Started keyword '%s'." % result.name if result.type in result.KEYWORD_TYPES else result._name)
 
-    def end_keyword(self, kw):
-        self.debug(lambda: "Ended keyword '%s'." % kw.name)
+    def end_body_item(self, data, result):
+        self.debug(lambda: "Ended keyword '%s'." % result.name if result.type in result.KEYWORD_TYPES else result._name)
 
     def output_file(self, name, path):
         self.info('%s: %s' % (name, path))
