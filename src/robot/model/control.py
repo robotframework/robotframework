@@ -28,8 +28,8 @@ if TYPE_CHECKING:
 IT = TypeVar('IT', bound='IfBranch|TryBranch')
 
 
-class Branches(BaseBranches['Keyword', 'For', 'While', 'If', 'Try', 'Return', 'Continue',
-                            'Break', 'Message', 'Error', IT]):
+class Branches(BaseBranches['Keyword', 'For', 'While', 'If', 'Try', 'Var', 'Return',
+                            'Continue', 'Break', 'Message', 'Error', IT]):
     pass
 
 

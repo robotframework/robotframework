@@ -74,7 +74,7 @@ class IterationType(Generic[FW]):
     pass
 
 
-class Iterations(model.BaseBody['Keyword', 'For', 'While', 'If', 'Try', 'Return',
+class Iterations(model.BaseBody['Keyword', 'For', 'While', 'If', 'Try', 'Var', 'Return',
                                 'Continue', 'Break', 'Message', 'Error'], IterationType[FW]):
     __slots__ = ['iteration_class']
     iteration_type: Type[FW] = KnownAtRuntime
