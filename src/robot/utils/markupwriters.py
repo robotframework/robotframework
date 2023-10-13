@@ -36,17 +36,18 @@ class _MarkupWriter:
     def _preamble(self):
         pass
 
-    def start(self, name, attrs=None, newline=True):
-        attrs = self._format_attrs(attrs)
+    def start(self, name, attrs=None, newline=True, write_empty=None):
+        attrs = self._format_attrs(attrs, write_empty)
         self._start(name, attrs, newline)
 
     def _start(self, name, attrs, newline):
         self._write(f'<{name} {attrs}>' if attrs else f'<{name}>', newline)
 
-    def _format_attrs(self, attrs):
+    def _format_attrs(self, attrs, write_empty):
         if not attrs:
             return ''
-        write_empty = self._write_empty
+        if write_empty is None:
+            write_empty = self._write_empty
         return ' '.join(f"{name}=\"{attribute_escape(value or '')}\""
                         for name, value in self._order_attrs(attrs)
                         if write_empty or value)
@@ -64,9 +65,12 @@ class _MarkupWriter:
     def end(self, name, newline=True):
         self._write(f'</{name}>', newline)
 
-    def element(self, name, content=None, attrs=None, escape=True, newline=True):
-        attrs = self._format_attrs(attrs)
-        if self._write_empty or content or attrs:
+    def element(self, name, content=None, attrs=None, escape=True, newline=True,
+                write_empty=None):
+        attrs = self._format_attrs(attrs, write_empty)
+        if write_empty is None:
+            write_empty = self._write_empty
+        if write_empty or content or attrs:
             self._start(name, attrs, newline=False)
             self.content(content, escape)
             self.end(name, newline)
@@ -98,15 +102,18 @@ class XmlWriter(_MarkupWriter):
     def _escape(self, text):
         return xml_escape(text)
 
-    def element(self, name, content=None, attrs=None, escape=True, newline=True):
+    def element(self, name, content=None, attrs=None, escape=True, newline=True,
+                write_empty=None):
         if content:
-            super().element(name, content, attrs, escape, newline)
+            super().element(name, content, attrs, escape, newline, write_empty)
         else:
-            self._self_closing_element(name, attrs, newline)
+            self._self_closing_element(name, attrs, newline, write_empty)
 
-    def _self_closing_element(self, name, attrs, newline):
-        attrs = self._format_attrs(attrs)
-        if self._write_empty or attrs:
+    def _self_closing_element(self, name, attrs, newline, write_empty):
+        attrs = self._format_attrs(attrs, write_empty)
+        if write_empty is None:
+            write_empty = self._write_empty
+        if write_empty or attrs:
             self._write(f'<{name} {attrs}/>' if attrs else f'<{name}/>', newline)
 
 

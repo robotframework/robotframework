@@ -4,8 +4,14 @@ Scalar
     Should Be Equal    ${name}    value
 
 Scalar with separator
-    VAR    ${name}    a    b    c    separator=-
-    Should Be Equal    ${name}    a-b-c
+    VAR    ${a}    ${1}    2       3       separator=\n
+    VAR    ${b}    1       ${2}    3       separator====
+    VAR    ${c}    1       2       ${3}    separator=
+    VAR    ${d}    ${a}    ${b}    ${c}    separator=${0}
+    Should Be Equal    ${a}    1\n2\n3
+    Should Be Equal    ${b}    1===2===3
+    Should Be Equal    ${c}    123
+    Should Be Equal    ${d}    ${a}0${b}0${c}
 
 List
     VAR    @{name}    v1    v2    v3
@@ -102,6 +108,6 @@ Scopes
     Should Be Equal    ${suite}     suite
     Should Be Equal    ${global}    global
     VAR                ${local3}    local3
-    VAR                ${test}      new-${test}    scope=test
+    VAR                ${test}      new    ${test}    scope=${test}    separator=${{'-'}}
     Should Be Equal    ${local3}    local3
     Should Be Equal    ${test}      new-test

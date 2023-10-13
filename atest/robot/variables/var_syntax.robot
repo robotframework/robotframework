@@ -4,19 +4,31 @@ Resource          atest_resource.robot
 
 *** Test Cases ***
 Scalar
-    Check Test Case    ${TESTNAME}
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Validate VAR    ${tc.body}[0]    \${name}    value
 
 Scalar with separator
-    Check Test Case    ${TESTNAME}
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Validate VAR    ${tc.body}[0]    \${a}    \${1}    2        3        separator=\\n
+    Validate VAR    ${tc.body}[1]    \${b}    1        \${2}    3        separator====
+    Validate VAR    ${tc.body}[2]    \${c}    1        2        \${3}    separator=
+    Validate VAR    ${tc.body}[3]    \${d}    \${a}    \${b}    \${c}    separator=\${0}
 
 List
-    Check Test Case    ${TESTNAME}
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Validate VAR    ${tc.body}[0]    \@{name}    v1    v2    v3
 
 Dict
-    Check Test Case    ${TESTNAME}
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Validate VAR    ${tc.body}[0]    \&{name}    k1=v1    k2=v2
 
 Scopes
-    Check Test Case    ${TESTNAME} 1
+    ${tc} =    Check Test Case    ${TESTNAME} 1
+    Validate VAR    ${tc.body}[0]    \${local1}    local1
+    Validate VAR    ${tc.body}[1]    \${local2}    local2    scope=LOCAL
+    Validate VAR    ${tc.body}[2]    \${test}      test      scope=test
+    Validate VAR    ${tc.body}[3]    \${suite}     suite     scope=\${{'suite'}}
+    Validate VAR    ${tc.body}[4]    \${global}    global    scope=GLOBAL
     Check Test Case    ${TESTNAME} 2
 
 Invalid scope
@@ -48,3 +60,12 @@ With inline IF
 
 With TRY
     Check Test Case    ${TESTNAME}
+
+*** Keywords ***
+Validate VAR
+    [Arguments]    ${var}    ${name}    @{value}    ${scope}=${None}    ${separator}=${None}
+    Should Be Equal    ${var.type}         VAR
+    Should Be Equal    ${var.name}         ${name}
+    Should Be Equal    ${var.value}        ${{tuple($value)}}
+    Should Be Equal    ${var.scope}        ${scope}
+    Should Be Equal    ${var.separator}    ${separator}

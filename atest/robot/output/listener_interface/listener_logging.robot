@@ -40,9 +40,10 @@ Execution errors should have messages from message and log_message methods
 Correct start/end warnings should be shown in execution errors
     ${msgs} =    Get start/end messages    ${ERRORS}
     @{kw} =        Create List    start keyword    end keyword
+    @{var} =       Create List    start var        end var
     @{return} =    Create List    start return     end return
-    @{setup} =     Create List    start setup      @{kw}    @{kw}    @{kw}    @{return}    end setup
-    @{uk} =        Create List    start keyword    @{kw}    @{kw}    @{kw}    @{return}    end keyword
+    @{setup} =     Create List    start setup      @{kw}    @{kw}    @{kw}    @{var}    @{kw}    @{return}    end setup
+    @{uk} =        Create List    start keyword    @{kw}    @{kw}    @{kw}    @{var}    @{kw}    @{return}    end keyword
     FOR    ${index}    ${method}    IN ENUMERATE
     ...    start_suite
     ...    @{setup}
@@ -102,12 +103,20 @@ Correct messages should be logged to normal log
     Check Log Message    ${kw.body[4].body[4]}    \${assign} = JUST TESTING...    INFO
     Check Log Message    ${kw.body[4].body[5]}    end keyword      INFO
     Check Log Message    ${kw.body[4].body[6]}    end keyword      WARN
-    Check Log Message    ${kw.body[5].body[0]}    start return     INFO
-    Check Log Message    ${kw.body[5].body[1]}    start return     WARN
-    Check Log Message    ${kw.body[5].body[2]}    end return       INFO
-    Check Log Message    ${kw.body[5].body[3]}    end return       WARN
-    Check Log Message    ${kw.body[6]}            end ${type}      INFO
-    Check Log Message    ${kw.body[7]}            end ${type}      WARN
+    Check Log Message    ${kw.body[5].body[0]}    start var        INFO
+    Check Log Message    ${kw.body[5].body[1]}    start var        WARN
+    Check Log Message    ${kw.body[5].body[2]}    end var          INFO
+    Check Log Message    ${kw.body[5].body[3]}    end var          WARN
+    Check Log Message    ${kw.body[6].body[0]}    start keyword    INFO
+    Check Log Message    ${kw.body[6].body[1]}    start keyword    WARN
+    Check Log Message    ${kw.body[6].body[2]}    end keyword      INFO
+    Check Log Message    ${kw.body[6].body[3]}    end keyword      WARN
+    Check Log Message    ${kw.body[7].body[0]}    start return     INFO
+    Check Log Message    ${kw.body[7].body[1]}    start return     WARN
+    Check Log Message    ${kw.body[7].body[2]}    end return       INFO
+    Check Log Message    ${kw.body[7].body[3]}    end return       WARN
+    Check Log Message    ${kw.body[8]}            end ${type}      INFO
+    Check Log Message    ${kw.body[9]}            end ${type}      WARN
 
 'Fail' has correct messages
     [Arguments]    ${kw}

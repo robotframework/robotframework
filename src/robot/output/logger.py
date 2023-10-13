@@ -144,8 +144,7 @@ class Logger(AbstractLogger):
 
     def unregister_logger(self, *loggers):
         for logger in loggers:
-            self._other_loggers = [l for l in self._other_loggers
-                                   if l is not logger]
+            self._other_loggers = [l for l in self._other_loggers if l is not logger]
 
     def disable_message_cache(self):
         self._message_cache = None
@@ -318,6 +317,16 @@ class Logger(AbstractLogger):
     def end_try_branch(self, data, result):
         for logger in self.end_loggers:
             logger.end_try_branch(data, result)
+
+    @start_body_item
+    def start_var(self, data, result):
+        for logger in self.start_loggers:
+            logger.start_var(data, result)
+
+    @end_body_item
+    def end_var(self, data, result):
+        for logger in self.end_loggers:
+            logger.end_var(data, result)
 
     @start_body_item
     def start_break(self, data, result):

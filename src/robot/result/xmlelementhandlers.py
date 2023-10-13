@@ -112,7 +112,8 @@ class TestHandler(ElementHandler):
     tag = 'test'
     # 'tags' is for RF < 4 compatibility.
     children = frozenset(('doc', 'tags', 'tag', 'timeout', 'status', 'kw', 'if', 'for',
-                          'try', 'while', 'return', 'break', 'continue', 'error', 'msg'))
+                          'try', 'while', 'variable', 'return', 'break', 'continue',
+                          'error', 'msg'))
 
     def start(self, elem, result):
         lineno = elem.get('line')
@@ -127,7 +128,7 @@ class KeywordHandler(ElementHandler):
     # 'arguments', 'assign' and 'tags' are for RF < 4 compatibility.
     children = frozenset(('doc', 'arguments', 'arg', 'assign', 'var', 'tags', 'tag',
                           'timeout', 'status', 'msg', 'kw', 'if', 'for', 'try',
-                          'while', 'return', 'break', 'continue', 'error'))
+                          'while', 'variable', 'return', 'break', 'continue', 'error'))
 
     def start(self, elem, result):
         elem_type = elem.get('type')
@@ -211,7 +212,7 @@ class WhileHandler(ElementHandler):
 class IterationHandler(ElementHandler):
     tag = 'iter'
     children = frozenset(('var', 'doc', 'status', 'kw', 'if', 'for', 'msg', 'try',
-                          'while', 'return', 'break', 'continue', 'error'))
+                          'while', 'variable', 'return', 'break', 'continue', 'error'))
 
     def start(self, elem, result):
         return result.body.create_iteration()
@@ -230,7 +231,7 @@ class IfHandler(ElementHandler):
 class BranchHandler(ElementHandler):
     tag = 'branch'
     children = frozenset(('status', 'kw', 'if', 'for', 'try', 'while', 'msg', 'doc',
-                          'return', 'pattern', 'break', 'continue', 'error'))
+                          'variable', 'return', 'pattern', 'break', 'continue', 'error'))
 
     def start(self, elem, result):
         if 'variable' in elem.attrib:    # RF < 7.0 compatibility.
@@ -257,9 +258,20 @@ class PatternHandler(ElementHandler):
 
 
 @ElementHandler.register
+class VariableHandler(ElementHandler):
+    tag = 'variable'
+    children = frozenset(('var', 'status', 'msg', 'kw'))
+
+    def start(self, elem, result):
+        return result.body.create_var(name=elem.get('name', ''),
+                                      scope=elem.get('scope'),
+                                      separator=elem.get('separator'))
+
+
+@ElementHandler.register
 class ReturnHandler(ElementHandler):
     tag = 'return'
-    children = frozenset(('status', 'value', 'msg', 'kw'))
+    children = frozenset(('value', 'status', 'msg', 'kw'))
 
     def start(self, elem, result):
         return result.body.create_return()
@@ -410,6 +422,8 @@ class VarHandler(ElementHandler):
             result.assign += (value,)
         elif result.type == result.ITERATION:
             result.assign[elem.get('name')] = value
+        elif result.type == result.VAR:
+            result.value += (value,)
         else:
             raise DataError(f"Invalid element '{elem}' for result '{result!r}'.")
 

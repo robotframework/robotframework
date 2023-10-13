@@ -216,6 +216,19 @@ class TestBuildTestSuite(unittest.TestCase):
                                     name='${x}    IN ENUMERATE    a    b    start=1')
         self._verify_test(test, body=(f1, f2))
 
+    def test_var(self):
+        test = TestSuite().tests.create()
+        test.body.create_var('${x}', value='x')
+        test.body.create_var('${y}', value=('x', 'y'), separator='', scope='test')
+        test.body.create_var('@{z}', value=('x', 'y'), scope='SUITE')
+        v1 = self._verify_body_item(test.body[0], type=9,
+                                    name='${x}    x')
+        v2 = self._verify_body_item(test.body[1], type=9,
+                                    name='${y}    x    y    separator=    scope=test')
+        v3 = self._verify_body_item(test.body[2], type=9,
+                                    name='@{z}    x    y    scope=SUITE')
+        self._verify_test(test, body=(v1, v2, v3))
+
     def test_message_directly_under_test(self):
         test = TestSuite().tests.create()
         test.body.create_message('Hi from test')

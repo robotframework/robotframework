@@ -272,6 +272,12 @@ class ListenerAdapter(LoggerApi):
     def end_try_branch(self, data: 'running.Try', result: 'result.TryBranch'):
         self.listener.end_keyword(ModelCombiner(data, result))
 
+    def start_var(self, data, result):
+        self.listener.start_keyword(ModelCombiner(data, result))
+
+    def end_var(self, data, result):
+        self.listener.end_keyword(ModelCombiner(data, result))
+
     def start_break(self, data, result):
         self.listener.start_keyword(ModelCombiner(data, result))
 

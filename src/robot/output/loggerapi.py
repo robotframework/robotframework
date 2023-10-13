@@ -68,6 +68,12 @@ class LoggerApi:
     def end_try_branch(self, data: 'running.Try', result: 'result.TryBranch'):
         self.end_body_item(data, result)
 
+    def start_var(self, data: 'running.Var', result: 'result.Var'):
+        self.start_body_item(data, result)
+
+    def end_var(self, data: 'running.Var', result: 'result.Var'):
+        self.end_body_item(data, result)
+
     def start_break(self, data: 'running.Break', result: 'result.Break'):
         self.start_body_item(data, result)
 
