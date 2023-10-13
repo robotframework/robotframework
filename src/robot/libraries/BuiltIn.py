@@ -1877,7 +1877,7 @@ class _RunKeyword(_BuiltInBase):
 
     def _accepts_embedded_arguments(self, name, ctx):
         if '{' in name:
-            runner = ctx.get_runner(name)
+            runner = ctx.get_runner(name, recommend_on_failure=False)
             return runner and hasattr(runner, 'embedded_args')
         return False
 

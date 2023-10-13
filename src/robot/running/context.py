@@ -302,8 +302,8 @@ class _ExecutionContext:
         method(data, result)
         self.steps.pop()
 
-    def get_runner(self, name):
-        return self.namespace.get_runner(name)
+    def get_runner(self, name, recommend_on_failure=True):
+        return self.namespace.get_runner(name, recommend_on_failure)
 
     def trace(self, message):
         self.output.trace(message)
