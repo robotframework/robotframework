@@ -35,21 +35,16 @@ def ConsoleOutput(type='verbose', width=78, colors='AUTO', markers='AUTO',
         return QuietOutput(colors, stderr)
     if upper == 'NONE':
         return NoOutput()
-
     discoveries = entry_points(group=ENTRY_POINT_GROUP, name=type)
-
     if discoveries:
         if len(discoveries) > 1:
             warnings.warn("Multiple console outputs with name '%s' found. "
                           "Using first entry (%s)."
                           % (type, discoveries[0].value))
-
         constructor = discoveries[0].load()
         return constructor(width, colors, markers, stdout, stderr)
-
     values = ["VERBOSE", "DOTTED", "QUIET", "NONE"]
     discoveries = entry_points(group=ENTRY_POINT_GROUP)
     values.extend(discovery.name for discovery in discoveries)
-
     raise DataError("Invalid console output type '%s'. Available: %s."
                     % (type, ', '.join(values)))
