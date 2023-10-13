@@ -149,9 +149,6 @@
           "type": "string"
         }
       },
-      "required": [
-        "values"
-      ],
       "additionalProperties": false
     },
     "Error": {

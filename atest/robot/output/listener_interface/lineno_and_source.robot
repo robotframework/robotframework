@@ -37,7 +37,7 @@ Not run keyword
     \END     KEYWORD          Non-existing                   18    NOT RUN
 
 FOR
-    START    FOR              \${x} IN [ first | second ]    21    NOT SET
+    START    FOR              \${x} IN first second          21    NOT SET
     START    ITERATION        \${x} = first                  21    NOT SET
     START    KEYWORD          No Operation                   22    NOT SET
     \END     KEYWORD          No Operation                   22    PASS
@@ -46,36 +46,36 @@ FOR
     START    KEYWORD          No Operation                   22    NOT SET
     \END     KEYWORD          No Operation                   22    PASS
     \END     ITERATION        \${x} = second                 21    PASS
-    \END     FOR              \${x} IN [ first | second ]    21    PASS
+    \END     FOR              \${x} IN first second          21    PASS
 
 FOR in keyword
     START    KEYWORD          FOR In Keyword                 26    NOT SET
-    START    FOR              \${x} IN [ once ]             105    NOT SET
+    START    FOR              \${x} IN once                 105    NOT SET
     START    ITERATION        \${x} = once                  105    NOT SET
     START    KEYWORD          No Operation                  106    NOT SET
     \END     KEYWORD          No Operation                  106    PASS
     \END     ITERATION        \${x} = once                  105    PASS
-    \END     FOR              \${x} IN [ once ]             105    PASS
+    \END     FOR              \${x} IN once                 105    PASS
     \END     KEYWORD          FOR In Keyword                 26    PASS
 
 FOR in IF
     START    IF               True                           29    NOT SET
-    START    FOR              \${x} | \${y} IN [ x | y ]     30    NOT SET
+    START    FOR              \${x} \${y} IN x y             30    NOT SET
     START    ITERATION        \${x} = x, \${y} = y           30    NOT SET
     START    KEYWORD          No Operation                   31    NOT SET
     \END     KEYWORD          No Operation                   31    PASS
     \END     ITERATION        \${x} = x, \${y} = y           30    PASS
-    \END     FOR              \${x} | \${y} IN [ x | y ]     30    PASS
+    \END     FOR              \${x} \${y} IN x y             30    PASS
     \END     IF               True                           29    PASS
 
 FOR in resource
     START    KEYWORD          FOR In Resource                36    NOT SET
-    START    FOR              \${x} IN [ once ]               6    NOT SET    source=${RESOURCE FILE}
+    START    FOR              \${x} IN once                   6    NOT SET    source=${RESOURCE FILE}
     START    ITERATION        \${x} = once                    6    NOT SET    source=${RESOURCE FILE}
     START    KEYWORD          Log                             7    NOT SET    source=${RESOURCE FILE}
     \END     KEYWORD          Log                             7    PASS       source=${RESOURCE FILE}
     \END     ITERATION        \${x} = once                    6    PASS       source=${RESOURCE FILE}
-    \END     FOR              \${x} IN [ once ]               6    PASS       source=${RESOURCE FILE}
+    \END     FOR              \${x} IN once                   6    PASS       source=${RESOURCE FILE}
     \END     KEYWORD          FOR In Resource                36    PASS
 
 IF
@@ -103,7 +103,7 @@ IF in keyword
     \END     KEYWORD          IF In Keyword                  48    PASS
 
 IF in FOR
-    START    FOR              \${x} IN [ 1 | 2 ]             52    NOT SET
+    START    FOR              \${x} IN 1 2                   52    NOT SET
     START    ITERATION        \${x} = 1                      52    NOT SET
     START    IF               \${x} == 1                     53    NOT SET
     START    KEYWORD          Log                            54    NOT SET
@@ -124,7 +124,7 @@ IF in FOR
     \END     KEYWORD          Fail                           56    FAIL
     \END     ELSE             \                              55    FAIL
     \END     ITERATION        \${x} = 2                      52    FAIL
-    \END     FOR              \${x} IN [ 1 | 2 ]             52    FAIL
+    \END     FOR              \${x} IN 1 2                   52    FAIL
 
 IF in resource
     START    KEYWORD          IF In Resource                 61    NOT SET
@@ -166,10 +166,10 @@ TRY in keyword
     START    KEYWORD          Fail                          120    NOT RUN
     \END     KEYWORD          Fail                          120    NOT RUN
     \END     EXCEPT           No match AS \${var}           119    NOT RUN
-    START    EXCEPT           No | Match | 2 AS \${x}       121    NOT RUN
+    START    EXCEPT           No Match 2 AS \${x}           121    NOT RUN
     START    KEYWORD          Fail                          122    NOT RUN
     \END     KEYWORD          Fail                          122    NOT RUN
-    \END     EXCEPT           No | Match | 2 AS \${x}       121    NOT RUN
+    \END     EXCEPT           No Match 2 AS \${x}           121    NOT RUN
     START    EXCEPT           ${EMPTY}                      123    NOT RUN
     START    KEYWORD          Fail                          124    NOT RUN
     \END     KEYWORD          Fail                          124    NOT RUN

@@ -81,11 +81,11 @@ class _DebugFileWriter(LoggerApi):
     def start_body_item(self, data, result):
         if self._kw_level == 0:
             self._separator('KEYWORD')
-        self._start(result.type, result._name, result.start_time)
+        self._start(result.type, result._log_name, result.start_time)
         self._kw_level += 1
 
     def end_body_item(self, data, result):
-        self._end(result.type, result._name, result.end_time, result.elapsed_time)
+        self._end(result.type, result._log_name, result.end_time, result.elapsed_time)
         self._kw_level -= 1
 
     def log_message(self, msg):

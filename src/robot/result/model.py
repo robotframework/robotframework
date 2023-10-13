@@ -326,8 +326,8 @@ class ForIteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
         visitor.visit_for_iteration(self)
 
     @property
-    def _name(self):
-        return ', '.join('%s = %s' % item for item in self.assign.items())
+    def _log_name(self):
+        return ', '.join(f'{name} = {value}' for name, value in self.assign.items())
 
 
 @Body.register
@@ -360,15 +360,8 @@ class For(model.For, StatusMixin, DeprecatedAttributesMixin):
         return self.iterations_class(self.iteration_class, self, iterations)
 
     @property
-    def _name(self):
-        assign = ' | '.join(self.assign)
-        values = ' | '.join(self.values)
-        for name, value in [('start', self.start),
-                            ('mode', self.mode),
-                            ('fill', self.fill)]:
-            if value is not None:
-                values += f' | {name}={value}'
-        return f'{assign} {self.flavor} [ {values} ]'
+    def _log_name(self):
+        return str(self)[7:]    # Drop 'FOR    ' prefix.
 
 
 class WhileIteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
@@ -427,17 +420,8 @@ class While(model.While, StatusMixin, DeprecatedAttributesMixin):
         return self.iterations_class(self.iteration_class, self, iterations)
 
     @property
-    def _name(self):
-        parts = []
-        if self.condition:
-            parts.append(self.condition)
-        if self.limit:
-            parts.append(f'limit={self.limit}')
-        if self.on_limit:
-            parts.append(f'on_limit={self.on_limit}')
-        if self.on_limit_message:
-            parts.append(f'on_limit_message={self.on_limit_message}')
-        return ' | '.join(parts)
+    def _log_name(self):
+        return str(self)[9:]    # Drop 'WHILE    ' prefix.
 
 
 class IfBranch(model.IfBranch, StatusMixin, DeprecatedAttributesMixin):
@@ -460,7 +444,7 @@ class IfBranch(model.IfBranch, StatusMixin, DeprecatedAttributesMixin):
         self.elapsed_time = elapsed_time
 
     @property
-    def _name(self):
+    def _log_name(self):
         return self.condition or ''
 
 
@@ -506,16 +490,8 @@ class TryBranch(model.TryBranch, StatusMixin, DeprecatedAttributesMixin):
         self.elapsed_time = elapsed_time
 
     @property
-    def _name(self):
-        patterns = list(self.patterns)
-        if self.pattern_type:
-            patterns.append(f'type={self.pattern_type}')
-        parts = []
-        if patterns:
-            parts.append(' | '.join(patterns))
-        if self.assign:
-            parts.append(f'AS {self.assign}')
-        return ' '.join(parts)
+    def _log_name(self):
+        return str(self)[len(self.type)+4:]    # Drop '<type>    ' prefix.
 
 
 @Body.register
@@ -570,6 +546,10 @@ class Var(model.Var, StatusMixin, DeprecatedAttributesMixin):
         keywords.
         """
         return self.body_class(self, body)
+
+    @property
+    def _log_name(self):
+        return str(self)[7:]    # Drop 'VAR    ' prefix.
 
 
 @Body.register
@@ -690,10 +670,6 @@ class Error(model.Error, StatusMixin, DeprecatedAttributesMixin):
         Typically contains the message that caused the error.
         """
         return self.body_class(self, body)
-
-    @property
-    def _name(self):
-        return self.values[0]
 
 
 @Body.register

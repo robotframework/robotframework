@@ -2,7 +2,7 @@
 Everything
     TRY
         Keyword
-    EXCEPT    No match
+    EXCEPT    No match    type=glob
         Fail    Not executed
         Fail    Not executed either
     EXCEPT    Ooops!    AS    ${err}

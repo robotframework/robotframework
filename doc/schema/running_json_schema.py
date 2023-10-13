@@ -37,7 +37,7 @@ class Var(BodyItem):
 
 class Return(BodyItem):
     type = Field('RETURN', const=True)
-    values: Sequence[str]
+    values: Sequence[str] | None
 
 
 class Continue(BodyItem):

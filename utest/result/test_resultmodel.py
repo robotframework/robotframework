@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 
 from robot.model import Tags
 from robot.result import (Break, Continue, Error, For, If, IfBranch, Keyword, Message,
-                          Return, TestCase, TestSuite, Try, TryBranch, While)
+                          Return, TestCase, TestSuite, Try, TryBranch, Var, While)
 from robot.utils.asserts import (assert_equal, assert_false, assert_raises,
                                  assert_raises_with_msg, assert_true)
 
@@ -455,16 +455,49 @@ class TestModel(unittest.TestCase):
         kw = branch.body.create_keyword()
         assert_equal(kw.parent, branch)
 
-    def test_while_name(self):
-        assert_equal(While()._name, '')
-        assert_equal(While('$x > 0')._name, '$x > 0')
-        assert_equal(While('True', '1 minute')._name, 'True | limit=1 minute')
-        assert_equal(While(limit='1 minute')._name, 'limit=1 minute')
-        assert_equal(While('True', '1 s', on_limit_message='Error message')._name,
-                     'True | limit=1 s | on_limit_message=Error message')
-        assert_equal(While(on_limit='pass')._name, 'on_limit=pass')
-        assert_equal(While(on_limit_message='Error message')._name,
+    def test_while_log_name(self):
+        assert_equal(While()._log_name, '')
+        assert_equal(While('$x > 0')._log_name, '$x > 0')
+        assert_equal(While('True', '1 minute')._log_name,
+                     'True    limit=1 minute')
+        assert_equal(While(limit='1 minute')._log_name,
+                     'limit=1 minute')
+        assert_equal(While('True', '1 s', on_limit_message='x')._log_name,
+                     'True    limit=1 s    on_limit_message=x')
+        assert_equal(While(on_limit='pass', limit='100')._log_name,
+                     'limit=100    on_limit=pass')
+        assert_equal(While(on_limit_message='Error message')._log_name,
                      'on_limit_message=Error message')
+
+    def test_for_log_name(self):
+        assert_equal(For(assign=['${x}'], values=['a', 'b'])._log_name,
+                     '${x}    IN    a    b')
+        assert_equal(For(['${x}'], 'IN ENUMERATE', ['a', 'b'], start='1')._log_name,
+                     '${x}    IN ENUMERATE    a    b    start=1')
+        assert_equal(For(['${x}', '${y}'], 'IN ZIP', ['${xs}', '${ys}'],
+                         mode='STRICT', fill='-')._log_name,
+                     '${x}    ${y}    IN ZIP    ${xs}    ${ys}    mode=STRICT    fill=-')
+
+    def test_try_log_name(self):
+        for typ in TryBranch.TRY, TryBranch.EXCEPT, TryBranch.ELSE, TryBranch.FINALLY:
+            assert_equal(TryBranch(typ)._log_name, '')
+        branch = TryBranch(TryBranch.EXCEPT)
+        assert_equal(branch.config(patterns=['p1', 'p2'])._log_name,
+                     'p1    p2')
+        assert_equal(branch.config(pattern_type='glob')._log_name,
+                     'p1    p2    type=glob')
+        assert_equal(branch.config(assign='${err}')._log_name,
+                     'p1    p2    type=glob    AS    ${err}')
+
+    def test_var_log_name(self):
+        assert_equal(Var('${x}', 'y')._log_name,
+                     '${x}    y')
+        assert_equal(Var('${x}', ('y', 'z'))._log_name,
+                     '${x}    y    z')
+        assert_equal(Var('${x}', ('y', 'z'), separator='')._log_name,
+                     '${x}    y    z    separator=')
+        assert_equal(Var('@{x}', ('y',), scope='test')._log_name,
+                     '@{x}    y    scope=test')
 
 
 class TestBody(unittest.TestCase):

@@ -362,7 +362,7 @@ class TestToFromDictAndJson(unittest.TestCase):
                            {'type': 'FINALLY', 'body': [{'name': 'K4'}]}])
 
     def test_return_continue_break(self):
-        self._verify(Return(), type='RETURN', values=())
+        self._verify(Return(), type='RETURN')
         self._verify(Return(('x', 'y'), lineno=9, error='E'),
                      type='RETURN', values=('x', 'y'), lineno=9, error='E')
         self._verify(Continue(), type='CONTINUE')
@@ -380,8 +380,8 @@ class TestToFromDictAndJson(unittest.TestCase):
 
     def test_error(self):
         self._verify(Error(), type='ERROR', values=(), error='')
-        self._verify(Error(('bad', 'things'), error='Bad things!'),
-                     type='ERROR', values=('bad', 'things'), error='Bad things!')
+        self._verify(Error(('x', 'y'), error='Bad things happened!'),
+                     type='ERROR', values=('x', 'y'), error='Bad things happened!')
 
     def test_test(self):
         self._verify(TestCase(), name='', body=[])

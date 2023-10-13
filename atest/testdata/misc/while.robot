@@ -12,7 +12,7 @@ WHILE loop in keyword
 *** Keywords ***
 WHILE loop executed multiple times
     ${variable}=     Set variable     ${1}
-    WHILE    True
+    WHILE    True    limit=10    on_limit_message=xxx
         Log    ${variable}
         ${variable}=    Evaluate    $variable + 1
         IF    $variable == 5    CONTINUE
