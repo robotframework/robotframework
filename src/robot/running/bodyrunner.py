@@ -275,13 +275,13 @@ class ForInZipRunner(ForInRunner):
         if not mode or self._context.dry_run:
             return None
         try:
-            mode = self._context.variables.replace_string(mode).upper()
-            if mode in ('STRICT', 'SHORTEST', 'LONGEST'):
-                return mode
-            raise DataError(f"Mode must be 'STRICT', 'SHORTEST' or 'LONGEST', "
-                            f"got '{mode}'.")
+            mode = self._context.variables.replace_string(mode)
+            if mode.upper() in ('STRICT', 'SHORTEST', 'LONGEST'):
+                return mode.upper()
+            raise DataError(f"Value '{mode}' is not accepted. Valid values "
+                            f"are 'STRICT', 'SHORTEST' and 'LONGEST'.")
         except DataError as err:
-            raise DataError(f'Invalid mode: {err}')
+            raise DataError(f'Invalid FOR IN ZIP mode: {err}')
 
     def _resolve_fill(self, fill):
         if not fill or self._context.dry_run:
@@ -289,7 +289,7 @@ class ForInZipRunner(ForInRunner):
         try:
             return self._context.variables.replace_scalar(fill)
         except DataError as err:
-            raise DataError(f'Invalid fill value: {err}')
+            raise DataError(f'Invalid FOR IN ZIP fill value: {err}')
 
     def _resolve_dict_values(self, values):
         raise DataError('FOR IN ZIP loops do not support iterating over dictionaries.',
@@ -351,9 +351,9 @@ class ForInEnumerateRunner(ForInRunner):
             try:
                 return int(start)
             except ValueError:
-                raise DataError(f"Start value must be an integer, got '{start}'.")
+                raise DataError(f"Value must be an integer, got '{start}'.")
         except DataError as err:
-            raise DataError(f'Invalid start value: {err}')
+            raise DataError(f'Invalid FOR IN ENUMERATE start value: {err}')
 
     def _map_dict_values_to_rounds(self, values, per_round):
         if per_round > 3:
@@ -467,10 +467,11 @@ class IfRunner:
     def run(self, data):
         with self._dry_run_recursion_detection(data) as recursive_dry_run:
             error = None
-            with StatusReporter(data, IfResult(), self._context, self._run):
+            result = IfResult()
+            with StatusReporter(data, result, self._context, self._run):
                 for branch in data.body:
                     try:
-                        if self._run_if_branch(branch, recursive_dry_run, data.error):
+                        if self._run_if_branch(branch, result, recursive_dry_run, data.error):
                             self._run = False
                     except ExecutionStatus as err:
                         error = err
@@ -492,9 +493,9 @@ class IfRunner:
             if dry_run:
                 self._dry_run_stack.pop()
 
-    def _run_if_branch(self, branch, recursive_dry_run=False, syntax_error=None):
+    def _run_if_branch(self, branch, result, recursive_dry_run=False, syntax_error=None):
         context = self._context
-        result = IfBranchResult(branch.type, branch.condition, start_time=datetime.now())
+        result = result.body.create_branch(branch.type, branch.condition, start_time=datetime.now())
         error = None
         if syntax_error:
             run_branch = False
@@ -539,28 +540,29 @@ class TryRunner:
 
     def run(self, data):
         run = self._run
-        with StatusReporter(data, TryResult(), self._context, run):
+        result = TryResult()
+        with StatusReporter(data, result, self._context, run):
             if data.error:
-                self._run_invalid(data)
+                self._run_invalid(data, result)
                 return
-            error = self._run_try(data, run)
+            error = self._run_try(data, result, run)
             run_excepts_or_else = self._should_run_excepts_or_else(error, run)
             if error:
-                error = self._run_excepts(data, error, run=run_excepts_or_else)
-                self._run_else(data, run=False)
+                error = self._run_excepts(data, result, error, run=run_excepts_or_else)
+                self._run_else(data, result, run=False)
             else:
-                self._run_excepts(data, error, run=False)
-                error = self._run_else(data, run=run_excepts_or_else)
-            error = self._run_finally(data, run) or error
+                self._run_excepts(data, result, error, run=False)
+                error = self._run_else(data, result, run=run_excepts_or_else)
+            error = self._run_finally(data, result, run) or error
             if error:
                 raise error
 
-    def _run_invalid(self, data):
+    def _run_invalid(self, data, result):
         error_reported = False
         for branch in data.body:
-            result = TryBranchResult(branch.type, branch.patterns, branch.pattern_type,
-                                     branch.assign)
-            with StatusReporter(branch, result, self._context, run=False, suppress=True):
+            branch_result = result.body.create_branch(branch.type, branch.patterns,
+                                                      branch.pattern_type, branch.assign)
+            with StatusReporter(branch, branch_result, self._context, run=False, suppress=True):
                 runner = BodyRunner(self._context, run=False, templated=self._templated)
                 runner.run(branch.body)
                 if not error_reported:
@@ -568,8 +570,8 @@ class TryRunner:
                     raise DataError(data.error, syntax=True)
         raise ExecutionFailed(data.error, syntax=True)
 
-    def _run_try(self, data, run):
-        result = TryBranchResult(data.TRY)
+    def _run_try(self, data, result, run):
+        result = result.body.create_branch(data.TRY)
         return self._run_branch(data.try_branch, result, run)
 
     def _should_run_excepts_or_else(self, error, run):
@@ -591,7 +593,7 @@ class TryRunner:
         else:
             return None
 
-    def _run_excepts(self, data, error, run):
+    def _run_excepts(self, data, result, error, run):
         for branch in data.except_branches:
             try:
                 run_branch = run and self._should_run_except(branch, error)
@@ -600,15 +602,15 @@ class TryRunner:
                 pattern_error = err
             else:
                 pattern_error = None
-            result = TryBranchResult(branch.type, branch.patterns,
-                                     branch.pattern_type, branch.assign)
+            branch_result = result.body.create_branch(branch.type, branch.patterns,
+                                                      branch.pattern_type, branch.assign)
             if run_branch:
                 if branch.assign:
                     self._context.variables[branch.assign] = str(error)
-                error = self._run_branch(branch, result, error=pattern_error)
+                error = self._run_branch(branch, branch_result, error=pattern_error)
                 run = False
             else:
-                self._run_branch(branch, result, run=False)
+                self._run_branch(branch, branch_result, run=False)
         return error
 
     def _should_run_except(self, branch, error):
@@ -616,9 +618,9 @@ class TryRunner:
             return True
         matchers = {
             'GLOB': lambda m, p: Matcher(p, spaceless=False, caseless=False).match(m),
-            'LITERAL': lambda m, p: m == p,
             'REGEXP': lambda m, p: re.fullmatch(p, m) is not None,
-            'START': lambda m, p: m.startswith(p)
+            'START': lambda m, p: m.startswith(p),
+            'LITERAL': lambda m, p: m == p,
         }
         if branch.pattern_type:
             pattern_type = self._context.variables.replace_string(branch.pattern_type)
@@ -626,21 +628,21 @@ class TryRunner:
             pattern_type = 'LITERAL'
         matcher = matchers.get(pattern_type.upper())
         if not matcher:
-            raise DataError(f"Invalid EXCEPT pattern type '{pattern_type}', "
-                            f"expected {seq2str(matchers, lastsep=' or ')}.")
+            raise DataError(f"Invalid EXCEPT pattern type '{pattern_type}'. "
+                            f"Valid values are {seq2str(matchers)}.")
         for pattern in branch.patterns:
             if matcher(error.message, self._context.variables.replace_string(pattern)):
                 return True
         return False
 
-    def _run_else(self, data, run):
+    def _run_else(self, data, result, run):
         if data.else_branch:
-            result = TryBranchResult(data.ELSE)
+            result = result.body.create_branch(data.ELSE)
             return self._run_branch(data.else_branch, result, run)
 
-    def _run_finally(self, data, run):
+    def _run_finally(self, data, result, run):
         if data.finally_branch:
-            result = TryBranchResult(data.FINALLY)
+            result = result.body.create_branch(data.FINALLY)
             try:
                 with StatusReporter(data.finally_branch, result, self._context, run):
                     runner = BodyRunner(self._context, run, self._templated)
@@ -693,15 +695,15 @@ class WhileLimit:
             return None
         try:
             on_limit = variables.replace_string(on_limit)
-            if on_limit.upper() not in ['PASS', 'FAIL']:
-                raise DataError("Value must be 'PASS' or 'FAIL'.")
+            if on_limit.upper() in ('PASS', 'FAIL'):
+                return on_limit.upper()
+            raise DataError(f"Value '{on_limit}' is not accepted. Valid values "
+                            f"are 'PASS' and 'FAIL'.")
         except DataError as err:
-            raise DataError(f"Invalid WHILE loop 'on_limit' value '{on_limit}': {err}")
-        else:
-            return on_limit.lower()
+            raise DataError(f"Invalid WHILE loop 'on_limit' value: {err}")
 
     def limit_exceeded(self):
-        on_limit_pass = self.on_limit == 'pass'
+        on_limit_pass = self.on_limit == 'PASS'
         if self.on_limit_message:
             raise LimitExceeded(on_limit_pass, self.on_limit_message)
         else:

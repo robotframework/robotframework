@@ -19,7 +19,136 @@ from robot.utils import NullMarkupWriter, safe_str, XmlWriter
 from robot.version import get_full_version
 from robot.result.visitor import ResultVisitor
 
+from .loggerapi import LoggerApi
 from .loggerhelper import IsLogged
+
+
+class XmlLoggerAdapter(LoggerApi):
+
+    def __init__(self, path, log_level='TRACE', rpa=False, generator='Robot'):
+        self._xml_logger = XmlLogger(path, log_level, rpa, generator)
+        self._flat_xml_logger = None
+        self.logger = self._xml_logger
+
+    @property
+    def flat_xml_logger(self):
+        if self._flat_xml_logger is None:
+            self._flat_xml_logger = FlatXmlLogger(self.logger)
+        return self._flat_xml_logger
+
+    def flatten(self, flatten):
+        if flatten:
+            self.logger = self.flat_xml_logger
+        else:
+            self.logger = self._xml_logger
+
+    def close(self):
+        self.logger.close()
+
+    def set_log_level(self, level):
+        return self.logger.set_log_level(level)
+
+    def start_suite(self, data, result):
+        self.logger.start_suite(result)
+
+    def end_suite(self, data, result):
+        self.logger.end_suite(result)
+
+    def start_test(self, data, result):
+        self.logger.start_test(result)
+
+    def end_test(self, data, result):
+        self.logger.end_test(result)
+
+    def start_keyword(self, data, result):
+        self.logger.start_keyword(result)
+
+    def end_keyword(self, data, result):
+        self.logger.end_keyword(result)
+
+    def start_for(self, data, result):
+        self.logger.start_for(result)
+
+    def end_for(self, data, result):
+        self.logger.end_for(result)
+
+    def start_for_iteration(self, data, result):
+        self.logger.start_for_iteration(result)
+
+    def end_for_iteration(self, data, result):
+        self.logger.end_for_iteration(result)
+
+    def start_while(self, data, result):
+        self.logger.start_while(result)
+
+    def end_while(self, data, result):
+        self.logger.end_while(result)
+
+    def start_while_iteration(self, data, result):
+        self.logger.start_while_iteration(result)
+
+    def end_while_iteration(self, data, result):
+        self.logger.end_while_iteration(result)
+
+    def start_if(self, data, result):
+        self.logger.start_if(result)
+
+    def end_if(self, data, result):
+        self.logger.end_if(result)
+
+    def start_if_branch(self, data, result):
+        self.logger.start_if_branch(result)
+
+    def end_if_branch(self, data, result):
+        self.logger.end_if_branch(result)
+
+    def start_try(self, data, result):
+        self.logger.start_try(result)
+
+    def end_try(self, data, result):
+        self.logger.end_try(result)
+
+    def start_try_branch(self, data, result):
+        self.logger.start_try_branch(result)
+
+    def end_try_branch(self, data, result):
+        self.logger.end_try_branch(result)
+
+    def start_var(self, data, result):
+        self.logger.start_var(result)
+
+    def end_var(self, data, result):
+        self.logger.end_var(result)
+
+    def start_break(self, data, result):
+        self.logger.start_break(result)
+
+    def end_break(self, data, result):
+        self.logger.end_break(result)
+
+    def start_continue(self, data, result):
+        self.logger.start_continue(result)
+
+    def end_continue(self, data, result):
+        self.logger.end_continue(result)
+
+    def start_return(self, data, result):
+        self.logger.start_return(result)
+
+    def end_return(self, data, result):
+        self.logger.end_return(result)
+
+    def start_error(self, data, result):
+        self.logger.start_error(result)
+
+    def end_error(self, data, result):
+        self.logger.end_error(result)
+
+    def log_message(self, message):
+        self.logger.log_message(message)
+
+    def message(self, message):
+        self.logger.message(message)
 
 
 class XmlLogger(ResultVisitor):
@@ -163,6 +292,20 @@ class XmlLogger(ResultVisitor):
     def end_while_iteration(self, iteration):
         self._write_status(iteration)
         self._writer.end('iter')
+
+    def start_var(self, var):
+        attr = {'name': var.name}
+        if var.scope is not None:
+            attr['scope'] = var.scope
+        if var.separator is not None:
+            attr['separator'] = var.separator
+        self._writer.start('variable', attr, write_empty=True)
+        for val in var.value:
+            self._writer.element('var', val)
+
+    def end_var(self, var):
+        self._write_status(var)
+        self._writer.end('variable')
 
     def start_return(self, return_):
         self._writer.start('return')
@@ -324,6 +467,12 @@ class FlatXmlLogger(XmlLogger):
         pass
 
     def end_while_iteration(self, iteration):
+        pass
+
+    def start_var(self, var):
+        pass
+
+    def end_var(self, var):
         pass
 
     def start_break(self, break_):

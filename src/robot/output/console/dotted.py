@@ -20,9 +20,10 @@ from robot.result import TestCase, TestSuite
 from robot.utils import plural_or_not as s, secs_to_timestr
 
 from .highlighting import HighlightingStream
+from ..loggerapi import LoggerApi
 
 
-class DottedOutput:
+class DottedOutput(LoggerApi):
 
     def __init__(self, width=78, colors='AUTO', stdout=None, stderr=None):
         self.width = width
@@ -30,31 +31,31 @@ class DottedOutput:
         self.stderr = HighlightingStream(stderr or sys.__stderr__, colors)
         self.markers_on_row = 0
 
-    def start_suite(self, suite: TestSuite):
-        if not suite.parent:
-            count = suite.test_count
-            ts = ('test' if not suite.rpa else 'task') + s(count)
-            self.stdout.write(f"Running suite '{suite.name}' with {count} {ts}.\n")
+    def start_suite(self, data, result):
+        if not data.parent:
+            count = data.test_count
+            ts = ('test' if not data.rpa else 'task') + s(count)
+            self.stdout.write(f"Running suite '{result.name}' with {count} {ts}.\n")
             self.stdout.write('=' * self.width + '\n')
 
-    def end_test(self, test: TestCase):
+    def end_test(self, data, result):
         if self.markers_on_row == self.width:
             self.stdout.write('\n')
             self.markers_on_row = 0
         self.markers_on_row += 1
-        if test.passed:
+        if result.passed:
             self.stdout.write('.')
-        elif test.skipped:
+        elif result.skipped:
             self.stdout.highlight('s', 'SKIP')
-        elif test.tags.robot('exit'):
+        elif result.tags.robot('exit'):
             self.stdout.write('x')
         else:
             self.stdout.highlight('F', 'FAIL')
 
-    def end_suite(self, suite: TestSuite):
-        if not suite.parent:
+    def end_suite(self, data, result):
+        if not data.parent:
             self.stdout.write('\n')
-            StatusReporter(self.stdout, self.width).report(suite)
+            StatusReporter(self.stdout, self.width).report(result)
             self.stdout.write('\n')
 
     def message(self, msg):

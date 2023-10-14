@@ -2267,6 +2267,104 @@ class TestBreak(unittest.TestCase):
         assert_tokens(data, expected, data_only=True)
 
 
+class TestVar(unittest.TestCase):
+
+    def test_simple(self):
+        data = 'VAR    ${name}    value'
+        expected = [
+            (T.VAR, 'VAR', 3, 4),
+            (T.VARIABLE, '${name}', 3, 11),
+            (T.ARGUMENT, 'value', 3, 22),
+            (T.EOS, '', 3, 27)
+        ]
+        self._verify(data, expected)
+
+    def test_multiple_values(self):
+        data = 'VAR    @{name}    v1    v2\n...    v3'
+        expected = [
+            (T.VAR, None, 3, 4),
+            (T.VARIABLE, '@{name}', 3, 11),
+            (T.ARGUMENT, 'v1', 3, 22),
+            (T.ARGUMENT, 'v2', 3, 28),
+            (T.ARGUMENT, 'v3', 4, 7),
+            (T.EOS, '', 4, 9)
+        ]
+        self._verify(data, expected)
+
+    def test_no_values(self):
+        data = 'VAR    @{name}'
+        expected = [
+            (T.VAR, 'VAR', 3, 4),
+            (T.VARIABLE, '@{name}', 3, 11),
+            (T.EOS, '', 3, 18)
+        ]
+        self._verify(data, expected)
+
+    def test_no_name(self):
+        data = 'VAR'
+        expected = [
+            (T.VAR, 'VAR', 3, 4),
+            (T.EOS, '', 3, 7)
+        ]
+        self._verify(data, expected)
+
+    def test_scope(self):
+        data = 'VAR    ${name}    value    scope=GLOBAL'
+        expected = [
+            (T.VAR, 'VAR', 3, 4),
+            (T.VARIABLE, '${name}', 3, 11),
+            (T.ARGUMENT, 'value', 3, 22),
+            (T.OPTION, 'scope=GLOBAL', 3, 31),
+            (T.EOS, '', 3, 43)
+        ]
+        self._verify(data, expected)
+
+    def test_separator_with_scalar(self):
+        data = 'VAR    ${name}    v1    v2    separator=-'
+        expected = [
+            (T.VAR, 'VAR', 3, 4),
+            (T.VARIABLE, '${name}', 3, 11),
+            (T.ARGUMENT, 'v1', 3, 22),
+            (T.ARGUMENT, 'v2', 3, 28),
+            (T.OPTION, 'separator=-', 3, 34),
+            (T.EOS, '', 3, 45)
+        ]
+        self._verify(data, expected)
+
+    def test_no_separator_with_list(self):
+        data = 'VAR    @{name}    v1    v2    separator=-'
+        expected = [
+            (T.VAR, 'VAR', 3, 4),
+            (T.VARIABLE, '@{name}', 3, 11),
+            (T.ARGUMENT, 'v1', 3, 22),
+            (T.ARGUMENT, 'v2', 3, 28),
+            (T.ARGUMENT, 'separator=-', 3, 34),
+            (T.EOS, '', 3, 45)
+        ]
+        self._verify(data, expected)
+
+    def test_no_separator_with_dict(self):
+        data = 'VAR    &{name}    k1=v1    k2=v2    separator=-'
+        expected = [
+            (T.VAR, 'VAR', 3, 4),
+            (T.VARIABLE, '&{name}', 3, 11),
+            (T.ARGUMENT, 'k1=v1', 3, 22),
+            (T.ARGUMENT, 'k2=v2', 3, 31),
+            (T.ARGUMENT, 'separator=-', 3, 40),
+            (T.EOS, '', 3, 51)
+        ]
+        self._verify(data, expected)
+
+    def _verify(self, data, expected):
+        data = '    ' + '    \n'.join(data.splitlines())
+        data = f'*** Test Cases ***\nName\n{data}'
+        expected = [(T.TESTCASE_HEADER, '*** Test Cases ***', 1, 0),
+                    (T.EOS, '', 1, 18),
+                    (T.TESTCASE_NAME, 'Name', 2, 0),
+                    (T.EOS, '', 2, 4)] + expected
+        assert_tokens(data, expected, data_only=True)
+
+
 class TestLanguageConfig(unittest.TestCase):
 
     def test_lang_as_code(self):

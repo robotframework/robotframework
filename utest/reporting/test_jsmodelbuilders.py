@@ -8,7 +8,7 @@ from robot.result import Keyword, Message, TestCase, TestSuite, For, ForIteratio
 from robot.result.executionerrors import ExecutionErrors
 from robot.model import Statistics, BodyItem
 from robot.reporting.jsmodelbuilders import (
-    ErrorsBuilder, JsBuildingContext, KeywordBuilder, MessageBuilder,
+    ErrorsBuilder, JsBuildingContext, BodyItemBuilder, MessageBuilder,
     StatisticsBuilder, SuiteBuilder, TestBuilder
 )
 from robot.reporting.stringcache import StringIndex
@@ -43,8 +43,8 @@ class TestBuildTestSuite(unittest.TestCase):
     def test_suite_with_values(self):
         suite = TestSuite('Name', 'Doc', {'m1': 'v1', 'M2': 'V2'}, None, False, 'Message',
                           '2011-12-04 19:00:00.000', '2011-12-04 19:00:42.001')
-        s = self._verify_keyword(suite.setup.config(name='S'), type=1, name='S')
-        t = self._verify_keyword(suite.teardown.config(name='T'), type=2, name='T')
+        s = self._verify_body_item(suite.setup.config(name='S'), type=1, name='S')
+        t = self._verify_body_item(suite.teardown.config(name='T'), type=2, name='T')
         self._verify_suite(suite, 'Name', 'Doc', ('m1', '<p>v1</p>', 'M2', '<p>V2</p>'),
                            message='Message', start=0, elapsed=42001, keywords=(s, t))
 
@@ -67,51 +67,51 @@ class TestBuildTestSuite(unittest.TestCase):
     def test_test_with_values(self):
         test = TestCase('Name', '*Doc*', ['t1', 't2'], '1 minute', 42, 'PASS', 'Msg',
                         '2011-12-04 19:22:22.222', '2011-12-04 19:22:22.333')
-        k = self._verify_keyword(test.body.create_keyword('K'), name='K')
-        s = self._verify_keyword(test.setup.config(name='S'), type=1, name='S')
-        t = self._verify_keyword(test.teardown.config(name='T'), type=2, name='T')
+        k = self._verify_body_item(test.body.create_keyword('K'), name='K')
+        s = self._verify_body_item(test.setup.config(name='S'), type=1, name='S')
+        t = self._verify_body_item(test.teardown.config(name='T'), type=2, name='T')
         self._verify_test(test, 'Name', '<b>Doc</b>', ('t1', 't2'),
                           '1 minute', 1, 'Msg', 0, 111, (s, k, t))
 
     def test_name_escaping(self):
         kw = Keyword('quote:"', 'and *url* https://url.com', doc='*"Doc"*',)
-        self._verify_keyword(kw, 0, 'quote:&quot;', 'and *url* https://url.com', '<b>"Doc"</b>')
+        self._verify_body_item(kw, 0, 'quote:&quot;', 'and *url* https://url.com', '<b>"Doc"</b>')
         test = TestCase('quote:" and *url* https://url.com', '*"Doc"*',)
         self._verify_test(test, 'quote:&quot; and *url* https://url.com', '<b>"Doc"</b>')
         suite = TestSuite('quote:" and *url* https://url.com', '*"Doc"*',)
         self._verify_suite(suite, 'quote:&quot; and *url* https://url.com', '<b>"Doc"</b>')
 
     def test_default_keyword(self):
-        self._verify_keyword(Keyword())
+        self._verify_body_item(Keyword())
 
     def test_keyword_with_values(self):
         kw = Keyword('KW Name', 'libname', '', 'http://doc', ('arg1', 'arg2'),
                      ('${v1}', '${v2}'), ('tag1', 'tag2'), '1 second', 'SETUP', 'FAIL',
                      'message', '2011-12-04 19:42:42.000', '2011-12-04 19:42:42.042')
-        self._verify_keyword(kw, 1, 'KW Name', 'libname',
-                             '<a href="http://doc">http://doc</a>',
-                             'arg1, arg2', '${v1}, ${v2}', 'tag1, tag2',
-                             '1 second', 0, 0, 42, 'message')
+        self._verify_body_item(kw, 1, 'KW Name', 'libname',
+                               '<a href="http://doc">http://doc</a>',
+                               'arg1    arg2', '${v1}    ${v2}', 'tag1, tag2',
+                               '1 second', 0, 0, 42, 'message')
 
     def test_keyword_with_body(self):
         root = Keyword('Root')
-        exp1 = self._verify_keyword(root.body.create_keyword('C1'), name='C1')
-        exp2 = self._verify_keyword(root.body.create_keyword('C2'), name='C2')
-        self._verify_keyword(root, name='Root', body=(exp1, exp2))
+        exp1 = self._verify_body_item(root.body.create_keyword('C1'), name='C1')
+        exp2 = self._verify_body_item(root.body.create_keyword('C2'), name='C2')
+        self._verify_body_item(root, name='Root', body=(exp1, exp2))
 
     def test_keyword_with_setup(self):
         root = Keyword('Root')
-        s = self._verify_keyword(root.setup.config(name='S'), type=1, name='S')
-        self._verify_keyword(root, name='Root', body=(s,))
-        k = self._verify_keyword(root.body.create_keyword('K'), name='K')
-        self._verify_keyword(root, name='Root', body=(s, k))
+        s = self._verify_body_item(root.setup.config(name='S'), type=1, name='S')
+        self._verify_body_item(root, name='Root', body=(s,))
+        k = self._verify_body_item(root.body.create_keyword('K'), name='K')
+        self._verify_body_item(root, name='Root', body=(s, k))
 
     def test_keyword_with_teardown(self):
         root = Keyword('Root')
-        t = self._verify_keyword(root.teardown.config(name='T'), type=2, name='T')
-        self._verify_keyword(root, name='Root', body=(t,))
-        k = self._verify_keyword(root.body.create_keyword('K'), name='K')
-        self._verify_keyword(root, name='Root', body=(k, t))
+        t = self._verify_body_item(root.teardown.config(name='T'), type=2, name='T')
+        self._verify_body_item(root, name='Root', body=(t,))
+        k = self._verify_body_item(root.body.create_keyword('K'), name='K')
+        self._verify_body_item(root, name='Root', body=(k, t))
 
     def test_default_message(self):
         self._verify_message(Message())
@@ -148,27 +148,29 @@ class TestBuildTestSuite(unittest.TestCase):
         suite = TestSuite()
         suite.setup.config(name='setup')
         suite.teardown.config(name='td')
-        K1 = self._verify_keyword(suite.setup, type=1, name='setup')
-        K2 = self._verify_keyword(suite.teardown, type=2, name='td')
+        ss = self._verify_body_item(suite.setup, type=1, name='setup')
+        st = self._verify_body_item(suite.teardown, type=2, name='td')
         suite.suites = [TestSuite()]
         suite.suites[0].tests = [TestCase(tags=['crit', 'xxx'])]
         t = self._verify_test(suite.suites[0].tests[0], tags=('crit', 'xxx'))
         suite.tests = [TestCase(), TestCase(status='PASS')]
-        S1 = self._verify_suite(suite.suites[0],
+        s1 = self._verify_suite(suite.suites[0],
                                 status=0, tests=(t,), stats=(1, 0, 1, 0))
-        suite.tests[0].body = [For(assign=['${x}'], values=['1', '2'], message='x'), Keyword()]
+        suite.tests[0].body = [For(assign=['${x}'], values=['1', '2'], message='x'),
+                               Keyword()]
         suite.tests[0].body[0].body = [ForIteration(), Message()]
-        k = self._verify_keyword(suite.tests[0].body[0].body[0], type=4)
+        i = self._verify_body_item(suite.tests[0].body[0].body[0], type=4)
         m = self._verify_message(suite.tests[0].body[0].body[1])
-        k1 = self._verify_keyword(suite.tests[0].body[0], type=3, body=(k, m), name='${x} IN [ 1 | 2 ]', message='x')
+        f = self._verify_body_item(suite.tests[0].body[0], type=3,
+                                   name='${x}    IN    1    2', message='x', body=(i, m))
         suite.tests[0].body[1].body = [Message(), Message('msg', level='TRACE')]
         m1 = self._verify_message(suite.tests[0].body[1].messages[0])
         m2 = self._verify_message(suite.tests[0].body[1].messages[1], 'msg', level=0)
-        k2 = self._verify_keyword(suite.tests[0].body[1], body=(m1, m2))
-        T1 = self._verify_test(suite.tests[0], body=(k1, k2))
-        T2 = self._verify_test(suite.tests[1], status=1)
-        self._verify_suite(suite, status=0, keywords=(K1, K2), suites=(S1,),
-                           tests=(T1, T2), stats=(3, 1, 2, 0))
+        k = self._verify_body_item(suite.tests[0].body[1], body=(m1, m2))
+        t1 = self._verify_test(suite.tests[0], body=(f, k))
+        t2 = self._verify_test(suite.tests[1], status=1)
+        self._verify_suite(suite, status=0, keywords=(ss, st), suites=(s1,),
+                           tests=(t1, t2), stats=(3, 1, 2, 0))
         self._verify_min_message_level('TRACE')
 
     def test_timestamps(self):
@@ -208,10 +210,24 @@ class TestBuildTestSuite(unittest.TestCase):
         test = TestSuite().tests.create()
         test.body.create_for(assign=['${x}'], values=['a', 'b'])
         test.body.create_for(['${x}'], 'IN ENUMERATE', ['a', 'b'], start='1')
-        end = ('', '', '', '', '', '', (0, None, 0), ())
-        exp_f1 = (3, '${x} IN [ a | b ]', *end)
-        exp_f2 = (3, '${x} IN ENUMERATE [ a | b | start=1 ]', *end)
-        self._verify_test(test, body=(exp_f1, exp_f2))
+        f1 = self._verify_body_item(test.body[0], type=3,
+                                    name='${x}    IN    a    b')
+        f2 = self._verify_body_item(test.body[1], type=3,
+                                    name='${x}    IN ENUMERATE    a    b    start=1')
+        self._verify_test(test, body=(f1, f2))
+
+    def test_var(self):
+        test = TestSuite().tests.create()
+        test.body.create_var('${x}', value='x')
+        test.body.create_var('${y}', value=('x', 'y'), separator='', scope='test')
+        test.body.create_var('@{z}', value=('x', 'y'), scope='SUITE')
+        v1 = self._verify_body_item(test.body[0], type=9,
+                                    name='${x}    x')
+        v2 = self._verify_body_item(test.body[1], type=9,
+                                    name='${y}    x    y    separator=    scope=test')
+        v3 = self._verify_body_item(test.body[2], type=9,
+                                    name='@{z}    x    y    scope=SUITE')
+        self._verify_test(test, body=(v1, v2, v3))
 
     def test_message_directly_under_test(self):
         test = TestSuite().tests.create()
@@ -248,13 +264,13 @@ class TestBuildTestSuite(unittest.TestCase):
         return self._build_and_verify(TestBuilder, test, name, timeout,
                                       doc, tags, status, body)
 
-    def _verify_keyword(self, keyword, type=0, name='', owner='', doc='',
-                        args='', assign='', tags='', timeout='', status=0,
-                        start=None, elapsed=0, message='', body=()):
+    def _verify_body_item(self, keyword, type=0, name='', owner='', doc='',
+                          args='', assign='', tags='', timeout='', status=0,
+                          start=None, elapsed=0, message='', body=()):
         status = (status, start, elapsed, message) \
                 if message else (status, start, elapsed)
         doc = f'<p>{doc}</p>' if doc else ''
-        return self._build_and_verify(KeywordBuilder, keyword, type, name, owner,
+        return self._build_and_verify(BodyItemBuilder, keyword, type, name, owner,
                                       timeout, doc, args, assign, tags, status, body)
 
     def _verify_message(self, msg, message='', level=2, timestamp=None):
@@ -433,7 +449,7 @@ class TestPruneInput(unittest.TestCase):
         kw = self.suite.suites[0].tests[0].body[0]
         assert_equal(len(kw.body), 5)
         assert_equal(len(kw.messages), 3)
-        KeywordBuilder(JsBuildingContext(prune_input=True)).build(kw)
+        BodyItemBuilder(JsBuildingContext(prune_input=True)).build(kw)
         assert_equal(len(kw.body), 0)
         assert_equal(len(kw.messages), 0)
 

@@ -495,17 +495,34 @@ variables slightly more explicit.
 
 If a scalar variable has a long value, it can be `split into multiple rows`__
 by using the `...` syntax. By default rows are concatenated together using
-a space, but this can be changed by having `SEPARATOR=<sep>` as the first item.
+a space, but this can be changed by using a having `separator` configuration
+option after the last value:
 
 .. sourcecode:: robotframework
 
    *** Variables ***
    ${EXAMPLE}      This value is joined
    ...             together with a space.
+   ${MULTILINE}    First line.
+   ...             Second line.
+   ...             Third line.
+   ...             separator=\n
+
+The `separator` option is new in Robot Framework 7.0, but also older versions
+support configuring the separator. With them the first value can contain a
+special `SEPARATOR` marker:
+
+.. sourcecode:: robotframework
+
+   *** Variables ***
    ${MULTILINE}    SEPARATOR=\n
    ...             First line.
    ...             Second line.
    ...             Third line.
+
+Both the `separator` option and the `SEPARATOR` marker are case-sensitive.
+Using the `separator` option is recommended, unless there is a need to
+support also older versions.
 
 __ `Dividing data to several rows`_
 

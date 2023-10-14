@@ -22,7 +22,6 @@ FOR IN ENUMERATE
     END
 
 FOR IN ZIP
-    FOR    ${en}    ${fi}    IN ZIP    ${ANIMALS}    ${FINNISH}
+    FOR    ${en}    ${fi}    IN ZIP    ${ANIMALS}    ${FINNISH}    mode=LONGEST    fill=-
         Log    ${en} is ${fi} in Finnish
-
     END

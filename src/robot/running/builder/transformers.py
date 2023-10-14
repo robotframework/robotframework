@@ -21,7 +21,8 @@ from robot.parsing import File, Token
 from robot.variables import VariableIterator
 
 from .settings import FileSettings
-from ..model import ResourceFile, TestSuite
+from ..model import (For, If, IfBranch, ResourceFile, TestSuite, TestCase, Try,
+                     TryBranch, UserKeyword, While)
 
 
 class SettingsBuilder(NodeVisitor):
@@ -109,6 +110,7 @@ class SuiteBuilder(NodeVisitor):
     def visit_Variable(self, node):
         self.suite.resource.variables.create(name=node.name,
                                              value=node.value,
+                                             separator=node.separator,
                                              lineno=node.lineno,
                                              error=format_error(node.errors))
 
@@ -120,10 +122,10 @@ class SuiteBuilder(NodeVisitor):
         self.generic_visit(node)
 
     def visit_TestCase(self, node):
-        TestCaseBuilder(self.suite, self.settings).visit(node)
+        TestCaseBuilder(self.suite, self.settings).build(node)
 
     def visit_Keyword(self, node):
-        KeywordBuilder(self.suite.resource, self.settings).visit(node)
+        KeywordBuilder(self.suite.resource, self.settings).build(node)
 
 
 class ResourceBuilder(NodeVisitor):
@@ -154,41 +156,86 @@ class ResourceBuilder(NodeVisitor):
     def visit_Variable(self, node):
         self.resource.variables.create(name=node.name,
                                        value=node.value,
+                                       separator=node.separator,
                                        lineno=node.lineno,
                                        error=format_error(node.errors))
 
     def visit_Keyword(self, node):
-        KeywordBuilder(self.resource, self.settings).visit(node)
+        KeywordBuilder(self.resource, self.settings).build(node)
 
 
-class TestCaseBuilder(NodeVisitor):
+class BodyBuilder(NodeVisitor):
+
+    def __init__(self, model: 'TestCase|UserKeyword|For|If|Try|While|None' = None):
+        self.model = model
+
+    def visit_For(self, node):
+        ForBuilder(self.model).build(node)
+
+    def visit_While(self, node):
+        WhileBuilder(self.model).build(node)
+
+    def visit_If(self, node):
+        IfBuilder(self.model).build(node)
+
+    def visit_Try(self, node):
+        TryBuilder(self.model).build(node)
+
+    def visit_KeywordCall(self, node):
+        self.model.body.create_keyword(name=node.keyword, args=node.args,
+                                       assign=node.assign, lineno=node.lineno)
+
+    def visit_TemplateArguments(self, node):
+        self.model.body.create_keyword(args=node.args, lineno=node.lineno)
+
+    def visit_Var(self, node):
+        self.model.body.create_var(node.name, node.value, node.scope, node.separator,
+                                   lineno=node.lineno, error=format_error(node.errors))
+
+    def visit_ReturnStatement(self, node):
+        self.model.body.create_return(node.values, lineno=node.lineno,
+                                      error=format_error(node.errors))
+
+    def visit_Continue(self, node):
+        self.model.body.create_continue(lineno=node.lineno,
+                                        error=format_error(node.errors))
+
+    def visit_Break(self, node):
+        self.model.body.create_break(lineno=node.lineno,
+                                     error=format_error(node.errors))
+
+    def visit_Error(self, node):
+        self.model.body.create_error(lineno=node.lineno,
+                                     values=node.values, error=format_error(node.errors))
+
+
+class TestCaseBuilder(BodyBuilder):
+    model: TestCase
 
     def __init__(self, suite: TestSuite, settings: FileSettings):
-        self.suite = suite
+        super().__init__(suite.tests.create())
         self.settings = settings
-        self.test = None
         self._test_has_tags = False
 
-    def visit_TestCase(self, node):
+    def build(self, node):
         settings = self.settings
         # Possible parsing errors aren't reported further with tests because:
         # - We only validate that test body or name isn't empty.
         # - That is validated again during execution.
         # - This way e.g. model modifiers can add content to body.
-        self.test = self.suite.tests.create(name=node.name,
-                                            lineno=node.lineno,
-                                            tags=settings.test_tags,
-                                            timeout=settings.test_timeout,
-                                            template=settings.test_template)
+        self.model.config(name=node.name, tags=settings.test_tags,
+                          timeout=settings.test_timeout,
+                          template=settings.test_template,
+                          lineno=node.lineno)
         if settings.test_setup:
-            self.test.setup.config(**settings.test_setup)
+            self.model.setup.config(**settings.test_setup)
         if settings.test_teardown:
-            self.test.teardown.config(**settings.test_teardown)
+            self.model.teardown.config(**settings.test_teardown)
         self.generic_visit(node)
         if not self._test_has_tags:
-            self.test.tags.add(settings.default_tags)
-        if self.test.template:
-            self._set_template(self.test, self.test.template)
+            self.model.tags.add(settings.default_tags)
+        if self.model.template:
+            self._set_template(self.model, self.model.template)
 
     def _set_template(self, parent, template):
         for item in parent.body:
@@ -213,156 +260,89 @@ class TestCaseBuilder(NodeVisitor):
         temp.append(after)
         return ''.join(temp), ()
 
-    def visit_For(self, node):
-        ForBuilder(self.test).build(node)
-
-    def visit_While(self, node):
-        WhileBuilder(self.test).build(node)
-
-    def visit_If(self, node):
-        IfBuilder(self.test).build(node)
-
-    def visit_Try(self, node):
-        TryBuilder(self.test).build(node)
-
-    def visit_TemplateArguments(self, node):
-        self.test.body.create_keyword(args=node.args, lineno=node.lineno)
-
     def visit_Documentation(self, node):
-        self.test.doc = node.value
+        self.model.doc = node.value
 
     def visit_Setup(self, node):
-        self.test.setup.config(name=node.name, args=node.args, lineno=node.lineno)
+        self.model.setup.config(name=node.name, args=node.args, lineno=node.lineno)
 
     def visit_Teardown(self, node):
-        self.test.teardown.config(name=node.name, args=node.args, lineno=node.lineno)
+        self.model.teardown.config(name=node.name, args=node.args, lineno=node.lineno)
 
     def visit_Timeout(self, node):
-        self.test.timeout = node.value
+        self.model.timeout = node.value
 
     def visit_Tags(self, node):
         for tag in node.values:
             if tag.startswith('-'):
-                self.test.tags.remove(tag[1:])
+                self.model.tags.remove(tag[1:])
             else:
-                self.test.tags.add(tag)
+                self.model.tags.add(tag)
         self._test_has_tags = True
 
     def visit_Template(self, node):
-        self.test.template = node.value
-
-    def visit_KeywordCall(self, node):
-        self.test.body.create_keyword(name=node.keyword, args=node.args,
-                                      assign=node.assign, lineno=node.lineno)
-
-    def visit_ReturnStatement(self, node):
-        self.test.body.create_return(node.values, lineno=node.lineno,
-                                     error=format_error(node.errors))
-
-    def visit_Continue(self, node):
-        self.test.body.create_continue(lineno=node.lineno,
-                                       error=format_error(node.errors))
-
-    def visit_Break(self, node):
-        self.test.body.create_break(lineno=node.lineno,
-                                    error=format_error(node.errors))
-
-    def visit_Error(self, node):
-        self.test.body.create_error(lineno=node.lineno,
-                                    values=node.values, error=format_error(node.errors))
+        self.model.template = node.value
 
 
-class KeywordBuilder(NodeVisitor):
+class KeywordBuilder(BodyBuilder):
+    model: UserKeyword
 
     def __init__(self, resource: ResourceFile, settings: FileSettings):
-        self.resource = resource
-        self.settings = settings
-        self.kw = None
+        super().__init__(resource.keywords.create(tags=settings.keyword_tags))
 
-    def visit_Keyword(self, node):
+    def build(self, node):
         # Possible parsing errors aren't reported further because:
         # - We only validate that keyword body or name isn't empty.
         # - That is validated again during execution.
         # - This way e.g. model modifiers can add content to body.
-        self.kw = self.resource.keywords.create(name=node.name,
-                                                tags=self.settings.keyword_tags,
-                                                lineno=node.lineno)
+        self.model.config(name=node.name, lineno=node.lineno)
         self.generic_visit(node)
 
     def visit_Documentation(self, node):
-        self.kw.doc = node.value
+        self.model.doc = node.value
 
     def visit_Arguments(self, node):
-        self.kw.args = node.values
+        self.model.args = node.values
         if node.errors:
             error = format_error(node.errors)
-            self.kw.error = f'Invalid argument specification: {error}'
+            self.model.error = f'Invalid argument specification: {error}'
 
     def visit_Tags(self, node):
         for tag in node.values:
             if tag.startswith('-'):
-                self.kw.tags.remove(tag[1:])
+                self.model.tags.remove(tag[1:])
             else:
-                self.kw.tags.add(tag)
+                self.model.tags.add(tag)
 
     def visit_Return(self, node):
-        ErrorReporter(self.resource.source).visit(node)
-        self.kw.return_ = node.values
+        ErrorReporter(self.model.source).visit(node)
+        self.model.return_ = node.values
 
     def visit_Timeout(self, node):
-        self.kw.timeout = node.value
+        self.model.timeout = node.value
 
     def visit_Setup(self, node):
-        self.kw.setup.config(name=node.name, args=node.args, lineno=node.lineno)
+        self.model.setup.config(name=node.name, args=node.args, lineno=node.lineno)
 
     def visit_Teardown(self, node):
-        self.kw.teardown.config(name=node.name, args=node.args, lineno=node.lineno)
+        self.model.teardown.config(name=node.name, args=node.args, lineno=node.lineno)
 
     def visit_KeywordCall(self, node):
-        self.kw.body.create_keyword(name=node.keyword, args=node.args,
-                                    assign=node.assign, lineno=node.lineno)
-
-    def visit_ReturnStatement(self, node):
-        self.kw.body.create_return(node.values, lineno=node.lineno,
-                                   error=format_error(node.errors))
-
-    def visit_Continue(self, node):
-        self.kw.body.create_continue(lineno=node.lineno,
-                                     error=format_error(node.errors))
-
-    def visit_Break(self, node):
-        self.kw.body.create_break(lineno=node.lineno,
-                                  error=format_error(node.errors))
-
-    def visit_For(self, node):
-        ForBuilder(self.kw).build(node)
-
-    def visit_While(self, node):
-        WhileBuilder(self.kw).build(node)
-
-    def visit_If(self, node):
-        IfBuilder(self.kw).build(node)
-
-    def visit_Try(self, node):
-        TryBuilder(self.kw).build(node)
-
-    def visit_Error(self, node):
-        self.kw.body.create_error(lineno=node.lineno,
-                                  values=node.values, error=format_error(node.errors))
+        self.model.body.create_keyword(name=node.keyword, args=node.args,
+                                       assign=node.assign, lineno=node.lineno)
 
 
-class ForBuilder(NodeVisitor):
+class ForBuilder(BodyBuilder):
+    model: For
 
-    def __init__(self, parent):
-        self.parent = parent
-        self.model = None
+    def __init__(self, parent: 'TestCase|UserKeyword|For|If|Try|While'):
+        super().__init__(parent.body.create_for())
 
     def build(self, node):
         error = format_error(self._get_errors(node))
-        self.model = self.parent.body.create_for(
-            node.assign, node.flavor, node.values, node.start, node.mode, node.fill,
-            lineno=node.lineno, error=error
-        )
+        self.model.config(assign=node.assign, flavor=node.flavor, values=node.values,
+                          start=node.start, mode=node.mode, fill=node.fill,
+                          lineno=node.lineno, error=error)
         for step in node.body:
             self.visit(step)
         return self.model
@@ -373,58 +353,22 @@ class ForBuilder(NodeVisitor):
             errors += node.end.errors
         return errors
 
-    def visit_KeywordCall(self, node):
-        self.model.body.create_keyword(name=node.keyword, args=node.args,
-                                       assign=node.assign, lineno=node.lineno)
 
-    def visit_TemplateArguments(self, node):
-        self.model.body.create_keyword(args=node.args, lineno=node.lineno)
+class IfBuilder(BodyBuilder):
+    model: 'IfBranch|None'
 
-    def visit_For(self, node):
-        ForBuilder(self.model).build(node)
-
-    def visit_While(self, node):
-        WhileBuilder(self.model).build(node)
-
-    def visit_If(self, node):
-        IfBuilder(self.model).build(node)
-
-    def visit_Try(self, node):
-        TryBuilder(self.model).build(node)
-
-    def visit_ReturnStatement(self, node):
-        self.model.body.create_return(node.values, lineno=node.lineno,
-                                      error=format_error(node.errors))
-
-    def visit_Continue(self, node):
-        self.model.body.create_continue(lineno=node.lineno,
-                                        error=format_error(node.errors))
-
-    def visit_Break(self, node):
-        self.model.body.create_break(lineno=node.lineno,
-                                     error=format_error(node.errors))
-
-    def visit_Error(self, node):
-        self.model.body.create_error(lineno=node.lineno,
-                                     values=node.values,
-                                     error=format_error(node.errors))
-
-
-class IfBuilder(NodeVisitor):
-
-    def __init__(self, parent):
-        self.parent = parent
-        self.model = None
+    def __init__(self, parent: 'TestCase|UserKeyword|For|If|Try|While'):
+        super().__init__()
+        self.root = parent.body.create_if()
 
     def build(self, node):
-        root = self.parent.body.create_if(lineno=node.lineno,
-                                          error=format_error(self._get_errors(node)))
+        self.root.config(lineno=node.lineno, error=format_error(self._get_errors(node)))
         assign = node.assign
         node_type = None
         while node:
             node_type = node.type if node.type != 'INLINE IF' else 'IF'
-            self.model = root.body.create_branch(node_type, node.condition,
-                                                 lineno=node.lineno)
+            self.model = self.root.body.create_branch(node_type, node.condition,
+                                                      lineno=node.lineno)
             for step in node.body:
                 self.visit(step)
             if assign:
@@ -436,10 +380,10 @@ class IfBuilder(NodeVisitor):
             node = node.orelse
         # Smallish hack to make sure assignment is always run.
         if assign and node_type != 'ELSE':
-            root.body.create_branch('ELSE').body.create_keyword(
+            self.root.body.create_branch('ELSE').body.create_keyword(
                 assign=assign, name='BuiltIn.Set Variable', args=['${NONE}']
             )
-        return root
+        return self.root
 
     def _get_errors(self, node):
         errors = node.header.errors + node.errors
@@ -449,64 +393,30 @@ class IfBuilder(NodeVisitor):
             errors += node.end.errors
         return errors
 
-    def visit_KeywordCall(self, node):
-        self.model.body.create_keyword(name=node.keyword, args=node.args,
-                                       assign=node.assign, lineno=node.lineno)
 
-    def visit_TemplateArguments(self, node):
-        self.model.body.create_keyword(args=node.args, lineno=node.lineno)
+class TryBuilder(BodyBuilder):
+    model: 'TryBranch|None'
 
-    def visit_For(self, node):
-        ForBuilder(self.model).build(node)
-
-    def visit_While(self, node):
-        WhileBuilder(self.model).build(node)
-
-    def visit_If(self, node):
-        IfBuilder(self.model).build(node)
-
-    def visit_Try(self, node):
-        TryBuilder(self.model).build(node)
-
-    def visit_ReturnStatement(self, node):
-        self.model.body.create_return(node.values, lineno=node.lineno,
-                                      error=format_error(node.errors))
-
-    def visit_Continue(self, node):
-        self.model.body.create_continue(lineno=node.lineno,
-                                        error=format_error(node.errors))
-
-    def visit_Break(self, node):
-        self.model.body.create_break(lineno=node.lineno,
-                                     error=format_error(node.errors))
-
-    def visit_Error(self, node):
-        self.model.body.create_error(lineno=node.lineno,
-                                     values=node.values, error=format_error(node.errors))
-
-
-class TryBuilder(NodeVisitor):
-
-    def __init__(self, parent):
-        self.parent = parent
-        self.model = None
+    def __init__(self, parent: 'TestCase|UserKeyword|For|If|Try|While'):
+        super().__init__()
+        self.root = parent.body.create_try()
         self.template_error = None
 
     def build(self, node):
-        root = self.parent.body.create_try(lineno=node.lineno)
+        self.root.config(lineno=node.lineno)
         errors = self._get_errors(node)
         while node:
-            self.model = root.body.create_branch(node.type, node.patterns,
-                                                 node.pattern_type, node.assign,
-                                                 lineno=node.lineno)
+            self.model = self.root.body.create_branch(node.type, node.patterns,
+                                                      node.pattern_type, node.assign,
+                                                      lineno=node.lineno)
             for step in node.body:
                 self.visit(step)
             node = node.next
         if self.template_error:
             errors += (self.template_error,)
         if errors:
-            root.error = format_error(errors)
-        return root
+            self.root.error = format_error(errors)
+        return self.root
 
     def _get_errors(self, node):
         errors = node.header.errors + node.errors
@@ -516,54 +426,21 @@ class TryBuilder(NodeVisitor):
             errors += node.end.errors
         return errors
 
-    def visit_For(self, node):
-        ForBuilder(self.model).build(node)
-
-    def visit_While(self, node):
-        WhileBuilder(self.model).build(node)
-
-    def visit_If(self, node):
-        IfBuilder(self.model).build(node)
-
-    def visit_Try(self, node):
-        TryBuilder(self.model).build(node)
-
-    def visit_ReturnStatement(self, node):
-        self.model.body.create_return(node.values, lineno=node.lineno,
-                                      error=format_error(node.errors))
-
-    def visit_Continue(self, node):
-        self.model.body.create_continue(lineno=node.lineno,
-                                        error=format_error(node.errors))
-
-    def visit_Break(self, node):
-        self.model.body.create_break(lineno=node.lineno,
-                                     error=format_error(node.errors))
-
-    def visit_KeywordCall(self, node):
-        self.model.body.create_keyword(name=node.keyword, args=node.args,
-                                       assign=node.assign, lineno=node.lineno)
-
     def visit_TemplateArguments(self, node):
         self.template_error = 'Templates cannot be used with TRY.'
 
-    def visit_Error(self, node):
-        self.model.body.create_error(lineno=node.lineno,
-                                     values=node.values, error=format_error(node.errors))
 
+class WhileBuilder(BodyBuilder):
+    model: While
 
-class WhileBuilder(NodeVisitor):
-
-    def __init__(self, parent):
-        self.parent = parent
-        self.model = None
+    def __init__(self, parent: 'TestCase|UserKeyword|For|If|Try|While'):
+        super().__init__(parent.body.create_while())
 
     def build(self, node):
         error = format_error(self._get_errors(node))
-        self.model = self.parent.body.create_while(
-            node.condition, node.limit, node.on_limit,
-            node.on_limit_message, lineno=node.lineno, error=error
-        )
+        self.model.config(condition=node.condition, limit=node.limit,
+                          on_limit=node.on_limit, on_limit_message=node.on_limit_message,
+                          lineno=node.lineno, error=error)
         for step in node.body:
             self.visit(step)
         return self.model
@@ -573,39 +450,6 @@ class WhileBuilder(NodeVisitor):
         if node.end:
             errors += node.end.errors
         return errors
-
-    def visit_KeywordCall(self, node):
-        self.model.body.create_keyword(name=node.keyword, args=node.args,
-                                       assign=node.assign, lineno=node.lineno)
-
-    def visit_TemplateArguments(self, node):
-        self.model.body.create_keyword(args=node.args, lineno=node.lineno)
-
-    def visit_For(self, node):
-        ForBuilder(self.model).build(node)
-
-    def visit_While(self, node):
-        WhileBuilder(self.model).build(node)
-
-    def visit_If(self, node):
-        IfBuilder(self.model).build(node)
-
-    def visit_Try(self, node):
-        TryBuilder(self.model).build(node)
-
-    def visit_ReturnStatement(self, node):
-        self.model.body.create_return(node.values, lineno=node.lineno,
-                                      error=format_error(node.errors))
-
-    def visit_Break(self, node):
-        self.model.body.create_break(error=format_error(node.errors))
-
-    def visit_Continue(self, node):
-        self.model.body.create_continue(error=format_error(node.errors))
-
-    def visit_Error(self, node):
-        self.model.body.create_error(lineno=node.lineno,
-                                     values=node.values, error=format_error(node.errors))
 
 
 def format_error(errors):

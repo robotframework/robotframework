@@ -61,7 +61,7 @@ class Variables:
         setter = VariableFileSetter(self.store)
         return setter.set(path_or_variables, args, overwrite)
 
-    def set_from_variable_table(self, variables, overwrite=False):
+    def set_from_variable_section(self, variables, overwrite=False):
         setter = VariableTableSetter(self.store)
         setter.set(variables, overwrite)
 

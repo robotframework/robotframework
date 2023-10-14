@@ -18,12 +18,13 @@ import re
 import warnings
 from abc import ABC, abstractmethod
 from collections.abc import Iterator, Sequence
-from typing import cast, ClassVar, overload, TYPE_CHECKING, Type, TypeVar
+from typing import cast, ClassVar, Literal, overload, TYPE_CHECKING, Type, TypeVar
 
 from robot.conf import Language
 from robot.running.arguments import UserKeywordArgumentParser
 from robot.utils import normalize_whitespace, seq2str, split_from_equals, test_or_task
-from robot.variables import is_scalar_assign, is_dict_variable, search_variable
+from robot.variables import (contains_variable, is_scalar_assign, is_dict_variable,
+                             search_variable)
 
 from ..lexer import Token
 
@@ -50,6 +51,9 @@ class Statement(Node, ABC):
     type: str
     handles_types: 'ClassVar[tuple[str, ...]]' = ()
     statement_handlers: 'ClassVar[dict[str, Type[Statement]]]' = {}
+    # Accepted configuration options. If the value is a tuple, it lists accepted
+    # values. If the used value contains a variable, it cannot be validated.
+    options: 'dict[str, tuple|None]' = {}
 
     def __init__(self, tokens: 'Sequence[Token]', errors: 'Sequence[str]' = ()):
         self.tokens = tuple(tokens)
@@ -191,9 +195,16 @@ class Statement(Node, ABC):
 
     def _validate_options(self):
         for name, values in self._get_options().items():
-            if len(values) > 1:
-                self.errors += (f"Option '{name}' allowed only once, got values "
-                                f"{seq2str(values)}.",)
+            if len(values) != 1:
+                self.errors += (f"{self.type} option '{name}' is accepted only once, "
+                                f"got {len(values)} values {seq2str(values)}.",)
+            elif self.options[name] is not None:
+                value = values[0]
+                expected = self.options[name]
+                if value.upper() not in expected and not contains_variable(value):
+                    self.errors += (f"{self.type} option '{name}' does not accept "
+                                    f"value '{value}'. Valid values are "
+                                    f"{seq2str(expected)}.",)
 
     def __iter__(self) -> 'Iterator[Token]':
         return iter(self.tokens)
@@ -628,15 +639,24 @@ class TestTimeout(SingleValue):
 @Statement.register
 class Variable(Statement):
     type = Token.VARIABLE
+    options = {
+        'separator': None
+    }
 
     @classmethod
-    def from_params(cls, name: str, value: 'str|Sequence[str]',
-                    separator: str = FOUR_SPACES, eol: str = EOL) -> 'Variable':
+    def from_params(cls, name: str,
+                    value: 'str|Sequence[str]',
+                    value_separator: 'str|None' = None,
+                    separator: str = FOUR_SPACES,
+                    eol: str = EOL) -> 'Variable':
         values = [value] if isinstance(value, str) else value
         tokens = [Token(Token.VARIABLE, name)]
         for value in values:
             tokens.extend([Token(Token.SEPARATOR, separator),
                            Token(Token.ARGUMENT, value)])
+        if value_separator is not None:
+            tokens.extend([Token(Token.SEPARATOR, separator),
+                           Token(Token.OPTION, f'separator={value_separator}')])
         tokens.append(Token(Token.EOL, eol))
         return cls(tokens)
 
@@ -651,26 +671,13 @@ class Variable(Statement):
     def value(self) -> 'tuple[str, ...]':
         return self.get_values(Token.ARGUMENT)
 
+    @property
+    def separator(self) -> 'str|None':
+        return self.get_option('separator')
+
     def validate(self, ctx: 'ValidationContext'):
-        name = self.get_value(Token.VARIABLE)
-        match = search_variable(name, ignore_errors=True)
-        if not match.is_assign(allow_assign_mark=True, allow_nested=True):
-            self.errors += (f"Invalid variable name '{name}'.",)
-        if match.is_dict_assign(allow_assign_mark=True):
-            self._validate_dict_items()
-
-    def _validate_dict_items(self):
-        for item in self.get_values(Token.ARGUMENT):
-            if not self._is_valid_dict_item(item):
-                self.errors += (
-                    f"Invalid dictionary variable item '{item}'. "
-                    f"Items must use 'name=value' syntax or be dictionary "
-                    f"variables themselves.",
-                )
-
-    def _is_valid_dict_item(self, item: str) -> bool:
-        name, value = split_from_equals(item)
-        return value is not None or is_dict_variable(item)
+        VariableValidator(allow_assign_mark=True).validate(self)
+        self._validate_options()
 
 
 @Statement.register
@@ -909,11 +916,19 @@ class TemplateArguments(Statement):
 @Statement.register
 class ForHeader(Statement):
     type = Token.FOR
+    options = {
+        'start': None,
+        'mode': ('STRICT', 'SHORTEST', 'LONGEST'),
+        'fill': None
+    }
 
     @classmethod
-    def from_params(cls, assign: 'Sequence[str]', values: 'Sequence[str]',
-                    flavor: str = 'IN', indent: str = FOUR_SPACES,
-                    separator: str = FOUR_SPACES, eol: str = EOL) -> 'ForHeader':
+    def from_params(cls, assign: 'Sequence[str]',
+                    values: 'Sequence[str]',
+                    flavor: Literal['IN', 'IN RANGE', 'IN ENUMERATE', 'IN ZIP'] = 'IN',
+                    indent: str = FOUR_SPACES,
+                    separator: str = FOUR_SPACES,
+                    eol: str = EOL) -> 'ForHeader':
         tokens = [Token(Token.SEPARATOR, indent),
                   Token(Token.FOR),
                   Token(Token.SEPARATOR, separator)]
@@ -959,7 +974,6 @@ class ForHeader(Statement):
         return self.get_option('fill') if self.flavor == 'IN ZIP' else None
 
     def validate(self, ctx: 'ValidationContext'):
-        self._validate_options()
         if not self.assign:
             self._add_error('no loop variables')
         if not self.flavor:
@@ -970,6 +984,7 @@ class ForHeader(Statement):
                     self._add_error(f"invalid loop variable '{var}'")
             if not self.values:
                 self._add_error('no loop values')
+        self._validate_options()
 
     def _add_error(self, error: str):
         self.errors += (f'FOR loop has {error}.',)
@@ -1091,6 +1106,9 @@ class TryHeader(NoArgumentHeader):
 @Statement.register
 class ExceptHeader(Statement):
     type = Token.EXCEPT
+    options = {
+        'type': ('GLOB', 'REGEXP', 'START', 'LITERAL')
+    }
 
     @classmethod
     def from_params(cls, patterns: 'Sequence[str]' = (), type: 'str|None' = None,
@@ -1131,7 +1149,6 @@ class ExceptHeader(Statement):
         return self.assign
 
     def validate(self, ctx: 'ValidationContext'):
-        self._validate_options()
         as_token = self.get_token(Token.AS)
         if as_token:
             variables = self.get_tokens(Token.ASSIGN)
@@ -1141,6 +1158,7 @@ class ExceptHeader(Statement):
                 self.errors += ("EXCEPT's AS accepts only one variable.",)
             elif not is_scalar_assign(variables[0].value):
                 self.errors += (f"EXCEPT's AS variable '{variables[0].value}' is invalid.",)
+        self._validate_options()
 
 
 @Statement.register
@@ -1156,6 +1174,11 @@ class End(NoArgumentHeader):
 @Statement.register
 class WhileHeader(Statement):
     type = Token.WHILE
+    options = {
+        'limit': None,
+        'on_limit': ('PASS', 'FAIL'),
+        'on_limit_message': None
+    }
 
     @classmethod
     def from_params(cls, condition: str, limit: 'str|None' = None,
@@ -1167,13 +1190,13 @@ class WhileHeader(Statement):
                   Token(Token.SEPARATOR, separator),
                   Token(Token.ARGUMENT, condition)]
         if limit:
-            tokens.extend([Token(Token.SEPARATOR, indent),
+            tokens.extend([Token(Token.SEPARATOR, separator),
                            Token(Token.OPTION, f'limit={limit}')])
         if on_limit:
-            tokens.extend([Token(Token.SEPARATOR, indent),
+            tokens.extend([Token(Token.SEPARATOR, separator),
                            Token(Token.OPTION, f'on_limit={on_limit}')])
         if on_limit_message:
-            tokens.extend([Token(Token.SEPARATOR, indent),
+            tokens.extend([Token(Token.SEPARATOR, separator),
                            Token(Token.OPTION, f'on_limit_message={on_limit_message}')])
         tokens.append(Token(Token.EOL, eol))
         return cls(tokens)
@@ -1195,25 +1218,72 @@ class WhileHeader(Statement):
         return self.get_option('on_limit_message')
 
     def validate(self, ctx: 'ValidationContext'):
-        conditions = self.get_tokens(Token.ARGUMENT)
+        conditions = self.get_values(Token.ARGUMENT)
         if len(conditions) > 1:
-            self._add_error(f'cannot have more than one condition, got '
-                            f'{seq2str(c.value for c in conditions)}')
+            self.errors += (f"WHILE accepts only one condition, got {len(conditions)} "
+                            f"conditions {seq2str(conditions)}.",)
         if self.on_limit and not self.limit:
-            self._add_error("'on_limit' option cannot be used without 'limit'")
+            self.errors += ("WHILE option 'on_limit' cannot be used without 'limit'.",)
         self._validate_options()
 
-    def _add_error(self, error: str):
-        self.errors += (f'WHILE loop {error}.',)
+
+@Statement.register
+class Var(Statement):
+    type = Token.VAR
+    options = {
+        'scope': ('GLOBAL', 'SUITE', 'TEST', 'TASK', 'LOCAL'),
+        'separator': None
+    }
+
+    @classmethod
+    def from_params(cls, name: str,
+                    value: 'str|Sequence[str]',
+                    scope: 'str|None' = None,
+                    value_separator: 'str|None' = None,
+                    indent: str = FOUR_SPACES,
+                    separator: str = FOUR_SPACES,
+                    eol: str = EOL) -> 'Var':
+        tokens = [Token(Token.SEPARATOR, indent),
+                  Token(Token.VAR),
+                  Token(Token.SEPARATOR, separator),
+                  Token(Token.VARIABLE, name)]
+        values = [value] if isinstance(value, str) else value
+        for value in values:
+            tokens.extend([Token(Token.SEPARATOR, separator),
+                           Token(Token.ARGUMENT, value)])
+        if scope:
+            tokens.extend([Token(Token.SEPARATOR, separator),
+                           Token(Token.OPTION, f'scope={scope}')])
+        if value_separator:
+            tokens.extend([Token(Token.SEPARATOR, separator),
+                           Token(Token.OPTION, f'separator={value_separator}')])
+        tokens.append(Token(Token.EOL, eol))
+        return cls(tokens)
+
+    @property
+    def name(self) -> str:
+        return self.get_value(Token.VARIABLE, '')
+
+    @property
+    def value(self) -> 'tuple[str, ...]':
+        return self.get_values(Token.ARGUMENT)
+
+    @property
+    def scope(self) -> 'str|None':
+        return self.get_option('scope')
+
+    @property
+    def separator(self) -> 'str|None':
+        return self.get_option('separator')
+
+    def validate(self, ctx: 'ValidationContext'):
+        VariableValidator().validate(self)
+        self._validate_options()
 
 
 @Statement.register
 class ReturnStatement(Statement):
     type = Token.RETURN_STATEMENT
-
-    @property
-    def values(self):
-        return self.get_values(Token.ARGUMENT)
 
     @classmethod
     def from_params(cls, values: 'Sequence[str]' = (), indent: str = FOUR_SPACES,
@@ -1225,6 +1295,10 @@ class ReturnStatement(Statement):
                            Token(Token.ARGUMENT, value)])
         tokens.append(Token(Token.EOL, eol))
         return cls(tokens)
+
+    @property
+    def values(self) -> 'tuple[str, ...]':
+        return self.get_values(Token.ARGUMENT)
 
     def validate(self, ctx: 'ValidationContext'):
         if not ctx.in_keyword:
@@ -1323,3 +1397,30 @@ class EmptyLine(Statement):
     @classmethod
     def from_params(cls, eol: str = EOL):
         return cls([Token(Token.EOL, eol)])
+
+
+class VariableValidator:
+
+    def __init__(self, allow_assign_mark: bool = False):
+        self.allow_assign_mark = allow_assign_mark
+
+    def validate(self, statement: Statement):
+        name = statement.get_value(Token.VARIABLE, '')
+        match = search_variable(name, ignore_errors=True)
+        if not match.is_assign(allow_assign_mark=self.allow_assign_mark,
+                               allow_nested=True):
+            statement.errors += (f"Invalid variable name '{name}'.",)
+        if match.identifier == '&':
+            self._validate_dict_items(statement)
+
+    def _validate_dict_items(self, statement: Statement):
+        for item in statement.get_values(Token.ARGUMENT):
+            if not self._is_valid_dict_item(item):
+                statement.errors += (
+                    f"Invalid dictionary variable item '{item}'. Items must use "
+                    f"'name=value' syntax or be dictionary variables themselves.",
+                )
+
+    def _is_valid_dict_item(self, item: str) -> bool:
+        name, value = split_from_equals(item)
+        return value is not None or is_dict_variable(item)

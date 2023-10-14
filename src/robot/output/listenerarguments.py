@@ -152,10 +152,9 @@ class StartKeywordArguments(_ListenerArgumentsFromItem):
     }
 
     def _get_name(self, kw):
-        return kw.full_name if kw.type in kw.KEYWORD_TYPES else kw._name
+        return kw.full_name if kw.type in kw.KEYWORD_TYPES else kw._log_name
 
     def _get_extra_attributes(self, kw):
-        # FOR and TRY model objects use `assign` starting from RF 7.0, but for
         # backwards compatibility reasons we pass them as `variable(s)`.
         if kw.type in kw.KEYWORD_TYPES:
             assign = list(kw.assign)
@@ -164,7 +163,7 @@ class StartKeywordArguments(_ListenerArgumentsFromItem):
             args = [a if is_string(a) else safe_str(a) for a in kw.args]
         else:
             assign = []
-            name = kw._name
+            name = kw._log_name
             owner = ''
             args = []
         attrs = {'kwname': name,

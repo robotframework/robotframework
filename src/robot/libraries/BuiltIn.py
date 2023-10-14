@@ -36,7 +36,7 @@ from robot.utils import (DotDict, escape, format_assign_message, get_error_messa
 from robot.utils.asserts import assert_equal, assert_not_equal
 from robot.variables import (evaluate_expression, is_dict_variable,
                              is_list_variable, search_variable,
-                             DictVariableTableValue, VariableTableValue)
+                             DictVariableResolver, VariableResolver)
 from robot.version import get_version
 
 
@@ -471,7 +471,7 @@ class _Converter(_BuiltInBase):
         """
         separate, combined = self._split_dict_items(items)
         result = DotDict(self._format_separate_dict_items(separate))
-        combined = DictVariableTableValue(combined).resolve(self._variables)
+        combined = DictVariableResolver(combined).resolve(self._variables)
         result.update(combined)
         return result
 
@@ -1686,7 +1686,7 @@ class _Variables(_BuiltInBase):
         """
         name = self._get_var_name(name)
         value = self._get_var_value(name, values)
-        self._variables.set_local_variable(name, value)
+        self._variables.set_local(name, value)
         self._log_set_variable(name, value)
 
     @run_keyword_variant(resolve=0)
@@ -1856,7 +1856,8 @@ class _Variables(_BuiltInBase):
                                 f"is not supported anymore. Create list variable "
                                 f"'@{name[1:]}' instead.")
             return self._variables.replace_scalar(values[0])
-        return VariableTableValue(values, name).resolve(self._variables)
+        resolver = VariableResolver.from_name_and_value(name, values)
+        return resolver.resolve(self._variables)
 
     def _log_set_variable(self, name, value):
         self.log(format_assign_message(name, value))
@@ -1883,14 +1884,14 @@ class _RunKeyword(_BuiltInBase):
         ctx = self._context
         if not (ctx.dry_run or self._accepts_embedded_arguments(name, ctx)):
             name, args = self._replace_variables_in_name([name] + list(args))
-        parent = ctx.steps[-1] if ctx.steps else (ctx.test or ctx.suite)
+        parent = ctx.steps[-1][0] if ctx.steps else (ctx.test or ctx.suite)
         kw = Keyword(name, args=args, parent=parent,
                      lineno=getattr(parent, 'lineno', None))
         return kw.run(ctx)
 
     def _accepts_embedded_arguments(self, name, ctx):
         if '{' in name:
-            runner = ctx.get_runner(name)
+            runner = ctx.get_runner(name, recommend_on_failure=False)
             return runner and hasattr(runner, 'embedded_args')
         return False
 

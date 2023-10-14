@@ -113,9 +113,9 @@ class VariableScopes:
             else:
                 scope.set_from_file(variables, overwrite=overwrite)
 
-    def set_from_variable_table(self, variables, overwrite=False):
+    def set_from_variable_section(self, variables, overwrite=False):
         for scope in self._scopes_until_suite:
-            scope.set_from_variable_table(variables, overwrite)
+            scope.set_from_variable_section(variables, overwrite)
 
     def resolve_delayed(self):
         for scope in self._scopes_until_suite:
@@ -154,7 +154,7 @@ class VariableScopes:
         self.current[name] = value
         self._variables_set.set_keyword(name, value)
 
-    def set_local_variable(self, name, value):
+    def set_local(self, name, value):
         self.current[name] = value
 
     def as_dict(self, decoration=True):

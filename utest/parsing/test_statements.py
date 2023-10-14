@@ -239,13 +239,31 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             Token(Token.VARIABLE, '${variable_name}'),
             Token(Token.SEPARATOR, '    '),
             Token(Token.ARGUMENT, "{'a': 4, 'b': 'abc'}"),
-            Token(Token.EOL, '\n')
+            Token(Token.EOL)
         ]
         assert_created_statement(
             tokens,
             Variable,
             name='${variable_name}',
             value="{'a': 4, 'b': 'abc'}"
+        )
+        # ${x}    a    b    separator=-
+        tokens = [
+            Token(Token.VARIABLE, '${x}'),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.ARGUMENT, 'a'),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.ARGUMENT, 'b'),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.OPTION, 'separator=-'),
+            Token(Token.EOL)
+        ]
+        assert_created_statement(
+            tokens,
+            Variable,
+            name='${x}',
+            value=['a', 'b'],
+            value_separator='-'
         )
         # ${var}    first    second    third
         # @{var}    first    second    third
@@ -259,7 +277,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
                 Token(Token.ARGUMENT, 'second'),
                 Token(Token.SEPARATOR, '    '),
                 Token(Token.ARGUMENT, 'third'),
-                Token(Token.EOL, '\n')
+                Token(Token.EOL)
             ]
             assert_created_statement(
                 tokens,
@@ -937,12 +955,53 @@ class TestCreateStatementsFromParams(unittest.TestCase):
         tokens = [
             Token(Token.SEPARATOR, '    '),
             Token(Token.END),
-            Token(Token.EOL, '\n')
+            Token(Token.EOL)
         ]
         assert_created_statement(
             tokens,
             End
         )
+
+    def test_Var(self):
+        tokens = [
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.VAR),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.VARIABLE, '${name}'),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.ARGUMENT, 'value'),
+            Token(Token.EOL)
+        ]
+        var = assert_created_statement(
+            tokens,
+            Var,
+            name='${name}',
+            value='value'
+        )
+        assert_equal(var.name, '${name}')
+        assert_equal(var.value, ('value',))
+        assert_equal(var.scope, None)
+        assert_equal(var.separator, None)
+        tokens[-1:-1] = [
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.ARGUMENT, 'value 2'),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.OPTION, 'scope=SUITE'),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.OPTION, r'separator=\n'),
+        ]
+        var = assert_created_statement(
+            tokens,
+            Var,
+            name='${name}',
+            value=('value', 'value 2'),
+            scope='SUITE',
+            value_separator=r'\n'
+        )
+        assert_equal(var.name, '${name}')
+        assert_equal(var.value, ('value', 'value 2'))
+        assert_equal(var.scope, 'SUITE')
+        assert_equal(var.separator, r'\n')
 
     def test_ReturnStatement(self):
         tokens = [

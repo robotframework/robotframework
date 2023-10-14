@@ -23,7 +23,6 @@ from robot.variables import VariableScopes
 
 from .bodyrunner import BodyRunner, KeywordRunner
 from .context import EXECUTION_CONTEXTS
-from .modelcombiner import ModelCombiner
 from .namespace import Namespace
 from .status import SuiteStatus, TestStatus
 from .timeouts import TestTimeout
@@ -71,7 +70,7 @@ class SuiteRunner(SuiteVisitor):
                                          self._settings.skip_teardown_on_exit)
         ns = Namespace(self._variables, result, suite.resource, self._settings.languages)
         ns.start_suite()
-        ns.variables.set_from_variable_table(suite.resource.variables)
+        ns.variables.set_from_variable_section(suite.resource.variables)
         EXECUTION_CONTEXTS.start_suite(result, ns, self._output,
                                        self._settings.dry_run)
         self._context.set_suite_variables(result)
@@ -82,10 +81,7 @@ class SuiteRunner(SuiteVisitor):
         result.metadata = [(self._resolve_setting(n), self._resolve_setting(v))
                            for n, v in result.metadata.items()]
         self._context.set_suite_variables(result)
-        self._output.start_suite(ModelCombiner(suite, result,
-                                               tests=suite.tests,
-                                               suites=suite.suites,
-                                               test_count=suite.test_count))
+        self._output.start_suite(suite, result)
         self._output.register_error_listener(self._suite_status.error_occurred)
         self._run_setup(suite, self._suite_status, run=self._any_test_run(suite))
 
@@ -117,7 +113,7 @@ class SuiteRunner(SuiteVisitor):
                     self._suite.suite_teardown_failed(str(failure))
         self._suite.end_time = datetime.now()
         self._suite.message = self._suite_status.message
-        self._context.end_suite(ModelCombiner(suite, self._suite))
+        self._context.end_suite(suite, self._suite)
         self._executed.pop()
         self._suite = self._suite.parent
         self._suite_status = self._suite_status.parent
@@ -138,8 +134,7 @@ class SuiteRunner(SuiteVisitor):
                                           self._get_timeout(test),
                                           test.lineno,
                                           start_time=datetime.now())
-        self._context.start_test(result)
-        self._output.start_test(ModelCombiner(test, result))
+        self._context.start_test(test, result)
         status = TestStatus(self._suite_status, result, settings.skip_on_failure,
                             settings.rpa)
         if status.exit:
@@ -191,7 +186,8 @@ class SuiteRunner(SuiteVisitor):
         result.status = status.status
         result.end_time = datetime.now()
         failed_before_listeners = result.failed
-        self._output.end_test(ModelCombiner(test, result))
+        # TODO: can this be removed to context
+        self._output.end_test(test, result)
         if result.failed and not failed_before_listeners:
             status.failure_occurred()
         self._context.end_test(result)

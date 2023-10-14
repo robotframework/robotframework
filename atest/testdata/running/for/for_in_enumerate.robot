@@ -34,19 +34,19 @@ Escape start
     Should Be True    ${result} == [0, 1]
 
 Invalid start
-    [Documentation]    FAIL    Invalid start value: Start value must be an integer, got 'invalid'.
+    [Documentation]    FAIL    Invalid FOR IN ENUMERATE start value: Value must be an integer, got 'invalid'.
     FOR    ${index}    ${item}    IN ENUMERATE    xxx    start=invalid
         Fail    Should not be executed
     END
 
 Invalid variable in start
-    [Documentation]    FAIL    Invalid start value: Variable '\${invalid}' not found.
+    [Documentation]    FAIL    Invalid FOR IN ENUMERATE start value: Variable '\${invalid}' not found.
     FOR    ${index}    ${item}    IN ENUMERATE    xxx    start=${invalid}
         Fail    Should not be executed
     END
 
 Start multiple times
-    [Documentation]    FAIL    Option 'start' allowed only once, got values '1', '2' and '3'.
+    [Documentation]    FAIL    FOR option 'start' is accepted only once, got 3 values '1', '2' and '3'.
     FOR    ${index}    ${item}    IN ENUMERATE    xxx    start=1    start=2    start=3
         Fail    Should not be executed
     END

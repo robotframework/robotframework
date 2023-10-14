@@ -47,21 +47,25 @@ def is_dict_variable(string):
     return is_variable(string, '&')
 
 
-def is_assign(string, identifiers='$@&', allow_assign_mark=False, allow_items=False):
+def is_assign(string, identifiers='$@&', allow_assign_mark=False,
+              allow_nested=False, allow_items=False):
     match = search_variable(string, identifiers, ignore_errors=True)
-    return match.is_assign(allow_assign_mark, allow_items=allow_items)
+    return match.is_assign(allow_assign_mark, allow_nested, allow_items)
 
 
-def is_scalar_assign(string, allow_assign_mark=False, allow_items=False):
-    return is_assign(string, '$', allow_assign_mark, allow_items)
+def is_scalar_assign(string, allow_assign_mark=False, allow_nested=False,
+                     allow_items=False):
+    return is_assign(string, '$', allow_assign_mark, allow_nested, allow_items)
 
 
-def is_list_assign(string, allow_assign_mark=False, allow_items=False):
-    return is_assign(string, '@', allow_assign_mark, allow_items)
+def is_list_assign(string, allow_assign_mark=False, allow_nested=False,
+                   allow_items=False):
+    return is_assign(string, '@', allow_assign_mark, allow_nested, allow_items)
 
 
-def is_dict_assign(string, allow_assign_mark=False, allow_items=False):
-    return is_assign(string, '&', allow_assign_mark, allow_items)
+def is_dict_assign(string, allow_assign_mark=False, allow_nested=False,
+                   allow_items=False):
+    return is_assign(string, '&', allow_assign_mark, allow_nested, allow_items)
 
 
 class VariableMatch:
@@ -114,8 +118,7 @@ class VariableMatch:
     def is_dict_variable(self):
         return self.identifier == '&' and self.is_variable()
 
-    def is_assign(self,
-                  allow_assign_mark=False, allow_nested=False, allow_items=False):
+    def is_assign(self, allow_assign_mark=False, allow_nested=False, allow_items=False):
         if allow_assign_mark and self.string.endswith('='):
             match = search_variable(self.string[:-1].rstrip(), ignore_errors=True)
             return match.is_assign(allow_items=allow_items)

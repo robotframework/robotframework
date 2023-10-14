@@ -1,7 +1,7 @@
 *** Settings ***
 Documentation     Some tests here
 Suite Setup       My Keyword    Suite Setup
-Force Tags        force
+Test Tags         force
 Library           String
 
 *** Variables ***
@@ -27,4 +27,6 @@ My Keyword
     Log    Hello says "${who}"!    ${LEVEL1}
     Log    Debug message    ${LEVEL2}
     ${assign} =    Convert to Uppercase    Just testing...
+    VAR    ${expected}    JUST TESTING...
+    Should Be Equal    ${assign}    ${expected}
     RETURN

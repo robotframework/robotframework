@@ -29,5 +29,5 @@ from .search import (search_variable, contains_variable,
                      is_dict_variable, is_dict_assign,
                      is_list_variable, is_list_assign,
                      VariableIterator)
-from .tablesetter import VariableTableValue, DictVariableTableValue
+from .tablesetter import VariableResolver, DictVariableResolver
 from .variables import Variables

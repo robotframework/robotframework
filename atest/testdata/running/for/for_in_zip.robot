@@ -134,45 +134,51 @@ Longest mode with custom fill value
     Should Be True    ${result} == [(1, 'a', 1), (2, 'b', 0), (0, 'c', 0)]
 
 Invalid mode
-    [Documentation]    FAIL    Invalid mode: Mode must be 'STRICT', 'SHORTEST' or 'LONGEST', got 'BAD'.
+    [Documentation]    FAIL    FOR option 'mode' does not accept value 'bad'. Valid values are 'STRICT', 'SHORTEST' and 'LONGEST'.
     FOR    ${x}    ${y}    IN ZIP    ${LIST1}    ${LIST2}    mode=bad
-        @{result} =    Create List    @{result}    ${x}:${y}
+        Fail    Should not be executed
+    END
+
+Invalid mode from variable
+    [Documentation]    FAIL    Invalid FOR IN ZIP mode: Value 'bad' is not accepted. Valid values are 'STRICT', 'SHORTEST' and 'LONGEST'.
+    FOR    ${x}    ${y}    IN ZIP    ${LIST1}    ${LIST2}    mode=${{'bad'}}
+        Fail    Should not be executed
     END
 
 Config more than once 1
-    [Documentation]    FAIL    Option 'mode' allowed only once, got values 'longest' and 'shortest'.
+    [Documentation]    FAIL    FOR option 'mode' is accepted only once, got 2 values 'longest' and 'shortest'.
     FOR    ${x}    ${y}    IN ZIP    ${LIST1}    ${LIST2}    mode=longest    mode=shortest
-        @{result} =    Create List    @{result}    ${x}:${y}
+        Fail    Should not be executed
     END
 
 Config more than once 2
-    [Documentation]    FAIL    Option 'fill' allowed only once, got values 'x', 'y' and 'z'.
+    [Documentation]    FAIL    FOR option 'fill' is accepted only once, got 3 values 'x', 'y' and 'z'.
     FOR    ${x}    ${y}    IN ZIP    ${LIST1}    ${LIST2}    fill=x    mode=longest    fill=y    fill=z
-        @{result} =    Create List    @{result}    ${x}:${y}
+        Fail    Should not be executed
     END
 
 Non-existing variable in mode
-    [Documentation]    FAIL    Invalid mode: Variable '\${bad}' not found.
+    [Documentation]    FAIL    Invalid FOR IN ZIP mode: Variable '\${bad}' not found.
     FOR    ${x}    ${y}    IN ZIP    ${LIST1}    ${LIST2}    mode=${bad}    fill=${ignored}
-        @{result} =    Create List    @{result}    ${x}:${y}
+        Fail    Should not be executed
     END
 
 Non-existing variable in fill value
-    [Documentation]    FAIL    Invalid fill value: Variable '\${bad}' not found.
+    [Documentation]    FAIL    Invalid FOR IN ZIP fill value: Variable '\${bad}' not found.
     FOR    ${x}    ${y}    IN ZIP    ${LIST1}    ${LIST2}    mode=longest    fill=${bad}
-        @{result} =    Create List    @{result}    ${x}:${y}
+        Fail    Should not be executed
     END
 
 Not iterable value
     [Documentation]    FAIL    FOR IN ZIP items must be list-like, but item 2 is integer.
     FOR    ${x}    ${y}    IN ZIP    ${LIST1}    ${42}
-        Fail    This test case should die before running this.
+        Fail    Should not be executed
     END
 
 Strings are not considered iterables
     [Documentation]    FAIL    FOR IN ZIP items must be list-like, but item 3 is string.
     FOR    ${x}    ${y}    IN ZIP    ${LIST1}    ${LIST2}    not list
-        Fail    This test case should die before running this.
+        Fail    Should not be executed
     END
 
 Too few variables 1
@@ -180,7 +186,7 @@ Too few variables 1
     ...    Number of FOR loop values should be multiple of its variables. \
     ...    Got 2 variables but 3 values.
     FOR    ${too}    ${few}    IN ZIP   ${LIST1}    ${LIST1}    ${LIST1}
-        Fail    This test case should die before running this.
+        Fail    Should not be executed
     END
 
 Too few variables 2
@@ -189,7 +195,7 @@ Too few variables 2
     ...    Got 3 variables but 4 values.
     @{items} =    Create List    ${LIST1}    ${LIST1}    ${LIST1}    ${LIST1}
     FOR    ${too}    ${few}    ${still}    IN ZIP   @{items}
-        Fail    This test case should die before running this.
+        Fail    Should not be executed
     END
 
 Too many variables 1
@@ -197,7 +203,7 @@ Too many variables 1
     ...    Number of FOR loop values should be multiple of its variables. \
     ...    Got 3 variables but 2 values.
     FOR    ${too}    ${many}    ${variables}    IN ZIP    ${LIST1}    ${LIST2}
-        Fail    This test case should die before running this.
+        Fail    Should not be executed
     END
 
 Too many variables 2
@@ -206,5 +212,5 @@ Too many variables 2
     ...    Got 4 variables but 1 value.
     @{items} =    Create List    ${LIST1}
     FOR    ${too}    ${many}    ${variables}    ${again}    IN ZIP    @{items}
-        Fail    This test case should die before running this.
+        Fail    Should not be executed
     END

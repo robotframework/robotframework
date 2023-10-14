@@ -68,7 +68,7 @@ class Namespace:
                     raise DataError(f'{item.setting_name} setting requires value.')
                 self._import(item)
             except DataError as err:
-                item.report_invalid_syntax(err.message)
+                item.report_error(err.message)
 
     def _import(self, import_setting):
         action = import_setting.select(self._import_library,
@@ -84,7 +84,7 @@ class Namespace:
         self._validate_not_importing_init_file(path)
         if overwrite or path not in self._kw_store.resources:
             resource = IMPORTER.import_resource(path, self.languages)
-            self.variables.set_from_variable_table(resource.variables, overwrite)
+            self.variables.set_from_variable_section(resource.variables, overwrite)
             user_library = UserLibrary(resource)
             self._kw_store.resources[path] = user_library
             self._handle_imports(resource.imports)
