@@ -25,12 +25,13 @@ from .logger import LOGGER
 from .modelcombiner import ModelCombiner
 
 
-class Listeners:
+class Listeners(LoggerApi):
     _method_names = ('start_suite', 'end_suite', 'start_test', 'end_test',
                      'start_keyword', 'end_keyword', 'log_message', 'message',
                      'output_file', 'report_file', 'log_file', 'debug_file',
                      'xunit_file', 'library_import', 'resource_import',
                      'variables_import', 'close')
+    _methods = {}
 
     def __init__(self, listeners, log_level='INFO'):
         self._is_logged = IsLogged(log_level)
@@ -38,50 +39,91 @@ class Listeners:
                                                    self._method_names)
         for name in self._method_names:
             method = ListenerMethods(name, listeners)
-            if name.endswith(('_keyword', '_file', '_import', 'log_message')):
-                name = '_' + name
-            setattr(self, name, method)
+            self._methods[name] = method
+
+    def start_suite(self, data: 'running.TestSuite', result: 'result.TestSuite'):
+        self._methods['start_suite'](ModelCombiner(data, result,
+                                                   tests=data.tests,
+                                                   suites=data.suites,
+                                                   test_count=data.test_count))
+
+    def end_suite(self, data: 'running.TestSuite', result: 'result.TestSuite'):
+        self._methods['end_suite'](ModelCombiner(data, result))
+
+    def start_test(self, data: 'running.TestCase', result: 'result.TestCase'):
+        self._methods['start_test'](ModelCombiner(data, result))
+
+    def end_test(self, data: 'running.TestCase', result: 'result.TestCase'):
+        self._methods['end_test'](ModelCombiner(data, result))
+
+    def start_body_item(self, data, result):
+        if data.type not in (data.IF_ELSE_ROOT, data.TRY_EXCEPT_ROOT):
+            self._methods['start_keyword'](ModelCombiner(data, result))
+
+    def end_body_item(self, data, result):
+        if data.type not in (data.IF_ELSE_ROOT, data.TRY_EXCEPT_ROOT):
+            self._methods['end_keyword'](ModelCombiner(data, result))
 
     def set_log_level(self, level):
         self._is_logged.set_level(level)
 
-    def start_keyword(self, kw):
-        if kw.type not in (kw.IF_ELSE_ROOT, kw.TRY_EXCEPT_ROOT):
-            self._start_keyword(kw)
+    def log_message(self, message: 'model.Message'):
+        if self._is_logged(message.level):
+            self._methods['log_message'](message)
 
-    def end_keyword(self, kw):
-        if kw.type not in (kw.IF_ELSE_ROOT, kw.TRY_EXCEPT_ROOT):
-            self._end_keyword(kw)
-
-    def log_message(self, msg):
-        if self._is_logged(msg.level):
-            self._log_message(msg)
+    def message(self, message: 'model.Message'):
+        self._methods['message'](message)
 
     def imported(self, import_type, name, attrs):
-        method = getattr(self, '_%s_import' % import_type.lower())
+        method = self._methods.get('%s_import' % import_type.lower())
         method(name, attrs)
 
     def output_file(self, file_type, path):
-        method = getattr(self, '_%s_file' % file_type.lower())
+        method = self._methods.get('%s_file' % file_type.lower())
         method(path)
+
+    def close(self):
+        self._methods['close']()
 
     def __bool__(self):
         return any(isinstance(method, ListenerMethods) and method
-                   for method in self.__dict__.values())
+                   for method in self._methods.values())
 
 
-class LibraryListeners:
+class LibraryListeners(LoggerApi):
     _method_names = ('start_suite', 'end_suite', 'start_test', 'end_test',
                      'start_keyword', 'end_keyword', 'log_message', 'message',
                      'close')
+    _methods = {}
 
     def __init__(self, log_level='INFO'):
         self._is_logged = IsLogged(log_level)
         for name in self._method_names:
             method = LibraryListenerMethods(name)
-            if name == 'log_message':
-                name = '_' + name
-            setattr(self, name, method)
+            self._methods[name] = method
+
+    def start_suite(self, data: 'running.TestSuite', result: 'result.TestSuite'):
+        self._methods['start_suite'](ModelCombiner(data, result,
+                                                   tests=data.tests,
+                                                   suites=data.suites,
+                                                   test_count=data.test_count))
+
+    def end_suite(self, data: 'running.TestSuite', result: 'result.TestSuite'):
+        self._methods['end_suite'](ModelCombiner(data, result))
+
+    def start_test(self, data: 'running.TestCase', result: 'result.TestCase'):
+        self._methods['start_test'](ModelCombiner(data, result))
+
+    def end_test(self, data: 'running.TestCase', result: 'result.TestCase'):
+        self._methods['end_test'](ModelCombiner(data, result))
+
+    def start_body_item(self, data, result):
+        if data.type not in (data.IF_ELSE_ROOT, data.TRY_EXCEPT_ROOT):
+            self._methods['start_keyword'](ModelCombiner(data, result))
+
+    def end_body_item(self, data, result):
+        if data.type not in (data.IF_ELSE_ROOT, data.TRY_EXCEPT_ROOT):
+            self._methods['end_keyword'](ModelCombiner(data, result))
 
     def register(self, listeners, library):
         listeners = ListenerProxy.import_listeners(listeners,
@@ -92,12 +134,12 @@ class LibraryListeners:
             method.register(listeners, library)
 
     def _listener_methods(self):
-        return [method for method in self.__dict__.values()
+        return [method for method in self._methods.values()
                 if isinstance(method, LibraryListenerMethods)]
 
     def unregister(self, library, close=False):
-        if close:
-            self.close(library=library)
+        if close and self._methods.get('close'):
+            self._methods['close'](library=library)
         for method in self._listener_methods():
             method.unregister(library)
 
@@ -112,15 +154,12 @@ class LibraryListeners:
     def set_log_level(self, level):
         self._is_logged.set_level(level)
 
-    def log_message(self, msg):
-        if self._is_logged(msg.level):
-            self._log_message(msg)
+    def log_message(self, message: 'model.Message'):
+        if self._is_logged(message.level):
+            self._methods['log_message'](message)
 
-    def imported(self, import_type, name, attrs):
-        pass
-
-    def output_file(self, file_type, path):
-        pass
+    def message(self, message: 'model.Message'):
+        self._methods['message'](message)
 
 
 class ListenerProxy(AbstractLoggerProxy):
@@ -174,139 +213,3 @@ class ListenerProxy(AbstractLoggerProxy):
                     raise DataError(msg)
                 LOGGER.error(msg)
         return imported
-
-
-class ListenerAdapter(LoggerApi):
-
-    def __init__(self, listener):
-        self.listener = listener
-
-    def register(self, listeners, library):
-        self.listener.register(listeners, library)
-
-    def unregister(self, library, close=False):
-        self.listener.unregister(library, close)
-
-    def new_suite_scope(self):
-        self.listener.new_suite_scope()
-
-    def discard_suite_scope(self):
-        self.listener.discard_suite_scope()
-
-    def message(self, message: 'model.Message'):
-        self.listener.message(message)
-
-    def log_message(self, message: 'model.Message'):
-        self.listener.log_message(message)
-
-    def set_log_level(self, level):
-        self.listener.set_log_level(level)
-
-    def start_suite(self, data: 'running.TestSuite', result: 'result.TestSuite'):
-        suite = ModelCombiner(data, result,
-                              tests=data.tests,
-                              suites=data.suites,
-                              test_count=data.test_count)
-        self.listener.start_suite(suite)
-
-    def end_suite(self, data: 'running.TestSuite', result: 'result.TestSuite'):
-        self.listener.end_suite(ModelCombiner(data, result))
-
-    def start_test(self, data: 'running.TestCase', result: 'result.TestCase'):
-        self.listener.start_test(ModelCombiner(data, result))
-
-    def end_test(self, data: 'running.TestCase', result: 'result.TestCase'):
-        self.listener.end_test(ModelCombiner(data, result))
-
-    def start_keyword(self, data: 'running.Keyword', result: 'result.Keyword'):
-        self.listener.start_keyword(ModelCombiner(data, result))
-
-    def end_keyword(self, data: 'running.Keyword', result: 'result.Keyword'):
-        self.listener.end_keyword(ModelCombiner(data, result))
-
-    def start_for(self, data: 'running.For', result: 'result.For'):
-        self.listener.start_keyword(ModelCombiner(data, result))
-
-    def end_for(self, data: 'running.For', result: 'result.For'):
-        self.listener.end_keyword(ModelCombiner(data, result))
-
-    def start_for_iteration(self, data: 'running.For', result: 'result.ForIteration'):
-        self.listener.start_keyword(ModelCombiner(data, result))
-
-    def end_for_iteration(self, data: 'running.For', result: 'result.ForIteration'):
-        self.listener.end_keyword(ModelCombiner(data, result))
-
-    def start_while(self, data: 'running.While', result: 'result.While'):
-        self.listener.start_keyword(ModelCombiner(data, result))
-
-    def end_while(self, data: 'running.While', result: 'result.While'):
-        self.listener.end_keyword(ModelCombiner(data, result))
-
-    def start_while_iteration(self, data: 'running.While', result: 'result.WhileIteration'):
-        self.listener.start_keyword(ModelCombiner(data, result))
-
-    def end_while_iteration(self, data: 'running.While', result: 'result.WhileIteration'):
-        self.listener.end_keyword(ModelCombiner(data, result))
-
-    def start_if(self, data: 'running.If', result: 'result.If'):
-        self.listener.start_keyword(ModelCombiner(data, result))
-
-    def end_if(self, data: 'running.If', result: 'result.If'):
-        self.listener.end_keyword(ModelCombiner(data, result))
-
-    def start_if_branch(self, data: 'running.If', result: 'result.IfBranch'):
-        self.listener.start_keyword(ModelCombiner(data, result))
-
-    def end_if_branch(self, data: 'running.If', result: 'result.IfBranch'):
-        self.listener.end_keyword(ModelCombiner(data, result))
-
-    def start_try(self, data: 'running.Try', result: 'result.Try'):
-        self.listener.start_keyword(ModelCombiner(data, result))
-
-    def end_try(self, data: 'running.Try', result: 'result.Try'):
-        self.listener.end_keyword(ModelCombiner(data, result))
-
-    def start_try_branch(self, data: 'running.Try', result: 'result.TryBranch'):
-        self.listener.start_keyword(ModelCombiner(data, result))
-
-    def end_try_branch(self, data: 'running.Try', result: 'result.TryBranch'):
-        self.listener.end_keyword(ModelCombiner(data, result))
-
-    def start_var(self, data, result):
-        self.listener.start_keyword(ModelCombiner(data, result))
-
-    def end_var(self, data, result):
-        self.listener.end_keyword(ModelCombiner(data, result))
-
-    def start_break(self, data, result):
-        self.listener.start_keyword(ModelCombiner(data, result))
-
-    def end_break(self, data, result):
-        self.listener.end_keyword(ModelCombiner(data, result))
-
-    def start_continue(self, data, result):
-        self.listener.start_keyword(ModelCombiner(data, result))
-
-    def end_continue(self, data, result):
-        self.listener.end_keyword(ModelCombiner(data, result))
-
-    def start_return(self, data, result):
-        self.listener.start_keyword(ModelCombiner(data, result))
-
-    def end_return(self, data, result):
-        self.listener.end_keyword(ModelCombiner(data, result))
-
-    def start_error(self, data, result):
-        self.listener.start_keyword(ModelCombiner(data, result))
-
-    def end_error(self, data, result):
-        self.listener.end_keyword(ModelCombiner(data, result))
-
-    def imported(self, import_type: str, name: str, attrs):
-        self.listener.imported(import_type, name, attrs)
-
-    def output_file(self, type_: str, path: str):
-        self.listener.output_file(type_, path)
-
-    def close(self):
-        self.listener.close()
