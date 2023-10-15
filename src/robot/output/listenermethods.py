@@ -34,6 +34,23 @@ class ListenerMethods:
             if method:
                 self._methods.append(ListenerMethod(method, listener))
 
+    def start_suite(self, data: 'running.TestSuite', result: 'result.TestSuite'):
+        for method in self._methods:
+            if method.version == 3:
+                method((data, result))
+            else:
+                method((result.name, {
+                    'id': data.id,
+                    'doc': result.doc,
+                    'metadata': dict(result.metadata),
+                    'starttime': result.starttime,
+                    'longname': result.full_name,
+                    'tests': [t.name for t in data.tests],
+                    'suites': [s.name for s in data.suites],
+                    'totaltests': data.test_count,
+                    'source': str(data.source or '')
+                }))
+
     def __call__(self, *args):
         if self._methods:
             args = ListenerArguments.by_method_name(self._method_name, args)

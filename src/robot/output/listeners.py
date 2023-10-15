@@ -38,14 +38,10 @@ class Listeners(LoggerApi):
         listeners = ListenerProxy.import_listeners(listeners,
                                                    self._method_names)
         for name in self._method_names:
-            method = ListenerMethods(name, listeners)
-            self._methods[name] = method
+            self._methods[name] = ListenerMethods(name, listeners)
 
     def start_suite(self, data: 'running.TestSuite', result: 'result.TestSuite'):
-        self._methods['start_suite'](ModelCombiner(data, result,
-                                                   tests=data.tests,
-                                                   suites=data.suites,
-                                                   test_count=data.test_count))
+        self._methods['start_suite'].start_suite(data, result)
 
     def end_suite(self, data: 'running.TestSuite', result: 'result.TestSuite'):
         self._methods['end_suite'](ModelCombiner(data, result))
