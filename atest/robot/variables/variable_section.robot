@@ -1,6 +1,6 @@
 *** Settings ***
-Suite Setup     Run tests  ${EMPTY}  variables/variable_section.robot
-Resource        atest_resource.robot
+Suite Setup       Run tests  ${EMPTY}    variables/variable_section.robot
+Resource          atest_resource.robot
 
 *** Test Cases ***
 Scalar String
