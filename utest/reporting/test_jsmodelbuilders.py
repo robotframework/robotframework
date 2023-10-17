@@ -216,6 +216,13 @@ class TestBuildTestSuite(unittest.TestCase):
                                     name='${x}    IN ENUMERATE    a    b    start=1')
         self._verify_test(test, body=(f1, f2))
 
+    def test_return(self):
+        self._verify_body_item(Keyword().body.create_return(), type=8)
+        self._verify_body_item(Keyword().body.create_return(('only one value',)),
+                               type=8, args='only one value')
+        self._verify_body_item(Keyword().body.create_return(('more', 'than', 'one')),
+                               type=8, args='more    than    one')
+
     def test_var(self):
         test = TestSuite().tests.create()
         test.body.create_var('${x}', value='x')
@@ -264,13 +271,13 @@ class TestBuildTestSuite(unittest.TestCase):
         return self._build_and_verify(TestBuilder, test, name, timeout,
                                       doc, tags, status, body)
 
-    def _verify_body_item(self, keyword, type=0, name='', owner='', doc='',
+    def _verify_body_item(self, item, type=0, name='', owner='', doc='',
                           args='', assign='', tags='', timeout='', status=0,
                           start=None, elapsed=0, message='', body=()):
         status = (status, start, elapsed, message) \
                 if message else (status, start, elapsed)
         doc = f'<p>{doc}</p>' if doc else ''
-        return self._build_and_verify(BodyItemBuilder, keyword, type, name, owner,
+        return self._build_and_verify(BodyItemBuilder, item, type, name, owner,
                                       timeout, doc, args, assign, tags, status, body)
 
     def _verify_message(self, msg, message='', level=2, timestamp=None):

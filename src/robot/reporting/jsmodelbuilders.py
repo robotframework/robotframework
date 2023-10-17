@@ -154,7 +154,7 @@ class BodyItemBuilder(Builder):
             if isinstance (item, Keyword):
                 return self._build_keyword(item, split)
             if isinstance(item, (Return, Error)):
-                return self._build(item, args=item.values, split=split)
+                return self._build(item, args='    '.join(item.values), split=split)
             return self._build(item, item._log_name, split=split)
 
     def _build_keyword(self, kw: Keyword, split):
