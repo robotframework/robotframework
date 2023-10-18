@@ -71,8 +71,10 @@ class PythonImporter:
                          getattr(var_file, 'getVariables', None))
         if get_variables:
             variables = self._get_dynamic(get_variables, args)
-        else:
+        elif not args:
             variables = self._get_static(var_file)
+        else:
+            raise DataError('Static variable files do not accept arguments.')
         return list(self._decorate_and_validate(variables))
 
     def _get_dynamic(self, get_variables, args):
