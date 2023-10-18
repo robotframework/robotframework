@@ -39,7 +39,7 @@ Invalid List Variable
     ${path} =    Normalize Path    ${RESDIR}/invalid_list_variable.py
     Error in file    14    ${DATAFILE}    43
     ...    Processing variable file '${path}' failed:
-    ...    Invalid variable '\@{invalid_list}': Expected list-like value, got string.
+    ...    Invalid variable 'LIST__invalid_list': Expected a list-like value, got string.
 
 Dynamic Variable File
     Check Test Case    ${TEST NAME} With No Args
@@ -52,7 +52,7 @@ Invalid return value from dynamic variable file
     ${path} =    Normalize Path    ${RESDIR}/dynamic_variables.py
     Error in file    4    ${DATAFILE}    10
     ...    Processing variable file '${path}' with arguments [ Two args | returns invalid ] failed:
-    ...    Expected 'get_variables' to return dict-like value, got None.
+    ...    Expected 'get_variables' to return a dictionary-like value, got None.
     ...    pattern=False
 
 Dynamic variable file raises exception

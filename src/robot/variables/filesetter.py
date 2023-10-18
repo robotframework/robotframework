@@ -40,8 +40,7 @@ class VariableFileSetter:
     def _import_if_needed(self, path_or_variables, args=None):
         if not is_string(path_or_variables):
             return path_or_variables
-        LOGGER.info("Importing variable file '%s' with args %s"
-                    % (path_or_variables, args))
+        LOGGER.info(f"Importing variable file '{path_or_variables}' with args {args}.")
         if path_or_variables.lower().endswith(('.yaml', '.yml')):
             importer = YamlImporter()
         elif path_or_variables.lower().endswith('.json'):
@@ -50,48 +49,14 @@ class VariableFileSetter:
             importer = PythonImporter()
         try:
             return importer.import_variables(path_or_variables, args)
-        except:
-            args = 'with arguments %s ' % seq2str2(args) if args else ''
-            raise DataError("Processing variable file '%s' %sfailed: %s"
-                            % (path_or_variables, args, get_error_message()))
+        except Exception:
+            args = f'with arguments {seq2str2(args)} ' if args else ''
+            raise DataError(f"Processing variable file '{path_or_variables}' "
+                            f"{args}failed: {get_error_message()}")
 
     def _set(self, variables, overwrite=False):
         for name, value in variables:
             self._store.add(name, value, overwrite)
-
-
-class YamlImporter:
-
-    def import_variables(self, path, args=None):
-        if args:
-            raise DataError('YAML variable files do not accept arguments.')
-        variables = self._import(path)
-        return [('${%s}' % name, self._dot_dict(value))
-                for name, value in variables]
-
-    def _import(self, path):
-        with io.open(path, encoding='UTF-8') as stream:
-            variables = self._load_yaml(stream)
-        if not is_dict_like(variables):
-            raise DataError('YAML variable file must be a mapping, got %s.'
-                            % type_name(variables))
-        return variables.items()
-
-    def _load_yaml(self, stream):
-        if not yaml:
-            raise DataError('Using YAML variable files requires PyYAML module '
-                            'to be installed. Typically you can install it '
-                            'by running `pip install pyyaml`.')
-        if yaml.__version__.split('.')[0] == '3':
-            return yaml.load(stream)
-        return yaml.full_load(stream)
-
-    def _dot_dict(self, value):
-        if is_dict_like(value):
-            return DotDict((k, self._dot_dict(v)) for k, v in value.items())
-        if is_list_like(value):
-            return [self._dot_dict(v) for v in value]
-        return value
 
 
 class PythonImporter:
@@ -102,24 +67,20 @@ class PythonImporter:
         return self._get_variables(var_file, args)
 
     def _get_variables(self, var_file, args):
-        if self._is_dynamic(var_file):
-            variables = self._get_dynamic(var_file, args)
+        get_variables = (getattr(var_file, 'get_variables', None) or
+                         getattr(var_file, 'getVariables', None))
+        if get_variables:
+            variables = self._get_dynamic(get_variables, args)
         else:
             variables = self._get_static(var_file)
         return list(self._decorate_and_validate(variables))
 
-    def _is_dynamic(self, var_file):
-        return (hasattr(var_file, 'get_variables') or
-                hasattr(var_file, 'getVariables'))
-
-    def _get_dynamic(self, var_file, args):
-        get_variables = (getattr(var_file, 'get_variables', None) or
-                         getattr(var_file, 'getVariables'))
+    def _get_dynamic(self, get_variables, args):
         variables = get_variables(*args)
         if is_dict_like(variables):
             return variables.items()
-        raise DataError("Expected '%s' to return dict-like value, got %s."
-                        % (get_variables.__name__, type_name(variables)))
+        raise DataError(f"Expected '{get_variables.__name__}' to return "
+                        f"a dictionary-like value, got {type_name(variables)}.")
 
     def _get_static(self, var_file):
         names = [attr for attr in dir(var_file) if not attr.startswith('_')]
@@ -132,41 +93,70 @@ class PythonImporter:
 
     def _decorate_and_validate(self, variables):
         for name, value in variables:
-            name = self._decorate(name)
-            self._validate(name, value)
+            if name.startswith('LIST__'):
+                if not is_list_like(value):
+                    raise DataError(f"Invalid variable '{name}': Expected a "
+                                    f"list-like value, got {type_name(value)}.")
+                name = f'@{{{name[6:]}}}'
+            elif name.startswith('DICT__'):
+                if not is_dict_like(value):
+                    raise DataError(f"Invalid variable '{name}': Expected a "
+                                    f"dictionary-like value, got {type_name(value)}.")
+                name = f'&{{{name[6:]}}}'
+            else:
+                name = f'${{{name}}}'
             yield name, value
-
-    def _decorate(self, name):
-        if name.startswith('LIST__'):
-            return '@{%s}' % name[6:]
-        if name.startswith('DICT__'):
-            return '&{%s}' % name[6:]
-        return '${%s}' % name
-
-    def _validate(self, name, value):
-        if name[0] == '@' and not is_list_like(value):
-            raise DataError("Invalid variable '%s': Expected list-like value, "
-                            "got %s." % (name, type_name(value)))
-        if name[0] == '&' and not is_dict_like(value):
-            raise DataError("Invalid variable '%s': Expected dict-like value, "
-                            "got %s." % (name, type_name(value)))
 
 
 class JsonImporter:
+
     def import_variables(self, path, args=None):
         if args:
             raise DataError('JSON variable files do not accept arguments.')
         variables = self._import(path)
-        return [('${%s}' % name, self._dot_dict(value))
+        return [(f'${{{name}}}', self._dot_dict(value))
                 for name, value in variables]
 
     def _import(self, path):
         with io.open(path, encoding='UTF-8') as stream:
             variables = json.load(stream)
         if not is_dict_like(variables):
-            raise DataError('JSON variable file must be a mapping, got %s.'
-                            % type_name(variables))
+            raise DataError(f'JSON variable file must be a mapping, '
+                            f'got {type_name(variables)}.')
         return variables.items()
+
+    def _dot_dict(self, value):
+        if is_dict_like(value):
+            return DotDict((k, self._dot_dict(v)) for k, v in value.items())
+        if is_list_like(value):
+            return [self._dot_dict(v) for v in value]
+        return value
+
+
+class YamlImporter:
+
+    def import_variables(self, path, args=None):
+        if args:
+            raise DataError('YAML variable files do not accept arguments.')
+        variables = self._import(path)
+        return [(f'${{{name}}}', self._dot_dict(value)) for name, value in variables]
+
+    def _import(self, path):
+        with io.open(path, encoding='UTF-8') as stream:
+            variables = self._load_yaml(stream)
+        if not is_dict_like(variables):
+            raise DataError(f'YAML variable file must be a mapping, '
+                            f'got {type_name(variables)}.')
+        return variables.items()
+
+    def _load_yaml(self, stream):
+        if not yaml:
+            raise DataError('Using YAML variable files requires PyYAML module '
+                            'to be installed. Typically you can install it '
+                            'by running `pip install pyyaml`.')
+        if yaml.__version__.split('.')[0] == '3':
+            return yaml.load(stream)
+        return yaml.full_load(stream)
 
     def _dot_dict(self, value):
         if is_dict_like(value):
