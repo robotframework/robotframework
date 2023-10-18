@@ -51,14 +51,14 @@ Dynamic Variable File With Variables And Backslashes In Args
 Invalid return value from dynamic variable file
     ${path} =    Normalize Path    ${RESDIR}/dynamic_variables.py
     Error in file    4    ${DATAFILE}    10
-    ...    Processing variable file '${path}' with arguments [ Two args | returns invalid ] failed:
+    ...    Processing variable file '${path}' with arguments ['Two args', 'returns invalid'] failed:
     ...    Expected 'get_variables' to return a dictionary-like value, got None.
     ...    pattern=False
 
 Dynamic variable file raises exception
     ${path} =    Normalize Path    ${RESDIR}/dynamic_variables.py
     Error in file    5    ${DATAFILE}    12
-    ...    Processing variable file '${path}' with arguments [ More | args | raises | exception ] failed:
+    ...    Processing variable file '${path}' with arguments ['More', 'args', 'raises', 'exception'] failed:
     ...    Invalid arguments for get_variables
     ...    pattern=False
 

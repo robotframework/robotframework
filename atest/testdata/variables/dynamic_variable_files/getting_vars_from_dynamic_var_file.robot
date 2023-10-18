@@ -1,9 +1,11 @@
 *** Settings ***
 Variables         dyn_vars.py    dict
-Variables         dyn_vars.py    mydict
+Variables         dyn_vars.py    type=mydict
 Variables         dyn_vars.py    Mapping
 Variables         dyn_vars.py    UserDict
 Variables         dyn_vars.py    MyUserDict
+Variables         argument_conversion.py    ${42}    number=3.14
+Variables         argument_conversion.py    ok       bad
 
 *** Test Cases ***
 Variables From Dict Should Be Loaded
@@ -25,3 +27,7 @@ Variables From UserDict Should Be Loaded
 Variables From My UserDict Should Be Loaded
     Should Be Equal    ${from my userdict}     This From MyUserDict
     Should Be Equal    ${from my userdict2}    ${2}
+
+Argument conversion
+    Should Be Equal    ${string}               42
+    Should Be Equal    ${number}               ${3.14}

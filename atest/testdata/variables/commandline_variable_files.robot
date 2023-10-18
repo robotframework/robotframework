@@ -19,6 +19,9 @@ Arguments To Variable Files Using Semicolon Separator
     Should Be Equal    ${SEMICOLON}                separator
     Should Be Equal    ${SEMI:COLON}               separator:with:colons
 
+Argument Conversion
+    Should Be Equal    ${CONVERSION}               ${42}
+
 Variable File From PYTHONPATH
     Should Be Equal    ${PYTHONPATH VAR 0}         Varfile found from PYTHONPATH
     Should Be Equal    ${PYTHONPATH ARGS 0}        ${EMPTY}

@@ -21,14 +21,14 @@ Dict is ordered
 Invalid list
     Check Test Case    ${TESTNAME}
     Verify Error    0    3
-    ...    [ LIST__inv_list | not a list ]
+    ...    ['LIST__inv_list', 'not a list']
     ...    LIST__inv_list
     ...    Expected a list-like value, got string.
 
 Invalid dict
     Check Test Case    ${TESTNAME}
     Verify Error    1    4
-    ...    [ DICT__inv_dict | ['1', '2', 3] ]
+    ...    ['DICT__inv_dict', ['1', '2', 3]]
     ...    DICT__inv_dict
     ...    Expected a dictionary-like value, got list.
 

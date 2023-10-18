@@ -47,7 +47,8 @@ class ArgumentValidator:
 
     def _raise_error(self, message):
         spec = self.arg_spec
-        raise DataError(f"{spec.type.capitalize()} '{spec.name}' {message}.")
+        name = f"'{spec.name}' " if spec.name else ''
+        raise DataError(f"{spec.type.capitalize()} {name}{message}.")
 
     def _validate_no_positional_only_as_named(self, named, spec):
         if not spec.var_named:

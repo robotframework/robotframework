@@ -16,6 +16,9 @@ Arguments To Variable Files
 Arguments To Variable Files Using Semicolon Separator
     Check Test Case  ${TEST NAME}
 
+Argument Conversion
+    Check Test Case  ${TEST NAME}
+
 Variable File From PYTHONPATH
     Check Test Case  ${TEST NAME}
 
@@ -28,18 +31,21 @@ Variable File From PYTHONPATH as module
 Variable File From PYTHONPATH as submodule
     Check Test Case  ${TEST NAME}
 
-Non-Existing Variable File
-    Stderr Should Contain  [ ERROR ] Variable file '${VF3}' does not exist.
-    Stderr Should Contain  [ ERROR ] Variable file '${VF4}' does not exist.
-
 Too Few Arguments To Variable File
-    Stderr Should Contain  [ ERROR ] Processing variable file '${VF2}' failed: TypeError: get_variables()
+    Check Log Message    ${ERRORS}[0]    Processing variable file '${VF2}' failed: Variable file expected 1 to 3 arguments, got 0.    level=ERROR
 
 Too Many Arguments To Variable File
-    Stderr Should Contain  [ ERROR ] Processing variable file '${VF2}' with arguments [ too | many | args ] failed: TypeError: get_variables()
+    Check Log Message    ${ERRORS}[2]    Processing variable file '${VF2}' with arguments ['too', 'many', 'args', 'here', 'we', 'have'] failed: Variable file expected 1 to 3 arguments, got 6.    level=ERROR
+
+Invalid Arguments To Variable File
+    Check Log Message    ${ERRORS}[3]    Processing variable file '${VF2}' with arguments ['ok', 'ok', 'not number'] failed: ValueError: Argument 'conversion' got value 'not number' that cannot be converted to integer.    level=ERROR
 
 Invalid Variable File
-    Stderr Should Contain  [ ERROR ] Processing variable file '${VF2}' with arguments [ FAIL ] failed: ZeroDivisionError:
+    Check Log Message    ${ERRORS}[1]    Processing variable file '${VF2}' with arguments [[]'FAIL'[]] failed: ZeroDivisionError: *    level=ERROR    pattern=True
+
+Non-Existing Variable File
+    Check Log Message    ${ERRORS}[4]     Variable file '${VF3}' does not exist.    level=ERROR
+    Check Log Message    ${ERRORS}[5]     Variable file '${VF4}' does not exist.    level=ERROR
 
 *** Keywords ***
 Run Test Data
@@ -49,13 +55,14 @@ Run Test Data
     ${VF4} =  Set Variable  non_absolute_non_existing.py
     ${options} =  Catenate
     ...  --variablefile ${VF1}
-    ...  -V ${VF2}:arg
+    ...  -V ${VF2}:arg:conversion=42
     ...  -V "${VF2}:arg2:value;with;semi;colons"
     ...  -V "${VF2};semicolon;separator"
-    ...  -V "${VF2};semi:colon;separator:with:colons"
+    ...  -V "${VF2};semi:colon;separator:with:colons;42"
     ...  --VariableFile ${VF2}
     ...  -V ${VF2}:FAIL
-    ...  -V ${VF2}:too:many:args
+    ...  -V ${VF2}:too:many:args:here:we:have
+    ...  -V "${VF2}:ok:ok:not number"
     ...  --variablef ${VF3}
     ...  --VARIABLEFILE ${VF4}
     ...  --VariableFile pythonpath_varfile.py

@@ -23,8 +23,8 @@ except ImportError:
 
 from robot.errors import DataError
 from robot.output import LOGGER
-from robot.utils import (get_error_message, is_dict_like, is_list_like,
-                         is_string, seq2str2, type_name, DotDict, Importer)
+from robot.utils import (DotDict, get_error_message, Importer, is_dict_like,
+                         is_list_like, type_name)
 
 
 class VariableFileSetter:
@@ -38,7 +38,7 @@ class VariableFileSetter:
         return variables
 
     def _import_if_needed(self, path_or_variables, args=None):
-        if not is_string(path_or_variables):
+        if not isinstance(path_or_variables, str):
             return path_or_variables
         LOGGER.info(f"Importing variable file '{path_or_variables}' with args {args}.")
         if path_or_variables.lower().endswith(('.yaml', '.yml')):
@@ -50,7 +50,7 @@ class VariableFileSetter:
         try:
             return importer.import_variables(path_or_variables, args)
         except Exception:
-            args = f'with arguments {seq2str2(args)} ' if args else ''
+            args = f'with arguments {args} ' if args else ''
             raise DataError(f"Processing variable file '{path_or_variables}' "
                             f"{args}failed: {get_error_message()}")
 
@@ -76,11 +76,18 @@ class PythonImporter:
         return list(self._decorate_and_validate(variables))
 
     def _get_dynamic(self, get_variables, args):
-        variables = get_variables(*args)
+        positional, named = self._resolve_arguments(get_variables, args)
+        variables = get_variables(*positional, **dict(named))
         if is_dict_like(variables):
             return variables.items()
         raise DataError(f"Expected '{get_variables.__name__}' to return "
                         f"a dictionary-like value, got {type_name(variables)}.")
+
+    def _resolve_arguments(self, get_variables, args):
+        # Avoid cyclic import. Yuck.
+        from robot.running.arguments import PythonArgumentParser
+        spec = PythonArgumentParser('variable file').parse(get_variables)
+        return spec.resolve(args)
 
     def _get_static(self, var_file):
         names = [attr for attr in dir(var_file) if not attr.startswith('_')]
