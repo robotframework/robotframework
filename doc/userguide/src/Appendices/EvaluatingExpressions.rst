@@ -178,3 +178,8 @@ This should not typically matter, but should be taken into account if
 complex expressions are evaluated often and there are strict time
 constrains. Moving such logic to test libraries is typically a good idea
 anyway.
+
+.. note:: Due to technical reasons, these special variables are available during
+          evaluation as local variables. That makes them unavailable in non-local
+          scopes such as in the expression part of list comprehensions and inside
+          lambdas.
