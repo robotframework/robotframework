@@ -55,12 +55,23 @@ Non-existing variable as scope
     VAR    ${x}    x    scope=${invalid}
 
 Non-existing variable in value
-    [Documentation]    FAIL    Setting variable '\${x} failed: Variable '\${bad}' not found.
+    [Documentation]    FAIL    Setting variable '\${x}' failed: Variable '\${bad}' not found.
     VAR    ${x}    ${bad}
 
 Non-existing variable in separator
-    [Documentation]    FAIL    Setting variable '\${x} failed: Variable '\${bad}' not found.
+    [Documentation]    FAIL    Setting variable '\${x}' failed: Variable '\${bad}' not found.
     VAR    ${x}    a    b    separator=${bad}
+
+Named based on another variable
+    VAR    ${x}      y
+    VAR    ${${x}}   z
+    VAR    ${x-${x}-${y}}   x-y-z
+    Should Be Equal    ${y}    z
+    Should Be Equal    ${x-y-z}    x-y-z
+
+Non-existing variable in name
+    [Documentation]    FAIL    Setting variable '\${this is \${bad}}' failed: Variable '${\bad}' not found.
+    VAR    ${this is ${bad}}    wharever
 
 With FOR
     FOR    ${x}    IN    a    b    c

@@ -53,7 +53,7 @@ Invalid key
     Check Test Case    ${TESTNAME}
     Error In File    5    variables/dict_variable_in_variable_table.robot    34
     ...    Setting variable '\&{NON HASHABLE KEY}' failed:
-    ...    Creating dictionary failed: *
+    ...    Creating dictionary variable failed: *
 
 Non-dict cannot be used as dict variable
     Check Test Case    ${TESTNAME} 1

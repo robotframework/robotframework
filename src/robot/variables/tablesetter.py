@@ -24,31 +24,27 @@ from .search import is_assign, is_list_variable, is_dict_variable
 
 if TYPE_CHECKING:
     from robot.running.model import Var, Variable
+    from .store import VariableStore
 
 
 class VariableTableSetter:
 
-    def __init__(self, store):
-        self._store = store
+    def __init__(self, store: 'VariableStore'):
+        self.store = store
 
     def set(self, variables: 'Sequence[Variable]', overwrite: bool = False):
-        for name, value in self._get_items(variables):
-            self._store.add(name, value, overwrite, decorated=False)
-
-    def _get_items(self, variables: 'Sequence[Variable]'):
         for var in variables:
             try:
                 value = VariableResolver.from_variable(var)
+                self.store.add(var.name, value, overwrite)
             except DataError as err:
                 var.report_error(str(err))
-            else:
-                yield var.name[2:-1], value
 
 
 class VariableResolver(Resolvable):
 
     def __init__(self, value: Sequence[str], error_reporter=None):
-        self.value = value
+        self.value = tuple(value)
         self.error_reporter = error_reporter
         self._resolving = False
 
@@ -56,7 +52,7 @@ class VariableResolver(Resolvable):
     def from_name_and_value(cls, name: str, value: 'str|Sequence[str]',
                             separator: 'str|None' = None,
                             error_reporter=None) -> 'VariableResolver':
-        if not is_assign(name):
+        if not is_assign(name, allow_nested=True):
             raise DataError(f"Invalid variable name '{name}'.")
         if name[0] == '$':
             return ScalarVariableResolver(value, separator, error_reporter)
@@ -95,7 +91,7 @@ class VariableResolver(Resolvable):
         if self.error_reporter:
             self.error_reporter(error)
         else:
-            raise DataError(f'Error reported not set. Reported error was: {error}')
+            raise DataError(f'Error reporter not set. Reported error was: {error}')
 
 
 class ScalarVariableResolver(VariableResolver):
@@ -157,7 +153,7 @@ class DictVariableResolver(VariableResolver):
         try:
             return DotDict(self._yield_replaced(self.value, variables.replace_scalar))
         except TypeError as err:
-            raise DataError(f'Creating dictionary failed: {err}')
+            raise DataError(f'Creating dictionary variable failed: {err}')
 
     def _yield_replaced(self, values, replace_scalar):
         for item in values:
@@ -165,5 +161,4 @@ class DictVariableResolver(VariableResolver):
                 key, values = item
                 yield replace_scalar(key), replace_scalar(values)
             else:
-                for key, values in replace_scalar(item).items():
-                    yield key, values
+                yield from replace_scalar(item).items()

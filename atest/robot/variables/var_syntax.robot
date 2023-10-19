@@ -46,6 +46,12 @@ Non-existing variable in value
 Non-existing variable in separator
     Check Test Case    ${TESTNAME}
 
+Named based on another variable
+    Check Test Case    ${TESTNAME}
+
+Non-existing variable in name
+    Check Test Case    ${TESTNAME}
+
 With FOR
     Check Test Case    ${TESTNAME}
 

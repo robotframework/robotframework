@@ -208,6 +208,12 @@ Optional Assign Mark With Multiple Variables
 Assign Mark Can Be Used Only With The Last Variable
     Check Test Case    ${TESTNAME}
 
+Named based on another variable
+    Check Test Case    ${TESTNAME}
+
+Non-existing variable in name
+    Check Test Case    ${TESTNAME}
+
 Files are not lists
     Check Test Case    ${TESTNAME}
 

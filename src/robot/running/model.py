@@ -40,7 +40,7 @@ from typing import Any, Literal, Mapping, Sequence, TYPE_CHECKING, Union
 
 from robot import model
 from robot.conf import RobotSettings
-from robot.errors import BreakLoop, ContinueLoop, DataError, ReturnFromKeyword
+from robot.errors import BreakLoop, ContinueLoop, DataError, ReturnFromKeyword, VariableError
 from robot.model import BodyItem, create_fixture, DataDict, ModelObject, TestSuites
 from robot.output import LOGGER, Output, pyloggingconf
 from robot.result import (Break as BreakResult, Continue as ContinueResult,
@@ -291,11 +291,11 @@ class Var(model.Var, WithSource):
                 if not context.dry_run:
                     scope = self._get_scope(context.variables)
                     setter = getattr(context.variables, f'set_{scope}')
-                    resolver = VariableResolver.from_variable(self)
                     try:
+                        resolver = VariableResolver.from_variable(self)
                         setter(self.name, resolver.resolve(context.variables))
                     except DataError as err:
-                        raise DataError(f"Setting variable '{self.name} failed: {err}")
+                        raise VariableError(f"Setting variable '{self.name}' failed: {err}")
 
     def _get_scope(self, variables):
         if not self.scope:

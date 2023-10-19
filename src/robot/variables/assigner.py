@@ -197,7 +197,10 @@ class VariableAssigner:
         return value
 
     def _normal_assign(self, name, value, variables):
-        variables[name] = value
+        try:
+            variables[name] = value
+        except DataError as err:
+            raise VariableError(f"Setting variable '{name}' failed: {err}")
         # Always return the actually assigned value.
         return value if name[0] == '$' else variables[name]
 

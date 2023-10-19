@@ -26,11 +26,13 @@ from robot.output import LOGGER
 from robot.utils import (DotDict, get_error_message, Importer, is_dict_like,
                          is_list_like, type_name)
 
+from .store import VariableStore
+
 
 class VariableFileSetter:
 
-    def __init__(self, store):
-        self._store = store
+    def __init__(self, store: VariableStore):
+        self.store = store
 
     def set(self, path_or_variables, args=None, overwrite=False):
         variables = self._import_if_needed(path_or_variables, args)
@@ -56,7 +58,7 @@ class VariableFileSetter:
 
     def _set(self, variables, overwrite=False):
         for name, value in variables:
-            self._store.add(name, value, overwrite)
+            self.store.add(name, value, overwrite, decorated=False)
 
 
 class PythonImporter:
@@ -106,14 +108,14 @@ class PythonImporter:
                 if not is_list_like(value):
                     raise DataError(f"Invalid variable '{name}': Expected a "
                                     f"list-like value, got {type_name(value)}.")
-                name = f'@{{{name[6:]}}}'
+                name = name[6:]
+                value = list(value)
             elif name.startswith('DICT__'):
                 if not is_dict_like(value):
                     raise DataError(f"Invalid variable '{name}': Expected a "
                                     f"dictionary-like value, got {type_name(value)}.")
-                name = f'&{{{name[6:]}}}'
-            else:
-                name = f'${{{name}}}'
+                name = name[6:]
+                value = DotDict(value)
             yield name, value
 
 
@@ -123,8 +125,7 @@ class JsonImporter:
         if args:
             raise DataError('JSON variable files do not accept arguments.')
         variables = self._import(path)
-        return [(f'${{{name}}}', self._dot_dict(value))
-                for name, value in variables]
+        return [(name, self._dot_dict(value)) for name, value in variables]
 
     def _import(self, path):
         with io.open(path, encoding='UTF-8') as stream:
@@ -148,7 +149,7 @@ class YamlImporter:
         if args:
             raise DataError('YAML variable files do not accept arguments.')
         variables = self._import(path)
-        return [(f'${{{name}}}', self._dot_dict(value)) for name, value in variables]
+        return [(name, self._dot_dict(value)) for name, value in variables]
 
     def _import(self, path):
         with io.open(path, encoding='UTF-8') as stream:

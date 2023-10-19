@@ -89,6 +89,11 @@ Dict assign
     &{x} =    IF    False    Not run    ELSE    Create dictionary    a=1    b=2
     Should Be True    ${x} == {'a': '1', 'b': '2'}
 
+Assign based on another variable
+    VAR    ${x}    y
+    ${${x}} =    IF    True    Set Variable    Y    ELSE    Not run
+    Should Be Equal    ${y}    Y
+
 Assign without ELSE
     ${x} =    IF    True    Set variable    Hello!
     Should Be Equal    ${x}    Hello!

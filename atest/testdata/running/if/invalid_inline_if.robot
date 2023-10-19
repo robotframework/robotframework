@@ -139,11 +139,11 @@ Invalid number of variables in assign
     ${x}    ${y} =    IF    False    Create list    x    y     ELSE    Create list    x    y    z
 
 Invalid value for list assign
-    [Documentation]    FAIL    Cannot set variable '\@{x}': Expected list-like value, got string.
+    [Documentation]    FAIL    Setting variable '\@{x}' failed: Expected list-like value, got string.
     @{x} =    IF    True    Set variable    String is not list
 
 Invalid value for dict assign
-    [Documentation]    FAIL    Cannot set variable '\&{x}': Expected dictionary-like value, got string.
+    [Documentation]    FAIL    Setting variable '\&{x}' failed: Expected dictionary-like value, got string.
     &{x} =    IF    False    Not run    ELSE    Set variable    String is not dict either
 
 Assign when IF branch is empty

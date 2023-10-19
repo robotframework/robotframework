@@ -13,11 +13,6 @@ ${NO VALUE}             ${EMPTY}
 @{LIST CREATED FROM LIST WITH ESCAPES}    @{LIST WITH ESCAPES}
 @{SPACE ESC LIST}       \ lead    trail \    \ \ 2 \ \    \ \ \ 3 \ \ \
 @{EMPTY LIST}
-Invalid Name            Decoration missing
-${}                     Body missing
-${not                   closed
-${not}[ok]              This is variable but not valid assign
-${not ${ok}}            This is variable but not valid assign
 ${lowercase}            Variable name in lower case
 @{lowercaselist}        Variable name in lower case
 ${S P a c e s }         Variable name with spaces
@@ -32,6 +27,13 @@ ${CATENATED}            By    default    values    are    joined    with    a   
 ${SEPARATOR VALUE}      SEPARATOR=-    Special    SEPARATOR    marker    as    ${1}    st    value
 ${SEPARATOR OPTION}     Explicit    separator    option    works    since    RF    ${7.0}    separator=-
 ${BOTH SEPARATORS}      SEPARATOR=marker    has    lower    precedence    than    option    separator=:
+${VAR}                  existing
+${BASED ON ${VAR}}      Supported since 7.0
+${BASED ON ${BAD}}      Ooop!
+Invalid Name            Decoration missing
+${}                     Body missing
+${not                   closed
+${not}[ok]              This is variable but not valid assign
 ${NONEX 1}              Creating variable based on ${NON EXISTING} variable fails.
 ${NONEX 2A}             This ${NON EX} is used for creating another variable.
 ${NONEX 2B}             ${NONEX 2A}
@@ -136,6 +138,9 @@ Scalar catenated from multiple values with 'SEPARATOR' marker
 Scalar catenated from multiple values with 'separator' option
     Should Be Equal    ${SEPARATOR OPTION}    Explicit-separator-option-works-since-RF-7.0
     Should Be Equal    ${BOTH SEPARATORS}     SEPARATOR=marker:has:lower:precedence:than:option
+
+Named based on another variable
+    Should Be Equal    ${BASED ON EXISTING}    Supported since 7.0
 
 Creating variable using non-existing variable fails
     Variable Should Not Exist    ${NONEX 1}

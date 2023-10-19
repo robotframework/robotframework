@@ -23,8 +23,7 @@ from itertools import zip_longest
 from robot.errors import (BreakLoop, ContinueLoop, DataError, ExecutionFailed,
                           ExecutionFailures, ExecutionPassed, ExecutionStatus)
 from robot.result import (For as ForResult, While as WhileResult, If as IfResult,
-                          IfBranch as IfBranchResult, Try as TryResult,
-                          TryBranch as TryBranchResult)
+                          Try as TryResult)
 from robot.output import librarylogger as logger
 from robot.utils import (cut_assign_value, frange, get_error_message, is_list_like,
                          is_number, plural_or_not as s, secs_to_timestr, seq2str,
