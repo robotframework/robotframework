@@ -556,7 +556,7 @@ The example below is functionally identical to the first example related to
 `get_variables` can also take arguments, which facilitates changing
 what variables actually are created. Arguments to the function are set just
 as any other arguments for a Python function. When `taking variable files
-into use`_ in the test data, arguments are specified in cells after the path
+into use`_, arguments are specified after the path
 to the variable file, and in the command line they are separated from the
 path with a colon or a semicolon.
 
@@ -577,6 +577,17 @@ or database where to read variables from.
             return variables1
         else:
             return variables2
+
+Starting from Robot Framework 7.0, arguments to variable files support automatic
+argument conversion as well as named argument syntax. For example, a variable
+file with `get_variables(first: int = 0, second: str = '')` could be imported
+like this:
+
+.. sourcecode:: robotframework
+
+   *** Settings ***
+   Variables    example.py    42              # Converted to integer.
+   Variables    example.py    second=value    # Named argument syntax.
 
 Implementing variable file as a class
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
