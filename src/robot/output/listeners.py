@@ -31,12 +31,12 @@ class Listeners(LoggerApi):
                      'output_file', 'report_file', 'log_file', 'debug_file',
                      'xunit_file', 'library_import', 'resource_import',
                      'variables_import', 'close')
-    _methods = {}
 
     def __init__(self, listeners, log_level='INFO'):
         self._is_logged = IsLogged(log_level)
         listeners = ListenerProxy.import_listeners(listeners,
                                                    self._method_names)
+        self._methods = {}
         for name in self._method_names:
             self._methods[name] = ListenerMethods(name, listeners)
 
@@ -44,21 +44,85 @@ class Listeners(LoggerApi):
         self._methods['start_suite'].start_suite(data, result)
 
     def end_suite(self, data: 'running.TestSuite', result: 'result.TestSuite'):
-        self._methods['end_suite'](ModelCombiner(data, result))
+        self._methods['end_suite'].end_suite(data, result)
 
     def start_test(self, data: 'running.TestCase', result: 'result.TestCase'):
-        self._methods['start_test'](ModelCombiner(data, result))
+        self._methods['start_test'].start_test(data, result)
 
     def end_test(self, data: 'running.TestCase', result: 'result.TestCase'):
-        self._methods['end_test'](ModelCombiner(data, result))
+        self._methods['end_test'].end_test(data, result)
 
-    def start_body_item(self, data, result):
-        if data.type not in (data.IF_ELSE_ROOT, data.TRY_EXCEPT_ROOT):
-            self._methods['start_keyword'](ModelCombiner(data, result))
+    def start_keyword(self, data: 'running.Keyword', result: 'result.Keyword'):
+        self._methods['start_keyword'].start_keyword(data, result)
 
-    def end_body_item(self, data, result):
-        if data.type not in (data.IF_ELSE_ROOT, data.TRY_EXCEPT_ROOT):
-            self._methods['end_keyword'](ModelCombiner(data, result))
+    def end_keyword(self, data: 'running.Keyword', result: 'result.Keyword'):
+        self._methods['end_keyword'].end_keyword(data, result)
+
+    def start_for(self, data: 'running.For', result: 'result.For'):
+        self._methods['start_keyword'].start_for(data, result)
+
+    def end_for(self, data: 'running.For', result: 'result.For'):
+        self._methods['end_keyword'].end_for(data, result)
+
+    def start_for_iteration(self, data: 'running.For', result: 'result.ForIteration'):
+        self._methods['start_keyword'].start_for_iteration(data, result)
+
+    def end_for_iteration(self, data: 'running.For', result: 'result.ForIteration'):
+        self._methods['end_keyword'].end_for_iteration(data, result)
+
+    def start_while(self, data: 'running.While', result: 'result.While'):
+        self._methods['start_keyword'].start_while(data, result)
+
+    def start_while_iteration(self, data: 'running.While', result: 'result.WhileIteration'):
+        self._methods['start_keyword'].start_while_iteration(data, result)
+
+    def end_while_iteration(self, data: 'running.While', result: 'result.WhileIteration'):
+        self._methods['end_keyword'].end_while_iteration(data, result)
+
+    def end_while(self, data: 'running.While', result: 'result.While'):
+        self._methods['end_keyword'].end_while(data, result)
+
+    def start_if_branch(self, data: 'running.If', result: 'result.If'):
+        self._methods['start_keyword'].start_if_branch(data, result)
+
+    def end_if_branch(self, data: 'running.If', result: 'result.If'):
+        self._methods['end_keyword'].end_if_branch(data, result)
+
+    def start_try_branch(self, data: 'running.Try', result: 'result.TryBranch'):
+        self._methods['start_keyword'].start_try_branch(data, result)
+
+    def end_try_branch(self, data: 'running.Try', result: 'result.TryBranch'):
+        self._methods['end_keyword'].end_try_branch(data, result)
+
+    def start_return(self, data: 'running.Return', result: 'result.Return'):
+        self._methods['start_keyword'].start_return(data, result)
+
+    def end_return(self, data: 'running.Return', result: 'result.Return'):
+        self._methods['end_keyword'].end_return(data, result)
+
+    def start_continue(self, data: 'running.Continue', result: 'result.Continue'):
+        self._methods['start_keyword'].start_continue(data, result)
+
+    def end_continue(self, data: 'running.Continue', result: 'result.Continue'):
+        self._methods['end_keyword'].end_continue(data, result)
+
+    def start_break(self, data: 'running.Break', result: 'result.Break'):
+        self._methods['start_keyword'].start_break(data, result)
+
+    def end_break(self, data: 'running.Break', result: 'result.Break'):
+        self._methods['end_keyword'].end_break(data, result)
+
+    def start_error(self, data: 'running.Error', result: 'result.Error'):
+        self._methods['start_keyword'].start_error(data, result)
+
+    def end_error(self, data: 'running.Error', result: 'result.Error'):
+        self._methods['end_keyword'].end_error(data, result)
+
+    def start_var(self, data: 'running.Var', result: 'result.Var'):
+        self._methods['start_keyword'].start_var(data, result)
+
+    def end_var(self, data: 'running.Var', result: 'result.Var'):
+        self._methods['end_keyword'].end_var(data, result)
 
     def set_log_level(self, level):
         self._is_logged.set_level(level)
