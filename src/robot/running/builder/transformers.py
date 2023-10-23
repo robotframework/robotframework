@@ -18,7 +18,7 @@ from ast import NodeVisitor
 from robot.errors import DataError
 from robot.output import LOGGER
 from robot.parsing import File, Token
-from robot.variables import VariableIterator
+from robot.variables import VariableMatches
 
 from .settings import FileSettings
 from ..model import (For, If, IfBranch, ResourceFile, TestSuite, TestCase, Try,
@@ -250,14 +250,13 @@ class TestCaseBuilder(BodyBuilder):
                 item.args = args
 
     def _format_template(self, template, arguments):
-        variables = VariableIterator(template, identifiers='$')
-        count = len(variables)
+        matches = VariableMatches(template, identifiers='$')
+        count = len(matches)
         if count == 0 or count != len(arguments):
             return template, arguments
         temp = []
-        for (before, _, after), arg in zip(variables, arguments):
-            temp.extend([before, arg])
-        temp.append(after)
+        for match, arg in zip(matches, arguments):
+            temp[-1:] = [match.before, arg, match.after]
         return ''.join(temp), ()
 
     def visit_Documentation(self, node):

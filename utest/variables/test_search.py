@@ -4,7 +4,7 @@ from robot.errors import DataError
 from robot.utils.asserts import (assert_equal, assert_false,
                                  assert_raises_with_msg, assert_true)
 from robot.variables.search import (search_variable, unescape_variable_syntax,
-                                    VariableIterator)
+                                    VariableMatches)
 
 
 class TestSearchVariable(unittest.TestCase):
@@ -236,7 +236,7 @@ class TestSearchVariable(unittest.TestCase):
         assert_equal(match.end, end, f'{inp!r} end')
         assert_equal(match.before, inp[:start] if start != -1 else inp)
         assert_equal(match.match, inp[start:end] if end != -1 else None)
-        assert_equal(match.after, inp[end:] if end != -1 else None)
+        assert_equal(match.after, inp[end:] if end != -1 else '')
         assert_equal(match.identifier, identifier, f'{inp!r} identifier')
         assert_equal(match.items, items, f'{inp!r} item')
         assert_equal(match.is_variable(), is_var)
@@ -269,36 +269,42 @@ class TestSearchVariable(unittest.TestCase):
         assert_true(search_variable('&{x}[k][foo][bar][1]').is_dict_variable())
 
 
-class TestVariableIterator(unittest.TestCase):
+class TestVariableMatches(unittest.TestCase):
 
     def test_no_variables(self):
-        iterator = VariableIterator('no vars here', identifiers='$')
-        assert_equal(list(iterator), [])
-        assert_equal(bool(iterator), False)
-        assert_equal(len(iterator), 0)
+        matches = VariableMatches('no vars here', identifiers='$')
+        assert_equal(list(matches), [])
+        assert_equal(bool(matches), False)
+        assert_equal(len(matches), 0)
 
     def test_one_variable(self):
-        iterator = VariableIterator('one ${var} here', identifiers='$')
-        assert_equal(list(iterator), [('one ', '${var}', ' here')])
-        assert_equal(bool(iterator), True)
-        assert_equal(len(iterator), 1)
+        matches = VariableMatches('one ${var} here', identifiers='$')
+        assert_equal(bool(matches), True)
+        assert_equal(len(matches), 1)
+        self._assert_match(next(iter(matches)), 'one ', '${var}', ' here')
 
     def test_multiple_variables(self):
-        iterator = VariableIterator('${1} @{2} and %{3}', identifiers='$@%')
-        assert_equal(list(iterator), [('', '${1}', ' @{2} and %{3}'),
-                                      (' ', '@{2}', ' and %{3}'),
-                                      (' and ', '%{3}', '')])
-        assert_equal(bool(iterator), True)
-        assert_equal(len(iterator), 3)
+        matches = VariableMatches('${1} @{2} and %{3}', identifiers='$@%')
+        assert_equal(bool(matches), True)
+        assert_equal(len(matches), 3)
+        m1, m2, m3 = matches
+        self._assert_match(m1, '', '${1}', ' @{2} and %{3}')
+        self._assert_match(m2, ' ', '@{2}', ' and %{3}')
+        self._assert_match(m3, ' and ', '%{3}', '')
 
     def test_can_be_iterated_many_times(self):
-        iterator = VariableIterator('one ${var} here', identifiers='$')
-        assert_equal(list(iterator), [('one ', '${var}', ' here')])
-        assert_equal(list(iterator), [('one ', '${var}', ' here')])
-        assert_equal(bool(iterator), True)
-        assert_equal(bool(iterator), True)
-        assert_equal(len(iterator), 1)
-        assert_equal(len(iterator), 1)
+        matches = VariableMatches('one ${var} here', identifiers='$')
+        assert_equal(bool(matches), True)
+        assert_equal(bool(matches), True)
+        assert_equal(len(matches), 1)
+        assert_equal(len(matches), 1)
+        self._assert_match(list(matches)[0], 'one ', '${var}', ' here')
+        self._assert_match(list(matches)[0], 'one ', '${var}', ' here')
+
+    def _assert_match(self, match, before, variable, after):
+        assert_equal(match.before, before)
+        assert_equal(match.match, variable)
+        assert_equal(match.after, after)
 
 
 class TestUnescapeVariableSyntax(unittest.TestCase):

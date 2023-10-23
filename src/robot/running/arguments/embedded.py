@@ -17,7 +17,7 @@ import re
 
 from robot.errors import DataError
 from robot.utils import get_error_message, is_string
-from robot.variables import VariableIterator
+from robot.variables import VariableMatches
 
 from ..context import EXECUTION_CONTEXTS
 
@@ -79,14 +79,16 @@ class EmbeddedArgumentParser:
         args = []
         custom_patterns = {}
         name_regexp = ['^']
-        for before, variable, string in VariableIterator(string, identifiers='$'):
-            name, pattern, custom = self._get_name_and_pattern(variable[2:-1])
+        after = string
+        for match in VariableMatches(string, identifiers='$'):
+            name, pattern, custom = self._get_name_and_pattern(match.base)
             args.append(name)
             if custom:
                 custom_patterns[name] = pattern
                 pattern = self._format_custom_regexp(pattern)
-            name_regexp.extend([re.escape(before), f'({pattern})'])
-        name_regexp.extend([re.escape(string), '$'])
+            name_regexp.extend([re.escape(match.before), f'({pattern})'])
+            after = match.after
+        name_regexp.extend([re.escape(after), '$'])
         name = self._compile_regexp(name_regexp) if args else None
         return EmbeddedArguments(name, args, custom_patterns or None)
 

@@ -23,7 +23,7 @@ from tokenize import generate_tokens, untokenize
 from robot.errors import DataError
 from robot.utils import get_error_message, type_name
 
-from .search import search_variable
+from .search import VariableMatches
 from .notfound import variable_not_found
 
 
@@ -113,16 +113,12 @@ def _import_modules(module_names):
 
 
 def _recommend_special_variables(expression):
-    example = []
-    remaining = expression
-    while True:
-        match = search_variable(remaining)
-        if not match:
-            break
-        example[-1:] = [match.before, match.identifier, match.base, match.after]
-        remaining = example[-1]
-    if not example:
+    matches = VariableMatches(expression)
+    if not matches:
         return ''
+    example = []
+    for match in matches:
+        example[-1:] += [match.before, match.identifier, match.base, match.after]
     example = ''.join(example)
     return (f"Variables in the original expression '{expression}' were resolved "
             f"before the expression was evaluated. Try using '{example}' "

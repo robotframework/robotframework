@@ -14,63 +14,79 @@
 #  limitations under the License.
 
 import re
+from typing import Iterator, Sequence
 
 from robot.errors import VariableError
 from robot.utils import is_string
 
 
-def search_variable(string, identifiers='$@&%*', ignore_errors=False):
+def search_variable(string: str, identifiers: Sequence[str] = '$@&%*',
+                    ignore_errors: bool = False) -> 'VariableMatch':
     if not (is_string(string) and '{' in string):
         return VariableMatch(string)
     return _search_variable(string, identifiers, ignore_errors)
 
 
-def contains_variable(string, identifiers='$@&'):
+def contains_variable(string: str, identifiers: Sequence[str] = '$@&') -> bool:
     match = search_variable(string, identifiers, ignore_errors=True)
     return bool(match)
 
 
-def is_variable(string, identifiers='$@&'):
+def is_variable(string: str, identifiers: Sequence[str] = '$@&') -> bool:
     match = search_variable(string, identifiers, ignore_errors=True)
     return match.is_variable()
 
 
-def is_scalar_variable(string):
+def is_scalar_variable(string: str) -> bool:
     return is_variable(string, '$')
 
 
-def is_list_variable(string):
+def is_list_variable(string: str) -> bool:
     return is_variable(string, '@')
 
 
-def is_dict_variable(string):
+def is_dict_variable(string: str) -> bool:
     return is_variable(string, '&')
 
 
-def is_assign(string, identifiers='$@&', allow_assign_mark=False,
-              allow_nested=False, allow_items=False):
+def is_assign(string: str,
+              identifiers: Sequence[str] = '$@&',
+              allow_assign_mark: bool = False,
+              allow_nested: bool = False,
+              allow_items: bool = False) -> bool:
     match = search_variable(string, identifiers, ignore_errors=True)
     return match.is_assign(allow_assign_mark, allow_nested, allow_items)
 
 
-def is_scalar_assign(string, allow_assign_mark=False, allow_nested=False,
-                     allow_items=False):
+def is_scalar_assign(string: str,
+                     allow_assign_mark: bool = False,
+                     allow_nested: bool = False,
+                     allow_items: bool = False) -> bool:
     return is_assign(string, '$', allow_assign_mark, allow_nested, allow_items)
 
 
-def is_list_assign(string, allow_assign_mark=False, allow_nested=False,
-                   allow_items=False):
+def is_list_assign(string: str,
+                   allow_assign_mark: bool = False,
+                   allow_nested: bool = False,
+                   allow_items: bool = False) -> bool:
     return is_assign(string, '@', allow_assign_mark, allow_nested, allow_items)
 
 
-def is_dict_assign(string, allow_assign_mark=False, allow_nested=False,
-                   allow_items=False):
+def is_dict_assign(string: str,
+                   allow_assign_mark: bool = False,
+                   allow_nested: bool = False,
+                   allow_items: bool = False) -> bool:
     return is_assign(string, '&', allow_assign_mark, allow_nested, allow_items)
 
 
 class VariableMatch:
 
-    def __init__(self, string, identifier=None, base=None, items=(), start=-1, end=-1):
+    def __init__(self, string: str,
+                 identifier: 'str|None' = None,
+                 base: 'str|None' = None,
+                 items: 'tuple[str, ...]' = (),
+                 start: int = -1,
+                 end: int = -1):
         self.string = string
         self.identifier = identifier
         self.base = base
@@ -88,37 +104,38 @@ class VariableMatch:
             )
 
     @property
-    def name(self):
-        return '%s{%s}' % (self.identifier, self.base) if self else None
+    def name(self) -> 'str|None':
+        return f'{self.identifier}{{{self.base}}}' if self.identifier else None
 
     @property
-    def before(self):
+    def before(self) -> str:
         return self.string[:self.start] if self.identifier else self.string
 
     @property
-    def match(self):
+    def match(self) -> 'str|None':
         return self.string[self.start:self.end] if self.identifier else None
 
     @property
-    def after(self):
-        return self.string[self.end:] if self.identifier else None
+    def after(self) -> str:
+        return self.string[self.end:] if self.identifier else ''
 
-    def is_variable(self):
+    def is_variable(self) -> bool:
         return bool(self.identifier
                     and self.base
                     and self.start == 0
                     and self.end == len(self.string))
 
-    def is_scalar_variable(self):
+    def is_scalar_variable(self) -> bool:
         return self.identifier == '$' and self.is_variable()
 
-    def is_list_variable(self):
+    def is_list_variable(self) -> bool:
         return self.identifier == '@' and self.is_variable()
 
-    def is_dict_variable(self):
+    def is_dict_variable(self) -> bool:
         return self.identifier == '&' and self.is_variable()
 
-    def is_assign(self, allow_assign_mark=False, allow_nested=False, allow_items=False):
+    def is_assign(self, allow_assign_mark: bool = False, allow_nested: bool = False,
+                  allow_items: bool = False) -> bool:
         if allow_assign_mark and self.string.endswith('='):
             match = search_variable(self.string[:-1].rstrip(), ignore_errors=True)
             return match.is_assign(allow_nested=allow_nested, allow_items=allow_items)
@@ -127,26 +144,30 @@ class VariableMatch:
                 and (allow_items or not self.items)
                 and (allow_nested or not search_variable(self.base)))
 
-    def is_scalar_assign(self, allow_assign_mark=False, allow_nested=False):
+    def is_scalar_assign(self, allow_assign_mark: bool = False,
+                         allow_nested: bool = False) -> bool:
         return self.identifier == '$' and self.is_assign(allow_assign_mark, allow_nested)
 
-    def is_list_assign(self, allow_assign_mark=False, allow_nested=False):
+    def is_list_assign(self, allow_assign_mark: bool = False,
+                       allow_nested: bool = False) -> bool:
         return self.identifier == '@' and self.is_assign(allow_assign_mark, allow_nested)
 
-    def is_dict_assign(self, allow_assign_mark=False, allow_nested=False):
+    def is_dict_assign(self, allow_assign_mark: bool = False,
+                       allow_nested: bool = False) -> bool:
         return self.identifier == '&' and self.is_assign(allow_assign_mark, allow_nested)
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         return self.identifier is not None
 
-    def __str__(self):
+    def __str__(self) -> str:
         if not self:
             return '<no match>'
         items = ''.join('[%s]' % i for i in self.items) if self.items else ''
         return '%s{%s}%s' % (self.identifier, self.base, items)
 
 
-def _search_variable(string, identifiers, ignore_errors=False):
+def _search_variable(string: str, identifiers: Sequence[str],
+                     ignore_errors: bool = False) -> VariableMatch:
     start = _find_variable_start(string, identifiers)
     if start < 0:
         return VariableMatch(string)
@@ -197,7 +218,7 @@ def _search_variable(string, identifiers, ignore_errors=False):
             raise VariableError(f"Variable '{incomplete}' was not closed properly.")
         raise VariableError(f"Variable item '{incomplete}' was not closed properly.")
 
-    return match if match else VariableMatch(match)
+    return match
 
 
 def _find_variable_start(string, identifiers):
@@ -236,26 +257,27 @@ def unescape_variable_syntax(item):
     return re.sub(r'(\\+)(?=(.+))', handle_escapes, item)
 
 
-class VariableIterator:
+class VariableMatches:
 
-    def __init__(self, string, identifiers='$@&%', ignore_errors=False):
+    def __init__(self, string: str, identifiers: Sequence[str] = '$@&%',
+                 ignore_errors: bool = False):
         self.string = string
         self.identifiers = identifiers
         self.ignore_errors = ignore_errors
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[VariableMatch]:
         remaining = self.string
         while True:
             match = search_variable(remaining, self.identifiers, self.ignore_errors)
             if not match:
                 break
             remaining = match.after
-            yield match.before, match.match, remaining
+            yield match
 
-    def __len__(self):
+    def __len__(self) -> int:
         return sum(1 for _ in self)
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         try:
             next(iter(self))
         except StopIteration:

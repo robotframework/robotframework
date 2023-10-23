@@ -16,7 +16,7 @@
 from collections.abc import Iterator
 from typing import cast, List
 
-from robot.variables import VariableIterator
+from robot.variables import VariableMatches
 
 
 # Type alias to ease typing elsewhere
@@ -207,26 +207,26 @@ class Token:
         """
         if self.type not in Token.ALLOW_VARIABLES:
             return self._tokenize_no_variables()
-        variables = VariableIterator(self.value)
-        if not variables:
+        matches = VariableMatches(self.value)
+        if not matches:
             return self._tokenize_no_variables()
-        return self._tokenize_variables(variables)
+        return self._tokenize_variables(matches)
 
     def _tokenize_no_variables(self) -> 'Iterator[Token]':
         yield self
 
-    def _tokenize_variables(self, variables) -> 'Iterator[Token]':
+    def _tokenize_variables(self, matches) -> 'Iterator[Token]':
         lineno = self.lineno
         col_offset = self.col_offset
-        remaining = ''
-        for before, variable, remaining in variables:
-            if before:
-                yield Token(self.type, before, lineno, col_offset)
-                col_offset += len(before)
-            yield Token(Token.VARIABLE, variable, lineno, col_offset)
-            col_offset += len(variable)
-        if remaining:
-            yield Token(self.type, remaining, lineno, col_offset)
+        after = ''
+        for match in matches:
+            if match.before:
+                yield Token(self.type, match.before, lineno, col_offset)
+            yield Token(Token.VARIABLE, match.match, lineno, col_offset + match.start)
+            col_offset += match.end
+            after = match.after
+        if after:
+            yield Token(self.type, after, lineno, col_offset)
 
     def __str__(self) -> str:
         return self.value
