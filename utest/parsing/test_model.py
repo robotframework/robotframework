@@ -1017,6 +1017,28 @@ Test
         test = get_and_assert_model(data, expected, depth=1)
         assert_equal([v.name for v in test.body], ['${x}', '@{y}', '&{z}', '${x${y}}'])
 
+    def test_equals(self):
+        data = '''
+*** Test Cases ***
+Test
+    VAR    ${x} =      value
+    VAR    @{y}=       two    values
+'''
+        expected = TestCase(
+            header=TestCaseName([Token(Token.TESTCASE_NAME, 'Test', 2, 0)]),
+            body=[
+                Var([Token(Token.VAR, 'VAR', 3, 4),
+                     Token(Token.VARIABLE, '${x} =', 3, 11),
+                     Token(Token.ARGUMENT, 'value', 3, 23)]),
+                Var([Token(Token.VAR, 'VAR', 4, 4),
+                     Token(Token.VARIABLE, '@{y}=', 4, 11),
+                     Token(Token.ARGUMENT, 'two', 4, 23),
+                     Token(Token.ARGUMENT, 'values', 4, 30)]),
+            ]
+        )
+        test = get_and_assert_model(data, expected, depth=1)
+        assert_equal([v.name for v in test.body], ['${x}', '@{y}'])
+
     def test_options(self):
         data = r'''
 *** Test Cases ***
@@ -1067,7 +1089,7 @@ Test
 Keyword
     VAR    bad      name
     VAR    ${not    closed
-    VAR    ${x}=    = not accepted
+    VAR    ${x}==   only one = accepted
     VAR
     VAR    &{d}     o=k    bad
     VAR    ${x}     ok     scope=bad
@@ -1084,9 +1106,9 @@ Keyword
                      Token(Token.ARGUMENT, 'closed', 4, 20)],
                     ["Invalid variable name '${not'."]),
                 Var([Token(Token.VAR, 'VAR', 5, 4),
-                     Token(Token.VARIABLE, '${x}=', 5, 11),
-                     Token(Token.ARGUMENT, '= not accepted', 5, 20)],
-                    ["Invalid variable name '${x}='."]),
+                     Token(Token.VARIABLE, '${x}==', 5, 11),
+                     Token(Token.ARGUMENT, 'only one = accepted', 5, 20)],
+                    ["Invalid variable name '${x}=='."]),
                 Var([Token(Token.VAR, 'VAR', 6, 4)],
                     ["Invalid variable name ''."]),
                 Var([Token(Token.VAR, 'VAR', 7, 4),

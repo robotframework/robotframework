@@ -2279,6 +2279,16 @@ class TestVar(unittest.TestCase):
         ]
         self._verify(data, expected)
 
+    def test_equals(self):
+        data = 'VAR    ${name}=    value'
+        expected = [
+            (T.VAR, 'VAR', 3, 4),
+            (T.VARIABLE, '${name}=', 3, 11),
+            (T.ARGUMENT, 'value', 3, 23),
+            (T.EOS, '', 3, 28)
+        ]
+        self._verify(data, expected)
+
     def test_multiple_values(self):
         data = 'VAR    @{name}    v1    v2\n...    v3'
         expected = [

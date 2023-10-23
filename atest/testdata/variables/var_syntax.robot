@@ -21,6 +21,14 @@ Dict
     VAR    &{name}    k1=v1    k2=v2
     Should Be Equal    ${name}    ${{{'k1': 'v1', 'k2': 'v2'}}}
 
+Equals is accepted
+    VAR    ${name}=    value
+    Should Be Equal    ${name}    value
+    VAR    @{name} =    v1    v2    v3
+    Should Be Equal    ${name}    ${{['v1', 'v2', 'v3']}}
+    VAR    &{name}=    k1=v1    k2=v2
+    Should Be Equal    ${name}    ${{{'k1': 'v1', 'k2': 'v2'}}}
+
 Scopes 1
     VAR   ${local1}    local1
     VAR   ${local2}    local2    scope=LOCAL

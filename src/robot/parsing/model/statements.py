@@ -676,7 +676,7 @@ class Variable(Statement):
         return self.get_option('separator')
 
     def validate(self, ctx: 'ValidationContext'):
-        VariableValidator(allow_assign_mark=True).validate(self)
+        VariableValidator().validate(self)
         self._validate_options()
 
 
@@ -1262,7 +1262,10 @@ class Var(Statement):
 
     @property
     def name(self) -> str:
-        return self.get_value(Token.VARIABLE, '')
+        name = self.get_value(Token.VARIABLE, '')
+        if name.endswith('='):
+            return name[:-1].rstrip()
+        return name
 
     @property
     def value(self) -> 'tuple[str, ...]':
@@ -1401,14 +1404,10 @@ class EmptyLine(Statement):
 
 class VariableValidator:
 
-    def __init__(self, allow_assign_mark: bool = False):
-        self.allow_assign_mark = allow_assign_mark
-
     def validate(self, statement: Statement):
         name = statement.get_value(Token.VARIABLE, '')
         match = search_variable(name, ignore_errors=True)
-        if not match.is_assign(allow_assign_mark=self.allow_assign_mark,
-                               allow_nested=True):
+        if not match.is_assign(allow_assign_mark=True, allow_nested=True):
             statement.errors += (f"Invalid variable name '{name}'.",)
         if match.identifier == '&':
             self._validate_dict_items(statement)

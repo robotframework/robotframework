@@ -22,6 +22,12 @@ Dict
     ${tc} =    Check Test Case    ${TESTNAME}
     Validate VAR    ${tc.body}[0]    \&{name}    k1=v1    k2=v2
 
+Equals is accepted
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Validate VAR    ${tc.body}[0]    \${name}    value
+    Validate VAR    ${tc.body}[2]    \@{name}    v1    v2    v3
+    Validate VAR    ${tc.body}[4]    \&{name}    k1=v1    k2=v2
+
 Scopes
     ${tc} =    Check Test Case    ${TESTNAME} 1
     Validate VAR    ${tc.body}[0]    \${local1}    local1
