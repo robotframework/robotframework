@@ -50,7 +50,7 @@ Non-string pattern type
     FAIL    FAIL                  pattern_types=['\${42}']
 
 Pattern type multiple times
-    FAIL    NOT RUN               pattern_types=['glob, start']
+    FAIL    PASS    NOT RUN       pattern_types=['start']
 
 Pattern type without patterns
     FAIL    PASS

@@ -110,9 +110,9 @@ Invalid mode from variable
 
 Config more than once
     ${tc} =    Check Test Case    ${TEST NAME} 1
-    Should be IN ZIP loop      ${tc.body[0]}    1   FAIL    mode=longest, shortest
+    Should be IN ZIP loop      ${tc.body[0]}    1   FAIL    mode=shortest
     ${tc} =    Check Test Case    ${TEST NAME} 2
-    Should be IN ZIP loop      ${tc.body[0]}    1   FAIL    mode=longest    fill=x, y, z
+    Should be IN ZIP loop      ${tc.body[0]}    1   FAIL    fill=z
 
 Non-existing variable in mode
     ${tc} =    Check Test Case    ${TEST NAME}

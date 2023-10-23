@@ -62,11 +62,15 @@ class StatementLexer(Lexer, ABC):
         raise NotImplementedError
 
     def _lex_options(self, *names: str, end_index: 'int|None' = None):
+        seen = set()
         for token in reversed(self.statement[:end_index]):
-            if '=' in token.value and token.value.split('=')[0] in names:
-                token.type = Token.OPTION
-            else:
-                break
+            if '=' in token.value:
+                name = token.value.split('=')[0]
+                if name in names and name not in seen:
+                    token.type = Token.OPTION
+                    seen.add(name)
+                    continue
+            break
 
 
 class SingleType(StatementLexer, ABC):

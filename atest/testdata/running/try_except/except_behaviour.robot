@@ -133,10 +133,11 @@ Non-string pattern type
     END
 
 Pattern type multiple times
-    [Documentation]    FAIL    EXCEPT option 'type' is accepted only once, got 2 values 'glob' and 'start'.
     TRY
-        Fail    failure
+        Fail    type=glob with stuff afterwards
     EXCEPT    x    type=glob    type=start
+        No operation
+    ELSE
         Fail   Should not be executed
     END
 

@@ -8,18 +8,22 @@ Scalar with separator
     VAR    ${b}    1       ${2}    3       separator====
     VAR    ${c}    1       2       ${3}    separator=
     VAR    ${d}    ${a}    ${b}    ${c}    separator=${0}
+    VAR    ${e}                            separator=has no effect
+    VAR    ${f}    separator=NO    separator=NO    separator=--YES--
     Should Be Equal    ${a}    1\n2\n3
     Should Be Equal    ${b}    1===2===3
     Should Be Equal    ${c}    123
     Should Be Equal    ${d}    ${a}0${b}0${c}
+    Should Be Equal    ${e}    ${EMPTY}
+    Should Be Equal    ${f}    separator=NO--YES--separator=NO
 
 List
-    VAR    @{name}    v1    v2    v3
-    Should Be Equal    ${name}    ${{['v1', 'v2', 'v3']}}
+    VAR    @{name}    v1    v2    separator=v3
+    Should Be Equal    ${name}    ${{['v1', 'v2', 'separator=v3']}}
 
 Dict
-    VAR    &{name}    k1=v1    k2=v2
-    Should Be Equal    ${name}    ${{{'k1': 'v1', 'k2': 'v2'}}}
+    VAR    &{name}    k1=v1    k2=v2    separator=v3
+    Should Be Equal    ${name}    ${{{'k1': 'v1', 'k2': 'v2', 'separator': 'v3'}}}
 
 Equals is accepted
     VAR    ${name}=    value
@@ -31,14 +35,14 @@ Equals is accepted
 
 Scopes 1
     VAR   ${local1}    local1
-    VAR   ${local2}    local2    scope=LOCAL
-    VAR   ${test}      test      scope=test
-    VAR   ${suite}     suite     scope=${{'suite'}}
-    VAR   ${global}    global    scope=GLOBAL
+    VAR   ${local2}    scope=local2    scope=LOCAL
+    VAR   @{test}      scope=value     scope=test
+    VAR   &{suite}     scope=value     scope=${{'suite'}}
+    VAR   ${global}    global          scope=GLOBAL
     Should Be Equal    ${local1}    local1
-    Should Be Equal    ${local2}    local2
-    Should Be Equal    ${test}      test
-    Should Be Equal    ${suite}     suite
+    Should Be Equal    ${local2}    scope=local2
+    Should Be Equal    ${test}      ${{['scope=value']}}
+    Should Be Equal    ${suite}     ${{{'scope': 'value'}}}
     Should Be Equal    ${global}    global
     Scopes
     Should Be Equal    ${test}      new-test
@@ -47,7 +51,7 @@ Scopes 1
 Scopes 2
     Variable Should Not Exist    ${local1}
     Variable Should Not Exist    ${local2}
-    Should Be Equal    ${suite}     suite
+    Should Be Equal    ${suite}     ${{{'scope': 'value'}}}
     Should Be Equal    ${global}    global
 
 Invalid scope
@@ -123,10 +127,10 @@ With TRY
 Scopes
     Variable Should Not Exist    ${local1}
     Variable Should Not Exist    ${local2}
-    Should Be Equal    ${test}      test
-    Should Be Equal    ${suite}     suite
+    Should Be Equal    ${test}      ${{['scope=value']}}
+    Should Be Equal    ${suite}     ${{{'scope': 'value'}}}
     Should Be Equal    ${global}    global
     VAR                ${local3}    local3
-    VAR                ${test}      new    ${test}    scope=${test}    separator=${{'-'}}
+    VAR                ${test}      new    test    scope=${{'test'}}    separator=${{'-'}}
     Should Be Equal    ${local3}    local3
     Should Be Equal    ${test}      new-test

@@ -169,15 +169,10 @@ class Statement(Node, ABC):
 
         New in Robot Framework 6.1.
         """
-        options = self._get_options()
-        return ', '.join(options[name]) if name in options else default
+        return self._get_options().get(name, default)
 
-    def _get_options(self) -> 'dict[str, list[str]]':
-        options: 'dict[str, list[str]]' = {}
-        for option in self.get_values(Token.OPTION):
-            name, value = option.split('=', 1)
-            options.setdefault(name, []).append(value)
-        return options
+    def _get_options(self) -> 'dict[str, str]':
+        return dict(opt.split('=', 1) for opt in self.get_values(Token.OPTION))
 
     @property
     def lines(self) -> 'Iterator[list[Token]]':
@@ -194,12 +189,8 @@ class Statement(Node, ABC):
         pass
 
     def _validate_options(self):
-        for name, values in self._get_options().items():
-            if len(values) != 1:
-                self.errors += (f"{self.type} option '{name}' is accepted only once, "
-                                f"got {len(values)} values {seq2str(values)}.",)
-            elif self.options[name] is not None:
-                value = values[0]
+        for name, value in self._get_options().items():
+            if self.options[name] is not None:
                 expected = self.options[name]
                 if value.upper() not in expected and not contains_variable(value):
                     self.errors += (f"{self.type} option '{name}' does not accept "

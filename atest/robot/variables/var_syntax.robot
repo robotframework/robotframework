@@ -9,18 +9,20 @@ Scalar
 
 Scalar with separator
     ${tc} =    Check Test Case    ${TESTNAME}
-    Validate VAR    ${tc.body}[0]    \${a}    \${1}    2        3        separator=\\n
-    Validate VAR    ${tc.body}[1]    \${b}    1        \${2}    3        separator====
-    Validate VAR    ${tc.body}[2]    \${c}    1        2        \${3}    separator=
-    Validate VAR    ${tc.body}[3]    \${d}    \${a}    \${b}    \${c}    separator=\${0}
+    Validate VAR    ${tc.body}[0]    \${a}    \${1}    2        3               separator=\\n
+    Validate VAR    ${tc.body}[1]    \${b}    1        \${2}    3               separator====
+    Validate VAR    ${tc.body}[2]    \${c}    1        2        \${3}           separator=
+    Validate VAR    ${tc.body}[3]    \${d}    \${a}    \${b}    \${c}           separator=\${0}
+    Validate VAR    ${tc.body}[4]    \${e}                                      separator=has no effect
+    Validate VAR    ${tc.body}[5]    \${f}    separator\=NO    separator\=NO    separator=--YES--
 
 List
     ${tc} =    Check Test Case    ${TESTNAME}
-    Validate VAR    ${tc.body}[0]    \@{name}    v1    v2    v3
+    Validate VAR    ${tc.body}[0]    \@{name}    v1    v2    separator\=v3
 
 Dict
     ${tc} =    Check Test Case    ${TESTNAME}
-    Validate VAR    ${tc.body}[0]    \&{name}    k1=v1    k2=v2
+    Validate VAR    ${tc.body}[0]    \&{name}    k1=v1    k2=v2    separator\=v3
 
 Equals is accepted
     ${tc} =    Check Test Case    ${TESTNAME}
@@ -31,10 +33,10 @@ Equals is accepted
 Scopes
     ${tc} =    Check Test Case    ${TESTNAME} 1
     Validate VAR    ${tc.body}[0]    \${local1}    local1
-    Validate VAR    ${tc.body}[1]    \${local2}    local2    scope=LOCAL
-    Validate VAR    ${tc.body}[2]    \${test}      test      scope=test
-    Validate VAR    ${tc.body}[3]    \${suite}     suite     scope=\${{'suite'}}
-    Validate VAR    ${tc.body}[4]    \${global}    global    scope=GLOBAL
+    Validate VAR    ${tc.body}[1]    \${local2}    scope\=local2    scope=LOCAL
+    Validate VAR    ${tc.body}[2]    \@{test}      scope\=value     scope=test
+    Validate VAR    ${tc.body}[3]    \&{suite}     scope\=value     scope=\${{'suite'}}
+    Validate VAR    ${tc.body}[4]    \${global}    global           scope=GLOBAL
     Check Test Case    ${TESTNAME} 2
 
 Invalid scope
