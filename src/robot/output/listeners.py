@@ -172,50 +172,49 @@ class Listeners(LoggerApi):
 
 
 class ListenerFacade(LoggerApi):
-    _no_method = lambda *args: None
 
     def __init__(self, listener, name, version):
         self.listener = listener
         self.name = name
         self.version = version
+        self._start_suite = self._get_method(listener, 'start_suite')
+        self._end_suite = self._get_method(listener, 'end_suite')
+        self._start_test = self._get_method(listener, 'start_test')
+        self._end_test = self._get_method(listener, 'end_test')
+        self._log_message = self._get_method(listener, 'log_message')
+        self._message = self._get_method(listener, 'message')
+        self._close = self._get_method(listener, 'close')
 
     def start_suite(self, data: 'running.TestSuite', result: 'result.TestSuite'):
-        method = self._get_method(self.listener, 'start_suite')
-        method(data, result)
+        self._start_suite(data, result)
 
     def end_suite(self, data: 'running.TestSuite', result: 'result.TestSuite'):
-        method = self._get_method(self.listener, 'end_suite')
-        method(data, result)
+        self._end_suite(data, result)
 
     def start_test(self, data: 'running.TestCase', result: 'result.TestCase'):
-        method = self._get_method(self.listener, 'start_test')
-        method(data, result)
+        self._start_test(data, result)
 
     def end_test(self, data: 'running.TestCase', result: 'result.TestCase'):
-        method = self._get_method(self.listener, 'end_test')
-        method(data, result)
+        self._end_test(data, result)
 
     def log_message(self, message: 'model.Message'):
-        method = self._get_method(self.listener, 'log_message')
-        method(message)
+        self._log_message(message)
 
     def message(self, message: 'model.Message'):
-        method = self._get_method(self.listener, 'message')
-        method(message)
+        self._message(message)
 
     def output_file(self, type_: str, path: str):
         method = self._get_method(self.listener, '%s_file' % type_.lower())
         method(path)
 
     def close(self):
-        method = self._get_method(self.listener, 'close')
-        method()
+        self._close()
 
     def _get_method(self, listener, name, prefix=''):
         for method_name in self._get_method_names(name, prefix):
             if hasattr(listener, method_name):
                 return ListenerMethod(getattr(listener, method_name), self.name, self.version)
-        return self._no_method
+        return ListenerMethod(None, self.name, self.version)
 
     def _get_method_names(self, name, prefix):
         names = [name, self._toCamelCase(name)] if '_' in name else [name]
@@ -230,139 +229,121 @@ class ListenerFacade(LoggerApi):
 
 class ListenerV2Facade(ListenerFacade):
 
+    def __init__(self, listener, name, version):
+        super().__init__(listener, name, version)
+        self._start_keyword = self._get_method(listener, 'start_keyword')
+        self._end_keyword = self._get_method(listener, 'end_keyword')
+        self._start_for = self._start_for_iteration = self._start_while = \
+            self._start_while_iteration = self._start_if_branch = \
+            self._start_try_branch = self._start_return = self._start_continue = \
+            self._start_break = self._start_var = self._start_error = self._start_keyword
+        self._end_for = self._end_for_iteration = self._end_while = self._end_while_iteration =\
+            self._end_if_branch = self._end_try_branch = self._end_return = self._end_continue =\
+            self._end_break = self._end_var = self._end_error = self._end_keyword
+
     def imported(self, import_type: str, name: str, attrs):
         method = self._get_method(self.listener, '%s_import' % import_type.lower())
         method(name, attrs)
 
     def start_suite(self, data: 'running.TestSuite', result: 'result.TestSuite'):
-        method = self._get_method(self.listener, 'start_suite')
-        method(result.name, self._suite_v2_attributes(data, result))
+        self._start_suite(result.name, self._suite_v2_attributes(data, result))
 
     def end_suite(self, data: 'running.TestSuite', result: 'result.TestSuite'):
-        method = self._get_method(self.listener, 'end_suite')
-        method(result.name, self._suite_v2_attributes(data, result, is_end=True))
+        self._end_suite(result.name, self._suite_v2_attributes(data, result, is_end=True))
 
     def start_test(self, data: 'running.TestCase', result: 'result.TestCase'):
-        method = self._get_method(self.listener, 'start_test')
-        method(result.name, self._test_v2_attributes(data, result))
+        self._start_test(result.name, self._test_v2_attributes(data, result))
 
     def end_test(self, data: 'running.TestCase', result: 'result.TestCase'):
-        method = self._get_method(self.listener, 'end_test')
-        method(result.name, self._test_v2_attributes(data, result, is_end=True))
+        self._end_test(result.name, self._test_v2_attributes(data, result, is_end=True))
 
     def start_keyword(self, data: 'running.Keyword', result: 'result.Keyword'):
-        method = self._get_method(self.listener, 'start_keyword')
-        method(result.full_name,
-               self._body_item_v2_attributes(data, result, is_keyword_like=True))
+        attrs = self._body_item_v2_attributes(data, result, is_keyword_like=True)
+        self._start_keyword(result.full_name, attrs)
 
     def end_keyword(self, data: 'running.Keyword', result: 'result.Keyword'):
-        method = self._get_method(self.listener, 'end_keyword')
-        method(result.full_name,
-               self._body_item_v2_attributes(data, result, is_keyword_like=True, is_end=True))
+        attrs = self._body_item_v2_attributes(data, result, is_keyword_like=True, is_end=True)
+        self._end_keyword(result.full_name, attrs)
 
     def start_for(self, data: 'running.For', result: 'result.For'):
-        method = self._get_method(self.listener, 'start_keyword')
-        method(result._log_name, self._for_v2_attributes(data, result))
+        self._start_for(result._log_name, self._for_v2_attributes(data, result))
 
     def end_for(self, data: 'running.For', result: 'result.For'):
-        method = self._get_method(self.listener, 'end_keyword')
-        method(result._log_name, self._for_v2_attributes(data, result, is_end=True))
+        self._end_for(result._log_name, self._for_v2_attributes(data, result, is_end=True))
 
     def start_for_iteration(self, data: 'running.For', result: 'result.ForIteration'):
         attrs = self._body_item_v2_attributes(data, result)
         attrs['variables'] = dict(result.assign)
-        method = self._get_method(self.listener, 'start_keyword')
-        method(result._log_name, attrs)
+        self._start_for_iteration(result._log_name, attrs)
 
     def end_for_iteration(self, data: 'running.For', result: 'result.ForIteration'):
         attrs = self._body_item_v2_attributes(data, result, is_end=True)
         attrs['variables'] = dict(result.assign)
-        method = self._get_method(self.listener, 'end_keyword')
-        method(result._log_name, attrs)
+        self._end_for_iteration(result._log_name, attrs)
 
     def start_while(self, data: 'running.While', result: 'result.While'):
-        method = self._get_method(self.listener, 'start_keyword')
-        method(result._log_name, self._while_v2_attributes(data, result))
+        self._start_while(result._log_name, self._while_v2_attributes(data, result))
 
     def end_while(self, data: 'running.While', result: 'result.While'):
-        method = self._get_method(self.listener, 'end_keyword')
-        method(result._log_name, self._while_v2_attributes(data, result, is_end=True))
+        self._end_while(result._log_name, self._while_v2_attributes(data, result, is_end=True))
 
     def start_while_iteration(self, data: 'running.While', result: 'result.WhileIteration'):
-        method = self._get_method(self.listener, 'start_keyword')
-        method(result._log_name, self._body_item_v2_attributes(data, result))
+        self._start_while_iteration(result._log_name, self._body_item_v2_attributes(data, result))
 
     def end_while_iteration(self, data: 'running.While', result: 'result.WhileIteration'):
-        method = self._get_method(self.listener, 'end_keyword')
-        method(result._log_name, self._body_item_v2_attributes(data, result, is_end=True))
+        self._end_while_iteration(result._log_name, self._body_item_v2_attributes(data, result, is_end=True))
 
     def start_if_branch(self, data: 'running.If', result: 'result.IfBranch'):
-        method = self._get_method(self.listener, 'start_keyword')
-        method(result._log_name, self._if_v2_attributes(data, result))
+        self._start_if_branch(result._log_name, self._if_v2_attributes(data, result))
 
     def end_if_branch(self, data: 'running.If', result: 'result.IfBranch'):
-        method = self._get_method(self.listener, 'end_keyword')
-        method(result._log_name, self._if_v2_attributes(data, result, is_end=True))
+        self._end_if_branch(result._log_name, self._if_v2_attributes(data, result, is_end=True))
 
     def start_try_branch(self, data: 'running.Try', result: 'result.TryBranch'):
-        method = self._get_method(self.listener, 'start_keyword')
-        method(result._log_name, self._try_v2_attributes(data, result))
+        self._start_try_branch(result._log_name, self._try_v2_attributes(data, result))
 
     def end_try_branch(self, data: 'running.Try', result: 'result.TryBranch'):
-        method = self._get_method(self.listener, 'end_keyword')
-        method(result._log_name, self._try_v2_attributes(data, result, is_end=True))
+        self._end_try_branch(result._log_name, self._try_v2_attributes(data, result, is_end=True))
 
     def start_return(self, data: 'running.Return', result: 'result.Return'):
         attrs = self._body_item_v2_attributes(data, result)
         attrs['values'] = list(result.values)
-        method = self._get_method(self.listener, 'start_keyword')
-        method(result._log_name, attrs)
+        self._start_return(result._log_name, attrs)
 
     def end_return(self, data: 'running.Return', result: 'result.Return'):
         attrs = self._body_item_v2_attributes(data, result, is_end=True)
         attrs['values'] = list(result.values)
-        method = self._get_method(self.listener, 'end_keyword')
-        method(result._log_name, attrs)
+        self._end_return(result._log_name, attrs)
 
     def start_continue(self, data: 'running.Continue', result: 'result.Continue'):
-        method = self._get_method(self.listener, 'start_keyword')
-        method(result._log_name, self._body_item_v2_attributes(data, result))
+        self._start_continue(result._log_name, self._body_item_v2_attributes(data, result))
 
     def end_continue(self, data: 'running.Continue', result: 'result.Continue'):
-        method = self._get_method(self.listener, 'end_keyword')
-        method(result._log_name, self._body_item_v2_attributes(data, result, is_end=True))
+        self._end_continue(result._log_name, self._body_item_v2_attributes(data, result, is_end=True))
 
     def start_break(self, data: 'running.Break', result: 'result.Break'):
-        method = self._get_method(self.listener, 'start_keyword')
-        method(result._log_name, self._body_item_v2_attributes(data, result))
+        self._start_break(result._log_name, self._body_item_v2_attributes(data, result))
 
     def end_break(self, data: 'running.Break', result: 'result.Break'):
-        method = self._get_method(self.listener, 'end_keyword')
-        method(result._log_name, self._body_item_v2_attributes(data, result, is_end=True))
+        self._end_break(result._log_name, self._body_item_v2_attributes(data, result, is_end=True))
 
     def start_error(self, data: 'running.Error', result: 'result.Error'):
-        method = self._get_method(self.listener, 'start_keyword')
-        method(result._log_name, self._body_item_v2_attributes(data, result))
+        self._start_error(result._log_name, self._body_item_v2_attributes(data, result))
 
     def end_error(self, data: 'running.Error', result: 'result.Error'):
-        method = self._get_method(self.listener, 'end_keyword')
-        method(result._log_name, self._body_item_v2_attributes(data, result, is_end=True))
+        self._end_error(result._log_name, self._body_item_v2_attributes(data, result, is_end=True))
 
     def start_var(self, data: 'running.Var', result: 'result.Var'):
-        method = self._get_method(self.listener, 'start_keyword')
-        method(result._log_name, self._body_item_v2_attributes(data, result))
+        self._start_var(result._log_name, self._body_item_v2_attributes(data, result))
 
     def end_var(self, data: 'running.Var', result: 'result.Var'):
-        method = self._get_method(self.listener, 'end_keyword')
-        method(result._log_name, self._body_item_v2_attributes(data, result, is_end=True))
+        self._end_var(result._log_name, self._body_item_v2_attributes(data, result, is_end=True))
 
     def log_message(self, message: 'model.Message'):
-        method = self._get_method(self.listener, 'log_message')
-        method(self._message_attributes(message))
+        self._log_message(self._message_attributes(message))
 
     def message(self, message: 'model.Message'):
-        method = self._get_method(self.listener, 'message')
-        method(self._message_attributes(message))
+        self._message(self._message_attributes(message))
 
     def _suite_v2_attributes(self, data, result, is_end=False):
         attrs = {
@@ -493,6 +474,7 @@ class ListenerV2Facade(ListenerFacade):
                  'html': 'yes' if msg.html else 'no'}
         return attrs
 
+
 def import_listener(listener):
     if not is_string(listener):
         # Modules have `__name__`, with others better to use `type_name`.
@@ -551,6 +533,8 @@ class ListenerMethod:
         self.library = library
 
     def __call__(self, *args):
+        if self.method is None:
+            return
         if self.called:
             return
         try:
