@@ -1,3 +1,7 @@
+*** Settings ***
+Suite Setup      VAR in suite setup and teardown    suite setup
+Suite Teardown   VAR in suite setup and teardown    suite teardown
+
 *** Test Cases ***
 Scalar
     VAR    ${name}    value
@@ -33,26 +37,30 @@ Equals is accepted
     VAR    &{name}=    k1=v1    k2=v2
     Should Be Equal    ${name}    ${{{'k1': 'v1', 'k2': 'v2'}}}
 
+In suite setup
+    Should Be Equal    ${SUITE}      set in suite setup
+    Should Be Equal    ${GLOBAL}     set in suite setup
+
 Scopes 1
     VAR   ${local1}    local1
     VAR   ${local2}    scope=local2    scope=LOCAL
-    VAR   @{test}      scope=value     scope=test
-    VAR   &{suite}     scope=value     scope=${{'suite'}}
-    VAR   ${global}    global          scope=GLOBAL
+    VAR   @{TEST}      scope=value     scope=test
+    VAR   &{SUITE}     scope=value     scope=${{'suite'}}
+    VAR   ${GLOBAL}    global          scope=GLOBAL
     Should Be Equal    ${local1}    local1
     Should Be Equal    ${local2}    scope=local2
-    Should Be Equal    ${test}      ${{['scope=value']}}
-    Should Be Equal    ${suite}     ${{{'scope': 'value'}}}
-    Should Be Equal    ${global}    global
+    Should Be Equal    ${TEST}      ${{['scope=value']}}
+    Should Be Equal    ${SUITE}     ${{{'scope': 'value'}}}
+    Should Be Equal    ${GLOBAL}    global
     Scopes
-    Should Be Equal    ${test}      new-test
+    Should Be Equal    ${TEST}      new-test
     Variable Should Not Exist    ${local3}
 
 Scopes 2
     Variable Should Not Exist    ${local1}
     Variable Should Not Exist    ${local2}
-    Should Be Equal    ${suite}     ${{{'scope': 'value'}}}
-    Should Be Equal    ${global}    global
+    Should Be Equal    ${SUITE}     ${{{'scope': 'value'}}}
+    Should Be Equal    ${GLOBAL}    global
 
 Invalid scope
     [Documentation]    FAIL    VAR option 'scope' does not accept value 'invalid'. Valid values are 'GLOBAL', 'SUITE', 'TEST', 'TASK' and 'LOCAL'.
@@ -127,10 +135,24 @@ With TRY
 Scopes
     Variable Should Not Exist    ${local1}
     Variable Should Not Exist    ${local2}
-    Should Be Equal    ${test}      ${{['scope=value']}}
-    Should Be Equal    ${suite}     ${{{'scope': 'value'}}}
-    Should Be Equal    ${global}    global
+    Should Be Equal    ${TEST}      ${{['scope=value']}}
+    Should Be Equal    ${SUITE}     ${{{'scope': 'value'}}}
+    Should Be Equal    ${GLOBAL}    global
     VAR                ${local3}    local3
-    VAR                ${test}      new    test    scope=${{'test'}}    separator=${{'-'}}
+    VAR                ${TEST}      new    test    scope=${{'test'}}    separator=${{'-'}}
     Should Be Equal    ${local3}    local3
-    Should Be Equal    ${test}      new-test
+    Should Be Equal    ${TEST}      new-test
+
+VAR in suite setup and teardown
+    [Arguments]    ${where}
+    VAR    ${local}     value
+    VAR    ${SUITE}     set in ${where}    scope=suite
+    VAR    ${GLOBAL}    set in ${where}    scope=global
+    Should Be Equal    ${local}     value
+    Should Be Equal    ${SUITE}     set in ${where}
+    Should Be Equal    ${GLOBAL}    set in ${where}
+    TRY
+        VAR    ${TEST}    this fails    scope=test
+    EXCEPT    AS    ${err}
+        Should Be Equal    ${err}    Setting variable '\${TEST}' failed: Cannot set test variable when no test is started.
+    END

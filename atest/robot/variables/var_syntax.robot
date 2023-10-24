@@ -30,13 +30,22 @@ Equals is accepted
     Validate VAR    ${tc.body}[2]    \@{name}    v1    v2    v3
     Validate VAR    ${tc.body}[4]    \&{name}    k1=v1    k2=v2
 
+In suite setup and teardown
+    Check Test Case    In suite setup
+    Validate VAR    ${SUITE.setup.body}[0]       \${local}     value
+    Validate VAR    ${SUITE.setup.body}[1]       \${SUITE}     set in \${where}    scope=suite
+    Validate VAR    ${SUITE.setup.body}[2]       \${GLOBAL}    set in \${where}    scope=global
+    Validate VAR    ${SUITE.teardown.body}[0]    \${local}     value
+    Validate VAR    ${SUITE.teardown.body}[1]    \${SUITE}     set in \${where}    scope=suite
+    Validate VAR    ${SUITE.teardown.body}[2]    \${GLOBAL}    set in \${where}    scope=global
+
 Scopes
     ${tc} =    Check Test Case    ${TESTNAME} 1
     Validate VAR    ${tc.body}[0]    \${local1}    local1
     Validate VAR    ${tc.body}[1]    \${local2}    scope\=local2    scope=LOCAL
-    Validate VAR    ${tc.body}[2]    \@{test}      scope\=value     scope=test
-    Validate VAR    ${tc.body}[3]    \&{suite}     scope\=value     scope=\${{'suite'}}
-    Validate VAR    ${tc.body}[4]    \${global}    global           scope=GLOBAL
+    Validate VAR    ${tc.body}[2]    \@{TEST}      scope\=value     scope=test
+    Validate VAR    ${tc.body}[3]    \&{SUITE}     scope\=value     scope=\${{'suite'}}
+    Validate VAR    ${tc.body}[4]    \${GLOBAL}    global           scope=GLOBAL
     Check Test Case    ${TESTNAME} 2
 
 Invalid scope
