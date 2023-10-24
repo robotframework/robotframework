@@ -14,26 +14,48 @@
 #  limitations under the License.
 
 import ast
+from typing import Any, Callable, Dict, Optional, Type, Union
 
 from .statements import Node
 
 
-class VisitorFinder:
+class _NotSet:
+    pass
 
-    def _find_visitor(self, cls):
-        if cls is ast.AST:
+
+class VisitorFinder:
+    __NOT_SET = _NotSet()
+    __cls_cache: Dict[Type[Any], Union[Callable[..., Any], None, _NotSet]]
+
+    def __new__(cls, *_args: Any, **_kwargs: Any):  # type: ignore[no-untyped-def]
+        # create cache on class level to avoid creating it for each instance
+        cls.__cls_cache = {}
+        return super().__new__(cls)
+
+    @classmethod
+    def __find_visitor(cls, node_cls: Type[Any]) -> Optional[Callable[..., Any]]:
+        if node_cls is ast.AST:
             return None
-        method = 'visit_' + cls.__name__
-        if hasattr(self, method):
-            return getattr(self, method)
-        # Forward-compatibility.
-        if method == 'visit_Return' and hasattr(self, 'visit_ReturnSetting'):
-            return getattr(self, 'visit_ReturnSetting')
-        for base in cls.__bases__:
-            visitor = self._find_visitor(base)
-            if visitor:
-                return visitor
+        method_name = "visit_" + node_cls.__name__
+        method = getattr(cls, method_name, None)
+        if callable(method):
+            return method  # type: ignore[no-any-return]
+        if method_name == "visit_Return":
+            method = getattr(cls, "visit_ReturnSetting", None)
+            if callable(method):
+                return method  # type: ignore[no-any-return]
+        for base in node_cls.__bases__:
+            method = cls._find_visitor(base)
+            if method:
+                return method
         return None
+
+    @classmethod
+    def _find_visitor(cls, node_cls: Type[Any]) -> Optional[Callable[..., Any]]:
+        result = cls.__cls_cache.get(node_cls, cls.__NOT_SET)
+        if result is cls.__NOT_SET:
+            result = cls.__cls_cache[node_cls] = cls.__find_visitor(node_cls)
+        return result  # type: ignore[return-value]
 
 
 class ModelVisitor(ast.NodeVisitor, VisitorFinder):
@@ -49,9 +71,9 @@ class ModelVisitor(ast.NodeVisitor, VisitorFinder):
             ...
     """
 
-    def visit(self, node: Node):
-        visitor = self._find_visitor(type(node)) or self.generic_visit
-        visitor(node)
+    def visit(self, node: Node) -> None:
+        visitor = self._find_visitor(type(node)) or self.__class__.generic_visit
+        visitor(self, node)
 
 
 class ModelTransformer(ast.NodeTransformer, VisitorFinder):
@@ -62,6 +84,6 @@ class ModelTransformer(ast.NodeTransformer, VisitorFinder):
     <https://docs.python.org/library/ast.html#ast.NodeTransformer>`__.
     """
 
-    def visit(self, node: Node):
-        visitor = self._find_visitor(type(node)) or self.generic_visit
-        return visitor(node)
+    def visit(self, node: Node) -> Node:
+        visitor = self._find_visitor(type(node)) or self.__class__.generic_visit
+        return visitor(self, node)
