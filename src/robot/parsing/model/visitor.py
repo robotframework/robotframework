@@ -14,7 +14,8 @@
 #  limitations under the License.
 
 import ast
-from typing import Any, Callable, Dict, Optional, Type, Union
+from collections import defaultdict
+from typing import Any, Callable, Dict, Iterator, List, Optional, Tuple, Type, Union
 
 from .statements import Node
 
@@ -25,11 +26,14 @@ class _NotSet:
 
 class VisitorFinder:
     __NOT_SET = _NotSet()
-    __cls_cache: Dict[Type[Any], Union[Callable[..., Any], None, _NotSet]]
+    __cls_finder_global_cache__: Dict[
+        Type[Any], Dict[Type[Any], Union[Callable[..., Any], None, _NotSet]]
+    ] = defaultdict(dict)
+    __cls_finder_cache__: Dict[Type[Any], Union[Callable[..., Any], None, _NotSet]]
 
     def __new__(cls, *_args: Any, **_kwargs: Any):  # type: ignore[no-untyped-def]
-        # create cache on class level to avoid creating it for each instance
-        cls.__cls_cache = {}
+        if not hasattr(cls, "__cls_finder_cache__"):
+            cls.__cls_finder_cache__ = cls.__cls_finder_global_cache__[cls]
         return super().__new__(cls)
 
     @classmethod
@@ -52,13 +56,29 @@ class VisitorFinder:
 
     @classmethod
     def _find_visitor(cls, node_cls: Type[Any]) -> Optional[Callable[..., Any]]:
-        result = cls.__cls_cache.get(node_cls, cls.__NOT_SET)
+        result = cls.__cls_finder_cache__.get(node_cls, cls.__NOT_SET)
         if result is cls.__NOT_SET:
-            result = cls.__cls_cache[node_cls] = cls.__find_visitor(node_cls)
+            result = cls.__cls_finder_cache__[node_cls] = cls.__find_visitor(node_cls)
         return result  # type: ignore[return-value]
 
 
-class ModelVisitor(ast.NodeVisitor, VisitorFinder):
+def _iter_field_values(node: Node) -> Iterator[Union[Node, List[Node], None]]:
+    for field in node._fields:
+        try:
+            yield getattr(node, field)
+        except AttributeError:
+            pass
+
+
+def iter_fields(node: Node) -> Iterator[Tuple[str, Union[Node, List[Node], None]]]:
+    for field in node._fields:
+        try:
+            yield field, getattr(node, field)
+        except AttributeError:
+            pass
+
+
+class ModelVisitor(VisitorFinder):
     """NodeVisitor that supports matching nodes based on their base classes.
 
     In other ways identical to the standard `ast.NodeVisitor
@@ -75,8 +95,18 @@ class ModelVisitor(ast.NodeVisitor, VisitorFinder):
         visitor = self._find_visitor(type(node)) or self.__class__.generic_visit
         visitor(self, node)
 
+    def generic_visit(self, node: Node) -> None:
+        for value in _iter_field_values(node):
+            if value is None:
+                continue
+            if isinstance(value, list):
+                for item in value:
+                    self.visit(item)
+            else:
+                self.visit(value)
 
-class ModelTransformer(ast.NodeTransformer, VisitorFinder):
+
+class ModelTransformer(VisitorFinder):
     """NodeTransformer that supports matching nodes based on their base classes.
 
     See :class:`ModelVisitor` for explanation how this is different compared
@@ -84,6 +114,30 @@ class ModelTransformer(ast.NodeTransformer, VisitorFinder):
     <https://docs.python.org/library/ast.html#ast.NodeTransformer>`__.
     """
 
-    def visit(self, node: Node) -> Node:
+    def visit(self, node: Node) -> Union[Node, List[Node], None]:
         visitor = self._find_visitor(type(node)) or self.__class__.generic_visit
         return visitor(self, node)
+
+    def generic_visit(self, node: Node) -> Union[Node, List[Node], None]:
+        for field, old_value in iter_fields(node):
+            if old_value is None:
+                continue
+            if isinstance(old_value, list):
+                new_values = []
+                for value in old_value:
+                    new_value = self.visit(value)
+                    if new_value is None:
+                        continue
+                    if isinstance(new_value, list):
+                        new_values.extend(new_value)
+                        continue
+                    new_values.append(new_value)
+                old_value[:] = new_values
+            else:
+                new_node = self.visit(old_value)
+                if new_node is None:
+                    delattr(node, field)
+                else:
+                    setattr(node, field, new_node)
+
+        return node
