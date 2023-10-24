@@ -14,14 +14,14 @@
 #  limitations under the License.
 
 import ast
-from typing import Any, Callable, Dict, Iterator, List, Optional, Tuple, Type, Union
+from typing import Any, Callable, Iterator
 
 from ...utils.notset import NOT_SET, NotSet
 from .statements import Node
 
 
 class VisitorFinder:
-    __cls_finder_cache__: Dict[Type[Any], Union[Callable[..., Any], None, NotSet]]
+    __cls_finder_cache__: "dict[type[Any], Callable[..., Any]|None|NotSet]"
 
     def __new__(cls, *_args: Any, **_kwargs: Any):  # type: ignore[no-untyped-def]
         if not hasattr(cls, "__cls_finder_cache__"):
@@ -29,7 +29,7 @@ class VisitorFinder:
         return super().__new__(cls)
 
     @classmethod
-    def __find_visitor(cls, node_cls: Type[Any]) -> Optional[Callable[..., Any]]:
+    def __find_visitor(cls, node_cls: "type[Any]") -> "Callable[..., Any]|None":
         if node_cls is ast.AST:
             return None
         method_name = "visit_" + node_cls.__name__
@@ -47,14 +47,14 @@ class VisitorFinder:
         return None
 
     @classmethod
-    def _find_visitor_cached(cls, node_cls: Type[Any]) -> Optional[Callable[..., Any]]:
+    def _find_visitor_cached(cls, node_cls: "type[Any]") -> "Callable[..., Any]|None":
         result = cls.__cls_finder_cache__.get(node_cls, NOT_SET)
         if result is NOT_SET:
             result = cls.__cls_finder_cache__[node_cls] = cls.__find_visitor(node_cls)
         return result  # type: ignore[return-value]
 
 
-def _iter_field_values(node: Node) -> Iterator[Union[Node, List[Node], None]]:
+def _iter_field_values(node: Node) -> "Iterator[Node|list[Node]|None]":
     for field in node._fields:
         try:
             yield getattr(node, field)
@@ -62,7 +62,7 @@ def _iter_field_values(node: Node) -> Iterator[Union[Node, List[Node], None]]:
             pass
 
 
-def iter_fields(node: Node) -> Iterator[Tuple[str, Union[Node, List[Node], None]]]:
+def iter_fields(node: Node) -> "Iterator[tuple[str, Node|list[Node]|None]]":
     for field in node._fields:
         try:
             yield field, getattr(node, field)
@@ -106,11 +106,11 @@ class ModelTransformer(VisitorFinder):
     <https://docs.python.org/library/ast.html#ast.NodeTransformer>`__.
     """
 
-    def visit(self, node: Node) -> Union[Node, List[Node], None]:
+    def visit(self, node: Node) -> "Node|list[Node]|None":
         visitor = self._find_visitor_cached(type(node)) or self.__class__.generic_visit
         return visitor(self, node)
 
-    def generic_visit(self, node: Node) -> Union[Node, List[Node], None]:
+    def generic_visit(self, node: Node) -> "Node|list[Node]|None":
         for field, old_value in iter_fields(node):
             if old_value is None:
                 continue
