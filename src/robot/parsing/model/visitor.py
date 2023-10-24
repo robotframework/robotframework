@@ -14,26 +14,18 @@
 #  limitations under the License.
 
 import ast
-from collections import defaultdict
 from typing import Any, Callable, Dict, Iterator, List, Optional, Tuple, Type, Union
 
+from ...utils.notset import NOT_SET, NotSet
 from .statements import Node
 
 
-class _NotSet:
-    pass
-
-
 class VisitorFinder:
-    __NOT_SET = _NotSet()
-    __cls_finder_global_cache__: Dict[
-        Type[Any], Dict[Type[Any], Union[Callable[..., Any], None, _NotSet]]
-    ] = defaultdict(dict)
-    __cls_finder_cache__: Dict[Type[Any], Union[Callable[..., Any], None, _NotSet]]
+    __cls_finder_cache__: Dict[Type[Any], Union[Callable[..., Any], None, NotSet]]
 
     def __new__(cls, *_args: Any, **_kwargs: Any):  # type: ignore[no-untyped-def]
         if not hasattr(cls, "__cls_finder_cache__"):
-            cls.__cls_finder_cache__ = cls.__cls_finder_global_cache__[cls]
+            cls.__cls_finder_cache__ = {}
         return super().__new__(cls)
 
     @classmethod
@@ -49,15 +41,15 @@ class VisitorFinder:
             if callable(method):
                 return method  # type: ignore[no-any-return]
         for base in node_cls.__bases__:
-            method = cls._find_visitor(base)
+            method = cls._find_visitor_cached(base)
             if method:
                 return method
         return None
 
     @classmethod
-    def _find_visitor(cls, node_cls: Type[Any]) -> Optional[Callable[..., Any]]:
-        result = cls.__cls_finder_cache__.get(node_cls, cls.__NOT_SET)
-        if result is cls.__NOT_SET:
+    def _find_visitor_cached(cls, node_cls: Type[Any]) -> Optional[Callable[..., Any]]:
+        result = cls.__cls_finder_cache__.get(node_cls, NOT_SET)
+        if result is NOT_SET:
             result = cls.__cls_finder_cache__[node_cls] = cls.__find_visitor(node_cls)
         return result  # type: ignore[return-value]
 
@@ -92,7 +84,7 @@ class ModelVisitor(VisitorFinder):
     """
 
     def visit(self, node: Node) -> None:
-        visitor = self._find_visitor(type(node)) or self.__class__.generic_visit
+        visitor = self._find_visitor_cached(type(node)) or self.__class__.generic_visit
         visitor(self, node)
 
     def generic_visit(self, node: Node) -> None:
@@ -115,7 +107,7 @@ class ModelTransformer(VisitorFinder):
     """
 
     def visit(self, node: Node) -> Union[Node, List[Node], None]:
-        visitor = self._find_visitor(type(node)) or self.__class__.generic_visit
+        visitor = self._find_visitor_cached(type(node)) or self.__class__.generic_visit
         return visitor(self, node)
 
     def generic_visit(self, node: Node) -> Union[Node, List[Node], None]:
