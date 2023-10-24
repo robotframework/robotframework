@@ -106,13 +106,13 @@ Non String Variable Is Accepted With Custom Regexp
 
 Regexp Extensions Are Not Supported
     Check Test Case    ${TEST NAME}
-    Creating Keyword Failed    0    294
+    Creating Keyword Failed    0    292
     ...    Regexp extensions like \${x:(?x)re} are not supported
     ...    Regexp extensions are not allowed in embedded arguments.
 
 Invalid Custom Regexp
     Check Test Case    ${TEST NAME}
-    Creating Keyword Failed    1    297
+    Creating Keyword Failed    1    295
     ...    Invalid \${x:(} Regexp
     ...    Compiling embedded arguments regexp failed: *
 
@@ -142,19 +142,19 @@ Embedded Arguments In Resource File Used Explicitly
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Keyword Data    ${tc.kws[0]}    embedded_args_in_uk_1.peke uses resource file    \${ret}
 
-Embedded And Positional Arguments Do Not Work Together
+Keyword with only embedded arguments doesn't accept normal arguments
     Check Test Case    ${TEST NAME}
 
 Keyword with embedded args cannot be used as "normal" keyword
     Check Test Case    ${TEST NAME}
 
-Keyword with both normal and embedded arguments
-    Check Test Case    ${TEST NAME}
+Keyword with both embedded and normal arguments
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log message    ${tc.body[0].body[0].msgs[0]}    2 horses are walking
+    Check Log message    ${tc.body[1].body[0].msgs[0]}    2 horses are swimming
+    Check Log message    ${tc.body[2].body[0].msgs[0]}    3 dogs are walking
 
-Keyword with both normal, positional and embedded arguments
-    Check Test Case    ${TEST NAME}
-
-Keyword with both normal and embedded arguments with too few arguments
+Keyword with both embedded and normal arguments with too few arguments
     Check Test Case    ${TEST NAME}
 
 Keyword matching multiple keywords in test case file
