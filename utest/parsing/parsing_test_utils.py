@@ -47,13 +47,13 @@ def assert_block(model, expected, expected_attrs):
 
 
 def assert_statement(model, expected):
-    assert_equal(model._fields, ('type', 'tokens'))
     assert_equal(model.type, expected.type)
     assert_equal(len(model.tokens), len(expected.tokens))
     for m, e in zip(model.tokens, expected.tokens):
         assert_equal(m, e, formatter=repr)
-    assert_equal(model._attributes, ('lineno', 'col_offset', 'end_lineno',
-                                     'end_col_offset', 'errors'))
+    assert_equal(model._fields, ())
+    assert_equal(model._attributes, ('type', 'tokens', 'lineno', 'col_offset',
+                                     'end_lineno', 'end_col_offset', 'errors'))
     assert_equal(model.lineno, expected.tokens[0].lineno)
     assert_equal(model.col_offset, expected.tokens[0].col_offset)
     assert_equal(model.end_lineno, expected.tokens[-1].lineno)
