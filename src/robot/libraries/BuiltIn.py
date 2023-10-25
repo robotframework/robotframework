@@ -3712,40 +3712,6 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     HTML in messages is not limited to BuiltIn library but works with any
     error message.
 
-    = Using variables with keywords creating or accessing variables =
-
-    This library has special keywords `Set Global Variable`, `Set Suite Variable`,
-    `Set Test Variable` and `Set Local Variable` for creating variables in
-    different scopes. These keywords take the variable name and its value as
-    arguments. The name can be given using the normal ``${variable}`` syntax or
-    in escaped format either like ``$variable`` or ``\${variable}``. For example,
-    these are typically equivalent and create new suite level variable
-    ``${name}`` with value ``value``:
-
-    | Set Suite Variable    ${name}     value
-    | Set Suite Variable    $name       value
-    | Set Suite Variable    \${name}    value
-
-    A problem with using the normal ``${variable}`` syntax is that these
-    keywords cannot easily know is the idea to create a variable with exactly
-    that name or does that variable actually contain the name of the variable
-    to create. If the variable does not initially exist, it will always be
-    created. If it exists and its value is a variable name either in the normal
-    or in the escaped syntax, variable with _that_ name is created instead.
-    For example, if ``${name}`` variable would exist and contain value
-    ``$example``, these examples would create different variables:
-
-    | Set Suite Variable    ${name}     value    # Creates ${example}.
-    | Set Suite Variable    $name       value    # Creates ${name}.
-    | Set Suite Variable    \${name}    value    # Creates ${name}.
-
-    Because the behavior when using the normal ``${variable}`` syntax depends
-    on the possible existing value of the variable, it is *highly recommended
-    to use the escaped ``$variable`` or ``\${variable}`` format instead*.
-
-    This same problem occurs also with special keywords for accessing variables
-    `Get Variable Value`, `Variable Should Exist` and `Variable Should Not Exist`.
-
     = Evaluating expressions =
 
     Many keywords, such as `Evaluate`, `Run Keyword If` and `Should Be True`,
@@ -3809,6 +3775,40 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     Notice that instead of creating complicated expressions, it is often better
     to move the logic into a library. That eases maintenance and can also
     enhance execution speed.
+
+    = Using variables with keywords creating or accessing variables =
+
+    This library has special keywords `Set Global Variable`, `Set Suite Variable`,
+    `Set Test Variable` and `Set Local Variable` for creating variables in
+    different scopes. These keywords take the variable name and its value as
+    arguments. The name can be given using the normal ``${variable}`` syntax or
+    in escaped format either like ``$variable`` or ``\${variable}``. For example,
+    these are typically equivalent and create new suite level variable
+    ``${name}`` with value ``value``:
+
+    | Set Suite Variable    ${name}     value
+    | Set Suite Variable    $name       value
+    | Set Suite Variable    \${name}    value
+
+    A problem with using the normal ``${variable}`` syntax is that these
+    keywords cannot easily know is the idea to create a variable with exactly
+    that name or does that variable actually contain the name of the variable
+    to create. If the variable does not initially exist, it will always be
+    created. If it exists and its value is a variable name either in the normal
+    or in the escaped syntax, variable with _that_ name is created instead.
+    For example, if ``${name}`` variable would exist and contain value
+    ``$example``, these examples would create different variables:
+
+    | Set Suite Variable    ${name}     value    # Creates ${example}.
+    | Set Suite Variable    $name       value    # Creates ${name}.
+    | Set Suite Variable    \${name}    value    # Creates ${name}.
+
+    Because the behavior when using the normal ``${variable}`` syntax depends
+    on the possible existing value of the variable, it is *highly recommended
+    to use the escaped ``$variable`` or ``\${variable}`` format instead*.
+
+    This same problem occurs also with special keywords for accessing variables
+    `Get Variable Value`, `Variable Should Exist` and `Variable Should Not Exist`.
 
     = Boolean arguments =
 
