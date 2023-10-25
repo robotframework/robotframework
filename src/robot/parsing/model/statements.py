@@ -47,7 +47,7 @@ class Node(ast.AST, ABC):
 
 
 class Statement(Node, ABC):
-    _attributes = (*Node._attributes, 'tokens', 'type')
+    _fields = ('type', 'tokens')
     type: str
     handles_types: 'ClassVar[tuple[str, ...]]' = ()
     statement_handlers: 'ClassVar[dict[str, Type[Statement]]]' = {}
