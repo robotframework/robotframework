@@ -1620,16 +1620,23 @@ class _Variables(_BuiltInBase):
         It is recommended to use `Create List` when creating new lists.
 
         Examples:
-        | ${hi} =   | Set Variable | Hello, world! |
-        | ${hi2} =  | Set Variable | I said: ${hi} |
-        | ${var1}   | ${var2} =    | Set Variable | Hello | world |
-        | @{list} = | Set Variable | ${list with some items} |
-        | ${item1}  | ${item2} =   | Set Variable  | ${list with 2 items} |
+        | ${hi} =    Set Variable    Hello, world!
+        | ${hi2} =    Set Variable    I said: ${hi}
+        | ${var1}    ${var2} =    Set Variable    Hello    world
+        | @{list} =    Set Variable    ${list with some items}
+        | ${item1}    ${item2} =    Set Variable    ${list with 2 items}
 
         Variables created with this keyword are available only in the
         scope where they are created. See `Set Global Variable`,
         `Set Test Variable` and `Set Suite Variable` for information on how to
         set variables so that they are available also in a larger scope.
+
+        *NOTE:* The ``VAR`` syntax introduced in Robot Framework 7.0 is generally
+        recommended over this keyword. The basic usage is shown below and the Robot
+        Framework User Guide explains the syntax in detail.
+
+        | VAR    ${hi}     Hello, world!
+        | VAR    ${hi2}    I said: ${hi}
         """
         if len(values) == 0:
             return ''
@@ -1669,6 +1676,9 @@ class _Variables(_BuiltInBase):
         ``${name}``.
 
         See also `Set Global Variable` and `Set Test Variable`.
+
+        *NOTE:* The ``VAR`` syntax introduced in Robot Framework 7.0 is recommended
+        over this keyword.
         """
         name = self._get_var_name(name)
         value = self._get_var_value(name, values)
@@ -1695,6 +1705,9 @@ class _Variables(_BuiltInBase):
 
         When creating automated tasks, not tests, it is possible to use `Set
         Task Variable`. See also `Set Global Variable` and `Set Local Variable`.
+
+        *NOTE:* The ``VAR`` syntax introduced in Robot Framework 7.0 is recommended
+        over this keyword.
         """
         name = self._get_var_name(name)
         value = self._get_var_value(name, values)
@@ -1707,6 +1720,9 @@ class _Variables(_BuiltInBase):
 
         This is an alias for `Set Test Variable` that is more applicable when
         creating tasks, not tests.
+
+        *NOTE:* The ``VAR`` syntax introduced in Robot Framework 7.0 is recommended
+        over this keyword.
         """
         self.set_test_variable(name, *values)
 
@@ -1759,6 +1775,14 @@ class _Variables(_BuiltInBase):
         | Set Suite Variable    &DICT      &{EMPTY}
 
         See also `Set Global Variable`, `Set Test Variable` and `Set Local Variable`.
+
+        *NOTE:* The ``VAR`` syntax introduced in Robot Framework 7.0 is recommended
+        over this keyword. The basic usage is shown below and the Robot Framework
+        User Guide explains the syntax in detail.
+
+        | VAR    ${SCALAR}    Hello, world!                scope=SUITE
+        | VAR    @{LIST}      First item    Second item    scope=SUITE
+        | VAR    &{DICT}      key=value     foo=bar        scope=SUITE
         """
         name = self._get_var_name(name)
         if values and is_string(values[-1]) and values[-1].startswith('children='):
@@ -1792,6 +1816,9 @@ class _Variables(_BuiltInBase):
         section for information why it is recommended to give the variable name
         in escaped format like ``$name`` or ``\${name}`` instead of the normal
         ``${name}``.
+
+        *NOTE:* The ``VAR`` syntax introduced in Robot Framework 7.0 is recommended
+        over this keyword.
         """
         name = self._get_var_name(name)
         value = self._get_var_value(name, values)
@@ -3809,6 +3836,11 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
 
     This same problem occurs also with special keywords for accessing variables
     `Get Variable Value`, `Variable Should Exist` and `Variable Should Not Exist`.
+
+    *NOTE:* It is recommended to use the ``VAR`` syntax introduced in Robot
+    Framework 7.0 for creating variables in different scopes instead of the
+    `Set Global/Suite/Test/Local Variable` keywords. It makes creating variables
+    uniform and avoids all the problems discussed above.
 
     = Boolean arguments =
 
