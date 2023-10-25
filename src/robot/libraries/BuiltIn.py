@@ -2452,19 +2452,21 @@ class _RunKeyword(_BuiltInBase):
         Use `Get Variable Value` if you need to set variables
         dynamically based on whether a variable exist or not.
         """
-        values = self._verify_values_for_set_variable_if(list(values))
-        if self._is_true(condition):
-            return self._variables.replace_scalar(values[0])
-        values = self._verify_values_for_set_variable_if(values[1:], True)
-        if len(values) == 1:
-            return self._variables.replace_scalar(values[0])
-        return self.run_keyword('BuiltIn.Set Variable If', *values[0:])
+        values = list(values)
+        while True:
+            values = self._verify_values_for_set_variable_if(values)
+            if self._is_true(condition):
+                return self._variables.replace_scalar(values[0])
+            if len(values) == 1:
+                return None
+            if len(values) == 2:
+                return self._variables.replace_scalar(values[1])
+            condition, *values = values[1:]
+            condition = self._variables.replace_scalar(condition)
 
-    def _verify_values_for_set_variable_if(self, values, default=False):
+    def _verify_values_for_set_variable_if(self, values):
         if not values:
-            if default:
-                return [None]
-            raise RuntimeError('At least one value is required')
+            raise RuntimeError('At least one value is required.')
         if is_list_variable(values[0]):
             values[:1] = [escape(item) for item in self._variables[values[0]]]
             return self._verify_values_for_set_variable_if(values)
