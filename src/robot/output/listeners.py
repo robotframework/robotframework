@@ -29,7 +29,11 @@ class Listeners(LoggerApi):
 
     def __init__(self, listeners, log_level='INFO'):
         self._is_logged = IsLogged(log_level)
-        self.listeners = import_listeners(listeners)
+        self._listeners = import_listeners(listeners) if listeners else []
+
+    @property
+    def listeners(self):
+        return self._listeners
 
     def start_suite(self, data: 'running.TestSuite', result: 'result.TestSuite'):
         for listener in self.listeners:
@@ -174,7 +178,7 @@ class Listeners(LoggerApi):
 class LibraryListeners(Listeners):
 
     def __init__(self, log_level='INFO'):
-        self._is_logged = IsLogged(log_level)
+        super().__init__([], log_level)
         self._listener_stack = []
 
     @property
@@ -204,10 +208,9 @@ class LibraryListeners(Listeners):
 
 class ListenerFacade(LoggerApi):
 
-    def __init__(self, listener, name, version, prefix=''):
+    def __init__(self, listener, name, prefix=''):
         self.listener = listener
         self.name = name
-        self.version = version
         self.prefix = prefix
         self._start_suite = self._get_method(listener, 'start_suite')
         self._end_suite = self._get_method(listener, 'end_suite')
@@ -245,8 +248,8 @@ class ListenerFacade(LoggerApi):
     def _get_method(self, listener, name):
         for method_name in self._get_method_names(name, self.prefix):
             if hasattr(listener, method_name):
-                return ListenerMethod(getattr(listener, method_name), self.name, self.version)
-        return ListenerMethod(None, self.name, self.version)
+                return ListenerMethod(getattr(listener, method_name), self.name)
+        return ListenerMethod(None, self.name)
 
     def _get_method_names(self, name, prefix):
         names = [name, self._toCamelCase(name)] if '_' in name else [name]
@@ -261,8 +264,8 @@ class ListenerFacade(LoggerApi):
 
 class ListenerV2Facade(ListenerFacade):
 
-    def __init__(self, listener, name, version, prefix=''):
-        super().__init__(listener, name, version, prefix)
+    def __init__(self, listener, name, prefix=''):
+        super().__init__(listener, name, prefix)
         self._start_keyword = self._get_method(listener, 'start_keyword')
         self._end_keyword = self._get_method(listener, 'end_keyword')
         self._start_for = self._start_for_iteration = self._start_while = \
@@ -509,15 +512,15 @@ class ListenerV2Facade(ListenerFacade):
 
 class LibraryListenerFacade(ListenerFacade):
 
-    def __init__(self, listener, name, version, library, prefix='_'):
-        super().__init__(listener, name, version, prefix)
+    def __init__(self, listener, name, library):
+        super().__init__(listener, name, prefix="_")
         self.library = library
 
 
 class LibraryListenerV2Facade(ListenerV2Facade):
 
-    def __init__(self, listener, name, version, library, prefix='_'):
-        super().__init__(listener, name, version, prefix)
+    def __init__(self, listener, name, library):
+        super().__init__(listener, name, prefix='_')
         self.library = library
 
 
@@ -549,38 +552,37 @@ def get_version(listener, name):
 
 
 def import_listeners(listeners, library=None):
-    all = []
-    for listener in listeners:
+    imported = []
+    for listener_source in listeners:
         try:
-            imported, name = import_listener(listener)
-            version = get_version(imported, name)
+            listener, name = import_listener(listener_source)
+            version = get_version(listener, name)
             if version == 2:
                 if library:
-                    all.append(LibraryListenerV2Facade(imported, name, version, library, prefix='_'))
+                    imported.append(LibraryListenerV2Facade(listener, name, library))
                 else:
-                    all.append(ListenerV2Facade(imported, name, version))
+                    imported.append(ListenerV2Facade(listener, name))
             else:
                 if library:
-                    all.append(LibraryListenerFacade(imported, name, version, library, prefix='_'))
+                    imported.append(LibraryListenerFacade(listener, name, library))
                 else:
-                    all.append(ListenerFacade(imported, name, version))
+                    imported.append(ListenerFacade(listener, name))
         except DataError as err:
-            name = listener if is_string(listener) else type_name(listener)
+            name = listener_source if is_string(listener_source) else type_name(listener_source)
             msg = "Taking listener '%s' into use failed: %s" % (name, err)
             if library:
                 raise DataError(msg)
             LOGGER.error(msg)
-    return all
+    return imported
 
 
 class ListenerMethod:
     # Flag to avoid recursive listener calls.
     called = False
 
-    def __init__(self, method, name, version):
+    def __init__(self, method, name):
         self.method = method
         self.listener_name = name
-        self.version = version
 
     def __call__(self, *args):
         if self.method is None:
