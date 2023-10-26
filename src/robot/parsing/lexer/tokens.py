@@ -49,7 +49,7 @@ class Token:
     KEYWORD_HEADER = 'KEYWORD HEADER'
     COMMENT_HEADER = 'COMMENT HEADER'
     INVALID_HEADER = 'INVALID HEADER'
-    FATAL_INVALID_HEADER = 'FATAL INVALID HEADER'
+    FATAL_INVALID_HEADER = 'FATAL INVALID HEADER'    # TODO: Remove in RF 8.
 
     TESTCASE_NAME = 'TESTCASE NAME'
     KEYWORD_NAME = 'KEYWORD NAME'
@@ -63,7 +63,7 @@ class Token:
     TEST_TEMPLATE = 'TEST TEMPLATE'
     TEST_TIMEOUT = 'TEST TIMEOUT'
     TEST_TAGS = 'TEST TAGS'
-    FORCE_TAGS = TEST_TAGS    # TODO: Remove FORCE_TAGS in RF 8.
+    FORCE_TAGS = TEST_TAGS    # TODO: Remove in RF 8.
     DEFAULT_TAGS = 'DEFAULT TAGS'
     KEYWORD_TAGS = 'KEYWORD TAGS'
     LIBRARY = 'LIBRARY'
@@ -75,13 +75,11 @@ class Token:
     TIMEOUT = 'TIMEOUT'
     TAGS = 'TAGS'
     ARGUMENTS = 'ARGUMENTS'
-    # Use ´RETURN_SETTING` type instead of `RETURN`. `[Return]` is deprecated and
-    # `RETURN` type will be used with `RETURN` statement in the future.
-    RETURN = 'RETURN'
-    RETURN_SETTING = RETURN
+    RETURN = 'RETURN'          # TODO: Change to mean RETURN statement in RF 8.
+    RETURN_SETTING = RETURN    # TODO: Remove in RF 8.
 
     AS = 'AS'
-    WITH_NAME = AS    # TODO: Remove WITH_NAME in RF 8.
+    WITH_NAME = AS             # TODO: Remove in RF 8.
 
     NAME = 'NAME'
     VARIABLE = 'VARIABLE'
@@ -111,10 +109,8 @@ class Token:
     CONFIG = 'CONFIG'
     EOL = 'EOL'
     EOS = 'EOS'
-
     ERROR = 'ERROR'
-    # TODO: FATAL_ERROR is no longer used, remove in RF 7.0
-    FATAL_ERROR = 'FATAL ERROR'
+    FATAL_ERROR = 'FATAL ERROR'    # TODO: Remove in RF 8.
 
     NON_DATA_TOKENS = frozenset((
         SEPARATOR,
