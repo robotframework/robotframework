@@ -171,12 +171,44 @@ class Listeners(LoggerApi):
         return len(self.listeners) > 0
 
 
+class LibraryListeners(Listeners):
+
+    def __init__(self, log_level='INFO'):
+        self._is_logged = IsLogged(log_level)
+        self._listener_stack = []
+
+    @property
+    def listeners(self):
+        return self._listener_stack[-1] if self._listener_stack else []
+
+    def new_suite_scope(self):
+        self._listener_stack.append([])
+
+    def discard_suite_scope(self):
+        self._listener_stack.pop()
+
+    def register(self, listeners, library):
+        listeners = import_listeners(listeners, library=library)
+        self._listener_stack[-1].extend(listeners)
+
+    def close(self):
+        pass
+
+    def unregister(self, library, close=False):
+        if close:
+            for listener in [li for li in self.listeners if li.library is library]:
+                listener.close()
+        listeners = [listener for listener in self._listener_stack[-1] if listener.library is not library]
+        self._listener_stack[-1] = listeners
+
+
 class ListenerFacade(LoggerApi):
 
-    def __init__(self, listener, name, version):
+    def __init__(self, listener, name, version, prefix=''):
         self.listener = listener
         self.name = name
         self.version = version
+        self.prefix = prefix
         self._start_suite = self._get_method(listener, 'start_suite')
         self._end_suite = self._get_method(listener, 'end_suite')
         self._start_test = self._get_method(listener, 'start_test')
@@ -210,8 +242,8 @@ class ListenerFacade(LoggerApi):
     def close(self):
         self._close()
 
-    def _get_method(self, listener, name, prefix=''):
-        for method_name in self._get_method_names(name, prefix):
+    def _get_method(self, listener, name):
+        for method_name in self._get_method_names(name, self.prefix):
             if hasattr(listener, method_name):
                 return ListenerMethod(getattr(listener, method_name), self.name, self.version)
         return ListenerMethod(None, self.name, self.version)
@@ -229,8 +261,8 @@ class ListenerFacade(LoggerApi):
 
 class ListenerV2Facade(ListenerFacade):
 
-    def __init__(self, listener, name, version):
-        super().__init__(listener, name, version)
+    def __init__(self, listener, name, version, prefix=''):
+        super().__init__(listener, name, version, prefix)
         self._start_keyword = self._get_method(listener, 'start_keyword')
         self._end_keyword = self._get_method(listener, 'end_keyword')
         self._start_for = self._start_for_iteration = self._start_while = \
@@ -475,6 +507,20 @@ class ListenerV2Facade(ListenerFacade):
         return attrs
 
 
+class LibraryListenerFacade(ListenerFacade):
+
+    def __init__(self, listener, name, version, library, prefix='_'):
+        super().__init__(listener, name, version, prefix)
+        self.library = library
+
+
+class LibraryListenerV2Facade(ListenerV2Facade):
+
+    def __init__(self, listener, name, version, library, prefix='_'):
+        super().__init__(listener, name, version, prefix)
+        self.library = library
+
+
 def import_listener(listener):
     if not is_string(listener):
         # Modules have `__name__`, with others better to use `type_name`.
@@ -502,21 +548,26 @@ def get_version(listener, name):
     return version
 
 
-def import_listeners(listeners,
-                     raise_on_error=False):
+def import_listeners(listeners, library=None):
     all = []
     for listener in listeners:
         try:
             imported, name = import_listener(listener)
             version = get_version(imported, name)
             if version == 2:
-                all.append(ListenerV2Facade(imported, name, version))
+                if library:
+                    all.append(LibraryListenerV2Facade(imported, name, version, library, prefix='_'))
+                else:
+                    all.append(ListenerV2Facade(imported, name, version))
             else:
-                all.append(ListenerFacade(imported, name, version))
+                if library:
+                    all.append(LibraryListenerFacade(imported, name, version, library, prefix='_'))
+                else:
+                    all.append(ListenerFacade(imported, name, version))
         except DataError as err:
             name = listener if is_string(listener) else type_name(listener)
             msg = "Taking listener '%s' into use failed: %s" % (name, err)
-            if raise_on_error:
+            if library:
                 raise DataError(msg)
             LOGGER.error(msg)
     return all
@@ -526,11 +577,10 @@ class ListenerMethod:
     # Flag to avoid recursive listener calls.
     called = False
 
-    def __init__(self, method, name, version, library=None):
+    def __init__(self, method, name, version):
         self.method = method
         self.listener_name = name
         self.version = version
-        self.library = library
 
     def __call__(self, *args):
         if self.method is None:

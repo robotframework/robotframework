@@ -15,11 +15,10 @@
 
 from . import pyloggingconf
 from .debugfile import DebugFile
-from .listeners import Listeners
+from .listeners import Listeners, LibraryListeners
 from .logger import LOGGER
 from .loggerapi import LoggerApi
 from .loggerhelper import AbstractLogger
-from .old_listener import LibraryListeners
 from .xmllogger import XmlLoggerAdapter
 
 

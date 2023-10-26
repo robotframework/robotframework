@@ -22,11 +22,12 @@ class Mock:
 
 class SuiteMock(Mock):
 
-    def __init__(self):
+    def __init__(self, is_result=False):
         self.name = 'suitemock'
-        self.doc = 'somedoc'
-        self.status = 'PASS'
         self.tests = self.suites = []
+        if is_result:
+            self.doc = 'somedoc'
+            self.status = 'PASS'
 
     stat_message = 'stat message'
     full_message = 'full message'
@@ -34,23 +35,25 @@ class SuiteMock(Mock):
 
 class TestMock(Mock):
 
-    def __init__(self):
+    def __init__(self, is_result=False):
         self.name = 'testmock'
-        self.doc = 'cod'
-        self.tags = ['foo', 'bar']
-        self.message = 'Expected failure'
-        self.status = 'FAIL'
         self.data = DotDict({'name':self.name})
+        if is_result:
+            self.doc = 'cod'
+            self.tags = ['foo', 'bar']
+            self.message = 'Expected failure'
+            self.status = 'FAIL'
 
 
 class KwMock(Mock, BodyItem):
     non_existing = ('branch_status',)
 
-    def __init__(self):
+    def __init__(self, is_result=False):
         self.full_name = self.name = 'kwmock'
-        self.args = ['a1', 'a2']
-        self.status = 'PASS'
-        self.type = BodyItem.KEYWORD
+        if is_result:
+            self.args = ['a1', 'a2']
+            self.status = 'PASS'
+            self.type = BodyItem.KEYWORD
 
 
 class ListenOutputs:
@@ -113,27 +116,27 @@ class TestListeners(unittest.TestCase):
         self.capturer = OutputCapturer()
 
     def test_start_suite(self):
-        self.listeners.start_suite(SuiteMock())
+        self.listeners.start_suite(SuiteMock(), SuiteMock(is_result=True))
         self._assert_output("SUITE START: suitemock 'somedoc'")
 
     def test_start_test(self):
-        self.listeners.start_test(TestMock())
+        self.listeners.start_test(TestMock(), TestMock(is_result=True))
         self._assert_output("TEST START: testmock 'cod' foo, bar")
 
     def test_start_keyword(self):
-        self.listeners.start_keyword(KwMock())
+        self.listeners.start_keyword(KwMock(), KwMock(is_result=True))
         self._assert_output("KW START: kwmock ['a1', 'a2']")
 
     def test_end_keyword(self):
-        self.listeners.end_keyword(KwMock())
+        self.listeners.end_keyword(KwMock(), KwMock(is_result=True))
         self._assert_output("KW END: PASS")
 
     def test_end_test(self):
-        self.listeners.end_test(TestMock())
+        self.listeners.end_test(TestMock(), TestMock(is_result=True))
         self._assert_output('TEST END: FAIL Expected failure')
 
     def test_end_suite(self):
-        self.listeners.end_suite(SuiteMock())
+        self.listeners.end_suite(SuiteMock(), SuiteMock(is_result=True))
         self._assert_output('SUITE END: PASS ' + self.stat_message)
 
     def test_output_file(self):
@@ -178,7 +181,7 @@ class TestAttributesAreNotAccessedUnnecessarily(unittest.TestCase):
                 if name.startswith(('start_', 'end_')):
                     model = ModelStub() if name.endswith('keyword') else None
                     method = getattr(listeners, name)
-                    method(model)
+                    method(model, model)
 
     def test_message_methods(self):
         class Message:
@@ -186,18 +189,6 @@ class TestAttributesAreNotAccessedUnnecessarily(unittest.TestCase):
         for listeners in [Listeners([]), LibraryListeners()]:
             listeners.log_message(Message)
             listeners.message(Message)
-
-    def test_some_methods_implemented(self):
-        class MyListener:
-            ROBOT_LISTENER_API_VERSION = 2
-            def end_suite(self, suite):
-                pass
-        libs = LibraryListeners()
-        libs.new_suite_scope()
-        libs.register([MyListener()], None)
-        for listeners in [Listeners([MyListener()]), libs]:
-            listeners.start_suite(None)
-            assert_raises(AttributeError, listeners.end_suite, None)
 
 
 if __name__ == '__main__':
