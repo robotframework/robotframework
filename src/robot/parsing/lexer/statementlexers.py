@@ -234,7 +234,7 @@ class ForHeaderLexer(StatementLexer):
                 token.type = Token.FOR_SEPARATOR
                 separator = normalize_whitespace(token.value)
             else:
-                token.type = Token.ASSIGN
+                token.type = Token.VARIABLE
         if separator == 'IN ENUMERATE':
             self._lex_options('start')
         elif separator == 'IN ZIP':
@@ -307,7 +307,7 @@ class ExceptHeaderLexer(StatementLexer):
                 token.type = Token.AS
                 as_index = index
             elif as_index:
-                token.type = Token.ASSIGN
+                token.type = Token.VARIABLE
             else:
                 token.type = Token.ARGUMENT
         self._lex_options('type', end_index=as_index)

@@ -993,7 +993,7 @@ class TestForLoop(unittest.TestCase):
         header = 'FOR    ${i}    IN    foo    bar'
         expected = [
             (T.FOR, 'FOR', 3, 4),
-            (T.ASSIGN, '${i}', 3, 11),
+            (T.VARIABLE, '${i}', 3, 11),
             (T.FOR_SEPARATOR, 'IN', 3, 19),
             (T.ARGUMENT, 'foo', 3, 25),
             (T.ARGUMENT, 'bar', 3, 32),
@@ -2007,7 +2007,7 @@ class TestReturn(unittest.TestCase):
     END
 '''
             expected = [(T.FOR, 'FOR', 3, 4),
-                        (T.ASSIGN, '${x}', 3, 11),
+                        (T.VARIABLE, '${x}', 3, 11),
                         (T.FOR_SEPARATOR, 'IN', 3, 19),
                         (T.ARGUMENT, '@{STUFF}', 3, 25),
                         (T.EOS, '', 3, 33),
@@ -2058,7 +2058,7 @@ class TestContinue(unittest.TestCase):
     END
 '''
         expected = [(T.FOR, 'FOR', 3, 4),
-                    (T.ASSIGN, '${x}', 3, 11),
+                    (T.VARIABLE, '${x}', 3, 11),
                     (T.FOR_SEPARATOR, 'IN', 3, 19),
                     (T.ARGUMENT, '@{STUFF}', 3, 25),
                     (T.EOS, '', 3, 33),
@@ -2084,7 +2084,7 @@ class TestContinue(unittest.TestCase):
     END
 '''
         expected = [(T.FOR, 'FOR', 3, 4),
-                    (T.ASSIGN, '${x}', 3, 11),
+                    (T.VARIABLE, '${x}', 3, 11),
                     (T.FOR_SEPARATOR, 'IN', 3, 19),
                     (T.ARGUMENT, '@{STUFF}', 3, 25),
                     (T.EOS, '', 3, 33),
@@ -2109,7 +2109,7 @@ class TestContinue(unittest.TestCase):
     END
 '''
         expected = [(T.FOR, 'FOR', 3, 4),
-                    (T.ASSIGN, '${x}', 3, 11),
+                    (T.VARIABLE, '${x}', 3, 11),
                     (T.FOR_SEPARATOR, 'IN', 3, 19),
                     (T.ARGUMENT, '@{STUFF}', 3, 25),
                     (T.EOS, '', 3, 33),
@@ -2174,7 +2174,7 @@ class TestBreak(unittest.TestCase):
     END
 '''
         expected = [(T.FOR, 'FOR', 3, 4),
-                    (T.ASSIGN, '${x}', 3, 11),
+                    (T.VARIABLE, '${x}', 3, 11),
                     (T.FOR_SEPARATOR, 'IN', 3, 19),
                     (T.ARGUMENT, '@{STUFF}', 3, 25),
                     (T.EOS, '', 3, 33),
@@ -2196,7 +2196,7 @@ class TestBreak(unittest.TestCase):
     END
 '''
         expected = [(T.FOR, 'FOR', 3, 4),
-                    (T.ASSIGN, '${x}', 3, 11),
+                    (T.VARIABLE, '${x}', 3, 11),
                     (T.FOR_SEPARATOR, 'IN', 3, 19),
                     (T.ARGUMENT, '@{STUFF}', 3, 25),
                     (T.EOS, '', 3, 33),
@@ -2232,7 +2232,7 @@ class TestBreak(unittest.TestCase):
     END
 '''
         expected = [(T.FOR, 'FOR', 3, 4),
-                    (T.ASSIGN, '${x}', 3, 11),
+                    (T.VARIABLE, '${x}', 3, 11),
                     (T.FOR_SEPARATOR, 'IN', 3, 19),
                     (T.ARGUMENT, '@{STUFF}', 3, 25),
                     (T.EOS, '', 3, 33),

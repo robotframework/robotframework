@@ -77,7 +77,7 @@ Multiple default EXCEPTs
     END
 
 AS requires variable
-    [Documentation]    FAIL    EXCEPT's AS requires variable.
+    [Documentation]    FAIL    EXCEPT AS requires a value.
     TRY
         Fail   Should not be executed
     EXCEPT    AS
@@ -85,7 +85,7 @@ AS requires variable
     END
 
 AS accepts only one variable
-    [Documentation]    FAIL    EXCEPT's AS accepts only one variable.
+    [Documentation]    FAIL    EXCEPT AS accepts only one value.
     TRY
         Fail   Should not be executed
     EXCEPT    AS    foo    ${foo}
@@ -93,7 +93,7 @@ AS accepts only one variable
     END
 
 Invalid AS variable
-    [Documentation]    FAIL    EXCEPT's AS variable 'foo' is invalid.
+    [Documentation]    FAIL    EXCEPT AS variable 'foo' is invalid.
     TRY
         Fail   Should not be executed
     EXCEPT    AS    foo
