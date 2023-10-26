@@ -146,36 +146,3 @@ class IsLogged:
             return LEVELS[level.upper()]
         except KeyError:
             raise DataError("Invalid log level '%s'." % level)
-
-
-class AbstractLoggerProxy:
-    _methods = None
-    _no_method = lambda *args: None
-
-    def __init__(self, logger, method_names=None, prefix=None):
-        self.logger = logger
-        for name in method_names or self._methods:
-            # Allow extending classes to implement some of the messages themselves.
-            if hasattr(self, name):
-                if hasattr(logger, name):
-                    continue
-                target = logger
-            else:
-                target = self
-            setattr(target, name, self._get_method(logger, name, prefix))
-
-    def _get_method(self, logger, name, prefix):
-        for method_name in self._get_method_names(name, prefix):
-            if hasattr(logger, method_name):
-                return getattr(logger, method_name)
-        return self._no_method
-
-    def _get_method_names(self, name, prefix):
-        names = [name, self._toCamelCase(name)] if '_' in name else [name]
-        if prefix:
-            names += [prefix + name for name in names]
-        return names
-
-    def _toCamelCase(self, name):
-        parts = name.split('_')
-        return ''.join([parts[0]] + [part.capitalize() for part in parts[1:]])
