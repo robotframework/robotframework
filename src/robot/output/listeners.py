@@ -152,9 +152,8 @@ class ListenerProxy(AbstractLoggerProxy):
             if version not in (2, 3):
                 raise ValueError
         except AttributeError:
-            raise DataError("Listener '%s' does not have mandatory "
-                            "'ROBOT_LISTENER_API_VERSION' attribute."
-                            % self.name)
+            "Sicne 7.1, Listener API version is by default considered to be V3 unless explicitly mentioned as V2"
+            return 3
         except (ValueError, TypeError):
             raise DataError("Listener '%s' uses unsupported API version '%s'."
                             % (self.name, listener.ROBOT_LISTENER_API_VERSION))
