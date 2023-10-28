@@ -10,10 +10,6 @@ Unsupported version
     1    unsupported_listeners.InvalidVersionClassListener
     ...    Listener 'unsupported_listeners.InvalidVersionClassListener' uses unsupported API version 'kekkonen'.
 
-No version information
-    2    unsupported_listeners
-    ...    Listener 'unsupported_listeners' does not have mandatory 'ROBOT_LISTENER_API_VERSION' attribute.
-
 *** Keywords ***
 Run Tests With Listeners
     ${listeners} =    Catenate
