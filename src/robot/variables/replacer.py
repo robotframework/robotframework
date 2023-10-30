@@ -42,33 +42,32 @@ class VariableReplacer:
         items = list(items or [])
         if replace_until is not None:
             return self._replace_list_until(items, replace_until, ignore_errors)
-        return list(self._replace_list(items, ignore_errors))
+        return self._replace_list(items, ignore_errors)
 
-    def _replace_list_until(self, items, replace_until, ignore_errors):
+    def _replace_list_until(self, items, limit, ignore_errors):
         # @{list} variables can contain more or less arguments than needed.
         # Therefore, we need to go through items one by one, and escape
         # possible extra items we got.
         replaced = []
-        while len(replaced) < replace_until and items:
+        while len(replaced) < limit and items:
             replaced.extend(self._replace_list([items.pop(0)], ignore_errors))
-        if len(replaced) > replace_until:
-            replaced[replace_until:] = [escape(item)
-                                        for item in replaced[replace_until:]]
+        if len(replaced) > limit:
+            replaced[limit:] = [escape(item) for item in replaced[limit:]]
         return replaced + items
 
     def _replace_list(self, items, ignore_errors):
+        result = []
         for item in items:
-            for value in self._replace_list_item(item, ignore_errors):
-                yield value
-
-    def _replace_list_item(self, item, ignore_errors):
-        match = search_variable(item, ignore_errors=ignore_errors)
-        if not match:
-            return [unescape(match.string)]
-        value = self.replace_scalar(match, ignore_errors)
-        if match.is_list_variable() and is_list_like(value):
-            return value
-        return [value]
+            match = search_variable(item, ignore_errors=ignore_errors)
+            if not match:
+                result.append(unescape(item))
+            else:
+                value = self._replace_scalar(match, ignore_errors)
+                if match.is_list_variable() and is_list_like(value):
+                    result.extend(value)
+                else:
+                    result.append(value)
+        return result
 
     def replace_scalar(self, item, ignore_errors=False):
         """Replaces variables from a scalar item.
@@ -77,20 +76,18 @@ class VariableReplacer:
         its value is returned. Otherwise, possible variables are replaced with
         'replace_string'. Result may be any object.
         """
-        match = self._search_variable(item, ignore_errors=ignore_errors)
+        if isinstance(item, VariableMatch):
+            match = item
+        else:
+            match = search_variable(item, ignore_errors=ignore_errors)
         if not match:
             return unescape(match.string)
         return self._replace_scalar(match, ignore_errors)
 
-    def _search_variable(self, item, ignore_errors):
-        if isinstance(item, VariableMatch):
-            return item
-        return search_variable(item, ignore_errors=ignore_errors)
-
     def _replace_scalar(self, match, ignore_errors=False):
-        if not match.is_variable():
-            return self.replace_string(match, ignore_errors=ignore_errors)
-        return self._get_variable_value(match, ignore_errors)
+        if match.is_variable():
+            return self._get_variable_value(match, ignore_errors)
+        return self._replace_string(match, unescape, ignore_errors)
 
     def replace_string(self, item, custom_unescaper=None, ignore_errors=False):
         """Replaces variables from a string. Result is always a string.
@@ -98,7 +95,10 @@ class VariableReplacer:
         Input can also be an already found VariableMatch.
         """
         unescaper = custom_unescaper or unescape
-        match = self._search_variable(item, ignore_errors=ignore_errors)
+        if isinstance(item, VariableMatch):
+            match = item
+        else:
+            match = search_variable(item, ignore_errors=ignore_errors)
         if not match:
             return safe_str(unescaper(match.string))
         return self._replace_string(match, unescaper, ignore_errors)
@@ -106,10 +106,8 @@ class VariableReplacer:
     def _replace_string(self, match, unescaper, ignore_errors):
         parts = []
         while match:
-            parts.extend([
-                unescaper(match.before),
-                safe_str(self._get_variable_value(match, ignore_errors))
-            ])
+            parts.append(unescaper(match.before))
+            parts.append(safe_str(self._get_variable_value(match, ignore_errors)))
             match = search_variable(match.after, ignore_errors=ignore_errors)
         parts.append(unescaper(match.string))
         return ''.join(parts)
@@ -126,17 +124,16 @@ class VariableReplacer:
             if match.items:
                 value = self._get_variable_item(match, value)
             try:
-                value = self._validate_value(match, value)
+                return self._validate_value(match, value)
             except VariableError:
                 raise
             except Exception:
                 error = get_error_message()
                 raise VariableError(f"Resolving variable '{match}' failed: {error}")
         except DataError:
-            if not ignore_errors:
-                raise
-            value = unescape(match.match)
-        return value
+            if ignore_errors:
+                return unescape(match.match)
+            raise
 
     def _get_variable_item(self, match, value):
         name = match.name

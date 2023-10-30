@@ -64,6 +64,9 @@ List assign
 Dict assign
     NOT RUN    PASS
 
+Assign based on another variable
+    PASS       NOT RUN    index=1
+
 Assign without ELSE
     PASS       NOT RUN               index=0
     NOT RUN    PASS       NOT RUN    index=2

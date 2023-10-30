@@ -3,7 +3,6 @@
 &{DICT}          a=1    b=${2}    ${3}=c
 ${EQUALS}        foo=bar
 
-
 *** Test Cases ***
 Empty
     &{d} =    Create Dictionary
@@ -74,7 +73,7 @@ Separate keys and values with invalid key
     Create Dictionary    ${NONEX KEY}=${NONEX VALUE}
 
 `key=value` syntax with invalid key
-    [Documentation]    FAIL STARTS: Creating dictionary failed:
+    [Documentation]    FAIL STARTS: Creating dictionary variable failed:
     Create Dictionary    ${DICT}=non-hashable
 
 `key=value` syntax without equals

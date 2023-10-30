@@ -111,5 +111,11 @@ Evaluate Nonstring
 Evaluate doesn't see module globals
     Check Test Case    ${TESTNAME}
 
+Automatic variables are not seen in expression part of comprehensions
+    Check Test Case    ${TESTNAME}
+
+Automatic variables are not seen inside lambdas
+    Check Test Case    ${TESTNAME}
+
 Evaluation errors can be caught
     Check Test Case    ${TESTNAME}

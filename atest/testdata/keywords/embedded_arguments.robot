@@ -153,7 +153,7 @@ Embedded Arguments In Resource File Used Explicitly
     Should Be Equal    ${ret}    peke-resource
     embedded_args_in_uk_2.-r1-r2-+r1+
 
-Embedded And Positional Arguments Do Not Work Together
+Keyword with only embedded arguments doesn't accept normal arguments
     [Documentation]    FAIL Keyword 'User \${user} Selects \${item} From Webshop' expected 0 arguments, got 1.
     Given this "usage" with @{EMPTY} works    @{EMPTY}
     Then User Invalid Selects Invalid From Webshop    invalid
@@ -162,14 +162,12 @@ Keyword with embedded args cannot be used as "normal" keyword
     [Documentation]    FAIL Variable '${user}' not found.
     User ${user} Selects ${item} From Webshop
 
-Keyword with both normal and embedded arguments
+Keyword with both embedded and normal arguments
     Number of horses should be    2
+    Number of horses should be    2    swimming
     Number of dogs should be    count=3
 
-Keyword with both normal, positional and embedded arguments
-    Number of horses should be    2    swimming
-
-Keyword with both normal and embedded arguments with too few arguments
+Keyword with both embedded and normal arguments with too few arguments
     [Documentation]    FAIL Keyword 'Number of ${animals} should be' expected 1 to 2 arguments, got 0.
     Number of horses should be
 
@@ -314,4 +312,4 @@ It is totally ${same}
 
 Number of ${animals} should be
     [Arguments]    ${count}    ${activity}=walking
-    Log to console    Checking if ${count} ${animals} are ${activity}
+    Log    ${count} ${animals} are ${activity}

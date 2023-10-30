@@ -106,7 +106,7 @@ Invalid limit mistyped prefix
     END
 
 Limit used multiple times
-    [Documentation]     FAIL WHILE option 'limit' is accepted only once, got 2 values '1' and '2'.
+    [Documentation]     FAIL WHILE accepts only one condition, got 2 conditions 'True' and 'limit=1'.
     WHILE    True    limit=1    limit=2
         Fail    Should not be executed
     END

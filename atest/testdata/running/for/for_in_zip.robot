@@ -146,14 +146,14 @@ Invalid mode from variable
     END
 
 Config more than once 1
-    [Documentation]    FAIL    FOR option 'mode' is accepted only once, got 2 values 'longest' and 'shortest'.
+    [Documentation]    FAIL    FOR IN ZIP items must be list-like, but item 3 is string.
     FOR    ${x}    ${y}    IN ZIP    ${LIST1}    ${LIST2}    mode=longest    mode=shortest
         Fail    Should not be executed
     END
 
 Config more than once 2
-    [Documentation]    FAIL    FOR option 'fill' is accepted only once, got 3 values 'x', 'y' and 'z'.
-    FOR    ${x}    ${y}    IN ZIP    ${LIST1}    ${LIST2}    fill=x    mode=longest    fill=y    fill=z
+    [Documentation]    FAIL    FOR IN ZIP items must be list-like, but item 4 is string.
+    FOR    ${items}    IN ZIP    ${LIST1}    ${LIST2}    ${LIST3}    fill=x    mode=longest    fill=y    fill=z
         Fail    Should not be executed
     END
 

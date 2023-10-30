@@ -16,13 +16,13 @@
 import sys
 
 from robot.errors import DataError
-from robot.result import Keyword, TestCase, TestSuite
 from robot.utils import get_console_length, getshortdoc, isatty, pad_console_length
 
 from .highlighting import HighlightingStream
+from ..loggerapi import LoggerApi
 
 
-class VerboseOutput:
+class VerboseOutput(LoggerApi):
 
     def __init__(self, width=78, colors='AUTO', markers='AUTO', stdout=None,
                  stderr=None):
@@ -31,36 +31,36 @@ class VerboseOutput:
         self.started_keywords = 0
         self.running_test = False
 
-    def start_suite(self, suite: TestSuite):
+    def start_suite(self, data, result):
         if not self.started:
             self.writer.suite_separator()
             self.started = True
-        self.writer.info(suite.full_name, suite.doc, start_suite=True)
+        self.writer.info(data.full_name, result.doc, start_suite=True)
         self.writer.suite_separator()
 
-    def end_suite(self, suite: TestSuite):
-        self.writer.info(suite.full_name, suite.doc)
-        self.writer.status(suite.status)
-        self.writer.message(suite.full_message)
+    def end_suite(self, data, result):
+        self.writer.info(data.full_name, result.doc)
+        self.writer.status(result.status)
+        self.writer.message(result.full_message)
         self.writer.suite_separator()
 
-    def start_test(self, test: TestCase):
-        self.writer.info(test.name, test.doc)
+    def start_test(self, data, result):
+        self.writer.info(result.name, result.doc)
         self.running_test = True
 
-    def end_test(self, test: TestCase):
-        self.writer.status(test.status, clear=True)
-        self.writer.message(test.message)
+    def end_test(self, data, result):
+        self.writer.status(result.status, clear=True)
+        self.writer.message(result.message)
         self.writer.test_separator()
         self.running_test = False
 
-    def start_keyword(self, kw: Keyword):
+    def start_body_item(self, data, result):
         self.started_keywords += 1
 
-    def end_keyword(self, kw: Keyword):
+    def end_body_item(self, data, result):
         self.started_keywords -= 1
         if self.running_test and not self.started_keywords:
-            self.writer.keyword_marker(kw.status)
+            self.writer.keyword_marker(result.status)
 
     def message(self, msg):
         if msg.level in ('WARN', 'ERROR'):

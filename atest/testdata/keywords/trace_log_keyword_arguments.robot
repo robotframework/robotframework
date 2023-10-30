@@ -79,7 +79,8 @@ Arguments With Run Keyword
 Embedded Arguments
     Embedded Arguments "foo" and "${42}" with UK
     Embedded Arguments "bar" and "${TEST NAME}"
-    Embedded arguments in a keyword with positional arguments    positively
+    Both embedded and normal arguments    argument
+    Both embedded and normal arguments    normal=argument
 
 *** Keywords ***
 Set Unicode Repr Object As Variable
@@ -115,6 +116,7 @@ Embedded Arguments "${first}" and "${second}" with ${what:[KU]+}
     Should be Equal    ${second}    ${42}
     Should be Equal    ${what}    UK
 
-${embedded} arguments in a ${keyword} with positional arguments
-    [arguments]     ${positional}
-    Log to console   ${embedded} ${keyword} ${positional}
+Both ${embedded} and normal arguments
+    [Arguments]     ${normal}
+    Should Be Equal    ${embedded}    embedded
+    Should Be Equal    ${normal}    argument

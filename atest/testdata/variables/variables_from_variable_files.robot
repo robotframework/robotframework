@@ -44,7 +44,8 @@ Scalar List With Escapes
     ...    ${LIST WITH ESCAPES [2]}    ${LIST WITH ESCAPES [3]}
     ${exp} =    Create List    one \\    two \\\\    three \\\\\\    \${non_existing}
     Should Be Equal    ${LIST WITH ESCAPES}    ${exp}
-    Should Be True    ${LIST WITH ESCAPES} == ['one \\\\', 'two \\\\\\\\', 'three \\\\\\\\\\\\', '\${non_existing}']    Backslashes are doubled here because 'Should Be True' uses 'eval' internally
+    # Backslashes are doubled because 'Should Be True' uses 'eval' internally.
+    Should Be True    ${LIST WITH ESCAPES} == ['one \\\\', 'two \\\\\\\\', 'three \\\\\\\\\\\\', '\${non_existing}']
 
 Scalar Object
     Should Not Be Equal    ${OBJECT}    dude    Comparing object to string

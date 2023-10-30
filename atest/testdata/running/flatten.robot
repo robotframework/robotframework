@@ -1,5 +1,5 @@
 *** Variables ***
-${while limit}    ${0}
+${LIMIT}         ${0}
 
 *** Test Cases ***
 A single user keyword
@@ -35,22 +35,22 @@ Loops and stuff
     [Tags]    robot:flatten
     FOR    ${i}    IN RANGE    5
         Log     inside for ${i}
-        IF    ${i} > 3
+        IF    ${i} > 1
             BREAK
         ELSE
             CONTINUE
         END
     END
-    WHILE    ${while limit} < 5
-        Log     inside while ${while limit}
-        ${while limit}=   Set Variable   ${while limit + 1}
-    END
-    IF    True
-        Log    inside if
-    ELSE
-        Fail    not run
+    WHILE    ${LIMIT} < 3
+        Log     inside while ${LIMIT}
+        VAR    ${LIMIT}    ${LIMIT + 1}
     END
     TRY
+        IF    True
+            Log    inside if
+        ELSE
+            Fail    not run
+        END
         Fail    fail inside try
     EXCEPT
         Log    inside except

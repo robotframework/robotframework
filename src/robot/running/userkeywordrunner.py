@@ -144,7 +144,8 @@ class UserKeywordRunner:
 
     def _trace_log_args_message(self, variables):
         return self._format_trace_log_args_message(
-            self._format_args_for_trace_logging(), variables)
+            self._format_args_for_trace_logging(), variables
+        )
 
     def _format_args_for_trace_logging(self):
         args = [f'${{{arg}}}' for arg in self.arguments.positional]
@@ -258,8 +259,6 @@ class EmbeddedArgumentsRunner(UserKeywordRunner):
         for name, value in self.embedded_args:
             variables[f'${{{name}}}'] = value
         super()._set_arguments(args, context)
-        context.output.trace(lambda: self._trace_log_args_message(variables),
-                             write_if_flat=False)
 
     def _trace_log_args_message(self, variables):
         args = [f'${{{arg}}}' for arg in self._handler.embedded.args]
@@ -267,6 +266,6 @@ class EmbeddedArgumentsRunner(UserKeywordRunner):
         return self._format_trace_log_args_message(args, variables)
 
     def _get_result(self, kw, assignment, variables):
-        result = UserKeywordRunner._get_result(self, kw, assignment, variables)
+        result = super()._get_result(kw, assignment, variables)
         result.source_name = self._handler.name
         return result

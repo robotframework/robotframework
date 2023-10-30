@@ -19,7 +19,7 @@ from robot.utils import (DotDict, is_dict_like, is_list_like, NormalizedDict, NO
 
 from .notfound import variable_not_found
 from .resolvable import GlobalVariableValue, Resolvable
-from .search import is_assign
+from .search import is_assign, unescape_variable_syntax
 
 
 class VariableStore:
@@ -66,7 +66,7 @@ class VariableStore:
             if decorated:
                 name = self._undecorate(name)
             return self[name]
-        except VariableError:
+        except DataError:
             if default is NOT_SET:
                 raise
             return default
@@ -86,25 +86,25 @@ class VariableStore:
             self.data[name] = value
 
     def _undecorate(self, name):
-        if not is_assign(name):
-            raise VariableError("Invalid variable name '%s'." % name)
-        return name[2:-1]
+        if not is_assign(name, allow_nested=True):
+            raise DataError(f"Invalid variable name '{name}'.")
+        return self._variables.replace_string(
+            name[2:-1], custom_unescaper=unescape_variable_syntax
+        )
 
     def _undecorate_and_validate(self, name, value):
         undecorated = self._undecorate(name)
+        if isinstance(value, Resolvable):
+            return undecorated, value
         if name[0] == '@':
             if not is_list_like(value):
-                self._raise_cannot_set_type(name, value, 'list')
+                raise DataError(f'Expected list-like value, got {type_name(value)}.')
             value = list(value)
         if name[0] == '&':
             if not is_dict_like(value):
-                self._raise_cannot_set_type(name, value, 'dictionary')
+                raise DataError(f'Expected dictionary-like value, got {type_name(value)}.')
             value = DotDict(value)
         return undecorated, value
-
-    def _raise_cannot_set_type(self, name, value, expected):
-        raise VariableError("Cannot set variable '%s': Expected %s-like value, got %s."
-                            % (name, expected, type_name(value)))
 
     def __len__(self):
         return len(self.data)

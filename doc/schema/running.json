@@ -37,6 +37,50 @@
       ],
       "additionalProperties": false
     },
+    "Var": {
+      "title": "Var",
+      "type": "object",
+      "properties": {
+        "lineno": {
+          "title": "Lineno",
+          "type": "integer"
+        },
+        "error": {
+          "title": "Error",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "scope": {
+          "title": "Scope",
+          "type": "string"
+        },
+        "separator": {
+          "title": "Separator",
+          "type": "string"
+        },
+        "type": {
+          "title": "Type",
+          "default": "VAR",
+          "const": "VAR",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "value"
+      ],
+      "additionalProperties": false
+    },
     "Break": {
       "title": "Break",
       "type": "object",
@@ -105,9 +149,6 @@
           "type": "string"
         }
       },
-      "required": [
-        "values"
-      ],
       "additionalProperties": false
     },
     "Error": {
@@ -198,6 +239,9 @@
               },
               {
                 "$ref": "#/definitions/Try"
+              },
+              {
+                "$ref": "#/definitions/Var"
               },
               {
                 "$ref": "#/definitions/Break"
@@ -296,6 +340,9 @@
               },
               {
                 "$ref": "#/definitions/Try"
+              },
+              {
+                "$ref": "#/definitions/Var"
               },
               {
                 "$ref": "#/definitions/Break"
@@ -399,6 +446,9 @@
                 "$ref": "#/definitions/Try"
               },
               {
+                "$ref": "#/definitions/Var"
+              },
+              {
                 "$ref": "#/definitions/Break"
               },
               {
@@ -486,6 +536,9 @@
               },
               {
                 "$ref": "#/definitions/Try"
+              },
+              {
+                "$ref": "#/definitions/Var"
               },
               {
                 "$ref": "#/definitions/Break"
@@ -577,6 +630,9 @@
               },
               {
                 "$ref": "#/definitions/Try"
+              },
+              {
+                "$ref": "#/definitions/Var"
               },
               {
                 "$ref": "#/definitions/Error"
@@ -733,6 +789,9 @@
               },
               {
                 "$ref": "#/definitions/Return"
+              },
+              {
+                "$ref": "#/definitions/Var"
               },
               {
                 "$ref": "#/definitions/Error"

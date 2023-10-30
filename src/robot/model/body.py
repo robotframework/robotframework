@@ -26,7 +26,7 @@ if TYPE_CHECKING:
     from robot.result.model import ForIteration, WhileIteration
     from robot.running.model import UserKeyword, ResourceFile
     from .control import (Break, Continue, Error, For, If, IfBranch, Return,
-                          Try, TryBranch, While)
+                          Try, TryBranch, Var, While)
     from .keyword import Keyword
     from .message import Message
     from .testcase import TestCase
@@ -35,13 +35,14 @@ if TYPE_CHECKING:
 
 BodyItemParent = Union['TestSuite', 'TestCase', 'UserKeyword', 'For', 'ForIteration',
                        'If', 'IfBranch', 'Try', 'TryBranch', 'While', 'WhileIteration',
-                       'Keyword', 'Return', 'Continue', 'Break', 'Error', None]
+                       'Keyword', 'Var', 'Return', 'Continue', 'Break', 'Error', None]
 BI = TypeVar('BI', bound='BodyItem')
 KW = TypeVar('KW', bound='Keyword')
 F = TypeVar('F', bound='For')
 W = TypeVar('W', bound='While')
 I = TypeVar('I', bound='If')
 T = TypeVar('T', bound='Try')
+V = TypeVar('V', bound='Var')
 R = TypeVar('R', bound='Return')
 C = TypeVar('C', bound='Continue')
 B = TypeVar('B', bound='Break')
@@ -65,6 +66,7 @@ class BodyItem(ModelObject):
     EXCEPT = 'EXCEPT'
     FINALLY = 'FINALLY'
     WHILE = 'WHILE'
+    VAR = 'VAR'
     RETURN = 'RETURN'
     CONTINUE = 'CONTINUE'
     BREAK = 'BREAK'
@@ -112,7 +114,7 @@ class BodyItem(ModelObject):
         raise NotImplementedError
 
 
-class BaseBody(ItemList[BodyItem], Generic[KW, F, W, I, T, R, C, B, M, E]):
+class BaseBody(ItemList[BodyItem], Generic[KW, F, W, I, T, V, R, C, B, M, E]):
     """Base class for Body and Branches objects."""
     __slots__ = []
     # Set using 'BaseBody.register' when these classes are created.
@@ -121,6 +123,7 @@ class BaseBody(ItemList[BodyItem], Generic[KW, F, W, I, T, R, C, B, M, E]):
     while_class: Type[W] = KnownAtRuntime
     if_class: Type[I] = KnownAtRuntime
     try_class: Type[T] = KnownAtRuntime
+    var_class: Type[V] = KnownAtRuntime
     return_class: Type[R] = KnownAtRuntime
     continue_class: Type[C] = KnownAtRuntime
     break_class: Type[B] = KnownAtRuntime
@@ -185,6 +188,10 @@ class BaseBody(ItemList[BodyItem], Generic[KW, F, W, I, T, R, C, B, M, E]):
     @copy_signature(while_class)
     def create_while(self, *args, **kwargs) -> while_class:
         return self._create(self.while_class, 'create_while', args, kwargs)
+
+    @copy_signature(var_class)
+    def create_var(self, *args, **kwargs) -> var_class:
+        return self._create(self.var_class, 'create_var', args, kwargs)
 
     @copy_signature(return_class)
     def create_return(self, *args, **kwargs) -> return_class:
@@ -268,8 +275,8 @@ class BaseBody(ItemList[BodyItem], Generic[KW, F, W, I, T, R, C, B, M, E]):
         return steps
 
 
-class Body(BaseBody['Keyword', 'For', 'While', 'If', 'Try', 'Return', 'Continue',
-                    'Break', 'Message', 'Error']):
+class Body(BaseBody['Keyword', 'For', 'While', 'If', 'Try', 'Var', 'Return',
+                    'Continue', 'Break', 'Message', 'Error']):
     """A list-like object representing a body of a test, keyword, etc.
 
     Body contains the keywords and other structures such as FOR loops.
@@ -282,7 +289,7 @@ class BranchType(Generic[IT]):
     pass
 
 
-class BaseBranches(BaseBody[KW, F, W, I, T, R, C, B, M, E], BranchType[IT]):
+class BaseBranches(BaseBody[KW, F, W, I, T, V, R, C, B, M, E], BranchType[IT]):
     """A list-like object representing IF and TRY branches."""
     __slots__ = ['branch_class']
     branch_type: Type[IT] = KnownAtRuntime

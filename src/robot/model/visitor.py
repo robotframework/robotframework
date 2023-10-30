@@ -107,7 +107,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from robot.model import (Break, BodyItem, Continue, Error, For, If, IfBranch,
                              Keyword, Message, Return, TestCase, TestSuite, Try,
-                             TryBranch, While)
+                             TryBranch, Var, While)
     from robot.result import ForIteration, WhileIteration
 
 
@@ -426,6 +426,28 @@ class SuiteVisitor:
         By default, calls :meth:`end_body_item` which, by default, does nothing.
         """
         self.end_body_item(iteration)
+
+    def visit_var(self, var: 'Var'):
+        """Visits a VAR elements."""
+        if self.start_var(var) is not False:
+            self._possible_body(var)
+            self.end_var(var)
+
+    def start_var(self, var: 'Var') -> 'bool|None':
+        """Called when a VAR element starts.
+
+        By default, calls :meth:`start_body_item` which, by default, does nothing.
+
+        Can return explicit ``False`` to stop visiting.
+        """
+        return self.start_body_item(var)
+
+    def end_var(self, var: 'Var'):
+        """Called when a VAR element ends.
+
+        By default, calls :meth:`end_body_item` which, by default, does nothing.
+        """
+        self.end_body_item(var)
 
     def visit_return(self, return_: 'Return'):
         """Visits a RETURN elements."""

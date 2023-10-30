@@ -27,9 +27,17 @@ class BodyItem(BaseModel):
     error: str | None
 
 
+class Var(BodyItem):
+    type = Field('VAR', const=True)
+    name: str
+    value: Sequence[str]
+    scope: str | None
+    separator: str | None
+
+
 class Return(BodyItem):
     type = Field('RETURN', const=True)
-    values: Sequence[str]
+    values: Sequence[str] | None
 
 
 class Continue(BodyItem):
@@ -60,7 +68,7 @@ class For(BodyItem):
     start: str | None
     mode: str | None
     fill: str | None
-    body: list['Keyword | For | While | If | Try | Break | Continue | Return | Error']
+    body: list['Keyword | For | While | If | Try | Var | Break | Continue | Return | Error']
 
 
 class While(BodyItem):
@@ -69,13 +77,13 @@ class While(BodyItem):
     limit: str | None
     on_limit: str | None
     on_limit_message: str | None
-    body: list['Keyword | For | While | If | Try | Break | Continue | Return | Error']
+    body: list['Keyword | For | While | If | Try | Var | Break | Continue | Return | Error']
 
 
 class IfBranch(BodyItem):
     type: Literal['IF', 'ELSE IF', 'ELSE']
     condition: str | None
-    body: list['Keyword | For | While | If | Try | Break | Continue | Return | Error']
+    body: list['Keyword | For | While | If | Try | Var | Break | Continue | Return | Error']
 
 
 class If(BodyItem):
@@ -88,7 +96,7 @@ class TryBranch(BodyItem):
     patterns: Sequence[str] | None
     pattern_type: str | None
     assign: str | None
-    body: list['Keyword | For | While | If | Try | Break | Continue | Return | Error']
+    body: list['Keyword | For | While | If | Try | Var | Break | Continue | Return | Error']
 
 
 class Try(BodyItem):
@@ -106,7 +114,7 @@ class TestCase(BaseModel):
     error: str | None
     setup: Keyword | None
     teardown: Keyword | None
-    body: list[Keyword | For | While | If | Try | Error]
+    body: list[Keyword | For | While | If | Try | Var | Error]
 
 
 class TestSuite(BaseModel):
@@ -159,7 +167,7 @@ class UserKeyword(BaseModel):
     error: str | None
     setup: Keyword | None
     teardown: Keyword | None
-    body: list[Keyword | For | While | If | Try | Return | Error]
+    body: list[Keyword | For | While | If | Try | Return | Var | Error]
 
 
 class Resource(BaseModel):

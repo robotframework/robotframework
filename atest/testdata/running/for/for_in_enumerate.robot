@@ -46,9 +46,9 @@ Invalid variable in start
     END
 
 Start multiple times
-    [Documentation]    FAIL    FOR option 'start' is accepted only once, got 3 values '1', '2' and '3'.
-    FOR    ${index}    ${item}    IN ENUMERATE    xxx    start=1    start=2    start=3
-        Fail    Should not be executed
+    FOR    ${index}    ${item}    IN ENUMERATE    start=1    start=2
+        Should Be Equal    ${index}    ${2}
+        Should Be Equal    ${item}     start=1
     END
 
 Index and two items

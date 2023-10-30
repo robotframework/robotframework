@@ -3,6 +3,7 @@ import unittest
 from robot.utils.asserts import assert_equal, assert_true, assert_false
 
 from robot.output.logger import Logger
+from robot.output.loggerapi import LoggerApi
 from robot.output.console.verbose import VerboseOutput
 
 
@@ -28,6 +29,9 @@ class LoggerMock:
 
     def copy(self):
         return LoggerMock(*self.expected)
+
+    def close(self):
+        pass
 
 
 class LoggerMock2(LoggerMock):
@@ -82,12 +86,6 @@ class TestLogger(unittest.TestCase):
         assert_equal(logger.output_file, ('name', 'path'))
         assert_true(logger.closed)
 
-    def test_registered_logger_does_not_need_all_methods(self):
-        logger = LoggerMock(('Hello, world!', 'INFO'))
-        self.logger.register_logger(logger)
-        self.logger.output_file('name', 'path')
-        self.logger.close()
-
     def test_close_removes_registered_loggers(self):
         logger = LoggerMock(('Hello, world!', 'INFO'))
         logger2 = LoggerMock2(('Hello, world!', 'INFO'))
@@ -115,22 +113,25 @@ class TestLogger(unittest.TestCase):
         assert_false(hasattr(logger, 'msg'))
 
     def test_start_and_end_suite_test_and_keyword(self):
-        class MyLogger:
-            def start_suite(self, suite): self.started_suite = suite
-            def end_suite(self, suite): self.ended_suite = suite
-            def start_test(self, test): self.started_test = test
-            def end_test(self, test): self.ended_test = test
-            def start_keyword(self, keyword): self.started_keyword = keyword
-            def end_keyword(self, keyword): self.ended_keyword = keyword
+        class MyLogger(LoggerApi):
+            def start_suite(self, suite, result): self.started_suite = suite
+            def end_suite(self, suite, result): self.ended_suite = suite
+            def start_test(self, test, result): self.started_test = test
+            def end_test(self, test, result): self.ended_test = test
+            def start_keyword(self, keyword, result): self.started_keyword = keyword
+            def end_keyword(self, keyword, result): self.ended_keyword = keyword
         class Arg:
             type = None
+            tests = ()
+            suites = ()
+            test_count = 0
         logger = MyLogger()
         self.logger.register_logger(logger)
         for name in 'suite', 'test', 'keyword':
             arg = Arg()
             arg.result = arg
             for stend in 'start', 'end':
-                getattr(self.logger, stend + '_' + name)(arg)
+                getattr(self.logger, stend + '_' + name)(arg, arg)
                 assert_equal(getattr(logger, stend + 'ed_' + name), arg)
 
     def test_verbose_console_output_is_automatically_registered(self):
@@ -185,7 +186,6 @@ class TestLogger(unittest.TestCase):
 
     def test_start_and_end_loggers_and_iter(self):
         logger = Logger()
-        console = logger._console_logger.logger
         xml = LoggerMock()
         listener = LoggerMock()
         lib_listener = LoggerMock()
@@ -193,10 +193,10 @@ class TestLogger(unittest.TestCase):
         logger.register_xml_logger(xml)
         logger.register_listeners(listener, lib_listener)
         logger.register_logger(other)
-        assert_equal([proxy.logger for proxy in logger.start_loggers],
-                     [other, console, xml, listener, lib_listener])
-        assert_equal([proxy.logger for proxy in logger.end_loggers],
-                     [listener, lib_listener, console, xml, other])
+        assert_equal([proxy.logger for proxy in logger.start_loggers if not isinstance(proxy, LoggerApi)],
+                     [other, xml, listener, lib_listener])
+        assert_equal([proxy.logger for proxy in logger.end_loggers if not isinstance(proxy, LoggerApi)],
+                     [listener, lib_listener, xml, other])
         assert_equal(list(logger), list(logger.end_loggers))
 
     def _number_of_registered_loggers_should_be(self, number, logger=None):
