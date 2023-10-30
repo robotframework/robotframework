@@ -248,11 +248,11 @@ class EmbeddedArgumentsRunner(UserKeywordRunner):
         self.embedded_args = handler.embedded.match(name).groups()
 
     def _resolve_arguments(self, args, variables=None):
-        self.arguments.resolve(args, variables)
+        result = super()._resolve_arguments(args, variables)
         if variables:
             embedded = [variables.replace_scalar(e) for e in self.embedded_args]
             self.embedded_args = self._handler.embedded.map(embedded)
-        return super()._resolve_arguments(args, variables)
+        return result
 
     def _set_arguments(self, args, context):
         variables = context.variables
