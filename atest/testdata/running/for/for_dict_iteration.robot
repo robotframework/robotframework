@@ -144,7 +144,7 @@ Invalid dict 1
 Invalid dict 2
     [Documentation]    FAIL
     ...    STARTS: Resolving variable '\&{{{[]: 'ooops'}}}' failed: \
-    ...    Evaluating expression '{[]: 'ooops'}' failed: TypeError:
+    ...    Evaluating expression "{[]: 'ooops'}" failed: TypeError:
     FOR    ${x}    IN    &{{{[]: 'ooops'}}}
         Fail    Not executed
     END

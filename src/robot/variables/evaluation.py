@@ -51,12 +51,12 @@ def evaluate_expression(expression, variables, modules=None, namespace=None,
         variable_recommendation = ''
         if isinstance(err, NameError) and 'RF_VAR_' in error:
             name = re.search(r'RF_VAR_([\w_]*)', error).group(1)
-            error = (f"Robot Framework variable '${name}' used in the expression part "
-                     f"of a comprehension or some other scope where it cannot be seen.")
+            error = (f"Robot Framework variable '${name}' is used in a scope "
+                     f"where it cannot be seen.")
         else:
             variable_recommendation = _recommend_special_variables(original)
-    raise DataError(f"Evaluating expression '{expression}' failed: {error}\n\n"
-                    f"{variable_recommendation}".strip())
+    raise DataError(f'Evaluating expression {expression!r} failed: {error}\n\n'
+                    f'{variable_recommendation}'.strip())
 
 
 def _evaluate(expression, variable_store, modules=None, namespace=None):
@@ -120,8 +120,8 @@ def _recommend_special_variables(expression):
     for match in matches:
         example[-1:] += [match.before, match.identifier, match.base, match.after]
     example = ''.join(example)
-    return (f"Variables in the original expression '{expression}' were resolved "
-            f"before the expression was evaluated. Try using '{example}' "
+    return (f"Variables in the original expression {expression!r} were resolved "
+            f"before the expression was evaluated. Try using {example!r} "
             f"syntax to avoid that. See Evaluating Expressions appendix in "
             f"Robot Framework User Guide for more details.")
 

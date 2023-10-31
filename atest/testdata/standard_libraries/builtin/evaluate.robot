@@ -105,7 +105,7 @@ Explicit modules used in lambda
 
 Evaluation namespace is mutable
     [Documentation]    FAIL
-    ...    Evaluating expression 'locals().__setitem__('var', 1) or locals().__delitem__('var') or var' failed: \
+    ...    Evaluating expression "locals().__setitem__('var', 1) or locals().__delitem__('var') or var" failed: \
     ...    NameError: name 'var' is not defined nor importable as module
     ${variable} =    Evaluate    locals().__setitem__('variable', 'value') or variable
     Should Be Equal    ${variable}    value
@@ -211,7 +211,7 @@ Invalid expression 2
     Evaluate    Someone forgot to add quotes!
 
 Invalid expression 3
-    [Documentation]    FAIL STARTS: Evaluating expression 'We have\nmultiple\nlines' failed: SyntaxError:
+    [Documentation]    FAIL STARTS: Evaluating expression 'We have\\nmultiple\\nlines' failed: SyntaxError:
     Evaluate    We have\nmultiple\nlines
 
 Invalid expression 4
@@ -271,22 +271,30 @@ Evaluate Empty
     Evaluate    ${EMPTY}
 
 Evaluate Nonstring
-    [Documentation]    FAIL Evaluating expression '5' failed: TypeError: Expression must be string, got integer.
+    [Documentation]    FAIL Evaluating expression 5 failed: TypeError: Expression must be string, got integer.
     Evaluate    ${5}
 
 Evaluate doesn't see module globals
     [Documentation]    FAIL STARTS: Evaluating expression 'DataError' failed: NameError:
     Evaluate    DataError
 
-Automatic variables are not seen in expression part of comprehensions
-    [Documentation]    FAIL Evaluating expression '[$x + x for x in 'abc']' failed: \
-    ...    Robot Framework variable '$x' used in the expression part of a comprehension or some other scope where it cannot be seen.
+Automatic variables are seen in expression part of comprehensions only with Python 3.12+
     VAR    ${x}
-    Evaluate    [$x + x for x in 'abc']
+    VAR    ${error}
+    ...    Evaluating expression "[$x + x for x in 'abc']" failed:
+    ...    Robot Framework variable '$x' is used in a scope where it cannot be seen.
+    TRY
+        ${result} =    Evaluate    [$x + x for x in 'abc']
+    EXCEPT    ${error}
+        Should Be True     sys.version_info < (3, 12)
+    ELSE
+        Should Be True     sys.version_info >= (3, 12)
+        Should Be equal    ${result}    ${{['a', 'b', 'c']}}
+    END
 
 Automatic variables are not seen inside lambdas
     [Documentation]    FAIL Evaluating expression '(lambda: $x)()' failed: \
-    ...    Robot Framework variable '$x' used in the expression part of a comprehension or some other scope where it cannot be seen.
+    ...    Robot Framework variable '$x' is used in a scope where it cannot be seen.
     VAR    ${x}
     Evaluate    (lambda: $x)()
 
