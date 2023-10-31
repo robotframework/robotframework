@@ -47,10 +47,12 @@ class FileLogger(AbstractLogger, LoggerApi):
         self.info("Ended test '%s'." % result.name)
 
     def start_body_item(self, data, result):
-        self.debug(lambda: "Started keyword '%s'." % result.name if result.type in result.KEYWORD_TYPES else result._name)
+        self.debug(lambda: "Started keyword '%s'." % result.name
+                   if result.type in result.KEYWORD_TYPES else result._log_name)
 
     def end_body_item(self, data, result):
-        self.debug(lambda: "Ended keyword '%s'." % result.name if result.type in result.KEYWORD_TYPES else result._name)
+        self.debug(lambda: "Ended keyword '%s'." % result.name
+                   if result.type in result.KEYWORD_TYPES else result._log_name)
 
     def output_file(self, name, path):
         self.info('%s: %s' % (name, path))

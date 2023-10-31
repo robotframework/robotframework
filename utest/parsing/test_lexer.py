@@ -993,7 +993,7 @@ class TestForLoop(unittest.TestCase):
         header = 'FOR    ${i}    IN    foo    bar'
         expected = [
             (T.FOR, 'FOR', 3, 4),
-            (T.ASSIGN, '${i}', 3, 11),
+            (T.VARIABLE, '${i}', 3, 11),
             (T.FOR_SEPARATOR, 'IN', 3, 19),
             (T.ARGUMENT, 'foo', 3, 25),
             (T.ARGUMENT, 'bar', 3, 32),
@@ -2007,7 +2007,7 @@ class TestReturn(unittest.TestCase):
     END
 '''
             expected = [(T.FOR, 'FOR', 3, 4),
-                        (T.ASSIGN, '${x}', 3, 11),
+                        (T.VARIABLE, '${x}', 3, 11),
                         (T.FOR_SEPARATOR, 'IN', 3, 19),
                         (T.ARGUMENT, '@{STUFF}', 3, 25),
                         (T.EOS, '', 3, 33),
@@ -2058,7 +2058,7 @@ class TestContinue(unittest.TestCase):
     END
 '''
         expected = [(T.FOR, 'FOR', 3, 4),
-                    (T.ASSIGN, '${x}', 3, 11),
+                    (T.VARIABLE, '${x}', 3, 11),
                     (T.FOR_SEPARATOR, 'IN', 3, 19),
                     (T.ARGUMENT, '@{STUFF}', 3, 25),
                     (T.EOS, '', 3, 33),
@@ -2084,7 +2084,7 @@ class TestContinue(unittest.TestCase):
     END
 '''
         expected = [(T.FOR, 'FOR', 3, 4),
-                    (T.ASSIGN, '${x}', 3, 11),
+                    (T.VARIABLE, '${x}', 3, 11),
                     (T.FOR_SEPARATOR, 'IN', 3, 19),
                     (T.ARGUMENT, '@{STUFF}', 3, 25),
                     (T.EOS, '', 3, 33),
@@ -2109,7 +2109,7 @@ class TestContinue(unittest.TestCase):
     END
 '''
         expected = [(T.FOR, 'FOR', 3, 4),
-                    (T.ASSIGN, '${x}', 3, 11),
+                    (T.VARIABLE, '${x}', 3, 11),
                     (T.FOR_SEPARATOR, 'IN', 3, 19),
                     (T.ARGUMENT, '@{STUFF}', 3, 25),
                     (T.EOS, '', 3, 33),
@@ -2174,7 +2174,7 @@ class TestBreak(unittest.TestCase):
     END
 '''
         expected = [(T.FOR, 'FOR', 3, 4),
-                    (T.ASSIGN, '${x}', 3, 11),
+                    (T.VARIABLE, '${x}', 3, 11),
                     (T.FOR_SEPARATOR, 'IN', 3, 19),
                     (T.ARGUMENT, '@{STUFF}', 3, 25),
                     (T.EOS, '', 3, 33),
@@ -2196,7 +2196,7 @@ class TestBreak(unittest.TestCase):
     END
 '''
         expected = [(T.FOR, 'FOR', 3, 4),
-                    (T.ASSIGN, '${x}', 3, 11),
+                    (T.VARIABLE, '${x}', 3, 11),
                     (T.FOR_SEPARATOR, 'IN', 3, 19),
                     (T.ARGUMENT, '@{STUFF}', 3, 25),
                     (T.EOS, '', 3, 33),
@@ -2232,7 +2232,7 @@ class TestBreak(unittest.TestCase):
     END
 '''
         expected = [(T.FOR, 'FOR', 3, 4),
-                    (T.ASSIGN, '${x}', 3, 11),
+                    (T.VARIABLE, '${x}', 3, 11),
                     (T.FOR_SEPARATOR, 'IN', 3, 19),
                     (T.ARGUMENT, '@{STUFF}', 3, 25),
                     (T.EOS, '', 3, 33),
@@ -2263,6 +2263,154 @@ class TestBreak(unittest.TestCase):
         expected = [(header_type, header, 1, 0),
                     (T.EOS, '', 1, len(header)),
                     (name_type, 'Name', 2, 0),
+                    (T.EOS, '', 2, 4)] + expected
+        assert_tokens(data, expected, data_only=True)
+
+
+class TestVar(unittest.TestCase):
+
+    def test_simple(self):
+        data = 'VAR    ${name}    value'
+        expected = [
+            (T.VAR, 'VAR', 3, 4),
+            (T.VARIABLE, '${name}', 3, 11),
+            (T.ARGUMENT, 'value', 3, 22),
+            (T.EOS, '', 3, 27)
+        ]
+        self._verify(data, expected)
+
+    def test_equals(self):
+        data = 'VAR    ${name}=    value'
+        expected = [
+            (T.VAR, 'VAR', 3, 4),
+            (T.VARIABLE, '${name}=', 3, 11),
+            (T.ARGUMENT, 'value', 3, 23),
+            (T.EOS, '', 3, 28)
+        ]
+        self._verify(data, expected)
+
+    def test_multiple_values(self):
+        data = 'VAR    @{name}    v1    v2\n...    v3'
+        expected = [
+            (T.VAR, None, 3, 4),
+            (T.VARIABLE, '@{name}', 3, 11),
+            (T.ARGUMENT, 'v1', 3, 22),
+            (T.ARGUMENT, 'v2', 3, 28),
+            (T.ARGUMENT, 'v3', 4, 11),
+            (T.EOS, '', 4, 13)
+        ]
+        self._verify(data, expected)
+
+    def test_no_values(self):
+        data = 'VAR    @{name}'
+        expected = [
+            (T.VAR, 'VAR', 3, 4),
+            (T.VARIABLE, '@{name}', 3, 11),
+            (T.EOS, '', 3, 18)
+        ]
+        self._verify(data, expected)
+
+    def test_no_name(self):
+        data = 'VAR'
+        expected = [
+            (T.VAR, 'VAR', 3, 4),
+            (T.EOS, '', 3, 7)
+        ]
+        self._verify(data, expected)
+
+    def test_scope(self):
+        data = ('VAR    ${name}    value    scope=GLOBAL\n'
+                'VAR    @{name}    value    scope=suite\n'
+                'VAR    &{name}    value    scope=Test\n')
+        expected = [
+            (T.VAR, 'VAR', 3, 4),
+            (T.VARIABLE, '${name}', 3, 11),
+            (T.ARGUMENT, 'value', 3, 22),
+            (T.OPTION, 'scope=GLOBAL', 3, 31),
+            (T.EOS, '', 3, 43),
+            (T.VAR, 'VAR', 4, 4),
+            (T.VARIABLE, '@{name}', 4, 11),
+            (T.ARGUMENT, 'value', 4, 22),
+            (T.OPTION, 'scope=suite', 4, 31),
+            (T.EOS, '', 4, 42),
+            (T.VAR, 'VAR', 5, 4),
+            (T.VARIABLE, '&{name}', 5, 11),
+            (T.ARGUMENT, 'value', 5, 22),
+            (T.OPTION, 'scope=Test', 5, 31),
+            (T.EOS, '', 5, 41)
+        ]
+        self._verify(data, expected)
+
+    def test_only_one_scope(self):
+        data = ('VAR    ${name}    scope=value    scope=GLOBAL\n'
+                'VAR    &{name}    scope=value    scope=GLOBAL')
+        expected = [
+            (T.VAR, 'VAR', 3, 4),
+            (T.VARIABLE, '${name}', 3, 11),
+            (T.ARGUMENT, 'scope=value', 3, 22),
+            (T.OPTION, 'scope=GLOBAL', 3, 37),
+            (T.EOS, '', 3, 49),
+            (T.VAR, 'VAR', 4, 4),
+            (T.VARIABLE, '&{name}', 4, 11),
+            (T.ARGUMENT, 'scope=value', 4, 22),
+            (T.OPTION, 'scope=GLOBAL', 4, 37),
+            (T.EOS, '', 4, 49)
+        ]
+        self._verify(data, expected)
+
+    def test_separator_with_scalar(self):
+        data = 'VAR    ${name}    v1    v2    separator=-'
+        expected = [
+            (T.VAR, 'VAR', 3, 4),
+            (T.VARIABLE, '${name}', 3, 11),
+            (T.ARGUMENT, 'v1', 3, 22),
+            (T.ARGUMENT, 'v2', 3, 28),
+            (T.OPTION, 'separator=-', 3, 34),
+            (T.EOS, '', 3, 45)
+        ]
+        self._verify(data, expected)
+
+    def test_only_one_separator(self):
+        data = 'VAR    ${name}    scope=v1    separator=v2    separator=-'
+        expected = [
+            (T.VAR, 'VAR', 3, 4),
+            (T.VARIABLE, '${name}', 3, 11),
+            (T.ARGUMENT, 'scope=v1', 3, 22),
+            (T.ARGUMENT, 'separator=v2', 3, 34),
+            (T.OPTION, 'separator=-', 3, 50),
+            (T.EOS, '', 3, 61)
+        ]
+        self._verify(data, expected)
+
+    def test_no_separator_with_list(self):
+        data = 'VAR    @{name}    v1    v2    separator=-'
+        expected = [
+            (T.VAR, 'VAR', 3, 4),
+            (T.VARIABLE, '@{name}', 3, 11),
+            (T.ARGUMENT, 'v1', 3, 22),
+            (T.ARGUMENT, 'v2', 3, 28),
+            (T.ARGUMENT, 'separator=-', 3, 34),
+            (T.EOS, '', 3, 45)
+        ]
+        self._verify(data, expected)
+
+    def test_no_separator_with_dict(self):
+        data = 'VAR    &{name}    scope=value    separator=-'
+        expected = [
+            (T.VAR, 'VAR', 3, 4),
+            (T.VARIABLE, '&{name}', 3, 11),
+            (T.ARGUMENT, 'scope=value', 3, 22),
+            (T.ARGUMENT, 'separator=-', 3, 37),
+            (T.EOS, '', 3, 48)
+        ]
+        self._verify(data, expected)
+
+    def _verify(self, data, expected):
+        data = '    ' + '\n    '.join(data.splitlines())
+        data = f'*** Test Cases ***\nName\n{data}'
+        expected = [(T.TESTCASE_HEADER, '*** Test Cases ***', 1, 0),
+                    (T.EOS, '', 1, 18),
+                    (T.TESTCASE_NAME, 'Name', 2, 0),
                     (T.EOS, '', 2, 4)] + expected
         assert_tokens(data, expected, data_only=True)
 

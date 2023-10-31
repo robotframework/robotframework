@@ -13,7 +13,7 @@ from robot.model.modelobject import ModelObject
 from robot.parsing import get_resource_model
 from robot.running import (Break, Continue, Error, For, If, IfBranch, Keyword,
                            Return, ResourceFile, TestCase, TestDefaults, TestSuite,
-                           Try, TryBranch, While)
+                           Try, TryBranch, Var, While)
 from robot.running.model import UserKeyword
 from robot.utils.asserts import assert_equal, assert_false, assert_not_equal
 
@@ -362,7 +362,7 @@ class TestToFromDictAndJson(unittest.TestCase):
                            {'type': 'FINALLY', 'body': [{'name': 'K4'}]}])
 
     def test_return_continue_break(self):
-        self._verify(Return(), type='RETURN', values=())
+        self._verify(Return(), type='RETURN')
         self._verify(Return(('x', 'y'), lineno=9, error='E'),
                      type='RETURN', values=('x', 'y'), lineno=9, error='E')
         self._verify(Continue(), type='CONTINUE')
@@ -372,10 +372,16 @@ class TestToFromDictAndJson(unittest.TestCase):
         self._verify(Break(lineno=11, error='E'),
                      type='BREAK', lineno=11, error='E')
 
+    def test_var(self):
+        self._verify(Var(), type='VAR', name='', value=())
+        self._verify(Var('${x}', 'y', 'TEST', '-', lineno=1, error='err'),
+                     type='VAR', name='${x}', value=('y',), scope='TEST', separator='-',
+                     lineno=1, error='err')
+
     def test_error(self):
         self._verify(Error(), type='ERROR', values=(), error='')
-        self._verify(Error(('bad', 'things'), error='Bad things!'),
-                     type='ERROR', values=('bad', 'things'), error='Bad things!')
+        self._verify(Error(('x', 'y'), error='Bad things happened!'),
+                     type='ERROR', values=('x', 'y'), error='Bad things happened!')
 
     def test_test(self):
         self._verify(TestCase(), name='', body=[])
@@ -387,13 +393,15 @@ class TestToFromDictAndJson(unittest.TestCase):
         test = TestCase('TC')
         test.setup.config(name='Setup')
         test.teardown.config(name='Teardown', args='a')
-        test.body.create_keyword('K1', 'a')
+        test.body.create_var('${x}', 'a')
+        test.body.create_keyword('K1', ['${x}'])
         test.body.create_if().body.create_branch('IF', '$c').body.create_keyword('K2')
         self._verify(test,
                      name='TC',
                      setup={'name': 'Setup'},
                      teardown={'name': 'Teardown', 'args': ('a',)},
-                     body=[{'name': 'K1', 'args': ('a',)},
+                     body=[{'type': 'VAR', 'name': '${x}', 'value': ('a',)},
+                           {'name': 'K1', 'args': ('${x}',)},
                            {'type': 'IF/ELSE ROOT',
                             'body': [{'type': 'IF', 'condition': '$c',
                                       'body': [{'name': 'K2'}]}]}])
@@ -499,7 +507,7 @@ class TestToFromDictAndJson(unittest.TestCase):
             suite = obj
         elif isinstance(obj, TestCase):
             suite.tests = [obj]
-        elif isinstance(obj, (Keyword, For, While, If, Try, Error)):
+        elif isinstance(obj, (Keyword, For, While, If, Try, Var, Error)):
             test.body.append(obj)
         elif isinstance(obj, (IfBranch, TryBranch)):
             item = If() if isinstance(obj, IfBranch) else Try()

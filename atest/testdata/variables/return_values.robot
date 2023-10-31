@@ -108,11 +108,11 @@ None To List Variable
     Should Be True    ${list} == []
 
 List When Non-List Returned 1
-    [Documentation]    FAIL Cannot set variable '\@{list}': Expected list-like value, got string.
+    [Documentation]    FAIL Setting variable '\@{list}' failed: Expected list-like value, got string.
     @{list} =    Set Variable    kekkonen
 
 List When Non-List Returned 2
-    [Documentation]    FAIL Cannot set variable '\@{list}': Expected list-like value, got integer.
+    [Documentation]    FAIL Setting variable '\@{list}' failed: Expected list-like value, got integer.
     @{list} =    Set Variable    ${42}
 
 Only One List Variable Allowed 1
@@ -191,7 +191,7 @@ Dictionary is dot-accessible
     Should Be Equal    ${nested.nested.key}    nested value
 
 Scalar dictionary is not dot-accessible
-    [Documentation]     FAIL STARTS: Resolving variable '${normal.key}' failed: AttributeError:
+    [Documentation]     FAIL STARTS: Resolving variable '\${normal.key}' failed: AttributeError:
     ${normal} =    Evaluate    {'key': 'value'}
     Should Be Equal    ${normal['key']}    value
     Should Be Equal    ${normal.key}    value
@@ -217,15 +217,15 @@ Dictionary only allowed alone 5
     &{d1}    &{d2} =    Fail    Not executed
 
 Dict when non-dict returned 1
-    [Documentation]    FAIL Cannot set variable '\&{ret}': Expected dictionary-like value, got list.
+    [Documentation]    FAIL Setting variable '\&{ret}' failed: Expected dictionary-like value, got list.
     &{ret} =     Create List
 
 Dict when non-dict returned 2
-    [Documentation]    FAIL Cannot set variable '\&{ret}': Expected dictionary-like value, got string.
+    [Documentation]    FAIL Setting variable '\&{ret}' failed: Expected dictionary-like value, got string.
     &{ret} =     Set variable   foo
 
 Dict when non-dict returned 3
-    [Documentation]    FAIL Cannot set variable '\&{ret}': Expected dictionary-like value, got integer.
+    [Documentation]    FAIL Setting variable '\&{ret}' failed: Expected dictionary-like value, got integer.
     &{ret} =     Set variable    ${5}
 
 Long String To Scalar Variable
@@ -298,8 +298,19 @@ Assign Mark Can Be Used Only With The Last Variable
     [Documentation]    FAIL Assign mark '=' can be used only with the last variable.
     ${v1} =    ${v2} =    Set Variable    a    b
 
+Named based on another variable
+    ${x} =    Set Variable    y
+    ${${x}} =    Set Variable    z
+    Should Be Equal    ${y}    z
+    ${x-${x}-${y}} =    Set Variable    x-${x}-${y}
+    Should Be Equal    ${x-y-z}    x-y-z
+
+Non-existing variable in name
+    [Documentation]    FAIL Setting variable '\${\${x}}' failed: Variable '\${x}' not found.
+    ${${x}} =    Set Variable    z
+
 Files are not lists
-    [Documentation]    FAIL Cannot set variable '\@{works not}': Expected list-like value, got file.
+    [Documentation]    FAIL Setting variable '\@{works not}' failed: Expected list-like value, got file.
     ${works} =    Get open file
     @{works not} =    Get open file
 
@@ -326,16 +337,16 @@ Invalid type error is catchable
     ...    Teardown failed:
     ...    Several failures occurred:
     ...
-    ...    1) Cannot set variable '\@{x}': Expected list-like value, got boolean.
+    ...    1) Setting variable '\@{x}' failed: Expected list-like value, got boolean.
     ...
-    ...    2) Cannot set variable '\&{x}': Expected dictionary-like value, got string.
+    ...    2) Setting variable '\&{x}' failed: Expected dictionary-like value, got string.
     ...
     ...    3) Also this is executed!
     Run Keyword And Expect Error
-    ...    Cannot set variable '\@{x}': Expected list-like value, got string.
+    ...    Setting variable '\@{x}' failed: Expected list-like value, got string.
     ...    Assign list variable    not list
     Run Keyword And Expect Error
-    ...    Cannot set variable '\&{x}': Expected dictionary-like value, got integer.
+    ...    Setting variable '\&{x}' failed: Expected dictionary-like value, got integer.
     ...    Assign dict variable    ${42}
     [Teardown]    Run Keywords
     ...    Assign list variable    ${False}               AND

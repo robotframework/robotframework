@@ -123,6 +123,12 @@ class Output(AbstractLogger, LoggerApi):
     def end_try_branch(self, data, result):
         LOGGER.end_try_branch(data, result)
 
+    def start_var(self, data, result):
+        LOGGER.start_var(data, result)
+
+    def end_var(self, data, result):
+        LOGGER.end_var(data, result)
+
     def start_break(self, data, result):
         LOGGER.start_break(data, result)
 

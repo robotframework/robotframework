@@ -1620,16 +1620,23 @@ class _Variables(_BuiltInBase):
         It is recommended to use `Create List` when creating new lists.
 
         Examples:
-        | ${hi} =   | Set Variable | Hello, world! |
-        | ${hi2} =  | Set Variable | I said: ${hi} |
-        | ${var1}   | ${var2} =    | Set Variable | Hello | world |
-        | @{list} = | Set Variable | ${list with some items} |
-        | ${item1}  | ${item2} =   | Set Variable  | ${list with 2 items} |
+        | ${hi} =    Set Variable    Hello, world!
+        | ${hi2} =    Set Variable    I said: ${hi}
+        | ${var1}    ${var2} =    Set Variable    Hello    world
+        | @{list} =    Set Variable    ${list with some items}
+        | ${item1}    ${item2} =    Set Variable    ${list with 2 items}
 
         Variables created with this keyword are available only in the
         scope where they are created. See `Set Global Variable`,
         `Set Test Variable` and `Set Suite Variable` for information on how to
         set variables so that they are available also in a larger scope.
+
+        *NOTE:* The ``VAR`` syntax introduced in Robot Framework 7.0 is generally
+        recommended over this keyword. The basic usage is shown below and the Robot
+        Framework User Guide explains the syntax in detail.
+
+        | VAR    ${hi}     Hello, world!
+        | VAR    ${hi2}    I said: ${hi}
         """
         if len(values) == 0:
             return ''
@@ -1669,10 +1676,13 @@ class _Variables(_BuiltInBase):
         ``${name}``.
 
         See also `Set Global Variable` and `Set Test Variable`.
+
+        *NOTE:* The ``VAR`` syntax introduced in Robot Framework 7.0 is recommended
+        over this keyword.
         """
         name = self._get_var_name(name)
         value = self._get_var_value(name, values)
-        self._variables.set_local_variable(name, value)
+        self._variables.set_local(name, value)
         self._log_set_variable(name, value)
 
     @run_keyword_variant(resolve=0)
@@ -1695,6 +1705,9 @@ class _Variables(_BuiltInBase):
 
         When creating automated tasks, not tests, it is possible to use `Set
         Task Variable`. See also `Set Global Variable` and `Set Local Variable`.
+
+        *NOTE:* The ``VAR`` syntax introduced in Robot Framework 7.0 is recommended
+        over this keyword.
         """
         name = self._get_var_name(name)
         value = self._get_var_value(name, values)
@@ -1707,6 +1720,9 @@ class _Variables(_BuiltInBase):
 
         This is an alias for `Set Test Variable` that is more applicable when
         creating tasks, not tests.
+
+        *NOTE:* The ``VAR`` syntax introduced in Robot Framework 7.0 is recommended
+        over this keyword.
         """
         self.set_test_variable(name, *values)
 
@@ -1759,6 +1775,14 @@ class _Variables(_BuiltInBase):
         | Set Suite Variable    &DICT      &{EMPTY}
 
         See also `Set Global Variable`, `Set Test Variable` and `Set Local Variable`.
+
+        *NOTE:* The ``VAR`` syntax introduced in Robot Framework 7.0 is recommended
+        over this keyword. The basic usage is shown below and the Robot Framework
+        User Guide explains the syntax in detail.
+
+        | VAR    ${SCALAR}    Hello, world!                scope=SUITE
+        | VAR    @{LIST}      First item    Second item    scope=SUITE
+        | VAR    &{DICT}      key=value     foo=bar        scope=SUITE
         """
         name = self._get_var_name(name)
         if values and is_string(values[-1]) and values[-1].startswith('children='):
@@ -1792,6 +1816,9 @@ class _Variables(_BuiltInBase):
         section for information why it is recommended to give the variable name
         in escaped format like ``$name`` or ``\${name}`` instead of the normal
         ``${name}``.
+
+        *NOTE:* The ``VAR`` syntax introduced in Robot Framework 7.0 is recommended
+        over this keyword.
         """
         name = self._get_var_name(name)
         value = self._get_var_value(name, values)
@@ -1877,7 +1904,7 @@ class _RunKeyword(_BuiltInBase):
 
     def _accepts_embedded_arguments(self, name, ctx):
         if '{' in name:
-            runner = ctx.get_runner(name)
+            runner = ctx.get_runner(name, recommend_on_failure=False)
             return runner and hasattr(runner, 'embedded_args')
         return False
 
@@ -2425,19 +2452,21 @@ class _RunKeyword(_BuiltInBase):
         Use `Get Variable Value` if you need to set variables
         dynamically based on whether a variable exist or not.
         """
-        values = self._verify_values_for_set_variable_if(list(values))
-        if self._is_true(condition):
-            return self._variables.replace_scalar(values[0])
-        values = self._verify_values_for_set_variable_if(values[1:], True)
-        if len(values) == 1:
-            return self._variables.replace_scalar(values[0])
-        return self.run_keyword('BuiltIn.Set Variable If', *values[0:])
+        values = list(values)
+        while True:
+            values = self._verify_values_for_set_variable_if(values)
+            if self._is_true(condition):
+                return self._variables.replace_scalar(values[0])
+            if len(values) == 1:
+                return None
+            if len(values) == 2:
+                return self._variables.replace_scalar(values[1])
+            condition, *values = values[1:]
+            condition = self._variables.replace_scalar(condition)
 
-    def _verify_values_for_set_variable_if(self, values, default=False):
+    def _verify_values_for_set_variable_if(self, values):
         if not values:
-            if default:
-                return [None]
-            raise RuntimeError('At least one value is required')
+            raise RuntimeError('At least one value is required.')
         if is_list_variable(values[0]):
             values[:1] = [escape(item) for item in self._variables[values[0]]]
             return self._verify_values_for_set_variable_if(values)
@@ -3712,40 +3741,6 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     HTML in messages is not limited to BuiltIn library but works with any
     error message.
 
-    = Using variables with keywords creating or accessing variables =
-
-    This library has special keywords `Set Global Variable`, `Set Suite Variable`,
-    `Set Test Variable` and `Set Local Variable` for creating variables in
-    different scopes. These keywords take the variable name and its value as
-    arguments. The name can be given using the normal ``${variable}`` syntax or
-    in escaped format either like ``$variable`` or ``\${variable}``. For example,
-    these are typically equivalent and create new suite level variable
-    ``${name}`` with value ``value``:
-
-    | Set Suite Variable    ${name}     value
-    | Set Suite Variable    $name       value
-    | Set Suite Variable    \${name}    value
-
-    A problem with using the normal ``${variable}`` syntax is that these
-    keywords cannot easily know is the idea to create a variable with exactly
-    that name or does that variable actually contain the name of the variable
-    to create. If the variable does not initially exist, it will always be
-    created. If it exists and its value is a variable name either in the normal
-    or in the escaped syntax, variable with _that_ name is created instead.
-    For example, if ``${name}`` variable would exist and contain value
-    ``$example``, these examples would create different variables:
-
-    | Set Suite Variable    ${name}     value    # Creates ${example}.
-    | Set Suite Variable    $name       value    # Creates ${name}.
-    | Set Suite Variable    \${name}    value    # Creates ${name}.
-
-    Because the behavior when using the normal ``${variable}`` syntax depends
-    on the possible existing value of the variable, it is *highly recommended
-    to use the escaped ``$variable`` or ``\${variable}`` format instead*.
-
-    This same problem occurs also with special keywords for accessing variables
-    `Get Variable Value`, `Variable Should Exist` and `Variable Should Not Exist`.
-
     = Evaluating expressions =
 
     Many keywords, such as `Evaluate`, `Run Keyword If` and `Should Be True`,
@@ -3809,6 +3804,45 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     Notice that instead of creating complicated expressions, it is often better
     to move the logic into a library. That eases maintenance and can also
     enhance execution speed.
+
+    = Using variables with keywords creating or accessing variables =
+
+    This library has special keywords `Set Global Variable`, `Set Suite Variable`,
+    `Set Test Variable` and `Set Local Variable` for creating variables in
+    different scopes. These keywords take the variable name and its value as
+    arguments. The name can be given using the normal ``${variable}`` syntax or
+    in escaped format either like ``$variable`` or ``\${variable}``. For example,
+    these are typically equivalent and create new suite level variable
+    ``${name}`` with value ``value``:
+
+    | Set Suite Variable    ${name}     value
+    | Set Suite Variable    $name       value
+    | Set Suite Variable    \${name}    value
+
+    A problem with using the normal ``${variable}`` syntax is that these
+    keywords cannot easily know is the idea to create a variable with exactly
+    that name or does that variable actually contain the name of the variable
+    to create. If the variable does not initially exist, it will always be
+    created. If it exists and its value is a variable name either in the normal
+    or in the escaped syntax, variable with _that_ name is created instead.
+    For example, if ``${name}`` variable would exist and contain value
+    ``$example``, these examples would create different variables:
+
+    | Set Suite Variable    ${name}     value    # Creates ${example}.
+    | Set Suite Variable    $name       value    # Creates ${name}.
+    | Set Suite Variable    \${name}    value    # Creates ${name}.
+
+    Because the behavior when using the normal ``${variable}`` syntax depends
+    on the possible existing value of the variable, it is *highly recommended
+    to use the escaped ``$variable`` or ``\${variable}`` format instead*.
+
+    This same problem occurs also with special keywords for accessing variables
+    `Get Variable Value`, `Variable Should Exist` and `Variable Should Not Exist`.
+
+    *NOTE:* It is recommended to use the ``VAR`` syntax introduced in Robot
+    Framework 7.0 for creating variables in different scopes instead of the
+    `Set Global/Suite/Test/Local Variable` keywords. It makes creating variables
+    uniform and avoids all the problems discussed above.
 
     = Boolean arguments =
 

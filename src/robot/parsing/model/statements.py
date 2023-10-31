@@ -47,7 +47,7 @@ class Node(ast.AST, ABC):
 
 
 class Statement(Node, ABC):
-    _fields = ('type', 'tokens')
+    _attributes = ('type', 'tokens') + Node._attributes
     type: str
     handles_types: 'ClassVar[tuple[str, ...]]' = ()
     statement_handlers: 'ClassVar[dict[str, Type[Statement]]]' = {}
@@ -169,15 +169,10 @@ class Statement(Node, ABC):
 
         New in Robot Framework 6.1.
         """
-        options = self._get_options()
-        return ', '.join(options[name]) if name in options else default
+        return self._get_options().get(name, default)
 
-    def _get_options(self) -> 'dict[str, list[str]]':
-        options: 'dict[str, list[str]]' = {}
-        for option in self.get_values(Token.OPTION):
-            name, value = option.split('=', 1)
-            options.setdefault(name, []).append(value)
-        return options
+    def _get_options(self) -> 'dict[str, str]':
+        return dict(opt.split('=', 1) for opt in self.get_values(Token.OPTION))
 
     @property
     def lines(self) -> 'Iterator[list[Token]]':
@@ -194,12 +189,8 @@ class Statement(Node, ABC):
         pass
 
     def _validate_options(self):
-        for name, values in self._get_options().items():
-            if len(values) != 1:
-                self.errors += (f"{self.type} option '{name}' is accepted only once, "
-                                f"got {len(values)} values {seq2str(values)}.",)
-            elif self.options[name] is not None:
-                value = values[0]
+        for name, value in self._get_options().items():
+            if self.options[name] is not None:
                 expected = self.options[name]
                 if value.upper() not in expected and not contains_variable(value):
                     self.errors += (f"{self.type} option '{name}' does not accept "
@@ -676,26 +667,8 @@ class Variable(Statement):
         return self.get_option('separator')
 
     def validate(self, ctx: 'ValidationContext'):
-        name = self.get_value(Token.VARIABLE)
-        match = search_variable(name, ignore_errors=True)
-        if not match.is_assign(allow_assign_mark=True, allow_nested=True):
-            self.errors += (f"Invalid variable name '{name}'.",)
-        if match.is_dict_assign(allow_assign_mark=True):
-            self._validate_dict_items()
+        VariableValidator().validate(self)
         self._validate_options()
-
-    def _validate_dict_items(self):
-        for item in self.get_values(Token.ARGUMENT):
-            if not self._is_valid_dict_item(item):
-                self.errors += (
-                    f"Invalid dictionary variable item '{item}'. "
-                    f"Items must use 'name=value' syntax or be dictionary "
-                    f"variables themselves.",
-                )
-
-    def _is_valid_dict_item(self, item: str) -> bool:
-        name, value = split_from_equals(item)
-        return value is not None or is_dict_variable(item)
 
 
 @Statement.register
@@ -951,7 +924,7 @@ class ForHeader(Statement):
                   Token(Token.FOR),
                   Token(Token.SEPARATOR, separator)]
         for variable in assign:
-            tokens.extend([Token(Token.ASSIGN, variable),
+            tokens.extend([Token(Token.VARIABLE, variable),
                            Token(Token.SEPARATOR, separator)])
         tokens.append(Token(Token.FOR_SEPARATOR, flavor))
         for value in values:
@@ -962,7 +935,7 @@ class ForHeader(Statement):
 
     @property
     def assign(self) -> 'tuple[str, ...]':
-        return self.get_values(Token.ASSIGN)
+        return self.get_values(Token.VARIABLE)
 
     @property
     def variables(self) -> 'tuple[str, ...]':    # TODO: Remove in RF 8.0.
@@ -1144,7 +1117,7 @@ class ExceptHeader(Statement):
             tokens.extend([Token(Token.SEPARATOR, separator),
                            Token(Token.AS),
                            Token(Token.SEPARATOR, separator),
-                           Token(Token.ASSIGN, assign)])
+                           Token(Token.VARIABLE, assign)])
         tokens.append(Token(Token.EOL, eol))
         return cls(tokens)
 
@@ -1158,7 +1131,7 @@ class ExceptHeader(Statement):
 
     @property
     def assign(self) -> 'str|None':
-        return self.get_value(Token.ASSIGN)
+        return self.get_value(Token.VARIABLE)
 
     @property
     def variable(self) -> 'str|None':    # TODO: Remove in RF 8.0.
@@ -1169,13 +1142,13 @@ class ExceptHeader(Statement):
     def validate(self, ctx: 'ValidationContext'):
         as_token = self.get_token(Token.AS)
         if as_token:
-            variables = self.get_tokens(Token.ASSIGN)
-            if not variables:
-                self.errors += ("EXCEPT's AS requires variable.",)
-            elif len(variables) > 1:
-                self.errors += ("EXCEPT's AS accepts only one variable.",)
-            elif not is_scalar_assign(variables[0].value):
-                self.errors += (f"EXCEPT's AS variable '{variables[0].value}' is invalid.",)
+            assign = self.get_tokens(Token.VARIABLE)
+            if not assign:
+                self.errors += ("EXCEPT AS requires a value.",)
+            elif len(assign) > 1:
+                self.errors += ("EXCEPT AS accepts only one value.",)
+            elif not is_scalar_assign(assign[0].value):
+                self.errors += (f"EXCEPT AS variable '{assign[0].value}' is invalid.",)
         self._validate_options()
 
 
@@ -1242,6 +1215,63 @@ class WhileHeader(Statement):
                             f"conditions {seq2str(conditions)}.",)
         if self.on_limit and not self.limit:
             self.errors += ("WHILE option 'on_limit' cannot be used without 'limit'.",)
+        self._validate_options()
+
+
+@Statement.register
+class Var(Statement):
+    type = Token.VAR
+    options = {
+        'scope': ('GLOBAL', 'SUITE', 'TEST', 'TASK', 'LOCAL'),
+        'separator': None
+    }
+
+    @classmethod
+    def from_params(cls, name: str,
+                    value: 'str|Sequence[str]',
+                    scope: 'str|None' = None,
+                    value_separator: 'str|None' = None,
+                    indent: str = FOUR_SPACES,
+                    separator: str = FOUR_SPACES,
+                    eol: str = EOL) -> 'Var':
+        tokens = [Token(Token.SEPARATOR, indent),
+                  Token(Token.VAR),
+                  Token(Token.SEPARATOR, separator),
+                  Token(Token.VARIABLE, name)]
+        values = [value] if isinstance(value, str) else value
+        for value in values:
+            tokens.extend([Token(Token.SEPARATOR, separator),
+                           Token(Token.ARGUMENT, value)])
+        if scope:
+            tokens.extend([Token(Token.SEPARATOR, separator),
+                           Token(Token.OPTION, f'scope={scope}')])
+        if value_separator:
+            tokens.extend([Token(Token.SEPARATOR, separator),
+                           Token(Token.OPTION, f'separator={value_separator}')])
+        tokens.append(Token(Token.EOL, eol))
+        return cls(tokens)
+
+    @property
+    def name(self) -> str:
+        name = self.get_value(Token.VARIABLE, '')
+        if name.endswith('='):
+            return name[:-1].rstrip()
+        return name
+
+    @property
+    def value(self) -> 'tuple[str, ...]':
+        return self.get_values(Token.ARGUMENT)
+
+    @property
+    def scope(self) -> 'str|None':
+        return self.get_option('scope')
+
+    @property
+    def separator(self) -> 'str|None':
+        return self.get_option('separator')
+
+    def validate(self, ctx: 'ValidationContext'):
+        VariableValidator().validate(self)
         self._validate_options()
 
 
@@ -1361,3 +1391,26 @@ class EmptyLine(Statement):
     @classmethod
     def from_params(cls, eol: str = EOL):
         return cls([Token(Token.EOL, eol)])
+
+
+class VariableValidator:
+
+    def validate(self, statement: Statement):
+        name = statement.get_value(Token.VARIABLE, '')
+        match = search_variable(name, ignore_errors=True)
+        if not match.is_assign(allow_assign_mark=True, allow_nested=True):
+            statement.errors += (f"Invalid variable name '{name}'.",)
+        if match.identifier == '&':
+            self._validate_dict_items(statement)
+
+    def _validate_dict_items(self, statement: Statement):
+        for item in statement.get_values(Token.ARGUMENT):
+            if not self._is_valid_dict_item(item):
+                statement.errors += (
+                    f"Invalid dictionary variable item '{item}'. Items must use "
+                    f"'name=value' syntax or be dictionary variables themselves.",
+                )
+
+    def _is_valid_dict_item(self, item: str) -> bool:
+        name, value = split_from_equals(item)
+        return value is not None or is_dict_variable(item)

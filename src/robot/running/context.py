@@ -238,74 +238,72 @@ class _ExecutionContext:
         if len(self.steps) > self._started_keywords_threshold:
             raise DataError('Maximum limit of started keywords and control '
                             'structures exceeded.')
-        if result.type == result.ELSE:
+        output = self.output
+        if result.type in (result.ELSE, result.ITERATION):
             method = {
-                result.IF_ELSE_ROOT: self.output.start_if_branch,
-                result.TRY_EXCEPT_ROOT: self.output.start_try_branch,
-            }[result.parent.type]
-        elif result.type == result.ITERATION:
-            method = {
-                result.FOR: self.output.start_for_iteration,
-                result.WHILE: self.output.start_while_iteration,
+                result.IF_ELSE_ROOT: output.start_if_branch,
+                result.TRY_EXCEPT_ROOT: output.start_try_branch,
+                result.FOR: output.start_for_iteration,
+                result.WHILE: output.start_while_iteration,
             }[result.parent.type]
         else:
             method = {
-                result.KEYWORD: self.output.start_keyword,
-                result.SETUP: self.output.start_keyword,
-                result.TEARDOWN: self.output.start_keyword,
-                result.FOR: self.output.start_for,
-                result.WHILE: self.output.start_while,
-                result.IF_ELSE_ROOT: self.output.start_if,
-                result.IF: self.output.start_if_branch,
-                result.ELSE: self.output.start_if_branch,
-                result.ELSE_IF: self.output.start_if_branch,
-                result.TRY_EXCEPT_ROOT: self.output.start_try,
-                result.TRY: self.output.start_try_branch,
-                result.EXCEPT: self.output.start_try_branch,
-                result.FINALLY: self.output.start_try_branch,
-                result.BREAK: self.output.start_break,
-                result.CONTINUE: self.output.start_continue,
-                result.RETURN: self.output.start_return,
-                result.ERROR: self.output.start_error,
+                result.KEYWORD: output.start_keyword,
+                result.SETUP: output.start_keyword,
+                result.TEARDOWN: output.start_keyword,
+                result.FOR: output.start_for,
+                result.WHILE: output.start_while,
+                result.IF_ELSE_ROOT: output.start_if,
+                result.IF: output.start_if_branch,
+                result.ELSE: output.start_if_branch,
+                result.ELSE_IF: output.start_if_branch,
+                result.TRY_EXCEPT_ROOT: output.start_try,
+                result.TRY: output.start_try_branch,
+                result.EXCEPT: output.start_try_branch,
+                result.FINALLY: output.start_try_branch,
+                result.VAR: output.start_var,
+                result.BREAK: output.start_break,
+                result.CONTINUE: output.start_continue,
+                result.RETURN: output.start_return,
+                result.ERROR: output.start_error,
             }[result.type]
         method(data, result)
 
     def end_body_item(self, data, result):
-        if result.type == result.ELSE:
+        output = self.output
+        if result.type in (result.ELSE, result.ITERATION):
             method = {
-                result.IF_ELSE_ROOT: self.output.end_if_branch,
-                result.TRY_EXCEPT_ROOT: self.output.end_try_branch,
-            }[result.parent.type]
-        elif result.type == result.ITERATION:
-            method = {
-                result.FOR: self.output.end_for_iteration,
-                result.WHILE: self.output.end_while_iteration,
+                result.IF_ELSE_ROOT: output.end_if_branch,
+                result.TRY_EXCEPT_ROOT: output.end_try_branch,
+                result.FOR: output.end_for_iteration,
+                result.WHILE: output.end_while_iteration,
             }[result.parent.type]
         else:
             method = {
-                result.KEYWORD: self.output.end_keyword,
-                result.SETUP: self.output.end_keyword,
-                result.TEARDOWN: self.output.end_keyword,
-                result.FOR: self.output.end_for,
-                result.WHILE: self.output.end_while,
-                result.IF_ELSE_ROOT: self.output.end_if,
-                result.IF: self.output.end_if_branch,
-                result.ELSE: self.output.end_if_branch,
-                result.ELSE_IF: self.output.end_if_branch,
-                result.TRY_EXCEPT_ROOT: self.output.end_try,
-                result.TRY: self.output.end_try_branch,
-                result.EXCEPT: self.output.end_try_branch,
-                result.FINALLY: self.output.end_try_branch,
-                result.BREAK: self.output.end_break,
-                result.CONTINUE: self.output.end_continue,
-                result.RETURN: self.output.end_return,
-                result.ERROR: self.output.end_error,
+                result.KEYWORD: output.end_keyword,
+                result.SETUP: output.end_keyword,
+                result.TEARDOWN: output.end_keyword,
+                result.FOR: output.end_for,
+                result.WHILE: output.end_while,
+                result.IF_ELSE_ROOT: output.end_if,
+                result.IF: output.end_if_branch,
+                result.ELSE: output.end_if_branch,
+                result.ELSE_IF: output.end_if_branch,
+                result.TRY_EXCEPT_ROOT: output.end_try,
+                result.TRY: output.end_try_branch,
+                result.EXCEPT: output.end_try_branch,
+                result.FINALLY: output.end_try_branch,
+                result.VAR: output.end_var,
+                result.BREAK: output.end_break,
+                result.CONTINUE: output.end_continue,
+                result.RETURN: output.end_return,
+                result.ERROR: output.end_error,
             }[result.type]
         method(data, result)
         self.steps.pop()
 
-    def get_runner(self, name):
-        return self.namespace.get_runner(name)
+    def get_runner(self, name, recommend_on_failure=True):
+        return self.namespace.get_runner(name, recommend_on_failure)
 
     def trace(self, message):
         self.output.trace(message)

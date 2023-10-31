@@ -23,12 +23,21 @@ Log messages are collected on specified level
     ...    INFO: Hello says "Suite Setup"!
     ...    DEBUG: Debug message
     ...    INFO: \${assign} = JUST TESTING...
+    ...    DEBUG: Argument types are:
+    ...    <class 'str'>
+    ...    <class 'str'>
     ...    INFO: Hello says "Pass"!
     ...    DEBUG: Debug message
     ...    INFO: \${assign} = JUST TESTING...
+    ...    DEBUG: Argument types are:
+    ...    <class 'str'>
+    ...    <class 'str'>
     ...    INFO: Hello says "Fail"!
     ...    DEBUG: Debug message
     ...    INFO: \${assign} = JUST TESTING...
+    ...    DEBUG: Argument types are:
+    ...    <class 'str'>
+    ...    <class 'str'>
     ...    FAIL: Expected failure
     ...    DEBUG: Traceback (most recent call last):
     ...    ${SPACE*2}None

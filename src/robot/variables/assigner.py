@@ -105,7 +105,7 @@ class VariableAssigner:
 
     def assign(self, return_value):
         context = self._context
-        context.output.trace(lambda: 'Return: %s' % prepr(return_value),
+        context.output.trace(lambda: f'Return: {prepr(return_value)}',
                              write_if_flat=False)
         resolver = ReturnValueResolver(self._assignment)
         for name, items, value in resolver.resolve(return_value):
@@ -120,7 +120,7 @@ class VariableAssigner:
             return False
         base, attr = [token.strip() for token in name[2:-1].rsplit('.', 1)]
         try:
-            var = variables.replace_scalar('${%s}' % base)
+            var = variables.replace_scalar(f'${{{base}}}')
         except VariableError:
             return False
         if not (self._variable_supports_extended_assign(var) and
@@ -128,9 +128,9 @@ class VariableAssigner:
             return False
         try:
             setattr(var, attr, value)
-        except:
-            raise VariableError("Setting attribute '%s' to variable '${%s}' failed: %s"
-                                % (attr, base, get_error_message()))
+        except Exception:
+            raise VariableError(f"Setting attribute '{attr}' to variable '${{{base}}}' "
+                                f"failed: {get_error_message()}")
         return True
 
     def _variable_supports_extended_assign(self, var):
@@ -172,14 +172,12 @@ class VariableAssigner:
         *nested, item = items
         decorated_nested_items = ''.join(f'[{item}]' for item in nested)
         var = variables.replace_scalar(f'${name[1:]}{decorated_nested_items}')
-
         if not self._variable_type_supports_item_assign(var):
             var_type = type_name(var)
             raise VariableError(
                 f"Variable '{name}{decorated_nested_items}' is {var_type} "
                 f"and does not support item assignment."
                 )
-
         selector = variables.replace_scalar(item)
         if isinstance(var, MutableSequence):
             try:
@@ -199,7 +197,10 @@ class VariableAssigner:
         return value
 
     def _normal_assign(self, name, value, variables):
-        variables[name] = value
+        try:
+            variables[name] = value
+        except DataError as err:
+            raise VariableError(f"Setting variable '{name}' failed: {err}")
         # Always return the actually assigned value.
         return value if name[0] == '$' else variables[name]
 
@@ -239,8 +240,8 @@ class _MultiReturnValueResolver:
     def __init__(self, assignments):
         self._names = []
         self._items = []
-        for assigment in assignments:
-            match: VariableMatch = search_variable(assigment)
+        for assign in assignments:
+            match: VariableMatch = search_variable(assign)
             self._names.append(match.name)
             self._items.append(match.items)
         self._min_count = len(assignments)
@@ -261,10 +262,10 @@ class _MultiReturnValueResolver:
             self._raise_expected_list(return_value)
 
     def _raise_expected_list(self, ret):
-        self._raise('Expected list-like value, got %s.' % type_name(ret))
+        self._raise(f'Expected list-like value, got {type_name(ret)}.')
 
     def _raise(self, error):
-        raise VariableError('Cannot set variables: %s' % error)
+        raise VariableError(f'Cannot set variables: {error}')
 
     def _validate(self, return_count):
         raise NotImplementedError
@@ -277,8 +278,7 @@ class ScalarsOnlyReturnValueResolver(_MultiReturnValueResolver):
 
     def _validate(self, return_count):
         if return_count != self._min_count:
-            self._raise('Expected %d return values, got %d.'
-                        % (self._min_count, return_count))
+            self._raise(f'Expected {self._min_count} return values, got {return_count}.')
 
     def _resolve(self, return_value):
         return list(zip(self._names, self._items, return_value))
@@ -287,18 +287,17 @@ class ScalarsOnlyReturnValueResolver(_MultiReturnValueResolver):
 class ScalarsAndListReturnValueResolver(_MultiReturnValueResolver):
 
     def __init__(self, assignments):
-        _MultiReturnValueResolver.__init__(self, assignments)
+        super().__init__(assignments)
         self._min_count -= 1
 
     def _validate(self, return_count):
         if return_count < self._min_count:
-            self._raise('Expected %d or more return values, got %d.'
-                        % (self._min_count, return_count))
+            self._raise(f'Expected {self._min_count} or more return values, '
+                        f'got {return_count}.')
 
     def _resolve(self, return_value):
         list_index = [a[0][0] for a in self._names].index('@')
         list_len = len(return_value) - len(self._names) + 1
-
         elements_before_list = list(zip(
             self._names[:list_index],
             self._items[:list_index],
@@ -314,5 +313,4 @@ class ScalarsAndListReturnValueResolver(_MultiReturnValueResolver):
             self._items[list_index],
             return_value[list_index:list_index+list_len],
         )]
-
         return elements_before_list + list_elements + elements_after_list

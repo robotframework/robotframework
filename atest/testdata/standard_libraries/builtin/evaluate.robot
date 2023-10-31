@@ -278,6 +278,18 @@ Evaluate doesn't see module globals
     [Documentation]    FAIL STARTS: Evaluating expression 'DataError' failed: NameError:
     Evaluate    DataError
 
+Automatic variables are not seen in expression part of comprehensions
+    [Documentation]    FAIL Evaluating expression '[$x + x for x in 'abc']' failed: \
+    ...    Robot Framework variable '$x' used in the expression part of a comprehension or some other scope where it cannot be seen.
+    VAR    ${x}
+    Evaluate    [$x + x for x in 'abc']
+
+Automatic variables are not seen inside lambdas
+    [Documentation]    FAIL Evaluating expression '(lambda: $x)()' failed: \
+    ...    Robot Framework variable '$x' used in the expression part of a comprehension or some other scope where it cannot be seen.
+    VAR    ${x}
+    Evaluate    (lambda: $x)()
+
 Evaluation errors can be caught
     FOR    ${invalid}    IN    ooops    1/0    $    $nonex    len(None)    ${EMPTY}    ${7}
         ${err1} =                 Run Keyword And Expect Error    *    Evaluate    ${invalid}

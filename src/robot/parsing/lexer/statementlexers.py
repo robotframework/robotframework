@@ -62,11 +62,15 @@ class StatementLexer(Lexer, ABC):
         raise NotImplementedError
 
     def _lex_options(self, *names: str, end_index: 'int|None' = None):
+        seen = set()
         for token in reversed(self.statement[:end_index]):
-            if '=' in token.value and token.value.split('=')[0] in names:
-                token.type = Token.OPTION
-            else:
-                break
+            if '=' in token.value:
+                name = token.value.split('=')[0]
+                if name in names and name not in seen:
+                    token.type = Token.OPTION
+                    seen.add(name)
+                    continue
+            break
 
 
 class SingleType(StatementLexer, ABC):
@@ -206,7 +210,8 @@ class KeywordCallLexer(StatementLexer):
         for token in self.statement:
             if keyword_seen:
                 token.type = Token.ARGUMENT
-            elif is_assign(token.value, allow_assign_mark=True, allow_items=True):
+            elif is_assign(token.value, allow_assign_mark=True, allow_nested=True,
+                           allow_items=True):
                 token.type = Token.ASSIGN
             else:
                 token.type = Token.KEYWORD
@@ -229,7 +234,7 @@ class ForHeaderLexer(StatementLexer):
                 token.type = Token.FOR_SEPARATOR
                 separator = normalize_whitespace(token.value)
             else:
-                token.type = Token.ASSIGN
+                token.type = Token.VARIABLE
         if separator == 'IN ENUMERATE':
             self._lex_options('start')
         elif separator == 'IN ZIP':
@@ -250,7 +255,8 @@ class InlineIfHeaderLexer(StatementLexer):
         for token in statement:
             if token.value == 'IF':
                 return True
-            if not is_assign(token.value, allow_assign_mark=True, allow_items=True):
+            if not is_assign(token.value, allow_assign_mark=True, allow_nested=True,
+                             allow_items=True):
                 return False
         return False
 
@@ -301,7 +307,7 @@ class ExceptHeaderLexer(StatementLexer):
                 token.type = Token.AS
                 as_index = index
             elif as_index:
-                token.type = Token.ASSIGN
+                token.type = Token.VARIABLE
             else:
                 token.type = Token.ARGUMENT
         self._lex_options('type', end_index=as_index)
@@ -332,6 +338,23 @@ class EndLexer(TypeAndArguments):
 
     def handles(self, statement: StatementTokens) -> bool:
         return statement[0].value == 'END'
+
+
+class VarLexer(StatementLexer):
+    token_type = Token.VAR
+
+    def handles(self, statement: StatementTokens) -> bool:
+        return statement[0].value == 'VAR'
+
+    def lex(self):
+        self.statement[0].type = Token.VAR
+        if len(self.statement) > 1:
+            name, *values = self.statement[1:]
+            name.type = Token.VARIABLE
+            for value in values:
+                value.type = Token.ARGUMENT
+            options = ['scope', 'separator'] if name.value[0] == '$' else ['scope']
+            self._lex_options(*options)
 
 
 class ReturnLexer(TypeAndArguments):

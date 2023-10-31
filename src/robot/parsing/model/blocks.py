@@ -25,7 +25,7 @@ from .statements import (Break, Continue, ElseHeader, ElseIfHeader, End, ExceptH
                          Error, FinallyHeader, ForHeader, IfHeader, KeywordCall,
                          KeywordName, Node, ReturnSetting, ReturnStatement,
                          SectionHeader, Statement, TemplateArguments, TestCaseName,
-                         TryHeader, WhileHeader)
+                         TryHeader, Var, WhileHeader)
 from .visitor import ModelVisitor
 from ..lexer import Token
 
@@ -98,7 +98,7 @@ class Block(Container, ABC):
 
     def _body_is_empty(self):
         # This works with tests, keywords, and blocks inside them, not with sections.
-        valid = (KeywordCall, TemplateArguments, Continue, Break, ReturnSetting,
+        valid = (KeywordCall, TemplateArguments, Var, Continue, Break, ReturnSetting,
                  ReturnStatement, NestedBlock, Error)
         return not any(isinstance(node, valid) for node in self.body)
 

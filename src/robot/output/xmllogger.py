@@ -114,6 +114,12 @@ class XmlLoggerAdapter(LoggerApi):
     def end_try_branch(self, data, result):
         self.logger.end_try_branch(result)
 
+    def start_var(self, data, result):
+        self.logger.start_var(result)
+
+    def end_var(self, data, result):
+        self.logger.end_var(result)
+
     def start_break(self, data, result):
         self.logger.start_break(result)
 
@@ -287,6 +293,20 @@ class XmlLogger(ResultVisitor):
         self._write_status(iteration)
         self._writer.end('iter')
 
+    def start_var(self, var):
+        attr = {'name': var.name}
+        if var.scope is not None:
+            attr['scope'] = var.scope
+        if var.separator is not None:
+            attr['separator'] = var.separator
+        self._writer.start('variable', attr, write_empty=True)
+        for val in var.value:
+            self._writer.element('var', val)
+
+    def end_var(self, var):
+        self._write_status(var)
+        self._writer.end('variable')
+
     def start_return(self, return_):
         self._writer.start('return')
         for value in return_.values:
@@ -447,6 +467,12 @@ class FlatXmlLogger(XmlLogger):
         pass
 
     def end_while_iteration(self, iteration):
+        pass
+
+    def start_var(self, var):
+        pass
+
+    def end_var(self, var):
         pass
 
     def start_break(self, break_):
