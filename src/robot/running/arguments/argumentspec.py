@@ -30,7 +30,7 @@ class ArgumentSpec:
 
     def __init__(self, name=None, type='Keyword', positional_only=None,
                  positional_or_named=None, var_positional=None, named_only=None,
-                 var_named=None, defaults=None, types=None):
+                 var_named=None, embedded=None, defaults=None, types=None):
         self.name = name
         self.type = type
         # FIXME: Use tuples, not lists. Consider using __slots__.
@@ -39,6 +39,7 @@ class ArgumentSpec:
         self.var_positional = var_positional
         self.named_only = named_only or []
         self.var_named = var_named
+        self.embedded = embedded or ()
         self.defaults = defaults or {}
         self.types = types
 

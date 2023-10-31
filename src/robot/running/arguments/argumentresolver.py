@@ -33,7 +33,7 @@ class ArgumentResolver:
                  dict_to_kwargs: bool = False):
         self.named_resolver = NamedArgumentResolver(spec) \
               if resolve_named else NullNamedArgumentResolver()
-        self.variable_replacer = VariableReplacer(resolve_variables_until)
+        self.variable_replacer = VariableReplacer(spec, resolve_variables_until)
         self.dict_to_kwargs = DictToKwargs(spec, dict_to_kwargs)
         self.argument_validator = ArgumentValidator(spec)
 
@@ -51,17 +51,15 @@ class NamedArgumentResolver:
         self.spec = spec
 
     def resolve(self, arguments, variables=None):
-        positional = []
         named = []
-        for arg in arguments:
+        for arg in arguments[len(self.spec.embedded):]:
             if is_dict_variable(arg):
                 named.append(arg)
             elif self._is_named(arg, named, variables):
                 named.append(split_from_equals(arg))
             elif named:
                 self._raise_positional_after_named()
-            else:
-                positional.append(arg)
+        positional = arguments[:-len(named)] if named else arguments
         return positional, named
 
     def _is_named(self, arg, previous_named, variables=None):
@@ -107,13 +105,20 @@ class DictToKwargs:
 
 class VariableReplacer:
 
-    def __init__(self, resolve_until: 'int|None' = None):
+    def __init__(self, spec: 'ArgumentSpec', resolve_until: 'int|None' = None):
+        self.spec = spec
         self.resolve_until = resolve_until
 
     def replace(self, positional, named, variables=None):
         # `variables` is None in dry-run mode and when using Libdoc.
         if variables:
-            positional = variables.replace_list(positional, self.resolve_until)
+            if self.spec.embedded:
+                embedded = len(self.spec.embedded)
+                positional = [
+                    variables.replace_scalar(emb) for emb in positional[:embedded]
+                ] + variables.replace_list(positional[embedded:])
+            else:
+                positional = variables.replace_list(positional, self.resolve_until)
             named = list(self._replace_named(named, variables.replace_scalar))
         else:
             # If `var` isn't a tuple, it's a &{dict} variables.

@@ -316,14 +316,12 @@ class _BaseTestLibrary:
     def _get_possible_embedded_args_handler(self, handler):
         embedded = EmbeddedArguments.from_name(handler.name)
         if embedded:
-            self._validate_embedded_count(embedded, handler.arguments)
+            if len(embedded.args) > handler.arguments.maxargs:
+                raise DataError(f'Keyword must accept at least as many positional '
+                                f'arguments as it has embedded arguments.')
+            handler.arguments.embedded = embedded.args
             return EmbeddedArgumentsHandler(embedded, handler), True
         return handler, False
-
-    def _validate_embedded_count(self, embedded, arguments):
-        if not (arguments.minargs <= len(embedded.args) <= arguments.maxargs):
-            raise DataError('Embedded argument count does not match number of '
-                            'accepted arguments.')
 
     def _raise_creating_instance_failed(self):
         message, details = get_error_details()

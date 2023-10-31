@@ -540,29 +540,29 @@ the keyword is called. In the above example, `${animal}` has value `cat` when
 the keyword is used for the first time and `dog` when it is used for
 the second time.
 
-Starting from Robot Framework 6.1, it is possible to create user keywords that have
-both embedded and "normal" (specified with :setting:`[Arguments]` setting) arguments.
-Earlier, having "normal" arguments was not possible. Otherwise, keywords with embedded
-arguments are created just like other user keywords. They are also used the same
-way as other keywords except that spaces and underscores are not ignored in their
-names when keywords are matched. They are, however, case-insensitive like
-other keywords. For example, the keyword in the example above could be used like
-:name:`select cow from list`, but not like :name:`Select cow fromlist`.
-Example below demonstrates using embedded and regular arguments in a single keyword:
+Starting from Robot Framework 6.1, it is possible to create user keywords
+that accept both embedded and "normal" arguments:
 
 .. sourcecode:: robotframework
 
    *** Test Cases ***
    Embedded and normal arguments
-       Number of cats should be    5
-       Number of elephants should be    1
+       Number of cats should be    2
+       Number of dogs should be    count=3
 
    *** Keywords ***
    Number of ${animals} should be
-       [Arguments]    ${expected_count}
+       [Arguments]    ${count}
        Open Page    Pet Selection
        Select Items From List    animal_list    ${animals}
-       Number of Selected List Items Should Be    ${expected_count}
+       Number of Selected List Items Should Be    ${count}
+
+Other than the special name, keywords with embedded
+arguments are created just like other user keywords. They are also used the same
+way as other keywords except that spaces and underscores are not ignored in their
+names when keywords are matched. They are, however, case-insensitive like
+other keywords. For example, the :name:`Select ${animal} from list` keyword could
+be used like :name:`select cow from list`, but not like :name:`Select cow fromlist`.
 
 Embedded arguments do not support default values or variable number of
 arguments like normal arguments do. If such functionality is needed, normal

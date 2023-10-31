@@ -1920,7 +1920,6 @@ signature-preserving decorators.
 .. note:: Support for "unwrapping" decorators decorated with `functools.wraps`
           is a new feature in Robot Framework 3.2.
 
-
 __ https://realpython.com/primer-on-python-decorators/
 __ https://docs.python.org/library/functools.html#functools.wraps
 __ https://pypi.org/project/decorator/
@@ -1929,45 +1928,62 @@ __ https://wrapt.readthedocs.io
 Embedding arguments into keyword names
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Library keywords can also accept arguments which are passed using
-the `embedded argument syntax`__.  The `@keyword decorator`_
-can be used to create a `custom keyword name`__ for the keyword
-which includes the desired syntax.
+Library keywords can also accept *embedded arguments* the same way as
+`user keywords`_. This section mainly covers the Python syntax to use to
+create such keywords, the embedded arguments syntax itself is covered in
+detail as part of `user keyword documentation`__.
+
+Library keywords with embedded arguments need to have a `custom name`__ that
+is typically set using the `@keyword decorator`_. Values matching embedded
+arguments are passed to the function or method implementing the keyword as
+positional arguments. If the function or method accepts more arguments, they
+can be passed to the keyword as normal positional or named arguments.
+Argument names do not need to match the embedded argument names, but that
+is generally a good convention.
 
 __ `Embedding arguments into keyword name`_
 __ `Setting custom name`_
+
+Keywords accepting embedded arguments:
 
 .. sourcecode:: python
 
     from robot.api.deco import keyword
 
 
-    @keyword('Add ${quantity:\d+} copies of ${item} to cart')
-    def add_copies_to_cart(quantity, item):
-        # ...
+    @keyword('Select ${animal} from list')
+    def select_animal_from_list(animal):
+        ...
+
+
+    @keyword('Number of ${animals} should be')
+    def number_of_animals_should_be(animals, count):
+        ...
+
+Tests using the above keywords:
 
 .. sourcecode:: robotframework
 
-   *** Test Cases ***
-   My Test
-       Add 7 copies of coffee to cart
+    *** Test Cases ***
+    Embedded arguments
+        Select cat from list
+        Select dog from list
 
-By default arguments are passed to implementing keywords as strings, but
-automatic `argument conversion`_ works if type information is specified
-somehow. It is convenient to use `function annotations`__,
-and alternatively it is possible to pass types to the `@keyword decorator`__.
-This example uses annotations:
+    Embedded and normal arguments
+        Number of cats should be    2
+        Number of dogs should be    count=3
+
+If type information is specified, automatic `argument conversion`_ works also
+with embedded arguments:
 
 .. sourcecode:: python
 
-    @keyword('Add ${quantity:\d+} copies of ${item} to cart')
+    @keyword('Add ${quantity} copies of ${item} to cart')
     def add_copies_to_cart(quantity: int, item: str):
-        # ...
+        ...
 
-__ `Specifying argument types using function annotations`_
-__ `Specifying argument types using @keyword decorator`_
-
-.. note:: Automatic type conversion is new in Robot Framework 3.1.
+.. note:: Support for mixing embedded arguments and normal arguments is new
+          in Robot Framework 7.0.
 
 Asynchronous keywords
 ~~~~~~~~~~~~~~~~~~~~~
