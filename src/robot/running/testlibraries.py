@@ -13,9 +13,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from functools import partial
 import inspect
 import os
+from functools import partial
 
 from robot.errors import DataError
 from robot.libraries import STDLIBS
@@ -134,10 +134,9 @@ class _BaseTestLibrary:
     def report_error(self, message, details=None, level='ERROR',
                      details_level='INFO'):
         prefix = 'Error in' if level in ('ERROR', 'WARN') else 'In'
-        self.logger.write("%s library '%s': %s" % (prefix, self.name, message),
-                          level)
+        self.logger.write(f"{prefix} library '{self.name}': {message}", level)
         if details:
-            self.logger.write('Details:\n%s' % details, details_level)
+            self.logger.write(f'Details:\n{details}', details_level)
 
     def _get_version(self, libcode):
         return self._get_attr(libcode, 'ROBOT_LIBRARY_VERSION') \
@@ -209,8 +208,8 @@ class _BaseTestLibrary:
             except DataError as err:
                 self.has_listener = False
                 # Error should have information about suite where the
-                # problem occurred but we don't have such info here.
-                self.report_error("Registering listeners failed: %s" % err)
+                # problem occurred, but we don't have such info here.
+                self.report_error(f"Registering listeners failed: {err}")
 
     def unregister_listeners(self, close=False):
         if self.has_listener:
@@ -231,16 +230,16 @@ class _BaseTestLibrary:
         except Exception:
             message, details = get_error_details()
             name = getattr(listener, '__name__', None) or type_name(listener)
-            self.report_error("Calling method '%s' of listener '%s' failed: %s"
-                              % (method.__name__, name, message), details)
+            self.report_error(f"Calling method '{method.__name__}' of listener "
+                              f"'{name}' failed: {message}", details)
 
     def _create_handlers(self, libcode):
         try:
             names = self._get_handler_names(libcode)
         except Exception:
             message, details = get_error_details()
-            raise DataError("Getting keyword names from library '%s' failed: %s"
-                            % (self.name, message), details)
+            raise DataError(f"Getting keyword names from library '{self.name}' "
+                            f"failed: {message}", details)
         for name in names:
             method = self._try_to_get_handler_method(libcode, name)
             if method:
@@ -251,7 +250,7 @@ class _BaseTestLibrary:
                     except DataError as err:
                         self._adding_keyword_failed(handler.name, err)
                     else:
-                        self.logger.debug("Created keyword '%s'" % handler.name)
+                        self.logger.debug(f"Created keyword '{handler.name}'.")
 
     def _get_handler_names(self, libcode):
         def has_robot_name(name):
@@ -277,7 +276,7 @@ class _BaseTestLibrary:
 
     def _adding_keyword_failed(self, name, error, level='ERROR'):
         self.report_error(
-            "Adding keyword '%s' failed: %s" % (name, error.message),
+            f"Adding keyword '{name}' failed: {error}",
             error.details,
             level=level,
             details_level='DEBUG'
@@ -327,14 +326,14 @@ class _BaseTestLibrary:
                             'accepted arguments.')
 
     def _raise_creating_instance_failed(self):
-        msg, details = get_error_details()
+        message, details = get_error_details()
         if self.positional_args or self.named_args:
-            args = self.positional_args + ['%s=%s' % item for item in self.named_args]
-            args_text = 'arguments %s' % seq2str2(args)
+            args = self.positional_args + [f'{n}={v}' for n, v in self.named_args]
+            args_text = f'arguments {seq2str2(args)}'
         else:
             args_text = 'no arguments'
-        raise DataError("Initializing library '%s' with %s failed: %s\n%s"
-                        % (self.name, args_text, msg, details))
+        raise DataError(f"Initializing library '{self.name}' with {args_text} failed: "
+                        f"{message}\n{details}")
 
 
 class _ClassLibrary(_BaseTestLibrary):

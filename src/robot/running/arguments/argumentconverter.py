@@ -33,7 +33,7 @@ class ArgumentConverter:
                  custom_converters: 'CustomArgumentConverters',
                  dry_run: bool = False,
                  languages: 'LanguagesLike' = None):
-        self.arg_spec = arg_spec
+        self.spec = arg_spec
         self.custom_converters = custom_converters
         self.dry_run = dry_run
         self.languages = languages
@@ -42,22 +42,22 @@ class ArgumentConverter:
         return self._convert_positional(positional), self._convert_named(named)
 
     def _convert_positional(self, positional):
-        names = self.arg_spec.positional
+        names = self.spec.positional
         converted = [self._convert(name, value)
                      for name, value in zip(names, positional)]
-        if self.arg_spec.var_positional:
-            converted.extend(self._convert(self.arg_spec.var_positional, value)
+        if self.spec.var_positional:
+            converted.extend(self._convert(self.spec.var_positional, value)
                              for value in positional[len(names):])
         return converted
 
     def _convert_named(self, named):
-        names = set(self.arg_spec.positional) | set(self.arg_spec.named_only)
-        var_named = self.arg_spec.var_named
+        names = set(self.spec.positional) | set(self.spec.named_only)
+        var_named = self.spec.var_named
         return [(name, self._convert(name if name in names else var_named, value))
                 for name, value in named]
 
     def _convert(self, name, value):
-        spec = self.arg_spec
+        spec = self.spec
         if (spec.types is None
                 or self.dry_run and contains_variable(value, identifiers='$@&%')):
             return value

@@ -27,29 +27,28 @@ if TYPE_CHECKING:
 
 class ArgumentResolver:
 
-    def __init__(self, arg_spec: 'ArgumentSpec',
+    def __init__(self, spec: 'ArgumentSpec',
                  resolve_named: bool = True,
                  resolve_variables_until: 'int|None' = None,
                  dict_to_kwargs: bool = False):
-        self.named_resolver = NamedArgumentResolver(arg_spec) \
+        self.named_resolver = NamedArgumentResolver(spec) \
               if resolve_named else NullNamedArgumentResolver()
         self.variable_replacer = VariableReplacer(resolve_variables_until)
-        self.dict_to_kwargs = DictToKwargs(arg_spec, dict_to_kwargs)
-        self.argument_validator = ArgumentValidator(arg_spec)
+        self.dict_to_kwargs = DictToKwargs(spec, dict_to_kwargs)
+        self.argument_validator = ArgumentValidator(spec)
 
     def resolve(self, arguments, variables=None):
         positional, named = self.named_resolver.resolve(arguments, variables)
         positional, named = self.variable_replacer.replace(positional, named, variables)
         positional, named = self.dict_to_kwargs.handle(positional, named)
-        self.argument_validator.validate(positional, named,
-                                         dryrun=variables is None)
+        self.argument_validator.validate(positional, named, dryrun=variables is None)
         return positional, named
 
 
 class NamedArgumentResolver:
 
-    def __init__(self, arg_spec: 'ArgumentSpec'):
-        self.arg_spec = arg_spec
+    def __init__(self, spec: 'ArgumentSpec'):
+        self.spec = spec
 
     def resolve(self, arguments, variables=None):
         positional = []
@@ -74,14 +73,12 @@ class NamedArgumentResolver:
                 name = variables.replace_scalar(name)
             except DataError:
                 return False
-        spec = self.arg_spec
         return bool(previous_named or
-                    spec.var_named or
-                    name in spec.positional_or_named or
-                    name in spec.named_only)
+                    self.spec.var_named or
+                    name in self.spec.named)
 
     def _raise_positional_after_named(self):
-        raise DataError(f"{self.arg_spec.type.capitalize()} '{self.arg_spec.name}' "
+        raise DataError(f"{self.spec.type.capitalize()} '{self.spec.name}' "
                         f"got positional argument after named arguments.")
 
 
@@ -93,9 +90,9 @@ class NullNamedArgumentResolver:
 
 class DictToKwargs:
 
-    def __init__(self, arg_spec: 'ArgumentSpec', enabled: bool = False):
-        self.maxargs = arg_spec.maxargs
-        self.enabled = enabled and bool(arg_spec.var_named)
+    def __init__(self, spec: 'ArgumentSpec', enabled: bool = False):
+        self.maxargs = spec.maxargs
+        self.enabled = enabled and bool(spec.var_named)
 
     def handle(self, positional, named):
         if self.enabled and self._extra_arg_has_kwargs(positional, named):

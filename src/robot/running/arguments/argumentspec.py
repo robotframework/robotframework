@@ -33,6 +33,7 @@ class ArgumentSpec:
                  var_named=None, defaults=None, types=None):
         self.name = name
         self.type = type
+        # FIXME: Use tuples, not lists. Consider using __slots__.
         self.positional_only = positional_only or []
         self.positional_or_named = positional_or_named or []
         self.var_positional = var_positional
@@ -48,6 +49,10 @@ class ArgumentSpec:
     @property
     def positional(self):
         return self.positional_only + self.positional_or_named
+
+    @property
+    def named(self):
+        return self.named_only + self.positional_or_named
 
     @property
     def minargs(self):
