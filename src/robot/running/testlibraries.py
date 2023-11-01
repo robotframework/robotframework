@@ -15,7 +15,7 @@
 
 import inspect
 import os
-from functools import partial
+from functools import cached_property, partial
 
 from robot.errors import DataError
 from robot.libraries import STDLIBS
@@ -254,11 +254,8 @@ class _BaseTestLibrary:
 
     def _get_handler_names(self, libcode):
         def has_robot_name(name):
-            try:
-                handler = self._get_handler_method(libcode, name)
-            except DataError:
-                return False
-            return hasattr(handler, 'robot_name')
+            candidate = inspect.getattr_static(libcode, name)
+            return hasattr(candidate, 'robot_name')
 
         auto_keywords = getattr(libcode, 'ROBOT_AUTO_KEYWORDS', True)
         if auto_keywords:
@@ -337,18 +334,17 @@ class _BaseTestLibrary:
 class _ClassLibrary(_BaseTestLibrary):
 
     def _get_handler_method(self, libinst, name):
-        for item in (libinst,) + inspect.getmro(libinst.__class__):
-            # `isroutine` is used before `getattr` to avoid calling properties.
-            if (name in getattr(item, '__dict__', ())
-                    and inspect.isroutine(item.__dict__[name])):
-                try:
-                    method = getattr(libinst, name)
-                except Exception:
-                    message, traceback = get_error_details()
-                    raise DataError(f'Getting handler method failed: {message}',
-                                    traceback)
-                return self._validate_handler_method(method)
-        raise DataError('Not a method or function.')
+        candidate = inspect.getattr_static(libinst, name)
+        if isinstance(candidate, classmethod):
+            candidate = candidate.__func__
+        if isinstance(candidate, cached_property) or not inspect.isroutine(candidate):
+            raise DataError('Not a method or function.')
+        try:
+            method = getattr(libinst, name)
+        except Exception:
+            message, details = get_error_details()
+            raise DataError(f'Getting handler method failed: {message}', details)
+        return self._validate_handler_method(method)
 
 
 class _ModuleLibrary(_BaseTestLibrary):
