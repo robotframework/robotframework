@@ -27,10 +27,12 @@ from .logger import LOGGER
 
 class Listeners(LoggerApi):
 
-    def __init__(self, listeners, log_level='INFO'):
+    def __init__(self, listeners=(), log_level='INFO'):
         self._is_logged = IsLogged(log_level)
         self._listeners = import_listeners(listeners) if listeners else []
 
+    # LibraryListeners has a dynamic implementation which requires
+    # `listeners` to be a property.
     @property
     def listeners(self):
         return self._listeners
@@ -172,13 +174,13 @@ class Listeners(LoggerApi):
             listener.close()
 
     def __bool__(self):
-        return len(self.listeners) > 0
+        return bool(self.listeners)
 
 
 class LibraryListeners(Listeners):
 
     def __init__(self, log_level='INFO'):
-        super().__init__([], log_level)
+        super().__init__(log_level=log_level)
         self._listener_stack = []
 
     @property
@@ -208,10 +210,10 @@ class LibraryListeners(Listeners):
 
 class ListenerFacade(LoggerApi):
 
-    def __init__(self, listener, name, prefix=''):
+    def __init__(self, listener, name, allow_leading_underscore=False):
         self.listener = listener
         self.name = name
-        self.prefix = prefix
+        self.allow_leading_underscore = allow_leading_underscore
         self._start_suite = self._get_method(listener, 'start_suite')
         self._end_suite = self._get_method(listener, 'end_suite')
         self._start_test = self._get_method(listener, 'start_test')
@@ -246,15 +248,15 @@ class ListenerFacade(LoggerApi):
         self._close()
 
     def _get_method(self, listener, name):
-        for method_name in self._get_method_names(name, self.prefix):
+        for method_name in self._get_method_names(name):
             if hasattr(listener, method_name):
                 return ListenerMethod(getattr(listener, method_name), self.name)
         return ListenerMethod(None, self.name)
 
-    def _get_method_names(self, name, prefix):
+    def _get_method_names(self, name):
         names = [name, self._toCamelCase(name)] if '_' in name else [name]
-        if prefix:
-            names += [prefix + name for name in names]
+        if self.allow_leading_underscore:
+            names += ['_' + name for name in names]
         return names
 
     def _toCamelCase(self, name):
@@ -264,8 +266,8 @@ class ListenerFacade(LoggerApi):
 
 class ListenerV2Facade(ListenerFacade):
 
-    def __init__(self, listener, name, prefix=''):
-        super().__init__(listener, name, prefix)
+    def __init__(self, listener, name, allow_leading_underscore=False):
+        super().__init__(listener, name, allow_leading_underscore)
         self._start_keyword = self._get_method(listener, 'start_keyword')
         self._end_keyword = self._get_method(listener, 'end_keyword')
         self._start_for = self._start_for_iteration = self._start_while = \
@@ -281,98 +283,138 @@ class ListenerV2Facade(ListenerFacade):
         method(name, attrs)
 
     def start_suite(self, data: 'running.TestSuite', result: 'result.TestSuite'):
-        self._start_suite(result.name, self._suite_v2_attributes(data, result))
+        self._start_suite(result.name, self._suite_attributes(data, result))
 
     def end_suite(self, data: 'running.TestSuite', result: 'result.TestSuite'):
-        self._end_suite(result.name, self._suite_v2_attributes(data, result, is_end=True))
+        self._end_suite(result.name, self._suite_attributes(data, result, is_end=True))
 
     def start_test(self, data: 'running.TestCase', result: 'result.TestCase'):
-        self._start_test(result.name, self._test_v2_attributes(data, result))
+        self._start_test(result.name, self._test_attributes(data, result))
 
     def end_test(self, data: 'running.TestCase', result: 'result.TestCase'):
-        self._end_test(result.name, self._test_v2_attributes(data, result, is_end=True))
+        self._end_test(result.name, self._test_attributes(data, result, is_end=True))
 
     def start_keyword(self, data: 'running.Keyword', result: 'result.Keyword'):
-        attrs = self._body_item_v2_attributes(data, result, is_keyword_like=True)
-        self._start_keyword(result.full_name, attrs)
+        self._start_keyword(result.full_name, self._keyword_attributes(data, result))
 
     def end_keyword(self, data: 'running.Keyword', result: 'result.Keyword'):
-        attrs = self._body_item_v2_attributes(data, result, is_keyword_like=True, is_end=True)
-        self._end_keyword(result.full_name, attrs)
+        self._end_keyword(result.full_name,
+                          self._keyword_attributes(data, result, is_end=True))
 
     def start_for(self, data: 'running.For', result: 'result.For'):
-        self._start_for(result._log_name, self._for_v2_attributes(data, result))
+        extra = self._for_extra_attrs(result)
+        self._start_for(result._log_name,
+                        self._control_attributes(data, result, **extra))
 
     def end_for(self, data: 'running.For', result: 'result.For'):
-        self._end_for(result._log_name, self._for_v2_attributes(data, result, is_end=True))
+        extra = self._for_extra_attrs(result)
+        self._end_for(result._log_name,
+                      self._control_attributes(data, result, is_end=True, **extra))
+
+    def _for_extra_attrs(self, result):
+        extra = {
+            'variables': list(result.assign),
+            'flavor': result.flavor or '',
+            'values': list(result.values)
+        }
+        if result.flavor == 'IN ENUMERATE':
+            extra['start'] = result.start
+        elif result.flavor == 'IN ZIP':
+            extra['fill'] = result.fill
+            extra['mode'] = result.mode
+        return extra
 
     def start_for_iteration(self, data: 'running.For', result: 'result.ForIteration'):
-        attrs = self._body_item_v2_attributes(data, result)
-        attrs['variables'] = dict(result.assign)
+        attrs = self._control_attributes(data, result, variables=dict(result.assign))
         self._start_for_iteration(result._log_name, attrs)
 
     def end_for_iteration(self, data: 'running.For', result: 'result.ForIteration'):
-        attrs = self._body_item_v2_attributes(data, result, is_end=True)
-        attrs['variables'] = dict(result.assign)
+        attrs = self._control_attributes(data, result, is_end=True, variables=dict(result.assign))
         self._end_for_iteration(result._log_name, attrs)
 
     def start_while(self, data: 'running.While', result: 'result.While'):
-        self._start_while(result._log_name, self._while_v2_attributes(data, result))
+        # FIXME: Add 'on_limit'
+        attrs = self._control_attributes(data, result, condition=result.condition,
+                                         limit=result.limit, on_limit_message=result.on_limit_message)
+        self._start_while(result._log_name, attrs)
 
     def end_while(self, data: 'running.While', result: 'result.While'):
-        self._end_while(result._log_name, self._while_v2_attributes(data, result, is_end=True))
+        attrs = self._control_attributes(data, result, condition=result.condition,
+                                         limit=result.limit, on_limit_message=result.on_limit_message,
+                                         is_end=True)
+        self._end_while(result._log_name, attrs)
 
     def start_while_iteration(self, data: 'running.While', result: 'result.WhileIteration'):
-        self._start_while_iteration(result._log_name, self._body_item_v2_attributes(data, result))
+        self._start_while_iteration(result._log_name, self._control_attributes(data, result))
 
     def end_while_iteration(self, data: 'running.While', result: 'result.WhileIteration'):
-        self._end_while_iteration(result._log_name, self._body_item_v2_attributes(data, result, is_end=True))
+        self._end_while_iteration(result._log_name,
+                                  self._control_attributes(data, result, is_end=True))
 
     def start_if_branch(self, data: 'running.If', result: 'result.IfBranch'):
-        self._start_if_branch(result._log_name, self._if_v2_attributes(data, result))
+        extra = {}
+        if result.type in (BodyItem.IF, BodyItem.ELSE_IF):
+            extra['condition'] = result.condition
+        self._start_if_branch(result._log_name,
+                              self._control_attributes(data, result, **extra))
 
     def end_if_branch(self, data: 'running.If', result: 'result.IfBranch'):
-        self._end_if_branch(result._log_name, self._if_v2_attributes(data, result, is_end=True))
+        extra = {}
+        if result.type in (BodyItem.IF, BodyItem.ELSE_IF):
+            extra['condition'] = result.condition
+        self._end_if_branch(result._log_name,
+                            self._control_attributes(data, result, is_end=True, **extra))
 
     def start_try_branch(self, data: 'running.Try', result: 'result.TryBranch'):
-        self._start_try_branch(result._log_name, self._try_v2_attributes(data, result))
+        extra = self._try_extra_attrs(result)
+        self._start_try_branch(result._log_name,
+                               self._control_attributes(data, result, **extra))
 
     def end_try_branch(self, data: 'running.Try', result: 'result.TryBranch'):
-        self._end_try_branch(result._log_name, self._try_v2_attributes(data, result, is_end=True))
+        extra = self._try_extra_attrs(result)
+        self._end_try_branch(result._log_name,
+                             self._control_attributes(data, result, is_end=True, **extra))
+
+    def _try_extra_attrs(self, result):
+        if result.type == BodyItem.EXCEPT:
+            return {
+                'patterns': list(result.patterns),
+                'pattern_type': result.pattern_type,
+                'variable': result.assign
+            }
+        return {}
 
     def start_return(self, data: 'running.Return', result: 'result.Return'):
-        attrs = self._body_item_v2_attributes(data, result)
-        attrs['values'] = list(result.values)
-        self._start_return(result._log_name, attrs)
+        self._start_return(result._log_name,
+                           self._control_attributes(data, result, values=list(result.values)))
 
     def end_return(self, data: 'running.Return', result: 'result.Return'):
-        attrs = self._body_item_v2_attributes(data, result, is_end=True)
-        attrs['values'] = list(result.values)
-        self._end_return(result._log_name, attrs)
+        self._end_return(result._log_name,
+                         self._control_attributes(data, result, is_end=True, values=list(result.values)))
 
     def start_continue(self, data: 'running.Continue', result: 'result.Continue'):
-        self._start_continue(result._log_name, self._body_item_v2_attributes(data, result))
+        self._start_continue(result._log_name, self._control_attributes(data, result))
 
     def end_continue(self, data: 'running.Continue', result: 'result.Continue'):
-        self._end_continue(result._log_name, self._body_item_v2_attributes(data, result, is_end=True))
+        self._end_continue(result._log_name, self._control_attributes(data, result, is_end=True))
 
     def start_break(self, data: 'running.Break', result: 'result.Break'):
-        self._start_break(result._log_name, self._body_item_v2_attributes(data, result))
+        self._start_break(result._log_name, self._control_attributes(data, result))
 
     def end_break(self, data: 'running.Break', result: 'result.Break'):
-        self._end_break(result._log_name, self._body_item_v2_attributes(data, result, is_end=True))
+        self._end_break(result._log_name, self._control_attributes(data, result, is_end=True))
 
     def start_error(self, data: 'running.Error', result: 'result.Error'):
-        self._start_error(result._log_name, self._body_item_v2_attributes(data, result))
+        self._start_error(result._log_name, self._control_attributes(data, result))
 
     def end_error(self, data: 'running.Error', result: 'result.Error'):
-        self._end_error(result._log_name, self._body_item_v2_attributes(data, result, is_end=True))
+        self._end_error(result._log_name, self._control_attributes(data, result, is_end=True))
 
     def start_var(self, data: 'running.Var', result: 'result.Var'):
-        self._start_var(result._log_name, self._body_item_v2_attributes(data, result))
+        self._start_var(result._log_name, self._control_attributes(data, result))
 
     def end_var(self, data: 'running.Var', result: 'result.Var'):
-        self._end_var(result._log_name, self._body_item_v2_attributes(data, result, is_end=True))
+        self._end_var(result._log_name, self._control_attributes(data, result, is_end=True))
 
     def log_message(self, message: 'model.Message'):
         self._log_message(self._message_attributes(message))
@@ -380,7 +422,7 @@ class ListenerV2Facade(ListenerFacade):
     def message(self, message: 'model.Message'):
         self._message(self._message_attributes(message))
 
-    def _suite_v2_attributes(self, data, result, is_end=False):
+    def _suite_attributes(self, data, result, is_end=False):
         attrs = {
             'id': data.id,
             'doc': result.doc,
@@ -402,7 +444,7 @@ class ListenerV2Facade(ListenerFacade):
             })
         return attrs
 
-    def _test_v2_attributes(self, data: 'running.TestCase', result: 'result.TestCase', is_end=False):
+    def _test_attributes(self, data: 'running.TestCase', result: 'result.TestCase', is_end=False):
         attrs = {
             'id': data.id,
             'doc': result.doc,
@@ -423,76 +465,42 @@ class ListenerV2Facade(ListenerFacade):
             })
         return attrs
 
-    def _for_v2_attributes(self, data: 'running.For', result: 'result.For', is_end=False):
-        attrs = self._body_item_v2_attributes(data, result, is_end=is_end)
-        attrs.update({
-            'variables': list(result.assign),
-            'flavor': result.flavor or '',
-            'values': list(result.values)
-        })
-        if result.flavor == 'IN ENUMERATE':
-            attrs['start'] = result.start
-        elif result.flavor == 'IN ZIP':
-            attrs['fill'] = result.fill
-            attrs['mode'] = result.mode
-        return attrs
-
-    def _while_v2_attributes(self, data: 'running.While', result: 'result.While', is_end=False):
-        attrs = self._body_item_v2_attributes(data, result, is_end=is_end)
-        attrs.update({
-            'condition': result.condition,
-            'limit': result.limit,
-            'on_limit_message': result.on_limit_message
-            # FIXME: Add 'on_limit'
-        })
-        return attrs
-
-    def _if_v2_attributes(self, data: 'running.If', result: 'result.If', is_end=False):
-        attrs = self._body_item_v2_attributes(data, result, is_end=is_end)
-        if result.type in (BodyItem.IF, BodyItem.ELSE_IF):
-            attrs['condition'] = result.condition
-        return attrs
-
-    def _try_v2_attributes(self, data: 'running.Try', result: 'result.TryBranch', is_end=False):
-        attrs = self._body_item_v2_attributes(data, result, is_end=is_end)
-        if result.type == BodyItem.EXCEPT:
-            attrs.update({
-                'patterns': list(result.patterns),
-                'pattern_type': result.pattern_type,
-                'variable': result.assign
-            })
-        return attrs
-
-    def _return_v2_attributes(self, data: 'running.Return', result: 'result.Return', is_end=False):
-        attrs = self._body_item_v2_attributes(data, result, is_end=is_end)
-        attrs['values'] = list(result.values)
-        return result._log_name, attrs
-
-    def _body_item_v2_attributes(self, data, result, is_end=False, is_keyword_like=False):
+    def _keyword_attributes(self, data, result, is_end=False):
         attrs = {
             'doc': result.doc,
             'lineno': data.lineno,
             'type': result.type,
             'status': result.status,
             'starttime': result.starttime,
-            'source': str(data.source or '')
+            'source': str(data.source or ''),
+            'kwname': result.name or '',
+            'libname': result.owner or '',
+            'args':  [a if is_string(a) else safe_str(a) for a in result.args],
+            'assign': list(result.assign),
+            'tags': list(result.tags)
         }
-        if is_keyword_like:
+        if is_end:
             attrs.update({
-                'kwname': result.name or '',
-                'libname': result.owner or '',
-                'args':  [a if is_string(a) else safe_str(a) for a in result.args],
-                'assign': list(result.assign),
-                'tags': list(result.tags),
+                'endtime': result.endtime,
+                'elapsedtime': result.elapsedtime
             })
-        else:
-            attrs.update({
-                'kwname': result._log_name,
-                'libname': '',
-                'args':  [],
-                'assign': [],
-                'tags': []
-            })
+        return attrs
+
+    def _control_attributes(self, data, result, is_end=False, **extra):
+        attrs = {
+            'doc': '',
+            'lineno': data.lineno,
+            'type': result.type,
+            'status': result.status,
+            'starttime': result.starttime,
+            'source': str(data.source or ''),
+            'kwname': result._log_name,
+            'libname': '',
+            'args':  [],
+            'assign': [],
+            'tags': []
+        }
+        attrs.update(**extra)
         if is_end:
             attrs.update({
                 'endtime': result.endtime,
@@ -513,14 +521,14 @@ class ListenerV2Facade(ListenerFacade):
 class LibraryListenerFacade(ListenerFacade):
 
     def __init__(self, listener, name, library):
-        super().__init__(listener, name, prefix="_")
+        super().__init__(listener, name, allow_leading_underscore=True)
         self.library = library
 
 
 class LibraryListenerV2Facade(ListenerV2Facade):
 
     def __init__(self, listener, name, library):
-        super().__init__(listener, name, prefix='_')
+        super().__init__(listener, name, allow_leading_underscore=True)
         self.library = library
 
 
