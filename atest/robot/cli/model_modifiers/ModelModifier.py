@@ -46,7 +46,7 @@ class ModelModifier(SuiteVisitor):
         iteration.assign['${x}'] = 'new'
 
     def start_if_branch(self, branch):
-        if branch.condition == "'IF' == 'WRONG'":
+        if branch.condition == "'${x}' == 'wrong'":
             branch.condition = 'True'
             # With Robot
             if not hasattr(branch, 'status'):

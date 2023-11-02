@@ -37,11 +37,11 @@ Errors Are Removed In All Mode
 IF/ELSE in All mode
     [Setup]    Previous test should have passed   Errors Are Removed In All Mode
     ${tc} =    Check Test Case    IF structure
-    Length Should Be    ${tc.body}    1
-    Length Should Be    ${tc.body[0].body}    3
-    IF Branch Should Be Empty    ${tc.body[0].body[0]}    IF         'IF' == 'WRONG'
-    IF Branch Should Be Empty    ${tc.body[0].body[1]}    ELSE IF    'ELSE IF' == 'ELSE IF'
-    IF Branch Should Be Empty    ${tc.body[0].body[2]}    ELSE
+    Length Should Be    ${tc.body}    2
+    Length Should Be    ${tc.body[1].body}    3
+    IF Branch Should Be Empty    ${tc.body[1].body[0]}    IF         '\${x}' == 'wrong'
+    IF Branch Should Be Empty    ${tc.body[1].body[1]}    ELSE IF    '\${x}' == 'value'
+    IF Branch Should Be Empty    ${tc.body[1].body[2]}    ELSE
 
 FOR in All mode
     [Setup]    Previous test should have passed    IF/ELSE in All mode

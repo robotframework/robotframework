@@ -75,10 +75,10 @@ Modify FOR
 Modify IF
     [Setup]    Should Be Equal    ${PREV TEST NAME}    Modify FOR
     ${tc} =    Check Test Case    If structure
-    Should Be Equal    ${tc.body[0].body[0].condition}          modified
-    Should Be Equal    ${tc.body[0].body[0].status}             PASS
-    Should Be Equal    ${tc.body[0].body[0].body[0].args[0]}    got here!
-    Should Be Equal    ${tc.body[0].body[1].status}             PASS
+    Should Be Equal    ${tc.body[1].body[0].condition}          modified
+    Should Be Equal    ${tc.body[1].body[0].status}             PASS
+    Should Be Equal    ${tc.body[1].body[0].body[0].args[0]}    got here!
+    Should Be Equal    ${tc.body[1].body[1].status}             PASS
 
 *** Keywords ***
 Modify FOR and IF

@@ -68,4 +68,4 @@ Modify FOR and IF
     Check Log Message    ${tc.body[0].body[1].body[0].msgs[0]}   is
     Check Log Message    ${tc.body[0].body[2].body[0].msgs[0]}   modified!
     ${tc} =    Check Test Case    If structure
-    Check Log Message    ${tc.body[0].body[0].body[0].msgs[0]}   going here!
+    Check Log Message    ${tc.body[1].body[0].body[0].msgs[0]}   going here!

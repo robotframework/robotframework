@@ -98,11 +98,12 @@ In start_keyword and end_keyword with WHILE
 
  In start_keyword and end_keyword with IF/ELSE
     ${tc} =               Check Test Case                          IF structure
-    Should Be Equal       ${tc.body[1].type}                       IF/ELSE ROOT
-    Length Should Be      ${tc.body[1].body}                       3                     # Listener is not called with root
-    Validate IF branch    ${tc.body[1].body[0]}                    IF         NOT RUN    # but is called with unexecuted branches.
-    Validate IF branch    ${tc.body[1].body[1]}                    ELSE IF    PASS
-    Validate IF branch    ${tc.body[1].body[2]}                    ELSE       NOT RUN
+    Should Be Equal       ${tc.body[1].type}                       VAR
+    Should Be Equal       ${tc.body[2].type}                       IF/ELSE ROOT
+    Length Should Be      ${tc.body[2].body}                       3                     # Listener is not called with root
+    Validate IF branch    ${tc.body[2].body[0]}                    IF         NOT RUN    # but is called with unexecuted branches.
+    Validate IF branch    ${tc.body[2].body[1]}                    ELSE IF    PASS
+    Validate IF branch    ${tc.body[2].body[2]}                    ELSE       NOT RUN
 
 In start_keyword and end_keyword with TRY/EXCEPT
     ${tc} =               Check Test Case                          Everything

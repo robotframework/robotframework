@@ -73,19 +73,21 @@ class KeywordType:
                                  % (attrs['type'], expected))
 
     def _get_expected_type(self, kwname, libname, args, source, lineno, **ignore):
+        if kwname.startswith(('${x}    ', '@{finnish}    ')):
+            return 'VAR'
         if ' IN ' in kwname:
             return 'FOR'
         if ' = ' in kwname:
             return 'ITERATION'
         if not args:
-            if "'IF' == 'WRONG'" in kwname or '${i} == 9' in kwname:
+            if "'${x}' == 'wrong'" in kwname or '${i} == 9' in kwname:
                 return 'IF'
-            if "'ELSE IF' == 'ELSE IF'" in kwname:
+            if "'${x}' == 'value'" in kwname:
                 return 'ELSE IF'
             if kwname == '':
                 source = os.path.basename(source)
                 if source == 'for_loops.robot':
-                    return 'BREAK' if lineno == 14 else 'CONTINUE'
+                    return 'BREAK' if lineno == 13 else 'CONTINUE'
                 return 'ELSE'
         expected = args[0] if libname == 'BuiltIn' else kwname
         return {'Suite Setup': 'SETUP', 'Suite Teardown': 'TEARDOWN',

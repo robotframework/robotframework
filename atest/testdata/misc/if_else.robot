@@ -1,8 +1,9 @@
 *** Test Cases ***
 IF structure
-    IF    'IF' == 'WRONG'
+    VAR    ${x}    value
+    IF    '${x}' == 'wrong'
         Fail  not going here
-    ELSE IF    'ELSE IF' == 'ELSE IF'
+    ELSE IF    '${x}' == 'value'
         Log   else if branch
     ELSE
         Fail  not going here
