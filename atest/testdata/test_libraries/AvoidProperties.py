@@ -1,3 +1,6 @@
+from functools import cached_property
+
+
 class NonDataDescriptor:
 
     def __init__(self, func):
@@ -28,6 +31,7 @@ class FailingDataDescriptor(DataDescriptor):
 class AvoidProperties:
     normal_property_called = 0
     classmethod_property_called = 0
+    cached_property_called = 0
     non_data_descriptor_called = 0
     classmethod_non_data_descriptor_called = 0
     data_descriptor_called = 0
@@ -46,6 +50,11 @@ class AvoidProperties:
     def classmethod_property(cls):
         cls.classmethod_property_called += 1
         return cls.classmethod_property_called
+
+    @cached_property
+    def cached_property(self):
+        type(self).cached_property_called += 1
+        return self.cached_property_called
 
     @NonDataDescriptor
     def non_data_descriptor(self):

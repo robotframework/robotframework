@@ -41,7 +41,7 @@ class ArgumentValidator:
         self._validate_no_extra_named(named, self.arg_spec)
 
     def _validate_no_multiple_values(self, positional, named, spec):
-        for name in spec.positional[:len(positional)]:
+        for name in spec.positional[:len(positional)-len(spec.embedded)]:
             if name in named and name not in spec.positional_only:
                 self._raise_error(f"got multiple values for argument '{name}'")
 
@@ -66,15 +66,18 @@ class ArgumentValidator:
         return sum(1 for n in named if n in spec.positional_or_named)
 
     def _raise_wrong_count(self, count, spec):
-        if spec.minargs == spec.maxargs:
-            expected = f'{spec.minargs} argument{s(spec.minargs)}'
+        embedded = len(spec.embedded)
+        minargs = spec.minargs - embedded
+        maxargs = spec.maxargs - embedded
+        if minargs == maxargs:
+            expected = f'{minargs} argument{s(minargs)}'
         elif not spec.var_positional:
-            expected = f'{spec.minargs} to {spec.maxargs} arguments'
+            expected = f'{minargs} to {maxargs} arguments'
         else:
-            expected = f'at least {spec.minargs} argument{s(spec.minargs)}'
+            expected = f'at least {minargs} argument{s(minargs)}'
         if spec.var_named or spec.named_only:
             expected = expected.replace('argument', 'non-named argument')
-        self._raise_error(f"expected {expected}, got {count}")
+        self._raise_error(f"expected {expected}, got {count - embedded}")
 
     def _validate_no_mandatory_missing(self, positional, named, spec):
         for name in spec.positional[len(positional):]:

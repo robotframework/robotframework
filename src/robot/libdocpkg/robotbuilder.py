@@ -18,8 +18,8 @@ import sys
 import re
 
 from robot.errors import DataError
-from robot.running import (ResourceFileBuilder, TestLibrary, TestSuiteBuilder,
-                           TypeInfo, UserLibrary, UserErrorHandler)
+from robot.running import (ArgumentSpec, ResourceFileBuilder, TestLibrary,
+                           TestSuiteBuilder, TypeInfo, UserLibrary, UserErrorHandler)
 from robot.utils import is_string, split_tags_from_doc, unescape
 from robot.variables import search_variable
 
@@ -149,6 +149,8 @@ class KeywordDocBuilder:
         doc, tags = self._get_doc_and_tags(kw)
         if not self._resource:
             self._escape_strings_in_defaults(kw.arguments.defaults)
+        if kw.arguments.embedded:
+            self._remove_embedded(kw.arguments)
         return KeywordDoc(name=kw.name,
                           args=kw.arguments,
                           doc=doc,
@@ -185,3 +187,11 @@ class KeywordDocBuilder:
         if self._resource and not isinstance(kw, UserErrorHandler):
             return unescape(kw.doc)
         return kw.doc
+
+    def _remove_embedded(self, spec: ArgumentSpec):
+        embedded = len(spec.embedded)
+        pos_only = len(spec.positional_only)
+        spec.positional_only[:embedded] = []
+        if embedded > pos_only:
+            spec.positional_or_named[:embedded-pos_only] = []
+        spec.embedded = ()

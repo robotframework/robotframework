@@ -74,7 +74,7 @@ Run Keyword And Return If can have non-existing keywords and variables if condit
     Run Keyword And Return If With Non-Existing Keyword And Variables
 
 Run Keyword And Return If with list variable containing escaped items
-    [Documentation]    FAIL STARTS: Evaluating expression 'c:\\temp' failed:
+    [Documentation]    FAIL STARTS: Evaluating expression 'c:\\\\temp' failed:
     ${ret} =    Run Keyword And Return If With Variables    True   Create List    @{ESCAPING}
     Should Be Equal    ${ret}    ${ESCAPING}
     Run Keyword And Return If With Variables    @{ESCAPING}

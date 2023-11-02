@@ -20,7 +20,7 @@ Invalid embedded arguments
     Keyword Count Should Be    3
     Stdout should contain adding keyword error
     ...    Invalid embedded \${args}
-    ...    Embedded argument count does not match number of accepted arguments.
+    ...    Keyword must accept at least as many positional arguments as it has embedded arguments.
 
 *** Keywords ***
 Stdout should contain adding keyword error

@@ -53,6 +53,14 @@ Embedded Arguments
     Keyword Name Should Be           13    Takes \${embedded} \${args}
     Keyword Arguments Should Be      13
 
+Embedded and Normal Arguments
+    Keyword Name Should Be           14    Takes \${embedded} and normal args
+    Keyword Arguments Should Be      14    mandatory    optional=None
+
+Embedded and Positional-only Arguments
+    Keyword Name Should Be           15    Takes \${embedded} and positional-only args
+    Keyword Arguments Should Be      15    mandatory    /    optional=None
+
 Keyword Documentation
     Keyword Doc Should Be            1     A keyword.\n\nSee `get hello` for details.
     Keyword Shortdoc Should Be       1     A keyword.

@@ -14,7 +14,7 @@ IF without condition with ELSE
     END
 
 IF with invalid condition
-    [Documentation]    FAIL STARTS:     Invalid IF condition: Evaluating expression ''123'=123' failed: SyntaxError:
+    [Documentation]    FAIL STARTS:     Invalid IF condition: Evaluating expression "'123'=123" failed: SyntaxError:
     IF    '123'=${123}
         Fail    Should not be run
     END
@@ -60,10 +60,10 @@ ELSE IF with invalid condition
 
 Recommend $var syntax if invalid condition contains ${var}
     [Documentation]    FAIL    Invalid IF condition: \
-    ...    Evaluating expression 'x == 'x'' failed: NameError: name 'x' is not defined nor importable as module
+    ...    Evaluating expression "x == 'x'" failed: NameError: name 'x' is not defined nor importable as module
     ...
-    ...    Variables in the original expression '\${x} == 'x'' were resolved before the expression was evaluated. \
-    ...    Try using '$x == 'x'' syntax to avoid that. See Evaluating Expressions appendix in Robot Framework User Guide for more details.
+    ...    Variables in the original expression "\${x} == 'x'" were resolved before the expression was evaluated. \
+    ...    Try using "$x == 'x'" syntax to avoid that. See Evaluating Expressions appendix in Robot Framework User Guide for more details.
     ${x} =    Set Variable    x
     IF    ${x} == 'x'
         Fail    Shouldn't be run

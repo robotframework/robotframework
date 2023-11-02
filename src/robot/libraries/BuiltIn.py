@@ -3158,18 +3158,14 @@ class _Misc(_BuiltInBase):
         """Sets the log threshold to the specified level and returns the old level.
 
         Messages below the level will not logged. The default logging level is
-        INFO, but it can be overridden with the command line option
-        ``--loglevel``.
+        INFO, but it can be overridden with the command line option ``--loglevel``.
 
-        The available levels: TRACE, DEBUG, INFO (default), WARN, ERROR and NONE (no
-        logging).
+        The available levels: TRACE, DEBUG, INFO (default), WARN, ERROR and NONE
+        (no logging).
         """
-        try:
-            old = self._context.output.set_log_level(level)
-        except DataError as err:
-            raise RuntimeError(str(err))
+        old = self._context.output.set_log_level(level)
         self._namespace.variables.set_global('${LOG_LEVEL}', level.upper())
-        self.log(f'Log level changed from {old} to {level.upper()}.')
+        self.log(f'Log level changed from {old} to {level.upper()}.', level='DEBUG')
         return old
 
     def reload_library(self, name_or_instance):

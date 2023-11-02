@@ -135,13 +135,10 @@ class EmbeddedArgumentsRunner(LibraryKeywordRunner):
         self.embedded_args = handler.embedded.match(name).groups()
 
     def _run(self, context, args):
-        if args:
-            raise DataError("Positional arguments are not allowed when using "
-                            "embedded arguments.")
-        return super()._run(context, self.embedded_args)
+        return super()._run(context, self.embedded_args + args)
 
     def _dry_run(self, context, args):
-        return super()._dry_run(context, self.embedded_args)
+        return super()._dry_run(context, self.embedded_args + args)
 
     def _get_result(self, kw, assignment):
         result = super()._get_result(kw, assignment)

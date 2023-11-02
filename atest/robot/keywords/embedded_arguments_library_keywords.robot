@@ -56,7 +56,7 @@ Embedded Arguments as Variables
 
 Embedded Arguments as List And Dict Variables
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Keyword Data    ${tc.kws[1]}    embedded_args_in_lk_1.User \@{i1} Selects \&{i2} From Webshop    \${o1}, \${o2}
+    Check Keyword Data    ${tc.kws[1]}    embedded_args_in_lk_1.User \@{inp1} Selects \&{inp2} From Webshop    \${out1}, \${out2}
 
 Non-Existing Variable in Embedded Arguments
     ${tc} =    Check Test Case    ${TEST NAME}
@@ -107,17 +107,29 @@ Keyword matching multiple keywords in library file
 Keyword matching multiple keywords in different library files
     Check Test Case    ${TEST NAME}
 
-Embedded And Positional Arguments Do Not Work Together
+Keyword with only embedded arguments doesn't accept normal arguments
     Check Test Case    ${TEST NAME}
 
 Keyword with embedded args cannot be used as "normal" keyword
     Check Test Case    ${TEST NAME}
 
-Embedded argument count must match accepted arguments
+Keyword with both embedded and normal arguments
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log message    ${tc.body[0].msgs[0]}    2 horses are walking
+    Check Log message    ${tc.body[1].msgs[0]}    2 horses are swimming
+    Check Log message    ${tc.body[2].msgs[0]}    3 dogs are walking
+
+Conversion with embedded and normal arguments
+    Check Test Case    ${TEST NAME}
+
+Keyword with both embedded and normal arguments with too few arguments
+    Check Test Case    ${TEST NAME}
+
+Must accept at least as many positional arguments as there are embedded arguments
     Check Test Case    ${TESTNAME}
     Error in library    embedded_args_in_lk_1
     ...    Adding keyword 'Wrong \${number} of embedded \${args}' failed:
-    ...    Embedded argument count does not match number of accepted arguments.
+    ...    Keyword must accept at least as many positional arguments as it has embedded arguments.
 
 Optional Non-Embedded Args Are Okay
     Check Test Case    ${TESTNAME}
@@ -125,10 +137,7 @@ Optional Non-Embedded Args Are Okay
 Varargs With Embedded Args Are Okay
     Check Test Case    ${TESTNAME}
 
-List variable is expanded when keyword accepts varargs
-    Check Test Case    ${TESTNAME}
-
-Scalar variable containing list is not expanded when keyword accepts varargs
+Lists are not expanded when keyword accepts varargs
     Check Test Case    ${TESTNAME}
 
 Same name with different regexp works

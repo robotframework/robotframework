@@ -43,10 +43,12 @@ Embedded Arguments as Variables
     Should Be Equal    ${item}    ${{[]}}
 
 Embedded Arguments as List And Dict Variables
-    ${i1}    ${i2} =    Evaluate    [1, 2, 3, 'neljä'], {'a': 1, 'b': 2}
-    ${o1}    ${o2} =    User @{i1} Selects &{i2} From Webshop
-    Should Be Equal    ${o1}    ${i1}
-    Should Be Equal    ${o2}    ${i2}
+    ${inp1}    ${inp2} =    Evaluate    (1, 2, 3, 'neljä'), {'a': 1, 'b': 2}
+    ${out1}    ${out2} =    User @{inp1} Selects &{inp2} From Webshop
+    Should Be Equal    ${out1}      ${{list($inp1)}}
+    Should Be Equal    ${out2}      ${inp2}
+    Should Be Equal    ${out2.a}    ${1}
+    Should Be Equal    ${out2.b}    ${2}
 
 Non-Existing Variable in Embedded Arguments
     [Documentation]    FAIL Variable '${non existing}' not found.
@@ -132,8 +134,8 @@ Keyword Matching Multiple Keywords In Different Library Files
     ...    ${INDENT}embedded_args_in_lk_2.\${a}*lib*\${b}
     foo*lib*bar
 
-Embedded And Positional Arguments Do Not Work Together
-    [Documentation]    FAIL Positional arguments are not allowed when using embedded arguments.
+Keyword with only embedded arguments doesn't accept normal arguments
+    [Documentation]    FAIL Keyword 'embedded_args_in_lk_1.User \${user} Selects \${item} From Webshop' expected 0 arguments, got 1.
     Given this "usage" with @{EMPTY} works    @{EMPTY}
     Then User Invalid Selects Invalid From Webshop    invalid
 
@@ -141,23 +143,40 @@ Keyword with embedded args cannot be used as "normal" keyword
     [Documentation]    FAIL Variable '\${user}' not found.
     User ${user} Selects ${item} From Webshop
 
-Embedded argument count must match accepted arguments
-    [Documentation]  FAIL No keyword with name 'Wrong number of embedded args' found.
+Keyword with both embedded and normal arguments
+    Number of horses should be    2
+    Number of horses should be    2    swimming
+    Number of dogs should be    count=3
+
+Conversion with embedded and normal arguments
+    [Documentation]    FAIL ValueError: Argument 'num1' got value 'bad' that cannot be converted to integer.
+    Conversion with embedded 42 and normal    42
+    Conversion with embedded bad and normal    bad
+
+Keyword with both embedded and normal arguments with too few arguments
+    [Documentation]    FAIL Keyword 'embedded_args_in_lk_1.Number of \${animals} should be' expected 1 to 2 arguments, got 0.
+    Number of horses should be
+
+Must accept at least as many positional arguments as there are embedded arguments
+    [Documentation]    FAIL No keyword with name 'Wrong number of embedded args' found.
     Wrong number of embedded args
 
 Optional Non-Embedded Args Are Okay
-    Optional Non-Embedded Args Are Okay
+    @{ret} =    Optional Non-Embedded Args Are Okay
+    Should Be Equal    ${ret}    ${{['Embedded', 'Okay', 3]}}
+    @{ret} =    Optional Non-Embedded Args Are Usable    Since RF 7!
+    Should Be Equal    ${ret}    ${{['Embedded', 'Usable', 'Since RF 7!']}}
 
 Varargs With Embedded Args Are Okay
     @{ret} =    Varargs With Embedded Args are Okay
     Should Be Equal    ${ret}    ${{['Embedded', 'Okay']}}
+    @{ret} =    Varargs With R Args are F    ${SPACE}    7    .    0    !    !    !
+    Should Be Equal    ${{''.join($ret)}}    RF 7.0!!!
 
-List variable is expanded when keyword accepts varargs
-    @{ret} =    Varargs With @{list} Args are Okay
-    Should Be Equal    ${ret}    ${{['first', 2, 'third', 'Okay']}}
-
-Scalar variable containing list is not expanded when keyword accepts varargs
+Lists are not expanded when keyword accepts varargs
     @{ret} =    Varargs With ${list} Args are Okay
+    Should Be Equal    ${ret}    ${{[['first', 2, 'third'], 'Okay']}}
+    @{ret} =    Varargs With @{list} Args are Okay
     Should Be Equal    ${ret}    ${{[['first', 2, 'third'], 'Okay']}}
 
 Same name with different regexp works

@@ -41,8 +41,18 @@ Keyword Arguments
 
 Embedded Arguments
     [Template]    NONE
-    Should Be Equal    ${MODEL}[keywords][13][name]    Takes \${embedded} \${args}
-    Should Be Empty    ${MODEL}[keywords][13][args]
+    Should Be Equal           ${MODEL}[keywords][13][name]    Takes \${embedded} \${args}
+    Should Be Empty           ${MODEL}[keywords][13][args]
+
+Embedded and Normal Arguments
+    [Template]    NONE
+    Should Be Equal           ${MODEL}[keywords][14][name]    Takes \${embedded} and normal args
+    Verify Argument Models    ${MODEL}[keywords][14][args]    mandatory    optional=None
+
+Embedded and Positional-only Arguments
+    [Template]    NONE
+    Should Be Equal           ${MODEL}[keywords][15][name]    Takes \${embedded} and positional-only args
+    Verify Argument Models    ${MODEL}[keywords][15][args]    mandatory    /    optional=None
 
 Keyword Documentation
     ${MODEL}[keywords][1][doc]

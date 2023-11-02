@@ -8,7 +8,7 @@ Resource          atest_resource.robot
 *** Test Cases ***
 Keywords Using BuiltIn
     ${tc} =    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    Log level changed from INFO to DEBUG.
+    Check Log Message    ${tc.kws[0].msgs[0]}    Log level changed from INFO to DEBUG.    DEBUG
     Check Log Message    ${tc.kws[0].msgs[1]}    Hello, debug world!    DEBUG
 
 Listener Using BuiltIn
@@ -22,7 +22,7 @@ Use 'Run Keyword' with non-Unicode values
 Use BuiltIn keywords with timeouts
     ${tc} =    Check Test Case    ${TESTNAME}
     Check Log Message    ${tc.kws[0].msgs[0]}    Test timeout 1 day active. * seconds left.    level=DEBUG    pattern=True
-    Check Log Message    ${tc.kws[0].msgs[1]}    Log level changed from INFO to DEBUG.
+    Check Log Message    ${tc.kws[0].msgs[1]}    Log level changed from INFO to DEBUG.    DEBUG
     Check Log Message    ${tc.kws[0].msgs[2]}    Hello, debug world!    DEBUG
     Check Log Message    ${tc.kws[3].kws[0].msgs[0]}    Test timeout 1 day active. * seconds left.    level=DEBUG    pattern=True
     Check Log Message    ${tc.kws[3].kws[0].msgs[1]}    42

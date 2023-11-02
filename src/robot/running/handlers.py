@@ -285,7 +285,6 @@ class EmbeddedArgumentsHandler:
     supports_embedded_args = True
 
     def __init__(self, embedded, orig_handler):
-        self.arguments = ArgumentSpec()  # Show empty argument spec for Libdoc
         self.embedded = embedded
         self._orig_handler = orig_handler
 
@@ -307,15 +306,11 @@ class EmbeddedArgumentsHandler:
         return EmbeddedArgumentsRunner(self, name)
 
     def resolve_arguments(self, args, variables=None, languages=None):
-        argspec = self._orig_handler.arguments
-        if variables:
-            if argspec.var_positional:
-                args = variables.replace_list(args)
-            else:
-                args = [variables.replace_scalar(a) for a in args]
-            self.embedded.validate(args)
-        return argspec.convert(args, named={}, converters=self.library.converters,
-                               dry_run=not variables)
+        positional, named = self.arguments.resolve(args, variables,
+                                                   self.library.converters,
+                                                   languages=languages)
+        self.embedded.validate(positional)
+        return positional, named
 
     def __copy__(self):
         return EmbeddedArgumentsHandler(self.embedded, copy(self._orig_handler))

@@ -26,21 +26,11 @@ from .loggerhelper import IsLogged
 class XmlLoggerAdapter(LoggerApi):
 
     def __init__(self, path, log_level='TRACE', rpa=False, generator='Robot'):
-        self._xml_logger = XmlLogger(path, log_level, rpa, generator)
-        self._flat_xml_logger = None
-        self.logger = self._xml_logger
+        self.logger = XmlLogger(path, log_level, rpa, generator)
 
     @property
-    def flat_xml_logger(self):
-        if self._flat_xml_logger is None:
-            self._flat_xml_logger = FlatXmlLogger(self.logger)
-        return self._flat_xml_logger
-
-    def flatten(self, flatten):
-        if flatten:
-            self.logger = self.flat_xml_logger
-        else:
-            self.logger = self._xml_logger
+    def flatten_level(self):
+        return self.logger.flatten_level
 
     def close(self):
         self.logger.close()
@@ -156,7 +146,9 @@ class XmlLogger(ResultVisitor):
     def __init__(self, path, log_level='TRACE', rpa=False, generator='Robot'):
         self._log_message_is_logged = IsLogged(log_level)
         self._error_message_is_logged = IsLogged('WARN')
-        self._writer = self._get_writer(path, rpa, generator)
+        # `_writer` is set to NullMarkupWriter when flattening, `_xml_writer` is not.
+        self._writer = self._xml_writer = self._get_writer(path, rpa, generator)
+        self.flatten_level = 0
         self._errors = []
 
     def _get_writer(self, path, rpa, generator):
@@ -193,7 +185,8 @@ class XmlLogger(ResultVisitor):
                  'level': msg.level}
         if msg.html:
             attrs['html'] = 'true'
-        self._writer.element('msg', msg.message, attrs)
+        # Use `_xml_writer`, not `_writer` to write messages also when flattening.
+        self._xml_writer.element('msg', msg.message, attrs)
 
     def start_keyword(self, kw):
         attrs = {'name': kw.name, 'owner': kw.owner}
@@ -205,10 +198,16 @@ class XmlLogger(ResultVisitor):
         self._write_list('var', kw.assign)
         self._write_list('arg', [safe_str(a) for a in kw.args])
         self._write_list('tag', kw.tags)
-        # Must be after tags to allow adding message when using --flattenkeywords.
         self._writer.element('doc', kw.doc)
+        if kw.tags.robot('flatten'):
+            self.flatten_level += 1
+            self._writer = NullMarkupWriter()
 
     def end_keyword(self, kw):
+        if kw.tags.robot('flatten'):
+            self.flatten_level -= 1
+            if self.flatten_level == 0:
+                self._writer = self._xml_writer
         if kw.timeout:
             self._writer.element('timeout', attrs={'value': str(kw.timeout)})
         self._write_status(kw)
@@ -407,94 +406,3 @@ class XmlLogger(ResultVisitor):
                  'start': item.start_time.isoformat() if item.start_time else None,
                  'elapsed': str(item.elapsed_time.total_seconds())}
         self._writer.element('status', item.message, attrs)
-
-
-class FlatXmlLogger(XmlLogger):
-
-    def __init__(self, real_xml_logger):
-        super().__init__(None)
-        self._writer = real_xml_logger._writer
-
-    def start_keyword(self, kw):
-        pass
-
-    def end_keyword(self, kw):
-        pass
-
-    def start_for(self, for_):
-        pass
-
-    def end_for(self, for_):
-        pass
-
-    def start_for_iteration(self, iteration):
-        pass
-
-    def end_for_iteration(self, iteration):
-        pass
-
-    def start_if(self, if_):
-        pass
-
-    def end_if(self, if_):
-        pass
-
-    def start_if_branch(self, branch):
-        pass
-
-    def end_if_branch(self, branch):
-        pass
-
-    def start_try(self, root):
-        pass
-
-    def end_try(self, root):
-        pass
-
-    def start_try_branch(self, branch):
-        pass
-
-    def end_try_branch(self, branch):
-        pass
-
-    def start_while(self, while_):
-        pass
-
-    def end_while(self, while_):
-        pass
-
-    def start_while_iteration(self, iteration):
-        pass
-
-    def end_while_iteration(self, iteration):
-        pass
-
-    def start_var(self, var):
-        pass
-
-    def end_var(self, var):
-        pass
-
-    def start_break(self, break_):
-        pass
-
-    def end_break(self, break_):
-        pass
-
-    def start_continue(self, continue_):
-        pass
-
-    def end_continue(self, continue_):
-        pass
-
-    def start_return(self, return_):
-        pass
-
-    def end_return(self, return_):
-        pass
-
-    def start_error(self, error):
-        pass
-
-    def end_error(self, error):
-        pass
