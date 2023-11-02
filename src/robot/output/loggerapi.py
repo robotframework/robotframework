@@ -69,10 +69,10 @@ class LoggerApi:
     def end_if(self, data: 'running.If', result: 'result.If'):
         self.end_body_item(data, result)
 
-    def start_if_branch(self, data: 'running.If', result: 'result.IfBranch'):
+    def start_if_branch(self, data: 'running.IfBranch', result: 'result.IfBranch'):
         self.start_body_item(data, result)
 
-    def end_if_branch(self, data: 'running.If', result: 'result.IfBranch'):
+    def end_if_branch(self, data: 'running.IfBranch', result: 'result.IfBranch'):
         self.end_body_item(data, result)
 
     def start_try(self, data: 'running.Try', result: 'result.Try'):
@@ -81,10 +81,10 @@ class LoggerApi:
     def end_try(self, data: 'running.Try', result: 'result.Try'):
         self.end_body_item(data, result)
 
-    def start_try_branch(self, data: 'running.Try', result: 'result.TryBranch'):
+    def start_try_branch(self, data: 'running.TryBranch', result: 'result.TryBranch'):
         self.start_body_item(data, result)
 
-    def end_try_branch(self, data: 'running.Try', result: 'result.TryBranch'):
+    def end_try_branch(self, data: 'running.TryBranch', result: 'result.TryBranch'):
         self.end_body_item(data, result)
 
     def start_var(self, data: 'running.Var', result: 'result.Var'):
