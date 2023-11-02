@@ -11,6 +11,7 @@ KW_TYPES = {'FOR': 'variables flavor values',
             'IF': 'condition',
             'ELSE IF': 'condition',
             'EXCEPT': 'patterns pattern_type variable',
+            'VAR': 'name value scope',
             'RETURN': 'values'}
 FOR_FLAVOR_EXTRA = {'IN ENUMERATE': ' start',
                     'IN ZIP': ' mode fill'}
@@ -33,7 +34,8 @@ EXPECTED_TYPES = {'tags': [str],
                   'on_limit_message': (str, type(None)),
                   'patterns': (str, list),
                   'pattern_type': (str, type(None)),
-                  'variable': (str, type(None))}
+                  'variable': (str, type(None)),
+                  'value': (str, list)}
 
 
 def verify_attrs(method_name, attrs, names):

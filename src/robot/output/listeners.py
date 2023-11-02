@@ -395,10 +395,19 @@ class ListenerV2Facade(ListenerFacade):
         self._end_kw(result._log_name, self._attrs(data, result, end=True))
 
     def start_var(self, data, result):
-        self._start_kw(result._log_name, self._attrs(data, result))
+        extra = self._var_extra_attrs(result)
+        self._start_kw(result._log_name, self._attrs(data, result, **extra))
 
     def end_var(self, data, result):
-        self._end_kw(result._log_name, self._attrs(data, result, end=True))
+        extra = self._var_extra_attrs(result)
+        self._end_kw(result._log_name, self._attrs(data, result, **extra, end=True))
+
+    def _var_extra_attrs(self, result):
+        if result.name.startswith('$'):
+            value = (result.separator or ' ').join(result.value)
+        else:
+            value = list(result.value)
+        return {'name': result.name, 'value': value, 'scope': result.scope or 'LOCAL'}
 
     def log_message(self, message):
         self._log_message(self._message_attributes(message))
