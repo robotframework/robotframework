@@ -327,13 +327,13 @@ class ListenerV2Facade(ListenerFacade):
 
     def start_while(self, data, result):
         attrs = self._attrs(data, result, condition=result.condition,
-                            limit=result.limit,
+                            limit=result.limit, on_limit=result.on_limit,
                             on_limit_message=result.on_limit_message)
         self._start_kw(result._log_name, attrs)
 
     def end_while(self, data, result):
         attrs = self._attrs(data, result, condition=result.condition,
-                            limit=result.limit,
+                            limit=result.limit, on_limit=result.on_limit,
                             on_limit_message=result.on_limit_message, end=True)
         self._end_kw(result._log_name, attrs)
 
