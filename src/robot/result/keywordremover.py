@@ -44,8 +44,9 @@ class KeywordRemover(SuiteVisitor, ABC):
                             f"'TAG:<pattern>', 'FOR' or 'WUKS', got '{conf}'.")
 
     def _clear_content(self, item):
-        item.body.clear()
-        self.removal_message.set_to(item)
+        if item.body:
+            item.body.clear()
+            self.removal_message.set_to(item)
 
     def _failed_or_warning_or_error(self, item):
         return not item.passed or self._warning_or_error(item)
@@ -58,14 +59,20 @@ class KeywordRemover(SuiteVisitor, ABC):
 
 class AllKeywordsRemover(KeywordRemover):
 
-    def visit_keyword(self, keyword):
-        self._clear_content(keyword)
+    def start_body_item(self, item):
+        self._clear_content(item)
 
-    def visit_for(self, for_):
-        self._clear_content(for_)
+    def start_if(self, item):
+        pass
 
-    def visit_if_branch(self, branch):
-        self._clear_content(branch)
+    def start_if_branch(self, item):
+        self._clear_content(item)
+
+    def start_try(self, item):
+        pass
+
+    def start_try_branch(self, item):
+        self._clear_content(item)
 
 
 class PassedKeywordRemover(KeywordRemover):

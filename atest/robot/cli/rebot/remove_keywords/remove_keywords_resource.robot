@@ -26,6 +26,12 @@ FOR Loop Should Be Empty
     Should Be Equal    ${loop.flavor}     ${flavor}
     Should Be Empty    ${loop.body}
 
+TRY Branch Should Be Empty
+    [Arguments]    ${branch}    ${type}    ${message}=
+    Should Be Equal    ${branch.message}    *HTML* ${message}${DATA REMOVED}
+    Should Be Equal    ${branch.type}       ${type}
+    Should Be Empty    ${branch.body}
+
 Keyword Should Not Be Empty
     [Arguments]    ${kw}    ${name}    @{args}
     Check Keyword Name And Args    ${kw}    ${name}    @{args}
