@@ -995,13 +995,13 @@ class TestSuite(model.TestSuite[Keyword, TestCase], StatusMixin):
     def remove_keywords(self, how: str):
         """Remove keywords based on the given condition.
 
-        :param how: What approach to use when removing keywords. Either
+        :param how: Which approach to use when removing keywords. Either
             ``ALL``, ``PASSED``, ``FOR``, ``WUKS``, or ``NAME:<pattern>``.
 
         For more information about the possible values see the documentation
         of the ``--removekeywords`` command line option.
         """
-        self.visit(KeywordRemover(how))
+        self.visit(KeywordRemover.from_config(how))
 
     def filter_messages(self, log_level: str = 'TRACE'):
         """Remove log messages below the specified ``log_level``."""

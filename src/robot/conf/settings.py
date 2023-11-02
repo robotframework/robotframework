@@ -339,7 +339,7 @@ class _BaseSettings:
     def _validate_remove_keywords(self, values):
         for value in values:
             try:
-                KeywordRemover(value)
+                KeywordRemover.from_config(value)
             except DataError as err:
                 self._raise_invalid('RemoveKeywords', err)
 

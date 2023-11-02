@@ -4,10 +4,10 @@ Suite Teardown    Remove File    ${INPUTFILE}
 Resource          remove_keywords_resource.robot
 
 *** Variables ***
-${1 REMOVED}      <i>1 passing step removed using --RemoveKeywords option.</i>
-${2 REMOVED}      <i>2 passing steps removed using --RemoveKeywords option.</i>
-${3 REMOVED}      <i>3 passing steps removed using --RemoveKeywords option.</i>
-${4 REMOVED}      <i>4 passing steps removed using --RemoveKeywords option.</i>
+${1 REMOVED}      <i>1 passing item removed using the --remove-keywords option.</i>
+${2 REMOVED}      <i>2 passing items removed using the --remove-keywords option.</i>
+${3 REMOVED}      <i>3 passing items removed using the --remove-keywords option.</i>
+${4 REMOVED}      <i>4 passing items removed using the --remove-keywords option.</i>
 
 *** Test Cases ***
 Passed Steps Are Removed Except The Last One

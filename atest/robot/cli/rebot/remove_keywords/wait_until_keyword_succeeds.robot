@@ -7,12 +7,12 @@ Last failing Step is not removed
     ${tc}=    Check Number Of Keywords     Fail Until The End    1
     ${expected} =    Catenate
     ...    [*]HTML[*] Keyword 'Fail' failed after retrying for 50 milliseconds.
-    ...    The last error was: Not gonna happen<hr><i>? failing step* removed using --RemoveKeywords option.</i>
+    ...    The last error was: Not gonna happen<hr><i>? failing item* removed using the --remove-keywords option.</i>
     Should Match    ${tc.body[0].message}    ${expected}
 
 Last passing Step is not removed
     ${tc}=    Check Number Of Keywords    Passes before timeout    2
-    Should Be Equal    ${tc.body[0].message}    *HTML* <i>1 failing step removed using --RemoveKeywords option.</i>
+    Should Be Equal    ${tc.body[0].message}    *HTML* <i>1 failing item removed using the --remove-keywords option.</i>
 
 Steps containing warnings are not removed
     ${tc}=   Check Number Of Keywords    Warnings    3

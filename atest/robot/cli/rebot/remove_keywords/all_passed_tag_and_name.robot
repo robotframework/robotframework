@@ -173,7 +173,7 @@ Keyword Should Contain Removal Message
     IF    $message
         ${message} =    Set Variable    ${message}<hr>
     END
-    Should Be Equal    ${keyword.message}    *HTML* ${message}<i>Data removed using --RemoveKeywords option.</i>
+    Should Be Equal    ${keyword.message}    *HTML* ${message}${DATA REMOVED}
 
 Logged Warnings Are Preserved In Execution Errors
     Check Log Message    ${ERRORS[1]}    Warning in suite setup    WARN
