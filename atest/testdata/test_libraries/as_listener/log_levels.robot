@@ -17,7 +17,7 @@ Log messages are collected on level set using 'Set Log Level'
     ${old} =    Set Log Level    DEBUG
     Keyword
     Logged messages should be
-    ...    INFO: Log level changed from ${old} to DEBUG.
+    ...    DEBUG: Log level changed from ${old} to DEBUG.
     ...    INFO: \${old} = ${old}
     ...    INFO: Message
     ...    DEBUG: Debug message

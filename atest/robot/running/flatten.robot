@@ -35,7 +35,7 @@ Log levels
     Run Tests    ${EMPTY}    running/flatten.robot
     ${tc}=    User keyword content should be flattened    4
     Check Log Message    ${tc.body[0].messages[0]}     INFO 1
-    Check Log Message    ${tc.body[0].messages[1]}     Log level changed from INFO to DEBUG.
+    Check Log Message    ${tc.body[0].messages[1]}     Log level changed from INFO to DEBUG.    DEBUG
     Check Log Message    ${tc.body[0].messages[2]}     INFO 2
     Check Log Message    ${tc.body[0].messages[3]}     DEBUG 2    level=DEBUG
 
