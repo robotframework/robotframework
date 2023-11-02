@@ -14,6 +14,9 @@ Loops and stuff
 Recursion
     Recursion    ${3}
 
+Log levels
+    Log levels
+
 *** Keywords ***
 UK
     [Tags]    robot:flatten
@@ -56,10 +59,21 @@ Loops and stuff
         Log    inside except
     END
 
- Recursion
+Recursion
     [Arguments]    ${num}
     [Tags]    robot:flatten
     Log    Level: ${num}
     IF    ${num} < 10
         Recursion    ${num+1}
     END
+
+Log levels
+    [Tags]    robot:flatten
+    Log    INFO 1
+    Log    DEBUG 1    DEBUG
+    Set Log Level     DEBUG
+    Log    INFO 2
+    Log    DEBUG 2    DEBUG
+    Set Log Level     NONE
+    Log    INFO 3
+    Log    DEBUG 3    DEBUG

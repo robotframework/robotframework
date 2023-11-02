@@ -32,7 +32,6 @@ class Output(AbstractLogger, LoggerApi):
         self.library_listeners = LibraryListeners(settings.log_level)
         self._register_loggers(DebugFile(settings.debug_file))
         self._settings = settings
-        self._flatten_level = 0
 
     def _register_loggers(self, debug_file):
         LOGGER.register_xml_logger(self._xml_logger)
@@ -63,16 +62,8 @@ class Output(AbstractLogger, LoggerApi):
 
     def start_keyword(self, data, result):
         LOGGER.start_keyword(data, result)
-        if result.type in result.KEYWORD_TYPES and result.tags.robot('flatten'):
-            self._flatten_level += 1
-            if self._flatten_level == 1:
-                self._xml_logger.flatten(True)
 
     def end_keyword(self, data, result):
-        if result.type in result.KEYWORD_TYPES and result.tags.robot('flatten'):
-            self._flatten_level -= 1
-            if not self._flatten_level:
-                self._xml_logger.flatten(False)
         LOGGER.end_keyword(data, result)
 
     def start_for(self, data, result):
@@ -157,7 +148,7 @@ class Output(AbstractLogger, LoggerApi):
         LOGGER.log_message(msg)
 
     def trace(self, msg, write_if_flat=True):
-        if write_if_flat or self._flatten_level == 0:
+        if write_if_flat or not self._xml_logger.flatten_level:
             self.write(msg, 'TRACE')
 
     def set_log_level(self, level):
