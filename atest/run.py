@@ -48,7 +48,7 @@ from interpreter import Interpreter
 
 
 CURDIR = Path(__file__).parent
-LATEST = CURDIR / 'results/latest.xml'
+LATEST = str(CURDIR / 'results/{interpreter.output_name}-latest.xml')
 ARGUMENTS = '''
 --doc Robot Framework acceptance tests
 --metadata interpreter:{interpreter}
@@ -65,15 +65,11 @@ ARGUMENTS = '''
 
 
 def atests(interpreter, arguments, schema_validation=False):
-    try:
-        interpreter = Interpreter(interpreter)
-    except ValueError as err:
-        sys.exit(str(err))
     output_dir, temp_dir = _get_directories(interpreter)
     arguments = list(_get_arguments(interpreter, output_dir)) + list(arguments)
     rc = _run(arguments, temp_dir, interpreter, schema_validation)
     if rc < 251:
-        _rebot(rc, output_dir)
+        _rebot(rc, output_dir, interpreter)
     return rc
 
 
@@ -117,7 +113,7 @@ def _run(args, tempdir, interpreter, schema_validation):
     return subprocess.call(command, env=environ)
 
 
-def _rebot(rc, output_dir):
+def _rebot(rc, output_dir, interpreter):
     output = output_dir / 'output.xml'
     if rc == 0:
         print('All tests passed, not generating log or report.')
@@ -125,7 +121,7 @@ def _rebot(rc, output_dir):
         command = [sys.executable, str(CURDIR.parent / 'src/robot/rebot.py'),
                    '--output-dir', str(output_dir), str(output)]
         subprocess.call(command)
-    shutil.copy(output, LATEST)
+    shutil.copy(output, LATEST.format(interpreter=interpreter))
 
 
 if __name__ == '__main__':
@@ -135,8 +131,12 @@ if __name__ == '__main__':
     parser.add_argument('-R', '--rerun-failed', action='store_true')
     parser.add_argument('-h', '--help', action='store_true')
     options, robot_args = parser.parse_known_args()
+    try:
+        interpreter = Interpreter(options.interpreter)
+    except ValueError as err:
+        sys.exit(str(err))
     if options.rerun_failed:
-        robot_args = ['--rerun-failed', LATEST] + robot_args
+        robot_args[:0] = ['--rerun-failed', LATEST.format(interpreter=interpreter)]
     last = Path(robot_args[-1]) if robot_args else None
     source_given = last and (last.is_dir() or last.is_file() and last.suffix == '.robot')
     if not source_given:
@@ -145,5 +145,5 @@ if __name__ == '__main__':
         print(__doc__)
         rc = 251
     else:
-        rc = atests(options.interpreter, robot_args, options.schema_validation)
+        rc = atests(interpreter, robot_args, options.schema_validation)
     sys.exit(rc)
