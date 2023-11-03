@@ -216,7 +216,7 @@ Suite setup and teardown
 
 Not only `test cases`__ but also test suites can have a setup and
 a teardown. A suite setup is executed before running any of the suite's
-test cases or child test suites, and a test teardown is executed after
+test cases or child test suites, and a suite teardown is executed after
 them. All test suites can have a setup and a teardown; with suites created
 from a directory they must be specified in a `suite initialization file`_.
 
