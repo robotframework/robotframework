@@ -180,7 +180,7 @@ Dictionaries Should Be Equal
 Dictionaries Should Be Equal With Keys In Different Order
     [Setup]  Create Dictionaries For Testing
     Dictionaries Should Be Equal    ${D4}    ${D4B}
-    
+
 Dictionaries Of Different Type Should Be Equal
     ${big2}=    Evaluate    collections.OrderedDict($BIG)    modules=collections
     Dictionaries Should Be Equal    ${BIG}    ${big2}
@@ -421,6 +421,8 @@ Dictionary Should Contain Value With Ignore Case And Nested List and Dictionary
 Dictionaries Should Be Equal With Keys In Different Order And Ignore Case
     [Setup]  Create Dictionaries For Testing Ignore Case
     Dictionaries Should Be Equal    ${D8}    ${D8B}  ignore_case=both
+    Dictionaries Should Be Equal    ${D8}    ${D8B}  ignore_case=key
+    Dictionaries Should Be Equal    ${D8B}   ${D8C}  ignore_case=value
 
 *** Keywords ***
 Validate invalid argument error
@@ -471,7 +473,9 @@ Create Dictionaries For Testing Ignore Case
     ${L0}    Create List  1  2  3
     ${D7}    Create Dictionary    1=${D0}  2=D  c=${L0}  d=3
     Set Test Variable    \${D7}
-    ${D8} =    Create Dictionary    A=1    b=2    c=3    d=4    E=5
+    ${D8} =    Create Dictionary     A=1    b=2    c=3    d=4    E=5
     Set Test Variable    \${D8}
-    ${D8B} =    Create Dictionary    d=4    b=2    e=5    a=1    C=3
+    ${D8B} =    Create Dictionary    D=4    b=2    E=5    a=1    C=3
     Set Test Variable    \${D8B}
+    ${D8C} =    Create Dictionary    E=5    D=4    C=3    b=2    a=1
+    Set Test Variable    \${D8C}

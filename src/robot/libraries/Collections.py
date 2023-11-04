@@ -885,12 +885,12 @@ class _Dictionary:
             yield f'{key}: {dictionary[key]}'
 
     def _keys_should_be_equal(self, dict1, dict2, msg, values, ignore_case):
-        keys1 = self.get_dictionary_keys(dict1)
-        keys2 = self.get_dictionary_keys(dict2)
         normalize = Normalizer(ignore_case).normalize
-        miss1 = ', '.join(str(k) for k in normalize(keys2) if k
+        keys1 = self.get_dictionary_keys(normalize(dict1))
+        keys2 = self.get_dictionary_keys(normalize(dict2))
+        miss1 = ', '.join(str(k) for k in keys2 if k
                           not in normalize(dict1))
-        miss2 = ', '.join(str(k) for k in normalize(keys1) if k
+        miss2 = ', '.join(str(k) for k in keys1 if k
                           not in normalize(dict2))
         error = []
         if miss1:
@@ -909,11 +909,17 @@ class _Dictionary:
                           msg, values)
 
     def _yield_dict_diffs(self, keys, dict1, dict2, ignore_case):
-        normalize = Normalizer(ignore_case).normalize
+        if ignore_case=="value": # TODO: Cleanup code
+            # key values have already been checked for equalness,
+            # so currently it is possible to only look for differences on value level
+            # and ignoring the differences on key level.
+            normalize = Normalizer(True).normalize
+        else:
+            normalize = Normalizer(ignore_case).normalize
         for key in normalize(keys):
             try:
-                assert_equal(normalize(dict1[key]),
-                             normalize(dict2[key]), msg=f'Key {key}')
+                assert_equal(normalize(normalize(dict1)[key]),
+                             normalize(normalize(dict2)[key]), msg=f'Key {key}')
             except AssertionError as err:
                 yield str(err)
 
