@@ -91,7 +91,11 @@ class TestBuildTestSuite(unittest.TestCase):
         self._verify_body_item(kw, 1, 'KW Name', 'libname',
                                '<a href="http://doc">http://doc</a>',
                                'arg1    arg2', '${v1}    ${v2}', 'tag1, tag2',
-                               '1 second', 0, 0, 42, 'message')
+                               '1 second', 0, 0, 42)
+
+    def test_keyword_with_robot_note(self):
+        kw = Keyword(message='*HTML* ... <span class="robot-note">The note.</span>')
+        self._verify_body_item(kw, message='The note.')
 
     def test_keyword_with_body(self):
         root = Keyword('Root')
@@ -162,7 +166,7 @@ class TestBuildTestSuite(unittest.TestCase):
         i = self._verify_body_item(suite.tests[0].body[0].body[0], type=4)
         m = self._verify_message(suite.tests[0].body[0].body[1])
         f = self._verify_body_item(suite.tests[0].body[0], type=3,
-                                   name='${x}    IN    1    2', message='x', body=(i, m))
+                                   name='${x}    IN    1    2', body=(i, m))
         suite.tests[0].body[1].body = [Message(), Message('msg', level='TRACE')]
         m1 = self._verify_message(suite.tests[0].body[1].messages[0])
         m2 = self._verify_message(suite.tests[0].body[1].messages[1], 'msg', level=0)

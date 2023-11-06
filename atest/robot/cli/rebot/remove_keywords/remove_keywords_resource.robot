@@ -3,7 +3,7 @@ Resource          rebot_resource.robot
 
 *** Variables ***
 ${INPUTFILE}      %{TEMPDIR}${/}rebot-test-rmkw.xml
-${DATA REMOVED}   <i>Content removed using the --remove-keywords option.</i>
+${DATA REMOVED}   <span class="robot-note">Content removed using the --remove-keywords option.</span>
 
 *** Keywords ***
 Keyword Should Be Empty

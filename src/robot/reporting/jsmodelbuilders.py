@@ -13,6 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import re
+
 from robot.output import LEVELS
 from robot.result import Error, Keyword, Message, Return
 
@@ -48,6 +50,7 @@ class JsModelBuilder:
 
 
 class Builder:
+    robot_note = re.compile('<span class="robot-note">(.*)</span>')
 
     def __init__(self, context: JsBuildingContext):
         self._context = context
@@ -55,18 +58,25 @@ class Builder:
         self._html = self._context.html
         self._timestamp = self._context.timestamp
 
-    def _get_status(self, item):
+    def _get_status(self, item, note_only=False):
         model = (STATUSES[item.status],
                  self._timestamp(item.start_time),
                  round(item.elapsed_time.total_seconds() * 1000))
         msg = item.message
         if not msg:
             return model
-        elif msg.startswith('*HTML*'):
-            msg = self._string(msg[6:].lstrip(), escape=False)
+        if note_only:
+            if msg.startswith('*HTML*'):
+                match = self.robot_note.search(msg)
+                if match:
+                    index = self._string(match.group(1))
+                    return model + (index,)
+            return model
+        if msg.startswith('*HTML*'):
+            index = self._string(msg[6:].lstrip(), escape=False)
         else:
-            msg = self._string(msg)
-        return model + (msg,)
+            index = self._string(msg)
+        return model + (index,)
 
     def _build_body(self, body, split=False):
         splitting = self._context.start_splitting_if_needed(split)
@@ -180,7 +190,7 @@ class BodyItemBuilder(Builder):
                 self._string(args),
                 self._string(assign),
                 self._string(tags),
-                self._get_status(item),
+                self._get_status(item, note_only=True),
                 self._build_body(body, split))
 
 

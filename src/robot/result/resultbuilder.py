@@ -184,7 +184,7 @@ class ExecutionResultBuilder:
             start = original[6:].strip() + '<hr>'
         else:
             start = html_escape(original) + '<hr>'
-        return f'*HTML* {start}<i>Content flattened.</i>'
+        return f'*HTML* {start}<span class="robot-note">Content flattened.</span>'
 
     def _get_matcher(self, matcher_class, flattened):
         matcher = matcher_class(flattened)

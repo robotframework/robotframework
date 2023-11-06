@@ -196,4 +196,5 @@ class RemovalMessage:
             start = item.message[6:].strip() + '<hr>'
         else:
             start = html_escape(item.message) + '<hr>'
-        item.message = f'*HTML* {start}<i>{message or self.message}</i>'
+        message = message or self.message
+        item.message = f'*HTML* {start}<span class="robot-note">{message}</span>'

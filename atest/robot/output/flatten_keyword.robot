@@ -9,7 +9,7 @@ ${FLATTEN}      --FlattenKeywords NAME:Keyword3
 ...             --flat TAG:flattenNOTkitty
 ...             --flatten "name:Flatten controls in keyword"
 ...             --log log.html
-${FLATTENED}    <i>Content flattened.</i>
+${FLATTENED}    <span class="robot-note">Content flattened.</span>
 ${ERROR}        [ ERROR ] Invalid value for option '--flattenkeywords': Expected 'FOR', 'WHILE', 'ITERATION', 'TAG:<pattern>' or 'NAME:<pattern>', got 'invalid'.${USAGE TIP}\n
 
 *** Test Cases ***
@@ -62,8 +62,7 @@ Match full name
     Check Log Message    ${TC.kws[3].msgs[0]}    Flatten me too!!
 
 Flattened in log after execution
-    Should Contain    ${LOG}    "*<i>Content flattened.\\x3c/i>"
-    Should Contain    ${LOG}    "*Expected e&amp;&lt;aped failure!<hr><i>Content flattened.\\x3c/i>"
+    Should Contain    ${LOG}    "*Content flattened."
 
 Flatten controls in keyword
     ${tc} =    Check Test Case    ${TEST NAME}

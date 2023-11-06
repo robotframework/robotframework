@@ -318,4 +318,4 @@ Create expected multi-merge message
 
 Log should have been created with Fail keywords flattened
     ${log} =    Get File    ${OUTDIR}/log.html
-    Should Contain    ${log}    "*Expected<hr><i>Content flattened.\\x3c/i>"
+    Should Contain    ${log}    "*Content flattened."
