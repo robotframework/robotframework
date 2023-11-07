@@ -53,7 +53,7 @@ Robot Framework requires Python 3.6 or newer and runs also on `PyPy <http://pypy
 If you need to use Python 2, `Jython <http://jython.org>`_ or
 `IronPython <http://ironpython.net>`_, you can use `Robot Framework 4.1.3`__.
 
-__ https://github.com/robotframework/robotframework/tree/v4.1.3#readme
+__ https://github.com/robotframework/robotframework/releases/tag/v4.1.3
 
 Example
 -------
