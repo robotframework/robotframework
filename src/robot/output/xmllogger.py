@@ -404,5 +404,5 @@ class XmlLogger(ResultVisitor):
     def _write_status(self, item):
         attrs = {'status': item.status,
                  'start': item.start_time.isoformat() if item.start_time else None,
-                 'elapsed': str(item.elapsed_time.total_seconds())}
+                 'elapsed': format(item.elapsed_time.total_seconds(), 'f')}
         self._writer.element('status', item.message, attrs)

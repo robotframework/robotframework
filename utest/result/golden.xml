@@ -3,14 +3,14 @@
 <suite id="s1" name="Normal" source="normal.html">
 <kw name="my setup" type="SETUP">
 <timeout value="1 year"/>
-<status status="PASS" start="2011-10-24T13:41:20.886000" elapsed="0.002"/>
+<status status="PASS" start="2011-10-24T13:41:20.886000" elapsed="0.002000"/>
 </kw>
 <test id="s1-t1" name="First One">
 <kw name="Log" owner="BuiltIn">
 <arg>Test 1</arg>
 <doc>Logs the given message with the given level.</doc>
 <msg time="2011-10-24T13:41:20.927000" level="INFO">Test 1</msg>
-<status status="PASS" start="2011-10-24T13:41:20.926000" elapsed="0.002"/>
+<status status="PASS" start="2011-10-24T13:41:20.926000" elapsed="0.002000"/>
 </kw>
 <kw name="logs on trace">
 <var>${not really in source}</var>
@@ -19,9 +19,9 @@
 <arg>Log on ${TEST NAME}</arg>
 <arg>TRACE</arg>
 <doc>Logs the given message with the given level.</doc>
-<status status="PASS" start="2011-10-24T13:41:20.931000" elapsed="0.001"/>
+<status status="PASS" start="2011-10-24T13:41:20.931000" elapsed="0.001000"/>
 </kw>
-<status status="PASS" start="2011-10-24T13:41:20.930000" elapsed="0.003"/>
+<status status="PASS" start="2011-10-24T13:41:20.930000" elapsed="0.003000"/>
 </kw>
 <for flavor="IN">
 <var>${x}</var>
@@ -32,37 +32,37 @@
 <arg>${x}</arg>
 <doc>Logs the given message with the given level.</doc>
 <msg time="2021-03-29T17:05:45.267000" level="INFO">not in source</msg>
-<status status="PASS" start="2021-03-29T17:05:45.266000" elapsed="0.001"/>
+<status status="PASS" start="2021-03-29T17:05:45.266000" elapsed="0.001000"/>
 </kw>
-<status status="PASS" start="2021-03-29T17:05:45.266000" elapsed="0.001"/>
+<status status="PASS" start="2021-03-29T17:05:45.266000" elapsed="0.001000"/>
 </iter>
-<status status="PASS" start="2021-03-29T17:05:45.266000" elapsed="0.001"/>
+<status status="PASS" start="2021-03-29T17:05:45.266000" elapsed="0.001000"/>
 </for>
 <if>
 <branch type="IF" condition="'IF' == 'WRONG'">
 <kw name="Fail" owner="BuiltIn">
 <arg>not going here</arg>
 <doc>Fails the test with the given message and optionally alters its tags.</doc>
-<status status="NOT RUN" start="2021-03-29T17:05:45.266000" elapsed="0.001"/>
+<status status="NOT RUN" start="2021-03-29T17:05:45.266000" elapsed="0.001000"/>
 </kw>
-<status status="NOT RUN" start="2021-03-29T17:05:45.266000" elapsed="0.001"/>
+<status status="NOT RUN" start="2021-03-29T17:05:45.266000" elapsed="0.001000"/>
 </branch>
 <branch type="ELSE">
 <kw name="No Operation" owner="BuiltIn">
 <doc>Not in source.</doc>
-<status status="PASS" start="2021-03-29T17:05:45.266000" elapsed="0.001"/>
+<status status="PASS" start="2021-03-29T17:05:45.266000" elapsed="0.001000"/>
 </kw>
-<status status="PASS" start="2021-03-29T17:05:45.266000" elapsed="0.001"/>
+<status status="PASS" start="2021-03-29T17:05:45.266000" elapsed="0.001000"/>
 </branch>
-<status status="PASS" start="2021-03-29T17:05:45.266000" elapsed="0.001"/>
+<status status="PASS" start="2021-03-29T17:05:45.266000" elapsed="0.001000"/>
 </if>
 <doc>Test case documentation</doc>
 <tag>t1</tag>
-<status status="PASS" start="2011-10-24T13:41:20.925000" elapsed="0.009"/>
+<status status="PASS" start="2011-10-24T13:41:20.925000" elapsed="0.009000"/>
 </test>
 <doc>Normal test cases</doc>
 <meta name="Something">My Value</meta>
-<status status="PASS" start="2011-10-24T13:41:20.873000" elapsed="0.079"/>
+<status status="PASS" start="2011-10-24T13:41:20.873000" elapsed="0.079000"/>
 </suite>
 <statistics>
 <total>
