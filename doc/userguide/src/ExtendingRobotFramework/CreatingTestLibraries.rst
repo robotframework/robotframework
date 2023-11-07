@@ -1263,9 +1263,9 @@ Other types cause conversion failures.
    | Enum_        |               |            | str_         | The specified type must be an enumeration (a subclass of Enum_ | .. sourcecode:: python               |
    |              |               |            |              | or Flag_) and given arguments must match its member names.     |                                      |
    |              |               |            |              |                                                                |    class Direction(Enum):            |
-   |              |               |            |              | Starting from RF 3.2.2, matching member names is case-, space- |        NORTH = auto()                |
-   |              |               |            |              | and underscore-insensitive.                                    |        NORTH_WEST = auto()           |
-   |              |               |            |              |                                                                |                                      |
+   |              |               |            |              | Matching member names is case, space, underscore and hyphen    |        NORTH = auto()                |
+   |              |               |            |              | insensitive, but exact matches have precedence over normalized |        NORTH_WEST = auto()           |
+   |              |               |            |              | matches. Ignoring hyphens is new in RF 7.0.                    |                                      |
    |              |               |            |              |                                                                | | `NORTH` (Direction.NORTH)          |
    |              |               |            |              |                                                                | | `north west` (Direction.NORTH_WEST)|
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
@@ -1273,8 +1273,8 @@ Other types cause conversion failures.
    |              |               |            | int_         | subclass of IntEnum_ or IntFlag_) and given arguments must     |                                      |
    |              |               |            |              | match its member names or values.                              |    class PowerState(IntEnum):        |
    |              |               |            |              |                                                                |        OFF = 0                       |
-   |              |               |            |              | Matching member names is case-, space- and                     |        ON = 1                        |
-   |              |               |            |              | and underscore-insensitive. Values can be given as actual      |                                      |
+   |              |               |            |              | Matching member names is case, space, underscore and hyphen    |        ON = 1                        |
+   |              |               |            |              | insensitive the same as with `Enum`. Values can be given as    |                                      |
    |              |               |            |              | integers and as strings that can be converted to integers.     | | `OFF` (PowerState.OFF)             |
    |              |               |            |              |                                                                | | `1` (PowerState.ON)                |
    |              |               |            |              | Support for IntEnum_ and IntFlag_ is new in RF 4.1.            |                                      |

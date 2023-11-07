@@ -172,7 +172,7 @@ class EnumConverter(TypeConverter):
 
     def _find_by_normalized_name_or_int_value(self, enum, value):
         members = sorted(enum.__members__)
-        matches = [m for m in members if eq(m, value, ignore='_')]
+        matches = [m for m in members if eq(m, value, ignore='_-')]
         if len(matches) == 1:
             return getattr(enum, matches[0])
         if len(matches) > 1:
