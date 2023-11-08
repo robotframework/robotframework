@@ -287,7 +287,7 @@ class StartSuiteAttributes(TypedDict):
     id: str
     longname: str
     doc: str
-    metadata: Dict[str, Any]
+    metadata: 'dict[str, str]'
     source: str
     suites: 'list[str]'
     tests: 'list[str]'
