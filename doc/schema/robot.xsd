@@ -4,7 +4,8 @@
         <xs:documentation xml:lang="en">
             = Robot Framework output.xml schema =
 
-            Compatible with Robot Framework 5.0 and newer. For more details see:
+            Compatible with Robot Framework 7.0 and newer. For more details and
+            for older versions, go to
             https://github.com/robotframework/robotframework/tree/master/doc/schema
 
             Due to XSD 1.1 not being widely adopted, this schema is XSD 1.0 compatible.
