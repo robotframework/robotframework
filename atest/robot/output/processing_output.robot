@@ -45,8 +45,16 @@ Minimal hand-created output
 My Run Robot And Rebot
     [Arguments]    ${params}    ${paths}
     Run Tests Without Processing Output    ${params}    ${paths}
+    Validate Elapsed In Output
     Copy Previous Outfile
     Run Rebot    ${EMPTY}    ${OUTFILE COPY}
+    Validate Elapsed In Output
+
+Validate Elapsed In Output
+    ${statuses} =    Get Elements    ${OUTFILE}    .//status
+    FOR    ${elem}    IN    @{statuses}
+        Should Match Regexp    ${elem.attrib}[elapsed]    ^\\d+\\.\\d+$
+    END
 
 Check Normal Suite Defaults
     [Arguments]    ${suite}    ${message}=    ${setup}=${None}    ${teardown}=${None}
