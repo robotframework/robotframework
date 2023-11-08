@@ -47,7 +47,7 @@ __ https://pypi.org/project/typing-extensions/
 import sys
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Sequence, Tuple, TypedDict, Union
+from typing import Any, Optional, Mapping, Sequence, TypedDict, Union
 if sys.version_info >= (3, 10):
     from types import UnionType
 else:
@@ -60,32 +60,32 @@ from robot.running import TestDefaults, TestSuite
 
 # Type aliases used by DynamicLibrary and HybridLibrary.
 Name = str
-PositArgs = List[Any]
-NamedArgs = Dict[str, Any]
+PositArgs = Sequence[Any]
+NamedArgs = Mapping[str, Any]
 Documentation = str
-Arguments = List[
+Arguments = Sequence[
     Union[
-        str,               # Name with possible default like `arg` or `arg=1`.
-        Tuple[str],        # Name without a default like `('arg',)`.
-        Tuple[str, Any]    # Name and default like `('arg', 1)`.
+        str,                   # Name with possible default like `arg` or `arg=1`.
+        'tuple[str]',          # Name without a default like `('arg',)`.
+        'tuple[str, Any]'      # Name and default like `('arg', 1)`.
     ]
 ]
-Type = Union[
-    type,                           # Actual type.
-    str,                            # Type name or alias.
-    UnionType,                      # Union syntax (e.g. `int | float`).
-    Tuple[Union[type, str], ...]    # Tuple of types. Behaves like union.
+TypeHint = Union[
+    type,                      # Actual type.
+    str,                       # Type name or alias.
+    UnionType,                 # Union syntax (e.g. `int | float`).
+    'tuple[TypeHint, ...]'     # Tuple of type hints. Behaves like a union.
 ]
-Types = Union[
-    Dict[str, Type],       # Types by name.
-    List[                  # Types by position.
+TypeHints = Union[
+    Mapping[str, TypeHint],    # Types by name.
+    Sequence[                  # Types by position.
         Union[
-            Type,          # Type info.
-            None           # No type info.
+            TypeHint,          # Type hint.
+            None               # No type hint.
         ]
     ]
 ]
-Tags = List[str]
+Tags = Sequence[str]
 Source = str
 
 
@@ -100,7 +100,7 @@ class DynamicLibrary(ABC):
     """
 
     @abstractmethod
-    def get_keyword_names(self) -> List[Name]:
+    def get_keyword_names(self) -> Sequence[Name]:
         """Return names of the keywords this library implements.
 
         :return: Keyword names as a list of strings.
@@ -186,7 +186,7 @@ class DynamicLibrary(ABC):
         """
         return None
 
-    def get_keyword_types(self, name: Name) -> Optional[Types]:
+    def get_keyword_types(self, name: Name) -> Optional[TypeHints]:
         """Optional method to return keyword's type specification.
 
         Type information is used for automatic argument conversion during
@@ -269,7 +269,7 @@ class HybridLibrary(ABC):
     """
 
     @abstractmethod
-    def get_keyword_names(self) -> List[Name]:
+    def get_keyword_names(self) -> Sequence[Name]:
         """Return names of the implemented keyword methods as a list or strings.
 
         Returned names must match names of the implemented keyword methods.
@@ -289,8 +289,8 @@ class StartSuiteAttributes(TypedDict):
     doc: str
     metadata: dict
     source: str
-    suites: List[str]
-    tests: List[str]
+    suites: 'list[str]'
+    tests: 'list[str]'
     totaltests: int
     starttime: str
 
@@ -316,7 +316,7 @@ class StartTestAttributes(TypedDict):
     longname: str
     originalname: str
     doc: str
-    tags: List[str]
+    tags: 'list[str]'
     template: str
     source: str
     lineno: int
@@ -341,21 +341,21 @@ class OptionalKeywordAttributes(TypedDict, total=False):
     IF structures attributes include ``condition``.
     """
     # FOR
-    variables: List[str]
+    variables: 'list[str]'
     flavor: str
-    values: List[str]
+    values: 'list[str]'
     # ITERATION with FOR
-    variables: Dict[str, str]
+    variables: 'dict[str, str]'
     # WHILE and IF
     condition: str
     # WHILE
     limit: str
     # EXCEPT
-    patterns: List[str]
+    patterns: 'list[str]'
     pattern_type: str
     variable: str
     # RETURN
-    values: List[str]
+    values: 'list[str]'
 
 
 class StartKeywordAttributes(OptionalKeywordAttributes):
@@ -367,9 +367,9 @@ class StartKeywordAttributes(OptionalKeywordAttributes):
     kwname: str
     libname: str
     doc: str
-    args: List[str]
-    assign: List[str]
-    tags: List[str]
+    args: 'list[str]'
+    assign: 'list[str]'
+    tags: 'list[str]'
     source: str
     lineno: int
     status: str
@@ -401,7 +401,7 @@ class LibraryAttributes(TypedDict):
 
     See the User Guide for more information.
     """
-    args: List[str]
+    args: 'list[str]'
     originalname: str
     source: str
     importer: Union[str, None]
@@ -421,7 +421,7 @@ class VariablesAttributes(TypedDict):
 
     See the User Guide for more information.
     """
-    args: List[str]
+    args: 'list[str]'
     source: str
     importer: Union[str, None]
 
