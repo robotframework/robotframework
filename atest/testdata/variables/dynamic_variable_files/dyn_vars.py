@@ -17,7 +17,7 @@ def get_dict():
 class MyDict(dict):
 
     def __init__(self):
-        dict.__init__(self, from_my_dict='This From My Dict', from_my_dict2=2)
+        super().__init__(from_my_dict='This From My Dict', from_my_dict2=2)
 
 
 def get_MyMapping():
@@ -47,5 +47,5 @@ def get_UserDict():
 class MyUserDict(UserDict):
 
     def __init__(self):
-        UserDict.__init__(self, {'from MyUserDict': 'This From MyUserDict',
-                                 'from MyUserDict2': 2})
+        super().__init__({'from MyUserDict': 'This From MyUserDict',
+                          'from MyUserDict2': 2})

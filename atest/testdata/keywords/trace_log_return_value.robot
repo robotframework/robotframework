@@ -29,4 +29,4 @@ Return object with invalid repr
 *** Keywords ***
 Return Value From UK
     ${return} =    Set Variable    value
-    [Return]    ${return}
+    RETURN    ${return}

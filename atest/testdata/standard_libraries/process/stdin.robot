@@ -2,38 +2,28 @@
 Resource           process_resource.robot
 
 *** Test Cases ***
-Stdin is PIPE by defauls
-    Start Process    python    -c    import sys; print(sys.stdin.read())
-    ${process} =    Get Process Object
-    Call Method    ${process.stdin}    write    ${{b'Hello, world!'}}
-    Call Method    ${process.stdin}    close
-    ${result} =    Wait For Process
-    Should Be Equal    ${result.stdout}    Hello, world!
-
-Stdin as PIPE explicitly
-    Start Process    python    -c    import sys; print(sys.stdin.read())    stdin=PIPE
-    ${process} =    Get Process Object
-    Call Method    ${process.stdin}    write    ${{b'Hello, world!'}}
-    Call Method    ${process.stdin}    close
-    ${result} =    Wait For Process
-    Should Be Equal    ${result.stdout}    Hello, world!
-
-Stdin can be disabled 1
-    Start Process    python    -c    import sys; print('Hello, world!')    stdin=NONE
-    ${process} =    Get Process Object
+Stdin is NONE by default
+    ${process} =    Start Process    python    -c    import sys; print('Hello, world!')
     Should Be Equal    ${process.stdin}    ${None}
     ${result} =    Wait For Process
     Should Be Equal    ${result.stdout}    Hello, world!
 
-Stdin can be disabled 2
-    ${result} =    Run Process    python    -c    import sys; print('Hello, world!')    stdin=None
-    ${process} =    Get Process Object
+Stdin can be set to PIPE
+    ${process} =    Start Process    python    -c    import sys; print(sys.stdin.read())    stdin=PIPE
+    Call Method    ${process.stdin}    write    ${{b'Hello, world!'}}
+    Call Method    ${process.stdin}    close
+    ${result} =    Wait For Process
+    Should Be Equal    ${result.stdout}    Hello, world!
+
+Stdin can be disabled explicitly
+    ${process} =    Start Process    python    -c    import sys; print('Hello, world!')    stdin=None
+    ${result} =    Wait For Process
     Should Be Equal    ${process.stdin}    ${None}
     Should Be Equal    ${result.stdout}    Hello, world!
 
 Stdin can be disabled with None object
-    ${result} =    Run Process    python    -c    import sys; print('Hello, world!')    stdin=${None}
-    ${process} =    Get Process Object
+    ${process} =    Start Process    python    -c    import sys; print('Hello, world!')    stdin=${None}
+    ${result} =    Wait For Process
     Should Be Equal    ${process.stdin}    ${None}
     Should Be Equal    ${result.stdout}    Hello, world!
 

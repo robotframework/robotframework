@@ -1,4 +1,4 @@
-*** Test Case ***
+*** Test Cases ***
 S2TC2 No Metadata
     Log    Whatever
 

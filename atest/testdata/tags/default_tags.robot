@@ -1,7 +1,7 @@
-*** Setting ***
+*** Settings ***
 Default Tags      03    four
 
-*** Test Case ***
+*** Test Cases ***
 No Own Tags With Default Tags
     No Operation
 

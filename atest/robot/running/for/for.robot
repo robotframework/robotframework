@@ -122,7 +122,7 @@ Failure inside FOR
     Should be equal       ${loop.kws[1].status}            PASS
     Should be equal       ${loop.kws[2].status}            PASS
     Check log message     ${loop.kws[3].kws[0].msgs[0]}    Before Check
-    Check log message     ${loop.kws[3].kws[1].msgs[0]}    Failure with 4    FAIL
+    Check log message     ${loop.kws[3].kws[1].msgs[0]}    Failure with <4>    FAIL
     Should be equal       ${loop.kws[3].kws[2].status}     NOT RUN
     Length should be      ${loop.kws[3].kws}               3
     Should be equal       ${loop.kws[3].status}            FAIL
@@ -294,26 +294,26 @@ Header at the end of file
 *** Keywords ***
 "Variables in values" helper
     [Arguments]    ${kw}    ${num}
-    Check log message    ${kw.kws[0].msgs[0]}    ${num}
-    Check log message    ${kw.kws[1].msgs[0]}    Hello from for loop
-    Should be equal      ${kw.kws[2].name}       BuiltIn.No Operation
+    Check log message    ${kw.kws[0].msgs[0]}         ${num}
+    Check log message    ${kw.kws[1].msgs[0]}         Hello from for loop
+    Should be equal      ${kw.kws[2].full_name}       BuiltIn.No Operation
 
 Check kw "My UK"
     [Arguments]    ${kw}
-    Should be equal      ${kw.name}              My UK
-    Should be equal      ${kw.kws[0].name}       BuiltIn.No Operation
-    Check log message    ${kw.kws[1].msgs[0]}    We are in My UK
+    Should be equal      ${kw.full_name}              My UK
+    Should be equal      ${kw.kws[0].full_name}       BuiltIn.No Operation
+    Check log message    ${kw.kws[1].msgs[0]}         We are in My UK
 
 Check kw "My UK 2"
     [Arguments]    ${kw}    ${arg}
-    Should be equal      ${kw.name}              My UK 2
+    Should be equal      ${kw.full_name}              My UK 2
     Check kw "My UK"     ${kw.kws[0]}
-    Check log message    ${kw.kws[1].msgs[0]}    My UK 2 got argument "${arg}"
+    Check log message    ${kw.kws[1].msgs[0]}         My UK 2 got argument "${arg}"
     Check kw "My UK"     ${kw.kws[2]}
 
 Check kw "For In UK"
     [Arguments]    ${kw}
-    Should be equal       ${kw.name}                            For In UK
+    Should be equal       ${kw.full_name}                       For In UK
     Check log message     ${kw.kws[0].msgs[0]}                  Not for yet
     Should be FOR loop    ${kw.kws[1]}    2
     Check log message     ${kw.kws[1].kws[0].kws[0].msgs[0]}    This is for with 1
@@ -324,7 +324,7 @@ Check kw "For In UK"
 
 Check kw "For In UK With Args"
     [Arguments]    ${kw}    ${arg_count}    ${first_arg}
-    Should be equal       ${kw.name}                            For In UK With Args
+    Should be equal       ${kw.full_name}                       For In UK With Args
     Should be FOR loop    ${kw.kws[0]}                          ${arg_count}
     Check kw "My UK 2"    ${kw.kws[0].kws[0].kws[0]}            ${first_arg}
     Should be FOR loop    ${kw.kws[2]}    1
@@ -335,7 +335,7 @@ Check kw "Nested For In UK"
     Should be FOR loop      ${kw.kws[0]}                               1                          FAIL
     Check kw "For In UK"    ${kw.kws[0].kws[0].kws[0]}
     ${nested2} =    Set Variable    ${kw.kws[0].kws[0].kws[1]}
-    Should be equal         ${nested2.name}                            Nested For In UK 2
+    Should be equal         ${nested2.full_name}                       Nested For In UK 2
     Should be FOR loop      ${nested2.kws[0]}                          2
     Check kw "For In UK"    ${nested2.kws[0].kws[0].kws[0]}
     Check log message       ${nested2.kws[0].kws[0].kws[1].msgs[0]}    Got arg: ${first_arg}

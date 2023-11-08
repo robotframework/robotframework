@@ -52,7 +52,7 @@ Invalid limit mistyped prefix
 
 Limit used multiple times
     ${tc} =    Check Test Case    ${TESTNAME}
-    Should Be Equal    ${tc.body[0].limit}    1, 2
+    Should Be Equal    ${tc.body[0].limit}    2
 
 Invalid values after limit
     ${tc} =    Check Test Case    ${TESTNAME}

@@ -1,10 +1,10 @@
 import unittest
 import warnings
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from robot.model import Tags
 from robot.result import (Break, Continue, Error, For, If, IfBranch, Keyword, Message,
-                          Return, TestCase, TestSuite, Try, While)
+                          Return, TestCase, TestSuite, Try, TryBranch, Var, While)
 from robot.utils.asserts import (assert_equal, assert_false, assert_raises,
                                  assert_raises_with_msg, assert_true)
 
@@ -125,36 +125,142 @@ class TestTimes(unittest.TestCase):
 
     def test_suite_elapsed_time_when_start_and_end_given(self):
         suite = TestSuite()
-        suite.starttime = '20010101 10:00:00.000'
-        suite.endtime = '20010101 10:00:01.234'
-        self.assert_elapsed(suite, 1234)
+        suite.start_time = '2001-01-01 10:00:00.000'
+        suite.end_time = '2001-01-01 10:00:01.234'
+        self.assert_elapsed(suite, 1.234)
 
     def assert_elapsed(self, obj, expected):
-        assert_equal(obj.elapsedtime, expected)
-        assert_equal(obj.elapsed_time.total_seconds() * 1000, expected)
+        assert_equal(obj.elapsedtime, round(expected * 1000))
+        assert_equal(obj.elapsed_time.total_seconds(), expected)
 
     def test_suite_elapsed_time_is_zero_by_default(self):
         self.assert_elapsed(TestSuite(), 0)
 
-    def test_suite_elapsed_time_is_got_from_childen_if_suite_does_not_have_times(self):
+    def test_suite_elapsed_time_is_got_from_children_if_suite_does_not_have_times(self):
         suite = TestSuite()
-        suite.tests.create(starttime='19991212 12:00:00.010',
-                           endtime='19991212 12:00:00.011')
+        suite.tests.create(start_time='1999-12-12 12:00:00.010',
+                           end_time='1999-12-12 12:00:00.011')
+        self.assert_elapsed(suite, 0.001)
+        suite.start_time = '1999-12-12 12:00:00.010'
+        suite.end_time = '1999-12-12 12:00:01.010'
         self.assert_elapsed(suite, 1)
-        assert_equal(suite.elapsedtime, 1)
-        suite.starttime = '19991212 12:00:00.010'
-        suite.endtime = '19991212 12:00:01.010'
-        self.assert_elapsed(suite, 1000)
 
-    def test_forward_compatibility(self):
-        for cls in (TestSuite, TestCase, Keyword, If, IfBranch, Try, For, While,
-                    Break, Continue, Return, Error):
-            obj = cls(starttime='20230512 16:40:00.001', endtime='20230512 16:40:01.001')
+    def test_datetime_and_string(self):
+        for cls in (TestSuite, TestCase, Keyword, If, IfBranch, Try, TryBranch,
+                    For, While, Break, Continue, Return, Error):
+            obj = cls(start_time='2023-05-12T16:40:00.001',
+                      end_time='2023-05-12 16:40:01.123456')
             assert_equal(obj.starttime, '20230512 16:40:00.001')
-            assert_equal(obj.endtime, '20230512 16:40:01.001')
+            assert_equal(obj.endtime, '20230512 16:40:01.123')
             assert_equal(obj.start_time, datetime(2023, 5, 12, 16, 40, 0, 1000))
-            assert_equal(obj.end_time, datetime(2023, 5, 12, 16, 40, 1, 1000))
-            self.assert_elapsed(obj, 1000)
+            assert_equal(obj.end_time, datetime(2023, 5, 12, 16, 40, 1, 123456))
+            self.assert_elapsed(obj, 1.122456)
+            obj.config(start_time='2023-09-07 20:33:44.444444',
+                       end_time=datetime(2023, 9, 7, 20, 33, 44, 999999))
+            assert_equal(obj.starttime, '20230907 20:33:44.444')
+            assert_equal(obj.endtime, '20230907 20:33:44.999')
+            assert_equal(obj.start_time, datetime(2023, 9, 7, 20, 33, 44, 444444))
+            assert_equal(obj.end_time, datetime(2023, 9, 7, 20, 33, 44, 999999))
+            self.assert_elapsed(obj, 0.555555)
+            obj.config(starttime='20230907 20:33:44.555555',
+                       endtime='20230907 20:33:44.999999')
+            assert_equal(obj.starttime, '20230907 20:33:44.555')
+            assert_equal(obj.endtime, '20230907 20:33:44.999')
+            assert_equal(obj.start_time, datetime(2023, 9, 7, 20, 33, 44, 555555))
+            assert_equal(obj.end_time, datetime(2023, 9, 7, 20, 33, 44, 999999))
+            self.assert_elapsed(obj, 0.444444)
+
+    def test_times_are_calculated_if_not_set(self):
+        for cls in (TestSuite, TestCase, Keyword, If, IfBranch, Try, TryBranch,
+                    For, While, Break, Continue, Return, Error):
+            obj = cls()
+            assert_equal(obj.start_time, None)
+            assert_equal(obj.end_time, None)
+            assert_equal(obj.elapsed_time, timedelta())
+            obj.config(start_time='2023-09-07 12:34:56',
+                       end_time='2023-09-07T12:34:57',
+                       elapsed_time=42)
+            assert_equal(obj.start_time, datetime(2023, 9, 7, 12, 34, 56))
+            assert_equal(obj.end_time, datetime(2023, 9, 7, 12, 34, 57))
+            assert_equal(obj.elapsed_time, timedelta(seconds=42))
+            obj.config(elapsed_time=None)
+            assert_equal(obj.start_time, datetime(2023, 9, 7, 12, 34, 56))
+            assert_equal(obj.end_time, datetime(2023, 9, 7, 12, 34, 57))
+            assert_equal(obj.elapsed_time, timedelta(seconds=1))
+            obj.config(elapsed_time=0)
+            assert_equal(obj.start_time, datetime(2023, 9, 7, 12, 34, 56))
+            assert_equal(obj.end_time, datetime(2023, 9, 7, 12, 34, 57))
+            assert_equal(obj.elapsed_time, timedelta(seconds=0))
+            obj.config(end_time=None,
+                       elapsed_time=timedelta(seconds=2))
+            assert_equal(obj.start_time, datetime(2023, 9, 7, 12, 34, 56))
+            assert_equal(obj.end_time, datetime(2023, 9, 7, 12, 34, 58))
+            assert_equal(obj.elapsed_time, timedelta(seconds=2))
+            obj.config(start_time=None,
+                       end_time=obj.start_time,
+                       elapsed_time=timedelta(seconds=10))
+            assert_equal(obj.start_time, datetime(2023, 9, 7, 12, 34, 46))
+            assert_equal(obj.end_time, datetime(2023, 9, 7, 12, 34, 56))
+            assert_equal(obj.elapsed_time, timedelta(seconds=10))
+            obj.config(start_time=None,
+                       end_time=None)
+            assert_equal(obj.start_time, None)
+            assert_equal(obj.end_time, None)
+            assert_equal(obj.elapsed_time, timedelta(seconds=10))
+
+    def test_suite_elapsed_time(self):
+        suite = TestSuite()
+        suite.tests.create(elapsed_time=1)
+        suite.suites.create(elapsed_time=2)
+        assert_equal(suite.elapsed_time, timedelta(seconds=3))
+        suite.setup.config(name='S', elapsed_time=0.1)
+        suite.teardown.config(name='T', elapsed_time=0.2)
+        assert_equal(suite.elapsed_time, timedelta(seconds=3.3))
+        suite.config(start_time=datetime(2023, 9, 7, 20, 33, 44),
+                     end_time=datetime(2023, 9, 7, 20, 33, 45),)
+        assert_equal(suite.elapsed_time, timedelta(seconds=1))
+        suite.elapsed_time = 42
+        assert_equal(suite.elapsed_time, timedelta(seconds=42))
+
+    def test_test_elapsed_time(self):
+        test = TestCase()
+        test.body.create_keyword(elapsed_time=1)
+        test.body.create_if(elapsed_time=2)
+        assert_equal(test.elapsed_time, timedelta(seconds=3))
+        test.setup.config(name='S', elapsed_time=0.1)
+        test.teardown.config(name='T', elapsed_time=0.2)
+        assert_equal(test.elapsed_time, timedelta(seconds=3.3))
+        test.config(start_time=datetime(2023, 9, 7, 20, 33, 44),
+                    end_time=datetime(2023, 9, 7, 20, 33, 45),)
+        assert_equal(test.elapsed_time, timedelta(seconds=1))
+        test.elapsed_time = 42
+        assert_equal(test.elapsed_time, timedelta(seconds=42))
+
+    def test_keyword_elapsed_time(self):
+        kw = Keyword()
+        kw.body.create_keyword(elapsed_time=1)
+        kw.body.create_if(elapsed_time=2)
+        assert_equal(kw.elapsed_time, timedelta(seconds=3))
+        kw.teardown.config(name='T', elapsed_time=0.2)
+        assert_equal(kw.elapsed_time, timedelta(seconds=3.2))
+        kw.config(start_time=datetime(2023, 9, 7, 20, 33, 44),
+                  end_time=datetime(2023, 9, 7, 20, 33, 45),)
+        assert_equal(kw.elapsed_time, timedelta(seconds=1))
+        kw.elapsed_time = 42
+        assert_equal(kw.elapsed_time, timedelta(seconds=42))
+
+    def test_control_structure_elapsed_time(self):
+        for cls in (If, IfBranch, Try, TryBranch, For, While, Break, Continue,
+                    Return, Error):
+            obj = cls()
+            obj.body.create_keyword(elapsed_time=1)
+            obj.body.create_keyword(elapsed_time=2)
+            assert_equal(obj.elapsed_time, timedelta(seconds=3))
+            obj.config(start_time=datetime(2023, 9, 7, 20, 33, 44),
+                       end_time=datetime(2023, 9, 7, 20, 33, 45),)
+            assert_equal(obj.elapsed_time, timedelta(seconds=1))
+            obj.elapsed_time = 42
+            assert_equal(obj.elapsed_time, timedelta(seconds=42))
 
 
 class TestSlots(unittest.TestCase):
@@ -203,14 +309,32 @@ class TestModel(unittest.TestCase):
     def test_keyword_name(self):
         kw = Keyword('keyword')
         assert_equal(kw.name, 'keyword')
-        kw = Keyword('keyword', 'lib')
-        assert_equal(kw.name, 'lib.keyword')
-        kw.kwname = 'Kekkonen'
-        kw.libname = 'Urho'
-        assert_equal(kw.name, 'Urho.Kekkonen')
+        assert_equal(kw.owner, None)
+        assert_equal(kw.full_name, 'keyword')
+        assert_equal(kw.source_name, None)
+        kw = Keyword('keyword', 'library', 'key${x}')
+        assert_equal(kw.name, 'keyword')
+        assert_equal(kw.owner, 'library')
+        assert_equal(kw.full_name, 'library.keyword')
+        assert_equal(kw.source_name, 'key${x}')
 
-    def test_keyword_name_cannot_be_set_directly(self):
-        assert_raises(AttributeError, setattr, Keyword(), 'name', 'value')
+    def test_full_name_cannot_be_set_directly(self):
+        assert_raises(AttributeError, setattr, Keyword(), 'full_name', 'value')
+
+    def test_deprecated_names(self):
+        # These aren't loudly deprecated yet.
+        kw = Keyword('k', 'l', 's')
+        assert_equal(kw.kwname, 'k')
+        assert_equal(kw.libname, 'l')
+        assert_equal(kw.sourcename, 's')
+        kw.kwname, kw.libname, kw.sourcename = 'K', 'L', 'S'
+        assert_equal(kw.kwname, 'K')
+        assert_equal(kw.libname, 'L')
+        assert_equal(kw.sourcename, 'S')
+        assert_equal(kw.name, 'K')
+        assert_equal(kw.owner, 'L')
+        assert_equal(kw.source_name, 'S')
+        assert_equal(kw.full_name, 'L.K')
 
     def test_status_propertys_with_test(self):
         self._verify_status_propertys(TestCase())
@@ -301,17 +425,6 @@ class TestModel(unittest.TestCase):
         assert_equal(kw.teardown.name, None)
         assert_equal(kw.teardown.type, 'TEARDOWN')
 
-    def test_keywords_deprecation(self):
-        kw = Keyword()
-        kw.body = [Keyword(), Message(), Keyword(), Keyword(), Message()]
-        kw.teardown.config(kwname='T')
-        with warnings.catch_warnings(record=True) as w:
-            kws = kw.keywords
-            assert_equal(list(kws), [kw.body[0], kw.body[2], kw.body[3], kw.teardown])
-            assert_true('deprecated' in str(w[0].message))
-        assert_raises(AttributeError, kws.append, Keyword())
-        assert_raises(AttributeError, setattr, kw, 'keywords', [])
-
     def test_for_parents(self):
         test = TestCase()
         for_ = test.body.create_for()
@@ -342,17 +455,49 @@ class TestModel(unittest.TestCase):
         kw = branch.body.create_keyword()
         assert_equal(kw.parent, branch)
 
-    def test_while_name(self):
-        assert_equal(While().name, '')
-        assert_equal(While('$x > 0').name, '$x > 0')
-        assert_equal(While('True', '1 minute').name, 'True | limit=1 minute')
-        assert_equal(While(limit='1 minute').name, 'limit=1 minute')
-        assert_equal(While('True', '1 s', on_limit_message='Error message').name,
-                     'True | limit=1 s | on_limit_message=Error message')
-        assert_equal(While(on_limit='pass').name,
-                     'on_limit=pass')
-        assert_equal(While(on_limit_message='Error message').name,
+    def test_while_log_name(self):
+        assert_equal(While()._log_name, '')
+        assert_equal(While('$x > 0')._log_name, '$x > 0')
+        assert_equal(While('True', '1 minute')._log_name,
+                     'True    limit=1 minute')
+        assert_equal(While(limit='1 minute')._log_name,
+                     'limit=1 minute')
+        assert_equal(While('True', '1 s', on_limit_message='x')._log_name,
+                     'True    limit=1 s    on_limit_message=x')
+        assert_equal(While(on_limit='pass', limit='100')._log_name,
+                     'limit=100    on_limit=pass')
+        assert_equal(While(on_limit_message='Error message')._log_name,
                      'on_limit_message=Error message')
+
+    def test_for_log_name(self):
+        assert_equal(For(assign=['${x}'], values=['a', 'b'])._log_name,
+                     '${x}    IN    a    b')
+        assert_equal(For(['${x}'], 'IN ENUMERATE', ['a', 'b'], start='1')._log_name,
+                     '${x}    IN ENUMERATE    a    b    start=1')
+        assert_equal(For(['${x}', '${y}'], 'IN ZIP', ['${xs}', '${ys}'],
+                         mode='STRICT', fill='-')._log_name,
+                     '${x}    ${y}    IN ZIP    ${xs}    ${ys}    mode=STRICT    fill=-')
+
+    def test_try_log_name(self):
+        for typ in TryBranch.TRY, TryBranch.EXCEPT, TryBranch.ELSE, TryBranch.FINALLY:
+            assert_equal(TryBranch(typ)._log_name, '')
+        branch = TryBranch(TryBranch.EXCEPT)
+        assert_equal(branch.config(patterns=['p1', 'p2'])._log_name,
+                     'p1    p2')
+        assert_equal(branch.config(pattern_type='glob')._log_name,
+                     'p1    p2    type=glob')
+        assert_equal(branch.config(assign='${err}')._log_name,
+                     'p1    p2    type=glob    AS    ${err}')
+
+    def test_var_log_name(self):
+        assert_equal(Var('${x}', 'y')._log_name,
+                     '${x}    y')
+        assert_equal(Var('${x}', ('y', 'z'))._log_name,
+                     '${x}    y    z')
+        assert_equal(Var('${x}', ('y', 'z'), separator='')._log_name,
+                     '${x}    y    z    separator=')
+        assert_equal(Var('@{x}', ('y',), scope='test')._log_name,
+                     '@{x}    y    scope=test')
 
 
 class TestBody(unittest.TestCase):
@@ -454,29 +599,23 @@ class TestDeprecatedKeywordSpecificAttributes(unittest.TestCase):
 
     def test_deprecated_keyword_specific_properties(self):
         for_ = For(['${x}', '${y}'], 'IN', ['a', 'b', 'c', 'd'])
-        for name, expected in [('name', '${x} | ${y} IN [ a | b | c | d ]'),
-                               ('args', ()),
-                               ('assign', ()),
+        for name, expected in [('args', ()),
                                ('tags', Tags()),
                                ('timeout', None)]:
-            assert_equal(getattr(for_, name), expected)
+            with warnings.catch_warnings(record=True) as w:
+                assert_equal(getattr(for_, name), expected)
+                assert_true(issubclass(w[-1].category, UserWarning))
+                assert_true(f'For, {name}' in str(w[-1].message))
 
     def test_if(self):
-        for name, expected in [('name', ''),
-                               ('args', ()),
+        for name, expected in [('args', ()),
                                ('assign', ()),
                                ('tags', Tags()),
                                ('timeout', None)]:
-            assert_equal(getattr(If(), name), expected)
-
-    def test_if_branch(self):
-        branch = IfBranch(IfBranch.IF, '$x > 0')
-        for name, expected in [('name', '$x > 0'),
-                               ('args', ()),
-                               ('assign', ()),
-                               ('tags', Tags()),
-                               ('timeout', None)]:
-            assert_equal(getattr(branch, name), expected)
+            with warnings.catch_warnings(record=True) as w:
+                assert_equal(getattr(If(), name), expected)
+                assert_true(issubclass(w[-1].category, UserWarning))
+                assert_true(f'If, {name}' in str(w[-1].message))
 
 
 if __name__ == '__main__':

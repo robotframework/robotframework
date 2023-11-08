@@ -1,4 +1,4 @@
-*** Variable ***
+*** Variables ***
 ${EXECUTED}             This is executed
 @{ARGS WITH ELSE}       ELSE    ${EXECUTED}
 @{ARGS WITH ELSE IF}    ELSE IF    ${EXECUTED}
@@ -8,7 +8,7 @@ ${FAIL}                 Fail
 @{EXPR AND CATENATE}    True    Catenate    \${foo}    ELSE IF    zig    ELSE    bar
 
 
-*** Test Case ***
+*** Test Cases ***
 Run Keyword If With True Expression
     Run Keyword If    ${True}    Log    ${EXECUTED}
 
@@ -177,7 +177,7 @@ Run Keyword Unless With True Expression
     Run Keyword Unless    ${0} == ${0}    Log    ${NON EXISTING}
 
 
-*** Keyword ***
+*** Keywords ***
 Conditional User Keyword
     [Arguments]    ${status}    ${message}
     Run Keyword If    '${status}' == 'PASS'    Log    ${message}

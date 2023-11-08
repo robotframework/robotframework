@@ -1,4 +1,4 @@
-*** Setting ***
+*** Settings ***
 Test Setup        Login and set prompt
 Test Teardown     Close All Connections
 Library           Telnet    3.142    CRLF    $    REGEXP    ASCII    strict    DeBuG    terminal_emulation=yes   terminal_type=vt100
@@ -132,7 +132,7 @@ Run with timeout 0.5
     [Arguments]    ${kw}    @{args}
     [Timeout]     0.5
     ${res}=   Run keyword    ${kw}    @{args}
-    [Return]    ${res}
+    RETURN    ${res}
 
 Read until should match
     [Arguments]    ${expected}   ${match}

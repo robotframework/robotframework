@@ -131,7 +131,7 @@ Run Stdout Stderr Process
     ...    sys.stderr.write('${stderr_content}')
     ${result} =    Run Process    python    -c    ${code}
     ...    stdout=${stdout}    stderr=${stderr}    cwd=${cwd}
-    [Return]    ${result}
+    RETURN    ${result}
 
 Run And Test Once
     [Arguments]    ${content}    ${stdout}=${NONE}    ${stderr}=${NONE}

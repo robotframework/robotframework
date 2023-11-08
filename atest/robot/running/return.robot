@@ -7,7 +7,9 @@ Simple
     ${tc} =    Check Test Case    ${TESTNAME}
     Should Be Equal    ${tc.body[0].body[1].type}      RETURN
     Should Be Equal    ${tc.body[0].body[1].status}    PASS
+    Should Be Equal    ${tc.body[0].body[1].message}   ${EMPTY}
     Should Be Equal    ${tc.body[0].body[2].status}    NOT RUN
+    Should Be Equal    ${tc.body[0].message}           ${EMPTY}
 
 Return value
     Check Test Case    ${TESTNAME}

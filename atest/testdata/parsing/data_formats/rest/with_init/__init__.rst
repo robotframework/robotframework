@@ -3,6 +3,7 @@
   ** Settings **
   Suite Setup     Suite Setup
   Documentation   Testing suite init file
+  Invalid Init    Setting
 
   ** Variables **
   ${msg} =  Running suite setup

@@ -65,7 +65,9 @@
 <status status="PASS" starttime="20220201 17:17:12.723" endtime="20220201 17:17:12.724"/>
 </kw>
 <if>
+<doc>Control structures could have doc until RF 7.0.</doc>
 <branch type="IF" condition="${i} == 9">
+<doc>Control structures could have doc until RF 7.0.</doc>
 <break>
 <status status="NOT RUN" starttime="20220201 17:17:12.724" endtime="20220201 17:17:12.724"/>
 </break>
@@ -2587,15 +2589,19 @@ can be used also for other purposes and extended as needed.</doc>
 <suite id="s1-s13" name="Try Except" source="/home/peke/Devel/robotframework/atest/testdata/misc/try_except.robot">
 <test id="s1-s13-t1" name="Everything" line="2">
 <try>
+<doc>Control structures could have doc until RF 7.0.</doc>
 <branch type="TRY">
+<doc>Control structures could have doc until RF 7.0.</doc>
 <kw name="Keyword">
 <try>
 <branch type="TRY">
 <for flavor="IN">
+<doc>Control structures could have doc until RF 7.0.</doc>
 <var>${msg}</var>
 <value>Ooops!</value>
 <value>Auts!</value>
 <iter>
+<doc>Control structures could have doc until RF 7.0.</doc>
 <var name="${msg}">Ooops!</var>
 <kw name="Fail" library="BuiltIn">
 <arg>${msg}</arg>
@@ -2862,7 +2868,9 @@ AssertionError: Ooops!</msg>
 <status status="PASS" starttime="20220201 17:17:13.301" endtime="20220201 17:17:13.301"/>
 </kw>
 <while condition="$variable &lt; 6">
+<doc>Control structures could have doc until RF 7.0.</doc>
 <iter>
+<doc>Control structures could have doc until RF 7.0.</doc>
 <kw name="Log" library="BuiltIn">
 <arg>${variable}</arg>
 <doc>Logs the given message with the given level.</doc>

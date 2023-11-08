@@ -13,6 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from datetime import datetime
+
 from robot.errors import DataError
 
 
@@ -58,9 +60,13 @@ class ElementHandler:
     def end(self, elem, result):
         pass
 
-    def _timestamp(self, elem, attr_name):
-        timestamp = elem.get(attr_name)
-        return timestamp if timestamp != 'N/A' else None
+    def _legacy_timestamp(self, elem, attr_name):
+        ts = elem.get(attr_name)
+        if ts == 'N/A' or not ts:
+            return None
+        ts = ts.ljust(24, '0')
+        return datetime(int(ts[:4]), int(ts[4:6]), int(ts[6:8]),
+                        int(ts[9:11]), int(ts[12:14]), int(ts[15:17]), int(ts[18:24]))
 
 
 class RootHandler(ElementHandler):
@@ -106,7 +112,8 @@ class TestHandler(ElementHandler):
     tag = 'test'
     # 'tags' is for RF < 4 compatibility.
     children = frozenset(('doc', 'tags', 'tag', 'timeout', 'status', 'kw', 'if', 'for',
-                          'try', 'while', 'return', 'break', 'continue', 'error', 'msg'))
+                          'try', 'while', 'variable', 'return', 'break', 'continue',
+                          'error', 'msg'))
 
     def start(self, elem, result):
         lineno = elem.get('line')
@@ -121,7 +128,7 @@ class KeywordHandler(ElementHandler):
     # 'arguments', 'assign' and 'tags' are for RF < 4 compatibility.
     children = frozenset(('doc', 'arguments', 'arg', 'assign', 'var', 'tags', 'tag',
                           'timeout', 'status', 'msg', 'kw', 'if', 'for', 'try',
-                          'while', 'return', 'break', 'continue', 'error'))
+                          'while', 'variable', 'return', 'break', 'continue', 'error'))
 
     def start(self, elem, result):
         elem_type = elem.get('type')
@@ -136,9 +143,15 @@ class KeywordHandler(ElementHandler):
             body = result.body
         except AttributeError:
             body = self._get_body_for_suite_level_keyword(result)
-        return body.create_keyword(kwname=elem.get('name', ''),
-                                   libname=elem.get('library'),
-                                   sourcename=elem.get('sourcename'))
+        return body.create_keyword(**self._get_keyword_attrs(elem))
+
+    def _get_keyword_attrs(self, elem):
+        # 'library' and 'sourcename' are RF < 7 compatibility.
+        return {
+            'name': elem.get('name', ''),
+            'owner': elem.get('owner') or elem.get('library'),
+            'source_name': elem.get('source_name') or elem.get('sourcename')
+        }
 
     def _get_body_for_suite_level_keyword(self, result):
         # Someone, most likely a listener, has created a `<kw>` element on suite level.
@@ -149,24 +162,22 @@ class KeywordHandler(ElementHandler):
         kw_type = 'teardown' if result.tests or result.suites else 'setup'
         keyword = getattr(result, kw_type)
         if not keyword:
-            keyword.config(kwname=f'Implicit {kw_type}', status=keyword.PASS)
+            keyword.config(name=f'Implicit {kw_type}', status=keyword.PASS)
         return keyword.body
 
     def _create_setup(self, elem, result):
-        return result.setup.config(kwname=elem.get('name', ''),
-                                   libname=elem.get('library'))
+        return result.setup.config(**self._get_keyword_attrs(elem))
 
     def _create_teardown(self, elem, result):
-        return result.teardown.config(kwname=elem.get('name', ''),
-                                      libname=elem.get('library'))
+        return result.teardown.config(**self._get_keyword_attrs(elem))
 
     # RF < 4 compatibility.
 
     def _create_for(self, elem, result):
-        return result.body.create_keyword(kwname=elem.get('name'), type='FOR')
+        return result.body.create_keyword(name=elem.get('name'), type='FOR')
 
     def _create_foritem(self, elem, result):
-        return result.body.create_keyword(kwname=elem.get('name'), type='ITERATION')
+        return result.body.create_keyword(name=elem.get('name'), type='ITERATION')
 
     _create_iteration = _create_foritem
 
@@ -201,7 +212,7 @@ class WhileHandler(ElementHandler):
 class IterationHandler(ElementHandler):
     tag = 'iter'
     children = frozenset(('var', 'doc', 'status', 'kw', 'if', 'for', 'msg', 'try',
-                          'while', 'return', 'break', 'continue', 'error'))
+                          'while', 'variable', 'return', 'break', 'continue', 'error'))
 
     def start(self, elem, result):
         return result.body.create_iteration()
@@ -220,9 +231,11 @@ class IfHandler(ElementHandler):
 class BranchHandler(ElementHandler):
     tag = 'branch'
     children = frozenset(('status', 'kw', 'if', 'for', 'try', 'while', 'msg', 'doc',
-                          'return', 'pattern', 'break', 'continue', 'error'))
+                          'variable', 'return', 'pattern', 'break', 'continue', 'error'))
 
     def start(self, elem, result):
+        if 'variable' in elem.attrib:    # RF < 7.0 compatibility.
+            elem.attrib['assign'] = elem.attrib.pop('variable')
         return result.body.create_branch(**elem.attrib)
 
 
@@ -245,9 +258,20 @@ class PatternHandler(ElementHandler):
 
 
 @ElementHandler.register
+class VariableHandler(ElementHandler):
+    tag = 'variable'
+    children = frozenset(('var', 'status', 'msg', 'kw'))
+
+    def start(self, elem, result):
+        return result.body.create_var(name=elem.get('name', ''),
+                                      scope=elem.get('scope'),
+                                      separator=elem.get('separator'))
+
+
+@ElementHandler.register
 class ReturnHandler(ElementHandler):
     tag = 'return'
-    children = frozenset(('status', 'value', 'msg', 'kw'))
+    children = frozenset(('value', 'status', 'msg', 'kw'))
 
     def start(self, elem, result):
         return result.body.create_return()
@@ -285,11 +309,23 @@ class MessageHandler(ElementHandler):
     tag = 'msg'
 
     def end(self, elem, result):
-        html_true = ('true', 'yes')    # 'yes' is compatibility for RF < 4.
-        result.body.create_message(elem.text or '',
-                                   elem.get('level', 'INFO'),
-                                   elem.get('html') in html_true,
-                                   self._timestamp(elem, 'timestamp'))
+        self._create_message(elem, result.body.create_message)
+
+    def _create_message(self, elem, creator):
+        if 'time' in elem.attrib:    # RF >= 7
+            timestamp = elem.attrib['time']
+        else:                        # RF < 7
+            timestamp = self._legacy_timestamp(elem, 'timestamp')
+        creator(elem.text or '',
+                elem.get('level', 'INFO'),
+                elem.get('html') in ('true', 'yes'),   # 'yes' is RF < 4 compatibility
+                timestamp)
+
+
+class ErrorMessageHandler(MessageHandler):
+
+    def end(self, elem, result):
+        self._create_message(elem, result.messages.create)
 
 
 @ElementHandler.register
@@ -302,8 +338,12 @@ class StatusHandler(ElementHandler):
     def end(self, elem, result):
         if self.set_status:
             result.status = elem.get('status', 'FAIL')
-        result.starttime = self._timestamp(elem, 'starttime')
-        result.endtime = self._timestamp(elem, 'endtime')
+        if 'start' in elem.attrib:    # RF >= 7
+            result.start_time = elem.attrib['start']
+            result.elapsed_time = float(elem.attrib['elapsed'])
+        else:                         # RF < 7
+            result.start_time = self._legacy_timestamp(elem, 'starttime')
+            result.end_time = self._legacy_timestamp(elem, 'endtime')
         if elem.text:
             result.message = elem.text
 
@@ -313,7 +353,13 @@ class DocHandler(ElementHandler):
     tag = 'doc'
 
     def end(self, elem, result):
-        result.doc = elem.text or ''
+        try:
+            result.doc = elem.text or ''
+        except AttributeError:
+            # With RF < 7 control structures can have `<doc>` containing information
+            # about flattening or removing date. Nowadays, they don't have `doc`
+            # attribute at all and `message` is used for this information.
+            result.message = elem.text or ''
 
 
 @ElementHandler.register
@@ -372,12 +418,12 @@ class VarHandler(ElementHandler):
 
     def end(self, elem, result):
         value = elem.text or ''
-        if result.type == result.KEYWORD:
+        if result.type in (result.KEYWORD, result.FOR):
             result.assign += (value,)
-        elif result.type == result.FOR:
-            result.variables += (value,)
         elif result.type == result.ITERATION:
-            result.variables[elem.get('name')] = value
+            result.assign[elem.get('name')] = value
+        elif result.type == result.VAR:
+            result.value += (value,)
         else:
             raise DataError(f"Invalid element '{elem}' for result '{result!r}'.")
 
@@ -413,16 +459,6 @@ class ErrorsHandler(ElementHandler):
 
     def get_child_handler(self, tag):
         return ErrorMessageHandler()
-
-
-class ErrorMessageHandler(ElementHandler):
-
-    def end(self, elem, result):
-        html_true = ('true', 'yes')    # 'yes' is compatibility for RF < 4.
-        result.messages.create(elem.text or '',
-                               elem.get('level', 'INFO'),
-                               elem.get('html') in html_true,
-                               self._timestamp(elem, 'timestamp'))
 
 
 @ElementHandler.register

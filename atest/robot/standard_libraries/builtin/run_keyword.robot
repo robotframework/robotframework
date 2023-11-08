@@ -5,17 +5,17 @@ Resource          atest_resource.robot
 *** Test Cases ***
 Run Keyword
     ${tc} =    Check test Case    ${TEST NAME}
-    Check Run Keyword    ${tc.kws[0]}    BuiltIn.Log    This is logged with Run Keyword
+    Check Run Keyword     ${tc.kws[0]}           BuiltIn.Log    This is logged with Run Keyword
     Check Keyword Data    ${tc.kws[1].kws[0]}    BuiltIn.No Operation
-    Check Run Keyword    ${tc.kws[2]}    BuiltIn.Log Many    1    2    3    4    5
-    Check Run Keyword    ${tc.kws[4]}    BuiltIn.Log    Run keyword with variable: Log
-    Check Run Keyword    ${tc.kws[6]}    BuiltIn.Log Many    one    two
+    Check Run Keyword     ${tc.kws[2]}           BuiltIn.Log Many    1    2    3    4    5
+    Check Run Keyword     ${tc.kws[4]}           BuiltIn.Log    Run keyword with variable: Log
+    Check Run Keyword     ${tc.kws[6]}           BuiltIn.Log Many    one    two
 
 Run Keyword Returning Value
     ${tc} =    Check test Case    ${TEST NAME}
-    Check Keyword Data    ${tc.kws[0]}    BuiltIn.Run Keyword    \${ret}    Set Variable, hello world
+    Check Keyword Data    ${tc.kws[0]}           BuiltIn.Run Keyword    \${ret}    Set Variable, hello world
     Check Keyword Data    ${tc.kws[0].kws[0]}    BuiltIn.Set Variable    args=hello world
-    Check Keyword Data    ${tc.kws[2]}    BuiltIn.Run Keyword    \${ret}    Evaluate, 1+2
+    Check Keyword Data    ${tc.kws[2]}           BuiltIn.Run Keyword    \${ret}    Evaluate, 1+2
     Check Keyword Data    ${tc.kws[2].kws[0]}    BuiltIn.Evaluate    args=1+2
 
 Run Keyword With Arguments That Needs To Be Escaped
@@ -66,9 +66,9 @@ With library keyword accepting embedded arguments as variables containing object
 
 Run Keyword In For Loop
     ${tc} =    Check test Case    ${TEST NAME}
-    Check Run Keyword    ${tc.kws[0].kws[0].kws[0]}    BuiltIn.Log    hello from for loop
+    Check Run Keyword          ${tc.kws[0].kws[0].kws[0]}    BuiltIn.Log    hello from for loop
     Check Run Keyword In UK    ${tc.kws[0].kws[2].kws[0]}    BuiltIn.Log    hei maailma
-    Check Run Keyword    ${tc.kws[1].kws[0].kws[0]}    BuiltIn.Log    hello from second for loop
+    Check Run Keyword          ${tc.kws[1].kws[0].kws[0]}    BuiltIn.Log    hello from second for loop
 
 Run Keyword With Test Timeout
     Check Test Case    ${TEST NAME} Passing
@@ -98,26 +98,26 @@ Stdout and stderr are not captured when running Run Keyword
 *** Keywords ***
 Check Run Keyword
     [Arguments]    ${kw}    ${subkw_name}    @{msgs}
-    Should Be Equal    ${kw.name}    BuiltIn.Run Keyword
-    Should Be Equal    ${kw.kws[0].name}    ${subkw_name}
+    Should Be Equal    ${kw.full_name}           BuiltIn.Run Keyword
+    Should Be Equal    ${kw.kws[0].full_name}    ${subkw_name}
     FOR    ${index}    ${msg}    IN ENUMERATE   @{msgs}
         Check Log Message    ${kw.kws[0].msgs[${index}]}    ${msg}
     END
 
 Check Run Keyword In Uk
     [Arguments]    ${kw}    ${subkw_name}    @{msgs}
-    Should Be Equal    ${kw.name}    BuiltIn.Run Keyword
-    Should Be Equal    ${kw.kws[0].name}    My UK
-    Check Run Keyword    ${kw.kws[0].kws[0]}    ${subkw_name}    @{msgs}
+    Should Be Equal      ${kw.full_name}           BuiltIn.Run Keyword
+    Should Be Equal      ${kw.kws[0].full_name}    My UK
+    Check Run Keyword    ${kw.kws[0].kws[0]}       ${subkw_name}    @{msgs}
 
 Check Run Keyword With Embedded Args
     [Arguments]    ${kw}    ${subkw_name}    ${msg}
-    Should Be Equal    ${kw.name}    BuiltIn.Run Keyword
+    Should Be Equal    ${kw.full_name}    BuiltIn.Run Keyword
     IF    ${subkw_name.endswith('library')}
-        Should Be Equal      ${kw.kws[0].name}       embedded_args.${subkw_name}
-        Check Log Message    ${kw.kws[0].msgs[0]}    ${msg}
+        Should Be Equal      ${kw.kws[0].full_name}       embedded_args.${subkw_name}
+        Check Log Message    ${kw.kws[0].msgs[0]}         ${msg}
     ELSE
-        Should Be Equal      ${kw.kws[0].name}              ${subkw_name}
-        Should Be Equal      ${kw.kws[0].kws[0].name}       BuiltIn.Log
-        Check Log Message    ${kw.kws[0].kws[0].msgs[0]}    ${msg}
+        Should Be Equal      ${kw.kws[0].full_name}              ${subkw_name}
+        Should Be Equal      ${kw.kws[0].kws[0].full_name}       BuiltIn.Log
+        Check Log Message    ${kw.kws[0].kws[0].msgs[0]}         ${msg}
     END

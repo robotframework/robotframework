@@ -1,8 +1,8 @@
-*** Setting ***
+*** Settings ***
 Library           ExampleLibrary
 Library           nön_äscii_dïr/valid.py
 
-*** Test Case ***
+*** Test Cases ***
 Generic Failure
     [Documentation]    FAIL foo != bar
     Exception    AssertionError    foo != bar

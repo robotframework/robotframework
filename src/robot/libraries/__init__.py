@@ -27,5 +27,5 @@ the http://robotframework.org web site.
 """
 
 STDLIBS = frozenset(('BuiltIn', 'Collections', 'DateTime', 'Dialogs', 'Easter',
-                     'OperatingSystem', 'Process', 'Remote', 'Reserved',
-                     'Screenshot', 'String', 'Telnet', 'XML'))
+                     'OperatingSystem', 'Process', 'Remote', 'Screenshot',
+                     'String', 'Telnet', 'XML'))

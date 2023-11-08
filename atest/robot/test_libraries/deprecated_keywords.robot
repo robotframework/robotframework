@@ -1,8 +1,8 @@
-*** Setting ***
+*** Settings ***
 Suite Setup       Run Tests    ${EMPTY}    test_libraries/deprecated_keywords.robot
 Resource          atest_resource.robot
 
-*** Test Case ***
+*** Test Cases ***
 Deprecated keywords
     ${tc} =    Check Test Case    ${TESTNAME}
     Verify Deprecation Warning    ${tc.kws[0]}    DeprecatedKeywords.Deprecated Library Keyword
@@ -45,7 +45,7 @@ Not Deprecated Keywords
         Syslog Should Not Contain    ${name}' is deprecated
     END
 
-*** Keyword ***
+*** Keywords ***
 Verify Deprecation Warning
     [Arguments]    ${kw}    ${name}    @{extra}
     ${message} =    Catenate    Keyword '${name}' is deprecated.    @{extra}

@@ -18,12 +18,11 @@ class TestSeg2Str(unittest.TestCase):
     def test_one_or_more(self):
         for seq, expected in [(['One'], "'One'"),
                               (['1', '2'], "'1' and '2'"),
-                              (['a', 'b', 'c', 'd'], "'a', 'b', 'c' and 'd'"),
-                              ([u'Unicode', u'ASCII'], "'Unicode' and 'ASCII'")]:
+                              (['a', 'b', 'c', 'd'], "'a', 'b', 'c' and 'd'")]:
             self._verify(seq, expected)
 
     def test_non_ascii_unicode(self):
-        self._verify([u'hyv\xe4'], u"'hyv\xe4'")
+        self._verify(['hyvä', 'äiti', '🏆'], "'hyvä', 'äiti' and '🏆'")
 
     def test_ascii_bytes(self):
         self._verify([b'ascii'], "'ascii'")

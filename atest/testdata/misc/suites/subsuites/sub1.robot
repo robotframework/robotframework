@@ -1,4 +1,4 @@
-*** Setting ***
+*** Settings ***
 Documentation     Normal test cases
 Force Tags        f1
 Default Tags      d1    d2
@@ -6,15 +6,15 @@ Metadata          Something    My Value
 Suite Setup       ${SETUP}
 Suite Teardown    ${TEARDOWN}
 
-*** Variable ***
-${SLEEP}          0.1
+*** Variables ***
+${SLEEP}          0.001
 ${FAIL}           NO
 ${MESSAGE}        Original message
 ${LEVEL}          INFO
 ${SETUP}          Setup
 ${TEARDOWN}       No Operation
 
-*** Test Case ***
+*** Test Cases ***
 SubSuite1 First
     [Tags]    t1
     Log    ${MESSAGE}    ${LEVEL}

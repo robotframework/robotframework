@@ -28,9 +28,9 @@ class TestNormalize(unittest.TestCase):
         self._verify('Fo o BaR', 'foobar', caseless=True)
 
     def test_caseless_non_ascii(self):
-        self._verify('\xc4iti', '\xc4iti', caseless=False)
-        for mother in ['\xc4ITI', '\xc4iTi', '\xe4iti', '\xe4iTi']:
-            self._verify(mother, '\xe4iti', caseless=True)
+        self._verify('Äiti', 'Äiti', caseless=False)
+        for mother in ['ÄITI', 'ÄiTi', 'äiti', 'äiTi']:
+            self._verify(mother, 'äiti', caseless=True)
 
     def test_spaceless(self):
         self._verify('Fo o BaR', 'fo o bar', spaceless=False)
@@ -119,13 +119,13 @@ class TestNormalizedDict(unittest.TestCase):
             assert_true(key not in nd2)
 
     def test_caseless_with_non_ascii(self):
-        nd1 = NormalizedDict({'\xe4': 1})
-        assert_equal(nd1['\xe4'], 1)
-        assert_equal(nd1['\xc4'], 1)
-        assert_true('\xc4' in nd1)
-        nd2 = NormalizedDict({'\xe4': 1}, caseless=False)
-        assert_equal(nd2['\xe4'], 1)
-        assert_true('\xc4' not in nd2)
+        nd1 = NormalizedDict({'ä': 1})
+        assert_equal(nd1['ä'], 1)
+        assert_equal(nd1['Ä'], 1)
+        assert_true('Ä' in nd1)
+        nd2 = NormalizedDict({'ä': 1}, caseless=False)
+        assert_equal(nd2['ä'], 1)
+        assert_true('Ä' not in nd2)
 
     def test_contains(self):
         nd = NormalizedDict({'Foo': 'bar'})
@@ -206,8 +206,8 @@ class TestNormalizedDict(unittest.TestCase):
         assert_equal(repr(type('Extend', (NormalizedDict,), {})()), 'Extend()')
 
     def test_unicode(self):
-        nd = NormalizedDict({'a': '\xe4', '\xe4': 'a'})
-        assert_equal(str(nd), "{'a': '\xe4', '\xe4': 'a'}")
+        nd = NormalizedDict({'a': 'ä', 'ä': 'a'})
+        assert_equal(str(nd), "{'a': 'ä', 'ä': 'a'}")
 
     def test_update(self):
         nd = NormalizedDict({'a': 1, 'b': 1, 'c': 1})

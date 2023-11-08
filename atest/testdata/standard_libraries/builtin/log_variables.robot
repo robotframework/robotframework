@@ -1,12 +1,12 @@
-*** Setting ***
+*** Settings ***
 Suite Setup       My Suite Setup
 
-*** Variable ***
+*** Variables ***
 @{LIST}           Hello    world
 ${SCALAR}         Hi tellus
 &{DICT}           key=value    two=${2}
 
-*** Test Case ***
+*** Test Cases ***
 Previous Test
     No Operation
 
@@ -25,7 +25,7 @@ List and dict variables failing during iteration
     Log Variables
     Log Many    ${BROKEN ITERABLE}    ${BROKEN SEQUENCE}    ${BROKEN MAPPING}
 
-*** Keyword ***
+*** Keywords ***
 My Suite Setup
     ${suite_setup_local_var} =    Set Variable    Variable available only locally in suite setup
     Set Suite Variable    $suite_setup_suite_var    Suite var set in suite setup

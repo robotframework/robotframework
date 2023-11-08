@@ -32,45 +32,39 @@ be imported via the :mod:`robot.running` module.
 
 __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#listener-interface
 __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#programmatic-modification-of-results
-
 """
 
-import sys
 import warnings
 from collections import OrderedDict
 from datetime import datetime, timedelta
 from itertools import chain
 from pathlib import Path
-from typing import Generic, Mapping, Sequence, Type, Union, TypeVar
-
-if sys.version_info >= (3, 8):
-    from typing import Literal
+from typing import Generic, Literal, Mapping, Sequence, Type, Union, TypeVar
 
 from robot import model
-from robot.model import (BodyItem, create_fixture, DataDict, Keywords, Tags,
-                         SuiteVisitor, TotalStatistics, TotalStatisticsBuilder,
-                         TestCases, TestSuites)
-from robot.utils import copy_signature, get_elapsed_time, KnownAtRuntime, setter
+from robot.model import (BodyItem, create_fixture, DataDict, SuiteVisitor, Tags,
+                         TestSuites, TotalStatistics, TotalStatisticsBuilder)
+from robot.utils import copy_signature, KnownAtRuntime, setter
 
 from .configurer import SuiteConfigurer
 from .messagefilter import MessageFilter
-from .modeldeprecation import deprecated, DeprecatedAttributesMixin
+from .modeldeprecation import DeprecatedAttributesMixin
 from .keywordremover import KeywordRemover
 from .suiteteardownfailed import SuiteTeardownFailed, SuiteTeardownFailureHandler
 
+
 IT = TypeVar('IT', bound='IfBranch|TryBranch')
 FW = TypeVar('FW', bound='ForIteration|WhileIteration')
+BodyItemParent = Union['TestSuite', 'TestCase', 'Keyword', 'For', 'ForIteration', 'If',
+                       'IfBranch', 'Try', 'TryBranch', 'While', 'WhileIteration', None]
 
-BodyItemParent = Union['TestSuite', 'TestCase', 'For', 'ForIteration', 'If', 'IfBranch',
-                       'Try', 'TryBranch', 'While', 'WhileIteration', None]
 
-
-class Body(model.BaseBody['Keyword', 'For', 'While', 'If', 'Try', 'Return', 'Continue',
-                          'Break', 'Message', 'Error']):
+class Body(model.BaseBody['Keyword', 'For', 'While', 'If', 'Try', 'Var', 'Return',
+                          'Continue', 'Break', 'Message', 'Error']):
     __slots__ = []
 
 
-class Branches(model.BaseBranches['Keyword', 'For', 'While', 'If', 'Try', 'Return',
+class Branches(model.BaseBranches['Keyword', 'For', 'While', 'If', 'Try', 'Var', 'Return',
                                   'Continue', 'Break', 'Message', 'Error', IT]):
     __slots__ = []
 
@@ -80,7 +74,7 @@ class IterationType(Generic[FW]):
     pass
 
 
-class Iterations(model.BaseBody['Keyword', 'For', 'While', 'If', 'Try', 'Return',
+class Iterations(model.BaseBody['Keyword', 'For', 'While', 'If', 'Try', 'Var', 'Return',
                                 'Continue', 'Break', 'Message', 'Error'], IterationType[FW]):
     __slots__ = ['iteration_class']
     iteration_type: Type[FW] = KnownAtRuntime
@@ -109,65 +103,142 @@ class StatusMixin:
     SKIP = 'SKIP'
     NOT_RUN = 'NOT RUN'
     NOT_SET = 'NOT SET'
-    starttime: 'str|None'
-    endtime: 'str|None'
     __slots__ = ()
 
     @property
-    def elapsedtime(self) -> int:
-        """Total execution time in milliseconds.
+    def start_time(self) -> 'datetime|None':
+        """Execution start time as a ``datetime`` or as a ``None`` if not set.
 
-        This attribute will be replaced by :attr:`elapsed_time` in the future.
+        If start time is not set, it is calculated based :attr:`end_time`
+        and :attr:`elapsed_time` if possible.
+
+        Can be set either directly as a ``datetime`` or as a string in ISO 8601
+        format.
+
+        New in Robot Framework 6.1. Heavily enhanced in Robot Framework 7.0.
         """
-        return get_elapsed_time(self.starttime, self.endtime)
+        if self._start_time:
+            return self._start_time
+        if self._end_time:
+            return self._end_time - self.elapsed_time
+        return None
+
+    @start_time.setter
+    def start_time(self, start_time: 'datetime|str|None'):
+        if isinstance(start_time, str):
+            start_time = datetime.fromisoformat(start_time)
+        self._start_time = start_time
+
+    @property
+    def end_time(self) -> 'datetime|None':
+        """Execution end time as a ``datetime`` or as a ``None`` if not set.
+
+        If end time is not set, it is calculated based :attr:`start_time`
+        and :attr:`elapsed_time` if possible.
+
+        Can be set either directly as a ``datetime`` or as a string in ISO 8601
+        format.
+
+        New in Robot Framework 6.1. Heavily enhanced in Robot Framework 7.0.
+        """
+        if self._end_time:
+            return self._end_time
+        if self._start_time:
+            return self._start_time + self.elapsed_time
+        return None
+
+    @end_time.setter
+    def end_time(self, end_time: 'datetime|str|None'):
+        if isinstance(end_time, str):
+            end_time = datetime.fromisoformat(end_time)
+        self._end_time = end_time
 
     @property
     def elapsed_time(self) -> timedelta:
         """Total execution time as a ``timedelta``.
 
-        This attribute will replace :attr:`elapsedtime` in the future.
+        If not set, calculated based on :attr:`start_time` and :attr:`end_time`
+        if possible. If that fails, calculated based on the elapsed time of
+        child items.
 
-        New in Robot Framework 6.1.
+        Can be set either directly as a ``timedelta`` or as an integer or a float
+        representing seconds.
+
+        New in Robot Framework 6.1. Heavily enhanced in Robot Framework 7.0.
         """
-        return timedelta(milliseconds=self.elapsedtime)
+        if self._elapsed_time is not None:
+            return self._elapsed_time
+        if self._start_time and self._end_time:
+            return self._end_time - self._start_time
+        return self._elapsed_time_from_children()
+
+    def _elapsed_time_from_children(self) -> timedelta:
+        elapsed = timedelta()
+        for child in self.body:
+            if hasattr(child, 'elapsed_time'):
+                elapsed += child.elapsed_time
+        if getattr(self, 'has_setup', False):
+            elapsed += self.setup.elapsed_time
+        if getattr(self, 'has_teardown', False):
+            elapsed += self.teardown.elapsed_time
+        return elapsed
+
+    @elapsed_time.setter
+    def elapsed_time(self, elapsed_time: 'timedelta|int|float|None'):
+        if isinstance(elapsed_time, (int, float)):
+            elapsed_time = timedelta(seconds=elapsed_time)
+        self._elapsed_time = elapsed_time
 
     @property
-    def start_time(self) -> 'datetime|None':
-        """Execution start time as a ``datetime`` or as ``None`` if not set.
+    def starttime(self) -> 'str|None':
+        """Execution start time as a string or as a ``None`` if not set.
 
-        This attribute will replace :attr:`starttime` in the future.
+        The string format is ``%Y%m%d %H:%M:%S.%f``.
 
-        New in Robot Framework 6.1.
+        Considered deprecated starting from Robot Framework 7.0.
+        :attr:`start_time` should be used instead.
         """
-        return self._timestr_to_datetime(self.starttime) if self.starttime else None
+        return self._datetime_to_timestr(self.start_time)
 
-    @start_time.setter
-    def start_time(self, start_time: 'datetime|None'):
-        self.starttime = self._datetime_to_timestr(start_time) if start_time else None
+    @starttime.setter
+    def starttime(self, starttime: 'str|None'):
+        self.start_time = self._timestr_to_datetime(starttime)
 
     @property
-    def end_time(self) -> 'datetime|None':
-        """Execution end time as a ``datetime`` or as ``None`` if not set.
+    def endtime(self) -> 'str|None':
+        """Execution end time as a string or as a ``None`` if not set.
 
-        This attribute will replace :attr:`endtime` in the future.
+        The string format is ``%Y%m%d %H:%M:%S.%f``.
 
-        New in Robot Framework 6.1.
+        Considered deprecated starting from Robot Framework 7.0.
+        :attr:`end_time` should be used instead.
         """
-        return self._timestr_to_datetime(self.endtime) if self.endtime else None
+        return self._datetime_to_timestr(self.end_time)
 
-    @end_time.setter
-    def end_time(self, end_time: 'datetime|None'):
-        self.endtime = self._datetime_to_timestr(end_time) if end_time else None
+    @endtime.setter
+    def endtime(self, endtime: 'str|None'):
+        self.end_time = self._timestr_to_datetime(endtime)
 
-    def _timestr_to_datetime(self, ts: str) -> datetime:
-        micro = int(ts[18:]) * 1000
+    @property
+    def elapsedtime(self) -> int:
+        """Total execution time in milliseconds.
+
+        Considered deprecated starting from Robot Framework 7.0.
+        :attr:`elapsed_time` should be used instead.
+        """
+        return round(self.elapsed_time.total_seconds() * 1000)
+
+    def _timestr_to_datetime(self, ts: 'str|None') -> 'datetime|None':
+        if not ts:
+            return None
+        ts = ts.ljust(24, '0')
         return datetime(int(ts[:4]), int(ts[4:6]), int(ts[6:8]),
-                        int(ts[9:11]), int(ts[12:14]), int(ts[15:17]), micro)
+                        int(ts[9:11]), int(ts[12:14]), int(ts[15:17]), int(ts[18:24]))
 
-    def _datetime_to_timestr(self, dt: datetime) -> str:
-        millis = int(round(dt.microsecond, -3) / 1000)
-        return (f'{dt.year}{dt.month:02}{dt.day:02} '
-                f'{dt.hour:02}:{dt.minute:02}.{dt.second:02}.{millis}')
+    def _datetime_to_timestr(self, dt: 'datetime|None') -> 'str|None':
+        if not dt:
+            return None
+        return dt.isoformat(' ', timespec='milliseconds').replace('-', '')
 
     @property
     def passed(self) -> bool:
@@ -196,7 +267,7 @@ class StatusMixin:
         return self.status == self.SKIP
 
     @skipped.setter
-    def skipped(self, skipped: 'Literal[True]'):
+    def skipped(self, skipped: Literal[True]):
         if not skipped:
             raise ValueError(f"`skipped` value must be truthy, got '{skipped}'.")
         self.status = self.SKIP
@@ -210,7 +281,7 @@ class StatusMixin:
         return self.status == self.NOT_RUN
 
     @not_run.setter
-    def not_run(self, not_run: 'Literal[True]'):
+    def not_run(self, not_run: Literal[True]):
         if not not_run:
             raise ValueError(f"`not_run` value must be truthy, got '{not_run}'.")
         self.status = self.NOT_RUN
@@ -220,22 +291,32 @@ class ForIteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
     """Represents one FOR loop iteration."""
     type = BodyItem.ITERATION
     body_class = Body
-    repr_args = ('variables',)
-    __slots__ = ['variables', 'status', 'starttime', 'endtime', 'doc']
+    repr_args = ('assign',)
+    __slots__ = ['assign', 'message', 'status', '_start_time', '_end_time',
+                 '_elapsed_time']
 
-    def __init__(self, variables: 'Mapping[str, str]|None' = None,
+    def __init__(self, assign: 'Mapping[str, str]|None' = None,
                  status: str = 'FAIL',
-                 starttime: 'str|None' = None,
-                 endtime: 'str|None' = None,
-                 doc: str = '',
+                 message: str = '',
+                 start_time: 'datetime|str|None' = None,
+                 end_time: 'datetime|str|None' = None,
+                 elapsed_time: 'timedelta|int|float|None' = None,
                  parent: BodyItemParent = None):
-        self.variables = OrderedDict(variables or ())
+        self.assign = OrderedDict(assign or ())
         self.parent = parent
         self.status = status
-        self.starttime = starttime
-        self.endtime = endtime
-        self.doc = doc
-        self.body = []
+        self.message = message
+        self.start_time = start_time
+        self.end_time = end_time
+        self.elapsed_time = elapsed_time
+        self.body = ()
+
+    @property
+    def variables(self) -> 'Mapping[str, str]':    # TODO: Remove in RF 8.0.
+        """Deprecated since Robot Framework 7.0. Use :attr:`assign` instead."""
+        warnings.warn("'ForIteration.variables' is deprecated and will be removed in "
+                      "Robot Framework 8.0. Use 'ForIteration.assign' instead.")
+        return self.assign
 
     @setter
     def body(self, body: 'Sequence[BodyItem|DataDict]') -> Body:
@@ -245,67 +326,62 @@ class ForIteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
         visitor.visit_for_iteration(self)
 
     @property
-    @deprecated
-    def name(self) -> str:
-        return ', '.join('%s = %s' % item for item in self.variables.items())
+    def _log_name(self):
+        return ', '.join(f'{name} = {value}' for name, value in self.assign.items())
 
 
 @Body.register
 class For(model.For, StatusMixin, DeprecatedAttributesMixin):
     iteration_class = ForIteration
     iterations_class = Iterations[iteration_class]
-    __slots__ = ['status', 'starttime', 'endtime', 'doc']
+    __slots__ = ['status', 'message', '_start_time', '_end_time', '_elapsed_time']
 
-    def __init__(self, variables: Sequence[str] = (),
-                 flavor: "Literal['IN', 'IN RANGE', 'IN ENUMERATE', 'IN ZIP']" = 'IN',
+    def __init__(self, assign: Sequence[str] = (),
+                 flavor: Literal['IN', 'IN RANGE', 'IN ENUMERATE', 'IN ZIP'] = 'IN',
                  values: Sequence[str] = (),
                  start: 'str|None' = None,
                  mode: 'str|None' = None,
                  fill: 'str|None' = None,
                  status: str = 'FAIL',
-                 starttime: 'str|None' = None,
-                 endtime: 'str|None' = None,
-                 doc: str = '',
+                 message: str = '',
+                 start_time: 'datetime|str|None' = None,
+                 end_time: 'datetime|str|None' = None,
+                 elapsed_time: 'timedelta|int|float|None' = None,
                  parent: BodyItemParent = None):
-        super().__init__(variables, flavor, values, start, mode, fill, parent)
+        super().__init__(assign, flavor, values, start, mode, fill, parent)
         self.status = status
-        self.starttime = starttime
-        self.endtime = endtime
-        self.doc = doc
+        self.message = message
+        self.start_time = start_time
+        self.end_time = end_time
+        self.elapsed_time = elapsed_time
 
     @setter
     def body(self, iterations: 'Sequence[ForIteration|DataDict]') -> iterations_class:
         return self.iterations_class(self.iteration_class, self, iterations)
 
     @property
-    @deprecated
-    def name(self) -> str:
-        variables = ' | '.join(self.variables)
-        values = ' | '.join(self.values)
-        for name, value in [('start', self.start),
-                            ('mode', self.mode),
-                            ('fill', self.fill)]:
-            if value is not None:
-                values += f' | {name}={value}'
-        return f'{variables} {self.flavor} [ {values} ]'
+    def _log_name(self):
+        return str(self)[7:]    # Drop 'FOR    ' prefix.
 
 
 class WhileIteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
     """Represents one WHILE loop iteration."""
     type = BodyItem.ITERATION
     body_class = Body
-    __slots__ = ['status', 'starttime', 'endtime', 'doc']
+    __slots__ = ['status', 'message', '_start_time', '_end_time', '_elapsed_time']
 
     def __init__(self, status: str = 'FAIL',
-                 starttime: 'str|None' = None,
-                 endtime: 'str|None' = None,
-                 doc: str = '',
+                 message: str = '',
+                 start_time: 'datetime|str|None' = None,
+                 end_time: 'datetime|str|None' = None,
+                 elapsed_time: 'timedelta|int|float|None' = None,
                  parent: BodyItemParent = None):
         self.parent = parent
         self.status = status
-        self.starttime = starttime
-        self.endtime = endtime
-        self.doc = doc
+        self.message = message
+        self.start_time = start_time
+        self.end_time = end_time
+        self.elapsed_time = elapsed_time
         self.body = ()
 
     @setter
@@ -315,72 +391,60 @@ class WhileIteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
     def visit(self, visitor: SuiteVisitor):
         visitor.visit_while_iteration(self)
 
-    @property
-    @deprecated
-    def name(self) -> str:
-        return ''
-
 
 @Body.register
 class While(model.While, StatusMixin, DeprecatedAttributesMixin):
     iteration_class = WhileIteration
     iterations_class = Iterations[iteration_class]
-    __slots__ = ['status', 'starttime', 'endtime', 'doc']
+    __slots__ = ['status', 'message', '_start_time', '_end_time', '_elapsed_time']
 
     def __init__(self, condition: 'str|None' = None,
                  limit: 'str|None' = None,
                  on_limit: 'str|None' = None,
                  on_limit_message: 'str|None' = None,
                  status: str = 'FAIL',
-                 starttime: 'str|None' = None,
-                 endtime: 'str|None' = None,
-                 doc: str = '',
+                 message: str = '',
+                 start_time: 'datetime|str|None' = None,
+                 end_time: 'datetime|str|None' = None,
+                 elapsed_time: 'timedelta|int|float|None' = None,
                  parent: BodyItemParent = None):
         super().__init__(condition, limit, on_limit, on_limit_message, parent)
         self.status = status
-        self.starttime = starttime
-        self.endtime = endtime
-        self.doc = doc
+        self.message = message
+        self.start_time = start_time
+        self.end_time = end_time
+        self.elapsed_time = elapsed_time
 
     @setter
     def body(self, iterations: 'Sequence[WhileIteration|DataDict]') -> iterations_class:
         return self.iterations_class(self.iteration_class, self, iterations)
 
     @property
-    @deprecated
-    def name(self) -> str:
-        parts = []
-        if self.condition:
-            parts.append(self.condition)
-        if self.limit:
-            parts.append(f'limit={self.limit}')
-        if self.on_limit:
-            parts.append(f'on_limit={self.on_limit}')
-        if self.on_limit_message:
-            parts.append(f'on_limit_message={self.on_limit_message}')
-        return ' | '.join(parts)
+    def _log_name(self):
+        return str(self)[9:]    # Drop 'WHILE    ' prefix.
 
 
 class IfBranch(model.IfBranch, StatusMixin, DeprecatedAttributesMixin):
     body_class = Body
-    __slots__ = ['status', 'starttime', 'endtime', 'doc']
+    __slots__ = ['status', 'message', '_start_time', '_end_time', '_elapsed_time']
 
     def __init__(self, type: str = BodyItem.IF,
                  condition: 'str|None' = None,
                  status: str = 'FAIL',
-                 starttime: 'str|None' = None,
-                 endtime: 'str|None' = None,
-                 doc: str = '',
+                 message: str = '',
+                 start_time: 'datetime|str|None' = None,
+                 end_time: 'datetime|str|None' = None,
+                 elapsed_time: 'timedelta|int|float|None' = None,
                  parent: BodyItemParent = None):
         super().__init__(type, condition, parent)
         self.status = status
-        self.starttime = starttime
-        self.endtime = endtime
-        self.doc = doc
+        self.message = message
+        self.start_time = start_time
+        self.end_time = end_time
+        self.elapsed_time = elapsed_time
 
     @property
-    @deprecated
-    def name(self) -> str:
+    def _log_name(self):
         return self.condition or ''
 
 
@@ -388,85 +452,124 @@ class IfBranch(model.IfBranch, StatusMixin, DeprecatedAttributesMixin):
 class If(model.If, StatusMixin, DeprecatedAttributesMixin):
     branch_class = IfBranch
     branches_class = Branches[branch_class]
-    __slots__ = ['status', 'starttime', 'endtime', 'doc']
+    __slots__ = ['status', 'message', '_start_time', '_end_time', '_elapsed_time']
 
     def __init__(self, status: str = 'FAIL',
-                 starttime: 'str|None' = None,
-                 endtime: 'str|None' = None,
-                 doc: str = '',
+                 message: str = '',
+                 start_time: 'datetime|str|None' = None,
+                 end_time: 'datetime|str|None' = None,
+                 elapsed_time: 'timedelta|int|float|None' = None,
                  parent: BodyItemParent = None):
         super().__init__(parent)
         self.status = status
-        self.starttime = starttime
-        self.endtime = endtime
-        self.doc = doc
+        self.message = message
+        self.start_time = start_time
+        self.end_time = end_time
+        self.elapsed_time = elapsed_time
 
 
 class TryBranch(model.TryBranch, StatusMixin, DeprecatedAttributesMixin):
     body_class = Body
-    __slots__ = ['status', 'starttime', 'endtime', 'doc']
+    __slots__ = ['status', 'message', '_start_time', '_end_time', '_elapsed_time']
 
     def __init__(self, type: str = BodyItem.TRY,
                  patterns: Sequence[str] = (),
                  pattern_type: 'str|None' = None,
-                 variable: 'str|None' = None,
+                 assign: 'str|None' = None,
                  status: str = 'FAIL',
-                 starttime: 'str|None' = None,
-                 endtime: 'str|None' = None,
-                 doc: str = '',
+                 message: str = '',
+                 start_time: 'datetime|str|None' = None,
+                 end_time: 'datetime|str|None' = None,
+                 elapsed_time: 'timedelta|int|float|None' = None,
                  parent: BodyItemParent = None):
-        super().__init__(type, patterns, pattern_type, variable, parent)
+        super().__init__(type, patterns, pattern_type, assign, parent)
         self.status = status
-        self.starttime = starttime
-        self.endtime = endtime
-        self.doc = doc
+        self.message = message
+        self.start_time = start_time
+        self.end_time = end_time
+        self.elapsed_time = elapsed_time
 
     @property
-    @deprecated
-    def name(self) -> str:
-        patterns = list(self.patterns)
-        if self.pattern_type:
-            patterns.append(f'type={self.pattern_type}')
-        parts = []
-        if patterns:
-            parts.append(' | '.join(patterns))
-        if self.variable:
-            parts.append(f'AS {self.variable}')
-        return ' '.join(parts)
+    def _log_name(self):
+        return str(self)[len(self.type)+4:]    # Drop '<type>    ' prefix.
 
 
 @Body.register
 class Try(model.Try, StatusMixin, DeprecatedAttributesMixin):
     branch_class = TryBranch
     branches_class = Branches[branch_class]
-    __slots__ = ['status', 'starttime', 'endtime', 'doc']
+    __slots__ = ['status', 'message', '_start_time', '_end_time', '_elapsed_time']
 
     def __init__(self, status: str = 'FAIL',
-                 starttime: 'str|None' = None,
-                 endtime: 'str|None' = None,
-                 doc: str = '',
+                 message: str = '',
+                 start_time: 'datetime|str|None' = None,
+                 end_time: 'datetime|str|None' = None,
+                 elapsed_time: 'timedelta|int|float|None' = None,
                  parent: BodyItemParent = None):
         super().__init__(parent)
         self.status = status
-        self.starttime = starttime
-        self.endtime = endtime
-        self.doc = doc
+        self.message = message
+        self.start_time = start_time
+        self.end_time = end_time
+        self.elapsed_time = elapsed_time
+
+
+@Body.register
+class Var(model.Var, StatusMixin, DeprecatedAttributesMixin):
+    __slots__ = ['status', 'message', '_start_time', '_end_time', '_elapsed_time']
+    body_class = Body
+
+    def __init__(self, name: str = '',
+                 value: 'str|Sequence[str]' = (),
+                 scope: 'str|None' = None,
+                 separator: 'str|None' = None,
+                 status: str = 'FAIL',
+                 message: str = '',
+                 start_time: 'datetime|str|None' = None,
+                 end_time: 'datetime|str|None' = None,
+                 elapsed_time: 'timedelta|int|float|None' = None,
+                 parent: BodyItemParent = None):
+        super().__init__(name, value, scope, separator, parent)
+        self.status = status
+        self.message = message
+        self.start_time = start_time
+        self.end_time = end_time
+        self.elapsed_time = elapsed_time
+        self.body = ()
+
+    @setter
+    def body(self, body: 'Sequence[BodyItem|DataDict]') -> Body:
+        """Child keywords and messages as a :class:`~.Body` object.
+
+        Typically empty. Only contains something if running VAR has failed
+        due to a syntax error or listeners have logged messages or executed
+        keywords.
+        """
+        return self.body_class(self, body)
+
+    @property
+    def _log_name(self):
+        return str(self)[7:]    # Drop 'VAR    ' prefix.
 
 
 @Body.register
 class Return(model.Return, StatusMixin, DeprecatedAttributesMixin):
-    __slots__ = ['status', 'starttime', 'endtime']
+    __slots__ = ['status', 'message', '_start_time', '_end_time', '_elapsed_time']
     body_class = Body
 
     def __init__(self, values: Sequence[str] = (),
                  status: str = 'FAIL',
-                 starttime: 'str|None' = None,
-                 endtime: 'str|None' = None,
+                 message: str = '',
+                 start_time: 'datetime|str|None' = None,
+                 end_time: 'datetime|str|None' = None,
+                 elapsed_time: 'timedelta|int|float|None' = None,
                  parent: BodyItemParent = None):
         super().__init__(values, parent)
         self.status = status
-        self.starttime = starttime
-        self.endtime = endtime
+        self.message = message
+        self.start_time = start_time
+        self.end_time = end_time
+        self.elapsed_time = elapsed_time
         self.body = ()
 
     @setter
@@ -479,30 +582,24 @@ class Return(model.Return, StatusMixin, DeprecatedAttributesMixin):
         """
         return self.body_class(self, body)
 
-    @property
-    @deprecated
-    def args(self) -> 'tuple[str, ...]':
-        return self.values
-
-    @property
-    @deprecated
-    def doc(self) -> str:
-        return ''
-
 
 @Body.register
 class Continue(model.Continue, StatusMixin, DeprecatedAttributesMixin):
-    __slots__ = ['status', 'starttime', 'endtime']
+    __slots__ = ['status', 'message', '_start_time', '_end_time', '_elapsed_time']
     body_class = Body
 
     def __init__(self, status: str = 'FAIL',
-                 starttime: 'str|None' = None,
-                 endtime: 'str|None' = None,
+                 message: str = '',
+                 start_time: 'datetime|str|None' = None,
+                 end_time: 'datetime|str|None' = None,
+                 elapsed_time: 'timedelta|int|float|None' = None,
                  parent: BodyItemParent = None):
         super().__init__(parent)
         self.status = status
-        self.starttime = starttime
-        self.endtime = endtime
+        self.message = message
+        self.start_time = start_time
+        self.end_time = end_time
+        self.elapsed_time = elapsed_time
         self.body = ()
 
     @setter
@@ -515,30 +612,24 @@ class Continue(model.Continue, StatusMixin, DeprecatedAttributesMixin):
         """
         return self.body_class(self, body)
 
-    @property
-    @deprecated
-    def args(self) -> 'tuple[str, ...]':
-        return ()
-
-    @property
-    @deprecated
-    def doc(self) -> str:
-        return ''
-
 
 @Body.register
 class Break(model.Break, StatusMixin, DeprecatedAttributesMixin):
-    __slots__ = ['status', 'starttime', 'endtime']
+    __slots__ = ['status', 'message', '_start_time', '_end_time', '_elapsed_time']
     body_class = Body
 
     def __init__(self, status: str = 'FAIL',
-                 starttime: 'str|None' = None,
-                 endtime: 'str|None' = None,
+                 message: str = '',
+                 start_time: 'datetime|str|None' = None,
+                 end_time: 'datetime|str|None' = None,
+                 elapsed_time: 'timedelta|int|float|None' = None,
                  parent: BodyItemParent = None):
         super().__init__(parent)
         self.status = status
-        self.starttime = starttime
-        self.endtime = endtime
+        self.message = message
+        self.start_time = start_time
+        self.end_time = end_time
+        self.elapsed_time = elapsed_time
         self.body = ()
 
     @setter
@@ -551,31 +642,25 @@ class Break(model.Break, StatusMixin, DeprecatedAttributesMixin):
         """
         return self.body_class(self, body)
 
-    @property
-    @deprecated
-    def args(self) -> 'tuple[str, ...]':
-        return ()
-
-    @property
-    @deprecated
-    def doc(self) -> str:
-        return ''
-
 
 @Body.register
 class Error(model.Error, StatusMixin, DeprecatedAttributesMixin):
-    __slots__ = ['status', 'starttime', 'endtime']
+    __slots__ = ['status', 'message', '_start_time', '_end_time', '_elapsed_time']
     body_class = Body
 
     def __init__(self, values: Sequence[str] = (),
                  status: str = 'FAIL',
-                 starttime: 'str|None' = None,
-                 endtime: 'str|None' = None,
+                 message: str = '',
+                 start_time: 'datetime|str|None' = None,
+                 end_time: 'datetime|str|None' = None,
+                 elapsed_time: 'timedelta|int|float|None' = None,
                  parent: BodyItemParent = None):
         super().__init__(values, parent)
         self.status = status
-        self.starttime = starttime
-        self.endtime = endtime
+        self.message = message
+        self.start_time = start_time
+        self.end_time = end_time
+        self.elapsed_time = elapsed_time
         self.body = ()
 
     @setter
@@ -586,21 +671,6 @@ class Error(model.Error, StatusMixin, DeprecatedAttributesMixin):
         """
         return self.body_class(self, body)
 
-    @property
-    @deprecated
-    def kwname(self) -> str:
-        return self.values[0]
-
-    @property
-    @deprecated
-    def args(self) -> 'tuple[str, ...]':
-        return self.values[1:]
-
-    @property
-    @deprecated
-    def doc(self) -> 'str':
-        return ''
-
 
 @Body.register
 @Branches.register
@@ -608,11 +678,12 @@ class Error(model.Error, StatusMixin, DeprecatedAttributesMixin):
 class Keyword(model.Keyword, StatusMixin):
     """Represents an executed library or user keyword."""
     body_class = Body
-    __slots__ = ['kwname', 'libname', 'doc', 'timeout', 'status', '_teardown',
-                 'starttime', 'endtime', 'message', 'sourcename']
+    __slots__ = ['owner', 'source_name', 'doc', 'timeout', 'status', 'message',
+                 '_start_time', '_end_time', '_elapsed_time', '_setup', '_teardown']
 
-    def __init__(self, kwname: str = '',
-                 libname: str = '',
+    def __init__(self, name: 'str|None' = '',
+                 owner: 'str|None' = None,
+                 source_name: 'str|None' = None,
                  doc: str = '',
                  args: Sequence[str] = (),
                  assign: Sequence[str] = (),
@@ -620,25 +691,25 @@ class Keyword(model.Keyword, StatusMixin):
                  timeout: 'str|None' = None,
                  type: str = BodyItem.KEYWORD,
                  status: str = 'FAIL',
-                 starttime: 'str|None' = None,
-                 endtime: 'str|None' = None,
-                 sourcename: 'str|None' = None,
+                 message: str = '',
+                 start_time: 'datetime|str|None' = None,
+                 end_time: 'datetime|str|None' = None,
+                 elapsed_time: 'timedelta|int|float|None' = None,
                  parent: BodyItemParent = None):
-        super().__init__(None, args, assign, type, parent)
-        #: Name of the keyword without library or resource name.
-        self.kwname = kwname
+        super().__init__(name, args, assign, type, parent)
         #: Name of the library or resource containing this keyword.
-        self.libname = libname
+        self.owner = owner
+        #: Original name of keyword with embedded arguments.
+        self.source_name = source_name
         self.doc = doc
         self.tags = tags
         self.timeout = timeout
         self.status = status
-        self.starttime = starttime
-        self.endtime = endtime
-        #: Keyword status message. Used only if suite teardowns fails.
-        self.message = ''
-        #: Original name of keyword with embedded arguments.
-        self.sourcename = sourcename
+        self.message = message
+        self.start_time = start_time
+        self.end_time = end_time
+        self.elapsed_time = elapsed_time
+        self._setup = None
         self._teardown = None
         self.body = ()
 
@@ -652,21 +723,6 @@ class Keyword(model.Keyword, StatusMixin):
         return self.body_class(self, body)
 
     @property
-    def keywords(self) -> Keywords:
-        """Deprecated since Robot Framework 4.0.
-
-        Use :attr:`body` or :attr:`teardown` instead.
-        """
-        keywords = self.body.filter(messages=False)
-        if self.teardown:
-            keywords.append(self.teardown)
-        return Keywords(self, keywords)
-
-    @keywords.setter
-    def keywords(self, keywords):
-        Keywords.raise_deprecation_error()
-
-    @property
     def messages(self) -> 'list[Message]':
         """Keyword's messages.
 
@@ -676,38 +732,72 @@ class Keyword(model.Keyword, StatusMixin):
         return self.body.filter(messages=True)    # type: ignore
 
     @property
-    def children(self) -> 'list[BodyItem]':
-        """List of child keywords and messages in creation order.
+    def full_name(self) -> 'str|None':
+        """Keyword name in format ``owner.name``.
 
-        Deprecated since Robot Framework 4.0. Use :attr:`body` instead.
+        Just ``name`` if :attr:`owner` is not set. In practice this is the
+        case only with user keywords in the suite file.
+
+        Cannot be set directly. Set :attr:`name` and :attr:`owner` separately
+        instead.
+
+        Notice that prior to Robot Framework 7.0, the ``name`` attribute contained
+        the full name and keyword and owner names were in ``kwname`` and ``libname``,
+        respectively.
         """
-        warnings.warn("'Keyword.children' is deprecated. Use 'Keyword.body' instead.")
-        return list(self.body)
+        return f'{self.owner}.{self.name}' if self.owner else self.name
+
+    # TODO: Deprecate 'kwname', 'libname' and 'sourcename' loudly in RF 8.
+    @property
+    def kwname(self) -> 'str|None':
+        """Deprecated since Robot Framework 7.0. Use :attr:`name` instead."""
+        return self.name
+
+    @kwname.setter
+    def kwname(self, name: 'str|None'):
+        self.name = name
 
     @property
-    def name(self) -> 'str|None':
-        """Keyword name in format ``libname.kwname``.
+    def libname(self) -> 'str|None':
+        """Deprecated since Robot Framework 7.0. Use :attr:`owner` instead."""
+        return self.owner
 
-        Just ``kwname`` if :attr:`libname` is empty. In practice that is the
-        case only with user keywords in the same file as the executed test case
-        or test suite.
+    @libname.setter
+    def libname(self, name: 'str|None'):
+        self.owner = name
 
-        Cannot be set directly. Set :attr:`libname` and :attr:`kwname`
-        separately instead.
+    @property
+    def sourcename(self) -> str:
+        """Deprecated since Robot Framework 7.0. Use :attr:`source_name` instead."""
+        return self.source_name
+
+    @sourcename.setter
+    def sourcename(self, name: str):
+        self.source_name = name
+
+    @property
+    def setup(self) -> 'Keyword':
+        """Keyword setup as a :class:`Keyword` object.
+
+        See :attr:`teardown` for more information. New in Robot Framework 7.0.
         """
-        if not self.libname:
-            return self.kwname
-        return f'{self.libname}.{self.kwname}'
+        if self._setup is None:
+            self.setup = None
+        return self._setup
 
-    @name.setter
-    def name(self, name):
-        if name is not None:
-            raise AttributeError("Cannot set 'name' attribute directly. "
-                                 "Set 'kwname' and 'libname' separately instead.")
-        self.kwname = None
-        self.libname = None
+    @setup.setter
+    def setup(self, setup: 'Keyword|DataDict|None'):
+        self._setup = create_fixture(self.__class__, setup, self, self.SETUP)
 
-    @property    # Cannot use @setter because it would create teardowns recursively.
+    @property
+    def has_setup(self) -> bool:
+        """Check does a keyword have a setup without creating a setup object.
+
+        See :attr:`has_teardown` for more information. New in Robot Framework 7.0.
+        """
+        return bool(self._setup)
+
+    @property
     def teardown(self) -> 'Keyword':
         """Keyword teardown as a :class:`Keyword` object.
 
@@ -737,7 +827,7 @@ class Keyword(model.Keyword, StatusMixin):
         Framework 4.1.2.
         """
         if self._teardown is None:
-            self._teardown = create_fixture(self.__class__, None, self, self.TEARDOWN)
+            self.teardown = None
         return self._teardown
 
     @teardown.setter
@@ -769,7 +859,7 @@ class TestCase(model.TestCase[Keyword], StatusMixin):
 
     See the base class for documentation of attributes not documented here.
     """
-    __slots__ = ['status', 'message', 'starttime', 'endtime']
+    __slots__ = ['status', 'message', '_start_time', '_end_time', '_elapsed_time']
     body_class = Body
     fixture_class = Keyword
 
@@ -780,28 +870,20 @@ class TestCase(model.TestCase[Keyword], StatusMixin):
                  lineno: 'int|None' = None,
                  status: str = 'FAIL',
                  message: str = '',
-                 starttime: 'str|None' = None,
-                 endtime: 'str|None' = None,
+                 start_time: 'datetime|str|None' = None,
+                 end_time: 'datetime|str|None' = None,
+                 elapsed_time: 'timedelta|int|float|None' = None,
                  parent: 'TestSuite|None' = None):
         super().__init__(name, doc, tags, timeout, lineno, parent)
-        #: Status as a string ``PASS`` or ``FAIL``. See also :attr:`passed`.
         self.status = status
-        #: Test message. Typically a failure message but can be set also when
-        #: test passes.
         self.message = message
-        #: Test case execution start time in format ``%Y%m%d %H:%M:%S.%f``.
-        self.starttime = starttime
-        #: Test case execution end time in format ``%Y%m%d %H:%M:%S.%f``.
-        self.endtime = endtime
+        self.start_time = start_time
+        self.end_time = end_time
+        self.elapsed_time = elapsed_time
 
     @property
     def not_run(self) -> bool:
         return False
-
-    @property
-    def critical(self) -> bool:
-        warnings.warn("'TestCase.critical' is deprecated and always returns 'True'.")
-        return True
 
     @setter
     def body(self, body: 'Sequence[BodyItem|DataDict]') -> Body:
@@ -814,7 +896,7 @@ class TestSuite(model.TestSuite[Keyword, TestCase], StatusMixin):
 
     See the base class for documentation of attributes not documented here.
     """
-    __slots__ = ['message', 'starttime', 'endtime']
+    __slots__ = ['message', '_start_time', '_end_time', '_elapsed_time']
     test_class = TestCase
     fixture_class = Keyword
 
@@ -824,16 +906,26 @@ class TestSuite(model.TestSuite[Keyword, TestCase], StatusMixin):
                  source: 'Path|str|None' = None,
                  rpa: bool = False,
                  message: str = '',
-                 starttime: 'str|None' = None,
-                 endtime: 'str|None' = None,
+                 start_time: 'datetime|str|None' = None,
+                 end_time: 'datetime|str|None' = None,
+                 elapsed_time: 'timedelta|int|float|None' = None,
                  parent: 'TestSuite|None' = None):
         super().__init__(name, doc, metadata, source, rpa, parent)
         #: Possible suite setup or teardown error message.
         self.message = message
-        #: Suite execution start time in format ``%Y%m%d %H:%M:%S.%f``.
-        self.starttime = starttime
-        #: Suite execution end time in format ``%Y%m%d %H:%M:%S.%f``.
-        self.endtime = endtime
+        self.start_time = start_time
+        self.end_time = end_time
+        self.elapsed_time = elapsed_time
+
+    def _elapsed_time_from_children(self) -> timedelta:
+        elapsed = timedelta()
+        if self.has_setup:
+            elapsed += self.setup.elapsed_time
+        if self.has_teardown:
+            elapsed += self.teardown.elapsed_time
+        for child in chain(self.suites, self.tests):
+            elapsed += child.elapsed_time
+        return elapsed
 
     @property
     def passed(self) -> bool:
@@ -855,7 +947,7 @@ class TestSuite(model.TestSuite[Keyword, TestCase], StatusMixin):
         return False
 
     @property
-    def status(self) -> "Literal['PASS', 'SKIP', 'FAIL']":
+    def status(self) -> Literal['PASS', 'SKIP', 'FAIL']:
         """'PASS', 'FAIL' or 'SKIP' depending on test statuses.
 
         - If any test has failed, status is 'FAIL'.
@@ -896,14 +988,6 @@ class TestSuite(model.TestSuite[Keyword, TestCase], StatusMixin):
         """String representation of the :attr:`statistics`."""
         return self.statistics.message
 
-    @property
-    def elapsedtime(self) -> int:
-        """Total execution time in milliseconds."""
-        if self.starttime and self.endtime:
-            return get_elapsed_time(self.starttime, self.endtime)
-        return sum(child.elapsedtime for child in
-                   chain(self.suites, self.tests, (self.setup, self.teardown)))
-
     @setter
     def suites(self, suites: 'Sequence[TestSuite|DataDict]') -> TestSuites['TestSuite']:
         return TestSuites['TestSuite'](self.__class__, self, suites)
@@ -911,13 +995,13 @@ class TestSuite(model.TestSuite[Keyword, TestCase], StatusMixin):
     def remove_keywords(self, how: str):
         """Remove keywords based on the given condition.
 
-        :param how: What approach to use when removing keywords. Either
+        :param how: Which approach to use when removing keywords. Either
             ``ALL``, ``PASSED``, ``FOR``, ``WUKS``, or ``NAME:<pattern>``.
 
         For more information about the possible values see the documentation
         of the ``--removekeywords`` command line option.
         """
-        self.visit(KeywordRemover(how))
+        self.visit(KeywordRemover.from_config(how))
 
     def filter_messages(self, log_level: str = 'TRACE'):
         """Remove log messages below the specified ``log_level``."""

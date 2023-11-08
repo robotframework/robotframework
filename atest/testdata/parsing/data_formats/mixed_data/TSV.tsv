@@ -5,7 +5,7 @@ Resource	../resources/txt_resource.txt
 *Variable
 ${msg}	*ERROR*
 
-*Test Case	
+*Test Cases	
 TSV Passing	No operation
 TSV Failing	[Documentation]	FAIL	**ERROR**
 	Failing	*${msg}*

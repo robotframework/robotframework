@@ -34,9 +34,6 @@ base class.
 .. note:: These classes are not exposed via the top level :mod:`robot.api`
           package and need to imported via :mod:`robot.api.interfaces`.
 
-.. note:: Using this module requires having the typing_extensions__ module
-          installed when using Python 3.6 or 3.7.
-
 This module is new in Robot Framework 6.1.
 
 __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#dynamic-library-api
@@ -50,16 +47,7 @@ __ https://pypi.org/project/typing-extensions/
 import sys
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Any, Dict, List, Sequence, Tuple, Union
-# Need to use version check and not try/except to support Mypy's stubgen.
-if sys.version_info >= (3, 8):
-    from typing import TypedDict
-else:
-    try:
-        from typing_extensions import TypedDict
-    except ImportError:
-        raise ImportError("Using the 'robot.api.interfaces' module requires having "
-                          "the 'typing_extensions' module installed with Python < 3.8.")
+from typing import Any, Dict, List, Sequence, Tuple, TypedDict, Union
 if sys.version_info >= (3, 10):
     from types import UnionType
 else:
@@ -527,8 +515,8 @@ class ListenerV3:
     def start_test(self, data: running.TestCase, result: result.TestCase) -> None:
         """Called when a test or task starts."""
 
-    def end_test(self, data: running.TestCase, result: result.TestCase) -> None:
-        """Called when a test or ends starts."""
+    def end_test(self, data: running.TestCase, result: result.TestCase):
+        """Called when a test or tasks ends."""
 
     def log_message(self, message: Message) -> None:
         """Called when a normal log message are emitted.

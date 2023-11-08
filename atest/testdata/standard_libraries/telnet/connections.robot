@@ -1,9 +1,9 @@
-*** Setting ***
+*** Settings ***
 Suite Teardown    Close All Connections
 Library           Telnet
 Resource          telnet_resource.robot
 
-*** Test Case ***
+*** Test Cases ***
 Open Connection
     ${index} =    Open Connection    ${HOST}   prompt=xxx
     Should Be Equal    ${index}    ${1}
@@ -46,7 +46,7 @@ Switch Connection
     Current Directory Should Be    /tmp
 
 
-*** Keyword ***
+*** Keywords ***
 Current Directory Should Be
     [Arguments]    ${expected}
     ${dir} =    Execute Command    pwd

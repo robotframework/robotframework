@@ -75,7 +75,7 @@ def _get_unixy_encoding():
 
 
 def _get_stream_output_encoding():
-    # Python 3.6+ uses UTF-8 as encoding with output streams.
+    # Python uses UTF-8 as encoding with output streams.
     # We want the real console encoding regardless the platform.
     if WINDOWS:
         return None

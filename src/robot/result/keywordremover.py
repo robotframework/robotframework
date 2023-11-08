@@ -13,37 +13,40 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from abc import ABC
+
 from robot.errors import DataError
 from robot.model import SuiteVisitor, TagPattern
-from robot.utils import Matcher, plural_or_not
+from robot.utils import html_escape, Matcher, plural_or_not
 
 
-def KeywordRemover(how):
-    upper = how.upper()
-    if upper.startswith('NAME:'):
-        return ByNameKeywordRemover(pattern=how[5:])
-    if upper.startswith('TAG:'):
-        return ByTagKeywordRemover(pattern=how[4:])
-    try:
-        return {'ALL': AllKeywordsRemover,
-                'PASSED': PassedKeywordRemover,
-                'FOR': ForLoopItemsRemover,
-                'WHILE': WhileLoopItemsRemover,
-                'WUKS': WaitUntilKeywordSucceedsRemover}[upper]()
-    except KeyError:
-        raise DataError(f"Expected 'ALL', 'PASSED', 'NAME:<pattern>', 'TAG:<pattern>', "
-                        f"'FOR' or 'WUKS', got '{how}'.")
-
-
-class _KeywordRemover(SuiteVisitor):
-    _message = 'Keyword data removed using --RemoveKeywords option.'
+class KeywordRemover(SuiteVisitor, ABC):
+    message = 'Content removed using the --remove-keywords option.'
 
     def __init__(self):
-        self._removal_message = RemovalMessage(self._message)
+        self.removal_message = RemovalMessage(self.message)
+
+    @classmethod
+    def from_config(cls, conf):
+        upper = conf.upper()
+        if upper.startswith('NAME:'):
+            return ByNameKeywordRemover(pattern=conf[5:])
+        if upper.startswith('TAG:'):
+            return ByTagKeywordRemover(pattern=conf[4:])
+        try:
+            return {'ALL': AllKeywordsRemover,
+                    'PASSED': PassedKeywordRemover,
+                    'FOR': ForLoopItemsRemover,
+                    'WHILE': WhileLoopItemsRemover,
+                    'WUKS': WaitUntilKeywordSucceedsRemover}[upper]()
+        except KeyError:
+            raise DataError(f"Expected 'ALL', 'PASSED', 'NAME:<pattern>', "
+                            f"'TAG:<pattern>', 'FOR' or 'WUKS', got '{conf}'.")
 
     def _clear_content(self, item):
-        item.body.clear()
-        self._removal_message.set(item)
+        if item.body:
+            item.body.clear()
+            self.removal_message.set_to(item)
 
     def _failed_or_warning_or_error(self, item):
         return not item.passed or self._warning_or_error(item)
@@ -54,19 +57,25 @@ class _KeywordRemover(SuiteVisitor):
         return finder.found
 
 
-class AllKeywordsRemover(_KeywordRemover):
+class AllKeywordsRemover(KeywordRemover):
 
-    def visit_keyword(self, keyword):
-        self._clear_content(keyword)
+    def start_body_item(self, item):
+        self._clear_content(item)
 
-    def visit_for(self, for_):
-        self._clear_content(for_)
+    def start_if(self, item):
+        pass
 
-    def visit_if_branch(self, branch):
-        self._clear_content(branch)
+    def start_if_branch(self, item):
+        self._clear_content(item)
+
+    def start_try(self, item):
+        pass
+
+    def start_try_branch(self, item):
+        self._clear_content(item)
 
 
-class PassedKeywordRemover(_KeywordRemover):
+class PassedKeywordRemover(KeywordRemover):
 
     def start_suite(self, suite):
         if not suite.statistics.failed:
@@ -76,28 +85,28 @@ class PassedKeywordRemover(_KeywordRemover):
 
     def visit_test(self, test):
         if not self._failed_or_warning_or_error(test):
-            for keyword in test.body:
-                self._clear_content(keyword)
+            for item in test.body:
+                self._clear_content(item)
 
     def visit_keyword(self, keyword):
         pass
 
 
-class ByNameKeywordRemover(_KeywordRemover):
+class ByNameKeywordRemover(KeywordRemover):
 
     def __init__(self, pattern):
-        _KeywordRemover.__init__(self)
+        super().__init__()
         self._matcher = Matcher(pattern, ignore='_')
 
     def start_keyword(self, kw):
-        if self._matcher.match(kw.name) and not self._warning_or_error(kw):
+        if self._matcher.match(kw.full_name) and not self._warning_or_error(kw):
             self._clear_content(kw)
 
 
-class ByTagKeywordRemover(_KeywordRemover):
+class ByTagKeywordRemover(KeywordRemover):
 
     def __init__(self, pattern):
-        _KeywordRemover.__init__(self)
+        super().__init__()
         self._pattern = TagPattern.from_string(pattern)
 
     def start_keyword(self, kw):
@@ -105,13 +114,13 @@ class ByTagKeywordRemover(_KeywordRemover):
             self._clear_content(kw)
 
 
-class _LoopItemsRemover(_KeywordRemover):
-    _message = '%d passing step%s removed using --RemoveKeywords option.'
+class LoopItemsRemover(KeywordRemover, ABC):
+    message = '{count} passing item{s} removed using the --remove-keywords option.'
 
     def _remove_from_loop(self, loop):
         before = len(loop.body)
         self._remove_keywords(loop.body)
-        self._removal_message.set_if_removed(loop, before)
+        self.removal_message.set_to_if_removed(loop, before)
 
     def _remove_keywords(self, body):
         iterations = body.filter(messages=False)
@@ -120,26 +129,26 @@ class _LoopItemsRemover(_KeywordRemover):
                 body.remove(it)
 
 
-class ForLoopItemsRemover(_LoopItemsRemover):
+class ForLoopItemsRemover(LoopItemsRemover):
 
     def start_for(self, for_):
         self._remove_from_loop(for_)
 
 
-class WhileLoopItemsRemover(_LoopItemsRemover):
+class WhileLoopItemsRemover(LoopItemsRemover):
 
     def start_while(self, while_):
         self._remove_from_loop(while_)
 
 
-class WaitUntilKeywordSucceedsRemover(_KeywordRemover):
-    _message = '%d failing step%s removed using --RemoveKeywords option.'
+class WaitUntilKeywordSucceedsRemover(KeywordRemover):
+    message = '{count} failing item{s} removed using the --remove-keywords option.'
 
     def start_keyword(self, kw):
-        if kw.libname == 'BuiltIn' and kw.kwname == 'Wait Until Keyword Succeeds':
+        if kw.owner == 'BuiltIn' and kw.name == 'Wait Until Keyword Succeeds':
             before = len(kw.body)
             self._remove_keywords(kw.body)
-            self._removal_message.set_if_removed(kw, before)
+            self.removal_message.set_to_if_removed(kw, before)
 
     def _remove_keywords(self, body):
         keywords = body.filter(messages=False)
@@ -172,12 +181,20 @@ class WarningAndErrorFinder(SuiteVisitor):
 class RemovalMessage:
 
     def __init__(self, message):
-        self._message = message
+        self.message = message
 
-    def set_if_removed(self, kw, len_before):
-        removed = len_before - len(kw.body)
+    def set_to_if_removed(self, item, len_before):
+        removed = len_before - len(item.body)
         if removed:
-            self.set(kw, self._message % (removed, plural_or_not(removed)))
+            message = self.message.format(count=removed, s=plural_or_not(removed))
+            self.set_to(item, message)
 
-    def set(self, kw, message=None):
-        kw.doc = ('%s\n\n_%s_' % (kw.doc, message or self._message)).strip()
+    def set_to(self, item, message=None):
+        if not item.message:
+            start = ''
+        elif item.message.startswith('*HTML*'):
+            start = item.message[6:].strip() + '<hr>'
+        else:
+            start = html_escape(item.message) + '<hr>'
+        message = message or self.message
+        item.message = f'*HTML* {start}<span class="robot-note">{message}</span>'

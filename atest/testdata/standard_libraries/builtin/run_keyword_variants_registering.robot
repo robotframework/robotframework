@@ -1,16 +1,16 @@
-*** Setting ***
+*** Settings ***
 Library           RegisteringLibrary.py
 Library           NotRegisteringLibrary.py
 Library           RegisteringLibrary.py    WITH NAME    lib
 Library           RegisteredClass.py
 Library           DynamicRegisteredLibrary.py
 
-*** Variable ***
+*** Variables ***
 ${VARIABLE}       \${not variable}
 ${HELLO}          Hello
 @{KEYWORD AND ARG}    \\Log Many    ${VARIABLE}
 
-*** Test Case ***
+*** Test Cases ***
 Not registered Keyword Fails With Content That Should Not Be Evaluated Twice
     [Documentation]    FAIL STARTS: Variable '\${not variable}' not found.
     ${var} =    Set Variable    \${not variable}
@@ -37,7 +37,7 @@ Registered Keyword With With Name
 Registered Keyword From Dynamic Library
     Dynamic Run Keyword    @{KEYWORD AND ARG}
 
-*** Keyword ***
+*** Keywords ***
 \Log Many
     [Arguments]    @{args}
     Log Many    @{args}

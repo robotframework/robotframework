@@ -1,7 +1,7 @@
 *** Settings ***
 Library          StandardExceptions.py
 
-*** Test Case ***
+*** Test Cases ***
 Test Passes
     [Documentation]    PASS
     No Operation
@@ -95,6 +95,6 @@ robot.api.Error with HTML message
     [Documentation]    FAIL *HTML* <b>BANG!</b>
     Error    <b>BANG!</b>    True
 
-*** Keyword ***
+*** Keywords ***
 Do Nothing
     No operation

@@ -2,7 +2,7 @@ Included file with some more test data.
 
 .. code:: robotframework
 
-   *** Setting ***
+   *** Settings ***
    Default Tags    default1
 
 

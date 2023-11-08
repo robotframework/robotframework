@@ -1,16 +1,16 @@
-*** Setting ***
+*** Settings ***
 Variables         resvarfiles/variables.py
 Variables         pythonpath_varfile.py    imported by path
 Variables         pythonpath_varfile       imported     as module
 Variables         package.submodule
 
-*** Variable ***
+*** Variables ***
 ${DEFINITION IN VARIABLE FILE 1}    ${STRING}
 ${DEFINITION IN VARIABLE FILE 2}    ${LIST[0]}! ${ONE ITEM[0]}
 ${DEFINITION IN VARIABLE FILE 3}    ${LIST WITH ESCAPES}
 @{DEFINITION IN VARIABLE FILE 4}    @{LIST WITH ESCAPES 2}
 
-*** Test Case ***
+*** Test Cases ***
 Scalar String
     Should Be Equal    ${STRING}    Hello world!
     Should Be Equal    I said: "${STRING}"    I said: "Hello world!"
@@ -44,7 +44,8 @@ Scalar List With Escapes
     ...    ${LIST WITH ESCAPES [2]}    ${LIST WITH ESCAPES [3]}
     ${exp} =    Create List    one \\    two \\\\    three \\\\\\    \${non_existing}
     Should Be Equal    ${LIST WITH ESCAPES}    ${exp}
-    Should Be True    ${LIST WITH ESCAPES} == ['one \\\\', 'two \\\\\\\\', 'three \\\\\\\\\\\\', '\${non_existing}']    Backslashes are doubled here because 'Should Be True' uses 'eval' internally
+    # Backslashes are doubled because 'Should Be True' uses 'eval' internally.
+    Should Be True    ${LIST WITH ESCAPES} == ['one \\\\', 'two \\\\\\\\', 'three \\\\\\\\\\\\', '\${non_existing}']
 
 Scalar Object
     Should Not Be Equal    ${OBJECT}    dude    Comparing object to string

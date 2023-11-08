@@ -4,7 +4,7 @@ from robot.errors import DataError
 from robot.utils.asserts import (assert_equal, assert_false,
                                  assert_raises_with_msg, assert_true)
 from robot.variables.search import (search_variable, unescape_variable_syntax,
-                                    VariableIterator)
+                                    VariableMatches)
 
 
 class TestSearchVariable(unittest.TestCase):
@@ -52,10 +52,10 @@ class TestSearchVariable(unittest.TestCase):
         for inp in ['${x', '${x:{}', '${y:{{}}', 'xx${z:{}xx', '{${{}{{}}{{',
                     r'${x\}', r'${x\\\}', r'${x\\\\\\\}']:
             for identifier in '$@&%':
+                variable = identifier + inp.split('$')[1]
                 assert_raises_with_msg(
                     DataError,
-                    "Variable '%s%s' was not closed properly."
-                    % (identifier, inp.split('$')[1]),
+                    f"Variable '{variable}' was not closed properly.",
                     search_variable, inp.replace('$', identifier)
                 )
                 self._test(inp.replace('$', identifier), ignore_errors=True)
@@ -108,13 +108,13 @@ class TestSearchVariable(unittest.TestCase):
     def test_incomplete_internal_vars(self):
         for inp in ['${var$', '${var${', '${var${int}']:
             for identifier in '$@&%':
+                variable = inp.replace('$', identifier)
                 assert_raises_with_msg(
                     DataError,
-                    "Variable '%s' was not closed properly."
-                    % inp.replace('$', identifier),
-                    search_variable, inp.replace('$', identifier)
+                    f"Variable '{variable}' was not closed properly.",
+                    search_variable, variable
                 )
-                self._test(inp.replace('$', identifier), ignore_errors=True)
+                self._test(variable, ignore_errors=True)
         self._test('}{${xx:{}}}}}', '${xx:{}}', start=2)
 
     def test_item_access(self):
@@ -151,7 +151,7 @@ class TestSearchVariable(unittest.TestCase):
 
     def test_unclosed_item(self):
         for inp in ['${x}[0', '${x}[0][key', r'${x}[0\]']:
-            msg = "Variable item '%s' was not closed properly." % inp
+            msg = f"Variable item '{inp}' was not closed properly."
             assert_raises_with_msg(DataError, msg, search_variable, inp)
             self._test(inp, ignore_errors=True)
         self._test('[${var}[i]][', '${var}', start=1, items='i')
@@ -224,21 +224,21 @@ class TestSearchVariable(unittest.TestCase):
             end = start + len(variable)
             is_var = inp == variable
             if items:
-                items_str = ''.join('[%s]' % i for i in items)
+                items_str = ''.join(f'[{i}]' for i in items)
                 end += len(items_str)
-                is_var = inp == '%s%s' % (variable, items_str)
+                is_var = inp == f'{variable}{items_str}'
             is_list_var = is_var and inp[0] == '@'
             is_dict_var = is_var and inp[0] == '&'
             is_scal_var = is_var and inp[0] == '$'
         match = search_variable(inp, identifiers, ignore_errors)
-        assert_equal(match.base, base, '%r base' % inp)
-        assert_equal(match.start, start, '%r start' % inp)
-        assert_equal(match.end, end, '%r end' % inp)
+        assert_equal(match.base, base, f'{inp!r} base')
+        assert_equal(match.start, start, f'{inp!r} start')
+        assert_equal(match.end, end, f'{inp!r} end')
         assert_equal(match.before, inp[:start] if start != -1 else inp)
         assert_equal(match.match, inp[start:end] if end != -1 else None)
-        assert_equal(match.after, inp[end:] if end != -1 else None)
-        assert_equal(match.identifier, identifier, '%r identifier' % inp)
-        assert_equal(match.items, items, '%r item' % inp)
+        assert_equal(match.after, inp[end:] if end != -1 else '')
+        assert_equal(match.identifier, identifier, f'{inp!r} identifier')
+        assert_equal(match.items, items, f'{inp!r} item')
         assert_equal(match.is_variable(), is_var)
         assert_equal(match.is_scalar_variable(), is_scal_var)
         assert_equal(match.is_list_variable(), is_list_var)
@@ -269,36 +269,42 @@ class TestSearchVariable(unittest.TestCase):
         assert_true(search_variable('&{x}[k][foo][bar][1]').is_dict_variable())
 
 
-class TestVariableIterator(unittest.TestCase):
+class TestVariableMatches(unittest.TestCase):
 
     def test_no_variables(self):
-        iterator = VariableIterator('no vars here', identifiers='$')
-        assert_equal(list(iterator), [])
-        assert_equal(bool(iterator), False)
-        assert_equal(len(iterator), 0)
+        matches = VariableMatches('no vars here', identifiers='$')
+        assert_equal(list(matches), [])
+        assert_equal(bool(matches), False)
+        assert_equal(len(matches), 0)
 
     def test_one_variable(self):
-        iterator = VariableIterator('one ${var} here', identifiers='$')
-        assert_equal(list(iterator), [('one ', '${var}', ' here')])
-        assert_equal(bool(iterator), True)
-        assert_equal(len(iterator), 1)
+        matches = VariableMatches('one ${var} here', identifiers='$')
+        assert_equal(bool(matches), True)
+        assert_equal(len(matches), 1)
+        self._assert_match(next(iter(matches)), 'one ', '${var}', ' here')
 
     def test_multiple_variables(self):
-        iterator = VariableIterator('${1} @{2} and %{3}', identifiers='$@%')
-        assert_equal(list(iterator), [('', '${1}', ' @{2} and %{3}'),
-                                      (' ', '@{2}', ' and %{3}'),
-                                      (' and ', '%{3}', '')])
-        assert_equal(bool(iterator), True)
-        assert_equal(len(iterator), 3)
+        matches = VariableMatches('${1} @{2} and %{3}', identifiers='$@%')
+        assert_equal(bool(matches), True)
+        assert_equal(len(matches), 3)
+        m1, m2, m3 = matches
+        self._assert_match(m1, '', '${1}', ' @{2} and %{3}')
+        self._assert_match(m2, ' ', '@{2}', ' and %{3}')
+        self._assert_match(m3, ' and ', '%{3}', '')
 
     def test_can_be_iterated_many_times(self):
-        iterator = VariableIterator('one ${var} here', identifiers='$')
-        assert_equal(list(iterator), [('one ', '${var}', ' here')])
-        assert_equal(list(iterator), [('one ', '${var}', ' here')])
-        assert_equal(bool(iterator), True)
-        assert_equal(bool(iterator), True)
-        assert_equal(len(iterator), 1)
-        assert_equal(len(iterator), 1)
+        matches = VariableMatches('one ${var} here', identifiers='$')
+        assert_equal(bool(matches), True)
+        assert_equal(bool(matches), True)
+        assert_equal(len(matches), 1)
+        assert_equal(len(matches), 1)
+        self._assert_match(list(matches)[0], 'one ', '${var}', ' here')
+        self._assert_match(list(matches)[0], 'one ', '${var}', ' here')
+
+    def _assert_match(self, match, before, variable, after):
+        assert_equal(match.before, before)
+        assert_equal(match.match, variable)
+        assert_equal(match.after, after)
 
 
 class TestUnescapeVariableSyntax(unittest.TestCase):
@@ -308,9 +314,9 @@ class TestUnescapeVariableSyntax(unittest.TestCase):
             self._test(inp)
 
     def test_no_variable(self):
-        for inp in ['\\', r'\n', r'\d+', r'\u2603', r'\$', r'\@', r'\&']:
+        for inp in ['\\', r'\n', r'\d+', '☃', r'\$', r'\@', r'\&']:
             self._test(inp)
-            self._test('Hello, %s!' % inp)
+            self._test(f'Hello, {inp}!')
 
     def test_unescape_variable(self):
         for i in '$@&%':

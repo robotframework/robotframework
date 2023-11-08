@@ -112,8 +112,7 @@ class Settings(ABC):
             token.type = Token.COMMENT
 
     def _lex_setting(self, statement: StatementTokens, name: str):
-        # TODO: Change token type from 'FORCE TAGS' to 'TEST TAGS' in RF 7.0.
-        statement[0].type = {'Test Tags': Token.FORCE_TAGS,
+        statement[0].type = {'Test Tags': Token.TEST_TAGS,
                              'Name': Token.SUITE_NAME}.get(name, name.upper())
         self.settings[name] = values = statement[1:]
         if name in self.name_and_arguments:
@@ -122,6 +121,9 @@ class Settings(ABC):
             self._lex_name_arguments_and_with_name(values)
         else:
             self._lex_arguments(values)
+        if name == 'Return':
+            statement[0].error = ("The '[Return]' setting is deprecated. "
+                                  "Use the 'RETURN' statement instead.")
 
     def _lex_name_and_arguments(self, tokens: StatementTokens):
         if tokens:
@@ -132,7 +134,7 @@ class Settings(ABC):
         self._lex_name_and_arguments(tokens)
         if len(tokens) > 1 and \
                 normalize_whitespace(tokens[-2].value) in ('WITH NAME', 'AS'):
-            tokens[-2].type = Token.WITH_NAME
+            tokens[-2].type = Token.AS
             tokens[-1].type = Token.NAME
 
     def _lex_arguments(self, tokens: StatementTokens):
@@ -257,6 +259,7 @@ class KeywordSettings(Settings):
     names = (
         'Documentation',
         'Arguments',
+        'Setup',
         'Teardown',
         'Timeout',
         'Tags',

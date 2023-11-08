@@ -1,6 +1,6 @@
-*** Setting ***
+*** Settings ***
 Library           OperatingSystem
 
-*** Keyword ***
+*** Keywords ***
 Resource KW
     Directory Should Exist    ${CURDIR}

@@ -1,7 +1,7 @@
-*** Setting ***
+*** Settings ***
 Library           DeprecatedKeywords.py
 
-*** Test Case ***
+*** Test Cases ***
 Deprecated keywords
     Deprecated Library Keyword
     Deprecated User Keyword
@@ -30,7 +30,7 @@ Not deprecated keywords
     Not Deprecated User Keyword Without Documentation
     Not Deprecated User Keyword With `*Deprecated` Prefix
 
-*** Keyword ***
+*** Keywords ***
 Deprecated User Keyword
     [Documentation]    *DEPRECATED* Use keyword `Not Deprecated User Keyword` instead.
     No Operation

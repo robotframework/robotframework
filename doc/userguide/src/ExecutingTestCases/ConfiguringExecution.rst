@@ -175,7 +175,7 @@ with a suite name::
 
 Notice that when the given name includes a suite name, it must match the whole
 suite name starting from the root suite. Using a wildcard as in the last example
-above allows matching suites anywhere.
+above allows matching tests with a parent suite anywhere.
 
 Using the :option:`--test` option is convenient when only a few tests needs
 to be selected. A common use case is running just the test that is currently
@@ -198,24 +198,22 @@ name::
   --suite Example                  # Match only suites with name 'Example'.
   --suite example*                 # Match suites starting with 'example'.
   --suite first --suite second     # Match suites with name 'first' or 'second'.
-  --suite parent.child             # Match suite 'child' in suite 'parent'.
+  --suite root.child               # Match suite 'child' in root suite 'root'.
+  --suite *.parent.child           # Match suite 'child' with parent 'parent' anywhere.
 
-Unlike with :option:`--test`, the name does not need to match the whole
-suite name, starting from the root suite, when the name contains a parent
-suite name. This behavior `will be changed`__ in the future and should not be relied
-upon. It is recommended to use the full name like `--suite root.parent.child`
-or `--suite *.parent.child`.
+If the name contains a parent suite name, it must match the whole suite name
+the same way as with :option:`--test`. Using a wildcard as in the last example
+above allows matching suites with a parent suite anywhere.
+
+.. note:: Prior to Robot Framework 7.0, :option:`--suite` with a parent suite
+          did not need to match the whole suite name. For example, `parent.child`
+          would match suite `child` with parent `parent` anywhere. The name must
+          be prefixed with a wildcard if this behavior is desired nowadays.
 
 If both :option:`--suite` and :option:`--test` options are used, only the
 specified tests in specified suites are selected::
 
   --suite mysuite --test mytest    # Match test 'mytest' if its inside suite 'mysuite'.
-
-Also this behavior `is likely to change`__ in the future and the above changed to mean
-selecting all tests in suite `mysuite` in addition to all tests with name `mytest`.
-A more reliable way to select a test in a suite is using `--test *.mysuite.mytest`
-or `--test *.mysuite.*.mytest` depending on should the test be directly inside
-the suite or not.
 
 Using the :option:`--suite` option is more or less the same as executing
 the appropriate suite file or directory directly. The main difference is
@@ -231,12 +229,10 @@ on higher level are not executed::
 Prior to Robot Framework 6.1, files not matching the :option:`--suite` option
 were not parsed at all for performance reasons. This optimization was not
 possible anymore after suites got a new :setting:`Name` setting that can override
-the default suite name got from the file or directory name. New
+the default suite name that is got from the file or directory name. New
 :option:`--parseinclude` option has been added to `explicitly select which
 files are parsed`__ if this kind of parsing optimization is needed.
 
-__ https://github.com/robotframework/robotframework/issues/4720
-__ https://github.com/robotframework/robotframework/issues/4721
 __ `Selecting files by name or path`_
 
 By tag names
@@ -296,6 +292,28 @@ many interesting possibilities:
   after executing all test cases, a separate report containing only
   the tests for a certain sprint can be generated (for example, `rebot
   --include sprint-42 output.xml`).
+
+Options :option:`--include` and :option:`--exclude` can be used in combination
+with :option:`--suite` and :option:`--test` discussed in the previous section.
+The general rules how they work together are as follows:
+
+- If :option:`--suite` is used, tests must be in the specified suite in addition
+  to satisfying other selection criteria.
+
+- If :option:`--include` is used with :option:`--test`, it is enough for a test
+  to match either of them.
+
+- If :option:`--exclude` is used, tests matching it are never selected.
+
+The above rules are demonstrated in the following examples::
+
+  --suite example --include tag    # Match test if it is in suite 'example' and has tag 'tag'.
+  --suite example --exclude tag    # Match test if it is in suite 'example' and does not have tag 'tag'.
+  --test example --include tag     # Match test if it has name 'example' or it has tag 'tag'.
+  --test ex* --exclude tag         # Match test if its name starts with 'ex' and it does not have tag 'tag'.
+
+.. note:: Prior to Robot Framework 7.0 using `--include` and `--test` together
+          required test to have both a matching tag and a matching name.
 
 Re-executing failed test cases
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

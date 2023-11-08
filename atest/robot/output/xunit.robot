@@ -18,7 +18,7 @@ XUnit File Is Created
 
 File Structure Is Correct
     ${root} =    Get Root Node
-    Suite Stats Should Be    ${root}    8    3    1    ${SUITE.starttime}
+    Suite Stats Should Be    ${root}    8    3    1    ${SUITE.start_time}
     ${tests} =    Get XUnit Nodes    testcase
     Length Should Be    ${tests}    8
     ${fails} =    Get XUnit Nodes    testcase/failure
@@ -144,14 +144,13 @@ Get XUnit Nodes
     RETURN    ${nodes}
 
 Suite Stats Should Be
-    [Arguments]    ${elem}    ${tests}    ${failures}    ${skipped}    ${starttime}
+    [Arguments]    ${elem}    ${tests}    ${failures}    ${skipped}    ${start_time}
     Element Attribute Should Be       ${elem}    tests       ${tests}
     Element Attribute Should Be       ${elem}    failures    ${failures}
     Element Attribute Should Be       ${elem}    skipped     ${skipped}
     Element Attribute Should Match    ${elem}    time        ?.???
     Element Attribute Should Be       ${elem}    errors      0
-    Element Attribute Should Be       ${elem}    timestamp
-    ...    ${{datetime.datetime.strptime($starttime, '%Y%m%d %H:%M:%S.%f').strftime('%Y-%m-%dT%H:%M:%S.%f')}}
+    Element Attribute Should Be       ${elem}    timestamp   ${start_time.isoformat()}
 
 Verify Outputs
     Stderr should be empty

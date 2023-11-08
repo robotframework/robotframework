@@ -1,11 +1,11 @@
-*** Setting ***
+*** Settings ***
 Suite Teardown    Set Tags    this-should-fail
 Library           Collections
 
-*** Variable ***
+*** Variables ***
 ${ERROR}    FAIL Parent suite teardown failed:\n'Set Tags' cannot be used in suite teardown.
 
-*** Test Case ***
+*** Test Cases ***
 Set Tags In Test Setup
     [Documentation]    ${ERROR}
     [Tags]    tag
@@ -29,7 +29,7 @@ Modifying ${TEST TAGS} after removing them has no affect on tags test has
     Append To List    ${TEST TAGS}    not really added
     Should Be True    ${TEST TAGS} == ['not really added']
 
-*** Keyword ***
+*** Keywords ***
 Set And Remove Tags
     [Arguments]    @{set}
     Set Tags    @{set}

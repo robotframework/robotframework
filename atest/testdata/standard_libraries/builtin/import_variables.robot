@@ -32,8 +32,9 @@ Import Variables With Arguments
     Should Be Equal  ${COMMON VARIABLE}  ${2}
 
 Inport Variables With Invalid Arguments
-    [Documentation]  FAIL REGEXP:
-    ...    Processing variable file '.*variables_to_import_2.py' with arguments \\[ 1 \\| 2 \\| 3 \\] failed: TypeError: .*
+    [Documentation]  FAIL GLOB:
+    ...    Processing variable file '*[/\\]variables_to_import_2.py' with arguments [[]'1', '2', '3'[]] failed: \
+    ...    Variable file expected 1 to 2 arguments, got 3.
     Import Variables  ${VAR FILE 2}  1  2  3
 
 Import Variables In User Keyword 1

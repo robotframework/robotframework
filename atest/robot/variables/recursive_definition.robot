@@ -59,4 +59,4 @@ Get recommendations
     [Arguments]    @{recommendations}
     ${recommendations} =    Catenate    SEPARATOR=\n${SPACE*4}
     ...    Did you mean:    @{recommendations}
-    [Return]    ${recommendations}
+    RETURN    ${recommendations}

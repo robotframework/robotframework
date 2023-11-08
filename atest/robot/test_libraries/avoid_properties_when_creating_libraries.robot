@@ -10,7 +10,11 @@ Property
 
 Classmethod property
     Check Test Case    ${TESTNAME}
-    Adding keyword failed    classmethod_property    classmethod=True
+    Adding keyword failed    classmethod_property
+
+Cached property
+    Check Test Case    ${TESTNAME}
+    Adding keyword failed    cached_property
 
 Non-data descriptor
     Check Test Case    ${TESTNAME}
@@ -18,7 +22,7 @@ Non-data descriptor
 
 Classmethod non-data descriptor
     Check Test Case    ${TESTNAME}
-    Adding keyword failed    classmethod_non_data_descriptor    classmethod=True
+    Adding keyword failed    classmethod_non_data_descriptor    error_with_38=True
 
 Data descriptor
     Check Test Case    ${TESTNAME}
@@ -26,28 +30,25 @@ Data descriptor
 
 Classmethod data descriptor
     Check Test Case    ${TESTNAME}
-    Adding keyword failed    classmethod_data_descriptor    classmethod=True
+    Adding keyword failed    classmethod_data_descriptor
 
 Failing non-data descriptor
     Adding keyword failed    failing_non_data_descriptor    Getting handler method failed: ZeroDivisionError:
 
 Failing classmethod non-data descriptor
-    Adding keyword failed    failing_classmethod_non_data_descriptor    Getting handler method failed: ZeroDivisionError:    classmethod=True
+    Adding keyword failed    failing_classmethod_non_data_descriptor    Getting handler method failed: ZeroDivisionError:    error_with_38=True
 
 Failing data descriptor
     Adding keyword failed    failing_data_descriptor
 
 Failing classmethod data descriptor
-    Adding keyword failed    failing_classmethod_data_descriptor    Getting handler method failed: ZeroDivisionError:    classmethod=True
+    Adding keyword failed    failing_classmethod_data_descriptor
 
 *** Keywords ***
 Adding keyword failed
-    [Arguments]    ${name}    ${error}=Not a method or function.    ${classmethod}=False
-    # With Python < 3.9, descriptors wrapped with @classmethod are considered callable by
-    # inspect.isroutine, but inspect.signature doesn't like them. This results in error
-    # being reported on different places depending on Python version.
-    IF    ${INTERPRETER.version_info} >= (3, 9) or not ${classmethod}
-        Syslog Should Contain    | INFO \ | In library 'AvoidProperties': Adding keyword '${name}' failed: ${error}
-    ELSE
+    [Arguments]    ${name}    ${error}=Not a method or function.    ${error_with_38}=False
+    IF    ${INTERPRETER.version_info} < (3, 9) and ${error_with_38}
         Syslog Should Contain    | ERROR | Error in library 'AvoidProperties': Adding keyword '${name}' failed:
+    ELSE
+        Syslog Should Contain    | INFO \ | In library 'AvoidProperties': Adding keyword '${name}' failed: ${error}
     END

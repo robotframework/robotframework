@@ -44,7 +44,6 @@ Validate
     Validate keyword 'Types'
     Validate keyword 'Special Types'
     Validate keyword 'Union'
-    Validate typedocs    ${datatypes}
 
 Validate library
     [Arguments]    ${source}
@@ -86,26 +85,3 @@ Validate keyword 'Special Types'
 Validate keyword 'Union'
     Keyword Name Should Be             4    Union
     Keyword Arguments Should Be        4    a: int | float
-
-Validate typedocs
-    [Arguments]    ${datatypes}=False
-    DataType Enum Should Be            0    Color    RGB colors.
-    ...                                {"name": "RED", "value": "R"}
-    ...                                {"name": "GREEN", "value": "G"}
-    ...                                {"name": "BLUE", "value": "B"}
-    DataType TypedDict Should Be       0    Size     Some size.
-    ...                                {"key": "width", "type": "int", "required": "true"}
-    ...                                {"key": "height", "type": "int", "required": "true"}
-    IF    ${datatypes}
-        Usages Should Be               0    Enum         Color
-        Usages Should Be               1    TypedDict    Size
-    ELSE
-        DataType Standard Should Be    0    boolean      Strings ``TRUE``, ``YES``,
-        DataType Standard Should Be    1    float        Conversion is done using
-        DataType Standard Should Be    2    integer      Conversion is done using
-        Usages Should Be               0    Standard     boolean    Types
-        Usages Should Be               1    Enum         Color      Special Types
-        Usages Should Be               2    Standard     float      Union
-        Usages Should Be               3    Standard     integer    Types    Union
-        Usages Should Be               4    TypedDict    Size       Special Types
-    END

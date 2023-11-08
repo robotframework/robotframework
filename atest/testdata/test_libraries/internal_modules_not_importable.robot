@@ -1,8 +1,8 @@
-*** Setting ***
+*** Settings ***
 Library           ImportRobotModuleTestLibrary.py
 Library           OperatingSystem
 
-*** Test Case ***
+*** Test Cases ***
 Internal modules cannot be imported directly
     Importing Robot Module Directly Fails
 

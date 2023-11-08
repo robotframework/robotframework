@@ -312,6 +312,8 @@ Normalized enum member match
     Enum                 normalize_me              MyEnum.normalize_me
     Enum                 normalize me              MyEnum.normalize_me
     Enum                 Normalize Me              MyEnum.normalize_me
+    Enum                 normalize-me              MyEnum.normalize_me
+    Enum                 n-o-r-m-a-l-i-z-e---ME    MyEnum.normalize_me
     Flag                 red                       MyFlag.RED
     IntEnum              on                        MyIntEnum.ON
     IntFlag              x                         MyIntFlag.X

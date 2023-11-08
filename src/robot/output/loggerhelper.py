@@ -14,10 +14,12 @@
 #  limitations under the License.
 
 import sys
+from datetime import datetime
+from typing import Callable, Literal
 
 from robot.errors import DataError
-from robot.model import Message as BaseMessage
-from robot.utils import get_timestamp, is_string, safe_str, console_encode
+from robot.model import Message as BaseMessage, MessageLevel
+from robot.utils import console_encode, safe_str
 
 
 LEVELS = {
@@ -30,6 +32,7 @@ LEVELS = {
   'DEBUG' : 1,
   'TRACE' : 0,
 }
+PseudoLevel = Literal['HTML', 'CONSOLE']
 
 
 def write_to_console(msg, newline=True, stream='stdout'):
@@ -88,38 +91,35 @@ class AbstractLogger:
 class Message(BaseMessage):
     __slots__ = ['_message']
 
-    def __init__(self, message, level='INFO', html=False, timestamp=None):
-        message = self._normalize_message(message)
+    def __init__(self, message: 'str|Callable[[], str]',
+                 level: 'MessageLevel|PseudoLevel' = 'INFO',
+                 html: bool = False,
+                 timestamp: 'datetime|str|None' = None):
         level, html = self._get_level_and_html(level, html)
-        timestamp = timestamp or get_timestamp()
-        super().__init__(message, level, html, timestamp)
+        super().__init__(message, level, html, timestamp or datetime.now())
 
-    def _normalize_message(self, msg):
-        if callable(msg):
-            return msg
-        if not is_string(msg):
-            msg = safe_str(msg)
-        if '\r\n' in msg:
-            msg = msg.replace('\r\n', '\n')
-        return msg
-
-    def _get_level_and_html(self, level, html):
+    def _get_level_and_html(self, level, html) -> 'tuple[MessageLevel, bool]':
         level = level.upper()
         if level == 'HTML':
             return 'INFO', True
         if level == 'CONSOLE':
-            level = 'INFO'
-        if level not in LEVELS:
-            raise DataError("Invalid log level '%s'." % level)
-        return level, html
+            return 'INFO', html
+        if level in LEVELS:
+            return level, html
+        raise DataError(f"Invalid log level '{level}'.")
 
     @property
-    def message(self):
+    def message(self) -> str:
         self.resolve_delayed_message()
         return self._message
 
     @message.setter
-    def message(self, message):
+    def message(self, message: 'str|Callable[[], str]'):
+        if not callable(message):
+            if not isinstance(message, str):
+                message = safe_str(message)
+            if '\r\n' in message:
+                message = message.replace('\r\n', '\n')
         self._message = message
 
     def resolve_delayed_message(self):
@@ -146,36 +146,3 @@ class IsLogged:
             return LEVELS[level.upper()]
         except KeyError:
             raise DataError("Invalid log level '%s'." % level)
-
-
-class AbstractLoggerProxy:
-    _methods = None
-    _no_method = lambda *args: None
-
-    def __init__(self, logger, method_names=None, prefix=None):
-        self.logger = logger
-        for name in method_names or self._methods:
-            # Allow extending classes to implement some of the messages themselves.
-            if hasattr(self, name):
-                if hasattr(logger, name):
-                    continue
-                target = logger
-            else:
-                target = self
-            setattr(target, name, self._get_method(logger, name, prefix))
-
-    def _get_method(self, logger, name, prefix):
-        for method_name in self._get_method_names(name, prefix):
-            if hasattr(logger, method_name):
-                return getattr(logger, method_name)
-        return self._no_method
-
-    def _get_method_names(self, name, prefix):
-        names = [name, self._toCamelCase(name)] if '_' in name else [name]
-        if prefix:
-            names += [prefix + name for name in names]
-        return names
-
-    def _toCamelCase(self, name):
-        parts = name.split('_')
-        return ''.join([parts[0]] + [part.capitalize() for part in parts[1:]])

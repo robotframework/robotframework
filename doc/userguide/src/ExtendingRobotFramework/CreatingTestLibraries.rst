@@ -916,13 +916,12 @@ Example:
        Sort Words    Foo    bar    baZ    case_sensitive=True
        Strip Spaces    ${word}    left=False
 
-
 __ https://www.python.org/dev/peps/pep-3102
 
 Positional-only arguments
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Python 3.8 introduced `positional-only arguments`__ that make it possible to
+Python supports so called `positional-only arguments`__ that make it possible to
 specify that an argument can only be given as a `positional argument`_, not as
 a `named argument`_ like `name=value`. Positional-only arguments are specified
 before normal arguments and a special `/` marker must be used after them:
@@ -1161,6 +1160,15 @@ __ `Specifying argument types using function annotations`_
 __ `Specifying argument types using @keyword decorator`_
 __ `Implicit argument types based on default values`_
 
+.. note:: If an argument has both a type hint and a default value, conversion is
+          first attempted based on the type hint and then, if that fails, based on
+          the default value type. This behavior is likely to change in the future
+          so that conversion based on the default value is done *only* if the argument
+          does not have a type hint. That will change conversion behavior in cases
+          like `arg: list = None` where `None` conversion will not be attempted
+          anymore. Library creators are strongly recommended to specify the default
+          value type explicitly like `arg: Union[list, None] = None` already now.
+
 The type to use can be specified either using concrete types (e.g. list_),
 by using Abstract Base Classes (ABC) (e.g. Sequence_), or by using sub
 classes of these types (e.g. MutableSequence_). Also types in in the typing_
@@ -1255,9 +1263,9 @@ Other types cause conversion failures.
    | Enum_        |               |            | str_         | The specified type must be an enumeration (a subclass of Enum_ | .. sourcecode:: python               |
    |              |               |            |              | or Flag_) and given arguments must match its member names.     |                                      |
    |              |               |            |              |                                                                |    class Direction(Enum):            |
-   |              |               |            |              | Starting from RF 3.2.2, matching member names is case-, space- |        NORTH = auto()                |
-   |              |               |            |              | and underscore-insensitive.                                    |        NORTH_WEST = auto()           |
-   |              |               |            |              |                                                                |                                      |
+   |              |               |            |              | Matching member names is case, space, underscore and hyphen    |        NORTH = auto()                |
+   |              |               |            |              | insensitive, but exact matches have precedence over normalized |        NORTH_WEST = auto()           |
+   |              |               |            |              | matches. Ignoring hyphens is new in RF 7.0.                    |                                      |
    |              |               |            |              |                                                                | | `NORTH` (Direction.NORTH)          |
    |              |               |            |              |                                                                | | `north west` (Direction.NORTH_WEST)|
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
@@ -1265,13 +1273,13 @@ Other types cause conversion failures.
    |              |               |            | int_         | subclass of IntEnum_ or IntFlag_) and given arguments must     |                                      |
    |              |               |            |              | match its member names or values.                              |    class PowerState(IntEnum):        |
    |              |               |            |              |                                                                |        OFF = 0                       |
-   |              |               |            |              | Matching member names is case-, space- and                     |        ON = 1                        |
-   |              |               |            |              | and underscore-insensitive. Values can be given as actual      |                                      |
+   |              |               |            |              | Matching member names is case, space, underscore and hyphen    |        ON = 1                        |
+   |              |               |            |              | insensitive the same as with `Enum`. Values can be given as    |                                      |
    |              |               |            |              | integers and as strings that can be converted to integers.     | | `OFF` (PowerState.OFF)             |
    |              |               |            |              |                                                                | | `1` (PowerState.ON)                |
    |              |               |            |              | Support for IntEnum_ and IntFlag_ is new in RF 4.1.            |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | None_        |               | NoneType   | str_         | String `NONE` (case-insensitive) is converted to the Python    | | `None`                             |
+   | None_        |               |            | str_         | String `NONE` (case-insensitive) is converted to the Python    | | `None`                             |
    |              |               |            |              | `None` object. Other values cause an error.                    |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | Any_         |               |            | Any          | Any value is accepted. No conversion is done.                  |                                      |
@@ -1280,7 +1288,7 @@ Other types cause conversion failures.
    |              |               |            |              | but conversion may have been done based on `default values     |                                      |
    |              |               |            |              | <Implicit argument types based on default values_>`__.         |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | list_        | Sequence_     |            | str_,        | Strings must be Python list literals. They are converted       | | `['one', 'two']`                   |
+   | list_        | Sequence_     | sequence   | str_,        | Strings must be Python list literals. They are converted       | | `['one', 'two']`                   |
    |              |               |            | Sequence_    | to actual lists using the `ast.literal_eval`_ function.        | | `[('one', 1), ('two', 2)]`         |
    |              |               |            |              | They can contain any values `ast.literal_eval` supports,       |                                      |
    |              |               |            |              | including lists and other containers.                          |                                      |
@@ -1288,6 +1296,8 @@ Other types cause conversion failures.
    |              |               |            |              | If the used type hint is list_ (e.g. `arg: list`), sequences   |                                      |
    |              |               |            |              | that are not lists are converted to lists. If the type hint is |                                      |
    |              |               |            |              | generic Sequence_, sequences are used without conversion.      |                                      |
+   |              |               |            |              |                                                                |                                      |
+   |              |               |            |              | Alias `sequence` is new in RF 7.0.                             |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | tuple_       |               |            | str_,        | Same as `list`, but string arguments must tuple literals.      | | `('one', 'two')`                   |
    |              |               |            | Sequence_    |                                                                |                                      |
@@ -1299,7 +1309,9 @@ Other types cause conversion failures.
    |              |               |            | Container_   |                                                                | | `frozenset()`                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | dict_        | Mapping_      | dictionary,| str_,        | Same as `list`, but string arguments must be dictionary        | | `{'a': 1, 'b': 2}`                 |
-   |              |               | map        | Mapping_     | literals.                                                      | | `{'key': 1, 'nested': {'key': 2}}` |
+   |              |               | mapping,   | Mapping_     | literals.                                                      | | `{'key': 1, 'nested': {'key': 2}}` |
+   |              |               | map        |              |                                                                |                                      |
+   |              |               |            |              | Alias `mapping` is new in RF 7.0.                              |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | TypedDict_   |               |            | str_,        | Same as `dict`, but dictionary items are also converted        | .. sourcecode:: python               |
    |              |               |            | Mapping_     | to the specified types and items not included in the type      |                                      |
@@ -1378,6 +1390,15 @@ syntax instead:
 .. sourcecode:: python
 
   def example(length: int | float, padding: int | str | None = None):
+      ...
+
+Robot Framework 7.0 enhanced the support for the union syntax so that also
+"stringly typed" unions like `'type1 | type2'` work. This syntax works also
+with older Python versions:
+
+.. sourcecode:: python
+
+  def example(length: 'int | float', padding: 'int | str | None' = None):
       ...
 
 An alternative is specifying types as a tuple. It is not recommended with annotations,
@@ -1471,14 +1492,18 @@ with different generic types works according to these rules:
 - With sets there can be exactly one type like `set[float]`. Conversion logic
   is the same as with lists.
 
+Using the native `list[int]` syntax requires `Python 3.9`__ or newer. If there
+is a need to support also earlier Python versions, it is possible to either use
+matching types from the typing_ module like `List[int]` or use the "stringly typed"
+syntax like `'list[int]'`.
+
 .. note:: Support for converting nested types with generics is new in
           Robot Framework 6.0. Same syntax works also with earlier versions,
           but arguments are only converted to the base type and nested types
           are not used for anything.
 
-.. note:: Using generics with Python standard types like `list[int]` is new
-          in `Python 3.9`__. With earlier versions matching types from
-          the typing_ module can be used like `List[int]`.
+.. note:: Support for "stringly typed" parameterized generics is new in
+          Robot Framework 7.0.
 
 __ https://peps.python.org/pep-0585/
 
@@ -1895,7 +1920,6 @@ signature-preserving decorators.
 .. note:: Support for "unwrapping" decorators decorated with `functools.wraps`
           is a new feature in Robot Framework 3.2.
 
-
 __ https://realpython.com/primer-on-python-decorators/
 __ https://docs.python.org/library/functools.html#functools.wraps
 __ https://pypi.org/project/decorator/
@@ -1904,45 +1928,62 @@ __ https://wrapt.readthedocs.io
 Embedding arguments into keyword names
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Library keywords can also accept arguments which are passed using
-the `embedded argument syntax`__.  The `@keyword decorator`_
-can be used to create a `custom keyword name`__ for the keyword
-which includes the desired syntax.
+Library keywords can also accept *embedded arguments* the same way as
+`user keywords`_. This section mainly covers the Python syntax to use to
+create such keywords, the embedded arguments syntax itself is covered in
+detail as part of `user keyword documentation`__.
+
+Library keywords with embedded arguments need to have a `custom name`__ that
+is typically set using the `@keyword decorator`_. Values matching embedded
+arguments are passed to the function or method implementing the keyword as
+positional arguments. If the function or method accepts more arguments, they
+can be passed to the keyword as normal positional or named arguments.
+Argument names do not need to match the embedded argument names, but that
+is generally a good convention.
 
 __ `Embedding arguments into keyword name`_
 __ `Setting custom name`_
+
+Keywords accepting embedded arguments:
 
 .. sourcecode:: python
 
     from robot.api.deco import keyword
 
 
-    @keyword('Add ${quantity:\d+} copies of ${item} to cart')
-    def add_copies_to_cart(quantity, item):
-        # ...
+    @keyword('Select ${animal} from list')
+    def select_animal_from_list(animal):
+        ...
+
+
+    @keyword('Number of ${animals} should be')
+    def number_of_animals_should_be(animals, count):
+        ...
+
+Tests using the above keywords:
 
 .. sourcecode:: robotframework
 
-   *** Test Cases ***
-   My Test
-       Add 7 copies of coffee to cart
+    *** Test Cases ***
+    Embedded arguments
+        Select cat from list
+        Select dog from list
 
-By default arguments are passed to implementing keywords as strings, but
-automatic `argument conversion`_ works if type information is specified
-somehow. It is convenient to use `function annotations`__,
-and alternatively it is possible to pass types to the `@keyword decorator`__.
-This example uses annotations:
+    Embedded and normal arguments
+        Number of cats should be    2
+        Number of dogs should be    count=3
+
+If type information is specified, automatic `argument conversion`_ works also
+with embedded arguments:
 
 .. sourcecode:: python
 
-    @keyword('Add ${quantity:\d+} copies of ${item} to cart')
+    @keyword('Add ${quantity} copies of ${item} to cart')
     def add_copies_to_cart(quantity: int, item: str):
-        # ...
+        ...
 
-__ `Specifying argument types using function annotations`_
-__ `Specifying argument types using @keyword decorator`_
-
-.. note:: Automatic type conversion is new in Robot Framework 3.1.
+.. note:: Support for mixing embedded arguments and normal arguments is new
+          in Robot Framework 7.0.
 
 Asynchronous keywords
 ~~~~~~~~~~~~~~~~~~~~~

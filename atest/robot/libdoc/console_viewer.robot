@@ -18,6 +18,8 @@ List all keywords
     ...   Robot Espacers
     ...   Set Name Using Robot Name Attribute
     ...   Takes \${embedded} \${args}
+    ...   Takes \${embedded} and normal args
+    ...   Takes \${embedded} and positional-only args
 
 List some keywords
     Run Libdoc And Verify Output    ${TESTDATADIR}/resource.robot list o

@@ -1,4 +1,4 @@
-*** Setting ***
+*** Settings ***
 Documentation     Robot's internal modules cannot be imported directly.
 Suite Setup       Run Keywords
 ...    Create Directory    ${TESTDIR}${/}robot    AND
@@ -6,10 +6,10 @@ Suite Setup       Run Keywords
 Suite Teardown    Remove Directory    ${TESTDIR}    recursively
 Resource          atest_resource.robot
 
-*** Variable ***
+*** Variables ***
 ${TESTDIR}        %{TEMPDIR}${/}module_importing_14350
 
-*** Test Case ***
+*** Test Cases ***
 Internal modules cannot be imported directly
     Check Test Case    ${TESTNAME}
 
@@ -24,5 +24,5 @@ Standard libraries can be imported through `robot.libraries.`
 
 In test data standard libraries can be imported directly
     ${tc} =    Check Test Case    ${TESTNAME}
-    Should Be Equal    ${tc.kws[0].name}    OperatingSystem.Directory Should Exist
-    Should Be Equal    ${tc.kws[1].name}    OperatingSystem.Directory Should Exist
+    Should Be Equal    ${tc.kws[0].full_name}    OperatingSystem.Directory Should Exist
+    Should Be Equal    ${tc.kws[1].full_name}    OperatingSystem.Directory Should Exist

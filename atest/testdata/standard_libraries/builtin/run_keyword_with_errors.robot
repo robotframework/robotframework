@@ -262,7 +262,7 @@ Passing UK
     Log    Hello world
     No Operation
     ${ret} =    Evaluate    1+2
-    [Return]    ${ret}
+    RETURN    ${ret}
 
 Failing Uk
     Passing Uk

@@ -1,7 +1,7 @@
-*** Setting ***
+*** Settings ***
 Force Tags        some
 
-*** Test Case ***
+*** Test Cases ***
 test1
     No Operation
 

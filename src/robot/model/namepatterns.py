@@ -23,15 +23,9 @@ class NamePatterns(Iterable[str]):
     def __init__(self, patterns: Sequence[str] = (), ignore: Sequence[str] = '_'):
         self.matcher = MultiMatcher(patterns, ignore)
 
-    def match(self, name: str, longname: 'str|None' = None) -> bool:
-        return bool(self._match(name) or
-                    longname and self._match_longname(longname))
-
-    def _match(self, name: str) -> bool:
-        return self.matcher.match(name)
-
-    def _match_longname(self, name: str) -> bool:
-        raise NotImplementedError
+    def match(self, name: str, full_name: 'str|None' = None) -> bool:
+        match = self.matcher.match
+        return bool(match(name) or full_name and match(full_name))
 
     def __bool__(self) -> bool:
         return bool(self.matcher)
@@ -39,19 +33,3 @@ class NamePatterns(Iterable[str]):
     def __iter__(self) -> Iterator[str]:
         for matcher in self.matcher:
             yield matcher.pattern
-
-
-class SuiteNamePatterns(NamePatterns):
-
-    def _match_longname(self, name):
-        while '.' in name:
-            if self._match(name):
-                return True
-            name = name.split('.', 1)[1]
-        return False
-
-
-class TestNamePatterns(NamePatterns):
-
-    def _match_longname(self, name):
-        return self._match(name)

@@ -1,9 +1,9 @@
-*** Setting ***
+*** Settings ***
 Suite Setup       My Setup
 Suite Teardown    My Teardown
 Resource          resource.robot
 
-*** Test Case ***
+*** Test Cases ***
 Test 1.1
     Register All    Test 1.1
     libraryscope.Global.Should Be Registered    Suite 0    Suite 1    Test 1.1
@@ -18,7 +18,7 @@ Test 1.2
     libraryscope.Test.Should Be Registered    Test 1.2
     Invalids Should Have Registered    Test 1.2
 
-*** Keyword ***
+*** Keywords ***
 My Setup
     Register All    Suite 1
     libraryscope.Global.Should Be Registered    Suite 0    Suite 1

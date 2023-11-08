@@ -81,12 +81,12 @@ List Variable From Dictionary
 
 Unrepresentable objects to list variables
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    \@{unrepr} = ? ${UNREPR} | ${UNREPR} ?    pattern=yes
-    Check Log Message    ${tc.kws[0].msgs[0]}    \@{unrepr} = ? ${UNREPR} | ${UNREPR} ?    pattern=yes
-    Should Match         ${tc.kws[2].kws[0].name}    \${obj} = ${UNREPR}
-    Check Log Message    ${tc.kws[2].kws[0].kws[1].msgs[0]}    $\{var} = ${UNREPR}    pattern=yes
-    Should Match         ${tc.kws[2].kws[1].name}    \${obj} = ${UNREPR}
-    Check Log Message    ${tc.kws[2].kws[1].kws[1].msgs[0]}    $\{var} = ${UNREPR}    pattern=yes
+    Check Log Message    ${tc.body[0].msgs[0]}    \@{unrepr} = ? ${UNREPR} | ${UNREPR} ?    pattern=yes
+    Check Log Message    ${tc.body[0].msgs[0]}    \@{unrepr} = ? ${UNREPR} | ${UNREPR} ?    pattern=yes
+    Should Match         ${tc.body[2].body[0].assign['\${obj}']}   ${UNREPR}
+    Check Log Message    ${tc.body[2].body[0].body[1].msgs[0]}     $\{var} = ${UNREPR}    pattern=yes
+    Should Match         ${tc.body[2].body[1].assign['\${obj}']}   ${UNREPR}
+    Check Log Message    ${tc.body[2].body[1].body[1].msgs[0]}     $\{var} = ${UNREPR}    pattern=yes
 
 None To List Variable
     ${tc} =    Check Test Case    ${TEST NAME}
@@ -206,6 +206,12 @@ Optional Assign Mark With Multiple Variables
     Check Test Case    ${TESTNAME}
 
 Assign Mark Can Be Used Only With The Last Variable
+    Check Test Case    ${TESTNAME}
+
+Named based on another variable
+    Check Test Case    ${TESTNAME}
+
+Non-existing variable in name
     Check Test Case    ${TESTNAME}
 
 Files are not lists

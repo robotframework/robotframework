@@ -18,17 +18,10 @@ from ast import literal_eval
 
 from robot.api import logger
 from robot.utils import (get_error_message, is_dict_like, is_list_like, is_truthy,
-                         Matcher, plural_or_not as s, seq2str, seq2str2, type_name)
+                         Matcher, NOT_SET, plural_or_not as s, seq2str, seq2str2,
+                         type_name)
 from robot.utils.asserts import assert_equal
 from robot.version import get_version
-
-
-class NotSet:
-    def __repr__(self):
-        return ""
-
-
-NOT_SET = NotSet()
 
 
 class _List:

@@ -34,22 +34,19 @@ __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#
 __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#listener-interface
 """
 
-import sys
 import warnings
 from pathlib import Path
-from typing import Any, Mapping, Sequence, TYPE_CHECKING, Union
-if sys.version_info >= (3, 8):
-    from typing import Literal
+from typing import Any, Literal, Mapping, Sequence, TYPE_CHECKING, Union
 
 from robot import model
 from robot.conf import RobotSettings
-from robot.errors import BreakLoop, ContinueLoop, DataError, ReturnFromKeyword
-from robot.model import (BodyItem, create_fixture, DataDict, Keywords, ModelObject,
-                         TestCases, TestSuites)
+from robot.errors import BreakLoop, ContinueLoop, DataError, ReturnFromKeyword, VariableError
+from robot.model import BodyItem, create_fixture, DataDict, ModelObject, TestSuites
 from robot.output import LOGGER, Output, pyloggingconf
 from robot.result import (Break as BreakResult, Continue as ContinueResult,
-                          Error as ErrorResult, Return as ReturnResult)
+                          Error as ErrorResult, Return as ReturnResult, Var as VarResult)
 from robot.utils import setter
+from robot.variables import VariableResolver
 
 from .bodyrunner import ForRunner, IfRunner, KeywordRunner, TryRunner, WhileRunner
 from .randomizer import Randomizer
@@ -64,8 +61,8 @@ BodyItemParent = Union['TestSuite', 'TestCase', 'UserKeyword', 'For', 'If', 'IfB
                        'Try', 'TryBranch', 'While', None]
 
 
-class Body(model.BaseBody['Keyword', 'For', 'While', 'If', 'Try', 'Return', 'Continue',
-                          'Break', 'model.Message', 'Error']):
+class Body(model.BaseBody['Keyword', 'For', 'While', 'If', 'Try', 'Var', 'Return',
+                          'Continue', 'Break', 'model.Message', 'Error']):
     __slots__ = []
 
 
@@ -117,8 +114,8 @@ class For(model.For, WithSource):
     __slots__ = ['lineno', 'error']
     body_class = Body
 
-    def __init__(self, variables: Sequence[str] = (),
-                 flavor: "Literal['IN', 'IN RANGE', 'IN ENUMERATE', 'IN ZIP']" = 'IN',
+    def __init__(self, assign: Sequence[str] = (),
+                 flavor: Literal['IN', 'IN RANGE', 'IN ENUMERATE', 'IN ZIP'] = 'IN',
                  values: Sequence[str] = (),
                  start: 'str|None' = None,
                  mode: 'str|None' = None,
@@ -126,9 +123,16 @@ class For(model.For, WithSource):
                  parent: BodyItemParent = None,
                  lineno: 'int|None' = None,
                  error: 'str|None' = None):
-        super().__init__(variables, flavor, values, start, mode, fill, parent)
+        super().__init__(assign, flavor, values, start, mode, fill, parent)
         self.lineno = lineno
         self.error = error
+
+    @classmethod
+    def from_dict(cls, data: DataDict) -> 'For':
+        # RF 6.1 compatibility
+        if 'variables' in data:
+            data['assign'] = data.pop('variables')
+        return super().from_dict(data)
 
     def to_dict(self) -> DataDict:
         data = super().to_dict()
@@ -219,11 +223,18 @@ class TryBranch(model.TryBranch, WithSource):
     def __init__(self, type: str = BodyItem.TRY,
                  patterns: Sequence[str] = (),
                  pattern_type: 'str|None' = None,
-                 variable: 'str|None' = None,
+                 assign: 'str|None' = None,
                  parent: BodyItemParent = None,
                  lineno: 'int|None' = None):
-        super().__init__(type, patterns, pattern_type, variable, parent)
+        super().__init__(type, patterns, pattern_type, assign, parent)
         self.lineno = lineno
+
+    @classmethod
+    def from_dict(cls, data: DataDict) -> 'TryBranch':
+        # RF 6.1 compatibility.
+        if 'variable' in data:
+            data['assign'] = data.pop('variable')
+        return super().from_dict(data)
 
     def to_dict(self) -> DataDict:
         data = super().to_dict()
@@ -246,6 +257,59 @@ class Try(model.Try, WithSource):
 
     def run(self, context, run=True, templated=False):
         return TryRunner(context, run, templated).run(self)
+
+    def to_dict(self) -> DataDict:
+        data = super().to_dict()
+        if self.lineno:
+            data['lineno'] = self.lineno
+        if self.error:
+            data['error'] = self.error
+        return data
+
+
+@Body.register
+class Var(model.Var, WithSource):
+    __slots__ = ['lineno', 'error']
+
+    def __init__(self, name: str = '',
+                 value: 'str|Sequence[str]' = (),
+                 scope: 'str|None' = None,
+                 separator: 'str|None' = None,
+                 parent: BodyItemParent = None,
+                 lineno: 'int|None' = None,
+                 error: 'str|None' = None):
+        super().__init__(name, value, scope, separator, parent)
+        self.lineno = lineno
+        self.error = error
+
+    def run(self, context, run=True, templated=False):
+        result = VarResult(self.name, self.value, self.scope, self.separator)
+        with StatusReporter(self, result, context, run):
+            if run:
+                if self.error:
+                    raise DataError(self.error, syntax=True)
+                if not context.dry_run:
+                    scope = self._get_scope(context.variables)
+                    setter = getattr(context.variables, f'set_{scope}')
+                    try:
+                        resolver = VariableResolver.from_variable(self)
+                        setter(self.name, resolver.resolve(context.variables))
+                    except DataError as err:
+                        raise VariableError(f"Setting variable '{self.name}' failed: {err}")
+
+    def _get_scope(self, variables):
+        if not self.scope:
+            return 'local'
+        try:
+            scope = variables.replace_string(self.scope)
+            if scope.upper() == 'TASK':
+                return 'test'
+            if scope.upper() in ('GLOBAL', 'SUITE', 'TEST', 'LOCAL'):
+                return scope.lower()
+            raise DataError(f"Value '{scope}' is not accepted. Valid values are "
+                            f"'GLOBAL', 'SUITE', 'TEST', 'TASK' and 'LOCAL'.")
+        except DataError as err:
+            raise DataError(f"Invalid VAR scope: {err}")
 
     def to_dict(self) -> DataDict:
         data = super().to_dict()
@@ -614,15 +678,17 @@ class TestSuite(model.TestSuite[Keyword, TestCase]):
 
 
 class Variable(ModelObject):
-    repr_args = ('name', 'value')
+    repr_args = ('name', 'value', 'separator')
 
     def __init__(self, name: str = '',
                  value: Sequence[str] = (),
+                 separator: 'str|None' = None,
                  parent: 'ResourceFile|None' = None,
                  lineno: 'int|None' = None,
                  error: 'str|None' = None):
         self.name = name
         self.value = tuple(value)
+        self.separator = separator
         self.parent = parent
         self.lineno = lineno
         self.error = error
@@ -631,7 +697,7 @@ class Variable(ModelObject):
     def source(self) -> 'Path|None':
         return self.parent.source if self.parent is not None else None
 
-    def report_invalid_syntax(self, message: str, level: str = 'ERROR'):
+    def report_error(self, message: str, level: str = 'ERROR'):
         source = self.source or '<unknown>'
         line = f' on line {self.lineno}' if self.lineno else ''
         LOGGER.write(f"Error in file '{source}'{line}: "
@@ -749,7 +815,7 @@ class UserKeyword(ModelObject):
     repr_args = ('name', 'args')
     fixture_class = Keyword
     __slots__ = ['name', 'args', 'doc', 'return_', 'timeout', 'lineno', 'parent',
-                 'error', '_teardown']
+                 'error', '_setup', '_teardown']
 
     def __init__(self, name: str = '',
                  args: Sequence[str] = (),
@@ -770,6 +836,7 @@ class UserKeyword(ModelObject):
         self.parent = parent
         self.error = error
         self.body = []
+        self._setup = None
         self._teardown = None
 
     @setter
@@ -777,24 +844,32 @@ class UserKeyword(ModelObject):
         return Body(self, body)
 
     @property
-    def keywords(self) -> Keywords:
-        """Deprecated since Robot Framework 4.0.
+    def setup(self) -> Keyword:
+        """User keyword setup as a :class:`Keyword` object.
 
-        Use :attr:`body` or :attr:`teardown` instead.
+        New in Robot Framework 7.0.
         """
-        kws = list(self.body)
-        if self.teardown:
-            kws.append(self.teardown)
-        return Keywords(self, kws)
+        if self._setup is None:
+            self.setup = None
+        return self._setup
 
-    @keywords.setter
-    def keywords(self, keywords):
-        Keywords.raise_deprecation_error()
+    @setup.setter
+    def setup(self, setup: 'Keyword|DataDict|None'):
+        self._setup = create_fixture(self.fixture_class, setup, self, Keyword.SETUP)
+
+    @property
+    def has_setup(self) -> bool:
+        """Check does a keyword have a setup without creating a setup object.
+
+        See :attr:`has_teardown` for more information. New in Robot Framework 7.0.
+        """
+        return bool(self._setup)
 
     @property
     def teardown(self) -> Keyword:
+        """User keyword teardown as a :class:`Keyword` object."""
         if self._teardown is None:
-            self._teardown = create_fixture(self.fixture_class, None, self, Keyword.TEARDOWN)
+            self.teardown = None
         return self._teardown
 
     @teardown.setter
@@ -805,7 +880,7 @@ class UserKeyword(ModelObject):
     def has_teardown(self) -> bool:
         """Check does a keyword have a teardown without creating a teardown object.
 
-        A difference between using ``if uk.has_teardown:`` and ``if uk.teardown:``
+        A difference between using ``if kw.has_teardown:`` and ``if kw.teardown:``
         is that accessing the :attr:`teardown` attribute creates a :class:`Keyword`
         object representing the teardown even when the user keyword actually does
         not have one. This can have an effect on memory usage.
@@ -833,6 +908,8 @@ class UserKeyword(ModelObject):
                             ('error', self.error)]:
             if value:
                 data[name] = value
+        if self.has_setup:
+            data['setup'] = self.setup.to_dict()
         data['body'] = self.body.to_dicts()
         if self.has_teardown:
             data['teardown'] = self.teardown.to_dict()
@@ -845,7 +922,7 @@ class Import(ModelObject):
     RESOURCE = 'RESOURCE'
     VARIABLES = 'VARIABLES'
 
-    def __init__(self, type: "Literal['LIBRARY', 'RESOURCE', 'VARIABLES']",
+    def __init__(self, type: Literal['LIBRARY', 'RESOURCE', 'VARIABLES'],
                  name: str,
                  args: Sequence[str] = (),
                  alias: 'str|None' = None,
@@ -879,7 +956,7 @@ class Import(ModelObject):
                 self.RESOURCE: resource,
                 self.VARIABLES: variables}[self.type]
 
-    def report_invalid_syntax(self, message: str, level: str = 'ERROR'):
+    def report_error(self, message: str, level: str = 'ERROR'):
         source = self.source or '<unknown>'
         line = f' on line {self.lineno}' if self.lineno else ''
         LOGGER.write(f"Error in file '{source}'{line}: {message}", level)

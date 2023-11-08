@@ -3,16 +3,16 @@ import os
 
 from robot.running import userkeyword
 from robot.running.model import ResourceFile, UserKeyword
-from robot.running.userkeyword import EmbeddedArguments, UserLibrary
+from robot.running.userkeyword import UserLibrary
 from robot.utils.asserts import (assert_equal, assert_none,
                                  assert_raises_with_msg, assert_true)
 
 
 class UserHandlerStub:
 
-    def __init__(self, kwdata, library):
+    def __init__(self, kwdata, owner):
         self.name = kwdata.name
-        self.libname = library
+        self.owner = owner
         self.lineno = 42
         if kwdata.name == 'FAIL':
             raise Exception('Expected failure')
@@ -23,7 +23,7 @@ class UserHandlerStub:
 
 class EmbeddedArgsHandlerStub:
 
-    def __init__(self, kwdata, library, embedded):
+    def __init__(self, kwdata, owner, embedded):
         if '${' not in kwdata.name:
             raise TypeError
         self.name = kwdata.name
@@ -120,7 +120,10 @@ class TestUserLibrary(unittest.TestCase):
 
     def _get_userlibrary(self, *keywords, **conf):
         resource = ResourceFile(**conf)
-        resource.keywords = [UserKeyword(name) for name in keywords]
+        for name in keywords:
+            kw = UserKeyword(name)
+            kw.body.create_keyword('No Operation')
+            resource.keywords.append(kw)
         return UserLibrary(resource, resource_file='source' in conf)
 
     def _lib_has_embedded_arg_keyword(self, lib, count=1):

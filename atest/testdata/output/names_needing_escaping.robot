@@ -1,7 +1,7 @@
 *** Variables ***
 ${var}     value
 
-*** Test Case ***
+*** Test Cases ***
 "Quotes"
     "Quotes"
 
@@ -23,7 +23,7 @@ Escaped \\\${var}
 Newline \\n and Tab \\t
     Newline \n and Tab \t
 
-*** Keyword ***
+*** Keywords ***
 "Quotes"
     No Operation
 

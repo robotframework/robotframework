@@ -1,7 +1,7 @@
-*** Setting ***
+*** Settings ***
 Suite Teardown    Fail    Failure in suite teardown
 
-*** Test Case ***
+*** Test Cases ***
 FTD FTD Passing
     [Documentation]    FAIL
     ...    Parent suite teardown failed:

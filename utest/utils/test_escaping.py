@@ -20,8 +20,8 @@ class TestUnEscape(unittest.TestCase):
                          ('\\ ', ' '),
                          ('a\\', 'a'),
                          ('\\a', 'a'),
-                         ('\\-', u'-'),
-                         (u'\\\xe4', u'\xe4'),
+                         ('\\-', '-'),
+                         ('\\ä', 'ä'),
                          ('\\0', '0'),
                          ('a\\b\\c\\d', 'abcd')]:
             assert_unescape(inp, exp)
@@ -86,9 +86,9 @@ class TestUnEscape(unittest.TestCase):
             assert_unescape(inp, inp.replace('\\', ''))
 
     def test_valid_x(self):
-        for inp, exp in [(r'\x00', u'\x00'),
-                         (r'\xab\xBA', u'\xab\xba'),
-                         (r'\xe4iti', u'\xe4iti')]:
+        for inp, exp in [(r'\x00', '\x00'),
+                         (r'\xab\xBA', '\xab\xba'),
+                         (r'\xe4iti', 'äiti')]:
             assert_unescape(inp, exp)
 
     def test_invalid_u(self):
@@ -104,9 +104,9 @@ class TestUnEscape(unittest.TestCase):
             assert_unescape(inp, inp.replace('\\', ''))
 
     def test_valid_u(self):
-        for inp, exp in [(r'\u0000', u'\x00'),
-                         (r'\uABba', u'\uabba'),
-                         (r'\u00e4iti', u'\xe4iti')]:
+        for inp, exp in [(r'\u0000', '\x00'),
+                         (r'\uABba', '\uabba'),
+                         (r'\u00e4iti', 'äiti')]:
             assert_unescape(inp, exp)
 
     def test_invalid_U(self):
@@ -122,11 +122,11 @@ class TestUnEscape(unittest.TestCase):
             assert_unescape(inp, inp.replace('\\', ''))
 
     def test_valid_U(self):
-        for inp, exp in [(r'\U00000000', u'\x00'),
-                         (r'\U0000ABba', u'\uabba'),
-                         (r'\U0001f3e9', u'\U0001f3e9'),
-                         (r'\U0010FFFF', u'\U0010ffff'),
-                         (r'\U000000e4iti', u'\xe4iti')]:
+        for inp, exp in [(r'\U00000000', '\x00'),
+                         (r'\U0000ABba', '\uabba'),
+                         (r'\U0001f3e9', '\U0001f3e9'),
+                         (r'\U0010FFFF', '\U0010ffff'),
+                         (r'\U000000e4iti', 'äiti')]:
             assert_unescape(inp, exp)
 
     def test_U_above_valid_range(self):

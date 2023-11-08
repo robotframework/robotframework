@@ -1,7 +1,7 @@
 *** Settings ***
 Library    Collections
 
-*** Keyword ***
+*** Keywords ***
 Check Variables In Suite Setup
     [Arguments]    ${name}    ${doc}    ${meta}    @{prev_test}
     Check Test Variables Do Not Exist

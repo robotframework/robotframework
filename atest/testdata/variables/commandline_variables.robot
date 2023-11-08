@@ -1,4 +1,4 @@
-*** Test Case ***
+*** Test Cases ***
 Normal Text
     Should Be Equal    ${NORMAL TEXT}    Hello
 

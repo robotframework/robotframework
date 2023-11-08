@@ -164,10 +164,10 @@ Invalid Syntax UK
 
 Some Return Value
     [Arguments]    ${a1}    ${a2}
-    [Return]    ${a1}-${a2}
+    RETURN    ${a1}-${a2}
 
 Ooops return value
-    [Return]    ${ooops}
+    RETURN    ${ooops}
 
 UK with multiple failures
     Invalid Syntax UK

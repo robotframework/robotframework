@@ -13,12 +13,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from datetime import datetime
 from contextlib import contextmanager
 from pathlib import Path
 
 from robot.output.loggerhelper import LEVELS
-from robot.utils import (attribute_escape, get_link_path, html_escape, safe_str,
-                         timestamp_to_secs)
+from robot.utils import attribute_escape, get_link_path, html_escape, safe_str
 
 from .expandkeywordmatcher import ExpandKeywordMatcher
 from .stringcache import StringCache
@@ -48,7 +48,9 @@ class JsBuildingContext:
         return None
 
     def string(self, string, escape=True, attr=False):
-        if escape and string:
+        if not string:
+            return self._strings.empty
+        if escape:
             if not isinstance(string, str):
                 string = safe_str(string)
             string = (html_escape if not attr else attribute_escape)(string)
@@ -64,10 +66,10 @@ class JsBuildingContext:
             if self._log_dir and source and source.exists() else ''
         return self.string(rel_source)
 
-    def timestamp(self, time):
-        if not time:
+    def timestamp(self, ts: datetime) -> 'int|None':
+        if not ts:
             return None
-        millis = int(timestamp_to_secs(time) * 1000)
+        millis = round(ts.timestamp() * 1000)
         if self.basemillis is None:
             self.basemillis = millis
         return millis - self.basemillis

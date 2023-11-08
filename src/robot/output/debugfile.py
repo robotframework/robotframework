@@ -14,9 +14,10 @@
 #  limitations under the License.
 
 from robot.errors import DataError
-from robot.utils import get_timestamp, file_writer, seq2str2
+from robot.utils import file_writer, seq2str2
 
 from .logger import LOGGER
+from .loggerapi import LoggerApi
 from .loggerhelper import IsLogged
 
 
@@ -34,7 +35,7 @@ def DebugFile(path):
         return _DebugFileWriter(outfile)
 
 
-class _DebugFileWriter:
+class _DebugFileWriter(LoggerApi):
     _separators = {'SUITE': '=', 'TEST': '-', 'KEYWORD': '~'}
 
     def __init__(self, outfile):
@@ -44,64 +45,76 @@ class _DebugFileWriter:
         self._outfile = outfile
         self._is_logged = IsLogged('DEBUG')
 
-    def start_suite(self, suite):
+    def start_suite(self, data, result):
         self._separator('SUITE')
-        self._start('SUITE', suite.longname)
+        self._start('SUITE', data.full_name, result.start_time)
         self._separator('SUITE')
 
-    def end_suite(self, suite):
+    def end_suite(self, data, result):
         self._separator('SUITE')
-        self._end('SUITE', suite.longname, suite.elapsedtime)
+        self._end('SUITE', data.full_name, result.end_time, result.elapsed_time)
         self._separator('SUITE')
         if self._indent == 0:
             LOGGER.output_file('Debug', self._outfile.name)
             self.close()
 
-    def start_test(self, test):
+    def start_test(self, data, result):
         self._separator('TEST')
-        self._start('TEST', test.name)
-        self._separator('TEST')
-
-    def end_test(self, test):
-        self._separator('TEST')
-        self._end('TEST', test.name, test.elapsedtime)
+        self._start('TEST', result.name, result.start_time)
         self._separator('TEST')
 
-    def start_keyword(self, kw):
+    def end_test(self, data, result):
+        self._separator('TEST')
+        self._end('TEST', result.name, result.end_time, result.elapsed_time)
+        self._separator('TEST')
+
+    def start_keyword(self, data, result):
         if self._kw_level == 0:
             self._separator('KEYWORD')
-        self._start(kw.type, kw.name, kw.args)
+        self._start(result.type, result.full_name, result.start_time, seq2str2(result.args))
         self._kw_level += 1
 
-    def end_keyword(self, kw):
-        self._end(kw.type, kw.name, kw.elapsedtime)
+    def end_keyword(self, data, result):
+        self._end(result.type, result.full_name, result.end_time, result.elapsed_time)
+        self._kw_level -= 1
+
+    def start_body_item(self, data, result):
+        if self._kw_level == 0:
+            self._separator('KEYWORD')
+        self._start(result.type, result._log_name, result.start_time)
+        self._kw_level += 1
+
+    def end_body_item(self, data, result):
+        self._end(result.type, result._log_name, result.end_time, result.elapsed_time)
         self._kw_level -= 1
 
     def log_message(self, msg):
         if self._is_logged(msg.level):
-            self._write(msg.message, level=msg.level, timestamp=msg.timestamp)
+            self._write(f'{msg.timestamp} - {msg.level} - {msg.message}')
 
     def close(self):
         if not self._outfile.closed:
             self._outfile.close()
 
-    def _start(self, type_, name, args=''):
-        args = ' ' + seq2str2(args)
-        self._write('+%s START %s: %s%s' % ('-'*self._indent, type_, name, args))
+    def _start(self, type, name, timestamp, extra=''):
+        if extra:
+            extra = f' {extra}'
+        indent = '-' * self._indent
+        self._write(f'{timestamp} - INFO - +{indent} START {type}: {name}{extra}')
         self._indent += 1
 
-    def _end(self, type_, name, elapsed):
+    def _end(self, type, name, timestamp, elapsed):
         self._indent -= 1
-        self._write('+%s END %s: %s (%s)' % ('-'*self._indent, type_, name, elapsed))
+        indent = '-' * self._indent
+        elapsed = elapsed.total_seconds()
+        self._write(f'{timestamp} - INFO - +{indent} END {type}: {name} ({elapsed} s)')
 
     def _separator(self, type_):
         self._write(self._separators[type_] * 78, separator=True)
 
-    def _write(self, text, separator=False, level='INFO', timestamp=None):
+    def _write(self, text, separator=False):
         if separator and self._separator_written_last:
             return
-        if not separator:
-            text = '%s - %s - %s' % (timestamp or get_timestamp(), level, text)
         self._outfile.write(text.rstrip() + '\n')
         self._outfile.flush()
         self._separator_written_last = separator

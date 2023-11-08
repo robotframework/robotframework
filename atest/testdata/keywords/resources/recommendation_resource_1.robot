@@ -1,4 +1,4 @@
-*** Keyword ***
+*** Keywords ***
 Keyword Only In Resource 1
     Log    Keyword in resource 1
 

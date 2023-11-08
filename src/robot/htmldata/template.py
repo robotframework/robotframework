@@ -27,13 +27,13 @@ if sys.version_info < (3, 9) and not Path(__file__).exists():    # zipsafe
     except ImportError:
         raise ImportError(
             "'importlib_resources' backport module needs to be installed with "
-            "Python 3.8 and older when Robot Framework is distributed as a zip "
-            "package or '__file__' does not exist for other reasons."
+            "Python 3.8 when Robot Framework is distributed as a zip package "
+            "or '__file__' does not exist for other reasons."
         )
 else:
     try:
         from importlib.resources import files
-    except ImportError:    # Python 3.8 or older
+    except ImportError:    # Python 3.8
         BASE_DIR = Path(__file__).absolute().parent.parent.parent    # zipsafe
 
         def files(module):

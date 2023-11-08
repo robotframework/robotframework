@@ -1,8 +1,8 @@
-*** Setting ***
+*** Settings ***
 Test Teardown     Remove File    ${OUTDIR}/${OUTFILE}
 Resource          atest_resource.robot
 
-*** Test Case ***
+*** Test Cases ***
 File Suite
     Run Tests    --settag cmdlinetag    misc/normal.robot
     Check Test Tags    First One    cmdlinetag    f1    t1    t2

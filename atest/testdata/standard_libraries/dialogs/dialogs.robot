@@ -3,7 +3,7 @@ Library           Dialogs
 Library           Collections
 Test Tags         manual    no-ci
 
-*** Variable ***
+*** Variables ***
 ${FILLER} =     Wräp < & シ${SPACE}
 
 *** Test Cases ***

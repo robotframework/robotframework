@@ -1,5 +1,5 @@
 *** Variables ***
-${while limit}    ${0}
+${LIMIT}         ${0}
 
 *** Test Cases ***
 A single user keyword
@@ -14,6 +14,9 @@ Loops and stuff
 Recursion
     Recursion    ${3}
 
+Log levels
+    Log levels
+
 *** Keywords ***
 UK
     [Tags]    robot:flatten
@@ -27,38 +30,50 @@ Nested UK
     Nest
 
 Nest
-    [Return]      foo
     Log    from nested kw
+    RETURN      foo
+    Log    not logged
 
 Loops and stuff
     [Tags]    robot:flatten
     FOR    ${i}    IN RANGE    5
         Log     inside for ${i}
-        IF    ${i} > 3
+        IF    ${i} > 1
             BREAK
         ELSE
             CONTINUE
         END
     END
-    WHILE    ${while limit} < 5
-        Log     inside while ${while limit}
-        ${while limit}=   Set Variable   ${while limit + 1}
-    END
-    IF    True
-        Log    inside if
-    ELSE
-        Fail
+    WHILE    ${LIMIT} < 3
+        Log     inside while ${LIMIT}
+        VAR    ${LIMIT}    ${LIMIT + 1}
     END
     TRY
-        Fail
+        IF    True
+            Log    inside if
+        ELSE
+            Fail    not run
+        END
+        Fail    fail inside try
     EXCEPT
         Log    inside except
     END
 
- Recursion
+Recursion
     [Arguments]    ${num}
     [Tags]    robot:flatten
     Log    Level: ${num}
     IF    ${num} < 10
         Recursion    ${num+1}
     END
+
+Log levels
+    [Tags]    robot:flatten
+    Log    INFO 1
+    Log    DEBUG 1    DEBUG
+    Set Log Level     DEBUG
+    Log    INFO 2
+    Log    DEBUG 2    DEBUG
+    Set Log Level     NONE
+    Log    INFO 3
+    Log    DEBUG 3    DEBUG

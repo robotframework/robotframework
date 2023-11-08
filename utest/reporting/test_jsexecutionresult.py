@@ -23,14 +23,14 @@ class TestRemoveDataNotNeededInReport(unittest.TestCase):
 
     def _get_suite(self):
         suite = TestSuite(name='root', doc='sdoc', metadata={'m': 'v'})
-        suite.setup.config(kwname='keyword')
+        suite.setup.config(name='keyword')
         sub = suite.suites.create(name='suite', metadata={'a': '1', 'b': '2'})
-        sub.setup.config(kwname='keyword')
+        sub.setup.config(name='keyword')
         t1 = sub.tests.create(name='test', tags=['t1'])
-        t1.body.create_keyword(kwname='keyword')
-        t1.body.create_keyword(kwname='keyword')
+        t1.body.create_keyword(name='keyword')
+        t1.body.create_keyword(name='keyword')
         t2 = sub.tests.create(name='test', tags=['t1', 't2'])
-        t2.body.create_keyword(kwname='keyword')
+        t2.body.create_keyword(name='keyword')
         return suite
 
     def _get_expected_suite_model(self, suite):

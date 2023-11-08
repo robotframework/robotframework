@@ -66,22 +66,26 @@ class SuiteConfigurer(SuiteVisitor):
         parts = [{False: 'tests', True: 'tasks', None: 'tests or tasks'}[rpa],
                  self._get_test_selector_msgs(),
                  self._get_suite_selector_msg()]
-        raise DataError("Suite '%s' contains no %s."
-                        % (name, ' '.join(p for p in parts if p)))
+        raise DataError(f"Suite '{name}' contains no "
+                        f"{' '.join(p for p in parts if p)}.")
 
     def _get_test_selector_msgs(self):
         parts = []
-        for explanation, selector in [('matching tags', self.include_tags),
-                                      ('not matching tags', self.exclude_tags),
-                                      ('matching name', self.include_tests)]:
-            if selector:
-                parts.append(self._format_selector_msg(explanation, selector))
-        return seq2str(parts, quote='')
+        for separator, explanation, selectors in [
+                (None, 'matching name', self.include_tests),
+                ('or', 'matching tags', self.include_tags),
+                ('and', 'not matching tags', self.exclude_tags)
+        ]:
+            if selectors:
+                if parts:
+                    parts.append(separator)
+                parts.append(self._format_selector_msg(explanation, selectors))
+        return ' '.join(parts)
 
-    def _format_selector_msg(self, explanation, selector):
-        if len(selector) == 1 and explanation[-1] == 's':
+    def _format_selector_msg(self, explanation, selectors):
+        if len(selectors) == 1 and explanation[-1] == 's':
             explanation = explanation[:-1]
-        return '%s %s' % (explanation, seq2str(selector, lastsep=' or '))
+        return f"{explanation} {seq2str(selectors, lastsep=' or ')}"
 
     def _get_suite_selector_msg(self):
         if not self.include_suites:

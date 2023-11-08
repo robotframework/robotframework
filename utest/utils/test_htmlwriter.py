@@ -1,5 +1,5 @@
-from io import StringIO
 import unittest
+from io import StringIO
 
 from robot.utils import HtmlWriter
 from robot.utils.asserts import assert_equal
@@ -28,8 +28,8 @@ class TestHtmlWriter(unittest.TestCase):
         self._verify('<test a="z" class="123" x="y">\n')
 
     def test_start_with_non_ascii_attributes(self):
-        self.writer.start('test', {'name': u'\xA7', u'\xE4': u'\xA7'})
-        self._verify(u'<test name="\xA7" \xE4="\xA7">\n')
+        self.writer.start('test', {'name': '§', 'ä': '§'})
+        self._verify('<test name="§" ä="§">\n')
 
     def test_start_with_quotes_in_attribute_value(self):
         self.writer.start('x', {'q':'"', 'qs': '""""', 'a': "'"}, False)
@@ -64,11 +64,10 @@ class TestHtmlWriter(unittest.TestCase):
 
     def test_content_with_non_ascii_data(self):
         self.writer.start('robot', newline=False)
-        self.writer.content(u'Circle is 360\xB0. ')
-        self.writer.content(u'Hyv\xE4\xE4 \xFC\xF6t\xE4!')
+        self.writer.content('Circle is 360°. ')
+        self.writer.content('Hyvää üötä!')
         self.writer.end('robot', newline=False)
-        expected = u'Circle is 360\xB0. Hyv\xE4\xE4 \xFC\xF6t\xE4!'
-        self._verify('<robot>%s</robot>' % expected)
+        self._verify('<robot>Circle is 360°. Hyvää üötä!</robot>')
 
     def test_multiple_content(self):
         self.writer.start('robot')
@@ -106,11 +105,11 @@ class TestHtmlWriter(unittest.TestCase):
     def test_non_ascii(self):
         self.output = StringIO()
         writer = HtmlWriter(self.output)
-        writer.start(u'p', attrs={'name': u'hyv\xe4\xe4'}, newline=False)
-        writer.content(u'y\xf6')
-        writer.element('i', u't\xe4', newline=False)
+        writer.start('p', attrs={'name': 'hyvää'}, newline=False)
+        writer.content('yö')
+        writer.element('i', 'tä', newline=False)
         writer.end('p', newline=False)
-        self._verify(u'<p name="hyv\xe4\xe4">y\xf6<i>t\xe4</i></p>')
+        self._verify('<p name="hyvää">yö<i>tä</i></p>')
 
     def _verify(self, expected):
         assert_equal(self.output.getvalue(), expected)

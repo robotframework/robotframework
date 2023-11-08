@@ -26,7 +26,7 @@ class GatherFailedTests(SuiteVisitor):
 
     def visit_test(self, test):
         if test.failed:
-            self.tests.append(glob_escape(test.longname))
+            self.tests.append(glob_escape(test.full_name))
 
     def visit_keyword(self, kw):
         pass
@@ -39,7 +39,7 @@ class GatherFailedSuites(SuiteVisitor):
 
     def start_suite(self, suite):
         if any(test.failed for test in suite.tests):
-            self.suites.append(glob_escape(suite.longname))
+            self.suites.append(glob_escape(suite.full_name))
 
     def visit_test(self, test):
         pass

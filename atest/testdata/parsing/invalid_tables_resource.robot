@@ -14,5 +14,5 @@ This stuff should be ignored
 Library        OperatingSystem
 
 
-*** Variable ***
+*** Variables ***
 ${DIR}        ${CURDIR}

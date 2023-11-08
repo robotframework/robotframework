@@ -61,4 +61,4 @@ Start Countdown
     ${handle} =    Start Process    python    ${COUNTDOWN}    ${TEMPFILE}
     ...    ${children}    alias=${alias}    shell=${shell}
     Wait Until Countdown Started
-    [Return]    ${handle}
+    RETURN    ${handle}

@@ -70,9 +70,9 @@ Using other options
     ...              --merge. Most importantly verify that options handled
     ...              by ExecutionResult (--flattenkeyword) work correctly.
     Re-run tests
-    Run merge    --nomerge --log log.html --merge --flattenkeyword name:BuiltIn.Log --name Custom
+    Run merge    --nomerge --log log.html --merge --flattenkeyword name:BuiltIn.Fail --name Custom
     Test merge should have been successful    suite name=Custom
-    Log should have been created with all Log keywords flattened
+    Log should have been created with Fail keywords flattened
 
 Merge ignores skip
     Create Output With Robot    ${ORIGINAL}    ${EMPTY}    rebot/merge_statuses.robot
@@ -175,7 +175,7 @@ Test merge should have been successful
     ...    ${SUITE.suites[7]}
 
 Suite setup and teardown should have been merged
-    Should Be Equal      ${SUITE.setup.name}                           BuiltIn.No Operation
+    Should Be Equal      ${SUITE.setup.full_name}                      BuiltIn.No Operation
     Should Be Equal      ${SUITE.teardown.name}                        ${NONE}
     Should Be Equal      ${SUITE.suites[1].name}                       Fourth
     Check Log Message    ${SUITE.suites[1].setup.msgs[0]}              Rerun!
@@ -253,15 +253,15 @@ Merge should have failed
 Timestamps should be cleared
     [Arguments]    @{suites}
     FOR    ${suite}    IN    @{suites}
-        Should Be Equal    ${suite.starttime}    ${None}
-        Should Be Equal    ${suite.endtime}    ${None}
+        Should Be Equal    ${suite.start_time}    ${None}
+        Should Be Equal    ${suite.end_time}    ${None}
     END
 
 Timestamps should be set
     [Arguments]    @{suites}
     FOR    ${suite}    IN    @{suites}
-        Timestamp Should Be Valid    ${suite.starttime}
-        Timestamp Should Be Valid    ${suite.endtime}
+        Timestamp Should Be Valid    ${suite.start_time}
+        Timestamp Should Be Valid    ${suite.end_time}
     END
 
 Create expected merge message header
@@ -316,7 +316,6 @@ Create expected multi-merge message
     ...    ${message 1}
     ...    <hr>${message 2}
 
-Log should have been created with all Log keywords flattened
+Log should have been created with Fail keywords flattened
     ${log} =    Get File    ${OUTDIR}/log.html
-    Should Not Contain    ${log}    "*<p>Logs the given message with the given level.\\x3c/p>"
-    Should Contain    ${log}    "*<p>Logs the given message with the given level.\\x3c/p>\\n<p><i><b>Content flattened.\\x3c/b>\\x3c/i>\\x3c/p>"
+    Should Contain    ${log}    "*Content flattened."

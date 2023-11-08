@@ -100,33 +100,24 @@ class TestTestCase(unittest.TestCase):
         assert_equal(copy.name, 'New')
         assert_equal(copy.doc, 'New')
 
-    def test_keywords_deprecation(self):
-        self.test.body = [Keyword(), Keyword(), Keyword()]
-        with warnings.catch_warnings(record=True) as w:
-            kws = self.test.keywords
-            assert_equal(len(kws), 3)
-            assert_true('deprecated' in str(w[0].message))
-        assert_raises(AttributeError, kws.append, Keyword())
-        assert_raises(AttributeError, setattr, self.test, 'keywords', [])
-
 
 class TestStringRepresentation(unittest.TestCase):
 
     def setUp(self):
         self.empty = TestCase()
         self.ascii = TestCase(name='Kekkonen')
-        self.non_ascii = TestCase(name=u'hyv\xe4 nimi')
+        self.non_ascii = TestCase(name='hyvä nimi')
 
     def test_str(self):
         for tc, expected in [(self.empty, ''),
                              (self.ascii, 'Kekkonen'),
-                             (self.non_ascii, u'hyv\xe4 nimi')]:
+                             (self.non_ascii, 'hyvä nimi')]:
             assert_equal(str(tc), expected)
 
     def test_repr(self):
         for tc, expected in [(self.empty, "TestCase(name='')"),
                              (self.ascii, "TestCase(name='Kekkonen')"),
-                             (self.non_ascii, u"TestCase(name=%r)" % u'hyv\xe4 nimi')]:
+                             (self.non_ascii, "TestCase(name='hyvä nimi')")]:
             assert_equal(repr(tc), 'robot.model.' + expected)
 
 

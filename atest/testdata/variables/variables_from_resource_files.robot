@@ -1,7 +1,7 @@
-*** Setting ***
+*** Settings ***
 Resource          resvarfiles/resource.robot
 
-*** Variable ***
+*** Variables ***
 ${DEFINITION IN RESOURCE (1)}    ${STRING}
 ${DEFINITION IN RESOURCE (2)}    ${LIST[0]}! ${ONE ITEM[0]}
 ${DEFINITION IN RESOURCE (3)}    ${LIST WITH ESCAPES}
@@ -9,7 +9,7 @@ ${DEFINITION IN RESOURCE (3)}    ${LIST WITH ESCAPES}
 ${ORIGINAL DEFINITION IN SECOND RESOURCE}    ${DEFINITION IN SECOND RESOURCE}
 ${DEFINITION IN SECOND RESOURCE (local)}    ${PRIORITIES 5}
 
-*** Test Case ***
+*** Test Cases ***
 Scalar String
     Should Be Equal    ${STRING}    Hello world!
     Should Be Equal    I said: "${STRING}"    I said: "Hello world!"

@@ -102,7 +102,7 @@ Generated Should Be
     Element Attribute Should Be    ${LIBDOC}    generated    ${generated}
 
 Spec version should be correct
-    Element Attribute Should Be    ${LIBDOC}    specversion    5
+    Element Attribute Should Be    ${LIBDOC}    specversion    6
 
 Should Have No Init
     ${inits} =    Get Elements    ${LIBDOC}    xpath=inits/init
@@ -148,7 +148,7 @@ Verify Arguments Structure
         ${name}=        Get Element Optional Text    ${arg_elem}    name
         ${types}=       Get Elements                 ${arg_elem}    type
         IF    not $types
-            ${type}=    Set Variable                 ${EMPTY}
+            ${type}=    Set Variable                 ${None}
         ELSE IF    len($types) == 1
             ${type}=    Get Type                     ${types}[0]
         ELSE
@@ -181,7 +181,6 @@ Get Type
         ${args} =    Catenate    SEPARATOR=,${SPACE}    @{nested}
         ${type} =    Set Variable    ${type}\[${args}]
     END
-    Should Be Equal    ${elem.text}    ${type}
     RETURN    ${type}
 
 Get Element Optional Text

@@ -34,7 +34,122 @@
       },
       "required": [
         "name"
-      ]
+      ],
+      "additionalProperties": false
+    },
+    "Var": {
+      "title": "Var",
+      "type": "object",
+      "properties": {
+        "lineno": {
+          "title": "Lineno",
+          "type": "integer"
+        },
+        "error": {
+          "title": "Error",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "scope": {
+          "title": "Scope",
+          "type": "string"
+        },
+        "separator": {
+          "title": "Separator",
+          "type": "string"
+        },
+        "type": {
+          "title": "Type",
+          "default": "VAR",
+          "const": "VAR",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "value"
+      ],
+      "additionalProperties": false
+    },
+    "Break": {
+      "title": "Break",
+      "type": "object",
+      "properties": {
+        "lineno": {
+          "title": "Lineno",
+          "type": "integer"
+        },
+        "error": {
+          "title": "Error",
+          "type": "string"
+        },
+        "type": {
+          "title": "Type",
+          "default": "BREAK",
+          "const": "BREAK",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "Continue": {
+      "title": "Continue",
+      "type": "object",
+      "properties": {
+        "lineno": {
+          "title": "Lineno",
+          "type": "integer"
+        },
+        "error": {
+          "title": "Error",
+          "type": "string"
+        },
+        "type": {
+          "title": "Type",
+          "default": "CONTINUE",
+          "const": "CONTINUE",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "Return": {
+      "title": "Return",
+      "type": "object",
+      "properties": {
+        "lineno": {
+          "title": "Lineno",
+          "type": "integer"
+        },
+        "error": {
+          "title": "Error",
+          "type": "string"
+        },
+        "values": {
+          "title": "Values",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "type": {
+          "title": "Type",
+          "default": "RETURN",
+          "const": "RETURN",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
     },
     "Error": {
       "title": "Error",
@@ -65,77 +180,8 @@
       "required": [
         "error",
         "values"
-      ]
-    },
-    "Break": {
-      "title": "Break",
-      "type": "object",
-      "properties": {
-        "lineno": {
-          "title": "Lineno",
-          "type": "integer"
-        },
-        "error": {
-          "title": "Error",
-          "type": "string"
-        },
-        "type": {
-          "title": "Type",
-          "default": "BREAK",
-          "const": "BREAK",
-          "type": "string"
-        }
-      }
-    },
-    "Continue": {
-      "title": "Continue",
-      "type": "object",
-      "properties": {
-        "lineno": {
-          "title": "Lineno",
-          "type": "integer"
-        },
-        "error": {
-          "title": "Error",
-          "type": "string"
-        },
-        "type": {
-          "title": "Type",
-          "default": "CONTINUE",
-          "const": "CONTINUE",
-          "type": "string"
-        }
-      }
-    },
-    "Return": {
-      "title": "Return",
-      "type": "object",
-      "properties": {
-        "lineno": {
-          "title": "Lineno",
-          "type": "integer"
-        },
-        "error": {
-          "title": "Error",
-          "type": "string"
-        },
-        "values": {
-          "title": "Values",
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "type": {
-          "title": "Type",
-          "default": "RETURN",
-          "const": "RETURN",
-          "type": "string"
-        }
-      },
-      "required": [
-        "values"
-      ]
+      ],
+      "additionalProperties": false
     },
     "TryBranch": {
       "title": "TryBranch",
@@ -170,8 +216,8 @@
           "title": "Pattern Type",
           "type": "string"
         },
-        "variable": {
-          "title": "Variable",
+        "assign": {
+          "title": "Assign",
           "type": "string"
         },
         "body": {
@@ -195,7 +241,7 @@
                 "$ref": "#/definitions/Try"
               },
               {
-                "$ref": "#/definitions/Error"
+                "$ref": "#/definitions/Var"
               },
               {
                 "$ref": "#/definitions/Break"
@@ -205,6 +251,9 @@
               },
               {
                 "$ref": "#/definitions/Return"
+              },
+              {
+                "$ref": "#/definitions/Error"
               }
             ]
           }
@@ -213,7 +262,8 @@
       "required": [
         "type",
         "body"
-      ]
+      ],
+      "additionalProperties": false
     },
     "Try": {
       "title": "Try",
@@ -243,7 +293,8 @@
       },
       "required": [
         "body"
-      ]
+      ],
+      "additionalProperties": false
     },
     "IfBranch": {
       "title": "IfBranch",
@@ -291,7 +342,7 @@
                 "$ref": "#/definitions/Try"
               },
               {
-                "$ref": "#/definitions/Error"
+                "$ref": "#/definitions/Var"
               },
               {
                 "$ref": "#/definitions/Break"
@@ -301,6 +352,9 @@
               },
               {
                 "$ref": "#/definitions/Return"
+              },
+              {
+                "$ref": "#/definitions/Error"
               }
             ]
           }
@@ -309,7 +363,8 @@
       "required": [
         "type",
         "body"
-      ]
+      ],
+      "additionalProperties": false
     },
     "If": {
       "title": "If",
@@ -339,7 +394,8 @@
       },
       "required": [
         "body"
-      ]
+      ],
+      "additionalProperties": false
     },
     "While": {
       "title": "While",
@@ -390,7 +446,7 @@
                 "$ref": "#/definitions/Try"
               },
               {
-                "$ref": "#/definitions/Error"
+                "$ref": "#/definitions/Var"
               },
               {
                 "$ref": "#/definitions/Break"
@@ -400,6 +456,9 @@
               },
               {
                 "$ref": "#/definitions/Return"
+              },
+              {
+                "$ref": "#/definitions/Error"
               }
             ]
           }
@@ -413,7 +472,8 @@
       },
       "required": [
         "body"
-      ]
+      ],
+      "additionalProperties": false
     },
     "For": {
       "title": "For",
@@ -427,8 +487,8 @@
           "title": "Error",
           "type": "string"
         },
-        "variables": {
-          "title": "Variables",
+        "assign": {
+          "title": "Assign",
           "type": "array",
           "items": {
             "type": "string"
@@ -478,7 +538,7 @@
                 "$ref": "#/definitions/Try"
               },
               {
-                "$ref": "#/definitions/Error"
+                "$ref": "#/definitions/Var"
               },
               {
                 "$ref": "#/definitions/Break"
@@ -488,6 +548,9 @@
               },
               {
                 "$ref": "#/definitions/Return"
+              },
+              {
+                "$ref": "#/definitions/Error"
               }
             ]
           }
@@ -500,11 +563,12 @@
         }
       },
       "required": [
-        "variables",
+        "assign",
         "flavor",
         "values",
         "body"
-      ]
+      ],
+      "additionalProperties": false
     },
     "TestCase": {
       "title": "TestCase",
@@ -568,6 +632,9 @@
                 "$ref": "#/definitions/Try"
               },
               {
+                "$ref": "#/definitions/Var"
+              },
+              {
                 "$ref": "#/definitions/Error"
               }
             ]
@@ -577,7 +644,8 @@
       "required": [
         "name",
         "body"
-      ]
+      ],
+      "additionalProperties": false
     },
     "Import": {
       "title": "Import",
@@ -615,7 +683,8 @@
       "required": [
         "type",
         "name"
-      ]
+      ],
+      "additionalProperties": false
     },
     "Variable": {
       "title": "Variable",
@@ -644,7 +713,8 @@
       "required": [
         "name",
         "value"
-      ]
+      ],
+      "additionalProperties": false
     },
     "UserKeyword": {
       "title": "UserKeyword",
@@ -691,6 +761,12 @@
           "title": "Error",
           "type": "string"
         },
+        "setup": {
+          "$ref": "#/definitions/Keyword"
+        },
+        "teardown": {
+          "$ref": "#/definitions/Keyword"
+        },
         "body": {
           "title": "Body",
           "type": "array",
@@ -712,10 +788,13 @@
                 "$ref": "#/definitions/Try"
               },
               {
-                "$ref": "#/definitions/Error"
+                "$ref": "#/definitions/Return"
               },
               {
-                "$ref": "#/definitions/Return"
+                "$ref": "#/definitions/Var"
+              },
+              {
+                "$ref": "#/definitions/Error"
               }
             ]
           }
@@ -724,7 +803,8 @@
       "required": [
         "name",
         "body"
-      ]
+      ],
+      "additionalProperties": false
     },
     "Resource": {
       "title": "Resource",
@@ -760,7 +840,8 @@
             "$ref": "#/definitions/UserKeyword"
           }
         }
-      }
+      },
+      "additionalProperties": false
     },
     "TestSuite": {
       "title": "TestSuite",

@@ -1,20 +1,17 @@
-no_args_vars = {
-    'dyn_no_args_get_var': 'Dyn var got with no args from get_variables',
-    'dyn_no_args_get_var_2': 2,
-    'LIST__dyn_no_args_get_var_list': ['one', 2]
-}
-one_arg_vars = {
-    'dyn_one_arg_get_var': 'Dyn var got with one arg from get_variables',
-    'dyn_one_arg_get_var_False': False,
-    'LIST__dyn_one_arg_get_var_list': ['one', False, no_args_vars]
-}
+NOT_VARIABLE = True
 
 
-def get_variables(*args):
-    if len(args) == 0:
-        return no_args_vars
-    if len(args) == 1:
-        return one_arg_vars
-    if len(args) == 2:
-        return None   # this is invalid
-    raise Exception('Invalid arguments for get_variables')
+def get_variables(a, b=None, c=None, d=None):
+    if b is None:
+        return {'dyn_one_arg': 'Dynamic variable got with one argument',
+                'dyn_one_arg_1': 1,
+                'LIST__dyn_one_arg_list': ['one', 1],
+                'args': [a, b, c, d]}
+    if c is None:
+        return {'dyn_two_args': 'Dynamic variable got with two arguments',
+                'dyn_two_args_False': False,
+                'LIST__dyn_two_args_list': ['two', 2],
+                'args': [a, b, c, d]}
+    if d is None:
+        return None
+    raise Exception('Ooops!')

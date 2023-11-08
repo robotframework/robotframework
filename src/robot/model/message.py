@@ -13,10 +13,16 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import html_escape
+from datetime import datetime
+from typing import Literal
+
+from robot.utils import html_escape, setter
 
 from .body import BodyItem
 from .itemlist import ItemList
+
+
+MessageLevel = Literal['TRACE', 'DEBUG', 'INFO', 'WARN', 'ERROR', 'FAIL', 'SKIP']
 
 
 class Message(BodyItem):
@@ -27,21 +33,24 @@ class Message(BodyItem):
     """
     type = BodyItem.MESSAGE
     repr_args = ('message', 'level')
-    __slots__ = ['message', 'level', 'html', 'timestamp']
+    __slots__ = ['message', 'level', 'html', '_timestamp']
 
-    def __init__(self, message='', level='INFO', html=False, timestamp=None, parent=None):
-        #: The message content as a string.
+    def __init__(self, message: str = '',
+                 level: MessageLevel = 'INFO',
+                 html: bool = False,
+                 timestamp: 'datetime|str|None' = None,
+                 parent: 'BodyItem|None' = None):
         self.message = message
-        #: Severity of the message. Either ``TRACE``, ``DEBUG``, ``INFO``,
-        #: ``WARN``, ``ERROR``, ``FAIL`` or ``SKIP`. The last two are only used
-        #: with keyword failure messages.
         self.level = level
-        #: ``True`` if the content is in HTML, ``False`` otherwise.
         self.html = html
-        #: Timestamp in format ``%Y%m%d %H:%M:%S.%f``.
         self.timestamp = timestamp
-        #: The object this message was triggered by.
         self.parent = parent
+
+    @setter
+    def timestamp(self, timestamp: 'datetime|str|None') -> 'datetime|None':
+        if isinstance(timestamp, str):
+            return datetime.fromisoformat(timestamp)
+        return timestamp
 
     @property
     def html_message(self):

@@ -1,13 +1,13 @@
-*** Setting ***
+*** Settings ***
 Suite Setup       Set And Remove Tags
 Force Tags        force-remove-please    force
 Default Tags      default-remove-also    default
 Library           Collections
 
-*** Variable ***
+*** Variables ***
 @{SUITE_TAGS}     default    force    force-init    set    set-init
 
-*** Test Case ***
+*** Test Cases ***
 Set And Remove Tags In Suite Level
     Should Be Equal    ${TEST_TAGS}    ${SUITE_TAGS}
 
@@ -62,7 +62,7 @@ Set And Remove Tags In A User Keyword
     Set And Remove Tags In UK
     Should Be True    ${TEST_TAGS} == ['tc','uk','uk2']
 
-*** Keyword ***
+*** Keywords ***
 Set And Remove Tags
     Set Tags    set    set-REMOVE-this    take this out too
     Remove Tags    non-existing    *-remove-*    Take this out TOO

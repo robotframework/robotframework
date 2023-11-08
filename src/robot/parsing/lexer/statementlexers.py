@@ -14,7 +14,6 @@
 #  limitations under the License.
 
 from abc import ABC, abstractmethod
-from typing import List
 
 from robot.errors import DataError
 from robot.utils import normalize_whitespace
@@ -58,14 +57,20 @@ class StatementLexer(Lexer, ABC):
     def input(self, statement: StatementTokens):
         self.statement = statement
 
+    @abstractmethod
     def lex(self):
         raise NotImplementedError
 
     def _lex_options(self, *names: str, end_index: 'int|None' = None):
+        seen = set()
         for token in reversed(self.statement[:end_index]):
-            if not token.value.startswith(names):
-                break
-            token.type = Token.OPTION
+            if '=' in token.value:
+                name = token.value.split('=')[0]
+                if name in names and name not in seen:
+                    token.type = Token.OPTION
+                    seen.add(name)
+                    continue
+            break
 
 
 class SingleType(StatementLexer, ABC):
@@ -181,6 +186,11 @@ class VariableLexer(TypeAndArguments):
     ctx: FileContext
     token_type = Token.VARIABLE
 
+    def lex(self):
+        super().lex()
+        if self.statement[0].value[:1] == '$':
+            self._lex_options('separator')
+
 
 class KeywordCallLexer(StatementLexer):
     ctx: 'TestCaseContext|KeywordContext'
@@ -200,7 +210,8 @@ class KeywordCallLexer(StatementLexer):
         for token in self.statement:
             if keyword_seen:
                 token.type = Token.ARGUMENT
-            elif is_assign(token.value, allow_assign_mark=True, allow_items=True):
+            elif is_assign(token.value, allow_assign_mark=True, allow_nested=True,
+                           allow_items=True):
                 token.type = Token.ASSIGN
             else:
                 token.type = Token.KEYWORD
@@ -225,9 +236,9 @@ class ForHeaderLexer(StatementLexer):
             else:
                 token.type = Token.VARIABLE
         if separator == 'IN ENUMERATE':
-            self._lex_options('start=')
+            self._lex_options('start')
         elif separator == 'IN ZIP':
-            self._lex_options('mode=', 'fill=')
+            self._lex_options('mode', 'fill')
 
 
 class IfHeaderLexer(TypeAndArguments):
@@ -244,7 +255,8 @@ class InlineIfHeaderLexer(StatementLexer):
         for token in statement:
             if token.value == 'IF':
                 return True
-            if not is_assign(token.value, allow_assign_mark=True, allow_items=True):
+            if not is_assign(token.value, allow_assign_mark=True, allow_nested=True,
+                             allow_items=True):
                 return False
         return False
 
@@ -298,7 +310,7 @@ class ExceptHeaderLexer(StatementLexer):
                 token.type = Token.VARIABLE
             else:
                 token.type = Token.ARGUMENT
-        self._lex_options('type=', end_index=as_index)
+        self._lex_options('type', end_index=as_index)
 
 
 class FinallyHeaderLexer(TypeAndArguments):
@@ -318,7 +330,7 @@ class WhileHeaderLexer(StatementLexer):
         self.statement[0].type = Token.WHILE
         for token in self.statement[1:]:
             token.type = Token.ARGUMENT
-        self._lex_options('limit=', 'on_limit=', 'on_limit_message=')
+        self._lex_options('limit', 'on_limit', 'on_limit_message')
 
 
 class EndLexer(TypeAndArguments):
@@ -326,6 +338,23 @@ class EndLexer(TypeAndArguments):
 
     def handles(self, statement: StatementTokens) -> bool:
         return statement[0].value == 'END'
+
+
+class VarLexer(StatementLexer):
+    token_type = Token.VAR
+
+    def handles(self, statement: StatementTokens) -> bool:
+        return statement[0].value == 'VAR'
+
+    def lex(self):
+        self.statement[0].type = Token.VAR
+        if len(self.statement) > 1:
+            name, *values = self.statement[1:]
+            name.type = Token.VARIABLE
+            for value in values:
+                value.type = Token.ARGUMENT
+            options = ['scope', 'separator'] if name.value[0] == '$' else ['scope']
+            self._lex_options(*options)
 
 
 class ReturnLexer(TypeAndArguments):

@@ -15,13 +15,14 @@
 
 import sys
 from enum import Enum
-from typing import Union, Tuple
+from typing import Any
 
-from robot.utils import has_args, is_union, safe_str, setter, type_repr
+from robot.utils import NOT_SET, safe_str, setter
 
 from .argumentconverter import ArgumentConverter
 from .argumentmapper import ArgumentMapper
 from .argumentresolver import ArgumentResolver
+from .typeinfo import TypeInfo
 from .typevalidator import TypeValidator
 
 
@@ -29,24 +30,30 @@ class ArgumentSpec:
 
     def __init__(self, name=None, type='Keyword', positional_only=None,
                  positional_or_named=None, var_positional=None, named_only=None,
-                 var_named=None, defaults=None, types=None):
+                 var_named=None, embedded=None, defaults=None, types=None):
         self.name = name
         self.type = type
+        # FIXME: Use tuples, not lists. Consider using __slots__.
         self.positional_only = positional_only or []
         self.positional_or_named = positional_or_named or []
         self.var_positional = var_positional
         self.named_only = named_only or []
         self.var_named = var_named
+        self.embedded = embedded or ()
         self.defaults = defaults or {}
         self.types = types
 
     @setter
-    def types(self, types):
+    def types(self, types) -> 'dict[str, TypeInfo]':
         return TypeValidator(self).validate(types)
 
     @property
     def positional(self):
         return self.positional_only + self.positional_or_named
+
+    @property
+    def named(self):
+        return self.named_only + self.positional_or_named
 
     @property
     def minargs(self):
@@ -84,28 +91,27 @@ class ArgumentSpec:
         return mapper.map(positional, named, replace_defaults)
 
     def __iter__(self):
-        notset = ArgInfo.NOTSET
         get_type = (self.types or {}).get
         get_default = self.defaults.get
         for arg in self.positional_only:
             yield ArgInfo(ArgInfo.POSITIONAL_ONLY, arg,
-                          get_type(arg, notset), get_default(arg, notset))
+                          get_type(arg), get_default(arg, NOT_SET))
         if self.positional_only:
             yield ArgInfo(ArgInfo.POSITIONAL_ONLY_MARKER)
         for arg in self.positional_or_named:
             yield ArgInfo(ArgInfo.POSITIONAL_OR_NAMED, arg,
-                          get_type(arg, notset), get_default(arg, notset))
+                          get_type(arg), get_default(arg, NOT_SET))
         if self.var_positional:
             yield ArgInfo(ArgInfo.VAR_POSITIONAL, self.var_positional,
-                          get_type(self.var_positional, notset))
+                          get_type(self.var_positional))
         elif self.named_only:
             yield ArgInfo(ArgInfo.NAMED_ONLY_MARKER)
         for arg in self.named_only:
             yield ArgInfo(ArgInfo.NAMED_ONLY, arg,
-                          get_type(arg, notset), get_default(arg, notset))
+                          get_type(arg), get_default(arg, NOT_SET))
         if self.var_named:
             yield ArgInfo(ArgInfo.VAR_NAMED, self.var_named,
-                          get_type(self.var_named, notset))
+                          get_type(self.var_named))
 
     def __bool__(self):
         return any([self.positional_only, self.positional_or_named, self.var_positional,
@@ -117,7 +123,6 @@ class ArgumentSpec:
 
 class ArgInfo:
     """Contains argument information. Only used by Libdoc."""
-    NOTSET = object()
     POSITIONAL_ONLY = 'POSITIONAL_ONLY'
     POSITIONAL_ONLY_MARKER = 'POSITIONAL_ONLY_MARKER'
     POSITIONAL_OR_NAMED = 'POSITIONAL_OR_NAMED'
@@ -126,10 +131,13 @@ class ArgInfo:
     NAMED_ONLY = 'NAMED_ONLY'
     VAR_NAMED = 'VAR_NAMED'
 
-    def __init__(self, kind, name='', type=NOTSET, default=NOTSET):
+    def __init__(self, kind: str,
+                 name: str = '',
+                 type: 'TypeInfo|None' = None,
+                 default: Any = NOT_SET):
         self.kind = kind
         self.name = name
-        self.type = TypeInfo.from_type(type)
+        self.type = type or TypeInfo()
         self.default = default
 
     @property
@@ -137,21 +145,12 @@ class ArgInfo:
         if self.kind in (self.POSITIONAL_ONLY,
                          self.POSITIONAL_OR_NAMED,
                          self.NAMED_ONLY):
-            return self.default is self.NOTSET
+            return self.default is NOT_SET
         return False
 
     @property
-    def types_reprs(self):
-        """Deprecated. Use :attr:`type` instead."""
-        if not self.type:
-            return []
-        if self.type.is_union:
-            return [str(t) for t in self.type.nested]
-        return [str(self.type)]
-
-    @property
     def default_repr(self):
-        if self.default is self.NOTSET:
+        if self.default is NOT_SET:
             return None
         if isinstance(self.default, Enum):
             return self.default.name
@@ -172,71 +171,6 @@ class ArgInfo:
             default_sep = ' = '
         else:
             default_sep = '='
-        if self.default is not self.NOTSET:
+        if self.default is not NOT_SET:
             ret = f'{ret}{default_sep}{self.default_repr}'
         return ret
-
-
-Type = Union[type, str, tuple, type(ArgInfo.NOTSET)]
-
-
-class TypeInfo:
-    """Represents argument type. Only used by Libdoc.
-
-    With unions and parametrized types, :attr:`nested` contains nested types.
-    """
-    NOTSET = ArgInfo.NOTSET
-
-    def __init__(self, type: Type = NOTSET, nested: Tuple['TypeInfo'] = ()):
-        self.type = type
-        self.nested = nested
-
-    @property
-    def name(self) -> str:
-        if isinstance(self.type, str):
-            return self.type
-        return type_repr(self.type, nested=False)
-
-    @property
-    def is_union(self) -> bool:
-        if isinstance(self.type, str):
-            return self.type == 'Union'
-        return is_union(self.type, allow_tuple=True)
-
-    @classmethod
-    def from_type(cls, type: Type) -> 'TypeInfo':
-        if type is cls.NOTSET:
-            return cls()
-        if isinstance(type, dict):
-            return cls.from_dict(type)
-        if isinstance(type, (tuple, list)):
-            if not type:
-                return cls()
-            if len(type) == 1:
-                return cls(type[0])
-            nested = tuple(cls.from_type(t) for t in type)
-            return cls('Union', nested)
-        if has_args(type):
-            nested = tuple(cls.from_type(t) for t in type.__args__)
-            return cls(type, nested)
-        return cls(type)
-
-    @classmethod
-    def from_dict(cls, data: dict) -> 'TypeInfo':
-        if not data:
-            return cls()
-        nested = tuple(cls.from_dict(n) for n in data['nested'])
-        return cls(data['name'], nested)
-
-    def __str__(self):
-        if self.is_union:
-            return ' | '.join(str(n) for n in self.nested)
-        if isinstance(self.type, str):
-            if self.nested:
-                nested = ', '.join(str(n) for n in self.nested)
-                return f'{self.name}[{nested}]'
-            return self.name
-        return type_repr(self.type)
-
-    def __bool__(self):
-        return self.type is not self.NOTSET

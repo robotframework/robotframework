@@ -27,6 +27,9 @@ On limit fail with continuable failure
 Invalid on_limit
     Check Test Case    ${TESTNAME}
 
+Invalid on_limit from variable
+    Check Test Case    ${TESTNAME}
+
 On limit without limit defined
     Check Test Case    ${TESTNAME}
 
@@ -55,7 +58,4 @@ On limit message before limit
     Check Test Case    ${TESTNAME}
 
 On limit message with invalid variable
-    Check Test Case    ${TESTNAME}
-
-Wrong WHILE arguments
     Check Test Case    ${TESTNAME}

@@ -14,7 +14,7 @@
 #  limitations under the License.
 
 from robot.running import TypeInfo
-from robot.utils import XmlWriter
+from robot.utils import NOT_SET, XmlWriter
 
 from .output import get_generation_time
 
@@ -26,9 +26,6 @@ class LibdocXmlWriter:
         self._write_start(libdoc, writer)
         self._write_keywords('inits', 'init', libdoc.inits, libdoc.source, writer)
         self._write_keywords('keywords', 'kw', libdoc.keywords, libdoc.source, writer)
-        # Write deprecated '<datatypes>' element.
-        self._write_data_types(libdoc.type_docs, writer)
-        # Write new '<types>' element.
         self._write_type_docs(libdoc.type_docs, writer)
         self._write_end(writer)
 
@@ -38,7 +35,7 @@ class LibdocXmlWriter:
                  'format': libdoc.doc_format,
                  'scope': libdoc.scope,
                  'generated': get_generation_time(),
-                 'specversion': '5'}
+                 'specversion': '6'}
         self._add_source_info(attrs, libdoc)
         writer.start('keywordspec', attrs)
         writer.element('version', libdoc.version)
@@ -58,7 +55,7 @@ class LibdocXmlWriter:
             writer.start(kw_type, attrs)
             self._write_arguments(kw, writer)
             writer.element('doc', kw.doc)
-            writer.element('shortdoc', kw.shortdoc)
+            writer.element('shortdoc', kw.short_doc)
             if kw_type == 'kw' and kw.tags:
                 self._write_tags(kw.tags, writer)
             writer.end(kw_type)
@@ -80,24 +77,24 @@ class LibdocXmlWriter:
                 writer.element('name', arg.name)
             if arg.type:
                 self._write_type_info(arg.type, kw.type_docs[arg.name], writer)
-            if arg.default is not arg.NOTSET:
+            if arg.default is not NOT_SET:
                 writer.element('default', arg.default_repr)
             writer.end('arg')
         writer.end('arguments')
 
-    def _write_type_info(self, type_info: TypeInfo, type_docs: dict, writer, top=True):
+    def _write_type_info(self, type_info: TypeInfo, type_docs: dict, writer):
         attrs = {'name': type_info.name}
         if type_info.is_union:
             attrs['union'] = 'true'
         if type_info.name in type_docs:
             attrs['typedoc'] = type_docs[type_info.name]
-        # Writing content, and omitting newlines, is backwards compatibility with
-        # specs created using RF < 6.1. TODO: Remove in RF 7.
-        writer.start('type', attrs, newline=False)
-        writer.content(str(type_info))
-        for nested in type_info.nested:
-            self._write_type_info(nested, type_docs, writer, top=False)
-        writer.end('type', newline=top)
+        if type_info.nested:
+            writer.start('type', attrs)
+            for nested in type_info.nested:
+                self._write_type_info(nested, type_docs, writer)
+            writer.end('type')
+        else:
+            writer.element('type', attrs=attrs)
 
     def _get_start_attrs(self, kw, lib_source):
         attrs = {'name': kw.name}
@@ -107,29 +104,6 @@ class LibdocXmlWriter:
             attrs['deprecated'] = 'true'
         self._add_source_info(attrs, kw, lib_source)
         return attrs
-
-    # Write legacy 'datatypes'. TODO: Remove in RF 7.
-    def _write_data_types(self, types, writer):
-        enums = sorted(t for t in types if t.type == 'Enum')
-        typed_dicts = sorted(t for t in types if t.type == 'TypedDict')
-        writer.start('datatypes')
-        if enums:
-            writer.start('enums')
-            for enum in enums:
-                writer.start('enum', {'name': enum.name})
-                writer.element('doc', enum.doc)
-                self._write_enum_members(enum, writer)
-                writer.end('enum')
-            writer.end('enums')
-        if typed_dicts:
-            writer.start('typeddicts')
-            for typ_dict in typed_dicts:
-                writer.start('typeddict', {'name': typ_dict.name})
-                writer.element('doc', typ_dict.doc)
-                self._write_typed_dict_items(typ_dict, writer)
-                writer.end('typeddict')
-            writer.end('typeddicts')
-        writer.end('datatypes')
 
     def _write_type_docs(self, type_docs, writer):
         writer.start('typedocs')

@@ -7,10 +7,11 @@ SUITE = 'id longname metadata source tests suites totaltests '
 TEST = 'id longname tags template originalname source lineno '
 KW = 'kwname libname args assign tags type lineno source status '
 KW_TYPES = {'FOR': 'variables flavor values',
-            'WHILE': 'condition limit on_limit_message',
+            'WHILE': 'condition limit on_limit on_limit_message',
             'IF': 'condition',
             'ELSE IF': 'condition',
             'EXCEPT': 'patterns pattern_type variable',
+            'VAR': 'name value scope',
             'RETURN': 'values'}
 FOR_FLAVOR_EXTRA = {'IN ENUMERATE': ' start',
                     'IN ZIP': ' mode fill'}
@@ -29,10 +30,12 @@ EXPECTED_TYPES = {'tags': [str],
                   'values': (list, dict),
                   'condition': str,
                   'limit': (str, type(None)),
+                  'on_limit': (str, type(None)),
                   'on_limit_message': (str, type(None)),
                   'patterns': (str, list),
                   'pattern_type': (str, type(None)),
-                  'variable': (str, type(None))}
+                  'variable': (str, type(None)),
+                  'value': (str, list)}
 
 
 def verify_attrs(method_name, attrs, names):
@@ -120,7 +123,8 @@ class VerifyAttributes:
         if type_ == 'FOR':
             extra += FOR_FLAVOR_EXTRA.get(attrs['flavor'], '')
         verify_attrs('START ' + type_, attrs, START + KW + extra)
-        verify_name(name, **attrs)
+        if type_ in ('KEYWORD', 'SETUP', 'TEARDOWN'):
+            verify_name(name, **attrs)
         self._keyword_stack.append(type_)
 
     def end_keyword(self, name, attrs):
@@ -132,7 +136,8 @@ class VerifyAttributes:
         if type_ == 'FOR':
             extra += FOR_FLAVOR_EXTRA.get(attrs['flavor'], '')
         verify_attrs('END ' + type_, attrs, END + KW + extra)
-        verify_name(name, **attrs)
+        if type_ in ('KEYWORD', 'SETUP', 'TEARDOWN'):
+            verify_name(name, **attrs)
 
     def close(self):
         OUTFILE.close()

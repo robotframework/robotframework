@@ -12,16 +12,16 @@ Embedded Arguments In User Keyword Name
     File Should Contain    ${OUTFILE}
     ...    name="User Peke Selects Advanced Python From Webshop"
     File Should Contain    ${OUTFILE}
-    ...    sourcename="User \${user} Selects \${item} From Webshop"
-    File Should Not Contain    ${OUTFILE}    sourcename="Log"
+    ...    source_name="User \${user} Selects \${item} From Webshop"
+    File Should Not Contain    ${OUTFILE}    source_name="Log"
 
 Complex Embedded Arguments
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].kws[0].msgs[0]}    feature-works
     Check Log Message    ${tc.kws[1].kws[0].msgs[0]}    test case-is *executed*
     Check Log Message    ${tc.kws[2].kws[0].msgs[0]}    issue-is about to be done!
-    File Should Contain    ${OUTFILE}    sourcename="\${prefix:Given|When|Then} this
-    File Should Not Contain    ${OUTFILE}    sourcename="Log"
+    File Should Contain    ${OUTFILE}    source_name="\${prefix:Given|When|Then} this
+    File Should Not Contain    ${OUTFILE}    source_name="Log"
 
 Embedded Arguments with BDD Prefixes
     ${tc} =    Check Test Case    ${TEST NAME}
@@ -31,14 +31,14 @@ Embedded Arguments with BDD Prefixes
     File Should Contain    ${OUTFILE}
     ...    name="Given user x selects y from webshop"
     File Should Contain    ${OUTFILE}
-    ...    sourcename="User \${user} Selects \${item} From Webshop"
-    File Should Not Contain    ${OUTFILE}    sourcename="Log"
+    ...    source_name="User \${user} Selects \${item} From Webshop"
+    File Should Not Contain    ${OUTFILE}    source_name="Log"
 
 Argument Namespaces with Embedded Arguments
     Check Test Case    ${TEST NAME}
     File Should Contain    ${OUTFILE}    name="My embedded warrior"
-    File Should Contain    ${OUTFILE}    sourcename="My embedded \${var}"
-    File Should Not Contain    ${OUTFILE}    sourcename="Log"
+    File Should Contain    ${OUTFILE}    source_name="My embedded \${var}"
+    File Should Not Contain    ${OUTFILE}    source_name="Log"
 
 Embedded Arguments as Variables
     ${tc} =    Check Test Case    ${TEST NAME}
@@ -47,12 +47,12 @@ Embedded Arguments as Variables
     File Should Contain    ${OUTFILE}
     ...    name="User \${42} Selects \${EMPTY} From Webshop"
     File Should Contain    ${OUTFILE}
-    ...    sourcename="User \${user} Selects \${item} From Webshop"
+    ...    source_name="User \${user} Selects \${item} From Webshop"
     File Should Contain    ${OUTFILE}
     ...    name="User \${name} Selects \${SPACE * 10} From Webshop"
     File Should Contain    ${OUTFILE}
-    ...    sourcename="User \${user} Selects \${item} From Webshop"
-    File Should Not Contain    ${OUTFILE}    sourcename="Log">
+    ...    source_name="User \${user} Selects \${item} From Webshop"
+    File Should Not Contain    ${OUTFILE}    source_name="Log">
 
 Embedded Arguments as List And Dict Variables
     ${tc} =    Check Test Case    ${TEST NAME}
@@ -90,23 +90,29 @@ Custom Regexp Matching Variables
     Check Test Case    ${TEST NAME}
 
 Non Matching Variable Is Accepted With Custom Regexp (But Not For Long)
-    Check Test Case    ${TEST NAME}
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.body[0].msgs[0]}
+    ...    Embedded argument 'x' got value 'foo' that does not match custom pattern 'bar'. The argument is still accepted, but this behavior will change in Robot Framework 8.0.    WARN
 
 Partially Matching Variable Is Accepted With Custom Regexp (But Not For Long)
-    Check Test Case    ${TEST NAME}
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.body[0].msgs[0]}
+    ...    Embedded argument 'x' got value 'ba' that does not match custom pattern 'bar'. The argument is still accepted, but this behavior will change in Robot Framework 8.0.    WARN
+    Check Log Message    ${tc.body[0].msgs[1]}
+    ...    Embedded argument 'y' got value 'zapzap' that does not match custom pattern '...'. The argument is still accepted, but this behavior will change in Robot Framework 8.0.    WARN
 
 Non String Variable Is Accepted With Custom Regexp
     Check Test Case    ${TEST NAME}
 
 Regexp Extensions Are Not Supported
     Check Test Case    ${TEST NAME}
-    Creating Keyword Failed    0    294
+    Creating Keyword Failed    0    292
     ...    Regexp extensions like \${x:(?x)re} are not supported
     ...    Regexp extensions are not allowed in embedded arguments.
 
 Invalid Custom Regexp
     Check Test Case    ${TEST NAME}
-    Creating Keyword Failed    1    297
+    Creating Keyword Failed    1    295
     ...    Invalid \${x:(} Regexp
     ...    Compiling embedded arguments regexp failed: *
 
@@ -136,19 +142,19 @@ Embedded Arguments In Resource File Used Explicitly
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Keyword Data    ${tc.kws[0]}    embedded_args_in_uk_1.peke uses resource file    \${ret}
 
-Embedded And Positional Arguments Do Not Work Together
+Keyword with only embedded arguments doesn't accept normal arguments
     Check Test Case    ${TEST NAME}
 
 Keyword with embedded args cannot be used as "normal" keyword
     Check Test Case    ${TEST NAME}
 
-Keyword with both normal and embedded arguments
-    Check Test Case    ${TEST NAME}
+Keyword with both embedded and normal arguments
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log message    ${tc.body[0].body[0].msgs[0]}    2 horses are walking
+    Check Log message    ${tc.body[1].body[0].msgs[0]}    2 horses are swimming
+    Check Log message    ${tc.body[2].body[0].msgs[0]}    3 dogs are walking
 
-Keyword with both normal, positional and embedded arguments
-    Check Test Case    ${TEST NAME}
-
-Keyword with both normal and embedded arguments with too few arguments
+Keyword with both embedded and normal arguments with too few arguments
     Check Test Case    ${TEST NAME}
 
 Keyword matching multiple keywords in test case file

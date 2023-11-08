@@ -22,6 +22,12 @@ ${INPUT FILE}     %{TEMPDIR}${/}robot-test-file.xml
     Run And Check Tests    --test *one --test Fi?st    First    Second One    Third One
     Run And Check Tests    --test [Great]Lob[sterB]estCase[!3-9]    GlobTestCase1    GlobTestCase2
 
+--test is cumulative with --include
+    Run And Check Tests    --test fifth --include t2      First    Fifth    Suite1 Second    SubSuite3 Second
+
+--exclude wins ovet --test
+    Run And Check Tests    --test fi* --exclude t1    Fifth
+
 --test not matching
     Failing Rebot
     ...    Suite 'Root' contains no tests matching name 'nonex'.
@@ -51,10 +57,11 @@ ${INPUT FILE}     %{TEMPDIR}${/}robot-test-file.xml
     Should Contain Suites    ${SUITE}    Suites
     Should Contain Suites    ${SUITE.suites[0].suites[0]}    Sub1    Sub2
 
---suite with end of long name
-    Run And Check Suites    --suite suites.subsuites    Subsuites
-    Should Contain Suites    ${SUITE}    Suites
-    Should Contain Suites    ${SUITE.suites[0].suites[0]}    Sub1    Sub2
+--suite matching end of long name is not enough anymore
+    [Documentation]    This was supported until RF 7.0.
+    Failing Rebot
+    ...    Suite 'Root' contains no tests in suite 'suites.subsuites'.
+    ...    --suite suites.subsuites    ${INPUT FILE}
 
 --suite not matching
     Failing Rebot
@@ -70,33 +77,50 @@ ${INPUT FILE}     %{TEMPDIR}${/}robot-test-file.xml
     ...    --name CustomName --suite nonex    ${INPUT FILE} ${INPUT FILE}
 
 --suite and --test together
-    Run And Check Suites and Tests    --suite tsuite1 --suite tsuite3 --test *1first --test nomatch    Tsuite1    Suite1 First
+    [Documentation]    Validate that only tests matching --test under suites matching --suite are selected.
+    Run Suites    --suite root.*.tsuite2 --suite manytests --test *first* --test nomatch --log log
+    Should Contain Suites    ${SUITE}              Many Tests    Suites
+    Should Contain Tests     ${SUITE.suites[0]}    First
+    Should Contain Tests     ${SUITE.suites[1]}    Suite2 First
+    Check Stats
 
 --suite and --test together not matching
     Failing Rebot
     ...     Suite 'Root' contains no tests matching name 'first', 'nonex' or '*one' in suites 'nonex' or 'suites'.
     ...    --suite nonex --suite suites --test first --test nonex --test *one    ${INPUT FILE}
 
+--suite with --include/--exclude
+    Run Suites    --suite tsuite[13] --include t? --exclude t2
+    Should Contain Suites    ${SUITE}              Suites
+    Should Contain Suites    ${SUITE.suites[0]}    Tsuite1    Tsuite3
+    Should Contain Tests     ${SUITE}              Suite1 First    Suite3 First
+
+--suite, --test, --include and --exclude
+    Run Suites    --suite sub* --suite "custom name *" --test *first -s nomatch -t nomatch --include sub3 --exclude t1
+    Should Contain Suites    ${SUITE}              Suites
+    Should Contain Suites    ${SUITE.suites[0]}    Custom name for 📂 'subsuites2'    Subsuites
+    Should Contain Tests     ${SUITE}              SubSuite2 First    SubSuite3 Second
+
 Elapsed Time
     [Documentation]    Test setting start, end and elapsed times correctly when filtering by tags
-    Comment    1) Rebot hand-edited output with predefined times and    check that times are read correctly. (A sanity check)
+    # 1) Rebot hand-edited output with predefined times and check that times are read correctly. (A sanity check)
     Run Rebot    ${EMPTY}    rebot${/}times.xml
-    Check Times    ${SUITE.tests[0]}    20061227 12:00:00.000    20061227 12:00:01.000    1000    # Incl-1
-    Check Times    ${SUITE.tests[1]}    20061227 12:00:01.000    20061227 12:00:03.000    2000    # Incl-12
-    Check Times    ${SUITE.tests[2]}    20061227 12:00:03.000    20061227 12:00:07.000    4000    # Incl-123
-    Check Times    ${SUITE.tests[3]}    20061227 12:00:07.000    20061227 12:00:07.001    0001    # Excl-1
-    Check Times    ${SUITE.tests[4]}    20061227 12:00:07.001    20061227 12:00:07.003    0002    # Excl-12
-    Check Times    ${SUITE.tests[5]}    20061227 12:00:07.003    20061227 12:00:07.007    0004    # Excl-123
-    Check Times    ${SUITE}    20061227 11:59:59.000    20061227 12:00:08.999    9999    # Suite
+    Times Should Be    ${SUITE.tests[0]}    2006-12-27 12:00:00.000    2006-12-27 12:00:01.000    1.000    # Incl-1
+    Times Should Be    ${SUITE.tests[1]}    2006-12-27 12:00:01.000    2006-12-27 12:00:03.000    2.000    # Incl-12
+    Times Should Be    ${SUITE.tests[2]}    2006-12-27 12:00:03.000    2006-12-27 12:00:07.000    4.000    # Incl-123
+    Times Should Be    ${SUITE.tests[3]}    2006-12-27 12:00:07.000    2006-12-27 12:00:07.001    0.001    # Excl-1
+    Times Should Be    ${SUITE.tests[4]}    2006-12-27 12:00:07.001    2006-12-27 12:00:07.003    0.002    # Excl-12
+    Times Should Be    ${SUITE.tests[5]}    2006-12-27 12:00:07.003    2006-12-27 12:00:07.007    0.004    # Excl-123
+    Times Should Be    ${SUITE}             2006-12-27 11:59:59.000    2006-12-27 12:00:08.999    9.999    # Suite
     Should Be Equal As Integers    ${SUITE.test_count}    6
-    Comment    2) Filter output created in earlier step and check    that times are set accordingly.
+    # 2) Filter output created in earlier step and check that times are set accordingly.
     Copy Previous Outfile
     Run Rebot    --test Exc* --test Incl-1    ${OUTFILE COPY}
-    Check Times    ${SUITE.tests[0]}    20061227 12:00:00.000    20061227 12:00:01.000    1000    # Incl-1
-    Check Times    ${SUITE.tests[1]}    20061227 12:00:07.000    20061227 12:00:07.001    0001    # Excl-1
-    Check Times    ${SUITE.tests[2]}    20061227 12:00:07.001    20061227 12:00:07.003    0002    # Excl-12
-    Check Times    ${SUITE.tests[3]}    20061227 12:00:07.003    20061227 12:00:07.007    0004    # Excl-123
-    Check Times    ${SUITE}    ${NONE}    ${NONE}    1007    # Suite
+    Times Should Be    ${SUITE.tests[0]}    2006-12-27 12:00:00.000    2006-12-27 12:00:01.000    1.000    # Incl-1
+    Times Should Be    ${SUITE.tests[1]}    2006-12-27 12:00:07.000    2006-12-27 12:00:07.001    0.001    # Excl-1
+    Times Should Be    ${SUITE.tests[2]}    2006-12-27 12:00:07.001    2006-12-27 12:00:07.003    0.002    # Excl-12
+    Times Should Be    ${SUITE.tests[3]}    2006-12-27 12:00:07.003    2006-12-27 12:00:07.007    0.004    # Excl-123
+    Times Should Be    ${SUITE}             ${NONE}                    ${NONE}                    1.007    # Suite
     Should Be Equal As Integers    ${SUITE.test_count}    4
 
 *** Keywords ***
@@ -106,9 +130,9 @@ Create Input File
 
 Remove Temps
     Remove Directory    ${MYOUTDIR}    recursive
-    Remove FIle    ${INPUT FILE}
+    Remove File    ${INPUT FILE}
 
-Run and check Tests
+Run and Check Tests
     [Arguments]    ${params}    @{tests}
     Run Rebot    ${params}    ${INPUT FILE}
     Stderr Should Be Empty
@@ -118,23 +142,14 @@ Run and check Tests
 
 Check Stats
     Should Be True    ${SUITE.statistics.failed} == 0
-    Should Be Equal    ${SUITE.starttime}    ${NONE}
-    Should Be Equal    ${SUITE.endtime}    ${NONE}
-    Elapsed Time Should Be Valid    ${SUITE.elapsedtime}
-    Should Be True    ${SUITE.elapsedtime} <= ${ORIGELAPSED}
+    Should Be Equal    ${SUITE.start_time}    ${NONE}
+    Should Be Equal    ${SUITE.end_time}    ${NONE}
+    Elapsed Time Should Be Valid    ${SUITE.elapsed_time}    maximum=${ORIG_ELAPSED.total_seconds()}
 
 Run and Check Suites
     [Arguments]    ${params}    @{suites}
     Run Suites    ${params}
     Should Contain Suites    ${SUITE.suites[0]}    @{suites}
-    Check Stats
-
-Run And Check Suites and Tests
-    [Arguments]    ${params}    ${subsuite}    @{tests}
-    Run Suites    ${params}
-    Should Contain Suites    ${SUITE.suites[0]}   ${subsuite}
-    Should Contain Tests    ${SUITE}    @{tests}
-    Should Be True    ${SUITE.statistics.passed} == len(@{tests})
     Check Stats
 
 Run Suites

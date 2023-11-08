@@ -1,4 +1,4 @@
-*** Test Case ***
+*** Test Cases ***
 Same Test Multiple Times
     No Operation
 

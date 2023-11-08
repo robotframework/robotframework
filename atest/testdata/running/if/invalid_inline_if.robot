@@ -100,7 +100,7 @@ Nested IF 3
     ...    ELSE               IF    True    Not run
 
 Nested FOR
-    [Documentation]    FAIL    'For' is a reserved keyword. It must be an upper case 'FOR' when used as a marker.
+    [Documentation]    FAIL    Support for the old FOR loop syntax has been removed. Replace 'FOR' with 'FOR', end the loop with 'END', and remove escaping backslashes.
     IF    True    FOR    ${x}    IN    @{stuff}
 
 Unnecessary END
@@ -139,11 +139,11 @@ Invalid number of variables in assign
     ${x}    ${y} =    IF    False    Create list    x    y     ELSE    Create list    x    y    z
 
 Invalid value for list assign
-    [Documentation]    FAIL    Cannot set variable '\@{x}': Expected list-like value, got string.
+    [Documentation]    FAIL    Setting variable '\@{x}' failed: Expected list-like value, got string.
     @{x} =    IF    True    Set variable    String is not list
 
 Invalid value for dict assign
-    [Documentation]    FAIL    Cannot set variable '\&{x}': Expected dictionary-like value, got string.
+    [Documentation]    FAIL    Setting variable '\&{x}' failed: Expected dictionary-like value, got string.
     &{x} =    IF    False    Not run    ELSE    Set variable    String is not dict either
 
 Assign when IF branch is empty

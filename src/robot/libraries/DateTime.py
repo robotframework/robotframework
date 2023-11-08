@@ -619,7 +619,7 @@ class Time:
         return secs_to_timestr(seconds, compact=True)
 
     def _convert_to_timer(self, seconds, millis=True):
-        return elapsed_time_to_string(seconds * 1000, include_millis=millis)
+        return elapsed_time_to_string(seconds, include_millis=millis, seconds=True)
 
     def _convert_to_timedelta(self, seconds, millis=True):
         return timedelta(seconds=seconds)

@@ -13,11 +13,17 @@ Nested UK
     Check Log Message    ${tc.body[0].messages[1]}    from nested kw
 
 Loops and stuff
-    ${tc}=    User keyword content should be flattened     19
+    ${tc}=    User keyword content should be flattened     10
     Check Log Message    ${tc.body[0].messages[0]}     inside for 0
-    Check Log Message    ${tc.body[0].messages[5]}     inside while 0
-    Check Log Message    ${tc.body[0].messages[15]}     inside if
-    Check Log Message    ${tc.body[0].messages[18]}     inside except
+    Check Log Message    ${tc.body[0].messages[1]}     inside for 1
+    Check Log Message    ${tc.body[0].messages[2]}     inside for 2
+    Check Log Message    ${tc.body[0].messages[3]}     inside while 0
+    Check Log Message    ${tc.body[0].messages[4]}     inside while 1
+    Check Log Message    ${tc.body[0].messages[5]}     inside while 2
+    Check Log Message    ${tc.body[0].messages[6]}     inside if
+    Check Log Message    ${tc.body[0].messages[7]}     fail inside try    FAIL
+    Check Log Message    ${tc.body[0].messages[8]}     Traceback (most recent call last):*    DEBUG    pattern=True
+    Check Log Message    ${tc.body[0].messages[9]}     inside except
 
 Recursion
     User keyword content should be flattened     8
@@ -25,11 +31,18 @@ Recursion
 Listener methods start and end keyword are called
     Stderr Should Be Empty
 
+Log levels
+    Run Tests    ${EMPTY}    running/flatten.robot
+    ${tc}=    User keyword content should be flattened    4
+    Check Log Message    ${tc.body[0].messages[0]}     INFO 1
+    Check Log Message    ${tc.body[0].messages[1]}     Log level changed from INFO to DEBUG.    DEBUG
+    Check Log Message    ${tc.body[0].messages[2]}     INFO 2
+    Check Log Message    ${tc.body[0].messages[3]}     DEBUG 2    level=DEBUG
+
 *** Keywords ***
 User keyword content should be flattened
     [Arguments]    ${expected_message_count}=0
     ${tc}=   Check Test Case    ${TESTNAME}
-    ${kw}=   set variable    ${tc.body[0]}
-    Length Should Be    ${kw.body}    ${expected_message_count}
-    Length Should Be   ${kw.messages}    ${expected_message_count}
+    Length Should Be    ${tc.body[0].body}        ${expected_message_count}
+    Length Should Be    ${tc.body[0].messages}    ${expected_message_count}
     RETURN    ${tc}

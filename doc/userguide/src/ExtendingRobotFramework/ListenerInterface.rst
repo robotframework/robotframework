@@ -255,10 +255,11 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  | * `values`: List of values being looped over                   |
    |                  |                  |   as a list or strings.                                        |
    |                  |                  | * `start`: Start configuration. Only used with `IN ENUMERATE`  |
-   |                  |                  |   loops.                                                       |
+   |                  |                  |   loops. New in RF 6.1.                                        |
    |                  |                  | * `mode`: Mode configuration. Only used with `IN ZIP` loops.   |
+   |                  |                  |   New in RF 6.1.                                               |
    |                  |                  | * `fill`: Fill value configuration. Only used with `IN ZIP`    |
-   |                  |                  |   loops.                                                       |
+   |                  |                  |   loops. New in RF 6.1.                                        |
    |                  |                  |                                                                |
    |                  |                  | Additional attributes for `ITERATION` types with `FOR` loops:  |
    |                  |                  |                                                                |
@@ -270,13 +271,14 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  | * `condition`: The looping condition.                          |
    |                  |                  | * `limit`: The maximum iteration limit.                        |
    |                  |                  | * `on_limit`: What to do if the limit is exceeded.             |
-   |                  |                  |   Valid values are `pass` and `fail`. New in RF 6.1.           |
+   |                  |                  |   Valid values are `pass` and `fail`. New in RF 7.0.           |
    |                  |                  | * `on_limit_message`: The custom error raised when the         |
    |                  |                  |   limit of the WHILE loop is reached. New in RF 6.1.           |
    |                  |                  |                                                                |
    |                  |                  | Additional attributes for `IF` and `ELSE IF` types:            |
    |                  |                  |                                                                |
    |                  |                  | * `condition`: The conditional expression being evaluated.     |
+   |                  |                  |   With `ELSE IF` new in RF 6.1.                                |
    |                  |                  |                                                                |
    |                  |                  | Additional attributes for `EXCEPT` types:                      |
    |                  |                  |                                                                |
@@ -289,9 +291,15 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  |                                                                |
    |                  |                  | * `values`: Return values from a keyword as a list or strings. |
    |                  |                  |                                                                |
-   |                  |                  | Additional attributes for control structures are new in RF 6.0.|
-   |                  |                  | `ELSE IF` `condition` as well as `FOR` loop `start`, `mode`    |
-   |                  |                  | and `fill` are new in RF 6.1.                                  |
+   |                  |                  | Additional attributes for `VAR` types:                         |
+   |                  |                  |                                                                |
+   |                  |                  | * `name`: Variable name.                                       |
+   |                  |                  | * `value`: Variable value. A string with scalar variables and  |
+   |                  |                  |   a list otherwise.                                            |
+   |                  |                  | * `scope`: Variable scope (e.g. `GLOBAL`) as a string.         |
+   |                  |                  |                                                                |
+   |                  |                  | Additional attributes for control structures are in general    |
+   |                  |                  | new in RF 6.0. `VAR` is new in RF 7.0.                         |
    +------------------+------------------+----------------------------------------------------------------+
    | end_keyword      | name, attributes | Called when a keyword ends.                                    |
    |                  |                  |                                                                |
@@ -637,7 +645,7 @@ adds a new test to each executed test suite and a new keyword to each test.
        suite.tests.create(name='New test')
 
    def start_test(test, result):
-       test.keywords.create(name='Log', args=['Keyword added by listener!'])
+       test.body.create_keyword(name='Log', args=['Keyword added by listener!'])
 
 Trying to modify execution in `end_suite` or `end_test` methods does not work,
 simply because that suite or test has already been executed. Trying to modify

@@ -1,7 +1,1 @@
-*** Setting ***
-
-*** Variable ***
-
-*** Test Case ***
-
-*** Keyword ***
+*** Test Cases ***

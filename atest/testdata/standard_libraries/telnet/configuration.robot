@@ -1,4 +1,4 @@
-*** Setting ***
+*** Settings ***
 Test Setup        Open Connection    ${HOST}
 Test Teardown     Close All Connections
 Library           Telnet    3.142    CRLF    $    False    ASCII    strict    DeBuG     window_size=95x95   terminal_emulation=NO

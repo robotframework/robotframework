@@ -21,6 +21,7 @@ import re
 import shutil
 import tempfile
 import time
+from datetime import datetime
 
 from robot.version import get_version
 from robot.api import logger
@@ -28,7 +29,7 @@ from robot.api.deco import keyword
 from robot.utils import (abspath, ConnectionCache, console_decode, del_env_var,
                          get_env_var, get_env_vars, get_time, is_truthy,
                          is_string, normpath, parse_time, plural_or_not,
-                         safe_str, secs_to_timestamp, secs_to_timestr, seq2str,
+                         safe_str, secs_to_timestr, seq2str,
                          set_env_var, timestr_to_secs, CONSOLE_ENCODING, WINDOWS)
 
 __version__ = get_version()
@@ -1297,8 +1298,8 @@ class OperatingSystem:
         if not os.path.isfile(path):
             self._error("Path '%s' is not a regular file." % path)
         os.utime(path, (mtime, mtime))
-        time.sleep(0.1)  # Give os some time to really set these times
-        tstamp = secs_to_timestamp(mtime, seps=('-', ' ', ':'))
+        time.sleep(0.1)    # Give OS some time to really set these times.
+        tstamp = datetime.fromtimestamp(mtime).isoformat(' ', timespec='seconds')
         self._link("Set modified time of '%%s' to %s." % tstamp, path)
 
     def get_file_size(self, path):

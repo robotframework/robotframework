@@ -22,7 +22,7 @@ class TestAbspathNormpath(unittest.TestCase):
 
     def test_abspath_when_cwd_is_non_ascii(self):
         orig = abspath('.')
-        nonasc = u'\xe4'
+        nonasc = 'ä'
         os.mkdir(nonasc)
         os.chdir(nonasc)
         try:
@@ -85,7 +85,7 @@ class TestAbspathNormpath(unittest.TestCase):
                   ('C:\\xxx\\..\\yyy\\..\\temp\\.', 'C:\\temp'),
                   ('c:\\Non\\Existing\\..', 'c:\\Non')]
         for x in 'ABCDEFGHIJKLMNOPQRSTUVXYZ':
-            base = '%s:\\' % x
+            base = f'{x}:\\'
             inputs.append((base, base))
             inputs.append((base.lower(), base.lower()))
             inputs.append((base[:2], base))
@@ -106,8 +106,8 @@ class TestAbspathNormpath(unittest.TestCase):
                 ('../..', '../..'),
                 ('foo', 'foo'),
                 ('foo/bar', 'foo/bar'),
-                (u'\xe4', u'\xe4'),
-                (u'\xe4/\xf6', u'\xe4/\xf6'),
+                ('ä', 'ä'),
+                ('ä/ö', 'ä/ö'),
                 ('./foo', 'foo'),
                 ('foo/.', 'foo'),
                 ('foo/..', '.'),
@@ -120,12 +120,11 @@ class TestGetLinkPath(unittest.TestCase):
     def test_basics(self):
         for base, target, expected in self._get_basic_inputs():
             assert_equal(get_link_path(target, base).replace('R:', 'r:'),
-                         expected, '%s -> %s' % (target, base))
+                         expected, f'{target} -> {base}')
 
     def test_base_is_existing_file(self):
         assert_equal(get_link_path(os.path.dirname(__file__), __file__), '.')
-        assert_equal(get_link_path(__file__, __file__),
-                     self._expected_basename(__file__))
+        assert_equal(get_link_path(__file__, __file__), os.path.basename(__file__))
 
     def test_non_existing_paths(self):
         assert_equal(get_link_path('/nonex/target', '/nonex/base'), '../target')
@@ -134,12 +133,12 @@ class TestGetLinkPath(unittest.TestCase):
                      os.path.relpath('/nonex', os.path.dirname(__file__)).replace(os.sep, '/'))
 
     def test_non_ascii_paths(self):
-        assert_equal(get_link_path(u'\xe4\xf6.txt', ''), '%C3%A4%C3%B6.txt')
-        assert_equal(get_link_path(u'\xe4/\xf6.txt', u'\xe4'), '%C3%B6.txt')
+        assert_equal(get_link_path('äö.txt', ''), '%C3%A4%C3%B6.txt')
+        assert_equal(get_link_path('ä/ö.txt', 'ä'), '%C3%B6.txt')
 
     def _get_basic_inputs(self):
         directory = os.path.dirname(__file__)
-        inputs = [(directory, __file__, self._expected_basename(__file__)),
+        inputs = [(directory, __file__, os.path.basename(__file__)),
                   (directory, directory, '.'),
                   (directory, directory + '/', '.'),
                   (directory, directory + '//', '.'),
@@ -153,9 +152,6 @@ class TestGetLinkPath(unittest.TestCase):
         platform_inputs = (self._posix_inputs() if os.sep == '/' else
                            self._windows_inputs())
         return inputs + platform_inputs
-
-    def _expected_basename(self, path):
-        return os.path.basename(path).replace('$py.class', '%24py.class')
 
     def _posix_inputs(self):
         return [('/tmp/', '/tmp/bar.txt', 'bar.txt'),

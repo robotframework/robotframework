@@ -1,9 +1,9 @@
-*Setting*	Value	Value	Value	Value
+*Settings*	Value	Value	Value	Value
 
 Resource 	tsv_resource2.tsv			
 
 
-*Variable*	Value	Value	Value	Value
+*Variables*	Value	Value	Value	Value
 ${tsv_resource_var}	TSV Resource Variable			
 
 

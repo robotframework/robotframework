@@ -39,12 +39,8 @@ class LibraryKeywordRunner:
         return self._handler.library
 
     @property
-    def libname(self):
-        return self._handler.library.name
-
-    @property
-    def longname(self):
-        return '%s.%s' % (self.library.name, self.name)
+    def full_name(self):
+        return f'{self.library.name}.{self.name}'
 
     def run(self, kw, context, run=True):
         assignment = VariableAssignment(kw.assign)
@@ -58,9 +54,9 @@ class LibraryKeywordRunner:
 
     def _get_result(self, kw, assignment):
         handler = self._handler
-        return KeywordResult(kwname=self.name,
-                             libname=handler.libname,
-                             doc=handler.shortdoc,
+        return KeywordResult(name=self.name,
+                             owner=handler.owner,
+                             doc=handler.short_doc,
                              args=kw.args,
                              assign=tuple(assignment),
                              tags=handler.tags,
@@ -129,8 +125,7 @@ class LibraryKeywordRunner:
                                'BuiltIn.Set Library Search Order',
                                'BuiltIn.Set Tags',
                                'BuiltIn.Remove Tags')
-        return (handler.libname == 'Reserved' or
-                handler.longname in keywords_to_execute)
+        return handler.full_name in keywords_to_execute
 
 
 class EmbeddedArgumentsRunner(LibraryKeywordRunner):
@@ -140,17 +135,14 @@ class EmbeddedArgumentsRunner(LibraryKeywordRunner):
         self.embedded_args = handler.embedded.match(name).groups()
 
     def _run(self, context, args):
-        if args:
-            raise DataError("Positional arguments are not allowed when using "
-                            "embedded arguments.")
-        return super()._run(context, self.embedded_args)
+        return super()._run(context, self.embedded_args + args)
 
     def _dry_run(self, context, args):
-        return super()._dry_run(context, self.embedded_args)
+        return super()._dry_run(context, self.embedded_args + args)
 
     def _get_result(self, kw, assignment):
         result = super()._get_result(kw, assignment)
-        result.sourcename = self._handler.name
+        result.source_name = self._handler.name
         return result
 
 

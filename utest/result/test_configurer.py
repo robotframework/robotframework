@@ -89,20 +89,23 @@ class TestFiltering(unittest.TestCase):
                                      include_suites='s', include_tests='t')
         assert_raises_with_msg(
             DataError,
-            "Suite 'root' contains no tests matching tag 'i', "
-            "not matching tag 'e' and matching name 't' in suite 's'.",
+            "Suite 'root' contains no tests matching name 't' "
+            "or matching tag 'i' "
+            "and not matching tag 'e' "
+            "in suite 's'.",
             self.suite.visit, configurer
         )
 
     def test_no_matching_tests_with_multiple_selectors(self):
-        configurer = SuiteConfigurer(include_tags=['i1', 'i2'],
+        configurer = SuiteConfigurer(include_tags=['i1', 'i2', 'i3'],
                                      exclude_tags=['e1', 'e2'],
                                      include_suites=['s1', 's2', 's3'],
                                      include_tests=['t1', 't2'])
         assert_raises_with_msg(
             DataError,
-            "Suite 'root' contains no tests matching tags 'i1' or 'i2', "
-            "not matching tags 'e1' or 'e2' and matching name 't1' or 't2' "
+            "Suite 'root' contains no tests matching name 't1' or 't2' "
+            "or matching tags 'i1', 'i2' or 'i3' "
+            "and not matching tags 'e1' or 'e2' "
             "in suites 's1', 's2' or 's3'.",
             self.suite.visit, configurer
         )
@@ -135,8 +138,8 @@ class TestRemoveKeywords(unittest.TestCase):
     def test_remove_passed_removes_setup_and_teardown_from_passed_suite(self):
         suite = TestSuite()
         suite.tests.create(status='PASS')
-        suite.setup.config(kwname='S', status='PASS').body.create_keyword()
-        suite.teardown.config(kwname='T', status='PASS').body.create_message(message='message')
+        suite.setup.config(name='S', status='PASS').body.create_keyword()
+        suite.teardown.config(name='T', status='PASS').body.create_message(message='message')
         self._remove_passed(suite)
         for keyword in suite.setup, suite.teardown:
             self._should_contain_no_messages_or_keywords(keyword)
@@ -173,7 +176,7 @@ class TestRemoveKeywords(unittest.TestCase):
 
     def test_remove_passed_does_not_remove_setup_and_teardown_from_failed_suite(self):
         suite = TestSuite()
-        suite.setup.config(kwname='SETUP').body.create_message(message='some')
+        suite.setup.config(name='SETUP').body.create_message(message='some')
         suite.teardown.config(type='TEARDOWN').body.create_keyword()
         suite.tests.create(status='FAIL')
         self._remove_passed(suite)
@@ -193,7 +196,7 @@ class TestRemoveKeywords(unittest.TestCase):
         loop = test.body.create_for(status='PASS')
         for i in range(100):
             loop.body.create_iteration({'${i}': i}, status='PASS')\
-                .body.create_keyword(kwname='k%d' % i, status='PASS')\
+                .body.create_keyword(name='k%d' % i, status='PASS')\
                 .body.create_message(message='something')
         return suite, loop
 
@@ -232,8 +235,8 @@ class TestRemoveKeywords(unittest.TestCase):
 
     def _suite_with_setup_and_teardown_and_test_with_keywords(self):
         suite = TestSuite()
-        suite.setup.config(kwname='S', status='PASS').body.create_message('setup message')
-        suite.teardown.config(kwname='T', status='PASS').body.create_message(message='message')
+        suite.setup.config(name='S', status='PASS').body.create_message('setup message')
+        suite.teardown.config(name='T', status='PASS').body.create_message(message='message')
         test = suite.tests.create()
         test.body.create_keyword().body.create_keyword()
         test.body.create_keyword().body.create_message('kw with message')

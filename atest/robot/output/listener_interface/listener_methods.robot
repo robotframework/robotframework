@@ -102,7 +102,11 @@ Check Listen All File
     ...    KEYWORD START: \${assign} = String.Convert To Upper Case ['Just testing...'] (line 29)
     ...    LOG MESSAGE: [INFO] \${assign} = JUST TESTING...
     ...    KEYWORD END: PASS
-    ...    RETURN START: (line 30)
+    ...    VAR START: \${expected}${SPACE*4}JUST TESTING... (line 30)
+    ...    VAR END: PASS
+    ...    KEYWORD START: BuiltIn.Should Be Equal ['\${assign}', '\${expected}'] (line 31)
+    ...    KEYWORD END: PASS
+    ...    RETURN START: (line 32)
     ...    RETURN END: PASS
     ...    SETUP END: PASS
     ...    TEST START: Pass (s1-t1, line 12) '' ['force', 'pass']
@@ -115,7 +119,11 @@ Check Listen All File
     ...    KEYWORD START: \${assign} = String.Convert To Upper Case ['Just testing...'] (line 29)
     ...    LOG MESSAGE: [INFO] \${assign} = JUST TESTING...
     ...    KEYWORD END: PASS
-    ...    RETURN START: (line 30)
+    ...    VAR START: \${expected}${SPACE*4}JUST TESTING... (line 30)
+    ...    VAR END: PASS
+    ...    KEYWORD START: BuiltIn.Should Be Equal ['\${assign}', '\${expected}'] (line 31)
+    ...    KEYWORD END: PASS
+    ...    RETURN START: (line 32)
     ...    RETURN END: PASS
     ...    KEYWORD END: PASS
     ...    TEST END: PASS
@@ -129,7 +137,11 @@ Check Listen All File
     ...    KEYWORD START: \${assign} = String.Convert To Upper Case ['Just testing...'] (line 29)
     ...    LOG MESSAGE: [INFO] \${assign} = JUST TESTING...
     ...    KEYWORD END: PASS
-    ...    RETURN START: (line 30)
+    ...    VAR START: \${expected}${SPACE*4}JUST TESTING... (line 30)
+    ...    VAR END: PASS
+    ...    KEYWORD START: BuiltIn.Should Be Equal ['\${assign}', '\${expected}'] (line 31)
+    ...    KEYWORD END: PASS
+    ...    RETURN START: (line 32)
     ...    RETURN END: PASS
     ...    KEYWORD END: PASS
     ...    KEYWORD START: BuiltIn.Fail ['Expected failure'] (line 21)

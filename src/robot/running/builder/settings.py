@@ -13,31 +13,23 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import sys
 from collections.abc import Sequence
+from typing import TypedDict
 
 from ..model import TestCase
 
 
-if sys.version_info >= (3, 8):
-    from typing import TypedDict
+class OptionalItems(TypedDict, total=False):
+    args: 'Sequence[str]'
+    lineno: int
 
 
-    class OptionalItems(TypedDict, total=False):
-        args: 'Sequence[str]'
-        lineno: int
+class FixtureDict(OptionalItems):
+    """Dictionary containing setup or teardown info.
 
-
-    class FixtureDict(OptionalItems):
-        """Dictionary containing setup or teardown info.
-
-        :attr:`args` and :attr:`lineno` are optional.
-        """
-        name: str
-
-else:
-    class FixtureDict(dict):
-        pass
+    :attr:`args` and :attr:`lineno` are optional.
+    """
+    name: str
 
 
 class TestDefaults:

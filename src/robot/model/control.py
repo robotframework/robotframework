@@ -13,15 +13,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import sys
-from typing import Any, cast, Sequence, TypeVar, TYPE_CHECKING
-if sys.version_info >= (3, 8):
-    from typing import Literal
+import warnings
+from typing import Any, cast, Literal, Sequence, TypeVar, TYPE_CHECKING
 
 from robot.utils import setter
 
 from .body import Body, BodyItem, BodyItemParent, BaseBranches
-from .keyword import Keywords
 from .modelobject import DataDict
 from .visitor import SuiteVisitor
 
@@ -31,31 +28,27 @@ if TYPE_CHECKING:
 IT = TypeVar('IT', bound='IfBranch|TryBranch')
 
 
-class Branches(BaseBranches['Keyword', 'For', 'While', 'If', 'Try', 'Return', 'Continue',
-                            'Break', 'Message', 'Error', IT]):
+class Branches(BaseBranches['Keyword', 'For', 'While', 'If', 'Try', 'Var', 'Return',
+                            'Continue', 'Break', 'Message', 'Error', IT]):
     pass
 
 
 @Body.register
 class For(BodyItem):
-    """Represents ``FOR`` loops.
-
-    :attr:`flavor` specifies the flavor, and it can be ``IN``, ``IN RANGE``,
-    ``IN ENUMERATE`` or ``IN ZIP``.
-    """
+    """Represents ``FOR`` loops."""
     type = BodyItem.FOR
     body_class = Body
-    repr_args = ('variables', 'flavor', 'values', 'start', 'mode', 'fill')
-    __slots__ = ['variables', 'flavor', 'values', 'start', 'mode', 'fill']
+    repr_args = ('assign', 'flavor', 'values', 'start', 'mode', 'fill')
+    __slots__ = ['assign', 'flavor', 'values', 'start', 'mode', 'fill']
 
-    def __init__(self, variables: Sequence[str] = (),
-                 flavor: "Literal['IN', 'IN RANGE', 'IN ENUMERATE', 'IN ZIP']" = 'IN',
+    def __init__(self, assign: Sequence[str] = (),
+                 flavor: Literal['IN', 'IN RANGE', 'IN ENUMERATE', 'IN ZIP'] = 'IN',
                  values: Sequence[str] = (),
                  start: 'str|None' = None,
                  mode: 'str|None' = None,
                  fill: 'str|None' = None,
                  parent: BodyItemParent = None):
-        self.variables = tuple(variables)
+        self.assign = tuple(assign)
         self.flavor = flavor
         self.values = tuple(values)
         self.start = start
@@ -64,37 +57,29 @@ class For(BodyItem):
         self.parent = parent
         self.body = ()
 
+    @property
+    def variables(self) -> 'tuple[str, ...]':    # TODO: Remove in RF 8.0.
+        """Deprecated since Robot Framework 7.0. Use :attr:`assign` instead."""
+        warnings.warn("'For.variables' is deprecated and will be removed in "
+                      "Robot Framework 8.0. Use 'For.assign' instead.")
+        return self.assign
+
+    @variables.setter
+    def variables(self, assign: 'tuple[str, ...]'):
+        warnings.warn("'For.variables' is deprecated and will be removed in "
+                      "Robot Framework 8.0. Use 'For.assign' instead.")
+        self.assign = assign
+
     @setter
     def body(self, body: 'Sequence[BodyItem|DataDict]') -> Body:
         return self.body_class(self, body)
 
-    @property
-    def keywords(self):
-        """Deprecated since Robot Framework 4.0. Use :attr:`body` instead."""
-        return Keywords(self, self.body)
-
-    @keywords.setter
-    def keywords(self, keywords):
-        Keywords.raise_deprecation_error()
-
     def visit(self, visitor: SuiteVisitor):
         visitor.visit_for(self)
 
-    def __str__(self):
-        parts = ['FOR', *self.variables, self.flavor, *self.values]
-        for name, value in [('start', self.start),
-                            ('mode', self.mode),
-                            ('fill', self.fill)]:
-            if value is not None:
-                parts.append(f'{name}={value}')
-        return '    '.join(parts)
-
-    def _include_in_repr(self, name: str, value: Any) -> bool:
-        return name not in ('start', 'mode', 'fill') or value is not None
-
     def to_dict(self) -> DataDict:
         data = {'type': self.type,
-                'variables': self.variables,
+                'assign': self.assign,
                 'flavor': self.flavor,
                 'values': self.values}
         for name, value in [('start', self.start),
@@ -104,6 +89,18 @@ class For(BodyItem):
                 data[name] = value
         data['body'] = self.body.to_dicts()
         return data
+
+    def __str__(self):
+        parts = ['FOR', *self.assign, self.flavor, *self.values]
+        for name, value in [('start', self.start),
+                            ('mode', self.mode),
+                            ('fill', self.fill)]:
+            if value is not None:
+                parts.append(f'{name}={value}')
+        return '    '.join(parts)
+
+    def _include_in_repr(self, name: str, value: Any) -> bool:
+        return value is not None or name in ('assign', 'flavor', 'values')
 
 
 @Body.register
@@ -133,18 +130,6 @@ class While(BodyItem):
     def visit(self, visitor: SuiteVisitor):
         visitor.visit_while(self)
 
-    def __str__(self) -> str:
-        parts = ['WHILE']
-        if self.condition is not None:
-            parts.append(self.condition)
-        if self.limit is not None:
-            parts.append(f'limit={self.limit}')
-        if self.on_limit is not None:
-            parts.append(f'limit={self.on_limit}')
-        if self.on_limit_message is not None:
-            parts.append(f'on_limit_message={self.on_limit_message}')
-        return '    '.join(parts)
-
     def _include_in_repr(self, name: str, value: Any) -> bool:
         return name == 'condition' or value is not None
 
@@ -158,6 +143,18 @@ class While(BodyItem):
                 data[name] = value
         data['body'] = self.body.to_dicts()
         return data
+
+    def __str__(self) -> str:
+        parts = ['WHILE']
+        if self.condition is not None:
+            parts.append(self.condition)
+        if self.limit is not None:
+            parts.append(f'limit={self.limit}')
+        if self.on_limit is not None:
+            parts.append(f'on_limit={self.on_limit}')
+        if self.on_limit_message is not None:
+            parts.append(f'on_limit_message={self.on_limit_message}')
+        return '    '.join(parts)
 
 
 class IfBranch(BodyItem):
@@ -187,13 +184,6 @@ class IfBranch(BodyItem):
             return self._get_id(self.parent)
         return self._get_id(self.parent.parent)
 
-    def __str__(self) -> str:
-        if self.type == self.IF:
-            return f'IF    {self.condition}'
-        if self.type == self.ELSE_IF:
-            return f'ELSE IF    {self.condition}'
-        return 'ELSE'
-
     def visit(self, visitor: SuiteVisitor):
         visitor.visit_if_branch(self)
 
@@ -203,6 +193,13 @@ class IfBranch(BodyItem):
             data['condition'] = self.condition
         data['body'] = self.body.to_dicts()
         return data
+
+    def __str__(self) -> str:
+        if self.type == self.IF:
+            return f'IF    {self.condition}'
+        if self.type == self.ELSE_IF:
+            return f'ELSE IF    {self.condition}'
+        return 'ELSE'
 
 
 @Body.register
@@ -237,22 +234,35 @@ class If(BodyItem):
 class TryBranch(BodyItem):
     """Represents individual ``TRY``, ``EXCEPT``, ``ELSE`` or ``FINALLY`` branch."""
     body_class = Body
-    repr_args = ('type', 'patterns', 'pattern_type', 'variable')
-    __slots__ = ['type', 'patterns', 'pattern_type', 'variable']
+    repr_args = ('type', 'patterns', 'pattern_type', 'assign')
+    __slots__ = ['type', 'patterns', 'pattern_type', 'assign']
 
     def __init__(self, type: str = BodyItem.TRY,
                  patterns: Sequence[str] = (),
                  pattern_type: 'str|None' = None,
-                 variable: 'str|None' = None,
+                 assign: 'str|None' = None,
                  parent: BodyItemParent = None):
-        if (patterns or pattern_type or variable) and type != BodyItem.EXCEPT:
-            raise TypeError(f"'{type}' branches do not accept patterns or variables.")
+        if (patterns or pattern_type or assign) and type != BodyItem.EXCEPT:
+            raise TypeError(f"'{type}' branches do not accept patterns or assignment.")
         self.type = type
         self.patterns = tuple(patterns)
         self.pattern_type = pattern_type
-        self.variable = variable
+        self.assign = assign
         self.parent = parent
         self.body = ()
+
+    @property
+    def variable(self) -> 'str|None':    # TODO: Remove in RF 8.0.
+        """Deprecated since Robot Framework 7.0. Use :attr:`assign` instead."""
+        warnings.warn("'TryBranch.variable' is deprecated and will be removed in "
+                      "Robot Framework 8.0. Use 'TryBranch.assign' instead.")
+        return self.assign
+
+    @variable.setter
+    def variable(self, assign: 'str|None'):
+        warnings.warn("'TryBranch.variable' is deprecated and will be removed in "
+                      "Robot Framework 8.0. Use 'TryBranch.assign' instead.")
+        self.assign = assign
 
     @setter
     def body(self, body: 'Sequence[BodyItem|DataDict]') -> Body:
@@ -267,19 +277,6 @@ class TryBranch(BodyItem):
             return self._get_id(self.parent)
         return self._get_id(self.parent.parent)
 
-    def __str__(self) -> str:
-        if self.type != BodyItem.EXCEPT:
-            return self.type
-        parts = ['EXCEPT', *self.patterns]
-        if self.pattern_type:
-            parts.append(f'type={self.pattern_type}')
-        if self.variable:
-            parts.extend(['AS', self.variable])
-        return '    '.join(parts)
-
-    def _include_in_repr(self, name: str, value: Any) -> bool:
-        return bool(value)
-
     def visit(self, visitor: SuiteVisitor):
         visitor.visit_try_branch(self)
 
@@ -289,10 +286,23 @@ class TryBranch(BodyItem):
             data['patterns'] = self.patterns
             if self.pattern_type:
                 data['pattern_type'] = self.pattern_type
-            if self.variable:
-                data['variable'] = self.variable
+            if self.assign:
+                data['assign'] = self.assign
         data['body'] = self.body.to_dicts()
         return data
+
+    def __str__(self) -> str:
+        if self.type != BodyItem.EXCEPT:
+            return self.type
+        parts = ['EXCEPT', *self.patterns]
+        if self.pattern_type:
+            parts.append(f'type={self.pattern_type}')
+        if self.assign:
+            parts.extend(['AS', self.assign])
+        return '    '.join(parts)
+
+    def _include_in_repr(self, name: str, value: Any) -> bool:
+        return bool(value)
 
 
 @Body.register
@@ -349,6 +359,49 @@ class Try(BodyItem):
 
 
 @Body.register
+class Var(BodyItem):
+    """Represents ``VAR``."""
+    type = BodyItem.VAR
+    repr_args = ('name', 'value', 'scope', 'separator')
+    __slots__ = ['name', 'value', 'scope', 'separator']
+
+    def __init__(self, name: str = '',
+                 value: 'str|Sequence[str]' = (),
+                 scope: 'str|None' = None,
+                 separator: 'str|None' = None,
+                 parent: BodyItemParent = None):
+        self.name = name
+        self.value = (value,) if isinstance(value, str) else tuple(value)
+        self.scope = scope
+        self.separator = separator
+        self.parent = parent
+
+    def visit(self, visitor: SuiteVisitor):
+        visitor.visit_var(self)
+
+    def to_dict(self) -> DataDict:
+        data = {'type': self.type,
+                'name': self.name,
+                'value': self.value}
+        if self.scope is not None:
+            data['scope'] = self.scope
+        if self.separator is not None:
+            data['separator'] = self.separator
+        return data
+
+    def __str__(self):
+        parts = ['VAR', self.name, *self.value]
+        if self.separator is not None:
+            parts.append(f'separator={self.separator}')
+        if self.scope is not None:
+            parts.append(f'scope={self.scope}')
+        return '    '.join(parts)
+
+    def _include_in_repr(self, name: str, value: Any) -> bool:
+        return value is not None or name in ('name', 'value')
+
+
+@Body.register
 class Return(BodyItem):
     """Represents ``RETURN``."""
     type = BodyItem.RETURN
@@ -364,8 +417,16 @@ class Return(BodyItem):
         visitor.visit_return(self)
 
     def to_dict(self) -> DataDict:
-        return {'type': self.type,
-                'values': self.values}
+        data = {'type': self.type}
+        if self.values:
+            data['values'] = self.values
+        return data
+
+    def __str__(self):
+        return '    '.join(['RETURN', *self.values])
+
+    def _include_in_repr(self, name: str, value: Any) -> bool:
+        return bool(value)
 
 
 @Body.register
@@ -383,6 +444,9 @@ class Continue(BodyItem):
     def to_dict(self) -> DataDict:
         return {'type': self.type}
 
+    def __str__(self):
+        return 'CONTINUE'
+
 
 @Body.register
 class Break(BodyItem):
@@ -398,6 +462,9 @@ class Break(BodyItem):
 
     def to_dict(self) -> DataDict:
         return {'type': self.type}
+
+    def __str__(self):
+        return 'BREAK'
 
 
 @Body.register
@@ -421,3 +488,6 @@ class Error(BodyItem):
     def to_dict(self) -> DataDict:
         return {'type': self.type,
                 'values': self.values}
+
+    def __str__(self):
+        return '    '.join(['ERROR', *self.values])

@@ -97,9 +97,9 @@ class LibraryDoc:
         formatter = DocFormatter(self.keywords, self.type_docs, self.doc, self.doc_format)
         self._doc = formatter.html(self.doc, intro=True)
         for item in self.inits + self.keywords:
-            # If 'shortdoc' is not set, it is generated automatically based on 'doc'
+            # If 'short_doc' is not set, it is generated automatically based on 'doc'
             # when accessed. Generate and set it to avoid HTML format affecting it.
-            item.shortdoc = item.shortdoc
+            item.short_doc = item.short_doc
             item.doc = formatter.html(item.doc)
         for type_doc in self.type_docs:
             # Standard docs are always in ROBOT format ...
@@ -113,7 +113,7 @@ class LibraryDoc:
 
     def to_dictionary(self, include_private=False, theme=None):
         data = {
-            'specversion': 2,
+            'specversion': 3,
             'name': self.name,
             'doc': self.doc,
             'version': self.version,
@@ -127,21 +127,11 @@ class LibraryDoc:
             'inits': [init.to_dictionary() for init in self.inits],
             'keywords': [kw.to_dictionary() for kw in self.keywords
                          if include_private or not kw.private],
-            # 'dataTypes' was deprecated in RF 5, 'typedoc' should be used instead.
-            'dataTypes': self._get_data_types(self.type_docs),
             'typedocs': [t.to_dictionary() for t in sorted(self.type_docs)]
         }
         if theme:
             data['theme'] = theme.lower()
         return data
-
-    def _get_data_types(self, types):
-        enums = sorted(t for t in types if t.type == 'Enum')
-        typed_dicts = sorted(t for t in types if t.type == 'TypedDict')
-        return {
-            'enums': [t.to_dictionary(legacy=True) for t in enums],
-            'typedDicts': [t.to_dictionary(legacy=True) for t in typed_dicts]
-        }
 
     def to_json(self, indent=None, include_private=True, theme=None):
         data = self.to_dictionary(include_private, theme)
@@ -151,12 +141,12 @@ class LibraryDoc:
 class KeywordDoc(Sortable):
     """Documentation for a single keyword or an initializer."""
 
-    def __init__(self, name='', args=None, doc='', shortdoc='', tags=(), private=False,
+    def __init__(self, name='', args=None, doc='', short_doc='', tags=(), private=False,
                  deprecated=False, source=None, lineno=-1, parent=None):
         self.name = name
         self.args = args or ArgumentSpec()
         self.doc = doc
-        self._shortdoc = shortdoc
+        self._short_doc = short_doc
         self.tags = Tags(tags)
         self.private = private
         self.deprecated = deprecated
@@ -167,19 +157,19 @@ class KeywordDoc(Sortable):
         self.type_docs = {arg.name: {} for arg in self.args}
 
     @property
-    def shortdoc(self):
-        return self._shortdoc or self._doc_to_shortdoc()
+    def short_doc(self):
+        return self._short_doc or self._doc_to_short_doc()
 
-    def _doc_to_shortdoc(self):
+    def _doc_to_short_doc(self):
         if self.parent and self.parent.doc_format == 'HTML':
-            doc = HtmlToText().get_shortdoc_from_html(self.doc)
+            doc = HtmlToText().get_short_doc_from_html(self.doc)
         else:
             doc = self.doc
         return ' '.join(getshortdoc(doc).splitlines())
 
-    @shortdoc.setter
-    def shortdoc(self, shortdoc):
-        self._shortdoc = shortdoc
+    @short_doc.setter
+    def short_doc(self, short_doc):
+        self._short_doc = short_doc
 
     @property
     def _sort_key(self):
@@ -190,7 +180,7 @@ class KeywordDoc(Sortable):
             'name': self.name,
             'args': [self._arg_to_dict(arg) for arg in self.args],
             'doc': self.doc,
-            'shortdoc': self.shortdoc,
+            'shortdoc': self.short_doc,
             'tags': list(self.tags),
             'source': str(self.source) if self.source else None,
             'lineno': self.lineno
@@ -206,8 +196,6 @@ class KeywordDoc(Sortable):
         return {
             'name': arg.name,
             'type': self._type_to_dict(arg.type, type_docs),
-            'types': arg.types_reprs,
-            'typedocs': type_docs,
             'defaultValue': arg.default_repr,
             'kind': arg.kind,
             'required': arg.required,

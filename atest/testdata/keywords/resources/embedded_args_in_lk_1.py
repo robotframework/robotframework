@@ -3,6 +3,7 @@ from robot.api.deco import keyword
 from robot.libraries.BuiltIn import BuiltIn
 
 
+ROBOT_AUTO_KEYWORDS = False
 should_be_equal = BuiltIn().should_be_equal
 log = logger.write
 
@@ -81,7 +82,7 @@ def literal_opening_curly_brace(curly):
     should_be_equal(curly, "{")
 
 
-@keyword(name="Literal ${Curly:\}} Brace")
+@keyword(name=r"Literal ${Curly:\}} Brace")
 def literal_closing_curly_brace(curly):
     should_be_equal(curly, "}")
 
@@ -124,9 +125,9 @@ def too_few_args_here(arg):
     pass
 
 
-@keyword(name="Optional ${nonembedded} Args Are ${okay}")
-def optional_args_are_okay(nonembedded=1, okay=2, indeed=3):
-    pass
+@keyword(name="Optional non-${embedded} Args Are ${okay}")
+def optional_args_are_okay(embedded=1, okay=2, extra=3):
+    return embedded, okay, extra
 
 
 @keyword(name="Varargs With ${embedded} Args Are ${okay}")
@@ -157,3 +158,13 @@ def totally_same_1(arg):
 @keyword('It is totally ${same}')
 def totally_same_2(arg):
     raise Exception('Not executed')
+
+
+@keyword('Number of ${animals} should be')
+def number_of_animals_should_be(animals, count, activity='walking'):
+    log(f'{count} {animals} are {activity}')
+
+
+@keyword('Conversion with embedded ${number} and normal')
+def conversion_with_embedded_and_normal(num1: int, /, num2: int):
+    assert num1 == num2 == 42

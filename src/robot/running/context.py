@@ -13,7 +13,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import sys
 import inspect
 import asyncio
 from contextlib import contextmanager
@@ -43,9 +42,6 @@ class Asynchronous:
         return inspect.iscoroutine(obj) and not self._is_loop_running()
 
     def _is_loop_running(self):
-        # ensure 3.6 compatibility
-        if sys.version_info.minor == 6:
-            return asyncio._get_running_loop() is not None
         try:
             asyncio.get_running_loop()
         except RuntimeError:
@@ -150,7 +146,7 @@ class _ExecutionContext:
     def warn_on_invalid_private_call(self, handler):
         parent = self.user_keywords[-1] if self.user_keywords else None
         if not parent or parent.source != handler.source:
-            self.warn(f"Keyword '{handler.longname}' is private and should only "
+            self.warn(f"Keyword '{handler.full_name}' is private and should only "
                       f"be called by keywords in the same file.")
 
     @contextmanager
@@ -184,24 +180,24 @@ class _ExecutionContext:
 
     @property
     def allow_loop_control(self):
-        for step in reversed(self.steps):
+        for _, step in reversed(self.steps):
             if step.type == 'ITERATION':
                 return True
-            if step.type == 'KEYWORD' and step.libname != 'BuiltIn':
+            if step.type == 'KEYWORD' and step.owner != 'BuiltIn':
                 return False
         return False
 
-    def end_suite(self, suite):
+    def end_suite(self, data, result):
         for name in ['${PREV_TEST_NAME}',
                      '${PREV_TEST_STATUS}',
                      '${PREV_TEST_MESSAGE}']:
             self.variables.set_global(name, self.variables[name])
-        self.output.end_suite(suite)
-        self.namespace.end_suite(suite)
+        self.output.end_suite(data, result)
+        self.namespace.end_suite(data)
         EXECUTION_CONTEXTS.end_suite()
 
     def set_suite_variables(self, suite):
-        self.variables['${SUITE_NAME}'] = suite.longname
+        self.variables['${SUITE_NAME}'] = suite.full_name
         self.variables['${SUITE_SOURCE}'] = str(suite.source or '')
         self.variables['${SUITE_DOCUMENTATION}'] = suite.doc
         self.variables['${SUITE_METADATA}'] = suite.metadata.copy()
@@ -210,13 +206,14 @@ class _ExecutionContext:
         self.variables['${SUITE_STATUS}'] = status
         self.variables['${SUITE_MESSAGE}'] = message
 
-    def start_test(self, test):
-        self.test = test
-        self._add_timeout(test.timeout)
+    def start_test(self, data, result):
+        self.test = result
+        self._add_timeout(result.timeout)
         self.namespace.start_test()
-        self.variables.set_test('${TEST_NAME}', test.name)
-        self.variables.set_test('${TEST_DOCUMENTATION}', test.doc)
-        self.variables.set_test('@{TEST_TAGS}', list(test.tags))
+        self.variables.set_test('${TEST_NAME}', result.name)
+        self.variables.set_test('${TEST_DOCUMENTATION}', result.doc)
+        self.variables.set_test('@{TEST_TAGS}', list(result.tags))
+        self.output.start_test(data, result)
 
     def _add_timeout(self, timeout):
         if timeout:
@@ -236,19 +233,77 @@ class _ExecutionContext:
         self.variables.set_suite('${PREV_TEST_MESSAGE}', test.message)
         self.timeout_occurred = False
 
-    def start_keyword(self, keyword):
-        self.steps.append(keyword)
+    def start_body_item(self, data, result):
+        self.steps.append((data, result))
         if len(self.steps) > self._started_keywords_threshold:
             raise DataError('Maximum limit of started keywords and control '
                             'structures exceeded.')
-        self.output.start_keyword(keyword)
+        output = self.output
+        if result.type in (result.ELSE, result.ITERATION):
+            method = {
+                result.IF_ELSE_ROOT: output.start_if_branch,
+                result.TRY_EXCEPT_ROOT: output.start_try_branch,
+                result.FOR: output.start_for_iteration,
+                result.WHILE: output.start_while_iteration,
+            }[result.parent.type]
+        else:
+            method = {
+                result.KEYWORD: output.start_keyword,
+                result.SETUP: output.start_keyword,
+                result.TEARDOWN: output.start_keyword,
+                result.FOR: output.start_for,
+                result.WHILE: output.start_while,
+                result.IF_ELSE_ROOT: output.start_if,
+                result.IF: output.start_if_branch,
+                result.ELSE: output.start_if_branch,
+                result.ELSE_IF: output.start_if_branch,
+                result.TRY_EXCEPT_ROOT: output.start_try,
+                result.TRY: output.start_try_branch,
+                result.EXCEPT: output.start_try_branch,
+                result.FINALLY: output.start_try_branch,
+                result.VAR: output.start_var,
+                result.BREAK: output.start_break,
+                result.CONTINUE: output.start_continue,
+                result.RETURN: output.start_return,
+                result.ERROR: output.start_error,
+            }[result.type]
+        method(data, result)
 
-    def end_keyword(self, keyword):
-        self.output.end_keyword(keyword)
+    def end_body_item(self, data, result):
+        output = self.output
+        if result.type in (result.ELSE, result.ITERATION):
+            method = {
+                result.IF_ELSE_ROOT: output.end_if_branch,
+                result.TRY_EXCEPT_ROOT: output.end_try_branch,
+                result.FOR: output.end_for_iteration,
+                result.WHILE: output.end_while_iteration,
+            }[result.parent.type]
+        else:
+            method = {
+                result.KEYWORD: output.end_keyword,
+                result.SETUP: output.end_keyword,
+                result.TEARDOWN: output.end_keyword,
+                result.FOR: output.end_for,
+                result.WHILE: output.end_while,
+                result.IF_ELSE_ROOT: output.end_if,
+                result.IF: output.end_if_branch,
+                result.ELSE: output.end_if_branch,
+                result.ELSE_IF: output.end_if_branch,
+                result.TRY_EXCEPT_ROOT: output.end_try,
+                result.TRY: output.end_try_branch,
+                result.EXCEPT: output.end_try_branch,
+                result.FINALLY: output.end_try_branch,
+                result.VAR: output.end_var,
+                result.BREAK: output.end_break,
+                result.CONTINUE: output.end_continue,
+                result.RETURN: output.end_return,
+                result.ERROR: output.end_error,
+            }[result.type]
+        method(data, result)
         self.steps.pop()
 
-    def get_runner(self, name):
-        return self.namespace.get_runner(name)
+    def get_runner(self, name, recommend_on_failure=True):
+        return self.namespace.get_runner(name, recommend_on_failure)
 
     def trace(self, message):
         self.output.trace(message)

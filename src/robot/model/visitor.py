@@ -21,7 +21,7 @@ and the :mod:`result model <robot.result.model>`, but the objects passed to
 the visitor methods are slightly different depending on the model they are
 used with. The main differences are that on the execution side keywords do
 not have child keywords nor messages, and that only the result objects have
-status related attributes like :attr:`status` and :attr:`starttime`.
+status related attributes like :attr:`status` and :attr:`start_time`.
 
 This module contains :class:`SuiteVisitor` that implements the core logic to
 visit a test suite structure, and the :mod:`~robot.result` package contains
@@ -80,19 +80,19 @@ Type hints
 
 Visitor methods have type hints to give more information about the model objects
 they receive to editors. Because visitors can be used with both running and result
-models, the types that are used are base classes from the :mod:`robot.model`
-module. Actual visitors may want to import appropriate types from
-:mod:`robot.running.model` or from :mod:`robot.result.model` modules instead.
-For example, this code that prints failed tests uses result side model objects::
+models, the types that are used as type hints are base classes from the
+:mod:`robot.model` module. Actual visitor implementations can import appropriate
+types from the :mod:`robot.running` or the :mod:`robot.result` module instead.
+For example, this visitor uses the result side model objects::
 
     from robot.api import SuiteVisitor
-    from robot.result.model import TestCase, TestSuite
+    from robot.result import TestCase, TestSuite
 
 
     class FailurePrinter(SuiteVisitor):
 
         def start_suite(self, suite: TestSuite):
-            print(f"{suite.longname}: {suite.statistics.failed} failed")
+            print(f"{suite.full_name}: {suite.statistics.failed} failed")
 
         def visit_test(self, test: TestCase):
             if test.failed:
@@ -107,7 +107,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from robot.model import (Break, BodyItem, Continue, Error, For, If, IfBranch,
                              Keyword, Message, Return, TestCase, TestSuite, Try,
-                             TryBranch, While)
+                             TryBranch, Var, While)
     from robot.result import ForIteration, WhileIteration
 
 
@@ -178,9 +178,14 @@ class SuiteVisitor:
         the body of the keyword
         """
         if self.start_keyword(keyword) is not False:
+            self._possible_setup(keyword)
             self._possible_body(keyword)
             self._possible_teardown(keyword)
             self.end_keyword(keyword)
+
+    def _possible_setup(self, item: 'BodyItem'):
+        if getattr(item, 'has_setup', False):
+            item.setup.visit(self)    # type: ignore
 
     def _possible_body(self, item: 'BodyItem'):
         if hasattr(item, 'body'):
@@ -421,6 +426,28 @@ class SuiteVisitor:
         By default, calls :meth:`end_body_item` which, by default, does nothing.
         """
         self.end_body_item(iteration)
+
+    def visit_var(self, var: 'Var'):
+        """Visits a VAR elements."""
+        if self.start_var(var) is not False:
+            self._possible_body(var)
+            self.end_var(var)
+
+    def start_var(self, var: 'Var') -> 'bool|None':
+        """Called when a VAR element starts.
+
+        By default, calls :meth:`start_body_item` which, by default, does nothing.
+
+        Can return explicit ``False`` to stop visiting.
+        """
+        return self.start_body_item(var)
+
+    def end_var(self, var: 'Var'):
+        """Called when a VAR element ends.
+
+        By default, calls :meth:`end_body_item` which, by default, does nothing.
+        """
+        self.end_body_item(var)
 
     def visit_return(self, return_: 'Return'):
         """Visits a RETURN elements."""

@@ -1,6 +1,7 @@
 import unittest
 
-from robot.model import For, If, IfBranch, TestCase, Try, TryBranch, While
+from robot.model import (Break, Continue, Error, For, If, IfBranch, Return, TestCase,
+                         Try, TryBranch, Var, While)
 from robot.utils.asserts import assert_equal
 
 
@@ -12,36 +13,33 @@ EXCEPT = Try.EXCEPT
 FINALLY = Try.FINALLY
 
 
-class TestFor(unittest.TestCase):
+class TestStringRepresentations(unittest.TestCase):
 
-    def test_string_reprs(self):
+    def test_for(self):
         for for_, exp_str, exp_repr in [
             (For(),
              'FOR    IN',
-             "For(variables=(), flavor='IN', values=())"),
+             "For(assign=(), flavor='IN', values=())"),
             (For(('${x}',), 'IN RANGE', ('10',)),
              'FOR    ${x}    IN RANGE    10',
-             "For(variables=('${x}',), flavor='IN RANGE', values=('10',))"),
+             "For(assign=('${x}',), flavor='IN RANGE', values=('10',))"),
             (For(('${x}', '${y}'), 'IN ENUMERATE', ('a', 'b')),
              'FOR    ${x}    ${y}    IN ENUMERATE    a    b',
-             "For(variables=('${x}', '${y}'), flavor='IN ENUMERATE', values=('a', 'b'))"),
+             "For(assign=('${x}', '${y}'), flavor='IN ENUMERATE', values=('a', 'b'))"),
             (For(['${x}'], 'IN ENUMERATE', ['@{stuff}'], start='1'),
              'FOR    ${x}    IN ENUMERATE    @{stuff}    start=1',
-             "For(variables=('${x}',), flavor='IN ENUMERATE', values=('@{stuff}',), start='1')"),
+             "For(assign=('${x}',), flavor='IN ENUMERATE', values=('@{stuff}',), start='1')"),
             (For(('${x}', '${y}'), 'IN ZIP', ('${xs}', '${ys}'), mode='LONGEST', fill='-'),
              'FOR    ${x}    ${y}    IN ZIP    ${xs}    ${ys}    mode=LONGEST    fill=-',
-             "For(variables=('${x}', '${y}'), flavor='IN ZIP', values=('${xs}', '${ys}'), mode='LONGEST', fill='-')"),
+             "For(assign=('${x}', '${y}'), flavor='IN ZIP', values=('${xs}', '${ys}'), mode='LONGEST', fill='-')"),
             (For(['${ü}'], 'IN', ['föö']),
              'FOR    ${ü}    IN    föö',
-             "For(variables=('${ü}',), flavor='IN', values=('föö',))")
+             "For(assign=('${ü}',), flavor='IN', values=('föö',))")
         ]:
             assert_equal(str(for_), exp_str)
             assert_equal(repr(for_), 'robot.model.' + exp_repr)
 
-
-class TestWhile(unittest.TestCase):
-
-    def test_string_reprs(self):
+    def test_while(self):
         for while_, exp_str, exp_repr in [
             (While(),
              'WHILE',
@@ -52,6 +50,86 @@ class TestWhile(unittest.TestCase):
         ]:
             assert_equal(str(while_), exp_str)
             assert_equal(repr(while_), 'robot.model.' + exp_repr)
+
+    def test_if(self):
+        for if_, exp_str, exp_repr in [
+            (IfBranch(),
+             'IF    None',
+             "IfBranch(type='IF', condition=None)"),
+            (IfBranch(condition='$x > 1'),
+             'IF    $x > 1',
+             "IfBranch(type='IF', condition='$x > 1')"),
+            (IfBranch(ELSE_IF, condition='$x > 2'),
+             'ELSE IF    $x > 2',
+             "IfBranch(type='ELSE IF', condition='$x > 2')"),
+            (IfBranch(ELSE),
+             'ELSE',
+             "IfBranch(type='ELSE', condition=None)"),
+            (IfBranch(condition='$x == "äiti"'),
+             'IF    $x == "äiti"',
+             "IfBranch(type='IF', condition='$x == \"äiti\"')"),
+        ]:
+            assert_equal(str(if_), exp_str)
+            assert_equal(repr(if_), 'robot.model.' + exp_repr)
+
+    def test_try(self):
+        for try_, exp_str, exp_repr in [
+            (TryBranch(),
+             'TRY',
+             "TryBranch(type='TRY')"),
+            (TryBranch(EXCEPT),
+             'EXCEPT',
+             "TryBranch(type='EXCEPT')"),
+            (TryBranch(EXCEPT, ('Message',)),
+             'EXCEPT    Message',
+             "TryBranch(type='EXCEPT', patterns=('Message',))"),
+            (TryBranch(EXCEPT, ('M', 'S', 'G', 'S')),
+             'EXCEPT    M    S    G    S',
+             "TryBranch(type='EXCEPT', patterns=('M', 'S', 'G', 'S'))"),
+            (TryBranch(EXCEPT, (), None, '${x}'),
+             'EXCEPT    AS    ${x}',
+             "TryBranch(type='EXCEPT', assign='${x}')"),
+            (TryBranch(EXCEPT, ('Message',), 'glob', '${x}'),
+             'EXCEPT    Message    type=glob    AS    ${x}',
+             "TryBranch(type='EXCEPT', patterns=('Message',), pattern_type='glob', assign='${x}')"),
+            (TryBranch(ELSE),
+             'ELSE',
+             "TryBranch(type='ELSE')"),
+            (TryBranch(FINALLY),
+             'FINALLY',
+             "TryBranch(type='FINALLY')"),
+        ]:
+            assert_equal(str(try_), exp_str)
+            assert_equal(repr(try_), 'robot.model.' + exp_repr)
+
+    def test_var(self):
+        for var, exp_str, exp_repr in [
+            (Var(),
+             'VAR    ',
+             "Var(name='', value=())"),
+            (Var('${name}', 'value'),
+             'VAR    ${name}    value',
+             "Var(name='${name}', value=('value',))"),
+            (Var('${name}', ['v1', 'v2'], separator=''),
+             'VAR    ${name}    v1    v2    separator=',
+             "Var(name='${name}', value=('v1', 'v2'), separator='')"),
+            (Var('@{list}', ['x', 'y'], scope='SUITE'),
+             'VAR    @{list}    x    y    scope=SUITE',
+             "Var(name='@{list}', value=('x', 'y'), scope='SUITE')")
+        ]:
+            assert_equal(str(var), exp_str)
+            assert_equal(repr(var), 'robot.model.' + exp_repr)
+
+    def test_return_continue_break(self):
+        for cls in Return, Continue, Break:
+            assert_equal(str(cls()), cls.__name__.upper())
+            assert_equal(repr(cls()), f'robot.model.{cls.__name__}()')
+        assert_equal(str(Return(['x', 'y'])), 'RETURN    x    y')
+        assert_equal(repr(Return(['x', 'y'])), f"robot.model.Return(values=('x', 'y'))")
+
+    def test_error(self):
+        assert_equal(str(Error(['x', 'y'])), 'ERROR    x    y')
+        assert_equal(repr(Error(['x', 'y'])), f"robot.model.Error(values=('x', 'y'))")
 
 
 class TestIf(unittest.TestCase):
@@ -95,27 +173,6 @@ class TestIf(unittest.TestCase):
         assert_equal(tc.body.create_if().body.create_branch().id, 't1-k3')
         assert_equal(tc.body.create_keyword().id, 't1-k4')
         assert_equal(tc.body.create_if().body.create_branch().id, 't1-k5')
-
-    def test_string_reprs(self):
-        for if_, exp_str, exp_repr in [
-            (IfBranch(),
-             'IF    None',
-             "IfBranch(type='IF', condition=None)"),
-            (IfBranch(condition='$x > 1'),
-             'IF    $x > 1',
-             "IfBranch(type='IF', condition='$x > 1')"),
-            (IfBranch(ELSE_IF, condition='$x > 2'),
-             'ELSE IF    $x > 2',
-             "IfBranch(type='ELSE IF', condition='$x > 2')"),
-            (IfBranch(ELSE),
-             'ELSE',
-             "IfBranch(type='ELSE', condition=None)"),
-            (IfBranch(condition=u'$x == "\xe4iti"'),
-             u'IF    $x == "\xe4iti"',
-             u"IfBranch(type='IF', condition=%r)" % u'$x == "\xe4iti"'),
-        ]:
-            assert_equal(str(if_), exp_str)
-            assert_equal(repr(if_), 'robot.model.' + exp_repr)
 
 
 class TestTry(unittest.TestCase):
@@ -161,36 +218,6 @@ class TestTry(unittest.TestCase):
         assert_equal(tc.body.create_try().body.create_branch().id, 't1-k3')
         assert_equal(tc.body.create_keyword().id, 't1-k4')
         assert_equal(tc.body.create_try().body.create_branch().id, 't1-k5')
-
-    def test_string_reprs(self):
-        for try_, exp_str, exp_repr in [
-            (TryBranch(),
-             'TRY',
-             "TryBranch(type='TRY')"),
-            (TryBranch(EXCEPT),
-             'EXCEPT',
-             "TryBranch(type='EXCEPT')"),
-            (TryBranch(EXCEPT, ('Message',)),
-             'EXCEPT    Message',
-             "TryBranch(type='EXCEPT', patterns=('Message',))"),
-            (TryBranch(EXCEPT, ('M', 'S', 'G', 'S')),
-             'EXCEPT    M    S    G    S',
-             "TryBranch(type='EXCEPT', patterns=('M', 'S', 'G', 'S'))"),
-            (TryBranch(EXCEPT, (), None, '${x}'),
-             'EXCEPT    AS    ${x}',
-             "TryBranch(type='EXCEPT', variable='${x}')"),
-            (TryBranch(EXCEPT, ('Message',), 'glob', '${x}'),
-             'EXCEPT    Message    type=glob    AS    ${x}',
-             "TryBranch(type='EXCEPT', patterns=('Message',), pattern_type='glob', variable='${x}')"),
-            (TryBranch(ELSE),
-             'ELSE',
-             "TryBranch(type='ELSE')"),
-            (TryBranch(FINALLY),
-             'FINALLY',
-             "TryBranch(type='FINALLY')"),
-        ]:
-            assert_equal(str(try_), exp_str)
-            assert_equal(repr(try_), 'robot.model.' + exp_repr)
 
 
 if __name__ == '__main__':

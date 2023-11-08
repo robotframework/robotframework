@@ -77,11 +77,11 @@ class TestAsserts(unittest.TestCase):
                                assert_equal, 'True', True)
 
     def test_assert_equal_with_custom_formatter(self):
-        assert_equal('hyv\xe4', 'hyv\xe4', formatter=repr)
-        assert_raises_with_msg(AE, "'hyv\xe4' != 'paha'",
-                               assert_equal, 'hyv\xe4', 'paha', formatter=repr)
+        assert_equal('hyvä', 'hyvä', formatter=repr)
+        assert_raises_with_msg(AE, "'hyvä' != 'paha'",
+                               assert_equal, 'hyvä', 'paha', formatter=repr)
         assert_raises_with_msg(AE, "'hyv\\xe4' != 'paha'",
-                               assert_equal, 'hyv\xe4', 'paha', formatter=ascii)
+                               assert_equal, 'hyvä', 'paha', formatter=ascii)
 
     def test_assert_not_equal(self):
         assert_not_equal('abc', 'ABC')
@@ -95,9 +95,9 @@ class TestAsserts(unittest.TestCase):
                   'hello', False)
 
     def test_assert_not_equal_with_custom_formatter(self):
-        assert_not_equal('hyv\xe4', 'paha', formatter=repr)
-        assert_raises_with_msg(AE, "'\xe4' == '\xe4'",
-                               assert_not_equal, '\xe4', '\xe4', formatter=repr)
+        assert_not_equal('hyvä', 'paha', formatter=repr)
+        assert_raises_with_msg(AE, "'ä' == 'ä'",
+                               assert_not_equal, 'ä', 'ä', formatter=repr)
 
     def test_fail(self):
         assert_raises(AE, fail)

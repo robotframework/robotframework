@@ -39,14 +39,14 @@ class listenerlibrary3:
 
     def log_message(self, msg):
         msg.message += ' [log_message]'
-        msg.timestamp = '20151216 15:51:20.141'
+        msg.timestamp = '2015-12-16 15:51:20.141'
 
     def foo(self):
         print("*WARN* Foo")
 
     def message(self, msg):
         msg.message += ' [message]'
-        msg.timestamp = '20151216 15:51:20.141'
+        msg.timestamp = '2015-12-16 15:51:20.141'
 
     def close(self):
         sys.__stderr__.write('CLOSING Listener library 3\n')

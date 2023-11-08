@@ -40,15 +40,11 @@ class TestIsMisc(unittest.TestCase):
 
     def test_is_union(self):
         assert is_union(Union[int, str])
-        assert is_union(Union[int, str], allow_tuple=True)
         assert not is_union((int, str))
-        assert is_union((int, str), allow_tuple=True)
         if PY_VERSION >= (3, 10):
             assert is_union(eval('int | str'))
-            assert is_union(eval('int | str'), allow_tuple=True)
         for not_union in 'string', 3, [int, str], list, List[int]:
             assert not is_union(not_union)
-            assert not is_union(not_union, allow_tuple=True)
 
 
 class TestListLike(unittest.TestCase):
@@ -106,7 +102,7 @@ class TestDictLike(unittest.TestCase):
             assert_equal(is_dict_like(thing), True, thing)
 
     def test_others(self):
-        for thing in ['', u'', 1, None, True, object(), [], (), set()]:
+        for thing in ['', b'', 1, None, True, object(), [], (), set()]:
             assert_equal(is_dict_like(thing), False, thing)
 
 
@@ -114,7 +110,6 @@ class TestTypeName(unittest.TestCase):
 
     def test_base_types(self):
         for item, exp in [('x', 'string'),
-                          (u'x', 'string'),
                           (b'x', 'bytes'),
                           (bytearray(), 'bytearray'),
                           (1, 'integer'),

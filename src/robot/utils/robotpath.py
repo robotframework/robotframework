@@ -44,6 +44,7 @@ def normpath(path, case_normalize=False):
        That includes Windows and also OSX in default configuration.
     4. Turn ``c:`` into ``c:\\`` on Windows instead of keeping it as ``c:``.
     """
+    # FIXME: Support pathlib.Path
     if not is_string(path):
         path = system_decode(path)
     path = safe_str(path)  # Handles NFC normalization on OSX

@@ -71,14 +71,6 @@ class DocumentationBuilder:
     instead.
     """
 
-    def __init__(self, library_or_resource=None):
-        """`library_or_resource` is accepted for backwards compatibility reasons.
-
-        It is not used for anything internally and passing it to the builder is
-        considered deprecated starting from RF 6.0.1.
-        """
-        pass
-
     def build(self, source):
         # Source can contain arguments separated with `::` so we cannot convert
         # it to Path and instead need to make sure it's a string. It would be

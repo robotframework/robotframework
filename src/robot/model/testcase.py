@@ -13,7 +13,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import sys
 from pathlib import Path
 from typing import Any, Generic, Sequence, Type, TYPE_CHECKING, TypeVar
 
@@ -22,7 +21,7 @@ from robot.utils import setter
 from .body import Body, BodyItem
 from .fixture import create_fixture
 from .itemlist import ItemList
-from .keyword import Keyword, Keywords
+from .keyword import Keyword
 from .modelobject import DataDict, ModelObject
 from .tags import Tags
 
@@ -35,7 +34,7 @@ TC = TypeVar('TC', bound='TestCase')
 KW = TypeVar('KW', bound='Keyword', covariant=True)
 
 
-class TestCase(ModelObject, Generic[KW] if sys.version_info >= (3, 7) else object):
+class TestCase(ModelObject, Generic[KW]):
     """Base model for a single test case.
 
     Extended by :class:`robot.running.model.TestCase` and
@@ -43,7 +42,7 @@ class TestCase(ModelObject, Generic[KW] if sys.version_info >= (3, 7) else objec
     """
     body_class = Body
     # See model.TestSuite on removing the type ignore directive
-    fixture_class: Type[KW] = Keyword # type: ignore
+    fixture_class: Type[KW] = Keyword    # type: ignore
     repr_args = ('name',)
     __slots__ = ['parent', 'name', 'doc', 'timeout', 'lineno', '_setup', '_teardown']
 
@@ -121,7 +120,7 @@ class TestCase(ModelObject, Generic[KW] if sys.version_info >= (3, 7) else objec
         return bool(self._setup)
 
     @property
-    def teardown(self) -> Keyword:
+    def teardown(self) -> KW:
         """Test teardown as a :class:`~.model.keyword.Keyword` object.
 
         See :attr:`setup` for more information.
@@ -145,19 +144,6 @@ class TestCase(ModelObject, Generic[KW] if sys.version_info >= (3, 7) else objec
         return bool(self._teardown)
 
     @property
-    def keywords(self) -> Keywords:
-        """Deprecated since Robot Framework 4.0
-
-        Use :attr:`body`, :attr:`setup` or :attr:`teardown` instead.
-        """
-        keywords = [self.setup] + list(self.body) + [self.teardown]
-        return Keywords(self, [kw for kw in keywords if kw])
-
-    @keywords.setter
-    def keywords(self, keywords):
-        Keywords.raise_deprecation_error()
-
-    @property
     def id(self) -> str:
         """Test case id in format like ``s1-t3``.
 
@@ -171,11 +157,16 @@ class TestCase(ModelObject, Generic[KW] if sys.version_info >= (3, 7) else objec
         return f'{self.parent.id}-t{index + 1}'
 
     @property
-    def longname(self) -> str:
-        """Test name prefixed with the long name of the parent suite."""
+    def full_name(self) -> str:
+        """Test name prefixed with the full name of the parent suite."""
         if not self.parent:
             return self.name
-        return f'{self.parent.longname}.{self.name}'
+        return f'{self.parent.full_name}.{self.name}'
+
+    @property
+    def longname(self) -> str:
+        """Deprecated since Robot Framework 7.0. Use :attr:`full_name` instead."""
+        return self.full_name
 
     @property
     def source(self) -> 'Path|None':

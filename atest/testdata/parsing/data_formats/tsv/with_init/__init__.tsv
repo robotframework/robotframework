@@ -1,8 +1,8 @@
-*Setting	Value	Value	Value	Value
+*Settings	Value	Value	Value	Value
 Suite Setup	Suite Setup			
 Documentation	Testing suite init file
 
-*Variable	Value	Value	Value	Value
+*Variables	Value	Value	Value	Value
 ${msg}	Running suite setup
 
 *Keywords	Action	Argument	Argument	Argument

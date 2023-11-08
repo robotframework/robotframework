@@ -27,14 +27,14 @@ This package is considered stable.
 
 from .body import BaseBody, Body, BodyItem, BaseBranches
 from .configurer import SuiteConfigurer
-from .control import Break, Continue, Error, For, If, IfBranch, Return, Try, TryBranch, While
+from .control import (Break, Continue, Error, For, If, IfBranch, Return, Try,
+                      TryBranch, Var, While)
 from .fixture import create_fixture
 from .itemlist import ItemList
-from .keyword import Keyword, Keywords
-from .message import Message, Messages
+from .keyword import Keyword
+from .message import Message, MessageLevel, Messages
 from .modelobject import DataDict, ModelObject
 from .modifier import ModelModifier
-from .namepatterns import SuiteNamePatterns, TestNamePatterns
 from .statistics import Statistics
 from .tags import Tags, TagPattern, TagPatterns
 from .testcase import TestCase, TestCases

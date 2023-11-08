@@ -1,11 +1,11 @@
-*** Setting ***
+*** Settings ***
 Documentation     Tests for set variable and set test/suite/global variable keywords
 Suite Setup       Run Tests
 ...               --variable cli_var_1:CLI1 --variable cli_var_2:CLI2 --variable cli_var_3:CLI3
 ...               standard_libraries/builtin/setting_variables
 Resource          atest_resource.robot
 
-*** Test Case ***
+*** Test Cases ***
 Set Variable
     ${tc} =    Check Test Case    ${TESTNAME}
     Check Log Message    ${tc.kws[0].msgs[0]}    \${var} = Hello
@@ -174,7 +174,7 @@ Setting scalar global variable with list value is not possible
     Check Test Case    ${TEST NAME} 1
     Check Test Case    ${TEST NAME} 2
 
-*** Keyword ***
+*** Keywords ***
 Check Suite Teardown Passed
     ${suite} =    Get Test Suite    Variables
     Should Be Equal    ${suite.teardown.status}    PASS

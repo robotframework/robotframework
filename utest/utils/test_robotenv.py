@@ -7,8 +7,8 @@ from robot.utils import get_env_var, set_env_var, del_env_var, get_env_vars
 
 TEST_VAR = 'TeST_EnV_vAR'
 TEST_VAL = 'original value'
-NON_ASCII_VAR = u'\xe4iti'
-NON_ASCII_VAL = u'is\xe4'
+NON_ASCII_VAR = 'äiti'
+NON_ASCII_VAL = 'isä'
 
 
 class TestRobotEnv(unittest.TestCase):

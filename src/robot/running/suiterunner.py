@@ -13,15 +13,16 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from datetime import datetime
+
 from robot.errors import ExecutionFailed, ExecutionStatus, DataError, PassExecution
 from robot.model import SuiteVisitor, TagPatterns
 from robot.result import TestSuite, Result
-from robot.utils import get_timestamp, is_list_like, NormalizedDict, test_or_task
+from robot.utils import is_list_like, NormalizedDict, test_or_task
 from robot.variables import VariableScopes
 
 from .bodyrunner import BodyRunner, KeywordRunner
 from .context import EXECUTION_CONTEXTS
-from .modelcombiner import ModelCombiner
 from .namespace import Namespace
 from .status import SuiteStatus, TestStatus
 from .timeouts import TestTimeout
@@ -46,7 +47,7 @@ class SuiteRunner(SuiteVisitor):
     def start_suite(self, suite):
         if suite.name in self._executed[-1] and suite.parent.source:
             self._output.warn(f"Multiple suites with name '{suite.name}' executed in "
-                              f"suite '{suite.parent.longname}'.")
+                              f"suite '{suite.parent.full_name}'.")
         self._executed[-1][suite.name] = True
         self._executed.append(NormalizedDict(ignore='_'))
         self._output.library_listeners.new_suite_scope()
@@ -54,7 +55,7 @@ class SuiteRunner(SuiteVisitor):
                            name=suite.name,
                            doc=suite.doc,
                            metadata=suite.metadata,
-                           starttime=get_timestamp(),
+                           start_time=datetime.now(),
                            rpa=self._settings.rpa)
         if not self.result:
             self.result = Result(root_suite=result, rpa=self._settings.rpa)
@@ -69,7 +70,7 @@ class SuiteRunner(SuiteVisitor):
                                          self._settings.skip_teardown_on_exit)
         ns = Namespace(self._variables, result, suite.resource, self._settings.languages)
         ns.start_suite()
-        ns.variables.set_from_variable_table(suite.resource.variables)
+        ns.variables.set_from_variable_section(suite.resource.variables)
         EXECUTION_CONTEXTS.start_suite(result, ns, self._output,
                                        self._settings.dry_run)
         self._context.set_suite_variables(result)
@@ -80,10 +81,7 @@ class SuiteRunner(SuiteVisitor):
         result.metadata = [(self._resolve_setting(n), self._resolve_setting(v))
                            for n, v in result.metadata.items()]
         self._context.set_suite_variables(result)
-        self._output.start_suite(ModelCombiner(suite, result,
-                                               tests=suite.tests,
-                                               suites=suite.suites,
-                                               test_count=suite.test_count))
+        self._output.start_suite(suite, result)
         self._output.register_error_listener(self._suite_status.error_occurred)
         self._run_setup(suite, self._suite_status, run=self._any_test_run(suite))
 
@@ -113,9 +111,9 @@ class SuiteRunner(SuiteVisitor):
                     self._suite.suite_teardown_skipped(str(failure))
                 else:
                     self._suite.suite_teardown_failed(str(failure))
-        self._suite.endtime = get_timestamp()
+        self._suite.end_time = datetime.now()
         self._suite.message = self._suite_status.message
-        self._context.end_suite(ModelCombiner(suite, self._suite))
+        self._context.end_suite(suite, self._suite)
         self._executed.pop()
         self._suite = self._suite.parent
         self._suite_status = self._suite_status.parent
@@ -128,16 +126,15 @@ class SuiteRunner(SuiteVisitor):
         if test.name in self._executed[-1]:
             self._output.warn(
                 test_or_task(f"Multiple {{test}}s with name '{test.name}' executed in "
-                             f"suite '{test.parent.longname}'.", settings.rpa))
+                             f"suite '{test.parent.full_name}'.", settings.rpa))
         self._executed[-1][test.name] = True
         result = self._suite.tests.create(self._resolve_setting(test.name),
                                           self._resolve_setting(test.doc),
                                           self._resolve_setting(test.tags),
                                           self._get_timeout(test),
                                           test.lineno,
-                                          starttime=get_timestamp())
-        self._context.start_test(result)
-        self._output.start_test(ModelCombiner(test, result))
+                                          start_time=datetime.now())
+        self._context.start_test(test, result)
         status = TestStatus(self._suite_status, result, settings.skip_on_failure,
                             settings.rpa)
         if status.exit:
@@ -187,9 +184,10 @@ class SuiteRunner(SuiteVisitor):
         if status.skip_on_failure_after_tag_changes:
             result.message = status.message or result.message
         result.status = status.status
-        result.endtime = get_timestamp()
+        result.end_time = datetime.now()
         failed_before_listeners = result.failed
-        self._output.end_test(ModelCombiner(test, result))
+        # TODO: can this be removed to context
+        self._output.end_test(test, result)
         if result.failed and not failed_before_listeners:
             status.failure_occurred()
         self._context.end_test(result)

@@ -15,13 +15,13 @@ ${INDENT} =        ${SPACE * 4}
 *** Keywords ***
 Get Etree Version
     ${et} =    Evaluate    robot.utils.ET    modules=robot
-    [Return]    ${et.VERSION}
+    RETURN    ${et.VERSION}
 
 Run With Bytes
     [Arguments]    ${kw}    ${string}    @{args}    ${encoding}=UTF-8    &{kws}
     ${bytes} =    Encode string to bytes    ${string}    ${encoding}
     ${result} =    Run Keyword    ${kw}    ${bytes}    @{args}    &{kws}
-    [Return]    ${result}
+    RETURN    ${result}
 
 Parse XML To Test Variable
     [Arguments]    ${input}    ${var}    &{config}
@@ -57,7 +57,7 @@ Run Keyword Depending On Etree Version
     ...    ${etree 1.3 keyword}
     ...    ELSE
     ...    ${etree 1.2 keyword}
-    [Return]    @{result}
+    RETURN    @{result}
 
 Test Attribute Namespace Parsing
      [Arguments]    ${elem}

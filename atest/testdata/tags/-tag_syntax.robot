@@ -1,26 +1,30 @@
 *** Settings ***
-Force Tags      -literal-with-force
-Default Tags    -literal-with-default
+Test Tags       -in-settings    tag1    tag2    tag3    ${TAG}
+Keyword Tags    -in-settings    kw1    kw2
 Resource        -tag_syntax.resource
 
 *** Variables ***
-${TAG}          -literal-with-variable
+${TAG}          tag
+${VAR}          -variable
 
 *** Test Cases ***
-Deprecation warning
-    [Tags]    -warn-with-test
-    Keyword
-    Keyword In Resource
+Remove from test
+    [Tags]    -tag2    tag4    -${tag}    --in-settings
+    Remove from keyword
+
+Remove from test using pattern
+    [Tags]    -tag[12]
+    Remove from keyword using pattern
 
 Escaped
-    [Tags]    \-literal-escaped
+    [Tags]    \-escaped
     No Operation
 
 Variable
-    [Tags]    ${TAG}
+    [Tags]    ${VAR}
     No Operation
 
 *** Keywords ***
-Keyword
-    [Tags]    -warn-with-keyword
+Remove from keyword
+    [Tags]    -kw1
     No Operation

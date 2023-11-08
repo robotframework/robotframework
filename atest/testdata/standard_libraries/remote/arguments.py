@@ -1,5 +1,6 @@
 import sys
 
+from datetime import datetime    # Needed by `eval()`.
 from xmlrpc.client import Binary
 
 from remoteserver import RemoteServer, keyword

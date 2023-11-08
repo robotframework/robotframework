@@ -46,3 +46,5 @@ With List Variables In Expressions And Values
 With List Variables Containing Escaped Values
     Check Test Case  ${TESTNAME}
 
+Lot of conditions
+    Check Test Case  ${TESTNAME}

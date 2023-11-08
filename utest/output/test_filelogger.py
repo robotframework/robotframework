@@ -1,46 +1,39 @@
-from io import StringIO
 import unittest
-import time
+from io import StringIO
 
 from robot.output.filelogger import FileLogger
-from robot.utils import robottime
 from robot.utils.asserts import assert_equal
-from robot.utils.robottime import TimestampCache
 
 
-class _FakeTimeCache(TimestampCache):
+class LoggerSub(FileLogger):
 
-    def __init__(self):
-        TimestampCache.__init__(self)
+    def _get_writer(self, path):
+        return StringIO()
 
-    def _get_epoch(self):
-        return 1613230353.123 + time.timezone
+    def message(self, msg):
+        msg.timestamp = '2023-09-08 12:16:00.123456'
+        super().message(msg)
 
 
 class TestFileLogger(unittest.TestCase):
 
     def setUp(self):
-        robottime.TIMESTAMP_CACHE = _FakeTimeCache()
-        FileLogger._get_writer = lambda *args: StringIO()
-        self.logger = FileLogger('whatever', 'INFO')
-
-    def tearDown(self):
-        robottime.TIMESTAMP_CACHE = TimestampCache()
+        self.logger = LoggerSub('whatever', 'INFO')
 
     def test_write(self):
         self.logger.write('my message', 'INFO')
-        expected = '20210213 15:32:33.123 | INFO  | my message\n'
+        expected = '2023-09-08 12:16:00.123456 | INFO  | my message\n'
         self._verify_message(expected)
         self.logger.write('my 2nd msg\nwith 2 lines', 'ERROR')
-        expected += '20210213 15:32:33.123 | ERROR | my 2nd msg\nwith 2 lines\n'
+        expected += '2023-09-08 12:16:00.123456 | ERROR | my 2nd msg\nwith 2 lines\n'
         self._verify_message(expected)
 
     def test_write_helpers(self):
         self.logger.info('my message')
-        expected = '20210213 15:32:33.123 | INFO  | my message\n'
+        expected = '2023-09-08 12:16:00.123456 | INFO  | my message\n'
         self._verify_message(expected)
         self.logger.warn('my 2nd msg\nwith 2 lines')
-        expected += '20210213 15:32:33.123 | WARN  | my 2nd msg\nwith 2 lines\n'
+        expected += '2023-09-08 12:16:00.123456 | WARN  | my 2nd msg\nwith 2 lines\n'
         self._verify_message(expected)
 
     def test_set_level(self):
@@ -48,7 +41,7 @@ class TestFileLogger(unittest.TestCase):
         self._verify_message('')
         self.logger.set_level('DEBUG')
         self.logger.write('msg', 'DEBUG')
-        self._verify_message('20210213 15:32:33.123 | DEBUG | msg\n')
+        self._verify_message('2023-09-08 12:16:00.123456 | DEBUG | msg\n')
 
     def _verify_message(self, expected):
         assert_equal(self.logger._writer.getvalue(), expected)

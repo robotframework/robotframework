@@ -65,10 +65,10 @@ Changing current element docs does not change console output, but does change ou
 Log messages and timestamps can be changed
     ${tc} =   Get test case    Pass [start suite]
     Check log message    ${tc.kws[0].kws[0].msgs[0]}    HELLO SAYS "PASS"!
-    Should be equal    ${tc.kws[0].kws[0].msgs[0].timestamp}    20151216 15:51:20.141
+    Should be equal    ${tc.kws[0].kws[0].msgs[0].timestamp}    ${datetime(2015, 12, 16, 15, 51, 20, 141000)}
 
 Syslog messages can be changed
-    Syslog Should Contain Match    20151216 15:51:20.141 | INFO \ | TESTS EXECUTION ENDED. STATISTICS:
+    Syslog Should Contain Match    2015-12-16 15:51:20.141000 | INFO \ | TESTS EXECUTION ENDED. STATISTICS:
 
 File methods and close are called
     Stderr Should Be Equal To    SEPARATOR=\n

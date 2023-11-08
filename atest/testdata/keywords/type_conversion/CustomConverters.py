@@ -88,7 +88,6 @@ class OnlyVarArg:
             raise AssertionError(f'Expected library to be instance of {ModuleType}, was {type(library)}')
 
 
-
 class Strict:
     pass
 
@@ -211,7 +210,7 @@ def invalid(a: Invalid, b: TooFewArgs, c: TooManyArgs, d: KwOnlyNotOk):
     assert (a, b, c, d) == ('a', 'b', 'c', 'd')
 
 
-def non_type_annotation(arg1: 'Hello, world!', arg2: 2 = 2):
+def non_type_annotation(arg1: 'Hello world!', arg2: 2 = 2):
     assert arg1 == arg2
 
 

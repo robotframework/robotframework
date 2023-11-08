@@ -81,49 +81,34 @@ Suite Metadata
     Should Be Equal    ${SUITE2.metadata['Other Meta']}    Another value
 
 Suite Times
-    Should Be Equal    ${SUITE3.starttime}    ${NONE}
-    Should Be Equal    ${SUITE3.endtime}    ${NONE}
-    Elapsed Time Should Be Valid    ${SUITE3.elapsedtime}
-    Should Be True    ${SUITE3.elapsedtime} == ${MILLIS1} + ${MILLIS2} + 9999
-    Timestamp Should Be Valid    ${SUITE3.suites[0].starttime}
-    Timestamp Should Be Valid    ${SUITE3.suites[0].endtime}
-    Elapsed Time Should Be Valid    ${SUITE3.suites[0].elapsedtime}
-    Should Be Equal    ${SUITE3.suites[0].elapsedtime}    ${MILLIS1}
-    Timestamp Should Be Valid    ${SUITE3.suites[1].starttime}
-    Timestamp Should Be Valid    ${SUITE3.suites[1].endtime}
-    Elapsed Time Should Be Valid    ${SUITE3.suites[1].elapsedtime}
-    Should Be Equal    ${SUITE3.suites[1].elapsedtime}    ${MILLIS2}
-    Should Be Equal    ${SUITE3.suites[2].starttime}    20061227 11:59:59.000
-    Should Be Equal    ${SUITE3.suites[2].endtime}    20061227 12:00:08.999
-    Should Be Equal    ${SUITE3.suites[2].elapsedtime}    ${9999}
+    Should Be Equal              ${SUITE3.start_time}                ${NONE}
+    Should Be Equal              ${SUITE3.end_time}                  ${NONE}
+    Elapsed Time Should Be       ${SUITE3.elapsed_time}              ${ELAPSED1} + ${ELAPSED2} + 9.999
+    Timestamp Should Be Valid    ${SUITE3.suites[0].start_time}
+    Timestamp Should Be Valid    ${SUITE3.suites[0].end_time}
+    Elapsed Time Should Be       ${SUITE3.suites[0].elapsed_time}    ${ELAPSED1}
+    Timestamp Should Be Valid    ${SUITE3.suites[1].start_time}
+    Timestamp Should Be Valid    ${SUITE3.suites[1].end_time}
+    Elapsed Time Should Be       ${SUITE3.suites[1].elapsed_time}    ${ELAPSED2}
+    Timestamp Should Be          ${SUITE3.suites[2].start_time}      2006-12-27 11:59:59
+    Timestamp Should Be          ${SUITE3.suites[2].end_time}        2006-12-27 12:00:08.999
+    Elapsed Time Should Be       ${SUITE3.suites[2].elapsed_time}    9.999
 
 Suite Times In Recombine
-    Should Be Equal    ${SUITE4.starttime}    ${NONE}
-    Should Be Equal    ${SUITE4.endtime}    ${NONE}
-    Should Be True    ${SUITE4.elapsedtime} == 9999 + ${MILLIS1} + ${MILLIS2}
-    Should Be Equal    ${SUITE4.suites[0].starttime}    20061227 11:59:59.000
-    Should Be Equal    ${SUITE4.suites[0].endtime}    20061227 12:00:08.999
-    Should Be Equal    ${SUITE4.suites[0].elapsedtime}    ${9999}
-    Should Be Equal    ${SUITE4.suites[1].starttime}    ${NONE}
-    Should Be Equal    ${SUITE4.suites[1].endtime}    ${NONE}
-    Timestamp Should Be Valid    ${SUITE4.suites[1].suites[0].starttime}
-    Timestamp Should Be Valid    ${SUITE4.suites[1].suites[0].endtime}
-    Elapsed Time Should Be Valid    ${SUITE4.suites[1].suites[0].elapsedtime}
-    Should Be Equal    ${SUITE4.suites[1].suites[0].elapsedtime}    ${MILLIS1}
-    Timestamp Should Be Valid    ${SUITE4.suites[1].suites[1].starttime}
-    Timestamp Should Be Valid    ${SUITE4.suites[1].suites[1].endtime}
-    Elapsed Time Should Be Valid    ${SUITE4.suites[1].suites[1].elapsedtime}
-    Should Be Equal    ${SUITE4.suites[1].suites[1].elapsedtime}    ${MILLIS2}
-
-Elapsed Time Should Be Written To Output When Start And End Time Are Not Known
-    ${combined} =    Get Element    ${COMB OUT 1}    suite/status
-    Element Attribute Should Be    ${combined}    starttime    N/A
-    Element Attribute Should Be    ${combined}    endtime    N/A
-    Should Be True    int($combined.get('elapsedtime')) >= 0
-    ${originals} =    Get Elements    ${COMB OUT 1}    suite/suite/status
-    Element Attribute Should Match    ${originals[0]}    starttime    20?????? ??:??:??.???
-    Element Attribute Should Match    ${originals[0]}    endtime    20?????? ??:??:??.???
-    Element Should Not Have Attribute    ${originals[0]}    elapsedtime
+    Should Be Equal              ${SUITE4.start_time}               ${NONE}
+    Should Be Equal              ${SUITE4.end_time}                 ${NONE}
+    Elapsed Time Should Be       ${SUITE4.elapsed_time}              ${ELAPSED1} + ${ELAPSED2} + 9.999
+    Timestamp Should Be          ${SUITE4.suites[0].start_time}      2006-12-27 11:59:59
+    Timestamp Should Be          ${SUITE4.suites[0].end_time}        2006-12-27 12:00:08.999
+    Elapsed Time Should Be       ${SUITE4.suites[0].elapsed_time}    9.999
+    Should Be Equal              ${SUITE4.suites[1].start_time}      ${NONE}
+    Should Be Equal              ${SUITE4.suites[1].end_time}        ${NONE}
+    Timestamp Should Be Valid    ${SUITE4.suites[1].suites[0].start_time}
+    Timestamp Should Be Valid    ${SUITE4.suites[1].suites[0].end_time}
+    Elapsed Time Should Be       ${SUITE4.suites[1].suites[0].elapsed_time}    ${ELAPSED1}
+    Timestamp Should Be Valid    ${SUITE4.suites[1].suites[1].start_time}
+    Timestamp Should Be Valid    ${SUITE4.suites[1].suites[1].end_time}
+    Elapsed Time Should Be       ${SUITE4.suites[1].suites[1].elapsed_time}    ${ELAPSED2}
 
 Combined Suite Names Are Correct In Statistics
     ${suites} =    Get Suite Stat Nodes    ${COMB OUT 1}
@@ -152,11 +137,11 @@ Create inputs for Rebot
 
 Create first input for Rebot
     Create Output With Robot    ${TEMP OUT 1}    ${EMPTY}    misc/pass_and_fail.robot
-    Set Suite Variable    $MILLIS1    ${ORIG ELAPSED}
+    Set Suite Variable    $ELAPSED1    ${ORIG ELAPSED.total_seconds()}
 
 Create second input for Rebot
     Create Output With Robot    ${TEMP OUT 2}    ${EMPTY}    misc/normal.robot
-    Set Suite Variable    $MILLIS2    ${ORIG ELAPSED}
+    Set Suite Variable    $ELAPSED2    ${ORIG ELAPSED.total_seconds()}
 
 Combine without options
     Run Rebot    ${EMPTY}    ${TEMP OUT 1} ${TEMP OUT 2}
