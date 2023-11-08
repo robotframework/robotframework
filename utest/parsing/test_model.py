@@ -13,7 +13,7 @@ from robot.parsing.model.statements import (
     Arguments, Break, Comment, Config, Continue, Documentation, ForHeader, End, ElseHeader,
     ElseIfHeader, EmptyLine, Error, IfHeader, InlineIfHeader, TryHeader, ExceptHeader,
     FinallyHeader, KeywordCall, KeywordName, Return, ReturnSetting, ReturnStatement,
-    SectionHeader, TestCaseName, Var, Variable, WhileHeader
+    SectionHeader, TestCaseName, TestTags, Var, Variable, WhileHeader
 )
 from robot.utils.asserts import assert_equal, assert_raises_with_msg
 
@@ -1865,6 +1865,16 @@ Example
             ret = cls.from_params(())
             visitor.visit(ret)
             assert_equal(visitor.node, ret)
+
+    def test_visit_ForceTags(self):
+        class VisitForceTags(ModelVisitor):
+            def visit_ForceTags(self, node):
+                self.node = node
+
+        node = TestTags.from_params(['t1', 't2'])
+        visitor = VisitForceTags()
+        visitor.visit(node)
+        assert_equal(visitor.node, node)
 
 
 class TestLanguageConfig(unittest.TestCase):

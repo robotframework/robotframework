@@ -39,12 +39,12 @@ class VisitorFinder:
 
     @classmethod
     def _find_visitor_from_class(cls, node_cls: 'type[Node]') -> 'VisitorMethod|None':
-        method_name = "visit_" + node_cls.__name__
+        method_name = 'visit_' + node_cls.__name__
         method = getattr(cls, method_name, None)
         if callable(method):
             return method
-        if method_name == "visit_Return":
-            method = getattr(cls, "visit_ReturnSetting", None)
+        if method_name in ('visit_TestTags', 'visit_Return'):
+            method = cls._backwards_compatibility(method_name)
             if callable(method):
                 return method
         for base in node_cls.__bases__:
@@ -53,6 +53,12 @@ class VisitorFinder:
                 if method:
                     return method
         return None
+
+    @classmethod
+    def _backwards_compatibility(cls, method_name):
+        old_name = {'visit_TestTags': 'visit_ForceTags',
+                    'visit_Return': 'visit_ReturnSetting'}[method_name]
+        return getattr(cls, old_name, None)
 
     def generic_visit(self, node: Node) -> 'None|Node|list[Node]':
         raise NotImplementedError
