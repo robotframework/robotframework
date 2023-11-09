@@ -55,9 +55,9 @@ to install the latest available release or use
 
    pip install robotframework==7.0a1
 
-to install exactly this version. Alternatively you can download the source
-distribution from PyPI_ and install it manually. For more details and other
-installation approaches, see the `installation instructions`_.
+to install exactly this version. Alternatively you can download the package
+from PyPI_ and install it manually. For more details and other installation
+approaches, see the `installation instructions`_.
 
 Most important enhancements
 ===========================
