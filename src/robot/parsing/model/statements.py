@@ -818,22 +818,18 @@ class Arguments(MultiValue):
         self.errors = tuple(errors)
 
 
-# TODO: Change Return to mean ReturnStatement in RF 7.0
-# - Rename current Return to ReturnSetting
-# - Rename current ReturnStatement to Return
+# TODO: Change Return to mean ReturnStatement in RF 8.0.
+# - Rename ReturnStatement to Return
 # - Add backwards compatible ReturnStatement alias
+# - Consider keeping ReturnSetting for backwards compatibility. It could just be `None`.
 # - Change Token.RETURN to mean Token.RETURN_STATEMENT
 # - Update also ModelVisitor
 @Statement.register
 class Return(MultiValue):
     """Represents the deprecated ``[Return]`` setting.
 
-    In addition to the ``[Return]`` setting itself, also the ``Return`` node
-    in the parsing model is deprecated and :class:`ReturnSetting` (new in
-    Robot Framework 6.1) should be used instead. :class:`ReturnStatement` will
-    be renamed to ``Return`` in Robot Framework 7.0.
-
-    Eventually ``[Return]`` and ``ReturnSetting`` will be removed altogether.
+    The ``[Return]`` setting is deprecated and will be removed in Robot Framework 8.0.
+    At the same time the :class:`ReturnStatement` class will be renamed to ``Return``.
     """
     type = Token.RETURN
 
