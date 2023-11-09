@@ -33,9 +33,9 @@ and bug fixes. **MORE intro stuff...**
 All issues targeted for Robot Framework {version.milestone} can be found
 from the `issue tracker milestone`_.
 
-Questions and comments related to the release can be sent to the
-`robotframework-users`_ mailing list or to `Robot Framework Slack`_,
-and possible bugs submitted to the `issue tracker`_.
+Questions and comments related to the release can be sent to the `#devel`
+channel on `Robot Framework Slack`_ and possible bugs submitted to
+the `issue tracker`_.
 
 **REMOVE ``--pre`` from the next command with final releases.**
 If you have pip_ installed, just run
@@ -50,9 +50,9 @@ to install the latest available release or use
 
    pip install robotframework=={version}
 
-to install exactly this version. Alternatively you can download the source
-distribution from PyPI_ and install it manually. For more details and other
-installation approaches, see the `installation instructions`_.
+to install exactly this version. Alternatively you can download the package
+from PyPI_ and install it manually. For more details and other installation
+approaches, see the `installation instructions`_.
 
 Robot Framework {version} was released on {date}.
 
