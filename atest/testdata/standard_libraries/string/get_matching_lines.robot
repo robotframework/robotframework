@@ -19,8 +19,10 @@ Get Lines Containing String Matching Some Lines
 
 Get Lines Containing String With Case-Insensitive
     Test Get Lines Containing String    ${INPUT}    Line    Line 1\nLine 2\nThird line    case-insensitive
-    Test Get Lines Containing String    ${INPUT}    ROW    One more row here    whatever
-    Test Get Lines Containing String    ${INPUT}    ROW    ${EMPTY}    ${EMPTY}
+    Test Get Lines Containing String    ${INPUT}    ROW     One more row here             True
+    Test Get Lines Containing String    ${INPUT}    ROW     ${EMPTY}                      ${EMPTY}
+    Test Get Lines Containing String    Straße\n...\nHassu\n
+    ...                                             SS      Straße\nHassu                 True
 
 Get Lines Matching Pattern When Input Is Empty
     Test Get Lines Matching Pattern    ${EMPTY}    what*ever    ${EMPTY}
@@ -34,14 +36,16 @@ Get Lines Matching Pattern Matching One Line
 
 Get Lines Matching Pattern Matching Some Lines
     Test Get Lines Matching Pattern    ${INPUT}    Line ?    Line 1\nLine 2
-    Test Get Lines Matching Pattern    ${INPUT}    ?in*    Line 1\nLine 2
-    Test Get Lines Matching Pattern    ${INPUT}    *    ${INPUT}
+    Test Get Lines Matching Pattern    ${INPUT}    ?in*      Line 1\nLine 2
+    Test Get Lines Matching Pattern    ${INPUT}    *         ${INPUT}
     Test Get Lines Matching Pattern    ${INPUT}    ??????    Line 1\nLine 2
 
 Get Lines Matching Pattern With Case-Insensitive
     Test Get Lines Matching Pattern    ${INPUT}    *line*    Line 1\nLine 2\nThird line    case-insensitive
-    Test Get Lines Matching Pattern    ${INPUT}    *LINE    Third line    whatever
-    Test Get Lines Matching Pattern    ${INPUT}    *LINE*    ${EMPTY}    ${EMPTY}
+    Test Get Lines Matching Pattern    ${INPUT}    *LINE     Third line                    True
+    Test Get Lines Matching Pattern    ${INPUT}    *LINE*    ${EMPTY}                      ${EMPTY}
+    Test Get Lines Matching Pattern    Straße\n...\nHassu\n
+    ...                                            *SS?      Straße\nHassu                 True
 
 Get Lines Matching Regexp When Input Is Empty
     Test Get Lines Matching Regexp    ${EMPTY}    what.*ever    ${EMPTY}

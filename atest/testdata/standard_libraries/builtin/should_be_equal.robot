@@ -15,6 +15,7 @@ Case-insensitive
     [Documentation]    FAIL yötä != päivää
     test value      TEST VALUE      ignore_case=True
     HYVÄÄ YÖTÄ      hyvää yötä      repr=True    ignore_case=yes
+    Straße          strasse         ignore_case=True
     ${42}           ${42}           ignore_case=True
     Yötä            Päivää          ignore_case=yep!
 
@@ -290,12 +291,12 @@ Should Not Be Equal
     foo    foo
 
 Should Not Be Equal case-insensitive
-    [Documentation]     FAIL foo == foo
+    [Documentation]     FAIL fööss == fööss
     [Template]  Should Not Be Equal
     test value      TEST VALUE1     ignore_case=True
     HYVÄÄ YÖTÄ      hyvää yötä1     ignore_case=True
     ${42}           ${43}           ignore_case=True
-    foo             FOO             ignore_case=True
+    fööß            FÖÖSS           ignore_case=True
 
 Should Not Be Equal without leading spaces
     [Documentation]     FAIL Several failures occurred:

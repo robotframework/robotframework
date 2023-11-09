@@ -16,6 +16,7 @@ Should Start With case-insensitive
     Hello!           hELLo            ignore_case=True
     HYVÄÄ YÖTÄ       hyvää            ignore_case=yeah
     Hello, world!    hello, WORLD!    ignore_case=True
+    Straße           stras            ignore_case=True
 
 Should Start With without values
     [Documentation]    FAIL My message
@@ -91,11 +92,11 @@ Should Not Start With
     Hello, world!    Hello
 
 Should Not Start With case-insensitive
-    [Documentation]     FAIL  'hello, world?' starts with 'hello, world'
+    [Documentation]     FAIL  'hello, ss?' starts with 'hello, s'
     [Template]    Should Not Start With
     !Hello!          hELLo           ignore_case=True
     HYVÄÄ YÖTÄ       pahaa           ignore_case=yeah
-    Hello, world?    hello, WORLD    ignore_case=True
+    Hello, ß?        hello, s        ignore_case=True
 
 Should Not Start With without leading spaces
     [Documentation]    FAIL Several failures occurred:
@@ -178,7 +179,7 @@ Should End With case-insensitive
     [Template]      Should End With
     This is it       Is IT            ignore_case=True
     Hello, world!    hello, WORLD!    ignore_case=True
-    HYVÄÄ YÖTÄ       ä yötä           ignore_case=True
+    HYVÄÄ YÖTÄ ß     ä yötä Ss        ignore_case=True
 
 Should End With without leading spaces
     [Documentation]    FAIL 'YÖTÄ' does not end with 'yötä'
@@ -245,11 +246,11 @@ Should Not End With
     Hillo!    !    Message only    No Values
 
 Should Not End With case-insensitive
-    [Documentation]     FAIL  'hello, world!' ends with 'hello, world!'
+    [Documentation]     FAIL  'hello, ss!' ends with 'hello, ss!'
     [Template]    Should Not End With
     Hello!           hELLo            ignore_case=True
     HYVÄÄ YÖTÄ       hyvää            ignore_case=yeah
-    Hello, world!    hello, WORLD!    ignore_case=True
+    Hello, ß!        HELLO, SS!       ignore_case=True
 
 Should Not End With without leading spaces
     [Documentation]    FAIL Several failures occurred:

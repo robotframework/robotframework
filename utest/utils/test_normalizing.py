@@ -32,6 +32,12 @@ class TestNormalize(unittest.TestCase):
         for mother in ['ÄITI', 'ÄiTi', 'äiti', 'äiTi']:
             self._verify(mother, 'äiti', caseless=True)
 
+    def test_casefold(self):
+        self._verify('ß', 'ss', caseless=True)
+        self._verify('Straße', 'strasse', caseless=True)
+        self._verify('Straße', 'strae', ignore='ß', caseless=True)
+        self._verify('Straße', 'trae', ignore='s', caseless=True)
+
     def test_spaceless(self):
         self._verify('Fo o BaR', 'fo o bar', spaceless=False)
         self._verify('Fo o BaR', 'foobar', spaceless=True)

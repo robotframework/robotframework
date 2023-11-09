@@ -28,6 +28,7 @@ Should Contain case-insensitive
     [Template]    Should Contain
     abcdefg     CD     ignore_case=True
     HYVÄ        vä     ignore_case=yes
+    Straße      ss     ignore_case=true
     ${LIST}     CEE    ignore_case=!!!
     ${DICT}     Ä      ignore_case=yes
     ${DICT1}    XXX    ignore_case=yes

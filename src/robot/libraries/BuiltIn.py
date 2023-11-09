@@ -626,8 +626,8 @@ class _Verify(_BuiltInBase):
         self._log_types_at_info_if_different(first, second)
         if is_string(first) and is_string(second):
             if ignore_case:
-                first = first.lower()
-                second = second.lower()
+                first = first.casefold()
+                second = second.casefold()
             if strip_spaces:
                 first = self._strip_spaces(first, strip_spaces)
                 second = self._strip_spaces(second, strip_spaces)
@@ -708,8 +708,8 @@ class _Verify(_BuiltInBase):
         self._log_types_at_info_if_different(first, second)
         if is_string(first) and is_string(second):
             if ignore_case:
-                first = first.lower()
-                second = second.lower()
+                first = first.casefold()
+                second = second.casefold()
             if strip_spaces:
                 first = self._strip_spaces(first, strip_spaces)
                 second = self._strip_spaces(second, strip_spaces)
@@ -844,8 +844,8 @@ class _Verify(_BuiltInBase):
         first = safe_str(first)
         second = safe_str(second)
         if ignore_case:
-            first = first.lower()
-            second = second.lower()
+            first = first.casefold()
+            second = second.casefold()
         if strip_spaces:
             first = self._strip_spaces(first, strip_spaces)
             second = self._strip_spaces(second, strip_spaces)
@@ -885,8 +885,8 @@ class _Verify(_BuiltInBase):
         first = safe_str(first)
         second = safe_str(second)
         if ignore_case:
-            first = first.lower()
-            second = second.lower()
+            first = first.casefold()
+            second = second.casefold()
         if strip_spaces:
             first = self._strip_spaces(first, strip_spaces)
             second = self._strip_spaces(second, strip_spaces)
@@ -905,8 +905,8 @@ class _Verify(_BuiltInBase):
         of the ``ignore_case``, ``strip_spaces``, and ``collapse_spaces`` options.
         """
         if ignore_case:
-            str1 = str1.lower()
-            str2 = str2.lower()
+            str1 = str1.casefold()
+            str2 = str2.casefold()
         if strip_spaces:
             str1 = self._strip_spaces(str1, strip_spaces)
             str2 = self._strip_spaces(str2, strip_spaces)
@@ -926,8 +926,8 @@ class _Verify(_BuiltInBase):
         of the ``ignore_case``, ``strip_spaces``, and ``collapse_spaces`` options.
         """
         if ignore_case:
-            str1 = str1.lower()
-            str2 = str2.lower()
+            str1 = str1.casefold()
+            str2 = str2.casefold()
         if strip_spaces:
             str1 = self._strip_spaces(str1, strip_spaces)
             str2 = self._strip_spaces(str2, strip_spaces)
@@ -948,8 +948,8 @@ class _Verify(_BuiltInBase):
         of the ``ignore_case``, ``strip_spaces``, and ``collapse_spaces`` options.
         """
         if ignore_case:
-            str1 = str1.lower()
-            str2 = str2.lower()
+            str1 = str1.casefold()
+            str2 = str2.casefold()
         if strip_spaces:
             str1 = self._strip_spaces(str1, strip_spaces)
             str2 = self._strip_spaces(str2, strip_spaces)
@@ -969,8 +969,8 @@ class _Verify(_BuiltInBase):
         of the ``ignore_case``, ``strip_spaces``, and ``collapse_spaces`` options.
         """
         if ignore_case:
-            str1 = str1.lower()
-            str2 = str2.lower()
+            str1 = str1.casefold()
+            str2 = str2.casefold()
         if strip_spaces:
             str1 = self._strip_spaces(str1, strip_spaces)
             str2 = self._strip_spaces(str2, strip_spaces)
@@ -1017,11 +1017,11 @@ class _Verify(_BuiltInBase):
         # case-insensitive comparisons.
         orig_container = container
         if ignore_case and is_string(item):
-            item = item.lower()
+            item = item.casefold()
             if is_string(container):
-                container = container.lower()
+                container = container.casefold()
             elif is_list_like(container):
-                container = set(x.lower() if is_string(x) else x for x in container)
+                container = set(x.casefold() if is_string(x) else x for x in container)
         if strip_spaces and is_string(item):
             item = self._strip_spaces(item, strip_spaces)
             if is_string(container):
@@ -1073,11 +1073,11 @@ class _Verify(_BuiltInBase):
         """
         orig_container = container
         if ignore_case and is_string(item):
-            item = item.lower()
+            item = item.casefold()
             if is_string(container):
-                container = container.lower()
+                container = container.casefold()
             elif is_list_like(container):
-                container = set(x.lower() if is_string(x) else x for x in container)
+                container = set(x.casefold() if is_string(x) else x for x in container)
         if strip_spaces and is_string(item):
             item = self._strip_spaces(item, strip_spaces)
             if is_string(container):
@@ -1128,11 +1128,11 @@ class _Verify(_BuiltInBase):
             raise RuntimeError('One or more items required.')
         orig_container = container
         if ignore_case:
-            items = [x.lower() if is_string(x) else x for x in items]
+            items = [x.casefold() if is_string(x) else x for x in items]
             if is_string(container):
-                container = container.lower()
+                container = container.casefold()
             elif is_list_like(container):
-                container = set(x.lower() if is_string(x) else x for x in container)
+                container = set(x.casefold() if is_string(x) else x for x in container)
         if strip_spaces:
             items = [self._strip_spaces(x, strip_spaces) for x in items]
             if is_string(container):
@@ -1186,11 +1186,11 @@ class _Verify(_BuiltInBase):
             raise RuntimeError('One or more items required.')
         orig_container = container
         if ignore_case:
-            items = [x.lower() if is_string(x) else x for x in items]
+            items = [x.casefold() if is_string(x) else x for x in items]
             if is_string(container):
-                container = container.lower()
+                container = container.casefold()
             elif is_list_like(container):
-                container = set(x.lower() if is_string(x) else x for x in container)
+                container = set(x.casefold() if is_string(x) else x for x in container)
         if strip_spaces:
             items = [self._strip_spaces(x, strip_spaces) for x in items]
             if is_string(container):
@@ -1246,11 +1246,11 @@ class _Verify(_BuiltInBase):
         orig_container = container
         if is_string(item):
             if ignore_case:
-                item = item.lower()
+                item = item.casefold()
                 if is_string(container):
-                    container = container.lower()
+                    container = container.casefold()
                 elif is_list_like(container):
-                    container = [x.lower() if is_string(x) else x for x in container]
+                    container = [x.casefold() if is_string(x) else x for x in container]
             if strip_spaces:
                 item = self._strip_spaces(item, strip_spaces)
                 if is_string(container):
@@ -1532,7 +1532,7 @@ class _Variables(_BuiltInBase):
     def log_variables(self, level='INFO'):
         """Logs all variables in the current scope with given log level."""
         variables = self.get_variables()
-        for name in sorted(variables, key=lambda s: s[2:-1].lower()):
+        for name in sorted(variables, key=lambda s: s[2:-1].casefold()):
             name, value = self._get_logged_variable(name, variables)
             msg = format_assign_message(name, value, cut_long=False)
             self.log(msg, level)

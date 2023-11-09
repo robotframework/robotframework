@@ -26,14 +26,15 @@ def normalize(string: str, ignore: 'Sequence[str]' = (), caseless: bool = True,
               spaceless: bool = True) -> str:
     """Normalize the ``string`` according to the given spec.
 
-    By default, string is turned to lower case and all whitespace is removed.
-    Additional characters can be removed by giving them in ``ignore`` list.
+    By default, string is turned to lower case (actually case-folded) and all
+    whitespace is removed. Additional characters can be removed by giving them
+    in ``ignore`` list.
     """
     if spaceless:
         string = ''.join(string.split())
     if caseless:
-        string = string.lower()
-        ignore = [i.lower() for i in ignore]
+        string = string.casefold()
+        ignore = [i.casefold() for i in ignore]
     # both if statements below enhance performance a little
     if ignore:
         for ign in ignore:

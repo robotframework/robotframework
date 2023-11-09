@@ -293,8 +293,8 @@ class String:
         if you need more complex pattern matching.
         """
         if is_truthy(case_insensitive):
-            pattern = pattern.lower()
-            contains = lambda line: pattern in line.lower()
+            pattern = pattern.casefold()
+            contains = lambda line: pattern in line.casefold()
         else:
             contains = lambda line: pattern in line
         return self._get_matching_lines(string, contains)
@@ -329,8 +329,8 @@ class String:
         literal strings is enough.
         """
         if is_truthy(case_insensitive):
-            pattern = pattern.lower()
-            matches = lambda line: fnmatchcase(line.lower(), pattern)
+            pattern = pattern.casefold()
+            matches = lambda line: fnmatchcase(line.casefold(), pattern)
         else:
             matches = lambda line: fnmatchcase(line, pattern)
         return self._get_matching_lines(string, matches)
