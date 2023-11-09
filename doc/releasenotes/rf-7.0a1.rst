@@ -71,7 +71,7 @@ execution. The motivation is to have a more convenient syntax than using
 the `Set Variable` keyword for creating local variables and to unify
 the syntax for creating variables in different scopes. Except for the mandatory
 `VAR` marker, the syntax is also the same as when creating variables in the
-Variables section. The syntax is easiest to explain with examples:
+Variables section. The syntax is best explained with examples:
 
 .. sourcecode:: robotframework
 
@@ -80,7 +80,7 @@ Variables section. The syntax is easiest to explain with examples:
         # Create a local variable `${local}` with value `value`.
         VAR    ${local}    value
 
-        # Same as above, but the variable is also seen elsewhere in the suite.
+        # The following creates a suite-scoped variable, visible throughout the suite.
         # Supported scopes are GLOBAL, SUITE, TEST, TASK and LOCAL (default).
         VAR    ${suite}    value    scope=SUITE
 
@@ -140,8 +140,8 @@ User keywords got support to use both embedded and normal arguments in Robot
 Framework 6.1 (`#4234`__) and now that support is extended also to library keywords
 (`#4710`_). The syntax works so that if the function or method implementing the keyword
 accepts more arguments than there are embedded arguments, the remaining arguments
-can be passed in as normal arguments. For example, a keyword below can be used
-as the test after it demonstrates:
+can be passed in as normal arguments. For example, the keyword and its usage shown
+below demonstrate this:
 
 .. sourcecode:: python
 
@@ -164,8 +164,8 @@ Tags set globally can be removed using `-tag` syntax
 
 Individual tests and keywords can nowadays remove tags set in the Settings
 section with `Test Tags` or `Keyword Tags` settings by using the `-tag` syntax
-(`#4374`_). For example, tests `T1` and `T3` below both get tags `all` and `most`
-while `T2` gets `all` and `one`.
+(`#4374`_). For example, in the following test cases, `T1` and `T3` are assigned
+the tags `all` and `most`, while `T2` is assigned `all` and `one`.
 
 .. sourcecode:: robotframework
 
@@ -198,15 +198,15 @@ errors, but Python type checkers support also "stringified" type hints like
 
 Support for stringified generics and unions has now been added also to
 Robot Framework's argument conversion (`#4711`_). For example,
-the following typing is works nowadays also with Python 3.8:
+the following typing now also works with Python 3.8:
 
 .. sourcecode:: python
 
     def example(a: 'list[int]', b: 'int | float'):
         ...
 
-These stringified types work also with the Remove library API and in other cases
-where using actual types is not possible at all.
+These stringified types are also compatible with the Remote library API and other
+scenarios where using actual types is not feasible.
 
 __ https://peps.python.org/pep-0585/
 __ https://peps.python.org/pep-0604/
@@ -260,8 +260,8 @@ __ https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoform
 Backwards incompatible changes
 ==============================
 
-Python 3.6 and 3.7 are not anymore supported
---------------------------------------------
+Python 3.6 and 3.7 are no longer supported
+------------------------------------------
 
 Robot Framework 7.0 requires Python 3.8 or newer (`#4294`_). The last version
 that supports Python 3.6 and 3.7 is Robot Framework 6.1.1.
@@ -295,7 +295,7 @@ Examples:
     <msg time="20231108 15:36:34.278" level="INFO">Hello world!</msg>
     <status status="PASS" starttime="20231108 15:37:35.046" endtime="20231108 15:37:35.046"/>
 
-    <! -- New format -->
+    <!-- New format -->
     <msg time="2023-11-08T15:36:34.278343" level="INFO">Hello world!</msg>
     <status status="PASS" start="2023-11-08T15:37:35.046153" elapsed="0.000161"/>
 
@@ -369,20 +369,20 @@ file that the keyword belonged to were in `kwname` and `libname` attributes,
 respectively. In addition to these, keywords using embedded arguments also had
 a `sourcename` attribute containing the original keyword name.
 
-Due to reasons explained in `#4884`_, the following changes are have been done
+Due to reasons explained in `#4884`_, the following changes have been made
 in Robot Framework 7.0:
 
-- Old `kwname` is renamed to `name` This is consistent with the execution side `Keyword`.
+- Old `kwname` is renamed to `name`. This is consistent with the execution side `Keyword`.
 - Old `libname` is renamed to `owner`.
 - New `full_name` is introduced to replace the old `name`.
 - `sourcename` is renamed to `source_name`.
-- `kwname`, `libname` and `sourcename` are preserved as propertys. They are considered
+- `kwname`, `libname` and `sourcename` are preserved as properties. They are considered
   deprecated, but accessing them will not cause a deprecation in this release yet.
 
 The backwards incompatible part of this change is changing the meaning of the
 `name` attribute. It used to be a read-only property yielding the full name
 like `BuiltIn.Log`, but now it is a normal attribute that contains just the actual
-keyword name like `Log`. All other old attributes have been preserved as propertys.
+keyword name like `Log`. All other old attributes have been preserved as properties.
 
 Deprecated attributes have been removed
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -396,8 +396,7 @@ have been removed (`#4846`_):
 - `Keyword.children`. Use `Keyword.body` and `Keyword.teardown` instead.
 - `TestCase.critical`. The whole criticality concept has been removed.
 
-`TestCase.keywords` and `TestSuite.keywords` were also present in the execution
-model and removed from there as well.
+Additionally, `TestCase.keywords` and `TestSuite.keywords` have been removed from the execution model.
 
 Changes to parsing model
 ------------------------
@@ -538,8 +537,8 @@ Other deprecated features
   using `mode=SHORTEST` has been deprecated. The strict mode where lengths must
   match will be the default mode in the future. (`#4685`_)
 
-- Various utility functions under in the `robot.utils` package that Robot Framework
-  itself does not anymore use have been deprecated. This includes the whole Python 2/3
+- Various utility functions in the `robot.utils` package no longer used by
+  Robot Framework itself have been deprecated. This includes the whole Python 2/3
   compatibility layer. If you need some of these utils, you can copy their code
   to your own tool or library. (`#4501`_)
 
@@ -566,8 +565,8 @@ In addition to work done by them, the community has provided some great contribu
 - `Daniel Biehl <https://github.com/d-biehl>`__ enhanced performance of traversing
   the parsing model using `ModelVisitor`. (`#4934`_)
 
-There are various contributions still under development and review, so the above
-list is likely to get a lot longer before Robot Framework 7.0 final is ready.
+With various contributions still under development, the above list is expected to grow
+before the final release of Robot Framework 7.0.
 If you have an enhancement in mind you would like to see included, new contributions
 are still possible as well.
 
@@ -722,7 +721,7 @@ Full list of fixes and enhancements
     * - `#4720`_
       - enhancement
       - medium
-      - Requite `--suite parent.suite` to match the full suite name
+      - Require `--suite parent.suite` to match the full suite name
       - alpha 1
     * - `#4721`_
       - enhancement
