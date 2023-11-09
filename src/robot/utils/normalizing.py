@@ -14,39 +14,23 @@
 #  limitations under the License.
 
 import re
-from collections.abc import Iterable, Iterator, Mapping, Sequence
-from typing import Any, MutableMapping, overload, TypeVar
+from collections.abc import Iterator, Mapping, Sequence
+from typing import Any, MutableMapping, TypeVar
 
 
 V = TypeVar('V')
 Self = TypeVar('Self', bound='NormalizedDict')
 
 
-@overload
 def normalize(string: str, ignore: 'Sequence[str]' = (), caseless: bool = True,
               spaceless: bool = True) -> str:
-    ...
-
-
-@overload
-def normalize(string: bytes, ignore: 'Sequence[bytes]' = (), caseless: bool = True,
-              spaceless: bool = True) -> bytes:
-    ...
-
-
-# TODO: Remove bytes support in RF 7.0. There shouldn't be needs for that with Python 3.
-def normalize(string, ignore=(), caseless=True, spaceless=True):
     """Normalize the ``string`` according to the given spec.
 
     By default, string is turned to lower case and all whitespace is removed.
     Additional characters can be removed by giving them in ``ignore`` list.
     """
-    empty = '' if isinstance(string, str) else b''
-    if isinstance(ignore, bytes):
-        # Iterating bytes in Python3 yields integers.
-        ignore = [bytes([i]) for i in ignore]
     if spaceless:
-        string = empty.join(string.split())
+        string = ''.join(string.split())
     if caseless:
         string = string.lower()
         ignore = [i.lower() for i in ignore]
@@ -54,7 +38,7 @@ def normalize(string, ignore=(), caseless=True, spaceless=True):
     if ignore:
         for ign in ignore:
             if ign in string:
-                string = string.replace(ign, empty)
+                string = string.replace(ign, '')
     return string
 
 

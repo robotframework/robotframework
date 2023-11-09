@@ -45,13 +45,6 @@ class TestNormalize(unittest.TestCase):
         self._verify('Foo_ bar', 'Fbar', ignore=['_', 'f', 'o'], caseless=False)
         self._verify('Foo_\n bar\n', 'foo_ bar', ignore=['\n'], spaceless=False)
 
-    def test_bytes(self):
-        self._verify(b'FOO & Bar', b'foo&bar')
-        self._verify(b'FOO & Bar', b'oobar', ignore=[b'F', b'&'])
-        self._verify(b'FOO & Bar', b'oo  bar', ignore=[b'F', b'&'], spaceless=False)
-        self._verify(b'FOO & Bar', b'bar', ignore=b'F&o')
-        self._verify(b'FOO & Bar', b'OOBar', ignore=b'F&o', caseless=False)
-
     def test_string_subclass_without_compatible_init(self):
         class BrokenLikeSudsText(str):
             def __new__(cls, value):
