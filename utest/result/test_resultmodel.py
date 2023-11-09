@@ -597,25 +597,50 @@ class TestBranches(unittest.TestCase):
 
 class TestDeprecatedKeywordSpecificAttributes(unittest.TestCase):
 
-    def test_deprecated_keyword_specific_properties(self):
-        for_ = For(['${x}', '${y}'], 'IN', ['a', 'b', 'c', 'd'])
-        for name, expected in [('args', ()),
+    def test_for(self):
+        obj = For(['${x}', '${y}'], 'IN', ['a', 'b', 'c', 'd'])
+        for attr, expected in [('name', '${x}    ${y}    IN    a    b    c    d'),
+                               ('kwname', '${x}    ${y}    IN    a    b    c    d'),
+                               ('libname', None),
+                               ('args', ()),
+                               ('doc', ''),
                                ('tags', Tags()),
                                ('timeout', None)]:
-            with warnings.catch_warnings(record=True) as w:
-                assert_equal(getattr(for_, name), expected)
-                assert_true(issubclass(w[-1].category, UserWarning))
-                assert_true(f'For, {name}' in str(w[-1].message))
+            self._verify_deprecation(obj, attr, expected)
 
-    def test_if(self):
-        for name, expected in [('args', ()),
-                               ('assign', ()),
-                               ('tags', Tags()),
-                               ('timeout', None)]:
-            with warnings.catch_warnings(record=True) as w:
-                assert_equal(getattr(If(), name), expected)
-                assert_true(issubclass(w[-1].category, UserWarning))
-                assert_true(f'If, {name}' in str(w[-1].message))
+    def test_those_having_assign(self):
+        for obj in For().body.create_iteration(), Try().body.create_branch():
+            for attr, expected in [('name', ''),
+                                   ('kwname', ''),
+                                   ('libname', None),
+                                   ('args', ()),
+                                   ('doc', ''),
+                                   ('tags', Tags()),
+                                   ('timeout', None)]:
+                self._verify_deprecation(obj, attr, expected)
+
+    def test_others(self):
+        for obj in (If(), If().body.create_branch(), Try(),
+                    While(), While().body.create_iteration(),
+                    Break(), Continue(), Return(), Error()):
+            for attr, expected in [('name', ''),
+                                   ('kwname', ''),
+                                   ('libname', None),
+                                   ('args', ()),
+                                   ('doc', ''),
+                                   ('assign', ()),
+                                   ('tags', Tags()),
+                                   ('timeout', None)]:
+                self._verify_deprecation(obj, attr, expected)
+
+    def _verify_deprecation(self, obj, attr, expected):
+        name = type(obj).__name__
+        with warnings.catch_warnings(record=True) as w:
+            assert_equal(getattr(obj, attr), expected, f'{name}.{attr}')
+            assert_true(issubclass(w[-1].category, UserWarning))
+            assert_equal(str(w[-1].message),
+                         f"'robot.result.{name}.{attr}' is deprecated and "
+                         f"will be removed in Robot Framework 8.0.")
 
 
 if __name__ == '__main__':
