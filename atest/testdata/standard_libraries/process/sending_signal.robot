@@ -52,7 +52,7 @@ Sending signal to a process with a wrong handle
 *** Keywords ***
 Killer signal
     [Arguments]    ${signal}    ${shell}=False    ${children}=0    ${group}=False
-    Start Countdown    alias=${signal}    shell=${shell}    children=${children}
+    Start Countdown    alias=${{str($signal)}}    shell=${shell}    children=${children}
     Send Signal To Process    ${signal}    group=${group}
     Countdown Should Have Stopped    handle=${signal}
 

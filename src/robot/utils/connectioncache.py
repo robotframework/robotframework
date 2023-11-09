@@ -13,17 +13,21 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from typing import Any
+
 from .normalizing import NormalizedDict
-from .robottypes import is_string
+
+
+Connection = Any
 
 
 class ConnectionCache:
     """Cache for libraries to use with concurrent connections, processes, etc.
 
     The cache stores the registered connections (or other objects) and allows
-    switching between them using generated indices or user given aliases.
-    This is useful with any library where there's need for multiple concurrent
-    connections, processes, etc.
+    switching between them using generated indices, user given aliases or
+    connection objects themselves. This is useful with any library having a need
+    for multiple concurrent connections, processes, etc.
 
     This class is used also outside the core framework by SeleniumLibrary,
     SSHLibrary, etc. Backwards compatibility is thus important when doing changes.
@@ -33,10 +37,10 @@ class ConnectionCache:
         self._no_current = NoConnection(no_current_msg)
         self.current = self._no_current  #: Current active connection.
         self._connections = []
-        self._aliases = NormalizedDict()
+        self._aliases = NormalizedDict[int]()
 
     @property
-    def current_index(self):
+    def current_index(self) -> 'int|None':
         if not self:
             return None
         for index, conn in enumerate(self):
@@ -44,11 +48,13 @@ class ConnectionCache:
                 return index + 1
 
     @current_index.setter
-    def current_index(self, index):
-        self.current = self._connections[index - 1] \
-            if index is not None else self._no_current
+    def current_index(self, index: 'int|None'):
+        if index is None:
+            self.current = self._no_current
+        else:
+            self.current = self._connections[index - 1]
 
-    def register(self, connection, alias=None):
+    def register(self, connection: Connection, alias: 'str|None' = None):
         """Registers given connection with optional alias and returns its index.
 
         Given connection is set to be the :attr:`current` connection.
@@ -62,52 +68,74 @@ class ConnectionCache:
         self.current = connection
         self._connections.append(connection)
         index = len(self._connections)
-        if is_string(alias):
+        if alias:
             self._aliases[alias] = index
         return index
 
-    def switch(self, alias_or_index):
-        """Switches to the connection specified by the given alias or index.
+    def switch(self, identifier: 'int|str|Connection') -> Connection:
+        """Switches to the connection specified using the ``identifier``.
+
+        Identifier can be an index, an alias, or a registered connection.
+        Raises an error if no matching connection is found.
 
         Updates :attr:`current` and also returns its new value.
-
-        Alias is whatever was given to :meth:`register` method and indices
-        are returned by it. Index can be given either as an integer or
-        as a string that can be converted to an integer. Raises an error
-        if no connection with the given index or alias found.
         """
-        self.current = self.get_connection(alias_or_index)
+        self.current = self.get_connection(identifier)
         return self.current
 
-    def get_connection(self, alias_or_index=None):
-        """Get the connection specified by the given alias or index..
+    def get_connection(self, identifier: 'int|str|Connection|None' = None) -> Connection:
+        """Returns the connection specified using the ``identifier``.
 
-        If ``alias_or_index`` is ``None``, returns the current connection
-        if it is active, or raises an error if it is not.
-
-        Alias is whatever was given to :meth:`register` method and indices
-        are returned by it. Index can be given either as an integer or
-        as a string that can be converted to an integer. Raises an error
-        if no connection with the given index or alias found.
+        Identifier can be an index (integer or string), an alias, a registered
+        connection or ``None``. If the identifier is ``None``, returns the
+        current connection if it is active and raises an error if it is not.
+        Raises an error also if no matching connection is found.
         """
-        if alias_or_index is None:
+        if identifier is None:
             if not self:
                 self.current.raise_error()
             return self.current
         try:
-            index = self.resolve_alias_or_index(alias_or_index)
+            index = self.get_connection_index(identifier)
         except ValueError as err:
             raise RuntimeError(err.args[0])
         return self._connections[index-1]
 
-    __getitem__ = get_connection
+    def get_connection_index(self, identifier: 'int|str|Connection') -> int:
+        """Returns the index of the connection specified using the ``identifier``.
 
-    def close_all(self, closer_method='close'):
-        """Closes connections using given closer method and empties cache.
+        Identifier can be an index (integer or string), an alias, or a registered
+        connection.
+
+        New in Robot Framework 7.0. :meth:`resolve_alias_or_index` can be used
+        with earlier versions.
+        """
+        if isinstance(identifier, str) and identifier in self._aliases:
+            return self._aliases[identifier]
+        if identifier in self._connections:
+            return self._connections.index(identifier) + 1
+        try:
+            index = int(identifier)
+        except (ValueError, TypeError):
+            index = -1
+        if 0 < index <= len(self._connections):
+            return index
+        raise ValueError(f"Non-existing index or alias '{identifier}'.")
+
+    def resolve_alias_or_index(self, alias_or_index):
+        """Deprecated in RF 7.0. Use :meth:`get_connection_index` instead."""
+        # This was initially added for SeleniumLibrary in RF 3.1.2.
+        # https://github.com/robotframework/robotframework/issues/3125
+        # The new method was added in RF 7.0. We can loudly deprecate this
+        # earliest in RF 8.0.
+        return self.get_connection_index(alias_or_index)
+
+    def close_all(self, closer_method: str = 'close'):
+        """Closes connections using the specified closer method and empties cache.
 
         If simply calling the closer method is not adequate for closing
         connections, clients should close connections themselves and use
-        :meth:`empty_cache` afterwards.
+        :meth:`empty_cache` afterward.
         """
         for conn in self._connections:
             getattr(conn, closer_method)()
@@ -123,6 +151,8 @@ class ConnectionCache:
         self._connections = []
         self._aliases = NormalizedDict()
 
+    __getitem__ = get_connection
+
     def __iter__(self):
         return iter(self._connections)
 
@@ -131,31 +161,6 @@ class ConnectionCache:
 
     def __bool__(self):
         return self.current is not self._no_current
-
-    def resolve_alias_or_index(self, alias_or_index):
-        for resolver in self._resolve_alias, self._resolve_index, self._is_connection:
-            try:
-                return resolver(alias_or_index)
-            except ValueError:
-                pass
-        raise ValueError(f"Non-existing index or alias '{alias_or_index}'.")
-
-    def _resolve_alias(self, alias):
-        if is_string(alias) and alias in self._aliases:
-            return self._aliases[alias]
-        raise ValueError
-
-    def _resolve_index(self, index):
-        try:
-            index = int(index)
-        except TypeError:
-            raise ValueError
-        if not 0 < index <= len(self._connections):
-            raise ValueError
-        return index
-
-    def _is_connection(self, conn):
-        return self._connections.index(conn) + 1
 
 
 class NoConnection:
