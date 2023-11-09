@@ -34,8 +34,7 @@ else:
 from robot.api import logger
 from robot.api.deco import keyword
 from robot.libraries.BuiltIn import BuiltIn
-from robot.utils import (asserts, ET, ETSource, is_bytes, is_falsy, is_string,
-                         is_truthy, plural_or_not as s)
+from robot.utils import asserts, ET, ETSource, is_falsy, is_truthy, plural_or_not as s
 from robot.version import get_version
 
 
@@ -53,7 +52,7 @@ class XML:
     The library has the following main usages:
 
     - Parsing an XML file, or a string containing XML, into an XML element
-      structure and finding certain elements from it for for further analysis
+      structure and finding certain elements from it for further analysis
       (e.g. `Parse XML` and `Get Element` keywords).
     - Getting text or attributes of elements
       (e.g. `Get Element Text` and `Get Element Attribute`).
@@ -75,10 +74,10 @@ class XML:
     children and their children. Possible comments and processing instructions
     in the source XML are removed.
 
-    XML is not validated during parsing even if has a schema defined. How
+    XML is not validated during parsing even if it has a schema defined. How
     possible doctype elements are handled otherwise depends on the used XML
     module and on the platform. The standard ElementTree strips doctypes
-    altogether but when `using lxml` they are preserved when XML is saved.
+    altogether, but when `using lxml` they are preserved when XML is saved.
 
     The element structure returned by `Parse XML`, as well as elements
     returned by keywords such as `Get Element`, can be used as the ``source``
@@ -168,7 +167,7 @@ class XML:
 
     If lxml support is enabled when `importing` the library, the whole
     [http://www.w3.org/TR/xpath/|xpath 1.0 standard] is supported.
-    That includes everything listed below but also lot of other useful
+    That includes everything listed below but also a lot of other useful
     constructs.
 
     == Tag names ==
@@ -304,7 +303,7 @@ class XML:
     = Handling XML namespaces =
 
     ElementTree and lxml handle possible namespaces in XML documents by adding
-    the namespace URI to tag names in so called Clark Notation. That is
+    the namespace URI to tag names in so-called Clark Notation. That is
     inconvenient especially with xpaths, and by default this library strips
     those namespaces away and moves them to ``xmlns`` attribute instead. That
     can be avoided by passing ``keep_clark_notation`` argument to `Parse XML`
@@ -1279,7 +1278,7 @@ class XML:
         The element to copy is specified using ``source`` and ``xpath``. They
         have exactly the same semantics as with `Get Element` keyword.
 
-        If the copy or the original element is modified afterwards, the changes
+        If the copy or the original element is modified afterward, the changes
         have no effect on the other.
 
         Examples using ``${XML}`` structure from `Example`:
