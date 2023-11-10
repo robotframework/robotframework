@@ -854,8 +854,8 @@ class _Dictionary:
         self._validate_dictionary(dict1)
         self._validate_dictionary(dict2, 2)
         normalize = Normalizer(ignore_case).normalize
-        keys = self.get_dictionary_keys(dict2)
-        diffs = ', '.join(str(k) for k in normalize(keys) if k
+        keys2 = self.get_dictionary_keys(dict2)
+        diffs = ', '.join(str(k) for k in normalize(keys2) if k
                           not in normalize(dict1))
         _verify_condition(not diffs,
                           f"Following keys missing from first dictionary: {diffs}",
