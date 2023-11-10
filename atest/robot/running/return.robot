@@ -6,19 +6,26 @@ Resource          atest_resource.robot
 Simple
     ${tc} =    Check Test Case    ${TESTNAME}
     Should Be Equal    ${tc.body[0].body[1].type}      RETURN
+    Should Be Equal    ${tc.body[0].body[1].values}    ${{()}}
     Should Be Equal    ${tc.body[0].body[1].status}    PASS
     Should Be Equal    ${tc.body[0].body[1].message}   ${EMPTY}
     Should Be Equal    ${tc.body[0].body[2].status}    NOT RUN
     Should Be Equal    ${tc.body[0].message}           ${EMPTY}
 
 Return value
-    Check Test Case    ${TESTNAME}
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Should Be Equal    ${tc.body[0].body[0].type}      RETURN
+    Should Be Equal    ${tc.body[0].body[0].values}    ${{('value',)}}
 
 Return value as variable
-    Check Test Case    ${TESTNAME}
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Should Be Equal    ${tc.body[0].body[0].type}      RETURN
+    Should Be Equal    ${tc.body[0].body[0].values}    ${{('\${42}',)}}
 
 Return multiple values
-    Check Test Case    ${TESTNAME}
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Should Be Equal    ${tc.body[0].body[0].type}      RETURN
+    Should Be Equal    ${tc.body[0].body[0].values}    ${{('first', '\${2}', 'third')}}
 
 In nested keyword
     Check Test Case    ${TESTNAME}
