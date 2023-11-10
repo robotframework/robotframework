@@ -308,12 +308,12 @@ class _List:
 
         Use the ``msg`` argument to override the default error message.
 
-        The ignore_case argument can be used to make comparison case-insensitive. 
+        The ignore_case argument can be used to make comparison case-insensitive.
         See the Ignore case section for more details. It is new in Robot Framework 7.0.
         """
         self._validate_list(list_)
         normalize = Normalizer(ignore_case).normalize
-        _verify_condition(normalize(value) in normalize(list_), 
+        _verify_condition(normalize(value) in normalize(list_),
                           f"{seq2str2(list_)} does not contain value '{value}'.", msg)
 
     def list_should_not_contain_value(self, list_, value, msg=None, ignore_case=False):
@@ -321,7 +321,7 @@ class _List:
 
         Use the ``msg`` argument to override the default error message.
 
-        The ignore_case argument can be used to make comparison case-insensitive. 
+        The ignore_case argument can be used to make comparison case-insensitive.
         See the Ignore case section for more details. It is new in Robot Framework 7.0.
         """
         self._validate_list(list_)
@@ -341,7 +341,7 @@ class _List:
         This keyword works with all iterables that can be converted to a list.
         The original iterable is never altered.
 
-        The ignore_case argument can be used to make comparison case-insensitive. 
+        The ignore_case argument can be used to make comparison case-insensitive.
         See the Ignore case section for more details. It is new in Robot Framework 7.0.
         """
         self._validate_list(list_)
@@ -403,7 +403,7 @@ class _List:
         | ${list2} = | Create List | cherry | banana | apple |
         | Lists Should Be Equal | ${list1} | ${list2} | ignore_order=True |
 
-        The ignore_case argument can be used to make comparison case-insensitive. 
+        The ignore_case argument can be used to make comparison case-insensitive.
         See the Ignore case section for more details. It is new in Robot Framework 7.0.
         """
         self._validate_lists(list1, list2)
@@ -448,7 +448,7 @@ class _List:
         See `Lists Should Be Equal` for more information about configuring
         the error message with ``msg`` and ``values`` arguments.
 
-        The ignore_case argument can be used to make comparison case-insensitive. 
+        The ignore_case argument can be used to make comparison case-insensitive.
         See the Ignore case section for more details. It is new in Robot Framework 7.0.
         """
         self._validate_lists(list1, list2)
@@ -727,8 +727,8 @@ class _Dictionary:
         """Fails if ``key`` is not found from ``dictionary``.
 
         Use the ``msg`` argument to override the default error message.
-        
-        The ignore_case argument can be used to make comparison case-insensitive. 
+
+        The ignore_case argument can be used to make comparison case-insensitive.
         See the Ignore case section for more details. It is new in Robot Framework 7.0.
         """
         self._validate_dictionary(dictionary)
@@ -742,8 +742,8 @@ class _Dictionary:
         """Fails if ``key`` is found from ``dictionary``.
 
         Use the ``msg`` argument to override the default error message.
-        
-        The ignore_case argument can be used to make comparison case-insensitive. 
+
+        The ignore_case argument can be used to make comparison case-insensitive.
         See the Ignore case section for more details. It is new in Robot Framework 7.0.
         """
         self._validate_dictionary(dictionary)
@@ -759,8 +759,8 @@ class _Dictionary:
         Value is converted to unicode for comparison.
 
         Use the ``msg`` argument to override the default error message.
-        
-        The ignore_case argument can be used to make comparison case-insensitive. 
+
+        The ignore_case argument can be used to make comparison case-insensitive.
         See the Ignore case section for more details. It is new in Robot Framework 7.0.
         """
         self._validate_dictionary(dictionary)
@@ -775,8 +775,8 @@ class _Dictionary:
         """Fails if ``value`` is not found from ``dictionary``.
 
         Use the ``msg`` argument to override the default error message.
-        
-        The ignore_case argument can be used to make comparison case-insensitive. 
+
+        The ignore_case argument can be used to make comparison case-insensitive.
         See the Ignore case section for more details. It is new in Robot Framework 7.0.
         """
         self._validate_dictionary(dictionary)
@@ -790,8 +790,8 @@ class _Dictionary:
         """Fails if ``value`` is found from ``dictionary``.
 
         Use the ``msg`` argument to override the default error message.
-        
-        The ignore_case argument can be used to make comparison case-insensitive. 
+
+        The ignore_case argument can be used to make comparison case-insensitive.
         See the Ignore case section for more details. It is new in Robot Framework 7.0.
         """
         self._validate_dictionary(dictionary)
@@ -820,8 +820,8 @@ class _Dictionary:
 
         See `Lists Should Be Equal` for more information about configuring
         the error message with ``msg`` and ``values`` arguments.
-        
-        The ignore_case argument can be used to make comparison case-insensitive. 
+
+        The ignore_case argument can be used to make comparison case-insensitive.
         See the Ignore case section for more details. It is new in Robot Framework 7.0.
         """
         self._validate_dictionary(dict1)
@@ -847,8 +847,8 @@ class _Dictionary:
 
         See `Lists Should Be Equal` for more information about configuring
         the error message with ``msg`` and ``values`` arguments.
-        
-        The ignore_case argument can be used to make comparison case-insensitive. 
+
+        The ignore_case argument can be used to make comparison case-insensitive.
         See the Ignore case section for more details. It is new in Robot Framework 7.0.
         """
         self._validate_dictionary(dict1)
@@ -860,6 +860,8 @@ class _Dictionary:
         _verify_condition(not diffs,
                           f"Following keys missing from first dictionary: {diffs}",
                           msg, values)
+        keys = [(key1, key2) for key1, key2 in
+                zip(dict1.keys(), dict2.keys()) if normalize(key1) == normalize(key2)]
         self._key_values_should_be_equal(keys, dict1, dict2, msg,
                                          values, ignore_case)
 
@@ -898,28 +900,24 @@ class _Dictionary:
         if miss2:
             error += [f'Following keys missing from second dictionary: {miss2}']
         _verify_condition(not error, '\n'.join(error), msg, values)
-        return keys1
+
+        keys = [(key1, key2) for key1, key2 in
+                zip(dict1.keys(), dict2.keys()) if normalize(key1) == normalize(key2)]
+        return keys
 
     def _key_values_should_be_equal(self, keys, dict1, dict2, msg, values, ignore_case):
-        normalize = Normalizer(ignore_case).normalize
-        diffs = '\n'.join(self._yield_dict_diffs(keys, normalize(dict1),
-                                normalize(dict2), ignore_case))
+        diffs = '\n'.join(self._yield_dict_diffs(keys, dict1,
+                                dict2, ignore_case))
         _verify_condition(not diffs,
                           f'Following keys have different values:\n{diffs}',
                           msg, values)
 
     def _yield_dict_diffs(self, keys, dict1, dict2, ignore_case):
-        if ignore_case=="value": # TODO: Cleanup code
-            # key values have already been checked for equalness,
-            # so currently it is possible to only look for differences on value level
-            # and ignoring the differences on key level.
-            normalize = Normalizer(True).normalize
-        else:
-            normalize = Normalizer(ignore_case).normalize
-        for key in normalize(keys):
+        normalize = Normalizer(True if ignore_case=="value" else ignore_case).normalize
+        for key1, key2 in keys:
             try:
-                assert_equal(normalize(normalize(dict1)[key]),
-                             normalize(normalize(dict2)[key]), msg=f'Key {key}')
+                assert_equal(normalize(dict1[key1]),
+                             normalize(dict2[key2]), msg=f'Key {key1}')
             except AssertionError as err:
                 yield str(err)
 
@@ -1015,7 +1013,7 @@ class Collections(_List, _Dictionary):
     ignore_case equal to ``key``, ``value`` or ``both``. Ignoring case means that the
     values to compare are normalized by lowercasing strings before comparison.
 
-    Additionally, be aware that list-like objects are converted to lists, and 
+    Additionally, be aware that list-like objects are converted to lists, and
     dictionary-like objects to dictionaries, for ease of comparison
 
     List Examples:
