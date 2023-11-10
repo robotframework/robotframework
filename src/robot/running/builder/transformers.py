@@ -190,7 +190,7 @@ class BodyBuilder(ModelVisitor):
         self.model.body.create_var(node.name, node.value, node.scope, node.separator,
                                    lineno=node.lineno, error=format_error(node.errors))
 
-    def visit_ReturnStatement(self, node):
+    def visit_Return(self, node):
         self.model.body.create_return(node.values, lineno=node.lineno,
                                       error=format_error(node.errors))
 
@@ -314,7 +314,7 @@ class KeywordBuilder(BodyBuilder):
             else:
                 self.model.tags.add(tag)
 
-    def visit_Return(self, node):
+    def visit_ReturnSetting(self, node):
         ErrorReporter(self.model.source).visit(node)
         self.return_setting = node.values
 
@@ -472,9 +472,9 @@ class ErrorReporter(ModelVisitor):
     def visit_Keyword(self, node):
         pass
 
-    def visit_Return(self, node):
+    def visit_ReturnSetting(self, node):
         # Empty 'visit_Keyword' above prevents calling this when visiting the whole
-        # model, but 'KeywordBuilder.visit_Return' visits the node it gets.
+        # model, but 'KeywordBuilder.visit_ReturnSetting' visits the node it gets.
         LOGGER.warn(self._format_message(node.get_token(Token.RETURN_SETTING)))
 
     def visit_SectionHeader(self, node):

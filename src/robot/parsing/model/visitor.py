@@ -44,7 +44,7 @@ class VisitorFinder:
         if callable(method):
             return method
         if method_name in ('visit_TestTags', 'visit_Return'):
-            method = cls._compatibility(method_name)
+            method = cls._backwards_compatibility(method_name)
             if callable(method):
                 return method
         for base in node_cls.__bases__:
@@ -55,11 +55,9 @@ class VisitorFinder:
         return None
 
     @classmethod
-    def _compatibility(cls, method_name):
-        # visit_ForceTags is supported for backwards compatibility.
-        # visit_ReturnSetting is supported for forward compatibility.
+    def _backwards_compatibility(cls, method_name):
         name = {'visit_TestTags': 'visit_ForceTags',
-                'visit_Return': 'visit_ReturnSetting'}[method_name]
+                'visit_Return': 'visit_ReturnStatement'}[method_name]
         return getattr(cls, name, None)
 
     def generic_visit(self, node: Node) -> 'None|Node|list[Node]':

@@ -1849,22 +1849,24 @@ Example
             def visit_Return(self, node):
                 self.node = node
 
-        for cls in Return, ReturnSetting:
-            visitor = VisitReturn()
-            ret = cls.from_params(())
-            visitor.visit(ret)
-            assert_equal(visitor.node, ret)
+        class VisitReturnStatement(ModelVisitor):
+            def visit_ReturnStatement(self, node):
+                self.node = node
+
+        for node in Return.from_params(), ReturnStatement.from_params():
+            for visitor in VisitReturn(), VisitReturnStatement():
+                visitor.visit(node)
+                assert_equal(visitor.node, node)
 
     def test_visit_ReturnSetting(self):
         class VisitReturnSetting(ModelVisitor):
             def visit_ReturnSetting(self, node):
                 self.node = node
 
-        for cls in Return, ReturnSetting:
-            visitor = VisitReturnSetting()
-            ret = cls.from_params(())
-            visitor.visit(ret)
-            assert_equal(visitor.node, ret)
+        node = ReturnSetting.from_params(())
+        visitor = VisitReturnSetting()
+        visitor.visit(node)
+        assert_equal(visitor.node, node)
 
     def test_visit_ForceTags(self):
         class VisitForceTags(ModelVisitor):
