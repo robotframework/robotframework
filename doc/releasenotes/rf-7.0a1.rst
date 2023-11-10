@@ -459,7 +459,7 @@ Other backwards incompatible changes
   `|` occur in unexpected places. For example, `arg: "Hello, world!"` will cause
   an error due to the comma. (`#4711`_)
 
-- `datetime`, `date` and `timedelta` objects are sent over the Remove interface
+- `datetime`, `date` and `timedelta` objects are sent over the Remote interface
   differently than earlier. They all used to be converted to strings, but nowadays
   `datetime` is sent as-is, `date` is converted to `datetime` and sent like that,
   and `timedelta` is converted to a `float` by using `timedelta.total_seconds()`.
