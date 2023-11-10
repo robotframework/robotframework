@@ -914,10 +914,10 @@ class _Dictionary:
 
     def _yield_dict_diffs(self, keys, dict1, dict2, ignore_case):
         normalize = Normalizer(True if ignore_case=="value" else ignore_case).normalize
-        for key1, key2 in keys:
+        for k1, k2 in keys:
             try:
-                assert_equal(normalize(dict1[key1]),
-                             normalize(dict2[key2]), msg=f'Key {key1}')
+                assert_equal(normalize(dict1[k1]),
+                             normalize(dict2[k2]), msg=f'Key {k1}')
             except AssertionError as err:
                 yield str(err)
 
