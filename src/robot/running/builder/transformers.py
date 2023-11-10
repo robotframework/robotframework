@@ -288,14 +288,17 @@ class KeywordBuilder(BodyBuilder):
 
     def __init__(self, resource: ResourceFile, settings: FileSettings):
         super().__init__(resource.keywords.create(tags=settings.keyword_tags))
+        self.return_setting = None
 
     def build(self, node):
         # Possible parsing errors aren't reported further because:
         # - We only validate that keyword body or name isn't empty.
-        # - That is validated again during execution.
+        # - Both of them are validated again during execution.
         # - This way e.g. model modifiers can add content to body.
         self.model.config(name=node.name, lineno=node.lineno)
         self.generic_visit(node)
+        if self.return_setting:
+            self.model.body.create_return(self.return_setting)
 
     def visit_Documentation(self, node):
         self.model.doc = node.value
@@ -315,7 +318,7 @@ class KeywordBuilder(BodyBuilder):
 
     def visit_Return(self, node):
         ErrorReporter(self.model.source).visit(node)
-        self.model.return_ = node.values
+        self.return_setting = node.values
 
     def visit_Timeout(self, node):
         self.model.timeout = node.value

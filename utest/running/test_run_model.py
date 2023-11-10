@@ -430,12 +430,11 @@ class TestToFromDictAndJson(unittest.TestCase):
 
     def test_user_keyword(self):
         self._verify(UserKeyword(), name='', body=[])
-        self._verify(UserKeyword('N', ('a',), 'd', 't', ('r',), 't', 1, error='E'),
+        self._verify(UserKeyword('N', ('a',), 'd', ('t',), 't', 1, error='E'),
                      name='N',
                      args=('a',),
                      doc='d',
                      tags=('t',),
-                     return_=('r',),
                      timeout='t',
                      lineno=1,
                      error='E',

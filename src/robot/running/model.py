@@ -814,14 +814,13 @@ class ResourceFile(ModelObject):
 class UserKeyword(ModelObject):
     repr_args = ('name', 'args')
     fixture_class = Keyword
-    __slots__ = ['name', 'args', 'doc', 'return_', 'timeout', 'lineno', 'parent',
-                 'error', '_setup', '_teardown']
+    __slots__ = ['name', 'args', 'doc', 'timeout', 'lineno', 'parent', 'error',
+                 '_setup', '_teardown']
 
     def __init__(self, name: str = '',
                  args: Sequence[str] = (),
                  doc: str = '',
                  tags: Sequence[str] = (),
-                 return_: Sequence[str] = (),
                  timeout: 'str|None' = None,
                  lineno: 'int|None' = None,
                  parent: 'ResourceFile|None' = None,
@@ -830,7 +829,6 @@ class UserKeyword(ModelObject):
         self.args = tuple(args)
         self.doc = doc
         self.tags = tags
-        self.return_ = tuple(return_)
         self.timeout = timeout
         self.lineno = lineno
         self.parent = parent
@@ -902,7 +900,6 @@ class UserKeyword(ModelObject):
         for name, value in [('args', self.args),
                             ('doc', self.doc),
                             ('tags', tuple(self.tags)),
-                            ('return_', self.return_),
                             ('timeout', self.timeout),
                             ('lineno', self.lineno),
                             ('error', self.error)]:

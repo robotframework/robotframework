@@ -67,22 +67,31 @@ Teardown with escaping
     Verify Teardown    \${notvar} is not a variable
 
 Return
-    Check Test Case    ${TEST NAME}
+    [Documentation]    [Return] is deprecated. In parsing it is transformed to RETURN.
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Should Be Equal    ${tc.body[0].body[0].type}      RETURN
+    Should Be Equal    ${tc.body[0].body[0].values}    ${{('Return value',)}}
     Error in File    0    parsing/user_keyword_settings.robot    167
     ...    The '[[]Return]' setting is deprecated. Use the 'RETURN' statement instead.    level=WARN
 
 Return using variables
-    Check Test Case    ${TEST NAME}
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Should Be Equal    ${tc.body[0].body[1].type}      RETURN
+    Should Be Equal    ${tc.body[0].body[1].values}    ${{('\${ret}',)}}
     Error in File    1    parsing/user_keyword_settings.robot    171
     ...    The '[[]Return]' setting is deprecated. Use the 'RETURN' statement instead.    level=WARN
 
 Return multiple
-    Check Test Case    ${TEST NAME}
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Should Be Equal    ${tc.body[0].body[1].type}      RETURN
+    Should Be Equal    ${tc.body[0].body[1].values}    ${{('\${arg1}', '+', '\${arg2}', '=', '\${result}')}}
     Error in File    2    parsing/user_keyword_settings.robot    176
     ...    The '[[]Return]' setting is deprecated. Use the 'RETURN' statement instead.    level=WARN
 
 Return with escaping
-    Check Test Case    ${TEST NAME}
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Should Be Equal    ${tc.body[0].body[0].type}      RETURN
+    Should Be Equal    ${tc.body[0].body[0].values}    ${{('\\\${XXX}', 'c:\\\\temp', '\\', '\\\\')}}
     Error in File    3    parsing/user_keyword_settings.robot    179
     ...    The '[[]Return]' setting is deprecated. Use the 'RETURN' statement instead.    level=WARN
 

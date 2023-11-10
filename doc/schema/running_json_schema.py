@@ -161,7 +161,6 @@ class UserKeyword(BaseModel):
     args: Sequence[str] | None
     doc: str | None
     tags: Sequence[str] | None
-    return_: Sequence[str] | None
     timeout: str | None
     lineno: int | None
     error: str | None

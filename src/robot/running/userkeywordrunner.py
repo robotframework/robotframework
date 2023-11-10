@@ -90,10 +90,10 @@ class UserKeywordRunner:
             if timeout is not None:
                 result.timeout = str(timeout)
             with context.timeout(timeout):
-                exception, return_ = self._execute(context)
+                exception, return_value = self._execute(context)
                 if exception and not exception.can_continue(context):
                     raise exception
-                return_value = self._get_return_value(variables, return_)
+                return_value = self._handle_return_value(return_value, variables)
                 if exception:
                     exception.return_value = return_value
                     raise exception
@@ -163,18 +163,18 @@ class UserKeywordRunner:
         handler = self._handler
         if context.dry_run and handler.tags.robot('no-dry-run'):
             return None, None
-        error = return_ = pass_ = None
+        error = success = return_value = None
         if handler.setup:
             error = self._run_setup_or_teardown(handler.setup, context)
         try:
             BodyRunner(context, run=not error).run(handler.body)
         except ReturnFromKeyword as exception:
-            return_ = exception
+            return_value = exception.return_value
             error = exception.earlier_failures
         except (BreakLoop, ContinueLoop) as exception:
-            pass_ = exception
+            success = exception
         except ExecutionPassed as exception:
-            pass_ = exception
+            success = exception
             error = exception.earlier_failures
             if error:
                 error.continue_on_failure = False
@@ -187,21 +187,20 @@ class UserKeywordRunner:
             td_error = None
         if error or td_error:
             error = UserKeywordExecutionFailed(error, td_error)
-        return error or pass_, return_
+        return error or success, return_value
 
-    def _get_return_value(self, variables, return_):
-        ret = self._handler.return_value if not return_ else return_.return_value
-        if not ret:
+    def _handle_return_value(self, return_value, variables):
+        if not return_value:
             return None
-        contains_list_var = any(is_list_variable(item) for item in ret)
+        contains_list_var = any(is_list_variable(item) for item in return_value)
         try:
-            ret = variables.replace_list(ret)
+            return_value = variables.replace_list(return_value)
         except DataError as err:
             raise VariableError(f'Replacing variables from keyword return '
                                 f'value failed: {err}')
-        if len(ret) != 1 or contains_list_var:
-            return ret
-        return ret[0]
+        if len(return_value) != 1 or contains_list_var:
+            return return_value
+        return return_value[0]
 
     def _run_setup_or_teardown(self, item, context):
         try:

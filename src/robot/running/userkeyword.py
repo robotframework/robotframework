@@ -49,7 +49,7 @@ class UserLibrary:
     def _create_handler(self, kw):
         if kw.error:
             raise DataError(kw.error)
-        if not kw.body and not kw.return_:
+        if not kw.body:
             raise DataError('User keyword cannot be empty.')
         if not kw.name:
             raise DataError('User keyword name cannot be empty.')
@@ -82,7 +82,6 @@ class UserKeywordHandler:
                                                            self.full_name)
         self.timeout = keyword.timeout
         self.body = keyword.body
-        self.return_value = tuple(keyword.return_)
         self.setup = keyword.setup if keyword.has_setup else None
         self.teardown = keyword.teardown if keyword.has_teardown else None
 
