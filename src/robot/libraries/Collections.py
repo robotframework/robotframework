@@ -899,8 +899,11 @@ class _Dictionary:
             error += [f'Following keys missing from first dictionary: {miss1}']
         if miss2:
             error += [f'Following keys missing from second dictionary: {miss2}']
+        if len(set(normalize(dict1).keys()))!=len(dict1.keys()):
+            error += ["First dictionary contains duplicate keys after normalizing."]
+        if len(set(normalize(dict2).keys()))!=len(dict2.keys()):
+            error += ["Second dictionary contains duplicate keys after normalizing."]
         _verify_condition(not error, '\n'.join(error), msg, values)
-
         keys = [(key1, key2) for key1, key2 in
                 zip(dict1.keys(), dict2.keys()) if normalize(key1) == normalize(key2)]
         return keys
@@ -913,7 +916,7 @@ class _Dictionary:
                           msg, values)
 
     def _yield_dict_diffs(self, keys, dict1, dict2, ignore_case):
-        normalize = Normalizer(True if ignore_case=="value" else ignore_case).normalize
+        normalize = Normalizer(ignore_case).normalize
         for k1, k2 in keys:
             try:
                 assert_equal(normalize(dict1[k1]),
@@ -1012,6 +1015,10 @@ class Collections(_List, _Dictionary):
     there are additional options since they employ both keys and values, using
     ignore_case equal to ``key``, ``value`` or ``both``. Ignoring case means that the
     values to compare are normalized by lowercasing strings before comparison.
+
+    Be aware that dictionaries containing keys that would be equal after normalization,
+    e.g. ``{'a': 1, 'A':2}`` can not be used, as this would result in equal keys within
+    the same dictionary.
 
     Additionally, be aware that list-like objects are converted to lists, and
     dictionary-like objects to dictionaries, for ease of comparison

@@ -423,6 +423,13 @@ Dictionaries Should Be Equal With Keys In Different Order And Ignore Case
     Dictionaries Should Be Equal    ${D8}    ${D8B}  ignore_case=both
     Dictionaries Should Be Equal    ${D8}    ${D8B}  ignore_case=key
     Dictionaries Should Be Equal    ${D8B}   ${D8C}  ignore_case=value
+
+Dictionaries With Equally Named Keys After Normalizing Cannot Ignore Case
+    [Documentation]  FAIL  	First dictionary contains duplicate keys after normalizing.
+    ...   Second dictionary contains duplicate keys after normalizing.
+    [Setup]  Create Dictionaries For Testing Ignore Case
+    Dictionaries Should Be Equal    ${D9}    ${D9B}  ignore_case=both
+
 *** Keywords ***
 Validate invalid argument error
     [Arguments]  ${keyword}    ${argument}=I'm not a dict, I'm a string.    @{args}    ${type}=string    ${position}=1
@@ -478,3 +485,7 @@ Create Dictionaries For Testing Ignore Case
     Set Test Variable    \${D8B}
     ${D8C} =    Create Dictionary    E=5    D=4    C=3    b=2    a=1
     Set Test Variable    \${D8C}
+    ${D9} =    Create Dictionary    A=1  a=2
+    Set Test Variable    \${D9}
+    ${D9B} =    Create Dictionary    A=1  a=2
+    Set Test Variable    \${D9B}
