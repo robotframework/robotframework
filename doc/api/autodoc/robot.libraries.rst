@@ -73,14 +73,6 @@ robot.libraries.Remote module
    :undoc-members:
    :show-inheritance:
 
-robot.libraries.Reserved module
--------------------------------
-
-.. automodule:: robot.libraries.Reserved
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 robot.libraries.Screenshot module
 ---------------------------------
 

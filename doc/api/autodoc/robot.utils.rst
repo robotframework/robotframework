@@ -177,6 +177,14 @@ robot.utils.normalizing module
    :undoc-members:
    :show-inheritance:
 
+robot.utils.notset module
+-------------------------
+
+.. automodule:: robot.utils.notset
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 robot.utils.platform module
 ---------------------------
 

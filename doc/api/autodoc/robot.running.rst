@@ -91,14 +91,6 @@ robot.running.model module
    :undoc-members:
    :show-inheritance:
 
-robot.running.modelcombiner module
-----------------------------------
-
-.. automodule:: robot.running.modelcombiner
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 robot.running.namespace module
 ------------------------------
 

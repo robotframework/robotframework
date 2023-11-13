@@ -41,22 +41,6 @@ robot.output.librarylogger module
    :undoc-members:
    :show-inheritance:
 
-robot.output.listenerarguments module
--------------------------------------
-
-.. automodule:: robot.output.listenerarguments
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-robot.output.listenermethods module
------------------------------------
-
-.. automodule:: robot.output.listenermethods
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 robot.output.listeners module
 -----------------------------
 
@@ -69,6 +53,14 @@ robot.output.logger module
 --------------------------
 
 .. automodule:: robot.output.logger
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+robot.output.loggerapi module
+-----------------------------
+
+.. automodule:: robot.output.loggerapi
    :members:
    :undoc-members:
    :show-inheritance:
