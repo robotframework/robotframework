@@ -61,6 +61,9 @@ Currently exposed APIs are:
   returned by the :func:`~robot.result.resultbuilder.ExecutionResult` or
   an executed :class:`~robot.running.model.TestSuite`.
 
+* :class:`~robot.running.arguments.typeinfo.TypeInfo` class for parsing
+  type hints and converting values based on them. New in Robot Framework 7.0.
+
 * :class:`~robot.conf.languages.Languages` and :class:`~robot.conf.languages.Language`
   classes for external tools that need to work with different translations.
   The latter is also the base class to use with custom translations.
@@ -81,6 +84,6 @@ from robot.parsing import (get_tokens, get_resource_tokens, get_init_tokens,
                            get_model, get_resource_model, get_init_model, Token)
 from robot.reporting import ResultWriter
 from robot.result import ExecutionResult, ResultVisitor
-from robot.running import TestSuite, TestSuiteBuilder
+from robot.running import TestSuite, TestSuiteBuilder, TypeInfo
 
 from .exceptions import ContinuableFailure, Failure, FatalError, Error, SkipExecution

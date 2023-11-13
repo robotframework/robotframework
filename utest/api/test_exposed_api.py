@@ -23,6 +23,9 @@ class TestExposedApi(unittest.TestCase):
         assert_equal(api.SuiteVisitor, model.SuiteVisitor)
         assert_equal(api.ResultVisitor, result.ResultVisitor)
 
+    def test_typeinfo(self):
+        assert_equal(api.TypeInfo, running.TypeInfo)
+
     def test_deprecated_parsing(self):
         assert_equal(api.get_model, parsing.get_model)
         assert_equal(api.get_resource_model, parsing.get_resource_model)
