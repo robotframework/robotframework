@@ -19,7 +19,7 @@ from decimal import Decimal
 from pathlib import Path
 from typing import Any, Union
 
-from robot.conf import LanguagesLike
+from robot.conf import Languages, LanguagesLike
 from robot.errors import DataError
 from robot.utils import (has_args, is_union, NOT_SET, plural_or_not as s, setter,
                          SetterAwareType, type_repr, typeddict_types)
@@ -270,6 +270,8 @@ class TypeInfo(metaclass=SetterAwareType):
         """
         if isinstance(custom_converters, dict):
             custom_converters = CustomArgumentConverters.from_dict(custom_converters)
+        if not isinstance(languages, Languages):
+            languages = Languages(languages)
         converter = TypeConverter.converter_for(self, custom_converters, languages)
         if not converter:
             raise TypeError(f"No converter found for '{self}'.")

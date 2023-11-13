@@ -218,6 +218,11 @@ class TestTypeInfo(unittest.TestCase):
             info.convert, '42', custom_converters={Custom: 'bad'}
         )
 
+    def test_language_config(self):
+        info = TypeInfo.from_type_hint(bool)
+        assert_equal(info.convert('kyllä', languages='Finnish'), True)
+        assert_equal(info.convert('ei', languages=['de', 'fi']), False)
+
     def test_no_converter(self):
         assert_raises_with_msg(
             TypeError,

@@ -24,7 +24,7 @@ from os import PathLike
 from pathlib import Path, PurePath
 from typing import Any, TYPE_CHECKING, Union
 
-from robot.conf import Languages, LanguagesLike
+from robot.conf import Languages
 from robot.libraries.DateTime import convert_date, convert_time
 from robot.utils import (eq, get_error_message, is_string, plural_or_not as s,
                          safe_str, seq2str, type_name)
@@ -48,7 +48,7 @@ class TypeConverter:
 
     def __init__(self, type_info: 'TypeInfo',
                  custom_converters: 'CustomArgumentConverters|None' = None,
-                 languages: LanguagesLike = None):
+                 languages: 'Languages|None' = None):
         self.type_info = type_info
         self.custom_converters = custom_converters
         self.languages = languages or Languages()
@@ -61,13 +61,13 @@ class TypeConverter:
     @classmethod
     def converter_for(cls, type_info: 'TypeInfo',
                       custom_converters: 'CustomArgumentConverters|None' = None,
-                      languages: LanguagesLike = None) -> 'TypeConverter|None':
+                      languages: 'Languages|None' = None) -> 'TypeConverter|None':
         if type_info.type is None:
             return None
         if custom_converters:
             info = custom_converters.get_converter_info(type_info.type)
             if info:
-                return CustomConverter(type_info, info)
+                return CustomConverter(type_info, info, languages)
         if type_info.type in cls._converters:
             return cls._converters[type_info.type](type_info, custom_converters, languages)
         for converter in cls._converters.values():
@@ -414,7 +414,7 @@ class ListConverter(TypeConverter):
 
     def __init__(self, type_info: 'TypeInfo',
                  custom_converters: 'CustomArgumentConverters|None' = None,
-                 languages: LanguagesLike = None):
+                 languages: 'Languages|None' = None):
         super().__init__(type_info, custom_converters, languages)
         nested = type_info.nested
         if not nested:
@@ -451,7 +451,7 @@ class TupleConverter(TypeConverter):
 
     def __init__(self, type_info: 'TypeInfo',
                  custom_converters: 'CustomArgumentConverters|None' = None,
-                 languages: LanguagesLike = None):
+                 languages: 'Languages|None' = None):
         super().__init__(type_info, custom_converters, languages)
         self.converters = ()
         self.homogenous = False
@@ -507,7 +507,7 @@ class TypedDictConverter(TypeConverter):
 
     def __init__(self, type_info: 'TypedDictInfo',
                  custom_converters: 'CustomArgumentConverters|None' = None,
-                 languages: LanguagesLike = None):
+                 languages: 'Languages|None' = None):
         super().__init__(type_info, custom_converters, languages)
         self.converters = {n: self.converter_for(t, custom_converters, languages)
                            for n, t in type_info.annotations.items()}
@@ -558,7 +558,7 @@ class DictionaryConverter(TypeConverter):
 
     def __init__(self, type_info: 'TypeInfo',
                  custom_converters: 'CustomArgumentConverters|None' = None,
-                 languages: LanguagesLike = None):
+                 languages: 'Languages|None' = None):
         super().__init__(type_info, custom_converters, languages)
         nested = type_info.nested
         if not nested:
@@ -609,7 +609,7 @@ class SetConverter(TypeConverter):
 
     def __init__(self, type_info: 'TypeInfo',
                  custom_converters: 'CustomArgumentConverters|None' = None,
-                 languages: LanguagesLike = None):
+                 languages: 'Languages|None' = None):
         super().__init__(type_info, custom_converters, languages)
         nested = type_info.nested
         if not nested:
@@ -658,7 +658,7 @@ class UnionConverter(TypeConverter):
 
     def __init__(self, type_info: 'TypeInfo',
                  custom_converters: 'CustomArgumentConverters|None' = None,
-                 languages: LanguagesLike = None):
+                 languages: 'Languages|None' = None):
         super().__init__(type_info, custom_converters, languages)
         self.converters = tuple(self.converter_for(info, custom_converters, languages)
                                 for info in self.type_info.nested)
@@ -710,7 +710,7 @@ class CustomConverter(TypeConverter):
 
     def __init__(self, type_info: 'TypeInfo',
                  converter_info: 'ConverterInfo',
-                 languages: LanguagesLike = None):
+                 languages: 'Languages|None' = None):
         super().__init__(type_info, languages=languages)
         self.converter_info = converter_info
 
