@@ -3294,6 +3294,9 @@ __ `Getting keyword source information`_
 A good example of using the dynamic API is Robot Framework's own
 `Remote library`_.
 
+.. note:: Starting from Robot Framework 7.0, dynamic libraries can have asynchronous
+          implementations of their special methods.
+
 Hybrid library API
 ------------------
 
