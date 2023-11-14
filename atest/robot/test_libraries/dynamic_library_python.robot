@@ -50,3 +50,6 @@ Invalid get_keyword_names
     ...    Getting keyword names from library 'InvalidKeywordNames' failed:
     ...    Calling dynamic method 'get_keyword_names' failed:
     ...    Return value must be a list of strings.
+
+Dynamic async kw works
+    Check Test Case    ${TESTNAME}

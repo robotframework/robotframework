@@ -1,7 +1,7 @@
 import asyncio
 
 
-class AsyncDynamic:
+class AsyncDynamicLibrary:
 
     async def get_keyword_names(self):
         await asyncio.sleep(0.1)
