@@ -69,6 +69,32 @@ Skip Teardowns After Stopping Gracefully
     Teardown Should Not Be Defined    ${tc}
     Teardown Should Not Be Defined    ${SUITE}
 
+SIGINT Signal Should Stop Async Test Execution Gracefully
+    Start And Send Signal    async_stop.robot    One SIGINT    5
+    Check Test Cases Have Failed Correctly
+    ${tc} =    Get Test Case    Test
+    Evaluate    len(${tc.kws[1].msgs}) == 1
+    Check Log Message    ${tc.kws[1].msgs[0]}    Start Sleep
+    Evaluate    len(${SUITE.teardown.msgs}) == 0
+
+Two SIGINT Signals Should Stop Async Test Execution Forcefully
+    Start And Send Signal    async_stop.robot    Two SIGINTs    5
+    Check Tests Have Been Forced To Shutdown
+
+SIGTERM Signal Should Stop Async Test Execution Gracefully
+    [Tags]    no-windows
+    Start And Send Signal    async_stop.robot    One SIGTERM    5
+    Check Test Cases Have Failed Correctly
+    ${tc} =    Get Test Case    Test
+    Evaluate    len(${tc.kws[1].msgs}) == 1
+    Check Log Message    ${tc.kws[1].msgs[0]}    Start Sleep
+    Evaluate    len(${SUITE.teardown.msgs}) == 0
+
+Two SIGTERM Signals Should Stop Async Test Execution Forcefully
+    [Tags]    no-windows
+    Start And Send Signal    async_stop.robot    Two SIGTERMs    5
+    Check Tests Have Been Forced To Shutdown
+
 *** Keywords ***
 Start And Send Signal
     [Arguments]    ${datasource}    ${signals}    ${sleep}=0s    @{extra options}
