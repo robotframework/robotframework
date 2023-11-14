@@ -9,6 +9,10 @@ Library decorator disables automatic keyword discovery
     Decorated method is keyword
     Not keyword
 
+Static and class methods when automatic keyword discovery is disabled
+    Decorated static method is keyword
+    Decorated class method is keyword
+
 Library decorator with arguments disables automatic keyword discovery by default
     [Documentation]    FAIL No keyword with name 'Not keyword v2' found.
     Decorated method is keyword v.2

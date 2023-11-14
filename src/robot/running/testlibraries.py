@@ -255,6 +255,8 @@ class _BaseTestLibrary:
     def _get_handler_names(self, libcode):
         def has_robot_name(name):
             candidate = inspect.getattr_static(libcode, name)
+            if isinstance(candidate, (classmethod, staticmethod)):
+                candidate = candidate.__func__
             return hasattr(candidate, 'robot_name')
 
         auto_keywords = getattr(libcode, 'ROBOT_AUTO_KEYWORDS', True)
