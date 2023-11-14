@@ -24,6 +24,7 @@ from robot.errors import DataError
 from robot.utils import (has_args, is_union, NOT_SET, plural_or_not as s, setter,
                          SetterAwareType, type_repr, typeddict_types)
 
+from ..context import EXECUTION_CONTEXTS
 from .customconverters import CustomArgumentConverters
 from .typeconverters import TypeConverter
 
@@ -261,7 +262,8 @@ class TypeInfo(metaclass=SetterAwareType):
         :param name: Name of the argument or other thing to convert.
             Used only for error reporting.
         :param custom_converters: Custom argument converters.
-        :param languages: Language configuration.
+        :param languages: Language configuration. During execution, uses the
+            current language configuration by default.
         :param kind: Type of the thing to be converted.
             Used only for error reporting.
         :raises: ``TypeError`` if there is no converter for this type or
@@ -270,7 +272,9 @@ class TypeInfo(metaclass=SetterAwareType):
         """
         if isinstance(custom_converters, dict):
             custom_converters = CustomArgumentConverters.from_dict(custom_converters)
-        if not isinstance(languages, Languages):
+        if not languages and EXECUTION_CONTEXTS.current:
+            languages = EXECUTION_CONTEXTS.current.languages
+        elif not isinstance(languages, Languages):
             languages = Languages(languages)
         converter = TypeConverter.converter_for(self, custom_converters, languages)
         if not converter:

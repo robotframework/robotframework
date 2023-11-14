@@ -104,6 +104,10 @@ class _ExecutionContext:
         self.user_keywords = []
         self.asynchronous = asynchronous
 
+    @property
+    def languages(self):
+        return self.namespace.languages
+
     @contextmanager
     def suite_teardown(self):
         self.in_suite_teardown = True

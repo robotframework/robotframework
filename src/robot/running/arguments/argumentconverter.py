@@ -18,7 +18,6 @@ from typing import TYPE_CHECKING
 from robot.variables import contains_variable
 
 from .typeinfo import TypeInfo
-from .typeconverters import TypeConverter
 
 if TYPE_CHECKING:
     from robot.conf import LanguagesLike
