@@ -352,7 +352,7 @@ class _ClassLibrary(_BaseTestLibrary):
 class _ModuleLibrary(_BaseTestLibrary):
 
     def _get_handler_method(self, libcode, name):
-        method = _BaseTestLibrary._get_handler_method(self, libcode, name)
+        method = super()._get_handler_method(libcode, name)
         if hasattr(libcode, '__all__') and name not in libcode.__all__:
             raise DataError('Not exposed as a keyword.')
         return method
@@ -379,14 +379,12 @@ class _DynamicLibrary(_BaseTestLibrary):
     get_handler_error_level = 'ERROR'
 
     def __init__(self, libcode, name, args, source, logger, variables=None):
-        _BaseTestLibrary.__init__(self, libcode, name, args, source, logger,
-                                  variables)
+        super().__init__(libcode, name, args, source, logger, variables)
 
     @property
     def doc(self):
         if self._doc is None:
-            self._doc = (self._get_kw_doc('__intro__') or
-                         _BaseTestLibrary.doc.fget(self))
+            self._doc = self._get_kw_doc('__intro__') or super().doc
         return self._doc
 
     def _get_kw_doc(self, name):
