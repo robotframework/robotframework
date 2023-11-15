@@ -54,6 +54,7 @@ class LibdocXmlWriter:
             attrs = self._get_start_attrs(kw, lib_source)
             writer.start(kw_type, attrs)
             self._write_arguments(kw, writer)
+            self._write_return_type(kw, writer)
             writer.element('doc', kw.doc)
             writer.element('shortdoc', kw.short_doc)
             if kw_type == 'kw' and kw.tags:
@@ -82,19 +83,24 @@ class LibdocXmlWriter:
             writer.end('arg')
         writer.end('arguments')
 
-    def _write_type_info(self, type_info: TypeInfo, type_docs: dict, writer):
+    def _write_type_info(self, type_info: TypeInfo, type_docs: dict, writer, element='type'):
         attrs = {'name': type_info.name}
         if type_info.is_union:
             attrs['union'] = 'true'
         if type_info.name in type_docs:
             attrs['typedoc'] = type_docs[type_info.name]
         if type_info.nested:
-            writer.start('type', attrs)
+            writer.start(element, attrs)
             for nested in type_info.nested:
                 self._write_type_info(nested, type_docs, writer)
-            writer.end('type')
+            writer.end(element)
         else:
-            writer.element('type', attrs=attrs)
+            writer.element(element, attrs=attrs)
+
+    def _write_return_type(self, kw, writer):
+        if kw.args.return_type:
+            self._write_type_info(kw.args.return_type, kw.type_docs['return'], writer,
+                                  element='returntype')
 
     def _get_start_attrs(self, kw, lib_source):
         attrs = {'name': kw.name}

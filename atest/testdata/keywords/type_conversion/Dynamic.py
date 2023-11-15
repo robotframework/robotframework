@@ -31,7 +31,7 @@ class Dynamic:
     def list_of_types(self, value, expected=None):
         self._validate_type(value, expected)
 
-    @keyword(types={'value': Decimal})
+    @keyword(types={'value': Decimal, 'return': None})
     def dict_of_types(self, value, expected=None):
         self._validate_type(value, expected)
 

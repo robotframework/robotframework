@@ -64,6 +64,7 @@ class JsonDocBuilder:
                         source=data['source'],
                         lineno=int(data.get('lineno', -1)))
         self._create_arguments(data['args'], kw)
+        self._add_return_type(data.get('returnType'), kw)
         return kw
 
     def _create_arguments(self, arguments, kw: KeywordDoc):
@@ -105,6 +106,12 @@ class JsonDocBuilder:
 
     def _parse_legacy_type_info(self, types):
         return TypeInfo.from_sequence(types) if types else None
+
+    def _add_return_type(self, data, kw: KeywordDoc):
+        if data:
+            type_docs = {}
+            kw.args.return_type = self._parse_type_info(data, type_docs)
+            kw.type_docs['return'] = type_docs
 
     def _parse_type_docs(self, type_docs):
         for data in type_docs:

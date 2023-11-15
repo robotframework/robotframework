@@ -3,7 +3,7 @@
   "name": "DataTypesLibrary",
   "doc": "<p>This Library has Data Types.</p>\n<p>It has some in <code>__init__</code> and others in the <a href=\"#Keywords\" class=\"name\">Keywords</a>.</p>\n<p>The DataTypes are the following that should be linked. <span class=\"name\">HttpCredentials</span> , <a href=\"#type-GeoLocation\" class=\"name\">GeoLocation</a> , <a href=\"#type-Small\" class=\"name\">Small</a> and <a href=\"#type-AssertionOperator\" class=\"name\">AssertionOperator</a>.</p>",
   "version": "",
-  "generated": "2023-09-14T19:27:00+00:00",
+  "generated": "2023-11-15T18:19:22+00:00",
   "type": "LIBRARY",
   "scope": "TEST",
   "docFormat": "HTML",
@@ -28,6 +28,7 @@
           "repr": "credentials: Small = one"
         }
       ],
+      "returnType": null,
       "doc": "<p>This is the init Docs.</p>\n<p>It links to <a href=\"#Set%20Location\" class=\"name\">Set Location</a> keyword and to <a href=\"#type-GeoLocation\" class=\"name\">GeoLocation</a> data type.</p>",
       "shortdoc": "This is the init Docs.",
       "tags": [],
@@ -87,6 +88,7 @@
           "repr": "exp: str = something?"
         }
       ],
+      "returnType": null,
       "doc": "<p>This links to <a href=\"#type-AssertionOperator\" class=\"name\">AssertionOperator</a> .</p>\n<p>This is the next Line that links to <a href=\"#Set%20Location\" class=\"name\">Set Location</a> .</p>",
       "shortdoc": "This links to `AssertionOperator` .",
       "tags": [],
@@ -149,6 +151,7 @@
           "repr": "arg4: Unknown"
         }
       ],
+      "returnType": null,
       "doc": "",
       "shortdoc": "",
       "tags": [],
@@ -221,6 +224,32 @@
           "repr": "funny: bool | int | float | str | AssertionOperator | Small | GeoLocation | None = equal"
         }
       ],
+      "returnType": {
+        "name": "Union",
+        "typedoc": null,
+        "nested": [
+          {
+            "name": "int",
+            "typedoc": "integer",
+            "nested": [],
+            "union": false
+          },
+          {
+            "name": "List",
+            "typedoc": "list",
+            "nested": [
+              {
+                "name": "int",
+                "typedoc": "integer",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": false
+          }
+        ],
+        "union": true
+      },
       "doc": "",
       "shortdoc": "",
       "tags": [],
@@ -244,6 +273,12 @@
           "repr": "location: GeoLocation"
         }
       ],
+      "returnType": {
+        "name": "bool",
+        "typedoc": "boolean",
+        "nested": [],
+        "union": false
+      },
       "doc": "",
       "shortdoc": "",
       "tags": [],
@@ -333,6 +368,7 @@
           "repr": "*args: List[Any]"
         }
       ],
+      "returnType": null,
       "doc": "",
       "shortdoc": "",
       "tags": [],
@@ -395,7 +431,8 @@
       "name": "boolean",
       "doc": "<p>Strings <code>TRUE</code>, <code>YES</code>, <code>ON</code> and <code>1</code> are converted to Boolean <code>True</code>, the empty string as well as strings <code>FALSE</code>, <code>NO</code>, <code>OFF</code> and <code>0</code> are converted to Boolean <code>False</code>, and the string <code>NONE</code> is converted to the Python <code>None</code> object. Other strings and other accepted values are passed as-is, allowing keywords to handle them specially if needed. All string comparisons are case-insensitive.</p>\n<p>Examples: <code>TRUE</code> (converted to <code>True</code>), <code>off</code> (converted to <code>False</code>), <code>example</code> (used as-is)</p>",
       "usages": [
-        "Funny Unions"
+        "Funny Unions",
+        "Set Location"
       ],
       "accepts": [
         "string",
@@ -497,6 +534,7 @@
       "name": "list",
       "doc": "<p>Strings must be Python <a href=\"https://docs.python.org/library/stdtypes.html#list\">list</a> literals. They are converted to actual lists using the <a href=\"https://docs.python.org/library/ast.html#ast.literal_eval\">ast.literal_eval</a> function. They can contain any values <code>ast.literal_eval</code> supports, including lists and other containers.</p>\n<p>If the type has nested types like <code>list[int]</code>, items are converted to those types automatically. This in new in Robot Framework 6.0.</p>\n<p>Examples: <code>['one', 'two']</code>, <code>[('one', 1), ('two', 2)]</code></p>",
       "usages": [
+        "Funny Unions",
         "Typing Types"
       ],
       "accepts": [

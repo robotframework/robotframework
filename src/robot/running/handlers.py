@@ -185,7 +185,10 @@ class _DynamicHandler(_RunnableHandler):
                 raise DataError(f"Too few '{name}' method parameters for "
                                 f"keyword-only arguments support.")
         get_keyword_types = GetKeywordTypes(self.library.get_instance())
-        spec.types = get_keyword_types(self._handler_name)
+        types = get_keyword_types(self._handler_name)
+        if isinstance(types, dict) and 'return' in types:
+            spec.return_type = types.pop('return')
+        spec.types = types
         return spec
 
     @property

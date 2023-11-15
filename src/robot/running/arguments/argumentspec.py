@@ -30,7 +30,8 @@ class ArgumentSpec:
 
     def __init__(self, name=None, type='Keyword', positional_only=None,
                  positional_or_named=None, var_positional=None, named_only=None,
-                 var_named=None, embedded=None, defaults=None, types=None):
+                 var_named=None, embedded=None, defaults=None, types=None,
+                 return_type=None):
         self.name = name
         self.type = type
         # FIXME: Use tuples, not lists. Consider using __slots__.
@@ -42,10 +43,19 @@ class ArgumentSpec:
         self.embedded = embedded or ()
         self.defaults = defaults or {}
         self.types = types
+        self.return_type = return_type
 
     @setter
-    def types(self, types) -> 'dict[str, TypeInfo]':
+    def types(self, types) -> 'dict[str, TypeInfo]|None':
         return TypeValidator(self).validate(types)
+
+    @setter
+    def return_type(self, hint) -> 'TypeInfo|None':
+        if hint in (None, type(None)):
+            return None
+        if isinstance(hint, TypeInfo):
+            return hint
+        return TypeInfo.from_type_hint(hint)
 
     @property
     def positional(self):
@@ -115,7 +125,7 @@ class ArgumentSpec:
 
     def __bool__(self):
         return any([self.positional_only, self.positional_or_named, self.var_positional,
-                    self.named_only, self.var_named])
+                    self.named_only, self.var_named, self.return_type])
 
     def __str__(self):
         return ', '.join(str(arg) for arg in self)

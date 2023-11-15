@@ -31,8 +31,8 @@ Run Libdoc And Parse Output
 
 Run Libdoc And Verify Output
     [Arguments]    ${args}    @{expected}
+    VAR    ${expected}    @{expected}    separator=\n
     ${output}=    Run Libdoc    ${args}
-    ${expected}=    Catenate    SEPARATOR=\n    @{expected}
     Should Match    ${output}   ${expected}\n
 
 Run Libdoc And Parse Model From HTML
@@ -80,7 +80,7 @@ Type Should Be
     Element Attribute Should Be    ${LIBDOC}    type    ${type}
 
 Scope Should Be
-    [Arguments]    ${scope}    ${old}=${{ {'GLOBAL': 'global', 'SUITE': 'test suite', 'TEST': 'test case'}[$scope] }}
+    [Arguments]    ${scope}
     Element Attribute Should Be    ${LIBDOC}    scope    ${scope}
 
 Source Should Be
@@ -138,7 +138,7 @@ Verify Arguments Structure
     [Arguments]    ${index}   ${xpath}    ${expected}
     ${kws}=    Get Elements    ${LIBDOC}    xpath=${xpath}
     ${arg_elems}=    Get Elements    ${kws}[${index}]    xpath=arguments/arg
-    FOR    ${arg_elem}    ${exp_repr}    IN ZIP     ${arg_elems}    ${expected}
+    FOR    ${arg_elem}    ${exp_repr}    IN ZIP     ${arg_elems}    ${expected}    mode=STRICT
         IF    $INTERPRETER.version_info >= (3, 11)
             ${exp_repr} =    Replace String    ${exp_repr}    | None = None    = None
         END
@@ -164,7 +164,20 @@ Verify Arguments Structure
         Verify Argument Model    ${arg_model}    ${exp_repr}
         Should Be Equal    ${repr}    ${exp_repr}
     END
-    Should Be Equal    ${{len($arg_elems)}}    ${{len($expected)}}
+
+Return Type Should Be
+    [Arguments]    ${index}    ${name}    @{nested}
+    ${kws}=    Get Elements    ${LIBDOC}    xpath=keywords/kw
+    VAR    ${kw}    ${kws}[${index}]
+    IF    $name.upper() == 'NONE'
+        Element Should Not Exist    ${kw}    returntype
+        RETURN
+    END
+    Element Attribute Should Be    ${kw}    name    ${name}    xpath=returntype
+    ${type_elems} =    Get Elements    ${kw}    returntype/type
+    FOR    ${elem}    ${expected}    IN ZIP    ${type_elems}    ${nested}    mode=STRICT
+        Element Attribute Should Be    ${elem}    name    ${expected}
+    END
 
 Get Type
     [Arguments]    ${elem}

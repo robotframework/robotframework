@@ -28,8 +28,8 @@ if TYPE_CHECKING:
 
 class TypeValidator:
 
-    def __init__(self, arg_spec: 'ArgumentSpec'):
-        self.arg_spec = arg_spec
+    def __init__(self, spec: 'ArgumentSpec'):
+        self.spec = spec
 
     def validate(self, types: 'Mapping|Sequence|None') -> 'dict[str, TypeInfo]|None':
         if types is None:
@@ -46,16 +46,14 @@ class TypeValidator:
         return {k: TypeInfo.from_type_hint(types[k]) for k in types}
 
     def _validate_type_dict(self, types: Mapping):
-        # 'return' isn't used for anything yet, but it may be shown by Libdoc
-        # in the future. Trying to be forward compatible.
-        names = set(self.arg_spec.argument_names + ['return'])
+        names = set(self.spec.argument_names)
         extra = [t for t in types if t not in names]
         if extra:
             raise DataError(f'Type information given to non-existing '
                             f'argument{s(extra)} {seq2str(sorted(extra))}.')
 
     def _type_list_to_dict(self, types: Sequence) -> dict:
-        names = self.arg_spec.argument_names
+        names = self.spec.argument_names
         if len(types) > len(names):
             raise DataError(f'Type information given to {len(types)} argument{s(types)} '
                             f'but keyword has only {len(names)} argument{s(names)}.')

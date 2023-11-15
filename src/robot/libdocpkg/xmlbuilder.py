@@ -70,6 +70,7 @@ class XmlDocBuilder:
                         source=elem.get('source') or lib_source,
                         lineno=int(elem.get('lineno', -1)))
         self._create_arguments(elem, kw)
+        self._add_return_type(elem.find('returntype'), kw)
         return kw
 
     def _create_arguments(self, elem, kw: KeywordDoc):
@@ -97,18 +98,18 @@ class XmlDocBuilder:
             type_docs = {}
             type_elems = arg.findall('type')
             if len(type_elems) == 1 and 'name' in type_elems[0].attrib:
-                type_info = self._parse_modern_type_info(type_elems[0], type_docs)
+                type_info = self._parse_type_info(type_elems[0], type_docs)
             else:
                 type_info = self._parse_legacy_type_info(type_elems, type_docs)
             if type_info:
                 spec.types[name] = type_info
             kw.type_docs[name] = type_docs
 
-    def _parse_modern_type_info(self, type_elem, type_docs):
+    def _parse_type_info(self, type_elem, type_docs):
         name = type_elem.get('name')
         if type_elem.get('typedoc'):
             type_docs[name] = type_elem.get('typedoc')
-        nested = [self._parse_modern_type_info(child, type_docs)
+        nested = [self._parse_type_info(child, type_docs)
                   for child in type_elem.findall('type')]
         return TypeInfo(name, nested=nested)
 
@@ -120,6 +121,12 @@ class XmlDocBuilder:
             if elem.get('typedoc'):
                 type_docs[name] = elem.get('typedoc')
         return TypeInfo.from_sequence(types) if types else None
+
+    def _add_return_type(self, elem, kw):
+        if elem is not None:
+            type_docs = {}
+            kw.args.return_type = self._parse_type_info(elem, type_docs)
+            kw.type_docs['return'] = type_docs
 
     def _parse_type_docs(self, spec):
         for elem in spec.findall('typedocs/type'):

@@ -144,7 +144,7 @@ class KeywordDoc(Sortable):
     def __init__(self, name='', args=None, doc='', short_doc='', tags=(), private=False,
                  deprecated=False, source=None, lineno=-1, parent=None):
         self.name = name
-        self.args = args or ArgumentSpec()
+        self.args = args if args is not None else ArgumentSpec()
         self.doc = doc
         self._short_doc = short_doc
         self.tags = Tags(tags)
@@ -179,6 +179,7 @@ class KeywordDoc(Sortable):
         data = {
             'name': self.name,
             'args': [self._arg_to_dict(arg) for arg in self.args],
+            'returnType': self._return_to_dict(self.args.return_type),
             'doc': self.doc,
             'shortdoc': self.short_doc,
             'tags': list(self.tags),
@@ -202,7 +203,11 @@ class KeywordDoc(Sortable):
             'repr': str(arg)
         }
 
-    def _type_to_dict(self, type: TypeInfo, type_docs: dict):
+    def _return_to_dict(self, return_type):
+        type_docs = self.type_docs.get('return', {})
+        return self._type_to_dict(return_type, type_docs)
+
+    def _type_to_dict(self, type: 'TypeInfo|None', type_docs: dict):
         if not type:
             return None
         return {'name': type.name,

@@ -101,8 +101,8 @@ class DataTypesLibrary:
         """
         pass
 
-    def set_location(self, location: GeoLocation):
-        pass
+    def set_location(self, location: GeoLocation) -> bool:
+        return True
 
     def assert_something(self, value, operator: Optional[AssertionOperator] = None, exp: str = 'something?'):
         """This links to `AssertionOperator` .
@@ -122,7 +122,7 @@ class DataTypesLibrary:
                              AssertionOperator,
                              Small,
                              GeoLocation,
-                             None]] = AssertionOperator.equal):
+                             None]] = AssertionOperator.equal) -> Union[int, List[int]]:
         pass
 
     def typing_types(self, list_of_str: List[str], dict_str_int: Dict[str, int], whatever: Any, *args: List[Any]):

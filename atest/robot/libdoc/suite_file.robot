@@ -19,7 +19,7 @@ Generated
     Generated Should Be Defined
 
 Scope
-    Scope Should Be                   GLOBAL    old=${EMPTY}
+    Scope Should Be                   GLOBAL
 
 Source Info
     Source Should Be                  ${TESTDATADIR}/suite.robot

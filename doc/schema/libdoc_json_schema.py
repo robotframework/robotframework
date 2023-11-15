@@ -80,17 +80,17 @@ class ArgumentKind(str, Enum):
     VAR_NAMED = 'VAR_NAMED'
 
 
-class ArgumentType(BaseModel):
+class TypeInfo(BaseModel):
     name: str
     typedoc: Union[str, None] = Field(description="Map type to info in 'typedocs'.")
-    nested: List['ArgumentType']
+    nested: List['TypeInfo']
     union: bool
 
 
 class Argument(BaseModel):
     """Keyword argument."""
     name: str
-    type: Union[ArgumentType, None]
+    type: Union[TypeInfo, None]
     defaultValue: Union[str, None] = Field(description="Possible default value or 'null'.")
     kind: ArgumentKind
     required: bool
@@ -100,6 +100,7 @@ class Argument(BaseModel):
 class Keyword(BaseModel):
     name: str
     args: List[Argument]
+    returnType: Optional[TypeInfo]
     doc: str
     shortdoc: str
     tags: List[str]

@@ -130,8 +130,8 @@
       ],
       "type": "string"
     },
-    "ArgumentType": {
-      "title": "ArgumentType",
+    "TypeInfo": {
+      "title": "TypeInfo",
       "type": "object",
       "properties": {
         "name": {
@@ -154,7 +154,7 @@
           "title": "Nested",
           "type": "array",
           "items": {
-            "$ref": "#/definitions/ArgumentType"
+            "$ref": "#/definitions/TypeInfo"
           }
         },
         "union": {
@@ -193,10 +193,10 @@
           "type": "string"
         },
         "type": {
-          "title": "ArgumentType",
+          "title": "TypeInfo",
           "anyOf": [
             {
-              "$ref": "#/definitions/ArgumentType"
+              "$ref": "#/definitions/TypeInfo"
             },
             {
               "type": "null"
@@ -249,6 +249,17 @@
           "items": {
             "$ref": "#/definitions/Argument"
           }
+        },
+        "returnType": {
+          "title": "TypeInfo",
+          "anyOf": [
+            {
+              "$ref": "#/definitions/TypeInfo"
+            },
+            {
+              "type": "null"
+            }
+          ]
         },
         "doc": {
           "title": "Doc",

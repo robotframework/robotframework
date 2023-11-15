@@ -66,24 +66,31 @@ class LibraryDocBuilder:
         return []
 
     def _get_type_docs(self, keywords, custom_converters):
-        type_docs = {}
+        all_type_docs = {}
         for kw in keywords:
-            for arg in kw.args:
-                kw.type_docs[arg.name] = {}
-                for type_info in self._yield_type_info(arg.type):
-                    type_doc = TypeDoc.for_type(type_info, custom_converters)
-                    if type_doc:
-                        kw.type_docs[arg.name][type_info.name] = type_doc.name
-                        type_docs.setdefault(type_doc, set()).add(kw.name)
-        for type_doc, usages in type_docs.items():
+            for name, type_info in self._yield_names_and_infos(kw.args):
+                type_docs = kw.type_docs.setdefault(name, {})
+                type_doc = TypeDoc.for_type(type_info, custom_converters)
+                if type_doc:
+                    type_docs[type_info.name] = type_doc.name
+                    all_type_docs.setdefault(type_doc, set()).add(kw.name)
+        for type_doc, usages in all_type_docs.items():
             type_doc.usages = sorted(usages, key=str.lower)
-        return set(type_docs)
+        return set(all_type_docs)
 
-    def _yield_type_info(self, info: TypeInfo):
+    def _yield_names_and_infos(self, args: ArgumentSpec):
+        for arg in args:
+            for type_info in self._yield_infos(arg.type):
+                yield arg.name, type_info
+        if args.return_type:
+            for type_info in self._yield_infos(args.return_type):
+                yield 'return', type_info
+
+    def _yield_infos(self, info: TypeInfo):
         if not info.is_union:
             yield info
         for nested in info.nested:
-            yield from self._yield_type_info(nested)
+            yield from self._yield_infos(nested)
 
 
 class ResourceDocBuilder:

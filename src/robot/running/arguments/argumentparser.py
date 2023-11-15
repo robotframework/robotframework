@@ -77,18 +77,20 @@ class PythonArgumentParser(ArgumentParser):
                 spec.defaults[param.name] = param.default
 
     def _set_types(self, spec, handler):
+        types = self._get_types(handler)
+        if isinstance(types, dict) and 'return' in types:
+            spec.return_type = types.pop('return')
+        spec.types = types
+
+    def _get_types(self, handler):
         # If types are set using the `@keyword` decorator, use them. Including when
-        # types are explicitly disabled with `@keyword(types=None)`. Otherwise read
+        # types are explicitly disabled with `@keyword(types=None)`. Otherwise get
         # type hints.
         if isclass(handler):
             handler = handler.__init__
-        robot_types = getattr(handler, 'robot_types', ())
-        if robot_types or robot_types is None:
-            spec.types = robot_types
-        else:
-            spec.types = self._get_type_hints(handler)
-
-    def _get_type_hints(self, handler):
+        types = getattr(handler, 'robot_types', ())
+        if types or types is None:
+            return types
         try:
             return get_type_hints(handler)
         except Exception:  # Can raise pretty much anything
