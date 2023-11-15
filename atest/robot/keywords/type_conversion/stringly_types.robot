@@ -27,6 +27,9 @@ Nested
 Aliases
     Check Test Case    ${TESTNAME}
 
+TypedDict
+    Check Test Case    ${TESTNAME}
+
 Invalid
     Check Test Case    ${TESTNAME}
     Check Log Message    ${ERRORS[1]}

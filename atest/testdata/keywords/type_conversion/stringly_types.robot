@@ -61,6 +61,9 @@ Nested
 Aliases
     Aliases    [1, 2, '3']    {'1': 1.1, 2: '2.2', '': 'NONE'}
 
+TypedDict
+    TypedDict    {'simple': 42, 'params': [1, 2.0, '3'], 'union': 3.14}
+
 Invalid
     [Documentation]    FAIL    No keyword with name 'Invalid' found.
     Invalid    whatever

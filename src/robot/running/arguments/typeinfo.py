@@ -17,7 +17,7 @@ from collections.abc import Mapping, Sequence, Set
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
-from typing import Any, Union
+from typing import Any, ForwardRef, get_type_hints, Union
 
 from robot.conf import Languages, LanguagesLike
 from robot.errors import DataError
@@ -155,6 +155,8 @@ class TypeInfo(metaclass=SetterAwareType):
         """
         if hint is NOT_SET:
             return cls()
+        if isinstance(hint, ForwardRef):
+            hint = hint.__forward_arg__
         if isinstance(hint, typeddict_types):
             return TypedDictInfo(hint.__name__, hint)
         if is_union(hint):
@@ -301,7 +303,11 @@ class TypedDictInfo(TypeInfo):
 
     def __init__(self, name: str, type: type):
         super().__init__(name, type)
-        self.annotations = {n: TypeInfo.from_type_hint(t)
-                            for n, t in type.__annotations__.items()}
+        try:
+            type_hints = get_type_hints(type)
+        except Exception:
+            type_hints = type.__annotations__
+        self.annotations = {name: TypeInfo.from_type_hint(hint)
+                            for name, hint in type_hints.items()}
         # __required_keys__ is new in Python 3.9.
         self.required = getattr(type, '__required_keys__', frozenset())

@@ -20,6 +20,11 @@ class Point(Point2D, total=False):
     z: int
 
 
+class Stringified(TypedDict):
+    a: 'int'
+    b: 'int | float'
+
+
 class BadIntMeta(type(int)):
     def __instancecheck__(self, instance):
         raise TypeError('Bang!')
@@ -97,6 +102,10 @@ def typeddict_with_optional(argument: Point, expected=None):
     _validate_type(argument, expected)
 
 
+def stringified_typeddict(argument: Stringified, expected=None):
+    _validate_type(argument, expected)
+
+
 def set_(argument: Set, expected=None):
     _validate_type(argument, expected)
 
@@ -137,13 +146,20 @@ def not_liking_isinstance(argument: BadInt, expected=None):
     _validate_type(argument, expected)
 
 
-def _validate_type(argument, expected, same=False):
-    if isinstance(expected, str):
+def _validate_type(argument, expected, same=False, evaluate=True):
+    if isinstance(expected, str) and evaluate:
         expected = eval(expected)
     if argument != expected or type(argument) != type(expected):
         atype = type(argument).__name__
         etype = type(expected).__name__
         raise AssertionError(f'{argument!r} ({atype}) != {expected!r} ({etype})')
+    if isinstance(argument, (list, tuple)):
+        for a, e in zip(argument, expected):
+            _validate_type(a, e, same, evaluate=False)
+    if isinstance(argument, dict):
+        for a, e in zip(argument, expected):
+            _validate_type(a, e, same, evaluate=False)
+            _validate_type(argument[a], expected[e], same, evaluate=False)
     if same and argument is not expected:
         raise AssertionError(f'{argument} (id: {id(argument)}) is not same '
                              f'as {expected} (id: {id(expected)})')

@@ -72,6 +72,9 @@ Invalid mapping
 TypedDict
     Check Test Case    ${TESTNAME}
 
+Stringified TypedDict types
+    Check Test Case    ${TESTNAME}
+
 Optional TypedDict keys can be omitted
     Check Test Case    ${TESTNAME}
 
