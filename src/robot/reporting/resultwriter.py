@@ -54,7 +54,7 @@ class ResultWriter:
         settings = settings or RebotSettings(options)
         results = Results(settings, *self._sources)
         if settings.output:
-            self._write_output(results.result, settings.output)
+            self._write_output(results.result, settings.output, settings.legacy_output)
         if settings.xunit:
             self._write_xunit(results.result, settings.xunit)
         if settings.log:
@@ -67,8 +67,8 @@ class ResultWriter:
                                settings.report_config)
         return results.return_code
 
-    def _write_output(self, result, path):
-        self._write('Output', result.save, path)
+    def _write_output(self, result, path, legacy_output=False):
+        self._write('Output', result.save, path, legacy_output)
 
     def _write_xunit(self, result, path):
         self._write('XUnit', XUnitWriter(result).write, path)

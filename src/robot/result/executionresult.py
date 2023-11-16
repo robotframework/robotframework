@@ -96,14 +96,18 @@ class Result:
         self._status_rc = status_rc
         self._stat_config = stat_config or {}
 
-    def save(self, path=None):
+    def save(self, path=None, legacy_output=False):
         """Save results as a new output XML file.
 
         :param path: Path to save results to. If omitted, overwrites the
             original file.
+        :param legacy_output: Save result in Robot Framework 6.x compatible
+            format. New in Robot Framework 7.0.
         """
-        from robot.reporting.outputwriter import OutputWriter
-        self.visit(OutputWriter(path or self.source, rpa=self.rpa))
+        from robot.reporting.outputwriter import LegacyOutputWriter, OutputWriter
+
+        writer = OutputWriter if not legacy_output else LegacyOutputWriter
+        self.visit(writer(path or self.source, rpa=self.rpa))
 
     def visit(self, visitor):
         """An entry point to visit the whole result object.

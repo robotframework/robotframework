@@ -130,6 +130,8 @@ Options
                           specified. Given path, similarly as paths given to
                           --log, --report and --xunit, is relative to
                           --outputdir unless given as an absolute path.
+    --legacyoutput        Create XML output file in format compatible with
+                          Robot Framework 6.x and earlier.
  -l --log file            HTML log file. Can be disabled by giving a special
                           name `NONE`. Default: log.html
                           Examples: `--log mylog.html`, `-l none`

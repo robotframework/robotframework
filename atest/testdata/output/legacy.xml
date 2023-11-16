@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 6.1.1 (Python 3.9.18 on linux)" generated="20231116 17:35:01.759" rpa="false" schemaversion="4">
+<suite id="s1" name="Legacy" source="/home/peke/Devel/robotframework/atest/testdata/output/legacy.robot">
+<kw name="Log" library="BuiltIn" type="SETUP">
+<arg>Hello!</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20231116 17:35:01.773" level="INFO">Hello!</msg>
+<status status="PASS" starttime="20231116 17:35:01.772" endtime="20231116 17:35:01.773"/>
+</kw>
+<test id="s1-t1" name="Passing" line="7">
+<kw name="Passing" type="SETUP">
+<kw name="Log" library="BuiltIn">
+<arg>Hello!</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20231116 17:35:01.773" level="INFO">Hello!</msg>
+<status status="PASS" starttime="20231116 17:35:01.773" endtime="20231116 17:35:01.773"/>
+</kw>
+<status status="PASS" starttime="20231116 17:35:01.773" endtime="20231116 17:35:01.773"/>
+</kw>
+<kw name="Passing">
+<kw name="Log" library="BuiltIn">
+<arg>Hello!</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20231116 17:35:01.774" level="INFO">Hello!</msg>
+<status status="PASS" starttime="20231116 17:35:01.774" endtime="20231116 17:35:01.774"/>
+</kw>
+<status status="PASS" starttime="20231116 17:35:01.773" endtime="20231116 17:35:01.774"/>
+</kw>
+<kw name="Passing" type="TEARDOWN">
+<kw name="Log" library="BuiltIn">
+<arg>Hello!</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20231116 17:35:01.774" level="INFO">Hello!</msg>
+<status status="PASS" starttime="20231116 17:35:01.774" endtime="20231116 17:35:01.774"/>
+</kw>
+<status status="PASS" starttime="20231116 17:35:01.774" endtime="20231116 17:35:01.774"/>
+</kw>
+<doc>Something...</doc>
+<tag>t1</tag>
+<tag>t2</tag>
+<status status="PASS" starttime="20231116 17:35:01.773" endtime="20231116 17:35:01.774"/>
+</test>
+<test id="s1-t2" name="Failing" line="14">
+<kw name="Failing">
+<kw name="Fail" library="BuiltIn">
+<arg>Hello!</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<msg timestamp="20231116 17:35:01.775" level="FAIL">Hello!</msg>
+<status status="FAIL" starttime="20231116 17:35:01.775" endtime="20231116 17:35:01.775"/>
+</kw>
+<status status="FAIL" starttime="20231116 17:35:01.775" endtime="20231116 17:35:01.775"/>
+</kw>
+<doc>FAIL    Hello!</doc>
+<status status="FAIL" starttime="20231116 17:35:01.774" endtime="20231116 17:35:01.775">Hello!</status>
+</test>
+<test id="s1-t3" name="Failing setup" line="18">
+<kw name="Failing" type="SETUP">
+<kw name="Fail" library="BuiltIn">
+<arg>Hello!</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<msg timestamp="20231116 17:35:01.776" level="FAIL">Hello!</msg>
+<status status="FAIL" starttime="20231116 17:35:01.776" endtime="20231116 17:35:01.776"/>
+</kw>
+<status status="FAIL" starttime="20231116 17:35:01.776" endtime="20231116 17:35:01.776"/>
+</kw>
+<doc>FAIL    Setup failed:
+Hello!</doc>
+<status status="FAIL" starttime="20231116 17:35:01.775" endtime="20231116 17:35:01.776">Setup failed:
+Hello!</status>
+</test>
+<test id="s1-t4" name="Failing teardown" line="23">
+<kw name="Passing">
+<kw name="Log" library="BuiltIn">
+<arg>Hello!</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20231116 17:35:01.777" level="INFO">Hello!</msg>
+<status status="PASS" starttime="20231116 17:35:01.777" endtime="20231116 17:35:01.777"/>
+</kw>
+<status status="PASS" starttime="20231116 17:35:01.776" endtime="20231116 17:35:01.777"/>
+</kw>
+<kw name="Failing" type="TEARDOWN">
+<kw name="Fail" library="BuiltIn">
+<arg>Hello!</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<msg timestamp="20231116 17:35:01.777" level="FAIL">Hello!</msg>
+<status status="FAIL" starttime="20231116 17:35:01.777" endtime="20231116 17:35:01.777"/>
+</kw>
+<status status="FAIL" starttime="20231116 17:35:01.777" endtime="20231116 17:35:01.777">Hello!</status>
+</kw>
+<doc>FAIL    Teardown failed:
+Hello!</doc>
+<status status="FAIL" starttime="20231116 17:35:01.776" endtime="20231116 17:35:01.777">Teardown failed:
+Hello!</status>
+</test>
+<test id="s1-t5" name="Controls" line="28">
+<kw name="Controls">
+<for flavor="IN RANGE">
+<var>${x}</var>
+<value>5</value>
+<iter>
+<var name="${x}">0</var>
+<if>
+<branch type="IF" condition="${x} &gt; 1">
+<continue>
+<status status="NOT RUN" starttime="20231116 17:35:01.778" endtime="20231116 17:35:01.778"/>
+</continue>
+<status status="NOT RUN" starttime="20231116 17:35:01.778" endtime="20231116 17:35:01.778"/>
+</branch>
+<status status="PASS" starttime="20231116 17:35:01.778" endtime="20231116 17:35:01.778"/>
+</if>
+<kw name="Log" library="BuiltIn">
+<arg>${x}</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20231116 17:35:01.779" level="INFO">0</msg>
+<status status="PASS" starttime="20231116 17:35:01.778" endtime="20231116 17:35:01.779"/>
+</kw>
+<status status="PASS" starttime="20231116 17:35:01.778" endtime="20231116 17:35:01.779"/>
+</iter>
+<iter>
+<var name="${x}">1</var>
+<if>
+<branch type="IF" condition="${x} &gt; 1">
+<continue>
+<status status="NOT RUN" starttime="20231116 17:35:01.779" endtime="20231116 17:35:01.779"/>
+</continue>
+<status status="NOT RUN" starttime="20231116 17:35:01.779" endtime="20231116 17:35:01.779"/>
+</branch>
+<status status="PASS" starttime="20231116 17:35:01.779" endtime="20231116 17:35:01.779"/>
+</if>
+<kw name="Log" library="BuiltIn">
+<arg>${x}</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20231116 17:35:01.779" level="INFO">1</msg>
+<status status="PASS" starttime="20231116 17:35:01.779" endtime="20231116 17:35:01.779"/>
+</kw>
+<status status="PASS" starttime="20231116 17:35:01.779" endtime="20231116 17:35:01.779"/>
+</iter>
+<iter>
+<var name="${x}">2</var>
+<if>
+<branch type="IF" condition="${x} &gt; 1">
+<continue>
+<status status="PASS" starttime="20231116 17:35:01.779" endtime="20231116 17:35:01.779"/>
+</continue>
+<status status="PASS" starttime="20231116 17:35:01.779" endtime="20231116 17:35:01.779"/>
+</branch>
+<status status="PASS" starttime="20231116 17:35:01.779" endtime="20231116 17:35:01.779"/>
+</if>
+<kw name="Log" library="BuiltIn">
+<arg>${x}</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="NOT RUN" starttime="20231116 17:35:01.780" endtime="20231116 17:35:01.780"/>
+</kw>
+<status status="PASS" starttime="20231116 17:35:01.779" endtime="20231116 17:35:01.780"/>
+</iter>
+<iter>
+<var name="${x}">3</var>
+<if>
+<branch type="IF" condition="${x} &gt; 1">
+<continue>
+<status status="PASS" starttime="20231116 17:35:01.780" endtime="20231116 17:35:01.780"/>
+</continue>
+<status status="PASS" starttime="20231116 17:35:01.780" endtime="20231116 17:35:01.780"/>
+</branch>
+<status status="PASS" starttime="20231116 17:35:01.780" endtime="20231116 17:35:01.780"/>
+</if>
+<kw name="Log" library="BuiltIn">
+<arg>${x}</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="NOT RUN" starttime="20231116 17:35:01.780" endtime="20231116 17:35:01.780"/>
+</kw>
+<status status="PASS" starttime="20231116 17:35:01.780" endtime="20231116 17:35:01.780"/>
+</iter>
+<iter>
+<var name="${x}">4</var>
+<if>
+<branch type="IF" condition="${x} &gt; 1">
+<continue>
+<status status="PASS" starttime="20231116 17:35:01.780" endtime="20231116 17:35:01.780"/>
+</continue>
+<status status="PASS" starttime="20231116 17:35:01.780" endtime="20231116 17:35:01.780"/>
+</branch>
+<status status="PASS" starttime="20231116 17:35:01.780" endtime="20231116 17:35:01.780"/>
+</if>
+<kw name="Log" library="BuiltIn">
+<arg>${x}</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="NOT RUN" starttime="20231116 17:35:01.780" endtime="20231116 17:35:01.780"/>
+</kw>
+<status status="PASS" starttime="20231116 17:35:01.780" endtime="20231116 17:35:01.780"/>
+</iter>
+<status status="PASS" starttime="20231116 17:35:01.778" endtime="20231116 17:35:01.780"/>
+</for>
+<while condition="True">
+<iter>
+<break>
+<status status="PASS" starttime="20231116 17:35:01.780" endtime="20231116 17:35:01.780"/>
+</break>
+<status status="PASS" starttime="20231116 17:35:01.780" endtime="20231116 17:35:01.780"/>
+</iter>
+<status status="PASS" starttime="20231116 17:35:01.780" endtime="20231116 17:35:01.781"/>
+</while>
+<return>
+<status status="PASS" starttime="20231116 17:35:01.781" endtime="20231116 17:35:01.781"/>
+</return>
+<status status="PASS" starttime="20231116 17:35:01.778" endtime="20231116 17:35:01.781"/>
+</kw>
+<status status="PASS" starttime="20231116 17:35:01.778" endtime="20231116 17:35:01.781"/>
+</test>
+<test id="s1-t6" name="Embedded" line="31">
+<kw name="Embedded" sourcename="Em${bed}ded">
+<kw name="Should Be Equal" library="BuiltIn">
+<arg>${bed}</arg>
+<arg>bed</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" starttime="20231116 17:35:01.781" endtime="20231116 17:35:01.781"/>
+</kw>
+<status status="PASS" starttime="20231116 17:35:01.781" endtime="20231116 17:35:01.781"/>
+</kw>
+<status status="PASS" starttime="20231116 17:35:01.781" endtime="20231116 17:35:01.782"/>
+</test>
+<test id="s1-t7" name="Warning" line="34">
+<kw name="Log" library="BuiltIn">
+<arg>xxx</arg>
+<arg>WARN</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20231116 17:35:01.782" level="WARN">xxx</msg>
+<status status="PASS" starttime="20231116 17:35:01.782" endtime="20231116 17:35:01.782"/>
+</kw>
+<status status="PASS" starttime="20231116 17:35:01.782" endtime="20231116 17:35:01.782"/>
+</test>
+<doc>Something...</doc>
+<meta name="Name">Value</meta>
+<status status="FAIL" starttime="20231116 17:35:01.760" endtime="20231116 17:35:01.782"/>
+</suite>
+<statistics>
+<total>
+<stat pass="4" fail="3" skip="0">All Tests</stat>
+</total>
+<tag>
+<stat pass="1" fail="0" skip="0">t1</stat>
+<stat pass="1" fail="0" skip="0">t2</stat>
+</tag>
+<suite>
+<stat pass="4" fail="3" skip="0" id="s1" name="Legacy">Legacy</stat>
+</suite>
+</statistics>
+<errors>
+<msg timestamp="20231116 17:35:01.782" level="WARN">xxx</msg>
+</errors>
+</robot>

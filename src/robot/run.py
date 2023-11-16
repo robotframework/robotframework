@@ -176,6 +176,8 @@ Options
                           can also be further processed with Rebot tool. Can be
                           disabled by giving a special value `NONE`.
                           Default: output.xml
+    --legacyoutput        Create XML output file in format compatible with
+                          Robot Framework 6.x and earlier.
  -l --log file            HTML log file. Can be disabled by giving a special
                           value `NONE`. Default: log.html
                           Examples: `--log mylog.html`, `-l NONE`

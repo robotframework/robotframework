@@ -17,7 +17,7 @@ from datetime import datetime
 
 from robot.utils import NullMarkupWriter, safe_str, XmlWriter
 from robot.version import get_full_version
-from robot.result.visitor import ResultVisitor
+from robot.result import Keyword, TestCase, TestSuite, ResultVisitor
 
 from .loggerapi import LoggerApi
 from .loggerhelper import IsLogged
@@ -25,8 +25,10 @@ from .loggerhelper import IsLogged
 
 class XmlLoggerAdapter(LoggerApi):
 
-    def __init__(self, path, log_level='TRACE', rpa=False, generator='Robot'):
-        self.logger = XmlLogger(path, log_level, rpa, generator)
+    def __init__(self, path, log_level='TRACE', rpa=False, generator='Robot',
+                 legacy_output=False):
+        logger = XmlLogger if not legacy_output else LegacyXmlLogger
+        self.logger = logger(path, log_level, rpa, generator)
 
     @property
     def flatten_level(self):
@@ -155,11 +157,14 @@ class XmlLogger(ResultVisitor):
         if not path:
             return NullMarkupWriter()
         writer = XmlWriter(path, write_empty=False, usage='output')
-        writer.start('robot', {'generator': get_full_version(generator),
-                               'generated': datetime.now().isoformat(),
-                               'rpa': 'true' if rpa else 'false',
-                               'schemaversion': '5'})
+        writer.start('robot', self._get_start_attrs(rpa, generator))
         return writer
+
+    def _get_start_attrs(self, rpa, generator):
+        return {'generator': get_full_version(generator),
+                'generated': datetime.now().isoformat(),
+                'rpa': 'true' if rpa else 'false',
+                'schemaversion': '5'}
 
     def close(self):
         self.start_errors()
@@ -189,12 +194,7 @@ class XmlLogger(ResultVisitor):
         self._xml_writer.element('msg', msg.message, attrs)
 
     def start_keyword(self, kw):
-        attrs = {'name': kw.name, 'owner': kw.owner}
-        if kw.type != 'KEYWORD':
-            attrs['type'] = kw.type
-        if kw.source_name:
-            attrs['source_name'] = kw.source_name
-        self._writer.start('kw', attrs)
+        self._writer.start('kw', self._get_start_keyword_attrs(kw))
         self._write_list('var', kw.assign)
         self._write_list('arg', [safe_str(a) for a in kw.args])
         self._write_list('tag', kw.tags)
@@ -202,6 +202,14 @@ class XmlLogger(ResultVisitor):
         if kw.tags.robot('flatten'):
             self.flatten_level += 1
             self._writer = NullMarkupWriter()
+
+    def _get_start_keyword_attrs(self, kw):
+        attrs = {'name': kw.name, 'owner': kw.owner}
+        if kw.type != 'KEYWORD':
+            attrs['type'] = kw.type
+        if kw.source_name:
+            attrs['source_name'] = kw.source_name
+        return attrs
 
     def end_keyword(self, kw):
         if kw.tags.robot('flatten'):
@@ -406,3 +414,42 @@ class XmlLogger(ResultVisitor):
                  'start': item.start_time.isoformat() if item.start_time else None,
                  'elapsed': format(item.elapsed_time.total_seconds(), 'f')}
         self._writer.element('status', item.message, attrs)
+
+
+class LegacyXmlLogger(XmlLogger):
+
+    def _get_start_attrs(self, rpa, generator):
+        return {'generator': get_full_version(generator),
+                'generated': self._datetime_to_timestamp(datetime.now()),
+                'rpa': 'true' if rpa else 'false',
+                'schemaversion': '4'}
+
+    def _datetime_to_timestamp(self, dt):
+        return dt.isoformat(' ', timespec='milliseconds').replace('-', '')
+
+    def _get_start_keyword_attrs(self, kw):
+        attrs = {'name': kw.kwname, 'library': kw.libname}
+        if kw.type != 'KEYWORD':
+            attrs['type'] = kw.type
+        if kw.source_name:
+            attrs['sourcename'] = kw.source_name
+        return attrs
+
+    def _write_status(self, item):
+        attrs = {'status': item.status,
+                 'starttime': self._datetime_to_timestamp(item.start_time),
+                 'endtime': self._datetime_to_timestamp(item.end_time)}
+        if (isinstance(item, (TestSuite, TestCase))
+                or isinstance(item, Keyword) and item.type == 'TEARDOWN'):
+            message = item.message
+        else:
+            message = ''
+        self._writer.element('status', message, attrs)
+
+    def _write_message(self, msg):
+        ts = self._datetime_to_timestamp(msg.timestamp) if msg.timestamp else None
+        attrs = {'timestamp':  ts, 'level': msg.level}
+        if msg.html:
+            attrs['html'] = 'true'
+        # Use `_xml_writer`, not `_writer` to write messages also when flattening.
+        self._xml_writer.element('msg', msg.message, attrs)

@@ -38,6 +38,7 @@ Command line options for test execution
   -V, --variablefile <path:args>  Sets variables using `variable files`_.
   -d, --outputdir <dir>   Defines where to `create output files`_.
   -o, --output <file>     Sets the path to the generated `output file`_.
+  --legacyoutput          Creates output file in `Robot Framework 6.x compatible format`_.
   -l, --log <file>        Sets the path to the generated `log file`_.
   -r, --report <file>     Sets the path to the generated `report file`_.
   -x, --xunit <file>      Sets the path to the generated `xUnit compatible result file`_.
@@ -110,6 +111,7 @@ Command line options for post-processing outputs
   -e, --exclude <tag>     `Selects the test cases`_ by tag.
   -d, --outputdir <dir>   Defines where to `create output files`_.
   -o, --output <file>     Sets the path to the generated `output file`_.
+  --legacyoutput          Creates output file in `Robot Framework 6.x compatible format`_.
   -l, --log <file>        Sets the path to the generated `log file`_.
   -r, --report <file>     Sets the path to the generated `report file`_.
   -x, --xunit <file>      Sets the path to the generated `xUnit compatible result file`_.
@@ -169,6 +171,7 @@ Command line options for post-processing outputs
 .. _individual variables: `Setting variables in command line`_
 
 .. _create output files: `Output directory`_
+.. _Robot Framework 6.x compatible format: `Legacy output file format`_
 .. _Adds a timestamp: `Timestamping output files`_
 .. _Split log file: `Splitting logs`_
 .. _Sets a title: `Setting titles`_

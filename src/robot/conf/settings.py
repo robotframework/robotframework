@@ -48,6 +48,7 @@ class _BaseSettings:
                  'Include'          : ('include', []),
                  'Exclude'          : ('exclude', []),
                  'OutputDir'        : ('outputdir', abspath('.')),
+                 'LegacyOutput'     : ('legacyoutput', False),
                  'Log'              : ('log', 'log.html'),
                  'Report'           : ('report', 'report.html'),
                  'XUnit'            : ('xunit', None),
@@ -371,6 +372,10 @@ class _BaseSettings:
     @property
     def output(self):
         return self['Output']
+
+    @property
+    def legacy_output(self):
+        return self['LegacyOutput']
 
     @property
     def log(self):
