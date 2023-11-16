@@ -2067,6 +2067,10 @@ More examples of functionality:
           manage the task and save a reference to avoid it being garbage collected. If the event loop
           closes and a task is still pending, a message will be printed to the console.
 
+.. note:: If execution of keyword cannot continue for some reason, for example a signal stop,
+          Robot Framework will cancel the async task and any of its children. Other async tasks will
+          continue running normally.
+
 Communicating with Robot Framework
 ----------------------------------
 

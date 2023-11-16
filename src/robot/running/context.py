@@ -17,7 +17,7 @@ import inspect
 import asyncio
 from contextlib import contextmanager
 
-from robot.errors import DataError
+from robot.errors import DataError, ExecutionFailed
 
 
 class Asynchronous:
@@ -36,7 +36,15 @@ class Asynchronous:
             self._loop_ref.close()
 
     def run_until_complete(self, coroutine):
-        return self.event_loop.run_until_complete(coroutine)
+        task = self.event_loop.create_task(coroutine)
+        try:
+            return self.event_loop.run_until_complete(task)
+        except ExecutionFailed as e:
+            if e.dont_continue:
+                task.cancel()
+                # wait for task and its children to cancel
+                self.event_loop.run_until_complete(asyncio.gather(task, return_exceptions=True))
+            raise e
 
     def is_loop_required(self, obj):
         return inspect.iscoroutine(obj) and not self._is_loop_running()
