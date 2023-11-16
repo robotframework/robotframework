@@ -133,6 +133,7 @@ class StubSettings:
     statistics_config = {}
     xunit_skip_noncritical = False
     expand_keywords = None
+    legacy_output = False
 
     def __init__(self, **settings):
         self.__dict__.update(settings)
