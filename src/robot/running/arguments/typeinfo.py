@@ -73,7 +73,8 @@ class TypeInfo(metaclass=SetterAwareType):
     Values can be converted according to this type info by using the
     :meth:`convert` method.
 
-    Part of the public API starting from Robot Framework 7.0.
+    Part of the public API starting from Robot Framework 7.0. In such usage
+    should be imported via the :mod:`robot.api` package.
     """
     is_typed_dict = False
     __slots__ = ('name', 'type')

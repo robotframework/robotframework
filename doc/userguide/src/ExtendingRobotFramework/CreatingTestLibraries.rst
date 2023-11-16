@@ -1015,16 +1015,36 @@ like `FALSE`, `NO` and `NONE` (case-insensitively) to be false:
 
 .. sourcecode:: python
 
-  def example_keyword(count, case_insensitive=True):
+  from robot.utils import is_truthy
+
+
+  def example_keyword(count, case_insensitive):
       count = int(count)
       if is_truthy(case_insensitive):
           # ...
 
-Notice that with Robot Framework 3.1 and newer `is_truthy` is not needed
-in the above example because argument type would be got based on the
-`default value`__.
+Keywords can also use Robot Framework's argument conversion functionality via
+the `robot.api.TypeInfo`__ class and its `convert` method. This can be useful
+if the needed conversion logic is more complicated or the are needs for better
+error reporting than what simply using, for example, `int()` provides.
 
-__ `Implicit argument types based on default values`_
+.. sourcecode:: python
+
+  from robot.api import TypeInfo
+
+
+  def example_keyword(count, case_insensitive):
+      count = TypeInfo.from_type(int).convert(count)
+      if TypeInfo.from_type(bool).convert(case_insensitive):
+          # ...
+
+.. tip:: It is generally recommended to specify types using type hints or otherwise
+         and let Robot Framework handle argument conversion automatically. Manual
+         argument conversion should only be needed in special cases.
+
+.. note:: `robot.api.TypeInfo` is new in Robot Framework 7.0.
+
+__ https://robot-framework.readthedocs.io/en/stable/autodoc/robot.running.arguments.html#robot.running.arguments.typeinfo.TypeInfo
 
 Specifying argument types using function annotations
 ''''''''''''''''''''''''''''''''''''''''''''''''''''
