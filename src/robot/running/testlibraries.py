@@ -257,7 +257,10 @@ class _BaseTestLibrary:
             candidate = inspect.getattr_static(libcode, name)
             if isinstance(candidate, (classmethod, staticmethod)):
                 candidate = candidate.__func__
-            return hasattr(candidate, 'robot_name')
+            try:
+                return hasattr(candidate, 'robot_name')
+            except Exception:
+                return False
 
         auto_keywords = getattr(libcode, 'ROBOT_AUTO_KEYWORDS', True)
         if auto_keywords:

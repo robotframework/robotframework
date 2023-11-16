@@ -18,3 +18,7 @@ Private Method Is Not Recognized As Keyword
 Private Decorated Method Is Recognized As Keyword
     Private Decorated Method Is Keyword
     Private Decorated Method In Module Is Keyword
+
+Invalid __getattr__ is handled
+    [Documentation]  FAIL  No keyword with name 'Invalid Getattr' found.
+    Invalid Getattr

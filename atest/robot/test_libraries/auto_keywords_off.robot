@@ -14,3 +14,6 @@ Private Method Is Not Recognized As Keyword
 
 Private Decorated Method Is Recognized As Keyword
     Check Test Case    ${TESTNAME}
+
+Invalid __getattr__ is handled
+    Check Test Case    ${TESTNAME}

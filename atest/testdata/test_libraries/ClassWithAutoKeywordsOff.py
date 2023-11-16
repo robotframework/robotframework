@@ -1,6 +1,14 @@
 from robot.api.deco import keyword
 
 
+class InvalidGetattr:
+
+    def __getattr__(self, item):
+        if item == 'robot_name':
+            raise ValueError('This goes through getattr() and hasattr().')
+        raise AttributeError
+
+
 class ClassWithAutoKeywordsOff:
     ROBOT_AUTO_KEYWORDS = False
 
@@ -17,3 +25,5 @@ class ClassWithAutoKeywordsOff:
     @keyword
     def _private_decorated_method_is_keyword(self):
         print('Decorated private methods are keywords.')
+
+    invalid_getattr = InvalidGetattr()
