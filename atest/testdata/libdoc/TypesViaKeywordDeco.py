@@ -6,7 +6,7 @@ class UnknownType:
 
 
 @keyword(types={'integer': int, 'boolean': bool, 'string': str})
-def A_basics(integer, boolean, string):
+def A_basics(integer, boolean, string: int):
     pass
 
 
@@ -33,4 +33,14 @@ def E_non_type_annotations(arg, *varargs):
 
 @keyword(types={'kwo': int, 'with_default': str})
 def F_kw_only_args(*, kwo, with_default='value'):
+    pass
+
+
+@keyword(types={'return': int})
+def G_return_type() -> bool:
+    pass
+
+
+@keyword(types={'arg': int, 'return': (int, float)})
+def G_return_type_as_tuple(arg):
     pass

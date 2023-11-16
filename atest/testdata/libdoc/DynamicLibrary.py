@@ -77,7 +77,7 @@ http://robotframework.org
 
     def get_keyword_types(self, name):
         if name == 'Types':
-            return {'integer': int, 'boolean': bool}
+            return {'integer': int, 'boolean': bool, 'return': int}
         return None
 
     def get_keyword_source(self, name):

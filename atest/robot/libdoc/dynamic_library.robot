@@ -90,6 +90,9 @@ Keyword tags from documentation
 Keyword types
     Keyword Arguments Should Be      18    integer: int    no type    boolean: bool = True
 
+Return type
+    Return Type Should Be            18    int
+
 No keyword source info
     Keyword Name Should Be           0     0
     Keyword Should Not Have Source   0

@@ -21,3 +21,11 @@ Non-type annotations
 
 Keyword-only arguments
     Keyword Arguments Should Be     5    *    kwo: int    with_default: str = value
+
+Return type
+    Keyword Arguments Should Be     6
+    Return Type Should Be           6    int
+
+Return type as tuple
+    Keyword Arguments Should Be     7    arg: int
+    Return Type Should Be           7    Union    int    float
