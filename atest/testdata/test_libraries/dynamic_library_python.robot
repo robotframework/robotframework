@@ -7,6 +7,7 @@ Library         dynamic_libraries/NonAsciiKeywordNames.py
 Library         dynamic_libraries/NonAsciiKeywordNames.py    include_latin1=True
 Library         dynamic_libraries/EmbeddedArgs.py
 Library         dynamic_libraries/InvalidKeywordNames.py
+Library         dynamic_libraries/AsyncDynamicLibrary.py
 
 *** Test Cases ***
 Passing, Logging and Returning
@@ -70,3 +71,7 @@ Embedded Keyword Arguments
     Should Be Equal  ${count}-${item}  7-Coffee
     ${count}  ${item} =  add 42 copies of foobar to cart
     Should Be Equal  ${count}-${item}  42-foobar
+
+Dynamic async kw works
+    ${result} =    Async Keyword
+    Should Be Equal    ${result}    test
