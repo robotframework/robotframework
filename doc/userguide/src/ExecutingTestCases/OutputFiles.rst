@@ -63,7 +63,7 @@ Legacy output file format
 
 There were some `backwards incompatible changes`__ to the output file format in
 Robot Framework 7.0. To make it possible to use new Robot Framework versions
-with external tools that are not updated to support the new format, there is
+with external tools that are not yet updated to support the new format, there is
 a :option:`--legacyoutput` option that produces output files that are compatible
 with Robot Framework 6.x and earlier. Robot Framework itself can process output
 files both in the old and in the new formats.

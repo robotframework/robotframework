@@ -284,15 +284,16 @@ With earlier versions start and end times of executed items as well as timestamp
 of the logged messages were stored using a custom `YYYYMMDD HH:MM:SS.mmm` format,
 but nowadays the format is `ISO 8601`_ compatible `YYYY-MM-DDTHH:MM:SS.mmmmmm`.
 In addition to that, instead of saving start and end times to `starttime` and
-`endtime` attributes, we nowadays store start and elapsed times to `start` and
-`elapsed` attributes.
+`endtime` attributes and message times to `timestamp`, we nowadays store
+start and elapsed times to `start` and `elapsed` attributes and message
+times to `time`.
 
 Examples:
 
 .. sourcecode:: xml
 
     <!-- Old format -->
-    <msg time="20231108 15:36:34.278" level="INFO">Hello world!</msg>
+    <msg timestamp="20231108 15:36:34.278" level="INFO">Hello world!</msg>
     <status status="PASS" starttime="20231108 15:37:35.046" endtime="20231108 15:37:35.046"/>
 
     <!-- New format -->
