@@ -177,6 +177,10 @@ Dictionaries Should Be Equal
     Dictionaries Should Be Equal    ${D3}    ${D3}
     Dictionaries Should Be Equal    ${BIG}    ${BIG}
 
+Dictionaries Should Be Equal With Keys In Different Order
+    [Setup]  Create Dictionaries For Testing
+    Dictionaries Should Be Equal    ${D4}    ${D4B}
+
 Dictionaries Of Different Type Should Be Equal
     ${big2}=    Evaluate    collections.OrderedDict($BIG)    modules=collections
     Dictionaries Should Be Equal    ${BIG}    ${big2}
@@ -340,6 +344,92 @@ Check invalid dictionary argument errors
     Remove From Dictionary                     I'm not a dict, I'm string.    a
     Set To Dictionary                          I'm not a dict, I'm string.    a    b
 
+Dictionaries Should Be Equal With Ignore Case
+    [Template]    Dictionaries Should Be Equal
+    [Setup]    Create Dictionaries For Testing Ignore Case
+    dict1=${D0}    dict2=${D1}    ignore_case=${True}
+    dict1=${D0}    dict2=${D1}    ignore_case=both
+    dict1=${D0}    dict2=${D2}    ignore_case=key
+    dict1=${D0}    dict2=${D3}    ignore_case=value
+
+Dictionaries Should Be Equal Without Ignoring Wrong Case
+    [Documentation]  FAIL Following keys missing from first dictionary: A, B, C
+    ...   Following keys missing from second dictionary: a, b, c
+    [Setup]    Create Dictionaries For Testing Ignore Case
+    Dictionaries Should Be Equal    dict1=${D0}    dict2=${D1}
+
+Dictionary Should Contain Item With Ignore Case
+    [Template]    Dictionary Should Contain Item
+    [Setup]    Create Dictionaries For Testing Ignore Case
+    dictionary=${D0}    key=A    value=x    ignore_case=${True}
+    dictionary=${D0}    key=A    value=x    ignore_case=BOTH
+    dictionary=${D0}    key=A    value=X    ignore_case=keY
+    dictionary=${D0}    key=a    value=x    ignore_case=VAlue
+
+Dictionary Should Contain Item Without Ignoring Wrong Case
+    [Documentation]  FAIL Dictionary does not contain key 'A'.
+    [Setup]    Create Dictionaries For Testing Ignore Case
+    Dictionary Should Contain Item    dictionary=${D0}    key=A    value=x
+
+Dictionary Should Contain Key With Ignore Case
+    [Setup]    Create Dictionaries For Testing Ignore Case
+    Dictionary Should Contain Key    dictionary=${D0}    key=A    ignore_case=${True}
+
+Dictionary Should Contain Key Without Ignoring Wrong Case
+    [Documentation]  FAIL Dictionary does not contain key 'A'.
+    [Setup]    Create Dictionaries For Testing Ignore Case
+    Dictionary Should Contain Key    dictionary=${D0}    key=A
+
+Dictionary Should Not Contain Key With Ignore Case Does Contain Key
+    [Setup]    Create Dictionaries For Testing Ignore Case
+    [Documentation]  FAIL Dictionary contains key 'A'.
+    Dictionary Should Not Contain Key    dictionary=${D0}    key=A    ignore_case=${True}
+
+Dictionary Should Contain Value With Ignore Case
+    [Template]    Dictionary Should Contain Value
+    [Setup]    Create Dictionaries For Testing Ignore Case
+    dictionary=${D0}    value=x    ignore_case=${True}
+    dictionary=${D7}  value=${D1_lower}    ignore_case=${True}
+
+Dictionary Should Contain Value Without Ignoring Wrong Case
+    [Documentation]  FAIL Dictionary does not contain value 'x'.
+    [Setup]    Create Dictionaries For Testing Ignore Case
+    Dictionary Should Contain Value  dictionary=${D0}    value=x
+
+Dictionary Should Not Contain Value With Ignore Case Does Contain Value
+    [Setup]    Create Dictionaries For Testing Ignore Case
+    [Documentation]  FAIL Dictionary contains value 'x'.
+    Dictionary Should Not Contain Value    dictionary=${D0}    value=x    ignore_case=${True}
+
+Dictionary Should Contain Sub Dictionary With Ignore Case
+    [Template]    Dictionary Should Contain Sub Dictionary
+    [Setup]    Create Dictionaries For Testing Ignore Case
+    dict1=${D0}    dict2=${D4}    ignore_case=${True}
+    dict1=${D0}    dict2=${D4}    ignore_case=both
+    dict1=${D0}    dict2=${D5}    ignore_case=key
+    dict1=${D0}    dict2=${D6}    ignore_case=value
+
+Dictionary Should Contain Sub Dictionary Without Ignoring Wrong Case
+    [Setup]    Create Dictionaries For Testing Ignore Case
+    [Documentation]  FAIL Following keys missing from first dictionary: A
+    Dictionary Should Contain Sub Dictionary   dict1=${D0}    dict2=${D4}
+
+Dictionary Should Contain Value With Ignore Case And Nested List and Dictionary
+    [Setup]    Create Dictionaries For Testing Ignore Case
+    Dictionary Should Contain Value  ${D7}  value=d    ignore_case=${True}
+
+Dictionaries Should Be Equal With Keys In Different Order And Ignore Case
+    [Setup]  Create Dictionaries For Testing Ignore Case
+    Dictionaries Should Be Equal    ${D8}    ${D8B}  ignore_case=both
+    Dictionaries Should Be Equal    ${D8}    ${D8B}  ignore_case=key
+    Dictionaries Should Be Equal    ${D8B}   ${D8C}  ignore_case=value
+
+Dictionaries With Equally Named Keys After Normalizing Cannot Ignore Case
+    [Documentation]  FAIL  	First dictionary contains duplicate keys after normalizing.
+    ...   Second dictionary contains duplicate keys after normalizing.
+    [Setup]  Create Dictionaries For Testing Ignore Case
+    Dictionaries Should Be Equal    ${D9}    ${D9B}  ignore_case=both
+
 *** Keywords ***
 Validate invalid argument error
     [Arguments]  ${keyword}    ${argument}=I'm not a dict, I'm a string.    @{args}    ${type}=string    ${position}=1
@@ -364,3 +454,38 @@ Create Dictionaries For Testing
     Set Test Variable    \${BIG}
     ${TUPLE} =    Evaluate    (1, 2)
     Set Test Variable    \${TUPLE}
+    ${D4} =    Create Dictionary    a=1    b=2    c=3    d=4    e=5
+    Set Test Variable    \${D4}
+    ${D4B} =    Create Dictionary    d=4    b=2    e=5    a=1    c=3
+    Set Test Variable    \${D4B}
+
+Create Dictionaries For Testing Ignore Case
+    ${D0}    Create Dictionary    a=X    b=Y    c=Z
+    Set Test Variable    \${D0}
+    ${D1}    Create Dictionary    A=x    B=y    C=z
+    Set Test Variable    \${D1}
+    ${D1_lower}    Create Dictionary    a=x    b=y    c=z
+    Set Test Variable    \${D1_lower}
+    ${D2}    Create Dictionary    A=X    B=Y    C=Z
+    Set Test Variable    \${D2}
+    ${D3}    Create Dictionary    a=x    b=y    c=z
+    Set Test Variable    \${D3}
+    ${D4}    Create Dictionary    A=x    b=Y
+    Set Test Variable    \${D4}
+    ${D5}    Create Dictionary    A=X    b=Y
+    Set Test Variable    \${D5}
+    ${D6}    Create Dictionary    a=x    b=Y
+    Set Test Variable    \${D6}
+    ${L0}    Create List  1  2  3
+    ${D7}    Create Dictionary    1=${D0}  2=D  c=${L0}  d=3
+    Set Test Variable    \${D7}
+    ${D8} =    Create Dictionary     A=1    b=2    c=3    d=4    E=5
+    Set Test Variable    \${D8}
+    ${D8B} =    Create Dictionary    D=4    b=2    E=5    a=1    C=3
+    Set Test Variable    \${D8B}
+    ${D8C} =    Create Dictionary    E=5    D=4    C=3    b=2    a=1
+    Set Test Variable    \${D8C}
+    ${D9} =    Create Dictionary    A=1  a=2
+    Set Test Variable    \${D9}
+    ${D9B} =    Create Dictionary    A=1  a=2
+    Set Test Variable    \${D9B}

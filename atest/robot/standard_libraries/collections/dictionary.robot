@@ -113,6 +113,9 @@ Dictionary Should Not Contain Value With Existing Value
 Dictionaries Should Be Equal
     Check Test Case    ${TEST NAME}
 
+Dictionaries Should Be Equal With Keys In Different Order
+    Check Test Case    ${TEST NAME}
+
 Dictionaries Of Different Type Should Be Equal
     Check Test Case    ${TEST NAME}
 
@@ -202,4 +205,49 @@ Pop From Dictionary With Default
     Check Test Case    ${TEST NAME}
 
 Check invalid dictionary argument errors
+    Check Test Case    ${TEST NAME}
+
+Dictionaries Should Be Equal With Ignore Case
+    Check Test Case    ${TEST NAME}
+
+Dictionaries Should Be Equal Without Ignoring Wrong Case
+    Check Test Case    ${TEST NAME}
+
+Dictionary Should Contain Item With Ignore Case
+    Check Test Case    ${TEST NAME}
+
+Dictionary Should Contain Item Without Ignoring Wrong Case
+    Check Test Case    ${TEST NAME}
+
+Dictionary Should Contain Key With Ignore Case
+    Check Test Case    ${TEST NAME}
+
+Dictionary Should Contain Key Without Ignoring Wrong Case
+    Check Test Case    ${TEST NAME}
+
+Dictionary Should Not Contain Key With Ignore Case Does Contain Key
+    Check Test Case    ${TEST NAME}
+
+Dictionary Should Contain Value With Ignore Case
+    Check Test Case    ${TEST NAME}
+
+Dictionary Should Contain Value Without Ignoring Wrong Case
+    Check Test Case    ${TEST NAME}
+
+Dictionary Should Not Contain Value With Ignore Case Does Contain Value
+    Check Test Case    ${TEST NAME}
+
+Dictionary Should Contain Sub Dictionary With Ignore Case
+    Check Test Case    ${TEST NAME}
+
+Dictionary Should Contain Sub Dictionary Without Ignoring Wrong Case
+    Check Test Case    ${TEST NAME}
+
+Dictionary Should Contain Value With Ignore Case And Nested List and Dictionary
+    Check Test Case    ${TEST NAME}
+
+Dictionaries Should Be Equal With Keys In Different Order And Ignore Case
+    Check Test Case    ${TEST NAME}
+
+Dictionaries With Equally Named Keys After Normalizing Cannot Ignore Case
     Check Test Case    ${TEST NAME}

@@ -607,6 +607,34 @@ Check List Error
     Should Not Contain Match              I am a string. Not a list.    xyz
     Sort List
 
+Lists Should Be Equal With Ignore Case
+    [Template]  Lists Should Be Equal  
+    [Setup]    Create Lists For Testing Ignore Case
+    list1=${L0}    list2=${L1}    ignore_case=${True}
+    list1=${L5}    list2=${L6}    ignore_case=${True}
+
+List Should Contain Value With Ignore Case
+    [Setup]    Create Lists For Testing Ignore Case
+    List Should Contain Value  ${L0}  value=A    ignore_case=${True}
+
+List Should Not Contain Value With Ignore Case Does Contain Value
+    [Setup]    Create Lists For Testing Ignore Case
+    [Documentation]  FAIL [ a | b | c | 1 | 2 ] contains value 'A'.
+    List Should Not Contain Value    ${L0}    value=A    ignore_case=${True}
+
+List Should Contain Sub List With Ignore Case
+    [Setup]    Create Lists For Testing Ignore Case
+    List Should Contain Sub List  list1=${L0}    list2=${L2}    ignore_case=${True}
+
+List Should Not Contain Duplicates With Ignore Case
+    [Setup]    Create Lists For Testing Ignore Case
+    [Documentation]    FAIL 'a' and 'c' found multiple times.
+    List Should Not Contain Duplicates  ${L3}    ignore_case=${True}
+
+List Should Contain Value With Ignore Case And Nested List and Dictionary
+    [Setup]    Create Lists For Testing Ignore Case
+    List Should Contain Value  ${L4}  value=d    ignore_case=${True}
+
 *** Keywords ***
 Validate invalid argument error
     [Arguments]    ${keyword}    ${argument}=I'm not a list, I'm a string.    @{args}    ${type}=string    ${position}=1
@@ -658,3 +686,21 @@ List Should Equal Matches
     ${list} =    Create List    @{list}
     ${matches} =    Get Matches    ${list_to_search}    ${pattern}    ${case_insensitive}    ${whitespace_insensitive}
     Lists Should Be Equal    ${matches}    ${list}
+
+Create Lists For Testing Ignore Case
+    ${L0}    Create List    a    b    c    1    2
+    Set Test Variable    \${L0}
+    ${L1}    Create List    A    B    C    1    2
+    Set Test Variable    \${L1}
+    ${L2}    Create List    A    B
+    Set Test Variable    \${L2}
+    ${L3}    Create List    A    a    b    c    C
+    Set Test Variable    \${L3}
+    ${D0}    Create Dictionary    a=1    b=2    c=3
+    ${D1}    Create Dictionary    A=1    b=2    C=3
+    ${L4}    Create List    ${L0}    D    d    3   ${D0}
+    Set Test Variable    \${L4}
+    ${L5}    Create List    ${L0}    D    d    3   ${D0}
+    Set Test Variable    \${L5}
+    ${L6}    Create List    ${L1}    d    D    3   ${D1}
+    Set Test Variable    \${L6}
