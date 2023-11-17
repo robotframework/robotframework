@@ -536,13 +536,23 @@
                 </div>
               </div>
             {{/if}}
+            {{if returnType}}
+            <div class="return-type">
+              <h4>Return Type</h4>
+              <span class="arg-type">
+              {{tmpl(returnType) 'type-info-template'}}
+              </span>
+            </div>
+          {{/if}}
             {{if libdoc.tags.length && tags.length}}
               <div class="tags">
                 <h4>Tags</h4>
+                <span class="kw-tags">
                 {{each tags}}
                   <a href="javascript:tagSearch('${$value}')"
                     title="Show keywords with this tag">${$value}</a>{{if $index < tags.length-1}},<br>{{/if}}
                 {{/each}}
+                </span>
               </div>
             {{/if}}
           </div>

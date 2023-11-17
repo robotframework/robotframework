@@ -288,6 +288,7 @@ input.hamburger-menu:checked ~ span.hamburger-menu-3
 
 .arguments-list-container {
     overflow-y: auto;
+    margin-bottom: 1.33rem;
 }
 
 
@@ -338,13 +339,19 @@ input.hamburger-menu:checked ~ span.hamburger-menu-3
     min-width: 150px;
 }
 
-.arguments-list .arg-type {
+.arguments-list .arg-type,
+.return-type .arg-type {
     margin-left: 2rem;
     -ms-grid-column: 3;
     grid-column: 3;
     background: var(--background-color);
     white-space: nowrap;
     -webkit-text-size-adjust: none;
+}
+
+.tags .kw-tags {
+    margin-left: 2rem;
+    display: flex;
 }
 
 .arguments-list .arg-kind {
@@ -583,6 +590,7 @@ h4 {
 
 .enum-type-members span,
 .args span,
+.return-type span,
 .args a
  {
     font-family: monospace;
@@ -625,7 +633,7 @@ a.type {
     color: var(--highlighted-color);
 }
 
-.tags {
+.tags, .return-type {
     display: flex;
     align-items: baseline;
 }
