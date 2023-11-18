@@ -41,6 +41,7 @@ KEYWORDS = ('robotframework automation testautomation rpa '
 PACKAGE_DATA = [join('htmldata', directory, pattern)
                 for directory in ('rebot', 'libdoc', 'testdoc', 'lib', 'common')
                 for pattern in ('*.html', '*.css', '*.js')]
+PACKAGE_DATA.append("py.typed")
 
 
 setup(
