@@ -14,18 +14,13 @@
 #  limitations under the License.
 
 import inspect
-from typing import (
-    Any,
-    Callable,
-    Dict,
-    Mapping,
-    Sequence,
-    Type,
-    TypeVar,
-    overload,
-)
+from typing import Any, Callable, Sequence, Type, TypeVar, overload
+
+from robot.api.interfaces import TypeHints
+
 
 F = TypeVar("F", bound=Callable[..., Any])
+Converters = dict[type, Callable[[Any], Any]]
 
 
 def not_keyword(func: F) -> F:
@@ -53,27 +48,25 @@ def not_keyword(func: F) -> F:
 not_keyword.robot_not_keyword = True
 
 
-# Decorator used without arguments, i.e. @keyword()
 @overload
-def keyword(name: F) -> F:
+def keyword(func: F, /) -> F:
     ...
 
 
-# Decorator used with arguments, e.g. @keyword("Custom Keyword Name")
 @overload
 def keyword(
     name: 'str | None' = None,
     tags: Sequence[str] = (),
-    types: 'Sequence[str] | Mapping[str, Any]' = (),
+    types: 'TypeHints | None' = (),
 ) -> Callable[[F], F]:
     ...
 
 
 @not_keyword
 def keyword(
-    name: 'str | Callable[..., Any] | None' = None,
+    name: 'Callable[[F], F] | str | None' = None,
     tags: Sequence[str] = (),
-    types: 'Sequence[str] | Mapping[str, Any]' = (),
+    types: 'TypeHints | None' = (),
 ) -> 'F | Callable[[F], F]':
     """Decorator to set custom name, tags and argument types to keywords.
 
@@ -133,7 +126,7 @@ C = TypeVar('C')
 
 # Decorator used without arguments, i.e. @library()
 @overload
-def library(scope: Type[C]) -> Type[C]:
+def library(cls: Type[C], /) -> Type[C]:
     ...
 
 
@@ -141,8 +134,8 @@ def library(scope: Type[C]) -> Type[C]:
 @overload
 def library(
     scope: 'str | None' = None,
-    version: 'str| None' = None,
-    converters: 'Dict[Any, Callable[..., Any]] | None' = None,
+    version: 'str | None' = None,
+    converters: 'Converters | None' = None,
     doc_format: 'str | None' = None,
     listener: 'Type[Any] | None' = None,
     auto_keywords: bool = False,
@@ -155,7 +148,7 @@ def library(
 def library(
     scope: 'Type[Any] | str | None' = None,
     version: 'str | None' = None,
-    converters: 'Dict[Any, Callable[..., Any]] | None' = None,
+    converters: 'Converters | None' = None,
     doc_format: 'str | None' = None,
     listener: 'Type[Any] | None' = None,
     auto_keywords: bool = False,

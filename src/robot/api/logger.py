@@ -71,6 +71,7 @@ from typing import Literal
 from robot.output import librarylogger
 from robot.running.context import EXECUTION_CONTEXTS
 
+
 LOGLEVEL = Literal['TRACE', 'DEBUG', 'INFO', 'CONSOLE', 'HTML', 'WARN', 'ERROR']
 CONSOLE_STREAM = Literal['stdout', 'stderr']
 
@@ -93,13 +94,15 @@ def write(msg: str, level: LOGLEVEL = 'INFO', html: bool = False) -> None:
         librarylogger.write(msg, level, html)
     else:
         logger = logging.getLogger("RobotFramework")
-        level_int = {'TRACE': logging.DEBUG // 2,
-                 'DEBUG': logging.DEBUG,
-                 'INFO': logging.INFO,
-                 'CONSOLE': logging.INFO,
-                 'HTML': logging.INFO,
-                 'WARN': logging.WARN,
-                 'ERROR': logging.ERROR}[level]
+        level_int = {
+            'TRACE': logging.DEBUG // 2,
+            'DEBUG': logging.DEBUG,
+            'INFO': logging.INFO,
+            'CONSOLE': logging.INFO,
+            'HTML': logging.INFO,
+            'WARN': logging.WARN,
+            'ERROR': logging.ERROR
+        }[level]
         logger.log(level_int, msg)
 
 
@@ -135,7 +138,9 @@ def error(msg: str, html: bool = False)-> None:
     write(msg, 'ERROR', html)
 
 
-def console(msg: str, newline: bool = True, stream: CONSOLE_STREAM = 'stdout') -> None:
+def console(
+        msg: str, newline: bool = True, stream: Literal['stdout', 'stderr'] = 'stdout'
+    ) -> None:
     """Writes the message to the console.
 
     If the ``newline`` argument is ``True``, a newline character is
