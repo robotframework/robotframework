@@ -514,7 +514,7 @@ class ListenerV3:
     def start_test(self, data: running.TestCase, result: result.TestCase) -> None:
         """Called when a test or task starts."""
 
-    def end_test(self, data: running.TestCase, result: result.TestCase):
+    def end_test(self, data: running.TestCase, result: result.TestCase) -> None:
         """Called when a test or tasks ends."""
 
     def log_message(self, message: Message) -> None:
