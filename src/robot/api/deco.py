@@ -19,6 +19,9 @@ from typing import Any, Callable, Sequence, Type, TypeVar, overload
 from robot.api.interfaces import TypeHints
 
 
+# Current annotations report `attr-defined` errors. This can be solved once Python 3.10
+# becomes the minimum version (error-free conditional typing proved too complex).
+# See: https://discuss.python.org/t/questions-related-to-typing-overload-style/38130
 F = TypeVar("F", bound=Callable[..., Any])
 Converters = dict[type, Callable[[Any], Any]]
 
