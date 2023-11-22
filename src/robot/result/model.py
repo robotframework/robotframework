@@ -71,7 +71,6 @@ class Branches(model.BaseBranches['Keyword', 'For', 'While', 'If', 'Try', 'Var',
 
 class IterationType(Generic[FW]):
     """Class that wrapps `Generic` as python doesn't allow multple generic inheritance"""
-    pass
 
 
 class Iterations(model.BaseBody['Keyword', 'For', 'While', 'If', 'Try', 'Var', 'Return',

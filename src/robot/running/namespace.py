@@ -451,8 +451,9 @@ class KeywordStore:
         for owner_name, kw_name in self._get_owner_and_kw_names(name):
             for owner in chain(self.libraries.values(), self.resources.values()):
                 if eq(owner.name, owner_name) and kw_name in owner.handlers:
-                    for handler in owner.handlers.get_handlers(kw_name):
-                        handlers_and_names.append((handler, kw_name))
+                    handlers_and_names.extend(
+                        [(handler, kw_name) for handler in owner.handlers.get_handlers(kw_name)]
+                    )
         if not handlers_and_names:
             return None
         if len(handlers_and_names) == 1:

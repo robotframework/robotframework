@@ -45,8 +45,7 @@ class _List:
         | ${L2} = ['a', 'b', 'x', 'y', 'z']
         """
         self._validate_list(list_)
-        for value in values:
-            list_.append(value)
+        list_.extend(values)
 
     def insert_into_list(self, list_, index, value):
         """Inserts ``value`` into ``list`` to the position specified with ``index``.
@@ -159,10 +158,7 @@ class _List:
         duplicates. Number of the removed duplicates is logged.
         """
         self._validate_list(list_)
-        ret = []
-        for item in list_:
-            if item not in ret:
-                ret.append(item)
+        ret = list(dict.fromkeys(list_))
         removed = len(list_) - len(ret)
         logger.info(f'{removed} duplicate{s(removed)} removed.')
         return ret

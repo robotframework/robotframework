@@ -1021,19 +1021,19 @@ class _Verify(_BuiltInBase):
             if is_string(container):
                 container = container.casefold()
             elif is_list_like(container):
-                container = set(x.casefold() if is_string(x) else x for x in container)
+                container = {x.casefold() if is_string(x) else x for x in container}
         if strip_spaces and is_string(item):
             item = self._strip_spaces(item, strip_spaces)
             if is_string(container):
                 container = self._strip_spaces(container, strip_spaces)
             elif is_list_like(container):
-                container = set(self._strip_spaces(x, strip_spaces) for x in container)
+                container = {self._strip_spaces(x, strip_spaces) for x in container}
         if collapse_spaces and is_string(item):
             item = self._collapse_spaces(item)
             if is_string(container):
                 container = self._collapse_spaces(container)
             elif is_list_like(container):
-                container = set(self._collapse_spaces(x) for x in container)
+                container = {self._collapse_spaces(x) for x in container}
         if item in container:
             raise AssertionError(self._get_string_msg(orig_container, item, msg,
                                                       values, 'contains'))
@@ -1077,19 +1077,19 @@ class _Verify(_BuiltInBase):
             if is_string(container):
                 container = container.casefold()
             elif is_list_like(container):
-                container = set(x.casefold() if is_string(x) else x for x in container)
+                container = {x.casefold() if is_string(x) else x for x in container}
         if strip_spaces and is_string(item):
             item = self._strip_spaces(item, strip_spaces)
             if is_string(container):
                 container = self._strip_spaces(container, strip_spaces)
             elif is_list_like(container):
-                container = set(self._strip_spaces(x, strip_spaces) for x in container)
+                container = {self._strip_spaces(x, strip_spaces) for x in container}
         if collapse_spaces and is_string(item):
             item = self._collapse_spaces(item)
             if is_string(container):
                 container = self._collapse_spaces(container)
             elif is_list_like(container):
-                container = set(self._collapse_spaces(x) for x in container)
+                container = {self._collapse_spaces(x) for x in container}
         if item not in container:
             raise AssertionError(self._get_string_msg(orig_container, item, msg,
                                                       values, 'does not contain'))
@@ -1132,19 +1132,19 @@ class _Verify(_BuiltInBase):
             if is_string(container):
                 container = container.casefold()
             elif is_list_like(container):
-                container = set(x.casefold() if is_string(x) else x for x in container)
+                container = {x.casefold() if is_string(x) else x for x in container}
         if strip_spaces:
             items = [self._strip_spaces(x, strip_spaces) for x in items]
             if is_string(container):
                 container = self._strip_spaces(container, strip_spaces)
             elif is_list_like(container):
-                container = set(self._strip_spaces(x, strip_spaces) for x in container)
+                container = {self._strip_spaces(x, strip_spaces) for x in container}
         if collapse_spaces:
             items = [self._collapse_spaces(x) for x in items]
             if is_string(container):
                 container = self._collapse_spaces(container)
             elif is_list_like(container):
-                container = set(self._collapse_spaces(x) for x in container)
+                container = {self._collapse_spaces(x) for x in container}
         if not any(item in container for item in items):
             msg = self._get_string_msg(orig_container,
                                        seq2str(items, lastsep=' or '),
@@ -1190,19 +1190,19 @@ class _Verify(_BuiltInBase):
             if is_string(container):
                 container = container.casefold()
             elif is_list_like(container):
-                container = set(x.casefold() if is_string(x) else x for x in container)
+                container = {x.casefold() if is_string(x) else x for x in container}
         if strip_spaces:
             items = [self._strip_spaces(x, strip_spaces) for x in items]
             if is_string(container):
                 container = self._strip_spaces(container, strip_spaces)
             elif is_list_like(container):
-                container = set(self._strip_spaces(x, strip_spaces) for x in container)
+                container = {self._strip_spaces(x, strip_spaces) for x in container}
         if collapse_spaces:
             items = [self._collapse_spaces(x) for x in items]
             if is_string(container):
                 container = self._collapse_spaces(container)
             elif is_list_like(container):
-                container = set(self._collapse_spaces(x) for x in container)
+                container = {self._collapse_spaces(x) for x in container}
         if any(item in container for item in items):
             msg = self._get_string_msg(orig_container,
                                        seq2str(items, lastsep=' or '),
@@ -3150,7 +3150,6 @@ class _Misc(_BuiltInBase):
         contain non-existing variables. If you are interested about variable
         values, you can use the `Log` or `Log Many` keywords.
         """
-        pass
 
     def set_log_level(self, level):
         """Sets the log threshold to the specified level and returns the old level.
@@ -4000,7 +3999,6 @@ class RobotNotRunningError(AttributeError):
     May later be based directly on Exception, so new code should except
     this exception explicitly.
     """
-    pass
 
 
 def register_run_keyword(library, keyword, args_to_process=0, deprecation_warning=True):

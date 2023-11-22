@@ -281,12 +281,10 @@ class Body(BaseBody['Keyword', 'For', 'While', 'If', 'Try', 'Var', 'Return',
 
     Body contains the keywords and other structures such as FOR loops.
     """
-    pass
 
 
 class BranchType(Generic[IT]):
     """Class that wrapps `Generic` as python doesn't allow multple generic inheritance"""
-    pass
 
 
 class BaseBranches(BaseBody[KW, F, W, I, T, V, R, C, B, M, E], BranchType[IT]):
