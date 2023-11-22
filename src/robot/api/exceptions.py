@@ -36,7 +36,7 @@ class Failure(AssertionError):
         :param message: Exception message.
         :param html: When ``True``, message is considered to be HTML and not escaped.
         """
-        AssertionError.__init__(self, message if not html else '*HTML* ' + message)
+        super().__init__(message if not html else '*HTML* ' + message)
 
 
 class ContinuableFailure(Failure):
@@ -62,7 +62,7 @@ class Error(RuntimeError):
         :param message: Exception message.
         :param html: When ``True``, message is considered to be HTML and not escaped.
         """
-        RuntimeError.__init__(self, message if not html else '*HTML* ' + message)
+        super().__init__(message if not html else '*HTML* ' + message)
 
 
 class FatalError(Error):
@@ -81,4 +81,4 @@ class SkipExecution(Exception):
         :param message: Exception message.
         :param html: When ``True``, message is considered to be HTML and not escaped.
         """
-        Exception.__init__(self, message if not html else '*HTML* ' + message)
+        super().__init__(message if not html else '*HTML* ' + message)

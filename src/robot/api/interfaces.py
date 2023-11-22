@@ -425,33 +425,33 @@ class ListenerV2:
     """Optional base class for listeners using the listener API v2."""
     ROBOT_LISTENER_API_VERSION = 2
 
-    def start_suite(self, name: str, attributes: StartSuiteAttributes) -> None:
+    def start_suite(self, name: str, attributes: StartSuiteAttributes):
         """Called when a suite starts."""
 
-    def end_suite(self, name: str, attributes: EndSuiteAttributes) -> None:
+    def end_suite(self, name: str, attributes: EndSuiteAttributes):
         """Called when a suite end."""
 
-    def start_test(self, name: str, attributes: StartTestAttributes) -> None:
+    def start_test(self, name: str, attributes: StartTestAttributes):
         """Called when a test or task starts."""
 
-    def end_test(self, name: str, attributes: EndTestAttributes) -> None:
+    def end_test(self, name: str, attributes: EndTestAttributes):
         """Called when a test or task ends."""
 
-    def start_keyword(self, name: str, attributes: StartKeywordAttributes) -> None:
+    def start_keyword(self, name: str, attributes: StartKeywordAttributes):
         """Called when a keyword or a control structure like IF starts.
 
         The type of the started item is in ``attributes['type']``. Control
         structures can contain extra attributes that are only relevant to them.
         """
 
-    def end_keyword(self, name: str, attributes: EndKeywordAttributes) -> None:
+    def end_keyword(self, name: str, attributes: EndKeywordAttributes):
         """Called when a keyword or a control structure like IF ends.
 
         The type of the started item is in ``attributes['type']``. Control
         structures can contain extra attributes that are only relevant to them.
         """
 
-    def log_message(self, message: MessageAttributes) -> None:
+    def log_message(self, message: MessageAttributes):
         """Called when a normal log message are emitted.
 
         The messages are typically logged by keywords, but also the framework
@@ -459,41 +459,41 @@ class ListenerV2:
         log.html.
         """
 
-    def message(self, message: MessageAttributes) -> None:
+    def message(self, message: MessageAttributes):
         """Called when framework's internal messages are emitted.
 
         Only logged by the framework itself. These messages end up to the syslog
         if it is enabled.
         """
 
-    def library_import(self, name: str, attributes: LibraryAttributes) -> None:
+    def library_import(self, name: str, attributes: LibraryAttributes):
         """Called after a library has been imported."""
 
-    def resource_import(self, name: str, attributes: ResourceAttributes) -> None:
+    def resource_import(self, name: str, attributes: ResourceAttributes):
         """Called after a resource file has been imported."""
 
-    def variables_import(self, name: str, attributes: VariablesAttributes) -> None:
+    def variables_import(self, name: str, attributes: VariablesAttributes):
         """Called after a variable file has been imported."""
 
-    def output_file(self, path: str) -> None:
+    def output_file(self, path: str):
         """Called after the output file has been created.
 
         At this point the file is guaranteed to be closed.
         """
 
-    def log_file(self, path: str) -> None:
+    def log_file(self, path: str):
         """Called after the log file has been created."""
 
-    def report_file(self, path: str) -> None:
+    def report_file(self, path: str):
         """Called after the report file has been created."""
 
-    def xunit_file(self, path: str) -> None:
+    def xunit_file(self, path: str):
         """Called after the xunit compatible output file has been created."""
 
-    def debug_file(self, path: str) -> None:
+    def debug_file(self, path: str):
         """Called after the debug file has been created."""
 
-    def close(self) -> None:
+    def close(self):
         """Called when the whole execution ends.
 
         With library listeners called when the library goes out of scope.
@@ -504,19 +504,19 @@ class ListenerV3:
     """Optional base class for listeners using the listener API v3."""
     ROBOT_LISTENER_API_VERSION = 3
 
-    def start_suite(self, data: running.TestSuite, result: result.TestSuite) -> None:
+    def start_suite(self, data: running.TestSuite, result: result.TestSuite):
         """Called when a suite starts."""
 
-    def end_suite(self, data: running.TestSuite, result: result.TestSuite) -> None:
+    def end_suite(self, data: running.TestSuite, result: result.TestSuite):
         """Called when a suite ends."""
 
-    def start_test(self, data: running.TestCase, result: result.TestCase) -> None:
+    def start_test(self, data: running.TestCase, result: result.TestCase):
         """Called when a test or task starts."""
 
-    def end_test(self, data: running.TestCase, result: result.TestCase) -> None:
+    def end_test(self, data: running.TestCase, result: result.TestCase):
         """Called when a test or tasks ends."""
 
-    def log_message(self, message: Message) -> None:
+    def log_message(self, message: Message):
         """Called when a normal log message are emitted.
 
         The messages are typically logged by keywords, but also the framework
@@ -524,32 +524,32 @@ class ListenerV3:
         log.html.
         """
 
-    def message(self, message: Message) -> None:
+    def message(self, message: Message):
         """Called when framework's internal messages are emitted.
 
         Only logged by the framework itself. These messages end up to the syslog
         if it is enabled.
         """
 
-    def output_file(self, path: str) -> None:
+    def output_file(self, path: str):
         """Called after the output file has been created.
 
         At this point the file is guaranteed to be closed.
         """
 
-    def log_file(self, path: str) -> None:
+    def log_file(self, path: str):
         """Called after the log file has been created."""
 
-    def report_file(self, path: str) -> None:
+    def report_file(self, path: str):
         """Called after the report file has been created."""
 
-    def xunit_file(self, path: str) -> None:
+    def xunit_file(self, path: str):
         """Called after the xunit compatible output file has been created."""
 
-    def debug_file(self, path: str) -> None:
+    def debug_file(self, path: str):
         """Called after the debug file has been created."""
 
-    def close(self) -> None:
+    def close(self):
         """Called when the whole execution ends.
 
         With library listeners called when the library goes out of scope.
