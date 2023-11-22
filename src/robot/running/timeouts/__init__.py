@@ -74,7 +74,8 @@ class _Timeout(Sortable):
                              test_timeout=isinstance(self, TestTimeout))
         if timeout <= 0:
             raise error
-        executable = lambda: runnable(*(args or ()), **(kwargs or {}))
+        def executable():
+            return runnable(*(args or ()), **(kwargs or {}))
         return Timeout(timeout, error).execute(executable)
 
     def get_message(self):

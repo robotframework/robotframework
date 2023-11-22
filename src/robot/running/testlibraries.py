@@ -260,7 +260,8 @@ class _BaseTestLibrary:
 
         auto_keywords = getattr(libcode, 'ROBOT_AUTO_KEYWORDS', True)
         if auto_keywords:
-            predicate = lambda name: name[:1] != '_' or has_robot_name(name)
+            def predicate(name):
+                return name[:1] != '_' or has_robot_name(name)
         else:
             predicate = has_robot_name
         return [name for name in dir(libcode) if predicate(name)]
@@ -411,5 +412,6 @@ class _DynamicLibrary(_BaseTestLibrary):
         return DynamicHandler(self, name, method, doc, argspec, tags)
 
     def _create_init_handler(self, libcode):
-        docgetter = lambda: self._get_kw_doc('__init__')
+        def docgetter():
+            return self._get_kw_doc('__init__')
         return InitHandler(self, self._resolve_init_method(libcode), docgetter)

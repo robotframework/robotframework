@@ -68,7 +68,8 @@ def directive(*args, **kwargs):
     directive_class, messages = directive.__wrapped__(*args, **kwargs)
     if directive_class not in relevant_directives:
         # Skipping unknown or non-relevant directive entirely
-        directive_class = (lambda *args, **kwargs: [])
+        def directive_class(*args, **kwargs):
+            return []
     return directive_class, messages
 
 

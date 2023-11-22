@@ -73,7 +73,8 @@ class LinkFormatter:
 
 
 class LineFormatter:
-    handles = lambda self, line: True
+    def handles(self, line):
+        return True
     newline = '\n'
     _bold = re.compile(r'''
 (                         # prefix (group 1)

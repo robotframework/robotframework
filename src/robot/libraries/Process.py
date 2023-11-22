@@ -755,7 +755,8 @@ class Process:
         self._processes.switch(handle)
 
     def _process_is_stopped(self, process, timeout):
-        stopped = lambda: process.poll() is not None
+        def stopped():
+            return process.poll() is not None
         max_time = time.time() + timeout
         while time.time() <= max_time and not stopped():
             time.sleep(min(0.1, timeout))
