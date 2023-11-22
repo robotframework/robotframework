@@ -232,8 +232,7 @@ List Should Not Contain Value, Value Found And Own Error Message
     List Should Not Contain Value    ${L1}    1    My error message!
 
 List Should Not Contain Duplicates With No Duplicates
-    ${generator}    ${tuple} =    Evaluate    (c for c in 'abcABC'), (0, 1, 2, '0', '1', '2')
-    FOR    ${list}    IN    ${L0}    ${L1}    ${L2}    ${L3}    ${L4}    ${generator}    ${tuple}
+    FOR    ${list}    IN    ${L0}    ${L1}    ${L2}    ${L3}    ${L4}    ${{(0, 1, 2, '0', '1', '2')}}
         List Should Not Contain Duplicates    ${list}
     END
 
@@ -335,6 +334,11 @@ Lists Should Be Equal Ignore Order
     ${list1} =    Create List    A    B    C    D
     ${list2} =    Create List    D    B    C    A
     Lists Should Be Equal    ${list1}    ${list2}    ignore_order=True
+
+Ignore Order Is Recursive
+    ${list1} =    Evaluate    [(1, 2, 3), (4, 5, 6)]
+    ${list2} =    Evaluate    [(6, 4, 5), (3, 1, 2)]
+    Lists Should Be Equal    ${list1}    ${list2}    ignore_order=yes
 
 List Should Contain Sub List
     List Should Contain Sub List    ${LONG}    ${L4}
@@ -608,7 +612,7 @@ Check List Error
     Sort List
 
 Lists Should Be Equal With Ignore Case
-    [Template]  Lists Should Be Equal  
+    [Template]  Lists Should Be Equal
     [Setup]    Create Lists For Testing Ignore Case
     list1=${L0}    list2=${L1}    ignore_case=${True}
     list1=${L5}    list2=${L6}    ignore_case=${True}

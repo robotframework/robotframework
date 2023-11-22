@@ -18,9 +18,8 @@ from ast import literal_eval
 from itertools import chain
 
 from robot.api import logger
-from robot.utils import (get_error_message, is_dict_like, is_list_like, is_string, is_truthy,
-                         Matcher, NOT_SET, plural_or_not as s, seq2str, seq2str2,
-                         type_name)
+from robot.utils import (get_error_message, is_dict_like, is_list_like, Matcher,
+                         NOT_SET, plural_or_not as s, seq2str, seq2str2, type_name)
 from robot.utils.asserts import assert_equal
 from robot.version import get_version
 
@@ -306,8 +305,9 @@ class _List:
 
         Use the ``msg`` argument to override the default error message.
 
-        The ignore_case argument can be used to make comparison case-insensitive.
-        See the Ignore case section for more details. It is new in Robot Framework 7.0.
+        The ``ignore_case`` argument can be used to make comparison case-insensitive.
+        See the `Ignore case` section for more details. This option is new in
+        Robot Framework 7.0.
         """
         self._validate_list(list_)
         normalize = Normalizer(ignore_case).normalize
@@ -319,8 +319,9 @@ class _List:
 
         Use the ``msg`` argument to override the default error message.
 
-        The ignore_case argument can be used to make comparison case-insensitive.
-        See the Ignore case section for more details. It is new in Robot Framework 7.0.
+        The ``ignore_case`` argument can be used to make comparison case-insensitive.
+        See the `Ignore case` section for more details. This option is new in
+        Robot Framework 7.0.
         """
         self._validate_list(list_)
         normalize = Normalizer(ignore_case).normalize
@@ -338,17 +339,16 @@ class _List:
         This keyword works with all iterables that can be converted to a list.
         The original iterable is never altered.
 
-        The ignore_case argument can be used to make comparison case-insensitive.
-        See the Ignore case section for more details. It is new in Robot Framework 7.0.
+        The ``ignore_case`` argument can be used to make comparison case-insensitive.
+        See the `Ignore case` section for more details. This option is new in
+        Robot Framework 7.0.
         """
         self._validate_list(list_)
-        if not isinstance(list_, list):
-            list_ = list(list_)
         dupes = []
-        normalize = Normalizer(ignore_case).normalize
-        for item in normalize(list_):
+        list_ = Normalizer(ignore_case).normalize(list_)
+        for item in list_:
             if item not in dupes:
-                count = normalize(list_).count(item)
+                count = list_.count(item)
                 if count > 1:
                     logger.info(f"'{item}' found {count} times.")
                     dupes.append(item)
@@ -393,15 +393,17 @@ class _List:
 
         The optional ``ignore_order`` argument can be used to ignore the order
         of the elements in the lists. Using it requires items to be sortable.
-        This is new in Robot Framework 3.2.
+        This option works recursively with nested lists starting from Robot
+        Framework 7.0.
 
         Example:
         | ${list1} = | Create List | apple | cherry | banana |
         | ${list2} = | Create List | cherry | banana | apple |
         | Lists Should Be Equal | ${list1} | ${list2} | ignore_order=True |
 
-        The ignore_case argument can be used to make comparison case-insensitive.
-        See the Ignore case section for more details. It is new in Robot Framework 7.0.
+        The ``ignore_case`` argument can be used to make comparison case-insensitive.
+        See the `Ignore case` section for more details. This option is new in
+        Robot Framework 7.0.
         """
         self._validate_lists(list1, list2)
         len1 = len(list1)
@@ -410,10 +412,7 @@ class _List:
                           f'Lengths are different: {len1} != {len2}',
                           msg, values)
         names = self._get_list_index_name_mapping(names, len1)
-        if ignore_order:
-            list1 = sorted(list1)
-            list2 = sorted(list2)
-        normalize = Normalizer(ignore_case).normalize
+        normalize = Normalizer(ignore_case, ignore_order).normalize
         diffs = '\n'.join(self._yield_list_diffs(normalize(list1), normalize(list2),
                                                  names))
         _verify_condition(not diffs,
@@ -445,13 +444,15 @@ class _List:
         See `Lists Should Be Equal` for more information about configuring
         the error message with ``msg`` and ``values`` arguments.
 
-        The ignore_case argument can be used to make comparison case-insensitive.
-        See the Ignore case section for more details. It is new in Robot Framework 7.0.
+        The ``ignore_case`` argument can be used to make comparison case-insensitive.
+        See the `Ignore case` section for more details. This option is new in
+        Robot Framework 7.0.
         """
         self._validate_lists(list1, list2)
         normalize = Normalizer(ignore_case).normalize
-        diffs = ', '.join(str(item) for item in normalize(list2) if
-                          item not in normalize(list1))
+        list1 = normalize(list1)
+        list2 = normalize(list2)
+        diffs = ', '.join(str(item) for item in list2 if item not in list1)
         _verify_condition(not diffs,
                           f'Following values were not found from first list: {diffs}',
                           msg, values)
@@ -698,14 +699,16 @@ class _Dictionary:
 
         Use the ``msg`` argument to override the default error message.
 
-        The ignore_case argument can be used to make comparison case-insensitive.
-        See the Ignore case section for more details. It is new in Robot Framework 7.0.
+        The ``ignore_case`` argument can be used to make comparison case-insensitive.
+        See the `Ignore case` section for more details. This option is new in
+        Robot Framework 7.0.
         """
         self._validate_dictionary(dictionary)
-        normalize = Normalizer(ignore_case).normalize
-        _verify_condition(normalize(key) in normalize(dictionary),
-                          f"Dictionary does not contain key '{key}'.",
-                          msg)
+        norm = Normalizer(ignore_case)
+        _verify_condition(
+            norm.normalize_key(key) in norm.normalize(dictionary),
+            f"Dictionary does not contain key '{key}'.", msg
+        )
 
     def dictionary_should_not_contain_key(self, dictionary, key, msg=None,
                                           ignore_case=False):
@@ -713,32 +716,35 @@ class _Dictionary:
 
         Use the ``msg`` argument to override the default error message.
 
-        The ignore_case argument can be used to make comparison case-insensitive.
-        See the Ignore case section for more details. It is new in Robot Framework 7.0.
+        The ``ignore_case`` argument can be used to make comparison case-insensitive.
+        See the `Ignore case` section for more details. This option is new in
+        Robot Framework 7.0.
         """
         self._validate_dictionary(dictionary)
-        normalize = Normalizer(ignore_case).normalize
-        _verify_condition(normalize(key) not in normalize(dictionary),
-                          f"Dictionary contains key '{key}'.",
-                          msg)
+        norm = Normalizer(ignore_case)
+        _verify_condition(
+            norm.normalize_key(key) not in norm.normalize(dictionary),
+            f"Dictionary contains key '{key}'.", msg
+        )
 
     def dictionary_should_contain_item(self, dictionary, key, value, msg=None,
                                        ignore_case=False):
         """An item of ``key`` / ``value`` must be found in a ``dictionary``.
 
-        Value is converted to unicode for comparison.
-
         Use the ``msg`` argument to override the default error message.
 
-        The ignore_case argument can be used to make comparison case-insensitive.
-        See the Ignore case section for more details. It is new in Robot Framework 7.0.
+        The ``ignore_case`` argument can be used to make comparison case-insensitive.
+        See the `Ignore case` section for more details. This option is new in
+        Robot Framework 7.0.
         """
         self._validate_dictionary(dictionary)
-        normalize = Normalizer(ignore_case).normalize
         self.dictionary_should_contain_key(dictionary, key, msg, ignore_case)
-        assert_equal(normalize(dictionary[normalize(key)]), normalize(value),
-                     msg or f"Value of dictionary key '{key}' does not match",
-                     values=not msg)
+        norm = Normalizer(ignore_case)
+        assert_equal(
+            norm.normalize(dictionary)[norm.normalize_key(key)],
+            norm.normalize_value(value),
+            msg or f"Value of dictionary key '{key}' does not match", values=not msg
+        )
 
     def dictionary_should_contain_value(self, dictionary, value, msg=None,
                                         ignore_case=False):
@@ -746,14 +752,16 @@ class _Dictionary:
 
         Use the ``msg`` argument to override the default error message.
 
-        The ignore_case argument can be used to make comparison case-insensitive.
-        See the Ignore case section for more details. It is new in Robot Framework 7.0.
+        The ``ignore_case`` argument can be used to make comparison case-insensitive.
+        See the `Ignore case` section for more details. This option is new in
+        Robot Framework 7.0.
         """
         self._validate_dictionary(dictionary)
-        normalize = Normalizer(ignore_case).normalize
-        _verify_condition(normalize(value) in normalize(dictionary).values(),
-                          f"Dictionary does not contain value '{value}'.",
-                          msg)
+        norm = Normalizer(ignore_case)
+        _verify_condition(
+            norm.normalize_value(value) in norm.normalize(dictionary).values(),
+            f"Dictionary does not contain value '{value}'.", msg
+        )
 
     def dictionary_should_not_contain_value(self, dictionary, value, msg=None,
                                             ignore_case=False):
@@ -761,14 +769,16 @@ class _Dictionary:
 
         Use the ``msg`` argument to override the default error message.
 
-        The ignore_case argument can be used to make comparison case-insensitive.
-        See the Ignore case section for more details. It is new in Robot Framework 7.0.
+        The ``ignore_case`` argument can be used to make comparison case-insensitive.
+        See the `Ignore case` section for more details. This option is new in
+        Robot Framework 7.0.
         """
         self._validate_dictionary(dictionary)
-        normalize = Normalizer(ignore_case).normalize
-        _verify_condition(normalize(value) not in normalize(dictionary).values(),
-                          f"Dictionary contains value '{value}'.",
-                          msg)
+        norm = Normalizer(ignore_case)
+        _verify_condition(
+            norm.normalize_value(value) not in norm.normalize(dictionary).values(),
+            f"Dictionary contains value '{value}'.", msg
+        )
 
     def dictionaries_should_be_equal(self, dict1, dict2, msg=None, values=True,
                                      ignore_keys=None, ignore_case=False):
@@ -781,7 +791,8 @@ class _Dictionary:
 
         ``ignore_keys`` can be used to provide a list of keys to ignore in the
         comparison. It can be an actual list or a Python list literal. This
-        option is new in Robot Framework 6.1.
+        option is new in Robot Framework 6.1. It works recursively with nested
+        dictionaries starting from Robot Framework 7.0.
 
         Examples:
         | Dictionaries Should Be Equal | ${dict} | ${expected} |
@@ -791,25 +802,39 @@ class _Dictionary:
         See `Lists Should Be Equal` for more information about configuring
         the error message with ``msg`` and ``values`` arguments.
 
-        The ignore_case argument can be used to make comparison case-insensitive.
-        See the Ignore case section for more details. It is new in Robot Framework 7.0.
+        The ``ignore_case`` argument can be used to make comparison case-insensitive.
+        See the `Ignore case` section for more details. This option is new in
+        Robot Framework 7.0.
         """
-        self._validate_dictionary(dict1)
-        self._validate_dictionary(dict2, 2)
-        if ignore_keys:
-            if isinstance(ignore_keys, str):
-                try:
-                    ignore_keys = literal_eval(ignore_keys)
-                except Exception:
-                    raise ValueError("Converting 'ignore_keys' to a list failed: "
-                                     + get_error_message())
-            if not is_list_like(ignore_keys):
-                raise ValueError(f"'ignore_keys' must be list-like, "
-                                 f"got {type_name(ignore_keys)}.")
-            dict1 = {k: v for k, v in dict1.items() if k not in ignore_keys}
-            dict2 = {k: v for k, v in dict2.items() if k not in ignore_keys}
-        keys = self._keys_should_be_equal(dict1, dict2, msg, values, ignore_case)
-        self._key_values_should_be_equal(keys, dict1, dict2, msg, values, ignore_case)
+        self._validate_dictionary(dict1, dict2)
+        normalizer = Normalizer(ignore_case, ignore_keys=ignore_keys)
+        dict1 = normalizer.normalize(dict1)
+        dict2 = normalizer.normalize(dict2)
+        self._should_have_same_keys(dict1, dict2, msg, values)
+        self._should_have_same_values(dict1, dict2, msg, values)
+
+    def _should_have_same_keys(self, dict1, dict2, message, values, validate_both=True):
+        missing = seq2str([k for k in dict2 if k not in dict1])
+        error = ''
+        if missing:
+            error = f"Following keys missing from first dictionary: {missing}"
+        if validate_both:
+            missing = seq2str([k for k in dict1 if k not in dict2])
+            if missing:
+                error += f"\nFollowing keys missing from second dictionary: {missing}"
+        if error:
+            _report_error(error.strip(), message, values)
+
+    def _should_have_same_values(self, dict1, dict2, message, values):
+        errors = []
+        for key in dict2:
+            try:
+                assert_equal(dict1[key], dict2[key], msg=f'Key {key}')
+            except AssertionError as err:
+                errors.append(str(err))
+        if errors:
+            error = '\n'.join([f'Following keys have different values:', *errors])
+            _report_error(error, message, values)
 
     def dictionary_should_contain_sub_dictionary(self, dict1, dict2, msg=None,
                                                  values=True, ignore_case=False):
@@ -818,22 +843,16 @@ class _Dictionary:
         See `Lists Should Be Equal` for more information about configuring
         the error message with ``msg`` and ``values`` arguments.
 
-        The ignore_case argument can be used to make comparison case-insensitive.
-        See the Ignore case section for more details. It is new in Robot Framework 7.0.
+        The ``ignore_case`` argument can be used to make comparison case-insensitive.
+        See the `Ignore case` section for more details. This option is new in
+        Robot Framework 7.0.
         """
-        self._validate_dictionary(dict1)
-        self._validate_dictionary(dict2, 2)
-        normalize = Normalizer(ignore_case).normalize
-        keys2 = self.get_dictionary_keys(dict2)
-        diffs = ', '.join(str(k) for k in normalize(keys2) if k
-                          not in normalize(dict1))
-        _verify_condition(not diffs,
-                          f"Following keys missing from first dictionary: {diffs}",
-                          msg, values)
-        keys = [(key1, key2) for key1, key2 in
-                zip(dict1.keys(), dict2.keys()) if normalize(key1) == normalize(key2)]
-        self._key_values_should_be_equal(keys, dict1, dict2, msg,
-                                         values, ignore_case)
+        self._validate_dictionary(dict1, dict2)
+        normalizer = Normalizer(ignore_case)
+        dict1 = normalizer.normalize(dict1)
+        dict2 = normalizer.normalize(dict2)
+        self._should_have_same_keys(dict1, dict2, msg, values, validate_both=False)
+        self._should_have_same_values(dict1, dict2, msg, values)
 
     def log_dictionary(self, dictionary, level='INFO'):
         """Logs the size and contents of the ``dictionary`` using given ``level``.
@@ -856,48 +875,12 @@ class _Dictionary:
         for key in self.get_dictionary_keys(dictionary):
             yield f'{key}: {dictionary[key]}'
 
-    def _keys_should_be_equal(self, dict1, dict2, msg, values, ignore_case):
-        normalize = Normalizer(ignore_case).normalize
-        keys1 = self.get_dictionary_keys(normalize(dict1))
-        keys2 = self.get_dictionary_keys(normalize(dict2))
-        miss1 = ', '.join(str(k) for k in keys2 if k
-                          not in normalize(dict1))
-        miss2 = ', '.join(str(k) for k in keys1 if k
-                          not in normalize(dict2))
-        error = []
-        if miss1:
-            error += [f'Following keys missing from first dictionary: {miss1}']
-        if miss2:
-            error += [f'Following keys missing from second dictionary: {miss2}']
-        if len(set(normalize(dict1).keys()))!=len(dict1.keys()):
-            error += ["First dictionary contains duplicate keys after normalizing."]
-        if len(set(normalize(dict2).keys()))!=len(dict2.keys()):
-            error += ["Second dictionary contains duplicate keys after normalizing."]
-        _verify_condition(not error, '\n'.join(error), msg, values)
-        keys = [(key1, key2) for key1, key2 in
-                zip(dict1.keys(), dict2.keys()) if normalize(key1) == normalize(key2)]
-        return keys
+    def _validate_dictionary(self, *dictionaries):
+        for index, dictionary in enumerate(dictionaries, start=1):
+            if not is_dict_like(dictionary):
+                raise TypeError(f"Expected argument {index} to be a dictionary, "
+                                f"got {type_name(dictionary)} instead.")
 
-    def _key_values_should_be_equal(self, keys, dict1, dict2, msg, values, ignore_case):
-        diffs = '\n'.join(self._yield_dict_diffs(keys, dict1,
-                                dict2, ignore_case))
-        _verify_condition(not diffs,
-                          f'Following keys have different values:\n{diffs}',
-                          msg, values)
-
-    def _yield_dict_diffs(self, keys, dict1, dict2, ignore_case):
-        normalize = Normalizer(ignore_case).normalize
-        for k1, k2 in keys:
-            try:
-                assert_equal(normalize(dict1[k1]),
-                             normalize(dict2[k2]), msg=f'Key {k1}')
-            except AssertionError as err:
-                yield str(err)
-
-    def _validate_dictionary(self, dictionary, position=1):
-        if not is_dict_like(dictionary):
-            raise TypeError(f"Expected argument {position} to be a dictionary or "
-                            f"dictionary-like, got {type_name(dictionary)} instead.")
 
 class Collections(_List, _Dictionary):
     """A library providing keywords for handling lists and dictionaries.
@@ -966,6 +949,24 @@ class Collections(_List, _Dictionary):
     | `Should Contain Match` | ${list} | ${pattern} | case_insensitive=${FALSE} | # Python ``False`` is false.   |
     | `Lists Should Be Equal` | ${x}   | ${y} | Custom error | values=no values | # ``no values`` works with ``values`` argument |
 
+    = Ignore case =
+
+    Various keywords support ignoring case in comparisons by using the optional
+    ``ignore_case`` argument. Case-insensitivity can be enabled by using
+    ``ignore_case=True`` (see `Boolean arguments` for details) and it works
+    recursively. With dictionaries, it is also possible to use special values
+    ``keys`` and ``values`` to normalize only keys or values, respectively.
+    These options themselves are case-insensitive and also singular forms
+    ``key`` and ``value`` are supported.
+
+    If a dictionary contains keys that normalize to a same value, e.g.
+    ``{'a': 1, 'A': 2}``, normalizing keys causes an error. Another thing
+    to take into account is that normalization can convert list-like objects
+    and mappings to ``list`` and ``dict`` instances, respectively.
+
+    Examples:
+    | `Lists Should Be Equal`        | ${list1} | ${list2} | ignore_case=True   |
+    | `Dictionaries Should Be Equal` | ${dict1} | ${dict2} | ignore_case=values |
 
     = Data in examples =
 
@@ -976,32 +977,6 @@ class Collections(_List, _Dictionary):
 
     Dictionary keywords use similar ``${Dx}`` variables. For example, ``${D1}``
     means ``{'a': 1}`` and ``${D3}`` means ``{'a': 1, 'b': 2, 'c': 3}``.
-
-    = Ignore case =
-
-    It is possible to ignore the case for elements in both dictionaries and lists.
-    In lists, this can be done by adding ``ignore_case=True``. For dictionaries,
-    there are additional options since they employ both keys and values, using
-    ignore_case equal to ``key``, ``value`` or ``both``. Ignoring case means that the
-    values to compare are normalized by lowercasing strings before comparison.
-
-    Be aware that dictionaries containing keys that would be equal after normalization,
-    e.g. ``{'a': 1, 'A':2}`` can not be used, as this would result in equal keys within
-    the same dictionary.
-
-    Additionally, be aware that list-like objects are converted to lists, and
-    dictionary-like objects to dictionaries, for ease of comparison
-
-    List Examples:
-    | `Lists should be equal` | ${list1} | ${list} | ignore_case=True   | # String ``true`` is True.   |
-    | `Lists should be equal` | ${list1} | ${list} | ignore_case=False  | # String ``false`` is False. |
-
-    Dictionary Examples:
-    | `Dictionaries should be equal` | ${dict1} | ${dict2} | ignore_case=True   | # String ``true`` is True.   |
-    | `Dictionaries should be equal` | ${dict1} | ${dict2} | ignore_case=both   | # Case will be ignored on keys and values    |
-    | `Dictionaries should be equal` | ${dict1} | ${dict2} | ignore_case=key    | # Case will be ignored on keys, not values   |
-    | `Dictionaries should be equal` | ${dict1} | ${dict2} | ignore_case=value  | # Case will be ignored on values, not keys   |
-    | `Dictionaries should be equal` | ${dict1} | ${dict2} | ignore_case=False  | # String ``false`` is False. |
     """
 
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
@@ -1098,14 +1073,17 @@ class Collections(_List, _Dictionary):
                                     whitespace_insensitive))
 
 
-def _verify_condition(condition, default_msg, msg, values=False):
-    if condition:
-        return
-    if not msg:
-        msg = default_msg
-    elif is_truthy(values) and str(values).upper() != 'NO VALUES':
-        msg += '\n' + default_msg
-    raise AssertionError(msg)
+def _verify_condition(condition, default_message, message, values=False):
+    if not condition:
+        _report_error(default_message, message, values)
+
+
+def _report_error(default_message, message, values=False):
+    if not message:
+        message = default_message
+    elif values and not (isinstance(values, str) and values.upper() == 'NO VALUES'):
+        message += '\n' + default_message
+    raise AssertionError(message)
 
 
 def _get_matches_in_iterable(iterable, pattern, case_insensitive=False,
@@ -1119,28 +1097,98 @@ def _get_matches_in_iterable(iterable, pattern, case_insensitive=False,
     elif pattern.startswith('glob='):
         pattern = pattern[5:]
     matcher = Matcher(pattern,
-                      caseless=is_truthy(case_insensitive),
-                      spaceless=is_truthy(whitespace_insensitive),
+                      caseless=case_insensitive,
+                      spaceless=whitespace_insensitive,
                       regexp=regexp)
     return [item for item in iterable if isinstance(item, str) and matcher.match(item)]
 
+
 class Normalizer:
-    def __init__(self, ignore_case=False):
+
+    def __init__(self, ignore_case=False, ignore_order=False, ignore_keys=None):
+        print(ignore_case)
         self.ignore_case = ignore_case
+        if isinstance(ignore_case, str):
+            self.ignore_key_case = ignore_case.upper() not in ('VALUE', 'VALUES')
+            self.ignore_value_case = ignore_case.upper() not in ('KEY', 'KEYS')
+        else:
+            self.ignore_key_case = self.ignore_value_case = self.ignore_case
+        self.ignore_order = ignore_order
+        self.ignore_keys = self._parse_ignored_keys(ignore_keys)
+
+    def _parse_ignored_keys(self, ignore_keys):
+        if not ignore_keys:
+            return set()
+        try:
+            if isinstance(ignore_keys, str):
+                ignore_keys = literal_eval(ignore_keys)
+            if not is_list_like(ignore_keys):
+                raise ValueError
+        except Exception:
+            raise ValueError(f"'ignore_keys' value '{ignore_keys}' cannot be "
+                             f"converted to a list.")
+        return {self.normalize_key(k) for k in ignore_keys}
 
     def normalize(self, value):
-        if not self.ignore_case:
+        if not self:
             return value
-        normalize = self.normalize
+        if isinstance(value, str):
+            return self.normalize_string(value)
         if is_dict_like(value):
-            if normalize(self.ignore_case)=="key":
-                return {normalize(k): value[k] for k in value}
-            elif normalize(self.ignore_case)=="value":
-                return {k: normalize(value[k]) for k in value}
-            elif normalize(self.ignore_case)=="both" or self.ignore_case is True:
-                return {normalize(k): normalize(value[k]) for k in value}
+            return self.normalize_dict(value)
         if is_list_like(value):
-            return [normalize(v) for v in value]
-        if is_string(value):
-            return value.lower()
+            return self.normalize_list(value)
         return value
+
+    def normalize_string(self, value):
+        return value.casefold() if self.ignore_case else value
+
+    def normalize_list(self, value):
+        cls = type(value)
+        if self.ignore_order:
+            value = sorted(value)
+        value = [self.normalize(v) for v in value]
+        return self._try_to_preserve_type(value, cls)
+
+    def _try_to_preserve_type(self, value, cls):
+        # Try to preserve original type. Most importantly, preserve tuples to
+        # allow using them as dictionary keys.
+        try:
+            return cls(value)
+        except TypeError:
+            return value
+
+    def normalize_dict(self, value):
+        cls = type(value)
+        result = {}
+        for key in value:
+            normalized = self.normalize_key(key)
+            if normalized in self.ignore_keys:
+                continue
+            if normalized in result:
+                raise AssertionError(
+                    f"Dictionary {value} contains multiple keys that are normalized "
+                    f"to '{normalized}'. Try normalizing only dictionary values like "
+                    f"'ignore_case=values'."
+                )
+            result[normalized] = self.normalize_value(value[key])
+        return self._try_to_preserve_type(result, cls)
+
+    def normalize_key(self, key):
+        ignore_case, self.ignore_case = self.ignore_case, self.ignore_key_case
+        try:
+            return self.normalize(key)
+        finally:
+            self.ignore_case = ignore_case
+
+    def normalize_value(self, value):
+        ignore_case, self.ignore_case = self.ignore_case, self.ignore_value_case
+        try:
+            return self.normalize(value)
+        finally:
+            self.ignore_case = ignore_case
+
+    def __bool__(self):
+        return bool(self.ignore_case
+                    or self.ignore_order
+                    or getattr(self, 'ignore_keys', False))

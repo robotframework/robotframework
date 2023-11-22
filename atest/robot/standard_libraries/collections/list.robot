@@ -202,6 +202,9 @@ Lists Should Be Equal With Named Indices As Dictionary With Too Few Values
 Lists Should Be Equal Ignore Order
     Check Test Case    ${TEST NAME}
 
+Ignore Order Is Recursive
+    Check Test Case    ${TEST NAME}
+
 List Should Contain Sub List
     Check Test Case    ${TEST NAME}
 
