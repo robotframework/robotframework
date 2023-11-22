@@ -46,7 +46,7 @@ with open(INPATH) as input:
             name = SEPARATOR.split(line)[0].replace('*', '').replace(' ', '').upper()
             parsing_tests = name in ('TESTCASE', 'TESTCASES', 'TASK', 'TASKS')
             parsing_settings = name in ('SETTING', 'SETTINGS')
-        elif parsing_tests and not SEPARATOR.match(line):
+        elif parsing_tests and not SEPARATOR.match(line) and line[0] != '#':
             TESTS.append(TestCase(line.split('  ')[0]))
         elif parsing_tests and line.strip().startswith('[Tags]'):
             TESTS[-1].tags = line.split('[Tags]', 1)[1].split()
