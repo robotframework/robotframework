@@ -21,8 +21,7 @@ from string import ascii_lowercase, ascii_uppercase, digits
 
 from robot.api import logger
 from robot.api.deco import keyword
-from robot.utils import (FileReader, is_bytes, is_string, is_truthy,
-                         parse_re_flags, safe_str, type_name)
+from robot.utils import FileReader, parse_re_flags, safe_str, type_name
 from robot.version import get_version
 
 
@@ -118,12 +117,10 @@ class String:
         strings contain upper case letters or special characters like
         apostrophes. It would, for example, convert "it's an OK iPhone"
         to "It'S An Ok Iphone".
-
-        New in Robot Framework 3.2.
         """
-        if not is_string(string):
-            raise TypeError('This keyword works only with Unicode strings.')
-        if is_string(exclude):
+        if not isinstance(string, str):
+            raise TypeError('This keyword works only with strings.')
+        if isinstance(exclude, str):
             exclude = [e.strip() for e in exclude.split(',')]
         elif not exclude:
             exclude = []
@@ -141,7 +138,7 @@ class String:
         return ''.join(title(token) for token in tokens)
 
     def encode_string_to_bytes(self, string, encoding, errors='strict'):
-        """Encodes the given Unicode ``string`` to bytes using the given ``encoding``.
+        """Encodes the given ``string`` to bytes using the given ``encoding``.
 
         ``errors`` argument controls what to do if encoding some characters fails.
         All values accepted by ``encode`` method in Python are valid, but in
@@ -158,13 +155,13 @@ class String:
 
         Use `Convert To Bytes` in ``BuiltIn`` if you want to create bytes based
         on character or integer sequences. Use `Decode Bytes To String` if you
-        need to convert byte strings to Unicode strings and `Convert To String`
-        in ``BuiltIn`` if you need to convert arbitrary objects to Unicode.
+        need to convert bytes to strings and `Convert To String`
+        in ``BuiltIn`` if you need to convert arbitrary objects to strings.
         """
         return bytes(string.encode(encoding, errors))
 
     def decode_bytes_to_string(self, bytes, encoding, errors='strict'):
-        """Decodes the given ``bytes`` to a Unicode string using the given ``encoding``.
+        """Decodes the given ``bytes`` to a string using the given ``encoding``.
 
         ``errors`` argument controls what to do if decoding some bytes fails.
         All values accepted by ``decode`` method in Python are valid, but in
@@ -179,11 +176,11 @@ class String:
         | ${string} = | Decode Bytes To String | ${bytes} | UTF-8 |
         | ${string} = | Decode Bytes To String | ${bytes} | ASCII | errors=ignore |
 
-        Use `Encode String To Bytes` if you need to convert Unicode strings to
-        byte strings, and `Convert To String` in ``BuiltIn`` if you need to
-        convert arbitrary objects to Unicode strings.
+        Use `Encode String To Bytes` if you need to convert strings to bytes,
+        and `Convert To String` in ``BuiltIn`` if you need to
+        convert arbitrary objects to strings.
         """
-        if is_string(bytes):
+        if isinstance(bytes, str):
             raise TypeError('Cannot decode strings.')
         return bytes.decode(encoding, errors)
 
@@ -208,13 +205,11 @@ class String:
         | ${xx} = | Format String | {:*^30}                        | centered     |
         | ${yy} = | Format String | {0:{width}{base}}              | ${42}        | base=X | width=10 |
         | ${zz} = | Format String | ${CURDIR}/template.txt         | positional   | named=value |
-
-        New in Robot Framework 3.1.
         """
         if os.path.isabs(template) and os.path.isfile(template):
             template = template.replace('/', os.sep)
-            logger.info('Reading template from file <a href="%s">%s</a>.'
-                        % (template, template), html=True)
+            logger.info(f'Reading template from file '
+                        f'<a href="{template}">{template}</a>.', html=True)
             with FileReader(template) as reader:
                 template = reader.read()
         return template.format(*positional, **named)
@@ -222,7 +217,7 @@ class String:
     def get_line_count(self, string):
         """Returns and logs the number of lines in the given string."""
         count = len(string.splitlines())
-        logger.info('%d lines' % count)
+        logger.info(f'{count} lines.')
         return count
 
     def split_to_lines(self, string, start=0, end=None):
@@ -255,7 +250,7 @@ class String:
     def get_line(self, string, line_number):
         """Returns the specified line from the given ``string``.
 
-        Line numbering starts from 0 and it is possible to use
+        Line numbering starts from 0, and it is possible to use
         negative indices to refer to lines from the end. The line is
         returned without the newline character.
 
@@ -281,9 +276,9 @@ class String:
         ``no``. If the value is not a string, its truth value is got directly
         in Python.
 
-        Lines are returned as one string catenated back together with
-        newlines. Possible trailing newline is never returned. The
-        number of matching lines is automatically logged.
+        Lines are returned as a string with lines joined together with
+        a newline. Possible trailing newline is never returned. The number
+        of matching lines is automatically logged.
 
         Examples:
         | ${lines} = | Get Lines Containing String | ${result} | An example |
@@ -292,7 +287,7 @@ class String:
         See `Get Lines Matching Pattern` and `Get Lines Matching Regexp`
         if you need more complex pattern matching.
         """
-        if is_truthy(case_insensitive):
+        if case_insensitive:
             pattern = pattern.casefold()
             contains = lambda line: pattern in line.casefold()
         else:
@@ -316,9 +311,9 @@ class String:
         ``no``. If the value is not a string, its truth value is got directly
         in Python.
 
-        Lines are returned as one string catenated back together with
-        newlines. Possible trailing newline is never returned. The
-        number of matching lines is automatically logged.
+        Lines are returned as a string with lines joined together with
+        a newline. Possible trailing newline is never returned. The number
+        of matching lines is automatically logged.
 
         Examples:
         | ${lines} = | Get Lines Matching Pattern | ${result} | Wild???? example |
@@ -328,7 +323,7 @@ class String:
         patterns and `Get Lines Containing String` if searching
         literal strings is enough.
         """
-        if is_truthy(case_insensitive):
+        if case_insensitive:
             pattern = pattern.casefold()
             matches = lambda line: fnmatchcase(line.casefold(), pattern)
         else:
@@ -344,10 +339,7 @@ class String:
 
         Lines match only if they match the pattern fully by default, but
         partial matching can be enabled by giving the ``partial_match``
-        argument a true value. The value is considered true
-        if it is a non-empty string that is not equal to ``false``, ``none`` or
-        ``no``. If the value is not a string, its truth value is got directly
-        in Python.
+        argument a true value.
 
         If the pattern is empty, it matches only empty lines by default.
         When partial matching is enabled, empty pattern matches all lines.
@@ -372,16 +364,14 @@ class String:
 
         The ``flags`` argument is new in Robot Framework 6.0.
         """
-        if is_truthy(partial_match):
-            match = re.compile(pattern, flags=parse_re_flags(flags)).search
-        else:
-            match = re.compile(pattern + '$', flags=parse_re_flags(flags)).match
+        regexp = re.compile(pattern, flags=parse_re_flags(flags))
+        match = regexp.search if partial_match else regexp.fullmatch
         return self._get_matching_lines(string, match)
 
     def _get_matching_lines(self, string, matches):
         lines = string.splitlines()
         matching = [line for line in lines if matches(line)]
-        logger.info('%d out of %d lines matched' % (len(matching), len(lines)))
+        logger.info(f'{len(matching)} out of {len(lines)} lines matched.')
         return '\n'.join(matching)
 
     def get_regexp_matches(self, string, pattern, *groups, flags=None):
@@ -693,16 +683,16 @@ class String:
 
         The default error message can be overridden with the optional ``msg`` argument.
         """
-        if not is_string(item):
-            self._fail(msg, "'%s' is %s, not a string.", item, type_name(item))
+        if not isinstance(item, str):
+            raise AssertionError(msg or f"{item!r} is {type_name(item)}, not a string.")
 
     def should_not_be_string(self, item, msg=None):
         """Fails if the given ``item`` is a string.
 
         The default error message can be overridden with the optional ``msg`` argument.
         """
-        if is_string(item):
-            self._fail(msg, "'%s' is a string.", item)
+        if isinstance(item, str):
+            raise AssertionError(msg or f"{item!r} is a string.")
 
     def should_be_unicode_string(self, item, msg=None):
         """Fails if the given ``item`` is not a Unicode string.
@@ -710,8 +700,7 @@ class String:
         On Python 3 this keyword behaves exactly the same way `Should Be String`.
         That keyword should be used instead and this keyword will be deprecated.
         """
-        if not is_string(item):
-            self._fail(msg, "'%s' is not a Unicode string.", item)
+        self.should_be_string(item, msg)
 
     def should_be_byte_string(self, item, msg=None):
         """Fails if the given ``item`` is not a byte string.
@@ -720,8 +709,8 @@ class String:
 
         The default error message can be overridden with the optional ``msg`` argument.
         """
-        if not is_bytes(item):
-            self._fail(msg, "'%s' is not a byte string.", item)
+        if not isinstance(item, bytes):
+            raise AssertionError(msg or f"{item!r} is not a byte string.")
 
     def should_be_lower_case(self, string, msg=None):
         """Fails if the given ``string`` is not in lower case.
@@ -735,7 +724,7 @@ class String:
         See also `Should Be Upper Case` and `Should Be Title Case`.
         """
         if not string.islower():
-            self._fail(msg, "'%s' is not lower case.", string)
+            raise AssertionError(msg or f"{string!r} is not lower case.")
 
     def should_be_upper_case(self, string, msg=None):
         """Fails if the given ``string`` is not in upper case.
@@ -749,7 +738,7 @@ class String:
         See also `Should Be Title Case` and `Should Be Lower Case`.
         """
         if not string.isupper():
-            self._fail(msg, "'%s' is not upper case.", string)
+            raise AssertionError(msg or f"{string!r} is not upper case.")
 
     @keyword(types=None)
     def should_be_title_case(self, string, msg=None, exclude=None):
@@ -782,7 +771,7 @@ class String:
         See also `Should Be Upper Case` and `Should Be Lower Case`.
         """
         if string != self.convert_to_title_case(string, exclude):
-            self._fail(msg, "'%s' is not title case.", string)
+            raise AssertionError(msg or f"{string!r} is not title case.")
 
     def _convert_to_index(self, value, name):
         if value == '':
@@ -795,10 +784,5 @@ class String:
         try:
             return int(value)
         except ValueError:
-            raise ValueError("Cannot convert '%s' argument '%s' to an integer."
-                             % (name, value))
-
-    def _fail(self, message, default_template, *items):
-        if not message:
-            message = default_template % tuple(safe_str(item) for item in items)
-        raise AssertionError(message)
+            raise ValueError(f"Cannot convert {name!r} argument {value!r} "
+                             f"to an integer.")

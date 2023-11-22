@@ -12,13 +12,13 @@ Should Be String Positive
     Should be String    ${EMPTY}
 
 Bytes are not strings
-    Run Keyword And Expect Error   '${BYTES}' is bytes, not a string.    Should Be String    ${BYTES}
+    Run Keyword And Expect Error   b'${BYTES}' is bytes, not a string.    Should Be String    ${BYTES}
     Should not be string    ${BYTES}
 
 Should Be String Negative
     [Template]     Run Keyword And Expect Error
-    '0' is integer, not a string.    Should be string    ${0}
-    My error                         Should be string    ${TRUE}    My error
+    0 is integer, not a string.    Should be string    ${0}
+    My error                       Should be string    ${TRUE}    My error
 
 Should Not Be String Positive
     Should Not Be String    ${0}
@@ -26,16 +26,16 @@ Should Not Be String Positive
 
 Should Not Be String Negative
     [Template]     Run Keyword And Expect Error
-    'Two\nlines' is a string.    Should not be string    Two\nlines
-    My error message             Should not be string    Hello    My error message
+    'Two\\nlines' is a string.    Should not be string    Two\nlines
+    My error message              Should not be string    Hello    My error message
 
 Should Be Unicode String Positive
     Should be Unicode String    Robot
 
 Should Be Unicode String Negative
     [Template]     Run Keyword And Expect Error
-    '${BYTES}' is not a Unicode string.    Should Be Unicode String    ${BYTES}
-    My error    Should Be Unicode String    ${0}    My error
+    b'${BYTES}' is bytes, not a string.    Should Be Unicode String    ${BYTES}
+    My error                               Should Be Unicode String    ${0}    My error
 
 Should Be Byte String Positive
     Should be Byte String    ${BYTES}
@@ -43,7 +43,7 @@ Should Be Byte String Positive
 Should Be Byte String Negative
     [Template]     Run Keyword And Expect Error
     'Hyvä' is not a byte string.    Should Be Byte String    Hyvä
-    My error    Should Be Byte String    ${0}    My error
+    My error                        Should Be Byte String    ${0}    My error
 
 Should Be Lower Case Positive
     Should Be Lower Case    foo bar
@@ -51,8 +51,8 @@ Should Be Lower Case Positive
 
 Should Be Lower Case Negative
     [Template]    Run Keyword And Expect Error
-    '${BYTES}' is not lower case.    Should Be Lower Case    ${BYTES}
-    My error    Should Be Lower Case    UP!    My error
+    b'${BYTES}' is not lower case.    Should Be Lower Case    ${BYTES}
+    My error                          Should Be Lower Case    UP!    My error
 
 Should Be Upper Case Positive
     Should Be Upper Case    FOO BAR
@@ -60,8 +60,8 @@ Should Be Upper Case Positive
 
 Should Be Upper Case Negative
     [Template]    Run Keyword And Expect Error
-    '${BYTES}' is not upper case.    Should Be Upper Case    ${BYTES}
-    Custom error    Should Be Upper Case    low...    Custom error
+    b'${BYTES}' is not upper case.    Should Be Upper Case    ${BYTES}
+    Custom error                      Should Be Upper Case    low...    Custom error
 
 Should Be Title Case Positive
     Should Be Title Case    Foo Bar!
@@ -105,11 +105,11 @@ Should Be Title Case With Regex Excludes
     full Match Only!      exclude=....
 
 Should Be Title Case Does Not Work With ASCII Bytes
-    [Documentation]    FAIL    TypeError: This keyword works only with Unicode strings.
+    [Documentation]    FAIL    TypeError: This keyword works only with strings.
     Should Be Title Case    ${BYTES}
 
 Should Be Title Case Does Not Work With Non-ASCII Bytes
-    [Documentation]    FAIL    TypeError: This keyword works only with Unicode strings.
+    [Documentation]    FAIL    TypeError: This keyword works only with strings.
     Should Be Title Case    ${{b'\xe4iti'}}
 
 *** Keywords ***
