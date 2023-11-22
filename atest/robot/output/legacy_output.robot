@@ -4,13 +4,13 @@ Resource       atest_resource.robot
 
 *** Test Cases ***
 Legacy output with Robot
-    Run Tests    --legacyoutput    output/legacy.robot
+    Run Tests    --legacyoutput    output/legacy.robot    validate output=False
     Validate output
 
 Legacy output with Rebot
     Run Tests    ${EMPTY}    output/legacy.robot
     Copy Previous Outfile
-    Run Rebot    --legacy-output    ${OUTFILE COPY}
+    Run Rebot    --legacy-output    ${OUTFILE COPY}    validate output=False
 
 *** Keywords ***
 Validate output
