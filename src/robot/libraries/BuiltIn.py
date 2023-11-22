@@ -152,7 +152,7 @@ class _Converter(_BuiltInBase):
             if base:
                 return int(item, self._convert_to_integer(base))
             return int(item)
-        except:
+        except Exception:
             raise RuntimeError(f"'{orig}' cannot be converted to an integer: "
                                f"{get_error_message()}")
 
@@ -295,7 +295,7 @@ class _Converter(_BuiltInBase):
     def _convert_to_number_without_precision(self, item):
         try:
             return float(item)
-        except:
+        except Exception:
             error = get_error_message()
             try:
                 return float(self._convert_to_integer(item))
@@ -384,7 +384,7 @@ class _Converter(_BuiltInBase):
             except AttributeError:
                 raise RuntimeError(f"Invalid input type '{input_type}'.")
             return bytes(bytearray(o for o in ordinals(input)))
-        except:
+        except Exception:
             raise RuntimeError("Creating bytes failed: " + get_error_message())
 
     def _get_ordinals_from_text(self, input):
@@ -1282,7 +1282,7 @@ class _Verify(_BuiltInBase):
         if not hasattr(container, 'count'):
             try:
                 container = list(container)
-            except:
+            except Exception:
                 raise RuntimeError(f"Converting '{container}' to list failed: "
                                    f"{get_error_message()}")
         count = container.count(item)
@@ -1414,22 +1414,22 @@ class _Verify(_BuiltInBase):
             return len(item)
         except RERAISED_EXCEPTIONS:
             raise
-        except:
+        except Exception:
             try:
                 return item.length()
             except RERAISED_EXCEPTIONS:
                 raise
-            except:
+            except Exception:
                 try:
                     return item.size()
                 except RERAISED_EXCEPTIONS:
                     raise
-                except:
+                except Exception:
                     try:
                         return item.length
                     except RERAISED_EXCEPTIONS:
                         raise
-                    except:
+                    except Exception:
                         raise RuntimeError(f"Could not get length of '{item}'.")
 
     def length_should_be(self, item, length, msg=None):
@@ -1546,7 +1546,7 @@ class _Variables(_BuiltInBase):
                 value = OrderedDict(value)
         except RERAISED_EXCEPTIONS:
             raise
-        except:
+        except Exception:
             name = '$' + name[1:]
         return name, value
 
@@ -3099,15 +3099,14 @@ class _Misc(_BuiltInBase):
     def _yield_logged_messages(self, messages):
         for msg in messages:
             match = search_variable(msg)
-            value = self._variables.replace_scalar(msg)
+            msg_value = self._variables.replace_scalar(msg)
             if match.is_list_variable():
-                for item in value:
-                    yield item
+                yield from msg_value
             elif match.is_dict_variable():
-                for name, value in value.items():
+                for name, value in msg_value.items():
                     yield f'{name}={value}'
             else:
-                yield value
+                yield msg_value
 
     def log_to_console(self, message, stream='STDOUT', no_newline=False, format=''):
         """Logs the given message to the console.
@@ -3651,7 +3650,7 @@ class _Misc(_BuiltInBase):
             ctx.suite.set_tags(tags, persist=True)
         else:
             raise RuntimeError("'Set Tags' cannot be used in suite teardown.")
-        self.log(f'Set tag{s(tags)} {seq2str((tags))}.')
+        self.log(f'Set tag{s(tags)} {seq2str(tags)}.')
 
     def remove_tags(self, *tags):
         """Removes given ``tags`` from the current test or all tests in a suite.
@@ -3679,7 +3678,7 @@ class _Misc(_BuiltInBase):
             ctx.suite.set_tags(remove=tags, persist=True)
         else:
             raise RuntimeError("'Remove Tags' cannot be used in suite teardown.")
-        self.log(f'Removed tag{s(tags)} {seq2str((tags))}.')
+        self.log(f'Removed tag{s(tags)} {seq2str(tags)}.')
 
     def get_library_instance(self, name=None, all=False):
         """Returns the currently active instance of the specified library.

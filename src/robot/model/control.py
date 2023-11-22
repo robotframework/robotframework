@@ -221,7 +221,7 @@ class If(BodyItem):
     @property
     def id(self) -> None:
         """Root IF/ELSE id is always ``None``."""
-        return None
+        return
 
     def visit(self, visitor: SuiteVisitor):
         visitor.visit_if(self)
@@ -348,7 +348,7 @@ class Try(BodyItem):
     @property
     def id(self) -> None:
         """Root TRY/EXCEPT id is always ``None``."""
-        return None
+        return
 
     def visit(self, visitor: SuiteVisitor):
         visitor.visit_try(self)

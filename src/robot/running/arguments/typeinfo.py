@@ -13,7 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from collections.abc import Mapping, Sequence, Set
+from collections.abc import Mapping, Sequence
+from collections.abc import Set as AbstractSet
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
@@ -106,10 +107,11 @@ class TypeInfo(metaclass=SetterAwareType):
         elif issubclass(typ, tuple):
             if nested[-1].type is Ellipsis and len(nested) != 2:
                 self._report_nested_error(nested, 1, 'Homogenous tuple', offset=-1)
-        elif issubclass(typ, Sequence) and not issubclass(typ, (str, bytes, bytearray)):
-            if len(nested) != 1:
-                self._report_nested_error(nested, 1)
-        elif issubclass(typ, Set):
+        elif (
+            issubclass(typ, AbstractSet)
+            or issubclass(typ, Sequence)
+            and not issubclass(typ, (str, bytes, bytearray))
+        ):
             if len(nested) != 1:
                 self._report_nested_error(nested, 1)
         elif issubclass(typ, Mapping):

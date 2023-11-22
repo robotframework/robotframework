@@ -34,10 +34,7 @@ from .outputcapture import OutputCapturer
 
 
 def TestLibrary(name, args=None, variables=None, create_handlers=True, logger=LOGGER):
-    if name in STDLIBS:
-        import_name = 'robot.libraries.' + name
-    else:
-        import_name = name
+    import_name = 'robot.libraries.' + name if name in STDLIBS else name
     with OutputCapturer(library_import=True):
         importer = Importer('library', logger=LOGGER)
         libcode, source = importer.import_class_or_module(import_name,
@@ -187,7 +184,7 @@ class _BaseTestLibrary:
         with OutputCapturer(library_import=True):
             try:
                 return libcode(*self.positional_args, **dict(self.named_args))
-            except:
+            except Exception:
                 self._raise_creating_instance_failed()
 
     def get_listeners(self, libinst=None):
@@ -319,8 +316,8 @@ class _BaseTestLibrary:
         embedded = EmbeddedArguments.from_name(handler.name)
         if embedded:
             if len(embedded.args) > handler.arguments.maxargs:
-                raise DataError(f'Keyword must accept at least as many positional '
-                                f'arguments as it has embedded arguments.')
+                raise DataError('Keyword must accept at least as many positional '
+                                'arguments as it has embedded arguments.')
             handler.arguments.embedded = embedded.args
             return EmbeddedArgumentsHandler(embedded, handler), True
         return handler, False

@@ -53,7 +53,7 @@ class _DynamicMethod:
             if ctx and ctx.asynchronous.is_loop_required(result):
                 result = ctx.asynchronous.run_until_complete(result)
             return self._handle_return_value(result)
-        except:
+        except Exception:
             raise DataError("Calling dynamic method '%s' failed: %s"
                             % (self.name, get_error_message()))
 

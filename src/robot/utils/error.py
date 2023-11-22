@@ -105,11 +105,10 @@ class ErrorDetails:
                 return traceback.format_exception(etype, value, tb)
             else:
                 return empty_tb + traceback.format_exception_only(etype, value)
+        elif tb:
+            return [prefix] + traceback.format_tb(tb)
         else:
-            if tb:
-                return [prefix] + traceback.format_tb(tb)
-            else:
-                return empty_tb
+            return empty_tb
 
     def _format_message(self, error):
         name = type(error).__name__.split('.')[-1]  # Use only the last part

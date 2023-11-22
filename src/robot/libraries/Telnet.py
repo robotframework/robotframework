@@ -509,7 +509,7 @@ class TelnetConnection(telnetlib.Telnet):
         self._terminal_type = self._encode(terminal_type) if terminal_type else None
         self.set_option_negotiation_callback(self._negotiate_options)
         self._set_telnetlib_log_level(telnetlib_log_level)
-        self._opt_responses = list()
+        self._opt_responses = []
 
     def set_timeout(self, timeout):
         """Sets the timeout used for waiting output in the current connection.

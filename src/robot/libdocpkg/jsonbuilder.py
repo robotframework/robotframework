@@ -51,8 +51,7 @@ class JsonDocBuilder:
         if not os.path.isfile(path):
             raise DataError(f"Spec file '{path}' does not exist.")
         with open(path) as json_source:
-            libdoc_dict = json.load(json_source)
-        return libdoc_dict
+            return json.load(json_source)
 
     def _create_keyword(self, data):
         kw = KeywordDoc(name=data.get('name'),

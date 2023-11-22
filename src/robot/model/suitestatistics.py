@@ -31,8 +31,7 @@ class SuiteStatistics:
     def __iter__(self):
         yield self.stat
         for child in self.suites:
-            for stat in child:
-                yield stat
+            yield from child
 
 
 class SuiteStatisticsBuilder:

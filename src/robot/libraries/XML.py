@@ -520,7 +520,7 @@ class XML:
             tree = self.etree.parse(source)
         if self.lxml_etree:
             strip = (lxml_etree.Comment, lxml_etree.ProcessingInstruction)
-            lxml_etree.strip_elements(tree, *strip, **dict(with_tail=False))
+            lxml_etree.strip_elements(tree, *strip, with_tail=False)
         root = tree.getroot()
         if not is_truthy(keep_clark_notation):
             self._ns_stripper.strip(root, preserve=is_falsy(strip_namespaces))
@@ -692,8 +692,7 @@ class XML:
         if element.text:
             yield element.text
         for child in element:
-            for text in self._yield_texts(child, top=False):
-                yield text
+            yield from self._yield_texts(child, top=False)
         if element.tail and not top:
             yield element.tail
 

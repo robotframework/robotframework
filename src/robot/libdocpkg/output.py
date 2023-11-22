@@ -16,6 +16,7 @@
 import datetime
 import os
 import time
+from contextlib import suppress
 
 from robot.utils import file_writer
 
@@ -38,10 +39,8 @@ class LibdocOutput:
         if self._output_file:
             self._output_file.close()
         if any(exc_info):
-            try:
+            with suppress(OSError):
                 os.remove(self._output_path)
-            except OSError:
-                pass
 
 
 def get_generation_time():

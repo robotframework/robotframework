@@ -498,10 +498,9 @@ class Process:
         process = self._processes[handle]
         logger.info('Waiting for process to complete.')
         timeout = self._get_timeout(timeout)
-        if timeout > 0:
-            if not self._process_is_stopped(process, timeout):
-                logger.info(f'Process did not complete in {secs_to_timestr(timeout)}.')
-                return self._manage_process_timeout(handle, on_timeout.lower())
+        if timeout > 0 and not self._process_is_stopped(process, timeout):
+            logger.info(f'Process did not complete in {secs_to_timestr(timeout)}.')
+            return self._manage_process_timeout(handle, on_timeout.lower())
         return self._wait(process)
 
     def _get_timeout(self, timeout):
@@ -932,12 +931,12 @@ class ProcessConfiguration:
             env = NormalizedDict(env, spaceless=False)
         self._add_to_env(env, extra)
         if WINDOWS:
-            env = dict((key.upper(), env[key]) for key in env)
+            env = {key.upper(): env[key] for key in env}
         return env
 
     def _get_initial_env(self, env, extra):
         if env:
-            return dict((system_encode(k), system_encode(env[k])) for k in env)
+            return {system_encode(k): system_encode(env[k]) for k in env}
         if extra:
             return os.environ.copy()
         return None

@@ -475,7 +475,7 @@ class String:
         # re.sub handles 0 and negative counts differently than string.replace
         if count == 0:
             return string
-        return re.sub(pattern, replace_with, string, max(count, 0), flags=parse_re_flags(flags))
+        return re.sub(pattern, replace_with, string, count=max(count, 0), flags=parse_re_flags(flags))
 
     def remove_string(self, string, *removables):
         """Removes all ``removables`` from the given ``string``.

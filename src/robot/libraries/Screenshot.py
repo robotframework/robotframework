@@ -194,7 +194,7 @@ class Screenshot:
                      % self._screenshot_taker.module)
         try:
             self._screenshot_taker(path)
-        except:
+        except Exception:
             logger.warn('Taking screenshot failed: %s\n'
                         'Make sure tests are run with a physical or virtual '
                         'display.' % get_error_message())
@@ -252,7 +252,7 @@ class ScreenshotTaker:
         print("Taking test screenshot to '%s'." % path)
         try:
             self(path)
-        except:
+        except Exception:
             print("Failed: %s" % get_error_message())
             return False
         else:

@@ -201,7 +201,7 @@ class ExecutionFailures(ExecutionFailed):
         else:
             html_prefix = ''
         if any(e.skip for e in errors):
-            skip_idx = errors.index([e for e in errors if e.skip][0])
+            skip_idx = errors.index(next(e for e in errors if e.skip))
             skip_msg = messages[skip_idx]
             messages = messages[:skip_idx] + messages[skip_idx+1:]
             if len(messages) == 1:

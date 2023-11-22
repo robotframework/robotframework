@@ -184,10 +184,7 @@ class ValidExtensions:
                 self.extensions.add(ext.lstrip('.').lower())
 
     def match(self, path: Path) -> bool:
-        for ext in self._extensions_from(path):
-            if ext in self.extensions:
-                return True
-        return False
+        return any(ext in self.extensions for ext in self._extensions_from(path))
 
     def get_extension(self, path: Path) -> str:
         for ext in self._extensions_from(path):

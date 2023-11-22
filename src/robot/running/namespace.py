@@ -207,8 +207,8 @@ class Namespace:
         return self._kw_store.get_library(name).get_instance()
 
     def get_library_instances(self):
-        return dict((name, lib.get_instance())
-                    for name, lib in self._kw_store.libraries.items())
+        return {name: lib.get_instance()
+                    for name, lib in self._kw_store.libraries.items()}
 
     def reload_library(self, name_or_instance):
         library = self._kw_store.get_library(name_or_instance)
@@ -281,8 +281,7 @@ class KeywordStore:
                                                  self.libraries,
                                                  self.resources)
             raise KeywordError(finder.recommend_similar_keywords(name, message))
-        else:
-            raise KeywordError(message)
+        raise KeywordError(message)
 
     def _get_runner(self, name):
         if not name:
@@ -325,15 +324,18 @@ class KeywordStore:
         runner = handlers[0].create_runner(name, self.languages)
         ctx = EXECUTION_CONTEXTS.current
         caller = ctx.user_keywords[-1] if ctx.user_keywords else ctx.test
-        if caller and runner.source != caller.source:
-            if self._exists_in_resource_file(name, caller.source):
-                message = (
-                    f"Keyword '{caller.full_name}' called keyword '{name}' that exists "
-                    f"both in the same resource file as the caller and in the suite "
-                    f"file using that resource. The keyword in the suite file is used "
-                    f"now, but this will change in Robot Framework 7.0."
-                )
-                runner.pre_run_messages += Message(message, level='WARN'),
+        if (
+            caller
+            and runner.source != caller.source
+            and self._exists_in_resource_file(name, caller.source)
+        ):
+            message = (
+                f"Keyword '{caller.full_name}' called keyword '{name}' that exists "
+                f"both in the same resource file as the caller and in the suite "
+                f"file using that resource. The keyword in the suite file is used "
+                f"now, but this will change in Robot Framework 7.0."
+            )
+            runner.pre_run_messages += Message(message, level='WARN'),
         return runner
 
     def _select_best_matches(self, handlers):
@@ -512,7 +514,7 @@ class KeywordRecommendationFinder:
                     for handler in self.user_keywords.handlers]
         for library in chain(self.libraries.values(), self.resources.values()):
             handlers.extend(
-                ((library.name or '',
-                  printable_name(handler.name, code_style=True))
-                 for handler in library.handlers))
+                (library.name or "", printable_name(handler.name, code_style=True))
+                for handler in library.handlers
+            )
         return sorted(handlers)

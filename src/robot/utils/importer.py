@@ -189,7 +189,7 @@ class Importer:
             raise DataError(err.args[0])
         try:
             return imported(*positional, **dict(named))
-        except:
+        except Exception:
             raise DataError('Creating instance failed: %s\n%s' % get_error_details())
 
     def _get_arg_spec(self, imported):
@@ -215,7 +215,7 @@ class _Importer:
         importlib.invalidate_caches()
         try:
             return __import__(name, fromlist=fromlist)
-        except:
+        except Exception:
             message, traceback = get_error_details(full_traceback=False)
             path = '\n'.join(f'  {p}' for p in sys.path)
             raise DataError(f'{message}\n{traceback}\nPYTHONPATH:\n{path}')
@@ -256,7 +256,7 @@ class ByPathImporter(_Importer):
             raise DataError('File or directory does not exist.')
         if not os.path.isabs(path):
             raise DataError('Import path must be absolute.')
-        if not os.path.splitext(path)[1] in self._valid_import_extensions:
+        if os.path.splitext(path)[1] not in self._valid_import_extensions:
             raise DataError('Not a valid file or directory to import.')
 
     def _remove_wrong_module_from_sys_modules(self, path):

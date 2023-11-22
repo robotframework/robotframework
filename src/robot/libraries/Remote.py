@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from contextlib import contextmanager
+from contextlib import contextmanager, suppress
 
 import http.client
 import re
@@ -65,10 +65,8 @@ class Remote:
 
     def _is_lib_info_available(self):
         if not self._lib_info_initialized:
-            try:
+            with suppress(TypeError):
                 self._lib_info = self._client.get_library_information()
-            except TypeError:
-                pass
             self._lib_info_initialized = True
         return self._lib_info is not None
 

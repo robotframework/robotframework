@@ -14,7 +14,7 @@
 #  limitations under the License.
 
 import re
-from collections.abc import Iterator, Mapping, Sequence
+from collections.abc import Iterable, Iterator, Mapping, Sequence
 from typing import Any, MutableMapping, TypeVar
 
 

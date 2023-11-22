@@ -114,10 +114,7 @@ class ScalarVariableResolver(VariableResolver):
         value, separator = self.value, self.separator
         if self._is_single_value(value, separator):
             return variables.replace_scalar(value[0])
-        if separator is None:
-            separator = ' '
-        else:
-            separator = variables.replace_string(separator)
+        separator = ' ' if separator is None else variables.replace_string(separator)
         value = variables.replace_list(value)
         return separator.join(str(item) for item in value)
 

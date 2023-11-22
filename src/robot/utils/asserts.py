@@ -177,7 +177,7 @@ def assert_raises_with_msg(exc_class, expected_msg, callable_obj, *args,
 
 def assert_equal(first, second, msg=None, values=True, formatter=safe_str):
     """Fail if given objects are unequal as determined by the '==' operator."""
-    if not first == second:
+    if first != second:
         _report_inequality(first, second, '!=', msg, values, formatter)
 
 

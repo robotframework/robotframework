@@ -134,8 +134,7 @@ class HtmlToText:
         match = re.search(r'<p.*?>(.*?)</?p>', doc, re.DOTALL)
         if match:
             doc = match.group(1)
-        doc = self.html_to_plain_text(doc)
-        return doc
+        return self.html_to_plain_text(doc)
 
     def html_to_plain_text(self, doc):
         for tag, repl in self.html_tags.items():

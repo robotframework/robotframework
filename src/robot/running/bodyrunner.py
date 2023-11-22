@@ -705,12 +705,11 @@ class WhileLimit:
         on_limit_pass = self.on_limit == 'PASS'
         if self.on_limit_message:
             raise LimitExceeded(on_limit_pass, self.on_limit_message)
-        else:
-            raise LimitExceeded(
-                on_limit_pass,
-                f"WHILE loop was aborted because it did not finish within the limit of {self}. "
-                f"Use the 'limit' argument to increase or remove the limit if needed."
-            )
+        raise LimitExceeded(
+            on_limit_pass,
+            f"WHILE loop was aborted because it did not finish within the limit of {self}. "
+            f"Use the 'limit' argument to increase or remove the limit if needed."
+        )
 
     def __enter__(self):
         raise NotImplementedError

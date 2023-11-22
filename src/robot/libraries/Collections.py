@@ -833,7 +833,7 @@ class _Dictionary:
             except AssertionError as err:
                 errors.append(str(err))
         if errors:
-            error = '\n'.join([f'Following keys have different values:', *errors])
+            error = '\n'.join(['Following keys have different values:', *errors])
             _report_error(error, message, values)
 
     def dictionary_should_contain_sub_dictionary(self, dict1, dict2, msg=None,

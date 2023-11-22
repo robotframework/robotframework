@@ -504,11 +504,10 @@ class ListenerV2Facade(ListenerFacade):
     def _message_attributes(self, msg):
         # Timestamp in our legacy format.
         timestamp = msg.timestamp.isoformat(' ', timespec='milliseconds').replace('-', '')
-        attrs = {'timestamp': timestamp,
+        return {'timestamp': timestamp,
                  'message': msg.message,
                  'level': msg.level,
                  'html': 'yes' if msg.html else 'no'}
-        return attrs
 
 
 def import_listener(listener):
