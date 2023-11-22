@@ -15,6 +15,7 @@
 
 import copy
 from ast import literal_eval
+from itertools import chain
 
 from robot.api import logger
 from robot.utils import (get_error_message, is_dict_like, is_list_like, is_string, is_truthy,
@@ -86,10 +87,7 @@ class _List:
         | ${L1} and ${L2} are not changed.
         """
         self._validate_lists(*lists)
-        ret = []
-        for item in lists:
-            ret.extend(item)
-        return ret
+        return list(chain.from_iterable(lists))
 
     def set_list_value(self, list_, index, value):
         """Sets the value of ``list`` specified by ``index`` to the given ``value``.
@@ -256,19 +254,19 @@ class _List:
         | ${L5} is not changed
         """
         self._validate_list(list_)
-        if start == '':
-            start = 0
+        start = self._index_to_int(start, empty_to_zero=True)
         list_ = self.get_slice_from_list(list_, start, end)
         try:
-            return int(start) + list_.index(value)
+            return start + list_.index(value)
         except ValueError:
             return -1
 
     def copy_list(self, list_, deepcopy=False):
         """Returns a copy of the given list.
 
-        If the optional ``deepcopy`` is given a true value, the returned
-        list is a deep copy. New option in Robot Framework 3.1.2.
+        By default, returns a new list with same items as in the original.
+        Set the ``deepcopy`` argument to a true value if also items should
+        be copied.
 
         The given list is never altered by this keyword.
         """
@@ -294,11 +292,11 @@ class _List:
         """Sorts the given list in place.
 
         Sorting fails if items in the list are not comparable with each others.
-        On Python 2 most objects are comparable, but on Python 3 comparing,
-        for example, strings with numbers is not possible.
+        For example, sorting a list containing strings and numbers is not possible.
 
         Note that the given list is changed and nothing is returned. Use
-        `Copy List` first, if you need to keep also the original order.
+        `Copy List` first, if you need to preserve the list also in the original
+        order.
         """
         self._validate_list(list_)
         list_.sort()
@@ -327,8 +325,7 @@ class _List:
         self._validate_list(list_)
         normalize = Normalizer(ignore_case).normalize
         _verify_condition(normalize(value) not in normalize(list_),
-                          f"{seq2str2(list_)} contains value '{value}'.",
-                          msg)
+                          f"{seq2str2(list_)} contains value '{value}'.", msg)
 
     def list_should_not_contain_duplicates(self, list_, msg=None, ignore_case=False):
         """Fails if any element in the ``list`` is found from it more than once.
@@ -427,7 +424,7 @@ class _List:
         if not names:
             return {}
         if is_dict_like(names):
-            return dict((int(index), names[index]) for index in names)
+            return {int(index): names[index] for index in names}
         return dict(zip(range(list_length), names))
 
     def _yield_list_diffs(self, list1, list2, names):
@@ -438,8 +435,8 @@ class _List:
             except AssertionError as err:
                 yield str(err)
 
-    def list_should_contain_sub_list(self, list1, list2, msg=None,
-                                     values=True, ignore_case=False):
+    def list_should_contain_sub_list(self, list1, list2, msg=None, values=True,
+                                     ignore_case=False):
         """Fails if not all elements in ``list2`` are found in ``list1``.
 
         The order of values and the number of values are not taken into
@@ -499,6 +496,7 @@ class _List:
     def _validate_lists(self, *lists):
         for index, item in enumerate(lists, start=1):
             self._validate_list(item, index)
+
 
 class _Dictionary:
 
@@ -600,12 +598,9 @@ class _Dictionary:
     def copy_dictionary(self, dictionary, deepcopy=False):
         """Returns a copy of the given dictionary.
 
-        The ``deepcopy`` argument controls should the returned dictionary be
-        a [https://docs.python.org/library/copy.html|shallow or deep copy].
-        By default returns a shallow copy, but that can be changed by giving
-        ``deepcopy`` a true value (see `Boolean arguments`). This is a new
-        option in Robot Framework 3.1.2. Earlier versions always returned
-        shallow copies.
+        By default, returns a new dictionary with same items as in the original.
+        Set the ``deepcopy`` argument to a true value if also items should
+        be copied.
 
         The given dictionary is never altered by this keyword.
         """
@@ -617,53 +612,36 @@ class _Dictionary:
     def get_dictionary_keys(self, dictionary, sort_keys=True):
         """Returns keys of the given ``dictionary`` as a list.
 
-        By default keys are returned in sorted order (assuming they are
+        By default, keys are returned in sorted order (assuming they are
         sortable), but they can be returned in the original order by giving
-        ``sort_keys``  a false value (see `Boolean arguments`). Notice that
-        with Python 3.5 and earlier dictionary order is undefined unless using
-        ordered dictionaries.
+        ``sort_keys`` a false value.
 
         The given ``dictionary`` is never altered by this keyword.
 
         Example:
         | ${sorted} =   | Get Dictionary Keys | ${D3} |
         | ${unsorted} = | Get Dictionary Keys | ${D3} | sort_keys=False |
-        =>
-        | ${sorted} = ['a', 'b', 'c']
-        | ${unsorted} = ['b', 'a', 'c']   # Order depends on Python version.
-
-        ``sort_keys`` is a new option in Robot Framework 3.1.2. Earlier keys
-        were always sorted.
         """
         self._validate_dictionary(dictionary)
-        keys = dictionary.keys()
         if sort_keys:
             try:
-                return sorted(keys)
+                return sorted(dictionary)
             except TypeError:
                 pass
-        return list(keys)
+        return list(dictionary)
 
     def get_dictionary_values(self, dictionary, sort_keys=True):
         """Returns values of the given ``dictionary`` as a list.
 
         Uses `Get Dictionary Keys` to get keys and then returns corresponding
-        values. By default keys are sorted and values returned in that order,
-        but this can be changed by giving ``sort_keys`` a false value (see
-        `Boolean arguments`). Notice that with Python 3.5 and earlier
-        dictionary order is undefined unless using ordered dictionaries.
+        values. By default, keys are sorted and values returned in that order,
+        but this can be changed by giving ``sort_keys`` a false value.
 
         The given ``dictionary`` is never altered by this keyword.
 
         Example:
         | ${sorted} =   | Get Dictionary Values | ${D3} |
         | ${unsorted} = | Get Dictionary Values | ${D3} | sort_keys=False |
-        =>
-        | ${sorted} = [1, 2, 3]
-        | ${unsorted} = [2, 1, 3]    # Order depends on Python version.
-
-        ``sort_keys`` is a new option in Robot Framework 3.1.2. Earlier values
-        were always sorted based on keys.
         """
         self._validate_dictionary(dictionary)
         keys = self.get_dictionary_keys(dictionary, sort_keys=sort_keys)
@@ -673,10 +651,8 @@ class _Dictionary:
         """Returns items of the given ``dictionary`` as a list.
 
         Uses `Get Dictionary Keys` to get keys and then returns corresponding
-        items. By default keys are sorted and items returned in that order,
-        but this can be changed by giving ``sort_keys`` a false value (see
-        `Boolean arguments`). Notice that with Python 3.5 and earlier
-        dictionary order is undefined unless using ordered dictionaries.
+        items. By default, keys are sorted and items returned in that order,
+        but this can be changed by giving ``sort_keys`` a false value.
 
         Items are returned as a flat list so that first item is a key,
         second item is a corresponding value, third item is the second key,
@@ -687,12 +663,6 @@ class _Dictionary:
         Example:
         | ${sorted} =   | Get Dictionary Items | ${D3} |
         | ${unsorted} = | Get Dictionary Items | ${D3} | sort_keys=False |
-        =>
-        | ${sorted} = ['a', 1, 'b', 2, 'c', 3]
-        | ${unsorted} = ['b', 2, 'a', 1, 'c', 3]    # Order depends on Python version.
-
-        ``sort_keys`` is a new option in Robot Framework 3.1.2. Earlier items
-        were always sorted based on keys.
         """
         self._validate_dictionary(dictionary)
         keys = self.get_dictionary_keys(dictionary, sort_keys=sort_keys)
@@ -964,11 +934,11 @@ class Collections(_List, _Dictionary):
     = Using with list-like and dictionary-like objects =
 
     List keywords that do not alter the given list can also be used
-    with tuples, and to some extend also with other iterables.
+    with tuples, and to some extent also with other iterables.
     `Convert To List` can be used to convert tuples and other iterables
     to Python ``list`` objects.
 
-    Similarly dictionary keywords can, for most parts, be used with other
+    Similarly, dictionary keywords can, for most parts, be used with other
     mappings. `Convert To Dictionary` can be used if real Python ``dict``
     objects are needed.
 
@@ -996,7 +966,6 @@ class Collections(_List, _Dictionary):
     | `Should Contain Match` | ${list} | ${pattern} | case_insensitive=${FALSE} | # Python ``False`` is false.   |
     | `Lists Should Be Equal` | ${x}   | ${y} | Custom error | values=no values | # ``no values`` works with ``values`` argument |
 
-    Considering ``OFF`` and ``0`` false is new in Robot Framework 3.1.
 
     = Data in examples =
 
