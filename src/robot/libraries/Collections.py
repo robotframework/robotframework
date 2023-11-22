@@ -925,6 +925,28 @@ class Collections(_List, _Dictionary):
     mappings. `Convert To Dictionary` can be used if real Python ``dict``
     objects are needed.
 
+    = Ignore case =
+
+    Various keywords support ignoring case in comparisons by using the optional
+    ``ignore_case`` argument. Case-insensitivity can be enabled by using
+    ``ignore_case=True`` (see `Boolean arguments`) and it works recursively.
+    With dictionaries, it is also possible to use special values ``keys`` and
+    ``values`` to normalize only keys or values, respectively. These options
+    themselves are case-insensitive and also singular forms ``key`` and
+    ``value`` are supported.
+
+    If a dictionary contains keys that normalize to the same value, e.g.
+    ``{'a': 1, 'A': 2}``, normalizing keys causes an error.
+
+    Examples:
+    | `Lists Should Be Equal`        | ${list1} | ${list2} | ignore_case=True   |
+    | `Dictionaries Should Be Equal` | ${dict1} | ${dict2} | ignore_case=values |
+
+    Notice that some keywords accept also an older ``case_insensitive`` argument
+    in addition to ``ignore_case``. The latter is new in Robot Framework 7.0 and
+    should be used unless there is a need to support older versions. The old
+    argument is considered deprecated and will eventually be removed.
+
     = Boolean arguments =
 
     Some keywords accept arguments that are handled as Boolean values true or
@@ -936,37 +958,9 @@ class Collections(_List, _Dictionary):
     regardless their value, and other argument types are tested using the same
     [http://docs.python.org/library/stdtypes.html#truth|rules as in Python].
 
-    True examples:
-    | `Should Contain Match` | ${list} | ${pattern} | case_insensitive=True    | # Strings are generally true.    |
-    | `Should Contain Match` | ${list} | ${pattern} | case_insensitive=yes     | # Same as the above.             |
-    | `Should Contain Match` | ${list} | ${pattern} | case_insensitive=${TRUE} | # Python ``True`` is true.       |
-    | `Should Contain Match` | ${list} | ${pattern} | case_insensitive=${42}   | # Numbers other than 0 are true. |
-
-    False examples:
-    | `Should Contain Match` | ${list} | ${pattern} | case_insensitive=False    | # String ``false`` is false.   |
-    | `Should Contain Match` | ${list} | ${pattern} | case_insensitive=no       | # Also string ``no`` is false. |
-    | `Should Contain Match` | ${list} | ${pattern} | case_insensitive=${EMPTY} | # Empty string is false.       |
-    | `Should Contain Match` | ${list} | ${pattern} | case_insensitive=${FALSE} | # Python ``False`` is false.   |
-    | `Lists Should Be Equal` | ${x}   | ${y} | Custom error | values=no values | # ``no values`` works with ``values`` argument |
-
-    = Ignore case =
-
-    Various keywords support ignoring case in comparisons by using the optional
-    ``ignore_case`` argument. Case-insensitivity can be enabled by using
-    ``ignore_case=True`` (see `Boolean arguments` for details) and it works
-    recursively. With dictionaries, it is also possible to use special values
-    ``keys`` and ``values`` to normalize only keys or values, respectively.
-    These options themselves are case-insensitive and also singular forms
-    ``key`` and ``value`` are supported.
-
-    If a dictionary contains keys that normalize to a same value, e.g.
-    ``{'a': 1, 'A': 2}``, normalizing keys causes an error. Another thing
-    to take into account is that normalization can convert list-like objects
-    and mappings to ``list`` and ``dict`` instances, respectively.
-
-    Examples:
-    | `Lists Should Be Equal`        | ${list1} | ${list2} | ignore_case=True   |
-    | `Dictionaries Should Be Equal` | ${dict1} | ${dict2} | ignore_case=values |
+    | `Should Contain Match` | ${list} | ${pattern} | ignore_case=True  |
+    | `Should Contain Match` | ${list} | ${pattern} | ignore_case=False |
+    | `Lists Should Be Equal` | ${list1} | ${list2} | Custom error | no values |
 
     = Data in examples =
 
@@ -983,8 +977,10 @@ class Collections(_List, _Dictionary):
     ROBOT_LIBRARY_VERSION = get_version()
 
     def should_contain_match(self, list, pattern, msg=None,
-                             case_insensitive=False,
-                             whitespace_insensitive=False):
+                             case_insensitive: 'bool|None' = None,
+                             whitespace_insensitive: 'bool|None' = None,
+                             ignore_case: bool = False,
+                             ignore_whitespace: bool = False):
         """Fails if ``pattern`` is not found in ``list``.
 
         By default, pattern matching is similar to matching files in a shell
@@ -996,72 +992,88 @@ class Collections(_List, _Dictionary):
         If you prepend ``regexp=`` to your pattern, your pattern will be used
         according to the Python
         [http://docs.python.org/library/re.html|re module] regular expression
-        syntax. Important note: Backslashes are an escape character, and must
-        be escaped with another backslash (e.g. ``regexp=\\\\d{6}`` to search for
-        ``\\d{6}``). See `BuiltIn.Should Match Regexp` for more details.
+        syntax. Notice that the backslash character often used with regular
+        expressions is an escape character in Robot Framework data and needs
+        to be escaped with another backslash like ``regexp=\\\\d{6}``. See
+        `BuiltIn.Should Match Regexp` for more details.
 
-        If ``case_insensitive`` is given a true value (see `Boolean arguments`),
-        the pattern matching will ignore case.
+        Matching is case-sensitive by default, but that can be changed by giving
+        the ``ignore_case`` argument a true value (see `Boolean arguments`).
+        This argument is new in Robot Framework 7.0, but with earlier versions
+        it is possible to use ``case_insensitive`` for the same purpose.
 
-        If ``whitespace_insensitive`` is given a true value (see `Boolean
-        arguments`), the pattern matching will ignore whitespace.
+        It is possible to ignore all whitespace by giving the ``ignore_whitespace``
+        argument a true value. This argument is new in Robot Framework 7.0 as well,
+        and with earlier versions it is possible to use ``whitespace_insensitive``.
+
+        Notice that both ``case_insensitive`` and ``whitespace_insensitive``
+        are considered deprecated. They will eventually be removed.
 
         Non-string values in lists are ignored when matching patterns.
 
         Use the ``msg`` argument to override the default error message.
 
-        See also ``Should Not Contain Match``.
-
         Examples:
         | Should Contain Match | ${list} | a*              | | | # Match strings beginning with 'a'. |
         | Should Contain Match | ${list} | regexp=a.*      | | | # Same as the above but with regexp. |
         | Should Contain Match | ${list} | regexp=\\\\d{6} | | | # Match strings containing six digits. |
-        | Should Contain Match | ${list} | a*  | case_insensitive=True       | | # Match strings beginning with 'a' or 'A'. |
-        | Should Contain Match | ${list} | ab* | whitespace_insensitive=yes  | | # Match strings beginning with 'ab' with possible whitespace ignored. |
-        | Should Contain Match | ${list} | ab* | whitespace_insensitive=true | case_insensitive=true | # Same as the above but also ignore case. |
+        | Should Contain Match | ${list} | a*  | ignore_case=True       | | # Match strings beginning with 'a' or 'A'. |
+        | Should Contain Match | ${list} | ab* | ignore_whitespace=yes  | | # Match strings beginning with 'ab' with possible whitespace ignored. |
+        | Should Contain Match | ${list} | ab* | ignore_whitespace=true | ignore_case=true | # Same as the above but also ignore case. |
         """
         _List._validate_list(self, list)
-        matches = _get_matches_in_iterable(list, pattern, case_insensitive,
-                                           whitespace_insensitive)
+        matches = self._get_matches(list, pattern, case_insensitive,
+                                    whitespace_insensitive, ignore_case,
+                                    ignore_whitespace)
         default = f"{seq2str2(list)} does not contain match for pattern '{pattern}'."
         _verify_condition(matches, default, msg)
 
     def should_not_contain_match(self, list, pattern, msg=None,
-                                 case_insensitive=False,
-                                 whitespace_insensitive=False):
+                                 case_insensitive: 'bool|None' = None,
+                                 whitespace_insensitive: 'bool|None' = None,
+                                 ignore_case: bool = False,
+                                 ignore_whitespace: bool = False):
         """Fails if ``pattern`` is found in ``list``.
 
         Exact opposite of `Should Contain Match` keyword. See that keyword
         for information about arguments and usage in general.
         """
         _List._validate_list(self, list)
-        matches = _get_matches_in_iterable(list, pattern, case_insensitive,
-                                           whitespace_insensitive)
+        matches = self._get_matches(list, pattern, case_insensitive,
+                                    whitespace_insensitive, ignore_case,
+                                    ignore_whitespace)
         default = f"{seq2str2(list)} contains match for pattern '{pattern}'."
         _verify_condition(not matches, default, msg)
 
-    def get_matches(self, list, pattern, case_insensitive=False,
-                    whitespace_insensitive=False):
+    def get_matches(self, list, pattern,
+                    case_insensitive: 'bool|None' = None,
+                    whitespace_insensitive: 'bool|None' = None,
+                    ignore_case: bool = False,
+                    ignore_whitespace: bool = False):
         """Returns a list of matches to ``pattern`` in ``list``.
 
-        For more information on ``pattern``, ``case_insensitive``, and
-        ``whitespace_insensitive``, see `Should Contain Match`.
+        For more information on ``pattern``, ``case_insensitive/ignore_case``, and
+        ``whitespace_insensitive/ignore_whitespace``, see `Should Contain Match`.
 
         Examples:
         | ${matches}= | Get Matches | ${list} | a* | # ${matches} will contain any string beginning with 'a' |
         | ${matches}= | Get Matches | ${list} | regexp=a.* | # ${matches} will contain any string beginning with 'a' (regexp version) |
-        | ${matches}= | Get Matches | ${list} | a* | case_insensitive=${True} | # ${matches} will contain any string beginning with 'a' or 'A' |
+        | ${matches}= | Get Matches | ${list} | a* | ignore_case=True | # ${matches} will contain any string beginning with 'a' or 'A' |
         """
         _List._validate_list(self, list)
-        return _get_matches_in_iterable(list, pattern, case_insensitive,
-                                        whitespace_insensitive)
+        return self._get_matches(list, pattern, case_insensitive,
+                                 whitespace_insensitive, ignore_case,
+                                 ignore_whitespace)
 
-    def get_match_count(self, list, pattern, case_insensitive=False,
-                        whitespace_insensitive=False):
+    def get_match_count(self, list, pattern,
+                        case_insensitive: 'bool|None' = None,
+                        whitespace_insensitive: 'bool|None' = None,
+                        ignore_case: bool = False,
+                        ignore_whitespace: bool = False):
         """Returns the count of matches to ``pattern`` in ``list``.
 
-        For more information on ``pattern``, ``case_insensitive``, and
-        ``whitespace_insensitive``, see `Should Contain Match`.
+        For more information on ``pattern``, ``case_insensitive/ignore_case``, and
+        ``whitespace_insensitive/ignore_whitespace``, see `Should Contain Match`.
 
         Examples:
         | ${count}= | Get Match Count | ${list} | a* | # ${count} will be the count of strings beginning with 'a' |
@@ -1070,7 +1082,30 @@ class Collections(_List, _Dictionary):
         """
         _List._validate_list(self, list)
         return len(self.get_matches(list, pattern, case_insensitive,
-                                    whitespace_insensitive))
+                                    whitespace_insensitive, ignore_case,
+                                    ignore_whitespace))
+
+    def _get_matches(self, iterable, pattern, case_insensitive=None,
+                     whitespace_insensitive=None, ignore_case=True,
+                     ignore_whitespace=False):
+        # `ignore_xxx` were added in RF  7.0 for consistency reasons.
+        # The idea is that they eventually replace `xxx_insensitive`.
+        # TODO: Emit deprecation warnings in RF 8.0.
+        if case_insensitive is not None:
+            ignore_case = case_insensitive
+        if whitespace_insensitive is not None:
+            ignore_whitespace = whitespace_insensitive
+        if not isinstance(pattern, str):
+            raise TypeError(f"Pattern must be string, got '{type_name(pattern)}'.")
+        regexp = False
+        if pattern.startswith('regexp='):
+            pattern = pattern[7:]
+            regexp = True
+        elif pattern.startswith('glob='):
+            pattern = pattern[5:]
+        matcher = Matcher(pattern, caseless=ignore_case, spaceless=ignore_whitespace,
+                          regexp=regexp)
+        return [item for item in iterable if isinstance(item, str) and matcher.match(item)]
 
 
 def _verify_condition(condition, default_message, message, values=False):
@@ -1084,23 +1119,6 @@ def _report_error(default_message, message, values=False):
     elif values and not (isinstance(values, str) and values.upper() == 'NO VALUES'):
         message += '\n' + default_message
     raise AssertionError(message)
-
-
-def _get_matches_in_iterable(iterable, pattern, case_insensitive=False,
-                             whitespace_insensitive=False):
-    if not isinstance(pattern, str):
-        raise TypeError(f"Pattern must be string, got '{type_name(pattern)}'.")
-    regexp = False
-    if pattern.startswith('regexp='):
-        pattern = pattern[7:]
-        regexp = True
-    elif pattern.startswith('glob='):
-        pattern = pattern[5:]
-    matcher = Matcher(pattern,
-                      caseless=case_insensitive,
-                      spaceless=whitespace_insensitive,
-                      regexp=regexp)
-    return [item for item in iterable if isinstance(item, str) and matcher.match(item)]
 
 
 class Normalizer:

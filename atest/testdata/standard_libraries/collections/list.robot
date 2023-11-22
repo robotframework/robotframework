@@ -409,65 +409,82 @@ Count Matches In List Glob
 Get Matches In List Case Insensitive
     [Template]    List Should Equal Matches
     ${STRINGS}    a       ${False}    ${False}    a
-    ${STRINGS}    A       ${True}    ${False}     a
-    ${STRINGS}    A       ${False}    ${False}
-    ${STRINGS}    word    ${True}    ${False}     wOrD    WOrd
-    ${STRINGS}    b       ${True}    ${False}     B       b
-    ${STRINGS}    b       ${False}    ${False}    b
+    ${STRINGS}    A       ${True}     ${False}    a
+    ${STRINGS}    A       False       false
+    ${STRINGS}    word    yes         no          wOrD    WOrd
+    ${STRINGS}    b       1           0           B       b
+    ${STRINGS}    b       no          NO          b
 
 Get Matches In List Whitespace Insensitive
     [Template]    List Should Equal Matches
-    ${WHITESPACE_STRINGS}    word    ${False}   ${True}    w o r d    w\no\nr\nd    w\no r\nd
+    ${WHITESPACE_STRINGS}    word    False      True    w o r d    w\no\nr\nd    w\no r\nd
     ${WHITESPACE_STRINGS}    word    ${True}    ${True}    w o r d    w\no\nr\nd    w\no r\nd    W O R D
-    ${WHITESPACE_STRINGS}    words   ${True}    ${True}
+    ${WHITESPACE_STRINGS}    words   yes        yes
 
 Get Matches In List Regexp
     [Template]    List Should Equal Matches
-    ${STRINGS}    regexp=.*a.*    ${False}    ${False}    a      regexp=blah
+    ${STRINGS}    regexp=.*a.*    False       False       a      regexp=blah
     ${STRINGS}    regexp=wOrD     ${False}    ${False}    wOrD
-    ${STRINGS}    regexp=word     ${True}     ${False}    wOrD    WOrd
-    ${STRINGS}    regexp=wo.*     ${True}     ${False}    wOrD    WOrd
-    ${STRINGS}    regexp=[a-z]    ${True}     ${False}    a       B    b    wOrD    WOrd    regexp=blah    glob=test
-    ${STRINGS}    regexp=.*       ${False}    ${False}    @{STRINGS}
-    ${STRINGS}    regexp=.$       ${False}    ${False}    a       B    b    1    2    3
+    ${STRINGS}    regexp=word     true        false       wOrD    WOrd
+    ${STRINGS}    regexp=wo.*     yes         no          wOrD    WOrd
+    ${STRINGS}    regexp=[a-z]    True        False       a       B    b    wOrD    WOrd    regexp=blah    glob=test
+    ${STRINGS}    regexp=.*       0           0           @{STRINGS}
+    ${STRINGS}    regexp=.$       ${0}        ${0}        a       B    b    1    2    3
 
 Get Matches In List Glob
     [Template]    List Should Equal Matches
-    ${STRINGS}    glob=*a*     ${False}    ${False}    a       regexp=blah
-    ${STRINGS}    glob=wOrD    ${False}    ${False}    wOrD
-    ${STRINGS}    glob=word    ${True}     ${False}    wOrD    WOrd
-    ${STRINGS}    glob=wo*     ${True}     ${False}    wOrD    WOrd
-    ${STRINGS}    glob=*       ${False}    ${False}    @{STRINGS}
+    ${STRINGS}    glob=*a*     False       False       a       regexp=blah
+    ${STRINGS}    glob=wOrD    false       false       wOrD
+    ${STRINGS}    glob=word    yes         no          wOrD    WOrd
+    ${STRINGS}    glob=wo*     ${1}        ${0}        wOrD    WOrd
+    ${STRINGS}    glob=*       False       FALSE       @{STRINGS}
     ${STRINGS}    glob=?       ${False}    ${False}    a       B    b    1    2    3
 
 List Should Contain Value Case Insensitive
     [Template]    Should Contain Match
     ${STRINGS}    a
-    ${STRINGS}    a       case_insensitive=True
-    ${STRINGS}    A       case_insensitive=True
-    ${STRINGS}    b       case_insensitive=True
-    ${STRINGS}    B       case_insensitive=True
-    ${STRINGS}    word    case_insensitive=True
-    ${STRINGS}    WORD    case_insensitive=True
-    ${STRINGS}    WoRd    case_insensitive=True
     ${STRINGS}    \${cmd list}
+    # Old config.
+    ${STRINGS}    a       case_insensitive=True
+    ${STRINGS}    A       case_insensitive=yes
+    ${STRINGS}    b       case_insensitive=${True}
+    ${STRINGS}    B       case_insensitive=xxx
+    ${STRINGS}    word    case_insensitive=${1}
+    ${STRINGS}    WORD    case_insensitive=TRUE
+    ${STRINGS}    WoRd    case_insensitive=true
+    # New config.
+    ${STRINGS}    a       ignore_case=True
+    ${STRINGS}    A       ignore_case=yes
+    ${STRINGS}    b       ignore_case=${True}
+    ${STRINGS}    B       ignore_case=xxx
+    ${STRINGS}    word    ignore_case=${1}
+    ${STRINGS}    WORD    ignore_case=TRUE
+    ${STRINGS}    WoRd    ignore_case=true
 
 List Should Contain Value Whitespace Insensitive
     [Template]    Should Contain Match
+    # Old config.
     ${WHITESPACE_STRINGS}    word           whitespace_insensitive=1    case_insensitive=${0}
     ${WHITESPACE_STRINGS}    wOrD           whitespace_insensitive=2    case_insensitive=${1}
     ${WHITESPACE_STRINGS}    regexp=wo.*    whitespace_insensitive=3
     ${WHITESPACE_STRINGS}    regexp=Wo.*    whitespace_insensitive=4    case_insensitive=${2}
     ${WHITESPACE_STRINGS}    glob=wo*       whitespace_insensitive=5
     ${WHITESPACE_STRINGS}    glob=Wo*       whitespace_insensitive=6    case_insensitive=${3}
+    # New config.
+    ${WHITESPACE_STRINGS}    word           ignore_whitespace=1    ignore_case=${0}
+    ${WHITESPACE_STRINGS}    wOrD           ignore_whitespace=2    ignore_case=${1}
+    ${WHITESPACE_STRINGS}    regexp=wo.*    ignore_whitespace=3
+    ${WHITESPACE_STRINGS}    regexp=Wo.*    ignore_whitespace=4    ignore_case=${2}
+    ${WHITESPACE_STRINGS}    glob=wo*       ignore_whitespace=5
+    ${WHITESPACE_STRINGS}    glob=Wo*       ignore_whitespace=6    ignore_case=${3}
 
 List Should Contain Value Regexp
     [Template]    Should Contain Match
     ${STRINGS}    regexp=.*a.*
     ${STRINGS}    regexp=wOrD
     ${STRINGS}    regexp=word     case_insensitive=True
-    ${STRINGS}    regexp=wo.*     case_insensitive=True
-    ${STRINGS}    regexp=[a-z]    case_insensitive=True
+    ${STRINGS}    regexp=wo.*     case_insensitive=yes
+    ${STRINGS}    regexp=[a-z]    case_insensitive=${1}
     ${STRINGS}    regexp=[a-zA-Z]
     ${STRINGS}    regexp=.*
     ${STRINGS}    regexp=\\w{4}
@@ -478,13 +495,13 @@ List Should Contain Value Glob
     ${STRINGS}    glob=*a*
     ${STRINGS}    glob=wOrD
     ${STRINGS}    glob=word        case_insensitive=True
-    ${STRINGS}    glob=wo*         case_insensitive=True
+    ${STRINGS}    glob=wo*         case_insensitive=true
     ${STRINGS}    glob=*
     ${STRINGS}    glob=?
     ${STRINGS}    glob=????
     ${STRINGS}    glob=?O??
-    ${STRINGS}    glob=?o??        case_insensitive=True
-    ${STRINGS}    glob=regexp=*    case_insensitive=True
+    ${STRINGS}    glob=?o??        case_insensitive=yes
+    ${STRINGS}    glob=regexp=*    case_insensitive=xxx
 
 List Should Contain Value, Value Not Found Case Insensitive
     [Documentation]    FAIL [ wOrD ] does not contain match for pattern 'words'.
@@ -520,22 +537,35 @@ List Should Contain Value, Value Not Found And Own Error Message Glob
 
 List Should Not Contain Value Case Insensitive
     [Template]    Should Not Contain Match
-    ${STRINGS}    words    case_insensitive=True
-    ${STRINGS}    5        case_insensitive=True
     ${STRINGS}    word
-    ${STRINGS}    AB       case_insensitive=True
+    # Old config.
+    ${STRINGS}    words    case_insensitive=True
+    ${STRINGS}    5        case_insensitive=yes
+    ${STRINGS}    AB       case_insensitive=${True}
+    # New config.
+    ${STRINGS}    words    ignore_case=True
+    ${STRINGS}    5        ignore_case=yes
+    ${STRINGS}    AB       ignore_case=${True}
 
 List Should Not Contain Value Whitespace Insensitive
     [Template]    Should Not Contain Match
     ${WHITESPACE_STRINGS}    wOrD
-    ${WHITESPACE_STRINGS}    wOrD                whitespace_insensitive=True
-    ${WHITESPACE_STRINGS}    wOrDs               whitespace_insensitive=True    case_insensitive=True
     ${WHITESPACE_STRINGS}    regexp=.*words.*
-    ${WHITESPACE_STRINGS}    regexp=.*words.*    whitespace_insensitive=True
-    ${WHITESPACE_STRINGS}    regexp=.*words.*    whitespace_insensitive=True    case_insensitive=True
     ${WHITESPACE_STRINGS}    glob=*words*
-    ${WHITESPACE_STRINGS}    glob=*words*        whitespace_insensitive=True
-    ${WHITESPACE_STRINGS}    glob=*words*        whitespace_insensitive=True    case_insensitive=True
+    # Old config.
+    ${WHITESPACE_STRINGS}    wOrD                whitespace_insensitive=True
+    ${WHITESPACE_STRINGS}    wOrDs               whitespace_insensitive=true    case_insensitive=true
+    ${WHITESPACE_STRINGS}    regexp=.*words.*    whitespace_insensitive=${True}
+    ${WHITESPACE_STRINGS}    regexp=.*words.*    whitespace_insensitive=yes     case_insensitive=yes
+    ${WHITESPACE_STRINGS}    glob=*words*        whitespace_insensitive=1
+    ${WHITESPACE_STRINGS}    glob=*words*        whitespace_insensitive=${1}    case_insensitive=${2}
+    # New config.
+    ${WHITESPACE_STRINGS}    wOrD                ignore_whitespace=True
+    ${WHITESPACE_STRINGS}    wOrDs               ignore_whitespace=true         ignore_case=true
+    ${WHITESPACE_STRINGS}    regexp=.*words.*    ignore_whitespace=${True}
+    ${WHITESPACE_STRINGS}    regexp=.*words.*    ignore_whitespace=yes          ignore_case=yes
+    ${WHITESPACE_STRINGS}    glob=*words*        ignore_whitespace=1
+    ${WHITESPACE_STRINGS}    glob=*words*        ignore_whitespace=${1}         ignore_case=${2}
 
 List Should Not Contain Value Regexp
     [Template]    Should Not Contain Match
@@ -548,9 +578,9 @@ List Should Not Contain Value Regexp
 List Should Not Contain Value Glob
     [Template]    Should Not Contain Match
     ${STRINGS}    glob=*words*    case_insensitive=True
-    ${STRINGS}    glob=[5]        case_insensitive=True
+    ${STRINGS}    glob=[5]        case_insensitive=yes
     ${STRINGS}    glob=*word?
-    ${STRINGS}    glob=AB*        case_insensitive=True
+    ${STRINGS}    glob=AB*        case_insensitive=${True}
 
 List Should Not Contain Value, Value Found Case Insensitive
     [Documentation]    FAIL [ wOrD ] contains match for pattern 'word'.
@@ -681,14 +711,21 @@ Get Random Item And Add It To List
     Add Item To List    ${to list}    ${item}
 
 Match Count Should Be
-    [Arguments]    ${count}    ${list}    ${pattern}    ${case_insensitive}=${False}    ${whitespace_insensitive}=${False}
+    [Arguments]    ${count}    ${list}    ${pattern}    ${case_insensitive}=False    ${whitespace_insensitive}=False
     ${actual_count} =    Get Match Count    ${list}    ${pattern}    ${case_insensitive}    ${whitespace_insensitive}
-    Should Be Equal As Integers    ${count}    ${actual_count}    msg=Expected ${count} matches, got ${actual_count} matches for pattern '${pattern}' in ${list}
+    Should Be Equal As Integers    ${count}    ${actual_count}
+    ...    msg=Expected ${count} matches, got ${actual_count} matches for pattern '${pattern}' in ${list}. Used old 'xxx_insensitive' arguments.
+    ...    values=False
+    ${actual_count} =    Get Match Count    ${list}    ${pattern}    ignore_case=${case_insensitive}    ignore_whitespace=${whitespace_insensitive}
+    Should Be Equal As Integers    ${count}    ${actual_count}
+    ...    msg=Expected ${count} matches, got ${actual_count} matches for pattern '${pattern}' in ${list}. Used new 'ignore_xxx' arguments.
+    ...    values=False
 
 List Should Equal Matches
-    [Arguments]    ${list_to_search}    ${pattern}    ${case_insensitive}=${False}    ${whitespace_insensitive}=${False}    @{list}
-    ${list} =    Create List    @{list}
+    [Arguments]    ${list_to_search}    ${pattern}    ${case_insensitive}=False    ${whitespace_insensitive}=False    @{list}
     ${matches} =    Get Matches    ${list_to_search}    ${pattern}    ${case_insensitive}    ${whitespace_insensitive}
+    Lists Should Be Equal    ${matches}    ${list}
+    ${matches} =    Get Matches    ${list_to_search}    ${pattern}    ignore_case=${case_insensitive}    ignore_whitespace=${whitespace_insensitive}
     Lists Should Be Equal    ${matches}    ${list}
 
 Create Lists For Testing Ignore Case

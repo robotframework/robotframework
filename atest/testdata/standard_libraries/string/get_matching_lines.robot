@@ -13,6 +13,7 @@ Get Lines Containing String When Pattern Is Empty
 
 Get Lines Containing String Matching One Line
     Test Get Lines Containing String    ${INPUT}    Third line    Third line
+    Test Get Lines Containing String    ${INPUT}    Third line    Third line              False
 
 Get Lines Containing String Matching Some Lines
     Test Get Lines Containing String    ${INPUT}    Line    Line 1\nLine 2
@@ -32,7 +33,7 @@ Get Lines Matching Pattern When Pattern Is Empty
 
 Get Lines Matching Pattern Matching One Line
     Test Get Lines Matching Pattern    ${INPUT}    Third*    Third line
-    Test Get Lines Matching Pattern    ${INPUT}    ???? 1    Line 1
+    Test Get Lines Matching Pattern    ${INPUT}    ???? 1    Line 1                       False
 
 Get Lines Matching Pattern Matching Some Lines
     Test Get Lines Matching Pattern    ${INPUT}    Line ?    Line 1\nLine 2
@@ -103,10 +104,14 @@ Test Get Lines Containing String
     [Arguments]    ${input}    ${pattern}    ${expected}    ${case-insensitive}=false
     ${actual} =    Get Lines Containing String    ${input}    ${pattern}    ${case-insensitive}
     Should Be Equal    ${actual}    ${expected}
+    ${actual} =    Get Lines Containing String    ${input}    ${pattern}    ignore_case=${case-insensitive}
+    Should Be Equal    ${actual}    ${expected}
 
 Test Get Lines Matching Pattern
     [Arguments]    ${input}    ${pattern}    ${expected}    ${case-insensitive}=no
     ${actual} =    Get Lines Matching Pattern    ${input}    ${pattern}    ${case-insensitive}
+    Should Be Equal    ${actual}    ${expected}
+    ${actual} =    Get Lines Matching Pattern    ${input}    ${pattern}    ignore_case=${case-insensitive}
     Should Be Equal    ${actual}    ${expected}
 
 Test Get Lines Matching Regexp

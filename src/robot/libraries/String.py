@@ -21,7 +21,7 @@ from string import ascii_lowercase, ascii_uppercase, digits
 
 from robot.api import logger
 from robot.api.deco import keyword
-from robot.utils import FileReader, parse_re_flags, safe_str, type_name
+from robot.utils import FileReader, parse_re_flags, type_name
 from robot.version import get_version
 
 
@@ -263,18 +263,19 @@ class String:
         line_number = self._convert_to_integer(line_number, 'line_number')
         return string.splitlines()[line_number]
 
-    def get_lines_containing_string(self, string, pattern, case_insensitive=False):
+    def get_lines_containing_string(self, string: str, pattern: str,
+                                    case_insensitive: 'bool|None' = None,
+                                    ignore_case: bool = False):
         """Returns lines of the given ``string`` that contain the ``pattern``.
 
         The ``pattern`` is always considered to be a normal string, not a glob
         or regexp pattern. A line matches if the ``pattern`` is found anywhere
         on it.
 
-        The match is case-sensitive by default, but giving ``case_insensitive``
-        a true value makes it case-insensitive. The value is considered true
-        if it is a non-empty string that is not equal to ``false``, ``none`` or
-        ``no``. If the value is not a string, its truth value is got directly
-        in Python.
+        The match is case-sensitive by default, but that can be changed by
+        giving ``ignore_case`` a true value. This option is new in Robot
+        Framework 7.0, but with older versions it is possible to use the
+        nowadays deprecated ``case_insensitive`` argument.
 
         Lines are returned as a string with lines joined together with
         a newline. Possible trailing newline is never returned. The number
@@ -282,19 +283,23 @@ class String:
 
         Examples:
         | ${lines} = | Get Lines Containing String | ${result} | An example |
-        | ${ret} =   | Get Lines Containing String | ${ret} | FAIL | case-insensitive |
+        | ${ret} =   | Get Lines Containing String | ${ret} | FAIL | ignore_case=True |
 
         See `Get Lines Matching Pattern` and `Get Lines Matching Regexp`
         if you need more complex pattern matching.
         """
-        if case_insensitive:
+        if case_insensitive is not None:
+            ignore_case = case_insensitive
+        if ignore_case:
             pattern = pattern.casefold()
             contains = lambda line: pattern in line.casefold()
         else:
             contains = lambda line: pattern in line
         return self._get_matching_lines(string, contains)
 
-    def get_lines_matching_pattern(self, string, pattern, case_insensitive=False):
+    def get_lines_matching_pattern(self, string: str, pattern: str,
+                                   case_insensitive: 'bool|None' = None,
+                                   ignore_case: bool = False):
         """Returns lines of the given ``string`` that match the ``pattern``.
 
         The ``pattern`` is a _glob pattern_ where:
@@ -305,11 +310,10 @@ class String:
 
         A line matches only if it matches the ``pattern`` fully.
 
-        The match is case-sensitive by default, but giving ``case_insensitive``
-        a true value makes it case-insensitive. The value is considered true
-        if it is a non-empty string that is not equal to ``false``, ``none`` or
-        ``no``. If the value is not a string, its truth value is got directly
-        in Python.
+        The match is case-sensitive by default, but that can be changed by
+        giving ``ignore_case`` a true value. This option is new in Robot
+        Framework 7.0, but with older versions it is possible to use the
+        nowadays deprecated ``case_insensitive`` argument.
 
         Lines are returned as a string with lines joined together with
         a newline. Possible trailing newline is never returned. The number
@@ -317,13 +321,15 @@ class String:
 
         Examples:
         | ${lines} = | Get Lines Matching Pattern | ${result} | Wild???? example |
-        | ${ret} = | Get Lines Matching Pattern | ${ret} | FAIL: * | case_insensitive=true |
+        | ${ret} = | Get Lines Matching Pattern | ${ret} | FAIL: * | ignore_case=True |
 
         See `Get Lines Matching Regexp` if you need more complex
         patterns and `Get Lines Containing String` if searching
         literal strings is enough.
         """
-        if case_insensitive:
+        if case_insensitive is not None:
+            ignore_case = case_insensitive
+        if ignore_case:
             pattern = pattern.casefold()
             matches = lambda line: fnmatchcase(line.casefold(), pattern)
         else:
