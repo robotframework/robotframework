@@ -511,11 +511,10 @@ class Process:
     def _manage_process_timeout(self, handle, on_timeout):
         if on_timeout == 'terminate':
             return self.terminate_process(handle)
-        elif on_timeout == 'kill':
+        if on_timeout == 'kill':
             return self.terminate_process(handle, kill=True)
-        else:
-            logger.info('Leaving process intact.')
-            return None
+        logger.info('Leaving process intact.')
+        return None
 
     def _wait(self, process):
         result = self._results[process]
@@ -730,7 +729,7 @@ class Process:
                                                  stdout_path, stderr_path)
         if not attributes:
             return result
-        elif len(attributes) == 1:
+        if len(attributes) == 1:
             return attributes[0]
         return attributes
 

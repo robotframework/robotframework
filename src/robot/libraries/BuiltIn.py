@@ -1640,10 +1640,9 @@ class _Variables(_BuiltInBase):
         """
         if len(values) == 0:
             return ''
-        elif len(values) == 1:
+        if len(values) == 1:
             return values[0]
-        else:
-            return list(values)
+        return list(values)
 
     @run_keyword_variant(resolve=0)
     def set_local_variable(self, name, *values):

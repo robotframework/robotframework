@@ -52,8 +52,7 @@ def _get_lib_class(libcode):
     if GetKeywordNames(libcode):
         if RunKeyword(libcode):
             return _DynamicLibrary
-        else:
-            return _HybridLibrary
+        return _HybridLibrary
     return _ClassLibrary
 
 

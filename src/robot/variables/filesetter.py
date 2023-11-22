@@ -128,7 +128,7 @@ class JsonImporter:
         return [(name, self._dot_dict(value)) for name, value in variables]
 
     def _import(self, path):
-        with io.open(path, encoding='UTF-8') as stream:
+        with open(path, encoding='UTF-8') as stream:
             variables = json.load(stream)
         if not is_dict_like(variables):
             raise DataError(f'JSON variable file must be a mapping, '
@@ -152,7 +152,7 @@ class YamlImporter:
         return [(name, self._dot_dict(value)) for name, value in variables]
 
     def _import(self, path):
-        with io.open(path, encoding='UTF-8') as stream:
+        with open(path, encoding='UTF-8') as stream:
             variables = self._load_yaml(stream)
         if not is_dict_like(variables):
             raise DataError(f'YAML variable file must be a mapping, '

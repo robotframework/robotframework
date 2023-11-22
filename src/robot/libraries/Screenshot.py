@@ -110,10 +110,7 @@ class Screenshot:
     def _norm_path(self, path):
         if not path:
             return path
-        elif isinstance(path, os.PathLike):
-            path = str(path)
-        else:
-            path = path.replace('/', os.sep)
+        path = str(path) if isinstance(path, os.PathLike) else path.replace('/', os.sep)
         return os.path.normpath(path)
 
     @property

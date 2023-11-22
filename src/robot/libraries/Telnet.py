@@ -1095,8 +1095,7 @@ class TelnetConnection(telnetlib.Telnet):
         if cmd in (telnetlib.DO, telnetlib.DONT, telnetlib.WILL, telnetlib.WONT):
             if (cmd, opt) in self._opt_responses:
                 return
-            else:
-                self._opt_responses.append((cmd, opt))
+            self._opt_responses.append((cmd, opt))
 
         # This is supposed to turn server side echoing on and turn other options off.
         if opt == telnetlib.ECHO and cmd in (telnetlib.WILL, telnetlib.WONT):

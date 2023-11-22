@@ -77,7 +77,7 @@ class DocFormatter:
         types = self._type_info_targets
         if name in targets:
             return f'<a href="#{targets[name]}" class="name">{name}</a>'
-        elif name in types:
+        if name in types:
             return f'<a href="#type-{types[name]}" class="name">{name}</a>'
         return f'<span class="name">{name}</span>'
 

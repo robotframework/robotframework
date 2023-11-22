@@ -235,10 +235,9 @@ def get_time(format='timestamp', time_=None):
     if not parts:
         return dt.isoformat(' ', timespec='seconds')
     # Return requested parts of the time
-    elif len(parts) == 1:
+    if len(parts) == 1:
         return parts[0]
-    else:
-        return parts
+    return parts
 
 
 def parse_timestamp(timestamp: 'str|datetime') -> datetime:
