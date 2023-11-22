@@ -20,6 +20,7 @@ here to avoid cyclic imports.
 """
 
 import threading
+from typing import Callable
 
 from .logger import LOGGER
 from .loggerhelper import Message, write_to_console
@@ -28,7 +29,7 @@ from .loggerhelper import Message, write_to_console
 LOGGING_THREADS = ('MainThread', 'RobotFrameworkTimeoutThread')
 
 
-def write(msg, level, html=False):
+def write(msg: 'str | Callable[[], str]', level: str, html: bool = False) -> None:
     # Callable messages allow lazy logging internally, but we don't want to
     # expose this functionality publicly. See the following issue for details:
     # https://github.com/robotframework/robotframework/issues/1505
@@ -66,5 +67,5 @@ def error(msg, html=False):
     write(msg, 'ERROR', html)
 
 
-def console(msg, newline=True, stream='stdout'):
+def console(msg: str, newline: bool = True, stream: str = 'stdout'):
     write_to_console(msg, newline, stream)
