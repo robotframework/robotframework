@@ -15,6 +15,7 @@
 
 import re
 from collections.abc import MutableSequence
+from contextlib import suppress
 
 from robot.errors import (DataError, ExecutionStatus, HandlerExecutionFailed,
                           VariableError)
@@ -118,7 +119,7 @@ class VariableAssigner:
     def _extended_assign(self, name, value, variables):
         if name[0] != '$' or '.' not in name or name in variables:
             return False
-        base, attr = [token.strip() for token in name[2:-1].rsplit('.', 1)]
+        base, attr = (token.strip() for token in name[2:-1].rsplit('.', 1))
         try:
             var = variables.replace_scalar(f'${{{base}}}')
         except VariableError:
@@ -180,10 +181,8 @@ class VariableAssigner:
                 )
         selector = variables.replace_scalar(item)
         if isinstance(var, MutableSequence):
-            try:
+            with suppress(ValueError):
                 selector = self._parse_sequence_index(selector)
-            except ValueError:
-                pass
         try:
             value = self._validate_item_assign(name, value)
             var[selector] = value

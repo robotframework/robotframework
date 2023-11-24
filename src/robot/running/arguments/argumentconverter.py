@@ -85,9 +85,9 @@ class ArgumentConverter:
         # https://github.com/robotframework/robotframework/issues/4881
         if name in spec.defaults:
             typ = type(spec.defaults[name])
-            if typ == str:      # Don't convert arguments to strings.
+            if typ is str:      # Don't convert arguments to strings.
                 info = TypeInfo()
-            elif typ == int:    # Try also conversion to float.
+            elif typ is int:    # Try also conversion to float.
                 info = TypeInfo.from_sequence([int, float])
             else:
                 info = TypeInfo.from_type(typ)

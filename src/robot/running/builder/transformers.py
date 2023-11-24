@@ -485,8 +485,7 @@ class ErrorReporter(ModelVisitor):
         if token.type == Token.INVALID_HEADER:
             if self.raise_on_invalid_header:
                 raise DataError(message)
-            else:
-                LOGGER.error(message)
+            LOGGER.error(message)
         else:
             # Errors, other than totally invalid headers, can occur only with
             # deprecated singular headers, and we want to report them as warnings.

@@ -72,7 +72,7 @@ def _single_result(source, options):
         return ExecutionResultBuilder(ets, **options).build(result)
     except IOError as err:
         error = err.strerror
-    except:
+    except Exception:
         error = get_error_message()
     raise DataError(f"Reading XML source '{ets}' failed: {error}")
 
@@ -155,21 +155,22 @@ class ExecutionResultBuilder:
                     inside += 1
                     if started >= 0:
                         started += 1
-                    elif by_name and name_match(elem.get('name', ''), elem.get('owner')
-                                                or elem.get('library')):
-                        started = 0
-                    elif by_type and type_match(tag):
+                    elif (
+                        by_name and name_match(
+                            elem.get("name", ""),
+                            elem.get("owner") or elem.get("library"))
+                        or by_type and type_match(tag)
+                    ):
                         started = 0
                     tags = []
-            else:
-                if tag in containers:
-                    inside -= 1
-                elif by_tags and inside and started < 0 and tag == 'tag':
-                    tags.append(elem.text or '')
-                    if tags_match(tags):
-                        started = 0
-                elif started == 0 and tag == 'status':
-                    elem.text = self._create_flattened_message(elem.text)
+            elif tag in containers:
+                inside -= 1
+            elif by_tags and inside and started < 0 and tag == 'tag':
+                tags.append(elem.text or '')
+                if tags_match(tags):
+                    started = 0
+            elif started == 0 and tag == 'status':
+                elem.text = self._create_flattened_message(elem.text)
             if started <= 0 or tag == 'msg':
                 yield event, elem
             else:

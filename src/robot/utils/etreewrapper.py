@@ -49,7 +49,7 @@ class ETSource:
     def _is_path(self, source):
         if is_pathlike(source):
             return True
-        elif is_string(source):
+        if is_string(source):
             prefix = '<'
         elif is_bytes(source):
             prefix = b'<'

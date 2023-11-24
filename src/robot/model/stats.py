@@ -49,12 +49,12 @@ class Stat(Sortable):
         if include_elapsed:
             attrs['elapsed'] = elapsed_time_to_string(self.elapsed, include_millis=False)
         if exclude_empty:
-            attrs = dict((k, v) for k, v in attrs.items() if v not in ('', None))
+            attrs = {k: v for k, v in attrs.items() if v not in ('', None)}
         if values_as_strings:
-            attrs = dict((k, str(v) if v is not None else '')
-                         for k, v in attrs.items())
+            attrs = {k: str(v) if v is not None else ''
+                         for k, v in attrs.items()}
         if html_escape:
-            attrs = dict((k, self._html_escape(v)) for k, v in attrs.items())
+            attrs = {k: self._html_escape(v) for k, v in attrs.items()}
         return attrs
 
     def _get_custom_attrs(self):

@@ -34,10 +34,7 @@ from .outputcapture import OutputCapturer
 
 
 def TestLibrary(name, args=None, variables=None, create_handlers=True, logger=LOGGER):
-    if name in STDLIBS:
-        import_name = 'robot.libraries.' + name
-    else:
-        import_name = name
+    import_name = 'robot.libraries.' + name if name in STDLIBS else name
     with OutputCapturer(library_import=True):
         importer = Importer('library', logger=LOGGER)
         libcode, source = importer.import_class_or_module(import_name,
@@ -55,8 +52,7 @@ def _get_lib_class(libcode):
     if GetKeywordNames(libcode):
         if RunKeyword(libcode):
             return _DynamicLibrary
-        else:
-            return _HybridLibrary
+        return _HybridLibrary
     return _ClassLibrary
 
 
@@ -187,7 +183,7 @@ class _BaseTestLibrary:
         with OutputCapturer(library_import=True):
             try:
                 return libcode(*self.positional_args, **dict(self.named_args))
-            except:
+            except Exception:
                 self._raise_creating_instance_failed()
 
     def get_listeners(self, libinst=None):
@@ -264,7 +260,8 @@ class _BaseTestLibrary:
 
         auto_keywords = getattr(libcode, 'ROBOT_AUTO_KEYWORDS', True)
         if auto_keywords:
-            predicate = lambda name: name[:1] != '_' or has_robot_name(name)
+            def predicate(name):
+                return name[:1] != '_' or has_robot_name(name)
         else:
             predicate = has_robot_name
         return [name for name in dir(libcode) if predicate(name)]
@@ -319,8 +316,8 @@ class _BaseTestLibrary:
         embedded = EmbeddedArguments.from_name(handler.name)
         if embedded:
             if len(embedded.args) > handler.arguments.maxargs:
-                raise DataError(f'Keyword must accept at least as many positional '
-                                f'arguments as it has embedded arguments.')
+                raise DataError('Keyword must accept at least as many positional '
+                                'arguments as it has embedded arguments.')
             handler.arguments.embedded = embedded.args
             return EmbeddedArgumentsHandler(embedded, handler), True
         return handler, False
@@ -415,5 +412,6 @@ class _DynamicLibrary(_BaseTestLibrary):
         return DynamicHandler(self, name, method, doc, argspec, tags)
 
     def _create_init_handler(self, libcode):
-        docgetter = lambda: self._get_kw_doc('__init__')
+        def docgetter():
+            return self._get_kw_doc('__init__')
         return InitHandler(self, self._resolve_init_method(libcode), docgetter)

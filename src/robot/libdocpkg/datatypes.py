@@ -55,14 +55,13 @@ class TypeDoc(Sortable):
         converter = TypeConverter.converter_for(type_info, converters)
         if not converter:
             return None
-        elif not converter.type:
+        if not converter.type:
             return cls(cls.CUSTOM, converter.type_name, converter.doc,
                        converter.value_types)
-        else:
-            # Get `type_name` from class, not from instance, to get the original
-            # name with generics like `list[int]` that override it in instance.
-            return cls(cls.STANDARD, type(converter).type_name,
-                       STANDARD_TYPE_DOCS[converter.type], converter.value_types)
+        # Get `type_name` from class, not from instance, to get the original
+        # name with generics like `list[int]` that override it in instance.
+        return cls(cls.STANDARD, type(converter).type_name,
+                    STANDARD_TYPE_DOCS[converter.type], converter.value_types)
 
     @classmethod
     def for_enum(cls, enum):

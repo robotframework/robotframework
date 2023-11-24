@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from contextlib import suppress
 from robot.errors import DataError, VariableError
 from robot.utils import (DotDict, is_dict_like, is_list_like, NormalizedDict, NOT_SET,
                          type_name)
@@ -32,10 +33,8 @@ class VariableStore:
         if item:
             return self._resolve_delayed(*item)
         for name, value in list(self.data.items()):
-            try:
+            with suppress(DataError):
                 self._resolve_delayed(name, value)
-            except DataError:
-                pass
 
     def _resolve_delayed(self, name, value):
         if not self._is_resolvable(value):

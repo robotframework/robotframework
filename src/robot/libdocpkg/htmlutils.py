@@ -77,7 +77,7 @@ class DocFormatter:
         types = self._type_info_targets
         if name in targets:
             return f'<a href="#{targets[name]}" class="name">{name}</a>'
-        elif name in types:
+        if name in types:
             return f'<a href="#type-{types[name]}" class="name">{name}</a>'
         return f'<span class="name">{name}</span>'
 
@@ -134,8 +134,7 @@ class HtmlToText:
         match = re.search(r'<p.*?>(.*?)</?p>', doc, re.DOTALL)
         if match:
             doc = match.group(1)
-        doc = self.html_to_plain_text(doc)
-        return doc
+        return self.html_to_plain_text(doc)
 
     def html_to_plain_text(self, doc):
         for tag, repl in self.html_tags.items():

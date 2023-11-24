@@ -179,8 +179,7 @@ class MultipleSelectionDialog(TkDialog):
         return widget
 
     def _get_value(self) -> list:
-        selected_values = [self.widget.get(i) for i in self.widget.curselection()]
-        return selected_values
+        return [self.widget.get(i) for i in self.widget.curselection()]
 
 
 class PassFailDialog(TkDialog):

@@ -84,7 +84,7 @@ class Application:
         except (KeyboardInterrupt, SystemExit):
             return self._report_error('Execution stopped by user.',
                                       rc=STOPPED_BY_USER)
-        except:
+        except Exception:
             error, details = get_error_details(exclude_robot_traces=False)
             return self._report_error('Unexpected error: %s' % error,
                                       details, rc=FRAMEWORK_ERROR)

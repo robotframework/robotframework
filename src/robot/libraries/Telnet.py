@@ -509,7 +509,7 @@ class TelnetConnection(telnetlib.Telnet):
         self._terminal_type = self._encode(terminal_type) if terminal_type else None
         self.set_option_negotiation_callback(self._negotiate_options)
         self._set_telnetlib_log_level(telnetlib_log_level)
-        self._opt_responses = list()
+        self._opt_responses = []
 
     def set_timeout(self, timeout):
         """Sets the timeout used for waiting output in the current connection.
@@ -1095,8 +1095,7 @@ class TelnetConnection(telnetlib.Telnet):
         if cmd in (telnetlib.DO, telnetlib.DONT, telnetlib.WILL, telnetlib.WONT):
             if (cmd, opt) in self._opt_responses:
                 return
-            else:
-                self._opt_responses.append((cmd, opt))
+            self._opt_responses.append((cmd, opt))
 
         # This is supposed to turn server side echoing on and turn other options off.
         if opt == telnetlib.ECHO and cmd in (telnetlib.WILL, telnetlib.WONT):

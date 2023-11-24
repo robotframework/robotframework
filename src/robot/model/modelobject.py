@@ -230,7 +230,7 @@ class JsonDumper:
     def dump(self, data: DataDict, output: 'None|TextIO|Path|str' = None) -> 'None|str':
         if not output:
             return json.dumps(data, **self.config)
-        elif isinstance(output, (str, Path)):
+        if isinstance(output, (str, Path)):
             with open(output, 'w', encoding='UTF-8') as file:
                 json.dump(data, file, **self.config)
         elif hasattr(output, 'write'):

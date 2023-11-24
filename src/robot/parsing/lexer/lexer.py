@@ -127,10 +127,7 @@ class Lexer:
         return tokens
 
     def _get_tokens(self, statements: 'Iterable[list[Token]]') -> 'Iterator[Token]':
-        if self.data_only:
-            ignored_types = {None, Token.COMMENT}
-        else:
-            ignored_types = {None}
+        ignored_types = {None, Token.COMMENT} if self.data_only else {None}
         inline_if_type = Token.INLINE_IF
         for statement in statements:
             last = None

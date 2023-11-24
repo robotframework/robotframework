@@ -152,7 +152,7 @@ class _Converter(_BuiltInBase):
             if base:
                 return int(item, self._convert_to_integer(base))
             return int(item)
-        except:
+        except Exception:
             raise RuntimeError(f"'{orig}' cannot be converted to an integer: "
                                f"{get_error_message()}")
 
@@ -295,7 +295,7 @@ class _Converter(_BuiltInBase):
     def _convert_to_number_without_precision(self, item):
         try:
             return float(item)
-        except:
+        except Exception:
             error = get_error_message()
             try:
                 return float(self._convert_to_integer(item))
@@ -384,7 +384,7 @@ class _Converter(_BuiltInBase):
             except AttributeError:
                 raise RuntimeError(f"Invalid input type '{input_type}'.")
             return bytes(bytearray(o for o in ordinals(input)))
-        except:
+        except Exception:
             raise RuntimeError("Creating bytes failed: " + get_error_message())
 
     def _get_ordinals_from_text(self, input):
@@ -1021,19 +1021,19 @@ class _Verify(_BuiltInBase):
             if is_string(container):
                 container = container.casefold()
             elif is_list_like(container):
-                container = set(x.casefold() if is_string(x) else x for x in container)
+                container = {x.casefold() if is_string(x) else x for x in container}
         if strip_spaces and is_string(item):
             item = self._strip_spaces(item, strip_spaces)
             if is_string(container):
                 container = self._strip_spaces(container, strip_spaces)
             elif is_list_like(container):
-                container = set(self._strip_spaces(x, strip_spaces) for x in container)
+                container = {self._strip_spaces(x, strip_spaces) for x in container}
         if collapse_spaces and is_string(item):
             item = self._collapse_spaces(item)
             if is_string(container):
                 container = self._collapse_spaces(container)
             elif is_list_like(container):
-                container = set(self._collapse_spaces(x) for x in container)
+                container = {self._collapse_spaces(x) for x in container}
         if item in container:
             raise AssertionError(self._get_string_msg(orig_container, item, msg,
                                                       values, 'contains'))
@@ -1077,19 +1077,19 @@ class _Verify(_BuiltInBase):
             if is_string(container):
                 container = container.casefold()
             elif is_list_like(container):
-                container = set(x.casefold() if is_string(x) else x for x in container)
+                container = {x.casefold() if is_string(x) else x for x in container}
         if strip_spaces and is_string(item):
             item = self._strip_spaces(item, strip_spaces)
             if is_string(container):
                 container = self._strip_spaces(container, strip_spaces)
             elif is_list_like(container):
-                container = set(self._strip_spaces(x, strip_spaces) for x in container)
+                container = {self._strip_spaces(x, strip_spaces) for x in container}
         if collapse_spaces and is_string(item):
             item = self._collapse_spaces(item)
             if is_string(container):
                 container = self._collapse_spaces(container)
             elif is_list_like(container):
-                container = set(self._collapse_spaces(x) for x in container)
+                container = {self._collapse_spaces(x) for x in container}
         if item not in container:
             raise AssertionError(self._get_string_msg(orig_container, item, msg,
                                                       values, 'does not contain'))
@@ -1132,19 +1132,19 @@ class _Verify(_BuiltInBase):
             if is_string(container):
                 container = container.casefold()
             elif is_list_like(container):
-                container = set(x.casefold() if is_string(x) else x for x in container)
+                container = {x.casefold() if is_string(x) else x for x in container}
         if strip_spaces:
             items = [self._strip_spaces(x, strip_spaces) for x in items]
             if is_string(container):
                 container = self._strip_spaces(container, strip_spaces)
             elif is_list_like(container):
-                container = set(self._strip_spaces(x, strip_spaces) for x in container)
+                container = {self._strip_spaces(x, strip_spaces) for x in container}
         if collapse_spaces:
             items = [self._collapse_spaces(x) for x in items]
             if is_string(container):
                 container = self._collapse_spaces(container)
             elif is_list_like(container):
-                container = set(self._collapse_spaces(x) for x in container)
+                container = {self._collapse_spaces(x) for x in container}
         if not any(item in container for item in items):
             msg = self._get_string_msg(orig_container,
                                        seq2str(items, lastsep=' or '),
@@ -1190,19 +1190,19 @@ class _Verify(_BuiltInBase):
             if is_string(container):
                 container = container.casefold()
             elif is_list_like(container):
-                container = set(x.casefold() if is_string(x) else x for x in container)
+                container = {x.casefold() if is_string(x) else x for x in container}
         if strip_spaces:
             items = [self._strip_spaces(x, strip_spaces) for x in items]
             if is_string(container):
                 container = self._strip_spaces(container, strip_spaces)
             elif is_list_like(container):
-                container = set(self._strip_spaces(x, strip_spaces) for x in container)
+                container = {self._strip_spaces(x, strip_spaces) for x in container}
         if collapse_spaces:
             items = [self._collapse_spaces(x) for x in items]
             if is_string(container):
                 container = self._collapse_spaces(container)
             elif is_list_like(container):
-                container = set(self._collapse_spaces(x) for x in container)
+                container = {self._collapse_spaces(x) for x in container}
         if any(item in container for item in items):
             msg = self._get_string_msg(orig_container,
                                        seq2str(items, lastsep=' or '),
@@ -1282,7 +1282,7 @@ class _Verify(_BuiltInBase):
         if not hasattr(container, 'count'):
             try:
                 container = list(container)
-            except:
+            except Exception:
                 raise RuntimeError(f"Converting '{container}' to list failed: "
                                    f"{get_error_message()}")
         count = container.count(item)
@@ -1414,22 +1414,22 @@ class _Verify(_BuiltInBase):
             return len(item)
         except RERAISED_EXCEPTIONS:
             raise
-        except:
+        except Exception:
             try:
                 return item.length()
             except RERAISED_EXCEPTIONS:
                 raise
-            except:
+            except Exception:
                 try:
                     return item.size()
                 except RERAISED_EXCEPTIONS:
                     raise
-                except:
+                except Exception:
                     try:
                         return item.length
                     except RERAISED_EXCEPTIONS:
                         raise
-                    except:
+                    except Exception:
                         raise RuntimeError(f"Could not get length of '{item}'.")
 
     def length_should_be(self, item, length, msg=None):
@@ -1546,7 +1546,7 @@ class _Variables(_BuiltInBase):
                 value = OrderedDict(value)
         except RERAISED_EXCEPTIONS:
             raise
-        except:
+        except Exception:
             name = '$' + name[1:]
         return name, value
 
@@ -1640,10 +1640,9 @@ class _Variables(_BuiltInBase):
         """
         if len(values) == 0:
             return ''
-        elif len(values) == 1:
+        if len(values) == 1:
             return values[0]
-        else:
-            return list(values)
+        return list(values)
 
     @run_keyword_variant(resolve=0)
     def set_local_variable(self, name, *values):
@@ -3099,15 +3098,14 @@ class _Misc(_BuiltInBase):
     def _yield_logged_messages(self, messages):
         for msg in messages:
             match = search_variable(msg)
-            value = self._variables.replace_scalar(msg)
+            msg_value = self._variables.replace_scalar(msg)
             if match.is_list_variable():
-                for item in value:
-                    yield item
+                yield from msg_value
             elif match.is_dict_variable():
-                for name, value in value.items():
+                for name, value in msg_value.items():
                     yield f'{name}={value}'
             else:
-                yield value
+                yield msg_value
 
     def log_to_console(self, message, stream='STDOUT', no_newline=False, format=''):
         """Logs the given message to the console.
@@ -3152,7 +3150,6 @@ class _Misc(_BuiltInBase):
         contain non-existing variables. If you are interested about variable
         values, you can use the `Log` or `Log Many` keywords.
         """
-        pass
 
     def set_log_level(self, level):
         """Sets the log threshold to the specified level and returns the old level.
@@ -3651,7 +3648,7 @@ class _Misc(_BuiltInBase):
             ctx.suite.set_tags(tags, persist=True)
         else:
             raise RuntimeError("'Set Tags' cannot be used in suite teardown.")
-        self.log(f'Set tag{s(tags)} {seq2str((tags))}.')
+        self.log(f'Set tag{s(tags)} {seq2str(tags)}.')
 
     def remove_tags(self, *tags):
         """Removes given ``tags`` from the current test or all tests in a suite.
@@ -3679,7 +3676,7 @@ class _Misc(_BuiltInBase):
             ctx.suite.set_tags(remove=tags, persist=True)
         else:
             raise RuntimeError("'Remove Tags' cannot be used in suite teardown.")
-        self.log(f'Removed tag{s(tags)} {seq2str((tags))}.')
+        self.log(f'Removed tag{s(tags)} {seq2str(tags)}.')
 
     def get_library_instance(self, name=None, all=False):
         """Returns the currently active instance of the specified library.
@@ -4002,7 +3999,6 @@ class RobotNotRunningError(AttributeError):
     May later be based directly on Exception, so new code should except
     this exception explicitly.
     """
-    pass
 
 
 def register_run_keyword(library, keyword, args_to_process=0, deprecation_warning=True):

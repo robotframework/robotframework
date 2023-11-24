@@ -29,7 +29,7 @@ class ArgumentValidator:
         self.arg_spec = arg_spec
 
     def validate(self, positional, named, dryrun=False):
-        named = set(name for name, value in named)
+        named = {name for name, value in named}
         if dryrun and (any(is_list_variable(arg) for arg in positional) or
                        any(is_dict_variable(arg) for arg in named)):
             return

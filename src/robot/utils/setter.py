@@ -87,8 +87,6 @@ class SetterAwareType(type):
     def __new__(cls, name, bases, dct):
         if '__slots__' in dct:
             slots = list(dct['__slots__'])
-            for item in dct.values():
-                if isinstance(item, setter):
-                    slots.append(item.attr_name)
+            slots.extend([item.attr_name for item in dct.values() if isinstance(item, setter)])
             dct['__slots__'] = slots
         return type.__new__(cls, name, bases, dct)

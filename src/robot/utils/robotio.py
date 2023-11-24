@@ -29,7 +29,7 @@ def file_writer(path=None, encoding='UTF-8', newline=None, usage=None):
         path = str(path)
     create_destination_directory(path, usage)
     try:
-        return io.open(path, 'w', encoding=encoding, newline=newline)
+        return open(path, 'w', encoding=encoding, newline=newline)
     except EnvironmentError:
         usage = '%s file' % usage if usage else 'file'
         raise DataError("Opening %s '%s' failed: %s"
@@ -40,7 +40,7 @@ def binary_file_writer(path=None):
     if path:
         if is_pathlike(path):
             path = str(path)
-        return io.open(path, 'wb')
+        return open(path, 'wb')
     f = io.BytesIO()
     getvalue = f.getvalue
     f.getvalue = lambda encoding='UTF-8': getvalue().decode(encoding)

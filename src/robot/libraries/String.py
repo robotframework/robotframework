@@ -292,9 +292,11 @@ class String:
             ignore_case = case_insensitive
         if ignore_case:
             pattern = pattern.casefold()
-            contains = lambda line: pattern in line.casefold()
+            def contains(line):
+                return pattern in line.casefold()
         else:
-            contains = lambda line: pattern in line
+            def contains(line):
+                return pattern in line
         return self._get_matching_lines(string, contains)
 
     def get_lines_matching_pattern(self, string: str, pattern: str,
@@ -331,9 +333,11 @@ class String:
             ignore_case = case_insensitive
         if ignore_case:
             pattern = pattern.casefold()
-            matches = lambda line: fnmatchcase(line.casefold(), pattern)
+            def matches(line):
+                return fnmatchcase(line.casefold(), pattern)
         else:
-            matches = lambda line: fnmatchcase(line, pattern)
+            def matches(line):
+                return fnmatchcase(line, pattern)
         return self._get_matching_lines(string, matches)
 
     def get_lines_matching_regexp(self, string, pattern, partial_match=False, flags=None):
@@ -475,7 +479,7 @@ class String:
         # re.sub handles 0 and negative counts differently than string.replace
         if count == 0:
             return string
-        return re.sub(pattern, replace_with, string, max(count, 0), flags=parse_re_flags(flags))
+        return re.sub(pattern, replace_with, string, count=max(count, 0), flags=parse_re_flags(flags))
 
     def remove_string(self, string, *removables):
         """Removes all ``removables`` from the given ``string``.

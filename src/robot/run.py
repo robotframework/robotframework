@@ -473,8 +473,9 @@ class RobotFramework(Application):
         return self._filter_options_without_value(options), arguments
 
     def _filter_options_without_value(self, options):
-        return dict((name, value) for name, value in options.items()
-                    if value not in (None, []))
+        return {
+            name: value for name, value in options.items() if value not in (None, [])
+        }
 
 
 def run_cli(arguments=None, exit=True):

@@ -64,7 +64,8 @@ class KeywordCallTemplate:
                 self.kwargs.append((name, value))
 
     def replace_defaults(self):
-        is_default = lambda arg: isinstance(arg, DefaultValue)
+        def is_default(arg):
+            return isinstance(arg, DefaultValue)
         while self.args and is_default(self.args[-1]):
             self.args.pop()
         self.args = [a if not is_default(a) else a.value for a in self.args]

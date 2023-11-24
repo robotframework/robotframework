@@ -24,9 +24,7 @@ def validate_flatten_keyword(options):
         # TODO: Deprecate 'foritem' in RF 6.1!
         if low == 'foritem':
             low = 'iteration'
-        if not (low in ('for', 'while', 'iteration') or
-                low.startswith('name:') or
-                low.startswith('tag:')):
+        if not (low in ('for', 'while', 'iteration') or low.startswith(('name:', 'tag:'))):
             raise DataError(f"Expected 'FOR', 'WHILE', 'ITERATION', 'TAG:<pattern>' or "
                             f"'NAME:<pattern>', got '{opt}'.")
 

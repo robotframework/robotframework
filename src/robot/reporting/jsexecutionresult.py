@@ -73,8 +73,7 @@ class _KeywordRemover:
             if isinstance(item, StringIndex):
                 yield item
             elif isinstance(item, tuple):
-                for i in self._get_used_indices(item):
-                    yield i
+                yield from self._get_used_indices(item)
 
     def _get_used_strings(self, strings, used_indices, remap):
         offset = 0

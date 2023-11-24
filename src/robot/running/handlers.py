@@ -237,8 +237,7 @@ class _DynamicHandler(_RunnableHandler):
         def handler(*positional, **kwargs):
             if self._supports_kwargs:
                 return runner(name, positional, kwargs)
-            else:
-                return runner(name, positional)
+            return runner(name, positional)
         return handler
 
 

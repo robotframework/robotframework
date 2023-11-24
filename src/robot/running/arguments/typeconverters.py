@@ -15,7 +15,8 @@
 
 from ast import literal_eval
 from collections import OrderedDict
-from collections.abc import ByteString, Container, Mapping, Sequence, Set
+from collections.abc import ByteString, Container, Mapping, Sequence
+from collections.abc import Set as AbstractSet
 from datetime import datetime, date, timedelta
 from decimal import InvalidOperation, Decimal
 from enum import Enum
@@ -401,7 +402,7 @@ class NoneConverter(TypeConverter):
 
     def _convert(self, value):
         if value.upper() == 'NONE':
-            return None
+            return
         raise ValueError
 
 
@@ -603,7 +604,7 @@ class DictionaryConverter(TypeConverter):
 @TypeConverter.register
 class SetConverter(TypeConverter):
     type = set
-    abc = Set
+    abc = AbstractSet
     type_name = 'set'
     value_types = (str, Container)
 
