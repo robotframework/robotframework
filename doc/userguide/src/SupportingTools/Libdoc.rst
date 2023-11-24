@@ -321,19 +321,15 @@ the end of this chapter.
 
     src/SupportingTools/ExampleLibrary.py
 
-If you want to use non-ASCII characters in the documentation, the documentation
-must either be Unicode string (default in Python 3) or UTF-8 encoded bytes.
+.. tip:: If you library does some initialization work that should not be done
+         when using Libdoc, you can `easily detect is Robot Framework running`__
 
-.. tip:: When using Python 2, you it is a good idea to set the
-         `source code encoding`__ to ease using non-ASCII characters.
-
-         For more information on Python documentation strings, see `PEP-257`__.
+.. tip:: For more information on Python documentation strings, see `PEP-257`__.
 
 __ `Libdoc HTML documentation`_
 __ `Libdoc example`_
-__ http://www.python.org/dev/peps/pep-0263
+__ `Detecting is Robot Framework running`_
 __ http://www.python.org/dev/peps/pep-0257
-
 
 Dynamic libraries
 ~~~~~~~~~~~~~~~~~
