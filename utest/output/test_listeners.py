@@ -4,7 +4,7 @@ from robot.model import BodyItem
 from robot.output.listeners import Listeners, LibraryListeners
 from robot.output import LOGGER
 from robot.running.outputcapture import OutputCapturer
-from robot.utils.asserts import assert_equal, assert_raises
+from robot.utils.asserts import assert_equal
 from robot.utils import DotDict
 
 
