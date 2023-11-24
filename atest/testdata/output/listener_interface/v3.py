@@ -1,5 +1,5 @@
-import sys
 import os
+import sys
 
 from robot.api import SuiteVisitor
 
@@ -106,5 +106,4 @@ def not_implemented(*args):
     raise SystemExit('Should not be called!')
 
 
-start_keyword = end_keyword = not_implemented
 library_import = resource_import = variables_import = not_implemented
