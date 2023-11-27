@@ -4,24 +4,23 @@ from robot.libraries.BuiltIn import BuiltIn
 
 
 class ListenSome:
-    ROBOT_LISTENER_API_VERSION = '2'
 
     def __init__(self):
         outpath = os.path.join(os.getenv('TEMPDIR'), 'listen_some.txt')
         self.outfile = open(outpath, 'w')
 
-    def startTest(self, name, attrs):
-        self.outfile.write(name + '\n')
+    def startTest(self, data, result):
+        self.outfile.write(data.name + '\n')
 
-    def endSuite(self, name, attrs):
-        self.outfile.write(attrs['statistics'] + '\n')
+    def endSuite(self, data, result):
+        self.outfile.write(result.stat_message + '\n')
 
     def close(self):
         self.outfile.close()
 
 
 class WithArgs:
-    ROBOT_LISTENER_API_VERSION = '2'
+    ROBOT_LISTENER_API_VERSION = '3'
 
     def __init__(self, arg1, arg2='default'):
         outpath = os.path.join(os.getenv('TEMPDIR'), 'listener_with_args.txt')

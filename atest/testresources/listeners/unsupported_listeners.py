@@ -5,14 +5,21 @@ def close():
     sys.exit('This should not be called')
 
 
-class V1ClassListener:
+class V1Listener:
     ROBOT_LISTENER_API_VERSION = 1
 
     def close(self):
         close()
 
 
-class InvalidVersionClassListener:
+class V4Listener:
+    ROBOT_LISTENER_API_VERSION = '4'
+
+    def close(self):
+        close()
+
+
+class InvalidVersionListener:
     ROBOT_LISTENER_API_VERSION = 'kekkonen'
 
     def close(self):

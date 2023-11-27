@@ -4,7 +4,7 @@ import sys
 
 
 class listener:
-    ROBOT_LISTENER_API_VERSION = 2
+    ROBOT_LISTENER_API_VERSION = '2'
 
     def start_test(self, name, attrs):
         self._stderr("START TEST")

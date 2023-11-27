@@ -9,10 +9,11 @@ class multiple_listenerlibrary:
             listenerlibrary(),
         ]
         if fail:
-            class NoVersionListener:
+            class BadVersionListener:
+                ROBOT_LISTENER_API_VERSION = 666
                 def events_should_be_empty(self):
                     pass
-            self.instances.append(NoVersionListener())
+            self.instances.append(BadVersionListener())
         self.ROBOT_LIBRARY_LISTENER = self.instances
 
     def events_should_be(self, *expected):

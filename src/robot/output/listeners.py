@@ -33,7 +33,7 @@ class Listeners(LoggerApi):
         self._is_logged = IsLogged(log_level)
         self._listeners = self._import_listeners(listeners)
 
-    def _import_listeners(self, listeners, library=None):
+    def _import_listeners(self, listeners, library=None) -> 'list[ListenerFacade]':
         imported = []
         for listener_source in listeners:
             try:
@@ -49,7 +49,7 @@ class Listeners(LoggerApi):
                 imported.append(listener)
         return imported
 
-    def _import_listener(self, listener, library=None):
+    def _import_listener(self, listener, library=None) -> 'ListenerFacade':
         if isinstance(listener, str):
             name, args = split_args_from_name_or_path(listener)
             importer = Importer('listener', logger=LOGGER)
@@ -58,21 +58,18 @@ class Listeners(LoggerApi):
         else:
             # Modules have `__name__`, with others better to use `type_name`.
             name = getattr(listener, '__name__', None) or type_name(listener)
-        if self._get_version(listener, name) == 2:
+        if self._get_version(listener) == 2:
             return ListenerV2Facade(listener, name, library)
         return ListenerV3Facade(listener, name, library)
 
-    def _get_version(self, listener, name):
+    def _get_version(self, listener):
+        version = getattr(listener, 'ROBOT_LISTENER_API_VERSION', 3)
         try:
-            version = int(listener.ROBOT_LISTENER_API_VERSION)
+            version = int(version)
             if version not in (2, 3):
                 raise ValueError
-        except AttributeError:
-            raise DataError(f"Listener '{name}' does not have mandatory "
-                            f"'ROBOT_LISTENER_API_VERSION' attribute.")
         except (ValueError, TypeError):
-            raise DataError(f"Listener '{name}' uses unsupported API version "
-                            f"'{listener.ROBOT_LISTENER_API_VERSION}'.")
+            raise DataError(f"Unsupported API version '{version}'.")
         return version
 
     # Must be property to allow LibraryListeners to override it.
