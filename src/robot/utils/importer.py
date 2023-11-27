@@ -189,7 +189,7 @@ class Importer:
             raise DataError(err.args[0])
         try:
             return imported(*positional, **dict(named))
-        except:
+        except Exception:
             raise DataError('Creating instance failed: %s\n%s' % get_error_details())
 
     def _get_arg_spec(self, imported):
@@ -215,7 +215,7 @@ class _Importer:
         importlib.invalidate_caches()
         try:
             return __import__(name, fromlist=fromlist)
-        except:
+        except Exception:
             message, traceback = get_error_details(full_traceback=False)
             path = '\n'.join(f'  {p}' for p in sys.path)
             raise DataError(f'{message}\n{traceback}\nPYTHONPATH:\n{path}')

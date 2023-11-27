@@ -31,7 +31,49 @@ class Listeners(LoggerApi):
 
     def __init__(self, listeners=(), log_level='INFO'):
         self._is_logged = IsLogged(log_level)
-        self._listeners = import_listeners(listeners) if listeners else []
+        self._listeners = self._import_listeners(listeners)
+
+    def _import_listeners(self, listeners, library=None):
+        imported = []
+        for listener_source in listeners:
+            try:
+                listener = self._import_listener(listener_source, library)
+            except DataError as err:
+                name = listener_source \
+                    if isinstance(listener_source, str) else type_name(listener_source)
+                msg = f"Taking listener '{name}' into use failed: {err}"
+                if library:
+                    raise DataError(msg)
+                LOGGER.error(msg)
+            else:
+                imported.append(listener)
+        return imported
+
+    def _import_listener(self, listener, library=None):
+        if isinstance(listener, str):
+            name, args = split_args_from_name_or_path(listener)
+            importer = Importer('listener', logger=LOGGER)
+            listener = importer.import_class_or_module(os.path.normpath(name),
+                                                       instantiate_with_args=args)
+        else:
+            # Modules have `__name__`, with others better to use `type_name`.
+            name = getattr(listener, '__name__', None) or type_name(listener)
+        if self._get_version(listener, name) == 2:
+            return ListenerV2Facade(listener, name, library)
+        return ListenerV3Facade(listener, name, library)
+
+    def _get_version(self, listener, name):
+        try:
+            version = int(listener.ROBOT_LISTENER_API_VERSION)
+            if version not in (2, 3):
+                raise ValueError
+        except AttributeError:
+            raise DataError(f"Listener '{name}' does not have mandatory "
+                            f"'ROBOT_LISTENER_API_VERSION' attribute.")
+        except (ValueError, TypeError):
+            raise DataError(f"Listener '{name}' uses unsupported API version "
+                            f"'{listener.ROBOT_LISTENER_API_VERSION}'.")
+        return version
 
     # Must be property to allow LibraryListeners to override it.
     @property
@@ -211,7 +253,7 @@ class LibraryListeners(Listeners):
         self._listeners.pop()
 
     def register(self, listeners, library):
-        listeners = import_listeners(listeners, library=library)
+        listeners = self._import_listeners(listeners, library=library)
         self._listeners[-1].extend(listeners)
 
     def close(self):
@@ -568,52 +610,6 @@ class ListenerV2Facade(ListenerFacade):
 
     def close(self):
         self._close()
-
-
-def import_listener(listener):
-    if not isinstance(listener, str):
-        # Modules have `__name__`, with others better to use `type_name`.
-        name = getattr(listener, '__name__', None) or type_name(listener)
-        return listener, name
-    name, args = split_args_from_name_or_path(listener)
-    importer = Importer('listener', logger=LOGGER)
-    listener = importer.import_class_or_module(os.path.normpath(name),
-                                               instantiate_with_args=args)
-    return listener, name
-
-
-def get_version(listener, name):
-    try:
-        version = int(listener.ROBOT_LISTENER_API_VERSION)
-        if version not in (2, 3):
-            raise ValueError
-    except AttributeError:
-        raise DataError(f"Listener '{name}' does not have mandatory "
-                        f"'ROBOT_LISTENER_API_VERSION' attribute.")
-    except (ValueError, TypeError):
-        raise DataError(f"Listener '{name}' uses unsupported API version "
-                        f"'{listener.ROBOT_LISTENER_API_VERSION}'.")
-    return version
-
-
-def import_listeners(listeners, library=None):
-    imported = []
-    for listener_source in listeners:
-        try:
-            listener, name = import_listener(listener_source)
-            version = get_version(listener, name)
-            if version == 2:
-                imported.append(ListenerV2Facade(listener, name, library))
-            else:
-                imported.append(ListenerV3Facade(listener, name, library))
-        except DataError as err:
-            name = listener_source \
-                    if isinstance(listener_source, str) else type_name(listener_source)
-            msg = f"Taking listener '{name}' into use failed: {err}"
-            if library:
-                raise DataError(msg)
-            LOGGER.error(msg)
-    return imported
 
 
 class ListenerMethod:
