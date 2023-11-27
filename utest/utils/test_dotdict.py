@@ -2,7 +2,7 @@ import unittest
 from collections import OrderedDict
 
 from robot.utils import DotDict
-from robot.utils.asserts import (assert_equal, assert_false, assert_not_equal,
+from robot.utils.asserts import (assert_equal, assert_false,
                                  assert_raises, assert_true)
 
 
@@ -34,7 +34,8 @@ class TestDotDict(unittest.TestCase):
         assert_true(self.dd != DotDict())
 
     def test_equality_with_normal_dict(self):
-        assert_equal(self.dd, {'z': 1, 2: 'y', 'x': 3})
+        assert_true(self.dd == {'z': 1, 2: 'y', 'x': 3})
+        assert_false(self.dd != {'z': 1, 2: 'y', 'x': 3})
 
     def test_hash(self):
         assert_raises(TypeError, hash, self.dd)
@@ -79,12 +80,17 @@ class TestDotDict(unittest.TestCase):
         dd1 = DotDict(sorted(d.items()))
         dd2 = DotDict(reversed(list(dd1.items())))
         for d1, d2 in [(dd1, dd2), (dd1, d), (dd2, d), (dd1, od1), (dd2, od2)]:
-            assert_equal(d1, d2)
-            assert_equal(d2, d1)
+            assert_true(d1 == d2)
+            assert_false(d1 != d2)
+            assert_true(d2 == d1)
+            assert_false(d2 != d1)
         for d1, d2 in [(dd1, od2), (dd2, od1)]:
-            assert_equal(d1, d2)
-            assert_equal(d2, d1)
-        assert_not_equal(od1, od2)
+            assert_true(d1 == d2)
+            assert_false(d1 != d2)
+            assert_true(d2 == d1)
+            assert_false(d2 != d1)
+        assert_false(od1 == od2)
+        assert_true(od1 != od2)
 
 
 class TestNestedDotDict(unittest.TestCase):
