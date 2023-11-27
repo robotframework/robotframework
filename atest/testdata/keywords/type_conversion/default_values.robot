@@ -10,17 +10,17 @@ ${PUREPATH}              ${{pathlib.PurePath('x/y')}}
 
 *** Test Cases ***
 Integer
-    Integer              42                        ${42}
-    Integer              -1                        ${-1}
-    Integer              9999999999999999999999    ${9999999999999999999999}
+    Integer              42                        42
+    Integer              -1                        -1
+    Integer              9999999999999999999999    9999999999999999999999
     Integer              123 456 789               123456789
     Integer              123_456_789               123456789
     Integer              - 123 456 789             -123456789
     Integer              -_123_456_789             -123456789
 
 Integer as float
-    Integer              1.0                       ${1.0}
-    Integer              1.5                       ${1.5}
+    Integer              1.0                       1
+    Integer              1.5                       1.5
 
 Integer as hex
     Integer              0x0                        0
@@ -66,11 +66,11 @@ Invalid integer
     Integer              0x0x0
 
 Float
-    Float                1.5                       ${1.5}
-    Float                -1                        ${-1.0}
-    Float                1e6                       ${1000000.0}
+    Float                1.5                       1.5
+    Float                -1                        -1.0
+    Float                1e6                       1000000.0
     Float                1 000 000 . 0_0_1         1000000.001
-    Float                -1.2e-3                   ${-0.0012}
+    Float                -1.2e-3                   -0.0012
 
 Invalid float
     [Template]           Invalid value is passed as-is
@@ -87,19 +87,19 @@ Invalid decimal
     Decimal              foobar
 
 Boolean
-    Boolean              True                      ${True}
-    Boolean              YES                       ${True}
-    Boolean              on                        ${True}
-    Boolean              1                         ${True}
-    Boolean              false                     ${False}
-    Boolean              No                        ${False}
-    Boolean              oFF                       ${False}
-    Boolean              0                         ${False}
-    Boolean              ${EMPTY}                  ${False}
-    Boolean              none                      ${None}
-    Boolean              ${None}                   ${None}
-    Boolean              ${0}                      ${0}
-    Boolean              ${1.1}                    ${1.1}
+    Boolean              True                      True
+    Boolean              YES                       True
+    Boolean              on                        True
+    Boolean              1                         True
+    Boolean              false                     False
+    Boolean              No                        False
+    Boolean              oFF                       False
+    Boolean              0                         False
+    Boolean              ${EMPTY}                  False
+    Boolean              none                      None
+    Boolean              ${None}                   None
+    Boolean              ${0}                      0
+    Boolean              ${1.1}                    1.1
 
 Invalid boolean
     [Template]           Invalid value is passed as-is
@@ -107,11 +107,11 @@ Invalid boolean
     Boolean              ${LIST}                   expected=${LIST}
 
 String
-    String               Hello, world!             u'Hello, world!'
-    String               åäö                       u'åäö'
-    String               None                      u'None'
-    String               True                      u'True'
-    String               []                        u'[]'
+    String               Hello, world!             'Hello, world!'
+    String               åäö                       'åäö'
+    String               None                      'None'
+    String               True                      'True'
+    String               []                        '[]'
     String               ${42}                     42
     String               ${None}                   None
     String               ${LIST}                   ['foo', 'bar']
@@ -304,11 +304,6 @@ Positional as named
     Integer              argument=-1               expected=-1
     Float                argument=1e2              expected=100.0
     Dictionary           argument={'a': 1}         expected={'a': 1}
-
-Invalid positional as named
-    Integer              argument=1.0              expected=1.0
-    Float                argument=xxx              expected='xxx'
-    Dictionary           argument=[0]              expected='[0]'
 
 Kwonly
     Kwonly               argument=1.0              expected=1.0

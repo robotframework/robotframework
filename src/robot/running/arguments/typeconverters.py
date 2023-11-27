@@ -270,6 +270,15 @@ class IntegerConverter(TypeConverter):
         try:
             return int(value, base)
         except ValueError:
+            if base == 10:
+                try:
+                    value, denominator = Decimal(value).as_integer_ratio()
+                except (InvalidOperation, ValueError, OverflowError):
+                    pass
+                else:
+                    if denominator != 1:
+                        raise ValueError('Conversion would lose precision.')
+                    return value
             raise ValueError
 
     def _get_base(self, value):

@@ -8,20 +8,22 @@ Resource                 conversion.resource
 
 *** Test Cases ***
 Integer
-    Integer              42                        ${42}
-    Int                  -1                        ${-1}
-    Long                 9999999999999999999999    ${9999999999999999999999}
+    Integer              42                        42
+    Integer              -42                       -42
+    Int                  1.0                       1
+    Int                  1e100                     10**100
+    Long                 9999999999999999999999    9999999999999999999999
 
 Invalid integer
     [Template]           Conversion Should Fail
     Integer              foobar
-    Int                  1.0                       type=integer
+    Int                  inf                       type=integer
 
 Float
-    Float                1.5                       ${1.5}
-    Double               -1                        ${-1.0}
-    Float                1e6                       ${1000000.0}
-    Double               -1.2e-3                   ${-0.0012}
+    Float                1.5                       1.5
+    Double               -1                        -1.0
+    Float                1e6                       1000000.0
+    Double               -1.2e-3                   -0.0012
 
 Invalid float
     [Template]           Conversion Should Fail
@@ -37,16 +39,16 @@ Invalid decimal
     Decimal              foobar
 
 Boolean
-    Boolean              True                      ${True}
-    Bool                 YES                       ${True}
-    Boolean              on                        ${True}
-    Bool                 1                         ${True}
-    Boolean              false                     ${False}
-    Bool                 No                        ${False}
-    Boolean              oFF                       ${False}
-    Bool                 0                         ${False}
-    Boolean              ${EMPTY}                  ${False}
-    Bool                 none                      ${None}
+    Boolean              True                      True
+    Bool                 YES                       True
+    Boolean              on                        True
+    Bool                 1                         True
+    Boolean              false                     False
+    Bool                 No                        False
+    Boolean              oFF                       False
+    Bool                 0                         False
+    Boolean              ${EMPTY}                  False
+    Bool                 none                      None
 
 Invalid boolean is accepted as-is
     Boolean              FooBar                    'FooBar'

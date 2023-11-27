@@ -20,6 +20,8 @@ Integer
     Integer              123_456_789               123456789
     Integer              - 123 456 789             -123456789
     Integer              -_123_456_789             -123456789
+    Integer              1.0                       1
+    Integer              10E99                     10**100
     Integer              ${41}                     41
     Integer              ${-4.0}                   -4
 
@@ -60,7 +62,7 @@ Integer as binary
 Invalid integer
     [Template]           Conversion Should Fail
     Integer              foobar
-    Integer              1.0
+    Integer              inf
     Integer              0xINVALID
     Integer              0o8
     Integer              0b2
@@ -76,7 +78,7 @@ Integral (abc)
 Invalid integral (abc)
     [Template]           Conversion Should Fail
     Integral             foobar                    type=integer
-    Integral             1.0                       type=integer
+    Integral             NaN                       type=integer
     Integral             ${LIST}                   type=integer    arg_type=list
 
 Float
@@ -505,7 +507,7 @@ Positional as named
 
 Invalid positional as named
     [Template]           Conversion Should Fail
-    Integer              argument=1.0
+    Integer              argument=inf
     Float                argument=xxx
     Dictionary           argument=[0]                                    error=Value is list, not dict.
 

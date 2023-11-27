@@ -1197,7 +1197,7 @@ __ `Implicit argument types based on default values`_
           does not have a type hint. That will change conversion behavior in cases
           like `arg: list = None` where `None` conversion will not be attempted
           anymore. Library creators are strongly recommended to specify the default
-          value type explicitly like `arg: Union[list, None] = None` already now.
+          value type explicitly like `arg: list | None = None` already now.
 
 The type to use can be specified either using concrete types (e.g. list_),
 by using Abstract Base Classes (ABC) (e.g. Sequence_), or by using sub
@@ -1233,17 +1233,21 @@ Other types cause conversion failures.
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | int_         | Integral_     | integer,   | str_,        | Conversion is done using the int_ built-in function. Floats    | | `42`                               |
    |              |               | long       | float_       | are accepted only if they can be represented as integers       | | `-1`                               |
-   |              |               |            |              | exactly. For example, `1.0` is accepted and `1.1` is not.      | | `0xFF`                             |
-   |              |               |            |              | If converting a string to an integer fails and the type        | | `0o777`                            |
-   |              |               |            |              | is got implicitly based on a default value, conversion to      | | `0b1010`                           |
-   |              |               |            |              | float is attempted as well.                                    | | `10 000 000`                       |
-   |              |               |            |              |                                                                | | `0xBAD_C0FFEE`                     |
-   |              |               |            |              | Starting from RF 4.1, it is possible to use hexadecimal,       | | `${1}`                             |
-   |              |               |            |              | octal and binary numbers by prefixing values with              | | `${1.0}`                           |
-   |              |               |            |              | `0x`, `0o` and `0b`, respectively.                             |                                      |
+   |              |               |            |              | exactly. For example, `1.0` is accepted and `1.1` is not.      | | `10 000 000`                       |
+   |              |               |            |              | If converting a string to an integer fails and the type        | | `1e100`                            |
+   |              |               |            |              | is got implicitly based on a default value, conversion to      | | `0xFF`                             |
+   |              |               |            |              | float is attempted as well.                                    | | `0o777`                            |
+   |              |               |            |              |                                                                | | `0b1010`                           |
+   |              |               |            |              | Starting from RF 4.1, it is possible to use hexadecimal,       | | `0xBAD_C0FFEE`                     |
+   |              |               |            |              | octal and binary numbers by prefixing values with              | | `${1}`                             |
+   |              |               |            |              | `0x`, `0o` and `0b`, respectively.                             | | `${1.0}`                           |
    |              |               |            |              |                                                                |                                      |
    |              |               |            |              | Starting from RF 4.1, spaces and underscores can be used as    |                                      |
    |              |               |            |              | visual separators for digit grouping purposes.                 |                                      |
+   |              |               |            |              |                                                                |                                      |
+   |              |               |            |              | Starting from RF 7.0, strings representing floats like are     |                                      |
+   |              |               |            |              | accepted as long as their decimal part is zero. This includes  |                                      |
+   |              |               |            |              | floats using the scientific notation like `1e100`.             |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | float_       | Real_         | double     | str_,        | Conversion is done using the float_ built-in.                  | | `3.14`                             |
    |              |               |            | Real_        |                                                                | | `2.9979e8`                         |

@@ -133,9 +133,6 @@ Unknown types are not converted
 Positional as named
     Check Test Case    ${TESTNAME}
 
-Invalid positional as named
-    Check Test Case    ${TESTNAME}
-
 Kwonly
     Check Test Case    ${TESTNAME}
 

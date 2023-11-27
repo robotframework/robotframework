@@ -18,11 +18,20 @@ ${PUREPATH}              ${{pathlib.PurePath('x/y')}}
 Integer
     Integer              42                        42
     Integer              -1                        -1
+    Integer              0                         0
+    Integer              -0                        0
     Integer              9999999999999999999999    9999999999999999999999
     Integer              123 456 789               123456789
     Integer              123_456_789               123456789
     Integer              - 123 456 789             -123456789
     Integer              -_123_456_789             -123456789
+    Integer              42.0                      42
+    Integer              -1.00000                  -1
+    Integer              0.0                       0
+    Integer              -0.0                      0
+    Integer              1e1000                    10**1000
+    Integer              -1.23E4                   -12300
+    Integer              100_e_-_2                 1
     Integer              ${41}                     41
     Integer              ${-4.0}                   -4
 
@@ -63,8 +72,11 @@ Integer as binary
 Invalid integer
     [Template]           Conversion Should Fail
     Integer              foobar
-    Integer              1.0
+    Integer              NaN
+    Integer              inf
     Integer              0xINVALID
+    Integer              1.1                       error=Conversion would lose precision.
+    Integer              1e-1000                   error=Conversion would lose precision.
     Integer              0o8
     Integer              0b2
     Integer              00b1
@@ -74,12 +86,13 @@ Invalid integer
 Integral (abc)
     Integral             42                        42
     Integral             -1                        -1
+    Integral             1.0                       1
     Integral             999_999 999_999 999       999999999999999
 
 Invalid integral (abc)
     [Template]           Conversion Should Fail
     Integral             foobar                    type=integer
-    Integral             1.0                       type=integer
+    Integral             inf                       type=integer
     Integral             ${LIST}                   type=integer    arg_type=list
 
 Float
@@ -533,7 +546,7 @@ Positional as named
 
 Invalid positional as named
     [Template]           Conversion Should Fail
-    Integer              argument=1.0
+    Integer              argument=bad
     Float                argument=xxx
     Dictionary           argument=[0]                                    error=Value is list, not dict.
 
