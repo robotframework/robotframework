@@ -171,8 +171,6 @@ class UserKeywordRunner:
         except ReturnFromKeyword as exception:
             return_value = exception.return_value
             error = exception.earlier_failures
-        except (BreakLoop, ContinueLoop) as exception:
-            success = exception
         except ExecutionPassed as exception:
             success = exception
             error = exception.earlier_failures
