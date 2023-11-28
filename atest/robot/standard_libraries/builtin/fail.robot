@@ -7,9 +7,15 @@ Fail
     ${tc}=    Check Test Tags    ${TESTNAME}    force1    force2
     Length Should Be    ${tc.kws[0].msgs}    1
 
-Fail With Message
+Fail with message
     ${tc}=    Check Test Tags    ${TESTNAME}    force1    force2
     Length Should Be    ${tc.kws[0].msgs}    1
+
+Fail with non-string message
+    Check Test Case    ${TESTNAME}
+
+Fail with non-true message having non-empty string representation
+    Check Test Case    ${TESTNAME}
 
 Set one tag
     ${tc}=    Check Test Tags    ${TESTNAME}    force1    force2    tag

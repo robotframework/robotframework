@@ -526,7 +526,7 @@ class _Verify(_BuiltInBase):
         See `Fatal Error` if you need to stop the whole test execution.
         """
         self._set_and_remove_tags(tags)
-        raise AssertionError(msg) if msg else AssertionError()
+        raise AssertionError(msg) if msg is not None else AssertionError()
 
     def fatal_error(self, msg=None):
         """Stops the whole test execution.
