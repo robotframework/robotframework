@@ -4,6 +4,7 @@ import os
 import tempfile
 import unittest
 import warnings
+from inspect import getattr_static
 from pathlib import Path
 
 from jsonschema import Draft202012Validator
@@ -181,7 +182,8 @@ class TestCopy(unittest.TestCase):
 
     def get_non_property_attrs(self, model1, model2):
         for attr in dir(model1):
-            if 'parent' in attr or isinstance(getattr(type(model1), attr, None), property):
+            if (attr in ('parent', 'owner')
+                    or isinstance(getattr_static(model1, attr, None), property)):
                 continue
             value1 = getattr(model1, attr)
             value2 = getattr(model2, attr)
@@ -210,10 +212,7 @@ class TestCopy(unittest.TestCase):
         if type(value1) is not type(value2):
             return False
         # None, Booleans, small numbers, etc. are singletons.
-        try:
-            return id(value1) == id(copy.deepcopy(value1))
-        except TypeError:  # Got in some cases at least with Python 2.6
-            return True
+        return id(value1) == id(copy.deepcopy(value1))
 
 
 class TestLineNumberAndSource(unittest.TestCase):

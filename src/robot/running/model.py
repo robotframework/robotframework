@@ -486,13 +486,13 @@ class TestSuite(model.TestSuite[Keyword, TestCase]):
         #: :class:`ResourceFile` instance containing imports, variables and
         #: keywords the suite owns. When data is parsed from the file system,
         #: this data comes from the same test case file that creates the suite.
-        self.resource = ResourceFile(parent=self)
+        self.resource = ResourceFile(owner=self)
 
     @setter
     def resource(self, resource: 'ResourceFile|dict') -> 'ResourceFile':
         if isinstance(resource, dict):
             resource = ResourceFile.from_dict(resource)
-            resource.parent = self
+            resource.owner = self
         return resource
 
     @classmethod
@@ -683,19 +683,19 @@ class Variable(ModelObject):
     def __init__(self, name: str = '',
                  value: Sequence[str] = (),
                  separator: 'str|None' = None,
-                 parent: 'ResourceFile|None' = None,
+                 owner: 'ResourceFile|None' = None,
                  lineno: 'int|None' = None,
                  error: 'str|None' = None):
         self.name = name
         self.value = tuple(value)
         self.separator = separator
-        self.parent = parent
+        self.owner = owner
         self.lineno = lineno
         self.error = error
 
     @property
     def source(self) -> 'Path|None':
-        return self.parent.source if self.parent is not None else None
+        return self.owner.source if self.owner is not None else None
 
     def report_error(self, message: str, level: str = 'ERROR'):
         source = self.source or '<unknown>'
@@ -714,13 +714,13 @@ class Variable(ModelObject):
 
 class ResourceFile(ModelObject):
     repr_args = ('source',)
-    __slots__ = ('_source', 'parent', 'doc')
+    __slots__ = ('_source', 'owner', 'doc')
 
     def __init__(self, source: 'Path|str|None' = None,
-                 parent: 'TestSuite|None' = None,
+                 owner: 'TestSuite|None' = None,
                  doc: str = ''):
         self.source = source
-        self.parent = parent
+        self.owner = owner
         self.doc = doc
         self.imports = []
         self.variables = []
@@ -730,8 +730,8 @@ class ResourceFile(ModelObject):
     def source(self) -> 'Path|None':
         if self._source:
             return self._source
-        if self.parent:
-            return self.parent.source
+        if self.owner:
+            return self.owner.source
         return None
 
     @source.setter
@@ -814,7 +814,7 @@ class ResourceFile(ModelObject):
 class UserKeyword(ModelObject):
     repr_args = ('name', 'args')
     fixture_class = Keyword
-    __slots__ = ['name', 'args', 'doc', 'timeout', 'lineno', 'parent', 'error',
+    __slots__ = ['name', 'args', 'doc', 'timeout', 'lineno', 'owner', 'error',
                  '_setup', '_teardown']
 
     def __init__(self, name: str = '',
@@ -823,7 +823,7 @@ class UserKeyword(ModelObject):
                  tags: Sequence[str] = (),
                  timeout: 'str|None' = None,
                  lineno: 'int|None' = None,
-                 parent: 'ResourceFile|None' = None,
+                 owner: 'ResourceFile|None' = None,
                  error: 'str|None' = None):
         self.name = name
         self.args = tuple(args)
@@ -831,7 +831,7 @@ class UserKeyword(ModelObject):
         self.tags = tags
         self.timeout = timeout
         self.lineno = lineno
-        self.parent = parent
+        self.owner = owner
         self.error = error
         self.body = []
         self._setup = None
@@ -893,7 +893,7 @@ class UserKeyword(ModelObject):
 
     @property
     def source(self) -> 'Path|None':
-        return self.parent.source if self.parent is not None else None
+        return self.owner.source if self.owner is not None else None
 
     def to_dict(self) -> DataDict:
         data: DataDict = {'name': self.name}
@@ -923,7 +923,7 @@ class Import(ModelObject):
                  name: str,
                  args: Sequence[str] = (),
                  alias: 'str|None' = None,
-                 parent: 'ResourceFile|None' = None,
+                 owner: 'ResourceFile|None' = None,
                  lineno: 'int|None' = None):
         if type not in (self.LIBRARY, self.RESOURCE, self.VARIABLES):
             raise ValueError(f"Invalid import type: Expected '{self.LIBRARY}', "
@@ -932,12 +932,12 @@ class Import(ModelObject):
         self.name = name
         self.args = tuple(args)
         self.alias = alias
-        self.parent = parent
+        self.owner = owner
         self.lineno = lineno
 
     @property
     def source(self) -> 'Path|None':
-        return self.parent.source if self.parent is not None else None
+        return self.owner.source if self.owner is not None else None
 
     @property
     def directory(self) -> 'Path|None':
@@ -978,8 +978,8 @@ class Import(ModelObject):
 
 class Imports(model.ItemList):
 
-    def __init__(self, parent: ResourceFile, imports: Sequence[Import] = ()):
-        super().__init__(Import, {'parent': parent}, items=imports)
+    def __init__(self, owner: ResourceFile, imports: Sequence[Import] = ()):
+        super().__init__(Import, {'owner': owner}, items=imports)
 
     def library(self, name: str, args: Sequence[str] = (), alias: 'str|None' = None,
                 lineno: 'int|None' = None) -> Import:
@@ -1011,11 +1011,11 @@ class Imports(model.ItemList):
 
 class Variables(model.ItemList[Variable]):
 
-    def __init__(self, parent: ResourceFile, variables: Sequence[Variable] = ()):
-        super().__init__(Variable, {'parent': parent}, items=variables)
+    def __init__(self, owner: ResourceFile, variables: Sequence[Variable] = ()):
+        super().__init__(Variable, {'owner': owner}, items=variables)
 
 
 class UserKeywords(model.ItemList[UserKeyword]):
 
-    def __init__(self, parent: ResourceFile, keywords: Sequence[UserKeyword] = ()):
-        super().__init__(UserKeyword, {'parent': parent}, items=keywords)
+    def __init__(self, owner: ResourceFile, keywords: Sequence[UserKeyword] = ()):
+        super().__init__(UserKeyword, {'owner': owner}, items=keywords)
