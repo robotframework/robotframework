@@ -119,7 +119,7 @@ Small typo should provide recommendation
     Check Test Case    ${TEST NAME}
 
 Invalid empty line continuation in arguments should throw an error
-    Error in File    4    parsing/user_keyword_settings.robot    213
+    Error in File    4    parsing/user_keyword_settings.robot    214
     ...    Creating keyword 'Invalid empty line continuation in arguments should throw an error' failed:
     ...    Invalid argument specification: Invalid argument syntax ''.
 

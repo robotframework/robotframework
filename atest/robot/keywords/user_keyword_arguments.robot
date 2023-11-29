@@ -85,12 +85,12 @@ Caller does not see modifications to varargs
 
 Invalid Arguments Spec
     [Template]    Verify Invalid Argument Spec
-    0    337    Invalid argument syntax       Invalid argument syntax 'no deco'.
-    1    341    Non-default after defaults    Non-default argument after default arguments.
-    2    345    Default with varargs          Only normal arguments accept default values, list arguments like '\@{varargs}' do not.
-    3    349    Default with kwargs           Only normal arguments accept default values, dictionary arguments like '\&{kwargs}' do not.
-    4    353    Kwargs not last               Only last argument can be kwargs.
-    5    357    Multiple errors               Multiple errors:
+    0    338    Invalid argument syntax       Invalid argument syntax 'no deco'.
+    1    342    Non-default after defaults    Non-default argument after default arguments.
+    2    346    Default with varargs          Only normal arguments accept default values, list arguments like '\@{varargs}' do not.
+    3    350    Default with kwargs           Only normal arguments accept default values, dictionary arguments like '\&{kwargs}' do not.
+    4    354    Kwargs not last               Only last argument can be kwargs.
+    5    358    Multiple errors               Multiple errors:
     ...                                       - Invalid argument syntax 'invalid'.
     ...                                       - Non-default argument after default arguments.
     ...                                       - Cannot have multiple varargs.

@@ -34,11 +34,7 @@ class UserLibrary:
         self.handlers = HandlerStore()
         self.source = source
         for kw in resource.keywords:
-            try:
-                handler = self._create_handler(kw)
-            except DataError as error:
-                handler = UserErrorHandler(error, kw.name, self.name, source, kw.lineno)
-                self._log_creating_failed(handler, error)
+            handler = self._create_handler(kw)
             embedded = isinstance(handler, EmbeddedArgumentsHandler)
             try:
                 self.handlers.add(handler, embedded)
@@ -46,16 +42,9 @@ class UserLibrary:
                 self._log_creating_failed(handler, error)
 
     def _create_handler(self, kw):
-        if kw.error:
-            raise DataError(kw.error)
-        if not kw.body:
-            raise DataError('User keyword cannot be empty.')
-        if not kw.name:
-            raise DataError('User keyword name cannot be empty.')
-        embedded = EmbeddedArguments.from_name(kw.name)
-        if not embedded:
-            return UserKeywordHandler(kw, self.name)
-        return EmbeddedArgumentsHandler(kw, self.name, embedded)
+        if kw.embedded_args:
+            return EmbeddedArgumentsHandler(kw, self.name, kw.embedded_args)
+        return UserKeywordHandler(kw, self.name)
 
     def _log_creating_failed(self, handler, error):
         LOGGER.error(f"Error in file '{self.source}' on line {handler.lineno}: "
@@ -83,6 +72,7 @@ class UserKeywordHandler:
         self.arguments = keyword.args
         self.timeout = keyword.timeout
         self.body = keyword.body
+        self.error = keyword.error
         self.setup = keyword.setup if keyword.has_setup else None
         self.teardown = keyword.teardown if keyword.has_teardown else None
 

@@ -116,14 +116,19 @@ Non-existing keyword name
     This is validated
 
 Invalid syntax in UK
-    [Documentation]    FAIL    Invalid argument specification: Invalid argument syntax '${arg'.
+    [Documentation]    FAIL
+    ...    Invalid argument specification: Multiple errors:
+    ...    - Invalid argument syntax '\${oops'.
+    ...    - Non-default argument after default arguments.
     Invalid Syntax UK
     This is validated
 
 Multiple Failures
     [Documentation]    FAIL    Several failures occurred:\n\n
     ...    1) Keyword 'BuiltIn.Should Be Equal' expected 2 to 8 arguments, got 1.\n\n
-    ...    2) Invalid argument specification: Invalid argument syntax '${arg'.\n\n
+    ...    2) Invalid argument specification: Multiple errors:\n
+    ...    - Invalid argument syntax '\${oops'.\n
+    ...    - Non-default argument after default arguments.\n\n
     ...    3) Keyword 'Some Return Value' expected 2 arguments, got 3.\n\n
     ...    4) No keyword with name 'Yet another non-existing keyword' found.\n\n
     ...    5) No keyword with name 'Does not exist' found.
@@ -159,7 +164,7 @@ Keyword with teardown with existing variable
     [Teardown]    ${TEARDOWN}    ${I DO NOT EXIST}
 
 Invalid Syntax UK
-    [Arguments]    ${arg
+    [Arguments]    ${arg}=def    ${oops
     No Operation
 
 Some Return Value

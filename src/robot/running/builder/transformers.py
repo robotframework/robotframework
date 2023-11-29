@@ -289,24 +289,36 @@ class KeywordBuilder(BodyBuilder):
         self.return_setting = None
 
     def build(self, node):
-        # Possible parsing errors on this level aren't reported further because:
-        # - Here we only validate that keyword body or name isn't empty.
-        # - Both of them are validated again during execution.
-        # - This way e.g. model modifiers can add content to body.
-        self.model.config(name=node.name, lineno=node.lineno)
+        try:
+            # Validate only name here. Reporting all parsing errors would report also
+            # body being empty, but we want to validate it only at parsing time.
+            if not node.name:
+                raise DataError('User keyword name cannot be empty.')
+            self.model.config(name=node.name, lineno=node.lineno)
+        except DataError as err:
+            # Errors other than name being empty mean that name contains invalid
+            # embedded arguments. Need to set `_setter__name` to bypass `@setter`.
+            self.model.config(_setter__name=node.name, lineno=node.lineno,
+                              error=str(err))
+            self._report_error(node, err)
         self.generic_visit(node)
         if self.return_setting:
             self.model.body.create_return(self.return_setting)
+
+    def _report_error(self, node, error):
+        error = f"Creating keyword '{self.model.name}' failed: {error}"
+        ErrorReporter(self.model.source).report_error(node, error)
 
     def visit_Documentation(self, node):
         self.model.doc = node.value
 
     def visit_Arguments(self, node):
-        if not node.errors:
-            self.model.args = node.values
+        if node.errors:
+            error = 'Invalid argument specification: ' + format_error(node.errors)
+            self.model.error = error
+            self._report_error(node, error)
         else:
-            error = format_error(node.errors)
-            self.model.error = f'Invalid argument specification: {error}'
+            self.model.args = node.values
 
     def visit_Tags(self, node):
         for tag in node.values:
@@ -476,27 +488,31 @@ class ErrorReporter(ModelVisitor):
     def visit_ReturnSetting(self, node):
         # Empty 'visit_Keyword' above prevents calling this when visiting the whole
         # model, but 'KeywordBuilder.visit_ReturnSetting' visits the node it gets.
-        LOGGER.warn(self._format_message(node.get_token(Token.RETURN_SETTING)))
+        self.report_error(node.get_token(Token.RETURN_SETTING), warn=True)
 
     def visit_SectionHeader(self, node):
         token = node.get_token(*Token.HEADER_TOKENS)
         if not token.error:
             return
-        message = self._format_message(token)
         if token.type == Token.INVALID_HEADER:
-            if self.raise_on_invalid_header:
-                raise DataError(message)
-            else:
-                LOGGER.error(message)
+            self.report_error(token, throw=self.raise_on_invalid_header)
         else:
             # Errors, other than totally invalid headers, can occur only with
             # deprecated singular headers, and we want to report them as warnings.
             # A more generic solution for separating errors and warnings would be good.
-            LOGGER.warn(self._format_message(token))
+            self.report_error(token, warn=True)
 
     def visit_Error(self, node):
-        for error in node.get_tokens(Token.ERROR):
-            LOGGER.error(self._format_message(error))
+        for token in node.get_tokens(Token.ERROR):
+            self.report_error(token)
 
-    def _format_message(self, token):
-        return f"Error in file '{self.source}' on line {token.lineno}: {token.error}"
+    def report_error(self, source, error=None, warn=False, throw=False):
+        if not error:
+            if isinstance(source, Token):
+                error = source.error
+            else:
+                error = format_error(source.errors)
+        message = f"Error in file '{self.source}' on line {source.lineno}: {error}"
+        if throw:
+            raise DataError(message)
+        LOGGER.write(message, level='WARN' if warn else 'ERROR')

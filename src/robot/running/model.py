@@ -48,7 +48,7 @@ from robot.result import (Break as BreakResult, Continue as ContinueResult,
 from robot.utils import getshortdoc, NOT_SET, setter
 from robot.variables import VariableResolver
 
-from .arguments import ArgumentSpec, UserKeywordArgumentParser
+from .arguments import ArgumentSpec, EmbeddedArguments, UserKeywordArgumentParser
 from .bodyrunner import ForRunner, IfRunner, KeywordRunner, TryRunner, WhileRunner
 from .randomizer import Randomizer
 from .statusreporter import StatusReporter
@@ -826,7 +826,7 @@ class ResourceFile(ModelObject):
 class UserKeyword(ModelObject):
     repr_args = ('name', 'args')
     fixture_class = Keyword
-    __slots__ = ['name', 'doc', 'timeout', 'lineno', 'owner', 'error',
+    __slots__ = ['embedded_args', 'doc', 'timeout', 'lineno', 'owner', 'error',
                  '_setup', '_teardown']
 
     def __init__(self, name: str = '',
@@ -837,6 +837,7 @@ class UserKeyword(ModelObject):
                  lineno: 'int|None' = None,
                  owner: 'ResourceFile|None' = None,
                  error: 'str|None' = None):
+        self.embedded_args: EmbeddedArguments | None = None
         self.name = name
         self.args = args
         self.doc = doc
@@ -848,6 +849,11 @@ class UserKeyword(ModelObject):
         self.body = []
         self._setup = None
         self._teardown = None
+
+    @setter
+    def name(self, name: str) -> str:
+        self.embedded_args = EmbeddedArguments.from_name(name)
+        return name
 
     @property
     def full_name(self):

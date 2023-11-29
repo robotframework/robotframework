@@ -102,10 +102,11 @@ Non-existing keyword name
 
 Invalid syntax in UK
     Check Test Case    ${TESTNAME}
-    Error In File    0    cli/dryrun/dryrun.robot    161
-    ...    Creating keyword 'Invalid Syntax UK' failed:
-    ...    Invalid argument specification:
-    ...    Invalid argument syntax '\${arg'.
+    Error In File    0    cli/dryrun/dryrun.robot    167
+    ...    SEPARATOR=\n
+    ...    Creating keyword 'Invalid Syntax UK' failed: Invalid argument specification: Multiple errors:
+    ...    - Invalid argument syntax '\${oops'.
+    ...    - Non-default argument after default arguments.
 
 Multiple Failures
     Check Test Case    ${TESTNAME}

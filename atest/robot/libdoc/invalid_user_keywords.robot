@@ -6,7 +6,7 @@ Resource          libdoc_resource.robot
 Invalid arg spec
     Keyword Name Should Be    0    Invalid arg spec
     Keyword Doc Should Be     0    *Creating keyword failed:* Invalid argument specification: Only last argument can be kwargs.
-    Stdout should contain error    Invalid arg spec    2
+    Stdout should contain error    Invalid arg spec    3
     ...    Invalid argument specification: Only last argument can be kwargs.
 
 Duplicate name

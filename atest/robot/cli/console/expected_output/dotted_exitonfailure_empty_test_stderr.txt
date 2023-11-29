@@ -1,6 +1,3 @@
+[[] ERROR ] Error in file '*[/\]empty_testcase_and_uk.robot' on line 42: Creating keyword '' failed: User keyword name cannot be empty.
 [[] WARN ] Error in file '*[/\]empty_testcase_and_uk.robot' on line 60: The '[[]Return]' setting is deprecated. Use the 'RETURN' statement instead.
 [[] WARN ] Error in file '*[/\]empty_testcase_and_uk.robot' on line 63: The '[[]Return]' setting is deprecated. Use the 'RETURN' statement instead.
-[[] ERROR ] Error in file '*[/\]empty_testcase_and_uk.robot' on line 42: Creating keyword '' failed: User keyword name cannot be empty.
-[[] ERROR ] Error in file '*[/\]empty_testcase_and_uk.robot' on line 46: Creating keyword 'Empty UK' failed: User keyword cannot be empty.
-[[] ERROR ] Error in file '*[/\]empty_testcase_and_uk.robot' on line 48: Creating keyword 'Empty UK With Settings' failed: User keyword cannot be empty.
-[[] ERROR ] Error in file '*[/\]empty_testcase_and_uk.robot' on line 62: Creating keyword 'Empty UK With Empty Return' failed: User keyword cannot be empty.

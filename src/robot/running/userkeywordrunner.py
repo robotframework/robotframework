@@ -161,6 +161,12 @@ class UserKeywordRunner:
 
     def _execute(self, context):
         handler = self._handler
+        if handler.error:
+            raise DataError(handler.error)
+        if not handler.body:
+            raise DataError('User keyword cannot be empty.')
+        if not handler.name:
+            raise DataError('User keyword name cannot be empty.')
         if context.dry_run and handler.tags.robot('no-dry-run'):
             return None, None
         error = success = return_value = None

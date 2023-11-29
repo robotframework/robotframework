@@ -47,8 +47,8 @@ Caller does not see modifications to kwargs
 
 Invalid arguments spec
     [Template]    Verify Invalid Argument Spec
-    0    181    Positional after kwargs    Only last argument can be kwargs.
-    1    185    Varargs after kwargs       Only last argument can be kwargs.
+    0    182    Positional after kwargs    Only last argument can be kwargs.
+    1    186    Varargs after kwargs       Only last argument can be kwargs.
 
 *** Keywords ***
 Verify Invalid Argument Spec
