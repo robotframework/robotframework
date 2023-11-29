@@ -113,4 +113,4 @@ class CssFileWriter(InliningWriter):
 
     def write(self, line: str):
         href, media = re.search('href="([^"]+)" media="([^"]+)"', line).groups()
-        self.inline_file(href, 'style', {'type': 'text/css', 'media': media})
+        self.inline_file(href, 'style', {'media': media})
