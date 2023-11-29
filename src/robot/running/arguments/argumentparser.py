@@ -15,7 +15,7 @@
 
 from abc import ABC, abstractmethod
 from inspect import isclass, signature, Parameter
-from typing import get_type_hints
+from typing import Any, Callable, get_type_hints
 
 from robot.errors import DataError
 from robot.utils import is_string, split_from_equals
@@ -26,15 +26,16 @@ from .argumentspec import ArgumentSpec
 
 class ArgumentParser(ABC):
 
-    def __init__(self, type='Keyword', error_reporter=None):
+    def __init__(self, type: str = 'Keyword',
+                 error_reporter: 'Callable[[str], None] | None' = None):
         self._type = type
         self._error_reporter = error_reporter
 
     @abstractmethod
-    def parse(self, source, name=None):
+    def parse(self, source: Any, name: 'str|None' = None) -> ArgumentSpec:
         raise NotImplementedError
 
-    def _report_error(self, error):
+    def _report_error(self, error: str):
         if self._error_reporter:
             self._error_reporter(error)
         else:

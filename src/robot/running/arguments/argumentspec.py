@@ -15,7 +15,7 @@
 
 import sys
 from enum import Enum
-from typing import Any
+from typing import Any, Callable
 
 from robot.utils import NOT_SET, safe_str, setter
 
@@ -28,7 +28,8 @@ from .typevalidator import TypeValidator
 
 class ArgumentSpec:
 
-    def __init__(self, name=None, type='Keyword', positional_only=None,
+    def __init__(self, name: 'str|Callable[[], str]|None' = None,
+                 type='Keyword', positional_only=None,
                  positional_or_named=None, var_positional=None, named_only=None,
                  var_named=None, embedded=None, defaults=None, types=None,
                  return_type=None):
@@ -44,6 +45,14 @@ class ArgumentSpec:
         self.defaults = defaults or {}
         self.types = types
         self.return_type = return_type
+
+    @property
+    def name(self) -> 'str|None':
+        return self._name if not callable(self._name) else self._name()
+
+    @name.setter
+    def name(self, name: 'str|Callable[[], str]|None'):
+        self._name = name
 
     @setter
     def types(self, types) -> 'dict[str, TypeInfo]|None':

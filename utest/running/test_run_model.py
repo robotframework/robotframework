@@ -14,8 +14,7 @@ from robot.model.modelobject import ModelObject
 from robot.parsing import get_resource_model
 from robot.running import (Break, Continue, Error, For, If, IfBranch, Keyword,
                            Return, ResourceFile, TestCase, TestDefaults, TestSuite,
-                           Try, TryBranch, Var, While)
-from robot.running.model import UserKeyword
+                           Try, TryBranch, UserKeyword, Var, While)
 from robot.utils.asserts import assert_equal, assert_false, assert_not_equal
 
 
@@ -41,7 +40,6 @@ class TestModelTypes(unittest.TestCase):
         kw = TestCase().body.create_keyword()
         assert_equal(type(kw), Keyword)
         assert_not_equal(type(kw), model.Keyword)
-
 
 
 class TestSuiteFromSources(unittest.TestCase):
@@ -429,15 +427,24 @@ class TestToFromDictAndJson(unittest.TestCase):
 
     def test_user_keyword(self):
         self._verify(UserKeyword(), name='', body=[])
-        self._verify(UserKeyword('N', ('a',), 'd', ('t',), 't', 1, error='E'),
+        self._verify(UserKeyword('N', ('${a}',), 'd', ('t',), 't', 1, error='E'),
                      name='N',
-                     args=('a',),
+                     args=('${a}',),
                      doc='d',
                      tags=('t',),
                      timeout='t',
                      lineno=1,
                      error='E',
                      body=[])
+
+    def test_user_keyword_args(self):
+        for spec in [('${a}', '${b}'),
+                     ('${a}', '@{b}'),
+                     ('@{a}', '&{b}'),
+                     ('${a}', '@{b}', '${c}'),
+                     ('${a}', '@{}', '${c}'),
+                     ('${a}=d', '@{b}', '${c}=e')]:
+            self._verify(UserKeyword(args=spec), name='', args=spec, body=[])
 
     def test_user_keyword_structure(self):
         uk = UserKeyword('UK')
@@ -576,6 +583,15 @@ Example
         assert_equal(res.keywords[0].tags, ['common', 'own'])
         assert_equal(res.keywords[0].body[0].name, 'Log')
         assert_equal(res.keywords[0].body[0].args, ('Hello!',))
+
+
+class TestStringRepresentation(unittest.TestCase):
+
+    def test_user_keyword_repr(self):
+        assert_equal(repr(UserKeyword(name='x')),
+                     "robot.running.UserKeyword(name='x')")
+        assert_equal(repr(UserKeyword(name='å', args=['${a}'], doc='Not included')),
+                     "robot.running.UserKeyword(name='å', args=['${a}'])")
 
 
 if __name__ == '__main__':

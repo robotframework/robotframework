@@ -8,7 +8,6 @@ Variables    dict_vars.py
 &{ONE}       ${1}=${2}
 @{LIST}      one    two    three
 
-
 *** Test Cases ***
 From variable table
     ${result} =    Create Dictionary    &{DICT}

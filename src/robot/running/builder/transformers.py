@@ -289,8 +289,8 @@ class KeywordBuilder(BodyBuilder):
         self.return_setting = None
 
     def build(self, node):
-        # Possible parsing errors aren't reported further because:
-        # - We only validate that keyword body or name isn't empty.
+        # Possible parsing errors on this level aren't reported further because:
+        # - Here we only validate that keyword body or name isn't empty.
         # - Both of them are validated again during execution.
         # - This way e.g. model modifiers can add content to body.
         self.model.config(name=node.name, lineno=node.lineno)
@@ -302,8 +302,9 @@ class KeywordBuilder(BodyBuilder):
         self.model.doc = node.value
 
     def visit_Arguments(self, node):
-        self.model.args = node.values
-        if node.errors:
+        if not node.errors:
+            self.model.args = node.values
+        else:
             error = format_error(node.errors)
             self.model.error = f'Invalid argument specification: {error}'
 

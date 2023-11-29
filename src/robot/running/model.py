@@ -41,13 +41,14 @@ from typing import Any, Literal, Mapping, Sequence, TYPE_CHECKING, Union
 from robot import model
 from robot.conf import RobotSettings
 from robot.errors import BreakLoop, ContinueLoop, DataError, ReturnFromKeyword, VariableError
-from robot.model import BodyItem, create_fixture, DataDict, ModelObject, TestSuites
+from robot.model import BodyItem, create_fixture, DataDict, ModelObject, Tags, TestSuites
 from robot.output import LOGGER, Output, pyloggingconf
 from robot.result import (Break as BreakResult, Continue as ContinueResult,
                           Error as ErrorResult, Return as ReturnResult, Var as VarResult)
-from robot.utils import setter
+from robot.utils import getshortdoc, NOT_SET, setter
 from robot.variables import VariableResolver
 
+from .arguments import ArgumentSpec, UserKeywordArgumentParser
 from .bodyrunner import ForRunner, IfRunner, KeywordRunner, TryRunner, WhileRunner
 from .randomizer import Randomizer
 from .statusreporter import StatusReporter
@@ -720,7 +721,7 @@ class ResourceFile(ModelObject):
                  owner: 'TestSuite|None' = None,
                  doc: str = ''):
         self.source = source
-        self.owner = owner
+        self.owner = owner    # TODO: Should this be 'parent' instead?
         self.doc = doc
         self.imports = []
         self.variables = []
@@ -739,6 +740,17 @@ class ResourceFile(ModelObject):
         if isinstance(source, str):
             source = Path(source)
         self._source = source
+
+    @property
+    def name(self) -> 'str|None':
+        """Resource file name.
+
+        ``None`` if resource file is part of a suite or if it does not have
+        :attr:`source`, name of the source file without the extension otherwise.
+        """
+        if self.owner or not self.source:
+            return None
+        return self.source.stem
 
     @setter
     def imports(self, imports: Sequence['Import']) -> 'Imports':
@@ -814,19 +826,19 @@ class ResourceFile(ModelObject):
 class UserKeyword(ModelObject):
     repr_args = ('name', 'args')
     fixture_class = Keyword
-    __slots__ = ['name', 'args', 'doc', 'timeout', 'lineno', 'owner', 'error',
+    __slots__ = ['name', 'doc', 'timeout', 'lineno', 'owner', 'error',
                  '_setup', '_teardown']
 
     def __init__(self, name: str = '',
-                 args: Sequence[str] = (),
+                 args: 'ArgumentSpec|Sequence[str]' = (),
                  doc: str = '',
-                 tags: Sequence[str] = (),
+                 tags: 'Tags|Sequence[str]' = (),
                  timeout: 'str|None' = None,
                  lineno: 'int|None' = None,
                  owner: 'ResourceFile|None' = None,
                  error: 'str|None' = None):
         self.name = name
-        self.args = tuple(args)
+        self.args = args
         self.doc = doc
         self.tags = tags
         self.timeout = timeout
@@ -836,6 +848,35 @@ class UserKeyword(ModelObject):
         self.body = []
         self._setup = None
         self._teardown = None
+
+    @property
+    def full_name(self):
+        if self.owner and self.owner.name:
+            return f'{self.owner.name}.{self.name}'
+        return self.name
+
+    @setter
+    def args(self, spec: 'ArgumentSpec|Sequence[str]') -> ArgumentSpec:
+        if not isinstance(spec, ArgumentSpec):
+            spec = UserKeywordArgumentParser().parse(spec)
+        spec.name = lambda: self.full_name
+        return spec
+
+    @property
+    def short_doc(self):
+        return getshortdoc(self.doc)
+
+    @setter
+    def tags(self, tags: 'Tags|Sequence[str]') -> Tags:
+        return Tags(tags)
+
+    @property
+    def private(self):
+        return bool(self.tags and self.tags.robot('private'))
+
+    @property
+    def source(self) -> 'Path|None':
+        return self.owner.source if self.owner is not None else None
 
     @setter
     def body(self, body: 'Sequence[BodyItem|DataDict]') -> Body:
@@ -887,17 +928,9 @@ class UserKeyword(ModelObject):
         """
         return bool(self._teardown)
 
-    @setter
-    def tags(self, tags: Sequence[str]) -> model.Tags:
-        return model.Tags(tags)
-
-    @property
-    def source(self) -> 'Path|None':
-        return self.owner.source if self.owner is not None else None
-
     def to_dict(self) -> DataDict:
         data: DataDict = {'name': self.name}
-        for name, value in [('args', self.args),
+        for name, value in [('args', tuple(self._decorate_args())),
                             ('doc', self.doc),
                             ('tags', tuple(self.tags)),
                             ('timeout', self.timeout),
@@ -911,6 +944,27 @@ class UserKeyword(ModelObject):
         if self.has_teardown:
             data['teardown'] = self.teardown.to_dict()
         return data
+
+    def _decorate_args(self):
+        for info in self.args:
+            if info.kind == info.VAR_NAMED:
+                deco = '&'
+            elif info.kind in (info.VAR_POSITIONAL, info.NAMED_ONLY_MARKER):
+                deco = '@'
+            else:
+                deco = '$'
+            arg = f'{deco}{{{info.name}}}'
+            if info.default is not NOT_SET:
+                arg = f'{arg}={info.default}'
+            yield arg
+
+    def _include_in_repr(self, name: str, value: Any) -> bool:
+        return name == 'name' or value
+
+    def _repr_format(self, name: str, value: Any) -> str:
+        if name == 'args':
+            return repr(list(self._decorate_args()))
+        return super()._repr_format(name, value)
 
 
 class Import(ModelObject):

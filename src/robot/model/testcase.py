@@ -48,7 +48,7 @@ class TestCase(ModelObject, Generic[KW]):
 
     def __init__(self, name: str = '',
                  doc: str = '',
-                 tags: Sequence[str] = (),
+                 tags: 'Tags|Sequence[str]' = (),
                  timeout: 'str|None' = None,
                  lineno: 'int|None' = None,
                  parent: 'TestSuite|None' = None):
@@ -68,7 +68,7 @@ class TestCase(ModelObject, Generic[KW]):
         return self.body_class(self, body)
 
     @setter
-    def tags(self, tags: Sequence[str]) -> Tags:
+    def tags(self, tags: 'Tags|Sequence[str]') -> Tags:
         """Test tags as a :class:`~.model.tags.Tags` object."""
         return Tags(tags)
 

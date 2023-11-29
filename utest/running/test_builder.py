@@ -49,7 +49,7 @@ class TestBuilding(unittest.TestCase):
     def test_user_keywords(self):
         uk = build('pass_and_fail.robot').resource.keywords[0]
         assert_equal(uk.name, 'My Keyword')
-        assert_equal(uk.args, ('${who}',))
+        assert_equal([str(a) for a in uk.args], ['who'])
 
     def test_test_data(self):
         test = build('pass_and_fail.robot').tests[1]

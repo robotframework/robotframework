@@ -167,13 +167,19 @@ class ModelObject(metaclass=SetterAwareType):
         return copy.deepcopy(self).config(**attributes)
 
     def __repr__(self) -> str:
-        arguments = [(name, getattr(self, name)) for name in self.repr_args]
-        args_repr = ', '.join(f'{name}={value!r}' for name, value in arguments
-                              if self._include_in_repr(name, value))
-        return f"{full_name(self)}({args_repr})"
+        args = []
+        for name in self.repr_args:
+            value = getattr(self, name)
+            if self._include_in_repr(name, value):
+                value = self._repr_format(name, value)
+                args.append(f'{name}={value}')
+        return f"{full_name(self)}({', '.join(args)})"
 
     def _include_in_repr(self, name: str, value: Any) -> bool:
         return True
+
+    def _repr_format(self, name: str, value: Any) -> str:
+        return repr(value)
 
 
 def full_name(obj_or_cls):

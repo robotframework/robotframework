@@ -17,9 +17,8 @@ import os
 
 from robot.errors import DataError
 from robot.output import LOGGER
-from robot.utils import getshortdoc
 
-from .arguments import EmbeddedArguments, UserKeywordArgumentParser
+from .arguments import EmbeddedArguments
 from .handlerstore import HandlerStore
 from .userkeywordrunner import UserKeywordRunner, EmbeddedArgumentsRunner
 from .usererrorhandler import UserErrorHandler
@@ -73,29 +72,19 @@ class UserKeywordHandler:
 
     def __init__(self, keyword, owner):
         self.name = keyword.name
+        self.full_name = keyword.full_name
+        self.short_doc = keyword.short_doc
+        self.private = keyword.private
         self.owner = owner
         self.doc = keyword.doc
         self.source = keyword.source
         self.lineno = keyword.lineno
         self.tags = keyword.tags
-        self.arguments = UserKeywordArgumentParser().parse(tuple(keyword.args),
-                                                           self.full_name)
+        self.arguments = keyword.args
         self.timeout = keyword.timeout
         self.body = keyword.body
         self.setup = keyword.setup if keyword.has_setup else None
         self.teardown = keyword.teardown if keyword.has_teardown else None
-
-    @property
-    def full_name(self):
-        return f'{self.owner}.{self.name}' if self.owner else self.name
-
-    @property
-    def short_doc(self):
-        return getshortdoc(self.doc)
-
-    @property
-    def private(self):
-        return bool(self.tags and self.tags.robot('private'))
 
     def create_runner(self, name, languages=None):
         return UserKeywordRunner(self)
