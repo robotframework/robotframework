@@ -14,9 +14,10 @@
 #  limitations under the License.
 
 import re
+from typing import Mapping, Sequence
 
 from robot.errors import DataError
-from robot.utils import get_error_message, is_string
+from robot.utils import get_error_message
 from robot.variables import VariableMatches
 
 from ..context import EXECUTION_CONTEXTS
@@ -24,23 +25,25 @@ from ..context import EXECUTION_CONTEXTS
 
 class EmbeddedArguments:
 
-    def __init__(self, name=None, args=(), custom_patterns=None):
+    def __init__(self, name: re.Pattern,
+                 args: Sequence[str] = (),
+                 custom_patterns: 'Mapping[str, str]|None' = None):
         self.name = name
-        self.args = args
-        self.custom_patterns = custom_patterns
+        self.args = tuple(args)
+        self.custom_patterns = custom_patterns or None
 
     @classmethod
-    def from_name(cls, name):
-        return EmbeddedArgumentParser().parse(name) if '${' in name else cls()
+    def from_name(cls, name) -> 'EmbeddedArguments|None':
+        return EmbeddedArgumentParser().parse(name) if '${' in name else None
 
     def match(self, name):
-        return self.name.match(name)
+        return self.name.fullmatch(name)
 
-    def map(self, values):
-        self.validate(values)
-        return list(zip(self.args, values))
+    def map(self, args):
+        self.validate(args)
+        return list(zip(self.args, args))
 
-    def validate(self, values):
+    def validate(self, args):
         """Validate that embedded args match custom regexps.
 
         Initial validation is done already when matching keywords, but this
@@ -52,19 +55,16 @@ class EmbeddedArguments:
         """
         if not self.custom_patterns:
             return
-        for arg, value in zip(self.args, values):
-            if arg in self.custom_patterns and is_string(value):
-                pattern = self.custom_patterns[arg]
+        for name, value in zip(self.args, args):
+            if name in self.custom_patterns and isinstance(value, str):
+                pattern = self.custom_patterns[name]
                 if not re.fullmatch(pattern, value):
                     # TODO: Change to `raise ValueError(...)` in RF 8.0.
                     context = EXECUTION_CONTEXTS.current
-                    context.warn(f"Embedded argument '{arg}' got value {value!r} "
+                    context.warn(f"Embedded argument '{name}' got value {value!r} "
                                  f"that does not match custom pattern {pattern!r}. "
                                  f"The argument is still accepted, but this behavior "
                                  f"will change in Robot Framework 8.0.")
-
-    def __bool__(self):
-        return self.name is not None
 
 
 class EmbeddedArgumentParser:
@@ -75,24 +75,26 @@ class EmbeddedArgumentParser:
     _default_pattern = '.*?'
     _variable_pattern = r'\$\{[^\}]+\}'
 
-    def parse(self, string):
+    def parse(self, string: str) -> 'EmbeddedArguments|None':
+        name_parts = []
         args = []
         custom_patterns = {}
-        name_regexp = ['^']
         after = string
         for match in VariableMatches(string, identifiers='$'):
-            name, pattern, custom = self._get_name_and_pattern(match.base)
-            args.append(name)
-            if custom:
-                custom_patterns[name] = pattern
+            arg, pattern, is_custom = self._get_name_and_pattern(match.base)
+            args.append(arg)
+            if is_custom:
+                custom_patterns[arg] = pattern
                 pattern = self._format_custom_regexp(pattern)
-            name_regexp.extend([re.escape(match.before), f'({pattern})'])
+            name_parts.extend([re.escape(match.before), f'({pattern})'])
             after = match.after
-        name_regexp.extend([re.escape(after), '$'])
-        name = self._compile_regexp(name_regexp) if args else None
-        return EmbeddedArguments(name, args, custom_patterns or None)
+        if not args:
+            return None
+        name_parts.append(re.escape(after))
+        return EmbeddedArguments(self._compile_regexp(name_parts), args,
+                                 custom_patterns)
 
-    def _get_name_and_pattern(self, name):
+    def _get_name_and_pattern(self, name: str) -> 'tuple[str, str, bool]':
         if ':' in name:
             name, pattern = name.split(':', 1)
             custom = True
@@ -101,7 +103,7 @@ class EmbeddedArgumentParser:
             custom = False
         return name, pattern, custom
 
-    def _format_custom_regexp(self, pattern):
+    def _format_custom_regexp(self, pattern: str) -> str:
         for formatter in (self._regexp_extensions_are_not_allowed,
                           self._make_groups_non_capturing,
                           self._unescape_curly_braces,
@@ -110,15 +112,15 @@ class EmbeddedArgumentParser:
             pattern = formatter(pattern)
         return pattern
 
-    def _regexp_extensions_are_not_allowed(self, pattern):
+    def _regexp_extensions_are_not_allowed(self, pattern: str) -> str:
         if self._regexp_extension.search(pattern):
             raise DataError('Regexp extensions are not allowed in embedded arguments.')
         return pattern
 
-    def _make_groups_non_capturing(self, pattern):
+    def _make_groups_non_capturing(self, pattern: str) -> str:
         return self._regexp_group_start.sub(self._regexp_group_escape, pattern)
 
-    def _unescape_curly_braces(self, pattern):
+    def _unescape_curly_braces(self, pattern: str) -> str:
         # Users must escape possible lone curly braces in patters (e.g. `${x:\{}`)
         # or otherwise the variable syntax is invalid.
         def unescape(match):
@@ -126,16 +128,16 @@ class EmbeddedArgumentParser:
             return '\\' * (backslashes // 2 * 2) + match.group(2)
         return self._escaped_curly.sub(unescape, pattern)
 
-    def _escape_escapes(self, pattern):
+    def _escape_escapes(self, pattern: str) -> str:
         # When keywords are matched, embedded arguments have not yet been
         # resolved which means possible escapes are still doubled. We thus
         # need to double them in the pattern as well.
         return pattern.replace(r'\\', r'\\\\')
 
-    def _add_automatic_variable_pattern(self, pattern):
+    def _add_automatic_variable_pattern(self, pattern: str) -> str:
         return f'{pattern}|{self._variable_pattern}'
 
-    def _compile_regexp(self, pattern):
+    def _compile_regexp(self, pattern: Sequence[str]) -> re.Pattern:
         try:
             return re.compile(''.join(pattern), re.IGNORECASE)
         except Exception:

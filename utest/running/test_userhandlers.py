@@ -25,16 +25,16 @@ class TestEmbeddedArgs(unittest.TestCase):
         assert_true(not EmbeddedArguments.from_name('No embedded args here'))
 
     def test_get_embedded_arg_and_regexp(self):
-        assert_equal(self.tmp1.embedded.args, ['item'])
+        assert_equal(self.tmp1.embedded.args, ('item',))
         assert_equal(self.tmp1.embedded.name.pattern,
-                     '^User\\ selects\\ (.*?)\\ from\\ list$')
+                     'User\\ selects\\ (.*?)\\ from\\ list')
         assert_equal(self.tmp1.name, 'User selects ${item} from list')
 
     def test_get_multiple_embedded_args_and_regexp(self):
-        assert_equal(self.tmp2.embedded.args, ['x', 'y', 'z'])
+        assert_equal(self.tmp2.embedded.args, ('x', 'y', 'z'))
         quote = '"' if sys.version_info[:2] >= (3, 7) else '\\"'
         assert_equal(self.tmp2.embedded.name.pattern,
-                     '^(.*?)\\ \\*\\ (.*?)\\ from\\ {0}(.*?){0}$'.format(quote))
+                     '(.*?)\\ \\*\\ (.*?)\\ from\\ {0}(.*?){0}'.format(quote))
 
     def test_create_runner_with_one_embedded_arg(self):
         runner = self.tmp1.create_runner('User selects book from list')
