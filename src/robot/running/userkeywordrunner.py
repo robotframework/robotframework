@@ -30,9 +30,9 @@ from .timeouts import KeywordTimeout
 
 class UserKeywordRunner:
 
-    def __init__(self, handler, name=None):
-        self._handler = handler
-        self.name = name or handler.name
+    def __init__(self, keyword, name=None):
+        self.keyword = keyword
+        self.name = name or keyword.name
         self.pre_run_messages = ()
 
     # FIXME: UserKeywordRunner shouldn't need the following propertys.
@@ -40,64 +40,66 @@ class UserKeywordRunner:
 
     @property
     def full_name(self):
-        owner = self._handler.owner
+        owner = self.keyword.owner
         return f'{owner.name}.{self.name}' if owner and owner.name else self.name
 
     @property
     def tags(self):
-        return self._handler.tags
+        return self.keyword.tags
 
     @property
     def source(self):
-        return self._handler.source
+        return self.keyword.source
 
     @property
     def error(self):
-        return self._handler.error
+        return self.keyword.error
 
     @property
     def arguments(self):
         """:rtype: :py:class:`robot.running.arguments.ArgumentSpec`"""
-        return self._handler.arguments
+        return self.keyword.arguments
 
-    def run(self, kw, context, run=True):
-        assignment = VariableAssignment(kw.assign)
-        result = self._get_result(kw, assignment, context.variables)
-        with StatusReporter(kw, result, context, run, implementation=self._handler):
-            if self._handler.private:
-                context.warn_on_invalid_private_call(self._handler)
+    def run(self, data, context, run=True):
+        kw = self.keyword.bind(data)
+        assignment = VariableAssignment(data.assign)
+        result = self._get_result(kw, data, assignment, context.variables)
+        with StatusReporter(data, result, context, run, implementation=kw):
+            if kw.private:
+                context.warn_on_invalid_private_call(kw)
             with assignment.assigner(context) as assigner:
                 if run:
-                    return_value = self._run(context, kw.args, result)
+                    return_value = self._run(kw, data.args, result, context)
                     assigner.assign(return_value)
                     return return_value
 
-    def _get_result(self, kw, assignment, variables):
-        handler = self._handler
-        doc = variables.replace_string(handler.doc, ignore_errors=True)
+    def _get_result(self, kw, data, assignment, variables):
+        doc = variables.replace_string(kw.doc, ignore_errors=True)
         doc, tags = split_tags_from_doc(doc)
-        tags = variables.replace_list(handler.tags, ignore_errors=True) + tags
+        tags = variables.replace_list(kw.tags, ignore_errors=True) + tags
         return KeywordResult(name=self.name,
-                             owner=handler.owner.name,
+                             owner=kw.owner.name,
                              doc=getshortdoc(doc),
-                             args=kw.args,
+                             args=data.args,
                              assign=tuple(assignment),
                              tags=tags,
-                             type=kw.type)
+                             type=data.type)
 
-    def _run(self, context, args, result):
+    def _run(self, kw, args, result, context):
         if self.pre_run_messages:
             for message in self.pre_run_messages:
                 context.output.message(message)
         variables = context.variables
-        args = self._resolve_arguments(args, variables)
-        with context.user_keyword(self._handler):
-            self._set_arguments(args, context)
-            timeout = self._get_timeout(variables)
-            if timeout is not None:
+        args = self._resolve_arguments(kw, args, variables)
+        with context.user_keyword(kw):
+            self._set_arguments(kw, args, context)
+            if kw.timeout:
+                timeout = KeywordTimeout(kw.timeout, variables)
                 result.timeout = str(timeout)
+            else:
+                timeout = None
             with context.timeout(timeout):
-                exception, return_value = self._execute(context)
+                exception, return_value = self._execute(kw, context)
                 if exception and not exception.can_continue(context):
                     raise exception
                 return_value = self._handle_return_value(return_value, variables)
@@ -106,26 +108,20 @@ class UserKeywordRunner:
                     raise exception
                 return return_value
 
-    def _get_timeout(self, variables=None):
-        timeout = self._handler.timeout
-        return KeywordTimeout(timeout, variables) if timeout else None
+    def _resolve_arguments(self, kw, args, variables=None):
+        return kw.arguments.resolve(args, variables)
 
-    def _resolve_arguments(self, arguments, variables=None):
-        return self.arguments.resolve(arguments, variables)
-
-    def _set_arguments(self, arguments, context):
-        positional, named = arguments
+    def _set_arguments(self, kw, args, context):
+        positional, named = args
         variables = context.variables
-        args, kwargs = self.arguments.map(positional, named,
-                                          replace_defaults=False)
-        self._set_variables(args, kwargs, variables)
-        context.output.trace(lambda: self._trace_log_args_message(variables),
+        args, kwargs = kw.arguments.map(positional, named, replace_defaults=False)
+        self._set_variables(kw.arguments, args, kwargs, variables)
+        context.output.trace(lambda: self._trace_log_args_message(kw, variables),
                              write_if_flat=False)
 
-    def _set_variables(self, positional, kwargs, variables):
-        spec = self.arguments
-        args, varargs = self._split_args_and_varargs(positional)
-        kwonly, kwargs = self._split_kwonly_and_kwargs(kwargs)
+    def _set_variables(self, spec, positional, kwargs, variables):
+        args, varargs = self._split_args_and_varargs(spec, positional)
+        kwonly, kwargs = self._split_kwonly_and_kwargs(spec, kwargs)
         for name, value in chain(zip(spec.positional, args), kwonly):
             if isinstance(value, DefaultValue):
                 value = value.resolve(variables)
@@ -135,52 +131,51 @@ class UserKeywordRunner:
         if spec.var_named:
             variables[f'&{{{spec.var_named}}}'] = DotDict(kwargs)
 
-    def _split_args_and_varargs(self, args):
-        if not self.arguments.var_positional:
+    def _split_args_and_varargs(self, spec, args):
+        if not spec.var_positional:
             return args, []
-        positional = len(self.arguments.positional)
+        positional = len(spec.positional)
         return args[:positional], args[positional:]
 
-    def _split_kwonly_and_kwargs(self, all_kwargs):
+    def _split_kwonly_and_kwargs(self, spec, all_kwargs):
         kwonly = []
         kwargs = []
         for name, value in all_kwargs:
-            target = kwonly if name in self.arguments.named_only else kwargs
+            target = kwonly if name in spec.named_only else kwargs
             target.append((name, value))
         return kwonly, kwargs
 
-    def _trace_log_args_message(self, variables):
+    def _trace_log_args_message(self, kw, variables):
         return self._format_trace_log_args_message(
-            self._format_args_for_trace_logging(), variables
+            self._format_args_for_trace_logging(kw.arguments), variables
         )
 
-    def _format_args_for_trace_logging(self):
-        args = [f'${{{arg}}}' for arg in self.arguments.positional]
-        if self.arguments.var_positional:
-            args.append(f'@{{{self.arguments.var_positional}}}')
-        if self.arguments.var_named:
-            args.append(f'&{{{self.arguments.var_named}}}')
+    def _format_args_for_trace_logging(self, spec):
+        args = [f'${{{arg}}}' for arg in spec.positional]
+        if spec.var_positional:
+            args.append(f'@{{{spec.var_positional}}}')
+        if spec.var_named:
+            args.append(f'&{{{spec.var_named}}}')
         return args
 
     def _format_trace_log_args_message(self, args, variables):
         args = ' | '.join(f'{name}={prepr(variables[name])}' for name in args)
         return f'Arguments: [ {args} ]'
 
-    def _execute(self, context):
-        handler = self._handler
-        if handler.error:
-            raise DataError(handler.error)
-        if not handler.body:
+    def _execute(self, kw, context):
+        if kw.error:
+            raise DataError(kw.error)
+        if not kw.body:
             raise DataError('User keyword cannot be empty.')
-        if not handler.name:
+        if not kw.name:
             raise DataError('User keyword name cannot be empty.')
-        if context.dry_run and handler.tags.robot('no-dry-run'):
+        if context.dry_run and kw.tags.robot('no-dry-run'):
             return None, None
         error = success = return_value = None
-        if handler.setup:
-            error = self._run_setup_or_teardown(handler.setup, context)
+        if kw.setup:
+            error = self._run_setup_or_teardown(kw.setup, context)
         try:
-            BodyRunner(context, run=not error).run(handler.body)
+            BodyRunner(context, run=not error).run(kw.body)
         except ReturnFromKeyword as exception:
             return_value = exception.return_value
             error = exception.earlier_failures
@@ -191,9 +186,9 @@ class UserKeywordRunner:
                 error.continue_on_failure = False
         except ExecutionFailed as exception:
             error = exception
-        if handler.teardown:
+        if kw.teardown:
             with context.keyword_teardown(error):
-                td_error = self._run_setup_or_teardown(handler.teardown, context)
+                td_error = self._run_setup_or_teardown(kw.teardown, context)
         else:
             td_error = None
         if error or td_error:
@@ -230,52 +225,53 @@ class UserKeywordRunner:
             return err
         return None
 
-    def dry_run(self, kw, context):
-        assignment = VariableAssignment(kw.assign)
-        result = self._get_result(kw, assignment, context.variables)
-        with StatusReporter(kw, result, context):
+    def dry_run(self, data, context):
+        kw = self.keyword.bind(data)
+        assignment = VariableAssignment(data.assign)
+        result = self._get_result(kw, data, assignment, context.variables)
+        with StatusReporter(data, result, context, implementation=kw):
             assignment.validate_assignment()
-            self._dry_run(context, kw.args, result)
+            self._dry_run(kw, data.args, result, context)
 
-    def _dry_run(self, context, args, result):
+    def _dry_run(self, kw, args, result, context):
         if self.pre_run_messages:
             for message in self.pre_run_messages:
                 context.output.message(message)
-        self._resolve_arguments(args)
-        with context.user_keyword(self._handler):
-            timeout = self._get_timeout()
-            if timeout:
+        self._resolve_arguments(kw, args)
+        with context.user_keyword(kw):
+            if kw.timeout:
+                timeout = KeywordTimeout(kw.timeout, context.variables)
                 result.timeout = str(timeout)
-            error, _ = self._execute(context)
+            error, _ = self._execute(kw, context)
             if error:
                 raise error
 
 
 class EmbeddedArgumentsRunner(UserKeywordRunner):
 
-    def __init__(self, handler, name):
-        super().__init__(handler, name)
-        self.embedded_args = handler.embedded.match(name).groups()
+    def __init__(self, keyword, name):
+        super().__init__(keyword, name)
+        self.embedded_args = keyword.embedded.match(name).groups()
 
-    def _resolve_arguments(self, args, variables=None):
-        result = super()._resolve_arguments(args, variables)
+    def _resolve_arguments(self, kw, args, variables=None):
+        result = super()._resolve_arguments(kw, args, variables)
         if variables:
             embedded = [variables.replace_scalar(e) for e in self.embedded_args]
-            self.embedded_args = self._handler.embedded.map(embedded)
+            self.embedded_args = kw.embedded.map(embedded)
         return result
 
-    def _set_arguments(self, args, context):
+    def _set_arguments(self, kw, args, context):
         variables = context.variables
         for name, value in self.embedded_args:
             variables[f'${{{name}}}'] = value
-        super()._set_arguments(args, context)
+        super()._set_arguments(kw, args, context)
 
-    def _trace_log_args_message(self, variables):
-        args = [f'${{{arg}}}' for arg in self._handler.embedded.args]
-        args += self._format_args_for_trace_logging()
+    def _trace_log_args_message(self, kw, variables):
+        args = [f'${{{arg}}}' for arg in kw.embedded.args]
+        args += self._format_args_for_trace_logging(kw.arguments)
         return self._format_trace_log_args_message(args, variables)
 
-    def _get_result(self, kw, assignment, variables):
-        result = super()._get_result(kw, assignment, variables)
-        result.source_name = self._handler.name
+    def _get_result(self, kw, data, assignment, variables):
+        result = super()._get_result(kw, data, assignment, variables)
+        result.source_name = kw.name
         return result

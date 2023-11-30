@@ -480,21 +480,21 @@ class IfRunner:
 
     @contextmanager
     def _dry_run_recursion_detection(self, data):
-        dry_run = self._context.dry_run
-        if dry_run:
-            recursive_dry_run = data in self._dry_run_stack
-            self._dry_run_stack.append(data)
+        if not self._context.dry_run:
+            yield False
         else:
-            recursive_dry_run = False
-        try:
-            yield recursive_dry_run
-        finally:
-            if dry_run:
+            data = data.to_dict()
+            recursive = data in self._dry_run_stack
+            self._dry_run_stack.append(data)
+            try:
+                yield recursive
+            finally:
                 self._dry_run_stack.pop()
 
     def _run_if_branch(self, branch, result, recursive_dry_run=False, syntax_error=None):
         context = self._context
-        result = result.body.create_branch(branch.type, branch.condition, start_time=datetime.now())
+        result = result.body.create_branch(branch.type, branch.condition,
+                                           start_time=datetime.now())
         error = None
         if syntax_error:
             run_branch = False
