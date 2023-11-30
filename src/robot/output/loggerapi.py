@@ -36,8 +36,18 @@ class LoggerApi:
     def start_keyword(self, data: 'running.Keyword', result: 'result.Keyword'):
         self.start_body_item(data, result)
 
+    def start_user_keyword(self, data: 'running.Keyword',
+                           implementation: 'running.UserKeyword',
+                           result: 'result.Keyword'):
+        self.start_keyword(data, result)
+
     def end_keyword(self, data: 'running.Keyword', result: 'result.Keyword'):
         self.end_body_item(data, result)
+
+    def end_user_keyword(self, data: 'running.Keyword',
+                         implementation: 'running.UserKeyword',
+                         result: 'result.Keyword'):
+        self.end_keyword(data, result)
 
     def start_for(self, data: 'running.For', result: 'result.For'):
         self.start_body_item(data, result)

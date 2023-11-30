@@ -101,6 +101,14 @@ class Listeners(LoggerApi):
         for listener in self.listeners:
             listener.end_keyword(data, result)
 
+    def start_user_keyword(self, data, implementation, result):
+        for listener in self.listeners:
+            listener.start_user_keyword(data, implementation, result)
+
+    def end_user_keyword(self, data, implementation, result):
+        for listener in self.listeners:
+            listener.end_user_keyword(data, implementation, result)
+
     def start_for(self, data, result):
         for listener in self.listeners:
             listener.start_for(data, result)
@@ -305,9 +313,11 @@ class ListenerV3Facade(ListenerFacade):
         # Test
         self.start_test = self._get_method('start_test')
         self.end_test = self._get_method('end_test')
-        # Keyword
+        # Keywords
         self.start_keyword = self._get_method('start_keyword')
         self.end_keyword = self._get_method('end_keyword')
+        self._start_user_keyword = self._get_method('start_user_keyword')
+        self._end_user_keyword = self._get_method('end_user_keyword')
         # IF
         self.start_if = self._get_method('start_if')
         self.end_if = self._get_method('end_if')
@@ -348,6 +358,18 @@ class ListenerV3Facade(ListenerFacade):
         self.message = self._get_method('message')
         # Close
         self.close = self._get_method('close')
+
+    def start_user_keyword(self, data, implementation, result):
+        if self._start_user_keyword:
+            self._start_user_keyword(data, implementation, result)
+        else:
+            self.start_keyword(data, result)
+
+    def end_user_keyword(self, data, implementation, result):
+        if self._end_user_keyword:
+            self._end_user_keyword(data, implementation, result)
+        else:
+            self.end_keyword(data, result)
 
 
 class ListenerV2Facade(ListenerFacade):
@@ -636,3 +658,6 @@ class ListenerMethod:
             LOGGER.info(f"Details:\n{details}")
         finally:
             ListenerMethod.called = False
+
+    def __bool__(self):
+        return self.method is not None

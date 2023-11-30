@@ -16,6 +16,7 @@
 from robot.errors import DataError
 from robot.output import LOGGER
 from robot.parsing import File, ModelVisitor, Token
+from robot.utils import escape
 from robot.variables import VariableMatches
 
 from .settings import FileSettings

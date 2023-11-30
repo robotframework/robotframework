@@ -981,6 +981,7 @@ class UserKeyword(ModelObject):
         return data
 
     def _decorate_args(self):
+        args = []
         for info in self.args:
             if info.kind == info.VAR_NAMED:
                 deco = '&'
@@ -991,14 +992,15 @@ class UserKeyword(ModelObject):
             arg = f'{deco}{{{info.name}}}'
             if info.default is not NOT_SET:
                 arg = f'{arg}={info.default}'
-            yield arg
+            args.append(arg)
+        return args
 
     def _include_in_repr(self, name: str, value: Any) -> bool:
         return name == 'name' or value
 
     def _repr_format(self, name: str, value: Any) -> str:
         if name == 'args':
-            return repr(list(self._decorate_args()))
+            return repr(self._decorate_args())
         return super()._repr_format(name, value)
 
 

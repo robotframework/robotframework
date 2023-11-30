@@ -245,13 +245,17 @@ class _ExecutionContext:
         self.variables.set_suite('${PREV_TEST_MESSAGE}', test.message)
         self.timeout_occurred = False
 
-    def start_body_item(self, data, result):
+    def start_body_item(self, data, result, implementation=None):
         self.steps.append((data, result))
         if len(self.steps) > self._started_keywords_threshold:
             raise DataError('Maximum limit of started keywords and control '
                             'structures exceeded.')
         output = self.output
-        if result.type in (result.ELSE, result.ITERATION):
+        args = (data, result)
+        if implementation:
+            method = output.start_user_keyword
+            args = (data, implementation, result)
+        elif result.type in (result.ELSE, result.ITERATION):
             method = {
                 result.IF_ELSE_ROOT: output.start_if_branch,
                 result.TRY_EXCEPT_ROOT: output.start_try_branch,
@@ -279,11 +283,15 @@ class _ExecutionContext:
                 result.RETURN: output.start_return,
                 result.ERROR: output.start_error,
             }[result.type]
-        method(data, result)
+        method(*args)
 
-    def end_body_item(self, data, result):
+    def end_body_item(self, data, result, implementation=None):
         output = self.output
-        if result.type in (result.ELSE, result.ITERATION):
+        args = (data, result)
+        if implementation:
+            method = output.end_user_keyword
+            args = (data, implementation, result)
+        elif result.type in (result.ELSE, result.ITERATION):
             method = {
                 result.IF_ELSE_ROOT: output.end_if_branch,
                 result.TRY_EXCEPT_ROOT: output.end_try_branch,
@@ -311,7 +319,7 @@ class _ExecutionContext:
                 result.RETURN: output.end_return,
                 result.ERROR: output.end_error,
             }[result.type]
-        method(data, result)
+        method(*args)
         self.steps.pop()
 
     def get_runner(self, name, recommend_on_failure=True):
