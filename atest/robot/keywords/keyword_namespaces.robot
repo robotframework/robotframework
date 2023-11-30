@@ -30,7 +30,7 @@ Keyword From Test Case File Overriding Local Keyword In Resource File Is Depreca
     ${message} =    Catenate
     ...    Keyword 'my_resource_1.Use test case file keyword even when local keyword with same name exists' called keyword
     ...    'Keyword Everywhere' that exists both in the same resource file as the caller and in the suite file using that
-    ...    resource. The keyword in the suite file is used now, but this will change in Robot Framework 7.0.
+    ...    resource. The keyword in the suite file is used now, but this will change in Robot Framework 8.0.
     Check Log Message    ${tc.body[0].body[0].msgs[0]}    ${message}    WARN
     Check Log Message    ${ERRORS}[1]                     ${message}    WARN
 
