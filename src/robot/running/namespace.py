@@ -21,15 +21,15 @@ from itertools import chain
 from robot.errors import DataError, KeywordError
 from robot.libraries import STDLIBS
 from robot.output import LOGGER, Message
-from robot.utils import (RecommendationFinder, eq, find_file, is_string, normalize,
-                         printable_name, seq2str2)
+from robot.utils import (eq, find_file, is_string, normalize, RecommendationFinder,
+                         seq2str2)
 
 from .context import EXECUTION_CONTEXTS
 from .importer import ImportCache, Importer
 from .model import Import
 from .runkwregister import RUN_KW_REGISTER
 from .usererrorhandler import UserErrorHandler
-from .userkeyword import UserLibrary
+
 
 IMPORTER = Importer()
 
@@ -85,10 +85,9 @@ class Namespace:
         if overwrite or path not in self._kw_store.resources:
             resource = IMPORTER.import_resource(path, self.languages)
             self.variables.set_from_variable_section(resource.variables, overwrite)
-            user_library = UserLibrary(resource)
-            self._kw_store.resources[path] = user_library
+            self._kw_store.resources[path] = resource
             self._handle_imports(resource.imports)
-            LOGGER.imported("Resource", user_library.name,
+            LOGGER.imported("Resource", resource.name,
                             importer=str(import_setting.source),
                             source=path)
         else:
@@ -224,8 +223,8 @@ class Namespace:
 
 class KeywordStore:
 
-    def __init__(self, resource, languages):
-        self.user_keywords = UserLibrary(resource, resource_file=False)
+    def __init__(self, suite_file, languages):
+        self.suite_file = suite_file
         self.libraries = OrderedDict()
         self.resources = ImportCache()
         self.search_order = ()
@@ -277,9 +276,9 @@ class KeywordStore:
             )
         message = f"No keyword with name '{name}' found."
         if recommend:
-            finder = KeywordRecommendationFinder(self.user_keywords,
-                                                 self.libraries,
-                                                 self.resources)
+            finder = KeywordRecommendationFinder(self.suite_file,
+                                                 *self.libraries.values(),
+                                                 *self.resources.values())
             raise KeywordError(finder.recommend_similar_keywords(name, message))
         else:
             raise KeywordError(message)
@@ -315,14 +314,14 @@ class KeywordStore:
                 self._get_runner_from_libraries(name))
 
     def _get_runner_from_suite_file(self, name):
-        if name not in self.user_keywords.handlers:
+        keywords = self.suite_file.find_keywords(name)
+        if not keywords:
             return None
-        handlers = self.user_keywords.handlers.get_handlers(name)
-        if len(handlers) > 1:
-            handlers = self._select_best_matches(handlers)
-            if len(handlers) > 1:
-                self._raise_multiple_keywords_found(handlers, name)
-        runner = handlers[0].create_runner(name, self.languages)
+        if len(keywords) > 1:
+            keywords = self._select_best_matches(keywords)
+            if len(keywords) > 1:
+                self._raise_multiple_keywords_found(keywords, name)
+        runner = keywords[0].create_runner(name, self.languages)
         ctx = EXECUTION_CONTEXTS.current
         caller = ctx.user_keywords[-1] if ctx.user_keywords else ctx.test
         if caller and runner.source != caller.source:
@@ -336,14 +335,14 @@ class KeywordStore:
                 runner.pre_run_messages += Message(message, level='WARN'),
         return runner
 
-    def _select_best_matches(self, handlers):
+    def _select_best_matches(self, keywords):
         # "Normal" matches are considered exact and win over embedded matches.
-        normal = [hand for hand in handlers if not hand.supports_embedded_args]
+        normal = [kw for kw in keywords if not kw.embedded]
         if normal:
             return normal
-        matches = [hand for hand in handlers
-                   if not self._is_worse_match_than_others(hand, handlers)]
-        return matches or handlers
+        matches = [kw for kw in keywords
+                   if not self._is_worse_match_than_others(kw, keywords)]
+        return matches or keywords
 
     def _is_worse_match_than_others(self, candidate, alternatives):
         for other in alternatives:
@@ -360,72 +359,72 @@ class KeywordStore:
 
     def _exists_in_resource_file(self, name, source):
         for resource in self.resources.values():
-            if resource.source == source and name in resource.handlers:
+            if resource.source == source and resource.find_keywords(name):
                 return True
         return False
 
     def _get_runner_from_resource_files(self, name):
-        handlers = [handler for res in self.resources.values()
-                    for handler in res.handlers_for(name)]
-        if not handlers:
+        keywords = [kw for resource in self.resources.values()
+                    for kw in resource.find_keywords(name)]
+        if not keywords:
             return None
-        if len(handlers) > 1:
-            handlers = self._filter_based_on_search_order(handlers)
-            if len(handlers) > 1:
-                handlers = self._prioritize_same_file_or_public(handlers)
-                if len(handlers) > 1:
-                    handlers = self._select_best_matches(handlers)
-                    if len(handlers) > 1:
-                        self._raise_multiple_keywords_found(handlers, name)
-        return handlers[0].create_runner(name, self.languages)
+        if len(keywords) > 1:
+            keywords = self._filter_based_on_search_order(keywords)
+            if len(keywords) > 1:
+                keywords = self._prioritize_same_file_or_public(keywords)
+                if len(keywords) > 1:
+                    keywords = self._select_best_matches(keywords)
+                    if len(keywords) > 1:
+                        self._raise_multiple_keywords_found(keywords, name)
+        return keywords[0].create_runner(name, self.languages)
 
     def _get_runner_from_libraries(self, name):
-        handlers = [handler for lib in self.libraries.values()
-                    for handler in lib.handlers_for(name)]
-        if not handlers:
+        keywords = [kw for lib in self.libraries.values()
+                    for kw in lib.find_keywords(name)]
+        if not keywords:
             return None
         pre_run_message = None
-        if len(handlers) > 1:
-            handlers = self._filter_based_on_search_order(handlers)
-            if len(handlers) > 1:
-                handlers = self._select_best_matches(handlers)
-                if len(handlers) > 1:
-                    handlers, pre_run_message = self._filter_stdlib_handler(handlers)
-                    if len(handlers) > 1:
-                        self._raise_multiple_keywords_found(handlers, name)
-        runner = handlers[0].create_runner(name, self.languages)
+        if len(keywords) > 1:
+            keywords = self._filter_based_on_search_order(keywords)
+            if len(keywords) > 1:
+                keywords = self._select_best_matches(keywords)
+                if len(keywords) > 1:
+                    keywords, pre_run_message = self._filter_stdlib_handler(keywords)
+                    if len(keywords) > 1:
+                        self._raise_multiple_keywords_found(keywords, name)
+        runner = keywords[0].create_runner(name, self.languages)
         if pre_run_message:
             runner.pre_run_messages += (pre_run_message,)
         return runner
 
-    def _prioritize_same_file_or_public(self, handlers):
+    def _prioritize_same_file_or_public(self, keywords):
         user_keywords = EXECUTION_CONTEXTS.current.user_keywords
         if user_keywords:
             parent_source = user_keywords[-1].source
-            matches = [h for h in handlers if h.source == parent_source]
+            matches = [kw for kw in keywords if kw.source == parent_source]
             if matches:
                 return matches
-        matches = [handler for handler in handlers if not handler.private]
-        return matches or handlers
+        matches = [kw for kw in keywords if not kw.private]
+        return matches or keywords
 
-    def _filter_based_on_search_order(self, handlers):
+    def _filter_based_on_search_order(self, keywords):
         for name in self.search_order:
-            matches = [hand for hand in handlers if eq(name, hand.owner)]
+            matches = [kw for kw in keywords if eq(name, kw.owner.name)]
             if matches:
                 return matches
-        return handlers
+        return keywords
 
-    def _filter_stdlib_handler(self, handlers):
+    def _filter_stdlib_handler(self, keywords):
         warning = None
-        if len(handlers) != 2:
-            return handlers, warning
+        if len(keywords) != 2:
+            return keywords, warning
         stdlibs_without_remote = STDLIBS - {'Remote'}
-        if handlers[0].library.orig_name in stdlibs_without_remote:
-            standard, custom = handlers
-        elif handlers[1].library.orig_name in stdlibs_without_remote:
-            custom, standard = handlers
+        if keywords[0].library.orig_name in stdlibs_without_remote:
+            standard, custom = keywords
+        elif keywords[1].library.orig_name in stdlibs_without_remote:
+            custom, standard = keywords
         else:
-            return handlers, warning
+            return keywords, warning
         if not RUN_KW_REGISTER.is_run_keyword(custom.library.orig_name, custom.name):
             warning = self._custom_and_standard_keyword_conflict_warning(custom, standard)
         return [custom], warning
@@ -445,50 +444,48 @@ class KeywordStore:
         )
 
     def _get_explicit_runner(self, name):
-        handlers_and_names = []
+        kws_and_names = []
         for owner_name, kw_name in self._get_owner_and_kw_names(name):
             for owner in chain(self.libraries.values(), self.resources.values()):
-                if eq(owner.name, owner_name) and kw_name in owner.handlers:
-                    for handler in owner.handlers.get_handlers(kw_name):
-                        handlers_and_names.append((handler, kw_name))
-        if not handlers_and_names:
+                if eq(owner.name, owner_name):
+                    for kw in owner.find_keywords(kw_name):
+                        kws_and_names.append((kw, kw_name))
+        if not kws_and_names:
             return None
-        if len(handlers_and_names) == 1:
-            handler, kw_name = handlers_and_names[0]
+        if len(kws_and_names) == 1:
+            kw, kw_name = kws_and_names[0]
         else:
-            handlers = [h for h, n in handlers_and_names]
-            matches = self._select_best_matches(handlers)
+            keywords = [kw for kw, _ in kws_and_names]
+            matches = self._select_best_matches(keywords)
             if len(matches) > 1:
-                self._raise_multiple_keywords_found(handlers, name, implicit=False)
-            handler, kw_name = handlers_and_names[handlers.index(matches[0])]
-        return handler.create_runner(kw_name, self.languages)
+                self._raise_multiple_keywords_found(keywords, name, implicit=False)
+            kw, kw_name = kws_and_names[keywords.index(matches[0])]
+        return kw.create_runner(kw_name, self.languages)
 
     def _get_owner_and_kw_names(self, full_name):
         tokens = full_name.split('.')
         return [('.'.join(tokens[:index]), '.'.join(tokens[index:]))
                 for index in range(1, len(tokens))]
 
-    def _raise_multiple_keywords_found(self, handlers, name, implicit=True):
-        if any(hand.supports_embedded_args for hand in handlers):
+    def _raise_multiple_keywords_found(self, keywords, name, implicit=True):
+        if any(kw.embedded for kw in keywords):
             error = f"Multiple keywords matching name '{name}' found"
         else:
             error = f"Multiple keywords with name '{name}' found"
             if implicit:
                 error += ". Give the full name of the keyword you want to use"
-        names = sorted(hand.full_name for hand in handlers)
+        names = sorted(kw.full_name for kw in keywords)
         raise KeywordError('\n    '.join([error+':'] + names))
 
 
 class KeywordRecommendationFinder:
 
-    def __init__(self, user_keywords, libraries, resources):
-        self.user_keywords = user_keywords
-        self.libraries = libraries
-        self.resources = resources
+    def __init__(self, *owners):
+        self.owners = owners
 
     def recommend_similar_keywords(self, name, message):
         """Return keyword names similar to `name`."""
-        candidates = self._get_candidates('.' in name)
+        candidates = self._get_candidates(use_full_name='.' in name)
         finder = RecommendationFinder(
             lambda name: normalize(candidates.get(name, name), ignore='_')
         )
@@ -499,20 +496,11 @@ class KeywordRecommendationFinder:
     def format_recommendations(message, recommendations):
         return RecommendationFinder().format(message, recommendations)
 
-    def _get_candidates(self, use_full_name):
-        names = {}
-        for owner, name in self._get_all_handler_names():
+    def _get_candidates(self, use_full_name=False):
+        candidates = {}
+        names = sorted((owner.name or '', kw.name)
+                       for owner in self.owners for kw in owner.keywords)
+        for owner, name in names:
             full_name = f'{owner}.{name}' if owner else name
-            names[full_name] = full_name if use_full_name else name
-        return names
-
-    def _get_all_handler_names(self):
-        """Return a list of `(library_name, handler_name)` tuples."""
-        handlers = [('', printable_name(handler.name, True))
-                    for handler in self.user_keywords.handlers]
-        for library in chain(self.libraries.values(), self.resources.values()):
-            handlers.extend(
-                ((library.name or '',
-                  printable_name(handler.name, code_style=True))
-                 for handler in library.handlers))
-        return sorted(handlers)
+            candidates[full_name] = full_name if use_full_name else name
+        return candidates

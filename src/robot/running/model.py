@@ -45,13 +45,14 @@ from robot.model import BodyItem, create_fixture, DataDict, ModelObject, Tags, T
 from robot.output import LOGGER, Output, pyloggingconf
 from robot.result import (Break as BreakResult, Continue as ContinueResult,
                           Error as ErrorResult, Return as ReturnResult, Var as VarResult)
-from robot.utils import getshortdoc, NOT_SET, setter
+from robot.utils import eq, getshortdoc, normalize, NOT_SET, setter
 from robot.variables import VariableResolver
 
 from .arguments import ArgumentSpec, EmbeddedArguments, UserKeywordArgumentParser
 from .bodyrunner import ForRunner, IfRunner, KeywordRunner, TryRunner, WhileRunner
 from .randomizer import Randomizer
 from .statusreporter import StatusReporter
+from .userkeywordrunner import UserKeywordRunner, EmbeddedArgumentsRunner
 
 if TYPE_CHECKING:
     from robot.parsing import File
@@ -721,7 +722,7 @@ class ResourceFile(ModelObject):
                  owner: 'TestSuite|None' = None,
                  doc: str = ''):
         self.source = source
-        self.owner = owner    # TODO: Should this be 'parent' instead?
+        self.owner = owner    # FIXME: Should this be 'parent' instead?
         self.doc = doc
         self.imports = []
         self.variables = []
@@ -808,6 +809,19 @@ class ResourceFile(ModelObject):
         from .builder import RobotParser
         return RobotParser().parse_resource_model(model)
 
+    def find_keywords(self, name: str,
+                      include_embedded: bool = True) -> 'list[UserKeyword]':
+        keywords = []
+        norm_name = normalize(name, ignore='_')
+        for kw in self.keywords:
+            if kw.embedded:
+                if include_embedded and kw.matches(name):
+                    keywords.append(kw)
+            else:
+                if normalize(kw.name, ignore='_') == norm_name:
+                    keywords.append(kw)
+        return keywords
+
     def to_dict(self) -> DataDict:
         data = {}
         if self._source:
@@ -826,7 +840,7 @@ class ResourceFile(ModelObject):
 class UserKeyword(ModelObject):
     repr_args = ('name', 'args')
     fixture_class = Keyword
-    __slots__ = ['embedded_args', 'doc', 'timeout', 'lineno', 'owner', 'error',
+    __slots__ = ['embedded', 'doc', 'timeout', 'lineno', 'owner', 'error',
                  '_setup', '_teardown']
 
     def __init__(self, name: str = '',
@@ -837,7 +851,7 @@ class UserKeyword(ModelObject):
                  lineno: 'int|None' = None,
                  owner: 'ResourceFile|None' = None,
                  error: 'str|None' = None):
-        self.embedded_args: EmbeddedArguments | None = None
+        self.embedded: EmbeddedArguments | None = None
         self.name = name
         self.args = args
         self.doc = doc
@@ -850,9 +864,14 @@ class UserKeyword(ModelObject):
         self._setup = None
         self._teardown = None
 
+    # FIXME: Decide between `args`, `arguments` and `parameters`.
+    @property
+    def arguments(self):
+        return self.args
+
     @setter
     def name(self, name: str) -> str:
-        self.embedded_args = EmbeddedArguments.from_name(name)
+        self.embedded = EmbeddedArguments.from_name(name)
         return name
 
     @property
@@ -933,6 +952,16 @@ class UserKeyword(ModelObject):
         New in Robot Framework 6.1.
         """
         return bool(self._teardown)
+
+    def matches(self, name: str) -> bool:
+        if self.embedded:
+            return self.embedded.match(name)
+        return eq(self.name, name, ignore='_')
+
+    def create_runner(self, name, languages=None):
+        if self.embedded:
+            return EmbeddedArgumentsRunner(self, name)
+        return UserKeywordRunner(self)
 
     def to_dict(self) -> DataDict:
         data: DataDict = {'name': self.name}

@@ -10,7 +10,7 @@ Invalid arg spec
     ...    Invalid argument specification: Only last argument can be kwargs.
 
 Duplicate name
-    Keyword Name Should Be    3    Same twice
+    Keyword Name Should Be    3    Same Twice
     Keyword Doc Should Be     3    *Creating keyword failed:* Keyword with same name defined multiple times.
     Stdout should contain error    Same twice    10
     ...    Keyword with same name defined multiple times

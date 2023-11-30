@@ -15,9 +15,9 @@
 
 from itertools import chain
 
-from robot.errors import (BreakLoop, ContinueLoop, DataError, ExecutionFailed,
-                          ExecutionPassed, ExecutionStatus, PassExecution,
-                          ReturnFromKeyword, UserKeywordExecutionFailed, VariableError)
+from robot.errors import (DataError, ExecutionFailed, ExecutionPassed, ExecutionStatus,
+                          PassExecution, ReturnFromKeyword, UserKeywordExecutionFailed,
+                          VariableError)
 from robot.result import Keyword as KeywordResult
 from robot.utils import DotDict, getshortdoc, prepr, split_tags_from_doc
 from robot.variables import is_list_variable, VariableAssignment
@@ -35,10 +35,13 @@ class UserKeywordRunner:
         self.name = name or handler.name
         self.pre_run_messages = ()
 
+    # FIXME: UserKeywordRunner shouldn't need the following propertys.
+    # Code needing them should use UserKeyword directly.
+
     @property
     def full_name(self):
         owner = self._handler.owner
-        return f'{owner}.{self.name}' if owner else self.name
+        return f'{owner.name}.{self.name}' if owner and owner.name else self.name
 
     @property
     def tags(self):
@@ -47,6 +50,10 @@ class UserKeywordRunner:
     @property
     def source(self):
         return self._handler.source
+
+    @property
+    def error(self):
+        return self._handler.error
 
     @property
     def arguments(self):
@@ -71,7 +78,7 @@ class UserKeywordRunner:
         doc, tags = split_tags_from_doc(doc)
         tags = variables.replace_list(handler.tags, ignore_errors=True) + tags
         return KeywordResult(name=self.name,
-                             owner=handler.owner,
+                             owner=handler.owner.name,
                              doc=getshortdoc(doc),
                              args=kw.args,
                              assign=tuple(assignment),

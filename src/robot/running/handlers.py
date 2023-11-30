@@ -21,7 +21,7 @@ from robot.utils import (getdoc, getshortdoc, is_list_like, normpath, printable_
 from robot.errors import DataError
 from robot.model import Tags
 
-from .arguments import ArgumentSpec, DynamicArgumentParser, PythonArgumentParser
+from .arguments import DynamicArgumentParser, PythonArgumentParser
 from .dynamicmethods import GetKeywordSource, GetKeywordTypes
 from .librarykeywordrunner import (EmbeddedArgumentsRunner,
                                    LibraryKeywordRunner, RunKeywordRunner)
@@ -45,7 +45,7 @@ def InitHandler(library, method=None, docgetter=None):
 
 
 class _RunnableHandler:
-    supports_embedded_args = False
+    embedded = None
 
     def __init__(self, library, handler_name, handler_method, doc='', tags=None):
         self.library = library
@@ -98,9 +98,10 @@ class _RunnableHandler:
     def short_doc(self):
         return getshortdoc(self.doc)
 
+    # FIXME: `library` -> `owner`
     @property
     def owner(self):
-        return self.library.name
+        return self.library
 
     @property
     def source(self):
@@ -285,7 +286,6 @@ class _PythonInitHandler(_PythonHandler):
 
 
 class EmbeddedArgumentsHandler:
-    supports_embedded_args = True
 
     def __init__(self, embedded, orig_handler):
         self.embedded = embedded

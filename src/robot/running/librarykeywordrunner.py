@@ -55,7 +55,7 @@ class LibraryKeywordRunner:
     def _get_result(self, kw, assignment):
         handler = self._handler
         return KeywordResult(name=self.name,
-                             owner=handler.owner,
+                             owner=handler.owner.name,
                              doc=handler.short_doc,
                              args=kw.args,
                              assign=tuple(assignment),

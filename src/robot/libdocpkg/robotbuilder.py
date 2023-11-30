@@ -19,7 +19,7 @@ import re
 
 from robot.errors import DataError
 from robot.running import (ArgumentSpec, ResourceFileBuilder, TestLibrary,
-                           TestSuiteBuilder, TypeInfo, UserLibrary, UserErrorHandler)
+                           TestSuiteBuilder, TypeInfo, UserErrorHandler)
 from robot.utils import is_string, split_tags_from_doc, unescape
 from robot.variables import search_variable
 
@@ -98,19 +98,18 @@ class ResourceDocBuilder:
 
     def build(self, path):
         path = self._find_resource_file(path)
-        res, name = self._import_resource(path)
+        resource, name = self._import_resource(path)
         libdoc = LibraryDoc(name=name,
-                            doc=self._get_doc(res, name),
+                            doc=self._get_doc(resource, name),
                             type=self.type,
                             scope='GLOBAL',
-                            source=res.source,
+                            source=resource.source,
                             lineno=1)
-        libdoc.keywords = KeywordDocBuilder(resource=True).build_keywords(res)
+        libdoc.keywords = KeywordDocBuilder(resource=True).build_keywords(resource)
         return libdoc
 
     def _import_resource(self, path):
-        model = ResourceFileBuilder(process_curdir=False).build(path)
-        resource = UserLibrary(model)
+        resource = ResourceFileBuilder(process_curdir=False).build(path)
         return resource, resource.name
 
     def _find_resource_file(self, path):
@@ -139,7 +138,7 @@ class SuiteDocBuilder(ResourceDocBuilder):
             # Hack to disable parsing nested files.
             builder.included_files = ('-no-files-included-',)
         suite = builder.build(path)
-        return UserLibrary(suite.resource), suite.name
+        return suite.resource, suite.name
 
     def _get_doc(self, resource, name):
         return f"Documentation for keywords in suite ``{name}``."
@@ -150,8 +149,8 @@ class KeywordDocBuilder:
     def __init__(self, resource=False):
         self._resource = resource
 
-    def build_keywords(self, lib):
-        return [self.build_keyword(kw) for kw in lib.handlers]
+    def build_keywords(self, owner):
+        return [self.build_keyword(kw) for kw in owner.keywords]
 
     def build_keyword(self, kw):
         doc, tags = self._get_doc_and_tags(kw)

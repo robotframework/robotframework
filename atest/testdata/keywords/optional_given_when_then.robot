@@ -68,7 +68,7 @@ Prefix consisting of multiple words
 Prefix must be followed by space
     [Documentation]  FAIL
     ...    No keyword with name 'Givenwe don't drink too many beers' found. Did you mean:
-    ...    ${SPACE*4}We Don't Drink Too Many Beers
+    ...    ${SPACE*4}We don't drink too many beers
     Givenwe don't drink too many beers
 
 *** Keywords ***

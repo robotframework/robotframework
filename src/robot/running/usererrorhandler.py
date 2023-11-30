@@ -28,16 +28,8 @@ class UserErrorHandler:
     tests in affected test case file from executing. Instead, UserErrorHandler
     is created and if it is ever run DataError is raised then.
     """
-    supports_embedded_arguments = False
 
     def __init__(self, error, name, owner=None, source=None, lineno=None):
-        """
-        :param robot.errors.DataError error: Occurred error.
-        :param str name: Name of the affected keyword.
-        :param str owner: Name of the affected library or resource.
-        :param str source: Path to the source file.
-        :param int lineno: Line number of the failing keyword.
-        """
         self.error = error
         self.name = name
         self.owner = owner
@@ -49,7 +41,8 @@ class UserErrorHandler:
 
     @property
     def full_name(self):
-        return f'{self.owner}.{self.name}' if self.owner else self.name
+        owner = self.owner
+        return f'{owner.name}.{self.name}' if owner and owner.name else self.name
 
     @property
     def doc(self):
@@ -64,7 +57,7 @@ class UserErrorHandler:
 
     def run(self, kw, context, run=True):
         result = KeywordResult(name=self.name,
-                               owner=self.owner,
+                               owner=self.owner.name if self.owner else None,
                                args=kw.args,
                                assign=tuple(VariableAssignment(kw.assign)),
                                type=kw.type)

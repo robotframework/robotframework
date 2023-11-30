@@ -2,77 +2,70 @@ import sys
 import unittest
 
 from robot.errors import DataError
-from robot.running import UserKeyword
-from robot.running.userkeyword import EmbeddedArgumentsHandler
+from robot.running import UserKeyword, ResourceFile
 from robot.running.arguments import EmbeddedArguments, UserKeywordArgumentParser
 from robot.utils.asserts import assert_equal, assert_true, assert_raises_with_msg
-
-
-def EAT(name, args=()):
-    kw = UserKeyword(name, args)
-    embedded = EmbeddedArguments.from_name(name)
-    return EmbeddedArgumentsHandler(kw, 'resource', embedded)
 
 
 class TestEmbeddedArgs(unittest.TestCase):
 
     def setUp(self):
-        self.tmp1 = EAT('User selects ${item} from list')
-        self.tmp2 = EAT('${x} * ${y} from "${z}"')
+        self.kw1 = UserKeyword('User selects ${item} from list')
+        self.kw2 = UserKeyword('${x} * ${y} from "${z}"')
 
     def test_truthy(self):
         assert_true(EmbeddedArguments.from_name('${Yes} embedded args here'))
         assert_true(not EmbeddedArguments.from_name('No embedded args here'))
 
     def test_get_embedded_arg_and_regexp(self):
-        assert_equal(self.tmp1.embedded.args, ('item',))
-        assert_equal(self.tmp1.embedded.name.pattern,
+        assert_equal(self.kw1.embedded.args, ('item',))
+        assert_equal(self.kw1.embedded.name.pattern,
                      'User\\ selects\\ (.*?)\\ from\\ list')
-        assert_equal(self.tmp1.name, 'User selects ${item} from list')
+        assert_equal(self.kw1.name, 'User selects ${item} from list')
 
     def test_get_multiple_embedded_args_and_regexp(self):
-        assert_equal(self.tmp2.embedded.args, ('x', 'y', 'z'))
+        assert_equal(self.kw2.embedded.args, ('x', 'y', 'z'))
         quote = '"' if sys.version_info[:2] >= (3, 7) else '\\"'
-        assert_equal(self.tmp2.embedded.name.pattern,
+        assert_equal(self.kw2.embedded.name.pattern,
                      '(.*?)\\ \\*\\ (.*?)\\ from\\ {0}(.*?){0}'.format(quote))
 
     def test_create_runner_with_one_embedded_arg(self):
-        runner = self.tmp1.create_runner('User selects book from list')
+        runner = self.kw1.create_runner('User selects book from list')
         assert_equal(runner.embedded_args, ('book',))
         assert_equal(runner.name, 'User selects book from list')
-        assert_equal(runner.full_name, 'resource.User selects book from list')
-        runner = self.tmp1.create_runner('User selects radio from list')
+        assert_equal(runner.full_name, 'User selects book from list')
+        self.kw1.owner = ResourceFile(source='xxx.resource')
+        runner = self.kw1.create_runner('User selects radio from list')
         assert_equal(runner.embedded_args, ('radio',))
         assert_equal(runner.name, 'User selects radio from list')
-        assert_equal(runner.full_name, 'resource.User selects radio from list')
+        assert_equal(runner.full_name, 'xxx.User selects radio from list')
 
     def test_create_runner_with_many_embedded_args(self):
-        runner = self.tmp2.create_runner('User * book from "list"')
+        runner = self.kw2.create_runner('User * book from "list"')
         assert_equal(runner.embedded_args, ('User', 'book', 'list'))
 
     def test_create_runner_with_empty_embedded_arg(self):
-        runner = self.tmp1.create_runner('User selects  from list')
+        runner = self.kw1.create_runner('User selects  from list')
         assert_equal(runner.embedded_args, ('',))
 
     def test_create_runner_with_special_characters_in_embedded_args(self):
-        runner = self.tmp2.create_runner('Janne & Heikki * "enjoy" from """')
+        runner = self.kw2.create_runner('Janne & Heikki * "enjoy" from """')
         assert_equal(runner.embedded_args, ('Janne & Heikki', '"enjoy"', '"'))
 
     def test_embedded_args_without_separators(self):
-        template = EAT('This ${does}${not} work so well')
-        runner = template.create_runner('This doesnot work so well')
+        kw = UserKeyword('This ${does}${not} work so well')
+        runner = kw.create_runner('This doesnot work so well')
         assert_equal(runner.embedded_args, ('', 'doesnot'))
 
     def test_embedded_args_with_separators_in_values(self):
-        template = EAT('This ${could} ${work}-${OK}')
-        runner = template.create_runner("This doesn't really work---")
+        kw = UserKeyword('This ${could} ${work}-${OK}')
+        runner = kw.create_runner("This doesn't really work---")
         assert_equal(runner.embedded_args, ("doesn't", 'really work', '--'))
 
     def test_creating_runners_is_case_insensitive(self):
-        runner = self.tmp1.create_runner('User SELECts book frOm liST')
+        runner = self.kw1.create_runner('User SELECts book frOm liST')
         assert_equal(runner.embedded_args, ('book',))
         assert_equal(runner.name, 'User SELECts book frOm liST')
-        assert_equal(runner.full_name, 'resource.User SELECts book frOm liST')
 
 
 class TestGetArgSpec(unittest.TestCase):

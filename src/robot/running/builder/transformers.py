@@ -286,28 +286,41 @@ class KeywordBuilder(BodyBuilder):
 
     def __init__(self, resource: ResourceFile, settings: FileSettings):
         super().__init__(resource.keywords.create(tags=settings.keyword_tags))
+        self.resource = resource
         self.return_setting = None
 
     def build(self, node):
+        kw = self.model
         try:
             # Validate only name here. Reporting all parsing errors would report also
             # body being empty, but we want to validate it only at parsing time.
             if not node.name:
                 raise DataError('User keyword name cannot be empty.')
-            self.model.config(name=node.name, lineno=node.lineno)
+            kw.config(name=node.name, lineno=node.lineno)
         except DataError as err:
             # Errors other than name being empty mean that name contains invalid
             # embedded arguments. Need to set `_setter__name` to bypass `@setter`.
-            self.model.config(_setter__name=node.name, lineno=node.lineno,
-                              error=str(err))
+            kw.config(_setter__name=node.name, lineno=node.lineno, error=str(err))
             self._report_error(node, err)
         self.generic_visit(node)
         if self.return_setting:
-            self.model.body.create_return(self.return_setting)
+            kw.body.create_return(self.return_setting)
+        self._handle_duplicates(node, kw)
 
     def _report_error(self, node, error):
         error = f"Creating keyword '{self.model.name}' failed: {error}"
         ErrorReporter(self.model.source).report_error(node, error)
+
+    def _handle_duplicates(self, node, kw):
+        # TODO: Keep references to built keywords here in builders to avoid the
+        # need search them from resources every time.
+        if not kw.embedded:
+            kws = self.resource.find_keywords(kw.name, include_embedded=False)
+            if len(kws) > 1:
+                error = 'Keyword with same name defined multiple times.'
+                self._report_error(node, error)
+                self.resource.keywords.pop()
+                kws[0].error = error
 
     def visit_Documentation(self, node):
         self.model.doc = node.value

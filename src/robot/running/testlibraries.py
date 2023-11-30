@@ -112,8 +112,12 @@ class _BaseTestLibrary:
         self._create_handlers(self.get_instance())
         self.reset_instance()
 
-    def handlers_for(self, name):
+    def find_keywords(self, name):
         return self.handlers.get_handlers(name)
+
+    @property
+    def keywords(self):
+        return list(self.handlers)
 
     def reload(self):
         self.handlers = HandlerStore()

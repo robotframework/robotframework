@@ -3318,12 +3318,20 @@ class _Misc(_BuiltInBase):
 
         See also `Variable Should Exist`.
         """
+        error = None
         try:
             runner = self._namespace.get_runner(name, recommend_on_failure=False)
-        except DataError as error:
+        except DataError as err:
+            error = err.message
             raise AssertionError(msg or error.message)
-        if isinstance(runner, UserErrorHandler):
-            raise AssertionError(msg or runner.error.message)
+        else:
+            # FIXME: Unify reporting errors.
+            if isinstance(runner, UserErrorHandler):
+                error = runner.error.message
+            elif getattr(runner, 'error', None) is not None:
+                error = runner.error
+        if error is not None:
+            raise AssertionError(msg or error)
 
     def get_time(self, format='timestamp', time_='NOW'):
         """Returns the given time in the requested format.

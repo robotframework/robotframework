@@ -78,9 +78,6 @@ Misspelled Keyword Spacing
 Misspelled Keyword No Whitespace
     Check Test Case    ${TESTNAME}
 
-Keyword With Period
-    Check Test Case    ${TESTNAME}
-
 Keyword With Periods
     Check Test Case    ${TESTNAME}
 
