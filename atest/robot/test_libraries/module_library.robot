@@ -43,8 +43,6 @@ If __all__ is present, only functions listed there are available
     Check Test Case  ${TESTNAME} 2
     Check Test Case  ${TESTNAME} 3
     Check Test Case  ${TESTNAME} 4
-    Keyword should not have been added  join
-    Keyword should not have been added  not_in_all
 
 Class Method Assigned To Module Variable
     Check Test Case  ${TESTNAME}

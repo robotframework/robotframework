@@ -37,6 +37,7 @@ class UserErrorHandler:
         self.lineno = lineno
         self.arguments = ArgumentSpec()
         self.timeout = None
+        self.embedded = None
         self.tags = Tags()
 
     @property

@@ -112,5 +112,5 @@ class ConverterInfo:
     def convert(self, value):
         if not self.library:
             return self.converter(value)
-        return self.converter(value, self.library.get_instance())
+        return self.converter(value, self.library.instance)
 

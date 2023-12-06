@@ -257,8 +257,8 @@ class LibraryListeners(Listeners):
     def discard_suite_scope(self):
         self._listeners.pop()
 
-    def register(self, listeners, library):
-        listeners = self._import_listeners(listeners, library=library)
+    def register(self, library):
+        listeners = self._import_listeners(library.listeners, library=library)
         self._listeners[-1].extend(listeners)
 
     def close(self):

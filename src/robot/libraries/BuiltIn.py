@@ -3178,8 +3178,8 @@ class _Misc(_BuiltInBase):
         the library. The latter is especially useful if the library itself
         calls this keyword as a method.
         """
-        library = self._namespace.reload_library(name_or_instance)
-        self.log(f'Reloaded library {library.name} with {len(library)} keywords.')
+        lib = self._namespace.reload_library(name_or_instance)
+        self.log(f'Reloaded library {lib.name} with {len(lib.keywords)} keywords.')
 
     @run_keyword_variant(resolve=0)
     def import_library(self, name, *args):

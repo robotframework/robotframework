@@ -29,13 +29,13 @@ from .runkwregister import RUN_KW_REGISTER
 
 
 def Handler(library, name, method):
-    if RUN_KW_REGISTER.is_run_keyword(library.orig_name, name):
+    if RUN_KW_REGISTER.is_run_keyword(library.real_name, name):
         return _RunKeywordHandler(library, name, method)
     return _PythonHandler(library, name, method)
 
 
 def DynamicHandler(library, name, method, doc, argspec, tags=None):
-    if RUN_KW_REGISTER.is_run_keyword(library.orig_name, name):
+    if RUN_KW_REGISTER.is_run_keyword(library.real_name, name):
         return _DynamicRunKeywordHandler(library, name, method, doc, argspec, tags)
     return _DynamicHandler(library, name, method, doc, argspec, tags)
 
@@ -78,7 +78,7 @@ class _RunnableHandler:
         return tags
 
     def _get_initial_handler(self, library, name, method):
-        if library.scope.is_global:
+        if library.scope is library.scope.GLOBAL:
             return self._get_global_handler(method, name)
         return None
 
@@ -117,7 +117,7 @@ class _RunnableHandler:
     def current_handler(self):
         if self._method:
             return self._method
-        return self._get_handler(self.library.get_instance(), self._handler_name)
+        return self._get_handler(self.library.instance, self._handler_name)
 
     def _get_global_handler(self, method, name):
         return method
@@ -185,7 +185,7 @@ class _DynamicHandler(_RunnableHandler):
             if spec.named_only:
                 raise DataError(f"Too few '{name}' method parameters for "
                                 f"keyword-only arguments support.")
-        get_keyword_types = GetKeywordTypes(self.library.get_instance())
+        get_keyword_types = GetKeywordTypes(self.library.instance)
         types = get_keyword_types(self._handler_name)
         if isinstance(types, dict) and 'return' in types:
             spec.return_type = types.pop('return')
@@ -199,7 +199,7 @@ class _DynamicHandler(_RunnableHandler):
         return self._source_info[0]
 
     def _get_source_info(self):
-        get_keyword_source = GetKeywordSource(self.library.get_instance())
+        get_keyword_source = GetKeywordSource(self.library.instance)
         try:
             source = get_keyword_source(self._handler_name)
         except DataError as err:
@@ -246,12 +246,12 @@ class _DynamicHandler(_RunnableHandler):
 class _RunKeywordHandler(_PythonHandler):
 
     def create_runner(self, name, languages=None):
-        dry_run = RUN_KW_REGISTER.get_dry_run(self.library.orig_name, self.name)
+        dry_run = RUN_KW_REGISTER.get_dry_run(self.library.real_name, self.name)
         return RunKeywordRunner(self, execute_in_dry_run=dry_run)
 
     @property
     def _args_to_process(self):
-        return RUN_KW_REGISTER.get_args_to_process(self.library.orig_name, self.name)
+        return RUN_KW_REGISTER.get_args_to_process(self.library.real_name, self.name)
 
     def resolve_arguments(self, args, variables=None, languages=None):
         return self.arguments.resolve(args, variables, self.library.converters,
@@ -266,18 +266,18 @@ class _DynamicRunKeywordHandler(_DynamicHandler, _RunKeywordHandler):
 
 class _PythonInitHandler(_PythonHandler):
 
-    def __init__(self, library, handler_name, handler_method, docgetter):
+    def __init__(self, library, handler_name, handler_method, doc_getter):
         super().__init__(library, handler_name, handler_method)
-        self._docgetter = docgetter
+        self.doc_getter = doc_getter
 
     def _get_name(self, handler_name, handler_method):
         return '__init__'
 
     @property
     def doc(self):
-        if self._docgetter:
-            self._doc = self._docgetter() or self._doc
-            self._docgetter = None
+        if self.doc_getter:
+            self._doc = self.doc_getter() or self._doc
+            self.doc_getter = None
         return self._doc
 
     def _parse_arguments(self, init_method):

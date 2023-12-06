@@ -3,16 +3,24 @@ import re
 import sys
 import unittest
 
-from robot.running.testlibraries import (TestLibrary, _ClassLibrary,
-                                         _ModuleLibrary, _DynamicLibrary)
+from robot.running.testlibraries import (TestLibrary, ClassLibrary,
+                                         ModuleLibrary, DynamicLibrary)
 from robot.utils.asserts import (assert_equal, assert_false, assert_none,
-                                 assert_not_equal, assert_not_none, assert_true,
+                                 assert_not_none, assert_true,
                                  assert_raises, assert_raises_with_msg)
 from robot.utils import normalize
 from robot.errors import DataError
 
 from classes import (NameLibrary, DocLibrary, ArgInfoLibrary, GetattrLibrary,
                      SynonymLibrary, __file__ as classes_source)
+
+
+class NullLogger:
+
+    def write(self, *args, **kwargs):
+        pass
+
+    error = warn = info = debug = write
 
 
 # Valid keyword names and arguments for some libraries
@@ -32,44 +40,44 @@ example_keywords = [ ( "Log", ("msg",) ),
 class TestLibraryTypes(unittest.TestCase):
 
     def test_python_library(self):
-        lib = TestLibrary("BuiltIn")
-        assert_equal(lib.__class__, _ClassLibrary)
-        assert_equal(lib.positional_args, [])
+        lib = TestLibrary.from_name("BuiltIn")
+        assert_true(isinstance(lib, ClassLibrary))
+        assert_equal(lib.init_args, ((), ()))
 
     def test_python_library_with_args(self):
-        lib = TestLibrary("ParameterLibrary", ['my_host', '8080'])
-        assert_equal(lib.__class__, _ClassLibrary)
-        assert_equal(lib.positional_args, ['my_host', '8080'])
+        lib = TestLibrary.from_name("ParameterLibrary", args=['my_host', '8080'])
+        assert_true(isinstance(lib, ClassLibrary))
+        assert_equal(lib.init_args, (('my_host', '8080'), ()))
 
     def test_module_library(self):
-        lib = TestLibrary("module_library")
-        assert_equal(lib.__class__, _ModuleLibrary)
+        lib = TestLibrary.from_name("module_library")
+        assert_true(isinstance(lib, ModuleLibrary))
 
     def test_module_library_with_args(self):
-        assert_raises(DataError, TestLibrary, "module_library", ['arg'] )
+        assert_raises(DataError, TestLibrary.from_name, "module_library", args=['arg'])
 
     def test_dynamic_python_library(self):
-        lib = TestLibrary("RunKeywordLibrary")
-        assert_equal(lib.__class__, _DynamicLibrary)
+        lib = TestLibrary.from_name("RunKeywordLibrary")
+        assert_true(isinstance(lib, DynamicLibrary))
 
 
 class TestImports(unittest.TestCase):
 
     def test_import_python_class(self):
-        lib = TestLibrary("BuiltIn")
+        lib = TestLibrary.from_name("BuiltIn")
         self._verify_lib(lib, "BuiltIn", default_keywords)
 
     def test_import_python_class_from_module(self):
-        lib = TestLibrary("robot.libraries.BuiltIn.BuiltIn")
+        lib = TestLibrary.from_name("robot.libraries.BuiltIn.BuiltIn")
         self._verify_lib(lib, "robot.libraries.BuiltIn.BuiltIn", default_keywords)
 
     def test_import_python_module(self):
-        lib = TestLibrary("module_library")
+        lib = TestLibrary.from_name("module_library")
         kws = ["passing", "two arguments from class", "lambdakeyword", "argument"]
         self._verify_lib(lib, "module_library", [(kw, None) for kw in kws])
 
     def test_import_python_module_from_module(self):
-        lib = TestLibrary("pythonmodule.library")
+        lib = TestLibrary.from_name("pythonmodule.library")
         self._verify_lib(lib, "pythonmodule.library",
                          [("keyword from submodule", None)])
 
@@ -77,7 +85,7 @@ class TestImports(unittest.TestCase):
         msg = ("Importing library '{libname}' failed: "
                "ModuleNotFoundError: No module named '{modname}'")
         for name in 'nonexisting', 'nonexi.sting':
-            error = assert_raises(DataError, TestLibrary, name)
+            error = assert_raises(DataError, TestLibrary.from_name, name)
             expected = msg.format(libname=name, modname=name.split('.')[0])
             assert_equal(str(error).splitlines()[0], expected)
 
@@ -85,53 +93,46 @@ class TestImports(unittest.TestCase):
         assert_raises_with_msg(DataError,
                                "Importing library 'pythonmodule.NonExisting' failed: "
                                "Module 'pythonmodule' does not contain 'NonExisting'.",
-                               TestLibrary, 'pythonmodule.NonExisting')
+                               TestLibrary.from_name, 'pythonmodule.NonExisting')
 
     def test_import_invalid_type(self):
         msg = "Importing library '%s' failed: Expected class or module, got %s."
         assert_raises_with_msg(DataError,
                                msg % ('pythonmodule.some_string', 'string'),
-                               TestLibrary, 'pythonmodule.some_string')
+                               TestLibrary.from_name, 'pythonmodule.some_string')
         assert_raises_with_msg(DataError,
                                msg % ('pythonmodule.some_object', 'SomeObject'),
-                               TestLibrary, 'pythonmodule.some_object')
-
-    def test_import_with_unicode_name(self):
-        self._verify_lib(TestLibrary("BuiltIn"), "BuiltIn", default_keywords)
-        self._verify_lib(TestLibrary("robot.libraries.BuiltIn.BuiltIn"),
-                         "robot.libraries.BuiltIn.BuiltIn", default_keywords)
-        self._verify_lib(TestLibrary("pythonmodule.library"), "pythonmodule.library",
-                         [("keyword from submodule", None)])
+                               TestLibrary.from_name, 'pythonmodule.some_object')
 
     def test_global_scope(self):
-        self._verify_scope(TestLibrary('libraryscope.Global'), 'GLOBAL')
+        self._verify_scope(TestLibrary.from_name('libraryscope.Global'), 'GLOBAL')
 
     def _verify_scope(self, lib, expected):
-        assert_equal(str(lib.scope), expected)
+        assert_equal(lib.scope.name, expected)
 
     def test_suite_scope(self):
-        self._verify_scope(TestLibrary('libraryscope.Suite'), 'SUITE')
-        self._verify_scope(TestLibrary('libraryscope.TestSuite'), 'SUITE')
+        self._verify_scope(TestLibrary.from_name('libraryscope.Suite'), 'SUITE')
+        self._verify_scope(TestLibrary.from_name('libraryscope.TestSuite'), 'SUITE')
 
     def test_test_scope(self):
-        self._verify_scope(TestLibrary('libraryscope.Test'), 'TEST')
-        self._verify_scope(TestLibrary('libraryscope.TestCase'), 'TEST')
+        self._verify_scope(TestLibrary.from_name('libraryscope.Test'), 'TEST')
+        self._verify_scope(TestLibrary.from_name('libraryscope.TestCase'), 'TEST')
 
     def test_task_scope_is_mapped_to_test_scope(self):
-        self._verify_scope(TestLibrary('libraryscope.Task'), 'TEST')
+        self._verify_scope(TestLibrary.from_name('libraryscope.Task'), 'TEST')
 
     def test_invalid_scope_is_mapped_to_test_scope(self):
         for libname in ['libraryscope.InvalidValue',
                         'libraryscope.InvalidEmpty',
                         'libraryscope.InvalidMethod',
                         'libraryscope.InvalidNone']:
-            self._verify_scope(TestLibrary(libname), 'TEST')
+            self._verify_scope(TestLibrary.from_name(libname), 'TEST')
 
     def _verify_lib(self, lib, libname, keywords):
         assert_equal(libname, lib.name)
         for name, _ in keywords:
-            handler = lib.handlers[name]
-            assert_equal(normalize(handler.full_name), normalize(f"{libname}.{name}"))
+            kw = lib.find_keywords(name)[0]
+            assert_equal(normalize(kw.full_name), normalize(f"{libname}.{name}"))
 
 
 class TestLibraryInit(unittest.TestCase):
@@ -147,7 +148,7 @@ class TestLibraryInit(unittest.TestCase):
 
     def test_new_style_class_with_init(self):
         lib = self._test_init_handler('newstyleclasses.NewStyleClassArgsLibrary', ['value'], 1, 1)
-        assert_equal(len(lib.handlers), 1)
+        assert_equal(len(lib.keywords), 1)
 
     def test_library_with_metaclass(self):
         self._test_init_handler('newstyleclasses.MetaClassLibrary')
@@ -156,7 +157,7 @@ class TestLibraryInit(unittest.TestCase):
         self._test_init_handler('LenLibrary')
 
     def _test_init_handler(self, libname, args=None, min=0, max=0):
-        lib = TestLibrary(libname, args)
+        lib = TestLibrary.from_name(libname, args=args)
         assert_equal(lib.init.arguments.minargs, min)
         assert_equal(lib.init.arguments.maxargs, max)
         return lib
@@ -175,7 +176,7 @@ class TestVersion(unittest.TestCase):
         self._verify_version('module_library', 'test')
 
     def _verify_version(self, name, version):
-        assert_equal(TestLibrary(name).version, version)
+        assert_equal(TestLibrary.from_name(name).version, version)
 
 
 class TestDocFormat(unittest.TestCase):
@@ -187,81 +188,89 @@ class TestDocFormat(unittest.TestCase):
         self._verify_doc_format('classes.VersionLibrary', 'HTML')
 
     def _verify_doc_format(self, name, doc_format):
-        assert_equal(TestLibrary(name).doc_format, doc_format)
+        assert_equal(TestLibrary.from_name(name).doc_format, doc_format)
 
 
 class _TestScopes(unittest.TestCase):
+    lib: TestLibrary
 
-    def _get_lib_and_instance(self, name):
-        lib = TestLibrary(name)
-        if lib.scope.is_global:
-            assert_not_none(lib._libinst)
-        else:
-            assert_none(lib._libinst)
-        return lib, lib._libinst
+    def start_suite(self, instance=False):
+        self.lib.scope_manager.start_suite()
+        assert_none(self.lib._instance)
+        if instance:
+            inst = self.lib.instance
+            assert_not_none(inst)
+            return inst
 
-    def _start_new_suite(self):
-        self.lib.start_suite()
-        assert_none(self.lib._libinst)
-        inst = self.lib.get_instance()
-        assert_not_none(inst)
-        return inst
+    def end_suite(self):
+        self.lib.scope_manager.end_suite()
+
+    def start_test(self):
+        self.lib.scope_manager.start_test()
+
+    def end_test(self):
+        self.lib.scope_manager.end_test()
 
     def _verify_end_suite_restores_previous_instance(self, prev_inst):
-        self.lib.end_suite()
-        assert_true(self.lib._libinst is prev_inst)
+        self.lib.scope_manager.end_suite()
+        assert_true(self.lib._instance is prev_inst)
         if prev_inst is not None:
-            assert_true(self.lib.get_instance() is prev_inst)
+            assert_true(self.lib.instance is prev_inst)
 
 
 class GlobalScope(_TestScopes):
 
     def test_global_scope(self):
-        lib, instance = self._get_lib_and_instance('BuiltIn')
+        lib = TestLibrary.from_name('BuiltIn')
+        instance = lib._instance
+        assert_not_none(instance)
         for mname in ['start_suite', 'start_suite', 'start_test', 'end_test',
                       'start_test', 'end_test', 'end_suite', 'start_suite',
                       'start_test', 'end_test', 'end_suite', 'end_suite']:
-            getattr(lib, mname)()
-            assert_true(instance is lib._libinst)
+            getattr(lib.scope_manager, mname)()
+            assert_true(instance is lib._instance)
 
 
 class TestSuiteScope(_TestScopes):
 
     def setUp(self):
-        self.lib, self.instance = self._get_lib_and_instance("libraryscope.Suite")
-        self.lib.start_suite()
+        self.lib = TestLibrary.from_name('libraryscope.Suite')
+        self.lib.instance = None
+        self.start_suite()
+        assert_none(self.lib._instance)
 
     def test_start_suite_flushes_instance(self):
-        assert_none(self.lib._libinst)
-        inst = self.lib.get_instance()
-        assert_not_none(inst)
-        assert_false(inst is self.instance)
+        assert_none(self.lib._instance)
+        assert_not_none(self.lib.instance)
 
     def test_start_test_or_end_test_do_not_flush_instance(self):
-        inst = self.lib.get_instance()
+        inst = self.lib.instance
         for _ in range(10):
-            self.lib.start_test()
-            assert_true(inst is self.lib._libinst)
-            assert_true(inst is self.lib.get_instance())
-            self.lib.end_test()
-            assert_true(inst is self.lib._libinst)
+            self.start_test()
+            assert_true(inst is self.lib._instance)
+            assert_true(inst is self.lib.instance)
+            self.end_test()
+            assert_true(inst is self.lib._instance)
+            assert_true(inst is self.lib.instance)
 
     def test_end_suite_restores_previous_instance_with_one_suite(self):
-        self.lib.start_test()
-        self.lib.get_instance()
-        self.lib.end_test()
-        self.lib.get_instance()
-        self.lib.end_suite()
-        assert_none(self.lib._libinst)
+        inst = self.lib.instance
+        assert_not_none(self.lib._instance)
+        self.start_test()
+        assert_true(inst, self.lib.instance)
+        self.end_test()
+        assert_true(inst, self.lib.instance)
+        self.end_suite()
+        assert_none(self.lib._instance)
 
-    def test_intance_caching(self):
-        inst1 = self.lib.get_instance()
-        inst2 = self._start_new_suite()
+    def test_instance_caching(self):
+        inst1 = self.lib.instance
+        inst2 = self.start_suite(instance=True)
         assert_false(inst1 is inst2)
         self._run_tests(inst2)
         self._verify_end_suite_restores_previous_instance(inst1)
-        inst3 = self._start_new_suite()
-        inst4 = self._start_new_suite()
+        inst3 = self.start_suite(instance=True)
+        inst4 = self.start_suite(instance=True)
         self._run_tests(inst4, 10)
         self._verify_end_suite_restores_previous_instance(inst3)
         self._verify_end_suite_restores_previous_instance(inst1)
@@ -269,146 +278,153 @@ class TestSuiteScope(_TestScopes):
 
     def _run_tests(self, exp_inst, count=3):
         for _ in range(count):
-            self.lib.start_test()
-            assert_true(self.lib.get_instance() is exp_inst)
-            self.lib.end_test()
-            assert_true(self.lib.get_instance() is exp_inst)
+            self.start_test()
+            assert_true(self.lib.instance is exp_inst)
+            self.end_test()
+            assert_true(self.lib.instance is exp_inst)
 
 
 class TestCaseScope(_TestScopes):
 
     def setUp(self):
-        self.lib, self.instance = self._get_lib_and_instance("libraryscope.Test")
-        self.lib.start_suite()
+        self.lib = TestLibrary.from_name('libraryscope.Test')
+        self.lib.instance = None
+        self.start_suite()
 
     def test_different_instances_for_all_tests(self):
         self._run_tests(None)
-        inst = self.lib.get_instance()
+        inst = self.lib.instance
         self._run_tests(inst, 5)
-        self.lib.end_suite()
-        assert_none(self.lib._libinst)
+        self.end_suite()
+        assert_none(self.lib._instance)
 
     def test_nested_suites(self):
-        top_inst = self.lib.get_instance()
+        top_inst = self.lib.instance
         self._run_tests(top_inst, 4)
-        self.lib.start_suite()
+        self.start_suite()
         self._run_tests(None, 3)
-        self.lib.start_suite()
-        self._run_tests(self.lib.get_instance(), 3)
-        self.lib.end_suite()
-        self.lib.end_suite()
-        assert_true(self.lib._libinst is top_inst)
+        self.start_suite()
+        self._run_tests(self.lib.instance, 3)
+        self.end_suite()
+        self.end_suite()
+        assert_true(self.lib._instance is top_inst)
 
     def _run_tests(self, suite_inst, count=3):
         old_insts = [suite_inst]
         for _ in range(count):
-            self.lib.start_test()
-            assert_none(self.lib._libinst)
-            inst = self.lib.get_instance()
+            self.start_test()
+            assert_none(self.lib._instance)
+            inst = self.lib.instance
             assert_false(inst in old_insts)
             old_insts.append(inst)
-            self.lib.end_test()
-            assert_true(self.lib._libinst is suite_inst)
+            self.end_test()
+            assert_true(self.lib._instance is suite_inst)
 
 
-class TestHandlers(unittest.TestCase):
+class TestKeywords(unittest.TestCase):
 
-    def test_get_handlers(self):
+    def test_keywords(self):
         for lib in [NameLibrary, DocLibrary, ArgInfoLibrary, GetattrLibrary, SynonymLibrary]:
-            handlers = TestLibrary(f'classes.{lib.__name__}').handlers
-            assert_equal(lib.handler_count, len(handlers), lib.__name__)
-            for handler in handlers:
+            keywords = TestLibrary.from_name(f'classes.{lib.__name__}').keywords
+            assert_equal(lib.handler_count, len(keywords), lib.__name__)
+            for handler in keywords:
                 assert_false(handler._handler_name.startswith('_'))
                 assert_true('skip' not in handler._handler_name)
 
-    def test_non_global_dynamic_handlers(self):
-        lib = TestLibrary("RunKeywordLibrary")
-        assert_equal(len(lib.handlers), 2)
-        assert_true('Run Keyword That Passes' in lib.handlers)
-        assert_true('Run Keyword That Fails' in lib.handlers)
-        assert_none(lib.handlers['Run Keyword That Passes']._method)
-        assert_none(lib.handlers['Run Keyword That Fails']._method)
+    def test_non_global_dynamic_keywords(self):
+        lib = TestLibrary.from_name("RunKeywordLibrary")
+        kw1, kw2 = lib.keywords
+        assert_equal(kw1.name, 'Run Keyword That Passes')
+        assert_equal(kw2.name, 'Run Keyword That Fails')
+        assert_none(kw1._method)
+        assert_none(kw2._method)
 
-    def test_global_dynamic_handlers(self):
-        lib = TestLibrary("RunKeywordLibrary.GlobalRunKeywordLibrary")
-        assert_equal(len(lib.handlers), 2)
-        for name in 'Run Keyword That Passes', 'Run Keyword That Fails':
-            handler = lib.handlers[name]
-            assert_not_none(handler._method)
-            assert_not_equal(handler._method, lib._libinst.run_keyword)
-            assert_equal(handler._method.__name__, 'handler')
+    def test_global_dynamic_keywords(self):
+        lib = TestLibrary.from_name("RunKeywordLibrary.GlobalRunKeywordLibrary")
+        kw1, kw2 = lib.keywords
+        assert_equal(kw1.name, 'Run Keyword That Passes')
+        assert_equal(kw2.name, 'Run Keyword That Fails')
+        assert_not_none(kw1._method)
+        assert_not_none(kw2._method)
 
-    def test_synonym_handlers(self):
-        testlib = TestLibrary('classes.SynonymLibrary')
-        names = ['handler', 'synonym_handler', 'another_synonym']
-        for handler in testlib.handlers:
-            # test 'handler_name' -- raises ValueError if it isn't in 'names'
-            names.remove(handler._handler_name)
-        assert_equal(len(names), 0, f'handlers {names} not created', False)
+    def test_synonyms(self):
+        lib = TestLibrary.from_name('classes.SynonymLibrary')
+        kw1, kw2, kw3 = lib.keywords
+        assert_equal(kw1.name, 'Another Synonym')
+        assert_equal(kw2.name, 'Handler')
+        assert_equal(kw3.name, 'Synonym Handler')
 
     def test_global_handlers_are_created_only_once(self):
-        lib = TestLibrary('classes.RecordingLibrary')
-        assert_true(lib.scope.is_global)
-        instance = lib._libinst
+        lib = TestLibrary.from_name('classes.RecordingLibrary')
+        assert_true(lib.scope is lib.scope.GLOBAL)
+        instance = lib._instance
         assert_true(instance is not None)
         assert_equal(instance.kw_accessed, 1)
         assert_equal(instance.kw_called, 0)
-        for _ in range(5):
-            lib.handlers['kw'].create_runner('kw')._run(_FakeContext(), [])
-        assert_true(lib._libinst is instance)
+        kw, = lib.keywords
+        for _ in range(42):
+            kw.create_runner('kw')._run(_FakeContext(), [])
+        assert_true(lib._instance is instance)
         assert_equal(instance.kw_accessed, 1)
-        assert_equal(instance.kw_called, 5)
+        assert_equal(instance.kw_called, 42)
 
 
 class TestDynamicLibrary(unittest.TestCase):
 
     def test_get_keyword_doc_is_used_if_present(self):
-        lib = TestLibrary('classes.ArgDocDynamicLibrary')
-        assert_equal(lib.handlers['No Arg'].doc,
+        lib = TestLibrary.from_name('classes.ArgDocDynamicLibrary')
+        assert_equal(self.find(lib, 'No Arg').doc,
                      'Keyword documentation for No Arg')
-        assert_equal(lib.handlers['Multiline'].doc,
+        assert_equal(self.find(lib, 'Multiline').doc,
                      'Multiline\nshort doc!\n\nBody\nhere.')
 
+    def find(self, lib, name):
+        kws = lib.find_keywords(name)
+        assert len(kws) == 1
+        return kws[0]
+
     def test_get_keyword_doc_and_args_are_ignored_if_not_callable(self):
-        lib = TestLibrary('classes.InvalidAttributeDynamicLibrary')
-        assert_equal(len(lib.handlers), 7)
-        assert_equal(lib.handlers['No Arg'].doc, '')
-        assert_handler_args(lib.handlers['No Arg'], 0, sys.maxsize)
+        lib = TestLibrary.from_name('classes.InvalidAttributeDynamicLibrary')
+        assert_equal(len(lib.keywords), 7)
+        assert_equal(self.find(lib, 'No Arg').doc, '')
+        assert_args(self.find(lib, 'No Arg'), 0, sys.maxsize)
 
     def test_handler_is_not_created_if_get_keyword_doc_fails(self):
-        lib = TestLibrary('classes.InvalidGetDocDynamicLibrary')
-        assert_equal(len(lib.handlers), 0)
+        lib = TestLibrary.from_name('classes.InvalidGetDocDynamicLibrary',
+                                    logger=NullLogger())
+        assert_equal(len(lib.keywords), 0)
 
     def test_handler_is_not_created_if_get_keyword_args_fails(self):
-        lib = TestLibrary('classes.InvalidGetArgsDynamicLibrary')
-        assert_equal(len(lib.handlers), 0)
+        lib = TestLibrary.from_name('classes.InvalidGetArgsDynamicLibrary',
+                                    logger=NullLogger())
+        assert_equal(len(lib.keywords), 0)
 
     def test_arguments_without_kwargs(self):
-        lib = TestLibrary('classes.ArgDocDynamicLibrary')
+        lib = TestLibrary.from_name('classes.ArgDocDynamicLibrary')
         for name, (mina, maxa) in [('No Arg', (0, 0)),
                                    ('One Arg', (1, 1)),
                                    ('One or Two Args', (1, 2)),
                                    ('Many Args', (0, sys.maxsize)),
                                    ('No Arg Spec', (0, sys.maxsize))]:
-            assert_handler_args(lib.handlers[name], mina, maxa)
+            assert_args(self.find(lib, name), mina, maxa)
 
     def test_arguments_with_kwargs(self):
-        lib = TestLibrary('classes.ArgDocDynamicLibraryWithKwargsSupport')
+        lib = TestLibrary.from_name('classes.ArgDocDynamicLibraryWithKwargsSupport')
         for name, (mina, maxa) in [('No Arg', (0, 0)),
                                    ('One Arg', (1, 1)),
                                    ('One or Two Args', (1, 2)),
                                    ('Many Args', (0, sys.maxsize))]:
-            assert_handler_args(lib.handlers[name], mina, maxa, kwargs=False)
+            assert_args(self.find(lib, name), mina, maxa)
         for name, (mina, maxa) in [('Kwargs', (0, 0)),
                                    ('Varargs and Kwargs', (0, sys.maxsize)),
                                    ('No Arg Spec', (0, sys.maxsize))]:
-            assert_handler_args(lib.handlers[name], mina, maxa, kwargs=True)
+            assert_args(self.find(lib, name), mina, maxa, kwargs=True)
 
 
-def assert_handler_args(handler, minargs=0, maxargs=0, kwargs=False):
-    assert_equal(handler.arguments.minargs, minargs)
-    assert_equal(handler.arguments.maxargs, maxargs)
-    assert_equal(bool(handler.arguments.var_named), kwargs)
+def assert_args(kw, minargs=0, maxargs=0, kwargs=False):
+    assert_equal(kw.arguments.minargs, minargs)
+    assert_equal(kw.arguments.maxargs, maxargs)
+    assert_equal(bool(kw.arguments.var_named), kwargs)
 
 
 class TestDynamicLibraryIntroDocumentation(unittest.TestCase):
@@ -426,11 +442,11 @@ class TestDynamicLibraryIntroDocumentation(unittest.TestCase):
                                          'dynamic override')
 
     def test_failure_in_dynamic_resolving_of_doc(self):
-        lib = TestLibrary('dynlibs.FailingDynamicDocLib')
+        lib = TestLibrary.from_name('dynlibs.FailingDynamicDocLib')
         assert_raises(DataError, getattr, lib, 'doc')
 
-    def _assert_intro_doc(self, library_name, expected_doc):
-        assert_equal(TestLibrary(library_name).doc, expected_doc)
+    def _assert_intro_doc(self, name, expected_doc):
+        assert_equal(TestLibrary.from_name(name).doc, expected_doc)
 
 
 class TestDynamicLibraryInitDocumentation(unittest.TestCase):
@@ -446,45 +462,45 @@ class TestDynamicLibraryInitDocumentation(unittest.TestCase):
                               'dynamic override')
 
     def test_failure_in_dynamic_resolving_of_doc(self):
-        init = TestLibrary('dynlibs.FailingDynamicDocLib').init
+        init = TestLibrary.from_name('dynlibs.FailingDynamicDocLib').init
         assert_raises(DataError, getattr, init, 'doc')
 
-    def _assert_init_doc(self, library_name, expected_doc):
-        assert_equal(TestLibrary(library_name).init.doc, expected_doc)
+    def _assert_init_doc(self, name, expected_doc):
+        assert_equal(TestLibrary.from_name(name).init.doc, expected_doc)
 
 
 class TestSourceAndLineno(unittest.TestCase):
 
     def test_class(self):
-        lib = TestLibrary('classes.NameLibrary')
+        lib = TestLibrary.from_name('classes.NameLibrary')
         self._verify(lib, classes_source, 10)
 
     def test_class_in_package(self):
         from robot.variables.variables import __file__ as source
-        lib = TestLibrary('robot.variables.Variables')
+        lib = TestLibrary.from_name('robot.variables.Variables')
         self._verify(lib, source, 24)
 
     def test_dynamic(self):
-        lib = TestLibrary('classes.ArgDocDynamicLibrary')
+        lib = TestLibrary.from_name('classes.ArgDocDynamicLibrary')
         self._verify(lib, classes_source, 215)
 
     def test_module(self):
         from module_library import __file__ as source
-        lib = TestLibrary('module_library')
+        lib = TestLibrary.from_name('module_library')
         self._verify(lib, source, 1)
 
     def test_package(self):
         from robot.variables import __file__ as source
-        lib = TestLibrary('robot.variables')
+        lib = TestLibrary.from_name('robot.variables')
         self._verify(lib, source, 1)
 
     def test_decorated(self):
-        lib = TestLibrary('classes.Decorated')
+        lib = TestLibrary.from_name('classes.Decorated')
         self._verify(lib, classes_source, 317)
 
     def test_no_class_statement(self):
-        lib = TestLibrary('classes.NoClassDefinition')
-        self._verify(lib, classes_source, -1)
+        lib = TestLibrary.from_name('classes.NoClassDefinition')
+        self._verify(lib, classes_source, 1)
 
     def _verify(self, lib, source, lineno):
         if source:

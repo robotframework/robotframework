@@ -14,15 +14,13 @@
 #  limitations under the License.
 
 import copy
-import os.path
 import os
 
 from robot.output import LOGGER
 from robot.errors import FrameworkError, DataError
-from robot.utils import normpath, seq2str, seq2str2, is_string
+from robot.utils import normpath, seq2str, seq2str2
 
 from .builder import ResourceFileBuilder
-from .handlerstore import HandlerStore
 from .testlibraries import TestLibrary
 
 
@@ -41,16 +39,41 @@ class Importer:
 
     def close_global_library_listeners(self):
         for lib in self._library_cache.values():
-            lib.close_global_listeners()
+            lib.scope_manager.close_global_listeners()
 
     def import_library(self, name, args, alias, variables):
-        lib = TestLibrary(name, args, variables, create_handlers=False)
-        positional, named = lib.positional_args, lib.named_args
-        lib = self._import_library(name, positional, named, lib)
+        lib = TestLibrary.from_name(name, args=args, variables=variables,
+                                    create_keywords=False)
+        positional, named = lib.init_args
+        args_str = seq2str2(list(positional) +
+                            [f'{name}={value}' for name, value in named])
+        key = (name, positional, named)
+        if key in self._library_cache:
+            LOGGER.info(f"Found library '{name}' with arguments {args_str} "
+                        f"from cache.")
+            lib = self._library_cache[key]
+        else:
+            lib.create_keywords()
+            if lib.scope is not lib.scope.GLOBAL:
+                lib.instance = None
+            self._library_cache[key] = lib
+            self._log_imported_library(name, args_str, lib)
         if alias:
             alias = variables.replace_scalar(alias)
-            lib = self._copy_library(lib, alias)
+            lib = self._copy_library(lib, alias, name, args, variables)
             LOGGER.info(f"Imported library '{name}' with name '{alias}'.")
+        return lib
+
+    def _copy_library(self, orig, alias, name, args, variables):
+        # FIXME: This resolves init args twice. Could we pass `orig.init_args` somehow?
+        lib = orig.from_code(orig.code, name=alias, real_name=orig.name, source=orig.source,
+                             args=args, create_keywords=False, variables=variables)
+        lib.instance = orig.instance
+        for kw in orig.keywords:
+            # FIXME: Try to avoid using `copy.copy`
+            kw = copy.copy(kw)
+            kw.library = lib
+            lib.keywords.append(kw)
         return lib
 
     def import_resource(self, path, lang=None):
@@ -69,45 +92,14 @@ class Importer:
             raise DataError(f"Invalid resource file extension '{extension}'. "
                             f"Supported extensions are {extensions}.")
 
-    def _import_library(self, name, positional, named, lib):
-        args = positional + [f'{name}={value}' for name, value in named]
-        key = (name, positional, named)
-        if key in self._library_cache:
-            LOGGER.info(f"Found library '{name}' with arguments {seq2str2(args)} "
-                        f"from cache.")
-            return self._library_cache[key]
-        lib.create_handlers()
-        self._library_cache[key] = lib
-        self._log_imported_library(name, args, lib)
-        return lib
-
-    def _log_imported_library(self, name, args, lib):
-        type = lib.__class__.__name__.replace('Library', '').lower()[1:]
-        listener = ', with listener' if lib.has_listener else ''
-        LOGGER.info(f"Imported library '{name}' with arguments {seq2str2(args)} "
-                    f"(version {lib.version or '<unknown>'}, {type} type, "
-                    f"{lib.scope} scope, {len(lib)} keywords{listener}).")
-        if not lib:
+    def _log_imported_library(self, name, args_str, lib):
+        kind = type(lib).__name__.replace('Library', '').lower()
+        listener = ', with listener' if lib.listeners else ''
+        LOGGER.info(f"Imported library '{name}' with arguments {args_str} "
+                    f"(version {lib.version or '<unknown>'}, {kind} type, "
+                    f"{lib.scope.name} scope, {len(lib.keywords)} keywords{listener}).")
+        if not (lib.keywords or lib.listeners):
             LOGGER.warn(f"Imported library '{name}' contains no keywords.")
-
-    def _copy_library(self, orig, name):
-        # This is pretty ugly. Hopefully we can remove cache and copying
-        # altogether in 3.0 and always just re-import libraries:
-        # https://github.com/robotframework/robotframework/issues/2106
-        lib = copy.copy(orig)
-        lib.name = name
-        lib.scope = type(lib.scope)(lib)
-        lib.reset_instance()
-        lib.handlers = HandlerStore()
-        for handler in orig.handlers._normal.values():
-            handler = copy.copy(handler)
-            handler.library = lib
-            lib.handlers.add(handler)
-        for handler in orig.handlers._embedded:
-            handler = copy.copy(handler)
-            handler.library = lib
-            lib.handlers.add(handler, embedded=True)
-        return lib
 
 
 class ImportCache:
@@ -122,7 +114,7 @@ class ImportCache:
         self._items = []
 
     def __setitem__(self, key, item):
-        if not is_string(key) and not isinstance(key, tuple):
+        if not isinstance(key, (str, tuple)):
             raise FrameworkError('Invalid key for ImportCache')
         key = self._norm_path_key(key)
         if key not in self._keys:
@@ -154,4 +146,4 @@ class ImportCache:
         return key
 
     def _is_path(self, key):
-        return is_string(key) and os.path.isabs(key) and os.path.exists(key)
+        return isinstance(key, str) and os.path.isabs(key) and os.path.exists(key)

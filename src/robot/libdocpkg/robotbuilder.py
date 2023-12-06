@@ -32,11 +32,11 @@ class LibraryDocBuilder:
 
     def build(self, library):
         name, args = self._split_library_name_and_args(library)
-        lib = TestLibrary(name, args)
+        lib = TestLibrary.from_name(name, args=args)
         libdoc = LibraryDoc(name=lib.name,
                             doc=self._get_doc(lib),
                             version=lib.version,
-                            scope=str(lib.scope),
+                            scope=lib.scope.name,
                             doc_format=lib.doc_format,
                             source=lib.source,
                             lineno=lib.lineno)

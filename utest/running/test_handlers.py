@@ -6,7 +6,7 @@ import unittest
 
 from robot.running.handlers import _PythonHandler, DynamicHandler
 from robot.utils.asserts import assert_equal, assert_raises_with_msg, assert_true
-from robot.running.testlibraries import TestLibrary, LibraryScope
+from robot.running.testlibraries import Scope, TestLibrary
 from robot.running.dynamicmethods import (
     GetKeywordArguments, GetKeywordDocumentation, RunKeyword)
 from robot.errors import DataError
@@ -24,11 +24,9 @@ def _get_handler_methods(lib):
 class LibraryMock:
 
     def __init__(self, name='MyLibrary', scope='GLOBAL'):
-        self.name = self.orig_name = name
-        self.scope = LibraryScope(scope, self)
-
-    register_listeners = unregister_listeners = reset_instance \
-        = get_instance = lambda *args: None
+        self.name = self.real_name = name
+        self.scope = Scope[scope]
+        self.instance = None
 
 
 def assert_argspec(argspec, minargs=0, maxargs=0, positional=[], defaults={},
@@ -72,7 +70,7 @@ class TestPythonHandler(unittest.TestCase):
             assert_equal(handler.arguments.maxargs, exp_maxa)
 
     def test_getarginfo_getattr(self):
-        handlers = TestLibrary('classes.GetattrLibrary').handlers
+        handlers = TestLibrary.from_name('classes.GetattrLibrary').keywords
         assert_equal(len(handlers), 3)
         for handler in handlers:
             assert_true(handler.name in ['Foo','Bar','Zap'])
@@ -290,80 +288,77 @@ class TestDynamicHandlerCreation(unittest.TestCase):
 class TestSourceAndLineno(unittest.TestCase):
 
     def test_class_with_init(self):
-        lib = TestLibrary('classes.RecordingLibrary')
-        self._verify(lib.handlers['kw'], classes_source, 206)
-        self._verify(lib.init, classes_source, 202)
+        lib = TestLibrary.from_name('classes.RecordingLibrary')
+        self._verify(lib, 'kw', classes_source, 206)
+        self._verify(lib, 'init', classes_source, 202)
 
     def test_class_without_init(self):
-        lib = TestLibrary('classes.NameLibrary')
-        self._verify(lib.handlers['simple1'], classes_source, 13)
-        self._verify(lib.init, classes_source, -1)
+        lib = TestLibrary.from_name('classes.NameLibrary')
+        self._verify(lib, 'simple1', classes_source, 13)
+        self._verify(lib, 'init', classes_source, -1)
 
     def test_module(self):
         from module_library import __file__ as source
-        lib = TestLibrary('module_library')
-        self._verify(lib.handlers['passing'], source, 5)
-        self._verify(lib.init, source, -1)
+        lib = TestLibrary.from_name('module_library')
+        self._verify(lib, 'passing', source, 5)
+        self._verify(lib, 'init', source, -1)
 
     def test_package(self):
         from robot.variables.search import __file__ as source
         from robot.variables import __file__ as init_source
-        lib = TestLibrary('robot.variables')
-        self._verify(lib.handlers['search_variable'], source, 23)
-        self._verify(lib.init, init_source, -1)
+        lib = TestLibrary.from_name('robot.variables')
+        self._verify(lib, 'search_variable', source, 23)
+        self._verify(lib, 'init', init_source, -1)
 
     def test_decorated(self):
-        lib = TestLibrary('classes.Decorated')
-        self._verify(lib.handlers['no_wrapper'], classes_source, 320)
-        self._verify(lib.handlers['wrapper'], classes_source, 327)
-        self._verify(lib.handlers['external'], classes_source, 332)
-        self._verify(lib.handlers['no_def'], classes_source, 335)
+        lib = TestLibrary.from_name('classes.Decorated')
+        self._verify(lib, 'no_wrapper', classes_source, 320)
+        self._verify(lib, 'wrapper', classes_source, 327)
+        self._verify(lib, 'external', classes_source, 332)
+        self._verify(lib, 'no_def', classes_source, 335)
 
     def test_dynamic_without_source(self):
-        lib = TestLibrary('classes.ArgDocDynamicLibrary')
-        self._verify(lib.handlers['No Arg'], classes_source, -1)
+        lib = TestLibrary.from_name('classes.ArgDocDynamicLibrary')
+        self._verify(lib, 'No Arg', classes_source, -1)
 
     def test_dynamic(self):
-        lib = TestLibrary('classes.DynamicWithSource')
-        self._verify(lib.handlers['only path'],
-                     classes_source)
-        self._verify(lib.handlers['path & lineno'],
-                     classes_source, 42)
-        self._verify(lib.handlers['lineno only'],
-                     classes_source, 6475)
-        self._verify(lib.handlers['invalid path'],
-                     'path validity is not validated')
-        self._verify(lib.handlers['path w/ colon'],
-                     r'c:\temp\lib.py', -1)
-        self._verify(lib.handlers['path w/ colon & lineno'],
-                     r'c:\temp\lib.py', 1234567890)
-        self._verify(lib.handlers['no source'],
-                     classes_source)
+        lib = TestLibrary.from_name('classes.DynamicWithSource')
+        self._verify(lib, 'only path', classes_source)
+        self._verify(lib, 'path & lineno', classes_source, 42)
+        self._verify(lib, 'lineno only', classes_source, 6475)
+        self._verify(lib, 'invalid path', 'path validity is not validated')
+        self._verify(lib, 'path w/ colon', r'c:\temp\lib.py', -1)
+        self._verify(lib, 'path w/ colon & lineno', r'c:\temp\lib.py', 1234567890)
+        self._verify(lib, 'no source', classes_source)
 
     def test_dynamic_with_non_ascii_source(self):
-        lib = TestLibrary('classes.DynamicWithSource')
-        self._verify(lib.handlers['nön-äscii'], 'hyvä esimerkki')
-        self._verify(lib.handlers['nön-äscii utf-8'], '福', 88)
+        lib = TestLibrary.from_name('classes.DynamicWithSource')
+        self._verify(lib, 'nön-äscii', 'hyvä esimerkki')
+        self._verify(lib, 'nön-äscii utf-8', '福', 88)
 
     def test_dynamic_init(self):
-        lib_with_init = TestLibrary('classes.ArgDocDynamicLibrary')
-        lib_without_init = TestLibrary('classes.DynamicWithSource')
-        self._verify(lib_with_init.init, classes_source, 217)
-        self._verify(lib_without_init.init, classes_source, -1)
+        lib_with_init = TestLibrary.from_name('classes.ArgDocDynamicLibrary')
+        lib_without_init = TestLibrary.from_name('classes.DynamicWithSource')
+        self._verify(lib_with_init, 'init', classes_source, 217)
+        self._verify(lib_without_init, 'init', classes_source, -1)
 
     def test_dynamic_invalid_source(self):
         logger = LoggerMock()
-        lib = TestLibrary('classes.DynamicWithSource', logger=logger)
-        self._verify(lib.handlers['invalid source'], lib.source)
+        lib = TestLibrary.from_name('classes.DynamicWithSource', logger=logger)
+        self._verify(lib, 'invalid source', lib.source)
         error = (
             "Error in library 'classes.DynamicWithSource': "
             "Getting source information for keyword 'Invalid Source' failed: "
             "Calling dynamic method 'get_keyword_source' failed: "
             "Return value must be a string, got integer."
         )
-        assert_equal(logger.messages, [(error, 'ERROR')])
+        assert_equal(logger.messages[-1], (error, 'ERROR'))
 
-    def _verify(self, kw, source, lineno=-1):
+    def _verify(self, lib, name, source, lineno=-1):
+        if name == 'init':
+            kw = lib.init
+        else:
+            kw, = lib.find_keywords(name)
         if source:
             source = re.sub(r'(\.pyc|\$py\.class)$', '.py', source)
             source = os.path.normpath(source)

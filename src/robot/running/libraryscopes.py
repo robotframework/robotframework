@@ -13,39 +13,40 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import inspect
+from enum import auto, Enum
+from typing import TYPE_CHECKING
 
-from robot.utils import normalize
+from robot.errors import DataError
 
+from .context import EXECUTION_CONTEXTS
 
-def LibraryScope(libcode, library):
-    scope = _get_scope(libcode)
-    if scope == 'GLOBAL':
-        return GlobalScope(library)
-    if scope in ('SUITE', 'TESTSUITE'):
-        return TestSuiteScope(library)
-    return TestCaseScope(library)
+if TYPE_CHECKING:
+    from .testlibraries import TestLibrary
 
 
-def _get_scope(libcode):
-    if inspect.ismodule(libcode):
-        return 'GLOBAL'
-    scope = getattr(libcode, 'ROBOT_LIBRARY_SCOPE', '')
-    return normalize(str(scope), ignore='_').upper()
+class Scope(Enum):
+    GLOBAL = auto()
+    SUITE = auto()
+    TEST = auto()
 
 
-class GlobalScope:
-    is_global = True
+class ScopeManager:
 
-    def __init__(self, library):
-        self._register_listeners = library.register_listeners
-        self._unregister_listeners = library.unregister_listeners
+    def __init__(self, library: 'TestLibrary'):
+        self.library = library
+
+    @classmethod
+    def for_library(cls, library):
+        manager = {Scope.GLOBAL: GlobalScopeManager,
+                   Scope.SUITE: SuiteScopeManager,
+                   Scope.TEST: TestScopeManager}[library.scope]
+        return manager(library)
 
     def start_suite(self):
-        self._register_listeners()
+        pass
 
     def end_suite(self):
-        self._unregister_listeners()
+        pass
 
     def start_test(self):
         pass
@@ -53,45 +54,62 @@ class GlobalScope:
     def end_test(self):
         pass
 
-    def __str__(self):
-        return 'GLOBAL'
+    def close_global_listeners(self):
+        pass
+
+    def register_listeners(self):
+        if self.library.listeners:
+            try:
+                listeners = EXECUTION_CONTEXTS.current.output.library_listeners
+                listeners.register(self.library)
+            except DataError as err:
+                self.library._has_listeners = False
+                self.library.report_error(f"Registering listeners failed: {err}")
+
+    def unregister_listeners(self, close=False):
+        if self.library.listeners:
+            listeners = EXECUTION_CONTEXTS.current.output.library_listeners
+            listeners.unregister(self.library, close)
 
 
-class TestSuiteScope(GlobalScope):
-    is_global = False
-
-    def __init__(self, library):
-        GlobalScope.__init__(self, library)
-        self._reset_instance = library.reset_instance
-        self._instance_cache = []
+class GlobalScopeManager(ScopeManager):
 
     def start_suite(self):
-        prev = self._reset_instance()
-        self._instance_cache.append(prev)
-        self._register_listeners()
+        self.register_listeners()
 
     def end_suite(self):
-        self._unregister_listeners(close=True)
-        prev = self._instance_cache.pop()
-        self._reset_instance(prev)
+        self.unregister_listeners()
 
-    def __str__(self):
-        return 'SUITE'
+    def close_global_listeners(self):
+        self.register_listeners()
+        self.unregister_listeners(close=True)
 
 
-class TestCaseScope(TestSuiteScope):
+class SuiteScopeManager(ScopeManager):
+
+    def __init__(self, library):
+        super().__init__(library)
+        self.instance_cache = []
+
+    def start_suite(self):
+        self.instance_cache.append(self.library._instance)
+        self.library.instance = None
+        self.register_listeners()
+
+    def end_suite(self):
+        self.unregister_listeners(close=True)
+        self.library.instance = self.instance_cache.pop()
+
+
+class TestScopeManager(SuiteScopeManager):
 
     def start_test(self):
-        self._unregister_listeners()
-        prev = self._reset_instance()
-        self._instance_cache.append(prev)
-        self._register_listeners()
+        self.unregister_listeners()
+        self.instance_cache.append(self.library._instance)
+        self.library.instance = None
+        self.register_listeners()
 
     def end_test(self):
-        self._unregister_listeners(close=True)
-        prev = self._instance_cache.pop()
-        self._reset_instance(prev)
-        self._register_listeners()
-
-    def __str__(self):
-        return 'TEST'
+        self.unregister_listeners(close=True)
+        self.library.instance = self.instance_cache.pop()
+        self.register_listeners()

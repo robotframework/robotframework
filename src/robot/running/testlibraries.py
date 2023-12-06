@@ -14,156 +14,70 @@
 #  limitations under the License.
 
 import inspect
-import os
 from functools import cached_property, partial
+from pathlib import Path
+from typing import Any, Sequence
 
 from robot.errors import DataError
 from robot.libraries import STDLIBS
 from robot.output import LOGGER
 from robot.utils import (getdoc, get_error_details, Importer, is_dict_like, is_init,
-                         is_list_like, normalize, seq2str2, type_name)
+                         is_list_like, normalize, NormalizedDict, seq2str2, type_name)
 
 from .arguments import EmbeddedArguments, CustomArgumentConverters
-from .context import EXECUTION_CONTEXTS
 from .dynamicmethods import (GetKeywordArguments, GetKeywordDocumentation,
                              GetKeywordNames, GetKeywordTags, RunKeyword)
 from .handlers import Handler, InitHandler, DynamicHandler, EmbeddedArgumentsHandler
-from .handlerstore import HandlerStore
-from .libraryscopes import LibraryScope
+from .libraryscopes import Scope, ScopeManager
 from .outputcapture import OutputCapturer
+from .usererrorhandler import UserErrorHandler
 
 
-def TestLibrary(name, args=None, variables=None, create_handlers=True, logger=LOGGER):
-    if name in STDLIBS:
-        import_name = 'robot.libraries.' + name
-    else:
-        import_name = name
-    with OutputCapturer(library_import=True):
-        importer = Importer('library', logger=LOGGER)
-        libcode, source = importer.import_class_or_module(import_name,
-                                                          return_source=True)
-    libclass = _get_lib_class(libcode)
-    lib = libclass(libcode, name, args or [], source, logger, variables)
-    if create_handlers:
-        lib.create_handlers()
-    return lib
+class TestLibrary:
+    # FIXME: Add docstrings and type hints! This is indirectly part of the public API.
 
-
-def _get_lib_class(libcode):
-    if inspect.ismodule(libcode):
-        return _ModuleLibrary
-    if GetKeywordNames(libcode):
-        if RunKeyword(libcode):
-            return _DynamicLibrary
-        else:
-            return _HybridLibrary
-    return _ClassLibrary
-
-
-class _BaseTestLibrary:
-    get_handler_error_level = 'INFO'
-
-    def __init__(self, libcode, name, args, source, logger, variables):
-        if os.path.exists(name):
-            name = os.path.splitext(os.path.basename(os.path.abspath(name)))[0]
-        self._libcode = libcode
-        self._libinst = None
-        self.version = self._get_version(libcode)
-        self.name = name
-        self.orig_name = name  # Stores original name when importing WITH NAME
+    def __init__(self, code, *, name=None, real_name=None, source=None, logger=LOGGER):
+        self.code = code
+        self.name = name or code.__name__
+        self.real_name = real_name or self.name
         self.source = source
         self.logger = logger
-        self.converters = self._get_converters(libcode)
-        self.handlers = HandlerStore()
-        self.has_listener = None  # Set when first instance is created
-        self._doc = None
-        self.doc_format = self._get_doc_format(libcode)
-        self.scope = LibraryScope(libcode, self)
-        self.init = self._create_init_handler(libcode)
-        self.positional_args, self.named_args \
-            = self.init.resolve_arguments(args, variables)
-
-    def __len__(self):
-        return len(self.handlers)
-
-    def __bool__(self):
-        return bool(self.handlers) or self.has_listener
+        self.init_args = ((), ())
+        self._instance = None
+        self.keywords = []
+        self._has_listeners = None
+        self.scope_manager = ScopeManager.for_library(self)
 
     @property
-    def doc(self):
-        if self._doc is None:
-            self._doc = getdoc(self.get_instance())
-        return self._doc
+    def instance(self):
+        instance = self.code if self._instance is None else self._instance
+        if self._has_listeners is None:
+            self._has_listeners = self._has_instance_listeners(instance)
+        return instance
+
+    @instance.setter
+    def instance(self, instance):
+        self._instance = instance
 
     @property
-    def lineno(self):
-        if inspect.ismodule(self._libcode):
-            return 1
-        try:
-            lines, start_lineno = inspect.getsourcelines(self._libcode)
-        except (TypeError, OSError, IOError):
-            return -1
-        for increment, line in enumerate(lines):
-            if line.strip().startswith('class '):
-                return start_lineno + increment
-        return start_lineno
-
-    def create_handlers(self):
-        self._create_handlers(self.get_instance())
-        self.reset_instance()
-
-    def find_keywords(self, name):
-        return self.handlers.get_handlers(name)
+    def init(self):
+        return InitHandler(self)
 
     @property
-    def keywords(self):
-        return list(self.handlers)
+    def listeners(self):
+        if self._has_listeners is None:
+            self._has_listeners = self._has_instance_listeners(self.instance)
+        if self._has_listeners is False:
+            return []
+        listener = self.instance.ROBOT_LIBRARY_LISTENER
+        return list(listener) if is_list_like(listener) else [listener]
 
-    def reload(self):
-        self.handlers = HandlerStore()
-        self._create_handlers(self.get_instance())
+    def _has_instance_listeners(self, instance):
+        return getattr(instance, 'ROBOT_LIBRARY_LISTENER', None) is not None
 
-    def start_suite(self):
-        self.scope.start_suite()
-
-    def end_suite(self):
-        self.scope.end_suite()
-
-    def start_test(self):
-        self.scope.start_test()
-
-    def end_test(self):
-        self.scope.end_test()
-
-    def report_error(self, message, details=None, level='ERROR',
-                     details_level='INFO'):
-        prefix = 'Error in' if level in ('ERROR', 'WARN') else 'In'
-        self.logger.write(f"{prefix} library '{self.name}': {message}", level)
-        if details:
-            self.logger.write(f'Details:\n{details}', details_level)
-
-    def _get_version(self, libcode):
-        return self._get_attr(libcode, 'ROBOT_LIBRARY_VERSION') \
-            or self._get_attr(libcode, '__version__')
-
-    def _get_attr(self, object, attr, default='', upper=False):
-        value = str(getattr(object, attr, default))
-        if upper:
-            value = normalize(value, ignore='_').upper()
-        return value
-
-    def _get_doc_format(self, libcode):
-        return self._get_attr(libcode, 'ROBOT_LIBRARY_DOC_FORMAT', upper=True)
-
-    def _create_init_handler(self, libcode):
-        return InitHandler(self, self._resolve_init_method(libcode))
-
-    def _resolve_init_method(self, libcode):
-        init = getattr(libcode, '__init__', None)
-        return init if is_init(init) else None
-
-    def _get_converters(self, libcode):
-        converters = getattr(libcode, 'ROBOT_LIBRARY_CONVERTERS', None)
+    @property
+    def converters(self):
+        converters = getattr(self.code, 'ROBOT_LIBRARY_CONVERTERS', None)
         if not converters:
             return None
         if not is_dict_like(converters):
@@ -172,93 +86,317 @@ class _BaseTestLibrary:
             return None
         return CustomArgumentConverters.from_dict(converters, self)
 
-    def reset_instance(self, instance=None):
-        prev = self._libinst
-        if not self.scope.is_global:
-            self._libinst = instance
-        return prev
+    @property
+    def doc(self) -> str:
+        return getdoc(self.instance)
 
-    def get_instance(self, create=True):
-        if not create:
-            return self._libinst
-        if self._libinst is None:
-            self._libinst = self._get_instance(self._libcode)
-        if self.has_listener is None:
-            self.has_listener = bool(self.get_listeners(self._libinst))
-        return self._libinst
+    @property
+    def doc_format(self) -> str:
+        return self._attr('ROBOT_LIBRARY_DOC_FORMAT', upper=True)
 
-    def _get_instance(self, libcode):
+    @property
+    def scope(self) -> Scope:
+        scope = self._attr('ROBOT_LIBRARY_SCOPE', 'TEST', upper=True)
+        if scope == 'GLOBAL':
+            return Scope.GLOBAL
+        if scope in ('SUITE', 'TESTSUITE'):
+            return Scope.SUITE
+        return Scope.TEST
+
+    @property
+    def version(self) -> str:
+        return self._attr('ROBOT_LIBRARY_VERSION') or self._attr('__version__')
+
+    @property
+    def lineno(self) -> int:
+        return 1
+
+    def _attr(self, name, default='', upper=False) -> str:
+        value = str(getattr(self.code, name, default))
+        if upper:
+            value = normalize(value, ignore='_').upper()
+        return value
+
+    @classmethod
+    def from_name(cls, name, *, real_name=None, args=None, variables=None,
+                  create_keywords=True, logger=LOGGER):
+        if name in STDLIBS:
+            import_name = 'robot.libraries.' + name
+        else:
+            import_name = name
+        if Path(name).exists():
+            name = Path(name).stem
         with OutputCapturer(library_import=True):
+            importer = Importer('library', logger=logger)
+            code, source = importer.import_class_or_module(import_name,
+                                                           return_source=True)
+        return cls.from_code(code, name=name, real_name=real_name, source=source,
+                             args=args, variables=variables,
+                             create_keywords=create_keywords, logger=logger)
+
+    @classmethod
+    def from_code(cls, code, *, name=None, real_name=None, source=None, args=None,
+                  variables=None, create_keywords=True, logger=LOGGER):
+        if inspect.ismodule(code):
+            lib = cls.from_module(code, name=name, real_name=real_name, source=source,
+                                  create_keywords=create_keywords, logger=logger)
+            if args:    # Resolving arguments reports an error.
+                lib.init.resolve_arguments(args, variables)
+            return lib
+        return cls.from_class(code, name=name, real_name=real_name, source=source,
+                              args=args or (), create_keywords=create_keywords,
+                              variables=variables, logger=logger)
+
+    @classmethod
+    def from_module(cls, module, *, name=None, real_name=None, source=None,
+                    create_keywords=True, logger=LOGGER):
+        return ModuleLibrary.from_module(module, name=name, real_name=real_name,
+                                         source=source, create_keywords=create_keywords,
+                                         logger=logger)
+
+    @classmethod
+    def from_class(cls, klass, *, name=None, real_name=None, source=None, args=(),
+                   create_keywords=True, variables=None, logger=LOGGER):
+        if not GetKeywordNames(klass):
+            library = ClassLibrary
+        elif not RunKeyword(klass):
+            library = HybridLibrary
+        else:
+            library = DynamicLibrary
+        return library.from_class(klass, name=name, real_name=real_name, source=source,
+                                  args=args, create_keywords=create_keywords,
+                                  variables=variables, logger=logger)
+
+    def create_keywords(self):
+        raise NotImplementedError
+
+    def find_keywords(self, name: str,
+                      include_embedded: bool = True) -> 'list[LibraryKeyword]':
+        # FIXME: This is duplication from ResourceFile. Move to some common place?
+        # FIXME: This is also rather slow.
+        keywords = []
+        norm_name = normalize(name, ignore='_')
+        for kw in self.keywords:
+            if kw.embedded:
+                if include_embedded and kw.matches(name):
+                    keywords.append(kw)
+            else:
+                if normalize(kw.name, ignore='_') == norm_name:
+                    keywords.append(kw)
+        return keywords
+
+    def report_error(self, message, details=None, level='ERROR', details_level='INFO'):
+        prefix = 'Error in' if level in ('ERROR', 'WARN') else 'In'
+        self.logger.write(f"{prefix} library '{self.name}': {message}", level)
+        if details:
+            self.logger.write(f'Details:\n{details}', details_level)
+
+
+class ModuleLibrary(TestLibrary):
+
+    @property
+    def scope(self) -> Scope:
+        return Scope.GLOBAL
+
+    @classmethod
+    def from_module(cls, module, *, name=None, real_name=None, source=None,
+                    create_keywords=True, logger=LOGGER):
+        library = cls(module, name=name, source=source, real_name=real_name,
+                      logger=logger)
+        if create_keywords:
+            library.create_keywords()
+        return library
+
+    @classmethod
+    def from_class(cls, *args, **kws):
+        raise TypeError(f"Cannot create '{cls.__name__}' from class.")
+
+    def create_keywords(self):
+        excludes = getattr(self.code, '__all__', None)
+        StaticKeywordCreator(self, excluded_names=excludes).create_keywords()
+
+
+class ClassLibrary(TestLibrary):
+
+    def __init__(self, code, *, name=None, real_name=None, source=None,
+                 positional_args: Sequence[Any] = (),
+                 named_args: 'Sequence[tuple[Any, Any]]' = (), logger=LOGGER):
+        super().__init__(code, name=name, real_name=real_name, source=source, logger=logger)
+        self.init_args = (positional_args, named_args)
+        self.instance = None
+
+    @property
+    def init(self):
+        init = getattr(self.code, '__init__', None)
+        return InitHandler(self, init if is_init(init) else None)
+
+    @property
+    def instance(self):
+        if self._instance is None:
+            positional, named = self.init_args
             try:
-                return libcode(*self.positional_args, **dict(self.named_args))
-            except:
-                self._raise_creating_instance_failed()
+                with OutputCapturer(library_import=True):
+                    self._instance = self.code(*positional, **dict(named))
+            except Exception:
+                message, details = get_error_details()
+                if positional or named:
+                    args = seq2str2([str(p) for p in positional] +
+                                    [f'{name}={value}' for name, value in named])
+                    args_text = f'arguments {args}'
+                else:
+                    args_text = 'no arguments'
+                raise DataError(f"Initializing library '{self.name}' with {args_text} failed: "
+                                f"{message}\n{details}")
+        if self._has_listeners is None:
+            self._has_listeners = self._has_instance_listeners(self._instance)
+        return self._instance
 
-    def get_listeners(self, libinst=None):
-        if libinst is None:
-            libinst = self.get_instance()
-        listeners = getattr(libinst, 'ROBOT_LIBRARY_LISTENER', None)
-        if listeners is None:
-            return []
-        if is_list_like(listeners):
-            return listeners
-        return [listeners]
+    @instance.setter
+    def instance(self, instance):
+        self._instance = instance
 
-    def register_listeners(self):
-        if self.has_listener:
-            try:
-                listeners = EXECUTION_CONTEXTS.current.output.library_listeners
-                listeners.register(self.get_listeners(), self)
-            except DataError as err:
-                self.has_listener = False
-                # Error should have information about suite where the
-                # problem occurred, but we don't have such info here.
-                self.report_error(f"Registering listeners failed: {err}")
-
-    def unregister_listeners(self, close=False):
-        if self.has_listener:
-            listeners = EXECUTION_CONTEXTS.current.output.library_listeners
-            listeners.unregister(self, close)
-
-    def close_global_listeners(self):
-        if self.scope.is_global:
-            for listener in self.get_listeners():
-                self._close_listener(listener)
-
-    def _close_listener(self, listener):
-        method = (getattr(listener, 'close', None) or
-                  getattr(listener, '_close', None))
+    @property
+    def lineno(self) -> int:
         try:
-            if method:
-                method()
-        except Exception:
-            message, details = get_error_details()
-            name = getattr(listener, '__name__', None) or type_name(listener)
-            self.report_error(f"Calling method '{method.__name__}' of listener "
-                              f"'{name}' failed: {message}", details)
+            lines, start_lineno = inspect.getsourcelines(self.code)
+        except (TypeError, OSError, IOError):
+            return 1
+        for increment, line in enumerate(lines):
+            if line.strip().startswith('class '):
+                return start_lineno + increment
+        return start_lineno
 
-    def _create_handlers(self, libcode):
-        try:
-            names = self._get_handler_names(libcode)
-        except Exception:
-            message, details = get_error_details()
-            raise DataError(f"Getting keyword names from library '{self.name}' "
-                            f"failed: {message}", details)
+    @classmethod
+    def from_module(cls, *args, **kws):
+        raise TypeError(f"Cannot create '{cls.__name__}' from module.")
+
+    @classmethod
+    def from_class(cls, klass, *, name=None, real_name=None, source=None, args=(),
+                   create_keywords=True, variables=None, logger=LOGGER):
+        library = cls(klass, name=name, real_name=real_name, source=source, logger=logger)
+        positional, named = library.init.resolve_arguments(args, variables)
+        library.init_args = (tuple(positional), tuple(named))
+        if create_keywords:
+            library.create_keywords()
+        return library
+
+    def create_keywords(self):
+        StaticKeywordCreator(self, avoid_propertys=True).create_keywords()
+
+
+class HybridLibrary(ClassLibrary):
+
+    def create_keywords(self):
+        names = DynamicKeywordCreator(self).get_keyword_names()
+        creator = StaticKeywordCreator(self, getting_method_failed_level='ERROR')
+        creator.create_keywords(names)
+
+
+class DynamicLibrary(ClassLibrary):
+
+    @property
+    def init(self):
+        init = super().init
+        init.doc_getter = lambda: GetKeywordDocumentation(self.instance)('__init__')
+        return init
+
+    @property
+    def doc(self) -> str:
+        return GetKeywordDocumentation(self.instance)('__intro__') or super().doc
+
+    def create_keywords(self):
+        DynamicKeywordCreator(self).create_keywords()
+
+
+class KeywordCreator:
+
+    def __init__(self, library: TestLibrary):
+        self.library = library
+
+    def get_keyword_names(self):
+        raise NotImplementedError
+
+    def create_keywords(self, names=None):
+        library = self.library
+        library.keywords = keywords = []
+        if names is None:
+            names = self.get_keyword_names()
+        seen = NormalizedDict(ignore='_')
         for name in names:
-            method = self._try_to_get_handler_method(libcode, name)
-            if method:
-                handler, embedded = self._try_to_create_handler(name, method)
-                if handler:
-                    try:
-                        self.handlers.add(handler, embedded)
-                    except DataError as err:
-                        self._adding_keyword_failed(handler.name, err)
-                    else:
-                        self.logger.debug(f"Created keyword '{handler.name}'.")
+            kw = self._create_keyword(library.instance, name, seen)
+            if kw:
+                keywords.append(kw)
+                library.logger.debug(f"Created keyword '{kw.name}'.")
 
-    def _get_handler_names(self, libcode):
-        def has_robot_name(name):
-            candidate = inspect.getattr_static(libcode, name)
+    def _create_keyword(self, instance, name, seen):
+        try:
+            keyword = self._create_normal_keyword(instance, name)
+        except DataError as err:
+            self._adding_keyword_failed(name, err)
+            return None
+        embedded = EmbeddedArguments.from_name(keyword.name) if keyword else None
+        if embedded:
+            try:
+                keyword = self._create_embedded_args_keyword(keyword, embedded)
+            except DataError as err:
+                self._adding_keyword_failed(keyword.name, err)
+                return None
+        return self._handle_duplicates(keyword, seen)
+
+    def _create_normal_keyword(self, instance, name):
+        raise NotImplementedError
+
+    def _create_embedded_args_keyword(self, keyword, embedded):
+        if len(embedded.args) > keyword.arguments.maxargs:
+            raise DataError(f'Keyword must accept at least as many positional '
+                            f'arguments as it has embedded arguments.')
+        keyword.arguments.embedded = embedded.args
+        return EmbeddedArgumentsHandler(embedded, keyword)
+
+    def _adding_keyword_failed(self, name, error, level='ERROR'):
+        self.library.report_error(
+            f"Adding keyword '{name}' failed: {error}",
+            error.details,
+            level=level,
+            details_level='DEBUG'
+        )
+
+    def _handle_duplicates(self, kw, seen: NormalizedDict):
+        if not kw or kw.embedded:
+            return kw
+        if kw.name not in seen:
+            seen[kw.name] = kw
+            return kw
+        error = DataError('Keyword with same name defined multiple times.')
+        kw = UserErrorHandler(error, kw.name, kw.owner)
+        index = self.library.keywords.index(seen[kw.name])
+        self.library.keywords[index] = seen[kw.name] = kw
+        self._adding_keyword_failed(kw.name, error)
+        return None
+
+
+class StaticKeywordCreator(KeywordCreator):
+
+    def __init__(self, library: TestLibrary, *, excluded_names=None,
+                 avoid_propertys=False,
+                 getting_method_failed_level='INFO'):
+        super().__init__(library)
+        self.excluded_names = excluded_names
+        self.avoid_propertys = avoid_propertys
+        self.getting_method_failed_level = getting_method_failed_level
+
+    def get_keyword_names(self):
+        instance = self.library.instance
+        try:
+            return self._get_names(instance)
+        except Exception:
+            message, details = get_error_details()
+            raise DataError(f"Getting keyword names from library '{self.library.name}' "
+                            f"failed: {message}", details)
+
+    def _get_names(self, instance) -> 'list[str]':
+        def explicitly_included(name):
+            candidate = inspect.getattr_static(instance, name)
             if isinstance(candidate, (classmethod, staticmethod)):
                 candidate = candidate.__func__
             try:
@@ -266,158 +404,68 @@ class _BaseTestLibrary:
             except Exception:
                 return False
 
-        auto_keywords = getattr(libcode, 'ROBOT_AUTO_KEYWORDS', True)
-        if auto_keywords:
-            predicate = lambda name: name[:1] != '_' or has_robot_name(name)
-        else:
-            predicate = has_robot_name
-        return [name for name in dir(libcode) if predicate(name)]
+        names = []
+        auto_keywords = getattr(instance, 'ROBOT_AUTO_KEYWORDS', True)
+        excluded_names = self.excluded_names
+        for name in dir(instance):
+            if not auto_keywords:
+                if not explicitly_included(name):
+                    continue
+            elif name[:1] == '_':
+                if not explicitly_included(name):
+                    continue
+            elif excluded_names is not None:
+                if name not in excluded_names:
+                    continue
+            names.append(name)
+        return names
 
-    def _try_to_get_handler_method(self, libcode, name):
+    def _create_normal_keyword(self, instance, name):
         try:
-            return self._get_handler_method(libcode, name)
+            method = self._get_method(instance, name)
         except DataError as err:
-            self._adding_keyword_failed(name, err, self.get_handler_error_level)
+            self._adding_keyword_failed(name, err, self.getting_method_failed_level)
             return None
+        else:
+            return Handler(self.library, name, method)
 
-    def _adding_keyword_failed(self, name, error, level='ERROR'):
-        self.report_error(
-            f"Adding keyword '{name}' failed: {error}",
-            error.details,
-            level=level,
-            details_level='DEBUG'
-        )
-
-    def _get_handler_method(self, libcode, name):
+    def _get_method(self, instance, name):
+        if self.avoid_propertys:
+            candidate = inspect.getattr_static(instance, name)
+            self._pre_validate_method(candidate)
         try:
-            method = getattr(libcode, name)
+            method = getattr(instance, name)
         except Exception:
             message, details = get_error_details()
             raise DataError(f'Getting handler method failed: {message}', details)
-        return self._validate_handler_method(method)
-
-    def _validate_handler_method(self, method):
-        # isroutine returns false for partial objects. This may change in the future.
-        if not (inspect.isroutine(method) or isinstance(method, partial)):
-            raise DataError('Not a method or function.')
-        if getattr(method, 'robot_not_keyword', False):
-            raise DataError('Not exposed as a keyword.')
+        self._validate_method(method)
         return method
 
-    def _try_to_create_handler(self, name, method):
-        try:
-            handler = self._create_handler(name, method)
-        except DataError as err:
-            self._adding_keyword_failed(name, err)
-            return None, False
-        try:
-            return self._get_possible_embedded_args_handler(handler)
-        except DataError as err:
-            self._adding_keyword_failed(handler.name, err)
-            return None, False
-
-    def _create_handler(self, handler_name, handler_method):
-        return Handler(self, handler_name, handler_method)
-
-    def _get_possible_embedded_args_handler(self, handler):
-        embedded = EmbeddedArguments.from_name(handler.name)
-        if embedded:
-            if len(embedded.args) > handler.arguments.maxargs:
-                raise DataError(f'Keyword must accept at least as many positional '
-                                f'arguments as it has embedded arguments.')
-            handler.arguments.embedded = embedded.args
-            return EmbeddedArgumentsHandler(embedded, handler), True
-        return handler, False
-
-    def _raise_creating_instance_failed(self):
-        message, details = get_error_details()
-        if self.positional_args or self.named_args:
-            args = self.positional_args + [f'{n}={v}' for n, v in self.named_args]
-            args_text = f'arguments {seq2str2(args)}'
-        else:
-            args_text = 'no arguments'
-        raise DataError(f"Initializing library '{self.name}' with {args_text} failed: "
-                        f"{message}\n{details}")
-
-
-class _ClassLibrary(_BaseTestLibrary):
-
-    def _get_handler_method(self, libinst, name):
-        candidate = inspect.getattr_static(libinst, name)
+    def _pre_validate_method(self, candidate):
         if isinstance(candidate, classmethod):
             candidate = candidate.__func__
         if isinstance(candidate, cached_property) or not inspect.isroutine(candidate):
             raise DataError('Not a method or function.')
-        try:
-            method = getattr(libinst, name)
-        except Exception:
-            message, details = get_error_details()
-            raise DataError(f'Getting handler method failed: {message}', details)
-        return self._validate_handler_method(method)
 
-
-class _ModuleLibrary(_BaseTestLibrary):
-
-    def _get_handler_method(self, libcode, name):
-        method = super()._get_handler_method(libcode, name)
-        if hasattr(libcode, '__all__') and name not in libcode.__all__:
+    def _validate_method(self, candidate):
+        if not (inspect.isroutine(candidate) or isinstance(candidate, partial)):
+            raise DataError('Not a method or function.')
+        if getattr(candidate, 'robot_not_keyword', False):
             raise DataError('Not exposed as a keyword.')
-        return method
-
-    def get_instance(self, create=True):
-        if not create:
-            return self._libcode
-        if self.has_listener is None:
-            self.has_listener = bool(self.get_listeners(self._libcode))
-        return self._libcode
-
-    def _create_init_handler(self, libcode):
-        return InitHandler(self)
 
 
-class _HybridLibrary(_BaseTestLibrary):
-    get_handler_error_level = 'ERROR'
+class DynamicKeywordCreator(KeywordCreator):
 
-    def _get_handler_names(self, instance):
-        return GetKeywordNames(instance)()
+    def get_keyword_names(self):
+        try:
+            return GetKeywordNames(self.library.instance)()
+        except DataError as err:
+            raise DataError(f"Getting keyword names from library '{self.library.name}' "
+                            f"failed: {err}")
 
-
-class _DynamicLibrary(_BaseTestLibrary):
-    get_handler_error_level = 'ERROR'
-
-    def __init__(self, libcode, name, args, source, logger, variables=None):
-        super().__init__(libcode, name, args, source, logger, variables)
-
-    @property
-    def doc(self):
-        if self._doc is None:
-            self._doc = self._get_kw_doc('__intro__') or super().doc
-        return self._doc
-
-    def _get_kw_doc(self, name):
-        getter = GetKeywordDocumentation(self.get_instance())
-        return getter(name)
-
-    def _get_kw_args(self, name):
-        getter = GetKeywordArguments(self.get_instance())
-        return getter(name)
-
-    def _get_kw_tags(self, name):
-        getter = GetKeywordTags(self.get_instance())
-        return getter(name)
-
-    def _get_handler_names(self, instance):
-        return GetKeywordNames(instance)()
-
-    def _get_handler_method(self, instance, name):
-        return RunKeyword(instance)
-
-    def _create_handler(self, name, method):
-        argspec = self._get_kw_args(name)
-        tags = self._get_kw_tags(name)
-        doc = self._get_kw_doc(name)
-        return DynamicHandler(self, name, method, doc, argspec, tags)
-
-    def _create_init_handler(self, libcode):
-        docgetter = lambda: self._get_kw_doc('__init__')
-        return InitHandler(self, self._resolve_init_method(libcode), docgetter)
+    def _create_normal_keyword(self, instance, name):
+        args = GetKeywordArguments(instance)(name)
+        tags = GetKeywordTags(instance)(name)
+        doc = GetKeywordDocumentation(instance)(name)
+        method = RunKeyword(instance)
+        return DynamicHandler(self.library, name, method, doc, args, tags)
