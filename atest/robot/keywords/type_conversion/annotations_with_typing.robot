@@ -111,5 +111,8 @@ None as default with Any
 Forward references
     Check Test Case    ${TESTNAME}
 
+Literal
+    Check Test Case    ${TESTNAME}
+
 Type hint not liking `isinstance`
     Check Test Case    ${TESTNAME}

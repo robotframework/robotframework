@@ -17,7 +17,7 @@ from collections.abc import Mapping, Sequence, Set
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
-from typing import Any, ForwardRef, get_type_hints, Union
+from typing import Any, ForwardRef, get_type_hints, Literal, Union
 
 from robot.conf import Languages, LanguagesLike
 from robot.errors import DataError
@@ -80,7 +80,7 @@ class TypeInfo(metaclass=SetterAwareType):
     __slots__ = ('name', 'type')
 
     def __init__(self, name: 'str|None' = None,
-                 type: 'type|None' = None,
+                 type: Any = None,
                  nested: 'Sequence[TypeInfo]' = ()):
         if name and not type:
             type = TYPE_NAMES.get(name.lower())
@@ -99,7 +99,7 @@ class TypeInfo(metaclass=SetterAwareType):
                 raise DataError('Union used as a type hint cannot be empty.')
             return tuple(nested)
         typ = self.type
-        if typ is None or not nested:
+        if typ is None or typ is Literal or not nested:
             return tuple(nested)
         if not isinstance(typ, type):
             self._report_nested_error(nested, 0)
@@ -161,11 +161,13 @@ class TypeInfo(metaclass=SetterAwareType):
         if isinstance(hint, typeddict_types):
             return TypedDictInfo(hint.__name__, hint)
         if is_union(hint):
-            nested = [cls.from_type_hint(typ) for typ in hint.__args__]
+            nested = [cls.from_type_hint(a) for a in hint.__args__]
             return cls('Union', nested=nested)
         if hasattr(hint, '__origin__'):
-            if has_args(hint):
-                nested = [cls.from_type_hint(t) for t in hint.__args__]
+            if hint.__origin__ is Literal:
+                nested = [cls(repr(a), a) for a in hint.__args__]
+            elif has_args(hint):
+                nested = [cls.from_type_hint(a) for a in hint.__args__]
             else:
                 nested = []
             return cls(type_repr(hint, nested=False), hint.__origin__, nested)

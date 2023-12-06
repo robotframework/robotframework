@@ -1,14 +1,12 @@
-from typing import (Any, Dict, List, Mapping, MutableMapping, MutableSet, MutableSequence,
-                    Set, Sequence, Tuple, Union)
+from typing import (Any, Dict, List, Literal, Mapping, MutableMapping, MutableSet,
+                    MutableSequence, Set, Sequence, Tuple, Union)
 try:
     from typing_extensions import TypedDict
 except ImportError:
     from typing import TypedDict
 
-from robot.api.deco import not_keyword
 
-
-TypedDict = not_keyword(TypedDict)
+TypedDict.robot_not_keyword = True
 
 
 class Point2D(TypedDict):
@@ -139,6 +137,10 @@ def forward_reference(argument: 'List', expected=None):
 
 
 def forward_ref_with_types(argument: 'List[int]', expected=None):
+    _validate_type(argument, expected)
+
+
+def literal(argument: Literal['x', 'y'], expected=None):
     _validate_type(argument, expected)
 
 

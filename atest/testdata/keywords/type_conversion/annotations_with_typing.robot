@@ -231,5 +231,9 @@ Forward references
     Forward reference         [1, 2, 3, 4]                [1, 2, 3, 4]
     Forward ref with types    [1, '2', 3, 4.0]            [1, 2, 3, 4]
 
+Literal
+    Literal                   x                           'x'
+    Literal                   whatever                    'whatever'
+
 Type hint not liking `isinstance`
     Not liking isinstance     42    42

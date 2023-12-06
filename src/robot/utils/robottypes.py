@@ -17,7 +17,7 @@ from collections.abc import Iterable, Mapping
 from collections import UserString
 from io import IOBase
 from os import PathLike
-from typing import Union, TypedDict, TypeVar
+from typing import Literal, Union, TypedDict, TypeVar
 try:
     from types import UnionType
 except ImportError:    # Python < 3.10
@@ -107,6 +107,11 @@ def type_repr(typ, nested=True):
         return '...'
     if is_union(typ):
         return ' | '.join(type_repr(a) for a in typ.__args__) if nested else 'Union'
+    if getattr(typ, '__origin__', None) is Literal:
+        if nested:
+            args = ', '.join(repr(a) for a in typ.__args__)
+            return f'Literal[{args}]'
+        return 'Literal'
     name = _get_type_name(typ)
     if nested and has_args(typ):
         args = ', '.join(type_repr(a) for a in typ.__args__)

@@ -2,7 +2,8 @@ import unittest
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
-from typing import Any, Dict, Generic, List, Mapping, Sequence, Set, Tuple, TypeVar, Union
+from typing import (Any, Dict, Generic, List, Literal, Mapping, Sequence, Set, Tuple,
+                    TypeVar, Union)
 
 from robot.errors import DataError
 from robot.running.arguments.typeinfo import TypeInfo, TYPE_NAMES
@@ -170,6 +171,16 @@ class TestTypeInfo(unittest.TestCase):
         assert_info(TypeInfo.from_type_hint(Any), 'Any', Any)
         assert_info(TypeInfo.from_type_hint(Ellipsis), '...', Ellipsis)
         assert_info(TypeInfo.from_type_hint(None), 'None', type(None))
+
+    def test_literal(self):
+        info = TypeInfo.from_type_hint(Literal['x', 1])
+        assert_info(info, 'Literal', Literal,
+                    (TypeInfo("'x'", 'x'), TypeInfo('1', 1)))
+        assert_equal(str(info), "Literal['x', 1]")
+        info = TypeInfo.from_type_hint(Literal['int', None, True])
+        assert_info(info, 'Literal', Literal,
+                    (TypeInfo("'int'", 'int'), TypeInfo('None'), TypeInfo('True', True)))
+        assert_equal(str(info), "Literal['int', None, True]")
 
     def test_non_type(self):
         for item in 42, object(), set(), b'hello':
