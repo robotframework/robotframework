@@ -120,3 +120,6 @@ Strict retry interval violation
 
 Strict and invalid retry interval
     Check Test Case    ${TESTNAME}
+
+Keyword name as variable
+    Check Test Case    ${TESTNAME}

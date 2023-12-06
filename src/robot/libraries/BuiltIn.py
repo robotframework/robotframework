@@ -2344,7 +2344,7 @@ class _RunKeyword(_BuiltInBase):
         ``5 times``, ``10 x``). ``retry_interval`` must always be given in
         Robot Framework's time format.
 
-        By default ``retry_interval`` is the time to wait _after_ a keyword has
+        By default, ``retry_interval`` is the time to wait _after_ a keyword has
         failed. For example, if the first run takes 2 seconds and the retry
         interval is 3 seconds, the second run starts 5 seconds after the first
         run started. If ``retry_interval`` start with prefix ``strict:``, the
@@ -2368,7 +2368,7 @@ class _RunKeyword(_BuiltInBase):
         Running the same keyword multiple times inside this keyword can create
         lots of output and considerably increase the size of the generated
         output files. It is possible to remove unnecessary keywords from
-        the outputs using ``--RemoveKeywords WUKS`` command line option.
+        the outputs using the ``--remove-keywords WUKS`` command line option.
 
         Support for "strict" retry interval is new in Robot Framework 4.1.
         """
@@ -2398,6 +2398,7 @@ class _RunKeyword(_BuiltInBase):
                     raise
                 count -= 1
                 if time.time() > maxtime > 0 or count == 0:
+                    name = self._variables.replace_scalar(name)
                     raise AssertionError(f"Keyword '{name}' failed after retrying "
                                          f"{message}. The last error was: {err}")
             finally:

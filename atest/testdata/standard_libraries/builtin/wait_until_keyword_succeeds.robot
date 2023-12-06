@@ -152,6 +152,15 @@ Strict and invalid retry interval
     [Documentation]    FAIL    ValueError: Invalid time string 'invalid:value'.
     Wait Until Keyword Succeeds    3 times    strict: invalid:value    Not executed
 
+Keyword name as variable
+    [Documentation]    FAIL
+    ...    Keyword 'Fail' failed after retrying 2 times. \
+    ...    The last error was: Hello!
+    VAR    ${passing}    Log
+    VAR    ${failing}    Fail
+    Wait Until Keyword Succeeds    2 hours    0    ${passing}    Hello!
+    Wait Until Keyword Succeeds    2 times    0    ${failing}    Hello!
+
 *** Keywords ***
 User Keyword
     ${value} =    Fail Until Retried Often Enough    From User Keyword
