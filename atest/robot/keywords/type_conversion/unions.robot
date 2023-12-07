@@ -74,8 +74,8 @@ Tuple with invalid types
 
 Union without types
     Check Test Case    ${TESTNAME}
-    Check Log Message    ${ERRORS}[1]    Error in library 'unions': Adding keyword 'union_without_types' failed: Union used as a type hint cannot be empty.    ERROR
+    Check Log Message    ${ERRORS}[1]    Error in library 'unions': Adding keyword 'union_without_types' failed: Union cannot be empty.    ERROR
 
 Empty tuple
     Check Test Case    ${TESTNAME}
-    Check Log Message    ${ERRORS}[0]    Error in library 'unions': Adding keyword 'empty_tuple' failed: Union used as a type hint cannot be empty.    ERROR
+    Check Log Message    ${ERRORS}[0]    Error in library 'unions': Adding keyword 'empty_tuple' failed: Union cannot be empty.    ERROR

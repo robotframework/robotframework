@@ -79,7 +79,7 @@ class TestTypeInfo(unittest.TestCase):
     def test_empty_union_not_allowed(self):
         for union in Union, ():
             assert_raises_with_msg(
-                DataError, 'Union used as a type hint cannot be empty.',
+                DataError, 'Union cannot be empty.',
                 TypeInfo.from_type_hint, union
             )
 

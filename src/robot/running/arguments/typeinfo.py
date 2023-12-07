@@ -97,33 +97,31 @@ class TypeInfo(metaclass=SetterAwareType):
 
         Used with parameterized types and unions.
         """
-        if self.is_union:
-            if not nested:
-                raise DataError('Union used as a type hint cannot be empty.')
-            return tuple(nested)
         typ = self.type
-        if typ is None or not nested:
-            return tuple(nested)
+        if self.is_union:
+            self._validate_union(nested)
+        elif typ is None or not nested:
+            pass
         elif typ is Literal:
             self._validate_literal(nested)
-            return tuple(nested)
         elif not isinstance(typ, type):
-            self._report_nested_error(nested, 0)
+            self._report_nested_error(nested)
         elif issubclass(typ, tuple):
-            if nested[-1].type is Ellipsis and len(nested) != 2:
-                self._report_nested_error(nested, 1, 'Homogenous tuple', offset=-1)
+            if nested[-1].type is Ellipsis:
+                self._validate_nested_count(nested, 2, 'Homogenous tuple', offset=-1)
         elif issubclass(typ, Sequence) and not issubclass(typ, (str, bytes, bytearray)):
-            if len(nested) != 1:
-                self._report_nested_error(nested, 1)
+            self._validate_nested_count(nested, 1)
         elif issubclass(typ, Set):
-            if len(nested) != 1:
-                self._report_nested_error(nested, 1)
+            self._validate_nested_count(nested, 1)
         elif issubclass(typ, Mapping):
-            if len(nested) != 2:
-                self._report_nested_error(nested, 2)
+            self._validate_nested_count(nested, 2)
         elif typ in TYPE_NAMES.values():
-            self._report_nested_error(nested, 0)
+            self._report_nested_error(nested)
         return tuple(nested)
+
+    def _validate_union(self, nested):
+        if not nested:
+            raise DataError('Union cannot be empty.')
 
     def _validate_literal(self, nested):
         for info in nested:
@@ -132,14 +130,20 @@ class TypeInfo(metaclass=SetterAwareType):
                                 f'Booleans, enums and None, value {info.name} is '
                                 f'{type_name(info.type)}.')
 
-    def _report_nested_error(self, nested, expected, kind=None, offset=0):
+    def _validate_nested_count(self, nested, expected, kind=None, offset=0):
+        if len(nested) != expected:
+            self._report_nested_error(nested, expected, kind, offset)
+
+    def _report_nested_error(self, nested, expected=0, kind=None, offset=0):
+        expected += offset
+        actual = len(nested) + offset
         args = ', '.join(str(n) for n in nested)
         kind = kind or f"'{self.name}{'[]' if expected > 0 else ''}'"
         if expected == 0:
             raise DataError(f"{kind} does not accept parameters, "
-                            f"'{self.name}[{args}]' has {len(nested) + offset}.")
+                            f"'{self.name}[{args}]' has {actual}.")
         raise DataError(f"{kind} requires exactly {expected} parameter{s(expected)}, "
-                        f"'{self.name}[{args}]' has {len(nested) + offset}.")
+                        f"'{self.name}[{args}]' has {actual}.")
 
     @property
     def is_union(self):
