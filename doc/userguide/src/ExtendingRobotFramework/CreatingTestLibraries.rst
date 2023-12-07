@@ -1200,7 +1200,7 @@ __ `Implicit argument types based on default values`_
           value type explicitly like `arg: list | None = None` already now.
 
 The type to use can be specified either using concrete types (e.g. list_),
-by using Abstract Base Classes (ABC) (e.g. Sequence_), or by using sub
+by using abstract base classes (ABC) (e.g. Sequence_), or by using sub
 classes of these types (e.g. MutableSequence_). Also types in in the typing_
 module that map to the supported concrete types or ABCs (e.g. `List`) are
 supported. In all these cases the argument is converted to the concrete type.
@@ -1238,38 +1238,38 @@ Other types cause conversion failures.
    |              |               |            |              | is got implicitly based on a default value, conversion to      | | `0xFF`                             |
    |              |               |            |              | float is attempted as well.                                    | | `0o777`                            |
    |              |               |            |              |                                                                | | `0b1010`                           |
-   |              |               |            |              | Starting from RF 4.1, it is possible to use hexadecimal,       | | `0xBAD_C0FFEE`                     |
-   |              |               |            |              | octal and binary numbers by prefixing values with              | | `${1}`                             |
+   |              |               |            |              | Starting from Robot Framework 4.1, it is possible to use       | | `0xBAD_C0FFEE`                     |
+   |              |               |            |              | hexadecimal, octal and binary numbers by prefixing values with | | `${1}`                             |
    |              |               |            |              | `0x`, `0o` and `0b`, respectively.                             | | `${1.0}`                           |
    |              |               |            |              |                                                                |                                      |
-   |              |               |            |              | Starting from RF 4.1, spaces and underscores can be used as    |                                      |
-   |              |               |            |              | visual separators for digit grouping purposes.                 |                                      |
+   |              |               |            |              | Starting from Robot Framework 4.1, spaces and underscores can  |                                      |
+   |              |               |            |              | be used as visual separators for digit grouping purposes.      |                                      |
    |              |               |            |              |                                                                |                                      |
-   |              |               |            |              | Starting from RF 7.0, strings representing floats like are     |                                      |
-   |              |               |            |              | accepted as long as their decimal part is zero. This includes  |                                      |
-   |              |               |            |              | floats using the scientific notation like `1e100`.             |                                      |
+   |              |               |            |              | Starting from Robot Framework 7.0, strings representing floats |                                      |
+   |              |               |            |              | are accepted as long as their decimal part is zero. This       |                                      |
+   |              |               |            |              | includes using the scientific notation like `1e100`.           |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | float_       | Real_         | double     | str_,        | Conversion is done using the float_ built-in.                  | | `3.14`                             |
    |              |               |            | Real_        |                                                                | | `2.9979e8`                         |
-   |              |               |            |              | Starting from RF 4.1, spaces and underscores can be used as    | | `10 000.000 01`                    |
-   |              |               |            |              | visual separators for digit grouping purposes.                 | | `10_000.000_01`                    |
+   |              |               |            |              | Starting from Robot Framework 4.1, spaces and underscores can  | | `10 000.000 01`                    |
+   |              |               |            |              | be used as visual separators for digit grouping purposes.      | | `10_000.000_01`                    |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | Decimal_     |               |            | str_,        | Conversion is done using the Decimal_ class. Decimal_ is       | | `3.14`                             |
    |              |               |            | int_,        | recommended over float_ when decimal numbers need to be        | | `10 000.000 01`                    |
    |              |               |            | float_       | represented exactly.                                           | | `10_000.000_01`                    |
    |              |               |            |              |                                                                |                                      |
-   |              |               |            |              | Starting from RF 4.1, spaces and underscores can be used as    |                                      |
-   |              |               |            |              | visual separators for digit grouping purposes.                 |                                      |
+   |              |               |            |              | Starting from Robot Framework 4.1, spaces and underscores can  |                                      |
+   |              |               |            |              | be used as visual separators for digit grouping purposes.      |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | str_         |               | string,    | Any          | All arguments are converted to Unicode strings. New in RF 4.0. |                                      |
+   | str_         |               | string,    | Any          | All arguments are converted to Unicode strings.                |                                      |
    |              |               | unicode    |              |                                                                |                                      |
-   |              |               |            |              |                                                                |                                      |
+   |              |               |            |              | New in Robot Framework 4.0.                                    |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | bytes_       | ByteString_   |            | str_,        | Strings are converted to bytes so that each Unicode code point | | `good`                             |
    |              |               |            | bytearray_   | below 256 is directly mapped to a matching byte. Higher code   | | `hyvä` (converted to `hyv\xe4`)    |
    |              |               |            |              | points are not allowed.                                        | | `\x00` (the null byte)             |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | bytearray_   |               |            | str_,        | Same conversion as with bytes_ but the result is a bytearray_. |                                      |
+   | bytearray_   |               |            | str_,        | Same conversion as with bytes_, but the result is a bytearray_.|                                      |
    |              |               |            | bytes_       |                                                                |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | `datetime    |               |            | str_,        | Strings are expected to be timestamps in `ISO 8601`_ like      | | `2022-02-09T16:39:43.632269`       |
@@ -1282,7 +1282,7 @@ Other types cause conversion failures.
    |              |               |            |              | Integers and floats are considered to represent seconds since  |                                      |
    |              |               |            |              | the `Unix epoch`_.                                             |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | date_        |               |            | str_         | Same string conversion as with `datetime <dt-mod_>`__ but all  | | `2018-09-12`                       |
+   | date_        |               |            | str_         | Same string conversion as with `datetime <dt-mod_>`__, but all | | `2018-09-12`                       |
    |              |               |            |              | time components are expected to be omitted or to be zeros.     |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | timedelta_   |               |            | str_,        | Strings are expected to represent a time interval in one of    | | `42` (42 seconds)                  |
@@ -1290,32 +1290,40 @@ Other types cause conversion failures.
    |              |               |            | float_       | `time as time string`_ or `time as "timer" string`_. Integers  | | `01:02` (same as above)            |
    |              |               |            |              | and floats are considered to be seconds.                       |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | `Path        | PathLike_     |            | str_         | Strings are converted `pathlib.Path <pathlib_>`__ objects.     | | `/tmp/absolute/path`               |
+   | `Path        | PathLike_     |            | str_         | Strings are converted to `pathlib.Path <pathlib_>`__ objects.  | | `/tmp/absolute/path`               |
    | <pathlib_>`__|               |            |              | On Windows `/` is converted to :codesc:`\\` automatically.     | | `relative/path/to/file.ext`        |
-   |              |               |            |              | New in RF 6.0.                                                 | | `name.txt`                         |
+   |              |               |            |              |                                                                | | `name.txt`                         |
+   |              |               |            |              | New in Robot Framework 6.0.                                    |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | Enum_        |               |            | str_         | The specified type must be an enumeration (a subclass of Enum_ | .. sourcecode:: python               |
    |              |               |            |              | or Flag_) and given arguments must match its member names.     |                                      |
    |              |               |            |              |                                                                |    class Direction(Enum):            |
-   |              |               |            |              | Matching member names is case, space, underscore and hyphen    |        NORTH = auto()                |
-   |              |               |            |              | insensitive, but exact matches have precedence over normalized |        NORTH_WEST = auto()           |
-   |              |               |            |              | matches. Ignoring hyphens is new in RF 7.0.                    |                                      |
+   |              |               |            |              | Matching member names is case, space, underscore and hyphen    |        """Move direction."""         |
+   |              |               |            |              | insensitive, but exact matches have precedence over normalized |        NORTH = auto()                |
+   |              |               |            |              | matches. Ignoring hyphens is new in Robot Framework 7.0.       |        NORTH_WEST = auto()           |
+   |              |               |            |              |                                                                |                                      |
+   |              |               |            |              | Enumeration documentation and members are shown in             |    def kw(arg: Direction):           |
+   |              |               |            |              | documentation generated by Libdoc_ automatically.              |        ...                           |
+   |              |               |            |              |                                                                |                                      |
    |              |               |            |              |                                                                | | `NORTH` (Direction.NORTH)          |
    |              |               |            |              |                                                                | | `north west` (Direction.NORTH_WEST)|
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | IntEnum_     |               |            | str_,        | The specified type must be an integer based enumeration (a     | .. sourcecode:: python               |
    |              |               |            | int_         | subclass of IntEnum_ or IntFlag_) and given arguments must     |                                      |
    |              |               |            |              | match its member names or values.                              |    class PowerState(IntEnum):        |
-   |              |               |            |              |                                                                |        OFF = 0                       |
-   |              |               |            |              | Matching member names is case, space, underscore and hyphen    |        ON = 1                        |
-   |              |               |            |              | insensitive the same as with `Enum`. Values can be given as    |                                      |
-   |              |               |            |              | integers and as strings that can be converted to integers.     | | `OFF` (PowerState.OFF)             |
-   |              |               |            |              |                                                                | | `1` (PowerState.ON)                |
-   |              |               |            |              | Support for IntEnum_ and IntFlag_ is new in RF 4.1.            |                                      |
+   |              |               |            |              |                                                                |        """Turn system ON or OFF."""  |
+   |              |               |            |              | Matching member names works the same way as with `Enum`.       |        OFF = 0                       |
+   |              |               |            |              | Values can be given as integers and as strings that can be     |        ON = 1                        |
+   |              |               |            |              | converted to integers.                                         |                                      |
+   |              |               |            |              |                                                                |    def kw(arg: PowerState):          |
+   |              |               |            |              | Enumeration documentation and members are shown in             |        ...                           |
+   |              |               |            |              | documentation generated by Libdoc_ automatically.              |                                      |
+   |              |               |            |              |                                                                | | `OFF` (PowerState.OFF)             |
+   |              |               |            |              | New in Robot Framework 4.1.                                    | | `1` (PowerState.ON)                |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | Literal_     |               |            | Any          | Only specified values are accepted. Values can be strings,     | .. sourcecode:: python               |
    |              |               |            |              | integers, bytes, Booleans, enums and `None`, and used arguments|                                      |
-   |              |               |            |              | are converted using the value type specific conversion logic.  |    def kw(arg: Literal['OFF', 'ON']):|
+   |              |               |            |              | are converted using the value type specific conversion logic.  |    def kw(arg: Literal['ON', 'OFF']):|
    |              |               |            |              |                                                                |        ...                           |
    |              |               |            |              | Strings are case, space, underscore and hyphen insensitive,    |                                      |
    |              |               |            |              | but exact matches have precedence over normalized matches.     | | `OFF`                              |
@@ -1330,9 +1338,7 @@ Other types cause conversion failures.
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | Any_         |               |            | Any          | Any value is accepted. No conversion is done.                  |                                      |
    |              |               |            |              |                                                                |                                      |
-   |              |               |            |              | New in RF 6.1. Any_ was not recognized with earlier versions,  |                                      |
-   |              |               |            |              | but conversion may have been done based on `default values     |                                      |
-   |              |               |            |              | <Implicit argument types based on default values_>`__.         |                                      |
+   |              |               |            |              | New in Robot Framework 6.1.                                    |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | list_        | Sequence_     | sequence   | str_,        | Strings must be Python list literals. They are converted       | | `['one', 'two']`                   |
    |              |               |            | Sequence_    | to actual lists using the `ast.literal_eval`_ function.        | | `[('one', 1), ('two', 2)]`         |
@@ -1343,7 +1349,7 @@ Other types cause conversion failures.
    |              |               |            |              | that are not lists are converted to lists. If the type hint is |                                      |
    |              |               |            |              | generic Sequence_, sequences are used without conversion.      |                                      |
    |              |               |            |              |                                                                |                                      |
-   |              |               |            |              | Alias `sequence` is new in RF 7.0.                             |                                      |
+   |              |               |            |              | Alias `sequence` is new in Robot Framework 7.0.                |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | tuple_       |               |            | str_,        | Same as `list`, but string arguments must tuple literals.      | | `('one', 'two')`                   |
    |              |               |            | Sequence_    |                                                                |                                      |
@@ -1357,14 +1363,14 @@ Other types cause conversion failures.
    | dict_        | Mapping_      | dictionary,| str_,        | Same as `list`, but string arguments must be dictionary        | | `{'a': 1, 'b': 2}`                 |
    |              |               | mapping,   | Mapping_     | literals.                                                      | | `{'key': 1, 'nested': {'key': 2}}` |
    |              |               | map        |              |                                                                |                                      |
-   |              |               |            |              | Alias `mapping` is new in RF 7.0.                              |                                      |
+   |              |               |            |              | Alias `mapping` is new in Robot Framework 7.0.                 |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | TypedDict_   |               |            | str_,        | Same as `dict`, but dictionary items are also converted        | .. sourcecode:: python               |
    |              |               |            | Mapping_     | to the specified types and items not included in the type      |                                      |
    |              |               |            |              | spec are not allowed.                                          |    class Config(TypedDict):          |
    |              |               |            |              |                                                                |        width: int                    |
-   |              |               |            |              | New in RF 6.0. Normal `dict` conversion was used earlier.      |        enabled: bool                 |
-   |              |               |            |              |                                                                |                                      |
+   |              |               |            |              | New in Robot Framework 6.0. Normal `dict` conversion was       |        enabled: bool                 |
+   |              |               |            |              | used earlier.                                                  |                                      |
    |              |               |            |              |                                                                | | `{'width': 1600, 'enabled': True}` |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
 
