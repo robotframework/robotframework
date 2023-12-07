@@ -16,7 +16,7 @@
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 
 STANDARD_TYPE_DOCS = {
@@ -180,6 +180,14 @@ If the type has nested types like ``frozenset[int]``, items are converted
 to those types automatically. This in new in Robot Framework 6.0.
 
 Examples: ``{1, 2, 3, 42}``, ``set()`` (an empty set)
+''',
+    Literal: '''\
+Only specified values are accepted. Values can be strings,
+integers, bytes, Booleans, enums and None, and used arguments
+are converted using the value type specific conversion logic.
+
+Strings are case, space, underscore and hyphen insensitive,
+but exact matches have precedence over normalized matches.
 '''
 }
 

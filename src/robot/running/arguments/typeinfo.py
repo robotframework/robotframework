@@ -16,13 +16,14 @@
 from collections.abc import Mapping, Sequence, Set
 from datetime import date, datetime, timedelta
 from decimal import Decimal
+from enum import Enum
 from pathlib import Path
 from typing import Any, ForwardRef, get_type_hints, Literal, Union
 
 from robot.conf import Languages, LanguagesLike
 from robot.errors import DataError
 from robot.utils import (has_args, is_union, NOT_SET, plural_or_not as s, setter,
-                         SetterAwareType, type_repr, typeddict_types)
+                         SetterAwareType, type_name, type_repr, typeddict_types)
 
 from ..context import EXECUTION_CONTEXTS
 from .customconverters import CustomArgumentConverters
@@ -60,8 +61,10 @@ TYPE_NAMES = {
     'map': dict,
     'set': set,
     'frozenset': frozenset,
-    'union': Union
+    'union': Union,
+    'literal': Literal
 }
+LITERAL_TYPES = (int, str, bytes, bool, Enum, type(None))
 
 
 class TypeInfo(metaclass=SetterAwareType):
@@ -80,10 +83,10 @@ class TypeInfo(metaclass=SetterAwareType):
     __slots__ = ('name', 'type')
 
     def __init__(self, name: 'str|None' = None,
-                 type: Any = None,
+                 type: Any = NOT_SET,
                  nested: 'Sequence[TypeInfo]' = ()):
-        if name and not type:
-            type = TYPE_NAMES.get(name.lower())
+        if type is NOT_SET:
+            type = TYPE_NAMES.get(name.lower()) if name else None
         self.name = name
         self.type = type
         self.nested = nested
@@ -99,9 +102,12 @@ class TypeInfo(metaclass=SetterAwareType):
                 raise DataError('Union used as a type hint cannot be empty.')
             return tuple(nested)
         typ = self.type
-        if typ is None or typ is Literal or not nested:
+        if typ is None or not nested:
             return tuple(nested)
-        if not isinstance(typ, type):
+        elif typ is Literal:
+            self._validate_literal(nested)
+            return tuple(nested)
+        elif not isinstance(typ, type):
             self._report_nested_error(nested, 0)
         elif issubclass(typ, tuple):
             if nested[-1].type is Ellipsis and len(nested) != 2:
@@ -118,6 +124,13 @@ class TypeInfo(metaclass=SetterAwareType):
         elif typ in TYPE_NAMES.values():
             self._report_nested_error(nested, 0)
         return tuple(nested)
+
+    def _validate_literal(self, nested):
+        for info in nested:
+            if not isinstance(info.type, LITERAL_TYPES):
+                raise DataError(f'Literal supports only integers, strings, bytes, '
+                                f'Booleans, enums and None, value {info.name} is '
+                                f'{type_name(info.type)}.')
 
     def _report_nested_error(self, nested, expected, kind=None, offset=0):
         args = ', '.join(str(n) for n in nested)
@@ -165,7 +178,8 @@ class TypeInfo(metaclass=SetterAwareType):
             return cls('Union', nested=nested)
         if hasattr(hint, '__origin__'):
             if hint.__origin__ is Literal:
-                nested = [cls(repr(a), a) for a in hint.__args__]
+                nested = [cls(repr(a) if not isinstance(a, Enum) else a.name, a)
+                          for a in hint.__args__]
             elif has_args(hint):
                 nested = [cls.from_type_hint(a) for a in hint.__args__]
             else:
@@ -230,7 +244,7 @@ class TypeInfo(metaclass=SetterAwareType):
         if not data:
             return cls()
         nested = [cls.from_type_hint(n) for n in data.get('nested', ())]
-        return cls(data['name'], data.get('type'), nested=nested)
+        return cls(data['name'], data.get('type', NOT_SET), nested=nested)
 
     @classmethod
     def from_sequence(cls, sequence: 'tuple|list') -> 'TypeInfo':

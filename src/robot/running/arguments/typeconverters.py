@@ -22,7 +22,7 @@ from enum import Enum
 from numbers import Integral, Real
 from os import PathLike
 from pathlib import Path, PurePath
-from typing import Any, TYPE_CHECKING, Union
+from typing import Any, Literal, TYPE_CHECKING, Union
 
 from robot.conf import Languages
 from robot.libraries.DateTime import convert_date, convert_time
@@ -712,6 +712,56 @@ class UnionConverter(TypeConverter):
                 unrecognized_types = True
         if unrecognized_types:
             return value
+        raise ValueError
+
+
+@TypeConverter.register
+class LiteralConverter(TypeConverter):
+    type = Literal
+    type_name = 'Literal'
+    value_types = (Any,)
+
+    def __init__(self, type_info: 'TypeInfo',
+                 custom_converters: 'CustomArgumentConverters|None' = None,
+                 languages: 'Languages|None' = None):
+        super().__init__(type_info, custom_converters, languages)
+        self.converters = [(info.type, self.literal_converter_for(info, languages))
+                           for info in type_info.nested]
+        self.type_name = seq2str([info.name for info in type_info.nested],
+                                 quote='', lastsep=' or ')
+
+    def literal_converter_for(self, type_info: 'TypeInfo',
+                              languages: 'Languages|None' = None) -> TypeConverter:
+        type_info = type(type_info)(type_info.name, type(type_info.type))
+        return self.converter_for(type_info, languages=languages)
+
+    @classmethod
+    def handles(cls, type_info: 'TypeInfo') -> bool:
+        return type_info.type is Literal
+
+    def no_conversion_needed(self, value: Any) -> bool:
+        return False
+
+    def _handles_value(self, value):
+        return True
+
+    def _convert(self, value):
+        matches = []
+        for expected, converter in self.converters:
+            if value == expected and type(value) is type(expected):
+                return expected
+            try:
+                converted = converter.convert(value)
+            except ValueError:
+                pass
+            else:
+                if (isinstance(expected, str) and eq(converted, expected, ignore='_-')
+                        or converted == expected):
+                    matches.append(expected)
+        if len(matches) == 1:
+            return matches[0]
+        if matches:
+            raise ValueError('No unique match found.')
         raise ValueError
 
 

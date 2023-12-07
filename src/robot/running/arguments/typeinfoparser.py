@@ -13,10 +13,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from ast import literal_eval
 from enum import auto, Enum
 from dataclasses import dataclass
+from typing import Literal
 
-from .typeinfo import TypeInfo
+from .typeinfo import LITERAL_TYPES, TypeInfo
 
 
 class TypeInfoTokenType(Enum):
@@ -78,8 +80,21 @@ class TypeInfoTokenizer:
 
     def name(self):
         end_at = set(self.markers) | {None}
-        while self.peek() not in end_at:
+        closing_quote = None
+        char = self.source[self.current-1]
+        if char in ('"', "'"):
+            end_at = {None}
+            closing_quote = char
+        elif char == 'b' and self.peek() in ('"', "'"):
+            end_at = {None}
+            closing_quote = self.advance()
+        while True:
+            char = self.peek()
+            if char in end_at:
+                break
             self.current += 1
+            if char == closing_quote:
+                break
         self.add_token(TypeInfoTokenType.NAME)
 
     def add_token(self, type: TypeInfoTokenType):
@@ -110,19 +125,32 @@ class TypeInfoParser:
             self.error('Type name missing.')
         info = TypeInfo(self.advance().value)
         if self.match(TypeInfoTokenType.LEFT_SQUARE):
-            info.nested = self.params()
+            info.nested = self.params(literal=info.type is Literal)
         if self.match(TypeInfoTokenType.PIPE):
             nested = [info] + self.union()
             info = TypeInfo('Union', nested=nested)
         return info
 
-    def params(self) -> 'list[TypeInfo]':
+    def params(self, literal: bool = False) -> 'list[TypeInfo]':
         params = []
         while not params or self.match(TypeInfoTokenType.COMMA):
-            params.append(self.type())
+            param = self.type()
+            if literal:
+                param = self._literal_param(param)
+            params.append(param)
         if not self.match(TypeInfoTokenType.RIGHT_SQUARE):
             self.error("Closing ']' missing.")
         return params
+
+    def _literal_param(self, param: TypeInfo) -> TypeInfo:
+        try:
+            value = literal_eval(param.name)
+            if not isinstance(value, LITERAL_TYPES):
+                raise ValueError
+        except (ValueError, SyntaxError):
+            token = self.tokens[self.current-1]
+            self.error(f"Invalid literal value {param.name!r}.", token)
+        return TypeInfo(repr(value), value)
 
     def union(self) -> 'list[TypeInfo]':
         types = []
@@ -157,8 +185,9 @@ class TypeInfoParser:
         except IndexError:
             return None
 
-    def error(self, message: str):
-        token = self.peek()
+    def error(self, message: str, token: 'TypeInfoToken|None' = None):
+        if not token:
+            token = self.peek()
         position = f'index {token.position}' if token else 'end'
         raise ValueError(f"Parsing type {self.source!r} failed: "
                          f"Error at {position}: {message}")

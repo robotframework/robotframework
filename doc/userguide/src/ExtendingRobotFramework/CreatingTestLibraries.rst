@@ -1313,6 +1313,18 @@ Other types cause conversion failures.
    |              |               |            |              |                                                                | | `1` (PowerState.ON)                |
    |              |               |            |              | Support for IntEnum_ and IntFlag_ is new in RF 4.1.            |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
+   | Literal_     |               |            | Any          | Only specified values are accepted. Values can be strings,     | .. sourcecode:: python               |
+   |              |               |            |              | integers, bytes, Booleans, enums and `None`, and used arguments|                                      |
+   |              |               |            |              | are converted using the value type specific conversion logic.  |    def kw(arg: Literal['OFF', 'ON']):|
+   |              |               |            |              |                                                                |        ...                           |
+   |              |               |            |              | Strings are case, space, underscore and hyphen insensitive,    |                                      |
+   |              |               |            |              | but exact matches have precedence over normalized matches.     | | `OFF`                              |
+   |              |               |            |              |                                                                | | `on`                               |
+   |              |               |            |              | `Literal` provides similar functionality as `Enum`, but does   |                                      |
+   |              |               |            |              | not support custom documentation.                              |                                      |
+   |              |               |            |              |                                                                |                                      |
+   |              |               |            |              | New in Robot Framework 7.0.                                    |                                      |
+   +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | None_        |               |            | str_         | String `NONE` (case-insensitive) is converted to the Python    | | `None`                             |
    |              |               |            |              | `None` object. Other values cause an error.                    |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
@@ -1383,6 +1395,7 @@ Other types cause conversion failures.
 .. _Flag: https://docs.python.org/library/enum.html#enum.Flag
 .. _IntEnum: https://docs.python.org/library/enum.html#enum.IntEnum
 .. _IntFlag: https://docs.python.org/library/enum.html#enum.IntFlag
+.. _Literal: https://docs.python.org/library/typing.html#typing.Literal
 .. _None: https://docs.python.org/library/constants.html#None
 .. _list: https://docs.python.org/library/stdtypes.html#list
 .. _Sequence: https://docs.python.org/library/collections.abc.html#collections.abc.Sequence

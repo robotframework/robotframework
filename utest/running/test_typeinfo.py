@@ -11,8 +11,8 @@ from robot.utils.asserts import assert_equal, assert_raises_with_msg
 
 
 def assert_info(info: TypeInfo, name, type=None, nested=()):
-    assert_equal(info.name, name)
-    assert_equal(info.type, type)
+    assert_equal(info.name, name, info)
+    assert_equal(info.type, type, info)
     assert_equal(len(info.nested), len(nested))
     for child, exp in zip(info.nested, nested):
         assert_info(child, exp.name, exp.type, exp.nested)
@@ -147,7 +147,7 @@ class TestTypeInfo(unittest.TestCase):
 
     def test_params_with_invalid_type(self):
         for name in TYPE_NAMES:
-            if TYPE_NAMES[name] not in (list, tuple, dict, set, frozenset):
+            if TYPE_NAMES[name] not in (list, tuple, dict, set, frozenset, Literal):
                 assert_raises_with_msg(
                     DataError,
                     f"'{name}' does not accept parameters, '{name}[int]' has 1.",
@@ -174,12 +174,13 @@ class TestTypeInfo(unittest.TestCase):
 
     def test_literal(self):
         info = TypeInfo.from_type_hint(Literal['x', 1])
-        assert_info(info, 'Literal', Literal,
-                    (TypeInfo("'x'", 'x'), TypeInfo('1', 1)))
+        assert_info(info, 'Literal', Literal, (TypeInfo("'x'", 'x'),
+                                               TypeInfo('1', 1)))
         assert_equal(str(info), "Literal['x', 1]")
         info = TypeInfo.from_type_hint(Literal['int', None, True])
-        assert_info(info, 'Literal', Literal,
-                    (TypeInfo("'int'", 'int'), TypeInfo('None'), TypeInfo('True', True)))
+        assert_info(info, 'Literal', Literal, (TypeInfo("'int'", 'int'),
+                                               TypeInfo('None', None),
+                                               TypeInfo('True', True)))
         assert_equal(str(info), "Literal['int', None, True]")
 
     def test_non_type(self):
