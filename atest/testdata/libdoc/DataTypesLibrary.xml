@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<keywordspec name="DataTypesLibrary" type="LIBRARY" format="ROBOT" scope="TEST" generated="2023-09-14T19:41:42+00:00" specversion="6" source="/home/peke/Devel/robotframework/atest/testdata/libdoc/DataTypesLibrary.py" lineno="88">
+<keywordspec name="DataTypesLibrary" type="LIBRARY" format="ROBOT" scope="TEST" generated="2023-12-07T22:04:45+00:00" specversion="6" source="/home/peke/Devel/robotframework/atest/testdata/libdoc/DataTypesLibrary.py" lineno="88">
 <version/>
 <doc>This Library has Data Types.
 
@@ -88,6 +88,12 @@ This is the next Line that links to `Set Location` .</doc>
 <default>equal</default>
 </arg>
 </arguments>
+<returntype name="Union" union="true">
+<type name="int" typedoc="integer"/>
+<type name="List" typedoc="list">
+<type name="int" typedoc="integer"/>
+</type>
+</returntype>
 <doc/>
 <shortdoc/>
 </kw>
@@ -98,6 +104,7 @@ This is the next Line that links to `Set Location` .</doc>
 <type name="GeoLocation" typedoc="GeoLocation"/>
 </arg>
 </arguments>
+<returntype name="bool" typedoc="boolean"/>
 <doc/>
 <shortdoc/>
 </kw>
@@ -181,6 +188,7 @@ Examples: ``TRUE`` (converted to ``True``), ``off`` (converted to ``False``),
 </accepts>
 <usages>
 <usage>Funny Unions</usage>
+<usage>Set Location</usage>
 </usages>
 </type>
 <type name="CustomType" type="Custom">
@@ -300,6 +308,7 @@ Examples: ``['one', 'two']``, ``[('one', 1), ('two', 2)]``
 <type>Sequence</type>
 </accepts>
 <usages>
+<usage>Funny Unions</usage>
 <usage>Typing Types</usage>
 </usages>
 </type>

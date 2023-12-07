@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<keywordspec name="DataTypesLibrary" type="LIBRARY" format="HTML" scope="TEST" generated="2023-09-29T14:04:16+00:00" specversion="6" source="/home/peke/Devel/robotframework/atest/testdata/libdoc/DataTypesLibrary.py" lineno="88">
+<keywordspec name="DataTypesLibrary" type="LIBRARY" format="HTML" scope="TEST" generated="2023-12-07T22:05:12+00:00" specversion="6" source="/home/peke/Devel/robotframework/atest/testdata/libdoc/DataTypesLibrary.py" lineno="88">
 <version/>
 <doc>&lt;p&gt;This Library has Data Types.&lt;/p&gt;
 &lt;p&gt;It has some in &lt;code&gt;__init__&lt;/code&gt; and others in the &lt;a href="#Keywords" class="name"&gt;Keywords&lt;/a&gt;.&lt;/p&gt;
@@ -83,6 +83,12 @@
 <default>equal</default>
 </arg>
 </arguments>
+<returntype name="Union" union="true">
+<type name="int" typedoc="integer"/>
+<type name="List" typedoc="list">
+<type name="int" typedoc="integer"/>
+</type>
+</returntype>
 <doc/>
 <shortdoc/>
 </kw>
@@ -93,20 +99,21 @@
 <type name="GeoLocation" typedoc="GeoLocation"/>
 </arg>
 </arguments>
+<returntype name="bool" typedoc="boolean"/>
 <doc/>
 <shortdoc/>
 </kw>
 <kw name="Typing Types" lineno="128">
-<arguments repr="list_of_str: list[str], dict_str_int: dict[str, int], whatever: Any, *args: list[Any]">
-<arg kind="POSITIONAL_OR_NAMED" required="true" repr="list_of_str: list[str]">
+<arguments repr="list_of_str: List[str], dict_str_int: Dict[str, int], whatever: Any, *args: List[Any]">
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="list_of_str: List[str]">
 <name>list_of_str</name>
-<type name="list" typedoc="list">
+<type name="List" typedoc="list">
 <type name="str" typedoc="string"/>
 </type>
 </arg>
-<arg kind="POSITIONAL_OR_NAMED" required="true" repr="dict_str_int: dict[str, int]">
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="dict_str_int: Dict[str, int]">
 <name>dict_str_int</name>
-<type name="dict" typedoc="dictionary">
+<type name="Dict" typedoc="dictionary">
 <type name="str" typedoc="string"/>
 <type name="int" typedoc="integer"/>
 </type>
@@ -115,9 +122,9 @@
 <name>whatever</name>
 <type name="Any" typedoc="Any"/>
 </arg>
-<arg kind="VAR_POSITIONAL" required="false" repr="*args: list[Any]">
+<arg kind="VAR_POSITIONAL" required="false" repr="*args: List[Any]">
 <name>args</name>
-<type name="list" typedoc="list">
+<type name="List" typedoc="list">
 <type name="Any" typedoc="Any"/>
 </type>
 </arg>
@@ -166,6 +173,7 @@
 </accepts>
 <usages>
 <usage>Funny Unions</usage>
+<usage>Set Location</usage>
 </usages>
 </type>
 <type name="CustomType" type="Custom">
@@ -255,6 +263,7 @@
 <type>Sequence</type>
 </accepts>
 <usages>
+<usage>Funny Unions</usage>
 <usage>Typing Types</usage>
 </usages>
 </type>
