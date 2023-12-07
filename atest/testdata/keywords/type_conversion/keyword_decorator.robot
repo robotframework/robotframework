@@ -588,8 +588,8 @@ Multiple types using Union
 
 Argument not matching Union tupes
     [Template]    Conversion Should Fail
-    Multiple types using Union    invalid    type=integer or None or float
-    Multiple types using Union    ${LIST}    type=integer or None or float    arg_type=list
+    Multiple types using Union    invalid    type=integer, None or float
+    Multiple types using Union    ${LIST}    type=integer, None or float    arg_type=list
 
 Multiple types using tuple
     [Template]    Multiple types using tuple
@@ -602,5 +602,5 @@ Multiple types using tuple
 
 Argument not matching tuple tupes
     [Template]    Conversion Should Fail
-    Multiple types using tuple    invalid    type=integer or None or float
-    Multiple types using tuple    ${LIST}    type=integer or None or float    arg_type=list
+    Multiple types using tuple    invalid    type=integer, None or float
+    Multiple types using tuple    ${LIST}    type=integer, None or float    arg_type=list

@@ -670,15 +670,15 @@ class UnionConverter(TypeConverter):
                  languages: 'Languages|None' = None):
         super().__init__(type_info, custom_converters, languages)
         self.converters = tuple(self.converter_for(info, custom_converters, languages)
-                                for info in self.type_info.nested)
+                                for info in type_info.nested)
         if not self.converters:
             raise TypeError('Union used as a type hint cannot be empty.')
 
     @property
     def type_name(self):
         if not self.converters:
-            return 'union'
-        return ' or '.join(c.type_name for c in self.converters)
+            return 'Union'
+        return seq2str([c.type_name for c in self.converters], quote='', lastsep=' or ')
 
     @classmethod
     def handles(cls, type_info: 'TypeInfo') -> bool:

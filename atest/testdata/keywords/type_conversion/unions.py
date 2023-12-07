@@ -1,9 +1,6 @@
+from datetime import date, timedelta
 from numbers import Rational
-from typing import List, Optional, Union
-try:
-    from typing import TypedDict
-except ImportError:
-    from typing_extensions import TypedDict
+from typing import List, Optional, TypedDict, Union
 
 
 class MyObject:
@@ -64,6 +61,10 @@ def union_with_typeddict(argument: Union[TypedDict('X', x=int), None], expected)
 
 
 def union_with_item_not_liking_isinstance(argument: Union[BadRational, int], expected):
+    assert argument == expected, '%r != %r' % (argument, expected)
+
+
+def union_with_multiple_types(argument: Union[int, float, None, date, timedelta], expected=object()):
     assert argument == expected, '%r != %r' % (argument, expected)
 
 

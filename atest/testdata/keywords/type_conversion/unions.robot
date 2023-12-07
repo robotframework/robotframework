@@ -65,6 +65,7 @@ Argument not matching union
     Union with int and None            invalid         type=integer or None
     Union with int and None            ${1.1}          type=integer or None     arg_type=float
     Union with subscripted generics    invalid         type=List[int] or integer
+    Union with multiple types          invalid         type=integer, float, None, date or timedelta
 
 Union with unrecognized type
     ${myobject}=    Create my object
