@@ -38,7 +38,11 @@ Union from typing
 Nested
     Keyword Arguments Should Be    10    a: List[int]    b: List[int | float]    c: Tuple[Tuple[UnknownType], Dict[str, Tuple[float]]]
 
+
+Literal
+    Keyword Arguments Should Be    11    a: Literal['on', 'off', 'int']    b: Literal[1, 2, 3]   c: Literal[one, True, None]
+
 Union syntax
     [Tags]    require-py3.10
-    Keyword Arguments Should Be    11    a: int | str | list | tuple
-    Keyword Arguments Should Be    12    a: int | str | list | tuple | None = None
+    Keyword Arguments Should Be    12    a: int | str | list | tuple
+    Keyword Arguments Should Be    13    a: int | str | list | tuple | None = None

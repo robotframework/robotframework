@@ -341,15 +341,15 @@ DataType TypedDict Should Be
 
 DataType Custom Should Be
     [Arguments]    ${index}    ${name}    ${doc}
-    ${customs}=   Get Elements    ${LIBDOC}   xpath=typedocs/type[@type='Custom']
-    Element Attribute Should Be    ${customs}[${index}]     name      ${name}
-    Element Text Should Be         ${customs}[${index}]     ${doc}    xpath=doc
+    ${types}=   Get Elements    ${LIBDOC}   xpath=typedocs/type[@type='Custom']
+    Element Attribute Should Be    ${types}[${index}]     name      ${name}
+    Element Text Should Be         ${types}[${index}]     ${doc}    xpath=doc
 
 DataType Standard Should Be
     [Arguments]    ${index}    ${name}    ${doc}
-    ${customs}=   Get Elements    ${LIBDOC}   xpath=typedocs/type[@type='Standard']
-    Element Attribute Should Be    ${customs}[${index}]     name       ${name}
-    Element Text Should Match      ${customs}[${index}]     ${doc}*    xpath=doc
+    ${types}=   Get Elements    ${LIBDOC}   xpath=typedocs/type[@type='Standard']
+    Element Attribute Should Be    ${types}[${index}]     name       ${name}
+    Element Text Should Match      ${types}[${index}]     ${doc}*    xpath=doc
 
 Usages Should Be
     [Arguments]    ${index}    ${type}    ${name}    @{expected}

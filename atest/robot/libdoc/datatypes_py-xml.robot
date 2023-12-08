@@ -54,6 +54,9 @@ Standard
     DataType Standard Should Be    1
     ...    boolean
     ...    Strings ``TRUE``, ``YES``, ``ON`` and ``1`` are converted to Boolean ``True``,
+    DataType Standard Should Be    6
+    ...    Literal
+    ...    Only specified values are accepted.
 
 Standard with generics
     DataType Standard Should Be    2
@@ -68,6 +71,8 @@ Accepted types
     ...    Any
     Accepted Types Should Be    2     Standard     boolean
     ...    string    integer    float    None
+    Accepted Types Should Be    10    Standard     Literal
+    ...    Any
     Accepted Types Should Be    3     Custom       CustomType
     ...    string    integer
     Accepted Types Should Be    4     Custom       CustomType2
@@ -75,21 +80,21 @@ Accepted types
     ...    string    Mapping
     Accepted Types Should Be    1     Enum         AssertionOperator
     ...    string
-    Accepted Types Should Be    11    Enum         Small
+    Accepted Types Should Be    12    Enum         Small
     ...    string    integer
 
 Usages
     Usages Should Be    0     Standard     Any
     ...    Typing Types
-    Usages Should Be    2     Standard     boolean
-    ...    Funny Unions    Set Location
     Usages Should Be    5     Standard     dictionary
     ...    Typing Types
+    Usages Should Be    13    Standard    string
+    ...    Assert Something    Funny Unions    Typing Types
     Usages Should Be    3     Custom       CustomType
     ...    Custom
     Usages Should be    7     TypedDict    GeoLocation
     ...    Funny Unions    Set Location
-    Usages Should Be    11    Enum         Small
+    Usages Should Be    12    Enum         Small
     ...    __init__    Funny Unions
 
 Typedoc links in arguments

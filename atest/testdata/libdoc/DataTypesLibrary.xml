@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<keywordspec name="DataTypesLibrary" type="LIBRARY" format="ROBOT" scope="TEST" generated="2023-12-07T22:04:45+00:00" specversion="6" source="/home/peke/Devel/robotframework/atest/testdata/libdoc/DataTypesLibrary.py" lineno="88">
+<keywordspec name="DataTypesLibrary" type="LIBRARY" format="ROBOT" scope="TEST" generated="2023-12-08T12:58:59+00:00" specversion="6" source="/home/peke/Devel/robotframework/atest/testdata/libdoc/DataTypesLibrary.py" lineno="88">
 <version/>
 <doc>This Library has Data Types.
 
@@ -49,7 +49,7 @@ It links to `Set Location` keyword and to `GeoLocation` data type.</doc>
 This is the next Line that links to `Set Location` .</doc>
 <shortdoc>This links to `AssertionOperator` .</shortdoc>
 </kw>
-<kw name="Custom" lineno="131">
+<kw name="Custom" lineno="134">
 <arguments repr="arg: CustomType, arg2: CustomType2, arg3: CustomType, arg4: Unknown">
 <arg kind="POSITIONAL_OR_NAMED" required="true" repr="arg: CustomType">
 <name>arg</name>
@@ -131,6 +131,23 @@ This is the next Line that links to `Set Location` .</doc>
 <name>args</name>
 <type name="List" typedoc="list">
 <type name="Any" typedoc="Any"/>
+</type>
+</arg>
+</arguments>
+<doc/>
+<shortdoc/>
+</kw>
+<kw name="X Literal" lineno="131">
+<arguments repr="arg: Literal[1, 'xxx', b'yyy', True, None, one]">
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="arg: Literal[1, 'xxx', b'yyy', True, None, one]">
+<name>arg</name>
+<type name="Literal" typedoc="Literal">
+<type name="1"/>
+<type name="'xxx'"/>
+<type name="b'yyy'"/>
+<type name="True"/>
+<type name="None"/>
+<type name="one"/>
 </type>
 </arg>
 </arguments>
@@ -310,6 +327,21 @@ Examples: ``['one', 'two']``, ``[('one', 1), ('two', 2)]``
 <usages>
 <usage>Funny Unions</usage>
 <usage>Typing Types</usage>
+</usages>
+</type>
+<type name="Literal" type="Standard">
+<doc>Only specified values are accepted. Values can be strings,
+integers, bytes, Booleans, enums and None, and used arguments
+are converted using the value type specific conversion logic.
+
+Strings are case, space, underscore and hyphen insensitive,
+but exact matches have precedence over normalized matches.
+</doc>
+<accepts>
+<type>Any</type>
+</accepts>
+<usages>
+<usage>X Literal</usage>
 </usages>
 </type>
 <type name="None" type="Standard">

@@ -24,6 +24,7 @@ Keyword Arguments
     ${MODEL}[keywords][2][args]     funny: bool | int | float | str | AssertionOperator | Small | GeoLocation | None = equal
     ${MODEL}[keywords][3][args]     location: GeoLocation
     ${MODEL}[keywords][4][args]     list_of_str: List[str]    dict_str_int: Dict[str, int]    whatever: Any    *args: List[Any]
+    ${MODEL}[keywords][5][args]     arg: Literal[1, 'xxx', b'yyy', True, None, one]
 
 TypedDict
     ${MODEL}[typedocs][7][type]    TypedDict
@@ -72,37 +73,52 @@ Custom types
     ${MODEL}[typedocs][4][doc]        <p>Class doc is used when converter method has no doc.</p>
 
 Standard types
+    ${MODEL}[typedocs][0][type]       Standard
+    ${MODEL}[typedocs][0][name]       Any
+    ${MODEL}[typedocs][0][doc]        <p>Any value is accepted. No conversion is done.</p>
     ${MODEL}[typedocs][2][type]       Standard
     ${MODEL}[typedocs][2][name]       boolean
     ${MODEL}[typedocs][2][doc]        <p>Strings <code>TRUE</code>, <code>YES</code>,   start=True
+    ${MODEL}[typedocs][10][name]      Literal
+    ${MODEL}[typedocs][10][doc]       <p>Only specified values are accepted.    start=True
+
+Standard types with generics
+    ${MODEL}[typedocs][5][type]       Standard
+    ${MODEL}[typedocs][5][name]       dictionary
+    ${MODEL}[typedocs][5][doc]        <p>Strings must be Python <a    start=True
+    ${MODEL}[typedocs][9][type]       Standard
+    ${MODEL}[typedocs][9][name]       list
+    ${MODEL}[typedocs][9][doc]        <p>Strings must be Python <a    start=True
 
 Accepted types
     ${MODEL}[typedocs][0][type]       Standard
     ${MODEL}[typedocs][0][accepts]    ['Any']
-    ${MODEL}[typedocs][1][type]       Enum
-    ${MODEL}[typedocs][1][accepts]    ['string']
     ${MODEL}[typedocs][2][type]       Standard
     ${MODEL}[typedocs][2][accepts]    ['string', 'integer', 'float', 'None']
+    ${MODEL}[typedocs][10][type]      Standard
+    ${MODEL}[typedocs][10][accepts]   ['Any']
     ${MODEL}[typedocs][3][type]       Custom
     ${MODEL}[typedocs][3][accepts]    ['string', 'integer']
     ${MODEL}[typedocs][4][type]       Custom
     ${MODEL}[typedocs][4][accepts]    []
     ${MODEL}[typedocs][7][type]       TypedDict
     ${MODEL}[typedocs][7][accepts]    ['string', 'Mapping']
-    ${MODEL}[typedocs][11][type]      Enum
-    ${MODEL}[typedocs][11][accepts]   ['string', 'integer']
+    ${MODEL}[typedocs][1][type]       Enum
+    ${MODEL}[typedocs][1][accepts]    ['string']
+    ${MODEL}[typedocs][12][type]      Enum
+    ${MODEL}[typedocs][12][accepts]   ['string', 'integer']
 
 Usages
-    ${MODEL}[typedocs][0][type]       Standard
-    ${MODEL}[typedocs][0][usages]     ['Typing Types']
     ${MODEL}[typedocs][2][type]       Standard
     ${MODEL}[typedocs][2][usages]     ['Funny Unions', 'Set Location']
+    ${MODEL}[typedocs][5][type]       Standard
+    ${MODEL}[typedocs][5][usages]     ['Typing Types']
     ${MODEL}[typedocs][3][type]       Custom
     ${MODEL}[typedocs][3][usages]     ['Custom']
     ${MODEL}[typedocs][7][type]       TypedDict
     ${MODEL}[typedocs][7][usages]     ['Funny Unions', 'Set Location']
-    ${MODEL}[typedocs][11][type]      Enum
-    ${MODEL}[typedocs][11][usages]    ['__init__', 'Funny Unions']
+    ${MODEL}[typedocs][12][type]      Enum
+    ${MODEL}[typedocs][12][usages]    ['__init__', 'Funny Unions']
 
 Typedoc links in arguments
     ${MODEL}[keywords][0][args][1][type][name]                  Union

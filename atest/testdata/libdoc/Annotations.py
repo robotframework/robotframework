@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Any, Dict, List, Union, Tuple
+from typing import Any, Dict, List, Literal, Union, Tuple
 
 
 class UnknownType:
@@ -81,13 +81,19 @@ def K_nested(a: List[int],
     pass
 
 
-try:
-    exec('''
-def L_union_syntax(a: int | str | list | tuple):
+def L_iteral(a: Literal['on', 'off', 'int'],
+              b: Literal[1, 2, 3],
+              c: Literal[Small.one, True, None]):
     pass
 
 
-def M_union_syntax_with_default(a: int | str | list | tuple = None):
+try:
+    exec('''
+def M_union_syntax(a: int | str | list | tuple):
+    pass
+
+
+def N_union_syntax_with_default(a: int | str | list | tuple = None):
     pass
 ''')
 except TypeError:    # Python < 3.10

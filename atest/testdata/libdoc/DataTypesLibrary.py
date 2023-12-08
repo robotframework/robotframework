@@ -1,5 +1,5 @@
 from enum import Enum, IntEnum
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Literal, Optional, Union
 try:
     from typing_extensions import TypedDict
 except ImportError:
@@ -126,6 +126,9 @@ class DataTypesLibrary:
         pass
 
     def typing_types(self, list_of_str: List[str], dict_str_int: Dict[str, int], whatever: Any, *args: List[Any]):
+        pass
+
+    def x_literal(self, arg: Literal[1, 'xxx', b'yyy', True, None, Small.one]):
         pass
 
     def custom(self, arg: CustomType, arg2: 'CustomType2', arg3: CustomType, arg4: Unknown):
