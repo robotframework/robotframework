@@ -160,10 +160,6 @@ class TypeInfo(metaclass=SetterAwareType):
         - a union such as ``int | float``
         - a string such as ``'int'``, ``'list[int]'`` or ``'int | float'``
         - a ``TypedDict`` (represented as a :class:`TypedDictInfo`)
-        - a dictionary with a key ``name`` and optional keys ``type`` and ``nested``,
-          where ``nested`` is a sequence of dictionaries or other supported
-          type hints, such as ``{'name': 'int'}`` or
-          ``{'name': 'Union', 'nested': ['int', 'float']}``
         - a sequence of supported type hints to create a union from such as
           ``[int, float]`` or ``('int', 'list[int]')``
 
@@ -191,8 +187,6 @@ class TypeInfo(metaclass=SetterAwareType):
             return cls(type_repr(hint, nested=False), hint.__origin__, nested)
         if isinstance(hint, str):
             return cls.from_string(hint)
-        if isinstance(hint, dict):
-            return cls.from_dict(hint)
         if isinstance(hint, (tuple, list)):
             return cls.from_sequence(hint)
         if isinstance(hint, type):
@@ -233,22 +227,6 @@ class TypeInfo(metaclass=SetterAwareType):
             return TypeInfoParser(hint).parse()
         except ValueError as err:
             raise DataError(str(err))
-
-    @classmethod
-    def from_dict(cls, data: dict) -> 'TypeInfo':
-        """Construct a ``TypeInfo`` based on a dictionary.
-
-        The dictionary must have a key ``name`` and it can optionally have keys
-        ``type`` and ``nested``. ``nested`` is a sequence of nested types
-        as dictionaries or other types supported by :meth:`from_type_hint`.
-
-        Use :meth:`from_type_hint` if other types than dictionaries need to
-        supported.
-        """
-        if not data:
-            return cls()
-        nested = [cls.from_type_hint(n) for n in data.get('nested', ())]
-        return cls(data['name'], data.get('type', NOT_SET), nested=nested)
 
     @classmethod
     def from_sequence(cls, sequence: 'tuple|list') -> 'TypeInfo':

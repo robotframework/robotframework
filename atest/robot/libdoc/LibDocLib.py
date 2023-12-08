@@ -64,15 +64,21 @@ class LibDocLib:
             self.json_schema.validate(json.load(f))
 
     def get_repr_from_arg_model(self, model):
-        type_info = TypeInfo.from_type_hint(model['type']) if model['type'] else None
         return str(ArgInfo(kind=model['kind'],
                            name=model['name'],
-                           type=type_info,
+                           type=self._get_type_info(model['type']),
                            default=model['default'] or NOT_SET))
 
     def get_repr_from_json_arg_model(self, model):
-        type_info = TypeInfo.from_type_hint(model['type']) if model['type'] else None
         return str(ArgInfo(kind=model['kind'],
                            name=model['name'],
-                           type=type_info,
+                           type=self._get_type_info(model['type']),
                            default=model['defaultValue'] or NOT_SET))
+
+    def _get_type_info(self, data):
+        if not data:
+            return None
+        if isinstance(data, str):
+            return TypeInfo.from_string(data)
+        nested = [self._get_type_info(n) for n in data.get('nested', ())]
+        return TypeInfo(data['name'], nested=nested)

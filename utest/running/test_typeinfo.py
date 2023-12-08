@@ -83,23 +83,6 @@ class TestTypeInfo(unittest.TestCase):
                 TypeInfo.from_type_hint, union
             )
 
-    def test_from_dict(self):
-        for data, expected in [
-            ({}, TypeInfo()),
-            ({'name': 'x'}, TypeInfo('x')),
-            ({'name': 'Integer'}, TypeInfo('Integer', int)),
-            ({'name': 'I', 'type': int}, TypeInfo('I', int)),
-            ({'name': 'List', 'nested': [int]},
-             TypeInfo('List', list, [TypeInfo('int')])),
-            ({'name': 'list', 'nested': ['Int | Float']},
-             TypeInfo('list', list, [TypeInfo('Union', nested=[TypeInfo('Int'),
-                                                               TypeInfo('Float')])])),
-            ({'name': 'Map', 'nested': [{'name': 'str'}, {'name': 'int'}]},
-             TypeInfo('Map', dict, [TypeInfo('str'), TypeInfo('int')])),
-        ]:
-            for info in TypeInfo.from_dict(data), TypeInfo.from_type_hint(data):
-                assert_info(info, expected.name, expected.type, expected.nested)
-
     def test_valid_params(self):
         for typ in (List[int], Sequence[int], Set[int], Tuple[int], 'list[int]',
                     'SEQUENCE[INT]', 'Set[integer]', 'frozenset[int]', 'tuple[int]'):
