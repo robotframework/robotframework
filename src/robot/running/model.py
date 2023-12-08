@@ -295,7 +295,8 @@ class Var(model.Var, WithSource):
                     setter = getattr(context.variables, f'set_{scope}')
                     try:
                         resolver = VariableResolver.from_variable(self)
-                        setter(self.name, resolver.resolve(context.variables))
+                        setter(self._resolve_name(self.name, context.variables),
+                               resolver.resolve(context.variables))
                     except DataError as err:
                         raise VariableError(f"Setting variable '{self.name}' failed: {err}")
 
@@ -312,6 +313,9 @@ class Var(model.Var, WithSource):
                             f"'GLOBAL', 'SUITE', 'TEST', 'TASK' and 'LOCAL'.")
         except DataError as err:
             raise DataError(f"Invalid VAR scope: {err}")
+
+    def _resolve_name(self, name, variables):
+        return name[:2] + variables.replace_string(name[2:-1]) + '}'
 
     def to_dict(self) -> DataDict:
         data = super().to_dict()

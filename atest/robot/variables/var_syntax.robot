@@ -24,6 +24,9 @@ Dict
     ${tc} =    Check Test Case    ${TESTNAME}
     Validate VAR    ${tc.body}[0]    \&{name}    k1=v1    k2=v2    separator\=v3
 
+Invalid name
+    Check Test Case    ${TESTNAME}
+
 Equals is accepted
     ${tc} =    Check Test Case    ${TESTNAME}
     Validate VAR    ${tc.body}[0]    \${name}    value
@@ -63,8 +66,13 @@ Non-existing variable in value
 Non-existing variable in separator
     Check Test Case    ${TESTNAME}
 
-Named based on another variable
+Name based on another variable
     Check Test Case    ${TESTNAME}
+
+Name based on variable defined in different scope
+    Check Test Case    ${TESTNAME} 1
+    Check Test Case    ${TESTNAME} 2
+    Check Test Case    ${TESTNAME} 3
 
 Non-existing variable in name
     Check Test Case    ${TESTNAME}

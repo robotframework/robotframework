@@ -29,6 +29,10 @@ Dict
     VAR    &{name}    k1=v1    k2=v2    separator=v3
     Should Be Equal    ${name}    ${{{'k1': 'v1', 'k2': 'v2', 'separator': 'v3'}}}
 
+Invalid name
+    [Documentation]    FAIL    Invalid variable name 'bad'.
+    VAR    bad    name
+
 Equals is accepted
     VAR    ${name}=    value
     Should Be Equal    ${name}    value
@@ -82,12 +86,47 @@ Non-existing variable in separator
     [Documentation]    FAIL    Setting variable '\${x}' failed: Variable '\${bad}' not found.
     VAR    ${x}    a    b    separator=${bad}
 
-Named based on another variable
+Name based on another variable
     VAR    ${x}      y
     VAR    ${${x}}   z
     VAR    ${x-${x}-${y}}   x-y-z
     Should Be Equal    ${y}    z
     Should Be Equal    ${x-y-z}    x-y-z
+
+Name based on variable defined in different scope 1
+    VAR    ${x}       g-1
+    VAR    ${y}       s-1
+    VAR    ${z}       t-1
+    VAR    ${${x}}    g-2    scope=GLOBAL
+    VAR    ${${y}}    s-2    scope=SUITE
+    VAR    ${${z}}    t-2    scope=TEST
+    Should Be Equal    ${g-1}    g-2
+    Should Be Equal    ${s-1}    s-2
+    Should Be Equal    ${t-1}    t-2
+
+Name based on variable defined in different scope 2
+    Should Be Equal    ${g-1}    g-2
+    Should Be Equal    ${s-1}    s-2
+    VAR    ${g-${g-1}}    g-3    scope=GLOBAL
+    VAR    ${g-${s-1}}    g-4    scope=GLOBAL
+    VAR    ${s-${g-1}}    s-3    scope=SUITE
+    VAR    ${s-${s-1}}    s-4    scope=SUITE
+    VAR    ${t-${g-1}}    t-3    scope=TEST
+    VAR    ${t-${s-1}}    t-4    scope=TEST
+    Should Be Equal    ${g-g-2}    g-3
+    Should Be Equal    ${g-s-2}    g-4
+    Should Be Equal    ${s-g-2}    s-3
+    Should Be Equal    ${s-s-2}    s-4
+    Should Be Equal    ${t-g-2}    t-3
+    Should Be Equal    ${t-s-2}    t-4
+
+Name based on variable defined in different scope 3
+    Should Be Equal    ${g-1}      g-2
+    Should Be Equal    ${s-1}      s-2
+    Should Be Equal    ${g-g-2}    g-3
+    Should Be Equal    ${g-s-2}    g-4
+    Should Be Equal    ${s-g-2}    s-3
+    Should Be Equal    ${s-s-2}    s-4
 
 Non-existing variable in name
     [Documentation]    FAIL    Setting variable '\${this is \${bad}}' failed: Variable '${\bad}' not found.
