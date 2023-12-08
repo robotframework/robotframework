@@ -1,5 +1,5 @@
 from enum import Enum, IntEnum
-from typing import Literal
+from typing import List, Literal
 
 
 class Char(Enum):
@@ -46,6 +46,9 @@ def multiple_matches(argument: Literal['ABC', 'abc', 'R', Char.R, Number.one, Tr
                      expected=None):
     _validate_type(argument, expected)
 
+
+def in_params(argument: List[Literal['R', 'F']], expected=None):
+    _validate_type(argument, expected)
 
 
 def _validate_type(argument, expected):

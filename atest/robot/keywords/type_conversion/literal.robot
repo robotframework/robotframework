@@ -56,3 +56,6 @@ Multiple matches with exact match
 
 Multiple matches with not exact match
     Check Test Case    ${TESTNAME}
+
+In parameters
+    Check Test Case    ${TESTNAME}

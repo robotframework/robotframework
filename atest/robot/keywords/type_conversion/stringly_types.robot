@@ -18,6 +18,9 @@ Parameterized tuple
 Homogenous tuple
     Check Test Case    ${TESTNAME}
 
+Literal
+    Check Test Case    ${TESTNAME}
+
 Union
     Check Test Case    ${TESTNAME}
 
@@ -27,7 +30,7 @@ Nested
 Aliases
     Check Test Case    ${TESTNAME}
 
-TypedDict
+TypedDict items
     Check Test Case    ${TESTNAME}
 
 Invalid

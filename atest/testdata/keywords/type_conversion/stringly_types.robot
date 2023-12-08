@@ -43,6 +43,17 @@ Homogenous tuple
     ...    type=tuple[int, ...]
     ...    error=Item '0' got value 'bad' that cannot be converted to integer.
 
+Literal
+    Literal    one        'one'
+    Literal    ${2}       2
+    Literal    ${None}    None
+    Literal    2          2
+    Literal    ONE        'one'
+    Literal    NONE       None
+    Conversion should fail
+    ...    Literal    bad
+    ...    type='one', 2 or None
+
 Union
     Union    1           1
     Union    1.2         1.2
@@ -61,8 +72,8 @@ Nested
 Aliases
     Aliases    [1, 2, '3']    {'1': 1.1, 2: '2.2', '': 'NONE'}
 
-TypedDict
-    TypedDict    {'simple': 42, 'params': [1, 2.0, '3'], 'union': 3.14}
+TypedDict items
+    TypedDict items    {'simple': 42, 'params': [1, 2.0, '3'], 'union': 3.14}
 
 Invalid
     [Documentation]    FAIL    No keyword with name 'Invalid' found.
