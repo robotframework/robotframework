@@ -111,8 +111,8 @@ from .arguments import ArgInfo, ArgumentSpec, TypeConverter, TypeInfo
 from .builder import ResourceFileBuilder, TestDefaults, TestSuiteBuilder
 from .context import EXECUTION_CONTEXTS
 from .model import (Break, Continue, Error, For, If, IfBranch, Keyword, Return,
-                    ResourceFile, TestCase, TestSuite, Try, TryBranch, UserKeyword,
-                    Var, While)
+                    TestCase, TestSuite, Try, TryBranch, Var, While)
+from .resourcemodel import ResourceFile, UserKeyword
 from .runkwregister import RUN_KW_REGISTER
 from .testlibraries import TestLibrary
 from .usererrorhandler import UserErrorHandler

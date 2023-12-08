@@ -1,7 +1,8 @@
 from io import StringIO
 import unittest
 
-from robot.running.model import TestSuite, Import
+from robot.running import TestSuite
+from robot.running.resourcemodel import Import
 from robot.utils.asserts import assert_equal, assert_raises_with_msg
 
 

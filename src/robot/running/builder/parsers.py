@@ -22,9 +22,10 @@ from robot.errors import DataError
 from robot.parsing import File, get_init_model, get_model, get_resource_model
 from robot.utils import FileReader, get_error_message, read_rest_data, type_name
 
+from ..model import TestSuite
+from ..resourcemodel import ResourceFile
 from .settings import FileSettings, InitFileSettings, TestDefaults
 from .transformers import ResourceBuilder, SuiteBuilder
-from ..model import ResourceFile, TestSuite
 
 
 class Parser(ABC):

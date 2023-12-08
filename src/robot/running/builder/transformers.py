@@ -16,12 +16,11 @@
 from robot.errors import DataError
 from robot.output import LOGGER
 from robot.parsing import File, ModelVisitor, Token
-from robot.utils import escape
 from robot.variables import VariableMatches
 
+from ..model import For, If, IfBranch, TestSuite, TestCase, Try, TryBranch, While
+from ..resourcemodel import ResourceFile, UserKeyword
 from .settings import FileSettings
-from ..model import (For, If, IfBranch, ResourceFile, TestSuite, TestCase, Try,
-                     TryBranch, UserKeyword, While)
 
 
 class SettingsBuilder(ModelVisitor):

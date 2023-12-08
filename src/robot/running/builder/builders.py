@@ -26,7 +26,8 @@ from robot.parsing import (SuiteFile, SuiteDirectory, SuiteStructure,
                            SuiteStructureBuilder, SuiteStructureVisitor)
 from robot.utils import Importer, seq2str, split_args_from_name_or_path, type_name
 
-from ..model import ResourceFile, TestSuite
+from ..model import TestSuite
+from ..resourcemodel import ResourceFile
 from .parsers import (CustomParser, JsonParser, NoInitFileDirectoryParser, Parser,
                       RestParser, RobotParser)
 from .settings import TestDefaults
