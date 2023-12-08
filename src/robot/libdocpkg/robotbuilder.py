@@ -61,7 +61,7 @@ class LibraryDocBuilder:
         return lib.doc or f"Documentation for library ``{lib.name}``."
 
     def _get_initializers(self, lib):
-        if lib.init.arguments:
+        if lib.init.args:
             return [KeywordDocBuilder().build_keyword(lib.init)]
         return []
 
@@ -158,11 +158,11 @@ class KeywordDocBuilder:
         if getattr(kw, 'error', None):
             doc = f'*Creating keyword failed:* {kw.error}'
         if not self._resource:
-            self._escape_strings_in_defaults(kw.arguments.defaults)
-        if kw.arguments.embedded:
-            self._remove_embedded(kw.arguments)
+            self._escape_strings_in_defaults(kw.args.defaults)
+        if kw.args.embedded:
+            self._remove_embedded(kw.args)
         return KeywordDoc(name=kw.name,
-                          args=kw.arguments,
+                          args=kw.args,
                           doc=doc,
                           tags=tags,
                           private=tags.robot('private'),

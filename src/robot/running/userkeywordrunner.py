@@ -58,7 +58,7 @@ class UserKeywordRunner:
     @property
     def arguments(self):
         """:rtype: :py:class:`robot.running.arguments.ArgumentSpec`"""
-        return self.keyword.arguments
+        return self.keyword.args
 
     def run(self, data, context, run=True):
         kw = self.keyword.bind(data)
@@ -109,13 +109,13 @@ class UserKeywordRunner:
                 return return_value
 
     def _resolve_arguments(self, kw, args, variables=None):
-        return kw.arguments.resolve(args, variables)
+        return kw.args.resolve(args, variables)
 
     def _set_arguments(self, kw, args, context):
         positional, named = args
         variables = context.variables
-        args, kwargs = kw.arguments.map(positional, named, replace_defaults=False)
-        self._set_variables(kw.arguments, args, kwargs, variables)
+        args, kwargs = kw.args.map(positional, named, replace_defaults=False)
+        self._set_variables(kw.args, args, kwargs, variables)
         context.output.trace(lambda: self._trace_log_args_message(kw, variables),
                              write_if_flat=False)
 
@@ -147,7 +147,7 @@ class UserKeywordRunner:
 
     def _trace_log_args_message(self, kw, variables):
         return self._format_trace_log_args_message(
-            self._format_args_for_trace_logging(kw.arguments), variables
+            self._format_args_for_trace_logging(kw.args), variables
         )
 
     def _format_args_for_trace_logging(self, spec):
@@ -268,7 +268,7 @@ class EmbeddedArgumentsRunner(UserKeywordRunner):
 
     def _trace_log_args_message(self, kw, variables):
         args = [f'${{{arg}}}' for arg in kw.embedded.args]
-        args += self._format_args_for_trace_logging(kw.arguments)
+        args += self._format_args_for_trace_logging(kw.args)
         return self._format_trace_log_args_message(args, variables)
 
     def _get_result(self, kw, data, assignment, variables):

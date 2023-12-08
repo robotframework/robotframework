@@ -35,7 +35,7 @@ class UserErrorHandler:
         self.owner = owner
         self.source = source
         self.lineno = lineno
-        self.arguments = ArgumentSpec()
+        self.args = ArgumentSpec()
         self.timeout = None
         self.embedded = None
         self.tags = Tags()

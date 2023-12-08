@@ -19,9 +19,10 @@ from typing import Any, Literal, Sequence, TYPE_CHECKING
 from robot import model
 from robot.model import BodyItem, create_fixture, DataDict, ModelObject, Tags
 from robot.output import LOGGER
-from robot.utils import eq, getshortdoc, normalize, NOT_SET, setter
+from robot.utils import normalize, NOT_SET, setter
 
-from .arguments import ArgumentSpec, EmbeddedArguments, UserKeywordArgumentParser
+from .arguments import ArgumentSpec, UserKeywordArgumentParser
+from .keywordimplementation import KeywordImplementation
 from .model import Body, BodyItemParent, Keyword, TestSuite
 from .userkeywordrunner import UserKeywordRunner, EmbeddedArgumentsRunner
 
@@ -152,14 +153,12 @@ class ResourceFile(ModelObject):
         return data
 
 
-class UserKeyword(ModelObject):
-    repr_args = ('name', 'args')
+class UserKeyword(KeywordImplementation):
     fixture_class = Keyword
-    __slots__ = ['embedded', 'doc', 'timeout', 'lineno', 'owner', 'parent', 'error',
-                 '_setup', '_teardown']
+    __slots__ = ['timeout', '_setup', '_teardown']
 
     def __init__(self, name: str = '',
-                 args: 'ArgumentSpec|Sequence[str]' = (),
+                 args: 'ArgumentSpec|Sequence[str]|None' = (),
                  doc: str = '',
                  tags: 'Tags|Sequence[str]' = (),
                  timeout: 'str|None' = None,
@@ -167,61 +166,23 @@ class UserKeyword(ModelObject):
                  owner: 'ResourceFile|None' = None,
                  parent: 'BodyItemParent|None' = None,
                  error: 'str|None' = None):
-        self.embedded: EmbeddedArguments | None = None
-        self.name = name
-        self.args = args
-        self.doc = doc
-        self.tags = tags
+        super().__init__(name, args, doc, tags, lineno, owner, parent, error)
         self.timeout = timeout
-        self.lineno = lineno
-        self.owner = owner
-        self.parent = parent
-        self.error = error
         self.body = []
         self._setup = None
         self._teardown = None
 
-    # FIXME: Decide between `args`, `arguments` and `parameters`.
-    @property
-    def arguments(self):
-        return self.args
-
     @setter
-    def name(self, name: str) -> str:
-        self.embedded = EmbeddedArguments.from_name(name)
-        return name
-
-    @property
-    def full_name(self):
-        if self.owner and self.owner.name:
-            return f'{self.owner.name}.{self.name}'
-        return self.name
-
-    @setter
-    def args(self, spec: 'ArgumentSpec|Sequence[str]') -> ArgumentSpec:
-        if isinstance(spec, ArgumentSpec):
+    def args(self, spec: 'ArgumentSpec|Sequence[str]|None') -> ArgumentSpec:
+        if not spec:
+            spec = ArgumentSpec()
+        elif not isinstance(spec, ArgumentSpec):
+            spec = UserKeywordArgumentParser().parse(spec)
+        else:
             # FIXME: ArgumentSpec should be copied here!
             pass
-        else:
-            spec = UserKeywordArgumentParser().parse(spec)
         spec.name = lambda: self.full_name
         return spec
-
-    @property
-    def short_doc(self):
-        return getshortdoc(self.doc)
-
-    @setter
-    def tags(self, tags: 'Tags|Sequence[str]') -> Tags:
-        return Tags(tags)
-
-    @property
-    def private(self):
-        return bool(self.tags and self.tags.robot('private'))
-
-    @property
-    def source(self) -> 'Path|None':
-        return self.owner.source if self.owner is not None else None
 
     @setter
     def body(self, body: 'Sequence[BodyItem|DataDict]') -> Body:
@@ -273,12 +234,7 @@ class UserKeyword(ModelObject):
         """
         return bool(self._teardown)
 
-    def matches(self, name: str) -> bool:
-        if self.embedded:
-            return self.embedded.match(name)
-        return eq(self.name, name, ignore='_')
-
-    def create_runner(self, name, languages=None):
+    def create_runner(self, name, languages=None) -> UserKeywordRunner:
         if self.embedded:
             return EmbeddedArgumentsRunner(self, name)
         return UserKeywordRunner(self)
@@ -328,9 +284,6 @@ class UserKeyword(ModelObject):
                 arg = f'{arg}={info.default}'
             args.append(arg)
         return args
-
-    def _include_in_repr(self, name: str, value: Any) -> bool:
-        return name == 'name' or value
 
     def _repr_format(self, name: str, value: Any) -> str:
         if name == 'args':

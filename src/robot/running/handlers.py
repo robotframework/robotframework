@@ -61,6 +61,10 @@ class _RunnableHandler:
                          tuple(tags_from_attr) +
                          tuple(tags or ()))
 
+    @property
+    def args(self):
+        return self.arguments
+
     def _get_name(self, handler_name, handler_method):
         robot_name = getattr(handler_method, 'robot_name', None)
         name = robot_name or printable_name(handler_name, code_style=True)
