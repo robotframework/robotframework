@@ -144,13 +144,19 @@ class TypeInfoParser:
 
     def _literal_param(self, param: TypeInfo) -> TypeInfo:
         try:
-            value = literal_eval(param.name)
+            try:
+                value = literal_eval(param.name)
+            except ValueError:
+                if param.name.isidentifier():
+                    return TypeInfo(param.name, None)
+                raise
             if not isinstance(value, LITERAL_TYPES):
                 raise ValueError
         except (ValueError, SyntaxError):
             token = self.tokens[self.current-1]
             self.error(f"Invalid literal value {param.name!r}.", token)
-        return TypeInfo(repr(value), value)
+        else:
+            return TypeInfo(repr(value), value)
 
     def union(self) -> 'list[TypeInfo]':
         types = []
