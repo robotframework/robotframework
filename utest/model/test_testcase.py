@@ -1,5 +1,4 @@
 import unittest
-import warnings
 from pathlib import Path
 
 from robot.utils.asserts import (assert_equal, assert_false, assert_not_equal, assert_raises,
@@ -100,25 +99,12 @@ class TestTestCase(unittest.TestCase):
         assert_equal(copy.name, 'New')
         assert_equal(copy.doc, 'New')
 
-
-class TestStringRepresentation(unittest.TestCase):
-
-    def setUp(self):
-        self.empty = TestCase()
-        self.ascii = TestCase(name='Kekkonen')
-        self.non_ascii = TestCase(name='hyvä nimi')
-
-    def test_str(self):
-        for tc, expected in [(self.empty, ''),
-                             (self.ascii, 'Kekkonen'),
-                             (self.non_ascii, 'hyvä nimi')]:
-            assert_equal(str(tc), expected)
-
-    def test_repr(self):
-        for tc, expected in [(self.empty, "TestCase(name='')"),
-                             (self.ascii, "TestCase(name='Kekkonen')"),
-                             (self.non_ascii, "TestCase(name='hyvä nimi')")]:
-            assert_equal(repr(tc), 'robot.model.' + expected)
+    def test_str_and_repr(self):
+        for name in '', 'Kekkonen', 'hyvä nimi', "quo\"te's":
+            test = TestCase(name)
+            expected = f'robot.model.TestCase(name={name!r})'
+            assert_equal(str(test), expected)
+            assert_equal(repr(test), expected)
 
 
 class TestTestCases(unittest.TestCase):

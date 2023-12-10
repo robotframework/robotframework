@@ -176,9 +176,6 @@ class TestCase(ModelObject, Generic[KW]):
         """:mod:`Visitor interface <robot.model.visitor>` entry-point."""
         visitor.visit_test(self)
 
-    def __str__(self) -> str:
-        return self.name
-
     def to_dict(self) -> 'dict[str, Any]':
         data: 'dict[str, Any]' = {'name': self.name}
         if self.doc:

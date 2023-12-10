@@ -189,6 +189,13 @@ class TestTestSuite(unittest.TestCase):
     def test_slots(self):
         assert_raises(AttributeError, setattr, self.suite, 'attr', 'value')
 
+    def test_str_and_repr(self):
+        for name in '', 'Kekkonen', 'hyvä nimi', "quo\"te's":
+            test = TestSuite(name)
+            expected = f'robot.model.TestSuite(name={name!r})'
+            assert_equal(str(test), expected)
+            assert_equal(repr(test), expected)
+
 
 class TestSuiteId(unittest.TestCase):
 
@@ -207,26 +214,6 @@ class TestSuiteId(unittest.TestCase):
         assert_equal(sub.id, 's1-s1-s1')
         suite.suites = [sub]
         assert_equal(sub.id, 's1-s1')
-
-
-class TestStringRepresentation(unittest.TestCase):
-
-    def setUp(self):
-        self.empty = TestSuite()
-        self.ascii = TestSuite(name='Kekkonen')
-        self.non_ascii = TestSuite(name='hyvä nimi')
-
-    def test_str(self):
-        for tc, expected in [(self.empty, ''),
-                             (self.ascii, 'Kekkonen'),
-                             (self.non_ascii, 'hyvä nimi')]:
-            assert_equal(str(tc), expected)
-
-    def test_repr(self):
-        for tc, expected in [(self.empty, "TestSuite(name='')"),
-                             (self.ascii, "TestSuite(name='Kekkonen')"),
-                             (self.non_ascii, "TestSuite(name='hyvä nimi')")]:
-            assert_equal(repr(tc), 'robot.model.' + expected)
 
 
 if __name__ == '__main__':

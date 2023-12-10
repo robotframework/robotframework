@@ -419,9 +419,6 @@ class TestSuite(ModelObject, Generic[KW, TC]):
         """:mod:`Visitor interface <robot.model.visitor>` entry-point."""
         visitor.visit_suite(self)
 
-    def __str__(self) -> str:
-        return self.name
-
     def to_dict(self) -> 'dict[str, Any]':
         data: 'dict[str, Any]' = {'name': self.name}
         if self.doc:
