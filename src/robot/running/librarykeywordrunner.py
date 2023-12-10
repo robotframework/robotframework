@@ -34,15 +34,6 @@ class LibraryKeywordRunner:
         self.pre_run_messages = ()
         self.languages = languages
 
-    # FIXME: Properties below shouldn't be needed
-    @property
-    def library(self):
-        return self.keyword.library
-
-    @property
-    def full_name(self):
-        return f'{self.library.name}.{self.name}'
-
     def run(self, data, context, run=True):
         kw = self.keyword.bind(data)
         assignment = VariableAssignment(data.assign)

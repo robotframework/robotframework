@@ -31,14 +31,12 @@ class TestEmbeddedArgs(unittest.TestCase):
 
     def test_create_runner_with_one_embedded_arg(self):
         runner = self.kw1.create_runner('User selects book from list')
-        assert_equal(runner.embedded_args, ('book',))
         assert_equal(runner.name, 'User selects book from list')
-        assert_equal(runner.full_name, 'User selects book from list')
+        assert_equal(runner.embedded_args, ('book',))
         self.kw1.owner = ResourceFile(source='xxx.resource')
         runner = self.kw1.create_runner('User selects radio from list')
-        assert_equal(runner.embedded_args, ('radio',))
         assert_equal(runner.name, 'User selects radio from list')
-        assert_equal(runner.full_name, 'xxx.User selects radio from list')
+        assert_equal(runner.embedded_args, ('radio',))
 
     def test_create_runner_with_many_embedded_args(self):
         runner = self.kw2.create_runner('User * book from "list"')

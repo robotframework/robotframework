@@ -3329,8 +3329,8 @@ class _Misc(_BuiltInBase):
             # FIXME: Unify reporting errors.
             if isinstance(runner, UserErrorHandler):
                 error = runner.error.message
-            elif getattr(runner, 'error', None) is not None:
-                error = runner.error
+            else:
+                error = runner.keyword.error
         if error is not None:
             raise AssertionError(msg or error)
 

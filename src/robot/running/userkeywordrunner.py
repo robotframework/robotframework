@@ -35,31 +35,6 @@ class UserKeywordRunner:
         self.name = name or keyword.name
         self.pre_run_messages = ()
 
-    # FIXME: UserKeywordRunner shouldn't need the following propertys.
-    # Code needing them should use UserKeyword directly.
-
-    @property
-    def full_name(self):
-        owner = self.keyword.owner
-        return f'{owner.name}.{self.name}' if owner and owner.name else self.name
-
-    @property
-    def tags(self):
-        return self.keyword.tags
-
-    @property
-    def source(self):
-        return self.keyword.source
-
-    @property
-    def error(self):
-        return self.keyword.error
-
-    @property
-    def arguments(self):
-        """:rtype: :py:class:`robot.running.arguments.ArgumentSpec`"""
-        return self.keyword.args
-
     def run(self, data, context, run=True):
         kw = self.keyword.bind(data)
         assignment = VariableAssignment(data.assign)

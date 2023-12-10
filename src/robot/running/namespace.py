@@ -324,7 +324,7 @@ class KeywordStore:
         runner = keywords[0].create_runner(name, self.languages)
         ctx = EXECUTION_CONTEXTS.current
         caller = ctx.user_keywords[-1] if ctx.user_keywords else ctx.test
-        if caller and runner.source != caller.source:
+        if caller and runner.keyword.source != caller.source:
             if self._exists_in_resource_file(name, caller.source):
                 message = (
                     f"Keyword '{caller.full_name}' called keyword '{name}' that exists "
