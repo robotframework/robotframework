@@ -21,7 +21,7 @@ from robot.model import BodyItem, create_fixture, DataDict, ModelObject, Tags
 from robot.output import LOGGER
 from robot.utils import normalize, NOT_SET, setter
 
-from .arguments import ArgumentSpec, UserKeywordArgumentParser
+from .arguments import ArgInfo, ArgumentSpec, UserKeywordArgumentParser
 from .keywordimplementation import KeywordImplementation
 from .model import Body, BodyItemParent, Keyword, TestSuite
 from .userkeywordrunner import UserKeywordRunner, EmbeddedArgumentsRunner
@@ -168,9 +168,9 @@ class UserKeyword(KeywordImplementation):
                  error: 'str|None' = None):
         super().__init__(name, args, doc, tags, lineno, owner, parent, error)
         self.timeout = timeout
-        self.body = []
         self._setup = None
         self._teardown = None
+        self.body = []
 
     @setter
     def args(self, spec: 'ArgumentSpec|Sequence[str]|None') -> ArgumentSpec:
@@ -255,7 +255,7 @@ class UserKeyword(KeywordImplementation):
 
     def to_dict(self) -> DataDict:
         data: DataDict = {'name': self.name}
-        for name, value in [('args', tuple(self._decorate_args())),
+        for name, value in [('args', tuple(self._decorate_arg(a) for a in self.args)),
                             ('doc', self.doc),
                             ('tags', tuple(self.tags)),
                             ('timeout', self.timeout),
@@ -270,25 +270,17 @@ class UserKeyword(KeywordImplementation):
             data['teardown'] = self.teardown.to_dict()
         return data
 
-    def _decorate_args(self):
-        args = []
-        for info in self.args:
-            if info.kind == info.VAR_NAMED:
-                deco = '&'
-            elif info.kind in (info.VAR_POSITIONAL, info.NAMED_ONLY_MARKER):
-                deco = '@'
-            else:
-                deco = '$'
-            arg = f'{deco}{{{info.name}}}'
-            if info.default is not NOT_SET:
-                arg = f'{arg}={info.default}'
-            args.append(arg)
-        return args
-
-    def _repr_format(self, name: str, value: Any) -> str:
-        if name == 'args':
-            return repr(self._decorate_args())
-        return super()._repr_format(name, value)
+    def _decorate_arg(self, arg: ArgInfo) -> str:
+        if arg.kind == arg.VAR_NAMED:
+            deco = '&'
+        elif arg.kind in (arg.VAR_POSITIONAL, arg.NAMED_ONLY_MARKER):
+            deco = '@'
+        else:
+            deco = '$'
+        result = f'{deco}{{{arg.name}}}'
+        if arg.default is not NOT_SET:
+            result += f'={arg.default}'
+        return result
 
 
 class Variable(ModelObject):

@@ -1,10 +1,5 @@
 import os
 
-try:
-    basestring
-except NameError:
-    basestring = str
-
 
 class ListenImports:
     ROBOT_LISTENER_API_VERSION = 2
@@ -29,7 +24,7 @@ class ListenImports:
     def _pretty(self, entry):
         if isinstance(entry, list):
             return '[%s]' % ', '.join(entry)
-        if isinstance(entry, basestring) and os.path.isabs(entry):
+        if isinstance(entry, str) and os.path.isabs(entry):
             entry = entry.replace('$py.class', '.py').replace('.pyc', '.py')
             tokens = entry.split(os.sep)
             index = -1 if tokens[-1] != '__init__.py' else -2

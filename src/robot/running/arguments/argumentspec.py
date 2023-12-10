@@ -91,10 +91,10 @@ class ArgumentSpec:
                 ([self.var_named] if self.var_named else []))
 
     def resolve(self, arguments, variables=None, converters=None,
-                resolve_named=True, resolve_variables_until=None,
+                resolve_named=True, resolve_args_until=None,
                 dict_to_kwargs=False, languages=None):
-        resolver = ArgumentResolver(self, resolve_named,
-                                    resolve_variables_until, dict_to_kwargs)
+        resolver = ArgumentResolver(self, resolve_named, resolve_args_until,
+                                    dict_to_kwargs)
         positional, named = resolver.resolve(arguments, variables)
         return self.convert(positional, named, converters, dry_run=not variables,
                             languages=languages)

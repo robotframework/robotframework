@@ -29,11 +29,11 @@ class ArgumentResolver:
 
     def __init__(self, spec: 'ArgumentSpec',
                  resolve_named: bool = True,
-                 resolve_variables_until: 'int|None' = None,
+                 resolve_args_until: 'int|None' = None,
                  dict_to_kwargs: bool = False):
         self.named_resolver = NamedArgumentResolver(spec) \
               if resolve_named else NullNamedArgumentResolver()
-        self.variable_replacer = VariableReplacer(spec, resolve_variables_until)
+        self.variable_replacer = VariableReplacer(spec, resolve_args_until)
         self.dict_to_kwargs = DictToKwargs(spec, dict_to_kwargs)
         self.argument_validator = ArgumentValidator(spec)
 

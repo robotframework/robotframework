@@ -232,7 +232,12 @@ class ArgDocDynamicLibrary:
         print('*INFO* Executed keyword "%s" with arguments %s.' % (name, args))
 
     def get_keyword_documentation(self, name):
-        return self._keywords[name].doc
+        if name in ('__init__', '__intro__'):
+            raise ValueError(f"'{name}' should be used only with Libdoc'")
+        try:
+            return self._keywords[name].doc
+        except KeyError:
+            raise ValueError(f"'{name}' not found")
 
     def get_keyword_arguments(self, name):
         return self._keywords[name].argspec

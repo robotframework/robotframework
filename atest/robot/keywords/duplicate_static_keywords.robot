@@ -5,7 +5,7 @@ Resource         atest_resource.robot
 *** Test Cases ***
 Using keyword defined twice fails
     ${tc} =    Check Test Case    ${TESTNAME}
-    Should Be Equal    ${tc.kws[0].full_name}    DupeKeywords.Defined twice
+    Should Be Equal    ${tc.kws[0].full_name}    DupeKeywords.Defined Twice
     Creating keyword should have failed    2    Defined twice
 
 Using keyword defined thrice fails as well

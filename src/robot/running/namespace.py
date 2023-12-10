@@ -135,7 +135,7 @@ class Namespace:
                             args=list(import_setting.args),
                             originalname=lib.real_name,
                             importer=str(import_setting.source),
-                            source=lib.source)
+                            source=str(lib.source or ''))
         self._kw_store.libraries[lib.name] = lib
         lib.scope_manager.start_suite()
         if self._running_test:
@@ -419,26 +419,26 @@ class KeywordStore:
         if len(keywords) != 2:
             return keywords, warning
         stdlibs_without_remote = STDLIBS - {'Remote'}
-        if keywords[0].library.real_name in stdlibs_without_remote:
+        if keywords[0].owner.real_name in stdlibs_without_remote:
             standard, custom = keywords
-        elif keywords[1].library.real_name in stdlibs_without_remote:
+        elif keywords[1].owner.real_name in stdlibs_without_remote:
             custom, standard = keywords
         else:
             return keywords, warning
-        if not RUN_KW_REGISTER.is_run_keyword(custom.library.real_name, custom.name):
+        if not RUN_KW_REGISTER.is_run_keyword(custom.owner.real_name, custom.name):
             warning = self._custom_and_standard_keyword_conflict_warning(custom, standard)
         return [custom], warning
 
     def _custom_and_standard_keyword_conflict_warning(self, custom, standard):
         custom_with_name = standard_with_name = ''
-        if custom.library.name != custom.library.real_name:
-            custom_with_name = f" imported as '{custom.library.name}'"
-        if standard.library.name != standard.library.real_name:
-            standard_with_name = f" imported as '{standard.library.name}'"
+        if custom.owner.name != custom.owner.real_name:
+            custom_with_name = f" imported as '{custom.owner.name}'"
+        if standard.owner.name != standard.owner.real_name:
+            standard_with_name = f" imported as '{standard.owner.name}'"
         return Message(
             f"Keyword '{standard.name}' found both from a custom library "
-            f"'{custom.library.real_name}'{custom_with_name} and a standard library "
-            f"'{standard.library.real_name}'{standard_with_name}. The custom keyword "
+            f"'{custom.owner.real_name}'{custom_with_name} and a standard library "
+            f"'{standard.owner.real_name}'{standard_with_name}. The custom keyword "
             f"is used. To select explicitly, and to get rid of this warning, use "
             f"either '{custom.full_name}' or '{standard.full_name}'.", level='WARN'
         )

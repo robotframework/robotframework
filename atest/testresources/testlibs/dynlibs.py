@@ -37,5 +37,5 @@ class FailingDynamicDocLib(_BaseDynamicLibrary):
     def __init__(self):
         """initoo-o-o"""
     def get_keyword_documentation(self, name):
-        raise RuntimeError('Failing in get_keyword_documentation')
+        raise RuntimeError(f"Failing in 'get_keyword_documentation' with '{name}'.")
 

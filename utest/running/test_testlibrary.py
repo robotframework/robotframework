@@ -2,6 +2,7 @@ import os.path
 import re
 import sys
 import unittest
+from pathlib import Path
 
 from robot.running.testlibraries import (TestLibrary, ClassLibrary,
                                          ModuleLibrary, DynamicLibrary)
@@ -42,12 +43,14 @@ class TestLibraryTypes(unittest.TestCase):
     def test_python_library(self):
         lib = TestLibrary.from_name("BuiltIn")
         assert_true(isinstance(lib, ClassLibrary))
-        assert_equal(lib.init_args, ((), ()))
+        assert_equal(lib.init.positional, [])
+        assert_equal(lib.init.named, {})
 
     def test_python_library_with_args(self):
-        lib = TestLibrary.from_name("ParameterLibrary", args=['my_host', '8080'])
+        lib = TestLibrary.from_name("ParameterLibrary", args=['my_host', 'port=8080'])
         assert_true(isinstance(lib, ClassLibrary))
-        assert_equal(lib.init_args, (('my_host', '8080'), ()))
+        assert_equal(lib.init.positional, ['my_host'])
+        assert_equal(lib.init.named, {'port': '8080'})
 
     def test_module_library(self):
         lib = TestLibrary.from_name("module_library")
@@ -158,8 +161,8 @@ class TestLibraryInit(unittest.TestCase):
 
     def _test_init_handler(self, libname, args=None, min=0, max=0):
         lib = TestLibrary.from_name(libname, args=args)
-        assert_equal(lib.init.arguments.minargs, min)
-        assert_equal(lib.init.arguments.maxargs, max)
+        assert_equal(lib.init.args.minargs, min)
+        assert_equal(lib.init.args.maxargs, max)
         return lib
 
 
@@ -325,27 +328,24 @@ class TestKeywords(unittest.TestCase):
 
     def test_keywords(self):
         for lib in [NameLibrary, DocLibrary, ArgInfoLibrary, GetattrLibrary, SynonymLibrary]:
-            keywords = TestLibrary.from_name(f'classes.{lib.__name__}').keywords
+            keywords = TestLibrary.from_class(lib).keywords
             assert_equal(lib.handler_count, len(keywords), lib.__name__)
-            for handler in keywords:
-                assert_false(handler._handler_name.startswith('_'))
-                assert_true('skip' not in handler._handler_name)
+            for kw in keywords:
+                name = kw.method.__name__
+                assert_false(name.startswith('_'))
+                assert_false('skip' in name)
 
     def test_non_global_dynamic_keywords(self):
         lib = TestLibrary.from_name("RunKeywordLibrary")
         kw1, kw2 = lib.keywords
         assert_equal(kw1.name, 'Run Keyword That Passes')
         assert_equal(kw2.name, 'Run Keyword That Fails')
-        assert_none(kw1._method)
-        assert_none(kw2._method)
 
     def test_global_dynamic_keywords(self):
         lib = TestLibrary.from_name("RunKeywordLibrary.GlobalRunKeywordLibrary")
         kw1, kw2 = lib.keywords
         assert_equal(kw1.name, 'Run Keyword That Passes')
         assert_equal(kw2.name, 'Run Keyword That Fails')
-        assert_not_none(kw1._method)
-        assert_not_none(kw2._method)
 
     def test_synonyms(self):
         lib = TestLibrary.from_name('classes.SynonymLibrary')
@@ -359,13 +359,13 @@ class TestKeywords(unittest.TestCase):
         assert_true(lib.scope is lib.scope.GLOBAL)
         instance = lib._instance
         assert_true(instance is not None)
-        assert_equal(instance.kw_accessed, 1)
+        assert_equal(instance.kw_accessed, 2)
         assert_equal(instance.kw_called, 0)
         kw, = lib.keywords
         for _ in range(42):
             kw.create_runner('kw')._run(_FakeContext(), [])
         assert_true(lib._instance is instance)
-        assert_equal(instance.kw_accessed, 1)
+        assert_equal(instance.kw_accessed, 44)
         assert_equal(instance.kw_called, 42)
 
 
@@ -422,9 +422,9 @@ class TestDynamicLibrary(unittest.TestCase):
 
 
 def assert_args(kw, minargs=0, maxargs=0, kwargs=False):
-    assert_equal(kw.arguments.minargs, minargs)
-    assert_equal(kw.arguments.maxargs, maxargs)
-    assert_equal(bool(kw.arguments.var_named), kwargs)
+    assert_equal(kw.args.minargs, minargs)
+    assert_equal(kw.args.maxargs, maxargs)
+    assert_equal(bool(kw.args.var_named), kwargs)
 
 
 class TestDynamicLibraryIntroDocumentation(unittest.TestCase):
@@ -443,7 +443,12 @@ class TestDynamicLibraryIntroDocumentation(unittest.TestCase):
 
     def test_failure_in_dynamic_resolving_of_doc(self):
         lib = TestLibrary.from_name('dynlibs.FailingDynamicDocLib')
-        assert_raises(DataError, getattr, lib, 'doc')
+        assert_raises_with_msg(
+            DataError,
+            "Calling dynamic method 'get_keyword_documentation' failed: "
+            "Failing in 'get_keyword_documentation' with '__intro__'.",
+            getattr, lib, 'doc'
+        )
 
     def _assert_intro_doc(self, name, expected_doc):
         assert_equal(TestLibrary.from_name(name).doc, expected_doc)
@@ -496,7 +501,7 @@ class TestSourceAndLineno(unittest.TestCase):
 
     def test_decorated(self):
         lib = TestLibrary.from_name('classes.Decorated')
-        self._verify(lib, classes_source, 317)
+        self._verify(lib, classes_source, 322)
 
     def test_no_class_statement(self):
         lib = TestLibrary.from_name('classes.NoClassDefinition')
@@ -505,7 +510,7 @@ class TestSourceAndLineno(unittest.TestCase):
     def _verify(self, lib, source, lineno):
         if source:
             source = re.sub(r'(\.pyc|\$py\.class)$', '.py', source)
-            source = os.path.normpath(source)
+            source = Path(os.path.normpath(source))
         assert_equal(lib.source, source)
         assert_equal(lib.lineno, lineno)
 

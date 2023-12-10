@@ -28,50 +28,53 @@ from .statusreporter import StatusReporter
 
 class LibraryKeywordRunner:
 
-    def __init__(self, handler, name=None, languages=None):
-        self._handler = handler
-        self.name = name or handler.name
+    def __init__(self, keyword, name=None, languages=None):
+        self.keyword = keyword
+        self.name = name or keyword.name
         self.pre_run_messages = ()
         self.languages = languages
 
+    # FIXME: Properties below shouldn't be needed
     @property
     def library(self):
-        return self._handler.library
+        return self.keyword.library
 
     @property
     def full_name(self):
         return f'{self.library.name}.{self.name}'
 
-    def run(self, kw, context, run=True):
-        assignment = VariableAssignment(kw.assign)
-        result = self._get_result(kw, assignment)
-        with StatusReporter(kw, result, context, run):
+    def run(self, data, context, run=True):
+        assignment = VariableAssignment(data.assign)
+        result = self._get_result(data, assignment)
+        with StatusReporter(data, result, context, run):
             if run:
                 with assignment.assigner(context) as assigner:
-                    return_value = self._run(context, kw.args)
+                    return_value = self._run(context, data.args)
                     assigner.assign(return_value)
                     return return_value
 
-    def _get_result(self, kw, assignment):
-        handler = self._handler
+    def _get_result(self, data, assignment):
+        implementation = self.keyword
         return KeywordResult(name=self.name,
-                             owner=handler.owner.name,
-                             doc=handler.short_doc,
-                             args=kw.args,
+                             owner=implementation.owner.name,
+                             doc=implementation.short_doc,
+                             args=data.args,
                              assign=tuple(assignment),
-                             tags=handler.tags,
-                             type=kw.type)
+                             tags=implementation.tags,
+                             type=data.type)
 
     def _run(self, context, args):
         if self.pre_run_messages:
             for message in self.pre_run_messages:
                 context.output.message(message)
         variables = context.variables if not context.dry_run else None
-        positional, named = self._handler.resolve_arguments(args, variables,
-                                                            self.languages)
+        positional, named = self.keyword.resolve_arguments(args, variables,
+                                                           self.languages)
         context.output.trace(lambda: self._trace_log_args(positional, named),
                              write_if_flat=False)
-        runner = self._runner_for(context, self._handler.current_handler(),
+        if self.keyword.error:
+            raise DataError(self.keyword.error)
+        runner = self._runner_for(context, self.keyword.method,
                                   positional, dict(named))
         return self._run_with_output_captured_and_signal_monitor(runner, context)
 
@@ -80,15 +83,15 @@ class LibraryKeywordRunner:
         args += ['%s=%s' % (safe_str(n), prepr(v)) for n, v in named]
         return 'Arguments: [ %s ]' % ' | '.join(args)
 
-    def _runner_for(self, context, handler, positional, named):
+    def _runner_for(self, context, keyword, positional, named):
         timeout = self._get_timeout(context)
         if timeout and timeout.active:
             def runner():
                 with LOGGER.delayed_logging:
                     context.output.debug(timeout.get_message)
-                    return timeout.run(handler, args=positional, kwargs=named)
+                    return timeout.run(keyword, args=positional, kwargs=named)
             return runner
-        return lambda: handler(*positional, **named)
+        return lambda: keyword(*positional, **named)
 
     def _get_timeout(self, context):
         return min(context.timeouts) if context.timeouts else None
@@ -107,32 +110,32 @@ class LibraryKeywordRunner:
         finally:
             STOP_SIGNAL_MONITOR.stop_running_keyword()
 
-    def dry_run(self, kw, context):
-        assignment = VariableAssignment(kw.assign)
-        result = self._get_result(kw, assignment)
-        with StatusReporter(kw, result, context, run=False):
+    def dry_run(self, data, context):
+        assignment = VariableAssignment(data.assign)
+        result = self._get_result(data, assignment)
+        with StatusReporter(data, result, context, run=False):
             assignment.validate_assignment()
-            self._dry_run(context, kw.args)
+            self._dry_run(context, data.args)
 
     def _dry_run(self, context, args):
-        if self._executed_in_dry_run(self._handler):
+        if self._executed_in_dry_run(self.keyword):
             self._run(context, args)
         else:
-            self._handler.resolve_arguments(args, languages=self.languages)
+            self.keyword.resolve_arguments(args, languages=self.languages)
 
-    def _executed_in_dry_run(self, handler):
+    def _executed_in_dry_run(self, keyword):
         keywords_to_execute = ('BuiltIn.Import Library',
                                'BuiltIn.Set Library Search Order',
                                'BuiltIn.Set Tags',
                                'BuiltIn.Remove Tags')
-        return handler.full_name in keywords_to_execute
+        return keyword.full_name in keywords_to_execute
 
 
 class EmbeddedArgumentsRunner(LibraryKeywordRunner):
 
-    def __init__(self, handler, name):
-        super().__init__(handler, name)
-        self.embedded_args = handler.embedded.match(name).groups()
+    def __init__(self, keyword, name):
+        super().__init__(keyword, name)
+        self.embedded_args = keyword.embedded.match(name).groups()
 
     def _run(self, context, args):
         return super()._run(context, self.embedded_args + args)
@@ -140,16 +143,16 @@ class EmbeddedArgumentsRunner(LibraryKeywordRunner):
     def _dry_run(self, context, args):
         return super()._dry_run(context, self.embedded_args + args)
 
-    def _get_result(self, kw, assignment):
-        result = super()._get_result(kw, assignment)
-        result.source_name = self._handler.name
+    def _get_result(self, data, assignment):
+        result = super()._get_result(data, assignment)
+        result.source_name = self.keyword.name
         return result
 
 
 class RunKeywordRunner(LibraryKeywordRunner):
 
-    def __init__(self, handler, execute_in_dry_run=False):
-        super().__init__(handler)
+    def __init__(self, keyword, execute_in_dry_run=False):
+        super().__init__(keyword)
         self.execute_in_dry_run = execute_in_dry_run
 
     def _get_timeout(self, context):
@@ -168,7 +171,7 @@ class RunKeywordRunner(LibraryKeywordRunner):
     def _get_dry_run_keywords(self, args):
         if not self.execute_in_dry_run:
             return []
-        name = self._handler.name
+        name = self.keyword.name
         if name == 'Run Keyword If':
             return self._get_dry_run_keywords_for_run_keyword_if(args)
         if name == 'Run Keywords':
@@ -226,5 +229,5 @@ class RunKeywordRunner(LibraryKeywordRunner):
                 yield given_args
 
     def _get_dry_run_keywords_based_on_name_argument(self, given_args):
-        index = list(self._handler.arguments.positional).index('name')
+        index = list(self.keyword.args.positional).index('name')
         return [Keyword(name=given_args[index], args=given_args[index+1:])]

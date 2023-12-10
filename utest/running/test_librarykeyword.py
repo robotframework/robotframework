@@ -3,30 +3,22 @@ import os.path
 import re
 import sys
 import unittest
+from pathlib import Path
 
-from robot.running.handlers import _PythonHandler, DynamicHandler
-from robot.utils.asserts import assert_equal, assert_raises_with_msg, assert_true
-from robot.running.testlibraries import Scope, TestLibrary
-from robot.running.dynamicmethods import (
-    GetKeywordArguments, GetKeywordDocumentation, RunKeyword)
 from robot.errors import DataError
+from robot.running.librarykeyword import StaticKeyword, DynamicKeyword
+from robot.running.testlibraries import DynamicLibrary, TestLibrary
+from robot.utils import type_name
+from robot.utils.asserts import assert_equal, assert_raises_with_msg, assert_true
 
 from classes import (NameLibrary, DocLibrary, ArgInfoLibrary,
                      __file__ as classes_source)
 from ArgumentsPython import ArgumentsPython
 
 
-def _get_handler_methods(lib):
+def get_keyword_methods(lib):
     attrs = [getattr(lib, a) for a in dir(lib) if not a.startswith('_')]
     return [a for a in attrs if inspect.ismethod(a)]
-
-
-class LibraryMock:
-
-    def __init__(self, name='MyLibrary', scope='GLOBAL'):
-        self.name = self.real_name = name
-        self.scope = Scope[scope]
-        self.instance = None
 
 
 def assert_argspec(argspec, minargs=0, maxargs=0, positional=[], defaults={},
@@ -40,45 +32,49 @@ def assert_argspec(argspec, minargs=0, maxargs=0, positional=[], defaults={},
     assert_equal(argspec.var_named, kwargs)
 
 
-class TestPythonHandler(unittest.TestCase):
+class TestStaticKeyword(unittest.TestCase):
 
     def test_name(self):
-        for method in _get_handler_methods(NameLibrary()):
-            handler = _PythonHandler(LibraryMock('mylib'), method.__name__, method)
-            assert_equal(handler.name, method.__doc__)
-            assert_equal(handler.full_name, 'mylib.'+method.__doc__)
+        for method in get_keyword_methods(NameLibrary()):
+            kw = StaticKeyword.from_name(method.__name__,
+                                         TestLibrary.from_class(NameLibrary))
+            assert_equal(kw.name, method.__doc__)
+            assert_equal(kw.full_name, f'NameLibrary.{method.__doc__}')
 
     def test_docs(self):
-        for method in _get_handler_methods(DocLibrary()):
-            handler = _PythonHandler(LibraryMock(), method.__name__, method)
-            assert_equal(handler.doc, method.expected_doc)
-            assert_equal(handler.short_doc, method.expected_shortdoc)
+        for method in get_keyword_methods(DocLibrary()):
+            kw = StaticKeyword.from_name(method.__name__,
+                                         TestLibrary.from_class(DocLibrary))
+            assert_equal(kw.doc, method.expected_doc)
+            assert_equal(kw.short_doc, method.expected_shortdoc)
 
     def test_arguments(self):
-        for method in _get_handler_methods(ArgInfoLibrary()):
-            handler = _PythonHandler(LibraryMock(), method.__name__, method)
-            args = handler.arguments
-            argspec = (args.positional, args.defaults, args.var_positional, args.var_named)
+        for method in get_keyword_methods(ArgInfoLibrary()):
+            kw = StaticKeyword.from_name(method.__name__,
+                                         TestLibrary.from_class(ArgInfoLibrary))
+            args = (kw.args.positional, kw.args.defaults, kw.args.var_positional,
+                    kw.args.var_named)
             expected = eval(method.__doc__)
-            assert_equal(argspec, expected, method.__name__)
+            assert_equal(args, expected, method.__name__)
 
     def test_arg_limits(self):
-        for method in _get_handler_methods(ArgumentsPython()):
-            handler = _PythonHandler(LibraryMock(), method.__name__, method)
+        for method in get_keyword_methods(ArgumentsPython()):
+            kw = StaticKeyword.from_name(method.__name__,
+                                         TestLibrary.from_class(ArgumentsPython))
             exp_mina, exp_maxa = eval(method.__doc__)
-            assert_equal(handler.arguments.minargs, exp_mina)
-            assert_equal(handler.arguments.maxargs, exp_maxa)
+            assert_equal(kw.args.minargs, exp_mina)
+            assert_equal(kw.args.maxargs, exp_maxa)
 
     def test_getarginfo_getattr(self):
-        handlers = TestLibrary.from_name('classes.GetattrLibrary').keywords
-        assert_equal(len(handlers), 3)
-        for handler in handlers:
-            assert_true(handler.name in ['Foo','Bar','Zap'])
-            assert_equal(handler.arguments.minargs, 0)
-            assert_equal(handler.arguments.maxargs, sys.maxsize)
+        keywords = TestLibrary.from_name('classes.GetattrLibrary').keywords
+        assert_equal(len(keywords), 3)
+        for kw in keywords:
+            assert_true(kw.name in ('Foo', 'Bar', 'Zap'))
+            assert_equal(kw.args.minargs, 0)
+            assert_equal(kw.args.maxargs, sys.maxsize)
 
 
-class TestDynamicHandlerCreation(unittest.TestCase):
+class TestDynamicKeyword(unittest.TestCase):
 
     def test_none_doc(self):
         self._assert_doc(None, '')
@@ -97,7 +93,8 @@ class TestDynamicHandlerCreation(unittest.TestCase):
         self._assert_doc(doc.encode('UTF-8'), doc)
 
     def test_invalid_doc_type(self):
-        self._assert_fails('Return value must be a string, got boolean.', doc=True)
+        self._assert_fails("Calling dynamic method 'get_keyword_documentation' failed: "
+                           "Return value must be a string, got boolean.", doc=True)
 
     def test_none_argspec(self):
         self._assert_spec(None, maxargs=sys.maxsize, varargs='varargs', kwargs=False)
@@ -113,12 +110,12 @@ class TestDynamicHandlerCreation(unittest.TestCase):
             self._assert_spec(argspec, len(argspec), len(argspec), argspec)
 
     def test_only_default_args(self):
-        self._assert_spec(['d1=default', 'd2=True'], 0, 2,
-                          ['d1', 'd2'], {'d1': 'default', 'd2': 'True'})
+        self._assert_spec(['d1=default', 'd2=True'],
+                          0, 2, ['d1', 'd2'], {'d1': 'default', 'd2': 'True'})
 
     def test_default_as_tuple_or_list_like(self):
-        self._assert_spec([('d1', 'default'), ['d2', True]], 0, 2,
-                          ['d1', 'd2'], {'d1': 'default', 'd2': True})
+        self._assert_spec([('d1', 'default'), ['d2', True]],
+                          0, 2, ['d1', 'd2'], {'d1': 'default', 'd2': True})
 
     def test_default_value_may_contain_equal_sign(self):
         self._assert_spec(['d=foo=bar'], 0, 1, ['d'], {'d': 'foo=bar'})
@@ -199,14 +196,16 @@ class TestDynamicHandlerCreation(unittest.TestCase):
 
     def test_invalid_argspec_type(self):
         for argspec in [True, [1, 2], ['arg', ()]]:
-            self._assert_fails("Return value must be a list of strings "
-                               "or non-empty tuples.", argspec)
+            self._assert_fails(f"Calling dynamic method 'get_keyword_arguments' failed: "
+                               f"Return value must be a list of strings "
+                               f"or non-empty tuples, got {type_name(argspec)}.",
+                               argspec)
 
     def test_invalid_tuple(self):
         for invalid in [('too', 'many', 'values'), ('*too', 'many'),
                         ('**too', 'many'), (1, 2), (1,)]:
-            self._assert_fails('Invalid argument specification: '
-                               'Invalid argument "%s".' % (invalid,),
+            self._assert_fails(f'Invalid argument specification: '
+                               f'Invalid argument "{invalid}".',
                                ['valid', invalid])
 
     def test_mandatory_arg_after_default_arg(self):
@@ -240,17 +239,17 @@ class TestDynamicHandlerCreation(unittest.TestCase):
 
     def test_missing_kwargs_support(self):
         for spec in (['**kwargs'], ['arg', '**kws'], ['a', '*v', '**k']):
-            self._assert_fails("Too few 'run_keyword' method parameters "
-                               "for **kwargs support.", spec)
+            self._assert_fails("Too few 'run_keyword' method parameters to support "
+                               "free named arguments.", spec)
 
     def test_missing_kwonlyargs_support(self):
         for spec in (['*', 'kwo'], ['*vars', 'kwo1', 'kwo2=default']):
-            self._assert_fails("Too few 'run_keyword' method parameters "
-                               "for keyword-only arguments support.", spec)
+            self._assert_fails("Too few 'run_keyword' method parameters to support "
+                               "named-only arguments.", spec)
 
     def _assert_doc(self, doc, expected=None):
         expected = doc if expected is None else expected
-        assert_equal(self._create_handler(doc=doc).doc, expected)
+        assert_equal(self._create_keyword(doc=doc).doc, expected)
 
     def _assert_spec(self, argspec, minargs=0, maxargs=0,
                      positional=[], defaults={}, varargs=None,
@@ -265,24 +264,35 @@ class TestDynamicHandlerCreation(unittest.TestCase):
         else:
             kwargs_support_modes = [True]
         for kwargs_support in kwargs_support_modes:
-            handler = self._create_handler(argspec, kwargs_support=kwargs_support)
-            assert_argspec(handler.arguments, minargs, maxargs, positional,
+            kw = self._create_keyword(argspec, kwargs_support=kwargs_support)
+            assert_argspec(kw.args, minargs, maxargs, positional,
                            defaults, varargs, kwonlyargs, kwargs)
 
     def _assert_fails(self, error, *args, **kwargs):
         assert_raises_with_msg(DataError, error,
-                               self._create_handler, *args, **kwargs)
+                               self._create_keyword, *args, **kwargs)
 
-    def _create_handler(self, argspec=None, doc=None, kwargs_support=False):
-        lib = LibraryMock('TEST CASE')
-        if kwargs_support:
-            lib.run_keyword = lambda name, args, kwargs: None
-        else:
-            lib.run_keyword = lambda name, args: None
-        lib.run_keyword.__name__ = 'run_keyword'
-        doc = GetKeywordDocumentation(lib)._handle_return_value(doc)
-        argspec = GetKeywordArguments(lib)._handle_return_value(argspec)
-        return DynamicHandler(lib, 'mock', RunKeyword(lib), doc, argspec)
+    def _create_keyword(self, argspec=None, doc=None, kwargs_support=False):
+        class Library:
+
+            def get_keyword_names(self):
+                return ['kw']
+
+            if kwargs_support:
+                def run_keyword(self, name, args, kwargs):
+                    pass
+            else:
+                def run_keyword(self, name, args):
+                    pass
+
+            def get_keyword_arguments(self, name):
+                return argspec
+
+            def get_keyword_documentation(self, name):
+                return doc
+
+        lib = DynamicLibrary.from_class(Library, logger=LoggerMock())
+        return DynamicKeyword.from_name('kw', lib)
 
 
 class TestSourceAndLineno(unittest.TestCase):
@@ -312,10 +322,10 @@ class TestSourceAndLineno(unittest.TestCase):
 
     def test_decorated(self):
         lib = TestLibrary.from_name('classes.Decorated')
-        self._verify(lib, 'no_wrapper', classes_source, 320)
-        self._verify(lib, 'wrapper', classes_source, 327)
-        self._verify(lib, 'external', classes_source, 332)
-        self._verify(lib, 'no_def', classes_source, 335)
+        self._verify(lib, 'no_wrapper', classes_source, 325)
+        self._verify(lib, 'wrapper', classes_source, 332)
+        self._verify(lib, 'external', classes_source, 337)
+        self._verify(lib, 'no_def', classes_source, 340)
 
     def test_dynamic_without_source(self):
         lib = TestLibrary.from_name('classes.ArgDocDynamicLibrary')
@@ -323,17 +333,17 @@ class TestSourceAndLineno(unittest.TestCase):
 
     def test_dynamic(self):
         lib = TestLibrary.from_name('classes.DynamicWithSource')
-        self._verify(lib, 'only path', classes_source)
+        self._verify(lib, 'only path', classes_source, -1)
         self._verify(lib, 'path & lineno', classes_source, 42)
         self._verify(lib, 'lineno only', classes_source, 6475)
-        self._verify(lib, 'invalid path', 'path validity is not validated')
+        self._verify(lib, 'invalid path', 'path validity is not validated', -1)
         self._verify(lib, 'path w/ colon', r'c:\temp\lib.py', -1)
         self._verify(lib, 'path w/ colon & lineno', r'c:\temp\lib.py', 1234567890)
-        self._verify(lib, 'no source', classes_source)
+        self._verify(lib, 'no source', classes_source, -1)
 
     def test_dynamic_with_non_ascii_source(self):
         lib = TestLibrary.from_name('classes.DynamicWithSource')
-        self._verify(lib, 'nön-äscii', 'hyvä esimerkki')
+        self._verify(lib, 'nön-äscii', 'hyvä esimerkki', -1)
         self._verify(lib, 'nön-äscii utf-8', '福', 88)
 
     def test_dynamic_init(self):
@@ -345,7 +355,7 @@ class TestSourceAndLineno(unittest.TestCase):
     def test_dynamic_invalid_source(self):
         logger = LoggerMock()
         lib = TestLibrary.from_name('classes.DynamicWithSource', logger=logger)
-        self._verify(lib, 'invalid source', lib.source)
+        self._verify(lib, 'invalid source', lib.source, -1)
         error = (
             "Error in library 'classes.DynamicWithSource': "
             "Getting source information for keyword 'Invalid Source' failed: "
@@ -354,14 +364,14 @@ class TestSourceAndLineno(unittest.TestCase):
         )
         assert_equal(logger.messages[-1], (error, 'ERROR'))
 
-    def _verify(self, lib, name, source, lineno=-1):
+    def _verify(self, lib, name, source, lineno=1):
         if name == 'init':
             kw = lib.init
         else:
             kw, = lib.find_keywords(name)
         if source:
-            source = re.sub(r'(\.pyc|\$py\.class)$', '.py', source)
-            source = os.path.normpath(source)
+            source = re.sub(r'(\.pyc|\$py\.class)$', '.py', str(source))
+            source = Path(os.path.normpath(source))
         assert_equal(kw.source, source)
         assert_equal(kw.lineno, lineno)
 

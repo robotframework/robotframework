@@ -53,7 +53,7 @@ Invalid get_keyword_names
     Error in file    3    test_libraries/hybrid_library.robot    3
     ...    Getting keyword names from library 'InvalidKeywordNames' failed:
     ...    Calling dynamic method 'get_keyword_names' failed:
-    ...    Return value must be a list of strings.
+    ...    Return value must be a list of strings, got integer.
 
 __init__ exposed as keyword
     ${tc} =    Check Test Case    ${TESTNAME}

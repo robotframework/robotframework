@@ -41,4 +41,4 @@ Using kw-only arguments is not possible if 'run_keyword' accepts no kwargs
     Check Test Case    ${TESTNAME}
     Error In Library    DynamicKwOnlyArgsWithoutKwargs
     ...    Adding keyword 'No kwargs' failed:
-    ...    Too few 'run_keyword' method parameters for keyword-only arguments support.
+    ...    Too few 'run_keyword' method parameters to support named-only arguments.

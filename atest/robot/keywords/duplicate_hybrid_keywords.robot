@@ -5,7 +5,7 @@ Resource         atest_resource.robot
 *** Test Cases ***
 Using keyword defined multiple times fails
     ${tc} =    Check Test Case    ${TESTNAME}
-    Should Be Equal    ${tc.kws[0].full_name}    DupeHybridKeywords.DEFINED TWICE
+    Should Be Equal    ${tc.kws[0].full_name}    DupeHybridKeywords.Defined Twice
     Error in library    DupeHybridKeywords
     ...    Adding keyword 'DEFINED TWICE' failed:
     ...    Keyword with same name defined multiple times.

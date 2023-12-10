@@ -6,7 +6,7 @@ Resource        atest_resource.robot
 Argspec consists of something else than strings
     Error message should be correct    0    other than strings
     ...    Calling dynamic method 'get_keyword_arguments' failed:
-    ...    Return value must be a list of strings or non-empty tuples.
+    ...    Return value must be a list of strings or non-empty tuples, got list.
 
 Argspec has named arguments before positional
     Invalid argument spec    1    named args before positional
@@ -31,7 +31,7 @@ Argspec has kwargs before varargs
 Empty tuple in argspec
     Error message should be correct    6    empty tuple
     ...    Calling dynamic method 'get_keyword_arguments' failed:
-    ...    Return value must be a list of strings or non-empty tuples.
+    ...    Return value must be a list of strings or non-empty tuples, got list.
 
 Too long tuple in argspec
     Invalid argument spec    7    too long tuple

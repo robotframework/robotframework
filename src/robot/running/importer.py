@@ -44,9 +44,8 @@ class Importer:
     def import_library(self, name, args, alias, variables):
         lib = TestLibrary.from_name(name, args=args, variables=variables,
                                     create_keywords=False)
-        positional, named = lib.init_args
-        args_str = seq2str2(list(positional) +
-                            [f'{name}={value}' for name, value in named])
+        positional, named = lib.init.positional, lib.init.named
+        args_str = seq2str2(positional + [f'{n}={named[n]}' for n in named])
         key = (name, positional, named)
         if key in self._library_cache:
             LOGGER.info(f"Found library '{name}' with arguments {args_str} "
@@ -60,20 +59,8 @@ class Importer:
             self._log_imported_library(name, args_str, lib)
         if alias:
             alias = variables.replace_scalar(alias)
-            lib = self._copy_library(lib, alias, name, args, variables)
+            lib = lib.copy(name=alias)
             LOGGER.info(f"Imported library '{name}' with name '{alias}'.")
-        return lib
-
-    def _copy_library(self, orig, alias, name, args, variables):
-        # FIXME: This resolves init args twice. Could we pass `orig.init_args` somehow?
-        lib = orig.from_code(orig.code, name=alias, real_name=orig.name, source=orig.source,
-                             args=args, create_keywords=False, variables=variables)
-        lib.instance = orig.instance
-        for kw in orig.keywords:
-            # FIXME: Try to avoid using `copy.copy`
-            kw = copy.copy(kw)
-            kw.library = lib
-            lib.keywords.append(kw)
         return lib
 
     def import_resource(self, path, lang=None):

@@ -16,40 +16,40 @@
 import inspect
 from functools import cached_property, partial
 from pathlib import Path
-from typing import Any, Sequence
+from typing import Any
 
 from robot.errors import DataError
 from robot.libraries import STDLIBS
 from robot.output import LOGGER
-from robot.utils import (getdoc, get_error_details, Importer, is_dict_like, is_init,
-                         is_list_like, normalize, NormalizedDict, seq2str2, type_name)
+from robot.utils import (getdoc, get_error_details, Importer, is_dict_like,
+                         is_list_like, normalize, NormalizedDict, seq2str2, setter, type_name)
 
-from .arguments import EmbeddedArguments, CustomArgumentConverters
-from .dynamicmethods import (GetKeywordArguments, GetKeywordDocumentation,
-                             GetKeywordNames, GetKeywordTags, RunKeyword)
-from .handlers import Handler, InitHandler, DynamicHandler, EmbeddedArgumentsHandler
+from .arguments import CustomArgumentConverters
+from .dynamicmethods import GetKeywordDocumentation, GetKeywordNames, RunKeyword
+from .librarykeyword import DynamicKeyword, LibraryInit, LibraryKeyword, StaticKeyword
 from .libraryscopes import Scope, ScopeManager
 from .outputcapture import OutputCapturer
-from .usererrorhandler import UserErrorHandler
 
 
 class TestLibrary:
     # FIXME: Add docstrings and type hints! This is indirectly part of the public API.
 
-    def __init__(self, code, *, name=None, real_name=None, source=None, logger=LOGGER):
+    def __init__(self, code: Any, init: LibraryInit, name=None, real_name=None, source=None,
+                 logger=LOGGER):
         self.code = code
+        self.init = init
+        self.init.owner = self
+        self.instance = None
         self.name = name or code.__name__
         self.real_name = real_name or self.name
         self.source = source
         self.logger = logger
-        self.init_args = ((), ())
-        self._instance = None
-        self.keywords = []
+        self.keywords: list[LibraryKeyword] = []
         self._has_listeners = None
         self.scope_manager = ScopeManager.for_library(self)
 
     @property
-    def instance(self):
+    def instance(self) -> Any:
         instance = self.code if self._instance is None else self._instance
         if self._has_listeners is None:
             self._has_listeners = self._has_instance_listeners(instance)
@@ -58,10 +58,6 @@ class TestLibrary:
     @instance.setter
     def instance(self, instance):
         self._instance = instance
-
-    @property
-    def init(self):
-        return InitHandler(self)
 
     @property
     def listeners(self):
@@ -103,6 +99,10 @@ class TestLibrary:
             return Scope.SUITE
         return Scope.TEST
 
+    @setter
+    def source(self, source: 'Path|str|None') -> 'Path|None':
+        return Path(source) if source else None
+
     @property
     def version(self) -> str:
         return self._attr('ROBOT_LIBRARY_VERSION') or self._attr('__version__')
@@ -118,8 +118,8 @@ class TestLibrary:
         return value
 
     @classmethod
-    def from_name(cls, name, *, real_name=None, args=None, variables=None,
-                  create_keywords=True, logger=LOGGER):
+    def from_name(cls, name, real_name=None, args=None, variables=None,
+                  create_keywords=True, logger=LOGGER) -> 'TestLibrary':
         if name in STDLIBS:
             import_name = 'robot.libraries.' + name
         else:
@@ -130,42 +130,37 @@ class TestLibrary:
             importer = Importer('library', logger=logger)
             code, source = importer.import_class_or_module(import_name,
                                                            return_source=True)
-        return cls.from_code(code, name=name, real_name=real_name, source=source,
-                             args=args, variables=variables,
-                             create_keywords=create_keywords, logger=logger)
+        return cls.from_code(code, name, real_name, source, args, variables,
+                             create_keywords, logger)
 
     @classmethod
-    def from_code(cls, code, *, name=None, real_name=None, source=None, args=None,
-                  variables=None, create_keywords=True, logger=LOGGER):
+    def from_code(cls, code, name=None, real_name=None, source=None, args=None,
+                  variables=None, create_keywords=True, logger=LOGGER) -> 'TestLibrary':
         if inspect.ismodule(code):
-            lib = cls.from_module(code, name=name, real_name=real_name, source=source,
-                                  create_keywords=create_keywords, logger=logger)
+            lib = cls.from_module(code, name, real_name, source, create_keywords, logger)
             if args:    # Resolving arguments reports an error.
                 lib.init.resolve_arguments(args, variables)
             return lib
-        return cls.from_class(code, name=name, real_name=real_name, source=source,
-                              args=args or (), create_keywords=create_keywords,
-                              variables=variables, logger=logger)
+        return cls.from_class(code, name, real_name, source, args or (), variables,
+                              create_keywords, logger)
 
     @classmethod
-    def from_module(cls, module, *, name=None, real_name=None, source=None,
-                    create_keywords=True, logger=LOGGER):
-        return ModuleLibrary.from_module(module, name=name, real_name=real_name,
-                                         source=source, create_keywords=create_keywords,
-                                         logger=logger)
+    def from_module(cls, module, name=None, real_name=None, source=None,
+                    create_keywords=True, logger=LOGGER) -> 'TestLibrary':
+        return ModuleLibrary.from_module(module, name, real_name, source,
+                                         create_keywords, logger)
 
     @classmethod
-    def from_class(cls, klass, *, name=None, real_name=None, source=None, args=(),
-                   create_keywords=True, variables=None, logger=LOGGER):
+    def from_class(cls, klass, name=None, real_name=None, source=None, args=(),
+                   variables=None, create_keywords=True, logger=LOGGER) -> 'TestLibrary':
         if not GetKeywordNames(klass):
             library = ClassLibrary
         elif not RunKeyword(klass):
             library = HybridLibrary
         else:
             library = DynamicLibrary
-        return library.from_class(klass, name=name, real_name=real_name, source=source,
-                                  args=args, create_keywords=create_keywords,
-                                  variables=variables, logger=logger)
+        return library.from_class(klass, name, real_name, source, args, variables,
+                                  create_keywords, logger)
 
     def create_keywords(self):
         raise NotImplementedError
@@ -185,6 +180,13 @@ class TestLibrary:
                     keywords.append(kw)
         return keywords
 
+    def copy(self, name) -> 'TestLibrary':
+        lib = type(self)(self.code, self.init.copy(), name, self.real_name,
+                         self.source, self.logger)
+        lib.instance = self.instance
+        lib.keywords = [kw.copy(owner=lib) for kw in self.keywords]
+        return lib
+
     def report_error(self, message, details=None, level='ERROR', details_level='INFO'):
         prefix = 'Error in' if level in ('ERROR', 'WARN') else 'In'
         self.logger.write(f"{prefix} library '{self.name}': {message}", level)
@@ -199,16 +201,15 @@ class ModuleLibrary(TestLibrary):
         return Scope.GLOBAL
 
     @classmethod
-    def from_module(cls, module, *, name=None, real_name=None, source=None,
-                    create_keywords=True, logger=LOGGER):
-        library = cls(module, name=name, source=source, real_name=real_name,
-                      logger=logger)
+    def from_module(cls, module, name=None, real_name=None, source=None,
+                    create_keywords=True, logger=LOGGER) -> 'ModuleLibrary':
+        library = cls(module, LibraryInit.null(), name, real_name, source, logger)
         if create_keywords:
             library.create_keywords()
         return library
 
     @classmethod
-    def from_class(cls, *args, **kws):
+    def from_class(cls, *args, **kws) -> 'TestLibrary':
         raise TypeError(f"Cannot create '{cls.__name__}' from class.")
 
     def create_keywords(self):
@@ -218,35 +219,22 @@ class ModuleLibrary(TestLibrary):
 
 class ClassLibrary(TestLibrary):
 
-    def __init__(self, code, *, name=None, real_name=None, source=None,
-                 positional_args: Sequence[Any] = (),
-                 named_args: 'Sequence[tuple[Any, Any]]' = (), logger=LOGGER):
-        super().__init__(code, name=name, real_name=real_name, source=source, logger=logger)
-        self.init_args = (positional_args, named_args)
-        self.instance = None
-
     @property
-    def init(self):
-        init = getattr(self.code, '__init__', None)
-        return InitHandler(self, init if is_init(init) else None)
-
-    @property
-    def instance(self):
+    def instance(self) -> Any:
         if self._instance is None:
-            positional, named = self.init_args
+            positional, named = self.init.positional, self.init.named
             try:
                 with OutputCapturer(library_import=True):
-                    self._instance = self.code(*positional, **dict(named))
+                    self._instance = self.code(*positional, **named)
             except Exception:
                 message, details = get_error_details()
                 if positional or named:
-                    args = seq2str2([str(p) for p in positional] +
-                                    [f'{name}={value}' for name, value in named])
+                    args = seq2str2(positional + [f'{n}={named[n]}' for n in named])
                     args_text = f'arguments {args}'
                 else:
                     args_text = 'no arguments'
-                raise DataError(f"Initializing library '{self.name}' with {args_text} failed: "
-                                f"{message}\n{details}")
+                raise DataError(f"Initializing library '{self.name}' with {args_text} "
+                                f"failed: {message}\n{details}")
         if self._has_listeners is None:
             self._has_listeners = self._has_instance_listeners(self._instance)
         return self._instance
@@ -267,21 +255,22 @@ class ClassLibrary(TestLibrary):
         return start_lineno
 
     @classmethod
-    def from_module(cls, *args, **kws):
+    def from_module(cls, *args, **kws) -> 'TestLibrary':
         raise TypeError(f"Cannot create '{cls.__name__}' from module.")
 
     @classmethod
-    def from_class(cls, klass, *, name=None, real_name=None, source=None, args=(),
-                   create_keywords=True, variables=None, logger=LOGGER):
-        library = cls(klass, name=name, real_name=real_name, source=source, logger=logger)
-        positional, named = library.init.resolve_arguments(args, variables)
-        library.init_args = (tuple(positional), tuple(named))
+    def from_class(cls, klass, name=None, real_name=None, source=None, args=(),
+                   variables=None, create_keywords=True, logger=LOGGER) -> 'ClassLibrary':
+        init = LibraryInit.from_class(klass)
+        library = cls(klass, init, name, real_name, source, logger)
+        positional, named = init.args.resolve(args, variables)
+        init.positional, init.named = list(positional), dict(named)
         if create_keywords:
             library.create_keywords()
         return library
 
     def create_keywords(self):
-        StaticKeywordCreator(self, avoid_propertys=True).create_keywords()
+        StaticKeywordCreator(self, avoid_properties=True).create_keywords()
 
 
 class HybridLibrary(ClassLibrary):
@@ -293,12 +282,13 @@ class HybridLibrary(ClassLibrary):
 
 
 class DynamicLibrary(ClassLibrary):
+    _supports_named_args = None
 
     @property
-    def init(self):
-        init = super().init
-        init.doc_getter = lambda: GetKeywordDocumentation(self.instance)('__init__')
-        return init
+    def supports_named_args(self) -> bool:
+        if self._supports_named_args is None:
+            self._supports_named_args = RunKeyword(self.instance).supports_named_args
+        return self._supports_named_args
 
     @property
     def doc(self) -> str:
@@ -310,48 +300,54 @@ class DynamicLibrary(ClassLibrary):
 
 class KeywordCreator:
 
-    def __init__(self, library: TestLibrary):
+    def __init__(self, library: TestLibrary, getting_method_failed_level='INFO'):
         self.library = library
+        self.getting_method_failed_level = getting_method_failed_level
 
     def get_keyword_names(self):
         raise NotImplementedError
 
     def create_keywords(self, names=None):
         library = self.library
-        library.keywords = keywords = []
+        instance = library.instance
+        keywords = library.keywords = []
         if names is None:
             names = self.get_keyword_names()
         seen = NormalizedDict(ignore='_')
         for name in names:
-            kw = self._create_keyword(library.instance, name, seen)
-            if kw:
-                keywords.append(kw)
-                library.logger.debug(f"Created keyword '{kw.name}'.")
-
-    def _create_keyword(self, instance, name, seen):
-        try:
-            keyword = self._create_normal_keyword(instance, name)
-        except DataError as err:
-            self._adding_keyword_failed(name, err)
-            return None
-        embedded = EmbeddedArguments.from_name(keyword.name) if keyword else None
-        if embedded:
             try:
-                keyword = self._create_embedded_args_keyword(keyword, embedded)
+                kw = self._create_keyword(instance, name)
             except DataError as err:
-                self._adding_keyword_failed(keyword.name, err)
-                return None
-        return self._handle_duplicates(keyword, seen)
+                self._adding_keyword_failed(name, err, self.getting_method_failed_level)
+            else:
+                if not kw:
+                    continue
+                try:
+                    if kw.embedded:
+                        self._validate_embedded(kw)
+                    else:
+                        self._handle_duplicates(kw, seen)
+                except DataError as err:
+                    self._adding_keyword_failed(kw.name, err)
+                else:
+                    keywords.append(kw)
+                    library.logger.debug(f"Created keyword '{kw.name}'.")
 
-    def _create_normal_keyword(self, instance, name):
+    def _create_keyword(self, instance, name) -> 'LibraryKeyword|None':
         raise NotImplementedError
 
-    def _create_embedded_args_keyword(self, keyword, embedded):
-        if len(embedded.args) > keyword.arguments.maxargs:
+    def _handle_duplicates(self, kw, seen: NormalizedDict):
+        if kw.name in seen:
+            error = 'Keyword with same name defined multiple times.'
+            seen[kw.name].error = error
+            raise DataError(error)
+        seen[kw.name] = kw
+
+    def _validate_embedded(self, kw):
+        if len(kw.embedded.args) > kw.args.maxargs:
             raise DataError(f'Keyword must accept at least as many positional '
                             f'arguments as it has embedded arguments.')
-        keyword.arguments.embedded = embedded.args
-        return EmbeddedArgumentsHandler(embedded, keyword)
+        kw.args.embedded = kw.embedded.args
 
     def _adding_keyword_failed(self, name, error, level='ERROR'):
         self.library.report_error(
@@ -361,31 +357,16 @@ class KeywordCreator:
             details_level='DEBUG'
         )
 
-    def _handle_duplicates(self, kw, seen: NormalizedDict):
-        if not kw or kw.embedded:
-            return kw
-        if kw.name not in seen:
-            seen[kw.name] = kw
-            return kw
-        error = DataError('Keyword with same name defined multiple times.')
-        kw = UserErrorHandler(error, kw.name, kw.owner)
-        index = self.library.keywords.index(seen[kw.name])
-        self.library.keywords[index] = seen[kw.name] = kw
-        self._adding_keyword_failed(kw.name, error)
-        return None
-
 
 class StaticKeywordCreator(KeywordCreator):
 
-    def __init__(self, library: TestLibrary, *, excluded_names=None,
-                 avoid_propertys=False,
-                 getting_method_failed_level='INFO'):
-        super().__init__(library)
+    def __init__(self, library: TestLibrary, getting_method_failed_level='INFO',
+                 excluded_names=None, avoid_properties=False):
+        super().__init__(library, getting_method_failed_level)
         self.excluded_names = excluded_names
-        self.avoid_propertys = avoid_propertys
-        self.getting_method_failed_level = getting_method_failed_level
+        self.avoid_properties = avoid_properties
 
-    def get_keyword_names(self):
+    def get_keyword_names(self) -> 'list[str]':
         instance = self.library.instance
         try:
             return self._get_names(instance)
@@ -420,17 +401,8 @@ class StaticKeywordCreator(KeywordCreator):
             names.append(name)
         return names
 
-    def _create_normal_keyword(self, instance, name):
-        try:
-            method = self._get_method(instance, name)
-        except DataError as err:
-            self._adding_keyword_failed(name, err, self.getting_method_failed_level)
-            return None
-        else:
-            return Handler(self.library, name, method)
-
-    def _get_method(self, instance, name):
-        if self.avoid_propertys:
+    def _create_keyword(self, instance, name) -> 'StaticKeyword|None':
+        if self.avoid_properties:
             candidate = inspect.getattr_static(instance, name)
             self._pre_validate_method(candidate)
         try:
@@ -439,7 +411,10 @@ class StaticKeywordCreator(KeywordCreator):
             message, details = get_error_details()
             raise DataError(f'Getting handler method failed: {message}', details)
         self._validate_method(method)
-        return method
+        try:
+            return StaticKeyword.from_name(name, self.library)
+        except DataError as err:
+            self._adding_keyword_failed(name, err)
 
     def _pre_validate_method(self, candidate):
         if isinstance(candidate, classmethod):
@@ -455,17 +430,17 @@ class StaticKeywordCreator(KeywordCreator):
 
 
 class DynamicKeywordCreator(KeywordCreator):
+    library: DynamicLibrary
 
-    def get_keyword_names(self):
+    def __init__(self, library: 'DynamicLibrary|HybridLibrary'):
+        super().__init__(library, getting_method_failed_level='ERROR')
+
+    def get_keyword_names(self) -> 'list[str]':
         try:
             return GetKeywordNames(self.library.instance)()
         except DataError as err:
             raise DataError(f"Getting keyword names from library '{self.library.name}' "
                             f"failed: {err}")
 
-    def _create_normal_keyword(self, instance, name):
-        args = GetKeywordArguments(instance)(name)
-        tags = GetKeywordTags(instance)(name)
-        doc = GetKeywordDocumentation(instance)(name)
-        method = RunKeyword(instance)
-        return DynamicHandler(self.library, name, method, doc, args, tags)
+    def _create_keyword(self, instance, name) -> DynamicKeyword:
+        return DynamicKeyword.from_name(name, self.library)
