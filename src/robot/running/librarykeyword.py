@@ -40,6 +40,7 @@ K = TypeVar('K', bound='type[LibraryKeyword]')
 
 
 class LibraryKeyword(KeywordImplementation):
+    type = KeywordImplementation.LIBRARY_KEYWORD
     owner: 'TestLibrary'
     __slots__ = ['_resolve_args_until']
 
@@ -90,7 +91,7 @@ class LibraryKeyword(KeywordImplementation):
         return positional, named
 
     def bind(self, data: Keyword) -> 'LibraryKeyword':
-        raise NotImplementedError  # FIXME
+        return self.copy(parent=data.parent)
 
     def copy(self, **attributes) -> 'LibraryKeyword':
         raise NotImplementedError

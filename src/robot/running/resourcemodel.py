@@ -154,6 +154,7 @@ class ResourceFile(ModelObject):
 
 
 class UserKeyword(KeywordImplementation):
+    type = KeywordImplementation.USER_KEYWORD
     fixture_class = Keyword
     __slots__ = ['timeout', '_setup', '_teardown']
 

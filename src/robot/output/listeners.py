@@ -109,6 +109,14 @@ class Listeners(LoggerApi):
         for listener in self.listeners:
             listener.end_user_keyword(data, implementation, result)
 
+    def start_library_keyword(self, data, implementation, result):
+        for listener in self.listeners:
+            listener.start_library_keyword(data, implementation, result)
+
+    def end_library_keyword(self, data, implementation, result):
+        for listener in self.listeners:
+            listener.end_library_keyword(data, implementation, result)
+
     def start_for(self, data, result):
         for listener in self.listeners:
             listener.start_for(data, result)
@@ -318,6 +326,8 @@ class ListenerV3Facade(ListenerFacade):
         self.end_keyword = self._get_method('end_keyword')
         self._start_user_keyword = self._get_method('start_user_keyword')
         self._end_user_keyword = self._get_method('end_user_keyword')
+        self._start_library_keyword = self._get_method('start_library_keyword')
+        self._end_library_keyword = self._get_method('end_library_keyword')
         # IF
         self.start_if = self._get_method('start_if')
         self.end_if = self._get_method('end_if')
@@ -368,6 +378,18 @@ class ListenerV3Facade(ListenerFacade):
     def end_user_keyword(self, data, implementation, result):
         if self._end_user_keyword:
             self._end_user_keyword(data, implementation, result)
+        else:
+            self.end_keyword(data, result)
+
+    def start_library_keyword(self, data, implementation, result):
+        if self._start_library_keyword:
+            self._start_library_keyword(data, implementation, result)
+        else:
+            self.start_keyword(data, result)
+
+    def end_library_keyword(self, data, implementation, result):
+        if self._end_library_keyword:
+            self._end_library_keyword(data, implementation, result)
         else:
             self.end_keyword(data, result)
 

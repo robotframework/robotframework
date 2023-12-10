@@ -73,6 +73,12 @@ class Output(AbstractLogger, LoggerApi):
     def end_user_keyword(self, data, implementation, result):
         LOGGER.end_user_keyword(data, implementation, result)
 
+    def start_library_keyword(self, data, implementation, result):
+        LOGGER.start_library_keyword(data, implementation, result)
+
+    def end_library_keyword(self, data, implementation, result):
+        LOGGER.end_library_keyword(data, implementation, result)
+
     def start_for(self, data, result):
         LOGGER.start_for(data, result)
 

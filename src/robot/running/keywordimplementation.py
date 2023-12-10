@@ -14,7 +14,7 @@
 #  limitations under the License.
 
 from pathlib import Path
-from typing import Any, Sequence, TYPE_CHECKING
+from typing import Any, Literal, Sequence, TYPE_CHECKING
 
 from robot.model import ModelObject, Tags
 from robot.utils import eq, getshortdoc, setter
@@ -31,8 +31,12 @@ if TYPE_CHECKING:
 
 class KeywordImplementation(ModelObject):
     """Base class for library and user keyword model objects."""
+    USER_KEYWORD = 'USER KEYWORD'
+    LIBRARY_KEYWORD = 'LIBRARY KEYWORD'
+    INVALID_KEYWORD = 'INVALID KEYWORD'
     repr_args = ('name', 'args')
     __slots__ = ['embedded', '_doc', '_lineno', 'owner', 'parent', 'error']
+    type: Literal['USER KEYWORD', 'LIBRARY KEYWORD', 'INVALID KEYWORD']
     source: 'Path|None'
     lineno: 'int|None'    # FIXME: This always be positive int.
 

@@ -253,7 +253,10 @@ class _ExecutionContext:
         output = self.output
         args = (data, result)
         if implementation:
-            method = output.start_user_keyword
+            if implementation.type == implementation.USER_KEYWORD:
+                method = output.start_user_keyword
+            else:
+                method = output.start_library_keyword
             args = (data, implementation, result)
         elif result.type in (result.ELSE, result.ITERATION):
             method = {
@@ -289,7 +292,10 @@ class _ExecutionContext:
         output = self.output
         args = (data, result)
         if implementation:
-            method = output.end_user_keyword
+            if implementation.type == implementation.USER_KEYWORD:
+                method = output.end_user_keyword
+            else:
+                method = output.end_library_keyword
             args = (data, implementation, result)
         elif result.type in (result.ELSE, result.ITERATION):
             method = {

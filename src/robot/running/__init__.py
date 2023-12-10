@@ -110,6 +110,7 @@ the results is possible using the
 from .arguments import ArgInfo, ArgumentSpec, TypeConverter, TypeInfo
 from .builder import ResourceFileBuilder, TestDefaults, TestSuiteBuilder
 from .context import EXECUTION_CONTEXTS
+from .librarykeyword import LibraryKeyword
 from .model import (Break, Continue, Error, For, If, IfBranch, Keyword, Return,
                     TestCase, TestSuite, Try, TryBranch, Var, While)
 from .resourcemodel import ResourceFile, UserKeyword
