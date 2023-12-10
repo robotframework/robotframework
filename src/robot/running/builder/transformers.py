@@ -16,6 +16,7 @@
 from robot.errors import DataError
 from robot.output import LOGGER
 from robot.parsing import File, ModelVisitor, Token
+from robot.utils import NormalizedDict
 from robot.variables import VariableMatches
 
 from ..model import For, If, IfBranch, TestSuite, TestCase, Try, TryBranch, While
@@ -93,6 +94,7 @@ class SuiteBuilder(ModelVisitor):
     def __init__(self, suite: TestSuite, settings: FileSettings):
         self.suite = suite
         self.settings = settings
+        self.seen_keywords = NormalizedDict(ignore='_')
         self.rpa = None
 
     def build(self, model: File):
@@ -123,7 +125,7 @@ class SuiteBuilder(ModelVisitor):
         TestCaseBuilder(self.suite, self.settings).build(node)
 
     def visit_Keyword(self, node):
-        KeywordBuilder(self.suite.resource, self.settings).build(node)
+        KeywordBuilder(self.suite.resource, self.settings, self.seen_keywords).build(node)
 
 
 class ResourceBuilder(ModelVisitor):
@@ -131,6 +133,7 @@ class ResourceBuilder(ModelVisitor):
     def __init__(self, resource: ResourceFile):
         self.resource = resource
         self.settings = FileSettings()
+        self.seen_keywords = NormalizedDict(ignore='_')
 
     def build(self, model: File):
         ErrorReporter(model.source, raise_on_invalid_header=True).visit(model)
@@ -159,7 +162,7 @@ class ResourceBuilder(ModelVisitor):
                                        error=format_error(node.errors))
 
     def visit_Keyword(self, node):
-        KeywordBuilder(self.resource, self.settings).build(node)
+        KeywordBuilder(self.resource, self.settings, self.seen_keywords).build(node)
 
 
 class BodyBuilder(ModelVisitor):
@@ -284,9 +287,11 @@ class TestCaseBuilder(BodyBuilder):
 class KeywordBuilder(BodyBuilder):
     model: UserKeyword
 
-    def __init__(self, resource: ResourceFile, settings: FileSettings):
+    def __init__(self, resource: ResourceFile, settings: FileSettings,
+                 seen_keywords: NormalizedDict):
         super().__init__(resource.keywords.create(tags=settings.keyword_tags))
         self.resource = resource
+        self.seen_keywords = seen_keywords
         self.return_setting = None
 
     def build(self, node):
@@ -305,22 +310,21 @@ class KeywordBuilder(BodyBuilder):
         self.generic_visit(node)
         if self.return_setting:
             kw.body.create_return(self.return_setting)
-        self._handle_duplicates(node, kw)
+        if not kw.embedded:
+            self._handle_duplicates(kw, self.seen_keywords, node)
 
     def _report_error(self, node, error):
         error = f"Creating keyword '{self.model.name}' failed: {error}"
         ErrorReporter(self.model.source).report_error(node, error)
 
-    def _handle_duplicates(self, node, kw):
-        # TODO: Keep references to built keywords here in builders to avoid the
-        # need search them from resources every time.
-        if not kw.embedded:
-            kws = self.resource.find_keywords(kw.name, include_embedded=False)
-            if len(kws) > 1:
-                error = 'Keyword with same name defined multiple times.'
-                self._report_error(node, error)
-                self.resource.keywords.pop()
-                kws[0].error = error
+    def _handle_duplicates(self, kw, seen, node):
+        if kw.name in seen:
+            error = 'Keyword with same name defined multiple times.'
+            seen[kw.name].error = error
+            self.resource.keywords.pop()
+            self._report_error(node, error)
+        else:
+            seen[kw.name] = kw
 
     def visit_Documentation(self, node):
         self.model.doc = node.value
