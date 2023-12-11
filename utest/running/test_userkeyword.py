@@ -2,9 +2,48 @@ import sys
 import unittest
 
 from robot.errors import DataError
-from robot.running import UserKeyword, ResourceFile
+from robot.running import UserKeyword, ResourceFile, TestCase
 from robot.running.arguments import EmbeddedArguments, UserKeywordArgumentParser
 from robot.utils.asserts import assert_equal, assert_true, assert_raises_with_msg
+
+
+class TestBind(unittest.TestCase):
+
+    def setUp(self):
+        self.res = ResourceFile()
+        self.tc = TestCase()
+        self.kw1 = UserKeyword('Hello', ['${arg}'], 'doc', ['tags'], '1s', 42, self.res)
+        self.kw2 = self.kw1.bind(self.tc.body.create_keyword())
+
+    def test_data(self):
+        kw = self.kw2
+        assert_equal(kw.name, 'Hello')
+        assert_equal(kw.args.positional, ('arg',))
+        assert_equal(kw.doc, 'doc')
+        assert_equal(kw.tags, ['tags'])
+        assert_equal(kw.timeout, '1s')
+        assert_equal(kw.lineno, 42)
+
+    def test_owner_and_parent(self):
+        kw = self.kw2
+        assert_equal(kw.owner, self.res)
+        assert_equal(kw.parent, self.tc)
+
+    def test_data_is_copied(self):
+        kw1, kw2 = self.kw1, self.kw2
+        kw2.name = kw2.doc = 'New'
+        kw2.args.positional_or_named = ('new', 'args')
+        kw2.args.defaults['args'] = 'xxx'
+        kw2.tags.add('new')
+        kw2.lineno = 666
+        assert_equal(kw1.name, 'Hello')
+        assert_equal(kw1.args.positional, ('arg',))
+        assert_equal(kw1.args.defaults, {})
+        assert_equal(kw1.doc, 'doc')
+        assert_equal(kw1.tags, ['tags'])
+        assert_equal(kw1.timeout, '1s')
+        assert_equal(kw1.lineno, 42)
+        assert_equal(kw1.owner, self.res)
 
 
 class TestEmbeddedArgs(unittest.TestCase):

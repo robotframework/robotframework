@@ -116,6 +116,13 @@ class ArgumentSpec(metaclass=SetterAwareType):
         mapper = ArgumentMapper(self)
         return mapper.map(positional, named, replace_defaults)
 
+    def copy(self) -> 'ArgumentSpec':
+        types = dict(self.types) if self.types is not None else None
+        return type(self)(self.name, self.type, self.positional_only,
+                          self.positional_or_named, self.var_positional,
+                          self.named_only, self.var_named, dict(self.defaults),
+                          self.embedded, types, self.return_type)
+
     def __iter__(self) -> Iterator['ArgInfo']:
         get_type = (self.types or {}).get
         get_default = self.defaults.get

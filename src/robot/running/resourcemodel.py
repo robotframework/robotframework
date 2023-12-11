@@ -172,9 +172,6 @@ class UserKeyword(KeywordImplementation):
             spec = ArgumentSpec()
         elif not isinstance(spec, ArgumentSpec):
             spec = UserKeywordArgumentParser().parse(spec)
-        else:
-            # FIXME: ArgumentSpec should be copied here!
-            pass
         spec.name = lambda: self.full_name
         return spec
 
@@ -235,10 +232,9 @@ class UserKeyword(KeywordImplementation):
         return UserKeywordRunner(self)
 
     def bind(self, data: Keyword) -> 'UserKeyword':
-        kw = UserKeyword('', self.args, self.doc, self.tags, self.timeout,
+        kw = UserKeyword('', self.args.copy(), self.doc, self.tags, self.timeout,
                          self.lineno, self.owner, data.parent, self.error)
         # Avoid possible errors setting name with invalid embedded args.
-        # FIXME: `self.embedded` should be copied.
         kw._name = self._name
         kw.embedded = self.embedded
         if self.has_setup:
