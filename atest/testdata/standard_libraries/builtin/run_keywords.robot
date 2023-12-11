@@ -99,7 +99,7 @@ In test teardown
     ...
     ...    4) No keyword with name 'Non-Existing Keyword' found.
     ...
-    ...    5) Keyword name cannot be empty.${ATD ERR}
+    ...    5) IF must have closing END.${ATD ERR}
     No Operation
     [Teardown]    Run keywords    Passing    ${NOOP}    Failing    ${NOOP}
     ...    Non-existing Variable    Fail    Non-Existing Keyword
@@ -165,7 +165,8 @@ Non-existing Variable
     Log    ${this variable does not exist}
 
 Syntax Error
-    ${invalid}
+    IF    True
+        Not executed
 
 Embedded "${arg}"
     Log    ${arg}

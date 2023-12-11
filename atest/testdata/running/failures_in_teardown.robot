@@ -116,7 +116,7 @@ Execution Continues After Keyword Errors
 
 Execution Stops After Syntax Error
     [Documentation]    FAIL    Teardown failed:
-    ...    Keyword name cannot be empty.
+    ...    IF must have closing END.
     ...
     ...    ${SUITE TEARDOWN FAILED}
     No Operation
@@ -182,8 +182,12 @@ Keyword Errors
     Keyword In Both Resources
 
 Syntax Errors
-    ${invalid}
+    Invalid IF
     Not executed
+
+Invalid IF
+    IF    True
+        Not executed
 
 Keyword With Fatal Error
     Fatal Error    The End

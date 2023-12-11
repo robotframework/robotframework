@@ -52,7 +52,7 @@ Ignore Error When Timeout Occurs In UK
     Run Keyword And Ignore Error    Timeouting UK
 
 Ignore Error Cannot Catch Syntax Errors
-    [Documentation]    FAIL Keyword name cannot be empty.
+    [Documentation]    FAIL IF must have closing END.
     Run Keyword And Ignore Error    Broken User Keyword
 
 Ignore Error Can Catch Non-Syntax Errors
@@ -155,7 +155,7 @@ Expect Error When Timeout Occurs In UK
     Run Keyword And Expect Error    *    Timeouting UK
 
 Expect Error Cannot Catch Syntax Errors
-    [Documentation]    FAIL Keyword name cannot be empty.
+    [Documentation]    FAIL IF must have closing END.
     Run Keyword And Expect Error    *    Broken User Keyword
 
 Expect Error Can Catch Non-Syntax Errors
@@ -290,7 +290,8 @@ For Loop With Non Existing Variable
     END
 
 Broken User Keyword
-    ${x}
+    IF    True
+        Not executed
 
 Access To Nonexisting Variable
     Log    ${nonexisting}

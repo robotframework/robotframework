@@ -25,7 +25,6 @@ from robot.errors import (BreakLoop, ContinueLoop, DataError, ExecutionFailed,
                           ReturnFromKeyword, VariableError)
 from robot.running import Keyword, RUN_KW_REGISTER
 from robot.running.context import EXECUTION_CONTEXTS
-from robot.running.usererrorhandler import UserErrorHandler
 from robot.utils import (DotDict, escape, format_assign_message, get_error_message,
                          get_time, html_escape, is_falsy, is_integer, is_list_like,
                          is_string, is_truthy, Matcher, normalize,
@@ -3319,20 +3318,12 @@ class _Misc(_BuiltInBase):
 
         See also `Variable Should Exist`.
         """
-        error = None
         try:
-            runner = self._namespace.get_runner(name, recommend_on_failure=False)
+            kw = self._namespace.get_runner(name, recommend_on_failure=False).keyword
+            if kw.error:
+                raise DataError(kw.error)
         except DataError as err:
-            error = err.message
-            raise AssertionError(msg or error.message)
-        else:
-            # FIXME: Unify reporting errors.
-            if isinstance(runner, UserErrorHandler):
-                error = runner.error.message
-            else:
-                error = runner.keyword.error
-        if error is not None:
-            raise AssertionError(msg or error)
+            raise AssertionError(msg or err.message)
 
     def get_time(self, format='timestamp', time_='NOW'):
         """Returns the given time in the requested format.

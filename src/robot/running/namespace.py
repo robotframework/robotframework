@@ -26,9 +26,9 @@ from robot.utils import (eq, find_file, is_string, normalize, RecommendationFind
 
 from .context import EXECUTION_CONTEXTS
 from .importer import ImportCache, Importer
+from .invalidkeyword import InvalidKeyword
 from .resourcemodel import Import
 from .runkwregister import RUN_KW_REGISTER
-from .usererrorhandler import UserErrorHandler
 
 
 IMPORTER = Importer()
@@ -217,8 +217,8 @@ class Namespace:
     def get_runner(self, name, recommend_on_failure=True):
         try:
             return self._kw_store.get_runner(name, recommend_on_failure)
-        except DataError as error:
-            return UserErrorHandler(error, name)
+        except DataError as err:
+            return InvalidKeyword(str(name), error=str(err)).create_runner(name)
 
 
 class KeywordStore:
@@ -285,9 +285,9 @@ class KeywordStore:
 
     def _get_runner(self, name):
         if not name:
-            raise DataError('Keyword name cannot be empty.', syntax=True)
+            raise DataError('Keyword name cannot be empty.')
         if not is_string(name):
-            raise DataError('Keyword name must be a string.', syntax=True)
+            raise DataError('Keyword name must be a string.')
         runner = self._get_runner_from_suite_file(name)
         if not runner and '.' in name:
             runner = self._get_explicit_runner(name)

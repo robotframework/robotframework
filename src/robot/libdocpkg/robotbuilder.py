@@ -19,7 +19,7 @@ import re
 
 from robot.errors import DataError
 from robot.running import (ArgumentSpec, ResourceFileBuilder, TestLibrary,
-                           TestSuiteBuilder, TypeInfo, UserErrorHandler)
+                           TestSuiteBuilder, TypeInfo)
 from robot.utils import is_string, split_tags_from_doc, unescape
 from robot.variables import search_variable
 
@@ -194,7 +194,7 @@ class KeywordDocBuilder:
         return doc, kw.tags + tags
 
     def _get_doc(self, kw):
-        if self._resource and not isinstance(kw, UserErrorHandler):
+        if self._resource:
             return unescape(kw.doc)
         return kw.doc
 
