@@ -80,10 +80,25 @@ class KeywordImplementation(ModelObject):
 
     @setter
     def args(self, spec: 'ArgumentSpec|None') -> ArgumentSpec:
+        """Information about accepted arguments.
+
+        It would be more correct to use term *parameter* instead of
+        *argument* in this context, and this attribute may be renamed
+        accordingly in the future. A forward compatible :attr:`params`
+        attribute exists already now.
+        """
         if spec is None:
             spec = ArgumentSpec()
         spec.name = lambda: self.full_name
         return spec
+
+    @property
+    def params(self) -> ArgumentSpec:
+        """Keyword parameter information.
+
+        This is a forward compatible alias for :attr:`args`.
+        """
+        return self.args
 
     @property
     def doc(self) -> str:
