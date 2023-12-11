@@ -259,6 +259,16 @@ class Logger(AbstractLogger):
             logger.end_library_keyword(data, implementation, result)
 
     @start_body_item
+    def start_invalid_keyword(self, data, implementation, result):
+        for logger in self.start_loggers:
+            logger.start_invalid_keyword(data, implementation, result)
+
+    @end_body_item
+    def end_invalid_keyword(self, data, implementation, result):
+        for logger in self.end_loggers:
+            logger.end_invalid_keyword(data, implementation, result)
+
+    @start_body_item
     def start_for(self, data, result):
         for logger in self.start_loggers:
             logger.start_for(data, result)
