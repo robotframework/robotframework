@@ -16,7 +16,8 @@
 import inspect
 from functools import cached_property, partial
 from pathlib import Path
-from typing import Any
+from typing import Any, Sequence, TypeVar
+from types import ModuleType
 
 from robot.errors import DataError
 from robot.libraries import STDLIBS
@@ -32,10 +33,17 @@ from .libraryscopes import Scope, ScopeManager
 from .outputcapture import OutputCapturer
 
 
-class TestLibrary:
-    # FIXME: Add docstrings and type hints! This is indirectly part of the public API.
+Self = TypeVar('Self', bound='TestLibrary')
 
-    def __init__(self, code: Any, init: LibraryInit, name=None, real_name=None, source=None,
+
+class TestLibrary:
+    """Represents imported test library."""
+
+    def __init__(self, code: 'type|ModuleType',
+                 init: LibraryInit,
+                 name: 'str|None' = None,
+                 real_name: 'str|None' = None,
+                 source: 'Path|None' = None,
                  logger=LOGGER):
         self.code = code
         self.init = init
@@ -44,7 +52,7 @@ class TestLibrary:
         self.name = name or code.__name__
         self.real_name = real_name or self.name
         self.source = source
-        self.logger = logger
+        self._logger = logger
         self.keywords: list[LibraryKeyword] = []
         self._has_listeners = None
         self.scope_manager = ScopeManager.for_library(self)
@@ -52,29 +60,41 @@ class TestLibrary:
 
     @property
     def instance(self) -> Any:
+        """Current library instance.
+
+        With module based libraries this is the module itself.
+
+        With class based libraries this is an instance of the class. Instances are
+        cleared automatically during execution based on their scope. Accessing this
+        property creates a new instance if needed.
+
+        :attr:`code´ contains the original library code. With module based libraries
+        it is the same as :attr:`instance`. With class based libraries it is
+        the library class.
+        """
         instance = self.code if self._instance is None else self._instance
         if self._has_listeners is None:
-            self._has_listeners = self._has_instance_listeners(instance)
+            self._has_listeners = self._instance_has_listeners(instance)
         return instance
 
     @instance.setter
-    def instance(self, instance):
+    def instance(self, instance: Any):
         self._instance = instance
 
     @property
-    def listeners(self):
+    def listeners(self) -> 'list[Any]':
         if self._has_listeners is None:
-            self._has_listeners = self._has_instance_listeners(self.instance)
+            self._has_listeners = self._instance_has_listeners(self.instance)
         if self._has_listeners is False:
             return []
         listener = self.instance.ROBOT_LIBRARY_LISTENER
         return list(listener) if is_list_like(listener) else [listener]
 
-    def _has_instance_listeners(self, instance):
+    def _instance_has_listeners(self, instance) -> bool:
         return getattr(instance, 'ROBOT_LIBRARY_LISTENER', None) is not None
 
     @property
-    def converters(self):
+    def converters(self) -> 'CustomArgumentConverters|None':
         converters = getattr(self.code, 'ROBOT_LIBRARY_CONVERTERS', None)
         if not converters:
             return None
@@ -120,8 +140,12 @@ class TestLibrary:
         return value
 
     @classmethod
-    def from_name(cls, name, real_name=None, args=None, variables=None,
-                  create_keywords=True, logger=LOGGER) -> 'TestLibrary':
+    def from_name(cls, name: str,
+                  real_name: 'str|None' = None,
+                  args: 'Sequence[str]|None' = None,
+                  variables=None,
+                  create_keywords: bool = True,
+                  logger=LOGGER) -> 'TestLibrary':
         if name in STDLIBS:
             import_name = 'robot.libraries.' + name
         else:
@@ -136,8 +160,14 @@ class TestLibrary:
                              create_keywords, logger)
 
     @classmethod
-    def from_code(cls, code, name=None, real_name=None, source=None, args=None,
-                  variables=None, create_keywords=True, logger=LOGGER) -> 'TestLibrary':
+    def from_code(cls, code: 'type|ModuleType',
+                  name: 'str|None' = None,
+                  real_name: 'str|None' = None,
+                  source: 'Path|None' = None,
+                  args: 'Sequence[str]|None' = None,
+                  variables=None,
+                  create_keywords: bool = True,
+                  logger=LOGGER) -> 'TestLibrary':
         if inspect.ismodule(code):
             lib = cls.from_module(code, name, real_name, source, create_keywords, logger)
             if args:    # Resolving arguments reports an error.
@@ -147,14 +177,24 @@ class TestLibrary:
                               create_keywords, logger)
 
     @classmethod
-    def from_module(cls, module, name=None, real_name=None, source=None,
-                    create_keywords=True, logger=LOGGER) -> 'TestLibrary':
+    def from_module(cls, module: ModuleType,
+                    name: 'str|None' = None,
+                    real_name: 'str|None' = None,
+                    source: 'Path|None' = None,
+                    create_keywords: bool = True,
+                    logger=LOGGER) -> 'TestLibrary':
         return ModuleLibrary.from_module(module, name, real_name, source,
                                          create_keywords, logger)
 
     @classmethod
-    def from_class(cls, klass, name=None, real_name=None, source=None, args=(),
-                   variables=None, create_keywords=True, logger=LOGGER) -> 'TestLibrary':
+    def from_class(cls, klass: type,
+                   name: 'str|None' = None,
+                   real_name: 'str|None' = None,
+                   source: 'Path|None' = None,
+                   args: Sequence[str] = (),
+                   variables=None,
+                   create_keywords: bool = True,
+                   logger=LOGGER) -> 'TestLibrary':
         if not GetKeywordNames(klass):
             library = ClassLibrary
         elif not RunKeyword(klass):
@@ -170,18 +210,21 @@ class TestLibrary:
     def find_keywords(self, name: str) -> 'list[LibraryKeyword]':
         return self.keyword_finder.find(name)
 
-    def copy(self, name) -> 'TestLibrary':
+    def copy(self: Self, name: str) -> Self:
         lib = type(self)(self.code, self.init.copy(), name, self.real_name,
-                         self.source, self.logger)
+                         self.source, self._logger)
         lib.instance = self.instance
         lib.keywords = [kw.copy(owner=lib) for kw in self.keywords]
         return lib
 
-    def report_error(self, message, details=None, level='ERROR', details_level='INFO'):
+    def report_error(self, message: str,
+                     details: 'str|None' = None,
+                     level: str = 'ERROR',
+                     details_level: str = 'INFO'):
         prefix = 'Error in' if level in ('ERROR', 'WARN') else 'In'
-        self.logger.write(f"{prefix} library '{self.name}': {message}", level)
+        self._logger.write(f"{prefix} library '{self.name}': {message}", level)
         if details:
-            self.logger.write(f'Details:\n{details}', details_level)
+            self._logger.write(f'Details:\n{details}', details_level)
 
 
 class ModuleLibrary(TestLibrary):
@@ -191,8 +234,12 @@ class ModuleLibrary(TestLibrary):
         return Scope.GLOBAL
 
     @classmethod
-    def from_module(cls, module, name=None, real_name=None, source=None,
-                    create_keywords=True, logger=LOGGER) -> 'ModuleLibrary':
+    def from_module(cls, module: ModuleType,
+                    name: 'str|None' = None,
+                    real_name: 'str|None' = None,
+                    source: 'Path|None' = None,
+                    create_keywords: bool = True,
+                    logger=LOGGER) -> 'ModuleLibrary':
         library = cls(module, LibraryInit.null(), name, real_name, source, logger)
         if create_keywords:
             library.create_keywords()
@@ -226,7 +273,7 @@ class ClassLibrary(TestLibrary):
                 raise DataError(f"Initializing library '{self.name}' with {args_text} "
                                 f"failed: {message}\n{details}")
         if self._has_listeners is None:
-            self._has_listeners = self._has_instance_listeners(self._instance)
+            self._has_listeners = self._instance_has_listeners(self._instance)
         return self._instance
 
     @instance.setter
@@ -249,8 +296,14 @@ class ClassLibrary(TestLibrary):
         raise TypeError(f"Cannot create '{cls.__name__}' from module.")
 
     @classmethod
-    def from_class(cls, klass, name=None, real_name=None, source=None, args=(),
-                   variables=None, create_keywords=True, logger=LOGGER) -> 'ClassLibrary':
+    def from_class(cls, klass: type,
+                   name: 'str|None' = None,
+                   real_name: 'str|None' = None,
+                   source: 'Path|None' = None,
+                   args: Sequence[str] = (),
+                   variables=None,
+                   create_keywords: bool = True,
+                   logger=LOGGER) -> 'ClassLibrary':
         init = LibraryInit.from_class(klass)
         library = cls(klass, init, name, real_name, source, logger)
         positional, named = init.args.resolve(args, variables)
@@ -294,10 +347,10 @@ class KeywordCreator:
         self.library = library
         self.getting_method_failed_level = getting_method_failed_level
 
-    def get_keyword_names(self):
+    def get_keyword_names(self) -> 'list[str]':
         raise NotImplementedError
 
-    def create_keywords(self, names=None):
+    def create_keywords(self, names: 'list[str]|None' = None):
         library = self.library
         library.keyword_finder.invalidate_cache()
         instance = library.instance
@@ -322,7 +375,7 @@ class KeywordCreator:
                     self._adding_keyword_failed(kw.name, err)
                 else:
                     keywords.append(kw)
-                    library.logger.debug(f"Created keyword '{kw.name}'.")
+                    library._logger.debug(f"Created keyword '{kw.name}'.")
 
     def _create_keyword(self, instance, name) -> 'LibraryKeyword|None':
         raise NotImplementedError

@@ -16,7 +16,7 @@
 import inspect
 from os.path import normpath
 from pathlib import Path
-from typing import Generic, Sequence, TypeVar, TYPE_CHECKING
+from typing import Any, Callable, Generic, Sequence, TypeVar, TYPE_CHECKING
 
 from robot.model import Tags
 from robot.errors import DataError
@@ -36,10 +36,12 @@ if TYPE_CHECKING:
     from .testlibraries import DynamicLibrary, TestLibrary
 
 
-K = TypeVar('K', bound='type[LibraryKeyword]')
+Self = TypeVar('Self', bound='LibraryKeyword')
+K = TypeVar('K', bound='LibraryKeyword')
 
 
 class LibraryKeyword(KeywordImplementation):
+    """Base class for different library keywords."""
     type = KeywordImplementation.LIBRARY_KEYWORD
     owner: 'TestLibrary'
     __slots__ = ['_resolve_args_until']
@@ -56,7 +58,7 @@ class LibraryKeyword(KeywordImplementation):
         self._resolve_args_until = resolve_args_until
 
     @property
-    def method(self):
+    def method(self) -> Callable[..., Any]:
         raise NotImplementedError
 
     @property
@@ -89,14 +91,15 @@ class LibraryKeyword(KeywordImplementation):
             self.embedded.validate(positional)
         return positional, named
 
-    def bind(self, data: Keyword) -> 'LibraryKeyword':
+    def bind(self: Self, data: Keyword) -> Self:
         return self.copy(parent=data.parent)
 
-    def copy(self, **attributes) -> 'LibraryKeyword':
+    def copy(self: Self, **attributes) -> Self:
         raise NotImplementedError
 
 
 class StaticKeyword(LibraryKeyword):
+    """Represents keywords in static libraries."""
     __slots__ = ['method_name']
 
     def __init__(self, method_name: str,
@@ -112,7 +115,8 @@ class StaticKeyword(LibraryKeyword):
         self.method_name = method_name
 
     @property
-    def method(self):
+    def method(self) -> Callable[..., Any]:
+        """Keyword method."""
         return getattr(self.owner.instance, self.method_name)
 
     @property
@@ -137,6 +141,7 @@ class StaticKeyword(LibraryKeyword):
 
 
 class DynamicKeyword(LibraryKeyword):
+    """Represents keywords in dynamic libraries."""
     owner: 'DynamicLibrary'
     __slots__ = ['run_keyword', '_orig_name', '__source_info']
 
@@ -157,7 +162,8 @@ class DynamicKeyword(LibraryKeyword):
         self.__source_info = None
 
     @property
-    def method(self):
+    def method(self) -> Callable[..., Any]:
+        """Dynamic ``run_keyword`` method."""
         return RunKeyword(self.owner.instance, self._orig_name,
                           self.owner.supports_named_args)
 
@@ -191,7 +197,8 @@ class DynamicKeyword(LibraryKeyword):
     def from_name(cls, name: str, owner: 'DynamicLibrary') -> 'DynamicKeyword':
         return DynamicKeywordCreator(name, owner).create()
 
-    def resolve_arguments(self, arguments, variables=None, languages=None):
+    def resolve_arguments(self, arguments, variables=None,
+                          languages=None) -> 'tuple[list, list]':
         positional, named = super().resolve_arguments(arguments, variables, languages)
         if not self.owner.supports_named_args:
             positional, named = self.args.map(positional, named)
@@ -204,6 +211,11 @@ class DynamicKeyword(LibraryKeyword):
 
 
 class LibraryInit(LibraryKeyword):
+    """Represents library initializer.
+
+    :attr:`positional` and :attr:`named` contain arguments used for initializing
+    the library.
+    """
 
     def __init__(self, owner: 'TestLibrary',
                  name: str = '',
@@ -230,16 +242,21 @@ class LibraryInit(LibraryKeyword):
         self._doc = doc
 
     @property
-    def method(self):
+    def method(self) -> 'Callable[..., None]|None':
+        """Initializer method.
+
+        ``None`` with module based libraries and when class based libraries
+        do not have ``__init__``.
+        """
         return getattr(self.owner.instance, '__init__', None)
 
     @classmethod
-    def from_class(cls, klass):
+    def from_class(cls, klass) -> 'LibraryInit':
         method = getattr(klass, '__init__', None)
         return LibraryInitCreator(method).create()
 
     @classmethod
-    def null(cls):
+    def null(cls) -> 'LibraryInit':
         return LibraryInitCreator(None).create()
 
     def copy(self, **attributes) -> 'LibraryInit':
@@ -248,7 +265,7 @@ class LibraryInit(LibraryKeyword):
 
 
 class KeywordCreator(Generic[K]):
-    keyword_class: K
+    keyword_class: 'type[K]'
 
     def __init__(self, name: str, library: 'TestLibrary|None' = None):
         self.name = name
@@ -259,7 +276,7 @@ class KeywordCreator(Generic[K]):
             self.extra['resolve_args_until'] = resolve_until
 
     @property
-    def instance(self):
+    def instance(self) -> Any:
         return self.library.instance
 
     def create(self, **extra) -> K:
@@ -321,7 +338,7 @@ class DynamicKeywordCreator(KeywordCreator[DynamicKeyword]):
     keyword_class = DynamicKeyword
     library: 'DynamicLibrary'
 
-    def get_name(self):
+    def get_name(self) -> str:
         return self.name
 
     def get_args(self) -> ArgumentSpec:
@@ -336,8 +353,7 @@ class DynamicKeywordCreator(KeywordCreator[DynamicKeyword]):
             if spec.var_named:
                 raise DataError(f"Too few '{name}' method parameters to support "
                                 f"free named arguments.")
-        get_keyword_types = GetKeywordTypes(self.instance)
-        types = get_keyword_types(self.name)
+        types = GetKeywordTypes(self.instance)(self.name)
         if isinstance(types, dict) and 'return' in types:
             spec.return_type = types.pop('return')
         spec.types = types
@@ -353,7 +369,7 @@ class DynamicKeywordCreator(KeywordCreator[DynamicKeyword]):
 class LibraryInitCreator(KeywordCreator[LibraryInit]):
     keyword_class = LibraryInit
 
-    def __init__(self, method):
+    def __init__(self, method: 'Callable[..., None]|None'):
         super().__init__('__init__')
         self.method = method if is_init(method) else lambda: None
 
@@ -368,7 +384,7 @@ class LibraryInitCreator(KeywordCreator[LibraryInit]):
     def get_args(self) -> ArgumentSpec:
         return PythonArgumentParser('Library').parse(self.method)
 
-    def get_doc(self):
+    def get_doc(self) -> str:
         return inspect.getdoc(self.method) or ''
 
     def get_tags(self) -> 'list[str]':

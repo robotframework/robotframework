@@ -30,7 +30,7 @@ if TYPE_CHECKING:
 
 
 class KeywordImplementation(ModelObject):
-    """Base class for library and user keyword model objects."""
+    """Base class for different keyword implementations."""
     USER_KEYWORD = 'USER KEYWORD'
     LIBRARY_KEYWORD = 'LIBRARY KEYWORD'
     INVALID_KEYWORD = 'INVALID KEYWORD'

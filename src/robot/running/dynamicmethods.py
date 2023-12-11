@@ -127,8 +127,11 @@ class RunKeyword(DynamicMethod):
     def __call__(self, *positional, **named):
         if self.supports_named_args:
             args = (self.keyword_name, positional, named)
+        elif named:
+            # This should never happen.
+            raise ValueError(f"'named' should not be used when named-argument "
+                             f"support is not enabled, got {named}.")
         else:
-            assert not named    # FIXME: Better error reporting?
             args = (self.keyword_name, positional)
         return self.method(*args)
 
