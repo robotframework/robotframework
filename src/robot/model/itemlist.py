@@ -108,14 +108,14 @@ class ItemList(MutableSequence[T]):
             index += 1
 
     @overload
-    def __getitem__(self, index: int) -> T:
+    def __getitem__(self, index: int, /) -> T:
         ...
 
     @overload
-    def __getitem__(self: Self, index: slice) -> Self:
+    def __getitem__(self: Self, index: slice, /) -> Self:
         ...
 
-    def __getitem__(self, index):
+    def __getitem__(self: Self, index: 'int|slice', /) -> 'T|Self':
         if isinstance(index, slice):
             return self._create_new_from(self._items[index])
         return self._items[index]
@@ -129,23 +129,24 @@ class ItemList(MutableSequence[T]):
         return new
 
     @overload
-    def __setitem__(self, index: int, item: 'T|DataDict'):
+    def __setitem__(self, index: int, item: 'T|DataDict', /):
         ...
 
     @overload
-    def __setitem__(self, index: slice, item: 'Iterable[T|DataDict]'):
+    def __setitem__(self, index: slice, items: 'Iterable[T|DataDict]', /):
         ...
 
-    def __setitem__(self, index, item):
+    def __setitem__(self, index: 'int|slice',
+                    item: 'T|DataDict|Iterable[T|DataDict]', /):
         if isinstance(index, slice):
             self._items[index] = [self._check_type_and_set_attrs(i) for i in item]
         else:
             self._items[index] = self._check_type_and_set_attrs(item)
 
-    def __delitem__(self, index: 'int|slice'):
+    def __delitem__(self, index: 'int|slice', /):
         del self._items[index]
 
-    def __contains__(self, item: object) -> bool:
+    def __contains__(self, item: Any, /) -> bool:
         return item in self._items
 
     def __len__(self) -> int:
