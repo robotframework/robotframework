@@ -15,9 +15,9 @@
 
 import sys
 from enum import Enum
-from typing import Any, Callable
+from typing import Any, Callable, Iterator, Mapping, Sequence
 
-from robot.utils import NOT_SET, safe_str, setter
+from robot.utils import NOT_SET, safe_str, setter, SetterAwareType
 
 from .argumentconverter import ArgumentConverter
 from .argumentmapper import ArgumentMapper
@@ -26,22 +26,29 @@ from .typeinfo import TypeInfo
 from .typevalidator import TypeValidator
 
 
-class ArgumentSpec:
+class ArgumentSpec(metaclass=SetterAwareType):
+    __slots__ = ['_name', 'type', 'positional_only', 'positional_or_named',
+                 'var_positional', 'named_only', 'var_named', 'embedded', 'defaults']
 
     def __init__(self, name: 'str|Callable[[], str]|None' = None,
-                 type='Keyword', positional_only=None,
-                 positional_or_named=None, var_positional=None, named_only=None,
-                 var_named=None, embedded=None, defaults=None, types=None,
-                 return_type=None):
+                 type: str = 'Keyword',
+                 positional_only: Sequence[str] = (),
+                 positional_or_named: Sequence[str] = (),
+                 var_positional: 'str|None' = None,
+                 named_only: Sequence[str] = (),
+                 var_named: 'str|None' = None,
+                 defaults: 'Mapping[str, Any]|None' = None,
+                 embedded: Sequence[str] = (),
+                 types: 'Mapping[str, TypeInfo]|None' = None,
+                 return_type: 'TypeInfo|None' = None):
         self.name = name
         self.type = type
-        # FIXME: Use tuples, not lists. Consider using __slots__.
-        self.positional_only = positional_only or []
-        self.positional_or_named = positional_or_named or []
+        self.positional_only = tuple(positional_only)
+        self.positional_or_named = tuple(positional_or_named)
         self.var_positional = var_positional
-        self.named_only = named_only or []
+        self.named_only = tuple(named_only)
         self.var_named = var_named
-        self.embedded = embedded or ()
+        self.embedded = tuple(embedded)
         self.defaults = defaults or {}
         self.types = types
         self.return_type = return_type
@@ -67,49 +74,49 @@ class ArgumentSpec:
         return TypeInfo.from_type_hint(hint)
 
     @property
-    def positional(self):
+    def positional(self) -> 'tuple[str, ...]':
         return self.positional_only + self.positional_or_named
 
     @property
-    def named(self):
+    def named(self) -> 'tuple[str, ...]':
         return self.named_only + self.positional_or_named
 
     @property
-    def minargs(self):
+    def minargs(self) -> int:
         return len([arg for arg in self.positional if arg not in self.defaults])
 
     @property
-    def maxargs(self):
+    def maxargs(self) -> int:
         return len(self.positional) if not self.var_positional else sys.maxsize
 
     @property
-    def argument_names(self):
-        return (self.positional_only +
-                self.positional_or_named +
-                ([self.var_positional] if self.var_positional else []) +
-                self.named_only +
-                ([self.var_named] if self.var_named else []))
+    def argument_names(self) -> 'tuple[str, ...]':
+        var_positional = (self.var_positional,) if self.var_positional else ()
+        var_named = (self.var_named,) if self.var_named else ()
+        return (self.positional_only + self.positional_or_named + var_positional +
+                self.named_only + var_named)
 
     def resolve(self, arguments, variables=None, converters=None,
                 resolve_named=True, resolve_args_until=None,
-                dict_to_kwargs=False, languages=None):
+                dict_to_kwargs=False, languages=None) -> 'tuple[list, list]':
         resolver = ArgumentResolver(self, resolve_named, resolve_args_until,
                                     dict_to_kwargs)
         positional, named = resolver.resolve(arguments, variables)
         return self.convert(positional, named, converters, dry_run=not variables,
                             languages=languages)
 
-    def convert(self, positional, named, converters=None, dry_run=False, languages=None):
+    def convert(self, positional, named, converters=None, dry_run=False,
+                languages=None) -> 'tuple[list, list]':
         if self.types or self.defaults:
             converter = ArgumentConverter(self, converters, dry_run, languages)
             positional, named = converter.convert(positional, named)
         return positional, named
 
-    def map(self, positional, named, replace_defaults=True):
+    def map(self, positional, named, replace_defaults=True) -> 'tuple[list, list]':
         mapper = ArgumentMapper(self)
         return mapper.map(positional, named, replace_defaults)
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator['ArgInfo']:
         get_type = (self.types or {}).get
         get_default = self.defaults.get
         for arg in self.positional_only:
@@ -160,7 +167,7 @@ class ArgInfo:
         self.default = default
 
     @property
-    def required(self):
+    def required(self) -> bool:
         if self.kind in (self.POSITIONAL_ONLY,
                          self.POSITIONAL_OR_NAMED,
                          self.NAMED_ONLY):
@@ -168,7 +175,7 @@ class ArgInfo:
         return False
 
     @property
-    def default_repr(self):
+    def default_repr(self) -> 'str|None':
         if self.default is NOT_SET:
             return None
         if isinstance(self.default, Enum):

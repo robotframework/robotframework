@@ -75,21 +75,26 @@ class XmlDocBuilder:
 
     def _create_arguments(self, elem, kw: KeywordDoc):
         spec = kw.args
-        setters = {
-            ArgInfo.POSITIONAL_ONLY: spec.positional_only.append,
-            ArgInfo.POSITIONAL_ONLY_MARKER: lambda value: None,
-            ArgInfo.POSITIONAL_OR_NAMED: spec.positional_or_named.append,
-            ArgInfo.VAR_POSITIONAL: lambda value: setattr(spec, 'var_positional', value),
-            ArgInfo.NAMED_ONLY_MARKER: lambda value: None,
-            ArgInfo.NAMED_ONLY: spec.named_only.append,
-            ArgInfo.VAR_NAMED: lambda value: setattr(spec, 'var_named', value),
-        }
+        spec = kw.args
+        positional_only = []
+        positional_or_named = []
+        named_only = []
         for arg in elem.findall('arguments/arg'):
             name_elem = arg.find('name')
             if name_elem is None:
                 continue
             name = name_elem.text
-            setters[arg.get('kind')](name)
+            kind = arg.get('kind')
+            if kind == ArgInfo.POSITIONAL_ONLY:
+                positional_only.append(name)
+            elif kind == ArgInfo.POSITIONAL_OR_NAMED:
+                positional_or_named.append(name)
+            elif kind == ArgInfo.VAR_POSITIONAL:
+                spec.var_positional = name
+            elif kind == ArgInfo.NAMED_ONLY:
+                named_only.append(name)
+            elif kind == ArgInfo.VAR_NAMED:
+                spec.var_named = name
             default_elem = arg.find('default')
             if default_elem is not None:
                 spec.defaults[name] = default_elem.text or ''
@@ -104,6 +109,9 @@ class XmlDocBuilder:
             if type_info:
                 spec.types[name] = type_info
             kw.type_docs[name] = type_docs
+        spec.positional_only = positional_only
+        spec.positional_or_named = positional_or_named
+        spec.named_only = named_only
 
     def _parse_type_info(self, type_elem, type_docs):
         name = type_elem.get('name')

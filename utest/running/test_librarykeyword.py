@@ -21,15 +21,15 @@ def get_keyword_methods(lib):
     return [a for a in attrs if inspect.ismethod(a)]
 
 
-def assert_argspec(argspec, minargs=0, maxargs=0, positional=[], defaults={},
-                   varargs=None, kwonlyargs=[], kwargs=None):
+def assert_argspec(argspec, minargs=0, maxargs=0, positional=(), varargs=None,
+                   named_only=(), var_named=None, defaults=None):
     assert_equal(argspec.minargs, minargs)
     assert_equal(argspec.maxargs, maxargs)
     assert_equal(argspec.positional, positional)
-    assert_equal(argspec.defaults, defaults)
     assert_equal(argspec.var_positional, varargs)
-    assert_equal(argspec.named_only, kwonlyargs)
-    assert_equal(argspec.var_named, kwargs)
+    assert_equal(argspec.named_only, named_only)
+    assert_equal(argspec.var_named, var_named)
+    assert_equal(argspec.defaults, defaults or {})
 
 
 class TestStaticKeyword(unittest.TestCase):
@@ -97,102 +97,101 @@ class TestDynamicKeyword(unittest.TestCase):
                            "Return value must be a string, got boolean.", doc=True)
 
     def test_none_argspec(self):
-        self._assert_spec(None, maxargs=sys.maxsize, varargs='varargs', kwargs=False)
+        self._assert_spec(None, 0, sys.maxsize, var_positional='varargs', var_named=False)
 
     def test_none_argspec_when_kwargs_supported(self):
-        self._assert_spec(None, maxargs=sys.maxsize, varargs='varargs', kwargs='kwargs')
+        self._assert_spec(None, 0, sys.maxsize, var_positional='varargs', var_named='kwargs')
 
     def test_empty_argspec(self):
         self._assert_spec([])
 
     def test_mandatory_args(self):
         for argspec in [['arg'], ['arg1', 'arg2', 'arg3']]:
-            self._assert_spec(argspec, len(argspec), len(argspec), argspec)
+            self._assert_spec(argspec, len(argspec), len(argspec), tuple(argspec))
 
     def test_only_default_args(self):
         self._assert_spec(['d1=default', 'd2=True'],
-                          0, 2, ['d1', 'd2'], {'d1': 'default', 'd2': 'True'})
+                          0, 2, ('d1', 'd2'), defaults={'d1': 'default', 'd2': 'True'})
 
     def test_default_as_tuple_or_list_like(self):
         self._assert_spec([('d1', 'default'), ['d2', True]],
-                          0, 2, ['d1', 'd2'], {'d1': 'default', 'd2': True})
+                          0, 2, ('d1', 'd2'), defaults={'d1': 'default', 'd2': True})
 
     def test_default_value_may_contain_equal_sign(self):
-        self._assert_spec(['d=foo=bar'], 0, 1, ['d'], {'d': 'foo=bar'})
+        self._assert_spec(['d=foo=bar'], 0, 1, ('d',), defaults={'d': 'foo=bar'})
 
     def test_default_value_as_tuple_may_contain_equal_sign(self):
-        self._assert_spec([('n=m', 'd=f')], 0, 1, ['n=m'], {'n=m': 'd=f'})
+        self._assert_spec([('n=m', 'd=f')], 0, 1, ('n=m',), defaults={'n=m': 'd=f'})
 
     def test_varargs(self):
-        self._assert_spec(['*vararg'], 0, sys.maxsize, varargs='vararg')
+        self._assert_spec(['*vararg'], 0, sys.maxsize, var_positional='vararg')
 
     def test_kwargs(self):
-        self._assert_spec(['**kwarg'], 0, 0, kwargs='kwarg')
+        self._assert_spec(['**kwarg'], 0, 0, var_named='kwarg')
 
     def test_varargs_and_kwargs(self):
         self._assert_spec(['*vararg', '**kwarg'],
-                          0, sys.maxsize, varargs='vararg', kwargs='kwarg')
+                          0, sys.maxsize, var_positional='vararg', var_named='kwarg')
 
-    def test_kwonlyargs(self):
-        self._assert_spec(['*', 'kwo'], kwonlyargs=['kwo'])
-        self._assert_spec(['*vars', 'kwo'], varargs='vars', kwonlyargs=['kwo'])
-        self._assert_spec(['*', 'x', 'y', 'z'], kwonlyargs=['x', 'y', 'z'])
+    def test_kwonly(self):
+        self._assert_spec(['*', 'k', 'w', 'o'], named_only=('k', 'w', 'o'))
+        self._assert_spec(['*vars', 'kwo',], var_positional='vars', named_only=('kwo',))
 
-    def test_kwonlydefaults(self):
+    def test_kwonly_with_defaults(self):
         self._assert_spec(['*', 'kwo=default'],
-                          kwonlyargs=['kwo'],
+                          named_only=('kwo',),
                           defaults={'kwo': 'default'})
         self._assert_spec(['*vars', 'kwo=default'],
-                          varargs='vars',
-                          kwonlyargs=['kwo'],
+                          var_positional='vars',
+                          named_only=('kwo',),
                           defaults={'kwo': 'default'})
         self._assert_spec(['*', 'x=1', 'y', 'z=3'],
-                          kwonlyargs=['x', 'y', 'z'],
+                          named_only=('x', 'y', 'z'),
                           defaults={'x': '1', 'z': '3'})
 
-    def test_kwonlydefaults_with_tuple(self):
+    def test_kwonly_with_defaults_tuple(self):
         self._assert_spec(['*', ('kwo', 'default')],
-                          kwonlyargs=['kwo'],
+                          named_only=('kwo',),
                           defaults={'kwo': 'default'})
         self._assert_spec([('*',), 'x=1', 'y', ('z', 3)],
-                          kwonlyargs=['x', 'y', 'z'],
+                          named_only=('x', 'y', 'z'),
                           defaults={'x': '1', 'z': 3})
 
     def test_integration(self):
         self._assert_spec(['arg', 'default=value'],
                           1, 2,
-                          positional=['arg', 'default'],
+                          positional=('arg', 'default'),
                           defaults={'default': 'value'})
         self._assert_spec(['arg', 'default=value', '*var'],
                           1, sys.maxsize,
-                          positional=['arg', 'default'],
+                          positional=('arg', 'default'),
                           defaults={'default': 'value'},
-                          varargs='var')
+                          var_positional='var')
         self._assert_spec(['arg', 'default=value', '**kw'],
                           1, 2,
-                          positional=['arg', 'default'],
+                          positional=('arg', 'default'),
                           defaults={'default': 'value'},
-                          kwargs='kw')
+                          var_named='kw')
         self._assert_spec(['arg', 'default=value', '*var', '**kw'],
                           1, sys.maxsize,
-                          positional=['arg', 'default'],
+                          positional=('arg', 'default'),
                           defaults={'default': 'value'},
-                          varargs='var',
-                          kwargs='kw')
+                          var_positional='var',
+                          var_named='kw')
         self._assert_spec(['a', 'b=1', 'c=2', '*d', 'e', 'f=3', 'g', '**h'],
                           1, sys.maxsize,
-                          positional=['a', 'b', 'c'],
+                          positional=('a', 'b', 'c'),
                           defaults={'b': '1', 'c': '2', 'f': '3'},
-                          varargs='d',
-                          kwonlyargs=['e', 'f', 'g'],
-                          kwargs='h')
+                          var_positional='d',
+                          named_only=('e', 'f', 'g'),
+                          var_named='h')
         self._assert_spec([('a',), ('b', '1'), ('c', 2), ('*d',), ('e',), ('f', 3), ('g',), ('**h',)],
                           1, sys.maxsize,
-                          positional=['a', 'b', 'c'],
+                          positional=('a', 'b', 'c'),
                           defaults={'b': '1', 'c': 2, 'f': 3},
-                          varargs='d',
-                          kwonlyargs=['e', 'f', 'g'],
-                          kwargs='h')
+                          var_positional='d',
+                          named_only=('e', 'f', 'g'),
+                          var_named='h')
 
     def test_invalid_argspec_type(self):
         for argspec in [True, [1, 2], ['arg', ()]]:
@@ -251,22 +250,21 @@ class TestDynamicKeyword(unittest.TestCase):
         expected = doc if expected is None else expected
         assert_equal(self._create_keyword(doc=doc).doc, expected)
 
-    def _assert_spec(self, argspec, minargs=0, maxargs=0,
-                     positional=[], defaults={}, varargs=None,
-                     kwonlyargs=[], kwargs=None):
-        if varargs and not maxargs:
+    def _assert_spec(self, in_args, minargs=0, maxargs=0, positional=(),
+                     var_positional=None, named_only=(), var_named=None, defaults=None):
+        if var_positional and not maxargs:
             maxargs = sys.maxsize
-        if kwargs is None and not kwonlyargs:
+        if var_named is None and not named_only:
             kwargs_support_modes = [True, False]
-        elif kwargs is False:
+        elif var_named is False:
             kwargs_support_modes = [False]
-            kwargs = None
+            var_named = None
         else:
             kwargs_support_modes = [True]
         for kwargs_support in kwargs_support_modes:
-            kw = self._create_keyword(argspec, kwargs_support=kwargs_support)
-            assert_argspec(kw.args, minargs, maxargs, positional,
-                           defaults, varargs, kwonlyargs, kwargs)
+            kw = self._create_keyword(in_args, kwargs_support=kwargs_support)
+            assert_argspec(kw.args, minargs, maxargs, positional, var_positional,
+                           named_only, var_named, defaults)
 
     def _assert_fails(self, error, *args, **kwargs):
         assert_raises_with_msg(DataError, error,

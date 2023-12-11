@@ -39,7 +39,7 @@ class ResourceFile(ModelObject):
                  owner: 'TestSuite|None' = None,
                  doc: str = ''):
         self.source = source
-        self.owner = owner    # FIXME: Should this be 'parent' instead?
+        self.owner = owner
         self.doc = doc
         self.keyword_finder = KeywordFinder['UserKeyword'](self)
         self.imports = []

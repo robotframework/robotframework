@@ -104,52 +104,52 @@ class ArgInfoLibrary:
     handler_count = 13
 
     def no_args(self):
-        """[], {}, None, None"""
+        """(), {}, None, None"""
         # Argument inspection had a bug when there was args on function body
         # so better keep some of them around here.
         a=b=c=1
 
     def required1(self, one):
-        """['one'], {}, None, None"""
+        """('one',), {}, None, None"""
 
     def required2(self, one, two):
-        """['one', 'two'], {}, None, None"""
+        """('one', 'two'), {}, None, None"""
 
     def required9(self, one, two, three, four, five, six, seven, eight, nine):
-        """['one','two','three','four','five','six','seven','eight','nine'], \
+        """('one','two','three','four','five','six','seven','eight','nine'), \
            {}, None, None"""
 
     def default1(self, one=1):
-        """['one'], {'one': 1}, None, None"""
+        """('one',), {'one': 1}, None, None"""
 
     def default5(self, one='', two=None, three=3, four='huh', five=True):
-        """['one', 'two', 'three', 'four', 'five'], \
+        """('one', 'two', 'three', 'four', 'five'), \
            {'one': '', 'two': None, 'three': 3, 'four': 'huh', 'five': True}, \
            None, None"""
 
     def required1_default1(self, one, two=''):
-        """['one', 'two'], {'two': ''}, None, None"""
+        """('one', 'two'), {'two': ''}, None, None"""
 
     def required2_default3(self, one, two, three=3, four=4, five=5):
-        """['one', 'two', 'three', 'four', 'five'], \
+        """('one', 'two', 'three', 'four', 'five'), \
            {'three': 3, 'four': 4, 'five': 5}, None, None"""
 
     def varargs(self,*one):
-        """[], {}, 'one', None"""
+        """(), {}, 'one', None"""
 
     def required2_varargs(self, one, two, *three):
-        """['one', 'two'], {}, 'three', None"""
+        """('one', 'two'), {}, 'three', None"""
 
     def req4_def2_varargs(self, one, two, three, four, five=5, six=6, *seven):
-        """['one', 'two', 'three', 'four', 'five', 'six'], \
+        """('one', 'two', 'three', 'four', 'five', 'six'), \
            {'five': 5, 'six': 6}, 'seven', None"""
 
     def req2_def3_varargs_kwargs(self, three, four, five=5, six=6, seven=7, *eight, **nine):
-        """['three', 'four', 'five', 'six', 'seven'], \
-          {'five': 5, 'six': 6, 'seven': 7}, 'eight', 'nine'"""
+        """('three', 'four', 'five', 'six', 'seven'), \
+           {'five': 5, 'six': 6, 'seven': 7}, 'eight', 'nine'"""
 
-    def varargs_kwargs(self,*one, **two):
-        """[], {}, 'one', 'two'"""
+    def varargs_kwargs(self, *one, **two):
+        """(), {}, 'one', 'two'"""
 
 
 class GetattrLibrary:

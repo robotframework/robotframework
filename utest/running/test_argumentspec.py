@@ -153,10 +153,19 @@ class TestStringRepr(unittest.TestCase):
         self._verify('e: Big',
                      ['e'], types=[Big])
 
-    def _verify(self, expected, positional_or_named=None, **config):
+    def _verify(self, expected, positional_or_named=(), **config):
         spec = ArgumentSpec(positional_or_named=positional_or_named, **config)
         assert_equal(str(spec), expected)
         assert_equal(bool(spec), bool(expected))
+
+
+class TestName(unittest.TestCase):
+
+    def test_static(self):
+        assert_equal(ArgumentSpec('xxx').name, 'xxx')
+
+    def test_dynamic(self):
+        assert_equal(ArgumentSpec(lambda: 'xxx').name, 'xxx')
 
 
 class TestArgInfo(unittest.TestCase):

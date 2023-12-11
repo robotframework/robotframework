@@ -72,68 +72,69 @@ class TestGetArgSpec(unittest.TestCase):
         self._verify('')
 
     def test_args(self):
-        self._verify('${arg1}', ['arg1',])
-        self._verify('${a1} ${a2}', ['a1', 'a2'])
+        self._verify('${arg1}', ('arg1',))
+        self._verify('${a1} ${a2}', ('a1', 'a2'))
 
     def test_defaults(self):
         self._verify('${arg1} ${arg2}=default @{varargs}',
-                     args=['arg1', 'arg2'],
+                     positional=['arg1', 'arg2'],
                      defaults={'arg2': 'default'},
-                     varargs='varargs')
+                     var_positional='varargs')
         self._verify('${arg1} ${arg2}= @{varargs}',
-                     args=['arg1', 'arg2'],
+                     positional=['arg1', 'arg2'],
                      defaults={'arg2': ''},
-                     varargs='varargs')
+                     var_positional='varargs')
         self._verify('${arg1}=d1 ${arg2}=d2 ${arg3}=d3',
-                     args=['arg1', 'arg2', 'arg3'],
+                     positional=['arg1', 'arg2', 'arg3'],
                      defaults={'arg1': 'd1', 'arg2': 'd2', 'arg3': 'd3'})
 
     def test_vararg(self):
-        self._verify('@{varargs}', varargs='varargs')
-        self._verify('${arg} @{varargs}', ['arg'], varargs='varargs')
+        self._verify('@{varargs}', var_positional='varargs')
+        self._verify('${arg} @{varargs}', ['arg'], var_positional='varargs')
 
     def test_kwonly(self):
         self._verify('@{} ${ko1} ${ko2}',
-                     kwonlyargs=['ko1', 'ko2'])
+                     named_only=['ko1', 'ko2'])
         self._verify('@{vars} ${ko1} ${ko2}',
-                     varargs='vars',
-                     kwonlyargs=['ko1', 'ko2'])
+                     var_positional='vars',
+                     named_only=['ko1', 'ko2'])
 
-    def test_kwonlydefaults(self):
+    def test_kwonly_with_defaults(self):
         self._verify('@{} ${ko1} ${ko2}=xxx',
-                     kwonlyargs=['ko1', 'ko2'],
+                     named_only=['ko1', 'ko2'],
                      defaults={'ko2': 'xxx'})
         self._verify('@{} ${ko1}=xxx ${ko2}',
-                     kwonlyargs=['ko1', 'ko2'],
+                     named_only=['ko1', 'ko2'],
                      defaults={'ko1': 'xxx'})
         self._verify('@{v} ${ko1}=foo ${ko2} ${ko3}=',
-                     varargs='v',
-                     kwonlyargs=['ko1', 'ko2', 'ko3'],
+                     var_positional='v',
+                     named_only=['ko1', 'ko2', 'ko3'],
                      defaults={'ko1': 'foo', 'ko3': ''})
 
     def test_kwargs(self):
-        self._verify('&{kwargs}', kwargs='kwargs')
+        self._verify('&{kwargs}',
+                     var_named='kwargs')
         self._verify('${arg} &{kwargs}',
-                     args=['arg'],
-                     kwargs='kwargs')
+                     positional=['arg'],
+                     var_named='kwargs')
         self._verify('@{} ${arg} &{kwargs}',
-                     kwonlyargs=['arg'],
-                     kwargs='kwargs')
+                     named_only=['arg'],
+                     var_named='kwargs')
         self._verify('${a1} ${a2}=ad @{vars} ${k1} ${k2}=kd &{kws}',
-                     args=['a1', 'a2'],
-                     varargs='vars',
-                     kwonlyargs=['k1', 'k2'],
+                     positional=['a1', 'a2'],
+                     var_positional='vars',
+                     named_only=['k1', 'k2'],
                      defaults={'a2': 'ad', 'k2': 'kd'},
-                     kwargs='kws')
+                     var_named='kws')
 
-    def _verify(self, in_args, args=[], defaults={}, varargs=None,
-                kwonlyargs=[], kwargs=None):
-        argspec = self._parse(in_args)
-        assert_equal(argspec.positional, args)
-        assert_equal(argspec.defaults, defaults)
-        assert_equal(argspec.var_positional, varargs)
-        assert_equal(argspec.named_only, kwonlyargs)
-        assert_equal(argspec.var_named, kwargs)
+    def _verify(self, in_args, positional=(), var_positional=None,
+                named_only=(), var_named=None, defaults=None):
+        spec = self._parse(in_args)
+        assert_equal(spec.positional, tuple(positional))
+        assert_equal(spec.var_positional, var_positional)
+        assert_equal(spec.named_only, tuple(named_only))
+        assert_equal(spec.var_named, var_named)
+        assert_equal(spec.defaults, defaults or {})
 
     def _parse(self, in_args):
         return UserKeywordArgumentParser().parse(in_args.split())

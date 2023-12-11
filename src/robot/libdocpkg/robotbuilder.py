@@ -201,7 +201,7 @@ class KeywordDocBuilder:
     def _remove_embedded(self, spec: ArgumentSpec):
         embedded = len(spec.embedded)
         pos_only = len(spec.positional_only)
-        spec.positional_only[:embedded] = []
+        spec.positional_only = spec.positional_only[embedded:]
         if embedded > pos_only:
-            spec.positional_or_named[:embedded-pos_only] = []
+            spec.positional_or_named = spec.positional_or_named[embedded-pos_only:]
         spec.embedded = ()
