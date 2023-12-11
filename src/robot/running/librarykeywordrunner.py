@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from contextlib import contextmanager
 from typing import TYPE_CHECKING
 
 from robot.errors import DataError
@@ -71,8 +72,7 @@ class LibraryKeywordRunner:
                              write_if_flat=False)
         if kw.error:
             raise DataError(kw.error)
-        runner = self._runner_for(kw.method, positional, dict(named), context)
-        return self._run_with_output_captured_and_signal_monitor(runner, context)
+        return self._execute(kw.method, positional, named, context)
 
     def _trace_log_args(self, positional, named):
         args = [prepr(arg) for arg in positional]
@@ -92,18 +92,32 @@ class LibraryKeywordRunner:
     def _get_timeout(self, context):
         return min(context.timeouts) if context.timeouts else None
 
-    def _run_with_output_captured_and_signal_monitor(self, runner, context):
-        with OutputCapturer():
-            return self._run_with_signal_monitoring(runner, context)
+    def _execute(self, method, positional, named, context):
+        timeout = self._get_timeout(context)
+        if timeout and timeout.active:
+            method = self._wrap_with_timeout(method, timeout, context.output)
+        with self._monitor(context):
+            result = method(*positional, **dict(named))
+            if context.asynchronous.is_loop_required(result):
+                return context.asynchronous.run_until_complete(result)
+            return result
 
-    def _run_with_signal_monitoring(self, runner, context):
+    def _wrap_with_timeout(self, method, timeout, output):
+        def wrapper(*args, **kwargs):
+            with output.delayed_logging:
+                output.debug(timeout.get_message)
+                return timeout.run(method, args=args, kwargs=kwargs)
+        return wrapper
+
+    @contextmanager
+    def _monitor(self, context):
+        STOP_SIGNAL_MONITOR.start_running_keyword(context.in_teardown)
+        capturer = OutputCapturer()
+        capturer.start()
         try:
-            STOP_SIGNAL_MONITOR.start_running_keyword(context.in_teardown)
-            runner_result = runner()
-            if context.asynchronous.is_loop_required(runner_result):
-                return context.asynchronous.run_until_complete(runner_result)
-            return runner_result
+            yield
         finally:
+            capturer.stop()
             STOP_SIGNAL_MONITOR.stop_running_keyword()
 
     def dry_run(self, data: KeywordData, context):
@@ -155,8 +169,13 @@ class RunKeywordRunner(LibraryKeywordRunner):
         # These keywords are not affected by timeouts. Keywords they execute are.
         return None
 
-    def _run_with_output_captured_and_signal_monitor(self, runner, context):
-        return self._run_with_signal_monitoring(runner, context)
+    @contextmanager
+    def _monitor(self, context):
+        STOP_SIGNAL_MONITOR.start_running_keyword(context.in_teardown)
+        try:
+            yield
+        finally:
+            STOP_SIGNAL_MONITOR.stop_running_keyword()
 
     def _dry_run(self, kw: 'LibraryKeyword', args, context):
         super()._dry_run(kw, args, context)

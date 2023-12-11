@@ -1,7 +1,7 @@
 import unittest
 
 from robot.model import BodyItem
-from robot.output.listeners import Listeners, LibraryListeners
+from robot.output.listeners import Listeners
 from robot.output import LOGGER
 from robot.running.outputcapture import OutputCapturer
 from robot.utils.asserts import assert_equal
@@ -114,6 +114,7 @@ class TestListeners(unittest.TestCase):
     def setUp(self):
         self.listeners = Listeners([self.listener_name])
         self.capturer = OutputCapturer()
+        self.capturer.start()
 
     def test_start_suite(self):
         self.listeners.start_suite(SuiteMock(), SuiteMock(is_result=True))

@@ -13,8 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from io import StringIO
 import sys
+from io import StringIO
 
 from robot.output import LOGGER
 from robot.utils import console_decode, console_encode
@@ -23,19 +23,27 @@ from robot.utils import console_decode, console_encode
 class OutputCapturer:
 
     def __init__(self, library_import=False):
-        self._library_import = library_import
-        self._python_out = PythonCapturer(stdout=True)
-        self._python_err = PythonCapturer(stdout=False)
+        self.library_import = library_import
+        self.stdout = None
+        self.stderr = None
+
+    def start(self):
+        self.stdout = StreamCapturer(stdout=True)
+        self.stderr = StreamCapturer(stdout=False)
+        if self.library_import:
+            LOGGER.enable_library_import_logging()
+
+    def stop(self):
+        self._release_and_log()
+        if self.library_import:
+            LOGGER.disable_library_import_logging()
 
     def __enter__(self):
-        if self._library_import:
-            LOGGER.enable_library_import_logging()
+        self.start()
         return self
 
     def __exit__(self, exc_type, exc_value, exc_trace):
-        self._release_and_log()
-        if self._library_import:
-            LOGGER.disable_library_import_logging()
+        self.stop()
         return False
 
     def _release_and_log(self):
@@ -47,12 +55,12 @@ class OutputCapturer:
             sys.__stderr__.write(console_encode(stderr, stream=sys.__stderr__))
 
     def _release(self):
-        stdout = self._python_out.release()
-        stderr = self._python_err.release()
+        stdout = self.stdout.release()
+        stderr = self.stderr.release()
         return stdout, stderr
 
 
-class PythonCapturer:
+class StreamCapturer:
 
     def __init__(self, stdout=True):
         if stdout:

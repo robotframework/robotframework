@@ -43,6 +43,10 @@ class Output(AbstractLogger, LoggerApi):
     def register_error_listener(self, listener):
         LOGGER.register_error_listener(listener)
 
+    @property
+    def delayed_logging(self):
+        return LOGGER.delayed_logging
+
     def close(self, result):
         self._xml_logger.logger.visit_statistics(result.statistics)
         self._xml_logger.close()
