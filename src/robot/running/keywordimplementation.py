@@ -122,6 +122,10 @@ class KeywordImplementation(ModelObject):
             return self.embedded.match(name)
         return eq(self.name, name, ignore='_')
 
+    def resolve_arguments(self, args, variables=None, languages=None) \
+            -> 'tuple[list, list]':
+        return self.args.resolve(args, variables, languages=languages)
+
     def create_runner(self, name, languages=None) \
             -> 'LibraryKeywordRunner|UserKeywordRunner':
         raise NotImplementedError

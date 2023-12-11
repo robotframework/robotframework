@@ -79,8 +79,7 @@ class LibraryKeyword(KeywordImplementation):
             return RunKeywordRunner(self, execute_in_dry_run=dry_run)
         return LibraryKeywordRunner(self, languages=languages)
 
-    # FIXME: Add to base class
-    def resolve_arguments(self, args, variables=None, languages=None):
+    def resolve_arguments(self, args, variables=None, languages=None) -> 'tuple[list, list]':
         resolve_args_until = self._resolve_args_until
         positional, named = self.args.resolve(args, variables, self.owner.converters,
                                               resolve_named=resolve_args_until is None,

@@ -14,6 +14,7 @@
 #  limitations under the License.
 
 from itertools import chain
+from typing import TYPE_CHECKING
 
 from robot.errors import (DataError, ExecutionFailed, ExecutionPassed, ExecutionStatus,
                           PassExecution, ReturnFromKeyword, UserKeywordExecutionFailed,
@@ -22,23 +23,27 @@ from robot.result import Keyword as KeywordResult
 from robot.utils import DotDict, getshortdoc, prepr, split_tags_from_doc
 from robot.variables import is_list_variable, VariableAssignment
 
-from .arguments import DefaultValue
+from .arguments import ArgumentSpec, DefaultValue
 from .bodyrunner import BodyRunner, KeywordRunner
+from .model import Keyword as KeywordData
 from .statusreporter import StatusReporter
 from .timeouts import KeywordTimeout
+
+if TYPE_CHECKING:
+    from .resourcemodel import UserKeyword
 
 
 class UserKeywordRunner:
 
-    def __init__(self, keyword, name=None):
+    def __init__(self, keyword: 'UserKeyword', name: 'str|None' = None):
         self.keyword = keyword
         self.name = name or keyword.name
         self.pre_run_messages = ()
 
-    def run(self, data, context, run=True):
+    def run(self, data: KeywordData, context, run=True):
         kw = self.keyword.bind(data)
         assignment = VariableAssignment(data.assign)
-        result = self._get_result(kw, data, assignment, context.variables)
+        result = self._get_result(data, kw, assignment, context.variables)
         with StatusReporter(data, result, context, run, implementation=kw):
             if kw.private:
                 context.warn_on_invalid_private_call(kw)
@@ -48,7 +53,8 @@ class UserKeywordRunner:
                     assigner.assign(return_value)
                     return return_value
 
-    def _get_result(self, kw, data, assignment, variables):
+    def _get_result(self, data: KeywordData, kw: 'UserKeyword', assignment,
+                    variables) -> KeywordResult:
         doc = variables.replace_string(kw.doc, ignore_errors=True)
         doc, tags = split_tags_from_doc(doc)
         tags = variables.replace_list(kw.tags, ignore_errors=True) + tags
@@ -60,14 +66,14 @@ class UserKeywordRunner:
                              tags=tags,
                              type=data.type)
 
-    def _run(self, kw, args, result, context):
+    def _run(self, kw: 'UserKeyword', args, result, context):
         if self.pre_run_messages:
             for message in self.pre_run_messages:
                 context.output.message(message)
         variables = context.variables
-        args = self._resolve_arguments(kw, args, variables)
+        positional, named = self._resolve_arguments(kw, args, variables)
         with context.user_keyword(kw):
-            self._set_arguments(kw, args, context)
+            self._set_arguments(kw, positional, named, context)
             if kw.timeout:
                 timeout = KeywordTimeout(kw.timeout, variables)
                 result.timeout = str(timeout)
@@ -83,49 +89,48 @@ class UserKeywordRunner:
                     raise exception
                 return return_value
 
-    def _resolve_arguments(self, kw, args, variables=None):
-        return kw.args.resolve(args, variables)
+    def _resolve_arguments(self, kw: 'UserKeyword', args, variables=None):
+        return kw.resolve_arguments(args, variables)
 
-    def _set_arguments(self, kw, args, context):
-        positional, named = args
+    def _set_arguments(self, kw: 'UserKeyword', positional, named, context):
         variables = context.variables
-        args, kwargs = kw.args.map(positional, named, replace_defaults=False)
-        self._set_variables(kw.args, args, kwargs, variables)
+        positional, named = kw.args.map(positional, named, replace_defaults=False)
+        self._set_variables(kw.args, positional, named, variables)
         context.output.trace(lambda: self._trace_log_args_message(kw, variables),
                              write_if_flat=False)
 
-    def _set_variables(self, spec, positional, kwargs, variables):
-        args, varargs = self._split_args_and_varargs(spec, positional)
-        kwonly, kwargs = self._split_kwonly_and_kwargs(spec, kwargs)
-        for name, value in chain(zip(spec.positional, args), kwonly):
+    def _set_variables(self, spec: ArgumentSpec, positional, named, variables):
+        positional, var_positional = self._separate_positional(spec, positional)
+        named_only, var_named = self._separate_named(spec, named)
+        for name, value in chain(zip(spec.positional, positional), named_only):
             if isinstance(value, DefaultValue):
                 value = value.resolve(variables)
             variables[f'${{{name}}}'] = value
         if spec.var_positional:
-            variables[f'@{{{spec.var_positional}}}'] = varargs
+            variables[f'@{{{spec.var_positional}}}'] = var_positional
         if spec.var_named:
-            variables[f'&{{{spec.var_named}}}'] = DotDict(kwargs)
+            variables[f'&{{{spec.var_named}}}'] = DotDict(var_named)
 
-    def _split_args_and_varargs(self, spec, args):
+    def _separate_positional(self, spec: ArgumentSpec, positional):
         if not spec.var_positional:
-            return args, []
-        positional = len(spec.positional)
-        return args[:positional], args[positional:]
+            return positional, []
+        count = len(spec.positional)
+        return positional[:count], positional[count:]
 
-    def _split_kwonly_and_kwargs(self, spec, all_kwargs):
-        kwonly = []
-        kwargs = []
-        for name, value in all_kwargs:
-            target = kwonly if name in spec.named_only else kwargs
+    def _separate_named(self, spec: ArgumentSpec, named):
+        named_only = []
+        var_named = []
+        for name, value in named:
+            target = named_only if name in spec.named_only else var_named
             target.append((name, value))
-        return kwonly, kwargs
+        return named_only, var_named
 
-    def _trace_log_args_message(self, kw, variables):
+    def _trace_log_args_message(self, kw: 'UserKeyword', variables):
         return self._format_trace_log_args_message(
             self._format_args_for_trace_logging(kw.args), variables
         )
 
-    def _format_args_for_trace_logging(self, spec):
+    def _format_args_for_trace_logging(self, spec: ArgumentSpec):
         args = [f'${{{arg}}}' for arg in spec.positional]
         if spec.var_positional:
             args.append(f'@{{{spec.var_positional}}}')
@@ -137,7 +142,7 @@ class UserKeywordRunner:
         args = ' | '.join(f'{name}={prepr(variables[name])}' for name in args)
         return f'Arguments: [ {args} ]'
 
-    def _execute(self, kw, context):
+    def _execute(self, kw: 'UserKeyword', context):
         if kw.error:
             raise DataError(kw.error)
         if not kw.body:
@@ -183,9 +188,9 @@ class UserKeywordRunner:
             return return_value
         return return_value[0]
 
-    def _run_setup_or_teardown(self, item, context):
+    def _run_setup_or_teardown(self, data: KeywordData, context):
         try:
-            name = context.variables.replace_string(item.name)
+            name = context.variables.replace_string(data.name)
         except DataError as err:
             if context.dry_run:
                 return None
@@ -193,22 +198,22 @@ class UserKeywordRunner:
         if name.upper() in ('', 'NONE'):
             return None
         try:
-            KeywordRunner(context).run(item, name)
+            KeywordRunner(context).run(data, name)
         except PassExecution:
             return None
         except ExecutionStatus as err:
             return err
         return None
 
-    def dry_run(self, data, context):
+    def dry_run(self, data: KeywordData, context):
         kw = self.keyword.bind(data)
         assignment = VariableAssignment(data.assign)
-        result = self._get_result(kw, data, assignment, context.variables)
+        result = self._get_result(data, kw, assignment, context.variables)
         with StatusReporter(data, result, context, implementation=kw):
             assignment.validate_assignment()
             self._dry_run(kw, data.args, result, context)
 
-    def _dry_run(self, kw, args, result, context):
+    def _dry_run(self, kw: 'UserKeyword', args, result, context):
         if self.pre_run_messages:
             for message in self.pre_run_messages:
                 context.output.message(message)
@@ -224,29 +229,30 @@ class UserKeywordRunner:
 
 class EmbeddedArgumentsRunner(UserKeywordRunner):
 
-    def __init__(self, keyword, name):
+    def __init__(self, keyword: 'UserKeyword', name: str):
         super().__init__(keyword, name)
         self.embedded_args = keyword.embedded.match(name).groups()
 
-    def _resolve_arguments(self, kw, args, variables=None):
+    def _resolve_arguments(self, kw: 'UserKeyword', args, variables=None):
         result = super()._resolve_arguments(kw, args, variables)
         if variables:
             embedded = [variables.replace_scalar(e) for e in self.embedded_args]
             self.embedded_args = kw.embedded.map(embedded)
         return result
 
-    def _set_arguments(self, kw, args, context):
+    def _set_arguments(self, kw: 'UserKeyword', positional, named, context):
         variables = context.variables
         for name, value in self.embedded_args:
             variables[f'${{{name}}}'] = value
-        super()._set_arguments(kw, args, context)
+        super()._set_arguments(kw, positional, named, context)
 
-    def _trace_log_args_message(self, kw, variables):
+    def _trace_log_args_message(self, kw: 'UserKeyword', variables):
         args = [f'${{{arg}}}' for arg in kw.embedded.args]
         args += self._format_args_for_trace_logging(kw.args)
         return self._format_trace_log_args_message(args, variables)
 
-    def _get_result(self, kw, data, assignment, variables):
-        result = super()._get_result(kw, data, assignment, variables)
+    def _get_result(self, data: KeywordData, kw: 'UserKeyword', assignment,
+                    variables) -> KeywordResult:
+        result = super()._get_result(data, kw, assignment, variables)
         result.source_name = kw.name
         return result

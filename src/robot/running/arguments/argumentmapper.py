@@ -32,43 +32,43 @@ class ArgumentMapper:
         template.fill_named(named)
         if replace_defaults:
             template.replace_defaults()
-        return template.args, template.kwargs
+        return template.positional, template.named
 
 
 class KeywordCallTemplate:
 
-    def __init__(self, arg_spec: 'ArgumentSpec'):
-        self.arg_spec = arg_spec
-        self.args = [None if arg not in arg_spec.defaults
-                     else DefaultValue(arg_spec.defaults[arg])
-                     for arg in arg_spec.positional]
-        self.kwargs = []
+    def __init__(self, spec: 'ArgumentSpec'):
+        self.spec = spec
+        self.positional = [DefaultValue(spec.defaults[arg])
+                           if arg in spec.defaults else None
+                           for arg in spec.positional]
+        self.named = []
 
     def fill_positional(self, positional):
-        self.args[:len(positional)] = positional
+        self.positional[:len(positional)] = positional
 
     def fill_named(self, named):
-        spec = self.arg_spec
+        spec = self.spec
         for name, value in named:
             if name in spec.positional_or_named:
                 index = spec.positional_or_named.index(name)
-                self.args[index] = value
+                self.positional[index] = value
             elif spec.var_named or name in spec.named_only:
-                self.kwargs.append((name, value))
+                self.named.append((name, value))
             else:
                 raise DataError(f"Non-existing named argument '{name}'.")
         named_names = {name for name, _ in named}
         for name in spec.named_only:
             if name not in named_names:
                 value = DefaultValue(spec.defaults[name])
-                self.kwargs.append((name, value))
+                self.named.append((name, value))
 
     def replace_defaults(self):
         is_default = lambda arg: isinstance(arg, DefaultValue)
-        while self.args and is_default(self.args[-1]):
-            self.args.pop()
-        self.args = [a if not is_default(a) else a.value for a in self.args]
-        self.kwargs = [(n, v) for n, v in self.kwargs if not is_default(v)]
+        while self.positional and is_default(self.positional[-1]):
+            self.positional.pop()
+        self.positional = [a if not is_default(a) else a.value for a in self.positional]
+        self.named = [(n, v) for n, v in self.named if not is_default(v)]
 
 
 class DefaultValue:
