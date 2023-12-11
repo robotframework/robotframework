@@ -304,8 +304,8 @@ class KeywordBuilder(BodyBuilder):
             kw.config(name=node.name, lineno=node.lineno)
         except DataError as err:
             # Errors other than name being empty mean that name contains invalid
-            # embedded arguments. Need to set `_setter__name` to bypass `@setter`.
-            kw.config(_setter__name=node.name, lineno=node.lineno, error=str(err))
+            # embedded arguments. Need to set `_name` to bypass `@property`.
+            kw.config(_name=node.name, lineno=node.lineno, error=str(err))
             self._report_error(node, err)
         self.generic_visit(node)
         if self.return_setting:

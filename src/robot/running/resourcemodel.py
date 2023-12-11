@@ -14,15 +14,16 @@
 #  limitations under the License.
 
 from pathlib import Path
-from typing import Any, Literal, Sequence, TYPE_CHECKING
+from typing import Any, Iterable, Literal, Sequence, TYPE_CHECKING
 
 from robot import model
 from robot.model import BodyItem, create_fixture, DataDict, ModelObject, Tags
 from robot.output import LOGGER
-from robot.utils import normalize, NOT_SET, setter
+from robot.utils import NOT_SET, setter
 
 from .arguments import ArgInfo, ArgumentSpec, UserKeywordArgumentParser
 from .keywordimplementation import KeywordImplementation
+from .keywordfinder import KeywordFinder
 from .model import Body, BodyItemParent, Keyword, TestSuite
 from .userkeywordrunner import UserKeywordRunner, EmbeddedArgumentsRunner
 
@@ -32,7 +33,7 @@ if TYPE_CHECKING:
 
 class ResourceFile(ModelObject):
     repr_args = ('source',)
-    __slots__ = ('_source', 'owner', 'doc')
+    __slots__ = ('_source', 'owner', 'doc', 'keyword_finder')
 
     def __init__(self, source: 'Path|str|None' = None,
                  owner: 'TestSuite|None' = None,
@@ -40,6 +41,7 @@ class ResourceFile(ModelObject):
         self.source = source
         self.owner = owner    # FIXME: Should this be 'parent' instead?
         self.doc = doc
+        self.keyword_finder = KeywordFinder['UserKeyword'](self)
         self.imports = []
         self.variables = []
         self.keywords = []
@@ -125,18 +127,8 @@ class ResourceFile(ModelObject):
         from .builder import RobotParser
         return RobotParser().parse_resource_model(model)
 
-    def find_keywords(self, name: str,
-                      include_embedded: bool = True) -> 'list[UserKeyword]':
-        keywords = []
-        norm_name = normalize(name, ignore='_')
-        for kw in self.keywords:
-            if kw.embedded:
-                if include_embedded and kw.matches(name):
-                    keywords.append(kw)
-            else:
-                if normalize(kw.name, ignore='_') == norm_name:
-                    keywords.append(kw)
-        return keywords
+    def find_keywords(self, name: str) -> 'list[UserKeyword]':
+        return self.keyword_finder.find(name)
 
     def to_dict(self) -> DataDict:
         data = {}
@@ -246,7 +238,7 @@ class UserKeyword(KeywordImplementation):
                          self.lineno, self.owner, data.parent, self.error)
         # Avoid possible errors setting name with invalid embedded args.
         # FIXME: `self.embedded` should be copied.
-        kw._setter__name = self.name
+        kw._name = self._name
         kw.embedded = self.embedded
         if self.has_setup:
             kw.setup = self.setup.to_dict()
@@ -425,4 +417,26 @@ class Variables(model.ItemList[Variable]):
 class UserKeywords(model.ItemList[UserKeyword]):
 
     def __init__(self, owner: ResourceFile, keywords: Sequence[UserKeyword] = ()):
+        self.invalidate_keyword_cache = owner.keyword_finder.invalidate_cache
+        self.invalidate_keyword_cache()
         super().__init__(UserKeyword, {'owner': owner}, items=keywords)
+
+    def append(self, item: 'UserKeyword|DataDict') -> UserKeyword:
+        self.invalidate_keyword_cache()
+        return super().append(item)
+
+    def extend(self, items: 'Iterable[UserKeyword|DataDict]'):
+        self.invalidate_keyword_cache()
+        return super().extend(items)
+
+    def __setitem__(self, index: 'int|slice', item: 'Iterable[UserKeyword|DataDict]'):
+        self.invalidate_keyword_cache()
+        return super().__setitem__(index, item)
+
+    def insert(self, index: int, item: 'UserKeyword|DataDict'):
+        self.invalidate_keyword_cache()
+        super().insert(index, item)
+
+    def clear(self):
+        self.invalidate_keyword_cache()
+        super().clear()

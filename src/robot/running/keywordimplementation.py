@@ -35,10 +35,10 @@ class KeywordImplementation(ModelObject):
     LIBRARY_KEYWORD = 'LIBRARY KEYWORD'
     INVALID_KEYWORD = 'INVALID KEYWORD'
     repr_args = ('name', 'args')
-    __slots__ = ['embedded', '_doc', '_lineno', 'owner', 'parent', 'error']
+    __slots__ = ['embedded', '_name', '_doc', '_lineno', 'owner', 'parent', 'error']
     type: Literal['USER KEYWORD', 'LIBRARY KEYWORD', 'INVALID KEYWORD']
     source: 'Path|None'
-    lineno: 'int|None'    # FIXME: This always be positive int.
+    lineno: 'int|None'    # FIXME: This should always be positive int.
 
     def __init__(self, name: str = '',
                  args: 'ArgumentSpec|None' = None,
@@ -48,8 +48,8 @@ class KeywordImplementation(ModelObject):
                  owner: 'ResourceFile|TestLibrary|None' = None,
                  parent: 'BodyItemParent|None' = None,
                  error: 'str|None' = None):
-        self.embedded: EmbeddedArguments | None = None
-        self.name = name
+        self._name = name
+        self.embedded = self._get_embedded(name)
         self.args = args
         self._doc = doc
         self.tags = tags
@@ -58,10 +58,19 @@ class KeywordImplementation(ModelObject):
         self.parent = parent
         self.error = error
 
-    @setter
-    def name(self, name: str) -> str:
-        self.embedded = EmbeddedArguments.from_name(name)
-        return name
+    def _get_embedded(self, name) -> 'EmbeddedArguments|None':
+        return EmbeddedArguments.from_name(name)
+
+    @property
+    def name(self) -> str:
+        return self._name
+
+    @name.setter
+    def name(self, name: str):
+        self.embedded = self._get_embedded(name)
+        if self.owner and self._name:
+            self.owner.keyword_finder.invalidate_cache()
+        self._name = name
 
     @property
     def full_name(self) -> str:

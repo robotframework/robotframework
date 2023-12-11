@@ -15,9 +15,9 @@
 
 from robot.errors import DataError
 from robot.result import Keyword as KeywordResult
-from robot.utils import setter
 from robot.variables import VariableAssignment
 
+from .arguments import EmbeddedArguments
 from .model import Keyword
 from .statusreporter import StatusReporter
 from .keywordimplementation import KeywordImplementation
@@ -26,9 +26,11 @@ from .keywordimplementation import KeywordImplementation
 class InvalidKeyword(KeywordImplementation):
     type = KeywordImplementation.INVALID_KEYWORD
 
-    @setter
-    def name(self, name: str) -> str:
-        return name
+    def _get_embedded(self, name) -> 'EmbeddedArguments|None':
+        try:
+            return super()._get_embedded(name)
+        except DataError:
+            return None
 
     def create_runner(self, name, languages=None):
         return InvalidKeywordRunner(self, name)

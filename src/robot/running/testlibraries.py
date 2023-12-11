@@ -26,6 +26,7 @@ from robot.utils import (getdoc, get_error_details, Importer, is_dict_like,
 
 from .arguments import CustomArgumentConverters
 from .dynamicmethods import GetKeywordDocumentation, GetKeywordNames, RunKeyword
+from .keywordfinder import KeywordFinder
 from .librarykeyword import DynamicKeyword, LibraryInit, LibraryKeyword, StaticKeyword
 from .libraryscopes import Scope, ScopeManager
 from .outputcapture import OutputCapturer
@@ -47,6 +48,7 @@ class TestLibrary:
         self.keywords: list[LibraryKeyword] = []
         self._has_listeners = None
         self.scope_manager = ScopeManager.for_library(self)
+        self.keyword_finder = KeywordFinder[LibraryKeyword](self)
 
     @property
     def instance(self) -> Any:
@@ -165,20 +167,8 @@ class TestLibrary:
     def create_keywords(self):
         raise NotImplementedError
 
-    def find_keywords(self, name: str,
-                      include_embedded: bool = True) -> 'list[LibraryKeyword]':
-        # FIXME: This is duplication from ResourceFile. Move to some common place?
-        # FIXME: This is also rather slow.
-        keywords = []
-        norm_name = normalize(name, ignore='_')
-        for kw in self.keywords:
-            if kw.embedded:
-                if include_embedded and kw.matches(name):
-                    keywords.append(kw)
-            else:
-                if normalize(kw.name, ignore='_') == norm_name:
-                    keywords.append(kw)
-        return keywords
+    def find_keywords(self, name: str) -> 'list[LibraryKeyword]':
+        return self.keyword_finder.find(name)
 
     def copy(self, name) -> 'TestLibrary':
         lib = type(self)(self.code, self.init.copy(), name, self.real_name,
@@ -309,6 +299,7 @@ class KeywordCreator:
 
     def create_keywords(self, names=None):
         library = self.library
+        library.keyword_finder.invalidate_cache()
         instance = library.instance
         keywords = library.keywords = []
         if names is None:
