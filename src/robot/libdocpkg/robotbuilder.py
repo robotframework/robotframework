@@ -154,8 +154,7 @@ class KeywordDocBuilder:
 
     def build_keyword(self, kw):
         doc, tags = self._get_doc_and_tags(kw)
-        # TODO: Unify reporting syntax errors.
-        if getattr(kw, 'error', None):
+        if kw.error:
             doc = f'*Creating keyword failed:* {kw.error}'
         if not self._resource:
             self._escape_strings_in_defaults(kw.args.defaults)
