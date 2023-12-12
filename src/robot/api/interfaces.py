@@ -516,6 +516,354 @@ class ListenerV3:
     def end_test(self, data: running.TestCase, result: result.TestCase):
         """Called when a test or tasks ends."""
 
+    def start_keyword(self, data: running.Keyword, result: result.Keyword):
+        """Called when a keyword starts by default.
+
+        The default implementation calls :meth:`start_body_item`.
+
+        See also :meth:`start_user_keyword`, :meth:`start_library_keyword` and
+        :meth:`start_invalid_keyword`.
+
+        New in Robot Framework 7.0.
+        """
+        self.start_body_item(data, result)
+
+    def end_keyword(self, data: running.Keyword, result: result.Keyword):
+        """Called when a keyword ends by default.
+
+        The default implementation calls :meth:`end_body_item`.
+
+        See also :meth:`end_user_keyword`, :meth:`end_library_keyword` and
+        :meth:`end_invalid_keyword`.
+
+        New in Robot Framework 7.0.
+        """
+        self.end_body_item(data, result)
+
+    def start_user_keyword(self, data: running.Keyword,
+                           implementation: running.UserKeyword,
+                           result: result.Keyword):
+        """Called when a user keyword starts.
+
+        The default implementation calls :meth:`start_keyword`.
+
+        New in Robot Framework 7.0.
+        """
+        self.start_keyword(data, result)
+
+    def end_user_keyword(self, data: running.Keyword,
+                         implementation: running.UserKeyword,
+                         result: result.Keyword):
+        """Called when a user keyword ends.
+
+        The default implementation calls :meth:`end_keyword`.
+
+        New in Robot Framework 7.0.
+        """
+        self.end_keyword(data, result)
+
+    def start_library_keyword(self, data: running.Keyword,
+                              implementation: running.LibraryKeyword,
+                              result: result.Keyword):
+        """Called when a library keyword starts.
+
+        The default implementation calls :meth:`start_keyword`.
+
+        New in Robot Framework 7.0.
+        """
+        self.start_keyword(data, result)
+
+    def end_library_keyword(self, data: running.Keyword,
+                            implementation: running.LibraryKeyword,
+                            result: result.Keyword):
+        """Called when a library keyword ends.
+
+        The default implementation calls :meth:`start_keyword`.
+
+        New in Robot Framework 7.0.
+        """
+        self.end_keyword(data, result)
+
+    def start_invalid_keyword(self, data: running.Keyword,
+                              implementation: running.KeywordImplementation,
+                              result: result.Keyword):
+        """Called when an invalid keyword call starts.
+
+        Keyword may not have been found, there could have been multiple matches,
+        or the keyword itself could be broken.
+
+        The default implementation calls :meth:`start_keyword`.
+
+        New in Robot Framework 7.0.
+        """
+        self.start_keyword(data, result)
+
+    def end_invalid_keyword(self, data: running.Keyword,
+                            implementation: running.KeywordImplementation,
+                            result: result.Keyword):
+        """Called when an invalid keyword call ends.
+
+        Keyword may not have been found, there could have been multiple matches,
+        or the keyword itself could be broken.
+
+        The default implementation calls :meth:`end_keyword`.
+
+        New in Robot Framework 7.0.
+        """
+        self.end_keyword(data, result)
+
+    def start_for(self, data: running.For, result: result.For):
+        """Called when a FOR loop starts.
+
+        The default implementation calls :meth:`start_body_item`.
+
+        New in Robot Framework 7.0.
+        """
+        self.start_body_item(data, result)
+
+    def end_for(self, data: running.For, result: result.For):
+        """Called when a FOR loop ends.
+
+        The default implementation calls :meth:`end_body_item`.
+
+        New in Robot Framework 7.0.
+        """
+        self.end_body_item(data, result)
+
+    def start_for_iteration(self, data: running.ForIteration,
+                            result: result.ForIteration):
+        """Called when a FOR loop iteration starts.
+
+        The default implementation calls :meth:`start_body_item`.
+
+        New in Robot Framework 7.0.
+        """
+        self.start_body_item(data, result)
+
+    def end_for_iteration(self, data: running.ForIteration,
+                          result: result.ForIteration):
+        """Called when a FOR loop iteration ends.
+
+        The default implementation calls :meth:`end_body_item`.
+
+        New in Robot Framework 7.0.
+        """
+        self.end_body_item(data, result)
+
+    def start_while(self, data: running.While, result: result.While):
+        """Called when a WHILE loop starts.
+
+        The default implementation calls :meth:`start_body_item`.
+
+        New in Robot Framework 7.0.
+        """
+        self.start_body_item(data, result)
+
+    def end_while(self, data: running.While, result: result.While):
+        """Called when a WHILE loop ends.
+
+        The default implementation calls :meth:`end_body_item`.
+
+        New in Robot Framework 7.0.
+        """
+        self.end_body_item(data, result)
+
+    def start_while_iteration(self, data: running.WhileIteration,
+                              result: result.WhileIteration):
+        """Called when a WHILE loop iteration starts.
+
+        The default implementation calls :meth:`start_body_item`.
+
+        New in Robot Framework 7.0.
+        """
+        self.start_body_item(data, result)
+
+    def end_while_iteration(self, data: running.WhileIteration,
+                            result: result.WhileIteration):
+        """Called when a WHILE loop iteration ends.
+
+        The default implementation calls :meth:`end_body_item`.
+
+        New in Robot Framework 7.0.
+        """
+        self.end_body_item(data, result)
+
+    def start_if(self, data: running.If, result: result.If):
+        """Called when an IF/ELSE structure starts.
+
+        The default implementation calls :meth:`start_body_item`.
+
+        New in Robot Framework 7.0.
+        """
+        self.start_body_item(data, result)
+
+    def end_if(self, data: running.If, result: result.If):
+        """Called when an IF/ELSE structure ends.
+
+        The default implementation calls :meth:`end_body_item`.
+
+        New in Robot Framework 7.0.
+        """
+        self.end_body_item(data, result)
+
+    def start_if_branch(self, data: running.IfBranch, result: result.IfBranch):
+        """Called when an individual IF/ELSE branch starts.
+
+        The default implementation calls :meth:`start_body_item`.
+
+        New in Robot Framework 7.0.
+        """
+        self.start_body_item(data, result)
+
+    def end_if_branch(self, data: running.IfBranch, result: result.IfBranch):
+        """Called when an individual IF/ELSE branch ends.
+
+        The default implementation calls :meth:`end_body_item`.
+
+        New in Robot Framework 7.0.
+        """
+        self.end_body_item(data, result)
+
+    def start_try(self, data: running.Try, result: result.Try):
+        """Called when a TRY/EXCEPT structure starts.
+
+        The default implementation calls :meth:`start_body_item`.
+
+        New in Robot Framework 7.0.
+        """
+        self.start_body_item(data, result)
+
+    def end_try(self, data: running.Try, result: result.Try):
+        """Called when a TRY/EXCEPT structure ends.
+
+        The default implementation calls :meth:`end_body_item`.
+
+        New in Robot Framework 7.0.
+        """
+        self.end_body_item(data, result)
+
+    def start_try_branch(self, data: running.TryBranch, result: result.TryBranch):
+        """Called when an individual TRY/EXCEPT branch starts.
+
+        The default implementation calls :meth:`start_body_item`.
+
+        New in Robot Framework 7.0.
+        """
+        self.start_body_item(data, result)
+
+    def end_try_branch(self, data: running.TryBranch, result: result.TryBranch):
+        """Called when an individual TRY/EXCEPT branch ends.
+
+        The default implementation calls :meth:`end_body_item`.
+
+        New in Robot Framework 7.0.
+        """
+        self.end_body_item(data, result)
+
+    def start_var(self, data: running.Var, result: result.Var):
+        """Called when VAR starts.
+
+        The default implementation calls :meth:`start_body_item`.
+
+        New in Robot Framework 7.0.
+        """
+        self.start_body_item(data, result)
+
+    def end_var(self, data: running.Var, result: result.Var):
+        """Called when VAR ends.
+
+        The default implementation calls :meth:`end_body_item`.
+
+        New in Robot Framework 7.0.
+        """
+        self.end_body_item(data, result)
+
+    def start_break(self, data: running.Break, result: result.Break):
+        """Called when BREAK starts.
+
+        The default implementation calls :meth:`start_body_item`.
+
+        New in Robot Framework 7.0.
+        """
+        self.start_body_item(data, result)
+
+    def end_break(self, data: running.Break, result: result.Break):
+        """Called when BREAK ends.
+
+        The default implementation calls :meth:`end_body_item`.
+
+        New in Robot Framework 7.0.
+        """
+        self.end_body_item(data, result)
+
+    def start_continue(self, data: running.Continue, result: result.Continue):
+        """Called when CONTINUE starts.
+
+        The default implementation calls :meth:`start_body_item`.
+
+        New in Robot Framework 7.0.
+        """
+        self.start_body_item(data, result)
+
+    def end_continue(self, data: running.Continue, result: result.Continue):
+        """Called when CONTINUE ends.
+
+        The default implementation calls :meth:`end_body_item`.
+
+        New in Robot Framework 7.0.
+        """
+        self.end_body_item(data, result)
+
+    def start_return(self, data: running.Return, result: result.Return):
+        """Called when RETURN starts.
+
+        The default implementation calls :meth:`start_body_item`.
+
+        New in Robot Framework 7.0.
+        """
+        self.start_body_item(data, result)
+
+    def end_return(self, data: running.Return, result: result.Return):
+        """Called when RETURN ends.
+
+        The default implementation calls :meth:`end_body_item`.
+
+        New in Robot Framework 7.0.
+        """
+        self.end_body_item(data, result)
+
+    def start_error(self, data: running.Error, result: result.Error):
+        """Called when encountered invalid syntax starts.
+
+        The default implementation calls :meth:`start_body_item`.
+
+        New in Robot Framework 7.0.
+        """
+        self.start_body_item(data, result)
+
+    def end_error(self, data: running.Error, result: result.Error):
+        """Called when encountered invalid syntax ends.
+
+        The default implementation calls :meth:`end_body_item`.
+
+        New in Robot Framework 7.0.
+        """
+        self.end_body_item(data, result)
+
+    def start_body_item(self, data, result):
+        """Called by default when a keyword or a control structure starts.
+
+        New in Robot Framework 7.0.
+        """
+        pass
+
+    def end_body_item(self, data, result):
+        """Called by default when a keyword or a control structure ends.
+
+        New in Robot Framework 7.0.
+        """
+        pass
+
     def log_message(self, message: Message):
         """Called when a normal log message are emitted.
 

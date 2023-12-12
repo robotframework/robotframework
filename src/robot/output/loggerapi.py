@@ -50,23 +50,23 @@ class LoggerApi:
         self.end_keyword(data, result)
 
     def start_library_keyword(self, data: 'running.Keyword',
-                           implementation: 'running.LibraryKeyword',
-                           result: 'result.Keyword'):
+                              implementation: 'running.LibraryKeyword',
+                              result: 'result.Keyword'):
         self.start_keyword(data, result)
 
     def end_library_keyword(self, data: 'running.Keyword',
-                         implementation: 'running.LibraryKeyword',
-                         result: 'result.Keyword'):
+                            implementation: 'running.LibraryKeyword',
+                            result: 'result.Keyword'):
         self.end_keyword(data, result)
 
     def start_invalid_keyword(self, data: 'running.Keyword',
-                           implementation: 'running.KeywordImplementation',
-                           result: 'result.Keyword'):
+                              implementation: 'running.KeywordImplementation',
+                              result: 'result.Keyword'):
         self.start_keyword(data, result)
 
     def end_invalid_keyword(self, data: 'running.Keyword',
-                         implementation: 'running.KeywordImplementation',
-                         result: 'result.Keyword'):
+                            implementation: 'running.KeywordImplementation',
+                            result: 'result.Keyword'):
         self.end_keyword(data, result)
 
     def start_for(self, data: 'running.For', result: 'result.For'):
