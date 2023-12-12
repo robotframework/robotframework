@@ -34,17 +34,15 @@ __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#
 __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#programmatic-modification-of-results
 """
 
-import warnings
-from collections import OrderedDict
 from datetime import datetime, timedelta
 from itertools import chain
 from pathlib import Path
-from typing import Generic, Literal, Mapping, Sequence, Type, Union, TypeVar
+from typing import Literal, Mapping, Sequence, Union, TypeVar
 
 from robot import model
-from robot.model import (BodyItem, create_fixture, DataDict, SuiteVisitor, Tags,
-                         TestSuites, TotalStatistics, TotalStatisticsBuilder)
-from robot.utils import copy_signature, KnownAtRuntime, setter
+from robot.model import (BodyItem, create_fixture, DataDict, Tags, TestSuites,
+                         TotalStatistics, TotalStatisticsBuilder)
+from robot.utils import setter
 
 from .configurer import SuiteConfigurer
 from .messagefilter import MessageFilter
@@ -61,33 +59,17 @@ BodyItemParent = Union['TestSuite', 'TestCase', 'Keyword', 'For', 'ForIteration'
 
 class Body(model.BaseBody['Keyword', 'For', 'While', 'If', 'Try', 'Var', 'Return',
                           'Continue', 'Break', 'Message', 'Error']):
-    __slots__ = []
+    __slots__ = ()
 
 
 class Branches(model.BaseBranches['Keyword', 'For', 'While', 'If', 'Try', 'Var', 'Return',
                                   'Continue', 'Break', 'Message', 'Error', IT]):
-    __slots__ = []
+    __slots__ = ()
 
 
-class IterationType(Generic[FW]):
-    """Class that wrapps `Generic` as python doesn't allow multple generic inheritance"""
-    pass
-
-
-class Iterations(model.BaseBody['Keyword', 'For', 'While', 'If', 'Try', 'Var', 'Return',
-                                'Continue', 'Break', 'Message', 'Error'], IterationType[FW]):
-    __slots__ = ['iteration_class']
-    iteration_type: Type[FW] = KnownAtRuntime
-
-    def __init__(self, iteration_class: Type[FW],
-                 parent: BodyItemParent = None,
-                 items: 'Sequence[FW|DataDict]' = ()):
-        self.iteration_class = iteration_class
-        super().__init__(parent, items)
-
-    @copy_signature(iteration_type)
-    def create_iteration(self, *args, **kwargs) -> FW:
-        return self._create(self.iteration_class, 'iteration_class', args, kwargs)
+class Iterations(model.BaseIterations['Keyword', 'For', 'While', 'If', 'Try', 'Var', 'Return',
+                                      'Continue', 'Break', 'Message', 'Error', FW]):
+    __slots__ = ()
 
 
 @Body.register
@@ -103,6 +85,7 @@ class StatusMixin:
     SKIP = 'SKIP'
     NOT_RUN = 'NOT RUN'
     NOT_SET = 'NOT SET'
+    status: Literal['PASS', 'FAIL', 'SKIP', 'NOT RUN', 'NOT SET']
     __slots__ = ()
 
     @property
@@ -287,11 +270,8 @@ class StatusMixin:
         self.status = self.NOT_RUN
 
 
-class ForIteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
-    """Represents one FOR loop iteration."""
-    type = BodyItem.ITERATION
+class ForIteration(model.ForIteration, StatusMixin, DeprecatedAttributesMixin):
     body_class = Body
-    repr_args = ('assign',)
     __slots__ = ['assign', 'message', 'status', '_start_time', '_end_time',
                  '_elapsed_time']
 
@@ -302,32 +282,12 @@ class ForIteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
                  end_time: 'datetime|str|None' = None,
                  elapsed_time: 'timedelta|int|float|None' = None,
                  parent: BodyItemParent = None):
-        self.assign = OrderedDict(assign or ())
-        self.parent = parent
+        super().__init__(assign, parent)
         self.status = status
         self.message = message
         self.start_time = start_time
         self.end_time = end_time
         self.elapsed_time = elapsed_time
-        self.body = ()
-
-    @property
-    def variables(self) -> 'Mapping[str, str]':    # TODO: Remove in RF 8.0.
-        """Deprecated since Robot Framework 7.0. Use :attr:`assign` instead."""
-        warnings.warn("'ForIteration.variables' is deprecated and will be removed in "
-                      "Robot Framework 8.0. Use 'ForIteration.assign' instead.")
-        return self.assign
-
-    @setter
-    def body(self, body: 'Sequence[BodyItem|DataDict]') -> Body:
-        return self.body_class(self, body)
-
-    def visit(self, visitor: SuiteVisitor):
-        visitor.visit_for_iteration(self)
-
-    @property
-    def _log_name(self):
-        return ', '.join(f'{name} = {value}' for name, value in self.assign.items())
 
 
 @Body.register
@@ -364,9 +324,7 @@ class For(model.For, StatusMixin, DeprecatedAttributesMixin):
         return str(self)[7:]    # Drop 'FOR    ' prefix.
 
 
-class WhileIteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
-    """Represents one WHILE loop iteration."""
-    type = BodyItem.ITERATION
+class WhileIteration(model.WhileIteration, StatusMixin, DeprecatedAttributesMixin):
     body_class = Body
     __slots__ = ['status', 'message', '_start_time', '_end_time', '_elapsed_time']
 
@@ -376,20 +334,12 @@ class WhileIteration(BodyItem, StatusMixin, DeprecatedAttributesMixin):
                  end_time: 'datetime|str|None' = None,
                  elapsed_time: 'timedelta|int|float|None' = None,
                  parent: BodyItemParent = None):
-        self.parent = parent
+        super().__init__(parent)
         self.status = status
         self.message = message
         self.start_time = start_time
         self.end_time = end_time
         self.elapsed_time = elapsed_time
-        self.body = ()
-
-    @setter
-    def body(self, body: 'Sequence[BodyItem|DataDict]') -> Body:
-        return self.body_class(self, body)
-
-    def visit(self, visitor: SuiteVisitor):
-        visitor.visit_while_iteration(self)
 
 
 @Body.register

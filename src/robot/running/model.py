@@ -36,7 +36,7 @@ __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#
 
 import warnings
 from pathlib import Path
-from typing import Literal, Sequence, TYPE_CHECKING, Union
+from typing import Literal, Sequence, TYPE_CHECKING, TypeVar, Union
 
 from robot import model
 from robot.conf import RobotSettings
@@ -56,13 +56,19 @@ if TYPE_CHECKING:
     from .resourcemodel import ResourceFile
 
 
+IT = TypeVar('IT', bound='IfBranch|TryBranch')
 BodyItemParent = Union['TestSuite', 'TestCase', 'UserKeyword', 'For', 'If', 'IfBranch',
                        'Try', 'TryBranch', 'While', None]
 
 
 class Body(model.BaseBody['Keyword', 'For', 'While', 'If', 'Try', 'Var', 'Return',
                           'Continue', 'Break', 'model.Message', 'Error']):
-    __slots__ = []
+    __slots__ = ()
+
+
+class Branches(model.BaseBranches['Keyword', 'For', 'While', 'If', 'Try', 'Var', 'Return',
+                                  'Continue', 'Break', 'Message', 'Error', IT]):
+    __slots__ = ()
 
 
 class WithSource:
@@ -178,8 +184,8 @@ class While(model.While, WithSource):
 
 
 class IfBranch(model.IfBranch, WithSource):
-    __slots__ = ['lineno']
     body_class = Body
+    __slots__ = ['lineno']
 
     def __init__(self, type: str = BodyItem.IF,
                  condition: 'str|None' = None,
@@ -197,8 +203,9 @@ class IfBranch(model.IfBranch, WithSource):
 
 @Body.register
 class If(model.If, WithSource):
-    __slots__ = ['lineno', 'error']
     branch_class = IfBranch
+    branches_class = Branches[branch_class]
+    __slots__ = ['lineno', 'error']
 
     def __init__(self, parent: BodyItemParent = None,
                  lineno: 'int|None' = None,
@@ -220,8 +227,8 @@ class If(model.If, WithSource):
 
 
 class TryBranch(model.TryBranch, WithSource):
-    __slots__ = ['lineno']
     body_class = Body
+    __slots__ = ['lineno']
 
     def __init__(self, type: str = BodyItem.TRY,
                  patterns: Sequence[str] = (),
@@ -248,8 +255,9 @@ class TryBranch(model.TryBranch, WithSource):
 
 @Body.register
 class Try(model.Try, WithSource):
-    __slots__ = ['lineno', 'error']
     branch_class = TryBranch
+    branches_class = Branches[branch_class]
+    __slots__ = ['lineno', 'error']
 
     def __init__(self, parent: BodyItemParent = None,
                  lineno: 'int|None' = None,

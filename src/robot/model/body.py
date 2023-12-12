@@ -25,8 +25,8 @@ from .modelobject import DataDict, full_name, ModelObject
 if TYPE_CHECKING:
     from robot.result.model import ForIteration, WhileIteration
     from robot.running.model import UserKeyword, ResourceFile
-    from .control import (Break, Continue, Error, For, If, IfBranch, Return,
-                          Try, TryBranch, Var, While)
+    from .control import (Break, Continue, Error, For, ForIteration, If, IfBranch,
+                          Return, Try, TryBranch, Var, While, WhileIteration)
     from .keyword import Keyword
     from .message import Message
     from .testcase import TestCase
@@ -49,6 +49,7 @@ B = TypeVar('B', bound='Break')
 M = TypeVar('M', bound='Message')
 E = TypeVar('E', bound='Error')
 IT = TypeVar('IT', bound='IfBranch|TryBranch')
+FW = TypeVar('FW', bound='ForIteration|WhileIteration')
 
 
 class BodyItem(ModelObject):
@@ -136,7 +137,7 @@ class BaseBody(ItemList[BodyItem], Generic[KW, F, W, I, T, V, R, C, B, M, E]):
 
     def _item_from_dict(self, data: DataDict) -> BodyItem:
         item_type = data.get('type', None)
-        if not item_type:
+        if item_type is None:
             item_class = self.keyword_class
         elif item_type == BodyItem.IF_ELSE_ROOT:
             item_class = self.if_class
@@ -163,7 +164,7 @@ class BaseBody(ItemList[BodyItem], Generic[KW, F, W, I, T, V, R, C, B, M, E]):
             f"Use item specific methods like 'create_keyword' instead."
         )
 
-    def _create(self, cls: 'Type[BI]', name: str, args: 'tuple[Any]',
+    def _create(self, cls: 'Type[BI]', name: str, args: 'tuple[Any, ...]',
                 kwargs: 'dict[str, Any]') -> BI:
         if cls is KnownAtRuntime:
             raise TypeError(f"'{full_name(self)}' object does not support '{name}'.")
@@ -284,8 +285,8 @@ class Body(BaseBody['Keyword', 'For', 'While', 'If', 'Try', 'Var', 'Return',
     pass
 
 
+# BaseBranches cannot extend Generic[IT] directly with BaseBody[...].
 class BranchType(Generic[IT]):
-    """Class that wrapps `Generic` as python doesn't allow multple generic inheritance"""
     pass
 
 
@@ -296,7 +297,7 @@ class BaseBranches(BaseBody[KW, F, W, I, T, V, R, C, B, M, E], BranchType[IT]):
 
     def __init__(self, branch_class: Type[IT],
                  parent: BodyItemParent = None,
-                 items: 'Iterable[BodyItem|DataDict]' = ()):
+                 items: 'Iterable[IT|DataDict]' = ()):
         self.branch_class = branch_class
         super().__init__(parent, items)
 
@@ -306,3 +307,26 @@ class BaseBranches(BaseBody[KW, F, W, I, T, V, R, C, B, M, E], BranchType[IT]):
     @copy_signature(branch_type)
     def create_branch(self, *args, **kwargs) -> IT:
         return self._create(self.branch_class, 'create_branch', args, kwargs)
+
+
+# BaseIterations cannot extend Generic[IT] directly with BaseBody[...].
+class IterationType(Generic[FW]):
+    pass
+
+
+class BaseIterations(BaseBody[KW, F, W, I, T, V, R, C, B, M, E], IterationType[FW]):
+    __slots__ = ['iteration_class']
+    iteration_type: Type[FW] = KnownAtRuntime
+
+    def __init__(self, iteration_class: Type[FW],
+                 parent: BodyItemParent = None,
+                 items: 'Iterable[FW|DataDict]' = ()):
+        self.iteration_class = iteration_class
+        super().__init__(parent, items)
+
+    def _item_from_dict(self, data: DataDict) -> FW:
+        return self.iteration_class.from_dict(data)
+
+    @copy_signature(iteration_type)
+    def create_iteration(self, *args, **kwargs) -> FW:
+        return self._create(self.iteration_class, 'iteration_class', args, kwargs)

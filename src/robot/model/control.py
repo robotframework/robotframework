@@ -14,23 +14,64 @@
 #  limitations under the License.
 
 import warnings
+from collections import OrderedDict
 from typing import Any, cast, Literal, Sequence, TypeVar, TYPE_CHECKING
 
 from robot.utils import setter
 
-from .body import Body, BodyItem, BodyItemParent, BaseBranches
+from .body import Body, BodyItem, BodyItemParent, BaseBranches, BaseIterations
 from .modelobject import DataDict
 from .visitor import SuiteVisitor
 
 if TYPE_CHECKING:
     from robot.model import Keyword, Message
 
+
 IT = TypeVar('IT', bound='IfBranch|TryBranch')
+FW = TypeVar('FW', bound='ForIteration|WhileIteration')
 
 
 class Branches(BaseBranches['Keyword', 'For', 'While', 'If', 'Try', 'Var', 'Return',
                             'Continue', 'Break', 'Message', 'Error', IT]):
-    pass
+    __slots__ = ()
+
+
+class Iterations(BaseIterations['Keyword', 'For', 'While', 'If', 'Try', 'Var', 'Return',
+                                'Continue', 'Break', 'Message', 'Error', FW]):
+    __slots__ = ()
+
+
+class ForIteration(BodyItem):
+    """Represents one FOR loop iteration."""
+    type = BodyItem.ITERATION
+    body_class = Body
+    repr_args = ('assign',)
+    __slots__ = ['assign', 'message', 'status', '_start_time', '_end_time',
+                 '_elapsed_time']
+
+    def __init__(self, assign: 'Mapping[str, str]|None' = None,
+                 parent: BodyItemParent = None):
+        self.assign = OrderedDict(assign or ())
+        self.parent = parent
+        self.body = ()
+
+    @property
+    def variables(self) -> 'Mapping[str, str]':    # TODO: Remove in RF 8.0.
+        """Deprecated since Robot Framework 7.0. Use :attr:`assign` instead."""
+        warnings.warn("'ForIteration.variables' is deprecated and will be removed in "
+                      "Robot Framework 8.0. Use 'ForIteration.assign' instead.")
+        return self.assign
+
+    @setter
+    def body(self, body: 'Sequence[BodyItem|DataDict]') -> Body:
+        return self.body_class(self, body)
+
+    def visit(self, visitor: SuiteVisitor):
+        visitor.visit_for_iteration(self)
+
+    @property
+    def _log_name(self):
+        return ', '.join(f'{name} = {value}' for name, value in self.assign.items())
 
 
 @Body.register
@@ -101,6 +142,24 @@ class For(BodyItem):
 
     def _include_in_repr(self, name: str, value: Any) -> bool:
         return value is not None or name in ('assign', 'flavor', 'values')
+
+
+class WhileIteration(BodyItem):
+    """Represents one WHILE loop iteration."""
+    type = BodyItem.ITERATION
+    body_class = Body
+    __slots__ = ()
+
+    def __init__(self, parent: BodyItemParent = None):
+        self.parent = parent
+        self.body = ()
+
+    @setter
+    def body(self, body: 'Sequence[BodyItem|DataDict]') -> Body:
+        return self.body_class(self, body)
+
+    def visit(self, visitor: SuiteVisitor):
+        visitor.visit_while_iteration(self)
 
 
 @Body.register
@@ -340,7 +399,7 @@ class Try(BodyItem):
         return None
 
     @property
-    def finally_branch(self):
+    def finally_branch(self) -> 'TryBranch|None':
         if self.body and self.body[-1].type == BodyItem.FINALLY:
             return cast(TryBranch, self.body[-1])
         return None
