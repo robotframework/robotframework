@@ -40,38 +40,38 @@ class UserKeywordRunner:
         self.name = name or keyword.name
         self.pre_run_messages = ()
 
-    def run(self, data: KeywordData, context, run=True):
+    def run(self, data: KeywordData, result: KeywordResult, context, run=True):
         kw = self.keyword.bind(data)
         assignment = VariableAssignment(data.assign)
-        result = self._get_result(data, kw, assignment, context.variables)
+        self._config_result(result, data, kw, assignment, context.variables)
         with StatusReporter(data, result, context, run, implementation=kw):
             if kw.private:
                 context.warn_on_invalid_private_call(kw)
             with assignment.assigner(context) as assigner:
                 if run:
-                    return_value = self._run(kw, data.args, result, context)
+                    return_value = self._run(data, kw, result, context)
                     assigner.assign(return_value)
                     return return_value
 
-    def _get_result(self, data: KeywordData, kw: 'UserKeyword', assignment,
-                    variables) -> KeywordResult:
+    def _config_result(self, result: KeywordResult, data: KeywordData,
+                       kw: 'UserKeyword', assignment, variables):
         doc = variables.replace_string(kw.doc, ignore_errors=True)
         doc, tags = split_tags_from_doc(doc)
         tags = variables.replace_list(kw.tags, ignore_errors=True) + tags
-        return KeywordResult(name=self.name,
-                             owner=kw.owner.name,
-                             doc=getshortdoc(doc),
-                             args=data.args,
-                             assign=tuple(assignment),
-                             tags=tags,
-                             type=data.type)
+        result.config(name=self.name,
+                      owner=kw.owner.name,
+                      doc=getshortdoc(doc),
+                      args=data.args,
+                      assign=tuple(assignment),
+                      tags=tags,
+                      type=data.type)
 
-    def _run(self, kw: 'UserKeyword', args, result, context):
+    def _run(self, data: KeywordData, kw: 'UserKeyword', result: KeywordResult, context):
         if self.pre_run_messages:
             for message in self.pre_run_messages:
                 context.output.message(message)
         variables = context.variables
-        positional, named = self._resolve_arguments(kw, args, variables)
+        positional, named = self._resolve_arguments(kw, data.args, variables)
         with context.user_keyword(kw):
             self._set_arguments(kw, positional, named, context)
             if kw.timeout:
@@ -80,7 +80,7 @@ class UserKeywordRunner:
             else:
                 timeout = None
             with context.timeout(timeout):
-                exception, return_value = self._execute(kw, context)
+                exception, return_value = self._execute(kw, result, context)
                 if exception and not exception.can_continue(context):
                     raise exception
                 return_value = self._handle_return_value(return_value, variables)
@@ -142,7 +142,7 @@ class UserKeywordRunner:
         args = ' | '.join(f'{name}={prepr(variables[name])}' for name in args)
         return f'Arguments: [ {args} ]'
 
-    def _execute(self, kw: 'UserKeyword', context):
+    def _execute(self, kw: 'UserKeyword', result: KeywordResult, context):
         if kw.error:
             raise DataError(kw.error)
         if not kw.body:
@@ -153,9 +153,9 @@ class UserKeywordRunner:
             return None, None
         error = success = return_value = None
         if kw.setup:
-            error = self._run_setup_or_teardown(kw.setup, context)
+            error = self._run_setup_or_teardown(kw.setup, result.setup, context)
         try:
-            BodyRunner(context, run=not error).run(kw.body)
+            BodyRunner(context, run=not error).run(kw, result)
         except ReturnFromKeyword as exception:
             return_value = exception.return_value
             error = exception.earlier_failures
@@ -168,7 +168,8 @@ class UserKeywordRunner:
             error = exception
         if kw.teardown:
             with context.keyword_teardown(error):
-                td_error = self._run_setup_or_teardown(kw.teardown, context)
+                td_error = self._run_setup_or_teardown(kw.teardown, result.teardown,
+                                                       context)
         else:
             td_error = None
         if error or td_error:
@@ -188,7 +189,8 @@ class UserKeywordRunner:
             return return_value
         return return_value[0]
 
-    def _run_setup_or_teardown(self, data: KeywordData, context):
+    def _run_setup_or_teardown(self, data: KeywordData, result: KeywordResult,
+                               context):
         try:
             name = context.variables.replace_string(data.name)
         except DataError as err:
@@ -198,31 +200,32 @@ class UserKeywordRunner:
         if name.upper() in ('', 'NONE'):
             return None
         try:
-            KeywordRunner(context).run(data, name)
+            KeywordRunner(context).run(data, result, name)
         except PassExecution:
             return None
         except ExecutionStatus as err:
             return err
         return None
 
-    def dry_run(self, data: KeywordData, context):
+    def dry_run(self, data: KeywordData, result: KeywordResult, context):
         kw = self.keyword.bind(data)
         assignment = VariableAssignment(data.assign)
-        result = self._get_result(data, kw, assignment, context.variables)
+        self._config_result(result, data, kw, assignment, context.variables)
         with StatusReporter(data, result, context, implementation=kw):
             assignment.validate_assignment()
-            self._dry_run(kw, data.args, result, context)
+            self._dry_run(data, kw, result, context)
 
-    def _dry_run(self, kw: 'UserKeyword', args, result, context):
+    def _dry_run(self, data: KeywordData, kw: 'UserKeyword', result: KeywordResult,
+                 context):
         if self.pre_run_messages:
             for message in self.pre_run_messages:
                 context.output.message(message)
-        self._resolve_arguments(kw, args)
+        self._resolve_arguments(kw, data.args)
         with context.user_keyword(kw):
             if kw.timeout:
                 timeout = KeywordTimeout(kw.timeout, context.variables)
                 result.timeout = str(timeout)
-            error, _ = self._execute(kw, context)
+            error, _ = self._execute(kw, result, context)
             if error:
                 raise error
 
@@ -251,8 +254,7 @@ class EmbeddedArgumentsRunner(UserKeywordRunner):
         args += self._format_args_for_trace_logging(kw.args)
         return self._format_trace_log_args_message(args, variables)
 
-    def _get_result(self, data: KeywordData, kw: 'UserKeyword', assignment,
-                    variables) -> KeywordResult:
-        result = super()._get_result(data, kw, assignment, variables)
+    def _config_result(self, result: KeywordResult, data: KeywordData,
+                       kw: 'UserKeyword', assignment, variables):
+        super()._config_result(result, data, kw, assignment, variables)
         result.source_name = kw.name
-        return result

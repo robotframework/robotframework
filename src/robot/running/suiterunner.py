@@ -17,12 +17,14 @@ from datetime import datetime
 
 from robot.errors import ExecutionFailed, ExecutionStatus, DataError, PassExecution
 from robot.model import SuiteVisitor, TagPatterns
-from robot.result import TestSuite, Result
+from robot.result import (Keyword as KeywordResult, TestCase as TestResult,
+                          TestSuite as SuiteResult, Result)
 from robot.utils import is_list_like, NormalizedDict, test_or_task
 from robot.variables import VariableScopes
 
 from .bodyrunner import BodyRunner, KeywordRunner
 from .context import EXECUTION_CONTEXTS
+from .model import Keyword as KeywordData, TestCase as TestData, TestSuite as SuiteData
 from .namespace import Namespace
 from .status import SuiteStatus, TestStatus
 from .timeouts import TestTimeout
@@ -32,61 +34,62 @@ class SuiteRunner(SuiteVisitor):
 
     def __init__(self, output, settings):
         self.result = None
-        self._output = output
-        self._settings = settings
-        self._variables = VariableScopes(settings)
-        self._suite = None
-        self._suite_status = None
-        self._executed = [NormalizedDict(ignore='_')]
-        self._skipped_tags = TagPatterns(settings.skip)
+        self.output = output
+        self.settings = settings
+        self.variables = VariableScopes(settings)
+        self.suite_result = None
+        self.suite_status = None
+        self.executed = [NormalizedDict(ignore='_')]
+        self.skipped_tags = TagPatterns(settings.skip)
 
     @property
-    def _context(self):
+    def context(self):
         return EXECUTION_CONTEXTS.current
 
-    def start_suite(self, suite):
-        if suite.name in self._executed[-1] and suite.parent.source:
-            self._output.warn(f"Multiple suites with name '{suite.name}' executed in "
-                              f"suite '{suite.parent.full_name}'.")
-        self._executed[-1][suite.name] = True
-        self._executed.append(NormalizedDict(ignore='_'))
-        self._output.library_listeners.new_suite_scope()
-        result = TestSuite(source=suite.source,
-                           name=suite.name,
-                           doc=suite.doc,
-                           metadata=suite.metadata,
-                           start_time=datetime.now(),
-                           rpa=self._settings.rpa)
+    def start_suite(self, data: SuiteData):
+        if data.name in self.executed[-1] and data.parent.source:
+            self.output.warn(f"Multiple suites with name '{data.name}' executed in "
+                              f"suite '{data.parent.full_name}'.")
+        self.executed[-1][data.name] = True
+        self.executed.append(NormalizedDict(ignore='_'))
+        self.output.library_listeners.new_suite_scope()
+        result = SuiteResult(source=data.source,
+                             name=data.name,
+                             doc=data.doc,
+                             metadata=data.metadata,
+                             start_time=datetime.now(),
+                             rpa=self.settings.rpa)
         if not self.result:
-            self.result = Result(root_suite=result, rpa=self._settings.rpa)
-            self.result.configure(status_rc=self._settings.status_rc,
-                                  stat_config=self._settings.statistics_config)
+            self.result = Result(root_suite=result, rpa=self.settings.rpa)
+            self.result.configure(status_rc=self.settings.status_rc,
+                                  stat_config=self.settings.statistics_config)
         else:
-            self._suite.suites.append(result)
-        self._suite = result
-        self._suite_status = SuiteStatus(self._suite_status,
-                                         self._settings.exit_on_failure,
-                                         self._settings.exit_on_error,
-                                         self._settings.skip_teardown_on_exit)
-        ns = Namespace(self._variables, result, suite.resource, self._settings.languages)
+            self.suite_result.suites.append(result)
+        self.suite_result = result
+        self.suite_status = SuiteStatus(self.suite_status,
+                                        self.settings.exit_on_failure,
+                                        self.settings.exit_on_error,
+                                        self.settings.skip_teardown_on_exit)
+        ns = Namespace(self.variables, result, data.resource, self.settings.languages)
         ns.start_suite()
-        ns.variables.set_from_variable_section(suite.resource.variables)
-        EXECUTION_CONTEXTS.start_suite(result, ns, self._output,
-                                       self._settings.dry_run)
-        self._context.set_suite_variables(result)
-        if not self._suite_status.failed:
+        ns.variables.set_from_variable_section(data.resource.variables)
+        EXECUTION_CONTEXTS.start_suite(result, ns, self.output,
+                                       self.settings.dry_run)
+        self.context.set_suite_variables(result)
+        if not self.suite_status.failed:
             ns.handle_imports()
             ns.variables.resolve_delayed()
         result.doc = self._resolve_setting(result.doc)
         result.metadata = [(self._resolve_setting(n), self._resolve_setting(v))
                            for n, v in result.metadata.items()]
-        self._context.set_suite_variables(result)
-        self._output.start_suite(suite, result)
-        self._output.register_error_listener(self._suite_status.error_occurred)
-        self._run_setup(suite, self._suite_status, run=self._any_test_run(suite))
+        self.context.set_suite_variables(result)
+        self.output.start_suite(data, result)
+        self.output.register_error_listener(self.suite_status.error_occurred)
+        self._run_setup(data, self.suite_status, self.suite_result,
+                        run=self._any_test_run(data))
 
-    def _any_test_run(self, suite):
-        skipped_tags = self._skipped_tags
+    def _any_test_run(self, suite: SuiteData):
+        skipped_tags = self.skipped_tags
         for test in suite.all_tests:
             tags = test.tags
             if not (skipped_tags.match(tags)
@@ -97,71 +100,73 @@ class SuiteRunner(SuiteVisitor):
 
     def _resolve_setting(self, value):
         if is_list_like(value):
-            return self._variables.replace_list(value, ignore_errors=True)
-        return self._variables.replace_string(value, ignore_errors=True)
+            return self.variables.replace_list(value, ignore_errors=True)
+        return self.variables.replace_string(value, ignore_errors=True)
 
-    def end_suite(self, suite):
-        self._suite.message = self._suite_status.message
-        self._context.report_suite_status(self._suite.status,
-                                          self._suite.full_message)
-        with self._context.suite_teardown():
-            failure = self._run_teardown(suite, self._suite_status)
+    def end_suite(self, suite: SuiteData):
+        self.suite_result.message = self.suite_status.message
+        self.context.report_suite_status(self.suite_result.status,
+                                         self.suite_result.full_message)
+        with self.context.suite_teardown():
+            failure = self._run_teardown(suite, self.suite_status, self.suite_result)
             if failure:
                 if failure.skip:
-                    self._suite.suite_teardown_skipped(str(failure))
+                    self.suite_result.suite_teardown_skipped(str(failure))
                 else:
-                    self._suite.suite_teardown_failed(str(failure))
-        self._suite.end_time = datetime.now()
-        self._suite.message = self._suite_status.message
-        self._context.end_suite(suite, self._suite)
-        self._executed.pop()
-        self._suite = self._suite.parent
-        self._suite_status = self._suite_status.parent
-        self._output.library_listeners.discard_suite_scope()
+                    self.suite_result.suite_teardown_failed(str(failure))
+        self.suite_result.end_time = datetime.now()
+        self.suite_result.message = self.suite_status.message
+        self.context.end_suite(suite, self.suite_result)
+        self._clear_result(self.suite_result)
+        self.executed.pop()
+        self.suite_result = self.suite_result.parent
+        self.suite_status = self.suite_status.parent
+        self.output.library_listeners.discard_suite_scope()
 
-    def visit_test(self, test):
-        settings = self._settings
-        if test.tags.robot('exclude'):
+    def visit_test(self, data: TestData):
+        settings = self.settings
+        if data.tags.robot('exclude'):
             return
-        if test.name in self._executed[-1]:
-            self._output.warn(
-                test_or_task(f"Multiple {{test}}s with name '{test.name}' executed in "
-                             f"suite '{test.parent.full_name}'.", settings.rpa))
-        self._executed[-1][test.name] = True
-        result = self._suite.tests.create(self._resolve_setting(test.name),
-                                          self._resolve_setting(test.doc),
-                                          self._resolve_setting(test.tags),
-                                          self._get_timeout(test),
-                                          test.lineno,
-                                          start_time=datetime.now())
-        self._context.start_test(test, result)
-        status = TestStatus(self._suite_status, result, settings.skip_on_failure,
+        if data.name in self.executed[-1]:
+            self.output.warn(
+                test_or_task(f"Multiple {{test}}s with name '{data.name}' executed in "
+                             f"suite '{data.parent.full_name}'.", settings.rpa))
+        self.executed[-1][data.name] = True
+        result = self.suite_result.tests.create(self._resolve_setting(data.name),
+                                                self._resolve_setting(data.doc),
+                                                self._resolve_setting(data.tags),
+                                                self._get_timeout(data),
+                                                data.lineno,
+                                                start_time=datetime.now())
+        self.context.start_test(data, result)
+        status = TestStatus(self.suite_status, result, settings.skip_on_failure,
                             settings.rpa)
         if status.exit:
             self._add_exit_combine()
             result.tags.add('robot:exit')
         if status.passed:
-            if not test.error:
-                if not test.name:
-                    test.error = 'Test name cannot be empty.'
-                elif not test.body:
-                    test.error = 'Test cannot be empty.'
-            if test.error:
+            if not data.error:
+                if not data.name:
+                    data.error = 'Test name cannot be empty.'
+                elif not data.body:
+                    data.error = 'Test cannot be empty.'
+            if data.error:
                 if settings.rpa:
-                    test.error = test.error.replace('Test', 'Task')
-                status.test_failed(test.error)
-            elif test.tags.robot('skip'):
+                    data.error = data.error.replace('Test', 'Task')
+                status.test_failed(data.error)
+            elif data.tags.robot('skip'):
                 status.test_skipped(
                     test_or_task("{Test} skipped using 'robot:skip' tag.",
                                  settings.rpa))
-            elif self._skipped_tags.match(test.tags):
+            elif self.skipped_tags.match(data.tags):
                 status.test_skipped(
                     test_or_task("{Test} skipped using '--skip' command line option.",
                                  settings.rpa))
-        self._run_setup(test, status, result)
+        self._run_setup(data, status, result)
         if status.passed:
+            runner = BodyRunner(self.context, templated=bool(data.template))
             try:
-                BodyRunner(self._context, templated=bool(test.template)).run(test.body)
+                runner.run(data, result)
             except PassExecution as exception:
                 err = exception.earlier_failures
                 if err:
@@ -176,8 +181,8 @@ class SuiteRunner(SuiteVisitor):
             status.test_failed(status.message)
         result.status = status.status
         result.message = status.message or result.message
-        with self._context.test_teardown(result):
-            self._run_teardown(test, status, result)
+        with self.context.test_teardown(result):
+            self._run_teardown(data, status, result)
         if status.passed and result.timeout and result.timeout.timed_out():
             status.test_failed(result.timeout.get_message())
             result.message = status.message
@@ -187,42 +192,56 @@ class SuiteRunner(SuiteVisitor):
         result.end_time = datetime.now()
         failed_before_listeners = result.failed
         # TODO: can this be removed to context
-        self._output.end_test(test, result)
+        self.output.end_test(data, result)
         if result.failed and not failed_before_listeners:
             status.failure_occurred()
-        self._context.end_test(result)
+        self.context.end_test(result)
+        self._clear_result(result)
+
+    def _clear_result(self, result: 'SuiteResult|TestResult'):
+        if result.has_setup:
+            result.setup = None
+        if result.has_teardown:
+            result.teardown = None
+        if hasattr(result, 'body'):
+            result.body.clear()
 
     def _add_exit_combine(self):
         exit_combine = ('NOT robot:exit', '')
-        if exit_combine not in self._settings['TagStatCombine']:
-            self._settings['TagStatCombine'].append(exit_combine)
+        if exit_combine not in self.settings['TagStatCombine']:
+            self.settings['TagStatCombine'].append(exit_combine)
 
-    def _get_timeout(self, test):
+    def _get_timeout(self, test: TestData):
         if not test.timeout:
             return None
-        return TestTimeout(test.timeout, self._variables, rpa=test.parent.rpa)
+        return TestTimeout(test.timeout, self.variables, rpa=test.parent.rpa)
 
-    def _run_setup(self, item, status, result=None, run=True):
+    def _run_setup(self, item: 'SuiteData|TestData',
+                   status: 'SuiteStatus|TestStatus',
+                   result: 'SuiteResult|TestResult',
+                   run: bool = True):
         if run and status.passed:
             if item.has_setup:
-                exception = self._run_setup_or_teardown(item.setup)
+                exception = self._run_setup_or_teardown(item.setup, result.setup)
             else:
                 exception = None
             status.setup_executed(exception)
-            if result and isinstance(exception, PassExecution):
+            if isinstance(exception, PassExecution) and isinstance(result, TestResult):
                 result.message = exception.message
         elif status.parent and status.parent.skipped:
             status.skipped = True
 
-    def _run_teardown(self, item, status, result=None):
+    def _run_teardown(self, item: 'SuiteData|TestData',
+                      status: 'SuiteStatus|TestStatus',
+                      result: 'SuiteResult|TestResult'):
         if status.teardown_allowed:
             if item.has_teardown:
-                exception = self._run_setup_or_teardown(item.teardown)
+                exception = self._run_setup_or_teardown(item.teardown, result.teardown)
             else:
                 exception = None
             status.teardown_executed(exception)
             failed = exception and not isinstance(exception, PassExecution)
-            if result and exception:
+            if isinstance(result, TestResult) and exception:
                 if failed or status.skipped or exception.skip:
                     result.message = status.message
                 else:
@@ -231,16 +250,16 @@ class SuiteRunner(SuiteVisitor):
                     result.message = exception.message
             return exception if failed else None
 
-    def _run_setup_or_teardown(self, data):
+    def _run_setup_or_teardown(self, data: KeywordData, result: KeywordResult):
         try:
-            name = self._variables.replace_string(data.name)
+            name = self.variables.replace_string(data.name)
         except DataError as err:
-            if self._settings.dry_run:
+            if self.settings.dry_run:
                 return None
             return ExecutionFailed(message=err.message)
         if name.upper() in ('', 'NONE'):
             return None
         try:
-            KeywordRunner(self._context).run(data, name=name)
+            KeywordRunner(self.context).run(data, result, name=name)
         except ExecutionStatus as err:
             return err

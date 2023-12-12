@@ -18,7 +18,7 @@ from robot.result import Keyword as KeywordResult
 from robot.variables import VariableAssignment
 
 from .arguments import EmbeddedArguments
-from .model import Keyword
+from .model import Keyword as KeywordData
 from .statusreporter import StatusReporter
 from .keywordimplementation import KeywordImplementation
 
@@ -35,23 +35,23 @@ class InvalidKeyword(KeywordImplementation):
     def create_runner(self, name, languages=None):
         return InvalidKeywordRunner(self, name)
 
-    def bind(self, data: Keyword) -> 'InvalidKeyword':
+    def bind(self, data: KeywordData) -> 'InvalidKeyword':
         return self.copy(parent=data.parent)
 
 
 class InvalidKeywordRunner:
 
-    def __init__(self, keyword, name=None):
+    def __init__(self, keyword: InvalidKeyword, name: 'str|None' = None):
         self.keyword = keyword
         self.name = name or keyword.name
 
-    def run(self, data, context, run=True):
+    def run(self, data: KeywordData, result: KeywordResult, context, run=True):
         kw = self.keyword.bind(data)
-        result = KeywordResult(name=self.name,
-                               owner=kw.owner.name if kw.owner else None,
-                               args=data.args,
-                               assign=tuple(VariableAssignment(data.assign)),
-                               type=data.type)
+        result.config(name=self.name,
+                      owner=kw.owner.name if kw.owner else None,
+                      args=data.args,
+                      assign=tuple(VariableAssignment(data.assign)),
+                      type=data.type)
         with StatusReporter(data, result, context, run, implementation=kw):
             if run:
                 raise DataError(kw.error)

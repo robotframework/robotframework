@@ -24,6 +24,7 @@ from robot.variables import contains_variable, is_list_variable, VariableAssignm
 
 from .bodyrunner import BodyRunner
 from .model import Keyword as KeywordData
+from .resourcemodel import UserKeyword
 from .outputcapture import OutputCapturer
 from .signalhandler import STOP_SIGNAL_MONITOR
 from .statusreporter import StatusReporter
@@ -41,28 +42,28 @@ class LibraryKeywordRunner:
         self.pre_run_messages = ()
         self.languages = languages
 
-    def run(self, data: KeywordData, context, run=True):
+    def run(self, data: KeywordData, result: KeywordResult, context, run=True):
         kw = self.keyword.bind(data)
         assignment = VariableAssignment(data.assign)
-        result = self._get_result(data, kw, assignment)
+        self._config_result(result, data, kw, assignment)
         with StatusReporter(data, result, context, run, implementation=kw):
             if run:
                 with assignment.assigner(context) as assigner:
-                    return_value = self._run(kw, data.args, context)
+                    return_value = self._run(kw, data.args, result, context)
                     assigner.assign(return_value)
                     return return_value
 
-    def _get_result(self, data: KeywordData, kw: 'LibraryKeyword',
-                    assignment) -> KeywordResult:
-        return KeywordResult(name=self.name,
-                             owner=kw.owner.name,
-                             doc=kw.short_doc,
-                             args=data.args,
-                             assign=tuple(assignment),
-                             tags=kw.tags,
-                             type=data.type)
+    def _config_result(self, result: KeywordResult, data: KeywordData,
+                       kw: 'LibraryKeyword', assignment):
+        result.config(name=self.name,
+                      owner=kw.owner.name,
+                      doc=kw.short_doc,
+                      args=data.args,
+                      assign=tuple(assignment),
+                      tags=kw.tags,
+                      type=data.type)
 
-    def _run(self, kw: 'LibraryKeyword', args, context):
+    def _run(self, kw: 'LibraryKeyword', args, result: KeywordResult, context):
         if self.pre_run_messages:
             for message in self.pre_run_messages:
                 context.output.message(message)
@@ -120,17 +121,17 @@ class LibraryKeywordRunner:
             capturer.stop()
             STOP_SIGNAL_MONITOR.stop_running_keyword()
 
-    def dry_run(self, data: KeywordData, context):
+    def dry_run(self, data: KeywordData, result: KeywordResult, context):
         kw = self.keyword.bind(data)
         assignment = VariableAssignment(data.assign)
-        result = self._get_result(data, kw, assignment)
+        self._config_result(result, data, kw, assignment)
         with StatusReporter(data, result, context, run=False, implementation=kw):
             assignment.validate_assignment()
-            self._dry_run(kw, data.args, context)
+            self._dry_run(kw, data.args, result, context)
 
-    def _dry_run(self, kw: 'LibraryKeyword', args, context):
+    def _dry_run(self, kw: 'LibraryKeyword', args, result: KeywordResult, context):
         if self._executed_in_dry_run(kw):
-            self._run(kw, args, context)
+            self._run(kw, args, result, context)
         else:
             kw.resolve_arguments(args, languages=self.languages)
 
@@ -146,17 +147,16 @@ class EmbeddedArgumentsRunner(LibraryKeywordRunner):
         super().__init__(keyword, name)
         self.embedded_args = keyword.embedded.match(name).groups()
 
-    def _run(self, kw: 'LibraryKeyword', args, context):
-        return super()._run(kw, self.embedded_args + args, context)
+    def _run(self, kw: 'LibraryKeyword', args, result: KeywordResult, context):
+        return super()._run(kw, self.embedded_args + args, result, context)
 
-    def _dry_run(self, kw: 'LibraryKeyword', args, context):
-        return super()._dry_run(kw, self.embedded_args + args, context)
+    def _dry_run(self, kw: 'LibraryKeyword', args, result: KeywordResult, context):
+        return super()._dry_run(kw, self.embedded_args + args, result, context)
 
-    def _get_result(self, data: KeywordData, kw: 'LibraryKeyword',
-                    assignment) -> KeywordResult:
-        result = super()._get_result(data, kw, assignment)
+    def _config_result(self, result: KeywordResult, data: KeywordData,
+                       kw: 'LibraryKeyword', assignment):
+        super()._config_result(result, data, kw, assignment)
         result.source_name = kw.name
-        return result
 
 
 class RunKeywordRunner(LibraryKeywordRunner):
@@ -177,11 +177,14 @@ class RunKeywordRunner(LibraryKeywordRunner):
         finally:
             STOP_SIGNAL_MONITOR.stop_running_keyword()
 
-    def _dry_run(self, kw: 'LibraryKeyword', args, context):
-        super()._dry_run(kw, args, context)
-        keywords = [k for k in self._get_dry_run_keywords(kw, args)
-                    if not contains_variable(k.name)]
-        BodyRunner(context).run(keywords)
+    def _dry_run(self, kw: 'LibraryKeyword', args, result: KeywordResult, context):
+        super()._dry_run(kw, args, result, context)
+        wrapper = UserKeyword(name=kw.name,
+                              doc="Wraps keywords executed by '{kw.name}' in dry-run.",
+                              parent=kw.parent)
+        wrapper.body = [k for k in self._get_dry_run_keywords(kw, args)
+                        if not contains_variable(k.name)]
+        BodyRunner(context).run(wrapper, result)
 
     def _get_dry_run_keywords(self, kw: 'LibraryKeyword', args):
         if not self.execute_in_dry_run:

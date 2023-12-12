@@ -22,8 +22,6 @@ from itertools import zip_longest
 
 from robot.errors import (BreakLoop, ContinueLoop, DataError, ExecutionFailed,
                           ExecutionFailures, ExecutionPassed, ExecutionStatus)
-from robot.result import (For as ForResult, While as WhileResult, If as IfResult,
-                          Try as TryResult)
 from robot.output import librarylogger as logger
 from robot.utils import (cut_assign_value, frange, get_error_message, is_list_like,
                          is_number, plural_or_not as s, secs_to_timestr, seq2str,
@@ -43,12 +41,12 @@ class BodyRunner:
         self._run = run
         self._templated = templated
 
-    def run(self, body):
+    def run(self, data, result):
         errors = []
         passed = None
-        for step in body:
+        for item in data.body:
             try:
-                step.run(self._context, self._run, self._templated)
+                item.run(result, self._context, self._run, self._templated)
             except ExecutionPassed as exception:
                 exception.set_earlier_failures(errors)
                 passed = exception
@@ -68,12 +66,12 @@ class KeywordRunner:
         self._context = context
         self._run = run
 
-    def run(self, step, name=None):
+    def run(self, data, result, name=None):
         context = self._context
-        runner = context.get_runner(name or step.name)
+        runner = context.get_runner(name or data.name)
         if context.dry_run:
-            return runner.dry_run(step, context)
-        return runner.run(step, context, self._run)
+            return runner.dry_run(data, result, context)
+        return runner.run(data, result, context, self._run)
 
 
 def ForRunner(context, flavor='IN', run=True, templated=False):
@@ -93,7 +91,7 @@ class ForInRunner:
         self._run = run
         self._templated = templated
 
-    def run(self, data):
+    def run(self, data, result):
         error = None
         run = False
         if self._run:
@@ -101,8 +99,6 @@ class ForInRunner:
                 error = DataError(data.error, syntax=True)
             else:
                 run = True
-        result = ForResult(data.assign, data.flavor, data.values, data.start,
-                           data.mode, data.fill)
         with StatusReporter(data, result, self._context, run) as status:
             if run:
                 try:
@@ -224,7 +220,8 @@ class ForInRunner:
             result.assign[name] = cut_assign_value(value)
         runner = BodyRunner(self._context, run, self._templated)
         with StatusReporter(data, result, self._context, run):
-            runner.run(data.body)
+            # FIXME: Should create ForIteration data object here.
+            runner.run(data, result)
 
     def _map_variables_and_values(self, variables, values):
         if len(variables) == 1 and len(values) != 1:
@@ -381,17 +378,13 @@ class WhileRunner:
         self._run = run
         self._templated = templated
 
-    def run(self, data):
+    def run(self, data, result):
         ctx = self._context
         error = None
         run = False
         limit = None
-        loop_result = WhileResult(data.condition,
-                                  data.limit,
-                                  data.on_limit,
-                                  data.on_limit_message,
-                                  start_time=datetime.now())
-        iter_result = loop_result.body.create_iteration(start_time=datetime.now())
+        result.start_time = datetime.now()
+        iter_result = result.body.create_iteration(start_time=datetime.now())
         if self._run:
             if data.error:
                 error = DataError(data.error, syntax=True)
@@ -404,7 +397,7 @@ class WhileRunner:
                     run = self._should_run(data.condition, ctx.variables)
                 except DataError as err:
                     error = err
-        with StatusReporter(data, loop_result, self._context, run):
+        with StatusReporter(data, result, self._context, run):
             if ctx.dry_run or not run:
                 self._run_iteration(data, iter_result, run)
                 if error:
@@ -433,7 +426,7 @@ class WhileRunner:
                     errors.extend(failed.get_errors())
                     if not failed.can_continue(ctx, self._templated):
                         break
-                iter_result = loop_result.body.create_iteration(start_time=datetime.now())
+                iter_result = result.body.create_iteration(start_time=datetime.now())
                 if not self._should_run(data.condition, ctx.variables):
                     break
             if errors:
@@ -442,7 +435,8 @@ class WhileRunner:
     def _run_iteration(self, data, result, run=True):
         runner = BodyRunner(self._context, run, self._templated)
         with StatusReporter(data, result, self._context, run):
-            runner.run(data.body)
+            # FIXME: Should create WhileIteration data object here.
+            runner.run(data, result)
 
     def _should_run(self, condition, variables):
         if not condition:
@@ -463,10 +457,9 @@ class IfRunner:
         self._run = run
         self._templated = templated
 
-    def run(self, data):
+    def run(self, data, result):
         with self._dry_run_recursion_detection(data) as recursive_dry_run:
             error = None
-            result = IfResult()
             with StatusReporter(data, result, self._context, self._run):
                 for branch in data.body:
                     try:
@@ -491,9 +484,9 @@ class IfRunner:
             finally:
                 self._dry_run_stack.pop()
 
-    def _run_if_branch(self, branch, result, recursive_dry_run=False, syntax_error=None):
+    def _run_if_branch(self, data, result, recursive_dry_run=False, syntax_error=None):
         context = self._context
-        result = result.body.create_branch(branch.type, branch.condition,
+        result = result.body.create_branch(data.type, data.condition,
                                            start_time=datetime.now())
         error = None
         if syntax_error:
@@ -501,33 +494,31 @@ class IfRunner:
             error = DataError(syntax_error, syntax=True)
         else:
             try:
-                run_branch = self._should_run_branch(branch, context, recursive_dry_run)
+                run_branch = self._should_run_branch(data, context, recursive_dry_run)
             except DataError as err:
                 error = err
                 run_branch = False
-        with StatusReporter(branch, result, context, run_branch):
+        with StatusReporter(data, result, context, run_branch):
             runner = BodyRunner(context, run_branch, self._templated)
             if not recursive_dry_run:
-                runner.run(branch.body)
+                runner.run(data, result)
             if error and self._run:
                 raise error
         return run_branch
 
-    def _should_run_branch(self, branch, context, recursive_dry_run=False):
-        condition = branch.condition
-        variables = context.variables
+    def _should_run_branch(self, data, context, recursive_dry_run=False):
         if context.dry_run:
             return not recursive_dry_run
         if not self._run:
             return False
-        if condition is None:
+        if data.condition is None:
             return True
         try:
-            return evaluate_expression(condition, variables.current,
+            return evaluate_expression(data.condition, context.variables.current,
                                        resolve_variables=True)
         except Exception:
             msg = get_error_message()
-            raise DataError(f'Invalid {branch.type} condition: {msg}')
+            raise DataError(f'Invalid {data.type} condition: {msg}')
 
 
 class TryRunner:
@@ -537,9 +528,8 @@ class TryRunner:
         self._run = run
         self._templated = templated
 
-    def run(self, data):
+    def run(self, data, result):
         run = self._run
-        result = TryResult()
         with StatusReporter(data, result, self._context, run):
             if data.error:
                 self._run_invalid(data, result)
@@ -563,7 +553,7 @@ class TryRunner:
                                                       branch.pattern_type, branch.assign)
             with StatusReporter(branch, branch_result, self._context, run=False, suppress=True):
                 runner = BodyRunner(self._context, run=False, templated=self._templated)
-                runner.run(branch.body)
+                runner.run(branch, branch_result)
                 if not error_reported:
                     error_reported = True
                     raise DataError(data.error, syntax=True)
@@ -580,13 +570,13 @@ class TryRunner:
             return True
         return not (error.skip or error.syntax or isinstance(error, ExecutionPassed))
 
-    def _run_branch(self, branch, result, run=True, error=None):
+    def _run_branch(self, data, result, run=True, error=None):
         try:
-            with StatusReporter(branch, result, self._context, run):
+            with StatusReporter(data, result, self._context, run):
                 if error:
                     raise error
                 runner = BodyRunner(self._context, run, self._templated)
-                runner.run(branch.body)
+                runner.run(data, result)
         except ExecutionStatus as err:
             return err
         else:
@@ -645,7 +635,7 @@ class TryRunner:
             try:
                 with StatusReporter(data.finally_branch, result, self._context, run):
                     runner = BodyRunner(self._context, run, self._templated)
-                    runner.run(data.finally_branch.body)
+                    runner.run(data.finally_branch, result)
             except ExecutionStatus as err:
                 return err
             else:

@@ -22,6 +22,9 @@ def start_suite(data, result):
 def end_suite(data, result):
     assert len(data.tests) == 5, '%d tests, not 5' % len(data.tests)
     assert len(result.tests) == 5, '%d tests, not 5' % len(result.tests)
+    for test in result.tests:
+        if test.setup or test.body or test.teardown:
+            raise AssertionError(f"Result test '{test.name}' not cleared")
     assert data.name == data.doc == result.name == 'Not visible in results'
     assert result.doc.endswith('[start suite]')
     assert result.metadata['suite'] == '[start]'

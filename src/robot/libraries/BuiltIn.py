@@ -1896,10 +1896,15 @@ class _RunKeyword(_BuiltInBase):
         ctx = self._context
         if not (ctx.dry_run or self._accepts_embedded_arguments(name, ctx)):
             name, args = self._replace_variables_in_name([name] + list(args))
-        parent = ctx.steps[-1][0] if ctx.steps else (ctx.test or ctx.suite)
-        kw = Keyword(name, args=args, parent=parent,
-                     lineno=getattr(parent, 'lineno', None))
-        return kw.run(ctx)
+        if ctx.steps:
+            data, result = ctx.steps[-1]
+            lineno = data.lineno
+        else:    # Called, typically by a listener, when no keyword started.
+            data = lineno = None
+            result = ctx.test or (ctx.suite.setup if not ctx.suite.has_tests
+                                  else ctx.suite.teardown)
+        kw = Keyword(name, args=args, parent=data, lineno=lineno)
+        return kw.run(result, ctx)
 
     def _accepts_embedded_arguments(self, name, ctx):
         if '{' in name:

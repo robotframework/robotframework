@@ -43,8 +43,6 @@ from robot.conf import RobotSettings
 from robot.errors import BreakLoop, ContinueLoop, DataError, ReturnFromKeyword, VariableError
 from robot.model import BodyItem, DataDict, TestSuites
 from robot.output import LOGGER, Output, pyloggingconf
-from robot.result import (Break as BreakResult, Continue as ContinueResult,
-                          Error as ErrorResult, Return as ReturnResult, Var as VarResult)
 from robot.utils import setter
 from robot.variables import VariableResolver
 
@@ -106,8 +104,8 @@ class Keyword(model.Keyword, WithSource):
             data['lineno'] = self.lineno
         return data
 
-    def run(self, context, run=True, templated=None):
-        return KeywordRunner(context, run).run(self)
+    def run(self, result, context, run=True, templated=None):
+        return KeywordRunner(context, run).run(self, result.body.create_keyword())
 
 
 @Body.register
@@ -143,8 +141,10 @@ class For(model.For, WithSource):
             data['error'] = self.error
         return data
 
-    def run(self, context, run=True, templated=False):
-        return ForRunner(context, self.flavor, run, templated).run(self)
+    def run(self, result, context, run=True, templated=False):
+        result = result.body.create_for(self.assign, self.flavor, self.values,
+                                        self.start, self.mode, self.fill)
+        return ForRunner(context, self.flavor, run, templated).run(self, result)
 
 
 @Body.register
@@ -171,8 +171,10 @@ class While(model.While, WithSource):
             data['error'] = self.error
         return data
 
-    def run(self, context, run=True, templated=False):
-        return WhileRunner(context, run, templated).run(self)
+    def run(self, result, context, run=True, templated=False):
+        result = result.body.create_while(self.condition, self.limit, self.on_limit,
+                                          self.on_limit_message)
+        return WhileRunner(context, run, templated).run(self, result)
 
 
 class IfBranch(model.IfBranch, WithSource):
@@ -205,8 +207,8 @@ class If(model.If, WithSource):
         self.lineno = lineno
         self.error = error
 
-    def run(self, context, run=True, templated=False):
-        return IfRunner(context, run, templated).run(self)
+    def run(self, result, context, run=True, templated=False):
+        return IfRunner(context, run, templated).run(self, result.body.create_if())
 
     def to_dict(self) -> DataDict:
         data = super().to_dict()
@@ -256,8 +258,8 @@ class Try(model.Try, WithSource):
         self.lineno = lineno
         self.error = error
 
-    def run(self, context, run=True, templated=False):
-        return TryRunner(context, run, templated).run(self)
+    def run(self, result, context, run=True, templated=False):
+        return TryRunner(context, run, templated).run(self, result.body.create_try())
 
     def to_dict(self) -> DataDict:
         data = super().to_dict()
@@ -283,8 +285,8 @@ class Var(model.Var, WithSource):
         self.lineno = lineno
         self.error = error
 
-    def run(self, context, run=True, templated=False):
-        result = VarResult(self.name, self.value, self.scope, self.separator)
+    def run(self, result, context, run=True, templated=False):
+        result = result.body.create_var(self.name, self.value, self.scope, self.separator)
         with StatusReporter(self, result, context, run):
             if run:
                 if self.error:
@@ -337,8 +339,9 @@ class Return(model.Return, WithSource):
         self.lineno = lineno
         self.error = error
 
-    def run(self, context, run=True, templated=False):
-        with StatusReporter(self, ReturnResult(self.values), context, run):
+    def run(self, result, context, run=True, templated=False):
+        result = result.body.create_return(self.values)
+        with StatusReporter(self, result, context, run):
             if run:
                 if self.error:
                     raise DataError(self.error, syntax=True)
@@ -365,8 +368,9 @@ class Continue(model.Continue, WithSource):
         self.lineno = lineno
         self.error = error
 
-    def run(self, context, run=True, templated=False):
-        with StatusReporter(self, ContinueResult(), context, run):
+    def run(self, result, context, run=True, templated=False):
+        result = result.body.create_continue()
+        with StatusReporter(self, result, context, run):
             if run:
                 if self.error:
                     raise DataError(self.error, syntax=True)
@@ -393,8 +397,9 @@ class Break(model.Break, WithSource):
         self.lineno = lineno
         self.error = error
 
-    def run(self, context, run=True, templated=False):
-        with StatusReporter(self, BreakResult(), context, run):
+    def run(self, result, context, run=True, templated=False):
+        result = result.body.create_break()
+        with StatusReporter(self, result, context, run):
             if run:
                 if self.error:
                     raise DataError(self.error, syntax=True)
@@ -422,8 +427,9 @@ class Error(model.Error, WithSource):
         self.lineno = lineno
         self.error = error
 
-    def run(self, context, run=True, templated=False):
-        with StatusReporter(self, ErrorResult(self.values), context, run):
+    def run(self, result, context, run=True, templated=False):
+        result = result.body.create_error(self.values)
+        with StatusReporter(self, result, context, run):
             if run:
                 raise DataError(self.error)
 

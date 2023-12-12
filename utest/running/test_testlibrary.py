@@ -363,7 +363,7 @@ class TestKeywords(unittest.TestCase):
         assert_equal(instance.kw_called, 0)
         kw, = lib.keywords
         for _ in range(42):
-            kw.create_runner('kw')._run(kw, [], _FakeContext())
+            kw.create_runner('kw')._run(kw, [], None, _FakeContext())
         assert_true(lib._instance is instance)
         assert_equal(instance.kw_accessed, 44)
         assert_equal(instance.kw_called, 42)
