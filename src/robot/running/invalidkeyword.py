@@ -44,6 +44,8 @@ class InvalidKeywordRunner:
     def __init__(self, keyword: InvalidKeyword, name: 'str|None' = None):
         self.keyword = keyword
         self.name = name or keyword.name
+        if not keyword.error:
+            raise ValueError("Executed 'InvalidKeyword' instance requires 'error'.")
 
     def run(self, data: KeywordData, result: KeywordResult, context, run=True):
         kw = self.keyword.bind(data)
@@ -53,7 +55,8 @@ class InvalidKeywordRunner:
                       assign=tuple(VariableAssignment(data.assign)),
                       type=data.type)
         with StatusReporter(data, result, context, run, implementation=kw):
-            if run:
+            # 'error' is can be set to 'None' by a listener that handles it.
+            if run and kw.error is not None:
                 raise DataError(kw.error)
 
     dry_run = run
