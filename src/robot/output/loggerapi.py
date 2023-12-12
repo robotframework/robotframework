@@ -75,10 +75,12 @@ class LoggerApi:
     def end_for(self, data: 'running.For', result: 'result.For'):
         self.end_body_item(data, result)
 
-    def start_for_iteration(self, data: 'running.For', result: 'result.ForIteration'):
+    def start_for_iteration(self, data: 'running.ForIteration',
+                            result: 'result.ForIteration'):
         self.start_body_item(data, result)
 
-    def end_for_iteration(self, data: 'running.For', result: 'result.ForIteration'):
+    def end_for_iteration(self, data: 'running.ForIteration',
+                          result: 'result.ForIteration'):
         self.end_body_item(data, result)
 
     def start_while(self, data: 'running.While', result: 'result.While'):
@@ -87,10 +89,12 @@ class LoggerApi:
     def end_while(self, data: 'running.While', result: 'result.While'):
         self.end_body_item(data, result)
 
-    def start_while_iteration(self, data: 'running.While', result: 'result.WhileIteration'):
+    def start_while_iteration(self, data: 'running.WhileIteration',
+                              result: 'result.WhileIteration'):
         self.start_body_item(data, result)
 
-    def end_while_iteration(self, data: 'running.While', result: 'result.WhileIteration'):
+    def end_while_iteration(self, data: 'running.WhileIteration',
+                            result: 'result.WhileIteration'):
         self.end_body_item(data, result)
 
     def start_if(self, data: 'running.If', result: 'result.If'):

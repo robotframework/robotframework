@@ -209,19 +209,20 @@ class ForInRunner:
                         f'value{s(values)}.')
 
     def _run_one_round(self, data, result, values=None, run=True):
-        result = result.body.create_iteration()
+        iter_data = data.get_iteration()
+        iter_result = result.body.create_iteration()
         if values is not None:
             variables = self._context.variables
-        else:    # Not really run (earlier failure, unexecuted IF branch, dry-run)
+        else:    # Not really run (earlier failure, un-executed IF branch, dry-run)
             variables = {}
             values = [''] * len(data.assign)
         for name, value in self._map_variables_and_values(data.assign, values):
             variables[name] = value
-            result.assign[name] = cut_assign_value(value)
+            iter_data.assign[name] = value
+            iter_result.assign[name] = cut_assign_value(value)
         runner = BodyRunner(self._context, run, self._templated)
-        with StatusReporter(data, result, self._context, run):
-            # FIXME: Should create ForIteration data object here.
-            runner.run(data, result)
+        with StatusReporter(iter_data, iter_result, self._context, run):
+            runner.run(iter_data, iter_result)
 
     def _map_variables_and_values(self, variables, values):
         if len(variables) == 1 and len(values) != 1:
@@ -398,8 +399,9 @@ class WhileRunner:
                 except DataError as err:
                     error = err
         with StatusReporter(data, result, self._context, run):
+            iter_data = data.get_iteration()
             if ctx.dry_run or not run:
-                self._run_iteration(data, iter_result, run)
+                self._run_iteration(iter_data, iter_result, run)
                 if error:
                     raise error
                 return
@@ -407,7 +409,7 @@ class WhileRunner:
             while True:
                 try:
                     with limit:
-                        self._run_iteration(data, iter_result)
+                        self._run_iteration(iter_data, iter_result)
                 except (BreakLoop, ContinueLoop) as ctrl:
                     if ctrl.earlier_failures:
                         errors.extend(ctrl.earlier_failures.get_errors())
@@ -435,7 +437,6 @@ class WhileRunner:
     def _run_iteration(self, data, result, run=True):
         runner = BodyRunner(self._context, run, self._templated)
         with StatusReporter(data, result, self._context, run):
-            # FIXME: Should create WhileIteration data object here.
             runner.run(data, result)
 
     def _should_run(self, condition, variables):
