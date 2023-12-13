@@ -107,7 +107,7 @@ class Keyword(BaseModel):
     private: Optional[bool]
     deprecated: Optional[bool]
     source: Path
-    lineno: int
+    lineno: Optional[int]
 
 
 class TypeDocType(str, Enum):

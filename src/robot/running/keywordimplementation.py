@@ -37,8 +37,6 @@ class KeywordImplementation(ModelObject):
     repr_args = ('name', 'args')
     __slots__ = ['embedded', '_name', '_doc', '_lineno', 'owner', 'parent', 'error']
     type: Literal['USER KEYWORD', 'LIBRARY KEYWORD', 'INVALID KEYWORD']
-    source: 'Path|None'
-    lineno: 'int|None'    # FIXME: This should always be positive int.
 
     def __init__(self, name: str = '',
                  args: 'ArgumentSpec|None' = None,
@@ -117,11 +115,11 @@ class KeywordImplementation(ModelObject):
         return Tags(tags)
 
     @property
-    def lineno(self) -> int:
+    def lineno(self) -> 'int|None':
         return self._lineno
 
     @lineno.setter
-    def lineno(self, lineno):
+    def lineno(self, lineno: 'int|None'):
         self._lineno = lineno
 
     @property
@@ -137,11 +135,11 @@ class KeywordImplementation(ModelObject):
             return self.embedded.match(name)
         return eq(self.name, name, ignore='_')
 
-    def resolve_arguments(self, args, variables=None, languages=None) \
-            -> 'tuple[list, list]':
+    def resolve_arguments(self, args: Sequence[str], variables=None,
+                          languages=None) -> 'tuple[list, list]':
         return self.args.resolve(args, variables, languages=languages)
 
-    def create_runner(self, name, languages=None) \
+    def create_runner(self, name: 'str|None', languages=None) \
             -> 'LibraryKeywordRunner|UserKeywordRunner':
         raise NotImplementedError
 

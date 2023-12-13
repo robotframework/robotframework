@@ -430,16 +430,13 @@ def assert_args(kw, minargs=0, maxargs=0, kwargs=False):
 class TestDynamicLibraryIntroDocumentation(unittest.TestCase):
 
     def test_doc_from_class_definition(self):
-        self._assert_intro_doc('dynlibs.StaticDocsLib',
-                               'This is lib intro.')
+        self._assert_intro_doc('dynlibs.StaticDocsLib', 'This is lib intro.')
 
     def test_doc_from_dynamic_method(self):
-        self._assert_intro_doc('dynlibs.DynamicDocsLib',
-                               'Dynamic intro doc.')
+        self._assert_intro_doc('dynlibs.DynamicDocsLib', 'Dynamic intro doc.')
 
     def test_dynamic_doc_overrides_class_doc(self):
-        self._assert_intro_doc('dynlibs.StaticAndDynamicDocsLib',
-                                         'dynamic override')
+        self._assert_intro_doc('dynlibs.StaticAndDynamicDocsLib', 'dynamic override')
 
     def test_failure_in_dynamic_resolving_of_doc(self):
         lib = TestLibrary.from_name('dynlibs.FailingDynamicDocLib')
@@ -463,8 +460,7 @@ class TestDynamicLibraryInitDocumentation(unittest.TestCase):
         self._assert_init_doc('dynlibs.DynamicDocsLib', 'Dynamic init doc.')
 
     def test_dynamic_doc_overrides_method_doc(self):
-        self._assert_init_doc('dynlibs.StaticAndDynamicDocsLib',
-                              'dynamic override')
+        self._assert_init_doc('dynlibs.StaticAndDynamicDocsLib', 'dynamic override')
 
     def test_failure_in_dynamic_resolving_of_doc(self):
         init = TestLibrary.from_name('dynlibs.FailingDynamicDocLib').init

@@ -225,7 +225,7 @@ class UserKeyword(KeywordImplementation):
         """
         return bool(self._teardown)
 
-    def create_runner(self, name, languages=None) \
+    def create_runner(self, name: 'str|None', languages=None) \
             -> 'UserKeywordRunner|EmbeddedArgumentsRunner':
         if self.embedded:
             return EmbeddedArgumentsRunner(self, name)

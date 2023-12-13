@@ -62,18 +62,18 @@ class LibraryKeyword(KeywordImplementation):
         raise NotImplementedError
 
     @property
-    def lineno(self) -> int:
+    def lineno(self) -> 'int|None':
         method = self.method
         try:
             lines, start_lineno = inspect.getsourcelines(inspect.unwrap(method))
         except (TypeError, OSError, IOError):
-            return -1
+            return None
         for increment, line in enumerate(lines):
             if line.strip().startswith('def '):
                 return start_lineno + increment
         return start_lineno
 
-    def create_runner(self, name, languages=None) -> LibraryKeywordRunner:
+    def create_runner(self, name: 'str|None', languages=None) -> LibraryKeywordRunner:
         if self.embedded:
             return EmbeddedArgumentsRunner(self, name)
         if self._resolve_args_until is not None:
@@ -81,7 +81,8 @@ class LibraryKeyword(KeywordImplementation):
             return RunKeywordRunner(self, execute_in_dry_run=dry_run)
         return LibraryKeywordRunner(self, languages=languages)
 
-    def resolve_arguments(self, args, variables=None, languages=None) -> 'tuple[list, list]':
+    def resolve_arguments(self, args: Sequence[str], variables=None,
+                          languages=None) -> 'tuple[list, list]':
         resolve_args_until = self._resolve_args_until
         positional, named = self.args.resolve(args, variables, self.owner.converters,
                                               resolve_named=resolve_args_until is None,
@@ -172,7 +173,7 @@ class DynamicKeyword(LibraryKeyword):
         return self._source_info[0] or super().source
 
     @property
-    def lineno(self) -> int:
+    def lineno(self) -> 'int|None':
         return self._source_info[1]
 
     @property
@@ -189,7 +190,7 @@ class DynamicKeyword(LibraryKeyword):
                 source, lineno = source.rsplit(':', 1)
                 lineno = int(lineno)
             else:
-                lineno = -1
+                lineno = None
             self.__source_info = Path(normpath(source)) if source else None, lineno
         return self.__source_info
 

@@ -303,20 +303,20 @@ class TestSourceAndLineno(unittest.TestCase):
     def test_class_without_init(self):
         lib = TestLibrary.from_name('classes.NameLibrary')
         self._verify(lib, 'simple1', classes_source, 13)
-        self._verify(lib, 'init', classes_source, -1)
+        self._verify(lib, 'init', classes_source, None)
 
     def test_module(self):
         from module_library import __file__ as source
         lib = TestLibrary.from_name('module_library')
         self._verify(lib, 'passing', source, 5)
-        self._verify(lib, 'init', source, -1)
+        self._verify(lib, 'init', source, None)
 
     def test_package(self):
         from robot.variables.search import __file__ as source
         from robot.variables import __file__ as init_source
         lib = TestLibrary.from_name('robot.variables')
         self._verify(lib, 'search_variable', source, 23)
-        self._verify(lib, 'init', init_source, -1)
+        self._verify(lib, 'init', init_source, None)
 
     def test_decorated(self):
         lib = TestLibrary.from_name('classes.Decorated')
@@ -327,33 +327,33 @@ class TestSourceAndLineno(unittest.TestCase):
 
     def test_dynamic_without_source(self):
         lib = TestLibrary.from_name('classes.ArgDocDynamicLibrary')
-        self._verify(lib, 'No Arg', classes_source, -1)
+        self._verify(lib, 'No Arg', classes_source, None)
 
     def test_dynamic(self):
         lib = TestLibrary.from_name('classes.DynamicWithSource')
-        self._verify(lib, 'only path', classes_source, -1)
+        self._verify(lib, 'only path', classes_source, None)
         self._verify(lib, 'path & lineno', classes_source, 42)
         self._verify(lib, 'lineno only', classes_source, 6475)
-        self._verify(lib, 'invalid path', 'path validity is not validated', -1)
-        self._verify(lib, 'path w/ colon', r'c:\temp\lib.py', -1)
+        self._verify(lib, 'invalid path', 'path validity is not validated', None)
+        self._verify(lib, 'path w/ colon', r'c:\temp\lib.py', None)
         self._verify(lib, 'path w/ colon & lineno', r'c:\temp\lib.py', 1234567890)
-        self._verify(lib, 'no source', classes_source, -1)
+        self._verify(lib, 'no source', classes_source, None)
 
     def test_dynamic_with_non_ascii_source(self):
         lib = TestLibrary.from_name('classes.DynamicWithSource')
-        self._verify(lib, 'nön-äscii', 'hyvä esimerkki', -1)
+        self._verify(lib, 'nön-äscii', 'hyvä esimerkki', None)
         self._verify(lib, 'nön-äscii utf-8', '福', 88)
 
     def test_dynamic_init(self):
         lib_with_init = TestLibrary.from_name('classes.ArgDocDynamicLibrary')
         lib_without_init = TestLibrary.from_name('classes.DynamicWithSource')
         self._verify(lib_with_init, 'init', classes_source, 217)
-        self._verify(lib_without_init, 'init', classes_source, -1)
+        self._verify(lib_without_init, 'init', classes_source, None)
 
     def test_dynamic_invalid_source(self):
         logger = LoggerMock()
         lib = TestLibrary.from_name('classes.DynamicWithSource', logger=logger)
-        self._verify(lib, 'invalid source', lib.source, -1)
+        self._verify(lib, 'invalid source', lib.source, None)
         error = (
             "Error in library 'classes.DynamicWithSource': "
             "Getting source information for keyword 'Invalid Source' failed: "
@@ -362,7 +362,7 @@ class TestSourceAndLineno(unittest.TestCase):
         )
         assert_equal(logger.messages[-1], (error, 'ERROR'))
 
-    def _verify(self, lib, name, source, lineno=1):
+    def _verify(self, lib, name, source, lineno):
         if name == 'init':
             kw = lib.init
         else:

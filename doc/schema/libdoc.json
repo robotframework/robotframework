@@ -305,7 +305,14 @@
         },
         "lineno": {
           "title": "Lineno",
-          "type": "integer"
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       },
       "required": [
@@ -314,8 +321,7 @@
         "doc",
         "shortdoc",
         "tags",
-        "source",
-        "lineno"
+        "source"
       ],
       "additionalProperties": false
     },
