@@ -127,4 +127,4 @@ def __getattr__(name):
                       f"Robot Framework 8.0.")
         return deprecated[name]
 
-    raise AssertionError(f"'robot.utils' has no attribute '{name}'.")
+    raise AttributeError(f"'robot.utils' has no attribute '{name}'.")

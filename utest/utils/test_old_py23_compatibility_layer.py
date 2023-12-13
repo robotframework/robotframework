@@ -2,7 +2,7 @@ import unittest
 import warnings
 from contextlib import contextmanager
 
-from robot.utils.asserts import assert_equal, assert_false, assert_true
+from robot.utils.asserts import assert_equal, assert_false, assert_raises, assert_true
 from robot import utils
 
 
@@ -89,6 +89,9 @@ class TestCompatibilityLayer(unittest.TestCase):
         import io
         with self.validate_deprecation('StringIO'):
             assert_true(utils.StringIO is io.StringIO)
+
+    def test_non_existing_attribute(self):
+        assert_raises(AttributeError, getattr, utils, 'xxx')
 
 
 if __name__ == '__main__':
