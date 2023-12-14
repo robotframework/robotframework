@@ -1,6 +1,9 @@
 *** Settings ***
-Library           Library.py
-Suite Teardown    validate_events
+Library               Library.py    ${VALIDATE EVENTS}
+Suite Teardown        Validate events
+
+*** Variables ***
+${VALIDATE EVENTS}    True
 
 *** Test Cases ***
 Library keyword
@@ -8,6 +11,23 @@ Library keyword
 
 User keyword
     User keyword
+
+Non-existing keyword
+    [Documentation]    FAIL No keyword with name 'Non-existing keyword' found.
+    Non-existing keyword
+    Non-existing keyword 2
+
+Empty keyword
+    [Documentation]    FAIL User keyword cannot be empty.
+    Empty keyword
+
+Duplicate keyword
+    [Documentation]    FAIL Keyword with same name defined multiple times.
+    Duplicate keyword
+
+Invalid keyword
+    [Documentation]    FAIL Invalid argument specification: Invalid argument syntax 'bad'.
+    Invalid keyword
 
 IF
     IF    False
@@ -44,25 +64,12 @@ VAR
     VAR    ${y}    value    scope=suite
     Should Be Equal    ${x}    ${y}
 
-Non-existing keyword
-    [Documentation]    FAIL No keyword with name 'Non-existing keyword' found.
-    Non-existing keyword
-
-Empty keyword
-    [Documentation]    FAIL User keyword cannot be empty.
-    Empty keyword
-
-Duplicate keyword
-    [Documentation]    FAIL Keyword with same name defined multiple times.
-    Duplicate keyword
-
-Invalid keyword
-    [Documentation]    FAIL Invalid argument specification: Invalid argument syntax 'bad'.
-    Invalid keyword
-
 Invalid syntax
     [Documentation]    FAIL Non-existing setting 'Bad'.
     [Bad]    setting
+
+Run Keyword
+    Run Keyword    User keyword
 
 *** Keywords ***
 User keyword
@@ -77,3 +84,4 @@ Duplicate keyword
 
 Invalid keyword
     [Arguments]    bad
+    Should Be Equal    ${valid} ${args}    args modified by listener

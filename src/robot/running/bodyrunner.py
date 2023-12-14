@@ -429,6 +429,7 @@ class WhileRunner:
                     if not failed.can_continue(ctx, self._templated):
                         break
                 iter_result = result.body.create_iteration(start_time=datetime.now())
+                iter_data = data.get_iteration()
                 if not self._should_run(data.condition, ctx.variables):
                     break
             if errors:

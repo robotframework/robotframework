@@ -274,6 +274,8 @@ class TestCheckerLibrary:
             expected.pop(expected.index((test.name, status)))
             if status and ':' in status:
                 status, message = status.split(':', 1)
+            elif status:
+                message = ''
             else:
                 message = None
             self._check_test_status(test, status, message)
