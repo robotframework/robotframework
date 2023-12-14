@@ -24,7 +24,7 @@ from robot.errors import (BreakLoop, ContinueLoop, DataError, ExecutionFailed,
                           ExecutionFailures, ExecutionPassed, ExecutionStatus)
 from robot.output import librarylogger as logger
 from robot.utils import (cut_assign_value, frange, get_error_message, is_list_like,
-                         is_number, plural_or_not as s, secs_to_timestr, seq2str,
+                         is_number, normalize, plural_or_not as s, secs_to_timestr, seq2str,
                          split_from_equals, type_name, Matcher, timestr_to_secs)
 from robot.variables import is_dict_variable, evaluate_expression
 
@@ -656,31 +656,22 @@ class WhileLimit:
                 on_limit_message = variables.replace_string(on_limit_message)
             except DataError as err:
                 raise DataError(f"Invalid WHILE loop 'on_limit_message': '{err}")
-        on_limit = cls.parse_on_limit(variables, on_limit)
+        on_limit = cls._parse_on_limit(variables, on_limit)
         if not limit:
-            return IterationCountLimit(DEFAULT_WHILE_LIMIT,
-                                       on_limit, on_limit_message)
-        value = variables.replace_string(limit)
-        if value.upper() == 'NONE':
+            return IterationCountLimit(DEFAULT_WHILE_LIMIT, on_limit, on_limit_message)
+        limit = variables.replace_string(limit)
+        if limit.upper() == 'NONE':
             return NoLimit()
         try:
-            count = int(value.replace(' ', ''))
+            count = cls._parse_limit_as_count(limit)
         except ValueError:
-            pass
+            seconds = cls._parse_limit_as_timestr(limit)
+            return DurationLimit(seconds, on_limit, on_limit_message)
         else:
-            if count <= 0:
-                raise DataError(f"Invalid WHILE loop limit: Iteration count must be "
-                                f"a positive integer, got '{count}'.")
             return IterationCountLimit(count, on_limit, on_limit_message)
-        try:
-            secs = timestr_to_secs(value)
-        except ValueError as err:
-            raise DataError(f'Invalid WHILE loop limit: {err.args[0]}')
-        else:
-            return DurationLimit(secs, on_limit, on_limit_message)
 
     @classmethod
-    def parse_on_limit(cls, variables, on_limit):
+    def _parse_on_limit(cls, variables, on_limit):
         if on_limit is None:
             return None
         try:
@@ -691,6 +682,26 @@ class WhileLimit:
                             f"are 'PASS' and 'FAIL'.")
         except DataError as err:
             raise DataError(f"Invalid WHILE loop 'on_limit' value: {err}")
+
+    @classmethod
+    def _parse_limit_as_count(cls, limit):
+        limit = normalize(limit)
+        if limit.endswith('times'):
+            limit = limit[:-5]
+        elif limit.endswith('x'):
+            limit = limit[:-1]
+        count = int(limit)
+        if count <= 0:
+            raise DataError(f"Invalid WHILE loop limit: Iteration count must be "
+                            f"a positive integer, got '{count}'.")
+        return count
+
+    @classmethod
+    def _parse_limit_as_timestr(cls, limit):
+        try:
+            return timestr_to_secs(limit)
+        except ValueError as err:
+            raise DataError(f'Invalid WHILE loop limit: {err.args[0]}')
 
     def limit_exceeded(self):
         on_limit_pass = self.on_limit == 'PASS'

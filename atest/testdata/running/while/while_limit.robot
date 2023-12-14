@@ -17,15 +17,24 @@ Limit with iteration count
         Log    ${variable}
     END
 
-Limit with iteration count with spaces
-    [Documentation]     FAIL WHILE loop was aborted because it did not finish within the limit of 30 iterations. ${USE LIMIT}
-    WHILE    $variable < 2    limit=3 0
+Iteration count with 'times' suffix
+    [Documentation]     FAIL WHILE loop was aborted because it did not finish within the limit of 3 iterations. ${USE LIMIT}
+    WHILE    $variable < 2    limit=3 times
         Log    ${variable}
     END
 
-Limit with iteration count with underscore
-    [Documentation]     FAIL WHILE loop was aborted because it did not finish within the limit of 10 iterations. ${USE LIMIT}
-    WHILE    $variable < 2    limit=1_0
+Iteration count with 'x' suffix
+    [Documentation]     FAIL WHILE loop was aborted because it did not finish within the limit of 4 iterations. ${USE LIMIT}
+    WHILE    $variable < 2    limit=4x
+        Log    ${variable}
+    END
+
+Iteration count normalization
+    [Documentation]     FAIL WHILE loop was aborted because it did not finish within the limit of 30 iterations. ${USE LIMIT}
+    WHILE    limit=1_000
+        BREAK
+    END
+    WHILE    $variable < 2    limit=3 0 T i m e S
         Log    ${variable}
     END
 
@@ -88,8 +97,8 @@ Continue after limit in teardown
     [Teardown]    Continue after limit
 
 Invalid limit invalid suffix
-    [Documentation]     FAIL Invalid WHILE loop limit: Invalid time string '1 times'.
-    WHILE    $variable < 2    limit=1 times
+    [Documentation]     FAIL Invalid WHILE loop limit: Invalid time string '1 bad'.
+    WHILE    $variable < 2    limit=1 bad
         Fail    Should not be executed
     END
 

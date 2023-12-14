@@ -97,7 +97,7 @@ def _time_string_to_secs(timestr):
         try:
             if   c == 'n': nanos  = float(''.join(temp)); temp = []
             elif c == 'u': micros = float(''.join(temp)); temp = []
-            elif c == 'x': millis = float(''.join(temp)); temp = []
+            elif c == 'M': millis = float(''.join(temp)); temp = []
             elif c == 's': secs   = float(''.join(temp)); temp = []
             elif c == 'm': mins   = float(''.join(temp)); temp = []
             elif c == 'h': hours  = float(''.join(temp)); temp = []
@@ -115,7 +115,7 @@ def _normalize_timestr(timestr):
     timestr = normalize(timestr)
     for specifier, aliases in [('n', ['nanosecond', 'ns']),
                                ('u', ['microsecond', 'us', 'μs']),
-                               ('x', ['millisecond', 'millisec', 'millis',
+                               ('M', ['millisecond', 'millisec', 'millis',
                                       'msec', 'ms']),
                                ('s', ['second', 'sec']),
                                ('m', ['minute', 'min']),

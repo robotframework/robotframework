@@ -582,7 +582,7 @@ Basic `WHILE` syntax
 
     *** Test Cases ***
     Example
-        ${rc} =   Set Variable    1
+        VAR    ${rc}   1
         WHILE    ${rc} != 0
             ${rc} =    Keyword that returns zero on success
         END
@@ -613,11 +613,13 @@ with Robot Framework, the execution must be forcefully stopped and no log or rep
 can be created. For this reason, `WHILE` loops in Robot Framework have a default
 limit of 10 000 iterations. If the limit is exceeded, the loop fails.
 
-The limit can be changed with the `limit` configuration parameter. Valid values
-are positive integers denoting iteration count and `time strings`__ like `10s` or
-`1 hour 10 minutes` denoting maximum iteration time. The limit can also be disabled
-altogether by using `NONE` (case-insensitive). All these options are illustrated
-by the examples below.
+The limit can be set with the `limit` configuration parameter either as a maximum
+iteration count or as a maximum time for the whole loop. When the limit is an
+iteration count, it is possible to use just integers like `100` and to add `times`
+or `x` suffix after the value like `100 times`. When the limit is a timeout,
+it is possible to use `time strings`__ like `10 s` or `1 hour 10 minutes`.
+The limit can also be disabled altogether by using `NONE` (case-insensitive).
+All these options are illustrated by the examples below.
 
 .. sourcecode:: robotframework
 
@@ -625,6 +627,12 @@ by the examples below.
     Limit as iteration count
         WHILE    True    limit=100
             Log    This is run 100 times.
+        END
+        WHILE    True    limit=10 times
+            Log    This is run 10 times.
+        END
+        WHILE    True    limit=42x
+            Log    This is run 42 times.
         END
 
     Limit as time
@@ -634,8 +642,11 @@ by the examples below.
 
     No limit
         WHILE    True    limit=NONE
-            Log    This must be forcefully stopped.
+            Log    This runs forever.
         END
+
+.. note:: Support for using `times` and `x` suffixes with iteration counts
+          is new in Robot Framework 7.0.
 
 Keywords in a loop are not forcefully stopped if the limit is exceeded. Instead
 the loop is exited similarly as if the loop condition would have become false.

@@ -9,13 +9,16 @@ Default limit is 10000 iterations
 Limit with iteration count
     Check while loop     FAIL    5
 
-Limit with iteration count with spaces
-    ${tc}=   Check Test Case    ${TESTNAME}
-    Should Be Equal    ${tc.body[0].limit}    3 0
+Iteration count with 'times' suffix
+    Check while loop     FAIL    3
 
-Limit with iteration count with underscore
+Iteration count with 'x' suffix
+    Check while loop     FAIL    4
+
+Iteration count normalization
     ${tc}=   Check Test Case    ${TESTNAME}
-    Should Be Equal    ${tc.body[0].limit}    1_0
+    Should Be Equal    ${tc.body[0].limit}    1_000
+    Should Be Equal    ${tc.body[1].limit}    3 0 T i m e S
 
 Limit as timestr
     Check Test Case    ${TESTNAME}
