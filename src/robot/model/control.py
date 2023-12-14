@@ -73,6 +73,12 @@ class ForIteration(BodyItem):
     def _log_name(self):
         return ', '.join(f'{name} = {value}' for name, value in self.assign.items())
 
+    def to_dict(self) -> DataDict:
+        return {
+            'type': self.type,
+            'assign': self.assign
+        }
+
 
 @Body.register
 class For(BodyItem):
@@ -160,6 +166,9 @@ class WhileIteration(BodyItem):
 
     def visit(self, visitor: SuiteVisitor):
         visitor.visit_while_iteration(self)
+
+    def to_dict(self) -> DataDict:
+        return {'type': self.type}
 
 
 @Body.register

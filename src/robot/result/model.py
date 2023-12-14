@@ -269,6 +269,15 @@ class StatusMixin:
             raise ValueError(f"`not_run` value must be truthy, got '{not_run}'.")
         self.status = self.NOT_RUN
 
+    def to_dict(self):
+        data = {'status': self.status,
+                'elapsed_time': self.elapsed_time.total_seconds()}
+        if self.start_time:
+            data['start_time'] = self.start_time.isoformat()
+        if self.message:
+            data['message'] = self.message
+        return data
+
 
 class ForIteration(model.ForIteration, StatusMixin, DeprecatedAttributesMixin):
     body_class = Body
@@ -288,6 +297,9 @@ class ForIteration(model.ForIteration, StatusMixin, DeprecatedAttributesMixin):
         self.start_time = start_time
         self.end_time = end_time
         self.elapsed_time = elapsed_time
+
+    def to_dict(self) -> DataDict:
+        return {**super().to_dict(), **StatusMixin.to_dict(self)}
 
 
 @Body.register
@@ -323,6 +335,9 @@ class For(model.For, StatusMixin, DeprecatedAttributesMixin):
     def _log_name(self):
         return str(self)[7:]    # Drop 'FOR    ' prefix.
 
+    def to_dict(self) -> DataDict:
+        return {**super().to_dict(), **StatusMixin.to_dict(self)}
+
 
 class WhileIteration(model.WhileIteration, StatusMixin, DeprecatedAttributesMixin):
     body_class = Body
@@ -340,6 +355,9 @@ class WhileIteration(model.WhileIteration, StatusMixin, DeprecatedAttributesMixi
         self.start_time = start_time
         self.end_time = end_time
         self.elapsed_time = elapsed_time
+
+    def to_dict(self) -> DataDict:
+        return {**super().to_dict(), **StatusMixin.to_dict(self)}
 
 
 @Body.register
@@ -373,6 +391,9 @@ class While(model.While, StatusMixin, DeprecatedAttributesMixin):
     def _log_name(self):
         return str(self)[9:]    # Drop 'WHILE    ' prefix.
 
+    def to_dict(self) -> DataDict:
+        return {**super().to_dict(), **StatusMixin.to_dict(self)}
+
 
 class IfBranch(model.IfBranch, StatusMixin, DeprecatedAttributesMixin):
     body_class = Body
@@ -397,6 +418,9 @@ class IfBranch(model.IfBranch, StatusMixin, DeprecatedAttributesMixin):
     def _log_name(self):
         return self.condition or ''
 
+    def to_dict(self) -> DataDict:
+        return {**super().to_dict(), **StatusMixin.to_dict(self)}
+
 
 @Body.register
 class If(model.If, StatusMixin, DeprecatedAttributesMixin):
@@ -416,6 +440,9 @@ class If(model.If, StatusMixin, DeprecatedAttributesMixin):
         self.start_time = start_time
         self.end_time = end_time
         self.elapsed_time = elapsed_time
+
+    def to_dict(self) -> DataDict:
+        return {**super().to_dict(), **StatusMixin.to_dict(self)}
 
 
 class TryBranch(model.TryBranch, StatusMixin, DeprecatedAttributesMixin):
@@ -443,6 +470,9 @@ class TryBranch(model.TryBranch, StatusMixin, DeprecatedAttributesMixin):
     def _log_name(self):
         return str(self)[len(self.type)+4:]    # Drop '<type>    ' prefix.
 
+    def to_dict(self) -> DataDict:
+        return {**super().to_dict(), **StatusMixin.to_dict(self)}
+
 
 @Body.register
 class Try(model.Try, StatusMixin, DeprecatedAttributesMixin):
@@ -462,6 +492,9 @@ class Try(model.Try, StatusMixin, DeprecatedAttributesMixin):
         self.start_time = start_time
         self.end_time = end_time
         self.elapsed_time = elapsed_time
+
+    def to_dict(self) -> DataDict:
+        return {**super().to_dict(), **StatusMixin.to_dict(self)}
 
 
 @Body.register
@@ -501,6 +534,12 @@ class Var(model.Var, StatusMixin, DeprecatedAttributesMixin):
     def _log_name(self):
         return str(self)[7:]    # Drop 'VAR    ' prefix.
 
+    def to_dict(self) -> DataDict:
+        data = {**super().to_dict(), **StatusMixin.to_dict(self)}
+        if self.body:
+            data['body'] = self.body.to_dicts()
+        return data
+
 
 @Body.register
 class Return(model.Return, StatusMixin, DeprecatedAttributesMixin):
@@ -532,6 +571,12 @@ class Return(model.Return, StatusMixin, DeprecatedAttributesMixin):
         """
         return self.body_class(self, body)
 
+    def to_dict(self) -> DataDict:
+        data = {**super().to_dict(), **StatusMixin.to_dict(self)}
+        if self.body:
+            data['body'] = self.body.to_dicts()
+        return data
+
 
 @Body.register
 class Continue(model.Continue, StatusMixin, DeprecatedAttributesMixin):
@@ -561,6 +606,12 @@ class Continue(model.Continue, StatusMixin, DeprecatedAttributesMixin):
         keywords.
         """
         return self.body_class(self, body)
+
+    def to_dict(self) -> DataDict:
+        data = {**super().to_dict(), **StatusMixin.to_dict(self)}
+        if self.body:
+            data['body'] = self.body.to_dicts()
+        return data
 
 
 @Body.register
@@ -592,6 +643,12 @@ class Break(model.Break, StatusMixin, DeprecatedAttributesMixin):
         """
         return self.body_class(self, body)
 
+    def to_dict(self) -> DataDict:
+        data = {**super().to_dict(), **StatusMixin.to_dict(self)}
+        if self.body:
+            data['body'] = self.body.to_dicts()
+        return data
+
 
 @Body.register
 class Error(model.Error, StatusMixin, DeprecatedAttributesMixin):
@@ -620,6 +677,12 @@ class Error(model.Error, StatusMixin, DeprecatedAttributesMixin):
         Typically contains the message that caused the error.
         """
         return self.body_class(self, body)
+
+    def to_dict(self) -> DataDict:
+        data = {**super().to_dict(), **StatusMixin.to_dict(self)}
+        if self.body:
+            data['body'] = self.body.to_dicts()
+        return data
 
 
 @Body.register
@@ -803,6 +866,26 @@ class Keyword(model.Keyword, StatusMixin):
         """Keyword tags as a :class:`~.model.tags.Tags` object."""
         return Tags(tags)
 
+    def to_dict(self) -> DataDict:
+        data = {**super().to_dict(), **StatusMixin.to_dict(self)}
+        if self.owner:
+            data['owner'] = self.owner
+        if self.source_name:
+            data['source_name'] = self.source_name
+        if self.doc:
+            data['doc'] = self.doc
+        if self.tags:
+            data['tags'] = list(self.tags)
+        if self.timeout:
+            data['timeout'] = self.timeout
+        if self.body:
+            data['body'] = self.body.to_dicts()
+        if self.has_setup:
+            data['setup'] = self.setup.to_dict()
+        if self.has_teardown:
+            data['teardown'] = self.teardown.to_dict()
+        return data
+
 
 class TestCase(model.TestCase[Keyword], StatusMixin):
     """Represents results of a single test case.
@@ -839,6 +922,9 @@ class TestCase(model.TestCase[Keyword], StatusMixin):
     def body(self, body: 'Sequence[BodyItem|DataDict]') -> Body:
         """Test body as a :class:`~robot.result.Body` object."""
         return self.body_class(self, body)
+
+    def to_dict(self) -> DataDict:
+        return {**super().to_dict(), **StatusMixin.to_dict(self)}
 
 
 class TestSuite(model.TestSuite[Keyword, TestCase], StatusMixin):
@@ -989,3 +1075,6 @@ class TestSuite(model.TestSuite[Keyword, TestCase], StatusMixin):
     def suite_teardown_skipped(self, message: str):
         """Internal usage only."""
         self.visit(SuiteTeardownFailed(message, skipped=True))
+
+    def to_dict(self) -> DataDict:
+        return {**super().to_dict(), **StatusMixin.to_dict(self)}
