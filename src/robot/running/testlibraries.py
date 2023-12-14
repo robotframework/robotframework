@@ -16,7 +16,7 @@
 import inspect
 from functools import cached_property, partial
 from pathlib import Path
-from typing import Any, Sequence, TypeVar
+from typing import Any, Literal, overload, Sequence, TypeVar
 from types import ModuleType
 
 from robot.errors import DataError
@@ -207,8 +207,18 @@ class TestLibrary:
     def create_keywords(self):
         raise NotImplementedError
 
-    def find_keywords(self, name: str) -> 'list[LibraryKeyword]':
-        return self.keyword_finder.find(name)
+    @overload
+    def find_keywords(self, name: str, count: Literal[1]) -> 'LibraryKeyword':
+        ...
+
+    @overload
+    def find_keywords(self, name: str, count: 'int|None' = None) \
+            -> 'list[LibraryKeyword]':
+        ...
+
+    def find_keywords(self, name: str, count: 'int|None' = None) \
+            -> 'list[LibraryKeyword]|LibraryKeyword':
+        return self.keyword_finder.find(name, count)
 
     def copy(self: Self, name: str) -> Self:
         lib = type(self)(self.code, self.init.copy(), name, self.real_name,

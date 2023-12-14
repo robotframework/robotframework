@@ -14,7 +14,7 @@
 #  limitations under the License.
 
 from pathlib import Path
-from typing import Any, Iterable, Literal, Sequence, TYPE_CHECKING
+from typing import Any, Iterable, Literal, overload, Sequence, TYPE_CHECKING
 
 from robot import model
 from robot.model import BodyItem, create_fixture, DataDict, ModelObject, Tags
@@ -127,8 +127,17 @@ class ResourceFile(ModelObject):
         from .builder import RobotParser
         return RobotParser().parse_resource_model(model)
 
-    def find_keywords(self, name: str) -> 'list[UserKeyword]':
-        return self.keyword_finder.find(name)
+    @overload
+    def find_keywords(self, name: str, count: Literal[1]) -> 'UserKeyword':
+        ...
+
+    @overload
+    def find_keywords(self, name: str, count: 'int|None' = None) -> 'list[UserKeyword]':
+        ...
+
+    def find_keywords(self, name: str, count: 'int|None' = None) \
+            -> 'list[UserKeyword]|UserKeyword':
+        return self.keyword_finder.find(name, count)
 
     def to_dict(self) -> DataDict:
         data = {}

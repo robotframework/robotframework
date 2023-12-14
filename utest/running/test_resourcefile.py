@@ -1,7 +1,54 @@
 import unittest
 
 from robot.running import ResourceFile, UserKeyword
-from robot.utils.asserts import assert_equal, assert_not_equal
+from robot.utils.asserts import assert_equal, assert_not_equal, assert_raises_with_msg
+
+
+class TestResourceFile(unittest.TestCase):
+
+    def setUp(self):
+        self.resource = ResourceFile()
+        for name in 'A', '${x:x}yz', 'x${y}z':
+            self.resource.keywords.create(name)
+
+    def find(self, name, count=None):
+        return self.resource.find_keywords(name, count)
+
+    def should_find(self, name, *matches, count=None):
+        kws = self.find(name, count)
+        assert_equal([k.name for k in kws], list(matches))
+
+    def test_find_normal_keywords(self):
+        self.should_find('A', 'A')
+        self.should_find('a', 'A')
+        self.should_find('B')
+
+    def test_find_keywords_with_embedded_args(self):
+        self.should_find('xxz', 'x${y}z')
+        self.should_find('XZZ', 'x${y}z')
+        self.should_find('XYZ', '${x:x}yz', 'x${y}z')
+
+    def test_find_with_count(self):
+        assert_equal(self.find('A', 1).name, 'A')
+        assert_equal(len(self.find('B', 0)), 0)
+        assert_equal(len(self.find('xyz', 2)), 2)
+
+    def test_find_with_invalid_count(self):
+        assert_raises_with_msg(
+            ValueError,
+            "Expected 2 keywords matching name 'A', found 1: 'A'",
+            self.find, 'A', 2
+        )
+        assert_raises_with_msg(
+            ValueError,
+            "Expected 1 keyword matching name 'B', found 0.",
+            self.find, 'B', 1
+        )
+        assert_raises_with_msg(
+            ValueError,
+            "Expected 1 keyword matching name 'xyz', found 2: '${x:x}yz' and 'x${y}z'",
+            self.find, 'xyz', 1
+        )
 
 
 class TestCacheInvalidation(unittest.TestCase):

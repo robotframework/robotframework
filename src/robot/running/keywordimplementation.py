@@ -131,8 +131,14 @@ class KeywordImplementation(ModelObject):
         return self.owner.source if self.owner is not None else None
 
     def matches(self, name: str) -> bool:
+        """Returns true if ``name`` matches the keyword name.
+
+        With normal keywords matching is a case, space and underscore insensitive
+        string comparison. With keywords accepting embedded arguments, matching
+        is done against the name.
+        """
         if self.embedded:
-            return self.embedded.match(name)
+            return self.embedded.match(name) is not None
         return eq(self.name, name, ignore='_')
 
     def resolve_arguments(self, args: Sequence[str], variables=None,
