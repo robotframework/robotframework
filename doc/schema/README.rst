@@ -14,6 +14,7 @@ Schema files
 
 - `<robot.xsd>`_ - Robot Framework XML output schema in XSD_ format.
 - `<running.json>`_ - `JSON Schema`_ for ``robot.running.TestSuite`` model structure.
+- `<result.json>`_ - `JSON Schema`_ for ``robot.result.TestSuite`` model structure.
 - `<libdoc.xsd>`_ - Libdoc XML spec schema in XSD_ format.
 - `<libdoc.json>`_ - Libdoc JSON spec schema in `JSON Schema`_ format.
 
@@ -34,9 +35,9 @@ XSD schemas are created by hand and updates need to be done directly to them.
 
 JSON schemas are generated based on models created using pydantic_.
 To modify these schemas, first update the appropriate pydantic model either
-in `<running_json_schema.py>`_ or `<libdoc_json_schema.py>`_
+in `<running_json_schema.py>`_, `<result_json_schema.py>`_, or `<libdoc_json_schema.py>`_
 and then execute that file to regenerate the actual schema file in
-`<running.json>`_ or `<libdoc.json>`_, respectively.
+`<running.json>`_, `<result.json>`_, or `<libdoc.json>`_, respectively.
 
 Testing schemas
 ---------------
