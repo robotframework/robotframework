@@ -32,24 +32,29 @@ class Var(BaseModel):
     value: Sequence[str]
     scope: str | None
     separator: str | None
+    body: list['Keyword | For | While | If | Try | Var | Break | Continue | Return | Error'] | None
 
 
 class Return(BaseModel):
     type = Field('RETURN', const=True)
     values: Sequence[str] | None
+    body: list['Keyword | For | While | If | Try | Var | Break | Continue | Return | Error'] | None
 
 
 class Continue(BaseModel):
     type = Field('CONTINUE', const=True)
+    body: list['Keyword | For | While | If | Try | Var | Break | Continue | Return | Error'] | None
 
 
 class Break(BaseModel):
     type = Field('BREAK', const=True)
+    body: list['Keyword | For | While | If | Try | Var | Break | Continue | Return | Error'] | None
 
 
 class Error(BaseModel):
     type = Field('ERROR', const=True)
     values: Sequence[str]
+    body: list['Keyword | For | While | If | Try | Var | Break | Continue | Return | Error'] | None
 
 
 class Keyword(BaseModel):
@@ -63,7 +68,7 @@ class Keyword(BaseModel):
     timeout: str | None
     setup: 'Keyword | None'
     teardown: 'Keyword | None'
-    body: list['Keyword | For | While | If | Try | Var | Break | Continue | Return | Error']
+    body: list['Keyword | For | While | If | Try | Var | Break | Continue | Return | Error'] | None
 
 
 class For(BaseModel):
@@ -74,6 +79,12 @@ class For(BaseModel):
     start: str | None
     mode: str | None
     fill: str | None
+    body: list['Keyword | For | ForIteration | While | If | Try | Var | Break | Continue | Return | Error']
+
+
+class ForIteration(BaseModel):
+    type = Field('ITERATION', const=True)
+    assign: dict[str, str]
     body: list['Keyword | For | While | If | Try | Var | Break | Continue | Return | Error']
 
 
@@ -83,6 +94,11 @@ class While(BaseModel):
     limit: str | None
     on_limit: str | None
     on_limit_message: str | None
+    body: list['Keyword | For | While | WhileIteration | If | Try | Var | Break | Continue | Return | Error']
+
+
+class WhileIteration(BaseModel):
+    type = Field('ITERATION', const=True)
     body: list['Keyword | For | While | If | Try | Var | Break | Continue | Return | Error']
 
 
@@ -146,7 +162,8 @@ class TestSuite(BaseModel):
         }
 
 
-for cls in [For, While, IfBranch, TryBranch, TestSuite]:
+for cls in [Keyword, For, ForIteration, While, WhileIteration, IfBranch, TryBranch, TestSuite,
+            Error, Break, Continue, Return, Var]:
     cls.update_forward_refs()
 
 

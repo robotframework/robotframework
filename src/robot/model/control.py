@@ -76,7 +76,8 @@ class ForIteration(BodyItem):
     def to_dict(self) -> DataDict:
         return {
             'type': self.type,
-            'assign': self.assign
+            'assign': dict(self.assign),
+            'body': self.body.to_dicts()
         }
 
 
@@ -168,7 +169,10 @@ class WhileIteration(BodyItem):
         visitor.visit_while_iteration(self)
 
     def to_dict(self) -> DataDict:
-        return {'type': self.type}
+        return {
+            'type': self.type,
+            'body': self.body.to_dicts()
+        }
 
 
 @Body.register

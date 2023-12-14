@@ -615,17 +615,60 @@ class TestToFromDictAndJson(unittest.TestCase):
         self._verify(Keyword(), name='', status='FAIL', elapsed_time=0)
         self._verify(Keyword('Name'), name='Name', status='FAIL', elapsed_time=0)
         time_ = datetime.now()
-        self._verify(Keyword('N', 'BuiltIn', 'N', 'some doc', ('args', ),
-                             ('${result}', ), ('t1', 't2'), "1s", BodyItem.KEYWORD, "PASS",
-                             'a msg', time_, None, 1.2),
-                     name='N', status='PASS', owner='BuiltIn', source_name='N', doc='some doc',
-                     args=('args', ), assign=('${result}',), tags=['t1', 't2'], timeout="1s", message='a msg',
-                     start_time=time_.isoformat(), elapsed_time=1.2)
+        keyword = Keyword('N', 'BuiltIn', 'N', 'some doc', ('args',),
+                          ('${result}',), ('t1', 't2'), "1s",
+                          BodyItem.KEYWORD, "PASS", 'a msg', time_, None, 1.2)
+        keyword.setup.config(name='Setup', status='PASS')
+        keyword.teardown.config(name='Teardown', args='a')
+        keyword.body.create_keyword("K1", status='PASS')
+        self._verify(
+            keyword,
+            name='N',
+            status='PASS',
+            owner='BuiltIn',
+            source_name='N',
+            doc='some doc',
+            args=('args', ),
+            assign=('${result}',),
+            tags=['t1', 't2'],
+            timeout="1s",
+            message='a msg',
+            start_time=time_.isoformat(),
+            elapsed_time=1.2,
+            setup={'name': 'Setup', 'status': 'PASS', 'elapsed_time': 0},
+            teardown={'name': 'Teardown', 'status': 'FAIL', 'args': ('a', ), 'elapsed_time': 0},
+            body=[{'name': 'K1', 'status': 'PASS', 'elapsed_time': 0}]
+        )
+
+    def test_for(self):
+        self._verify(For(), type='FOR', assign=(), flavor='IN', values=(), body=[], status='FAIL', elapsed_time=0)
+        self._verify(For(['${i}'], 'IN RANGE', ['10']),
+                     type='FOR', assign=('${i}',), flavor='IN RANGE', values=('10',),
+                     body=[], status='FAIL', elapsed_time=0)
+        root = For(['${i}', '${a}'], 'IN ENUMERATE', ['cat', 'dog'], start='1')
+        iter_ = root.body.create_iteration({"${x}": "1"})
+        iter_.body.create_keyword('K1')
+        self._verify(root,
+                     type='FOR', assign=('${i}', '${a}'), flavor='IN ENUMERATE',
+                     values=('cat', 'dog'), start='1', status='FAIL', elapsed_time=0,
+                     body=[{'type': 'ITERATION', 'assign': {'${x}': '1'}, 'status': 'FAIL', 'elapsed_time': 0,
+                            'body': [{'name': 'K1', 'status': 'FAIL', 'elapsed_time': 0}]}])
+
+    def test_while(self):
+        self._verify(While(limit='1', on_limit_message='Ooops!', status='PASS'),
+                     type='WHILE', limit='1', on_limit_message='Ooops!', status='PASS', elapsed_time=0, body=[])
+        root = While('True')
+        iter_ = root.body.create_iteration()
+        iter_.body.create_keyword('K')
+        self._verify(root, type='WHILE', condition='True', status='FAIL', elapsed_time=0,
+                     body=[{'type': 'ITERATION', 'status': 'FAIL', 'elapsed_time': 0,
+                           'body': [{'name': 'K', 'status': 'FAIL', 'elapsed_time': 0}]}
+                           ])
 
     def test_if(self):
         time_ = datetime.now()
-        if_ = If("FAIL", "I failed", start_time=time_, elapsed_time=0.1)
-        if_.body.create_branch(condition="0 > 1", status="FAIL", message="I failed", start_time=time_, elapsed_time=0.01)
+        if_ = If('FAIL', 'I failed', start_time=time_, elapsed_time=0.1)
+        if_.body.create_branch(condition='0 > 1', status='FAIL', message='I failed', start_time=time_, elapsed_time=0.01)
         exp_branch = {
             'condition': '0 > 1',
             'elapsed_time': 0.01,
@@ -637,6 +680,35 @@ class TestToFromDictAndJson(unittest.TestCase):
         }
         self._verify(if_, type=BodyItem.IF_ELSE_ROOT, status="FAIL", message="I failed", start_time=time_.isoformat(),
                      elapsed_time=0.1, body=[exp_branch])
+
+    def test_try_structure(self):
+        root = Try()
+        root.body.create_branch(Try.TRY).body.create_keyword('K1')
+        root.body.create_branch(Try.EXCEPT).body.create_keyword('K2')
+        root.body.create_branch(Try.ELSE).body.create_keyword('K3')
+        root.body.create_branch(Try.FINALLY).body.create_keyword('K4')
+        self._verify(root,
+                     status='FAIL',
+                     elapsed_time=0,
+                     type='TRY/EXCEPT ROOT',
+                     body=[{'type': 'TRY', 'status': 'FAIL', 'elapsed_time': 0,
+                            'body': [{'name': 'K1', 'status': 'FAIL', 'elapsed_time': 0}]},
+                           {'type': 'EXCEPT', 'patterns': (), 'status': 'FAIL', 'elapsed_time': 0,
+                            'body': [{'name': 'K2', 'status': 'FAIL', 'elapsed_time': 0}]},
+                           {'type': 'ELSE', 'status': 'FAIL', 'elapsed_time': 0,
+                            'body': [{'name': 'K3', 'status': 'FAIL', 'elapsed_time': 0}]},
+                           {'type': 'FINALLY', 'status': 'FAIL', 'elapsed_time': 0,
+                            'body': [{'name': 'K4', 'status': 'FAIL', 'elapsed_time': 0}]}])
+
+    def test_return_continue_break(self):
+        self._verify(Return(('x', 'y')),
+                     type='RETURN', values=('x', 'y'), status='FAIL', elapsed_time=0)
+        self._verify(Continue(), type='CONTINUE', status='FAIL', elapsed_time=0)
+        self._verify(Break(), type='BREAK', status='FAIL', elapsed_time=0)
+        ret = Return()
+        ret.body.create_keyword("foo")
+        self._verify(ret, type='RETURN', status='FAIL', elapsed_time=0,
+                     body=[{'elapsed_time': 0.0, 'name': 'foo', 'status': 'FAIL'}])
 
     def test_test(self):
         self._verify(TestCase(), name='', status='FAIL', body=[], elapsed_time=0)
