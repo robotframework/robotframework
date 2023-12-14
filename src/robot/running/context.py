@@ -269,9 +269,6 @@ class _ExecutionContext:
             }[result.parent.type]
         else:
             method = {
-                result.KEYWORD: output.start_keyword,
-                result.SETUP: output.start_keyword,
-                result.TEARDOWN: output.start_keyword,
                 result.FOR: output.start_for,
                 result.WHILE: output.start_while,
                 result.IF_ELSE_ROOT: output.start_if,
@@ -310,9 +307,6 @@ class _ExecutionContext:
             }[result.parent.type]
         else:
             method = {
-                result.KEYWORD: output.end_keyword,
-                result.SETUP: output.end_keyword,
-                result.TEARDOWN: output.end_keyword,
                 result.FOR: output.end_for,
                 result.WHILE: output.end_while,
                 result.IF_ELSE_ROOT: output.end_if,
