@@ -85,9 +85,10 @@ __ `Implicit argument types based on default values`_
 Listener interface versions
 ---------------------------
 
-There are two supported listener interface versions. A listener must
-have an attribute `ROBOT_LISTENER_API_VERSION` with value 2 or 3, either as
-a string or as an integer, depending on which API version it uses.
+There are two supported listener interface versions with version numbers 2 and 3.
+A listener can specify which version to use by having a `ROBOT_LISTENER_API_VERSION`
+attribute with value 2 or 3, respectively. Starting from Robot Framework 7.0,
+the listener version 3 is used by default if the version is not specified.
 
 The main difference between listener versions 2 and 3 is that the former only
 gets information about the execution but cannot directly affect it. The latter
@@ -738,7 +739,7 @@ act as a listener. To avoid listener methods to be exposed as keywords in
 the latter case, it is possible to prefix them with an underscore.
 For example, instead of using `end_suite` it is possible to use `_end_suite`.
 
-Following examples illustrates using an external listener as well as library
+Following examples illustrates using an external listener as well as a library
 acting as a listener itself:
 
 .. sourcecode:: python
@@ -747,29 +748,52 @@ acting as a listener itself:
 
 
    class LibraryWithExternalListener:
-       ROBOT_LIBRARY_LISTENER = Listener()
        ROBOT_LIBRARY_SCOPE = 'GLOBAL'
-       ROBOT_LISTENER_API_VERSION = 2
+       ROBOT_LIBRARY_LISTENER = Listener()
 
-       # actual library code here ...
+       def example_keyword(self):
+            ...
 
 .. sourcecode:: python
 
-   class PythonLibraryAsListenerItself:
-       ROBOT_LIBRARY_SCOPE = 'TEST SUITE'
+   class LibraryItselfAsListener:
+       ROBOT_LIBRARY_SCOPE = 'SUITE'
        ROBOT_LISTENER_API_VERSION = 2
 
        def __init__(self):
            self.ROBOT_LIBRARY_LISTENER = self
 
+       # Use '_' prefix to avoid listener method becoming a keyword.
        def _end_suite(self, name, attrs):
-           print('Suite %s (%s) ending.' % (name, attrs['id']))
+           print(f"Suite '{name}' ending with status {attrs['id']}.")
 
-       # actual library code here ...
+       def example_keyword(self):
+            ...
 
-As the seconds example above already demonstrated, library listeners have to
-specify `listener interface versions`_ using `ROBOT_LISTENER_API_VERSION`
+As the second example above already demonstrated, library listeners can
+specify `listener interface versions`_ using the `ROBOT_LISTENER_API_VERSION`
 attribute exactly like any other listener.
+
+Starting from Robot Framework 7.0, a listener can register itself to be a listener
+also by using a string `SELF` (case-insensitive) as a listener. This is especially
+convenient when using the `@library decorator`_:
+
+.. sourcecode:: python
+
+   from robot.api.deco import keyword, library
+
+
+   @library(scope='SUITE', listener='SELF')
+   class LibraryItselfAsListener:
+
+       # Listener version is not specified, so uses the listener version 3 by default.
+       # Keywords must use the @keyword decorator, so no need to use the '_' prefix here.
+       def end_suite(self, data, result):
+           print(f"Suite '{data.name}' ending with status {result.status}.")
+
+       @keyword
+       def example_keyword(self):
+            ...
 
 It is also possible to specify multiple listeners for a single library by
 giving `ROBOT_LIBRARY_LISTENER` a value as a list:
@@ -782,7 +806,8 @@ giving `ROBOT_LIBRARY_LISTENER` a value as a list:
    class LibraryWithMultipleListeners:
        ROBOT_LIBRARY_LISTENER = [Listener1(), Listener2(), Listener3()]
 
-       # actual library code here ...
+       def example_keyword(self):
+            ...
 
 Called listener methods
 ~~~~~~~~~~~~~~~~~~~~~~~

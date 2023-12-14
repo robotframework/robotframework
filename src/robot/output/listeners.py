@@ -50,6 +50,8 @@ class Listeners(LoggerApi):
         return imported
 
     def _import_listener(self, listener, library=None) -> 'ListenerFacade':
+        if library and isinstance(listener, str) and listener.upper() == 'SELF':
+            listener = library.instance
         if isinstance(listener, str):
             name, args = split_args_from_name_or_path(listener)
             importer = Importer('listener', logger=LOGGER)

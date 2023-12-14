@@ -2,10 +2,10 @@ import sys
 
 
 class listenerlibrary3:
-    ROBOT_LIBRARY_SCOPE = "TEST CASE"
+    ROBOT_LIBRARY_LISTENER = 'SELF'
 
     def __init__(self):
-        self.ROBOT_LIBRARY_LISTENER = self
+        self.listeners = []
 
     def start_suite(self, data, result):
         result.doc = (result.doc + ' [start suite]').strip()
@@ -14,6 +14,8 @@ class listenerlibrary3:
         assert len(data.tests) == 2
         assert len(result.tests) == 0
         data.tests.create(name='New')
+        assert not self.listeners or self.listeners[-1] is not self
+        self.listeners.append(self)
 
     def end_suite(self, data, result):
         assert len(data.tests) == 3
@@ -23,6 +25,7 @@ class listenerlibrary3:
         result.name += ' [end suite]'
         result.doc += ' [end suite]'
         result.metadata['suite'] += ' [end]'
+        assert self.listeners.pop() is self
 
     def start_test(self, data, result):
         result.doc = (result.doc + ' [start test]').strip()
@@ -30,12 +33,15 @@ class listenerlibrary3:
         result.message = 'Message: [start]'
         result.parent.metadata['tests'] += 'x'
         data.body.create_keyword('No Operation')
+        assert not self.listeners or self.listeners[-1] is not self
+        self.listeners.append(self)
 
     def end_test(self, data, result):
         result.doc += ' [end test]'
         result.tags.add('[end]')
         result.passed = not result.passed
         result.message += ' [end]'
+        assert self.listeners.pop() is self
 
     def log_message(self, msg):
         msg.message += ' [log_message]'
