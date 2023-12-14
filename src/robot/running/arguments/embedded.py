@@ -14,7 +14,7 @@
 #  limitations under the License.
 
 import re
-from typing import Mapping, Sequence
+from typing import Any, Mapping, Sequence
 
 from robot.errors import DataError
 from robot.utils import get_error_message
@@ -33,24 +33,24 @@ class EmbeddedArguments:
         self.custom_patterns = custom_patterns or None
 
     @classmethod
-    def from_name(cls, name) -> 'EmbeddedArguments|None':
+    def from_name(cls, name: str) -> 'EmbeddedArguments|None':
         return EmbeddedArgumentParser().parse(name) if '${' in name else None
 
-    def match(self, name):
+    def match(self, name: str) -> 're.Match|None':
         return self.name.fullmatch(name)
 
-    def map(self, args):
+    def map(self, args: Sequence[Any]) -> 'list[tuple[str, Any]]':
         self.validate(args)
         return list(zip(self.args, args))
 
-    def validate(self, args):
+    def validate(self, args: Sequence[Any]):
         """Validate that embedded args match custom regexps.
 
         Initial validation is done already when matching keywords, but this
         validation makes sure arguments match also if they are given as variables.
 
         Currently, argument not matching only causes a deprecation warning, but
-        that will be changed to an actual failure in RF 8.0:
+        that will be changed to ``ValueError`` in RF 8.0:
         https://github.com/robotframework/robotframework/issues/4069
         """
         if not self.custom_patterns:
@@ -76,7 +76,7 @@ class EmbeddedArgumentParser:
     _variable_pattern = r'\$\{[^\}]+\}'
 
     def parse(self, string: str) -> 'EmbeddedArguments|None':
-        name_parts = []
+        name_parts = ['^']
         args = []
         custom_patterns = {}
         after = string
@@ -90,9 +90,9 @@ class EmbeddedArgumentParser:
             after = match.after
         if not args:
             return None
-        name_parts.append(re.escape(after))
-        return EmbeddedArguments(self._compile_regexp(name_parts), args,
-                                 custom_patterns)
+        name_parts.extend([re.escape(after), '$'])
+        name = self._compile_regexp(''.join(name_parts))
+        return EmbeddedArguments(name, args, custom_patterns)
 
     def _get_name_and_pattern(self, name: str) -> 'tuple[str, str, bool]':
         if ':' in name:
@@ -137,9 +137,9 @@ class EmbeddedArgumentParser:
     def _add_automatic_variable_pattern(self, pattern: str) -> str:
         return f'{pattern}|{self._variable_pattern}'
 
-    def _compile_regexp(self, pattern: Sequence[str]) -> re.Pattern:
+    def _compile_regexp(self, pattern: str) -> re.Pattern:
         try:
             return re.compile(''.join(pattern), re.IGNORECASE)
         except Exception:
-            raise DataError("Compiling embedded arguments regexp failed: %s"
-                            % get_error_message())
+            raise DataError(f"Compiling embedded arguments regexp failed: "
+                            f"{get_error_message()}")
