@@ -78,6 +78,18 @@ class Iterations(model.BaseIterations['Keyword', 'For', 'While', 'If', 'Try', 'V
 class Message(model.Message):
     __slots__ = ()
 
+    def to_dict(self) -> DataDict:
+        data: DataDict = {
+            'type': self.type,
+            'message': self.message,
+            'level': self.level,
+            'html': self.html,
+        }
+        if self.timestamp:
+            data['timestamp'] = self.timestamp.isoformat()
+        return data
+
+
 
 class StatusMixin:
     PASS = 'PASS'

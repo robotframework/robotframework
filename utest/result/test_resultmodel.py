@@ -614,10 +614,10 @@ class TestToFromDictAndJson(unittest.TestCase):
     def test_keyword(self):
         self._verify(Keyword(), name='', status='FAIL', elapsed_time=0)
         self._verify(Keyword('Name'), name='Name', status='FAIL', elapsed_time=0)
-        time_ = datetime.now()
+        now = datetime.now()
         keyword = Keyword('N', 'BuiltIn', 'N', 'some doc', ('args',),
                           ('${result}',), ('t1', 't2'), "1s",
-                          BodyItem.KEYWORD, "PASS", 'a msg', time_, None, 1.2)
+                          BodyItem.KEYWORD, "PASS", 'a msg', now, None, 1.2)
         keyword.setup.config(name='Setup', status='PASS')
         keyword.teardown.config(name='Teardown', args='a')
         keyword.body.create_keyword("K1", status='PASS')
@@ -633,7 +633,7 @@ class TestToFromDictAndJson(unittest.TestCase):
             tags=['t1', 't2'],
             timeout="1s",
             message='a msg',
-            start_time=time_.isoformat(),
+            start_time=now.isoformat(),
             elapsed_time=1.2,
             setup={'name': 'Setup', 'status': 'PASS', 'elapsed_time': 0},
             teardown={'name': 'Teardown', 'status': 'FAIL', 'args': ('a', ), 'elapsed_time': 0},
@@ -666,19 +666,19 @@ class TestToFromDictAndJson(unittest.TestCase):
                            ])
 
     def test_if(self):
-        time_ = datetime.now()
-        if_ = If('FAIL', 'I failed', start_time=time_, elapsed_time=0.1)
-        if_.body.create_branch(condition='0 > 1', status='FAIL', message='I failed', start_time=time_, elapsed_time=0.01)
+        now = datetime.now()
+        if_ = If('FAIL', 'I failed', start_time=now, elapsed_time=0.1)
+        if_.body.create_branch(condition='0 > 1', status='FAIL', message='I failed', start_time=now, elapsed_time=0.01)
         exp_branch = {
             'condition': '0 > 1',
             'elapsed_time': 0.01,
             'message': 'I failed',
-            'start_time': time_.isoformat(),
+            'start_time': now.isoformat(),
             'status': 'FAIL',
             'type': BodyItem.IF,
             'body': []
         }
-        self._verify(if_, type=BodyItem.IF_ELSE_ROOT, status="FAIL", message="I failed", start_time=time_.isoformat(),
+        self._verify(if_, type=BodyItem.IF_ELSE_ROOT, status="FAIL", message="I failed", start_time=now.isoformat(),
                      elapsed_time=0.1, body=[exp_branch])
 
     def test_try_structure(self):
@@ -706,9 +706,16 @@ class TestToFromDictAndJson(unittest.TestCase):
         self._verify(Continue(), type='CONTINUE', status='FAIL', elapsed_time=0)
         self._verify(Break(), type='BREAK', status='FAIL', elapsed_time=0)
         ret = Return()
-        ret.body.create_keyword("foo")
+        ret.body.create_message('something', 'WARN', True)
         self._verify(ret, type='RETURN', status='FAIL', elapsed_time=0,
-                     body=[{'elapsed_time': 0.0, 'name': 'foo', 'status': 'FAIL'}])
+                     body=[{'message': 'something', 'level': 'WARN', 'html': True,
+                            'type': BodyItem.MESSAGE}])
+
+    def test_message(self):
+        now = datetime.now()
+        self._verify(Message('a msg', 'DEBUG', False, now),
+                     type=BodyItem.MESSAGE, message='a msg', level='DEBUG', html=False,
+                     timestamp=now.isoformat())
 
     def test_test(self):
         self._verify(TestCase(), name='', status='FAIL', body=[], elapsed_time=0)
@@ -718,7 +725,9 @@ class TestToFromDictAndJson(unittest.TestCase):
         test.setup.config(name='Setup', status='PASS')
         test.teardown.config(name='Teardown', args='a')
         test.body.create_keyword('K1', 'suite')
-        test.body.create_if(status='PASS').body.create_branch(condition='$c', status='PASS').body.create_keyword('K2', status='PASS')
+        test.body.create_if(status='PASS').\
+            body.create_branch(condition='$c', status='PASS').\
+            body.create_keyword('K2', status='PASS')
         self._verify(test,
                      name='TC',
                      status='FAIL',
@@ -783,7 +792,7 @@ class TestToFromDictAndJson(unittest.TestCase):
             suite = obj
         elif isinstance(obj, TestCase):
             suite.tests = [obj]
-        elif isinstance(obj, (Keyword, For, While, If, Try, Var, Error)):
+        elif isinstance(obj, (Keyword, For, While, If, Try, Var, Error, Message)):
             test.body.append(obj)
         elif isinstance(obj, (IfBranch, TryBranch)):
             item = If() if isinstance(obj, IfBranch) else Try()
@@ -792,10 +801,6 @@ class TestToFromDictAndJson(unittest.TestCase):
         elif isinstance(obj, (Break, Continue, Return)):
             branch = test.body.create_if().body.create_branch()
             branch.body.append(obj)
-        elif isinstance(obj, UserKeyword):
-            suite.resource.keywords.append(obj)
-        elif isinstance(obj, ResourceFile):
-            suite.resource = obj
         else:
             raise ValueError(obj)
         return suite

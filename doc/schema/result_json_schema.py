@@ -16,48 +16,59 @@ from pydantic import BaseModel as PydanticBaseModel, Extra, Field
 
 
 class BaseModel(PydanticBaseModel):
-    elapsed_time: float
-    status: str
-    start_time: str | None
-    message: str | None
 
     class Config:
         # Do not allow extra attributes.
         extra = Extra.forbid
 
 
-class Var(BaseModel):
+class WithStatus(BaseModel):
+    elapsed_time: float
+    status: str
+    start_time: str | None
+    message: str | None
+
+
+class Var(WithStatus):
     type = Field('VAR', const=True)
     name: str
     value: Sequence[str]
     scope: str | None
     separator: str | None
-    body: list['Keyword | For | While | If | Try | Var | Break | Continue | Return | Error'] | None
+    body: list['Keyword | Message'] | None
 
 
-class Return(BaseModel):
+class Return(WithStatus):
     type = Field('RETURN', const=True)
     values: Sequence[str] | None
-    body: list['Keyword | For | While | If | Try | Var | Break | Continue | Return | Error'] | None
+    body: list['Keyword | Message'] | None
 
 
-class Continue(BaseModel):
+class Continue(WithStatus):
     type = Field('CONTINUE', const=True)
-    body: list['Keyword | For | While | If | Try | Var | Break | Continue | Return | Error'] | None
+    body: list['Keyword | Message'] | None
 
 
-class Break(BaseModel):
+class Break(WithStatus):
     type = Field('BREAK', const=True)
-    body: list['Keyword | For | While | If | Try | Var | Break | Continue | Return | Error'] | None
+    body: list['Keyword | Message'] | None
 
 
-class Error(BaseModel):
+class Error(WithStatus):
     type = Field('ERROR', const=True)
     values: Sequence[str]
-    body: list['Keyword | For | While | If | Try | Var | Break | Continue | Return | Error'] | None
+    body: list['Keyword | Message'] | None
 
 
-class Keyword(BaseModel):
+class Message(BaseModel):
+    type = Field('MESSAGE', const=True)
+    message: str
+    level: Literal['TRACE', 'DEBUG', 'INFO', 'WARN', 'ERROR', 'FAIL', 'SKIP']
+    html: bool
+    timestamp: str | None
+
+
+class Keyword(WithStatus):
     name: str
     args: Sequence[str] | None
     assign: Sequence[str] | None
@@ -68,10 +79,10 @@ class Keyword(BaseModel):
     timeout: str | None
     setup: 'Keyword | None'
     teardown: 'Keyword | None'
-    body: list['Keyword | For | While | If | Try | Var | Break | Continue | Return | Error'] | None
+    body: list['Keyword | For | While | If | Try | Var | Break | Continue | Return | Error | Message'] | None
 
 
-class For(BaseModel):
+class For(WithStatus):
     type = Field('FOR', const=True)
     assign: Sequence[str]
     flavor: str
@@ -79,54 +90,54 @@ class For(BaseModel):
     start: str | None
     mode: str | None
     fill: str | None
-    body: list['Keyword | For | ForIteration | While | If | Try | Var | Break | Continue | Return | Error']
+    body: list['Keyword | For | ForIteration | While | If | Try | Var | Break | Continue | Return | Error | Message']
 
 
-class ForIteration(BaseModel):
+class ForIteration(WithStatus):
     type = Field('ITERATION', const=True)
     assign: dict[str, str]
-    body: list['Keyword | For | While | If | Try | Var | Break | Continue | Return | Error']
+    body: list['Keyword | For | While | If | Try | Var | Break | Continue | Return | Error| Message']
 
 
-class While(BaseModel):
+class While(WithStatus):
     type = Field('WHILE', const=True)
     condition: str | None
     limit: str | None
     on_limit: str | None
     on_limit_message: str | None
-    body: list['Keyword | For | While | WhileIteration | If | Try | Var | Break | Continue | Return | Error']
+    body: list['Keyword | For | While | WhileIteration | If | Try | Var | Break | Continue | Return | Error | Message']
 
 
-class WhileIteration(BaseModel):
+class WhileIteration(WithStatus):
     type = Field('ITERATION', const=True)
-    body: list['Keyword | For | While | If | Try | Var | Break | Continue | Return | Error']
+    body: list['Keyword | For | While | If | Try | Var | Break | Continue | Return | Error | Message']
 
 
-class IfBranch(BaseModel):
+class IfBranch(WithStatus):
     type: Literal['IF', 'ELSE IF', 'ELSE']
     condition: str | None
-    body: list['Keyword | For | While | If | Try | Var | Break | Continue | Return | Error']
+    body: list['Keyword | For | While | If | Try | Var | Break | Continue | Return | Error | Message']
 
 
-class If(BaseModel):
+class If(WithStatus):
     type = Field('IF/ELSE ROOT', const=True)
     body: list[IfBranch]
 
 
-class TryBranch(BaseModel):
+class TryBranch(WithStatus):
     type: Literal['TRY', 'EXCEPT', 'ELSE', 'FINALLY']
     patterns: Sequence[str] | None
     pattern_type: str | None
     assign: str | None
-    body: list['Keyword | For | While | If | Try | Var | Break | Continue | Return | Error']
+    body: list['Keyword | For | While | If | Try | Var | Break | Continue | Return | Error | Message']
 
 
-class Try(BaseModel):
+class Try(WithStatus):
     type = Field('TRY/EXCEPT ROOT', const=True)
     body: list[TryBranch]
 
 
-class TestCase(BaseModel):
+class TestCase(WithStatus):
     name: str
     doc: str | None
     tags: Sequence[str] | None
@@ -136,10 +147,10 @@ class TestCase(BaseModel):
     error: str | None
     setup: Keyword | None
     teardown: Keyword | None
-    body: list[Keyword | For | While | If | Try | Var | Error]
+    body: list[Keyword | For | While | If | Try | Var | Error | Message ]
 
 
-class TestSuite(BaseModel):
+class TestSuite(WithStatus):
     """JSON schema for `robot.running.TestSuite`.
 
     Compatible with JSON Schema Draft 2020-12.
