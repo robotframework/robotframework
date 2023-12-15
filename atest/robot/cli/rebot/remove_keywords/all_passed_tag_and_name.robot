@@ -16,6 +16,11 @@ All Mode
     Keyword Should Be Empty    ${tc2.body[0]}    My Keyword    Fail
     Keyword Should Be Empty    ${tc2.body[1]}    BuiltIn.Fail    Expected failure
     Keyword Should Contain Removal Message    ${tc2.body[1]}   Expected failure
+    ${tc3} =    Check Test Case    Test with setup and teardown
+    Keyword Should Be Empty    ${tc3.setup}       Test Setup
+    Keyword Should Contain Removal Message    ${tc3.setup}
+    Keyword Should Be Empty    ${tc3.teardown}    Test Teardown
+    Keyword Should Contain Removal Message    ${tc3.teardown}
 
 Warnings Are Removed In All Mode
     [Setup]    Verify previous test and set My Suite    All Mode    1
@@ -87,6 +92,11 @@ Passed Mode
     Length Should Be    ${tc2.body}    2
     Keyword Should Not Be Empty    ${tc2.body[0]}    My Keyword    Fail
     Keyword Should Not Be Empty    ${tc2.body[1]}    BuiltIn.Fail    Expected failure
+    ${tc3} =    Check Test Case    Test with setup and teardown
+    Keyword Should Be Empty    ${tc3.setup}       Test Setup
+    Keyword Should Contain Removal Message    ${tc3.setup}
+    Keyword Should Be Empty    ${tc3.teardown}    Test Teardown
+    Keyword Should Contain Removal Message    ${tc3.teardown}
 
 Warnings Are Not Removed In Passed Mode
     [Setup]    Verify previous test and set My Suite    Passed Mode    1
@@ -181,6 +191,7 @@ Run Some Tests
     ...    misc/for_loops.robot
     ...    misc/try_except.robot
     ...    misc/while.robot
+    ...    misc/setups_and_teardowns.robot
     Create Output With Robot    ${INPUTFILE}    ${EMPTY}    ${suites}
 
 Run Rebot And Set My Suite

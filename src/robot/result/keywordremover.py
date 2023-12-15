@@ -79,17 +79,24 @@ class PassedKeywordRemover(KeywordRemover):
 
     def start_suite(self, suite):
         if not suite.statistics.failed:
-            for keyword in suite.setup, suite.teardown:
-                if not self._warning_or_error(keyword):
-                    self._clear_content(keyword)
+            self._remove_setup_and_teardown(suite)
 
     def visit_test(self, test):
         if not self._failed_or_warning_or_error(test):
             for item in test.body:
                 self._clear_content(item)
+            self._remove_setup_and_teardown(test)
 
     def visit_keyword(self, keyword):
         pass
+
+    def _remove_setup_and_teardown(self, item):
+        if item.has_setup:
+            if not self._warning_or_error(item.setup):
+                self._clear_content(item.setup)
+        if item.has_teardown:
+            if not self._warning_or_error(item.teardown):
+                self._clear_content(item.teardown)
 
 
 class ByNameKeywordRemover(KeywordRemover):

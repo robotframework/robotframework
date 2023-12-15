@@ -15,7 +15,9 @@ ${KEPT BY PATTERN MESSAGE}    +BYPATTERN -ALL
 
 *** Test Cases ***
 Passing
+    [Setup]       Log    ${PASS MESSAGE}
     Log    ${PASS MESSAGE}
+    [Teardown]    Run Keywords    Log    ${PASS MESSAGE}    AND    Log    ${PASS MESSAGE}
 
 Failing
     [Documentation]    FAIL Message
