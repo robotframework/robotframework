@@ -117,7 +117,6 @@ Support and Contact
 - `Forum <https://forum.robotframework.org/>`_
 - `robotframework-users
   <https://groups.google.com/group/robotframework-users/>`_ mailing list
-- `@robotframework <https://twitter.com/robotframework>`_ on Twitter
 
 Contributing
 ------------
