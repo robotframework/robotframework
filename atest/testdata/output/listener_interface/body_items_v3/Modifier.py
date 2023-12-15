@@ -1,7 +1,7 @@
 from robot import result, running
 
 
-class DataModifier:
+class Modifier:
     modify_once = 'User keyword'
 
     def start_library_keyword(self, data: running.Keyword,

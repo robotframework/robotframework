@@ -1,5 +1,3 @@
-import sys
-
 from eventvalidators import (SeparateMethods, SeparateMethodsAlsoForKeywords,
                              StartEndBobyItemOnly)
 
@@ -9,8 +7,8 @@ class Library:
                               SeparateMethods(),
                               SeparateMethodsAlsoForKeywords()]
 
-    def __init__(self, validate_events=True):
-        if not validate_events or '--listener' in sys.argv:
+    def __init__(self, validate_events=False):
+        if not validate_events:
             self.ROBOT_LIBRARY_LISTENER = []
         self.state = 'initial'
 

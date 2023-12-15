@@ -3,7 +3,7 @@ Library               Library.py    ${VALIDATE EVENTS}
 Suite Teardown        Validate events
 
 *** Variables ***
-${VALIDATE EVENTS}    True
+${VALIDATE EVENTS}    False
 
 *** Test Cases ***
 Library keyword

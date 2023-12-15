@@ -1,10 +1,10 @@
 *** Settings ***
-Suite Setup       Run Tests    --variable VALIDATE_EVENTS:False --listener ${DATADIR}/${MODIFIER}    ${SOURCE}
+Suite Setup       Run Tests    --listener ${DATADIR}/${MODIFIER}    ${SOURCE}
 Resource          atest_resource.robot
 
 *** Variables ***
 ${SOURCE}         output/listener_interface/body_items_v3/tests.robot
-${MODIFIER}       output/listener_interface/body_items_v3/DataModifier.py
+${MODIFIER}       output/listener_interface/body_items_v3/Modifier.py
 @{ALL TESTS}      Library keyword    User keyword    Non-existing keyword
 ...               Empty keyword    Duplicate keyword    Invalid keyword
 ...               IF    TRY    FOR    WHILE    VAR    RETURN
@@ -61,9 +61,8 @@ Modify RETURN
     Should Be Equal     ${tc.body[0].body[1].values}[0]       secret
 
 Validate that all methods are called correctly
-    Run Tests    ${EMPTY}    ${SOURCE}
+    Run Tests    --variable VALIDATE_EVENTS:True    ${SOURCE}
     Should contain tests    ${SUITE}    @{ALL TESTS}
     Check Log Message    ${SUITE.teardown.messages[0]}    Listener StartEndBobyItemOnly is OK.
     Check Log Message    ${SUITE.teardown.messages[1]}    Listener SeparateMethods is OK.
     Check Log Message    ${SUITE.teardown.messages[2]}    Listener SeparateMethodsAlsoForKeywords is OK.
-
