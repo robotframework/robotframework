@@ -99,7 +99,7 @@ jobs:
         if: always() && runner.os != 'Windows'
 
       - name: Archive acceptances test results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: at-results-${{ matrix.python-version }}-${{ matrix.os }}
           path: atest/results
