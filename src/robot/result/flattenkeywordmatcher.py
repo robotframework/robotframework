@@ -14,8 +14,10 @@
 #  limitations under the License.
 
 from robot.errors import DataError
-from robot.model import TagPatterns
-from robot.utils import MultiMatcher
+from robot.model import TagPatterns, SuiteVisitor
+from robot.utils import html_escape, MultiMatcher
+
+from .model import Keyword
 
 
 def validate_flatten_keyword(options):
@@ -29,6 +31,16 @@ def validate_flatten_keyword(options):
                 low.startswith('tag:')):
             raise DataError(f"Expected 'FOR', 'WHILE', 'ITERATION', 'TAG:<pattern>' or "
                             f"'NAME:<pattern>', got '{opt}'.")
+
+
+def create_flatten_message(original):
+    if not original:
+        start = ''
+    elif original.startswith('*HTML*'):
+        start = original[6:].strip() + '<hr>'
+    else:
+        start = html_escape(original) + '<hr>'
+    return f'*HTML* {start}<span class="robot-note">Content flattened.</span>'
 
 
 class FlattenByTypeMatcher:
@@ -81,3 +93,30 @@ class FlattenByTagMatcher:
 
     def __bool__(self):
         return bool(self._matcher)
+
+
+class FlattenByTags(SuiteVisitor):
+
+    def __init__(self, flatten):
+        if isinstance(flatten, str):
+            flatten = [flatten]
+        patterns = [p[4:] for p in flatten if p[:4].lower() == 'tag:']
+        self.matcher = TagPatterns(patterns)
+
+    def start_suite(self, suite):
+        return bool(self.matcher)
+
+    def start_keyword(self, keyword: Keyword):
+        if self.matcher.match(keyword.tags):
+            keyword.message = create_flatten_message(keyword.message)
+            keyword.body = MessageFinder(keyword).messages
+
+
+class MessageFinder(SuiteVisitor):
+
+    def __init__(self, keyword: Keyword):
+        self.messages = []
+        keyword.visit(self)
+
+    def visit_message(self, message):
+        self.messages.append(message)

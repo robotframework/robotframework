@@ -15,11 +15,11 @@
 
 from robot.errors import DataError
 from robot.model import SuiteVisitor
-from robot.utils import ET, ETSource, get_error_message, html_escape
+from robot.utils import ET, ETSource, get_error_message
 
 from .executionresult import Result, CombinedResult
-from .flattenkeywordmatcher import (FlattenByNameMatcher, FlattenByTypeMatcher,
-                                    FlattenByTagMatcher)
+from .flattenkeywordmatcher import (create_flatten_message, FlattenByNameMatcher,
+                                    FlattenByTypeMatcher, FlattenByTags)
 from .merger import Merger
 from .xmlelementhandlers import XmlElementHandler
 
@@ -106,6 +106,10 @@ class ExecutionResultBuilder:
         with self._source as source:
             self._parse(source, handler.start, handler.end)
         result.handle_suite_teardown_failures()
+        if self._flattened_keywords:
+            # Tags are nowadays written after keyword content, so we cannot
+            # flatten based on them when parsing output.xml.
+            result.suite.visit(FlattenByTags(self._flattened_keywords))
         if not self._include_keywords:
             result.suite.visit(RemoveKeywords())
         return result
@@ -143,7 +147,6 @@ class ExecutionResultBuilder:
         # Performance optimized. Do not change without profiling!
         name_match, by_name = self._get_matcher(FlattenByNameMatcher, flattened)
         type_match, by_type = self._get_matcher(FlattenByTypeMatcher, flattened)
-        tags_match, by_tags = self._get_matcher(FlattenByTagMatcher, flattened)
         started = -1    # if 0 or more, we are flattening
         tags = []
         containers = {'kw', 'for', 'while', 'iter', 'if', 'try'}
@@ -164,27 +167,14 @@ class ExecutionResultBuilder:
             else:
                 if tag in containers:
                     inside -= 1
-                elif by_tags and inside and started < 0 and tag == 'tag':
-                    tags.append(elem.text or '')
-                    if tags_match(tags):
-                        started = 0
                 elif started == 0 and tag == 'status':
-                    elem.text = self._create_flattened_message(elem.text)
+                    elem.text = create_flatten_message(elem.text)
             if started <= 0 or tag == 'msg':
                 yield event, elem
             else:
                 elem.clear()
             if started >= 0 and event == 'end' and tag in containers:
                 started -= 1
-
-    def _create_flattened_message(self, original):
-        if not original:
-            start = ''
-        elif original.startswith('*HTML*'):
-            start = original[6:].strip() + '<hr>'
-        else:
-            start = html_escape(original) + '<hr>'
-        return f'*HTML* {start}<span class="robot-note">Content flattened.</span>'
 
     def _get_matcher(self, matcher_class, flattened):
         matcher = matcher_class(flattened)

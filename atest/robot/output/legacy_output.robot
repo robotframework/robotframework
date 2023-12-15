@@ -18,4 +18,4 @@ Validate output
     ...    Failing teardown    Controls    Embedded    Warning
     ${output} =    Mask Changing Parts    ${OUTFILE}
     ${expected} =    Mask Changing Parts    ${DATADIR}/output/legacy.xml
-    Elements Should Be Equal    ${output}    ${expected}
+    Elements Should Be Equal    ${output}    ${expected}    sort_children=True
