@@ -66,6 +66,15 @@ Exclude children
     ${TEST}    <test name="root">\n${SPACE*4}\n${SPACE*4}</test>    exclude_children=yes
     ${TEST}    <test name="root"/>                                  exclude    normalize
 
+Sort children
+    [Template]    Elements should be equal
+    <r><a/><b/><c/><d/><e/></r>              <r><c/><b/><d/><a/><e/></r>              sort_children=True
+    <r><b><y/><x/></b><a><x/><y/></a></r>    <r><a><y/><x/></a><b><x/><y/></b></r>    sort_children=True
+    <r><x a="1"/><y/><x a="2"/><z/></r>      <r><z/><x a="1"/><y/><x a="2"/></r>      sort_children=yes!
+    <r>a<x/>b<y/>c<z/>d</r>                  <r>a<z/>b<y/>c<x/>d</r>                  sort_children=True
+    <r>\n \ <a/>\n \ <c/>\n \ <b/>\n</r>     <r>\n \ <c/>\n \ <b/>\n \ <a/>\n</r>     sort_children=True
+    <r>\n \ <a/>\n \ <c/>\n \ <b/>\n</r>     <r>\<c/><b/><a/></r>                     sort_children=True    normalize_whitespace=True
+
 *** Keywords ***
 Element should be equal to itself
     [Arguments]    ${source}

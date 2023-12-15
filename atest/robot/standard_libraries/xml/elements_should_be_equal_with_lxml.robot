@@ -39,3 +39,6 @@ Normalize whitespace
 
 Exclude children
     Check Test Case    ${TESTNAME}
+
+Sort children
+    Check Test Case    ${TESTNAME}

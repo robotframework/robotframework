@@ -878,7 +878,7 @@ class XML:
                                  f"Attribute '{name}' exists and has value '{attr}'.")
 
     def elements_should_be_equal(self, source, expected, exclude_children=False,
-                                 normalize_whitespace=False):
+                                 normalize_whitespace=False, sort_children=False):
         """Verifies that the given ``source`` element is equal to ``expected``.
 
         Both ``source`` and ``expected`` can be given as a path to an XML file,
@@ -888,12 +888,14 @@ class XML:
 
         The keyword passes if the ``source`` element and ``expected`` element
         are equal. This includes testing the tag names, texts, and attributes
-        of the elements. By default also child elements are verified the same
+        of the elements. By default, also child elements are verified the same
         way, but this can be disabled by setting ``exclude_children`` to a
-        true value (see `Boolean arguments`).
+        true value (see `Boolean arguments`). Child elements are expected to
+        be in the same order, but that can be changed by giving ``sort_children``
+        a true value. Notice that elements are sorted solely based on tag names.
 
         All texts inside the given elements are verified, but possible text
-        outside them is not. By default texts must match exactly, but setting
+        outside them is not. By default, texts must match exactly, but setting
         ``normalize_whitespace`` to a true value makes text verification
         independent on newlines, tabs, and the amount of spaces. For more
         details about handling text see `Get Element Text` keyword and
@@ -913,12 +915,14 @@ class XML:
         the ``.`` at the end that is the `tail` text of the ``<i>`` element.
 
         See also `Elements Should Match`.
+
+        ``sort_children`` is new in Robot Framework 7.0.
         """
-        self._compare_elements(source, expected, should_be_equal,
-                               exclude_children, normalize_whitespace)
+        self._compare_elements(source, expected, should_be_equal, exclude_children,
+                               sort_children, normalize_whitespace)
 
     def elements_should_match(self, source, expected, exclude_children=False,
-                              normalize_whitespace=False):
+                              normalize_whitespace=False, sort_children=False):
         """Verifies that the given ``source`` element matches ``expected``.
 
         This keyword works exactly like `Elements Should Be Equal` except that
@@ -935,14 +939,21 @@ class XML:
 
         See `Elements Should Be Equal` for more examples.
         """
-        self._compare_elements(source, expected, should_match,
-                               exclude_children, normalize_whitespace)
+        self._compare_elements(source, expected, should_match, exclude_children,
+                               sort_children, normalize_whitespace)
 
     def _compare_elements(self, source, expected, comparator, exclude_children,
-                          normalize_whitespace):
+                          sort_children, normalize_whitespace):
         normalizer = self._normalize_whitespace if normalize_whitespace else None
-        comparator = ElementComparator(comparator, normalizer, exclude_children)
+        sorter = self._sort_children if sort_children else None
+        comparator = ElementComparator(comparator, normalizer, sorter, exclude_children)
         comparator.compare(self.get_element(source), self.get_element(expected))
+
+    def _sort_children(self, element):
+        tails = [child.tail for child in element]
+        element[:] = sorted(element, key=lambda child: child.tag)
+        for child, tail in zip(element, tails):
+            child.tail = tail
 
     def set_element_tag(self, source, tag, xpath='.'):
         """Sets the tag of the specified element.
@@ -1456,10 +1467,12 @@ class ElementFinder:
 
 class ElementComparator:
 
-    def __init__(self, comparator, normalizer=None, exclude_children=False):
-        self._comparator = comparator
-        self._normalizer = normalizer or (lambda text: text)
-        self._exclude_children = is_truthy(exclude_children)
+    def __init__(self, comparator, normalizer=None, child_sorter=None,
+                 exclude_children=False):
+        self.comparator = comparator
+        self.normalizer = normalizer or (lambda text: text)
+        self.child_sorter = child_sorter
+        self.exclude_children = exclude_children
 
     def compare(self, actual, expected, location=None):
         if not location:
@@ -1469,7 +1482,7 @@ class ElementComparator:
         self._compare_texts(actual, expected, location)
         if location.is_not_root:
             self._compare_tails(actual, expected, location)
-        if not self._exclude_children:
+        if not self.exclude_children:
             self._compare_children(actual, expected, location)
 
     def _compare_tags(self, actual, expected, location):
@@ -1480,7 +1493,7 @@ class ElementComparator:
         if location.is_not_root:
             message = f"{message} at '{location.path}'"
         if not comparator:
-            comparator = self._comparator
+            comparator = self.comparator
         comparator(actual, expected, message)
 
     def _compare_attributes(self, actual, expected, location):
@@ -1495,7 +1508,7 @@ class ElementComparator:
                       'Different text', location)
 
     def _text(self, text):
-        return self._normalizer(text or '')
+        return self.normalizer(text or '')
 
     def _compare_tails(self, actual, expected, location):
         self._compare(self._text(actual.tail), self._text(expected.tail),
@@ -1504,6 +1517,9 @@ class ElementComparator:
     def _compare_children(self, actual, expected, location):
         self._compare(len(actual), len(expected), 'Different number of child elements',
                       location, should_be_equal)
+        if self.child_sorter:
+            self.child_sorter(actual)
+            self.child_sorter(expected)
         for act, exp in zip(actual, expected):
             self.compare(act, exp, location.child(act.tag))
 

@@ -74,6 +74,14 @@ Exclude children
     ${TEST}    <test name="*">\n${SPACE*4}\n${SPACE*4}</test>    exclude_children=yes
     ${TEST}    <test name="????"/>    exclude    normalize
 
+Sort children
+    [Template]    Elements should match
+    <r><a/><b>t</b><c/></r>                <r><c/><b>?</b><a>*</a></r>            sort_children=True
+    <r><x a="1"/><y/><x a="2"/><z/></r>    <r><z/><x a="?"/><y/><x a="?"/></r>    sort_children=yes!
+    <r>a<x/>b<y/>c<z/>d</r>                <r>?<z/>*<y/>c<x/>d</r>                sort_children=True
+    <r>\n \ <a/>\n \ <b>t</b>\n</r>        <r>\n \ <b>?</b>\n \ <a>*</a>\n</r>    sort_children=True
+    <r>\n \ <a/>\n \ <b>t</b>\n</r>        <r><b>?</b><a>*</a></r>                sort_children=True    normalize_whitespace=True
+
 *** Keywords ***
 Match Elements
     [Arguments]    ${source}    ${match}
