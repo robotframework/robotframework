@@ -113,8 +113,8 @@ about the executed keyword and the library it belongs to:
         library = implementation.owner
         print(f"Keyword '{implementation.name}' is implemented in library "
               f"'{library.name}' at '{implementation.source}' on line "
-              f"{implementation.lineno}. The library has {library.scope} scope "
-              f"and the current library instance is '{library.instance}'.")
+              f"{implementation.lineno}. The library has {library.scope.name} "
+              f"scope and the current instance is {library.instance}.")
 
 As the above example already illustrated, it is possible to get an access to
 the actual library instance. This means that listeners can inspect the library
