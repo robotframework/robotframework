@@ -31,17 +31,17 @@ Invalid keyword
 
 IF
     IF    False
-        Library keyword
+        Non-existing keyword
     ELSE IF    True
         User keyword
     ELSE
-        Non-existing keyword
+        Fail    Should not be executed!
     END
 
 TRY
     TRY
-        Fail    Message
-    EXCEPT    Message
+        Fail    Should be caught!
+    EXCEPT    Should be caught!
         Library keyword
     ELSE
         Non-existing keyword
@@ -63,6 +63,10 @@ VAR
     VAR    ${x}    value
     VAR    ${y}    value    scope=suite
     Should Be Equal    ${x}    ${y}
+
+RETURN
+    ${result} =    User keyword
+    Should be equal    ${result}    value
 
 Invalid syntax
     [Documentation]    FAIL Non-existing setting 'Bad'.

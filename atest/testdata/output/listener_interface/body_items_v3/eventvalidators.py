@@ -24,6 +24,7 @@ class EventValidator:
             'WHILE',
                 'ITERATION', 'BREAK',
             'VAR', 'VAR', 'KEYWORD',
+            'KEYWORD', 'KEYWORD', 'RETURN', 'KEYWORD',
             'ERROR',
             'KEYWORD', 'KEYWORD', 'KEYWORD', 'RETURN',
             'TEARDOWN'

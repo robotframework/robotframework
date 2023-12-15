@@ -1,3 +1,5 @@
+import sys
+
 from eventvalidators import (SeparateMethods, SeparateMethodsAlsoForKeywords,
                              StartEndBobyItemOnly)
 
@@ -8,7 +10,7 @@ class Library:
                               SeparateMethodsAlsoForKeywords()]
 
     def __init__(self, validate_events=True):
-        if not validate_events:
+        if not validate_events or '--listener' in sys.argv:
             self.ROBOT_LIBRARY_LISTENER = []
         self.state = 'initial'
 
@@ -19,3 +21,5 @@ class Library:
     def validate_events(self):
         for listener in self.ROBOT_LIBRARY_LISTENER:
             listener.validate()
+        if not self.ROBOT_LIBRARY_LISTENER:
+            print('Event validation not active.')
