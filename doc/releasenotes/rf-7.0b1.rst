@@ -365,7 +365,8 @@ section with `Test Tags` or `Keyword Tags` settings by using the `-tag` syntax
 
 With tests it is possible to get the same effect by using the `Default Tags`
 setting and overriding it where needed. That syntax is, however, considered
-deprecated (`#4365`__) and using the new `-tag` syntax is recommended.
+deprecated (`#4365`__) and using the new `-tag` syntax is recommended. With
+keywords there was no similar functionality earlier.
 
 __ https://github.com/robotframework/robotframework/issues/4365
 
@@ -374,11 +375,11 @@ Dynamic and hybrid library APIs support asynchronous execution
 
 Dynamic and hybrid libraries nowadays support asynchronous execution.
 In practice the special methods like `get_keyword_names` and `run_keyword`
-can be implemented as async methods. (`#4803`_)
+can be implemented as async methods (`#4803`_).
 
 Async support was added to the normal static library API in Robot Framework
-6.1 (`#4089`_). A bug related to handling asynchronous keywords if the whole
-execution is stopped gracefully has also been fixed (`#4808`_).
+6.1 (`#4089`_). A bug related to handling asynchronous keywords if execution
+is stopped gracefully has also been fixed (`#4808`_).
 
 .. _#4089: https://github.com/robotframework/robotframework/issues/4089
 
@@ -755,7 +756,7 @@ In addition to work done by them, the community has provided some great contribu
 
 - `Ygor Pontelo <https://github.com/ygorpontelo>`__ added async support to the
   dynamic and hybrid library APIs (`#4803`_) and fixed a bug with handling async
-  keywords when the whole execution is stopped gracefully (`#4808`_).
+  keywords when execution is stopped gracefully (`#4808`_).
 
 - `Topi 'top1' Tuulensuu <https://github.com/totu>`__ fixed a performance regression
   when using `Run Keyword` so that the name of the executed keyword contains a variable
