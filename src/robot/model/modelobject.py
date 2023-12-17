@@ -35,6 +35,9 @@ class ModelObject(metaclass=SetterAwareType):
         """Create this object based on data in a dictionary.
 
         Data can be got from the :meth:`to_dict` method or created externally.
+
+        With ``robot.running`` model objects new in Robot Framework 6.1,
+        with ``robot.result`` new in Robot Framework 7.0.
         """
         try:
             return cls().config(**data)
@@ -49,7 +52,7 @@ class ModelObject(metaclass=SetterAwareType):
         The data is given as the ``source`` parameter. It can be:
 
         - a string (or bytes) containing the data directly,
-        - an open file object where to read the data, or
+        - an open file object where to read the data from, or
         - a path (``pathlib.Path`` or string) to a UTF-8 encoded file to read.
 
         The JSON data is first converted to a Python dictionary and the object
@@ -58,6 +61,9 @@ class ModelObject(metaclass=SetterAwareType):
         Notice that the ``source`` is considered to be JSON data if it is
         a string and contains ``{``. If you need to use ``{`` in a file system
         path, pass it in as a ``pathlib.Path`` instance.
+
+        With ``robot.running`` model objects new in Robot Framework 6.1,
+        with ``robot.result`` new in Robot Framework 7.0.
         """
         try:
             data = JsonLoader().load(source)
@@ -69,6 +75,9 @@ class ModelObject(metaclass=SetterAwareType):
         """Serialize this object into a dictionary.
 
         The object can be later restored by using the :meth:`from_dict` method.
+
+        With ``robot.running`` model objects new in Robot Framework 6.1,
+        with ``robot.result`` new in Robot Framework 7.0.
         """
         raise NotImplementedError
 
@@ -84,7 +93,7 @@ class ModelObject(metaclass=SetterAwareType):
 
     def to_json(self, file: 'None|TextIO|Path|str' = None, *,
                 ensure_ascii: bool = False, indent: int = 0,
-                separators: 'tuple[str, str]' = (',', ':')) -> 'None|str':
+                separators: 'tuple[str, str]' = (',', ':')) -> 'str|None':
         """Serialize this object into JSON.
 
         The object is first converted to a Python dictionary using the
@@ -94,13 +103,16 @@ class ModelObject(metaclass=SetterAwareType):
         It can be:
 
         - ``None`` (default) to return the data as a string,
-        - an open file object where to write the data, or
+        - an open file object where to write the data to, or
         - a path (``pathlib.Path`` or string) to a file where to write
           the data using UTF-8 encoding.
 
         JSON formatting can be configured using optional parameters that
         are passed directly to the underlying json__ module. Notice that
         the defaults differ from what ``json`` uses.
+
+        With ``robot.running`` model objects new in Robot Framework 6.1,
+        with ``robot.result`` new in Robot Framework 7.0.
 
         __ https://docs.python.org/3/library/json.html
         """
