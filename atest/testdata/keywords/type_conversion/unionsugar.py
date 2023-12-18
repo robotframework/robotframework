@@ -19,6 +19,10 @@ class BadRational(Rational, metaclass=BadRationalMeta):
     pass
 
 
+class XD(TypedDict):
+    x: int
+
+
 def create_my_object():
     return MyObject()
 
@@ -55,7 +59,7 @@ def union_with_subscripted_generics_and_str(argument: list[str] | str, expected)
     assert argument == eval(expected), '%r != %s' % (argument, expected)
 
 
-def union_with_typeddict(argument: TypedDict('X', x=int) | None, expected):
+def union_with_typeddict(argument: XD | None, expected):
     assert argument == eval(expected), '%r != %s' % (argument, expected)
 
 

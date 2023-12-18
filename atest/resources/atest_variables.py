@@ -22,4 +22,4 @@ if os.name == 'nt':
                                      errors='ignore')
     CONSOLE_ENCODING = 'cp' + output.split()[-1]
 else:
-    CONSOLE_ENCODING = locale.getdefaultlocale()[-1]
+    CONSOLE_ENCODING = locale.getlocale()[-1]

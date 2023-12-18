@@ -79,13 +79,13 @@ Escape characters and curly braces
     ${X + '\${Y}'}            X\${Y}
     ${X + '\\${Y}'}           X\\Y
     ${X + '$\{Y\}'}           X\${Y}
-    ${X + '\$\{Y\}'}          X\\\${Y}
+    ${X + '\\$\{Y\}'}         X\\\${Y}
     ${X + '\\'}               X\\
     ${X + '\}'}               X}
     ${X + '\{'}               X{
     ${X + '{}'}               X{}
     ${X + {'k': 'v'}['k']}    Xv
-    ${X + __import__('re').match('(\d{2})${Y}\\s{2}', '1${2}Y\t\r').group(${1})}
+    ${X + __import__('re').match(r'(\d{2})${Y}\s{2}', '1${2}Y\t\r').group(${1})}
     ...                       X12
 
 Failing When Attribute Does Not exists 1

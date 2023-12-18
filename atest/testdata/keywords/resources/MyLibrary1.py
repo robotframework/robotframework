@@ -51,7 +51,7 @@ class MyLibrary1:
     def no_custom_name_given_2(self):
         pass
 
-    @keyword('Add ${number:\d+} Copies Of ${product:\w+} To Cart')
+    @keyword(r'Add ${number:\d+} Copies Of ${product:\w+} To Cart')
     def add_copies_to_cart(self, num, thing):
         return num, thing
 
