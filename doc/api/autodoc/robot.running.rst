@@ -43,26 +43,42 @@ robot.running.dynamicmethods module
    :undoc-members:
    :show-inheritance:
 
-robot.running.handlers module
------------------------------
-
-.. automodule:: robot.running.handlers
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-robot.running.handlerstore module
----------------------------------
-
-.. automodule:: robot.running.handlerstore
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 robot.running.importer module
 -----------------------------
 
 .. automodule:: robot.running.importer
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+robot.running.invalidkeyword module
+-----------------------------------
+
+.. automodule:: robot.running.invalidkeyword
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+robot.running.keywordfinder module
+----------------------------------
+
+.. automodule:: robot.running.keywordfinder
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+robot.running.keywordimplementation module
+------------------------------------------
+
+.. automodule:: robot.running.keywordimplementation
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+robot.running.librarykeyword module
+-----------------------------------
+
+.. automodule:: robot.running.librarykeyword
    :members:
    :undoc-members:
    :show-inheritance:
@@ -115,6 +131,14 @@ robot.running.randomizer module
    :undoc-members:
    :show-inheritance:
 
+robot.running.resourcemodel module
+----------------------------------
+
+.. automodule:: robot.running.resourcemodel
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 robot.running.runkwregister module
 ----------------------------------
 
@@ -159,22 +183,6 @@ robot.running.testlibraries module
 ----------------------------------
 
 .. automodule:: robot.running.testlibraries
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-robot.running.usererrorhandler module
--------------------------------------
-
-.. automodule:: robot.running.usererrorhandler
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-robot.running.userkeyword module
---------------------------------
-
-.. automodule:: robot.running.userkeyword
    :members:
    :undoc-members:
    :show-inheritance:
