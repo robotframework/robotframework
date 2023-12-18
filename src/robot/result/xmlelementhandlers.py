@@ -49,8 +49,6 @@ class ElementHandler:
 
     def get_child_handler(self, tag):
         if tag not in self.children:
-            if not self.tag:
-                raise DataError(f"Incompatible root element '{tag}'.")
             raise DataError(f"Incompatible child element '{tag}' for '{self.tag}'.")
         return self.element_handlers[tag]
 
@@ -70,7 +68,13 @@ class ElementHandler:
 
 
 class RootHandler(ElementHandler):
-    children = frozenset(('robot',))
+    children = frozenset(('robot', 'suite'))
+
+    def get_child_handler(self, tag):
+        try:
+            return super().get_child_handler(tag)
+        except DataError:
+            raise DataError(f"Incompatible root element '{tag}'.")
 
 
 @ElementHandler.register

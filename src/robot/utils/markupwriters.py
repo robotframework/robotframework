@@ -20,7 +20,7 @@ from .robotio import file_writer
 
 class _MarkupWriter:
 
-    def __init__(self, output, write_empty=True, usage=None):
+    def __init__(self, output, write_empty=True, usage=None, preamble=True):
         """
         :param output: Either an opened, file like object, or a path to the
             desired output file. In the latter case, the file is created
@@ -31,7 +31,8 @@ class _MarkupWriter:
             output = file_writer(output, usage=usage)
         self.output = output
         self._write_empty = write_empty
-        self._preamble()
+        if preamble:
+            self._preamble()
 
     def _preamble(self):
         pass

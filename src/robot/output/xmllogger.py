@@ -145,19 +145,23 @@ class XmlLoggerAdapter(LoggerApi):
 
 class XmlLogger(ResultVisitor):
 
-    def __init__(self, path, log_level='TRACE', rpa=False, generator='Robot'):
+    def __init__(self, output, log_level='TRACE', rpa=False, generator='Robot',
+                 suite_only=False):
         self._log_message_is_logged = IsLogged(log_level)
         self._error_message_is_logged = IsLogged('WARN')
         # `_writer` is set to NullMarkupWriter when flattening, `_xml_writer` is not.
-        self._writer = self._xml_writer = self._get_writer(path, rpa, generator)
+        self._writer = self._xml_writer = self._get_writer(output, rpa, generator,
+                                                           suite_only)
         self.flatten_level = 0
         self._errors = []
 
-    def _get_writer(self, path, rpa, generator):
-        if not path:
+    def _get_writer(self, output, rpa, generator, suite_only):
+        if not output:
             return NullMarkupWriter()
-        writer = XmlWriter(path, write_empty=False, usage='output')
-        writer.start('robot', self._get_start_attrs(rpa, generator))
+        writer = XmlWriter(output, write_empty=False, usage='output',
+                           preamble=not suite_only)
+        if not suite_only:
+            writer.start('robot', self._get_start_attrs(rpa, generator))
         return writer
 
     def _get_start_attrs(self, rpa, generator):

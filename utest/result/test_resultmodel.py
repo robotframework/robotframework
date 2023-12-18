@@ -1,14 +1,20 @@
 import json
+import os
+import sys
+import tempfile
 import unittest
 import warnings
 from datetime import datetime, timedelta
+from io import StringIO
 from pathlib import Path
+from xml.etree import ElementTree as ET
 
 from jsonschema import Draft202012Validator
 
 from robot.model import Tags, BodyItem
-from robot.result import (Break, Continue, Error, For, If, IfBranch, Keyword, Message,
-                          Return, TestCase, TestSuite, Try, TryBranch, Var, While)
+from robot.result import (Break, Continue, Error, ExecutionResult, For, If, IfBranch,
+                          Keyword, Message, Return, TestCase, TestSuite, Try, TryBranch,
+                          Var, While)
 from robot.utils.asserts import (assert_equal, assert_false, assert_raises,
                                  assert_raises_with_msg, assert_true)
 
@@ -852,6 +858,51 @@ class TestDeprecatedKeywordSpecificAttributes(unittest.TestCase):
             assert_equal(str(w[-1].message),
                          f"'robot.result.{name}.{attr}' is deprecated and "
                          f"will be removed in Robot Framework 8.0.")
+
+
+class TestSuiteToFromXml(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        golden = CURDIR / 'golden.xml'
+        cls.suite = ExecutionResult(golden).suite
+        cls.xml = ET.tostring(ET.parse(golden).find('suite'), encoding='unicode')
+
+    def test_to_string(self):
+        self._verify_xml(self.suite.to_xml())
+
+    def test_from_string(self):
+        self._verify_suite(TestSuite.from_xml(self.xml))
+
+    def test_to_file(self):
+        file = StringIO()
+        assert self.suite.to_xml(file) is None
+        self._verify_xml(file.getvalue())
+        assert not file.closed
+
+    def test_from_file(self):
+        file = StringIO(self.xml)
+        self._verify_suite(TestSuite.from_xml(file))
+        assert not file.closed
+
+    def test_to_path(self):
+        path = Path(os.getenv('TEMPDIR', tempfile.gettempdir()), 'suite.xml')
+        assert self.suite.to_xml(path) is None
+        self._verify_suite(TestSuite.from_xml(path))
+        self.suite.to_xml(str(path))
+        self._verify_suite(TestSuite.from_xml(path))
+
+    def test_from_path(self):
+        self._verify_suite(TestSuite.from_xml(CURDIR / 'golden.xml'))
+        self._verify_suite(TestSuite.from_xml(str(CURDIR / 'golden.xml')))
+
+    def _verify_suite(self, suite):
+        self._verify_xml(suite.to_xml())
+
+    def _verify_xml(self, xml):
+        kws = {'strict': True} if sys.version_info >= (3, 10) else {}
+        for exp, act in zip(self.xml.splitlines(), xml.splitlines(), **kws):
+            assert_equal(exp.replace(' />', '/>'), act)
 
 
 if __name__ == '__main__':

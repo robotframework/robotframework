@@ -35,9 +35,10 @@ __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#
 """
 
 from datetime import datetime, timedelta
+from io import StringIO
 from itertools import chain
 from pathlib import Path
-from typing import Literal, Mapping, Sequence, Union, TypeVar
+from typing import Literal, Mapping, overload, Sequence, Union, TextIO, TypeVar
 
 from robot import model
 from robot.model import (BodyItem, create_fixture, DataDict, Tags, TestSuites,
@@ -1090,3 +1091,72 @@ class TestSuite(model.TestSuite[Keyword, TestCase], StatusMixin):
 
     def to_dict(self) -> DataDict:
         return {**super().to_dict(), **StatusMixin.to_dict(self)}
+
+    @overload
+    def to_xml(self, file: None = None) -> str:
+        ...
+
+    @overload
+    def to_xml(self, file: 'TextIO|Path|str') -> None:
+        ...
+
+    def to_xml(self, file: 'None|TextIO|Path|str' = None) -> 'str|None':
+        """Serialize suite into XML.
+
+        The format is the same that is used with normal output.xml files, but
+        the ``<robot>`` root node is omitted and the result contains only
+        the ``<suite>`` structure.
+
+        The ``file`` parameter controls what to do with the resulting XML data.
+        It can be:
+
+        - ``None`` (default) to return the data as a string,
+        - an open file object where to write the data to, or
+        - a path (``pathlib.Path`` or string) to a file where to write
+          the data using UTF-8 encoding.
+
+        A serialized suite can be recreated by using the :meth:`from_xml` method.
+
+        New in Robot Framework 7.0.
+        """
+        from robot.reporting.outputwriter import OutputWriter
+
+        output, close = self._get_output(file)
+        try:
+            self.visit(OutputWriter(output, suite_only=True))
+        finally:
+            if close:
+                output.close()
+        return output.getvalue() if file is None else None
+
+    def _get_output(self, output) -> 'tuple[TextIO|StringIO, bool]':
+        close = False
+        if output is None:
+            output = StringIO()
+        elif isinstance(output, (Path, str)):
+            output = open(output, 'w')
+            close = True
+        return output, close
+
+    @classmethod
+    def from_xml(cls, source: 'str|TextIO|Path') -> 'TestSuite':
+        """Create suite based on results in XML.
+
+        The data is given as the ``source`` parameter. It can be:
+
+        - a string containing the data directly,
+        - an open file object where to read the data from, or
+        - a path (``pathlib.Path`` or string) to a UTF-8 encoded file to read.
+
+        Supports both normal output.xml files and files containing only the
+        ``<suite>`` structure created, for example, with the :meth:`to_xml`
+        method. When using normal output.xml files, possible execution errors
+        listed in ``<errors>`` are silently ignored. If that is a problem,
+        :class:`~robot.result.resultbuilder.ExecutionResult` should be used
+        instead.
+
+        New in Robot Framework 7.0.
+        """
+        from .resultbuilder import ExecutionResult
+
+        return ExecutionResult(source).suite

@@ -18,8 +18,8 @@ from robot.output.xmllogger import XmlLogger, LegacyXmlLogger
 
 class OutputWriter(XmlLogger):
 
-    def __init__(self, output, rpa=False):
-        super().__init__(output, rpa=rpa, generator='Rebot')
+    def __init__(self, output, rpa=False, suite_only=False):
+        super().__init__(output, rpa=rpa, generator='Rebot', suite_only=suite_only)
 
     def start_message(self, msg):
         self._write_message(msg)
