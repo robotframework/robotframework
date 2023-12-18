@@ -18,6 +18,9 @@ Epoch
 Datetime object
     Check Test Case    ${TESTNAME}
 
+Date object
+    Check Test Case    ${TESTNAME}
+
 Pad zeroes to missing values
     Check Test Case    ${TESTNAME}
 

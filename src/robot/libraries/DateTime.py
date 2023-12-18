@@ -96,10 +96,10 @@ Examples:
 == Python datetime ==
 
 Python's standard
-[http://docs.python.org/library/datetime.html#datetime-objects|datetime]
-objects can be used both in input and output. In input they are recognized
-automatically, and in output it is possible to get them by giving ``datetime``
-value to ``result_format`` argument.
+[https://docs.python.org/library/datetime.html#datetime.datetime|datetime]
+objects can be used both in input and output. In input, they are recognized
+automatically, and in output it is possible to get them by using the ``datetime``
+value with the ``result_format`` argument.
 
 One nice benefit with datetime objects is that they have different time
 components available as attributes that can be easily accessed using the
@@ -114,6 +114,16 @@ Examples:
 | Should Be Equal As Integers | ${datetime.minute}      | 7      |
 | Should Be Equal As Integers | ${datetime.second}      | 42     |
 | Should Be Equal As Integers | ${datetime.microsecond} | 123000 |
+
+== Python date ==
+
+Python's standard [https://docs.python.org/library/datetime.html#datetime.date|date]
+objects are automatically recognized in input starting from Robot Framework 7.0.
+They are not supported in output, but ``datetime`` objects can be converted
+to ``date`` objects if needed:
+
+| ${datetime} = | Convert Date | 2023-12-18 11:10:42 | datetime |
+| Log | ${datetime.date()} | # The time part is ignored. |
 
 == Epoch time ==
 
@@ -514,6 +524,8 @@ class Date:
     def _convert_to_datetime(self, date, input_format):
         if isinstance(date, datetime.datetime):
             return date
+        if isinstance(date, datetime.date):
+            return datetime.datetime(date.year, date.month, date.day)
         if isinstance(date, (int, float)):
             return datetime.datetime.fromtimestamp(date)
         if isinstance(date, str):
