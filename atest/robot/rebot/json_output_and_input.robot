@@ -25,8 +25,9 @@ JSON input combined
 Invalid JSON input
     Create File    ${JSON}    bad
     Run Rebot Without Processing Output    ${EMPTY}    ${JSON}
+    ${json} =    Normalize Path    ${JSON}
     VAR    ${error}
-    ...    Reading JSON source '${JSON}' failed:
+    ...    Reading JSON source '${json}' failed:
     ...    Loading JSON data failed:
     ...    Invalid JSON data: *
     Stderr Should Match    [[] ERROR ] ${error}${USAGE TIP}\n
