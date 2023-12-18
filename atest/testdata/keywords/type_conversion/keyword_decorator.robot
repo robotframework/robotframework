@@ -178,21 +178,6 @@ Invalid bytes
     Bytes                Hyvä esimerkki! \u2603    error=Character '\u2603' cannot be mapped to a byte.
     Bytes                ${1.3}                    arg_type=float
 
-Bytestring
-    Bytestring           foo                       b'foo'
-    Bytestring           \x00\x01\xFF\u00FF        b'\\x00\\x01\\xFF\\xFF'
-    Bytestring           Hyvä esimerkki!           b'Hyv\\xE4 esimerkki!'
-    Bytestring           None                      b'None'
-    Bytestring           NONE                      b'NONE'
-    Bytestring           ${{b'foo'}}               b'foo'
-    Bytestring           ${{bytearray(b'foo')}}    bytearray(b'foo')
-
-Invalid bytesstring
-    [Template]           Conversion Should Fail
-    Bytestring           \u0100                    type=bytes            error=Character '\u0100' cannot be mapped to a byte.
-    Bytestring           \u00ff\u0100\u0101        type=bytes            error=Character '\u0100' cannot be mapped to a byte.
-    Bytestring           Hyvä esimerkki! \u2603    type=bytes            error=Character '\u2603' cannot be mapped to a byte.
-
 Bytearray
     Bytearray            foo                       bytearray(b'foo')
     Bytearray            \x00\x01\xFF\u00FF        bytearray(b'\\x00\\x01\\xFF\\xFF')
@@ -208,6 +193,19 @@ Invalid bytearray
     Bytearray            \u00ff\u0100\u0101        error=Character '\u0100' cannot be mapped to a byte.
     Bytearray            Hyvä esimerkki! \u2603    error=Character '\u2603' cannot be mapped to a byte.
     Bytearray            ${2123.1021}              arg_type=float
+
+Bytestring replacement
+    [Documentation]    ``collections.abc.ByteString`` that we earlier supported was deprecated
+    ...                and we removed its support. ``(bytes, bytearray)`` can be used instead.
+    ...                FAIL
+    ...                ValueError: Argument 'argument' got value 'Ā' that cannot be converted to bytes or bytearray.
+    [Template]         Bytestring replacement
+    foo                       b'foo'
+    \x00\x01\xFF\u00FF        b'\\x00\\x01\\xFF\\xFF'
+    None                      b'None'
+    ${{b'foo'}}               b'foo'
+    ${{bytearray(b'foo')}}    bytearray(b'foo')
+    \u0100
 
 Datetime
     DateTime             2014-06-11T10:07:42       datetime(2014, 6, 11, 10, 7, 42)

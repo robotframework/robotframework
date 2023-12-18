@@ -63,16 +63,13 @@ Bytes
 Invalid bytes
     Check Test Case    ${TESTNAME}
 
-Bytestring
-    Check Test Case    ${TESTNAME}
-
-Invalid bytesstring
-    Check Test Case    ${TESTNAME}
-
 Bytearray
     Check Test Case    ${TESTNAME}
 
 Invalid bytearray
+    Check Test Case    ${TESTNAME}
+
+Bytestring replacement
     Check Test Case    ${TESTNAME}
 
 Datetime

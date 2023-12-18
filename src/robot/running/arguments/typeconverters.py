@@ -15,7 +15,7 @@
 
 from ast import literal_eval
 from collections import OrderedDict
-from collections.abc import ByteString, Container, Mapping, Sequence, Set
+from collections.abc import Container, Mapping, Sequence, Set
 from datetime import datetime, date, timedelta
 from decimal import InvalidOperation, Decimal
 from enum import Enum
@@ -324,7 +324,6 @@ class DecimalConverter(TypeConverter):
 @TypeConverter.register
 class BytesConverter(TypeConverter):
     type = bytes
-    abc = ByteString
     type_name = 'bytes'
     value_types = (str, bytearray)
 

@@ -78,13 +78,13 @@ def bytes_(argument, expected=None):
     _validate_type(argument, expected)
 
 
-@keyword(types={'argument': getattr(abc, 'ByteString', None)})
-def bytestring(argument, expected=None):
+@keyword(types={'argument': bytearray})
+def bytearray_(argument, expected=None):
     _validate_type(argument, expected)
 
 
-@keyword(types={'argument': bytearray})
-def bytearray_(argument, expected=None):
+@keyword(types={'argument': (bytes, bytearray)})
+def bytestring_replacement(argument, expected=None):
     _validate_type(argument, expected)
 
 

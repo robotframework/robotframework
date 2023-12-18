@@ -79,11 +79,11 @@ def bytes_(argument: bytes, expected=None):
     _validate_type(argument, expected)
 
 
-def bytestring(argument: abc.ByteString, expected=None):
+def bytearray_(argument: bytearray, expected=None):
     _validate_type(argument, expected)
 
 
-def bytearray_(argument: bytearray, expected=None):
+def bytestring_replacement(argument: 'bytes | bytearray', expected=None):
     _validate_type(argument, expected)
 
 

@@ -1265,7 +1265,7 @@ Other types cause conversion failures.
    |              |               | unicode    |              |                                                                |                                      |
    |              |               |            |              | New in Robot Framework 4.0.                                    |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | bytes_       | ByteString_   |            | str_,        | Strings are converted to bytes so that each Unicode code point | | `good`                             |
+   | bytes_       |               |            | str_,        | Strings are converted to bytes so that each Unicode code point | | `good`                             |
    |              |               |            | bytearray_   | below 256 is directly mapped to a matching byte. Higher code   | | `hyvä` (converted to `hyv\xe4`)    |
    |              |               |            |              | points are not allowed.                                        | | `\x00` (the null byte)             |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
@@ -1390,7 +1390,6 @@ Other types cause conversion failures.
 .. _Decimal: https://docs.python.org/library/decimal.html#decimal.Decimal
 .. _str: https://docs.python.org/library/functions.html#func-str
 .. _bytes: https://docs.python.org/library/functions.html#func-bytes
-.. _ByteString: https://docs.python.org/library/collections.abc.html#collections.abc.ByteString
 .. _bytearray: https://docs.python.org/library/functions.html#func-bytearray
 .. _dt-mod: https://docs.python.org/library/datetime.html#datetime.datetime
 .. _date: https://docs.python.org/library/datetime.html#datetime.date
