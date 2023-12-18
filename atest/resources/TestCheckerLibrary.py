@@ -341,6 +341,16 @@ class TestCheckerLibrary:
             b.should_be_equal(item.level, 'INFO' if level == 'HTML' else level, 'Wrong log level')
         b.should_be_equal(str(item.html), str(html or level == 'HTML'), 'Wrong HTML status')
 
+    def outputs_should_be_equal(self, output1, output2):
+        suite1 = self._parse_output(output1)
+        suite2 = self._parse_output(output2)
+        assert suite1.to_dict() == suite2.to_dict()
+
+    def _parse_output(self, output) -> TestSuite:
+        from_source = {'xml': TestSuite.from_xml,
+                       'json': TestSuite.from_json}[output.rsplit('.')[-1].lower()]
+        return from_source(output)
+
 
 class ProcessResults(ResultVisitor):
 

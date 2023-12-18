@@ -1,3 +1,4 @@
+import json
 import os
 import unittest
 import tempfile
@@ -379,6 +380,48 @@ class TestUsingPathlibPath(unittest.TestCase):
             path.unlink()
         self.test_suite_is_built(result.suite)
         self.test_test_is_built(result.suite)
+
+
+class TestJsonResult(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        cls.data = json.dumps({
+            'name': 'S',
+            'tests': [{'name': 'T1', 'status': 'PASS',
+                       'body': [{'name': 'Këüẅörd',
+                                 'start_time': '2023-12-18 22:35:12.345678',
+                                 'elapsed_time': 0.123}]},
+                      {'name': 'T2', 'status': 'FAIL'},
+                      {'name': 'T3', 'status': 'FAIL'}]
+        })
+        cls.path = Path(os.getenv('TEMPDIR', tempfile.gettempdir()), 'robot-utest.json')
+        cls.path.write_text(cls.data)
+
+    def test_json_string(self):
+        self._verify(self.data)
+
+    def test_json_bytes(self):
+        self._verify(self.data.encode('UTF-8'))
+
+    def test_json_path(self):
+        self._verify(self.path)
+        self._verify(str(self.path))
+
+    def test_json_file(self):
+        with open(self.path) as file:
+            self._verify(file)
+
+    def _verify(self, source):
+        result = ExecutionResult(source)
+        assert_equal(result.suite.name, 'S')
+        assert_equal(result.suite.elapsed_time.total_seconds(), 0.123)
+        assert_equal(result.suite.tests[0].body[0].name, 'Këüẅörd')
+        assert_equal(result.suite.tests[0].body[0].start_time.microsecond, 345678)
+        assert_equal(result.statistics.total.passed, 1)
+        assert_equal(result.statistics.total.failed, 2)
+        assert_equal(len(result.errors), 0)
+        assert_equal(result.return_code, 2)
 
 
 if __name__ == '__main__':

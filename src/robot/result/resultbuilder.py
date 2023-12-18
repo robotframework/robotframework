@@ -13,35 +13,43 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from pathlib import Path
+
 from robot.errors import DataError
 from robot.model import SuiteVisitor
 from robot.utils import ET, ETSource, get_error_message
 
-from .executionresult import Result, CombinedResult
+from .executionresult import CombinedResult, is_json_source, Result
 from .flattenkeywordmatcher import (create_flatten_message, FlattenByNameMatcher,
                                     FlattenByTypeMatcher, FlattenByTags)
 from .merger import Merger
+from .model import TestSuite
 from .xmlelementhandlers import XmlElementHandler
 
 
 def ExecutionResult(*sources, **options):
     """Factory method to constructs :class:`~.executionresult.Result` objects.
 
-    :param sources: XML source(s) containing execution results.
-        Can be specified as paths, opened file objects, or strings/bytes
-        containing XML directly. Support for bytes is new in RF 3.2.
+    :param sources: XML or JSON source(s) containing execution results.
+        Can be specified as paths (``pathlib.Path`` or ``str``), opened file
+        objects, or strings/bytes containing XML/JSON directly.
     :param options: Configuration options.
         Using ``merge=True`` causes multiple results to be combined so that
         tests in the latter results replace the ones in the original.
         Setting ``rpa`` either to ``True`` (RPA mode) or ``False`` (test
-        automation) sets execution mode explicitly. By default it is got
+        automation) sets execution mode explicitly. By default, it is got
         from processed output files and conflicting modes cause an error.
         Other options are passed directly to the
         :class:`ExecutionResultBuilder` object used internally.
     :returns: :class:`~.executionresult.Result` instance.
 
-    Should be imported by external code via the :mod:`robot.api` package.
-    See the :mod:`robot.result` package for a usage example.
+    A source is considered to be JSON in these cases:
+    - It is a path with a ``.json`` suffix.
+    - It is an open file that has a ``name`` attribute with a ``.json`` suffix.
+    - It is string or bytes starting with ``{`` and ending with ``}``.
+
+    This method should be imported by external code via the :mod:`robot.api`
+    package. See the :mod:`robot.result` package for a usage example.
     """
     if not sources:
         raise DataError('One or more data source needed.')
@@ -66,13 +74,27 @@ def _combine_results(sources, options):
 
 
 def _single_result(source, options):
+    if is_json_source(source):
+        return _json_result(source, options)
+    return _xml_result(source, options)
+
+
+def _json_result(source, options):
+    try:
+        suite = TestSuite.from_json(source)
+    except Exception:
+        raise DataError(f"Reading JSON source '{source}' failed: {get_error_message()}")
+    return Result(source, suite, rpa=options.pop('rpa', None))
+
+
+def _xml_result(source, options):
     ets = ETSource(source)
     result = Result(source, rpa=options.pop('rpa', None))
     try:
         return ExecutionResultBuilder(ets, **options).build(result)
     except IOError as err:
         error = err.strerror
-    except:
+    except Exception:
         error = get_error_message()
     raise DataError(f"Reading XML source '{ets}' failed: {error}")
 

@@ -13,11 +13,35 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from pathlib import Path
+
 from robot.errors import DataError
 from robot.model import Statistics
 
 from .executionerrors import ExecutionErrors
 from .model import TestSuite
+
+
+def is_json_source(source):
+    if isinstance(source, bytes):
+        # Latin-1 is most likely not the right encoding, but decoding bytes with it
+        # always succeeds and characters we care about will be correct as well.
+        source = source.decode('Latin-1')
+    if isinstance(source, str):
+        source = source.strip()
+        first, last = (source[0], source[-1]) if source else ('', '')
+        if (first, last) == ('{', '}'):
+            return True
+        if (first, last) == ('<', '>'):
+            return False
+        path = Path(source)
+    elif isinstance(source, Path):
+        path = source
+    elif hasattr(source, 'name') and isinstance(source.name, str):
+        path = Path(source.name)
+    else:
+        return False
+    return bool(path and path.suffix.lower() == '.json')
 
 
 class Result:
@@ -96,18 +120,38 @@ class Result:
         self._status_rc = status_rc
         self._stat_config = stat_config or {}
 
-    def save(self, path=None, legacy_output=False):
-        """Save results as a new output XML file.
+    def save(self, target=None, legacy_output=False):
+        """Save results as XML or JSON file.
 
-        :param path: Path to save results to. If omitted, overwrites the
-            original file.
+        :param target: Target where to save results to. Can be a path
+            (``pathlib.Path`` or ``str``) or an open file object. If omitted,
+            uses the :attr:`source` which overwrites the original file.
         :param legacy_output: Save result in Robot Framework 6.x compatible
             format. New in Robot Framework 7.0.
+
+        File type is got based on the ``target``. The type is JSON if the ``target``
+        is a path that has a ``.json`` suffix or if it is an open file that has
+        a ``name`` attribute with a ``.json`` suffix. Otherwise, the type is XML.
+
+        Notice that saved JSON files only contain suite information, no statics
+        or errors like XML files. This is likely to change in the future so
+        that JSON files get a new root object with the current suite as a child
+        and statics and errors as additional children. Robot Framework's own
+        functions and methods accepting JSON results will continue to work
+        also with JSON files containing only a suite.
         """
         from robot.reporting.outputwriter import LegacyOutputWriter, OutputWriter
 
-        writer = OutputWriter if not legacy_output else LegacyOutputWriter
-        self.visit(writer(path or self.source, rpa=self.rpa))
+        target = target or self.source
+        if not target:
+            raise ValueError('Path required.')
+        if is_json_source(target):
+            # This writes only suite information, not stats or errors. This
+            # should be changed when we add JSON support to execution.
+            self.suite.to_json(target)
+        else:
+            writer = OutputWriter if not legacy_output else LegacyOutputWriter
+            self.visit(writer(target, rpa=self.rpa))
 
     def visit(self, visitor):
         """An entry point to visit the whole result object.
@@ -146,7 +190,7 @@ class CombinedResult(Result):
     """Combined results of multiple test executions."""
 
     def __init__(self, results=None):
-        Result.__init__(self)
+        super().__init__()
         for result in results or ():
             self.add_result(result)
 
