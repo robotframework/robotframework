@@ -58,7 +58,7 @@ ARGUMENTS = '''
 --splitlog
 --console dotted
 --console-width 100
---suite-stat-Level 3
+--suite-stat-level 3
 --log NONE
 --report NONE
 '''.strip()
@@ -121,7 +121,9 @@ def _rebot(rc, output_dir, interpreter):
         command = [sys.executable, str(CURDIR.parent / 'src/robot/rebot.py'),
                    '--output-dir', str(output_dir), str(output)]
         subprocess.call(command)
-    shutil.copy(output, LATEST.format(interpreter=interpreter))
+    latest = Path(LATEST.format(interpreter=interpreter))
+    latest.unlink(missing_ok=True)
+    shutil.copy(output, latest)
 
 
 if __name__ == '__main__':
