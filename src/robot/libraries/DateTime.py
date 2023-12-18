@@ -304,6 +304,7 @@ Additionally, helper classes ``Date`` and ``Time`` can be used directly:
 """
 
 import datetime
+import sys
 
 from robot.version import get_version
 from robot.utils import (elapsed_time_to_string, secs_to_timestr, timestr_to_secs,
@@ -345,7 +346,12 @@ def get_current_date(time_zone='local', increment=0, result_format='timestamp',
     if time_zone.upper() == 'LOCAL' or result_format.upper() == 'EPOCH':
         dt = datetime.datetime.now()
     elif time_zone.upper() == 'UTC':
-        dt = datetime.datetime.utcnow()
+        if sys.version_info >= (3, 12):
+            # `utcnow()` was deprecated in Python 3.12. We only support "naive"
+            # datetime objects and thus need to remove timezone information here.
+            dt = datetime.datetime.now(datetime.UTC).replace(tzinfo=None)
+        else:
+            dt = datetime.datetime.utcnow()
     else:
         raise ValueError(f"Unsupported timezone '{time_zone}'.")
     date = Date(dt) + Time(increment)
