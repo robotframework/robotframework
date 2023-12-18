@@ -283,7 +283,7 @@ are available as functions that can be easily imported:
 |     seconds = convert_time(timeout)
 |     # ...
 
-Additionally helper classes ``Date`` and ``Time`` can be used directly:
+Additionally, helper classes ``Date`` and ``Time`` can be used directly:
 
 | from robot.libraries.DateTime import Date, Time
 |
@@ -293,12 +293,11 @@ Additionally helper classes ``Date`` and ``Time`` can be used directly:
 |     # ...
 """
 
-from datetime import datetime, timedelta
-import time
+import datetime
 
 from robot.version import get_version
-from robot.utils import (elapsed_time_to_string, is_falsy, is_number, is_string,
-                         secs_to_timestr, timestr_to_secs, type_name)
+from robot.utils import (elapsed_time_to_string, secs_to_timestr, timestr_to_secs,
+                         type_name)
 
 __version__ = get_version()
 __all__ = ['convert_time', 'convert_date', 'subtract_date_from_date',
@@ -306,8 +305,8 @@ __all__ = ['convert_time', 'convert_date', 'subtract_date_from_date',
            'add_time_to_time', 'add_time_to_date', 'get_current_date']
 
 
-def get_current_date(time_zone='local', increment=0,
-                     result_format='timestamp', exclude_millis=False):
+def get_current_date(time_zone='local', increment=0, result_format='timestamp',
+                     exclude_millis=False):
     """Returns current local or UTC time with an optional increment.
 
     Arguments:
@@ -333,20 +332,14 @@ def get_current_date(time_zone='local', increment=0,
     | Should Be Equal | ${date.year}     | ${2014}                 |
     | Should Be Equal | ${date.month}    | ${6}                    |
     """
-    upper = time_zone.upper()
-    if upper == 'LOCAL':
-        dt = datetime.now()
-    # Epoch time is same regardless the timezone. We convert `dt` to epoch time
-    # using `time.mktime()` afterwards, and it expects time in local time.
-    # For details: https://github.com/robotframework/robotframework/issues/3306
-    elif upper == 'UTC' and result_format.upper() == 'EPOCH':
-        dt = datetime.now()
-    elif upper == 'UTC':
-        dt = datetime.utcnow()
+    if time_zone.upper() == 'LOCAL' or result_format.upper() == 'EPOCH':
+        dt = datetime.datetime.now()
+    elif time_zone.upper() == 'UTC':
+        dt = datetime.datetime.utcnow()
     else:
-        raise ValueError("Unsupported timezone '%s'." % time_zone)
+        raise ValueError(f"Unsupported timezone '{time_zone}'.")
     date = Date(dt) + Time(increment)
-    return date.convert(result_format, millis=is_falsy(exclude_millis))
+    return date.convert(result_format, millis=not exclude_millis)
 
 
 def convert_date(date, result_format='timestamp', exclude_millis=False,
@@ -368,8 +361,7 @@ def convert_date(date, result_format='timestamp', exclude_millis=False,
     | ${date} =       | Convert Date | 5.28.2014 12:05         | exclude_millis=yes | date_format=%m.%d.%Y %H:%M |
     | Should Be Equal | ${date}      | 2014-05-28 12:05:00     |
     """
-    return Date(date, date_format).convert(result_format,
-                                           millis=is_falsy(exclude_millis))
+    return Date(date, date_format).convert(result_format, millis=not exclude_millis)
 
 
 def convert_time(time, result_format='number', exclude_millis=False):
@@ -389,7 +381,7 @@ def convert_time(time, result_format='number', exclude_millis=False):
     | ${time} =       | Convert Time  | ${3661.5} | timer | exclude_milles=yes |
     | Should Be Equal | ${time}       | 01:01:02          |
     """
-    return Time(time).convert(result_format, millis=is_falsy(exclude_millis))
+    return Time(time).convert(result_format, millis=not exclude_millis)
 
 
 def subtract_date_from_date(date1, date2, result_format='number',
@@ -415,7 +407,7 @@ def subtract_date_from_date(date1, date2, result_format='number',
     | Should Be Equal | ${time}                 | 1 day 42 seconds        |
     """
     time = Date(date1, date1_format) - Date(date2, date2_format)
-    return time.convert(result_format, millis=is_falsy(exclude_millis))
+    return time.convert(result_format, millis=not exclude_millis)
 
 
 def add_time_to_date(date, time, result_format='timestamp',
@@ -439,7 +431,7 @@ def add_time_to_date(date, time, result_format='timestamp',
     | Should Be Equal | ${date}          | 2014-05-28 13:07:06.115 |
     """
     date = Date(date, date_format) + Time(time)
-    return date.convert(result_format, millis=is_falsy(exclude_millis))
+    return date.convert(result_format, millis=not exclude_millis)
 
 
 def subtract_time_from_date(date, time, result_format='timestamp',
@@ -463,7 +455,7 @@ def subtract_time_from_date(date, time, result_format='timestamp',
     | Should Be Equal | ${date}                 | 2014-05-28 12:05:03.111 |
     """
     date = Date(date, date_format) - Time(time)
-    return date.convert(result_format, millis=is_falsy(exclude_millis))
+    return date.convert(result_format, millis=not exclude_millis)
 
 
 def add_time_to_time(time1, time2, result_format='number',
@@ -484,7 +476,7 @@ def add_time_to_time(time1, time2, result_format='number',
     | Should Be Equal | ${time}          | 04:07:03          |
     """
     time = Time(time1) + Time(time2)
-    return time.convert(result_format, millis=is_falsy(exclude_millis))
+    return time.convert(result_format, millis=not exclude_millis)
 
 
 def subtract_time_from_time(time1, time2, result_format='number',
@@ -506,7 +498,7 @@ def subtract_time_from_time(time1, time2, result_format='number',
     | Should Be Equal | ${time}                 | - 10s    |
     """
     time = Time(time1) - Time(time2)
-    return time.convert(result_format, millis=is_falsy(exclude_millis))
+    return time.convert(result_format, millis=not exclude_millis)
 
 
 class Date:
@@ -520,33 +512,33 @@ class Date:
         return self._convert_to_epoch(self.datetime)
 
     def _convert_to_datetime(self, date, input_format):
-        if isinstance(date, datetime):
+        if isinstance(date, datetime.datetime):
             return date
-        if is_number(date):
-            return datetime.fromtimestamp(date)
-        if is_string(date):
+        if isinstance(date, (int, float)):
+            return datetime.datetime.fromtimestamp(date)
+        if isinstance(date, str):
             return self._string_to_datetime(date, input_format)
-        raise ValueError("Unsupported input '%s'." % date)
+        raise ValueError(f"Unsupported input '{date}'.")
 
     def _string_to_datetime(self, ts, input_format):
         if not input_format:
             ts = self._normalize_timestamp(ts)
             input_format = '%Y-%m-%d %H:%M:%S.%f'
-        return datetime.strptime(ts, input_format)
+        return datetime.datetime.strptime(ts, input_format)
 
-    def _normalize_timestamp(self, date):
-        ts = ''.join(d for d in date if d.isdigit())
-        if not (8 <= len(ts) <= 20):
-            raise ValueError("Invalid timestamp '%s'." % date)
-        ts = ts.ljust(20, '0')
-        return '%s-%s-%s %s:%s:%s.%s' % (ts[:4], ts[4:6], ts[6:8], ts[8:10],
-                                         ts[10:12], ts[12:14], ts[14:])
+    def _normalize_timestamp(self, timestamp):
+        numbers = ''.join(d for d in timestamp if d.isdigit())
+        if not (8 <= len(numbers) <= 20):
+            raise ValueError(f"Invalid timestamp '{timestamp}'.")
+        d = numbers[:8]
+        t = numbers[8:].ljust(12, '0')
+        return f'{d[:4]}-{d[4:6]}-{d[6:8]} {t[:2]}:{t[2:4]}:{t[4:6]}.{t[6:]}'
 
     def convert(self, format, millis=True):
         dt = self.datetime
         if not millis:
             secs = 1 if dt.microsecond >= 5e5 else 0
-            dt = dt.replace(microsecond=0) + timedelta(seconds=secs)
+            dt = dt.replace(microsecond=0) + datetime.timedelta(seconds=secs)
         if '%' in format:
             return self._convert_to_custom_timestamp(dt, format)
         format = format.lower()
@@ -556,7 +548,7 @@ class Date:
             return dt
         if format == 'epoch':
             return self._convert_to_epoch(dt)
-        raise ValueError("Unknown format '%s'." % format)
+        raise ValueError(f"Unknown format '{format}'.")
 
     def _convert_to_custom_timestamp(self, dt, format):
         return dt.strftime(format)
@@ -566,25 +558,25 @@ class Date:
             return dt.strftime('%Y-%m-%d %H:%M:%S')
         ms = round(dt.microsecond / 1000)
         if ms == 1000:
-            dt += timedelta(seconds=1)
+            dt += datetime.timedelta(seconds=1)
             ms = 0
-        return dt.strftime('%Y-%m-%d %H:%M:%S') + '.%03d' % ms
+        return dt.strftime('%Y-%m-%d %H:%M:%S') + f'.{ms:03d}'
 
     def _convert_to_epoch(self, dt):
-        return time.mktime(dt.timetuple()) + dt.microsecond / 1e6
+        return dt.timestamp()
 
     def __add__(self, other):
         if isinstance(other, Time):
             return Date(self.datetime + other.timedelta)
-        raise TypeError('Can only add Time to Date, got %s.' % type_name(other))
+        raise TypeError(f'Can only add Time to Date, got {type_name(other)}.')
 
     def __sub__(self, other):
         if isinstance(other, Date):
             return Time(self.datetime - other.datetime)
         if isinstance(other, Time):
             return Date(self.datetime - other.timedelta)
-        raise TypeError('Can only subtract Date or Time from Date, got %s.'
-                        % type_name(other))
+        raise TypeError(f'Can only subtract Date or Time from Date, '
+                        f'got {type_name(other)}.')
 
 
 class Time:
@@ -593,19 +585,19 @@ class Time:
         self.seconds = float(self._convert_time_to_seconds(time))
 
     def _convert_time_to_seconds(self, time):
-        if isinstance(time, timedelta):
+        if isinstance(time, datetime.timedelta):
             return time.total_seconds()
         return timestr_to_secs(time, round_to=None)
 
     @property
     def timedelta(self):
-        return timedelta(seconds=self.seconds)
+        return datetime.timedelta(seconds=self.seconds)
 
     def convert(self, format, millis=True):
         try:
-            result_converter = getattr(self, '_convert_to_%s' % format.lower())
+            result_converter = getattr(self, f'_convert_to_{format.lower()}')
         except AttributeError:
-            raise ValueError("Unknown format '%s'." % format)
+            raise ValueError(f"Unknown format '{format}'.")
         seconds = self.seconds if millis else float(round(self.seconds))
         return result_converter(seconds, millis)
 
@@ -622,15 +614,14 @@ class Time:
         return elapsed_time_to_string(seconds, include_millis=millis, seconds=True)
 
     def _convert_to_timedelta(self, seconds, millis=True):
-        return timedelta(seconds=seconds)
+        return datetime.timedelta(seconds=seconds)
 
     def __add__(self, other):
         if isinstance(other, Time):
             return Time(self.seconds + other.seconds)
-        raise TypeError('Can only add Time to Time, got %s.' % type_name(other))
+        raise TypeError(f'Can only add Time to Time, got {type_name(other)}.')
 
     def __sub__(self, other):
         if isinstance(other, Time):
             return Time(self.seconds - other.seconds)
-        raise TypeError('Can only subtract Time from Time, got %s.'
-                        % type_name(other))
+        raise TypeError(f'Can only subtract Time from Time, got {type_name(other)}.')
