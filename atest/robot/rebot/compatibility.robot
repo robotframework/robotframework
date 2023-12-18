@@ -15,6 +15,9 @@ RF 4.0 compatibility
 RF 5.0 compatibility
     Run Rebot And Validate Statistics    rebot/output-5.0.xml      175    10
 
+Suite only
+    Run Rebot And Validate Statistics    rebot/suite_only.xml      179    10    3
+
 Message directly under test
     Run Rebot And Validate Statistics    rebot/issue-3762.xml      1      0
     ${tc} =    Check Test Case    test A
@@ -24,9 +27,11 @@ Message directly under test
 
 *** Keywords ***
 Run Rebot And Validate Statistics
-    [Arguments]    ${path}    ${passed}    ${failed}    ${validate}=True
+    [Arguments]    ${path}    ${passed}    ${failed}    ${skipped}=0    ${validate}=True
     Run Rebot    ${EMPTY}    ${path}    validate output=${validate}
-    ${total}    ${passed}    ${failed} =    Evaluate    ${passed} + ${failed}, ${passed}, ${failed}
-    Should Be Equal    ${SUITE.statistics.total}     ${total}
-    Should Be Equal    ${SUITE.statistics.passed}    ${passed}
-    Should Be Equal    ${SUITE.statistics.failed}    ${failed}
+    ${total}    ${passed}    ${failed}    ${skipped} =
+    ...    Evaluate    ${passed} + ${failed} + ${skipped}, ${passed}, ${failed}, ${skipped}
+    Should Be Equal    ${SUITE.statistics.total}      ${total}
+    Should Be Equal    ${SUITE.statistics.passed}     ${passed}
+    Should Be Equal    ${SUITE.statistics.failed}     ${failed}
+    Should Be Equal    ${SUITE.statistics.skipped}    ${skipped}
