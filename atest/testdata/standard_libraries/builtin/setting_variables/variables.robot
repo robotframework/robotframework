@@ -240,18 +240,21 @@ Set Suite Variable 2
     Set Suite Variable    invalid
 
 Set Child Suite Variable 1
+    Check Child Suite Variables    var3=Only seen in this suite
     Should Be Equal    ${PARENT SUITE SETUP CHILD SUITE VAR 1}    Set in __init__
     Should Be True    ${PARENT SUITE SETUP CHILD SUITE VAR 2} == ['Set in', '__init__']
     Should Be Equal    ${PARENT SUITE SETUP CHILD SUITE VAR 3}    Only seen in this suite
     Set Global Variable    ${PARENT SUITE SETUP CHILD SUITE VAR 2}    Overridden by global
     Should Be Equal    ${PARENT SUITE SETUP CHILD SUITE VAR 2}    Overridden by global
     Set Suite Variable    ${PARENT SUITE SETUP CHILD SUITE VAR 3}    Only seen, and overridden, in this suite    children=${TRUE}
+    Check Child Suite Variables    var2=Overridden by global    var3=Only seen, and overridden, in this suite
 
 Set Child Suite Variable 2
-    [Documentation]    FAIL Variable '${NON EXISTING}' not found.
+    [Documentation]    FAIL Variable '\${NON EXISTING}' not found.
     Should Be Equal    ${PARENT SUITE SETUP CHILD SUITE VAR 1}    Set in __init__
     Should Be Equal    ${PARENT SUITE SETUP CHILD SUITE VAR 2}    Overridden by global
     Should Be Equal    ${PARENT SUITE SETUP CHILD SUITE VAR 3}    Only seen, and overridden, in this suite
+    Check Child Suite Variables    var2=Overridden by global    var3=Only seen, and overridden, in this suite
     Set Suite Variable    ${VAR}    value    children=${NON EXISTING}
 
 Set Global Variable 1
@@ -556,11 +559,13 @@ My Suite Setup
     Variable Should Not Exist    $parent_suite_setup_suite_var
     Variable Should Not Exist    $parent_suite_setup_suite_var_2
     Should Be Equal    ${parent_suite_setup_global_var}    Set in __init__
+    Check Child Suite Variables
     Should Be Equal    ${PARENT SUITE SETUP CHILD SUITE VAR 1}    Set in __init__
     Should Be True    ${PARENT SUITE SETUP CHILD SUITE VAR 2} == ['Set in', '__init__']
     Should Be True    ${PARENT SUITE SETUP CHILD SUITE VAR 3} == {'Set': 'in __init__'}
     Set Suite Variable    ${PARENT SUITE SETUP CHILD SUITE VAR 3}    Only seen in this suite    children=true
     Set Global Variable    ${VARIABLE TABLE IN VARIABLES 2 (2)}    Set by suite setup in "variables.robot"
+    Check Child Suite Variables    var3=Only seen in this suite
 
 My Suite Teardown
     Set Suite Variable    $suite_teardown_suite_var    Suite var set in suite teardown
@@ -580,6 +585,7 @@ My Suite Teardown
     Should Be Equal    ${PARENT SUITE SETUP CHILD SUITE VAR 1}    Set in __init__
     Should Be Equal    ${PARENT SUITE SETUP CHILD SUITE VAR 2}    Overridden by global
     Should Be Equal    ${PARENT SUITE SETUP CHILD SUITE VAR 3}    Only seen, and overridden, in this suite
+    Check Child Suite Variables    var2=Overridden by global    var3=Only seen, and overridden, in this suite
 
 Test Variable Should Be Set To
     [Arguments]    ${expected}
@@ -709,3 +715,12 @@ Setting Local Variable
 
 Local Variable Should Not Exist
     Variable Should Not Exist    ${new}
+
+Check Child Suite Variables
+    [Arguments]
+    ...    ${var1}=Set in __init__
+    ...     ${var2}=${{['Set in', '__init__']}}
+    ...     ${var3}=${{{'Set': 'in __init__'}}}
+    Should Be Equal    ${PARENT SUITE SETUP CHILD SUITE VAR 1}   ${var1}
+    Should Be Equal    ${PARENT SUITE SETUP CHILD SUITE VAR 2}   ${var2}
+    Should Be Equal    ${PARENT SUITE SETUP CHILD SUITE VAR 3}   ${var3}
