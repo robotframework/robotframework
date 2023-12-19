@@ -34,6 +34,10 @@ class Output(AbstractLogger, LoggerApi):
         self._register_loggers(DebugFile(settings.debug_file))
         self._settings = settings
 
+    @property
+    def initial_log_level(self):
+        return self._settings.log_level
+
     def _register_loggers(self, debug_file):
         LOGGER.register_xml_logger(self._xml_logger)
         LOGGER.register_listeners(self.listeners or None, self.library_listeners)

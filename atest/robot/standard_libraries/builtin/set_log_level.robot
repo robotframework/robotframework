@@ -26,6 +26,15 @@ Set Log Level
 Invalid Log Level Failure Is Catchable
     Check Test Case    ${TESTNAME}
 
+Reset Log Level
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc.kws[0].msgs[0]}    Log level changed from INFO to DEBUG.    DEBUG
+    Check Log Message    ${tc.kws[1].msgs[0]}    This is logged    INFO
+    Check Log Message    ${tc.kws[2].msgs[0]}    This is logged    DEBUG
+    Should Be Empty      ${tc.kws[3].msgs}
+    Check Log Message    ${tc.kws[4].msgs[0]}    This is logged    INFO
+    Should Be Empty      ${tc.kws[5].msgs}
+
 Log Level Goes To HTML
     File Should Contain    ${OUTDIR}${/}set_log_level_log.html    KW Info to log
     File Should Contain    ${OUTDIR}${/}set_log_level_log.html    KW Trace to log
