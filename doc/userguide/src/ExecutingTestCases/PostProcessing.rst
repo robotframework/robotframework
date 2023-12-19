@@ -61,8 +61,8 @@ are processed and they have conflicting modes.
 __ `Test execution`_
 __ `Task execution`_
 
-Creating different reports and logs
------------------------------------
+Creating reports, logs and output files
+---------------------------------------
 
 You can use Rebot for creating the same reports and logs that
 are created automatically during the test execution. Of course, it is
@@ -79,6 +79,13 @@ Another common usage is creating only the output file when running tests
 --report NONE`) and generating logs and reports later. Tests can,
 for example, be executed on different environments, output files collected
 to a central place, and reports and logs created there.
+
+Rebot does not create XML output files by default, but it is possible to
+create them by using the :option:`--output (-o)` option. Log and report
+are created by default, but they can be disabled by using value `NONE`
+(case-insensitive) if they are not needed::
+
+   rebot --include smoke --output smoke.xml --log none --report none original.xml
 
 Combining outputs
 -----------------
@@ -182,3 +189,27 @@ suites found from all given output files. If some test is found from multiple
 outputs, latest results replace the earlier ones like explained in the previous
 section. Also this merging strategy requires the top-level test suites to
 be same in all outputs.
+
+JSON output files
+-----------------
+
+Rebot can create and process output files also in the JSON_ format.
+Creating JSON output files is done using the normal :option:`--output` option
+so that the specified file has a :file:`.json` extension::
+
+   rebot --output output.json output.xml
+
+When reading output files, JSON files are automatically recognized by
+the extension::
+
+   rebot output.json
+   rebot output1.json output2.json
+
+When combining or merging results, it is possible to mix JSON and XML files::
+
+   rebot output1.xml output2.json
+   rebot --merge original.xml rerun.json
+
+The JSON output file structure is documented in the :file:`result.json` `schema file`_.
+
+.. note:: Support for JSON output files is new in Robot Framework 7.0.

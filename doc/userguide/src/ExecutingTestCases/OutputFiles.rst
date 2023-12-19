@@ -43,8 +43,8 @@ format. Log_, report_ and xUnit_ files are typically generated based on them,
 and they can also be combined and otherwise post-processed with Rebot_.
 
 .. tip:: Generating report_ and xUnit_ files as part of test execution
-         does not require processing output files. Disabling log_ generation
-         when running tests can thus save memory.
+         does not require processing output files after execution. Disabling
+         log_ generation when running tests can thus save memory.
 
 The command line option :option:`--output (-o)` determines the path where
 the output file is created relative to the `output directory`_. The default
@@ -57,6 +57,16 @@ It is possible to disable creation of the output file when running tests by
 giving a special value `NONE` to the :option:`--output` option. If no outputs
 are needed, they should all be explicitly disabled using
 `--output NONE --report NONE --log NONE`.
+
+The XML output file structure is documented in the :file:`robot.xsd` `schema file`_.
+
+.. note:: Starting from Robot Framework 7.0, Rebot_ can read and write
+          `JSON output files`_. The plan is to enhance the support for
+          JSON output files in the future so that they could be created
+          already during execution. For more details see issue `#3423`__.
+
+__ https://github.com/robotframework/robotframework/issues/3423
+
 
 Legacy output file format
 ~~~~~~~~~~~~~~~~~~~~~~~~~

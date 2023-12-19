@@ -118,7 +118,7 @@ the :file:`.robot.rst` extension are parsed by default. If you would
 rather use just :file:`.rst` or :file:`.rest` extension, that needs to be
 configured separately.
 
-Robot Framework data can also be created in `JSON format`_ that is targeted
+Robot Framework data can also be created in the `JSON format`_ that is targeted
 more for tool developers than normal Robot Framework users. Only JSON files
 with the custom :file:`.rbt` extension are parsed by default.
 
@@ -318,7 +318,7 @@ when processing files using reStructuredText tooling normally.
 JSON format
 ~~~~~~~~~~~
 
-Robot Framework supports data also in JSON_ format. This format is designed
+Robot Framework supports data also in the JSON_ format. This format is designed
 more for tool developers than for regular Robot Framework users and it is not
 meant to be edited manually. Its most important use cases are:
 
@@ -430,16 +430,14 @@ directory after the suite is recreated:
    suite = TestSuite.from_json('data.rbt')
    suite.adjust_source(root='/new/path/to')
 
-__ https://robot-framework.readthedocs.io/en/master/autodoc/robot.running.html#robot.running.model.TestSuite.adjust_source
+__ https://robot-framework.readthedocs.io/en/master/autodoc/robot.model.html#robot.model.testsuite.TestSuite.adjust_source
 
 JSON structure
 ''''''''''''''
 
 Imports, variables and keywords created in suite files are included in the
 generated JSON along with tests and tasks. The exact JSON structure is documented
-in the :file:`running.json` `schema file`__.
-
-__ https://github.com/robotframework/robotframework/tree/master/doc/schema#readme
+in the :file:`running.json` `schema file`_.
 
 Rules for parsing the data
 --------------------------

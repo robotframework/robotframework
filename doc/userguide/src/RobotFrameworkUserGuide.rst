@@ -209,6 +209,7 @@
 .. _download page: http://downloads.robotframework.org
 .. _version control system: http://source.robotframework.org
 .. _previous User Guides: http://robotframework.org/robotframework/#user-guide
+.. _schema file: https://github.com/robotframework/robotframework/tree/master/doc/schema#readme
 
 .. API docs
 
