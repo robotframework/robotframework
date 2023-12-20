@@ -109,10 +109,10 @@ class OperatingSystem:
     operating system dependent, but typically e.g. ``~/robot`` is expanded to
     ``C:\Users\<user>\robot`` on Windows and ``/home/<user>/robot`` on Unixes.
 
-    = ``pathlib.Path`` support =
+    = pathlib.Path support =
 
     Starting from Robot Framework 6.0, arguments representing paths can be given
-    as [https://docs.python.org/3/library/pathlib.html pathlib.Path] instances
+    as [https://docs.python.org/3/library/pathlib.html|pathlib.Path] instances
     in addition to strings.
 
     All keywords returning paths return them as strings. This may change in
