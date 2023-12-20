@@ -182,11 +182,14 @@ class _ExecutionContext:
     def continue_on_failure(self, default=False):
         parents = ([self.test] if self.test else []) + self.user_keywords
         for index, parent in enumerate(reversed(parents)):
-            if (parent.tags.robot('recursive-stop-on-failure')
-                    or index == 0 and parent.tags.robot('stop-on-failure')):
+            robot = parent.tags.robot
+            if index == 0 and robot('stop-on-failure'):
                 return False
-            if (parent.tags.robot('recursive-continue-on-failure')
-                    or index == 0 and parent.tags.robot('continue-on-failure')):
+            if index == 0 and robot('continue-on-failure'):
+                return True
+            if robot('recursive-stop-on-failure'):
+                return False
+            if robot('recursive-continue-on-failure'):
                 return True
         return default or self.in_teardown
 

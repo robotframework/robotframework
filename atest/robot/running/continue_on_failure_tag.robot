@@ -134,3 +134,9 @@ Test test setup with continue-on-failure
 
 Test test setup with recursive-continue-on-failure
     Check Test Case    ${TESTNAME}
+
+recursive-stop-on-failure with continue-on-failure
+    Check Test Case    ${TESTNAME}
+
+recursive-continue-on-failure with stop-on-failure
+    Check Test Case    ${TESTNAME}

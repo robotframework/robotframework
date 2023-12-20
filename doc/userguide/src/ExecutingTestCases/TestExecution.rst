@@ -548,11 +548,21 @@ example are run even though `robot:stop-on-failure` is used:
        Run Keyword and Continue on Failure    Should be Equal    1    2
        Log    This is executed regardless the tag
 
+If `robot:recursive-stop-on-failure` and `robot:continue-on-failure` are used
+together in the same test or keyword, execution is stopped in called keywords
+if there are failures, but continues in the test or keyword using these tags.
+If `robot:recursive-continue-on-failure` and `robot:stop-on-failure` are used
+together in the same test or keyword, execution is continued in called keywords
+if there are failures, but stopped in the test or keyword using these tags.
+
 __ `Special failures from keywords`_
 __ `Run Keyword And Continue On Failure keyword`_
 
 .. note:: The `robot:stop-on-failure` and `robot:recursive-stop-on-failure`
           tags are new in Robot Framework 6.0.
+
+.. note:: Using recursive and non-recursive tags together in same test or
+          keyword is new in Robot Framework 7.0.
 
 TRY/EXCEPT
 ~~~~~~~~~~

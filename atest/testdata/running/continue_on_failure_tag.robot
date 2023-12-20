@@ -365,6 +365,62 @@ Test test setup with recursive-continue-on-failure
     [Setup]     test setup
     Fail    should-not-run
 
+recursive-stop-on-failure with continue-on-failure
+    [Documentation]    FAIL
+    ...    Several failures occurred:
+    ...
+    ...    1) 1.1.1
+    ...
+    ...    2) 2.1.1
+    ...
+    ...    3) 3.1.1
+    ...
+    ...    4) t1.1.1
+    ...
+    ...    5) t2.1.1
+    ...
+    ...    Also teardown failed:
+    ...    Several failures occurred:
+    ...
+    ...    1) 1.1.1
+    ...
+    ...    2) 2.1.1
+    ...
+    ...    3) 3.1.1
+    [Tags]    robot:recursive-stop-on-failure    robot:continue-on-failure
+    recursive-stop-on-failure with continue-on-failure
+    Step t1
+    Step t2
+    [Teardown]    recursive-stop-on-failure with continue-on-failure
+
+recursive-continue-on-failure with stop-on-failure
+    [Documentation]    FAIL
+    ...    Several failures occurred:
+    ...
+    ...    1) 1.1.1
+    ...
+    ...    2) 1.1.2
+    ...
+    ...    3) 1.2.1
+    ...
+    ...    4) 1.2.2
+    ...
+    ...    Also teardown failed:
+    ...    Several failures occurred:
+    ...
+    ...    1) 1.1.1
+    ...
+    ...    2) 1.1.2
+    ...
+    ...    3) 1.2.1
+    ...
+    ...    4) 1.2.2
+    [Tags]    robot:recursive-continue-on-failure    robot:stop-on-failure
+    recursive-continue-on-failure with stop-on-failure
+    Step t1
+    Step t2
+    [Teardown]    recursive-continue-on-failure with stop-on-failure
+
 *** Keywords ***
 Failure in user keyword with continue tag
     [Arguments]    ${run_kw}=No Operation
@@ -466,3 +522,23 @@ run-kw-and-continue failure in user keyword with stop tag
 test setup
     Fail    setup-1
     Fail    setup-2
+
+recursive-stop-on-failure with continue-on-failure
+    [Tags]    robot:recursive-stop-on-failure    robot:continue-on-failure
+    Step 1
+    Step 2
+    Step 3
+
+recursive-continue-on-failure with stop-on-failure
+    [Tags]    robot:recursive-continue-on-failure    robot:stop-on-failure
+    Step 1
+    Step 2
+    Step 3
+
+Step ${x}
+    Step ${x}.1
+    Step ${x}.2
+
+Step ${x}.${y}
+    Fail    ${x}.${y}.1
+    Fail    ${x}.${y}.2
