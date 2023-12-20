@@ -34,10 +34,10 @@ class LoggerMock:
         pass
 
 
-class LoggerMock2(LoggerMock):
+class LoggerMock2(LoggerMock, LoggerApi):
 
-    def output_file(self, name, path):
-        self.output_file = (name, path)
+    def result_file(self, kind, path):
+        self.result_file_args = (kind, path)
 
     def close(self):
         self.closed = True
@@ -81,9 +81,11 @@ class TestLogger(unittest.TestCase):
     def test_all_methods(self):
         logger = LoggerMock2(('Hello, world!', 'INFO'))
         self.logger.register_logger(logger)
-        self.logger.output_file('name', 'path')
+        self.logger.output_file('out.xml')
+        assert_equal(logger.result_file_args, ('Output', 'out.xml'))
+        self.logger.log_file('log.html')
+        assert_equal(logger.result_file_args, ('Log', 'log.html'))
         self.logger.close()
-        assert_equal(logger.output_file, ('name', 'path'))
         assert_true(logger.closed)
 
     def test_close_removes_registered_loggers(self):

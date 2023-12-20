@@ -62,8 +62,8 @@ class DottedOutput(LoggerApi):
         if msg.level in ('WARN', 'ERROR'):
             self.stderr.error(msg.message, msg.level)
 
-    def output_file(self, name, path):
-        self.stdout.write(f"{name+':':8} {path}\n")
+    def result_file(self, kind, path):
+        self.stdout.write(f"{kind+':':8} {path}\n")
 
 
 class StatusReporter(SuiteVisitor):

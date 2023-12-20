@@ -141,23 +141,23 @@ class TestListeners(unittest.TestCase):
         self._assert_output('SUITE END: PASS ' + self.stat_message)
 
     def test_output_file(self):
-        self.listeners.output_file('output', 'path/to/output')
+        self.listeners.output_file('path/to/output')
         self._assert_output('Output: path/to/output')
 
     def test_log_file(self):
-        self.listeners.output_file('log', 'path/to/log')
+        self.listeners.log_file('path/to/log')
         self._assert_output('Log: path/to/log')
 
     def test_report_file(self):
-        self.listeners.output_file('report', 'path/to/report')
+        self.listeners.report_file('path/to/report')
         self._assert_output('Report: path/to/report')
 
     def test_debug_file(self):
-        self.listeners.output_file('debug', 'path/to/debug')
+        self.listeners.debug_file('path/to/debug')
         self._assert_output('Debug: path/to/debug')
 
     def test_xunit_file(self):
-        self.listeners.output_file('XUnit', 'path/to/xunit')
+        self.listeners.xunit_file('path/to/xunit')
         self._assert_output('XUnit: path/to/xunit')
 
     def test_close(self):

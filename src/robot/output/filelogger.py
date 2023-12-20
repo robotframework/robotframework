@@ -54,8 +54,8 @@ class FileLogger(AbstractLogger, LoggerApi):
         self.debug(lambda: "Ended keyword '%s'." % result.name
                    if result.type in result.KEYWORD_TYPES else result._log_name)
 
-    def output_file(self, name, path):
-        self.info('%s: %s' % (name, path))
+    def result_file(self, kind, path):
+        self.info('%s: %s' % (kind, path))
 
     def close(self):
         self._writer.close()

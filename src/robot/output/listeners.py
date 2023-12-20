@@ -247,9 +247,25 @@ class Listeners(LoggerApi):
         for listener in self.listeners:
             listener.imported(import_type, name, attrs)
 
-    def output_file(self, file_type, path):
+    def output_file(self, path):
         for listener in self.listeners:
-            listener.output_file(file_type, path)
+            listener.output_file(path)
+
+    def report_file(self, path):
+        for listener in self.listeners:
+            listener.report_file(path)
+
+    def log_file(self, path):
+        for listener in self.listeners:
+            listener.log_file(path)
+
+    def xunit_file(self, path):
+        for listener in self.listeners:
+            listener.xunit_file(path)
+
+    def debug_file(self, path):
+        for listener in self.listeners:
+            listener.debug_file(path)
 
     def close(self):
         for listener in self.listeners:
@@ -298,10 +314,11 @@ class ListenerFacade(LoggerApi, ABC):
         self.listener = listener
         self.name = name
         self.library = library
-
-    def output_file(self, type_: str, path: str):
-        method = self._get_method(f'{type_.lower()}_file')
-        method(path)
+        self.output_file = self._get_method('output_file')
+        self.report_file = self._get_method('report_file')
+        self.log_file = self._get_method('log_file')
+        self.xunit_file = self._get_method('xunit_file')
+        self.debug_file = self._get_method('debug_file')
 
     def _get_method(self, name, fallback=None):
         for method_name in self._get_method_names(name):

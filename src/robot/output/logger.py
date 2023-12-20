@@ -402,10 +402,29 @@ class Logger(AbstractLogger):
         for logger in self:
             logger.imported(import_type, name, attrs)
 
-    def output_file(self, file_type, path):
-        """Finished output, report, log, debug, or xunit file"""
+    def output_file(self, path):
         for logger in self:
-            logger.output_file(file_type, path)
+            logger.output_file(path)
+
+    def report_file(self, path):
+        for logger in self:
+            logger.report_file(path)
+
+    def log_file(self, path):
+        for logger in self:
+            logger.log_file(path)
+
+    def xunit_file(self, path):
+        for logger in self:
+            logger.xunit_file(path)
+
+    def debug_file(self, path):
+        for logger in self:
+            logger.debug_file(path)
+
+    def result_file(self, kind, path):
+        kind_file = getattr(self, f'{kind.lower()}_file')
+        kind_file(path)
 
     def close(self):
         for logger in self:

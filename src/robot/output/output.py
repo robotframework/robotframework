@@ -55,7 +55,7 @@ class Output(AbstractLogger, LoggerApi):
         self._xml_logger.logger.visit_statistics(result.statistics)
         self._xml_logger.close()
         LOGGER.unregister_xml_logger()
-        LOGGER.output_file('Output', self._settings['Output'])
+        LOGGER.output_file(self._settings['Output'])
 
     def start_suite(self, data, result):
         LOGGER.start_suite(data, result)

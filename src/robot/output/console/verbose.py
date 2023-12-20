@@ -66,8 +66,8 @@ class VerboseOutput(LoggerApi):
         if msg.level in ('WARN', 'ERROR'):
             self.writer.error(msg.message, msg.level, clear=self.running_test)
 
-    def output_file(self, name, path):
-        self.writer.output(name, path)
+    def result_file(self, kind, path):
+        self.writer.output(kind, path)
 
 
 class VerboseWriter:

@@ -85,7 +85,7 @@ class ResultWriter:
         except DataError as err:
             LOGGER.error(err.message)
         else:
-            LOGGER.output_file(name, path)
+            LOGGER.result_file(name, path)
 
 
 class Results:

@@ -55,7 +55,7 @@ class _DebugFileWriter(LoggerApi):
         self._end('SUITE', data.full_name, result.end_time, result.elapsed_time)
         self._separator('SUITE')
         if self._indent == 0:
-            LOGGER.output_file('Debug', self._outfile.name)
+            LOGGER.debug_file(self._outfile.name)
             self.close()
 
     def start_test(self, data, result):
