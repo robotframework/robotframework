@@ -85,7 +85,7 @@ def read_rest_data(rstfile):
 def unic(item):
     # Cannot be deprecated using '__getattr__' because a module with same name exists.
     warnings.warn("'robot.utils.unic' is deprecated and will be removed in "
-                  "Robot Framework 8.0.")
+                  "Robot Framework 9.0.", DeprecationWarning)
     return safe_str(item)
 
 
@@ -123,8 +123,11 @@ def __getattr__(name):
     }
 
     if name in deprecated:
+        # TODO: Change DeprecationWarning to more visible UserWarning in RF 8.0.
+        # https://github.com/robotframework/robotframework/issues/4501
+        # Remember also the 'unic' function that's outside '__getattr__'.
         warnings.warn(f"'robot.utils.{name}' is deprecated and will be removed in "
-                      f"Robot Framework 8.0.")
+                      f"Robot Framework 9.0.", DeprecationWarning)
         return deprecated[name]
 
     raise AttributeError(f"'robot.utils' has no attribute '{name}'.")
