@@ -23,6 +23,3 @@ Should exclude milliseconds
 
 Epoch time is float regardless are millis included or not
     Check Test Case    ${TESTNAME}
-
-Formatted with %f in middle
-    Check Test Case    ${TESTNAME}
