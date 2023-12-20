@@ -5,7 +5,7 @@
     --secondary-color: #ccc;
     --link-color: #15c;
     --link-hover-color: #61c;
-    --highlight-color: #f4f4f4;
+    --highlight-color: #eee;
     --pass-color: #97bd61;
     --fail-color: #ce3e01;
     --warn-color: #fed84f;
@@ -18,13 +18,14 @@
 
 @media (prefers-color-scheme: dark) {
     :root {
+        color-scheme: dark;
         --text-color: white;
         --background-color: #1c2227;
         --primary-color: #26373b;
         --secondary-color: #424f5a;
         --link-color: #8cc4ff;
         --link-hover-color: #bb86fc;
-        --highlight-color: #242b31;
+        --highlight-color: #002b36;
         --pass-link-color: #97bd61;
         --warn-link-color: #fed84f;
         --fail-link-color: #ff9b8f;
@@ -209,7 +210,7 @@ h2 {
     margin-bottom: 1em;
 }
 .statistics tr:hover {
-    background: #f4f4f4; /* Fallback value */
+    background: #eee; /* Fallback value */
     background: var(--highlight-color);
     cursor: pointer;
 }
@@ -265,10 +266,9 @@ th.stats-col-graph:hover {
     width: auto;
     height: 7px;
     padding: 0;
-    background: #aaa;
 }
 .empty-graph {
-    background: #f4f4f4; /* Fallback value */
+    background: #eee; /* Fallback value */
     background: var(--highlight-color);
 }
 .pass-bar, .fail-bar, .skip-bar {

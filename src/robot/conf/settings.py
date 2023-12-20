@@ -55,7 +55,7 @@ class _BaseSettings:
                  'TimestampOutputs' : ('timestampoutputs', False),
                  'LogTitle'         : ('logtitle', None),
                  'ReportTitle'      : ('reporttitle', None),
-                 'ReportBackground' : ('reportbackground', ('#97bd61', '#ce3e01', '#fed32e')),
+                 'ReportBackground' : ('reportbackground', ('#9e9', '#f66', '#fed84f')),
                  'SuiteStatLevel'   : ('suitestatlevel', -1),
                  'TagStatInclude'   : ('tagstatinclude', []),
                  'TagStatExclude'   : ('tagstatexclude', []),

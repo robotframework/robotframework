@@ -94,7 +94,7 @@ input[type='submit']:hover, input[type='button']:hover {
 #search-help div {
     margin: 0.5em 0.5em 0.7em 0;
     padding: 0.7em;
-    background: #f4f4f4; /* Fallback value */
+    background: #eee; /* Fallback value */
     background: var(--highlight-color);
     border-color: #ccc; /* Fallback value */
     border-color: var(--secondary-color);
@@ -174,7 +174,7 @@ input[type='submit']:hover, input[type='button']:hover {
     background-color: var(--secondary-color);
 }
 #test-details > tbody > tr:hover {
-    background: #f4f4f4; /* Fallback value */
+    background: #eee; /* Fallback value */
     background: var(--highlight-color);
     cursor: pointer;
 }

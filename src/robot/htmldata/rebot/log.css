@@ -47,7 +47,7 @@
 }
 .element-header:hover {
     cursor: pointer;
-    background-color: #f4f4f4; /* Fallback value */
+    background-color: #eee; /* Fallback value */
     background-color: var(--highlight-color);
     border-color: #ccc; /* Fallback value */
     border-color: var(--secondary-color);
