@@ -305,6 +305,7 @@ Additionally, helper classes ``Date`` and ``Time`` can be used directly:
 
 import datetime
 import sys
+import time
 
 from robot.version import get_version
 from robot.utils import (elapsed_time_to_string, secs_to_timestr, timestr_to_secs,
@@ -533,10 +534,22 @@ class Date:
         if isinstance(date, datetime.date):
             return datetime.datetime(date.year, date.month, date.day)
         if isinstance(date, (int, float)):
-            return datetime.datetime.fromtimestamp(date)
+            return self._epoch_seconds_to_datetime(date)
         if isinstance(date, str):
             return self._string_to_datetime(date, input_format)
         raise ValueError(f"Unsupported input '{date}'.")
+
+    def _epoch_seconds_to_datetime(self, secs):
+        try:
+            return datetime.datetime.fromtimestamp(secs)
+        except OverflowError:
+            # Y2038 bug: https://github.com/python/cpython/issues/101069
+            # We use local times and need to handle DST separately here.
+            dt = datetime.datetime.fromtimestamp(0) + datetime.timedelta(seconds=secs)
+            dst_difference = time.altzone - time.timezone
+            if dst_difference and self._convert_to_epoch(dt) - secs == dst_difference:
+                return dt - datetime.timedelta(seconds=dst_difference)
+            return dt
 
     def _string_to_datetime(self, ts, input_format):
         if not input_format:
@@ -582,7 +595,6 @@ class Date:
 
     def _convert_to_epoch(self, dt):
         try:
-            raise OverflowError
             return dt.timestamp()
         except OverflowError:
             # Y2038 bug: https://github.com/python/cpython/issues/101069
