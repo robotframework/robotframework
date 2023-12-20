@@ -36,6 +36,7 @@
 </div>
 <script type="text/javascript">removeJavaScriptDisabledWarning();</script>
 
+<div id="status-bar"></div>
 <div id="header"></div>
 <div id="statistics-container"></div>
 <div id="test-details-container"></div>
@@ -49,7 +50,7 @@ $(document).ready(function () {
         return;
     }
     window.prevLocationHash = '';
-    setBackground(topsuite);
+    setStatusColor(topsuite);
     initLayout(topsuite.name, 'Report');
     storage.init('report');
     addSummary(topsuite);
@@ -58,7 +59,7 @@ $(document).ready(function () {
     window.onhashchange = showDetailsByHash;
 });
 
-function setBackground(topsuite) {
+function setStatusColor(topsuite) {
     var color;
     if (topsuite.fail)
         color = window.settings.background.fail;
@@ -66,7 +67,7 @@ function setBackground(topsuite) {
         color = window.settings.background.pass;
     else
         color = window.settings.background.skip;
-    $('body').css('background-color', color);
+    $('#status-bar').css('background-color', color);
 }
 
 function addSummary(topsuite) {

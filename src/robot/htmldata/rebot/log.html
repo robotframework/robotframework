@@ -100,11 +100,17 @@ function highlightLinkTarget() {
 }
 
 function highlight(element, color) {
+    var darkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    var startingColor = darkMode ? 52 : 242;
+    var endingColor = darkMode ? 39 : 255;
+
     if (color === undefined)
-        color = 242;
-    if (color < 255) {
+        color = startingColor;
+
+    if (color != endingColor) {
         element.css({'background-color': 'rgb('+color+','+color+','+color+')'});
-        setTimeout(function () { highlight(element, color+1); }, 300);
+        color = darkMode ? color - 1 : color + 1;
+        setTimeout(function () { highlight(element, color); }, 300);
     } else {
         element.css({'background-color': ''});
     }
