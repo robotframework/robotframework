@@ -16,7 +16,6 @@
 from robot.utils import compress_text, html_format
 
 
-# TODO: can this be removed?
 class StringIndex(int):
     pass
 

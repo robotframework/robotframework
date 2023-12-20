@@ -91,7 +91,7 @@ def unic(item):
 
 def __getattr__(name):
     # Deprecated utils mostly related to the old Python 2/3 compatibility layer.
-    # See also 'unic' above 'PY2' in the 'platform' module. TODO: Remove in RF 8.0.
+    # See also 'unic' above and 'PY2' in 'platform.py'.
     # https://github.com/robotframework/robotframework/issues/4501
 
     from io import StringIO
