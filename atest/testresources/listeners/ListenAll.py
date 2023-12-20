@@ -94,7 +94,7 @@ class ListenAll:
         self._out_file('Debug', path)
 
     def _out_file(self, name, path):
-        assert os.path.isabs(path)
+        assert isinstance(path, str) and os.path.isabs(path)
         self.outfile.write('%s: %s\n' % (name, os.path.basename(path)))
 
     def close(self):

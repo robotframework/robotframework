@@ -879,22 +879,22 @@ class ListenerV3:
         if it is enabled.
         """
 
-    def output_file(self, path: str):
+    def output_file(self, path: Path):
         """Called after the output file has been created.
 
         At this point the file is guaranteed to be closed.
         """
 
-    def log_file(self, path: str):
+    def log_file(self, path: Path):
         """Called after the log file has been created."""
 
-    def report_file(self, path: str):
+    def report_file(self, path: Path):
         """Called after the report file has been created."""
 
-    def xunit_file(self, path: str):
+    def xunit_file(self, path: Path):
         """Called after the xunit compatible output file has been created."""
 
-    def debug_file(self, path: str):
+    def debug_file(self, path: Path):
         """Called after the debug file has been created."""
 
     def close(self):

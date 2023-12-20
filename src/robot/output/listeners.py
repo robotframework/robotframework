@@ -15,6 +15,7 @@
 
 import os.path
 from abc import ABC
+from pathlib import Path
 
 from robot.errors import DataError, TimeoutError
 from robot.model import BodyItem
@@ -314,11 +315,6 @@ class ListenerFacade(LoggerApi, ABC):
         self.listener = listener
         self.name = name
         self.library = library
-        self.output_file = self._get_method('output_file')
-        self.report_file = self._get_method('report_file')
-        self.log_file = self._get_method('log_file')
-        self.xunit_file = self._get_method('xunit_file')
-        self.debug_file = self._get_method('debug_file')
 
     def _get_method(self, name, fallback=None):
         for method_name in self._get_method_names(name):
@@ -399,6 +395,12 @@ class ListenerV3Facade(ListenerFacade):
         # Messages
         self.log_message = get('log_message')
         self.message = get('message')
+        # Result files
+        self.output_file = self._get_method('output_file')
+        self.report_file = self._get_method('report_file')
+        self.log_file = self._get_method('log_file')
+        self.xunit_file = self._get_method('xunit_file')
+        self.debug_file = self._get_method('debug_file')
         # Close
         self.close = get('close')
 
@@ -455,6 +457,12 @@ class ListenerV2Facade(ListenerFacade):
         # Messages
         self._log_message = self._get_method('log_message')
         self._message = self._get_method('message')
+        # Result files
+        self._output_file = self._get_method('output_file')
+        self._report_file = self._get_method('report_file')
+        self._log_file = self._get_method('log_file')
+        self._xunit_file = self._get_method('xunit_file')
+        self._debug_file = self._get_method('debug_file')
         # Close
         self._close = self._get_method('close')
 
@@ -598,6 +606,21 @@ class ListenerV2Facade(ListenerFacade):
 
     def message(self, message):
         self._message(self._message_attributes(message))
+
+    def output_file(self, path: Path):
+        self._output_file(str(path))
+
+    def report_file(self, path: Path):
+        self._report_file(str(path))
+
+    def log_file(self, path: Path):
+        self._log_file(str(path))
+
+    def xunit_file(self, path: Path):
+        self._xunit_file(str(path))
+
+    def debug_file(self, path: Path):
+        self._debug_file(str(path))
 
     def _suite_attrs(self, data, result, end=False):
         attrs = {

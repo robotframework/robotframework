@@ -1,4 +1,3 @@
-import os
 import sys
 
 from robot.api import SuiteVisitor
@@ -74,23 +73,23 @@ message = log_message
 
 
 def output_file(path):
-    print("Output: %s" % os.path.basename(path), file=sys.__stderr__)
+    print(f"Output: {path.name}", file=sys.__stderr__)
 
 
 def log_file(path):
-    print("Log: %s" % os.path.basename(path), file=sys.__stderr__)
+    print(f"Log: {path.name}", file=sys.__stderr__)
 
 
 def report_file(path):
-    print("Report: %s" % os.path.basename(path), file=sys.__stderr__)
+    print(f"Report: {path.name}", file=sys.__stderr__)
 
 
 def debug_file(path):
-    print("Debug: %s" % os.path.basename(path), file=sys.__stderr__)
+    print(f"Debug: {path.name}", file=sys.__stderr__)
 
 
 def xunit_file(path):
-    print("Xunit: %s" % os.path.basename(path), file=sys.__stderr__)
+    print(f"Xunit: {path.name}", file=sys.__stderr__)
 
 
 def close():

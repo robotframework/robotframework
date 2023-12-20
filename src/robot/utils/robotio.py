@@ -15,6 +15,7 @@
 
 import io
 import os.path
+from pathlib import Path
 
 from robot.errors import DataError
 
@@ -47,14 +48,13 @@ def binary_file_writer(path=None):
     return f
 
 
-def create_destination_directory(path, usage=None):
-    if is_pathlike(path):
-        path = str(path)
-    directory = os.path.dirname(path)
-    if directory and not os.path.exists(directory):
+def create_destination_directory(path: 'Path|str', usage=None):
+    if not is_pathlike(path):
+        path = Path(path)
+    if not path.parent.exists():
         try:
-            os.makedirs(directory, exist_ok=True)
+            os.makedirs(path.parent, exist_ok=True)
         except EnvironmentError:
-            usage = '%s directory' % usage if usage else 'directory'
-            raise DataError("Creating %s '%s' failed: %s"
-                            % (usage, directory, get_error_message()))
+            usage = f'{usage} directory' if usage else 'directory'
+            raise DataError(f"Creating {usage} '{path.parent}' failed: "
+                            f"{get_error_message()}")

@@ -13,6 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from pathlib import Path
+
 from robot.errors import DataError
 from robot.utils import file_writer, seq2str2
 
@@ -55,7 +57,7 @@ class _DebugFileWriter(LoggerApi):
         self._end('SUITE', data.full_name, result.end_time, result.elapsed_time)
         self._separator('SUITE')
         if self._indent == 0:
-            LOGGER.debug_file(self._outfile.name)
+            LOGGER.debug_file(Path(self._outfile.name))
             self.close()
 
     def start_test(self, data, result):

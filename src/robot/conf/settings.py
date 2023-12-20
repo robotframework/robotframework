@@ -18,7 +18,6 @@ import os
 import random
 import string
 import sys
-import time
 import warnings
 from datetime import datetime
 from pathlib import Path
@@ -114,7 +113,7 @@ class _BaseSettings:
                 return str(value)
             return value if value and value.upper() != 'NONE' else None
         if name == 'OutputDir':
-            return abspath(value)
+            return Path(value).absolute()
         if name in ['SuiteStatLevel', 'ConsoleWidth']:
             return self._convert_to_positive_integer_or_default(name, value)
         if name == 'VariableFiles':
@@ -225,7 +224,7 @@ class _BaseSettings:
             LOGGER.error('Log file cannot be created if output.xml is disabled.')
             return None
         name = self._process_output_name(option, name)
-        path = abspath(os.path.join(self['OutputDir'], name))
+        path = self.output_directory / name
         create_destination_directory(path, f'{option.lower()} file')
         return path
 
@@ -366,27 +365,27 @@ class _BaseSettings:
         return '\n'.join(f'{name}: {self._opts[name]}' for name in sorted(self._opts))
 
     @property
-    def output_directory(self):
-        return self['OutputDir']
+    def output_directory(self) -> Path:
+        return Path(self['OutputDir'])
 
     @property
-    def output(self):
+    def output(self) -> 'Path|None':
         return self['Output']
 
     @property
-    def legacy_output(self):
+    def legacy_output(self) -> bool:
         return self['LegacyOutput']
 
     @property
-    def log(self):
+    def log(self) -> 'Path|None':
         return self['Log']
 
     @property
-    def report(self):
+    def report(self) -> 'Path|None':
         return self['Report']
 
     @property
-    def xunit(self):
+    def xunit(self) -> 'Path|None':
         return self['XUnit']
 
     @property

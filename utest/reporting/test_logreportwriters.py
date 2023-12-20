@@ -1,4 +1,5 @@
 import unittest
+from pathlib import Path
 
 from robot.reporting.logreportwriters import LogWriter
 from robot.utils.asserts import assert_true, assert_equal
@@ -18,7 +19,6 @@ class LogWriterWithMockedWriting(LogWriter):
         self.write_called = True
 
 
-
 class TestLogWriter(unittest.TestCase):
 
     def test_splitting_log(self):
@@ -29,10 +29,10 @@ class TestLogWriter(unittest.TestCase):
         writer = LogWriterWithMockedWriting(model)
         writer.write('mylog.html', None)
         assert_true(writer.write_called)
-        assert_equal([(1, (0, 1, 2, -1), ('*', '*1', '*2'), 'mylog-1.js'),
-                       (2, (0, 1, 0, 42), ('*', '*x'), 'mylog-2.js'),
-                       (3, ((1, 2), (3, 4, ())), ('*',), 'mylog-3.js')],
-                      writer.split_write_calls)
+        assert_equal([(1, (0, 1, 2, -1), ('*', '*1', '*2'), Path('mylog-1.js')),
+                       (2, (0, 1, 0, 42), ('*', '*x'), Path('mylog-2.js')),
+                       (3, ((1, 2), (3, 4, ())), ('*',), Path('mylog-3.js'))],
+                     writer.split_write_calls)
 
 
 if __name__ == '__main__':

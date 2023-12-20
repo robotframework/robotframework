@@ -1,3 +1,4 @@
+import re
 from os.path import abspath, dirname, join, normpath
 import unittest
 from pathlib import Path
@@ -45,34 +46,42 @@ class TestRobotAndRebotSettings(unittest.TestCase):
         assert_equal(RobotSettings({'test': 'one'})['TestNames'], ['one'])
         assert_equal(RebotSettings({'exclude': 'two'})['Exclude'], ['two'])
 
-    def test_output_files_as_none_string(self):
-        for name in 'Output', 'Report', 'Log', 'XUnit', 'DebugFile':
-            attr = (name[:-4] if name.endswith('File') else name).lower()
-            settings = RobotSettings({name.lower(): 'NoNe'})
-            assert_equal(settings[name], None)
-            if hasattr(settings, attr):
-                assert_equal(getattr(settings, attr), None)
-
-    def test_output_files_as_none_object(self):
-        for name in 'Output', 'Report', 'Log', 'XUnit', 'DebugFile':
-            attr = (name[:-4] if name.endswith('File') else name).lower()
-            settings = RobotSettings({name.lower(): None})
-            assert_equal(settings[name], None)
-            if hasattr(settings, attr):
-                assert_equal(getattr(settings, attr), None)
-
-    def test_output_files_as_pathlib_objects(self):
+    def test_output_files(self):
         for name in 'Output.xml', 'Report.html', 'Log.html', 'XUnit.xml', 'DebugFile.txt':
             name, ext = name.split('.')
-            expected = abspath(f'test.{ext}')
+            expected = Path(f'test.{ext}').absolute()
             attr = (name[:-4] if name.endswith('File') else name).lower()
-            settings = RobotSettings({name.lower(): Path('test')})
-            assert_equal(settings[name], expected)
-            if hasattr(settings, attr):
-                assert_equal(getattr(settings, attr), expected)
+            for value in 'test', Path('test'):
+                settings = RobotSettings({name.lower(): value})
+                assert_equal(settings[name], expected)
+                if hasattr(settings, attr):
+                    assert_equal(getattr(settings, attr), expected)
 
-    def test_output_dir_as_pathlib_object(self):
-        assert_equal(RobotSettings({'outputdir': Path('.')})['OutputDir'], abspath('.'))
+    def test_output_files_with_timestamps(self):
+        for name in 'Output.xml', 'Report.html', 'Log.html', 'XUnit.xml', 'DebugFile.txt':
+            name, ext = name.split('.')
+            for value in 'test', Path('test'):
+                path = RobotSettings({name.lower(): value,
+                                      'timestampoutputs': True})[name]
+                assert_true(isinstance(path, Path))
+                assert_equal(f'test-<timestamp>.{ext}',
+                             re.sub(r'20\d{6}-\d{6}', '<timestamp>', path.name))
+
+    def test_result_files_as_none(self):
+        for name in 'Output', 'Report', 'Log', 'XUnit', 'DebugFile':
+            attr = (name[:-4] if name.endswith('File') else name).lower()
+            for value in 'None', 'NONE', None:
+                for timestamp_outputs in True, False:
+                    settings = RobotSettings({name.lower(): value,
+                                              'timestampoutputs': timestamp_outputs})
+                    assert_equal(settings[name], None)
+                    if hasattr(settings, attr):
+                        assert_equal(getattr(settings, attr), None)
+
+    def test_output_dir(self):
+        for value in '.', Path('.'), Path('.').absolute():
+            assert_equal(RobotSettings({'outputdir': value}).output_directory,
+                         Path('.').absolute())
 
     def test_rerun_failed_as_none_string_and_object(self):
         for name in 'ReRunFailed', 'ReRunFailedSuites':
