@@ -45,7 +45,7 @@ def __getattr__(name):
 
     if name == 'PY2':
         warnings.warn("'robot.utils.platform.PY2' is deprecated and will be removed "
-                      "in Robot Framework 8.0.")
+                      "in Robot Framework 9.0.", DeprecationWarning)
         return False
 
     raise AttributeError(f"'robot.utils.platform' has no attribute '{name}'.")

@@ -14,7 +14,8 @@ class TestCompatibilityLayer(unittest.TestCase):
             yield
         assert_equal(str(w[0].message),
                      f"'robot.utils.{name}' is deprecated and will be removed "
-                     f"in Robot Framework 8.0.")
+                     f"in Robot Framework 9.0.")
+        assert_equal(w[0].category, DeprecationWarning)
 
     def test_constants(self):
         with self.validate_deprecation('PY3'):
