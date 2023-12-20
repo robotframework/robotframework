@@ -3,7 +3,8 @@ from datetime import date, datetime, timedelta
 
 
 TIMEZONE = time.altzone if time.localtime().tm_isdst else time.timezone
-EPOCH = 1542892422.0 + time.timezone
+EPOCH = 1542892422.0 + time.timezone      # 2018-11-22 13:13:42
+BIG_EPOCH = 5000000000 + time.timezone    # 2128-06-11 09:53:20
 
 
 def all_days_for_year(year):

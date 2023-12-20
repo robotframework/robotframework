@@ -11,6 +11,7 @@ ${DATE w/ MICRO}      ${datetime(2018, 11, 22, 13, 13, 42, 123456)}
 *** Test Cases ***    INPUT                      FORMAT               OUTPUT                     INPUT FORMAT
 Should convert to timestamp
                       2014-04-24 21:45:12.123    timeSTAMP            2014-04-24 21:45:12.123
+                      3014-04-24 21:45:12.123    timeSTAMP            3014-04-24 21:45:12.123
                       2014-04-24 21:45:12.123    tImestamp            2014-04-24 21:45:12.123    %Y-%m-%d %H:%M:%S.%f
                       20140424 21:45:12.12399    tImestamp            2014-04-24 21:45:12.124    %Y%m%d %H:%M:%S.%f
                       ${EPOCH}                   TIMEstamp            2018-11-22 13:13:42.000
@@ -98,4 +99,4 @@ Date Conversion Should Succeed Without Milliseconds
 Epoch time format should be
     [Arguments]    ${input}    ${expected}    ${millis}
     ${result} =    Convert Date    ${input}    result_format=epoch    exclude_millis=${millis}
-    Should Be Equal As Strings    ${result}    ${expected}
+    Should Be Equal As Numbers    ${result}    ${expected}

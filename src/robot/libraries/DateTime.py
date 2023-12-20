@@ -581,7 +581,13 @@ class Date:
         return dt.strftime('%Y-%m-%d %H:%M:%S') + f'.{ms:03d}'
 
     def _convert_to_epoch(self, dt):
-        return dt.timestamp()
+        try:
+            raise OverflowError
+            return dt.timestamp()
+        except OverflowError:
+            # Y2038 bug: https://github.com/python/cpython/issues/101069
+            ok = dt.replace(year=2037)
+            return ok.timestamp() + (dt - ok).total_seconds()
 
     def __add__(self, other):
         if isinstance(other, Time):
