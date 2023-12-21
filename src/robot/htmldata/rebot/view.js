@@ -219,10 +219,6 @@ theme = function() {
     var storage;
     var theme;
 
-    function test() {
-        console.log('test', storage);
-    }
-
     function init(givenStorage) {
         storage = givenStorage;
         theme = { value: getPreference() };

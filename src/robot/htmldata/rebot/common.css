@@ -317,15 +317,15 @@ th.stats-col-graph:hover {
 }
 #theme-toggle {
     position: fixed;
-    left: 0;
-    top: 0;
+    right: 0;
+    bottom: 0;
     width: 28px;
     height: 28px;
     border: none;
     padding: 4px;
     z-index: 1000;
-    border-bottom-left-radius: 3px;
-    border-bottom-right-radius: 3px;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
     background: var(--highlight-color);
 }
 [data-theme="dark"] .dark-mode-icon,
