@@ -25,7 +25,7 @@
 <!-- JS MODEL --><script type="text/javascript" src="../testdata/data.js"></script>
 <title></title>
 </head>
-<body>
+<body data-theme="dark">
 <div id="javascript-disabled">
   <h1>Opening Robot Framework log failed</h1>
   <ul>
@@ -35,7 +35,9 @@
   </ul>
 </div>
 <script type="text/javascript">removeJavaScriptDisabledWarning();</script>
-
+<script type="text/javascript">
+    document.body.setAttribute('data-theme', getThemePreference());
+</script>
 <div id="header"></div>
 <div id="statistics-container"></div>
 
@@ -100,16 +102,16 @@ function highlightLinkTarget() {
 }
 
 function highlight(element, color) {
-    var darkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    var darkMode = getThemePreference() === 'dark';
     var startingColor = darkMode ? 52 : 242;
     var endingColor = darkMode ? 39 : 255;
 
     if (color === undefined)
         color = startingColor;
 
-    if (color != endingColor) {
+    if (color > endingColor) {
         element.css({'background-color': 'rgb('+color+','+color+','+color+')'});
-        color = darkMode ? color - 1 : color + 1;
+        color = darkMode ? color - 2 : color + 2;
         setTimeout(function () { highlight(element, color); }, 300);
     } else {
         element.css({'background-color': ''});
