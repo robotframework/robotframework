@@ -212,7 +212,7 @@ function stopPropagation(event) {
 }
 
 
-theme = function() {
+const theme = function () {
 
     const storageKey = 'theme-preference';
     const urlParams = new URLSearchParams(window.location.search);
@@ -269,5 +269,5 @@ theme = function() {
     }
 
     return {init: init, getPreference: getPreference, setPreference: setPreference,
-            onClick: onClick};
+        reflectPreference: reflectPreference, onClick: onClick};
 }();

@@ -1,6 +1,6 @@
 storage = function () {
 
-    var prefix = 'robot-framework-';
+    const prefix = 'robot-framework-';
     var storage;
 
     function init(user) {
@@ -32,5 +32,5 @@ storage = function () {
         storage[prefix + name] = value;
     }
 
-    return {init: init, get: get, set: set};
+    return {init: init, get: get, set: set, prefix: prefix};
 }();
