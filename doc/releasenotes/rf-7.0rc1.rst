@@ -14,7 +14,8 @@ Robot Framework 7.0 release candidate 1 was released on Thursday December 21, 20
 It contains all planned features and fixes and it is targeted for anyone interested
 to see how they can use the `interesting new features`__ and how `backwards
 incompatible changes`_ and deprecations_ possibly affect their tests,
-tasks, tools and libraries.
+tasks, tools and libraries. The target date for the final release is Monday
+January 8, 2024.
 
 __ `Most important enhancements`_
 
