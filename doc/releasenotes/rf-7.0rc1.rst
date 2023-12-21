@@ -10,12 +10,12 @@ mixing embedded and normal arguments with library keywords (`#4710`_), JSON
 result format (`#4847`_) and various other enhancements and bug fixes.
 Robot Framework 7.0 requires Python 3.8 or newer (`#4294`_).
 
-Robot Framework 7.0 release candidate 1 was released on Thursday December 21, 2023.
-It contains all planned features and fixes and it is targeted for anyone interested
-to see how they can use the `interesting new features`__ and how `backwards
-incompatible changes`_ and deprecations_ possibly affect their tests,
-tasks, tools and libraries. The target date for the final release is Monday
-January 8, 2024.
+Robot Framework 7.0 rc 1 was released on Thursday December 21, 2023, with all
+features and fixes planned to be included in the final release. It is targeted
+for anyone interested to see how they can use the `interesting new features`__
+and how `backwards incompatible changes`_ and deprecations_ possibly affect
+their tests, tasks, tools and libraries. The target date for the final release
+is Monday January 8, 2024.
 
 __ `Most important enhancements`_
 
@@ -67,10 +67,12 @@ Most important enhancements
   If you are interested to learn more about the new features in Robot Framework 7.0,
   join the `RoboCon conference`__ in February, 2024. `Pekka Klärck`_, Robot Framework
   lead developer, will go through the key features briefly in the `onsite conference`__
-  in Helsinki and more thoroughly in the `online edition`__. The conference has
-  also dozens of other great talks, workshops and lot of possibilities to
-  meet other community members as well as developers of various tools and libraries
-  in the ecosystem.
+  in Helsinki and more thoroughly in the `online edition`__.
+
+  The conference has also dozens of other great talks, workshops and a lot of
+  possibilities to meet other community members as well as developers of various
+  tools and libraries in the ecosystem. All profits from the conference will be
+  used for future Robot Framework development.
 
 __ https://robocon.io
 __ https://robocon.io/#live-opening-the-conference
