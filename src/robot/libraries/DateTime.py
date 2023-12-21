@@ -540,16 +540,7 @@ class Date:
         raise ValueError(f"Unsupported input '{date}'.")
 
     def _epoch_seconds_to_datetime(self, secs):
-        try:
-            return datetime.datetime.fromtimestamp(secs)
-        except OverflowError:
-            # Y2038 bug: https://github.com/python/cpython/issues/101069
-            # We use local times and need to handle DST separately here.
-            dt = datetime.datetime.fromtimestamp(0) + datetime.timedelta(seconds=secs)
-            dst_difference = time.altzone - time.timezone
-            if dst_difference and self._convert_to_epoch(dt) - secs == dst_difference:
-                return dt - datetime.timedelta(seconds=dst_difference)
-            return dt
+        return datetime.datetime.fromtimestamp(secs)
 
     def _string_to_datetime(self, ts, input_format):
         if not input_format:
@@ -594,12 +585,7 @@ class Date:
         return dt.strftime('%Y-%m-%d %H:%M:%S') + f'.{ms:03d}'
 
     def _convert_to_epoch(self, dt):
-        try:
-            return dt.timestamp()
-        except OverflowError:
-            # Y2038 bug: https://github.com/python/cpython/issues/101069
-            ok = dt.replace(year=2037)
-            return ok.timestamp() + (dt - ok).total_seconds()
+        return dt.timestamp()
 
     def __add__(self, other):
         if isinstance(other, Time):

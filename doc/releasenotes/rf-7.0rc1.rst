@@ -600,8 +600,6 @@ There have been some changes to the result model that unfortunately affect
 external tools using it. The main motivation for these changes has been
 cleaning up the model before creating a JSON representation for it (`#4847`_).
 
-.. _#4847: https://github.com/robotframework/robotframework/issues/4847
-
 Changes related to keyword names
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -941,11 +939,6 @@ Full list of fixes and enhancements
       - high
       - Async support to dynamic and hybrid library APIs
       - alpha 2
-    * - `#4244`_
-      - bug
-      - medium
-      - DateTime suffers from "Year 2038" problem with epoch conversion on 32 bit systems
-      - rc 1
     * - `#4808`_
       - bug
       - medium
@@ -1307,7 +1300,7 @@ Full list of fixes and enhancements
       - Change paths passed to listener v3 methods to `pathlib.Path` instances
       - rc 1
 
-Altogether 86 issues. View on the `issue tracker <https://github.com/robotframework/robotframework/issues?q=milestone%3Av7.0>`__.
+Altogether 85 issues. View on the `issue tracker <https://github.com/robotframework/robotframework/issues?q=milestone%3Av7.0>`__.
 
 .. _#3296: https://github.com/robotframework/robotframework/issues/3296
 .. _#3761: https://github.com/robotframework/robotframework/issues/3761
@@ -1322,7 +1315,6 @@ Altogether 86 issues. View on the `issue tracker <https://github.com/robotframew
 .. _#4633: https://github.com/robotframework/robotframework/issues/4633
 .. _#4711: https://github.com/robotframework/robotframework/issues/4711
 .. _#4803: https://github.com/robotframework/robotframework/issues/4803
-.. _#4244: https://github.com/robotframework/robotframework/issues/4244
 .. _#4808: https://github.com/robotframework/robotframework/issues/4808
 .. _#4859: https://github.com/robotframework/robotframework/issues/4859
 .. _#4880: https://github.com/robotframework/robotframework/issues/4880
