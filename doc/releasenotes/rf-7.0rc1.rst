@@ -94,7 +94,7 @@ listener API version 3 has only supported suites and tests/tasks.
 
 The biggest enhancement in the whole Robot Framework 7.0 is that the listener
 version 3 has been extended to support also keywords and control structures (`#3296`_).
-For example, a listener having the following methods would print information
+For example, a listener having the following methods prints information
 about started keywords and ended WHILE loops:
 
 .. sourcecode:: python
@@ -131,18 +131,17 @@ about the executed keyword and the library it belongs to:
               f"{implementation.lineno}. The library has {library.scope.name} "
               f"scope and the current instance is {library.instance}.")
 
-As the above example already illustrated, it is possible to get an access to
+As the above example already illustrated, it is even possible to get an access to
 the actual library instance. This means that listeners can inspect the library
 state and also modify it. With user keywords it is even possible to modify
 the keyword itself or, via the `owner` resource file, any other keyword in
 the resource file.
 
 Listeners can also modify results if needed. Possible use cases include hiding
-sensitive information and adding more details to results based on some
-external sources.
+sensitive information and adding more details to results based on external sources.
 
 Notice that although listener can change status of any executed keyword or control
-structure, that does not directly affect the status of executed tests. In general
+structure, that does not directly affect the status of the executed test. In general
 listeners cannot directly fail keywords so that execution would stop or handle
 failures so that execution would continue. This kind of functionality may be
 added in the future if there are needs.
@@ -172,7 +171,7 @@ Libraries can register themselves as listeners by using string `SELF`
 
 Listeners are typically enabled  from the command line, but libraries
 can register listeners as well. Often libraries themselves want to act
-as listeners, and that has earlier required using `ROBOT_LIBRARY_LISTENER = self`
+as listeners, and that has earlier required using `self.ROBOT_LIBRARY_LISTENER = self`
 in the `__init__` method. Robot Framework 7.0 makes it possible to use string
 `SELF` (case-insensitive) for this purpose as well (`#4910`_), which means
 that a listener can be specified as a class attribute and not only in `__init__`.
@@ -218,10 +217,10 @@ Variables section. The syntax is best explained with examples:
 
     *** Test Cases ***
     Example
-        # Create a local variable `${local}` with value `value`.
+        # Create a local variable `${local}` with a value `value`.
         VAR    ${local}    value
 
-        # Create a suite-scoped variable, visible throughout the whole suite.
+        # Create a variable that is available throughout the whole suite.
         # Supported scopes are GLOBAL, SUITE, TEST, TASK and LOCAL (default).
         VAR    ${suite}    value    scope=SUITE
 
@@ -261,7 +260,7 @@ using IF/ELSE structures:
         VAR    @{list}    a    b    c
 
     Dictionary
-        # Creates a dict with two items.
+        # Creates a dictionary with two items.
         VAR    &{dict}    key=value    second=item
 
     Normal IF
@@ -348,8 +347,8 @@ Support for `Literal`
 ~~~~~~~~~~~~~~~~~~~~~
 
 In Python, the Literal__ type makes it possible to type arguments so that type
-checkers accept only certain values. For example, a function like below
-only accepts strings `x`, `y` and `z`.
+checkers accept only certain values. For example, this function only accepts
+strings `x`, `y` and `z`:
 
 .. sourcecode:: python
 
@@ -396,7 +395,7 @@ the following typing now also works with Python 3.8:
         ...
 
 These stringified types are also compatible with the Remote library API and other
-scenarios where using actual types is not feasible.
+scenarios where using actual types is not possible.
 
 __ https://peps.python.org/pep-0585/
 __ https://peps.python.org/pep-0604/
@@ -404,10 +403,11 @@ __ https://peps.python.org/pep-0604/
 Tags set globally can be removed using `-tag` syntax
 ----------------------------------------------------
 
-Individual tests and keywords can nowadays remove tags set in the Settings
-section with `Test Tags` or `Keyword Tags` settings by using the `-tag` syntax
-(`#4374`_). For example, tests `T1` and `T3` below are given tags `all` and
-`most`, and test `T2` gets tags `all` and `one`:
+Individual tests and keywords can nowadays remove tags that have been set in
+the Settings section with `Test Tags` or `Keyword Tags` settings by using
+the `-tag` syntax with their own `[Tags]` setting (`#4374`_). For example,
+tests `T1` and `T3` below get tags `all` and `most`, and test `T2` gets
+tags `all` and `one`:
 
 .. sourcecode:: robotframework
 
@@ -446,8 +446,8 @@ is stopped gracefully has also been fixed (`#4808`_).
 Timestamps in result model and output.xml use standard format
 -------------------------------------------------------------
 
-Timestamps used in the result model and stored to the output.xml file earlier
-used custom format like `20231107 19:57:01.123`. Non-standard formats are seldom
+Timestamps used in the result model and stored to the output.xml file used custom
+format like `20231107 19:57:01.123` earlier. Non-standard formats are seldom
 a good idea, and in this case parsing the custom format turned out to be slow
 as well.
 
@@ -475,7 +475,7 @@ Storing start and elapsed times also takes less space than storing start and end
 
 As the result of these changes, times are available in the result model and in
 output.xml in higher precision than earlier. Earlier times were stored in millisecond
-granularity, but nowadays we use microseconds. Logs and reports still use milliseconds,
+granularity, but nowadays they use microseconds. Logs and reports still use milliseconds,
 but that can be changed in the future if there are needs.
 
 Changes to output.xml are backwards incompatible and affect all external tools
@@ -618,12 +618,13 @@ in Robot Framework 7.0:
 - New `full_name` is introduced to replace the old `name`.
 - `sourcename` is renamed to `source_name`.
 - `kwname`, `libname` and `sourcename` are preserved as properties. They are considered
-  deprecated, but accessing them will not cause a deprecation in this release yet.
+  deprecated, but accessing them does not cause a deprecation warning yet.
 
 The backwards incompatible part of this change is changing the meaning of the
 `name` attribute. It used to be a read-only property yielding the full name
 like `BuiltIn.Log`, but now it is a normal attribute that contains just the actual
-keyword name like `Log`. All other old attributes have been preserved as properties.
+keyword name like `Log`. All other old attributes have been preserved as properties
+and code using them does not need to be updated immediately.
 
 Deprecated attributes have been removed
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -727,7 +728,7 @@ Other backwards incompatible changes
   stays exactly the same.
 
 - Paths passed to listener version 3 methods like `output_file` and `log_file` have
-  been changed from strings to `pathlib.Path` instances (`#4988`_). Most of the time
+  been changed from strings to `pathlib.Path` objects (`#4988`_). Most of the time
   both kinds of paths work interchangeably, so this change is unlikely to cause issues.
   If you need to handle these paths as strings, they can be converted by using
   `str(path)`.
@@ -803,8 +804,8 @@ Other deprecated features
   using `mode=SHORTEST` has been deprecated (`#4685`_). The strict mode where lengths
   must match will be the default mode in the future.
 
-- Various utility functions in the `robot.utils` package, including the whole
-  Python 2/3 compatibility layer, that are no longer used by Robot Framework itself
+- Various utility functions in the `robot.utils` package that are no longer used
+  by Robot Framework itself, including the whole Python 2/3 compatibility layer,
   have been deprecated (`#4501`_). If you need some of these utils, you can copy
   their code to your own tool or library. This change may affect existing
   libraries and tools in the ecosystem.
@@ -839,8 +840,8 @@ In addition to work done by them, the community has provided some great contribu
   when using `Run Keyword` so that the name of the executed keyword contains a variable
   (`#4659`_).
 
-- `Pasi Saikkonen <https://github.com/psaikkonen>`__ added dark mode to report
-  and log (`#3725`_).
+- `Pasi Saikkonen <https://github.com/psaikkonen>`__ added dark mode to reports
+  and logs (`#3725`_).
 
 - `René <https://github.com/Snooz82>`__ added return type information to Libdoc's
   HTML output (`#3017`_), fixed `DotDict` equality comparisons (`#4956`_) and
