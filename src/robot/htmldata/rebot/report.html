@@ -35,9 +35,6 @@
   </ul>
 </div>
 <script type="text/javascript">removeJavaScriptDisabledWarning();</script>
-<script type="text/javascript">
-    document.body.setAttribute('data-theme', getThemePreference());
-</script>
 <div id="status-bar"></div>
 <div id="header"></div>
 <div id="statistics-container"></div>
@@ -45,6 +42,8 @@
 
 <script type="text/javascript">
 $(document).ready(function () {
+    storage.init();
+    theme.init(storage);
     try {
         var topsuite = window.testdata.suite();
     } catch (error) {
@@ -54,7 +53,6 @@ $(document).ready(function () {
     window.prevLocationHash = '';
     initLayout(topsuite.name, 'Report');
     setStatusColor(topsuite);
-    storage.init('report');
     addSummary(topsuite);
     addStatistics();
     addDetails();
@@ -69,7 +67,7 @@ function setStatusColor(topsuite) {
     let fail = Boolean(topsuite.fail);
     let pass = Boolean(!topsuite.fail && topsuite.pass);
     let skip = Boolean(!topsuite.fail && !topsuite.pass);
-    if (getThemePreference() === 'dark') {
+    if (theme.getPreference() === 'dark') {
         $('#status-bar').toggleClass("fail-bar", fail);
         $('#status-bar').toggleClass("pass-bar", pass);
         $('#status-bar').toggleClass("skip-bar", skip);

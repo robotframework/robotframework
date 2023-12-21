@@ -22,6 +22,7 @@
 <script type="text/javascript" src="util.js"></script>
 <script type="text/javascript" src="testdata.js"></script>
 <script type="text/javascript" src="view.js"></script>
+<script type="text/javascript" src="../common/storage.js"></script>
 <!-- JS MODEL --><script type="text/javascript" src="../testdata/data.js"></script>
 <title></title>
 </head>
@@ -35,14 +36,13 @@
   </ul>
 </div>
 <script type="text/javascript">removeJavaScriptDisabledWarning();</script>
-<script type="text/javascript">
-    document.body.setAttribute('data-theme', getThemePreference());
-</script>
 <div id="header"></div>
 <div id="statistics-container"></div>
 
 <script type="text/javascript">
 $(document).ready(function() {
+    storage.init();
+    theme.init(storage);
     try {
         var topsuite = window.testdata.suite();
     } catch (error) {
@@ -102,7 +102,7 @@ function highlightLinkTarget() {
 }
 
 function highlight(element, color) {
-    var darkMode = getThemePreference() === 'dark';
+    var darkMode = theme.getPreference() === 'dark';
     var startingColor = darkMode ? 52 : 242;
     var endingColor = darkMode ? 39 : 255;
 

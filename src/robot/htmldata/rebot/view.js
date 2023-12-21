@@ -71,8 +71,7 @@ function addHeader() {
         ago: util.createGeneratedAgoString(generated),
         title: document.title
     }).appendTo($('#header'));
-    document.getElementById('theme-toggle')?.addEventListener('click', onClick);
-    reflectThemePreference();
+    document.getElementById('theme-toggle')?.addEventListener('click', theme.onClick);
 }
 
 function addReportOrLogLink(myType) {
@@ -212,49 +211,67 @@ function stopPropagation(event) {
         event.stopPropagation();
 }
 
-const storageKey = 'theme-preference';
-const urlParams = new URLSearchParams(window.location.search);
-const theme = { value: getThemePreference() };
 
-window.matchMedia('(prefers-color-scheme: dark)')
-    .addEventListener('change', ({matches:isDark}) => {
-        theme.value = isDark ? 'dark' : 'light';
-        setThemePreference();
-    });
+theme = function() {
 
-window.addEventListener('storage', ({key, newValue}) => {
-    if (key === storageKey) {
-        theme.value = newValue === 'dark' ? 'dark' : 'light';
-        setThemePreference();
+    const storageKey = 'theme-preference';
+    const urlParams = new URLSearchParams(window.location.search);
+    var storage;
+    var theme;
+
+    function test() {
+        console.log('test', storage);
     }
-})
 
-function getThemePreference() {
-    if (urlParams.has('theme')) {
-        const urlTheme = urlParams.get('theme') === 'dark' ? 'dark' : 'light';
-        localStorage.setItem(storageKey, urlTheme);
-        urlParams.delete('theme');
-        return urlTheme;
+    function init(givenStorage) {
+        storage = givenStorage;
+        theme = { value: getPreference() };
+        document.body.setAttribute('data-theme', theme.value);
+        reflectPreference();
+
+        window.matchMedia('(prefers-color-scheme: dark)')
+            .addEventListener('change', ({matches:isDark}) => {
+                theme.value = isDark ? 'dark' : 'light';
+                setPreference();
+            });
+
+        window.addEventListener('storage', ({key, newValue}) => {
+            if (key === storage.prefix + storageKey) {
+                theme.value = newValue === 'dark' ? 'dark' : 'light';
+                setPreference();
+            }
+        });
     }
-    if (localStorage.getItem(storageKey))
-        return localStorage.getItem(storageKey) === 'dark' ? 'dark' : 'light';
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-}
-    
-function setThemePreference() {
-    localStorage.setItem(storageKey, theme.value);
-    reflectThemePreference();
-}
 
-function reflectThemePreference() {
-    document.body.setAttribute('data-theme', theme.value);
-    document.querySelector('#theme-toggle')?.setAttribute('aria-label', theme.value);
-    const event = new Event('theme-change', {value: theme.value});
-    document.dispatchEvent(event);
-}
-    
-function onClick() {
-    theme.value = theme.value === 'light' ? 'dark' : 'light';
-    setThemePreference();
-}
+    function getPreference() {
+        if (urlParams.has('theme')) {
+            var urlTheme = urlParams.get('theme') === 'dark' ? 'dark' : 'light';
+            storage.set(storageKey, urlTheme);
+            urlParams.delete('theme');
+            return urlTheme;
+        }
+        if (storage.get(storageKey))
+            return storage.get(storageKey) === 'dark' ? 'dark' : 'light';
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
 
+    function setPreference() {
+        storage.set(storageKey, theme.value);
+        reflectPreference();
+    }
+
+    function reflectPreference() {
+        document.body.setAttribute('data-theme', theme.value);
+        document.querySelector('#theme-toggle')?.setAttribute('aria-label', theme.value);
+        const event = new Event('theme-change', {value: theme.value});
+        document.dispatchEvent(event);
+    }
+
+    function onClick() {
+        theme.value = theme.value === 'light' ? 'dark' : 'light';
+        setPreference();
+    }
+
+    return {init: init, getPreference: getPreference, setPreference: setPreference,
+            onClick: onClick};
+}();

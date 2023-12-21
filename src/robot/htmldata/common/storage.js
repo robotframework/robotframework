@@ -4,7 +4,8 @@ storage = function () {
     var storage;
 
     function init(user) {
-        prefix += user + '-';
+        if (user)
+            prefix += user + '-';
         storage = getStorage();
     }
 
