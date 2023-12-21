@@ -25,7 +25,7 @@
 <!-- JS MODEL --><script type="text/javascript" src="../testdata/data.js"></script>
 <title></title>
 </head>
-<body>
+<body data-theme="dark">
 <div id="javascript-disabled">
   <h1>Opening Robot Framework report failed</h1>
   <ul>
@@ -35,7 +35,9 @@
   </ul>
 </div>
 <script type="text/javascript">removeJavaScriptDisabledWarning();</script>
-
+<script type="text/javascript">
+    document.body.setAttribute('data-theme', getThemePreference());
+</script>
 <div id="status-bar"></div>
 <div id="header"></div>
 <div id="statistics-container"></div>
@@ -50,17 +52,16 @@ $(document).ready(function () {
         return;
     }
     window.prevLocationHash = '';
-    setStatusColor(topsuite);
     initLayout(topsuite.name, 'Report');
+    setStatusColor(topsuite);
     storage.init('report');
     addSummary(topsuite);
     addStatistics();
     addDetails();
     window.onhashchange = showDetailsByHash;
-    window.matchMedia('(prefers-color-scheme: dark)')
-        .addEventListener('change', ({matches:isDark}) => {
+    document.addEventListener("theme-change", () => {
         setStatusColor(topsuite);
-  })
+    });
 });
 
 function setStatusColor(topsuite) {
@@ -68,7 +69,7 @@ function setStatusColor(topsuite) {
     let fail = Boolean(topsuite.fail);
     let pass = Boolean(!topsuite.fail && topsuite.pass);
     let skip = Boolean(!topsuite.fail && !topsuite.pass);
-    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    if (getThemePreference() === 'dark') {
         $('#status-bar').toggleClass("fail-bar", fail);
         $('#status-bar').toggleClass("pass-bar", pass);
         $('#status-bar').toggleClass("skip-bar", skip);

@@ -6,13 +6,14 @@
     --elapsed-color: #666;
 }
 
-@media (prefers-color-scheme: dark) {
-    :root {
-        --icon-filter: invert(1); /* Invert colors for the icons */
-        --icon-highlight: #a39990; /* Dark mode secondary color inverted (--icon-filter will invert it back) */
-        --elapsed-color: #999;
-    }
+/* @media (prefers-color-scheme: dark) { */
+
+[data-theme="dark"] {
+    --icon-filter: invert(1);
+    --icon-highlight: #a39990;
+    --elapsed-color: #999;
 }
+
 /* Containers */
 .suite, .test, #errors {
     border-color: #ccc; /* Fallback value */

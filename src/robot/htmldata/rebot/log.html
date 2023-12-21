@@ -25,7 +25,7 @@
 <!-- JS MODEL --><script type="text/javascript" src="../testdata/data.js"></script>
 <title></title>
 </head>
-<body>
+<body data-theme="dark">
 <div id="javascript-disabled">
   <h1>Opening Robot Framework log failed</h1>
   <ul>
@@ -35,7 +35,9 @@
   </ul>
 </div>
 <script type="text/javascript">removeJavaScriptDisabledWarning();</script>
-
+<script type="text/javascript">
+    document.body.setAttribute('data-theme', getThemePreference());
+</script>
 <div id="header"></div>
 <div id="statistics-container"></div>
 
