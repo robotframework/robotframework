@@ -53,7 +53,7 @@ from .statusreporter import StatusReporter
 if TYPE_CHECKING:
     from robot.parsing import File
     from .builder import TestDefaults
-    from .resourcemodel import ResourceFile
+    from .resourcemodel import ResourceFile, UserKeyword
 
 
 IT = TypeVar('IT', bound='IfBranch|TryBranch')
@@ -67,7 +67,7 @@ class Body(model.BaseBody['Keyword', 'For', 'While', 'If', 'Try', 'Var', 'Return
 
 
 class Branches(model.BaseBranches['Keyword', 'For', 'While', 'If', 'Try', 'Var', 'Return',
-                                  'Continue', 'Break', 'Message', 'Error', IT]):
+                                  'Continue', 'Break', 'model.Message', 'Error', IT]):
     __slots__ = ()
 
 

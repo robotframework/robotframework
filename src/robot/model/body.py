@@ -23,8 +23,7 @@ from .itemlist import ItemList
 from .modelobject import DataDict, full_name, ModelObject
 
 if TYPE_CHECKING:
-    from robot.result.model import ForIteration, WhileIteration
-    from robot.running.model import UserKeyword, ResourceFile
+    from robot.running.model import ResourceFile, UserKeyword
     from .control import (Break, Continue, Error, For, ForIteration, If, IfBranch,
                           Return, Try, TryBranch, Var, While, WhileIteration)
     from .keyword import Keyword

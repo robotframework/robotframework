@@ -15,7 +15,7 @@
 
 import warnings
 from collections import OrderedDict
-from typing import Any, cast, Literal, Sequence, TypeVar, TYPE_CHECKING
+from typing import Any, cast, Mapping, Literal, Sequence, TypeVar, TYPE_CHECKING
 
 from robot.utils import setter
 
