@@ -91,7 +91,7 @@ to create even more powerful and interesting tools in the future.
 Support keywords and control structures with listener version 3
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The major limitation with the listener API has been been that the listener
+The major limitation with the listener API has been that the listener
 API version 2 only supports getting notifications and that the more powerful
 listener API version 3 has only supported suites and tests/tasks.
 
