@@ -51,7 +51,7 @@ class TestCase(ModelObject, Generic[KW]):
                  tags: 'Tags|Sequence[str]' = (),
                  timeout: 'str|None' = None,
                  lineno: 'int|None' = None,
-                 parent: 'TestSuite|None' = None):
+                 parent: 'TestSuite[KW, TestCase[KW]]|None' = None):
         self.name = name
         self.doc = doc
         self.tags = tags

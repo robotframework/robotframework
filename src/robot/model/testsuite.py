@@ -57,7 +57,7 @@ class TestSuite(ModelObject, Generic[KW, TC]):
                  metadata: 'Mapping[str, str]|None' = None,
                  source: 'Path|str|None' = None,
                  rpa: 'bool|None' = False,
-                 parent: 'TestSuite|None' = None):
+                 parent: 'TestSuite[KW, TC]|None' = None):
         self._name = name
         self.doc = doc
         self.metadata = metadata
