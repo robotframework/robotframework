@@ -353,7 +353,7 @@ class VarLexer(StatementLexer):
             name.type = Token.VARIABLE
             for value in values:
                 value.type = Token.ARGUMENT
-            options = ['scope', 'separator'] if name.value[0] == '$' else ['scope']
+            options = ['scope', 'separator'] if name.value[:1] == '$' else ['scope']
             self._lex_options(*options)
 
 

@@ -1118,6 +1118,8 @@ Keyword
     VAR    ${not    closed
     VAR    ${x}==   only one = accepted
     VAR
+    VAR
+    ...
     VAR    &{d}     o=k    bad
     VAR    ${x}     ok     scope=bad
 '''
@@ -1139,15 +1141,18 @@ Keyword
                 Var([Token(Token.VAR, 'VAR', 6, 4)],
                     ["Invalid variable name ''."]),
                 Var([Token(Token.VAR, 'VAR', 7, 4),
-                     Token(Token.VARIABLE, '&{d}', 7, 11),
-                     Token(Token.ARGUMENT, 'o=k', 7, 20),
-                     Token(Token.ARGUMENT, 'bad', 7, 27)],
+                     Token(Token.VARIABLE, '', 8, 7)],
+                    ["Invalid variable name ''."]),
+                Var([Token(Token.VAR, 'VAR', 9, 4),
+                     Token(Token.VARIABLE, '&{d}', 9, 11),
+                     Token(Token.ARGUMENT, 'o=k', 9, 20),
+                     Token(Token.ARGUMENT, 'bad', 9, 27)],
                     ["Invalid dictionary variable item 'bad'. Items must use "
                      "'name=value' syntax or be dictionary variables themselves."]),
-                Var([Token(Token.VAR, 'VAR', 8, 4),
-                     Token(Token.VARIABLE, '${x}', 8, 11),
-                     Token(Token.ARGUMENT, 'ok', 8, 20),
-                     Token(Token.OPTION, 'scope=bad', 8, 27)],
+                Var([Token(Token.VAR, 'VAR', 10, 4),
+                     Token(Token.VARIABLE, '${x}', 10, 11),
+                     Token(Token.ARGUMENT, 'ok', 10, 20),
+                     Token(Token.OPTION, 'scope=bad', 10, 27)],
                     ["VAR option 'scope' does not accept value 'bad'. Valid values "
                      "are 'GLOBAL', 'SUITE', 'TEST', 'TASK' and 'LOCAL'."]),
             ]

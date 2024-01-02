@@ -27,6 +27,12 @@ Dict
 Invalid name
     Check Test Case    ${TESTNAME}
 
+No name
+    Check Test Case    ${TESTNAME}
+
+No name with continuation
+    Check Test Case    ${TESTNAME}
+
 Equals is accepted
     ${tc} =    Check Test Case    ${TESTNAME}
     Validate VAR    ${tc.body}[0]    \${name}    value

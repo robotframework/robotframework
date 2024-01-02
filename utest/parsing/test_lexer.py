@@ -2318,6 +2318,15 @@ class TestVar(unittest.TestCase):
         ]
         self._verify(data, expected)
 
+    def test_no_name_with_continuation(self):
+        data = 'VAR\n...'
+        expected = [
+            (T.VAR, 'VAR', 3, 4),
+            (T.VARIABLE, '', 4, 7),
+            (T.EOS, '', 4, 7)
+        ]
+        self._verify(data, expected)
+
     def test_scope(self):
         data = ('VAR    ${name}    value    scope=GLOBAL\n'
                 'VAR    @{name}    value    scope=suite\n'

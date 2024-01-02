@@ -33,6 +33,15 @@ Invalid name
     [Documentation]    FAIL    Invalid variable name 'bad'.
     VAR    bad    name
 
+No name
+    [Documentation]    FAIL    Invalid variable name ''.
+    VAR
+
+No name with continuation
+    [Documentation]    FAIL    Invalid variable name ''.
+    VAR
+    ...
+
 Equals is accepted
     VAR    ${name}=    value
     Should Be Equal    ${name}    value
