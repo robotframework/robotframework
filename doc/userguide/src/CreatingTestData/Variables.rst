@@ -1260,18 +1260,20 @@ can be changed dynamically using keywords from the `BuiltIn`_ library.
    +------------------------+-------------------------------------------------------+------------+
    | ${LOG LEVEL}           | Current `log level`_.                                 | Everywhere |
    +------------------------+-------------------------------------------------------+------------+
-   | ${OUTPUT FILE}         | An absolute path to the `output file`_.               | Everywhere |
+   | ${OUTPUT DIR}          | An absolute path to the `output directory`_ as        | Everywhere |
+   |                        | a string.                                             |            |
    +------------------------+-------------------------------------------------------+------------+
-   | ${LOG FILE}            | An absolute path to the `log file`_ or string NONE    | Everywhere |
-   |                        | when no log file is created.                          |            |
+   | ${OUTPUT FILE}         | An absolute path to the `output file`_ as a string or | Everywhere |
+   |                        | a string `NONE` if the output file is not created.    |            |
    +------------------------+-------------------------------------------------------+------------+
-   | ${REPORT FILE}         | An absolute path to the `report file`_ or string NONE | Everywhere |
-   |                        | when no report is created.                            |            |
+   | ${LOG FILE}            | An absolute path to the `log file`_ as a string or    | Everywhere |
+   |                        | a string `NONE` if the log file is not created.       |            |
    +------------------------+-------------------------------------------------------+------------+
-   | ${DEBUG FILE}          | An absolute path to the `debug file`_ or string NONE  | Everywhere |
-   |                        | when no debug file is created.                        |            |
+   | ${REPORT FILE}         | An absolute path to the `report file`_ as a string or | Everywhere |
+   |                        | a string `NONE` if the report file is not created.    |            |
    +------------------------+-------------------------------------------------------+------------+
-   | ${OUTPUT DIR}          | An absolute path to the `output directory`_.          | Everywhere |
+   | ${DEBUG FILE}          | An absolute path to the `debug file`_ as a string or  | Everywhere |
+   |                        | a string `NONE` if the debug file is not created.     |            |
    +------------------------+-------------------------------------------------------+------------+
    | &{OPTIONS}             | A dictionary exposing command line options. The       | Everywhere |
    |                        | dictionary keys match the command line options and    |            |

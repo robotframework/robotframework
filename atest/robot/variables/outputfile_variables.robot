@@ -9,6 +9,7 @@ Result file variables as absolute paths
     ...    ${OUTDIR}    ${OUTFILE}    ${OUTDIR}${/}mylog.html    ${OUTDIR}${/}myreport.html    %{TEMPDIR}${/}mydebug.txt
     Outputfile Variables Should Contain Correct Paths    Log All Output Files In Sublevel
     ...    ${OUTDIR}    ${OUTFILE}    ${OUTDIR}${/}mylog.html    ${OUTDIR}${/}myreport.html    %{TEMPDIR}${/}mydebug.txt
+    Check Test Case    Result file variables are strings
 
 Result file variables as NONE string
     Run Tests  --log none --report NONE  variables/outputfile_variables
@@ -16,6 +17,7 @@ Result file variables as NONE string
     ...    ${OUTDIR}    ${OUTFILE}    NONE    NONE    NONE
     Outputfile Variables Should Contain Correct Paths    Log All Output Files In Sublevel
     ...    ${OUTDIR}    ${OUTFILE}    NONE    NONE    NONE
+    Check Test Case    Result file variables are strings
 
 *** Keywords ***
 Outputfile Variables Should Contain Correct Paths
