@@ -1,4 +1,3 @@
 *** Test Cases ***
 Log All Output Files In Toplevel
-    Log Many  ${OUTPUT_FILE}  ${LOG_FILE}  ${REPORT_FILE}  ${DEBUGFILE}  ${OUTPUTDIR}
-
+    Log Many    ${OUTPUT DIR}    ${OUTPUT FILE}    ${LOG FILE}    ${REPORT FILE}    ${DEBUG FILE}
