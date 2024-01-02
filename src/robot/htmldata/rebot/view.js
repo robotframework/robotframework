@@ -232,7 +232,7 @@ const theme = function () {
             });
 
         window.addEventListener('storage', ({key, newValue}) => {
-            if (key === storage.prefix + storageKey) {
+            if (key === storage.fullKey(storageKey)) {
                 theme.value = newValue === 'dark' ? 'dark' : 'light';
                 setPreference();
             }

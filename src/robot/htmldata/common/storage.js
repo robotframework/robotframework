@@ -21,16 +21,20 @@ storage = function () {
         }
     }
 
-    function get(name, defaultValue) {
-        var value = storage[prefix + name];
+    function get(key, defaultValue) {
+        var value = storage[fullKey(key)];
         if (typeof value === 'undefined')
             return defaultValue;
         return value;
     }
 
-    function set(name, value) {
-        storage[prefix + name] = value;
+    function set(key, value) {
+        storage[fullKey(key)] = value;
     }
 
-    return {init: init, get: get, set: set, prefix: prefix};
+    function fullKey(key) {
+        return prefix + key;
+    }
+
+    return {init: init, get: get, set: set, fullKey: fullKey};
 }();
