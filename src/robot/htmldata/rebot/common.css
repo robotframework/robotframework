@@ -15,8 +15,12 @@
     --ascending-icon: url(data:image/gif;base64,R0lGODlhCwAJAKEAAAAAAH9/fwAAAAAAACH5BAEAAAIALAAAAAALAAkAAAIUlBWnFr3cnIr0WQOyBmvzp13CpxQAOw==);
     --descending-icon: url(data:image/gif;base64,R0lGODlhCwAJAKEAAAAAAH9/fwAAAAAAACH5BAEAAAIALAAAAAALAAkAAAIUlAWnBr3cnIr0WROyDmvzp13CpxQAOw==);
 }
+@media (prefers-color-scheme: dark) {
+    :root {
+        color-scheme: dark;
+    }
+}
 [data-theme="dark"] {
-    color-scheme: dark;
     --text-color: #e2e1d7;
     --background-color: #1c2227;
     --primary-color: #26373b;
@@ -40,6 +44,9 @@ body {
     background: white; /* Fallback value */
     background: var(--background-color);
     margin-left: 15px;
+}
+body[theme-toggled] {
+    transition: background 0.3s, background-color 0.3s, color 0.3s, border-color 0.3s;
 }
 table {
     table-layout: fixed;
@@ -330,9 +337,9 @@ th.stats-col-graph:hover {
 }
 [data-theme="dark"] .dark-mode-icon,
 [data-theme="light"] .light-mode-icon {
-    display: block;
+    display: none;
 }
 [data-theme="dark"] .light-mode-icon,
 [data-theme="light"] .dark-mode-icon {
-    display: none;
+    display: block;
 }
