@@ -52,13 +52,14 @@ Modifier can fix empty test and keyword
     Check Log Message    ${tc.body[0].body[0].msgs[0]}    Keyword body made non-empty by modifier
     Check Test Case    Test name made non-empty by modifier    PASS    ${EMPTY}
 
-
 Modifiers are used before normal configuration
-    ${result} =    Run Tests
-    ...    --include added --prerun ${CURDIR}/ModelModifier.py:CREATE:name=Created:tags=added    ${TEST DATA}
+    Run Tests    --include added --prerun ${CURDIR}/ModelModifier.py:CREATE:name=Created:tags=added    ${TEST DATA}
     Stderr Should Be Empty
     Length Should Be    ${SUITE.tests}    1
-    ${tc} =    Check test case    Created
+    ${tc} =    Check Test Case    Created
+    Check Log Message    ${tc.body[0].msgs[0]}    Args as strings
+    Check Log Message    ${tc.body[1].msgs[0]}    Args as tuples
+    Check Log Message    ${tc.body[2].msgs[0]}    Args as pos and named
     Lists should be equal    ${tc.tags}    ${{['added']}}
 
 Modify FOR and IF

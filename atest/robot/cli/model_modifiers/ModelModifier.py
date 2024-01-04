@@ -14,7 +14,9 @@ class ModelModifier(SuiteVisitor):
             raise RuntimeError(' '.join(self.config[1:]))
         elif config[0] == 'CREATE':
             tc = suite.tests.create(**dict(conf.split('-', 1) for conf in config[1:]))
-            tc.body.create_keyword('No operation')
+            tc.body.create_keyword('Log', args=['Args as strings', 'level=INFO'])
+            tc.body.create_keyword('Log', args=[('Args as tuples',), ('level', 'INFO')])
+            tc.body.create_keyword('Log', args=[('Args as pos and named',), {'level': 'INFO'}])
             self.config = []
         elif config == ('REMOVE', 'ALL', 'TESTS'):
             suite.tests = []
