@@ -94,8 +94,6 @@ class XML:
     escaped by doubling it (``\\\\``). Using the built-in variable ``${/}``
     naturally works too.
 
-    Note: Support for XML as bytes is new in Robot Framework 3.2.
-
     = Using lxml =
 
     By default, this library uses Python's standard
@@ -432,8 +430,6 @@ class XML:
     | `Parse XML` | ${XML} | keep_clark_notation=${EMPTY} | # Empty string is false.       |
     | `Parse XML` | ${XML} | keep_clark_notation=${FALSE} | # Python ``False`` is false.   |
 
-    Considering ``OFF`` and ``0`` false is new in Robot Framework 3.1.
-
     == Pattern matching ==
 
     Some keywords, for example `Elements Should Match`, support so called
@@ -449,9 +445,6 @@ class XML:
     Unlike with glob patterns normally, path separator characters ``/`` and
     ``\\`` and the newline character ``\\n`` are matches by the above
     wildcards.
-
-    Support for brackets like ``[abc]`` and ``[!a-z]`` is new in
-    Robot Framework 3.1
     """
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
     ROBOT_LIBRARY_VERSION = get_version()
