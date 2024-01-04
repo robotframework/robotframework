@@ -15,6 +15,8 @@ Contents
   `<Library.py>`_.
 - `<tests.robot>`_ can be used with the aforementioned listeners to see
   how they work.
+- `<ArgumentModifier.py>`_ modifies keyword arguments and can be used with
+  `<keyword_arguments.robot>`_.
 
 Usage
 -----
@@ -31,3 +33,7 @@ the results with the earlier results::
 To validate that all listener methods are executed, use this::
 
     robot --variable VALIDATE_EVENTS:True tests.robot
+
+To see how keyword arguments can be modified::
+
+    robot --listener ArgumentModifier.py keyword_arguments.robot

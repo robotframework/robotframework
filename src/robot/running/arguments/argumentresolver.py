@@ -16,7 +16,7 @@
 from typing import TYPE_CHECKING
 
 from robot.errors import DataError
-from robot.utils import is_string, is_dict_like, split_from_equals
+from robot.utils import is_dict_like, is_list_like, split_from_equals
 from robot.variables import is_dict_variable
 
 from .argumentvalidator import ArgumentValidator
@@ -38,9 +38,13 @@ class ArgumentResolver:
         self.argument_validator = ArgumentValidator(spec)
 
     def resolve(self, arguments, variables=None):
-        positional, named = self.named_resolver.resolve(arguments, variables)
-        positional, named = self.variable_replacer.replace(positional, named, variables)
-        positional, named = self.dict_to_kwargs.handle(positional, named)
+        if len(arguments) == 2 and is_list_like(arguments[0]) and is_dict_like(arguments[1]):
+            positional = list(arguments[0])
+            named = list(arguments[1].items())
+        else:
+            positional, named = self.named_resolver.resolve(arguments, variables)
+            positional, named = self.variable_replacer.replace(positional, named, variables)
+            positional, named = self.dict_to_kwargs.handle(positional, named)
         self.argument_validator.validate(positional, named, dryrun=variables is None)
         return positional, named
 
@@ -51,29 +55,44 @@ class NamedArgumentResolver:
         self.spec = spec
 
     def resolve(self, arguments, variables=None):
+        spec = self.spec
+        positional = list(arguments[:len(spec.embedded)])
         named = []
-        for arg in arguments[len(self.spec.embedded):]:
+        for arg in arguments[len(spec.embedded):]:
             if is_dict_variable(arg):
                 named.append(arg)
-            elif self._is_named(arg, named, variables):
-                named.append(split_from_equals(arg))
-            elif named:
-                self._raise_positional_after_named()
-        positional = arguments[:-len(named)] if named else arguments
+            else:
+                name, value = self._split_named(arg, named, variables, spec)
+                if name is not None:
+                    named.append((name, value))
+                elif named:
+                    self._raise_positional_after_named()
+                else:
+                    positional.append(value)
         return positional, named
 
-    def _is_named(self, arg, previous_named, variables=None):
+    def _split_named(self, arg, previous_named, variables, spec):
+        if isinstance(arg, tuple):
+            if len(arg) == 2 and isinstance(arg[0], str):
+                return arg
+            elif len(arg) == 1:
+                return None, arg[0]
+            else:
+                return None, arg
         name, value = split_from_equals(arg)
-        if value is None:
-            return False
+        if value is None or not self._is_named(name, previous_named, variables, spec):
+            return None, arg
+        return name, value
+
+    def _is_named(self, name, previous_named, variables, spec):
+        if previous_named or spec.var_named:
+            return True
         if variables:
             try:
                 name = variables.replace_scalar(name)
             except DataError:
                 return False
-        return bool(previous_named or
-                    self.spec.var_named or
-                    name in self.spec.named)
+        return name in spec.named
 
     def _raise_positional_after_named(self):
         raise DataError(f"{self.spec.type.capitalize()} '{self.spec.name}' "
@@ -83,7 +102,7 @@ class NamedArgumentResolver:
 class NullNamedArgumentResolver:
 
     def resolve(self, arguments, variables=None):
-        return arguments, {}
+        return arguments, []
 
 
 class DictToKwargs:
@@ -128,7 +147,7 @@ class VariableReplacer:
     def _replace_named(self, named, replace_scalar):
         for item in named:
             for name, value in self._get_replaced_named(item, replace_scalar):
-                if not is_string(name):
+                if not isinstance(name, str):
                     raise DataError('Argument names must be strings.')
                 yield name, value
 

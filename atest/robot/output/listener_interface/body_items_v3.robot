@@ -12,7 +12,7 @@ ${MODIFIER}       output/listener_interface/body_items_v3/Modifier.py
 
 *** Test Cases ***
 Modify library keyword
-    Check Test Case    Library keyword         FAIL    state: set by listener
+    Check Test Case    Library keyword         FAIL    Expected state to be 'initial', but it was 'set by listener'.
 
 Modify user keyword
     Check Test Case    User keyword            FAIL    Failed by listener once!
