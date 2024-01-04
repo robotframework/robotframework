@@ -274,6 +274,14 @@ class TestToFromDictAndJson(unittest.TestCase):
         self._verify(Keyword('Setup', type=Keyword.SETUP, lineno=1),
                      name='Setup', lineno=1)
 
+    def test_keyword_arguments_as_tuples(self):
+        self._verify(Keyword(args=[('arg',), (2,), ('name', 'value'), ('n2', 2)]),
+                     name='', args=(('arg',), (2,), ('name', 'value'), ('n2', 2)))
+
+    def test_keyword_arguments_as_positional_and_named_directly(self):
+        self._verify(Keyword(args=[('arg', 2), {'name': 'value', 'n2': 2}]),
+                     name='', args=(('arg', 2), {'name': 'value', 'n2': 2}))
+
     def test_for(self):
         self._verify(For(), type='FOR', assign=(), flavor='IN', values=(), body=[])
         self._verify(For(['${i}'], 'IN RANGE', ['10'], lineno=2),

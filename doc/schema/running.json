@@ -19,10 +19,49 @@
         },
         "args": {
           "title": "Args",
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {},
+                  {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 1,
+                    "items": [
+                      {}
+                    ]
+                  },
+                  {
+                    "type": "array",
+                    "minItems": 2,
+                    "maxItems": 2,
+                    "items": [
+                      {
+                        "type": "string"
+                      },
+                      {}
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "items": [
+                {
+                  "type": "array",
+                  "items": {}
+                },
+                {
+                  "type": "object"
+                }
+              ]
+            }
+          ]
         },
         "assign": {
           "title": "Assign",
@@ -737,13 +776,6 @@
         },
         "tags": {
           "title": "Tags",
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "return_": {
-          "title": "Return ",
           "type": "array",
           "items": {
             "type": "string"
