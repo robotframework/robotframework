@@ -21,7 +21,7 @@ from typing import Literal
 from .typeinfo import LITERAL_TYPES, TypeInfo
 
 
-class TypeInfoTokenType(Enum):
+class TokenType(Enum):
     NAME = auto()
     LEFT_SQUARE = auto()
     RIGHT_SQUARE = auto()
@@ -33,23 +33,23 @@ class TypeInfoTokenType(Enum):
 
 
 @dataclass
-class TypeInfoToken:
-    type: TypeInfoTokenType
+class Token:
+    type: TokenType
     value: str
     position: int = -1
 
 
 class TypeInfoTokenizer:
     markers = {
-        '[': TypeInfoTokenType.LEFT_SQUARE,
-        ']': TypeInfoTokenType.RIGHT_SQUARE,
-        '|': TypeInfoTokenType.PIPE,
-        ',': TypeInfoTokenType.COMMA,
+        '[': TokenType.LEFT_SQUARE,
+        ']': TokenType.RIGHT_SQUARE,
+        '|': TokenType.PIPE,
+        ',': TokenType.COMMA,
     }
 
     def __init__(self, source: str):
         self.source = source
-        self.tokens: 'list[TypeInfoToken]' = []
+        self.tokens: 'list[Token]' = []
         self.start = 0
         self.current = 0
 
@@ -57,7 +57,7 @@ class TypeInfoTokenizer:
     def at_end(self) -> bool:
         return self.current >= len(self.source)
 
-    def tokenize(self) -> 'list[TypeInfoToken]':
+    def tokenize(self) -> 'list[Token]':
         while not self.at_end:
             self.start = self.current
             char = self.advance()
@@ -95,18 +95,18 @@ class TypeInfoTokenizer:
             self.current += 1
             if char == closing_quote:
                 break
-        self.add_token(TypeInfoTokenType.NAME)
+        self.add_token(TokenType.NAME)
 
-    def add_token(self, type: TypeInfoTokenType):
+    def add_token(self, type: TokenType):
         value = self.source[self.start:self.current].strip()
-        self.tokens.append(TypeInfoToken(type, value, self.start))
+        self.tokens.append(Token(type, value, self.start))
 
 
 class TypeInfoParser:
 
     def __init__(self, source: str):
         self.source = source
-        self.tokens: 'list[TypeInfoToken]' = []
+        self.tokens: 'list[Token]' = []
         self.current = 0
 
     @property
@@ -121,12 +121,12 @@ class TypeInfoParser:
         return info
 
     def type(self) -> TypeInfo:
-        if not self.check(TypeInfoTokenType.NAME):
+        if not self.check(TokenType.NAME):
             self.error('Type name missing.')
         info = TypeInfo(self.advance().value)
-        if self.match(TypeInfoTokenType.LEFT_SQUARE):
+        if self.match(TokenType.LEFT_SQUARE):
             info.nested = self.params(literal=info.type is Literal)
-        if self.match(TypeInfoTokenType.PIPE):
+        if self.match(TokenType.PIPE):
             nested = [info] + self.union()
             info = TypeInfo('Union', nested=nested)
         return info
@@ -138,18 +138,18 @@ class TypeInfoParser:
             token = self.peek()
             if not token:
                 self.error("Closing ']' missing.")
-            if token.type is TypeInfoTokenType.RIGHT_SQUARE:
+            if token.type is TokenType.RIGHT_SQUARE:
                 self.advance()
                 break
-            if token.type is TypeInfoTokenType.COMMA:
-                if not prev or prev.type is TypeInfoTokenType.COMMA:
+            if token.type is TokenType.COMMA:
+                if not prev or prev.type is TokenType.COMMA:
                     self.error("Type missing before ','.")
                 self.advance()
                 prev = token
                 continue
-            if token.type is TypeInfoTokenType.NAME:
+            if token.type is TokenType.NAME:
                 param = self.type()
-            elif token.type is TypeInfoTokenType.LEFT_SQUARE:
+            elif token.type is TokenType.LEFT_SQUARE:
                 self.advance()
                 param = TypeInfo()
                 param.nested = self.params()
@@ -180,7 +180,7 @@ class TypeInfoParser:
 
     def union(self) -> 'list[TypeInfo]':
         types = []
-        while not types or self.match(TypeInfoTokenType.PIPE):
+        while not types or self.match(TokenType.PIPE):
             info = self.type()
             if info.is_union:
                 types.extend(info.nested)
@@ -188,30 +188,30 @@ class TypeInfoParser:
                 types.append(info)
         return types
 
-    def match(self, *types: TypeInfoTokenType) -> bool:
+    def match(self, *types: TokenType) -> bool:
         for typ in types:
             if self.check(typ):
                 self.advance()
                 return True
         return False
 
-    def check(self, expected: TypeInfoTokenType) -> bool:
+    def check(self, expected: TokenType) -> bool:
         peeked = self.peek()
         return peeked and peeked.type == expected
 
-    def advance(self) -> 'TypeInfoToken|None':
+    def advance(self) -> 'Token|None':
         token = self.peek()
         if token:
             self.current += 1
         return token
 
-    def peek(self) -> 'TypeInfoToken|None':
+    def peek(self) -> 'Token|None':
         try:
             return self.tokens[self.current]
         except IndexError:
             return None
 
-    def error(self, message: str, token: 'TypeInfoToken|None' = None):
+    def error(self, message: str, token: 'Token|None' = None):
         if not token:
             token = self.peek()
         position = f'index {token.position}' if token else 'end'
