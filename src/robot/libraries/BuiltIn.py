@@ -17,6 +17,7 @@ import difflib
 import re
 import time
 from collections import OrderedDict
+from collections.abc import Sequence
 
 from robot.api import logger, SkipExecution
 from robot.api.deco import keyword
@@ -1540,12 +1541,15 @@ class _Variables(_BuiltInBase):
         value = variables[name]
         try:
             if name[0] == '@':
-                value = list(value)
+                if isinstance(value, Sequence):
+                    value = list(value)
+                else:    # Don't consume iterables.
+                    name = '$' + name[1:]
             if name[0] == '&':
                 value = OrderedDict(value)
         except RERAISED_EXCEPTIONS:
             raise
-        except:
+        except Exception:
             name = '$' + name[1:]
         return name, value
 

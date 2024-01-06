@@ -15,7 +15,6 @@
 
 import re
 
-from .robottypes import is_integer
 from .unic import safe_str
 
 
@@ -71,7 +70,7 @@ def _is_camel_case_boundary(prev, char, next):
 
 
 def plural_or_not(item):
-    count = item if is_integer(item) else len(item)
+    count = item if isinstance(item, int) else len(item)
     return '' if count in (1, -1) else 's'
 
 

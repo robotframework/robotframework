@@ -5,6 +5,8 @@ Suite Setup       My Suite Setup
 @{LIST}           Hello    world
 ${SCALAR}         Hi tellus
 &{DICT}           key=value    two=${2}
+${ITERABLE}       ${{(item for item in 'Should not be consumed!'.split())}}
+${ENDLESS}        ${{itertools.repeat('RF')}}
 
 *** Test Cases ***
 Previous Test
@@ -18,6 +20,7 @@ Log Variables
     @{int_list_2} =    Evaluate    [0, 1, 2, 3]
     Log Variables    debug
     Log Variables In UK
+    Should Be Equal    ${{' '.join($ITERABLE)}}    Should not be consumed!
     [Teardown]    Set Log Level    INFO
 
 List and dict variables failing during iteration

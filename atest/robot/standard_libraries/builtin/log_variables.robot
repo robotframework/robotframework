@@ -15,8 +15,10 @@ Log Variables In Suite Setup
     Check Variable Message    \${cli_var_3} = CLI3
     Check Variable Message    \${DEBUG_FILE} = NONE
     Check Variable Message    \&{DICT} = { key=value | two=2 }
+    Check Variable Message    \${ENDLESS} = repeat('RF')
     Check Variable Message    \${EXECDIR} = *    pattern=yes
     Check Variable Message    \${False} = *    pattern=yes
+    Check Variable Message    \${ITERABLE} = <generator object <genexpr> at 0x*>    pattern=yes
     Check Variable Message    \@{LIST} = [ Hello | world ]
     Check Variable Message    \${LOG_FILE} = NONE
     Check Variable Message    \${LOG_LEVEL} = INFO
@@ -42,7 +44,7 @@ Log Variables In Suite Setup
     Check Variable Message    \${SUITE_SOURCE} = *    pattern=yes
     Check Variable Message    \${TEMPDIR} = *    pattern=yes
     Check Variable Message    \${True} = *    pattern=yes
-    Length Should Be    ${kw.messages}    35
+    Length Should Be    ${kw.messages}    37
 
 Log Variables In Test
     ${test} =    Check Test Case    Log Variables
@@ -56,8 +58,10 @@ Log Variables In Test
     Check Variable Message    \${cli_var_3} = CLI3
     Check Variable Message    \${DEBUG_FILE} = NONE
     Check Variable Message    \&{DICT} = { key=value | two=2 }
+    Check Variable Message    \${ENDLESS} = repeat('RF')
     Check Variable Message    \${EXECDIR} = *    pattern=yes
     Check Variable Message    \${False} = *    pattern=yes
+    Check Variable Message    \${ITERABLE} = <generator object <genexpr> at 0x*>    pattern=yes
     Check Variable Message    \@{LIST} = [ Hello | world ]
     Check Variable Message    \${LOG_FILE} = NONE
     Check Variable Message    \${LOG_LEVEL} = TRACE
@@ -85,7 +89,7 @@ Log Variables In Test
     Check Variable Message    \${TEST_NAME} = Log Variables
     Check Variable Message    \@{TEST_TAGS} = [ ]
     Check Variable Message    \${True} = *    pattern=yes
-    Length Should Be    ${kw.messages}    39
+    Length Should Be    ${kw.messages}    41
 
 Log Variables After Setting New Variables
     ${test} =    Check Test Case    Log Variables
@@ -99,10 +103,12 @@ Log Variables After Setting New Variables
     Check Variable Message    \${cli_var_3} = CLI3    DEBUG
     Check Variable Message    \${DEBUG_FILE} = NONE    DEBUG
     Check Variable Message    \&{DICT} = { key=value | two=2 }    DEBUG
+    Check Variable Message    \${ENDLESS} = repeat('RF')    DEBUG
     Check Variable Message    \${EXECDIR} = *    DEBUG    pattern=yes
     Check Variable Message    \${False} = *    DEBUG    pattern=yes
     Check Variable Message    \@{int_list_1} = [ 0 | 1 | 2 | 3 ]    DEBUG
     Check Variable Message    \@{int_list_2} = [ 0 | 1 | 2 | 3 ]    DEBUG
+    Check Variable Message    \${ITERABLE} = <generator object <genexpr> at 0x*>    DEBUG    pattern=yes
     Check Variable Message    \@{LIST} = [ Hello | world ]    DEBUG
     Check Variable Message    \${LOG_FILE} = NONE    DEBUG
     Check Variable Message    \${LOG_LEVEL} = TRACE    DEBUG
@@ -131,7 +137,7 @@ Log Variables After Setting New Variables
     Check Variable Message    \@{TEST_TAGS} = [ ]    DEBUG
     Check Variable Message    \${True} = *    DEBUG    pattern=yes
     Check Variable Message    \${var} = Hello    DEBUG
-    Length Should Be    ${kw.messages}    42
+    Length Should Be    ${kw.messages}    44
 
 Log Variables In User Keyword
     ${test} =    Check Test Case    Log Variables
@@ -145,8 +151,10 @@ Log Variables In User Keyword
     Check Variable Message    \${cli_var_3} = CLI3
     Check Variable Message    \${DEBUG_FILE} = NONE
     Check Variable Message    \&{DICT} = { key=value | two=2 }
+    Check Variable Message    \${ENDLESS} = repeat('RF')
     Check Variable Message    \${EXECDIR} = *    pattern=yes
     Check Variable Message    \${False} = *    pattern=yes
+    Check Variable Message    \${ITERABLE} = <generator object <genexpr> at 0x*>    pattern=yes
     Check Variable Message    \@{LIST} = [ Hello | world ]
     Check Variable Message    \${LOG_FILE} = NONE
     Check Variable Message    \${LOG_LEVEL} = TRACE
@@ -175,7 +183,7 @@ Log Variables In User Keyword
     Check Variable Message    \@{TEST_TAGS} = [ ]
     Check Variable Message    \${True} = *    pattern=yes
     Check Variable Message    \${ukvar} = Value of an uk variable
-    Length Should Be    ${kw.messages}    40
+    Length Should Be    ${kw.messages}    42
 
 List and dict variables failing during iteration
     Check Test Case    ${TEST NAME}
