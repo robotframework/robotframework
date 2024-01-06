@@ -133,16 +133,37 @@ class TypeInfoParser:
 
     def params(self, literal: bool = False) -> 'list[TypeInfo]':
         params = []
-        while not params or self.match(TypeInfoTokenType.COMMA):
-            param = self.type()
+        prev = None
+        while True:
+            token = self.peek()
+            if not token:
+                self.error("Closing ']' missing.")
+            if token.type is TypeInfoTokenType.RIGHT_SQUARE:
+                self.advance()
+                break
+            if token.type is TypeInfoTokenType.COMMA:
+                if not prev or prev.type is TypeInfoTokenType.COMMA:
+                    self.error("Type missing before ','.")
+                self.advance()
+                prev = token
+                continue
+            if token.type is TypeInfoTokenType.NAME:
+                param = self.type()
+            elif token.type is TypeInfoTokenType.LEFT_SQUARE:
+                self.advance()
+                param = TypeInfo()
+                param.nested = self.params()
             if literal:
                 param = self._literal_param(param)
             params.append(param)
-        if not self.match(TypeInfoTokenType.RIGHT_SQUARE):
-            self.error("Closing ']' missing.")
+            prev = token
+        if literal and not params:
+            self.error('Literal cannot be empty.')
         return params
 
     def _literal_param(self, param: TypeInfo) -> TypeInfo:
+        if param.name is None:
+            self.error(f"Literal does not support values in brackets.")
         try:
             try:
                 value = literal_eval(param.name)
@@ -153,8 +174,7 @@ class TypeInfoParser:
             if not isinstance(value, LITERAL_TYPES):
                 raise ValueError
         except (ValueError, SyntaxError):
-            token = self.tokens[self.current-1]
-            self.error(f"Invalid literal value {param.name!r}.", token)
+            self.error(f"Invalid literal value {param.name!r}.")
         else:
             return TypeInfo(repr(value), value)
 

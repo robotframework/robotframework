@@ -25,13 +25,25 @@ class TestTypeInfoParser(unittest.TestCase):
     def test_parameterized(self):
         info = TypeInfoParser('list[int]').parse()
         assert_equal(info.name, 'list')
-        assert_equal(info.nested[0].name, 'int')
+        assert_equal([n.name for n in info.nested], ['int'])
 
     def test_multiple_parameters(self):
         info = TypeInfoParser('Mapping[str, int]').parse()
         assert_equal(info.name, 'Mapping')
-        assert_equal(info.nested[0].name, 'str')
-        assert_equal(info.nested[1].name, 'int')
+        assert_equal([n.name for n in info.nested], ['str', 'int'])
+
+    def test_trailing_comma_is_ok(self):
+        info = TypeInfoParser('list[str,]').parse()
+        assert_equal(info.name, 'list')
+        assert_equal([n.name for n in info.nested], ['str'])
+        info = TypeInfoParser('tuple[str, int, float,]').parse()
+        assert_equal(info.name, 'tuple')
+        assert_equal([n.name for n in info.nested], ['str', 'int', 'float'])
+
+    def test_no_parameters(self):
+        info = TypeInfoParser('x[]').parse()
+        assert_equal(info.name, 'x')
+        assert_equal(info.nested, ())
 
     def test_union(self):
         info = TypeInfoParser('int | float').parse()
@@ -73,20 +85,46 @@ class TestTypeInfoParser(unittest.TestCase):
             assert_equal(nested.type, None)
 
     def test_invalid_literal(self):
-        for info, index, error in [
-              ("Literal[1.0]",     8, "Invalid literal value '1.0'."),
-              ("Literal[2x]",      8, "Invalid literal value '2x'."),
-              ("Literal[3/0]",     8, "Invalid literal value '3/0'."),
-              ("Literal['+', -]", 13, "Invalid literal value '-'."),
-              ("Literal[']",       8, "Invalid literal value \"']\"."),
-              ("Literal[]",        8, "Type name missing."),
-              ("Literal[,]",       8, "Type name missing."),
+        for info, position, error in [
+              ("Literal[1.0]",    11, "Invalid literal value '1.0'."),
+              ("Literal[2x]",     10, "Invalid literal value '2x'."),
+              ("Literal[3/0]",    11, "Invalid literal value '3/0'."),
+              ("Literal['+', -]", 14, "Invalid literal value '-'."),
+              ("Literal[']",   'end', "Invalid literal value \"']\"."),
+              ("Literal[]",    'end', "Literal cannot be empty."),
+              ("Literal[,]",       8, "Type missing before ','."),
+              ("Literal[[1], 2]", 11, "Literal does not support values in brackets."),
+              ("Literal[1, []]",  13, "Literal does not support values in brackets."),
         ]:
+            position = f'index {position}' if isinstance(position, int) else position
             assert_raises_with_msg(
                 ValueError,
-                f"Parsing type {info!r} failed: Error at index {index}: {error}",
+                f"Parsing type {info!r} failed: Error at {position}: {error}",
                 TypeInfoParser(info).parse
             )
+
+    def test_parens_instead_of_type_name(self):
+        info = TypeInfoParser('Callable[[], None]').parse()
+        assert_equal(info.name, 'Callable')
+        assert_equal(info.nested[0].name, None)
+        assert_equal(info.nested[0].nested, ())
+        assert_equal(info.nested[1].name, 'None')
+        info = TypeInfoParser('Callable[[str, int], float]').parse()
+        assert_equal(info.name, 'Callable')
+        assert_equal(info.nested[0].name, None)
+        assert_equal(info.nested[0].nested[0].name, 'str')
+        assert_equal(info.nested[0].nested[1].name, 'int')
+        assert_equal(info.nested[1].name, 'float')
+        info = TypeInfoParser('x[[], [[]], [[y]]]').parse()
+        assert_equal(info.name, 'x')
+        assert_equal(info.nested[0].name, None)
+        assert_equal(info.nested[0].nested, ())
+        assert_equal(info.nested[1].name, None)
+        assert_equal(info.nested[1].nested[0].name, None)
+        assert_equal(info.nested[1].nested[0].nested, ())
+        assert_equal(info.nested[2].name, None)
+        assert_equal(info.nested[2].nested[0].name, None)
+        assert_equal(info.nested[2].nested[0].nested[0].name, 'y')
 
     def test_mixed(self):
         info = TypeInfoParser('int | list[int] |tuple[int,int|tuple[int, int|str]]').parse()
@@ -111,7 +149,7 @@ class TestTypeInfoParser(unittest.TestCase):
                 (']',      0,     'Type name missing.'),
                 (',',      0,     'Type name missing.'),
                 ('|',      0,     'Type name missing.'),
-                ('x[',     'end', 'Type name missing.'),
+                ('x[',     'end', "Closing ']' missing."),
                 ('x]',     1,     "Extra content after 'x'."),
                 ('x,',     1,     "Extra content after 'x'."),
                 ('x|',     'end', 'Type name missing.'),
@@ -121,10 +159,11 @@ class TestTypeInfoParser(unittest.TestCase):
                 ('x[y]|',  'end', 'Type name missing.'),
                 ('x[y]z',  4,     "Extra content after 'x[y]'."),
                 ('x[y',    'end', "Closing ']' missing."),
-                ('x[y,',   'end', 'Type name missing.'),
+                ('x[y,',   'end', "Closing ']' missing."),
                 ('x[y,z',  'end', "Closing ']' missing."),
-                ('x[,',    2,     'Type name missing.'),
-                ('x[[y]]', 2,     'Type name missing.'),
+                ('x[,',    2,     "Type missing before ','."),
+                ('x[,]',   2,     "Type missing before ','."),
+                ('x[y,,]', 4,     "Type missing before ','."),
                 ('x | ,',  4,     'Type name missing.'),
                 ('x|||',   2,     'Type name missing.'),
                 ('"x"y',   3,     'Extra content after \'"x"\'.'),
