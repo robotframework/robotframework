@@ -91,31 +91,6 @@ function drawErrorsRecursively(errors, target) {
         // Errors may have moved scroll position. Resetting location re-scrolls.
         if (window.location.hash)
             window.location.replace(window.location.hash);
-        highlightLinkTarget();
-    }
-}
-
-function highlightLinkTarget() {
-    if (window.location.hash) {
-        var target = $(window.location.hash);
-        highlight(target);
-    }
-}
-
-function highlight(element, color) {
-    var darkMode = theme.getPreference() === 'dark';
-    var startingColor = darkMode ? 52 : 242;
-    var endingColor = darkMode ? 39 : 255;
-
-    if (color === undefined)
-        color = startingColor;
-
-    if (color > endingColor) {
-        element.css({'background-color': 'rgb('+color+','+color+','+color+')'});
-        color = darkMode ? color - 2 : color + 2;
-        setTimeout(function () { highlight(element, color); }, 300);
-    } else {
-        element.css({'background-color': ''});
     }
 }
 
@@ -133,7 +108,6 @@ function makeElementVisible(id) {
             expandFailed(window.testdata.findLoaded(util.last(ids)));
             window.location.hash = id;
             document.getElementById(id).scrollIntoView();
-            highlightLinkTarget();
         }
     });
 }

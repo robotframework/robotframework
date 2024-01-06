@@ -6,6 +6,7 @@
     --link-color: #15c;
     --link-hover-color: #61c;
     --highlight-color: #eee;
+    --target-color: #f9f9f9;
     --pass-color: #97bd61;
     --fail-color: #ce3e01;
     --warn-color: #fed84f;
@@ -28,6 +29,7 @@
     --link-color: #8cc4ff;
     --link-hover-color: #bb86fc;
     --highlight-color: #002b36;
+    --target-color: #1a252e;
     --pass-link-color: #97bd61;
     --warn-link-color: #fed84f;
     --fail-link-color: #ff9b8f;
@@ -342,4 +344,19 @@ th.stats-col-graph:hover {
 [data-theme="dark"] .light-mode-icon,
 [data-theme="light"] .dark-mode-icon {
     display: block;
+}
+
+@keyframes highlight {
+    0% {
+        background: var(--primary-color)
+    }
+    100% {
+        background: var(--target-color);
+    }
+}
+
+:target {
+    background: var(--target-color);
+    transition: background 0.3s;
+    animation: highlight 4s;
 }
