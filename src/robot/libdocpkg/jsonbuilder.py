@@ -109,7 +109,7 @@ class JsonDocBuilder:
         if data.get('typedoc'):
             type_docs[data['name']] = data['typedoc']
         nested = [self._parse_type_info(typ, type_docs) for typ in data.get('nested', ())]
-        return TypeInfo(data['name'], None, nested=nested)
+        return TypeInfo(data['name'], None, nested=nested or None)
 
     def _parse_legacy_type_info(self, types):
         return TypeInfo.from_sequence(types) if types else None

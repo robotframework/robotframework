@@ -84,7 +84,7 @@ class TypeInfo(metaclass=SetterAwareType):
 
     def __init__(self, name: 'str|None' = None,
                  type: Any = NOT_SET,
-                 nested: 'Sequence[TypeInfo]' = ()):
+                 nested: 'Sequence[TypeInfo]|None' = None):
         if type is NOT_SET:
             type = TYPE_NAMES.get(name.lower()) if name else None
         self.name = name
@@ -92,7 +92,7 @@ class TypeInfo(metaclass=SetterAwareType):
         self.nested = nested
 
     @setter
-    def nested(self, nested: 'Sequence[TypeInfo]') -> 'tuple[TypeInfo, ...]':
+    def nested(self, nested: 'Sequence[TypeInfo]') -> 'tuple[TypeInfo, ...]|None':
         """Nested types as a tuple of ``TypeInfo`` objects.
 
         Used with parameterized types and unions.
@@ -100,8 +100,10 @@ class TypeInfo(metaclass=SetterAwareType):
         typ = self.type
         if self.is_union:
             self._validate_union(nested)
-        elif typ is None or not nested:
-            pass
+        elif nested is None:
+            return None
+        elif typ is None:
+            return tuple(nested)
         elif typ is Literal:
             self._validate_literal(nested)
         elif not isinstance(typ, type):
@@ -124,6 +126,8 @@ class TypeInfo(metaclass=SetterAwareType):
             raise DataError('Union cannot be empty.')
 
     def _validate_literal(self, nested):
+        if not nested:
+            raise DataError('Literal cannot be empty.')
         for info in nested:
             if not isinstance(info.type, LITERAL_TYPES):
                 raise DataError(f'Literal supports only integers, strings, bytes, '
@@ -183,7 +187,7 @@ class TypeInfo(metaclass=SetterAwareType):
             elif has_args(hint):
                 nested = [cls.from_type_hint(a) for a in hint.__args__]
             else:
-                nested = []
+                nested = None
             return cls(type_repr(hint, nested=False), hint.__origin__, nested)
         if isinstance(hint, str):
             return cls.from_string(hint)
@@ -285,10 +289,11 @@ class TypeInfo(metaclass=SetterAwareType):
     def __str__(self):
         if self.is_union:
             return ' | '.join(str(n) for n in self.nested)
-        if self.nested:
-            nested = ', '.join(str(n) for n in self.nested)
-            return f'{self.name}[{nested}]'
-        return self.name or ''
+        name = self.name or ''
+        if self.nested is None:
+            return name
+        nested = ', '.join(str(n) for n in self.nested)
+        return f'{name}[{nested}]'
 
     def __bool__(self):
         return self.name is not None

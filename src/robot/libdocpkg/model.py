@@ -212,5 +212,5 @@ class KeywordDoc(Sortable):
             return None
         return {'name': type.name,
                 'typedoc': type_docs.get(type.name),
-                'nested': [self._type_to_dict(t, type_docs) for t in type.nested],
+                'nested': [self._type_to_dict(t, type_docs) for t in type.nested or ()],
                 'union': type.is_union}

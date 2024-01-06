@@ -81,4 +81,4 @@ class LibDocLib:
         if isinstance(data, str):
             return TypeInfo.from_string(data)
         nested = [self._get_type_info(n) for n in data.get('nested', ())]
-        return TypeInfo(data['name'], None, nested=nested)
+        return TypeInfo(data['name'], None, nested=nested or None)

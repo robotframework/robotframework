@@ -119,7 +119,7 @@ class XmlDocBuilder:
             type_docs[name] = type_elem.get('typedoc')
         nested = [self._parse_type_info(child, type_docs)
                   for child in type_elem.findall('type')]
-        return TypeInfo(name, None, nested=nested)
+        return TypeInfo(name, None, nested=nested or None)
 
     def _parse_legacy_type_info(self, type_elems, type_docs):
         types = []

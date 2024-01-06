@@ -162,9 +162,9 @@ class TypeInfoParser:
         return params
 
     def _literal_param(self, param: TypeInfo) -> TypeInfo:
-        if param.name is None:
-            self.error(f"Literal does not support values in brackets.")
         try:
+            if param.name is None:
+                raise ValueError
             try:
                 value = literal_eval(param.name)
             except ValueError:
@@ -174,7 +174,7 @@ class TypeInfoParser:
             if not isinstance(value, LITERAL_TYPES):
                 raise ValueError
         except (ValueError, SyntaxError):
-            self.error(f"Invalid literal value {param.name!r}.")
+            self.error(f"Invalid literal value {str(param)!r}.")
         else:
             return TypeInfo(repr(value), value)
 

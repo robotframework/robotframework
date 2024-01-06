@@ -10,12 +10,15 @@ from robot.running.arguments.typeinfo import TypeInfo, TYPE_NAMES
 from robot.utils.asserts import assert_equal, assert_raises_with_msg
 
 
-def assert_info(info: TypeInfo, name, type=None, nested=()):
+def assert_info(info: TypeInfo, name, type=None, nested=None):
     assert_equal(info.name, name, info)
     assert_equal(info.type, type, info)
-    assert_equal(len(info.nested), len(nested))
-    for child, exp in zip(info.nested, nested):
-        assert_info(child, exp.name, exp.type, exp.nested)
+    if nested is None:
+        assert_equal(info.nested, None)
+    else:
+        assert_equal(len(info.nested), len(nested))
+        for child, exp in zip(info.nested, nested):
+            assert_info(child, exp.name, exp.type, exp.nested)
 
 
 class TestTypeInfo(unittest.TestCase):
@@ -71,10 +74,8 @@ class TestTypeInfo(unittest.TestCase):
     def test_union_with_one_type_is_reduced_to_the_type(self):
         for union in Union[int], (int,):
             info = TypeInfo.from_type_hint(union)
-            assert_equal(info.type, int)
-            assert_equal(info.name, 'int')
+            assert_info(info, 'int', int)
             assert_equal(info.is_union, False)
-            assert_equal(len(info.nested), 0)
 
     def test_empty_union_not_allowed(self):
         for union in Union, ():
@@ -94,6 +95,11 @@ class TestTypeInfo(unittest.TestCase):
             assert_equal(len(info.nested), 2)
             assert_equal(info.nested[0].type, int)
             assert_equal(info.nested[1].type, str)
+
+    def test_generics_without_params(self):
+        for typ in List, Sequence, Set, Tuple, Dict, Mapping, list, tuple, dict:
+            info = TypeInfo.from_type_hint(typ)
+            assert_equal(info.nested, None)
 
     def test_invalid_sequence_params(self):
         for typ in 'list[int, str]', 'SEQUENCE[x, y]', 'Set[x, y]', 'frozenset[x, y]':
@@ -138,8 +144,9 @@ class TestTypeInfo(unittest.TestCase):
                 )
 
     def test_parameters_with_unknown_type(self):
-        info = TypeInfo.from_type_hint('x[int, float]')
-        assert_equal([n.type for n in info.nested], [int, float])
+        for info in [TypeInfo('x', nested=[TypeInfo('int'), TypeInfo('float')]),
+                     TypeInfo.from_type_hint('x[int, float]')]:
+            assert_info(info, 'x', nested=[TypeInfo('int'), TypeInfo('float')])
 
     def test_parameters_with_custom_generic(self):
         T = TypeVar('T')
@@ -170,9 +177,25 @@ class TestTypeInfo(unittest.TestCase):
         for item in 42, object(), set(), b'hello':
             assert_info(TypeInfo.from_type_hint(item), str(item))
 
+    def test_str(self):
+        for info, expected in [
+            (TypeInfo(), ''), (TypeInfo('int'), 'int'),  (TypeInfo('x'), 'x'),
+            (TypeInfo('list', nested=[TypeInfo('int')]), 'list[int]'),
+            (TypeInfo('Union', nested=[TypeInfo('x'), TypeInfo('y')]), 'x | y'),
+            (TypeInfo(nested=()), '[]'),
+            (TypeInfo(nested=[TypeInfo('int'), TypeInfo('str')]), '[int, str]')
+        ]:
+            assert_equal(str(info), expected)
+        for hint in [
+            'int', 'x', 'int | float', 'x | y | z', 'list[int]', 'tuple[int, ...]',
+            'dict[str | int, tuple[int | float]]', 'x[a, b, c]', 'Callable[[], None]',
+            'Callable[[str, tuple[int | float]], dict[str, int | float]]'
+        ]:
+            assert_equal(str(TypeInfo.from_type_hint(hint)), hint)
+
     def test_conversion(self):
         assert_equal(TypeInfo.from_type_hint(int).convert('42'), 42)
-        assert_equal(TypeInfo.from_type_hint('list[int]').convert('[42]'), [42])
+        assert_equal(TypeInfo.from_type_hint('list[int]').convert('[4, 2]'), [4, 2])
 
     def test_failing_conversion(self):
         assert_raises_with_msg(

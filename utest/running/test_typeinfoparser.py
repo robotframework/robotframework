@@ -40,6 +40,11 @@ class TestTypeInfoParser(unittest.TestCase):
         assert_equal(info.name, 'tuple')
         assert_equal([n.name for n in info.nested], ['str', 'int', 'float'])
 
+    def test_unrecognized_with_parameters(self):
+        info = TypeInfoParser('x[y, z]').parse()
+        assert_equal(info.name, 'x')
+        assert_equal([n.name for n in info.nested], ['y', 'z'])
+
     def test_no_parameters(self):
         info = TypeInfoParser('x[]').parse()
         assert_equal(info.name, 'x')
@@ -93,8 +98,8 @@ class TestTypeInfoParser(unittest.TestCase):
               ("Literal[']",   'end', "Invalid literal value \"']\"."),
               ("Literal[]",    'end', "Literal cannot be empty."),
               ("Literal[,]",       8, "Type missing before ','."),
-              ("Literal[[1], 2]", 11, "Literal does not support values in brackets."),
-              ("Literal[1, []]",  13, "Literal does not support values in brackets."),
+              ("Literal[[1], 2]", 11, "Invalid literal value '[1]'."),
+              ("Literal[1, []]",  13, "Invalid literal value '[]'."),
         ]:
             position = f'index {position}' if isinstance(position, int) else position
             assert_raises_with_msg(
