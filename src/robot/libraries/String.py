@@ -644,9 +644,9 @@ class String:
 
         Examples:
         | ${ignore first} = | Get Substring | ${string} | 1  |    |
-        | ${ignore last} =  | Get Substring | ${string} |    | -1 |
+        | ${ignore last} =  | Get Substring | ${string} | 0  | -1 |
         | ${5th to 10th} =  | Get Substring | ${string} | 4  | 10 |
-        | ${first two} =    | Get Substring | ${string} |    | 1  |
+        | ${first two} =    | Get Substring | ${string} | 0  | 1  |
         | ${last two} =     | Get Substring | ${string} | -2 |    |
         """
         start = self._convert_to_index(start, 'start')
