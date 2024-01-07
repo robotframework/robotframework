@@ -19,6 +19,9 @@ Saved XML is semantically same as original
 Saved XML has same namespaces as original
     Check Test Case    ${TESTNAME}
 
+Element To String with namespaces
+    Check Test Case    ${TESTNAME}
+
 Element without namepace inside element with namespace
     Check Test Case    ${TESTNAME}
 

@@ -21,4 +21,4 @@ Log element
 
 Log child element
     ${tc}=    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    <täg attr="hyv&#xE4;">sisältö</täg>
+    Check Log Message    ${tc.kws[0].msgs[0]}    <täg attr="hyvä">sisältö</täg>

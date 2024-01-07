@@ -5,7 +5,6 @@ Resource          xml_resource.robot
 
 *** Variables ***
 ${TÄG}            <täg attr="hyvä">sisältö</täg>
-${T&#xE4;G}       <täg attr="hyv&#xE4;">sisältö</täg>
 ${XML}            <root>\n\t${TÄG}\n</root>
 
 *** Test Cases ***
@@ -22,9 +21,9 @@ Element to string with encoding
 
 Child element to string
     ${string}=    Element To String    ${XML}    xpath=täg
-    Should Be Equal    ${string}    ${T&#xE4;G}
+    Should Be Equal    ${string}    ${TÄG}
     ${string}=    Element To String    ${XML}    täg    latin-1
-    ${expected}=    Encode String To Bytes    ${T&#xE4;G}    encoding=latin-1
+    ${expected}=    Encode String To Bytes    ${TÄG}    encoding=latin-1
     Should Be Equal    ${string}    ${expected}
 
 Log element
@@ -35,4 +34,4 @@ Log element
 
 Log child element
     ${string}=    Log Element    ${XML}    xpath=täg
-    Should Be Equal    ${string}    ${T&#xE4;G}
+    Should Be Equal    ${string}    ${TÄG}

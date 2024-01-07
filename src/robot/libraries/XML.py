@@ -1309,6 +1309,8 @@ class XML:
         See also `Log Element` and `Save XML`.
         """
         source = self.get_element(source, xpath)
+        if self.lxml_etree:
+            source = self._ns_stripper.unstrip(source)
         string = self.etree.tostring(source, encoding='UTF-8').decode('UTF-8')
         string = re.sub(r'^<\?xml .*\?>', '', string).strip()
         if encoding:

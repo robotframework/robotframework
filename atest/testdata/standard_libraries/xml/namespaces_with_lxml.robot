@@ -49,6 +49,13 @@ Saved XML is semantically same as original
 Saved XML has same namespaces as original
     Saved XML Should Equal File    ${NS}    ${NS}
 
+Element To String with namespaces
+    ${full} =    Element To String    ${NS}
+    ${another} =    Element To String    ${NS}    xpath=another
+    ${orig} =    Get File    ${NS}
+    Should Be Equal    ${full}       ${{re.search('<test .*</test>', $orig, flags=re.DOTALL).group()}}
+    Should Be Equal    ${another}    ${{re.search('<another .*</another>', $orig, flags=re.DOTALL).group()}}
+
 Element without namepace inside element with namespace
     Save XML    ${NO NS IN NS}    ${OUTPUT}
     Elements Should Be Equal    ${NO NS IN NS}    ${OUTPUT}

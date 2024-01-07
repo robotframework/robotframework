@@ -4,6 +4,26 @@ Resource          xml_resource.robot
 Test Setup        Remove File    ${OUTPUT}
 Suite Teardown    Remove File    ${OUTPUT}
 
+*** Variables ***
+${NS SAVED}
+...   <test name="root" xmlns="default">
+...   ${INDENT}<child1 id="1">default ns</child1>
+...   ${INDENT}<child2 xmlns="http://uri">ns with prefix</child2>
+...   ${INDENT}<child3 xmlns="whatever.xsd">
+...   ${INDENT}${INDENT}<grand-child>2nd prefix</grand-child>
+...   ${INDENT}${INDENT}<grand-child-2 xmlns="http://uri">
+...   ${INDENT}${INDENT}${INDENT}<ggc>1st prefix again</ggc>
+...   ${INDENT}${INDENT}${INDENT}<ggc2 xmlns="default">default ns 2</ggc2>
+...   ${INDENT}${INDENT}</grand-child-2>
+...   ${INDENT}${INDENT}<grand-child-3>2nd prefix 2</grand-child-3>
+...   ${INDENT}</child3>
+...   ${INDENT}<another xmlns="default2">
+...   ${INDENT}${INDENT}<child>2nd default</child>
+...   ${INDENT}</another>
+...   ${INDENT}<back>back in default</back>
+...   </test>
+...   separator=\n
+
 *** Test Cases ***
 Tag names contain no namespaces
     ${children} =    Get Child Elements    ${NS}
@@ -46,23 +66,14 @@ Saved XML is semantically same as original
     Elements Should Be Equal    ${etree1}    ${etree2}
 
 Saved XML has same content as original but only default namespaces
-    Saved XML Should Equal    ${NS}
-    ...   <test name="root" xmlns="default">
-    ...   ${INDENT}<child1 id="1">default ns</child1>
-    ...   ${INDENT}<child2 xmlns="http://uri">ns with prefix</child2>
-    ...   ${INDENT}<child3 xmlns="whatever.xsd">
-    ...   ${INDENT}${INDENT}<grand-child>2nd prefix</grand-child>
-    ...   ${INDENT}${INDENT}<grand-child-2 xmlns="http://uri">
-    ...   ${INDENT}${INDENT}${INDENT}<ggc>1st prefix again</ggc>
-    ...   ${INDENT}${INDENT}${INDENT}<ggc2 xmlns="default">default ns 2</ggc2>
-    ...   ${INDENT}${INDENT}</grand-child-2>
-    ...   ${INDENT}${INDENT}<grand-child-3>2nd prefix 2</grand-child-3>
-    ...   ${INDENT}</child3>
-    ...   ${INDENT}<another xmlns="default2">
-    ...   ${INDENT}${INDENT}<child>2nd default</child>
-    ...   ${INDENT}</another>
-    ...   ${INDENT}<back>back in default</back>
-    ...   </test>
+    Saved XML Should Equal    ${NS}    ${NS SAVED}
+
+Element To String with namespaces
+    ${full} =    Element To String    ${NS}
+    ${another} =    Element To String    ${NS}    xpath=another
+    ${orig} =    Get File    ${NS}
+    Should Be Equal    ${full}       ${NS SAVED}
+    Should Be Equal    ${another}    ${{re.search('<another .*</another>', $orig, flags=re.DOTALL).group()}}
 
 Element without namepace inside element with namespace
     Save XML    ${NO NS IN NS}    ${OUTPUT}
