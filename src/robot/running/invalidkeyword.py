@@ -24,6 +24,11 @@ from .keywordimplementation import KeywordImplementation
 
 
 class InvalidKeyword(KeywordImplementation):
+    """Represents an invalid keyword call.
+
+    Keyword may not have been found, there could have been multiple matches,
+    or the keyword call itself could have been invalid.
+    """
     type = KeywordImplementation.INVALID_KEYWORD
 
     def _get_embedded(self, name) -> 'EmbeddedArguments|None':

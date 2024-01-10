@@ -22,7 +22,7 @@ so on::
     robot --parser path/to/MyParser.py tests.custom
     robot --parser Parser1:arg --parser Parser2:a1:a2 path/to/tests
 
-__ `Taking listeners into use`_
+__ `Registering listeners from command line`_
 
 Parser API
 ----------

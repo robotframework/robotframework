@@ -422,7 +422,7 @@ class VariablesAttributes(TypedDict):
 
 
 class ListenerV2:
-    """Optional base class for listeners using the listener API v2."""
+    """Optional base class for listeners using the listener API version 2."""
     ROBOT_LISTENER_API_VERSION = 2
 
     def start_suite(self, name: str, attributes: StartSuiteAttributes):
@@ -501,7 +501,7 @@ class ListenerV2:
 
 
 class ListenerV3:
-    """Optional base class for listeners using the listener API v3."""
+    """Optional base class for listeners using the listener API version 3."""
     ROBOT_LISTENER_API_VERSION = 3
 
     def start_suite(self, data: running.TestSuite, result: result.TestSuite):
@@ -519,10 +519,12 @@ class ListenerV3:
     def start_keyword(self, data: running.Keyword, result: result.Keyword):
         """Called when a keyword starts by default.
 
-        The default implementation calls :meth:`start_body_item`.
+        This method is called, by default, with user keywords, library keywords
+        and when a keyword call is invalid. It is not called, however, if a more
+        specific :meth:`start_user_keyword`, :meth:`start_library_keyword` or
+        :meth:`start_invalid_keyword` method is implemented.
 
-        See also :meth:`start_user_keyword`, :meth:`start_library_keyword` and
-        :meth:`start_invalid_keyword`.
+        The default implementation calls :meth:`start_body_item`.
 
         New in Robot Framework 7.0.
         """
@@ -531,10 +533,12 @@ class ListenerV3:
     def end_keyword(self, data: running.Keyword, result: result.Keyword):
         """Called when a keyword ends by default.
 
-        The default implementation calls :meth:`end_body_item`.
+        This method is called, by default, with user keywords, library keywords
+        and when a keyword call is invalid. It is not called, however, if a more
+        specific :meth:`end_user_keyword`, :meth:`end_library_keyword` or
+        :meth:`end_invalid_keyword` method is implemented.
 
-        See also :meth:`end_user_keyword`, :meth:`end_library_keyword` and
-        :meth:`end_invalid_keyword`.
+        The default implementation calls :meth:`end_body_item`.
 
         New in Robot Framework 7.0.
         """
@@ -590,7 +594,7 @@ class ListenerV3:
         """Called when an invalid keyword call starts.
 
         Keyword may not have been found, there could have been multiple matches,
-        or the keyword itself could be broken.
+        or the keyword call itself could have been invalid.
 
         The default implementation calls :meth:`start_keyword`.
 
@@ -604,7 +608,7 @@ class ListenerV3:
         """Called when an invalid keyword call ends.
 
         Keyword may not have been found, there could have been multiple matches,
-        or the keyword itself could be broken.
+        or the keyword call itself could have been invalid.
 
         The default implementation calls :meth:`end_keyword`.
 

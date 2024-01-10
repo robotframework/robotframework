@@ -32,6 +32,12 @@ The public API of this module consists of the following objects:
   :mod:`robot.running.model` module. These classes are typically only needed
   in type hints.
 
+* Keyword implementation related classes :class:`~robot.running.resourcemodel.UserKeyword`,
+  :class:`~robot.running.librarykeyword.LibraryKeyword`,
+  :class:`~robot.running.invalidkeyword.InvalidKeyword` and their common base class
+  :class:`~robot.running.keywordimplementation.KeywordImplementation`. Also these
+  classes are mainly needed in type hints.
+
 * :class:`~robot.running.builder.settings.TestDefaults` that is part of the
   `external parsing API`__ and also typically needed only in type hints.
 
@@ -43,6 +49,7 @@ the :mod:`robot.api` package.
 
 .. note:: Prior to Robot Framework 6.1, only some classes in
           :mod:`robot.running.model` were exposed via :mod:`robot.running`.
+          Keyword implementation related classes are new in Robot Framework 7.0.
 
 Examples
 --------

@@ -100,7 +100,7 @@ class LibraryKeyword(KeywordImplementation):
 
 
 class StaticKeyword(LibraryKeyword):
-    """Represents keywords in static libraries."""
+    """Represents a keyword in a static library."""
     __slots__ = ['method_name']
 
     def __init__(self, method_name: str,
@@ -142,7 +142,7 @@ class StaticKeyword(LibraryKeyword):
 
 
 class DynamicKeyword(LibraryKeyword):
-    """Represents keywords in dynamic libraries."""
+    """Represents a keyword in a dynamic library."""
     owner: 'DynamicLibrary'
     __slots__ = ['run_keyword', '_orig_name', '__source_info']
 
@@ -212,7 +212,7 @@ class DynamicKeyword(LibraryKeyword):
 
 
 class LibraryInit(LibraryKeyword):
-    """Represents library initializer.
+    """Represents a library initializer.
 
     :attr:`positional` and :attr:`named` contain arguments used for initializing
     the library.

@@ -91,7 +91,6 @@ class Message(model.Message):
         return data
 
 
-
 class StatusMixin:
     PASS = 'PASS'
     FAIL = 'FAIL'

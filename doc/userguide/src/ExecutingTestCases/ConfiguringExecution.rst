@@ -677,11 +677,8 @@ use options like :option:`--include` also with possible dynamically added
 tests.
 
 .. tip:: Modifiers are taken into use from the command line exactly the same
-         way as listeners_. See the `Taking listeners into use`_ section for
-         more information and examples.
-
-.. note:: Prior to Robot Framework 3.2 pre-run modifiers were executed
-          after other configuration.
+         way as listeners_. See the `Registering listeners from command line`_
+         section for more information and examples.
 
 __ `Specifying library to import`_
 __ `Supported conversions`_
