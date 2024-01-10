@@ -49,10 +49,12 @@ you can simply run::
 For more detailed installation instructions, including installing Python, see
 `<INSTALL.rst>`__.
 
-Robot Framework requires Python 3.6 or newer and runs also on `PyPy <http://pypy.org>`_.
+Robot Framework requires Python 3.8 or newer and runs also on `PyPy <http://pypy.org>`_.
+The latest version that supports Python 3.6 and 3.7 is `Robot Framework 6.1.1`__.
 If you need to use Python 2, `Jython <http://jython.org>`_ or
 `IronPython <http://ironpython.net>`_, you can use `Robot Framework 4.1.3`__.
 
+__ https://github.com/robotframework/robotframework/tree/v6.1.1#readme
 __ https://github.com/robotframework/robotframework/tree/v4.1.3#readme
 
 Example

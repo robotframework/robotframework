@@ -28,13 +28,13 @@ is having Python or its alternative implementation `PyPy <https://pypy.org>`_
 installed. Another recommended precondition is having the pip_ package manager
 available.
 
-Robot Framework requires Python 3.6 or newer. If you need to use Python 2,
+Robot Framework requires Python 3.8 or newer. The latest version that supports
+Python 3.6 and 3.7 is `Robot Framework 6.1.1`__. If you need to use Python 2,
 `Jython <http://jython.org>`_ or `IronPython <http://ironpython.net>`_,
 you can use `Robot Framework 4.1.3`__.
-The forthcoming Robot Framework 7.0 will require `Python 3.8 or newer`__.
 
+__ https://github.com/robotframework/robotframework/blob/v6.1.1/INSTALL.rst
 __ https://github.com/robotframework/robotframework/blob/v4.1.3/INSTALL.rst
-__ https://github.com/robotframework/robotframework/issues/4294
 
 Installing Python on Linux
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
