@@ -1,9 +1,9 @@
 {
-  "specversion": 2,
+  "specversion": 3,
   "name": "Dialogs",
   "doc": "A library providing dialogs for interacting with users.\n\n``Dialogs`` is Robot Framework's standard library that provides means\nfor pausing the test or task execution and getting input from users.\n\nLong lines in the provided messages are wrapped automatically. If you want\nto wrap lines manually, you can add newlines using the ``\\n`` character\nsequence.\n\nThe library has a known limitation that it cannot be used with timeouts.",
-  "version": "6.1.1",
-  "generated": "2023-07-28T19:27:14+00:00",
+  "version": "7.0",
+  "generated": "2024-01-11T16:18:35+00:00",
   "type": "LIBRARY",
   "scope": "GLOBAL",
   "docFormat": "ROBOT",
@@ -18,8 +18,6 @@
         {
           "name": "message",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -28,14 +26,13 @@
         {
           "name": "default_error",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": "",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
           "repr": "default_error="
         }
       ],
+      "returnType": null,
       "doc": "Pauses execution until user sets the keyword status.\n\nUser can press either ``PASS`` or ``FAIL`` button. In the latter case execution\nfails and an additional dialog is opened for defining the error message.\n\n``message`` is the instruction shown in the initial dialog and\n``default_error`` is the default value shown in the possible error message\ndialog.",
       "shortdoc": "Pauses execution until user sets the keyword status.",
       "tags": [],
@@ -48,8 +45,6 @@
         {
           "name": "message",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -58,14 +53,13 @@
         {
           "name": "values",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
           "repr": "*values"
         }
       ],
+      "returnType": null,
       "doc": "Pauses execution and asks user to select a value.\n\nThe selected value is returned. Pressing ``Cancel`` fails the keyword.\n\n``message`` is the instruction shown in the dialog and ``values`` are\nthe options given to the user.\n\nExample:\n| ${user} = | Get Selection From User | Select user | user1 | user2 | admin |",
       "shortdoc": "Pauses execution and asks user to select a value.",
       "tags": [],
@@ -78,8 +72,6 @@
         {
           "name": "message",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -88,14 +80,13 @@
         {
           "name": "values",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
           "repr": "*values"
         }
       ],
+      "returnType": null,
       "doc": "Pauses execution and asks user to select multiple values.\n\nThe selected values are returned as a list. Selecting no values is OK\nand in that case the returned list is empty. Pressing ``Cancel`` fails\nthe keyword.\n\n``message`` is the instruction shown in the dialog and ``values`` are\nthe options given to the user.\n\nExample:\n| ${users} = | Get Selections From User | Select users | user1 | user2 | admin |",
       "shortdoc": "Pauses execution and asks user to select multiple values.",
       "tags": [],
@@ -108,8 +99,6 @@
         {
           "name": "message",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -118,8 +107,6 @@
         {
           "name": "default_value",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": "",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -128,14 +115,13 @@
         {
           "name": "hidden",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
           "repr": "hidden=False"
         }
       ],
+      "returnType": null,
       "doc": "Pauses execution and asks user to input a value.\n\nValue typed by the user, or the possible default value, is returned.\nReturning an empty value is fine, but pressing ``Cancel`` fails the keyword.\n\n``message`` is the instruction shown in the dialog and ``default_value`` is\nthe possible default value shown in the input field.\n\nIf ``hidden`` is given a true value, the value typed by the user is hidden.\n``hidden`` is considered true if it is a non-empty string not equal to\n``false``, ``none`` or ``no``, case-insensitively. If it is not a string,\nits truth value is got directly using same\n[http://docs.python.org/library/stdtypes.html#truth|rules as in Python].\n\nExample:\n| ${username} = | Get Value From User | Input user name | default    |\n| ${password} = | Get Value From User | Input password  | hidden=yes |",
       "shortdoc": "Pauses execution and asks user to input a value.",
       "tags": [],
@@ -148,14 +134,13 @@
         {
           "name": "message",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": "Execution paused. Press OK to continue.",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
           "repr": "message=Execution paused. Press OK to continue."
         }
       ],
+      "returnType": null,
       "doc": "Pauses execution until user clicks ``Ok`` button.\n\n``message`` is the message shown in the dialog.",
       "shortdoc": "Pauses execution until user clicks ``Ok`` button.",
       "tags": [],
@@ -163,9 +148,5 @@
       "lineno": 40
     }
   ],
-  "dataTypes": {
-    "enums": [],
-    "typedDicts": []
-  },
   "typedocs": []
 }

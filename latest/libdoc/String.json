@@ -1,14 +1,14 @@
 {
-  "specversion": 2,
+  "specversion": 3,
   "name": "String",
   "doc": "A library for string manipulation and verification.\n\n``String`` is Robot Framework's standard library for manipulating\nstrings (e.g. `Replace String Using Regexp`, `Split To Lines`) and\nverifying their contents (e.g. `Should Be String`).\n\nFollowing keywords from ``BuiltIn`` library can also be used with strings:\n\n- `Catenate`\n- `Get Length`\n- `Length Should Be`\n- `Should (Not) Be Empty`\n- `Should (Not) Be Equal (As Strings/Integers/Numbers)`\n- `Should (Not) Match (Regexp)`\n- `Should (Not) Contain`\n- `Should (Not) Start With`\n- `Should (Not) End With`\n- `Convert To String`\n- `Convert To Bytes`",
-  "version": "6.1.1",
-  "generated": "2023-07-28T19:27:14+00:00",
+  "version": "7.0",
+  "generated": "2024-01-11T16:18:35+00:00",
   "type": "LIBRARY",
   "scope": "GLOBAL",
   "docFormat": "ROBOT",
   "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-  "lineno": 29,
+  "lineno": 28,
   "tags": [],
   "inits": [],
   "keywords": [
@@ -18,19 +18,18 @@
         {
           "name": "string",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
           "repr": "string"
         }
       ],
+      "returnType": null,
       "doc": "Converts string to lower case.\n\nUses Python's standard\n[https://docs.python.org/library/stdtypes.html#str.lower|lower()]\nmethod.\n\nExamples:\n| ${str1} = | Convert To Lower Case | ABC |\n| ${str2} = | Convert To Lower Case | 1A2c3D |\n| Should Be Equal | ${str1} | abc |\n| Should Be Equal | ${str2} | 1a2c3d |",
       "shortdoc": "Converts string to lower case.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 53
+      "lineno": 52
     },
     {
       "name": "Convert To Title Case",
@@ -38,8 +37,6 @@
         {
           "name": "string",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -48,19 +45,18 @@
         {
           "name": "exclude",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
           "repr": "exclude=None"
         }
       ],
-      "doc": "Converts string to title case.\n\nUses the following algorithm:\n\n- Split the string to words from whitespace characters (spaces,\n  newlines, etc.).\n- Exclude words that are not all lower case. This preserves,\n  for example, \"OK\" and \"iPhone\".\n- Exclude also words listed in the optional ``exclude`` argument.\n- Title case the first alphabetical character of each word that has\n  not been excluded.\n- Join all words together so that original whitespace is preserved.\n\nExplicitly excluded words can be given as a list or as a string with\nwords separated by a comma and an optional space. Excluded words are\nactually considered to be regular expression patterns, so it is\npossible to use something like \"example[.!?]?\" to match the word\n\"example\" on it own and also if followed by \".\", \"!\" or \"?\".\nSee `BuiltIn.Should Match Regexp` for more information about Python\nregular expression syntax in general and how to use it in Robot\nFramework data in particular.\n\nExamples:\n| ${str1} = | Convert To Title Case | hello, world!     |\n| ${str2} = | Convert To Title Case | it's an OK iPhone | exclude=a, an, the |\n| ${str3} = | Convert To Title Case | distance is 1 km. | exclude=is, km.? |\n| Should Be Equal | ${str1} | Hello, World! |\n| Should Be Equal | ${str2} | It's an OK iPhone |\n| Should Be Equal | ${str3} | Distance is 1 km. |\n\nThe reason this keyword does not use Python's standard\n[https://docs.python.org/library/stdtypes.html#str.title|title()]\nmethod is that it can yield undesired results, for example, if\nstrings contain upper case letters or special characters like\napostrophes. It would, for example, convert \"it's an OK iPhone\"\nto \"It'S An Ok Iphone\".\n\nNew in Robot Framework 3.2.",
+      "returnType": null,
+      "doc": "Converts string to title case.\n\nUses the following algorithm:\n\n- Split the string to words from whitespace characters (spaces,\n  newlines, etc.).\n- Exclude words that are not all lower case. This preserves,\n  for example, \"OK\" and \"iPhone\".\n- Exclude also words listed in the optional ``exclude`` argument.\n- Title case the first alphabetical character of each word that has\n  not been excluded.\n- Join all words together so that original whitespace is preserved.\n\nExplicitly excluded words can be given as a list or as a string with\nwords separated by a comma and an optional space. Excluded words are\nactually considered to be regular expression patterns, so it is\npossible to use something like \"example[.!?]?\" to match the word\n\"example\" on it own and also if followed by \".\", \"!\" or \"?\".\nSee `BuiltIn.Should Match Regexp` for more information about Python\nregular expression syntax in general and how to use it in Robot\nFramework data in particular.\n\nExamples:\n| ${str1} = | Convert To Title Case | hello, world!     |\n| ${str2} = | Convert To Title Case | it's an OK iPhone | exclude=a, an, the |\n| ${str3} = | Convert To Title Case | distance is 1 km. | exclude=is, km.? |\n| Should Be Equal | ${str1} | Hello, World! |\n| Should Be Equal | ${str2} | It's an OK iPhone |\n| Should Be Equal | ${str3} | Distance is 1 km. |\n\nThe reason this keyword does not use Python's standard\n[https://docs.python.org/library/stdtypes.html#str.title|title()]\nmethod is that it can yield undesired results, for example, if\nstrings contain upper case letters or special characters like\napostrophes. It would, for example, convert \"it's an OK iPhone\"\nto \"It'S An Ok Iphone\".",
       "shortdoc": "Converts string to title case.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 84
+      "lineno": 83
     },
     {
       "name": "Convert To Upper Case",
@@ -68,19 +64,18 @@
         {
           "name": "string",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
           "repr": "string"
         }
       ],
+      "returnType": null,
       "doc": "Converts string to upper case.\n\nUses Python's standard\n[https://docs.python.org/library/stdtypes.html#str.upper|upper()]\nmethod.\n\nExamples:\n| ${str1} = | Convert To Upper Case | abc |\n| ${str2} = | Convert To Upper Case | 1a2C3d |\n| Should Be Equal | ${str1} | ABC |\n| Should Be Equal | ${str2} | 1A2C3D |",
       "shortdoc": "Converts string to upper case.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 68
+      "lineno": 67
     },
     {
       "name": "Decode Bytes To String",
@@ -88,8 +83,6 @@
         {
           "name": "bytes",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -98,8 +91,6 @@
         {
           "name": "encoding",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -108,19 +99,18 @@
         {
           "name": "errors",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": "strict",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
           "repr": "errors=strict"
         }
       ],
-      "doc": "Decodes the given ``bytes`` to a Unicode string using the given ``encoding``.\n\n``errors`` argument controls what to do if decoding some bytes fails.\nAll values accepted by ``decode`` method in Python are valid, but in\npractice the following values are most useful:\n\n- ``strict``: fail if characters cannot be decoded (default)\n- ``ignore``: ignore characters that cannot be decoded\n- ``replace``: replace characters that cannot be decoded with\n  a replacement character\n\nExamples:\n| ${string} = | Decode Bytes To String | ${bytes} | UTF-8 |\n| ${string} = | Decode Bytes To String | ${bytes} | ASCII | errors=ignore |\n\nUse `Encode String To Bytes` if you need to convert Unicode strings to\nbyte strings, and `Convert To String` in ``BuiltIn`` if you need to\nconvert arbitrary objects to Unicode strings.",
-      "shortdoc": "Decodes the given ``bytes`` to a Unicode string using the given ``encoding``.",
+      "returnType": null,
+      "doc": "Decodes the given ``bytes`` to a string using the given ``encoding``.\n\n``errors`` argument controls what to do if decoding some bytes fails.\nAll values accepted by ``decode`` method in Python are valid, but in\npractice the following values are most useful:\n\n- ``strict``: fail if characters cannot be decoded (default)\n- ``ignore``: ignore characters that cannot be decoded\n- ``replace``: replace characters that cannot be decoded with\n  a replacement character\n\nExamples:\n| ${string} = | Decode Bytes To String | ${bytes} | UTF-8 |\n| ${string} = | Decode Bytes To String | ${bytes} | ASCII | errors=ignore |\n\nUse `Encode String To Bytes` if you need to convert strings to bytes,\nand `Convert To String` in ``BuiltIn`` if you need to\nconvert arbitrary objects to strings.",
+      "shortdoc": "Decodes the given ``bytes`` to a string using the given ``encoding``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 166
+      "lineno": 163
     },
     {
       "name": "Encode String To Bytes",
@@ -128,8 +118,6 @@
         {
           "name": "string",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -138,8 +126,6 @@
         {
           "name": "encoding",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -148,19 +134,18 @@
         {
           "name": "errors",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": "strict",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
           "repr": "errors=strict"
         }
       ],
-      "doc": "Encodes the given Unicode ``string`` to bytes using the given ``encoding``.\n\n``errors`` argument controls what to do if encoding some characters fails.\nAll values accepted by ``encode`` method in Python are valid, but in\npractice the following values are most useful:\n\n- ``strict``: fail if characters cannot be encoded (default)\n- ``ignore``: ignore characters that cannot be encoded\n- ``replace``: replace characters that cannot be encoded with\n  a replacement character\n\nExamples:\n| ${bytes} = | Encode String To Bytes | ${string} | UTF-8 |\n| ${bytes} = | Encode String To Bytes | ${string} | ASCII | errors=ignore |\n\nUse `Convert To Bytes` in ``BuiltIn`` if you want to create bytes based\non character or integer sequences. Use `Decode Bytes To String` if you\nneed to convert byte strings to Unicode strings and `Convert To String`\nin ``BuiltIn`` if you need to convert arbitrary objects to Unicode.",
-      "shortdoc": "Encodes the given Unicode ``string`` to bytes using the given ``encoding``.",
+      "returnType": null,
+      "doc": "Encodes the given ``string`` to bytes using the given ``encoding``.\n\n``errors`` argument controls what to do if encoding some characters fails.\nAll values accepted by ``encode`` method in Python are valid, but in\npractice the following values are most useful:\n\n- ``strict``: fail if characters cannot be encoded (default)\n- ``ignore``: ignore characters that cannot be encoded\n- ``replace``: replace characters that cannot be encoded with\n  a replacement character\n\nExamples:\n| ${bytes} = | Encode String To Bytes | ${string} | UTF-8 |\n| ${bytes} = | Encode String To Bytes | ${string} | ASCII | errors=ignore |\n\nUse `Convert To Bytes` in ``BuiltIn`` if you want to create bytes based\non character or integer sequences. Use `Decode Bytes To String` if you\nneed to convert bytes to strings and `Convert To String`\nin ``BuiltIn`` if you need to convert arbitrary objects to strings.",
+      "shortdoc": "Encodes the given ``string`` to bytes using the given ``encoding``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 143
+      "lineno": 140
     },
     {
       "name": "Fetch From Left",
@@ -168,8 +153,6 @@
         {
           "name": "string",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -178,19 +161,18 @@
         {
           "name": "marker",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
           "repr": "marker"
         }
       ],
+      "returnType": null,
       "doc": "Returns contents of the ``string`` before the first occurrence of ``marker``.\n\nIf the ``marker`` is not found, whole string is returned.\n\nSee also `Fetch From Right`, `Split String` and `Split String\nFrom Right`.",
       "shortdoc": "Returns contents of the ``string`` before the first occurrence of ``marker``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 579
+      "lineno": 575
     },
     {
       "name": "Fetch From Right",
@@ -198,8 +180,6 @@
         {
           "name": "string",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -208,19 +188,18 @@
         {
           "name": "marker",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
           "repr": "marker"
         }
       ],
+      "returnType": null,
       "doc": "Returns contents of the ``string`` after the last occurrence of ``marker``.\n\nIf the ``marker`` is not found, whole string is returned.\n\nSee also `Fetch From Left`, `Split String` and `Split String\nFrom Right`.",
       "shortdoc": "Returns contents of the ``string`` after the last occurrence of ``marker``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 589
+      "lineno": 585
     },
     {
       "name": "Format String",
@@ -228,8 +207,6 @@
         {
           "name": "template",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -238,8 +215,6 @@
         {
           "name": "positional",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
@@ -248,19 +223,18 @@
         {
           "name": "named",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_NAMED",
           "required": false,
           "repr": "**named"
         }
       ],
-      "doc": "Formats a ``template`` using the given ``positional`` and ``named`` arguments.\n\nThe template can be either be a string or an absolute path to\nan existing file. In the latter case the file is read and its contents\nare used as the template. If the template file contains non-ASCII\ncharacters, it must be encoded using UTF-8.\n\nThe template is formatted using Python's\n[https://docs.python.org/library/string.html#format-string-syntax|format\nstring syntax]. Placeholders are marked using ``{}`` with possible\nfield name and format specification inside. Literal curly braces\ncan be inserted by doubling them like `{{` and `}}`.\n\nExamples:\n| ${to} = | Format String | To: {} <{}>                    | ${user}      | ${email} |\n| ${to} = | Format String | To: {name} <{email}>           | name=${name} | email=${email} |\n| ${to} = | Format String | To: {user.name} <{user.email}> | user=${user} |\n| ${xx} = | Format String | {:*^30}                        | centered     |\n| ${yy} = | Format String | {0:{width}{base}}              | ${42}        | base=X | width=10 |\n| ${zz} = | Format String | ${CURDIR}/template.txt         | positional   | named=value |\n\nNew in Robot Framework 3.1.",
+      "returnType": null,
+      "doc": "Formats a ``template`` using the given ``positional`` and ``named`` arguments.\n\nThe template can be either be a string or an absolute path to\nan existing file. In the latter case the file is read and its contents\nare used as the template. If the template file contains non-ASCII\ncharacters, it must be encoded using UTF-8.\n\nThe template is formatted using Python's\n[https://docs.python.org/library/string.html#format-string-syntax|format\nstring syntax]. Placeholders are marked using ``{}`` with possible\nfield name and format specification inside. Literal curly braces\ncan be inserted by doubling them like `{{` and `}}`.\n\nExamples:\n| ${to} = | Format String | To: {} <{}>                    | ${user}      | ${email} |\n| ${to} = | Format String | To: {name} <{email}>           | name=${name} | email=${email} |\n| ${to} = | Format String | To: {user.name} <{user.email}> | user=${user} |\n| ${xx} = | Format String | {:*^30}                        | centered     |\n| ${yy} = | Format String | {0:{width}{base}}              | ${42}        | base=X | width=10 |\n| ${zz} = | Format String | ${CURDIR}/template.txt         | positional   | named=value |",
       "shortdoc": "Formats a ``template`` using the given ``positional`` and ``named`` arguments.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 190
+      "lineno": 187
     },
     {
       "name": "Generate Random String",
@@ -268,8 +242,6 @@
         {
           "name": "length",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": "8",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -278,19 +250,18 @@
         {
           "name": "chars",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": "[LETTERS][NUMBERS]",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
           "repr": "chars=[LETTERS][NUMBERS]"
         }
       ],
+      "returnType": null,
       "doc": "Generates a string with a desired ``length`` from the given ``chars``.\n\n``length`` can be given as a number, a string representation of a number,\nor as a range of numbers, such as ``5-10``. When a range of values is given\nthe range will be selected by random within the range.\n\nThe population sequence ``chars`` contains the characters to use\nwhen generating the random string. It can contain any\ncharacters, and it is possible to use special markers\nexplained in the table below:\n\n|  = Marker =   |               = Explanation =                   |\n| ``[LOWER]``   | Lowercase ASCII characters from ``a`` to ``z``. |\n| ``[UPPER]``   | Uppercase ASCII characters from ``A`` to ``Z``. |\n| ``[LETTERS]`` | Lowercase and uppercase ASCII characters.       |\n| ``[NUMBERS]`` | Numbers from 0 to 9.                            |\n\nExamples:\n| ${ret} = | Generate Random String |\n| ${low} = | Generate Random String | 12 | [LOWER]         |\n| ${bin} = | Generate Random String | 8  | 01              |\n| ${hex} = | Generate Random String | 4  | [NUMBERS]abcdef |\n| ${rnd} = | Generate Random String | 5-10 | # Generates a string 5 to 10 characters long |\n\nGiving ``length`` as a range of values is new in Robot Framework 5.0.",
       "shortdoc": "Generates a string with a desired ``length`` from the given ``chars``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 599
+      "lineno": 595
     },
     {
       "name": "Get Line",
@@ -298,8 +269,6 @@
         {
           "name": "string",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -308,19 +277,18 @@
         {
           "name": "line_number",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
           "repr": "line_number"
         }
       ],
-      "doc": "Returns the specified line from the given ``string``.\n\nLine numbering starts from 0 and it is possible to use\nnegative indices to refer to lines from the end. The line is\nreturned without the newline character.\n\nExamples:\n| ${first} =    | Get Line | ${string} | 0  |\n| ${2nd last} = | Get Line | ${string} | -2 |\n\nUse `Split To Lines` if all lines are needed.",
+      "returnType": null,
+      "doc": "Returns the specified line from the given ``string``.\n\nLine numbering starts from 0, and it is possible to use\nnegative indices to refer to lines from the end. The line is\nreturned without the newline character.\n\nExamples:\n| ${first} =    | Get Line | ${string} | 0  |\n| ${2nd last} = | Get Line | ${string} | -2 |\n\nUse `Split To Lines` if all lines are needed.",
       "shortdoc": "Returns the specified line from the given ``string``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 255
+      "lineno": 250
     },
     {
       "name": "Get Line Count",
@@ -328,99 +296,170 @@
         {
           "name": "string",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
           "repr": "string"
         }
       ],
+      "returnType": null,
       "doc": "Returns and logs the number of lines in the given string.",
       "shortdoc": "Returns and logs the number of lines in the given string.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 222
+      "lineno": 217
     },
     {
       "name": "Get Lines Containing String",
       "args": [
         {
           "name": "string",
-          "type": null,
-          "types": [],
-          "typedocs": {},
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "string"
+          "repr": "string: str"
         },
         {
           "name": "pattern",
-          "type": null,
-          "types": [],
-          "typedocs": {},
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "pattern"
+          "repr": "pattern: str"
         },
         {
           "name": "case_insensitive",
-          "type": null,
-          "types": [],
-          "typedocs": {},
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "bool",
+                "typedoc": "boolean",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "None",
+                "typedoc": "None",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
+          "defaultValue": "None",
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": false,
+          "repr": "case_insensitive: bool | None = None"
+        },
+        {
+          "name": "ignore_case",
+          "type": {
+            "name": "bool",
+            "typedoc": "boolean",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "case_insensitive=False"
+          "repr": "ignore_case: bool = False"
         }
       ],
-      "doc": "Returns lines of the given ``string`` that contain the ``pattern``.\n\nThe ``pattern`` is always considered to be a normal string, not a glob\nor regexp pattern. A line matches if the ``pattern`` is found anywhere\non it.\n\nThe match is case-sensitive by default, but giving ``case_insensitive``\na true value makes it case-insensitive. The value is considered true\nif it is a non-empty string that is not equal to ``false``, ``none`` or\n``no``. If the value is not a string, its truth value is got directly\nin Python.\n\nLines are returned as one string catenated back together with\nnewlines. Possible trailing newline is never returned. The\nnumber of matching lines is automatically logged.\n\nExamples:\n| ${lines} = | Get Lines Containing String | ${result} | An example |\n| ${ret} =   | Get Lines Containing String | ${ret} | FAIL | case-insensitive |\n\nSee `Get Lines Matching Pattern` and `Get Lines Matching Regexp`\nif you need more complex pattern matching.",
+      "returnType": null,
+      "doc": "Returns lines of the given ``string`` that contain the ``pattern``.\n\nThe ``pattern`` is always considered to be a normal string, not a glob\nor regexp pattern. A line matches if the ``pattern`` is found anywhere\non it.\n\nThe match is case-sensitive by default, but that can be changed by\ngiving ``ignore_case`` a true value. This option is new in Robot\nFramework 7.0, but with older versions it is possible to use the\nnowadays deprecated ``case_insensitive`` argument.\n\nLines are returned as a string with lines joined together with\na newline. Possible trailing newline is never returned. The number\nof matching lines is automatically logged.\n\nExamples:\n| ${lines} = | Get Lines Containing String | ${result} | An example |\n| ${ret} =   | Get Lines Containing String | ${ret} | FAIL | ignore_case=True |\n\nSee `Get Lines Matching Pattern` and `Get Lines Matching Regexp`\nif you need more complex pattern matching.",
       "shortdoc": "Returns lines of the given ``string`` that contain the ``pattern``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 271
+      "lineno": 266
     },
     {
       "name": "Get Lines Matching Pattern",
       "args": [
         {
           "name": "string",
-          "type": null,
-          "types": [],
-          "typedocs": {},
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "string"
+          "repr": "string: str"
         },
         {
           "name": "pattern",
-          "type": null,
-          "types": [],
-          "typedocs": {},
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "pattern"
+          "repr": "pattern: str"
         },
         {
           "name": "case_insensitive",
-          "type": null,
-          "types": [],
-          "typedocs": {},
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "bool",
+                "typedoc": "boolean",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "None",
+                "typedoc": "None",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
+          "defaultValue": "None",
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": false,
+          "repr": "case_insensitive: bool | None = None"
+        },
+        {
+          "name": "ignore_case",
+          "type": {
+            "name": "bool",
+            "typedoc": "boolean",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "case_insensitive=False"
+          "repr": "ignore_case: bool = False"
         }
       ],
-      "doc": "Returns lines of the given ``string`` that match the ``pattern``.\n\nThe ``pattern`` is a _glob pattern_ where:\n| ``*``        | matches everything |\n| ``?``        | matches any single character |\n| ``[chars]``  | matches any character inside square brackets (e.g. ``[abc]`` matches either ``a``, ``b`` or ``c``) |\n| ``[!chars]`` | matches any character not inside square brackets |\n\nA line matches only if it matches the ``pattern`` fully.\n\nThe match is case-sensitive by default, but giving ``case_insensitive``\na true value makes it case-insensitive. The value is considered true\nif it is a non-empty string that is not equal to ``false``, ``none`` or\n``no``. If the value is not a string, its truth value is got directly\nin Python.\n\nLines are returned as one string catenated back together with\nnewlines. Possible trailing newline is never returned. The\nnumber of matching lines is automatically logged.\n\nExamples:\n| ${lines} = | Get Lines Matching Pattern | ${result} | Wild???? example |\n| ${ret} = | Get Lines Matching Pattern | ${ret} | FAIL: * | case_insensitive=true |\n\nSee `Get Lines Matching Regexp` if you need more complex\npatterns and `Get Lines Containing String` if searching\nliteral strings is enough.",
+      "returnType": null,
+      "doc": "Returns lines of the given ``string`` that match the ``pattern``.\n\nThe ``pattern`` is a _glob pattern_ where:\n| ``*``        | matches everything |\n| ``?``        | matches any single character |\n| ``[chars]``  | matches any character inside square brackets (e.g. ``[abc]`` matches either ``a``, ``b`` or ``c``) |\n| ``[!chars]`` | matches any character not inside square brackets |\n\nA line matches only if it matches the ``pattern`` fully.\n\nThe match is case-sensitive by default, but that can be changed by\ngiving ``ignore_case`` a true value. This option is new in Robot\nFramework 7.0, but with older versions it is possible to use the\nnowadays deprecated ``case_insensitive`` argument.\n\nLines are returned as a string with lines joined together with\na newline. Possible trailing newline is never returned. The number\nof matching lines is automatically logged.\n\nExamples:\n| ${lines} = | Get Lines Matching Pattern | ${result} | Wild???? example |\n| ${ret} = | Get Lines Matching Pattern | ${ret} | FAIL: * | ignore_case=True |\n\nSee `Get Lines Matching Regexp` if you need more complex\npatterns and `Get Lines Containing String` if searching\nliteral strings is enough.",
       "shortdoc": "Returns lines of the given ``string`` that match the ``pattern``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 302
+      "lineno": 300
     },
     {
       "name": "Get Lines Matching Regexp",
@@ -428,8 +467,6 @@
         {
           "name": "string",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -438,8 +475,6 @@
         {
           "name": "pattern",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -448,8 +483,6 @@
         {
           "name": "partial_match",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -458,19 +491,18 @@
         {
           "name": "flags",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
           "repr": "flags=None"
         }
       ],
-      "doc": "Returns lines of the given ``string`` that match the regexp ``pattern``.\n\nSee `BuiltIn.Should Match Regexp` for more information about\nPython regular expression syntax in general and how to use it\nin Robot Framework data in particular.\n\nLines match only if they match the pattern fully by default, but\npartial matching can be enabled by giving the ``partial_match``\nargument a true value. The value is considered true\nif it is a non-empty string that is not equal to ``false``, ``none`` or\n``no``. If the value is not a string, its truth value is got directly\nin Python.\n\nIf the pattern is empty, it matches only empty lines by default.\nWhen partial matching is enabled, empty pattern matches all lines.\n\nPossible flags altering how the expression is parsed (e.g. ``re.IGNORECASE``,\n``re.VERBOSE``) can be given using the ``flags`` argument (e.g.\n``flags=IGNORECASE | VERBOSE``) or embedded to the pattern (e.g.\n``(?ix)pattern``).\n\nLines are returned as one string concatenated back together with\nnewlines. Possible trailing newline is never returned. The\nnumber of matching lines is automatically logged.\n\nExamples:\n| ${lines} = | Get Lines Matching Regexp | ${result} | Reg\\\\w{3} example |\n| ${lines} = | Get Lines Matching Regexp | ${result} | Reg\\\\w{3} example | partial_match=true |\n| ${ret} =   | Get Lines Matching Regexp | ${ret}    | (?i)FAIL: .* |\n| ${ret} =   | Get Lines Matching Regexp | ${ret}    | FAIL: .* | flags=IGNORECASE |\n\nSee `Get Lines Matching Pattern` and `Get Lines Containing String` if you\ndo not need the full regular expression powers (and complexity).\n\nThe ``flags`` argument is new in Robot Framework 6.0.",
+      "returnType": null,
+      "doc": "Returns lines of the given ``string`` that match the regexp ``pattern``.\n\nSee `BuiltIn.Should Match Regexp` for more information about\nPython regular expression syntax in general and how to use it\nin Robot Framework data in particular.\n\nLines match only if they match the pattern fully by default, but\npartial matching can be enabled by giving the ``partial_match``\nargument a true value.\n\nIf the pattern is empty, it matches only empty lines by default.\nWhen partial matching is enabled, empty pattern matches all lines.\n\nPossible flags altering how the expression is parsed (e.g. ``re.IGNORECASE``,\n``re.VERBOSE``) can be given using the ``flags`` argument (e.g.\n``flags=IGNORECASE | VERBOSE``) or embedded to the pattern (e.g.\n``(?ix)pattern``).\n\nLines are returned as one string concatenated back together with\nnewlines. Possible trailing newline is never returned. The\nnumber of matching lines is automatically logged.\n\nExamples:\n| ${lines} = | Get Lines Matching Regexp | ${result} | Reg\\\\w{3} example |\n| ${lines} = | Get Lines Matching Regexp | ${result} | Reg\\\\w{3} example | partial_match=true |\n| ${ret} =   | Get Lines Matching Regexp | ${ret}    | (?i)FAIL: .* |\n| ${ret} =   | Get Lines Matching Regexp | ${ret}    | FAIL: .* | flags=IGNORECASE |\n\nSee `Get Lines Matching Pattern` and `Get Lines Containing String` if you\ndo not need the full regular expression powers (and complexity).\n\nThe ``flags`` argument is new in Robot Framework 6.0.",
       "shortdoc": "Returns lines of the given ``string`` that match the regexp ``pattern``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 338
+      "lineno": 339
     },
     {
       "name": "Get Regexp Matches",
@@ -478,8 +510,6 @@
         {
           "name": "string",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -488,8 +518,6 @@
         {
           "name": "pattern",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -498,8 +526,6 @@
         {
           "name": "groups",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
@@ -508,19 +534,18 @@
         {
           "name": "flags",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": "None",
           "kind": "NAMED_ONLY",
           "required": false,
           "repr": "flags=None"
         }
       ],
+      "returnType": null,
       "doc": "Returns a list of all non-overlapping matches in the given string.\n\n``string`` is the string to find matches from and ``pattern`` is the\nregular expression. See `BuiltIn.Should Match Regexp` for more\ninformation about Python regular expression syntax in general and how\nto use it in Robot Framework data in particular.\n\nIf no groups are used, the returned list contains full matches. If one\ngroup is used, the list contains only contents of that group. If\nmultiple groups are used, the list contains tuples that contain\nindividual group contents. All groups can be given as indexes (starting\nfrom 1) and named groups also as names.\n\nPossible flags altering how the expression is parsed (e.g. ``re.IGNORECASE``,\n``re.MULTILINE``) can be given using the ``flags`` argument (e.g.\n``flags=IGNORECASE | MULTILINE``) or embedded to the pattern (e.g.\n``(?im)pattern``).\n\nExamples:\n| ${no match} =    | Get Regexp Matches | the string | xxx     |\n| ${matches} =     | Get Regexp Matches | the string | t..     |\n| ${matches} =     | Get Regexp Matches | the string | T..     | flags=IGNORECASE |\n| ${one group} =   | Get Regexp Matches | the string | t(..)   | 1 |\n| ${named group} = | Get Regexp Matches | the string | t(?P<name>..) | name |\n| ${two groups} =  | Get Regexp Matches | the string | t(.)(.) | 1 | 2 |\n=>\n| ${no match} = []\n| ${matches} = ['the', 'tri']\n| ${one group} = ['he', 'ri']\n| ${named group} = ['he', 'ri']\n| ${two groups} = [('h', 'e'), ('r', 'i')]\n\nThe ``flags`` argument is new in Robot Framework 6.0.",
       "shortdoc": "Returns a list of all non-overlapping matches in the given string.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 387
+      "lineno": 383
     },
     {
       "name": "Get Substring",
@@ -528,8 +553,6 @@
         {
           "name": "string",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -538,8 +561,6 @@
         {
           "name": "start",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -548,19 +569,18 @@
         {
           "name": "end",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
           "repr": "end=None"
         }
       ],
-      "doc": "Returns a substring from ``start`` index to ``end`` index.\n\nThe ``start`` index is inclusive and ``end`` is exclusive.\nIndexing starts from 0, and it is possible to use\nnegative indices to refer to characters from the end.\n\nExamples:\n| ${ignore first} = | Get Substring | ${string} | 1  |    |\n| ${ignore last} =  | Get Substring | ${string} |    | -1 |\n| ${5th to 10th} =  | Get Substring | ${string} | 4  | 10 |\n| ${first two} =    | Get Substring | ${string} |    | 1  |\n| ${last two} =     | Get Substring | ${string} | -2 |    |",
+      "returnType": null,
+      "doc": "Returns a substring from ``start`` index to ``end`` index.\n\nThe ``start`` index is inclusive and ``end`` is exclusive.\nIndexing starts from 0, and it is possible to use\nnegative indices to refer to characters from the end.\n\nExamples:\n| ${ignore first} = | Get Substring | ${string} | 1  |    |\n| ${ignore last} =  | Get Substring | ${string} | 0  | -1 |\n| ${5th to 10th} =  | Get Substring | ${string} | 4  | 10 |\n| ${first two} =    | Get Substring | ${string} | 0  | 1  |\n| ${last two} =     | Get Substring | ${string} | -2 |    |",
       "shortdoc": "Returns a substring from ``start`` index to ``end`` index.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 642
+      "lineno": 638
     },
     {
       "name": "Remove String",
@@ -568,8 +588,6 @@
         {
           "name": "string",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -578,19 +596,18 @@
         {
           "name": "removables",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
           "repr": "*removables"
         }
       ],
+      "returnType": null,
       "doc": "Removes all ``removables`` from the given ``string``.\n\n``removables`` are used as literal strings. Each removable will be\nmatched to a temporary string from which preceding removables have\nbeen already removed. See second example below.\n\nUse `Remove String Using Regexp` if more powerful pattern matching is\nneeded. If only a certain number of matches should be removed,\n`Replace String` or `Replace String Using Regexp` can be used.\n\nA modified version of the string is returned and the original\nstring is not altered.\n\nExamples:\n| ${str} =        | Remove String | Robot Framework | work   |\n| Should Be Equal | ${str}        | Robot Frame     |\n| ${str} =        | Remove String | Robot Framework | o | bt |\n| Should Be Equal | ${str}        | R Framewrk      |",
       "shortdoc": "Removes all ``removables`` from the given ``string``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 484
+      "lineno": 480
     },
     {
       "name": "Remove String Using Regexp",
@@ -598,8 +615,6 @@
         {
           "name": "string",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -608,8 +623,6 @@
         {
           "name": "patterns",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
@@ -618,19 +631,18 @@
         {
           "name": "flags",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": "None",
           "kind": "NAMED_ONLY",
           "required": false,
           "repr": "flags=None"
         }
       ],
+      "returnType": null,
       "doc": "Removes ``patterns`` from the given ``string``.\n\nThis keyword is otherwise identical to `Remove String`, but\nthe ``patterns`` to search for are considered to be a regular\nexpression. See `Replace String Using Regexp` for more information\nabout the regular expression syntax. That keyword can also be\nused if there is a need to remove only a certain number of\noccurrences.\n\nPossible flags altering how the expression is parsed (e.g. ``re.IGNORECASE``,\n``re.MULTILINE``) can be given using the ``flags`` argument (e.g.\n``flags=IGNORECASE | MULTILINE``) or embedded to the pattern (e.g.\n``(?im)pattern``).\n\nThe ``flags`` argument is new in Robot Framework 6.0.",
       "shortdoc": "Removes ``patterns`` from the given ``string``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 508
+      "lineno": 504
     },
     {
       "name": "Replace String",
@@ -638,8 +650,6 @@
         {
           "name": "string",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -648,8 +658,6 @@
         {
           "name": "search_for",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -658,8 +666,6 @@
         {
           "name": "replace_with",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -668,19 +674,18 @@
         {
           "name": "count",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": "-1",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
           "repr": "count=-1"
         }
       ],
+      "returnType": null,
       "doc": "Replaces ``search_for`` in the given ``string`` with ``replace_with``.\n\n``search_for`` is used as a literal string. See `Replace String\nUsing Regexp` if more powerful pattern matching is needed.\nIf you need to just remove a string see `Remove String`.\n\nIf the optional argument ``count`` is given, only that many\noccurrences from left are replaced. Negative ``count`` means\nthat all occurrences are replaced (default behaviour) and zero\nmeans that nothing is done.\n\nA modified version of the string is returned and the original\nstring is not altered.\n\nExamples:\n| ${str} =        | Replace String | Hello, world!  | world | tellus   |\n| Should Be Equal | ${str}         | Hello, tellus! |       |          |\n| ${str} =        | Replace String | Hello, world!  | l     | ${EMPTY} | count=1 |\n| Should Be Equal | ${str}         | Helo, world!   |       |          |",
       "shortdoc": "Replaces ``search_for`` in the given ``string`` with ``replace_with``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 432
+      "lineno": 428
     },
     {
       "name": "Replace String Using Regexp",
@@ -688,8 +693,6 @@
         {
           "name": "string",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -698,8 +701,6 @@
         {
           "name": "pattern",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -708,8 +709,6 @@
         {
           "name": "replace_with",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -718,8 +717,6 @@
         {
           "name": "count",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": "-1",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -728,19 +725,18 @@
         {
           "name": "flags",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
           "repr": "flags=None"
         }
       ],
+      "returnType": null,
       "doc": "Replaces ``pattern`` in the given ``string`` with ``replace_with``.\n\nThis keyword is otherwise identical to `Replace String`, but\nthe ``pattern`` to search for is considered to be a regular\nexpression.  See `BuiltIn.Should Match Regexp` for more\ninformation about Python regular expression syntax in general\nand how to use it in Robot Framework data in particular.\n\nPossible flags altering how the expression is parsed (e.g. ``re.IGNORECASE``,\n``re.MULTILINE``) can be given using the ``flags`` argument (e.g.\n``flags=IGNORECASE | MULTILINE``) or embedded to the pattern (e.g.\n``(?im)pattern``).\n\nIf you need to just remove a string see `Remove String Using Regexp`.\n\nExamples:\n| ${str} = | Replace String Using Regexp | ${str} | 20\\\\d\\\\d-\\\\d\\\\d-\\\\d\\\\d | <DATE> |\n| ${str} = | Replace String Using Regexp | ${str} | (Hello|Hi) | ${EMPTY} | count=1 |\n\nThe ``flags`` argument is new in Robot Framework 6.0.",
       "shortdoc": "Replaces ``pattern`` in the given ``string`` with ``replace_with``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 456
+      "lineno": 452
     },
     {
       "name": "Should Be Byte String",
@@ -748,8 +744,6 @@
         {
           "name": "item",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -758,19 +752,18 @@
         {
           "name": "msg",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
           "repr": "msg=None"
         }
       ],
+      "returnType": null,
       "doc": "Fails if the given ``item`` is not a byte string.\n\nUse `Should Be String` if you want to verify the ``item`` is a string.\n\nThe default error message can be overridden with the optional ``msg`` argument.",
       "shortdoc": "Fails if the given ``item`` is not a byte string.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 716
+      "lineno": 711
     },
     {
       "name": "Should Be Lower Case",
@@ -778,8 +771,6 @@
         {
           "name": "string",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -788,19 +779,18 @@
         {
           "name": "msg",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
           "repr": "msg=None"
         }
       ],
+      "returnType": null,
       "doc": "Fails if the given ``string`` is not in lower case.\n\nFor example, ``'string'`` and ``'with specials!'`` would pass, and\n``'String'``, ``''`` and ``' '`` would fail.\n\nThe default error message can be overridden with the optional\n``msg`` argument.\n\nSee also `Should Be Upper Case` and `Should Be Title Case`.",
       "shortdoc": "Fails if the given ``string`` is not in lower case.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 726
+      "lineno": 721
     },
     {
       "name": "Should Be String",
@@ -808,8 +798,6 @@
         {
           "name": "item",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -818,19 +806,18 @@
         {
           "name": "msg",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
           "repr": "msg=None"
         }
       ],
+      "returnType": null,
       "doc": "Fails if the given ``item`` is not a string.\n\nThe default error message can be overridden with the optional ``msg`` argument.",
       "shortdoc": "Fails if the given ``item`` is not a string.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 691
+      "lineno": 687
     },
     {
       "name": "Should Be Title Case",
@@ -838,8 +825,6 @@
         {
           "name": "string",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -848,8 +833,6 @@
         {
           "name": "msg",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -858,19 +841,18 @@
         {
           "name": "exclude",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
           "repr": "exclude=None"
         }
       ],
+      "returnType": null,
       "doc": "Fails if given ``string`` is not title.\n\n``string`` is a title cased string if there is at least one upper case\nletter in each word.\n\nFor example, ``'This Is Title'`` and ``'OK, Give Me My iPhone'``\nwould pass. ``'all words lower'`` and ``'Word In lower'`` would fail.\n\nThis logic changed in Robot Framework 4.0 to be compatible with\n`Convert to Title Case`. See `Convert to Title Case` for title case\nalgorithm and reasoning.\n\nThe default error message can be overridden with the optional\n``msg`` argument.\n\nWords can be explicitly excluded with the optional ``exclude`` argument.\n\nExplicitly excluded words can be given as a list or as a string with\nwords separated by a comma and an optional space. Excluded words are\nactually considered to be regular expression patterns, so it is\npossible to use something like \"example[.!?]?\" to match the word\n\"example\" on it own and also if followed by \".\", \"!\" or \"?\".\nSee `BuiltIn.Should Match Regexp` for more information about Python\nregular expression syntax in general and how to use it in Robot\nFramework data in particular.\n\nSee also `Should Be Upper Case` and `Should Be Lower Case`.",
       "shortdoc": "Fails if given ``string`` is not title.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 755
+      "lineno": 750
     },
     {
       "name": "Should Be Unicode String",
@@ -878,8 +860,6 @@
         {
           "name": "item",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -888,19 +868,18 @@
         {
           "name": "msg",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
           "repr": "msg=None"
         }
       ],
+      "returnType": null,
       "doc": "Fails if the given ``item`` is not a Unicode string.\n\nOn Python 3 this keyword behaves exactly the same way `Should Be String`.\nThat keyword should be used instead and this keyword will be deprecated.",
       "shortdoc": "Fails if the given ``item`` is not a Unicode string.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 707
+      "lineno": 703
     },
     {
       "name": "Should Be Upper Case",
@@ -908,8 +887,6 @@
         {
           "name": "string",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -918,19 +895,18 @@
         {
           "name": "msg",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
           "repr": "msg=None"
         }
       ],
+      "returnType": null,
       "doc": "Fails if the given ``string`` is not in upper case.\n\nFor example, ``'STRING'`` and ``'WITH SPECIALS!'`` would pass, and\n``'String'``, ``''`` and ``' '`` would fail.\n\nThe default error message can be overridden with the optional\n``msg`` argument.\n\nSee also `Should Be Title Case` and `Should Be Lower Case`.",
       "shortdoc": "Fails if the given ``string`` is not in upper case.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 740
+      "lineno": 735
     },
     {
       "name": "Should Not Be String",
@@ -938,8 +914,6 @@
         {
           "name": "item",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -948,19 +922,18 @@
         {
           "name": "msg",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
           "repr": "msg=None"
         }
       ],
+      "returnType": null,
       "doc": "Fails if the given ``item`` is a string.\n\nThe default error message can be overridden with the optional ``msg`` argument.",
       "shortdoc": "Fails if the given ``item`` is a string.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 699
+      "lineno": 695
     },
     {
       "name": "Split String",
@@ -968,8 +941,6 @@
         {
           "name": "string",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -978,8 +949,6 @@
         {
           "name": "separator",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -988,19 +957,18 @@
         {
           "name": "max_split",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": "-1",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
           "repr": "max_split=-1"
         }
       ],
+      "returnType": null,
       "doc": "Splits the ``string`` using ``separator`` as a delimiter string.\n\nIf a ``separator`` is not given, any whitespace string is a\nseparator. In that case also possible consecutive whitespace\nas well as leading and trailing whitespace is ignored.\n\nSplit words are returned as a list. If the optional\n``max_split`` is given, at most ``max_split`` splits are done, and\nthe returned list will have maximum ``max_split + 1`` elements.\n\nExamples:\n| @{words} =         | Split String | ${string} |\n| @{words} =         | Split String | ${string} | ,${SPACE} |\n| ${pre} | ${post} = | Split String | ${string} | ::    | 1 |\n\nSee `Split String From Right` if you want to start splitting\nfrom right, and `Fetch From Left` and `Fetch From Right` if\nyou only want to get first/last part of the string.",
       "shortdoc": "Splits the ``string`` using ``separator`` as a delimiter string.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 530
+      "lineno": 526
     },
     {
       "name": "Split String From Right",
@@ -1008,8 +976,6 @@
         {
           "name": "string",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1018,8 +984,6 @@
         {
           "name": "separator",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -1028,19 +992,18 @@
         {
           "name": "max_split",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": "-1",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
           "repr": "max_split=-1"
         }
       ],
+      "returnType": null,
       "doc": "Splits the ``string`` using ``separator`` starting from right.\n\nSame as `Split String`, but splitting is started from right. This has\nan effect only when ``max_split`` is given.\n\nExamples:\n| ${first} | ${rest} = | Split String            | ${string} | - | 1 |\n| ${rest}  | ${last} = | Split String From Right | ${string} | - | 1 |",
       "shortdoc": "Splits the ``string`` using ``separator`` starting from right.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 556
+      "lineno": 552
     },
     {
       "name": "Split String To Characters",
@@ -1048,19 +1011,18 @@
         {
           "name": "string",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
           "repr": "string"
         }
       ],
+      "returnType": null,
       "doc": "Splits the given ``string`` to characters.\n\nExample:\n| @{characters} = | Split String To Characters | ${string} |",
       "shortdoc": "Splits the given ``string`` to characters.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 571
+      "lineno": 567
     },
     {
       "name": "Split To Lines",
@@ -1068,8 +1030,6 @@
         {
           "name": "string",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1078,8 +1038,6 @@
         {
           "name": "start",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": "0",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -1088,19 +1046,18 @@
         {
           "name": "end",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
           "repr": "end=None"
         }
       ],
+      "returnType": null,
       "doc": "Splits the given string to lines.\n\nIt is possible to get only a selection of lines from ``start``\nto ``end`` so that ``start`` index is inclusive and ``end`` is\nexclusive. Line numbering starts from 0, and it is possible to\nuse negative indices to refer to lines from the end.\n\nLines are returned without the newlines. The number of\nreturned lines is automatically logged.\n\nExamples:\n| @{lines} =        | Split To Lines | ${manylines} |    |    |\n| @{ignore first} = | Split To Lines | ${manylines} | 1  |    |\n| @{ignore last} =  | Split To Lines | ${manylines} |    | -1 |\n| @{5th to 10th} =  | Split To Lines | ${manylines} | 4  | 10 |\n| @{first two} =    | Split To Lines | ${manylines} |    | 1  |\n| @{last two} =     | Split To Lines | ${manylines} | -2 |    |\n\nUse `Get Line` if you only need to get a single line.",
       "shortdoc": "Splits the given string to lines.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 228
+      "lineno": 223
     },
     {
       "name": "Strip String",
@@ -1108,8 +1065,6 @@
         {
           "name": "string",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
@@ -1118,8 +1073,6 @@
         {
           "name": "mode",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": "both",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
@@ -1128,24 +1081,59 @@
         {
           "name": "characters",
           "type": null,
-          "types": [],
-          "typedocs": {},
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
           "repr": "characters=None"
         }
       ],
+      "returnType": null,
       "doc": "Remove leading and/or trailing whitespaces from the given string.\n\n``mode`` is either ``left`` to remove leading characters, ``right`` to\nremove trailing characters, ``both`` (default) to remove the\ncharacters from both sides of the string or ``none`` to return the\nunmodified string.\n\nIf the optional ``characters`` is given, it must be a string and the\ncharacters in the string will be stripped in the string. Please note,\nthat this is not a substring to be removed but a list of characters,\nsee the example below.\n\nExamples:\n| ${stripped}=  | Strip String | ${SPACE}Hello${SPACE} | |\n| Should Be Equal | ${stripped} | Hello | |\n| ${stripped}=  | Strip String | ${SPACE}Hello${SPACE} | mode=left |\n| Should Be Equal | ${stripped} | Hello${SPACE} | |\n| ${stripped}=  | Strip String | aabaHelloeee | characters=abe |\n| Should Be Equal | ${stripped} | Hello | |",
       "shortdoc": "Remove leading and/or trailing whitespaces from the given string.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 661
+      "lineno": 657
     }
   ],
-  "dataTypes": {
-    "enums": [],
-    "typedDicts": []
-  },
-  "typedocs": []
+  "typedocs": [
+    {
+      "type": "Standard",
+      "name": "boolean",
+      "doc": "Strings ``TRUE``, ``YES``, ``ON`` and ``1`` are converted to Boolean ``True``,\nthe empty string as well as strings ``FALSE``, ``NO``, ``OFF`` and ``0``\nare converted to Boolean ``False``, and the string ``NONE`` is converted\nto the Python ``None`` object. Other strings and other accepted values are\npassed as-is, allowing keywords to handle them specially if\nneeded. All string comparisons are case-insensitive.\n\nExamples: ``TRUE`` (converted to ``True``), ``off`` (converted to ``False``),\n``example`` (used as-is)\n",
+      "usages": [
+        "Get Lines Containing String",
+        "Get Lines Matching Pattern"
+      ],
+      "accepts": [
+        "string",
+        "integer",
+        "float",
+        "None"
+      ]
+    },
+    {
+      "type": "Standard",
+      "name": "None",
+      "doc": "String ``NONE`` (case-insensitive) is converted to Python ``None`` object.\nOther values cause an error.\n",
+      "usages": [
+        "Get Lines Containing String",
+        "Get Lines Matching Pattern"
+      ],
+      "accepts": [
+        "string"
+      ]
+    },
+    {
+      "type": "Standard",
+      "name": "string",
+      "doc": "All arguments are converted to Unicode strings.",
+      "usages": [
+        "Get Lines Containing String",
+        "Get Lines Matching Pattern"
+      ],
+      "accepts": [
+        "Any"
+      ]
+    }
+  ]
 }
