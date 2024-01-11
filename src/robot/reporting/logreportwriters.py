@@ -56,7 +56,7 @@ class LogWriter(_LogReportWriter):
     def _write_split_log(self, index, keywords, strings, path: Path):
         with file_writer(path, usage=self.usage) as outfile:
             writer = SplitLogWriter(outfile)
-            writer.write(keywords, strings, index, path.stem)
+            writer.write(keywords, strings, index, path.name)
 
 
 class ReportWriter(_LogReportWriter):

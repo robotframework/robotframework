@@ -49,6 +49,9 @@ Outputs Into Different Dirs
 Split Log
     Run Tests Without Processing Output    --outputdir ${CLI OUTDIR} --output o.xml --report r.html --log l.html --splitlog    ${TESTFILE}
     Directory Should Contain    ${CLI OUTDIR}    l-1.js    l-2.js    l.html    o.xml    r.html
+    FOR    ${name}    IN    l-1.js    l-2.js
+        File Should Contain    ${CLI OUTDIR}/${name}    window.fileLoading.notify("${name}");
+    END
 
 Non-writable Output File
     Create Directory    ${CLI OUTDIR}/diréctöry.xml
