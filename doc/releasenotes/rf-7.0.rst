@@ -2,6 +2,12 @@
 Robot Framework 7.0
 ===================
 
+
+..
+     GitHub fails to render this file at the moment.
+     View rf-7.0.pdf until the problem is resolved.
+
+
 .. default-role:: code
 
 `Robot Framework`_ 7.0 is a new major release with highly enhanced listener interface
