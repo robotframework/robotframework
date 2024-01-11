@@ -50,7 +50,7 @@ command in a terminal:
 .. sourcecode:: bash
 
   $ python --version
-  Python 3.8.10
+  Python 3.10.13
 
 Notice that if your distribution provides also older Python 2, running `python`
 may use that. To use Python 3, you can use `python3` command or even more version
@@ -60,10 +60,10 @@ one to use:
 
 .. sourcecode:: bash
 
-  $ python3.9 --version
-  Python 3.9.10
-  $ python3.10 --version
-  Python 3.10.2
+  $ python3.11 --version
+  Python 3.11.7
+  $ python3.12 --version
+  Python 3.12.1
 
 Installing Robot Framework directly under the system provided Python
 has a risk that possible problems can affect the whole Python installation
@@ -92,7 +92,7 @@ added to `PATH`, you can open the command prompt and execute `python --version`:
 .. sourcecode:: batch
 
   C:\>python --version
-  Python 3.9.4
+  Python 3.10.9
 
 If you install multiple Python versions on Windows, the version that is used
 when you execute `python` is the one first in `PATH`. If you need to use others,
@@ -101,9 +101,9 @@ the easiest way is using the `py launcher`__:
 .. sourcecode:: batch
 
   C:\>py --version
-  Python 3.9.4
-  C:\>py -3.10 --version
-  Python 3.10.2
+  Python 3.10.9
+  C:\>py -3.12 --version
+  Python 3.12.1
 
 __ https://docs.python.org/3/using/windows.html
 __ https://docs.python.org/3/using/windows.html#windows-full
@@ -203,18 +203,18 @@ Examples on Linux:
 .. sourcecode:: bash
 
   $ pip --version
-  pip 20.2 from ... (python 3.8)
-  $ python3.10 -m pip --version
-  pip 20.2 from ... (python 3.10)
+  pip 23.2.1 from ... (python 3.10)
+  $ python3.12 -m pip --version
+  pip 23.3.1 from ... (python 3.12)
 
 Examples on Windows:
 
 .. sourcecode:: batch
 
   C:\> pip --version
-  pip 20.2.2 from ... (python 3.9)
-  C:\> py -m 3.10 -m pip --version
-  pip 20.2.1 from ... (python 3.10)
+  pip 23.2.1 from ... (python 3.10)
+  C:\> py -m 3.12 -m pip --version
+  pip 23.3.2 from ... (python 3.12)
 
 In the subsequent sections pip is always run using the `pip` command. You may
 need to use some of the other approaches explained above in your environment.
@@ -241,10 +241,10 @@ __ PyPI_
     pip install --upgrade --pre robotframework
 
     # Install a specific version
-    pip install robotframework==5.0
+    pip install robotframework==7.0
 
     # Install separately downloaded package (no network connection needed)
-    pip install robotframework-5.0-py3-none-any.whl
+    pip install robotframework-7.0-py3-none-any.whl
 
     # Install latest (possibly unreleased) code directly from GitHub
     pip install https://github.com/robotframework/robotframework/archive/master.zip
@@ -283,7 +283,7 @@ the following command:
 .. sourcecode:: bash
 
    $ robot --version
-   Robot Framework 5.0 (Python 3.8.10 on linux)
+   Robot Framework 7.0 (Python 3.10.3 on linux)
 
 If running these commands fails with a message saying that the command is
 not found or recognized, a good first step is double-checking the PATH_
@@ -296,11 +296,11 @@ version.
 
 .. sourcecode:: bash
 
-   $ python3.10 -m robot --version
-   Robot Framework 5.0 (Python 3.10.2 on linux)
+   $ python3.12 -m robot --version
+   Robot Framework 7.0 (Python 3.12.1 on linux)
 
-   C:\>py -3.10 -m robot --version
-   Robot Framework 5.0 (Python 3.10.3 on win32)
+   C:\>py -3.11 -m robot --version
+   Robot Framework 7.0 (Python 3.11.7 on win32)
 
 Virtual environments
 --------------------
