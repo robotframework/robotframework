@@ -57,10 +57,6 @@ to install exactly this version. Alternatively you can download the package
 from PyPI_ and install it manually. For more details and other installation
 approaches, see the `installation instructions`_.
 
-.. contents::
-   :depth: 2
-   :local:
-
 Most important enhancements
 ===========================
 

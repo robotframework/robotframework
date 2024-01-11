@@ -19,7 +19,6 @@ and possible bugs submitted to the `issue tracker`_.
 .. _PyPI: https://pypi.python.org/pypi/robotframework
 .. _issue tracker milestone: https://github.com/robotframework/robotframework/milestone/64
 .. _issue tracker: https://github.com/robotframework/robotframework/issues
-.. _robotframework-users: http://groups.google.com/group/robotframework-users
 .. _Slack: http://slack.robotframework.org
 .. _Robot Framework Slack: Slack_
 .. _installation instructions: ../../INSTALL.rst
@@ -47,10 +46,6 @@ to install exactly this version. Alternatively you can download the package
 from PyPI_ and install it manually. For more details and other installation
 approaches, see the `installation instructions`_.
 
-.. contents::
-   :depth: 2
-   :local:
-
 Most important enhancements
 ===========================
 
@@ -64,6 +59,7 @@ Most important enhancements
   tools and libraries in the ecosystem. All profits from the conference will be
   used for future Robot Framework development.
 
+.. _Pekka Klärck: https://github.com/pekkaklarck
 __ https://robocon.io
 __ https://robocon.io/#live-opening-the-conference
 __ https://robocon.io/#online-opening-the-conference-live
@@ -828,8 +824,7 @@ and its over 60 member organizations. If your organization is using Robot Framew
 and benefiting from it, consider joining the foundation to support its
 development as well.
 
-Robot Framework 7.0 team funded by the foundation consists of
-`Pekka Klärck <https://github.com/pekkaklarck>`_ and
+Robot Framework 7.0 team funded by the foundation consists of `Pekka Klärck`_ and
 `Janne Härkönen <https://github.com/yanne>`_ (part time).
 In addition to work done by them, the community has provided some great contributions:
 
