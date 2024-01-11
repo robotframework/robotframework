@@ -675,7 +675,7 @@ to use the escaped__ format like `\-tag`.
 
 .. note:: The `-tag` syntax for removing common tags is new in Robot Framework 7.0.
 
-__ escaping
+__ escaping_
 
 Deprecation of :setting:`Force Tags` and :setting:`Default Tags`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
