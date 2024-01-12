@@ -15,12 +15,16 @@ function toggleKeyword(kwId) {
     toggleElement(kwId, ['keyword']);
 }
 
-function toggleElement(elementId, childrenNames) {
+function toggleErrors(elementId) {
     var element = $('#' + elementId);
     var children = element.children('.children');
     children.toggle(100, '', function () {
         element.children('.element-header').toggleClass('closed');
     });
+}
+
+function toggleElement(elementId, childrenNames) {
+    toggleErrors(elementId);
     populateChildren(elementId, children, childrenNames);
 }
 
