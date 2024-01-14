@@ -15,7 +15,7 @@ function toggleKeyword(kwId) {
     toggleElement(kwId, ['keyword']);
 }
 
-function toggleErrors(elementId) {
+function toggleSymbols(elementId) {
     var element = $('#' + elementId);
     var children = element.children('.children');
     children.toggle(100, '', function () {
@@ -24,7 +24,7 @@ function toggleErrors(elementId) {
 }
 
 function toggleElement(elementId, childrenNames) {
-    toggleErrors(elementId);
+    toggleSymbols(elementId);
     populateChildren(elementId, children, childrenNames);
 }
 
