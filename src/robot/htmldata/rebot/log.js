@@ -21,10 +21,11 @@ function toggleSymbols(elementId) {
     children.toggle(100, '', function () {
         element.children('.element-header').toggleClass('closed');
     });
+    return children;
 }
 
 function toggleElement(elementId, childrenNames) {
-    toggleSymbols(elementId);
+    var children = toggleSymbols(elementId);
     populateChildren(elementId, children, childrenNames);
 }
 
