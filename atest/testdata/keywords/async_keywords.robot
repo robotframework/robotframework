@@ -17,10 +17,10 @@ Works Using Gather
 Long Async Tasks Run In Background
     [Tags]    require-py3.7
     ${hanger} =     Create Hanger
-    Basic Async Test
+    Sleep    1s
     Stop task From Hanger   ${hanger}
     ${size} =    Evaluate    len($hanger.ticks)
-    Should Be True    ${size} > 1
+    Should Be True    ${size} > 2
 
 Builtin Call From Library Works
     ${result} =    Run Keyword Using Builtin

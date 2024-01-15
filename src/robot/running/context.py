@@ -15,6 +15,7 @@
 
 import inspect
 import asyncio
+import threading
 from contextlib import contextmanager
 
 from robot.errors import DataError, ExecutionFailed
@@ -24,6 +25,7 @@ class Asynchronous:
 
     def __init__(self):
         self._loop_ref = None
+        self._thread = None
 
     @property
     def event_loop(self):
@@ -33,17 +35,23 @@ class Asynchronous:
 
     def close_loop(self):
         if self._loop_ref:
+            self._stop_background_loop()
             self._loop_ref.close()
 
     def run_until_complete(self, coroutine):
+        self._stop_background_loop()
         task = self.event_loop.create_task(coroutine)
         try:
-            return self.event_loop.run_until_complete(task)
+            result = self.event_loop.run_until_complete(task)
+            self._start_background_loop()
+            return result
         except ExecutionFailed as e:
             if e.dont_continue:
                 task.cancel()
                 # wait for task and its children to cancel
                 self.event_loop.run_until_complete(asyncio.gather(task, return_exceptions=True))
+            if not e.exit:
+                self._start_background_loop()
             raise e
 
     def is_loop_required(self, obj):
@@ -57,6 +65,14 @@ class Asynchronous:
         else:
             return True
 
+    def _start_background_loop(self):
+        self._thread = threading.Thread(target=self.event_loop.run_forever)
+        self._thread.start()
+
+    def _stop_background_loop(self):
+        if self._thread and self._thread.is_alive():
+            self.event_loop.call_soon_threadsafe(self.event_loop.stop)
+            self._thread.join()
 
 class ExecutionContexts:
 
