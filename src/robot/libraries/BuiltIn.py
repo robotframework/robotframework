@@ -27,8 +27,8 @@ from robot.errors import (BreakLoop, ContinueLoop, DataError, ExecutionFailed,
 from robot.running import Keyword, RUN_KW_REGISTER
 from robot.running.context import EXECUTION_CONTEXTS
 from robot.utils import (DotDict, escape, format_assign_message, get_error_message,
-                         get_time, html_escape, is_falsy, is_integer, is_list_like,
-                         is_string, is_truthy, Matcher, normalize,
+                         get_time, html_escape, is_dict_like, is_falsy, is_integer,
+                         is_list_like, is_string, is_truthy, Matcher, normalize,
                          normalize_whitespace, parse_re_flags, parse_time, prepr,
                          plural_or_not as s, RERAISED_EXCEPTIONS, safe_str,
                          secs_to_timestr, seq2str, split_from_equals,
@@ -1907,6 +1907,11 @@ class _RunKeyword(_BuiltInBase):
             data = lineno = None
             result = ctx.test or (ctx.suite.setup if not ctx.suite.has_tests
                                   else ctx.suite.teardown)
+        # In RF 7, kw.run expands *args, **kwargs. To keep the previous behavior of not
+        # expanding arguments (i.e. run_keyword only supports positional args) the
+        # specific backwards incompatible case is handled
+        if len(args) == 2 and is_list_like(args[0]) and is_dict_like(args[1]):
+            args = [(args[0],), (args[1],)]
         kw = Keyword(name, args=args, parent=data, lineno=lineno)
         return kw.run(result, ctx)
 
