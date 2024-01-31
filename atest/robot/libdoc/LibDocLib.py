@@ -67,13 +67,13 @@ class LibDocLib:
         return str(ArgInfo(kind=model['kind'],
                            name=model['name'],
                            type=self._get_type_info(model['type']),
-                           default=model['default'] or NOT_SET))
+                           default=self._get_default(model['default'])))
 
     def get_repr_from_json_arg_model(self, model):
         return str(ArgInfo(kind=model['kind'],
                            name=model['name'],
                            type=self._get_type_info(model['type']),
-                           default=model['defaultValue'] or NOT_SET))
+                           default=self._get_default(model['defaultValue'])))
 
     def _get_type_info(self, data):
         if not data:
@@ -82,3 +82,6 @@ class LibDocLib:
             return TypeInfo.from_string(data)
         nested = [self._get_type_info(n) for n in data.get('nested', ())]
         return TypeInfo(data['name'], None, nested=nested or None)
+
+    def _get_default(self, data):
+        return data if data is not None else NOT_SET

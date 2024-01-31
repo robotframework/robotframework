@@ -54,7 +54,7 @@ from .match import eq, Matcher, MultiMatcher
 from .misc import (classproperty, isatty, parse_re_flags, plural_or_not,
                    printable_name, seq2str, seq2str2, test_or_task)
 from .normalizing import normalize, normalize_whitespace, NormalizedDict
-from .notset import NOT_SET
+from .notset import NOT_SET, NotSet
 from .platform import PY_VERSION, PYPY, UNIXY, WINDOWS, RERAISED_EXCEPTIONS
 from .recommendations import RecommendationFinder
 from .robotenv import get_env_var, set_env_var, del_env_var, get_env_vars
