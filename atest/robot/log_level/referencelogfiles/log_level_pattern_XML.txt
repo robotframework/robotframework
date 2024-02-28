@@ -1,0 +1,8 @@
+<kw\sname="Log"\sowner="BuiltIn">
+<kw\sname="Log\sLevels\sIn\sPython\sLibrary"\sowner="log_level">
+<kw\sname="Log\sLevels\sIn\sResource\sFile"\sowner="log_level">
+(<msg\stime=").+?("\slevel="\w+?">===\s\[LOG_LEVEL_TEST\]\s-\s\[\w+?\]\s-\s\[\w+?\]:\s\w+?\stest\sstring\s\w+?\stest\sstring\s\w+?\stest\sstring\s\w+?</msg>)
+(<suite\s).+>
+</suite>
+<errors>
+</errors>
