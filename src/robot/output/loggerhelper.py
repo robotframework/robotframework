@@ -23,11 +23,12 @@ from robot.utils import console_encode, safe_str
 
 
 LEVELS = {
-  'NONE'  : 7,
-  'SKIP'  : 6,
-  'FAIL'  : 5,
-  'ERROR' : 4,
-  'WARN'  : 3,
+  'NONE'  : 8,
+  'SKIP'  : 7,
+  'FAIL'  : 6,
+  'ERROR' : 5,
+  'WARN'  : 4,
+  'USER'  : 3, # has to fit to 'var LEVELS' in robot/htmldata/rebot/testdata.js
   'INFO'  : 2,
   'DEBUG' : 1,
   'TRACE' : 0,
