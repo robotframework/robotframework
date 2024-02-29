@@ -1,0 +1,436 @@
+==============================================================================
+2024-02-29 15:02:47.408365 - INFO - + START SUITE: Log Level
+==============================================================================
+2024-02-29 15:02:47.456236 - INFO - +- START TEST: Log Level Test
+------------------------------------------------------------------------------
+2024-02-29 15:02:47.457263 - INFO - +-- START KEYWORD: ClogLevelTest.Get Single Log Message [ ROBOT_FILE | ERROR ]
+2024-02-29 15:02:47.457263 - TRACE - Arguments: [ 'ROBOT_FILE' | 'ERROR' ]
+2024-02-29 15:02:47.457263 - TRACE - Return: (True,
+ '=== [LOG_LEVEL_TEST] - [ROBOT_FILE] - [ERROR]: ERROR test string ERROR test string ERROR test string ERROR')
+2024-02-29 15:02:47.458259 - INFO - ${bAck} = True
+2024-02-29 15:02:47.458259 - INFO - ${log_message} = === [LOG_LEVEL_TEST] - [ROBOT_FILE] - [ERROR]: ERROR test string ERROR test string ERROR test string ERROR
+2024-02-29 15:02:47.458259 - INFO - +-- END KEYWORD: ClogLevelTest.Get Single Log Message (0.000996 s)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2024-02-29 15:02:47.458259 - INFO - +-- START KEYWORD: BuiltIn.Should Be Equal [ ${bAck} | ${True} | Failed to execute the log level robot file ]
+2024-02-29 15:02:47.458259 - TRACE - Arguments: [ True | True | 'Failed to execute the log level robot file' ]
+2024-02-29 15:02:47.458259 - DEBUG - Argument types are:
+<class 'bool'>
+<class 'bool'>
+2024-02-29 15:02:47.459257 - TRACE - Return: None
+2024-02-29 15:02:47.459257 - INFO - +-- END KEYWORD: BuiltIn.Should Be Equal (0.000998 s)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2024-02-29 15:02:47.459257 - INFO - +-- START IF/ELSE ROOT:
+2024-02-29 15:02:47.459257 - INFO - +--- START IF: ${True}
+2024-02-29 15:02:47.459257 - INFO - +---- START FOR: ${index}    IN RANGE    0    1
+2024-02-29 15:02:47.459257 - INFO - +----- START ITERATION: ${index} = 0
+2024-02-29 15:02:47.459257 - INFO - +------ START KEYWORD: BuiltIn.Log [ ${log_message} | ERROR ]
+2024-02-29 15:02:47.460255 - TRACE - Arguments: [ '=== [LOG_LEVEL_TEST] - [ROBOT_FILE] - [ERROR]: ERROR test string ERROR test string ERROR test string ERROR' | 'ERROR' ]
+2024-02-29 15:02:47.460255 - ERROR - === [LOG_LEVEL_TEST] - [ROBOT_FILE] - [ERROR]: ERROR test string ERROR test string ERROR test string ERROR
+2024-02-29 15:02:47.461254 - TRACE - Return: None
+2024-02-29 15:02:47.461254 - INFO - +------ END KEYWORD: BuiltIn.Log (0.001997 s)
+2024-02-29 15:02:47.461254 - INFO - +----- END ITERATION: ${index} = 0 (0.001997 s)
+2024-02-29 15:02:47.461254 - INFO - +---- END FOR: ${index}    IN RANGE    0    1 (0.001997 s)
+2024-02-29 15:02:47.461254 - INFO - +--- END IF: ${True} (0.001997 s)
+2024-02-29 15:02:47.461254 - INFO - +-- END IF/ELSE ROOT:  (0.001997 s)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2024-02-29 15:02:47.461254 - INFO - +-- START KEYWORD: ClogLevelTest.Get Single Log Message [ ROBOT_FILE | WARN ]
+2024-02-29 15:02:47.461254 - TRACE - Arguments: [ 'ROBOT_FILE' | 'WARN' ]
+2024-02-29 15:02:47.461254 - TRACE - Return: (True,
+ '=== [LOG_LEVEL_TEST] - [ROBOT_FILE] - [WARN]: WARN test string WARN test string WARN test string WARN')
+2024-02-29 15:02:47.462249 - INFO - ${bAck} = True
+2024-02-29 15:02:47.462249 - INFO - ${log_message} = === [LOG_LEVEL_TEST] - [ROBOT_FILE] - [WARN]: WARN test string WARN test string WARN test string WARN
+2024-02-29 15:02:47.462249 - INFO - +-- END KEYWORD: ClogLevelTest.Get Single Log Message (0.000995 s)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2024-02-29 15:02:47.462249 - INFO - +-- START KEYWORD: BuiltIn.Should Be Equal [ ${bAck} | ${True} | Failed to execute the log level robot file ]
+2024-02-29 15:02:47.462249 - TRACE - Arguments: [ True | True | 'Failed to execute the log level robot file' ]
+2024-02-29 15:02:47.462249 - DEBUG - Argument types are:
+<class 'bool'>
+<class 'bool'>
+2024-02-29 15:02:47.462249 - TRACE - Return: None
+2024-02-29 15:02:47.462249 - INFO - +-- END KEYWORD: BuiltIn.Should Be Equal (0.0 s)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2024-02-29 15:02:47.463246 - INFO - +-- START IF/ELSE ROOT:
+2024-02-29 15:02:47.463246 - INFO - +--- START IF: ${True}
+2024-02-29 15:02:47.463246 - INFO - +---- START FOR: ${index}    IN RANGE    0    1
+2024-02-29 15:02:47.463246 - INFO - +----- START ITERATION: ${index} = 0
+2024-02-29 15:02:47.463246 - INFO - +------ START KEYWORD: BuiltIn.Log [ ${log_message} | WARN ]
+2024-02-29 15:02:47.463246 - TRACE - Arguments: [ '=== [LOG_LEVEL_TEST] - [ROBOT_FILE] - [WARN]: WARN test string WARN test string WARN test string WARN' | 'WARN' ]
+2024-02-29 15:02:47.463246 - WARN - === [LOG_LEVEL_TEST] - [ROBOT_FILE] - [WARN]: WARN test string WARN test string WARN test string WARN
+2024-02-29 15:02:47.464253 - TRACE - Return: None
+2024-02-29 15:02:47.464253 - INFO - +------ END KEYWORD: BuiltIn.Log (0.001007 s)
+2024-02-29 15:02:47.464253 - INFO - +----- END ITERATION: ${index} = 0 (0.001007 s)
+2024-02-29 15:02:47.464253 - INFO - +---- END FOR: ${index}    IN RANGE    0    1 (0.001007 s)
+2024-02-29 15:02:47.464253 - INFO - +--- END IF: ${True} (0.001007 s)
+2024-02-29 15:02:47.464253 - INFO - +-- END IF/ELSE ROOT:  (0.001007 s)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2024-02-29 15:02:47.465241 - INFO - +-- START KEYWORD: ClogLevelTest.Get Single Log Message [ ROBOT_FILE | USER ]
+2024-02-29 15:02:47.465241 - TRACE - Arguments: [ 'ROBOT_FILE' | 'USER' ]
+2024-02-29 15:02:47.465241 - TRACE - Return: (True,
+ '=== [LOG_LEVEL_TEST] - [ROBOT_FILE] - [USER]: USER test string USER test string USER test string USER')
+2024-02-29 15:02:47.465241 - INFO - ${bAck} = True
+2024-02-29 15:02:47.465241 - INFO - ${log_message} = === [LOG_LEVEL_TEST] - [ROBOT_FILE] - [USER]: USER test string USER test string USER test string USER
+2024-02-29 15:02:47.465241 - INFO - +-- END KEYWORD: ClogLevelTest.Get Single Log Message (0.0 s)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2024-02-29 15:02:47.465241 - INFO - +-- START KEYWORD: BuiltIn.Should Be Equal [ ${bAck} | ${True} | Failed to execute the log level robot file ]
+2024-02-29 15:02:47.465241 - TRACE - Arguments: [ True | True | 'Failed to execute the log level robot file' ]
+2024-02-29 15:02:47.466243 - DEBUG - Argument types are:
+<class 'bool'>
+<class 'bool'>
+2024-02-29 15:02:47.466243 - TRACE - Return: None
+2024-02-29 15:02:47.466243 - INFO - +-- END KEYWORD: BuiltIn.Should Be Equal (0.001002 s)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2024-02-29 15:02:47.466243 - INFO - +-- START IF/ELSE ROOT:
+2024-02-29 15:02:47.466243 - INFO - +--- START IF: ${True}
+2024-02-29 15:02:47.466243 - INFO - +---- START FOR: ${index}    IN RANGE    0    1
+2024-02-29 15:02:47.466243 - INFO - +----- START ITERATION: ${index} = 0
+2024-02-29 15:02:47.466243 - INFO - +------ START KEYWORD: BuiltIn.Log [ ${log_message} | USER ]
+2024-02-29 15:02:47.466243 - TRACE - Arguments: [ '=== [LOG_LEVEL_TEST] - [ROBOT_FILE] - [USER]: USER test string USER test string USER test string USER' | 'USER' ]
+2024-02-29 15:02:47.467235 - USER - === [LOG_LEVEL_TEST] - [ROBOT_FILE] - [USER]: USER test string USER test string USER test string USER
+2024-02-29 15:02:47.467235 - TRACE - Return: None
+2024-02-29 15:02:47.467235 - INFO - +------ END KEYWORD: BuiltIn.Log (0.000992 s)
+2024-02-29 15:02:47.467235 - INFO - +----- END ITERATION: ${index} = 0 (0.000992 s)
+2024-02-29 15:02:47.467235 - INFO - +---- END FOR: ${index}    IN RANGE    0    1 (0.000992 s)
+2024-02-29 15:02:47.467235 - INFO - +--- END IF: ${True} (0.000992 s)
+2024-02-29 15:02:47.467235 - INFO - +-- END IF/ELSE ROOT:  (0.000992 s)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2024-02-29 15:02:47.467235 - INFO - +-- START KEYWORD: ClogLevelTest.Get Single Log Message [ ROBOT_FILE | INFO ]
+2024-02-29 15:02:47.467235 - TRACE - Arguments: [ 'ROBOT_FILE' | 'INFO' ]
+2024-02-29 15:02:47.467235 - TRACE - Return: (True,
+ '=== [LOG_LEVEL_TEST] - [ROBOT_FILE] - [INFO]: INFO test string INFO test string INFO test string INFO')
+2024-02-29 15:02:47.467235 - INFO - ${bAck} = True
+2024-02-29 15:02:47.468233 - INFO - ${log_message} = === [LOG_LEVEL_TEST] - [ROBOT_FILE] - [INFO]: INFO test string INFO test string INFO test string INFO
+2024-02-29 15:02:47.468233 - INFO - +-- END KEYWORD: ClogLevelTest.Get Single Log Message (0.000998 s)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2024-02-29 15:02:47.468233 - INFO - +-- START KEYWORD: BuiltIn.Should Be Equal [ ${bAck} | ${True} | Failed to execute the log level robot file ]
+2024-02-29 15:02:47.468233 - TRACE - Arguments: [ True | True | 'Failed to execute the log level robot file' ]
+2024-02-29 15:02:47.468233 - DEBUG - Argument types are:
+<class 'bool'>
+<class 'bool'>
+2024-02-29 15:02:47.468233 - TRACE - Return: None
+2024-02-29 15:02:47.468233 - INFO - +-- END KEYWORD: BuiltIn.Should Be Equal (0.0 s)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2024-02-29 15:02:47.468233 - INFO - +-- START IF/ELSE ROOT:
+2024-02-29 15:02:47.468233 - INFO - +--- START IF: ${True}
+2024-02-29 15:02:47.469230 - INFO - +---- START FOR: ${index}    IN RANGE    0    1
+2024-02-29 15:02:47.469230 - INFO - +----- START ITERATION: ${index} = 0
+2024-02-29 15:02:47.469230 - INFO - +------ START KEYWORD: BuiltIn.Log [ ${log_message} | INFO ]
+2024-02-29 15:02:47.469230 - TRACE - Arguments: [ '=== [LOG_LEVEL_TEST] - [ROBOT_FILE] - [INFO]: INFO test string INFO test string INFO test string INFO' | 'INFO' ]
+2024-02-29 15:02:47.469230 - INFO - === [LOG_LEVEL_TEST] - [ROBOT_FILE] - [INFO]: INFO test string INFO test string INFO test string INFO
+2024-02-29 15:02:47.469230 - TRACE - Return: None
+2024-02-29 15:02:47.469230 - INFO - +------ END KEYWORD: BuiltIn.Log (0.0 s)
+2024-02-29 15:02:47.469230 - INFO - +----- END ITERATION: ${index} = 0 (0.0 s)
+2024-02-29 15:02:47.469230 - INFO - +---- END FOR: ${index}    IN RANGE    0    1 (0.0 s)
+2024-02-29 15:02:47.469230 - INFO - +--- END IF: ${True} (0.000997 s)
+2024-02-29 15:02:47.469230 - INFO - +-- END IF/ELSE ROOT:  (0.000997 s)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2024-02-29 15:02:47.470227 - INFO - +-- START KEYWORD: ClogLevelTest.Get Single Log Message [ ROBOT_FILE | DEBUG ]
+2024-02-29 15:02:47.470227 - TRACE - Arguments: [ 'ROBOT_FILE' | 'DEBUG' ]
+2024-02-29 15:02:47.470227 - TRACE - Return: (True,
+ '=== [LOG_LEVEL_TEST] - [ROBOT_FILE] - [DEBUG]: DEBUG test string DEBUG test string DEBUG test string DEBUG')
+2024-02-29 15:02:47.470227 - INFO - ${bAck} = True
+2024-02-29 15:02:47.470227 - INFO - ${log_message} = === [LOG_LEVEL_TEST] - [ROBOT_FILE] - [DEBUG]: DEBUG test string DEBUG test string DEBUG test string DEBUG
+2024-02-29 15:02:47.470227 - INFO - +-- END KEYWORD: ClogLevelTest.Get Single Log Message (0.0 s)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2024-02-29 15:02:47.470227 - INFO - +-- START KEYWORD: BuiltIn.Should Be Equal [ ${bAck} | ${True} | Failed to execute the log level robot file ]
+2024-02-29 15:02:47.470227 - TRACE - Arguments: [ True | True | 'Failed to execute the log level robot file' ]
+2024-02-29 15:02:47.470227 - DEBUG - Argument types are:
+<class 'bool'>
+<class 'bool'>
+2024-02-29 15:02:47.471224 - TRACE - Return: None
+2024-02-29 15:02:47.471224 - INFO - +-- END KEYWORD: BuiltIn.Should Be Equal (0.000997 s)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2024-02-29 15:02:47.471224 - INFO - +-- START IF/ELSE ROOT:
+2024-02-29 15:02:47.471224 - INFO - +--- START IF: ${True}
+2024-02-29 15:02:47.471224 - INFO - +---- START FOR: ${index}    IN RANGE    0    1
+2024-02-29 15:02:47.471224 - INFO - +----- START ITERATION: ${index} = 0
+2024-02-29 15:02:47.471224 - INFO - +------ START KEYWORD: BuiltIn.Log [ ${log_message} | DEBUG ]
+2024-02-29 15:02:47.471224 - TRACE - Arguments: [ '=== [LOG_LEVEL_TEST] - [ROBOT_FILE] - [DEBUG]: DEBUG test string DEBUG test string DEBUG test string DEBUG' | 'DEBUG' ]
+2024-02-29 15:02:47.472222 - DEBUG - === [LOG_LEVEL_TEST] - [ROBOT_FILE] - [DEBUG]: DEBUG test string DEBUG test string DEBUG test string DEBUG
+2024-02-29 15:02:47.472222 - TRACE - Return: None
+2024-02-29 15:02:47.472222 - INFO - +------ END KEYWORD: BuiltIn.Log (0.000998 s)
+2024-02-29 15:02:47.472222 - INFO - +----- END ITERATION: ${index} = 0 (0.000998 s)
+2024-02-29 15:02:47.472222 - INFO - +---- END FOR: ${index}    IN RANGE    0    1 (0.000998 s)
+2024-02-29 15:02:47.472222 - INFO - +--- END IF: ${True} (0.000998 s)
+2024-02-29 15:02:47.472222 - INFO - +-- END IF/ELSE ROOT:  (0.000998 s)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2024-02-29 15:02:47.472222 - INFO - +-- START KEYWORD: ClogLevelTest.Get Single Log Message [ ROBOT_FILE | TRACE ]
+2024-02-29 15:02:47.472222 - TRACE - Arguments: [ 'ROBOT_FILE' | 'TRACE' ]
+2024-02-29 15:02:47.472222 - TRACE - Return: (True,
+ '=== [LOG_LEVEL_TEST] - [ROBOT_FILE] - [TRACE]: TRACE test string TRACE test string TRACE test string TRACE')
+2024-02-29 15:02:47.472222 - INFO - ${bAck} = True
+2024-02-29 15:02:47.472222 - INFO - ${log_message} = === [LOG_LEVEL_TEST] - [ROBOT_FILE] - [TRACE]: TRACE test string TRACE test string TRACE test string TRACE
+2024-02-29 15:02:47.472222 - INFO - +-- END KEYWORD: ClogLevelTest.Get Single Log Message (0.0 s)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2024-02-29 15:02:47.473191 - INFO - +-- START KEYWORD: BuiltIn.Should Be Equal [ ${bAck} | ${True} | Failed to execute the log level robot file ]
+2024-02-29 15:02:47.473191 - TRACE - Arguments: [ True | True | 'Failed to execute the log level robot file' ]
+2024-02-29 15:02:47.473191 - DEBUG - Argument types are:
+<class 'bool'>
+<class 'bool'>
+2024-02-29 15:02:47.473191 - TRACE - Return: None
+2024-02-29 15:02:47.473191 - INFO - +-- END KEYWORD: BuiltIn.Should Be Equal (0.0 s)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2024-02-29 15:02:47.473191 - INFO - +-- START IF/ELSE ROOT:
+2024-02-29 15:02:47.473191 - INFO - +--- START IF: ${True}
+2024-02-29 15:02:47.473191 - INFO - +---- START FOR: ${index}    IN RANGE    0    1
+2024-02-29 15:02:47.474217 - INFO - +----- START ITERATION: ${index} = 0
+2024-02-29 15:02:47.474217 - INFO - +------ START KEYWORD: BuiltIn.Log [ ${log_message} | TRACE ]
+2024-02-29 15:02:47.474217 - TRACE - Arguments: [ '=== [LOG_LEVEL_TEST] - [ROBOT_FILE] - [TRACE]: TRACE test string TRACE test string TRACE test string TRACE' | 'TRACE' ]
+2024-02-29 15:02:47.474217 - TRACE - === [LOG_LEVEL_TEST] - [ROBOT_FILE] - [TRACE]: TRACE test string TRACE test string TRACE test string TRACE
+2024-02-29 15:02:47.474217 - TRACE - Return: None
+2024-02-29 15:02:47.474217 - INFO - +------ END KEYWORD: BuiltIn.Log (0.0 s)
+2024-02-29 15:02:47.474217 - INFO - +----- END ITERATION: ${index} = 0 (0.0 s)
+2024-02-29 15:02:47.474217 - INFO - +---- END FOR: ${index}    IN RANGE    0    1 (0.001026 s)
+2024-02-29 15:02:47.474217 - INFO - +--- END IF: ${True} (0.001026 s)
+2024-02-29 15:02:47.474217 - INFO - +-- END IF/ELSE ROOT:  (0.001026 s)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2024-02-29 15:02:47.475214 - INFO - +-- START KEYWORD: ClogLevelTest.Get Single Log Message [ ROBOT_FILE | DEFAULT ]
+2024-02-29 15:02:47.475214 - TRACE - Arguments: [ 'ROBOT_FILE' | 'DEFAULT' ]
+2024-02-29 15:02:47.475214 - TRACE - Return: (True,
+ '=== [LOG_LEVEL_TEST] - [ROBOT_FILE] - [DEFAULT]: DEFAULT test string DEFAULT test string DEFAULT test string DEFAULT')
+2024-02-29 15:02:47.475214 - INFO - ${bAck} = True
+2024-02-29 15:02:47.475214 - INFO - ${log_message} = === [LOG_LEVEL_TEST] - [ROBOT_FILE] - [DEFAULT]: DEFAULT test string DEFAULT test string DEFAULT test string DEFAULT
+2024-02-29 15:02:47.475214 - INFO - +-- END KEYWORD: ClogLevelTest.Get Single Log Message (0.0 s)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2024-02-29 15:02:47.475214 - INFO - +-- START KEYWORD: BuiltIn.Should Be Equal [ ${bAck} | ${True} | Failed to execute the log level robot file ]
+2024-02-29 15:02:47.476211 - TRACE - Arguments: [ True | True | 'Failed to execute the log level robot file' ]
+2024-02-29 15:02:47.476211 - DEBUG - Argument types are:
+<class 'bool'>
+<class 'bool'>
+2024-02-29 15:02:47.476211 - TRACE - Return: None
+2024-02-29 15:02:47.476211 - INFO - +-- END KEYWORD: BuiltIn.Should Be Equal (0.000997 s)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2024-02-29 15:02:47.477181 - INFO - +-- START IF/ELSE ROOT:
+2024-02-29 15:02:47.477181 - INFO - +--- START IF: ${True}
+2024-02-29 15:02:47.477181 - INFO - +---- START FOR: ${index}    IN RANGE    0    1
+2024-02-29 15:02:47.477181 - INFO - +----- START ITERATION: ${index} = 0
+2024-02-29 15:02:47.477181 - INFO - +------ START KEYWORD: BuiltIn.Log [ ${log_message} ]
+2024-02-29 15:02:47.477181 - TRACE - Arguments: [ '=== [LOG_LEVEL_TEST] - [ROBOT_FILE] - [DEFAULT]: DEFAULT test string DEFAULT test string DEFAULT test string DEFAULT' ]
+2024-02-29 15:02:47.477181 - INFO - === [LOG_LEVEL_TEST] - [ROBOT_FILE] - [DEFAULT]: DEFAULT test string DEFAULT test string DEFAULT test string DEFAULT
+2024-02-29 15:02:47.477181 - TRACE - Return: None
+2024-02-29 15:02:47.477181 - INFO - +------ END KEYWORD: BuiltIn.Log (0.0 s)
+2024-02-29 15:02:47.477181 - INFO - +----- END ITERATION: ${index} = 0 (0.0 s)
+2024-02-29 15:02:47.477181 - INFO - +---- END FOR: ${index}    IN RANGE    0    1 (0.0 s)
+2024-02-29 15:02:47.478210 - INFO - +--- END IF: ${True} (0.001029 s)
+2024-02-29 15:02:47.478210 - INFO - +-- END IF/ELSE ROOT:  (0.001029 s)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2024-02-29 15:02:47.478210 - INFO - +-- START KEYWORD: log_level.Log Levels In Resource File [ ]
+2024-02-29 15:02:47.478210 - TRACE - Arguments: [  ]
+2024-02-29 15:02:47.479204 - INFO - +--- START KEYWORD: ClogLevelTest.Get Single Log Message [ RESOURCE_FILE | ERROR ]
+2024-02-29 15:02:47.479204 - TRACE - Arguments: [ 'RESOURCE_FILE' | 'ERROR' ]
+2024-02-29 15:02:47.479204 - TRACE - Return: (True,
+ '=== [LOG_LEVEL_TEST] - [RESOURCE_FILE] - [ERROR]: ERROR test string ERROR test string ERROR test string ERROR')
+2024-02-29 15:02:47.479204 - INFO - ${bAck} = True
+2024-02-29 15:02:47.479204 - INFO - ${log_message} = === [LOG_LEVEL_TEST] - [RESOURCE_FILE] - [ERROR]: ERROR test string ERROR test string ERROR test string ERROR
+2024-02-29 15:02:47.479204 - INFO - +--- END KEYWORD: ClogLevelTest.Get Single Log Message (0.0 s)
+2024-02-29 15:02:47.479204 - INFO - +--- START KEYWORD: BuiltIn.Should Be Equal [ ${bAck} | ${True} | Failed to execute the log level resource file ]
+2024-02-29 15:02:47.479204 - TRACE - Arguments: [ True | True | 'Failed to execute the log level resource file' ]
+2024-02-29 15:02:47.479204 - DEBUG - Argument types are:
+<class 'bool'>
+<class 'bool'>
+2024-02-29 15:02:47.479204 - TRACE - Return: None
+2024-02-29 15:02:47.479204 - INFO - +--- END KEYWORD: BuiltIn.Should Be Equal (0.0 s)
+2024-02-29 15:02:47.480201 - INFO - +--- START IF/ELSE ROOT:
+2024-02-29 15:02:47.480201 - INFO - +---- START IF: ${True}
+2024-02-29 15:02:47.480201 - INFO - +----- START FOR: ${index}    IN RANGE    0    1
+2024-02-29 15:02:47.480201 - INFO - +------ START ITERATION: ${index} = 0
+2024-02-29 15:02:47.480201 - INFO - +------- START KEYWORD: BuiltIn.Log [ ${log_message} | ERROR ]
+2024-02-29 15:02:47.480201 - TRACE - Arguments: [ '=== [LOG_LEVEL_TEST] - [RESOURCE_FILE] - [ERROR]: ERROR test string ERROR test string ERROR test string ERROR' | 'ERROR' ]
+2024-02-29 15:02:47.480201 - ERROR - === [LOG_LEVEL_TEST] - [RESOURCE_FILE] - [ERROR]: ERROR test string ERROR test string ERROR test string ERROR
+2024-02-29 15:02:47.481199 - TRACE - Return: None
+2024-02-29 15:02:47.481199 - INFO - +------- END KEYWORD: BuiltIn.Log (0.000998 s)
+2024-02-29 15:02:47.481199 - INFO - +------ END ITERATION: ${index} = 0 (0.000998 s)
+2024-02-29 15:02:47.481199 - INFO - +----- END FOR: ${index}    IN RANGE    0    1 (0.000998 s)
+2024-02-29 15:02:47.481199 - INFO - +---- END IF: ${True} (0.000998 s)
+2024-02-29 15:02:47.481199 - INFO - +--- END IF/ELSE ROOT:  (0.000998 s)
+2024-02-29 15:02:47.481199 - INFO - +--- START KEYWORD: ClogLevelTest.Get Single Log Message [ RESOURCE_FILE | WARN ]
+2024-02-29 15:02:47.481199 - TRACE - Arguments: [ 'RESOURCE_FILE' | 'WARN' ]
+2024-02-29 15:02:47.481199 - TRACE - Return: (True,
+ '=== [LOG_LEVEL_TEST] - [RESOURCE_FILE] - [WARN]: WARN test string WARN test string WARN test string WARN')
+2024-02-29 15:02:47.482195 - INFO - ${bAck} = True
+2024-02-29 15:02:47.482195 - INFO - ${log_message} = === [LOG_LEVEL_TEST] - [RESOURCE_FILE] - [WARN]: WARN test string WARN test string WARN test string WARN
+2024-02-29 15:02:47.482195 - INFO - +--- END KEYWORD: ClogLevelTest.Get Single Log Message (0.000996 s)
+2024-02-29 15:02:47.482195 - INFO - +--- START KEYWORD: BuiltIn.Should Be Equal [ ${bAck} | ${True} | Failed to execute the log level resource file ]
+2024-02-29 15:02:47.482195 - TRACE - Arguments: [ True | True | 'Failed to execute the log level resource file' ]
+2024-02-29 15:02:47.482195 - DEBUG - Argument types are:
+<class 'bool'>
+<class 'bool'>
+2024-02-29 15:02:47.482195 - TRACE - Return: None
+2024-02-29 15:02:47.482195 - INFO - +--- END KEYWORD: BuiltIn.Should Be Equal (0.0 s)
+2024-02-29 15:02:47.482195 - INFO - +--- START IF/ELSE ROOT:
+2024-02-29 15:02:47.482195 - INFO - +---- START IF: ${True}
+2024-02-29 15:02:47.482195 - INFO - +----- START FOR: ${index}    IN RANGE    0    1
+2024-02-29 15:02:47.483193 - INFO - +------ START ITERATION: ${index} = 0
+2024-02-29 15:02:47.483193 - INFO - +------- START KEYWORD: BuiltIn.Log [ ${log_message} | WARN ]
+2024-02-29 15:02:47.483193 - TRACE - Arguments: [ '=== [LOG_LEVEL_TEST] - [RESOURCE_FILE] - [WARN]: WARN test string WARN test string WARN test string WARN' | 'WARN' ]
+2024-02-29 15:02:47.483193 - WARN - === [LOG_LEVEL_TEST] - [RESOURCE_FILE] - [WARN]: WARN test string WARN test string WARN test string WARN
+2024-02-29 15:02:47.484162 - TRACE - Return: None
+2024-02-29 15:02:47.484162 - INFO - +------- END KEYWORD: BuiltIn.Log (0.000969 s)
+2024-02-29 15:02:47.484162 - INFO - +------ END ITERATION: ${index} = 0 (0.000969 s)
+2024-02-29 15:02:47.484162 - INFO - +----- END FOR: ${index}    IN RANGE    0    1 (0.001967 s)
+2024-02-29 15:02:47.484162 - INFO - +---- END IF: ${True} (0.001967 s)
+2024-02-29 15:02:47.484162 - INFO - +--- END IF/ELSE ROOT:  (0.001967 s)
+2024-02-29 15:02:47.484162 - INFO - +--- START KEYWORD: ClogLevelTest.Get Single Log Message [ RESOURCE_FILE | USER ]
+2024-02-29 15:02:47.484162 - TRACE - Arguments: [ 'RESOURCE_FILE' | 'USER' ]
+2024-02-29 15:02:47.484162 - TRACE - Return: (True,
+ '=== [LOG_LEVEL_TEST] - [RESOURCE_FILE] - [USER]: USER test string USER test string USER test string USER')
+2024-02-29 15:02:47.484162 - INFO - ${bAck} = True
+2024-02-29 15:02:47.484162 - INFO - ${log_message} = === [LOG_LEVEL_TEST] - [RESOURCE_FILE] - [USER]: USER test string USER test string USER test string USER
+2024-02-29 15:02:47.484162 - INFO - +--- END KEYWORD: ClogLevelTest.Get Single Log Message (0.0 s)
+2024-02-29 15:02:47.485189 - INFO - +--- START KEYWORD: BuiltIn.Should Be Equal [ ${bAck} | ${True} | Failed to execute the log level resource file ]
+2024-02-29 15:02:47.485189 - TRACE - Arguments: [ True | True | 'Failed to execute the log level resource file' ]
+2024-02-29 15:02:47.485189 - DEBUG - Argument types are:
+<class 'bool'>
+<class 'bool'>
+2024-02-29 15:02:47.485189 - TRACE - Return: None
+2024-02-29 15:02:47.485189 - INFO - +--- END KEYWORD: BuiltIn.Should Be Equal (0.0 s)
+2024-02-29 15:02:47.485189 - INFO - +--- START IF/ELSE ROOT:
+2024-02-29 15:02:47.485189 - INFO - +---- START IF: ${True}
+2024-02-29 15:02:47.485189 - INFO - +----- START FOR: ${index}    IN RANGE    0    1
+2024-02-29 15:02:47.485189 - INFO - +------ START ITERATION: ${index} = 0
+2024-02-29 15:02:47.486186 - INFO - +------- START KEYWORD: BuiltIn.Log [ ${log_message} | USER ]
+2024-02-29 15:02:47.486186 - TRACE - Arguments: [ '=== [LOG_LEVEL_TEST] - [RESOURCE_FILE] - [USER]: USER test string USER test string USER test string USER' | 'USER' ]
+2024-02-29 15:02:47.486186 - USER - === [LOG_LEVEL_TEST] - [RESOURCE_FILE] - [USER]: USER test string USER test string USER test string USER
+2024-02-29 15:02:47.486186 - TRACE - Return: None
+2024-02-29 15:02:47.486186 - INFO - +------- END KEYWORD: BuiltIn.Log (0.0 s)
+2024-02-29 15:02:47.486186 - INFO - +------ END ITERATION: ${index} = 0 (0.000997 s)
+2024-02-29 15:02:47.486186 - INFO - +----- END FOR: ${index}    IN RANGE    0    1 (0.000997 s)
+2024-02-29 15:02:47.486186 - INFO - +---- END IF: ${True} (0.000997 s)
+2024-02-29 15:02:47.486186 - INFO - +--- END IF/ELSE ROOT:  (0.000997 s)
+2024-02-29 15:02:47.486186 - INFO - +--- START KEYWORD: ClogLevelTest.Get Single Log Message [ RESOURCE_FILE | INFO ]
+2024-02-29 15:02:47.486186 - TRACE - Arguments: [ 'RESOURCE_FILE' | 'INFO' ]
+2024-02-29 15:02:47.486186 - TRACE - Return: (True,
+ '=== [LOG_LEVEL_TEST] - [RESOURCE_FILE] - [INFO]: INFO test string INFO test string INFO test string INFO')
+2024-02-29 15:02:47.486186 - INFO - ${bAck} = True
+2024-02-29 15:02:47.487183 - INFO - ${log_message} = === [LOG_LEVEL_TEST] - [RESOURCE_FILE] - [INFO]: INFO test string INFO test string INFO test string INFO
+2024-02-29 15:02:47.487183 - INFO - +--- END KEYWORD: ClogLevelTest.Get Single Log Message (0.000997 s)
+2024-02-29 15:02:47.487183 - INFO - +--- START KEYWORD: BuiltIn.Should Be Equal [ ${bAck} | ${True} | Failed to execute the log level resource file ]
+2024-02-29 15:02:47.487183 - TRACE - Arguments: [ True | True | 'Failed to execute the log level resource file' ]
+2024-02-29 15:02:47.487183 - DEBUG - Argument types are:
+<class 'bool'>
+<class 'bool'>
+2024-02-29 15:02:47.487183 - TRACE - Return: None
+2024-02-29 15:02:47.487183 - INFO - +--- END KEYWORD: BuiltIn.Should Be Equal (0.0 s)
+2024-02-29 15:02:47.487183 - INFO - +--- START IF/ELSE ROOT:
+2024-02-29 15:02:47.487183 - INFO - +---- START IF: ${True}
+2024-02-29 15:02:47.487183 - INFO - +----- START FOR: ${index}    IN RANGE    0    1
+2024-02-29 15:02:47.487183 - INFO - +------ START ITERATION: ${index} = 0
+2024-02-29 15:02:47.487183 - INFO - +------- START KEYWORD: BuiltIn.Log [ ${log_message} | INFO ]
+2024-02-29 15:02:47.488179 - TRACE - Arguments: [ '=== [LOG_LEVEL_TEST] - [RESOURCE_FILE] - [INFO]: INFO test string INFO test string INFO test string INFO' | 'INFO' ]
+2024-02-29 15:02:47.488179 - INFO - === [LOG_LEVEL_TEST] - [RESOURCE_FILE] - [INFO]: INFO test string INFO test string INFO test string INFO
+2024-02-29 15:02:47.488179 - TRACE - Return: None
+2024-02-29 15:02:47.488179 - INFO - +------- END KEYWORD: BuiltIn.Log (0.000996 s)
+2024-02-29 15:02:47.488179 - INFO - +------ END ITERATION: ${index} = 0 (0.000996 s)
+2024-02-29 15:02:47.488179 - INFO - +----- END FOR: ${index}    IN RANGE    0    1 (0.000996 s)
+2024-02-29 15:02:47.488179 - INFO - +---- END IF: ${True} (0.000996 s)
+2024-02-29 15:02:47.488179 - INFO - +--- END IF/ELSE ROOT:  (0.000996 s)
+2024-02-29 15:02:47.488179 - INFO - +--- START KEYWORD: ClogLevelTest.Get Single Log Message [ RESOURCE_FILE | DEBUG ]
+2024-02-29 15:02:47.488179 - TRACE - Arguments: [ 'RESOURCE_FILE' | 'DEBUG' ]
+2024-02-29 15:02:47.488179 - TRACE - Return: (True,
+ '=== [LOG_LEVEL_TEST] - [RESOURCE_FILE] - [DEBUG]: DEBUG test string DEBUG test string DEBUG test string DEBUG')
+2024-02-29 15:02:47.488179 - INFO - ${bAck} = True
+2024-02-29 15:02:47.488179 - INFO - ${log_message} = === [LOG_LEVEL_TEST] - [RESOURCE_FILE] - [DEBUG]: DEBUG test string DEBUG test string DEBUG test string DEBUG
+2024-02-29 15:02:47.489177 - INFO - +--- END KEYWORD: ClogLevelTest.Get Single Log Message (0.000998 s)
+2024-02-29 15:02:47.489177 - INFO - +--- START KEYWORD: BuiltIn.Should Be Equal [ ${bAck} | ${True} | Failed to execute the log level resource file ]
+2024-02-29 15:02:47.489177 - TRACE - Arguments: [ True | True | 'Failed to execute the log level resource file' ]
+2024-02-29 15:02:47.489177 - DEBUG - Argument types are:
+<class 'bool'>
+<class 'bool'>
+2024-02-29 15:02:47.489177 - TRACE - Return: None
+2024-02-29 15:02:47.489177 - INFO - +--- END KEYWORD: BuiltIn.Should Be Equal (0.0 s)
+2024-02-29 15:02:47.489177 - INFO - +--- START IF/ELSE ROOT:
+2024-02-29 15:02:47.489177 - INFO - +---- START IF: ${True}
+2024-02-29 15:02:47.489177 - INFO - +----- START FOR: ${index}    IN RANGE    0    1
+2024-02-29 15:02:47.489177 - INFO - +------ START ITERATION: ${index} = 0
+2024-02-29 15:02:47.489177 - INFO - +------- START KEYWORD: BuiltIn.Log [ ${log_message} | DEBUG ]
+2024-02-29 15:02:47.490146 - TRACE - Arguments: [ '=== [LOG_LEVEL_TEST] - [RESOURCE_FILE] - [DEBUG]: DEBUG test string DEBUG test string DEBUG test string DEBUG' | 'DEBUG' ]
+2024-02-29 15:02:47.490146 - DEBUG - === [LOG_LEVEL_TEST] - [RESOURCE_FILE] - [DEBUG]: DEBUG test string DEBUG test string DEBUG test string DEBUG
+2024-02-29 15:02:47.490146 - TRACE - Return: None
+2024-02-29 15:02:47.490146 - INFO - +------- END KEYWORD: BuiltIn.Log (0.000969 s)
+2024-02-29 15:02:47.490146 - INFO - +------ END ITERATION: ${index} = 0 (0.000969 s)
+2024-02-29 15:02:47.490146 - INFO - +----- END FOR: ${index}    IN RANGE    0    1 (0.000969 s)
+2024-02-29 15:02:47.490146 - INFO - +---- END IF: ${True} (0.000969 s)
+2024-02-29 15:02:47.490146 - INFO - +--- END IF/ELSE ROOT:  (0.000969 s)
+2024-02-29 15:02:47.490146 - INFO - +--- START KEYWORD: ClogLevelTest.Get Single Log Message [ RESOURCE_FILE | TRACE ]
+2024-02-29 15:02:47.490146 - TRACE - Arguments: [ 'RESOURCE_FILE' | 'TRACE' ]
+2024-02-29 15:02:47.490146 - TRACE - Return: (True,
+ '=== [LOG_LEVEL_TEST] - [RESOURCE_FILE] - [TRACE]: TRACE test string TRACE test string TRACE test string TRACE')
+2024-02-29 15:02:47.490146 - INFO - ${bAck} = True
+2024-02-29 15:02:47.490146 - INFO - ${log_message} = === [LOG_LEVEL_TEST] - [RESOURCE_FILE] - [TRACE]: TRACE test string TRACE test string TRACE test string TRACE
+2024-02-29 15:02:47.490146 - INFO - +--- END KEYWORD: ClogLevelTest.Get Single Log Message (0.0 s)
+2024-02-29 15:02:47.491173 - INFO - +--- START KEYWORD: BuiltIn.Should Be Equal [ ${bAck} | ${True} | Failed to execute the log level resource file ]
+2024-02-29 15:02:47.491173 - TRACE - Arguments: [ True | True | 'Failed to execute the log level resource file' ]
+2024-02-29 15:02:47.491173 - DEBUG - Argument types are:
+<class 'bool'>
+<class 'bool'>
+2024-02-29 15:02:47.491173 - TRACE - Return: None
+2024-02-29 15:02:47.491173 - INFO - +--- END KEYWORD: BuiltIn.Should Be Equal (0.0 s)
+2024-02-29 15:02:47.491173 - INFO - +--- START IF/ELSE ROOT:
+2024-02-29 15:02:47.491173 - INFO - +---- START IF: ${True}
+2024-02-29 15:02:47.491173 - INFO - +----- START FOR: ${index}    IN RANGE    0    1
+2024-02-29 15:02:47.491173 - INFO - +------ START ITERATION: ${index} = 0
+2024-02-29 15:02:47.491173 - INFO - +------- START KEYWORD: BuiltIn.Log [ ${log_message} | TRACE ]
+2024-02-29 15:02:47.492169 - TRACE - Arguments: [ '=== [LOG_LEVEL_TEST] - [RESOURCE_FILE] - [TRACE]: TRACE test string TRACE test string TRACE test string TRACE' | 'TRACE' ]
+2024-02-29 15:02:47.492169 - TRACE - === [LOG_LEVEL_TEST] - [RESOURCE_FILE] - [TRACE]: TRACE test string TRACE test string TRACE test string TRACE
+2024-02-29 15:02:47.492169 - TRACE - Return: None
+2024-02-29 15:02:47.492169 - INFO - +------- END KEYWORD: BuiltIn.Log (0.000996 s)
+2024-02-29 15:02:47.492169 - INFO - +------ END ITERATION: ${index} = 0 (0.000996 s)
+2024-02-29 15:02:47.492169 - INFO - +----- END FOR: ${index}    IN RANGE    0    1 (0.000996 s)
+2024-02-29 15:02:47.492169 - INFO - +---- END IF: ${True} (0.000996 s)
+2024-02-29 15:02:47.492169 - INFO - +--- END IF/ELSE ROOT:  (0.000996 s)
+2024-02-29 15:02:47.492169 - INFO - +--- START KEYWORD: ClogLevelTest.Get Single Log Message [ RESOURCE_FILE | DEFAULT ]
+2024-02-29 15:02:47.492169 - TRACE - Arguments: [ 'RESOURCE_FILE' | 'DEFAULT' ]
+2024-02-29 15:02:47.492169 - TRACE - Return: (True,
+ '=== [LOG_LEVEL_TEST] - [RESOURCE_FILE] - [DEFAULT]: DEFAULT test string DEFAULT test string DEFAULT test string DEFAULT')
+2024-02-29 15:02:47.492169 - INFO - ${bAck} = True
+2024-02-29 15:02:47.493169 - INFO - ${log_message} = === [LOG_LEVEL_TEST] - [RESOURCE_FILE] - [DEFAULT]: DEFAULT test string DEFAULT test string DEFAULT test string DEFAULT
+2024-02-29 15:02:47.493169 - INFO - +--- END KEYWORD: ClogLevelTest.Get Single Log Message (0.001 s)
+2024-02-29 15:02:47.493169 - INFO - +--- START KEYWORD: BuiltIn.Should Be Equal [ ${bAck} | ${True} | Failed to execute the log level resource file ]
+2024-02-29 15:02:47.493169 - TRACE - Arguments: [ True | True | 'Failed to execute the log level resource file' ]
+2024-02-29 15:02:47.493169 - DEBUG - Argument types are:
+<class 'bool'>
+<class 'bool'>
+2024-02-29 15:02:47.493169 - TRACE - Return: None
+2024-02-29 15:02:47.493169 - INFO - +--- END KEYWORD: BuiltIn.Should Be Equal (0.0 s)
+2024-02-29 15:02:47.493169 - INFO - +--- START IF/ELSE ROOT:
+2024-02-29 15:02:47.493169 - INFO - +---- START IF: ${True}
+2024-02-29 15:02:47.493169 - INFO - +----- START FOR: ${index}    IN RANGE    0    1
+2024-02-29 15:02:47.493169 - INFO - +------ START ITERATION: ${index} = 0
+2024-02-29 15:02:47.494164 - INFO - +------- START KEYWORD: BuiltIn.Log [ ${log_message} ]
+2024-02-29 15:02:47.494164 - TRACE - Arguments: [ '=== [LOG_LEVEL_TEST] - [RESOURCE_FILE] - [DEFAULT]: DEFAULT test string DEFAULT test string DEFAULT test string DEFAULT' ]
+2024-02-29 15:02:47.494164 - INFO - === [LOG_LEVEL_TEST] - [RESOURCE_FILE] - [DEFAULT]: DEFAULT test string DEFAULT test string DEFAULT test string DEFAULT
+2024-02-29 15:02:47.494164 - TRACE - Return: None
+2024-02-29 15:02:47.494164 - INFO - +------- END KEYWORD: BuiltIn.Log (0.0 s)
+2024-02-29 15:02:47.494164 - INFO - +------ END ITERATION: ${index} = 0 (0.000995 s)
+2024-02-29 15:02:47.494164 - INFO - +----- END FOR: ${index}    IN RANGE    0    1 (0.000995 s)
+2024-02-29 15:02:47.494164 - INFO - +---- END IF: ${True} (0.000995 s)
+2024-02-29 15:02:47.494164 - INFO - +--- END IF/ELSE ROOT:  (0.000995 s)
+2024-02-29 15:02:47.494164 - TRACE - Return: None
+2024-02-29 15:02:47.494164 - INFO - +-- END KEYWORD: log_level.Log Levels In Resource File (0.015954 s)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2024-02-29 15:02:47.495168 - INFO - +-- START KEYWORD: log_level.Log Levels In Python Library [ ]
+2024-02-29 15:02:47.495168 - TRACE - Arguments: [  ]
+2024-02-29 15:02:47.495168 - ERROR - === [LOG_LEVEL_TEST] - [PYTHON_LIBRARY] - [ERROR]: ERROR test string ERROR test string ERROR test string ERROR
+2024-02-29 15:02:47.496159 - WARN - === [LOG_LEVEL_TEST] - [PYTHON_LIBRARY] - [WARN]: WARN test string WARN test string WARN test string WARN
+2024-02-29 15:02:47.496159 - USER - === [LOG_LEVEL_TEST] - [PYTHON_LIBRARY] - [USER]: USER test string USER test string USER test string USER
+2024-02-29 15:02:47.496159 - INFO - === [LOG_LEVEL_TEST] - [PYTHON_LIBRARY] - [INFO]: INFO test string INFO test string INFO test string INFO
+2024-02-29 15:02:47.496159 - DEBUG - === [LOG_LEVEL_TEST] - [PYTHON_LIBRARY] - [DEBUG]: DEBUG test string DEBUG test string DEBUG test string DEBUG
+2024-02-29 15:02:47.496159 - TRACE - === [LOG_LEVEL_TEST] - [PYTHON_LIBRARY] - [TRACE]: TRACE test string TRACE test string TRACE test string TRACE
+2024-02-29 15:02:47.497155 - INFO - === [LOG_LEVEL_TEST] - [PYTHON_LIBRARY] - [DEFAULT]: DEFAULT test string DEFAULT test string DEFAULT test string DEFAULT
+2024-02-29 15:02:47.497155 - TRACE - Return: (True,
+ '=== [LOG_LEVEL_TEST] - [PYTHON_LIBRARY] - [DEFAULT]: DEFAULT test string DEFAULT test string DEFAULT test string DEFAULT')
+2024-02-29 15:02:47.497155 - INFO - ${bAck} = True
+2024-02-29 15:02:47.497155 - INFO - ${log_message} = === [LOG_LEVEL_TEST] - [PYTHON_LIBRARY] - [DEFAULT]: DEFAULT test string DEFAULT test string DEFAULT test string DEFAULT
+2024-02-29 15:02:47.497155 - INFO - +-- END KEYWORD: log_level.Log Levels In Python Library (0.001987 s)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2024-02-29 15:02:47.497155 - INFO - +-- START KEYWORD: BuiltIn.Should Be Equal [ ${bAck} | ${True} | Failed to execute the Python keyword library ]
+2024-02-29 15:02:47.497155 - TRACE - Arguments: [ True | True | 'Failed to execute the Python keyword library' ]
+2024-02-29 15:02:47.497155 - DEBUG - Argument types are:
+<class 'bool'>
+<class 'bool'>
+2024-02-29 15:02:47.497155 - TRACE - Return: None
+2024-02-29 15:02:47.497155 - INFO - +-- END KEYWORD: BuiltIn.Should Be Equal (0.0 s)
+------------------------------------------------------------------------------
+2024-02-29 15:02:47.498153 - INFO - +- END TEST: Log Level Test (0.041917 s)
+------------------------------------------------------------------------------
+2024-02-29 15:02:47.499122 - INFO - + END SUITE: Log Level (0.090757 s)
+==============================================================================
