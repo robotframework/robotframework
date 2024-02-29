@@ -18,34 +18,29 @@
 
 XC-HWP/ESW3-Queckenstedt
 
-28.02.2024
+29.02.2024
 
 --------------------------------------------------------------------------------------------------------------
 
 The "log level 'USER'" feature
 ==============================
 
-The bunch of log levels provided by the Robot Framework, has been extended by a log level 'USER'.
+The bunch of log levels provided by the Robot Framework, has been extended by a log level 'USER', that is
+placed between INFO and WARN.
 
 The reason for this new log level is to have a better separation between user specific log messages
 and standard messages provided by the Robot Framework itself (at default log level INFO).
 A user who really wants to have his own output only, has the ability now to switch to log level USER,
-at which all INFO messages (and below) from Robot Framework or other sources like Python keyword libraries
-or resource files are suppressed.
+at which all INFO messages (and messages below INFO) from Robot Framework or other sources like Python
+keyword libraries or resource files are suppressed.
 
 This reduces the amount of content in Robot Framework output files. 
 
-Additionally the standard output of Robot Framework has been reduced (carefully).
-
-Example: The Robot Framework logs the start and the end of a keyword execution (under log level INFO).
-But when the affected keyword is the 'Log' keyword and when this Log keyword does not produce any output
-because of the log level does not fit, then it makes no sense to log the start and the end of this
-keyword. Or in other words: It makes no sense to log the start and the end of something that does not have
-any effect during test execution. Therefore corresponding output is suppressed now.
+Further output like the start and the end of a keyword execution, the start and the end of loops and IF conditions
+have been made log level dependent (debugfile.py and xmllogger.py) - with default level INFO.
+Therefore in all levels above INFO those messages are not present in output files any more.
 
 Also this measure reduces the amount of content in Robot Framework output files and eases the readability.
-
-The new log level USER is placed between INFO and WARN.
 
 
 The "log level" self test
@@ -62,8 +57,11 @@ The robot file itself is called by another robot file with every available log l
 For every combination of log levels it is checked if all expected log messages can be found in the debug log file
 and in the XML report file. Additionally it is checked if all declined log messages are not present in these files.
 
-Additionally the XML report file is compared with a reference file (based on a pattern file). This is to consider the
-XML structure and the multiple occurrences of log messages also.
+To check also the remaining content like the start and the end of a keyword execution or FOR loops and IF conditions,
+an output file comparison follows. The current output file is compared with a reference file, that is a previous output
+file with manually checked content that is like expected. Not the entire content is compared. The comparison is reduced
+to a subset of content based on a pattern file for the debug log file in text format (log_level_pattern_DEBUG_LOG.txt) and
+a pattern file for the XML output file (log_level_pattern_XML.txt).
 
 Every deviation immediately stops the test.
 
@@ -144,18 +142,22 @@ Self test files:
 
   Reference files used for output file copmarison of XML report files
 
+* referencelogfiles/log_level_pattern_DEBUG_LOG.txt
+
+  Pattern file with regular expressions used for debug log file comparison
+
 * referencelogfiles/log_level_pattern_XML.txt
 
-  Pattern file with regular expressions used for output file comparison
+  Pattern file with regular expressions used for XML output file comparison
+
+* robotframework\atest\robot\log_level\readme_log_level_test.txt
+
+  The feature and self test documentation (this readme)
 
 
 Self test execution:
 --------------------
 
-<Python interpreter> "./atest/run.py" "./atest/robot/log_level"
-
-Caution: run.py is CWD sensitive!
-
-
+<Python interpreter> "./atest/run.py" -l log_level_test_log.html -r log_level_test_report.html -b log_level_test_debug.log "./atest/robot/log_level"
 
 

@@ -20,7 +20,7 @@
 #
 # XC-HWP/ESW3-Queckenstedt
 #
-# 23.02.2024
+# 29.02.2024
 #
 # --------------------------------------------------------------------------------------------------------------
 
@@ -45,6 +45,10 @@ class CLogData():
 
     def __init__(self):
 
+        # where the Log keyword calls are located
+        self.__tupleOrigins = ("ROBOT_FILE", "RESOURCE_FILE", "PYTHON_LIBRARY")
+
+        # log levels supported by this test
         self.__tupleLogLevels = ("ERROR", "WARN", "USER", "INFO", "DEBUG", "TRACE", "DEFAULT")
 
         # The meaning of "DEFAULT" in this test is: No log level defined in 'Log' keyword call.
@@ -87,7 +91,10 @@ class CLogData():
     # --------------------------------------------------------------------------------------------------------------
 
     # content used in Log keywords
-    def get_single_log_message(self, origin="TEST", log_level="DEFAULT"):
+    def get_single_log_message(self, origin="UNKNOWN", log_level="DEFAULT"):
+        if origin not in self.__tupleOrigins:
+            sMessage = f"Origin '{origin}' not supported by this self test. Expected one of [" + ", ".join(self.__tupleOrigins) + "]"
+            return False, sMessage
         if log_level not in self.__tupleLogLevels:
             sMessage = f"Log level '{log_level}' not supported by this self test. Expected one of [" + ", ".join(self.__tupleLogLevels) + "]"
             return False, sMessage
@@ -96,7 +103,7 @@ class CLogData():
 
     # --------------------------------------------------------------------------------------------------------------
 
-    def get_log_messages(self, origin="TEST"):
+    def get_log_messages(self, origin="UNKNOWN"):
         """Returns a dictionary of log messages for a certain origin.
            'origin' can be a robot file, a resource file or a Python keyword library.
         """
@@ -118,10 +125,9 @@ class CLogData():
         if file_type not in ("LOG", "XML"):
             return listExpectedContent
 
-        tupleOrigins        = ("ROBOT_FILE", "RESOURCE_FILE", "PYTHON_LIBRARY")
         tupleExpectedLevels = self.__dictExpectedLevels[log_level]
 
-        for origin in tupleOrigins:
+        for origin in self.__tupleOrigins:
             dictLogMessages = self.get_log_messages(origin)
             for sLevel in tupleExpectedLevels:
                 # Put together the part from Robot Framework (the log level label)
@@ -137,7 +143,7 @@ class CLogData():
                     sExpectedContent = f"level=\"{log_level_label}\">{dictLogMessages[sLevel]}"
                 listExpectedContent.append(sExpectedContent)
             # eof for sLevel in tupleExpectedLevels:
-        # eof for origin in tupleOrigins:
+        # eof for origin in self.__tupleOrigins:
 
         return listExpectedContent
     # eof def get_expected_content_list(...):
@@ -154,10 +160,9 @@ class CLogData():
         if file_type not in ("LOG", "XML"):
             return listDeclinedContent
 
-        tupleOrigins        = ("ROBOT_FILE", "RESOURCE_FILE", "PYTHON_LIBRARY")
         tupleDeclinedLevels = self.__dictDeclinedLevels[log_level]
 
-        for origin in tupleOrigins:
+        for origin in self.__tupleOrigins:
             dictLogMessages = self.get_log_messages(origin)
             for sLevel in tupleDeclinedLevels:
                 # Put together the part from Robot Framework (the log level label)
@@ -176,7 +181,7 @@ class CLogData():
                         sDeclinedContent = f"level=\"{log_level_label}\">{dictLogMessages[sLevel]}"
                         listDeclinedContent.append(sDeclinedContent)
             # eof for sLevel in tupleDeclinedLevels:
-        # eof for origin in tupleOrigins:
+        # eof for origin in self.__tupleOrigins:
 
         return listDeclinedContent
     # eof def get_declined_content_list(...):

@@ -20,7 +20,7 @@
 #
 # XC-HWP/ESW3-Queckenstedt
 #
-# 26.02.2024
+# 29.02.2024
 #
 # --------------------------------------------------------------------------------------------------------------
 
@@ -77,12 +77,16 @@ class ClogLevelTest():
         self.__oLogData = CLogData()
 
         # path and name of Robot Framework log files to check; file names depend on log level and counter value and will be computed later
-        self.__sOutputFile_XML     = None
-        self.__sOutputFile_LOG     = None
-        self.__sOutputFile_REPORT  = None
-        self.__sOutputFile_DEBUG   = None
-        self.__sOutputFile_XML_REF = None
-        self.__sPatternFile_XML    = None
+        self.__sOutputFile_XML           = None
+        self.__sOutputFile_LOG           = None
+        self.__sOutputFile_REPORT        = None
+        self.__sOutputFile_DEBUG_LOG     = None
+        #
+        self.__sOutputFile_DEBUG_LOG_REF = None
+        self.__sPatternFile_DEBUG_LOG    = None
+        #
+        self.__sOutputFile_XML_REF       = None
+        self.__sPatternFile_XML          = None
 
         # enable a sorted occurrence of log files in file explorer (sorted by log level); the numbers are part of the output file names
         self.__dictLevelNumber = {}
@@ -172,13 +176,25 @@ class ClogLevelTest():
 
         # In the command line above we tell the Robot Framework to store all output file within sOutputDir under certain names.
         # We also need to recover these information inside this library to have access to the output files when checking the content.
-        self.__sOutputFile_XML    = f"{sOutputDir}/{sLevelNumber}.log_level_{log_level}.xml"
-        self.__sOutputFile_LOG    = f"{sOutputDir}/{sLevelNumber}.log_level_{log_level}_log.html"
-        self.__sOutputFile_REPORT = f"{sOutputDir}/{sLevelNumber}.log_level_{log_level}_report.html"
-        self.__sOutputFile_DEBUG  = f"{sOutputDir}/{sLevelNumber}.log_level_{log_level}_debug.log"
+        self.__sOutputFile_XML        = f"{sOutputDir}/{sLevelNumber}.log_level_{log_level}.xml"
+        self.__sOutputFile_LOG        = f"{sOutputDir}/{sLevelNumber}.log_level_{log_level}_log.html"
+        self.__sOutputFile_REPORT     = f"{sOutputDir}/{sLevelNumber}.log_level_{log_level}_report.html"
+        self.__sOutputFile_DEBUG_LOG  = f"{sOutputDir}/{sLevelNumber}.log_level_{log_level}_debug.log"
 
-        # reference log file corresponding to the current XML output file
-        self.__sOutputFile_XML_REF = f"{sSuiteSourceFolder}/referencelogfiles/{sLevelNumber}.log_level_{log_level}-REF.xml"
+        # reference DEBUG log file corresponding to the current DEBUG log file
+        self.__sOutputFile_DEBUG_LOG_REF = f"{sSuiteSourceFolder}/referencelogfiles/{sLevelNumber}.log_level_{log_level}_debug.log"
+        if os.path.isfile(self.__sOutputFile_DEBUG_LOG_REF) is False:
+            BuiltIn().log(f"Missing reference file '{self.__sOutputFile_DEBUG_LOG_REF}'", "ERROR")
+            return ERROR
+
+        # pattern file for comparison of DEBUG log files
+        self.__sPatternFile_DEBUG_LOG = f"{sSuiteSourceFolder}/referencelogfiles/log_level_pattern_DEBUG_LOG.txt"
+        if os.path.isfile(self.__sPatternFile_DEBUG_LOG) is False:
+            BuiltIn().log(f"Missing pattern file '{self.__sPatternFile_DEBUG_LOG}'", "ERROR")
+            return ERROR
+
+        # reference XML file corresponding to the current XML output file
+        self.__sOutputFile_XML_REF = f"{sSuiteSourceFolder}/referencelogfiles/{sLevelNumber}.log_level_{log_level}.xml"
         if os.path.isfile(self.__sOutputFile_XML_REF) is False:
             BuiltIn().log(f"Missing reference file '{self.__sOutputFile_XML_REF}'", "ERROR")
             return ERROR
@@ -235,7 +251,7 @@ class ClogLevelTest():
         ERROR   = 1
 
         # which files to check
-        tupleFilesToCheck = (self.__sOutputFile_DEBUG, self.__sOutputFile_XML)
+        tupleFilesToCheck = (self.__sOutputFile_DEBUG_LOG, self.__sOutputFile_XML)
 
         # --------------------------------------------------------------------------------------------------------------
         # file content check
@@ -318,16 +334,34 @@ class ClogLevelTest():
 
         # eof for sOutputFile in tupleFilesToCheck:
 
-        # ==================================
-        # ==== 3. XML outout file comparison
-        # ==================================
+        # The previous checks only belong to the pure existence of message strings caused by the Log keyword.
+        # To check also the remaining content like the start and the end of a keyword execution or FOR loops and IF conditions,
+        # an output file comparison follows.
+        # The current output file is compared with a reference file, that is a previous output file with manually checked content
+        # that is like expected. Not the entire content is compared. The comparison is reduced to a subset of content based on
+        # a pattern file for the debug log file in text format (log_level_pattern_DEBUG_LOG.txt) and a pattern file for the XML output
+        # file (log_level_pattern_XML.txt).
 
-        # In case of the XML file is affected, a simple string check like executed before, is not enough.
-        # Because of the string check searches everywhere in the log file and does not consider the XML structure.
-        # Messages can appear at two positions: at any position for logged Log keyword calls and within
-        # the errors section (<error> tag). To fill the gap we execute now a log file comparison.
-        # Based on a pattern file (log_level_pattern_XML.txt), the current XML output file is compared with a
-        # corresponding reference output file.
+
+        # ========================================
+        # ==== 3. debug log output file comparison
+        # ========================================
+
+        oComparison = CComparison()
+        bIdentical, bSuccess, sResult = oComparison.Compare(self.__sOutputFile_DEBUG_LOG, self.__sOutputFile_DEBUG_LOG_REF, self.__sPatternFile_DEBUG_LOG)
+        if bSuccess is not True:
+            BuiltIn().log(sResult, "ERROR")
+            return ERROR
+        if bIdentical is False:
+            BuiltIn().log(sResult, "ERROR")
+            return ERROR
+        del oComparison
+        BuiltIn().log(f"debug log file comparison successful. {sResult}", "INFO")
+
+
+        # ==================================
+        # ==== 4. XML output file comparison
+        # ==================================
 
         oComparison = CComparison()
         bIdentical, bSuccess, sResult = oComparison.Compare(self.__sOutputFile_XML, self.__sOutputFile_XML_REF, self.__sPatternFile_XML)
@@ -337,9 +371,11 @@ class ClogLevelTest():
         if bIdentical is False:
             BuiltIn().log(sResult, "ERROR")
             return ERROR
+        del oComparison
         BuiltIn().log(f"XML file comparison successful. {sResult}", "INFO")
 
-        BuiltIn().log(f"Success: Content checked in output files successfully", "INFO")
+
+        BuiltIn().log(f"Success: Content check in output files successfull", "INFO")
         return SUCCESS
 
     # eof def __CheckOutputFiles(self):
