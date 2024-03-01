@@ -1255,3 +1255,45 @@ class Vi(Language):
     but_prefixes = ['Nhưng']
     true_strings = ['Đúng', 'Vâng', 'Mở']
     false_strings = ['Sai', 'Không', 'Tắt', 'Không Có Gì']
+
+
+class Ja(Language):
+    """Japanese"""
+    settings_header = '設定'
+    variables_header = '変数'
+    test_cases_header = 'テスト ケース'
+    tasks_header = 'タスク'
+    keywords_header = 'キーワード'
+    comments_header = 'コメント'
+    library_setting = 'ライブラリ'
+    resource_setting = 'リソース'
+    variables_setting = '変数'
+    name_setting = '名前'
+    documentation_setting = 'ドキュメント'
+    metadata_setting = 'メタデータ'
+    suite_setup_setting = 'スイート セットアップ'
+    suite_teardown_setting = 'スイート ティアダウン'
+    test_setup_setting = 'テスト セットアップ'
+    task_setup_setting = 'タスク セットアップ'
+    test_teardown_setting = 'テスト ティアダウン'
+    task_teardown_setting = 'タスク ティアダウン'
+    test_template_setting = 'テスト テンプレート'
+    task_template_setting = 'タスク テンプレート'
+    test_timeout_setting = 'テスト タイムアウト'
+    task_timeout_setting = 'タスク タイムアウト'
+    test_tags_setting = 'テスト タグ'
+    task_tags_setting = 'タスク タグ'
+    keyword_tags_setting = 'キーワード タグ'
+    setup_setting = 'セットアップ'
+    teardown_setting = 'ティアダウン'
+    template_setting = 'テンプレート'
+    tags_setting = 'タグ'
+    timeout_setting = 'タイムアウト'
+    arguments_setting = '引数'
+    given_prefixes = ['仮定', '指定', '前提条件']
+    when_prefixes = ['条件', '次の場合', 'もし', '実行条件']
+    then_prefixes = ['アクション', 'その時', '動作']
+    and_prefixes = ['および', '及び', 'かつ', '且つ', 'ならびに', '並びに', 'そして', 'それから']
+    but_prefixes = ['ただし', '但し']
+    true_strings = ['真', '有効', 'はい', 'オン']
+    false_strings = ['偽', '無効', 'いいえ', 'オフ']
