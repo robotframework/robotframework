@@ -97,7 +97,7 @@ Log Levels In Resource File
       END
    END
 
-   # -- without explicite log level (default log level assumed to be INFO)
+   # -- without explicite log level (default log level assumed to be INFO); test internally this is labelled with 'DEFAULT'
 
    ${bAck}    ${log_message}=    Get Single Log Message    RESOURCE_FILE    DEFAULT
    Should Be Equal    ${bAck}    ${True}    Failed to execute the log level resource file
