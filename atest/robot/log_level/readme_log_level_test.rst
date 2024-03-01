@@ -124,6 +124,7 @@ Self test files
 * ``libs/ClogLevelTest.py``
 
   Keyword library to support the self test. Responsible for:
+
   - versioning
   - definition of all output files and folders belonging to the self test
   - execution of ``log_level.robot``
