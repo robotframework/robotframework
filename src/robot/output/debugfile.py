@@ -100,8 +100,7 @@ class _DebugFileWriter(LoggerApi):
         if self._is_logged(msg_level):
             log_kw_start = True
         else:
-            # suppress the logging of the start of a BuiltIn.Log keyword in case of no message is logged
-            # because of a trace level mismatch (to avoid useless content in debug log file)
+            # suppress the logging because the trace level does not match
             log_kw_start = False
 
         if log_kw_start is True:
@@ -123,8 +122,7 @@ class _DebugFileWriter(LoggerApi):
         if self._is_logged(msg_level):
             log_kw_end = True
         else:
-            # suppress the logging of the end of a BuiltIn.Log keyword in case of no message is logged
-            # because of a trace level mismatch (to avoid useless content in debug log file)
+            # suppress the logging because the trace level does not match
             log_kw_end = False
 
         if log_kw_end is True:
