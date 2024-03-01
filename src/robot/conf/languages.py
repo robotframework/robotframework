@@ -1258,7 +1258,10 @@ class Vi(Language):
 
 
 class Ja(Language):
-    """Japanese"""
+    """Japanese
+
+    New in Robot Framework 7.0.1.
+    """
     settings_header = '設定'
     variables_header = '変数'
     test_cases_header = 'テスト ケース'
