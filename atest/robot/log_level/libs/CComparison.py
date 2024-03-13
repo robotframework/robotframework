@@ -1,6 +1,5 @@
-# **************************************************************************************************************
-#
-#  Copyright 2020-2024 Robert Bosch GmbH
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -13,39 +12,21 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-#
-# **************************************************************************************************************
-#
-# CComparison.py
-#
-# XC-HWP/ESW3-Queckenstedt
-#
-# 03.04.2023
-#
-# **************************************************************************************************************
 
 # -- import standard Python modules
 import os, re
 
 # -- import own Python modules
-from PythonExtensionsCollection.File.CFile import CFile
-from PythonExtensionsCollection.String.CString import CString
-
-# **************************************************************************************************************
+from CFile import CFile
+from CString import CString
 
 class CComparison(object):
    """The class ``CComparison`` contains mechanisms to compare two files either based on the original version of these files
 or based on an extract (made with regular expressions) to ensure that only relevant parts of the files are compared.
    """
 
-   # --------------------------------------------------------------------------------------------------------------
-   #TM***
-
    def __init__(self):
       self.__bSkipBlankLines = True
-
-   # --------------------------------------------------------------------------------------------------------------
-   #TM***
 
    def Compare(self, sFile_1=None, sFile_2=None, sPatternFile=None, sIgnorePatternFile=None, bDebug=False):
       """
@@ -330,12 +311,3 @@ Compares two files. While reading in all files empty lines are skipped.
    # eof def Compare(self, sFile_1=None, sFile_2=None, sPatternFile=None):
 
 # eof class CComparison(object):
-
-# --------------------------------------------------------------------------------------------------------------
-
-
-
-
-
-
-

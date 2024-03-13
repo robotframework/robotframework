@@ -211,21 +211,17 @@ class XmlLogger(ResultVisitor):
         self._xml_writer.element('msg', msg.message, attrs)
 
     def start_keyword(self, kw):
-
         # inits
         log_kw_start = True
         msg_level = LOG_LEVEL_XML_FILE
-
         if kw.name == 'BuiltIn.Log':
             # this keyword has it's own log level
             msg_level = self.get_level_from_kw_args(kw.args)
-
         if self._log_message_is_logged(msg_level):
             log_kw_start = True
         else:
             # suppress the logging because the trace level does not match
             log_kw_start = False
-
         if log_kw_start is True:
             self._writer.start('kw', self._get_start_keyword_attrs(kw))
             if kw.tags.robot('flatten'):
@@ -241,21 +237,17 @@ class XmlLogger(ResultVisitor):
         return attrs
 
     def end_keyword(self, kw):
-
         # inits
         log_kw_end = True
         msg_level = LOG_LEVEL_XML_FILE
-
         if kw.name == 'BuiltIn.Log':
             # this keyword has it's own log level
             msg_level = self.get_level_from_kw_args(kw.args)
-
         if self._log_message_is_logged(msg_level):
             log_kw_end = True
         else:
             # suppress the logging because the trace level does not match
             log_kw_end = False
-
         if log_kw_end is True:
             if kw.tags.robot('flatten'):
                 self.flatten_level -= 1

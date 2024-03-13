@@ -88,21 +88,17 @@ class _DebugFileWriter(LoggerApi):
             self._separator('TEST')
 
     def start_keyword(self, data, result):
-
         # inits
         log_kw_start = True
         msg_level = LOG_LEVEL_DEBUG_FILE
-
         if result.full_name == 'BuiltIn.Log':
             # this keyword has it's own log level
             msg_level = self.get_level_from_kw_args(result.args)
-
         if self._is_logged(msg_level):
             log_kw_start = True
         else:
             # suppress the logging because the trace level does not match
             log_kw_start = False
-
         if log_kw_start is True:
             if self._kw_level == 0:
                 self._separator('KEYWORD')
@@ -110,21 +106,17 @@ class _DebugFileWriter(LoggerApi):
             self._kw_level += 1
 
     def end_keyword(self, data, result):
-
         # inits
         log_kw_end = True
         msg_level = LOG_LEVEL_DEBUG_FILE
-
         if result.full_name == 'BuiltIn.Log':
             # this keyword has it's own log level
             msg_level = self.get_level_from_kw_args(result.args)
-
         if self._is_logged(msg_level):
             log_kw_end = True
         else:
             # suppress the logging because the trace level does not match
             log_kw_end = False
-
         if log_kw_end is True:
             self._end(result.type, result.full_name, result.end_time, result.elapsed_time)
             self._kw_level -= 1

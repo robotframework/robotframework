@@ -1,6 +1,5 @@
-# **************************************************************************************************************
-#
-#  Copyright 2020-2024 Robert Bosch GmbH
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -13,16 +12,6 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-#
-# **************************************************************************************************************
-#
-# ClogLevelTest.py
-#
-# XC-HWP/ESW3-Queckenstedt
-#
-# 29.02.2024
-#
-# --------------------------------------------------------------------------------------------------------------
 
 # -- import standard Python modules
 import sys, os, platform, shlex, subprocess
@@ -34,6 +23,7 @@ from robot.libraries.BuiltIn import BuiltIn
 # -- import test specific Python modules
 from CLogData import CLogData
 from CComparison import CComparison
+from CString import CString
 
 # --------------------------------------------------------------------------------------------------------------
 #
@@ -43,18 +33,10 @@ from CComparison import CComparison
 MODULE_NAME    = "ClogLevelTest.py"
 TEST_NAME      = "log level test"
 MODULE_VERSION = "0.1.0"
-MODULE_DATE    = "26.02.2024"
+MODULE_DATE    = "13.03.2024"
 THIS_MODULE    = f"{MODULE_NAME} v. {MODULE_VERSION} / {MODULE_DATE}"
 THIS_TEST      = f"{TEST_NAME} v. {MODULE_VERSION} / {MODULE_DATE}"
 #
-# --------------------------------------------------------------------------------------------------------------
-
-def normalize_path(sPath=None):
-    """To give all paths an unique look&feel"""
-    if sPath is not None:
-        sPath = sPath.replace("\\", "/")
-    return sPath
-
 # --------------------------------------------------------------------------------------------------------------
 
 @library
@@ -68,8 +50,6 @@ class ClogLevelTest():
     ROBOT_AUTO_KEYWORDS   = False # only decorated methods are keywords
     ROBOT_LIBRARY_VERSION = MODULE_VERSION
     ROBOT_LIBRARY_SCOPE   = 'GLOBAL'
-
-    # --------------------------------------------------------------------------------------------------------------
 
     def __init__(self):
 
@@ -105,8 +85,6 @@ class ClogLevelTest():
     def __del__(self):
         pass
 
-    # --------------------------------------------------------------------------------------------------------------
-
     @keyword
     def get_test_info(self):
         """Returns the test information
@@ -121,16 +99,12 @@ class ClogLevelTest():
         return THIS_MODULE
     # eof def get_module_info(...):
 
-    # --------------------------------------------------------------------------------------------------------------
-
     @keyword
     def get_single_log_message(self, origin="UNKNOWN", log_level="UNKNOWN"):
         bAck, sMessage = self.__oLogData.get_single_log_message(origin, log_level)
         if bAck is not True:
             BuiltIn().log(sMessage, "ERROR")
         return bAck, sMessage
-
-    # --------------------------------------------------------------------------------------------------------------
 
     @keyword
     def execute_log_level_test_file(self, log_level=None):
@@ -158,11 +132,11 @@ class ClogLevelTest():
         sLevelNumber = self.__dictLevelNumber[log_level]
 
         # get output dir from this Robot Framework process
-        sOutputDir = normalize_path(BuiltIn().get_variable_value("${OUTPUT DIR}"))
+        sOutputDir = CString.NormalizePath(BuiltIn().get_variable_value("${OUTPUT DIR}"))
         # derive output dir of called Robot Framework process out of output dir of this process
         sOutputDir = f"{sOutputDir}/log_level_logfiles"
         # detect the current robot file folder
-        sSuiteSource = normalize_path(BuiltIn().get_variable_value("${SUITE SOURCE}"))
+        sSuiteSource = CString.NormalizePath(BuiltIn().get_variable_value("${SUITE SOURCE}"))
         sSuiteSourceFolder = os.path.dirname(sSuiteSource)
         # the robot file of the called Robot Framework process (log_level.robot) is expected to be present in same folder
         sLevelTestRobotFile = f"{sSuiteSourceFolder}/log_level.robot"
@@ -229,8 +203,6 @@ class ClogLevelTest():
         return nErrorLevel
 
     # eof def execute_log_level_test_file(...):
-
-    # --------------------------------------------------------------------------------------------------------------
 
     def __CheckOutputFiles(self, log_level=None):
         """Checked output files: XML file and debug log file (the HTML files are generated out of the XML file
@@ -380,7 +352,4 @@ class ClogLevelTest():
 
     # eof def __CheckOutputFiles(self):
 
-    # --------------------------------------------------------------------------------------------------------------
-
 # eof class ClogLevelTest():
-
