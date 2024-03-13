@@ -1,6 +1,5 @@
-# **************************************************************************************************************
-#
-#  Copyright 2020-2024 Robert Bosch GmbH
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -13,16 +12,6 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-#
-# **************************************************************************************************************
-#
-# CLogData.py
-#
-# XC-HWP/ESW3-Queckenstedt
-#
-# 29.02.2024
-#
-# --------------------------------------------------------------------------------------------------------------
 
 # -- import standard Python modules
 import sys, os
@@ -83,12 +72,8 @@ class CLogData():
     def __del__(self):
         pass
 
-    # --------------------------------------------------------------------------------------------------------------
-
     def get_supported_log_levels(self):
         return self.__tupleLogLevels
-
-    # --------------------------------------------------------------------------------------------------------------
 
     # content used in Log keywords
     def get_single_log_message(self, origin="UNKNOWN", log_level="DEFAULT"):
@@ -101,8 +86,6 @@ class CLogData():
         dictLogMessages = self.get_log_messages(origin)
         return True, dictLogMessages[log_level]
 
-    # --------------------------------------------------------------------------------------------------------------
-
     def get_log_messages(self, origin="UNKNOWN"):
         """Returns a dictionary of log messages for a certain origin.
            'origin' can be a robot file, a resource file or a Python keyword library.
@@ -112,8 +95,6 @@ class CLogData():
             dictLogMessages[sLogLevel] = f"=== [LOG_LEVEL_TEST] - [{origin}] - [{sLogLevel}]: {self.__dictTestStrings[sLogLevel]}"
         return dictLogMessages
     # eof def get_log_messages(...):
-
-    # --------------------------------------------------------------------------------------------------------------
 
     def get_expected_content_list(self, log_level="DEFAULT", file_type=None):
         """Returns a list of expected log messages for a certain origin and a certain log level.
@@ -147,8 +128,6 @@ class CLogData():
 
         return listExpectedContent
     # eof def get_expected_content_list(...):
-
-    # --------------------------------------------------------------------------------------------------------------
 
     def get_declined_content_list(self, log_level="DEFAULT", file_type=None):
         """Returns a list of declined log messages for a certain origin and a certain log level.
@@ -186,7 +165,4 @@ class CLogData():
         return listDeclinedContent
     # eof def get_declined_content_list(...):
 
-    # --------------------------------------------------------------------------------------------------------------
-
 # eof class CLogData():
-
