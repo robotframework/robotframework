@@ -22,9 +22,9 @@ if WINDOWS:
     from .windows import Timeout
 else:
     try:
-        from .posix import Timeout
+        from .posix import Timeoutx
     except ImportError:
-        from .dummy import Timeout
+        from .nosupport import Timeout
 
 
 class _Timeout(Sortable):
