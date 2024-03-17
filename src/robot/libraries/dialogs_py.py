@@ -26,9 +26,8 @@ class TkDialog(Toplevel):
 
     def __init__(self, message, value=None, **config):
         self._prevent_execution_with_timeouts()
-        self.root = self._get_root()
         self._button_bindings = {}
-        super().__init__(self.root)
+        super().__init__(self._get_root())
         self._initialize_dialog()
         self.widget = self._create_body(message, value, **config)
         self._create_buttons()
@@ -109,8 +108,8 @@ class TkDialog(Toplevel):
         return None
 
     def _close(self, event=None):
-        # self.destroy() is not enough on Linux
-        self.root.destroy()
+        self.destroy()
+        self.update() # Needed on linux to close the window (Issue #1466)
 
     def _right_button_clicked(self, event=None):
         self._result = self._get_right_button_value()

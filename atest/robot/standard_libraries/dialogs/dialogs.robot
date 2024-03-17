@@ -66,3 +66,6 @@ Get Selections From User Exited
 
 Multiple dialogs in a row
     Check Test Case    ${TESTNAME}
+
+Garbage Collection In Thread Should Not Cause Problems
+    Check Test Case    ${TESTNAME}

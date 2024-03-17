@@ -117,3 +117,9 @@ Multiple dialogs in a row
     [Documentation]  FAIL No value provided by user.
     Pause Execution    Verify that dialog is closed immediately.\n\nAfter pressing OK or <Enter>.
     Get Value From User    Verify that dialog is closed immediately.\n\nAfter pressing Cancel or <Esc>.
+
+Garbage Collection In Thread Should Not Cause Problems
+    ${thread}=    Evaluate    threading.Thread(target=gc.collect)    modules=gc,threading
+    Pause Execution    Verify that the execution does not crash after pressing OK or <Enter>.
+    Call Method    ${thread}    start
+    Call Method    ${thread}    join
