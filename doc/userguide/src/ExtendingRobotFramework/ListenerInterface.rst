@@ -422,6 +422,14 @@ but `the plan is to add them in Robot Framework 7.1`__.
 __ https://github.com/robotframework/robotframework/issues/3296
 __ https://github.com/robotframework/robotframework/issues/5008
 
+Listener version 3 has separate methods for library keywords, user keywords and
+all control structures. If there is a need to listen to all keyword related
+events, it is possible to implement `start_keyword` and `end_keyword`. In addition
+to that, `start_body_item` and `end_body_item` can be implemented to get
+notifications related to all keywords and control structures. These higher level
+listener methods are not called if more specific methods like `start_library_keyword`
+or `end_if` are implemented.
+
 Listener methods in the API version 3 are listed in the following table
 and in the API docs of the optional ListenerV3_ base class.
 
@@ -462,7 +470,7 @@ and in the API docs of the optional ListenerV3_ base class.
    |                       |                  | if a more specific `start_user_keyword`, `start_library_keyword`   |
    |                       |                  | or `start_invalid_keyword` method is implemented.                  |
    +-----------------------+------------------+--------------------------------------------------------------------+
-   | end_keyword           | data, result     | Called when a keyword starts.                                      |
+   | end_keyword           | data, result     | Called when a keyword ends.                                        |
    |                       |                  |                                                                    |
    |                       |                  | Same arguments and other semantics as with `start_keyword`.        |
    +-----------------------+------------------+--------------------------------------------------------------------+
@@ -538,6 +546,14 @@ and in the API docs of the optional ListenerV3_ base class.
    | start_error           | data, result     | Called when invalid syntax starts.                                 |
    +-----------------------+------------------+--------------------------------------------------------------------+
    | end_error             | data, result     | Called when invalid syntax ends.                                   |
+   +-----------------------+------------------+--------------------------------------------------------------------+
+   | start_body_item       | data, result     | Called when a keyword or a control structure starts, unless        |
+   |                       |                  | a more specific method such as `start_keyword` or `start_if`       |
+   |                       |                  | is implemented.                                                    |
+   +-----------------------+------------------+--------------------------------------------------------------------+
+   | end_body_item         | data, result     | Called when a keyword or a control structure ends, unless          |
+   |                       |                  | a more specific method such as `end_keyword` or `end_if`           |
+   |                       |                  | is implemented.                                                    |
    +-----------------------+------------------+--------------------------------------------------------------------+
    | log_message           | message          | Called when an executed keyword writes a log message.              |
    |                       |                  | `message` is a model object representing the `logged               |
