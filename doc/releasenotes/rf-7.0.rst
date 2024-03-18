@@ -875,7 +875,7 @@ Full list of fixes and enhancements
     :header-rows: 1
 
     * - ID
-      - Type
+     - Type
       - Priority
       - Summary
     * - `#3296`_
