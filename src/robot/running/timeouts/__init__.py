@@ -22,7 +22,7 @@ if WINDOWS:
     from .windows import Timeout
 else:
     try:
-        from .posix import Timeoutx
+        from .posix import Timeout
     except ImportError:
         from .nosupport import Timeout
 
