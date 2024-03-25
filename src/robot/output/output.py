@@ -31,7 +31,7 @@ class Output(AbstractLogger, LoggerApi):
                                             legacy_output=settings.legacy_output)
         self.listeners = Listeners(settings.listeners, settings.log_level)
         self.library_listeners = LibraryListeners(settings.log_level)
-        self._register_loggers(DebugFile(settings.debug_file))
+        self._register_loggers(DebugFile(settings.debug_file, settings.log_level))
         self._settings = settings
 
     @property
