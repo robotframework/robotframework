@@ -1134,7 +1134,7 @@ than one action.
        and credentials are submitted
        Then welcome page should be open
 
-__ http://testobsessed.com/2008/12/08/acceptance-test-driven-development-atdd-an-overview
+__ https://en.wikipedia.org/wiki/Acceptance_test-driven_development
 __ http://en.wikipedia.org/wiki/Specification_by_example
 __ http://en.wikipedia.org/wiki/Behavior_Driven_Development
 
