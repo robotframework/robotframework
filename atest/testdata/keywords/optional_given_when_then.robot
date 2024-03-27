@@ -48,6 +48,11 @@ Keyword can be used with and without prefix
     Then we are in Berlin city
     we are in Berlin city
 
+First word in a keyword can be an argument
+    Given we don't drink too many beers
+    Then Pekka drinks lonkero instead
+    and Miikka drinks water instead
+
 Localized prefixes
     Oletetaan we don't drink too many beers
     Kun we are in  museum  cafe
@@ -97,6 +102,10 @@ We ${x} This ${thing} Implemented
 
 We Go To ${somewhere}
     Should Be Equal  ${somewhere}  walking tour
+
+${person} drinks ${beverage} instead
+    Should not start with  ${person}  Then
+    Should not start with  ${person}  and
 
 Multipart prefixes didn't work with RF 6.0
     No Operation
