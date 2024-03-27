@@ -297,21 +297,22 @@ class KeywordStore:
             runner = self._get_explicit_runner(name)
         if not runner:
             runner = self._get_implicit_runner(name)
-        if not runner:
-            runner = self._get_bdd_style_runner(name, self.languages.bdd_prefixes)
+        if not runner or runner.keyword.name.startswith('$'):
+            prefix, kw_name = self._detect_bdd_prefix(name)
+            if prefix:
+                bdd_runner = self._get_runner(kw_name)
+                if bdd_runner:
+                    runner = copy.copy(bdd_runner)
+                    runner.name = f"{prefix} {kw_name}"
         return runner
 
-    def _get_bdd_style_runner(self, name, prefixes):
+    def _detect_bdd_prefix(self, name):
         parts = name.split()
         for index in range(1, len(parts)):
-            prefix = ' '.join(parts[:index]).title()
-            if prefix in prefixes:
-                runner = self._get_runner(' '.join(parts[index:]))
-                if runner:
-                    runner = copy.copy(runner)
-                    runner.name = name
-                    return runner
-        return None
+            prefix = ' '.join(parts[:index])
+            if prefix.title() in self.languages.bdd_prefixes:
+                return (prefix, ' '.join(parts[index:]))
+        return ('', name)
 
     def _get_implicit_runner(self, name):
         return (self._get_runner_from_resource_files(name) or
