@@ -23,6 +23,7 @@ from robot.libraries import STDLIBS
 from robot.output import LOGGER, Message
 from robot.utils import (eq, find_file, is_string, normalize, RecommendationFinder,
                          seq2str2)
+from robot.variables.search import search_variable
 
 from .context import EXECUTION_CONTEXTS
 from .importer import ImportCache, Importer
@@ -297,7 +298,8 @@ class KeywordStore:
             runner = self._get_explicit_runner(name)
         if not runner:
             runner = self._get_implicit_runner(name)
-        if not runner or runner.keyword.name.startswith('$'):
+        # handle bdd prefixes, even when swallowed by a leading variable
+        if not runner or not search_variable(runner.keyword.name).before:
             prefix, kw_name = self._detect_bdd_prefix(name)
             if prefix:
                 bdd_runner = self._get_runner(kw_name)
