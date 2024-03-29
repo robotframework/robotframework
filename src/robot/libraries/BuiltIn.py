@@ -1072,6 +1072,11 @@ class _Verify(_BuiltInBase):
         in Robot Framework 4.1.
         """
         orig_container = container
+        if isinstance(container, bytes) and isinstance(item, str):
+            try:
+                item = item.encode('latin-1')
+            except UnicodeEncodeError:
+                raise ValueError("{item} can not be encoded into bytes.")
         if ignore_case and is_string(item):
             item = item.casefold()
             if is_string(container):
