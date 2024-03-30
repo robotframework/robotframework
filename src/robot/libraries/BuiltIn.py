@@ -1042,7 +1042,7 @@ class _Verify(_BuiltInBase):
                        ignore_case=False, strip_spaces=False, collapse_spaces=False):
         """Fails if ``container`` does not contain ``item`` one or more times.
 
-        Works with strings, lists, and anything that supports Python's ``in``
+        Works with strings, lists, bytes, and anything that supports Python's ``in``
         operator.
 
         See `Should Be Equal` for an explanation on how to override the default
@@ -1076,7 +1076,7 @@ class _Verify(_BuiltInBase):
             try:
                 item = item.encode('latin-1')
             except UnicodeEncodeError:
-                raise ValueError("{item} can not be encoded into bytes.")
+                raise ValueError(f"{item} can not be encoded into bytes.")
         if ignore_case and is_string(item):
             item = item.casefold()
             if is_string(container):

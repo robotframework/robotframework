@@ -24,7 +24,8 @@ def get_variables():
         DICT_4={'\ta': 1, 'a b': 2, '  c': 3, 'dd\n\t': 4, '\nak \t': 5},
         DICT_5={' a': 0, '\ta': 1, 'a\t': 2, '\nb': 3, 'd\t': 4, '\td\n': 5, 'e   e': 6},
         PREPR_DICT1="{'a': 1}",
-        BINARY=b'\x00\x01\x02\xA0\xB0'
+        BYTES=b'\x00\x01\x02\xA0\xB0',
+        UNICODE_NON_LATIN=u'\u2013'
     )
     variables['ASCII_DICT'] = ascii(variables['DICT'])
     return variables
