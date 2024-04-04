@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup      Run Tests    --variablefile ${VARDIR}/cli.json -V ${VARDIR}/cli2.json --pythonpath ${VARDIR}
+Suite Setup      Run Tests    --variablefile "${VARDIR}/cli.json" -V "${VARDIR}/cli2.json" --pythonpath "${VARDIR}"
 ...              variables/json_variable_file.robot
 Resource         atest_resource.robot
 
