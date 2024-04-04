@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup      Run Tests    --variablefile ${VARDIR}/cli.yaml -V ${VARDIR}/cli.YML --pythonpath ${VARDIR}
+Suite Setup      Run Tests    --variablefile "${VARDIR}/cli.yaml" -V "${VARDIR}/cli.YML" --pythonpath "${VARDIR}"
 ...              variables/yaml_variable_file.robot
 Force Tags       require-yaml
 Resource         atest_resource.robot
