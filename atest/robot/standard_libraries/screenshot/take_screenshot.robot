@@ -15,6 +15,14 @@ Basename May Be Defined
     ${tc}=  Check Test Case  ${TESTNAME}
     Check Embedding In Log  ${tc.kws[0].kws[0].msgs[1]}  foo_1.jpg
 
+Basename May Be Defined With Screenshot Format Of PNG
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Embedding In Log    ${tc.kws[0].kws[0].msgs[1]}    foo_1.png
+
+Basename May Be Defined With Screenshot Format Of TIFF
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Embedding In Log    ${tc.kws[0].kws[0].msgs[1]}    foo_1.tiff
+
 Basename With Extension Turns Off Index Generation
     ${tc}=  Check Test Case  ${TESTNAME}
     Check Embedding In Log  ${tc.kws[0].kws[0].msgs[1]}  xxx.jpg
