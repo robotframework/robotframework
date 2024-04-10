@@ -168,7 +168,6 @@ class Screenshot:
         return old
 
     def take_screenshot(self, name="screenshot", width="800px", img_format="jpg"):
-        # TODO: update the docs below once this actually works
         """Takes a screenshot in JPEG format and embeds it into the log file.
 
         Name of the file where the screenshot is stored is derived from the
