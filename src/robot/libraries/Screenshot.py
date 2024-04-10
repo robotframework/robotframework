@@ -57,8 +57,10 @@ class Screenshot:
     one found will be used.
 
     - wxPython :: http://wxpython.org :: Generic Python GUI toolkit.
+        - supports: png, jpeg, gif, pcx, pnm, tiff, tga, ico, cur
     - PyGTK :: http://pygtk.org :: This module is available by default on most
       Linux distributions.
+        - supports:
     - Pillow :: http://python-pillow.github.io ::
       Only works on Windows. Also the original PIL package is supported.
     - Scrot :: http://en.wikipedia.org/wiki/Scrot :: Not used on Windows.
@@ -85,8 +87,26 @@ class Screenshot:
 
     ROBOT_LIBRARY_SCOPE = 'TEST SUITE'
     ROBOT_LIBRARY_VERSION = get_version()
+    IMAGE_FORMATS = {
+        "jpg": {"extensions": ("jpg", "jpeg",),
+                "wx_bmp_type": "BITMAP_TYPE_JPEG",
+                "gtk_type": "jpeg",
+                "pil_type": "JPEG"},
+        "png": {"extensions": ("png",),
+                "wx_bmp_type": "BITMAP_TYPE_PNG",
+                "gtk_type": "png",
+                "pil_type": "PNG"},
+        "tiff": {"extensions": ("tiff", "tif",),
+                 "wx_bmp_type": "BITMAP_TYPE_TIFF",
+                 "gtk_type": None,
+                 "pil_type": "TIFF"},
+        "bmp": {"extensions": ("bmp",),
+                "wx_bmp_type": "BITMAP_TYPE_BMP",
+                "gtk_type": "bmp",
+                "pil_type": "BMP"}
+    }
 
-    def __init__(self, screenshot_directory=None, screenshot_module=None):
+    def __init__(self, screenshot_directory=None, screenshot_module=None, image_format="jpg"):
         """Configure where screenshots are saved.
 
         If ``screenshot_directory`` is not given, screenshots are saved into
@@ -104,8 +124,11 @@ class Screenshot:
         | Library   | Screenshot | ${TEMPDIR} |
         | Library   | Screenshot | screenshot_module=PyGTK |
         """
+        # take in the image format here, so it can be referenced from here on out
+        self._out_img_format = image_format
         self._given_screenshot_dir = self._norm_path(screenshot_directory)
-        self._screenshot_taker = ScreenshotTaker(screenshot_module)
+        # make sure all screenshot modules support the type we want - they do
+        self._screenshot_taker = ScreenshotTaker(screenshot_module, self._out_img_format)
 
     def _norm_path(self, path):
         if not path:
@@ -136,6 +159,7 @@ class Screenshot:
 
         The directory can also be set in `importing`.
         """
+        print(f"path passed in is: {path}")
         path = self._norm_path(path)
         if not os.path.isdir(path):
             raise RuntimeError("Directory '%s' does not exist." % path)
@@ -143,7 +167,8 @@ class Screenshot:
         self._given_screenshot_dir = path
         return old
 
-    def take_screenshot(self, name="screenshot", width="800px"):
+    def take_screenshot(self, name="screenshot", width="800px", img_format="jpg"):
+        # TODO: update the docs below once this actually works
         """Takes a screenshot in JPEG format and embeds it into the log file.
 
         Name of the file where the screenshot is stored is derived from the
@@ -158,6 +183,8 @@ class Screenshot:
 
         ``width`` specifies the size of the screenshot in the log file.
 
+        ``img_format`` specifies the image format for the screenshot, default is "jpg"
+
         Examples: (LOGDIR is determined automatically by the library)
         | Take Screenshot |                  |     | # LOGDIR/screenshot_1.jpg (index automatically incremented) |
         | Take Screenshot | mypic            |     | # LOGDIR/mypic_1.jpg (index automatically incremented) |
@@ -165,20 +192,24 @@ class Screenshot:
         | Take Screenshot | pic.jpg          |     | # LOGDIR/pic.jpg (always uses this file) |
         | Take Screenshot | images/login.jpg | 80% | # Specify both name and width. |
         | Take Screenshot | width=550px      |     | # Specify only width. |
+        | Take Screenshot | img_format=png   |     | # Specify only image format, png in this case |
+        | Take Screenshot | png_image        | img_format=tiff  | # Specify name and image format, "tiff" in this case |
 
         The path where the screenshot is saved is returned.
         """
+        self._out_img_format = img_format
         path = self._save_screenshot(name)
         self._embed_screenshot(path, width)
         return path
 
-    def take_screenshot_without_embedding(self, name="screenshot"):
+    def take_screenshot_without_embedding(self, name="screenshot", img_format="jpg"):
         """Takes a screenshot and links it from the log file.
 
         This keyword is otherwise identical to `Take Screenshot` but the saved
         screenshot is not embedded into the log file. The screenshot is linked
         so it is nevertheless easily available.
         """
+        self._out_img_format = img_format
         path = self._save_screenshot(name)
         self._link_screenshot(path)
         return path
@@ -208,12 +239,19 @@ class Screenshot:
         return path
 
     def _get_screenshot_path(self, basename):
-        if basename.lower().endswith(('.jpg', '.jpeg')):
+        try:
+            # retrieve a tuple of the common file extension variations
+            file_extensions = Screenshot.IMAGE_FORMATS[self._out_img_format]["extensions"]
+        except KeyError as ke:
+            logger.error(f"KeyError in _get_screenshot_path(): {ke}")
+        # if basename.lower().endswith(file_extensions):
+        if any([basename.lower().endswith(x) for x in file_extensions]):
             return os.path.join(self._screenshot_dir, basename)
         index = 0
         while True:
             index += 1
-            path = os.path.join(self._screenshot_dir, "%s_%d.jpg" % (basename, index))
+            # use the image format key for the file extension
+            path = os.path.join(self._screenshot_dir, "%s_%d.%s" % (basename, index, self._out_img_format))
             if not os.path.exists(path):
                 return path
 
@@ -230,7 +268,8 @@ class Screenshot:
 
 class ScreenshotTaker:
 
-    def __init__(self, module_name=None):
+    def __init__(self, module_name=None, image_format='jpg'):
+        self._image_format = image_format
         self._screenshot = self._get_screenshot_taker(module_name)
         self.module = self._screenshot.__name__.split('_')[1]
         self._wx_app_reference = None
@@ -289,7 +328,7 @@ class ScreenshotTaker:
                 return screenshot_taker
 
     def _osx_screenshot(self, path):
-        if self._call('screencapture', '-t', 'jpg', path) != 0:
+        if self._call('screencapture', '-t', self._image_format, path) != 0:
             raise RuntimeError("Using 'screencapture' failed.")
 
     def _call(self, *command):
@@ -304,9 +343,14 @@ class ScreenshotTaker:
         return os.sep == '/' and self._call('scrot', '--version') == 0
 
     def _scrot_screenshot(self, path):
-        if not path.endswith(('.jpg', '.jpeg')):
-            raise RuntimeError("Scrot requires extension to be '.jpg' or "
-                               "'.jpeg', got '%s'." % os.path.splitext(path)[1])
+        try:
+            file_extensions = Screenshot.IMAGE_FORMATS[self._image_format]["extensions"]
+        except KeyError as ke:
+            logger.error(f"KeyError in _scrot_screenshot(): {ke}")
+        # if not path.endswith(file_extensions):
+        if any([path.endswith(x) for x in file_extensions]):
+            raise RuntimeError("Scrot requires extension to be like %s, "
+                               "but got '%s'." % (str(file_extensions), os.path.splitext(path)[1]))
         if os.path.exists(path):
             os.remove(path)
         if self._call('scrot', '--silent', path) != 0:
@@ -325,7 +369,7 @@ class ScreenshotTaker:
         memory.SelectObject(bitmap)
         memory.Blit(0, 0, width, height, context, -1, -1)
         memory.SelectObject(wx.NullBitmap)
-        bitmap.SaveFile(path, wx.BITMAP_TYPE_JPEG)
+        bitmap.SaveFile(path, Screenshot.IMAGE_FORMATS[self._image_format]["wx_bmp_type"])
 
     def _gtk_screenshot(self, path):
         window = gdk.get_default_root_window()
@@ -337,10 +381,10 @@ class ScreenshotTaker:
                                   0, 0, 0, 0, width, height)
         if not pb:
             raise RuntimeError('Taking screenshot failed.')
-        pb.save(path, 'jpeg')
+        pb.save(path, Screenshot.IMAGE_FORMATS[self._image_format]["gtk_type"])
 
     def _pil_screenshot(self, path):
-        ImageGrab.grab().save(path, 'JPEG')
+        ImageGrab.grab().save(path, Screenshot.IMAGE_FORMATS[self._image_format]["pil_type"])
 
     def _no_screenshot(self, path):
         raise RuntimeError('Taking screenshots is not supported on this platform '
