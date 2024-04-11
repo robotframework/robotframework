@@ -609,6 +609,8 @@ class String:
         | ``[UPPER]``   | Uppercase ASCII characters from ``A`` to ``Z``. |
         | ``[LETTERS]`` | Lowercase and uppercase ASCII characters.       |
         | ``[NUMBERS]`` | Numbers from 0 to 9.                            |
+        | ``[ARABIC]``  | Arabic characters from 0x0600 to 0x0700 unicode |
+        | ``[POLISH]``  | ASCII characters and Polish diacritical signs.  |
 
         Examples:
         | ${ret} = | Generate Random String |
@@ -630,7 +632,10 @@ class String:
         for name, value in [('[LOWER]', ascii_lowercase),
                             ('[UPPER]', ascii_uppercase),
                             ('[LETTERS]', ascii_lowercase + ascii_uppercase),
-                            ('[NUMBERS]', digits)]:
+                            ('[NUMBERS]', digits),
+                            ('[ARABIC]',''.join(chr(character) for character in range(0x0600, 0x0700))),
+                            ('[POLISH]',ascii_lowercase + ascii_uppercase+''.join(
+                                ["\u0105", "\u0107", "\u0119", "\u0142", "\u0144", "\u00F3", "\u015B", "\u017A", "\u017C", "\u0104", "\u0106", "\u0118", "\u0141", "\u0143", "\u00D3", "\u015A", "\u0179", "\u017B"]))]:
             chars = chars.replace(name, value)
         maxi = len(chars) - 1
         return ''.join(chars[randint(0, maxi)] for _ in range(length))
