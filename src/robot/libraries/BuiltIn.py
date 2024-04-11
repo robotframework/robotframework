@@ -3223,12 +3223,12 @@ class _Misc(_BuiltInBase):
         operating systems.
 
         It is possible to pass arguments to the imported library and also
-        named argument syntax works if the library supports it. ``WITH NAME``
+        named argument syntax works if the library supports it. ``AS``
         syntax can be used to give a custom name to the imported library.
 
         Examples:
         | Import Library | MyLibrary |
-        | Import Library | ${CURDIR}/Lib.py | arg1 | named=arg2 | WITH NAME | Custom |
+        | Import Library | ${CURDIR}/Lib.py | arg1 | named=arg2 | AS | Custom |
         """
         args, alias = self._split_alias(args)
         try:
