@@ -168,7 +168,8 @@ class Screenshot:
         return old
 
     def take_screenshot(self, name="screenshot", width="800px", img_format="jpg"):
-        """Takes a screenshot in JPEG format and embeds it into the log file.
+        """Takes a screenshot in the specified format, jpg by default, and embeds
+        it into the log file
 
         Name of the file where the screenshot is stored is derived from the
         given ``name``. If the ``name`` ends with extension ``.jpg`` or
@@ -346,7 +347,6 @@ class ScreenshotTaker:
             file_extensions = Screenshot.IMAGE_FORMATS[self._image_format]["extensions"]
         except KeyError as ke:
             logger.error(f"KeyError in _scrot_screenshot(): {ke}")
-        # if not path.endswith(file_extensions):
         if any([path.endswith(x) for x in file_extensions]):
             raise RuntimeError("Scrot requires extension to be like %s, "
                                "but got '%s'." % (str(file_extensions), os.path.splitext(path)[1]))
