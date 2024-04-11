@@ -124,10 +124,8 @@ class Screenshot:
         | Library   | Screenshot | ${TEMPDIR} |
         | Library   | Screenshot | screenshot_module=PyGTK |
         """
-        # take in the image format here, so it can be referenced from here on out
         self._out_img_format = image_format
         self._given_screenshot_dir = self._norm_path(screenshot_directory)
-        # make sure all screenshot modules support the type we want - they do
         self._screenshot_taker = ScreenshotTaker(screenshot_module, self._out_img_format)
 
     def _norm_path(self, path):
@@ -244,7 +242,6 @@ class Screenshot:
             file_extensions = Screenshot.IMAGE_FORMATS[self._out_img_format]["extensions"]
         except KeyError as ke:
             logger.error(f"KeyError in _get_screenshot_path(): {ke}")
-        # if basename.lower().endswith(file_extensions):
         if any([basename.lower().endswith(x) for x in file_extensions]):
             return os.path.join(self._screenshot_dir, basename)
         index = 0
