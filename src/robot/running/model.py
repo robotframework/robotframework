@@ -663,7 +663,7 @@ class TestSuite(model.TestSuite[Keyword, TestCase]):
 
         Example::
 
-            suite.configure(included_tags=['smoke'],
+            suite.configure(include_tags=['smoke'],
                             doc='Smoke test results.')
 
         Not to be confused with :meth:`config` method that suites, tests,

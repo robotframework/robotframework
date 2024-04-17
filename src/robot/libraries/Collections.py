@@ -18,10 +18,13 @@ from ast import literal_eval
 from itertools import chain
 
 from robot.api import logger
-from robot.utils import (get_error_message, is_dict_like, is_list_like, Matcher,
-                         NOT_SET, plural_or_not as s, seq2str, seq2str2, type_name)
+from robot.utils import (is_dict_like, is_list_like, Matcher, NotSet,
+                         plural_or_not as s, seq2str, seq2str2, type_name)
 from robot.utils.asserts import assert_equal
 from robot.version import get_version
+
+
+NOT_SET = NotSet()
 
 
 class _List:

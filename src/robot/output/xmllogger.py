@@ -429,6 +429,8 @@ class LegacyXmlLogger(XmlLogger):
                 'schemaversion': '4'}
 
     def _datetime_to_timestamp(self, dt):
+        if dt is None:
+            return None
         return dt.isoformat(' ', timespec='milliseconds').replace('-', '')
 
     def _get_start_keyword_attrs(self, kw):

@@ -215,6 +215,10 @@ class Namespace:
         return library
 
     def get_runner(self, name, recommend_on_failure=True):
+        # TODO: Consider changing the default value of `recommend_on_failure` to False.
+        # Recommendations are not needed in all contexts and collecting them has a
+        # performance effect that has caused issues #4659 and #5051. It is possible to
+        # opt-out from collecting recommendations, but making it opt-in could be safer.
         try:
             return self._kw_store.get_runner(name, recommend_on_failure)
         except DataError as err:

@@ -13,20 +13,13 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-class NotSet:
-    """Represents value that is not set.
-
-    Can be used instead of the standard ``None`` in cases where ``None``
-    itself is a valid value.
-
-    ``robot.utils.NOT_SET`` is an instance of this class, but it in same cases
-    it is better to create a separate instance.
-
-    New in Robot Framework 7.0.
-    """
-
-    def __repr__(self):
-        return ''
+from robot.errors import DataError
 
 
-NOT_SET = NotSet()
+class Timeout:
+
+    def __init__(self, timeout, error):
+        pass
+
+    def execute(self, runnable):
+        raise DataError('Timeouts are not supported on this platform.')

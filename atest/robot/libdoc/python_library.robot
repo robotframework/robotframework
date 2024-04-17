@@ -135,3 +135,8 @@ Deprecation
     ...
     ...                                       RF and Libdoc don't consider this being deprecated.
     Keyword Should Not Be Deprecated     3
+
+NOT_SET as default value
+    Run Libdoc And Parse Output      Collections
+    Keyword Name Should Be           17    Get From Dictionary
+    Keyword Arguments Should Be      17    dictionary    key    default=

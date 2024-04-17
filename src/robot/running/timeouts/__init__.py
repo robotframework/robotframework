@@ -21,10 +21,14 @@ from robot.errors import TimeoutError, DataError, FrameworkError
 if WINDOWS:
     from .windows import Timeout
 else:
-    from .posix import Timeout
+    try:
+        from .posix import Timeout
+    except ImportError:
+        from .nosupport import Timeout
 
 
 class _Timeout(Sortable):
+    type: str
 
     def __init__(self, timeout=None, variables=None):
         self.string = timeout or ''
@@ -113,7 +117,7 @@ class TestTimeout(_Timeout):
     def __init__(self, timeout=None, variables=None, rpa=False):
         if rpa:
             self.type = 'Task'
-        _Timeout.__init__(self, timeout, variables)
+        super().__init__(timeout, variables)
 
     def set_keyword_timeout(self, timeout_occurred):
         if timeout_occurred:
