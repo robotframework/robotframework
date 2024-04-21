@@ -52,6 +52,13 @@ Union with TypedDict
     NONE               None
     ${NONE}            None
 
+Union with str and TypedDict
+    [Template]    Union with str and TypedDict
+    {'x': 1}           "{'x': 1}"
+    ${{{'x': 1}}}      {'x': 1}
+    ${{{'bad': 1}}}    "{'bad': 1}"
+    ${{{'x': '1'}}}    "{'x': '1'}"
+
 Union with item not liking isinstance
     [Template]    Union with item not liking isinstance
     42                 ${42}

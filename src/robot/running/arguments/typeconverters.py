@@ -526,7 +526,17 @@ class TypedDictConverter(TypeConverter):
         return type_info.is_typed_dict
 
     def no_conversion_needed(self, value):
-        return False
+        if not isinstance(value, dict):
+            return False
+        for key in value:
+            try:
+                converter = self.converters[key]
+            except KeyError:
+                return False
+            else:
+                if not converter.no_conversion_needed(value[key]):
+                    return False
+        return set(value).issuperset(self.type_info.required)
 
     def _non_string_convert(self, value):
         return self._convert_items(value)

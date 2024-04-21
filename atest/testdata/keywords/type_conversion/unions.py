@@ -64,6 +64,10 @@ def union_with_typeddict(argument: Union[XD, None], expected):
     assert argument == eval(expected), '%r != %s' % (argument, expected)
 
 
+def union_with_str_and_typeddict(argument: Union[str, XD], expected):
+    assert argument == eval(expected), '%r != %s' % (argument, expected)
+
+
 def union_with_item_not_liking_isinstance(argument: Union[BadRational, int], expected):
     assert argument == expected, '%r != %r' % (argument, expected)
 
