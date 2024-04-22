@@ -526,7 +526,7 @@ class TypedDictConverter(TypeConverter):
         return type_info.is_typed_dict
 
     def no_conversion_needed(self, value):
-        if not isinstance(value, dict):
+        if not isinstance(value, Mapping):
             return False
         for key in value:
             try:

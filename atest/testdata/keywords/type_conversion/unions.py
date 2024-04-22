@@ -1,4 +1,5 @@
 from datetime import date, timedelta
+from collections.abc import Mapping
 from numbers import Rational
 from typing import List, Optional, TypedDict, Union
 
@@ -64,7 +65,10 @@ def union_with_typeddict(argument: Union[XD, None], expected):
     assert argument == eval(expected), '%r != %s' % (argument, expected)
 
 
-def union_with_str_and_typeddict(argument: Union[str, XD], expected):
+def union_with_str_and_typeddict(argument: Union[str, XD], expected, non_dict_mapping=False):
+    if non_dict_mapping:
+        assert isinstance(argument, Mapping) and not isinstance(argument, dict)
+        argument = dict(argument)
     assert argument == eval(expected), '%r != %s' % (argument, expected)
 
 
