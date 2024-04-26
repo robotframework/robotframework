@@ -1,5 +1,6 @@
 *** Settings ***
-Suite Setup       Run Tests    ${EMPTY}    running/for/for.robot
+Suite Setup       Run Tests    --log log-tests-also-string-reprs.html    running/for/for.robot
+Suite Teardown    File Should Exist    ${OUTDIR}/log-tests-also-string-reprs.html
 Resource          for.resource
 
 *** Test Cases ***

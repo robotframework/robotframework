@@ -370,9 +370,9 @@ class ForBuilder(BodyBuilder):
 
     def build(self, node):
         error = format_error(self._get_errors(node))
-        self.model.config(assign=node.assign, flavor=node.flavor, values=node.values,
-                          start=node.start, mode=node.mode, fill=node.fill,
-                          lineno=node.lineno, error=error)
+        self.model.config(assign=node.assign, flavor=node.flavor or 'IN',
+                          values=node.values, start=node.start, mode=node.mode,
+                          fill=node.fill, lineno=node.lineno, error=error)
         for step in node.body:
             self.visit(step)
         return self.model
