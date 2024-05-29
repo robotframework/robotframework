@@ -82,7 +82,7 @@ Catching exceptions with `EXCEPT`
 The basic `TRY/EXCEPT` syntax can be used to handle failures based on
 error messages:
 
-.. sourcecode:: robotframework
+.. code:: robotframework
 
     *** Test Cases ***
     First example
@@ -107,7 +107,7 @@ multiple messages to match, and such a branch is executed if any of its messages
 match. In all these cases messages can be specified using variables in addition
 to literal strings.
 
-.. sourcecode:: robotframework
+.. code:: robotframework
 
     *** Test Cases ***
     Multiple EXCEPT branches
@@ -132,7 +132,7 @@ It is also possible to have an `EXCEPT` without messages, in which case it match
 any error. There can be only one such `EXCEPT` and it must follow possible
 other `EXCEPT` branches:
 
-.. sourcecode:: robotframework
+.. code:: robotframework
 
     *** Test Cases ***
     Match any error
@@ -162,7 +162,7 @@ values for the type are `GLOB`, `REGEXP`, `START` and `LITERAL` (default) and
 all values are case insensitive. If an `EXCEPT` has multiple messages, the type
 applies to all of them.
 
-.. sourcecode:: robotframework
+.. code:: robotframework
 
     *** Test Cases ***
     Glob pattern
@@ -216,7 +216,7 @@ occurred. Robot Framework supports that by making it possible to capture
 the error message into a variable by adding `AS  ${var}` at the
 end of the `EXCEPT` statement:
 
-.. sourcecode:: robotframework
+.. code:: robotframework
 
     *** Test Cases ***
     Capture error
@@ -235,7 +235,7 @@ Optional `ELSE` branches make it possible to execute keywords if there is no err
 There can be only one `ELSE` branch and it is allowed only after one or more
 `EXCEPT` branches:
 
-.. sourcecode:: robotframework
+.. code:: robotframework
 
     *** Test Cases ***
     ELSE branch
@@ -259,7 +259,7 @@ and the `TRY/EXCEPT/ELSE` structure fails.
 To handle both the case when there is any error and when there is no error,
 it is possible to use an `EXCEPT` without any message in combination with an `ELSE`:
 
-.. sourcecode:: robotframework
+.. code:: robotframework
 
     *** Test Cases ***
     Handle everything
@@ -280,7 +280,7 @@ after a keyword execution somewhat similarly as teardowns. There can be only one
 `FINALLY` branch and it must always be last. They can be used in combination with
 `EXCEPT` and `ELSE` branches and having also `TRY/FINALLY` structure is possible:
 
-.. sourcecode:: robotframework
+.. code:: robotframework
 
     *** Test Cases ***
     TRY/EXCEPT/ELSE/FINALLY
@@ -327,7 +327,7 @@ appendix in the User Guide.
 
 Example:
 
-.. sourcecode:: robotframework
+.. code:: robotframework
 
     *** Variables ***
     ${x}              10
@@ -350,7 +350,7 @@ control statements are often used in combination with the new `inline IF`_ synta
 
 Example:
 
-.. sourcecode:: robotframework
+.. code:: robotframework
 
     *** Variables ***
     ${x}              10
@@ -398,7 +398,7 @@ are positive integers denoting iteration count and "time strings" like `10s` or
 altogether by using `NONE` (case-insensitive). All these options are illustrated
 by the examples below.
 
-.. sourcecode:: robotframework
+.. code:: robotframework
 
     *** Test Cases ***
     Limit as iteration count
@@ -429,7 +429,7 @@ using the new inline `IF` syntax (`#4093`_) where the statement to execute follo
 the `IF` marker and condition directly and no `END` marker is needed. For example,
 the following two keywords are equivalent:
 
-.. sourcecode:: robotframework
+.. code:: robotframework
 
     *** Keyword ***
     Normal IF
@@ -446,7 +446,7 @@ the following two keywords are equivalent:
 
 The inline `IF` syntax supports also `ELSE` and `ELSE IF` branches:
 
-.. sourcecode:: robotframework
+.. code:: robotframework
 
     *** Keyword ***
     Inline IF/ELSE
@@ -468,7 +468,7 @@ to assign must be before the starting `IF`. Otherwise the logic is exactly
 the same as when assigning variables based on keyword return values. If
 assignment is used and no branch is run, the variable gets value `None`.
 
-.. sourcecode:: robotframework
+.. code:: robotframework
 
     *** Keyword ***
     Inline IF/ELSE with assignment
@@ -486,7 +486,7 @@ New `BREAK` and `CONTINUE` statements (`#4079`_) were already used in WHILE_
 examples above. In addition to that they work with the old `FOR` loops and with
 both loops they are often combined with `inline IF`_:
 
-.. sourcecode:: robotframework
+.. code:: robotframework
 
     *** Test Cases ***
     Example
@@ -509,7 +509,7 @@ It can be used for returning values when the keyword has been executed like
 when using the old `[Return]` setting, and also for returning prematurely like
 the old `Return From Keyword` keyword supports:
 
-.. sourcecode:: robotframework
+.. code:: robotframework
 
     *** Keywords ***
     Return at the end
@@ -564,7 +564,7 @@ Let's assume we wanted to create a keyword that accepts date_ objects for
 users in Finland where the commonly used date format is `dd.mm.yyyy`.
 The usage could look something like this:
 
-.. sourcecode:: robotframework
+.. code:: robotframework
 
     *** Test Cases ***
     Example
@@ -574,7 +574,7 @@ Automatic argument conversion supports dates, but it expects them
 to be in `yyyy-mm-dd` format so it will not work. A solution is creating
 a custom converter and registering it to handle date_ conversion:
 
-.. sourcecode:: python
+.. code:: python
 
     from datetime import date
 
@@ -610,7 +610,7 @@ using `regular expressions`__ makes it possible to validate both that the input
 has dots (`.`) in correct places and that date parts contain correct amount
 of digits:
 
-.. sourcecode:: python
+.. code:: python
 
     from datetime import date
     import re
@@ -654,7 +654,7 @@ the value type, but if the converter only accepts certain types, it is typically
 easier to just restrict the value to that type. Doing it requires only adding
 appropriate type hint to the converter:
 
-.. sourcecode:: python
+.. code:: python
 
     def parse_fi_date(value: str):
          # ...
@@ -670,7 +670,7 @@ as a Union_. For example, if we wanted to enhance our keyword to accept also
 integers so that they would be considered seconds since the `Unix epoch`__,
 we could change the converter like this:
 
-.. sourcecode:: python
+.. code:: python
 
     from datetime import date
     import re
@@ -704,7 +704,7 @@ A problem with the earlier example is that date_ objects could only be given
 in `dd.mm.yyyy` format. It would not work if there was a need to
 support dates in different formats like in this example:
 
-.. sourcecode:: robotframework
+.. code:: robotframework
 
     *** Test Cases ***
     Example
@@ -715,7 +715,7 @@ support dates in different formats like in this example:
 A solution to this problem is creating custom types instead of overriding
 the default date_ conversion:
 
-.. sourcecode:: python
+.. code:: python
 
     from datetime import date
     import re
@@ -787,7 +787,7 @@ not have any documentation, documentation is got from the type. Both of these
 approaches to add documentation to converters in the previous example thus
 produce the same result:
 
-.. sourcecode:: python
+.. code:: python
 
     class FiDate(date):
 
@@ -876,7 +876,7 @@ Loop control keywords cannot be used inside keywords
 directly inside a FOR loop, not in keywords used by loops (`#4185`_). For example,
 this is not anymore supported:
 
-.. sourcecode:: robotframework
+.. code:: robotframework
 
     *** Keywords ***
     Looping

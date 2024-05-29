@@ -104,7 +104,7 @@ Automatic argument conversion
 By default all arguments that are not specified as variables are given to
 Python based keywords as Unicode strings. This includes cases like this:
 
-.. sourcecode:: robotframework
+.. code:: robotframework
 
   *** Test Cases ***
   Example
@@ -117,7 +117,7 @@ then converts arguments to the specified types automatically.
 When using Python 3, it is possible to use `function annotations`__ to
 explicitly specify types (`#2890`_):
 
-.. sourcecode:: python
+.. code:: python
 
   def example_keyword(count: int, case_insensitive: bool = True):
       if case_insensitive:
@@ -128,7 +128,7 @@ decorator (`#2947`_) that works also with Python 2. It is possible both
 to map argument names to types using a dictionary and to use a list mapping
 arguments to types based on position:
 
-.. sourcecode:: python
+.. code:: python
 
   @keyword(types={'count': int, 'case_insensitive': bool})
   def example_keyword(count, case_insensitive=True):
@@ -143,7 +143,7 @@ arguments to types based on position:
 If an argument has no explicit type specified, Robot Framework still tries
 to get the type implicitly from an argument default values (`#2932`_):
 
-.. sourcecode:: python
+.. code:: python
 
   def example_keyword(count=-1, case_insensitive=True):
       if case_insensitive:
@@ -161,13 +161,13 @@ user keywords (`#2896`_), and with dynamic libraries (`#2897`_).
 
 With Python 3 libraries this syntax could be used, for example, like this:
 
-.. sourcecode:: python
+.. code:: python
 
   def sort_words(*words, case_sensitive=False):
       key = str.lower if case_sensitive else None
       return sorted(words, key=key)
 
-.. sourcecode:: robotframework
+.. code:: robotframework
 
  *** Test Cases ***
  Example
@@ -176,7 +176,7 @@ With Python 3 libraries this syntax could be used, for example, like this:
 
 User keywords using the new syntax could look like this:
 
-.. sourcecode:: robotframework
+.. code:: robotframework
 
  *** Keywords ***
  With Varargs
