@@ -22,16 +22,10 @@ ${INPUT FILE}     %{TEMPDIR}${/}robot-test-file.xml
     Run And Check Tests    --test *one --test Fi?st    First    Second One    Third One
     Run And Check Tests    --test [Great]Lob[sterB]estCase[!3-9]    GlobTestCase1    GlobTestCase2
 
---test is cumulative with --include
-    Run And Check Tests    --test fifth --include t2      First    Fifth    Suite1 Second    SubSuite3 Second
-
---exclude wins ovet --test
-    Run And Check Tests    --test fi* --exclude t1    Fifth
-
 --test not matching
     Failing Rebot
     ...    Suite 'Root' contains no tests matching name 'nonex'.
-    ...    --test nonex    ${INPUT FILE}
+    ...    --test nonex
 
 --test not matching with multiple inputs
     Failing Rebot
@@ -40,6 +34,18 @@ ${INPUT FILE}     %{TEMPDIR}${/}robot-test-file.xml
     Failing Rebot
     ...    Suite 'My Name' contains no tests matching name 'nonex'.
     ...    --test nonex -N "My Name"    ${INPUT FILE} ${INPUT FILE}
+
+--test and --include must both match
+    Run And Check Tests    --test first --include t1 -i f1    First
+    Failing Rebot
+    ...    Suite 'Root' contains no tests matching name 'fifth' and matching tag 't1'.
+    ...    --test fifth --include t1
+
+--exclude wins over --test
+    Run And Check Tests    --test fi* --exclude t1    Fifth
+    Failing Rebot
+    ...    Suite 'Root' contains no tests matching name 'first' and not matching tag 'f1'.
+    ...    --test first --exclude f1
 
 --suite once
     Run And Check Suites    --suite tsuite1   Tsuite1
@@ -96,7 +102,7 @@ ${INPUT FILE}     %{TEMPDIR}${/}robot-test-file.xml
     Should Contain Tests     ${SUITE}              Suite1 First    Suite3 First
 
 --suite, --test, --include and --exclude
-    Run Suites    --suite sub* --suite "custom name *" --test *first -s nomatch -t nomatch --include sub3 --exclude t1
+    Run Suites    --suite sub* --suite "custom name *" --test "subsuite3 second" -t *first -s nomatch -t nomatch --include f1 --exclude t1
     Should Contain Suites    ${SUITE}              Suites
     Should Contain Suites    ${SUITE.suites[0]}    Custom name for 📂 'subsuites2'    Subsuites
     Should Contain Tests     ${SUITE}              SubSuite2 First    SubSuite3 Second
@@ -158,6 +164,6 @@ Run Suites
     Stderr Should Be Empty
 
 Failing Rebot
-    [Arguments]    ${error}    ${options}    ${sources}
+    [Arguments]    ${error}    ${options}    ${sources}=${INPUT FILE}
     Run Rebot Without Processing Output    ${options}    ${sources}
     Stderr Should Be Equal To    [ ERROR ] ${error}${USAGE TIP}\n

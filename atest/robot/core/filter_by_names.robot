@@ -17,16 +17,10 @@ ${SUITE DIR}       misc/suites
     Run And Check Tests    --test *one --test Fi?st    First    Second One    Third One
     Run And Check Tests    --test [Great]Lob[sterB]estCase[!3-9]    GlobTestCase1    GlobTestCase2
 
---test is cumulative with --include
-    Run And Check Tests    --test fifth --include t1      First    Fifth
-
---exclude wins ovet --test
-    Run And Check Tests    --test fi* --exclude t1    Fifth
-
 --test not matching
     Run Failing Test
     ...    Suite 'Many Tests' contains no tests matching name 'notexists'.
-    ...    --test notexists    ${SUITE FILE}
+    ...    --test notexists
 
 --test not matching with multiple inputs
     Run Failing Test
@@ -35,6 +29,18 @@ ${SUITE DIR}       misc/suites
     Run Failing Test
     ...    Suite 'My Name' contains no tests matching name 'notexists'.
     ...    --name "My Name" --test notexists    ${SUITE FILE} ${SUITE DIR}
+
+--test and --include must both match
+    Run And Check Tests    --test first --include t1 -i f1    First
+    Run Failing Test
+    ...    Suite 'Many Tests' contains no tests matching name 'fifth' and matching tag 't1'.
+    ...    --test fifth --include t1
+
+--exclude wins over --test
+    Run And Check Tests    --test fi* --exclude t1    Fifth
+    Run Failing Test
+    ...    Suite 'Many Tests' contains no tests matching name 'first' and not matching tag 'f1'.
+    ...    --test first --exclude f1
 
 --suite once
     Run Suites    --suite tsuite1
@@ -131,7 +137,7 @@ Parent suite init files are processed
     Should Contain Tests     ${SUITE}    Suite1 First    Suite3 First
 
 --suite, --test, --include and --exclude
-    Run Suites    --suite sub* --suite "custom name *" --test *first -s nomatch -t nomatch --include sub3 --exclude t1
+    Run Suites    --suite sub* --suite "custom name *" --test "subsuite3 second" -t *first -s nomatch -t nomatch --include f1 --exclude t1
     Should Contain Suites    ${SUITE}    Custom name for 📂 'subsuites2'    Subsuites
     Should Contain Tests     ${SUITE}    SubSuite2 First    SubSuite3 Second
 
@@ -162,6 +168,6 @@ Run Suites
     Stderr Should Be Empty
 
 Run Failing Test
-    [Arguments]    ${error}    ${options}    ${sources}
+    [Arguments]    ${error}    ${options}    ${sources}=${SUITE FILE}
     Run Tests Without Processing Output    ${options}    ${sources}
     Stderr Should Be Equal To    [ ERROR ] ${error}${USAGE TIP}\n
