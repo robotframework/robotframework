@@ -770,6 +770,7 @@ to see the actual translations:
 - `French (fr)`_
 - `Hindi (hi)`_
 - `Italian (it)`_
+- `Japanese (ja)`_
 - `Dutch (nl)`_
 - `Polish (pl)`_
 - `Portuguese (pt)`_

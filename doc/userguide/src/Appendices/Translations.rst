@@ -1164,6 +1164,135 @@ Boolean strings
     * - False
       - Falso, No, Off, Nessuno
 
+Japanese (ja)
+-------------
+
+New in Robot Framework 7.0.1.
+
+Section headers
+~~~~~~~~~~~~~~~
+
+.. list-table::
+    :class: tabular
+    :width: 40em
+    :widths: 2 3
+    :header-rows: 1
+
+    * - Header
+      - Translation
+    * - Settings
+      - 設定
+    * - Variables
+      - 変数
+    * - Test Cases
+      - テスト ケース
+    * - Tasks
+      - タスク
+    * - Keywords
+      - キーワード
+    * - Comments
+      - コメント
+
+Settings
+~~~~~~~~
+
+.. list-table::
+    :class: tabular
+    :width: 40em
+    :widths: 2 3
+    :header-rows: 1
+
+    * - Setting
+      - Translation
+    * - Library
+      - ライブラリ
+    * - Resource
+      - リソース
+    * - Variables
+      - 変数
+    * - Name
+      - 名前
+    * - Documentation
+      - ドキュメント
+    * - Metadata
+      - メタデータ
+    * - Suite Setup
+      - スイート セットアップ
+    * - Suite Teardown
+      - スイート ティアダウン
+    * - Test Setup
+      - テスト セットアップ
+    * - Task Setup
+      - タスク セットアップ
+    * - Test Teardown
+      - テスト ティアダウン
+    * - Task Teardown
+      - タスク ティアダウン
+    * - Test Template
+      - テスト テンプレート
+    * - Task Template
+      - タスク テンプレート
+    * - Test Timeout
+      - テスト タイムアウト
+    * - Task Timeout
+      - タスク タイムアウト
+    * - Test Tags
+      - テスト タグ
+    * - Task Tags
+      - タスク タグ
+    * - Keyword Tags
+      - キーワード タグ
+    * - Tags
+      - タグ
+    * - Setup
+      - セットアップ
+    * - Teardown
+      - ティアダウン
+    * - Template
+      - テンプレート
+    * - Timeout
+      - タイムアウト
+    * - Arguments
+      - 引数
+
+BDD prefixes
+~~~~~~~~~~~~
+
+.. list-table::
+    :class: tabular
+    :width: 40em
+    :widths: 2 3
+    :header-rows: 1
+
+    * - Prefix
+      - Translation
+    * - Given
+      - 仮定, 指定, 前提条件
+    * - When
+      - 条件, 次の場合, もし, 実行条件
+    * - Then
+      - アクション, その時, 動作
+    * - And
+      - および, 及び, かつ, 且つ, ならびに, 並びに, そして, それから
+    * - But
+      - ただし, 但し
+
+Boolean strings
+~~~~~~~~~~~~~~~
+
+.. list-table::
+    :class: tabular
+    :width: 40em
+    :widths: 2 3
+    :header-rows: 1
+
+    * - True/False
+      - Values
+    * - True
+      - 真, 有効, はい, オン
+    * - False
+      - 偽, 無効, いいえ, オフ
+
 Dutch (nl)
 ----------
 
