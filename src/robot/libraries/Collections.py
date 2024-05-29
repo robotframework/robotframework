@@ -1127,7 +1127,6 @@ def _report_error(default_message, message, values=False):
 class Normalizer:
 
     def __init__(self, ignore_case=False, ignore_order=False, ignore_keys=None):
-        print(ignore_case)
         self.ignore_case = ignore_case
         if isinstance(ignore_case, str):
             self.ignore_key_case = ignore_case.upper() not in ('VALUE', 'VALUES')
