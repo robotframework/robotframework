@@ -39,6 +39,7 @@ integers or floating point numbers, the whole format is case and space
 insensitive, and it is possible to add `-` prefix to specify negative
 times. The available time specifiers are:
 
+* weeks, week, w
 * days, day, d
 * hours, hour, h
 * minutes, minute, mins, min, m
@@ -57,6 +58,7 @@ Examples::
    - 10 seconds
 
 .. note:: Support for micro and nanoseconds is new in Robot Framework 6.0.
+          Support for weeks is new in Robot Framework 7.1.
 
 Time as "timer" string
 ----------------------
