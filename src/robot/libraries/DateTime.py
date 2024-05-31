@@ -191,7 +191,7 @@ integers or floating point numbers, the whole format is case and space
 insensitive, and it is possible to add a minus prefix to specify negative
 times. The available time specifiers are:
 
-- ``weeks``, ``week``, ``w``
+- ``weeks``, ``week``, ``w`` (new in RF 7.1)
 - ``days``, ``day``, ``d``
 - ``hours``, ``hour``, ``h``
 - ``minutes``, ``minute``, ``mins``, ``min``, ``m``
