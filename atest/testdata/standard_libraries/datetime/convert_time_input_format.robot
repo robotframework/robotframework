@@ -17,6 +17,12 @@ Time string           10 s                                  10
                       0.123456789 ms                        0.000123456789
                       123 μs                                0.000123
                       1 ns                                  1E-9
+                      1 week                                604800
+                      2 weeks                               1209600
+                      1 week 1 day 1 hour 1 min 1 sec 1 ms  694861.001
+                      2 weeks 1 day 1 hour 1 min 1 sec      1299661
+                      1w 1d 1h 1m 1s 1ms                    694861.001
+                      2w 1d 1h 1m 1s 1ms                    1299661.001
 
 Number as string      10                                    10
                       0.5                                   0.5
