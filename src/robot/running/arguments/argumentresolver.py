@@ -16,7 +16,7 @@
 from typing import TYPE_CHECKING
 
 from robot.errors import DataError
-from robot.utils import is_dict_like, is_list_like, split_from_equals
+from robot.utils import is_dict_like, split_from_equals
 from robot.variables import is_dict_variable
 
 from .argumentvalidator import ArgumentValidator
@@ -38,13 +38,9 @@ class ArgumentResolver:
         self.argument_validator = ArgumentValidator(spec)
 
     def resolve(self, arguments, variables=None):
-        if len(arguments) == 2 and is_list_like(arguments[0]) and is_dict_like(arguments[1]):
-            positional = list(arguments[0])
-            named = list(arguments[1].items())
-        else:
-            positional, named = self.named_resolver.resolve(arguments, variables)
-            positional, named = self.variable_replacer.replace(positional, named, variables)
-            positional, named = self.dict_to_kwargs.handle(positional, named)
+        positional, named = self.named_resolver.resolve(arguments, variables)
+        positional, named = self.variable_replacer.replace(positional, named, variables)
+        positional, named = self.dict_to_kwargs.handle(positional, named)
         self.argument_validator.validate(positional, named, dryrun=variables is None)
         return positional, named
 
@@ -72,13 +68,6 @@ class NamedArgumentResolver:
         return positional, named
 
     def _split_named(self, arg, previous_named, variables, spec):
-        if isinstance(arg, tuple):
-            if len(arg) == 2 and isinstance(arg[0], str):
-                return arg
-            elif len(arg) == 1:
-                return None, arg[0]
-            else:
-                return None, arg
         name, value = split_from_equals(arg)
         if value is None or not self._is_named(name, previous_named, variables, spec):
             return None, arg

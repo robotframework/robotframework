@@ -217,7 +217,7 @@ class XmlLogger(ResultVisitor):
             if self.flatten_level == 0:
                 self._writer = self._xml_writer
         self._write_list('var', kw.assign)
-        self._write_list('arg', kw.args)
+        self._write_list('arg', [str(a) for a in kw.args])
         self._write_list('tag', kw.tags)
         self._writer.element('doc', kw.doc)
         if kw.timeout:

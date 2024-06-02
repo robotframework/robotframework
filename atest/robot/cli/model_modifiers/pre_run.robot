@@ -57,9 +57,7 @@ Modifiers are used before normal configuration
     Stderr Should Be Empty
     Length Should Be    ${SUITE.tests}    1
     ${tc} =    Check Test Case    Created
-    Check Log Message    ${tc.body[0].msgs[0]}    Args as strings
-    Check Log Message    ${tc.body[1].msgs[0]}    Args as tuples
-    Check Log Message    ${tc.body[2].msgs[0]}    Args as pos and named
+    Check Log Message    ${tc.body[0].msgs[0]}    Hello
     Lists should be equal    ${tc.tags}    ${{['added']}}
 
 Modify FOR and IF

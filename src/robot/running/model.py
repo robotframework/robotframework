@@ -97,27 +97,11 @@ class Keyword(model.Keyword, WithSource):
     strings in the exact same format as in the data. This means that arguments can
     have variables and escape characters, and that named arguments are specified
     using the ``name=value`` syntax.
-
-    If arguments are set programmatically, it is possible to use also other types
-    than strings. To support non-string values with named arguments, it is possible
-    to use two-item tuples like ``('name', 'value')``. To avoid ambiguity if an
-    argument contains a literal ``=`` character, positional arguments can also be
-    given using one-item tuples like ``('value',)``. In all these cases strings
-    can contain variables, and they must follow the escaping rules used in normal
-    data.
-
-    Arguments can also be given directly as a tuple containing list of positional
-    arguments and a dictionary of named arguments. In this case arguments are
-    used as-is without replacing variables or handling escapes. Argument conversion
-    and validation is done even in this case, though.
-
-    Support for specifying arguments using tuples and giving them directly as
-    positional and named arguments are new in Robot Framework 7.0.
     """
     __slots__ = ['lineno']
 
     def __init__(self, name: str = '',
-                 args: model.Arguments = (),
+                 args: Sequence[str] = (),
                  assign: Sequence[str] = (),
                  type: str = BodyItem.KEYWORD,
                  parent: BodyItemParent = None,
