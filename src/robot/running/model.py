@@ -109,15 +109,6 @@ class Keyword(model.Keyword, WithSource):
         super().__init__(name, args, assign, type, parent)
         self.lineno = lineno
 
-    @classmethod
-    def from_json(cls, source) -> 'Keyword':
-        kw = super().from_json(source)
-        # Argument tuples have a special meaning during execution.
-        # Tuples are represented as lists in JSON, so we need to convert them.
-        kw.args = tuple([tuple(a) if isinstance(a, list) else a
-                         for a in kw.args])
-        return kw
-
     def to_dict(self) -> DataDict:
         data = super().to_dict()
         if self.lineno:

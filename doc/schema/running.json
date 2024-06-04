@@ -19,49 +19,10 @@
         },
         "args": {
           "title": "Args",
-          "anyOf": [
-            {
-              "type": "array",
-              "items": {
-                "anyOf": [
-                  {},
-                  {
-                    "type": "array",
-                    "minItems": 1,
-                    "maxItems": 1,
-                    "items": [
-                      {}
-                    ]
-                  },
-                  {
-                    "type": "array",
-                    "minItems": 2,
-                    "maxItems": 2,
-                    "items": [
-                      {
-                        "type": "string"
-                      },
-                      {}
-                    ]
-                  }
-                ]
-              }
-            },
-            {
-              "type": "array",
-              "minItems": 2,
-              "maxItems": 2,
-              "items": [
-                {
-                  "type": "array",
-                  "items": {}
-                },
-                {
-                  "type": "object"
-                }
-              ]
-            }
-          ]
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         "assign": {
           "title": "Assign",
