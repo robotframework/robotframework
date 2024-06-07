@@ -34,8 +34,7 @@ approaches, see the `installation instructions`_.
 Robot Framework 7.0.1 release candidate 2 was released on Friday June 7, 2024.
 It is especially targeted for users who have reported issues so that they can
 verify that fixes work properly. The final Robot Framework 7.0 version is
-planned to be released on Monday June 10, 2024, but making sure all fixes work
-properly may take a few more extra days.
+planned to be released on Monday June 10, 2024.
 
 .. _Robot Framework: http://robotframework.org
 .. _Robot Framework Foundation: http://robotframework.org/foundation
