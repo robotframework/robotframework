@@ -58,7 +58,14 @@ Modifiers are used before normal configuration
     Length Should Be    ${SUITE.tests}    1
     ${tc} =    Check Test Case    Created
     Check Log Message    ${tc.body[0].msgs[0]}    Hello
+    Check Keyword Data    ${tc.body[0]}    BuiltIn.Log    args=Hello, level=INFO
     Lists should be equal    ${tc.tags}    ${{['added']}}
+
+Modifiers can use special Argument objects in arguments
+    ${tc} =    Check Test Case    Created
+    Check Log Message    ${tc.body[1].msgs[0]}    Argument object!
+    Check Keyword Data    ${tc.body[1]}    BuiltIn.Log    args=Argument object!, level=INFO
+    Check Keyword Data    ${tc.body[2]}    BuiltIn.Should Contain    args=(1, 2, 3), item=2
 
 Modify FOR and IF
     Run Tests    --prerun ${CURDIR}/ModelModifier.py    misc/for_loops.robot misc/if_else.robot

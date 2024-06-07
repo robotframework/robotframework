@@ -36,7 +36,7 @@ __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#
 
 import warnings
 from pathlib import Path
-from typing import Literal, Mapping, Sequence, TYPE_CHECKING, TypeVar, Union
+from typing import Any, Literal, Mapping, Sequence, TYPE_CHECKING, TypeVar, Union
 
 from robot import model
 from robot.conf import RobotSettings
@@ -80,6 +80,29 @@ class WithSource:
         return self.parent.source if self.parent is not None else None
 
 
+class Argument:
+    """A temporary API for creating named arguments with non-string values.
+
+    This class was added in RF 7.0.1 (#5031) after a failed attempt to add a public
+    API for this purpose in RF 7.0 (#5000). A better, public API is planned for RF 7.1.
+
+    The main limitation of this class is that it is not compatible with the JSON model.
+    The current plan is to remove this in the future, possibly already in RF 8.0, but
+    we can consider preserving it if it turns out to be useful.
+    """
+
+    def __init__(self, name: 'str|None', value: Any):
+        """
+        :param name: Argument name. If ``None``, argument is considered positional.
+        :param value: Argument value.
+        """
+        self.name = name
+        self.value = value
+
+    def __str__(self):
+        return str(self.value) if self.name is None else f'{self.name}={self.value}'
+
+
 @Body.register
 class Keyword(model.Keyword, WithSource):
     """Represents an executable keyword call.
@@ -101,7 +124,7 @@ class Keyword(model.Keyword, WithSource):
     __slots__ = ['lineno']
 
     def __init__(self, name: str = '',
-                 args: Sequence[str] = (),
+                 args: 'Sequence[str|Argument|Any]' = (),
                  assign: Sequence[str] = (),
                  type: str = BodyItem.KEYWORD,
                  parent: BodyItemParent = None,

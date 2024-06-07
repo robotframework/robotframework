@@ -20,6 +20,7 @@ from robot.utils import is_dict_like, split_from_equals
 from robot.variables import is_dict_variable
 
 from .argumentvalidator import ArgumentValidator
+from ..model import Argument
 
 if TYPE_CHECKING:
     from .argumentspec import ArgumentSpec
@@ -68,6 +69,8 @@ class NamedArgumentResolver:
         return positional, named
 
     def _split_named(self, arg, previous_named, variables, spec):
+        if isinstance(arg, Argument):
+            return arg.name, arg.value
         name, value = split_from_equals(arg)
         if value is None or not self._is_named(name, previous_named, variables, spec):
             return None, arg
