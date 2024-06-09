@@ -84,7 +84,13 @@ class Argument:
     """A temporary API for creating named arguments with non-string values.
 
     This class was added in RF 7.0.1 (#5031) after a failed attempt to add a public
-    API for this purpose in RF 7.0 (#5000). A better, public API is planned for RF 7.1.
+    API for this purpose in RF 7.0 (#5000). A better public API is planned for RF 7.1
+    (#5143).
+
+    If you need to support also RF 7.0, you can pass named arguments as two-item tuples
+    like `(name, value)` and positional arguments as one-item tuples like `(value,)`.
+    That approach does not work anymore in RF 7.0.1, though, so the code needs to be
+    conditional depending on Robot Framework version.
 
     The main limitation of this class is that it is not compatible with the JSON model.
     The current plan is to remove this in the future, possibly already in RF 8.0, but
