@@ -4,7 +4,7 @@ Library           OperatingSystem
 Library           Library.py
 Library           AsyncStop.py
 
-*** Test Case ***
+*** Test Cases ***
 Test
     [Documentation]    FAIL Execution terminated by signal
     Create File    ${TESTSIGNALFILE}
