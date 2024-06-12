@@ -1,10 +1,10 @@
-from itertools import chain
 import unittest
-from robot.utils.asserts import assert_equal, assert_raises_with_msg, assert_true
+from itertools import chain
 
 from robot.errors import DataError
 from robot.result import Keyword, TestCase, TestSuite
 from robot.result.configurer import SuiteConfigurer
+from robot.utils.asserts import assert_equal, assert_raises_with_msg, assert_true
 
 
 SETUP = Keyword.SETUP
@@ -90,7 +90,7 @@ class TestFiltering(unittest.TestCase):
         assert_raises_with_msg(
             DataError,
             "Suite 'root' contains no tests matching name 't' "
-            "or matching tag 'i' "
+            "and matching tag 'i' "
             "and not matching tag 'e' "
             "in suite 's'.",
             self.suite.visit, configurer
@@ -104,7 +104,7 @@ class TestFiltering(unittest.TestCase):
         assert_raises_with_msg(
             DataError,
             "Suite 'root' contains no tests matching name 't1' or 't2' "
-            "or matching tags 'i1', 'i2' or 'i3' "
+            "and matching tags 'i1', 'i2' or 'i3' "
             "and not matching tags 'e1' or 'e2' "
             "in suites 's1', 's2' or 's3'.",
             self.suite.visit, configurer

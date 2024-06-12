@@ -134,6 +134,8 @@ class UserKeywordRunner:
         args = [f'${{{arg}}}' for arg in spec.positional]
         if spec.var_positional:
             args.append(f'@{{{spec.var_positional}}}')
+        if spec.named_only:
+            args.extend(f'${{{arg}}}' for arg in spec.named_only)
         if spec.var_named:
             args.append(f'&{{{spec.var_named}}}')
         return args

@@ -13,12 +13,20 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import sys
 from collections.abc import Mapping, Sequence, Set
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 from enum import Enum
 from pathlib import Path
-from typing import Any, ForwardRef, get_type_hints, Literal, Union
+from typing import Any, ForwardRef, get_type_hints, get_origin, Literal, Union
+if sys.version_info >= (3, 11):
+    from typing import NotRequired, Required
+else:
+    try:
+        from typing_extensions import NotRequired, Required
+    except ImportError:
+        NotRequired = Required = object()
 
 from robot.conf import Languages, LanguagesLike
 from robot.errors import DataError
@@ -307,11 +315,30 @@ class TypedDictInfo(TypeInfo):
 
     def __init__(self, name: str, type: type):
         super().__init__(name, type)
-        try:
-            type_hints = get_type_hints(type)
-        except Exception:
-            type_hints = type.__annotations__
-        self.annotations = {name: TypeInfo.from_type_hint(hint)
-                            for name, hint in type_hints.items()}
+        type_hints = self._get_type_hints(type)
         # __required_keys__ is new in Python 3.9.
         self.required = getattr(type, '__required_keys__', frozenset())
+        if sys.version_info < (3, 11):
+            self._handle_typing_extensions_required_and_not_required(type_hints)
+        self.annotations = {name: TypeInfo.from_type_hint(hint)
+                            for name, hint in type_hints.items()}
+
+    def _get_type_hints(self, type) -> 'dict[str, Any]':
+        try:
+            return get_type_hints(type)
+        except Exception:
+            return type.__annotations__
+
+    def _handle_typing_extensions_required_and_not_required(self, type_hints):
+        # NotRequired and Required are handled automatically by Python 3.11 and newer,
+        # but with older they appear in type hints and need to be handled separately.
+        required = set(self.required)
+        for key, hint in type_hints.items():
+            origin = get_origin(hint)
+            if origin is Required:
+                required.add(key)
+                type_hints[key] = hint.__args__[0]
+            elif origin is NotRequired:
+                required.discard(key)
+                type_hints[key] = hint.__args__[0]
+        self.required = frozenset(required)

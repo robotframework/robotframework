@@ -29,7 +29,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Setup python for starting the tests
-        uses: actions/setup-python@v5.0.0
+        uses: actions/setup-python@v5.1.0
         with:
           python-version: '3.11'
           architecture: 'x64'
@@ -43,7 +43,7 @@ jobs:
         if: runner.os != 'Windows'
 
       - name: Setup python ${{ matrix.python-version }} for running the tests
-        uses: actions/setup-python@v5.0.0
+        uses: actions/setup-python@v5.1.0
         with:
           python-version: ${{ matrix.python-version }}
           architecture: 'x64'
@@ -111,7 +111,7 @@ jobs:
           echo "JOB_STATUS=$(python -c "print('${{ job.status }}'.lower())")" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
         if: always() && job.status == 'failure' && runner.os == 'Windows'
 
-      - uses: octokit/request-action@89697eb6635e52c6e1e5559f15b5c91ba5100cb0
+      - uses: octokit/request-action@872c5c97b3c85c23516a572f02b31401ef82415d
         name: Update status with Github Status API
         id: update_status
         with:

@@ -84,7 +84,7 @@ class Filter(EmptySuiteRemover):
             suite.start_time = suite.end_time = suite.elapsed_time = None
         if self.include_suites is not None:
             return self._filter_based_on_suite_name(suite)
-        suite.tests = [t for t in suite.tests if self._test_included(t)]
+        self._filter_tests(suite)
         return bool(suite.suites)
 
     def _filter_based_on_suite_name(self, suite: 'TestSuite') -> bool:
@@ -96,16 +96,16 @@ class Filter(EmptySuiteRemover):
         suite.tests = []
         return True
 
-    def _test_included(self, test: 'TestCase') -> bool:
+    def _filter_tests(self, suite: 'TestSuite'):
         tests, include, exclude \
                 = self.include_tests, self.include_tags, self.exclude_tags
-        if exclude is not None and exclude.match(test.tags):
-            return False
-        if include is not None and include.match(test.tags):
-            return True
-        if tests is not None and tests.match(test.name, test.full_name):
-            return True
-        return include is None and tests is None
+        t: TestCase
+        if tests is not None:
+            suite.tests = [t for t in suite.tests if tests.match(t.name, t.full_name)]
+        if include is not None:
+            suite.tests = [t for t in suite.tests if include.match(t.tags)]
+        if exclude is not None:
+            suite.tests = [t for t in suite.tests if not exclude.match(t.tags)]
 
     def __bool__(self) -> bool:
         return bool(self.include_suites is not None or

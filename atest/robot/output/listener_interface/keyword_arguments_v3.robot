@@ -7,26 +7,12 @@ ${SOURCE}         output/listener_interface/body_items_v3/keyword_arguments.robo
 ${MODIFIER}       output/listener_interface/body_items_v3/ArgumentModifier.py
 
 *** Test Cases ***
-Arguments as strings
+Valid arguments
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Keyword Data    ${tc.body[0]}    Library.Library Keyword
     ...    args=\${STATE}, number=\${123}, obj=None, escape=c:\\\\temp\\\\new
     Check Keyword Data    ${tc.body[1]}    Library.Library Keyword
     ...    args=new, 123, c:\\\\temp\\\\new, NONE
-
-Arguments as tuples
-    ${tc} =    Check Test Case    ${TEST NAME}
-    Check Keyword Data    ${tc.body[0]}    Library.Library Keyword
-    ...    args=\${STATE}, escape=c:\\\\temp\\\\new, obj=Object(123), number=\${123}
-    Check Keyword Data    ${tc.body[1]}    Library.Library Keyword
-    ...    args=new, 1.0, obj=Object(1), escape=c:\\\\temp\\\\new
-
-Arguments directly as positional and named
-    ${tc} =    Check Test Case    ${TEST NAME}
-    Check Keyword Data    ${tc.body[0]}    Library.Library Keyword
-    ...    args=\${XXX}, 456, c:\\temp\\new, obj=Object(456)
-    Check Keyword Data    ${tc.body[1]}    Library.Library Keyword
-    ...    args=state=\${XXX}, obj=Object(1), number=1.0, escape=c:\\temp\\new
 
 Too many arguments
     ${tc} =    Check Test Case    ${TEST NAME}
@@ -42,14 +28,7 @@ Conversion error
     Check Keyword Data    ${tc.body[1]}    Library.Library Keyword
     ...    args=number=bad    status=FAIL
 
-Named argument not matching
-    ${tc} =    Check Test Case    ${TEST NAME}
-    Check Keyword Data    ${tc.body[0]}    Library.Library Keyword
-    ...    args=no=match    status=FAIL
-    Check Keyword Data    ${tc.body[1]}    Library.Library Keyword
-    ...    args=o, k, bad=name    status=FAIL
-
 Positional after named
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Keyword Data    ${tc.body[0]}    Library.Library Keyword
-    ...    args=positional, name=value, ooops    status=FAIL
+    ...    args=positional, number=-1, ooops    status=FAIL

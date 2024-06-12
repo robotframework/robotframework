@@ -47,7 +47,7 @@ Python version than the one provided by your distribution by default.
 To check what Python version you have installed, you can run `python --version`
 command in a terminal:
 
-.. sourcecode:: bash
+.. code:: bash
 
   $ python --version
   Python 3.10.13
@@ -58,7 +58,7 @@ specific command like `python3.8`. You need to use these version specific varian
 also if you have multiple Python 3 versions installed and need to pinpoint which
 one to use:
 
-.. sourcecode:: bash
+.. code:: bash
 
   $ python3.11 --version
   Python 3.11.7
@@ -89,7 +89,7 @@ to select the `Add Python 3.x to PATH` checkbox on the first dialog.
 To make sure Python installation has been successful and Python has been
 added to `PATH`, you can open the command prompt and execute `python --version`:
 
-.. sourcecode:: batch
+.. code:: batch
 
   C:\>python --version
   Python 3.10.9
@@ -98,7 +98,7 @@ If you install multiple Python versions on Windows, the version that is used
 when you execute `python` is the one first in `PATH`. If you need to use others,
 the easiest way is using the `py launcher`__:
 
-.. sourcecode:: batch
+.. code:: batch
 
   C:\>py --version
   Python 3.10.9
@@ -200,7 +200,7 @@ To make sure you have pip available, you can run `pip --version` or equivalent.
 
 Examples on Linux:
 
-.. sourcecode:: bash
+.. code:: bash
 
   $ pip --version
   pip 23.2.1 from ... (python 3.10)
@@ -209,7 +209,7 @@ Examples on Linux:
 
 Examples on Windows:
 
-.. sourcecode:: batch
+.. code:: batch
 
   C:\> pip --version
   pip 23.2.1 from ... (python 3.10)
@@ -229,7 +229,7 @@ shown below and pip_ documentation has more information and examples.
 
 __ PyPI_
 
-.. sourcecode:: bash
+.. code:: bash
 
     # Install the latest version (does not upgrade)
     pip install robotframework
@@ -265,7 +265,7 @@ repository and checking out the needed release tag.
 
 Once you have the source code, you can install it with the following command:
 
-.. sourcecode:: bash
+.. code:: bash
 
    python setup.py install
 
@@ -280,7 +280,7 @@ Verifying installation
 To make sure that the correct Robot Framework version has been installed, run
 the following command:
 
-.. sourcecode:: bash
+.. code:: bash
 
    $ robot --version
    Robot Framework 7.0 (Python 3.10.3 on linux)
@@ -294,7 +294,7 @@ running `robot` will execute the one first in PATH_. To select explicitly,
 you can run `python -m robot` and substitute `python` with the right Python
 version.
 
-.. sourcecode:: bash
+.. code:: bash
 
    $ python3.12 -m robot --version
    Robot Framework 7.0 (Python 3.12.1 on linux)

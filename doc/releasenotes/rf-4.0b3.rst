@@ -179,7 +179,7 @@ block is highly recommended but not mandatory.
 In the following example keywords `Some keyword` and `Another keyword`
 are executed if `${rc}` is greater than zero:
 
-.. sourcecode:: robotframework
+.. code:: robotframework
 
     *** Test Cases ***
     Example
@@ -207,7 +207,7 @@ not true.
 In this example `Some keyword` is executed if `${rc}` is greater than
 zero and `Another keyword` is executed otherwise:
 
-.. sourcecode:: robotframework
+.. code:: robotframework
 
     *** Test Cases ***
     Example
@@ -230,7 +230,7 @@ ELSE IF branches and it is executed if all conditions are false.
 In the following example different keyword is executed depending on is `${rc}`
 positive, negative, zero, or something else like a string or `None`:
 
-.. sourcecode:: robotframework
+.. code:: robotframework
 
     *** Test Cases ***
     Example

@@ -31,7 +31,7 @@ from .control import (Break, Continue, Error, For, ForIteration, If, IfBranch,
                       Return, Try, TryBranch, Var, While, WhileIteration)
 from .fixture import create_fixture
 from .itemlist import ItemList
-from .keyword import Arguments, Keyword
+from .keyword import Keyword
 from .message import Message, MessageLevel, Messages
 from .modelobject import DataDict, ModelObject
 from .modifier import ModelModifier

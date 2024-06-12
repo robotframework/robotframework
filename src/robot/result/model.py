@@ -43,7 +43,7 @@ from typing import Literal, Mapping, overload, Sequence, Union, TextIO, TypeVar
 from robot import model
 from robot.model import (BodyItem, create_fixture, DataDict, Tags, TestSuites,
                          TotalStatistics, TotalStatisticsBuilder)
-from robot.utils import is_dict_like, is_list_like, setter
+from robot.utils import setter
 
 from .configurer import SuiteConfigurer
 from .messagefilter import MessageFilter
@@ -710,7 +710,7 @@ class Keyword(model.Keyword, StatusMixin):
                  owner: 'str|None' = None,
                  source_name: 'str|None' = None,
                  doc: str = '',
-                 args: model.Arguments = (),
+                 args: Sequence[str] = (),
                  assign: Sequence[str] = (),
                  tags: Sequence[str] = (),
                  timeout: 'str|None' = None,
@@ -737,30 +737,6 @@ class Keyword(model.Keyword, StatusMixin):
         self._setup = None
         self._teardown = None
         self.body = ()
-
-    @setter
-    def args(self, args: model.Arguments) -> 'tuple[str, ...]':
-        """Keyword arguments.
-
-        Arguments originating from normal data are given as a list of strings.
-        Programmatically it is possible to use also other types and named arguments
-        can be specified using name-value tuples. Additionally, it is possible
-        o give arguments directly as a list of positional arguments and a dictionary
-        of named arguments. In all these cases arguments are stored as strings.
-        """
-        if len(args) == 2 and is_list_like(args[0]) and is_dict_like(args[1]):
-            positional = [str(a) for a in args[0]]
-            named = [f'{n}={v}' for n, v in args[1].items()]
-            return tuple(positional + named)
-        return tuple([a if isinstance(a, str) else self._arg_to_str(a) for a in args])
-
-    def _arg_to_str(self, arg):
-        if isinstance(arg, tuple):
-            if len(arg) == 2:
-                return f'{arg[0]}={arg[1]}'
-            if len(arg) == 1:
-                return str(arg[0])
-        return str(arg)
 
     @setter
     def body(self, body: 'Sequence[BodyItem|DataDict]') -> Body:

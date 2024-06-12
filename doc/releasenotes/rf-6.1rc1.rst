@@ -75,7 +75,7 @@ functionalities are explained below:
    it also accepts a path or an open file where to write JSON data along with
    configuration options related to JSON formatting:
 
-   .. sourcecode:: python
+   .. code:: python
 
       from robot.running import TestSuite
 
@@ -92,7 +92,7 @@ functionalities are explained below:
 2. You can create a suite based on JSON data using `TestSuite.from_json`__.
    It works both with JSON strings and paths to JSON files:
 
-   .. sourcecode:: python
+   .. code:: python
 
       from robot.running import TestSuite
 
@@ -116,7 +116,7 @@ that machine. To avoid such problems, it is possible to use the new
 before getting the data and add a correct root directory after the suite is
 recreated:
 
-.. sourcecode:: python
+.. code:: python
 
    from robot.running import TestSuite
 
@@ -163,7 +163,7 @@ need is an `EXTENSION` or `extension` attribute that specifies the extension
 or extensions they support, and a `parse` method that gets the path of the
 source file to parse as an argument:
 
-.. sourcecode:: python
+.. code:: python
 
     from robot.api import TestSuite
 
@@ -186,7 +186,7 @@ preserve state and allows passing arguments from the command like. The following
 example illustrates that and, unlike the previous example, actually processes the
 source file:
 
-.. sourcecode:: python
+.. code:: python
 
     from pathlib import Path
     from robot.api import TestSuite
@@ -220,7 +220,7 @@ __ https://robot-framework.readthedocs.io/en/latest/autodoc/robot.api.html#robot
 
 __ https://robot-framework.readthedocs.io/en/latest/autodoc/robot.running.builder.html#robot.running.builder.settings.TestDefaults
 
-.. sourcecode:: python
+.. code:: python
 
     from pathlib import Path
     from robot.api import TestSuite
@@ -256,7 +256,7 @@ supports headers in format `=== Test Cases ===` in addition to
 `TestSuite.from_string`__, `TestSuite.from_model`__ or
 `TestSuite.from_file_system`__ factory methods for constructing the returned suite.
 
-.. sourcecode:: python
+.. code:: python
 
     from pathlib import Path
     from robot.running import TestDefaults, TestSuite
@@ -281,7 +281,7 @@ User keywords with both embedded and normal arguments
 User keywords can nowadays mix embedded arguments and normal arguments (`#4234`_).
 For example, this kind of usage is possible:
 
-.. sourcecode:: robotframework
+.. code:: robotframework
 
    *** Test Cases ***
    Example
@@ -314,7 +314,7 @@ WHILE and FOR loops, the log file can get hard to understand with many different
 nesting levels. Such nested structures also increase the size of the output.xml
 file. For example, even a simple keyword like:
 
-.. sourcecode:: robotframework
+.. code:: robotframework
 
     *** Keywords ***
     Example
@@ -323,7 +323,7 @@ file. For example, even a simple keyword like:
 
 creates this much content in output.xml:
 
-.. sourcecode:: xml
+.. code:: xml
 
     <kw name="Example">
       <kw name="Log" library="BuiltIn">
@@ -350,7 +350,7 @@ huge amounts of memory. When `--flattenkeywords` is used with Rebot, it is
 possible to create a new flattened output.xml. For example, the above structure
 is converted into this if the `Example` keyword is flattened using `--flattenkeywords`:
 
-.. sourcecode:: xml
+.. code:: xml
 
     <kw name="Keyword">
       <doc>_*Content flattened.*_</doc>
@@ -364,7 +364,7 @@ during execution and without using command line options. The only thing needed
 is using the new keyword tag `robot:flatten` (`#4584`_) and flattening is done
 automatically. For example, if the earlier `Keyword` is changed to:
 
-.. sourcecode:: robotframework
+.. code:: robotframework
 
     *** Keywords ***
     Example
@@ -374,7 +374,7 @@ automatically. For example, if the earlier `Keyword` is changed to:
 
 the result in output.xml will be this:
 
-.. sourcecode:: xml
+.. code:: xml
 
     <kw name="Example">
       <tag>robot:flatten</tag>
@@ -413,7 +413,7 @@ based on the library state (`#4510`_). This can be done simply by creating
 a converter that accepts two values. The first value is the value used in
 the data, exactly as earlier, and the second is the library instance or module:
 
-.. sourcecode:: python
+.. code:: python
 
     def converter(value, library):
         ...
@@ -430,7 +430,7 @@ It has been possible to create variable files using YAML in addition to Python
 for long time, and nowadays also JSON variable files are supported (`#4532`_).
 For example, a JSON file containing:
 
-.. sourcecode:: json
+.. code:: json
 
     {
         "STRING": "Hello, world!",
@@ -439,7 +439,7 @@ For example, a JSON file containing:
 
 could be used like this:
 
-.. sourcecode:: robotframework
+.. code:: robotframework
 
     *** Settings ***
     Variables        example.json
@@ -461,7 +461,7 @@ Robot Framework's WHILE__ loop has been enhanced in several different ways:
   the option to `PASS` changes that. For example, the following loop runs ten
   times and continues execution afterwards:
 
-  .. sourcecode:: robotframework
+  .. code:: robotframework
 
       *** Test Cases ***
       WHILE with 'limit' and 'on_limit'
@@ -492,7 +492,7 @@ For example, the following loop is executed only twice:
 __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#for-in-zip-loop
 __ https://docs.python.org/3/library/functions.html#zip
 
-.. sourcecode:: robotframework
+.. code:: robotframework
 
     *** Variables ***
     @{ANIMALS}    dog      cat    horse    cow    elephant
@@ -511,7 +511,7 @@ the expected values. The example succeeds if `Get something` returns ten items
 if three first ones match. What's even worse, it succeeds also if `Get something`
 returns nothing.
 
-.. sourcecode:: robotframework
+.. code:: robotframework
 
     *** Test Cases ***
     Example
@@ -552,7 +552,7 @@ values (`#4682`_):
 
 All these modes are illustrated by the following examples:
 
-.. sourcecode:: robotframework
+.. code:: robotframework
 
    *** Variables ***
    @{CHARACTERS}     a    b    c    d    f
@@ -631,7 +631,7 @@ It is nowadays possible to use asynchronous functions (created using
 the following async functions could be used as keyword `Gather Something` and
 `Async Sleep`:
 
-.. sourcecode:: python
+.. code:: python
 
     from asyncio import gather, sleep
 
@@ -764,7 +764,7 @@ Earlier if a type was not recognized at all, the used value was returned
 as-is without trying conversion with the remaining types. For example, if
 a keyword like:
 
-.. sourcecode:: python
+.. code:: python
 
     def example(arg: Union[UnknownType, int]):
         ...

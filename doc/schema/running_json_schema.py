@@ -10,7 +10,7 @@ Requires Pydantic 1.10. https://docs.pydantic.dev/1.10/
 
 from collections.abc import Sequence
 from pathlib import Path
-from typing import Any, Literal
+from typing import Literal
 
 from pydantic import BaseModel as PydanticBaseModel, Extra, Field
 
@@ -56,7 +56,7 @@ class Error(BodyItem):
 
 class Keyword(BodyItem):
     name: str
-    args: Sequence[Any | tuple[Any] | tuple[str, Any]] | tuple[list[Any], dict[str, Any]] | None
+    args: Sequence[str] | None
     assign: Sequence[str] | None
 
 

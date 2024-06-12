@@ -36,7 +36,7 @@ __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#
 
 import warnings
 from pathlib import Path
-from typing import Literal, Mapping, Sequence, TYPE_CHECKING, TypeVar, Union
+from typing import Any, Literal, Mapping, Sequence, TYPE_CHECKING, TypeVar, Union
 
 from robot import model
 from robot.conf import RobotSettings
@@ -80,6 +80,35 @@ class WithSource:
         return self.parent.source if self.parent is not None else None
 
 
+class Argument:
+    """A temporary API for creating named arguments with non-string values.
+
+    This class was added in RF 7.0.1 (#5031) after a failed attempt to add a public
+    API for this purpose in RF 7.0 (#5000). A better public API is planned for RF 7.1
+    (#5143).
+
+    If you need to support also RF 7.0, you can pass named arguments as two-item tuples
+    like `(name, value)` and positional arguments as one-item tuples like `(value,)`.
+    That approach does not work anymore in RF 7.0.1, though, so the code needs to be
+    conditional depending on Robot Framework version.
+
+    The main limitation of this class is that it is not compatible with the JSON model.
+    The current plan is to remove this in the future, possibly already in RF 8.0, but
+    we can consider preserving it if it turns out to be useful.
+    """
+
+    def __init__(self, name: 'str|None', value: Any):
+        """
+        :param name: Argument name. If ``None``, argument is considered positional.
+        :param value: Argument value.
+        """
+        self.name = name
+        self.value = value
+
+    def __str__(self):
+        return str(self.value) if self.name is None else f'{self.name}={self.value}'
+
+
 @Body.register
 class Keyword(model.Keyword, WithSource):
     """Represents an executable keyword call.
@@ -97,42 +126,17 @@ class Keyword(model.Keyword, WithSource):
     strings in the exact same format as in the data. This means that arguments can
     have variables and escape characters, and that named arguments are specified
     using the ``name=value`` syntax.
-
-    If arguments are set programmatically, it is possible to use also other types
-    than strings. To support non-string values with named arguments, it is possible
-    to use two-item tuples like ``('name', 'value')``. To avoid ambiguity if an
-    argument contains a literal ``=`` character, positional arguments can also be
-    given using one-item tuples like ``('value',)``. In all these cases strings
-    can contain variables, and they must follow the escaping rules used in normal
-    data.
-
-    Arguments can also be given directly as a tuple containing list of positional
-    arguments and a dictionary of named arguments. In this case arguments are
-    used as-is without replacing variables or handling escapes. Argument conversion
-    and validation is done even in this case, though.
-
-    Support for specifying arguments using tuples and giving them directly as
-    positional and named arguments are new in Robot Framework 7.0.
     """
     __slots__ = ['lineno']
 
     def __init__(self, name: str = '',
-                 args: model.Arguments = (),
+                 args: 'Sequence[str|Argument|Any]' = (),
                  assign: Sequence[str] = (),
                  type: str = BodyItem.KEYWORD,
                  parent: BodyItemParent = None,
                  lineno: 'int|None' = None):
         super().__init__(name, args, assign, type, parent)
         self.lineno = lineno
-
-    @classmethod
-    def from_json(cls, source) -> 'Keyword':
-        kw = super().from_json(source)
-        # Argument tuples have a special meaning during execution.
-        # Tuples are represented as lists in JSON, so we need to convert them.
-        kw.args = tuple([tuple(a) if isinstance(a, list) else a
-                         for a in kw.args])
-        return kw
 
     def to_dict(self) -> DataDict:
         data = super().to_dict()

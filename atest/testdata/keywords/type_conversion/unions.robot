@@ -52,6 +52,15 @@ Union with TypedDict
     NONE               None
     ${NONE}            None
 
+Union with str and TypedDict
+    [Template]    Union with str and TypedDict
+    {'x': 1}           "{'x': 1}"
+    ${{{'x': 1}}}      {'x': 1}
+    ${{type('NonDictMapping', (collections.abc.Mapping,), {'__getitem__': lambda s, k: {'x': 1}[k], '__iter__': lambda s: iter({'x': 1}), '__len__': lambda s: 1})()}}
+    ...                {'x': 1}    non_dict_mapping=True
+    ${{{'bad': 1}}}    "{'bad': 1}"
+    ${{{'x': '1'}}}    "{'x': '1'}"
+
 Union with item not liking isinstance
     [Template]    Union with item not liking isinstance
     42                 ${42}

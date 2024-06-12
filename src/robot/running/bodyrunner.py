@@ -68,7 +68,7 @@ class KeywordRunner:
 
     def run(self, data, result, name=None):
         context = self._context
-        runner = context.get_runner(name or data.name)
+        runner = context.get_runner(name or data.name, recommend_on_failure=self._run)
         if context.dry_run:
             return runner.dry_run(data, result, context)
         return runner.run(data, result, context, self._run)

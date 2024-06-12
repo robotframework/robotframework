@@ -37,6 +37,11 @@ Variable Number of Arguments
     ...    \${mand}='mandatory' | \@{vargs}=[]
     ...    'mandatory'
 
+Named only
+    Check Argument Value Trace
+    ...    \${no1}='a' | \${no2}='b'
+    ...    no1='a' | no2='b'
+
 Kwargs
     Check Argument Value Trace
     ...    \&{kwargs}={}
@@ -46,8 +51,8 @@ Kwargs
 
 All args
     Check Argument Value Trace
-    ...    \${positional}='1' | \@{varargs}=['2', '3'] | \&{kwargs}={'d': '4'}
-    ...    '1' | '2' | '3' | d='4'
+    ...    \${positional}='1' | \@{varargs}=['2', '3'] | \${named_only}='4' | \&{kwargs}={'free': '5'}
+    ...    '1' | '2' | '3' | named_only='4' | free='5'
 
 Non String Object as Argument
     Check Argument Value Trace
