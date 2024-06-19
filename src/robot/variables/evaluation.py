@@ -149,6 +149,8 @@ class EvaluationNamespace(MutableMapping):
         if name in PYTHON_BUILTINS:
             raise KeyError
         try:
+            if hasattr(builtins,name):
+                return getattr(builtins, name)
             return __import__(name)
         except ImportError:
             raise NameError(f"name '{name}' is not defined nor importable as module")
