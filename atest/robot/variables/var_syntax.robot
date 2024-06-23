@@ -39,14 +39,27 @@ Equals is accepted
     Validate VAR    ${tc.body}[2]    \@{name}    v1    v2    v3
     Validate VAR    ${tc.body}[4]    \&{name}    k1=v1    k2=v2
 
+In init file suite setup and teardown
+    Check Test Case    In root suite setup
+    Validate VAR    ${SUITE.setup.body}[0]       \${local}     value
+    Validate VAR    ${SUITE.setup.body}[1]       \${SUITE}     set in \${where}    scope=suite
+    Validate VAR    ${SUITE.setup.body}[2]       \${SUITES}    set in \${where}    scope=suites
+    Validate VAR    ${SUITE.setup.body}[3]       \${GLOBAL}    set in \${where}    scope=global
+    Validate VAR    ${SUITE.teardown.body}[0]    \${local}     value
+    Validate VAR    ${SUITE.teardown.body}[1]    \${SUITE}     set in \${where}    scope=suite
+    Validate VAR    ${SUITE.teardown.body}[2]    \${SUITES}    set in \${where}    scope=suites
+    Validate VAR    ${SUITE.teardown.body}[3]    \${GLOBAL}    set in \${where}    scope=global
+
 In suite setup and teardown
     Check Test Case    In suite setup
-    Validate VAR    ${SUITE.suites[0].setup.body}[0]       \${local}     value
-    Validate VAR    ${SUITE.suites[0].setup.body}[1]       \${SUITE}     set in \${where}    scope=suite
-    Validate VAR    ${SUITE.suites[0].setup.body}[2]       \${GLOBAL}    set in \${where}    scope=global
-    Validate VAR    ${SUITE.suites[0].teardown.body}[0]    \${local}     value
-    Validate VAR    ${SUITE.suites[0].teardown.body}[1]    \${SUITE}     set in \${where}    scope=suite
-    Validate VAR    ${SUITE.suites[0].teardown.body}[2]    \${GLOBAL}    set in \${where}    scope=global
+    Validate VAR    ${SUITE.suites[0].setup.body}[3]       \${local}     value
+    Validate VAR    ${SUITE.suites[0].setup.body}[4]       \${SUITE}     set in \${where}    scope=suite
+    Validate VAR    ${SUITE.suites[0].setup.body}[5]       \${SUITES}    set in \${where}    scope=suites
+    Validate VAR    ${SUITE.suites[0].setup.body}[6]       \${GLOBAL}    set in \${where}    scope=global
+    Validate VAR    ${SUITE.suites[0].teardown.body}[3]    \${local}     value
+    Validate VAR    ${SUITE.suites[0].teardown.body}[4]    \${SUITE}     set in \${where}    scope=suite
+    Validate VAR    ${SUITE.suites[0].teardown.body}[5]    \${SUITES}    set in \${where}    scope=suites
+    Validate VAR    ${SUITE.suites[0].teardown.body}[6]    \${GLOBAL}    set in \${where}    scope=global
 
 Scopes
     ${tc} =    Check Test Case    ${TESTNAME} 1
@@ -57,6 +70,7 @@ Scopes
     Validate VAR    ${tc.body}[4]    \${SUITES}    children too     scope=Suites
     Validate VAR    ${tc.body}[5]    \${GLOBAL}    global           scope=GLOBAL
     Check Test Case    ${TESTNAME} 2
+    Check Test Case    ${TESTNAME} 3
 
 Invalid scope
     Check Test Case    ${TESTNAME}
