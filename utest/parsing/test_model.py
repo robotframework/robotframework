@@ -1154,7 +1154,7 @@ Keyword
                      Token(Token.ARGUMENT, 'ok', 10, 20),
                      Token(Token.OPTION, 'scope=bad', 10, 27)],
                     ["VAR option 'scope' does not accept value 'bad'. Valid values "
-                     "are 'GLOBAL', 'SUITE', 'TEST', 'TASK' and 'LOCAL'."]),
+                     "are 'LOCAL', 'TEST', 'TASK', 'SUITE', 'SUITES' and 'GLOBAL'."]),
             ]
         )
         get_and_assert_model(data, expected, depth=1)

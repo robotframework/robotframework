@@ -369,26 +369,28 @@ class Var(model.Var, WithSource):
                 if self.error:
                     raise DataError(self.error, syntax=True)
                 if not context.dry_run:
-                    scope = self._get_scope(context.variables)
-                    setter = getattr(context.variables, f'set_{scope}')
+                    scope, config = self._get_scope(context.variables)
+                    set_variable = getattr(context.variables, f'set_{scope}')
                     try:
                         resolver = VariableResolver.from_variable(self)
-                        setter(self._resolve_name(self.name, context.variables),
-                               resolver.resolve(context.variables))
+                        set_variable(self._resolve_name(self.name, context.variables),
+                                     resolver.resolve(context.variables), **config)
                     except DataError as err:
                         raise VariableError(f"Setting variable '{self.name}' failed: {err}")
 
     def _get_scope(self, variables):
         if not self.scope:
-            return 'local'
+            return 'local', {}
         try:
             scope = variables.replace_string(self.scope)
             if scope.upper() == 'TASK':
-                return 'test'
-            if scope.upper() in ('GLOBAL', 'SUITE', 'TEST', 'LOCAL'):
-                return scope.lower()
+                return 'test', {}
+            if scope.upper() == 'SUITES':
+                return 'suite', {'children': True}
+            if scope.upper() in ('LOCAL', 'TEST', 'SUITE', 'GLOBAL'):
+                return scope.lower(), {}
             raise DataError(f"Value '{scope}' is not accepted. Valid values are "
-                            f"'GLOBAL', 'SUITE', 'TEST', 'TASK' and 'LOCAL'.")
+                            f"'LOCAL', 'TEST', 'TASK', 'SUITE', 'SUITES' and 'GLOBAL'.")
         except DataError as err:
             raise DataError(f"Invalid VAR scope: {err}")
 

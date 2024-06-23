@@ -59,11 +59,13 @@ Scopes 1
     VAR   ${local2}    scope=local2    scope=LOCAL
     VAR   @{TEST}      scope=value     scope=test
     VAR   &{SUITE}     scope=value     scope=${{'suite'}}
+    VAR   ${SUITES}    children too    scope=Suites
     VAR   ${GLOBAL}    global          scope=GLOBAL
     Should Be Equal    ${local1}    local1
     Should Be Equal    ${local2}    scope=local2
     Should Be Equal    ${TEST}      ${{['scope=value']}}
     Should Be Equal    ${SUITE}     ${{{'scope': 'value'}}}
+    Should Be Equal    ${SUITES}    children too
     Should Be Equal    ${GLOBAL}    global
     Scopes
     Should Be Equal    ${TEST}      new-test
@@ -73,14 +75,15 @@ Scopes 2
     Variable Should Not Exist    ${local1}
     Variable Should Not Exist    ${local2}
     Should Be Equal    ${SUITE}     ${{{'scope': 'value'}}}
+    Should Be Equal    ${SUITES}    children too
     Should Be Equal    ${GLOBAL}    global
 
 Invalid scope
-    [Documentation]    FAIL    VAR option 'scope' does not accept value 'invalid'. Valid values are 'GLOBAL', 'SUITE', 'TEST', 'TASK' and 'LOCAL'.
+    [Documentation]    FAIL    VAR option 'scope' does not accept value 'invalid'. Valid values are 'LOCAL', 'TEST', 'TASK', 'SUITE', 'SUITES' and 'GLOBAL'.
     VAR    ${x}    x    scope=invalid
 
 Invalid scope from variable
-    [Documentation]    FAIL    Invalid VAR scope: Value 'invalid' is not accepted. Valid values are 'GLOBAL', 'SUITE', 'TEST', 'TASK' and 'LOCAL'.
+    [Documentation]    FAIL    Invalid VAR scope: Value 'invalid' is not accepted. Valid values are 'LOCAL', 'TEST', 'TASK', 'SUITE', 'SUITES' and 'GLOBAL'.
     VAR    ${x}    x    scope=${{'invalid'}}
 
 Non-existing variable as scope

@@ -1208,7 +1208,7 @@ class WhileHeader(Statement):
 class Var(Statement):
     type = Token.VAR
     options = {
-        'scope': ('GLOBAL', 'SUITE', 'TEST', 'TASK', 'LOCAL'),
+        'scope': ('LOCAL', 'TEST', 'TASK', 'SUITE', 'SUITES', 'GLOBAL'),
         'separator': None
     }
 

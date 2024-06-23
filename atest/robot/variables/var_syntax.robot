@@ -54,7 +54,8 @@ Scopes
     Validate VAR    ${tc.body}[1]    \${local2}    scope\=local2    scope=LOCAL
     Validate VAR    ${tc.body}[2]    \@{TEST}      scope\=value     scope=test
     Validate VAR    ${tc.body}[3]    \&{SUITE}     scope\=value     scope=\${{'suite'}}
-    Validate VAR    ${tc.body}[4]    \${GLOBAL}    global           scope=GLOBAL
+    Validate VAR    ${tc.body}[4]    \${SUITES}    children too     scope=Suites
+    Validate VAR    ${tc.body}[5]    \${GLOBAL}    global           scope=GLOBAL
     Check Test Case    ${TESTNAME} 2
 
 Invalid scope
