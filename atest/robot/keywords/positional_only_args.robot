@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup       Run Tests    ${EMPTY}    keywords/positional_only_args.robot
-Force Tags        require-py3.8
 Resource          atest_resource.robot
 
 *** Test Cases ***
