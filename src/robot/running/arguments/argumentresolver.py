@@ -52,14 +52,13 @@ class NamedArgumentResolver:
         self.spec = spec
 
     def resolve(self, arguments, variables=None):
-        spec = self.spec
-        positional = list(arguments[:len(spec.embedded)])
+        positional = list(arguments[:len(self.spec.embedded)])
         named = []
-        for arg in arguments[len(spec.embedded):]:
+        for arg in arguments[len(self.spec.embedded):]:
             if is_dict_variable(arg):
                 named.append(arg)
             else:
-                name, value = self._split_named(arg, named, variables, spec)
+                name, value = self._split_named(arg, named, variables)
                 if name is not None:
                     named.append((name, value))
                 elif named:
@@ -68,23 +67,23 @@ class NamedArgumentResolver:
                     positional.append(value)
         return positional, named
 
-    def _split_named(self, arg, previous_named, variables, spec):
+    def _split_named(self, arg, previous_named, variables):
         if isinstance(arg, Argument):
             return arg.name, arg.value
         name, value = split_from_equals(arg)
-        if value is None or not self._is_named(name, previous_named, variables, spec):
+        if value is None or not self._is_named(name, previous_named, variables):
             return None, arg
         return name, value
 
-    def _is_named(self, name, previous_named, variables, spec):
-        if previous_named or spec.var_named:
+    def _is_named(self, name, previous_named, variables):
+        if previous_named or self.spec.var_named:
             return True
         if variables:
             try:
                 name = variables.replace_scalar(name)
             except DataError:
                 return False
-        return name in spec.named
+        return name in self.spec.named
 
     def _raise_positional_after_named(self):
         raise DataError(f"{self.spec.type.capitalize()} '{self.spec.name}' "
