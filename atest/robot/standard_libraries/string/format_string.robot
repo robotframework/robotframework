@@ -21,6 +21,9 @@ Format String With Named And Search Replace Arguments
 Format String From Non-ASCII Template
     Check Test Case    ${TESTNAME}
 
+Template can contain '=' without escaping
+    Check Test Case    ${TESTNAME}
+
 Format String From Template File
     ${tc} =    Check Test Case    ${TESTNAME}
     Check Reading Template Message    ${tc.kws[0].msgs[0]}    format_string_template.txt

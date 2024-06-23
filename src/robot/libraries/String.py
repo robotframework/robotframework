@@ -184,7 +184,7 @@ class String:
             raise TypeError('Cannot decode strings.')
         return bytes.decode(encoding, errors)
 
-    def format_string(self, template, *positional, **named):
+    def format_string(self, template, /, *positional, **named):
         """Formats a ``template`` using the given ``positional`` and ``named`` arguments.
 
         The template can be either be a string or an absolute path to
@@ -205,6 +205,9 @@ class String:
         | ${xx} = | Format String | {:*^30}                        | centered     |
         | ${yy} = | Format String | {0:{width}{base}}              | ${42}        | base=X | width=10 |
         | ${zz} = | Format String | ${CURDIR}/template.txt         | positional   | named=value |
+
+        Prior to Robot Framework 7.1, possible equal signs in the template string must
+        be escaped with a backslash like ``x\\={}`.
         """
         if os.path.isabs(template) and os.path.isfile(template):
             template = template.replace('/', os.sep)

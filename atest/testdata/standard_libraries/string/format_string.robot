@@ -33,6 +33,16 @@ Format String From Non-ASCII Template
     ${result} =    Format String    {} and {} are fruits from Brazil    Açaí    Cupuaçu
     Should be equal    ${result}    Açaí and Cupuaçu are fruits from Brazil
 
+Template can contain '=' without escaping
+    ${result} =    Format String    x={}, y={}    1    2
+    Should be equal    ${result}    x=1, y=2
+    ${result} =    Format String    x={x}, y={y}    y=2    x=1
+    Should be equal    ${result}    x=1, y=2
+    ${result} =    Format String    template={}    always positional
+    Should be equal    ${result}    template=always positional
+    ${result} =    Format String    escaping\={}    ok as well
+    Should be equal    ${result}    escaping=ok as well
+
 Format String From Template File
     ${result} =    Format String    ${CURDIR}/format_string_template.txt    condition=supports
     Should be equal    ${result}    Format String also supports files templates!
