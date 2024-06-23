@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup       Run Tests    ${EMPTY}    variables/var_syntax.robot
+Suite Setup       Run Tests    ${EMPTY}    variables/var_syntax
 Resource          atest_resource.robot
 
 *** Test Cases ***
@@ -41,12 +41,12 @@ Equals is accepted
 
 In suite setup and teardown
     Check Test Case    In suite setup
-    Validate VAR    ${SUITE.setup.body}[0]       \${local}     value
-    Validate VAR    ${SUITE.setup.body}[1]       \${SUITE}     set in \${where}    scope=suite
-    Validate VAR    ${SUITE.setup.body}[2]       \${GLOBAL}    set in \${where}    scope=global
-    Validate VAR    ${SUITE.teardown.body}[0]    \${local}     value
-    Validate VAR    ${SUITE.teardown.body}[1]    \${SUITE}     set in \${where}    scope=suite
-    Validate VAR    ${SUITE.teardown.body}[2]    \${GLOBAL}    set in \${where}    scope=global
+    Validate VAR    ${SUITE.suites[0].setup.body}[0]       \${local}     value
+    Validate VAR    ${SUITE.suites[0].setup.body}[1]       \${SUITE}     set in \${where}    scope=suite
+    Validate VAR    ${SUITE.suites[0].setup.body}[2]       \${GLOBAL}    set in \${where}    scope=global
+    Validate VAR    ${SUITE.suites[0].teardown.body}[0]    \${local}     value
+    Validate VAR    ${SUITE.suites[0].teardown.body}[1]    \${SUITE}     set in \${where}    scope=suite
+    Validate VAR    ${SUITE.suites[0].teardown.body}[2]    \${GLOBAL}    set in \${where}    scope=global
 
 Scopes
     ${tc} =    Check Test Case    ${TESTNAME} 1
