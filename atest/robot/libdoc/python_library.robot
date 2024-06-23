@@ -94,10 +94,10 @@ Keyword-only Arguments
 
 Positional-only Arguments
     Run Libdoc And Parse Output      ${DATADIR}/keywords/PositionalOnly.py
-    Keyword Arguments Should Be      2    arg    /
+    Keyword Arguments Should Be      1    arg    /
     Keyword Arguments Should Be      5    posonly    /    normal
     Keyword Arguments Should Be      0    required    optional=default    /
-    Keyword Arguments Should Be      4    first: int    second: float    /
+    Keyword Arguments Should Be      3    first: int    second: float    /
 
 Decorators
     Run Libdoc And Parse Output      ${TESTDATADIR}/Decorators.py

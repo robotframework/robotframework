@@ -52,9 +52,11 @@ class NamedArgumentResolver:
         self.spec = spec
 
     def resolve(self, arguments, variables=None):
-        positional = list(arguments[:len(self.spec.embedded)])
+        known_positional_count = max(len(self.spec.positional_only),
+                                     len(self.spec.embedded))
+        positional = list(arguments[:known_positional_count])
         named = []
-        for arg in arguments[len(self.spec.embedded):]:
+        for arg in arguments[known_positional_count:]:
             if is_dict_variable(arg):
                 named.append(arg)
             else:

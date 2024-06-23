@@ -6,10 +6,13 @@ Resource          atest_resource.robot
 Normal usage
     Check Test Case    ${TESTNAME}
 
-Named syntax is not used
+Default values
     Check Test Case    ${TESTNAME}
 
-Default values
+Positional only value can contain '=' without it being considered named argument
+    Check Test Case    ${TESTNAME}
+
+Name of positional only argument can be used with kwargs
     Check Test Case    ${TESTNAME}
 
 Type conversion
@@ -18,16 +21,9 @@ Type conversion
 Too few arguments
     Check Test Case    ${TESTNAME} 1
     Check Test Case    ${TESTNAME} 2
+    Check Test Case    ${TESTNAME} 3
 
 Too many arguments
     Check Test Case    ${TESTNAME} 1
     Check Test Case    ${TESTNAME} 2
-
-Named argument syntax doesn't work after valid named arguments
-    Check Test Case    ${TESTNAME}
-
-Name can be used with kwargs
-    Check Test Case    ${TESTNAME}
-
-Mandatory positional-only missing with kwargs
-    Check Test Case    ${TESTNAME}
+    Check Test Case    ${TESTNAME} 3
