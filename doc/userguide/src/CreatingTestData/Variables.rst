@@ -912,9 +912,29 @@ Scope
 
 Variables created with the `VAR` syntax are are available only within the test
 or user keyword where they are created. That can, however, be altered by using
-the `scope` configuration option. Supported values are `LOCAL` (default),
-`TEST` (available within the current test), `TASK` (alias for `TEST`), `SUITE`
-(available within the current suite) and `GLOBAL` (available globally).
+the `scope` configuration option. Supported values are:
+
+`LOCAL`
+    Make the variable available in the current local scope. This is the default.
+
+`TEST`
+    Make the variable available within the current test. This includes all keywords
+    called by the test.
+
+`TASK`
+    Alias for `TEST` that can be used when `creating tasks`_.
+
+`SUITE`
+    Make the variable available within the current suite. This includes all subsequent
+    tests in that suite, but not tests in possible child suites.
+
+`SUITES`
+    Make the variable available within the current suite and in its child suites.
+    New in Robot Framework 7.1.
+
+`GLOBAL`
+    Make the variable available globally. This includes all subsequent keywords and tests.
+
 Although Robot Framework variables are case-insensitive, it is recommended to
 use capital letters with non-local variable names.
 
@@ -926,32 +946,39 @@ use capital letters with non-local variable names.
     *** Test Cases ***
     Scope example
         VAR    ${local}     local value
-        VAR    ${TEST}      test value      scope=TEST
-        VAR    ${SUITE}     suite value     scope=SUITE
-        VAR    ${GLOBAL}    global value    scope=GLOBAL
+        VAR    ${TEST}      test value            scope=TEST
+        VAR    ${SUITE}     suite value           scope=SUITE
+        VAR    ${SUITES}    nested suite value    scope=SUITES
+        VAR    ${GLOBAL}    global value          scope=GLOBAL
         Should Be Equal    ${local}     local value
         Should Be Equal    ${TEST}      test value
         Should Be Equal    ${SUITE}     suite value
+        Should Be Equal    ${SUITES}    nested suite value
         Should Be Equal    ${GLOBAL}    global value
         Keyword
         Should Be Equal    ${TEST}      new test value
         Should Be Equal    ${SUITE}     new suite value
+        Should Be Equal    ${SUITES}    new nested suite value
         Should Be Equal    ${GLOBAL}    new global value
 
     Scope example, part 2
         Should Be Equal    ${SUITE}     new suite value
+        Should Be Equal    ${SUITES}    new nested suite value
         Should Be Equal    ${GLOBAL}    new global value
 
     *** Keywords ***
     Keyword
         Should Be Equal    ${TEST}      test value
         Should Be Equal    ${SUITE}     suite value
+        Should Be Equal    ${SUITES}    nested suite value
         Should Be Equal    ${GLOBAL}    global value
         VAR    ${TEST}      new ${TEST}      scope=TEST
         VAR    ${SUITE}     new ${SUITE}     scope=SUITE
+        VAR    ${SUITES}    new ${SUITES}    scope=SUITES
         VAR    ${GLOBAL}    new ${GLOBAL}    scope=GLOBAL
         Should Be Equal    ${TEST}      new test value
         Should Be Equal    ${SUITE}     new suite value
+        Should Be Equal    ${SUITES}    new nested suite value
         Should Be Equal    ${GLOBAL}    new global value
 
 Creating variables conditionally
