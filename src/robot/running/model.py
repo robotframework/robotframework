@@ -365,18 +365,17 @@ class Var(model.Var, WithSource):
     def run(self, result, context, run=True, templated=False):
         result = result.body.create_var(self.name, self.value, self.scope, self.separator)
         with StatusReporter(self, result, context, run):
-            if run:
-                if self.error:
-                    raise DataError(self.error, syntax=True)
-                if not context.dry_run:
-                    scope, config = self._get_scope(context.variables)
-                    set_variable = getattr(context.variables, f'set_{scope}')
-                    try:
-                        resolver = VariableResolver.from_variable(self)
-                        set_variable(self._resolve_name(self.name, context.variables),
-                                     resolver.resolve(context.variables), **config)
-                    except DataError as err:
-                        raise VariableError(f"Setting variable '{self.name}' failed: {err}")
+            if self.error and run:
+                raise DataError(self.error, syntax=True)
+            if not run or context.dry_run:
+                return
+            scope, config = self._get_scope(context.variables)
+            set_variable = getattr(context.variables, f'set_{scope}')
+            try:
+                name, value = self._resolve_name_and_value(context.variables)
+                set_variable(name, value, **config)
+            except DataError as err:
+                raise VariableError(f"Setting variable '{self.name}' failed: {err}")
 
     def _get_scope(self, variables):
         if not self.scope:
@@ -394,8 +393,10 @@ class Var(model.Var, WithSource):
         except DataError as err:
             raise DataError(f"Invalid VAR scope: {err}")
 
-    def _resolve_name(self, name, variables):
-        return name[:2] + variables.replace_string(name[2:-1]) + '}'
+    def _resolve_name_and_value(self, variables):
+        name = self.name[:2] + variables.replace_string(self.name[2:-1]) + '}'
+        value = VariableResolver.from_variable(self).resolve(variables)
+        return name, value
 
     def to_dict(self) -> DataDict:
         data = super().to_dict()
