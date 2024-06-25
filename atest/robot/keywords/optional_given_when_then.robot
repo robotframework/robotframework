@@ -46,6 +46,12 @@ Keyword can be used with and without prefix
     Should Be Equal    ${tc.kws[5].full_name}    Then we are in Berlin city
     Should Be Equal    ${tc.kws[6].full_name}    we are in Berlin city
 
+First word in a keyword can be an argument
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Should Be Equal    ${tc.kws[0].full_name}    Given we don't drink too many beers
+    Should Be Equal    ${tc.kws[1].full_name}    Then Pekka drinks lonkero instead
+    Should Be Equal    ${tc.kws[2].full_name}    and Miikka drinks water instead
+
 Localized prefixes
     ${tc} =    Check Test Case    ${TEST NAME}
     Should Be Equal    ${tc.kws[0].full_name}    Oletetaan we don't drink too many beers
