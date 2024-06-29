@@ -83,11 +83,8 @@ class LibraryKeywordRunner:
     def _runner_for(self, method, positional, named, context):
         timeout = self._get_timeout(context)
         if timeout and timeout.active:
-            def runner():
-                with LOGGER.delayed_logging:
-                    context.output.debug(timeout.get_message)
-                    return timeout.run(method, args=positional, kwargs=named)
-            return runner
+            context.output.debug(timeout.get_message)
+            return lambda: timeout.run(method, args=positional, kwargs=named)
         return lambda: method(*positional, **named)
 
     def _get_timeout(self, context):
@@ -105,9 +102,8 @@ class LibraryKeywordRunner:
 
     def _wrap_with_timeout(self, method, timeout, output):
         def wrapper(*args, **kwargs):
-            with output.delayed_logging:
-                output.debug(timeout.get_message)
-                return timeout.run(method, args=args, kwargs=kwargs)
+            output.debug(timeout.get_message)
+            return timeout.run(method, args=args, kwargs=kwargs)
         return wrapper
 
     @contextmanager

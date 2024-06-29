@@ -41,8 +41,7 @@ def write(msg: 'str | Callable[[], str]', level: str, html: bool = False):
             console(msg)
         else:
             raise RuntimeError("Invalid log level '%s'." % level)
-    if threading.current_thread().name in LOGGING_THREADS:
-        LOGGER.log_message(Message(msg, level, html))
+    LOGGER.log_message(Message(msg, level, html))
 
 
 def trace(msg, html=False):

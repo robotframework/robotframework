@@ -52,10 +52,11 @@ class Output(AbstractLogger, LoggerApi):
         return LOGGER.delayed_logging
 
     def close(self, result):
-        self._xml_logger.logger.visit_statistics(result.statistics)
-        self._xml_logger.close()
-        LOGGER.unregister_xml_logger()
-        LOGGER.output_file(self._settings['Output'])
+        def callback():
+            self._xml_logger.logger.visit_statistics(result.statistics)
+            self._xml_logger.close()
+            LOGGER.output_file(self._settings['Output'])
+        LOGGER.unregister_xml_logger(callback)
 
     def start_suite(self, data, result):
         LOGGER.start_suite(data, result)
