@@ -33,6 +33,7 @@ ${RUNNER DEFAULTS}
 ...               --ConsoleMarkers OFF
 ...               --PYTHONPATH "${CURDIR}${/}..${/}testresources${/}testlibs"
 ...               --PYTHONPATH "${CURDIR}${/}..${/}testresources${/}listeners"
+${SCREENSHOT DIR}     %{TEMPDIR}${/}robot_atest_screenshots
 
 *** Keywords ***
 Run Tests
