@@ -103,6 +103,7 @@ Check Listen All File
     ...    LOG MESSAGE: [INFO] \${assign} = JUST TESTING...
     ...    KEYWORD END: PASS
     ...    VAR START: \${expected}${SPACE*4}JUST TESTING... (line 30)
+    ...    LOG MESSAGE: [INFO] \${expected} = JUST TESTING...
     ...    VAR END: PASS
     ...    KEYWORD START: BuiltIn.Should Be Equal ['\${assign}', '\${expected}'] (line 31)
     ...    KEYWORD END: PASS
@@ -120,6 +121,7 @@ Check Listen All File
     ...    LOG MESSAGE: [INFO] \${assign} = JUST TESTING...
     ...    KEYWORD END: PASS
     ...    VAR START: \${expected}${SPACE*4}JUST TESTING... (line 30)
+    ...    LOG MESSAGE: [INFO] \${expected} = JUST TESTING...
     ...    VAR END: PASS
     ...    KEYWORD START: BuiltIn.Should Be Equal ['\${assign}', '\${expected}'] (line 31)
     ...    KEYWORD END: PASS
@@ -138,6 +140,7 @@ Check Listen All File
     ...    LOG MESSAGE: [INFO] \${assign} = JUST TESTING...
     ...    KEYWORD END: PASS
     ...    VAR START: \${expected}${SPACE*4}JUST TESTING... (line 30)
+    ...    LOG MESSAGE: [INFO] \${expected} = JUST TESTING...
     ...    VAR END: PASS
     ...    KEYWORD START: BuiltIn.Should Be Equal ['\${assign}', '\${expected}'] (line 31)
     ...    KEYWORD END: PASS

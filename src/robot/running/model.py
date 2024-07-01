@@ -43,7 +43,7 @@ from robot.conf import RobotSettings
 from robot.errors import BreakLoop, ContinueLoop, DataError, ReturnFromKeyword, VariableError
 from robot.model import BodyItem, DataDict, TestSuites
 from robot.output import LOGGER, Output, pyloggingconf
-from robot.utils import setter
+from robot.utils import format_assign_message, setter
 from robot.variables import VariableResolver
 
 from .bodyrunner import ForRunner, IfRunner, KeywordRunner, TryRunner, WhileRunner
@@ -374,6 +374,7 @@ class Var(model.Var, WithSource):
             try:
                 name, value = self._resolve_name_and_value(context.variables)
                 set_variable(name, value, **config)
+                context.info(format_assign_message(name, value))
             except DataError as err:
                 raise VariableError(f"Setting variable '{self.name}' failed: {err}")
 

@@ -13,17 +13,20 @@ Nested UK
     Check Log Message    ${tc.body[0].messages[1]}    from nested kw
 
 Loops and stuff
-    ${tc}=    User keyword content should be flattened     10
+    ${tc}=    User keyword content should be flattened     13
     Check Log Message    ${tc.body[0].messages[0]}     inside for 0
     Check Log Message    ${tc.body[0].messages[1]}     inside for 1
     Check Log Message    ${tc.body[0].messages[2]}     inside for 2
     Check Log Message    ${tc.body[0].messages[3]}     inside while 0
-    Check Log Message    ${tc.body[0].messages[4]}     inside while 1
-    Check Log Message    ${tc.body[0].messages[5]}     inside while 2
-    Check Log Message    ${tc.body[0].messages[6]}     inside if
-    Check Log Message    ${tc.body[0].messages[7]}     fail inside try    FAIL
-    Check Log Message    ${tc.body[0].messages[8]}     Traceback (most recent call last):*    DEBUG    pattern=True
-    Check Log Message    ${tc.body[0].messages[9]}     inside except
+    Check Log Message    ${tc.body[0].messages[4]}     \${LIMIT} = 1
+    Check Log Message    ${tc.body[0].messages[5]}     inside while 1
+    Check Log Message    ${tc.body[0].messages[6]}     \${LIMIT} = 2
+    Check Log Message    ${tc.body[0].messages[7]}     inside while 2
+    Check Log Message    ${tc.body[0].messages[8]}     \${LIMIT} = 3
+    Check Log Message    ${tc.body[0].messages[9]}     inside if
+    Check Log Message    ${tc.body[0].messages[10]}    fail inside try    FAIL
+    Check Log Message    ${tc.body[0].messages[11]}    Traceback (most recent call last):*    DEBUG    pattern=True
+    Check Log Message    ${tc.body[0].messages[12]}    inside except
 
 Recursion
     User keyword content should be flattened     8

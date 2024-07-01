@@ -12,7 +12,7 @@ Scalar with separator
     VAR    ${b}    1       ${2}    3       separator====
     VAR    ${c}    1       2       ${3}    separator=
     VAR    ${d}    ${a}    ${b}    ${c}    separator=${0}
-    VAR    ${e}                            separator=has no effect
+    VAR    ${e}                            separator=no effect
     VAR    ${f}    separator=NO    separator=NO    separator=--YES--
     Should Be Equal    ${a}    1\n2\n3
     Should Be Equal    ${b}    1===2===3
@@ -28,6 +28,21 @@ List
 Dict
     VAR    &{name}    k1=v1    k2=v2    separator=v3
     Should Be Equal    ${name}    ${{{'k1': 'v1', 'k2': 'v2', 'separator': 'v3'}}}
+
+Long values
+    ${items} =    Create List
+    ...    This is a rather long value.
+    ...    It will be cut when it is logged by VAR.
+    ...    Otherwise it should work normally.
+    ...    This is a rather long value.
+    ...    It will be cut when it is logged by VAR.
+    ...    Otherwise it should work normally.
+    VAR    ${scalar}    @{items}
+    VAR    @{list}      @{items}
+    VAR    &{dict}      &{{dict(enumerate($items))}}
+    Should Be Equal    ${scalar}    ${{' '.join($items)}}
+    Should Be Equal    ${list}      ${items}
+    Should Be Equal    ${dict}      ${{dict(enumerate($items))}}
 
 Invalid name
     [Documentation]    FAIL    Invalid variable name 'bad'.

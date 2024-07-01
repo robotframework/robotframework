@@ -105,8 +105,11 @@ Correct messages should be logged to normal log
     Check Log Message    ${kw.body[4].body[6]}    end keyword      WARN
     Check Log Message    ${kw.body[5].body[0]}    start var        INFO
     Check Log Message    ${kw.body[5].body[1]}    start var        WARN
-    Check Log Message    ${kw.body[5].body[2]}    end var          INFO
-    Check Log Message    ${kw.body[5].body[3]}    end var          WARN
+    Check Log Message    ${kw.body[5].body[2]}    log_message: INFO \${expected} = JUST TESTING...    INFO
+    Check Log Message    ${kw.body[5].body[3]}    log_message: INFO \${expected} = JUST TESTING...    WARN
+    Check Log Message    ${kw.body[5].body[4]}    \${expected} = JUST TESTING...    INFO
+    Check Log Message    ${kw.body[5].body[5]}    end var          INFO
+    Check Log Message    ${kw.body[5].body[6]}    end var          WARN
     Check Log Message    ${kw.body[6].body[0]}    start keyword    INFO
     Check Log Message    ${kw.body[6].body[1]}    start keyword    WARN
     Check Log Message    ${kw.body[6].body[2]}    end keyword      INFO

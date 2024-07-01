@@ -75,11 +75,11 @@ VAR in All mode
     ${tc} =    Check Test Case    IF structure
     Should Be Equal     ${tc.body[0].type}       VAR
     Should Be Empty     ${tc.body[0].body}
-    Should Be Equal     ${tc.body[0].message}    ${EMPTY}
+    Should Be Equal     ${tc.body[0].message}    *HTML* ${DATA REMOVED}
     ${tc} =    Check Test Case    WHILE loop executed multiple times
     Should Be Equal     ${tc.body[0].type}       VAR
     Should Be Empty     ${tc.body[0].body}
-    Should Be Equal     ${tc.body[0].message}    ${EMPTY}
+    Should Be Equal     ${tc.body[0].message}    *HTML* ${DATA REMOVED}
 
 Passed Mode
     [Setup]    Run Rebot and set My Suite    --removekeywords passed    0
