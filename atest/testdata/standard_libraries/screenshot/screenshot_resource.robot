@@ -17,6 +17,7 @@ Save Start Time
     Set Test Variable  \${START TIME}
 
 Screenshots Should Exist
-    [Arguments]  ${directory}  @{files}
-    @{actual files}=  List Directory  ${directory}  *.jp*g
+    [Arguments]  ${directory}  @{files}    ${format}=jpg
+    ${file_ext_re} =    Set Variable If    "${format.lower()}" == "jpg"    *.jp*g    *.${format}
+    @{actual files}=  List Directory  ${directory}  ${file_ext_re}
     Lists Should Be Equal  ${actual files}  ${files}
