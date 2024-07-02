@@ -32,6 +32,14 @@ Invalid JSON input
     ...    Invalid JSON data: *
     Stderr Should Match    [[] ERROR ] ${error}${USAGE TIP}\n
 
+Non-existing JSON input
+    Run Rebot Without Processing Output    ${EMPTY}    non_existing.json
+    ${json} =    Normalize Path    ${DATADIR}/non_existing.json
+    VAR    ${error}
+    ...    Reading JSON source '${json}' failed:
+    ...    No such file or directory
+    Stderr Should Match    [[] ERROR ] ${error}${USAGE TIP}\n
+
 *** Keywords ***
 Create XML and JSON outputs
     Create Output With Robot    ${XML}    ${EMPTY}    misc

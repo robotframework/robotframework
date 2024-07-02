@@ -224,12 +224,7 @@ class JsonLoader:
     def _is_path(self, source):
         if isinstance(source, Path):
             return True
-        if not isinstance(source, str) or '{' in source:
-            return False
-        try:
-            return Path(source).is_file()
-        except OSError:    # Can happen on Windows w/ Python < 3.10.
-            return False
+        return isinstance(source, str) and '{' not in source
 
 
 class JsonDumper:
