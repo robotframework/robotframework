@@ -936,7 +936,7 @@ as a class and also uses type hints:
 
         def end_test(self, data: running.TestCase, result: result.TestCase):
             elapsed_seconds = result.elapsed_time.total_seconds()
-            if result.status == 'PASS' and  elapsed_seconds > self.max_milliseconds:
+            if result.status == 'PASS' and elapsed_seconds > self.max_seconds:
                 result.status = 'FAIL'
                 result.message = 'Test execution took too long.'
 
@@ -950,15 +950,46 @@ case is not possible because it has already been written to the `output.xml`_
 file when listeners are called. Due to the same reason modifying already
 finished tests in the `end_suite` method has no effect either.
 
-Notice that although listeners can change status of any executed keyword or control
-structure, that does not directly affect the status of the executed test. In general
-listeners cannot directly fail keywords so that execution would stop or handle
-failures so that execution would continue. This kind of functionality may be
-added in the future if there are needs.
-
 This API is very similar to the `pre-Rebot modifier`_ API that can be used
 to modify results before report and log are generated. The main difference is
 that listeners modify also the created :file:`output.xml` file.
+
+Changing keyword and control structure status
+'''''''''''''''''''''''''''''''''''''''''''''
+
+Listeners can also affect the execution flow by changing statuses of the executed
+keywords and control structures. For example, if a listener changes the status of
+a passed keyword to FAIL, the keyword is considered failed exactly as if it had
+failed normally. Similarly, it is possible to change the status of a passed or
+failed keyword to SKIP to get the keyword and the whole test skipped. It is
+also possible to silence failures by changing the status to PASS, but this
+should be done only in special cases and with great care to avoid hiding real
+failures.
+
+The following example demonstrates changing the status by failing keywords
+that take too long time to execute. The previous example had similar logic
+with tests, but this listener also stops the execution immediately if there
+is a keyword that is too slow. As the example shows, listeners can also change
+the error message, not only the status.
+
+.. sourcecode:: python
+
+    from robot import result, running
+
+
+    class KeywordPerformanceMonitor:
+
+        def __init__(self, max_seconds: float = 0.1):
+            self.max_seconds = max_seconds
+
+        def end_keyword(self, data: running.Keyword, result: result.Keyword):
+            elapsed_seconds = result.elapsed_time.total_seconds()
+            if result.status == 'PASS' and elapsed_seconds > self.max_seconds:
+                result.status = 'FAIL'
+                result.message = 'Keyword execution took too long.'
+
+.. note:: Changes to status only affect the execution flow starting from
+          Robot Framework 7.1.
 
 More examples
 ~~~~~~~~~~~~~

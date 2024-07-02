@@ -114,13 +114,14 @@ Check Test Tags
     RETURN    ${tc}
 
 Check Keyword Data
-    [Arguments]    ${kw}    ${name}    ${assign}=    ${args}=    ${status}=PASS    ${tags}=    ${doc}=*    ${type}=KEYWORD
+    [Arguments]    ${kw}    ${name}    ${assign}=    ${args}=    ${status}=PASS    ${tags}=    ${doc}=*    ${message}=*    ${type}=KEYWORD
     Should Be Equal    ${kw.full_name}               ${name}
     Should Be Equal    ${{', '.join($kw.assign)}}    ${assign}
     Should Be Equal    ${{', '.join($kw.args)}}      ${args}
     Should Be Equal    ${kw.status}                  ${status}
     Should Be Equal    ${{', '.join($kw.tags)}}      ${tags}
     Should Match       ${kw.doc}                     ${doc}
+    Should Match       ${kw.message}                 ${message}
     Should Be Equal    ${kw.type}                    ${type}
 
 Check TRY Data
