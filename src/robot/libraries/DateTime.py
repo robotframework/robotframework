@@ -191,6 +191,7 @@ integers or floating point numbers, the whole format is case and space
 insensitive, and it is possible to add a minus prefix to specify negative
 times. The available time specifiers are:
 
+- ``weeks``, ``week``, ``w`` (new in RF 7.1)
 - ``days``, ``day``, ``d``
 - ``hours``, ``hour``, ``h``
 - ``minutes``, ``minute``, ``mins``, ``min``, ``m``
@@ -201,9 +202,9 @@ times. The available time specifiers are:
 
 When returning a time string, it is possible to select between ``verbose``
 and ``compact`` representations using ``result_format`` argument. The verbose
-format uses long specifiers ``day``, ``hour``, ``minute``, ``second`` and
+format uses long specifiers ``week``, ``day``, ``hour``, ``minute``, ``second`` and
 ``millisecond``, and adds ``s`` at the end when needed. The compact format uses
-shorter specifiers ``d``, ``h``, ``min``, ``s`` and ``ms``, and even drops
+shorter specifiers ``w``, ``d``, ``h``, ``min``, ``s`` and ``ms``, and even drops
 the space between the number and the specifier.
 
 Examples:
