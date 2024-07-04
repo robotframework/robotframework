@@ -141,7 +141,12 @@ class IsLogged:
         self.__init__(level)
         return old
 
-    def _level_to_int(self, level):
+    @classmethod
+    def validate_level(cls, level):
+        cls._level_to_int(level)
+
+    @classmethod
+    def _level_to_int(cls, level):
         try:
             return LEVELS[level.upper()]
         except KeyError:

@@ -33,6 +33,9 @@ class LoggerMock:
     def close(self):
         pass
 
+    def __iter__(self):
+        yield self
+
 
 class LoggerMock2(LoggerMock, LoggerApi):
 
