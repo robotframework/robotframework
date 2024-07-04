@@ -74,7 +74,7 @@ class Logger(AbstractLogger):
     def _listeners(self):
         cli_listeners = list(self._cli_listeners or [])
         lib_listeners = list(self._lib_listeners or [])
-        return cli_listeners + lib_listeners
+        return sorted(cli_listeners + lib_listeners, key=lambda li: -li.order)
 
     @property
     def start_loggers(self):
