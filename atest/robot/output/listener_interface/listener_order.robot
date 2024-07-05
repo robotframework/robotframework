@@ -43,14 +43,15 @@ Validate close order
 
 Invalid order
     ${listener} =    Normalize Path    ${LISTENER}
-    Check Log Message    ${ERRORS}[0]    Taking listener '${LISTENER}:NOT USED:invalid' into use failed: Invalid listener order 'invalid'.    ERROR
+    Check Log Message    ${ERRORS}[0]    Taking listener '${listener}:NOT USED:invalid' into use failed: Invalid listener order 'invalid'.    ERROR
     Check Log Message    ${ERRORS}[1]    Error in library 'BAD': Registering listeners failed: Taking listener 'SELF' into use failed: Invalid listener order 'bad'.    ERROR
 
 *** Keywords ***
 Run Tests With Ordered Listeners
+    ${listener} =    Normalize Path    ${LISTENER}
     VAR    ${options}
-    ...    --listener "${LISTENER}:CLI 1:-1"
-    ...    --listener "${LISTENER}:CLI 2:3.14"
-    ...    --listener "${LISTENER}:NOT USED:invalid"
-    ...    --listener "${LISTENER}:CLI 3"
+    ...    --listener "${listener}:CLI 1:-1"
+    ...    --listener "${listener}:CLI 2:3.14"
+    ...    --listener "${listener}:NOT USED:invalid"
+    ...    --listener "${listener}:CLI 3"
     Run Tests    ${options}    output/listener_interface/listener_order.robot
