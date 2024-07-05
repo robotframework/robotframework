@@ -145,7 +145,7 @@ class _BaseSettings:
     def _process_doc(self, value):
         if isinstance(value, Path) or (os.path.isfile(value) and value.strip() == value):
             try:
-                with open(value) as f:
+                with open(value, encoding='UTF-8') as f:
                     value = f.read()
             except (OSError, IOError) as err:
                 self._raise_invalid('Doc', f"Reading documentation from '{value}' "

@@ -1133,7 +1133,7 @@ class TestSuite(model.TestSuite[Keyword, TestCase], StatusMixin):
         if output is None:
             output = StringIO()
         elif isinstance(output, (Path, str)):
-            output = open(output, 'w')
+            output = open(output, 'w', encoding='UTF-8')
             close = True
         return output, close
 

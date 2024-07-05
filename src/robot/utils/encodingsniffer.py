@@ -18,7 +18,7 @@ import sys
 import locale
 
 from .misc import isatty
-from .platform import UNIXY, WINDOWS
+from .platform import PY_VERSION, UNIXY, WINDOWS
 
 
 if UNIXY:
@@ -53,6 +53,8 @@ def _get_encoding(platform_getters, default):
 
 
 def _get_python_system_encoding():
+    if PY_VERSION >= (3, 11):
+        return locale.getencoding()
     # ValueError occurs with PyPy 3.10 if language config is invalid.
     # https://foss.heptapod.net/pypy/pypy/-/issues/3975
     try:

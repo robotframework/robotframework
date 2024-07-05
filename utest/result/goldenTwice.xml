@@ -62,6 +62,7 @@
 <status status="PASS" start="2011-10-24T13:41:20.925000" elapsed="0.009000"/>
 </test>
 <doc>Normal test cases</doc>
+<meta name="Nön-ÄSCÏÏ">🤖</meta>
 <meta name="Something">My Value</meta>
 <status status="PASS" start="2011-10-24T13:41:20.873000" elapsed="0.079000"/>
 </suite>
@@ -126,6 +127,7 @@
 <status status="PASS" start="2011-10-24T13:41:20.925000" elapsed="0.009000"/>
 </test>
 <doc>Normal test cases</doc>
+<meta name="Nön-ÄSCÏÏ">🤖</meta>
 <meta name="Something">My Value</meta>
 <status status="PASS" start="2011-10-24T13:41:20.873000" elapsed="0.079000"/>
 </suite>

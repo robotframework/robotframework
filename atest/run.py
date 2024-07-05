@@ -103,7 +103,8 @@ def _run(args, tempdir, interpreter, schema_validation):
     environ = dict(os.environ,
                    TEMPDIR=str(tempdir),
                    PYTHONCASEOK='True',
-                   PYTHONIOENCODING='')
+                   PYTHONIOENCODING='',
+                   PYTHONWARNDEFAULTENCODING='True')
     if schema_validation:
         environ['ATEST_VALIDATE_OUTPUT'] = 'TRUE'
     print(f"{interpreter}\n{interpreter.underline}\n")
