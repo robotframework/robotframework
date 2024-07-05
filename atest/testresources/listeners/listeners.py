@@ -7,7 +7,7 @@ class ListenSome:
 
     def __init__(self):
         outpath = os.path.join(os.getenv('TEMPDIR'), 'listen_some.txt')
-        self.outfile = open(outpath, 'w')
+        self.outfile = open(outpath, 'w', encoding='UTF-8')
 
     def startTest(self, data, result):
         self.outfile.write(data.name + '\n')
@@ -24,7 +24,7 @@ class WithArgs:
 
     def __init__(self, arg1, arg2='default'):
         outpath = os.path.join(os.getenv('TEMPDIR'), 'listener_with_args.txt')
-        with open(outpath, 'a') as outfile:
+        with open(outpath, 'a', encoding='UTF-8') as outfile:
             outfile.write("I got arguments '%s' and '%s'\n" % (arg1, arg2))
 
 
@@ -163,7 +163,7 @@ class Messages:
     ROBOT_LISTENER_API_VERSION = '2'
 
     def __init__(self, path):
-        self.output = open(path, 'w')
+        self.output = open(path, 'w', encoding='UTF-8')
 
     def log_message(self, msg):
         self.output.write('%s: %s\n' % (msg['level'], msg['message']))

@@ -18,7 +18,7 @@ ${CWD}            %{TEMPDIR}/process-cwd
 Some process
     [Arguments]    ${alias}=${null}    ${stderr}=STDOUT
     Remove File    ${STARTED}
-    ${handle}=    Start Python Process    open(r'${STARTED}', 'w').close(); print(input())
+    ${handle}=    Start Python Process    open(r'${STARTED}', 'w', encoding='ASCII').close(); print(input())
     ...    alias=${alias}    stderr=${stderr}    stdin=PIPE
     Wait Until Created    ${STARTED}    timeout=10s
     Process Should Be Running

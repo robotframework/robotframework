@@ -7,7 +7,7 @@ class ListenAll:
 
     def __init__(self, *path):
         path = ':'.join(path) if path else self._get_default_path()
-        self.outfile = open(path, 'w')
+        self.outfile = open(path, 'w', encoding='UTF-8')
         self.start_attrs = []
 
     def _get_default_path(self):

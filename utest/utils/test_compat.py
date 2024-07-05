@@ -26,7 +26,7 @@ class TestIsATty(unittest.TestCase):
             assert_false(isatty(wrapper))
 
     def test_open_and_closed_file(self):
-        with open(__file__) as file:
+        with open(__file__, encoding='ASCII') as file:
             assert_false(isatty(file))
         assert_false(isatty(file))
 

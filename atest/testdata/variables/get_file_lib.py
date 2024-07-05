@@ -1,2 +1,2 @@
 def get_open_file():
-    return open(__file__)
+    return open(__file__, encoding='ASCII')

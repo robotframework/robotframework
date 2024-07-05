@@ -260,7 +260,7 @@ class TestSplitArgsFromNameOrPath(unittest.TestCase):
 
     def test_existing_paths_are_made_absolute(self):
         path = 'robot-framework-unit-test-file-12q3405909qasf'
-        open(path, 'w').close()
+        open(path, 'w', encoding='ASCII').close()
         try:
             assert_equal(self.method(path), (abspath(path), []))
             assert_equal(self.method(path+':arg'), (abspath(path), ['arg']))

@@ -19,7 +19,7 @@ CURDIR = Path(__file__).resolve().parent
 DATADIR = (CURDIR / '../../atest/testdata/libdoc/').resolve()
 TEMPDIR = Path(os.getenv('TEMPDIR') or tempfile.gettempdir())
 VALIDATOR = Draft202012Validator(
-    json.loads((CURDIR / '../../doc/schema/libdoc.json').read_text())
+    json.loads((CURDIR / '../../doc/schema/libdoc.json').read_text(encoding='UTF-8'))
 )
 
 try:
@@ -237,7 +237,7 @@ class TestJson(unittest.TestCase):
         path = DATADIR / lib
         spec = LibraryDocumentation(path).to_json()
         data = json.loads(spec)
-        with open(path) as f:
+        with open(path, encoding='locale' if PY_VERSION >= (3, 10) else None) as f:
             orig_data = json.load(f)
         data['generated'] = orig_data['generated'] = None
         self.maxDiff = None

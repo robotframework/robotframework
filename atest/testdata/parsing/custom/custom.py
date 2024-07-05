@@ -9,7 +9,7 @@ extension = 'ignored'
 
 def parse(source):
     suite = TestSuite(source=source, metadata={'Parser': 'Custom'})
-    for line in source.read_text().splitlines():
+    for line in source.read_text(encoding='UTF-8').splitlines():
         if not line or line[0] in ('*', '#'):
             continue
         if line[0] != ' ':

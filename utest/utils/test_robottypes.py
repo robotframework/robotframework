@@ -62,7 +62,7 @@ class TestListLike(unittest.TestCase):
             assert_equal(is_list_like(thing), True, thing)
 
     def test_files_are_not_list_like(self):
-        with open(__file__) as f:
+        with open(__file__, encoding='UTF-8') as f:
             assert_equal(is_list_like(f), False)
         assert_equal(is_list_like(f), False)
 
@@ -123,7 +123,7 @@ class TestTypeName(unittest.TestCase):
             assert_equal(type_name(item), exp)
 
     def test_file(self):
-        with open(__file__) as f:
+        with open(__file__, encoding='UTF-8') as f:
             assert_equal(type_name(f), 'file')
 
     def test_custom_objects(self):

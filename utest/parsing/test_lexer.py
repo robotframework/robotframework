@@ -1651,7 +1651,7 @@ Example
 
     @classmethod
     def setUpClass(cls):
-        with open(cls.path, 'w') as f:
+        with open(cls.path, 'w', encoding='UTF-8') as f:
             f.write(cls.data)
 
     @classmethod
@@ -1667,9 +1667,9 @@ Example
         self._verify(Path(self.path), data_only=True)
 
     def test_open_file(self):
-        with open(self.path) as f:
+        with open(self.path, encoding='UTF-8') as f:
             self._verify(f)
-        with open(self.path) as f:
+        with open(self.path, encoding='UTF-8') as f:
             self._verify(f, data_only=True)
 
     def test_string_io(self):

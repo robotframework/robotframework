@@ -27,5 +27,5 @@ class ListenerOrder:
         self._write('close', 'listener_close_order.log')
 
     def _write(self, msg, name='listener_order.log'):
-        with open(self.tempdir / name, 'a') as file:
+        with open(self.tempdir / name, 'a', encoding='ASCII') as file:
             file.write(f'{self.name}: {msg}\n')

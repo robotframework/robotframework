@@ -1,6 +1,7 @@
 import os
 
-OUTFILE = open(os.path.join(os.getenv('TEMPDIR'), 'listener_attrs.txt'), 'w')
+OUTFILE = open(os.path.join(os.getenv('TEMPDIR'), 'listener_attrs.txt'), 'w',
+               encoding='UTF-8')
 START = 'doc starttime '
 END = START + 'endtime elapsedtime status '
 SUITE = 'id longname metadata source tests suites totaltests '

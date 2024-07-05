@@ -21,7 +21,7 @@ class LibDocLib:
     def __init__(self, interpreter=None):
         self.interpreter = interpreter
         self.xml_schema = XMLSchema(str(ROOT/'doc/schema/libdoc.xsd'))
-        with open(ROOT/'doc/schema/libdoc.json') as f:
+        with open(ROOT/'doc/schema/libdoc.json', encoding='UTF-8') as f:
             self.json_schema = Draft202012Validator(json.load(f))
 
     @property
@@ -60,7 +60,7 @@ class LibDocLib:
         self.xml_schema.validate(path)
 
     def validate_json_spec(self, path):
-        with open(path) as f:
+        with open(path, encoding='UTF-8') as f:
             self.json_schema.validate(json.load(f))
 
     def get_repr_from_arg_model(self, model):

@@ -66,7 +66,7 @@ Keyword
 
     @classmethod
     def setUpClass(cls):
-        with open(cls.path, 'w') as f:
+        with open(cls.path, 'w', encoding='UTF-8') as f:
             f.write(cls.data)
 
     @classmethod
@@ -262,7 +262,7 @@ class TestToFromDictAndJson(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        with open(CURDIR / '../../doc/schema/running.json') as file:
+        with open(CURDIR / '../../doc/schema/running.json', encoding='UTF-8') as file:
             schema = json.load(file)
         cls.validator = Draft202012Validator(schema=schema)
 

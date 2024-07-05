@@ -146,7 +146,7 @@ class TestGetModel(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        PATH.write_text(DATA)
+        PATH.write_text(DATA, encoding='UTF-8')
 
     @classmethod
     def tearDownClass(cls):
@@ -165,7 +165,7 @@ class TestGetModel(unittest.TestCase):
         assert_model(model, EXPECTED, source=PATH)
 
     def test_from_open_file(self):
-        with open(PATH) as f:
+        with open(PATH, encoding='UTF-8') as f:
             model = get_model(f)
         assert_model(model, EXPECTED)
 
@@ -175,7 +175,7 @@ class TestSaveModel(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        PATH.write_text(DATA)
+        PATH.write_text(DATA, encoding='UTF-8')
 
     @classmethod
     def tearDownClass(cls):
@@ -211,7 +211,7 @@ class TestSaveModel(unittest.TestCase):
         message = 'Saving model requires explicit output ' \
                   'when original source is not path.'
         assert_raises_with_msg(TypeError, message, get_model(DATA).save)
-        with open(PATH) as f:
+        with open(PATH, encoding='UTF-8') as f:
             assert_raises_with_msg(TypeError, message, get_model(f).save)
 
 
