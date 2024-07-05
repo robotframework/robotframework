@@ -49,6 +49,8 @@ Correct start/end warnings should be shown in execution errors
     ...    @{setup}
     ...    start_test
     ...    @{uk}
+    ...    start keyword    start keyword    end keyword    end keyword
+    ...    @{kw}
     ...    end_test
     ...    start_test
     ...    @{uk}

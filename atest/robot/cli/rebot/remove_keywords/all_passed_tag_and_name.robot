@@ -10,7 +10,7 @@ All Mode
     Keyword Should Contain Removal Message    ${MY SUITE.setup}
     ${tc1} =    Check Test Case    Pass
     ${tc2} =    Check Test Case    Fail
-    Length Should Be    ${tc1.body}    1
+    Length Should Be    ${tc1.body}    3
     Keyword Should Be Empty    ${tc1.body[0]}    My Keyword    Pass
     Length Should Be    ${tc2.body}    2
     Keyword Should Be Empty    ${tc2.body[0]}    My Keyword    Fail
@@ -86,7 +86,7 @@ Passed Mode
     Keyword Should Not Be Empty    ${MY SUITE.setup}    My Keyword    Suite Setup
     ${tc1} =    Check Test Case    Pass
     ${tc2} =    Check Test Case    Fail
-    Length Should Be    ${tc1.body}    1
+    Length Should Be    ${tc1.body}    3
     Keyword Should Be Empty    ${tc1.body[0]}    My Keyword    Pass
     Keyword Should Contain Removal Message     ${tc1.body[0]}
     Length Should Be    ${tc2.body}    2
@@ -123,7 +123,7 @@ Name Mode
     Keyword Should Contain Removal Message    ${MY SUITE.setup}
     ${tc1} =    Check Test Case    Pass
     ${tc2} =    Check Test Case    Fail
-    Length Should Be    ${tc1.body}    1
+    Length Should Be    ${tc1.body}    3
     Keyword Should Be Empty    ${tc1.body[0]}    My Keyword    Pass
     Keyword Should Contain Removal Message    ${tc1.body[0]}
     Length Should Be    ${tc2.body}    2
@@ -156,7 +156,7 @@ Tag Mode
     Keyword Should Contain Removal Message    ${MY SUITE.setup}
     ${tc1} =    Check Test Case    Pass
     ${tc2} =    Check Test Case    Fail
-    Length Should Be    ${tc1.body}    1
+    Length Should Be    ${tc1.body}    3
     Keyword Should Be Empty    ${tc1.body[0]}    My Keyword    Pass
     Keyword Should Contain Removal Message    ${tc1.body[0]}
     Length Should Be    ${tc2.body}    2

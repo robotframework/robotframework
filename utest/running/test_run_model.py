@@ -241,17 +241,17 @@ class TestLineNumberAndSource(unittest.TestCase):
             assert_equal(suite.resource.imports[0].directory, source.parent)
 
     def test_variable(self):
-        self._assert_lineno_and_source(self.suite.resource.variables[0], 8)
+        self._assert_lineno_and_source(self.suite.resource.variables[0], 10)
 
     def test_test(self):
-        self._assert_lineno_and_source(self.suite.tests[0], 12)
+        self._assert_lineno_and_source(self.suite.tests[0], 14)
 
     def test_user_keyword(self):
-        self._assert_lineno_and_source(self.suite.resource.keywords[0], 24)
+        self._assert_lineno_and_source(self.suite.resource.keywords[0], 28)
 
     def test_keyword_call(self):
-        self._assert_lineno_and_source(self.suite.tests[0].body[0], 15)
-        self._assert_lineno_and_source(self.suite.resource.keywords[0].body[0], 27)
+        self._assert_lineno_and_source(self.suite.tests[0].body[0], 17)
+        self._assert_lineno_and_source(self.suite.resource.keywords[0].body[0], 31)
 
     def _assert_lineno_and_source(self, item, lineno):
         assert_equal(item.source, self.source)

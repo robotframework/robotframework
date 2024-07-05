@@ -1,0 +1,1 @@
+VARIABLE = 'From variables.py'
