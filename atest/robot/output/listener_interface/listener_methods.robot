@@ -133,7 +133,7 @@ Check Listen All File
     ...    LOG MESSAGE: [INFO] Hello, resource!
     ...    KEYWORD END: PASS
     ...    KEYWORD END: PASS
-    ...    KEYWORD START: BuiltIn.Should Be Equal ['\${VARIABLE}', 'From variables.py'] (line 19)
+    ...    KEYWORD START: BuiltIn.Should Be Equal ['\${VARIABLE}', 'From variables.py with arg 1'] (line 19)
     ...    KEYWORD END: PASS
     ...    TEST END: PASS
     ...    TEST START: Fail (s1-t2, line 21) 'FAIL Expected failure' ['fail', 'force']
