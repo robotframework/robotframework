@@ -215,12 +215,16 @@ class ListenerV3Facade(ListenerFacade):
         # Messages
         self._log_message = get('log_message')
         self.message = get('message')
+        # Imports
+        self.library_import = get('library_import')
+        self.resource_import = get('resource_import')
+        self.variables_import = get('variables_import')
         # Result files
-        self.output_file = self._get_method('output_file')
-        self.report_file = self._get_method('report_file')
-        self.log_file = self._get_method('log_file')
-        self.xunit_file = self._get_method('xunit_file')
-        self.debug_file = self._get_method('debug_file')
+        self.output_file = get('output_file')
+        self.report_file = get('report_file')
+        self.log_file = get('log_file')
+        self.xunit_file = get('xunit_file')
+        self.debug_file = get('debug_file')
         # Close
         self.close = get('close')
 
@@ -281,6 +285,10 @@ class ListenerV2Facade(ListenerFacade):
         # Messages
         self._log_message = self._get_method('log_message')
         self._message = self._get_method('message')
+        # Imports
+        self._library_import = self._get_method('library_import')
+        self._resource_import = self._get_method('resource_import')
+        self._variables_import = self._get_method('variables_import')
         # Result files
         self._output_file = self._get_method('output_file')
         self._report_file = self._get_method('report_file')
@@ -289,10 +297,6 @@ class ListenerV2Facade(ListenerFacade):
         self._debug_file = self._get_method('debug_file')
         # Close
         self._close = self._get_method('close')
-
-    def imported(self, import_type: str, name: str, attrs):
-        method = self._get_method(f'{import_type.lower()}_import')
-        method(name, attrs)
 
     def start_suite(self, data, result):
         self._start_suite(result.name, self._suite_attrs(data, result))
@@ -431,6 +435,21 @@ class ListenerV2Facade(ListenerFacade):
 
     def message(self, message):
         self._message(self._message_attributes(message))
+
+    def library_import(self, library, importer):
+        self._library_import(library.name, {'args': list(importer.args),
+                                            'originalname': library.real_name,
+                                            'source': str(library.source or ''),
+                                            'importer': str(importer.source)})
+
+    def resource_import(self, resource, importer):
+        self._resource_import(resource.name, {'source': str(resource.source),
+                                              'importer': str(importer.source)})
+
+    def variables_import(self, attrs: dict, importer):
+        self._variables_import(attrs['name'], {'args': list(attrs['args']),
+                                               'source': str(attrs['source']),
+                                               'importer': str(importer.source)})
 
     def output_file(self, path: Path):
         self._output_file(str(path))

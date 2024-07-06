@@ -211,5 +211,16 @@ class LoggerApi:
     def imported(self, import_type: str, name: str, attrs):
         pass
 
+    def library_import(self, library: 'running.TestLibrary',
+                       importer: 'running.Import'):
+        pass
+
+    def resource_import(self, resource: 'running.ResourceFile',
+                        importer: 'running.Import'):
+        pass
+
+    def variables_import(self, attrs: dict, importer: 'running.Import'):
+        pass
+
     def close(self):
         pass

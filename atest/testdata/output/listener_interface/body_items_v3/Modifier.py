@@ -21,7 +21,9 @@ class Modifier:
             self.modify_once = None
         if not implementation.body:
             implementation.body.create_keyword('Log', ['Added by listener!'])
-        # Modifications via 'owner' resource file are permanent.
+        # Modifications via `owner` resource file are permanent.
+        # Starting from RF 7.1, modifications like this are easier to do
+        # by implementing the `resource_import` listener method.
         if not implementation.owner.find_keywords('Non-existing keyword'):
             kw = implementation.owner.keywords.create('Non-existing keyword')
             kw.body.create_keyword('Log', ['This keyword exists now!'])

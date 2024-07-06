@@ -406,9 +406,17 @@ class Logger(AbstractLogger):
         for logger in self.end_loggers:
             logger.end_error(data, result)
 
-    def imported(self, import_type, name, **attrs):
+    def library_import(self, library, importer):
         for logger in self:
-            logger.imported(import_type, name, attrs)
+            logger.library_import(library, importer)
+
+    def resource_import(self, resource, importer):
+        for logger in self:
+            logger.resource_import(resource, importer)
+
+    def variables_import(self, variables, importer):
+        for logger in self:
+            logger.variables_import(variables, importer)
 
     def output_file(self, path):
         for logger in self:

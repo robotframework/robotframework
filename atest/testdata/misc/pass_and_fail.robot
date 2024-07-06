@@ -4,7 +4,7 @@ Suite Setup       My Keyword    Suite Setup
 Test Tags         force
 Library           String
 Resource          example.resource
-Variables         variables.py
+Variables         variables.py    arg ${1}
 
 *** Variables ***
 ${LEVEL1}         INFO
@@ -16,7 +16,7 @@ Pass
     # I am a comment. Please ignore me.
     My Keyword    Pass
     Resource Keyword
-    Should Be Equal    ${VARIABLE}    From variables.py
+    Should Be Equal    ${VARIABLE}    From variables.py with arg 1
 
 Fail
     [Documentation]    FAIL Expected failure

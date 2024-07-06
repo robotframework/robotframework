@@ -87,9 +87,7 @@ class Namespace:
             self.variables.set_from_variable_section(resource.variables, overwrite)
             self._kw_store.resources[path] = resource
             self._handle_imports(resource.imports)
-            LOGGER.imported("Resource", resource.name,
-                            importer=str(import_setting.source),
-                            source=path)
+            LOGGER.resource_import(resource, import_setting)
         else:
             LOGGER.info(f"Resource file '{path}' already imported by "
                         f"suite '{self._suite_name}'.")
@@ -109,10 +107,10 @@ class Namespace:
         if overwrite or (path, args) not in self._imported_variable_files:
             self._imported_variable_files.add((path, args))
             self.variables.set_from_file(path, args, overwrite)
-            LOGGER.imported("Variables", os.path.basename(path),
-                            args=list(args),
-                            importer=str(import_setting.source),
-                            source=path)
+            LOGGER.variables_import({'name': os.path.basename(path),
+                                     'args': args,
+                                     'source': path},
+                                    importer=import_setting)
         else:
             msg = f"Variable file '{path}'"
             if args:
@@ -131,11 +129,7 @@ class Namespace:
                         f"'{self._suite_name}'.")
             return
         if notify:
-            LOGGER.imported("Library", lib.name,
-                            args=list(import_setting.args),
-                            originalname=lib.real_name,
-                            importer=str(import_setting.source),
-                            source=str(lib.source or ''))
+            LOGGER.library_import(lib, import_setting)
         self._kw_store.libraries[lib.name] = lib
         lib.scope_manager.start_suite()
         if self._running_test:

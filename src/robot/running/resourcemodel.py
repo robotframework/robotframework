@@ -32,6 +32,8 @@ if TYPE_CHECKING:
 
 
 class ResourceFile(ModelObject):
+    """Represents a resource file."""
+
     repr_args = ('source',)
     __slots__ = ('_source', 'owner', 'doc', 'keyword_finder')
 
@@ -319,6 +321,7 @@ class Variable(ModelObject):
 
 
 class Import(ModelObject):
+    """Represents library, resource file or variable file import."""
     repr_args = ('type', 'name', 'args', 'alias')
     LIBRARY = 'LIBRARY'
     RESOURCE = 'RESOURCE'

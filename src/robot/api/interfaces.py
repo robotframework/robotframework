@@ -883,6 +883,38 @@ class ListenerV3:
         if it is enabled.
         """
 
+    def library_import(self, library: running.TestLibrary, importer: running.Import):
+        """Called after a library has been imported.
+
+        ``library`` represents the imported library. It can be inspected and
+        also modified. ``importer`` contains information about the location where
+        the library was imported.
+
+        New in Robot Framework 7.1.
+        """
+
+    def resource_import(self, resource: running.ResourceFile, importer: running.Import):
+        """Called after a resource file has been imported.
+
+        ``resource`` represents the imported resource file. It can be inspected and
+        also modified. ``importer`` contains information about the location where
+        the resource was imported.
+
+        New in Robot Framework 7.1.
+        """
+
+    def variables_import(self, attrs: dict, importer: running.Import):
+        """Called after a variable file has been imported.
+
+        ``attrs`` contains information about the imported variable file. It can be
+        inspected, but modifications to it have no effect. `importer`` contains
+        information about the location where the variable file was imported.
+
+        New in Robot Framework 7.1. This method will be changed in the future
+        so that the ``attrs`` dictionary is replaced with an object representing
+        the imported variable file.
+        """
+
     def output_file(self, path: Path):
         """Called after the output file has been created.
 

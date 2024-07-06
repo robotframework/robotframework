@@ -347,8 +347,8 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  | * `args`: Arguments passed to the library as a list.           |
    |                  |                  | * `originalname`: The original library name if the library has |
    |                  |                  |   been given an alias using `AS`, otherwise same as `name`.    |
-   |                  |                  | * `source`: An absolute path to the library source. `None`     |
-   |                  |                  |   if getting the                                               |
+   |                  |                  | * `source`: An absolute path to the library source. An empty   |
+   |                  |                  |   string if getting the                                        |
    |                  |                  |   source of the library failed for some reason.                |
    |                  |                  | * `importer`: An absolute path to the file importing the       |
    |                  |                  |   library. `None` when BuiltIn_ is imported as well as when    |
@@ -414,13 +414,10 @@ These methods get actual running and result model objects that used by Robot
 Framework itself, and listeners can both query information they need and
 change the model objects on the fly.
 
-Listener version 3 was enhanced heavily in Robot Framework 7.0 when it
-got `methods related to keywords and control structures`__. It still does not
-have methods related to library, resource file and variable file imports,
-but `the plan is to add them in Robot Framework 7.1`__.
-
-__ https://github.com/robotframework/robotframework/issues/3296
-__ https://github.com/robotframework/robotframework/issues/5008
+Listener version 3 was enhanced heavily in Robot Framework 7.0 when it got
+methods related to keywords and control structures. It was enhanced further
+in Robot Framework 7.1 when it got methods related to library, resource file
+and variable file imports.
 
 Listener version 3 has separate methods for library keywords, user keywords and
 all control structures. If there is a need to listen to all keyword related
@@ -566,11 +563,30 @@ and in the API docs of the optional ListenerV3_ base class.
    |                       |                  |                                                                    |
    |                       |                  | `message` is same object as with `log_message`.                    |
    +-----------------------+------------------+--------------------------------------------------------------------+
-   | library_import        | N/A              | Not currently implemented.                                         |
+   | library_import        | library,         | Called after a library has been imported.                          |
+   |                       | importer         |                                                                    |
+   |                       |                  | `library <running.TestLibrary_>`__ represents the imported library.|
+   |                       |                  | It can be inspected and also modified. `importer                   |
+   |                       |                  | <running.Import_>`__ contains information about the location where |
+   |                       |                  | the library was imported.                                          |
    +-----------------------+------------------+--------------------------------------------------------------------+
-   | resource_import       | N/A              | Not currently implemented.                                         |
+   | resource_import       | resource,        | Called after a resource file has been imported.                    |
+   |                       | importer         |                                                                    |
+   |                       |                  | `resource <running.ResourceFile_>`__ represents the imported       |
+   |                       |                  | resource file. It can be inspected and also modified. `importer    |
+   |                       |                  | <running.Import_>`__ contains information about the location where |
+   |                       |                  | the resource was imported.                                         |
    +-----------------------+------------------+--------------------------------------------------------------------+
-   | variables_import      | N/A              | Not currently implemented.                                         |
+   | variables_import      | attrs,           | Called after a variable file has been imported.                    |
+   |                       | importer         |                                                                    |
+   |                       |                  | `attrs` contains information about the imported variable file as   |
+   |                       |                  | a dictionary. It can be inspected, but modifications to it have no |
+   |                       |                  | effect. `importer <running.Import_>`__ contains information about  |
+   |                       |                  | the location where the variable file was imported.                 |
+   |                       |                  |                                                                    |
+   |                       |                  | This method will be changed in the future so that the `attrs`      |
+   |                       |                  | dictionary is replaced with an object representing the imported    |
+   |                       |                  | variable file.                                                     |
    +-----------------------+------------------+--------------------------------------------------------------------+
    | output_file           | path             | Called when writing to an `output file`_ is ready.                 |
    |                       |                  |                                                                    |
@@ -597,6 +613,12 @@ and in the API docs of the optional ListenerV3_ base class.
    |                       |                  | With `library listeners`_ called when the library goes out         |
    |                       |                  | of scope.                                                          |
    +-----------------------+------------------+--------------------------------------------------------------------+
+
+.. note:: Methods related to keywords and control structures are new in
+          Robot Framework 7.0.
+
+.. note:: Methods related to library, resource file and variable file imports
+          are new in Robot Framework 7.1.
 
 .. note:: Prior to Robot Framework 7.0, paths passed to result file related listener
           version 3 methods were strings.
