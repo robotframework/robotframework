@@ -48,6 +48,9 @@ Keyword can be used with and without prefix
     Then we are in Berlin city
     we are in Berlin city
 
+First word of a keyword can be a prefix
+    Given the prefix is part of the keyword
+
 First word in a keyword can be an argument
     Given we don't drink too many beers
     Then Pekka drinks lonkero instead
@@ -111,3 +114,6 @@ ${person} drinks water instead
 
 Multipart prefixes didn't work with RF 6.0
     No Operation
+
+Given the prefix is part of the keyword
+   No operation

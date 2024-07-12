@@ -46,6 +46,10 @@ Keyword can be used with and without prefix
     Should Be Equal    ${tc.kws[5].full_name}    Then we are in Berlin city
     Should Be Equal    ${tc.kws[6].full_name}    we are in Berlin city
 
+First word of a keyword can be a prefix
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Should Be Equal    ${tc.kws[0].full_name}    Given the prefix is part of the keyword
+
 First word in a keyword can be an argument
     ${tc} =    Check Test Case    ${TEST NAME}
     Should Be Equal    ${tc.kws[0].full_name}    Given we don't drink too many beers
