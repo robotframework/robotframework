@@ -71,7 +71,7 @@ Prefix consisting of multiple words
     Fie ca multipart prefixes didn't work with RF 6.0
 
 Prefix must be followed by space
-    [Documentation]  FAIL
+    [Documentation]    FAIL
     ...    No keyword with name 'Givenwe don't drink too many beers' found. Did you mean:
     ...    ${SPACE*4}We don't drink too many beers
     Givenwe don't drink too many beers
@@ -81,31 +81,33 @@ We don't drink too many beers
     No Operation
 
 We are in
-    [Arguments]  ${a1}  ${a2}
-    Should Be Equal  ${a1}-${a2}  museum-cafe
+    [Arguments]    ${a1}    ${a2}
+    Should Be Equal    ${a1}-${a2}    museum-cafe
 
 Time
-    [Arguments]  @{args}
-    Length Should Be  ${args}  4
+    [Arguments]    @{args}
+    Length Should Be    ${args}    4
 
 we get this feature ready today
     Given we don't drink too many beers
 
 We Are In ${name} city
-    Should be equal  ${name}  Berlin
+    Should be equal    ${name}    Berlin
 
 It Does Not ${x}
-    Should Be Equal  ${x}  rain
+    Should Be Equal    ${x}    rain
 
 We ${x} This ${thing} Implemented
-    Should Be Equal  ${x}-${thing}  get-feature
+    Should Be Equal    ${x}-${thing}    get-feature
 
 We Go To ${somewhere}
-    Should Be Equal  ${somewhere}  walking tour
+    Should Be Equal    ${somewhere}    walking tour
 
-${person} drinks ${beverage} instead
-    Should not start with  ${person}  Then
-    Should not start with  ${person}  and
+${person} drinks lonkero instead
+    Should be equal    ${person}    Pekka
+
+${person} drinks water instead
+    Should be equal    ${person}    Miikka
 
 Multipart prefixes didn't work with RF 6.0
     No Operation

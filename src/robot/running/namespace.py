@@ -293,28 +293,28 @@ class KeywordStore:
             raise DataError('Keyword name cannot be empty.')
         if not is_string(name):
             raise DataError('Keyword name must be a string.')
-        runner = self._get_runner_from_suite_file(name)
+        runner = self._get_bdd_style_runner(name, self.languages.bdd_prefixes)
+        if not runner:
+            runner = self._get_runner_from_suite_file(name)
         if not runner and '.' in name:
             runner = self._get_explicit_runner(name)
         if not runner:
             runner = self._get_implicit_runner(name)
-        # handle bdd prefixes, even when swallowed by a leading variable
-        if not runner or not search_variable(runner.keyword.name).before:
-            prefix, kw_name = self._detect_bdd_prefix(name)
-            if prefix:
-                bdd_runner = self._get_runner(kw_name)
-                if bdd_runner:
-                    runner = copy.copy(bdd_runner)
-                    runner.name = f"{prefix} {kw_name}"
+        if not runner:
+            runner = self._get_bdd_style_runner(name, self.languages.bdd_prefixes)
         return runner
 
-    def _detect_bdd_prefix(self, name):
+    def _get_bdd_style_runner(self, name, prefixes):
         parts = name.split()
         for index in range(1, len(parts)):
-            prefix = ' '.join(parts[:index])
-            if prefix.title() in self.languages.bdd_prefixes:
-                return (prefix, ' '.join(parts[index:]))
-        return ('', name)
+            prefix = ' '.join(parts[:index]).title()
+            if prefix in prefixes:
+                runner = self._get_runner(' '.join(parts[index:]))
+                if runner:
+                    runner = copy.copy(runner)
+                    runner.name = name
+                    return runner
+        return None
 
     def _get_implicit_runner(self, name):
         return (self._get_runner_from_resource_files(name) or
