@@ -1142,13 +1142,14 @@ Ignoring :name:`Given/When/Then/And/But` prefixes
 '''''''''''''''''''''''''''''''''''''''''''''''''
 
 Prefixes :name:`Given`, :name:`When`, :name:`Then`, :name:`And` and :name:`But`
-are dropped when matching keywords are searched, if no match with the full name
-is found. This works for both user keywords and library keywords. For example,
-:name:`Given login page is open` in the above example can be implemented as
-user keyword either with or without the word :name:`Given`. Ignoring prefixes
-also allows using the same keyword with different prefixes. For example
-:name:`Welcome page should be open` could also used as :name:`And welcome page
-should be open`.
+are dropped when searching for matching keywords. This works for both user
+keywords and library keywords. For example, :name:`Given login page is open` in
+the above example is typically implemented as a keyword without the word
+:name:`Given`, i.e. :name:`Login page is open`. Ignoring prefixes allows using
+the same keyword with different prefixes. For example :name:`Welcome page
+should be open` could be used as :name:`Then welcome page should be open` or
+:name:`and welcome page should be open`. If the only available match is a
+keyword with the full name, including the prefix, then it is also matched.
 
 .. note:: These prefixes can be localized_. See the Translations_ appendix
           for supported translations.
