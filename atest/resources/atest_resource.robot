@@ -411,4 +411,6 @@ Traceback Should Be
         ${path} =    Normalize Path    ${DATADIR}/${path}
         ${exp} =    Set Variable    ${exp}\n${SPACE*2}File "${path}", line *, in ${func}\n${SPACE*4}${text}
     END
+    # Remove '~~~^^^' lines.
+    ${msg.message} =    Evaluate    '\\n'.join(line for line in $msg.message.splitlines() if line.strip('~^ ') or not line)
     Check Log Message    ${msg}    ${exp}\n${error}    DEBUG    pattern=True    traceback=True

@@ -22,7 +22,7 @@ Non-data descriptor
 
 Classmethod non-data descriptor
     Check Test Case    ${TESTNAME}
-    Adding keyword failed    classmethod_non_data_descriptor    error_with_38=True
+    Adding keyword failed    classmethod_non_data_descriptor    error=True
 
 Data descriptor
     Check Test Case    ${TESTNAME}
@@ -36,7 +36,7 @@ Failing non-data descriptor
     Adding keyword failed    failing_non_data_descriptor    Getting handler method failed: ZeroDivisionError:
 
 Failing classmethod non-data descriptor
-    Adding keyword failed    failing_classmethod_non_data_descriptor    Getting handler method failed: ZeroDivisionError:    error_with_38=True
+    Adding keyword failed    failing_classmethod_non_data_descriptor    Getting handler method failed: ZeroDivisionError:    error=True
 
 Failing data descriptor
     Adding keyword failed    failing_data_descriptor
@@ -46,9 +46,9 @@ Failing classmethod data descriptor
 
 *** Keywords ***
 Adding keyword failed
-    [Arguments]    ${name}    ${error}=Not a method or function.    ${error_with_38}=False
-    IF    ${INTERPRETER.version_info} < (3, 9) and ${error_with_38}
+    [Arguments]    ${name}    ${message}=Not a method or function.    ${error}=False
+    IF    ${error} and not (3, 9) <= ${INTERPRETER.version_info} < (3, 13)
         Syslog Should Contain    | ERROR | Error in library 'AvoidProperties': Adding keyword '${name}' failed:
     ELSE
-        Syslog Should Contain    | INFO \ | In library 'AvoidProperties': Adding keyword '${name}' failed: ${error}
+        Syslog Should Contain    | INFO \ | In library 'AvoidProperties': Adding keyword '${name}' failed: ${message}
     END
