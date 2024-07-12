@@ -23,7 +23,6 @@ from robot.libraries import STDLIBS
 from robot.output import LOGGER, Message
 from robot.utils import (eq, find_file, is_string, normalize, RecommendationFinder,
                          seq2str2)
-from robot.variables.search import search_variable
 
 from .context import EXECUTION_CONTEXTS
 from .importer import ImportCache, Importer
