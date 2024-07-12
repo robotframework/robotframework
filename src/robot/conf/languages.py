@@ -52,7 +52,7 @@ class Languages:
         self.languages: 'list[Language]' = []
         self.headers: 'dict[str, str]' = {}
         self.settings: 'dict[str, str]' = {}
-        self.bdd_prefixes:  'set[str]' = set()
+        self.bdd_prefixes: 'set[str]' = set()
         self.true_strings: 'set[str]' = {'True', '1'}
         self.false_strings: 'set[str]' = {'False', '0', 'None', ''}
         for lang in self._get_languages(languages, add_english):
