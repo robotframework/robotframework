@@ -1148,11 +1148,16 @@ the above example is typically implemented as a keyword without the word
 :name:`Given`, i.e. :name:`Login page is open`. Ignoring prefixes allows using
 the same keyword with different prefixes. For example :name:`Welcome page
 should be open` could be used as :name:`Then welcome page should be open` or
-:name:`and welcome page should be open`. If the only available match is a
-keyword with the full name, including the prefix, then it is also matched.
+:name:`and welcome page should be open`. It is valid to include the prefix
+directly as part of the keyword's name. If this causes a naming conflict, then
+the one without prefix will get precedence.
 
 .. note:: These prefixes can be localized_. See the Translations_ appendix
           for supported translations.
+
+.. note:: Prior to Robot Framework 7.1, arguments had precedence over prefixes.
+          If a keyword started with an argument, then any prefix would be
+          included in the argument value.
 
 Embedding data to keywords
 ''''''''''''''''''''''''''

@@ -48,6 +48,11 @@ Keyword can be used with and without prefix
     Then we are in Berlin city
     we are in Berlin city
 
+Only single prefixes are a processed
+    [Documentation]  FAIL No keyword with name 'but then we are in Berlin city' found.
+    Given we are in Berlin city
+    but then we are in Berlin city
+
 First word of a keyword can be a prefix
     Given the prefix is part of the keyword
 
@@ -55,6 +60,7 @@ First word in a keyword can be an argument
     Given we don't drink too many beers
     Then Pekka drinks lonkero instead
     and Miikka drinks water instead
+    Étant donné Miikka drinks water instead
 
 Localized prefixes
     Oletetaan we don't drink too many beers
