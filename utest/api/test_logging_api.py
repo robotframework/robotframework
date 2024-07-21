@@ -79,6 +79,13 @@ class TestRedirectToPythonLogging(unittest.TestCase):
         logger.write("Doo", 'INFO')
         assert_equal(self.handler.messages, ['Foo', 'Boo', 'Goo', 'Doo'])
 
+    def test_empty_string_not_looged_to_python(self):
+        logger.info("")
+        logger.debug("")
+        logger.trace("")
+        logger.write("", 'INFO')
+        assert_equal(self.handler.messages, [])
+
     def test_logger_to_python_with_html(self):
         logger.info("Foo", html=True)
         logger.write("Doo", 'INFO', html=True)
@@ -88,6 +95,7 @@ class TestRedirectToPythonLogging(unittest.TestCase):
     def test_logger_to_python_with_console(self):
         logger.write("Foo", 'CONSOLE')
         assert_equal(self.handler.messages, ['Foo'])
+
 
 if __name__ == '__main__':
     unittest.main()
