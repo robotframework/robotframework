@@ -624,13 +624,13 @@ This approach is not enough to resolve all conflicts, but it helps in common
 cases and is generally recommended. Another benefit is that it makes arguments
 stand out from rest of the keyword.
 
-The problem of arguments matching too much occurs often when creating
-keywords that `ignore the given/when/then/and/but prefixes`__ typically used
-in Behavior Driven Development (BDD). For example,
-:name:`${name} goes home` matches :name:`Given Janne goes home` so
-that `${name}` gets value `Given Janne`. Quotes around the
-argument, like in :name:`"${name}" goes home`, resolve this problem
-easily.
+Prior to Robot Framework 7.1, embedded arguments starting the keyword name also
+matched possible `given/when/then/and/but prefixes`__ typically used in Behavior
+Driven Development (BDD). For example, :name:`${name} goes home` matched
+:name:`Given Janne goes home` so that `${name}` got value `Given Janne`.
+Nowadays the prefix is ignored and `${name}` will be `Janne` as expected.
+If older Robot Framework versions need to be supported, it is easiest to quote
+the argument like in :name:`"${name}" goes home` to get consistent behavior.
 
 An alternative solution for limiting what values arguments match is
 `using custom regular expressions`_.

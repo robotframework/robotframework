@@ -1142,26 +1142,18 @@ Ignoring :name:`Given/When/Then/And/But` prefixes
 '''''''''''''''''''''''''''''''''''''''''''''''''
 
 Prefixes :name:`Given`, :name:`When`, :name:`Then`, :name:`And` and :name:`But`
-are dropped when searching for matching keywords. This works for both user
-keywords and library keywords. For example, :name:`Given login page is open` in
-the above example is typically implemented as a keyword without the word
-:name:`Given`, i.e. :name:`Login page is open`. Ignoring prefixes allows using
-the same keyword with different prefixes. For example :name:`Welcome page
+can be omitted when creating keywords. For example, :name:`Given login page is open`
+in the above example is typically implemented without the word :name:`Given`
+so that the name is just :name:`Login page is open`. Omitting prefixes allows using
+the same keyword with different prefixes. For example, :name:`Welcome page
 should be open` could be used as :name:`Then welcome page should be open` or
-:name:`and welcome page should be open`. It is valid to include the prefix
-directly as part of the keyword's name. If this causes a naming conflict, then
-the one without prefix will get precedence.
+:name:`and welcome page should be open`.
 
 .. note:: These prefixes can be localized_. See the Translations_ appendix
           for supported translations.
-
-.. note:: Prior to Robot Framework 7.1, arguments had precedence over prefixes.
-          If a keyword started with an argument, then any prefix would be
-          included in the argument value.
 
 Embedding data to keywords
 ''''''''''''''''''''''''''
 
 When writing concrete examples it is useful to be able to pass actual data to
-keyword implementations. User keywords support this by allowing `embedding
-arguments into keyword name`_.
+keyword implementations. This can be done by `embedding arguments into keyword name`_.
