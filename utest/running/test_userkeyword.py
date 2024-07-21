@@ -59,13 +59,13 @@ class TestEmbeddedArgs(unittest.TestCase):
     def test_get_embedded_arg_and_regexp(self):
         assert_equal(self.kw1.embedded.args, ('item',))
         assert_equal(self.kw1.embedded.name.pattern,
-                     '^User\\ selects\\ (.*?)\\ from\\ list$')
+                     r'^User\sselects\s(.*?)\sfrom\slist$')
         assert_equal(self.kw1.name, 'User selects ${item} from list')
 
     def test_get_multiple_embedded_args_and_regexp(self):
         assert_equal(self.kw2.embedded.args, ('x', 'y', 'z'))
         assert_equal(self.kw2.embedded.name.pattern,
-                     '^(.*?)\\ \\*\\ (.*?)\\ from\\ "(.*?)"$')
+                     r'^(.*?)\s\*\s(.*?)\sfrom\s"(.*?)"$')
 
     def test_create_runner_with_one_embedded_arg(self):
         runner = self.kw1.create_runner('User selects book from list')

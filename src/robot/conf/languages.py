@@ -14,6 +14,7 @@
 #  limitations under the License.
 
 import inspect
+import re
 from itertools import chain
 from pathlib import Path
 from typing import cast, Iterable, Iterator, Union
@@ -57,6 +58,14 @@ class Languages:
         self.false_strings: 'set[str]' = {'False', '0', 'None', ''}
         for lang in self._get_languages(languages, add_english):
             self._add_language(lang)
+        self._bdd_prefix_regexp = None
+
+    @property
+    def bdd_prefix_regexp(self):
+        if not self._bdd_prefix_regexp:
+            prefixes = '|'.join(self.bdd_prefixes).replace(' ', r'\s').lower()
+            self._bdd_prefix_regexp = re.compile(rf'({prefixes})\s', re.IGNORECASE)
+        return self._bdd_prefix_regexp
 
     def reset(self, languages: Iterable[LanguageLike] = (), add_english: bool = True):
         """Resets the instance to the given languages."""
@@ -87,6 +96,7 @@ class Languages:
                     raise DataError(f'{err1} {err2}') from None
         for lang in languages:
             self._add_language(lang)
+        self._bdd_prefix_regexp = None
 
     def _exists(self, path: Path):
         try:

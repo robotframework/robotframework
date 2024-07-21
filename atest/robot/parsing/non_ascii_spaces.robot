@@ -43,3 +43,6 @@ In ELSE IF
 
 In inline ELSE IF
     Check Test Case    ${TESTNAME}
+
+With embedded arguments and BDD prefixes
+    Check Test Case    ${TESTNAME}

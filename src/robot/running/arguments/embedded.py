@@ -80,7 +80,7 @@ class EmbeddedArgumentParser:
         args = []
         custom_patterns = {}
         after = string
-        for match in VariableMatches(string, identifiers='$'):
+        for match in VariableMatches(' '.join(string.split()), identifiers='$'):
             arg, pattern, is_custom = self._get_name_and_pattern(match.base)
             args.append(arg)
             if is_custom:
@@ -139,7 +139,7 @@ class EmbeddedArgumentParser:
 
     def _compile_regexp(self, pattern: str) -> re.Pattern:
         try:
-            return re.compile(pattern, re.IGNORECASE)
+            return re.compile(pattern.replace(r'\ ', r'\s'), re.IGNORECASE)
         except Exception:
             raise DataError(f"Compiling embedded arguments regexp failed: "
                             f"{get_error_message()}")
