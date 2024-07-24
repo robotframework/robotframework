@@ -89,6 +89,8 @@ def write(msg: str, level: LOGLEVEL = 'INFO', html: bool = False):
     specific methods such as ``info`` and ``debug`` that have separate
     ``html`` argument to control the message format.
     """
+    if len(msg) == 0:
+        return
     if EXECUTION_CONTEXTS.current is not None:
         librarylogger.write(msg, level, html)
     else:
