@@ -79,7 +79,7 @@ class TestRedirectToPythonLogging(unittest.TestCase):
         logger.write("Doo", 'INFO')
         assert_equal(self.handler.messages, ['Foo', 'Boo', 'Goo', 'Doo'])
 
-    def test_empty_string_not_looged_to_python(self):
+    def test_empty_string_not_logged_to_python(self):
         logger.info("")
         logger.debug("")
         logger.trace("")
