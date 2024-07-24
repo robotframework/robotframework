@@ -100,6 +100,17 @@ Should Contain and collapse spaces
     ${LIST4}      \tb\n     collapse_spaces=TRUE
     ${LIST4}      \tc\n     collapse_spaces=TRUE
 
+Should Contain for bytes
+    [Documentation]    FAIL Several failures occurred:
+    ...
+    ...    1) ValueError: byte must be in range(0, 256)
+    ...
+    ...    2) ValueError: \u2013 can not be encoded into bytes.
+    [Template]    Should Contain
+    ${BYTES}    ${1000}
+    ${BYTES}    ${UNICODE_NON_LATIN}
+    ${BYTES}    \xA0
+
 Should Not Contain
     [Documentation]    FAIL 'Hello yet again' contains 'yet'
     [Template]    Should Not Contain
