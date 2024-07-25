@@ -15,6 +15,14 @@ Basename May Be Defined
     ${tc}=  Check Test Case  ${TESTNAME}
     Check Embedding In Log  ${tc.kws[0].kws[0].msgs[1]}  foo_1.jpg
 
+Basename May Be Defined With Screenshot Format Of PNG
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Embedding In Log    ${tc.kws[0].kws[0].msgs[1]}    foo_1.png
+
+Basename May Be Defined With Screenshot Format Of TIFF
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Embedding In Log    ${tc.kws[0].kws[0].msgs[1]}    foo_1.tiff
+
 Basename With Extension Turns Off Index Generation
     ${tc}=  Check Test Case  ${TESTNAME}
     Check Embedding In Log  ${tc.kws[0].kws[0].msgs[1]}  xxx.jpg
@@ -38,9 +46,17 @@ Without Embedding
 *** Keywords ***
 Check Embedding In Log
     [Arguments]  ${message}  ${path}  ${width}=800px
-    Check Log Message  ${message}  <a href="${path}"><img src="${path}" width="${width}"></a>  HTML
+    ${rel_dir} =    Get Screenshot Dir As Relative Path    ${path}
+    Check Log Message  ${message}  <a href="${rel_dir}"><img src="${rel_dir}" width="${width}"></a>  HTML
 
 Check Linking In Log
     [Arguments]  ${message}  ${file}
-    ${path} =  Normalize Path  ${OUTDIR}/${file}
-    Check Log Message  ${message}  Screenshot saved to '<a href="${file}">${path}</a>'.  HTML
+    ${path} =  Set Variable    ${SCREENSHOT DIR}/${file}
+    ${rel_dir} =    Get Screenshot Dir As Relative Path        ${file}
+    Check Log Message  ${message}  Screenshot saved to '<a href="${rel_dir}">${path}</a>'.  HTML
+
+Get Screenshot Dir As Relative Path
+    [Arguments]    ${path}
+    ${parent_dir} =    Evaluate    "${SCREENSHOT DIR}".split('/')[-1]
+    ${ret_val} =       Set Variable    ../${parent_dir}/${path}
+    RETURN    ${ret_val}
