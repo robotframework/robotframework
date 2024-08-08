@@ -205,3 +205,26 @@ Should Not Contain and collapse spaces
     ${DICT4}     a\tb    collapse_spaces=${TRUE}
     ${LIST4}     \ a     collapse_spaces=Yes
     ${LIST4}     b\t     collapse_spaces=TRue
+
+Test Should Contain Byte
+    Should Contain    ${BINARY_DATA}    \xA0
+
+Test Should Contain Integer
+    Should Contain    ${BINARY_DATA}    ${INT_IN_RANGE}
+
+Test Should Contain Integer Out Of Range
+    [Documentation]    Validates that a ValueError is raised for an out-of-range integer
+    Run Keyword And Expect Error    ValueError: byte must be in range(0, 256). Got '300' instead.    Should Contain    ${BINARY_DATA}    ${INT_OUT_OF_RANGE_HIGH}
+    Run Keyword And Expect Error    ValueError: byte must be in range(0, 256). Got '-1' instead.    Should Contain    ${BINARY_DATA}    ${INT_OUT_OF_RANGE_LOW}
+
+Test Should Contain Case Insensitive
+    Should Contain    ${STRING_DATA}    world    ignore_case=True
+
+Test Should Contain With Leading Spaces Stripped
+    Should Contain    ${STRING_DATA}    Hello    strip_spaces=LEADING
+
+Test Should Contain With Trailing Spaces Stripped
+    Should Contain    ${STRING_DATA}    World    strip_spaces=TRAILING
+
+Test Should Contain With Collapsed Spaces
+    Should Contain    ${STRING_DATA}    Hello World    collapse_spaces=True

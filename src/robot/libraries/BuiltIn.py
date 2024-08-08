@@ -1045,6 +1045,14 @@ class _Verify(_BuiltInBase):
         Works with strings, lists, and anything that supports Python's ``in``
         operator.
 
+        If ``container`` is a bytes object and ``item`` is a string, the string
+        will be encoded to bytes using 'latin-1'. If encoding fails, a ValueError
+        will be raised.
+
+        If ``item`` is an integer and ``container`` is a bytes object, it checks if the
+        integer is in the range 0-255 before converting it to bytes. If it is not, a
+        ValueError is raised.
+
         See `Should Be Equal` for an explanation on how to override the default
         error message with arguments ``msg`` and ``values``.
 
@@ -1069,9 +1077,20 @@ class _Verify(_BuiltInBase):
         | Should Contain | ${some list} | value | ignore_case=True |
 
         ``strip_spaces`` is new in Robot Framework 4.0 and ``collapse_spaces`` is new
-        in Robot Framework 4.1.
+        in Robot Framework 4.1. Automatic conversion of strings to bytes when the container
+        is bytes is new in Robot Framework 7.1.
         """
         orig_container = container
+        if isinstance(container, bytes):
+            if isinstance(item, str):
+                try:
+                    item = item.encode('latin-1')
+                except UnicodeEncodeError:
+                    raise ValueError(f"Cannot encode the item '{item}' to bytes using 'latin-1'.")
+            elif isinstance(item, int):
+                if not (0 <= item <= 255):
+                    raise ValueError(f"byte must be in range(0, 256). Got '{item}' instead.")
+                item = bytes([item])
         if ignore_case and is_string(item):
             item = item.casefold()
             if is_string(container):

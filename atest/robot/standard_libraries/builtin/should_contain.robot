@@ -50,3 +50,6 @@ Should Not Contain and do not collapse spaces
 
 Should Not Contain and collapse spaces
     Check Test Case    ${TESTNAME}
+
+Should Contain for bytes
+    Check Test Case    ${TESTNAME}
