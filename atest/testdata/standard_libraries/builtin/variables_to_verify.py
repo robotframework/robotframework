@@ -23,7 +23,16 @@ def get_variables():
         DICT_3={'a': 1, 'b': 2, 'c': 3},
         DICT_4={'\ta': 1, 'a b': 2, '  c': 3, 'dd\n\t': 4, '\nak \t': 5},
         DICT_5={' a': 0, '\ta': 1, 'a\t': 2, '\nb': 3, 'd\t': 4, '\td\n': 5, 'e   e': 6},
-        PREPR_DICT1="{'a': 1}"
+        PREPR_DICT1="{'a': 1}",
+
+        # Variables for the tests
+        BINARY_DATA=b'\x00\x01\x02\xa0\xb0',
+        STRING_DATA='Hello World',
+        NON_EXISTENT_BYTE=b'\xff',
+        INT_IN_RANGE=160,  # \xA0 in decimal
+        INT_OUT_OF_RANGE_HIGH=300,
+        INT_OUT_OF_RANGE_LOW=-1,
+        CONVERTED_BINARY='Hello World'.encode('latin-1')
     )
     variables['ASCII_DICT'] = ascii(variables['DICT'])
     return variables
