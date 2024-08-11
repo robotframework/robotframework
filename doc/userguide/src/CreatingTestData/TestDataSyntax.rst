@@ -771,6 +771,7 @@ to see the actual translations:
 - `Hindi (hi)`_
 - `Italian (it)`_
 - `Japanese (ja)`_
+- `Korean (ko)`_
 - `Dutch (nl)`_
 - `Polish (pl)`_
 - `Portuguese (pt)`_
