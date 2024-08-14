@@ -24,12 +24,12 @@ class TkDialog(Toplevel):
     left_button = 'OK'
     right_button = 'Cancel'
 
-    def __init__(self, message, value=None, **config):
+    def __init__(self, message, value=None, default: Union[int,str,None]=None, **config):
         self._prevent_execution_with_timeouts()
         self._button_bindings = {}
         super().__init__(self._get_root())
         self._initialize_dialog()
-        self.widget = self._create_body(message, value, **config)
+        self.widget = self._create_body(message, value, default, **config)
         self._create_buttons()
         self._finalize_dialog()
         self._result = None
@@ -68,18 +68,18 @@ class TkDialog(Toplevel):
         if self.widget:
             self.widget.focus_set()
 
-    def _create_body(self, message, value, **config) -> Union[Entry, Listbox, None]:
+    def _create_body(self, message, value, default: Union[int,str,None]=None, **config) -> Union[Entry, Listbox, None]:
         frame = Frame(self)
         max_width = self.winfo_screenwidth() // 2
         label = Label(frame, text=message, anchor=W, justify=LEFT, wraplength=max_width)
         label.pack(fill=BOTH)
-        widget = self._create_widget(frame, value, **config)
+        widget = self._create_widget(frame, value, default, **config)
         if widget:
             widget.pack(fill=BOTH)
         frame.pack(padx=5, pady=5, expand=1, fill=BOTH)
         return widget
 
-    def _create_widget(self, frame, value) -> Union[Entry, Listbox, None]:
+    def _create_widget(self, frame, value, default: Union[int,str,None]=None) -> Union[Entry, Listbox, None]:
         return None
 
     def _create_buttons(self):
@@ -154,10 +154,16 @@ class InputDialog(TkDialog):
 
 class SelectionDialog(TkDialog):
 
-    def _create_widget(self, parent, values) -> Listbox:
+    def _create_widget(self, parent, values, default: Union[int,str,None]=None) -> Listbox:
         widget = Listbox(parent)
-        for item in values:
-            widget.insert(END, item)
+        if default is not None:
+            if isinstance(default,int):
+                widget.insert(END, values[default])
+            elif isinstance(default,str):
+                widget.insert(END, values.index[default])
+        else:
+            for item in values:
+                widget.insert(END, item)
         widget.config(width=0)
         return widget
 
