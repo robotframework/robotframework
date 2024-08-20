@@ -27,9 +27,6 @@ from .search import VariableMatches
 from .notfound import variable_not_found
 
 
-PYTHON_BUILTINS = set(builtins.__dict__)
-
-
 def evaluate_expression(expression, variables, modules=None, namespace=None,
                         resolve_variables=False):
     original = expression
@@ -146,7 +143,7 @@ class EvaluationNamespace(MutableMapping):
         self.namespace.pop(key)
 
     def _import_module(self, name):
-        if name in PYTHON_BUILTINS:
+        if hasattr(builtins, name):
             raise KeyError
         try:
             return __import__(name)
