@@ -101,8 +101,8 @@ describe("Statistics percents and widths", function () {
             skip: 0},
         {label: "<0.1% passed",
             pass: 1,
-            fail: 4000,
-            skip: 0},
+            fail: 2000,
+            skip: 2000},
         {label: "0% failed",
             pass: 100,
             fail: 0,
@@ -111,10 +111,14 @@ describe("Statistics percents and widths", function () {
             pass: 0,
             fail: 30,
             skip: 0},
-        {label: "0% passed",
+        {label: "percentages add up to over 100%",
             pass: 5005,
             fail: 4995,
-            skip: 0}
+            skip: 0},
+        {label: "percentages add up to over 100%",
+            pass: 1,
+            fail: 4,
+            skip: 1}
     ]
 
     var stats = window.stats.Statistics(totals, tags, []);
@@ -143,14 +147,14 @@ describe("Statistics percents and widths", function () {
         var stat = tagStats[0];
         percentagesShouldBe(stat, 99.9, 0.1, 0);
         stat = tagStats[1];
-        percentagesShouldBe(stat, 0.1, 99.9, 0);
+        percentagesShouldBe(stat, 0.1, 50, 50);
     });
 
     it("should guarantee that non-zero widths are at least 1", function () {
         var stat = tagStats[0];
         widthsShouldBe(stat, 99, 1, 0);
         stat = tagStats[1];
-        widthsShouldBe(stat, 1, 99, 0);
+        widthsShouldBe(stat, 1, 49.5, 49.5);
     });
 
     it("should handle pass/fail/skip percentages and widths of 0 and 100", function () {
@@ -166,5 +170,8 @@ describe("Statistics percents and widths", function () {
         var stat = tagStats[4];
         percentagesShouldBe(stat, 50.1, 50, 0);
         widthsShouldBe(stat, 50, 50, 0);
+        var stat = tagStats[5];
+        percentagesShouldBe(stat, 16.7, 66.7, 16.7);
+        widthsShouldBe(stat, 16.7, 66.6, 16.7);
     });
 });
