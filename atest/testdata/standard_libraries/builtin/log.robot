@@ -139,6 +139,7 @@ Log Many
     Log Many    @{LIST}
     Log Many
     Log Many    @{EMPTY}
+    Log Many    preserve    ${EMPTY}   empty    ${EMPTY}
     Log Many    -${EMPTY}-    -@{EMPTY}-    -&{EMPTY}-
     Log Many    ${LIST}[0]    ${DICT}[b]
 
