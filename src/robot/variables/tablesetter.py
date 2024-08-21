@@ -23,7 +23,7 @@ from .resolvable import Resolvable
 from .search import is_assign, is_list_variable, is_dict_variable
 
 if TYPE_CHECKING:
-    from robot.running.model import Var, Variable
+    from robot.running import Var, Variable
     from .store import VariableStore
 
 
