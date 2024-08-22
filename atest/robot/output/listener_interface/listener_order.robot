@@ -41,10 +41,10 @@ Validate close order
     ...    separator=\n
     File Should Be Equal To    %{TEMPDIR}/listener_close_order.log    ${expected}\n
 
-Invalid order
+Invalid priority
     ${listener} =    Normalize Path    ${LISTENER}
-    Check Log Message    ${ERRORS}[0]    Taking listener '${listener}:NOT USED:invalid' into use failed: Invalid listener order 'invalid'.    ERROR
-    Check Log Message    ${ERRORS}[1]    Error in library 'BAD': Registering listeners failed: Taking listener 'SELF' into use failed: Invalid listener order 'bad'.    ERROR
+    Check Log Message    ${ERRORS}[0]    Taking listener '${listener}:NOT USED:invalid' into use failed: Invalid listener priority 'invalid'.    ERROR
+    Check Log Message    ${ERRORS}[1]    Error in library 'BAD': Registering listeners failed: Taking listener 'SELF' into use failed: Invalid listener priority 'bad'.    ERROR
 
 *** Keywords ***
 Run Tests With Ordered Listeners
