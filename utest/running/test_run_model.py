@@ -14,7 +14,7 @@ from robot.model.modelobject import ModelObject
 from robot.parsing import get_resource_model
 from robot.running import (Break, Continue, Error, For, If, IfBranch, Keyword,
                            Return, ResourceFile, TestCase, TestDefaults, TestSuite,
-                           Try, TryBranch, UserKeyword, Var, While)
+                           Try, TryBranch, UserKeyword, Var, Variable, While)
 from robot.utils.asserts import assert_equal, assert_false, assert_not_equal
 
 
@@ -592,6 +592,12 @@ class TestStringRepresentation(unittest.TestCase):
                      "robot.running.UserKeyword(name='x')")
         assert_equal(repr(UserKeyword(name='å', args=['${a}'], doc='Not included')),
                      "robot.running.UserKeyword(name='å', args=['${a}'])")
+
+    def test_variable_repr(self):
+        assert_equal(repr(Variable('${x}', ['two', 'parts'])),
+                     "robot.running.Variable(name='${x}', value=('two', 'parts'))")
+        assert_equal(repr(Variable('${x}', ['a', 'b'], separator='-')),
+                     "robot.running.Variable(name='${x}', value=('a', 'b'), separator='-')")
 
 
 if __name__ == '__main__':

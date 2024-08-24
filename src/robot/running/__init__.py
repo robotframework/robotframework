@@ -123,6 +123,6 @@ from .librarykeyword import LibraryKeyword
 from .model import (Break, Continue, Error, For, ForIteration, If, IfBranch, Keyword,
                     Return, TestCase, TestSuite, Try, TryBranch, Var, While,
                     WhileIteration)
-from .resourcemodel import Import, ResourceFile, UserKeyword
+from .resourcemodel import Import, ResourceFile, UserKeyword, Variable
 from .runkwregister import RUN_KW_REGISTER
 from .testlibraries import TestLibrary

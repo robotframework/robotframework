@@ -319,6 +319,9 @@ class Variable(ModelObject):
             data['error'] = self.error
         return data
 
+    def _include_in_repr(self, name: str, value: Any) -> bool:
+        return not (name == 'separator' and value is None)
+
 
 class Import(ModelObject):
     """Represents library, resource file or variable file import."""
