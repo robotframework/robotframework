@@ -27,7 +27,10 @@ Should Contain and do not collapse spaces
 Should Contain and collapse spaces
     Check Test Case    ${TESTNAME}
 
-Should Contain for bytes
+Should Contain with bytes
+    Check Test Case    ${TESTNAME}
+
+Should Contain with bytearray
     Check Test Case    ${TESTNAME}
 
 Should Not Contain
