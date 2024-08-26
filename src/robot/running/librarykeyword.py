@@ -16,7 +16,7 @@
 import inspect
 from os.path import normpath
 from pathlib import Path
-from typing import Any, Callable, Generic, Sequence, TypeVar, TYPE_CHECKING
+from typing import Any, Callable, Generic, Mapping, Sequence, TypeVar, TYPE_CHECKING
 
 from robot.model import Tags
 from robot.errors import DataError
@@ -29,10 +29,13 @@ from .dynamicmethods import (GetKeywordArguments, GetKeywordDocumentation,
                              RunKeyword)
 from .model import BodyItemParent, Keyword
 from .keywordimplementation import KeywordImplementation
-from .librarykeywordrunner import EmbeddedArgumentsRunner, LibraryKeywordRunner, RunKeywordRunner
+from .librarykeywordrunner import (EmbeddedArgumentsRunner, LibraryKeywordRunner,
+                                   RunKeywordRunner)
 from .runkwregister import RUN_KW_REGISTER
 
 if TYPE_CHECKING:
+    from robot.conf import LanguagesLike
+
     from .testlibraries import DynamicLibrary, TestLibrary
 
 
@@ -73,7 +76,8 @@ class LibraryKeyword(KeywordImplementation):
                 return start_lineno + increment
         return start_lineno
 
-    def create_runner(self, name: 'str|None', languages=None) -> LibraryKeywordRunner:
+    def create_runner(self, name: 'str|None',
+                      languages: 'LanguagesLike' = None) -> LibraryKeywordRunner:
         if self.embedded:
             return EmbeddedArgumentsRunner(self, name)
         if self._resolve_args_until is not None:
@@ -81,10 +85,13 @@ class LibraryKeyword(KeywordImplementation):
             return RunKeywordRunner(self, execute_in_dry_run=dry_run)
         return LibraryKeywordRunner(self, languages=languages)
 
-    def resolve_arguments(self, args: Sequence[str], variables=None,
-                          languages=None) -> 'tuple[list, list]':
+    def resolve_arguments(self, args: 'Sequence[str|Any]',
+                          named_args: 'Mapping[str, Any]|None' = None,
+                          variables=None,
+                          languages: 'LanguagesLike' = None) -> 'tuple[list, list]':
         resolve_args_until = self._resolve_args_until
-        positional, named = self.args.resolve(args, variables, self.owner.converters,
+        positional, named = self.args.resolve(args, named_args, variables,
+                                              self.owner.converters,
                                               resolve_named=resolve_args_until is None,
                                               resolve_args_until=resolve_args_until,
                                               languages=languages)
@@ -198,9 +205,12 @@ class DynamicKeyword(LibraryKeyword):
     def from_name(cls, name: str, owner: 'DynamicLibrary') -> 'DynamicKeyword':
         return DynamicKeywordCreator(name, owner).create()
 
-    def resolve_arguments(self, arguments, variables=None,
-                          languages=None) -> 'tuple[list, list]':
-        positional, named = super().resolve_arguments(arguments, variables, languages)
+    def resolve_arguments(self, args: 'Sequence[str|Any]',
+                          named_args: 'Mapping[str, Any]|None' = None,
+                          variables=None,
+                          languages: 'LanguagesLike' = None) -> 'tuple[list, list]':
+        positional, named = super().resolve_arguments(args, named_args, variables,
+                                                      languages)
         if not self.owner.supports_named_args:
             positional, named = self.args.map(positional, named)
         return positional, named

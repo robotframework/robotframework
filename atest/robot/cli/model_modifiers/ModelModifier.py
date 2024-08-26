@@ -1,4 +1,5 @@
 from robot.model import SuiteVisitor
+from robot.running import TestCase as RunningTestCase
 from robot.running.model import Argument
 
 
@@ -16,14 +17,18 @@ class ModelModifier(SuiteVisitor):
         elif config[0] == 'CREATE':
             tc = suite.tests.create(**dict(conf.split('-', 1) for conf in config[1:]))
             tc.body.create_keyword('Log', args=['Hello', 'level=INFO'])
-            # robot.running.model.Argument is a private/temporary API for creating
-            # named arguments with non-string values programmatically. It was added
-            # in RF 7.0.1 (#5031) after a failed attempt to add an API for this
-            # purpose in RF 7.0 (#5000). A better, public API is planned for RF 7.1.
-            tc.body.create_keyword('Log', args=[Argument(None, 'Argument object!'),
-                                                Argument('level', 'INFO')])
-            tc.body.create_keyword('Should Contain', args=[(1, 2, 3),
-                                                           Argument('item', 2)])
+            if isinstance(tc, RunningTestCase):
+                # robot.running.model.Argument is a private/temporary API for creating
+                # named arguments with non-string values programmatically. It was added
+                # in RF 7.0.1 (#5031) after a failed attempt to add an API for this
+                # purpose in RF 7.0 (#5000).
+                tc.body.create_keyword('Log', args=[Argument(None, 'Argument object!'),
+                                                    Argument('level', 'INFO')])
+                tc.body.create_keyword('Should Contain',
+                                       args=[(1, 2, 3), Argument('item', 2)])
+                # Passing named args separately is supported since RF 7.1 (#5143).
+                tc.body.create_keyword('Log', args=['<b>Named args separately</b>'],
+                                       named_args={'html': True, 'level': '${{"INFO"}}'})
             self.config = []
         elif config == ('REMOVE', 'ALL', 'TESTS'):
             suite.tests = []

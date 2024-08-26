@@ -269,8 +269,10 @@ class TestToFromDictAndJson(unittest.TestCase):
     def test_keyword(self):
         self._verify(Keyword(), name='')
         self._verify(Keyword('Name'), name='Name')
-        self._verify(Keyword('N', 'args', ('${result}',)),
+        self._verify(Keyword('N', 'args', assign=('${result}',)),
                      name='N', args=tuple('args'), assign=('${result}',))
+        self._verify(Keyword('N', ['pos', 'p2'], {'named': 'arg', 'n2': 2}),
+                     name='N', args=('pos', 'p2'), named_args={'named': 'arg', 'n2': 2})
         self._verify(Keyword('Setup', type=Keyword.SETUP, lineno=1),
                      name='Setup', lineno=1)
 

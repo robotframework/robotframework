@@ -171,7 +171,7 @@ class TestLibrary:
         if inspect.ismodule(code):
             lib = cls.from_module(code, name, real_name, source, create_keywords, logger)
             if args:    # Resolving arguments reports an error.
-                lib.init.resolve_arguments(args, variables)
+                lib.init.resolve_arguments(args, variables=variables)
             return lib
         return cls.from_class(code, name, real_name, source, args or (), variables,
                               create_keywords, logger)
@@ -316,7 +316,7 @@ class ClassLibrary(TestLibrary):
                    logger=LOGGER) -> 'ClassLibrary':
         init = LibraryInit.from_class(klass)
         library = cls(klass, init, name, real_name, source, logger)
-        positional, named = init.args.resolve(args, variables)
+        positional, named = init.args.resolve(args, variables=variables)
         init.positional, init.named = list(positional), dict(named)
         if create_keywords:
             library.create_keywords()

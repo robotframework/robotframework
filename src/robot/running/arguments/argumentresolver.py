@@ -38,8 +38,11 @@ class ArgumentResolver:
         self.dict_to_kwargs = DictToKwargs(spec, dict_to_kwargs)
         self.argument_validator = ArgumentValidator(spec)
 
-    def resolve(self, arguments, variables=None):
-        positional, named = self.named_resolver.resolve(arguments, variables)
+    def resolve(self, args, named_args=None, variables=None):
+        if named_args is None:
+            positional, named = self.named_resolver.resolve(args, variables)
+        else:
+            positional, named = args, list(named_args.items())
         positional, named = self.variable_replacer.replace(positional, named, variables)
         positional, named = self.dict_to_kwargs.handle(positional, named)
         self.argument_validator.validate(positional, named, dryrun=variables is None)

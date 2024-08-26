@@ -96,12 +96,12 @@ class ArgumentSpec(metaclass=SetterAwareType):
         return (self.positional_only + self.positional_or_named + var_positional +
                 self.named_only + var_named)
 
-    def resolve(self, arguments, variables=None, converters=None,
+    def resolve(self, args, named_args=None, variables=None, converters=None,
                 resolve_named=True, resolve_args_until=None,
                 dict_to_kwargs=False, languages=None) -> 'tuple[list, list]':
         resolver = ArgumentResolver(self, resolve_named, resolve_args_until,
                                     dict_to_kwargs)
-        positional, named = resolver.resolve(arguments, variables)
+        positional, named = resolver.resolve(args, named_args, variables)
         return self.convert(positional, named, converters, dry_run=not variables,
                             languages=languages)
 
