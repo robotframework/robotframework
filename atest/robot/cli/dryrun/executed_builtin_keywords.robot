@@ -8,6 +8,11 @@ Import Library
     Syslog Should Contain    Imported library 'String' with arguments [ ]
     Syslog Should Contain    Imported library 'ParameterLibrary' with arguments [ value | 42 ]
 
+Import Resource
+    Check Test Case    ${TESTNAME}
+    ${resource} =    Normalize Path    ${DATADIR}/cli/dryrun/resource.robot
+    Syslog Should Contain    Imported resource file '${resource}' (6 keywords).
+
 Set Library Search Order
     ${tc} =    Check Test Case    ${TESTNAME}
     Should Be Equal    ${tc.kws[1].full_name}    Second.Parameters
