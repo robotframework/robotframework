@@ -156,14 +156,13 @@ class SelectionDialog(TkDialog):
 
     def _create_widget(self, parent, values, default: Union[int,str,None]=None) -> Listbox:
         widget = Listbox(parent)
+        for item in values:
+            widget.insert(END, item)
         if default is not None:
             if isinstance(default,int):
-                widget.insert(END, values[default])
+                widget.select_set(values[default])
             elif isinstance(default,str):
-                widget.insert(END, values.index[default])
-        else:
-            for item in values:
-                widget.insert(END, item)
+                widget.select_set(values.index[default])
         widget.config(width=0)
         return widget
 
