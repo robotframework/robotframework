@@ -142,13 +142,17 @@ Log Many
     Check Log Message    ${tc.kws[2].msgs[1]}    2
     Check Log Message    ${tc.kws[2].msgs[2]}    3
     Check Log Message    ${tc.kws[2].msgs[3]}    String presentation of MyObject
-    Should Be Empty    ${tc.kws[3].msgs}
-    Should Be Empty    ${tc.kws[4].msgs}
-    Check Log Message    ${tc.kws[5].msgs[0]}    --
-    Check Log Message    ${tc.kws[5].msgs[1]}    -[]-
-    Check Log Message    ${tc.kws[5].msgs[2]}    -{}-
-    Check Log Message    ${tc.kws[6].msgs[0]}    1
-    Check Log Message    ${tc.kws[6].msgs[1]}    2
+    Should Be Empty      ${tc.kws[3].msgs}
+    Should Be Empty      ${tc.kws[4].msgs}
+    Check Log Message    ${tc.kws[5].msgs[0]}    preserve
+    Check Log Message    ${tc.kws[5].msgs[1]}    ${EMPTY}
+    Check Log Message    ${tc.kws[5].msgs[2]}    empty
+    Check Log Message    ${tc.kws[5].msgs[3]}    ${EMPTY}
+    Check Log Message    ${tc.kws[6].msgs[0]}    --
+    Check Log Message    ${tc.kws[6].msgs[1]}    -[]-
+    Check Log Message    ${tc.kws[6].msgs[2]}    -{}-
+    Check Log Message    ${tc.kws[7].msgs[0]}    1
+    Check Log Message    ${tc.kws[7].msgs[1]}    2
 
 Log Many with named and dict arguments
     ${tc} =    Check Test Case    ${TEST NAME}

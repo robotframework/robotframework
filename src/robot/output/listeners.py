@@ -127,14 +127,14 @@ class ListenerFacade(LoggerApi, ABC):
         self.name = name
         self._is_logged = is_logged
         self.library = library
-        self.order = self._get_order(listener)
+        self.priority = self._get_priority(listener)
 
-    def _get_order(self, listener):
-        order = getattr(listener, 'ROBOT_LISTENER_ORDER', 0)
+    def _get_priority(self, listener):
+        priority = getattr(listener, 'ROBOT_LISTENER_PRIORITY', 0)
         try:
-            return float(order)
+            return float(priority)
         except (ValueError, TypeError):
-            raise DataError(f"Invalid listener order '{order}'.")
+            raise DataError(f"Invalid listener priority '{priority}'.")
 
     def _get_method(self, name, fallback=None):
         for method_name in self._get_method_names(name):

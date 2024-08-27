@@ -54,9 +54,12 @@ class InvalidKeywordRunner:
 
     def run(self, data: KeywordData, result: KeywordResult, context, run=True):
         kw = self.keyword.bind(data)
+        args = tuple(data.args)
+        if data.named_args:
+            args += tuple(f'{n}={v}' for n, v in data.named_args.items())
         result.config(name=self.name,
                       owner=kw.owner.name if kw.owner else None,
-                      args=data.args,
+                      args=args,
                       assign=tuple(VariableAssignment(data.assign)),
                       type=data.type)
         with StatusReporter(data, result, context, run, implementation=kw):

@@ -27,6 +27,10 @@ Evaluate
     Should Be Equal    ${stat}    ${True}
     Evaluate    INVALID
 
+Custom additions to builtins are supported
+    ${foo} =    Evaluate    setattr(builtins, 'foo', 'bar') or foo
+    Should Be Equal    ${foo}    bar
+
 Modules are imported automatically
     ${ceil} =    Evaluate    math.ceil(1.001)
     Should Be Equal    ${ceil}    ${2}

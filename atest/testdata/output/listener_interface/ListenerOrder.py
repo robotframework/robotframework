@@ -9,10 +9,10 @@ from robot.api.deco import library
 class ListenerOrder:
     tempdir = Path(os.getenv('TEMPDIR', tempfile.gettempdir()))
 
-    def __init__(self, name, order=None):
-        if order is not None:
-            self.ROBOT_LISTENER_ORDER = order
-        self.name = f'{name} ({order})'
+    def __init__(self, name, priority=None):
+        if priority is not None:
+            self.ROBOT_LISTENER_PRIORITY = priority
+        self.name = f'{name} ({priority})'
 
     def start_suite(self, data, result):
         self._write('start_suite')

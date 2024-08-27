@@ -23,7 +23,7 @@ def get_variables():
         DICT_3={'a': 1, 'b': 2, 'c': 3},
         DICT_4={'\ta': 1, 'a b': 2, '  c': 3, 'dd\n\t': 4, '\nak \t': 5},
         DICT_5={' a': 0, '\ta': 1, 'a\t': 2, '\nb': 3, 'd\t': 4, '\td\n': 5, 'e   e': 6},
-        PREPR_DICT1="{'a': 1}"
+        PREPR_DICT1="{'a': 1}",
     )
     variables['ASCII_DICT'] = ascii(variables['DICT'])
     return variables

@@ -14,7 +14,7 @@
 #  limitations under the License.
 
 from pathlib import Path
-from typing import Any, Literal, Sequence, TYPE_CHECKING
+from typing import Any, Literal, Mapping, Sequence, TYPE_CHECKING
 
 from robot.model import ModelObject, Tags
 from robot.utils import eq, getshortdoc, setter
@@ -23,6 +23,8 @@ from .arguments import ArgInfo, ArgumentSpec, EmbeddedArguments
 from .model import BodyItemParent, Keyword
 
 if TYPE_CHECKING:
+    from robot.conf import LanguagesLike
+
     from .librarykeywordrunner import LibraryKeywordRunner
     from .resourcemodel import ResourceFile
     from .testlibraries import TestLibrary
@@ -141,11 +143,13 @@ class KeywordImplementation(ModelObject):
             return self.embedded.match(name) is not None
         return eq(self.name, name, ignore='_')
 
-    def resolve_arguments(self, args: Sequence[str], variables=None,
-                          languages=None) -> 'tuple[list, list]':
-        return self.args.resolve(args, variables, languages=languages)
+    def resolve_arguments(self, args: 'Sequence[str|Any]',
+                          named_args: 'Mapping[str, Any]|None' = None,
+                          variables=None,
+                          languages: 'LanguagesLike' = None) -> 'tuple[list, list]':
+        return self.args.resolve(args, named_args, variables, languages=languages)
 
-    def create_runner(self, name: 'str|None', languages=None) \
+    def create_runner(self, name: 'str|None', languages: 'LanguagesLike' = None) \
             -> 'LibraryKeywordRunner|UserKeywordRunner':
         raise NotImplementedError
 

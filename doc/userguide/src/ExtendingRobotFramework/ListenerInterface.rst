@@ -801,7 +801,7 @@ Listener order
 By default, listeners are called in the order they are taken into use so that
 listeners registered from the command line are called before library listeners.
 It is, however, possible to control the calling order by setting the special
-`ROBOT_LISTENER_ORDER` attribute to an integer or a floating point value.
+`ROBOT_LISTENER_PRIORITY` attribute to an integer or a floating point value.
 The bigger the number, the higher precedence the listener has and the earlier
 it is called. The number can be positive or negative and it is zero by default.
 

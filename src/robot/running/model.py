@@ -84,8 +84,8 @@ class Argument:
     """A temporary API for creating named arguments with non-string values.
 
     This class was added in RF 7.0.1 (#5031) after a failed attempt to add a public
-    API for this purpose in RF 7.0 (#5000). A better public API is planned for RF 7.1
-    (#5143).
+    API for this purpose in RF 7.0 (#5000). A better public API that allows passing
+    named arguments separately was added in RF 7.1 (#5143).
 
     If you need to support also RF 7.0, you can pass named arguments as two-item tuples
     like `(name, value)` and positional arguments as one-item tuples like `(value,)`.
@@ -122,24 +122,33 @@ class Keyword(model.Keyword, WithSource):
     The actual keyword that is executed depends on the context where this model
     is executed.
 
-    Arguments originating from normal Robot Framework data are stored as list of
-    strings in the exact same format as in the data. This means that arguments can
-    have variables and escape characters, and that named arguments are specified
-    using the ``name=value`` syntax.
+    Arguments originating from normal Robot Framework data are stored in the
+    :attr:`args` attribute as a tuple of strings in the exact same format as in
+    the data. This means that arguments can have variables and escape characters,
+    and that named arguments are specified using the ``name=value`` syntax.
+
+    When creating keywords programmatically, it is possible to set :attr:`named_args`
+    separately and use :attr:`args` only for positional arguments. Argument values
+    do not need to be strings, but also in this case strings can contain variables
+    and normal Robot Framework escaping rules must be taken into account.
     """
-    __slots__ = ['lineno']
+    __slots__ = ['named_args', 'lineno']
 
     def __init__(self, name: str = '',
                  args: 'Sequence[str|Argument|Any]' = (),
+                 named_args: 'Mapping[str, Any]|None' = None,
                  assign: Sequence[str] = (),
                  type: str = BodyItem.KEYWORD,
                  parent: BodyItemParent = None,
                  lineno: 'int|None' = None):
         super().__init__(name, args, assign, type, parent)
+        self.named_args = named_args
         self.lineno = lineno
 
     def to_dict(self) -> DataDict:
         data = super().to_dict()
+        if self.named_args is not None:
+            data['named_args'] = self.named_args
         if self.lineno:
             data['lineno'] = self.lineno
         return data
