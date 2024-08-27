@@ -28,6 +28,7 @@ from .model import Body, BodyItemParent, Keyword, TestSuite
 from .userkeywordrunner import UserKeywordRunner, EmbeddedArgumentsRunner
 
 if TYPE_CHECKING:
+    from robot.conf import LanguagesLike
     from robot.parsing import File
 
 
@@ -236,7 +237,8 @@ class UserKeyword(KeywordImplementation):
         """
         return bool(self._teardown)
 
-    def create_runner(self, name: 'str|None', languages=None) \
+    def create_runner(self, name: 'str|None',
+                      languages: 'LanguagesLike' = None) \
             -> 'UserKeywordRunner|EmbeddedArgumentsRunner':
         if self.embedded:
             return EmbeddedArgumentsRunner(self, name)
@@ -318,6 +320,9 @@ class Variable(ModelObject):
         if self.error:
             data['error'] = self.error
         return data
+
+    def _include_in_repr(self, name: str, value: Any) -> bool:
+        return not (name == 'separator' and value is None)
 
 
 class Import(ModelObject):

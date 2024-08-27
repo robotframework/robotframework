@@ -1042,7 +1042,7 @@ class _Verify(_BuiltInBase):
                        ignore_case=False, strip_spaces=False, collapse_spaces=False):
         """Fails if ``container`` does not contain ``item`` one or more times.
 
-        Works with strings, lists, and anything that supports Python's ``in``
+        Works with strings, lists, bytes, and anything that supports Python's ``in``
         operator.
 
         See `Should Be Equal` for an explanation on how to override the default
@@ -1063,15 +1063,28 @@ class _Verify(_BuiltInBase):
         arguments are strings, the comparison is done with all white spaces replaced by
         a single space character.
 
+        If the ``container`` is bytes and the ``item`` is a string, the ``item``
+        is automatically converted to bytes. Conversion is done using the ISO-8859-1
+        encoding that maps each Unicode code point directly to a matching byte.
+
         Examples:
         | Should Contain | ${output}    | PASS  |
         | Should Contain | ${some list} | value | msg=Failure! | values=False |
         | Should Contain | ${some list} | value | ignore_case=True |
 
-        ``strip_spaces`` is new in Robot Framework 4.0 and ``collapse_spaces`` is new
-        in Robot Framework 4.1.
+        ``strip_spaces`` is new in Robot Framework 4.0, ``collapse_spaces`` is new
+        in Robot Framework 4.1 and automatically converting ``item`` to bytes
+        is new in Robot Framework 7.1.
         """
         orig_container = container
+        if isinstance(container, (bytes, bytearray)):
+            if isinstance(item, str):
+                try:
+                    item = item.encode('ISO-8859-1')
+                except UnicodeEncodeError:
+                    raise ValueError(f'{item!r} cannot be encoded into bytes.')
+            elif isinstance(item, int) and item not in range(256):
+                raise ValueError(f'Byte must be in range 0-255, got {item}.')
         if ignore_case and is_string(item):
             item = item.casefold()
             if is_string(container):

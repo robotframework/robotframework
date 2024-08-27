@@ -57,6 +57,46 @@
 </branch>
 <status status="PASS" start="2021-03-29T17:05:45.266000" elapsed="0.001000"/>
 </if>
+<while condition="$variable &lt; 6">
+<iter>
+<kw name="Log" owner="BuiltIn">
+<msg time="2024-08-26T13:34:29.548081" level="INFO">1</msg>
+<arg>${variable}</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2024-08-26T13:34:29.547953" elapsed="0.000198"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2024-08-26T13:34:29.548424" level="INFO">${variable} = 2</msg>
+<var>${variable}</var>
+<arg>$variable + 1</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2024-08-26T13:34:29.548256" elapsed="0.000186"/>
+</kw>
+<status status="PASS" start="2024-08-26T13:34:29.547520" elapsed="0.000955"/>
+</iter>
+<status status="PASS" start="2024-08-26T13:34:29.547517" elapsed="0.003092"/>
+</while>
+<try>
+<branch type="TRY">
+<kw name="Log" owner="BuiltIn">
+<msg time="2024-08-26T13:43:45.268788" level="INFO">Hello!</msg>
+<arg>Hello!</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2024-08-26T13:43:45.268687" elapsed="0.000141"/>
+</kw>
+<status status="PASS" start="2024-08-26T13:43:45.268407" elapsed="0.000465"/>
+</branch>
+<branch type="EXCEPT">
+<pattern>No match</pattern>
+<kw name="Fail" owner="BuiltIn">
+<arg>Not run</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<status status="NOT RUN" start="2024-08-26T13:43:45.268982" elapsed="0.000020"/>
+</kw>
+<status status="NOT RUN" start="2024-08-26T13:43:45.268914" elapsed="0.000116"/>
+</branch>
+<status status="PASS" start="2024-08-26T13:43:45.268361" elapsed="0.000696"/>
+</try>
 <doc>Test case documentation</doc>
 <tag>t1</tag>
 <status status="PASS" start="2011-10-24T13:41:20.925000" elapsed="0.009000"/>
@@ -122,6 +162,46 @@
 </branch>
 <status status="PASS" start="2021-03-29T17:05:45.266000" elapsed="0.001000"/>
 </if>
+<while condition="$variable &lt; 6">
+<iter>
+<kw name="Log" owner="BuiltIn">
+<msg time="2024-08-26T13:34:29.548081" level="INFO">1</msg>
+<arg>${variable}</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2024-08-26T13:34:29.547953" elapsed="0.000198"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2024-08-26T13:34:29.548424" level="INFO">${variable} = 2</msg>
+<var>${variable}</var>
+<arg>$variable + 1</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2024-08-26T13:34:29.548256" elapsed="0.000186"/>
+</kw>
+<status status="PASS" start="2024-08-26T13:34:29.547520" elapsed="0.000955"/>
+</iter>
+<status status="PASS" start="2024-08-26T13:34:29.547517" elapsed="0.003092"/>
+</while>
+<try>
+<branch type="TRY">
+<kw name="Log" owner="BuiltIn">
+<msg time="2024-08-26T13:43:45.268788" level="INFO">Hello!</msg>
+<arg>Hello!</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2024-08-26T13:43:45.268687" elapsed="0.000141"/>
+</kw>
+<status status="PASS" start="2024-08-26T13:43:45.268407" elapsed="0.000465"/>
+</branch>
+<branch type="EXCEPT">
+<pattern>No match</pattern>
+<kw name="Fail" owner="BuiltIn">
+<arg>Not run</arg>
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<status status="NOT RUN" start="2024-08-26T13:43:45.268982" elapsed="0.000020"/>
+</kw>
+<status status="NOT RUN" start="2024-08-26T13:43:45.268914" elapsed="0.000116"/>
+</branch>
+<status status="PASS" start="2024-08-26T13:43:45.268361" elapsed="0.000696"/>
+</try>
 <doc>Test case documentation</doc>
 <tag>t1</tag>
 <status status="PASS" start="2011-10-24T13:41:20.925000" elapsed="0.009000"/>

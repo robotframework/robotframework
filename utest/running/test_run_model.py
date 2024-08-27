@@ -14,7 +14,7 @@ from robot.model.modelobject import ModelObject
 from robot.parsing import get_resource_model
 from robot.running import (Break, Continue, Error, For, If, IfBranch, Keyword,
                            Return, ResourceFile, TestCase, TestDefaults, TestSuite,
-                           Try, TryBranch, UserKeyword, Var, While)
+                           Try, TryBranch, UserKeyword, Var, Variable, While)
 from robot.utils.asserts import assert_equal, assert_false, assert_not_equal
 
 
@@ -269,8 +269,10 @@ class TestToFromDictAndJson(unittest.TestCase):
     def test_keyword(self):
         self._verify(Keyword(), name='')
         self._verify(Keyword('Name'), name='Name')
-        self._verify(Keyword('N', 'args', ('${result}',)),
+        self._verify(Keyword('N', 'args', assign=('${result}',)),
                      name='N', args=tuple('args'), assign=('${result}',))
+        self._verify(Keyword('N', ['pos', 'p2'], {'named': 'arg', 'n2': 2}),
+                     name='N', args=('pos', 'p2'), named_args={'named': 'arg', 'n2': 2})
         self._verify(Keyword('Setup', type=Keyword.SETUP, lineno=1),
                      name='Setup', lineno=1)
 
@@ -592,6 +594,12 @@ class TestStringRepresentation(unittest.TestCase):
                      "robot.running.UserKeyword(name='x')")
         assert_equal(repr(UserKeyword(name='å', args=['${a}'], doc='Not included')),
                      "robot.running.UserKeyword(name='å', args=['${a}'])")
+
+    def test_variable_repr(self):
+        assert_equal(repr(Variable('${x}', ['two', 'parts'])),
+                     "robot.running.Variable(name='${x}', value=('two', 'parts'))")
+        assert_equal(repr(Variable('${x}', ['a', 'b'], separator='-')),
+                     "robot.running.Variable(name='${x}', value=('a', 'b'), separator='-')")
 
 
 if __name__ == '__main__':

@@ -4,6 +4,7 @@ Library    ParameterLibrary    second    2    WITH NAME    Second
 
 *** Variables ***
 ${VARIABLE}       value
+${RESOURCE}       ${CURDIR}/resource.robot
 
 *** Test Cases ***
 Import Library
@@ -11,6 +12,10 @@ Import Library
     Get Line Count    foo
     Import Library    ParameterLibrary    ${VARIABLE}    ${42}    WITH NAME    Dynamic
     Dynamic.Parameters
+
+Import Resource
+    Import Resource    ${RESOURCE}
+    Simple UK
 
 Set Library Search Order
     Set Library Search Order    Second

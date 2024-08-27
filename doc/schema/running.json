@@ -21,8 +21,17 @@
           "title": "Args",
           "type": "array",
           "items": {
-            "type": "string"
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {}
+            ]
           }
+        },
+        "named_args": {
+          "title": "Named Args",
+          "type": "object"
         },
         "assign": {
           "title": "Assign",

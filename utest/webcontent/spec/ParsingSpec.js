@@ -118,19 +118,19 @@ describe("Handling Suite", function () {
 
     it("should parse for loop", function() {
         var forloop = nthKeyword(firstTest(window.testdata.suite()), 1);
-        expect(forloop.name).toEqual("${i} IN RANGE [ 2 ]");
+        expect(forloop.name).toEqual("${i}    IN RANGE    2");
         expect(forloop.type).toEqual("FOR");
         var foritem = nthKeyword(forloop, 0);
         expect(foritem.name).toEqual("${i} = 0");
-        expect(foritem.type).toEqual("VAR");
+        expect(foritem.type).toEqual("ITERATION");
         foritem = nthKeyword(forloop, 1);
         expect(foritem.name).toEqual("${i} = 1");
-        expect(foritem.type).toEqual("VAR");
+        expect(foritem.type).toEqual("ITERATION");
     });
 
     it("should parse message", function () {
         var message = nthKeyword(firstTest(window.testdata.suite()), 0).children()[0];
-        expect(message.text).toEqual("Slept 100 milliseconds");
+        expect(message.text).toEqual("Slept 100 milliseconds.");
     });
 
 });
