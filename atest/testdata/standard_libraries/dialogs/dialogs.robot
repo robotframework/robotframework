@@ -100,17 +100,17 @@ Get Selections From User When No Input Provided
     Should Be True    type($values) is list
     ${expected values}=    Create List
     Lists Should Be Equal    ${values}    ${expected values}
+
 Get Selections From User When Default Value Provided by Index
     ${values}=    Get Selections From User    Press OK or <Enter>.    value 1    value 2    value 3    value 4    default=0
-    Should Be True    type($values) is list
-    ${expected values}=    Create List    value 1
-    Lists Should Be Equal    ${values}    ${expected values}
+    Should Be True    ${values} is list
+    Should Be Equal    ${values}[${values}.curselection()[0]]    value 1
 
 Get Selections From User When Default Value Provided by String
-    ${values}=    Get Selections From User    Press OK or <Enter>.    value1    value2    value3    value4    default=value 1
-    Should Be True    type($values) is list
-    ${expected values}=    Create List    value 1
-    Lists Should Be Equal    ${values}    ${expected values}    
+    ${values}=    Get Selections From User    Press OK or <Enter>.    value 1    value 2    value 3    value 4    default=value 1
+    Should Be True    ${values} is list
+    Should Be Equal    ${values}[${values}.curselection()[0]]    value 1
+    
 Get Selections From User Cancelled
     [Documentation]  FAIL No value provided by user.
     Get Selections From User
