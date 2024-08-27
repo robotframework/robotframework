@@ -146,7 +146,7 @@ class LibraryKeywordRunner:
     def _executed_in_dry_run(self, kw: 'LibraryKeyword'):
         return (kw.owner.name == 'BuiltIn'
                 and kw.name in ('Import Library', 'Set Library Search Order',
-                                'Set Tags', 'Remove Tags'))
+                                'Set Tags', 'Remove Tags', 'Import Resource'))
 
 
 class EmbeddedArgumentsRunner(LibraryKeywordRunner):
