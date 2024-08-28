@@ -79,7 +79,7 @@ class TkDialog(Toplevel):
         frame.pack(padx=5, pady=5, expand=1, fill=BOTH)
         return widget
 
-    def _create_widget(self, frame, value, default: Union[int,str,None]=None) -> Union[Entry, Listbox, None]:
+    def _create_widget(self, frame, value) -> Union[Entry, Listbox, None]:
         return None
 
     def _create_buttons(self):
