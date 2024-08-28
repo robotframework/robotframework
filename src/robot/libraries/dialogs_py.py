@@ -24,12 +24,12 @@ class TkDialog(Toplevel):
     left_button = 'OK'
     right_button = 'Cancel'
 
-    def __init__(self, message, value=None, default: Union[int,str,None]=None, **config):
+    def __init__(self, message, value=None, **config):
         self._prevent_execution_with_timeouts()
         self._button_bindings = {}
         super().__init__(self._get_root())
         self._initialize_dialog()
-        self.widget = self._create_body(message, value, default, **config)
+        self.widget = self._create_body(message, value, **config)
         self._create_buttons()
         self._finalize_dialog()
         self._result = None
@@ -68,12 +68,12 @@ class TkDialog(Toplevel):
         if self.widget:
             self.widget.focus_set()
 
-    def _create_body(self, message, value, default: Union[int,str,None]=None, **config) -> Union[Entry, Listbox, None]:
+    def _create_body(self, message, value, **config) -> Union[Entry, Listbox, None]:
         frame = Frame(self)
         max_width = self.winfo_screenwidth() // 2
         label = Label(frame, text=message, anchor=W, justify=LEFT, wraplength=max_width)
         label.pack(fill=BOTH)
-        widget = self._create_widget(frame, value, default, **config)
+        widget = self._create_widget(frame, value, **config)
         if widget:
             widget.pack(fill=BOTH)
         frame.pack(padx=5, pady=5, expand=1, fill=BOTH)
@@ -153,16 +153,23 @@ class InputDialog(TkDialog):
 
 
 class SelectionDialog(TkDialog):
-
-    def _create_widget(self, parent, values, default: Union[int,str,None]=None) -> Listbox:
+    def __init__(self, message, values, default=None):
+        super().__init__(message, values, default=default)
+    def _create_widget(self, parent, values, default=None) -> Listbox:
         widget = Listbox(parent)
         for item in values:
             widget.insert(END, item)
         if default is not None:
-            if isinstance(default,int):
-                widget.select_set(values[default])
+            if default.isnumeric() and isinstance(int(default),int):
+                index = int(default)-1
+                if 0>index or index>widget.size():
+                    raise RuntimeError('Default value index is out of bounds.')
             elif isinstance(default,str):
-                widget.select_set(values.index[default])
+                try:
+                    index = list(widget.get(0, "end")).index(default)
+                except ValueError:
+                    raise RuntimeError('Default value cannot be found.')
+            widget.select_set(index)                    
         widget.config(width=0)
         return widget
 

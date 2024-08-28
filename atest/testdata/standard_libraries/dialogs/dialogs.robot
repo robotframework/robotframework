@@ -87,6 +87,20 @@ Get Selection From User When Default Value Provided by String
     ...    default=value 1
     Should Be Equal    ${value}    value 1
 
+Get Selection From User When Default Value Index Is Out of Bounds
+    [Documentation]    FAIL Default value index is out of bounds.
+    Get Selection From User    
+    ...    Press OK or <Enter>.    
+    ...    value 1    value 2    value 3    value 4    
+    ...    default=21
+
+Get Selection From User When Default Value Cannot Be Found
+    [Documentation]  FAIL Default value cannot be found.
+    Get Selection From User    
+    ...    Press OK or <Enter>.    
+    ...    value 1    value 2    value 3    value 4    
+    ...    default=asd
+
 Get Selection From User Cancelled
     [Documentation]  FAIL No value provided by user.
     Get Selection From User    Press <C> or <c>.    zip    zap    foo
