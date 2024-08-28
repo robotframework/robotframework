@@ -83,7 +83,7 @@ def get_value_from_user(message, default_value='', hidden=False):
                                             is_truthy(hidden)))
 
 
-def get_selection_from_user(message, *values, default= None):
+def get_selection_from_user(message, *values, default=None):
     """Pauses execution and asks user to select a value.
 
     The selected value is returned. Pressing ``Cancel`` fails the keyword.
@@ -91,10 +91,15 @@ def get_selection_from_user(message, *values, default= None):
     ``message`` is the instruction shown in the dialog and ``values`` are
     the options given to the user.
     
-    ``default`` is the default index or value from values ``values``
-
+    ``default`` is the default value set for user selection. 
+    The input for default value can be value index, that starts from 1,
+    or it can be string value from ``values``, ``values`` are the selection options give to user.
+    When ``default`` is set to ``1`` or ``user1``, then there is no need for user to input any selection.
+    New in Robot Framework 7.2.
     Example:
-    | ${user} = | Get Selection From User | Select user | user1 | user2 | admin | default=user1
+    | ${user} = | Get Selection From User | Select user | user1 | user2 | admin |
+    | ${user} = | Get Selection From User | Select user | user1 | user2 | admin | default=1 |
+    | ${user} = | Get Selection From User | Select user | user1 | user2 | admin | default=user1 |
     """
     return _validate_user_input(SelectionDialog(message, values, default))
 
