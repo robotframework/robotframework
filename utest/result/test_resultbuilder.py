@@ -24,6 +24,13 @@ class TestBuildingSuiteExecutionResult(unittest.TestCase):
         self.suite = self.result.suite
         self.test = self.suite.tests[0]
 
+    def test_result_has_generation_time(self):
+        assert_equal(self.result.generation_time, datetime(2023, 9, 8, 12, 1, 47, 906104))
+        result = ExecutionResult("<robot><suite/></robot>")
+        assert_equal(result.generation_time, None)
+        result = ExecutionResult("<robot generated='20111024 13:41:20.873'><suite/></robot>")
+        assert_equal(result.generation_time, datetime(2011, 10, 24, 13, 41, 20, 873000))
+
     def test_suite_is_built(self):
         assert_equal(self.suite.source, Path('normal.html'))
         assert_equal(self.suite.name, 'Normal')

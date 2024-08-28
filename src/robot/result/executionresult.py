@@ -64,6 +64,7 @@ class Result:
         #: :class:`~.executionerrors.ExecutionErrors` object.
         self.errors = errors or ExecutionErrors()
         self.generated_by_robot = True
+        self.generation_time = None
         self._status_rc = True
         self._stat_config = {}
         self.rpa = rpa
