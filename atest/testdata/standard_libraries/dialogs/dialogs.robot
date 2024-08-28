@@ -73,6 +73,20 @@ Get Selection From User
     ...    This is a really long string and the window should change the size properly to content.
     Should Be Equal    ${value}    valuë
 
+Get Selection From User When Default Value Provided by Index
+    ${value}=    Get Selection From User    
+    ...    Press OK or <Enter>.    
+    ...    value 1    value 2    value 3    value 4    
+    ...    default=1
+    Should Be Equal    ${value}    value 1
+
+Get Selection From User When Default Value Provided by String
+    ${value}=    Get Selection From User    
+    ...    Press OK or <Enter>.    
+    ...    value 1    value 2    value 3    value 4    
+    ...    default=value 1
+    Should Be Equal    ${value}    value 1
+
 Get Selection From User Cancelled
     [Documentation]  FAIL No value provided by user.
     Get Selection From User    Press <C> or <c>.    zip    zap    foo
@@ -99,18 +113,6 @@ Get Selections From User When No Input Provided
     ...    value 1    value 2    value 3    value 4
     Should Be True    type($values) is list
     ${expected values}=    Create List
-    Lists Should Be Equal    ${values}    ${expected values}
-
-Get Selections From User When Default Value Provided by Index
-    ${values}=    Get Selections From User    Press OK or <Enter>.    value 1    value 2    value 3    value 4    default=0
-    Should Be True    type($values) is list
-    ${expected values}=    Create List    value 1
-    Lists Should Be Equal    ${values}    ${expected values}
-
-Get Selections From User When Default Value Provided by String
-    ${values}=    Get Selections From User    Press OK or <Enter>.    value 1    value 2    value 3    value 4    default=value 1
-    Should Be True    type($values) is list
-    ${expected values}=    Create List    value 1
     Lists Should Be Equal    ${values}    ${expected values}
     
 Get Selections From User Cancelled
