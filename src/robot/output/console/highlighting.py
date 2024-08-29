@@ -109,6 +109,10 @@ class HighlightingStream:
         finally:
             highlighter.reset()
 
+    def result_file(self, kind, path):
+        path = self._highlighter.link(path)
+        self.write(f"{kind + ':':8} {path}\n")
+
 
 def Highlighter(stream):
     if os.sep == '/':
@@ -137,11 +141,17 @@ class AnsiHighlighter:
     def reset(self):
         self._set_color(self._ANSI_RESET)
 
+    def link(self, path):
+        return  f'\033]8;;file:///{path}\033\\{path}\033]8;;\033\\'
+
     def _set_color(self, color):
         self._stream.write(color)
 
 
 class NoHighlighting(AnsiHighlighter):
+
+    def link(self, path):
+        return path
 
     def _set_color(self, color):
         pass
@@ -173,6 +183,9 @@ class DosHighlighter:
 
     def reset(self):
         self._set_colors(self._orig_colors)
+
+    def link(self, path):
+        return path
 
     def _get_std_handle(self, stream):
         handle = self._STDOUT_HANDLE \

@@ -67,7 +67,7 @@ class VerboseOutput(LoggerApi):
             self.writer.error(msg.message, msg.level, clear=self.running_test)
 
     def result_file(self, kind, path):
-        self.writer.output(kind, path)
+        self.writer.result_file(kind, path)
 
 
 class VerboseWriter:
@@ -146,8 +146,8 @@ class VerboseWriter:
         if self._should_clear_markers(clear):
             self._write_info()
 
-    def output(self, name, path):
-        self.stdout.write(f"{name+':':8} {path}\n")
+    def result_file(self, kind, path):
+        self.stdout.result_file(kind, path)
 
 
 class KeywordMarker:
