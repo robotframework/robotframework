@@ -74,31 +74,38 @@ Get Selection From User
     Should Be Equal    ${value}    valuë
 
 Get Selection From User When Default Value Provided by Index
-    ${value}=    Get Selection From User    
-    ...    Press OK or <Enter>.    
-    ...    value 1    value 2    value 3    value 4    
+    ${value}=    Get Selection From User
+    ...    Press OK or <Enter>.
+    ...    value 1    value 2    value 3    value 4
     ...    default=1
     Should Be Equal    ${value}    value 1
 
 Get Selection From User When Default Value Provided by String
-    ${value}=    Get Selection From User    
-    ...    Press OK or <Enter>.    
-    ...    value 1    value 2    value 3    value 4    
-    ...    default=value 1
-    Should Be Equal    ${value}    value 1
+    ${value}=    Get Selection From User
+    ...    Press OK or <Enter>.
+    ...    xxx    yyy    zzz    ååå    äää    ööö
+    ...    default=ööö
+    Should Be Equal    ${value}    ööö
+
+Get Selection From User When Default Value Is Integer
+    ${value}=    Get Selection From User
+    ...    Press OK or <Enter>.
+    ...    -2    -1    0    1    2
+    ...    default=1
+    Should Be Equal    ${value}    1
 
 Get Selection From User When Default Value Index Is Out of Bounds
-    [Documentation]    FAIL Default value index is out of bounds.
-    Get Selection From User    
-    ...    Press OK or <Enter>.    
-    ...    value 1    value 2    value 3    value 4    
-    ...    default=21
+    [Documentation]    FAIL ValueError: Default value index is out of bounds.
+    Get Selection From User
+    ...    Press OK or <Enter>.
+    ...    value 1    value 2    value 3    value 4
+    ...    default=5
 
 Get Selection From User When Default Value Cannot Be Found
-    [Documentation]  FAIL Default value cannot be found.
-    Get Selection From User    
-    ...    Press OK or <Enter>.    
-    ...    value 1    value 2    value 3    value 4    
+    [Documentation]  FAIL ValueError: Invalid default value 'asd'.
+    Get Selection From User
+    ...    Press OK or <Enter>.
+    ...    value 1    value 2    value 3    value 4
     ...    default=asd
 
 Get Selection From User Cancelled
@@ -128,7 +135,7 @@ Get Selections From User When No Input Provided
     Should Be True    type($values) is list
     ${expected values}=    Create List
     Lists Should Be Equal    ${values}    ${expected values}
-    
+
 Get Selections From User Cancelled
     [Documentation]  FAIL No value provided by user.
     Get Selections From User
