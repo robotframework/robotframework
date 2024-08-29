@@ -153,11 +153,23 @@ class InputDialog(TkDialog):
 
 
 class SelectionDialog(TkDialog):
-
-    def _create_widget(self, parent, values) -> Listbox:
+    def __init__(self, message, values, default=None):
+        super().__init__(message, values, default=default)
+    def _create_widget(self, parent, values, default=None) -> Listbox:
         widget = Listbox(parent)
         for item in values:
             widget.insert(END, item)
+        if default is not None:
+            if default.isnumeric() and isinstance(int(default),int):
+                index = int(default)-1
+                if 0>index or index>widget.size():
+                    raise RuntimeError('Default value index is out of bounds.')
+            elif isinstance(default,str):
+                try:
+                    index = list(widget.get(0, "end")).index(default)
+                except ValueError:
+                    raise RuntimeError('Default value cannot be found.')
+            widget.select_set(index)                    
         widget.config(width=0)
         return widget
 
