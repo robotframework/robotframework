@@ -1296,6 +1296,8 @@ Boolean strings
 Korean (ko)
 -----------
 
+New in Robot Framework 7.1.
+
 Section headers
 ~~~~~~~~~~~~~~~
 
@@ -1443,7 +1445,7 @@ Section headers
     * - Tasks
       - Taken
     * - Keywords
-      - Sleutelwoorden
+      - Actiewoorden
     * - Comments
       - Opmerkingen
 
@@ -1471,41 +1473,41 @@ Settings
     * - Metadata
       - Metadata
     * - Suite Setup
-      - Suite Preconditie
+      - Suitevoorbereiding
     * - Suite Teardown
-      - Suite Postconditie
+      - Suite-afronding
     * - Test Setup
-      - Test Preconditie
+      - Testvoorbereiding
     * - Task Setup
-      - Taak Preconditie
+      - Taakvoorbereiding
     * - Test Teardown
-      - Test Postconditie
+      - Testafronding
     * - Task Teardown
-      - Taak Postconditie
+      - Taakafronding
     * - Test Template
-      - Test Sjabloon
+      - Testsjabloon
     * - Task Template
-      - Taak Sjabloon
+      - Taaksjabloon
     * - Test Timeout
-      - Test Time-out
+      - Testtijdslimiet
     * - Task Timeout
-      - Taak Time-out
+      - Taaktijdslimiet
     * - Test Tags
-      - Test Labels
+      - Testlabels
     * - Task Tags
-      - Taak Labels
+      - Taaklabels
     * - Keyword Tags
-      - Sleutelwoord Labels
+      - Actiewoordlabels
     * - Tags
       - Labels
     * - Setup
-      - Preconditie
+      - Voorbereiding
     * - Teardown
-      - Postconditie
+      - Afronding
     * - Template
       - Sjabloon
     * - Timeout
-      - Time-out
+      - Tijdslimiet
     * - Arguments
       - Parameters
 
