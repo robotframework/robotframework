@@ -1310,3 +1310,45 @@ class Ja(Language):
     but_prefixes = ['ただし', '但し']
     true_strings = ['真', '有効', 'はい', 'オン']
     false_strings = ['偽', '無効', 'いいえ', 'オフ']
+
+
+class Ko(Language):
+    """Korean"""
+    settings_header = '설정'
+    variables_header = '변수'
+    test_cases_header = '테스트 사례'
+    tasks_header = '작업'
+    keywords_header = '키워드'
+    comments_header = '의견'
+    library_setting = '라이브러리'
+    resource_setting = '자료'
+    variables_setting = '변수'
+    name_setting = '이름'
+    documentation_setting = '문서'
+    metadata_setting = '메타데이터'
+    suite_setup_setting = '스위트 설정'
+    suite_teardown_setting = '스위트 중단'
+    test_setup_setting = '테스트 설정'
+    task_setup_setting = '작업 설정'
+    test_teardown_setting = '테스트 중단'
+    task_teardown_setting = '작업 중단'
+    test_template_setting = '테스트 템플릿'
+    task_template_setting = '작업 템플릿'
+    test_timeout_setting = '테스트 시간 초과'
+    task_timeout_setting = '작업 시간 초과'
+    test_tags_setting = '테스트 태그'
+    task_tags_setting = '작업 태그'
+    keyword_tags_setting = '키워드 태그'
+    setup_setting = '설정'
+    teardown_setting = '중단'
+    template_setting = '템플릿'
+    tags_setting = '태그'
+    timeout_setting = '시간 초과'
+    arguments_setting = '주장'
+    given_prefixes = ['주어진']
+    when_prefixes = ['때']
+    then_prefixes = ['보다']
+    and_prefixes = ['그리고']
+    but_prefixes = ['하지만']
+    true_strings = ['참', '네', '켜기']
+    false_strings = ['거짓', '아니오', '끄기']

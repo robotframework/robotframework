@@ -1293,6 +1293,133 @@ Boolean strings
     * - False
       - 偽, 無効, いいえ, オフ
 
+Korean (ko)
+-----------
+
+Section headers
+~~~~~~~~~~~~~~~
+
+.. list-table::
+    :class: tabular
+    :width: 40em
+    :widths: 2 3
+    :header-rows: 1
+
+    * - Header
+      - Translation
+    * - Settings
+      - 설정
+    * - Variables
+      - 변수
+    * - Test Cases
+      - 테스트 사례
+    * - Tasks
+      - 작업
+    * - Keywords
+      - 키워드
+    * - Comments
+      - 의견
+
+Settings
+~~~~~~~~
+
+.. list-table::
+    :class: tabular
+    :width: 40em
+    :widths: 2 3
+    :header-rows: 1
+
+    * - Setting
+      - Translation
+    * - Library
+      - 라이브러리
+    * - Resource
+      - 자료
+    * - Variables
+      - 변수
+    * - Name
+      - 이름
+    * - Documentation
+      - 문서
+    * - Metadata
+      - 메타데이터
+    * - Suite Setup
+      - 스위트 설정
+    * - Suite Teardown
+      - 스위트 중단
+    * - Test Setup
+      - 테스트 설정
+    * - Task Setup
+      - 작업 설정
+    * - Test Teardown
+      - 테스트 중단
+    * - Task Teardown
+      - 작업 중단
+    * - Test Template
+      - 테스트 템플릿
+    * - Task Template
+      - 작업 템플릿
+    * - Test Timeout
+      - 테스트 시간 초과
+    * - Task Timeout
+      - 작업 시간 초과
+    * - Test Tags
+      - 테스트 태그
+    * - Task Tags
+      - 작업 태그
+    * - Keyword Tags
+      - 키워드 태그
+    * - Tags
+      - 태그
+    * - Setup
+      - 설정
+    * - Teardown
+      - 중단
+    * - Template
+      - 템플릿
+    * - Timeout
+      - 시간 초과
+    * - Arguments
+      - 주장
+
+BDD prefixes
+~~~~~~~~~~~~
+
+.. list-table::
+    :class: tabular
+    :width: 40em
+    :widths: 2 3
+    :header-rows: 1
+
+    * - Prefix
+      - Translation
+    * - Given
+      - 주어진
+    * - When
+      - 때
+    * - Then
+      - 보다
+    * - And
+      - 그리고
+    * - But
+      - 하지만
+
+Boolean strings
+~~~~~~~~~~~~~~~
+
+.. list-table::
+    :class: tabular
+    :width: 40em
+    :widths: 2 3
+    :header-rows: 1
+
+    * - True/False
+      - Values
+    * - True
+      - 참, 네, 켜기
+    * - False
+      - 거짓, 아니오, 끄기
+
 Dutch (nl)
 ----------
 
