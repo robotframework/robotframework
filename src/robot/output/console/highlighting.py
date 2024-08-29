@@ -23,6 +23,7 @@ import os
 import sys
 try:
     from ctypes import windll, Structure, c_short, c_ushort, byref
+    from ctypes.wintypes import DWORD
 except ImportError:  # Not on Windows
     windll = None
 
@@ -115,9 +116,11 @@ class HighlightingStream:
 
 
 def Highlighter(stream):
-    if os.sep == '/':
+    if os.sep == '/' or virtual_terminal_enabled(stream):
         return AnsiHighlighter(stream)
-    return DosHighlighter(stream) if windll else NoHighlighting(stream)
+    if windll:
+        return DosHighlighter(stream)
+    return NoHighlighting(stream)
 
 
 class AnsiHighlighter:
@@ -142,7 +145,7 @@ class AnsiHighlighter:
         self._set_color(self._ANSI_RESET)
 
     def link(self, path):
-        return  f'\033]8;;file:///{path}\033\\{path}\033]8;;\033\\'
+        return f'\033]8;;file:///{path}\033\\{path}\033]8;;\033\\'
 
     def _set_color(self, color):
         self._stream.write(color)
@@ -164,11 +167,9 @@ class DosHighlighter:
     _FOREGROUND_GREY = 0x7
     _FOREGROUND_INTENSITY = 0x8
     _BACKGROUND_MASK = 0xF0
-    _STDOUT_HANDLE = -11
-    _STDERR_HANDLE = -12
 
     def __init__(self, stream):
-        self._handle = self._get_std_handle(stream)
+        self._handle = get_std_handle(stream)
         self._orig_colors = self._get_colors()
         self._background = self._orig_colors & self._BACKGROUND_MASK
 
@@ -187,11 +188,6 @@ class DosHighlighter:
     def link(self, path):
         return path
 
-    def _get_std_handle(self, stream):
-        handle = self._STDOUT_HANDLE \
-            if stream is sys.__stdout__ else self._STDERR_HANDLE
-        return windll.kernel32.GetStdHandle(handle)
-
     def _get_colors(self):
         csbi = _CONSOLE_SCREEN_BUFFER_INFO()
         ok = windll.kernel32.GetConsoleScreenBufferInfo(self._handle, byref(csbi))
@@ -204,6 +200,23 @@ class DosHighlighter:
 
     def _set_colors(self, colors):
         windll.kernel32.SetConsoleTextAttribute(self._handle, colors)
+
+
+def get_std_handle(stream):
+    handle = -11 if stream is sys.__stdout__ else -12
+    return windll.kernel32.GetStdHandle(handle)
+
+
+def virtual_terminal_enabled(stream):
+    handle = get_std_handle(stream)
+    enable_vt = 0x0004
+    mode = DWORD()
+    if not windll.kernel32.GetConsoleMode(handle, byref(mode)):
+        return False    # Calling GetConsoleMode failed.
+    if mode.value & enable_vt:
+        return True     # VT already enabled.
+    # Try to enable VT.
+    return windll.kernel32.SetConsoleMode(handle, mode.value | enable_vt) != 0
 
 
 if windll:
