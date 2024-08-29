@@ -1313,7 +1313,10 @@ class Ja(Language):
 
 
 class Ko(Language):
-    """Korean"""
+    """Korean
+
+    New in Robot Framework 7.1.
+    """
     settings_header = '설정'
     variables_header = '변수'
     test_cases_header = '테스트 사례'
