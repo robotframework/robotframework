@@ -6,11 +6,11 @@ Resource          console_resource.robot
 *** Test Cases ***
 Console Colors Auto
     Run Tests With Colors    --consolecolors auto
-    Outputs should not have ANSI colors
+    Outputs should not have ANSI codes
 
 Console Colors Off
     Run Tests With Colors    --consolecolors OFF
-    Outputs should not have ANSI colors
+    Outputs should not have ANSI codes
 
 Console Colors On
     Run Tests With Colors    --ConsoleCol on
@@ -18,7 +18,7 @@ Console Colors On
 
 Console Colors ANSI
     Run Tests With Colors    --Console-Colors AnSi
-    Outputs should have ANSI colors
+    Outputs should have ANSI codes
 
 Invalid Console Colors
     Run Tests Without Processing Output    -C InVaLid    misc/pass_and_fail.robot
@@ -48,22 +48,23 @@ Run Tests With Colors
     [Arguments]    ${colors}
     Run Tests    ${colors} --variable LEVEL1:WARN    misc/pass_and_fail.robot
 
-Outputs should not have ANSI colors
+Outputs should not have ANSI codes
     Stdout Should Contain    | PASS |
     Stdout Should Contain    | FAIL |
     Stderr Should Contain    [ WARN ]
 
 Outputs should have ANSI colors when not on Windows
     IF    os.sep == '/'
-        Outputs should have ANSI colors
+        Outputs should have ANSI codes
     ELSE
-       Outputs should not have ANSI colors
+       Outputs should not have ANSI codes
     END
 
-Outputs should have ANSI colors
+Outputs should have ANSI codes
     Stdout Should Not Contain    | PASS |
     Stdout Should Not Contain    | FAIL |
     Stderr Should Not Contain    [ WARN ]
-    Stdout Should Contain    PASS
-    Stdout Should Contain    FAIL
-    Stderr Should Contain    WARN
+    Stdout Should Contain    | \x1b[32mPASS\x1b[0m |
+    Stdout Should Contain    | \x1b[31mFAIL\x1b[0m |
+    Stderr Should Contain    [ \x1b[33mWARN\x1b[0m ]
+    Stdout Should Contain    \x1b]8;;file:///
