@@ -795,8 +795,8 @@ If library creates a new listener instance every time when the library
 itself is instantiated, the actual listener instance to use will change
 according to the `library scope`_.
 
-Listener order
---------------
+Listener calling order
+----------------------
 
 By default, listeners are called in the order they are taken into use so that
 listeners registered from the command line are called before library listeners.
@@ -808,7 +808,7 @@ it is called. The number can be positive or negative and it is zero by default.
 The custom order does not affect the `close` method of library listeners, though.
 That method is always called when the library goes out of its scope.
 
-.. note:: Setting custom listener order is new in Robot Framework 7.1.
+.. note:: Controlling listener calling order is new in Robot Framework 7.1.
 
 Listener examples
 -----------------
