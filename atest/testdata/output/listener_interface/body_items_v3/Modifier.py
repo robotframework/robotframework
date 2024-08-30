@@ -78,7 +78,6 @@ class Modifier:
     def start_while_iteration(self, data: running.WhileIteration,
                               result: result.WhileIteration):
         if data.parent.parent.name == 'WHILE':
-            self.modify_body(data, result)
             # Each iteration starts with original body.
             assert not data.body
             iterations = len(result.parent.body)
