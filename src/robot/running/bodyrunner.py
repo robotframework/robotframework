@@ -401,7 +401,6 @@ class WhileRunner:
                 if error:
                     raise error
                 return
-
             limit = WhileLimit.create(data.limit,
                                       data.on_limit,
                                       data.on_limit_message,
