@@ -54,17 +54,19 @@ Outputs should not have ANSI codes
     Stderr Should Contain    [ WARN ]
 
 Outputs should have ANSI colors when not on Windows
+    [Arguments]    ${links}=True
     IF    os.sep == '/'
-        Outputs should have ANSI codes
+        Outputs should have ANSI codes    ${links}
     ELSE
        Outputs should not have ANSI codes
     END
 
 Outputs should have ANSI codes
+    [Arguments]    ${links}=True
     Stdout Should Not Contain    | PASS |
     Stdout Should Not Contain    | FAIL |
     Stderr Should Not Contain    [ WARN ]
     Stdout Should Contain    | \x1b[32mPASS\x1b[0m |
     Stdout Should Contain    | \x1b[31mFAIL\x1b[0m |
     Stderr Should Contain    [ \x1b[33mWARN\x1b[0m ]
-    Stdout Should Contain    \x1b]8;;file:///
+    Stdout Should Contain    \x1b]8;;file://
