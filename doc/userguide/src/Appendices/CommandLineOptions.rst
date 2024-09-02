@@ -88,6 +88,7 @@ Command line options for test execution
   --quiet                 Shortcut for `--console quiet`.
   -W, --consolewidth <width>  `Sets the width`_ of the console output.
   -C, --consolecolors <auto|on|ansi|off>  `Specifies are colors`_ used on the console.
+  --consolelinks <auto|off>  Controls `making paths to results files hyperlinks <Console links_>`_.
   -K, --consolemarkers <auto|on|off>  Show `markers on the console`_ when top level
                                       keywords in a test case end.
   -P, --pythonpath <path>  Additional locations to add to the `module search path`_.
@@ -146,6 +147,7 @@ Command line options for post-processing outputs
                           `empty test suites`_.
   --prerebotmodifier <name:args>  Activate `programmatic modification of results`_.
   -C, --consolecolors <auto|on|ansi|off>  `Specifies are colors`_ used on the console.
+  --consolelinks <auto|off>  Controls `making paths to results files hyperlinks <Console links_>`_.
   -P, --pythonpath <path>   Additional locations to add to the `module search path`_.
   -A, --argumentfile <path>   A text file to `read more arguments`_ from.
   -h, --help              Prints `usage instructions`_.

@@ -824,6 +824,29 @@ __ http://en.wikipedia.org/wiki/ANSI_escape_code
 
 .. note:: Using ANSI codes on Windows by default is new in Robot Framework 7.1.
 
+Console links
+~~~~~~~~~~~~~
+
+Result file paths written to the console at the end of the execution are, by default,
+hyperlinks. This behavior can be controlled with the :option:`--consolelinks` option
+that accepts the following case-insensitive values:
+
+`auto`
+    Paths are converted to links when `console colors`_ are enabled. This is the default.
+
+`off`
+    Links are unconditionally disabled.
+
+The hyperlink support depends also on the console that is used, but nowadays
+the `support is pretty good`__. The commonly used `Windows Console`__ does not
+support links, though, but the newer `Windows Terminal`__ does.
+
+.. note:: Hyperlink support is new in Robot Framework 7.1.
+
+__ https://github.com/Alhadis/OSC8-Adoption
+__ https://en.wikipedia.org/wiki/Windows_Console
+__ https://en.wikipedia.org/wiki/Windows_Terminal
+
 Console markers
 ~~~~~~~~~~~~~~~
 

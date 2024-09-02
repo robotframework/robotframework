@@ -68,6 +68,7 @@ class _BaseSettings:
                  'PreRebotModifiers': ('prerebotmodifier', []),
                  'StatusRC'         : ('statusrc', True),
                  'ConsoleColors'    : ('consolecolors', 'AUTO'),
+                 'ConsoleLinks'     : ('consolelinks', 'AUTO'),
                  'PythonPath'       : ('pythonpath', []),
                  'StdOut'           : ('stdout', None),
                  'StdErr'           : ('stderr', None)}
@@ -455,6 +456,10 @@ class _BaseSettings:
         return self['ConsoleColors']
 
     @property
+    def console_links(self):
+        return self['ConsoleLinks']
+
+    @property
     def rpa(self):
         return self['RPA']
 
@@ -613,6 +618,7 @@ class RobotSettings(_BaseSettings):
             'type':    self.console_type,
             'width':   self.console_width,
             'colors':  self.console_colors,
+            'links': self.console_links,
             'markers': self.console_markers,
             'stdout':  self['StdOut'],
             'stderr':  self['StdErr']
@@ -736,6 +742,7 @@ class RebotSettings(_BaseSettings):
     def console_output_config(self):
         return {
             'colors':  self.console_colors,
+            'links': self.console_links,
             'stdout':  self['StdOut'],
             'stderr':  self['StdErr']
         }

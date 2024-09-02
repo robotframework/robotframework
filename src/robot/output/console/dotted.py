@@ -25,10 +25,10 @@ from ..loggerapi import LoggerApi
 
 class DottedOutput(LoggerApi):
 
-    def __init__(self, width=78, colors='AUTO', stdout=None, stderr=None):
+    def __init__(self, width=78, colors='AUTO', links='AUTO', stdout=None, stderr=None):
         self.width = width
-        self.stdout = HighlightingStream(stdout or sys.__stdout__, colors)
-        self.stderr = HighlightingStream(stderr or sys.__stderr__, colors)
+        self.stdout = HighlightingStream(stdout or sys.__stdout__, colors, links)
+        self.stderr = HighlightingStream(stderr or sys.__stderr__, colors, links)
         self.markers_on_row = 0
 
     def start_suite(self, data, result):

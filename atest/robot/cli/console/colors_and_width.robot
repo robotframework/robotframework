@@ -5,19 +5,19 @@ Resource          console_resource.robot
 
 *** Test Cases ***
 Console Colors Auto
-    Run Tests With Colors    --consolecolors auto
+    Run Tests With Warnings    --consolecolors auto
     Outputs should not have ANSI codes
 
 Console Colors Off
-    Run Tests With Colors    --consolecolors OFF
+    Run Tests With Warnings    --consolecolors OFF
     Outputs should not have ANSI codes
 
 Console Colors On
-    Run Tests With Colors    --ConsoleCol on
+    Run Tests With Warnings    --ConsoleCol on
     Outputs should have ANSI colors when not on Windows
 
 Console Colors ANSI
-    Run Tests With Colors    --Console-Colors AnSi
+    Run Tests With Warnings    --Console-Colors AnSi
     Outputs should have ANSI codes
 
 Invalid Console Colors
@@ -43,10 +43,19 @@ Invalid Width
     Run Tests Without Processing Output    -W InVaLid    misc/pass_and_fail.robot
     Stderr Should Be Equal To    [ ERROR ] Invalid value for option '--consolewidth': Expected integer, got 'InVaLid'.${USAGE TIP}\n
 
+Console links off
+    [Documentation]    Console links being enabled is tested as part of testing console colors.
+    Run Tests With Warnings    --console-links oFF --console-colors on
+    Outputs should have ANSI colors when not on Windows    links=False
+
+Invalid link config
+    Run Tests Without Processing Output    --ConsoleLinks InVaLid    misc/pass_and_fail.robot
+    Stderr Should Be Equal To    [ ERROR ] Invalid console link value 'InVaLid. Available 'AUTO' and 'OFF'.${USAGE TIP}\n
+
 *** Keywords ***
-Run Tests With Colors
-    [Arguments]    ${colors}
-    Run Tests    ${colors} --variable LEVEL1:WARN    misc/pass_and_fail.robot
+Run Tests With Warnings
+    [Arguments]    ${options}
+    Run Tests    ${options} --variable LEVEL1:WARN    misc/pass_and_fail.robot
 
 Outputs should not have ANSI codes
     Stdout Should Contain    | PASS |
@@ -69,4 +78,8 @@ Outputs should have ANSI codes
     Stdout Should Contain    | \x1b[32mPASS\x1b[0m |
     Stdout Should Contain    | \x1b[31mFAIL\x1b[0m |
     Stderr Should Contain    [ \x1b[33mWARN\x1b[0m ]
-    Stdout Should Contain    \x1b]8;;file://
+    IF    ${links}
+        Stdout Should Contain    \x1b]8;;file://
+    ELSE
+        Stdout Should Not Contain    \x1b]8;;file://
+    END

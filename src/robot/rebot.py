@@ -262,6 +262,9 @@ Options
                           on:   always use colors
                           ansi: like `on` but use ANSI colors also on Windows
                           off:  disable colors altogether
+    --consolelinks auto|off  Control making paths to results files hyperlinks.
+                          auto: use links when colors are enabled (default)
+                          off: disable links unconditionally
  -P --pythonpath path *   Additional locations to add to the module search path
                           that is used when importing Python based extensions.
  -A --argumentfile path *  Text file to read more arguments from. File can have
