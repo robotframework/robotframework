@@ -7,7 +7,7 @@ ${SOURCE}         output/listener_interface/body_items_v3/tests.robot
 ${MODIFIER}       output/listener_interface/body_items_v3/Modifier.py
 @{ALL TESTS}      Library keyword    User keyword    Non-existing keyword
 ...               Empty keyword    Duplicate keyword    Invalid keyword
-...               IF    TRY    FOR    WHILE    VAR    RETURN
+...               IF    TRY    FOR    WHILE    WHILE with modified limit    VAR    RETURN
 ...               Invalid syntax    Run Keyword
 
 *** Test Cases ***
@@ -40,6 +40,11 @@ Modify FOR
 Modify WHILE
     ${tc} =    Check Test Case    WHILE     FAIL    Fail at iteration 10.
     Length Should Be    ${tc.body[0].body}                     10
+
+Modify WHILE limit
+    ${tc} =    Check Test Case    WHILE with modified limit     PASS    ${EMPTY}
+    Length Should Be    ${tc.body[0].body}                     3
+    Should Be Equal    ${tc.body[0].body[2].message}    Modified limit message.
 
 Modify IF
     ${tc} =    Check Test Case    IF        FAIL    Executed!

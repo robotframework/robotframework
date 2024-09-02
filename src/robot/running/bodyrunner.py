@@ -391,10 +391,6 @@ class WhileRunner:
                 error = DataError(data.error, syntax=True)
             elif not ctx.dry_run:
                 try:
-                    limit = WhileLimit.create(data.limit,
-                                              data.on_limit,
-                                              data.on_limit_message,
-                                              ctx.variables)
                     run = self._should_run(data.condition, ctx.variables)
                 except DataError as err:
                     error = err
@@ -405,6 +401,10 @@ class WhileRunner:
                 if error:
                     raise error
                 return
+            limit = WhileLimit.create(data.limit,
+                                      data.on_limit,
+                                      data.on_limit_message,
+                                      ctx.variables)
             errors = []
             while True:
                 try:

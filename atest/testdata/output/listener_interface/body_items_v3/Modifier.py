@@ -68,15 +68,21 @@ class Modifier:
         result.assign['${x}'] = 'xxx'
 
     def start_while(self, data: running.While, result: result.While):
-        data.body.clear()
+        if data.parent.name == 'WHILE':
+            data.body.clear()
+        if data.parent.name == 'WHILE with modified limit':
+            data.limit = '2'
+            data.on_limit = 'PASS'
+            data.on_limit_message = 'Modified limit message.'
 
     def start_while_iteration(self, data: running.WhileIteration,
                               result: result.WhileIteration):
-        # Each iteration starts with original body.
-        assert not data.body
-        iterations = len(result.parent.body)
-        name = 'Fail' if iterations == 10 else 'Log'
-        data.body.create_keyword(name, [f'{name} at iteration {iterations}.'])
+        if data.parent.parent.name == 'WHILE':
+            # Each iteration starts with original body.
+            assert not data.body
+            iterations = len(result.parent.body)
+            name = 'Fail' if iterations == 10 else 'Log'
+            data.body.create_keyword(name, [f'{name} at iteration {iterations}.'])
 
     def start_if(self, data: running.If, result: result.If):
         data.body[1].condition = 'False'
