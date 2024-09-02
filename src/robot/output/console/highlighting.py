@@ -152,7 +152,7 @@ class AnsiHighlighter:
         self._set_color(self.RESET)
 
     def link(self, path):
-        return f'\033]8;;file:///{path}\033\\{path}\033]8;;\033\\'
+        return f'\033]8;;{path.as_uri()}\033\\{path}\033]8;;\033\\'
 
     def _set_color(self, color):
         self._stream.write(color)
