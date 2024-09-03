@@ -1,5 +1,5 @@
 =======================================
-Robot Framework 7.1 release candidate 1
+Robot Framework 7.1 release candidate 2
 =======================================
 
 .. default-role:: code
