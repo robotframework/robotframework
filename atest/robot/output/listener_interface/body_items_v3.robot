@@ -43,8 +43,10 @@ Modify WHILE
 
 Modify WHILE limit
     ${tc} =    Check Test Case    WHILE with modified limit     PASS    ${EMPTY}
-    Length Should Be    ${tc.body[0].body}                     3
-    Should Be Equal    ${tc.body[0].body[2].message}    Modified limit message.
+    Length Should Be    ${tc.body[1].body}                     3
+    Check Log Message   ${tc.body[1].body[0].body[0].body[0]}  \${x} = 1
+    Check Log Message   ${tc.body[1].body[1].body[0].body[0]}  \${x} = 2
+    Check Log Message   ${tc.body[1].body[2]}                  Modified limit message.
 
 Modify IF
     ${tc} =    Check Test Case    IF        FAIL    Executed!

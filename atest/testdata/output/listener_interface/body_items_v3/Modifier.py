@@ -71,7 +71,7 @@ class Modifier:
         if data.parent.name == 'WHILE':
             data.body.clear()
         if data.parent.name == 'WHILE with modified limit':
-            data.limit = '2'
+            data.limit = 2
             data.on_limit = 'PASS'
             data.on_limit_message = 'Modified limit message.'
 

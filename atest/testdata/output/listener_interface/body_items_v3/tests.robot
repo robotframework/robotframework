@@ -60,17 +60,14 @@ WHILE
     END
 
 WHILE with modified limit
-    [Documentation]    FAIL 
-    ...    WHILE loop was aborted because it did not finish within the limit of 1 iterations. Use the 'limit' argument to increase or remove the limit if needed.
-    
-    # It might be useful to globally change default behaviour of WHILE limit,
-    # if it was not explicitly specified.
-    # Modifier.py listener will change limit configuration - we will pass the test
-    # on loop limit, limit will be changed to 2 and default log message on
-    # limit will be changed.
+    [Documentation]    FAIL
+    ...    WHILE loop was aborted because it did not finish within the limit of 1 iterations. \
+    ...    Use the 'limit' argument to increase or remove the limit if needed.
+    VAR    ${x}    ${0}
     WHILE     True    limit=1
-        CONTINUE
+        VAR    ${x}    ${x + 1}
     END
+    Should Be Equal    ${x}   ${2}
 
 VAR
     VAR    ${x}    value

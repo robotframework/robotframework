@@ -383,7 +383,6 @@ class WhileRunner:
         ctx = self._context
         error = None
         run = False
-        limit = None
         result.start_time = datetime.now()
         iter_result = result.body.create_iteration(start_time=datetime.now())
         if self._run:
@@ -396,15 +395,17 @@ class WhileRunner:
                     error = err
         with StatusReporter(data, result, self._context, run):
             iter_data = data.get_iteration()
+            if run:
+                try:
+                    limit = WhileLimit.create(data, ctx.variables)
+                except DataError as err:
+                    error = err
+                    run = False
             if ctx.dry_run or not run:
                 self._run_iteration(iter_data, iter_result, run)
                 if error:
                     raise error
                 return
-            limit = WhileLimit.create(data.limit,
-                                      data.on_limit,
-                                      data.on_limit_message,
-                                      ctx.variables)
             errors = []
             while True:
                 try:
@@ -651,29 +652,34 @@ class WhileLimit:
         self.on_limit_message = on_limit_message
 
     @classmethod
-    def create(cls, limit, on_limit, on_limit_message, variables):
-        if on_limit_message:
-            try:
-                on_limit_message = variables.replace_string(on_limit_message)
-            except DataError as err:
-                raise DataError(f"Invalid WHILE loop 'on_limit_message': '{err}")
-        on_limit = cls._parse_on_limit(variables, on_limit)
+    def create(cls, data, variables):
+        limit = cls._parse_limit(data.limit, variables)
+        on_limit = cls._parse_on_limit(data.on_limit, variables)
+        on_limit_msg = cls._parse_on_limit_message(data.on_limit_message, variables)
         if not limit:
-            return IterationCountLimit(DEFAULT_WHILE_LIMIT, on_limit, on_limit_message)
-        limit = variables.replace_string(limit)
+            return IterationCountLimit(DEFAULT_WHILE_LIMIT, on_limit, on_limit_msg)
         if limit.upper() == 'NONE':
             return NoLimit()
         try:
             count = cls._parse_limit_as_count(limit)
         except ValueError:
             seconds = cls._parse_limit_as_timestr(limit)
-            return DurationLimit(seconds, on_limit, on_limit_message)
+            return DurationLimit(seconds, on_limit, on_limit_msg)
         else:
-            return IterationCountLimit(count, on_limit, on_limit_message)
+            return IterationCountLimit(count, on_limit, on_limit_msg)
 
     @classmethod
-    def _parse_on_limit(cls, variables, on_limit):
-        if on_limit is None:
+    def _parse_limit(cls, limit, variables):
+        if not limit:
+            return None
+        try:
+            return variables.replace_string(limit)
+        except DataError as err:
+            raise DataError(f"Invalid WHILE loop limit: {err}")
+
+    @classmethod
+    def _parse_on_limit(cls, on_limit, variables):
+        if not on_limit:
             return None
         try:
             on_limit = variables.replace_string(on_limit)
@@ -682,7 +688,16 @@ class WhileLimit:
             raise DataError(f"Value '{on_limit}' is not accepted. Valid values "
                             f"are 'PASS' and 'FAIL'.")
         except DataError as err:
-            raise DataError(f"Invalid WHILE loop 'on_limit' value: {err}")
+            raise DataError(f"Invalid WHILE loop 'on_limit': {err}")
+
+    @classmethod
+    def _parse_on_limit_message(cls, on_limit_message, variables):
+        if not on_limit_message:
+            return None
+        try:
+            return variables.replace_string(on_limit_message)
+        except DataError as err:
+            raise DataError(f"Invalid WHILE loop 'on_limit_message': '{err}")
 
     @classmethod
     def _parse_limit_as_count(cls, limit):
