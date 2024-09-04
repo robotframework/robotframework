@@ -20,8 +20,6 @@ from pathlib import Path
 
 
 if sys.version_info < (3, 9) and not Path(__file__).exists():    # zipsafe
-    # `importlib.resources.files` is new in Python 3.9, but that version does
-    # not seem to be compatible with zipapp.
     try:
         from importlib_resources import files
     except ImportError:
