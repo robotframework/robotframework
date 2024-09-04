@@ -19,7 +19,6 @@
 
 import errno
 import os
-import socket
 import sys
 from contextlib import contextmanager
 try:
@@ -163,12 +162,7 @@ class AnsiHighlighter:
             uri = path.as_uri()
         except ValueError:
             return path
-        # Add the host name to the URI to support opening links remotely.
-        # Windows Terminal doesn't yet support the host component, though:
-        # https://github.com/microsoft/terminal/issues/14116
-        if uri[:8] == 'file:///' and not WINDOWS:
-            uri = f'file://{socket.getfqdn()}/{uri[8:]}'
-        # The hyperlink format is documented here:
+        # Terminal hyperlink syntax is documented here:
         # https://gist.github.com/egmontkob/eb114294efbcd5adb1944c9f3cb5feda
         return f'\033]8;;{uri}\033\\{path}\033]8;;\033\\'
 
