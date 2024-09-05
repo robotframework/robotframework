@@ -63,6 +63,9 @@ class Writer(ABC):
 class ModelWriter(Writer, ABC):
     handles_line = '<!-- JS MODEL -->'
 
+    def handles(self, line: str):
+        return line.strip().startswith(self.handles_line)
+
 
 class LineWriter(Writer):
 
