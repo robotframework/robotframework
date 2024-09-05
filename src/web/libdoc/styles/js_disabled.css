@@ -1,0 +1,21 @@
+#javascript-disabled {
+    width: 600px;
+    margin: 100px auto 0 auto;
+    padding: 20px;
+    color: black;
+    border: 1px solid #ccc;
+    background: #eee;
+}
+#javascript-disabled h1 {
+    width: 100%;
+    float: none;
+}
+#javascript-disabled ul {
+    font-size: 1.2em;
+}
+#javascript-disabled li {
+    margin: 0.5em 0;
+}
+#javascript-disabled b {
+    font-style: italic;
+}

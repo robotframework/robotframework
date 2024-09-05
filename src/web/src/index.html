@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <!-- JS MODEL -->
+  </head>
+  <body>
+    <style>
+      @import "./styles/main.css";
+    </style>
+    <style>
+      @import "./styles/doc_formatting.css";
+    </style>
+    <div id="root"></div>
+    <script type="text/x-handlebars-template" id="base-template">
+      <div class="base-container">
+        <input
+          id="hamburger-menu-input"
+          class="hamburger-menu"
+          type="checkbox"
+        />
+        <span class="hamburger-menu hamburger-menu-1"></span>
+        <span class="hamburger-menu hamburger-menu-2"></span>
+        <span class="hamburger-menu hamburger-menu-3"></span>
+        <div class="libdoc-overview"><div id="shortcuts-container"></div></div>
+        <div class="libdoc-details">
+          <table class="metadata">
+            {{#if version}}<tr><th>{{t "libVersion"}}:</th><td
+                >{{version}}</td></tr>{{/if}}
+            {{#if scope}}<tr><th>{{t "libScope"}}:</th><td
+                >{{scope}}</td></tr>{{/if}}
+          </table>
+          <div id="introduction-container">
+            <h2 id="introduction">{{t "intro"}}</h2>
+            <div class="doc">{{{doc}}}</div>
+          </div>
+          <div id="importing-container"></div>
+          <div id="keywords-container"></div>
+          <div id="data-types-container"></div>
+          <div id="footer-container"></div>
+        </div>
+        <a class="libdoc-title" href="#library-documentation-top">
+          <h1>{{name}}</h1>
+          <svg
+            xmlns:dc="http://purl.org/dc/elements/1.1/"
+            xmlns:cc="http://creativecommons.org/ns#"
+            xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+            xmlns:svg="http://www.w3.org/2000/svg"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 202.4325 202.34125"
+            height="42"
+            width="42"
+            xml:space="preserve"
+            version="1.1"
+          ><metadata id="metadata8"><rdf:RDF><cc:Work rdf:about=""><dc:format
+                  >image/svg+xml</dc:format><dc:type
+                    rdf:resource="http://purl.org/dc/dcmitype/StillImage"
+                  /></cc:Work></rdf:RDF></metadata><defs id="defs6"><clipPath
+                id="clipPath16"
+                clipPathUnits="userSpaceOnUse"
+              ><path
+                  id="path18"
+                  d="m 0,161.873 161.946,0 L 161.946,0 0,0 0,161.873 Z"
+                /></clipPath></defs><g
+              transform="matrix(1.25,0,0,-1.25,0,202.34125)"
+              id="g10"
+            ><g id="g12"><g clip-path="url(#clipPath16)" id="g14"><g
+                    transform="translate(52.4477,88.1268)"
+                    id="g20"
+                  ><path
+                      id="robot-svg-path"
+                      d="m 0,0 c 0,7.6 6.179,13.779 13.77,13.779 7.6,0 13.779,-6.179 13.779,-13.779 0,-2.769 -2.238,-5.007 -4.998,-5.007 -2.761,0 -4.999,2.238 -4.999,5.007 0,2.078 -1.695,3.765 -3.782,3.765 C 11.693,3.765 9.997,2.078 9.997,0 9.997,-2.769 7.76,-5.007 4.999,-5.007 2.238,-5.007 0,-2.769 0,0 m 57.05,-23.153 c 0,-2.771 -2.237,-5.007 -4.998,-5.007 l -46.378,0 c -2.761,0 -4.999,2.236 -4.999,5.007 0,2.769 2.238,5.007 4.999,5.007 l 46.378,0 c 2.761,0 4.998,-2.238 4.998,-5.007 M 35.379,-2.805 c -1.545,2.291 -0.941,5.398 1.35,6.943 l 11.594,7.83 c 2.273,1.58 5.398,0.941 6.943,-1.332 1.545,-2.29 0.941,-5.398 -1.35,-6.943 l -11.594,-7.83 c -0.852,-0.586 -1.829,-0.87 -2.788,-0.87 -1.607,0 -3.187,0.781 -4.155,2.202 m 31.748,-30.786 c 0,-0.945 -0.376,-1.852 -1.045,-2.522 l -8.617,-8.617 c -0.669,-0.668 -1.576,-1.045 -2.523,-1.045 l -52.833,0 c -0.947,0 -1.854,0.377 -2.523,1.045 l -8.617,8.617 c -0.669,0.67 -1.045,1.577 -1.045,2.522 l 0,52.799 c 0,0.947 0.376,1.854 1.045,2.522 l 8.617,8.619 c 0.669,0.668 1.576,1.044 2.523,1.044 l 52.833,0 c 0.947,0 1.854,-0.376 2.523,-1.044 l 8.617,-8.619 c 0.669,-0.668 1.045,-1.575 1.045,-2.522 l 0,-52.799 z m 7.334,61.086 -11.25,11.25 c -1.705,1.705 -4.018,2.663 -6.428,2.663 l -56.523,0 c -2.412,0 -4.725,-0.959 -6.43,-2.665 L -17.412,27.494 c -1.704,-1.705 -2.661,-4.016 -2.661,-6.427 l 0,-56.515 c 0,-2.411 0.958,-4.725 2.663,-6.428 l 11.25,-11.25 c 1.705,-1.705 4.017,-2.662 6.428,-2.662 l 56.515,0 c 2.41,0 4.723,0.957 6.428,2.662 l 11.25,11.25 c 1.705,1.703 2.663,4.017 2.663,6.428 l 0,56.514 c 0,2.412 -0.958,4.724 -2.663,6.429"
+                    /></g></g></g></g></svg>
+        </a>
+      </div>
+    </script>
+    <script type="text/x-handlebars-template" id="importing-template">
+      <h2 id="Importing">{{t "importing"}}</h2>
+      <div class="keywords">
+          {{#each inits}}
+          <div class="kw-row">
+            <div class="kw-overview">
+            {{#if this.args.length}}
+                <div class="args">
+                  <h4>{{t "arguments"}}</h4>
+                  <div class="arguments-list-container">
+                    <div class="arguments-list">
+                    {{#each this.args}}
+                      {{> arg }}
+                    {{/each}}
+                    </div>
+                  </div>
+                </div>
+            {{/if}}
+            {{#if this.doc}}
+              <div class="kw-docs">
+                <h4>{{t "doc"}}</h4>
+                <div class="kwdoc doc">{{{this.doc}}}</div>
+              </div>
+            {{/if}}
+          </div>
+          {{/each}}
+      </div>
+    </script>
+    <script type="text/x-handlebars-template" id="shortcuts-template">
+      <div class="keywords-overview">
+        <div class="keyword-search-box">
+          <input
+            placeholder="{{t 'search'}}"
+            type="text"
+            class="search-input"
+          />
+          <button class="clear-search">&#10005;</button>
+        </div>
+        {{#if tags.length}}
+          <select id="tags-shortcuts-container">
+          </select>
+        {{/if}}
+        <div class="keywords-overview-header-row">
+          <h4>{{t "keywords"}}
+            (<span id="keyword-statistics-header"></span>)
+          </h4>
+          <button id="toggle-keyword-shortcuts">+</button>
+        </div>
+        <ul class="shortcuts" id="keyword-shortcuts-container">
+        </ul>
+      </div>
+    </script>
+    <script type="text/x-handlebars-template" id="keyword-shortcuts-template">
+      {{#each keywords}}
+        {{#unless this.hidden}}
+          <li>
+            <a
+              href="#{{encodeURIComponent this.name}}"
+              class="match"
+              title="{{value.shortdoc}}"
+            >{{this.name}}</a>
+          </li>
+        {{/unless}}
+      {{/each}}
+      {{#each keywords}}
+        {{#if this.hidden}}
+          <li>
+            <a
+              href="#{{encodeURIComponent this.name}}"
+              class="no-match"
+              title="{{value.shortdoc}}"
+            >{{this.name}}</a>
+          </li>
+        {{/if}}
+      {{/each}}
+    </script>
+    <script type="text/x-handlebars-template" id="keywords-template">
+      <h2 id="Keywords">{{t "keywords"}}</h2>
+      <div class="keywords">
+          {{#each keywords}}
+          {{#unless this.hidden}}
+          {{>keyword this}}
+          {{/unless}}
+          {{/each}}
+          {{#each keywords}}
+          {{#if this.hidden}}
+          {{>keyword this}}
+          {{/if}}
+          {{/each}}
+      </div>
+    </script>
+    <script type="text/x-handlebars-template" id="keyword-template">
+      <div class="keyword-container {{#if hidden}}no-{{/if}}match" id="{{name}}">
+         <div class="keyword-name">
+              <h2>
+              <a class="kw-name" href="#{{encodeURIComponent name}}"
+                 title="{{t 'kwLink'}}">{{name}}</a>
+              </h2>
+         </div>
+         <div class="keyword-content">
+            <div class="kw-overview">
+              {{#if args.length}}
+                <div class="args">
+                  <h4>{{t "arguments"}}</h4>
+                  <div class="arguments-list-container">
+                    <div class="arguments-list">
+                    {{#each args}}
+                      {{> arg this}}
+                    {{/each}}
+                    </div>
+                  </div>
+                </div>
+              {{/if}}
+              {{#if returnType}}
+              <div class="return-type">
+                <h4>{{t "returnType"}}</h4>
+                <span class="arg-type">
+                {{>typeInfo returnType}}
+                </span>
+              </div>
+              {{/if}}
+            </div>
+            {{#if tags.length}}
+            <div class="tags">
+              <h4>{{t "tags"}}</h4>
+              <span class="kw-tags">
+              {{#each tags}}
+                <span class="tag-link"
+                  title="Show keywords with this tag">{{this}}</span>{{#unless @last}},<br>{{/unless}}
+              {{/each}}
+              </span>
+            </div>
+          {{/if}}
+        </div>
+            {{#if doc}}
+              <div class="kw-docs">
+                <h4>{{t "doc"}}</h4>
+                <div class="kwdoc doc">{{{doc}}}</div>
+              </div>
+            {{/if}}
+         </div>
+      </div>
+    </script>
+    <script type="text/x-handlebars-template" id="argument-template">
+          <span class="arg-name {{#if required}}arg-required{{else}}arg-optional{{/if}}" title="{{t 'argName'}}">
+          {{#ifEquals kind "VAR_POSITIONAL"}}<span class="arg-kind" title="{{t 'varArgs'}}">*</span>{{/ifEquals}}
+          {{#ifEquals kind "VAR_NAMED"}}<span class="arg-kind" title="{{t 'varNamedArgs'}}">**</span>{{/ifEquals}}
+          {{#ifEquals kind "NAMED_ONLY"}}<span class="arg-kind" title="{{t 'namedOnlyArg'}}">&#x1F3F7;</span>{{/ifEquals}}
+          {{#ifEquals kind "POSITIONAL_ONLY"}}<span class="arg-kind" title="{{t 'posOnlyArg'}}">&#x27F6;</span>{{/ifEquals}}
+          {{name}}
+          </span>
+        {{#ifNotNull defaultValue}}
+        <div class="arg-default-container">
+          <span class="arg-default-eq">=</span>
+          <span class="arg-default-value" title="{{t 'defaultTitle'}}">{{defaultValue}}</span>
+        </div>
+      {{/ifNotNull}}
+
+      {{#if type}}
+        <span class="arg-type">
+            {{> typeInfo type}}
+        </span>
+      {{/if}}
+    </script>
+    <script type="text/x-handlebars-template" id="tags-shortcuts-template">
+      <option value="" {{#ifEquals selectedTag ""}}selected{{/ifEquals}}>- Show all tags -</option>
+      {{#each tags}}
+        <option {{#ifEquals ../selectedTag this}}selected{{/ifEquals}}>{{this}}
+        </option>
+      {{/each}}
+    </script>
+    <script type="text/x-handlebars-template" id="type-info-template">
+      {{~#if union}}
+        {{#each nested}}
+          {{> typeInfo this}}
+          {{#unless @last}}|{{/unless}}
+        {{/each}}
+      {{else~}}
+        {{#if typedoc~}}
+          <a style="cursor: pointer;" class="type" data-typedoc={{typedoc}} title="{{t 'typeInfoDialog'}}">{{name}}</a>
+        {{~else}}
+          <span class="type">{{name}}</span>
+        {{/if}}
+        {{#if nested.length}}
+        [
+        {{~#each nested}}
+            {{~> typeInfo this}}
+            {{~#unless @last}},&nbsp;{{/unless}}
+          {{~/each~}}
+          ]
+        {{/if~}}
+      {{~/if~}}
+    </script>
+    <script type="text/x-handlebars-template" id="data-types-template">
+      {{#if typedocs.length}}
+        <h2 id="Data types">{{t "dataTypes"}}</h2>
+        <div class="data-types">
+          {{#each typedocs}}
+            {{> dataType this}}
+          {{/each}}
+        </div>
+      {{/if}}
+    </script>
+    <script type="text/x-handlebars-template" id="data-type-template">
+      <div class="data-type-container {{#if hidden}}no-{{/if}}match" id="type-modal-{{name}}">
+         <div class="data-type-name">
+              <h2>{{name}} ({{type}})</h2>
+         </div>
+         <div class="data-type-content">
+            {{#if doc}}
+              <div class="dt-docs">
+                <h4>{{t "doc"}}</h4>
+                <div class="dtdoc doc">{{{doc}}}</div>
+              </div>
+            {{/if}}
+            {{#if members}}
+              <div class="dt-members">
+                <h4>{{t "allowedValues"}}</h4>
+                <ul class="enum-type-members">
+                  {{#each members}}
+                  <li>
+                    <span class="enum-member">{{this.name}}</span>
+                    {{#ifContains ../accepts "integer"}}
+                      &nbsp; (<span class="enum-member">{{value.value}}</span>)
+                    {{/ifContains}}
+                  </li>
+                  {{/each}}
+                </ul>
+              </div>
+            {{else}}
+              {{# if items}}
+              <div class="dt-items">
+                <h4>{{t "dictStructure"}}</h4>
+                  <div class="typed-dict-annotation">
+                  <span class="typed-dict-item">
+                    {
+                      {{#each items}}<br><span
+                    {{#if required}}
+                      class="td-item {{#if required}}required-key{{else}}optional-key{{/if}}"
+                      title="{{#if required}}required-key{{else}}optional-key{{/if}}"
+                    {{else}}
+                      class="td-item"
+                    {{/if}}
+                   >'${key}': </span>
+                     <span class="td-type">&lt;${type}&gt;</span>
+                     {{/each}}<br>
+                    }</span>
+                  </div>
+              </div>
+              {{/if}}
+            {{/if}}
+            {{#if accepts.length}}
+              <div class="dt-docs">
+                <h4>{{t "convertedTypes"}}</h4>
+                <ul class="dt-usages-list">
+                {{#each accepts}}
+                  <li>{{this}}</li>
+                {{/each}}
+                </ul>
+              </div>
+            {{/if}}
+            {{#if usages.length}}
+              <div class="dt-usages">
+                <h4>{{t "usages"}}</h4>
+                <ul class="dt-usages-list">
+                  {{#each usages}}
+                    <li><a href="#{{encodeURIComponent this}}">{{this}}</a></li>
+                  {{/each}}
+                </ul>
+              </div>
+            {{/if}}
+         </div>
+      </div>
+    </script>
+    <script type="text/x-handlebars-template" id="footer-template">
+      <p class="footer">
+        {{t "generatedBy"}}
+        <a
+          href="http://robotframework.org/robotframework/#built-in-tools"
+        >Libdoc</a>
+        {{t "on"}}
+        {{generated}}.
+      </p>
+    </script>
+    <script type="module">
+      import render from "./main.ts";
+
+      if (process.env.NODE_ENV !== "production") {
+        // Only runs in development and will be stripped in production builds.
+        import("./testdata.ts").then((module) => render(module.DATA));
+      } else {
+        render(libdoc);
+      }
+    </script>
+  </body>
+</html>
+q
