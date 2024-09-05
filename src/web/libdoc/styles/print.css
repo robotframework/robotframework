@@ -1,0 +1,11 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-size: 8pt;
+}
+a {
+    text-decoration: none;
+}
+#search, #open-search {
+    display: none;
+}
