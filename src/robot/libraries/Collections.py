@@ -455,9 +455,8 @@ class _List:
         normalize = Normalizer(ignore_case).normalize
         list1 = normalize(list1)
         list2 = normalize(list2)
-        diffs = ', '.join(str(item) for item in list2 if item not in list1)
-        _verify_condition(not diffs,
-                          f'Following values were not found from first list: {diffs}',
+        diffs = [item for item in list2 if item not in list1]
+        _verify_condition(not diffs, f'Following values are missing: {seq2str(diffs)}',
                           msg, values)
 
     def log_list(self, list_, level='INFO'):

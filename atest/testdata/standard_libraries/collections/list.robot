@@ -344,8 +344,12 @@ List Should Contain Sub List
     List Should Contain Sub List    ${LONG}    ${L4}
 
 List Should Contain Sub List With Missing Values
-    [Documentation]    FAIL Following values were not found from first list: 1, 1, 2, 1, 2
+    [Documentation]    FAIL Following values are missing: '1', '1', '2', '1' and '2'
     List Should Contain Sub List    ${L4}    ${LONG}
+
+List Should Contain Sub List When The Only Missing Value Is Empty String
+    [Documentation]    FAIL Following values are missing: ''
+    List Should Contain Sub List    ${L4}    ${{['41', 42, '', '43']}}
 
 List Should Contain Sub List With Missing Values And Own Error Message
     [Documentation]    FAIL My error message!
@@ -353,8 +357,8 @@ List Should Contain Sub List With Missing Values And Own Error Message
 
 List Should Contain Sub List With Missing Values And Own And Default Error Messages
     [Documentation]    FAIL My error message!
-    ...    Following values were not found from first list: 1, 1, 2, 1, 2
-    List Should Contain Sub List    ${L4}    ${LONG}    My error message!    values=please
+    ...    Following values are missing: 'x' and 'y'
+    List Should Contain Sub List    ${L4}    ${{'x', 'y'}}    My error message!    values=please
 
 Log List With Different Log Levels
     Log List    ${L3}

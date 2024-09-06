@@ -211,6 +211,9 @@ List Should Contain Sub List
 List Should Contain Sub List With Missing Values
     Check Test Case    ${TEST NAME}
 
+List Should Contain Sub List When The Only Missing Value Is Empty String
+    Check Test Case    ${TEST NAME}
+
 List Should Contain Sub List With Missing Values And Own Error Message
     Check Test Case    ${TEST NAME}
 
