@@ -1311,9 +1311,13 @@ can be changed dynamically using keywords from the `BuiltIn`_ library.
    |                        | - `${OPTIONS.include}` (:option:`--include`)          |            |
    |                        | - `${OPTIONS.skip}` (:option:`--skip`)                |            |
    |                        | - `${OPTIONS.skip_on_failure}`                        |            |
-   |                        |   (:option:`--skiponfailure`)                         |            |
+   |                        |   (:option:`--skip-on-failure`)                       |            |
+   |                        | - `${OPTIONS.console_width}`                          |            |
+   |                        |   (:option:`--console-width`)                         |            |
    |                        |                                                       |            |
-   |                        | New in RF 5.0. More options can be exposed later.     |            |
+   |                        | `${OPTIONS}` itself was added in RF 5.0 and           |            |
+   |                        | `${OPTIONS.console_width}` in RF 7.1.                 |            |
+   |                        | More options can be exposed later.                    |            |
    +------------------------+-------------------------------------------------------+------------+
 
 Suite related variables `${SUITE SOURCE}`, `${SUITE NAME}`, `${SUITE DOCUMENTATION}`

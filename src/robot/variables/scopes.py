@@ -192,7 +192,8 @@ class GlobalVariables(Variables):
                                 'include': Tags(settings.include),
                                 'exclude': Tags(settings.exclude),
                                 'skip': Tags(settings.skip),
-                                'skip_on_failure': Tags(settings.skip_on_failure)
+                                'skip_on_failure': Tags(settings.skip_on_failure),
+                                'console_width': settings.console_width
                             })),
                             ('${/}', os.sep),
                             ('${:}', os.pathsep),
