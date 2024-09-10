@@ -2,8 +2,8 @@
   "specversion": 3,
   "name": "Dialogs",
   "doc": "A library providing dialogs for interacting with users.\n\n``Dialogs`` is Robot Framework's standard library that provides means\nfor pausing the test or task execution and getting input from users.\n\nLong lines in the provided messages are wrapped automatically. If you want\nto wrap lines manually, you can add newlines using the ``\\n`` character\nsequence.\n\nThe library has a known limitation that it cannot be used with timeouts.",
-  "version": "7.0.1",
-  "generated": "2024-06-10T20:03:11+00:00",
+  "version": "7.1",
+  "generated": "2024-09-10T11:07:51+00:00",
   "type": "LIBRARY",
   "scope": "GLOBAL",
   "docFormat": "ROBOT",
@@ -57,10 +57,18 @@
           "kind": "VAR_POSITIONAL",
           "required": false,
           "repr": "*values"
+        },
+        {
+          "name": "default",
+          "type": null,
+          "defaultValue": "None",
+          "kind": "NAMED_ONLY",
+          "required": false,
+          "repr": "default=None"
         }
       ],
       "returnType": null,
-      "doc": "Pauses execution and asks user to select a value.\n\nThe selected value is returned. Pressing ``Cancel`` fails the keyword.\n\n``message`` is the instruction shown in the dialog and ``values`` are\nthe options given to the user.\n\nExample:\n| ${user} = | Get Selection From User | Select user | user1 | user2 | admin |",
+      "doc": "Pauses execution and asks user to select a value.\n\nThe selected value is returned. Pressing ``Cancel`` fails the keyword.\n\n``message`` is the instruction shown in the dialog, ``values`` are\nthe options given to the user and ``default`` is the optional default value.\n\nThe default value can either be one of the specified values or the index of\nthe value starting from ``1``. For example, ``default=user1`` and ``default=1``\nin the examples below have the exact same effect.\n\nExample:\n| ${user} = | Get Selection From User | Select user | user1 | user2 | admin |\n| ${user} = | Get Selection From User | Select user | user1 | user2 | admin | default=user1 |\n| ${user} = | Get Selection From User | Select user | user1 | user2 | admin | default=1 |\n\n``default`` is new in Robot Framework 7.1.",
       "shortdoc": "Pauses execution and asks user to select a value.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Dialogs.py",
@@ -91,7 +99,7 @@
       "shortdoc": "Pauses execution and asks user to select multiple values.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Dialogs.py",
-      "lineno": 100
+      "lineno": 108
     },
     {
       "name": "Get Value From User",

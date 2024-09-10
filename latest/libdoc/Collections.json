@@ -2,13 +2,13 @@
   "specversion": 3,
   "name": "Collections",
   "doc": "A library providing keywords for handling lists and dictionaries.\n\n``Collections`` is Robot Framework's standard library that provides a\nset of keywords for handling Python lists and dictionaries. This\nlibrary has keywords, for example, for modifying and getting\nvalues from lists and dictionaries (e.g. `Append To List`, `Get\nFrom Dictionary`) and for verifying their contents (e.g. `Lists\nShould Be Equal`, `Dictionary Should Contain Value`).\n\n== Table of contents ==\n\n- `Related keywords in BuiltIn`\n- `Using with list-like and dictionary-like objects`\n- `Ignore case`\n- `Boolean arguments`\n- `Data in examples`\n- `Keywords`\n\n= Related keywords in BuiltIn =\n\nFollowing keywords in the BuiltIn library can also be used with\nlists and dictionaries:\n\n| = Keyword Name =             | = Applicable With = |\n| `Create List`                | lists |\n| `Create Dictionary`          | dicts |\n| `Get Length`                 | both  |\n| `Length Should Be`           | both  |\n| `Should Be Empty`            | both  |\n| `Should Not Be Empty`        | both  |\n| `Should Contain`             | both  |\n| `Should Not Contain`         | both  |\n| `Should Contain X Times`     | lists |\n| `Should Not Contain X Times` | lists |\n| `Get Count`                  | lists |\n\n= Using with list-like and dictionary-like objects =\n\nList keywords that do not alter the given list can also be used\nwith tuples, and to some extent also with other iterables.\n`Convert To List` can be used to convert tuples and other iterables\nto Python ``list`` objects.\n\nSimilarly, dictionary keywords can, for most parts, be used with other\nmappings. `Convert To Dictionary` can be used if real Python ``dict``\nobjects are needed.\n\n= Ignore case =\n\nVarious keywords support ignoring case in comparisons by using the optional\n``ignore_case`` argument. Case-insensitivity can be enabled by using\n``ignore_case=True`` (see `Boolean arguments`) and it works recursively.\nWith dictionaries, it is also possible to use special values ``keys`` and\n``values`` to normalize only keys or values, respectively. These options\nthemselves are case-insensitive and also singular forms ``key`` and\n``value`` are supported.\n\nIf a dictionary contains keys that normalize to the same value, e.g.\n``{'a': 1, 'A': 2}``, normalizing keys causes an error.\n\nExamples:\n| `Lists Should Be Equal`        | ${list1} | ${list2} | ignore_case=True   |\n| `Dictionaries Should Be Equal` | ${dict1} | ${dict2} | ignore_case=values |\n\nNotice that some keywords accept also an older ``case_insensitive`` argument\nin addition to ``ignore_case``. The latter is new in Robot Framework 7.0 and\nshould be used unless there is a need to support older versions. The old\nargument is considered deprecated and will eventually be removed.\n\n= Boolean arguments =\n\nSome keywords accept arguments that are handled as Boolean values true or\nfalse. If such an argument is given as a string, it is considered false if\nit is an empty string or equal to ``FALSE``, ``NONE``, ``NO``, ``OFF`` or\n``0``, case-insensitively. Keywords verifying something that allow dropping\nactual and expected values from the possible error message also consider\nstring ``no values`` to be false. Other strings are considered true\nregardless their value, and other argument types are tested using the same\n[http://docs.python.org/library/stdtypes.html#truth|rules as in Python].\n\n| `Should Contain Match` | ${list} | ${pattern} | ignore_case=True  |\n| `Should Contain Match` | ${list} | ${pattern} | ignore_case=False |\n| `Lists Should Be Equal` | ${list1} | ${list2} | Custom error | no values |\n\n= Data in examples =\n\nList related keywords use variables in format ``${Lx}`` in their examples.\nThey mean lists with as many alphabetic characters as specified by ``x``.\nFor example, ``${L1}`` means ``['a']`` and ``${L3}`` means\n``['a', 'b', 'c']``.\n\nDictionary keywords use similar ``${Dx}`` variables. For example, ``${D1}``\nmeans ``{'a': 1}`` and ``${D3}`` means ``{'a': 1, 'b': 2, 'c': 3}``.",
-  "version": "7.0.1",
-  "generated": "2024-06-10T20:03:11+00:00",
+  "version": "7.1",
+  "generated": "2024-09-10T11:07:51+00:00",
   "type": "LIBRARY",
   "scope": "GLOBAL",
   "docFormat": "ROBOT",
   "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-  "lineno": 888,
+  "lineno": 887,
   "tags": [],
   "inits": [],
   "keywords": [
@@ -75,7 +75,7 @@
       "shortdoc": "Converts the given ``item`` to a Python ``dict`` type.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 507
+      "lineno": 506
     },
     {
       "name": "Convert To List",
@@ -121,7 +121,7 @@
       "shortdoc": "Returns a copy of the given dictionary.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 602
+      "lineno": 601
     },
     {
       "name": "Copy List",
@@ -250,7 +250,7 @@
       "shortdoc": "Fails if the given dictionaries are not equal.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 786
+      "lineno": 785
     },
     {
       "name": "Dictionary Should Contain Item",
@@ -301,7 +301,7 @@
       "shortdoc": "An item of ``key`` / ``value`` must be found in a ``dictionary``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 733
+      "lineno": 732
     },
     {
       "name": "Dictionary Should Contain Key",
@@ -344,7 +344,7 @@
       "shortdoc": "Fails if ``key`` is not found from ``dictionary``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 699
+      "lineno": 698
     },
     {
       "name": "Dictionary Should Contain Sub Dictionary",
@@ -395,7 +395,7 @@
       "shortdoc": "Fails unless all items in ``dict2`` are found from ``dict1``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 842
+      "lineno": 841
     },
     {
       "name": "Dictionary Should Contain Value",
@@ -438,7 +438,7 @@
       "shortdoc": "Fails if ``value`` is not found from ``dictionary``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 752
+      "lineno": 751
     },
     {
       "name": "Dictionary Should Not Contain Key",
@@ -481,7 +481,7 @@
       "shortdoc": "Fails if ``key`` is found from ``dictionary``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 716
+      "lineno": 715
     },
     {
       "name": "Dictionary Should Not Contain Value",
@@ -524,7 +524,7 @@
       "shortdoc": "Fails if ``value`` is found from ``dictionary``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 769
+      "lineno": 768
     },
     {
       "name": "Get Dictionary Items",
@@ -551,7 +551,7 @@
       "shortdoc": "Returns items of the given ``dictionary`` as a list.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 654
+      "lineno": 653
     },
     {
       "name": "Get Dictionary Keys",
@@ -578,7 +578,7 @@
       "shortdoc": "Returns keys of the given ``dictionary`` as a list.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 616
+      "lineno": 615
     },
     {
       "name": "Get Dictionary Values",
@@ -605,7 +605,7 @@
       "shortdoc": "Returns values of the given ``dictionary`` as a list.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 637
+      "lineno": 636
     },
     {
       "name": "Get From Dictionary",
@@ -640,7 +640,7 @@
       "shortdoc": "Returns a value from the given ``dictionary`` based on the given ``key``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 675
+      "lineno": 674
     },
     {
       "name": "Get From List",
@@ -815,7 +815,7 @@
       "shortdoc": "Returns the count of matches to ``pattern`` in ``list``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 1071
+      "lineno": 1070
     },
     {
       "name": "Get Matches",
@@ -920,7 +920,7 @@
       "shortdoc": "Returns a list of matches to ``pattern`` in ``list``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 1051
+      "lineno": 1050
     },
     {
       "name": "Get Slice From List",
@@ -1017,7 +1017,7 @@
       "shortdoc": "Keeps the given ``keys`` in the ``dictionary`` and removes all other.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 587
+      "lineno": 586
     },
     {
       "name": "List Should Contain Sub List",
@@ -1283,7 +1283,7 @@
       "shortdoc": "Logs the size and contents of the ``dictionary`` using given ``level``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 860
+      "lineno": 859
     },
     {
       "name": "Log List",
@@ -1310,7 +1310,7 @@
       "shortdoc": "Logs the length and contents of the ``list`` using given ``level``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 463
+      "lineno": 462
     },
     {
       "name": "Pop From Dictionary",
@@ -1345,7 +1345,7 @@
       "shortdoc": "Pops the given ``key`` from the ``dictionary`` and returns its value.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 568
+      "lineno": 567
     },
     {
       "name": "Remove Duplicates",
@@ -1391,7 +1391,7 @@
       "shortdoc": "Removes the given ``keys`` from the ``dictionary``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 549
+      "lineno": 548
     },
     {
       "name": "Remove From List",
@@ -1534,7 +1534,7 @@
       "shortdoc": "Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 519
+      "lineno": 518
     },
     {
       "name": "Should Contain Match",
@@ -1647,7 +1647,7 @@
       "shortdoc": "Fails if ``pattern`` is not found in ``list``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 982
+      "lineno": 981
     },
     {
       "name": "Should Not Contain Match",
@@ -1760,7 +1760,7 @@
       "shortdoc": "Fails if ``pattern`` is found in ``list``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 1034
+      "lineno": 1033
     },
     {
       "name": "Sort List",
