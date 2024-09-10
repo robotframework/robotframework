@@ -5,7 +5,7 @@ Robot Framework 7.1
 .. default-role:: code
 
 `Robot Framework`_ 7.1 is a feature release with enhancements, for example,
-to listeners and to the `VAR` syntax that was introduced in Robot Framework 7.0.
+to listeners and to the `VAR` syntax that was introduced in `Robot Framework 7.0`_.
 
 Questions and comments related to the release can be sent to the `#devel`
 channel on `Robot Framework Slack`_ and possible bugs submitted to
@@ -95,11 +95,15 @@ Other enhancements
   This API is targeted for pre-run modifiers and listeners that modify tests or tasks
   before or during execution. There was an attempt to add such an API already in
   Robot Framework 7.0 (`#5000`__), but the selected approach caused backwards
-  incompatibility problems and it was reverted in Robot Framework 7.1 (`#5031`__).
+  incompatibility problems and it was reverted in Robot Framework 7.0.1 (`#5031`__).
   Hopefully this new API works better.
 
 - Korean translations have been added (`#5187`_) and Dutch translations have been
   updated (`#5148`_).
+
+- If a keyword has a name like `${kind} example` and it is used like `Given good example`,
+  the variable `${kind}` will only contain value `good` when it used to contain `Given good`
+  (`#4577`_).
 
 - Robot Framework 7.1 is officially compatible with the forthcoming `Python 3.13`__
   release (`#5091`_). No code changes were needed so also older Robot Framework
@@ -134,14 +138,14 @@ Backwards incompatible changes
   the localization system so that old terms would still work but cause a deprecation
   warning.
 
-- If a keyword has a name like `${kind} example` and it is used like `Given good example`,
-  the variable `${kind}` will only contain value `good` when it used to contain `Given good`
-  (`#4577`_). This is obviously a nice enhancement in general, but possible existing code
-  handling the prefix that was earlier included may need to be updated.
+- As already mentioned above, the behavior when a keyword has a name like `${kind} example`
+  and it is used like `Given good example` has changed. Earlier the variable `${kind}`
+  contained `Given good`, but nowadays it contain only `good` (`#4577`_). This is a very
+  nice enhancement in general, but possible existing code handling the prefix that was
+  earlier included may need to be updated.
 
 Acknowledgements
 ================
-
 
 Robot Framework development is sponsored by the `Robot Framework Foundation`_
 and its over 60 member organizations. If your organization is using Robot Framework
@@ -216,6 +220,10 @@ Full list of fixes and enhancements
       - bug
       - high
       - Variables containing mutable values are resolved incorrectly in some cases
+    * - `#4577`_
+      - enhancement
+      - high
+      - Strip prefix from argument value if BDD keyword starts with embedded argument
     * - `#5008`_
       - enhancement
       - high
@@ -260,10 +268,6 @@ Full list of fixes and enhancements
       - enhancement
       - medium
       - `Import Resource` should be executed in dry-run
-    * - `#4577`_
-      - enhancement
-      - medium
-      - Strip prefix from argument value if BDD keyword starts with embedded argument
     * - `#4821`_
       - enhancement
       - medium
@@ -309,6 +313,7 @@ Altogether 27 issues. View on the `issue tracker <https://github.com/robotframew
 .. _#5094: https://github.com/robotframework/robotframework/issues/5094
 .. _#5172: https://github.com/robotframework/robotframework/issues/5172
 .. _#5181: https://github.com/robotframework/robotframework/issues/5181
+.. _#4577: https://github.com/robotframework/robotframework/issues/4577
 .. _#5008: https://github.com/robotframework/robotframework/issues/5008
 .. _#5060: https://github.com/robotframework/robotframework/issues/5060
 .. _#5077: https://github.com/robotframework/robotframework/issues/5077
@@ -320,7 +325,6 @@ Altogether 27 issues. View on the `issue tracker <https://github.com/robotframew
 .. _#5159: https://github.com/robotframework/robotframework/issues/5159
 .. _#5177: https://github.com/robotframework/robotframework/issues/5177
 .. _#3418: https://github.com/robotframework/robotframework/issues/3418
-.. _#4577: https://github.com/robotframework/robotframework/issues/4577
 .. _#4821: https://github.com/robotframework/robotframework/issues/4821
 .. _#5038: https://github.com/robotframework/robotframework/issues/5038
 .. _#5054: https://github.com/robotframework/robotframework/issues/5054
