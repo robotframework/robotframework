@@ -175,8 +175,7 @@ class TypeInfo(metaclass=SetterAwareType):
         - a sequence of supported type hints to create a union from such as
           ``[int, float]`` or ``('int', 'list[int]')``
 
-        In special cases, for example with dictionaries or sequences, using the
-        more specialized methods like :meth:`from_dict` or :meth:`from_sequence`
+        In special cases using a more specialized method like :meth:`from_sequence`
         may be more appropriate than using this generic method.
         """
         if hint is NOT_SET:
