@@ -92,3 +92,9 @@ File methods and close are called
     ...    Log: l.html
     ...    Report: r.html
     ...    Close\n
+
+File methods when files are disabled
+    Run Tests Without Processing Output    --listener ${LISTENER DIR}/v3.py -o NONE -r NONE -l NONE    misc/pass_and_fail.robot
+    Stderr Should Be Equal To    SEPARATOR=\n
+    ...    Output: None
+    ...    Close\n

@@ -478,20 +478,37 @@ class ListenerV2:
     def output_file(self, path: str):
         """Called after the output file has been created.
 
-        At this point the file is guaranteed to be closed.
+        ``path`` is an absolute path to the output file or
+        a string ``None`` if creating the output file is disabled.
         """
 
     def log_file(self, path: str):
-        """Called after the log file has been created."""
+        """Called after the log file has been created.
+
+        ``path`` is an absolute path to the log file.
+        Not called if creating the log file is disabled.
+        """
 
     def report_file(self, path: str):
-        """Called after the report file has been created."""
+        """Called after the report file has been created.
+
+        ``path`` is an absolute path to the report file.
+        Not called if creating the report file is disabled.
+        """
 
     def xunit_file(self, path: str):
-        """Called after the xunit compatible output file has been created."""
+        """Called after the xunit compatible output file has been created.
+
+        ``path`` is an absolute path to the xunit file.
+        Only called if creating the xunit file is enabled.
+        """
 
     def debug_file(self, path: str):
-        """Called after the debug file has been created."""
+        """Called after the debug file has been created.
+
+        ``path`` is an absolute path to the debug file.
+        Only called if creating the debug file is enabled.
+        """
 
     def close(self):
         """Called when the whole execution ends.
@@ -915,23 +932,40 @@ class ListenerV3:
         the imported variable file.
         """
 
-    def output_file(self, path: Path):
+    def output_file(self, path: 'Path | None'):
         """Called after the output file has been created.
 
-        At this point the file is guaranteed to be closed.
+        ``path`` is an absolute path to the output file or
+        ``None`` if creating the output file is disabled.
         """
 
     def log_file(self, path: Path):
-        """Called after the log file has been created."""
+        """Called after the log file has been created.
+
+        ``path`` is an absolute path to the log file.
+        Not called if creating the log file is disabled.
+        """
 
     def report_file(self, path: Path):
-        """Called after the report file has been created."""
+        """Called after the report file has been created.
+
+        ``path`` is an absolute path to the report file.
+        Not called if creating the report file is disabled.
+        """
 
     def xunit_file(self, path: Path):
-        """Called after the xunit compatible output file has been created."""
+        """Called after the xunit compatible output file has been created.
+
+        ``path`` is an absolute path to the xunit file.
+        Only called if creating the xunit file is enabled.
+        """
 
     def debug_file(self, path: Path):
-        """Called after the debug file has been created."""
+        """Called after the debug file has been created.
+
+        ``path`` is an absolute path to the debug file.
+        Only called if creating the debug file is enabled.
+        """
 
     def close(self):
         """Called when the whole execution ends.

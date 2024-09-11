@@ -381,23 +381,28 @@ it. If that is needed, `listener version 3`_ can be used instead.
    +------------------+------------------+----------------------------------------------------------------+
    | output_file      | path             | Called when writing to an `output file`_ is ready.             |
    |                  |                  |                                                                |
-   |                  |                  | `path` is an absolute path to the file as a string.            |
+   |                  |                  | `path` is an absolute path to the file as a string or          |
+   |                  |                  | a string `None` if creating the output file is disabled.       |
    +------------------+------------------+----------------------------------------------------------------+
    | log_file         | path             | Called when writing to a `log file`_ is ready.                 |
    |                  |                  |                                                                |
    |                  |                  | `path` is an absolute path to the file as a string.            |
+   |                  |                  | Not called if creating the log file is disabled.               |
    +------------------+------------------+----------------------------------------------------------------+
    | report_file      | path             | Called when writing to a `report file`_ is ready.              |
    |                  |                  |                                                                |
    |                  |                  | `path` is an absolute path to the file as a string.            |
+   |                  |                  | Not called if creating the report file is disabled.            |
    +------------------+------------------+----------------------------------------------------------------+
    | xunit_file       | path             | Called when writing to an `xunit file`_ is ready.              |
    |                  |                  |                                                                |
    |                  |                  | `path` is an absolute path to the file as a string.            |
+   |                  |                  | Only called if creating the xunit file is enabled.             |
    +------------------+------------------+----------------------------------------------------------------+
    | debug_file       | path             | Called when writing to a `debug file`_ is ready.               |
    |                  |                  |                                                                |
    |                  |                  | `path` is an absolute path to the file as a string.            |
+   |                  |                  | Only called if creating the debug file is enabled.             |
    +------------------+------------------+----------------------------------------------------------------+
    | close            |                  | Called when the whole test execution ends.                     |
    |                  |                  |                                                                |
@@ -590,23 +595,28 @@ and in the API docs of the optional ListenerV3_ base class.
    +-----------------------+------------------+--------------------------------------------------------------------+
    | output_file           | path             | Called when writing to an `output file`_ is ready.                 |
    |                       |                  |                                                                    |
-   |                       |                  | `path` is an absolute path to the file as a `pathlib.Path` object. |
+   |                       |                  | `path` is an absolute path to the file as a `pathlib.Path` object  |
+   |                       |                  | or the `None` object if creating the output file is disabled.      |
    +-----------------------+------------------+--------------------------------------------------------------------+
    | log_file              | path             | Called when writing to a `log file`_ is ready.                     |
    |                       |                  |                                                                    |
    |                       |                  | `path` is an absolute path to the file as a `pathlib.Path` object. |
+   |                       |                  | Not called if creating the log file is disabled.                   |
    +-----------------------+------------------+--------------------------------------------------------------------+
    | report_file           | path             | Called when writing to a `report file`_ is ready.                  |
    |                       |                  |                                                                    |
    |                       |                  | `path` is an absolute path to the file as a `pathlib.Path` object. |
+   |                       |                  | Not called if creating the report file is disabled.                |
    +-----------------------+------------------+--------------------------------------------------------------------+
    | xunit_file            | path             | Called when writing to an `xunit file`_ is ready.                  |
    |                       |                  |                                                                    |
    |                       |                  | `path` is an absolute path to the file as a `pathlib.Path` object. |
+   |                       |                  | Only called if creating the xunit file is enabled.                 |
    +-----------------------+------------------+--------------------------------------------------------------------+
    | debug_file            | path             | Called when writing to a `debug file`_ is ready.                   |
    |                       |                  |                                                                    |
    |                       |                  | `path` is an absolute path to the file as a `pathlib.Path` object. |
+   |                       |                  | Only called if creating the debug file is enabled.                 |
    +-----------------------+------------------+--------------------------------------------------------------------+
    | close                 |                  | Called when the whole test execution ends.                         |
    |                       |                  |                                                                    |

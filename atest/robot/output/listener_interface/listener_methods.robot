@@ -161,6 +161,7 @@ Check Listen All File
     ...    SUITE END: FAIL 2 tests, 1 passed, 1 failed
     ...    Output: output.xml    Closing...
     Check Listener File    ${filename}    @{expected}
+    Stderr Should Be Empty
 
 Calling listener failed
     [Arguments]    ${method}    ${error}

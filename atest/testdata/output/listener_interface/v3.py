@@ -72,7 +72,8 @@ message = log_message
 
 
 def output_file(path):
-    print(f"Output: {path.name}", file=sys.__stderr__)
+    name = path.name if path is not None else 'None'
+    print(f"Output: {name}", file=sys.__stderr__)
 
 
 def log_file(path):
