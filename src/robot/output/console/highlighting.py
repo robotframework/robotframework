@@ -119,7 +119,7 @@ class HighlightingStream:
             highlighter.reset()
 
     def result_file(self, kind, path):
-        path = self._highlighter.link(path)
+        path = self._highlighter.link(path) if path else 'NONE'
         self.write(f"{kind + ':':8} {path}\n")
 
 
