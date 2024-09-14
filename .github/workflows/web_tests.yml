@@ -25,6 +25,6 @@ jobs:
         with:
           node-version: "16"
       - name: Run tests
-        working-directory: ./app
+        working-directory: ./src/web
         run: npm install && npm run test
 
