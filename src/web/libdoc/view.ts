@@ -8,11 +8,13 @@ import { regexpEscape, delay } from "./util";
 class View {
   storage: Storage;
   libdoc: RuntimeLibdoc;
+  translate: Translate;
   searchTime: number;
 
   constructor(libdoc: RuntimeLibdoc, storage: Storage, translate: Translate) {
     this.libdoc = libdoc;
     this.storage = storage;
+    this.translate = translate;
     this.initTemplating(translate);
   }
 
@@ -48,20 +50,25 @@ class View {
   render() {
     document.title = this.libdoc.name;
     this.setTheme();
-    this.renderTemplate("base", this.libdoc, "#root");
-    this.renderImporting();
-    this.renderShortcuts();
-    this.renderKeywords();
-    this.renderTemplate("data-types");
-    this.renderTemplate("footer");
+    this.renderTemplates();
     this.initTagSearch();
     this.initHashEvents();
+    this.initLanguageMenu();
     setTimeout(() => {
       if (this.storage.get("keyword-wall") === "open") {
         this.openKeywordWall();
       }
     }, 0);
     createModal();
+  }
+
+  private renderTemplates() {
+    this.renderLibdocTemplate("base", this.libdoc, "#root");
+    this.renderImporting();
+    this.renderShortcuts();
+    this.renderKeywords();
+    this.renderLibdocTemplate("data-types");
+    this.renderLibdocTemplate("footer");
   }
 
   private initHashEvents() {
@@ -104,7 +111,7 @@ class View {
     }
     if (this.libdoc.tags.length) {
       this.libdoc.selectedTag = selectedTag;
-      this.renderTemplate("tags-shortcuts");
+      this.renderLibdocTemplate("tags-shortcuts");
       document.getElementById("tags-shortcuts-container")!.onchange = (e) => {
         const value = (e.target as HTMLSelectElement).selectedOptions[0].value;
         if (value != "") {
@@ -116,13 +123,35 @@ class View {
     }
   }
 
+  private initLanguageMenu() {
+    this.renderTemplate("language", {
+      languages: this.translate.getLanguages(),
+    });
+    document.querySelectorAll("#language-container ul a")!.forEach((link) => {
+      link.addEventListener("click", () => {
+        const changed = this.translate.setLanguage(link.innerHTML);
+        if (changed) {
+          this.render();
+        }
+      });
+    });
+    document
+      .querySelector("#language-container button")!
+      .addEventListener("click", () => {
+        console.log(document.querySelector("#language-container ul")!);
+        document
+          .querySelector("#language-container ul")!
+          .classList.toggle("hidden");
+      });
+  }
+
   private renderImporting() {
-    this.renderTemplate("importing");
+    this.renderLibdocTemplate("importing");
     this.registerTypeDocHandlers("#importing-container");
   }
 
   private renderShortcuts() {
-    this.renderTemplate("shortcuts");
+    this.renderLibdocTemplate("shortcuts");
     document
       .getElementById("toggle-keyword-shortcuts")!
       .addEventListener("click", () => this.toggleShortcuts());
@@ -132,7 +161,7 @@ class View {
     document
       .querySelector(".search-input")!
       .addEventListener("keydown", () => delay(() => this.searching(), 150));
-    this.renderTemplate("keyword-shortcuts");
+    this.renderLibdocTemplate("keyword-shortcuts");
     document
       .querySelectorAll("a.match")
       .forEach((e) => e.addEventListener("click", this.closeMenu));
@@ -151,7 +180,7 @@ class View {
     if (libdoc == null) {
       libdoc = this.libdoc;
     }
-    this.renderTemplate("keywords", libdoc);
+    this.renderLibdocTemplate("keywords", libdoc);
     document.querySelectorAll(".kw-tags span").forEach((elem) => {
       elem.addEventListener("click", (e) => {
         this.tagSearch((e.target! as HTMLSpanElement).innerText);
@@ -290,11 +319,11 @@ class View {
       if (!kw.hidden) keywordMatchCount++;
       return kw;
     });
-    this.renderTemplate("keyword-shortcuts", result);
+    this.renderLibdocTemplate("keyword-shortcuts", result);
     this.renderKeywords(result);
     if (this.libdoc.tags.length) {
       this.libdoc.selectedTag = include.tagsExact ? pattern : "";
-      this.renderTemplate("tags-shortcuts");
+      this.renderLibdocTemplate("tags-shortcuts");
     }
     document.getElementById("keyword-statistics-header")!.innerText =
       keywordMatchCount + " / " + result.keywords.length;
@@ -339,11 +368,11 @@ class View {
   }
 
   private resetKeywords() {
-    this.renderTemplate("keyword-shortcuts");
+    this.renderLibdocTemplate("keyword-shortcuts");
     this.renderKeywords();
     if (this.libdoc.tags.length) {
       this.libdoc.selectedTag = "";
-      this.renderTemplate("tags-shortcuts");
+      this.renderLibdocTemplate("tags-shortcuts");
     }
     history.replaceState && history.replaceState(null, "", location.pathname);
   }
@@ -359,23 +388,31 @@ class View {
     this.resetKeywords();
   }
 
-  private renderTemplate(
+  private renderLibdocTemplate(
     name: string,
     libdoc: Libdoc | null = null,
+    container_selector: string = "",
+  ) {
+    if (libdoc == null) {
+      libdoc = this.libdoc;
+    }
+    this.renderTemplate(name, libdoc, container_selector);
+  }
+
+  private renderTemplate(
+    name: string,
+    data: any,
     container_selector: string = "",
   ) {
     const template = document.getElementById(`${name}-template`)?.innerHTML;
     const compiled_template = Handlebars.compile(template);
 
-    if (libdoc == null) {
-      libdoc = this.libdoc;
-    }
     if (container_selector === "") {
       container_selector = `#${name}-container`;
     }
 
     const target = document.body.querySelector(container_selector)!;
-    target.innerHTML = compiled_template(libdoc);
+    target.innerHTML = compiled_template(data);
   }
 }
 
