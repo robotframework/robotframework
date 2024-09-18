@@ -82,41 +82,61 @@ Test libraries can be implemented as Python modules or classes.
 Library name
 ~~~~~~~~~~~~
 
-The name of a test library that is used when a library is imported is
-the same as the name of the module or class implementing it. For
-example, if you have a Python module `MyLibrary` (that is,
-file :file:`MyLibrary.py`), it will create a library with name
-:name:`MyLibrary`.
+As discussed under the `Using test libraries`_ section, libraries can
+be `imported by name or path`__:
 
-Python classes are always inside a module. If the name of a class
-implementing a library is the same as the name of the module, Robot
-Framework allows dropping the class name when importing the
-library. For example, class `MyLib` in :file:`MyLib.py`
-file can be used as a library with just name :name:`MyLib`. This also
-works with submodules so that if, for example, `parent.MyLib` module
-has class `MyLib`, importing it using just :name:`parent.MyLib`
-works. If the module name and class name are different, libraries must be
-taken into use using both module and class names, such as
-:name:`mymodule.MyLibrary` or :name:`parent.submodule.MyLib`.
+.. sourcecode:: robotframework
 
-.. tip:: If the library name is really long, it is recommended to give
-         the library a `simpler alias`__ by using `AS`.
+   *** Settings ***
+   Library    MyLibrary
+   Library    module.LibraryClass
+   Library    path/AnotherLibrary.py
 
+When a library is imported by a name, the library module must be in the
+`module search path`_ and the name can either refer to a library module
+or to a library class. When a name refers directly to a library class,
+the name must be in format like `modulename.ClassName`. Paths to libraries
+always refer to modules.
+
+Even when a library import refers to a module, either by a name or by a path,
+a class in the module, not the module itself, is used as a library in these cases:
+
+1. If the module contains a class that has the same name as the module.
+   The class can be either implemented in the module or imported into it.
+
+   This makes it possible to import libraries using simple names like `MyLibrary`
+   instead of specifying both the module and the class like `module.MyLibrary` or
+   `MyLibrary.MyLibrary`. When importing a library by a path, it is not even
+   possible to directly refer to a library class and automatically using a class
+   from the imported module is the only option.
+
+2. If the module contains exactly one class decorated with the `@library decorator`_.
+   In this case the class needs to be implemented in the module, not imported to it.
+
+   This approach has all the same benefits as the earlier one, but it also allows
+   the class name to differ from the module name.
+
+   Using the `@library decorator`_ for this purpose is new in Robot Framework 7.2.
+
+.. tip:: If the library name is really long, it is often a good idea to give
+         it a `simpler alias`__ at the import time.
+
+__ `Specifying library to import`_
 __ `Setting custom name to library`_
 
 Providing arguments to libraries
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 All test libraries implemented as classes can take arguments. These
-arguments are specified in the Setting section after the library name,
+arguments are specified after the library name when the library is imported,
 and when Robot Framework creates an instance of the imported library,
 it passes them to its constructor. Libraries implemented as a module
-cannot take any arguments, so trying to use those results in an error.
+cannot take any arguments.
 
 The number of arguments needed by the library is the same
-as the number of arguments accepted by the library's
-constructor. The default values and variable number of arguments work
-similarly as with `keyword arguments`_. Arguments passed
+as the number of arguments accepted by the library's `__init__` method.
+The default values, argument conversion, and other such features work
+the same way as with `keyword arguments`_. Arguments passed
 to the library, as well as the library name itself, can be specified
 using variables, so it is possible to alter them, for example, from the
 command line.
@@ -377,17 +397,25 @@ The `@library` decorator only sets class attributes `ROBOT_LIBRARY_SCOPE`,
 `ROBOT_LIBRARY_VERSION`, `ROBOT_LIBRARY_CONVERTERS`, `ROBOT_LIBRARY_DOC_FORMAT`
 and `ROBOT_LIBRARY_LISTENER` if the respective arguments `scope`, `version`,
 `converters`, `doc_format` and `listener` are used. The `ROBOT_AUTO_KEYWORDS`
-attribute is set always. When attributes are set, they override possible
-existing class attributes.
+attribute is set always and its presence can be used as an indication that
+the `@library` decorator has been used. When attributes are set, they
+override possible existing class attributes.
 
-.. note:: The `@library` decorator is new in Robot Framework 3.2
-          and `converters` argument is new in Robot Framework 5.0.
+When a class is decorated with the `@library` decorator, it is used as a library
+even when a `library import refers only to a module containing it`__. This is done
+regardless does the the class name match the module name or not.
+
+.. note:: The `@library` decorator is new in Robot Framework 3.2,
+          the `converters` argument is new in Robot Framework 5.0, and
+          specifying that a class in an imported module should be used as
+          a library is new in Robot Framework 7.2.
 
 __ `library scope`_
 __ `library version`_
 __ `Custom argument converters`_
 __ `Library acting as listener`_
 __ `What methods are considered keywords`_
+__ `Library name`_
 
 Creating keywords
 -----------------
