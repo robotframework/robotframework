@@ -145,7 +145,7 @@ command line.
 
    *** Settings ***
    Library    MyLibrary     10.0.0.1    8080
-   Library    AnotherLib    ${VAR}
+   Library    AnotherLib    ${ENVIRONMENT}
 
 Example implementations for the libraries used in the above example:
 
@@ -156,10 +156,10 @@ Example implementations for the libraries used in the above example:
   class MyLibrary:
 
       def __init__(self, host, port=80):
-          self._conn = Connection(host, int(port))
+          self.connection = Connection(host, port)
 
       def send_message(self, message):
-          self._conn.send(message)
+          self.connection.send(message)
 
 .. sourcecode:: python
 
@@ -170,9 +170,9 @@ Example implementations for the libraries used in the above example:
 
        def do_something(self):
            if self.environment == 'test':
-               # do something in test environment
+               do_something_in_test_environment()
            else:
-               # do something in other environments
+               do_something_in_other_environments()
 
 Library scope
 ~~~~~~~~~~~~~
@@ -250,9 +250,8 @@ Example library using the `SUITE` scope:
             self._counter += 1
             print(self._counter)
 
-        def clear_counter(self):
+        def clear_count(self):
             self._counter = 0
-
 
 __ `Providing arguments to libraries`_
 
@@ -363,7 +362,7 @@ attributes automatically:
 
     @library(scope='GLOBAL', version='3.2b1', doc_format='reST', listener=Listener())
     class Example:
-        # ...
+        ...
 
 The `@library` decorator also disables the `automatic keyword discovery`__
 by setting the `ROBOT_AUTO_KEYWORDS` argument to `False` by default. This
@@ -379,7 +378,7 @@ like:
 
     @library
     class Example:
-        # ...
+        ...
 
 If needed, the automatic keyword discovery can be enabled by using the
 `auto_keywords` argument:
@@ -391,7 +390,7 @@ If needed, the automatic keyword discovery can be enabled by using the
 
     @library(scope='GLOBAL', auto_keywords=True)
     class Example:
-        # ...
+        ...
 
 The `@library` decorator only sets class attributes `ROBOT_LIBRARY_SCOPE`,
 `ROBOT_LIBRARY_VERSION`, `ROBOT_LIBRARY_CONVERTERS`, `ROBOT_LIBRARY_DOC_FORMAT`
@@ -522,8 +521,8 @@ a keyword :name:`Current Thread`.
 
 
    def example_keyword():
-       print('Running in thread "%s".' % current_thread().name)
-
+       thread_name = current_thread().name
+       print(f"Running in thread '{thread_name}'.")
 
 A simple way to avoid imported functions becoming keywords is to only
 import modules (e.g. `import threading`) and to use functions via the module
@@ -546,7 +545,8 @@ For example, the library below implements only one keyword
 
 
    def example_keyword():
-       print('Running in thread "%s".' % current_thread().name)
+       thread_name = current_thread().name
+       print(f"Running in thread '{thread_name}'.")
 
    def this_is_not_keyword():
        pass
@@ -571,7 +571,8 @@ implements only one keyword :name:`Example Keyword`:
 
    @keyword
    def example_keyword():
-       print('Running in thread "%s".' % current_thread().name)
+       thread_name = current_thread().name
+       print(f"Running in thread '{thread_name}'.")
 
    def this_is_not_keyword():
        pass
@@ -600,7 +601,8 @@ functions becoming keywords.
 
 
    def example_keyword():
-       print('Running in thread "%s".' % current_thread().name)
+       thread_name = current_thread().name
+       print(f"Running in thread '{thread_name}'.")
 
    @not_keyword
    def this_is_not_keyword():
@@ -629,7 +631,7 @@ Example library implemented as a module in the :file:`MyLibrary.py` file:
 .. sourcecode:: python
 
   def hello(name):
-      print("Hello, %s!" % name)
+      print(f"Hello, {name}!")
 
   def do_nothing():
       pass
@@ -659,7 +661,7 @@ by setting the `robot_name` attribute on the method to the desired custom name:
 .. sourcecode:: python
 
     def login(username, password):
-      # ...
+        ...
 
     login.robot_name = 'Login via user panel'
 
@@ -679,7 +681,7 @@ example, it is typically easiest to use the `@keyword decorator`_:
 
     @keyword('Login via user panel')
     def login(username, password):
-          # ...
+        ...
 
 Using this decorator without an argument will have no effect on the exposed
 keyword name, but will still set the `robot_name` attribute.  This allows
@@ -708,11 +710,11 @@ set this attribute by using the `@keyword decorator`_:
 
     @keyword(tags=['tag1', 'tag2'])
     def login(username, password):
-        # ...
+        ...
 
     @keyword('Custom name', ['tags', 'here'])
     def another_example():
-        # ...
+        ...
 
 Another option for setting tags is giving them on the last line of
 `keyword documentation`__ with `Tags:` prefix and separated by a comma. For
@@ -725,7 +727,7 @@ example:
 
         Tags: tag1, tag2
         """
-        # ...
+        ...
 
 __ `User keyword tags`_
 __ `Documenting libraries`_
@@ -753,10 +755,10 @@ Example keywords taking different numbers of arguments:
       print("Keyword got no arguments.")
 
   def one_argument(arg):
-      print("Keyword got one argument '%s'." % arg)
+      print(f"Keyword got one argument '{arg}'.")
 
   def three_arguments(a1, a2, a3):
-      print("Keyword got three arguments '%s', '%s' and '%s'." % (a1, a2, a3))
+      print(f"Keyword got three arguments '{a1}', '{a2}' and '{a3}'.")
 
 
 Default values to keywords
@@ -772,10 +774,11 @@ which is familiar to all Python programmers, is illustrated below:
 .. sourcecode:: python
 
    def one_default(arg='default'):
-       print("Argument has value %s" % arg)
+       print(f"Got argument '{arg}'.")
+
 
    def multiple_defaults(arg1, arg2='default 1', arg3='default 2'):
-       print("Got arguments %s, %s and %s" % (arg1, arg2, arg3))
+       print(f"Got arguments '{arg1}', '{arg2}' and '{arg3}'.")
 
 The first example keyword above can be used either with zero or one
 arguments. If no arguments are given, `arg` gets the value
@@ -816,7 +819,7 @@ be combined with other ways of specifying arguments:
           print(arg)
 
   def one_required(required, *others):
-      print("Required: %s\nOthers:" % required)
+      print(f"Required: {required}\nOthers:")
       for arg in others:
           print(arg)
 
@@ -1049,7 +1052,7 @@ like `FALSE`, `NO` and `NONE` (case-insensitively) to be false:
   def example_keyword(count, case_insensitive):
       count = int(count)
       if is_truthy(case_insensitive):
-          # ...
+          ...
 
 Keywords can also use Robot Framework's argument conversion functionality via
 the `robot.api.TypeInfo`__ class and its `convert` method. This can be useful
@@ -1064,7 +1067,7 @@ error reporting than what simply using, for example, `int()` provides.
   def example_keyword(count, case_insensitive):
       count = TypeInfo.from_type(int).convert(count)
       if TypeInfo.from_type(bool).convert(case_insensitive):
-          # ...
+          ...
 
 .. tip:: It is generally recommended to specify types using type hints or otherwise
          and let Robot Framework handle argument conversion automatically. Manual
@@ -1087,7 +1090,7 @@ follows and arguments would be converted automatically:
 
   def example_keyword(count: int, case_insensitive: bool = True):
       if case_insensitive:
-          # ...
+          ...
 
 See the `Supported conversions`_ section below for a list of types that
 are automatically converted and what values these types accept. It is
@@ -1125,12 +1128,12 @@ below implementing the same keyword as in earlier examples:
   @keyword(types={'count': int, 'case_insensitive': bool})
   def example_keyword(count, case_insensitive=True):
       if case_insensitive:
-          # ...
+          ...
 
   @keyword(types=[int, bool])
   def example_keyword(count, case_insensitive=True):
       if case_insensitive:
-          # ...
+          ...
 
 Regardless of the approach that is used, it is not necessarily to specify
 types for all arguments. When specifying types as a list, it is possible
@@ -1142,11 +1145,11 @@ keywords specify the type only for the second argument:
 
   @keyword(types={'second': float})
   def example1(first, second, third):
-      # ...
+      ...
 
   @keyword(types=[None, float])
   def example2(first, second, third):
-      # ...
+      ...
 
 Starting from Robot Framework 7.0, it is possible to specify the keyword return
 type by using key `'return'` with an appropriate type in the type dictionary.
@@ -1173,7 +1176,7 @@ types `int` and `bool`, respectively:
 
   def example_keyword(count=-1, case_insensitive=True):
       if case_insensitive:
-          # ...
+          ...
 
 When type information is got implicitly based on the default values,
 argument conversion itself is not as strict as when the information is
@@ -1714,7 +1717,7 @@ appropriate type hint to the converter:
 .. sourcecode:: python
 
     def parse_fi_date(value: str):
-         # ...
+        ...
 
 Notice that this type hint *is not* used for converting the value before calling
 the converter, it is used for strictly restricting which types can be used.
@@ -1932,7 +1935,7 @@ produce the same result:
         @classmethod
         def from_string(cls, value: str):
             """Date in ``dd.mm.yyyy`` format."""
-            # ...
+            ...
 
 
     class UsDate(date):
@@ -1940,7 +1943,7 @@ produce the same result:
 
         @classmethod
         def from_string(cls, value: str):
-            # ...
+            ...
 
 Adding documentation is in general recommended to provide users more
 information about conversion. It is especially important to document
@@ -2406,7 +2409,8 @@ is that this approach works also with the `remote library interface`_.
 
 
     def example_keyword():
-        print('*INFO:%d* Message with timestamp' % (time.time()*1000))
+        timestamp = int(time.time() * 1000)
+        print(f'*INFO:{timestamp}* Message with timestamp')
 
 .. _Unix epoch: http://en.wikipedia.org/wiki/Unix_time
 __ `Using log levels`_
@@ -2561,7 +2565,7 @@ a simple usage example:
 
 
    def my_keyword(arg):
-       logger.debug('Got argument %s' % arg)
+       logger.debug(f"Got argument '{arg}'.")
        do_something()
        logger.info('<i>This</i> is a boring example', html=True)
        logger.console('Hello, console!')
@@ -2593,7 +2597,7 @@ Framework.
 
 
    def my_keyword(arg):
-       logging.debug('Got argument %s' % arg)
+       logging.debug(f"Got argument '{arg}'.")
        do_something()
        logging.info('This is a boring example')
 
@@ -2631,7 +2635,7 @@ Library logging using the logging API during import:
 
 
    def keyword():
-       # ...
+       ...
 
 .. note:: If you log something during initialization, i.e. in Python
           `__init__`, the messages may be
@@ -3001,11 +3005,11 @@ attribute on every method in the library during `get_keyword_names`.
            return [value.robot_name or name for name, value in keywords]
 
        def helper_method(self):
-           # ...
+           ...
 
        @keyword
        def keyword_method(self):
-           # ...
+           ...
 
 __ `Setting custom name`_
 
@@ -3050,9 +3054,9 @@ trivial, dynamic library.
        def get_keyword_names(self):
            return ['first keyword', 'second keyword']
 
-       def run_keyword(self, name, args, kwargs):
-           print("Running keyword '%s' with positional arguments %s and named arguments %s."
-                 % (name, args, kwargs))
+       def run_keyword(self, name, args, named_args):
+           print(f"Running keyword '{name}' with positional arguments {args} "
+                 f"and named arguments {named_args}.")
 
 __ `Free named arguments with dynamic libraries`_
 __ `Named-only arguments with dynamic libraries`_
@@ -3496,12 +3500,12 @@ __ http://docs.python.org/reference/datamodel.html#attribute-access
            return ['my_keyword', 'external_keyword']
 
        def my_keyword(self, arg):
-           print("My Keyword called with '%s'" % arg)
+           print(f"My Keyword called with '{args}'.")
 
        def __getattr__(self, name):
            if name == 'external_keyword':
                return external_keyword
-           raise AttributeError("Non-existing attribute '%s'" % name)
+           raise AttributeError(f"Non-existing attribute '{name}'.")
 
 Note that `__getattr__` does not execute the actual keyword like
 `run_keyword` does with the dynamic API. Instead, it only
@@ -3639,8 +3643,8 @@ inheritance. This is illustrated by the example below that adds new
 
 .. sourcecode:: python
 
+   from robot.api.deco import keyword
    from SeleniumLibrary import SeleniumLibrary
-   from SeleniumLibrary.base import keyword
 
 
    class ExtendedSeleniumLibrary(SeleniumLibrary):
@@ -3649,8 +3653,7 @@ inheritance. This is illustrated by the example below that adds new
        def title_should_start_with(self, expected):
            title = self.get_title()
            if not title.startswith(expected):
-               raise AssertionError("Title '%s' did not start with '%s'"
-                                    % (title, expected))
+               raise AssertionError(f"Title '{title}' did not start with '{expected}'.")
 
 A big difference with this approach compared to modifying the original
 library is that the new library has a different name than the
@@ -3708,8 +3711,7 @@ __ `Using Robot Framework's internal modules`_
        seleniumlib = BuiltIn().get_library_instance('SeleniumLibrary')
        title = seleniumlib.get_title()
        if not title.startswith(expected):
-           raise AssertionError("Title '%s' did not start with '%s'"
-                                % (title, expected))
+           raise AssertionError(f"Title '{title}' did not start with '{expected}'.")
 
 This approach is clearly better than importing the library directly
 and using it when the library has a state. The biggest benefit over
