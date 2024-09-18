@@ -118,6 +118,18 @@ a {
   color: var(--text-color);
 }
 
+#language-container {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 1000;
+}
+
+#language-container ul {
+  list-style: none;
+  padding: 0 10px 0 10px;
+}
+
 .hamburger-menu {
   display: none;
   position: fixed;
