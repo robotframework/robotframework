@@ -33,6 +33,11 @@ class TestSeg2Str(unittest.TestCase):
     def test_other_objects(self):
         self._verify([None, 1, True], "'None', '1' and 'True'")
 
+    def test_generator(self):
+        self._verify(range(5), "'0', '1', '2', '3' and '4'")
+        self._verify((c for c in 'abcde'), "'a', 'b', 'c', 'd' and 'e'")
+        self._verify((i for i in []), '')
+
 
 class TestPrintableName(unittest.TestCase):
 
