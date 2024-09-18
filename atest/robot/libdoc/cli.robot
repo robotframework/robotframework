@@ -105,7 +105,7 @@ Run Libdoc And Verify Created Output File
 HTML Doc Should Have Been Created
     [Arguments]    ${path}    ${name}    ${version}
     ${libdoc}=    Get File    ${path}
-    Should Start With    ${libdoc}    <!DOCTYPE
+    Should Start With    ${libdoc}    <!doctype
     Should Contain    ${libdoc}    ${name}
     Should Contain    ${libdoc}    ${version}
 
