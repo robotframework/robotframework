@@ -162,15 +162,14 @@ class Importer:
             self._raise_import_failed(path, err)
 
     def _log_import_succeeded(self, item, name, source):
-        import_type = '%s ' % self._type.lower() if self._type else ''
+        prefix = f'Imported {self._type.lower()}' if self._type else 'Imported'
         item_type = 'module' if inspect.ismodule(item) else 'class'
-        location = ("'%s'" % source) if source else 'unknown location'
-        self._logger.info("Imported %s%s '%s' from %s."
-                          % (import_type, item_type, name, location))
+        source = f"'{source}'" if source else 'unknown location'
+        self._logger.info(f"{prefix} {item_type} '{name}' from {source}.")
 
     def _raise_import_failed(self, name, error):
         prefix = f'Importing {self._type.lower()}' if self._type else 'Importing'
-        raise DataError(f"{prefix} '{name}' failed: {error.message}")
+        raise DataError(f"{prefix} '{name}' failed: {error}")
 
     def _instantiate_if_needed(self, imported, args):
         if args is None:
@@ -190,7 +189,8 @@ class Importer:
         try:
             return imported(*positional, **dict(named))
         except Exception:
-            raise DataError('Creating instance failed: %s\n%s' % get_error_details())
+            message, traceback = get_error_details()
+            raise DataError(f'Creating instance failed: {message}\n{traceback}')
 
     def _get_arg_spec(self, imported):
         # Avoid cyclic import. Yuck.
@@ -223,7 +223,7 @@ class _Importer:
     def _verify_type(self, imported):
         if inspect.isclass(imported) or inspect.ismodule(imported):
             return imported
-        raise DataError('Expected class or module, got %s.' % type_name(imported))
+        raise DataError(f'Expected class or module, got {type_name(imported)}.')
 
     def _get_class_from_module(self, module, name=None):
         klass = getattr(module, name or module.__name__, None)
@@ -264,8 +264,8 @@ class ByPathImporter(_Importer):
         importing_package = os.path.splitext(path)[1] == ''
         if self._wrong_module_imported(name, importing_from, importing_package):
             del sys.modules[name]
-            self._logger.info("Removed module '%s' from sys.modules to import "
-                              "fresh module." % name)
+            self.logger.info(f"Removed module '{name}' from sys.modules to import "
+                             f"a fresh module.")
 
     def _split_path_to_module(self, path):
         module_dir, module_file = os.path.split(abspath(path))
@@ -322,8 +322,7 @@ class DottedImporter(_Importer):
         try:
             imported = getattr(parent, lib_name)
         except AttributeError:
-            raise DataError("Module '%s' does not contain '%s'."
-                            % (parent_name, lib_name))
+            raise DataError(f"Module '{parent_name}' does not contain '{lib_name}'.")
         if get_class:
             imported = self._get_class_from_module(imported, lib_name) or imported
         return self._verify_type(imported), self._get_source(imported)

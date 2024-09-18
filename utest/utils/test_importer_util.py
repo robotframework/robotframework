@@ -146,7 +146,7 @@ class test:
         self.logger.assert_message(msg, index=index)
 
     def _assert_removed_message(self, name, index=0):
-        msg = f"Removed module '{name}' from sys.modules to import fresh module."
+        msg = f"Removed module '{name}' from sys.modules to import a fresh module."
         self.logger.assert_message(msg, index=index)
 
 
