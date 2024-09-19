@@ -15,7 +15,7 @@
 
 from collections.abc import Iterator
 
-from robot.utils import test_or_task
+from robot.utils import plural_or_not, test_or_task
 
 from .stats import TotalStat
 from .visitor import SuiteVisitor
@@ -61,18 +61,11 @@ class TotalStatistics:
         For example::
             2 tests, 1 passed, 1 failed
         """
-        # TODO: should this message be highlighted in console
-        test_or_task = 'test' if not self._rpa else 'task'
-        total, end, passed, failed, skipped = self._get_counts()
-        template = '%d %s%s, %d passed, %d failed'
-        if skipped:
-            return ((template + ', %d skipped')
-                    % (total, test_or_task, end, passed, failed, skipped))
-        return template % (total, test_or_task, end, passed, failed)
-
-    def _get_counts(self):
-        ending = 's' if self.total != 1 else ''
-        return self.total, ending, self.passed, self.failed, self.skipped
+        kind = test_or_task('test', self._rpa) + plural_or_not(self.total)
+        msg = f'{self.total} {kind}, {self.passed} passed, {self.failed} failed'
+        if self.skipped:
+            msg += f', {self.skipped} skipped'
+        return msg
 
 
 class TotalStatisticsBuilder(SuiteVisitor):
