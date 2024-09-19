@@ -23,6 +23,14 @@ class TestMessage(unittest.TestCase):
     def test_slots(self):
         assert_raises(AttributeError, setattr, Message(), 'attr', 'value')
 
+    def test_to_dict(self):
+        assert_equal(Message('Hello!').to_dict(),
+                     {'message': 'Hello!', 'level': 'INFO', 'html': False})
+        dt = datetime.now()
+        assert_equal(Message('<b>Hi!</b>', 'WARN', html=True, timestamp=dt).to_dict(),
+                     {'message': '<b>Hi!</b>', 'level': 'WARN', 'html': True,
+                      'timestamp': dt.isoformat()} )
+
     def test_id_without_parent(self):
         assert_equal(Message().id, 'm1')
 
