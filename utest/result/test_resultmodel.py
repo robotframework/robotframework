@@ -719,9 +719,12 @@ class TestToFromDictAndJson(unittest.TestCase):
 
     def test_message(self):
         now = datetime.now()
-        self._verify(Message('a msg', 'DEBUG', False, now),
-                     type=BodyItem.MESSAGE, message='a msg', level='DEBUG', html=False,
+        self._verify(Message('a msg', 'DEBUG', timestamp=now),
+                     type=BodyItem.MESSAGE, message='a msg', level='DEBUG',
                      timestamp=now.isoformat())
+        self._verify(Message('<b>msg</b>', 'WARN', html=True, timestamp=now),
+                     type=BodyItem.MESSAGE, message='<b>msg</b>', level='WARN',
+                     html=True, timestamp=now.isoformat())
 
     def test_test(self):
         self._verify(TestCase(), name='', status='FAIL', body=[], elapsed_time=0)

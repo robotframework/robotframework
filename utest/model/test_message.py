@@ -25,7 +25,7 @@ class TestMessage(unittest.TestCase):
 
     def test_to_dict(self):
         assert_equal(Message('Hello!').to_dict(),
-                     {'message': 'Hello!', 'level': 'INFO', 'html': False})
+                     {'message': 'Hello!', 'level': 'INFO'})
         dt = datetime.now()
         assert_equal(Message('<b>Hi!</b>', 'WARN', html=True, timestamp=dt).to_dict(),
                      {'message': '<b>Hi!</b>', 'level': 'WARN', 'html': True,

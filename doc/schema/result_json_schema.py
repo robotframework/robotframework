@@ -64,7 +64,7 @@ class Message(BaseModel):
     type = Field('MESSAGE', const=True)
     message: str
     level: Literal['TRACE', 'DEBUG', 'INFO', 'WARN', 'ERROR', 'FAIL', 'SKIP']
-    html: bool
+    html: bool | None
     timestamp: str | None
 
 

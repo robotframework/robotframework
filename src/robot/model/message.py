@@ -71,8 +71,9 @@ class Message(BodyItem):
 
     def to_dict(self):
         data = {'message': self.message,
-                'level': self.level,
-                'html': self.html}
+                'level': self.level}
+        if self.html:
+            data['html'] = True
         if self.timestamp:
             data['timestamp'] = self.timestamp.isoformat()
         return data

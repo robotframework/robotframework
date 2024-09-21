@@ -39,8 +39,7 @@
       },
       "required": [
         "message",
-        "level",
-        "html"
+        "level"
       ],
       "additionalProperties": false
     },
