@@ -79,13 +79,15 @@ def _single_result(source, options):
 
 def _json_result(source, options):
     try:
-        suite = TestSuite.from_json(source)
+        result = Result.from_json(source)
     except IOError as err:
         error = err.strerror
     except Exception:
         error = get_error_message()
     else:
-        return Result(source, suite, rpa=options.pop('rpa', None))
+        if 'rpa' in options:
+            result.rpa = options['rpa']
+        return result
     raise DataError(f"Reading JSON source '{source}' failed: {error}")
 
 

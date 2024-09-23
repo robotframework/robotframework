@@ -1085,6 +1085,42 @@ class TestSuite(model.TestSuite[Keyword, TestCase], StatusMixin):
     def to_dict(self) -> DataDict:
         return {**super().to_dict(), **StatusMixin.to_dict(self)}
 
+    @classmethod
+    def from_dict(cls, data: DataDict) -> 'TestSuite':
+        """Create suite based on result data in a dictionary.
+
+        ``data`` can either contain only the suite data got, for example, from
+        the :meth:`to_dict` method, or it can contain full result data with
+        execution errors and other such information in addition to the suite data.
+        In the latter case only the suite data is used, though.
+
+        Support for full result data is new in Robot Framework 7.2.
+        """
+        if 'suite' in data:
+            data = data['suite']
+        return super().from_dict(data)
+
+    @classmethod
+    def from_json(cls, source: 'str|bytes|TextIO|Path') -> 'TestSuite':
+        """Create suite based on results in JSON.
+
+        The data is given as the ``source`` parameter. It can be:
+
+        - a string containing the data directly,
+        - an open file object where to read the data from, or
+        - a path (``pathlib.Path`` or string) to a UTF-8 encoded file to read.
+
+        Supports JSON produced by :meth:`to_json` that contains only the suite
+        information, as well as full result JSON that contains also execution
+        errors and other information. In the latter case errors and all other
+        information is silently ignored, though. If that is a problem,
+        :class:`~robot.result.resultbuilder.ExecutionResult` should be used
+        instead.
+
+        Support for full result JSON is new in Robot Framework 7.2.
+        """
+        return super().from_json(source)
+
     @overload
     def to_xml(self, file: None = None) -> str:
         ...

@@ -86,8 +86,7 @@ class RobotHandler(ElementHandler):
     children = frozenset(('suite', 'statistics', 'errors'))
 
     def start(self, elem, result):
-        generator = elem.get('generator', 'unknown').split()[0].upper()
-        result.generated_by_robot = generator == 'ROBOT'
+        result.generator = elem.get('generator', 'unknown')
         result.generation_time = self._parse_generation_time(elem.get('generated'))
         if result.rpa is None:
             result.rpa = elem.get('rpa', 'false') == 'true'

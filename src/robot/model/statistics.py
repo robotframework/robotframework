@@ -38,6 +38,13 @@ class Statistics:
         self.suite: SuiteStatistics = suite_builder.stats
         self.tags: TagStatistics = tag_builder.stats
 
+    def to_dict(self):
+        return {
+            'total': self.total.stat.get_attributes(include_label=True),
+            'suites': [s.get_attributes(include_label=True) for s in self.suite],
+            'tags': [t.get_attributes(include_label=True) for t in self.tags],
+        }
+
     def visit(self, visitor):
         visitor.visit_statistics(self)
 

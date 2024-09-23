@@ -53,13 +53,21 @@ class TestStatisticsSimple(unittest.TestCase):
         self.statistics = Statistics(suite)
 
     def test_total(self):
-        verify_stat(self.statistics.total._stat, 'All Tests', 2, 1, 1)
+        verify_stat(self.statistics.total.stat, 'All Tests', 2, 1, 1)
 
     def test_suite(self):
         verify_suite(self.statistics.suite, 'Hello', 's1', 2, 1, 1)
 
     def test_tags(self):
         assert_equal(list(self.statistics.tags), [])
+
+    def test_to_dict(self):
+        assert_equal(self.statistics.to_dict(), {
+            'total': {'pass': 2, 'fail': 1, 'skip': 1, 'label': 'All Tests'},
+            'suites': [{'pass': 2, 'fail': 1, 'skip': 1, 'label': 'Hello',
+                        'name': 'Hello', 'id': 's1'}],
+            'tags': []
+        })
 
 
 class TestStatisticsNotSoSimple(unittest.TestCase):
@@ -70,7 +78,7 @@ class TestStatisticsNotSoSimple(unittest.TestCase):
                                      [('t? & smoke', ''), ('none NOT t1', 'a title')])
 
     def test_total(self):
-        verify_stat(self.statistics.total._stat, 'All Tests', 4, 3, 2)
+        verify_stat(self.statistics.total.stat, 'All Tests', 4, 3, 2)
 
     def test_suite(self):
         suite = self.statistics.suite
@@ -95,6 +103,24 @@ class TestStatisticsNotSoSimple(unittest.TestCase):
         assert_equal(len(list(tags)), len(expected))
         for t, e in zip(tags, expected):
             verify_stat(t, *e)
+
+    def test_to_dict(self):
+        assert_equal(self.statistics.to_dict(), {
+            'total': {'pass': 4, 'fail': 3, 'skip': 2, 'label': 'All Tests'},
+            'suites': [{'pass': 4, 'fail': 3, 'skip': 2,
+                        'id': 's1', 'name': 'Root Suite', 'label': 'Root Suite'},
+                       {'pass': 4, 'fail': 2, 'skip': 1, 'label': 'Root Suite.First Sub Suite',
+                        'id': 's1-s1', 'name': 'First Sub Suite'},
+                       {'pass': 0, 'fail': 1, 'skip': 1, 'label': 'Root Suite.Second Sub Suite',
+                        'id': 's1-s2', 'name': 'Second Sub Suite'}],
+            'tags': [{'pass': 0, 'fail': 0, 'skip': 0, 'label': 'a title',
+                      'info': 'combined', 'combined': 'none NOT t1'},
+                     {'pass': 2, 'fail': 2, 'skip': 0, 'label': 't? & smoke',
+                      'info': 'combined', 'combined': 't? & smoke'},
+                     {'pass': 2, 'fail': 2, 'skip': 0, 'label': 'smoke'},
+                     {'pass': 3, 'fail': 2, 'skip': 1, 'label': 't1'},
+                     {'pass': 2, 'fail': 1, 'skip': 0, 'label': 't2'}]
+        })
 
 
 class TestSuiteStatistics(unittest.TestCase):
@@ -179,7 +205,7 @@ class TestElapsedTime(unittest.TestCase):
         self.stats = Statistics(suite, tag_stat_combine=[('?2', 'combined')])
 
     def test_total_stats(self):
-        assert_equal(self.stats.total._stat.elapsed, timedelta(seconds=11.001))
+        assert_equal(self.stats.total.stat.elapsed, timedelta(seconds=11.001))
 
     def test_tag_stats(self):
         t1, t2, t3 = self.stats.tags.tags.values()

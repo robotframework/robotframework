@@ -60,7 +60,7 @@ class SuiteRunner(SuiteVisitor):
                              start_time=datetime.now(),
                              rpa=self.settings.rpa)
         if not self.result:
-            self.result = Result(root_suite=result, rpa=self.settings.rpa)
+            self.result = Result(suite=result, rpa=self.settings.rpa)
             self.result.configure(status_rc=self.settings.status_rc,
                                   stat_config=self.settings.statistics_config)
         else:
