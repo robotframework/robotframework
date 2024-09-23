@@ -28,7 +28,8 @@
         },
         "timestamp": {
           "title": "Timestamp",
-          "type": "string"
+          "type": "string",
+          "format": "date-time"
         },
         "type": {
           "title": "Type",
@@ -39,7 +40,8 @@
       },
       "required": [
         "message",
-        "level"
+        "level",
+        "timestamp"
       ],
       "additionalProperties": false
     },
@@ -57,7 +59,8 @@
         },
         "start_time": {
           "title": "Start Time",
-          "type": "string"
+          "type": "string",
+          "format": "date-time"
         },
         "message": {
           "title": "Message",
@@ -125,7 +128,8 @@
         },
         "start_time": {
           "title": "Start Time",
-          "type": "string"
+          "type": "string",
+          "format": "date-time"
         },
         "message": {
           "title": "Message",
@@ -172,7 +176,8 @@
         },
         "start_time": {
           "title": "Start Time",
-          "type": "string"
+          "type": "string",
+          "format": "date-time"
         },
         "message": {
           "title": "Message",
@@ -219,7 +224,8 @@
         },
         "start_time": {
           "title": "Start Time",
-          "type": "string"
+          "type": "string",
+          "format": "date-time"
         },
         "message": {
           "title": "Message",
@@ -273,7 +279,8 @@
         },
         "start_time": {
           "title": "Start Time",
-          "type": "string"
+          "type": "string",
+          "format": "date-time"
         },
         "message": {
           "title": "Message",
@@ -328,7 +335,8 @@
         },
         "start_time": {
           "title": "Start Time",
-          "type": "string"
+          "type": "string",
+          "format": "date-time"
         },
         "message": {
           "title": "Message",
@@ -423,7 +431,8 @@
         },
         "start_time": {
           "title": "Start Time",
-          "type": "string"
+          "type": "string",
+          "format": "date-time"
         },
         "message": {
           "title": "Message",
@@ -464,7 +473,8 @@
         },
         "start_time": {
           "title": "Start Time",
-          "type": "string"
+          "type": "string",
+          "format": "date-time"
         },
         "message": {
           "title": "Message",
@@ -547,7 +557,8 @@
         },
         "start_time": {
           "title": "Start Time",
-          "type": "string"
+          "type": "string",
+          "format": "date-time"
         },
         "message": {
           "title": "Message",
@@ -588,7 +599,8 @@
         },
         "start_time": {
           "title": "Start Time",
-          "type": "string"
+          "type": "string",
+          "format": "date-time"
         },
         "message": {
           "title": "Message",
@@ -663,7 +675,8 @@
         },
         "start_time": {
           "title": "Start Time",
-          "type": "string"
+          "type": "string",
+          "format": "date-time"
         },
         "message": {
           "title": "Message",
@@ -757,7 +770,8 @@
         },
         "start_time": {
           "title": "Start Time",
-          "type": "string"
+          "type": "string",
+          "format": "date-time"
         },
         "message": {
           "title": "Message",
@@ -840,7 +854,8 @@
         },
         "start_time": {
           "title": "Start Time",
-          "type": "string"
+          "type": "string",
+          "format": "date-time"
         },
         "message": {
           "title": "Message",
@@ -951,7 +966,8 @@
         },
         "start_time": {
           "title": "Start Time",
-          "type": "string"
+          "type": "string",
+          "format": "date-time"
         },
         "message": {
           "title": "Message",
@@ -1067,7 +1083,8 @@
         },
         "start_time": {
           "title": "Start Time",
-          "type": "string"
+          "type": "string",
+          "format": "date-time"
         },
         "message": {
           "title": "Message",
@@ -1166,7 +1183,8 @@
         },
         "start_time": {
           "title": "Start Time",
-          "type": "string"
+          "type": "string",
+          "format": "date-time"
         },
         "message": {
           "title": "Message",

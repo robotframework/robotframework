@@ -9,6 +9,7 @@ Requires Pydantic 1.10. https://docs.pydantic.dev/1.10/
 """
 
 from collections.abc import Sequence
+from datetime import datetime
 from pathlib import Path
 from typing import Literal
 
@@ -25,7 +26,7 @@ class BaseModel(PydanticBaseModel):
 class WithStatus(BaseModel):
     elapsed_time: float
     status: str
-    start_time: str | None
+    start_time: datetime | None
     message: str | None
 
 
@@ -65,7 +66,7 @@ class Message(BaseModel):
     message: str
     level: Literal['TRACE', 'DEBUG', 'INFO', 'WARN', 'ERROR', 'FAIL', 'SKIP']
     html: bool | None
-    timestamp: str | None
+    timestamp: datetime
 
 
 class Keyword(WithStatus):
