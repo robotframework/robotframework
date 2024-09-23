@@ -846,7 +846,7 @@
       "additionalProperties": false
     },
     "TestSuite": {
-      "title": "TestSuite",
+      "title": "robot.running.TestSuite",
       "description": "JSON schema for `robot.running.TestSuite`.\n\nCompatible with JSON Schema Draft 2020-12.",
       "type": "object",
       "properties": {

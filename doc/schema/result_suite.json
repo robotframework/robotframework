@@ -1,42 +1,74 @@
 {
-  "title": "Result",
-  "description": "Schema for JSON output files.\n\n`robot.result.TestSuite` has a separate schema that can be used when not\nworking with the full result model.\n\nCompatible with JSON Schema Draft 2020-12.",
+  "title": "robot.result.TestSuite",
+  "description": "JSON schema for `robot.result.TestSuite`.\n\nThe whole result model with, for example, errors and statistics has its\nown schema.\n\nCompatible with JSON Schema Draft 2020-12.",
   "type": "object",
   "properties": {
-    "generated": {
-      "title": "Generated",
+    "elapsed_time": {
+      "title": "Elapsed Time",
+      "type": "number"
+    },
+    "status": {
+      "title": "Status",
+      "type": "string"
+    },
+    "start_time": {
+      "title": "Start Time",
       "type": "string",
       "format": "date-time"
     },
-    "generator": {
-      "title": "Generator",
+    "message": {
+      "title": "Message",
       "type": "string"
+    },
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "doc": {
+      "title": "Doc",
+      "type": "string"
+    },
+    "metadata": {
+      "title": "Metadata",
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "source": {
+      "title": "Source",
+      "type": "string",
+      "format": "path"
     },
     "rpa": {
       "title": "Rpa",
       "type": "boolean"
     },
-    "suite": {
-      "$ref": "#/definitions/TestSuite"
+    "setup": {
+      "$ref": "#/definitions/Keyword"
     },
-    "statistics": {
-      "$ref": "#/definitions/Statistics"
+    "teardown": {
+      "$ref": "#/definitions/Keyword"
     },
-    "errors": {
-      "title": "Errors",
+    "tests": {
+      "title": "Tests",
       "type": "array",
       "items": {
-        "$ref": "#/definitions/ErrorMessage"
+        "$ref": "#/definitions/TestCase"
+      }
+    },
+    "suites": {
+      "title": "Suites",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/TestSuite"
       }
     }
   },
   "required": [
-    "generated",
-    "generator",
-    "rpa",
-    "suite",
-    "statistics",
-    "errors"
+    "elapsed_time",
+    "status",
+    "name"
   ],
   "additionalProperties": false,
   "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -1278,181 +1310,6 @@
         "elapsed_time",
         "status",
         "name"
-      ],
-      "additionalProperties": false
-    },
-    "Stat": {
-      "title": "Stat",
-      "type": "object",
-      "properties": {
-        "label": {
-          "title": "Label",
-          "type": "string"
-        },
-        "pass": {
-          "title": "Pass",
-          "type": "integer"
-        },
-        "fail": {
-          "title": "Fail",
-          "type": "integer"
-        },
-        "skip": {
-          "title": "Skip",
-          "type": "integer"
-        }
-      },
-      "required": [
-        "label",
-        "pass",
-        "fail",
-        "skip"
-      ],
-      "additionalProperties": false
-    },
-    "SuiteStat": {
-      "title": "SuiteStat",
-      "type": "object",
-      "properties": {
-        "label": {
-          "title": "Label",
-          "type": "string"
-        },
-        "pass": {
-          "title": "Pass",
-          "type": "integer"
-        },
-        "fail": {
-          "title": "Fail",
-          "type": "integer"
-        },
-        "skip": {
-          "title": "Skip",
-          "type": "integer"
-        },
-        "name": {
-          "title": "Name",
-          "type": "string"
-        },
-        "id": {
-          "title": "Id",
-          "type": "string"
-        }
-      },
-      "required": [
-        "label",
-        "pass",
-        "fail",
-        "skip",
-        "name",
-        "id"
-      ],
-      "additionalProperties": false
-    },
-    "TagStat": {
-      "title": "TagStat",
-      "type": "object",
-      "properties": {
-        "label": {
-          "title": "Label",
-          "type": "string"
-        },
-        "pass": {
-          "title": "Pass",
-          "type": "integer"
-        },
-        "fail": {
-          "title": "Fail",
-          "type": "integer"
-        },
-        "skip": {
-          "title": "Skip",
-          "type": "integer"
-        },
-        "doc": {
-          "title": "Doc",
-          "type": "string"
-        },
-        "combined": {
-          "title": "Combined",
-          "type": "string"
-        },
-        "info": {
-          "title": "Info",
-          "type": "string"
-        },
-        "links": {
-          "title": "Links",
-          "type": "string"
-        }
-      },
-      "required": [
-        "label",
-        "pass",
-        "fail",
-        "skip"
-      ],
-      "additionalProperties": false
-    },
-    "Statistics": {
-      "title": "Statistics",
-      "type": "object",
-      "properties": {
-        "total": {
-          "$ref": "#/definitions/Stat"
-        },
-        "suites": {
-          "title": "Suites",
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/SuiteStat"
-          }
-        },
-        "tags": {
-          "title": "Tags",
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/TagStat"
-          }
-        }
-      },
-      "required": [
-        "total",
-        "suites",
-        "tags"
-      ],
-      "additionalProperties": false
-    },
-    "ErrorMessage": {
-      "title": "ErrorMessage",
-      "type": "object",
-      "properties": {
-        "message": {
-          "title": "Message",
-          "type": "string"
-        },
-        "level": {
-          "title": "Level",
-          "enum": [
-            "ERROR",
-            "WARN"
-          ],
-          "type": "string"
-        },
-        "html": {
-          "title": "Html",
-          "type": "boolean"
-        },
-        "timestamp": {
-          "title": "Timestamp",
-          "type": "string",
-          "format": "date-time"
-        }
-      },
-      "required": [
-        "message",
-        "level",
-        "timestamp"
       ],
       "additionalProperties": false
     }

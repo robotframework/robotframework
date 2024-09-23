@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""JSON schema for ``robot.running.TestSuite`` model structure.
+"""JSON schema for the `robot.running.TestSuite` structure.
 
 The schema is modeled using Pydantic in this file. After updating the model,
 execute this file to regenerate the actual schema file in ``running.json``.
@@ -135,6 +135,7 @@ class TestSuite(BaseModel):
     resource: 'Resource | None'
 
     class Config:
+        title = 'robot.running.TestSuite'
         # pydantic doesn't add schema version automatically.
         # https://github.com/samuelcolvin/pydantic/issues/1478
         schema_extra = {

@@ -614,7 +614,7 @@ class TestToFromDictAndJson(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        with open(CURDIR / '../../doc/schema/result.json', encoding='UTF-8') as file:
+        with open(CURDIR / '../../doc/schema/result_suite.json', encoding='UTF-8') as file:
             schema = json.load(file)
         cls.validator = Draft202012Validator(schema=schema)
         cls.maxDiff = 2000
@@ -921,7 +921,7 @@ class TestJsonResult(unittest.TestCase):
             'rpa': False,
             'suite': {
                 'name': 'S',
-                'tests': [{'name': 'T1', 'status': 'PASS',
+                'tests': [{'name': 'T1', 'status': 'PASS', 'tags': ['tag'],
                            'body': [{'name': 'Këüẅörd', 'status': 'PASS',
                                      'start_time': '2023-12-18 22:35:12.345678',
                                      'elapsed_time': 0.123}]},
@@ -935,6 +935,9 @@ class TestJsonResult(unittest.TestCase):
         })
         cls.path = Path(os.getenv('TEMPDIR', tempfile.gettempdir()), 'robot-utest.json')
         cls.path.write_text(cls.data, encoding='UTF-8')
+        with open(CURDIR / '../../doc/schema/result.json', encoding='UTF-8') as file:
+            schema = json.load(file)
+        cls.validator = Draft202012Validator(schema=schema)
 
     def test_json_string(self):
         self._verify(self.data)
@@ -965,7 +968,7 @@ class TestJsonResult(unittest.TestCase):
         assert_equal(data['rpa'], False)
         assert_equal(data['suite'], {
             'name': 'S',
-            'tests': [{'name': 'T1',
+            'tests': [{'name': 'T1', 'tags': ['tag'],
                        'body': [{'name': 'Këüẅörd',
                                  'status': 'PASS', 'elapsed_time': 0.123,
                                  'start_time': '2023-12-18T22:35:12.345678'}],
@@ -978,7 +981,7 @@ class TestJsonResult(unittest.TestCase):
             'total': {'pass': 1, 'fail': 1, 'skip': 1, 'label': 'All Tests'},
             'suites': [{'name': 'S', 'label': 'S', 'id': 's1',
                         'pass': 1, 'fail': 1, 'skip': 1}],
-            'tags': []
+            'tags': [{'pass': 1, 'fail': 0, 'skip': 0, 'label': 'tag'}]
         })
         assert_equal(data['errors'], [{'message': 'Hello!', 'level': 'WARN',
                                        'timestamp': '2024-09-21T21:47:12.345678'}])
@@ -1002,6 +1005,8 @@ class TestJsonResult(unittest.TestCase):
             assert_equal(result.suite.rpa, rpa)
             assert_equal(result.suite.name, 'S')
             assert_equal(result.suite.elapsed_time.total_seconds(), 0.133)
+            assert_equal(result.suite.tests[0].name, 'T1')
+            assert_equal(result.suite.tests[0].tags, ['tag'])
             assert_equal(result.suite.tests[0].body[0].name, 'Këüẅörd')
             assert_equal(result.suite.tests[0].body[0].start_time,
                          datetime(2023, 12, 18, 22, 35, 12, 345678))
@@ -1017,6 +1022,7 @@ class TestJsonResult(unittest.TestCase):
             else:
                 assert_equal(len(result.errors), 0)
             assert_equal(result.return_code, 1)
+            self.validator.validate(instance=json.loads(result.to_json()))
 
 
 if __name__ == '__main__':
