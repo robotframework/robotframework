@@ -205,7 +205,7 @@ the extension::
    rebot output.json
    rebot output1.json output2.json
 
-When combining or merging results, it is possible to mix JSON and XML files::
+When combining or merging results, it is possible to mix JSON and XML output files::
 
    rebot output1.xml output2.json
    rebot --merge original.xml rerun.json
@@ -213,3 +213,6 @@ When combining or merging results, it is possible to mix JSON and XML files::
 The JSON output file structure is documented in the :file:`result.json` `schema file`_.
 
 .. note:: Support for JSON output files is new in Robot Framework 7.0.
+          Prior to Robot Framework 7.2 JSON output files contained only
+          information about the executed suite, but nowadays they contain
+          the same result data as `XML output files`_.
