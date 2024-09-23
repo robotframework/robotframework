@@ -3,7 +3,7 @@
 """JSON schema for the `robot.running.TestSuite` structure.
 
 The schema is modeled using Pydantic in this file. After updating the model,
-execute this file to regenerate the actual schema file in ``running.json``.
+execute this file to regenerate the actual schema file in `running_suite.json`.
 
 Requires Pydantic 1.10. https://docs.pydantic.dev/1.10/
 """
@@ -184,7 +184,7 @@ for cls in [For, While, IfBranch, TryBranch, TestSuite]:
 
 
 if __name__ == '__main__':
-    path = Path(__file__).parent / 'running.json'
+    path = Path(__file__).parent / 'running_suite.json'
     with open(path, 'w') as f:
         f.write(TestSuite.schema_json(indent=2))
     print(path.absolute())

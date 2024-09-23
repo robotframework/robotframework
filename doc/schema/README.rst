@@ -12,10 +12,10 @@ at the top of the page.
 Schema files
 ------------
 
-- `<robot.xsd>`_ - XML result (output.xml) schema in XSD_ format.
+- `<result.xsd>`_ - XML result (output.xml) schema in XSD_ format.
 - `<result.json>`_ - JSON result (output.json) schema in `JSON Schema`_ format.
 - `<result_suite.json>`_ - `JSON Schema`_ for ``robot.result.TestSuite``.
-- `<running.json>`_ - `JSON Schema`_ for ``robot.running.TestSuite``.
+- `<running_suite.json>`_ - `JSON Schema`_ for ``robot.running.TestSuite``.
 - `<libdoc.xsd>`_ - Libdoc XML spec schema in XSD_ format.
 - `<libdoc.json>`_ - Libdoc JSON spec schema in `JSON Schema`_ format.
 
