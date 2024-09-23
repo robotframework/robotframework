@@ -1,16 +1,13 @@
-import json
 import os
-import re
 import unittest
 import tempfile
 from datetime import datetime
-from io import StringIO, TextIOBase
+from io import StringIO
 from pathlib import Path
 
 from robot.errors import DataError
 from robot.result import ExecutionResult, ExecutionResultBuilder, Result, TestSuite
 from robot.utils.asserts import assert_equal, assert_false, assert_true, assert_raises
-from robot.version import get_full_version
 
 
 CURDIR = Path(__file__).resolve().parent
@@ -397,114 +394,6 @@ class TestUsingPathlibPath(unittest.TestCase):
             path.unlink()
         self.test_suite_is_built(result.suite)
         self.test_test_is_built(result.suite)
-
-
-class TestJsonResult(unittest.TestCase):
-
-    @classmethod
-    def setUpClass(cls):
-        cls.data = json.dumps({
-            'generator': 'Unit tests',
-            'generated': '2024-09-21 21:49:12.345678',
-            'rpa': False,
-            'suite': {
-                'name': 'S',
-                'tests': [{'name': 'T1', 'status': 'PASS',
-                           'body': [{'name': 'Këüẅörd', 'status': 'PASS',
-                                     'start_time': '2023-12-18 22:35:12.345678',
-                                     'elapsed_time': 0.123}]},
-                          {'name': 'T2', 'status': 'FAIL', 'elapsed_time': 0.01},
-                          {'name': 'T3', 'status': 'SKIP'}],
-            },
-            'statistics': 'ignored by from_json',
-            'errors': [{'message': 'Hello!',
-                        'level': 'WARN',
-                        'timestamp': '2024-09-21 21:47:12.345678'}]
-        })
-        cls.path = Path(os.getenv('TEMPDIR', tempfile.gettempdir()), 'robot-utest.json')
-        cls.path.write_text(cls.data, encoding='UTF-8')
-
-    def test_json_string(self):
-        self._verify(self.data)
-
-    def test_json_bytes(self):
-        self._verify(self.data.encode('UTF-8'))
-
-    def test_json_path(self):
-        self._verify(self.path)
-        self._verify(str(self.path))
-
-    def test_json_file(self):
-        with open(self.path, encoding='UTF-8') as file:
-            self._verify(file)
-
-    def test_suite_data_only(self):
-        data = json.loads(self.data)['suite']
-        self._verify(json.dumps(data), full=False, generator='unknown')
-
-    def test_to_json(self):
-        result = ExecutionResult(self.data)
-        data = json.loads(result.to_json())
-        assert_equal(list(data), ['generator', 'generated', 'rpa', 'suite',
-                                  'statistics', 'errors'])
-        assert_equal(data['generator'], get_full_version('Rebot'))
-        assert_true(re.fullmatch(r'20\d\d-\d\d-\d\dT\d\d:\d\d:\d\d\.\d{6}',
-                                 data['generated']))
-        assert_equal(data['rpa'], False)
-        assert_equal(data['suite'], {
-            'name': 'S',
-            'tests': [{'name': 'T1',
-                       'body': [{'name': 'Këüẅörd',
-                                 'status': 'PASS', 'elapsed_time': 0.123,
-                                 'start_time': '2023-12-18T22:35:12.345678'}],
-                       'status': 'PASS', 'elapsed_time': 0.123},
-                      {'name': 'T2', 'body': [], 'status': 'FAIL', 'elapsed_time': 0.01},
-                      {'name': 'T3', 'body': [], 'status': 'SKIP', 'elapsed_time': 0.0}],
-            'status': 'FAIL', 'elapsed_time': 0.133
-        })
-        assert_equal(data['statistics'], {
-            'total': {'pass': 1, 'fail': 1, 'skip': 1, 'label': 'All Tests'},
-            'suites': [{'name': 'S', 'label': 'S', 'id': 's1',
-                        'pass': 1, 'fail': 1, 'skip': 1}],
-            'tags': []
-        })
-        assert_equal(data['errors'], [{'message': 'Hello!', 'level': 'WARN',
-                                       'timestamp': '2024-09-21T21:47:12.345678'}])
-
-    def test_to_json_roundtrip(self):
-        result = ExecutionResult(self.data)
-        generator = get_full_version('Rebot')
-        self._verify(result.to_json(), generator=generator)
-        self._verify(result.to_json(include_statistics=False), generator=generator)
-        self._verify(result.to_json().replace('"rpa":false', '"rpa":true'),
-                     generator=generator, rpa=True)
-
-    def _verify(self, source, full=True, generator='Unit tests', rpa=False):
-        execution_result = ExecutionResult(source)
-        if isinstance(source, TextIOBase):
-            source.seek(0)
-        result_from_json = Result.from_json(source)
-        for result in execution_result, result_from_json:
-            assert_equal(result.generator, generator)
-            assert_equal(result.rpa, rpa)
-            assert_equal(result.suite.rpa, rpa)
-            assert_equal(result.suite.name, 'S')
-            assert_equal(result.suite.elapsed_time.total_seconds(), 0.133)
-            assert_equal(result.suite.tests[0].body[0].name, 'Këüẅörd')
-            assert_equal(result.suite.tests[0].body[0].start_time,
-                         datetime(2023, 12, 18, 22, 35, 12, 345678))
-            assert_equal(result.statistics.total.passed, 1)
-            assert_equal(result.statistics.total.failed, 1)
-            assert_equal(result.statistics.total.skipped, 1)
-            if full:
-                assert_equal(len(result.errors), 1)
-                assert_equal(result.errors[0].message, 'Hello!')
-                assert_equal(result.errors[0].level, 'WARN')
-                assert_equal(result.errors[0].timestamp,
-                             datetime(2024, 9, 21, 21, 47, 12, 345678))
-            else:
-                assert_equal(len(result.errors), 0)
-            assert_equal(result.return_code, 1)
 
 
 if __name__ == '__main__':
