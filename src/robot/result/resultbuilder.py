@@ -21,7 +21,6 @@ from .executionresult import CombinedResult, is_json_source, Result
 from .flattenkeywordmatcher import (create_flatten_message, FlattenByNameMatcher,
                                     FlattenByTypeMatcher, FlattenByTags)
 from .merger import Merger
-from .model import TestSuite
 from .xmlelementhandlers import XmlElementHandler
 
 
@@ -104,7 +103,7 @@ def _xml_result(source, options):
 
 
 class ExecutionResultBuilder:
-    """Builds :class:`~.executionresult.Result` objects based on output files.
+    """Builds :class:`~.executionresult.Result` objects based on XML output files.
 
     Instead of using this builder directly, it is recommended to use the
     :func:`ExecutionResult` factory method.
