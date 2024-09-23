@@ -140,18 +140,18 @@ class TestCheckerLibrary:
         set_suite_variable('$ERRORS', result.errors)
 
     def _validate_output(self, path):
-        schema_version = self._get_schema_version(path)
-        if schema_version != self.schema.version:
-            raise AssertionError(
-                'Incompatible schema versions. Schema has `version="%s"` '
-                'but output file has `schemaversion="%s"`.'
-                % (self.schema.version, schema_version)
-        )
+        version = self._get_schema_version(path)
+        if not version:
+            raise ValueError('Schema version not found from XML output.')
+        if version != self.schema.version:
+            raise ValueError(f'Incompatible schema versions. '
+                             f'Schema has `version="{self.schema.version}"` but '
+                             f'output file has `schemaversion="{version}"`.')
         self.schema.validate(path)
 
     def _get_schema_version(self, path):
-        with open(path, encoding='UTF-8') as f:
-            for line in f:
+        with open(path, encoding='UTF-8') as file:
+            for line in file:
                 if line.startswith('<robot'):
                     return re.search(r'schemaversion="(\d+)"', line).group(1)
 
