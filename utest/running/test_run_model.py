@@ -262,7 +262,7 @@ class TestToFromDictAndJson(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        with open(CURDIR / '../../doc/schema/running.json', encoding='UTF-8') as file:
+        with open(CURDIR / '../../doc/schema/running_suite.json', encoding='UTF-8') as file:
             schema = json.load(file)
         cls.validator = Draft202012Validator(schema=schema)
 

@@ -58,7 +58,7 @@ giving a special value `NONE` to the :option:`--output` option. If no outputs
 are needed, they should all be explicitly disabled using
 `--output NONE --report NONE --log NONE`.
 
-The XML output file structure is documented in the :file:`robot.xsd` `schema file`_.
+The XML output file structure is documented in the :file:`result.xsd` `schema file`_.
 
 .. note:: Starting from Robot Framework 7.0, Rebot_ can read and write
           `JSON output files`_. The plan is to enhance the support for
