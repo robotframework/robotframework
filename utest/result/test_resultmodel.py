@@ -714,7 +714,7 @@ class TestToFromDictAndJson(unittest.TestCase):
         self._verify(Continue(), type='CONTINUE', status='FAIL', elapsed_time=0)
         self._verify(Break(), type='BREAK', status='FAIL', elapsed_time=0)
         ret = Return()
-        ret.body.create_message('something', 'WARN', True, '2024-09-23 14:05:00:123456')
+        ret.body.create_message('something', 'WARN', True, '2024-09-23 14:05:00.123456')
         self._verify(ret, type='RETURN', status='FAIL', elapsed_time=0,
                      body=[{'message': 'something', 'level': 'WARN', 'html': True,
                             'timestamp': '2024-09-23T14:05:00.123456',
