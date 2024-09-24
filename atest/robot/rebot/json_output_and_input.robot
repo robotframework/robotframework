@@ -15,7 +15,7 @@ JSON output structure
     ...                Unit tests do schema validation with smaller data and that ought to be enough.
     ${data} =    Evaluate    json.load(open($JSON, encoding='UTF-8'))
     Lists Should Be Equal    ${data}    ${{['generator', 'generated', 'rpa', 'suite', 'statistics', 'errors']}}
-    Should Match       ${data}[generator]                     Rebot ?.* (Python 3.* on *)
+    Should Match       ${data}[generator]                     Rebot ?.* (* on *)
     Should Match       ${data}[generated]                     20??-??-??T??:??:??.??????
     Should Be Equal    ${data}[rpa]                           ${False}
     Should Be Equal    ${data}[suite][name]                   Misc
