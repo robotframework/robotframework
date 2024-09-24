@@ -174,7 +174,7 @@ class TestStatus(ExecutionStatus):
         if error is not None:
             message = str(error)
             skip = error.skip
-            fatal = error.exit
+            fatal = error.exit or self.test.tags.robot('exit-on-failure')
         else:
             skip = fatal = False
         if skip:

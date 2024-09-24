@@ -651,9 +651,18 @@ __ `Stopping test execution`_
 Stopping when first test case fails
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If option :option:`--exitonfailure (-X)` is used, test execution stops
-immediately if any test fails. The remaining tests are marked
-as failed without actually executing them.
+If option :option:`--exitonfailure (-X)` is used, the whole execution stops
+immediately if any test fails.
+
+Stopping using `robot:exit-on-failure` tag
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If a failed test has a special__ `robot:exit-on-failure` tag, the whole execution
+stops immediately after that test.
+
+__ `Reserved tags`_
+
+.. note:: This functionality is new in Robot Framework 7.2.
 
 Stopping on parsing or execution error
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

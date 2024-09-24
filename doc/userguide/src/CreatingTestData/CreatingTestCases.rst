@@ -766,6 +766,9 @@ to be added in the future.
 `robot:stop-on-failure` and `robot:recursive-stop-on-failure`
     Used for `disabling the continue-on-failure mode`__.
 
+`robot:exit-on-failure`
+    Stop the whole execution if a `test with this tag fails`__.
+
 `robot:skip-on-failure`
     Mark test to be `skipped if it fails`__.
 
@@ -789,6 +792,7 @@ to be added in the future.
 
 __ `Enabling continue-on-failure using tags`_
 __ `Disabling continue-on-failure using tags`_
+__ `Stopping using robot:exit-on-failure tag`_
 __ `Automatically skipping failed tests`_
 __ `Skipping before execution`_
 __ `By tag names`_
