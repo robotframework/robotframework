@@ -15,6 +15,7 @@
 
 import copy
 from ast import literal_eval
+from collections.abc import Iterable
 from itertools import chain
 
 from robot.api import logger
@@ -783,7 +784,7 @@ class _Dictionary:
         )
 
     def dictionaries_should_be_equal(self, dict1, dict2, msg=None, values=True,
-                                     ignore_keys=None, ignore_case=False):
+                                     ignore_keys=None, ignore_case=False, ignore_value_order=False):
         """Fails if the given dictionaries are not equal.
 
         First the equality of dictionaries' keys is checked and after that all
@@ -807,13 +808,18 @@ class _Dictionary:
         The ``ignore_case`` argument can be used to make comparison case-insensitive.
         See the `Ignore case` section for more details. This option is new in
         Robot Framework 7.0.
+
+        The ``ignore_value_order`` argument can be used to make comparison in case of
+        list-like values to ignore the order of the elements in the lists.
+        Using it requires items to be sortable.
+        This option is new in Robot Framework XXXX. # TODO: add correct RF version
         """
         self._validate_dictionary(dict1, dict2)
         normalizer = Normalizer(ignore_case, ignore_keys=ignore_keys)
         dict1 = normalizer.normalize(dict1)
         dict2 = normalizer.normalize(dict2)
         self._should_have_same_keys(dict1, dict2, msg, values)
-        self._should_have_same_values(dict1, dict2, msg, values)
+        self._should_have_same_values(dict1, dict2, msg, values, ignore_value_order)
 
     def _should_have_same_keys(self, dict1, dict2, message, values, validate_both=True):
         missing = seq2str([k for k in dict2 if k not in dict1])
@@ -827,11 +833,17 @@ class _Dictionary:
         if error:
             _report_error(error.strip(), message, values)
 
-    def _should_have_same_values(self, dict1, dict2, message, values):
+    def _should_have_same_values(self, dict1, dict2, message, values, ignore_value_order):
         errors = []
         for key in dict2:
             try:
-                assert_equal(dict1[key], dict2[key], msg=f'Key {key}')
+                if ignore_value_order and isinstance(dict1[key], Iterable) and isinstance(dict2[key], Iterable):
+                    normalizer = Normalizer(ignore_order=True)
+                    value1 = normalizer.normalize(dict1[key])
+                    value2 = normalizer.normalize(dict2[key])
+                    assert_equal(value1, value2, msg=f'Key {key}')
+                else:
+                    assert_equal(dict1[key], dict2[key], msg=f'Key {key}')
             except AssertionError as err:
                 errors.append(str(err))
         if errors:
@@ -839,7 +851,7 @@ class _Dictionary:
             _report_error(error, message, values)
 
     def dictionary_should_contain_sub_dictionary(self, dict1, dict2, msg=None,
-                                                 values=True, ignore_case=False):
+                                                 values=True, ignore_case=False, ignore_value_order=False):
         """Fails unless all items in ``dict2`` are found from ``dict1``.
 
         See `Lists Should Be Equal` for more information about configuring
@@ -848,13 +860,18 @@ class _Dictionary:
         The ``ignore_case`` argument can be used to make comparison case-insensitive.
         See the `Ignore case` section for more details. This option is new in
         Robot Framework 7.0.
+
+        The ``ignore_value_order`` argument can be used to make comparison in case of
+        list-like values to ignore the order of the elements in the lists.
+        Using it requires items to be sortable.
+        This option is new in Robot Framework XXXX. # TODO: add correct RF version
         """
         self._validate_dictionary(dict1, dict2)
         normalizer = Normalizer(ignore_case)
         dict1 = normalizer.normalize(dict1)
         dict2 = normalizer.normalize(dict2)
         self._should_have_same_keys(dict1, dict2, msg, values, validate_both=False)
-        self._should_have_same_values(dict1, dict2, msg, values)
+        self._should_have_same_values(dict1, dict2, msg, values, ignore_value_order)
 
     def log_dictionary(self, dictionary, level='INFO'):
         """Logs the size and contents of the ``dictionary`` using given ``level``.
