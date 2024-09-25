@@ -11,10 +11,12 @@ Reset Message
     [Teardown]    Should Be Equal    ${TEST MESSAGE}    My Real Test Message
 
 Append To Message
-    [Documentation]    PASS My <message> & its continuation <>
+    [Documentation]    PASS My <message> & its continuation <>1,\n2
     Set Test Message    My <message>    append please
     Set Test Message    & its continuation <>    append=please
-    [Teardown]    Should Be Equal    ${TEST MESSAGE}    My <message> & its continuation <>
+    Set Test Message    1    append=yes    separator=
+    Set Test Message    \n2    append=yup  separator=,
+    [Teardown]    Should Be Equal    ${TEST MESSAGE}    My <message> & its continuation <>1,\n2
 
 Set Non-ASCII Message
     [Documentation]    PASS Hyvää yötä & huomenta!
@@ -109,6 +111,21 @@ Test Message Variable Reacts On Set Test Message
     [Documentation]    PASS Other Second
     Pass_Execution    Initial Test Message
     [Teardown]    Check Test Message Variable Behavior Is Correct
+
+Append HTML to non-HTML with separator
+    [Documentation]    PASS *HTML* A non HTML &lt;message&gt;&amp;its <b>HTML</b> continuation
+    Set Test Message    A non HTML <message>
+    Set Test Message    *HTML* its <b>HTML</b> continuation    append=true    separator=&
+
+Append non-HTML to HTML with separator
+    [Documentation]    PASS *HTML* A <b>HTML</b> message&lt;\br&gt;its non-HTML &lt;continuation&gt;
+    Set Test Message    *HTML* A <b>HTML</b> message
+    Set Test Message    its non-HTML <continuation>    append=True    separator=<\br>
+
+Append HTML to HTML with separator
+    [Documentation]    PASS *HTML* A <b>HTML</b> message &amp;&amp; its <b>HTML</b> continuation
+    Set Test Message    *HTML* A <b>HTML</b> message
+    Set Test Message    *HTML* &amp; its <b>HTML</b> continuation    append=yeah    separator=${SPACE}&
 
 *** Keywords ***
 Set Message In Teardown And Fail Afterwards
