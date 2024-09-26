@@ -450,7 +450,7 @@ class Process:
             command = self.join_command_line(command)
         log_level = configuration.pop('log_level',None)
         self._get_log_by_level(f'Starting process:\n{system_decode(command)}',log_level)
-        self._get_log_by_level(f'Process configuration:\n{config}',log_level)
+        self._get_log_by_level(f'Process configuration:\n{config}','debug')
 
     def is_process_running(self, handle=None):
         """Checks is the process running or not.
@@ -1049,7 +1049,9 @@ stdout:  {self._stream_name(self.stdout_stream)}
 stderr:  {self._stream_name(self.stderr_stream)}
 stdin:   {self._stream_name(self.stdin_stream)}
 alias:   {self.alias}
-env:     {self.env}'''
+env:     {self.env}
+log_level:  {self.log_level}
+'''
 
     def _stream_name(self, stream):
         if hasattr(stream, 'name'):
