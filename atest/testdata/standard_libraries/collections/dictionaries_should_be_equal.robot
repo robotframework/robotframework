@@ -141,7 +141,7 @@ Different values and custom error message with values
 `ignore_value_order` set to True
     Dictionaries Should Be Equal    ${D10A}    ${D10B}    ignore_value_order=True
 
-`ignore_value_order` set to False and dictionaries have list in different order
+`ignore_value_order` set to False and dictionaries have lists in different order
     [Documentation]    FAIL
     ...    Following keys have different values:
     ...    Key list: ['a', 'B'] != ['B', 'a']

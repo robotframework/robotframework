@@ -99,5 +99,5 @@ Should contain sub dictionary with `ignore_case`
 Should contain sub dictionary with `ignore_value_order`
     Check Test Case    ${TESTNAME}
 
-Should contain sub dictionary with `ignore_value_order` set to False and dictionaries have list in different order
+Should contain sub dictionary with `ignore_value_order` set to False when dictionaries have lists in different order
     Check Test Case    ${TESTNAME}

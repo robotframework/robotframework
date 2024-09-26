@@ -812,7 +812,7 @@ class _Dictionary:
         The ``ignore_value_order`` argument can be used to make comparison in case of
         list-like values to ignore the order of the elements in the lists.
         Using it requires items to be sortable.
-        This option is new in Robot Framework XXXX. # TODO: add correct RF version
+        This option is new in Robot Framework 7.2.
         """
         self._validate_dictionary(dict1, dict2)
         normalizer = Normalizer(ignore_case, ignore_keys=ignore_keys)
@@ -864,7 +864,7 @@ class _Dictionary:
         The ``ignore_value_order`` argument can be used to make comparison in case of
         list-like values to ignore the order of the elements in the lists.
         Using it requires items to be sortable.
-        This option is new in Robot Framework XXXX. # TODO: add correct RF version
+        This option is new in Robot Framework 7.2.
         """
         self._validate_dictionary(dict1, dict2)
         normalizer = Normalizer(ignore_case)

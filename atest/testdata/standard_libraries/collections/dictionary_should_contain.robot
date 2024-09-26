@@ -249,7 +249,10 @@ Should contain sub dictionary with `ignore_case`
 Should contain sub dictionary with `ignore_value_order`
     Dictionary Should Contain Sub Dictionary    ${D}    ${D_2}    ignore_value_order=True
 
-Should contain sub dictionary with `ignore_value_order` set to False and dictionaries have list in different order
+Should contain sub dictionary with `ignore_value_order` set to False when dictionaries have lists in different order
+    [Documentation]    FAIL
+    ...    Following keys have different values:
+    ...    Key list: ['a', 'B'] != ['B', 'a']
     Dictionary Should Contain Sub Dictionary    ${D}    ${D_2}
 
 ### Misc ###
