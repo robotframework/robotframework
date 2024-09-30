@@ -7,6 +7,8 @@ def end_keyword(data, result):
     elif result.passed and 'Fail me!' in result.args:
         result.failed = True
         result.message = 'Ooops!!'
+    elif result.passed and 'Silent fail!' in result.args:
+        result.failed = True
     elif result.skipped:
         result.failed = True
         result.message = 'Failing!'

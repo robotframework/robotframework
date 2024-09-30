@@ -179,12 +179,22 @@ class ExampleLibrary:
         return FailingStr(), FailingStr()
 
     def fail_with_suppressed_exception_name(self, msg):
-        raise MyException(msg)
+        raise ExceptionWithSuppressedName(msg)
+
+    def exception_with_empty_message_and_name(self):
+        raise ExceptionWithEmptyName('')
 
 
 class _MyList(list):
     pass
 
 
-class MyException(AssertionError):
+class ExceptionWithSuppressedName(AssertionError):
     ROBOT_SUPPRESS_NAME = True
+
+
+class ExceptionWithEmptyName(AssertionError):
+    pass
+
+
+ExceptionWithEmptyName.__name__ = ''
