@@ -29,9 +29,13 @@ class Failure:
         self.teardown_skipped = None
 
     def __bool__(self):
-        return bool(
-            self.setup or self.test or self.teardown or
-            self.setup_skipped or self.test_skipped or self.teardown_skipped
+        return (
+            self.setup is not None
+            or self.test is not None
+            or self.teardown is not None
+            or self.setup_skipped is not None
+            or self.test_skipped is not None
+            or self.teardown_skipped is not None
         )
 
 

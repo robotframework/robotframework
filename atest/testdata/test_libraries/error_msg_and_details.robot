@@ -3,13 +3,21 @@ Library           ExampleLibrary
 Library           nön_äscii_dïr/valid.py
 
 *** Test Cases ***
-Generic Failure
+Generic failure
     [Documentation]    FAIL foo != bar
     Exception    AssertionError    foo != bar
 
-Exception Name Suppressed in Error Message
+Exception name suppressed explicitly
     [Documentation]    FAIL No Exception Name
     Fail with suppressed exception name    No Exception Name
+
+Even suppressed name is included if message is empty
+    [Documentation]    FAIL ExceptionWithSuppressedName
+    Fail with suppressed exception name    ${EMPTY}
+
+Exception with empty message and name is handled properly
+    [Documentation]    FAIL
+    Exception with empty message and name
 
 Non Generic Failure
     [Documentation]    FAIL FloatingPointError: Too Large A Number !!

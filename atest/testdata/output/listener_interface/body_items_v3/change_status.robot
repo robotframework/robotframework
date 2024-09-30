@@ -8,6 +8,11 @@ Pass to fail
     Log     Fail me!
     Log     I'm not run.
 
+Pass to fail without a message
+    [Documentation]    FAIL
+    Log    Silent fail!
+    Log    I'm not run.
+
 Skip to fail
     [Documentation]    FAIL    Failing!
     Skip    Fail me!
