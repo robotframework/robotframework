@@ -3,8 +3,8 @@ Library           Collections
 Library           CollectionsHelperLibrary.py
 
 *** Variables ***
-@{LIST_1}          a    B
-@{LIST_2}          B    a
+@{LIST_1}        a    B
+@{LIST_2}        B    a
 ${TUPLE}         ${{'a', 'B'}}
 &{D0}
 &{D1}            a=x
@@ -14,11 +14,14 @@ ${TUPLE}         ${{'a', 'B'}}
 &{D3C}           A=X    b=Y    C=${3}
 &{D9A}           a=1    b=2    c=3    d=4    e=5    f=6    g=7    h=8    i=9
 &{D9B}           d=4    e=5    i=9    a=1    f=6    g=7    b=2    h=8    c=3
-&{D10A}           d=4    e=5    i=9    a=1    f=6    g=7    b=2    h=8    c=3    list=${LIST_1}
-&{D10B}           d=4    e=5    i=9    a=1    f=6    g=7    b=2    h=8    c=3    list=${LIST_2}
+&{D10A}          d=4    e=5    i=9    a=1    f=6    g=7    b=2    h=8    c=3    list=${LIST_1}
+&{D10B}          d=4    e=5    i=9    a=1    f=6    g=7    b=2    h=8    c=3    list=${LIST_2}
+&{D10C}          d=4    e=5    i=9    a=1    f=6    g=7    b=2    h=8    c=3    list=${LIST_2}    dict_list=@{DICTS}
+&{D10D}          d=4    e=5    i=9    a=1    f=6    g=7    b=2    h=8    c=3    list=${LIST_2}    dict_list=@{DICTS_1}
 &{DX}            a=x    B=Y    c=${3}   ${4}=E    ß=Straße
 ...              list=${LIST_1}    ${TUPLE}=tuple    dict=${D2}
 @{DICTS}         ${D0}    ${D1}    ${D2}    ${D3}    ${D3B}    ${D3C}    ${D9A}    ${D9B}    ${DX}
+@{DICTS_1}       ${DX}    ${D9B}    ${D9A}    ${D3C}    ${D3B}    ${D3}    ${D2}    ${D1}    ${D0}
 
 *** Test Cases ***
 Comparison with itself
@@ -140,6 +143,9 @@ Different values and custom error message with values
 
 `ignore_value_order` set to True
     Dictionaries Should Be Equal    ${D10A}    ${D10B}    ignore_value_order=True
+    
+`ignore_value_order` set to True when dictionaries has key with value of a list of a dictionaries
+    Dictionaries Should Be Equal    ${D10C}    ${D10D}    ignore_value_order=True
 
 `ignore_value_order` set to False and dictionaries have lists in different order
     [Documentation]    FAIL

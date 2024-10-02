@@ -815,11 +815,11 @@ class _Dictionary:
         This option is new in Robot Framework 7.2.
         """
         self._validate_dictionary(dict1, dict2)
-        normalizer = Normalizer(ignore_case, ignore_keys=ignore_keys)
+        normalizer = Normalizer(ignore_case=ignore_case, ignore_keys=ignore_keys, ignore_order=ignore_value_order)
         dict1 = normalizer.normalize(dict1)
         dict2 = normalizer.normalize(dict2)
         self._should_have_same_keys(dict1, dict2, msg, values)
-        self._should_have_same_values(dict1, dict2, msg, values, ignore_value_order)
+        self._should_have_same_values(dict1, dict2, msg, values)
 
     def _should_have_same_keys(self, dict1, dict2, message, values, validate_both=True):
         missing = seq2str([k for k in dict2 if k not in dict1])
@@ -833,17 +833,11 @@ class _Dictionary:
         if error:
             _report_error(error.strip(), message, values)
 
-    def _should_have_same_values(self, dict1, dict2, message, values, ignore_value_order):
+    def _should_have_same_values(self, dict1, dict2, message, values):
         errors = []
         for key in dict2:
             try:
-                if ignore_value_order and isinstance(dict1[key], Iterable) and isinstance(dict2[key], Iterable):
-                    normalizer = Normalizer(ignore_order=True)
-                    value1 = normalizer.normalize(dict1[key])
-                    value2 = normalizer.normalize(dict2[key])
-                    assert_equal(value1, value2, msg=f'Key {key}')
-                else:
-                    assert_equal(dict1[key], dict2[key], msg=f'Key {key}')
+                assert_equal(dict1[key], dict2[key], msg=f'Key {key}')
             except AssertionError as err:
                 errors.append(str(err))
         if errors:
@@ -867,11 +861,11 @@ class _Dictionary:
         This option is new in Robot Framework 7.2.
         """
         self._validate_dictionary(dict1, dict2)
-        normalizer = Normalizer(ignore_case)
+        normalizer = Normalizer(ignore_case=ignore_case, ignore_order=ignore_value_order)
         dict1 = normalizer.normalize(dict1)
         dict2 = normalizer.normalize(dict2)
         self._should_have_same_keys(dict1, dict2, msg, values, validate_both=False)
-        self._should_have_same_values(dict1, dict2, msg, values, ignore_value_order)
+        self._should_have_same_values(dict1, dict2, msg, values)
 
     def log_dictionary(self, dictionary, level='INFO'):
         """Logs the size and contents of the ``dictionary`` using given ``level``.
@@ -1182,7 +1176,10 @@ class Normalizer:
     def normalize_list(self, value):
         cls = type(value)
         if self.ignore_order:
-            value = sorted(value)
+            try:
+                value = sorted(value)
+            except TypeError:
+                value = sorted(value, key=str)
         value = [self.normalize(v) for v in value]
         return self._try_to_preserve_type(value, cls)
 

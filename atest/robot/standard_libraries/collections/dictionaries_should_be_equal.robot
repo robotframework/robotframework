@@ -69,5 +69,8 @@ Different values and custom error message with values
 `ignore_value_order` set to True
     Check Test Case    ${TESTNAME}
 
+`ignore_value_order` set to True when dictionaries has key with value of a list of a dictionaries
+    Check Test Case    ${TESTNAME}
+
 `ignore_value_order` set to False and dictionaries have lists in different order
     Check Test Case    ${TESTNAME}
