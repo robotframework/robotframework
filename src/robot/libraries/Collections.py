@@ -15,7 +15,6 @@
 
 import copy
 from ast import literal_eval
-from collections.abc import Iterable
 from itertools import chain
 
 from robot.api import logger
