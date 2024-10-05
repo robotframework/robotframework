@@ -99,7 +99,7 @@ jobs:
         working-directory: atest/results
         run: |
           pip install rflogs
-          rflogs upload --tag workflow:${{ github.workflow }} --tag os:${{ runner.os }} --tag python-version:${{ matrix.python-version }} --tag branch:${{ github.head_ref }}
+          rflogs upload --tag "workflow:${{ github.workflow }}" --tag "os:${{ runner.os }}" --tag "python-version:${{ matrix.python-version }}" --tag "branch:${{ github.head_ref }}"
 
       - uses: octokit/request-action@872c5c97b3c85c23516a572f02b31401ef82415d
         name: Update status with Github Status API
