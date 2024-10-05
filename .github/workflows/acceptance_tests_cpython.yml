@@ -140,18 +140,3 @@ jobs:
           else:
               print("No directory containing log.html found")
               exit(1)
-
-      - uses: octokit/request-action@872c5c97b3c85c23516a572f02b31401ef82415d
-        name: Update status with Github Status API
-        id: update_status
-        with:
-          route: POST /repos/:repository/statuses/:sha
-          repository: ${{ github.repository }}
-          sha: ${{ github.sha }}
-          state: "${{env.JOB_STATUS}}"
-          target_url: "${{env.REPORT_URL}}"
-          description: "Link to test report."
-          context: at-results-${{ matrix.python-version }}-${{ matrix.os }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.STATUS_UPLOAD_TOKEN }}
-        if: always() && job.status == 'failure'
