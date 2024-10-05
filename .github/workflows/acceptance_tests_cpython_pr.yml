@@ -94,6 +94,7 @@ jobs:
         if: always() && job.status == 'failure'
 
       - name: Install and run rflogs
+        if: failure()
         env:
           RFLOGS_API_KEY: ${{ secrets.RFLOGS_API_KEY }}
         working-directory: atest/results

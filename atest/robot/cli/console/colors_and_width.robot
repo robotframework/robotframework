@@ -5,6 +5,7 @@ Resource          console_resource.robot
 
 *** Test Cases ***
 Console Colors Auto
+    Fail  Just FAIL
     Run Tests With Warnings    --consolecolors auto
     Outputs should not have ANSI codes
 
