@@ -105,35 +105,38 @@ jobs:
           path: atest/results
         if: always() && job.status == 'failure'
 
-      - name: Upload results on *nix
-        run: |
-          echo '<html><head><meta http-equiv = "refresh" content =" 0 ; url = /report.html"></head></html>' > atest/results/index.html
-          zip -r -j site.zip atest/results > no_output 2>&1
-          curl -s -H "Content-Type: application/zip" -H "Authorization: Bearer ${{ secrets.NETLIFY_TOKEN }}" --data-binary "@site.zip" https://api.netlify.com/api/v1/sites > response.json
-          echo "REPORT_URL=$(cat response.json|python -c "import sys, json; print('https://' + json.load(sys.stdin)['subdomain'] + '.netlify.com')")" >> $GITHUB_ENV
-          echo "JOB_STATUS=$(python -c "print('${{ job.status }}'.lower())")" >> $GITHUB_ENV
-        if: always() && job.status == 'failure' && runner.os != 'Windows'
-
-      - name: Upload results on Windows
-        run: |
-          echo '<html><head><meta http-equiv = "refresh" content =" 0 ; url = /report.html"></head></html>' > atest/results/index.html
-          zip -r -j site.zip atest/results > no_output 2>&1
-          curl -s -H "Content-Type: application/zip" -H "Authorization: Bearer ${{ secrets.NETLIFY_TOKEN }}" --data-binary "@site.zip" https://api.netlify.com/api/v1/sites > response.json
-          echo "REPORT_URL=$(cat response.json|python -c "import sys, json; print('https://' + json.load(sys.stdin)['subdomain'] + '.netlify.com')")" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-          echo "JOB_STATUS=$(python -c "print('${{ job.status }}'.lower())")" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-        if: always() && job.status == 'failure' && runner.os == 'Windows'
-
-      - uses: octokit/request-action@872c5c97b3c85c23516a572f02b31401ef82415d
-        name: Update status with Github Status API
-        id: update_status
-        with:
-          route: POST /repos/:repository/statuses/:sha
-          repository: ${{ github.repository }}
-          sha: ${{ github.sha }}
-          state: "${{env.JOB_STATUS}}"
-          target_url: "${{env.REPORT_URL}}"
-          description: "Link to test report."
-          context: at-results-${{ matrix.python-version }}-${{ matrix.os }}
+      - name: Install and run rflogs
+        if: failure()
         env:
-          GITHUB_TOKEN: ${{ secrets.STATUS_UPLOAD_TOKEN }}
-        if: always() && job.status == 'failure'
+          RFLOGS_API_KEY: ${{ secrets.RFLOGS_API_KEY }}
+        working-directory: atest/results
+        shell: python
+        run: |
+          import os
+          import glob
+          import subprocess
+
+          # Install rflogs
+          subprocess.check_call(["pip", "install", "rflogs"])
+
+          # Find the first directory containing log.html
+          log_files = glob.glob("**/log.html", recursive=True)
+          if log_files:
+              result_dir = os.path.dirname(log_files[0])
+              print(f"Result directory: {result_dir}")
+
+              # Construct the rflogs command
+              cmd = [
+                  "rflogs", "upload",
+                  "--tag", f"workflow:${{ github.workflow }}",
+                  "--tag", f"os:${{ runner.os }}",
+                  "--tag", f"python-version:${{ matrix.python-version }}",
+                  "--tag", f"branch:${{ github.head_ref || github.ref_name }}",
+                  result_dir
+              ]
+
+              # Run rflogs upload
+              subprocess.check_call(cmd)
+          else:
+              print("No directory containing log.html found")
+              exit(1)
