@@ -14,6 +14,7 @@ ${STDERR}         %{TEMPDIR}/redirect_stderr.txt
 
 *** Test Cases ***
 PYTHONIOENCODING is honored in console output
+    Fail   for no good reason
     ${result} =    Run Process
     ...    @{COMMAND}
     ...    env:PYTHONIOENCODING=ISO-8859-5
