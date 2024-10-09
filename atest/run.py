@@ -24,6 +24,9 @@ environment variable to `TRUE`.
 
 Use `--rerun-failed (`-R`)` to re-execute failed tests from the previous run.
 
+The output directory is set based on the interpreter version and operating
+system by default. It can be changed using the normal `--outputdir` option.
+
 Examples:
 $ atest/run.py
 $ atest/run.py --exclude no-ci atest/robot/standard_libraries
@@ -64,8 +67,8 @@ ARGUMENTS = '''
 '''.strip()
 
 
-def atests(interpreter, arguments, schema_validation=False):
-    output_dir, temp_dir = _get_directories(interpreter)
+def atests(interpreter, arguments, output_dir=None, schema_validation=False):
+    output_dir, temp_dir = _get_directories(interpreter, output_dir)
     arguments = list(_get_arguments(interpreter, output_dir)) + list(arguments)
     rc = _run(arguments, temp_dir, interpreter, schema_validation)
     if rc < 251:
@@ -73,9 +76,12 @@ def atests(interpreter, arguments, schema_validation=False):
     return rc
 
 
-def _get_directories(interpreter):
+def _get_directories(interpreter, output_dir=None):
     name = interpreter.output_name
-    output_dir = CURDIR / 'results' / name
+    if output_dir:
+        output_dir = Path(output_dir)
+    else:
+        output_dir = CURDIR / 'results' / name
     temp_dir = Path(tempfile.gettempdir()) / 'robotatest' / name
     if output_dir.exists():
         shutil.rmtree(output_dir)
@@ -132,6 +138,7 @@ if __name__ == '__main__':
     parser.add_argument('-I', '--interpreter', default=sys.executable)
     parser.add_argument('-S', '--schema-validation', action='store_true')
     parser.add_argument('-R', '--rerun-failed', action='store_true')
+    parser.add_argument('-d', '--outputdir')
     parser.add_argument('-h', '--help', action='store_true')
     options, robot_args = parser.parse_known_args()
     try:
@@ -148,5 +155,5 @@ if __name__ == '__main__':
         print(__doc__)
         rc = 251
     else:
-        rc = atests(interpreter, robot_args, options.schema_validation)
+        rc = atests(interpreter, robot_args, options.outputdir, options.schema_validation)
     sys.exit(rc)
