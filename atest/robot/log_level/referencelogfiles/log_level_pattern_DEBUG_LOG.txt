@@ -1,0 +1,10 @@
+.+?\s-\s(\w+?\s-\s===\s\[LOG_LEVEL_TEST\]\s-\s\[\w+?\]\s-\s\[\w+?\]:\s\w+?\stest\sstring\s\w+?\stest\sstring\s\w+?\stest\sstring\s\w+?)
+.+?\s-\s(\w+?)\s-\s.+?\s(START\sKEYWORD):\s(.+?)\[.+?\]
+.+?\s-\s(\w+?)\s-\s.+?\s(END\sKEYWORD):\s(.+?)\s\(.+?\)
+.+?\s-\s(\w+?)\s-\s.+?\s(START\sIF/ELSE\sROOT):
+.+?\s-\s(\w+?)\s-\s.+?\s(END\sIF/ELSE\sROOT):
+.+?\s-\s(\w+?)\s-\s.+?\s(START\sIF):
+.+?\s-\s(\w+?)\s-\s.+?\s(END\sIF):
+.+?\s-\s(\w+?)\s-\s.+?\s(START\sITERATION):
+.+?\s-\s(\w+?)\s-\s.+?\s(END\sITERATION):
+
