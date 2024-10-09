@@ -52,7 +52,8 @@ class OutputCapturer:
             LOGGER.log_output(stdout)
         if stderr:
             LOGGER.log_output(stderr)
-            sys.__stderr__.write(console_encode(stderr, stream=sys.__stderr__))
+            if sys.__stderr__:
+                sys.__stderr__.write(console_encode(stderr, stream=sys.__stderr__))
 
     def _release(self):
         stdout = self.stdout.release()
