@@ -76,16 +76,6 @@ jobs:
           ${{ matrix.set_display }}
           ${{ env.ATEST_PYTHON }} atest/run.py --interpreter ${{ env.BASE_PYTHON }} --exclude no-ci ${{ matrix.atest_args }} atest/robot
 
-      - name: Delete output.xml (on Win)
-        run: |
-          Get-ChildItem atest/results -Include output.xml -Recurse | Remove-Item
-        if: always() && runner.os == 'Windows'
-
-      - name: Delete output.xml (on Unix-like)
-        run: |
-          find atest/results -type f -name 'output.xml' -exec rm {} +
-        if: always() && runner.os != 'Windows'
-
       - name: Archive acceptances test results
         uses: actions/upload-artifact@v4
         with:
