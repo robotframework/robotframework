@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from typing import Any, Callable, Sequence, TypeVar, Union, overload
+from typing import Any, Callable, Literal, Sequence, TypeVar, Union, overload
 
 from .interfaces import TypeHints
 
@@ -26,7 +26,9 @@ K = TypeVar('K', bound=Callable[..., Any])    # Keyword function.
 L = TypeVar('L', bound=type)                  # Library class.
 KeywordDecorator = Callable[[K], K]
 LibraryDecorator = Callable[[L], L]
+Scope = Literal['GLOBAL', 'SUITE', 'TEST', 'TASK']
 Converter = Union[Callable[[Any], Any], Callable[[Any, Any], Any]]
+DocFormat = Literal['ROBOT', 'HTML', 'TEXT', 'REST']
 
 
 def not_keyword(func: F) -> F:
@@ -107,7 +109,7 @@ def keyword(name: 'K | str | None' = None,
         def types_as_list(length, case_insensitive):
             # ...
 
-        @keyword(types=None])
+        @keyword(types=None)
         def no_conversion(length, case_insensitive=False):
             # ...
     """
@@ -129,20 +131,20 @@ def library(cls: L, /) -> L:
 
 
 @overload
-def library(scope: 'str | None' = None,
+def library(scope: 'Scope | None' = None,
             version: 'str | None' = None,
             converters: 'dict[type, Converter] | None' = None,
-            doc_format: 'str | None' = None,
+            doc_format: 'DocFormat | None' = None,
             listener: 'Any | None' = None,
             auto_keywords: bool = False) -> LibraryDecorator:
     ...
 
 
 @not_keyword
-def library(scope: 'L | str | None' = None,
+def library(scope: 'L | Scope | None' = None,
             version: 'str | None' = None,
             converters: 'dict[type, Converter] | None' = None,
-            doc_format: 'str | None' = None,
+            doc_format: 'DocFormat | None' = None,
             listener: 'Any | None' = None,
             auto_keywords: bool = False) -> 'L | LibraryDecorator':
     """Class decorator to control keyword discovery and other library settings.
