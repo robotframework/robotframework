@@ -1527,8 +1527,12 @@ class _Variables(_BuiltInBase):
         For the reasons explained in the `Using variables with keywords creating
         or accessing variables` section, using the escaped format is recommended.
 
+        Notice that ``default`` must be given positionally like ``example`` and
+        not using the named-argument syntax like ``default=example``. We hope to
+        be able to remove this limitation in the future.
+
         Examples:
-        | ${x} =    `Get Variable Value`    $a    default
+        | ${x} =    `Get Variable Value`    $a    example
         | ${y} =    `Get Variable Value`    $a    ${b}
         | ${z} =    `Get Variable Value`    $z
         =>
@@ -1567,7 +1571,7 @@ class _Variables(_BuiltInBase):
         return name, value
 
     @run_keyword_variant(resolve=0)
-    def variable_should_exist(self, name, msg=None):
+    def variable_should_exist(self, name, message=None):
         r"""Fails unless the given variable exists within the current scope.
 
         The name of the variable can be given either as a normal variable name
@@ -1575,7 +1579,10 @@ class _Variables(_BuiltInBase):
         For the reasons explained in the `Using variables with keywords creating
         or accessing variables` section, using the escaped format is recommended.
 
-        The default error message can be overridden with the ``msg`` argument.
+        The default error message can be overridden with the ``message`` argument.
+        Notice that it must be given positionally like ``A message`` and not
+        using the named-argument syntax like ``message=A message``. We hope to
+        be able to remove this limitation in the future.
 
         See also `Variable Should Not Exist` and `Keyword Should Exist`.
         """
@@ -1583,11 +1590,11 @@ class _Variables(_BuiltInBase):
         try:
             self._variables.replace_scalar(name)
         except VariableError:
-            raise AssertionError(self._variables.replace_string(msg)
-                                 if msg else f"Variable '{name}' does not exist.")
+            raise AssertionError(self._variables.replace_string(message)
+                                 if message else f"Variable '{name}' does not exist.")
 
     @run_keyword_variant(resolve=0)
-    def variable_should_not_exist(self, name, msg=None):
+    def variable_should_not_exist(self, name, message=None):
         r"""Fails if the given variable exists within the current scope.
 
         The name of the variable can be given either as a normal variable name
@@ -1595,7 +1602,10 @@ class _Variables(_BuiltInBase):
         For the reasons explained in the `Using variables with keywords creating
         or accessing variables` section, using the escaped format is recommended.
 
-        The default error message can be overridden with the ``msg`` argument.
+        The default error message can be overridden with the ``message`` argument.
+        Notice that it must be given positionally like ``A message`` and not
+        using the named-argument syntax like ``message=A message``. We hope to
+        be able to remove this limitation in the future.
 
         See also `Variable Should Exist` and `Keyword Should Exist`.
         """
@@ -1605,8 +1615,8 @@ class _Variables(_BuiltInBase):
         except VariableError:
             pass
         else:
-            raise AssertionError(self._variables.replace_string(msg)
-                                 if msg else f"Variable '{name}' exists.")
+            raise AssertionError(self._variables.replace_string(message)
+                                 if message else f"Variable '{name}' exists.")
 
     def replace_variables(self, text):
         """Replaces variables in the given text with their current values.
