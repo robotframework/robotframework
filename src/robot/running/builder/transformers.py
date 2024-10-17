@@ -19,7 +19,7 @@ from robot.parsing import File, ModelVisitor, Token
 from robot.utils import NormalizedDict
 from robot.variables import VariableMatches
 
-from ..model import For, If, IfBranch, TestSuite, TestCase, Try, TryBranch, While
+from ..model import For, If, IfBranch, TestCase, TestSuite, Try, TryBranch, While
 from ..resourcemodel import ResourceFile, UserKeyword
 from .settings import FileSettings
 
@@ -509,19 +509,21 @@ class ErrorReporter(ModelVisitor):
 
     def visit_SectionHeader(self, node):
         token = node.get_token(*Token.HEADER_TOKENS)
-        if not token.error:
+        if token is None or token.error is None:
             return
-        if token.type == Token.INVALID_HEADER:
-            self.report_error(token, throw=self.raise_on_invalid_header)
-        else:
-            # Errors, other than totally invalid headers, can occur only with
-            # deprecated singular headers, and we want to report them as warnings.
-            # A more generic solution for separating errors and warnings would be good.
-            self.report_error(token, warn=True)
+        self.report_invalid_token_or_raise(token)
 
     def visit_Error(self, node):
         for token in node.get_tokens(Token.ERROR):
             self.report_error(token)
+
+    def report_invalid_token_or_raise(self, token: Token):
+        if token.error is None:  # assert for the type checker that error is not None
+            return
+        message = f"Error in file '{self.source}' on line {token.lineno}: {token.error}"
+        if token.type == Token.INVALID_HEADER and token.error.should_throw:
+            raise DataError(message)
+        LOGGER.write(message, level='WARN' if token.error.is_warning else 'ERROR')
 
     def report_error(self, source, error=None, warn=False, throw=False):
         if not error:
