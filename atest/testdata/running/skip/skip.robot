@@ -6,33 +6,63 @@ ${TEST_OR_TASK}    Test
 
 *** Test Cases ***
 Skip keyword
-    [Documentation]    SKIP Skipped with Skip keyword.
+    [Documentation]    FAIL Skip occurred:
+    ...
+    ...    Skipped with Skip keyword.
+    ...
+    ...    Also failure occurred:
+    ...
+    ...    Should be executed!
     Skip
-    Fail    Should not be executed!
+    Fail    Should be executed!
 
 Skip with SkipExecution exception in library
-    [Documentation]    SKIP Show must not got on
+    [Documentation]    FAIL Skip occurred:
+    ...
+    ...    Show must not got on
+    ...
+    ...    Also failure occurred:
+    ...
+    ...    Should be executed!
     Skip with Message    Show must not got on
-    Fail    Should not be executed!
+    Fail    Should be executed!
 
 Skip with SkipExecution exception in library using HTML
-    [Documentation]    SKIP *HTML* Show <b>must</b> not got on
+    [Documentation]    FAIL *HTML* Skip occurred:
+    ...
+    ...     Show <b>must</b> not got on
+    ...
+    ...    Also failure occurred:
+    ...
+    ...    Should be executed!
     Skip with Message    Show <b>must</b> not got on    html=True
-    Fail    Should not be executed!
+    Fail    Should be executed!
 
 Skip with custom exception
     [Documentation]    SKIP CustomSkipException: Skipped with custom exception.
     Skip with custom exception
 
 Skip If Keyword with True Condition
-    [Documentation]    SKIP 1 == 1
+    [Documentation]    FAIL Skip occurred:
+    ...
+    ...    1 == 1
+    ...
+    ...    Also failure occurred:
+    ...
+    ...    Should be executed!
     Skip If    1 == 1
-    Fail    Should not be executed!
+    Fail    Should be executed!
 
 Skip If Keyword with True Condition And Custom Message
-    [Documentation]    SKIP Skipped with abandon.
+    [Documentation]    FAIL Skip occurred:
+    ...
+    ...    Skipped with abandon.
+    ...
+    ...    Also failure occurred:
+    ...
+    ...    Should be executed!
     Skip If    1 == 1    Skipped with abandon.
-    Fail    Should not be executed!
+    Fail    Should be executed!
 
 Skip If Keyword with False Condition
     [Documentation]    FAIL Should be executed!
@@ -40,9 +70,15 @@ Skip If Keyword with False Condition
     Fail    Should be executed!
 
 Skip Keyword with Custom Message
-    [Documentation]    SKIP Skipped due to reasons
+    [Documentation]    FAIL Skip occurred:
+    ...
+    ...    Skipped due to reasons
+    ...
+    ...    Also failure occurred:
+    ...
+    ...    Should be executed!
     Skip    Skipped due to reasons
-    Fail    Should not be executed!
+    Fail    Should be executed!
 
 Skip in Setup
     [Documentation]    SKIP Setup skip
@@ -99,45 +135,53 @@ Skip in Teardown After Skip In Body
     [Teardown]    Skip    Teardown skip
 
 Skip After Continuable Failure
-    [Documentation]    SKIP
+    [Documentation]    FAIL Skip occurred:
+    ...
     ...    Skip wins over failure!
     ...
     ...    Also failure occurred:
+    ...
     ...    We can continue!
     Run Keyword And Continue On Failure
     ...    Fail    We can continue!
     Skip    Skip wins over failure!
-    Fail    Should not be executed!
+    Pass Execution    Should not be executed!
 
 Skip After Multiple Continuable Failures
-    [Documentation]    SKIP
-    ...    Skip wins over two failures!!
+    [Documentation]    FAIL Skip occurred:
+    ...
+    ...    Skip is just a skip!!
     ...
     ...    Also failures occurred:
     ...
     ...    1) We can continue!
     ...
     ...    2) We can continue again!
+    ...
+    ...    3) Should not be executed!
     Run Keyword And Continue On Failure
     ...    Fail    We can continue!
     Run Keyword And Continue On Failure
     ...    Fail    We can continue again!
-    Skip    Skip wins over two failures!!
+    Skip    Skip is just a skip!!
     Fail    Should not be executed!
 
 Skip After Continuable Failure with HTML Message
-    [Documentation]    SKIP
-    ...    *HTML* Skipeti &lt;b&gt;skip&lt;/b&gt;
+    [Documentation]    FAIL *HTML* Skip occurred:
+    ...
+    ...    Skipeti &lt;b&gt;skip&lt;/b&gt;
     ...
     ...    Also failure occurred:
+    ...
     ...    We <b>can</b> continue!
     Run Keyword And Continue On Failure
     ...    Fail    *HTML* We <b>can</b> continue!
     Skip    Skipeti <b>skip</b>
 
 Skip After Multiple Continuable Failure with HTML Messages
-    [Documentation]    SKIP
-    ...    *HTML* Skipeti <b>skip</b>
+    [Documentation]    FAIL *HTML* Skip occurred:
+    ...
+    ...    Skipeti <b>skip</b>
     ...
     ...    Also failures occurred:
     ...
@@ -183,22 +227,46 @@ Skip in Teardown with Pass Execution in Body
     [Teardown]    Skip  Then we skip
 
 Skip with Run Keyword and Ignore Error
-    [Documentation]    SKIP Skip from within
+    [Documentation]    FAIL Skip occurred:
+    ...
+    ...    Skip from within
+    ...
+    ...    Also failure occurred:
+    ...
+    ...    Should be executed!
     Run Keyword and Ignore Error    Skip    Skip from within
-    Fail    Should not be executed!
+    Fail    Should be executed!
 
 Skip with Run Keyword and Expect Error
-    [Documentation]    SKIP Skip from within
+    [Documentation]    FAIL Skip occurred:
+    ...
+    ...    Skip from within
+    ...
+    ...    Also failure occurred:
+    ...
+    ...    Should be executed!
     Run Keyword and Expect Error    An error that never happens    Skip    Skip from within
-    Fail    Should not be executed!
+    Fail    Should be executed!
 
 Skip with Run Keyword and Return Status
-    [Documentation]    SKIP Skip from within
+    [Documentation]    FAIL Skip occurred:
+    ...
+    ...    Skip from within
+    ...
+    ...    Also failure occurred:
+    ...
+    ...    Should not be executed!
     Run Keyword and Return Status    Skip    Skip from within
     Fail    Should not be executed!
 
 Skip with Wait Until Keyword Succeeds
-    [Documentation]    SKIP Skip from within
+    [Documentation]    FAIL Skip occurred:
+    ...
+    ...    Skip from within
+    ...
+    ...    Also failure occurred:
+    ...
+    ...    Should not be executed!
     Wait Until Keyword Succeeds    3x    1s
     ...    Skip    Skip from within
     Fail    Should not be executed!
@@ -270,8 +338,73 @@ Failing Test
 Passing Test
     No Operation
 
+Skip Template One Skip And Pass
+    [Documentation]    PASS 1 == 1
+    [Template]    Skip template one skip and pass
+    1
+    2
+
+Skip Template Two Skips And Pass
+    [Documentation]    PASS Skips occurred:
+    ...
+    ...    1) 2 == 2
+    ...
+    ...    2) 4 == 4
+    [Template]    Skip template two skips and pass
+    1
+    2
+    3
+    4
+    5
+
+Skip Template Two Skips And Fail
+    [Documentation]    FAIL Skips occurred:
+    ...
+    ...    0) 2 == 2
+    ...
+    ...    1) 4 == 4
+    ...
+    ...    Also failure occurred:
+    ...
+    ...    fail
+    [Template]    Skip template two skips and fail
+    1
+    2
+    3
+    4
+    5
+
+Skip Template All Skips
+    [Documentation]    SKIP Skips occurred:
+    ...
+    ...    0) skip
+    ...
+    ...    1) skip
+    [Template]    Skip template all skips
+    1
+    2
+
 *** Keywords ***
 Skip with keywords before and after
     No Operation
     Skip    Skip between keywords
-    Fail    Should not be executed!
+    Pass Execution    Should be executed!
+
+Skip template all skips
+    [Arguments]    ${num}
+    Skip    skip
+
+Skip template one skip and pass
+    [Arguments]    ${num}
+    Skip If    ${num} == 1
+
+Skip template two skips and pass
+    [Arguments]    ${num}
+    Skip If    ${num} == 2
+    Skip If    ${num} == 4
+
+Skip template two skips and fail
+    [Arguments]    ${num}
+    Skip If    ${num} == 2
+    Skip If    ${num} == 4
+    Run Keyword If    ${num} == 5    Fail    fail

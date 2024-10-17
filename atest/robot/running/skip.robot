@@ -1,4 +1,6 @@
 *** Settings ***
+Library         ../../testdata/running/skip/skiplib.py
+
 Suite Setup     Run Tests  --skip skip-this --SkipOnFailure skip-on-failure    running/skip/
 Resource        atest_resource.robot
 
@@ -139,3 +141,15 @@ Suite setup and teardown are not run if all tests are unconditionally skipped or
     Check Test Case     Skip using robot:skip
     Check Test Case     Skip using --skip
     Length Should Be    ${suite.suites[0].tests}    2
+
+Skip Template One Skip And Pass
+    Check Test Case    ${TEST NAME}
+
+Skip Template Two Skips And Pass
+    Check Test Case    ${TEST NAME}
+
+Skip Template Two Skips And Fail
+    Check Test Case    ${TEST NAME}
+
+Skip Template All Skips
+    Check Test Case    ${TEST NAME}
