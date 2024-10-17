@@ -1,6 +1,4 @@
 *** Settings ***
-Library         ../../testdata/running/skip/skiplib.py
-
 Suite Setup     Run Tests  --skip skip-this --SkipOnFailure skip-on-failure    running/skip/
 Resource        atest_resource.robot
 

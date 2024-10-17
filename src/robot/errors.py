@@ -143,7 +143,7 @@ class ExecutionStatus(RobotError):
     def can_continue(self, context, templated=False):
         if context.dry_run:
             return True
-        if self.skip:
+        if templated and self.skip:
             return True
         if self.syntax or self.exit or self.test_timeout:
             return False
@@ -187,9 +187,56 @@ class HandlerExecutionFailed(ExecutionFailed):
 
 class ExecutionFailures(ExecutionFailed):
 
-    def __init__(self, errors, message=None):
+    def __init__(self, errors, message=None, attrs=None):
         super().__init__(message or self._format_message(errors),
-                         **self._get_attrs(errors))
+                         **(attrs or self._get_attrs(errors)))
+        self._errors = errors
+
+    def _format_message(self, errors):
+        messages = [e.message for e in errors]
+        if len(messages) == 1:
+            return messages[0]
+        prefix = 'Several failures occurred:'
+        if any(msg.startswith('*HTML*') for msg in messages):
+            html_prefix = '*HTML* '
+            messages = [self._html_format(msg) for msg in messages]
+        else:
+            html_prefix = ''
+        if any(e.skip for e in errors):
+            skip_idx = errors.index([e for e in errors if e.skip][0])
+            skip_msg = messages[skip_idx]
+            messages = messages[:skip_idx] + messages[skip_idx+1:]
+            if len(messages) == 1:
+                return '%s%s\n\nAlso failure occurred:\n%s' \
+                       % (html_prefix, skip_msg, messages[0])
+            prefix = '%s\n\nAlso failures occurred:' % skip_msg
+        return '\n\n'.join(
+            [html_prefix + prefix] +
+            ['%d) %s' % (i, m) for i, m in enumerate(messages, start=1)]
+        )
+
+    def _html_format(self, msg):
+        from robot.utils import html_escape
+        if msg.startswith('*HTML*'):
+            return msg[6:].lstrip()
+        return html_escape(msg)
+
+    def _get_attrs(self, errors):
+        return {
+            'test_timeout': any(e.test_timeout for e in errors),
+            'keyword_timeout': any(e.keyword_timeout for e in errors),
+            'syntax': any(e.syntax for e in errors),
+            'exit': any(e.exit for e in errors),
+            'continue_on_failure': all(e.continue_on_failure for e in errors),
+            'skip': any(e.skip for e in errors)
+        }
+
+    def get_errors(self):
+        return self._errors
+
+class SkipsWithOrWithoutErrorsExecution(ExecutionFailures):
+    def __init__(self, errors):
+        super().__init__(errors, self._format_message(errors), self._get_attrs(errors))
         self._errors = errors
 
     def _format_message(self, errors):
@@ -198,9 +245,7 @@ class ExecutionFailures(ExecutionFailed):
         skip_messages = [e.message for e in skips]
         fails = list(filter(lambda e: not e.skip, errors))
         fail_messages = [e.message for e in fails]
-        if len(messages) == 1:
-            return messages[0]
-        prefix = 'Several failures occurred:'
+        prefix = ''
         if any(msg.startswith('*HTML*') for msg in messages):
             html_prefix = '*HTML* '
             skip_messages = [self._html_format(msg) for msg in skip_messages]
@@ -225,12 +270,6 @@ class ExecutionFailures(ExecutionFailed):
             ['%d) %s' % (i, m) for i, m in enumerate(fail_messages, start=1)]
         )
 
-    def _html_format(self, msg):
-        from robot.utils import html_escape
-        if msg.startswith('*HTML*'):
-            return msg[6:].lstrip()
-        return html_escape(msg)
-
     def _get_attrs(self, errors):
         return {
             'test_timeout': any(e.test_timeout for e in errors),
@@ -240,10 +279,6 @@ class ExecutionFailures(ExecutionFailed):
             'continue_on_failure': all(e.continue_on_failure for e in errors),
             'skip': all(e.skip for e in errors)
         }
-
-    def get_errors(self):
-        return self._errors
-
 
 class UserKeywordExecutionFailed(ExecutionFailures):
 
@@ -299,7 +334,7 @@ class PassExecution(ExecutionPassed):
     def __init__(self, message):
         super().__init__(message)
 
-class SkipWithPassesExecution(ExecutionPassed):
+class SkipsWithPassesExecution(ExecutionPassed):
     """Used when there are skips with passes only keyword."""
 
     def __init__(self, errors):

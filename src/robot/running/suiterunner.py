@@ -15,7 +15,7 @@
 
 from datetime import datetime
 
-from robot.errors import ExecutionFailed, ExecutionStatus, DataError, PassExecution, SkipWithPassesExecution
+from robot.errors import ExecutionFailed, ExecutionStatus, DataError, PassExecution, SkipsWithPassesExecution
 from robot.model import SuiteVisitor, TagPatterns
 from robot.result import (Keyword as KeywordResult, TestCase as TestResult,
                           TestSuite as SuiteResult, Result)
@@ -173,7 +173,7 @@ class SuiteRunner(SuiteVisitor):
                     status.test_failed(error=err)
                 else:
                     result.message = exception.message
-            except SkipWithPassesExecution as exception:
+            except SkipsWithPassesExecution as exception:
                 result.message = exception.message
             except ExecutionStatus as err:
                 status.test_failed(error=err)
