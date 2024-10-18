@@ -14,14 +14,60 @@
 #  limitations under the License.
 
 from collections.abc import Iterator
-from typing import cast, List
+from dataclasses import dataclass
+from enum import Enum, auto
+from typing import List, cast
 
+from robot.errors import DataError
+from robot.output import LOGGER
 from robot.variables import VariableMatches
-
 
 # Type alias to ease typing elsewhere
 StatementTokens = List['Token']
 
+
+class ErrorCode(Enum):
+    INVALID_LANGUAGE_CONFIGURATION = auto()
+    INVALID_SECTION_HEADER = auto()
+    INVALID_SECTION_IN_INIT_FILE = auto()
+    INVALID_SECTION_IN_RESOURCE_FILE = auto()
+
+    RETURN_SETTING_DEPRECATED = auto()
+    SETTINGS_VALIDATION_ERROR = auto()
+    SINGULAR_HEADER_DEPRECATED = auto()
+    SYNTAX_ERROR = auto()
+
+
+class ErrorKind(Enum):
+    WARNING = 'WARNING'
+    ERROR = 'ERROR'
+
+
+@dataclass(frozen=True)
+class InvalidTokenError:
+    kind: ErrorKind
+    code: ErrorCode
+    message: str | None = None
+    is_fatal: bool = False
+
+    def __str__(self) -> str:
+        return f"{self.message or ''}"
+
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}({self.kind.value}, {self.code.name}, {self.message!r})'
+
+    def __eq__(self, value: object) -> bool:
+        if not isinstance(value, InvalidTokenError):
+            return False
+        return (self.kind == value.kind and self.code == value.code and self.message == value.message)
+
+    @property
+    def is_warning(self) -> bool:
+        return self.kind == ErrorKind.WARNING
+
+    @property
+    def should_throw(self) -> bool:
+        return self.kind == ErrorKind.ERROR and self.is_fatal
 
 class Token:
     """Token representing piece of Robot Framework data.
@@ -162,7 +208,7 @@ class Token:
                  '_add_eos_before', '_add_eos_after']
 
     def __init__(self, type: 'str|None' = None, value: 'str|None' = None,
-                 lineno: int = -1, col_offset: int = -1, error: 'str|None' = None):
+                 lineno: int = -1, col_offset: int = -1, error: 'InvalidTokenError|None' = None):
         self.type = type
         if value is None:
             value = {
@@ -188,7 +234,7 @@ class Token:
             return -1
         return self.col_offset + len(self.value)
 
-    def set_error(self, error: str):
+    def set_error(self, error: InvalidTokenError) -> None:
         self.type = Token.ERROR
         self.error = error
 
@@ -240,6 +286,15 @@ class Token:
                 and self.col_offset == other.col_offset
                 and self.error == other.error)
 
+    def dump_error_or_raise(self, source: str) -> None:
+        if self.error is None:
+            return
+        message = f"Error in file '{source}' on line {self.lineno}: {self.error}"
+
+        if self.type == Token.INVALID_HEADER:
+            raise DataError(message)
+
+        LOGGER.write(message, level='WARN' if self.error.is_warning else 'ERROR')
 
 class EOS(Token):
     """Token representing end of a statement."""
