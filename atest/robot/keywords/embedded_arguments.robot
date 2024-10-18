@@ -104,15 +104,12 @@ Partially Matching Variable Is Accepted With Custom Regexp (But Not For Long)
 Non String Variable Is Accepted With Custom Regexp
     Check Test Case    ${TEST NAME}
 
-Regexp Extensions Are Not Supported
+Custom regexp with inline flag
     Check Test Case    ${TEST NAME}
-    Creating Keyword Failed    0    292
-    ...    Regexp extensions like \${x:(?x)re} are not supported
-    ...    Regexp extensions are not allowed in embedded arguments.
 
 Invalid Custom Regexp
     Check Test Case    ${TEST NAME}
-    Creating Keyword Failed    1    295
+    Creating Keyword Failed    0    310
     ...    Invalid \${x:(} Regexp
     ...    Compiling embedded arguments regexp failed: *
 

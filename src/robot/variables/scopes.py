@@ -16,7 +16,6 @@
 import os
 import tempfile
 
-from robot.errors import VariableError
 from robot.model import Tags
 from robot.output import LOGGER
 from robot.utils import abspath, find_file, get_error_details, DotDict, NormalizedDict
@@ -31,6 +30,7 @@ class VariableScopes:
         self._global = GlobalVariables(settings)
         self._suite = None
         self._test = None
+        self._suite_locals = []
         self._scopes = [self._global]
         self._variables_set = SetVariables()
 
@@ -59,16 +59,18 @@ class VariableScopes:
     def start_suite(self):
         self._suite = self._global.copy()
         self._scopes.append(self._suite)
+        self._suite_locals.append(NormalizedDict(ignore='_'))
         self._variables_set.start_suite()
         self._variables_set.update(self._suite)
 
     def end_suite(self):
         self._scopes.pop()
+        self._suite_locals.pop()
         self._suite = self._scopes[-1] if len(self._scopes) > 1 else None
         self._variables_set.end_suite()
 
     def start_test(self):
-        self._test = self._suite.copy()
+        self._test = self._suite.copy(exclude=self._suite_locals[-1])
         self._scopes.append(self._test)
         self._variables_set.start_test()
 
@@ -78,7 +80,8 @@ class VariableScopes:
         self._variables_set.end_test()
 
     def start_keyword(self):
-        kw = self._suite.copy()
+        exclude = self._suite_locals[-1] if self._test else ()
+        kw = self._suite.copy(exclude)
         self._variables_set.start_keyword()
         self._variables_set.update(kw)
         self._scopes.append(kw)
@@ -141,13 +144,19 @@ class VariableScopes:
         for scope in self._scopes_until_suite:
             name, value = self._set_global_suite_or_test(scope, name, value)
         self._variables_set.set_suite(name, value, children)
+        # Override possible "suite local variables" (i.e. test variables set on
+        # suite level) if real suite level variable is set.
+        if name in self._suite_locals[-1]:
+            self._suite_locals[-1].pop(name)
 
     def set_test(self, name, value):
-        if self._test is None:
-            raise VariableError('Cannot set test variable when no test is started.')
-        for scope in self._scopes_until_test:
-            name, value = self._set_global_suite_or_test(scope, name, value)
-        self._variables_set.set_test(name, value)
+        if self._test:
+            for scope in self._scopes_until_test:
+                name, value = self._set_global_suite_or_test(scope, name, value)
+            self._variables_set.set_test(name, value)
+        else:
+            self.set_suite(name, value)
+            self._suite_locals[-1][name] = None
 
     def set_keyword(self, name, value):
         self.current[name] = value
