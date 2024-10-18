@@ -17,6 +17,12 @@ Append to test documentation
    Should be equal        ${TEST DOCUMENTATION}      Original doc is continued
    Set test documentation      \n\ntwice!    append=yep
    Should be equal        ${TEST DOCUMENTATION}      Original doc is continued \n\ntwice!
+   Set test documentation      thrice    append=yes    separator=${SPACE}
+   Should be equal        ${TEST DOCUMENTATION}      Original doc is continued \n\ntwice! thrice
+   Set test documentation      ${EMPTY}    append=yes    separator=!
+   Should be equal        ${TEST DOCUMENTATION}      Original doc is continued \n\ntwice! thrice!
+   Set test documentation      !    append=yes    separator=${EMPTY}
+   Should be equal        ${TEST DOCUMENTATION}      Original doc is continued \n\ntwice! thrice!!
 
 Set suite documentation
    Set suite documentation     New suite doc
@@ -33,7 +39,11 @@ Append to suite documentation 2
    Should be equal        ${SUITE DOCUMENTATION}      New suite doc is continued
    Set suite documentation      \n\ntwice!    append=yep
    Should be equal        ${SUITE DOCUMENTATION}      New suite doc is continued \n\ntwice!
+   Set suite documentation      thrice    append=yep    separator=,
+   Should be equal        ${SUITE DOCUMENTATION}      New suite doc is continued \n\ntwice!,thrice
+   Set suite documentation      ${1}    append=yes    separator=?
+   Should be equal        ${SUITE DOCUMENTATION}      New suite doc is continued \n\ntwice!,thrice?1
 
 Set top level suite documentation
    Set suite documentation    Appended in test.    append=yes    top=please
-   Should be equal        ${SUITE DOCUMENTATION}      New suite doc is continued \n\ntwice!
+   Should be equal        ${SUITE DOCUMENTATION}      New suite doc is continued \n\ntwice!,thrice?1
