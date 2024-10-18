@@ -148,8 +148,6 @@ class ExecutionStatus(RobotError):
         if templated:
             return context.continue_on_failure(default=True)
         if self.keyword_timeout:
-            if context.in_teardown:
-                self.keyword_timeout = False
             return False
         return self.continue_on_failure or context.continue_on_failure()
 
