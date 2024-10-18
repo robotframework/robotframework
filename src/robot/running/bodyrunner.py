@@ -21,7 +21,8 @@ from datetime import datetime
 from itertools import zip_longest
 
 from robot.errors import (BreakLoop, ContinueLoop, DataError, ExecutionFailed,
-                          ExecutionFailures, ExecutionPassed, ExecutionStatus)
+                          ExecutionFailures, ExecutionPassed, ExecutionStatus,
+                          SkipsWithPassesExecution, SkipsWithOrWithoutErrorsExecution)
 from robot.output import librarylogger as logger
 from robot.utils import (cut_assign_value, frange, get_error_message, is_list_like,
                          is_number, normalize, plural_or_not as s, secs_to_timestr, seq2str,
@@ -57,8 +58,14 @@ class BodyRunner:
         if passed:
             raise passed
         if errors:
+            if self._templated:
+                if all(e.skip for e in errors):
+                    if len(data.body) == len(errors):
+                        raise SkipsWithOrWithoutErrorsExecution(errors)
+                    raise SkipsWithPassesExecution(errors)
+                if any(e.skip for e in errors):
+                    raise SkipsWithOrWithoutErrorsExecution(errors)
             raise ExecutionFailures(errors)
-
 
 class KeywordRunner:
 
