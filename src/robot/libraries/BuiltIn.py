@@ -1720,8 +1720,12 @@ class _Variables(_BuiltInBase):
         variable in a user keyword, it is available both in the test case level
         and also in all other user keywords used in the current test. Other
         test cases will not see variables set with this keyword.
-        It is an error to call `Set Test Variable` outside the
-        scope of a test (e.g. in a Suite Setup or Teardown).
+
+        If `Set Test Variable` is used in suite setup, the variable is available
+        everywhere within that suite setup as well as in the corresponding suite
+        teardown, but it is not seen by tests or possible child suites. If the
+        keyword is used in a suite teardown, the variable is available only in that
+        teardown.
 
         See `Set Suite Variable` for more information and usage examples. See
         also the `Using variables with keywords creating or accessing variables`
@@ -1734,6 +1738,9 @@ class _Variables(_BuiltInBase):
 
         *NOTE:* The ``VAR`` syntax introduced in Robot Framework 7.0 is recommended
         over this keyword.
+
+        *NOTE:* Prior to Robot Framework 7.2, using `Set Test Variable` in a suite
+        setup or teardown was an error.
         """
         name = self._get_var_name(name)
         value = self._get_var_value(name, values)

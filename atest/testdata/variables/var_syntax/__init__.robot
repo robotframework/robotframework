@@ -13,8 +13,10 @@ VAR in suite setup and teardown
     Should Be Equal    ${local}     value
     Should Be Equal    ${SUITE}     set in ${where}
     Should Be Equal    ${GLOBAL}    set in ${where}
-    TRY
-        VAR    ${TEST}    this fails    scope=test
-    EXCEPT    AS    ${err}
-        Should Be Equal    ${err}    Setting variable '\${TEST}' failed: Cannot set test variable when no test is started.
+    IF    $where == 'root suite setup'
+        VAR    ${TEST}    set in ${where}    scope=test
+    ELSE
+        Should Be Equal    ${TEST}    set in root suite setup
+        VAR    ${TEST}    set in ${where}
+        Should Be Equal    ${TEST}    set in root suite teardown
     END

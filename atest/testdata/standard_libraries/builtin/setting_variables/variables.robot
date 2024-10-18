@@ -205,6 +205,20 @@ Set Task Variable as alias for Set Test Variable
     Set Task Variable    ${TEST VAR}    Set again in test level
     Test Variable Should Be Set To      Set again in test level
 
+Test variables set on suite level is not seen in tests
+    Variable Should Not Exist    $parent_suite_setup_test_var
+    Variable Should Not Exist    $suite_setup_test_var
+    Variable Should Not Exist    $suite_setup_test_var_to_be_overridden_by_suite_var
+    Variable Should Not Exist    $suite_setup_test_var_to_be_overridden_by_global_var
+    Set Suite Variable    \${SUITE setup TEST var to be overridden by SUITE var}     Overridded by suite variable!
+    Set Suite Variable    \${SUITE setup TEST var_to_be overridden by GLOBAL var}    Overridded by global variable!
+    Should Be Equal    ${suite_setup_test_var_to_be_overridden_by_suite_var}         Overridded by suite variable!
+    Should Be Equal    ${suite_setup_test_var_to_be_overridden_by_global_var}        Overridded by global variable!
+
+Test variable set on suite levvel can be overridden as suite variable
+    Should Be Equal    ${suite_setup_test_var_to_be_overridden_by_suite_var}         Overridded by suite variable!
+    Should Be Equal    ${suite_setup_test_var_to_be_overridden_by_global_var}        Overridded by global variable!
+
 Set Suite Variable 1
     [Documentation]    FAIL Variable '\${non_existing}' not found.
     Variable Should Not Exist    $parent_suite_setup_suite_var
@@ -545,6 +559,9 @@ Setting scalar global variable with list value is not possible 2
 *** Keywords ***
 My Suite Setup
     ${suite_setup_local_var} =    Set Variable    Variable available only locally    in suite setup
+    Set Test Variable    $suite_setup_test_var    New in RF 7.2!
+    Set Test Variable    $suite_setup_test_var_to_be_overridden_by_suite_var    Will be overridden
+    Set Test Variable    $suite_setup_test_var_to_be_overridden_by_global_var    Will be overridden
     Set Suite Variable    $suite_setup_suite_var    Suite var set in suite setup
     @{suite_setup_suite_var_list} =    Create List    Suite var set in    suite setup
     Set Suite Variable    @suite_setup_suite_var_list
@@ -556,6 +573,7 @@ My Suite Setup
     Should Be True    ${suite_setup_suite_var_list} == [ 'Suite var set in', 'suite setup' ]
     Should Be Equal    ${suite_setup_global_var}    Global var set in suite setup
     Should Be True    ${suite_setup_global_var_list} == [ 'Global var set in', 'suite setup' ]
+    Variable Should Not Exist    $parent_suite_setup_test_var
     Variable Should Not Exist    $parent_suite_setup_suite_var
     Variable Should Not Exist    $parent_suite_setup_suite_var_2
     Should Be Equal    ${parent_suite_setup_global_var}    Set in __init__
@@ -569,6 +587,9 @@ My Suite Setup
 
 My Suite Teardown
     Set Suite Variable    $suite_teardown_suite_var    Suite var set in suite teardown
+    Should Be Equal    ${suite_setup_test_var}    New in RF 7.2!
+    Should Be Equal    ${suite_setup_test_var_to_be_overridden_by_suite_var}     Overridded by suite variable!
+    Should Be Equal    ${suite_setup_test_var_to_be_overridden_by_global_var}    Overridded by global variable!
     Should Be Equal    ${suite_setup_suite_var}    Suite var set in suite setup
     Should Be Equal    ${test_level_suite_var}    Suite var set in test
     Should Be Equal    ${uk_level_suite_var}    Suite var set in user keyword
