@@ -30,6 +30,12 @@ Append to value
     ...    Set suite metadata 'toappend' to value 'Original is continued'.
     Check log message    ${tc.kws[4].msgs[0]}
     ...    Set suite metadata 'TOAPPEND' to value 'Original is continued \n\ntwice!'.
+    Check log message    ${tc.kws[6].msgs[0]}
+    ...    Set suite metadata 'Version' to value '1.0'.
+    Check log message    ${tc.kws[8].msgs[0]}
+    ...    Set suite metadata 'version' to value '1.0/2.0'.
+    Check log message    ${tc.kws[10].msgs[0]}
+    ...    Set suite metadata 'ver sion' to value '1.0/2.0/3.0'.
 
 Set top-level suite metadata
     Metadata should have value    New metadata    Metadata for top level suite    top=yes
@@ -38,6 +44,13 @@ Set top-level suite metadata
     ...    Set suite metadata 'New metadata' to value 'Metadata for'.
     Check log message    ${tc.kws[1].msgs[0]}
     ...    Set suite metadata 'newmetadata' to value 'Metadata for top level suite'.
+    Metadata should have value    Separator    2top**level    top=yes
+    Check log message    ${tc.kws[3].msgs[0]}
+    ...    Set suite metadata 'Separator' to value '2'.
+    Check log message    ${tc.kws[4].msgs[0]}
+    ...    Set suite metadata 'Separator' to value '2top'.
+    Check log message    ${tc.kws[5].msgs[0]}
+    ...    Set suite metadata 'Separator' to value '2top**level'.
 
 Non-ASCII and non-string names and values
     ${tc} =    Check test case    ${TESTNAME}
