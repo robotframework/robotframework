@@ -67,7 +67,10 @@ Set Test Variable Not Affecting Other Tests
 Test Variables Set In One Suite Are Not Available In Another
     Check Test Case    ${TESTNAME}
 
-Set Test Variable cannot be used in suite setup or teardown
+Test variables set on suite level is not seen in tests
+    Check Test Case    ${TESTNAME}
+
+Test variable set on suite levvel can be overridden as suite variable
     Check Test Case    ${TESTNAME}
 
 Set Task Variable as alias for Set Test Variable

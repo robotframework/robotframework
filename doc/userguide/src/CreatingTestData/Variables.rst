@@ -919,7 +919,9 @@ the `scope` configuration option. Supported values are:
 
 `TEST`
     Make the variable available within the current test. This includes all keywords
-    called by the test.
+    called by the test. If used on the suite level, makes the variable available in
+    suite setup and teardown, but not in tests or possible child suites.
+    Prior to Robot Framework 7.2, using this scope on the suite level was an error.
 
 `TASK`
     Alias for `TEST` that can be used when `creating tasks`_.
@@ -1444,11 +1446,18 @@ Variables with the test case scope are visible in a test case and in
 all user keywords the test uses. Initially there are no variables in
 this scope, but it is possible to create them by using the `VAR syntax`_ or
 the :name:`Set Test Variable` keyword anywhere in a test case.
-Trying to create test variables in suite setup or suite teardown causes
-and error.
+
+If a variable with the test scope is created in suite setup, the variable is
+available everywhere within that suite setup as well as in the corresponding suite
+teardown, but it is not seen by tests or possible child suites. If such
+a variable is created in a suite teardown, the variable is available only
+in that teardown.
 
 Also variables in the test case scope are to some extend global. It is
 thus generally recommended to use capital letters with them too.
+
+.. note:: Creating variables with the test scope in a suite setup or teardown
+          caused an error prior to Robot Framework 7.2.
 
 Local scope
 '''''''''''
