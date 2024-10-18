@@ -85,6 +85,10 @@ class UserKeywordRunner:
             with context.timeout(timeout):
                 exception, return_value = self._execute(kw, result, context)
                 if exception and not exception.can_continue(context):
+                    if context.in_teardown and exception.keyword_timeout:
+                        # Allow execution to continue on teardowns after timeout.
+                        # https://github.com/robotframework/robotframework/issues/3398
+                        exception.keyword_timeout = False
                     raise exception
                 return_value = self._handle_return_value(return_value, variables)
                 if exception:
