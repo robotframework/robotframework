@@ -1,6 +1,6 @@
 *** Settings ***
-Suite Setup      Run Tests    ${EMPTY}    standard_libraries/process/run_process_with_timeout.robot
-Resource         atest_resource.robot
+Suite Setup       Run Tests    ${EMPTY}    standard_libraries/process/run_process_with_timeout.robot
+Resource          atest_resource.robot
 
 *** Test Cases ***
 Finish before timeout
@@ -52,6 +52,12 @@ On timeout process can be killed (w/ custom streams)
     Check Log Message    ${tc.kws[0].msgs[2]}    Process did not complete in 200 milliseconds.
     Check Log Message    ${tc.kws[0].msgs[3]}    Forcefully killing process.
 On timeout process can be left running
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc.kws[0].msgs[1]}    Waiting for process to complete.
+    Check Log Message    ${tc.kws[0].msgs[2]}    Process did not complete in 200 milliseconds.
+    Check Log Message    ${tc.kws[0].msgs[3]}    Leaving process intact.
+
+On timeout process can be left running with log_level
     ${tc} =    Check Test Case    ${TESTNAME}
     Check Log Message    ${tc.kws[0].msgs[1]}    Waiting for process to complete.
     Check Log Message    ${tc.kws[0].msgs[2]}    Process did not complete in 200 milliseconds.

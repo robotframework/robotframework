@@ -49,6 +49,10 @@ Sending signal to a process with a wrong handle
     [Documentation]    FAIL Non-existing index or alias 'unknown'.
     Send Signal To Process    2    handle=unknown
 
+Sending signal to a process with a wrong handle with info log level
+    [Documentation]    FAIL Non-existing index or alias 'unknown'.
+    Send Signal To Process    2    handle=unknown    log_level='info'
+
 *** Keywords ***
 Killer signal
     [Arguments]    ${signal}    ${shell}=False    ${children}=0    ${group}=False
