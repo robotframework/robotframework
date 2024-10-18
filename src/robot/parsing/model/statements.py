@@ -18,13 +18,18 @@ import re
 import warnings
 from abc import ABC, abstractmethod
 from collections.abc import Iterator, Sequence
-from typing import cast, ClassVar, Literal, overload, TYPE_CHECKING, Type, TypeVar
+from typing import TYPE_CHECKING, ClassVar, Literal, Type, TypeVar, cast, overload
 
 from robot.conf import Language
+from robot.parsing.lexer.tokens import InvalidTokenError
 from robot.running.arguments import UserKeywordArgumentParser
 from robot.utils import normalize_whitespace, seq2str, split_from_equals, test_or_task
-from robot.variables import (contains_variable, is_scalar_assign, is_dict_variable,
-                             search_variable)
+from robot.variables import (
+    contains_variable,
+    is_dict_variable,
+    is_scalar_assign,
+    search_variable,
+)
 
 from ..lexer import Token
 
@@ -1353,7 +1358,7 @@ class Error(Statement):
     _errors: 'tuple[str, ...]' = ()
 
     @classmethod
-    def from_params(cls, error: str, value: str = '', indent: str = FOUR_SPACES,
+    def from_params(cls, error: InvalidTokenError, value: str = '', indent: str = FOUR_SPACES,
                     eol: str = EOL) -> 'Error':
         return cls([
             Token(Token.SEPARATOR, indent),
@@ -1373,12 +1378,11 @@ class Error(Statement):
         along with errors got from tokens.
         """
         tokens = self.get_tokens(Token.ERROR)
-        return tuple(t.error or '' for t in tokens) + self._errors
+        return tuple(str(t.error.message) if t.error else "" for t in tokens) + self._errors
 
     @errors.setter
     def errors(self, errors: 'Sequence[str]'):
         self._errors = tuple(errors)
-
 
 class EmptyLine(Statement):
     type = Token.EOL
