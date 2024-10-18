@@ -114,6 +114,16 @@ Non String Variable Is Accepted With Custom Regexp
     Result of ${40} - ${-2} is ${42}
     I execute "${42}"
 
+Custom regexp with inline flag
+    VAR   ${flag}   flag
+    VAR   ${flng}   fl\ng
+    Custom regexp with ignore-case flag
+    Custom regexp with ignore-case FLAG    expected=FLAG
+    Custom regexp with ignore-case ${flag}
+    Custom regexp with dot-matches-all flag
+    Custom regexp with dot-matches-all ${flag}
+    Custom regexp with dot-matches-all ${flng}    expected=${flng}
+
 Regexp Extensions Are Not Supported
     [Documentation]    FAIL Regexp extensions are not allowed in embedded arguments.
     Regexp extensions like ${x:(?x)re} are not supported
@@ -289,8 +299,13 @@ Custom Regexp With ${pattern:\\{}}
 Grouping ${x:Cu(st|ts)(om)?} ${y:Regexp\(?erts\)?}
     RETURN    ${x}-${y}
 
-Regexp extensions like ${x:(?x)re} are not supported
-    This is not executed
+Custom regexp with ignore-case ${flag:(?i)flag}
+    [Arguments]    ${expected}=flag
+    Should Be Equal    ${flag}    ${expected}
+
+Custom regexp with dot-matches-all ${flag:(?sax)f...}
+    [Arguments]    ${expected}=flag
+    Should Be Equal    ${flag}    ${expected}
 
 Invalid ${x:(} Regexp
     This is not executed

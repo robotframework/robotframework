@@ -732,6 +732,8 @@ A custom embedded argument regular expression is defined after the
 base name of the argument so that the argument and the regexp are
 separated with a colon. For example, an argument that should match
 only numbers can be defined like `${arg:\d+}`.
+If needed, custom patterns can be prefixed with `inline flags`__ such as
+`(?i)` for case-insensitivity.
 
 Using custom regular expressions is illustrated by the following examples.
 Notice that the first one shows how the earlier problem with
@@ -757,6 +759,10 @@ the keyword so that `${team}` can only contain non-whitespace characters.
        Deadline is 2022-09-21
        Deadline is today
 
+   Case-insensitive match
+       Select dog
+       Select CAT
+
    *** Keywords ***
    Select ${city} ${team:\S+}
        Log    Selected ${team} from ${city}.
@@ -773,9 +779,16 @@ the keyword so that `${team}` can only contain non-whitespace characters.
        END
        Log    Deadline is on ${date}.
 
+   Select ${animal:(?i)cat|dog}
+       [Documentation]    Inline flag `(?i)` makes the pattern case-insensitive.
+       Log    Selected ${animal}!
+
+.. note:: Support for inline flags is new in Robot Framework 7.2.
+
 __ http://en.wikipedia.org/wiki/Regular_expression
 __ `Embedded arguments matching wrong values`_
 __ `Resolving conflicts`_
+__ https://docs.python.org/3/library/re.html#regular-expression-syntax
 
 Supported regular expression syntax
 '''''''''''''''''''''''''''''''''''
