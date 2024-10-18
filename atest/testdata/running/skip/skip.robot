@@ -340,3 +340,22 @@ Skip template two skips and fail
     Skip If    ${num} == 2
     Skip If    ${num} == 4
     Run Keyword If    ${num} == 5    Fail    fail
+
+Skip template all skips
+    [Arguments]    ${num}
+    Skip    skip
+
+Skip template one skip and pass
+    [Arguments]    ${num}
+    Skip If    ${num} == 1
+
+Skip template two skips and pass
+    [Arguments]    ${num}
+    Skip If    ${num} == 2
+    Skip If    ${num} == 4
+
+Skip template two skips and fail
+    [Arguments]    ${num}
+    Skip If    ${num} == 2
+    Skip If    ${num} == 4
+    Run Keyword If    ${num} == 5    Fail    fail
