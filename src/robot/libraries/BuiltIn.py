@@ -2415,6 +2415,7 @@ class _RunKeyword(_BuiltInBase):
             try:
                 return self.run_keyword(name, *args)
             except ExecutionFailed as err:
+                self._reset_keyword_timeout_in_teardown(err, self._context)
                 if err.dont_continue or err.skip:
                     raise
                 count -= 1
@@ -2433,6 +2434,17 @@ class _RunKeyword(_BuiltInBase):
                             f"{secs_to_timestr(retry_interval)}."
                         )
             self._sleep_in_parts(sleep_time)
+
+    def _reset_keyword_timeout_in_teardown(self, err, context):
+        # Keyword timeouts in teardowns have been converted to normal failures
+        # to allow execution to continue on higher level:
+        # https://github.com/robotframework/robotframework/issues/3398
+        # We need to reset it here to not continue unnecessarily:
+        # https://github.com/robotframework/robotframework/issues/5237
+        if context.in_teardown:
+            timeouts = [t for t in context.timeouts if t.type == 'Keyword']
+            if timeouts and min(timeouts).timed_out():
+                err.keyword_timeout = True
 
     @run_keyword_variant(resolve=1)
     def set_variable_if(self, condition, *values):
