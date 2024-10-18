@@ -5,8 +5,6 @@ rellu >= 0.7
 twine >= 1.12
 wheel
 docutils
-jsonschema
-xmlschema
 pygments >= 2.8
 sphinx
 pydantic < 2
