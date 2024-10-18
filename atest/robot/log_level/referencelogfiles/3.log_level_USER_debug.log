@@ -1,0 +1,16 @@
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2024-02-29 15:02:46.072720 - ERROR - === [LOG_LEVEL_TEST] - [ROBOT_FILE] - [ERROR]: ERROR test string ERROR test string ERROR test string ERROR
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2024-02-29 15:02:46.074683 - WARN - === [LOG_LEVEL_TEST] - [ROBOT_FILE] - [WARN]: WARN test string WARN test string WARN test string WARN
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2024-02-29 15:02:46.076702 - USER - === [LOG_LEVEL_TEST] - [ROBOT_FILE] - [USER]: USER test string USER test string USER test string USER
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2024-02-29 15:02:46.084684 - ERROR - === [LOG_LEVEL_TEST] - [RESOURCE_FILE] - [ERROR]: ERROR test string ERROR test string ERROR test string ERROR
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2024-02-29 15:02:46.085682 - WARN - === [LOG_LEVEL_TEST] - [RESOURCE_FILE] - [WARN]: WARN test string WARN test string WARN test string WARN
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2024-02-29 15:02:46.088674 - USER - === [LOG_LEVEL_TEST] - [RESOURCE_FILE] - [USER]: USER test string USER test string USER test string USER
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2024-02-29 15:02:46.092666 - ERROR - === [LOG_LEVEL_TEST] - [PYTHON_LIBRARY] - [ERROR]: ERROR test string ERROR test string ERROR test string ERROR
+2024-02-29 15:02:46.093632 - WARN - === [LOG_LEVEL_TEST] - [PYTHON_LIBRARY] - [WARN]: WARN test string WARN test string WARN test string WARN
+2024-02-29 15:02:46.094630 - USER - === [LOG_LEVEL_TEST] - [PYTHON_LIBRARY] - [USER]: USER test string USER test string USER test string USER

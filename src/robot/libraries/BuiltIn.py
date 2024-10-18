@@ -3054,7 +3054,7 @@ class _Misc(_BuiltInBase):
             repr='DEPRECATED', formatter='str'):
         r"""Logs the given message with the given level.
 
-        Valid levels are TRACE, DEBUG, INFO (default), WARN and ERROR.
+        Valid levels are TRACE, DEBUG, INFO (default), USER, WARN and ERROR.
         In addition to that, there are pseudo log levels HTML and CONSOLE that
         both log messages using INFO.
 
@@ -3210,7 +3210,7 @@ class _Misc(_BuiltInBase):
 
         Messages below the level will not logged. The default logging level is
         INFO, but it can be overridden with the ``--loglevel`` command line option.
-        The available levels are TRACE, DEBUG, INFO (default), WARN, ERROR and NONE
+        The available levels are TRACE, DEBUG, INFO (default), USER, WARN, ERROR and NONE
         (no logging).
 
         The old level is returned and can be used for setting the level back

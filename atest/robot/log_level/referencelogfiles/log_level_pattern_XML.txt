@@ -1,0 +1,13 @@
+<kw\sname="Get\sSingle\sLog\sMessage"\sowner="ClogLevelTest">
+<kw\sname="Log\sLevels\sIn\sResource\sFile"\sowner="log_level">
+<kw\sname="Log\sLevels\sIn\sPython\sLibrary"\sowner="log_level">
+<kw\sname="Log"\sowner="BuiltIn">
+(<msg\stime=").+?("\slevel="\w+?">===\s\[LOG_LEVEL_TEST\]\s-\s\[\w+?\]\s-\s\[\w+?\]:\s\w+?\stest\sstring\s\w+?\stest\sstring\s\w+?\stest\sstring\s\w+?</msg>)
+(<suite)\s.+name="(.+?)"
+<errors>
+</errors>
+<branch\stype="IF"
+</branch>
+<for\sflavor="IN\sRANGE">
+</for>
+<status\sstatus=".+?"

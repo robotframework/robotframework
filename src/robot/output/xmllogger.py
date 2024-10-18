@@ -22,10 +22,11 @@ from robot.result import Keyword, TestCase, TestSuite, ResultVisitor
 from .loggerapi import LoggerApi
 from .loggerhelper import IsLogged
 
+LOG_LEVEL_XML_FILE = "INFO" # output caused by code in this file, depends on this trace level
 
 class XmlLoggerAdapter(LoggerApi):
 
-    def __init__(self, path, log_level='TRACE', rpa=False, generator='Robot',
+    def __init__(self, path, log_level=LOG_LEVEL_XML_FILE, rpa=False, generator='Robot',
                  legacy_output=False):
         logger = XmlLogger if not legacy_output else LegacyXmlLogger
         self.logger = logger(path, log_level, rpa, generator)
@@ -145,7 +146,7 @@ class XmlLoggerAdapter(LoggerApi):
 
 class XmlLogger(ResultVisitor):
 
-    def __init__(self, output, log_level='TRACE', rpa=False, generator='Robot',
+    def __init__(self, output, log_level=LOG_LEVEL_XML_FILE, rpa=False, generator='Robot',
                  suite_only=False):
         self._log_message_is_logged = IsLogged(log_level)
         self._error_message_is_logged = IsLogged('WARN')
@@ -154,6 +155,18 @@ class XmlLogger(ResultVisitor):
                                                            suite_only)
         self.flatten_level = 0
         self._errors = []
+
+    def get_level_from_kw_args(self, args=None):
+        # args expected to be a 'kw.args' tuple
+        supported_levels = ('ERROR', 'WARN', 'USER', 'INFO', 'DEBUG', 'TRACE') # not using LEVELS from loggerhelper.py here, because of more states inside there. A more strict separation is desired here.
+        identified_level = LOG_LEVEL_XML_FILE
+        if args is None:
+            return identified_level
+        for arg in args:
+            if arg in supported_levels:
+                identified_level = arg
+                break
+        return identified_level
 
     def _get_writer(self, output, rpa, generator, suite_only):
         if not output:
@@ -198,10 +211,22 @@ class XmlLogger(ResultVisitor):
         self._xml_writer.element('msg', msg.message, attrs)
 
     def start_keyword(self, kw):
-        self._writer.start('kw', self._get_start_keyword_attrs(kw))
-        if kw.tags.robot('flatten'):
-            self.flatten_level += 1
-            self._writer = NullMarkupWriter()
+        # inits
+        log_kw_start = True
+        msg_level = LOG_LEVEL_XML_FILE
+        if kw.name == 'BuiltIn.Log':
+            # this keyword has it's own log level
+            msg_level = self.get_level_from_kw_args(kw.args)
+        if self._log_message_is_logged(msg_level):
+            log_kw_start = True
+        else:
+            # suppress the logging because the trace level does not match
+            log_kw_start = False
+        if log_kw_start is True:
+            self._writer.start('kw', self._get_start_keyword_attrs(kw))
+            if kw.tags.robot('flatten'):
+                self.flatten_level += 1
+                self._writer = NullMarkupWriter()
 
     def _get_start_keyword_attrs(self, kw):
         attrs = {'name': kw.name, 'owner': kw.owner}
@@ -212,134 +237,170 @@ class XmlLogger(ResultVisitor):
         return attrs
 
     def end_keyword(self, kw):
-        if kw.tags.robot('flatten'):
-            self.flatten_level -= 1
-            if self.flatten_level == 0:
-                self._writer = self._xml_writer
-        self._write_list('var', kw.assign)
-        self._write_list('arg', [str(a) for a in kw.args])
-        self._write_list('tag', kw.tags)
-        self._writer.element('doc', kw.doc)
-        if kw.timeout:
-            self._writer.element('timeout', attrs={'value': str(kw.timeout)})
-        self._write_status(kw)
-        self._writer.end('kw')
+        # inits
+        log_kw_end = True
+        msg_level = LOG_LEVEL_XML_FILE
+        if kw.name == 'BuiltIn.Log':
+            # this keyword has it's own log level
+            msg_level = self.get_level_from_kw_args(kw.args)
+        if self._log_message_is_logged(msg_level):
+            log_kw_end = True
+        else:
+            # suppress the logging because the trace level does not match
+            log_kw_end = False
+        if log_kw_end is True:
+            if kw.tags.robot('flatten'):
+                self.flatten_level -= 1
+                if self.flatten_level == 0:
+                    self._writer = self._xml_writer
+            self._write_list('var', kw.assign)
+            self._write_list('arg', [str(a) for a in kw.args])
+            self._write_list('tag', kw.tags)
+            self._writer.element('doc', kw.doc)
+            if kw.timeout:
+                self._writer.element('timeout', attrs={'value': str(kw.timeout)})
+            self._write_status(kw)
+            self._writer.end('kw')
 
     def start_if(self, if_):
-        self._writer.start('if')
+        if self._log_message_is_logged(LOG_LEVEL_XML_FILE):
+            self._writer.start('if')
 
     def end_if(self, if_):
-        self._write_status(if_)
-        self._writer.end('if')
+        if self._log_message_is_logged(LOG_LEVEL_XML_FILE):
+            self._write_status(if_)
+            self._writer.end('if')
 
     def start_if_branch(self, branch):
-        self._writer.start('branch', {'type': branch.type,
-                                      'condition': branch.condition})
+        if self._log_message_is_logged(LOG_LEVEL_XML_FILE):
+            self._writer.start('branch', {'type': branch.type,
+                                          'condition': branch.condition})
 
     def end_if_branch(self, branch):
-        self._write_status(branch)
-        self._writer.end('branch')
+        if self._log_message_is_logged(LOG_LEVEL_XML_FILE):
+            self._write_status(branch)
+            self._writer.end('branch')
 
     def start_for(self, for_):
-        self._writer.start('for', {'flavor': for_.flavor,
-                                   'start': for_.start,
-                                   'mode': for_.mode,
-                                   'fill': for_.fill})
+        if self._log_message_is_logged(LOG_LEVEL_XML_FILE):
+            self._writer.start('for', {'flavor': for_.flavor,
+                                       'start': for_.start,
+                                       'mode': for_.mode,
+                                       'fill': for_.fill})
 
     def end_for(self, for_):
-        for name in for_.assign:
-            self._writer.element('var', name)
-        for value in for_.values:
-            self._writer.element('value', value)
-        self._write_status(for_)
-        self._writer.end('for')
+        if self._log_message_is_logged(LOG_LEVEL_XML_FILE):
+            for name in for_.assign:
+                self._writer.element('var', name)
+            for value in for_.values:
+                self._writer.element('value', value)
+            self._write_status(for_)
+            self._writer.end('for')
 
     def start_for_iteration(self, iteration):
-        self._writer.start('iter')
+        if self._log_message_is_logged(LOG_LEVEL_XML_FILE):
+            self._writer.start('iter')
 
     def end_for_iteration(self, iteration):
-        for name, value in iteration.assign.items():
-            self._writer.element('var', value, {'name': name})
-        self._write_status(iteration)
-        self._writer.end('iter')
+        if self._log_message_is_logged(LOG_LEVEL_XML_FILE):
+            for name, value in iteration.assign.items():
+                self._writer.element('var', value, {'name': name})
+            self._write_status(iteration)
+            self._writer.end('iter')
 
     def start_try(self, root):
-        self._writer.start('try')
+        if self._log_message_is_logged(LOG_LEVEL_XML_FILE):
+            self._writer.start('try')
 
     def end_try(self, root):
-        self._write_status(root)
-        self._writer.end('try')
+        if self._log_message_is_logged(LOG_LEVEL_XML_FILE):
+            self._write_status(root)
+            self._writer.end('try')
 
     def start_try_branch(self, branch):
-        if branch.type == branch.EXCEPT:
-            self._writer.start('branch', attrs={
-                'type': 'EXCEPT',
-                'pattern_type': branch.pattern_type,
-                'assign': branch.assign
-            })
-            self._write_list('pattern', branch.patterns)
-        else:
-            self._writer.start('branch', attrs={'type': branch.type})
+        if self._log_message_is_logged(LOG_LEVEL_XML_FILE):
+            if branch.type == branch.EXCEPT:
+                self._writer.start('branch', attrs={
+                    'type': 'EXCEPT',
+                    'pattern_type': branch.pattern_type,
+                    'assign': branch.assign
+                })
+                self._write_list('pattern', branch.patterns)
+            else:
+                self._writer.start('branch', attrs={'type': branch.type})
 
     def end_try_branch(self, branch):
-        self._write_status(branch)
-        self._writer.end('branch')
+        if self._log_message_is_logged(LOG_LEVEL_XML_FILE):
+            self._write_status(branch)
+            self._writer.end('branch')
 
     def start_while(self, while_):
-        self._writer.start('while', attrs={
-            'condition': while_.condition,
-            'limit': while_.limit,
-            'on_limit': while_.on_limit,
-            'on_limit_message': while_.on_limit_message
-        })
+        if self._log_message_is_logged(LOG_LEVEL_XML_FILE):
+            self._writer.start('while', attrs={
+                'condition': while_.condition,
+                'limit': while_.limit,
+                'on_limit': while_.on_limit,
+                'on_limit_message': while_.on_limit_message
+            })
 
     def end_while(self, while_):
-        self._write_status(while_)
-        self._writer.end('while')
+        if self._log_message_is_logged(LOG_LEVEL_XML_FILE):
+            self._write_status(while_)
+            self._writer.end('while')
 
     def start_while_iteration(self, iteration):
-        self._writer.start('iter')
+        if self._log_message_is_logged(LOG_LEVEL_XML_FILE):
+            self._writer.start('iter')
 
     def end_while_iteration(self, iteration):
-        self._write_status(iteration)
-        self._writer.end('iter')
+        if self._log_message_is_logged(LOG_LEVEL_XML_FILE):
+            self._write_status(iteration)
+            self._writer.end('iter')
 
     def start_var(self, var):
-        attr = {'name': var.name}
-        if var.scope is not None:
-            attr['scope'] = var.scope
-        if var.separator is not None:
-            attr['separator'] = var.separator
-        self._writer.start('variable', attr, write_empty=True)
+        if self._log_message_is_logged(LOG_LEVEL_XML_FILE):
+            attr = {'name': var.name}
+            if var.scope is not None:
+                attr['scope'] = var.scope
+            if var.separator is not None:
+                attr['separator'] = var.separator
+            self._writer.start('variable', attr, write_empty=True)
 
     def end_var(self, var):
-        for val in var.value:
-            self._writer.element('var', val)
-        self._write_status(var)
-        self._writer.end('variable')
+        if self._log_message_is_logged(LOG_LEVEL_XML_FILE):
+            for val in var.value:
+                self._writer.element('var', val)
+            self._write_status(var)
+            self._writer.end('variable')
 
     def start_return(self, return_):
-        self._writer.start('return')
+        if self._log_message_is_logged(LOG_LEVEL_XML_FILE):
+            self._writer.start('return')
 
     def end_return(self, return_):
-        for value in return_.values:
-            self._writer.element('value', value)
-        self._write_status(return_)
-        self._writer.end('return')
+        if self._log_message_is_logged(LOG_LEVEL_XML_FILE):
+            for value in return_.values:
+                self._writer.element('value', value)
+            self._write_status(return_)
+            self._writer.end('return')
 
     def start_continue(self, continue_):
-        self._writer.start('continue')
+        if self._log_message_is_logged(LOG_LEVEL_XML_FILE):
+            self._writer.start('continue')
 
     def end_continue(self, continue_):
-        self._write_status(continue_)
-        self._writer.end('continue')
+        if self._log_message_is_logged(LOG_LEVEL_XML_FILE):
+            self._write_status(continue_)
+            self._writer.end('continue')
 
     def start_break(self, break_):
-        self._writer.start('break')
+        if self._log_message_is_logged(LOG_LEVEL_XML_FILE):
+            self._writer.start('break')
 
     def end_break(self, break_):
-        self._write_status(break_)
-        self._writer.end('break')
+        if self._log_message_is_logged(LOG_LEVEL_XML_FILE):
+            self._write_status(break_)
+            self._writer.end('break')
 
     def start_error(self, error):
         self._writer.start('error')
