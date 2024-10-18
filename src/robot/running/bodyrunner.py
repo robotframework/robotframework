@@ -63,7 +63,8 @@ class BodyRunner:
                     if len(data.body) == len(errors):
                         raise SkipsWithOrWithoutErrorsExecution(errors)
                     raise SkipsWithPassesExecution(errors)
-                raise SkipsWithOrWithoutErrorsExecution(errors)
+                if any(e.skip for e in errors):
+                    raise SkipsWithOrWithoutErrorsExecution(errors)
             raise ExecutionFailures(errors)
 
 class KeywordRunner:

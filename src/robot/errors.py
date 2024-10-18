@@ -245,7 +245,7 @@ class SkipsWithOrWithoutErrorsExecution(ExecutionFailures):
         skip_messages = [e.message for e in skips]
         fails = list(filter(lambda e: not e.skip, errors))
         fail_messages = [e.message for e in fails]
-        prefix = ''
+        prefix = 'aaaa'
         if any(msg.startswith('*HTML*') for msg in messages):
             html_prefix = '*HTML* '
             skip_messages = [self._html_format(msg) for msg in skip_messages]
