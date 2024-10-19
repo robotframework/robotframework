@@ -229,14 +229,14 @@ Creating distributions
 
         git checkout gh-pages
         invoke add-docs $VERSION --push
-        git checkout master
+        git checkout master    # replace master with v*-maintenance if needed!
 
 Post actions
 ------------
 
 1. Back to master if needed::
 
-      git checkout master
+      git checkout master    # replace master with v*-maintenance if needed!
 
 2. Set dev version based on the previous version::
 
