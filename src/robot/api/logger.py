@@ -34,7 +34,7 @@ using logger named ``RobotFramework``.
 Log levels
 ----------
 
-It is possible to log messages using levels ``TRACE``, ``DEBUG``, ``INFO``,
+It is possible to log messages using levels ``TRACE``, ``DEBUG``, ``INFO``, ``USER``,
 ``WARN`` and ``ERROR`` either using the :func:`write` function or, more
 commonly, with the log level specific :func:`trace`, :func:`debug`,
 :func:`info`, :func:`warn`, :func:`error` functions.
@@ -72,13 +72,13 @@ from robot.output import librarylogger
 from robot.running.context import EXECUTION_CONTEXTS
 
 
-LOGLEVEL = Literal['TRACE', 'DEBUG', 'INFO', 'CONSOLE', 'HTML', 'WARN', 'ERROR']
+LOGLEVEL = Literal['TRACE', 'DEBUG', 'INFO', 'USER', 'CONSOLE', 'HTML', 'WARN', 'ERROR']
 
 
 def write(msg: str, level: LOGLEVEL = 'INFO', html: bool = False):
     """Writes the message to the log file using the given level.
 
-    Valid log levels are ``TRACE``, ``DEBUG``, ``INFO`` (default), ``WARN``,
+    Valid log levels are ``TRACE``, ``DEBUG``, ``INFO`` (default), ``USER``, ``WARN``,
     and ``ERROR``. In addition to that, there are pseudo log levels ``HTML``
     and ``CONSOLE`` for logging messages as HTML and for logging messages
     both to the log file and to the console, respectively. With both of these
@@ -97,6 +97,7 @@ def write(msg: str, level: LOGLEVEL = 'INFO', html: bool = False):
             'TRACE': logging.DEBUG // 2,
             'DEBUG': logging.DEBUG,
             'INFO': logging.INFO,
+            'USER': logging.INFO,
             'CONSOLE': logging.INFO,
             'HTML': logging.INFO,
             'WARN': logging.WARN,
@@ -124,6 +125,11 @@ def info(msg: str, html: bool = False, also_console: bool = False):
     write(msg, 'INFO', html)
     if also_console:
         console(msg)
+
+
+def user(msg: str, html: bool = False):
+    """Writes the message to the log file using the ``USER`` level."""
+    write(msg, 'USER', html)
 
 
 def warn(msg: str, html: bool = False):
