@@ -12,9 +12,12 @@ Replace test documentation
     Check Log Message    ${tc.kws[0].msgs[0]}    Set test documentation to:\nNew doc
 
 Append to test documentation
-    ${tc} =    Check Test Doc    ${TESTNAME}     Original doc is continued \n\ntwice!
+    ${tc} =    Check Test Doc    ${TESTNAME}     Original doc is continued \n\ntwice! thrice!!
     Check Log Message    ${tc.kws[0].msgs[0]}    Set test documentation to:\nOriginal doc is continued
     Check Log Message    ${tc.kws[2].msgs[0]}    Set test documentation to:\nOriginal doc is continued \n\ntwice!
+    Check Log Message    ${tc.kws[4].msgs[0]}    Set test documentation to:\nOriginal doc is continued \n\ntwice! thrice
+    Check Log Message    ${tc.kws[6].msgs[0]}    Set test documentation to:\nOriginal doc is continued \n\ntwice! thrice!
+    Check Log Message    ${tc.kws[8].msgs[0]}    Set test documentation to:\nOriginal doc is continued \n\ntwice! thrice!!
 
 Set suite documentation
     ${tc} =    Check Test Case    ${TESTNAME}
@@ -27,7 +30,9 @@ Append to suite documentation
     Check Log Message    ${tc.kws[0].msgs[0]}    Set suite documentation to:\nNew suite doc is continued
     ${tc} =    Check Test Case    ${TESTNAME} 2
     Check Log Message    ${tc.kws[1].msgs[0]}    Set suite documentation to:\nNew suite doc is continued \n\ntwice!
-    Should Be Equal    ${SUITE.suites[0].doc}    New suite doc is continued \n\ntwice!
+    Check Log Message    ${tc.kws[3].msgs[0]}    Set suite documentation to:\nNew suite doc is continued \n\ntwice!,thrice
+    Check Log Message    ${tc.kws[5].msgs[0]}    Set suite documentation to:\nNew suite doc is continued \n\ntwice!,thrice?1
+    Should Be Equal    ${SUITE.suites[0].doc}    New suite doc is continued \n\ntwice!,thrice?1
 
 Set init file suite docs
     Should Be Equal     ${SUITE.doc}    Init file doc. Concatenated in setup. Appended in test.

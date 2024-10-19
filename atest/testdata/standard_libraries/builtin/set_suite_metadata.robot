@@ -25,11 +25,20 @@ Append to value
     Metadata variable should have value    To Append    Original is continued
     Set Suite Metadata    TOAPPEND    \n\ntwice!    append=please
     Metadata variable should have value    To Append    Original is continued \n\ntwice!
+    Set Suite Metadata    Version    1.0    append please    separator=,
+    Metadata variable should have value    Version    1.0
+    Set Suite Metadata    version    2.0    append please    separator=/
+    Metadata variable should have value    Version    1.0/2.0
+    Set Suite Metadata    ver sion    3.0    append please    separator=/
+    Metadata variable should have value    Version    1.0/2.0/3.0
 
 Set top-level suite metadata
     Set Suite Metadata    New metadata    Metadata for    top=yes
     Set Suite Metadata    newmetadata    top level suite    append    top
     Metadata variable should have value    New metadata    Set in test
+    Set Suite Metadata    Separator    ${2}    append=yes    top=yes     separator=/
+    Set Suite Metadata    Separator    top    append    top    separator=
+    Set Suite Metadata    Separator    level    append    top    separator=**
 
 Non-ASCII and non-string names and values
     Set Suite Metadata    ${42}    ${1}
