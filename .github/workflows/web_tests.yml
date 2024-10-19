@@ -5,11 +5,12 @@ on:
     branches:
       - main
       - master
+      - v*-maintenance
+
     paths:
       - '.github/workflows/**'
       - 'src/web**'
       - '!**/*.rst'
-
 
 jobs:
   jest_tests:
@@ -27,4 +28,3 @@ jobs:
       - name: Run tests
         working-directory: ./src/web
         run: npm install && npm run test
-
