@@ -84,6 +84,14 @@ class TestTokenError(unittest.TestCase):
         error = InvalidTokenError(ErrorKind.WARNING, ErrorCode.SYNTAX_ERROR, 'Bad!')
         assert_equal(error.is_warning, True)
 
+    def test_as_error(self):
+        error = InvalidTokenError.as_error(ErrorCode.SYNTAX_ERROR, 'Something went wrong!')
+        assert_equal(error, InvalidTokenError(ErrorKind.ERROR, ErrorCode.SYNTAX_ERROR, 'Something went wrong!'))
+
+    def test_as_warning(self):
+        error = InvalidTokenError.as_warning(ErrorCode.RETURN_SETTING_DEPRECATED, 'Deprecated!')
+        assert_equal(error, InvalidTokenError(ErrorKind.WARNING, ErrorCode.RETURN_SETTING_DEPRECATED, 'Deprecated!'))
+
 
 if __name__ == '__main__':
     unittest.main()

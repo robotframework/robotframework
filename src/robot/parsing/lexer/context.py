@@ -89,8 +89,7 @@ class FileContext(LexingContext):
         if self.languages.headers.get(normalized) == header:
             return True
         if normalized == header[:-1]:
-            statement[0].error = InvalidTokenError(
-                kind=ErrorKind.WARNING,
+            statement[0].error = InvalidTokenError.as_warning(
                 code=ErrorCode.SINGULAR_HEADER_DEPRECATED,
                 message=f"Singular section headers like '{marker}' are deprecated. Use plural format like '*** {header} ***' instead.")
             return True
@@ -113,8 +112,7 @@ class SuiteFileContext(FileContext):
         return self._handles_section(statement, 'Tasks')
 
     def _get_invalid_section_error(self, header: str) -> InvalidTokenError:
-        return InvalidTokenError(
-            kind=ErrorKind.ERROR,
+        return InvalidTokenError.as_error(
             code=ErrorCode.INVALID_SECTION_HEADER,
             message=f"Unrecognized section header '{header}'. Valid sections: 'Settings', 'Variables', 'Test Cases', 'Tasks', 'Keywords' and 'Comments'.")
 
@@ -125,12 +123,10 @@ class ResourceFileContext(FileContext):
     def _get_invalid_section_error(self, header: str) -> InvalidTokenError:
         name = self._normalize(header)
         if self.languages.headers.get(name) in ('Test Cases', 'Tasks'):
-            return InvalidTokenError(
-            kind=ErrorKind.ERROR,
+            return InvalidTokenError.as_error(
             code=ErrorCode.INVALID_SECTION_IN_RESOURCE_FILE,
             message=f"Resource file with '{name}' section is invalid.", is_fatal=True)
-        return InvalidTokenError(
-            kind=ErrorKind.ERROR,
+        return InvalidTokenError.as_error(
             code=ErrorCode.INVALID_SECTION_HEADER,
             message=f"Unrecognized section header '{header}'. Valid sections: 'Settings', 'Variables', 'Keywords' and 'Comments'.",
             is_fatal=True)
@@ -142,12 +138,10 @@ class InitFileContext(FileContext):
     def _get_invalid_section_error(self, header: str) -> InvalidTokenError:
         name = self._normalize(header)
         if self.languages.headers.get(name) in ('Test Cases', 'Tasks'):
-            return InvalidTokenError(
-                kind=ErrorKind.ERROR,
+            return InvalidTokenError.as_error(
                 code=ErrorCode.INVALID_SECTION_IN_INIT_FILE,
                 message=f"'{name}' section is not allowed in suite initialization file.")
-        return InvalidTokenError(
-            kind=ErrorKind.ERROR,
+        return InvalidTokenError.as_error(
             code=ErrorCode.INVALID_SECTION_HEADER,
             message=f"Unrecognized section header '{header}'. Valid sections: 'Settings', 'Variables', 'Keywords' and 'Comments'.")
 

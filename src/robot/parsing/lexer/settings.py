@@ -68,7 +68,7 @@ class Settings(ABC):
         try:
             self._validate(orig, name, statement)
         except ValueError as err:
-            self._lex_error(statement, InvalidTokenError(ErrorKind.ERROR, ErrorCode.SETTINGS_VALIDATION_ERROR, err.args[0]))
+            self._lex_error(statement, InvalidTokenError.as_error(code=ErrorCode.SETTINGS_VALIDATION_ERROR, message=err.args[0]))
         else:
             self._lex_setting(statement, name)
 
@@ -122,8 +122,8 @@ class Settings(ABC):
         else:
             self._lex_arguments(values)
         if name == 'Return':
-            statement[0].error = InvalidTokenError(ErrorKind.WARNING, ErrorCode.RETURN_SETTING_DEPRECATED,
-                                       "The '[Return]' setting is deprecated. Use the 'RETURN' statement instead.")
+            statement[0].error = InvalidTokenError.as_warning(code=ErrorCode.RETURN_SETTING_DEPRECATED,
+                                       message="The '[Return]' setting is deprecated. Use the 'RETURN' statement instead.")
 
     def _lex_name_and_arguments(self, tokens: StatementTokens):
         if tokens:
