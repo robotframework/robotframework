@@ -1671,7 +1671,7 @@ Documentation
         expected = File([
             InvalidSection(
                 header=SectionHeader(
-                    [Token('INVALID HEADER', '*** Test Cases ***', 1, 0, error=InvalidTokenError(ErrorKind.ERROR, ErrorCode.INVALID_SECTION_IN_RESOURCE_FILE, inv_testcases))])
+                    [Token('INVALID HEADER', '*** Test Cases ***', 1, 0, error=InvalidTokenError(ErrorKind.FATAL, ErrorCode.INVALID_SECTION_IN_RESOURCE_FILE, inv_testcases))])
             )
         ])
         assert_model(model, expected)
@@ -1693,7 +1693,7 @@ Documentation
         expected = File([
             InvalidSection(
                 header=SectionHeader(
-                    [Token('INVALID HEADER', '*** Invalid ***', 1, 0, error=InvalidTokenError(ErrorKind.ERROR, ErrorCode.INVALID_SECTION_HEADER, inv_header))]
+                    [Token('INVALID HEADER', '*** Invalid ***', 1, 0, error=InvalidTokenError(ErrorKind.FATAL, ErrorCode.INVALID_SECTION_HEADER, inv_header))]
                 )
             ),
             SettingSection(
@@ -1707,7 +1707,7 @@ Documentation
             ),
             InvalidSection(
                 header=SectionHeader(
-                    [Token('INVALID HEADER', '*** Test Cases ***', 5, 0, error=InvalidTokenError(ErrorKind.ERROR, ErrorCode.INVALID_SECTION_IN_RESOURCE_FILE, inv_testcases))]
+                    [Token('INVALID HEADER', '*** Test Cases ***', 5, 0, error=InvalidTokenError(ErrorKind.FATAL, ErrorCode.INVALID_SECTION_IN_RESOURCE_FILE, inv_testcases))]
                 )
             ),
         ])

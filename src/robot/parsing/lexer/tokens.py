@@ -28,7 +28,7 @@ StatementTokens = List['Token']
 
 class ErrorCode(Enum):
     """ Error codes for invalid tokens.
-    
+
     The error codes are used to identify the error that occurred when tokenizing data. 
     """
     INVALID_LANGUAGE_CONFIGURATION = auto()
@@ -45,6 +45,7 @@ class ErrorCode(Enum):
 class ErrorKind(Enum):
     WARNING = 'WARNING'
     ERROR = 'ERROR'
+    FATAL = 'FATAL'
 
 
 @dataclass(frozen=True)
@@ -54,23 +55,20 @@ class InvalidTokenError:
     :param kind: The kind of the error, either `ErrorKind.WARNING` or `ErrorKind.ERROR`.
     :param code: The error code.
     :param message: The error message.
-    :param is_fatal: Whether the error is fatal or not.
 
-    The `kind` attribute is either `ErrorKind.WARNING` or `ErrorKind.ERROR` and the `code` attribute
-    is an instance of `ErrorCode`. The `message` attribute is a string describing the error. The
-    `is_fatal` attribute is a boolean indicating whether the error is fatal or not. If `is_fatal` is
-    `True`, the error should be treated as fatal and the parsing should be stopped.
+    The `kind` attribute is either `ErrorCode.WARNING`, `ErrorCode.ERROR` or `ErrorCode.FATAL`.
+    The `message` attribute is a string describing the error.
 
-    The `message` attribute is optional and defaults to `None`. The `is_fatal` attribute is optional
-    and defaults to `False`. The `is_warning` and `should_throw` properties can be used to check the
-    kind of the error. The `as_warning` and `as_error` class methods can be used to create new instances
-    of `InvalidTokenError` with the kind set to `ErrorKind.WARNING` or `ErrorKind.ERROR` respectively.
+    The `message` attribute is optional and defaults to `None`. The `is_warning` and `is_fatal` properties
+    can be used to check the kind of the error. If `is_fatal` equals to `True` (ErrorKind.FATAL), the error
+    should be treated as fatal and the parsing should be stopped. The `as_warning`, `as_error` and `as_fatal` class methods
+    can be used to create new instances of `InvalidTokenError` with the kind set to `ErrorKind.WARNING`,
+    `ErrorKind.ERROR` or `ErrorKind.FATAL` respectively.
     """
-    
+
     kind: ErrorKind
     code: ErrorCode
     message: str | None = None
-    is_fatal: bool = False
 
     def __str__(self) -> str:
         return f"{self.message or ''}"
@@ -88,16 +86,20 @@ class InvalidTokenError:
         return self.kind == ErrorKind.WARNING
 
     @property
-    def should_throw(self) -> bool:
-        return self.kind == ErrorKind.ERROR and self.is_fatal
+    def is_fatal(self) -> bool:
+        return self.kind == ErrorKind.FATAL
 
     @classmethod
     def as_warning(cls, code: ErrorCode, message: str | None = None) -> 'InvalidTokenError':
         return cls(ErrorKind.WARNING, code, message)
 
     @classmethod
-    def as_error(cls, code: ErrorCode, message: str | None = None, is_fatal: bool = False) -> 'InvalidTokenError':
-        return cls(ErrorKind.ERROR, code, message, is_fatal)
+    def as_error(cls, code: ErrorCode, message: str | None = None) -> 'InvalidTokenError':
+        return cls(ErrorKind.ERROR, code, message)
+
+    @classmethod
+    def as_fatal(cls, code: ErrorCode, message: str | None = None) -> 'InvalidTokenError':
+        return cls(ErrorKind.FATAL, code, message)
 
 
 class Token:

@@ -735,7 +735,7 @@ Hello, I'm a comment!
     def test_case_section_causes_fatal_error_in_resource_file(self):
         assert_tokens('*** Test Cases ***', [
             (T.INVALID_HEADER, '*** Test Cases ***', 1, 0,
-             InvalidTokenError(ErrorKind.ERROR, ErrorCode.INVALID_SECTION_IN_RESOURCE_FILE, "Resource file with 'Test Cases' section is invalid.")),
+             InvalidTokenError(ErrorKind.FATAL, ErrorCode.INVALID_SECTION_IN_RESOURCE_FILE, "Resource file with 'Test Cases' section is invalid.")),
             (T.EOS, '', 1, 18),
         ], get_resource_tokens, data_only=True)
 
@@ -758,7 +758,7 @@ Hello, I'm a comment!
     def test_invalid_section_in_resource_file(self):
         assert_tokens('*', [
             (T.INVALID_HEADER, '*', 1, 0,
-             InvalidTokenError(ErrorKind.ERROR, ErrorCode.INVALID_SECTION_HEADER, "Unrecognized section header '*'. Valid sections: "
+             InvalidTokenError(ErrorKind.FATAL, ErrorCode.INVALID_SECTION_HEADER, "Unrecognized section header '*'. Valid sections: "
              "'Settings', 'Variables', 'Keywords' and 'Comments'.")),
             (T.EOS, '', 1, 1),
         ], get_resource_tokens, data_only=True)

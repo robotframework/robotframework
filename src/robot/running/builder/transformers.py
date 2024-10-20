@@ -521,7 +521,7 @@ class ErrorReporter(ModelVisitor):
         if token.error is None:  # assert for the type checker that error is not None
             return
         message = f"Error in file '{self.source}' on line {token.lineno}: {token.error}"
-        if token.type == Token.INVALID_HEADER and token.error.should_throw:
+        if token.error.is_fatal:
             raise DataError(message)
         LOGGER.write(message, level='WARN' if token.error.is_warning else 'ERROR')
 

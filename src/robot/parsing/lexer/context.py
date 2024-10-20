@@ -123,13 +123,12 @@ class ResourceFileContext(FileContext):
     def _get_invalid_section_error(self, header: str) -> InvalidTokenError:
         name = self._normalize(header)
         if self.languages.headers.get(name) in ('Test Cases', 'Tasks'):
-            return InvalidTokenError.as_error(
+            return InvalidTokenError.as_fatal(
             code=ErrorCode.INVALID_SECTION_IN_RESOURCE_FILE,
-            message=f"Resource file with '{name}' section is invalid.", is_fatal=True)
-        return InvalidTokenError.as_error(
+            message=f"Resource file with '{name}' section is invalid.")
+        return InvalidTokenError.as_fatal(
             code=ErrorCode.INVALID_SECTION_HEADER,
-            message=f"Unrecognized section header '{header}'. Valid sections: 'Settings', 'Variables', 'Keywords' and 'Comments'.",
-            is_fatal=True)
+            message=f"Unrecognized section header '{header}'. Valid sections: 'Settings', 'Variables', 'Keywords' and 'Comments'.")
 
 
 class InitFileContext(FileContext):
