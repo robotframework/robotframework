@@ -13,12 +13,19 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.conf import Languages, LanguageLike, LanguagesLike
+from robot.conf import LanguageLike, Languages, LanguagesLike
 from robot.utils import normalize_whitespace
 
-from .settings import (InitFileSettings, FileSettings, Settings, SuiteFileSettings,
-                       ResourceFileSettings, TestCaseSettings, KeywordSettings)
-from .tokens import StatementTokens, Token
+from .settings import (
+    FileSettings,
+    InitFileSettings,
+    KeywordSettings,
+    ResourceFileSettings,
+    Settings,
+    SuiteFileSettings,
+    TestCaseSettings,
+)
+from .tokens import ErrorCode, ErrorKind, InvalidTokenError, StatementTokens, Token
 
 
 class LexingContext:
@@ -71,7 +78,7 @@ class FileContext(LexingContext):
         for token in statement[1:]:
             token.type = Token.COMMENT
 
-    def _get_invalid_section_error(self, header: str) -> str:
+    def _get_invalid_section_error(self, header: str) -> InvalidTokenError:
         raise NotImplementedError
 
     def _handles_section(self, statement: StatementTokens, header: str) -> bool:
@@ -82,10 +89,9 @@ class FileContext(LexingContext):
         if self.languages.headers.get(normalized) == header:
             return True
         if normalized == header[:-1]:
-            statement[0].error = (
-                f"Singular section headers like '{marker}' are deprecated. "
-                f"Use plural format like '*** {header} ***' instead."
-            )
+            statement[0].error = InvalidTokenError.as_warning(
+                code=ErrorCode.SINGULAR_HEADER_DEPRECATED,
+                message=f"Singular section headers like '{marker}' are deprecated. Use plural format like '*** {header} ***' instead.")
             return True
         return False
 
@@ -105,32 +111,38 @@ class SuiteFileContext(FileContext):
     def task_section(self, statement: StatementTokens) -> bool:
         return self._handles_section(statement, 'Tasks')
 
-    def _get_invalid_section_error(self, header: str) -> str:
-        return (f"Unrecognized section header '{header}'. Valid sections: "
-                f"'Settings', 'Variables', 'Test Cases', 'Tasks', 'Keywords' "
-                f"and 'Comments'.")
+    def _get_invalid_section_error(self, header: str) -> InvalidTokenError:
+        return InvalidTokenError.as_error(
+            code=ErrorCode.INVALID_SECTION_HEADER,
+            message=f"Unrecognized section header '{header}'. Valid sections: 'Settings', 'Variables', 'Test Cases', 'Tasks', 'Keywords' and 'Comments'.")
 
 
 class ResourceFileContext(FileContext):
     settings: ResourceFileSettings
 
-    def _get_invalid_section_error(self, header: str) -> str:
+    def _get_invalid_section_error(self, header: str) -> InvalidTokenError:
         name = self._normalize(header)
         if self.languages.headers.get(name) in ('Test Cases', 'Tasks'):
-            return f"Resource file with '{name}' section is invalid."
-        return (f"Unrecognized section header '{header}'. Valid sections: "
-                f"'Settings', 'Variables', 'Keywords' and 'Comments'.")
+            return InvalidTokenError.as_fatal(
+            code=ErrorCode.INVALID_SECTION_IN_RESOURCE_FILE,
+            message=f"Resource file with '{name}' section is invalid.")
+        return InvalidTokenError.as_fatal(
+            code=ErrorCode.INVALID_SECTION_HEADER,
+            message=f"Unrecognized section header '{header}'. Valid sections: 'Settings', 'Variables', 'Keywords' and 'Comments'.")
 
 
 class InitFileContext(FileContext):
     settings: InitFileSettings
 
-    def _get_invalid_section_error(self, header: str) -> str:
+    def _get_invalid_section_error(self, header: str) -> InvalidTokenError:
         name = self._normalize(header)
         if self.languages.headers.get(name) in ('Test Cases', 'Tasks'):
-            return f"'{name}' section is not allowed in suite initialization file."
-        return (f"Unrecognized section header '{header}'. Valid sections: "
-                f"'Settings', 'Variables', 'Keywords' and 'Comments'.")
+            return InvalidTokenError.as_error(
+                code=ErrorCode.INVALID_SECTION_IN_INIT_FILE,
+                message=f"'{name}' section is not allowed in suite initialization file.")
+        return InvalidTokenError.as_error(
+            code=ErrorCode.INVALID_SECTION_HEADER,
+            message=f"Unrecognized section header '{header}'. Valid sections: 'Settings', 'Variables', 'Keywords' and 'Comments'.")
 
 
 class TestCaseContext(LexingContext):

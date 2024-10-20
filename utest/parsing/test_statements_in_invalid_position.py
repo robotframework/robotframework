@@ -1,9 +1,10 @@
 import unittest
 
-from robot.parsing import get_model, Token
-from robot.parsing.model.statements import Break, Continue, Error, ReturnStatement
+from parsing.parsing_test_utils import RemoveNonDataTokensVisitor, assert_model
 
-from parsing_test_utils import assert_model, RemoveNonDataTokensVisitor
+from robot.parsing import Token, get_model
+from robot.parsing.lexer.tokens import ErrorCode, ErrorKind, InvalidTokenError
+from robot.parsing.model.statements import Break, Continue, Error, ReturnStatement
 
 
 def remove_non_data_nodes_and_assert(node, expected, data_only):
@@ -23,7 +24,7 @@ Example
     RETURN''', data_only=data_only)
                 node = model.sections[0].body[0].body[0]
                 expected = Error(
-                    [Token(Token.ERROR, 'RETURN', 3, 4, 'RETURN is not allowed in this context.')],
+                    [Token(Token.ERROR, 'RETURN', 3, 4, error=InvalidTokenError(ErrorKind.ERROR, ErrorCode.SYNTAX_ERROR, 'RETURN is not allowed in this context.'))],
                 )
                 remove_non_data_nodes_and_assert(node, expected, data_only)
 
@@ -173,7 +174,7 @@ Example
     BREAK''', data_only=data_only)
                 node = model.sections[0].body[0].body[0]
                 expected = Error(
-                    [Token(Token.ERROR, 'BREAK', 3, 4, 'BREAK is not allowed in this context.')],
+                    [Token(Token.ERROR, 'BREAK', 3, 4, error=InvalidTokenError(ErrorKind.ERROR, ErrorCode.SYNTAX_ERROR, 'BREAK is not allowed in this context.'))],
                 )
                 remove_non_data_nodes_and_assert(node, expected, data_only)
 
@@ -242,7 +243,7 @@ Example
     BREAK''', data_only=data_only)
                 node = model.sections[0].body[0].body[0]
                 expected = Error(
-                    [Token(Token.ERROR, 'BREAK', 3, 4, 'BREAK is not allowed in this context.')],
+                    [Token(Token.ERROR, 'BREAK', 3, 4,error=InvalidTokenError(ErrorKind.ERROR, ErrorCode.SYNTAX_ERROR, 'BREAK is not allowed in this context.'))],
                 )
                 remove_non_data_nodes_and_assert(node, expected, data_only)
 
@@ -292,7 +293,7 @@ Example
     CONTINUE''', data_only=data_only)
                 node = model.sections[0].body[0].body[0]
                 expected = Error(
-                    [Token(Token.ERROR, 'CONTINUE', 3, 4, 'CONTINUE is not allowed in this context.')],
+                    [Token(Token.ERROR, 'CONTINUE', 3, 4, error=InvalidTokenError(ErrorKind.ERROR, ErrorCode.SYNTAX_ERROR, 'CONTINUE is not allowed in this context.'))],
                 )
                 remove_non_data_nodes_and_assert(node, expected, data_only)
 
@@ -361,7 +362,7 @@ Example
     CONTINUE''', data_only=data_only)
                 node = model.sections[0].body[0].body[0]
                 expected = Error(
-                    [Token(Token.ERROR, 'CONTINUE', 3, 4, 'CONTINUE is not allowed in this context.')],
+                    [Token(Token.ERROR, 'CONTINUE', 3, 4, error=InvalidTokenError(ErrorKind.ERROR, ErrorCode.SYNTAX_ERROR, 'CONTINUE is not allowed in this context.'))],
                 )
                 remove_non_data_nodes_and_assert(node, expected, data_only)
 

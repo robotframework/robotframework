@@ -19,8 +19,8 @@ from robot.errors import DataError
 from robot.utils import normalize_whitespace
 from robot.variables import is_assign
 
-from .context import FileContext, LexingContext, KeywordContext, TestCaseContext
-from .tokens import StatementTokens, Token
+from .context import FileContext, KeywordContext, LexingContext, TestCaseContext
+from .tokens import ErrorCode, ErrorKind, InvalidTokenError, StatementTokens, Token
 
 
 class Lexer(ABC):
@@ -140,10 +140,9 @@ class ImplicitCommentLexer(CommentLexer):
             try:
                 self.ctx.add_language(lang)
             except DataError:
-                statement[0].set_error(
-                    f"Invalid language configuration: "
-                    f"Language '{lang}' not found nor importable as a language module."
-                )
+                statement[0].set_error(InvalidTokenError.as_error(
+                                                         code=ErrorCode.INVALID_LANGUAGE_CONFIGURATION,
+                                                         message=f"Invalid language configuration: Language '{lang}' not found nor importable as a language module."))
             else:
                 statement[0].type = Token.CONFIG
 
@@ -387,6 +386,8 @@ class SyntaxErrorLexer(TypeAndArguments):
 
     def lex(self):
         token = self.statement[0]
-        token.set_error(f'{token.value} is not allowed in this context.')
+        token.set_error(InvalidTokenError.as_error(
+                                          code=ErrorCode.SYNTAX_ERROR,
+                                          message=f'{token.value} is not allowed in this context.'))
         for t in self.statement[1:]:
             t.type = Token.ARGUMENT

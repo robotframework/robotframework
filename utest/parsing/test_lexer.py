@@ -1,13 +1,13 @@
 import os
-import unittest
 import tempfile
+import unittest
 from io import StringIO
 from pathlib import Path
 
 from robot.conf import Language, Languages
+from robot.parsing import Token, get_init_tokens, get_resource_tokens, get_tokens
+from robot.parsing.lexer.tokens import ErrorCode, ErrorKind, InvalidTokenError
 from robot.utils.asserts import assert_equal
-from robot.parsing import get_tokens, get_init_tokens, get_resource_tokens, Token
-
 
 T = Token
 
@@ -122,13 +122,13 @@ Default Tags      Not allowed in init file
             (T.SETTING_HEADER, '*** Settings ***', 1, 0),
             (T.EOS, '', 1, 16),
             (T.ERROR, 'Test Template', 2, 0,
-             "Setting 'Test Template' is not allowed in suite initialization file."),
+              InvalidTokenError(ErrorKind.ERROR, ErrorCode.SETTINGS_VALIDATION_ERROR, "Setting 'Test Template' is not allowed in suite initialization file.")),
             (T.EOS, '', 2, 13),
             (T.TEST_TAGS, 'Test Tags', 3, 0),
             (T.ARGUMENT, 'Allowed in both', 3, 18),
             (T.EOS, '', 3, 33),
             (T.ERROR, 'Default Tags', 4, 0,
-             "Setting 'Default Tags' is not allowed in suite initialization file."),
+             InvalidTokenError(ErrorKind.ERROR, ErrorCode.SETTINGS_VALIDATION_ERROR, "Setting 'Default Tags' is not allowed in suite initialization file.")),
             (T.EOS, '', 4, 12)
         ]
         assert_tokens(data, expected, get_init_tokens, data_only=True)
@@ -154,40 +154,40 @@ Name              Bad Resource Name
             (T.SETTING_HEADER, '*** Settings ***', 1, 0),
             (T.EOS, '', 1, 16),
             (T.ERROR, 'Metadata', 2, 0,
-             "Setting 'Metadata' is not allowed in resource file."),
+             InvalidTokenError(ErrorKind.ERROR, ErrorCode.SETTINGS_VALIDATION_ERROR, "Setting 'Metadata' is not allowed in resource file.")),
             (T.EOS, '', 2, 8),
             (T.ERROR, 'Suite Setup', 3, 0,
-             "Setting 'Suite Setup' is not allowed in resource file."),
+             InvalidTokenError(ErrorKind.ERROR, ErrorCode.SETTINGS_VALIDATION_ERROR, "Setting 'Suite Setup' is not allowed in resource file.")),
             (T.EOS, '', 3, 11),
             (T.ERROR, 'suite teardown', 4, 0,
-             "Setting 'suite teardown' is not allowed in resource file."),
+             InvalidTokenError(ErrorKind.ERROR, ErrorCode.SETTINGS_VALIDATION_ERROR, "Setting 'suite teardown' is not allowed in resource file.")),
             (T.EOS, '', 4, 14),
             (T.ERROR, 'Test Setup', 5, 0,
-             "Setting 'Test Setup' is not allowed in resource file."),
+             InvalidTokenError(ErrorKind.ERROR, ErrorCode.SETTINGS_VALIDATION_ERROR, "Setting 'Test Setup' is not allowed in resource file.")),
             (T.EOS, '', 5, 10),
             (T.ERROR, 'TEST TEARDOWN', 6, 0,
-             "Setting 'TEST TEARDOWN' is not allowed in resource file."),
+             InvalidTokenError(ErrorKind.ERROR, ErrorCode.SETTINGS_VALIDATION_ERROR, "Setting 'TEST TEARDOWN' is not allowed in resource file.")),
             (T.EOS, '', 6, 13),
             (T.ERROR, 'Test Template', 7, 0,
-             "Setting 'Test Template' is not allowed in resource file."),
+             InvalidTokenError(ErrorKind.ERROR, ErrorCode.SETTINGS_VALIDATION_ERROR, "Setting 'Test Template' is not allowed in resource file.")),
             (T.EOS, '', 7, 13),
             (T.ERROR, 'Test Timeout', 8, 0,
-             "Setting 'Test Timeout' is not allowed in resource file."),
+             InvalidTokenError(ErrorKind.ERROR, ErrorCode.SETTINGS_VALIDATION_ERROR, "Setting 'Test Timeout' is not allowed in resource file.")),
             (T.EOS, '', 8, 12),
             (T.ERROR, 'Test Tags', 9, 0,
-             "Setting 'Test Tags' is not allowed in resource file."),
+             InvalidTokenError(ErrorKind.ERROR, ErrorCode.SETTINGS_VALIDATION_ERROR, "Setting 'Test Tags' is not allowed in resource file.")),
             (T.EOS, '', 9, 9),
             (T.ERROR, 'Default Tags', 10, 0,
-             "Setting 'Default Tags' is not allowed in resource file."),
+             InvalidTokenError(ErrorKind.ERROR, ErrorCode.SETTINGS_VALIDATION_ERROR, "Setting 'Default Tags' is not allowed in resource file.")),
             (T.EOS, '', 10, 12),
             (T.ERROR, 'Task Tags', 11, 0,
-             "Setting 'Task Tags' is not allowed in resource file."),
+             InvalidTokenError(ErrorKind.ERROR, ErrorCode.SETTINGS_VALIDATION_ERROR, "Setting 'Task Tags' is not allowed in resource file.")),
             (T.EOS, '', 11, 9),
             (T.DOCUMENTATION, 'Documentation', 12, 0),
             (T.ARGUMENT, 'Valid in all data files.', 12, 18),
             (T.EOS, '', 12, 42),
             (T.ERROR, "Name", 13, 0,
-             "Setting 'Name' is not allowed in resource file."),
+            InvalidTokenError(ErrorKind.ERROR, ErrorCode.SETTINGS_VALIDATION_ERROR, "Setting 'Name' is not allowed in resource file.")),
             (T.EOS, '', 13, 4)
         ]
         assert_tokens(data, expected, get_resource_tokens, data_only=True)
@@ -277,15 +277,15 @@ Libra ry      Smallish typo gives us recommendations!
         expected = [
             (T.SETTING_HEADER, '*** Settings ***', 1, 0),
             (T.EOS, '', 1, 16),
-            (T.ERROR, 'Invalid', 2, 0, "Non-existing setting 'Invalid'."),
+            (T.ERROR, 'Invalid', 2, 0, InvalidTokenError(ErrorKind.ERROR, ErrorCode.SETTINGS_VALIDATION_ERROR, "Non-existing setting 'Invalid'.")),
             (T.EOS, '', 2, 7),
             (T.LIBRARY, 'Library', 3, 0),
             (T.NAME, 'Valid', 3, 14),
             (T.EOS, '', 3, 19),
-            (T.ERROR, 'Oops, I', 4, 0, "Non-existing setting 'Oops, I'."),
+            (T.ERROR, 'Oops, I', 4, 0, InvalidTokenError(ErrorKind.ERROR, ErrorCode.SETTINGS_VALIDATION_ERROR, "Non-existing setting 'Oops, I'.")),
             (T.EOS, '', 4, 7),
-            (T.ERROR, 'Libra ry', 5, 0, "Non-existing setting 'Libra ry'. "
-                                        "Did you mean:\n    Library"),
+            (T.ERROR, 'Libra ry', 5, 0, InvalidTokenError(ErrorKind.ERROR, ErrorCode.SETTINGS_VALIDATION_ERROR, "Non-existing setting 'Libra ry'. "
+                                        "Did you mean:\n    Library")),
             (T.EOS, '', 5, 8)
         ]
         assert_tokens(data, expected, get_tokens, data_only=True)
@@ -305,16 +305,16 @@ NaMe             This    is    an    invalid    name
             (T.SETTING_HEADER, '*** Settings ***', 1, 0),
             (T.EOS, '', 1, 16),
             (T.ERROR, 'Resource', 2, 0,
-             "Setting 'Resource' accepts only one value, got 3."),
+             InvalidTokenError(ErrorKind.ERROR, ErrorCode.SETTINGS_VALIDATION_ERROR, "Setting 'Resource' accepts only one value, got 3.")),
             (T.EOS, '', 2, 8),
             (T.ERROR, 'Test Timeout', 3, 0,
-             "Setting 'Test Timeout' accepts only one value, got 2."),
+             InvalidTokenError(ErrorKind.ERROR, ErrorCode.SETTINGS_VALIDATION_ERROR, "Setting 'Test Timeout' accepts only one value, got 2.")),
             (T.EOS, '', 3, 12),
             (T.ERROR, 'Test Template', 4, 0,
-             "Setting 'Test Template' accepts only one value, got 5."),
+             InvalidTokenError(ErrorKind.ERROR, ErrorCode.SETTINGS_VALIDATION_ERROR, "Setting 'Test Template' accepts only one value, got 5.")),
             (T.EOS, '', 4, 13),
             (T.ERROR, 'NaMe', 5, 0,
-             "Setting 'NaMe' accepts only one value, got 5."),
+             InvalidTokenError(ErrorKind.ERROR, ErrorCode.SETTINGS_VALIDATION_ERROR, "Setting 'NaMe' accepts only one value, got 5.")),
             (T.EOS, '', 5, 4),
         ]
         assert_tokens(data, expected, data_only=True)
@@ -351,61 +351,61 @@ Name              Ignored
             (T.ARGUMENT, 'Used', 2, 18),
             (T.EOS, '', 2, 22),
             (T.ERROR, 'Documentation', 3, 0,
-             "Setting 'Documentation' is allowed only once. Only the first value is used."),
+             InvalidTokenError(ErrorKind.ERROR, ErrorCode.SETTINGS_VALIDATION_ERROR, "Setting 'Documentation' is allowed only once. Only the first value is used.")),
             (T.EOS, '', 3, 13),
             (T.SUITE_SETUP, 'Suite Setup', 4, 0),
             (T.NAME, 'Used', 4, 18),
             (T.EOS, '', 4, 22),
             (T.ERROR, 'Suite Setup', 5, 0,
-             "Setting 'Suite Setup' is allowed only once. Only the first value is used."),
+             InvalidTokenError(ErrorKind.ERROR, ErrorCode.SETTINGS_VALIDATION_ERROR, "Setting 'Suite Setup' is allowed only once. Only the first value is used.")),
             (T.EOS, '', 5, 11),
             (T.SUITE_TEARDOWN, 'Suite Teardown', 6, 0),
             (T.NAME, 'Used', 6, 18),
             (T.EOS, '', 6, 22),
             (T.ERROR, 'Suite Teardown', 7, 0,
-             "Setting 'Suite Teardown' is allowed only once. Only the first value is used."),
+             InvalidTokenError(ErrorKind.ERROR, ErrorCode.SETTINGS_VALIDATION_ERROR, "Setting 'Suite Teardown' is allowed only once. Only the first value is used.")),
             (T.EOS, '', 7, 14),
             (T.TEST_SETUP, 'Test Setup', 8, 0),
             (T.NAME, 'Used', 8, 18),
             (T.EOS, '', 8, 22),
             (T.ERROR, 'Test Setup', 9, 0,
-             "Setting 'Test Setup' is allowed only once. Only the first value is used."),
+             InvalidTokenError(ErrorKind.ERROR, ErrorCode.SETTINGS_VALIDATION_ERROR, "Setting 'Test Setup' is allowed only once. Only the first value is used.")),
             (T.EOS, '', 9, 10),
             (T.TEST_TEARDOWN, 'Test Teardown', 10, 0),
             (T.NAME, 'Used', 10, 18),
             (T.EOS, '', 10, 22),
             (T.ERROR, 'Test Teardown', 11, 0,
-             "Setting 'Test Teardown' is allowed only once. Only the first value is used."),
+             InvalidTokenError(ErrorKind.ERROR, ErrorCode.SETTINGS_VALIDATION_ERROR, "Setting 'Test Teardown' is allowed only once. Only the first value is used.")),
             (T.EOS, '', 11, 13),
             (T.TEST_TEMPLATE, 'Test Template', 12, 0),
             (T.NAME, 'Used', 12, 18),
             (T.EOS, '', 12, 22),
             (T.ERROR, 'Test Template', 13, 0,
-             "Setting 'Test Template' is allowed only once. Only the first value is used."),
+             InvalidTokenError(ErrorKind.ERROR, ErrorCode.SETTINGS_VALIDATION_ERROR, "Setting 'Test Template' is allowed only once. Only the first value is used.")),
             (T.EOS, '', 13, 13),
             (T.TEST_TIMEOUT, 'Test Timeout', 14, 0),
             (T.ARGUMENT, 'Used', 14, 18),
             (T.EOS, '', 14, 22),
             (T.ERROR, 'Test Timeout', 15, 0,
-             "Setting 'Test Timeout' is allowed only once. Only the first value is used."),
+             InvalidTokenError(ErrorKind.ERROR, ErrorCode.SETTINGS_VALIDATION_ERROR, "Setting 'Test Timeout' is allowed only once. Only the first value is used.")),
             (T.EOS, '', 15, 12),
             (T.TEST_TAGS, 'Test Tags', 16, 0),
             (T.ARGUMENT, 'Used', 16, 18),
             (T.EOS, '', 16, 22),
             (T.ERROR, 'Test Tags', 17, 0,
-             "Setting 'Test Tags' is allowed only once. Only the first value is used."),
+             InvalidTokenError(ErrorKind.ERROR, ErrorCode.SETTINGS_VALIDATION_ERROR,"Setting 'Test Tags' is allowed only once. Only the first value is used.")),
             (T.EOS, '', 17, 9),
             (T.DEFAULT_TAGS, 'Default Tags', 18, 0),
             (T.ARGUMENT, 'Used', 18, 18),
             (T.EOS, '', 18, 22),
             (T.ERROR, 'Default Tags', 19, 0,
-             "Setting 'Default Tags' is allowed only once. Only the first value is used."),
+             InvalidTokenError(ErrorKind.ERROR, ErrorCode.SETTINGS_VALIDATION_ERROR, "Setting 'Default Tags' is allowed only once. Only the first value is used.")),
             (T.EOS, '', 19, 12),
             ("SUITE NAME", 'Name', 20, 0),
             (T.ARGUMENT, 'Used', 20, 18),
             (T.EOS, '', 20, 22),
             (T.ERROR, 'Name', 21, 0,
-             "Setting 'Name' is allowed only once. Only the first value is used."),
+             InvalidTokenError(ErrorKind.ERROR, ErrorCode.SETTINGS_VALIDATION_ERROR, "Setting 'Name' is allowed only once. Only the first value is used.")),
             (T.EOS, '', 21, 4)
         ]
         assert_tokens(data, expected, data_only=True)
@@ -500,7 +500,7 @@ Name
             (T.ARGUMENT, '${TIMEOUT}', 9, 23),
             (T.EOS, '', 9, 33),
             (T.RETURN, '[Return]', 10, 4,
-             "The '[Return]' setting is deprecated. Use the 'RETURN' statement instead."),
+             InvalidTokenError(ErrorKind.WARNING, ErrorCode.RETURN_SETTING_DEPRECATED, "The '[Return]' setting is deprecated. Use the 'RETURN' statement instead.")),
             (T.ARGUMENT, 'Value', 10, 23),
             (T.EOS, '', 10, 28)
         ]
@@ -521,10 +521,10 @@ Name
             (T.TESTCASE_NAME, 'Name', 2, 0),
             (T.EOS, '', 2, 4),
             (T.ERROR, '[Timeout]', 3, 4,
-             "Setting 'Timeout' accepts only one value, got 4."),
+             InvalidTokenError(ErrorKind.ERROR, ErrorCode.SETTINGS_VALIDATION_ERROR, "Setting 'Timeout' accepts only one value, got 4.")),
             (T.EOS, '', 3, 13),
             (T.ERROR, '[Template]', 4, 4,
-             "Setting 'Template' accepts only one value, got 3."),
+            InvalidTokenError(ErrorKind.ERROR, ErrorCode.SETTINGS_VALIDATION_ERROR, "Setting 'Template' accepts only one value, got 3.")),
             (T.EOS, '', 4, 14)
         ]
         assert_tokens(data, expected, data_only=True)
@@ -542,7 +542,7 @@ Name
             (T.KEYWORD_NAME, 'Name', 2, 0),
             (T.EOS, '', 2, 4),
             (T.ERROR, '[Timeout]', 3, 4,
-             "Setting 'Timeout' accepts only one value, got 4."),
+             InvalidTokenError(ErrorKind.ERROR, ErrorCode.SETTINGS_VALIDATION_ERROR,  "Setting 'Timeout' accepts only one value, got 4.")),
             (T.EOS, '', 3, 13),
         ]
         assert_tokens(data, expected, data_only=True)
@@ -574,37 +574,37 @@ Name
             (T.ARGUMENT, 'Used', 3, 23),
             (T.EOS, '', 3, 27),
             (T.ERROR, '[Documentation]', 4, 4,
-             "Setting 'Documentation' is allowed only once. Only the first value is used."),
+            InvalidTokenError(ErrorKind.ERROR, ErrorCode.SETTINGS_VALIDATION_ERROR, "Setting 'Documentation' is allowed only once. Only the first value is used.")),
             (T.EOS, '', 4, 19),
             (T.TAGS, '[Tags]', 5, 4),
             (T.ARGUMENT, 'Used', 5, 23),
             (T.EOS, '', 5, 27),
             (T.ERROR, '[Tags]', 6, 4,
-             "Setting 'Tags' is allowed only once. Only the first value is used."),
+             InvalidTokenError(ErrorKind.ERROR, ErrorCode.SETTINGS_VALIDATION_ERROR, "Setting 'Tags' is allowed only once. Only the first value is used.")),
             (T.EOS, '', 6, 10),
             (T.SETUP, '[Setup]', 7, 4),
             (T.NAME, 'Used', 7, 23),
             (T.EOS, '', 7, 27),
             (T.ERROR, '[Setup]', 8, 4,
-             "Setting 'Setup' is allowed only once. Only the first value is used."),
+             InvalidTokenError(ErrorKind.ERROR, ErrorCode.SETTINGS_VALIDATION_ERROR, "Setting 'Setup' is allowed only once. Only the first value is used.")),
             (T.EOS, '', 8, 11),
             (T.TEARDOWN, '[Teardown]', 9, 4),
             (T.NAME, 'Used', 9, 23),
             (T.EOS, '', 9, 27),
             (T.ERROR, '[Teardown]', 10, 4,
-             "Setting 'Teardown' is allowed only once. Only the first value is used."),
+             InvalidTokenError(ErrorKind.ERROR, ErrorCode.SETTINGS_VALIDATION_ERROR, "Setting 'Teardown' is allowed only once. Only the first value is used.")),
             (T.EOS, '', 10, 14),
             (T.TEMPLATE, '[Template]', 11, 4),
             (T.NAME, 'Used', 11, 23),
             (T.EOS, '', 11, 27),
             (T.ERROR, '[Template]', 12, 4,
-             "Setting 'Template' is allowed only once. Only the first value is used."),
+             InvalidTokenError(ErrorKind.ERROR, ErrorCode.SETTINGS_VALIDATION_ERROR, "Setting 'Template' is allowed only once. Only the first value is used.")),
             (T.EOS, '', 12, 14),
             (T.TIMEOUT, '[Timeout]', 13, 4),
             (T.ARGUMENT, 'Used', 13, 23),
             (T.EOS, '', 13, 27),
             (T.ERROR, '[Timeout]', 14, 4,
-             "Setting 'Timeout' is allowed only once. Only the first value is used."),
+             InvalidTokenError(ErrorKind.ERROR, ErrorCode.SETTINGS_VALIDATION_ERROR, "Setting 'Timeout' is allowed only once. Only the first value is used.")),
             (T.EOS, '', 14, 13)
         ]
         assert_tokens(data, expected, data_only=True)
@@ -636,38 +636,38 @@ Name
             (T.ARGUMENT, 'Used', 3, 23),
             (T.EOS, '', 3, 27),
             (T.ERROR, '[Documentation]', 4, 4,
-             "Setting 'Documentation' is allowed only once. Only the first value is used."),
+             InvalidTokenError(ErrorKind.ERROR, ErrorCode.SETTINGS_VALIDATION_ERROR, "Setting 'Documentation' is allowed only once. Only the first value is used.")),
             (T.EOS, '', 4, 19),
             (T.TAGS, '[Tags]', 5, 4),
             (T.ARGUMENT, 'Used', 5, 23),
             (T.EOS, '', 5, 27),
             (T.ERROR, '[Tags]', 6, 4,
-             "Setting 'Tags' is allowed only once. Only the first value is used."),
+             InvalidTokenError(ErrorKind.ERROR, ErrorCode.SETTINGS_VALIDATION_ERROR, "Setting 'Tags' is allowed only once. Only the first value is used.")),
             (T.EOS, '', 6, 10),
             (T.ARGUMENTS, '[Arguments]', 7, 4),
             (T.ARGUMENT, 'Used', 7, 23),
             (T.EOS, '', 7, 27),
             (T.ERROR, '[Arguments]', 8, 4,
-             "Setting 'Arguments' is allowed only once. Only the first value is used."),
+             InvalidTokenError(ErrorKind.ERROR, ErrorCode.SETTINGS_VALIDATION_ERROR, "Setting 'Arguments' is allowed only once. Only the first value is used.")),
             (T.EOS, '', 8, 15),
             (T.TEARDOWN, '[Teardown]', 9, 4),
             (T.NAME, 'Used', 9, 23),
             (T.EOS, '', 9, 27),
             (T.ERROR, '[Teardown]', 10, 4,
-             "Setting 'Teardown' is allowed only once. Only the first value is used."),
+             InvalidTokenError(ErrorKind.ERROR, ErrorCode.SETTINGS_VALIDATION_ERROR, "Setting 'Teardown' is allowed only once. Only the first value is used.")),
             (T.EOS, '', 10, 14),
             (T.TIMEOUT, '[Timeout]', 11, 4),
             (T.ARGUMENT, 'Used', 11, 23),
             (T.EOS, '', 11, 27),
             (T.ERROR, '[Timeout]', 12, 4,
-             "Setting 'Timeout' is allowed only once. Only the first value is used."),
+             InvalidTokenError(ErrorKind.ERROR, ErrorCode.SETTINGS_VALIDATION_ERROR, "Setting 'Timeout' is allowed only once. Only the first value is used.")),
             (T.EOS, '', 12, 13),
             (T.RETURN, '[Return]', 13, 4,
-             "The '[Return]' setting is deprecated. Use the 'RETURN' statement instead."),
+             InvalidTokenError(ErrorKind.WARNING, ErrorCode.RETURN_SETTING_DEPRECATED,  "The '[Return]' setting is deprecated. Use the 'RETURN' statement instead.")),
             (T.ARGUMENT, 'Used', 13, 23),
             (T.EOS, '', 13, 27),
             (T.ERROR, '[Return]', 14, 4,
-             "Setting 'Return' is allowed only once. Only the first value is used."),
+             InvalidTokenError(ErrorKind.ERROR, ErrorCode.SETTINGS_VALIDATION_ERROR, "Setting 'Return' is allowed only once. Only the first value is used.")),
             (T.EOS, '', 14, 12)
         ]
         assert_tokens(data, expected, data_only=True)
@@ -728,38 +728,38 @@ Hello, I'm a comment!
     def test_case_section_causes_error_in_init_file(self):
         assert_tokens('*** Test Cases ***', [
             (T.INVALID_HEADER, '*** Test Cases ***', 1, 0,
-             "'Test Cases' section is not allowed in suite initialization file."),
+              InvalidTokenError(ErrorKind.ERROR, ErrorCode.INVALID_SECTION_IN_INIT_FILE, "'Test Cases' section is not allowed in suite initialization file.")),
             (T.EOS, '', 1, 18),
         ], get_init_tokens, data_only=True)
 
     def test_case_section_causes_fatal_error_in_resource_file(self):
         assert_tokens('*** Test Cases ***', [
             (T.INVALID_HEADER, '*** Test Cases ***', 1, 0,
-             "Resource file with 'Test Cases' section is invalid."),
+             InvalidTokenError(ErrorKind.FATAL, ErrorCode.INVALID_SECTION_IN_RESOURCE_FILE, "Resource file with 'Test Cases' section is invalid.")),
             (T.EOS, '', 1, 18),
         ], get_resource_tokens, data_only=True)
 
     def test_invalid_section_in_test_case_file(self):
         assert_tokens('*** Invalid ***', [
             (T.INVALID_HEADER, '*** Invalid ***', 1, 0,
-             "Unrecognized section header '*** Invalid ***'. Valid sections: "
-             "'Settings', 'Variables', 'Test Cases', 'Tasks', 'Keywords' and 'Comments'."),
+             InvalidTokenError(ErrorKind.ERROR, ErrorCode.INVALID_SECTION_HEADER,  "Unrecognized section header '*** Invalid ***'. Valid sections: "
+             "'Settings', 'Variables', 'Test Cases', 'Tasks', 'Keywords' and 'Comments'.")),
             (T.EOS, '', 1, 15),
         ], data_only=True)
 
     def test_invalid_section_in_init_file(self):
         assert_tokens('*** S e t t i n g s ***', [
             (T.INVALID_HEADER, '*** S e t t i n g s ***', 1, 0,
-             "Unrecognized section header '*** S e t t i n g s ***'. Valid sections: "
-             "'Settings', 'Variables', 'Keywords' and 'Comments'."),
+              InvalidTokenError(ErrorKind.ERROR, ErrorCode.INVALID_SECTION_HEADER,  "Unrecognized section header '*** S e t t i n g s ***'. Valid sections: "
+             "'Settings', 'Variables', 'Keywords' and 'Comments'.")),
             (T.EOS, '', 1, 23),
         ], get_init_tokens, data_only=True)
 
     def test_invalid_section_in_resource_file(self):
         assert_tokens('*', [
             (T.INVALID_HEADER, '*', 1, 0,
-             "Unrecognized section header '*'. Valid sections: "
-             "'Settings', 'Variables', 'Keywords' and 'Comments'."),
+             InvalidTokenError(ErrorKind.FATAL, ErrorCode.INVALID_SECTION_HEADER, "Unrecognized section header '*'. Valid sections: "
+             "'Settings', 'Variables', 'Keywords' and 'Comments'.")),
             (T.EOS, '', 1, 1),
         ], get_resource_tokens, data_only=True)
 
@@ -772,23 +772,27 @@ Hello, I'm a comment!
 '''
         expected = [
             (T.SETTING_HEADER, '*** Setting ***', 1, 0,
+             InvalidTokenError(ErrorKind.WARNING, ErrorCode.SINGULAR_HEADER_DEPRECATED,
              "Singular section headers like '*** Setting ***' are deprecated. "
-             "Use plural format like '*** Settings ***' instead."),
+             "Use plural format like '*** Settings ***' instead.")),
             (T.EOL, '\n', 1, 15),
             (T.EOS, '', 1, 16),
             (T.VARIABLE_HEADER, '***variable***', 2, 0,
+             InvalidTokenError(ErrorKind.WARNING, ErrorCode.SINGULAR_HEADER_DEPRECATED,
              "Singular section headers like '***variable***' are deprecated. "
-             "Use plural format like '*** Variables ***' instead."),
+             "Use plural format like '*** Variables ***' instead.")),
             (T.EOL, '\n', 2, 14),
             (T.EOS, '', 2, 15),
             (T.KEYWORD_HEADER, '*Keyword', 3, 0,
+             InvalidTokenError(ErrorKind.WARNING, ErrorCode.SINGULAR_HEADER_DEPRECATED,
              "Singular section headers like '*Keyword' are deprecated. "
-             "Use plural format like '*** Keywords ***' instead."),
+             "Use plural format like '*** Keywords ***' instead.")),
             (T.EOL, '\n', 3, 8),
             (T.EOS, '', 3, 9),
             (T.COMMENT_HEADER, '*** Comment ***', 4, 0,
+             InvalidTokenError(ErrorKind.WARNING, ErrorCode.SINGULAR_HEADER_DEPRECATED,
              "Singular section headers like '*** Comment ***' are deprecated. "
-             "Use plural format like '*** Comments ***' instead."),
+             "Use plural format like '*** Comments ***' instead.")),
             (T.EOL, '\n', 4, 15),
             (T.EOS, '', 4, 16)
         ]
@@ -797,8 +801,9 @@ Hello, I'm a comment!
         assert_tokens(data, expected, get_resource_tokens)
         assert_tokens('*** Test Case ***', [
             (T.TESTCASE_HEADER, '*** Test Case ***', 1, 0,
+             InvalidTokenError(ErrorKind.WARNING, ErrorCode.SINGULAR_HEADER_DEPRECATED,                   
              "Singular section headers like '*** Test Case ***' are deprecated. "
-             "Use plural format like '*** Test Cases ***' instead."),
+             "Use plural format like '*** Test Cases ***' instead.")),
             (T.EOL, '', 1, 17),
             (T.EOS, '', 1, 17),
         ])
@@ -1754,7 +1759,7 @@ ${invalid}    ${usage}
                     (T.NAME, 'Your', 2, 57),
                     (T.VARIABLE, '${Name}', 2, 61),
                     (T.EOS, '', 2, 68),
-                    (T.ERROR, '${invalid}', 3, 0, "Non-existing setting '${invalid}'."),
+                    (T.ERROR, '${invalid}', 3, 0, InvalidTokenError(ErrorKind.ERROR, ErrorCode.SETTINGS_VALIDATION_ERROR, "Non-existing setting '${invalid}'.")),
                     (T.EOS, '', 3, 10)]
         assert_tokens(data, expected, get_tokens=get_tokens,
                       data_only=True, tokenize_variables=True)
@@ -1980,7 +1985,7 @@ class TestReturn(unittest.TestCase):
 
     def test_in_test(self):
         data = '    RETURN'
-        expected = [(T.ERROR, 'RETURN', 3, 4,  'RETURN is not allowed in this context.'),
+        expected = [(T.ERROR, 'RETURN', 3, 4, InvalidTokenError(ErrorKind.ERROR, ErrorCode.SYNTAX_ERROR, 'RETURN is not allowed in this context.')),
                     (T.EOS, '', 3, 10)]
         self._verify(data, expected, test=True)
 
@@ -2039,13 +2044,13 @@ class TestContinue(unittest.TestCase):
 
     def test_in_keyword(self):
         data = '    CONTINUE'
-        expected = [(T.ERROR, 'CONTINUE', 3, 4,  'CONTINUE is not allowed in this context.'),
+        expected = [(T.ERROR, 'CONTINUE', 3, 4,  InvalidTokenError(ErrorKind.ERROR, ErrorCode.SYNTAX_ERROR, 'CONTINUE is not allowed in this context.')),
                     (T.EOS, '', 3, 12)]
         self._verify(data, expected)
 
     def test_in_test(self):
         data = '    CONTINUE'
-        expected = [(T.ERROR, 'CONTINUE', 3, 4,  'CONTINUE is not allowed in this context.'),
+        expected = [(T.ERROR, 'CONTINUE', 3, 4,  InvalidTokenError(ErrorKind.ERROR, ErrorCode.SYNTAX_ERROR, 'CONTINUE is not allowed in this context.')),
                     (T.EOS, '', 3, 12)]
         self._verify(data, expected, test=True)
 
@@ -2155,13 +2160,13 @@ class TestBreak(unittest.TestCase):
 
     def test_in_keyword(self):
         data = '    BREAK'
-        expected = [(T.ERROR, 'BREAK', 3, 4,  'BREAK is not allowed in this context.'),
+        expected = [(T.ERROR, 'BREAK', 3, 4, InvalidTokenError(ErrorKind.ERROR, ErrorCode.SYNTAX_ERROR, 'BREAK is not allowed in this context.')),
                     (T.EOS, '', 3, 9)]
         self._verify(data, expected)
 
     def test_in_test(self):
         data = '    BREAK'
-        expected = [(T.ERROR, 'BREAK', 3, 4,  'BREAK is not allowed in this context.'),
+        expected = [(T.ERROR, 'BREAK', 3, 4,  InvalidTokenError(ErrorKind.ERROR, ErrorCode.SYNTAX_ERROR, 'BREAK is not allowed in this context.')),
                     (T.EOS, '', 3, 9)]
         self._verify(data, expected, test=True)
 
@@ -2520,8 +2525,8 @@ Dokumentaatio    Documentation
 '''
         expected = [
             (T.ERROR, 'language: in:va:lid', 1, 0,
-             "Invalid language configuration: Language 'in:va:lid' not found "
-             "nor importable as a language module."),
+              InvalidTokenError(ErrorKind.ERROR, ErrorCode.INVALID_LANGUAGE_CONFIGURATION, "Invalid language configuration: Language 'in:va:lid' not found "
+             "nor importable as a language module.")),
             (T.EOL, '\n', 1, 19),
             (T.EOS, '', 1, 20),
             (T.COMMENT, 'language: bad again', 2, 0),

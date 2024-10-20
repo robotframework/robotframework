@@ -16,9 +16,9 @@
 from abc import ABC, abstractmethod
 
 from robot.conf import Languages
-from robot.utils import normalize, normalize_whitespace, RecommendationFinder
+from robot.utils import RecommendationFinder, normalize, normalize_whitespace
 
-from .tokens import StatementTokens, Token
+from .tokens import ErrorCode, ErrorKind, InvalidTokenError, StatementTokens, Token
 
 
 class Settings(ABC):
@@ -68,7 +68,7 @@ class Settings(ABC):
         try:
             self._validate(orig, name, statement)
         except ValueError as err:
-            self._lex_error(statement, err.args[0])
+            self._lex_error(statement, InvalidTokenError.as_error(code=ErrorCode.SETTINGS_VALIDATION_ERROR, message=err.args[0]))
         else:
             self._lex_setting(statement, name)
 
@@ -106,7 +106,7 @@ class Settings(ABC):
     def _not_valid_here(self, name: str) -> str:
         raise NotImplementedError
 
-    def _lex_error(self, statement: StatementTokens, error: str):
+    def _lex_error(self, statement: StatementTokens, error: InvalidTokenError):
         statement[0].set_error(error)
         for token in statement[1:]:
             token.type = Token.COMMENT
@@ -122,8 +122,8 @@ class Settings(ABC):
         else:
             self._lex_arguments(values)
         if name == 'Return':
-            statement[0].error = ("The '[Return]' setting is deprecated. "
-                                  "Use the 'RETURN' statement instead.")
+            statement[0].error = InvalidTokenError.as_warning(code=ErrorCode.RETURN_SETTING_DEPRECATED,
+                                       message="The '[Return]' setting is deprecated. Use the 'RETURN' statement instead.")
 
     def _lex_name_and_arguments(self, tokens: StatementTokens):
         if tokens:
