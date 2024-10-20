@@ -8,3 +8,4 @@ docutils
 pygments >= 2.8
 sphinx
 pydantic < 2
+telnetlib-313-and-up; python_version >= "3.13"
