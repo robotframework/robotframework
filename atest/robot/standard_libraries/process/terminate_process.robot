@@ -1,9 +1,14 @@
 *** Settings ***
-Suite Setup      Run Tests    ${EMPTY}    standard_libraries/process/terminate_process.robot
-Resource         atest_resource.robot
+Suite Setup       Run Tests    ${EMPTY}    standard_libraries/process/terminate_process.robot
+Resource          atest_resource.robot
 
 *** Test Cases ***
 Terminate process
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc.kws[1].msgs[0]}    Gracefully terminating process.
+    Check Log Message    ${tc.kws[1].msgs[1]}    Process completed.
+
+Terminate process with debug log level
     ${tc} =    Check Test Case    ${TESTNAME}
     Check Log Message    ${tc.kws[1].msgs[0]}    Gracefully terminating process.
     Check Log Message    ${tc.kws[1].msgs[1]}    Process completed.
