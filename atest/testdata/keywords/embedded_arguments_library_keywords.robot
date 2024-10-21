@@ -23,6 +23,7 @@ Complex Embedded Arguments
     Then this "issue" is about to be done!
 
 Embedded Arguments with BDD Prefixes
+    # In this case Given/When/Then is not part of the keyword name
     Given user x selects y from webshop
     When user x selects y from webshop
     ${x}    ${y} =    Then user x selects y from webshop
@@ -61,6 +62,11 @@ Custom Embedded Argument Regexp
     Result of 1 + 1 is 2
     Result of 43 - 1 is 42
     Result of a + b is fail
+
+Custom regexp with inline flags
+    Select (case-insensitively) cat    expected=cat
+    Select (case-insensitively) DOG    expected=DOG
+    Select (case-insensitively) cOw    expected=cOw
 
 Custom Regexp With Curly Braces
     Today is 2011-06-21

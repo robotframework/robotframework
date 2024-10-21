@@ -43,10 +43,12 @@ from robot.utils import console_encode, isatty, WINDOWS
 class HighlightingStream:
 
     def __init__(self, stream, colors='AUTO', links='AUTO'):
-        self.stream = stream
+        self.stream = stream or NullStream()
         self._highlighter = self._get_highlighter(stream, colors, links)
 
     def _get_highlighter(self, stream, colors, links):
+        if not stream:
+            return NoHighlighting()
         options = {'AUTO': Highlighter if isatty(stream) else NoHighlighting,
                    'ON': Highlighter,
                    'OFF': NoHighlighting,
@@ -102,7 +104,7 @@ class HighlightingStream:
     def error(self, message, level):
         self.write('[ ', flush=False)
         self.highlight(level, flush=False)
-        self.write(' ] %s\n' % message)
+        self.write(f' ] {message}\n')
 
     @contextmanager
     def _highlighting(self, status):
@@ -121,6 +123,15 @@ class HighlightingStream:
     def result_file(self, kind, path):
         path = self._highlighter.link(path) if path else 'NONE'
         self.write(f"{kind + ':':8} {path}\n")
+
+
+class NullStream:
+
+    def write(self, text):
+        pass
+
+    def flush(self):
+        pass
 
 
 def Highlighter(stream, links=True):
@@ -171,6 +182,9 @@ class AnsiHighlighter:
 
 
 class NoHighlighting(AnsiHighlighter):
+
+    def __init__(self, stream=None, links=True):
+        super().__init__(stream, links)
 
     def link(self, path):
         return path

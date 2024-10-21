@@ -40,8 +40,9 @@ def write_to_console(msg, newline=True, stream='stdout'):
     if newline:
         msg += '\n'
     stream = sys.__stdout__ if stream.lower() != 'stderr' else sys.__stderr__
-    stream.write(console_encode(msg, stream=stream))
-    stream.flush()
+    if stream:
+        stream.write(console_encode(msg, stream=stream))
+        stream.flush()
 
 
 class AbstractLogger:

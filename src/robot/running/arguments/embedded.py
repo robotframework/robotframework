@@ -68,7 +68,7 @@ class EmbeddedArguments:
 
 
 class EmbeddedArgumentParser:
-    _regexp_extension = re.compile(r'(?<!\\)\(\?.+\)')
+    _inline_flag = re.compile(r'\(\?[aiLmsux]+(-[imsx]+)?\)')
     _regexp_group_start = re.compile(r'(?<!\\)\((.*?)\)')
     _escaped_curly = re.compile(r'(\\+)([{}])')
     _regexp_group_escape = r'(?:\1)'
@@ -104,7 +104,7 @@ class EmbeddedArgumentParser:
         return name, pattern, custom
 
     def _format_custom_regexp(self, pattern: str) -> str:
-        for formatter in (self._regexp_extensions_are_not_allowed,
+        for formatter in (self._remove_inline_flags,
                           self._make_groups_non_capturing,
                           self._unescape_curly_braces,
                           self._escape_escapes,
@@ -112,10 +112,11 @@ class EmbeddedArgumentParser:
             pattern = formatter(pattern)
         return pattern
 
-    def _regexp_extensions_are_not_allowed(self, pattern: str) -> str:
-        if self._regexp_extension.search(pattern):
-            raise DataError('Regexp extensions are not allowed in embedded arguments.')
-        return pattern
+    def _remove_inline_flags(self, pattern: str) -> str:
+        # Inline flags are included in custom regexp stored separately, but they
+        # must be removed from the full pattern.
+        match = self._inline_flag.match(pattern)
+        return pattern if match is None else pattern[match.end():]
 
     def _make_groups_non_capturing(self, pattern: str) -> str:
         return self._regexp_group_start.sub(self._regexp_group_escape, pattern)

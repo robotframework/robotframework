@@ -31,13 +31,17 @@ class _StopSignalMonitor:
 
     def __call__(self, signum, frame):
         self._signal_count += 1
-        LOGGER.info('Received signal: %s.' % signum)
+        LOGGER.info(f'Received signal: {signum}.')
         if self._signal_count > 1:
-            sys.__stderr__.write('Execution forcefully stopped.\n')
+            self._write_to_stderr('Execution forcefully stopped.')
             raise SystemExit()
-        sys.__stderr__.write('Second signal will force exit.\n')
+        self._write_to_stderr('Second signal will force exit.')
         if self._running_keyword:
             self._stop_execution_gracefully()
+
+    def _write_to_stderr(self, message):
+        if sys.__stderr__:
+            sys.__stderr__.write(message + '\n')
 
     def _stop_execution_gracefully(self):
         raise ExecutionFailed('Execution terminated by signal', exit=True)
