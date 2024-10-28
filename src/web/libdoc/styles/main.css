@@ -125,9 +125,27 @@ a {
   z-index: 1000;
 }
 
+#language-container button {
+  border: none;
+  padding-top: 15px;
+  padding-right: 15px;
+}
+
 #language-container ul {
   list-style: none;
-  padding: 0 10px 0 10px;
+  margin: 0;
+  padding: 10px;
+  background-color: var(--background-color);
+}
+
+#language-container a {
+  text-decoration: none;
+  cursor: pointer;
+  color: var(--less-important-text-color);
+}
+
+#language-container a.selected {
+  color: var(--text-color);
 }
 
 .hamburger-menu {
