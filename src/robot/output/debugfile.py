@@ -91,7 +91,7 @@ class _DebugFileWriter(LoggerApi):
         self._kw_level -= 1
 
     def log_message(self, msg):
-        if self._is_logged(msg.level):
+        if self._is_logged(msg.level) and msg.message is not None:
             self._write(f'{msg.timestamp} - {msg.level} - {msg.message}')
 
     def close(self):

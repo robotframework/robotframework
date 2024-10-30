@@ -19,7 +19,7 @@ from typing import Callable, Literal
 
 from robot.errors import DataError
 from robot.model import Message as BaseMessage, MessageLevel
-from robot.utils import console_encode, safe_str
+from robot.utils import console_encode
 
 
 LEVELS = {
@@ -90,9 +90,22 @@ class AbstractLogger:
 
 
 class Message(BaseMessage):
+    """Represents message logged during execution.
+
+    Most messages are logged by libraries. They typically log strings, but
+    possible non-string items have been converted to strings already before
+    they end up here.
+
+    In addition to strings, Robot Framework itself logs also callables to make
+    constructing messages that are not typically needed lazy. Such messages are
+    resolved when they are accessed.
+
+    Listeners can remove messages by setting the `message` attribute to `None`.
+    These messages are not written to the output.xml at all.
+    """
     __slots__ = ['_message']
 
-    def __init__(self, message: 'str|Callable[[], str]',
+    def __init__(self, message: 'str|None|Callable[[], str|None]',
                  level: 'MessageLevel|PseudoLevel' = 'INFO',
                  html: bool = False,
                  timestamp: 'datetime|str|None' = None):
@@ -110,17 +123,12 @@ class Message(BaseMessage):
         raise DataError(f"Invalid log level '{level}'.")
 
     @property
-    def message(self) -> str:
+    def message(self) -> 'str|None':
         self.resolve_delayed_message()
         return self._message
 
     @message.setter
-    def message(self, message: 'str|Callable[[], str]'):
-        if not callable(message):
-            if not isinstance(message, str):
-                message = safe_str(message)
-            if '\r\n' in message:
-                message = message.replace('\r\n', '\n')
+    def message(self, message: 'str|None|Callable[[], str|None]'):
         self._message = message
 
     def resolve_delayed_message(self):
@@ -151,4 +159,4 @@ class IsLogged:
         try:
             return LEVELS[level.upper()]
         except KeyError:
-            raise DataError("Invalid log level '%s'." % level)
+            raise DataError(f"Invalid log level '{level}'.")
