@@ -129,11 +129,13 @@ class Message(BaseMessage):
 
     @message.setter
     def message(self, message: 'str|None|Callable[[], str|None]'):
+        if isinstance(message, str) and '\r\n' in message:
+            message = message.replace('\r\n', '\n')
         self._message = message
 
     def resolve_delayed_message(self):
         if callable(self._message):
-            self._message = self._message()
+            self.message = self._message()
 
 
 class IsLogged:

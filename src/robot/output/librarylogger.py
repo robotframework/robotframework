@@ -34,8 +34,6 @@ LOGGING_THREADS = ('MainThread', 'RobotFrameworkTimeoutThread')
 def write(msg: Any, level: str, html: bool = False):
     if not isinstance(msg, str):
         msg = safe_str(msg)
-    if '\r\n' in msg:
-        msg = msg.replace('\r\n', '\n')
     if level.upper() not in ('TRACE', 'DEBUG', 'INFO', 'HTML', 'WARN', 'ERROR'):
         if level.upper() == 'CONSOLE':
             level = 'INFO'
