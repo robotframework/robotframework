@@ -669,13 +669,23 @@ special meaning otherwise than with the :setting:`[Tags]` setting. If there is
 a need to set a tag starting with a hyphen with :setting:`[Tags]`, it is possible
 to use the escaped__ format like `\-tag`.
 
+At the moment the `-tag` syntax can be used for removing tags only with the
+:setting:`[Tags]` setting, but the plan is to support this functionality also
+with the :setting:`Test Tags` setting in Robot Framework 8.0 (`#5250`__).
+Setting tags having a literal value that starts with a hyphen in :setting:`Test Tags`
+was deprecated in Robot Framework 7.2 (`#5252`__). The escaped format like `\-tag`
+can be used if tags with such values are needed.
+
 .. note:: The :setting:`Test Tags` setting is new in Robot Framework 6.0.
           Earlier versions support :setting:`Force Tags` and :setting:`Default Tags`
           settings discussed in the next section.
 
-.. note:: The `-tag` syntax for removing common tags is new in Robot Framework 7.0.
+.. note:: The `-tag` syntax for removing tags using the :setting:`[Tags]` setting
+          is new in Robot Framework 7.0.
 
 __ escaping_
+__ https://github.com/robotframework/robotframework/issues/5250
+__ https://github.com/robotframework/robotframework/issues/5252
 
 Deprecation of :setting:`Force Tags` and :setting:`Default Tags`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

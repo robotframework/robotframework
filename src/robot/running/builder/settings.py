@@ -50,7 +50,8 @@ class TestDefaults:
     def __init__(self, parent: 'TestDefaults|None' = None,
                  setup: 'FixtureDict|None' = None,
                  teardown: 'FixtureDict|None' = None,
-                 tags: 'Sequence[str]' = (), timeout: 'str|None' = None):
+                 tags: 'Sequence[str]' = (),
+                 timeout: 'str|None' = None):
         self.parent = parent
         self.setup = setup
         self.teardown = teardown

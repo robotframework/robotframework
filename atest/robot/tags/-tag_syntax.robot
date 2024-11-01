@@ -18,7 +18,15 @@ Remove from keyword using pattern
     Check Keyword Data    ${tc.kws[0]}    -tag_syntax.${TEST NAME}    tags=r1, r5, r6
 
 Escaped
-    Check Test Tags    ${TESTNAME}    -escaped    -in-settings    tag    tag1    tag2    tag3
+    Check Test Tags    ${TESTNAME}    -escaped    -escaped-in-settings    -in-settings    tag    tag1    tag2    tag3
 
 Variable
-    Check Test Tags    ${TESTNAME}    -in-settings    -variable    tag    tag1    tag2    tag3
+    Check Test Tags    ${TESTNAME}    -escaped-in-settings    -in-settings    -variable    tag    tag1    tag2    tag3
+
+-tag syntax in Test Tags is deprecated
+    Error in file    0    tags/-tag_syntax.robot    2
+    ...    Setting tags starting with a hyphen like '-in-settings' using the 'Test Tags'
+    ...    setting is deprecated. In Robot Framework 8.0 this syntax will be used for
+    ...    removing tags. Escape the tag like '\\-in-settings' to use the literal value
+    ...    and to avoid this warning.
+    ...    level=WARN
