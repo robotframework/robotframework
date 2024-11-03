@@ -43,7 +43,7 @@ Failure When Setting Variables
     No Operation
     [Teardown]    Failure when setting variables
 
-Failure In For Loop
+Failure In FOR Loop
     [Documentation]    FAIL    Teardown failed:
     ...    Several failures occurred:
     ...
@@ -57,7 +57,7 @@ Failure In For Loop
     ...
     ...    ${SUITE TEARDOWN FAILED}
     No Operation
-    [Teardown]    Failures In For Loop
+    [Teardown]    Failures In FOR Loop
 
 Execution Continues After Test Timeout
     [Documentation]    FAIL    Teardown failed:
@@ -76,7 +76,7 @@ Execution Stops After Keyword Timeout
     No Operation
     [Teardown]    Keyword Timeout Occurs
 
-Execution Continues After Keyword Timeout Occurs In Executed Keyword
+Execution continues if executed keyword fails for keyword timeout
     [Documentation]    FAIL    Teardown failed:
     ...    Several failures occurred:
     ...
@@ -87,6 +87,14 @@ Execution Continues After Keyword Timeout Occurs In Executed Keyword
     ...    ${SUITE TEARDOWN FAILED}
     No Operation
     [Teardown]    Keyword Timeout Occurs In Executed Keyword
+
+Execution stops after keyword timeout if keyword uses WUKS
+    [Documentation]    FAIL    Teardown failed:
+    ...    Keyword timeout 100 milliseconds exceeded.
+    ...
+    ...    ${SUITE TEARDOWN FAILED}
+    No Operation
+    [Teardown]    Keyword Using WUKS
 
 Execution Continues If Variable Does Not Exist
     [Documentation]    FAIL    Teardown failed:
@@ -150,7 +158,7 @@ Failure when setting variables
     ${ret} =    Fail    Return values is None
     Should Be Equal    ${ret}    ${None}
 
-Failures In For Loop
+Failures In FOR Loop
     FOR    ${animal}    IN    cat    dog
         Fail    ${animal}
         Fail    again
@@ -168,6 +176,16 @@ Keyword Timeout Occurs
 Keyword Timeout Occurs In Executed Keyword
     Keyword Timeout Occurs
     Fail    This should be executed
+
+Keyword Using WUKS
+    [Timeout]    100ms
+    Wait Until Keyword Succeeds    4x    1s
+    ...    Fail Slowly
+    Fail    This should not be executed
+
+Fail Slowly
+    Sleep    0.51ms
+    Fail    Failing!
 
 Missing Variables
     Log    ${this var does not exist}

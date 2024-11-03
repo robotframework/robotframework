@@ -4,11 +4,17 @@ Resource          atest_resource.robot
 Test Template     Verify Test Case And Error In Log
 
 *** Test Cases ***
-Exception Type is Removed From Generic Failures
+Exception name is not included with generic exceptions
     Generic Failure    foo != bar
 
-Exception Type is Removed with Exception Attribute
-    Exception Name Suppressed in Error Message    No Exception Name
+Exception name can be supppressed explicitly
+    Exception name suppressed explicitly    No Exception Name
+
+Even suppressed name is included if message is empty
+    ${TEST NAME}    ExceptionWithSuppressedName
+
+Exception with empty message and name is handled properly
+    ${TEST NAME}    ${EMPTY}
 
 Exception Type is Included In Non-Generic Failures
     Non Generic Failure    FloatingPointError: Too Large A Number !!

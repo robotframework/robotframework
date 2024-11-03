@@ -991,15 +991,28 @@ as a class and also uses type hints:
             if msg.level == 'WARN' and not msg.html:
                 msg.message = f'<b style="font-size: 1.5em">{msg.message}</b>'
                 msg.html = True
+            if self._message_is_not_relevant(msg.message):
+                msg.message = None
+
+        def _message_is_not_relevant(self, message: str) -> bool:
+            ...
 
 A limitation is that modifying the name of the current test suite or test
 case is not possible because it has already been written to the `output.xml`_
 file when listeners are called. Due to the same reason modifying already
 finished tests in the `end_suite` method has no effect either.
 
+When modifying logged messages, it is possible to remove a message altogether
+by setting `message` to `None` as the above example demonstrates. This can be
+used for removing sensitive or non-relevant messages so that there is nothing
+visible in the log file.
+
 This API is very similar to the `pre-Rebot modifier`_ API that can be used
 to modify results before report and log are generated. The main difference is
 that listeners modify also the created :file:`output.xml` file.
+
+.. note:: Removing messages altogether by setting them to `None` is new in
+          Robot Framework 7.2.
 
 Changing keyword and control structure status
 '''''''''''''''''''''''''''''''''''''''''''''

@@ -65,6 +65,9 @@ Non-Existing Variable in Embedded Arguments
 Custom Embedded Argument Regexp
     Check Test Case    ${TEST NAME}
 
+Custom regexp with inline flags
+    Check Test Case    ${TEST NAME}
+
 Custom Regexp With Curly Braces
     Check Test Case    ${TEST NAME}
 

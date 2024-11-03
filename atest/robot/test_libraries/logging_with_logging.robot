@@ -78,3 +78,9 @@ Suppress errors from logging module
 Log with format
     ${tc} =    Check test case    ${TEST NAME}
     Check log message    ${tc.kws[0].msgs[0]}    root INFO logged at info
+
+Log non-strings
+    ${tc} =    Check test case    ${TEST NAME}
+    Check log message    ${tc.kws[0].msgs[0]}    42
+    Check log message    ${tc.kws[0].msgs[1]}    True
+    Check log message    ${tc.kws[0].msgs[2]}    None

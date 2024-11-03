@@ -15,6 +15,8 @@ Append To Message
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].msgs[0]}    Set test message to:\nMy <message>
     Check Log Message    ${tc.kws[1].msgs[0]}    Set test message to:\nMy <message> & its continuation <>
+    Check Log Message    ${tc.kws[2].msgs[0]}    Set test message to:\nMy <message> & its continuation <>1
+    Check Log Message    ${tc.kws[3].msgs[0]}    Set test message to:\nMy <message> & its continuation <>1,\n2
 
 Set Non-ASCII Message
     ${tc} =    Check Test Case    ${TEST NAME}
@@ -87,3 +89,18 @@ Not Allowed In Suite Setup or Teardown
     ...    Also suite teardown failed:
     ...    'Set Test Message' keyword cannot be used in suite setup or teardown.
     Should Be Equal    ${SUITE.suites[1].message}    ${error}
+
+Append HTML to non-HTML with separator
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.kws[0].msgs[0]}    Set test message to:\nA non HTML <message>    html=False
+    Check Log Message    ${tc.kws[1].msgs[0]}    Set test message to:\nA non HTML &lt;message&gt;&amp;its <b>HTML</b> continuation    html=True
+
+Append non-HTML to HTML with separator
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.kws[0].msgs[0]}    Set test message to:\nA <b>HTML</b> message    html=True
+    Check Log Message    ${tc.kws[1].msgs[0]}    Set test message to:\nA <b>HTML</b> message&lt;\br&gt;its non-HTML &lt;continuation&gt;    html=True
+
+Append HTML to HTML with separator
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.kws[0].msgs[0]}    Set test message to:\nA <b>HTML</b> message    html=True
+    Check Log Message    ${tc.kws[1].msgs[0]}    Set test message to:\nA <b>HTML</b> message &amp;&amp; its <b>HTML</b> continuation    html=True

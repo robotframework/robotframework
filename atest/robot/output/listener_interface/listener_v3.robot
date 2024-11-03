@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup       Run Tests    --listener ${LISTENER DIR}/v3.py -l l -r r -b d -x x    misc/pass_and_fail.robot
+Suite Setup       Run Tests    --listener ${LISTENER DIR}/v3.py -l l -r r -b d -x x -L trace    misc/pass_and_fail.robot
 Resource          listener_resource.robot
 
 *** Variables ***
@@ -63,9 +63,17 @@ Changing current element docs does not change console output, but does change ou
     Check Test Doc    Pass [start suite]    [start suite] [start test] [end test]
 
 Log messages and timestamps can be changed
-    ${tc} =   Get test case    Pass [start suite]
-    Check log message    ${tc.kws[0].kws[0].msgs[0]}    HELLO SAYS "PASS"!
-    Should be equal    ${tc.kws[0].kws[0].msgs[0].timestamp}    ${datetime(2015, 12, 16, 15, 51, 20, 141000)}
+    ${tc} =   Get Test Case    Pass [start suite]
+    Check Keyword Data    ${tc.kws[0].kws[0]}   BuiltIn.Log    args=Hello says "\${who}"!, \${LEVEL1}
+    Check Log Message     ${tc.kws[0].kws[0].msgs[0]}    HELLO SAYS "PASS"!
+    Should Be Equal       ${tc.kws[0].kws[0].msgs[0].timestamp}    ${datetime(2015, 12, 16, 15, 51, 20, 141000)}
+
+Log message can be removed by setting message to `None`
+    ${tc} =   Get Test Case    Fail [start suite]
+    Check Keyword Data    ${tc.kws[0].kws[0]}   BuiltIn.Log    args=Hello says "\${who}"!, \${LEVEL1}
+    Should Be Empty       ${tc.kws[0].kws[0].msgs}
+    File Should Not Contain    ${OUTDIR}/d.txt    HELLO SAYS "FAIL"!
+    File Should Not Contain    ${OUTDIR}/d.txt    None
 
 Syslog messages can be changed
     Syslog Should Contain Match    2015-12-16 15:51:20.141000 | INFO \ | TESTS EXECUTION ENDED. STATISTICS:

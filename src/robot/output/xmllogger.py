@@ -190,11 +190,14 @@ class XmlLogger(ResultVisitor):
             self._write_message(msg)
 
     def _write_message(self, msg):
+        # Discard messages explicitly set to `None` by listeners.
+        if msg.message is None:
+            return
         attrs = {'time': msg.timestamp.isoformat() if msg.timestamp else None,
                  'level': msg.level}
         if msg.html:
             attrs['html'] = 'true'
-        # Use `_xml_writer`, not `_writer` to write messages also when flattening.
+        # Use `_xml_writer`, not `_writer`, to write messages also when flattening.
         self._xml_writer.element('msg', msg.message, attrs)
 
     def start_keyword(self, kw):

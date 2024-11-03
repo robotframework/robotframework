@@ -50,8 +50,9 @@ Write messages to console
 Log Non-Strings
     ${tc} =  Check test case  ${TEST NAME}
     Check log message  ${tc.kws[0].msgs[0]}  42
-    Check log message  ${tc.kws[0].msgs[1]}  True  WARN
-    Check log message  ${ERRORS.msgs[5]}  True  WARN
+    Check log message  ${tc.kws[0].msgs[1]}  True  WARN  html=True
+    Check log message  ${tc.kws[0].msgs[2]}  None
+    Check log message  ${ERRORS.msgs[5]}     True  WARN  html=True
 
 Log Callable
     ${tc} =  Check test case  ${TEST NAME}

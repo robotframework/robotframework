@@ -44,6 +44,10 @@ class Translate {
   public getLanguages() {
     return this.languages.map((l) => l.lang);
   }
+
+  public currentLanguage() {
+    return this.language.lang;
+  }
 }
 
 export default Translate;

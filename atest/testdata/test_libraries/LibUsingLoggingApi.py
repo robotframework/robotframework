@@ -34,7 +34,8 @@ def write_messages_to_console():
 
 def log_non_strings():
     logger.info(42)
-    logger.warn(True)
+    logger.warn(True, html=True)
+    logger.info(None)
 
 
 def log_callable():
