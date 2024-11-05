@@ -51,7 +51,18 @@ class TypeConverter:
                  languages: 'Languages|None' = None):
         self.type_info = type_info
         self.custom_converters = custom_converters
-        self.languages = languages or Languages()
+        self.languages = languages
+
+    @property
+    def languages(self) -> Languages:
+        # Initialize only when needed to save time especially with Libdoc.
+        if self._languages is None:
+            self._languages = Languages()
+        return self._languages
+
+    @languages.setter
+    def languages(self, languages: 'Languages|None'):
+        self._languages = languages
 
     @classmethod
     def register(cls, converter: 'type[TypeConverter]') -> 'type[TypeConverter]':
