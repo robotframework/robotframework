@@ -115,8 +115,7 @@ class Languages:
         self.false_strings |= {s.title() for s in lang.false_strings}
 
     def _get_languages(self, languages, add_english=True) -> 'list[Language]':
-        languages = self._resolve_languages(languages, add_english)
-        available = self._get_available_languages()
+        languages, available = self._resolve_languages(languages, add_english)
         returned: 'list[Language]' = []
         for lang in languages:
             if isinstance(lang, Language):
@@ -138,9 +137,11 @@ class Languages:
             languages = list(languages)
         else:
             languages = [languages]
+        # Get available languages only if custom languages are used to save time.
+        available = self._get_available_languages() if languages else {}
         if add_english:
             languages.append(En())
-        return languages
+        return languages, available
 
     def _get_available_languages(self) -> 'dict[str, type[Language]]':
         available = {}
