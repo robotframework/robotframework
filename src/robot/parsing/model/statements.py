@@ -1343,8 +1343,9 @@ class Config(Statement):
 
     @property
     def language(self) -> 'Language|None':
-        value = self.get_value(Token.CONFIG)
-        return Language.from_name(value[len('language:'):]) if value else None
+        value = ' '.join(self.get_values(Token.CONFIG))
+        lang = value.split(':', 1)[1].strip()
+        return Language.from_name(lang) if lang else None
 
 
 @Statement.register

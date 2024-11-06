@@ -1889,9 +1889,10 @@ class TestLanguageConfig(unittest.TestCase):
     def test_config(self):
         model = get_model('''\
 language: fi
+ignored
 language: bad
-language: bad    but ignored
-language: de     # ok
+language: b    a    d
+LANGUAGE:GER    MAN    # OK!
 *** Einstellungen ***
 Dokumentaatio    Header is de and setting is fi.
 ''')
@@ -1903,36 +1904,50 @@ Dokumentaatio    Header is de and setting is fi.
                         Token('CONFIG', 'language: fi', 1, 0),
                         Token('EOL', '\n', 1, 12)
                     ]),
+                    Comment([
+                        Token('COMMENT', 'ignored', 2, 0),
+                        Token('EOL', '\n', 2, 7)
+                    ]),
                     Error([
-                        Token('ERROR', 'language: bad', 2, 0,
+                        Token('ERROR', 'language: bad', 3, 0,
                               "Invalid language configuration: Language 'bad' "
                               "not found nor importable as a language module."),
-                        Token('EOL', '\n', 2, 13)
+                        Token('EOL', '\n', 3, 13)
                     ]),
-                    Comment([
-                        Token('COMMENT', 'language: bad', 3, 0),
-                        Token('SEPARATOR', '    ', 3, 13),
-                        Token('COMMENT', 'but ignored', 3, 17),
-                        Token('EOL', '\n', 3, 28)
+                    Error([
+                        Token('ERROR', 'language: b', 4, 0,
+                              "Invalid language configuration: Language 'b a d' "
+                              "not found nor importable as a language module."),
+                        Token('SEPARATOR', '    ', 4, 11),
+                        Token('ERROR', 'a', 4, 15,
+                              "Invalid language configuration: Language 'b a d' "
+                              "not found nor importable as a language module."),
+                        Token('SEPARATOR', '    ', 4, 16),
+                        Token('ERROR', 'd', 4, 20,
+                              "Invalid language configuration: Language 'b a d' "
+                              "not found nor importable as a language module."),
+                        Token('EOL', '\n', 4, 21)
                     ]),
                     Config([
-                        Token('CONFIG', 'language: de', 4, 0),
-                        Token('SEPARATOR', '     ', 4, 12),
-                        Token('COMMENT', '# ok', 4, 17),
-                        Token('EOL', '\n', 4, 21)
+                        Token('CONFIG', 'LANGUAGE:GER', 5, 0),
+                        Token('SEPARATOR', '    ', 5, 12),
+                        Token('CONFIG', 'MAN', 5, 16),
+                        Token('SEPARATOR', '    ', 5, 19),
+                        Token('COMMENT', '# OK!', 5, 23),
+                        Token('EOL', '\n', 5, 28)
                     ]),
                 ]),
                 SettingSection(
                     header=SectionHeader([
-                        Token('SETTING HEADER', '*** Einstellungen ***', 5, 0),
-                        Token('EOL', '\n', 5, 21)
+                        Token('SETTING HEADER', '*** Einstellungen ***', 6, 0),
+                        Token('EOL', '\n', 6, 21)
                     ]),
                     body=[
                         Documentation([
-                            Token('DOCUMENTATION', 'Dokumentaatio', 6, 0),
-                            Token('SEPARATOR', '    ', 6, 13),
-                            Token('ARGUMENT', 'Header is de and setting is fi.', 6, 17),
-                            Token('EOL', '\n', 6, 48)
+                            Token('DOCUMENTATION', 'Dokumentaatio', 7, 0),
+                            Token('SEPARATOR', '    ', 7, 13),
+                            Token('ARGUMENT', 'Header is de and setting is fi.', 7, 17),
+                            Token('EOL', '\n', 7, 48)
                         ])
                     ]
                 )
