@@ -21,8 +21,7 @@ from datetime import datetime
 from itertools import zip_longest
 
 from robot.errors import (BreakLoop, ContinueLoop, DataError, ExecutionFailed,
-                          ExecutionFailures, ExecutionPassed, ExecutionStatus,
-                          SkipsWithPassesExecution, SkipsWithOrWithoutErrorsExecution)
+                          ExecutionFailures, ExecutionPassed, ExecutionStatus)
 from robot.output import librarylogger as logger
 from robot.utils import (cut_assign_value, frange, get_error_message, is_list_like,
                          is_number, normalize, plural_or_not as s, secs_to_timestr, seq2str,
@@ -57,15 +56,17 @@ class BodyRunner:
                 self._run = exception.can_continue(self._context, self._templated)
         if passed:
             raise passed
+        if errors and self._templated:
+            errors = self._handle_skip_with_templates(errors, result)
         if errors:
-            if self._templated:
-                if all(e.skip for e in errors):
-                    if len(data.body) == len(errors):
-                        raise SkipsWithOrWithoutErrorsExecution(errors)
-                    raise SkipsWithPassesExecution(errors)
-                if any(e.skip for e in errors):
-                    raise SkipsWithOrWithoutErrorsExecution(errors)
             raise ExecutionFailures(errors)
+
+    def _handle_skip_with_templates(self, errors, result):
+        if len(result.body) == 1 or not any(e.skip for e in errors):
+            return errors
+        if all(item.skipped for item in result.body):
+            raise ExecutionFailed('All iterations skipped.', skip=True)
+        return [e for e in errors if not e.skip]
 
 class KeywordRunner:
 

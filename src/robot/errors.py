@@ -143,9 +143,12 @@ class ExecutionStatus(RobotError):
     def can_continue(self, context, templated=False):
         if context.dry_run:
             return True
+        if self.syntax or self.exit or self.skip or self.test_timeout:
+            if self.syntax or self.exit or self.test_timeout:
+                return False
         if templated:
             return context.continue_on_failure(default=True)
-        if self.syntax or self.exit or self.skip or self.test_timeout:
+        if self.skip:
             return False
         if self.keyword_timeout:
             return False
@@ -230,52 +233,6 @@ class ExecutionFailures(ExecutionFailed):
     def get_errors(self):
         return self._errors
 
-class SkipsWithOrWithoutErrorsExecution(ExecutionFailures):
-    def __init__(self, errors):
-        super().__init__(errors, self._format_message(errors), self._get_attrs(errors))
-        self._errors = errors
-
-    def _format_message(self, errors):
-        messages = [e.message for e in errors]
-        skips = list(filter(lambda e: e.skip, errors))
-        skip_messages = [e.message for e in skips]
-        fails = list(filter(lambda e: not e.skip, errors))
-        fail_messages = [e.message for e in fails]
-        prefix = 'aaaa'
-        if any(msg.startswith('*HTML*') for msg in messages):
-            html_prefix = '*HTML* '
-            skip_messages = [self._html_format(msg) for msg in skip_messages]
-            fail_messages = [self._html_format(msg) for msg in fail_messages]
-        else:
-            html_prefix = ''
-        if any(e.skip for e in errors):
-            skip_msg = "Skip occurred:\n\n%s" % skip_messages[0]
-            if len(skips) != 1:
-                skip_msg = '\n\n'.join(
-                    ['Skips occurred:'] + ['%d) %s' % (i, m) for i, m in enumerate(skip_messages, start=0)]
-                )
-            if len(fails) == 1:
-                return '%s%s\n\nAlso failure occurred:\n\n%s' \
-                       % (html_prefix, skip_msg, fail_messages[0])
-            if len(fails) == 0:
-                prefix = skip_msg
-            else:
-                prefix = '%s\n\nAlso failures occurred:' % skip_msg
-        return '\n\n'.join(
-            [html_prefix + prefix] +
-            ['%d) %s' % (i, m) for i, m in enumerate(fail_messages, start=1)]
-        )
-
-    def _get_attrs(self, errors):
-        return {
-            'test_timeout': any(e.test_timeout for e in errors),
-            'keyword_timeout': any(e.keyword_timeout for e in errors),
-            'syntax': any(e.syntax for e in errors),
-            'exit': any(e.exit for e in errors),
-            'continue_on_failure': all(e.continue_on_failure for e in errors),
-            'skip': all(e.skip for e in errors)
-        }
-
 class UserKeywordExecutionFailed(ExecutionFailures):
 
     def __init__(self, run_errors=None, teardown_errors=None):
@@ -329,34 +286,6 @@ class PassExecution(ExecutionPassed):
 
     def __init__(self, message):
         super().__init__(message)
-
-class SkipsWithPassesExecution(ExecutionPassed):
-    """Used when there are skips with passes only keyword."""
-
-    def __init__(self, errors):
-        super().__init__(self._format_message(errors))
-        self.set_earlier_failures(errors)
-
-    def _format_message(self, errors):
-        messages = [e.message for e in errors]
-        if len(messages) == 1:
-            return messages[0]
-        prefix = 'Skips occurred:'
-        if any(msg.startswith('*HTML*') for msg in messages):
-            html_prefix = '*HTML* '
-            messages = [self._html_format(msg) for msg in messages]
-        else:
-            html_prefix = ''
-        return '\n\n'.join(
-            [html_prefix + prefix] +
-            ['%d) %s' % (i, m) for i, m in enumerate(messages, start=1)]
-        )
-
-    def _html_format(self, msg):
-        from robot.utils import html_escape
-        if msg.startswith('*HTML*'):
-            return msg[6:].lstrip()
-        return html_escape(msg)
 
 class ContinueLoop(ExecutionPassed):
     """Used by CONTINUE statement."""
