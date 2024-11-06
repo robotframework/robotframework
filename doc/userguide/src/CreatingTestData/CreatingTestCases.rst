@@ -932,6 +932,14 @@ an empty value for :setting:`[Template]` means that the test has no
 template even when :setting:`Test Template` is used. It is also possible
 to use value `NONE` to indicate that a test has no template.
 
+Using keywords with `default values`_ or accepting `variable number of arguments`_,
+as well as using `named arguments`_ and `free named arguments`_, work with templates
+exactly like they work otherwise. Using variables_ in arguments is also
+supported normally.
+
+Templates with multiple iterations
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 If a templated test case has multiple data rows in its body, the template
 is applied for all the rows one by one. This
 means that the same keyword is executed multiple times, once with data
@@ -950,11 +958,6 @@ the templated tests the mode is on automatically.
        first round 1     first round 2
        second round 1    second round 2
        third round 1     third round 2
-
-Using keywords with `default values`_ or accepting `variable number of arguments`_,
-as well as using `named arguments`_ and `free named arguments`_, work with templates
-exactly like they work otherwise. Using variables_ in arguments is also
-supported normally.
 
 Templates with embedded arguments
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
