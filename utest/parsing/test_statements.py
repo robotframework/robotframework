@@ -1,9 +1,9 @@
 import unittest
 
+from robot.parsing import ErrorCode, ErrorKind, InvalidTokenError, Token
 from robot.parsing.model.statements import *
-from robot.parsing import Token
-from robot.utils.asserts import assert_equal, assert_true
 from robot.utils import type_name
+from robot.utils.asserts import assert_equal, assert_true
 
 
 def assert_created_statement(tokens, base_class, **params):
@@ -1055,6 +1055,19 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             tokens,
             EmptyLine,
             eol='\n'
+        )
+
+    def test_Error(self):
+        error_token = InvalidTokenError(ErrorKind.ERROR, ErrorCode.SYNTAX_ERROR, 'Error message')
+        tokens = [
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.ERROR, value="", error=error_token),
+            Token(Token.EOL, '\n')
+        ]
+        assert_created_statement(
+            tokens,
+            Error,
+            error=error_token
         )
 
 

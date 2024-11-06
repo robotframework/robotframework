@@ -13,5 +13,5 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from .lexer import get_tokens, get_resource_tokens, get_init_tokens
-from .tokens import StatementTokens, Token
+from .lexer import get_init_tokens, get_resource_tokens, get_tokens
+from .tokens import ErrorCode, ErrorKind, InvalidTokenError, StatementTokens, Token

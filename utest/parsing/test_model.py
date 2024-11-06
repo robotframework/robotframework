@@ -1,24 +1,65 @@
 import ast
 import os
-import unittest
 import tempfile
+import unittest
 from pathlib import Path
 
-from robot.parsing import get_model, get_resource_model, ModelVisitor, ModelTransformer, Token
+from parsing.parsing_test_utils import assert_model, remove_non_data
+
+from robot.parsing import (
+    ModelTransformer,
+    ModelVisitor,
+    Token,
+    get_model,
+    get_resource_model,
+)
+from robot.parsing.lexer.tokens import ErrorCode, ErrorKind, InvalidTokenError
 from robot.parsing.model.blocks import (
-    File, For, If, ImplicitCommentSection, InvalidSection, Try, While,
-    Keyword, KeywordSection, SettingSection, TestCase, TestCaseSection, VariableSection
+    File,
+    For,
+    If,
+    ImplicitCommentSection,
+    InvalidSection,
+    Keyword,
+    KeywordSection,
+    SettingSection,
+    TestCase,
+    TestCaseSection,
+    Try,
+    VariableSection,
+    While,
 )
 from robot.parsing.model.statements import (
-    Arguments, Break, Comment, Config, Continue, Documentation, ForHeader, End, ElseHeader,
-    ElseIfHeader, EmptyLine, Error, IfHeader, InlineIfHeader, TryHeader, ExceptHeader,
-    FinallyHeader, KeywordCall, KeywordName, Return, ReturnSetting, ReturnStatement,
-    SectionHeader, TestCaseName, TestTags, Var, Variable, WhileHeader
+    Arguments,
+    Break,
+    Comment,
+    Config,
+    Continue,
+    Documentation,
+    ElseHeader,
+    ElseIfHeader,
+    EmptyLine,
+    End,
+    Error,
+    ExceptHeader,
+    FinallyHeader,
+    ForHeader,
+    IfHeader,
+    InlineIfHeader,
+    KeywordCall,
+    KeywordName,
+    Return,
+    ReturnSetting,
+    ReturnStatement,
+    SectionHeader,
+    TestCaseName,
+    TestTags,
+    TryHeader,
+    Var,
+    Variable,
+    WhileHeader,
 )
 from robot.utils.asserts import assert_equal, assert_raises_with_msg
-
-from parsing_test_utils import assert_model, remove_non_data
-
 
 DATA = '''\
 
@@ -1582,13 +1623,13 @@ Example:
 class TestError(unittest.TestCase):
 
     def test_get_errors_from_tokens(self):
-        assert_equal(Error([Token('ERROR', error='xxx')]).errors,
+        assert_equal(Error([Token('ERROR', error=InvalidTokenError(ErrorKind.ERROR, ErrorCode.SYNTAX_ERROR, 'xxx'))]).errors,
                      ('xxx',))
-        assert_equal(Error([Token('ERROR', error='xxx'),
+        assert_equal(Error([Token('ERROR', error=InvalidTokenError(ErrorKind.ERROR, ErrorCode.SYNTAX_ERROR, 'xxx')),
                             Token('ARGUMENT'),
-                            Token('ERROR', error='yyy')]).errors,
+                            Token('ERROR', error=InvalidTokenError(ErrorKind.ERROR, ErrorCode.SYNTAX_ERROR, 'yyy'))]).errors,
                      ('xxx', 'yyy'))
-        assert_equal(Error([Token('ERROR', error=e) for e in '0123456789']).errors,
+        assert_equal(Error([Token('ERROR', error=InvalidTokenError(ErrorKind.ERROR, ErrorCode.SYNTAX_ERROR, e)) for e in '0123456789']).errors,
                      tuple('0123456789'))
 
     def test_model_error(self):
@@ -1606,7 +1647,7 @@ Documentation
         expected = File([
             InvalidSection(
                 header=SectionHeader(
-                    [Token('INVALID HEADER', '*** Invalid ***', 1, 0, inv_header)]
+                    [Token('INVALID HEADER', '*** Invalid ***', 1, 0, error=InvalidTokenError(ErrorKind.ERROR, ErrorCode.INVALID_SECTION_HEADER, inv_header))]
                 )
 
             ),
@@ -1615,7 +1656,7 @@ Documentation
                     Token('SETTING HEADER', '*** Settings ***', 2, 0)
                 ]),
                 body=[
-                    Error([Token('ERROR', 'Invalid', 3, 0, inv_setting)]),
+                    Error([Token('ERROR', 'Invalid', 3, 0, error=InvalidTokenError(ErrorKind.ERROR, ErrorCode.SETTINGS_VALIDATION_ERROR, inv_setting))]),
                     Documentation([Token('DOCUMENTATION', 'Documentation', 4, 0)])
                 ]
             )
@@ -1630,7 +1671,7 @@ Documentation
         expected = File([
             InvalidSection(
                 header=SectionHeader(
-                    [Token('INVALID HEADER', '*** Test Cases ***', 1, 0, inv_testcases)])
+                    [Token('INVALID HEADER', '*** Test Cases ***', 1, 0, error=InvalidTokenError(ErrorKind.FATAL, ErrorCode.INVALID_SECTION_IN_RESOURCE_FILE, inv_testcases))])
             )
         ])
         assert_model(model, expected)
@@ -1652,7 +1693,7 @@ Documentation
         expected = File([
             InvalidSection(
                 header=SectionHeader(
-                    [Token('INVALID HEADER', '*** Invalid ***', 1, 0, inv_header)]
+                    [Token('INVALID HEADER', '*** Invalid ***', 1, 0, error=InvalidTokenError(ErrorKind.FATAL, ErrorCode.INVALID_SECTION_HEADER, inv_header))]
                 )
             ),
             SettingSection(
@@ -1660,13 +1701,13 @@ Documentation
                     Token('SETTING HEADER', '*** Settings ***', 2, 0)
                 ]),
                 body=[
-                    Error([Token('ERROR', 'Invalid', 3, 0, inv_setting)]),
+                    Error([Token('ERROR', 'Invalid', 3, 0, error=InvalidTokenError(ErrorKind.ERROR, ErrorCode.SETTINGS_VALIDATION_ERROR, inv_setting))]),
                     Documentation([Token('DOCUMENTATION', 'Documentation', 4, 0)]),
                 ]
             ),
             InvalidSection(
                 header=SectionHeader(
-                    [Token('INVALID HEADER', '*** Test Cases ***', 5, 0, inv_testcases)]
+                    [Token('INVALID HEADER', '*** Test Cases ***', 5, 0, error=InvalidTokenError(ErrorKind.FATAL, ErrorCode.INVALID_SECTION_IN_RESOURCE_FILE, inv_testcases))]
                 )
             ),
         ])
@@ -1676,7 +1717,7 @@ Documentation
         error = Error([])
         error.errors = ('explicitly set', 'errors')
         assert_equal(error.errors, ('explicitly set', 'errors'))
-        error.tokens = [Token('ERROR', error='normal error'),]
+        error.tokens = (Token('ERROR', error=InvalidTokenError(ErrorKind.ERROR, ErrorCode.SYNTAX_ERROR, 'normal error')),)
         assert_equal(error.errors, ('normal error',
                                     'explicitly set', 'errors'))
         error.errors = ['errors', 'as', 'list']
@@ -1904,9 +1945,9 @@ Dokumentaatio    Header is de and setting is fi.
                         Token('EOL', '\n', 1, 12)
                     ]),
                     Error([
-                        Token('ERROR', 'language: bad', 2, 0,
-                              "Invalid language configuration: Language 'bad' "
-                              "not found nor importable as a language module."),
+                        Token('ERROR', 'language: bad', 2, 0, error=InvalidTokenError(ErrorKind.ERROR, ErrorCode.INVALID_LANGUAGE_CONFIGURATION, 
+                                                                               "Invalid language configuration: Language 'bad' "
+                                                                               "not found nor importable as a language module.")),
                         Token('EOL', '\n', 2, 13)
                     ]),
                     Comment([
