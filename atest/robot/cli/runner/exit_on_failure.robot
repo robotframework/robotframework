@@ -73,12 +73,12 @@ Suite setup fails
     [Setup]    Run Tests
     ...    --ExitOnFail --variable SUITE_SETUP:Fail
     ...    misc/setups_and_teardowns.robot misc/pass_and_fail.robot
-    Test Should Not Have Been Run    Test with setup and teardown
-    Test Should Not Have Been Run    Test with failing setup
-    Test Should Not Have Been Run    Test with failing teardown
-    Test Should Not Have Been Run    Failing test with failing teardown
-    Test Should Not Have Been Run    Pass
-    Test Should Not Have Been Run    Fail
+    Parent Setup Should Have Failed    Test with setup and teardown
+    Test Should Not Have Been Run      Test with failing setup
+    Test Should Not Have Been Run      Test with failing teardown
+    Test Should Not Have Been Run      Failing test with failing teardown
+    Test Should Not Have Been Run      Pass
+    Test Should Not Have Been Run      Fail
 
 Suite teardown fails
     [Setup]    Run Tests
@@ -96,6 +96,11 @@ Failure set by listener can initiate exit-on-failure
     Test Should Not Have Been Run    Fail
 
 *** Keywords ***
+Parent Setup Should Have Failed
+    [Arguments]    ${name}
+    ${tc} =    Check Test Case    ${name}    FAIL    Parent suite setup failed:\nAssertionError
+    Should Not Contain    ${tc.tags}    robot:exit
+
 Test Should Not Have Been Run
     [Arguments]    ${name}
     ${tc} =    Check Test Case    ${name}    FAIL    ${EXIT ON FAILURE}

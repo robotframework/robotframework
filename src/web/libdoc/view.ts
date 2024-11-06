@@ -128,6 +128,9 @@ class View {
       languages: this.translate.getLanguages(),
     });
     document.querySelectorAll("#language-container ul a")!.forEach((link) => {
+      if (link.innerHTML === this.translate.currentLanguage()) {
+        link.classList.toggle("selected");
+      }
       link.addEventListener("click", () => {
         const changed = this.translate.setLanguage(link.innerHTML);
         if (changed) {
@@ -138,7 +141,6 @@ class View {
     document
       .querySelector("#language-container button")!
       .addEventListener("click", () => {
-        console.log(document.querySelector("#language-container ul")!);
         document
           .querySelector("#language-container ul")!
           .classList.toggle("hidden");

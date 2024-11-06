@@ -350,6 +350,10 @@ a JavaScript file in the same folder as the main log file. These files have
 names such as :file:`log-42.js` where :file:`log` is the base name of the
 main log file and :file:`42` is an incremented index.
 
+The JavaScript files are saved to the same directory where the `log file`_
+itself is saved. It is the common `output directory`_ by default, but
+it can be changed with the :option:`--log` command line option.
+
 .. note:: When copying the log files, you need to copy also all the
           :file:`log-*.js` files or some information will be missing.
 

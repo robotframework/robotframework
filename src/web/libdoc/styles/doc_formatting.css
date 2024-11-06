@@ -54,6 +54,7 @@
   overflow-y: auto;
   padding: 0.3rem;
   border-radius: 3px;
+  margin-left: -90px;
 }
 
 .doc code,

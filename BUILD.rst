@@ -76,7 +76,7 @@ __ https://github.com/robotframework/robotframework/tree/master/atest#schema-val
 Preparation
 -----------
 
-1. Check that you are on the master branch and have nothing left to commit,
+1. Check that you are on the right branch and have nothing left to commit,
    pull, or push::
 
       git branch
@@ -93,13 +93,13 @@ Preparation
 
       VERSION=<version>
 
-   For example, ``VERSION=3.0.1`` or ``VERSION=3.1a2``.
+   For example, ``VERSION=7.1.1`` or ``VERSION=7.2a2``. No ``v`` prefix!
 
 Release notes
 -------------
 
-1. Create personal `GitHub access token`__ to be able to access issue tracker
-   programmatically. The token needs only the `repo/public_repo` scope.
+1. Create a personal `GitHub access token`__ to be able to access issue tracker
+   programmatically. The token needs only the ``repo/public_repo`` scope.
 
 2. Set GitHub user information into shell variables to ease running the
    ``invoke release-notes`` command in the next step::
@@ -119,7 +119,7 @@ Release notes
    <Set version_>`__. Omit the ``-w`` option if you just want to get release
    notes printed to the console, not written to a file.
 
-   When generating release notes for a preview release like ``3.0.2rc1``,
+   When generating release notes for a preview release like ``7.2rc1``,
    the list of issues is only going to contain issues with that label
    (e.g. ``rc1``) or with a label of an earlier preview release (e.g.
    ``alpha1``, ``beta2``).
@@ -229,14 +229,14 @@ Creating distributions
 
         git checkout gh-pages
         invoke add-docs $VERSION --push
-        git checkout master
+        git checkout master    # replace master with v*-maintenance if needed!
 
 Post actions
 ------------
 
 1. Back to master if needed::
 
-      git checkout master
+      git checkout master    # replace master with v*-maintenance if needed!
 
 2. Set dev version based on the previous version::
 

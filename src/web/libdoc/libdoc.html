@@ -145,12 +145,10 @@
       </div>
     </script>
     <script type="text/x-handlebars-template" id="language-template">
-      <button>
-        lang
-      </button>
+      <button>Lang</button>
       <ul class="hidden">
         {{#each languages}}
-          <li><a>{{this}}</a></li>
+          <li class="{{#ifEquals this selected}}selected{{/ifEquals}}"><a>{{this}}</a></li>
         {{/each}}
       </ul>
     </script>

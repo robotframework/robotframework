@@ -135,18 +135,22 @@ class TestTestSetupAndTeardown(unittest.TestCase):
         self.tests = run(build('setups_and_teardowns.robot')).tests
 
     def test_passing_setup_and_teardown(self):
-        assert_test(self.tests[0], 'Test with setup and teardown', 'PASS')
+        assert_test(self.tests[0], 'Test with setup and teardown', 'PASS',
+                    tags=('tag1', 'tag2'))
 
     def test_failing_setup(self):
         assert_test(self.tests[1], 'Test with failing setup', 'FAIL',
+                    tags=('tag1',),
                     msg='Setup failed:\nTest Setup')
 
     def test_failing_teardown(self):
         assert_test(self.tests[2], 'Test with failing teardown', 'FAIL',
+                    tags=('tag1', 'tag2'),
                     msg='Teardown failed:\nTest Teardown')
 
     def test_failing_test_with_failing_teardown(self):
         assert_test(self.tests[3], 'Failing test with failing teardown', 'FAIL',
+                    tags=('tag1', 'tag2'),
                     msg='Keyword\n\nAlso teardown failed:\nTest Teardown')
 
 
@@ -158,13 +162,15 @@ class TestSuiteSetupAndTeardown(unittest.TestCase):
     def test_passing_setup_and_teardown(self):
         suite = run(self.suite)
         assert_suite(suite, 'Setups And Teardowns', 'FAIL', tests=4)
-        assert_test(suite.tests[0], 'Test with setup and teardown', 'PASS')
+        assert_test(suite.tests[0], 'Test with setup and teardown', 'PASS',
+                    tags=('tag1', 'tag2'))
 
     def test_failing_setup(self):
         suite = run(self.suite, variable='SUITE SETUP:Fail')
         assert_suite(suite, 'Setups And Teardowns', 'FAIL',
                      'Suite setup failed:\nAssertionError', 4)
         assert_test(suite.tests[0], 'Test with setup and teardown', 'FAIL',
+                    tags=('tag1', 'tag2'),
                     msg='Parent suite setup failed:\nAssertionError')
 
     def test_failing_teardown(self):
@@ -172,6 +178,7 @@ class TestSuiteSetupAndTeardown(unittest.TestCase):
         assert_suite(suite, 'Setups And Teardowns', 'FAIL',
                      'Suite teardown failed:\nAssertionError', 4)
         assert_test(suite.tests[0], 'Test with setup and teardown', 'FAIL',
+                    tags=('tag1', 'tag2'),
                     msg='Parent suite teardown failed:\nAssertionError')
 
     def test_failing_test_with_failing_teardown(self):
@@ -180,6 +187,7 @@ class TestSuiteSetupAndTeardown(unittest.TestCase):
                      'Suite setup failed:\nAssertionError\n\n'
                      'Also suite teardown failed:\nAssertionError', 4)
         assert_test(suite.tests[0], 'Test with setup and teardown', 'FAIL',
+                    tags=('tag1', 'tag2'),
                     msg='Parent suite setup failed:\nAssertionError\n\n'
                         'Also parent suite teardown failed:\nAssertionError')
 
@@ -194,6 +202,7 @@ class TestSuiteSetupAndTeardown(unittest.TestCase):
                      'Suite setup failed:\nAssertionError\n\n'
                      'Also suite teardown failed:\nAssertionError', 4)
         assert_test(suite.suites[0].tests[0], 'Test with setup and teardown', 'FAIL',
+                    tags=('tag1', 'tag2'),
                     msg='Parent suite setup failed:\nAssertionError\n\n'
                         'Also parent suite teardown failed:\nAssertionError\n\n'
                         'Also parent suite teardown failed:\nTop level')

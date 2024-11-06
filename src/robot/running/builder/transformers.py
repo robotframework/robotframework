@@ -62,6 +62,15 @@ class SettingsBuilder(ModelVisitor):
         self.settings.default_tags = node.values
 
     def visit_TestTags(self, node):
+        for tag in node.values:
+            if tag.startswith('-'):
+                LOGGER.warn(
+                    f"Error in file '{self.suite.source}' on line {node.lineno}: "
+                    f"Setting tags starting with a hyphen like '{tag}' using the "
+                    f"'Test Tags' setting is deprecated. In Robot Framework 8.0 this "
+                    f"syntax will be used for removing tags. Escape the tag like "
+                    f"'\\{tag}' to use the literal value and to avoid this warning."
+                )
         self.settings.test_tags = node.values
 
     def visit_KeywordTags(self, node):
