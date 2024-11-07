@@ -32,7 +32,7 @@ def _safe_str(item):
             return ''.join(chr(b) if b < 128 else '\\x%x' % b for b in item)
     try:
         return str(item)
-    except:
+    except Exception:
         return _unrepresentable_object(item)
 
 
@@ -45,7 +45,7 @@ class PrettyRepr(PrettyPrinter):
     def format(self, object, context, maxlevels, level):
         try:
             return PrettyPrinter.format(self, object, context, maxlevels, level)
-        except:
+        except Exception:
             return _unrepresentable_object(object), True, False
 
     # Don't split strings: https://stackoverflow.com/questions/31485402
@@ -63,5 +63,6 @@ class PrettyRepr(PrettyPrinter):
 
 def _unrepresentable_object(item):
     from .error import get_error_message
-    return "<Unrepresentable object %s. Error: %s>" \
-           % (item.__class__.__name__, get_error_message())
+
+    error = get_error_message()
+    return f'<Unrepresentable object {type(item).__name__}. Error: {error}>'
