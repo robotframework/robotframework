@@ -10,10 +10,12 @@ Numbers
     ${FLOAT}          ${3.14}
     -${FLOAT}-        -3.14-
 
-Byte string
-    [Documentation]  We has ${BYTE STRING}!
-    ${BYTE STRING}    ${BYTE STRING}
-    -${BYTE STRING}-  -${BYTE STRING STR}-
+Bytes
+    [Documentation]  We has ${BYTES}!
+    ${BYTES}          ${BYTES}
+    ${BYTEARRAY}      ${BYTEARRAY}
+    -${BYTES}-        -${BYTES STR}-
+    -${BYTEARRAY}-    -${BYTES STR}-
 
 Collections
     [Documentation]  ${LIST} ${DICT}
