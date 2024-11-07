@@ -341,8 +341,8 @@ class _Converter(_BuiltInBase):
         - ``text:`` Converts text to bytes character by character. All
           characters with ordinal below 256 can be used and are converted to
           bytes with same values. Many characters are easiest to represent
-          using escapes like ``\x00`` or ``\xff``. Supports both Unicode
-          strings and bytes.
+          using escapes like ``\x00`` or ``\xff``. In practice this is the same
+          as Latin-1 encoding.
 
         - ``int:`` Converts integers separated by spaces to bytes. Similarly as
           with `Convert To Integer`, it is possible to use binary, octal, or
@@ -3584,11 +3584,11 @@ class _Misc(_BuiltInBase):
 
         If the optional ``append`` argument is given a true value (see `Boolean
         arguments`), the given ``message`` is added after the possible earlier
-        message by joining the messages with a space.
-        
+        message.
+
         An optional ``separator`` argument can be used to provide custom separator
-        string when appending to old text. By default a single space is used 
-        as separator.
+        string when appending to the old text. A single space is used as separator
+        by default.
 
         In test teardown this keyword can alter the possible failure message,
         but otherwise failures override messages set by this keyword. Notice
@@ -3605,7 +3605,8 @@ class _Misc(_BuiltInBase):
         | Set Test Message | `*`HTML`*` <b>Hello!</b> |                      |
 
         This keyword can not be used in suite setup or suite teardown.
-        ``separator`` argument is new in Robot Framework 7.2.
+
+        The ``separator`` argument is new in Robot Framework 7.2.
         """
         test = self._context.test
         if not test:
@@ -3642,19 +3643,19 @@ class _Misc(_BuiltInBase):
     def set_test_documentation(self, doc, append=False, separator=' '):
         """Sets documentation for the current test case.
 
-        By default the possible existing documentation is overwritten, but
+        The possible existing documentation is overwritten by default, but
         this can be changed using the optional ``append`` argument similarly
         as with `Set Test Message` keyword.
-        
+
         An optional ``separator`` argument can be used to provide custom separator
-        string when appending to old text. By default a single space is used 
-        as separator.
+        string when appending to the old text. A single space is used as separator
+        by default.
 
         The current test documentation is available as a built-in variable
         ``${TEST DOCUMENTATION}``. This keyword can not be used in suite
         setup or suite teardown.
-        
-        ``separator`` argument is new in Robot Framework 7.2.
+
+        The ``separator`` argument is new in Robot Framework 7.2.
         """
         test = self._context.test
         if not test:
@@ -3675,15 +3676,15 @@ class _Misc(_BuiltInBase):
         If the optional ``top`` argument is given a true value (see `Boolean
         arguments`), the documentation of the top level suite is altered
         instead.
-        
+
         An optional ``separator`` argument can be used to provide custom separator
-        string when appending to old text. By default a single space is used 
-        as separator.
+        string when appending to the old text. A single space is used as separator
+        by default.
 
         The documentation of the current suite is available as a built-in
         variable ``${SUITE DOCUMENTATION}``.
-        
-        ``separator`` argument is new in Robot Framework 7.2.
+
+        The ``separator`` argument is new in Robot Framework 7.2.
         """
         suite = self._get_context(top).suite
         suite.doc = self._get_new_text(suite.doc, doc, append, separator=separator)
@@ -3700,22 +3701,22 @@ class _Misc(_BuiltInBase):
         This keyword sets the metadata of the current suite by default.
         If the optional ``top`` argument is given a true value (see `Boolean
         arguments`), the metadata of the top level suite is altered instead.
-        
+
         An optional ``separator`` argument can be used to provide custom separator
-        string when appending to old text. By default a single space is used 
-        as separator.
+        string when appending to the old text. A single space is used as separator
+        by default.
 
         The metadata of the current suite is available as a built-in variable
         ``${SUITE METADATA}`` in a Python dictionary. Notice that modifying this
         variable directly has no effect on the actual metadata the suite has.
-        
-        ``separator`` argument is new in Robot Framework 7.2.
+
+        The ``separator`` argument is new in Robot Framework 7.2.
         """
         if not is_string(name):
             name = str(name)
         metadata = self._get_context(top).suite.metadata
         original = metadata.get(name, '')
-        metadata[name] = self._get_new_text(original, value, append, 
+        metadata[name] = self._get_new_text(original, value, append,
                                             separator=separator)
         self._variables.set_suite('${SUITE_METADATA}', metadata.copy(), top)
         self.log(f"Set suite metadata '{name}' to value '{metadata[name]}'.")
