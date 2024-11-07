@@ -143,9 +143,8 @@ class ExecutionStatus(RobotError):
     def can_continue(self, context, templated=False):
         if context.dry_run:
             return True
-        if self.syntax or self.exit or self.skip or self.test_timeout:
-            if self.syntax or self.exit or self.test_timeout:
-                return False
+        if self.syntax or self.exit or self.test_timeout:
+            return False
         if templated:
             return context.continue_on_failure(default=True)
         if self.skip:
@@ -186,9 +185,9 @@ class HandlerExecutionFailed(ExecutionFailed):
 
 class ExecutionFailures(ExecutionFailed):
 
-    def __init__(self, errors, message=None, attrs=None):
+    def __init__(self, errors, message=None):
         super().__init__(message or self._format_message(errors),
-                         **(attrs or self._get_attrs(errors)))
+                         **self._get_attrs(errors))
         self._errors = errors
 
     def _format_message(self, errors):
@@ -232,6 +231,7 @@ class ExecutionFailures(ExecutionFailed):
 
     def get_errors(self):
         return self._errors
+
 
 class UserKeywordExecutionFailed(ExecutionFailures):
 
@@ -286,6 +286,7 @@ class PassExecution(ExecutionPassed):
 
     def __init__(self, message):
         super().__init__(message)
+
 
 class ContinueLoop(ExecutionPassed):
     """Used by CONTINUE statement."""

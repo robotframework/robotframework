@@ -270,52 +270,6 @@ Failing Test
 Passing Test
     No Operation
 
-Skip Template One Skip And Pass
-    [Documentation]    PASS 1 == 1
-    [Template]    Skip template one skip and pass
-    1
-    2
-
-Skip Template Two Skips And Pass
-    [Documentation]    PASS Skips occurred:
-    ...
-    ...    1) 2 == 2
-    ...
-    ...    2) 4 == 4
-    [Template]    Skip template two skips and pass
-    1
-    2
-    3
-    4
-    5
-
-Skip Template Two Skips And Fail
-    [Documentation]    FAIL Skips occurred:
-    ...
-    ...    0) 2 == 2
-    ...
-    ...    1) 4 == 4
-    ...
-    ...    Also failure occurred:
-    ...
-    ...    fail
-    [Template]    Skip template two skips and fail
-    1
-    2
-    3
-    4
-    5
-
-Skip Template All Skips
-    [Documentation]    SKIP Skips occurred:
-    ...
-    ...    0) skip
-    ...
-    ...    1) skip
-    [Template]    Skip template all skips
-    1
-    2
-
 *** Keywords ***
 Skip with keywords before and after
     No Operation

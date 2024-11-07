@@ -1,9 +1,3 @@
-*** Settings ***
-Library            skiplib.py
-
-*** Variables ***
-${TEST_OR_TASK}    Test
-
 *** Test Cases ***
 Skip With Pass
     [Documentation]    PASS
