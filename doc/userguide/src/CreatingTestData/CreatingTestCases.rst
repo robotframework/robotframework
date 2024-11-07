@@ -948,6 +948,18 @@ are executed even if one or more of them fails. It is possible to use this
 kind of `continue on failure`_ mode with normal tests too, but with
 the templated tests the mode is on automatically.
 
+Also in case of templated tests all the rounds are executed even if one
+or more of them are skipped.
+The aggregated result of a templated test with skipped iterations is:
+
+* PASS if there were at lease one PASS iteration with any number of SKIPs
+* SKIP if all iterations were SKIP
+* FAIL if any of the iterations were FAIL
+
+.. note:: This behavior is valid only from Robot Framework 7.2.
+          Earlier versions stopped executing remaining rounds in case of a
+          skipped iteration is found
+
 .. sourcecode:: robotframework
 
    *** Settings ***
