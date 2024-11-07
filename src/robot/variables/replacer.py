@@ -59,14 +59,11 @@ class VariableReplacer:
         result = []
         for item in items:
             match = search_variable(item, ignore_errors=ignore_errors)
-            if not match:
-                result.append(unescape(item))
+            value = self._replace(match, ignore_errors)
+            if match.is_list_variable() and is_list_like(value):
+                result.extend(value)
             else:
-                value = self._replace_scalar(match, ignore_errors)
-                if match.is_list_variable() and is_list_like(value):
-                    result.extend(value)
-                else:
-                    result.append(value)
+                result.append(value)
         return result
 
     def replace_scalar(self, item, ignore_errors=False):
@@ -80,37 +77,36 @@ class VariableReplacer:
             match = item
         else:
             match = search_variable(item, ignore_errors=ignore_errors)
-        if not match:
-            return unescape(match.string)
-        return self._replace_scalar(match, ignore_errors)
-
-    def _replace_scalar(self, match, ignore_errors=False):
-        if match.is_variable():
-            return self._get_variable_value(match, ignore_errors)
-        return self._replace_string(match, unescape, ignore_errors)
+        return self._replace(match, ignore_errors)
 
     def replace_string(self, item, custom_unescaper=None, ignore_errors=False):
         """Replaces variables from a string. Result is always a string.
 
         Input can also be an already found VariableMatch.
         """
-        unescaper = custom_unescaper or unescape
         if isinstance(item, VariableMatch):
             match = item
         else:
             match = search_variable(item, ignore_errors=ignore_errors)
-        if not match:
-            return safe_str(unescaper(match.string))
-        return self._replace_string(match, unescaper, ignore_errors)
+        result = self._replace(match, ignore_errors, custom_unescaper or unescape)
+        return safe_str(result)
 
-    def _replace_string(self, match, unescaper, ignore_errors):
+    def _replace(self, match, ignore_errors, unescaper=unescape):
+        if not match:
+            return unescaper(match.string)
+        if match.is_variable():
+            return self._get_variable_value(match, ignore_errors)
         parts = []
         while match:
-            parts.append(unescaper(match.before))
-            parts.append(safe_str(self._get_variable_value(match, ignore_errors)))
+            if match.before:
+                parts.append(unescaper(match.before))
+            parts.append(self._get_variable_value(match, ignore_errors))
             match = search_variable(match.after, ignore_errors=ignore_errors)
-        parts.append(unescaper(match.string))
-        return ''.join(parts)
+        if match.string:
+            parts.append(unescaper(match.string))
+        if all(isinstance(p, (bytes, bytearray)) for p in parts):
+            return b''.join(parts)
+        return ''.join(safe_str(p) for p in parts)
 
     def _get_variable_value(self, match, ignore_errors):
         match.resolve_base(self, ignore_errors)

@@ -115,7 +115,7 @@ its value as-is and the value can be any object. If the variable is not used
 alone, like `${GREER}, ${NAME}!!` above, its value is first converted into
 a string and then concatenated with the other data.
 
-.. note:: Variable values are used as-is without conversions also when
+.. note:: Variable values are used as-is without string conversion also when
           passing arguments to keywords using the `named arguments`_
           syntax like `argname=${var}`.
 
@@ -131,8 +131,6 @@ object:
 
      def __str__():
          return "Hi, terra!"
-
-
 
 With these two variables set, we then have the following test data:
 
@@ -153,13 +151,46 @@ the arguments as explained below:
 - :name:`KW 3` gets a string `I said "Hello, world!"`
 - :name:`KW 4` gets a string `You said "Hi, terra!"`
 
-.. Note:: Converting variables to Unicode obviously fails if the variable
-          cannot be represented as Unicode. This can happen, for example,
-          if you try to use byte sequences as arguments to keywords so that
-          you catenate the values together like `${byte1}${byte2}`.
-          A workaround is creating a variable that contains the whole value
-          and using it alone in the cell (e.g. `${bytes}`) because then
-          the value is used as-is.
+Scalar variables containing bytes
+'''''''''''''''''''''''''''''''''
+
+Variables containing bytes__ or bytearrays__ are handled slightly differently
+than other variables containing non-string values:
+
+- If they are used alone, everything works exactly as with other objects and
+  their values are passed to keywords as-is.
+
+- If they are concatenated only with other variables that also contain bytes or
+  bytearrays, the result is bytes instead of a string.
+
+- If they are concatenated with strings or with variables containing other
+  types than bytes or bytearrays, they are converted to strings like other
+  objects, but they have a different string representation than they normally
+  have in Python. In practice bytes in the ASCII range are mapped directly
+  to Unicode characters with matching code points and other bytes are shown
+  in an escaped format.
+
+The following examples demonstrates using bytes and bytearrays would work
+exactly the same way. Variable `${a}` is expected to contain bytes `\x00\x01`
+and variable `${b}` bytes `a\xe4`.
+
+.. sourcecode:: robotframework
+
+    *** Test Cases ***
+    Bytes alone
+        [Documentation]    Keyword gets bytes '\x00\x01'.
+        Keyword    ${a}
+
+    Bytes concatenated with bytes
+        [Documentation]    Keyword gets bytes '\x00\x01a\xe4'.
+        Keyword    ${a}${b}
+
+    Bytes concatenated with others
+        [Documentation]    Keyword gets string '=\x00\x01a\\xe4='.
+        Keyword    =${a}${b}=
+
+__ https://docs.python.org/3/library/stdtypes.html#bytes-objects
+__ https://docs.python.org/3/library/stdtypes.html#bytearray-objects
 
 .. _list variable:
 .. _list variables:

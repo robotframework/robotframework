@@ -17,6 +17,12 @@ Bytes
     -${BYTES}-        -${BYTES STR}-
     -${BYTEARRAY}-    -${BYTES STR}-
 
+Bytes concatenated with bytes yields bytes
+    [Documentation]    ${BYTES}${BYTEARRAY}
+    ${BYTES}${BYTEARRAY}         ${{b'hyv\xe4hyv\xe4'}}
+    ${BYTEARRAY}${BYTES}         ${{b'hyv\xe4hyv\xe4'}}
+    ${BYTES}${{b'-'}}${BYTES}    ${{b'hyv\xe4-hyv\xe4'}}
+
 Collections
     [Documentation]  ${LIST} ${DICT}
     -${LIST}-         -${LIST STR}-

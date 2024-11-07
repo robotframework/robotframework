@@ -10,6 +10,9 @@ Numbers
 Bytes
     Check Test Doc    ${TESTNAME}    We has ${BYTES STR}!
 
+Bytes concatenated with bytes yields bytes
+    Check Test Doc    ${TESTNAME}    ${BYTES}${BYTEARRAY}${EMPTY}    # ${EMPTY} coerces value to a string
+
 Collections
     Check Test Doc    ${TESTNAME}    ${LIST STR} ${DICT STR}
 
