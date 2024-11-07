@@ -4,10 +4,10 @@ Library           CollectionsHelperLibrary.py
 
 *** Variables ***
 @{LIST}          a    B
-@{LIST_2}          B    a
+@{LIST_2}        B    a
 ${TUPLE}         ${{'a', 'B'}}
 &{D}             a=x    B=Y    c=${3}   ${4}=E    ß=Straße    list=${LIST}    ${TUPLE}=tuple
-&{D_2}             a=x    B=Y    list=${LIST_2}    ${TUPLE}=tuple
+&{D_2}           a=x    B=Y    list=${LIST_2}    ${TUPLE}=tuple
 
 *** Test Cases ***
 ### Should (Not) Contain Key ###

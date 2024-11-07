@@ -783,7 +783,8 @@ class _Dictionary:
         )
 
     def dictionaries_should_be_equal(self, dict1, dict2, msg=None, values=True,
-                                     ignore_keys=None, ignore_case=False, ignore_value_order=False):
+                                     ignore_keys=None, ignore_case=False,
+                                     ignore_value_order=False):
         """Fails if the given dictionaries are not equal.
 
         First the equality of dictionaries' keys is checked and after that all
@@ -814,7 +815,8 @@ class _Dictionary:
         This option is new in Robot Framework 7.2.
         """
         self._validate_dictionary(dict1, dict2)
-        normalizer = Normalizer(ignore_case=ignore_case, ignore_keys=ignore_keys, ignore_order=ignore_value_order)
+        normalizer = Normalizer(ignore_case=ignore_case, ignore_keys=ignore_keys,
+                                ignore_order=ignore_value_order)
         dict1 = normalizer.normalize(dict1)
         dict2 = normalizer.normalize(dict2)
         self._should_have_same_keys(dict1, dict2, msg, values)
@@ -844,7 +846,8 @@ class _Dictionary:
             _report_error(error, message, values)
 
     def dictionary_should_contain_sub_dictionary(self, dict1, dict2, msg=None,
-                                                 values=True, ignore_case=False, ignore_value_order=False):
+                                                 values=True, ignore_case=False,
+                                                 ignore_value_order=False):
         """Fails unless all items in ``dict2`` are found from ``dict1``.
 
         See `Lists Should Be Equal` for more information about configuring
@@ -860,7 +863,8 @@ class _Dictionary:
         This option is new in Robot Framework 7.2.
         """
         self._validate_dictionary(dict1, dict2)
-        normalizer = Normalizer(ignore_case=ignore_case, ignore_order=ignore_value_order)
+        normalizer = Normalizer(ignore_case=ignore_case,
+                                ignore_order=ignore_value_order)
         dict1 = normalizer.normalize(dict1)
         dict2 = normalizer.normalize(dict2)
         self._should_have_same_keys(dict1, dict2, msg, values, validate_both=False)
@@ -1175,10 +1179,7 @@ class Normalizer:
     def normalize_list(self, value):
         cls = type(value)
         if self.ignore_order:
-            try:
-                value = sorted(value)
-            except TypeError:
-                value = sorted(value, key=str)
+            value = sorted(value)
         value = [self.normalize(v) for v in value]
         return self._try_to_preserve_type(value, cls)
 

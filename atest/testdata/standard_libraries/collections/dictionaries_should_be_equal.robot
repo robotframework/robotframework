@@ -143,9 +143,6 @@ Different values and custom error message with values
 
 `ignore_value_order` set to True
     Dictionaries Should Be Equal    ${D10A}    ${D10B}    ignore_value_order=True
-    
-`ignore_value_order` set to True when dictionaries has key with value of a list of a dictionaries
-    Dictionaries Should Be Equal    ${D10C}    ${D10D}    ignore_value_order=True
 
 `ignore_value_order` set to False and dictionaries have lists in different order
     [Documentation]    FAIL
