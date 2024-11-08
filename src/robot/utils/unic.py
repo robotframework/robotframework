@@ -26,10 +26,8 @@ def _safe_str(item):
     if isinstance(item, str):
         return item
     if isinstance(item, (bytes, bytearray)):
-        try:
-            return item.decode('ASCII')
-        except UnicodeError:
-            return ''.join(chr(b) if b < 128 else '\\x%x' % b for b in item)
+        # Map each byte to Unicode code point with same ordinal.
+        return item.decode('latin-1')
     try:
         return str(item)
     except Exception:

@@ -46,14 +46,14 @@ Logging Non-ASCII As Unicode
 
 Logging Non-ASCII As Bytes
     ${tc} =    Check Test Case    ${TEST NAME}
-    ${expected} =    Get Expected Bytes    Hyvää päivää!
+    ${expected} =    Get Expected Byte Representation    Hyvää päivää!
     Check Log Message    ${tc.kws[1].msgs[0]}    ${expected}
     Check Log Message    ${tc.kws[2].msgs[0]}    ${expected}
     Stderr Should Contain    ${expected}
 
 Logging Mixed Non-ASCII Unicode And Bytes
     ${tc} =    Check Test Case    ${TEST NAME}
-    ${bytes} =    Get Expected Bytes    Hyvä byte!
+    ${bytes} =    Get Expected Byte Representation    Hyvä byte!
     Check Log Message    ${tc.kws[1].msgs[0]}    ${bytes} Hyvä Unicode!
 
 Logging HTML
@@ -76,7 +76,7 @@ FAIL is not valid log level
     Check Log Message    ${tc.kws[0].msgs[0]}    *FAIL* is not failure    INFO
 
 *** Keywords ***
-Get Expected Bytes
+Get Expected Byte Representation
     [Arguments]    ${string}
     ${bytes} =    Encode String To Bytes    ${string}    ${CONSOLE_ENCODING}
-    RETURN    b'${bytes}'
+    RETURN    ${{str($bytes)}}

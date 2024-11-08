@@ -33,7 +33,7 @@ Keyword Arguments
     [Template]    Verify Argument Models
     ${MODEL}[keywords][0][args]
     ${MODEL}[keywords][1][args]     a1=d    *a2
-    ${MODEL}[keywords][6][args]     arg=hyv\\xe4
+    ${MODEL}[keywords][6][args]     arg=hyvä
     ${MODEL}[keywords][9][args]     arg=hyvä
     ${MODEL}[keywords][10][args]    a=1    b=True    c=(1, 2, None)
     ${MODEL}[keywords][11][args]    arg=\\ robot \\ escapers\\n\\t\\r \\ \\

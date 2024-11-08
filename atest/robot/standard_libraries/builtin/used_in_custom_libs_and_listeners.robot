@@ -17,7 +17,7 @@ Listener Using BuiltIn
 Use 'Run Keyword' with non-Unicode values
     ${tc} =    Check Test Case    ${TESTNAME}
     Check Log Message    ${tc.kws[0].kws[0].msgs[0]}    42
-    Check Log Message    ${tc.kws[0].kws[1].msgs[0]}    \\xff
+    Check Log Message    ${tc.kws[0].kws[1].msgs[0]}    \xff
 
 Use BuiltIn keywords with timeouts
     ${tc} =    Check Test Case    ${TESTNAME}
@@ -27,7 +27,7 @@ Use BuiltIn keywords with timeouts
     Check Log Message    ${tc.kws[3].kws[0].msgs[0]}    Test timeout 1 day active. * seconds left.    level=DEBUG    pattern=True
     Check Log Message    ${tc.kws[3].kws[0].msgs[1]}    42
     Check Log Message    ${tc.kws[3].kws[1].msgs[0]}    Test timeout 1 day active. * seconds left.    level=DEBUG    pattern=True
-    Check Log Message    ${tc.kws[3].kws[1].msgs[1]}    \\xff
+    Check Log Message    ${tc.kws[3].kws[1].msgs[1]}    \xff
 
 User keyword used via 'Run Keyword'
     ${tc} =    Check Test Case    ${TESTNAME}

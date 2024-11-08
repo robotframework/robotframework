@@ -166,9 +166,13 @@ than other variables containing non-string values:
 - If they are concatenated with strings or with variables containing other
   types than bytes or bytearrays, they are converted to strings like other
   objects, but they have a different string representation than they normally
-  have in Python. In practice bytes in the ASCII range are mapped directly
-  to Unicode characters with matching code points and other bytes are shown
-  in an escaped format.
+  have in Python. With Python the string representation contains surrounding
+  quotes and a `b` prefix like `b'\x00'`, but with Robot Framework quotes
+  and the prefix are omitted, and each byte is mapped to a Unicode code point
+  with the same ordinal. In practice this is same as converting bytes to strings
+  using the Latin-1 encoding. This format has a big benefit that the resulting
+  string can be converted back to bytes, for example, by using the BuiltIn_
+  keyword :name:`Convert To Bytes` or by automatic `argument conversion`_.
 
 The following examples demonstrates using bytes and bytearrays would work
 exactly the same way. Variable `${a}` is expected to contain bytes `\x00\x01`
@@ -186,11 +190,19 @@ and variable `${b}` bytes `a\xe4`.
         Keyword    ${a}${b}
 
     Bytes concatenated with others
-        [Documentation]    Keyword gets string '=\x00\x01a\\xe4='.
+        [Documentation]    Keyword gets string '=\x00\x01a\xe4='.
         Keyword    =${a}${b}=
 
 __ https://docs.python.org/3/library/stdtypes.html#bytes-objects
 __ https://docs.python.org/3/library/stdtypes.html#bytearray-objects
+
+.. note:: Getting bytes when variables containing bytes are concatenated is new
+          in Robot Framework 7.2. With earlier versions the result was a string.
+
+.. note:: All bytes being mapped to matching Unicode code points in string
+          representation is new Robot Framework 7.2. With earlier versions
+          only bytes in the ASCII range were mapped directly code points and
+          other bytes were represented in an escaped format.
 
 .. _list variable:
 .. _list variables:

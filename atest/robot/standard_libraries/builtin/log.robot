@@ -89,9 +89,9 @@ formatter=str
     Check Log Message    ${tc.kws[0].msgs[0]}    Nothing special here
     Check Log Message    ${tc.kws[1].msgs[0]}    Hyvää yötä ☃!
     Check Log Message    ${tc.kws[2].msgs[0]}    42    DEBUG
-    Check Log Message    ${tc.kws[4].msgs[0]}    abc\\xff (formatter=str)
+    Check Log Message    ${tc.kws[4].msgs[0]}    abc\xff (formatter=str)
     Check Log Message    ${tc.kws[6].msgs[0]}    hyvä
-    Stdout Should Contain    abc\\xff (formatter=str)
+    Stdout Should Contain    abc\xff (formatter=str)
 
 formatter=repr pretty prints
     ${tc} =    Check Test Case    ${TEST NAME}

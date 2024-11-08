@@ -28,7 +28,7 @@ class TestSeg2Str(unittest.TestCase):
         self._verify([b'ascii'], "'ascii'")
 
     def test_non_ascii_bytes(self):
-        self._verify([b'non-\xe4scii'], "'non-\\xe4scii'")
+        self._verify([b'non-\xe4scii'], "'non-\xe4scii'")
 
     def test_other_objects(self):
         self._verify([None, 1, True], "'None', '1' and 'True'")

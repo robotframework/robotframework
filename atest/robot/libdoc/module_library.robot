@@ -44,7 +44,7 @@ Keyword Arguments
     Keyword Arguments Should Be      12    a    b    *args    **kwargs
 
 Non-ASCII Bytes Defaults
-    Keyword Arguments Should Be      6     arg=hyv\\xe4
+    Keyword Arguments Should Be      6     arg=hyvä
 
 Non-ASCII String Defaults
     Keyword Arguments Should Be      9     arg=hyvä

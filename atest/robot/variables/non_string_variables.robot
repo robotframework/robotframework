@@ -8,10 +8,13 @@ Numbers
     Check Test Doc    ${TESTNAME}    I can has 42 and 3.14?
 
 Bytes
-    Check Test Doc    ${TESTNAME}    We has ${BYTES STR}!
+    Check Test Doc    ${TESTNAME}    We has hyvä!
 
 Bytes concatenated with bytes yields bytes
-    Check Test Doc    ${TESTNAME}    ${BYTES}${BYTEARRAY}${EMPTY}    # ${EMPTY} coerces value to a string
+    Check Test Doc    ${TESTNAME}    hyvähyvä
+
+Bytes string representation can be converted back to bytes
+    Check Test Doc    ${TESTNAME}    ${EMPTY}
 
 Collections
     Check Test Doc    ${TESTNAME}    ${LIST STR} ${DICT STR}
