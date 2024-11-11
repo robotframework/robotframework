@@ -943,22 +943,7 @@ Templates with multiple iterations
 If a templated test case has multiple data rows in its body, the template
 is applied for all the rows one by one. This
 means that the same keyword is executed multiple times, once with data
-on each row. Templated tests are also special so that all the rounds
-are executed even if one or more of them fails. It is possible to use this
-kind of `continue on failure`_ mode with normal tests too, but with
-the templated tests the mode is on automatically.
-
-Also in case of templated tests all the rounds are executed even if one
-or more of them are skipped.
-The aggregated result of a templated test with skipped iterations is:
-
-* PASS if there were at lease one PASS iteration with any number of SKIPs
-* SKIP if all iterations were SKIP
-* FAIL if any of the iterations were FAIL
-
-.. note:: This behavior is valid only from Robot Framework 7.2.
-          Earlier versions stopped executing remaining rounds in case of a
-          skipped iteration is found
+on each row.
 
 .. sourcecode:: robotframework
 
@@ -970,6 +955,26 @@ The aggregated result of a templated test with skipped iterations is:
        first round 1     first round 2
        second round 1    second round 2
        third round 1     third round 2
+
+Templated tests are special so that all iterations are executed even if one
+or more of them is failed or skipped. The aggregated result of a templated
+test with multiple iterations is:
+
+- FAIL if any of the iterations failed.
+- PASS if there were no failures and at least one iteration passed.
+- SKIP if all iterations were skipped.
+
+.. note:: It is possible to use the `continue on failure`_ mode also with normal
+          tests, but with the templated tests the mode is on automatically. If
+          needed, the mode can also be disabled__ with templates by using the
+          `robot:stop-on-failure` tag.
+
+.. note:: Running all iterations if one or more is skipped is new in Robot
+          Framework 7.2. With earlier versions the execution stopped for the
+          first skipped iteration and the test got the SKIP status regardless
+          of the status of the earlier iterations.
+
+__ `Disabling continue-on-failure using tags`_
 
 Templates with embedded arguments
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
