@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  --skip skip-this --SkipOnFailure skip-on-failure    running/skip/
+Suite Setup     Run Tests    ${EMPTY}    running/skip_with_template.robot
 Resource        atest_resource.robot
 
 *** Test Cases ***
