@@ -56,9 +56,17 @@ class BodyRunner:
                 self._run = exception.can_continue(self._context, self._templated)
         if passed:
             raise passed
+        if errors and self._templated:
+            errors = self._handle_skip_with_templates(errors, result)
         if errors:
             raise ExecutionFailures(errors)
 
+    def _handle_skip_with_templates(self, errors, result):
+        if len(result.body) == 1 or not any(e.skip for e in errors):
+            return errors
+        if all(item.skipped for item in result.body):
+            raise ExecutionFailed('All iterations skipped.', skip=True)
+        return [e for e in errors if not e.skip]
 
 class KeywordRunner:
 
