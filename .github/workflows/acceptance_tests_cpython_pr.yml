@@ -15,7 +15,7 @@ jobs:
       fail-fast: true
       matrix:
         os: [ 'ubuntu-latest', 'windows-latest' ]
-        python-version: [ '3.8', '3.12' ]
+        python-version: [ '3.8', '3.13' ]
         include:
           - os: ubuntu-latest
             set_display: export DISPLAY=:99; Xvfb :99 -screen 0 1024x768x24 -ac -noreset & sleep 3
@@ -31,7 +31,7 @@ jobs:
       - name: Setup python for starting the tests
         uses: actions/setup-python@v5.3.0
         with:
-          python-version: '3.11'
+          python-version: '3.13'
           architecture: 'x64'
 
       - name: Get test starter Python at Windows
