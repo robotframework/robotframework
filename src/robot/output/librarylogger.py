@@ -19,7 +19,7 @@ This is exposed via :py:mod:`robot.api.logger`. Implementation must reside
 here to avoid cyclic imports.
 """
 
-import threading
+from threading import current_thread
 from typing import Any
 
 from robot.utils import safe_str
@@ -28,7 +28,7 @@ from .logger import LOGGER
 from .loggerhelper import Message, write_to_console
 
 
-LOGGING_THREADS = ('MainThread', 'RobotFrameworkTimeoutThread')
+RUN_THREAD = 'MainThread'
 
 
 def write(msg: Any, level: str, html: bool = False):
@@ -40,7 +40,7 @@ def write(msg: Any, level: str, html: bool = False):
             console(msg)
         else:
             raise RuntimeError(f"Invalid log level '{level}'.")
-    if threading.current_thread().name in LOGGING_THREADS:
+    if current_thread().name in (RUN_THREAD, 'RobotFrameworkTimeoutThread'):
         LOGGER.log_message(Message(msg, level, html))
 
 
