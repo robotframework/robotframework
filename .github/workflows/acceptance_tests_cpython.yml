@@ -63,22 +63,16 @@ jobs:
         run: echo "BASE_PYTHON=$(which python)" >> $GITHUB_ENV
         if: runner.os != 'Windows'
 
-      - name: Install Report handling tools to Windows
-        run: |
-          choco install curl -y --no-progress
-          choco install zip -y --no-progress
-        if: runner.os == 'Windows'
-
       - name: Install Ubuntu PyPy dependencies
         run: |
           sudo apt-get update
           sudo apt-get -y -q install libxslt-dev libxml2-dev
         if: contains(matrix.python-version, 'pypy') && contains(matrix.os, 'ubuntu')
 
-      - name: Install screen and report handling tools, and other required libraries to Linux
+      - name: Install screen and other required libraries to Linux
         run: |
           sudo apt-get update
-          sudo apt-get -y -q install xvfb scrot zip curl libxml2-dev libxslt1-dev
+          sudo apt-get -y -q install xvfb scrot libxml2-dev libxslt1-dev
         if: contains(matrix.os, 'ubuntu')
 
       - name: Run acceptance tests
