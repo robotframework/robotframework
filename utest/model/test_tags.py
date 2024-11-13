@@ -356,6 +356,12 @@ class TestTagPatterns(unittest.TestCase):
         patterns = TagPatterns(['isä', 'äiti'])
         assert_equal(seq2str(patterns), "'isä' and 'äiti'")
 
+    def test_is_constant(self):
+        for true in [], ['x'], ['a', 'b', 'c']:
+            assert_true(TagPatterns(true).is_constant)
+        for false in ['x*'], ['x', 'y?'], ['[abc]'], ['xORy'], ['xANDy'], ['x', 'NOTy']:
+            assert_false(TagPatterns(false).is_constant)
+
 
 class AndOrPatternGenerator:
     tags = ['0', '1']

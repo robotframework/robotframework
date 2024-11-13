@@ -13,7 +13,7 @@ Exit-on-failure is not initiated if suite setup fails and skip-on-failure is act
     Run Tests    --exit-on-failure --skip-on-failure tag1 --variable SUITE_SETUP:Fail
     ...    misc/setups_and_teardowns.robot misc/pass_and_fail.robot misc/pass_and_fail.robot
     VAR    ${message}
-    ...    Test failed but skip-on-failure mode was active and it was marked skipped.
+    ...    Failed test skipped using 'tag1' tag.
     ...
     ...    Original failure:
     ...    Parent suite setup failed:
@@ -35,7 +35,7 @@ Exit-on-failure is initiated if suite setup fails and skip-on-failure is not act
     Run Tests    --exit-on-failure --skip-on-failure tag2 --variable SUITE_SETUP:Fail
     ...    misc/setups_and_teardowns.robot misc/pass_and_fail.robot
     VAR    ${prefix}
-    ...    Test failed but skip-on-failure mode was active and it was marked skipped.
+    ...    Failed test skipped using 'tag2' tag.
     ...
     ...    Original failure:
     ...    separator=\n

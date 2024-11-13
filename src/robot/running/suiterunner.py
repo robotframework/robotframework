@@ -19,7 +19,8 @@ from robot.errors import ExecutionFailed, ExecutionStatus, DataError, PassExecut
 from robot.model import SuiteVisitor, TagPatterns
 from robot.result import (Keyword as KeywordResult, TestCase as TestResult,
                           TestSuite as SuiteResult, Result)
-from robot.utils import is_list_like, NormalizedDict, test_or_task
+from robot.utils import (is_list_like, NormalizedDict, plural_or_not as s, seq2str,
+                         test_or_task)
 from robot.variables import VariableScopes
 
 from .bodyrunner import BodyRunner, KeywordRunner
@@ -156,12 +157,12 @@ class SuiteRunner(SuiteVisitor):
                 status.test_failed(data.error)
             elif data.tags.robot('skip'):
                 status.test_skipped(
-                    test_or_task("{Test} skipped using 'robot:skip' tag.",
-                                 settings.rpa))
+                    self._get_skipped_message(['robot:skip'], settings.rpa)
+                )
             elif self.skipped_tags.match(data.tags):
                 status.test_skipped(
-                    test_or_task("{Test} skipped using '--skip' command line option.",
-                                 settings.rpa))
+                    self._get_skipped_message(self.skipped_tags, settings.rpa)
+                )
         self._run_setup(data, status, result)
         if status.passed:
             runner = BodyRunner(self.context, templated=bool(data.template))
@@ -197,6 +198,11 @@ class SuiteRunner(SuiteVisitor):
             status.failure_occurred()
         self.context.end_test(result)
         self._clear_result(result)
+
+    def _get_skipped_message(self, tags, rpa):
+        kind = 'tag' if getattr(tags, 'is_constant', True) else 'tag pattern'
+        return test_or_task(f"{{Test}} skipped using {seq2str(tags)} {kind}{s(tags)}.",
+                            rpa)
 
     def _clear_result(self, result: 'SuiteResult|TestResult'):
         if result.has_setup:

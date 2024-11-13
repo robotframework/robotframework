@@ -17,7 +17,7 @@ from abc import ABC
 
 from robot.errors import PassExecution
 from robot.model import TagPatterns
-from robot.utils import html_escape, test_or_task
+from robot.utils import html_escape, plural_or_not as s, seq2str, test_or_task
 
 
 class Failure:
@@ -169,10 +169,10 @@ class SuiteStatus(ExecutionStatus):
 
 class TestStatus(ExecutionStatus):
 
-    def __init__(self, parent, test, skip_on_failure=None, rpa=False):
+    def __init__(self, parent, test, skip_on_failure=(), rpa=False):
         super().__init__(parent)
         self.test = test
-        self.skip_on_failure_tags = skip_on_failure
+        self.skip_on_failure_tags = TagPatterns(skip_on_failure)
         self.rpa = rpa
 
     def test_failed(self, message=None, error=None):
@@ -205,13 +205,18 @@ class TestStatus(ExecutionStatus):
 
     def _skip_on_failure(self):
         return (self.test.tags.robot('skip-on-failure')
-                or self.skip_on_failure_tags
-                and TagPatterns(self.skip_on_failure_tags).match(self.test.tags))
+                or self.skip_on_failure_tags.match(self.test.tags))
 
-    def _skip_on_fail_msg(self, msg):
+    def _skip_on_fail_msg(self, fail_msg):
+        if self.test.tags.robot('skip-on-failure'):
+            tags = ['robot:skip-on-failure']
+            kind = 'tag'
+        else:
+            tags = self.skip_on_failure_tags
+            kind = 'tag' if tags.is_constant else 'tag pattern'
         return test_or_task(
-            "{Test} failed but skip-on-failure mode was active and it was marked "
-            "skipped.\n\nOriginal failure:\n%s" % msg, rpa=self.rpa
+            f"Failed {{test}} skipped using {seq2str(tags)} {kind}{s(tags)}.\n\n"
+            f"Original failure:\n{fail_msg}", rpa=self.rpa
         )
 
     def _my_message(self):

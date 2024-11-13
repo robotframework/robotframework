@@ -82,8 +82,8 @@ Merge ignores skip
     ...    *HTML* Test has been re-executed and results merged.
     ...    Latter result had <span class="skip">SKIP</span> status and was ignored. Message:
     Should Contain Tests    ${SUITE}
-    ...    Pass=PASS:${prefix}\nTest skipped using '--skip' command line option.
-    ...    Fail=FAIL:${prefix}\nTest skipped using '--skip' command line option.<hr>Original message:\nNot &lt;b&gt;HTML&lt;/b&gt; fail
+    ...    Pass=PASS:${prefix}\nTest skipped using 'NOT skip' tag pattern.
+    ...    Fail=FAIL:${prefix}\nTest skipped using 'NOT skip' tag pattern.<hr>Original message:\nNot &lt;b&gt;HTML&lt;/b&gt; fail
     ...    Skip=SKIP:${prefix}\n<b>HTML</b> skip<hr>Original message:\n<b>HTML</b> skip
 
 *** Keywords ***

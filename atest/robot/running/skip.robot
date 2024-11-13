@@ -139,3 +139,17 @@ Suite setup and teardown are not run if all tests are unconditionally skipped or
     Check Test Case     Skip using robot:skip
     Check Test Case     Skip using --skip
     Length Should Be    ${suite.suites[0].tests}    2
+
+--skip and --skip-on-failure used multiple times
+    Run Tests  --skip skip-this --skip no-match --SkipOnFailure skip-on-failure --skip-on-failure xxx    running/skip/skip.robot
+    Check Test Case    Skipped with --skip
+    ...    message=Test skipped using 'no-match' and 'skip-this' tags.
+    Check Test Case    Skipped with --SkipOnFailure
+    ...    message=Failed test skipped using 'skip-on-failure' and 'xxx' tags.\n\nOriginal failure:\nOoops, we fail!
+
+--skip and --skip-on-failure with patterns
+    Run Tests  --skip skip-t*s --skip no-match --SkipOnFailure xxxORskip-on-failure    running/skip/skip.robot
+    Check Test Case    Skipped with --skip
+    ...    message=Test skipped using 'no-match' and 'skip-t*s' tag patterns.
+    Check Test Case    Skipped with --SkipOnFailure
+    ...    message=Failed test skipped using 'xxx OR skip-on-failure' tag pattern.\n\nOriginal failure:\nOoops, we fail!
