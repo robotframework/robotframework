@@ -138,8 +138,27 @@ In start_keyword and end_keyword with RETURN
     Should Be Equal       ${tc.body[3].body[1].body[1].body[2].body[1].full_name}  BuiltIn.Log
     Check Log Message     ${tc.body[3].body[1].body[1].body[2].body[1].body[0]}    end_keyword
 
+In dry-run
+    Run Tests With Keyword Running Listener    --dry-run
+    Should Contain Tests    ${SUITE}
+    ...    First One
+    ...    Test with setup and teardown
+    ...    FOR
+    ...    FOR IN ENUMERATE
+    ...    FOR IN ZIP
+    ...    WHILE loop executed multiple times
+    ...    WHILE loop in keyword
+    ...    IF structure
+    ...    Everything
+    ...    Second One=FAIL:Several failures occurred:\n\n1) No keyword with name 'Not executed' found.\n\n2) No keyword with name 'Not executed' found.
+    ...    Test with failing setup=PASS
+    ...    Test with failing teardown=PASS
+    ...    Failing test with failing teardown=PASS
+    ...    FOR IN RANGE=FAIL:No keyword with name 'Not executed!' found.
+
 *** Keywords ***
 Run Tests With Keyword Running Listener
+    [Arguments]    ${options}=
     ${path} =    Normalize Path    ${LISTENER DIR}/keyword_running_listener.py
     ${files} =    Catenate
     ...    misc/normal.robot
@@ -148,7 +167,7 @@ Run Tests With Keyword Running Listener
     ...    misc/while.robot
     ...    misc/if_else.robot
     ...    misc/try_except.robot
-    Run Tests    --listener ${path}    ${files}    validate output=True
+    Run Tests    --listener ${path} ${options}    ${files}    validate output=True
     Should Be Empty    ${ERRORS}
 
 Validate IF branch
