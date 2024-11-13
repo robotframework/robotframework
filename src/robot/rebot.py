@@ -122,7 +122,6 @@ Options
     --processemptysuite   Processes output also if the top level suite is
                           empty. Useful e.g. with --include/--exclude when it
                           is not an error that there are no matches.
-                          Use --skiponfailure when starting execution instead.
  -d --outputdir dir       Where to create output files. The default is the
                           directory where Rebot is run from and the given path
                           is considered relative to that unless it is absolute.
