@@ -1,8 +1,9 @@
 import unittest
 
-from robot.utils.asserts import assert_raises, assert_equal
 from robot.errors import DataError
 from robot.output.loggerhelper import AbstractLogger, Message
+from robot.result import Message as ResultMessage
+from robot.utils.asserts import assert_equal, assert_raises, assert_true
 
 
 class TestAbstractLogger(unittest.TestCase):
@@ -19,6 +20,9 @@ class TestMessage(unittest.TestCase):
 
     def test_callable_message(self):
         assert_equal(Message(lambda: 'my message').message, 'my message')
+
+    def test_correct_base_type(self):
+        assert_true(isinstance(Message('msg'), ResultMessage))
 
 
 if __name__ == '__main__':

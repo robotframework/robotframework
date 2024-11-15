@@ -18,7 +18,8 @@ from datetime import datetime
 from typing import Callable, Literal
 
 from robot.errors import DataError
-from robot.model import Message as BaseMessage, MessageLevel
+from robot.model import MessageLevel
+from robot.result import Message as BaseMessage
 from robot.utils import console_encode
 
 

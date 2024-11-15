@@ -53,7 +53,6 @@ else:
     UnionType = type
 
 from robot import result, running
-from robot.model import Message
 from robot.running import TestDefaults, TestSuite
 
 
@@ -885,7 +884,7 @@ class ListenerV3:
         """
         pass
 
-    def log_message(self, message: Message):
+    def log_message(self, message: result.Message):
         """Called when a normal log message are emitted.
 
         The messages are typically logged by keywords, but also the framework
@@ -893,7 +892,7 @@ class ListenerV3:
         log.html.
         """
 
-    def message(self, message: Message):
+    def message(self, message: result.Message):
         """Called when framework's internal messages are emitted.
 
         Only logged by the framework itself. These messages end up to the syslog

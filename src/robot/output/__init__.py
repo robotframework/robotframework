@@ -22,4 +22,4 @@ test execution is refactored.
 from .output import Output
 from .logger import LOGGER
 from .xmllogger import XmlLogger
-from .loggerhelper import LEVELS, Message
+from .loggerhelper import IsLogged, LEVELS, Message

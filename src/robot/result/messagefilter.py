@@ -13,15 +13,15 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.output.loggerhelper import IsLogged
+from robot import output
 
-from robot.model import SuiteVisitor
+from .visitor import ResultVisitor
 
 
-class MessageFilter(SuiteVisitor):
+class MessageFilter(ResultVisitor):
 
     def __init__(self, log_level=None):
-        self.is_logged = IsLogged(log_level or 'TRACE')
+        self.is_logged = output.IsLogged(log_level or 'TRACE')
 
     def start_suite(self, suite):
         if self.is_logged.level == 'TRACE':
