@@ -4,9 +4,16 @@ from robot.api import logger
 
 ROBOT_LISTENER_API_VERSION = 2
 
+RECURSION = False
+
 
 def get_logging_listener_method(name):
+
     def listener_method(*args):
+        global RECURSION
+        if RECURSION:
+            return
+        RECURSION = True
         if name in ['message', 'log_message']:
             msg = args[0]
             message = f"{name}: {msg['level']} {msg['message']}"
@@ -18,6 +25,8 @@ def get_logging_listener_method(name):
             message = name
         logging.info(message)
         logger.warn(message)
+        RECURSION = False
+
     return listener_method
 
 

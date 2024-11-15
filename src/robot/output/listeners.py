@@ -141,7 +141,7 @@ class ListenerFacade(LoggerApi, ABC):
             method = getattr(self.listener, method_name, None)
             if method:
                 return ListenerMethod(method, self.name)
-        return ListenerMethod(None, self.name) if fallback is None else fallback
+        return fallback or ListenerMethod(None, self.name)
 
     def _get_method_names(self, name):
         names = [name, self._to_camelCase(name)] if '_' in name else [name]
@@ -567,21 +567,15 @@ class ListenerV2Facade(ListenerFacade):
 
 
 class ListenerMethod:
-    # Flag to avoid recursive listener calls.
-    called = False
 
     def __init__(self, method, name):
         self.method = method
         self.listener_name = name
 
     def __call__(self, *args):
-        if self.method is None:
-            return
-        if self.called:
-            return
         try:
-            ListenerMethod.called = True
-            self.method(*args)
+            if self.method is not None:
+                self.method(*args)
         except TimeoutError:
             # Propagate possible timeouts:
             # https://github.com/robotframework/robotframework/issues/2763
@@ -591,8 +585,6 @@ class ListenerMethod:
             LOGGER.error(f"Calling method '{self.method.__name__}' of listener "
                          f"'{self.listener_name}' failed: {message}")
             LOGGER.info(f"Details:\n{details}")
-        finally:
-            ListenerMethod.called = False
 
     def __bool__(self):
         return self.method is not None

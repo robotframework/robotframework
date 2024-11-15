@@ -114,7 +114,7 @@ Check Test Tags
     RETURN    ${tc}
 
 Check Keyword Data
-    [Arguments]    ${kw}    ${name}    ${assign}=    ${args}=    ${status}=PASS    ${tags}=    ${doc}=*    ${message}=*    ${type}=KEYWORD
+    [Arguments]    ${kw}    ${name}    ${assign}=    ${args}=    ${status}=PASS    ${tags}=    ${doc}=*    ${message}=*    ${type}=KEYWORD    ${children}=-1
     Should Be Equal    ${kw.full_name}               ${name}
     Should Be Equal    ${{', '.join($kw.assign)}}    ${assign}
     Should Be Equal    ${{', '.join($kw.args)}}      ${args}
@@ -123,6 +123,8 @@ Check Keyword Data
     Should Match       ${kw.doc}                     ${doc}
     Should Match       ${kw.message}                 ${message}
     Should Be Equal    ${kw.type}                    ${type}
+    IF    ${children} >= 0
+    ...    Length Should Be    ${kw.body}            ${children}
 
 Check TRY Data
     [Arguments]    ${try}    ${patterns}=    ${pattern_type}=${None}    ${assign}=${None}    ${status}=PASS
