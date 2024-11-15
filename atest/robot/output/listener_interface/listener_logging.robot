@@ -10,10 +10,10 @@ Logging from listener does not break output file
 All start and end methods can log warnings to execution errors
     Correct warnings should be shown in execution errors
 
-Methods inside start_keyword and end_keyword can log normal messages
+Methods under tests can log normal messages
     Correct messages should be logged to normal log
 
-Methods outside start_keyword and end_keyword can log messages to syslog
+Methods outside tests can log messages to syslog
     Correct messages should be logged to syslog
 
 *** Keywords ***
@@ -73,10 +73,18 @@ Get start/end messages
 Correct messages should be logged to normal log
     'My Keyword' has correct messages    ${SUITE.setup}    Suite Setup
     ${tc} =    Check Test Case    Pass
-    'My Keyword' has correct messages    ${tc.kws[0]}    Pass
+    Check Log Message    ${tc.body[0]}   start_test    INFO
+    Check Log Message    ${tc.body[1]}   start_test    WARN
+    'My Keyword' has correct messages    ${tc.body[2]}    Pass
+    Check Log Message    ${tc.body[5]}   end_test    INFO
+    Check Log Message    ${tc.body[6]}   end_test    WARN
     ${tc} =    Check Test Case    Fail
-    'My Keyword' has correct messages    ${tc.kws[0]}    Fail
-    'Fail' has correct messages    ${tc.kws[1]}
+    Check Log Message    ${tc.body[0]}   start_test    INFO
+    Check Log Message    ${tc.body[1]}   start_test    WARN
+    'My Keyword' has correct messages    ${tc.body[2]}    Fail
+    'Fail' has correct messages    ${tc.body[3]}
+    Check Log Message    ${tc.body[4]}   end_test    INFO
+    Check Log Message    ${tc.body[5]}   end_test    WARN
 
 'My Keyword' has correct messages
     [Arguments]    ${kw}    ${name}
@@ -138,8 +146,6 @@ Correct messages should be logged to syslog
     ...    message: INFO Robot Framework
     ...    start_suite
     ...    end_suite
-    ...    start_test
-    ...    end_test
     ...    output_file
     ...    log_file
     ...    report_file
