@@ -166,8 +166,8 @@ class ListenerV3Facade(ListenerFacade):
         self.start_test = get('start_test')
         self.end_test = get('end_test')
         # Fallbacks for body items
-        start_body_item = self._get_method('start_body_item')
-        end_body_item = self._get_method('end_body_item')
+        start_body_item = get('start_body_item')
+        end_body_item = get('end_body_item')
         # Keywords
         self.start_keyword = get('start_keyword', start_body_item)
         self.end_keyword = get('end_keyword', end_body_item)
@@ -273,30 +273,31 @@ class ListenerV2Facade(ListenerFacade):
 
     def __init__(self, listener, name, is_logged, library=None):
         super().__init__(listener, name, is_logged, library)
+        get = self._get_method
         # Suite
-        self._start_suite = self._get_method('start_suite')
-        self._end_suite = self._get_method('end_suite')
+        self._start_suite = get('start_suite')
+        self._end_suite = get('end_suite')
         # Test
-        self._start_test = self._get_method('start_test')
-        self._end_test = self._get_method('end_test')
+        self._start_test = get('start_test')
+        self._end_test = get('end_test')
         # Keyword and control structures
-        self._start_kw = self._get_method('start_keyword')
-        self._end_kw = self._get_method('end_keyword')
+        self._start_kw = get('start_keyword')
+        self._end_kw = get('end_keyword')
         # Messages
-        self._log_message = self._get_method('log_message')
-        self._message = self._get_method('message')
+        self._log_message = get('log_message')
+        self._message = get('message')
         # Imports
-        self._library_import = self._get_method('library_import')
-        self._resource_import = self._get_method('resource_import')
-        self._variables_import = self._get_method('variables_import')
+        self._library_import = get('library_import')
+        self._resource_import = get('resource_import')
+        self._variables_import = get('variables_import')
         # Result files
-        self._output_file = self._get_method('output_file')
-        self._report_file = self._get_method('report_file')
-        self._log_file = self._get_method('log_file')
-        self._xunit_file = self._get_method('xunit_file')
-        self._debug_file = self._get_method('debug_file')
+        self._output_file = get('output_file')
+        self._report_file = get('report_file')
+        self._log_file = get('log_file')
+        self._xunit_file = get('xunit_file')
+        self._debug_file = get('debug_file')
         # Close
-        self._close = self._get_method('close')
+        self._close = get('close')
 
     def start_suite(self, data, result):
         self._start_suite(result.name, self._suite_attrs(data, result))
