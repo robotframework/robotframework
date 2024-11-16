@@ -30,6 +30,9 @@ class XmlLoggerAdapter(LoggerApi):
         logger = XmlLogger if not legacy_output else LegacyXmlLogger
         self.logger = logger(path, log_level, rpa, generator)
 
+    def is_logged(self, message):
+        return self.logger.is_logged(message)
+
     @property
     def flatten_level(self):
         return self.logger.flatten_level
@@ -155,6 +158,10 @@ class XmlLogger(ResultVisitor):
         self.flatten_level = 0
         self._errors = []
 
+    def is_logged(self, msg):
+        # `message` can be set to None by listeners to get it discarded.
+        return self._log_message_is_logged(msg.level) and msg.message is not None
+
     def _get_writer(self, output, rpa, generator, suite_only):
         if not output:
             return NullMarkupWriter()
@@ -186,13 +193,10 @@ class XmlLogger(ResultVisitor):
             self._errors.append(msg)
 
     def log_message(self, msg):
-        if self._log_message_is_logged(msg.level):
+        if self.is_logged(msg):
             self._write_message(msg)
 
     def _write_message(self, msg):
-        # Discard messages explicitly set to `None` by listeners.
-        if msg.message is None:
-            return
         attrs = {'time': msg.timestamp.isoformat() if msg.timestamp else None,
                  'level': msg.level}
         if msg.html:

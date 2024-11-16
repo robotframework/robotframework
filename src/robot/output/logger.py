@@ -206,6 +206,8 @@ class Logger(AbstractLogger):
             return
         for logger in self:
             logger.log_message(msg)
+        if self._log_message_parents and self._xml_logger.is_logged(msg):
+            self._log_message_parents[-1].body.append(msg)
         if msg.level in ('WARN', 'ERROR'):
             self.message(msg)
 
