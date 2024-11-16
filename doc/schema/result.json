@@ -80,8 +80,7 @@
       },
       "required": [
         "message",
-        "level",
-        "timestamp"
+        "level"
       ],
       "additionalProperties": false
     },
@@ -482,7 +481,44 @@
           "title": "Body",
           "type": "array",
           "items": {
-            "$ref": "#/definitions/TryBranch"
+            "anyOf": [
+              {
+                "$ref": "#/definitions/TryBranch"
+              },
+              {
+                "$ref": "#/definitions/Keyword"
+              },
+              {
+                "$ref": "#/definitions/For"
+              },
+              {
+                "$ref": "#/definitions/While"
+              },
+              {
+                "$ref": "#/definitions/If"
+              },
+              {
+                "$ref": "#/definitions/Try"
+              },
+              {
+                "$ref": "#/definitions/Var"
+              },
+              {
+                "$ref": "#/definitions/Break"
+              },
+              {
+                "$ref": "#/definitions/Continue"
+              },
+              {
+                "$ref": "#/definitions/Return"
+              },
+              {
+                "$ref": "#/definitions/Error"
+              },
+              {
+                "$ref": "#/definitions/Message"
+              }
+            ]
           }
         },
         "type": {
@@ -608,7 +644,44 @@
           "title": "Body",
           "type": "array",
           "items": {
-            "$ref": "#/definitions/IfBranch"
+            "anyOf": [
+              {
+                "$ref": "#/definitions/IfBranch"
+              },
+              {
+                "$ref": "#/definitions/Keyword"
+              },
+              {
+                "$ref": "#/definitions/For"
+              },
+              {
+                "$ref": "#/definitions/While"
+              },
+              {
+                "$ref": "#/definitions/If"
+              },
+              {
+                "$ref": "#/definitions/Try"
+              },
+              {
+                "$ref": "#/definitions/Var"
+              },
+              {
+                "$ref": "#/definitions/Break"
+              },
+              {
+                "$ref": "#/definitions/Continue"
+              },
+              {
+                "$ref": "#/definitions/Return"
+              },
+              {
+                "$ref": "#/definitions/Error"
+              },
+              {
+                "$ref": "#/definitions/Message"
+              }
+            ]
           }
         },
         "type": {
@@ -1451,8 +1524,7 @@
       },
       "required": [
         "message",
-        "level",
-        "timestamp"
+        "level"
       ],
       "additionalProperties": false
     }

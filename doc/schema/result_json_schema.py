@@ -68,14 +68,14 @@ class Message(BaseModel):
     message: str
     level: Literal['TRACE', 'DEBUG', 'INFO', 'WARN', 'ERROR', 'FAIL', 'SKIP']
     html: bool | None
-    timestamp: datetime
+    timestamp: datetime | None
 
 
 class ErrorMessage(BaseModel):
     message: str
     level: Literal['ERROR', 'WARN']
     html: bool | None
-    timestamp: datetime
+    timestamp: datetime | None
 
 
 class Keyword(WithStatus):
@@ -131,7 +131,7 @@ class IfBranch(WithStatus):
 
 class If(WithStatus):
     type = Field('IF/ELSE ROOT', const=True)
-    body: list[IfBranch]
+    body: list['IfBranch | Keyword | For | While | If | Try | Var | Break | Continue | Return | Error | Message']
 
 
 class TryBranch(WithStatus):
@@ -144,7 +144,7 @@ class TryBranch(WithStatus):
 
 class Try(WithStatus):
     type = Field('TRY/EXCEPT ROOT', const=True)
-    body: list[TryBranch]
+    body: list['TryBranch | Keyword | For | While | If | Try | Var | Break | Continue | Return | Error | Message']
 
 
 class TestCase(WithStatus):
@@ -238,8 +238,8 @@ class Result(BaseModel):
         }
 
 
-for cls in [Keyword, For, ForIteration, While, WhileIteration, IfBranch, TryBranch, TestSuite,
-            Error, Break, Continue, Return, Var]:
+for cls in [Keyword, For, ForIteration, While, WhileIteration, If, IfBranch,
+            Try, TryBranch, TestSuite, Error, Break, Continue, Return, Var]:
     cls.update_forward_refs()
 
 

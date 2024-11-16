@@ -662,6 +662,14 @@ class TestToFromDictAndJson(unittest.TestCase):
                      body=[{'type': 'ITERATION', 'assign': {'${x}': '1'}, 'status': 'FAIL', 'elapsed_time': 0,
                             'body': [{'name': 'K1', 'status': 'FAIL', 'elapsed_time': 0}]}])
 
+    def test_for_with_message_in_iterations(self):
+        root = For()
+        root.body.create_iteration()
+        root.body.create_message('xxx')
+        self._verify(root, type='FOR', assign=(), flavor='IN', values=(), status='FAIL', elapsed_time=0,
+                     body=[{'type': 'ITERATION', 'status': 'FAIL', 'elapsed_time': 0, 'assign': {}, 'body': []},
+                           {'type': 'MESSAGE', 'message': 'xxx', 'level': 'INFO'}])
+
     def test_while(self):
         self._verify(While(limit='1', on_limit_message='Ooops!', status='PASS'),
                      type='WHILE', limit='1', on_limit_message='Ooops!', status='PASS', elapsed_time=0, body=[])
@@ -670,8 +678,15 @@ class TestToFromDictAndJson(unittest.TestCase):
         iter_.body.create_keyword('K')
         self._verify(root, type='WHILE', condition='True', status='FAIL', elapsed_time=0,
                      body=[{'type': 'ITERATION', 'status': 'FAIL', 'elapsed_time': 0,
-                           'body': [{'name': 'K', 'status': 'FAIL', 'elapsed_time': 0}]}
-                           ])
+                           'body': [{'name': 'K', 'status': 'FAIL', 'elapsed_time': 0}]}])
+
+    def test_while_with_message_in_iterations(self):
+        root = While('True')
+        root.body.create_iteration()
+        root.body.create_message('xxx')
+        self._verify(root, type=BodyItem.WHILE, condition='True', status="FAIL", elapsed_time=0,
+                     body=[{'type': 'ITERATION', 'status': 'FAIL', 'elapsed_time': 0, 'body': []},
+                           {'type': 'MESSAGE', 'message': 'xxx', 'level': 'INFO'}])
 
     def test_if(self):
         now = datetime.now()
@@ -688,6 +703,15 @@ class TestToFromDictAndJson(unittest.TestCase):
         }
         self._verify(if_, type=BodyItem.IF_ELSE_ROOT, status="FAIL", message="I failed", start_time=now.isoformat(),
                      elapsed_time=0.1, body=[exp_branch])
+
+    def test_if_with_message_in_branches(self):
+        root = If()
+        root.body.create_branch(condition='True')
+        root.body.create_message('Hello!')
+        self._verify(root, type=BodyItem.IF_ELSE_ROOT, status="FAIL", elapsed_time=0,
+                     body=[{'type': 'IF', 'condition': 'True', 'elapsed_time': 0.0,
+                            'status': 'FAIL', 'body': []},
+                           {'type': 'MESSAGE', 'level': 'INFO', 'message': 'Hello!'}])
 
     def test_try_structure(self):
         root = Try()
@@ -707,6 +731,22 @@ class TestToFromDictAndJson(unittest.TestCase):
                             'body': [{'name': 'K3', 'status': 'FAIL', 'elapsed_time': 0}]},
                            {'type': 'FINALLY', 'status': 'FAIL', 'elapsed_time': 0,
                             'body': [{'name': 'K4', 'status': 'FAIL', 'elapsed_time': 0}]}])
+
+    def test_try_with_message_in_branches(self):
+        root = Try()
+        root.body.create_branch(Try.TRY).body.create_keyword('K1')
+        root.body.create_message('Hello', timestamp='2024-11-16 02:46')
+        root.body.create_branch(Try.FINALLY).body.create_keyword('K2')
+        self._verify(root,
+                     status='FAIL',
+                     elapsed_time=0,
+                     type='TRY/EXCEPT ROOT',
+                     body=[{'type': 'TRY', 'status': 'FAIL', 'elapsed_time': 0,
+                            'body': [{'name': 'K1', 'status': 'FAIL', 'elapsed_time': 0}]},
+                           {'type': 'MESSAGE', 'message': 'Hello', 'level': 'INFO',
+                            'timestamp': '2024-11-16T02:46:00'},
+                           {'type': 'FINALLY', 'status': 'FAIL', 'elapsed_time': 0,
+                            'body': [{'name': 'K2', 'status': 'FAIL', 'elapsed_time': 0}]}])
 
     def test_return_continue_break(self):
         self._verify(Return(('x', 'y')),

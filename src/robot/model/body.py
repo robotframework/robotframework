@@ -17,6 +17,7 @@ import re
 from typing import (Any, Callable, cast, Generic, Iterable, Type, TYPE_CHECKING,
                     TypeVar, Union)
 
+from robot.errors import DataError
 from robot.utils import copy_signature, KnownAtRuntime
 
 from .itemlist import ItemList
@@ -300,8 +301,11 @@ class BaseBranches(BaseBody[KW, F, W, I, T, V, R, C, B, M, E], BranchType[IT]):
         self.branch_class = branch_class
         super().__init__(parent, items)
 
-    def _item_from_dict(self, data: DataDict) -> IT:
-        return self.branch_class.from_dict(data)
+    def _item_from_dict(self, data: DataDict) -> BodyItem:
+        try:
+            return self.branch_class.from_dict(data)
+        except DataError:
+            return super()._item_from_dict(data)
 
     @copy_signature(branch_type)
     def create_branch(self, *args, **kwargs) -> IT:
@@ -323,8 +327,11 @@ class BaseIterations(BaseBody[KW, F, W, I, T, V, R, C, B, M, E], IterationType[F
         self.iteration_class = iteration_class
         super().__init__(parent, items)
 
-    def _item_from_dict(self, data: DataDict) -> FW:
-        return self.iteration_class.from_dict(data)
+    def _item_from_dict(self, data: DataDict) -> BodyItem:
+        try:
+            return self.iteration_class.from_dict(data)
+        except DataError:
+            return super()._item_from_dict(data)
 
     @copy_signature(iteration_type)
     def create_iteration(self, *args, **kwargs) -> FW:
