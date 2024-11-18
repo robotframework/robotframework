@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup       Run Tests    --listener ${LISTENER DIR}/ResultModel.py:${MODEL FILE} --loglevel DEBUG    ${LISTENER DIR}/result_model.robot
+Suite Setup       Run Tests    --listener "${LISTENER DIR}/ResultModel.py;${MODEL FILE}" --loglevel DEBUG    ${LISTENER DIR}/result_model.robot
 Resource          listener_resource.robot
 
 *** Variables ***
