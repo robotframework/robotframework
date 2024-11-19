@@ -13,8 +13,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import inspect
 import asyncio
+import inspect
+import sys
 from contextlib import contextmanager
 
 from robot.errors import DataError, ExecutionFailed
@@ -95,7 +96,6 @@ EXECUTION_CONTEXTS = ExecutionContexts()
 
 
 class _ExecutionContext:
-    _started_keywords_threshold = 100
 
     def __init__(self, suite, namespace, output, dry_run=False, asynchronous=None):
         self.suite = suite
@@ -249,10 +249,8 @@ class _ExecutionContext:
         self.timeout_occurred = False
 
     def start_body_item(self, data, result, implementation=None):
+        self._prevent_execution_close_to_recursion_limit()
         self.steps.append((data, result))
-        if len(self.steps) > self._started_keywords_threshold:
-            raise DataError('Maximum limit of started keywords and control '
-                            'structures exceeded.')
         output = self.output
         args = (data, result)
         if implementation:
@@ -289,6 +287,14 @@ class _ExecutionContext:
                 result.ERROR: output.start_error,
             }[result.type]
         method(*args)
+
+    def _prevent_execution_close_to_recursion_limit(self):
+        try:
+            sys._getframe(sys.getrecursionlimit() - 100)
+        except (ValueError, AttributeError):
+            pass
+        else:
+            raise DataError('Recursive execution stopped.')
 
     def end_body_item(self, data, result, implementation=None):
         output = self.output

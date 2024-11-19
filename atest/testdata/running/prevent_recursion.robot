@@ -2,7 +2,7 @@
 Suite Teardown       Recursion With Run Keyword
 
 *** Variables ***
-${LIMIT EXCEEDED}    Maximum limit of started keywords and control structures exceeded.
+${LIMIT EXCEEDED}    Recursive execution stopped.
 ${PSTD FAILED}       \n\nAlso parent suite teardown failed:\n${LIMIT EXCEEDED}
 
 *** Test Cases ***
