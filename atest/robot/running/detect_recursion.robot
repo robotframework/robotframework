@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup      Run Tests    ${EMPTY}    running/prevent_recursion.robot
+Suite Setup      Run Tests    ${EMPTY}    running/detect_recursion.robot
 Resource         atest_resource.robot
 
 *** Test Cases ***
@@ -18,4 +18,3 @@ Infinitely recursive for loop
 Recursion below the recursion limit is ok
     [Documentation]    Also verifies that recursion limit blown earlier doesn't affect subsequent tests
     Check Test Case    ${TESTNAME}
-
