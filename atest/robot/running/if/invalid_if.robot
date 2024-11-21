@@ -28,6 +28,12 @@ ELSE IF with invalid condition
 Recommend $var syntax if invalid condition contains ${var}
     FAIL    index=1
 
+$var recommendation with multiple variables
+    FAIL    index=1
+
+Remove quotes around variable in $var recommendation
+    FAIL    index=2
+
 IF without END
     FAIL
 
