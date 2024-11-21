@@ -36,6 +36,7 @@ def robot_handler_enabled(level):
         return
     handler = RobotHandler()
     old_raise = logging.raiseExceptions
+    old_level = root.level
     root.addHandler(handler)
     logging.raiseExceptions = False
     set_level(level)
@@ -43,6 +44,7 @@ def robot_handler_enabled(level):
         yield
     finally:
         root.removeHandler(handler)
+        root.setLevel(old_level)
         logging.raiseExceptions = old_raise
 
 
