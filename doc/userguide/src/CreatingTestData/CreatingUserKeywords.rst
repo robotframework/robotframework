@@ -1129,3 +1129,27 @@ HTML output files.
 .. note:: Private user keywords are new in Robot Framework 6.0.
 
 __ `User keyword tags`_
+
+Recursion
+---------
+
+User keywords can call themselves either directly or indirectly. This kind of
+recursive usage is fine as long as the recursion ends, typically based on some
+condition, before the recursion limit is exceeded. The limit exists because
+otherwise infinite recursion would crash the execution.
+
+Robot Framework's recursion detection works so, that it checks is the current
+recursion level close to the recursion limit of the underlying Python process.
+If it is close enough, no more new started keywords or control structures are
+allowed and execution fails.
+
+Python's default recursion limit is 1000 stack frames, which in practice means that
+it is possible to start approximately 140 keywords or control structures.
+If that is not enough, Python's recursion limit can be raised using the
+`sys.setrecursionlimit()`__ function. As the documentation of the function explains,
+this should be done with care, because a too-high level can lead to a crash.
+
+__ https://docs.python.org/3/library/sys.html#sys.setrecursionlimit
+
+.. note:: Prior to Robot Framework 7.2, the recursion limit was hard-coded to
+          100 started keywords or control structures.
