@@ -306,6 +306,16 @@ ROBOT_SYSLOG_LEVEL        Log level to use when writing to the syslog file.
                           Available levels are the same as for --loglevel
                           command line option and the default is INFO.
 
+Return Codes
+============
+
+0                         All tests passed.
+1-249                     Returned number of tests failed.
+250                       250 or more failures.
+251                       Help or version information printed.
+252                       Invalid data or command line options.
+255                       Unexpected internal error.
+
 Examples
 ========
 

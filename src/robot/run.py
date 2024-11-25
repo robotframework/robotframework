@@ -404,6 +404,17 @@ ROBOT_SYSLOG_LEVEL        Log level to use when writing to the syslog file.
 ROBOT_INTERNAL_TRACES     When set to any non-empty value, Robot Framework's
                           internal methods are included in error tracebacks.
 
+Return Codes
+============
+
+0                         All tests passed.
+1-249                     Returned number of tests failed.
+250                       250 or more failures.
+251                       Help or version information printed.
+252                       Invalid data or command line options.
+253                       Execution stopped by user.
+255                       Unexpected internal error.
+
 Examples
 ========
 
