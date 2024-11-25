@@ -24,7 +24,7 @@ from robot.api.deco import keyword
 from robot.errors import (BreakLoop, ContinueLoop, DataError, ExecutionFailed,
                           ExecutionFailures, ExecutionPassed, PassExecution,
                           ReturnFromKeyword, VariableError)
-from robot.running import Keyword, RUN_KW_REGISTER
+from robot.running import Keyword, RUN_KW_REGISTER, TypeInfo
 from robot.running.context import EXECUTION_CONTEXTS
 from robot.utils import (DotDict, escape, format_assign_message, get_error_message,
                          get_time, html_escape, is_falsy, is_integer, is_list_like,
@@ -583,8 +583,8 @@ class _Verify(_BuiltInBase):
 
     def should_be_equal(self, first, second, msg=None, values=True,
                         ignore_case=False, formatter='str', strip_spaces=False,
-                        collapse_spaces=False):
-        """Fails if the given objects are unequal.
+                        collapse_spaces=False, type=None, types=None):
+        r"""Fails if the given objects are unequal.
 
         Optional ``msg``, ``values`` and ``formatter`` arguments specify how
         to construct the error message if this keyword fails:
@@ -614,15 +614,33 @@ class _Verify(_BuiltInBase):
         arguments are strings, the comparison is done with all white spaces replaced by
         a single space character.
 
+        The ``type`` and ``types`` arguments control optional type conversion:
+        - If ``type`` is used, the argument ``second`` is converted to that type.
+          In addition to that, the argument ``first`` is validated to match the type.
+        - If ``types`` is used, both ``first`` and ``second`` are converted.
+        - Supported types are the same as supported by
+          [https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#supported-conversions|
+          automatic argument conversion] such as ``int``, ``bytes`` and ``list``.
+          Also parameterized types like ``list[int]`` and unions like ``int | float``
+          are supported.
+        - When using ``type``, a special value ``auto`` can be used to convert
+          ``second`` to the same type that ``first`` has.
+        - Using both ``type`` and ``types`` at the same time is an error.
+
         Examples:
         | Should Be Equal | ${x} | expected |
         | Should Be Equal | ${x} | expected | Custom error message |
         | Should Be Equal | ${x} | expected | Custom message | values=False |
         | Should Be Equal | ${x} | expected | ignore_case=True | formatter=repr |
+        | Should Be Equal | ${x} | \x00\x01 | type=bytes |
+        | Should Be Equal | ${x} | ${y}     | types=int|float |
 
         ``strip_spaces`` is new in Robot Framework 4.0 and
         ``collapse_spaces`` is new in Robot Framework 4.1.
+        ``type`` and ``types`` are new in Robot Framework 7.2.
         """
+        if type or types:
+            first, second = self._type_convert(first, second, type, types)
         self._log_types_at_info_if_different(first, second)
         if is_string(first) and is_string(second):
             if ignore_case:
@@ -635,6 +653,21 @@ class _Verify(_BuiltInBase):
                 first = self._collapse_spaces(first)
                 second = self._collapse_spaces(second)
         self._should_be_equal(first, second, msg, values, formatter)
+
+    def _type_convert(self, first, second, type, types, type_builtin=type):
+        if type and types:
+            raise TypeError("Cannot use both 'type' and 'types' arguments.")
+        elif types:
+            type = types
+        elif isinstance(type, str) and type.upper() == 'AUTO':
+            type = type_builtin(first)
+        converter = TypeInfo.from_type_hint(type).get_converter()
+        if types:
+            first = converter.convert(first, 'first')
+        elif not converter.no_conversion_needed(first):
+            raise ValueError(f"Argument 'first' got value {first!r} that "
+                             f"does not match type {type!r}.")
+        return first, converter.convert(second, 'second')
 
     def _should_be_equal(self, first, second, msg, values, formatter='str'):
         include_values = self._include_values(values)

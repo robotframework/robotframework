@@ -196,6 +196,13 @@ class TestTypeInfo(unittest.TestCase):
     def test_conversion(self):
         assert_equal(TypeInfo.from_type_hint(int).convert('42'), 42)
         assert_equal(TypeInfo.from_type_hint('list[int]').convert('[4, 2]'), [4, 2])
+        assert_equal(TypeInfo.from_type_hint('Literal["Dog", "Cat"]').convert('dog'), 'Dog')
+
+    def test_no_conversion_needed_with_literal(self):
+        converter = TypeInfo.from_type_hint('Literal["Dog", "Cat"]').get_converter()
+        assert_equal(converter.no_conversion_needed('Dog'), True)
+        assert_equal(converter.no_conversion_needed('dog'), False)
+        assert_equal(converter.no_conversion_needed('bad'), False)
 
     def test_failing_conversion(self):
         assert_raises_with_msg(
@@ -244,12 +251,12 @@ class TestTypeInfo(unittest.TestCase):
     def test_no_converter(self):
         assert_raises_with_msg(
             TypeError,
-            "No converter found for 'Unknown'.",
+            "Cannot convert type 'Unknown'.",
             TypeInfo.from_type_hint(type('Unknown', (), {})).convert, 'whatever'
         )
         assert_raises_with_msg(
             TypeError,
-            "No converter found for 'unknown[int]'.",
+            "Cannot convert type 'unknown[int]'.",
             TypeInfo.from_type_hint('unknown[int]').convert, 'whatever'
         )
 

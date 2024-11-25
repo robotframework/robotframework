@@ -282,6 +282,26 @@ class TypeInfo(metaclass=SetterAwareType):
             ``ValueError`` is conversion fails.
         :return: Converted value.
         """
+        converter = self.get_converter(custom_converters, languages)
+        return converter.convert(value, name, kind)
+
+    def get_converter(self,
+                      custom_converters: 'CustomArgumentConverters|dict|None' = None,
+                      languages: 'LanguagesLike' = None) -> TypeConverter:
+        """Get argument converter for this ``TypeInfo``.
+
+        :param custom_converters: Custom argument converters.
+        :param languages: Language configuration. During execution, uses the
+            current language configuration by default.
+        :raises: ``TypeError`` if there is no converter for this type.
+        :return: ``TypeConverter``.
+
+        The :meth:`convert` method handles the common conversion case, but this
+        method can be used if the converter is needed multiple times or its
+        needed also for other purposes than conversion.
+
+        New in Robot Framework 7.2.
+        """
         if isinstance(custom_converters, dict):
             custom_converters = CustomArgumentConverters.from_dict(custom_converters)
         if not languages and EXECUTION_CONTEXTS.current:
@@ -290,8 +310,8 @@ class TypeInfo(metaclass=SetterAwareType):
             languages = Languages(languages)
         converter = TypeConverter.converter_for(self, custom_converters, languages)
         if not converter:
-            raise TypeError(f"No converter found for '{self}'.")
-        return converter.convert(value, name, kind)
+            raise TypeError(f"Cannot convert type '{self}'.")
+        return converter
 
     def __str__(self):
         if self.is_union:

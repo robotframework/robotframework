@@ -760,7 +760,8 @@ class LiteralConverter(TypeConverter):
         return type_info.type is Literal
 
     def no_conversion_needed(self, value: Any) -> bool:
-        return False
+        return any(value == expected and type(value) is type(expected)
+                   for expected, _ in self.converters)
 
     def _handles_value(self, value):
         return True
