@@ -380,10 +380,10 @@ class _Converter(_BuiltInBase):
         """
         try:
             try:
-                ordinals = getattr(self, f'_get_ordinals_from_{input_type}')
+                get_ordinals = getattr(self, f'_get_ordinals_from_{input_type}')
             except AttributeError:
                 raise RuntimeError(f"Invalid input type '{input_type}'.")
-            return bytes(bytearray(o for o in ordinals(input)))
+            return bytes(o for o in get_ordinals(input))
         except:
             raise RuntimeError("Creating bytes failed: " + get_error_message())
 
