@@ -68,6 +68,7 @@ class BodyRunner:
             raise ExecutionFailed('All iterations skipped.', skip=True)
         return [e for e in errors if not e.skip]
 
+
 class KeywordRunner:
 
     def __init__(self, context, run=True):
@@ -141,6 +142,8 @@ class ForInRunner:
                 if not failed.can_continue(self._context, self._templated):
                     break
         if errors:
+            if self._templated and len(errors) > 1 and all(e.skip for e in errors):
+                raise ExecutionFailed('All iterations skipped.', skip=True)
             raise ExecutionFailures(errors)
         return executed
 
