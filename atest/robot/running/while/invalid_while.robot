@@ -37,6 +37,15 @@ Invalid condition causes normal error
 Non-existing variable in condition causes normal error
     Check Test Case    ${TEST NAME}
 
+Templatest are not supported
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Should Be Equal       ${tc.body[0].type}               WHILE
+    Should Be Equal       ${tc.body[0].status}             FAIL
+    Should Be Equal       ${tc.body[0].body[0].type}       ITERATION
+    Should Be Equal       ${tc.body[0].body[0].status}     NOT RUN
+    Check Keyword Data    ${tc.body[0].body[0].body[0]}    ${EMPTY}    args=1    status=NOT RUN
+    Check Keyword Data    ${tc.body[0].body[0].body[1]}    ${EMPTY}    args=2    status=NOT RUN
+
 *** Keywords ***
 Check Invalid WHILE Test Case
     [Arguments]    ${body}=True

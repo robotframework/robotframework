@@ -10,10 +10,11 @@ from robot.parsing.model.blocks import (
     Keyword, KeywordSection, SettingSection, TestCase, TestCaseSection, VariableSection
 )
 from robot.parsing.model.statements import (
-    Arguments, Break, Comment, Config, Continue, Documentation, ForHeader, End, ElseHeader,
-    ElseIfHeader, EmptyLine, Error, IfHeader, InlineIfHeader, TryHeader, ExceptHeader,
-    FinallyHeader, KeywordCall, KeywordName, Return, ReturnSetting, ReturnStatement,
-    SectionHeader, TestCaseName, TestTags, Var, Variable, WhileHeader
+    Arguments, Break, Comment, Config, Continue, Documentation, ForHeader, End,
+    ElseHeader, ElseIfHeader, EmptyLine, Error, IfHeader, InlineIfHeader,
+    TemplateArguments, TryHeader, ExceptHeader, FinallyHeader, KeywordCall,
+    KeywordName, Return, ReturnSetting, ReturnStatement, SectionHeader, TestCaseName,
+    TestTags, Var, Variable, WhileHeader
 )
 from robot.utils.asserts import assert_equal, assert_raises_with_msg
 
@@ -130,14 +131,15 @@ EXPECTED = File(sections=[
 ])
 
 
-def get_and_assert_model(data, expected, depth=2):
+def get_and_assert_model(data, expected, depth=2, indices=None):
     for data_only in True, False:
         model = get_model(data.strip(), data_only=data_only)
         if not data_only:
             remove_non_data(model)
         node = model.sections[0]
-        for _ in range(depth):
-            node = node.body[0]
+        for i in range(depth):
+            index = indices[i] if indices else 0
+            node = node.body[index]
         assert_model(node, expected)
     return node
 
@@ -457,6 +459,28 @@ Example
             errors=('WHILE loop cannot be empty.',)
         )
         get_and_assert_model(data, expected)
+
+    def test_templates_not_allowed(self):
+        data = '''
+*** Test Cases ***
+Example
+    [Template]    Log
+    WHILE    True
+        Hello, world!
+    END
+'''
+        expected = While(
+            header=WhileHeader([
+                Token(Token.WHILE, 'WHILE', 4, 4),
+                Token(Token.ARGUMENT, 'True', 4, 13)
+            ]),
+            body=[
+                TemplateArguments([Token(Token.ARGUMENT, 'Hello, world!', 5, 8)])
+            ],
+            end=End([Token(Token.END, 'END', 6, 4)]),
+            errors=('WHILE does not support templates.',)
+        )
+        get_and_assert_model(data, expected, indices=[0, 1])
 
 
 class TestIf(unittest.TestCase):
@@ -906,6 +930,33 @@ Example
                     'TRY must have closing END.')
         )
         get_and_assert_model(data, expected)
+
+    def test_templates_not_allowed(self):
+        data = '''
+*** Test Cases ***
+Example
+    [Template]    Log
+    TRY
+        Hello, world!
+    FINALLY
+        Hello, again!
+    END
+'''
+        expected = Try(
+            header=TryHeader([Token(Token.TRY, 'TRY', 4, 4)]),
+            body=[
+                TemplateArguments([Token(Token.ARGUMENT, 'Hello, world!', 5, 8)])
+            ],
+            next=Try(
+                header=FinallyHeader([Token(Token.FINALLY, 'FINALLY', 6, 4)]),
+                body=[
+                    TemplateArguments([Token(Token.ARGUMENT, 'Hello, again!', 7, 8)])
+                ],
+            ),
+            end=End([Token(Token.END, 'END', 8, 4)]),
+            errors=("TRY does not support templates.",),
+        )
+        get_and_assert_model(data, expected, indices=[0, 1])
 
 
 class TestVariables(unittest.TestCase):

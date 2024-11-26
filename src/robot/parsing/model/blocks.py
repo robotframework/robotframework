@@ -328,6 +328,7 @@ class Try(NestedBlock):
         if self.type == Token.TRY:
             self._validate_structure()
             self._validate_end()
+            TemplatesNotAllowed('TRY').check(self)
 
     def _validate_body(self):
         if self._body_is_empty():
@@ -395,6 +396,7 @@ class While(NestedBlock):
             self.errors += ('WHILE loop cannot be empty.',)
         if not self.end:
             self.errors += ('WHILE loop must have closing END.',)
+        TemplatesNotAllowed('WHILE').check(self)
 
 
 class ModelWriter(ModelVisitor):
@@ -504,3 +506,19 @@ class LastStatementFinder(ModelVisitor):
 
     def visit_Statement(self, statement: Statement):
         self.statement = statement
+
+
+class TemplatesNotAllowed(ModelVisitor):
+
+    def __init__(self, kind: str):
+        self.kind = kind
+        self.found = False
+
+    def check(self, model: Node):
+        self.found = False
+        self.visit(model)
+        if self.found:
+            model.errors += (f'{self.kind} does not support templates.',)
+
+    def visit_TemplateArguments(self, node: None):
+        self.found = True

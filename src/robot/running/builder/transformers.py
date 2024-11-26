@@ -439,11 +439,10 @@ class TryBuilder(BodyBuilder):
     def __init__(self, parent: 'TestCase|UserKeyword|For|If|Try|While'):
         super().__init__()
         self.root = parent.body.create_try()
-        self.template_error = None
 
     def build(self, node):
-        self.root.config(lineno=node.lineno)
-        errors = self._get_errors(node)
+        self.root.config(lineno=node.lineno,
+                         error=format_error(self._get_errors(node)))
         while node:
             self.model = self.root.body.create_branch(node.type, node.patterns,
                                                       node.pattern_type, node.assign,
@@ -451,10 +450,6 @@ class TryBuilder(BodyBuilder):
             for step in node.body:
                 self.visit(step)
             node = node.next
-        if self.template_error:
-            errors += (self.template_error,)
-        if errors:
-            self.root.error = format_error(errors)
         return self.root
 
     def _get_errors(self, node):
@@ -465,9 +460,6 @@ class TryBuilder(BodyBuilder):
             errors += node.end.errors
         return errors
 
-    def visit_TemplateArguments(self, node):
-        self.template_error = 'Templates cannot be used with TRY.'
-
 
 class WhileBuilder(BodyBuilder):
     model: While
@@ -476,10 +468,12 @@ class WhileBuilder(BodyBuilder):
         super().__init__(parent.body.create_while())
 
     def build(self, node):
-        error = format_error(self._get_errors(node))
-        self.model.config(condition=node.condition, limit=node.limit,
-                          on_limit=node.on_limit, on_limit_message=node.on_limit_message,
-                          lineno=node.lineno, error=error)
+        self.model.config(condition=node.condition,
+                          limit=node.limit,
+                          on_limit=node.on_limit,
+                          on_limit_message=node.on_limit_message,
+                          lineno=node.lineno,
+                          error=format_error(self._get_errors(node)))
         for step in node.body:
             self.visit(step)
         return self.model
