@@ -6,18 +6,18 @@ Resource          dryrun_resource.robot
 *** Test Cases ***
 IF will not recurse in dry run
     ${tc}=    Check Test Case    ${TESTNAME}
-    Check Branch Statuses    ${tc.body[0]}                            Recursive if         PASS
-    Check Branch Statuses    ${tc.body[0].body[0].body[0].body[0]}    Recursive if         NOT RUN
+    Check Branch Statuses    ${tc.body[0]}        Recursive if         PASS
+    Check Branch Statuses    ${tc[0, 0, 0, 0]}    Recursive if         NOT RUN
 
 ELSE IF will not recurse in dry run
     ${tc}=    Check Test Case    ${TESTNAME}
-    Check Branch Statuses    ${tc.body[0]}                            Recursive else if    PASS
-    Check Branch Statuses    ${tc.body[0].body[0].body[1].body[0]}    Recursive else if    NOT RUN
+    Check Branch Statuses    ${tc.body[0]}        Recursive else if    PASS
+    Check Branch Statuses    ${tc[0, 0, 1, 0]}    Recursive else if    NOT RUN
 
 ELSE will not recurse in dry run
     ${tc}=    Check Test Case    ${TESTNAME}
-    Check Branch Statuses    ${tc.body[0]}                            Recursive else       PASS
-    Check Branch Statuses    ${tc.body[0].body[0].body[2].body[0]}    Recursive else       NOT RUN
+    Check Branch Statuses    ${tc.body[0]}        Recursive else       PASS
+    Check Branch Statuses    ${tc[0, 0, 2, 0]}    Recursive else       NOT RUN
 
 Dryrun fail inside of IF
     Check Test Case    ${TESTNAME}
@@ -44,9 +44,9 @@ Dryrun fail empty IF in non executed branch
 Check Branch Statuses
     [Arguments]    ${kw}    ${name}    ${status}
     Should Be Equal    ${kw.name}                      ${name}
-    Should Be Equal    ${kw.body[0].body[0].type}      IF
-    Should Be Equal    ${kw.body[0].body[0].status}    ${status}
-    Should Be Equal    ${kw.body[0].body[1].type}      ELSE IF
-    Should Be Equal    ${kw.body[0].body[1].status}    ${status}
-    Should Be Equal    ${kw.body[0].body[2].type}      ELSE
-    Should Be Equal    ${kw.body[0].body[2].status}    ${status}
+    Should Be Equal    ${kw[0, 0].type}      IF
+    Should Be Equal    ${kw[0, 0].status}    ${status}
+    Should Be Equal    ${kw[0, 1].type}      ELSE IF
+    Should Be Equal    ${kw[0, 1].status}    ${status}
+    Should Be Equal    ${kw[0, 2].type}      ELSE
+    Should Be Equal    ${kw[0, 2].status}    ${status}

@@ -15,97 +15,112 @@ from robot.result.model import Body, Iterations
 from robot.utils.asserts import assert_equal
 
 
-class NoSlotsKeyword(Keyword):
+class WithBodyTraversing:
+
+    def __getitem__(self, index):
+        if isinstance(index, str):
+            index = tuple(int(i) for i in index.split(','))
+        if isinstance(index, (int, slice)):
+            return self.body[index]
+        if isinstance(index, tuple):
+            item = self
+            for i in index:
+                item = item.body[int(i)]
+            return item
+        raise TypeError(f"Invalid index `{repr(index)}`")
+
+
+class ATestKeyword(Keyword, WithBodyTraversing):
     pass
 
 
-class NoSlotsFor(For):
+class ATestFor(For, WithBodyTraversing):
     pass
 
 
-class NoSlotsWhile(While):
+class ATestWhile(While, WithBodyTraversing):
     pass
 
 
-class NoSlotsIf(If):
+class ATestIf(If, WithBodyTraversing):
     pass
 
 
-class NoSlotsTry(Try):
+class ATestTry(Try, WithBodyTraversing):
     pass
 
 
-class NoSlotsVar(Var):
+class ATestVar(Var, WithBodyTraversing):
     pass
 
 
-class NoSlotsReturn(Return):
+class ATestReturn(Return, WithBodyTraversing):
     pass
 
 
-class NoSlotsBreak(Break):
+class ATestBreak(Break, WithBodyTraversing):
     pass
 
 
-class NoSlotsContinue(Continue):
+class ATestContinue(Continue, WithBodyTraversing):
     pass
 
 
-class NoSlotsError(Error):
+class ATestError(Error, WithBodyTraversing):
     pass
 
 
-class NoSlotsBody(Body):
-    keyword_class = NoSlotsKeyword
-    for_class = NoSlotsFor
-    if_class = NoSlotsIf
-    try_class = NoSlotsTry
-    while_class = NoSlotsWhile
-    var_class = NoSlotsVar
-    return_class = NoSlotsReturn
-    break_class = NoSlotsBreak
-    continue_class = NoSlotsContinue
-    error_class = NoSlotsError
+class ATestBody(Body, WithBodyTraversing):
+    keyword_class = ATestKeyword
+    for_class = ATestFor
+    if_class = ATestIf
+    try_class = ATestTry
+    while_class = ATestWhile
+    var_class = ATestVar
+    return_class = ATestReturn
+    break_class = ATestBreak
+    continue_class = ATestContinue
+    error_class = ATestError
 
 
-class NoSlotsIfBranch(IfBranch):
-    body_class = NoSlotsBody
+class ATestIfBranch(IfBranch, WithBodyTraversing):
+    body_class = ATestBody
 
 
-class NoSlotsTryBranch(TryBranch):
-    body_class = NoSlotsBody
+class ATestTryBranch(TryBranch, WithBodyTraversing):
+    body_class = ATestBody
 
 
-class NoSlotsForIteration(ForIteration):
-    body_class = NoSlotsBody
+class ATestForIteration(ForIteration, WithBodyTraversing):
+    body_class = ATestBody
 
 
-class NoSlotsWhileIteration(WhileIteration):
-    body_class = NoSlotsBody
+class ATestWhileIteration(WhileIteration, WithBodyTraversing):
+    body_class = ATestBody
 
 
-class NoSlotsIterations(Iterations):
-    keyword_class = NoSlotsKeyword
+class ATestIterations(Iterations, WithBodyTraversing):
+    keyword_class = ATestKeyword
 
 
-NoSlotsKeyword.body_class = NoSlotsVar.body_class = NoSlotsReturn.body_class \
-    = NoSlotsBreak.body_class = NoSlotsContinue.body_class \
-    = NoSlotsError.body_class = NoSlotsBody
-NoSlotsFor.iterations_class = NoSlotsWhile.iterations_class = NoSlotsIterations
-NoSlotsFor.iteration_class = NoSlotsForIteration
-NoSlotsWhile.iteration_class = NoSlotsWhileIteration
-NoSlotsIf.branch_class = NoSlotsIfBranch
-NoSlotsTry.branch_class = NoSlotsTryBranch
+ATestKeyword.body_class = ATestVar.body_class = ATestReturn.body_class \
+    = ATestBreak.body_class = ATestContinue.body_class \
+    = ATestError.body_class = ATestBody
+ATestFor.iterations_class = ATestWhile.iterations_class = ATestIterations
+ATestFor.iteration_class = ATestForIteration
+ATestWhile.iteration_class = ATestWhileIteration
+ATestIf.branch_class = ATestIfBranch
+ATestTry.branch_class = ATestTryBranch
 
 
-class NoSlotsTestCase(TestCase):
-    fixture_class = NoSlotsKeyword
-    body_class = NoSlotsBody
+class ATestTestCase(TestCase, WithBodyTraversing):
+    fixture_class = ATestKeyword
+    body_class = ATestBody
 
 
-class NoSlotsTestSuite(TestSuite):
-    fixture_class = NoSlotsKeyword
-    test_class = NoSlotsTestCase
+class ATestTestSuite(TestSuite):
+    fixture_class = ATestKeyword
+    test_class = ATestTestCase
 
 
 class TestCheckerLibrary:
@@ -127,7 +142,7 @@ class TestCheckerLibrary:
             self._validate_output(path)
         try:
             logger.info("Processing output '%s'." % path)
-            result = Result(suite=NoSlotsTestSuite())
+            result = Result(suite=ATestTestSuite())
             ExecutionResultBuilder(path).build(result)
         except:
             set_suite_variable('$SUITE', None)
@@ -368,7 +383,7 @@ class ProcessResults(ResultVisitor):
         test.kws = list(test.body)
 
     def start_body_item(self, item):
-        # TODO: Consider not setting these attributes to avoid "NoSlots" variants.
+        # TODO: Consider not setting these attributes to avoid "ATest" variants.
         # - Using normal `body` and `messages` would in general be cleaner.
         # - If `kws` is preserved, it should only contain keywords, not controls.
         # - `msgs` isn't that much shorter than `messages`.

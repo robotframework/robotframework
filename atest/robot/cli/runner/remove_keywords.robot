@@ -99,10 +99,10 @@ Test should contain for messages
     [Arguments]    ${name}
     ${tc} =    Check test case    ${name}
     ${for} =    Set Variable    ${tc.kws[0].kws[0]}
-    Check log message    ${for.body[0].body[0].body[1].body[0].body[0]}    ${REMOVED FOR MESSAGE} one
-    Check log message    ${for.body[1].body[0].body[1].body[0].body[0]}    ${REMOVED FOR MESSAGE} two
-    Check log message    ${for.body[2].body[0].body[1].body[0].body[0]}    ${REMOVED FOR MESSAGE} three
-    Check log message    ${for.body[3].body[0].body[0].body[0].body[0]}    ${KEPT FOR MESSAGE} LAST
+    Check log message    ${for[0, 0, 1, 0, 0]}    ${REMOVED FOR MESSAGE} one
+    Check log message    ${for[1, 0, 1, 0, 0]}    ${REMOVED FOR MESSAGE} two
+    Check log message    ${for[2, 0, 1, 0, 0]}    ${REMOVED FOR MESSAGE} three
+    Check log message    ${for[3, 0, 0, 0, 0]}    ${KEPT FOR MESSAGE} LAST
 
 Output should contain while messages
     Test should contain while messages    WHILE when test passes
@@ -112,10 +112,10 @@ Test should contain while messages
     [Arguments]    ${name}
     ${tc} =    Check test case    ${name}
     ${while} =    Set Variable    ${tc.kws[0].kws[1]}
-    Check log message    ${while.body[0].body[0].body[1].body[0].body[0]}    ${REMOVED WHILE MESSAGE} 1
-    Check log message    ${while.body[1].body[0].body[1].body[0].body[0]}    ${REMOVED WHILE MESSAGE} 2
-    Check log message    ${while.body[2].body[0].body[1].body[0].body[0]}    ${REMOVED WHILE MESSAGE} 3
-    Check log message    ${while.body[3].body[0].body[0].body[0].body[0]}    ${KEPT WHILE MESSAGE} 4
+    Check log message    ${while[0, 0, 1, 0, 0]}    ${REMOVED WHILE MESSAGE} 1
+    Check log message    ${while[1, 0, 1, 0, 0]}    ${REMOVED WHILE MESSAGE} 2
+    Check log message    ${while[2, 0, 1, 0, 0]}    ${REMOVED WHILE MESSAGE} 3
+    Check log message    ${while[3, 0, 0, 0, 0]}    ${KEPT WHILE MESSAGE} 4
 
 Output should contain WUKS messages
     Test should contain WUKS messages    WUKS when test passes

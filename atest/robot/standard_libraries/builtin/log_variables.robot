@@ -5,7 +5,7 @@ Resource          atest_resource.robot
 
 *** Test Cases ***
 Log Variables In Suite Setup
-    Set Test Variable    ${KW}    ${SUITE.setup.body[7]}
+    Set Test Variable    ${KW}    ${SUITE.setup[7]}
     Set Test Variable    ${INDEX}    ${0}
     Check Variable Message    \${/} = *    pattern=yes
     Check Variable Message    \${:} = ${:}
@@ -48,7 +48,7 @@ Log Variables In Suite Setup
 
 Log Variables In Test
     ${test} =    Check Test Case    Log Variables
-    Set Test Variable    ${KW}    ${test.body[0]}
+    Set Test Variable    ${KW}    ${test[0]}
     Set Test Variable    ${INDEX}    ${1}
     Check Variable Message    \${/} = *    pattern=yes
     Check Variable Message    \${:} = ${:}
@@ -93,7 +93,7 @@ Log Variables In Test
 
 Log Variables After Setting New Variables
     ${test} =    Check Test Case    Log Variables
-    Set Test Variable    ${KW}    ${test.body[4]}
+    Set Test Variable    ${KW}    ${test[4]}
     Set Test Variable    ${INDEX}    ${1}
     Check Variable Message    \${/} = *    DEBUG    pattern=yes
     Check Variable Message    \${:} = ${:}    DEBUG
@@ -141,7 +141,7 @@ Log Variables After Setting New Variables
 
 Log Variables In User Keyword
     ${test} =    Check Test Case    Log Variables
-    Set Test Variable    ${KW}    ${test.body[5].body[2]}
+    Set Test Variable    ${KW}    ${test[5, 2]}
     Set Test Variable    ${INDEX}    ${1}
     Check Variable Message    \${/} = *    pattern=yes
     Check Variable Message    \${:} = ${:}

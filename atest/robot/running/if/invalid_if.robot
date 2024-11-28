@@ -50,7 +50,7 @@ ELSE IF without condition
 ELSE IF with multiple conditions
     [Template]    NONE
     ${tc} =    Branch statuses should be    FAIL    NOT RUN    NOT RUN
-    Should Be Equal    ${tc.body[0].body[1].condition}    \${False}, ooops, \${True}
+    Should Be Equal    ${tc[0, 1].condition}    \${False}, ooops, \${True}
 
 ELSE with condition
     FAIL    NOT RUN

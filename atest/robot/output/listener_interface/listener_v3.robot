@@ -82,12 +82,12 @@ Library import
     Stdout Should Contain    Imported library 'BuiltIn' with 107 keywords.
     Stdout Should Contain    Imported library 'String' with 32 keywords.
     ${tc} =   Get Test Case    Pass [start suite]
-    Check Keyword Data    ${tc.body[0].body[0]}    BuiltIn.Log    doc=Changed!    args=Hello says "\${who}"!, \${LEVEL1}
+    Check Keyword Data    ${tc[0, 0]}    BuiltIn.Log    doc=Changed!    args=Hello says "\${who}"!, \${LEVEL1}
 
 Resource import
     Stdout Should Contain    Imported resource 'example' with 2 keywords.
     ${tc} =   Get Test Case    Pass [start suite]
-    Check Keyword Data    ${tc.body[1].body[1]}    example.New!    doc=Dynamically created.
+    Check Keyword Data    ${tc[1, 1]}    example.New!    doc=Dynamically created.
 
 Variables import
     Stdout Should Contain    Imported variables 'variables.py' without much info.

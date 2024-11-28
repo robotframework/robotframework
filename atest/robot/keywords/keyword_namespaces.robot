@@ -31,18 +31,18 @@ Keyword From Test Case File Overriding Local Keyword In Resource File Is Depreca
     ...    Keyword 'my_resource_1.Use test case file keyword even when local keyword with same name exists' called keyword
     ...    'Keyword Everywhere' that exists both in the same resource file as the caller and in the suite file using that
     ...    resource. The keyword in the suite file is used now, but this will change in Robot Framework 8.0.
-    Check Log Message    ${tc.body[0].body[0].msgs[0]}    ${message}    WARN
+    Check Log Message    ${tc[0, 0].msgs[0]}    ${message}    WARN
     Check Log Message    ${ERRORS}[1]                     ${message}    WARN
 
 Local keyword in resource file has precedence over keywords in other resource files
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.body[0].body[0].body[0].msgs[0]}    Keyword in resource 1
-    Check Log Message    ${tc.body[1].body[0].body[0].msgs[0]}    Keyword in resource 2
+    Check Log Message    ${tc[0, 0, 0].msgs[0]}    Keyword in resource 1
+    Check Log Message    ${tc[1, 0, 0].msgs[0]}    Keyword in resource 2
 
 Search order has precedence over local keyword in resource file
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.body[0].body[0].body[0].msgs[0]}    Keyword in resource 1
-    Check Log Message    ${tc.body[1].body[0].body[0].msgs[0]}    Keyword in resource 1
+    Check Log Message    ${tc[0, 0, 0].msgs[0]}    Keyword in resource 1
+    Check Log Message    ${tc[1, 0, 0].msgs[0]}    Keyword in resource 1
 
 Keyword From Custom Library Overrides Keywords From Standard Library
     ${tc} =    Check Test Case    ${TEST NAME}
