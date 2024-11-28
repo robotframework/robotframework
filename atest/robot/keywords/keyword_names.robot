@@ -3,7 +3,7 @@ Documentation     Tests for how keyword names are logged in outputs. Should
 ...               always use full names (e.g. 'MyLib.My Keyword') and use format
 ...               defined in library or resource, not format that is used.
 Suite Setup       Run Tests    --pythonpath ${RESDIR}    keywords/keyword_names.robot
-Resource          atest.resource
+Resource          atest_resource.robot
 
 *** Variables ***
 ${RESDIR}         ${DATADIR}/keywords/resources
