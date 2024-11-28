@@ -18,13 +18,13 @@ Passed Steps Are Removed Except The Last One
 
 Failed Steps Are Not Removed
     ${tc}=    Check Test Case    Failure inside FOR 2
-    Length Should Be    ${tc.body[0].body}                         1
-    Should Be Equal     ${tc.body[0].message}                      *HTML* Failure with &lt;4&gt;<hr>${3 REMOVED}
-    Should Be Equal     ${tc.body[0].body[0].type}                 ITERATION
-    Should Be Equal     ${tc.body[0].body[0].assign['\${num}']}    4
-    Should Be Equal     ${tc.body[0].body[0].status}               FAIL
-    Length Should Be    ${tc.body[0].body[0].body}                 3
-    Should Be Equal     ${tc.body[0].body[0].body[-1].status}      NOT RUN
+    Length Should Be    ${tc[0].body}                    1
+    Should Be Equal     ${tc[0].message}                 *HTML* Failure with &lt;4&gt;<hr>${3 REMOVED}
+    Should Be Equal     ${tc[0, 0].type}                 ITERATION
+    Should Be Equal     ${tc[0, 0].assign['\${num}']}    4
+    Should Be Equal     ${tc[0, 0].status}               FAIL
+    Length Should Be    ${tc[0, 0].body}                 3
+    Should Be Equal     ${tc[0, 0,-1].status}            NOT RUN
 
 Steps With Warning Are Not Removed
     ${tc}=    Check Test Case    Variables in values
@@ -51,11 +51,11 @@ Steps From Loops In Keywords From Loops Are Removed
 
 Empty Loops Are Handled Correctly
     ${tc}=    Check Test Case    Empty body
-    Should Be Equal    ${tc.body[0].status}            FAIL
-    Should Be Equal    ${tc.body[0].message}           FOR loop cannot be empty.
-    Should Be Equal    ${tc.body[0].body[0].type}      ITERATION
-    Should Be Equal    ${tc.body[0].body[0].status}    NOT RUN
-    Should Be Empty    ${tc.body[0].body[0].body}
+    Should Be Equal    ${tc[0].status}            FAIL
+    Should Be Equal    ${tc[0].message}           FOR loop cannot be empty.
+    Should Be Equal    ${tc[0, 0].type}           ITERATION
+    Should Be Equal    ${tc[0, 0].status}         NOT RUN
+    Should Be Empty    ${tc[0, 0].body}
 
 *** Keywords ***
 Remove For Loop Keywords With Rebot

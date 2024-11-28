@@ -70,7 +70,7 @@ Setup/teardown with existing variable is resolved and executed
     ${tc} =    Check Test Case    ${TESTNAME}
     Check Keyword Data    ${tc.setup}    BuiltIn.No Operation    status=NOT RUN    type=SETUP
     Check Keyword Data    ${tc.teardown}    Teardown    args=\${nonex arg}    type=TEARDOWN
-    Check Keyword Data    ${tc.teardown.body[0]}    BuiltIn.Log    args=\${arg}    status=NOT RUN
+    Check Keyword Data    ${tc.teardown[0]}    BuiltIn.Log    args=\${arg}    status=NOT RUN
 
 User keyword return value
     Check Test Case    ${TESTNAME}

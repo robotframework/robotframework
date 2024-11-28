@@ -6,14 +6,14 @@ Resource          for.resource
 *** Test Cases ***
 Simple loop
     ${tc} =    Check test case    ${TEST NAME}
-    ${loop} =    Set variable    ${tc.body[1]}
-    Check log message          ${tc.body[0].msgs[0]}              Not yet in FOR
+    ${loop} =    Set variable    ${tc[1]}
+    Check log message          ${tc[0].msgs[0]}         Not yet in FOR
     Should be FOR loop         ${loop}    2
-    Should be FOR iteration    ${loop.body[0]}                    \${var}=one
-    Check log message          ${loop.body[0].body[0].msgs[0]}    var: one
-    Should be FOR iteration    ${loop.body[1]}                    \${var}=two
-    Check log message          ${loop.body[1].body[0].msgs[0]}    var: two
-    Check log message          ${tc.body[2].body[0]}              Not in FOR anymore
+    Should be FOR iteration    ${loop[0]}               \${var}=one
+    Check log message          ${loop[0, 0].msgs[0]}    var: one
+    Should be FOR iteration    ${loop[1]}               \${var}=two
+    Check log message          ${loop[1, 0].msgs[0]}    var: two
+    Check log message          ${tc[2, 0]}              Not in FOR anymore
 
 Variables in values
     ${loop} =    Check test and get loop    ${TEST NAME}
@@ -91,14 +91,14 @@ Deeply nested loops
 
 Settings after FOR
     ${tc} =    Check test case    ${TEST NAME}
-    Should be FOR loop    ${tc.kws[0]}    1
+    Should be FOR loop    ${tc[0]}    1
     Check log message     ${tc.teardown.msgs[0]}    Teardown was found and eXecuted.
 
 Looping over empty list variable is OK
     ${tc} =    Check test case    ${TEST NAME}
     Should be FOR loop         ${tc.kws[0]}                     1               NOT RUN
-    Should be FOR iteration    ${tc.body[0].body[0]}            \${var}=
-    Check keyword data         ${tc.body[0].body[0].body[0]}    BuiltIn.Fail    args=Not executed    status=NOT RUN
+    Should be FOR iteration    ${tc[0, 0]}            \${var}=
+    Check keyword data         ${tc[0, 0, 0]}    BuiltIn.Fail    args=Not executed    status=NOT RUN
 
 Other iterables
     ${tc} =    Check test case    ${TEST NAME}
@@ -186,20 +186,20 @@ Loop value with non-existing variable
 
 Multiple loop variables
     ${tc} =    Check Test Case    ${TEST NAME}
-    ${loop} =    Set Variable     ${tc.body[0]}
-    Should be FOR loop            ${loop}                            4
-    Should be FOR iteration       ${loop.body[0]}                    \${x}=1    \${y}=a
-    Check log message             ${loop.body[0].body[0].msgs[0]}    1a
-    Should be FOR iteration       ${loop.body[1]}                    \${x}=2    \${y}=b
-    Check log message             ${loop.body[1].body[0].msgs[0]}    2b
-    Should be FOR iteration       ${loop.body[2]}                    \${x}=3    \${y}=c
-    Check log message             ${loop.body[2].body[0].msgs[0]}    3c
-    Should be FOR iteration       ${loop.body[3]}                    \${x}=4    \${y}=d
-    Check log message             ${loop.body[3].body[0].msgs[0]}    4d
-    ${loop} =    Set Variable     ${tc.body[2]}
-    Should be FOR loop            ${loop}            2
-    Should be FOR iteration       ${loop.body[0]}    \${a}=1    \${b}=2    \${c}=3    \${d}=4    \${e}=5
-    Should be FOR iteration       ${loop.body[1]}    \${a}=1    \${b}=2    \${c}=3    \${d}=4    \${e}=5
+    ${loop} =    Set Variable     ${tc[0]}
+    Should be FOR loop            ${loop}                  4
+    Should be FOR iteration       ${loop[0]}               \${x}=1    \${y}=a
+    Check log message             ${loop[0, 0].msgs[0]}    1a
+    Should be FOR iteration       ${loop[1]}               \${x}=2    \${y}=b
+    Check log message             ${loop[1, 0].msgs[0]}    2b
+    Should be FOR iteration       ${loop[2]}               \${x}=3    \${y}=c
+    Check log message             ${loop[2, 0].msgs[0]}    3c
+    Should be FOR iteration       ${loop[3]}               \${x}=4    \${y}=d
+    Check log message             ${loop[3, 0].msgs[0]}    4d
+    ${loop} =    Set Variable     ${tc[2]}
+    Should be FOR loop            ${loop}                  2
+    Should be FOR iteration       ${loop[0]}    \${a}=1    \${b}=2    \${c}=3    \${d}=4    \${e}=5
+    Should be FOR iteration       ${loop[1]}    \${a}=1    \${b}=2    \${c}=3    \${d}=4    \${e}=5
 
 Wrong number of loop variables
     Check test and failed loop    ${TEST NAME} 1
@@ -207,27 +207,27 @@ Wrong number of loop variables
 
 Cut long iteration variable values
     ${tc} =         Check test case    ${TEST NAME}
-    ${loop} =       Set Variable       ${tc.body[6]}
+    ${loop} =       Set Variable       ${tc[6]}
     ${exp10} =      Set Variable       0123456789
     ${exp100} =     Evaluate           "${exp10}" * 10
     ${exp200} =     Evaluate           "${exp10}" * 20
     ${exp200+} =    Set Variable       ${exp200}...
-    Should be FOR loop            ${loop}            6
-    Should be FOR iteration       ${loop.body[0]}    \${var}=${exp10}
-    Should be FOR iteration       ${loop.body[1]}    \${var}=${exp100}
-    Should be FOR iteration       ${loop.body[2]}    \${var}=${exp200}
-    Should be FOR iteration       ${loop.body[3]}    \${var}=${exp200+}
-    Should be FOR iteration       ${loop.body[4]}    \${var}=${exp200+}
-    Should be FOR iteration       ${loop.body[5]}    \${var}=${exp200+}
-    ${loop} =    Set Variable     ${tc.body[7]}
-    Should be FOR loop            ${loop}            2
-    Should be FOR iteration       ${loop.body[0]}    \${var1}=${exp10}      \${var2}=${exp100}     \${var3}=${exp200}
-    Should be FOR iteration       ${loop.body[1]}    \${var1}=${exp200+}    \${var2}=${exp200+}    \${var3}=${exp200+}
+    Should be FOR loop            ${loop}       6
+    Should be FOR iteration       ${loop[0]}    \${var}=${exp10}
+    Should be FOR iteration       ${loop[1]}    \${var}=${exp100}
+    Should be FOR iteration       ${loop[2]}    \${var}=${exp200}
+    Should be FOR iteration       ${loop[3]}    \${var}=${exp200+}
+    Should be FOR iteration       ${loop[4]}    \${var}=${exp200+}
+    Should be FOR iteration       ${loop[5]}    \${var}=${exp200+}
+    ${loop} =    Set Variable     ${tc[7]}
+    Should be FOR loop            ${loop}       2
+    Should be FOR iteration       ${loop[0]}    \${var1}=${exp10}      \${var2}=${exp100}     \${var3}=${exp200}
+    Should be FOR iteration       ${loop[1]}    \${var1}=${exp200+}    \${var2}=${exp200+}    \${var3}=${exp200+}
 
 Characters that are illegal in XML
     ${tc} =    Check test case    ${TEST NAME}
-    Should be FOR iteration       ${tc.body[0].body[0]}    \${var}=illegal:
-    Should be FOR iteration       ${tc.body[0].body[1]}    \${var}=more:
+    Should be FOR iteration       ${tc[0, 0]}    \${var}=illegal:
+    Should be FOR iteration       ${tc[0, 1]}    \${var}=more:
 
 Old :FOR syntax is not supported
     Check Test Case    ${TESTNAME}
@@ -284,10 +284,10 @@ Syntax error in nested loop
 
 Unexecuted
     ${tc} =    Check Test Case    ${TESTNAME}
-    Should be FOR loop         ${tc.body[1].body[0].body[0]}            1         NOT RUN
-    Should be FOR iteration    ${tc.body[1].body[0].body[0].body[0]}    \${x}=    \${y}=
-    Should be FOR loop         ${tc.body[5]}                            1         NOT RUN
-    Should be FOR iteration    ${tc.body[5].body[0]}                    \${x}=    \${y}=
+    Should be FOR loop         ${tc[1, 0, 0]}       1         NOT RUN
+    Should be FOR iteration    ${tc[1, 0, 0, 0]}    \${x}=    \${y}=
+    Should be FOR loop         ${tc[5]}             1         NOT RUN
+    Should be FOR iteration    ${tc[5, 0]}          \${x}=    \${y}=
 
 Header at the end of file
     Check Test Case    ${TESTNAME}

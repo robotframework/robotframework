@@ -42,9 +42,9 @@ IF/ELSE in All mode
     ${tc} =    Check Test Case    IF structure
     Length Should Be    ${tc.body}            2
     Length Should Be    ${tc.body[1].body}    3
-    IF Branch Should Be Empty    ${tc.body[1].body[0]}    IF         '\${x}' == 'wrong'
-    IF Branch Should Be Empty    ${tc.body[1].body[1]}    ELSE IF    '\${x}' == 'value'
-    IF Branch Should Be Empty    ${tc.body[1].body[2]}    ELSE
+    IF Branch Should Be Empty    ${tc[1, 0]}    IF         '\${x}' == 'wrong'
+    IF Branch Should Be Empty    ${tc[1, 1]}    ELSE IF    '\${x}' == 'value'
+    IF Branch Should Be Empty    ${tc[1, 2]}    ELSE
 
 FOR in All mode
     ${tc} =    Check Test Case    FOR
@@ -58,11 +58,11 @@ TRY/EXCEPT in All mode
     ${tc} =    Check Test Case    Everything
     Length Should Be    ${tc.body}            1
     Length Should Be    ${tc.body[0].body}    5
-    TRY Branch Should Be Empty    ${tc.body[0].body[0]}    TRY        Ooops!<hr>
-    TRY Branch Should Be Empty    ${tc.body[0].body[1]}    EXCEPT
-    TRY Branch Should Be Empty    ${tc.body[0].body[2]}    EXCEPT
-    TRY Branch Should Be Empty    ${tc.body[0].body[3]}    ELSE
-    TRY Branch Should Be Empty    ${tc.body[0].body[4]}    FINALLY
+    TRY Branch Should Be Empty    ${tc[0, 0]}    TRY        Ooops!<hr>
+    TRY Branch Should Be Empty    ${tc[0, 1]}    EXCEPT
+    TRY Branch Should Be Empty    ${tc[0, 2]}    EXCEPT
+    TRY Branch Should Be Empty    ${tc[0, 3]}    ELSE
+    TRY Branch Should Be Empty    ${tc[0, 4]}    FINALLY
 
 WHILE and VAR in All mode
     ${tc} =    Check Test Case    WHILE loop executed multiple times
@@ -105,7 +105,7 @@ Warnings Are Not Removed In Passed Mode
     ${tc1}    ${tc2}=    Set Variable    ${MY SUITE.tests[:2]}
     Length Should Be    ${tc1.body}    1
     Keyword Should Not Be Empty    ${tc1.body[0]}    Warning in    test case
-    Keyword Should Not Be Empty    ${tc1.body[0].body[0].body[0].body[0]}    BuiltIn.Log    Warning in \${where}    WARN
+    Keyword Should Not Be Empty    ${tc1[0, 0, 0, 0]}    BuiltIn.Log    Warning in \${where}    WARN
     Length Should Be    ${tc2.body}    1
     Keyword Should Be Empty    ${tc2.body[0]}    No warning
     Logged Warnings Are Preserved In Execution Errors
@@ -113,7 +113,7 @@ Warnings Are Not Removed In Passed Mode
 Errors Are Not Removed In Passed Mode
     [Setup]    Previous test should have passed    Warnings Are Not Removed In Passed Mode
     ${tc} =    Check Test Case    Error in test case
-    Check Log Message    ${tc.body[0].body[0].msgs[0]}    Logged errors supported since 2.9    ERROR
+    Check Log Message    ${tc[0, 0].msgs[0]}    Logged errors supported since 2.9    ERROR
     Logged Errors Are Preserved In Execution Errors
 
 Name Mode
@@ -140,14 +140,14 @@ Warnings Are Not Removed In Name Mode
     Length Should Be    ${tc1.body}    1
     Length Should Be    ${tc2.body}    1
     Keyword Should Not Be Empty    ${tc1.body[0]}    Warning in    test case
-    Keyword Should Not Be Empty    ${tc1.body[0].body[0].body[0].body[0]}    BuiltIn.Log    Warning in \${where}    WARN
+    Keyword Should Not Be Empty    ${tc1[0, 0, 0, 0]}    BuiltIn.Log    Warning in \${where}    WARN
     Keyword Should Be Empty    ${tc2.body[0]}    No warning
     Logged Warnings Are Preserved In Execution Errors
 
 Errors Are Not Removed In Name Mode
     [Setup]    Previous test should have passed    Warnings Are Not Removed In Name Mode
     ${tc} =    Check Test Case    Error in test case
-    Check Log Message    ${tc.body[0].body[0].msgs[0]}    Logged errors supported since 2.9    ERROR
+    Check Log Message    ${tc[0, 0].msgs[0]}    Logged errors supported since 2.9    ERROR
     Logged Errors Are Preserved In Execution Errors
 
 Tag Mode
@@ -172,14 +172,14 @@ Warnings Are Not Removed In Tag Mode
     Length Should Be    ${tc1.body}    1
     Length Should Be    ${tc2.body}    1
     Keyword Should Not Be Empty    ${tc1.body[0]}    Warning in    test case
-    Keyword Should Not Be Empty    ${tc1.body[0].body[0].body[0].body[0]}    BuiltIn.Log    Warning in \${where}    WARN
+    Keyword Should Not Be Empty    ${tc1[0, 0, 0, 0]}    BuiltIn.Log    Warning in \${where}    WARN
     Keyword Should Be Empty    ${tc2.body[0]}    No warning
     Logged Warnings Are Preserved In Execution Errors
 
 Errors Are Not Removed In Tag Mode
     [Setup]    Previous test should have passed    Warnings Are Not Removed In Tag Mode
     ${tc} =    Check Test Case    Error in test case
-    Check Log Message    ${tc.body[0].body[0].msgs[0]}    Logged errors supported since 2.9    ERROR
+    Check Log Message    ${tc[0, 0].msgs[0]}    Logged errors supported since 2.9    ERROR
     Logged Errors Are Preserved In Execution Errors
 
 *** Keywords ***

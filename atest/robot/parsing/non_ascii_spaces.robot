@@ -39,7 +39,7 @@ In FOR separator
 
 In ELSE IF
     ${tc} =    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc.body[0].body[3].body[0].msgs[0]}    Should be executed
+    Check Log Message    ${tc[0, 3, 0].msgs[0]}    Should be executed
 
 In inline ELSE IF
     Check Test Case    ${TESTNAME}

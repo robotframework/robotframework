@@ -81,12 +81,12 @@ List Variable From Dictionary
 
 Unrepresentable objects to list variables
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.body[0].msgs[0]}    \@{unrepr} = ? ${UNREPR} | ${UNREPR} ?    pattern=yes
-    Check Log Message    ${tc.body[0].msgs[0]}    \@{unrepr} = ? ${UNREPR} | ${UNREPR} ?    pattern=yes
-    Should Match         ${tc.body[2].body[0].assign['\${obj}']}   ${UNREPR}
-    Check Log Message    ${tc.body[2].body[0].body[1].msgs[0]}     $\{var} = ${UNREPR}    pattern=yes
-    Should Match         ${tc.body[2].body[1].assign['\${obj}']}   ${UNREPR}
-    Check Log Message    ${tc.body[2].body[1].body[1].msgs[0]}     $\{var} = ${UNREPR}    pattern=yes
+    Check Log Message    ${tc[0].msgs[0]}                \@{unrepr} = ? ${UNREPR} | ${UNREPR} ?    pattern=yes
+    Check Log Message    ${tc[0].msgs[0]}                \@{unrepr} = ? ${UNREPR} | ${UNREPR} ?    pattern=yes
+    Should Match         ${tc[2, 0].assign['\${obj}']}   ${UNREPR}
+    Check Log Message    ${tc[2, 0, 1].msgs[0]}          $\{var} = ${UNREPR}    pattern=yes
+    Should Match         ${tc[2, 1].assign['\${obj}']}   ${UNREPR}
+    Check Log Message    ${tc[2, 1, 1].msgs[0]}          $\{var} = ${UNREPR}    pattern=yes
 
 None To List Variable
     ${tc} =    Check Test Case    ${TEST NAME}

@@ -5,7 +5,7 @@ Suite Setup       Run Tests    --log test_result_model_as_well    running/while/
 *** Test Cases ***
 Multiple conditions
     ${tc} =   Check Invalid WHILE Test Case
-    Should Be Equal    ${tc.body[0].condition}    Too, many, conditions, !
+    Should Be Equal    ${tc[0].condition}    Too, many, conditions, !
 
 Invalid condition
     Check Invalid WHILE Test Case
@@ -39,23 +39,23 @@ Non-existing variable in condition causes normal error
 
 Templatest are not supported
     ${tc} =    Check Test Case    ${TEST NAME}
-    Should Be Equal       ${tc.body[0].type}               WHILE
-    Should Be Equal       ${tc.body[0].status}             FAIL
-    Should Be Equal       ${tc.body[0].body[0].type}       ITERATION
-    Should Be Equal       ${tc.body[0].body[0].status}     NOT RUN
-    Check Keyword Data    ${tc.body[0].body[0].body[0]}    ${EMPTY}    args=1    status=NOT RUN
-    Check Keyword Data    ${tc.body[0].body[0].body[1]}    ${EMPTY}    args=2    status=NOT RUN
+    Should Be Equal       ${tc[0].type}         WHILE
+    Should Be Equal       ${tc[0].status}       FAIL
+    Should Be Equal       ${tc[0, 0].type}      ITERATION
+    Should Be Equal       ${tc[0, 0].status}    NOT RUN
+    Check Keyword Data    ${tc[0, 0, 0]}        ${EMPTY}    args=1    status=NOT RUN
+    Check Keyword Data    ${tc[0, 0, 1]}        ${EMPTY}    args=2    status=NOT RUN
 
 *** Keywords ***
 Check Invalid WHILE Test Case
     [Arguments]    ${body}=True
     ${tc} =    Check Test Case    ${TESTNAME}
-    Should Be Equal    ${tc.body[0].type}              WHILE
-    Should Be Equal    ${tc.body[0].status}            FAIL
-    Should Be Equal    ${tc.body[0].body[0].type}      ITERATION
-    Should Be Equal    ${tc.body[0].body[0].status}    NOT RUN
+    Should Be Equal    ${tc[0].type}         WHILE
+    Should Be Equal    ${tc[0].status}       FAIL
+    Should Be Equal    ${tc[0, 0].type}      ITERATION
+    Should Be Equal    ${tc[0, 0].status}    NOT RUN
     IF    ${body}
-        Should Be Equal    ${tc.body[0].body[0].body[0].full_name}      BuiltIn.Fail
-        Should Be Equal    ${tc.body[0].body[0].body[0].status}         NOT RUN
+        Should Be Equal    ${tc[0, 0, 0].full_name}      BuiltIn.Fail
+        Should Be Equal    ${tc[0, 0, 0].status}         NOT RUN
     END
     RETURN    ${tc}

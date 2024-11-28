@@ -47,9 +47,9 @@ Error if all tests removed
 Modifier can fix empty test and keyword
     Run Tests    --RunEmptySuite --PreRun ${CURDIR}/ModelModifier.py    core/empty_testcase_and_uk.robot
     ${tc} =    Check Test Case    Empty Test Case    PASS    ${EMPTY}
-    Check Log Message    ${tc.body[0].msgs[0]}    Test body made non-empty by modifier
+    Check Log Message    ${tc[0].msgs[0]}    Test body made non-empty by modifier
     ${tc} =    Check Test Case    Empty User Keyword    PASS    ${EMPTY}
-    Check Log Message    ${tc.body[0].body[0].msgs[0]}    Keyword body made non-empty by modifier
+    Check Log Message    ${tc[0, 0].msgs[0]}    Keyword body made non-empty by modifier
     Check Test Case    Test name made non-empty by modifier    PASS    ${EMPTY}
 
 Modifiers are used before normal configuration
@@ -57,26 +57,26 @@ Modifiers are used before normal configuration
     Stderr Should Be Empty
     Length Should Be    ${SUITE.tests}    1
     ${tc} =    Check Test Case    Created
-    Check Log Message    ${tc.body[0].msgs[0]}    Hello
-    Check Keyword Data    ${tc.body[0]}    BuiltIn.Log    args=Hello, level=INFO
+    Check Log Message    ${tc[0].msgs[0]}    Hello
+    Check Keyword Data    ${tc[0]}    BuiltIn.Log    args=Hello, level=INFO
     Lists should be equal    ${tc.tags}    ${{['added']}}
 
 Modifiers can use special Argument objects in arguments
     ${tc} =    Check Test Case    Created
-    Check Log Message    ${tc.body[1].msgs[0]}    Argument object!
-    Check Keyword Data    ${tc.body[1]}    BuiltIn.Log    args=Argument object!, level=INFO
-    Check Keyword Data    ${tc.body[2]}    BuiltIn.Should Contain    args=(1, 2, 3), item=2
+    Check Log Message    ${tc[1].msgs[0]}    Argument object!
+    Check Keyword Data    ${tc[1]}    BuiltIn.Log    args=Argument object!, level=INFO
+    Check Keyword Data    ${tc[2]}    BuiltIn.Should Contain    args=(1, 2, 3), item=2
 
 Modifiers can pass positional and named arguments separately
     ${tc} =    Check Test Case    Created
-    Check Log Message    ${tc.body[3].msgs[0]}    <b>Named args separately</b>    html=True
-    Check Keyword Data    ${tc.body[3]}    BuiltIn.Log    args=<b>Named args separately</b>, html=True, level=\${{"INFO"}}
+    Check Log Message    ${tc[3].msgs[0]}    <b>Named args separately</b>    html=True
+    Check Keyword Data    ${tc[3]}           BuiltIn.Log    args=<b>Named args separately</b>, html=True, level=\${{"INFO"}}
 
 Modify FOR and IF
     Run Tests    --prerun ${CURDIR}/ModelModifier.py    misc/for_loops.robot misc/if_else.robot
     ${tc} =    Check Test Case    FOR IN RANGE
-    Check Log Message    ${tc.body[0].body[0].body[0].msgs[0]}   FOR
-    Check Log Message    ${tc.body[0].body[1].body[0].msgs[0]}   is
-    Check Log Message    ${tc.body[0].body[2].body[0].msgs[0]}   modified!
+    Check Log Message    ${tc[0, 0, 0].msgs[0]}   FOR
+    Check Log Message    ${tc[0, 1, 0].msgs[0]}   is
+    Check Log Message    ${tc[0, 2, 0].msgs[0]}   modified!
     ${tc} =    Check Test Case    If structure
-    Check Log Message    ${tc.body[1].body[0].body[0].msgs[0]}   going here!
+    Check Log Message    ${tc[1, 0, 0].msgs[0]}   going here!

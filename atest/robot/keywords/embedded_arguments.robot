@@ -91,14 +91,14 @@ Custom Regexp Matching Variables
 
 Non Matching Variable Is Accepted With Custom Regexp (But Not For Long)
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.body[0].msgs[0]}
+    Check Log Message    ${tc[0].msgs[0]}
     ...    Embedded argument 'x' got value 'foo' that does not match custom pattern 'bar'. The argument is still accepted, but this behavior will change in Robot Framework 8.0.    WARN
 
 Partially Matching Variable Is Accepted With Custom Regexp (But Not For Long)
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.body[0].msgs[0]}
+    Check Log Message    ${tc[0].msgs[0]}
     ...    Embedded argument 'x' got value 'ba' that does not match custom pattern 'bar'. The argument is still accepted, but this behavior will change in Robot Framework 8.0.    WARN
-    Check Log Message    ${tc.body[0].msgs[1]}
+    Check Log Message    ${tc[0].msgs[1]}
     ...    Embedded argument 'y' got value 'zapzap' that does not match custom pattern '...'. The argument is still accepted, but this behavior will change in Robot Framework 8.0.    WARN
 
 Non String Variable Is Accepted With Custom Regexp
@@ -147,9 +147,9 @@ Keyword with embedded args cannot be used as "normal" keyword
 
 Keyword with both embedded and normal arguments
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log message    ${tc.body[0].body[0].msgs[0]}    2 horses are walking
-    Check Log message    ${tc.body[1].body[0].msgs[0]}    2 horses are swimming
-    Check Log message    ${tc.body[2].body[0].msgs[0]}    3 dogs are walking
+    Check Log message    ${tc[0, 0].msgs[0]}    2 horses are walking
+    Check Log message    ${tc[1, 0].msgs[0]}    2 horses are swimming
+    Check Log message    ${tc[2, 0].msgs[0]}    3 dogs are walking
 
 Keyword with both embedded and normal arguments with too few arguments
     Check Test Case    ${TEST NAME}
