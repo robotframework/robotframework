@@ -284,8 +284,8 @@ class BaseBody(ItemList[BodyItem], Generic[KW, F, W, G, I, T, V, R, C, B, M, E])
         return steps
 
 
-class Body(BaseBody['Keyword', 'For', 'While', 'If', 'Try', 'Var', 'Return',
-                    'Continue', 'Break', 'Message', 'Error']):
+class Body(BaseBody['Keyword', 'For', 'While', 'Group', 'If', 'Try', 'Var',
+                     'Return', 'Continue', 'Break', 'Message', 'Error']):
     """A list-like object representing a body of a test, keyword, etc.
 
     Body contains the keywords and other structures such as FOR loops.
