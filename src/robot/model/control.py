@@ -31,8 +31,8 @@ IT = TypeVar('IT', bound='IfBranch|TryBranch')
 FW = TypeVar('FW', bound='ForIteration|WhileIteration')
 
 
-class Branches(BaseBranches['Keyword', 'For', 'While', 'If', 'Try', 'Var', 'Return',
-                            'Continue', 'Break', 'Message', 'Error', IT]):
+class Branches(BaseBranches['Keyword', 'For', 'While', 'Group', 'If', 'Try', 'Var',
+                            'Return', 'Continue', 'Break', 'Message', 'Error', IT]):
     __slots__ = ()
 
 
