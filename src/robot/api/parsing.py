@@ -545,6 +545,7 @@ from robot.parsing.model.statements import (
     FinallyHeader as FinallyHeader,
     ForHeader as ForHeader,
     WhileHeader as WhileHeader,
+    GroupHeader as GroupHeader,
     End as End,
     Var as Var,
     ReturnStatement as ReturnStatement,

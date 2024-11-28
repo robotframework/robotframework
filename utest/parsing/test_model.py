@@ -6,12 +6,12 @@ from pathlib import Path
 
 from robot.parsing import get_model, get_resource_model, ModelVisitor, ModelTransformer, Token
 from robot.parsing.model.blocks import (
-    File, For, If, ImplicitCommentSection, InvalidSection, Try, While,
+    File, For, Group, If, ImplicitCommentSection, InvalidSection, Try, While,
     Keyword, KeywordSection, SettingSection, TestCase, TestCaseSection, VariableSection
 )
 from robot.parsing.model.statements import (
     Arguments, Break, Comment, Config, Continue, Documentation, ForHeader, End,
-    ElseHeader, ElseIfHeader, EmptyLine, Error, IfHeader, InlineIfHeader,
+    ElseHeader, ElseIfHeader, EmptyLine, Error, GroupHeader, IfHeader, InlineIfHeader,
     TemplateArguments, TryHeader, ExceptHeader, FinallyHeader, KeywordCall,
     KeywordName, Return, ReturnSetting, ReturnStatement, SectionHeader, TestCaseName,
     TestTags, Var, Variable, WhileHeader
@@ -481,6 +481,33 @@ Example
             errors=('WHILE does not support templates.',)
         )
         get_and_assert_model(data, expected, indices=[0, 1])
+
+class TestGroup(unittest.TestCase):
+
+    def test_valid(self):
+        data = '''
+*** Test Cases ***
+Example
+    GROUP    Name
+        Log    ${x}
+    END
+'''
+        expected = Group(
+            header=GroupHeader([
+                Token(Token.GROUP, 'GROUP', 3, 4),
+                Token(Token.ARGUMENT, 'Name', 3, 13),
+            ]),
+            body=[
+                KeywordCall([Token(Token.KEYWORD, 'Log', 4, 8),
+                             Token(Token.ARGUMENT, '${x}', 4, 15)])
+            ],
+            end=End([Token(Token.END, 'END', 5, 4)]),
+        )
+        group = get_and_assert_model(data, expected)
+        assert_equal(group.name, 'Name')
+        assert_equal(group.header.name, 'Name')  #shall be empty with no name give to GROUP
+
+    # TODO: RENE add invalid test cases and EMPTY name
 
 
 class TestIf(unittest.TestCase):

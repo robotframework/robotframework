@@ -229,6 +229,37 @@ class While(BodyItem):
         return '    '.join(parts)
 
 
+@Body.register
+class Group(BodyItem):
+    """Represents ``GROUP``."""
+    type = BodyItem.GROUP
+    body_class = Body
+    repr_args = ('name',)
+    __slots__ = ['name']
+
+    def __init__(self, name: str = '',
+                 parent: BodyItemParent = None):
+        self.name = name
+        self.parent = parent
+        self.body = ()
+
+    @setter
+    def body(self, body: 'Sequence[BodyItem|DataDict]') -> Body:
+        return self.body_class(self, body)
+
+    def visit(self, visitor: SuiteVisitor):
+        visitor.visit_while(self)
+
+    def to_dict(self) -> DataDict:
+        return {'type': self.type, 'name': self.name, 'body': self.body.to_dicts()}
+
+    def __str__(self) -> str:
+        parts = ['GROUP']
+        if self.name:
+            parts.append(self.name)
+        return '    '.join(parts)
+
+
 class IfBranch(BodyItem):
     """Represents individual ``IF``, ``ELSE IF`` or ``ELSE`` branch."""
     body_class = Body

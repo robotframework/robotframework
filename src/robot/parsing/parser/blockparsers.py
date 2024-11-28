@@ -16,7 +16,7 @@
 from abc import ABC, abstractmethod
 
 from ..lexer import Token
-from ..model import (Block, Container, End, For, If, Keyword, NestedBlock,
+from ..model import (Block, Container, End, For, Group, If, Keyword, NestedBlock,
                      Statement, TestCase, Try, While)
 
 
@@ -44,10 +44,12 @@ class BlockParser(Parser, ABC):
         super().__init__(model)
         self.parsers: 'dict[str, type[NestedBlockParser]]' = {
             Token.FOR: ForParser,
+            Token.GROUP: GroupParser,
             Token.IF: IfParser,
             Token.INLINE_IF: IfParser,
             Token.TRY: TryParser,
             Token.WHILE: WhileParser
+
         }
 
     def handles(self, statement: Statement) -> bool:
@@ -99,6 +101,10 @@ class ForParser(NestedBlockParser):
 
 class WhileParser(NestedBlockParser):
     model: While
+
+
+class GroupParser(NestedBlockParser):
+    model: Group
 
 
 class IfParser(NestedBlockParser):

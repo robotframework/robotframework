@@ -320,6 +320,16 @@ class Logger(AbstractLogger):
             logger.end_while_iteration(data, result)
 
     @start_body_item
+    def start_group(self, data, result):
+        for logger in self.start_loggers:
+            logger.start_group(data, result)
+
+    @end_body_item
+    def end_group(self, data, result):
+        for logger in self.end_loggers:
+            logger.end_group(data, result)
+
+    @start_body_item
     def start_if(self, data, result):
         for logger in self.start_loggers:
             logger.start_if(data, result)

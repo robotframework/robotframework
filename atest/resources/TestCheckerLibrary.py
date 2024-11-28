@@ -8,7 +8,7 @@ from robot.api import logger
 from robot.libraries.BuiltIn import BuiltIn
 from robot.result import (
     Break, Continue, Error, ExecutionResult, ExecutionResultBuilder, For,
-    ForIteration, If, IfBranch, Keyword, Result, ResultVisitor, Return,
+    ForIteration, Group, If, IfBranch, Keyword, Result, ResultVisitor, Return,
     TestCase, TestSuite, Try, TryBranch, Var, While, WhileIteration
 )
 from robot.result.model import Body, Iterations
@@ -55,6 +55,10 @@ class ATestWhile(While, WithBodyTraversing):
     pass
 
 
+class ATestGroup(Group, WithBodyTraversing):
+    pass
+
+
 class ATestIf(If, WithBodyTraversing):
     pass
 
@@ -89,6 +93,7 @@ class ATestBody(Body):
     if_class = ATestIf
     try_class = ATestTry
     while_class = ATestWhile
+    group_class = ATestGroup
     var_class = ATestVar
     return_class = ATestReturn
     break_class = ATestBreak
@@ -118,7 +123,8 @@ class ATestIterations(Iterations, WithBodyTraversing):
 
 ATestKeyword.body_class = ATestVar.body_class = ATestReturn.body_class \
     = ATestBreak.body_class = ATestContinue.body_class \
-    = ATestError.body_class = ATestBody
+    = ATestError.body_class = ATestGroup.body_class \
+    = ATestBody
 ATestFor.iterations_class = ATestWhile.iterations_class = ATestIterations
 ATestFor.iteration_class = ATestForIteration
 ATestWhile.iteration_class = ATestWhileIteration

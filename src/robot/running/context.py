@@ -272,6 +272,7 @@ class _ExecutionContext:
             method = {
                 result.FOR: output.start_for,
                 result.WHILE: output.start_while,
+                result.GROUP: output.start_group,
                 result.IF_ELSE_ROOT: output.start_if,
                 result.IF: output.start_if_branch,
                 result.ELSE: output.start_if_branch,
@@ -318,6 +319,7 @@ class _ExecutionContext:
             method = {
                 result.FOR: output.end_for,
                 result.WHILE: output.end_while,
+                result.GROUP: output.end_group,
                 result.IF_ELSE_ROOT: output.end_if,
                 result.IF: output.end_if_branch,
                 result.ELSE: output.end_if_branch,

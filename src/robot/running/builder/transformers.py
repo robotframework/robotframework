@@ -19,7 +19,7 @@ from robot.parsing import File, ModelVisitor, Token
 from robot.utils import NormalizedDict
 from robot.variables import VariableMatches
 
-from ..model import For, If, IfBranch, TestSuite, TestCase, Try, TryBranch, While
+from ..model import For, Group, If, IfBranch, TestSuite, TestCase, Try, TryBranch, While
 from ..resourcemodel import ResourceFile, UserKeyword
 from .settings import FileSettings
 
@@ -176,7 +176,7 @@ class ResourceBuilder(ModelVisitor):
 
 class BodyBuilder(ModelVisitor):
 
-    def __init__(self, model: 'TestCase|UserKeyword|For|If|Try|While|None' = None):
+    def __init__(self, model: 'TestCase|UserKeyword|For|If|Try|While|Group|None' = None):
         self.model = model
 
     def visit_For(self, node):
@@ -184,6 +184,9 @@ class BodyBuilder(ModelVisitor):
 
     def visit_While(self, node):
         WhileBuilder(self.model).build(node)
+
+    def visit_Group(self, node):
+        GroupBuilder(self.model).build(node)
 
     def visit_If(self, node):
         IfBuilder(self.model).build(node)
@@ -374,7 +377,7 @@ class KeywordBuilder(BodyBuilder):
 class ForBuilder(BodyBuilder):
     model: For
 
-    def __init__(self, parent: 'TestCase|UserKeyword|For|If|Try|While'):
+    def __init__(self, parent: 'TestCase|UserKeyword|For|If|Try|While|Group'):
         super().__init__(parent.body.create_for())
 
     def build(self, node):
@@ -396,7 +399,7 @@ class ForBuilder(BodyBuilder):
 class IfBuilder(BodyBuilder):
     model: 'IfBranch|None'
 
-    def __init__(self, parent: 'TestCase|UserKeyword|For|If|Try|While'):
+    def __init__(self, parent: 'TestCase|UserKeyword|For|If|Try|While|Group'):
         super().__init__()
         self.root = parent.body.create_if()
 
@@ -436,7 +439,7 @@ class IfBuilder(BodyBuilder):
 class TryBuilder(BodyBuilder):
     model: 'TryBranch|None'
 
-    def __init__(self, parent: 'TestCase|UserKeyword|For|If|Try|While'):
+    def __init__(self, parent: 'TestCase|UserKeyword|For|If|Try|While|Group'):
         super().__init__()
         self.root = parent.body.create_try()
 
@@ -464,7 +467,7 @@ class TryBuilder(BodyBuilder):
 class WhileBuilder(BodyBuilder):
     model: While
 
-    def __init__(self, parent: 'TestCase|UserKeyword|For|If|Try|While'):
+    def __init__(self, parent: 'TestCase|UserKeyword|For|If|Try|While|Group'):
         super().__init__(parent.body.create_while())
 
     def build(self, node):
@@ -474,6 +477,26 @@ class WhileBuilder(BodyBuilder):
                           on_limit_message=node.on_limit_message,
                           lineno=node.lineno,
                           error=format_error(self._get_errors(node)))
+        for step in node.body:
+            self.visit(step)
+        return self.model
+
+    def _get_errors(self, node):
+        errors = node.header.errors + node.errors
+        if node.end:
+            errors += node.end.errors
+        return errors
+
+
+class GroupBuilder(BodyBuilder):
+    model: Group
+
+    def __init__(self, parent: 'TestCase|UserKeyword|For|If|Try|While|Group'):
+        super().__init__(parent.body.create_group())
+
+    def build(self, node):
+        error = format_error(self._get_errors(node))
+        self.model.config(name=node.name, lineno=node.lineno, error=error)
         for step in node.body:
             self.visit(step)
         return self.model

@@ -463,6 +463,22 @@ class WhileRunner:
             raise DataError(f'Invalid WHILE loop condition: {msg}')
 
 
+class GroupRunner:
+
+    def __init__(self, context, run=True, templated=False):
+        self._context = context
+        self._run = run
+        self._templated = templated
+
+    def run(self, data, result):
+        with StatusReporter(data, result, self._context, self._run):
+            if data.error:
+                raise DataError(data.error)
+            result.name = self._context.variables.replace_string(result.name)
+            runner = BodyRunner(self._context, self._run, self._templated)
+            runner.run(data, result)
+
+
 class IfRunner:
     _dry_run_stack = []
 

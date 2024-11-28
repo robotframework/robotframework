@@ -76,6 +76,9 @@ class TestStatementFromTokens(unittest.TestCase):
         assert_statements(Statement.from_tokens(tokens), KeywordCall(tokens))
 
 
+# TODO: RENE  Add test cases for GROUP
+
+
 class TestCreateStatementsFromParams(unittest.TestCase):
 
     def test_Statement(self):
