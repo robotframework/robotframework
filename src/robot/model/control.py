@@ -36,8 +36,8 @@ class Branches(BaseBranches['Keyword', 'For', 'While', 'Group', 'If', 'Try', 'Va
     __slots__ = ()
 
 
-class Iterations(BaseIterations['Keyword', 'For', 'While', 'If', 'Try', 'Var', 'Return',
-                                'Continue', 'Break', 'Message', 'Error', FW]):
+class Iterations(BaseIterations['Keyword', 'For', 'While', 'Group', 'If', 'Try', 'Var',
+                                'Return', 'Continue', 'Break', 'Message', 'Error', FW]):
     __slots__ = ()
 
 
