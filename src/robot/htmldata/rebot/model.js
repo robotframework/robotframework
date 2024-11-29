@@ -131,6 +131,7 @@ window.model = (function () {
                 return test.keywords();
         };
         test.tags = data.tags;
+        test.metadata = data.metadata;
         test.matchesTagPattern = function (pattern) {
             return containsTagPattern(test.tags, pattern);
         };

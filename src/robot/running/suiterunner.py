@@ -135,6 +135,7 @@ class SuiteRunner(SuiteVisitor):
         self.executed[-1][data.name] = True
         result = self.suite_result.tests.create(self._resolve_setting(data.name),
                                                 self._resolve_setting(data.doc),
+                                                data.metadata,
                                                 self._resolve_setting(data.tags),
                                                 self._get_timeout(data),
                                                 data.lineno,

@@ -292,6 +292,8 @@ class TestCaseBuilder(BodyBuilder):
     def visit_Template(self, node):
         self.model.template = node.value
 
+    def visit_Metadata(self, node):
+        self.model.metadata[node.name] = node.value
 
 class KeywordBuilder(BodyBuilder):
     model: UserKeyword

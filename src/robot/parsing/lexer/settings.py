@@ -221,6 +221,7 @@ class ResourceFileSettings(FileSettings):
 class TestCaseSettings(Settings):
     names = (
         'Documentation',
+        'Metadata',
         'Tags',
         'Setup',
         'Teardown',

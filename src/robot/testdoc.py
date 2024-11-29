@@ -208,6 +208,8 @@ class JsonConverter:
             'fullName': self._escape(test.full_name),
             'id': test.id,
             'doc': self._html(test.doc),
+            'metadata': [(self._escape(name), self._html(value))
+                         for name, value in test.metadata.items()],
             'tags': [self._escape(t) for t in test.tags],
             'timeout': self._get_timeout(test.timeout),
             'keywords': list(self._convert_keywords(test.body))

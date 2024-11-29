@@ -228,6 +228,7 @@ class _ExecutionContext:
         self.variables.set_test('${TEST_NAME}', result.name)
         self.variables.set_test('${TEST_DOCUMENTATION}', result.doc)
         self.variables.set_test('@{TEST_TAGS}', list(result.tags))
+        self.variables.set_test('${TEST_METADATA}', result.metadata.copy())
         self.output.start_test(data, result)
 
     def _add_timeout(self, timeout):

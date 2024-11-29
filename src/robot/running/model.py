@@ -542,13 +542,14 @@ class TestCase(model.TestCase[Keyword]):
 
     def __init__(self, name: str = '',
                  doc: str = '',
+                 metadata: 'Mapping[str, str]|None' = None,
                  tags: Sequence[str] = (),
                  timeout: 'str|None' = None,
                  lineno: 'int|None' = None,
                  parent: 'TestSuite|None' = None,
                  template: 'str|None' = None,
                  error: 'str|None' = None):
-        super().__init__(name, doc, tags, timeout, lineno, parent)
+        super().__init__(name, doc, metadata, tags, timeout, lineno, parent)
         #: Name of the keyword that has been used as a template when building the test.
         # ``None`` if template is not used.
         self.template = template
