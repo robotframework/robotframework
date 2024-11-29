@@ -215,7 +215,7 @@ class BaseBody(ItemList[BodyItem], Generic[KW, F, W, I, T, V, R, C, B, M, E]):
         return self._create(self.error_class, 'create_error', args, kwargs)
 
     def filter(self, keywords: 'bool|None' = None, messages: 'bool|None' = None,
-               predicate: 'Callable[[T], bool]|None' = None):
+               predicate: 'Callable[[T], bool]|None' = None) -> 'list[BodyItem]':
         """Filter body items based on type and/or custom predicate.
 
         To include or exclude items based on types, give matching arguments
