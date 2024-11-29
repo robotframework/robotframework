@@ -74,5 +74,5 @@ Assignment messages should be
     FOR    ${name}    ${msg}    IN ZIP    ${TESTS}    ${messages}    mode=STRICT
         ${tc} =    Check Test Case    ${name}
         ${msg} =    Evaluate    ${msg}
-        Check Log Message    ${tc.body[0].msgs[0]}    \${value} = ${msg}
+        Check Log Message    ${tc[0, 0]}    \${value} = ${msg}
     END

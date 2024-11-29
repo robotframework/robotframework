@@ -5,19 +5,19 @@ Resource         atest_resource.robot
 *** Test Cases ***
 In suite settings
     ${tc} =    Check Test Case    In test and keywords
-    Check Log Message    ${tc.setup.kws[0].msgs[0]}       ':\\xa0:'
-    Check Log Message    ${tc.setup.kws[1].msgs[0]}       : :
-    Check Log Message    ${tc.teardown.kws[0].msgs[0]}    ':\\u1680:'
-    Check Log Message    ${tc.teardown.kws[1].msgs[0]}    : :
+    Check Log Message    ${tc.setup[0, 0]}       ':\\xa0:'
+    Check Log Message    ${tc.setup[1, 0]}       : :
+    Check Log Message    ${tc.teardown[0, 0]}    ':\\u1680:'
+    Check Log Message    ${tc.teardown[1, 0]}    : :
 
 In test and keywords
     ${tc} =    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc.kws[0].kws[0].msgs[0]}      ':\\xa0:'
-    Check Log Message    ${tc.kws[0].kws[1].msgs[0]}      : :
-    Check Log Message    ${tc.kws[1].kws[0].msgs[0]}      ':\\u1680:'
-    Check Log Message    ${tc.kws[1].kws[1].msgs[0]}      : :
-    Check Log Message    ${tc.kws[2].kws[0].msgs[0]}      ':\\u3000:'
-    Check Log Message    ${tc.kws[2].kws[1].msgs[0]}      :　:
+    Check Log Message    ${tc[0, 0, 0]}      ':\\xa0:'
+    Check Log Message    ${tc[0, 1, 0]}      : :
+    Check Log Message    ${tc[1, 0, 0]}      ':\\u1680:'
+    Check Log Message    ${tc[1, 1, 0]}      : :
+    Check Log Message    ${tc[2, 0, 0]}      ':\\u3000:'
+    Check Log Message    ${tc[2, 1, 0]}      :　:
 
 As separator
     Check Test Case    ${TESTNAME}
@@ -39,7 +39,7 @@ In FOR separator
 
 In ELSE IF
     ${tc} =    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc[0, 3, 0].msgs[0]}    Should be executed
+    Check Log Message    ${tc[0, 3, 0][0]}    Should be executed
 
 In inline ELSE IF
     Check Test Case    ${TESTNAME}

@@ -18,4 +18,4 @@ Tags both from doc and get_keyword_tags
 Keyword Tags Should Be
     [Arguments]    ${index}    @{tags}
     ${tc} =    Check Test Case    ${TESTNAME}
-    Lists Should Be Equal    ${tc.kws[${index}].tags}    ${tags}
+    Lists Should Be Equal    ${tc[${index}].tags}    ${tags}

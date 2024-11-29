@@ -6,44 +6,44 @@ Resource          atest_resource.robot
 *** Test Cases ***
 Set Message To Successful Test
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    Set test message to:\nMy Test <Message>
+    Check Log Message    ${tc[0, 0]}    Set test message to:\nMy Test <Message>
 
 Reset Message
     Check Test Case    ${TEST NAME}
 
 Append To Message
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    Set test message to:\nMy <message>
-    Check Log Message    ${tc.kws[1].msgs[0]}    Set test message to:\nMy <message> & its continuation <>
-    Check Log Message    ${tc.kws[2].msgs[0]}    Set test message to:\nMy <message> & its continuation <>1
-    Check Log Message    ${tc.kws[3].msgs[0]}    Set test message to:\nMy <message> & its continuation <>1,\n2
+    Check Log Message    ${tc[0, 0]}    Set test message to:\nMy <message>
+    Check Log Message    ${tc[1, 0]}    Set test message to:\nMy <message> & its continuation <>
+    Check Log Message    ${tc[2, 0]}    Set test message to:\nMy <message> & its continuation <>1
+    Check Log Message    ${tc[3, 0]}    Set test message to:\nMy <message> & its continuation <>1,\n2
 
 Set Non-ASCII Message
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    Set test message to:\nHyvää yötä
+    Check Log Message    ${tc[0, 0]}    Set test message to:\nHyvää yötä
 
 Set Multiline Message
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    Set test message to:\n1\n2\n3
+    Check Log Message    ${tc[0, 0]}    Set test message to:\n1\n2\n3
 
 Set HTML Message
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    Set test message to:\nMy <b>HTML</b> message    html=True
+    Check Log Message    ${tc[0, 0]}    Set test message to:\nMy <b>HTML</b> message    html=True
 
 Append HTML to non-HTML
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    Set test message to:\nMy non-HTML <message> &    html=False
-    Check Log Message    ${tc.kws[1].msgs[0]}    Set test message to:\nMy non-HTML &lt;message&gt; &amp; its <b>HTML</b> continuation    html=True
+    Check Log Message    ${tc[0, 0]}    Set test message to:\nMy non-HTML <message> &    html=False
+    Check Log Message    ${tc[1, 0]}    Set test message to:\nMy non-HTML &lt;message&gt; &amp; its <b>HTML</b> continuation    html=True
 
 Append non-HTML to HTML
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    Set test message to:\nMy <b>HTML</b> message    html=True
-    Check Log Message    ${tc.kws[1].msgs[0]}    Set test message to:\nMy <b>HTML</b> message &amp; its non-HTML &lt;continuation&gt;    html=True
+    Check Log Message    ${tc[0, 0]}    Set test message to:\nMy <b>HTML</b> message    html=True
+    Check Log Message    ${tc[1, 0]}    Set test message to:\nMy <b>HTML</b> message &amp; its non-HTML &lt;continuation&gt;    html=True
 
 Append HTML to HTML
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    Set test message to:\nMy <b>HTML</b> message    html=True
-    Check Log Message    ${tc.kws[1].msgs[0]}    Set test message to:\nMy <b>HTML</b> message &amp; its <b>HTML</b> continuation    html=True
+    Check Log Message    ${tc[0, 0]}    Set test message to:\nMy <b>HTML</b> message    html=True
+    Check Log Message    ${tc[1, 0]}    Set test message to:\nMy <b>HTML</b> message &amp; its <b>HTML</b> continuation    html=True
 
 Set Non-String Message
     Check Test Case    ${TEST NAME}
@@ -92,15 +92,15 @@ Not Allowed In Suite Setup or Teardown
 
 Append HTML to non-HTML with separator
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    Set test message to:\nA non HTML <message>    html=False
-    Check Log Message    ${tc.kws[1].msgs[0]}    Set test message to:\nA non HTML &lt;message&gt;&amp;its <b>HTML</b> continuation    html=True
+    Check Log Message    ${tc[0, 0]}    Set test message to:\nA non HTML <message>    html=False
+    Check Log Message    ${tc[1, 0]}    Set test message to:\nA non HTML &lt;message&gt;&amp;its <b>HTML</b> continuation    html=True
 
 Append non-HTML to HTML with separator
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    Set test message to:\nA <b>HTML</b> message    html=True
-    Check Log Message    ${tc.kws[1].msgs[0]}    Set test message to:\nA <b>HTML</b> message&lt;\br&gt;its non-HTML &lt;continuation&gt;    html=True
+    Check Log Message    ${tc[0, 0]}    Set test message to:\nA <b>HTML</b> message    html=True
+    Check Log Message    ${tc[1, 0]}    Set test message to:\nA <b>HTML</b> message&lt;\br&gt;its non-HTML &lt;continuation&gt;    html=True
 
 Append HTML to HTML with separator
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    Set test message to:\nA <b>HTML</b> message    html=True
-    Check Log Message    ${tc.kws[1].msgs[0]}    Set test message to:\nA <b>HTML</b> message &amp;&amp; its <b>HTML</b> continuation    html=True
+    Check Log Message    ${tc[0, 0]}    Set test message to:\nA <b>HTML</b> message    html=True
+    Check Log Message    ${tc[1, 0]}    Set test message to:\nA <b>HTML</b> message &amp;&amp; its <b>HTML</b> continuation    html=True

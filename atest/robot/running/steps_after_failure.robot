@@ -6,7 +6,7 @@ Resource          atest_resource.robot
 Library keyword after failure
     ${tc} =    Check Test Case    ${TESTNAME}
     Should Not Be Run    ${tc[2:]}    5
-    Check Log Message    ${tc.teardown.msgs[0]}    This is run
+    Check Log Message    ${tc.teardown[0]}    This is run
 
 User keyword after failure
     ${tc} =    Check Test Case    ${TESTNAME}

@@ -5,11 +5,11 @@ Resource          atest_resource.robot
 *** Test Cases ***
 Dynamic kwargs support should work without argument specification
     ${tc}=    Check test Case    ${TESTNAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    print this
-    Check Log Message    ${tc.kws[1].msgs[0]}    x: something, y: something else
-    Check Log Message    ${tc.kws[2].msgs[0]}    x: something, y: 0
-    Check Log Message    ${tc.kws[3].msgs[0]}    x 1 3
-    Check Log Message    ${tc.kws[4].msgs[0]}    something 13 3 y:12
+    Check Log Message    ${tc[0, 0]}    print this
+    Check Log Message    ${tc[1, 0]}    x: something, y: something else
+    Check Log Message    ${tc[2, 0]}    x: something, y: 0
+    Check Log Message    ${tc[3, 0]}    x 1 3
+    Check Log Message    ${tc[4, 0]}    something 13 3 y:12
 
 Unexpected keyword argument
     Check test Case    ${TESTNAME}
@@ -36,7 +36,7 @@ Documentation and Argument Boundaries Work When Argspec is None
 Check test case and its keywords
     [Arguments]    ${keyword}    @{argstrings}
     ${tc} =    Check Test case    ${TESTNAME}
-    Should Be Equal    ${tc.kws[0].doc}    Keyword documentation for ${keyword}
+    Should Be Equal    ${tc[0].doc}    Keyword documentation for ${keyword}
     FOR    ${index}    ${argstr}    IN ENUMERATE   @{argstrings}
-        Check Log Message    ${tc.kws[${index}].msgs[0]}    Executed keyword ${keyword} with arguments ${argstr}
+        Check Log Message    ${tc[${index}, 0]}    Executed keyword ${keyword} with arguments ${argstr}
     END

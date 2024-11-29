@@ -19,7 +19,7 @@ There should be warning when multiple tests with same name are executed
 
 There should be no warning when there are multiple tests with same name in data but only one is executed
     ${tc} =    Check Test Case    Same Test In Data But Only One Executed
-    Check Log Message    ${tc.kws[0].msgs[0]}    This is executed!
+    Check Log Message    ${tc[0, 0]}    This is executed!
     Length Should Be    ${ERRORS}    3
 
 *** Keywords ***

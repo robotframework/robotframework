@@ -7,13 +7,13 @@ Only stop
     ${loop} =    Check test and get loop    ${TEST NAME}
     Should be IN RANGE loop     ${loop}    100
     Should be FOR iteration     ${loop[0]}               \${i}=0
-    Check log message           ${loop[0, 1].msgs[0]}    i: 0
+    Check log message           ${loop[0, 1][0]}    i: 0
     Should be FOR iteration     ${loop[1]}               \${i}=1
-    Check log message           ${loop[1, 1].msgs[0]}    i: 1
+    Check log message           ${loop[1, 1][0]}    i: 1
     Should be FOR iteration     ${loop[42]}              \${i}=42
-    Check log message           ${loop[42,1].msgs[0]}    i: 42
+    Check log message           ${loop[42,1][0]}    i: 42
     Should be FOR iteration     ${loop[-1]}              \${i}=99
-    Check log message           ${loop[-1,1].msgs[0]}    i: 99
+    Check log message           ${loop[-1,1][0]}    i: 99
 
 Start and stop
     ${loop} =    Check test and get loop    ${TEST NAME}

@@ -28,17 +28,17 @@ Invalid Usage in Resource File
 
 Local Private Keyword In Resource File Has Precedence Over Keywords In Another Resource
     ${tc}=    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc[0, 0, 0].msgs[0]}    private.resource
-    Check Log Message    ${tc[0, 1, 0].msgs[0]}    private.resource
+    Check Log Message    ${tc[0, 0, 0, 0]}    private.resource
+    Check Log Message    ${tc[0, 1, 0, 0]}    private.resource
 
 Search Order Has Precedence Over Local Private Keyword In Resource File
     ${tc}=    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc[0, 0, 0].msgs[0]}    private2.resource
+    Check Log Message    ${tc[0, 0, 0, 0]}    private2.resource
 
 Imported Public Keyword Has Precedence Over Imported Private Keywords
     ${tc}=    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc[0, 0].msgs[0]}            private2.resource
-    Check Log Message    ${tc[1, 0, 0].msgs[0]}    private2.resource
+    Check Log Message    ${tc[0, 0, 0]}       private2.resource
+    Check Log Message    ${tc[1, 0, 0, 0]}    private2.resource
 
 If All Keywords Are Private Raise Multiple Keywords Found
     Check Test Case    ${TESTNAME}

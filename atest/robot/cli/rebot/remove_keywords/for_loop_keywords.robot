@@ -12,9 +12,9 @@ ${4 REMOVED}      <span class="robot-note">4 passing items removed using the --r
 *** Test Cases ***
 Passed Steps Are Removed Except The Last One
     ${tc}=    Check Test Case    Simple loop
-    Length Should Be    ${tc.kws[1].kws}              1
-    Should Be Equal     ${tc.kws[1].message}          *HTML* ${1 REMOVED}
-    Should Be Equal     ${tc.kws[1].kws[0].status}    PASS
+    Length Should Be    ${tc[1].body}                    1
+    Should Be Equal     ${tc[1].message}                 *HTML* ${1 REMOVED}
+    Should Be Equal     ${tc[1, 0].status}               PASS
 
 Failed Steps Are Not Removed
     ${tc}=    Check Test Case    Failure inside FOR 2
@@ -24,37 +24,37 @@ Failed Steps Are Not Removed
     Should Be Equal     ${tc[0, 0].assign['\${num}']}    4
     Should Be Equal     ${tc[0, 0].status}               FAIL
     Length Should Be    ${tc[0, 0].body}                 3
-    Should Be Equal     ${tc[0, 0,-1].status}            NOT RUN
+    Should Be Equal     ${tc[0, 0, -1].status}           NOT RUN
 
 Steps With Warning Are Not Removed
     ${tc}=    Check Test Case    Variables in values
-    Length Should Be     ${tc.kws[0].kws}                              2
-    Should Be Equal      ${tc.kws[0].message}                          *HTML* ${4 REMOVED}
-    Check Log Message    ${tc.kws[0].kws[0].kws[-1].kws[0].msgs[0]}    Presidential Candidate!    WARN
-    Check Log Message    ${tc.kws[0].kws[1].kws[-1].kws[0].msgs[0]}    Presidential Candidate!    WARN
+    Length Should Be     ${tc[0].body}                   2
+    Should Be Equal      ${tc[0].message}                *HTML* ${4 REMOVED}
+    Check Log Message    ${tc[0, 0, -1, 0, 0]}           Presidential Candidate!    WARN
+    Check Log Message    ${tc[0, 1, -1, 0, 0]}           Presidential Candidate!    WARN
 
 Steps From Nested Loops Are Removed
     ${tc}=    Check Test Case    Nested Loop Syntax
-    Length Should Be    ${tc.kws[0].kws}                      1
-    Should Be Equal     ${tc.kws[0].message}                  *HTML* ${2 REMOVED}
-    Length Should Be    ${tc.kws[0].kws[0].kws[1].kws}        1
-    Should Be Equal     ${tc.kws[0].kws[0].kws[1].message}    *HTML* ${2 REMOVED}
+    Length Should Be    ${tc[0].body}                    1
+    Should Be Equal     ${tc[0].message}                 *HTML* ${2 REMOVED}
+    Length Should Be    ${tc[0, 0, 1].body}              1
+    Should Be Equal     ${tc[0, 0, 1].message}           *HTML* ${2 REMOVED}
 
 Steps From Loops In Keywords From Loops Are Removed
     ${tc}=    Check Test Case    Keyword with loop calling other keywords with loops
-    Length Should Be    ${tc.kws[0].kws[0].kws}                             1
-    Should Be Equal     ${tc.kws[0].kws[0].message}                         This ought to be enough
-    Length Should Be    ${tc.kws[0].kws[0].kws[0].kws[0].kws[1].kws}        1
-    Should Be Equal     ${tc.kws[0].kws[0].kws[0].kws[0].kws[1].message}    *HTML* ${1 REMOVED}
-    Length Should Be    ${tc.kws[0].kws[0].kws[0].kws[1].kws[0].kws}        1
-    Should Be Equal     ${tc.kws[0].kws[0].kws[0].kws[1].kws[0].message}    *HTML* ${1 REMOVED}
+    Length Should Be    ${tc[0, 0].body}                 1
+    Should Be Equal     ${tc[0, 0].message}              This ought to be enough
+    Length Should Be    ${tc[0, 0, 0, 0, 1].body}        1
+    Should Be Equal     ${tc[0, 0, 0, 0, 1].message}     *HTML* ${1 REMOVED}
+    Length Should Be    ${tc[0, 0, 0, 1, 0].body}        1
+    Should Be Equal     ${tc[0, 0, 0, 1, 0].message}     *HTML* ${1 REMOVED}
 
 Empty Loops Are Handled Correctly
     ${tc}=    Check Test Case    Empty body
-    Should Be Equal    ${tc[0].status}            FAIL
-    Should Be Equal    ${tc[0].message}           FOR loop cannot be empty.
-    Should Be Equal    ${tc[0, 0].type}           ITERATION
-    Should Be Equal    ${tc[0, 0].status}         NOT RUN
+    Should Be Equal    ${tc[0].status}                   FAIL
+    Should Be Equal    ${tc[0].message}                  FOR loop cannot be empty.
+    Should Be Equal    ${tc[0, 0].type}                  ITERATION
+    Should Be Equal    ${tc[0, 0].status}                NOT RUN
     Should Be Empty    ${tc[0, 0].body}
 
 *** Keywords ***

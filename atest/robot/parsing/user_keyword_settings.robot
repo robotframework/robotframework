@@ -5,11 +5,11 @@ Resource          atest_resource.robot
 *** Test Cases ***
 Name
     ${tc} =    Check Test Case    Normal name
-    Should Be Equal  ${tc.kws[0].full_name}    Normal name
+    Should Be Equal  ${tc[0].full_name}    Normal name
 
 Names are not formatted
     ${tc} =    Check Test Case    Names are not formatted
-    FOR    ${kw}    IN    @{tc.kws}
+    FOR    ${kw}    IN    @{tc.body}
         Should Be Equal    ${kw.full_name}  user_keyword nameS _are_not_ FORmatted
     END
 
@@ -43,19 +43,19 @@ Documentation with escaping
 Arguments
     [Documentation]    Tested more thoroughly elsewhere.
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[0].kws[0].msgs[0]}    mandatory
-    Check Log Message    ${tc.kws[0].kws[0].msgs[1]}    default
-    Should Be True       ${tc.kws[0].args} == ('mandatory',)
-    Check Log Message    ${tc.kws[1].kws[0].msgs[0]}    1
-    Check Log Message    ${tc.kws[1].kws[0].msgs[1]}    2
-    Should Be True       ${tc.kws[1].args} == ('1', '2')
-    Check Log Message    ${tc.kws[2].kws[0].msgs[0]}    1
-    Check Log Message    ${tc.kws[2].kws[0].msgs[1]}    2
-    Check Log Message    ${tc.kws[2].kws[0].msgs[2]}    3
-    Check Log Message    ${tc.kws[2].kws[0].msgs[3]}    4
-    Check Log Message    ${tc.kws[2].kws[0].msgs[4]}    5
-    Check Log Message    ${tc.kws[2].kws[0].msgs[5]}    key=6
-    Should Be True       ${tc.kws[2].args} == ('\${1}', '\${2}', '\${3}', '\${4}', '\${5}', 'key=\${6}')
+    Check Log Message    ${tc[0, 0, 0]}    mandatory
+    Check Log Message    ${tc[0, 0, 1]}    default
+    Should Be True       ${tc[0].args} == ('mandatory',)
+    Check Log Message    ${tc[1, 0, 0]}    1
+    Check Log Message    ${tc[1, 0, 1]}    2
+    Should Be True       ${tc[1].args} == ('1', '2')
+    Check Log Message    ${tc[2, 0, 0]}    1
+    Check Log Message    ${tc[2, 0, 1]}    2
+    Check Log Message    ${tc[2, 0, 2]}    3
+    Check Log Message    ${tc[2, 0, 3]}    4
+    Check Log Message    ${tc[2, 0, 4]}    5
+    Check Log Message    ${tc[2, 0, 5]}    key=6
+    Should Be True       ${tc[2].args} == ('\${1}', '\${2}', '\${3}', '\${4}', '\${5}', 'key=\${6}')
 
 Teardown
     Verify Teardown    Keyword teardown
@@ -106,8 +106,8 @@ Invalid timeout
 
 Multiple settings
     Verify Documentation    Documentation for a user keyword
-    Verify Teardown   Teardown World
-    Verify Timeout  6 minutes
+    Verify Teardown         Teardown World
+    Verify Timeout          6 minutes
 
 Invalid setting
     Check Test Case    ${TEST NAME}
@@ -127,15 +127,15 @@ Invalid empty line continuation in arguments should throw an error
 Verify Documentation
     [Arguments]    ${doc}    ${test}=${TEST NAME}
     ${tc} =    Check Test Case    ${test}
-    Should Be Equal    ${tc.kws[0].doc}    ${doc}
+    Should Be Equal    ${tc[0].doc}    ${doc}
 
 Verify Teardown
     [Arguments]    ${message}
     ${tc} =    Check Test Case    ${TEST NAME}
-    Should Be Equal    ${tc.kws[0].teardown.full_name}    BuiltIn.Log
-    Check Log Message    ${tc.kws[0].teardown.msgs[0]}    ${message}
+    Should Be Equal      ${tc[0].teardown.full_name}    BuiltIn.Log
+    Check Log Message    ${tc[0].teardown[0]}           ${message}
 
 Verify Timeout
     [Arguments]    ${timeout}
     ${tc} =    Check Test Case    ${TEST NAME}
-    Should Be Equal    ${tc.kws[0].timeout}    ${timeout}
+    Should Be Equal    ${tc[0].timeout}    ${timeout}

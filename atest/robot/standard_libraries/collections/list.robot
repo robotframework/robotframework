@@ -60,8 +60,8 @@ Remove From List With Invalid Index
 
 Remove Duplicates
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    0 duplicates removed.
-    Check Log Message    ${tc.kws[2].msgs[0]}    3 duplicates removed.
+    Check Log Message    ${tc[0, 0]}    0 duplicates removed.
+    Check Log Message    ${tc[2, 0]}    3 duplicates removed.
 
 Count Values In List
     Check Test Case    ${TEST NAME}
@@ -149,19 +149,19 @@ List Should Not Contain Duplicates Is Case And Space Sensitive
 
 List Should Not Contain Duplicates With One Duplicate
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[1].msgs[0]}    'item' found 2 times.
+    Check Log Message    ${tc[1, 0]}    'item' found 2 times.
 
 List Should Not Contain Duplicates With Multiple Duplicates
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[1].msgs[0]}    '2' found 2 times.
-    Check Log Message    ${tc.kws[1].msgs[1]}    'None' found 2 times.
-    Check Log Message    ${tc.kws[1].msgs[2]}    '4' found 4 times.
-    Check Log Message    ${tc.kws[1].msgs[3]}    '[1, 2, 3]' found 2 times.
-    Check Log Message    ${tc.kws[1].msgs[4]}    '[]' found 10 times.
+    Check Log Message    ${tc[1, 0]}    '2' found 2 times.
+    Check Log Message    ${tc[1, 1]}    'None' found 2 times.
+    Check Log Message    ${tc[1, 2]}    '4' found 4 times.
+    Check Log Message    ${tc[1, 3]}    '[1, 2, 3]' found 2 times.
+    Check Log Message    ${tc[1, 4]}    '[]' found 10 times.
 
 List Should Not Contain Duplicates With Custom Error Message
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[2].msgs[0]}    '42' found 42 times.
+    Check Log Message    ${tc[2, 0]}    '42' found 42 times.
 
 Lists Should Be Equal
     Check Test Case    ${TEST NAME}
@@ -227,18 +227,18 @@ Log List With Different Log Levels
     ...    0: 11
     ...    1: 12
     ...    2: 13
-    Check Log Message    ${tc.kws[0].msgs[0]}    ${expected}    INFO
-    Variable Should Not Exist    ${tc.kws[1].msgs[0]}
-    Check Log Message    ${tc.kws[2].msgs[0]}    ${expected}    WARN
-    Check Log Message    ${tc.kws[3].msgs[0]}    ${expected}    DEBUG
-    Check Log Message    ${tc.kws[4].msgs[0]}    ${expected}    INFO
+    Check Log Message    ${tc[0, 0]}    ${expected}    INFO
+    Variable Should Not Exist    ${tc[1, 0]}
+    Check Log Message    ${tc[2, 0]}    ${expected}    WARN
+    Check Log Message    ${tc[3, 0]}    ${expected}    DEBUG
+    Check Log Message    ${tc[4, 0]}    ${expected}    INFO
 
 Log List With Different Lists
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    List is empty.    INFO
-    Check Log Message    ${tc.kws[1].msgs[0]}    List has one item:\n1
-    Check Log Message    ${tc.kws[4].msgs[0]}    List has one item:\n(1, 2, 3)
-    Check Log Message    ${tc.kws[6].msgs[0]}    List length is 2 and it contains following items:\n0: (1, 2, 3)\n1: 3.12
+    Check Log Message    ${tc[0, 0]}    List is empty.    INFO
+    Check Log Message    ${tc[1, 0]}    List has one item:\n1
+    Check Log Message    ${tc[4, 0]}    List has one item:\n(1, 2, 3)
+    Check Log Message    ${tc[6, 0]}    List length is 2 and it contains following items:\n0: (1, 2, 3)\n1: 3.12
 
 Count Matches In List Case Insensitive
     Check Test Case    ${TEST NAME}

@@ -61,47 +61,47 @@ User Keyword Name Ending With Dot
 
 Name Set Using 'robot_name' Attribute
     ${tc} =    Check Test Case    ${TESTNAME}
-    Should Be Equal    ${tc.kws[0].full_name}    MyLibrary1.Name set using 'robot_name' attribute
-    Check Log Message    ${tc.kws[0].msgs[0]}    My name was set using 'robot_name' attribute!
+    Should Be Equal    ${tc[0].full_name}    MyLibrary1.Name set using 'robot_name' attribute
+    Check Log Message    ${tc[0, 0]}    My name was set using 'robot_name' attribute!
 
 Name Set Using 'robot.api.deco.keyword' Decorator
     ${tc} =    Check Test Case    ${TESTNAME}
-    Should Be Equal    ${tc.kws[0].full_name}    MyLibrary1.Name set using 'robot.api.deco.keyword' decorator
-    Check Log Message    ${tc.kws[0].msgs[0]}    My name was set using 'robot.api.deco.keyword' decorator!
+    Should Be Equal    ${tc[0].full_name}    MyLibrary1.Name set using 'robot.api.deco.keyword' decorator
+    Check Log Message    ${tc[0, 0]}    My name was set using 'robot.api.deco.keyword' decorator!
 
 Custom non-ASCII name
     ${tc} =    Check Test Case    ${TESTNAME}
-    Should Be Equal    ${tc.kws[0].full_name}    MyLibrary1.Custom nön-ÄSCII name
+    Should Be Equal    ${tc[0].full_name}    MyLibrary1.Custom nön-ÄSCII name
 
 Old Name Doesn't Work If Name Set Using 'robot_name'
     Check Test Case    ${TESTNAME}
 
 Keyword can just be marked without changing its name
     ${tc} =    Check Test Case    ${TESTNAME}
-    Should Be Equal    ${tc.kws[0].full_name}    MyLibrary1.No Custom Name Given 1
-    Should Be Equal    ${tc.kws[1].full_name}    MyLibrary1.No Custom Name Given 2
+    Should Be Equal    ${tc[0].full_name}    MyLibrary1.No Custom Name Given 1
+    Should Be Equal    ${tc[1].full_name}    MyLibrary1.No Custom Name Given 2
 
 Functions decorated with @keyword can start with underscrore
     ${tc} =    Check Test Case    ${TESTNAME}
-    Should Be Equal    ${tc.kws[0].full_name}    MyLibrary1.I Start With An Underscore And I Am Ok
-    Check Log Message    ${tc.kws[0].msgs[0]}    I'm marked with @keyword
-    Should Be Equal    ${tc.kws[1].full_name}    MyLibrary1.Function name can be whatever
-    Check Log Message    ${tc.kws[1].msgs[0]}    Real name set by @keyword
+    Should Be Equal    ${tc[0].full_name}    MyLibrary1.I Start With An Underscore And I Am Ok
+    Check Log Message    ${tc[0, 0]}    I'm marked with @keyword
+    Should Be Equal    ${tc[1].full_name}    MyLibrary1.Function name can be whatever
+    Check Log Message    ${tc[1, 0]}    Real name set by @keyword
 
 Assignment is not part of name
     ${tc} =    Check Test Case    ${TESTNAME}
-    Check Keyword Data    ${tc.kws[0]}    BuiltIn.Log                                           args=No assignment
-    Check Keyword Data    ${tc.kws[1]}    BuiltIn.Set Variable    assign=\${var}                args=value
-    Check Keyword Data    ${tc.kws[2]}    BuiltIn.Set Variable    assign=\${v1}, \${v2}         args=1, 2
-    Check Keyword Data    ${tc.kws[3]}    BuiltIn.Evaluate        assign=\${first}, \@{rest}    args=range(10)
+    Check Keyword Data    ${tc[0]}    BuiltIn.Log                                           args=No assignment
+    Check Keyword Data    ${tc[1]}    BuiltIn.Set Variable    assign=\${var}                args=value
+    Check Keyword Data    ${tc[2]}    BuiltIn.Set Variable    assign=\${v1}, \${v2}         args=1, 2
+    Check Keyword Data    ${tc[3]}    BuiltIn.Evaluate        assign=\${first}, \@{rest}    args=range(10)
 
 Library name and keyword name are separate
     ${tc} =    Check Test Case    ${TESTNAME}
-    Keyword and library names should be    ${tc.kws[0]}    Keyword Only In Test Case File
-    Keyword and library names should be    ${tc.kws[1]}    Keyword Only In Resource 1    my_resource_1
-    Keyword and library names should be    ${tc.kws[2]}    Keyword Only In Resource 1    my_resource_1
-    Keyword and library names should be    ${tc.kws[3]}    Log    BuiltIn
-    Keyword and library names should be    ${tc.kws[4]}    Log    BuiltIn
+    Keyword and library names should be    ${tc[0]}    Keyword Only In Test Case File
+    Keyword and library names should be    ${tc[1]}    Keyword Only In Resource 1    my_resource_1
+    Keyword and library names should be    ${tc[2]}    Keyword Only In Resource 1    my_resource_1
+    Keyword and library names should be    ${tc[3]}    Log    BuiltIn
+    Keyword and library names should be    ${tc[4]}    Log    BuiltIn
 
 Empty keyword name is not allowed
     Error in library    MyLibrary1

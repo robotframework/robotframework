@@ -113,7 +113,7 @@ Warnings Are Not Removed In Passed Mode
 Errors Are Not Removed In Passed Mode
     [Setup]    Previous test should have passed    Warnings Are Not Removed In Passed Mode
     ${tc} =    Check Test Case    Error in test case
-    Check Log Message    ${tc[0, 0].msgs[0]}    Logged errors supported since 2.9    ERROR
+    Check Log Message    ${tc[0, 0, 0]}    Logged errors supported since 2.9    ERROR
     Logged Errors Are Preserved In Execution Errors
 
 Name Mode
@@ -147,7 +147,7 @@ Warnings Are Not Removed In Name Mode
 Errors Are Not Removed In Name Mode
     [Setup]    Previous test should have passed    Warnings Are Not Removed In Name Mode
     ${tc} =    Check Test Case    Error in test case
-    Check Log Message    ${tc[0, 0].msgs[0]}    Logged errors supported since 2.9    ERROR
+    Check Log Message    ${tc[0, 0, 0]}    Logged errors supported since 2.9    ERROR
     Logged Errors Are Preserved In Execution Errors
 
 Tag Mode
@@ -179,7 +179,7 @@ Warnings Are Not Removed In Tag Mode
 Errors Are Not Removed In Tag Mode
     [Setup]    Previous test should have passed    Warnings Are Not Removed In Tag Mode
     ${tc} =    Check Test Case    Error in test case
-    Check Log Message    ${tc[0, 0].msgs[0]}    Logged errors supported since 2.9    ERROR
+    Check Log Message    ${tc[0, 0, 0]}    Logged errors supported since 2.9    ERROR
     Logged Errors Are Preserved In Execution Errors
 
 *** Keywords ***

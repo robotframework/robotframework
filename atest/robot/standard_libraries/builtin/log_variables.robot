@@ -191,5 +191,5 @@ List and dict variables failing during iteration
 *** Keywords ***
 Check Variable Message
     [Arguments]    ${expected}    ${level}=INFO    ${pattern}=
-    Check Log Message    ${KW.msgs[${INDEX}]}    ${expected}    ${level}    pattern=${pattern}
+    Check Log Message    ${KW[${INDEX}]}    ${expected}    ${level}    pattern=${pattern}
     Set Test Variable    ${INDEX}    ${INDEX + 1}

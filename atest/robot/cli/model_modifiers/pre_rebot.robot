@@ -64,13 +64,13 @@ Modify FOR
     Should Be Equal      ${tc[0].values}                ${{('FOR', 'is', 'modified!')}}
     Should Be Equal      ${tc[0, 0].assign['\${i}']}    0 (modified)
     Should Be Equal      ${tc[0, 0].assign['\${x}']}    new
-    Check Log Message    ${tc[0, 0, 0].msgs[0]}         0
+    Check Log Message    ${tc[0, 0, 0, 0]}              0
     Should Be Equal      ${tc[0, 1].assign['\${i}']}    1 (modified)
     Should Be Equal      ${tc[0, 1].assign['\${x}']}    new
-    Check Log Message    ${tc[0, 1, 0].msgs[0]}         1
+    Check Log Message    ${tc[0, 1, 0, 0]}              1
     Should Be Equal      ${tc[0, 2].assign['\${i}']}    2 (modified)
     Should Be Equal      ${tc[0, 2].assign['\${x}']}    new
-    Check Log Message    ${tc[0, 2, 0].msgs[0]}         2
+    Check Log Message    ${tc[0, 2, 0, 0]}              2
 
 Modify IF
     [Setup]    Should Be Equal    ${PREV TEST NAME}    Modify FOR

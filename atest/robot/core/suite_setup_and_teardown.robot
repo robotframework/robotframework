@@ -1,35 +1,32 @@
 *** Settings ***
-Resource          atest_resource.robot
+Resource            atest_resource.robot
 
 *** Variables ***
-${1 PASS MSG}     1 test, 1 passed, 0 failed
-${1 FAIL MSG}     1 test, 0 passed, 1 failed
-${2 FAIL MSG}     2 tests, 0 passed, 2 failed
-${4 FAIL MSG}     4 tests, 0 passed, 4 failed
-${5 FAIL MSG}     5 tests, 0 passed, 5 failed
-${12 FAIL MSG}    12 tests, 0 passed, 12 failed
-${ALSO}           \n\nAlso teardown of the parent suite failed.
+${1 PASS MSG}       1 test, 1 passed, 0 failed
+${1 FAIL MSG}       1 test, 0 passed, 1 failed
+${2 FAIL MSG}       2 tests, 0 passed, 2 failed
+${4 FAIL MSG}       4 tests, 0 passed, 4 failed
+${5 FAIL MSG}       5 tests, 0 passed, 5 failed
+${12 FAIL MSG}      12 tests, 0 passed, 12 failed
+${ALSO}             \n\nAlso teardown of the parent suite failed.
 ${EXECUTED FILE}    %{TEMPDIR}/robot-suite-teardown-executed.txt
 
 *** Test Cases ***
 Passing Suite Setup
     Run Tests    ${EMPTY}    core/passing_suite_setup.robot
-    Check Suite Status    ${SUITE}    PASS    ${1 PASS MSG}
-    ...    Verify Suite Setup
+    Check Suite Status    ${SUITE}    PASS    ${1 PASS MSG}    Verify Suite Setup
 
 Passing Suite Teardown
     [Setup]    Remove File    ${EXECUTED FILE}
     Run Tests    ${EMPTY}    core/passing_suite_teardown.robot
-    Check Suite Status    ${SUITE}    PASS    ${1 PASS MSG}
-    ...   Test
+    Check Suite Status    ${SUITE}    PASS    ${1 PASS MSG}    Test
     File Should Exist    ${EXECUTED FILE}
     [Teardown]    Remove File    ${EXECUTED FILE}
 
 Passing Suite Setup And Teardown
     [Setup]    Remove File    ${EXECUTED FILE}
     Run Tests    ${EMPTY}    core/passing_suite_setup_and_teardown.robot
-    Check Suite Status    ${SUITE}    PASS    ${1 PASS MSG}
-    ...    Verify Suite Setup
+    Check Suite Status    ${SUITE}    PASS    ${1 PASS MSG}    Verify Suite Setup
     File Should Exist    ${EXECUTED FILE}
     [Teardown]    Remove File    ${EXECUTED FILE}
 
@@ -38,11 +35,10 @@ Failing Suite Setup
     Check Suite Status    ${SUITE}    FAIL
     ...    Suite setup failed:\nExpected failure\n\n${2 FAIL MSG}
     ...    Test 1    Test 2
-    Should Be Equal    ${SUITE.setup.status}    FAIL
-    Should Be Equal    ${SUITE.teardown.status}    PASS
-    Length Should Be    ${SUITE.teardown.msgs}    1
+    Should Be Equal      ${SUITE.setup.status}            FAIL
+    Should Be Equal      ${SUITE.teardown.status}         PASS
+    Length Should Be     ${SUITE.teardown.body}           1
     Check Log Message    ${SUITE.teardown.messages[0]}    Suite teardown executed
-    Should Be Empty    ${SUITE.teardown.kws}
 
 Erroring Suite Setup
     Run Tests    ${EMPTY}    core/erroring_suite_setup.robot
@@ -50,15 +46,15 @@ Erroring Suite Setup
     ...    Suite setup failed:\nNo keyword with name 'Non-Existing Keyword' found.\n\n${2 FAIL MSG}
     ...    Test 1    Test 2
     Should Be Equal    ${SUITE.setup.status}    FAIL
-    ${td} =    Set Variable    ${SUITE.teardown}
-    Should Be Equal    ${td.name}    My TD
-    Should Be Equal    ${td.status}    PASS
-    Should Be Empty    ${td.msgs}
-    Length Should Be    ${td.kws}    2
-    Length Should Be    ${td.kws[0].msgs}    1
-    Check Log Message    ${td.kws[0].msgs[0]}    Hello from suite teardown!
-    Should Be Empty    ${td.kws[0].kws}
-    Should Be Equal    ${td.kws[1].full_name}    BuiltIn.No Operation
+    VAR    ${td}    ${SUITE.teardown}
+    Should Be Equal      ${td.name}            My TD
+    Should Be Equal      ${td.status}          PASS
+    Length Should Be     ${td.body}            2
+    Length Should Be     ${td.messages}        0
+    Length Should Be     ${td[0].body}         1
+    Length Should Be     ${td[0].messages}     1
+    Check Log Message    ${td[0, 0]}           Hello from suite teardown!
+    Should Be Equal      ${td[1].full_name}    BuiltIn.No Operation
 
 Failing Higher Level Suite Setup
     Run Tests    ${EMPTY}    core/failing_higher_level_suite_setup
@@ -104,7 +100,7 @@ Failing Suite Setup And Teardown
     ...    in two lines
     Check Suite Status    ${SUITE}    FAIL    ${error}\n\n${2 FAIL MSG}
     ...    Test 1    Test 2
-    Should Be Equal    ${SUITE.setup.status}    FAIL
+    Should Be Equal    ${SUITE.setup.status}       FAIL
     Should Be Equal    ${SUITE.teardown.status}    FAIL
     Output should contain teardown error    Teardown failure\nin two lines
 
@@ -161,10 +157,14 @@ Long Error Messages
 *** Keywords ***
 Check Suite Status
     [Arguments]    ${suite or name}    ${status}    ${message}    @{tests}
-    ${is string} =    Run Keyword And Return Status    Should Be String    ${suite or name}
-    ${suite} =    Run Keyword If    ${is string}    Get Test Suite    ${suite or name}
-    ...    ELSE    Set Variable    ${suite or name}
-    Should Be Equal    ${suite.status}    ${status}    Wrong suite status
+    TRY
+        Should Be String    ${suite or name}
+    EXCEPT
+        VAR    ${suite}    ${suite or name}
+    ELSE
+        ${suite} =    Get Test Suite    ${suite or name}
+    END
+    Should Be Equal    ${suite.status}          ${status}     Wrong suite status
     Should Be Equal    ${suite.full_message}    ${message}    Wrong suite message
     Should Contain Tests    ${suite}    @{tests}
 

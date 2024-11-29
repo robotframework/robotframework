@@ -34,4 +34,4 @@ Check TC And UK Name
     [Arguments]  ${name}
     ${tc} =  Check Test Case  ${name}
     Should Be Equal  ${tc.name}  ${name}
-    Should Be Equal  ${tc.kws[0].name}  ${name}
+    Should Be Equal  ${tc[0].name}  ${name}

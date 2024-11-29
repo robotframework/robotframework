@@ -145,8 +145,8 @@ Setup and teardown with escaping
 Template
     [Documentation]    Mainly tested elsewhere
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    Hello, world!
-    Check Log Message    ${tc.kws[1].msgs[0]}    Hi, tellus!
+    Check Log Message    ${tc[0, 0]}    Hello, world!
+    Check Log Message    ${tc[1, 0]}    Hi, tellus!
 
 Timeout
     Verify Timeout    1 day
@@ -198,13 +198,13 @@ Verify Setup
     [Arguments]    ${message}
     ${tc} =    Check Test Case    ${TEST NAME}
     Should Be Equal    ${tc.setup.full_name}    BuiltIn.Log
-    Check Log Message    ${tc.setup.msgs[0]}    ${message}
+    Check Log Message    ${tc.setup[0]}    ${message}
 
 Verify Teardown
     [Arguments]    ${message}
     ${tc} =    Check Test Case    ${TEST NAME}
     Should Be Equal    ${tc.teardown.full_name}    BuiltIn.Log
-    Check Log Message    ${tc.teardown.msgs[0]}    ${message}
+    Check Log Message    ${tc.teardown[0]}    ${message}
 
 Verify Timeout
     [Arguments]    ${timeout}

@@ -6,22 +6,22 @@ Resource          atest_resource.robot
 *** Test Cases ***
 Importing Python Library In File By Path
     ${test} =    Check Test Case    Importing Python Library In File By Path
-    Check Keyword Data    ${test.kws[0]}    MyLibFile.Keyword In My Lib File
-    Check Keyword Data    ${test.kws[1]}    MyLibFile2.Keyword In My Lib File 2    \${ret}    world
+    Check Keyword Data    ${test[0]}    MyLibFile.Keyword In My Lib File
+    Check Keyword Data    ${test[1]}    MyLibFile2.Keyword In My Lib File 2    \${ret}    world
 
 Importing Python Library In Dir By Path
     ${test} =    Check Test Case    Importing Python Library In Dir By Path
-    Check Keyword Data    ${test.kws[0]}    MyLibDir.Keyword In My Lib Dir    \${ret}
-    Check Keyword Data    ${test.kws[2]}    MyLibDir.Keyword In My Lib Dir    \${ret}    a1, a2
+    Check Keyword Data    ${test[0]}    MyLibDir.Keyword In My Lib Dir    \${ret}
+    Check Keyword Data    ${test[2]}    MyLibDir.Keyword In My Lib Dir    \${ret}    a1, a2
 
 Importing Library With Same Name
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check log message    ${tc.kws[0].msgs[0]}    Hello from lib1
-    Check log message    ${tc.kws[1].msgs[0]}    Hello from lib2
+    Check log message    ${tc[0, 0]}    Hello from lib1
+    Check log message    ${tc[1, 0]}    Hello from lib2
 
 Importing Python Library By Path With Variables
     ${test} =    Check Test Case    Importing Python Library By Path With Variables
-    Check Keyword Data    ${test.kws[0]}    MyLibDir2.Keyword In My Lib Dir 2    \${sum}    1, 2, 3, 4, 5
+    Check Keyword Data    ${test[0]}    MyLibDir2.Keyword In My Lib Dir 2    \${sum}    1, 2, 3, 4, 5
 
 Importing By Path Having Spaces
     Check Test Case    ${TEST NAME}

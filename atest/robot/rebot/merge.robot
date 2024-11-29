@@ -178,8 +178,8 @@ Suite setup and teardown should have been merged
     Should Be Equal      ${SUITE.setup.full_name}                      BuiltIn.No Operation
     Should Be Equal      ${SUITE.teardown.name}                        ${NONE}
     Should Be Equal      ${SUITE.suites[1].name}                       Fourth
-    Check Log Message    ${SUITE.suites[1].setup.msgs[0]}              Rerun!
-    Check Log Message    ${SUITE.suites[1].teardown.msgs[0]}           New!
+    Check Log Message    ${SUITE.suites[1].setup[0]}                   Rerun!
+    Check Log Message    ${SUITE.suites[1].teardown[0]}                New!
     Should Be Equal      ${SUITE.suites[2].suites[0].name}             Sub1
     Should Be Equal      ${SUITE.suites[2].suites[0].setup.name}       ${NONE}
     Should Be Equal      ${SUITE.suites[2].suites[0].teardown.name}    ${NONE}
@@ -243,7 +243,7 @@ Warnings should have been merged
     Check Log Message    ${ERRORS[0]}    Original message    WARN
     Check Log Message    ${ERRORS[1]}    Override    WARN
     ${tc} =    Check Test Case    SubSuite1 First
-    Check Log Message    ${tc.kws[0].msgs[0]}    Override    WARN
+    Check Log Message    ${tc[0, 0]}    Override    WARN
 
 Merge should have failed
     Stderr Should Be Equal To

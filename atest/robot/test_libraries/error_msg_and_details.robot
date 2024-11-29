@@ -38,18 +38,18 @@ Multiline Error With CRLF
 Message And Internal Trace Are Removed From Details When Exception In Library
     [Template]    NONE
     ${tc} =    Verify Test Case And Error In Log    Generic Failure    foo != bar
-    Traceback Should Be    ${tc.kws[0].msgs[1]}
+    Traceback Should Be    ${tc[0, 1]}
     ...    ../testresources/testlibs/ExampleLibrary.py    exception    raise exception(msg)
     ...    error=AssertionError: foo != bar
     ${tc} =    Verify Test Case And Error In Log    Non Generic Failure    FloatingPointError: Too Large A Number !!
-    Traceback Should Be    ${tc.kws[0].msgs[1]}
+    Traceback Should Be    ${tc[0, 1]}
     ...    ../testresources/testlibs/ExampleLibrary.py    exception    raise exception(msg)
     ...    error=FloatingPointError: Too Large A Number !!
 
 Message and Internal Trace Are Removed From Details When Exception In External Code
     [Template]    NONE
     ${tc} =    Verify Test Case And Error In Log    External Failure    UnboundLocalError: Raised from an external object!
-    Traceback Should Be    ${tc.kws[0].msgs[1]}
+    Traceback Should Be    ${tc[0, 1]}
     ...    ../testresources/testlibs/ExampleLibrary.py    external_exception    ObjectToReturn('failure').exception(name, msg)
     ...    ../testresources/testlibs/objecttoreturn.py    exception             raise exception(msg)
     ...    error=UnboundLocalError: Raised from an external object!
@@ -61,14 +61,14 @@ Chained exceptions
     # This avois the need to construct long and complicated tracebacks that are subject
     # change between Python versions.
     ${tc} =    Verify Test Case And Error In Log    Implicitly chained exception    NameError: name 'ooops' is not defined    msg=1
-    Check Log Message    ${tc.kws[0].msgs[2]}    ${tc.kws[0].msgs[0].message}    DEBUG
+    Check Log Message    ${tc[0, 2]}    ${tc[0, 0].message}    DEBUG
     ${tc} =    Verify Test Case And Error In Log    Explicitly chained exception    Expected error    msg=1
-    Check Log Message    ${tc.kws[0].msgs[2]}    ${tc.kws[0].msgs[0].message}    DEBUG
+    Check Log Message    ${tc[0, 2]}    ${tc[0, 0].message}    DEBUG
 
 Failure in library in non-ASCII directory
     [Template]    NONE
     ${tc} =    Verify Test Case And Error In Log    ${TEST NAME}    Keyword in 'nön_äscii_dïr' fails!    index=1
-    Traceback Should Be    ${tc.kws[1].msgs[1]}
+    Traceback Should Be    ${tc[1, 1]}
     ...    test_libraries/nön_äscii_dïr/valid.py    failing_keyword_in_non_ascii_dir    raise AssertionError("Keyword in 'nön_äscii_dïr' fails!")
     ...    error=AssertionError: Keyword in 'nön_äscii_dïr' fails!
 
@@ -91,7 +91,7 @@ Include internal traces when ROBOT_INTERNAL_TRACE is set
     Run Tests    -L DEBUG -t "Generic Failure"    test_libraries/error_msg_and_details.robot
     ${tc} =    Check Test Case    Generic Failure
     # Remove '^^^' lines added by Python 3.11+.
-    ${tb} =    Evaluate    '\\n'.join(line for line in $tc.kws[0].msgs[1].message.splitlines() if line.strip('^ '))
+    ${tb} =    Evaluate    '\\n'.join(line for line in $tc[0, 1].message.splitlines() if line.strip('^ '))
     Should Start With    ${tb}    Traceback (most recent call last):
     Should Contain       ${tb}    librarykeywordrunner.py
     Should End With      ${tb}    raise exception(msg)\nAssertionError: foo != bar
@@ -102,10 +102,10 @@ Include internal traces when ROBOT_INTERNAL_TRACE is set
 Verify Test Case And Error In Log
     [Arguments]    ${name}    ${error}    ${index}=0    ${msg}=0
     ${tc} =    Check Test Case    ${name}
-    Check Log Message    ${tc.kws[${index}].msgs[${msg}]}    ${error}    FAIL
+    Check Log Message    ${tc[${index}, ${msg}]}    ${error}    FAIL
     RETURN    ${tc}
 
 Verify Test Case, Error In Log And No Details
     [Arguments]    ${name}    ${error}    ${msg_index}=${0}
     ${tc} =    Verify Test Case And Error In Log    ${name}    ${error}    0    ${msg_index}
-    Length Should Be    ${tc.kws[0].msgs}    ${msg_index + 1}
+    Length Should Be    ${tc[0].body}    ${msg_index + 1}

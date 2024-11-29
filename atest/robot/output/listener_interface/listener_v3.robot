@@ -8,11 +8,11 @@ ${SEPARATOR}      ${EMPTY + '-' * 78}
 *** Test Cases ***
 New tests and keywords can be added
     ${tc} =    Check test case    Added by start_suite [start suite]   FAIL    [start] [end]
-    Check keyword data    ${tc.kws[0]}    BuiltIn.No Operation
+    Check keyword data    ${tc[0]}    BuiltIn.No Operation
     ${tc} =    Check test case    Added by startTest    PASS    Dynamically added! [end]
-    Check keyword data    ${tc.kws[0]}    BuiltIn.Fail    args=Dynamically added!    status=FAIL
+    Check keyword data    ${tc[0]}    BuiltIn.Fail    args=Dynamically added!    status=FAIL
     ${tc} =    Check test case    Added by end_Test    FAIL    [start] [end]
-    Check keyword data    ${tc.kws[0]}    BuiltIn.Log    args=Dynamically added!, INFO
+    Check keyword data    ${tc[0]}    BuiltIn.Log    args=Dynamically added!, INFO
     Stdout Should Contain    SEPARATOR=\n
     ...    Added by start_suite [start suite] :: [start suite] ${SPACE*17} | FAIL |
     ...    [start] [end]
@@ -64,14 +64,14 @@ Changing current element docs does not change console output, but does change ou
 
 Log messages and timestamps can be changed
     ${tc} =   Get Test Case    Pass [start suite]
-    Check Keyword Data    ${tc.kws[0].kws[0]}   BuiltIn.Log    args=Hello says "\${who}"!, \${LEVEL1}
-    Check Log Message     ${tc.kws[0].kws[0].msgs[0]}    HELLO SAYS "PASS"!
-    Should Be Equal       ${tc.kws[0].kws[0].msgs[0].timestamp}    ${datetime(2015, 12, 16, 15, 51, 20, 141000)}
+    Check Keyword Data    ${tc[0, 0]}   BuiltIn.Log    args=Hello says "\${who}"!, \${LEVEL1}
+    Check Log Message     ${tc[0, 0, 0]}    HELLO SAYS "PASS"!
+    Should Be Equal       ${tc[0, 0, 0].timestamp}    ${datetime(2015, 12, 16, 15, 51, 20, 141000)}
 
 Log message can be removed by setting message to `None`
     ${tc} =   Get Test Case    Fail [start suite]
-    Check Keyword Data    ${tc.kws[0].kws[0]}   BuiltIn.Log    args=Hello says "\${who}"!, \${LEVEL1}
-    Should Be Empty       ${tc.kws[0].kws[0].msgs}
+    Check Keyword Data    ${tc[0, 0]}   BuiltIn.Log    args=Hello says "\${who}"!, \${LEVEL1}
+    Should Be Empty       ${tc[0, 0].body}
     File Should Not Contain    ${OUTDIR}/d.txt    HELLO SAYS "FAIL"!
     File Should Not Contain    ${OUTDIR}/d.txt    None
 

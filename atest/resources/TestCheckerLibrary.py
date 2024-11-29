@@ -329,7 +329,7 @@ class TestCheckerLibrary:
             assert_equal(act, exp)
 
     def should_contain_keywords(self, item, *kw_names):
-        actual_names = [kw.full_name for kw in item.kws]
+        actual_names = [kw.full_name for kw in item.body.filter(keywords=True)]
         assert_equal(len(actual_names), len(kw_names), 'Wrong number of keywords')
         for act, exp in zip(actual_names, kw_names):
             assert_equal(act, exp)
@@ -371,7 +371,7 @@ class TestCheckerLibrary:
 
 class ProcessResults(ResultVisitor):
 
-    def start_test(self, test):
+    def visit_test(self, test):
         for status in 'FAIL', 'SKIP', 'PASS':
             if status in test.doc:
                 test.exp_status = status
@@ -380,18 +380,3 @@ class ProcessResults(ResultVisitor):
         else:
             test.exp_status = 'PASS'
             test.exp_message = ''
-        test.kws = list(test.body)
-
-    def start_body_item(self, item):
-        # TODO: Consider not setting these attributes to avoid "ATest" variants.
-        # - Using normal `body` and `messages` would in general be cleaner.
-        # - If `kws` is preserved, it should only contain keywords, not controls.
-        # - `msgs` isn't that much shorter than `messages`.
-        item.kws = item.body.filter(messages=False)
-        item.msgs = item.body.filter(messages=True)
-
-    def visit_message(self, message):
-        pass
-
-    def visit_errors(self, errors):
-        errors.msgs = errors.messages

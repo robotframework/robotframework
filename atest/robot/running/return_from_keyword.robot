@@ -56,5 +56,5 @@ Return From Keyword If does not evaluate bogus arguments if condition is untrue
 
 Logs Info
     ${tc} =  Check Test Case    Without Return Value
-    Check Log Message    ${tc.kws[0].kws[0].msgs[0]}
+    Check Log Message    ${tc[0, 0, 0]}
     ...    Returning from the enclosing user keyword.

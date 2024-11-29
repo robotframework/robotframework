@@ -8,7 +8,7 @@ ${EXECUTED}       This is executed
 *** Test Cases ***
 Run Keyword If With True Expression
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc[0, 0].msgs[0]}    ${EXECUTED}
+    Check Log Message    ${tc[0, 0, 0]}    ${EXECUTED}
 
 Run Keyword If With False Expression
     ${tc} =    Check Test Case    ${TEST NAME}
@@ -16,13 +16,13 @@ Run Keyword If With False Expression
 
 Run Keyword In User Keyword
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc[0, 0, 0].msgs[0]}    ${EXECUTED}
+    Check Log Message    ${tc[0, 0, 0, 0]}    ${EXECUTED}
     Should Be Empty    ${tc[1, 0].body}
 
 Run Keyword With ELSE
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc[1, 0].msgs[0]}    ${EXECUTED}
-    Check Log Message    ${tc[3, 0].msgs[0]}    ${EXECUTED}
+    Check Log Message    ${tc[1, 0, 0]}    ${EXECUTED}
+    Check Log Message    ${tc[3, 0, 0]}    ${EXECUTED}
 
 Keyword Name in ELSE as variable
     Check Test Case    ${TEST NAME}
@@ -45,18 +45,18 @@ Only first ELSE is significant
 
 Run Keyword With ELSE IF
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc[1, 0].msgs[0]}    ${EXECUTED}
+    Check Log Message    ${tc[1, 0, 0]}    ${EXECUTED}
 
 Run Keyword with ELSE IF and ELSE
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc[0, 0].msgs[0]}    ${EXECUTED}
-    Check Log Message    ${tc[1, 0].msgs[0]}    ${EXECUTED}
+    Check Log Message    ${tc[0, 0, 0]}    ${EXECUTED}
+    Check Log Message    ${tc[1, 0, 0]}    ${EXECUTED}
 
 Run Keyword with multiple ELSE IF
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc[0, 0].msgs[0]}    ${EXECUTED}
-    Check Log Message    ${tc[1, 0].msgs[0]}    ${EXECUTED}
-    Check Log Message    ${tc[2, 0].msgs[0]}    ${EXECUTED}
+    Check Log Message    ${tc[0, 0, 0]}    ${EXECUTED}
+    Check Log Message    ${tc[1, 0, 0]}    ${EXECUTED}
+    Check Log Message    ${tc[2, 0, 0]}    ${EXECUTED}
 
 Keyword Name in ELSE IF as variable
     Check Test Case    ${TEST NAME}
@@ -79,7 +79,7 @@ ELSE IF without keyword is invalid
 
 ELSE before ELSE IF is ignored
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc[0, 0].msgs[0]}    ${EXECUTED}
+    Check Log Message    ${tc[0, 0, 0]}    ${EXECUTED}
 
 ELSE and ELSE IF inside list arguments should be escaped
     Check Test Case    ${TEST NAME}
@@ -108,24 +108,24 @@ Run Keyword With ELSE and ELSE IF from Variable
 
 Run Keyword Unless With False Expression
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${ERRORS[0]}           Keyword 'BuiltIn.Run Keyword Unless' is deprecated.    WARN
-    Check Log Message    ${tc[1, 0]}            Keyword 'BuiltIn.Run Keyword Unless' is deprecated.    WARN
-    Check Log Message    ${tc[1, 1].msgs[0]}    ${EXECUTED}
+    Check Log Message    ${ERRORS[0]}       Keyword 'BuiltIn.Run Keyword Unless' is deprecated.    WARN
+    Check Log Message    ${tc[1, 0]}        Keyword 'BuiltIn.Run Keyword Unless' is deprecated.    WARN
+    Check Log Message    ${tc[1, 1, 0]}     ${EXECUTED}
 
 Run Keyword Unless With True Expression
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${ERRORS[1]}           Keyword 'BuiltIn.Run Keyword Unless' is deprecated.    WARN
-    Check Log Message    ${tc[0, 0]}            Keyword 'BuiltIn.Run Keyword Unless' is deprecated.    WARN
-    Length Should Be     ${tc[0].body}          1
+    Check Log Message    ${ERRORS[1]}       Keyword 'BuiltIn.Run Keyword Unless' is deprecated.    WARN
+    Check Log Message    ${tc[0, 0]}        Keyword 'BuiltIn.Run Keyword Unless' is deprecated.    WARN
+    Length Should Be     ${tc[0].body}      1
 
 Variable Values Should Not Be Visible As Keyword's Arguments
     ${tc} =    Check Test Case    Run Keyword In User Keyword
-    Check Keyword Data    ${tc[0, 0]}    BuiltIn.Run Keyword If    args='\${status}' == 'PASS', Log, \${message}
-    Check Keyword Data    ${tc[0, 0, 0]}    BuiltIn.Log    args=\${message}
+    Check Keyword Data    ${tc[0, 0]}       BuiltIn.Run Keyword If    args='\${status}' == 'PASS', Log, \${message}
+    Check Keyword Data    ${tc[0, 0, 0]}    BuiltIn.Log               args=\${message}
 
 *** Keywords ***
 Test ELSE (IF) Escaping
     [Arguments]    ${kw}    ${else (if)}
-    Length Should Be    ${kw.msgs}    2
-    Check Log Message    ${kw.msgs[0]}    ${else (if)}
-    Check Log Message    ${kw.msgs[1]}    ${EXECUTED}
+    Length Should Be     ${kw.body}    2
+    Check Log Message    ${kw[0]}      ${else (if)}
+    Check Log Message    ${kw[1]}      ${EXECUTED}

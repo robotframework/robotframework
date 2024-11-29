@@ -17,8 +17,8 @@ Returning
 
 Logging
     ${tc} =    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    I can has logz?
-    Check Log Message    ${tc.kws[0].msgs[1]}    Yezz!!    DEBUG
+    Check Log Message    ${tc[0, 0]}    I can has logz?
+    Check Log Message    ${tc[0, 1]}    Yezz!!    DEBUG
 
 Extra stuff in result dictionary is ignored
     Check Test Case    ${TESTNAME}
@@ -26,7 +26,7 @@ Extra stuff in result dictionary is ignored
 Keyword documentation
     [Documentation]    Library does not have `get_keyword_documentation` method.
     ${tc} =    Get Test Case    Passing
-    Should Be Equal    ${tc.kws[0].doc}    ${EMPTY}
+    Should Be Equal    ${tc[0].doc}    ${EMPTY}
 
 Keyword name conflict with custom library
     Check Test Case    ${TESTNAME}
@@ -38,5 +38,5 @@ Keyword name conflict with standard library
     ...    'Remote' and a standard library 'BuiltIn'. The custom keyword
     ...    is used. To select explicitly, and to get rid of this warning,
     ...    use either 'Remote.Should Be True' or 'BuiltIn.Should Be True'.
-    Check Log Message    ${tc.kws[0].msgs[0]}    ${warning}    WARN
-    Check Log Message    ${tc.kws[0].msgs[1]}    Always passes
+    Check Log Message    ${tc[0, 0]}    ${warning}    WARN
+    Check Log Message    ${tc[0, 1]}    Always passes

@@ -44,7 +44,7 @@ Skip in Teardown After Failure In Body
 
 Teardown is executed after skip
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check log message    ${tc.teardown.msgs[0]}    Teardown is executed!
+    Check log message    ${tc.teardown[0]}    Teardown is executed!
 
 Fail in Teardown After Skip In Body
     Check Test Case    ${TEST NAME}

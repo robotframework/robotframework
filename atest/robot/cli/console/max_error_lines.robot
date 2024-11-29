@@ -38,15 +38,16 @@ Has Been Cut
     Should Contain    ${test.message}    ${EXPLANATION}
     Should Match Non Empty Regexp    ${test.message}    ${eol_dots}
     Should Match Non Empty Regexp    ${test.message}    ${bol_dots}
-    Error Message In Log Should Not Have Been Cut    ${test.kws}
+    Error Message In Log Should Not Have Been Cut    ${test.body}
     RETURN    ${test}
 
 Error Message In Log Should Not Have Been Cut
-    [Arguments]    ${kws}
-    @{keywords} =    Set Variable    ${kws}
-    FOR    ${kw}    IN    @{keywords}
-        Run Keyword If    ${kw.msgs}    Should Not Contain    ${kw.msgs[-1].message}    ${EXPLANATION}
-        Error Message In Log Should Not Have Been Cut    ${kw.kws}
+    [Arguments]    ${body}
+    FOR    ${item}    IN    @{body}
+        VAR    ${messages}    ${item.body.filter(messages=True)}
+        IF    ${messages}
+        ...    Should Not Contain    ${messages[-1].message}    ${EXPLANATION}
+        Error Message In Log Should Not Have Been Cut    ${item.body.filter(messages=False)}
     END
 
 Should Match Non Empty Regexp

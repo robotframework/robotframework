@@ -66,7 +66,7 @@ ${SUITE DIR}       misc/suites
 Parent suite init files are processed
     Previous Test Should Have Passed    --suite with patterns
     Should Be True    ${SUITE.teardown}
-    Check log message    ${SUITE.teardown.msgs[0]}    Default suite teardown
+    Check log message    ${SUITE.teardown[0]}    Default suite teardown
 
 --suite matching directory
     Run Suites    --suite sub?uit[efg]s

@@ -14,4 +14,3 @@ TRY
     Check Keyword Data    ${tc[0, 3, 0]}       BuiltIn.Log    args=in the finally    status=NOT RUN
     Check TRY Data        ${tc[1, 0]}          status=FAIL
     Check Keyword Data    ${tc[1, 0, 0]}       resource.Anarchy in the UK    status=FAIL    args=1, 2
-

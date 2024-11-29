@@ -11,11 +11,11 @@ Remove from test using pattern
 
 Remove from keyword
     ${tc} =    Check Test Case    Remove from test
-    Check Keyword Data    ${tc.kws[0]}    ${TEST NAME}    tags=-in-settings, kw2
+    Check Keyword Data    ${tc[0]}    ${TEST NAME}    tags=-in-settings, kw2
 
 Remove from keyword using pattern
     ${tc} =    Check Test Case    Remove from test using pattern
-    Check Keyword Data    ${tc.kws[0]}    -tag_syntax.${TEST NAME}    tags=r1, r5, r6
+    Check Keyword Data    ${tc[0]}    -tag_syntax.${TEST NAME}    tags=r1, r5, r6
 
 Escaped
     Check Test Tags    ${TESTNAME}    -escaped    -escaped-in-settings    -in-settings    tag    tag1    tag2    tag3

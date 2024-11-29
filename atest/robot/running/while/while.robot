@@ -5,7 +5,7 @@ Suite Setup       Run Tests    ${EMPTY}    running/while/while.robot
 *** Test Cases ***
 Loop executed once
     ${loop}=    Check While Loop    PASS    1
-    Check Log Message   ${loop.body[0].body[0].msgs[0]}    1
+    Check Log Message   ${loop[0, 0, 0]}    1
 
 Loop executed multiple times
     Check While Loop    PASS    5
