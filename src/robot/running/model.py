@@ -46,7 +46,7 @@ from robot.output import LOGGER, Output, pyloggingconf
 from robot.utils import format_assign_message, setter
 from robot.variables import VariableResolver
 
-from .bodyrunner import ForRunner, IfRunner, KeywordRunner, TryRunner, WhileRunner
+from .bodyrunner import ForRunner, GroupRunner, IfRunner, KeywordRunner, TryRunner, WhileRunner
 from .randomizer import Randomizer
 from .statusreporter import StatusReporter
 
@@ -58,15 +58,15 @@ if TYPE_CHECKING:
 
 IT = TypeVar('IT', bound='IfBranch|TryBranch')
 BodyItemParent = Union['TestSuite', 'TestCase', 'UserKeyword', 'For', 'If', 'IfBranch',
-                       'Try', 'TryBranch', 'While', None]
+                       'Try', 'TryBranch', 'While', 'Group', None]
 
 
-class Body(model.BaseBody['Keyword', 'For', 'While', 'If', 'Try', 'Var', 'Return',
+class Body(model.BaseBody['Keyword', 'For', 'While', 'Group', 'If', 'Try', 'Var', 'Return',
                           'Continue', 'Break', 'model.Message', 'Error']):
     __slots__ = ()
 
 
-class Branches(model.BaseBranches['Keyword', 'For', 'While', 'If', 'Try', 'Var', 'Return',
+class Branches(model.BaseBranches['Keyword', 'For', 'While', 'Group', 'If', 'Try', 'Var', 'Return',
                                   'Continue', 'Break', 'model.Message', 'Error', IT]):
     __slots__ = ()
 
@@ -259,6 +259,33 @@ class While(model.While, WithSource):
         iteration = WhileIteration(self, self.lineno, self.error)
         iteration.body = [item.to_dict() for item in self.body]
         return iteration
+        self.error = error
+
+
+@Body.register
+class Group(model.Group, WithSource):
+    __slots__ = ['lineno', 'error']
+    body_class = Body
+
+    def __init__(self, name: str = '',
+                 parent: BodyItemParent = None,
+                 lineno: 'int|None' = None,
+                 error: 'str|None' = None):
+        super().__init__(name, parent)
+        self.lineno = lineno
+        self.error = error
+
+    def to_dict(self) -> DataDict:
+        data = super().to_dict()
+        if self.lineno:
+            data['lineno'] = self.lineno
+        if self.error:
+            data['error'] = self.error
+        return data
+
+    def run(self, result, context, run=True, templated=False):
+        result = result.body.create_group(self.name)
+        return GroupRunner(context, run, templated).run(self, result)
 
 
 class IfBranch(model.IfBranch, WithSource):

@@ -85,6 +85,12 @@ class XmlLoggerAdapter(LoggerApi):
     def end_while_iteration(self, data, result):
         self.logger.end_while_iteration(result)
 
+    def start_group(self, data, result):
+        self.logger.start_group(result)
+
+    def end_group(self, data, result):
+        self.logger.end_group(result)
+
     def start_if(self, data, result):
         self.logger.start_if(result)
 
@@ -310,6 +316,13 @@ class XmlLogger(ResultVisitor):
     def end_while_iteration(self, iteration):
         self._write_status(iteration)
         self._writer.end('iter')
+
+    def start_group(self, group):
+        self._writer.start('group', {'name': group.name})
+
+    def end_group(self, group):
+        self._write_status(group)
+        self._writer.end('group')
 
     def start_var(self, var):
         attr = {'name': var.name}

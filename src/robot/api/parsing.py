@@ -196,6 +196,7 @@ Blocks:
 - :class:`~robot.parsing.model.blocks.Try`
 - :class:`~robot.parsing.model.blocks.For`
 - :class:`~robot.parsing.model.blocks.While`
+- :class:`~robot.parsing.model.blocks.Group` (new in RF 7.2)
 
 Statements:
 
@@ -236,6 +237,7 @@ Statements:
 - :class:`~robot.parsing.model.statements.FinallyHeader`
 - :class:`~robot.parsing.model.statements.ForHeader`
 - :class:`~robot.parsing.model.statements.WhileHeader`
+- :class:`~robot.parsing.model.statements.GroupHeader` (new in RF 7.2)
 - :class:`~robot.parsing.model.statements.Var` (new in RF 7.0)
 - :class:`~robot.parsing.model.statements.End`
 - :class:`~robot.parsing.model.statements.ReturnStatement`
@@ -504,7 +506,8 @@ from robot.parsing.model.blocks import (
     If as If,
     Try as Try,
     For as For,
-    While as While
+    While as While,
+    Group as Group
 )
 from robot.parsing.model.statements import (
     SectionHeader as SectionHeader,
@@ -545,6 +548,7 @@ from robot.parsing.model.statements import (
     FinallyHeader as FinallyHeader,
     ForHeader as ForHeader,
     WhileHeader as WhileHeader,
+    GroupHeader as GroupHeader,
     End as End,
     Var as Var,
     ReturnStatement as ReturnStatement,

@@ -1034,6 +1034,50 @@ Name
                       get_resource_tokens, data_only=True)
 
 
+class TestGroup(unittest.TestCase):
+
+    def test_group_header(self):
+        header = 'GROUP    Name'
+        expected = [
+            (T.GROUP, 'GROUP', 3, 4),
+            (T.ARGUMENT, 'Name', 3, 13),
+            (T.EOS, '', 3, 17)
+        ]
+        self._verify(header, expected)
+
+    def _verify(self, header, expected_header):
+        data = '''\
+*** %s ***
+Name
+    %s
+        Keyword
+    END
+'''
+        body_and_end = [
+            (T.KEYWORD, 'Keyword', 4, 8),
+            (T.EOS, '', 4, 15),
+            (T.END, 'END', 5, 4),
+            (T.EOS, '', 5, 7)
+        ]
+        expected = [
+            (T.TESTCASE_HEADER, '*** Test Cases ***', 1, 0),
+            (T.EOS, '', 1, 18),
+            (T.TESTCASE_NAME, 'Name', 2, 0),
+            (T.EOS, '', 2, 4)
+        ] + expected_header + body_and_end
+        assert_tokens(data % ('Test Cases', header), expected, data_only=True)
+
+        expected = [
+            (T.KEYWORD_HEADER, '*** Keywords ***', 1, 0),
+            (T.EOS, '', 1, 16),
+            (T.KEYWORD_NAME, 'Name', 2, 0),
+            (T.EOS, '', 2, 4)
+        ] + expected_header + body_and_end
+        assert_tokens(data % ('Keywords', header), expected, data_only=True)
+        assert_tokens(data % ('Keywords', header), expected,
+                      get_resource_tokens, data_only=True)
+
+
 class TestIf(unittest.TestCase):
 
     def test_if_only(self):

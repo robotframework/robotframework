@@ -23,7 +23,7 @@ from .context import (FileContext, KeywordContext, LexingContext, SuiteFileConte
 from .statementlexers import (BreakLexer, CommentLexer, CommentSectionHeaderLexer,
                               ContinueLexer, ElseHeaderLexer, ElseIfHeaderLexer,
                               EndLexer, ExceptHeaderLexer, FinallyHeaderLexer,
-                              ForHeaderLexer, IfHeaderLexer, ImplicitCommentLexer,
+                              ForHeaderLexer, GroupHeaderLexer, IfHeaderLexer, ImplicitCommentLexer,
                               InlineIfHeaderLexer, InvalidSectionHeaderLexer,
                               KeywordCallLexer, KeywordSectionHeaderLexer,
                               KeywordSettingLexer, Lexer, ReturnLexer, SettingLexer,
@@ -202,7 +202,7 @@ class TestCaseLexer(TestOrKeywordLexer):
 
     def lexer_classes(self) -> 'tuple[type[Lexer], ...]':
         return (TestCaseSettingLexer, ForLexer, InlineIfLexer, IfLexer, TryLexer,
-                WhileLexer, VarLexer, SyntaxErrorLexer, KeywordCallLexer)
+                WhileLexer, GroupLexer, VarLexer, SyntaxErrorLexer,  KeywordCallLexer)
 
 
 class KeywordLexer(TestOrKeywordLexer):
@@ -213,7 +213,7 @@ class KeywordLexer(TestOrKeywordLexer):
 
     def lexer_classes(self) -> 'tuple[type[Lexer], ...]':
         return (KeywordSettingLexer, ForLexer, InlineIfLexer, IfLexer, TryLexer,
-                WhileLexer, VarLexer, ReturnLexer, SyntaxErrorLexer, KeywordCallLexer)
+                WhileLexer, GroupLexer, VarLexer, ReturnLexer, SyntaxErrorLexer, KeywordCallLexer)
 
 
 class NestedBlockLexer(BlockLexer, ABC):
@@ -230,7 +230,7 @@ class NestedBlockLexer(BlockLexer, ABC):
         super().input(statement)
         lexer = self.lexers[-1]
         if isinstance(lexer, (ForHeaderLexer, IfHeaderLexer, TryHeaderLexer,
-                              WhileHeaderLexer)):
+                              WhileHeaderLexer, GroupHeaderLexer)):
             self._block_level += 1
         if isinstance(lexer, EndLexer):
             self._block_level -= 1
@@ -243,8 +243,8 @@ class ForLexer(NestedBlockLexer):
 
     def lexer_classes(self) -> 'tuple[type[Lexer], ...]':
         return (ForHeaderLexer, InlineIfLexer, IfLexer, TryLexer, WhileLexer, EndLexer,
-                VarLexer, ReturnLexer, ContinueLexer, BreakLexer, SyntaxErrorLexer,
-                KeywordCallLexer)
+                GroupLexer, VarLexer, ReturnLexer, ContinueLexer, BreakLexer,
+                SyntaxErrorLexer, KeywordCallLexer)
 
 
 class WhileLexer(NestedBlockLexer):
@@ -254,8 +254,8 @@ class WhileLexer(NestedBlockLexer):
 
     def lexer_classes(self) -> 'tuple[type[Lexer], ...]':
         return (WhileHeaderLexer, ForLexer, InlineIfLexer, IfLexer, TryLexer, EndLexer,
-                VarLexer, ReturnLexer, ContinueLexer, BreakLexer, SyntaxErrorLexer,
-                KeywordCallLexer)
+                GroupLexer, VarLexer, ReturnLexer, ContinueLexer, BreakLexer,
+                SyntaxErrorLexer, KeywordCallLexer)
 
 
 class TryLexer(NestedBlockLexer):
@@ -266,7 +266,19 @@ class TryLexer(NestedBlockLexer):
     def lexer_classes(self) -> 'tuple[type[Lexer], ...]':
         return (TryHeaderLexer, ExceptHeaderLexer, ElseHeaderLexer, FinallyHeaderLexer,
                 ForLexer, InlineIfLexer, IfLexer, WhileLexer, EndLexer, VarLexer,
-                ReturnLexer, BreakLexer, ContinueLexer, SyntaxErrorLexer,
+                GroupLexer, ReturnLexer, BreakLexer, ContinueLexer, SyntaxErrorLexer,
+                KeywordCallLexer)
+
+
+class GroupLexer(NestedBlockLexer):
+
+    def handles(self, statement: StatementTokens) -> bool:
+        return GroupHeaderLexer(self.ctx).handles(statement)
+
+    def lexer_classes(self) -> 'tuple[type[Lexer], ...]':
+        return (GroupHeaderLexer, InlineIfLexer, IfLexer,
+                ForLexer, TryLexer, WhileLexer, EndLexer, VarLexer,
+                ReturnLexer, ContinueLexer, BreakLexer, SyntaxErrorLexer,
                 KeywordCallLexer)
 
 
@@ -277,8 +289,9 @@ class IfLexer(NestedBlockLexer):
 
     def lexer_classes(self) -> 'tuple[type[Lexer], ...]':
         return (InlineIfLexer, IfHeaderLexer, ElseIfHeaderLexer, ElseHeaderLexer,
-                ForLexer, TryLexer, WhileLexer, EndLexer, VarLexer, ReturnLexer,
-                ContinueLexer, BreakLexer, SyntaxErrorLexer, KeywordCallLexer)
+                ForLexer, TryLexer, WhileLexer, EndLexer, VarLexer, GroupLexer,
+                ReturnLexer, ContinueLexer, BreakLexer, SyntaxErrorLexer,
+                KeywordCallLexer)
 
 
 class InlineIfLexer(NestedBlockLexer):
@@ -293,7 +306,7 @@ class InlineIfLexer(NestedBlockLexer):
 
     def lexer_classes(self) -> 'tuple[type[Lexer], ...]':
         return (InlineIfHeaderLexer, ElseIfHeaderLexer, ElseHeaderLexer, VarLexer,
-                ReturnLexer, ContinueLexer, BreakLexer, KeywordCallLexer)
+                GroupLexer, ReturnLexer, ContinueLexer, BreakLexer, KeywordCallLexer)
 
     def input(self, statement: StatementTokens):
         for part in self._split(statement):

@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from .blocks import (Block, CommentSection, Container, File, For, If,
+from .blocks import (Block, CommentSection, Container, File, For, If, Group,
                      ImplicitCommentSection, InvalidSection, Keyword,
                      KeywordSection, NestedBlock, Section, SettingSection,
                      TestCase, TestCaseSection, Try, VariableSection, While)

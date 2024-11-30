@@ -708,6 +708,24 @@ class ListenerV3:
         """
         self.end_body_item(data, result)
 
+    def start_group(self, data: running.Group, result: result.Group):
+        """Called when a GROUP starts.
+
+        The default implementation calls :meth:`start_body_item`.
+
+        New in Robot Framework 7.2.
+        """
+        self.start_body_item(data, result)
+
+    def end_group(self, data: running.Group, result: result.Group):
+        """Called when a GROUP ends.
+
+        The default implementation calls :meth:`end_body_item`.
+
+        New in Robot Framework 7.2.
+        """
+        self.end_body_item(data, result)
+
     def start_if(self, data: running.If, result: result.If):
         """Called when an IF/ELSE structure starts.
 

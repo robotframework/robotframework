@@ -22,7 +22,7 @@ from typing import cast, Iterator, Sequence, TextIO, Union
 from robot.utils import file_writer, test_or_task
 
 from .statements import (Break, Continue, ElseHeader, ElseIfHeader, End, ExceptHeader,
-                         Error, FinallyHeader, ForHeader, IfHeader, KeywordCall,
+                         Error, FinallyHeader, ForHeader, GroupHeader, IfHeader, KeywordCall,
                          KeywordName, Node, ReturnSetting, ReturnStatement,
                          SectionHeader, Statement, TemplateArguments, TestCaseName,
                          TryHeader, Var, WhileHeader)
@@ -99,7 +99,7 @@ class Block(Container, ABC):
     def _body_is_empty(self):
         # This works with tests, keywords, and blocks inside them, not with sections.
         valid = (KeywordCall, TemplateArguments, Var, Continue, Break, ReturnSetting,
-                 ReturnStatement, NestedBlock, Error)
+                 Group, ReturnStatement, NestedBlock, Error)
         return not any(isinstance(node, valid) for node in self.body)
 
 
@@ -397,6 +397,20 @@ class While(NestedBlock):
         if not self.end:
             self.errors += ('WHILE loop must have closing END.',)
         TemplatesNotAllowed('WHILE').check(self)
+
+
+class Group(NestedBlock):
+    header: GroupHeader
+
+    @property
+    def name(self) -> str:
+        return self.header.name
+
+    def validate(self, ctx: 'ValidationContext'):
+        if self._body_is_empty():
+            self.errors += ('GROUP cannot be empty.',)
+        if not self.end:
+            self.errors += ('GROUP must have closing END.',)
 
 
 class ModelWriter(ModelVisitor):

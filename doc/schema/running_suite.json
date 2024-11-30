@@ -244,6 +244,9 @@
                 "$ref": "#/definitions/While"
               },
               {
+                "$ref": "#/definitions/Group"
+              },
+              {
                 "$ref": "#/definitions/If"
               },
               {
@@ -345,6 +348,9 @@
                 "$ref": "#/definitions/While"
               },
               {
+                "$ref": "#/definitions/Group"
+              },
+              {
                 "$ref": "#/definitions/If"
               },
               {
@@ -406,6 +412,76 @@
       ],
       "additionalProperties": false
     },
+    "Group": {
+      "title": "Group",
+      "type": "object",
+      "properties": {
+        "lineno": {
+          "title": "Lineno",
+          "type": "integer"
+        },
+        "error": {
+          "title": "Error",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "body": {
+          "title": "Body",
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions/Keyword"
+              },
+              {
+                "$ref": "#/definitions/For"
+              },
+              {
+                "$ref": "#/definitions/While"
+              },
+              {
+                "$ref": "#/definitions/Group"
+              },
+              {
+                "$ref": "#/definitions/If"
+              },
+              {
+                "$ref": "#/definitions/Try"
+              },
+              {
+                "$ref": "#/definitions/Var"
+              },
+              {
+                "$ref": "#/definitions/Break"
+              },
+              {
+                "$ref": "#/definitions/Continue"
+              },
+              {
+                "$ref": "#/definitions/Return"
+              },
+              {
+                "$ref": "#/definitions/Error"
+              }
+            ]
+          }
+        },
+        "type": {
+          "title": "Type",
+          "default": "GROUP",
+          "const": "GROUP",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "body"
+      ],
+      "additionalProperties": false
+    },
     "While": {
       "title": "While",
       "type": "object",
@@ -447,6 +523,9 @@
               },
               {
                 "$ref": "#/definitions/While"
+              },
+              {
+                "$ref": "#/definitions/Group"
               },
               {
                 "$ref": "#/definitions/If"
@@ -541,6 +620,9 @@
                 "$ref": "#/definitions/While"
               },
               {
+                "$ref": "#/definitions/Group"
+              },
+              {
                 "$ref": "#/definitions/If"
               },
               {
@@ -633,6 +715,9 @@
               },
               {
                 "$ref": "#/definitions/While"
+              },
+              {
+                "$ref": "#/definitions/Group"
               },
               {
                 "$ref": "#/definitions/If"
@@ -782,6 +867,9 @@
               },
               {
                 "$ref": "#/definitions/While"
+              },
+              {
+                "$ref": "#/definitions/Group"
               },
               {
                 "$ref": "#/definitions/If"

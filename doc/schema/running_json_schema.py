@@ -69,7 +69,7 @@ class For(BodyItem):
     start: str | None
     mode: str | None
     fill: str | None
-    body: list['Keyword | For | While | If | Try | Var | Break | Continue | Return | Error']
+    body: list['Keyword | For | While | Group | If | Try | Var | Break | Continue | Return | Error']
 
 
 class While(BodyItem):
@@ -78,13 +78,19 @@ class While(BodyItem):
     limit: str | None
     on_limit: str | None
     on_limit_message: str | None
-    body: list['Keyword | For | While | If | Try | Var | Break | Continue | Return | Error']
+    body: list['Keyword | For | While | Group | If | Try | Var | Break | Continue | Return | Error']
+
+
+class Group(BodyItem):
+    type = Field('GROUP', const=True)
+    name: str
+    body: list['Keyword | For | While | Group | If | Try | Var | Break | Continue | Return | Error']
 
 
 class IfBranch(BodyItem):
     type: Literal['IF', 'ELSE IF', 'ELSE']
     condition: str | None
-    body: list['Keyword | For | While | If | Try | Var | Break | Continue | Return | Error']
+    body: list['Keyword | For | While | Group | If | Try | Var | Break | Continue | Return | Error']
 
 
 class If(BodyItem):
@@ -97,7 +103,7 @@ class TryBranch(BodyItem):
     patterns: Sequence[str] | None
     pattern_type: str | None
     assign: str | None
-    body: list['Keyword | For | While | If | Try | Var | Break | Continue | Return | Error']
+    body: list['Keyword | For | While | Group | If | Try | Var | Break | Continue | Return | Error']
 
 
 class Try(BodyItem):
@@ -115,7 +121,7 @@ class TestCase(BaseModel):
     error: str | None
     setup: Keyword | None
     teardown: Keyword | None
-    body: list[Keyword | For | While | If | Try | Var | Error]
+    body: list[Keyword | For | While | Group | If | Try | Var | Error]
 
 
 class TestSuite(BaseModel):
@@ -168,7 +174,7 @@ class UserKeyword(BaseModel):
     error: str | None
     setup: Keyword | None
     teardown: Keyword | None
-    body: list[Keyword | For | While | If | Try | Return | Var | Error]
+    body: list[Keyword | For | While | Group | If | Try | Return | Var | Error]
 
 
 class Resource(BaseModel):
@@ -178,8 +184,7 @@ class Resource(BaseModel):
     variables: list[Variable] | None
     keywords: list[UserKeyword] | None
 
-
-for cls in [For, While, IfBranch, TryBranch, TestSuite]:
+for cls in [For, While, Group, IfBranch, TryBranch, TestSuite]:
     cls.update_forward_refs()
 
 

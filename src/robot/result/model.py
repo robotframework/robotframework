@@ -55,20 +55,21 @@ from .suiteteardownfailed import SuiteTeardownFailed, SuiteTeardownFailureHandle
 IT = TypeVar('IT', bound='IfBranch|TryBranch')
 FW = TypeVar('FW', bound='ForIteration|WhileIteration')
 BodyItemParent = Union['TestSuite', 'TestCase', 'Keyword', 'For', 'ForIteration', 'If',
-                       'IfBranch', 'Try', 'TryBranch', 'While', 'WhileIteration', None]
+                       'IfBranch', 'Try', 'TryBranch', 'While', 'WhileIteration',
+                       'Group', None]
 
 
-class Body(model.BaseBody['Keyword', 'For', 'While', 'If', 'Try', 'Var', 'Return',
+class Body(model.BaseBody['Keyword', 'For', 'While', 'Group', 'If', 'Try', 'Var', 'Return',
                           'Continue', 'Break', 'Message', 'Error']):
     __slots__ = ()
 
 
-class Branches(model.BaseBranches['Keyword', 'For', 'While', 'If', 'Try', 'Var', 'Return',
+class Branches(model.BaseBranches['Keyword', 'For', 'While', 'Group', 'If', 'Try', 'Var', 'Return',
                                   'Continue', 'Break', 'Message', 'Error', IT]):
     __slots__ = ()
 
 
-class Iterations(model.BaseIterations['Keyword', 'For', 'While', 'If', 'Try', 'Var', 'Return',
+class Iterations(model.BaseIterations['Keyword', 'For', 'While', 'Group', 'If', 'Try', 'Var', 'Return',
                                       'Continue', 'Break', 'Message', 'Error', FW]):
     __slots__ = ()
 
@@ -396,6 +397,33 @@ class While(model.While, StatusMixin, DeprecatedAttributesMixin):
     @property
     def _log_name(self):
         return str(self)[9:]    # Drop 'WHILE    ' prefix.
+
+    def to_dict(self) -> DataDict:
+        return {**super().to_dict(), **StatusMixin.to_dict(self)}
+
+
+@Body.register
+class Group(model.Group, StatusMixin, DeprecatedAttributesMixin):
+    body_class = Body
+    __slots__ = ['status', 'message', '_start_time', '_end_time', '_elapsed_time']
+
+    def __init__(self, name: str = '',
+                 status: str = 'FAIL',
+                 message: str = '',
+                 start_time: 'datetime|str|None' = None,
+                 end_time: 'datetime|str|None' = None,
+                 elapsed_time: 'timedelta|int|float|None' = None,
+                 parent: BodyItemParent = None):
+        super().__init__(name, parent)
+        self.status = status
+        self.message = message
+        self.start_time = start_time
+        self.end_time = end_time
+        self.elapsed_time = elapsed_time
+
+    @property
+    def _log_name(self):
+        return self.name
 
     def to_dict(self) -> DataDict:
         return {**super().to_dict(), **StatusMixin.to_dict(self)}

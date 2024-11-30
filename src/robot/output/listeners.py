@@ -197,6 +197,9 @@ class ListenerV3Facade(ListenerFacade):
         self.end_while = get('end_while', end_body_item)
         self.start_while_iteration = get('start_while_iteration', start_body_item)
         self.end_while_iteration = get('end_while_iteration', end_body_item)
+        # GROUP
+        self.start_group = get('start_group', start_body_item)
+        self.end_group = get('end_group', end_body_item)
         # VAR
         self.start_var = get('start_var', start_body_item)
         self.end_var = get('end_var', end_body_item)
@@ -363,6 +366,12 @@ class ListenerV2Facade(ListenerFacade):
 
     def end_while_iteration(self, data, result):
         self._end_kw(result._log_name, self._attrs(data, result, end=True))
+
+    def start_group(self, data, result):
+        self._start_kw(result._log_name, self._attrs(data, result, name=result.name))
+
+    def end_group(self, data, result):
+        self._end_kw(result._log_name, self._attrs(data, result, name=result.name, end=True))
 
     def start_if_branch(self, data, result):
         extra = {'condition': result.condition} if result.type != result.ELSE else {}

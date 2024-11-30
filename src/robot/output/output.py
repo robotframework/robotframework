@@ -117,6 +117,12 @@ class Output(AbstractLogger, LoggerApi):
     def end_while_iteration(self, data, result):
         LOGGER.end_while_iteration(data, result)
 
+    def start_group(self, data, result):
+        LOGGER.start_group(data, result)
+
+    def end_group(self, data, result):
+        LOGGER.end_group(data, result)
+
     def start_if(self, data, result):
         LOGGER.start_if(data, result)
 

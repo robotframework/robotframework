@@ -42,6 +42,14 @@ IF after failure
         ${x} =    Fail    This should not be run
     END
 
+GROUP after failure
+    [Documentation]    FAIL    This fails
+    Fail    This fails
+    GROUP    Group Name
+        Fail    This should not be run
+        ${x} =    Fail    This should not be run
+    END
+
 FOR after failure
     [Documentation]    FAIL    This fails
     Fail    This fails
@@ -103,8 +111,10 @@ Nested control structure after failure
         IF    True
             FOR    ${y}    IN RANGE    ${x}
                 Fail    This should not be run
-                Fail    This should not be run
-                Fail    This should not be run
+                GROUP    This should not be run
+                    Fail    This should not be run
+                    Fail    This should not be run
+                END
             END
             Fail    This should not be run
         ELSE
@@ -156,6 +166,20 @@ Failure in ELSE branch
     ELSE
         Fail    This fails
         Fail    This should not be run
+    END
+    Fail    This should not be run
+
+Failure in GROUP
+    [Documentation]    FAIL    This fails
+    GROUP    Group Name 0
+        GROUP    Group Name 0,0
+            Fail    This fails
+            Fail    This should not be run
+        END
+        Fail    This should not be run
+        GROUP    Group Name 0,1
+            Fail    This should not be run
+        END
     END
     Fail    This should not be run
 
