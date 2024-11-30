@@ -482,6 +482,7 @@ Example
         )
         get_and_assert_model(data, expected, indices=[0, 1])
 
+
 class TestGroup(unittest.TestCase):
 
     def test_valid(self):
@@ -505,9 +506,75 @@ Example
         )
         group = get_and_assert_model(data, expected)
         assert_equal(group.name, 'Name')
-        assert_equal(group.header.name, 'Name')  #shall be empty with no name give to GROUP
+        assert_equal(group.header.name, 'Name')
 
-    # TODO: RENE add invalid test cases and EMPTY name
+    def test_empty_name(self):
+        data = '''
+*** Test Cases ***
+Example
+    GROUP
+        Log    ${x}
+    END
+'''
+        expected = Group(
+            header=GroupHeader([
+                Token(Token.GROUP, 'GROUP', 3, 4)
+            ]),
+            body=[
+                KeywordCall([Token(Token.KEYWORD, 'Log', 4, 8),
+                             Token(Token.ARGUMENT, '${x}', 4, 15)])
+            ],
+            end=End([Token(Token.END, 'END', 5, 4)]),
+        )
+        group = get_and_assert_model(data, expected)
+        assert_equal(group.name, '')
+        assert_equal(group.header.name, '')
+
+    def test_invalid_two_args(self):
+        data = '''
+*** Test Cases ***
+Example
+    GROUP   one   two
+        Log    ${x}
+'''
+        expected = Group(
+            header=GroupHeader([
+                Token(Token.GROUP, 'GROUP', 3, 4),
+                Token(Token.ARGUMENT, 'one', 3, 12),
+                Token(Token.ARGUMENT, 'two', 3, 18)
+            ],
+                errors=("GROUP accepts only one argument as name, got 2 arguments 'one' and 'two'.",)
+            ),
+            body=[
+                KeywordCall([Token(Token.KEYWORD, 'Log', 4, 8),
+                             Token(Token.ARGUMENT, '${x}', 4, 15)])
+            ],
+            errors=('GROUP must have closing END.',)
+        )
+        group = get_and_assert_model(data, expected)
+        assert_equal(group.name, 'one, two')
+        assert_equal(group.header.name, 'one, two')
+
+    def test_invalid_no_END(self):
+        data = '''
+*** Test Cases ***
+Example
+    GROUP
+        Log    ${x}
+'''
+        expected = Group(
+            header=GroupHeader([
+                Token(Token.GROUP, 'GROUP', 3, 4)
+            ]),
+            body=[
+                KeywordCall([Token(Token.KEYWORD, 'Log', 4, 8),
+                             Token(Token.ARGUMENT, '${x}', 4, 15)])
+            ],
+            errors=('GROUP must have closing END.',)
+        )
+        group = get_and_assert_model(data, expected)
+        assert_equal(group.name, '')
+        assert_equal(group.header.name, '')
 
 
 class TestIf(unittest.TestCase):

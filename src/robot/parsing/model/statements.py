@@ -1213,10 +1213,13 @@ class GroupHeader(Statement):
                     indent: str = FOUR_SPACES, separator: str = FOUR_SPACES,
                     eol: str = EOL) -> 'GroupHeader':
         tokens = [Token(Token.SEPARATOR, indent),
-                  Token(Token.GROUP),
-                  Token(Token.SEPARATOR, separator),
-                  Token(Token.ARGUMENT, name),
-                  Token(Token.EOL, eol)]
+                  Token(Token.GROUP)]
+        if name:
+            tokens.extend(
+                [Token(Token.SEPARATOR, separator),
+                Token(Token.ARGUMENT, name)]
+            )
+        tokens.append(Token(Token.EOL, eol))
         return cls(tokens)
 
     @property

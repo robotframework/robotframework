@@ -14,7 +14,7 @@ Group with other control structure
         END
         GROUP    With WHILE
             WHILE    $i < 2
-                GROUP    Group1 Inside WHILE
+                GROUP    Group1 Inside WHILE (${i})
                     Log    ${i}
                 END
                 GROUP    Group2 Inside WHILE
@@ -32,6 +32,10 @@ Test With Not Executed Groups
             Should Be Equal    ${var}    value
             IF     True
                 Log     IF in GROUP
+            ELSE
+                GROUP    GROUP in ELSE
+                    Fail    Shall be logged but NOT RUN
+                END
             END
         END
     ELSE

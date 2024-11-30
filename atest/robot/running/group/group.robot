@@ -27,7 +27,8 @@ Anonymous GROUP
 Test With Vars In GROUP Name
     ${tc}=    Check Test Case    ${TESTNAME}
     Check Body Item Data    ${tc[0]}      type=GROUP        name=Test is named: Test With Vars In GROUP Name    children=1
-    Check Body Item Data    ${tc[0, 0]}    type=KEYWORD      name=Log       args=Test With Vars In GROUP Name
+    Check Body Item Data    ${tc[0, 0]}    type=KEYWORD      name=Log       args=\${TEST_NAME}
+    Check Log Message       ${tc[0, 0, 0]}    Test With Vars In GROUP Name
     Check Body Item Data    ${tc[1]}      type=GROUP        name=42    children=1
     Check Body Item Data    ${tc[1, 0]}    type=KEYWORD      name=Log       args=Should be 42
 
