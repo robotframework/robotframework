@@ -4,48 +4,48 @@ Resource                  listener_resource.robot
 
 *** Test Cases ***
 In start_suite when suite has no setup
-    Check Keyword Data    ${SUITE.setup}             Implicit setup    type=SETUP         children=1
-    Validate Log          ${SUITE.setup[0]}          start_suite
+    Check Keyword Data    ${SUITE.setup}              Implicit setup    type=SETUP         children=1
+    Validate Log          ${SUITE.setup[0]}           start_suite
 
 In end_suite when suite has no teardown
-    Check Keyword Data    ${SUITE.teardown}          Implicit teardown    type=TEARDOWN         children=1
-    Validate Log          ${SUITE.teardown[0]}       end_suite
+    Check Keyword Data    ${SUITE.teardown}           Implicit teardown    type=TEARDOWN         children=1
+    Validate Log          ${SUITE.teardown[0]}        end_suite
 
 In start_suite when suite has setup
-    VAR                   ${kw}                      ${SUITE.suites[1].setup}
-    Check Keyword Data    ${kw}                      Suite Setup          type=SETUP            children=5
-    Validate Log          ${kw[0]}                   start_suite
-    Check Keyword Data    ${kw[1]}                   BuiltIn.Log          args=start_keyword    children=1
-    Check Log Message     ${kw[1, 0]}                start_keyword
-    Validate Log          ${kw[2]}                   Keyword
-    Check Keyword Data    ${kw[3]}                   Keyword                                    children=3
-    Check Keyword Data    ${kw[3, 0]}                BuiltIn.Log          args=start_keyword    children=1
-    Check Log Message     ${kw[3, 0, 0]}             start_keyword
-    Check Keyword Data    ${kw[3, 1]}                BuiltIn.Log          args=Keyword          children=3
-    Check Keyword Data    ${kw[3, 2]}                BuiltIn.Log          args=end_keyword      children=1
-    Check Log Message     ${kw[3, 2, 0]}             end_keyword
-    Check Keyword Data    ${kw[4]}                   BuiltIn.Log          args=end_keyword      children=1
-    Check Log Message     ${kw[4, 0]}                end_keyword
+    VAR                   ${kw}                       ${SUITE.suites[1].setup}
+    Check Keyword Data    ${kw}                       Suite Setup          type=SETUP            children=5
+    Validate Log          ${kw[0]}                    start_suite
+    Check Keyword Data    ${kw[1]}                    BuiltIn.Log          args=start_keyword    children=1
+    Check Log Message     ${kw[1, 0]}                 start_keyword
+    Validate Log          ${kw[2]}                    Keyword
+    Check Keyword Data    ${kw[3]}                    Keyword                                    children=3
+    Check Keyword Data    ${kw[3, 0]}                 BuiltIn.Log          args=start_keyword    children=1
+    Check Log Message     ${kw[3, 0, 0]}              start_keyword
+    Check Keyword Data    ${kw[3, 1]}                 BuiltIn.Log          args=Keyword          children=3
+    Check Keyword Data    ${kw[3, 2]}                 BuiltIn.Log          args=end_keyword      children=1
+    Check Log Message     ${kw[3, 2, 0]}              end_keyword
+    Check Keyword Data    ${kw[4]}                    BuiltIn.Log          args=end_keyword      children=1
+    Check Log Message     ${kw[4, 0]}                 end_keyword
 
 In end_suite when suite has teardown
-    VAR                   ${kw}                      ${SUITE.suites[1].teardown}
-    Check Keyword Data    ${kw}                      Suite Teardown       type=TEARDOWN         children=5
-    Check Keyword Data    ${kw[0]}                   BuiltIn.Log          args=start_keyword    children=1
-    Check Log Message     ${kw[0, 0]}                start_keyword
-    Validate Log          ${kw[1]}                   Keyword
-    Check Keyword Data    ${kw[2]}                   Keyword                                    children=3
-    Check Keyword Data    ${kw[2, 0]}                BuiltIn.Log          args=start_keyword    children=1
-    Check Log Message     ${kw[2, 0, 0]}             start_keyword
-    Check Keyword Data    ${kw[2, 1]}                BuiltIn.Log          args=Keyword          children=3
-    Check Keyword Data    ${kw[2, 2]}                BuiltIn.Log          args=end_keyword      children=1
-    Check Log Message     ${kw[2, 2, 0]}             end_keyword
-    Check Keyword Data    ${kw[3]}                   BuiltIn.Log          args=end_keyword      children=1
-    Check Log Message     ${kw[3, 0]}                end_keyword
-    Validate Log          ${kw[4]}                   end_suite
+    VAR                   ${kw}                       ${SUITE.suites[1].teardown}
+    Check Keyword Data    ${kw}                       Suite Teardown       type=TEARDOWN         children=5
+    Check Keyword Data    ${kw[0]}                    BuiltIn.Log          args=start_keyword    children=1
+    Check Log Message     ${kw[0, 0]}                 start_keyword
+    Validate Log          ${kw[1]}                    Keyword
+    Check Keyword Data    ${kw[2]}                    Keyword                                    children=3
+    Check Keyword Data    ${kw[2, 0]}                 BuiltIn.Log          args=start_keyword    children=1
+    Check Log Message     ${kw[2, 0, 0]}              start_keyword
+    Check Keyword Data    ${kw[2, 1]}                 BuiltIn.Log          args=Keyword          children=3
+    Check Keyword Data    ${kw[2, 2]}                 BuiltIn.Log          args=end_keyword      children=1
+    Check Log Message     ${kw[2, 2, 0]}              end_keyword
+    Check Keyword Data    ${kw[3]}                    BuiltIn.Log          args=end_keyword      children=1
+    Check Log Message     ${kw[3, 0]}                 end_keyword
+    Validate Log          ${kw[4]}                    end_suite
 
 In start_test and end_test when test has no setup or teardown
-    ${tc} =               Check Test Case                  First One
-    Length Should Be      ${tc.body}                       5
+    ${tc} =               Check Test Case             First One
+    Length Should Be      ${tc.body}                  5
     Should Not Be True    ${tc.setup}
     Should Not Be True    ${tc.teardown}
     Validate Log          ${tc[0]}                    start_test
@@ -97,45 +97,45 @@ In start_keyword and end_keyword with user keyword
     Length Should Be      ${tc[3].body}               3
 
 In start_keyword and end_keyword with FOR loop
-    ${tc} =               Check Test Case                      FOR
-    ${for} =              Set Variable                         ${tc[1]}
-    Should Be Equal       ${for.type}                          FOR
-    Length Should Be      ${for.body}                          5
-    Length Should Be      ${for.body.filter(keywords=True)}    2
-    Should Be Equal       ${for[0].full_name}                  BuiltIn.Log
-    Check Log Message     ${for[0, 0]}                         start_keyword
-    Should Be Equal       ${for[-1].full_name}                 BuiltIn.Log
-    Check Log Message     ${for[-1,0]}                         end_keyword
+    ${tc} =               Check Test Case             FOR
+    ${for} =              Set Variable                ${tc[1]}
+    Should Be Equal       ${for.type}                 FOR
+    Length Should Be      ${for.body}                 5
+    Length Should Be      ${for.keywords}             2
+    Should Be Equal       ${for[0].full_name}         BuiltIn.Log
+    Check Log Message     ${for[0, 0]}                start_keyword
+    Should Be Equal       ${for[-1].full_name}        BuiltIn.Log
+    Check Log Message     ${for[-1,0]}                end_keyword
 
 In start_keyword and end_keyword with WHILE
-    ${tc} =               Check Test Case                        While loop executed multiple times
-    ${while} =            Set Variable                           ${tc[2]}
-    Should Be Equal       ${while.type}                          WHILE
-    Length Should Be      ${while.body}                          7
-    Length Should Be      ${while.body.filter(keywords=True)}    2
-    Should Be Equal       ${while[0].full_name}                  BuiltIn.Log
-    Check Log Message     ${while[0, 0]}                         start_keyword
-    Should Be Equal       ${while[-1].full_name}                 BuiltIn.Log
-    Check Log Message     ${while[-1,0]}                         end_keyword
+    ${tc} =               Check Test Case             While loop executed multiple times
+    ${while} =            Set Variable                ${tc[2]}
+    Should Be Equal       ${while.type}               WHILE
+    Length Should Be      ${while.body}               7
+    Length Should Be      ${while.keywords}           2
+    Should Be Equal       ${while[0].full_name}       BuiltIn.Log
+    Check Log Message     ${while[0, 0]}              start_keyword
+    Should Be Equal       ${while[-1].full_name}      BuiltIn.Log
+    Check Log Message     ${while[-1,0]}              end_keyword
 
 In start_keyword and end_keyword with IF/ELSE
-    ${tc} =               Check Test Case                IF structure
-    Should Be Equal       ${tc[1].type}                  VAR
-    Should Be Equal       ${tc[2].type}                  IF/ELSE ROOT
-    Length Should Be      ${tc[2].body}                  3                     # Listener is not called with root
-    Validate IF branch    ${tc[2, 0]}                    IF         NOT RUN    # but is called with unexecuted branches.
-    Validate IF branch    ${tc[2, 1]}                    ELSE IF    PASS
-    Validate IF branch    ${tc[2, 2]}                    ELSE       NOT RUN
+    ${tc} =               Check Test Case             IF structure
+    Should Be Equal       ${tc[1].type}               VAR
+    Should Be Equal       ${tc[2].type}               IF/ELSE ROOT
+    Length Should Be      ${tc[2].body}               3                     # Listener is not called with root
+    Validate IF branch    ${tc[2, 0]}                 IF         NOT RUN    # but is called with unexecuted branches.
+    Validate IF branch    ${tc[2, 1]}                 ELSE IF    PASS
+    Validate IF branch    ${tc[2, 2]}                 ELSE       NOT RUN
 
 In start_keyword and end_keyword with TRY/EXCEPT
-    ${tc} =               Check Test Case                Everything
-    Should Be Equal       ${tc[1].type}                  TRY/EXCEPT ROOT
-    Length Should Be      ${tc[1].body}                  5                     # Listener is not called with root
-    Validate FOR branch   ${tc[1, 0]}                    TRY        FAIL
-    Validate FOR branch   ${tc[1, 1]}                    EXCEPT     NOT RUN    # but is called with unexecuted branches.
-    Validate FOR branch   ${tc[1, 2]}                    EXCEPT     PASS
-    Validate FOR branch   ${tc[1, 3]}                    ELSE       NOT RUN
-    Validate FOR branch   ${tc[1, 4]}                    FINALLY    PASS
+    ${tc} =               Check Test Case             Everything
+    Should Be Equal       ${tc[1].type}               TRY/EXCEPT ROOT
+    Length Should Be      ${tc[1].body}               5                     # Listener is not called with root
+    Validate FOR branch   ${tc[1, 0]}                 TRY        FAIL
+    Validate FOR branch   ${tc[1, 1]}                 EXCEPT     NOT RUN    # but is called with unexecuted branches.
+    Validate FOR branch   ${tc[1, 2]}                 EXCEPT     PASS
+    Validate FOR branch   ${tc[1, 3]}                 ELSE       NOT RUN
+    Validate FOR branch   ${tc[1, 4]}                 FINALLY    PASS
 
 In start_keyword and end_keyword with BREAK and CONTINUE
     ${tc} =                   Check Test Case                  WHILE loop in keyword

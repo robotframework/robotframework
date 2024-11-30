@@ -16,6 +16,6 @@ Check Loop Attributes
     Should Be Equal    ${loop.type}    WHILE
     Should Be Equal    ${loop.status}    ${status}
     IF    '${iterations}' != 'not known'
-        Length Should Be    ${loop.body.filter(messages=False)}       ${iterations}
+        Length Should Be    ${loop.non_messages}    ${iterations}
     END
     RETURN    ${loop}

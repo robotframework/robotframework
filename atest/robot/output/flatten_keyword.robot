@@ -158,6 +158,6 @@ Run And Rebot Flattened
     Set Suite Variable    $TC
 
 Check Counts
-    [Arguments]    ${item}    ${messages}    ${others}=0
-    Length Should Be    ${item.body.filter(messages=True)}     ${messages}
-    Length Should Be    ${item.body.filter(messages=False)}    ${others}
+    [Arguments]    ${item}    ${messages}    ${non_messages}=0
+    Length Should Be    ${item.messages}        ${messages}
+    Length Should Be    ${item.non_messages}    ${non_messages}

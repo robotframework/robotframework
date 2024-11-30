@@ -7,7 +7,7 @@ Fail Because Timeout exceeded
     ${tc} =    Check Test Case    ${TESTNAME}
     # Cannot test exactly how many times kw is run because it depends on interpreter speed.
     Check Log Message    ${tc[0, 0, 0]}    Still 2 times to fail!    FAIL
-    Should Be True       len($tc[0].body.filter(messages=False)) < 4
+    Should Be True       len($tc[0].non_messages) < 4
 
 Pass with first Try
     ${tc} =    Check Test Case    ${TESTNAME}
@@ -86,7 +86,7 @@ Retry if variable is not found
     Check Log Message    ${tc[0, 0, 0, 0]}    Variable '\${nonexisting}' not found.    FAIL
     Check Log Message    ${tc[0, 1, 0, 0]}    Variable '\${nonexisting}' not found.    FAIL
     Check Log Message    ${tc[0, 2, 0, 0]}    Variable '\${nonexisting}' not found.    FAIL
-    Length Should Be     ${tc[0].body.filter(messages=False)}    3
+    Length Should Be     ${tc[0].non_messages}    3
 
 Pass With Initially Nonexisting Variable Inside Wait Until Keyword Succeeds
     ${tc} =    Check Test Case    ${TESTNAME}
@@ -105,12 +105,12 @@ Strict retry interval
 
 Fail with strict retry interval
     ${tc} =    Check Test Case    ${TESTNAME}
-    Length Should Be    ${tc[0].body.filter(messages=False)}    3
+    Length Should Be    ${tc[0].non_messages}    3
     Elapsed Time Should Be Valid    ${tc.body[0].elapsed_time}    minimum=0.2    maximum=0.6
 
 Strict retry interval violation
     ${tc} =    Check Test Case    ${TESTNAME}
-    Length Should Be    ${tc[0].body.filter(messages=False)}    4
+    Length Should Be    ${tc[0].non_messages}    4
     Elapsed Time Should Be Valid    ${tc[0].elapsed_time}    minimum=0.4    maximum=1.2
     FOR    ${index}    IN    1    3    5    7
         Check Log Message    ${tc[0, ${index}]}

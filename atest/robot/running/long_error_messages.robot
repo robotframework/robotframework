@@ -47,10 +47,11 @@ Has Been Cut
 
 Error Message In Log Should Not Have Been Cut
     [Arguments]    ${item}
-    FOR    ${kw}    IN    @{item.body.filter(keywords=True)}
-        IF    ${kw.body.filter(messages=True)}
-        ...    Should Not Contain    ${kw[-1].message}    ${EXPLANATION}
-        Error Message In Log Should Not Have Been Cut    ${kw}
+    FOR    ${child}    IN    @{item.non_messages}
+        FOR    ${msg}    IN    @{child.messages}
+            Should Not Contain    ${msg.message}    ${EXPLANATION}
+        END
+        Error Message In Log Should Not Have Been Cut    ${child}
     END
 
 Should Match Non Empty Regexp

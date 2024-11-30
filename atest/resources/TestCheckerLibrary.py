@@ -16,6 +16,7 @@ from robot.utils.asserts import assert_equal
 
 
 class WithBodyTraversing:
+    body: Body
 
     def __getitem__(self, index):
         if isinstance(index, str):
@@ -27,7 +28,19 @@ class WithBodyTraversing:
             for i in index:
                 item = item.body[int(i)]
             return item
-        raise TypeError(f"Invalid index `{repr(index)}`")
+        raise TypeError(f"Invalid index {repr(index)}.")
+
+    @property
+    def keywords(self):
+        return self.body.filter(keywords=True)
+
+    @property
+    def messages(self):
+        return self.body.filter(messages=True)
+
+    @property
+    def non_messages(self):
+        return self.body.filter(messages=False)
 
 
 class ATestKeyword(Keyword, WithBodyTraversing):
@@ -70,7 +83,7 @@ class ATestError(Error, WithBodyTraversing):
     pass
 
 
-class ATestBody(Body, WithBodyTraversing):
+class ATestBody(Body):
     keyword_class = ATestKeyword
     for_class = ATestFor
     if_class = ATestIf
@@ -329,7 +342,7 @@ class TestCheckerLibrary:
             assert_equal(act, exp)
 
     def should_contain_keywords(self, item, *kw_names):
-        actual_names = [kw.full_name for kw in item.body.filter(keywords=True)]
+        actual_names = [kw.full_name for kw in item.keywords]
         assert_equal(len(actual_names), len(kw_names), 'Wrong number of keywords')
         for act, exp in zip(actual_names, kw_names):
             assert_equal(act, exp)

@@ -21,8 +21,9 @@ Steps containing warnings are not removed
 
 Nested Wait Until keywords are removed
     ${tc}=    Check Test Case    Nested
-    Length Should Be    ${tc[0].body.filter(messages=False)}    1
-    Length Should Be    ${tc[0, 0].body}                   1
+    Length Should Be    ${tc[0].messages}        1
+    Length Should Be    ${tc[0].non_messages}    1
+    Length Should Be    ${tc[0, 0].body}         1
 
 *** Keywords ***
 Remove Wait Until Keyword Succeeds with Rebot
@@ -32,6 +33,5 @@ Remove Wait Until Keyword Succeeds with Rebot
 Check Number Of Keywords
     [Arguments]    ${name}    ${expected}
     ${tc}=    Check Test Case    ${name}
-    Length Should Be    ${tc[0].body.filter(messages=False)}    ${expected}
+    Length Should Be    ${tc[0].non_messages}    ${expected}
     RETURN    ${tc}
-
