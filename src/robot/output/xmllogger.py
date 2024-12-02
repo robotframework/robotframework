@@ -28,14 +28,9 @@ class XmlLoggerAdapter(LoggerApi):
                  legacy_output=False):
         logger = XmlLogger if not legacy_output else LegacyXmlLogger
         self.is_logged = log_level.is_logged
-        self.logger = logger(path, rpa, generator)
-
-    @property
-    def flatten_level(self):
-        return self.logger.flatten_level
-
-    def close(self):
-        self.logger.close()
+        self.logger = self.real_logger = logger(path, rpa, generator)
+        self.flatten_level = 0
+        self.errors = []
 
     def start_suite(self, data, result):
         self.logger.start_suite(result)
@@ -51,8 +46,15 @@ class XmlLoggerAdapter(LoggerApi):
 
     def start_keyword(self, data, result):
         self.logger.start_keyword(result)
+        if result.tags.robot('flatten'):
+            self.flatten_level += 1
+            self.logger = NullLogger()
 
     def end_keyword(self, data, result):
+        if self.flatten_level and result.tags.robot('flatten'):
+            self.flatten_level -= 1
+            if self.flatten_level == 0:
+                self.logger = self.real_logger
         self.logger.end_keyword(result)
 
     def start_for(self, data, result):
@@ -135,21 +137,25 @@ class XmlLoggerAdapter(LoggerApi):
 
     def log_message(self, message):
         if self.is_logged(message):
-            self.logger.log_message(message)
+            # Use the real logger also when flattening.
+            self.real_logger.log_message(message)
 
     def message(self, message):
         if message.level in ('WARN', 'ERROR'):
-            self.logger.message(message)
+            self.errors.append(message)
+
+    def close(self):
+        self.logger.start_errors()
+        for msg in self.errors:
+            self.logger.message(msg)
+        self.logger.end_errors()
+        self.logger.close()
 
 
 class XmlLogger(ResultVisitor):
 
     def __init__(self, output, rpa=False, generator='Robot', suite_only=False):
-        # `_writer` is set to NullMarkupWriter when flattening, `_xml_writer` is not.
-        self._writer = self._xml_writer = self._get_writer(output, rpa, generator,
-                                                           suite_only)
-        self.flatten_level = 0
-        self._errors = []
+        self._writer = self._get_writer(output, rpa, generator, suite_only)
 
     def _get_writer(self, output, rpa, generator, suite_only):
         if not output:
@@ -167,15 +173,11 @@ class XmlLogger(ResultVisitor):
                 'schemaversion': '5'}
 
     def close(self):
-        self.start_errors()
-        for msg in self._errors:
-            self._write_message(msg)
-        self.end_errors()
         self._writer.end('robot')
         self._writer.close()
 
     def message(self, msg):
-        self._errors.append(msg)
+        self._write_message(msg)
 
     def log_message(self, msg):
         self._write_message(msg)
@@ -185,14 +187,10 @@ class XmlLogger(ResultVisitor):
                  'level': msg.level}
         if msg.html:
             attrs['html'] = 'true'
-        # Use `_xml_writer`, not `_writer`, to write messages also when flattening.
-        self._xml_writer.element('msg', msg.message, attrs)
+        self._writer.element('msg', msg.message, attrs)
 
     def start_keyword(self, kw):
         self._writer.start('kw', self._get_start_keyword_attrs(kw))
-        if kw.tags.robot('flatten'):
-            self.flatten_level += 1
-            self._writer = NullMarkupWriter()
 
     def _get_start_keyword_attrs(self, kw):
         attrs = {'name': kw.name, 'owner': kw.owner}
@@ -203,10 +201,6 @@ class XmlLogger(ResultVisitor):
         return attrs
 
     def end_keyword(self, kw):
-        if kw.tags.robot('flatten'):
-            self.flatten_level -= 1
-            if self.flatten_level == 0:
-                self._writer = self._xml_writer
         self._write_list('var', kw.assign)
         self._write_list('arg', [str(a) for a in kw.args])
         self._write_list('tag', kw.tags)
@@ -448,5 +442,13 @@ class LegacyXmlLogger(XmlLogger):
         attrs = {'timestamp':  ts, 'level': msg.level}
         if msg.html:
             attrs['html'] = 'true'
-        # Use `_xml_writer`, not `_writer` to write messages also when flattening.
-        self._xml_writer.element('msg', msg.message, attrs)
+        self._writer.element('msg', msg.message, attrs)
+
+
+class NullLogger(XmlLogger):
+
+    def __init__(self):
+        super().__init__(None)
+
+    def _get_writer(self, output, rpa, generator, suite_only):
+        return NullMarkupWriter()
