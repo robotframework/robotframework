@@ -20,18 +20,15 @@ from robot.version import get_full_version
 from robot.result import Keyword, TestCase, TestSuite, ResultVisitor
 
 from .loggerapi import LoggerApi
-from .loggerhelper import IsLogged
 
 
 class XmlLoggerAdapter(LoggerApi):
 
-    def __init__(self, path, log_level='TRACE', rpa=False, generator='Robot',
+    def __init__(self, path, log_level, rpa=False, generator='Robot',
                  legacy_output=False):
         logger = XmlLogger if not legacy_output else LegacyXmlLogger
-        self.logger = logger(path, log_level, rpa, generator)
-
-    def is_logged(self, message):
-        return self.logger.is_logged(message)
+        self.is_logged = log_level.is_logged
+        self.logger = logger(path, rpa, generator)
 
     @property
     def flatten_level(self):
@@ -39,9 +36,6 @@ class XmlLoggerAdapter(LoggerApi):
 
     def close(self):
         self.logger.close()
-
-    def set_log_level(self, level):
-        return self.logger.set_log_level(level)
 
     def start_suite(self, data, result):
         self.logger.start_suite(result)
@@ -140,27 +134,22 @@ class XmlLoggerAdapter(LoggerApi):
         self.logger.end_error(result)
 
     def log_message(self, message):
-        self.logger.log_message(message)
+        if self.is_logged(message):
+            self.logger.log_message(message)
 
     def message(self, message):
-        self.logger.message(message)
+        if message.level in ('WARN', 'ERROR'):
+            self.logger.message(message)
 
 
 class XmlLogger(ResultVisitor):
 
-    def __init__(self, output, log_level='TRACE', rpa=False, generator='Robot',
-                 suite_only=False):
-        self._log_message_is_logged = IsLogged(log_level)
-        self._error_message_is_logged = IsLogged('WARN')
+    def __init__(self, output, rpa=False, generator='Robot', suite_only=False):
         # `_writer` is set to NullMarkupWriter when flattening, `_xml_writer` is not.
         self._writer = self._xml_writer = self._get_writer(output, rpa, generator,
                                                            suite_only)
         self.flatten_level = 0
         self._errors = []
-
-    def is_logged(self, msg):
-        # `message` can be set to None by listeners to get it discarded.
-        return self._log_message_is_logged(msg.level) and msg.message is not None
 
     def _get_writer(self, output, rpa, generator, suite_only):
         if not output:
@@ -185,16 +174,11 @@ class XmlLogger(ResultVisitor):
         self._writer.end('robot')
         self._writer.close()
 
-    def set_log_level(self, level):
-        return self._log_message_is_logged.set_level(level)
-
     def message(self, msg):
-        if self._error_message_is_logged(msg.level):
-            self._errors.append(msg)
+        self._errors.append(msg)
 
     def log_message(self, msg):
-        if self.is_logged(msg):
-            self._write_message(msg)
+        self._write_message(msg)
 
     def _write_message(self, msg):
         attrs = {'time': msg.timestamp.isoformat() if msg.timestamp else None,

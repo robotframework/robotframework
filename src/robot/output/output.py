@@ -18,7 +18,8 @@ from .debugfile import DebugFile
 from .listeners import Listeners, LibraryListeners
 from .logger import LOGGER
 from .loggerapi import LoggerApi
-from .loggerhelper import AbstractLogger, IsLogged
+from .loggerhelper import AbstractLogger
+from .loglevel import LogLevel
 from .xmllogger import XmlLoggerAdapter
 
 
@@ -26,11 +27,12 @@ class Output(AbstractLogger, LoggerApi):
 
     def __init__(self, settings):
         AbstractLogger.__init__(self)
-        self._xml_logger = XmlLoggerAdapter(settings.output, settings.log_level,
+        self._log_level = LogLevel(settings.log_level)
+        self._xml_logger = XmlLoggerAdapter(settings.output, self._log_level,
                                             settings.rpa,
                                             legacy_output=settings.legacy_output)
-        self.listeners = Listeners(settings.listeners, settings.log_level)
-        self.library_listeners = LibraryListeners(settings.log_level)
+        self.listeners = Listeners(settings.listeners, self._log_level)
+        self.library_listeners = LibraryListeners(self._log_level)
         self._register_loggers(DebugFile(settings.debug_file))
         self._settings = settings
 
@@ -179,8 +181,6 @@ class Output(AbstractLogger, LoggerApi):
             self.write(msg, 'TRACE')
 
     def set_log_level(self, level):
-        IsLogged.validate_level(level)
+        old = self._log_level.set(level)
         pyloggingconf.set_level(level)
-        self.listeners.set_log_level(level)
-        self.library_listeners.set_log_level(level)
-        return self._xml_logger.set_log_level(level)
+        return old

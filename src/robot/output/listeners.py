@@ -16,6 +16,7 @@
 import os.path
 from abc import ABC
 from pathlib import Path
+from typing import Any, Iterable
 
 from robot.errors import DataError, TimeoutError
 from robot.model import BodyItem
@@ -23,15 +24,17 @@ from robot.utils import (get_error_details, Importer, safe_str,
                          split_args_from_name_or_path, type_name)
 
 from .loggerapi import LoggerApi
-from .loggerhelper import IsLogged
 from .logger import LOGGER
+from .loglevel import LogLevel
 
 
 class Listeners:
     _listeners: 'list[ListenerFacade]'
 
-    def __init__(self, listeners=(), log_level='INFO'):
-        self._is_logged = IsLogged(log_level)
+    def __init__(self, listeners: Iterable['str|Any'] = (),
+                 log_level: 'LogLevel|str' = 'INFO'):
+        self._log_level = log_level \
+                if isinstance(log_level, LogLevel) else LogLevel(log_level)
         self._listeners = self._import_listeners(listeners)
 
     # Must be property to allow LibraryListeners to override it.
@@ -67,8 +70,8 @@ class Listeners:
             # Modules have `__name__`, with others better to use `type_name`.
             name = getattr(listener, '__name__', None) or type_name(listener)
         if self._get_version(listener) == 2:
-            return ListenerV2Facade(listener, name, self._is_logged, library)
-        return ListenerV3Facade(listener, name, self._is_logged, library)
+            return ListenerV2Facade(listener, name, self._log_level, library)
+        return ListenerV3Facade(listener, name, self._log_level, library)
 
     def _get_version(self, listener):
         version = getattr(listener, 'ROBOT_LISTENER_API_VERSION', 3)
@@ -80,9 +83,6 @@ class Listeners:
             raise DataError(f"Unsupported API version '{version}'.")
         return version
 
-    def set_log_level(self, level):
-        self._is_logged.set_level(level)
-
     def __iter__(self):
         return iter(self.listeners)
 
@@ -93,7 +93,7 @@ class Listeners:
 class LibraryListeners(Listeners):
     _listeners: 'list[list[ListenerFacade]]'
 
-    def __init__(self, log_level='INFO'):
+    def __init__(self, log_level: 'LogLevel|str' = 'INFO'):
         super().__init__(log_level=log_level)
 
     @property
@@ -122,10 +122,10 @@ class LibraryListeners(Listeners):
 
 class ListenerFacade(LoggerApi, ABC):
 
-    def __init__(self, listener, name, is_logged, library=None):
+    def __init__(self, listener, name, log_level, library=None):
         self.listener = listener
         self.name = name
-        self._is_logged = is_logged
+        self._is_logged = log_level.is_logged
         self.library = library
         self.priority = self._get_priority(listener)
 
@@ -156,8 +156,8 @@ class ListenerFacade(LoggerApi, ABC):
 
 class ListenerV3Facade(ListenerFacade):
 
-    def __init__(self, listener, name, is_logged, library=None):
-        super().__init__(listener, name, is_logged, library)
+    def __init__(self, listener, name, log_level, library=None):
+        super().__init__(listener, name, log_level, library)
         get = self._get_method
         # Suite
         self.start_suite = get('start_suite')
@@ -265,14 +265,14 @@ class ListenerV3Facade(ListenerFacade):
             self.end_keyword(data, result)
 
     def log_message(self, message):
-        if self._is_logged(message.level):
+        if self._is_logged(message):
             self._log_message(message)
 
 
 class ListenerV2Facade(ListenerFacade):
 
-    def __init__(self, listener, name, is_logged, library=None):
-        super().__init__(listener, name, is_logged, library)
+    def __init__(self, listener, name, log_level, library=None):
+        super().__init__(listener, name, log_level, library)
         get = self._get_method
         # Suite
         self._start_suite = get('start_suite')
@@ -431,7 +431,7 @@ class ListenerV2Facade(ListenerFacade):
         return {'name': result.name, 'value': value, 'scope': result.scope or 'LOCAL'}
 
     def log_message(self, message):
-        if self._is_logged(message.level):
+        if self._is_logged(message):
             self._log_message(self._message_attributes(message))
 
     def message(self, message):

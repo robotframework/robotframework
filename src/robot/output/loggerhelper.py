@@ -22,17 +22,9 @@ from robot.model import MessageLevel
 from robot.result import Message as BaseMessage
 from robot.utils import console_encode
 
+from .loglevel import LEVELS
 
-LEVELS = {
-  'NONE'  : 7,
-  'SKIP'  : 6,
-  'FAIL'  : 5,
-  'ERROR' : 4,
-  'WARN'  : 3,
-  'INFO'  : 2,
-  'DEBUG' : 1,
-  'TRACE' : 0,
-}
+
 PseudoLevel = Literal['HTML', 'CONSOLE']
 
 
@@ -47,12 +39,6 @@ def write_to_console(msg, newline=True, stream='stdout'):
 
 
 class AbstractLogger:
-
-    def __init__(self, level='TRACE'):
-        self._is_logged = IsLogged(level)
-
-    def set_level(self, level):
-        return self._is_logged.set_level(level)
 
     def trace(self, msg):
         self.write(msg, 'TRACE')
@@ -137,29 +123,3 @@ class Message(BaseMessage):
     def resolve_delayed_message(self):
         if callable(self._message):
             self.message = self._message()
-
-
-class IsLogged:
-
-    def __init__(self, level):
-        self.level = level.upper()
-        self._int_level = self._level_to_int(level)
-
-    def __call__(self, level):
-        return self._level_to_int(level) >= self._int_level
-
-    def set_level(self, level):
-        old = self.level
-        self.__init__(level)
-        return old
-
-    @classmethod
-    def validate_level(cls, level):
-        cls._level_to_int(level)
-
-    @classmethod
-    def _level_to_int(cls, level):
-        try:
-            return LEVELS[level.upper()]
-        except KeyError:
-            raise DataError(f"Invalid log level '{level}'.")

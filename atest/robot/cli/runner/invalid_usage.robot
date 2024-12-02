@@ -46,8 +46,8 @@ Invalid --RemoveKeywords
 
 Invalid --loglevel
     --loglevel bad tests.robot
-    ...    Invalid value for option '--loglevel': Invalid level 'BAD'.
+    ...    Invalid value for option '--loglevel': Invalid log level 'BAD'.
     --loglevel INFO:INV tests.robot
-    ...    Invalid value for option '--loglevel': Invalid level 'INV'.
+    ...    Invalid value for option '--loglevel': Invalid log level 'INV'.
     -L INFO:DEBUG tests.robot
     ...    Invalid value for option '--loglevel': Level in log 'DEBUG' is lower than execution level 'INFO'.

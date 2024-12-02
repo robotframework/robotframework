@@ -23,7 +23,7 @@ from datetime import datetime
 from pathlib import Path
 
 from robot.errors import DataError, FrameworkError
-from robot.output import LOGGER, loggerhelper
+from robot.output import LOGGER, LogLevel
 from robot.result.keywordremover import KeywordRemover
 from robot.result.flattenkeywordmatcher import validate_flatten_keyword
 from robot.utils import (abspath, create_destination_directory, escape,
@@ -163,16 +163,17 @@ class _BaseSettings:
 
     def _split_log_level(self, level):
         if ':' in level:
-            log_level, visible_level = level.split(':', 1)
+            collect, show = level.split(':', 1)
         else:
-            log_level = visible_level = level
-        for level in log_level, visible_level:
-            if level not in loggerhelper.LEVELS:
-                self._raise_invalid('LogLevel', f"Invalid level '{level}'.")
-        if not loggerhelper.IsLogged(log_level)(visible_level):
-            self._raise_invalid('LogLevel', f"Level in log '{visible_level}' is lower "
-                                            f"than execution level '{log_level}'.")
-        return log_level, visible_level
+            collect = show = level
+        try:
+            collect,  show = LogLevel(collect), LogLevel(show)
+        except DataError as err:
+            self._raise_invalid('LogLevel', str(err))
+        if collect.priority > show.priority:
+            self._raise_invalid('LogLevel', f"Level in log '{show.level}' is lower "
+                                            f"than execution level '{collect.level}'.")
+        return collect.level, show.level
 
     def _process_max_error_lines(self, value):
         if not value or value.upper() == 'NONE':
