@@ -20,7 +20,7 @@ class StreamXmlWriter(XmlWriter):
 
 class TestableOutputWriter(OutputWriter):
 
-    def _get_writer(self, output, rpa, generator, suite_only):
+    def _get_writer(self, output, rpa, suite_only):
         writer = StreamXmlWriter(output, write_empty=False)
         writer.start('robot')
         return writer

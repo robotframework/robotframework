@@ -24,11 +24,10 @@ from .loggerapi import LoggerApi
 
 class XmlLoggerAdapter(LoggerApi):
 
-    def __init__(self, path, log_level, rpa=False, generator='Robot',
-                 legacy_output=False):
+    def __init__(self, path, log_level, rpa=False, legacy_output=False):
         logger = XmlLogger if not legacy_output else LegacyXmlLogger
+        self.logger = self.real_logger = logger(path, rpa)
         self.is_logged = log_level.is_logged
-        self.logger = self.real_logger = logger(path, rpa, generator)
         self.flatten_level = 0
         self.errors = []
 
@@ -153,21 +152,22 @@ class XmlLoggerAdapter(LoggerApi):
 
 
 class XmlLogger(ResultVisitor):
+    generator = 'Robot'
 
-    def __init__(self, output, rpa=False, generator='Robot', suite_only=False):
-        self._writer = self._get_writer(output, rpa, generator, suite_only)
+    def __init__(self, output, rpa=False, suite_only=False):
+        self._writer = self._get_writer(output, rpa, suite_only)
 
-    def _get_writer(self, output, rpa, generator, suite_only):
+    def _get_writer(self, output, rpa, suite_only):
         if not output:
             return NullMarkupWriter()
         writer = XmlWriter(output, write_empty=False, usage='output',
                            preamble=not suite_only)
         if not suite_only:
-            writer.start('robot', self._get_start_attrs(rpa, generator))
+            writer.start('robot', self._get_start_attrs(rpa))
         return writer
 
-    def _get_start_attrs(self, rpa, generator):
-        return {'generator': get_full_version(generator),
+    def _get_start_attrs(self, rpa):
+        return {'generator': get_full_version(self.generator),
                 'generated': datetime.now().isoformat(),
                 'rpa': 'true' if rpa else 'false',
                 'schemaversion': '5'}
@@ -407,8 +407,8 @@ class XmlLogger(ResultVisitor):
 
 class LegacyXmlLogger(XmlLogger):
 
-    def _get_start_attrs(self, rpa, generator):
-        return {'generator': get_full_version(generator),
+    def _get_start_attrs(self, rpa):
+        return {'generator': get_full_version(self.generator),
                 'generated': self._datetime_to_timestamp(datetime.now()),
                 'rpa': 'true' if rpa else 'false',
                 'schemaversion': '4'}
@@ -450,5 +450,5 @@ class NullLogger(XmlLogger):
     def __init__(self):
         super().__init__(None)
 
-    def _get_writer(self, output, rpa, generator, suite_only):
+    def _get_writer(self, output, rpa, suite_only):
         return NullMarkupWriter()

@@ -17,32 +17,20 @@ from robot.output.xmllogger import XmlLogger, LegacyXmlLogger
 
 
 class OutputWriter(XmlLogger):
+    generator = 'Rebot'
 
-    def __init__(self, output, rpa=False, suite_only=False):
-        super().__init__(output, rpa=rpa, generator='Rebot', suite_only=suite_only)
-
-    def start_message(self, msg):
-        self._write_message(msg)
-
-    def close(self):
-        self._writer.end('robot')
-        self._writer.close()
+    def visit_message(self, msg):
+        super().message(msg)
 
     def end_result(self, result):
         self.close()
 
 
 class LegacyOutputWriter(LegacyXmlLogger):
+    generator = 'Rebot'
 
-    def __init__(self, output, rpa=False):
-        super().__init__(output, rpa=rpa, generator='Rebot')
-
-    def start_message(self, msg):
-        self._write_message(msg)
-
-    def close(self):
-        self._writer.end('robot')
-        self._writer.close()
+    def visit_message(self, msg):
+        super().message(msg)
 
     def end_result(self, result):
         self.close()
