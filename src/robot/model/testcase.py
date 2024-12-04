@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from collections.abc import Mapping
 from pathlib import Path
 from typing import Any, Generic, Sequence, Type, TYPE_CHECKING, TypeVar
 
@@ -22,6 +23,7 @@ from .body import Body, BodyItem
 from .fixture import create_fixture
 from .itemlist import ItemList
 from .keyword import Keyword
+from .metadata import Metadata
 from .modelobject import DataDict, ModelObject
 from .tags import Tags
 
@@ -48,12 +50,14 @@ class TestCase(ModelObject, Generic[KW]):
 
     def __init__(self, name: str = '',
                  doc: str = '',
+                 metadata: 'Mapping[str, str]|None' = None,
                  tags: 'Tags|Sequence[str]' = (),
                  timeout: 'str|None' = None,
                  lineno: 'int|None' = None,
                  parent: 'TestSuite[KW, TestCase[KW]]|None' = None):
         self.name = name
         self.doc = doc
+        self.metadata = metadata
         self.tags = tags
         self.timeout = timeout
         self.lineno = lineno
@@ -167,6 +171,12 @@ class TestCase(ModelObject, Generic[KW]):
     def longname(self) -> str:
         """Deprecated since Robot Framework 7.0. Use :attr:`full_name` instead."""
         return self.full_name
+    
+
+    @setter
+    def metadata(self, metadata: 'Mapping[str, str]|None') -> Metadata:
+        """Free case metadata as a :class:`~.metadata.Metadata` object."""
+        return Metadata(metadata)
 
     @property
     def source(self) -> 'Path|None':
@@ -180,6 +190,8 @@ class TestCase(ModelObject, Generic[KW]):
         data: 'dict[str, Any]' = {'name': self.name}
         if self.doc:
             data['doc'] = self.doc
+        if self.metadata:
+            data['metadata'] = dict(self.metadata)
         if self.tags:
             data['tags'] = tuple(self.tags)
         if self.timeout:

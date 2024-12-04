@@ -128,7 +128,7 @@ class TestHandler(ElementHandler):
     # 'tags' is for RF < 4 compatibility.
     children = frozenset(('doc', 'tags', 'tag', 'timeout', 'status', 'kw', 'if', 'for',
                           'try', 'while', 'variable', 'return', 'break', 'continue',
-                          'error', 'msg'))
+                          'error', 'msg', 'meta'))
 
     def start(self, elem, result):
         lineno = elem.get('line')
