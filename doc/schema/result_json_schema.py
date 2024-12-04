@@ -149,6 +149,7 @@ class Try(WithStatus):
 
 class TestCase(WithStatus):
     name: str
+    id: str | None
     doc: str | None
     tags: Sequence[str] | None
     template: str | None
@@ -162,6 +163,7 @@ class TestCase(WithStatus):
 
 class TestSuite(WithStatus):
     name: str
+    id: str | None
     doc: str | None
     metadata: dict[str, str] | None
     source: Path | None

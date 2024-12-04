@@ -770,7 +770,7 @@ class TestToFromDictAndJson(unittest.TestCase):
                      html=True, timestamp=now.isoformat())
 
     def test_test(self):
-        self._verify(TestCase(), name='', status='FAIL', body=[], elapsed_time=0)
+        self._verify(TestCase(), name='', id='t1', status='FAIL', body=[], elapsed_time=0)
 
     def test_testcase_structure(self):
         test = TestCase('TC', 'my doc', ['T1', 'T2'], '1 minute', 42)
@@ -782,6 +782,7 @@ class TestToFromDictAndJson(unittest.TestCase):
             body.create_keyword('K2', status='PASS')
         self._verify(test,
                      name='TC',
+                     id='t1',
                      status='FAIL',
                      doc='my doc',
                      tags=('T1', 'T2'),
@@ -805,19 +806,21 @@ class TestToFromDictAndJson(unittest.TestCase):
         suite.teardown.config(name='Teardown', args='a', status='PASS')
         suite.tests.create('T1', status='PASS').body.create_keyword('K', status='PASS')
         suite.suites.create('Child').tests.create('T2')
-        self._verify(suite,
-                     status='FAIL',
-                     name='Root',
-                     elapsed_time=0,
-                     setup={'name': 'Setup', 'status': 'PASS', 'elapsed_time': 0},
-                     teardown={'name': 'Teardown', 'args': ('a',), 'status': 'PASS',
-                               'elapsed_time': 0},
-                     tests=[{'name': 'T1', 'status': 'PASS', 'elapsed_time': 0,
-                             'body': [{'name': 'K', 'status': 'PASS', 'elapsed_time': 0}]}],
-                     suites=[{'name': 'Child', 'status': 'FAIL', 'elapsed_time': 0,
-                              'tests': [{'name': 'T2', 'status': 'FAIL', 'elapsed_time': 0, 'body': []}]
-                            }],
-                     )
+        self._verify(
+            suite,
+            status='FAIL',
+            name='Root',
+            id='s1',
+            elapsed_time=0,
+            setup={'name': 'Setup', 'status': 'PASS', 'elapsed_time': 0},
+            teardown={'name': 'Teardown', 'args': ('a',), 'status': 'PASS',
+                      'elapsed_time': 0},
+            tests=[{'name': 'T1', 'id': 's1-t1', 'status': 'PASS', 'elapsed_time': 0,
+                    'body': [{'name': 'K', 'status': 'PASS', 'elapsed_time': 0}]}],
+            suites=[{'name': 'Child', 'id': 's1-s1', 'status': 'FAIL', 'elapsed_time': 0,
+                     'tests': [{'name': 'T2', 'id': 's1-s1-t1', 'status': 'FAIL',
+                                'elapsed_time': 0, 'body': []}]}]
+        )
 
     def _verify(self, obj, **expected):
         data = obj.to_dict()
@@ -1008,13 +1011,16 @@ class TestJsonResult(unittest.TestCase):
         assert_equal(data['rpa'], False)
         assert_equal(data['suite'], {
             'name': 'S',
-            'tests': [{'name': 'T1', 'tags': ['tag'],
-                       'body': [{'name': 'Këüẅörd',
-                                 'status': 'PASS', 'elapsed_time': 0.123,
-                                 'start_time': '2023-12-18T22:35:12.345678'}],
-                       'status': 'PASS', 'elapsed_time': 0.123},
-                      {'name': 'T2', 'body': [], 'status': 'FAIL', 'elapsed_time': 0.01},
-                      {'name': 'T3', 'body': [], 'status': 'SKIP', 'elapsed_time': 0.0}],
+            'id': 's1',
+            'tests': [
+                {'name': 'T1', 'id': 's1-t1', 'tags': ['tag'],
+                 'body': [{'name': 'Këüẅörd',
+                           'status': 'PASS', 'elapsed_time': 0.123,
+                           'start_time': '2023-12-18T22:35:12.345678'}],
+                 'status': 'PASS', 'elapsed_time': 0.123},
+                {'name': 'T2', 'id': 's1-t2', 'body': [], 'status': 'FAIL', 'elapsed_time': 0.01},
+                {'name': 'T3', 'id': 's1-t3', 'body': [], 'status': 'SKIP', 'elapsed_time': 0.0}
+            ],
             'status': 'FAIL', 'elapsed_time': 0.133
         })
         assert_equal(data['statistics'], {

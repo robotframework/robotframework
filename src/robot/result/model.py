@@ -930,7 +930,12 @@ class TestCase(model.TestCase[Keyword], StatusMixin):
         return self.body_class(self, body)
 
     def to_dict(self) -> DataDict:
-        return {**super().to_dict(), **StatusMixin.to_dict(self)}
+        return {'id': self.id, **super().to_dict(), **StatusMixin.to_dict(self)}
+
+    @classmethod
+    def from_dict(cls, data: DataDict) -> 'TestCase':
+        data.pop('id', None)
+        return super().from_dict(data)
 
 
 class TestSuite(model.TestSuite[Keyword, TestCase], StatusMixin):
@@ -1083,7 +1088,7 @@ class TestSuite(model.TestSuite[Keyword, TestCase], StatusMixin):
         self.visit(SuiteTeardownFailed(message, skipped=True))
 
     def to_dict(self) -> DataDict:
-        return {**super().to_dict(), **StatusMixin.to_dict(self)}
+        return {'id': self.id, **super().to_dict(), **StatusMixin.to_dict(self)}
 
     @classmethod
     def from_dict(cls, data: DataDict) -> 'TestSuite':
@@ -1098,6 +1103,7 @@ class TestSuite(model.TestSuite[Keyword, TestCase], StatusMixin):
         """
         if 'suite' in data:
             data = data['suite']
+        data.pop('id', None)
         return super().from_dict(data)
 
     @classmethod
