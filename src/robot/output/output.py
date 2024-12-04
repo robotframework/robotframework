@@ -52,7 +52,7 @@ class Output(AbstractLogger, LoggerApi):
         return LOGGER.delayed_logging
 
     def close(self, result):
-        self.output_file.logger.visit_statistics(result.statistics)
+        self.output_file.statistics(result.statistics)
         self.output_file.close()
         LOGGER.unregister_output_file()
         LOGGER.output_file(self._settings['Output'])

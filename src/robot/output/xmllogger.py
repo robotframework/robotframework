@@ -24,16 +24,12 @@ class XmlLogger(ResultVisitor):
     generator = 'Robot'
 
     def __init__(self, output, rpa=False, suite_only=False):
-        self._writer = self._get_writer(output, rpa, suite_only)
-
-    def _get_writer(self, output, rpa, suite_only):
-        if not output:
-            return NullMarkupWriter()
-        writer = XmlWriter(output, write_empty=False, usage='output',
-                           preamble=not suite_only)
+        self._writer = self._get_writer(output, preamble=not suite_only)
         if not suite_only:
-            writer.start('robot', self._get_start_attrs(rpa))
-        return writer
+            self._writer.start('robot', self._get_start_attrs(rpa))
+
+    def _get_writer(self, output, preamble=True):
+        return XmlWriter(output, usage='output', write_empty=False, preamble=preamble)
 
     def _get_start_attrs(self, rpa):
         return {'generator': get_full_version(self.generator),
@@ -45,10 +41,10 @@ class XmlLogger(ResultVisitor):
         self._writer.end('robot')
         self._writer.close()
 
-    def message(self, msg):
+    def visit_message(self, msg):
         self._write_message(msg)
 
-    def log_message(self, msg):
+    def message(self, msg):
         self._write_message(msg)
 
     def _write_message(self, msg):
@@ -229,6 +225,9 @@ class XmlLogger(ResultVisitor):
         self._write_status(suite)
         self._writer.end('suite')
 
+    def statistics(self, stats):
+        self.visit_statistics(stats)
+
     def start_statistics(self, stats):
         self._writer.start('statistics')
 
@@ -257,10 +256,13 @@ class XmlLogger(ResultVisitor):
         self._writer.element('stat', stat.name,
                              stat.get_attributes(values_as_strings=True))
 
-    def start_errors(self, errors=None):
+    def errors(self, errors):
+        self.visit_errors(errors)
+
+    def start_errors(self, errors):
         self._writer.start('errors')
 
-    def end_errors(self, errors=None):
+    def end_errors(self, errors):
         self._writer.end('errors')
 
     def _write_list(self, tag, items):
@@ -319,5 +321,5 @@ class NullLogger(XmlLogger):
     def __init__(self):
         super().__init__(None)
 
-    def _get_writer(self, output, rpa, suite_only):
+    def _get_writer(self, output, preamble=True):
         return NullMarkupWriter()

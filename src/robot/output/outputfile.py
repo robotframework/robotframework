@@ -13,18 +13,37 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from pathlib import Path
+
+from robot.errors import DataError
+from robot.utils import get_error_message
+
 from .loggerapi import LoggerApi
+from .loglevel import LogLevel
 from .xmllogger import LegacyXmlLogger, NullLogger, XmlLogger
 
 
 class OutputFile(LoggerApi):
 
-    def __init__(self, path, log_level, rpa=False, legacy_output=False):
-        logger = XmlLogger if not legacy_output else LegacyXmlLogger
-        self.logger = self.real_logger = logger(path, rpa)
+    def __init__(self, path: 'Path|None', log_level: LogLevel, rpa: bool = False,
+                 legacy_output: bool = False):
+        # `self.logger` is replaced with `NullLogger` when flattening.
+        self.logger = self.real_logger = self._get_logger(path, rpa, legacy_output)
         self.is_logged = log_level.is_logged
         self.flatten_level = 0
         self.errors = []
+
+    def _get_logger(self, path, rpa, legacy_output):
+        if not path:
+            return NullLogger()
+        try:
+            file = open(path, 'w', encoding='UTF-8')
+        except Exception:
+            raise DataError(f"Opening output file '{path}' failed: "
+                            f"{get_error_message()}")
+        if legacy_output:
+            return LegacyXmlLogger(file, rpa)
+        return XmlLogger(file, rpa)
 
     def start_suite(self, data, result):
         self.logger.start_suite(result)
@@ -132,15 +151,15 @@ class OutputFile(LoggerApi):
     def log_message(self, message):
         if self.is_logged(message):
             # Use the real logger also when flattening.
-            self.real_logger.log_message(message)
+            self.real_logger.message(message)
 
     def message(self, message):
         if message.level in ('WARN', 'ERROR'):
             self.errors.append(message)
 
+    def statistics(self, stats):
+        self.logger.statistics(stats)
+
     def close(self):
-        self.logger.start_errors()
-        for msg in self.errors:
-            self.logger.message(msg)
-        self.logger.end_errors()
+        self.logger.errors(self.errors)
         self.logger.close()

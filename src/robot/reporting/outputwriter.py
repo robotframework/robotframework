@@ -19,18 +19,12 @@ from robot.output.xmllogger import XmlLogger, LegacyXmlLogger
 class OutputWriter(XmlLogger):
     generator = 'Rebot'
 
-    def visit_message(self, msg):
-        super().message(msg)
-
     def end_result(self, result):
         self.close()
 
 
 class LegacyOutputWriter(LegacyXmlLogger):
     generator = 'Rebot'
-
-    def visit_message(self, msg):
-        super().message(msg)
 
     def end_result(self, result):
         self.close()
