@@ -1,6 +1,9 @@
 *** Settings ***
-Suite Setup       Run Tests    --dryrun    cli/dryrun/run_keyword_variants.robot
+Suite Setup       Run Tests    --dryrun --listener ${LISTENER}    cli/dryrun/run_keyword_variants.robot
 Resource          atest_resource.robot
+
+*** Variables ***
+${LISTENER}       ${DATADIR}/cli/dryrun/LinenoListener.py
 
 *** Test Cases ***
 Run Keyword With Keyword with Invalid Number of Arguments
@@ -106,3 +109,17 @@ Given/When/Then
     Length Should Be    ${tc[2].body}    2
     Length Should Be    ${tc[3].body}    3
     Length Should Be    ${tc[4].body}    3
+
+Line number
+    Should Be Empty    ${ERRORS}
+    ${tc} =    Check Test Case    Run Keyword With Missing Keyword
+    Should Be Equal    ${tc[0].doc}       Keyword 'Run Keyword' on line 14.
+    Should Be Equal    ${tc[0, 0].doc}    Keyword 'Missing' on line 14.
+    ${tc} =    Check Test Case    Run Keywords When One Keyword Fails
+    Should Be Equal    ${tc[0].doc}       Keyword 'Run Keywords' on line 68.
+    Should Be Equal    ${tc[0, 0].doc}    Keyword 'Fail' on line 68.
+    Should Be Equal    ${tc[0, 2].doc}    Keyword 'Log' on line 68.
+    Should Be Equal    ${tc[0, 3].doc}    Keyword 'UK' on line 68.
+    ${tc} =    Check Test Case    Run Keyword If Pass
+    Should Be Equal    ${tc[0].doc}       Keyword 'Run Keyword If' on line 114.
+    Should Be Equal    ${tc[0, 0].doc}    Keyword 'No Operation' on line 114.

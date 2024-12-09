@@ -229,7 +229,9 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  | * `tags`: `Keyword tags`_ as a list of strings.                |
    |                  |                  | * `source`: An absolute path of the file where the keyword was |
    |                  |                  |   used. New in RF 4.0.                                         |
-   |                  |                  | * `lineno`: Line where the keyword was used. New in RF 4.0.    |
+   |                  |                  | * `lineno`: Line where the keyword was used. Typically an      |
+   |                  |                  |   integer, but can be `None` if a keyword has been executed by |
+   |                  |                  |   a listener. New in RF 4.0.                                   |
    |                  |                  | * `status`: Initial keyword status. `NOT RUN` if keyword is    |
    |                  |                  |   not executed (e.g. due to an earlier failure), `NOT SET`     |
    |                  |                  |   otherwise. New in RF 4.0.                                    |

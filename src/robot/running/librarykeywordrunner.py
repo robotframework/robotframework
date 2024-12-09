@@ -183,23 +183,27 @@ class RunKeywordRunner(LibraryKeywordRunner):
         finally:
             STOP_SIGNAL_MONITOR.stop_running_keyword()
 
-    def _end_dry_run(self, data: KeywordData, kw: 'LibraryKeyword',
+    def _end_dry_run(self, data: KeywordData, implementation: 'LibraryKeyword',
                      result: KeywordResult, context):
-        wrapper = UserKeyword(name=kw.name,
-                              doc="Wraps keywords executed by '{kw.name}' in dry-run.",
-                              parent=kw.parent)
-        wrapper.body = [k for k in self._get_dry_run_keywords(kw, data.args)
-                        if not contains_variable(k.name)]
+        wrapper = UserKeyword(name=implementation.name,
+                              doc=f"Wraps keywords executed by '{implementation.name}' "
+                                  f"in dry-run.",
+                              parent=implementation.parent)
+        for kw in self._get_dry_run_keywords(implementation, data.args):
+            if not contains_variable(kw.name):
+                kw.lineno = data.lineno
+                wrapper.body.append(kw)
         BodyRunner(context).run(wrapper, result)
 
-    def _get_dry_run_keywords(self, kw: 'LibraryKeyword', args):
+    def _get_dry_run_keywords(self, implementation: 'LibraryKeyword', args):
         if not self.execute_in_dry_run:
             return []
-        if kw.name == 'Run Keyword If':
+        if implementation.name == 'Run Keyword If':
             return self._get_dry_run_keywords_for_run_keyword_if(args)
-        if kw.name == 'Run Keywords':
+        if implementation.name == 'Run Keywords':
             return self._get_dry_run_keywords_for_run_keyword(args)
-        return self._get_dry_run_keywords_based_on_name(kw, args)
+        index = implementation.args.positional.index('name')
+        return [KeywordData(name=args[index], args=args[index+1:])]
 
     def _get_dry_run_keywords_for_run_keyword_if(self, given_args):
         for kw_call in self._get_run_kw_if_calls(given_args):
@@ -250,7 +254,3 @@ class RunKeywordRunner(LibraryKeywordRunner):
                 yield kw_call
             if given_args:
                 yield given_args
-
-    def _get_dry_run_keywords_based_on_name(self, kw: 'LibraryKeyword', given_args):
-        index = kw.args.positional.index('name')
-        return [KeywordData(name=given_args[index], args=given_args[index+1:])]
