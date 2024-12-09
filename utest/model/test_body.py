@@ -1,9 +1,17 @@
 import unittest
 
-from robot.model import (Body, BodyItem, If, For, Keyword, Message, TestCase,
+from robot.model import (BaseBody, Body, BodyItem, If, For, Keyword, Message, TestCase,
                          TestSuite, Try)
 from robot.result.model import Body as ResultBody, TestCase as ResultTestCase
 from robot.utils.asserts import assert_equal, assert_raises_with_msg
+
+
+def subclasses(base):
+    for cls in base.__subclasses__():
+        if cls.__module__.split('.')[0] != 'robot':
+            continue
+        yield cls
+        yield from subclasses(cls)
 
 
 class TestBody(unittest.TestCase):
@@ -64,23 +72,22 @@ class TestBody(unittest.TestCase):
         body = Body(items=[Keyword(), If(), x, For(), Keyword()])
         assert_equal(body.filter(keywords=True, predicate=predicate), [x])
 
+    def test_all_body_classes_have_slots(self):
+        for cls in subclasses(BaseBody):
+            assert_raises_with_msg(AttributeError,
+                                   f"'{cls.__name__}' object has no attribute 'attr'",
+                                   setattr, cls(None), 'attr', 'value')
+
 
 class TestBodyItem(unittest.TestCase):
 
-    def subclasses(self, parent=BodyItem):
-        for cls in parent.__subclasses__():
-            if cls.__module__.split('.')[0] != 'robot':
-                continue
-            yield cls
-            yield from self.subclasses(cls)
-
     def test_all_body_items_have_type(self):
-        for cls in self.subclasses():
+        for cls in subclasses(BodyItem):
             if getattr(cls, 'type', None) is None:
                 raise AssertionError(f'{cls.__name__} has no type attribute')
 
     def test_id_without_parent(self):
-        for cls in self.subclasses():
+        for cls in subclasses(BodyItem):
             if issubclass(cls, (If, Try)):
                 assert_equal(cls().id, None)
             elif issubclass(cls, Message):
@@ -89,7 +96,7 @@ class TestBodyItem(unittest.TestCase):
                 assert_equal(cls().id, 'k1')
 
     def test_id_with_parent(self):
-        for cls in self.subclasses():
+        for cls in subclasses(BodyItem):
             tc = ResultTestCase()
             tc.body = [cls(), cls(), cls()]
             if issubclass(cls, (If, Try)):

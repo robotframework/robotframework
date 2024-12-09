@@ -94,7 +94,7 @@ class BodyItem(ModelObject):
 
 class BaseBody(ItemList[BodyItem], Generic[KW, F, W, I, T, V, R, C, B, M, E]):
     """Base class for Body and Branches objects."""
-    __slots__ = []
+    __slots__ = ()
     # Set using 'BaseBody.register' when these classes are created.
     keyword_class: Type[KW] = KnownAtRuntime
     for_class: Type[F] = KnownAtRuntime
@@ -259,12 +259,12 @@ class Body(BaseBody['Keyword', 'For', 'While', 'If', 'Try', 'Var', 'Return',
 
     Body contains the keywords and other structures such as FOR loops.
     """
-    pass
+    __slots__ = ()
 
 
 # BaseBranches cannot extend Generic[IT] directly with BaseBody[...].
 class BranchType(Generic[IT]):
-    pass
+    __slots__ = ()
 
 
 class BaseBranches(BaseBody[KW, F, W, I, T, V, R, C, B, M, E], BranchType[IT]):
@@ -291,7 +291,7 @@ class BaseBranches(BaseBody[KW, F, W, I, T, V, R, C, B, M, E], BranchType[IT]):
 
 # BaseIterations cannot extend Generic[IT] directly with BaseBody[...].
 class IterationType(Generic[FW]):
-    pass
+    __slots__ = ()
 
 
 class BaseIterations(BaseBody[KW, F, W, I, T, V, R, C, B, M, E], IterationType[FW]):
