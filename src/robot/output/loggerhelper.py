@@ -92,7 +92,7 @@ class Message(BaseMessage):
     """
     __slots__ = ['_message']
 
-    def __init__(self, message: 'str|None|Callable[[], str|None]',
+    def __init__(self, message: 'str|None|Callable[[], str|None]' = '',
                  level: 'MessageLevel|PseudoLevel' = 'INFO',
                  html: bool = False,
                  timestamp: 'datetime|str|None' = None):

@@ -734,10 +734,10 @@ class Keyword(model.Keyword, StatusMixin):
 
     @setter
     def body(self, body: 'Sequence[BodyItem|DataDict]') -> Body:
-        """Possible keyword body as a :class:`~.Body` object.
+        """Keyword body as a :class:`~.Body` object.
 
         Body can consist of child keywords, messages, and control structures
-        such as IF/ELSE. Library keywords typically have an empty body.
+        such as IF/ELSE.
         """
         return self.body_class(self, body)
 

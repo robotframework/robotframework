@@ -51,7 +51,7 @@ class ModelObject(metaclass=SetterAwareType):
     ERROR = 'ERROR'
     MESSAGE = 'MESSAGE'
     KEYWORD_TYPES = (KEYWORD, SETUP, TEARDOWN)
-    type = None
+    type: str
     repr_args = ()
     __slots__ = []
 

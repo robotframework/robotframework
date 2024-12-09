@@ -53,6 +53,7 @@ FW = TypeVar('FW', bound='ForIteration|WhileIteration')
 
 
 class BodyItem(ModelObject):
+    body: 'BaseBody'
     __slots__ = ['parent']
 
     @property
@@ -78,16 +79,14 @@ class BodyItem(ModelObject):
         # or linking to warnings and errors won't work.
         steps = []
         if getattr(parent, 'has_setup', False):
-            steps.append(parent.setup)          # type: ignore - Use Protocol with RF 7.
+            steps.append(parent.setup)
         if hasattr(parent, 'body'):
-            steps.extend(step for step in
-                         parent.body.flatten()  # type: ignore - Use Protocol with RF 7.
-                         if step.type != self.MESSAGE)
+            steps.extend(parent.body.flatten(messages=False))
         if getattr(parent, 'has_teardown', False):
-            steps.append(parent.teardown)       # type: ignore - Use Protocol with RF 7.
+            steps.append(parent.teardown)
         index = steps.index(self) if self in steps else len(steps)
-        parent_id = getattr(parent, 'id', None)
-        return f'{parent_id}-k{index + 1}' if parent_id else f'k{index + 1}'
+        pid = parent.id    # IF/TRY root id is None. Avoid calling property twice.
+        return f'{pid}-k{index + 1}' if pid else f'k{index + 1}'
 
     def to_dict(self) -> DataDict:
         raise NotImplementedError
@@ -217,9 +216,6 @@ class BaseBody(ItemList[BodyItem], Generic[KW, F, W, I, T, V, R, C, B, M, E]):
         use ``body.filter(keywords=False``, messages=False)``. For more detailed
         filtering it is possible to use ``predicate``.
         """
-        if messages is not None and self.message_class is KnownAtRuntime:
-            raise TypeError(f"'{full_name(self)}' object does not support "
-                            f"filtering by 'messages'.")
         return self._filter([(self.keyword_class, keywords),
                              (self.message_class, messages)], predicate)
 
@@ -237,21 +233,24 @@ class BaseBody(ItemList[BodyItem], Generic[KW, F, W, I, T, V, R, C, B, M, E]):
             items = [item for item in items if predicate(item)]
         return items
 
-    def flatten(self) -> 'list[BodyItem]':
+    def flatten(self, **filter_config) -> 'list[BodyItem]':
         """Return steps so that IF and TRY structures are flattened.
 
         Basically the IF/ELSE and TRY/EXCEPT root elements are replaced
-        with their branches. This is how they are shown in log files.
+        with their branches. This is how they are shown in the log file.
+
+        ``filter_config`` can be used to filter steps using the :meth:`filter`
+        method before flattening. New in Robot Framework 7.2.
         """
         roots = BodyItem.IF_ELSE_ROOT, BodyItem.TRY_EXCEPT_ROOT
-        steps = []
-        for item in self:
+        steps = self if not filter_config else self.filter(**filter_config)
+        flat = []
+        for item in steps:
             if item.type in roots:
-                item = cast('Try|If', item)
-                steps.extend(item.body)
+                flat.extend(item.body)
             else:
-                steps.append(item)
-        return steps
+                flat.append(item)
+        return flat
 
 
 class Body(BaseBody['Keyword', 'For', 'While', 'If', 'Try', 'Var', 'Return',

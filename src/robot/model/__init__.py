@@ -32,7 +32,7 @@ from .control import (Break, Continue, Error, For, ForIteration, If, IfBranch,
 from .fixture import create_fixture
 from .itemlist import ItemList
 from .keyword import Keyword
-from .message import Message, MessageLevel, Messages
+from .message import Message, MessageLevel
 from .modelobject import DataDict, ModelObject
 from .modifier import ModelModifier
 from .statistics import Statistics
