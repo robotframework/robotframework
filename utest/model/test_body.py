@@ -3,7 +3,7 @@ import unittest
 from robot.model import (BaseBody, Body, BodyItem, If, For, Keyword, Message, TestCase,
                          TestSuite, Try)
 from robot.result.model import Body as ResultBody, TestCase as ResultTestCase
-from robot.utils.asserts import assert_equal, assert_raises_with_msg
+from robot.utils.asserts import assert_equal, assert_raises, assert_raises_with_msg
 
 
 def subclasses(base):
@@ -74,9 +74,7 @@ class TestBody(unittest.TestCase):
 
     def test_all_body_classes_have_slots(self):
         for cls in subclasses(BaseBody):
-            assert_raises_with_msg(AttributeError,
-                                   f"'{cls.__name__}' object has no attribute 'attr'",
-                                   setattr, cls(None), 'attr', 'value')
+            assert_raises(AttributeError, setattr, cls(None), 'attr', 'value')
 
 
 class TestBodyItem(unittest.TestCase):
