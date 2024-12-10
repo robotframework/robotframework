@@ -13,8 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from itertools import chain
 import re
+from itertools import chain
 
 from robot.utils import NormalizedDict
 
@@ -26,10 +26,7 @@ class TagStatistics:
     """Container for tag statistics."""
 
     def __init__(self, combined_stats):
-        #: Dictionary, where key is the name of the tag as a string and value
-        #: is an instance of :class:`~robot.model.stats.TagStat`.
         self.tags = NormalizedDict(ignore='_')
-        #: List of :class:`~robot.model.stats.CombinedTagStat` objects.
         self.combined = combined_stats
 
     def visit(self, visitor):
@@ -127,21 +124,23 @@ class TagStatLink:
         return link, title
 
     def _replace_groups(self, link, title, match):
-        for index, group in enumerate(match.groups()):
-            placefolder = '%%%d' % (index+1)
+        for index, group in enumerate(match.groups(), start=1):
+            placefolder = f'%{index}'
             link = link.replace(placefolder, group)
             title = title.replace(placefolder, group)
         return link, title
 
     def _get_match_regexp(self, pattern):
-        pattern = '^%s$' % ''.join(self._yield_match_pattern(pattern))
+        pattern = ''.join(self._yield_match_pattern(pattern))
         return re.compile(pattern, re.IGNORECASE)
 
     def _yield_match_pattern(self, pattern):
+        yield '^'
         for token in self._match_pattern_tokenizer.split(pattern):
             if token.startswith('?'):
-                yield '(%s)' % ('.'*len(token))
+                yield f'({"."*len(token)})'
             elif token == '*':
                 yield '(.*)'
             else:
                 yield re.escape(token)
+        yield '$'

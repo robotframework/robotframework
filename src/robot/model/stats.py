@@ -15,8 +15,7 @@
 
 from datetime import timedelta
 
-from robot.utils import (Sortable, elapsed_time_to_string, html_escape,
-                         is_string, normalize)
+from robot.utils import elapsed_time_to_string, html_escape, normalize, Sortable
 
 from .tags import TagPattern
 
@@ -40,8 +39,7 @@ class Stat(Sortable):
         self._norm_name = normalize(name, ignore='_')
 
     def get_attributes(self, include_label=False, include_elapsed=False,
-                       exclude_empty=True, values_as_strings=False,
-                       html_escape=False):
+                       exclude_empty=True, values_as_strings=False, html_escape=False):
         attrs = {'pass': self.passed, 'fail': self.failed, 'skip': self.skipped}
         attrs.update(self._get_custom_attrs())
         if include_label:
@@ -49,19 +47,18 @@ class Stat(Sortable):
         if include_elapsed:
             attrs['elapsed'] = elapsed_time_to_string(self.elapsed, include_millis=False)
         if exclude_empty:
-            attrs = dict((k, v) for k, v in attrs.items() if v not in ('', None))
+            attrs = {k: v for k, v in attrs.items() if v not in ('', None)}
         if values_as_strings:
-            attrs = dict((k, str(v) if v is not None else '')
-                         for k, v in attrs.items())
+            attrs = {k: str(v if v is not None else '') for k, v in attrs.items()}
         if html_escape:
-            attrs = dict((k, self._html_escape(v)) for k, v in attrs.items())
+            attrs = {k: self._html_escape(v) for k, v in attrs.items()}
         return attrs
 
     def _get_custom_attrs(self):
         return {}
 
     def _html_escape(self, item):
-        return html_escape(item) if is_string(item) else item
+        return html_escape(item) if isinstance(item, str) else item
 
     @property
     def total(self):
