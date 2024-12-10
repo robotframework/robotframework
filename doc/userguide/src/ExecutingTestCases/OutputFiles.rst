@@ -462,8 +462,7 @@ Tags can be given a documentation with the command line option
 :option:`--tagdoc`, which takes an argument in the format
 `tag:doc`. `tag` is the name of the tag to assign the
 documentation to, and it can also be a `simple pattern`_ matching
-multiple tags. `doc` is the assigned documentation. It can contain
-simple `HTML formatting`_.
+multiple tags. `doc` is the assigned documentation.
 
 The given documentation is shown with matching tags in the :name:`Test
 Details by Tag` table, and as a tool tip for these tags in the
@@ -473,7 +472,7 @@ they are combined together and separated with an ampersand.
 Examples::
 
     --tagdoc mytag:Example
-    --tagdoc "regression:*See* http://info.html"
+    --tagdoc "regression:See http://example.com/info.html"
     --tagdoc "owner-*:Original author"
 
 .. note:: Prior to Robot Framework 3.1, underscores in the documentation were
