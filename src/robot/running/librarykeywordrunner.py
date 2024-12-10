@@ -195,10 +195,10 @@ class RunKeywordRunner(LibraryKeywordRunner):
         wrapper = UserKeyword(name=kw.name,
                               doc=f"Wraps keywords executed by '{kw.name}' in dry-run.",
                               parent=kw.parent)
-        for kw in self._get_dry_run_children(kw, data.args):
-            if not contains_variable(kw.name):
-                kw.lineno = data.lineno
-                wrapper.body.append(kw)
+        for child in self._get_dry_run_children(kw, data.args):
+            if not contains_variable(child.name):
+                child.lineno = data.lineno
+                wrapper.body.append(child)
         BodyRunner(context).run(wrapper, result)
 
     def _get_dry_run_children(self, kw: 'LibraryKeyword', args):
