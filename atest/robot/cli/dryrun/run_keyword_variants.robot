@@ -7,7 +7,9 @@ ${LISTENER}       ${DATADIR}/cli/dryrun/LinenoListener.py
 
 *** Test Cases ***
 Run Keyword With Keyword with Invalid Number of Arguments
-    Check Test Case    ${TESTNAME}
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Keyword Data    ${tc[0]}       BuiltIn.Run Keyword    args=Log    status=FAIL
+    Check Keyword Data    ${tc[0, 0]}    BuiltIn.Log            args=       status=FAIL
 
 Run Keyword With Missing Keyword
     Check Test Case    ${TESTNAME}
@@ -22,7 +24,10 @@ Keywords with variable in name are ignored also when variable is argument
     Check Test Case    ${TESTNAME}
 
 Run Keyword With UK
-    Check Test Case    ${TESTNAME}
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Keyword Data    ${tc[0]}          BuiltIn.Run Keyword If    args=True, UK    status=PASS
+    Check Keyword Data    ${tc[0, 0]}       UK                                         status=PASS
+    Check Keyword Data    ${tc[0, 0, 0]}    BuiltIn.No Operation                       status=NOT RUN
 
 Run Keyword With Failing UK
     Check Test Case    ${TESTNAME}
