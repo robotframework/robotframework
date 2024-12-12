@@ -27,8 +27,6 @@ earlier as an input.
 .. note:: Support for generating documentation for suite files and suite
           initialization files is new in Robot Framework 6.0.
 
-.. note:: The support for the JSON spec files is new in Robot Framework 4.0.
-
 __ `Python libraries`_
 __ `Dynamic libraries`_
 
@@ -58,7 +56,6 @@ Options
                            format and `html` means converting documentation to HTML. The
                            default is `raw` with XML spec files and `html` with JSON
                            specs and when using the special `libspec` format.
-                           New in Robot Framework 4.0.
   -F, --docformat <robot|html|text|rest>
                            Specifies the source documentation format. Possible
                            values are Robot Framework's documentation format,
@@ -77,7 +74,7 @@ Options
   -P, --pythonpath <path>  Additional locations where to search for libraries
                            and resources similarly as when `running tests`__.
   --quiet                  Do not print the path of the generated output file
-                           to the console. New in Robot Framework 4.0.
+                           to the console.
   -h, --help               Prints this help.
 
 __ `Library version`_

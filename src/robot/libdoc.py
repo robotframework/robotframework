@@ -67,9 +67,6 @@ the normal installation. Alternatively it is possible to execute the
 can be replaced with any supported Python interpreter. Yet another alternative
 is running the module as a script like `python path/to/robot/libdoc.py`.
 
-The separate `libdoc` command and the support for JSON spec files are new in
-Robot Framework 4.0.
-
 Options
 =======
 
@@ -85,7 +82,7 @@ Options
                           documentation format and HTML means converting
                           documentation to HTML. The default is RAW with XML
                           spec files and HTML with JSON specs and when using
-                          the special LIBSPEC format. New in RF 4.0.
+                          the special LIBSPEC format.
  -F --docformat ROBOT|HTML|TEXT|REST
                           Specifies the source documentation format. Possible
                           values are Robot Framework's documentation format,
@@ -98,12 +95,12 @@ Options
                           based on the browser color scheme. New in RF 6.0.
     --language lang       Set the default language in documentation. `lang`
                           must be a code of a built-in language, which are
-                          `en` and `fi`.
+                          `en` and `fi`. New in RF 7.2.
  -n --name name           Sets the name of the documented library or resource.
  -v --version version     Sets the version of the documented library or
                           resource.
     --quiet               Do not print the path of the generated output file
-                          to the console. New in RF 4.0.
+                          to the console.
  -P --pythonpath path *   Additional locations where to search for libraries
                           and resources.
  -h -? --help             Print this help.
@@ -246,8 +243,8 @@ def libdoc_cli(arguments=None, exit=True):
     """Executes Libdoc similarly as from the command line.
 
     :param arguments: Command line options and arguments as a list of strings.
-        Starting from RF 4.0, defaults to ``sys.argv[1:]`` if not given.
-    :param exit: If ``True``, call ``sys.exit`` automatically. New in RF 4.0.
+        Defaults to ``sys.argv[1:]`` if not given.
+    :param exit: If ``True``, call ``sys.exit`` automatically.
 
     The :func:`libdoc` function may work better in programmatic usage.
 
@@ -283,9 +280,8 @@ def libdoc(library_or_resource, outfile, name='', version='', format=None,
         files is converted to HTML regardless of the original documentation
         format. Possible values are ``'HTML'`` (convert to HTML) and ``'RAW'``
         (use original format). The default depends on the output format.
-        New in Robot Framework 4.0.
     :param quiet: When true, the path of the generated output file is not
-        printed the console. New in Robot Framework 4.0.
+        printed the console.
 
     Arguments have same semantics as Libdoc command line options with same names.
     Run ``libdoc --help`` or consult the Libdoc section in the Robot Framework
