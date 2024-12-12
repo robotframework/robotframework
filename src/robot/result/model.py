@@ -904,6 +904,7 @@ class TestCase(model.TestCase[Keyword], StatusMixin):
 
     def __init__(self, name: str = '',
                  doc: str = '',
+                 metadata: 'Mapping[str, str]|None' = None,
                  tags: Sequence[str] = (),
                  timeout: 'str|None' = None,
                  lineno: 'int|None' = None,
@@ -913,7 +914,7 @@ class TestCase(model.TestCase[Keyword], StatusMixin):
                  end_time: 'datetime|str|None' = None,
                  elapsed_time: 'timedelta|int|float|None' = None,
                  parent: 'TestSuite|None' = None):
-        super().__init__(name, doc, tags, timeout, lineno, parent)
+        super().__init__(name, doc, metadata, tags, timeout, lineno, parent)
         self.status = status
         self.message = message
         self.start_time = start_time
