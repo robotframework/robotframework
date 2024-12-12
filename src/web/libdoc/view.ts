@@ -11,7 +11,11 @@ class View {
   translations: Translations;
   searchTime: number;
 
-  constructor(libdoc: RuntimeLibdoc, storage: Storage, translations: Translations) {
+  constructor(
+    libdoc: RuntimeLibdoc,
+    storage: Storage,
+    translations: Translations,
+  ) {
     this.libdoc = libdoc;
     this.storage = storage;
     this.translations = translations;
