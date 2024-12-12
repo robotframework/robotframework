@@ -67,6 +67,10 @@ Options
                            or the value is `none`, the theme is selected based on
                            the browser color scheme. Only applicable with HTML outputs.
                            New in Robot Framework 6.0.
+  --language <lang>
+                          Set the default language in documentation. `lang`
+                          must be a code of a built-in language, which are
+                          `en` and `fi`. New in Robot Framework 7.2.
   -N, --name <newname>     Sets the name of the documented library or resource.
   -V, --version <newversion>  Sets the version of the documented library or
                            resource. The default value for test libraries is
@@ -180,6 +184,9 @@ keyword search dialog that can also be opened by simply pressing the `s` key.
 Libdoc automatically creates HTML documentation if the output file extension
 is :file:`*.html`. If there is a need to use some other extension, the
 format can be specified explicitly with the :option:`--format` option.
+
+Starting from Robot Framework 7.2, it is possible to localise the static
+texts in the HTML documentation by using the :option:`--language` option.
 
 ::
 
