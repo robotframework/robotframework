@@ -79,10 +79,10 @@ class Iterations(model.BaseIterations['Keyword', 'For', 'While', 'If', 'Try', 'V
 class Message(model.Message):
     __slots__ = ()
 
-    def to_dict(self) -> DataDict:
-        data = super().to_dict()
-        data['type'] = self.type
-        return data
+    def to_dict(self, include_type=True) -> DataDict:
+        if not include_type:
+            return super().to_dict()
+        return {'type': self.type, **super().to_dict()}
 
 
 class StatusMixin:

@@ -20,6 +20,7 @@ from robot.utils import get_error_message
 
 from .loggerapi import LoggerApi
 from .loglevel import LogLevel
+from .jsonlogger import JsonLogger
 from .xmllogger import LegacyXmlLogger, NullLogger, XmlLogger
 
 
@@ -41,6 +42,8 @@ class OutputFile(LoggerApi):
         except Exception:
             raise DataError(f"Opening output file '{path}' failed: "
                             f"{get_error_message()}")
+        if path.suffix.lower() == '.json':
+            return JsonLogger(file, rpa)
         if legacy_output:
             return LegacyXmlLogger(file, rpa)
         return XmlLogger(file, rpa)
