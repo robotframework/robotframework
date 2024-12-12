@@ -96,6 +96,9 @@ Options
                           Use dark or light HTML theme. If this option is not
                           used, or the value is NONE, the theme is selected
                           based on the browser color scheme. New in RF 6.0.
+    --language lang       Set the default language in documentation. `lang`
+                          must be a code of a built-in language, which are
+                          `en` and `fi`.
  -n --name name           Sets the name of the documented library or resource.
  -v --version version     Sets the version of the documented library or
                           resource.
@@ -179,7 +182,7 @@ class LibDoc(Application):
         return options, arguments
 
     def main(self, args, name='', version='', format=None, docformat=None,
-             specdocformat=None, theme=None, pythonpath=None, quiet=False):
+             specdocformat=None, theme=None, language=None, pythonpath=None, quiet=False):
         if pythonpath:
             sys.path = pythonpath + sys.path
         lib_or_res, output = args[:2]
@@ -194,7 +197,7 @@ class LibDoc(Application):
                 or specdocformat == 'HTML'
                 or format in ('JSON', 'LIBSPEC') and specdocformat != 'RAW'):
             libdoc.convert_docs_to_html()
-        libdoc.save(output, format, self._validate_theme(theme, format))
+        libdoc.save(output, format, self._validate_theme(theme, format), language)
         if not quiet:
             self.console(Path(output).absolute())
 

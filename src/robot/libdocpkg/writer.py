@@ -20,10 +20,10 @@ from .xmlwriter import LibdocXmlWriter
 from .jsonwriter import LibdocJsonWriter
 
 
-def LibdocWriter(format=None, theme=None):
+def LibdocWriter(format=None, theme=None, lang=None):
     format = (format or 'HTML')
     if format == 'HTML':
-        return LibdocHtmlWriter(theme)
+        return LibdocHtmlWriter(theme, lang)
     if format == 'XML':
         return LibdocXmlWriter()
     if format == 'LIBSPEC':

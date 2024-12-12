@@ -89,9 +89,9 @@ class LibraryDoc:
     def all_tags(self):
         return Tags(chain.from_iterable(kw.tags for kw in self.keywords))
 
-    def save(self, output=None, format='HTML', theme=None):
+    def save(self, output=None, format='HTML', theme=None, lang=None):
         with LibdocOutput(output, format) as outfile:
-            LibdocWriter(format, theme).write(self, outfile)
+            LibdocWriter(format, theme, lang).write(self, outfile)
 
     def convert_docs_to_html(self):
         formatter = DocFormatter(self.keywords, self.type_docs, self.doc, self.doc_format)
@@ -111,7 +111,7 @@ class LibraryDoc:
                 type_doc.doc = formatter.html(type_doc.doc)
         self.doc_format = 'HTML'
 
-    def to_dictionary(self, include_private=False, theme=None):
+    def to_dictionary(self, include_private=False, theme=None, lang=None):
         data = {
             'specversion': 3,
             'name': self.name,
@@ -131,10 +131,12 @@ class LibraryDoc:
         }
         if theme:
             data['theme'] = theme.lower()
+        if lang:
+            data['lang'] = lang.lower()
         return data
 
-    def to_json(self, indent=None, include_private=True, theme=None):
-        data = self.to_dictionary(include_private, theme)
+    def to_json(self, indent=None, include_private=True, theme=None, lang=None):
+        data = self.to_dictionary(include_private, theme, lang)
         return json.dumps(data, indent=indent)
 
 
