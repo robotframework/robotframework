@@ -1,29 +1,29 @@
 import Mark from "mark.js";
 import Handlebars from "handlebars";
 import Storage from "./storage";
-import Translate from "./i18n/translate";
+import Translations from "./i18n/translations";
 import { createModal, showModal } from "./modal";
 import { regexpEscape, delay } from "./util";
 
 class View {
   storage: Storage;
   libdoc: RuntimeLibdoc;
-  translate: Translate;
+  translations: Translations;
   searchTime: number;
 
-  constructor(libdoc: RuntimeLibdoc, storage: Storage, translate: Translate) {
+  constructor(libdoc: RuntimeLibdoc, storage: Storage, translations: Translations) {
     this.libdoc = libdoc;
     this.storage = storage;
-    this.translate = translate;
-    this.initTemplating(translate);
+    this.translations = translations;
+    this.initTemplating(translations);
   }
 
-  private initTemplating(translate: Translate) {
-    Handlebars.registerHelper("t", function (key) {
-      return translate.getTranslation(key);
+  private initTemplating(translate: Translations) {
+    Handlebars.registerHelper("t", function (key: string) {
+      return translate.translate(key);
     });
-    Handlebars.registerHelper("encodeURIComponent", function (string) {
-      return encodeURIComponent(string);
+    Handlebars.registerHelper("encodeURIComponent", function (value: string) {
+      return encodeURIComponent(value);
     });
     Handlebars.registerHelper("ifEquals", function (arg1, arg2, options) {
       return arg1 == arg2 ? options.fn(this) : options.inverse(this);
@@ -125,14 +125,14 @@ class View {
 
   private initLanguageMenu() {
     this.renderTemplate("language", {
-      languages: this.translate.getLanguages(),
+      languages: this.translations.getLanguageCodes(),
     });
     document.querySelectorAll("#language-container ul a")!.forEach((link) => {
-      if (link.innerHTML === this.translate.currentLanguage()) {
+      if (link.innerHTML === this.translations.currentLanguage()) {
         link.classList.toggle("selected");
       }
       link.addEventListener("click", () => {
-        const changed = this.translate.setLanguage(link.innerHTML);
+        const changed = this.translations.setLanguage(link.innerHTML);
         if (changed) {
           this.render();
         }
@@ -198,8 +198,8 @@ class View {
   }
 
   private getTheme() {
-    if (this.libdoc["theme"]) {
-      return this.libdoc["theme"];
+    if (this.libdoc.theme != null) {
+      return this.libdoc.theme;
     } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
       return "dark";
     } else {

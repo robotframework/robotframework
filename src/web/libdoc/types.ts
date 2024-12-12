@@ -13,6 +13,8 @@ type Libdoc = {
   inits: Array<Keyword>;
   keywords: Array<Keyword>;
   typedocs: Array<TypeDoc>;
+  theme: string | null;
+  lang: string | null;
 };
 
 type Keyword = {
