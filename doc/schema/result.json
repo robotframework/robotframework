@@ -454,8 +454,7 @@
       "required": [
         "elapsed_time",
         "status",
-        "type",
-        "body"
+        "type"
       ],
       "additionalProperties": false
     },
@@ -536,8 +535,7 @@
       },
       "required": [
         "elapsed_time",
-        "status",
-        "body"
+        "status"
       ],
       "additionalProperties": false
     },
@@ -623,8 +621,7 @@
       "required": [
         "elapsed_time",
         "status",
-        "type",
-        "body"
+        "type"
       ],
       "additionalProperties": false
     },
@@ -705,8 +702,7 @@
       },
       "required": [
         "elapsed_time",
-        "status",
-        "body"
+        "status"
       ],
       "additionalProperties": false
     },
@@ -789,8 +785,7 @@
       "required": [
         "elapsed_time",
         "status",
-        "name",
-        "body"
+        "name"
       ],
       "additionalProperties": false
     },
@@ -868,8 +863,7 @@
       },
       "required": [
         "elapsed_time",
-        "status",
-        "body"
+        "status"
       ],
       "additionalProperties": false
     },
@@ -966,8 +960,7 @@
       },
       "required": [
         "elapsed_time",
-        "status",
-        "body"
+        "status"
       ],
       "additionalProperties": false
     },
@@ -1053,8 +1046,7 @@
       "required": [
         "elapsed_time",
         "status",
-        "assign",
-        "body"
+        "assign"
       ],
       "additionalProperties": false
     },
@@ -1168,8 +1160,7 @@
         "status",
         "assign",
         "flavor",
-        "values",
-        "body"
+        "values"
       ],
       "additionalProperties": false
     },
@@ -1394,8 +1385,7 @@
       "required": [
         "elapsed_time",
         "status",
-        "name",
-        "body"
+        "name"
       ],
       "additionalProperties": false
     },
