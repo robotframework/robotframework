@@ -121,6 +121,12 @@ class OutputFile(LoggerApi):
     def end_try_branch(self, data, result):
         self.logger.end_try_branch(result)
 
+    def start_group(self, data, result):
+        self.logger.start_group(result)
+
+    def end_group(self, data, result):
+        self.logger.end_group(result)
+
     def start_var(self, data, result):
         self.logger.start_var(result)
 
