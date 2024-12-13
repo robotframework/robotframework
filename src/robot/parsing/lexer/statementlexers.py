@@ -335,6 +335,13 @@ class WhileHeaderLexer(StatementLexer):
         self._lex_options('limit', 'on_limit', 'on_limit_message')
 
 
+class GroupHeaderLexer(TypeAndArguments):
+    token_type = Token.GROUP
+
+    def handles(self, statement: StatementTokens) -> bool:
+        return statement[0].value == 'GROUP'
+
+
 class EndLexer(TypeAndArguments):
     token_type = Token.END
 

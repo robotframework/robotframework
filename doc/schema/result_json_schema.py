@@ -89,7 +89,7 @@ class Keyword(WithStatus):
     timeout: str | None
     setup: 'Keyword | None'
     teardown: 'Keyword | None'
-    body: list['Keyword | For | While | If | Try | Var | Break | Continue | Return | Error | Message'] | None
+    body: list['Keyword | For | While | Group | If | Try | Var | Break | Continue | Return | Error | Message'] | None
 
 
 class For(WithStatus):
@@ -100,13 +100,13 @@ class For(WithStatus):
     start: str | None
     mode: str | None
     fill: str | None
-    body: list['Keyword | For | ForIteration | While | If | Try | Var | Break | Continue | Return | Error | Message']
+    body: list['Keyword | For | ForIteration | While | Group | If | Try | Var | Break | Continue | Return | Error | Message']
 
 
 class ForIteration(WithStatus):
     type = Field('ITERATION', const=True)
     assign: dict[str, str]
-    body: list['Keyword | For | While | If | Try | Var | Break | Continue | Return | Error| Message']
+    body: list['Keyword | For | While | Group | If | Try | Var | Break | Continue | Return | Error| Message']
 
 
 class While(WithStatus):
@@ -115,23 +115,29 @@ class While(WithStatus):
     limit: str | None
     on_limit: str | None
     on_limit_message: str | None
-    body: list['Keyword | For | While | WhileIteration | If | Try | Var | Break | Continue | Return | Error | Message']
+    body: list['Keyword | For | While | WhileIteration | Group | If | Try | Var | Break | Continue | Return | Error | Message']
 
 
 class WhileIteration(WithStatus):
     type = Field('ITERATION', const=True)
-    body: list['Keyword | For | While | If | Try | Var | Break | Continue | Return | Error | Message']
+    body: list['Keyword | For | While | Group | If | Try | Var | Break | Continue | Return | Error | Message']
+
+
+class Group(WithStatus):
+    type = Field('GROUP', const=True)
+    name: str
+    body: list['Keyword | For | While | Group | If | Try | Var | Break | Continue | Return | Error | Message']
 
 
 class IfBranch(WithStatus):
     type: Literal['IF', 'ELSE IF', 'ELSE']
     condition: str | None
-    body: list['Keyword | For | While | If | Try | Var | Break | Continue | Return | Error | Message']
+    body: list['Keyword | For | While | Group | If | Try | Var | Break | Continue | Return | Error | Message']
 
 
 class If(WithStatus):
     type = Field('IF/ELSE ROOT', const=True)
-    body: list['IfBranch | Keyword | For | While | If | Try | Var | Break | Continue | Return | Error | Message']
+    body: list['IfBranch | Keyword | For | While | Group | If | Try | Var | Break | Continue | Return | Error | Message']
 
 
 class TryBranch(WithStatus):
@@ -139,12 +145,12 @@ class TryBranch(WithStatus):
     patterns: Sequence[str] | None
     pattern_type: str | None
     assign: str | None
-    body: list['Keyword | For | While | If | Try | Var | Break | Continue | Return | Error | Message']
+    body: list['Keyword | For | While | Group | If | Try | Var | Break | Continue | Return | Error | Message']
 
 
 class Try(WithStatus):
     type = Field('TRY/EXCEPT ROOT', const=True)
-    body: list['TryBranch | Keyword | For | While | If | Try | Var | Break | Continue | Return | Error | Message']
+    body: list['TryBranch | Keyword | For | While | Group | If | Try | Var | Break | Continue | Return | Error | Message']
 
 
 class TestCase(WithStatus):
@@ -158,7 +164,7 @@ class TestCase(WithStatus):
     error: str | None
     setup: Keyword | None
     teardown: Keyword | None
-    body: list[Keyword | For | While | If | Try | Var | Error | Message ]
+    body: list[Keyword | For | While | Group | If | Try | Var | Error | Message ]
 
 
 class TestSuite(WithStatus):
@@ -240,7 +246,7 @@ class Result(BaseModel):
         }
 
 
-for cls in [Keyword, For, ForIteration, While, WhileIteration, If, IfBranch,
+for cls in [Keyword, For, ForIteration, While, WhileIteration, Group, If, IfBranch,
             Try, TryBranch, TestSuite, Error, Break, Continue, Return, Var]:
     cls.update_forward_refs()
 

@@ -127,7 +127,7 @@ class TestHandler(ElementHandler):
     tag = 'test'
     # 'tags' is for RF < 4 compatibility.
     children = frozenset(('doc', 'tags', 'tag', 'timeout', 'status', 'kw', 'if', 'for',
-                          'try', 'while', 'variable', 'return', 'break', 'continue',
+                          'try', 'while', 'group', 'variable', 'return', 'break', 'continue',
                           'error', 'msg'))
 
     def start(self, elem, result):
@@ -143,7 +143,8 @@ class KeywordHandler(ElementHandler):
     # 'arguments', 'assign' and 'tags' are for RF < 4 compatibility.
     children = frozenset(('doc', 'arguments', 'arg', 'assign', 'var', 'tags', 'tag',
                           'timeout', 'status', 'msg', 'kw', 'if', 'for', 'try',
-                          'while', 'variable', 'return', 'break', 'continue', 'error'))
+                          'while', 'group', 'variable', 'return', 'break', 'continue',
+                          'error'))
 
     def start(self, elem, result):
         elem_type = elem.get('type')
@@ -227,10 +228,20 @@ class WhileHandler(ElementHandler):
 class IterationHandler(ElementHandler):
     tag = 'iter'
     children = frozenset(('var', 'doc', 'status', 'kw', 'if', 'for', 'msg', 'try',
-                          'while', 'variable', 'return', 'break', 'continue', 'error'))
+                          'while', 'group', 'variable', 'return', 'break', 'continue', 'error'))
 
     def start(self, elem, result):
         return result.body.create_iteration()
+
+
+@ElementHandler.register
+class GroupHandler(ElementHandler):
+    tag = 'group'
+    children = frozenset(('status', 'kw', 'if', 'for', 'try', 'while', 'group', 'msg',
+                          'variable', 'return', 'break', 'continue', 'error'))
+
+    def start(self, elem, result):
+        return result.body.create_group(name=elem.get('name', ''))
 
 
 @ElementHandler.register
@@ -245,8 +256,9 @@ class IfHandler(ElementHandler):
 @ElementHandler.register
 class BranchHandler(ElementHandler):
     tag = 'branch'
-    children = frozenset(('status', 'kw', 'if', 'for', 'try', 'while', 'msg', 'doc',
-                          'variable', 'return', 'pattern', 'break', 'continue', 'error'))
+    children = frozenset(('status', 'kw', 'if', 'for', 'try', 'while', 'group', 'msg',
+                          'doc', 'variable', 'return', 'pattern', 'break', 'continue',
+                          'error'))
 
     def start(self, elem, result):
         if 'variable' in elem.attrib:    # RF < 7.0 compatibility.

@@ -457,6 +457,9 @@
                 "$ref": "#/definitions/While"
               },
               {
+                "$ref": "#/definitions/Group"
+              },
+              {
                 "$ref": "#/definitions/If"
               },
               {
@@ -529,6 +532,9 @@
               },
               {
                 "$ref": "#/definitions/While"
+              },
+              {
+                "$ref": "#/definitions/Group"
               },
               {
                 "$ref": "#/definitions/If"
@@ -620,6 +626,9 @@
                 "$ref": "#/definitions/While"
               },
               {
+                "$ref": "#/definitions/Group"
+              },
+              {
                 "$ref": "#/definitions/If"
               },
               {
@@ -694,6 +703,9 @@
                 "$ref": "#/definitions/While"
               },
               {
+                "$ref": "#/definitions/Group"
+              },
+              {
                 "$ref": "#/definitions/If"
               },
               {
@@ -734,6 +746,90 @@
       ],
       "additionalProperties": false
     },
+    "Group": {
+      "title": "Group",
+      "type": "object",
+      "properties": {
+        "elapsed_time": {
+          "title": "Elapsed Time",
+          "type": "number"
+        },
+        "status": {
+          "title": "Status",
+          "type": "string"
+        },
+        "start_time": {
+          "title": "Start Time",
+          "type": "string",
+          "format": "date-time"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "body": {
+          "title": "Body",
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions/Keyword"
+              },
+              {
+                "$ref": "#/definitions/For"
+              },
+              {
+                "$ref": "#/definitions/While"
+              },
+              {
+                "$ref": "#/definitions/Group"
+              },
+              {
+                "$ref": "#/definitions/If"
+              },
+              {
+                "$ref": "#/definitions/Try"
+              },
+              {
+                "$ref": "#/definitions/Var"
+              },
+              {
+                "$ref": "#/definitions/Break"
+              },
+              {
+                "$ref": "#/definitions/Continue"
+              },
+              {
+                "$ref": "#/definitions/Return"
+              },
+              {
+                "$ref": "#/definitions/Error"
+              },
+              {
+                "$ref": "#/definitions/Message"
+              }
+            ]
+          }
+        },
+        "type": {
+          "title": "Type",
+          "default": "GROUP",
+          "const": "GROUP",
+          "type": "string"
+        }
+      },
+      "required": [
+        "elapsed_time",
+        "status",
+        "name",
+        "body"
+      ],
+      "additionalProperties": false
+    },
     "WhileIteration": {
       "title": "WhileIteration",
       "type": "object",
@@ -768,6 +864,9 @@
               },
               {
                 "$ref": "#/definitions/While"
+              },
+              {
+                "$ref": "#/definitions/Group"
               },
               {
                 "$ref": "#/definitions/If"
@@ -865,6 +964,9 @@
                 "$ref": "#/definitions/WhileIteration"
               },
               {
+                "$ref": "#/definitions/Group"
+              },
+              {
                 "$ref": "#/definitions/If"
               },
               {
@@ -946,6 +1048,9 @@
               },
               {
                 "$ref": "#/definitions/While"
+              },
+              {
+                "$ref": "#/definitions/Group"
               },
               {
                 "$ref": "#/definitions/If"
@@ -1056,6 +1161,9 @@
               },
               {
                 "$ref": "#/definitions/While"
+              },
+              {
+                "$ref": "#/definitions/Group"
               },
               {
                 "$ref": "#/definitions/If"
@@ -1184,6 +1292,9 @@
                 "$ref": "#/definitions/While"
               },
               {
+                "$ref": "#/definitions/Group"
+              },
+              {
                 "$ref": "#/definitions/If"
               },
               {
@@ -1293,6 +1404,9 @@
               },
               {
                 "$ref": "#/definitions/While"
+              },
+              {
+                "$ref": "#/definitions/Group"
               },
               {
                 "$ref": "#/definitions/If"

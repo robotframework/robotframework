@@ -529,6 +529,7 @@ and in the API docs of the optional ListenerV3_ base class.
    | start_if_branch,      |                  |                                                                    |
    | start_try,            |                  |                                                                    |
    | start_try_branch,     |                  |                                                                    |
+   | start_group,          |                  |                                                                    |
    | start_var,            |                  |                                                                    |
    | start_continue,       |                  |                                                                    |
    | start_break,          |                  |                                                                    |
@@ -542,6 +543,7 @@ and in the API docs of the optional ListenerV3_ base class.
    | end_if_branch,        |                  |                                                                    |
    | end_try,              |                  |                                                                    |
    | end_try_branch,       |                  |                                                                    |
+   | end_group,            |                  |                                                                    |
    | end_var,              |                  |                                                                    |
    | end_continue,         |                  |                                                                    |
    | end_break,            |                  |                                                                    |

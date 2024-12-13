@@ -1205,6 +1205,35 @@ class WhileHeader(Statement):
 
 
 @Statement.register
+class GroupHeader(Statement):
+    type = Token.GROUP
+
+    @classmethod
+    def from_params(cls, name: str = '',
+                    indent: str = FOUR_SPACES, separator: str = FOUR_SPACES,
+                    eol: str = EOL) -> 'GroupHeader':
+        tokens = [Token(Token.SEPARATOR, indent),
+                  Token(Token.GROUP)]
+        if name:
+            tokens.extend(
+                [Token(Token.SEPARATOR, separator),
+                Token(Token.ARGUMENT, name)]
+            )
+        tokens.append(Token(Token.EOL, eol))
+        return cls(tokens)
+
+    @property
+    def name(self) -> str:
+        return ', '.join(self.get_values(Token.ARGUMENT))
+
+    def validate(self, ctx: 'ValidationContext'):
+        names = self.get_values(Token.ARGUMENT)
+        if len(names) > 1:
+            self.errors += (f"GROUP accepts only one argument as name, got {len(names)} "
+                            f"arguments {seq2str(names)}.",)
+
+
+@Statement.register
 class Var(Statement):
     type = Token.VAR
     options = {

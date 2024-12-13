@@ -951,6 +951,32 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             on_limit_message='Error message'
         )
 
+    def test_GroupHeader(self):
+        # GROUP    name
+        tokens = [
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.GROUP),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.ARGUMENT, 'name'),
+            Token(Token.EOL, '\n')
+        ]
+        assert_created_statement(
+            tokens,
+            GroupHeader,
+            name='name'
+        )
+        # GROUP
+        tokens = [
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.GROUP),
+            Token(Token.EOL, '\n')
+        ]
+        assert_created_statement(
+            tokens,
+            GroupHeader,
+            name=''
+        )
+
     def test_End(self):
         tokens = [
             Token(Token.SEPARATOR, '    '),

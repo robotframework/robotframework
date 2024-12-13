@@ -154,6 +154,13 @@ class XmlLogger(ResultVisitor):
         self._write_status(iteration)
         self._writer.end('iter')
 
+    def start_group(self, group):
+        self._writer.start('group', {'name': group.name})
+
+    def end_group(self, group):
+        self._write_status(group)
+        self._writer.end('group')
+
     def start_var(self, var):
         attr = {'name': var.name}
         if var.scope is not None:

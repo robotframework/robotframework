@@ -44,6 +44,7 @@ class ModelObject(metaclass=SetterAwareType):
     EXCEPT = 'EXCEPT'
     FINALLY = 'FINALLY'
     WHILE = 'WHILE'
+    GROUP = 'GROUP'
     VAR = 'VAR'
     RETURN = 'RETURN'
     CONTINUE = 'CONTINUE'
