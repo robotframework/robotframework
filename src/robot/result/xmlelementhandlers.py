@@ -119,7 +119,7 @@ class SuiteHandler(ElementHandler):
     def get_child_handler(self, tag):
         if tag == 'status':
             return StatusHandler(set_status=False)
-        return ElementHandler.get_child_handler(self, tag)
+        return super().get_child_handler(tag)
 
 
 @ElementHandler.register

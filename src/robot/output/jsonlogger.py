@@ -28,7 +28,7 @@ class JsonLogger:
         self.writer = JsonWriter(file)
         self.writer.start_dict(generator=get_full_version('Robot'),
                                generated=datetime.now().isoformat(),
-                               rpa=Raw('true' if rpa else 'false'))
+                               rpa=Raw(self.writer.encode(rpa)))
         self.containers = []
 
     def start_suite(self, suite):
@@ -254,13 +254,9 @@ class JsonWriter:
         self.comma = False
 
     def _newline(self, comma: 'bool|None' = None, newline: 'bool|None' = None):
-        if comma is None:
-            comma = self.comma
-        if newline is None:
-            newline = self.newline
-        if comma:
+        if (self.comma if comma is None else comma):
             self._write(',')
-        if newline:
+        if (self.newline if newline is None else newline):
             self._write('\n')
         self.newline = True
 
