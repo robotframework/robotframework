@@ -44,12 +44,11 @@ class BlockParser(Parser, ABC):
         super().__init__(model)
         self.parsers: 'dict[str, type[NestedBlockParser]]' = {
             Token.FOR: ForParser,
-            Token.GROUP: GroupParser,
+            Token.WHILE: WhileParser,
             Token.IF: IfParser,
             Token.INLINE_IF: IfParser,
             Token.TRY: TryParser,
-            Token.WHILE: WhileParser
-
+            Token.GROUP: GroupParser
         }
 
     def handles(self, statement: Statement) -> bool:
