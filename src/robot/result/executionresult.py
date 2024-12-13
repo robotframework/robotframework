@@ -141,7 +141,8 @@ class Result:
         self._stat_config = stat_config or {}
 
     @classmethod
-    def from_json(cls, source: 'str|bytes|TextIO|Path') -> 'Result':
+    def from_json(cls, source: 'str|bytes|TextIO|Path',
+                  rpa: 'bool|None' = None) -> 'Result':
         """Construct a result object from JSON data.
 
         The data is given as the ``source`` parameter. It can be:
@@ -166,10 +167,12 @@ class Result:
             data = JsonLoader().load(source)
         except (TypeError, ValueError) as err:
             raise DataError(f'Loading JSON data failed: {err}')
+        if rpa is None:
+            rpa = data.get('rpa', False)
         if 'suite' in data:
-            result = cls._from_full_json(data)
+            result = cls._from_full_json(data, rpa)
         else:
-            result = cls._from_suite_json(data)
+            result = cls._from_suite_json(data, rpa)
         if isinstance(source, Path):
             result.source = source
         elif isinstance(source, str) and source[0] != '{' and Path(source).exists():
@@ -177,18 +180,18 @@ class Result:
         return result
 
     @classmethod
-    def _from_full_json(cls, data) -> 'Result':
+    def _from_full_json(cls, data, rpa) -> 'Result':
         result = Result(suite=TestSuite.from_dict(data['suite']),
                         errors=ExecutionErrors(data.get('errors')),
-                        rpa=data.get('rpa'),
+                        rpa=rpa,
                         generator=data.get('generator'))
         if data.get('generation_time'):
             result.generation_time = datetime.fromisoformat(data['generation_time'])
         return result
 
     @classmethod
-    def _from_suite_json(cls, data) -> 'Result':
-        return Result(suite=TestSuite.from_dict(data), rpa=data.get('rpa', False))
+    def _from_suite_json(cls, data, rpa) -> 'Result':
+        return Result(suite=TestSuite.from_dict(data), rpa=rpa)
 
     @overload
     def to_json(self, file: None = None, *,
