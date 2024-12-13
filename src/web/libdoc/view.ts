@@ -3,7 +3,16 @@ import Handlebars from "handlebars";
 import Storage from "./storage";
 import Translations from "./i18n/translations";
 import { createModal, showModal } from "./modal";
+import { RuntimeLibdoc } from "./types";
 import { regexpEscape, delay } from "./util";
+
+interface MatchInclude {
+  args?: boolean;
+  doc?: boolean;
+  name?: boolean;
+  tags?: boolean;
+  tagsExact?: boolean;
+}
 
 class View {
   storage: Storage;
@@ -29,9 +38,12 @@ class View {
     Handlebars.registerHelper("encodeURIComponent", function (value: string) {
       return encodeURIComponent(value);
     });
-    Handlebars.registerHelper("ifEquals", function (arg1, arg2, options) {
-      return arg1 == arg2 ? options.fn(this) : options.inverse(this);
-    });
+    Handlebars.registerHelper(
+      "ifEquals",
+      function (arg1: string, arg2: string, options) {
+        return arg1 == arg2 ? options.fn(this) : options.inverse(this);
+      },
+    );
     Handlebars.registerHelper("ifNotNull", function (arg1, options) {
       return arg1 !== null ? options.fn(this) : options.inverse(this);
     });
@@ -182,7 +194,7 @@ class View {
     );
   }
 
-  private renderKeywords(libdoc: Libdoc | null = null) {
+  private renderKeywords(libdoc: RuntimeLibdoc | null = null) {
     if (libdoc == null) {
       libdoc = this.libdoc;
     }
@@ -261,7 +273,11 @@ class View {
     }
   }
 
-  private highlightMatches(string: string, include, givenSearchTime?: number) {
+  private highlightMatches(
+    string: string,
+    include: MatchInclude,
+    givenSearchTime?: number,
+  ) {
     if (givenSearchTime && givenSearchTime !== this.searchTime) {
       return;
     }
@@ -287,10 +303,10 @@ class View {
       );
       if (include.tagsExact) {
         const filtered: Array<Element> = [];
-        for (const elem of matches) {
+        matches.forEach((elem) => {
           if (elem.textContent?.toUpperCase() == string.toUpperCase())
             filtered.push(elem);
-        }
+        });
         new Mark(filtered).mark(string);
       } else {
         new Mark(matches).mark(string);
@@ -300,7 +316,7 @@ class View {
 
   private markMatches(
     pattern: string,
-    include,
+    include: MatchInclude,
     givenSearchTime?: number,
     callback?: FrameRequestCallback,
   ) {
@@ -313,7 +329,7 @@ class View {
     }
     const regexp = new RegExp(patternRegexp, "i");
     const test = regexp.test.bind(regexp);
-    let result = {} as Libdoc;
+    let result = {} as RuntimeLibdoc;
     let keywordMatchCount = 0;
     result.keywords = this.libdoc.keywords.map((orig) => {
       const kw = { ...orig };
@@ -396,7 +412,7 @@ class View {
 
   private renderLibdocTemplate(
     name: string,
-    libdoc: Libdoc | null = null,
+    libdoc: RuntimeLibdoc | null = null,
     container_selector: string = "",
   ) {
     if (libdoc == null) {

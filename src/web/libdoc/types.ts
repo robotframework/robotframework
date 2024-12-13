@@ -79,3 +79,5 @@ interface RuntimeLibdoc extends Libdoc {
 interface RuntimeKeyword extends Keyword {
   hidden?: boolean;
 }
+
+export type { Libdoc, RuntimeLibdoc };

@@ -1,5 +1,6 @@
 import Storage from "./storage";
 import Translations from "./i18n/translations";
+import { Libdoc } from "./types";
 import View from "./view";
 
 function render(libdoc: Libdoc) {
