@@ -10,8 +10,10 @@ Result model is consistent with information sent to listeners
     Should Be Empty    ${ERRORS}
 
 Result model build during execution is same as saved to output.xml
-    ${tc} =    Check Test Case    Test
-    Dictionaries Should Be Equal    ${{robot.result.TestCase.from_json($MODEL_FILE).to_dict()}}    ${tc.to_dict()}
+    ${expected} =    Check Test Case    Test
+    ${actual} =    Evaluate    robot.result.TestCase.from_json($MODEL_FILE)
+    ${suite} =     Evaluate    robot.result.TestSuite.from_dict({'tests': [$actual]})    # Required to get correct id.
+    Dictionaries Should Be Equal    ${actual.to_dict()}    ${expected.to_dict()}
 
 Messages below log level and messages explicitly removed are not included
     ${tc} =    Check Test Case    Test

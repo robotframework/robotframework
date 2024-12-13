@@ -131,6 +131,16 @@ a {
   padding-right: 15px;
 }
 
+#language-container svg {
+  width: 20px;
+  height: 20px;
+}
+
+#language-container svg path {
+  stroke: var(--text-color);
+  fill: var(--background-color);
+}
+
 #language-container ul {
   list-style: none;
   margin: 0;

@@ -12,6 +12,11 @@ class TestTestCase(unittest.TestCase):
     def setUp(self):
         self.test = TestCase(tags=['t1', 't2'], name='test')
 
+    def test_type(self):
+        assert_equal(self.test.type, 'TEST')
+        assert_equal(self.test.type, self.test.TEST)
+        assert_equal(self.test.type, self.test.TASK)
+
     def test_id_without_parent(self):
         assert_equal(self.test.id, 't1')
 

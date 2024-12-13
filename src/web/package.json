@@ -3,7 +3,7 @@
   "source": "libdoc/libdoc.html",
   "scripts": {
     "start": "parcel",
-    "build": "parcel build --config .parcelrc && cp dist/libdoc.html ../robot/htmldata/libdoc",
+    "build": "rm -rf .parcel-cache && parcel build --config .parcelrc && cp dist/libdoc.html ../robot/htmldata/libdoc",
     "pretty": "prettier . --write",
     "test": "jest"
   },

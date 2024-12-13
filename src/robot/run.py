@@ -239,7 +239,6 @@ Options
                           pattern. Documentation is shown in `Test Details` and
                           also as a tooltip in `Statistics by Tag`. Pattern can
                           use `*`, `?` and `[]` as wildcards like --test.
-                          Documentation can contain formatting like --doc.
                           Examples: --tagdoc mytag:Example
                                     --tagdoc "owner-*:Original author"
     --tagstatlink pattern:link:title *  Add external links into `Statistics by

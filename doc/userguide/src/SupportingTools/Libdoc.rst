@@ -27,8 +27,6 @@ earlier as an input.
 .. note:: Support for generating documentation for suite files and suite
           initialization files is new in Robot Framework 6.0.
 
-.. note:: The support for the JSON spec files is new in Robot Framework 4.0.
-
 __ `Python libraries`_
 __ `Dynamic libraries`_
 
@@ -58,7 +56,6 @@ Options
                            format and `html` means converting documentation to HTML. The
                            default is `raw` with XML spec files and `html` with JSON
                            specs and when using the special `libspec` format.
-                           New in Robot Framework 4.0.
   -F, --docformat <robot|html|text|rest>
                            Specifies the source documentation format. Possible
                            values are Robot Framework's documentation format,
@@ -70,6 +67,10 @@ Options
                            or the value is `none`, the theme is selected based on
                            the browser color scheme. Only applicable with HTML outputs.
                            New in Robot Framework 6.0.
+  --language <lang>
+                          Set the default language in documentation. `lang`
+                          must be a code of a built-in language, which are
+                          `en` and `fi`. New in Robot Framework 7.2.
   -N, --name <newname>     Sets the name of the documented library or resource.
   -V, --version <newversion>  Sets the version of the documented library or
                            resource. The default value for test libraries is
@@ -77,7 +78,7 @@ Options
   -P, --pythonpath <path>  Additional locations where to search for libraries
                            and resources similarly as when `running tests`__.
   --quiet                  Do not print the path of the generated output file
-                           to the console. New in Robot Framework 4.0.
+                           to the console.
   -h, --help               Prints this help.
 
 __ `Library version`_
@@ -183,6 +184,9 @@ keyword search dialog that can also be opened by simply pressing the `s` key.
 Libdoc automatically creates HTML documentation if the output file extension
 is :file:`*.html`. If there is a need to use some other extension, the
 format can be specified explicitly with the :option:`--format` option.
+
+Starting from Robot Framework 7.2, it is possible to localise the static
+texts in the HTML documentation by using the :option:`--language` option.
 
 ::
 

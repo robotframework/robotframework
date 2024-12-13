@@ -27,6 +27,31 @@ DataDict = Dict[str, Any]
 
 
 class ModelObject(metaclass=SetterAwareType):
+    SUITE = 'SUITE'
+    TEST = 'TEST'
+    TASK = TEST
+    KEYWORD = 'KEYWORD'
+    SETUP = 'SETUP'
+    TEARDOWN = 'TEARDOWN'
+    FOR = 'FOR'
+    ITERATION = 'ITERATION'
+    IF_ELSE_ROOT = 'IF/ELSE ROOT'
+    IF = 'IF'
+    ELSE_IF = 'ELSE IF'
+    ELSE = 'ELSE'
+    TRY_EXCEPT_ROOT = 'TRY/EXCEPT ROOT'
+    TRY = 'TRY'
+    EXCEPT = 'EXCEPT'
+    FINALLY = 'FINALLY'
+    WHILE = 'WHILE'
+    VAR = 'VAR'
+    RETURN = 'RETURN'
+    CONTINUE = 'CONTINUE'
+    BREAK = 'BREAK'
+    ERROR = 'ERROR'
+    MESSAGE = 'MESSAGE'
+    KEYWORD_TYPES = (KEYWORD, SETUP, TEARDOWN)
+    type: str
     repr_args = ()
     __slots__ = []
 

@@ -54,6 +54,9 @@
   overflow-y: auto;
   padding: 0.3rem;
   border-radius: 3px;
+}
+
+.kwdoc pre {
   margin-left: -90px;
 }
 

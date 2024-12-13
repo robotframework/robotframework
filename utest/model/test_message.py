@@ -2,7 +2,7 @@ import unittest
 from datetime import datetime
 
 from robot.model import Message
-from robot.result import Keyword
+from robot.result import Keyword, Var, While
 from robot.result.executionerrors import ExecutionErrors
 from robot.utils.asserts import assert_equal, assert_raises
 
@@ -41,6 +41,11 @@ class TestMessage(unittest.TestCase):
         assert_equal(kw.body.create_keyword().id, 'k1-k1')
         assert_equal(kw.body.create_message().id, 'k1-m3')
         assert_equal(kw.body.create_keyword().body.create_message().id, 'k1-k2-m1')
+
+    def test_id_with_control_parent(self):
+        for parent in Var(), While():
+            assert_equal(parent.body.create_message().id, 'k1-m1')
+            assert_equal(parent.body.create_message().id, 'k1-m2')
 
     def test_id_with_errors_parent(self):
         errors = ExecutionErrors()

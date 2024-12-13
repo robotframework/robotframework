@@ -80,10 +80,10 @@ class Iterations(model.BaseIterations['Keyword', 'For', 'While', 'Group', 'If', 
 class Message(model.Message):
     __slots__ = ()
 
-    def to_dict(self) -> DataDict:
-        data = super().to_dict()
-        data['type'] = self.type
-        return data
+    def to_dict(self, include_type=True) -> DataDict:
+        if not include_type:
+            return super().to_dict()
+        return {'type': self.type, **super().to_dict()}
 
 
 class StatusMixin:
@@ -762,10 +762,10 @@ class Keyword(model.Keyword, StatusMixin):
 
     @setter
     def body(self, body: 'Sequence[BodyItem|DataDict]') -> Body:
-        """Possible keyword body as a :class:`~.Body` object.
+        """Keyword body as a :class:`~.Body` object.
 
         Body can consist of child keywords, messages, and control structures
-        such as IF/ELSE. Library keywords typically have an empty body.
+        such as IF/ELSE.
         """
         return self.body_class(self, body)
 
@@ -958,7 +958,12 @@ class TestCase(model.TestCase[Keyword], StatusMixin):
         return self.body_class(self, body)
 
     def to_dict(self) -> DataDict:
-        return {**super().to_dict(), **StatusMixin.to_dict(self)}
+        return {'id': self.id, **super().to_dict(), **StatusMixin.to_dict(self)}
+
+    @classmethod
+    def from_dict(cls, data: DataDict) -> 'TestCase':
+        data.pop('id', None)
+        return super().from_dict(data)
 
 
 class TestSuite(model.TestSuite[Keyword, TestCase], StatusMixin):
@@ -1111,7 +1116,7 @@ class TestSuite(model.TestSuite[Keyword, TestCase], StatusMixin):
         self.visit(SuiteTeardownFailed(message, skipped=True))
 
     def to_dict(self) -> DataDict:
-        return {**super().to_dict(), **StatusMixin.to_dict(self)}
+        return {'id': self.id, **super().to_dict(), **StatusMixin.to_dict(self)}
 
     @classmethod
     def from_dict(cls, data: DataDict) -> 'TestSuite':
@@ -1126,6 +1131,7 @@ class TestSuite(model.TestSuite[Keyword, TestCase], StatusMixin):
         """
         if 'suite' in data:
             data = data['suite']
+        data.pop('id', None)
         return super().from_dict(data)
 
     @classmethod

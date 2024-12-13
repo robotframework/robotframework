@@ -51,7 +51,7 @@ class Logger(AbstractLogger):
     def __init__(self, register_console_logger=True):
         self._console_logger = None
         self._syslog = None
-        self._xml_logger = None
+        self._output_file = None
         self._cli_listeners = None
         self._lib_listeners = None
         self._other_loggers = []
@@ -75,14 +75,14 @@ class Logger(AbstractLogger):
     @property
     def start_loggers(self):
         loggers = (self._other_loggers
-                   + [self._console_logger, self._syslog, self._xml_logger]
+                   + [self._console_logger, self._syslog, self._output_file]
                    + self._listeners)
         return [logger for logger in loggers if logger]
 
     @property
     def end_loggers(self):
         loggers = (self._listeners
-                   + [self._console_logger, self._syslog, self._xml_logger]
+                   + [self._console_logger, self._syslog, self._output_file]
                    + self._other_loggers)
         return [logger for logger in loggers if logger]
 
@@ -129,11 +129,11 @@ class Logger(AbstractLogger):
         else:
             self._syslog = self._wrap_and_relay(syslog)
 
-    def register_xml_logger(self, logger):
-        self._xml_logger = self._wrap_and_relay(logger)
+    def register_output_file(self, logger):
+        self._output_file = self._wrap_and_relay(logger)
 
-    def unregister_xml_logger(self):
-        self._xml_logger = None
+    def unregister_output_file(self):
+        self._output_file = None
 
     def register_listeners(self, listeners, library_listeners):
         self._cli_listeners = listeners
@@ -206,7 +206,7 @@ class Logger(AbstractLogger):
             return
         for logger in self:
             logger.log_message(msg)
-        if self._log_message_parents and self._xml_logger.is_logged(msg):
+        if self._log_message_parents and self._output_file.is_logged(msg):
             self._log_message_parents[-1].body.append(msg)
         if msg.level in ('WARN', 'ERROR'):
             self.message(msg)

@@ -20,7 +20,7 @@ from robot.utils import file_writer, seq2str2
 
 from .logger import LOGGER
 from .loggerapi import LoggerApi
-from .loggerhelper import IsLogged
+from .loglevel import LogLevel
 
 
 def DebugFile(path):
@@ -45,7 +45,7 @@ class _DebugFileWriter(LoggerApi):
         self._kw_level = 0
         self._separator_written_last = False
         self._outfile = outfile
-        self._is_logged = IsLogged('DEBUG')
+        self._is_logged = LogLevel('DEBUG').is_logged
 
     def start_suite(self, data, result):
         self._separator('SUITE')
@@ -91,7 +91,7 @@ class _DebugFileWriter(LoggerApi):
         self._kw_level -= 1
 
     def log_message(self, msg):
-        if self._is_logged(msg.level) and msg.message is not None:
+        if self._is_logged(msg):
             self._write(f'{msg.timestamp} - {msg.level} - {msg.message}')
 
     def close(self):

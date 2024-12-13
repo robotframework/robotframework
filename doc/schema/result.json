@@ -1318,6 +1318,10 @@
           "title": "Name",
           "type": "string"
         },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
         "doc": {
           "title": "Doc",
           "type": "string"
@@ -1418,6 +1422,10 @@
         },
         "name": {
           "title": "Name",
+          "type": "string"
+        },
+        "id": {
+          "title": "Id",
           "type": "string"
         },
         "doc": {

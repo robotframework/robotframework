@@ -365,7 +365,7 @@ class StartKeywordAttributes(OptionalKeywordAttributes):
     assign: 'list[str]'
     tags: 'list[str]'
     source: str
-    lineno: int
+    lineno: 'int|None'
     status: str
     starttime: str
 
