@@ -248,7 +248,7 @@ class Group(BodyItem):
         return self.body_class(self, body)
 
     def visit(self, visitor: SuiteVisitor):
-        visitor.visit_while(self)
+        visitor.visit_group(self)
 
     def to_dict(self) -> DataDict:
         return {'type': self.type, 'name': self.name, 'body': self.body.to_dicts()}
