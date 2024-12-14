@@ -1309,3 +1309,95 @@ There are also other methods to execute keywords conditionally:
 
 __ `Test teardown`_
 __ `User keyword teardown`_
+
+`GROUP` syntax
+--------------
+
+Robot Framework 7.2 introduced the `GROUP` syntax that allows grouping related
+keywords and control structures together:
+
+.. sourcecode:: robotframework
+
+    *** Test Cases ***
+    Valid login
+        GROUP    Open browser to login page
+            Open Browser    ${LOGIN URL}
+            Title Should Be    Login Page
+        END
+        GROUP    Submit credentials
+            Input Username    username_field    demo
+            Input Password    password_field    mode
+        END
+        GROUP    Login should have succeeded
+            Title Should Be    Welcome Page
+        END
+
+As the above example demonstrates, groups can have a name, but the name is
+optional. Groups can be nested freely with each others and also with other control
+structures.
+
+Notice that reusable `user keywords`_ are in general recommended over the `GROUP`
+syntax, but if there are no reusing possibilities, named groups give similar benefits.
+For example, in the log file the end result is exactly the same except that there is
+a `GROUP` label instead of a `KEYWORD` label.
+
+All groups within a test or a user keyword share the same variable namespace.
+This means that, unlike when using keywords, there is no need to use arguments
+or return values for sharing values. This can be a benefit in simple cases,
+but if there are lot of variables, the benefit can turn into a problem and cause
+a huge mess.
+
+`GROUP` with templates
+~~~~~~~~~~~~~~~~~~~~~~
+
+The `GROUP` syntax can be used for grouping iterations with `test templates`_:
+
+.. sourcecode:: robotframework
+
+    *** Settings ***
+    Library           String
+    Test Template     Upper case should be
+
+    *** Test Cases ***
+    Template example
+        GROUP    ASCII characters
+            a    A
+            z    Z
+        END
+        GROUP    Latin-1 characters
+            ä    Ä
+            ß    SS
+        END
+        GROUP    Numbers
+            1    1
+            9    9
+        END
+
+    *** Keywords ***
+    Upper case should be
+        [Arguments]    ${char}    ${expected}
+        ${actual} =    Convert To Upper Case    ${char}
+        Should Be Equal    ${actual}    ${expected}
+
+Programmatic usage
+~~~~~~~~~~~~~~~~~~
+
+One of the primary usages for groups is making it possible to create structured
+tests and user keywords programmatically. For example, the following
+`pre-run modifier`_ adds a group at the end of each modified test. Groups can
+be added similarly also by `listeners`_ that use the `listener API version 3`__.
+
+.. sourcecode:: python
+
+
+    from robot.api import SuiteVisitor
+
+
+    class GroupAdder(SuiteVisitor):
+
+        def start_test(self, test):
+            group = test.body.create_group(name='Example')
+            group.body.create_keyword(name='Log', args=['Hello, world!'])
+            group.body.create_keyword(name='No Operation')
+
+__ `Listener version 3`_
