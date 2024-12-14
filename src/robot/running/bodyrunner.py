@@ -471,19 +471,26 @@ class GroupRunner:
         self._templated = templated
 
     def run(self, data, result):
-        if data.error:
-            error = DataError(data.error, syntax=True)
+        if self._run:
+            error = self._initialize(data, result)
+            run = error is None
         else:
             error = None
-            try:
-                result.name = self._context.variables.replace_string(result.name)
-            except DataError as err:
-                error = err
-        with StatusReporter(data, result, self._context, self._run):
+            run = False
+        with StatusReporter(data, result, self._context, run=run):
+            runner = BodyRunner(self._context, run, self._templated)
+            runner.run(data, result)
             if error:
                 raise error
-            runner = BodyRunner(self._context, self._run, self._templated)
-            runner.run(data, result)
+
+    def _initialize(self, data, result):
+        if data.error:
+            return DataError(data.error, syntax=True)
+        try:
+            result.name = self._context.variables.replace_string(result.name)
+        except DataError as err:
+            return err
+        return None
 
 
 class IfRunner:

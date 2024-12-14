@@ -1,5 +1,5 @@
 *** Test Cases ***
-Test with Nested Groups
+Nested
     GROUP
         ${var}    Set Variable    assignment
         GROUP     This Is A Named Group
@@ -7,7 +7,7 @@ Test with Nested Groups
         END
     END
 
-Group with other control structure
+With other control structures
     IF    True
         GROUP    Hello
             VAR    ${i}    ${0}
@@ -25,7 +25,7 @@ Group with other control structure
         END
     END
 
-Test With Not Executed Groups
+In non-executed branch
     VAR    ${var}    value
     IF     True
         GROUP      GROUP in IF
@@ -38,8 +38,13 @@ Test With Not Executed Groups
                 END
             END
         END
-    ELSE
-        GROUP
+    ELSE IF    False
+        GROUP    ${non_existing_variable_is_fine_here}
             Fail    Shall be logged but NOT RUN
+        END
+    ELSE
+        # This possibly should be validated earlier so that the whole test would
+        # fail for a syntax error without executing it.
+        GROUP    Even empty GROUP is allowed
         END
     END

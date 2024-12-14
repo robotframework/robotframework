@@ -114,17 +114,18 @@ Check Test Tags
     RETURN    ${tc}
 
 Check Body Item Data
-    [Arguments]    ${body_item}    ${type}=KEYWORD    ${status}=PASS    ${children}=-1    &{expected_data}
-    FOR    ${key}    ${expected}    IN    &{expected_data}    status=${status}    type=${type}
-        VAR    ${actual_value} =    ${body_item.${key}}
-        IF    isinstance($actual_value, collections.abc.Iterable) and not isinstance($actual_value, str)
-            Should Be Equal    ${{', '.join($actual_value)}}     ${expected}
+    [Arguments]    ${item}    ${type}=KEYWORD    ${status}=PASS    ${children}=-1    &{others}
+    FOR    ${key}    ${expected}    IN    type=${type}    status=${status}    type=${type}    &{others}
+        IF    $key == 'status' and $type == 'MESSAGE'    CONTINUE
+        VAR    ${actual}    ${item.${key}}
+        IF    isinstance($actual, collections.abc.Iterable) and not isinstance($actual, str)
+            Should Be Equal    ${{', '.join($actual)}}     ${expected}
         ELSE
-            Should Be Equal    ${actual_value}    ${expected}
+            Should Be Equal    ${actual}    ${expected}
         END
     END
     IF    ${children} >= 0
-    ...    Length Should Be    ${body_item.body}    ${children}
+    ...    Length Should Be    ${item.body}    ${children}
 
 Check Keyword Data
     [Arguments]    ${kw}    ${name}    ${assign}=    ${args}=    ${status}=PASS    ${tags}=    ${doc}=*    ${message}=*    ${type}=KEYWORD    ${children}=-1

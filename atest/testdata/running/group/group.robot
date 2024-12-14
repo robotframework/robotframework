@@ -1,29 +1,35 @@
 *** Settings ***
-Suite Setup    Keyword With A Group
-Suite Teardown    Keyword With A Group
-
+Suite Setup       Keyword
+Suite Teardown    Keyword
 
 *** Test Cases ***
-Simple GROUP
+Basics
+    GROUP    1st group
+        Log    Inside group
+        Log    Still inside
+    END
     GROUP
-    ...    name 1
-        Log    low level
-        Log    another low level
+    ...    second
+        Log    Inside second group
     END
-    GROUP    name 2
-        Log    yet another low level
+    Log    After
+
+Failing
+    [Documentation]    FAIL    Failing inside GROUP!
+    GROUP    Fails
+        Fail    Failing inside GROUP!
+        Fail    Not run
     END
-    Log    this is the end
+    GROUP    Not run
+        Fail    Not run
+    END
 
-GROUP in keywords
-    Keyword With A Group
-
-Anonymous GROUP
+Anonymous
     GROUP
-       Log    this group has no name
+       Log    Inside unnamed group
     END
 
-Test With Vars In GROUP Name
+Variable in name
     GROUP    Test is named: ${TEST_NAME}
         Log    ${TEST_NAME}
     END
@@ -31,15 +37,17 @@ Test With Vars In GROUP Name
         Log    Should be 42
     END
 
+In user keyword
+    Keyword
 
 *** Keywords ***
-Keyword With A Group
-    Log    top level
-    GROUP    frist keyword GROUP
+Keyword
+    Log    Before
+    GROUP    First
         Log    low level
         Log    another low level
     END
-    GROUP     second keyword GROUP
+    GROUP    Second
         Log    yet another low level
     END
-    Log    this is the end
+    Log    After
