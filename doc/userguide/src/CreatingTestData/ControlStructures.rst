@@ -703,9 +703,9 @@ Nesting `WHILE` loops
 
     *** Test Cases ***
     Nesting WHILE
-        ${x} =   Set Variable    10
+        VAR    ${x}    10
         WHILE    ${x} > 0
-            ${y} =   Set Variable    ${x}
+            VAR    ${y}    ${x}
             WHILE    ${y} > 0
                 ${y} =    Evaluate    ${y} - 1
             END
@@ -725,11 +725,6 @@ It is possible to `remove or flatten unnecessary keywords`__ using
 :option:`--removekeywords` and :option:`--flattenkeywords` command line options.
 
 __ `Removing and flattening keywords`_
-
-.. _if:
-.. _if/else:
-.. _if/else structures:
-
 
 .. _BREAK:
 .. _CONTINUE:
@@ -800,6 +795,10 @@ keyword called in the loop body is invalid.
 
 .. note:: Also the RETURN_ statement can be used to a exit loop. It only works
           when loops are used inside a `user keyword`_.
+
+.. _if:
+.. _if/else:
+.. _if/else structures:
 
 `IF/ELSE` syntax
 ----------------
