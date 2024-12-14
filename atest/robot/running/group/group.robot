@@ -14,8 +14,8 @@ Basics
 
 Failing
     ${tc}=    Check Test Case    ${TESTNAME}
-    Check Body Item Data    ${tc[0]}       type=GROUP        name=Fails        children=2    status=FAIL
-    Check Body Item Data    ${tc[0, 0]}    type=KEYWORD      name=Fail         children=1    status=FAIL
+    Check Body Item Data    ${tc[0]}       type=GROUP        name=Fails        children=2    status=FAIL    message=Failing inside GROUP!
+    Check Body Item Data    ${tc[0, 0]}    type=KEYWORD      name=Fail         children=1    status=FAIL    message=Failing inside GROUP!
     Check Body Item Data    ${tc[0, 1]}    type=KEYWORD      name=Fail         children=0    status=NOT RUN
     Check Body Item Data    ${tc[1]}       type=GROUP        name=Not run      children=1    status=NOT RUN
     Check Body Item Data    ${tc[1, 0]}    type=KEYWORD      name=Fail         children=0    status=NOT RUN

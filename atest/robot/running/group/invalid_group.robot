@@ -36,7 +36,7 @@ Non-existing variable in name
 Invalid data is not reported after failures
     ${tc}    Check Test Case    ${TESTNAME}
     Length Should Be        ${tc.body}    4
-    Check Body Item Data    ${tc[0]}      KEYWORD    status=FAIL       children=1    name=Fail    args=Something bad happened!
+    Check Body Item Data    ${tc[0]}      KEYWORD    status=FAIL       children=1    name=Fail    args=Something bad happened!    message=Something bad happened!
     Check Body Item Data    ${tc[1]}      GROUP      status=NOT RUN    children=1    name=\${non_existing_non_executed_variable_is_ok}
     Check Body Item Data    ${tc[1, 0]}   KEYWORD    status=NOT RUN    children=0    name=Fail    args=Not run
     Check Body Item Data    ${tc[2]}      GROUP      status=NOT RUN    children=0    name=Empty non-executed GROUP is ok

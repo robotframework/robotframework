@@ -114,8 +114,8 @@ Check Test Tags
     RETURN    ${tc}
 
 Check Body Item Data
-    [Arguments]    ${item}    ${type}=KEYWORD    ${status}=PASS    ${children}=-1    &{others}
-    FOR    ${key}    ${expected}    IN    type=${type}    status=${status}    type=${type}    &{others}
+    [Arguments]    ${item}    ${type}=KEYWORD    ${status}=PASS    ${message}=    ${children}=-1    &{others}
+    FOR    ${key}    ${expected}    IN    type=${type}    status=${status}    type=${type}    message=${message}    &{others}
         IF    $key == 'status' and $type == 'MESSAGE'    CONTINUE
         VAR    ${actual}    ${item.${key}}
         IF    isinstance($actual, collections.abc.Iterable) and not isinstance($actual, str)
