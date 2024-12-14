@@ -252,7 +252,7 @@ class TestCaseBuilder(BodyBuilder):
 
     def _set_template(self, parent, template):
         for item in parent.body:
-            if item.type == item.FOR:
+            if item.type in (item.FOR, item.GROUP):
                 self._set_template(item, template)
             elif item.type == item.IF_ELSE_ROOT:
                 for branch in item.body:
