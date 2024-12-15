@@ -582,6 +582,31 @@ class TestJsonLogger(unittest.TestCase):
 "elapsed_time":0.000000
 }''')
 
+    def test_group(self):
+        self.test_start_test()
+        named = Group('named', status='PASS', start_time=self.start, elapsed_time=1)
+        anonymous = Group()
+        self.logger.start_group(named)
+        self.verify(''',
+"body":[{
+"type":"GROUP"''')
+        self.logger.start_group(anonymous)
+        self.verify(''',
+"body":[{
+"type":"GROUP"''')
+        self.logger.end_group(anonymous)
+        self.verify(''',
+"status":"FAIL",
+"elapsed_time":0.000000
+}''')
+        self.logger.end_group(named)
+        self.verify('''],
+"name":"named",
+"status":"PASS",
+"start_time":"2024-12-03T12:27:00.123456",
+"elapsed_time":1.000000
+}''')
+
     def test_var(self):
         self.test_start_test()
         var = Var(name='${x}', value=['y'])

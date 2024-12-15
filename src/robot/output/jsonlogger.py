@@ -141,6 +141,13 @@ class JsonLogger:
                   assign=item.assign,
                   **self._status(item))
 
+    def start_group(self, item):
+        self._start(type=item.type)
+
+    def end_group(self, item):
+        self._end(name=item.name,
+                  **self._status(item))
+
     def start_var(self, item):
         self._start(type=item.type)
 
