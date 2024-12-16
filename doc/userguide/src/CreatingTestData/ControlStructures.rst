@@ -1313,8 +1313,7 @@ __ `User keyword teardown`_
 `GROUP` syntax
 --------------
 
-Robot Framework 7.2 introduced the `GROUP` syntax that allows grouping related
-keywords and control structures together:
+The `GROUP` syntax allows grouping related keywords and control structures together:
 
 .. sourcecode:: robotframework
 
@@ -1333,19 +1332,22 @@ keywords and control structures together:
         END
 
 As the above example demonstrates, groups can have a name, but the name is
-optional. Groups can be nested freely with each others and also with other control
-structures.
+optional. Groups can be nested freely with each others and also with other
+control structures.
 
-Notice that reusable `user keywords`_ are in general recommended over the `GROUP`
-syntax, but if there are no reusing possibilities, named groups give similar benefits.
-For example, in the log file the end result is exactly the same except that there is
-a `GROUP` label instead of a `KEYWORD` label.
+`User keywords`_ are in general recommended over the `GROUP` syntax, because
+they are reusable and they simplify tests or keywords where they are used by
+hiding and encapsulating lower level details. In the log file user keywords
+and groups look the same, though, except that instead of a `KEYWORD` label
+there is a `GROUP` label.
 
-All groups within a test or a user keyword share the same variable namespace.
+All groups within a test or a keyword share the same variable namespace.
 This means that, unlike when using keywords, there is no need to use arguments
 or return values for sharing values. This can be a benefit in simple cases,
-but if there are lot of variables, the benefit can turn into a problem and cause
-a huge mess.
+but if there are lot of variables, the benefit can turn into a problem and
+cause a huge mess.
+
+.. note:: The `GROUP` syntax is new in Robot Framework 7.2.
 
 `GROUP` with templates
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -1388,7 +1390,6 @@ tests and user keywords programmatically. For example, the following
 be added similarly also by `listeners`_ that use the `listener API version 3`__.
 
 .. sourcecode:: python
-
 
     from robot.api import SuiteVisitor
 
