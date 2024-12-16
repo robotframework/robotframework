@@ -1,27 +1,58 @@
+*** Variables ***
+${INDEX}          ${1}
+
 *** Test Cases ***
-Same Test Multiple Times
-    No Operation
+Duplicates
+    [Documentation]    FAIL    Executed!
+    Fail    Executed!
 
-Same Test Multiple Times
-    No Operation
+Duplicates
+    [Documentation]    FAIL    Executed!
+    Fail    Executed!
 
-Same Test Multiple Times
-    No Operation
+Duplicates
+    [Documentation]    FAIL    Executed!
+    Fail    Executed!
 
-Same Test With Different Case And Spaces
-    [Documentation]    FAIL Expected failure
-    Fail    Expected failure
+Duplicates with different case and spaces
+    [Documentation]    FAIL    Executed!
+    Fail    Executed!
 
-SameTestwith Different CASE and s p a c e s
-    No Operation
+Duplicates with different CASE ands p a c e s
+    [Documentation]    FAIL    Executed!
+    Fail    Executed!
 
-Same Test In Data But Only One Executed
+Duplicates but only one executed
     [Tags]    exclude
-    No Operating
+    Fail    Not executed!
 
-Same Test In Data But Only One Executed
-    [Tags]    exclude
-    No Operation
+Duplicates after resolving ${{'variables'}}
+    [Documentation]    FAIL    Executed!
+    Fail    Executed!
 
-Same Test In Data But Only One Executed
-    Log    This is executed!
+${{'Duplicates'}} after resolving variables
+    [Documentation]    FAIL    Executed!
+    Fail    Executed!
+
+Duplicates but only one executed
+    [Tags]    robot:exclude
+    Fail    Not executed!
+
+Duplicates but only one executed
+    [Documentation]    FAIL    Executed!
+    Fail    Executed!
+
+Test ${INDEX}
+    [Documentation]    FAIL    Executed!
+    VAR    ${INDEX}    ${INDEX + 1}    scope=SUITE
+    Fail    Executed!
+
+Test ${INDEX}
+    [Documentation]    FAIL    Executed!
+    VAR    ${INDEX}    ${INDEX + 1}    scope=SUITE
+    Fail    Executed!
+
+Test ${INDEX}
+    [Documentation]    FAIL    Executed!
+    VAR    ${INDEX}    ${INDEX + 1}    scope=SUITE
+    Fail    Executed!

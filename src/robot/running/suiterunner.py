@@ -135,11 +135,11 @@ class SuiteRunner(SuiteVisitor):
         if result.tags.robot('exclude'):
             self.suite_result.tests.pop()
             return
-        if data.name in self.executed[-1]:
+        if result.name in self.executed[-1]:
             self.output.warn(
-                test_or_task(f"Multiple {{test}}s with name '{data.name}' executed in "
-                             f"suite '{data.parent.full_name}'.", settings.rpa))
-        self.executed[-1][data.name] = True
+                test_or_task(f"Multiple {{test}}s with name '{result.name}' executed "
+                             f"in suite '{result.parent.full_name}'.", settings.rpa))
+        self.executed[-1][result.name] = True
         self.context.start_test(data, result)
         status = TestStatus(self.suite_status, result, settings.skip_on_failure,
                             settings.rpa)
