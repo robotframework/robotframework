@@ -7,12 +7,12 @@ ${XML}            %{TEMPDIR}/rebot.xml
 ${JSON}           %{TEMPDIR}/rebot.json
 
 *** Test Cases ***
-JSON output
-    Outputs should be equal    ${JSON}    ${XML}
+JSON output contains same suite information as XML output
+    Outputs Should Contain Same Data    ${JSON}    ${XML}
 
 JSON output structure
     [Documentation]    JSON schema validation would be good, but it's too slow with big output files.
-    ...                Unit tests do schema validation with smaller data and that ought to be enough.
+    ...                The following test validates a smaller suite and unit tests do schema validation as well.
     ${data} =    Evaluate    json.load(open($JSON, encoding='UTF-8'))
     Lists Should Be Equal    ${data}    ${{['generator', 'generated', 'rpa', 'suite', 'statistics', 'errors']}}
     Should Match       ${data}[generator]                     Rebot ?.* (* on *)
@@ -25,17 +25,21 @@ JSON output structure
     Should Be Equal    ${data}[statistics][suites][-1][id]    s1-s17
     Should Be Equal    ${data}[errors][0][level]              ERROR
 
+JSON output schema validation
+    Run Rebot Without Processing Output    --suite Everything --output %{TEMPDIR}/everything.json    ${JSON}
+    Validate JSON Output    %{TEMPDIR}/everything.json
+
 JSON input
     Run Rebot    ${EMPTY}    ${JSON}
-    Outputs should be equal    ${JSON}    ${OUTFILE}
+    Outputs Should Contain Same Data    ${JSON}    ${OUTFILE}
 
 JSON input combined
     Run Rebot    ${EMPTY}    ${XML} ${XML}
     Copy Previous Outfile    # Expected result
     Run Rebot    ${EMPTY}    ${JSON} ${XML}
-    Outputs should be equal    ${OUTFILE}    ${OUTFILE COPY}
+    Outputs Should Contain Same Data    ${OUTFILE}    ${OUTFILE COPY}
     Run Rebot    ${EMPTY}    ${JSON} ${JSON}
-    Outputs should be equal    ${OUTFILE}    ${OUTFILE COPY}
+    Outputs Should Contain Same Data    ${OUTFILE}    ${OUTFILE COPY}
 
 Invalid JSON input
     Create File    ${JSON}    bad

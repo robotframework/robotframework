@@ -1,12 +1,15 @@
+import json
 import os
 import re
 from pathlib import Path
 
+from jsonschema import Draft202012Validator
 from xmlschema import XMLSchema
 
 from robot import utils
 from robot.api import logger
 from robot.libraries.BuiltIn import BuiltIn
+from robot.libraries.Collections import Collections
 from robot.result import (
     Break, Continue, Error, ExecutionResult, ExecutionResultBuilder, For,
     ForIteration, Group, If, IfBranch, Keyword, Result, ResultVisitor, Return,
@@ -147,7 +150,9 @@ class TestCheckerLibrary:
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
 
     def __init__(self):
-        self.schema = XMLSchema('doc/schema/result.xsd')
+        self.xml_schema = XMLSchema('doc/schema/result.xsd')
+        with open('doc/schema/result.json', encoding='UTF-8') as f:
+            self.json_schema = Draft202012Validator(json.load(f))
 
     def process_output(self, path: 'None|Path', validate: 'bool|None' = None):
         set_suite_variable = BuiltIn().set_suite_variable
@@ -177,17 +182,21 @@ class TestCheckerLibrary:
         version = self._get_schema_version(path)
         if not version:
             raise ValueError('Schema version not found from XML output.')
-        if version != self.schema.version:
+        if version != self.xml_schema.version:
             raise ValueError(f'Incompatible schema versions. '
-                             f'Schema has `version="{self.schema.version}"` but '
+                             f'Schema has `version="{self.xml_schema.version}"` but '
                              f'output file has `schemaversion="{version}"`.')
-        self.schema.validate(path)
+        self.xml_schema.validate(path)
 
     def _get_schema_version(self, path):
         with open(path, encoding='UTF-8') as file:
             for line in file:
                 if line.startswith('<robot'):
                     return re.search(r'schemaversion="(\d+)"', line).group(1)
+
+    def validate_json_output(self, path: Path):
+        with path.open(encoding='UTF') as file:
+            self.json_schema.validate(json.load(file))
 
     def get_test_case(self, name):
         suite = BuiltIn().get_variable_value('${SUITE}')
@@ -376,16 +385,26 @@ class TestCheckerLibrary:
             b.should_be_equal(item.level, 'INFO' if level == 'HTML' else level, 'Wrong log level')
         b.should_be_equal(str(item.html), str(html or level == 'HTML'), 'Wrong HTML status')
 
-    def outputs_should_be_equal(self, output1, output2):
+    def outputs_should_contain_same_data(self, output1, output2, ignore_timestamps=False):
+        dictionaries_should_be_equal = Collections().dictionaries_should_be_equal
+        if ignore_timestamps:
+            ignore_keys = ['start_time', 'end_time', 'elapsed_time', 'timestamp']
+        else:
+            ignore_keys = None
         result1 = ExecutionResult(output1)
         result2 = ExecutionResult(output2)
-        should_be_equal = BuiltIn().should_be_equal
-        should_be_equal(result1.suite.to_dict(),
-                        result2.suite.to_dict())
-        should_be_equal(result1.statistics.to_dict(),
-                        result2.statistics.to_dict())
-        should_be_equal(result1.errors.messages.to_dicts(),
-                        result2.errors.messages.to_dicts())
+        dictionaries_should_be_equal(result1.suite.to_dict(),
+                                     result2.suite.to_dict(),
+                                     ignore_keys=ignore_keys)
+        dictionaries_should_be_equal(result1.statistics.to_dict(),
+                                     result2.statistics.to_dict(),
+                                     ignore_keys=ignore_keys)
+        # Use `zip(..., strict=True)` when Python 3.10 is minimum version.
+        assert len(result1.errors) == len(result2.errors)
+        for msg1, msg2 in zip(result1.errors, result2.errors):
+            dictionaries_should_be_equal(msg1.to_dict(),
+                                         msg2.to_dict(),
+                                         ignore_keys=ignore_keys)
 
 
 class ProcessResults(ResultVisitor):

@@ -16,9 +16,10 @@ User keyword and RETURN
     ${value} =    User Keyword    value
     Should Be Equal    ${value}    return value
 
-Test documentation and tags
+Test documentation, tags and timeout
     [Documentation]    Hello, world!
     [Tags]    hello    world
+    [Timeout]    1 min
     No Operation
 
 Test setup and teardown
@@ -26,8 +27,8 @@ Test setup and teardown
     Log    Body
     [Teardown]    User Keyword
 
-Keyword documentation and tags
-    Keyword documentation and tags
+Keyword Keyword documentation, tags and timeout
+    Keyword documentation, tags and timeout
 
 Keyword setup and teardown
     Keyword setup and teardown
@@ -101,9 +102,10 @@ User keyword
     Should Be Equal    ${arg}    value
     RETURN    return ${arg}
 
-Keyword documentation and tags
+Keyword documentation, tags and timeout
     [Documentation]    Hello, world!
     [Tags]    hello    world
+    [Timeout]    1 day
     No Operation
 
 Keyword setup and teardown
