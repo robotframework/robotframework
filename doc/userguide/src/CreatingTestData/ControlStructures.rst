@@ -1326,13 +1326,31 @@ The `GROUP` syntax allows grouping related keywords and control structures toget
         GROUP    Submit credentials
             Input Username    username_field    demo
             Input Password    password_field    mode
+            Click Button    login_button
         END
         GROUP    Login should have succeeded
             Title Should Be    Welcome Page
         END
 
-As the above example demonstrates, groups can have a name, but the name is
-optional. Groups can be nested freely with each others and also with other
+    Anonymous group
+        GROUP
+            Log    Group name is optional.
+        END
+
+    Nesting
+        GROUP
+            GROUP    Nested group
+                Log    Groups can be nested.
+            END
+            IF    True
+                GROUP
+                    Log    Groups can also be nested with other control structures.
+                END
+            END
+        END
+
+As the above examples demonstrates, groups can have a name, but the name is
+optional. Groups can also be nested freely with each others and with other
 control structures.
 
 `User keywords`_ are in general recommended over the `GROUP` syntax, because
@@ -1386,8 +1404,9 @@ Programmatic usage
 
 One of the primary usages for groups is making it possible to create structured
 tests and user keywords programmatically. For example, the following
-`pre-run modifier`_ adds a group at the end of each modified test. Groups can
-be added similarly also by `listeners`_ that use the `listener API version 3`__.
+`pre-run modifier`_ adds a group with two keywords at the end of each modified
+test. Groups can be added also by `listeners`_ that use the
+`listener API version 3`__.
 
 .. sourcecode:: python
 
