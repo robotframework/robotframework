@@ -1,5 +1,6 @@
 import os
 import re
+from pathlib import Path
 
 from xmlschema import XMLSchema
 
@@ -148,13 +149,12 @@ class TestCheckerLibrary:
     def __init__(self):
         self.schema = XMLSchema('doc/schema/result.xsd')
 
-    def process_output(self, path, validate=None):
+    def process_output(self, path: 'None|Path', validate: 'bool|None' = None):
         set_suite_variable = BuiltIn().set_suite_variable
-        if not path or path.upper() == 'NONE':
+        if path is None:
             set_suite_variable('$SUITE', None)
             logger.info("Not processing output.")
             return
-        path = path.replace('/', os.sep)
         if validate is None:
             validate = os.getenv('ATEST_VALIDATE_OUTPUT', False)
         if utils.is_truthy(validate):
