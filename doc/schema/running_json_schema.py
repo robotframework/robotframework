@@ -83,7 +83,7 @@ class While(BodyItem):
 
 class Group(BodyItem):
     type = Field('GROUP', const=True)
-    name: str
+    name: str | None
     body: list['Keyword | For | While | Group | If | Try | Var | Break | Continue | Return | Error']
 
 

@@ -125,7 +125,7 @@ class WhileIteration(WithStatus):
 
 class Group(WithStatus):
     type = Field('GROUP', const=True)
-    name: str
+    name: str | None
     body: list['Keyword | For | While | Group | If | Try | Var | Break | Continue | Return | Error | Message'] | None
 
 

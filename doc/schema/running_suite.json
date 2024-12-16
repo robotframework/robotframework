@@ -477,7 +477,6 @@
         }
       },
       "required": [
-        "name",
         "body"
       ],
       "additionalProperties": false

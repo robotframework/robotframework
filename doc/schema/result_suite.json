@@ -820,8 +820,7 @@
       },
       "required": [
         "elapsed_time",
-        "status",
-        "name"
+        "status"
       ],
       "additionalProperties": false
     },
