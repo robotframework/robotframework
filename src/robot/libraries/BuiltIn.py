@@ -1964,7 +1964,7 @@ class _RunKeyword(_BuiltInBase):
         if not (ctx.dry_run or self._accepts_embedded_arguments(name, ctx)):
             name, args = self._replace_variables_in_name([name] + list(args))
         if ctx.steps:
-            data, result = ctx.steps[-1]
+            data, result, _ = ctx.steps[-1]
             lineno = data.lineno
         else:    # Called, typically by a listener, when no keyword started.
             data = lineno = None

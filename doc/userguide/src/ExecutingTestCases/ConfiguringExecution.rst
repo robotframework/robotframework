@@ -266,16 +266,25 @@ combining individual tags or patterns together::
    --exclude xxORyyORzz
    --include fooNOTbar
 
-Starting from RF 5.0, it is also possible to use the reserved
-tag `robot:exclude` to achieve
-the same effect as with using the `--exclude` option:
+Another way to exclude tests by tags is using the `robot:exclude` `reserved tag`__.
+This tag can also be set using a variable, which allows excluding test
+dynamically during execution.
 
 .. sourcecode:: robotframework
 
+   *** Variables ***
+   ${EXCLUDE}        robot:exclude
+
    *** Test Cases ***
-   Example
+   Literal
+      [Documentation]    Unconditionally excluded.
       [Tags]    robot:exclude
-      Fail      This is not executed
+      Log    This is not executed
+
+   As variable
+      [Documentation]    Excluded unless ${EXCLUDE} is set to a different value.
+      [Tags]    ${EXCLUDE}
+      Log    This is not executed by default
 
 Selecting test cases by tags is a very flexible mechanism and allows
 many interesting possibilities:
@@ -302,11 +311,18 @@ In that case tests that are selected must match all selection criteria::
   --test ex* --include tag         # Match test if its name starts with 'ex' and it has tag 'tag'.
   --test ex* --exclude tag         # Match test if its name starts with 'ex' and it does not have tag 'tag'.
 
-.. note:: In Robot Framework 7.0 `--include` and `--test` were cumulative and
-          selected tests needed to match only either of these options. That behavior
-          caused `backwards incompatibility problems`__ and it was changed
-          back to the original already in Robot Framework 7.0.1.
+.. note:: `robot:exclude` is new in Robot Framework 5.0.
 
+.. note:: Using variables with `robot:exclude` is new in Robot Framework 7.2.
+          Using variables with tags matched against :option:`--include` and
+          :option:`--exclude` is not supported.
+
+.. note:: In Robot Framework 7.0 :option:`--include` and :option:`--test` were cumulative
+          and selected tests needed to match only either of these options. That behavior
+          caused `backwards incompatibility problems`__ and it was reverted already in
+          Robot Framework 7.0.1.
+
+__ `Reserved tags`_
 __ https://github.com/robotframework/robotframework/issues/5023
 
 Re-executing failed test cases

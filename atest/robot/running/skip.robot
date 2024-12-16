@@ -110,27 +110,39 @@ Skip with Wait Until Keyword Succeeds
 Skipped with --skip
     Check Test Case    ${TEST NAME}
 
-Skipped when test is tagged with robot:skip
+Skipped with --skip when tag uses variable
+    Check Test Case    ${TEST NAME}
+
+Skipped with robot:skip
+    Check Test Case    ${TEST NAME}
+
+Skipped with robot:skip when tag uses variable
     Check Test Case    ${TEST NAME}
 
 Skipped with --SkipOnFailure
     Check Test Case    ${TEST NAME}
 
-Skipped with --SkipOnFailure when Failure in Test Setup
+Skipped with --SkipOnFailure when tag uses variable
     Check Test Case    ${TEST NAME}
 
-Skipped with --SkipOnFailure when Failure in Test Teardown
+Skipped with --SkipOnFailure when failure in setup
     Check Test Case    ${TEST NAME}
 
-Skipped with --SkipOnFailure when Set Tags Used in Teardown
+Skipped with --SkipOnFailure when failure in teardown
     Check Test Case    ${TEST NAME}
 
-Skipped although test fails since test is tagged with robot:skip-on-failure
+Skipped with --SkipOnFailure when Set Tags used in teardown
     Check Test Case    ${TEST NAME}
 
-Using Skip Does Not Affect Passing And Failing Tests
-    Check Test Case    Passing Test
-    Check Test Case    Failing Test
+Skipped with robot:skip-on-failure
+    Check Test Case    ${TEST NAME}
+
+Skipped with robot:skip-on-failure when tag uses variable
+    Check Test Case    ${TEST NAME}
+
+Skipping does not affect passing and failing tests
+    Check Test Case    Passing
+    Check Test Case    Failing
 
 Suite setup and teardown are not run if all tests are unconditionally skipped or excluded
     ${suite} =    Get Test Suite    All Skipped

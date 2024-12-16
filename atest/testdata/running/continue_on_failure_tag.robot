@@ -4,6 +4,7 @@ Library            Exceptions
 *** Variables ***
 ${HEADER}          Several failures occurred:\n
 ${EXC}             ContinuableApocalypseException
+${FAILURE}         failure
 
 *** Test Cases ***
 Continue in test with continue tag
@@ -21,7 +22,7 @@ Continue in test with Set Tags
     ...    1) 1
     ...
     ...    2) 2
-    Set Tags    ROBOT:CONTINUE-ON-FAILURE      # Case doesn't matter.
+    Set Tags    ROBOT:CONTINUE-ON-${FAILURE}     # Case doesn't matter and variables work.
     Fail    1
     Fail    2
     Log    This should be executed
@@ -39,7 +40,7 @@ Continue in test with continue tag and UK without tag
     ...    1) kw2a
     ...
     ...    2) This should be executed
-    [Tags]    robot:CONTINUE-on-failure        # Case doesn't matter.
+    [Tags]    robot:CONTINUE-on-${FAILURE}       # Case doesn't matter and variables work.
     Failure in user keyword without tag
     Fail    This should be executed
 
@@ -52,7 +53,7 @@ Continue in test with continue tag and nested UK with and without tag
     ...    3) kw2a
     ...
     ...    4) This should be executed
-    [Tags]    robot: continue-on-failure       # Spaces are collapesed.
+    [Tags]    robot: continue-on-failure         # Spaces are collapesed.
     Failure in user keyword with continue tag    run_kw=Failure in user keyword without tag
     Fail    This should be executed
 
@@ -226,7 +227,7 @@ Recursive continue in test with continue tag and two nested UK with and without 
     ...    4) kw2b
     ...
     ...    5) This should be executed
-    [Tags]    ROBOT:RECURSIVE-CONTINUE-ON-FAILURE       # Case doesn't matter.
+    [Tags]    ROBOT:RECURSIVE-CONTINUE-ON-${FAILURE}    # Case doesn't matter and variables work.
     Failure in user keyword with continue tag    run_kw=Failure in user keyword without tag
     Fail    This should be executed
 
@@ -307,13 +308,13 @@ Test teardown using user keyword with stop tag in test case
     ...    1) kw2a
     ...
     ...    2) kw2b
-    [Tags]    robot:stop-on-failure
+    [Tags]    robot:STOP-on-${FAILURE}
     No Operation
     [Teardown]    Failure in user keyword without tag
 
 Test teardown using user keyword with recursive stop tag in test case
     [Documentation]    FAIL    Teardown failed:\nkw2a
-    [Tags]    robot:recursive-stop-on-failure
+    [Tags]    robot:recursive-stop-on-${FAILURE}
     No Operation
     [Teardown]    Failure in user keyword without tag
 
@@ -384,7 +385,7 @@ Test recursive-continue-recursive-stop
     ...    1) kw11a
     ...
     ...    2) 2
-    [Tags]    robot:recursive-continue-on-failure
+    [Tags]    robot: recursive-CONTINUE-on-${FAILURE}
     Failure in user keyword with recursive stop tag
     Fail    2
 
@@ -492,7 +493,7 @@ Failure in user keyword without tag
 
 Failure in user keyword with recursive continue tag
     [Arguments]    ${run_kw}=No Operation
-    [Tags]    robot:recursive-continue-on-failure
+    [Tags]    ROBOT:recursive-continue-on-${FAILURE}
     Fail    kw3a
     Fail    kw3b
     Log    This should be executed
@@ -511,13 +512,13 @@ Failure in user keyword with recursive stop tag
     Fail    kw11b
 
 Teardown with stop tag in user keyword
-    [Tags]    robot:stop-on-failure
+    [Tags]    robot:STOP-on-${FAILURE}
     No Operation
     [Teardown]    Run Keywords    Fail    kw5a    AND    Fail    kw5b
 
 Teardown with recursive stop tag in user keyword
     [Arguments]    ${run_kw}=No Operation
-    [Tags]    robot:recursive-stop-on-failure
+    [Tags]    ROBOT:recursive-STOP-on-${FAILURE}
     No Operation
     [Teardown]    Run Keywords    ${run_kw}    AND    Fail    kw6a    AND    Fail    kw6b
 
@@ -533,7 +534,7 @@ FOR loop in in user keyword without tag
     END
 
 IF in user keyword with continue tag
-    [Tags]    robot:continue-on-failure
+    [Tags]    ROBOT:continue-on-${FAILURE}
     IF    1==1
         Fail    kw7a
         Fail    kw7b

@@ -3,6 +3,7 @@ Library            skiplib.py
 
 *** Variables ***
 ${TEST_OR_TASK}    test
+${SKIP}            skip
 
 *** Test Cases ***
 Skip keyword
@@ -180,7 +181,7 @@ Skip with Pass Execution in Teardown
 Skip in Teardown with Pass Execution in Body
     [Documentation]    SKIP Then we skip
     Pass Execution    First we pass
-    [Teardown]    Skip  Then we skip
+    [Teardown]    Skip    Then we skip
 
 Skip with Run Keyword and Ignore Error
     [Documentation]    SKIP Skip from within
@@ -206,13 +207,22 @@ Skip with Wait Until Keyword Succeeds
 Skipped with --skip
     [Documentation]    SKIP    ${TEST_OR_TASK.title()} skipped using 'skip-this' tag.
     [Tags]    skip-this
-    Fail
+    Fail    Should not be executed!
 
-Skipped when test is tagged with robot:skip
-    [Documentation]    SKIP
-    ...    Test skipped using 'robot:skip' tag.
+Skipped with --skip when tag uses variable
+    [Documentation]    SKIP    ${TEST_OR_TASK.title()} skipped using 'skip-this' tag.
+    [Tags]    ${SKIP}-this
+    Fail    Should not be executed!
+
+Skipped with robot:skip
+    [Documentation]    SKIP    Test skipped using 'robot:skip' tag.
     [Tags]    robot:skip
-    Fail      Test should not be executed
+    Fail    Should not be executed!
+
+Skipped with robot:skip when tag uses variable
+    [Documentation]    SKIP    Test skipped using 'robot:skip' tag.
+    [Tags]    robot:${SKIP}    robot:whatever
+    Fail    Should not be executed!
 
 Skipped with --SkipOnFailure
     [Documentation]    SKIP
@@ -223,18 +233,27 @@ Skipped with --SkipOnFailure
     [Tags]    skip-on-failure
     Fail    Ooops, we fail!
 
-Skipped with --SkipOnFailure when Failure in Test Setup
+Skipped with --SkipOnFailure when tag uses variable
+    [Documentation]    SKIP
+    ...    Failed ${TEST_OR_TASK} skipped using 'skip-on-failure' tag.
+    ...
+    ...    Original failure:
+    ...    Ooops, we fail!
+    [Tags]    ${SKIP}-on-failure
+    Fail    Ooops, we fail!
+
+Skipped with --SkipOnFailure when failure in setup
     [Documentation]    SKIP
     ...    Failed ${TEST_OR_TASK} skipped using 'skip-on-failure' tag.
     ...
     ...    Original failure:
     ...    Setup failed:
     ...    failure in setup
-    [Tags]    skip-on-failure
+    [Tags]    SKIP-ON-FAILURE
     [Setup]    Fail    failure in setup
     No Operation
 
-Skipped with --SkipOnFailure when Failure in Test Teardown
+Skipped with --SkipOnFailure when failure in teardown
     [Documentation]    SKIP
     ...    Failed ${TEST_OR_TASK} skipped using 'skip-on-failure' tag.
     ...
@@ -242,10 +261,10 @@ Skipped with --SkipOnFailure when Failure in Test Teardown
     ...    Teardown failed:
     ...    failure in teardown
     [Tags]    skip-on-failure
-    [Teardown]    Fail    failure in teardown
     No Operation
+    [Teardown]    Fail    failure in teardown
 
-Skipped with --SkipOnFailure when Set Tags Used in Teardown
+Skipped with --SkipOnFailure when Set Tags used in teardown
     [Documentation]    SKIP
     ...    Failed ${TEST_OR_TASK} skipped using 'skip-on-failure' tag.
     ...
@@ -254,20 +273,29 @@ Skipped with --SkipOnFailure when Set Tags Used in Teardown
     Fail    Ooops, we fail!
     [Teardown]    Set Tags    skip-on-failure
 
-Skipped although test fails since test is tagged with robot:skip-on-failure
+Skipped with robot:skip-on-failure
     [Documentation]    SKIP
     ...    Failed ${TEST_OR_TASK} skipped using 'robot:skip-on-failure' tag.
     ...
     ...    Original failure:
-    ...    We failed here, but the test is reported as skipped instead
-    [Tags]  robot:skip-on-failure
-    Fail   We failed here, but the test is reported as skipped instead
+    ...    We fail here, but the test is reported as skipped.
+    [Tags]    robot:skip-on-failure
+    Fail    We fail here, but the test is reported as skipped.
 
-Failing Test
+Skipped with robot:skip-on-failure when tag uses variable
+    [Documentation]    SKIP
+    ...    Failed ${TEST_OR_TASK} skipped using 'robot:skip-on-failure' tag.
+    ...
+    ...    Original failure:
+    ...    We fail here, but the test is reported as skipped.
+    [Tags]    robot:${SKIP}-on-FAILURE
+    Fail    We fail here, but the test is reported as skipped.
+
+Failing
     [Documentation]    FAIL AssertionError
     Fail
 
-Passing Test
+Passing
     No Operation
 
 *** Keywords ***

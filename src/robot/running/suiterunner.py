@@ -126,19 +126,20 @@ class SuiteRunner(SuiteVisitor):
 
     def visit_test(self, data: TestData):
         settings = self.settings
-        if data.tags.robot('exclude'):
-            return
-        if data.name in self.executed[-1]:
-            self.output.warn(
-                test_or_task(f"Multiple {{test}}s with name '{data.name}' executed in "
-                             f"suite '{data.parent.full_name}'.", settings.rpa))
-        self.executed[-1][data.name] = True
         result = self.suite_result.tests.create(self._resolve_setting(data.name),
                                                 self._resolve_setting(data.doc),
                                                 self._resolve_setting(data.tags),
                                                 self._get_timeout(data),
                                                 data.lineno,
                                                 start_time=datetime.now())
+        if result.tags.robot('exclude'):
+            self.suite_result.tests.pop()
+            return
+        if data.name in self.executed[-1]:
+            self.output.warn(
+                test_or_task(f"Multiple {{test}}s with name '{data.name}' executed in "
+                             f"suite '{data.parent.full_name}'.", settings.rpa))
+        self.executed[-1][data.name] = True
         self.context.start_test(data, result)
         status = TestStatus(self.suite_status, result, settings.skip_on_failure,
                             settings.rpa)
@@ -155,11 +156,11 @@ class SuiteRunner(SuiteVisitor):
                 if settings.rpa:
                     data.error = data.error.replace('Test', 'Task')
                 status.test_failed(data.error)
-            elif data.tags.robot('skip'):
+            elif result.tags.robot('skip'):
                 status.test_skipped(
                     self._get_skipped_message(['robot:skip'], settings.rpa)
                 )
-            elif self.skipped_tags.match(data.tags):
+            elif self.skipped_tags.match(result.tags):
                 status.test_skipped(
                     self._get_skipped_message(self.skipped_tags, settings.rpa)
                 )

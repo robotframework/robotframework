@@ -223,21 +223,37 @@ specified tags or tag patterns are skipped::
     --skip windowsANDversion9?
     --skip python2.* --skip python3.[0-6]
 
-Starting from Robot Framework 5.0, a test case can also be skipped by tagging
-the test with the reserved tag `robot:skip`:
+Tests can also be skipped by tagging the test with the `robot:skip` `reserved tag`__.
+This tag can also be set using a variable, which allows skipping test dynamically
+during execution.
 
 .. sourcecode:: robotframework
 
+   *** Variables ***
+   ${SKIP}           robot:skip
+
    *** Test Cases ***
-   Example
-       [Tags]    robot:skip
-       Log       This is not executed
+   Literal
+      [Documentation]    Unconditionally skipped.
+      [Tags]    robot:skip
+      Log    This is not executed
+
+   As variable
+      [Documentation]    Skipped unless ${SKIP} is set to a different value.
+      [Tags]    ${SKIP}
+      Log    This is not executed by default
 
 The difference between :option:`--skip` and :option:`--exclude` is that with
 the latter tests are `omitted from the execution altogether`__ and they will not
 be shown in logs and reports. With the former they are included, but not actually
 executed, and they will be visible in logs and reports.
 
+.. note:: `robot:skip` is new in Robot Framework 5.0.
+
+.. note:: Support for using variables with tags used for skipping is new in
+          Robot Framework 7.2.
+
+__ `Reserved tags`_
 __ `By tag names`_
 
 Skipping dynamically during execution
