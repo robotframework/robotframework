@@ -19,10 +19,10 @@ JSON output structure
     Should Match       ${data}[generated]                     20??-??-??T??:??:??.??????
     Should Be Equal    ${data}[rpa]                           ${False}
     Should Be Equal    ${data}[suite][name]                   Misc
-    Should Be Equal    ${data}[suite][suites][1][name]        For Loops
+    Should Be Equal    ${data}[suite][suites][1][name]        Everything
     Should Be Equal    ${data}[statistics][total][skip]       ${3}
     Should Be Equal    ${data}[statistics][tags][4][label]    f1
-    Should Be Equal    ${data}[statistics][suites][-1][id]    s1-s16
+    Should Be Equal    ${data}[statistics][suites][-1][id]    s1-s17
     Should Be Equal    ${data}[errors][0][level]              ERROR
 
 JSON input
