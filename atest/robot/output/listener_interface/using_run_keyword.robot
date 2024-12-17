@@ -4,7 +4,7 @@ Resource                  listener_resource.robot
 
 *** Test Cases ***
 In start_suite when suite has no setup
-    Check Keyword Data    ${SUITE.setup}              Implicit setup    type=SETUP         children=1
+    Check Keyword Data    ${SUITE.setup}              Implicit setup       type=SETUP            children=1
     Validate Log          ${SUITE.setup[0]}           start_suite
 
 In end_suite when suite has no teardown
@@ -51,10 +51,10 @@ In start_test and end_test when test has no setup or teardown
     Validate Log          ${tc[0]}                    start_test
     Validate Log          ${tc[1]}                    Test 1
     Validate Log          ${tc[2]}                    Logging with debug level    DEBUG
-    Check Keyword Data    ${tc[3]}                    logs on trace    tags=kw, tags                   children=3
-    Check Keyword Data    ${tc[3, 0]}                 BuiltIn.Log  args=start_keyword                  children=1
-    Check Keyword Data    ${tc[3, 1]}                 BuiltIn.Log  args=Log on \${TEST NAME}, TRACE    children=3
-    Check Keyword Data    ${tc[3, 2]}                 BuiltIn.Log  args=end_keyword                    children=1
+    Check Keyword Data    ${tc[3]}                    logs on trace        tags=kw, tags                       children=3
+    Check Keyword Data    ${tc[3, 0]}                 BuiltIn.Log          args=start_keyword                  children=1
+    Check Keyword Data    ${tc[3, 1]}                 BuiltIn.Log          args=Log on \${TEST NAME}, TRACE    children=3
+    Check Keyword Data    ${tc[3, 2]}                 BuiltIn.Log          args=end_keyword                    children=1
     Validate Log          ${tc[4]}                    end_test
 
 In start_test and end_test when test has setup and teardown
