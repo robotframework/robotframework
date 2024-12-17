@@ -325,7 +325,7 @@ class BreakHandler(ElementHandler):
 @ElementHandler.register
 class ErrorHandler(ElementHandler):
     tag = 'error'
-    children = frozenset(('status', 'msg', 'value'))
+    children = frozenset(('status', 'msg', 'value', 'kw'))
 
     def start(self, elem, result):
         return result.body.create_error()

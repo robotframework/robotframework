@@ -172,11 +172,25 @@ In dry-run
     ...    WHILE loop in keyword
     ...    IF structure
     ...    Everything
+    ...    Library keyword
+    ...    User keyword and RETURN
+    ...    Test documentation, tags and timeout
+    ...    Test setup and teardown
+    ...    Keyword Keyword documentation, tags and timeout
+    ...    Keyword setup and teardown
+    ...    VAR
+    ...    IF
+    ...    TRY
+    ...    FOR and CONTINUE
+    ...    WHILE and BREAK
+    ...    GROUP
     ...    Second One=FAIL:Several failures occurred:\n\n1) No keyword with name 'Not executed' found.\n\n2) No keyword with name 'Not executed' found.
     ...    Test with failing setup=PASS
     ...    Test with failing teardown=PASS
     ...    Failing test with failing teardown=PASS
     ...    FOR IN RANGE=FAIL:No keyword with name 'Not executed!' found.
+    ...    Failure=PASS
+    ...    Syntax error=FAIL:Several failures occurred:\n\n1) Non-existing setting 'Bad'.\n\n2) Non-existing setting 'Ooops'.
 
 *** Keywords ***
 Run Tests With Keyword Running Listener
@@ -189,8 +203,9 @@ Run Tests With Keyword Running Listener
     ...    misc/while.robot
     ...    misc/if_else.robot
     ...    misc/try_except.robot
+    ...    misc/everything.robot
     Run Tests    --listener ${path} ${options} -L debug    ${files}    validate output=True
-    Should Be Empty    ${ERRORS}
+    Length Should Be    ${ERRORS}    1
 
 Validate Log
     [Arguments]    ${kw}    ${message}    ${level}=INFO

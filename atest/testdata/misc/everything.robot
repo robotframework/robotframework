@@ -75,7 +75,6 @@ FOR and CONTINUE
         Should Be Equal    ${x}${i}    x1
     END
 
-
 WHILE and BREAK
     WHILE    True
         BREAK
@@ -93,7 +92,8 @@ GROUP
     END
 
 Syntax error
-    [Documentation]    FAIL    Non-existing setting 'Ooops'.
+    [Documentation]    FAIL    Non-existing setting 'Bad'.
+    [Bad]      Setting
     [Ooops]    I did it again
 
 *** Keywords ***

@@ -61,9 +61,10 @@
     </xs:complexType>
     <xs:complexType name="Error">
         <xs:choice maxOccurs="unbounded">
-        <xs:element name="value" type="xs:string" minOccurs="1" maxOccurs="unbounded" />
-        <xs:element name="msg" type="Message" />
-        <xs:element name="status" type="Status" />
+            <xs:element name="value" type="xs:string" minOccurs="1" maxOccurs="unbounded" />
+            <xs:element name="msg" type="Message" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="kw" type="Keyword" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="status" type="Status" />
         </xs:choice>
     </xs:complexType>
     <xs:complexType name="Test">
