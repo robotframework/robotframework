@@ -1,6 +1,7 @@
 import json
 import os
 import re
+from datetime import datetime
 from pathlib import Path
 
 from jsonschema import Draft202012Validator
@@ -15,6 +16,7 @@ from robot.result import (
     ForIteration, Group, If, IfBranch, Keyword, Result, ResultVisitor, Return,
     TestCase, TestSuite, Try, TryBranch, Var, While, WhileIteration
 )
+from robot.result.executionerrors import ExecutionErrors
 from robot.result.model import Body, Iterations
 from robot.utils.asserts import assert_equal
 
@@ -165,18 +167,35 @@ class TestCheckerLibrary:
         if utils.is_truthy(validate):
             self._validate_output(path)
         try:
-            logger.info("Processing output '%s'." % path)
-            result = Result(suite=ATestTestSuite())
-            ExecutionResultBuilder(path).build(result)
+            logger.info(f"Processing output '{path}'.")
+            if path.suffix.lower() == '.json':
+                result = self._build_result_from_json(path)
+            else:
+                result = self._build_result_from_xml(path)
         except:
             set_suite_variable('$SUITE', None)
             msg, details = utils.get_error_details()
             logger.info(details)
-            raise RuntimeError('Processing output failed: %s' % msg)
+            raise RuntimeError(f'Processing output failed: {msg}')
         result.visit(ProcessResults())
         set_suite_variable('$SUITE', result.suite)
         set_suite_variable('$STATISTICS', result.statistics)
         set_suite_variable('$ERRORS', result.errors)
+
+    def _build_result_from_xml(self, path):
+        result = Result(source=path, suite=ATestTestSuite())
+        ExecutionResultBuilder(path).build(result)
+        return result
+
+    def _build_result_from_json(self, path):
+        with open(path, encoding='UTF-8') as file:
+            data = json.load(file)
+        return Result(source=path,
+                      suite=ATestTestSuite.from_dict(data['suite']),
+                      errors=ExecutionErrors(data.get('errors')),
+                      rpa=data.get('rpa'),
+                      generator=data.get('generator'),
+                      generation_time=datetime.fromisoformat(data['generated']))
 
     def _validate_output(self, path):
         version = self._get_schema_version(path)

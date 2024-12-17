@@ -1131,6 +1131,14 @@ class TestSuite(model.TestSuite[Keyword, TestCase], StatusMixin):
         """
         if 'suite' in data:
             data = data['suite']
+        # `body` on the suite level means that a listener has logged something or
+        # executed a keyword in a `start/end_suite` method. Throwing such data
+        # away isn't great, but it's better than data being invalid and properly
+        # handling it would be complicated. We handle such XML outputs (see
+        # `xmlelementhandlers`), but with JSON there can even be one `body` in
+        # the beginning and other at the end, and even preserving them both
+        # would be hard.
+        data.pop('body', None)
         data.pop('id', None)
         return super().from_dict(data)
 

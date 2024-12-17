@@ -160,6 +160,45 @@ In start_keyword and end_keyword with RETURN
     Should Be Equal       ${tc[3, 1, 1, 2, 1].full_name}       BuiltIn.Log
     Check Log Message     ${tc[3, 1, 1, 2, 1, 1]}              end_keyword
 
+With JSON output
+    [Documentation]    Mainly test that executed keywords don't cause problems.
+    ...
+    ...                Some data, such as keywords and messages on suite level,
+    ...                are discarded and thus the exact output isn't the same as
+    ...                with XML.
+    ...
+    ...                Cannot validate output, because it doesn't match the schema.
+    Run Tests With Keyword Running Listener    format=json    validate=False
+    Should Contain Tests    ${SUITE}
+    ...    First One
+    ...    Second One
+    ...    Test with setup and teardown
+    ...    Test with failing setup
+    ...    Test with failing teardown
+    ...    Failing test with failing teardown
+    ...    FOR
+    ...    FOR IN RANGE
+    ...    FOR IN ENUMERATE
+    ...    FOR IN ZIP
+    ...    WHILE loop executed multiple times
+    ...    WHILE loop in keyword
+    ...    IF structure
+    ...    Everything
+    ...    Library keyword
+    ...    User keyword and RETURN
+    ...    Test documentation, tags and timeout
+    ...    Test setup and teardown
+    ...    Keyword Keyword documentation, tags and timeout
+    ...    Keyword setup and teardown
+    ...    Failure
+    ...    VAR
+    ...    IF
+    ...    TRY
+    ...    FOR and CONTINUE
+    ...    WHILE and BREAK
+    ...    GROUP
+    ...    Syntax error
+
 In dry-run
     Run Tests With Keyword Running Listener    --dry-run
     Should Contain Tests    ${SUITE}
@@ -194,9 +233,10 @@ In dry-run
 
 *** Keywords ***
 Run Tests With Keyword Running Listener
-    [Arguments]    ${options}=
-    ${path} =    Normalize Path    ${LISTENER DIR}/keyword_running_listener.py
-    ${files} =    Catenate
+    [Arguments]    ${options}=    ${format}=xml    ${validate}=True
+    VAR    ${listener}    ${LISTENER DIR}/keyword_running_listener.py
+    VAR    ${output}      ${OUTDIR}/output.${format}
+    VAR    ${files}
     ...    misc/normal.robot
     ...    misc/setups_and_teardowns.robot
     ...    misc/for_loops.robot
@@ -204,7 +244,7 @@ Run Tests With Keyword Running Listener
     ...    misc/if_else.robot
     ...    misc/try_except.robot
     ...    misc/everything.robot
-    Run Tests    --listener ${path} ${options} -L debug    ${files}    validate output=True
+    Run Tests    --listener ${listener} ${options} -L debug -o ${output}    ${files}    output=${output}    validate output=${validate}
     Length Should Be    ${ERRORS}    1
 
 Validate Log

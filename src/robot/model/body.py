@@ -312,10 +312,10 @@ class BaseIterations(BaseBody[KW, F, W, G, I, T, V, R, C, B, M, E], IterationTyp
         super().__init__(parent, items)
 
     def _item_from_dict(self, data: DataDict) -> BodyItem:
-        try:
-            return self.iteration_class.from_dict(data)
-        except DataError:
+        # Non-iteration data is typically caused by listeners.
+        if data.get('type') != 'ITERATION':
             return super()._item_from_dict(data)
+        return self.iteration_class.from_dict(data)
 
     @copy_signature(iteration_type)
     def create_iteration(self, *args, **kwargs) -> FW:
