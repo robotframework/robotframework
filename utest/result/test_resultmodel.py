@@ -998,7 +998,8 @@ class TestJsonResult(unittest.TestCase):
 
     def test_suite_data_only(self):
         data = json.loads(self.data)['suite']
-        self._verify(json.dumps(data), full=False, generator='unknown')
+        self._verify(json.dumps(data), full=False, generator='unknown',
+                     generation_time=None)
 
     def test_to_json(self):
         result = ExecutionResult(self.data)
@@ -1034,19 +1035,25 @@ class TestJsonResult(unittest.TestCase):
 
     def test_to_json_roundtrip(self):
         result = ExecutionResult(self.data)
-        generator = get_full_version('Rebot')
-        self._verify(result.to_json(), generator=generator)
-        self._verify(result.to_json(include_statistics=False), generator=generator)
-        self._verify(result.to_json().replace('"rpa":false', '"rpa":true'),
-                     generator=generator, rpa=True)
+        for json_data in (result.to_json(),
+                          result.to_json(include_statistics=False),
+                          result.to_json().replace('"rpa":false', '"rpa":true')):
+            data = json.loads(json_data)
+            self._verify(json_data,
+                         generator=get_full_version('Rebot'),
+                         generation_time=datetime.fromisoformat(data['generated']),
+                         rpa=data['rpa'])
 
-    def _verify(self, source, full=True, generator='Unit tests', rpa=False):
+    def _verify(self, source, full=True, generator='Unit tests',
+                generation_time=datetime(2024, 9, 21, 21, 49, 12, 345678),
+                rpa=False):
         execution_result = ExecutionResult(source)
         if isinstance(source, TextIOBase):
             source.seek(0)
         result_from_json = Result.from_json(source)
         for result in execution_result, result_from_json:
             assert_equal(result.generator, generator)
+            assert_equal(result.generation_time, generation_time)
             assert_equal(result.rpa, rpa)
             assert_equal(result.suite.rpa, rpa)
             assert_equal(result.suite.name, 'S')

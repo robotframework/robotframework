@@ -65,7 +65,7 @@ class Result:
                  errors: 'ExecutionErrors|None' = None,
                  rpa: 'bool|None' = None,
                  generator: str = 'unknown',
-                 generation_time: 'datetime|None' = None):
+                 generation_time: 'datetime|str|None' = None):
         self.source = Path(source) if isinstance(source, str) else source
         self.suite = suite or TestSuite()
         self.errors = errors or ExecutionErrors()
@@ -85,6 +85,14 @@ class Result:
         suite.rpa = rpa
         for child in suite.suites:
             self._set_suite_rpa(child, rpa)
+
+    @setter
+    def generation_time(self, timestamp: 'datetime|str|None') -> 'datetime|None':
+        if datetime is None:
+            return None
+        if isinstance(timestamp, str):
+            return datetime.fromisoformat(timestamp)
+        return timestamp
 
     @property
     def statistics(self) -> Statistics:
@@ -181,13 +189,11 @@ class Result:
 
     @classmethod
     def _from_full_json(cls, data, rpa) -> 'Result':
-        result = Result(suite=TestSuite.from_dict(data['suite']),
-                        errors=ExecutionErrors(data.get('errors')),
-                        rpa=rpa,
-                        generator=data.get('generator'))
-        if data.get('generation_time'):
-            result.generation_time = datetime.fromisoformat(data['generation_time'])
-        return result
+        return Result(suite=TestSuite.from_dict(data['suite']),
+                      errors=ExecutionErrors(data.get('errors')),
+                      rpa=rpa,
+                      generator=data.get('generator'),
+                      generation_time=data.get('generated'))
 
     @classmethod
     def _from_suite_json(cls, data, rpa) -> 'Result':
