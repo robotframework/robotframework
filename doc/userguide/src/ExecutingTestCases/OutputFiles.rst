@@ -38,40 +38,47 @@ is created automatically, if it does not exist already.
 Output file
 ~~~~~~~~~~~
 
-Output files contain all the test execution results in machine readable XML
+Output files contain all execution results in machine readable XML or JSON
 format. Log_, report_ and xUnit_ files are typically generated based on them,
 and they can also be combined and otherwise post-processed with Rebot_.
+Various external tools also process output files to be able to show detailed
+execution information.
 
 .. tip:: Generating report_ and xUnit_ files as part of test execution
          does not require processing output files after execution. Disabling
          log_ generation when running tests can thus save memory.
 
 The command line option :option:`--output (-o)` determines the path where
-the output file is created relative to the `output directory`_. The default
-name for the output file, when tests are run, is :file:`output.xml`.
-
+the output file is created. The path is relative to the `output directory`_
+and the default value is :file:`output.xml` when executing tests.
 When `post-processing outputs`_ with Rebot, new output files are not created
 unless the :option:`--output` option is explicitly used.
 
-It is possible to disable creation of the output file when running tests by
-giving a special value `NONE` to the :option:`--output` option. If no outputs
-are needed, they should all be explicitly disabled using
-`--output NONE --report NONE --log NONE`.
+It is possible to disable the output file by using a special value `NONE`
+with the :option:`--output` option. If no outputs are needed, they should
+all be explicitly disabled using `--output NONE --report NONE --log NONE`.
 
-The XML output file structure is documented in the :file:`result.xsd` `schema file`_.
+XML output format
+'''''''''''''''''
 
-.. note:: Starting from Robot Framework 7.0, Rebot_ can read and write
-          `JSON output files`_. The plan is to enhance the support for
-          JSON output files in the future so that they could be created
-          already during execution. For more details see issue `#3423`__.
+Output files are created using XML by default. The XML output format is
+documented in the :file:`result.xsd` `schema file`_.
 
-__ https://github.com/robotframework/robotframework/issues/3423
+JSON output format
+''''''''''''''''''
 
+Robot Framework supports also JSON outputs and this format is used automatically
+if the output file extension is :file:`.json`. The JSON output format is
+documented in the :file:`result.json` `schema file`_.
 
-Legacy output file format
-~~~~~~~~~~~~~~~~~~~~~~~~~
+.. note:: JSON output files are supported during execution starting from
+          Robot Framework 7.2. Rebot_ can create them based on XML output
+          files already with Robot Framework 7.0.
 
-There were some `backwards incompatible changes`__ to the output file format in
+Legacy XML format
+'''''''''''''''''
+
+There were some `backwards incompatible changes`__ to the XML output file format in
 Robot Framework 7.0. To make it possible to use new Robot Framework versions
 with external tools that are not yet updated to support the new format, there is
 a :option:`--legacyoutput` option that produces output files that are compatible
@@ -614,10 +621,8 @@ Some examples
     # Flatten content of all uer keywords
     Keyword Tags    robot:flatten
 
-
 __ `Reserved tags`_
 __ `Keyword tags`_
-
 
 Automatically expanding keywords
 --------------------------------

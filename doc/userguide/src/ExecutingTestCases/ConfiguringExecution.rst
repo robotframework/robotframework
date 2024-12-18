@@ -112,7 +112,7 @@ __ `reStructuredText format`_
 __ `JSON format`_
 __ `Supported file formats`_
 
-.. note:: `--parseinclude` is new in Robot Framework 6.1.
+.. note:: :option:`--parseinclude` is new in Robot Framework 6.1.
 
 Selecting files by extension
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
