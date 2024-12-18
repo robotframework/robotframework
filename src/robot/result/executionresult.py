@@ -169,18 +169,20 @@ class Result:
         :attr:`statistics` are populated automatically based on suite information
         and thus ignored if they are present in the data.
 
+        The ``rpa`` argument can be used to override the RPA mode. The mode is
+        got from the data by default.
+
         New in Robot Framework 7.2.
         """
         try:
             data = JsonLoader().load(source)
         except (TypeError, ValueError) as err:
             raise DataError(f'Loading JSON data failed: {err}')
-        if rpa is None:
-            rpa = data.get('rpa', False)
         if 'suite' in data:
-            result = cls._from_full_json(data, rpa)
+            result = cls._from_full_json(data)
         else:
-            result = cls._from_suite_json(data, rpa)
+            result = cls._from_suite_json(data)
+        result.rpa = data.get('rpa', False) if rpa is None else rpa
         if isinstance(source, Path):
             result.source = source
         elif isinstance(source, str) and source[0] != '{' and Path(source).exists():
@@ -188,16 +190,15 @@ class Result:
         return result
 
     @classmethod
-    def _from_full_json(cls, data, rpa) -> 'Result':
+    def _from_full_json(cls, data) -> 'Result':
         return Result(suite=TestSuite.from_dict(data['suite']),
                       errors=ExecutionErrors(data.get('errors')),
-                      rpa=rpa,
                       generator=data.get('generator'),
                       generation_time=data.get('generated'))
 
     @classmethod
-    def _from_suite_json(cls, data, rpa) -> 'Result':
-        return Result(suite=TestSuite.from_dict(data), rpa=rpa)
+    def _from_suite_json(cls, data) -> 'Result':
+        return Result(suite=TestSuite.from_dict(data))
 
     @overload
     def to_json(self, file: None = None, *,
