@@ -3,6 +3,7 @@ from fnmatch import fnmatchcase
 from io import StringIO
 from typing import cast
 
+from robot.model import Statistics
 from robot.output.jsonlogger import JsonLogger
 from robot.result import *
 
@@ -706,6 +707,67 @@ class TestJsonLogger(unittest.TestCase):
 "level":"DEBUG",
 "html":true,
 "timestamp":"2024-12-03T12:27:00.123456"
+}''')
+
+    def test_statistics(self):
+        self.test_end_suite()
+        suite = TestSuite.from_dict({
+            'name': 'Root',
+            'suites': [{'name': 'Child 1',
+                        'tests': [{'status': 'PASS', 'tags': ['t1', 't2', 't3']},
+                                  {'status': 'FAIL', 'tags': ['t1', 't2']}]},
+                       {'name': 'Child 2',
+                        'tests': [{'status': 'PASS', 'tags': ['t1']}]}]
+        })
+        stats = Statistics(suite, tag_doc=[('t2', 'doc for t2')])
+        self.logger.statistics(stats)
+        self.verify(''',
+"statistics":{
+"total":{
+"label":"All Tests",
+"pass":2,
+"fail":1,
+"skip":0
+},
+"suites":[{
+"label":"Root",
+"name":"Root",
+"id":"s1",
+"pass":2,
+"fail":1,
+"skip":0
+},{
+"label":"Root.Child 1",
+"name":"Child 1",
+"id":"s1-s1",
+"pass":1,
+"fail":1,
+"skip":0
+},{
+"label":"Root.Child 2",
+"name":"Child 2",
+"id":"s1-s2",
+"pass":1,
+"fail":0,
+"skip":0
+}],
+"tags":[{
+"label":"t1",
+"pass":2,
+"fail":1,
+"skip":0
+},{
+"label":"t2",
+"doc":"doc for t2",
+"pass":1,
+"fail":1,
+"skip":0
+},{
+"label":"t3",
+"pass":1,
+"fail":0,
+"skip":0
+}]
 }''')
 
     def test_no_errors(self):

@@ -194,7 +194,21 @@ class JsonLogger:
         self.writer.end_list()
 
     def statistics(self, stats):
-        self.writer.items(statistics=stats.to_dict())
+        data = stats.to_dict()
+        self.writer.start_dict('statistics')
+        self.writer.start_dict('total', **data['total'])
+        self.writer.end_dict()
+        self.writer.start_list('suites')
+        for item in data['suites']:
+            self.writer.start_dict(**item)
+            self.writer.end_dict()
+        self.writer.end_list()
+        self.writer.start_list('tags')
+        for item in data['tags']:
+            self.writer.start_dict(**item)
+            self.writer.end_dict()
+        self.writer.end_list()
+        self.writer.end_dict()
 
     def close(self):
         self.writer.end_dict()
@@ -296,7 +310,7 @@ class JsonWriter:
     def _item(self, value, name=None):
         if isinstance(value, UnlessNone) and value:
             value = value.value
-        elif not value:
+        elif not (value or value == 0 and not isinstance(value, bool)):
             return
         if isinstance(value, Raw):
             value = value.value

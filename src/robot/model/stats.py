@@ -40,10 +40,11 @@ class Stat(Sortable):
 
     def get_attributes(self, include_label=False, include_elapsed=False,
                        exclude_empty=True, values_as_strings=False, html_escape=False):
-        attrs = {'pass': self.passed, 'fail': self.failed, 'skip': self.skipped}
-        attrs.update(self._get_custom_attrs())
-        if include_label:
-            attrs['label'] = self.name
+        attrs = {
+            **({'label': self.name} if include_label else {}),
+            **self._get_custom_attrs(),
+            **{'pass': self.passed, 'fail': self.failed, 'skip': self.skipped},
+        }
         if include_elapsed:
             attrs['elapsed'] = elapsed_time_to_string(self.elapsed, include_millis=False)
         if exclude_empty:
@@ -106,7 +107,7 @@ class SuiteStat(Stat):
         self._name = suite.name
 
     def _get_custom_attrs(self):
-        return {'id': self.id, 'name': self._name}
+        return {'name': self._name, 'id': self.id}
 
     def _update_elapsed(self, test):
         pass
