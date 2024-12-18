@@ -1354,10 +1354,10 @@ optional. Groups can also be nested freely with each others and with other
 control structures.
 
 `User keywords`_ are in general recommended over the `GROUP` syntax, because
-they are reusable and they simplify tests or keywords where they are used by
-hiding and encapsulating lower level details. In the log file user keywords
-and groups look the same, though, except that instead of a `KEYWORD` label
-there is a `GROUP` label.
+they are reusable and because they simplify tests or keywords where they are
+used by hiding and encapsulating lower level details. In the log file user
+keywords and groups look the same, though, except that instead of a `KEYWORD`
+label there is a `GROUP` label.
 
 All groups within a test or a keyword share the same variable namespace.
 This means that, unlike when using keywords, there is no need to use arguments
