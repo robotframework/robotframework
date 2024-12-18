@@ -470,18 +470,17 @@ class RobotFramework(Application):
             old_max_assign_length = text.MAX_ASSIGN_LENGTH
             text.MAX_ERROR_LINES = settings.max_error_lines
             text.MAX_ASSIGN_LENGTH = settings.max_assign_length
-            librarylogger.RUN_THREAD = current_thread().name
+            librarylogger.LOGGING_THREADS[0] = current_thread().name
             try:
                 result = suite.run(settings)
             finally:
                 text.MAX_ERROR_LINES = old_max_error_lines
                 text.MAX_ASSIGN_LENGTH = old_max_assign_length
-                librarylogger.RUN_THREAD = 'MainThread'
-            LOGGER.info("Tests execution ended. Statistics:\n%s"
-                        % result.suite.stat_message)
+                librarylogger.LOGGING_THREADS[0] = 'MainThread'
+            LOGGER.info(f"Tests execution ended. "
+                        f"Statistics:\n{result.suite.stat_message}")
             if settings.log or settings.report or settings.xunit:
-                writer = ResultWriter(settings.output if settings.log
-                                      else result)
+                writer = ResultWriter(settings.output if settings.log else result)
                 writer.write_results(settings.get_rebot_settings())
         return result.return_code
 
