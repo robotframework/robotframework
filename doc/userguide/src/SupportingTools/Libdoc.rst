@@ -188,6 +188,10 @@ format can be specified explicitly with the :option:`--format` option.
 Starting from Robot Framework 7.2, it is possible to localise the static
 texts in the HTML documentation by using the :option:`--language` option.
 
+See the `README.rst` file in `src/web/libodc` directory in the project
+repository for up to date information about how to add new languages
+for the localisation.
+
 ::
 
    libdoc OperatingSystem OperatingSystem.html

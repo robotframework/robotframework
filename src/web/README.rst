@@ -39,3 +39,12 @@ Prettier is used to format code, and it can be run manually by::
 
     npm run pretty
 
+Localisation
+------------
+
+The static text in the libdoc HTML can be localised to different languages. The created documentation contains
+a language selector that can be used to select the current localisation. There is also command line option in
+the libdoc cli to set the default language.
+
+To create new localisations, edit the file `src/web/libdoc/i18n/translations.json`. It is as easy as adding a
+new element to the top level object by copying, for example the contents of the "en" key.
