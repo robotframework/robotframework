@@ -189,7 +189,13 @@ Creating distributions
 
       invoke clean
 
-3. Create and validate source distribution in zip format and
+3. Build libdoc distribution. This step can be skipped if there are
+   no changes to libdoc. Prequisites are listed in `<src/web/README.md>`_.
+   The distribution is created by running::
+
+     npm run build --prefix src/web/
+
+4. Create and validate source distribution in zip format and
    `wheel <https://pythonwheels.com>`_::
 
       python setup.py sdist --formats zip bdist_wheel
@@ -198,18 +204,18 @@ Creating distributions
 
    Distributions can be tested locally if needed.
 
-4. Upload distributions to PyPI::
+5. Upload distributions to PyPI::
 
       twine upload dist/*
 
-5. Verify that project pages at `PyPI
+6. Verify that project pages at `PyPI
    <https://pypi.python.org/pypi/robotframework>`_ look good.
 
-6. Test installation::
+7. Test installation::
 
       pip install --pre --upgrade robotframework
 
-7. Documentation
+8. Documentation
 
    - For a reproducible build, set the ``SOURCE_DATE_EPOCH``
      environment variable to a constant value, corresponding to the
