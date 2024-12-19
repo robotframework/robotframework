@@ -1,10 +1,9 @@
-Robot Framework web projects
-============================
+# Robot Framework web projects
+
 
 This directory contains the Robot Framework HTML frontend for libdoc. Eventually, also log and report will be moved to the same tech stack.
 
-Tech
-----
+## Tech
 
 This prototype uses following technologies:
 
@@ -14,37 +13,35 @@ This prototype uses following technologies:
 
 Unit test are written using [Jest](https://jestjs.io).
 
-Development
------------
+## Development
 
-Install dependencies::
+Install dependencies:
 
     npm install
 
-Run::
+Run:
 
     npm run start
 
 The development server starts at `localhost:1234`.
 
-Test::
+Test:
 
     npm test
 
 
-Code formatting conventions
---------------------------
+## Code formatting conventions
 
-Prettier is used to format code, and it can be run manually by::
+
+Prettier is used to format code, and it can be run manually by:
 
     npm run pretty
 
-Localisation
-------------
+## Localisation
 
 The static text in the libdoc HTML can be localised to different languages. The created documentation contains
 a language selector that can be used to select the current localisation. There is also command line option in
 the libdoc cli to set the default language.
 
-To create new localisations, edit the file `src/web/libdoc/i18n/translations.json`. It is as easy as adding a
-new element to the top level object by copying, for example the contents of the "en" key.
+To create new localisations, edit the [translations](https://github.com/robotframework/robotframework/blob/master/src/web/libdoc/i18n/translations.json) file.
+It is as easy as adding a new element to the top level object by copying, for example the contents of the "en" key.
