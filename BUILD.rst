@@ -195,10 +195,9 @@ Creating distributions
 
      npm run build --prefix src/web/
 
-4. Create and validate source distribution in zip format and
-   `wheel <https://pythonwheels.com>`_::
+4. Create and validate source distribution and `wheel <https://pythonwheels.com>`_::
 
-      python setup.py sdist --formats zip bdist_wheel
+      python setup.py sdist bdist_wheel
       ls -l dist
       twine check dist/*
 
