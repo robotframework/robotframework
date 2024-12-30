@@ -19,8 +19,7 @@ from typing import overload, TextIO
 
 from robot.errors import DataError
 from robot.model import Statistics
-from robot.model.modelobject import JsonDumper, JsonLoader    # FIXME: Expose via `robot.model` or move to `robot.utils`.
-from robot.utils import setter
+from robot.utils import JsonDumper, JsonLoader, setter
 from robot.version import get_full_version
 
 from .executionerrors import ExecutionErrors
