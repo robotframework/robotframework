@@ -665,7 +665,7 @@ class TestSuite(model.TestSuite[Keyword, TestCase]):
         from .builder import RobotParser
         suite = RobotParser().parse_model(model, defaults)
         if name is not None:
-            # TODO: Remove 'name' in RF 7.
+            # TODO: Remove 'name' in RF 8.0.
             warnings.warn("'name' argument of 'TestSuite.from_model' is deprecated. "
                           "Set the name to the returned suite separately.")
             suite.name = name
