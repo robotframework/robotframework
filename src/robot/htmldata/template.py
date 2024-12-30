@@ -17,25 +17,7 @@ import sys
 from collections.abc import Iterable
 from os.path import normpath
 from pathlib import Path
-
-
-if sys.version_info < (3, 9) and not Path(__file__).exists():    # zipsafe
-    try:
-        from importlib_resources import files
-    except ImportError:
-        raise ImportError(
-            "'importlib_resources' backport module needs to be installed with "
-            "Python 3.8 when Robot Framework is distributed as a zip package "
-            "or '__file__' does not exist for other reasons."
-        )
-else:
-    try:
-        from importlib.resources import files
-    except ImportError:    # Python 3.8
-        BASE_DIR = Path(__file__).absolute().parent.parent.parent    # zipsafe
-
-        def files(module):
-            return BASE_DIR / module.replace('.', '/')
+from importlib.resources import files
 
 
 class HtmlTemplate(Iterable):
