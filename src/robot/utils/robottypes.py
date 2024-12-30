@@ -113,7 +113,7 @@ def type_repr(typ, nested=True):
             return f'Literal[{args}]'
         return 'Literal'
     name = _get_type_name(typ)
-    if nested and has_args(typ):
+    if nested and hasattr(typ, '__args__'):
         args = ', '.join(type_repr(a) for a in typ.__args__)
         return f'{name}[{args}]'
     return name
@@ -126,20 +126,6 @@ def _get_type_name(typ):
         if name:
             return name
     return str(typ)
-
-
-def has_args(type):
-    """Helper to check has type valid ``__args__``.
-
-   ``__args__`` contains TypeVars when accessed directly from ``typing.List`` and
-   other such types with Python 3.8. Python 3.9+ don't have ``__args__`` at all.
-   Parameterize usages like ``List[int].__args__`` always work the same way.
-
-    This helper can be removed in favor of using ``hasattr(type, '__args__')``
-    when we support only Python 3.9 and newer.
-    """
-    args = getattr(type, '__args__', None)
-    return bool(args and not all(isinstance(a, TypeVar) for a in args))
 
 
 def is_truthy(item):
