@@ -524,7 +524,8 @@ class Process:
 
     def _wait(self, process):
         result = self._results[process]
-        result.rc = process.wait() or 0
+        (_stdout, _stdin) = process.communicate()
+        result.rc = process.returncode or 0
         result.close_streams()
         logger.info('Process completed.')
         return result
