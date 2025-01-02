@@ -14,6 +14,7 @@
 #  limitations under the License.
 
 import os
+import io
 import signal as signal_module
 import subprocess
 import sys
@@ -524,9 +525,26 @@ class Process:
 
     def _wait(self, process):
         result = self._results[process]
-        (_stdout, _stdin) = process.communicate()
+
+        _force_stdout_empty = (process.stdout and process.stdout.closed)
+        _force_stderr_empty = (process.stderr and process.stderr.closed)
+
+        if process.stdin and False == process.stdin.closed:
+            (_stdout, _stderr) = process.communicate()
+        else:
+            _stdin = process.stdin
+            process.stdin = io.StringIO("")
+            (_stdout, _stderr) = process.communicate()
+            process.stdin = _stdin
+
+        if _force_stdout_empty:
+            _stdout = ""
+        if _force_stderr_empty:
+            _stderr = ""
+
         result.rc = process.returncode or 0
-        result.close_streams()
+        result.close_streams(_stdout, _stderr)
+
         logger.info('Process completed.')
         return result
 
@@ -866,18 +884,22 @@ class ExecutionResult:
             output = output[:-1]
         return output
 
-    def close_streams(self):
-        standard_streams = self._get_and_read_standard_streams(self._process)
+    def close_streams(self, _stdout, _stderr):
+        standard_streams = self._get_and_read_standard_streams(self._process, _stdout, _stderr)
         for stream in standard_streams + self._custom_streams:
             if self._is_open(stream):
                 stream.close()
 
-    def _get_and_read_standard_streams(self, process):
+    def _get_and_read_standard_streams(self, process, _stdout, _stderr):
         stdin, stdout, stderr = process.stdin, process.stdout, process.stderr
         if stdout:
             self._read_stdout()
+        if _stdout:
+            self._stdout = self._format_output(_stdout)
         if stderr:
             self._read_stderr()
+        if _stderr:
+            self._stderr = self._format_output(_stderr)
         return [stdin, stdout, stderr]
 
     def __str__(self):
