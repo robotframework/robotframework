@@ -526,24 +526,16 @@ class Process:
     def _wait(self, process):
         result = self._results[process]
 
-        _force_stdout_empty = (process.stdout and process.stdout.closed)
-        _force_stderr_empty = (process.stderr and process.stderr.closed)
+        _take_stdout = not (process.stdout and process.stdout.closed)
+        _take_stderr = not (process.stderr and process.stderr.closed)
 
-        if process.stdin and False == process.stdin.closed:
-            (_stdout, _stderr) = process.communicate()
-        else:
-            _stdin = process.stdin
-            process.stdin = io.StringIO("")
-            (_stdout, _stderr) = process.communicate()
-            process.stdin = _stdin
-
-        if _force_stdout_empty:
-            _stdout = ""
-        if _force_stderr_empty:
-            _stderr = ""
+        _stdin = process.stdin
+        process.stdin = process.stdin if (process.stdin and False == process.stdin.closed) else io.StringIO("")
+        (_stdout, _stderr) = process.communicate()
+        process.stdin = _stdin
 
         result.rc = process.returncode or 0
-        result.close_streams(_stdout, _stderr)
+        result.close_streams(_stdout if _take_stdout else "", _stderr if _take_stderr else "")
 
         logger.info('Process completed.')
         return result
