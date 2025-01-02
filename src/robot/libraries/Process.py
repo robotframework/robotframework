@@ -531,10 +531,10 @@ class Process:
 
         _stdin = process.stdin
         process.stdin = process.stdin if (process.stdin and False == process.stdin.closed) else io.StringIO("")
-        (_stdout, _stderr) = process.communicate()
+        (_stdout, _stderr,) = process.communicate()
         process.stdin = _stdin
 
-        result.rc = process.returncode or 0
+        result.rc = process.returncode
         result.close_streams(_stdout if _take_stdout else "", _stderr if _take_stderr else "")
 
         logger.info('Process completed.')
