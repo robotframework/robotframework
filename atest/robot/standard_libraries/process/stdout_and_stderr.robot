@@ -54,6 +54,9 @@ Lot of output to custom stream
 Lot of output to DEVNULL
     Check Test Case    ${TESTNAME}
 
+Lot of output to pipes
+    Check Test Case    ${TESTNAME}
+
 Run multiple times
     Check Test Case    ${TESTNAME}
 
