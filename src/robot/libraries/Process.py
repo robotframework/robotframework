@@ -538,6 +538,16 @@ class Process:
 
         if _stdout:
             result._stdout = result._format_output(_stdout if _take_stdout else "")
+        
+        try:
+            process.stdout.close()
+        except AttributeError:
+            pass
+        try:
+            process.stderr.close()
+        except AttributeError:
+            pass
+        
         if _stderr:
             result._stderr = result._format_output(_stderr if _take_stderr else "")
 
