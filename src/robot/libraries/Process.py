@@ -530,7 +530,7 @@ class Process:
         _take_stderr = (process.stderr and (not process.stderr.closed))
 
         _stdin = process.stdin
-        process.stdin = process.stdin if (process.stdin and False == process.stdin.closed) else io.StringIO("")
+        process.stdin = process.stdin if (process.stdin and not process.stdin.closed) else io.StringIO("")
         (_stdout, _stderr,) = process.communicate()
         process.stdin = _stdin
 
@@ -539,17 +539,14 @@ class Process:
         if _stdout:
             result._stdout = result._format_output(_stdout if _take_stdout else "")
         
-        try:
-            process.stdout.close()
-        except AttributeError:
-            pass
-        try:
-            process.stderr.close()
-        except AttributeError:
-            pass
-        
         if _stderr:
             result._stderr = result._format_output(_stderr if _take_stderr else "")
+
+        for f in [process.stdout, process.stderr]:
+            try:
+                f.close()
+            except AttributeError:
+                pass
 
         logger.info('Process completed.')
         return result
