@@ -526,8 +526,8 @@ class Process:
     def _wait(self, process):
         result = self._results[process]
 
-        _take_stdout = not (process.stdout and process.stdout.closed)
-        _take_stderr = not (process.stderr and process.stderr.closed)
+        _take_stdout = (process.stdout and (not process.stdout.closed))
+        _take_stderr = (process.stderr and (not process.stderr.closed))
 
         _stdin = process.stdin
         process.stdin = process.stdin if (process.stdin and False == process.stdin.closed) else io.StringIO("")
@@ -535,7 +535,11 @@ class Process:
         process.stdin = _stdin
 
         result.rc = process.returncode
-        result.close_streams(_stdout if _take_stdout else "", _stderr if _take_stderr else "")
+
+        if _stdout:
+            result._stdout = result._format_output(_stdout if _take_stdout else "")
+        if _stderr:
+            result._stderr = result._format_output(_stderr if _take_stderr else "")
 
         logger.info('Process completed.')
         return result
@@ -875,24 +879,6 @@ class ExecutionResult:
         if output.endswith('\n'):
             output = output[:-1]
         return output
-
-    def close_streams(self, _stdout, _stderr):
-        standard_streams = self._get_and_read_standard_streams(self._process, _stdout, _stderr)
-        for stream in standard_streams + self._custom_streams:
-            if self._is_open(stream):
-                stream.close()
-
-    def _get_and_read_standard_streams(self, process, _stdout, _stderr):
-        stdin, stdout, stderr = process.stdin, process.stdout, process.stderr
-        if stdout:
-            self._read_stdout()
-        if _stdout:
-            self._stdout = self._format_output(_stdout)
-        if stderr:
-            self._read_stderr()
-        if _stderr:
-            self._stderr = self._format_output(_stderr)
-        return [stdin, stdout, stderr]
 
     def __str__(self):
         return f'<result object with rc {self.rc}>'
