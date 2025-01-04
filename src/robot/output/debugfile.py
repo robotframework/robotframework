@@ -16,6 +16,7 @@
 from pathlib import Path
 import threading
 import queue
+from enum import Enum
 
 from robot.errors import DataError
 from robot.utils import file_writer, seq2str2
@@ -64,15 +65,25 @@ class _debug_worker:
         # safe as name is imutable
         return self._name
 
+    class _command(Enum):
+        CLOSE = 1
+        WRITE = 2
+
+    def close(self):
+        self._out_q.put((_debug_worker._command.CLOSE, False,))
+
+    def write(self, text):
+        self._out_q.put((_debug_worker._command.WRITE, text,))
+
     @staticmethod
     def _worker(outfile, q):
         while True:
             elem_type, elem_data = q.get()
-            if elem_type == "close":
+            if elem_type == _debug_worker._command.CLOSE:
                 outfile.close()
                 q.task_done()
                 return
-            elif elem_type == "write":
+            elif elem_type == _debug_worker._command.WRITE:
                 outfile.write(elem_data)
                 outfile.flush()
                 q.task_done()
