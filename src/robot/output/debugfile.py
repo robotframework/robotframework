@@ -40,10 +40,11 @@ def DebugFile(path):
 
 class _debug_worker:
     def __init__(self, outfile):
+        self._ofile = outfile
+        self._name = self._ofile.name
         self._out_q = queue.Queue()
         self._worker_thread = threading.Thread(target=_debug_worker._worker, args=(outfile, self._out_q), daemon=False)
         self._worker_thread.start()
-        self._ofile = outfile
 
     def close(self):
         self._out_q.put(("close", False,))
@@ -53,11 +54,15 @@ class _debug_worker:
 
     @property
     def closed(self):
-        return self._ofile.closed
+        if self._worker_thread.is_alive():
+            return False
+        self._out_q.join()
+        return True
 
     @property
     def name(self):
-        return self._ofile.name
+        # safe as name is imutable
+        return self._name
 
     @staticmethod
     def _worker(outfile, q):
@@ -65,21 +70,25 @@ class _debug_worker:
             elem_type, elem_data = q.get()
             if elem_type == "close":
                 outfile.close()
+                q.task_done()
                 return
             elif elem_type == "write":
                 outfile.write(elem_data)
                 outfile.flush()
+                q.task_done()
 
     _workers = {}
+    _lock = threading.Lock()
 
     @staticmethod
     def get_worker(outfile):
-        try:
-            return _debug_worker._workers[outfile]
-        except KeyError:
-            _debug_worker._workers[outfile] = _debug_worker(outfile)
-        finally:
-            return _debug_worker._workers[outfile]
+        with _debug_worker._lock:
+            try:
+                return _debug_worker._workers[outfile]
+            except KeyError:
+                _debug_worker._workers[outfile] = _debug_worker(outfile)
+            finally:
+                return _debug_worker._workers[outfile]
 
 class _DebugFileWriter(LoggerApi):
     _separators = {'SUITE': '=', 'TEST': '-', 'KEYWORD': '~'}
