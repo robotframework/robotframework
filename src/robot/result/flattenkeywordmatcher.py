@@ -23,7 +23,7 @@ from .model import Keyword
 def validate_flatten_keyword(options):
     for opt in options:
         low = opt.lower()
-        # TODO: Deprecate 'foritem' in RF 6.1!
+        # TODO: Deprecate 'foritem' in RF 7.3!
         if low == 'foritem':
             low = 'iteration'
         if not (low in ('for', 'while', 'iteration') or

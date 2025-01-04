@@ -3141,7 +3141,7 @@ class _Misc(_BuiltInBase):
         Formatter options ``type`` and ``len`` are new in Robot Framework 5.0.
         The CONSOLE level is new in Robot Framework 6.1.
         """
-        # TODO: Remove `repr` altogether in RF 7.0. It was deprecated in RF 5.0.
+        # TODO: Remove `repr` altogether in RF 8.0. It was deprecated in RF 5.0.
         if repr == 'DEPRECATED':
             formatter = self._get_formatter(formatter)
         else:
