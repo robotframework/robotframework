@@ -39,6 +39,7 @@ def DebugFile(path):
         LOGGER.info('Debug file: %s' % path)
         return _DebugFileWriter(outfile)
 
+
 class _debug_worker:
     def __init__(self, outfile):
         self._ofile = outfile
@@ -88,18 +89,24 @@ class _debug_worker:
                 outfile.flush()
                 q.task_done()
 
-    _workers = {}
-    _lock = threading.Lock()
+    @staticmethod
+    def __worker():
+        _workers = {}
+        while True:
+            (outfile, q_res,) = _debug_worker._request_worker_q.get()
+            if not outfile in _workers:
+                _workers[outfile] = _debug_worker(outfile)
+            q_res.put(_workers[outfile])
+
+    _request_worker_q = queue.Queue()
+    _t = threading.Thread(target=__worker, daemon=True)
 
     @staticmethod
     def get_worker(outfile):
-        with _debug_worker._lock:
-            try:
-                return _debug_worker._workers[outfile]
-            except KeyError:
-                _debug_worker._workers[outfile] = _debug_worker(outfile)
-            finally:
-                return _debug_worker._workers[outfile]
+        q = queue.Queue()
+        _debug_worker._request_worker_q.put((outfile, q,))
+        return q.get()
+
 
 class _DebugFileWriter(LoggerApi):
     _separators = {'SUITE': '=', 'TEST': '-', 'KEYWORD': '~'}
@@ -107,11 +114,10 @@ class _DebugFileWriter(LoggerApi):
 
     @staticmethod
     def get_thread_local_instance(self):
-        try:
-            return threading.current_thread()._DebugFileWriter
-        except AttributeError:
-            threading.current_thread()._DebugFileWriter = _DebugFileWriter(self._orig_outfile)
-        return threading.current_thread()._DebugFileWriter
+        ct = threading.current_thread()
+        if not hasattr(ct, "_DebugFileWriter"):
+            ct._DebugFileWriter = _DebugFileWriter(self._orig_outfile)
+        return ct._DebugFileWriter
 
     def __init__(self, outfile):
         self._indent = 0
@@ -208,3 +214,6 @@ class _DebugFileWriter(LoggerApi):
         text = "".join(f"{threading.current_thread().name}\t{item}\n" for item in text.rstrip().split('\n'))
         self._outfile.write(text)
         self._separator_written_last = separator
+
+
+_debug_worker._t.start()
