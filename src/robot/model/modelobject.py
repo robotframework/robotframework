@@ -14,12 +14,11 @@
 #  limitations under the License.
 
 import copy
-import json
 from pathlib import Path
 from typing import Any, Dict, overload, TextIO, Type, TypeVar
 
 from robot.errors import DataError
-from robot.utils import get_error_message, SetterAwareType, type_name
+from robot.utils import JsonDumper, JsonLoader, SetterAwareType, type_name
 
 
 T = TypeVar('T', bound='ModelObject')
@@ -226,54 +225,3 @@ def full_name(obj_or_cls):
     if len(parts) > 1 and parts[0] == 'robot':
         parts[2:-1] = []
     return '.'.join(parts)
-
-
-class JsonLoader:
-
-    def load(self, source: 'str|bytes|TextIO|Path') -> DataDict:
-        try:
-            data = self._load(source)
-        except (json.JSONDecodeError, TypeError):
-            raise ValueError(f'Invalid JSON data: {get_error_message()}')
-        if not isinstance(data, dict):
-            raise TypeError(f"Expected dictionary, got {type_name(data)}.")
-        return data
-
-    def _load(self, source):
-        if self._is_path(source):
-            with open(source, encoding='UTF-8') as file:
-                return json.load(file)
-        if hasattr(source, 'read'):
-            return json.load(source)
-        return json.loads(source)
-
-    def _is_path(self, source):
-        if isinstance(source, Path):
-            return True
-        return isinstance(source, str) and '{' not in source
-
-
-class JsonDumper:
-
-    def __init__(self, **config):
-        self.config = config
-
-    @overload
-    def dump(self, data: DataDict, output: None = None) -> str:
-        ...
-
-    @overload
-    def dump(self, data: DataDict, output: 'TextIO|Path|str') -> None:
-        ...
-
-    def dump(self, data: DataDict, output: 'None|TextIO|Path|str' = None) -> 'None|str':
-        if not output:
-            return json.dumps(data, **self.config)
-        elif isinstance(output, (str, Path)):
-            with open(output, 'w', encoding='UTF-8') as file:
-                json.dump(data, file, **self.config)
-        elif hasattr(output, 'write'):
-            json.dump(data, output, **self.config)
-        else:
-            raise TypeError(f"Output should be None, path or open file, "
-                            f"got {type_name(output)}.")
