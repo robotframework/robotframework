@@ -15,6 +15,7 @@
 
 from contextlib import contextmanager
 import os
+from threading import current_thread
 
 from robot.errors import DataError
 
@@ -205,7 +206,8 @@ class Logger(AbstractLogger):
             self._log_message_cache.append(msg)
             return
         for logger in self:
-            logger.log_message(msg)
+            if (current_thread().name in ['MainThread', 'RobotFrameworkTimeoutThread']) or hasattr(logger, "multithread_capable") and logger.multithread_capable:
+                logger.log_message(msg)
         if self._log_message_parents and self._output_file.is_logged(msg):
             self._log_message_parents[-1].body.append(msg)
         if msg.level in ('WARN', 'ERROR'):
