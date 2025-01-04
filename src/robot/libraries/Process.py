@@ -529,6 +529,8 @@ class Process:
         _take_stdout = (process.stdout and (not process.stdout.closed))
         _take_stderr = (process.stderr and (not process.stderr.closed))
 
+        # This is needed to handle stdin closes identically to how it was when the
+        # wait function was used.
         _stdin = process.stdin
         process.stdin = process.stdin if (process.stdin and not process.stdin.closed) else io.StringIO("")
         (_stdout, _stderr,) = process.communicate()
@@ -536,6 +538,8 @@ class Process:
 
         result.rc = process.returncode
 
+        # This is needed to handle stdin closes identically to how it was when the
+        # wait function was used.
         if _stdout:
             result._stdout = result._format_output(_stdout if _take_stdout else "")
         
