@@ -546,7 +546,7 @@ class Process:
         if _stderr:
             result._stderr = result._format_output(_stderr if _take_stderr else "")
 
-        for f in [process.stdout, process.stderr, process.stdin] + result._custom_streams:
+        for f in [process.stdout, process.stderr] + result._custom_streams:
             try:
                 f.close()
             except AttributeError:
