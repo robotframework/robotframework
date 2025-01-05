@@ -48,12 +48,6 @@ class _debug_worker:
         self._worker_thread = threading.Thread(target=_debug_worker._worker, args=(outfile, self._out_q), daemon=False)
         self._worker_thread.start()
 
-    def close(self):
-        self._out_q.put(("close", False,))
-
-    def write(self, text):
-        self._out_q.put(("write", text,))
-
     @property
     def closed(self):
         if self._worker_thread.is_alive():
@@ -94,7 +88,7 @@ class _debug_worker:
         _workers = {}
         while True:
             (outfile, q_res,) = _debug_worker._request_worker_q.get()
-            if not outfile in _workers:
+            if outfile not in _workers:
                 _workers[outfile] = _debug_worker(outfile)
             q_res.put(_workers[outfile])
 
