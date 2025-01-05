@@ -40,12 +40,33 @@ def DebugFile(path):
         return _DebugFileWriter(outfile)
 
 
+def _worker_factory():
+    _workers = {}
+    while True:
+        (outfile, q_res,) = _debug_worker._request_worker_q.get()
+        if outfile not in _workers:
+            _workers[outfile] = _debug_worker(outfile)
+        q_res.put(_workers[outfile])
+
+
+def _write_log2file_queue_endpoint(outfile, q):
+    while True:
+        elem_type, elem_data = q.get()
+        if elem_type == _debug_worker._command.CLOSE:
+            outfile.close()
+            q.task_done()
+            return
+        elif elem_type == _debug_worker._command.WRITE:
+            outfile.write(elem_data)
+            outfile.flush()
+            q.task_done()
+
+
 class _debug_worker:
     def __init__(self, outfile):
-        self._ofile = outfile
-        self._name = self._ofile.name
+        self._name = outfile.name
         self._out_q = queue.Queue()
-        self._worker_thread = threading.Thread(target=_debug_worker._worker, args=(outfile, self._out_q), daemon=False)
+        self._worker_thread = threading.Thread(target=_write_log2file_queue_endpoint, args=(outfile, self._out_q), daemon=False)
         self._worker_thread.start()
 
     @property
@@ -70,65 +91,43 @@ class _debug_worker:
     def write(self, text):
         self._out_q.put((_debug_worker._command.WRITE, text,))
 
-    @staticmethod
-    def _worker(outfile, q):
-        while True:
-            elem_type, elem_data = q.get()
-            if elem_type == _debug_worker._command.CLOSE:
-                outfile.close()
-                q.task_done()
-                return
-            elif elem_type == _debug_worker._command.WRITE:
-                outfile.write(elem_data)
-                outfile.flush()
-                q.task_done()
-
-    @staticmethod
-    def __worker():
-        _workers = {}
-        while True:
-            (outfile, q_res,) = _debug_worker._request_worker_q.get()
-            if outfile not in _workers:
-                _workers[outfile] = _debug_worker(outfile)
-            q_res.put(_workers[outfile])
-
     _request_worker_q = queue.Queue()
-    _t = threading.Thread(target=__worker, daemon=True)
+    _t = threading.Thread(target=_worker_factory, daemon=True)
 
-    @staticmethod
-    def get_worker(outfile):
-        q = queue.Queue()
-        _debug_worker._request_worker_q.put((outfile, q,))
-        return q.get()
+
+def _get_worker(outfile):
+    q = queue.Queue()
+    _debug_worker._request_worker_q.put((outfile, q,))
+    return q.get()
+
+
+def _get_thread_local_instance_DebugFileWriter(self):
+    ct = threading.current_thread()
+    if not hasattr(ct, "_DebugFileWriter"):
+        ct._DebugFileWriter = _DebugFileWriter(self._orig_outfile)
+    return ct._DebugFileWriter
 
 
 class _DebugFileWriter(LoggerApi):
     _separators = {'SUITE': '=', 'TEST': '-', 'KEYWORD': '~'}
     multithread_capable = True
 
-    @staticmethod
-    def get_thread_local_instance(self):
-        ct = threading.current_thread()
-        if not hasattr(ct, "_DebugFileWriter"):
-            ct._DebugFileWriter = _DebugFileWriter(self._orig_outfile)
-        return ct._DebugFileWriter
-
     def __init__(self, outfile):
         self._indent = 0
         self._kw_level = 0
         self._separator_written_last = False
         self._orig_outfile = outfile
-        self._outfile = _debug_worker.get_worker(outfile)
+        self._outfile = _get_worker(outfile)
         self._is_logged = LogLevel('DEBUG').is_logged
 
     def start_suite(self, data, result):
-        self = _DebugFileWriter.get_thread_local_instance(self)
+        self = _get_thread_local_instance_DebugFileWriter(self)
         self._separator('SUITE')
         self._start('SUITE', data.full_name, result.start_time)
         self._separator('SUITE')
 
     def end_suite(self, data, result):
-        self = _DebugFileWriter.get_thread_local_instance(self)
+        self = _get_thread_local_instance_DebugFileWriter(self)
         self._separator('SUITE')
         self._end('SUITE', data.full_name, result.end_time, result.elapsed_time)
         self._separator('SUITE')
@@ -137,53 +136,53 @@ class _DebugFileWriter(LoggerApi):
             self.close()
 
     def start_test(self, data, result):
-        self = _DebugFileWriter.get_thread_local_instance(self)
+        self = _get_thread_local_instance_DebugFileWriter(self)
         self._separator('TEST')
         self._start('TEST', result.name, result.start_time)
         self._separator('TEST')
 
     def end_test(self, data, result):
-        self = _DebugFileWriter.get_thread_local_instance(self)
+        self = _get_thread_local_instance_DebugFileWriter(self)
         self._separator('TEST')
         self._end('TEST', result.name, result.end_time, result.elapsed_time)
         self._separator('TEST')
 
     def start_keyword(self, data, result):
-        self = _DebugFileWriter.get_thread_local_instance(self)
+        self = _get_thread_local_instance_DebugFileWriter(self)
         if self._kw_level == 0:
             self._separator('KEYWORD')
         self._start(result.type, result.full_name, result.start_time, seq2str2(result.args))
         self._kw_level += 1
 
     def end_keyword(self, data, result):
-        self = _DebugFileWriter.get_thread_local_instance(self)
+        self = _get_thread_local_instance_DebugFileWriter(self)
         self._end(result.type, result.full_name, result.end_time, result.elapsed_time)
         self._kw_level -= 1
 
     def start_body_item(self, data, result):
-        self = _DebugFileWriter.get_thread_local_instance(self)
+        self = _get_thread_local_instance_DebugFileWriter(self)
         if self._kw_level == 0:
             self._separator('KEYWORD')
         self._start(result.type, result._log_name, result.start_time)
         self._kw_level += 1
 
     def end_body_item(self, data, result):
-        self = _DebugFileWriter.get_thread_local_instance(self)
+        self = _get_thread_local_instance_DebugFileWriter(self)
         self._end(result.type, result._log_name, result.end_time, result.elapsed_time)
         self._kw_level -= 1
 
     def log_message(self, msg):
-        self = _DebugFileWriter.get_thread_local_instance(self)
+        self = _get_thread_local_instance_DebugFileWriter(self)
         if self._is_logged(msg):
             self._write(f'{msg.timestamp} - {msg.level} - {msg.message}')
 
     def close(self):
-        self = _DebugFileWriter.get_thread_local_instance(self)
+        self = _get_thread_local_instance_DebugFileWriter(self)
         if not self._outfile.closed:
             self._outfile.close()
 
     def _start(self, type, name, timestamp, extra=''):
-        self = _DebugFileWriter.get_thread_local_instance(self)
+        self = _get_thread_local_instance_DebugFileWriter(self)
         if extra:
             extra = f' {extra}'
         indent = '-' * self._indent
@@ -191,18 +190,18 @@ class _DebugFileWriter(LoggerApi):
         self._indent += 1
 
     def _end(self, type, name, timestamp, elapsed):
-        self = _DebugFileWriter.get_thread_local_instance(self)
+        self = _get_thread_local_instance_DebugFileWriter(self)
         self._indent -= 1
         indent = '-' * self._indent
         elapsed = elapsed.total_seconds()
         self._write(f'{timestamp} - INFO - +{indent} END {type}: {name} ({elapsed} s)')
 
     def _separator(self, type_):
-        self = _DebugFileWriter.get_thread_local_instance(self)
+        self = _get_thread_local_instance_DebugFileWriter(self)
         self._write(self._separators[type_] * 78, separator=True)
 
     def _write(self, text, separator=False):
-        self = _DebugFileWriter.get_thread_local_instance(self)
+        self = _get_thread_local_instance_DebugFileWriter(self)
         if separator and self._separator_written_last:
             return
         text = "".join(f"{threading.current_thread().name}\t{item}\n" for item in text.rstrip().split('\n'))
