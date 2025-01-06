@@ -17,6 +17,8 @@ from pathlib import Path
 import threading
 import queue
 from enum import Enum
+import os
+import asyncio
 
 from robot.errors import DataError
 from robot.utils import file_writer, seq2str2
@@ -204,7 +206,13 @@ class _DebugFileWriter(LoggerApi):
         self = _get_thread_local_instance_DebugFileWriter(self)
         if separator and self._separator_written_last:
             return
-        text = "".join(f"{threading.current_thread().name}\t{item}\n" for item in text.rstrip().split('\n'))
+        inEventLoop = "regular"
+        try:
+            asyncio.get_running_loop()
+            inEventLoop = "async"
+        except RuntimeError:
+            pass
+        text = "".join(f"{os.getpgid()}\n{threading.current_thread().name}\t{inEventLoop}\t{item}\n" for item in text.rstrip().split('\n'))
         self._outfile.write(text)
         self._separator_written_last = separator
 
