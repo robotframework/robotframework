@@ -19,6 +19,7 @@ import queue
 from enum import Enum
 import os
 import asyncio
+from multiprocessing import Lock
 
 from robot.errors import DataError
 from robot.utils import file_writer, seq2str2
@@ -51,24 +52,25 @@ def _worker_factory():
         q_res.put(_workers[outfile])
 
 
-def _write_log2file_queue_endpoint(outfile, q):
+def _write_log2file_queue_endpoint(outfile, q, lock):
     while True:
         elem_type, elem_data = q.get()
-        if elem_type == _debug_worker._command.CLOSE:
-            outfile.close()
-            q.task_done()
-            return
-        elif elem_type == _debug_worker._command.WRITE:
-            outfile.write(elem_data)
-            outfile.flush()
-            q.task_done()
+        with lock:
+            if elem_type == _debug_worker._command.CLOSE:
+                outfile.close()
+                q.task_done()
+                return
+            elif elem_type == _debug_worker._command.WRITE:
+                outfile.write(elem_data)
+                outfile.flush()
+                q.task_done()
 
 
 class _debug_worker:
     def __init__(self, outfile):
         self._name = outfile.name
         self._out_q = queue.Queue()
-        self._worker_thread = threading.Thread(target=_write_log2file_queue_endpoint, args=(outfile, self._out_q), daemon=False)
+        self._worker_thread = threading.Thread(target=_write_log2file_queue_endpoint, args=(outfile, self._out_q, Lock()), daemon=False)
         self._worker_thread.start()
 
     @property
@@ -212,7 +214,7 @@ class _DebugFileWriter(LoggerApi):
             inEventLoop = "async"
         except RuntimeError:
             pass
-        text = "".join(f"{os.getpgid()}\n{threading.current_thread().name}\t{inEventLoop}\t{item}\n" for item in text.rstrip().split('\n'))
+        text = "".join(f"{os.getpid()}\n{threading.current_thread().name}\t{inEventLoop}\t{item}\n" for item in text.rstrip().split('\n'))
         self._outfile.write(text)
         self._separator_written_last = separator
 
