@@ -15,6 +15,7 @@
 
 from contextlib import contextmanager
 import os
+import queue
 from threading import current_thread
 
 from robot.errors import DataError
@@ -24,6 +25,7 @@ from .filelogger import FileLogger
 from .loggerhelper import AbstractLogger
 from .stdoutlogsplitter import StdoutLogSplitter
 
+import multiprocessing
 
 def start_body_item(method):
     def wrapper(self, *args):
@@ -52,6 +54,9 @@ class Logger(AbstractLogger):
 
     NOTE: This API is likely to change in future versions.
     """
+
+    _initial_pid = os.getpid()
+    _message_queue = multiprocessing.Queue()
 
     def __init__(self, register_console_logger=True):
         self._console_logger = None
@@ -214,7 +219,10 @@ class Logger(AbstractLogger):
         if self._log_message_parents and self._output_file.is_logged(msg):
             self._log_message_parents[-1].body.append(msg)
         if msg.level in ('WARN', 'ERROR'):
-            self.message(msg)
+            if Logger._initial_pid != os.getpid() or list(self) == []:
+                Logger._message_queue.put(msg)
+            else:
+                self.message(msg)
 
     def log_output(self, output):
         for msg in StdoutLogSplitter(output):
@@ -233,6 +241,12 @@ class Logger(AbstractLogger):
     def end_suite(self, data, result):
         for logger in self.end_loggers:
             logger.end_suite(data, result)
+        if os.getpid() == Logger._initial_pid:
+            while True:
+                try:
+                    self.message(Logger._message_queue.get(block=False))
+                except queue.Empty:
+                    break
 
     def start_test(self, data, result):
         self._log_message_parents.append(result)
