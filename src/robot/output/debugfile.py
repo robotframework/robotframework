@@ -214,7 +214,7 @@ class _DebugFileWriter(LoggerApi):
             inEventLoop = "async"
         except RuntimeError:
             pass
-        text = "".join(f"{os.getpid()}\n{threading.current_thread().name}\t{inEventLoop}\t{item}\n" for item in text.rstrip().split('\n'))
+        text = "".join(f"{os.getpid()}\t{threading.current_thread().name}\t{inEventLoop}\t{item}\n" for item in text.rstrip().split('\n'))
         self._outfile.write(text)
         self._separator_written_last = separator
 

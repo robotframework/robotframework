@@ -38,6 +38,10 @@ def end_body_item(method):
         self._log_message_parents.pop()
     return wrapper
 
+def _filter_by_thread(loggers):
+    for logger in loggers:
+        if (current_thread().name in ['MainThread', 'RobotFrameworkTimeoutThread']) or hasattr(logger, "multithread_capable") and logger.multithread_capable:
+            yield logger
 
 class Logger(AbstractLogger):
     """A global logger proxy to delegating messages to registered loggers.
@@ -78,17 +82,17 @@ class Logger(AbstractLogger):
         loggers = (self._other_loggers
                    + [self._console_logger, self._syslog, self._output_file]
                    + self._listeners)
-        return [logger for logger in loggers if logger]
+        return _filter_by_thread([logger for logger in loggers if logger])
 
     @property
     def end_loggers(self):
         loggers = (self._listeners
                    + [self._console_logger, self._syslog, self._output_file]
                    + self._other_loggers)
-        return [logger for logger in loggers if logger]
+        return _filter_by_thread([logger for logger in loggers if logger])
 
     def __iter__(self):
-        return iter(self.end_loggers)
+        return _filter_by_thread(iter(self.end_loggers))
 
     def __enter__(self):
         if not self._enabled:
@@ -206,8 +210,7 @@ class Logger(AbstractLogger):
             self._log_message_cache.append(msg)
             return
         for logger in self:
-            if (current_thread().name in ['MainThread', 'RobotFrameworkTimeoutThread']) or hasattr(logger, "multithread_capable") and logger.multithread_capable:
-                logger.log_message(msg)
+            logger.log_message(msg)
         if self._log_message_parents and self._output_file.is_logged(msg):
             self._log_message_parents[-1].body.append(msg)
         if msg.level in ('WARN', 'ERROR'):
