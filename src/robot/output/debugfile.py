@@ -15,11 +15,13 @@
 
 from pathlib import Path
 import threading
+import multiprocessing
 import queue
 from enum import Enum
 import os
 import asyncio
-from multiprocessing import Lock
+import io
+
 
 from robot.errors import DataError
 from robot.utils import file_writer, seq2str2
@@ -40,70 +42,39 @@ def DebugFile(path):
         return None
     else:
         LOGGER.info('Debug file: %s' % path)
+        if isinstance(outfile, io.TextIOWrapper):
+            return _DebugFileWriter("/tmp/x")
         return _DebugFileWriter(outfile)
 
+class _command(Enum):
+    CLOSE = 1
+    WRITE = 2
+    START = 3
 
-def _worker_factory():
-    _workers = {}
+
+def _write_log2file_queue_endpoint(q):
+    targets = {}
+    usage_count = {}
     while True:
-        (outfile, q_res,) = _debug_worker._request_worker_q.get()
-        if outfile not in _workers:
-            _workers[outfile] = _debug_worker(outfile)
-        q_res.put(_workers[outfile])
-
-
-def _write_log2file_queue_endpoint(outfile, q, lock):
-    while True:
-        elem_type, elem_data = q.get()
-        with lock:
-            if elem_type == _debug_worker._command.CLOSE:
-                outfile.close()
-                q.task_done()
-                return
-            elif elem_type == _debug_worker._command.WRITE:
-                outfile.write(elem_data)
-                outfile.flush()
-                q.task_done()
-
-
-class _debug_worker:
-    def __init__(self, outfile):
-        self._name = outfile.name
-        self._out_q = queue.Queue()
-        self._worker_thread = threading.Thread(target=_write_log2file_queue_endpoint, args=(outfile, self._out_q, Lock()), daemon=False)
-        self._worker_thread.start()
-
-    @property
-    def closed(self):
-        if self._worker_thread.is_alive():
-            return False
-        self._out_q.join()
-        return True
-
-    @property
-    def name(self):
-        # safe as name is imutable
-        return self._name
-
-    class _command(Enum):
-        CLOSE = 1
-        WRITE = 2
-
-    def close(self):
-        self._out_q.put((_debug_worker._command.CLOSE, False,))
-
-    def write(self, text):
-        self._out_q.put((_debug_worker._command.WRITE, text,))
-
-    _request_worker_q = queue.Queue()
-    _t = threading.Thread(target=_worker_factory, daemon=True)
-
-
-def _get_worker(outfile):
-    q = queue.Queue()
-    _debug_worker._request_worker_q.put((outfile, q,))
-    return q.get()
-
+        oPath, elem_type, elem_data = q.get()
+        if oPath not in targets:
+            targets[oPath] = io.open(oPath, 'w', encoding='UTF-8', newline=None)
+        
+        if elem_type == _command.START:
+            if oPath not in usage_count:
+                usage_count[oPath] = 0
+            usage_count[oPath] += 1
+        if elem_type == _command.CLOSE:
+            targets[oPath].close()
+            usage_count[oPath] -= 1
+            del targets[oPath]
+        elif elem_type == _command.WRITE:
+            targets[oPath].write(elem_data)
+            targets[oPath].flush()
+        q.task_done()
+        if sum(usage_count.values()) == 0:
+            break
+        
 
 def _get_thread_local_instance_DebugFileWriter(self):
     ct = threading.current_thread()
@@ -116,13 +87,20 @@ class _DebugFileWriter(LoggerApi):
     _separators = {'SUITE': '=', 'TEST': '-', 'KEYWORD': '~'}
     multithread_capable = True
 
+    _q = multiprocessing.JoinableQueue()
+    _p = multiprocessing.Process(target=_write_log2file_queue_endpoint, args=(_q,))
+    _p.daemon = True
+
     def __init__(self, outfile):
         self._indent = 0
         self._kw_level = 0
         self._separator_written_last = False
         self._orig_outfile = outfile
-        self._outfile = _get_worker(outfile)
         self._is_logged = LogLevel('DEBUG').is_logged
+        
+        if not _DebugFileWriter._p.is_alive():
+            _DebugFileWriter._p.start()
+        _DebugFileWriter._q.put((outfile, _command.START, None))
 
     def start_suite(self, data, result):
         self = _get_thread_local_instance_DebugFileWriter(self)
@@ -136,7 +114,7 @@ class _DebugFileWriter(LoggerApi):
         self._end('SUITE', data.full_name, result.end_time, result.elapsed_time)
         self._separator('SUITE')
         if self._indent == 0:
-            LOGGER.debug_file(Path(self._outfile.name))
+            LOGGER.debug_file(Path(self._orig_outfile))
             self.close()
 
     def start_test(self, data, result):
@@ -182,8 +160,8 @@ class _DebugFileWriter(LoggerApi):
 
     def close(self):
         self = _get_thread_local_instance_DebugFileWriter(self)
-        if not self._outfile.closed:
-            self._outfile.close()
+        _DebugFileWriter._q.put((self._orig_outfile, _command.CLOSE, None))
+        _DebugFileWriter._q.join()
 
     def _start(self, type, name, timestamp, extra=''):
         self = _get_thread_local_instance_DebugFileWriter(self)
@@ -215,8 +193,5 @@ class _DebugFileWriter(LoggerApi):
         except RuntimeError:
             pass
         text = "".join(f"{os.getpid()}\t{threading.current_thread().name}\t{inEventLoop}\t{item}\n" for item in text.rstrip().split('\n'))
-        self._outfile.write(text)
+        _DebugFileWriter._q.put((self._orig_outfile, _command.WRITE, text))
         self._separator_written_last = separator
-
-
-_debug_worker._t.start()
