@@ -179,17 +179,20 @@ class _DebugFileWriter(LoggerApi):
         self = _get_thread_local_instance_DebugFileWriter(self)
         self._write(self._separators[type_] * 78, separator=True)
 
-    def _write(self, text, separator=False):
-        self = _get_thread_local_instance_DebugFileWriter(self)
-        if separator and self._separator_written_last:
-            return
+    def _prepare_text(self, text):
         inEventLoop = "regular"
         try:
             asyncio.get_running_loop()
             inEventLoop = "async"
         except RuntimeError:
             pass
-        text = "".join(f"{os.getpid()}\t{threading.current_thread().name}\t{inEventLoop}\t{item}\n" for item in text.rstrip().split('\n'))
+        return "".join(f"{os.getpid()}\t{threading.current_thread().name}\t{inEventLoop}\t{item}\n" for item in text.rstrip().split('\n'))
+    
+    def _write(self, text, separator=False):
+        self = _get_thread_local_instance_DebugFileWriter(self)
+        if separator and self._separator_written_last:
+            return
+        text = _prepare_text(text)
         self._outfile.write(text.rstrip() + '\n')
         self._outfile.flush()
         self._separator_written_last = separator
@@ -220,15 +223,7 @@ class _DebugFileWriterForFile(_DebugFileWriter):
 
     def _write(self, text, separator=False):
         self = _get_thread_local_instance_DebugFileWriter(self)
-        if separator and self._separator_written_last:
-            return
-        inEventLoop = "regular"
-        try:
-            asyncio.get_running_loop()
-            inEventLoop = "async"
-        except RuntimeError:
-            pass
-        text = "".join(f"{os.getpid()}\t{threading.current_thread().name}\t{inEventLoop}\t{item}\n" for item in text.rstrip().split('\n'))
+        text = _prepare_text(text)
         _DebugFileWriter._q.put((self._orig_outfile, _command.WRITE, text))
         self._separator_written_last = separator
 
