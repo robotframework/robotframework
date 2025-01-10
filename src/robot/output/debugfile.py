@@ -33,19 +33,14 @@ def DebugFile(path):
     if not path:
         LOGGER.info('No debug file')
         return None
-    try:
-        outfile = file_writer(path, usage='debug')
-    except DataError as err:
-        LOGGER.error(err.message)
-        return None
+
+    LOGGER.info('Debug file: %s' % path)
+    if isinstance(path, Path):
+        return _DebugFileWriterForFile(path)
+    elif isinstance(path, io.TextIOWrapper):
+        return _DebugFileWriter(path)
     else:
-        LOGGER.info('Debug file: %s' % path)
-        if isinstance(outfile, io.TextIOWrapper):
-            return _DebugFileWriter(outfile)
-        elif isinstance(outfile, Path):
-            return _DebugFileWriterForFile(outfile)
-        else:
-            assert False, "unsupported debug output type"
+        assert False, "unsupported debug output type"
 
 
 class _command(Enum):
@@ -84,7 +79,7 @@ def _write_log2file_queue_endpoint(q):
 def _get_thread_local_instance_DebugFileWriter(self):
     ct = threading.current_thread()
     if not hasattr(ct, "_DebugFileWriter"):
-        ct._DebugFileWriter = _DebugFileWriter(self._orig_outfile)
+        ct._DebugFileWriter = type(self)(self._orig_outfile)
     return ct._DebugFileWriter
 
 
@@ -92,9 +87,11 @@ class _DebugFileWriter(LoggerApi):
     _separators = {'SUITE': '=', 'TEST': '-', 'KEYWORD': '~'}
 
     def __init__(self, outfile):
+        self.multithread_capable = False
         self._indent = 0
         self._kw_level = 0
         self._separator_written_last = False
+        self._orig_outfile = outfile
         self._outfile = outfile
         self._is_logged = LogLevel('DEBUG').is_logged
         ct = threading.current_thread()
@@ -186,7 +183,7 @@ class _DebugFileWriter(LoggerApi):
             inEventLoop = "async"
         except RuntimeError:
             pass
-        return "".join(f"{os.getpid()}\t{threading.current_thread().name}\t{inEventLoop}\t{item}\n" for item in text.rstrip().split('\n'))
+        return "".join(f"{multiprocessing.current_process().name}\t{threading.current_thread().name}\t{inEventLoop}\t{item}\n" for item in text.rstrip().split('\n'))
     
     def _write(self, text, separator=False):
         self = _get_thread_local_instance_DebugFileWriter(self)
@@ -199,17 +196,17 @@ class _DebugFileWriter(LoggerApi):
 
 
 class _DebugFileWriterForFile(_DebugFileWriter):
-    multithread_capable = True
-
     _q = multiprocessing.JoinableQueue()
     _p = multiprocessing.Process(target=_write_log2file_queue_endpoint, args=(_q,))
     _p.daemon = True
+    multithread_capable = True
 
     def __init__(self, outfile):
         self._indent = 0
         self._kw_level = 0
         self._separator_written_last = False
         self._orig_outfile = outfile
+        self._outfile = outfile
         self._is_logged = LogLevel('DEBUG').is_logged
         
         _DebugFileWriterForFile._q.put((outfile, _command.START, None))
@@ -218,13 +215,13 @@ class _DebugFileWriterForFile(_DebugFileWriter):
 
     def close(self):
         self = _get_thread_local_instance_DebugFileWriter(self)
-        _DebugFileWriter._q.put((self._orig_outfile, _command.CLOSE, None))
-        _DebugFileWriter._q.join()
+        _DebugFileWriterForFile._q.put((self._orig_outfile, _command.CLOSE, None))
+        _DebugFileWriterForFile._q.join()
 
     def _write(self, text, separator=False):
         self = _get_thread_local_instance_DebugFileWriter(self)
         text = self._prepare_text(text)
-        _DebugFileWriter._q.put((self._orig_outfile, _command.WRITE, text))
+        _DebugFileWriterForFile._q.put((self._orig_outfile, _command.WRITE, text))
         self._separator_written_last = separator
 
 if multiprocessing.current_process().name == 'MainProcess':

@@ -28,8 +28,14 @@ from .stdoutlogsplitter import StdoutLogSplitter
 
 def _filter_by_thread(loggers):
     for logger in loggers:
-        if (current_thread().name in ['MainThread', 'RobotFrameworkTimeoutThread']) or hasattr(logger, "multithread_capable") and logger.multithread_capable:
+        if current_thread().name in ['MainThread', 'RobotFrameworkTimeoutThread']:
             yield logger
+        else:
+            try:
+                if logger.multithread_capable:
+                    yield logger
+            except AttributeError:
+                pass
 
 
 def start_body_item(method):
