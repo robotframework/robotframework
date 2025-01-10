@@ -116,7 +116,7 @@ Test Timeouts When Also Keywords Are Timeouted
     Timeouted Keyword Passes    0.2
 
 Keyword Timeout From Variable
-    [Documentation]    FAIL Keyword timeout 1 millisecond exceeded.
+    [Documentation]    FAIL Keyword timeout 200 millisecond exceeded.
     Keyword timeout from variable
 
 Keyword Timeout From Argument
