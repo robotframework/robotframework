@@ -38,7 +38,7 @@ def DebugFile(path):
     if isinstance(path, Path):
         return _DebugFileWriterForFile(path)
     elif isinstance(path, io.TextIOWrapper):
-        return _DebugFileWriter(path)
+        return _DebugFileWriterForStream(path)
     else:
         assert False, "unsupported debug output type"
 
@@ -87,12 +87,10 @@ class _DebugFileWriter(LoggerApi):
     _separators = {'SUITE': '=', 'TEST': '-', 'KEYWORD': '~'}
 
     def __init__(self, outfile):
-        self.multithread_capable = False
         self._indent = 0
         self._kw_level = 0
         self._separator_written_last = False
         self._orig_outfile = outfile
-        self._outfile = outfile
         self._is_logged = LogLevel('DEBUG').is_logged
         ct = threading.current_thread()
         ct._DebugFileWriter = self
@@ -152,11 +150,6 @@ class _DebugFileWriter(LoggerApi):
         if self._is_logged(msg):
             self._write(f'{msg.timestamp} - {msg.level} - {msg.message}')
 
-    def close(self):
-        self = _get_thread_local_instance_DebugFileWriter(self)
-        if not self._outfile.closed:
-            self._outfile.close()
-
     def _start(self, type, name, timestamp, extra=''):
         self = _get_thread_local_instance_DebugFileWriter(self)
         if extra:
@@ -184,7 +177,23 @@ class _DebugFileWriter(LoggerApi):
         except RuntimeError:
             pass
         return "".join(f"{multiprocessing.current_process().name}\t{threading.current_thread().name}\t{inEventLoop}\t{item}\n" for item in text.rstrip().split('\n'))
-    
+
+
+class _DebugFileWriterForStream(_DebugFileWriter):
+    _separators = {'SUITE': '=', 'TEST': '-', 'KEYWORD': '~'}
+    multithread_capable = False
+
+    def __init__(self, outfile):
+        super().__init__(outfile)
+        self._outfile = outfile
+        ct = threading.current_thread()
+        ct._DebugFileWriter = self
+
+    def close(self):
+        self = _get_thread_local_instance_DebugFileWriter(self)
+        if not self._outfile.closed:
+            self._outfile.close()
+
     def _write(self, text, separator=False):
         self = _get_thread_local_instance_DebugFileWriter(self)
         if separator and self._separator_written_last:
