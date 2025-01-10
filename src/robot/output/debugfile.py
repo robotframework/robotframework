@@ -232,5 +232,5 @@ class _DebugFileWriterForFile(_DebugFileWriter):
         _DebugFileWriter._q.put((self._orig_outfile, _command.WRITE, text))
         self._separator_written_last = separator
 
-if __name__ == '__main__':
+if multiprocessing.current_process().name == 'MainProcess':
     _DebugFileWriterForFile._p.start()
