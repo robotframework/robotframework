@@ -321,8 +321,8 @@ Run Keyword With Timeout
     Run Keyword If    True    Sleep    3
 
 Keyword timeout from variable
-    [Timeout]    ${0.001}
-    Sleep    0.1
+    [Timeout]    ${0.2}
+    Sleep    3.0
 
 Keyword timeout from argument
     [Arguments]   ${timeout}
