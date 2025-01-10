@@ -21,7 +21,7 @@ from enum import Enum
 import os
 import asyncio
 import io
-
+import tempfile
 
 from robot.errors import DataError
 from robot.utils import file_writer, seq2str2
@@ -33,8 +33,7 @@ from .loglevel import LogLevel
 
 def DebugFile(path):
     if not path:
-        LOGGER.info('No debug file')
-        return None
+        path = tempfile.mktemp(prefix='debug-', suffix='.log')
     try:
         outfile = file_writer(path, usage='debug')
     except DataError as err:
@@ -42,9 +41,7 @@ def DebugFile(path):
         return None
     else:
         LOGGER.info('Debug file: %s' % path)
-        if isinstance(outfile, io.TextIOWrapper):
-            return _DebugFileWriter("/tmp/x")
-        return _DebugFileWriter(outfile)
+        return _DebugFileWriter(path)
 
 class _command(Enum):
     CLOSE = 1
@@ -57,17 +54,21 @@ def _write_log2file_queue_endpoint(q):
     usage_count = {}
     while True:
         oPath, elem_type, elem_data = q.get()
-        if oPath not in targets:
-            targets[oPath] = io.open(oPath, 'w', encoding='UTF-8', newline=None)
         
         if elem_type == _command.START:
             if oPath not in usage_count:
                 usage_count[oPath] = 0
             usage_count[oPath] += 1
-        if elem_type == _command.CLOSE:
-            targets[oPath].close()
-            usage_count[oPath] -= 1
-            del targets[oPath]
+            if oPath not in targets:
+                targets[oPath] = io.open(oPath, 'w', encoding='UTF-8', newline=None)
+
+        elif elem_type == _command.CLOSE:
+            try:
+                usage_count[oPath] -= 1
+                if 0 == usage_count[oPath]:
+                    targets[oPath].close()
+            except Exception as e:
+                pass
         elif elem_type == _command.WRITE:
             targets[oPath].write(elem_data)
             targets[oPath].flush()
@@ -195,3 +196,8 @@ class _DebugFileWriter(LoggerApi):
         text = "".join(f"{os.getpid()}\t{threading.current_thread().name}\t{inEventLoop}\t{item}\n" for item in text.rstrip().split('\n'))
         _DebugFileWriter._q.put((self._orig_outfile, _command.WRITE, text))
         self._separator_written_last = separator
+    
+    @property
+    def _outfile(self):
+        with open(self._orig_outfile, 'r') as f:
+            return io.StringIO(f.read())
