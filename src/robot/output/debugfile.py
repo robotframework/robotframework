@@ -192,7 +192,7 @@ class _DebugFileWriter(LoggerApi):
         self = _get_thread_local_instance_DebugFileWriter(self)
         if separator and self._separator_written_last:
             return
-        text = _prepare_text(text)
+        text = self._prepare_text(text)
         self._outfile.write(text.rstrip() + '\n')
         self._outfile.flush()
         self._separator_written_last = separator
@@ -223,7 +223,7 @@ class _DebugFileWriterForFile(_DebugFileWriter):
 
     def _write(self, text, separator=False):
         self = _get_thread_local_instance_DebugFileWriter(self)
-        text = _prepare_text(text)
+        text = self._prepare_text(text)
         _DebugFileWriter._q.put((self._orig_outfile, _command.WRITE, text))
         self._separator_written_last = separator
 
