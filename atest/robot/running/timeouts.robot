@@ -63,7 +63,7 @@ Test Timeouts When Also Keywords Are Timeouted
 
 Keyword Timeout From Variable
     ${tc} =    Check Test Case    ${TEST NAME}
-    Should Be Equal    ${tc[0].timeout}    1 millisecond
+    Should Be Equal    ${tc[0].timeout}    200 milliseconds
 
 Keyword Timeout From Argument
     ${tc} =    Check Test Case    ${TEST NAME}
