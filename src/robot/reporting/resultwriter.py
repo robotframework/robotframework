@@ -115,10 +115,11 @@ class Results:
                                            *self._sources)
             if self._settings.rpa is None:
                 self._settings.rpa = self._result.rpa
-            modifier = ModelModifier(self._settings.pre_rebot_modifiers,
-                                     self._settings.process_empty_suite,
-                                     LOGGER)
-            self._result.suite.visit(modifier)
+            if self._settings.pre_rebot_modifiers:
+                modifier = ModelModifier(self._settings.pre_rebot_modifiers,
+                                        self._settings.process_empty_suite,
+                                        LOGGER)
+                self._result.suite.visit(modifier)
             self._result.configure(self._settings.status_rc,
                                    self._settings.suite_config,
                                    self._settings.statistics_config)
