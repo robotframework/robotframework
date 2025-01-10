@@ -20,6 +20,10 @@ Non-Existing Input
 Existing And Non-Existing Input
     Reading XML source '.*nönéx.xml' failed: .*    source=${INPUTFILE} nönéx.xml nonex2.xml
 
+No tests in output
+    [Setup]    Create File    %{TEMPDIR}/no_tests.xml    <robot><suite name="No Tests!"/></robot>
+    Suite 'No Tests!' contains no tests.    source=%{TEMPDIR}/no_tests.xml
+
 Non-XML Input
     [Setup]    Create File    %{TEMPDIR}/invalid.robot    Hello, world
     (\\[Fatal Error\\] .*: Content is not allowed in prolog.\\n)?Reading XML source '.*invalid.robot' failed: .*
@@ -63,6 +67,6 @@ Invalid --RemoveKeywords
 Rebot Should Fail
     [Arguments]    ${error}    ${options}=    ${source}=${INPUT}
     ${result} =    Run Rebot    ${options}    ${source}    default options=    output=None
-    Should Be Equal As Integers   ${result.rc}    252
+    Should Be Equal    ${result.rc}    252    type=int
     Should Be Empty    ${result.stdout}
     Should Match Regexp    ${result.stderr}    ^\\[ .*ERROR.* \\] ${error}${USAGETIP}$
