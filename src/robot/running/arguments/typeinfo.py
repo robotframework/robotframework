@@ -30,7 +30,7 @@ else:
 
 from robot.conf import Languages, LanguagesLike
 from robot.errors import DataError
-from robot.utils import (has_args, is_union, NOT_SET, plural_or_not as s, setter,
+from robot.utils import (is_union, NOT_SET, plural_or_not as s, setter,
                          SetterAwareType, type_name, type_repr, typeddict_types)
 
 from ..context import EXECUTION_CONTEXTS
@@ -191,7 +191,7 @@ class TypeInfo(metaclass=SetterAwareType):
             if hint.__origin__ is Literal:
                 nested = [cls(repr(a) if not isinstance(a, Enum) else a.name, a)
                           for a in hint.__args__]
-            elif has_args(hint):
+            elif hasattr(hint, '__args__'):
                 nested = [cls.from_type_hint(a) for a in hint.__args__]
             else:
                 nested = None
