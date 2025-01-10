@@ -42,8 +42,7 @@ def write(msg: Any, level: str, html: bool = False):
             console(msg)
         else:
             raise RuntimeError(f"Invalid log level '{level}'.")
-    if current_thread().name in LOGGING_THREADS:
-        LOGGER.log_message(Message(msg, level, html))
+    LOGGER.log_message(Message(msg, level, html))
 
 
 def trace(msg, html=False):

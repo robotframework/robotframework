@@ -23,6 +23,6 @@ def run_logging_tests(output):
 
 
 output = (sys.argv + ['output.xml'])[1]
-t = Thread(target=lambda: run_logging_tests(output))
+t = Thread(target=lambda: run_logging_tests(output), name="MainThread")
 t.start()
 t.join()

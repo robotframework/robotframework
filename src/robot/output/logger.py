@@ -15,6 +15,8 @@
 
 from contextlib import contextmanager
 import os
+import queue
+from threading import current_thread
 
 from robot.errors import DataError
 
@@ -23,6 +25,7 @@ from .filelogger import FileLogger
 from .loggerhelper import AbstractLogger
 from .stdoutlogsplitter import StdoutLogSplitter
 
+import multiprocessing
 
 def start_body_item(method):
     def wrapper(self, *args):
@@ -37,6 +40,10 @@ def end_body_item(method):
         self._log_message_parents.pop()
     return wrapper
 
+def _filter_by_thread(loggers):
+    for logger in loggers:
+        if (current_thread().name in ['MainThread', 'RobotFrameworkTimeoutThread']) or hasattr(logger, "multithread_capable") and logger.multithread_capable:
+            yield logger
 
 class Logger(AbstractLogger):
     """A global logger proxy to delegating messages to registered loggers.
@@ -47,6 +54,9 @@ class Logger(AbstractLogger):
 
     NOTE: This API is likely to change in future versions.
     """
+
+    _initial_pid = os.getpid()
+    _message_queue = multiprocessing.Queue()
 
     def __init__(self, register_console_logger=True):
         self._console_logger = None
@@ -77,17 +87,17 @@ class Logger(AbstractLogger):
         loggers = (self._other_loggers
                    + [self._console_logger, self._syslog, self._output_file]
                    + self._listeners)
-        return [logger for logger in loggers if logger]
+        return _filter_by_thread([logger for logger in loggers if logger])
 
     @property
     def end_loggers(self):
         loggers = (self._listeners
                    + [self._console_logger, self._syslog, self._output_file]
                    + self._other_loggers)
-        return [logger for logger in loggers if logger]
+        return _filter_by_thread([logger for logger in loggers if logger])
 
     def __iter__(self):
-        return iter(self.end_loggers)
+        return _filter_by_thread(iter(self.end_loggers))
 
     def __enter__(self):
         if not self._enabled:
@@ -209,7 +219,10 @@ class Logger(AbstractLogger):
         if self._log_message_parents and self._output_file.is_logged(msg):
             self._log_message_parents[-1].body.append(msg)
         if msg.level in ('WARN', 'ERROR'):
-            self.message(msg)
+            if Logger._initial_pid != os.getpid() or list(self) == []:
+                Logger._message_queue.put(msg)
+            else:
+                self.message(msg)
 
     def log_output(self, output):
         for msg in StdoutLogSplitter(output):
@@ -228,6 +241,12 @@ class Logger(AbstractLogger):
     def end_suite(self, data, result):
         for logger in self.end_loggers:
             logger.end_suite(data, result)
+        if os.getpid() == Logger._initial_pid:
+            while True:
+                try:
+                    self.message(Logger._message_queue.get(block=False))
+                except queue.Empty:
+                    break
 
     def start_test(self, data, result):
         self._log_message_parents.append(result)
