@@ -25,12 +25,15 @@ from .filelogger import FileLogger
 from .loggerhelper import AbstractLogger
 from .stdoutlogsplitter import StdoutLogSplitter
 
+# The constant LOGGING_THREADS is used by BackgroundLogger.
+# https://github.com/robotframework/robotbackgroundlogger
+LOGGING_THREADS = ['MainThread', 'RobotFrameworkTimeoutThread']
 
 def _filter_by_thread(loggers):
-    for logger in loggers:
-        if current_thread().name in ['MainThread', 'RobotFrameworkTimeoutThread']:
-            yield logger
-        else:
+    if current_thread().name in LOGGING_THREADS:
+        yield from loggers
+    else:
+        for logger in loggers:
             try:
                 if logger.multithread_capable:
                     yield logger

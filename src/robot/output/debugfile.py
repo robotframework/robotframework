@@ -46,33 +46,30 @@ def DebugFile(path):
             assert False, "unsupported debug output type"
     except Exception as e:
         LOGGER.error(f"Opening debug file '{str(path)}' failed: {get_error_message()}")
-        return None 
-
+        return None
 
 class _command(Enum):
     CLOSE = 1
     WRITE = 2
     START = 3
 
-
 def _write_log2file_queue_endpoint(q2log, qStatus):
     targets = {}
     usage_count = {}
     while True:
         oPath, elem_type, elem_data = q2log.get()
-        
+
         if elem_type == _command.START:
             if oPath not in usage_count:
                 usage_count[oPath] = 0
             usage_count[oPath] += 1
+            payload = None
             if oPath not in targets:
                 try:
                     targets[oPath] = io.open(oPath, 'w', encoding='UTF-8', newline=None)
-                    qStatus.put((oPath, "OK",))
                 except Exception as e:
-                    qStatus.put((oPath, f"Opening '{str(oPath)}' failed: {get_error_message()}",))
-            else:
-                qStatus.put((oPath, "OK",))
+                    payload =  f"Opening '{str(oPath)}' failed: {get_error_message()}"
+            qStatus.put((oPath, payload))
         elif elem_type == _command.CLOSE:
             try:
                 usage_count[oPath] -= 1
@@ -95,12 +92,13 @@ def _get_thread_local_instance_DebugFileWriter(self):
 class _DebugFileWriter(LoggerApi):
     _separators = {'SUITE': '=', 'TEST': '-', 'KEYWORD': '~'}
 
-    def __init__(self, outfile):
+    def __init__(self, outfile, name):
         self._indent = 0
         self._kw_level = 0
         self._separator_written_last = False
         self._orig_outfile = outfile
         self._is_logged = LogLevel('DEBUG').is_logged
+        self.name = name
         ct = threading.current_thread()
         ct._DebugFileWriter = self
 
@@ -115,7 +113,7 @@ class _DebugFileWriter(LoggerApi):
         self._end('SUITE', data.full_name, result.end_time, result.elapsed_time)
         self._separator('SUITE')
         if self._indent == 0:
-            LOGGER.debug_file(Path(self._outfile.name))
+            LOGGER.debug_file(Path(self.name))
             self.close()
 
     def start_test(self, data, result):
@@ -193,7 +191,7 @@ class _DebugFileWriterForStream(_DebugFileWriter):
     multithread_capable = False
 
     def __init__(self, outfile):
-        super().__init__(outfile)
+        super().__init__(outfile, outfile.name)
         self._outfile = outfile
         ct = threading.current_thread()
         ct._DebugFileWriter = self
@@ -221,21 +219,17 @@ class _DebugFileWriterForFile(_DebugFileWriter):
     multithread_capable = True
 
     def __init__(self, outfile):
-        self._indent = 0
-        self._kw_level = 0
-        self._separator_written_last = False
-        self._orig_outfile = outfile
-        self._outfile = outfile
-        self._is_logged = LogLevel('DEBUG').is_logged
-        
+        super().__init__(outfile, outfile)
+
+
         _DebugFileWriterForFile._q.put((outfile, _command.START, None,))
         ct = threading.current_thread()
         ct._DebugFileWriter = self
         while True:
-            (lPath, status) = _DebugFileWriterForFile._qStatus.get(timeout=1)
+            (lPath, payload,) = _DebugFileWriterForFile._qStatus.get(timeout=1)
             if str(lPath) == str(outfile):
-                if status != "OK":
-                    raise DataError(status)
+                if isinstance(payload, str):
+                    raise DataError(payload)
                 break
             else:
                 _DebugFileWriterForFile._qStatus.put((lPath, status))
