@@ -34,7 +34,6 @@ ${RUNNER DEFAULTS}
 ...               --PYTHONPATH "${CURDIR}${/}..${/}testresources${/}testlibs"
 ...               --PYTHONPATH "${CURDIR}${/}..${/}testresources${/}listeners"
 
-
 *** Keywords ***
 Run Tests
     [Arguments]    ${options}=    ${sources}=    ${default options}=${RUNNER DEFAULTS}    ${output}=${OUTFILE}    ${validate output}=None

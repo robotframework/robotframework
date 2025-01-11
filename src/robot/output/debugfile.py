@@ -20,6 +20,7 @@ import asyncio
 import io
 import os
 from enum import Enum
+import collections
 
 from robot.errors import DataError
 from robot.utils.error import get_error_message
@@ -55,13 +56,11 @@ class _command(Enum):
 
 def _write_log2file_queue_endpoint(q2log, qStatus):
     targets = {}
-    usage_count = {}
+    usage_count = collections.defaultdict(lambda : 0)
     while True:
         oPath, elem_type, elem_data = q2log.get()
 
         if elem_type == _command.START:
-            if oPath not in usage_count:
-                usage_count[oPath] = 0
             usage_count[oPath] += 1
             payload = None
             if oPath not in targets:
