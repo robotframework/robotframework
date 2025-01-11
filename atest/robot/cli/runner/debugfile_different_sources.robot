@@ -8,4 +8,7 @@ ${TEST FILE}        cli${/}runner${/}debugfile_different_sources.robot
 *** test cases ***
 all
     Run Tests         --debugfile=${CLI OUTDIR}${/}debug.log --variable=DEBUGFILE:${CLI OUTDIR}${/}debug.log  ${TEST FILE}  
-    Should Contain Tests    ${SUITE}    log from thread process and async
+    Should Contain Tests    ${SUITE}
+    ...    log from async
+    ...    log from thread
+    ...    log from process
