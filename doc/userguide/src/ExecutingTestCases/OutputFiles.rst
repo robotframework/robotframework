@@ -605,21 +605,15 @@ option described in the previous chapter, e.g. all content except for log messag
 from under the keyword having the tag. One important difference is that in this case, the removed
 content is not written to the output file at all, and thus cannot be accessed at later time.
 
-Some examples
-
 .. sourcecode:: robotframework
 
     *** Keywords ***
-    Flattening affects this keyword and all it's children
+    Example
         [Tags]    robot:flatten
-        Log    something
-        FOR     ${i}     IN RANGE     2
-             Log    The message is preserved but for loop iteration is not
+        Log    Keywords and the loop are removed, but logged messages are preserved.
+        FOR     ${i}     IN RANGE     1    101
+             Log    Iteration ${i}/100.
         END
-
-    *** Settings ***
-    # Flatten content of all uer keywords
-    Keyword Tags    robot:flatten
 
 __ `Reserved tags`_
 __ `Keyword tags`_
