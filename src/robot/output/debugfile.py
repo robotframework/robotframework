@@ -81,6 +81,10 @@ def _write_log2file_queue_endpoint(q2log, qStatus):
             targets[oPath].write(elem_data)
             targets[oPath].flush()
         q2log.task_done()
+        if sum(usage_count.values()) == 0:
+            q2log.close()
+            qStatus.close()
+            break
 
 def _get_thread_local_instance_DebugFileWriter(self):
     ct = threading.current_thread()
@@ -212,9 +216,10 @@ class _DebugFileWriterForStream(_DebugFileWriter):
 
 
 class _DebugFileWriterForFile(_DebugFileWriter):
-    _q = multiprocessing.JoinableQueue()
-    _qStatus = multiprocessing.Queue()
-    _p = multiprocessing.Process(target=_write_log2file_queue_endpoint, args=(_q, _qStatus,))
+    ctx = multiprocessing
+    _q = ctx.JoinableQueue()
+    _qStatus = ctx.Queue()
+    _p = ctx.Process(target=_write_log2file_queue_endpoint, args=(_q, _qStatus,))
     _p.daemon = True
     multithread_capable = True
 
@@ -245,6 +250,8 @@ class _DebugFileWriterForFile(_DebugFileWriter):
         text = self._prepare_text(text)
         _DebugFileWriterForFile._q.put((self._orig_outfile, _command.WRITE, text))
         self._separator_written_last = separator
+        _DebugFileWriterForFile._q.join()
+
 
 if multiprocessing.current_process().name == 'MainProcess':
     _DebugFileWriterForFile._p.start()
