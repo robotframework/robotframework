@@ -1,6 +1,7 @@
 import sys
 from pathlib import Path
 from threading import Thread
+import robot.output.debugfile as debugfile
 
 
 CURDIR = Path(__file__).parent.absolute()
