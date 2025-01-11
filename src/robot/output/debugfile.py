@@ -22,6 +22,7 @@ import os
 from enum import Enum
 
 from robot.errors import DataError
+from robot.utils.error import get_error_message
 from robot.utils import file_writer, seq2str2
 
 from .logger import LOGGER
@@ -49,19 +50,25 @@ class _command(Enum):
     START = 3
 
 
-def _write_log2file_queue_endpoint(q):
+def _write_log2file_queue_endpoint(q2log, qStatus):
     targets = {}
     usage_count = {}
     while True:
-        oPath, elem_type, elem_data = q.get()
+        oPath, elem_type, elem_data = q2log.get()
         
         if elem_type == _command.START:
             if oPath not in usage_count:
                 usage_count[oPath] = 0
             usage_count[oPath] += 1
             if oPath not in targets:
-                targets[oPath] = io.open(oPath, 'w', encoding='UTF-8', newline=None)
-
+                try:
+                    targets[oPath] = io.open(oPath, 'w', encoding='UTF-8', newline=None)
+                except Exception as e:
+                    pass
+                    qStatus.put((oPath, DataError(f"Opening '{str(oPath)}' failed: {get_error_message()}"),))
+                    q2log.task_done()
+                    continue
+            qStatus.put((oPath, "OK",))
         elif elem_type == _command.CLOSE:
             try:
                 usage_count[oPath] -= 1
@@ -72,7 +79,7 @@ def _write_log2file_queue_endpoint(q):
         elif elem_type == _command.WRITE:
             targets[oPath].write(elem_data)
             targets[oPath].flush()
-        q.task_done()
+        q2log.task_done()
         if sum(usage_count.values()) == 0:
             break
 
@@ -206,7 +213,8 @@ class _DebugFileWriterForStream(_DebugFileWriter):
 
 class _DebugFileWriterForFile(_DebugFileWriter):
     _q = multiprocessing.JoinableQueue()
-    _p = multiprocessing.Process(target=_write_log2file_queue_endpoint, args=(_q,))
+    _qStatus = multiprocessing.Queue()
+    _p = multiprocessing.Process(target=_write_log2file_queue_endpoint, args=(_q, _qStatus,))
     _p.daemon = True
     multithread_capable = True
 
@@ -218,9 +226,17 @@ class _DebugFileWriterForFile(_DebugFileWriter):
         self._outfile = outfile
         self._is_logged = LogLevel('DEBUG').is_logged
         
-        _DebugFileWriterForFile._q.put((outfile, _command.START, None))
+        _DebugFileWriterForFile._q.put((outfile, _command.START, None,))
         ct = threading.current_thread()
         ct._DebugFileWriter = self
+        while True:
+            (lPath, status) = _DebugFileWriterForFile._qStatus.get(timeout=5)
+            if str(lPath) == str(outfile):
+                if status != "OK":
+                    raise status
+                break
+            else:
+                _DebugFileWriterForFile._qStatus.put((lPath, status))
 
     def close(self):
         self = _get_thread_local_instance_DebugFileWriter(self)
