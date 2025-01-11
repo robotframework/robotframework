@@ -98,7 +98,7 @@ class _DebugFileWriter(LoggerApi):
         self._separator_written_last = False
         self._orig_outfile = outfile
         self._is_logged = LogLevel('DEBUG').is_logged
-        self.name = name
+        self._name = name
         ct = threading.current_thread()
         ct._DebugFileWriter = self
 
@@ -113,7 +113,7 @@ class _DebugFileWriter(LoggerApi):
         self._end('SUITE', data.full_name, result.end_time, result.elapsed_time)
         self._separator('SUITE')
         if self._indent == 0:
-            LOGGER.debug_file(Path(self.name))
+            LOGGER.debug_file(Path(self._name))
             self.close()
 
     def start_test(self, data, result):
