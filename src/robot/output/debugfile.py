@@ -36,12 +36,17 @@ def DebugFile(path):
         return None
 
     LOGGER.info('Debug file: %s' % path)
-    if isinstance(path, Path):
-        return _DebugFileWriterForFile(path)
-    elif isinstance(path, io.TextIOWrapper):
-        return _DebugFileWriterForStream(path)
-    else:
-        assert False, "unsupported debug output type"
+    try:
+        if isinstance(path, Path):
+            return _DebugFileWriterForFile(path)
+        elif isinstance(path, io.TextIOWrapper):
+            assert False, "unsupported debug output type"
+            return _DebugFileWriterForStream(path)
+        else:
+            assert False, "unsupported debug output type"
+    except Exception as e:
+        LOGGER.error(f"Opening debug file '{str(path)}' failed: {get_error_message()}")
+        return None 
 
 
 class _command(Enum):
@@ -63,12 +68,11 @@ def _write_log2file_queue_endpoint(q2log, qStatus):
             if oPath not in targets:
                 try:
                     targets[oPath] = io.open(oPath, 'w', encoding='UTF-8', newline=None)
+                    qStatus.put((oPath, "OK",))
                 except Exception as e:
-                    pass
-                    qStatus.put((oPath, DataError(f"Opening '{str(oPath)}' failed: {get_error_message()}"),))
-                    q2log.task_done()
-                    continue
-            qStatus.put((oPath, "OK",))
+                    qStatus.put((oPath, f"Opening '{str(oPath)}' failed: {get_error_message()}",))
+            else:
+                qStatus.put((oPath, "OK",))
         elif elem_type == _command.CLOSE:
             try:
                 usage_count[oPath] -= 1
@@ -80,8 +84,6 @@ def _write_log2file_queue_endpoint(q2log, qStatus):
             targets[oPath].write(elem_data)
             targets[oPath].flush()
         q2log.task_done()
-        if sum(usage_count.values()) == 0:
-            break
 
 def _get_thread_local_instance_DebugFileWriter(self):
     ct = threading.current_thread()
@@ -230,13 +232,14 @@ class _DebugFileWriterForFile(_DebugFileWriter):
         ct = threading.current_thread()
         ct._DebugFileWriter = self
         while True:
-            (lPath, status) = _DebugFileWriterForFile._qStatus.get(timeout=5)
+            (lPath, status) = _DebugFileWriterForFile._qStatus.get(timeout=1)
             if str(lPath) == str(outfile):
                 if status != "OK":
-                    raise status
+                    raise DataError(status)
                 break
             else:
                 _DebugFileWriterForFile._qStatus.put((lPath, status))
+            raise Exception("Unexpected status")
 
     def close(self):
         self = _get_thread_local_instance_DebugFileWriter(self)
