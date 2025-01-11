@@ -24,13 +24,15 @@ from typing import Any
 
 from robot.utils import safe_str
 
-from .logger import LOGGER
+# The constant LOGGING_THREADS is used by BackgroundLogger.
+# https://github.com/robotframework/robotbackgroundlogger
+from .logger import LOGGER, LOGGING_THREADS
 from .loggerhelper import Message, write_to_console
 
 
-# This constant is used by BackgroundLogger.
-# https://github.com/robotframework/robotbackgroundlogger
-LOGGING_THREADS = ['MainThread', 'RobotFrameworkTimeoutThread']
+
+
+
 
 
 def write(msg: Any, level: str, html: bool = False):
@@ -42,8 +44,7 @@ def write(msg: Any, level: str, html: bool = False):
             console(msg)
         else:
             raise RuntimeError(f"Invalid log level '{level}'.")
-    if current_thread().name in LOGGING_THREADS:
-        LOGGER.log_message(Message(msg, level, html))
+    LOGGER.log_message(Message(msg, level, html))
 
 
 def trace(msg, html=False):

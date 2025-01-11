@@ -16,12 +16,29 @@
 from contextlib import contextmanager
 import os
 
+from threading import current_thread
+
 from robot.errors import DataError
 
 from .console import ConsoleOutput
 from .filelogger import FileLogger
 from .loggerhelper import AbstractLogger
 from .stdoutlogsplitter import StdoutLogSplitter
+
+# The constant LOGGING_THREADS is used by BackgroundLogger.
+# https://github.com/robotframework/robotbackgroundlogger
+LOGGING_THREADS = ['MainThread', 'RobotFrameworkTimeoutThread']
+
+def _filter_by_thread(loggers):
+    if current_thread().name in LOGGING_THREADS:
+        yield from loggers
+    else:
+        for logger in loggers:
+            try:
+                if logger.multithread_capable:
+                    yield logger
+            except AttributeError:
+                pass
 
 
 def start_body_item(method):
@@ -77,17 +94,17 @@ class Logger(AbstractLogger):
         loggers = (self._other_loggers
                    + [self._console_logger, self._syslog, self._output_file]
                    + self._listeners)
-        return [logger for logger in loggers if logger]
+        return _filter_by_thread([logger for logger in loggers if logger])
 
     @property
     def end_loggers(self):
         loggers = (self._listeners
                    + [self._console_logger, self._syslog, self._output_file]
                    + self._other_loggers)
-        return [logger for logger in loggers if logger]
+        return _filter_by_thread([logger for logger in loggers if logger])
 
     def __iter__(self):
-        return iter(self.end_loggers)
+        return _filter_by_thread(iter(self.end_loggers))
 
     def __enter__(self):
         if not self._enabled:
