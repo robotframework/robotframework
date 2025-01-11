@@ -83,6 +83,16 @@ def _write_log2file_queue_endpoint(q2log, qStatus):
         q2log.task_done()
 
 
+def _get_thread_local_instance_DebugFileWriter(self):
+    ct = threading.current_thread()
+    async_id = self._get_async_id()
+    if not hasattr(ct, "_DebugFileWriter"):
+        ct._DebugFileWriter = dict()
+    if not async_id in ct._DebugFileWriter:
+        ct._DebugFileWriter[async_id] = type(self)(self._orig_outfile)
+    return ct._DebugFileWriter[async_id]
+
+
 class _DebugFileWriter(LoggerApi):
     _separators = {'SUITE': '=', 'TEST': '-', 'KEYWORD': '~'}
 
@@ -93,20 +103,9 @@ class _DebugFileWriter(LoggerApi):
         self._orig_outfile = outfile
         self._is_logged = LogLevel('DEBUG').is_logged
         self._name = name
-        ct = threading.current_thread()
-        ct._DebugFileWriter = {}
-
-    def _get_thread_local_instance_DebugFileWriter(self):
-        ct = threading.current_thread()
-        async_id = self._get_async_id()
-        if not hasattr(ct, "_DebugFileWriter"):
-            ct._DebugFileWriter = dict()
-        if not async_id in ct._DebugFileWriter:
-            ct._DebugFileWriter[async_id] = type(self)(self._orig_outfile)
-        return ct._DebugFileWriter[async_id]
 
     def start_suite(self, data, result):
-        self = self._get_thread_local_instance_DebugFileWriter()
+        self = _get_thread_local_instance_DebugFileWriter(self)
         self._separator('SUITE')
         self._start('SUITE', data.full_name, result.start_time)
         self._separator('SUITE')
@@ -120,48 +119,48 @@ class _DebugFileWriter(LoggerApi):
             self.close()
 
     def start_test(self, data, result):
-        self = self._get_thread_local_instance_DebugFileWriter()
+        self = _get_thread_local_instance_DebugFileWriter(self)
         self._separator('TEST')
         self._start('TEST', result.name, result.start_time)
         self._separator('TEST')
 
     def end_test(self, data, result):
-        self = self._get_thread_local_instance_DebugFileWriter()
+        self = _get_thread_local_instance_DebugFileWriter(self)
         self._separator('TEST')
         self._end('TEST', result.name, result.end_time, result.elapsed_time)
         self._separator('TEST')
 
     def start_keyword(self, data, result):
-        self = self._get_thread_local_instance_DebugFileWriter()
+        self = _get_thread_local_instance_DebugFileWriter(self)
         if self._kw_level == 0:
             self._separator('KEYWORD')
         self._start(result.type, result.full_name, result.start_time, seq2str2(result.args))
         self._kw_level += 1
 
     def end_keyword(self, data, result):
-        self = self._get_thread_local_instance_DebugFileWriter()
+        self = _get_thread_local_instance_DebugFileWriter(self)
         self._end(result.type, result.full_name, result.end_time, result.elapsed_time)
         self._kw_level -= 1
 
     def start_body_item(self, data, result):
-        self = self._get_thread_local_instance_DebugFileWriter()
+        self = _get_thread_local_instance_DebugFileWriter(self)
         if self._kw_level == 0:
             self._separator('KEYWORD')
         self._start(result.type, result._log_name, result.start_time)
         self._kw_level += 1
 
     def end_body_item(self, data, result):
-        self = self._get_thread_local_instance_DebugFileWriter()
+        self = _get_thread_local_instance_DebugFileWriter(self)
         self._end(result.type, result._log_name, result.end_time, result.elapsed_time)
         self._kw_level -= 1
 
     def log_message(self, msg):
-        self = self._get_thread_local_instance_DebugFileWriter()
+        self = _get_thread_local_instance_DebugFileWriter(self)
         if self._is_logged(msg):
             self._write(f'{msg.timestamp} - {msg.level} - {msg.message}')
 
     def _start(self, type, name, timestamp, extra=''):
-        self = self._get_thread_local_instance_DebugFileWriter()
+        self = _get_thread_local_instance_DebugFileWriter(self)
         if extra:
             extra = f' {extra}'
         indent = '-' * self._indent
@@ -169,22 +168,22 @@ class _DebugFileWriter(LoggerApi):
         self._indent += 1
 
     def _end(self, type, name, timestamp, elapsed):
-        self = self._get_thread_local_instance_DebugFileWriter()
+        self = _get_thread_local_instance_DebugFileWriter(self)
         self._indent -= 1
         indent = '-' * self._indent
         elapsed = elapsed.total_seconds()
         self._write(f'{timestamp} - INFO - +{indent} END {type}: {name} ({elapsed} s)')
 
     def _separator(self, type_):
-        self = self._get_thread_local_instance_DebugFileWriter()
+        self = _get_thread_local_instance_DebugFileWriter(self)
         self._write(self._separators[type_] * 78, separator=True)
-
+    
     def _get_async_id(self):
-        try:
+         try:
             loop_id = id(asyncio.get_running_loop())
             loop_id_bytes = loop_id.to_bytes((loop_id.bit_length() + 7) // 8, byteorder="big")
             return f"""async_{base64.b64encode(loop_id_bytes).decode("utf-8")}"""
-        except RuntimeError:
+         except RuntimeError:
             return "std_thread"
 
     def _prepare_text(self, text):
@@ -200,15 +199,15 @@ class _DebugFileWriterForStream(_DebugFileWriter):
         super().__init__(outfile, outfile.name)
         self._outfile = outfile
         ct = threading.current_thread()
-        ct._DebugFileWriter[self._get_async_id()] = self
+        ct._DebugFileWriter = {self._get_async_id(): self}
 
     def close(self):
-        self = self._get_thread_local_instance_DebugFileWriter()
+        self = _get_thread_local_instance_DebugFileWriter(self)
         if not self._outfile.closed:
             self._outfile.close()
 
     def _write(self, text, separator=False):
-        self = self._get_thread_local_instance_DebugFileWriter()
+        self = _get_thread_local_instance_DebugFileWriter(self)
         if separator and self._separator_written_last:
             return
         text = self._prepare_text(text)
@@ -230,6 +229,7 @@ class _DebugFileWriterForFile(_DebugFileWriter):
         super().__init__(outfile, outfile)
         _DebugFileWriterForFile._q.put((outfile, _command.START, None,), timeout=None)
         ct = threading.current_thread()
+        ct._DebugFileWriter = {self._get_async_id(): self}
         while True:
             (lPath, payload,) = _DebugFileWriterForFile._qStatus.get(timeout=None)
             if str(lPath) == str(outfile):
@@ -241,12 +241,12 @@ class _DebugFileWriterForFile(_DebugFileWriter):
             raise Exception("Unexpected status")
 
     def close(self):
-        self = self._get_thread_local_instance_DebugFileWriter()
+        self = _get_thread_local_instance_DebugFileWriter(self)
         _DebugFileWriterForFile._q.put((self._orig_outfile, _command.CLOSE, None,), timeout=None)
         _DebugFileWriterForFile._q.join()
 
     def _write(self, text, separator=False):
-        self = self._get_thread_local_instance_DebugFileWriter()
+        self = _get_thread_local_instance_DebugFileWriter(self)
         text = self._prepare_text(text)
         _DebugFileWriterForFile._q.put((self._orig_outfile, _command.WRITE, text,), timeout=None)
         self._separator_written_last = separator
