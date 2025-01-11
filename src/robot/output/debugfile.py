@@ -14,7 +14,7 @@
 #  limitations under the License.
 
 from pathlib import Path
-import multiprocessing
+import multiprocessing as mp
 import threading
 import asyncio
 import io
@@ -184,7 +184,7 @@ class _DebugFileWriter(LoggerApi):
             inEventLoop = "async"
         except RuntimeError:
             pass
-        return "".join(f"{multiprocessing.current_process().name}\t{threading.current_thread().name}\t{inEventLoop}\t{item}\n" for item in text.rstrip().split('\n'))
+        return "".join(f"{mp.current_process().name}\t{threading.current_thread().name}\t{inEventLoop}\t{item}\n" for item in text.rstrip().split('\n'))
 
 
 class _DebugFileWriterForStream(_DebugFileWriter):
@@ -213,13 +213,13 @@ class _DebugFileWriterForStream(_DebugFileWriter):
 
 
 class _DebugFileWriterForFile(_DebugFileWriter):
-    ctx = multiprocessing
-    _q = ctx.JoinableQueue()
-    _qStatus = ctx.Queue()
-    _p = ctx.Process(target=_write_log2file_queue_endpoint, args=(_q, _qStatus,))
-    _p.daemon = True
+    if mp.current_process().name == 'MainProcess':
+        _q = mp.JoinableQueue()
+        _qStatus = mp.Queue()
+        _p = mp.Process(target=_write_log2file_queue_endpoint, args=(_q, _qStatus,))
+        _p.daemon = True
+        _p.start()
     multithread_capable = True
-    _p.start()
 
     def __init__(self, outfile):
         super().__init__(outfile, outfile)
