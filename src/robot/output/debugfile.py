@@ -38,6 +38,12 @@ def DebugFile(path):
     LOGGER.info('Debug file: %s' % path)
     try:
         if isinstance(path, Path):
+            if not hasattr(_DebugFileWriterForFile, "_q"):
+                _DebugFileWriterForFile._q = multiprocessing.JoinableQueue()
+                _DebugFileWriterForFile._qStatus = multiprocessing.Queue()
+                _DebugFileWriterForFile._p = multiprocessing.Process(target=_write_log2file_queue_endpoint, args=(_DebugFileWriterForFile._q, _DebugFileWriterForFile._qStatus,))
+                _DebugFileWriterForFile._p.daemon = True
+                _DebugFileWriterForFile._p.start()
             return _DebugFileWriterForFile(path)
         elif isinstance(path, io.TextIOWrapper):
             assert False, "unsupported debug output type"
@@ -212,10 +218,7 @@ class _DebugFileWriterForStream(_DebugFileWriter):
 
 
 class _DebugFileWriterForFile(_DebugFileWriter):
-    _q = multiprocessing.JoinableQueue()
-    _qStatus = multiprocessing.Queue()
-    _p = multiprocessing.Process(target=_write_log2file_queue_endpoint, args=(_q, _qStatus,))
-    _p.daemon = True
+    
     multithread_capable = True
 
     def __init__(self, outfile):
@@ -245,6 +248,5 @@ class _DebugFileWriterForFile(_DebugFileWriter):
         text = self._prepare_text(text)
         _DebugFileWriterForFile._q.put((self._orig_outfile, _command.WRITE, text))
         self._separator_written_last = separator
+        _DebugFileWriterForFile._q.join()
 
-if multiprocessing.current_process().name == 'MainProcess':
-    _DebugFileWriterForFile._p.start()
