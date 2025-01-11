@@ -38,9 +38,9 @@ def DebugFile(path):
     LOGGER.info('Debug file: %s' % path)
     try:
         if isinstance(path, Path):
+            #return _DebugFileWriterForStream(io.open(path, "r"))
             return _DebugFileWriterForFile(path)
         elif isinstance(path, io.TextIOWrapper):
-            assert False, "unsupported debug output type"
             return _DebugFileWriterForStream(path)
         else:
             assert False, "unsupported debug output type"
@@ -81,10 +81,7 @@ def _write_log2file_queue_endpoint(q2log, qStatus):
             targets[oPath].write(elem_data)
             targets[oPath].flush()
         q2log.task_done()
-        if sum(usage_count.values()) == 0:
-            q2log.close()
-            qStatus.close()
-            break
+
 
 def _get_thread_local_instance_DebugFileWriter(self):
     ct = threading.current_thread()
@@ -222,16 +219,15 @@ class _DebugFileWriterForFile(_DebugFileWriter):
     _p = ctx.Process(target=_write_log2file_queue_endpoint, args=(_q, _qStatus,))
     _p.daemon = True
     multithread_capable = True
+    _p.start()
 
     def __init__(self, outfile):
         super().__init__(outfile, outfile)
-
-
-        _DebugFileWriterForFile._q.put((outfile, _command.START, None,))
+        _DebugFileWriterForFile._q.put((outfile, _command.START, None,), timeout=None)
         ct = threading.current_thread()
         ct._DebugFileWriter = self
         while True:
-            (lPath, payload,) = _DebugFileWriterForFile._qStatus.get(timeout=1)
+            (lPath, payload,) = _DebugFileWriterForFile._qStatus.get(timeout=None)
             if str(lPath) == str(outfile):
                 if isinstance(payload, str):
                     raise DataError(payload)
@@ -242,16 +238,11 @@ class _DebugFileWriterForFile(_DebugFileWriter):
 
     def close(self):
         self = _get_thread_local_instance_DebugFileWriter(self)
-        _DebugFileWriterForFile._q.put((self._orig_outfile, _command.CLOSE, None))
+        _DebugFileWriterForFile._q.put((self._orig_outfile, _command.CLOSE, None), timeout=None)
         _DebugFileWriterForFile._q.join()
 
     def _write(self, text, separator=False):
         self = _get_thread_local_instance_DebugFileWriter(self)
         text = self._prepare_text(text)
-        _DebugFileWriterForFile._q.put((self._orig_outfile, _command.WRITE, text))
+        _DebugFileWriterForFile._q.put((self._orig_outfile, _command.WRITE, text), timeout=None)
         self._separator_written_last = separator
-        _DebugFileWriterForFile._q.join()
-
-
-if multiprocessing.current_process().name == 'MainProcess':
-    _DebugFileWriterForFile._p.start()

@@ -4,7 +4,7 @@ Library           OperatingSystem
 *** Variables ***
 ${DEBUGFILE}      debug.log
 *** Test Cases ***
-all
+log from thread process and async
       write_to_debugfile_from_thread
       ${found} =	Grep File	${DEBUGFILE}         MainProcess\tThread-1 (write_to_debugfile)\tregular*Writing to debugfile from thread
       Should not be empty    ${found}
