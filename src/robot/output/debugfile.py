@@ -38,7 +38,7 @@ def DebugFile(path):
     LOGGER.info('Debug file: %s' % path)
     try:
         if isinstance(path, Path):
-            if not hasattr(_DebugFileWriterForFile, "_q"):
+            if not hasattr(_DebugFileWriterForFile, '_p') or not _DebugFileWriterForFile._p.is_alive():
                 _DebugFileWriterForFile._q = multiprocessing.JoinableQueue()
                 _DebugFileWriterForFile._qStatus = multiprocessing.Queue()
                 _DebugFileWriterForFile._p = multiprocessing.Process(target=_write_log2file_queue_endpoint, args=(_DebugFileWriterForFile._q, _DebugFileWriterForFile._qStatus,))
@@ -87,6 +87,8 @@ def _write_log2file_queue_endpoint(q2log, qStatus):
             targets[oPath].write(elem_data)
             targets[oPath].flush()
         q2log.task_done()
+        if sum(usage_count.values()) == 0:
+            break
 
 def _get_thread_local_instance_DebugFileWriter(self):
     ct = threading.current_thread()
@@ -249,4 +251,5 @@ class _DebugFileWriterForFile(_DebugFileWriter):
         _DebugFileWriterForFile._q.put((self._orig_outfile, _command.WRITE, text))
         self._separator_written_last = separator
         _DebugFileWriterForFile._q.join()
+
 
