@@ -23,7 +23,6 @@ from enum import Enum
 import collections
 import base64
 
-
 from robot.errors import DataError
 from robot.utils.error import get_error_message
 from robot.utils import file_writer, seq2str2
@@ -71,12 +70,9 @@ def _write_log2file_queue_endpoint(q2log, qStatus):
                     payload =  f"Opening '{str(oPath)}' failed: {get_error_message()}"
             qStatus.put((oPath, payload,))
         elif elem_type == _command.CLOSE:
-            try:
-                usage_count[oPath] -= 1
-                if 0 == usage_count[oPath]:
-                    targets[oPath].close()
-            except Exception as e:
-                pass
+            usage_count[oPath] -= 1
+            if 0 == usage_count[oPath]:
+                targets[oPath].close()
         elif elem_type == _command.WRITE:
             targets[oPath].write(elem_data)
             targets[oPath].flush()
@@ -217,7 +213,7 @@ class _DebugFileWriterForStream(_DebugFileWriter):
 
 
 class _DebugFileWriterForFile(_DebugFileWriter):
-    if mp.current_process().name == 'MainProcess':
+    if None is mp.parent_process():
         _q = mp.JoinableQueue()
         _qStatus = mp.Queue()
         _p = mp.Process(target=_write_log2file_queue_endpoint, args=(_q, _qStatus,))
@@ -237,8 +233,8 @@ class _DebugFileWriterForFile(_DebugFileWriter):
                     raise DataError(payload)
                 break
             else:
+                # we received status information for a file we did not request, put it back.
                 _DebugFileWriterForFile._qStatus.put((lPath, status,))
-            raise Exception("Unexpected status")
 
     def close(self):
         self = _get_thread_local_instance_DebugFileWriter(self)
