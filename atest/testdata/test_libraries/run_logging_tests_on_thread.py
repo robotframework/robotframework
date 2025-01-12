@@ -1,6 +1,7 @@
 import sys
 from pathlib import Path
 from threading import Thread
+import robot.output.debugfile as debugfile
 
 
 CURDIR = Path(__file__).parent.absolute()
@@ -9,7 +10,6 @@ sys.path.insert(1, str(CURDIR / '../../testresources/testlibs'))
 
 
 from robot import run
-import robot.output.debugfile
 
 
 def run_logging_tests(output):
