@@ -213,7 +213,7 @@ class _DebugFileWriterForStream(_DebugFileWriter):
 
 
 class _DebugFileWriterForFile(_DebugFileWriter):
-    if None is mp.parent_process():
+    if mp.current_process().name == 'MainProcess':
         _q = mp.JoinableQueue()
         _qStatus = mp.Queue()
         _p = mp.Process(target=_write_log2file_queue_endpoint, args=(_q, _qStatus,))
