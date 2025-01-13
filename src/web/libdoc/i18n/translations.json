@@ -74,7 +74,7 @@
     "varNamedArgs": "Argumentos nomeados em quantidade variável",
     "namedOnlyArg": "Apenas argumentos nomeados",
     "posOnlyArg": "Apenas argumentos posicionais",
-    "defaultTitle": "Valor por omissão que é usado se nenhum tiver sido dado",
+    "defaultTitle": "Valor padrão que é usado se nenhum tiver sido informado",
     "typeInfoDialog": "Clicar para mostrar informação de tipo",
     "search": "Pesquisar",
     "dataTypes": "Tipos de dados",
@@ -84,7 +84,7 @@
     "usages": "Usos",
     "generatedBy": "Gerado por",
     "on": "ligado",
-    "chooseLanguage": "Escolher língua"
+    "chooseLanguage": "Escolher idioma"
   },
   "pt-PT": {
     "code": "pt-PT",
