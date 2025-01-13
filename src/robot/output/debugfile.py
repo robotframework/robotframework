@@ -49,34 +49,19 @@ def DebugFile(path):
         LOGGER.error(f"Opening debug file '{str(path)}' failed: {get_error_message()}")
         return None
 
-class _command(Enum):
-    CLOSE = 1
-    WRITE = 2
-    START = 3
 
 def _write_log2file_queue_endpoint(q2log, qStatus):
-    targets = {}
-    usage_count = collections.defaultdict(lambda : 0)
-    while True:
-        oPath, elem_type, elem_data = q2log.get()
-
-        if elem_type == _command.START:
-            usage_count[oPath] += 1
-            payload = None
-            if oPath not in targets:
+    try:
+        with io.open(q2log.get(), 'w', encoding='UTF-8', newline=None) as of:
+            qStatus.put(None)
+            while True:
                 try:
-                    targets[oPath] = io.open(oPath, 'w', encoding='UTF-8', newline=None)
-                except Exception as e:
-                    payload =  f"Opening '{str(oPath)}' failed: {get_error_message()}"
-            qStatus.put((oPath, payload,))
-        elif elem_type == _command.CLOSE:
-            usage_count[oPath] -= 1
-            if 0 == usage_count[oPath]:
-                targets[oPath].close()
-        elif elem_type == _command.WRITE:
-            targets[oPath].write(elem_data)
-            targets[oPath].flush()
-        q2log.task_done()
+                    of.write(q2log.get())
+                    of.flush()
+                except Exception as _:
+                    break
+    except Exception as _:
+        qStatus.put(f"Opening '{str(oPath)}' failed: {get_error_message()}")
 
 
 def _get_thread_local_instance_DebugFileWriter(self):
@@ -213,36 +198,27 @@ class _DebugFileWriterForStream(_DebugFileWriter):
 
 
 class _DebugFileWriterForFile(_DebugFileWriter):
-    if mp.current_process().name == 'MainProcess':
-        _q = mp.JoinableQueue()
-        _qStatus = mp.Queue()
-        _p = mp.Process(target=_write_log2file_queue_endpoint, args=(_q, _qStatus,))
-        _p.daemon = True
-        _p.start()
     multithread_capable = True
 
     def __init__(self, outfile):
         super().__init__(outfile, outfile)
-        _DebugFileWriterForFile._q.put((outfile, _command.START, None,), timeout=None)
+        self._q = mp.Queue()
+        self._qStatus = mp.Queue()
+        mp.Process(target=_write_log2file_queue_endpoint, args=(_q, _qStatus,), daemon=True).start()
+        _DebugFileWriterForFile._q.put(outfile)
         ct = threading.current_thread()
         ct._DebugFileWriter = {self._get_async_id(): self}
-        while True:
-            (lPath, payload,) = _DebugFileWriterForFile._qStatus.get(timeout=None)
-            if str(lPath) == str(outfile):
-                if isinstance(payload, str):
-                    raise DataError(payload)
-                break
-            else:
-                # we received status information for a file we did not request, put it back.
-                _DebugFileWriterForFile._qStatus.put((lPath, status,))
+        if payload := _DebugFileWriterForFile._qStatus.get(timeout=None) is not None:
+            raise DataError(payload)
+        _DebugFileWriterForFile._qStatus.close()
 
     def close(self):
         self = _get_thread_local_instance_DebugFileWriter(self)
-        _DebugFileWriterForFile._q.put((self._orig_outfile, _command.CLOSE, None,), timeout=None)
         _DebugFileWriterForFile._q.join()
+        _DebugFileWriterForFile._q.close()
 
     def _write(self, text, separator=False):
         self = _get_thread_local_instance_DebugFileWriter(self)
         text = self._prepare_text(text)
-        _DebugFileWriterForFile._q.put((self._orig_outfile, _command.WRITE, text,), timeout=None)
+        _DebugFileWriterForFile._q.put(text, timeout=None)
         self._separator_written_last = separator

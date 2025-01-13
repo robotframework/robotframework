@@ -10,9 +10,8 @@ log from thread
       Run Keyword If    $major >= 3 and $minor >= 10     Wait Until Keyword Succeeds	1 sec	0.01 sec	check for log entry         MainProcess\twr_thread\tstd_thread*Writing to debugfile from thread
 
 log from process
-      ${PLATFORM} =      Evaluate    platform.system()    modules=platform
-      Run Keyword If    $PLATFORM == 'Linux'     write_to_debugfile_from_process
-      Run Keyword If    $PLATFORM == 'Linux'     Wait Until Keyword Succeeds	1 sec	0.01 sec	check for log entry         wr_process\tMainThread\tstd_thread*Writing to debugfile from process
+      write_to_debugfile_from_process
+      Wait Until Keyword Succeeds	1 sec	0.01 sec	check for log entry         wr_process\tMainThread\tstd_thread*Writing to debugfile from process
 
 log from async
       ${major}    ${minor}    ${patch} =    Evaluate    sys.version_info[:3]    modules=sys

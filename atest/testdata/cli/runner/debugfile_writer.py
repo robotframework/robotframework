@@ -3,6 +3,10 @@ import multiprocessing
 import threading
 
 
+def _write_to_debugfile_p():
+        logger.debug('Writing to debugfile from process')
+
+
 def write_to_debugfile_from_thread():
     def write_to_debugfile():
         logger.debug('Writing to debugfile from thread')
@@ -12,12 +16,10 @@ def write_to_debugfile_from_thread():
 
 
 def write_to_debugfile_from_process():
-    def write_to_debugfile():
-        logger.debug('Writing to debugfile from process')
-    p = multiprocessing.Process(target=write_to_debugfile, name="wr_process")
+    p = multiprocessing.Process(target=_write_to_debugfile_p, name="wr_process")
     p.start()
     p.join()
 
+
 async def write_to_debugfile_from_async():
     logger.debug('Writing to debugfile from async')
-
