@@ -40,7 +40,7 @@ def DebugFile(path):
     LOGGER.info('Debug file: %s' % path)
     try:
         if isinstance(path, Path):
-            return _DebugFileWriterForFile(path, path.name)
+            return _DebugFileWriterForFile(path, path)
         elif isinstance(path, io.TextIOWrapper):
             return _DebugFileWriterForStream(path)
         else:
@@ -53,7 +53,8 @@ def DebugFile(path):
 
 def _write_log2file_queue_endpoint(q2log, qStatus):
     try:
-        with io.open(q2log.get(), 'w', encoding='UTF-8', newline=None) as of:
+        oPath = q2log.get()
+        with io.open(oPath, 'w', encoding='UTF-8', newline=None) as of:
             qStatus.put(None)
             while True:
                 payload = q2log.get()
@@ -100,6 +101,7 @@ class _DebugFileWriter(LoggerApi):
         self._separator('SUITE')
 
     def end_suite(self, data, result):
+        self = _get_thread_local_instance_DebugFileWriter(self)
         self._separator('SUITE')
         self._end('SUITE', data.full_name, result.end_time, result.elapsed_time)
         self._separator('SUITE')
