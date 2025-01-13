@@ -55,15 +55,16 @@ def _write_log2file_queue_endpoint(q2log, qStatus):
         oPath = q2log.get()
         with io.open(oPath, 'w', encoding='UTF-8', newline=None) as of:
             qStatus.put(None)
-            while True:
-                payload = q2log.get()
-                if isinstance(payload, str):
-                    of.write(payload)
-                    of.flush()
-                elif payload is None:
-                    break
-                else:
-                    assert False, f"Unsupported payload type: {type(payload)} of value {payload}"
+            try:
+                while True:
+                    payload = q2log.get()
+                    if isinstance(payload, str):
+                        of.write(payload)
+                        of.flush()
+                    elif payload is None:
+                        break
+            except Exception as _:
+                pass
 
     except Exception as _:
         qStatus.put(f"Opening '{str(oPath)}' failed: {get_error_message()}")
