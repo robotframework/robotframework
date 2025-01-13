@@ -40,13 +40,14 @@ def DebugFile(path):
     LOGGER.info('Debug file: %s' % path)
     try:
         if isinstance(path, Path):
-            return _DebugFileWriterForFile(path)
+            return _DebugFileWriterForFile(path, path.name)
         elif isinstance(path, io.TextIOWrapper):
             return _DebugFileWriterForStream(path)
         else:
             assert False, "unsupported debug output type"
     except Exception as e:
         LOGGER.error(f"Opening debug file '{str(path)}' failed: {get_error_message()}")
+        raise e
         return None
 
 
@@ -55,11 +56,15 @@ def _write_log2file_queue_endpoint(q2log, qStatus):
         with io.open(q2log.get(), 'w', encoding='UTF-8', newline=None) as of:
             qStatus.put(None)
             while True:
-                try:
-                    of.write(q2log.get())
+                payload = q2log.get()
+                if isinstance(payload, str):
+                    of.write(payload)
                     of.flush()
-                except Exception as _:
+                elif payload is None:
                     break
+                else:
+                    assert False, f"Unsupported payload type: {type(payload)} of value {payload}"
+
     except Exception as _:
         qStatus.put(f"Opening '{str(oPath)}' failed: {get_error_message()}")
 
@@ -68,9 +73,12 @@ def _get_thread_local_instance_DebugFileWriter(self):
     ct = threading.current_thread()
     async_id = self._get_async_id()
     if not hasattr(ct, "_DebugFileWriter"):
-        ct._DebugFileWriter = dict()
+        ct._DebugFileWriter = {}
     if not async_id in ct._DebugFileWriter:
-        ct._DebugFileWriter[async_id] = type(self)(self._orig_outfile)
+        if isinstance(self, _DebugFileWriterQueueBased):
+            ct._DebugFileWriter[async_id] = _DebugFileWriterQueueBased(self._q, self._name)
+        else:
+            ct._DebugFileWriter[async_id] = self
     return ct._DebugFileWriter[async_id]
 
 
@@ -171,6 +179,21 @@ class _DebugFileWriter(LoggerApi):
         inEventLoop = self._get_async_id()
         return "".join(f"{mp.current_process().name}\t{threading.current_thread().name}\t{inEventLoop}\t{item}\n" for item in text.rstrip().split('\n'))
 
+class _DebugFileWriterQueueBased(_DebugFileWriter):
+    def __init__(self, q, name):
+        super().__init__(None, name)
+        self._q = q
+
+    def close(self):
+        self = _get_thread_local_instance_DebugFileWriter(self)
+        self._q.put(None, timeout=None)
+
+    def _write(self, text, separator=False):
+        self = _get_thread_local_instance_DebugFileWriter(self)
+        text = self._prepare_text(text)
+        self._q.put(text, timeout=None)
+        self._separator_written_last = separator
+
 
 class _DebugFileWriterForStream(_DebugFileWriter):
     _separators = {'SUITE': '=', 'TEST': '-', 'KEYWORD': '~'}
@@ -179,8 +202,6 @@ class _DebugFileWriterForStream(_DebugFileWriter):
     def __init__(self, outfile):
         super().__init__(outfile, outfile.name)
         self._outfile = outfile
-        ct = threading.current_thread()
-        ct._DebugFileWriter = {self._get_async_id(): self}
 
     def close(self):
         self = _get_thread_local_instance_DebugFileWriter(self)
@@ -197,28 +218,20 @@ class _DebugFileWriterForStream(_DebugFileWriter):
         self._separator_written_last = separator
 
 
-class _DebugFileWriterForFile(_DebugFileWriter):
+class _DebugFileWriterForFile(_DebugFileWriterQueueBased):
     multithread_capable = True
 
-    def __init__(self, outfile):
-        super().__init__(outfile, outfile)
+    def __init__(self, outfile, name):
+        super().__init__(outfile, name)
         self._q = mp.Queue()
-        self._qStatus = mp.Queue()
-        mp.Process(target=_write_log2file_queue_endpoint, args=(_q, _qStatus,), daemon=True).start()
-        _DebugFileWriterForFile._q.put(outfile)
-        ct = threading.current_thread()
-        ct._DebugFileWriter = {self._get_async_id(): self}
-        if payload := _DebugFileWriterForFile._qStatus.get(timeout=None) is not None:
-            raise DataError(payload)
-        _DebugFileWriterForFile._qStatus.close()
-
-    def close(self):
-        self = _get_thread_local_instance_DebugFileWriter(self)
-        _DebugFileWriterForFile._q.join()
-        _DebugFileWriterForFile._q.close()
-
-    def _write(self, text, separator=False):
-        self = _get_thread_local_instance_DebugFileWriter(self)
-        text = self._prepare_text(text)
-        _DebugFileWriterForFile._q.put(text, timeout=None)
-        self._separator_written_last = separator
+        _qStatus = mp.Queue()
+        mp.Process(target=_write_log2file_queue_endpoint, args=(self._q, _qStatus,), daemon=True).start()
+        self._q.put(outfile)
+        try:
+            if payload := _qStatus.get(timeout=None) is not None:
+                raise DataError(payload)
+        except Exception as e:
+            raise e
+        finally:
+            _qStatus.close()
+            _qStatus.join_thread()
