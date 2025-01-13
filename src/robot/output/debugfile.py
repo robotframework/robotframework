@@ -47,7 +47,6 @@ def DebugFile(path):
             assert False, "unsupported debug output type"
     except Exception as e:
         LOGGER.error(f"Opening debug file '{str(path)}' failed: {get_error_message()}")
-        raise e
         return None
 
 

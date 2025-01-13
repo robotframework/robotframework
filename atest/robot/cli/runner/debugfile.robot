@@ -65,6 +65,8 @@ No Debugfile
 Invalid Debugfile
     Create Directory  %{TEMPDIR}/debug.txt
     Run Tests Without Processing Output  --outputdir ${CLI OUTDIR} -b %{TEMPDIR}/debug.txt  ${TESTFILE}
+    ${data1}=       Get File      /tmp/robotatest/Python-3.10.15-Linux/output/stderr.txt 
+    ${data2}=       Get File      /tmp/robotatest/Python-3.10.15-Linux/output/stdout.txt 
     Stderr Should Match Regexp  \\[ ERROR \\] Opening debug file '.*debug.txt' failed: .*
     Stdout Should Contain  2 tests, 2 passed, 0 failed
 
