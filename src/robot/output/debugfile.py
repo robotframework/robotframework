@@ -64,10 +64,10 @@ def _write_log2file_queue_endpoint(q2log, qStatus):
                     elif payload is None:
                         break
             except Exception as _:
-                pass
-
+                assert False, f"Writing to '{str(oPath)}' failed: {e}"
     except Exception as _:
         qStatus.put(f"Opening '{str(oPath)}' failed: {get_error_message()}")
+    q2log.close()
 
 
 def _get_thread_local_instance_DebugFileWriter(self):
@@ -229,11 +229,7 @@ class _DebugFileWriterForFile(_DebugFileWriterQueueBased):
         _qStatus = mp.Queue()
         mp.Process(target=_write_log2file_queue_endpoint, args=(self._q, _qStatus,), daemon=True).start()
         self._q.put(outfile)
-        try:
-            if payload := _qStatus.get(timeout=None) is not None:
-                raise DataError(payload)
-        except Exception as e:
-            raise e
-        finally:
-            _qStatus.close()
-            _qStatus.join_thread()
+        payload = _qStatus.get(timeout=None)
+        _qStatus.close()
+        if payload is not None:
+            raise DataError(payload)
