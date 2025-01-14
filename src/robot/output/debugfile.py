@@ -19,7 +19,7 @@ import threading
 import asyncio
 import io
 import os
-from enum import Enum
+from dataclasses import dataclass
 import sys
 import base64
 
@@ -31,6 +31,10 @@ from .logger import LOGGER
 from .loggerapi import LoggerApi
 from .loglevel import LogLevel
 
+@dataclass
+class _loggerProcessComm:
+    payloadQ: mp.Queue
+    statusQ: mp.Queue
 
 def DebugFile(path):
     if not path:
@@ -51,7 +55,7 @@ def DebugFile(path):
 
 
 def _write_log2file_queue_endpoint(q2log, qStatus):
-    # When the system shutds down slowly there is a
+    # When the system shuts down slowly there is a
     # confusing error message written to stderr
     sys.stdout = io.open(os.devnull, 'w', encoding='UTF-8', newline=None)
     sys.stderr = io.open(os.devnull, 'w', encoding='UTF-8', newline=None)
@@ -67,11 +71,11 @@ def _write_log2file_queue_endpoint(q2log, qStatus):
                         of.flush()
                     elif payload is None:
                         break
-            except Exception as _:
-                assert False, f"Writing to '{str(oPath)}' failed: {e}"
+            except Exception as e:
+                qStatus.put(f"Writing to '{str(oPath)}' failed: {e}")
+        qStatus.put(None)
     except Exception as _:
         qStatus.put(f"Opening '{str(oPath)}' failed: {get_error_message()}")
-    q2log.close()
 
 
 def _get_thread_local_instance_DebugFileWriter(self):
@@ -192,12 +196,20 @@ class _DebugFileWriterQueueBased(_DebugFileWriter):
 
     def close(self):
         self = _get_thread_local_instance_DebugFileWriter(self)
-        self._q.put(None, timeout=None)
+        try:
+            self._q.payloadQ.put(None, timeout=None)
+            payload = self._q.statusQ.get()
+            assert payload is None, f"Error in writing debug file: {payload}"
+            self._q.statusQ.close()
+            self._q.payloadQ.close()
+        except ValueError:
+            pass
+
 
     def _write(self, text, separator=False):
         self = _get_thread_local_instance_DebugFileWriter(self)
         text = self._prepare_text(text)
-        self._q.put(text, timeout=None)
+        self._q.payloadQ.put(text, timeout=None)
         self._separator_written_last = separator
 
 
@@ -229,12 +241,11 @@ class _DebugFileWriterForFile(_DebugFileWriterQueueBased):
 
     def __init__(self, outfile, name):
         super().__init__(outfile, name)
-        self._q = mp.Queue()
-        _qStatus = mp.Queue()
-        mp.Process(target=_write_log2file_queue_endpoint, args=(self._q, _qStatus,), daemon=True).start()
-        self._q.put(outfile)
-        payload = _qStatus.get(timeout=None)
-        _qStatus.close()
+        self._q = _loggerProcessComm(payloadQ=mp.Queue(), statusQ=mp.Queue())
+        mp.Process(target=_write_log2file_queue_endpoint, args=(self._q.payloadQ, self._q.statusQ,), daemon=True).start()
+        self._q.payloadQ.put(outfile)
+        payload = self._q.statusQ.get(timeout=None)
+
         if payload is not None:
             raise DataError(payload)
 
