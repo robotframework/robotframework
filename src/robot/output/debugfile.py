@@ -233,3 +233,7 @@ class _DebugFileWriterForFile(_DebugFileWriterQueueBased):
         _qStatus.close()
         if payload is not None:
             raise DataError(payload)
+
+class _DebugFileWriterForChildProcessOrInterpreter(_DebugFileWriterQueueBased):
+    def message(self, msg):
+        self.log_message(msg)
