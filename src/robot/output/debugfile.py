@@ -20,7 +20,7 @@ import asyncio
 import io
 import os
 from enum import Enum
-import collections
+import sys
 import base64
 
 from robot.errors import DataError
@@ -51,6 +51,10 @@ def DebugFile(path):
 
 
 def _write_log2file_queue_endpoint(q2log, qStatus):
+    # When the system shutds down slowly there is a
+    # confusing error message written to stderr
+    sys.stdout = open(os.devnull, 'w')
+    sys.stderr = open(os.devnull, 'w')
     try:
         oPath = q2log.get()
         with io.open(oPath, 'w', encoding='UTF-8', newline=None) as of:
