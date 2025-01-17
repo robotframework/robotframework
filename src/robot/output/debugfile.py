@@ -22,6 +22,7 @@ import os
 from dataclasses import dataclass
 import sys
 import base64
+import signal
 
 from robot.errors import DataError
 from robot.utils.error import get_error_message
@@ -57,24 +58,37 @@ def DebugFile(path):
 def _write_log2file_queue_endpoint(q2log, qStatus):
     # When the system shuts down slowly there is a
     # confusing error message written to stderr
-    sys.stdout = io.open(os.devnull, 'w', encoding='UTF-8', newline=None)
-    sys.stderr = io.open(os.devnull, 'w', encoding='UTF-8', newline=None)
+
+    class SignalException(Exception):
+        pass
+
+    def handle_signal(signum, frame):
+        raise SignalException(f"Signal {signum} received.")
+
+    # Register signal handlers
+    signal.signal(signal.SIGTERM, handle_signal)
+    signal.signal(signal.SIGINT, handle_signal)
+
     try:
         oPath = q2log.get()
-        of = io.open(oPath, 'w', encoding='UTF-8', newline=None)
-        qStatus.put(None)
-        while True:
-            try:
-                payload = q2log.get()
-                if isinstance(payload, str):
-                    of.write(payload)
-                    of.flush()
-                elif payload is None:
-                    qStatus.put(None)
-            except Exception as e:
-                qStatus.put(f"Writing to '{str(oPath)}' failed: {e}")
+        with io.open(oPath, 'w', encoding='UTF-8', newline=None) as of:
+            qStatus.put(None)
+            while True:
+                try:
+                    payload = q2log.get()
+                    if isinstance(payload, str):
+                        of.write(payload)
+                        of.flush()
+                    elif payload is None:
+                        qStatus.put(None)
+                except SignalException:
+                    break
+                except Exception as e:
+                    qStatus.put(f"Writing to '{str(oPath)}' failed: {e}")
     except Exception as _:
         qStatus.put(f"Opening '{str(oPath)}' failed: {get_error_message()}")
+    except SignalException:
+        pass
 
 
 def _get_thread_local_instance_DebugFileWriter(self):
