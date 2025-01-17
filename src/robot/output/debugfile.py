@@ -61,19 +61,18 @@ def _write_log2file_queue_endpoint(q2log, qStatus):
     sys.stderr = io.open(os.devnull, 'w', encoding='UTF-8', newline=None)
     try:
         oPath = q2log.get()
-        with io.open(oPath, 'w', encoding='UTF-8', newline=None) as of:
-            qStatus.put(None)
+        of = io.open(oPath, 'w', encoding='UTF-8', newline=None)
+        qStatus.put(None)
+        while True:
             try:
-                while True:
-                    payload = q2log.get()
-                    if isinstance(payload, str):
-                        of.write(payload)
-                        of.flush()
-                    elif payload is None:
-                        break
+                payload = q2log.get()
+                if isinstance(payload, str):
+                    of.write(payload)
+                    of.flush()
+                elif payload is None:
+                    qStatus.put(None)
             except Exception as e:
                 qStatus.put(f"Writing to '{str(oPath)}' failed: {e}")
-        qStatus.put(None)
     except Exception as _:
         qStatus.put(f"Opening '{str(oPath)}' failed: {get_error_message()}")
 
