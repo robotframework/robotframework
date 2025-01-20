@@ -32,6 +32,15 @@ from .logger import LOGGER
 from .loggerapi import LoggerApi
 from .loglevel import LogLevel
 
+try:
+    from interpreters_backport import interpreters
+    def get_current_interpreter_id():
+        return f"interpreter_{interpreters.get_current().id}"
+except ModuleNotFoundError:
+    def get_current_interpreter_id():
+        return f"interpreter_0"
+
+
 @dataclass
 class _loggerProcessComm:
     payloadQ: mp.Queue
@@ -200,7 +209,7 @@ class _DebugFileWriter(LoggerApi):
 
     def _prepare_text(self, text):
         inEventLoop = self._get_async_id()
-        return "".join(f"{mp.current_process().name}\t{threading.current_thread().name}\t{inEventLoop}\t{item}\n" for item in text.rstrip().split('\n'))
+        return "".join(f"{mp.current_process().name}\t{threading.current_thread().name}\t{inEventLoop}\t{get_current_interpreter_id()}\t{item}\n" for item in text.rstrip().split('\n'))
 
 class _DebugFileWriterQueueBased(_DebugFileWriter):
     def __init__(self, q, name):

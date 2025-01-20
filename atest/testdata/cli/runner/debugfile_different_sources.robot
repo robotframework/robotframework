@@ -7,20 +7,24 @@ ${DEBUGFILE}      debug.log
 *** Test Cases ***
 log from thread
       ${major}    ${minor}    ${patch} =    Evaluate    sys.version_info[:3]    modules=sys
-      Run Keyword and expect Error          *           check for log entry         ^MainProcess\twr_thread\tstd_thread\t.*- DEBUG - Writing to debugfile from thread.*
+      Run Keyword and expect Error          *           check for log entry         ^MainProcess\twr_thread\tstd_thread\tinterpreter_0\t.*- DEBUG - Writing to debugfile from thread.*
       Run Keyword If    $major >= 3 and $minor >= 10     write_to_debugfile_from_thread
-      Run Keyword If    $major >= 3 and $minor >= 10     Wait Until Keyword Succeeds	1 sec	0.01 sec	check for log entry         ^MainProcess\twr_thread\tstd_thread\t.*- DEBUG - Writing to debugfile from thread.*
+      Run Keyword If    $major >= 3 and $minor >= 10     Wait Until Keyword Succeeds	1 sec	0.01 sec	check for log entry         ^MainProcess\twr_thread\tstd_thread\tinterpreter_0\t.*- DEBUG - Writing to debugfile from thread.*
 
 log from process
-      Run Keyword and expect Error       *                  check for log entry        ^wr_process\tMainThread\tstd_thread\t.*- DEBUG - Writing to debugfile from process.*
+      Run Keyword and expect Error       *                  check for log entry        ^wr_process\tMainThread\tstd_thread\tinterpreter_0\t.*- DEBUG - Writing to debugfile from process.*
       write_to_debugfile_from_process
-      Wait Until Keyword Succeeds	     1 sec	0.01 sec    check for log entry        ^wr_process\tMainThread\tstd_thread\t.*- DEBUG - Writing to debugfile from process.*
+      Wait Until Keyword Succeeds	     1 sec	0.01 sec    check for log entry        ^wr_process\tMainThread\tstd_thread\tinterpreter_0\t.*- DEBUG - Writing to debugfile from process.*
 
 log from async
       ${major}    ${minor}    ${patch} =                               Evaluate                         sys.version_info[:3]    modules=sys
       Run Keyword and expect Error    *                                check for log entry              ^MainProcess\tMainThread\tasync_.*Writing to debugfile from async.*
       Run Keyword If                  $major >= 3 and $minor >= 10     write_to_debugfile_from_async
       Run Keyword If                  $major >= 3 and $minor >= 10     Wait Until Keyword Succeeds	  1 sec	              0.01 sec	check for log entry      ^MainProcess\tMainThread\tasync_.*Writing to debugfile from async.*
+
+log from subinterpreter
+      write_to_debugfile_from_interpreter
+      Wait Until Keyword Succeeds	  1 sec	              0.01 sec	check for log entry      ^MainProcess\tMainThread\tstd_thread\tinterpreter_1.*Writing to debugfile from subinterpreter
 
 *** keywords ***
 check for log entry

@@ -12,3 +12,4 @@ all
     ...    log from async
     ...    log from thread
     ...    log from process
+    ...    log from subinterpreter
