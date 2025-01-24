@@ -37,6 +37,10 @@ Merge suite documentation and metadata
     [Setup]   Should Be Equal    ${PREV_TEST_STATUS}    PASS
     Suite documentation and metadata should have been merged
 
+Suite elapsed time should be updated
+    [Setup]   Should Be Equal    ${PREV_TEST_STATUS}    PASS
+    Should Be True    $SUITE.elapsed_time > $ORIGINAL_ELAPSED
+
 Merge re-executed and re-re-executed tests
     Re-run tests
     Re-re-run tests
@@ -95,6 +99,7 @@ Run original tests
     ...    --metadata Original:True
     Create Output With Robot    ${ORIGINAL}    ${options}    ${SUITES}
     Verify original tests
+    VAR    ${ORIGINAL ELAPSED}    ${SUITE.elapsed_time}    scope=SUITE
 
 Verify original tests
     Should Be Equal    ${SUITE.name}    Suites
@@ -115,6 +120,7 @@ Re-run tests
     ...    --variable TEARDOWN_MSG:New!        #           -- ;; --
     ...    --variable SETUP:NONE               # Affects misc/suites/subsuites/sub1.robot
     ...    --variable TEARDOWN:NONE            #           -- ;; --
+    ...    --variable SLEEP:0.1                #           -- ;; --
     ...    --rerunfailed ${ORIGINAL} ${options}
     Create Output With Robot    ${MERGE 1}    ${options}    ${SUITES}
     Should Be Equal    ${SUITE.name}    Suites
