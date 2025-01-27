@@ -115,7 +115,7 @@
     "on": "op",
     "chooseLanguage": "Kies taal"
   },
-  "pt-BR": {
+  "pt-br": {
     "code": "pt-BR",
     "intro": "Introdução",
     "libVersion": "Versão da Biblioteca",
@@ -144,7 +144,7 @@
     "on": "ligado",
     "chooseLanguage": "Escolher idioma"
   },
-  "pt-PT": {
+  "pt-pt": {
     "code": "pt-PT",
     "intro": "Introdução",
     "libVersion": "Versão da Biblioteca",
