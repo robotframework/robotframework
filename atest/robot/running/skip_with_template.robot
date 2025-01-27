@@ -56,6 +56,14 @@ FOR w/ only SKIP -> SKIP
     Status Should Be    ${tc.body[0]}    SKIP    All iterations skipped.
     Status Should Be    ${tc.body[1]}    SKIP    just once
 
+Messages in test body are ignored
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc[0]}          Hello says listener!
+    Check Log Message    ${tc[1, 0, 0]}    Library listener adds messages to body of this test.
+    Check Log Message    ${tc[2, 0, 0]}    This iteration is skipped!    SKIP
+    Check Log Message    ${tc[3, 0, 0]}    This iteration passes!
+    Check Log Message    ${tc[4]}          Bye says listener!
+
 *** Keywords ***
 Status Should Be
     [Arguments]    ${item}    ${status}    ${message}=
