@@ -365,9 +365,9 @@ class StatusHandler(ElementHandler):
     def end(self, elem, result):
         if self.set_status:
             result.status = elem.get('status', 'FAIL')
-        if 'start' in elem.attrib:    # RF >= 7
-            result.start_time = elem.attrib['start']
+        if 'elapsed' in elem.attrib:  # RF >= 7
             result.elapsed_time = float(elem.attrib['elapsed'])
+            result.start_time = elem.get('start')
         else:                         # RF < 7
             result.start_time = self._legacy_timestamp(elem, 'starttime')
             result.end_time = self._legacy_timestamp(elem, 'endtime')

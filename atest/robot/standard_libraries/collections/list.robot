@@ -353,3 +353,6 @@ List Should Not Contain Duplicates With Ignore Case
 
 List Should Contain Value With Ignore Case And Nested List and Dictionary
     Check Test Case    ${TEST NAME}
+
+Lists Should be equal with Ignore Case and Order
+    Check Test Case    ${TEST NAME}

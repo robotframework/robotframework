@@ -54,7 +54,7 @@ class SuiteConfigurer(model.SuiteConfigurer):
             return None
 
     def visit_suite(self, suite):
-        model.SuiteConfigurer.visit_suite(self, suite)
+        super().visit_suite(suite)
         self._remove_keywords(suite)
         self._set_times(suite)
         suite.filter_messages(self.log_level)

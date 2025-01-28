@@ -1178,9 +1178,9 @@ class Normalizer:
 
     def normalize_list(self, value):
         cls = type(value)
+        value = [self.normalize(v) for v in value]
         if self.ignore_order:
             value = sorted(value)
-        value = [self.normalize(v) for v in value]
         return self._try_to_preserve_type(value, cls)
 
     def _try_to_preserve_type(self, value, cls):

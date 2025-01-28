@@ -1,4 +1,5 @@
 *** Settings ***
+Library           AddMessageToTestBody.py
 Test Template     Run Keyword
 
 *** Test Cases ***
@@ -89,3 +90,8 @@ FOR w/ only SKIP -> SKIP
     FOR    ${x}    IN    just once
         Skip    ${x}
     END
+
+Messages in test body are ignored
+    Log        Library listener adds messages to body of this test.
+    Skip If    True    This iteration is skipped!
+    Log        This iteration passes!
