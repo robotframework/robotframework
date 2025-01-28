@@ -120,7 +120,7 @@ Re-run tests
     ...    --variable TEARDOWN_MSG:New!        #           -- ;; --
     ...    --variable SETUP:NONE               # Affects misc/suites/subsuites/sub1.robot
     ...    --variable TEARDOWN:NONE            #           -- ;; --
-    ...    --variable SLEEP:0.1                #           -- ;; --
+    ...    --variable SLEEP:0.5                #           -- ;; --
     ...    --rerunfailed ${ORIGINAL} ${options}
     Create Output With Robot    ${MERGE 1}    ${options}    ${SUITES}
     Should Be Equal    ${SUITE.name}    Suites
