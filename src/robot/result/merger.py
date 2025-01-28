@@ -36,7 +36,7 @@ class Merger(SuiteVisitor):
         else:
             old = self._find(self.current.suites, suite.name)
         if old is not None:
-            old.start_time = old.end_time = None
+            old.start_time = old.end_time = old.elapsed_time = None
             old.doc = suite.doc
             old.metadata.update(suite.metadata)
             old.setup = suite.setup
