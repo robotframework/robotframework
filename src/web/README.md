@@ -1,6 +1,5 @@
 # Robot Framework web projects
 
-
 This directory contains the Robot Framework HTML frontend for libdoc. Eventually, also log and report will be moved to the same tech stack.
 
 ## Tech
@@ -29,9 +28,7 @@ Test:
 
     npm test
 
-
 ## Code formatting conventions
-
 
 Prettier is used to format code, and it can be run manually by:
 
