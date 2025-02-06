@@ -25,6 +25,19 @@ class TkDialog(Toplevel):
     right_button = 'Cancel'
 
     def __init__(self, message, value=None, **config):
+        self.bg_color = "#232627"   # Dialog background color
+        self.button_normal_color ="#009A91"
+        self.button_hover_color = "#1AB4A4"
+        self.button_click_color = "#009A91"
+        self.button_text_color = "white"
+        self.button_radius = 7
+        self.button_width = 130
+        self.button_height = 40
+        self.text_font = ("Arial", 11)
+        self.button_font = ("Arial", 10, "bold")
+        self.input_bg_color = "#6B7376"
+        self.input_fg_color = "white"
+
         self._prevent_execution_with_timeouts()
         self._button_bindings = {}
         super().__init__(self._get_root())
