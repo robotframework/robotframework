@@ -266,7 +266,7 @@ class SelectionDialog(TkDialog):
         super().__init__(message, values, default=default)
 
     def _create_widget(self, parent, values, default=None) -> Listbox:
-        widget = Listbox(parent)
+        widget = Listbox(parent,background=self.input_bg_color)
         for item in values:
             widget.insert(END, item)
         if default is not None:
