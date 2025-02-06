@@ -1,6 +1,7 @@
 import unittest
 import os
 import os.path
+from pathlib import Path
 
 from robot.utils import abspath, normpath, get_link_path, WINDOWS
 from robot.utils.robotpath import CASE_INSENSITIVE_FILESYSTEM
@@ -53,13 +54,14 @@ class TestAbspathNormpath(unittest.TestCase):
 
     def test_normpath(self):
         for inp, exp in self._get_inputs():
-            path = normpath(inp)
-            assert_equal(path, exp, inp)
-            assert_true(isinstance(path, str), inp)
-            exp = exp.lower() if CASE_INSENSITIVE_FILESYSTEM else exp
-            path = normpath(inp, case_normalize=True)
-            assert_equal(path, exp, inp)
-            assert_true(isinstance(path, str), inp)
+            for inp in inp, Path(inp):
+                path = normpath(inp)
+                assert_equal(path, exp, inp)
+                assert_true(isinstance(path, str), inp)
+                exp = exp.lower() if CASE_INSENSITIVE_FILESYSTEM else exp
+                path = normpath(inp, case_normalize=True)
+                assert_equal(path, exp, inp)
+                assert_true(isinstance(path, str), inp)
 
     def _get_inputs(self):
         inputs = self._windows_inputs if WINDOWS else self._posix_inputs

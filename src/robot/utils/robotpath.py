@@ -16,6 +16,7 @@
 import os
 import os.path
 import sys
+from pathlib import Path
 from urllib.request import pathname2url as path_to_url
 
 from robot.errors import DataError
@@ -43,8 +44,9 @@ def normpath(path, case_normalize=False):
        That includes Windows and also OSX in default configuration.
     4. Turn ``c:`` into ``c:\\`` on Windows instead of keeping it as ``c:``.
     """
-    # FIXME: Support pathlib.Path
-    if not isinstance(path, str):
+    if isinstance(path, Path):
+        path = str(path)
+    elif not isinstance(path, str):
         path = system_decode(path)
     path = safe_str(path)  # Handles NFC normalization on OSX
     path = os.path.normpath(path)
