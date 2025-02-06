@@ -156,7 +156,7 @@ def is_truthy(item):
     Boolean values similarly as Robot Framework itself. See also
     :func:`is_falsy`.
     """
-    if is_string(item):
+    if isinstance(item, str):
         return item.upper() not in FALSE_STRINGS
     return bool(item)
 

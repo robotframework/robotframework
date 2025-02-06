@@ -26,8 +26,8 @@ from typing import Any, Literal, TYPE_CHECKING, Union
 
 from robot.conf import Languages
 from robot.libraries.DateTime import convert_date, convert_time
-from robot.utils import (eq, get_error_message, is_string, plural_or_not as s,
-                         safe_str, seq2str, type_name)
+from robot.utils import (eq, get_error_message, plural_or_not as s, safe_str,
+                         seq2str, type_name)
 
 
 if TYPE_CHECKING:
@@ -153,7 +153,7 @@ class TypeConverter:
         return value
 
     def _remove_number_separators(self, value):
-        if is_string(value):
+        if isinstance(value, str):
             for sep in ' ', '_':
                 if sep in value:
                     value = value.replace(sep, '')

@@ -21,7 +21,6 @@ from pathlib import Path
 
 from .charwidth import get_char_width
 from .misc import seq2str2
-from .robottypes import is_string
 from .unic import safe_str
 
 
@@ -96,7 +95,7 @@ def _dict_to_str(d):
 
 
 def cut_assign_value(value):
-    if not is_string(value):
+    if not isinstance(value, str):
         value = safe_str(value)
     if len(value) > MAX_ASSIGN_LENGTH:
         value = value[:MAX_ASSIGN_LENGTH] + '...'
@@ -182,6 +181,6 @@ def getdoc(item):
 def getshortdoc(doc_or_item, linesep='\n'):
     if not doc_or_item:
         return ''
-    doc = doc_or_item if is_string(doc_or_item) else getdoc(doc_or_item)
+    doc = doc_or_item if isinstance(doc_or_item, str) else getdoc(doc_or_item)
     lines = takewhile(lambda line: line.strip(), doc.splitlines())
     return linesep.join(lines)

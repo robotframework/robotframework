@@ -18,7 +18,7 @@ from inspect import isclass, signature, Parameter
 from typing import Any, Callable, get_type_hints
 
 from robot.errors import DataError
-from robot.utils import is_string, split_from_equals
+from robot.utils import split_from_equals
 from robot.variables import is_assign, is_scalar_assign
 
 from .argumentspec import ArgumentSpec
@@ -208,7 +208,7 @@ class DynamicArgumentParser(ArgumentSpecParser):
 
     def _is_invalid_tuple(self, arg):
         return (len(arg) > 2
-                or not is_string(arg[0])
+                or not isinstance(arg[0], str)
                 or (arg[0].startswith('*') and len(arg) > 1))
 
     def _is_var_named(self, arg):
