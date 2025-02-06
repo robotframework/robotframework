@@ -235,7 +235,13 @@ class InputDialog(TkDialog):
         super().__init__(message, default, hidden=hidden)
 
     def _create_widget(self, parent, default, hidden=False) -> Entry:
-        widget = Entry(parent, show='*' if hidden else '')
+        # Create a wrapper frame to control spacing
+        input_frame = Frame(parent, bg=self.bg_color)
+        input_frame.pack(pady=5)  # Adjust this value to increase/decrease spacing
+        # Create the Entry widget inside the frame
+        widget = Entry(input_frame, bg=self.input_bg_color,fg=self.input_fg_color, show='*' if hidden else '')
+        widget.pack(ipadx=70,ipady=5,padx=5, pady=10)  # Adds some internal padding for spacing
+
         widget.insert(0, default)
         widget.select_range(0, END)
         widget.bind('<FocusIn>', self._unbind_buttons)
