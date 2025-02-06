@@ -17,7 +17,7 @@ Methods outside tests can log messages to syslog
     Correct messages should be logged to syslog
 
 Logging from listener when using JSON output
-    [Setup]    Run Tests With Logging Listener    json=True
+    [Setup]    Run Tests With Logging Listener    format=json
     Test statuses should be correct
     Log and report should be created
     Correct messages should be logged to normal log
@@ -27,6 +27,7 @@ Logging from listener when using JSON output
 *** Keywords ***
 Run Tests With Logging Listener
     [Arguments]    ${format}=xml
+    Should Be True    $format in ('xml', 'json')
     VAR    ${output}      ${OUTDIR}/output.${format}
     VAR    ${listener}    ${LISTENER DIR}/logging_listener.py
     Run Tests    --listener ${listener} -o ${output} -l l.html -r r.html    misc/pass_and_fail.robot    output=${output}
