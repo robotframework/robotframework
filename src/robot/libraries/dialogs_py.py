@@ -125,10 +125,10 @@ class TkDialog(Toplevel):
         return None
 
     def _create_buttons(self):
-        frame = Frame(self)
+        frame = Frame(self, bg=self.bg_color)
         self._create_button(frame, self.left_button, self._left_button_clicked)
         self._create_button(frame, self.right_button, self._right_button_clicked)
-        frame.pack()
+        frame.pack(pady=10)
 
     def _create_button(self, parent, label, callback):
         if label:
