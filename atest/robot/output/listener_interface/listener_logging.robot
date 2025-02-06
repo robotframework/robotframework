@@ -29,8 +29,10 @@ Run Tests With Logging Listener
     [Arguments]    ${format}=xml
     Should Be True    $format in ('xml', 'json')
     VAR    ${output}      ${OUTDIR}/output.${format}
-    VAR    ${listener}    ${LISTENER DIR}/logging_listener.py
-    Run Tests    --listener ${listener} -o ${output} -l l.html -r r.html    misc/pass_and_fail.robot    output=${output}
+    VAR    ${options}
+    ...    --listener ${LISTENER DIR}/logging_listener.py
+    ...    -o ${output} -l l.html -r r.html
+    Run Tests    ${options}    misc/pass_and_fail.robot    output=${output}
 
 Test statuses should be correct
     Check Test Case    Pass
@@ -100,9 +102,9 @@ Correct messages should be logged to normal log
 'My Keyword' has correct messages
     [Arguments]    ${kw}    ${name}
     IF    '${name}' == 'Suite Setup'
-        ${type} =    Set Variable    setup
+        VAR    ${type}     setup
     ELSE
-        ${type} =    Set Variable    keyword
+        VAR    ${type}     keyword
     END
     Check Log Message    ${kw[0]}       start ${type}    INFO
     Check Log Message    ${kw[1]}       start ${type}    WARN
