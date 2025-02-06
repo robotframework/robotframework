@@ -54,7 +54,9 @@ class TkDialog(Toplevel):
 
     def _get_root(self) -> Tk:
         root = Tk()
-        root.withdraw()
+        if sys.platform.startswith("linux"):
+            root.wait_visibility(root)
+        root.attributes('-alpha', 0)  
         return root
 
     def _initialize_dialog(self):
