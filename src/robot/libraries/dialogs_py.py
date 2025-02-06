@@ -295,7 +295,7 @@ class SelectionDialog(TkDialog):
 class MultipleSelectionDialog(TkDialog):
 
     def _create_widget(self, parent, values) -> Listbox:
-        widget = Listbox(parent, selectmode='multiple')
+        widget = Listbox(parent, background=self.input_bg_color, selectmode='multiple')
         for item in values:
             widget.insert(END, item)
         widget.config(width=0)
