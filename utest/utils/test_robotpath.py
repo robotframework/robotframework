@@ -8,6 +8,10 @@ from robot.utils.robotpath import CASE_INSENSITIVE_FILESYSTEM
 from robot.utils.asserts import assert_equal, assert_true
 
 
+def casenorm(path):
+    return path.lower() if CASE_INSENSITIVE_FILESYSTEM else path
+
+
 class TestAbspathNormpath(unittest.TestCase):
 
     def test_abspath(self):
@@ -16,9 +20,8 @@ class TestAbspathNormpath(unittest.TestCase):
             path = abspath(inp)
             assert_equal(path, exp, inp)
             assert_true(isinstance(path, str), inp)
-            exp = exp.lower() if CASE_INSENSITIVE_FILESYSTEM else exp
             path = abspath(inp, case_normalize=True)
-            assert_equal(path, exp, inp)
+            assert_equal(path, casenorm(exp), inp)
             assert_true(isinstance(path, str), inp)
 
     def test_abspath_when_cwd_is_non_ascii(self):
@@ -58,9 +61,8 @@ class TestAbspathNormpath(unittest.TestCase):
                 path = normpath(inp)
                 assert_equal(path, exp, inp)
                 assert_true(isinstance(path, str), inp)
-                exp = exp.lower() if CASE_INSENSITIVE_FILESYSTEM else exp
                 path = normpath(inp, case_normalize=True)
-                assert_equal(path, exp, inp)
+                assert_equal(path, casenorm(exp), inp)
                 assert_true(isinstance(path, str), inp)
 
     def _get_inputs(self):
