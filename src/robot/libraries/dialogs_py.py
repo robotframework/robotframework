@@ -60,12 +60,37 @@ class TkDialog(Toplevel):
         return root
 
     def _initialize_dialog(self):
-        self.withdraw()    # Remove from display until finalized.
-        self.title('Robot Framework')
+        self.withdraw()
+        self.configure(bg=self.bg_color)
+        self.overrideredirect(True)  
+
+        # Create a custom title bar
+        title_bar = Frame(self, bg=self.bg_color, relief="flat", bd=2)
+        title_bar.pack(fill="x")
+        # Add a title label
+        title_label = Label(title_bar, text="Robot Framework - Dialogs", fg="white", bg=self.bg_color, font=("Arial", 10, "bold"))
+        title_label.pack(side=LEFT, padx=10,pady=10)
+        # Enable dragging functionality
+        for widget in (title_bar, title_label):
+            widget.bind("<ButtonPress-1>", self._start_move)
+            widget.bind("<B1-Motion>", self._on_move)
+                
         self.protocol("WM_DELETE_WINDOW", self._close)
         self.bind("<Escape>", self._close)
         if self.left_button == TkDialog.left_button:
             self.bind("<Return>", self._left_button_clicked)
+
+    # Enable Dragging Functions
+    def _start_move(self, event):
+        """ Records the initial mouse position when clicking the title bar. """
+        self.x_offset = event.x
+        self.y_offset = event.y
+
+    def _on_move(self, event):
+        """ Moves the window when dragging the title bar. """
+        x = self.winfo_x() + (event.x - self.x_offset)
+        y = self.winfo_y() + (event.y - self.y_offset)
+        self.geometry(f"+{x}+{y}")
 
     def _finalize_dialog(self):
         self.update()    # Needed to get accurate dialog size.
