@@ -16,7 +16,7 @@
 import sys
 from threading import current_thread
 from tkinter import (BOTH, Button, END, Entry, Frame, Label, LEFT, Listbox, Tk,
-                     Toplevel, W)
+                     Toplevel, W, Canvas)
 from typing import Any, Union
 
 
@@ -132,8 +132,68 @@ class TkDialog(Toplevel):
 
     def _create_button(self, parent, label, callback):
         if label:
-            button = Button(parent, text=label, width=10, command=callback, underline=0)
-            button.pack(side=LEFT, padx=5, pady=5)
+            frame = Frame(parent, bg=self.bg_color)
+            frame.pack(side=LEFT, padx=10, pady=10)
+
+            canvas = Canvas(frame, width=self.button_width, height=self.button_height,
+                            bg=self.bg_color, highlightthickness=0)
+            canvas.pack()
+
+            x0, y0, x1, y1 = 5, 5, self.button_width - 5, self.button_height - 5
+
+            rounded_rect = [
+                canvas.create_oval(x0, y0, x0 + self.button_radius, y0 + self.button_radius,
+                                   fill=self.button_normal_color, outline=self.button_normal_color),
+                canvas.create_oval(x1 - self.button_radius, y0, x1, y0 + self.button_radius,
+                                   fill=self.button_normal_color, outline=self.button_normal_color),
+                canvas.create_oval(x0, y1 - self.button_radius, x0 + self.button_radius, y1,
+                                   fill=self.button_normal_color, outline=self.button_normal_color),
+                canvas.create_oval(x1 - self.button_radius, y1 - self.button_radius, x1, y1,
+                                   fill=self.button_normal_color, outline=self.button_normal_color),
+                canvas.create_rectangle(x0 + self.button_radius // 2, y0, x1 - self.button_radius // 2, y1,
+                                        fill=self.button_normal_color, outline=self.button_normal_color),
+                canvas.create_rectangle(x0, y0 + self.button_radius // 2, x1, y1 - self.button_radius // 2,
+                                        fill=self.button_normal_color, outline=self.button_normal_color)
+            ]
+
+            button = Button(frame, text=label, font=self.button_font,
+                            bg=self.button_normal_color, fg=self.button_text_color,
+                            activebackground=self.button_normal_color, activeforeground="white",
+                            borderwidth=0, relief="flat", cursor="hand2",
+                            highlightthickness=0, bd=0,
+                            command=callback)
+
+            button_window = canvas.create_window(self.button_width // 2, self.button_height // 2,
+                                                 window=button, width=100, height=30)
+
+            def on_hover(event):
+                for shape in rounded_rect:
+                    canvas.itemconfig(shape, fill=self.button_hover_color, outline=self.button_hover_color)
+                button.config(bg=self.button_hover_color, activebackground=self.button_hover_color)
+
+            def on_leave(event):
+                for shape in rounded_rect:
+                    canvas.itemconfig(shape, fill=self.button_normal_color, outline=self.button_normal_color)
+                button.config(bg=self.button_normal_color, activebackground=self.button_normal_color)
+
+            def on_click(event):
+                for shape in rounded_rect:
+                    canvas.itemconfig(shape, fill=self.button_click_color, outline=self.button_click_color)
+                button.config(bg=self.button_click_color, activebackground=self.button_click_color)
+
+            def on_release(event):
+                on_hover(event)  # Restore hover color after click
+
+            button.bind("<Enter>", on_hover)
+            button.bind("<Leave>", on_leave)
+            button.bind("<ButtonPress-1>", on_click)
+            button.bind("<ButtonRelease-1>", on_release)
+
+            canvas.bind("<Enter>", on_hover)
+            canvas.bind("<Leave>", on_leave)
+            canvas.bind("<ButtonPress-1>", on_click)
+            canvas.bind("<ButtonRelease-1>", on_release)
+
             for char in label[0].upper(), label[0].lower():
                 self.bind(char, callback)
                 self._button_bindings[char] = callback
