@@ -37,6 +37,7 @@ class TkDialog(Toplevel):
         self.button_font = ("Arial", 10, "bold")
         self.input_bg_color = "#6B7376"
         self.input_fg_color = "white"
+        self.lable_fg_color = "white"
 
         self._prevent_execution_with_timeouts()
         self._button_bindings = {}
@@ -109,9 +110,10 @@ class TkDialog(Toplevel):
             self.widget.focus_set()
 
     def _create_body(self, message, value, **config) -> Union[Entry, Listbox, None]:
-        frame = Frame(self)
+        frame = Frame(self, bg=self.bg_color)
         max_width = self.winfo_screenwidth() // 2
-        label = Label(frame, text=message, anchor=W, justify=LEFT, wraplength=max_width)
+        label = Label(frame, text=message, anchor=W, justify=LEFT, wraplength=max_width,
+                      bg=self.bg_color, fg=self.lable_fg_color, font=self.text_font)
         label.pack(fill=BOTH)
         widget = self._create_widget(frame, value, **config)
         if widget:
