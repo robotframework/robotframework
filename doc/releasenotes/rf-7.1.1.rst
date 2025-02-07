@@ -5,8 +5,9 @@ Robot Framework 7.1.1
 .. default-role:: code
 
 `Robot Framework`_ 7.1.1 is the first and also the only planned bug fix release
-in the Robot Framework 7.1.x series. It fixes all reported regressions as well as
-some issues affecting also earlier versions.
+in the Robot Framework 7.1.x series. It fixes all reported regressions in
+`Robot Framework 7.1 <rf-7.1.rst>`_ as well as some issues affecting also
+earlier versions.
 
 Questions and comments related to the release can be sent to the `#devel`
 channel on `Robot Framework Slack`_ and possible bugs submitted to
