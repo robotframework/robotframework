@@ -71,7 +71,7 @@ class TkDialog(Toplevel):
         title_bar = Frame(self, bg=self.bg_color, relief="flat", bd=2)
         title_bar.pack(fill="x")
         # Add a title label
-        title_label = Label(title_bar, text="Robot Framework - Dialogs", fg="white", bg=self.bg_color, font=("Arial", 10, "bold"))
+        title_label = Label(title_bar, text="Robot Framework", fg="white", bg=self.bg_color, font=("Arial", 10, "bold"))
         title_label.pack(side=LEFT, padx=10,pady=10)
         # Enable dragging functionality
         for widget in (title_bar, title_label):
