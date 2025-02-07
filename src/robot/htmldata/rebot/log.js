@@ -7,9 +7,6 @@ function toggleSuite(suiteId) {
 function toggleTest(testId) {
     toggleElement(testId, ['keyword']);
     var test = window.testdata.findLoaded(testId);
-    if (test.status == "FAIL" || test.status == "SKIP")
-        expandFailed(test);
-}
 
 function toggleKeyword(kwId) {
     toggleElement(kwId, ['keyword']);
