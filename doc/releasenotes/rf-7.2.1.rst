@@ -4,10 +4,11 @@ Robot Framework 7.2.1
 
 .. default-role:: code
 
-`Robot Framework`_ 7.2.1 is the first and also the only planned bug fix release
-in the Robot Framework 7.2.x series. It fixes all reported regressions in
-`Robot Framework 7.2 <rf-7.2.rst>`_ as well as some issues affecting also
-earlier versions.
+`Robot Framework`_ 7.2.1 is the first bug fix release in the Robot Framework 7.2.x
+series. It fixes all reported regressions in `Robot Framework 7.2 <rf-7.2.rst>`_
+as well as some issues affecting also earlier versions. Unfortunately the
+there was a mistake in the build process that required creating an immediate
+`Robot Framework 7.2.2 <rf-7.2.2.rst>`_ release.
 
 Questions and comments related to the release can be sent to the `#devel`
 channel on `Robot Framework Slack`_ and possible bugs submitted to
@@ -30,6 +31,7 @@ from PyPI_ and install it manually. For more details and other installation
 approaches, see the `installation instructions`_.
 
 Robot Framework 7.2.1 was released on Friday February 7, 2025.
+It has been superseded by `Robot Framework 7.2.2 <rf-7.2.2.rst>`_.
 
 .. _Robot Framework: http://robotframework.org
 .. _Robot Framework Foundation: http://robotframework.org/foundation
@@ -94,10 +96,6 @@ Full list of fixes and enhancements
       - bug
       - medium
       - `Lists Should Be Equal` does not work as expected with `ignore_case` and `ignore_order` arguments
-    * - `#5329`_
-      - bug
-      - medium
-      - New language selection button in my libdoc makes mobile view very uncomfortable
     * - `#5331`_
       - bug
       - medium
@@ -107,13 +105,12 @@ Full list of fixes and enhancements
       - low
       - Elapsed time is ignored when parsing output.xml if start time is not set
 
-Altogether 8 issues. View on the `issue tracker <https://github.com/robotframework/robotframework/issues?q=milestone%3Av7.2.1>`__.
+Altogether 7 issues. View on the `issue tracker <https://github.com/robotframework/robotframework/issues?q=milestone%3Av7.2.1>`__.
 
 .. _#5326: https://github.com/robotframework/robotframework/issues/5326
 .. _#5317: https://github.com/robotframework/robotframework/issues/5317
 .. _#5318: https://github.com/robotframework/robotframework/issues/5318
 .. _#5058: https://github.com/robotframework/robotframework/issues/5058
 .. _#5321: https://github.com/robotframework/robotframework/issues/5321
-.. _#5329: https://github.com/robotframework/robotframework/issues/5329
 .. _#5331: https://github.com/robotframework/robotframework/issues/5331
 .. _#5325: https://github.com/robotframework/robotframework/issues/5325
