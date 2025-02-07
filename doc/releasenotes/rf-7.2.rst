@@ -30,7 +30,8 @@ from PyPI_ and install it manually. For more details and other installation
 approaches, see the `installation instructions`_.
 
 Robot Framework 7.2 was released on Tuesday January 14, 2025.
-It has been superseded by `Robot Framework 7.2.1 <rf-7.2.1.rst>`_.
+It has been superseded by `Robot Framework 7.2.1 <rf-7.2.1.rst>`_ and
+`Robot Framework 7.2.2 <rf-7.2.2.rst>`_.
 
 .. _Robot Framework: http://robotframework.org
 .. _Robot Framework Foundation: http://robotframework.org/foundation
