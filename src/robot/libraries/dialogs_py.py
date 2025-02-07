@@ -38,6 +38,7 @@ class TkDialog(Toplevel):
         self.input_bg_color = "#6B7376"
         self.input_fg_color = "white"
         self.lable_fg_color = "white"
+        self.widget_text_color = "white"
 
         self._prevent_execution_with_timeouts()
         self._button_bindings = {}
@@ -268,7 +269,7 @@ class SelectionDialog(TkDialog):
         super().__init__(message, values, default=default)
 
     def _create_widget(self, parent, values, default=None) -> Listbox:
-        widget = Listbox(parent,background=self.input_bg_color)
+        widget = Listbox(parent,background=self.input_bg_color, foreground=self.widget_text_color)
         for item in values:
             widget.insert(END, item)
         if default is not None:
@@ -297,7 +298,7 @@ class SelectionDialog(TkDialog):
 class MultipleSelectionDialog(TkDialog):
 
     def _create_widget(self, parent, values) -> Listbox:
-        widget = Listbox(parent, background=self.input_bg_color, selectmode='multiple')
+        widget = Listbox(parent, background=self.input_bg_color, foreground=self.widget_text_color, selectmode='multiple')
         for item in values:
             widget.insert(END, item)
         widget.config(width=0)
