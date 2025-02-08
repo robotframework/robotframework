@@ -14,6 +14,7 @@
 #  limitations under the License.
 
 import os
+import io
 import signal as signal_module
 import subprocess
 import sys
@@ -524,8 +525,33 @@ class Process:
 
     def _wait(self, process):
         result = self._results[process]
-        result.rc = process.wait() or 0
-        result.close_streams()
+
+        _take_stdout = (process.stdout and (not process.stdout.closed))
+        _take_stderr = (process.stderr and (not process.stderr.closed))
+
+        # This is needed to handle stdin closes identically to how it was when the
+        # wait function was used.
+        _stdin = process.stdin
+        process.stdin = process.stdin if (process.stdin and not process.stdin.closed) else io.StringIO("")
+        (_stdout, _stderr,) = process.communicate()
+        process.stdin = _stdin
+
+        result.rc = process.returncode
+
+        # This is needed to handle stdin closes identically to how it was when the
+        # wait function was used.
+        if _stdout:
+            result._stdout = result._format_output(_stdout if _take_stdout else "")
+        
+        if _stderr:
+            result._stderr = result._format_output(_stderr if _take_stderr else "")
+
+        for f in [process.stdout, process.stderr] + result._custom_streams:
+            try:
+                f.close()
+            except AttributeError:
+                pass
+
         logger.info('Process completed.')
         return result
 
@@ -864,20 +890,6 @@ class ExecutionResult:
         if output.endswith('\n'):
             output = output[:-1]
         return output
-
-    def close_streams(self):
-        standard_streams = self._get_and_read_standard_streams(self._process)
-        for stream in standard_streams + self._custom_streams:
-            if self._is_open(stream):
-                stream.close()
-
-    def _get_and_read_standard_streams(self, process):
-        stdin, stdout, stderr = process.stdin, process.stdout, process.stderr
-        if stdout:
-            self._read_stdout()
-        if stderr:
-            self._read_stderr()
-        return [stdin, stdout, stderr]
 
     def __str__(self):
         return f'<result object with rc {self.rc}>'

@@ -97,6 +97,13 @@ Lot of output to DEVNULL
     Should Be Empty    ${result.stderr}
     Should Be Equal    ${result.rc}    ${0}
 
+Lot of output to pipes
+    [Tags]    performance
+    ${result}=    Run Process    python -c "import sys;sys.stdout.write('Hello Robotframework'*65536);sys.stderr.write('Hello Robotframework'*65536)"    shell=True
+    Should Not Be Empty    ${result.stdout}
+    Should Not Be Empty    ${result.stderr}
+    Should Be Equal    ${result.rc}    ${0}
+
 Run multiple times
     [Tags]    performance
     FOR    ${i}    IN RANGE    100
@@ -139,3 +146,4 @@ Run And Test Once
     ...    stdout_content=out-${content}    stderr_content=err-${content}
     Should Be Equal   ${result.stdout}    out-${content}
     Should Be Equal   ${result.stderr}    err-${content}
+
