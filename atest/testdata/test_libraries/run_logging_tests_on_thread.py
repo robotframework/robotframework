@@ -9,6 +9,7 @@ sys.path.insert(1, str(CURDIR / '../../testresources/testlibs'))
 
 
 from robot import run
+import robot.output.debugfile
 
 
 def run_logging_tests(output):
@@ -21,8 +22,8 @@ def run_logging_tests(output):
         report=None,
         log=None)
 
-
-output = (sys.argv + ['output.xml'])[1]
-t = Thread(target=lambda: run_logging_tests(output))
-t.start()
-t.join()
+if __name__ == '__main__':
+    output = (sys.argv + ['output.xml'])[1]
+    t = Thread(target=lambda: run_logging_tests(output))
+    t.start()
+    t.join()

@@ -1,2 +1,3 @@
 jsonschema >= 4.0
 xmlschema
+interpreters-pep-734
