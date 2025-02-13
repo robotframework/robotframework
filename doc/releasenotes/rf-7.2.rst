@@ -30,6 +30,8 @@ from PyPI_ and install it manually. For more details and other installation
 approaches, see the `installation instructions`_.
 
 Robot Framework 7.2 was released on Tuesday January 14, 2025.
+It has been superseded by `Robot Framework 7.2.1 <rf-7.2.1.rst>`_ and
+`Robot Framework 7.2.2 <rf-7.2.2.rst>`_.
 
 .. _Robot Framework: http://robotframework.org
 .. _Robot Framework Foundation: http://robotframework.org/foundation
@@ -342,11 +344,11 @@ Acknowledgements
 
 
 Robot Framework development is sponsored by the `Robot Framework Foundation`_
-and its over 60 member organizations. If your organization is using Robot Framework
+and its over 70 member organizations. If your organization is using Robot Framework
 and benefiting from it, consider joining the foundation to support its
 development as well.
 
-Robot Framework 7.0 team funded by the foundation consisted of `Pekka Klärck`_ and
+Robot Framework 7.2 team funded by the foundation consisted of `Pekka Klärck`_ and
 `Janne Härkönen <https://github.com/yanne>`_. Janne worked only part-time and was
 mainly responsible on Libdoc enhancements. In addition to work done by them, the
 community has provided some great contributions:

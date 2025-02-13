@@ -28,6 +28,7 @@ from PyPI_ and install it manually. For more details and other installation
 approaches, see the `installation instructions`_.
 
 Robot Framework 7.1 was released on Tuesday September 10, 2024.
+It has been superseded by `Robot Framework 7.1.1 <rf-7.1.1.rst>`_
 
 .. _Robot Framework: http://robotframework.org
 .. _Robot Framework Foundation: http://robotframework.org/foundation
@@ -47,7 +48,6 @@ Robot Framework 7.1 was released on Tuesday September 10, 2024.
 
 Most important enhancements
 ===========================
-
 
 Listener enhancements
 ---------------------
