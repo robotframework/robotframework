@@ -27,7 +27,6 @@ The library has a known limitation that it cannot be used with timeouts.
 
 from robot.version import get_version
 
-import inspect
 import importlib
 import multiprocessing as mp
 import concurrent.futures
