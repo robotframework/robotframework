@@ -25,7 +25,6 @@ class TkDialog(Toplevel):
     right_button = 'Cancel'
 
     def __init__(self, message, value=None, **config):
-        self._prevent_execution_with_timeouts()
         self._button_bindings = {}
         super().__init__(self._get_root())
         self._initialize_dialog()
@@ -33,11 +32,6 @@ class TkDialog(Toplevel):
         self._create_buttons()
         self._finalize_dialog()
         self._result = None
-
-    def _prevent_execution_with_timeouts(self):
-        if 'linux' not in sys.platform and current_thread().name != 'MainThread':
-            raise RuntimeError('Dialogs library is not supported with '
-                               'timeouts on Python on this platform.')
 
     def _get_root(self) -> Tk:
         root = Tk()
