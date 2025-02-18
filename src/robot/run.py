@@ -371,6 +371,7 @@ Options
                           |  path/to/test/directory/
                           Examples:
                           --argumentfile argfile.txt --argumentfile STDIN
+ --customsettings file    Path to custom settings toml file.
  -h -? --help             Print usage instructions.
  --version                Print version information.
 

@@ -22,6 +22,8 @@ import warnings
 from datetime import datetime
 from pathlib import Path
 
+import toml
+
 from robot.errors import DataError, FrameworkError
 from robot.output import LOGGER, loggerhelper
 from robot.result.keywordremover import KeywordRemover
@@ -141,6 +143,8 @@ class _BaseSettings:
             self._validate_expandkeywords(value)
         if name == 'Extension':
             return tuple('.' + ext.lower().lstrip('.') for ext in value.split(':'))
+        if name == 'CustomSettings':
+            return self._process_custom_settings(value)
         return value
 
     def _process_doc(self, value):
@@ -358,6 +362,11 @@ class _BaseSettings:
 
     def _raise_invalid(self, option, error):
         raise DataError(f"Invalid value for option '--{option.lower()}': {error}")
+    
+    def _process_custom_settings(self, path):
+        with open(path, 'r') as f:
+            config = toml.load(f)
+        return config
 
     def __contains__(self, setting):
         return setting in self._opts
@@ -495,7 +504,8 @@ class RobotSettings(_BaseSettings):
                        'ConsoleWidth'       : ('consolewidth', 78),
                        'ConsoleMarkers'     : ('consolemarkers', 'AUTO'),
                        'DebugFile'          : ('debugfile', None),
-                       'Language'           : ('language', [])}
+                       'Language'           : ('language', []),
+                       'CustomSettings'     : ('customsettings', None)}                 
     _languages = None
 
     def get_rebot_settings(self):
@@ -548,6 +558,7 @@ class RobotSettings(_BaseSettings):
             'randomize_suites': self.randomize_suites,
             'randomize_tests': self.randomize_tests,
             'randomize_seed': self.randomize_seed,
+            'custom_settings': self.custom_settings
         }
 
     @property
@@ -671,6 +682,10 @@ class RobotSettings(_BaseSettings):
     @property
     def extension(self):
         return self['Extension']
+    
+    @property
+    def custom_settings(self):
+        return self['CustomSettings']
 
 
 class RebotSettings(_BaseSettings):

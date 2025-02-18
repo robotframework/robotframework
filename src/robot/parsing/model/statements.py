@@ -1410,3 +1410,20 @@ class VariableValidator:
     def _is_valid_dict_item(self, item: str) -> bool:
         name, value = split_from_equals(item)
         return value is not None or is_dict_variable(item)
+
+
+@Statement.register
+class CustomSetting(SingleValue):
+    type = Token.CUSTOMSETTING
+
+    @classmethod
+    def from_params(cls, value: str, indent: str = FOUR_SPACES,
+                    separator: str = FOUR_SPACES, eol: str = EOL, name: str = None) -> 'CustomSetting':
+        return cls([
+            Token(Token.SEPARATOR, indent),
+            Token(Token.CUSTOMSETTING, name),
+            Token(Token.SEPARATOR, separator),
+            Token(Token.ARGUMENT, value),
+            Token(Token.EOL, eol)
+        ])
+    

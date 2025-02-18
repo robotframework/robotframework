@@ -23,7 +23,7 @@ class SuiteConfigurer(SuiteVisitor):
 
     def __init__(self, name=None, doc=None, metadata=None, set_tags=None,
                  include_tags=None, exclude_tags=None, include_suites=None,
-                 include_tests=None, empty_suite_ok=False):
+                 include_tests=None, empty_suite_ok=False, custom_settings=None):
         self.name = name
         self.doc = doc
         self.metadata = metadata
@@ -33,6 +33,7 @@ class SuiteConfigurer(SuiteVisitor):
         self.include_suites = include_suites
         self.include_tests = include_tests
         self.empty_suite_ok = empty_suite_ok
+        self.custom_settings = custom_settings
 
     @property
     def add_tags(self):

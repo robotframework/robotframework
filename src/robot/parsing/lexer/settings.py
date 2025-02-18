@@ -36,7 +36,8 @@ class Settings(ABC):
         'Test Template',
         'Timeout',
         'Template',
-        'Name'
+        'Name',
+        'Customsetting'
     )
     name_and_arguments = (
         'Metadata',
@@ -55,7 +56,9 @@ class Settings(ABC):
         'Library',
     )
 
-    def __init__(self, languages: Languages):
+    def __init__(self, languages: Languages, custom_settings = {}):
+        for n in custom_settings: 
+            self.names = self.names + n
         self.settings: 'dict[str, list[Token]|None]' = {n: None for n in self.names}
         self.languages = languages
 
@@ -221,12 +224,13 @@ class ResourceFileSettings(FileSettings):
 class TestCaseSettings(Settings):
     names = (
         'Documentation',
-        'Metadata',
         'Tags',
         'Setup',
         'Teardown',
         'Template',
-        'Timeout'
+        'Timeout',
+        'Metadata',
+        'Customsetting'
     )
 
     def __init__(self, parent: SuiteFileSettings):
