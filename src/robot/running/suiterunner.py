@@ -135,11 +135,11 @@ class SuiteRunner(SuiteVisitor):
         self.executed[-1][data.name] = True
         result = self.suite_result.tests.create(self._resolve_setting(data.name),
                                                 self._resolve_setting(data.doc),
-                                                data.metadata,
                                                 self._resolve_setting(data.tags),
                                                 self._get_timeout(data),
                                                 data.lineno,
-                                                start_time=datetime.now())
+                                                start_time=datetime.now(),
+                                                metadata=data.metadata)
         self.context.start_test(data, result)
         status = TestStatus(self.suite_status, result, settings.skip_on_failure,
                             settings.rpa)

@@ -50,11 +50,11 @@ class TestCase(ModelObject, Generic[KW]):
 
     def __init__(self, name: str = '',
                  doc: str = '',
-                 metadata: 'Mapping[str, str]|None' = None,
                  tags: 'Tags|Sequence[str]' = (),
                  timeout: 'str|None' = None,
                  lineno: 'int|None' = None,
-                 parent: 'TestSuite[KW, TestCase[KW]]|None' = None):
+                 parent: 'TestSuite[KW, TestCase[KW]]|None' = None,
+                 metadata: 'Mapping[str, str]|None' = None):
         self.name = name
         self.doc = doc
         self.metadata = metadata
