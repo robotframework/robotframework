@@ -41,12 +41,7 @@ _ctx = mp.get_context("spawn") # spawn is thread safe (forkserver would also wor
 _pool = concurrent.futures.ProcessPoolExecutor(max_workers=1, mp_context=_ctx) # only one worker, this makes calls sequential, eventhough parallel calls would be possible
 
 def _process_worker(fun_name, args, kwargs):
-    m = importlib.import_module("robot.libraries.dialogs_py") 
-    # dialogs_py is only loaded in target process, 
-    # tkinter is not loaded before the function is
-    # executed.
-    #
-    # This avoids the problem of tkinter not beeing pickleable
+    m = importlib.import_module("robot.libraries._Dialogs")
     return getattr(m, fun_name)(*args, **kwargs)
 
 def run_in_process(fun):
@@ -56,7 +51,7 @@ def run_in_process(fun):
     return wrapper
 
 # the acutall functions are implemented here
-_dialogs_py = importlib.import_module('robot.libraries.dialogs_py')
+_dialogs_py = importlib.import_module('robot.libraries._Dialogs')
 
 
 for name in __all__:
