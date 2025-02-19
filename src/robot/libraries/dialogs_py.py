@@ -59,7 +59,7 @@ class TkDialog(Toplevel):
         if sys.platform.startswith("linux"):
             root.wait_visibility(root)
             root.attributes('-alpha', 0)
-        if sys.platform.startswith("win"):
+        else:
             root.withdraw()
         return root
 
