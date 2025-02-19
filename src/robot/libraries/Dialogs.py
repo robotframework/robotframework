@@ -51,8 +51,8 @@ def run_in_process(fun):
     return wrapper
 
 # the acutall functions are implemented here
-_dialogs_py = importlib.import_module('robot.libraries._Dialogs')
+_Dialogs = importlib.import_module('robot.libraries._Dialogs')
 
 
 for name in __all__:
-    globals()[name] = run_in_process(getattr(_dialogs_py, name))
+    globals()[name] = run_in_process(getattr(_Dialogs, name))
