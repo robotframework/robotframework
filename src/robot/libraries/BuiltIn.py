@@ -1939,7 +1939,8 @@ class _Variables(_BuiltInBase):
         return resolver.resolve(self._variables)
 
     def _log_set_variable(self, name, value):
-        self.log(format_assign_message(name, value))
+        if self._context.steps:
+            logger.info(format_assign_message(name, value))
 
 
 class _RunKeyword(_BuiltInBase):

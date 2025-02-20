@@ -30,6 +30,8 @@ from PyPI_ and install it manually. For more details and other installation
 approaches, see the `installation instructions`_.
 
 Robot Framework 7.2 was released on Tuesday January 14, 2025.
+It has been superseded by `Robot Framework 7.2.1 <rf-7.2.1.rst>`_ and
+`Robot Framework 7.2.2 <rf-7.2.2.rst>`_.
 
 .. _Robot Framework: http://robotframework.org
 .. _Robot Framework Foundation: http://robotframework.org/foundation
@@ -270,6 +272,23 @@ all keywords and messages (`#5268`_). This should not typically cause problems,
 but there is a possibility for recursion if a listener does something
 after it gets a notification about an action it initiated itself.
 
+Messages logged by `start_test` and `end_test` listener methods are preserved
+-----------------------------------------------------------------------------
+
+Messages logged by `start_test` and `end_test` listeners methods using
+`robot.api.logger` used to be ignored, but nowadays they are preserved (`#5266`_).
+They are shown in the log file directly under the corresponding test and in
+the result model they are in `TestCase.body` along with keywords and control
+structures used by the test.
+
+Messages in `TestCase.body` can cause problems with tools processing results
+if they expect to see only keywords and control structures. This requires
+tools processing results to be updated.
+
+Showing these messages in the log file can add unnecessary noise. If that
+happens, listeners need to be configured to log less or to log using a level
+that is not visible by default.
+
 Change to handling SKIP with templates
 --------------------------------------
 
@@ -325,11 +344,11 @@ Acknowledgements
 
 
 Robot Framework development is sponsored by the `Robot Framework Foundation`_
-and its over 60 member organizations. If your organization is using Robot Framework
+and its over 70 member organizations. If your organization is using Robot Framework
 and benefiting from it, consider joining the foundation to support its
 development as well.
 
-Robot Framework 7.0 team funded by the foundation consisted of `Pekka Klärck`_ and
+Robot Framework 7.2 team funded by the foundation consisted of `Pekka Klärck`_ and
 `Janne Härkönen <https://github.com/yanne>`_. Janne worked only part-time and was
 mainly responsible on Libdoc enhancements. In addition to work done by them, the
 community has provided some great contributions:

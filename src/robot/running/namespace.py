@@ -21,8 +21,7 @@ from itertools import chain
 from robot.errors import DataError, KeywordError
 from robot.libraries import STDLIBS
 from robot.output import LOGGER, Message
-from robot.utils import (eq, find_file, is_string, normalize, RecommendationFinder,
-                         seq2str2)
+from robot.utils import eq, find_file, normalize, RecommendationFinder, seq2str2
 
 from .context import EXECUTION_CONTEXTS
 from .importer import ImportCache, Importer
@@ -231,7 +230,7 @@ class KeywordStore:
     def get_library(self, name_or_instance):
         if name_or_instance is None:
             raise DataError("Library can not be None.")
-        if is_string(name_or_instance):
+        if isinstance(name_or_instance, str):
             return self._get_lib_by_name(name_or_instance)
         return self._get_lib_by_instance(name_or_instance)
 
@@ -284,7 +283,7 @@ class KeywordStore:
     def _get_runner(self, name, strip_bdd_prefix=True):
         if not name:
             raise DataError('Keyword name cannot be empty.')
-        if not is_string(name):
+        if not isinstance(name, str):
             raise DataError('Keyword name must be a string.')
         runner = None
         if strip_bdd_prefix:

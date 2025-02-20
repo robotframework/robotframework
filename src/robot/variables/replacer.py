@@ -16,7 +16,7 @@
 from robot.errors import DataError, VariableError
 from robot.output import librarylogger as logger
 from robot.utils import (DotDict, escape, get_error_message, is_dict_like, is_list_like,
-                         is_string, safe_str, type_name, unescape)
+                         safe_str, type_name, unescape)
 
 from .finders import VariableFinder
 from .search import VariableMatch, search_variable
@@ -174,7 +174,7 @@ class VariableReplacer:
     def _parse_sequence_variable_index(self, index):
         if isinstance(index, (int, slice)):
             return index
-        if not is_string(index):
+        if not isinstance(index, str):
             raise ValueError
         if ':' not in index:
             return int(index)

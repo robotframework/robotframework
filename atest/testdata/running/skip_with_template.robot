@@ -1,5 +1,5 @@
 *** Settings ***
-Library           AddMessageToTestBody.py
+Library           AddMessagesToTestBody    name=Messages in test body are ignored
 Test Template     Run Keyword
 
 *** Test Cases ***

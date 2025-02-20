@@ -29,7 +29,7 @@ class Translations {
     }
     let found = false;
     Object.keys(translations).forEach((langCode) => {
-      if (langCode === lang) {
+      if (langCode.toLowerCase() === lang.toLowerCase()) {
         this.language = translations[langCode];
         found = true;
       }

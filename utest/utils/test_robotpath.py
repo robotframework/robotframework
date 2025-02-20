@@ -1,10 +1,15 @@
 import unittest
 import os
 import os.path
+from pathlib import Path
 
 from robot.utils import abspath, normpath, get_link_path, WINDOWS
 from robot.utils.robotpath import CASE_INSENSITIVE_FILESYSTEM
 from robot.utils.asserts import assert_equal, assert_true
+
+
+def casenorm(path):
+    return path.lower() if CASE_INSENSITIVE_FILESYSTEM else path
 
 
 class TestAbspathNormpath(unittest.TestCase):
@@ -15,9 +20,8 @@ class TestAbspathNormpath(unittest.TestCase):
             path = abspath(inp)
             assert_equal(path, exp, inp)
             assert_true(isinstance(path, str), inp)
-            exp = exp.lower() if CASE_INSENSITIVE_FILESYSTEM else exp
             path = abspath(inp, case_normalize=True)
-            assert_equal(path, exp, inp)
+            assert_equal(path, casenorm(exp), inp)
             assert_true(isinstance(path, str), inp)
 
     def test_abspath_when_cwd_is_non_ascii(self):
@@ -53,13 +57,13 @@ class TestAbspathNormpath(unittest.TestCase):
 
     def test_normpath(self):
         for inp, exp in self._get_inputs():
-            path = normpath(inp)
-            assert_equal(path, exp, inp)
-            assert_true(isinstance(path, str), inp)
-            exp = exp.lower() if CASE_INSENSITIVE_FILESYSTEM else exp
-            path = normpath(inp, case_normalize=True)
-            assert_equal(path, exp, inp)
-            assert_true(isinstance(path, str), inp)
+            for inp in inp, Path(inp):
+                path = normpath(inp)
+                assert_equal(path, exp, inp)
+                assert_true(isinstance(path, str), inp)
+                path = normpath(inp, case_normalize=True)
+                assert_equal(path, casenorm(exp), inp)
+                assert_true(isinstance(path, str), inp)
 
     def _get_inputs(self):
         inputs = self._windows_inputs if WINDOWS else self._posix_inputs
