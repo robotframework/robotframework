@@ -539,7 +539,7 @@ class Process:
                 # an exception is used to mange the test timeout situation
                 (_stdout, _stderr,) = process.communicate(timeout=0.1)
                 break
-            except TimeoutExpired:
+            except subprocess.TimeoutExpired:
                 pass
 
         process.stdin = _stdin
