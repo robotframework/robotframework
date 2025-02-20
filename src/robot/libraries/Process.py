@@ -20,6 +20,7 @@ import subprocess
 import sys
 import time
 from tempfile import TemporaryFile
+import contextlib
 
 from robot.api import logger
 from robot.utils import (cmdline2list, ConnectionCache, console_decode, console_encode,
@@ -534,13 +535,11 @@ class Process:
         _stdin = process.stdin
         process.stdin = process.stdin if (process.stdin and not process.stdin.closed) else io.StringIO("")
         while True:
-            try:
+            with contextlib.suppress(subprocess.TimeoutExpired):
                 # this is to allow the process to be aborted when on windows
                 # an exception is used to mange the test timeout situation
                 (_stdout, _stderr,) = process.communicate(timeout=0.1)
                 break
-            except subprocess.TimeoutExpired:
-                pass
 
         process.stdin = _stdin
 
@@ -555,10 +554,8 @@ class Process:
             result._stderr = result._format_output(_stderr if _take_stderr else "")
 
         for f in [process.stdout, process.stderr] + result._custom_streams:
-            try:
+            with contextlib.suppress(AttributeError):
                 f.close()
-            except AttributeError:
-                pass
 
         logger.info('Process completed.')
         return result
