@@ -533,7 +533,15 @@ class Process:
         # wait function was used.
         _stdin = process.stdin
         process.stdin = process.stdin if (process.stdin and not process.stdin.closed) else io.StringIO("")
-        (_stdout, _stderr,) = process.communicate()
+        while True:
+            try:
+                # this is to allow the process to be aborted when on windows
+                # an exception is used to mange the test timeout situation
+                (_stdout, _stderr,) = process.communicate(timeout=0.1)
+                break
+            except TimeoutExpired:
+                pass
+
         process.stdin = _stdin
 
         result.rc = process.returncode
