@@ -65,19 +65,22 @@ class TkDialog(Toplevel):
 
     def _initialize_dialog(self):
         self.withdraw()
-        self.configure(bg=self.bg_color)
-        self.overrideredirect(True)  
+        if sys.platform == "darwin":
+            self.title("Robot Framework")
+        else:
+            self.configure(bg=self.bg_color)
+            self.overrideredirect(True)  
 
-        # Create a custom title bar
-        title_bar = Frame(self, bg=self.bg_color, relief="flat", bd=2)
-        title_bar.pack(fill="x")
-        # Add a title label
-        title_label = Label(title_bar, text="Robot Framework", fg="white", bg=self.bg_color, font=("Arial", 10, "bold"))
-        title_label.pack(side=LEFT, padx=10,pady=10)
-        # Enable dragging functionality
-        for widget in (title_bar, title_label):
-            widget.bind("<ButtonPress-1>", self._start_move)
-            widget.bind("<B1-Motion>", self._on_move)
+            # Create a custom title bar
+            title_bar = Frame(self, bg=self.bg_color, relief="flat", bd=2)
+            title_bar.pack(fill="x")
+            # Add a title label
+            title_label = Label(title_bar, text="Robot Framework", fg="white", bg=self.bg_color, font=("Arial", 10, "bold"))
+            title_label.pack(side=LEFT, padx=10,pady=10)
+            # Enable dragging functionality
+            for widget in (title_bar, title_label):
+                widget.bind("<ButtonPress-1>", self._start_move)
+                widget.bind("<B1-Motion>", self._on_move)
                 
         self.protocol("WM_DELETE_WINDOW", self._close)
         self.bind("<Escape>", self._close)
@@ -113,10 +116,10 @@ class TkDialog(Toplevel):
             self.widget.focus_set()
 
     def _create_body(self, message, value, **config) -> Union[Entry, Listbox, None]:
-        frame = Frame(self, bg=self.bg_color)
+        frame = Frame(self, bg=self.bg_color if sys.platform != "darwin" else None)     #type:ignore
         max_width = self.winfo_screenwidth() // 2
         label = Label(frame, text=message, anchor=W, justify=LEFT, wraplength=max_width,
-                      bg=self.bg_color, fg=self.lable_fg_color, font=self.text_font)
+                      bg=self.bg_color if sys.platform != "darwin" else None, fg=self.lable_fg_color, font=self.text_font)  #type:ignore
         label.pack(fill=BOTH)
         widget = self._create_widget(frame, value, **config)
         if widget:
@@ -128,74 +131,79 @@ class TkDialog(Toplevel):
         return None
 
     def _create_buttons(self):
-        frame = Frame(self, bg=self.bg_color)
+        frame = Frame(self, bg=self.bg_color if sys.platform != "darwin" else None)
         self._create_button(frame, self.left_button, self._left_button_clicked)
         self._create_button(frame, self.right_button, self._right_button_clicked)
         frame.pack(pady=10)
 
     def _create_button(self, parent, label, callback):
         if label:
-            frame = Frame(parent, bg=self.bg_color)
-            frame.pack(side=LEFT, padx=10, pady=10)
+            if sys.platform == "darwin":
+                button = Button(parent, text=label, width=10, command=callback, underline=0,font=self.button_font)
+                button.pack(side=LEFT, padx=5, pady=5)
+            else:
 
-            canvas = Canvas(frame, width=self.button_width, height=self.button_height,
-                            bg=self.bg_color, highlightthickness=0)
-            canvas.pack()
+                frame = Frame(parent, bg=self.bg_color)
+                frame.pack(side=LEFT, padx=10, pady=10)
 
-            x0, y0, x1, y1 = 5, 5, self.button_width - 5, self.button_height - 5
+                canvas = Canvas(frame, width=self.button_width, height=self.button_height,
+                                bg=self.bg_color, highlightthickness=0)
+                canvas.pack()
 
-            rounded_rect = [
-                canvas.create_oval(x0, y0, x0 + self.button_radius, y0 + self.button_radius,
-                                   fill=self.button_normal_color, outline=self.button_normal_color),
-                canvas.create_oval(x1 - self.button_radius, y0, x1, y0 + self.button_radius,
-                                   fill=self.button_normal_color, outline=self.button_normal_color),
-                canvas.create_oval(x0, y1 - self.button_radius, x0 + self.button_radius, y1,
-                                   fill=self.button_normal_color, outline=self.button_normal_color),
-                canvas.create_oval(x1 - self.button_radius, y1 - self.button_radius, x1, y1,
-                                   fill=self.button_normal_color, outline=self.button_normal_color),
-                canvas.create_rectangle(x0 + self.button_radius // 2, y0, x1 - self.button_radius // 2, y1,
-                                        fill=self.button_normal_color, outline=self.button_normal_color),
-                canvas.create_rectangle(x0, y0 + self.button_radius // 2, x1, y1 - self.button_radius // 2,
-                                        fill=self.button_normal_color, outline=self.button_normal_color)
-            ]
+                x0, y0, x1, y1 = 5, 5, self.button_width - 5, self.button_height - 5
 
-            button = Button(frame, text=label, font=self.button_font,
-                            bg=self.button_normal_color, fg=self.button_text_color,
-                            activebackground=self.button_normal_color, activeforeground="white",
-                            borderwidth=0, relief="flat", cursor="hand2",
-                            highlightthickness=0, bd=0,
-                            command=callback)
+                rounded_rect = [
+                    canvas.create_oval(x0, y0, x0 + self.button_radius, y0 + self.button_radius,
+                                    fill=self.button_normal_color, outline=self.button_normal_color),
+                    canvas.create_oval(x1 - self.button_radius, y0, x1, y0 + self.button_radius,
+                                    fill=self.button_normal_color, outline=self.button_normal_color),
+                    canvas.create_oval(x0, y1 - self.button_radius, x0 + self.button_radius, y1,
+                                    fill=self.button_normal_color, outline=self.button_normal_color),
+                    canvas.create_oval(x1 - self.button_radius, y1 - self.button_radius, x1, y1,
+                                    fill=self.button_normal_color, outline=self.button_normal_color),
+                    canvas.create_rectangle(x0 + self.button_radius // 2, y0, x1 - self.button_radius // 2, y1,
+                                            fill=self.button_normal_color, outline=self.button_normal_color),
+                    canvas.create_rectangle(x0, y0 + self.button_radius // 2, x1, y1 - self.button_radius // 2,
+                                            fill=self.button_normal_color, outline=self.button_normal_color)
+                ]
 
-            button_window = canvas.create_window(self.button_width // 2, self.button_height // 2,
-                                                 window=button, width=100, height=30)
+                button = Button(frame, text=label, font=self.button_font,
+                                bg=self.button_normal_color, fg=self.button_text_color,
+                                activebackground=self.button_normal_color, activeforeground="white",
+                                borderwidth=0, relief="flat", cursor="hand2",
+                                highlightthickness=0, bd=0,
+                                command=callback)
 
-            def on_hover(event):
-                for shape in rounded_rect:
-                    canvas.itemconfig(shape, fill=self.button_hover_color, outline=self.button_hover_color)
-                button.config(bg=self.button_hover_color, activebackground=self.button_hover_color)
+                button_window = canvas.create_window(self.button_width // 2, self.button_height // 2,
+                                                    window=button, width=100, height=30)
 
-            def on_leave(event):
-                for shape in rounded_rect:
-                    canvas.itemconfig(shape, fill=self.button_normal_color, outline=self.button_normal_color)
-                button.config(bg=self.button_normal_color, activebackground=self.button_normal_color)
+                def on_hover(event):
+                    for shape in rounded_rect:
+                        canvas.itemconfig(shape, fill=self.button_hover_color, outline=self.button_hover_color)
+                    button.config(bg=self.button_hover_color, activebackground=self.button_hover_color)
 
-            def on_click(event):
-                for shape in rounded_rect:
-                    canvas.itemconfig(shape, fill=self.button_click_color, outline=self.button_click_color)
-                button.config(bg=self.button_click_color, activebackground=self.button_click_color)
+                def on_leave(event):
+                    for shape in rounded_rect:
+                        canvas.itemconfig(shape, fill=self.button_normal_color, outline=self.button_normal_color)
+                    button.config(bg=self.button_normal_color, activebackground=self.button_normal_color)
 
-            def on_release(event):
-                on_hover(event)  # Restore hover color after click
+                def on_click(event):
+                    for shape in rounded_rect:
+                        canvas.itemconfig(shape, fill=self.button_click_color, outline=self.button_click_color)
+                    button.config(bg=self.button_click_color, activebackground=self.button_click_color)
 
-            button.bind("<Enter>", on_hover)
-            button.bind("<Leave>", on_leave)
-            button.bind("<ButtonPress-1>", on_click)
-            button.bind("<ButtonRelease-1>", on_release)
+                def on_release(event):
+                    on_hover(event)  # Restore hover color after click
 
-            canvas.bind("<Enter>", on_hover)
-            canvas.bind("<Leave>", on_leave)
-            canvas.bind("<ButtonPress-1>", on_click)
-            canvas.bind("<ButtonRelease-1>", on_release)
+                button.bind("<Enter>", on_hover)
+                button.bind("<Leave>", on_leave)
+                button.bind("<ButtonPress-1>", on_click)
+                button.bind("<ButtonRelease-1>", on_release)
+
+                canvas.bind("<Enter>", on_hover)
+                canvas.bind("<Leave>", on_leave)
+                canvas.bind("<ButtonPress-1>", on_click)
+                canvas.bind("<ButtonRelease-1>", on_release)
 
             for char in label[0].upper(), label[0].lower():
                 self.bind(char, callback)
@@ -229,7 +237,7 @@ class TkDialog(Toplevel):
 
 
 class MessageDialog(TkDialog):
-    right_button = None
+    right_button = None     #type:ignore
 
 
 class InputDialog(TkDialog):
@@ -239,10 +247,10 @@ class InputDialog(TkDialog):
 
     def _create_widget(self, parent, default, hidden=False) -> Entry:
         # Create a wrapper frame to control spacing
-        input_frame = Frame(parent, bg=self.bg_color)
+        input_frame = Frame(parent, bg=self.bg_color if sys.platform != "darwin" else None)     #type:ignore
         input_frame.pack(pady=5)  # Adjust this value to increase/decrease spacing
         # Create the Entry widget inside the frame
-        widget = Entry(input_frame, bg=self.input_bg_color,fg=self.input_fg_color, show='*' if hidden else '')
+        widget = Entry(input_frame, bg=self.input_bg_color if sys.platform != "darwin" else None,fg=self.input_fg_color, show='*' if hidden else '')        #type:ignore
         widget.pack(ipadx=70,ipady=5,padx=5, pady=10)  # Adds some internal padding for spacing
 
         widget.insert(0, default)
