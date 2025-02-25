@@ -65,6 +65,7 @@ class TkDialog(Toplevel):
 
     def _initialize_dialog(self):
         self.withdraw()
+        self.attributes("-topmost",True)
         if sys.platform == "darwin":
             self.title("Robot Framework")
         else:
@@ -112,6 +113,8 @@ class TkDialog(Toplevel):
         self.geometry(f'{width}x{height}+{x}+{y}')
         self.lift()
         self.deiconify()
+        self.focus_force()
+        self.grab_set()
         if self.widget:
             self.widget.focus_set()
 
