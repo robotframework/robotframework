@@ -37,8 +37,8 @@ class TkDialog(Toplevel):
         self.button_font = ("Arial", 10, "bold")
         self.input_bg_color = "#6B7376"
         self.input_fg_color = "white"
-        self.lable_fg_color = "white"
-        self.widget_text_color = "white"
+        self.lable_fg_color = None if sys.platform == "darwin" else "white"
+        self.widget_text_color = None if sys.platform == "darwin" else "white"
 
         self._prevent_execution_with_timeouts()
         self._button_bindings = {}
