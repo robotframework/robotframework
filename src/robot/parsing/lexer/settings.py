@@ -79,7 +79,7 @@ class Settings(ABC):
         return name
 
     def _validate(self, orig: str, name: str, statement: StatementTokens):
-        if name not in self.settings:
+        if name not in self.settings and name not in self.settings['Customsetting'].keys():
             message = self._get_non_existing_setting_message(orig, name)
             raise ValueError(message)
         if self.settings[name] is not None and name not in self.multi_use:
@@ -165,7 +165,8 @@ class SuiteFileSettings(FileSettings):
         'Keyword Tags',
         'Library',
         'Resource',
-        'Variables'
+        'Variables',
+        'Customsetting'
     )
     aliases = {
         'Force Tags': 'Test Tags',

@@ -143,7 +143,7 @@ class _BaseSettings:
             self._validate_expandkeywords(value)
         if name == 'Extension':
             return tuple('.' + ext.lower().lstrip('.') for ext in value.split(':'))
-        if name == 'CustomSettings':
+        if name == 'Customsetting':
             return self._process_custom_settings(value)
         return value
 
@@ -363,10 +363,8 @@ class _BaseSettings:
     def _raise_invalid(self, option, error):
         raise DataError(f"Invalid value for option '--{option.lower()}': {error}")
     
-    def _process_custom_settings(self, path):
-        with open(path, 'r') as f:
-            config = toml.load(f)
-        return config
+    def _process_custom_settings(self, name):
+        return name
 
     def __contains__(self, setting):
         return setting in self._opts

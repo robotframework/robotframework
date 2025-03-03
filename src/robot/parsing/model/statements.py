@@ -1413,12 +1413,12 @@ class VariableValidator:
 
 
 @Statement.register
-class CustomSetting(SingleValue):
+class Customsetting(SingleValue):
     type = Token.CUSTOMSETTING
 
     @classmethod
     def from_params(cls, value: str, indent: str = FOUR_SPACES,
-                    separator: str = FOUR_SPACES, eol: str = EOL, name: str = None) -> 'CustomSetting':
+                    separator: str = FOUR_SPACES, eol: str = EOL, name: str = None) -> 'Customsetting':
         return cls([
             Token(Token.SEPARATOR, indent),
             Token(Token.CUSTOMSETTING, name),
