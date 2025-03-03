@@ -212,6 +212,12 @@ function addExecutionLog(main) {
           <td class="doc">{{html $value[1]}}</td>
         </tr>
         {{/each}}
+        {{each custom_setting}}
+        <tr>
+          <th>{{html $value[0]}}:</th>
+          <td class="doc">{{html $value[1]}}</td>
+        </tr>
+        {{/each}}
         {{if source}}
         <tr>
           <th>Source:</th>
@@ -281,6 +287,12 @@ function addExecutionLog(main) {
         </tr>
         {{/if}}
         {{each metadata}}
+        <tr>
+          <th>{{html $value[0]}}:</th>
+          <td class="doc">{{html $value[1]}}</td>
+        </tr>
+        {{/each}}
+        {{each custom_setting}}
         <tr>
           <th>{{html $value[0]}}:</th>
           <td class="doc">{{html $value[1]}}</td>
