@@ -197,7 +197,7 @@ class DynamicArgumentParser(ArgumentSpecParser):
 
     def _validate_arg(self, arg):
         if isinstance(arg, tuple):
-            if self._is_invalid_tuple(arg):
+            if not self._is_valid_tuple(arg):
                 self._report_error(f'Invalid argument "{arg}".')
             if len(arg) == 1:
                 return arg[0]
@@ -206,10 +206,10 @@ class DynamicArgumentParser(ArgumentSpecParser):
             return tuple(arg.split('=', 1))
         return arg
 
-    def _is_invalid_tuple(self, arg):
-        return (len(arg) > 2
-                or not isinstance(arg[0], str)
-                or (arg[0].startswith('*') and len(arg) > 1))
+    def _is_valid_tuple(self, arg):
+        return (len(arg) in (1, 2)
+                and isinstance(arg[0], str)
+                and not (arg[0].startswith('*') and len(arg) == 2))
 
     def _is_var_named(self, arg):
         return arg[:2] == '**'
