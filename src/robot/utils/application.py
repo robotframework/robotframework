@@ -18,7 +18,7 @@ import sys
 from robot.errors import (INFO_PRINTED, DATA_ERROR, STOPPED_BY_USER,
                           FRAMEWORK_ERROR, Information, DataError)
 
-from .argumentparser import ArgumentParser
+from .argumentparser import ArgumentParser, EnvironmentVariableExpander
 from .encoding import console_encode
 from .error import get_error_details
 
@@ -30,7 +30,7 @@ class Application:
         self._ap = ArgumentParser(usage, name, version, arg_limits,
                                   self.validate, env_options, **auto_options)
         self._logger = logger or DefaultLogger()
-
+        self._env_expander = EnvironmentVariableExpander()
     def main(self, arguments, **options):
         raise NotImplementedError
 
@@ -41,6 +41,7 @@ class Application:
         with self._logger:
             self._logger.info('%s %s' % (self._ap.name, self._ap.version))
             options, arguments = self._parse_arguments(cli_arguments)
+            options, arguments = self._expand_arguments(options, arguments)
             rc = self._execute(arguments, options)
         if exit:
             self._exit(rc)
@@ -49,6 +50,36 @@ class Application:
     def console(self, msg):
         if msg:
             print(console_encode(msg))
+
+    def _expand_arguments(self, options, arguments):
+        self.console('Starting expansion of environment variables in options and arguments.')
+        # print(f"options: {options}")
+        # print(f"arguments: {arguments}")
+        expanded_options, expanded_arguments = self._env_expander.expand_arguments(options, arguments)
+        # print(f"expanded_options: {expanded_options}")
+        # print(f"expanded_arguments: {expanded_arguments}")
+        for original, expanded in zip(arguments, expanded_arguments):
+            if original != expanded:
+                self.console(f"Expanded argument '{original}' -> '{expanded}'")
+
+        for key in options.keys():
+            original = options[key]
+            expanded = expanded_options[key]
+            if isinstance(original, list):
+                for orig, exp in zip(original, expanded):
+                    if orig != exp:
+                        self.console(f"Expanded option '{key}' value '{orig}' -> '{exp}'")
+                    elif '$' in orig:  # Add this to log unexpanded variables
+                        self.console(f"Variable in option '{key}' remains unexpanded: '{orig}'")
+            elif isinstance(original, str):
+                if original != expanded:
+                    self.console(f"Expanded option '{key}' value '{original}' -> '{expanded}'")
+                elif '$' in original:  # Add this to log unexpanded variables
+                    self.console(f"Variable in option '{key}' remains unexpanded: '{original}'")
+
+        self.console('Completed expansion of environment variables.')
+
+        return expanded_options, expanded_arguments
 
     def _parse_arguments(self, cli_args):
         try:
