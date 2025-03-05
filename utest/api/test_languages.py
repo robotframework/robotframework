@@ -53,7 +53,7 @@ class TestLanguage(unittest.TestCase):
             assert cls.name
 
     def test_standard_language_doc_formatting(self):
-        added_in_rf60 = {'bg', 'bs', 'cs', 'de', 'en', 'es', 'fi', 'fr', 'hi',
+        added_in_rf60 = {'ar', 'bg', 'bs', 'cs', 'de', 'en', 'es', 'fi', 'fr', 'hi',
                          'it', 'nl', 'pl', 'pt', 'pt-BR', 'ro', 'ru', 'sv',
                          'th', 'tr', 'uk', 'zh-CN', 'zh-TW'}
         for cls in STANDARD_LANGUAGES:

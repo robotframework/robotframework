@@ -1179,6 +1179,7 @@ class It(Language):
     and_prefixes = ['E']
     but_prefixes = ['Ma']
     true_strings = ['Vero', 'Sì', 'On']
+    teardown_setting = 'Hậu thiết lập'
     false_strings = ['Falso', 'No', 'Off', 'Nessuno']
 
 
@@ -1255,7 +1256,6 @@ class Vi(Language):
     keyword_tags_setting = 'Các từ khóa nhãn'
     tags_setting = 'Các thẻ'
     setup_setting = 'Tiền thiết lập'
-    teardown_setting = 'Hậu thiết lập'
     template_setting = 'Mẫu'
     timeout_setting = 'Thời gian chờ'
     arguments_setting = 'Các đối số'
@@ -1356,3 +1356,47 @@ class Ko(Language):
     but_prefixes = ['하지만']
     true_strings = ['참', '네', '켜기']
     false_strings = ['거짓', '아니오', '끄기']
+
+class Ar(Language):
+    """Arabic
+
+    New in Robot Framework X.Y.
+    """
+    settings_header = 'الإعدادات'
+    variables_header = 'المتغيرات'
+    test_cases_header = 'وضعيات الاختبار'
+    tasks_header = 'المهام'
+    keywords_header = 'الأوامر'
+    comments_header = 'التعليقات'
+    library_setting = 'المكتبة'
+    resource_setting = 'المورد'
+    variables_setting = 'المتغيرات'
+    name_setting = 'الاسم'
+    documentation_setting = 'التوثيق'
+    metadata_setting = 'البيانات الوصفية'
+    suite_setup_setting = 'إعداد المجموعة'
+    suite_teardown_setting = 'تفكيك المجموعة'
+    test_setup_setting = 'تهيئة الاختبار'
+    task_setup_setting = 'تهيئة المهمة'
+    test_teardown_setting = 'تفكيك الاختبار'
+    task_teardown_setting = 'تفكيك المهمة'
+    test_template_setting = 'قالب الاختبار'
+    task_template_setting = 'قالب المهمة'
+    test_timeout_setting = 'مهلة الاختبار'
+    task_timeout_setting = 'مهلة المهمة'
+    test_tags_setting = 'علامات الاختبار'
+    task_tags_setting = 'علامات المهمة'
+    keyword_tags_setting = 'علامات الأوامر'
+    setup_setting = 'إعداد'
+    teardown_setting = 'تفكيك'
+    template_setting = 'قالب'
+    tags_setting = 'العلامات'
+    timeout_setting = 'المهلة الزمنية'
+    arguments_setting = 'المعطيات'
+    given_prefixes = ['بافتراض']
+    when_prefixes = ['عندما', 'لما']
+    then_prefixes = ['إذن', 'عندها']
+    and_prefixes = ['و']
+    but_prefixes = ['لكن']
+    true_strings = ['نعم', 'صحيح']
+    false_strings = ['لا', 'خطأ']
