@@ -4,7 +4,10 @@ import re
 from datetime import datetime
 from pathlib import Path
 
-from jsonschema import Draft202012Validator
+try:
+    from jsonschema import Draft202012Validator as JSONValidator
+except ImportError:
+    JSONValidator = None
 from xmlschema import XMLSchema
 
 from robot.api import logger
@@ -153,8 +156,13 @@ class TestCheckerLibrary:
 
     def __init__(self):
         self.xml_schema = XMLSchema('doc/schema/result.xsd')
+        self.json_schema = self._load_json_schema()
+
+    def _load_json_schema(self):
+        if not JSONValidator:
+            return None
         with open('doc/schema/result.json', encoding='UTF-8') as f:
-            self.json_schema = Draft202012Validator(json.load(f))
+            return JSONValidator(json.load(f))
 
     def process_output(self, path: 'None|Path', validate: 'bool|None' = None):
         set_suite_variable = BuiltIn().set_suite_variable
@@ -217,6 +225,8 @@ class TestCheckerLibrary:
                     return re.search(r'schemaversion="(\d+)"', line).group(1)
 
     def validate_json_output(self, path: Path):
+        if not self.json_schema:
+            raise RuntimeError('jsonschema module is not installed!')
         with path.open(encoding='UTF') as file:
             self.json_schema.validate(json.load(file))
 
