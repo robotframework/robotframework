@@ -125,10 +125,11 @@ Read standard streams when they are already closed externally
 Run Stdout Stderr Process
     [Arguments]    ${stdout}=${NONE}    ${stderr}=${NONE}    ${cwd}=${NONE}
     ...    ${stdout_content}=stdout    ${stderr_content}=stderr
-    ${code} =    Catenate    SEPARATOR=;
+    VAR    ${code}
     ...    import sys
     ...    sys.stdout.write('${stdout_content}')
     ...    sys.stderr.write('${stderr_content}')
+    ...    separator=;
     ${result} =    Run Process    python    -c    ${code}
     ...    stdout=${stdout}    stderr=${stderr}    cwd=${cwd}
     RETURN    ${result}

@@ -18,7 +18,8 @@ ${CWD}            %{TEMPDIR}/process-cwd
 Some process
     [Arguments]    ${alias}=${null}    ${stderr}=STDOUT
     Remove File    ${STARTED}
-    ${handle}=    Start Python Process    open(r'${STARTED}', 'w', encoding='ASCII').close(); print(input())
+    ${handle}=    Start Python Process
+    ...    open(r'${STARTED}', 'w', encoding='ASCII').close(); print(input())
     ...    alias=${alias}    stderr=${stderr}    stdin=PIPE
     Wait Until Created    ${STARTED}    timeout=10s
     Process Should Be Running
@@ -27,7 +28,7 @@ Some process
 Stop some process
     [Arguments]    ${handle}=${NONE}    ${message}=
     ${running}=    Is Process Running    ${handle}
-    Return From Keyword If    not $running
+    IF    not $running    RETURN
     ${process}=    Get Process Object    ${handle}
     ${stdout}    ${_} =    Call Method    ${process}    communicate    ${message.encode('ASCII') + b'\n'}
     RETURN    ${stdout.decode('ASCII').rstrip()}
@@ -53,7 +54,7 @@ Result should match
 
 Custom stream should contain
     [Arguments]    ${path}    ${expected}
-    Return From Keyword If    not $path
+    IF    not $path    RETURN
     ${path} =    Normalize Path    ${path}
     ${content} =    Get File    ${path}    encoding=CONSOLE
     Should Be Equal    ${content.rstrip()}    ${expected}
@@ -65,7 +66,8 @@ Script result should equal
     Result should equal    ${result}    ${stdout}    ${stderr}    ${rc}
 
 Start Python Process
-    [Arguments]    ${command}    ${alias}=${NONE}    ${stdout}=${NONE}    ${stderr}=${NONE}    ${stdin}=None    ${shell}=False
+    [Arguments]    ${command}    ${alias}=${NONE}    ${stdout}=${NONE}    ${stderr}=${NONE}
+    ...    ${stdin}=None    ${shell}=False
     ${handle}=    Start Process    python    -c    ${command}
     ...    alias=${alias}    stdout=${stdout}    stderr=${stderr}    stdin=${stdin}    shell=${shell}
     RETURN    ${handle}
