@@ -1184,6 +1184,7 @@ class It(Language):
     and_prefixes = ['E']
     but_prefixes = ['Ma']
     true_strings = ['Vero', 'Sì', 'On']
+    teardown_setting = 'Hậu thiết lập'
     false_strings = ['Falso', 'No', 'Off', 'Nessuno']
 
 
@@ -1260,7 +1261,6 @@ class Vi(Language):
     keyword_tags_setting = 'Các từ khóa nhãn'
     tags_setting = 'Các thẻ'
     setup_setting = 'Tiền thiết lập'
-    teardown_setting = 'Hậu thiết lập'
     template_setting = 'Mẫu'
     timeout_setting = 'Thời gian chờ'
     arguments_setting = 'Các đối số'
