@@ -59,6 +59,9 @@ class KeywordRemover(SuiteVisitor, ABC):
 
 class AllKeywordsRemover(KeywordRemover):
 
+    def start_test(self, test):
+        test.body = test.body.filter(messages=False)
+
     def start_body_item(self, item):
         self._clear_content(item)
 
@@ -78,11 +81,12 @@ class AllKeywordsRemover(KeywordRemover):
 class PassedKeywordRemover(KeywordRemover):
 
     def start_suite(self, suite):
-        if not suite.statistics.failed:
+        if not suite.failed:
             self._remove_setup_and_teardown(suite)
 
     def visit_test(self, test):
         if not self._failed_or_warning_or_error(test):
+            test.body = test.body.filter(messages=False)
             for item in test.body:
                 self._clear_content(item)
             self._remove_setup_and_teardown(test)
@@ -158,7 +162,7 @@ class WaitUntilKeywordSucceedsRemover(KeywordRemover):
             self.removal_message.set_to_if_removed(kw, before)
 
     def _remove_keywords(self, body):
-        keywords = body.filter(messages=False)
+        keywords = body.filter(keywords=True)
         if keywords:
             include_from_end = 2 if keywords[-1].passed else 1
             for kw in keywords[:-include_from_end]:

@@ -18,7 +18,6 @@ import fnmatch
 from typing import Iterable, Iterator, Sequence
 
 from .normalizing import normalize
-from .robottypes import is_string
 
 
 def eq(str1: str, str2: str, ignore: Sequence[str] = (), caseless: bool = True,
@@ -66,7 +65,7 @@ class MultiMatcher(Iterable[Matcher]):
     def _ensure_iterable(self, patterns):
         if patterns is None:
             return ()
-        if is_string(patterns):
+        if isinstance(patterns, str):
             return (patterns,)
         return patterns
 

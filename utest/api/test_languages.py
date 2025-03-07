@@ -99,6 +99,15 @@ class TestLanguage(unittest.TestCase):
         assert_equal(X().bdd_prefixes, {'List', 'is', 'default',
                                         'but', 'any', 'iterable', 'works'})
 
+    def test_bdd_prefixes_are_sorted_by_length(self):
+        class X(Language):
+            given_prefixes = ['1', 'longest']
+            when_prefixes = ['XX']
+        pattern = Languages([X()]).bdd_prefix_regexp.pattern
+        expected = r'\(longest\|given\|.*\|xx\|1\)\\s'
+        if not re.fullmatch(expected, pattern):
+            raise AssertionError(f"Pattern '{pattern}' did not match '{expected}'.")
+
 
 class TestLanguageFromName(unittest.TestCase):
 

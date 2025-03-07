@@ -4,10 +4,12 @@ import re
 from datetime import datetime
 from pathlib import Path
 
-from jsonschema import Draft202012Validator
+try:
+    from jsonschema import Draft202012Validator as JSONValidator
+except ImportError:
+    JSONValidator = None
 from xmlschema import XMLSchema
 
-from robot import utils
 from robot.api import logger
 from robot.libraries.BuiltIn import BuiltIn
 from robot.libraries.Collections import Collections
@@ -19,6 +21,7 @@ from robot.result import (
 from robot.result.executionerrors import ExecutionErrors
 from robot.result.model import Body, Iterations
 from robot.utils.asserts import assert_equal
+from robot.utils import eq, get_error_details, is_truthy, Matcher
 
 
 class WithBodyTraversing:
@@ -153,8 +156,13 @@ class TestCheckerLibrary:
 
     def __init__(self):
         self.xml_schema = XMLSchema('doc/schema/result.xsd')
+        self.json_schema = self._load_json_schema()
+
+    def _load_json_schema(self):
+        if not JSONValidator:
+            return None
         with open('doc/schema/result.json', encoding='UTF-8') as f:
-            self.json_schema = Draft202012Validator(json.load(f))
+            return JSONValidator(json.load(f))
 
     def process_output(self, path: 'None|Path', validate: 'bool|None' = None):
         set_suite_variable = BuiltIn().set_suite_variable
@@ -163,9 +171,12 @@ class TestCheckerLibrary:
             logger.info("Not processing output.")
             return
         if validate is None:
-            validate = os.getenv('ATEST_VALIDATE_OUTPUT', False)
-        if utils.is_truthy(validate):
-            self._validate_output(path)
+            validate = is_truthy(os.getenv('ATEST_VALIDATE_OUTPUT', False))
+        if validate:
+            if path.suffix.lower() == '.json':
+                self.validate_json_output(path)
+            else:
+                self._validate_output(path)
         try:
             logger.info(f"Processing output '{path}'.")
             if path.suffix.lower() == '.json':
@@ -174,7 +185,7 @@ class TestCheckerLibrary:
                 result = self._build_result_from_xml(path)
         except:
             set_suite_variable('$SUITE', None)
-            msg, details = utils.get_error_details()
+            msg, details = get_error_details()
             logger.info(details)
             raise RuntimeError(f'Processing output failed: {msg}')
         result.visit(ProcessResults())
@@ -214,6 +225,8 @@ class TestCheckerLibrary:
                     return re.search(r'schemaversion="(\d+)"', line).group(1)
 
     def validate_json_output(self, path: Path):
+        if not self.json_schema:
+            raise RuntimeError('jsonschema module is not installed!')
         with path.open(encoding='UTF') as file:
             self.json_schema.validate(json.load(file))
 
@@ -231,7 +244,7 @@ class TestCheckerLibrary:
 
     def get_tests_from_suite(self, suite, name=None):
         tests = [test for test in suite.tests
-                 if name is None or utils.eq(test.name, name)]
+                 if name is None or eq(test.name, name)]
         for subsuite in suite.suites:
             tests.extend(self.get_tests_from_suite(subsuite, name))
         return tests
@@ -246,7 +259,7 @@ class TestCheckerLibrary:
         raise RuntimeError(err % (name, suite.name))
 
     def _get_suites_from_suite(self, suite, name):
-        suites = [suite] if utils.eq(suite.name, name) else []
+        suites = [suite] if eq(suite.name, name) else []
         for subsuite in suite.suites:
             suites.extend(self._get_suites_from_suite(subsuite, name))
         return suites
@@ -291,7 +304,7 @@ class TestCheckerLibrary:
                 return
         if test.exp_message.startswith('GLOB:'):
             pattern = self._get_pattern(test, 'GLOB:')
-            matcher = utils.Matcher(pattern, caseless=False, spaceless=False)
+            matcher = Matcher(pattern, caseless=False, spaceless=False)
             if matcher.match(test.message):
                 return
         if test.exp_message.startswith('STARTS:'):
@@ -365,7 +378,7 @@ class TestCheckerLibrary:
                                  f"Expected ({len(expected)}): {', '.join(expected)}\n"
                                  f"Actual   ({len(actual)}): {', '.join(actual)}")
         for name in expected:
-            if not utils.Matcher(name).match_any(actual):
+            if not Matcher(name).match_any(actual):
                 raise AssertionError(f'Suite {name} not found.')
 
     def should_contain_tags(self, test, *tags):

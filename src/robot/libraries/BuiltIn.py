@@ -1939,7 +1939,8 @@ class _Variables(_BuiltInBase):
         return resolver.resolve(self._variables)
 
     def _log_set_variable(self, name, value):
-        self.log(format_assign_message(name, value))
+        if self._context.steps:
+            logger.info(format_assign_message(name, value))
 
 
 class _RunKeyword(_BuiltInBase):
@@ -2867,8 +2868,8 @@ class _Control(_BuiltInBase):
 
         *NOTE:* Robot Framework 5.0 added support for native ``RETURN`` statement
         and for inline ``IF``, and that combination should be used instead of this
-        keyword. For example, ``Return From Keyword`` usage in the example below
-        could be replaced with
+        keyword. For example, `Return From Keyword If` usage in the `Find Index`
+        example below could be replaced with this:
 
         | IF    '${item}' == '${element}'    RETURN    ${index}
 

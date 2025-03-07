@@ -10,7 +10,11 @@ from io import StringIO, TextIOBase
 from pathlib import Path
 from xml.etree import ElementTree as ET
 
-from jsonschema import Draft202012Validator
+try:
+    from jsonschema import Draft202012Validator as JSONValidator
+except ImportError:
+    def JSONValidator(*a, **k):
+        raise unittest.SkipTest('jsonschema module is not available')
 
 from robot.model import Tags, BodyItem
 from robot.result import (Break, Continue, Error, ExecutionResult, For, If, IfBranch,
@@ -616,7 +620,7 @@ class TestToFromDictAndJson(unittest.TestCase):
     def setUpClass(cls):
         with open(CURDIR / '../../doc/schema/result_suite.json', encoding='UTF-8') as file:
             schema = json.load(file)
-        cls.validator = Draft202012Validator(schema=schema)
+        cls.validator = JSONValidator(schema=schema)
         cls.maxDiff = 2000
 
     def test_keyword(self):
@@ -980,7 +984,7 @@ class TestJsonResult(unittest.TestCase):
         cls.path.write_text(cls.data, encoding='UTF-8')
         with open(CURDIR / '../../doc/schema/result.json', encoding='UTF-8') as file:
             schema = json.load(file)
-        cls.validator = Draft202012Validator(schema=schema)
+        cls.validator = JSONValidator(schema=schema)
 
     def test_json_string(self):
         self._verify(self.data)

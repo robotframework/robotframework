@@ -15,7 +15,7 @@ JSON output contains same suite information as XML output
 
 JSON output structure
     [Documentation]    Full JSON schema validation would be good, but it's too slow with big output files.
-    ...                The following test validates a smaller suite.
+    ...                The test after this one validates a smaller suite against a schema.
     ${data} =    Evaluate    json.load(open($JSON, encoding='UTF-8'))
     Lists Should Be Equal    ${data}    ${{['generator', 'generated', 'rpa', 'suite', 'statistics', 'errors']}}
     Should Match       ${data}[generator]                     Robot ?.* (* on *)
@@ -29,6 +29,7 @@ JSON output structure
     Should Be Equal    ${data}[errors][0][level]              ERROR
 
 JSON output matches schema
+    [Tags]    require-jsonschema
     Run Tests Without Processing Output    -o OUT.JSON    misc/everything.robot
     Validate JSON Output    ${OUTDIR}/OUT.JSON
 
