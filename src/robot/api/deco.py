@@ -13,6 +13,13 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import importlib
+import multiprocessing as mp
+import concurrent.futures
+import collections
+import robot.errors
+from functools import wraps
+
 from typing import Any, Callable, Literal, Sequence, TypeVar, Union, overload
 
 from .interfaces import TypeHints
@@ -30,6 +37,44 @@ Scope = Literal['GLOBAL', 'SUITE', 'TEST', 'TASK']
 Converter = Union[Callable[[Any], Any], Callable[[Any, Any], Any]]
 DocFormat = Literal['ROBOT', 'HTML', 'TEXT', 'REST']
 
+
+def _process_worker_for_decorator(libnameIn, classname,  name, args, kwargs):
+    infra = importlib.import_module("robot.api.deco")
+    infra.run_in_its_own_process_decorator._trunk = False
+    m = importlib.import_module(libnameIn)
+    if classname:
+        m = getattr(m, classname)
+    return getattr(m, name)(*args, **kwargs)
+
+
+class run_in_its_own_process_decorator:
+    _trunk = True
+    def __init__(self, module_name, class_name=None, ctx="spawn"):
+        self._module_name = module_name
+        self._class_name = class_name
+        self._ctx = mp.get_context(ctx)
+        self._pools = concurrent.futures.ProcessPoolExecutor(max_workers=1, mp_context=self._ctx)
+
+    def __call__(self, fun):
+        @wraps(fun)
+        def wrapper(*args, **kwargs):
+            if self._trunk:
+                future = self._pools.submit(_process_worker_for_decorator, self._module_name, self._class_name, fun.__name__, args, kwargs)
+                try:
+                    while True:
+                        try:
+                            return future.result(timeout=0.01)
+                        except concurrent.futures.TimeoutError:
+                            pass
+                except robot.errors.TimeoutError:
+                    for _, process in self._pools._processes.items():
+                        process.terminate()
+                        process.join()
+                    self._pools = concurrent.futures.ProcessPoolExecutor(max_workers=1, mp_context=self._ctx)
+                    raise
+            else:
+                return fun(*args, **kwargs)
+        return wrapper
 
 def not_keyword(func: F) -> F:
     """Decorator to disable exposing functions or methods as keywords.

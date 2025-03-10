@@ -32,6 +32,10 @@ from robot.utils import (abspath, ConnectionCache, console_decode, del_env_var,
                          safe_str, secs_to_timestr, seq2str, set_env_var,
                          timestr_to_secs, CONSOLE_ENCODING, PY_VERSION, WINDOWS)
 
+from robot.api.deco import run_in_its_own_process_decorator
+
+rip = run_in_its_own_process_decorator("robot.libraries.OperatingSystem", "OperatingSystem")
+
 __version__ = get_version()
 PROCESSES = ConnectionCache('No active processes.')
 
@@ -250,6 +254,7 @@ class OperatingSystem:
         rc = process.close()
         return rc, stdout
 
+    @rip
     def get_file(self, path, encoding='UTF-8', encoding_errors='strict'):
         """Returns the contents of a specified file.
 

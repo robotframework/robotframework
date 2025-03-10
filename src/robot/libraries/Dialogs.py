@@ -27,16 +27,18 @@ The library has a known limitation that it cannot be used with timeouts.
 
 from robot.version import get_version
 from robot.utils import is_truthy
+from robot.api.deco import run_in_its_own_process_decorator
 
 from .dialogs_py import (InputDialog, MessageDialog, MultipleSelectionDialog,
                          PassFailDialog, SelectionDialog)
 
+rip = run_in_its_own_process_decorator("robot.libraries.Dialogs")
 
 __version__ = get_version()
 __all__ = ['execute_manual_step', 'get_value_from_user',
            'get_selection_from_user', 'pause_execution', 'get_selections_from_user']
 
-
+@rip
 def pause_execution(message='Execution paused. Press OK to continue.'):
     """Pauses execution until user clicks ``Ok`` button.
 
@@ -45,6 +47,7 @@ def pause_execution(message='Execution paused. Press OK to continue.'):
     MessageDialog(message).show()
 
 
+@rip
 def execute_manual_step(message, default_error=''):
     """Pauses execution until user sets the keyword status.
 
@@ -60,6 +63,7 @@ def execute_manual_step(message, default_error=''):
         raise AssertionError(msg)
 
 
+@rip
 def get_value_from_user(message, default_value='', hidden=False):
     """Pauses execution and asks user to input a value.
 
@@ -83,6 +87,7 @@ def get_value_from_user(message, default_value='', hidden=False):
                                             is_truthy(hidden)))
 
 
+@rip
 def get_selection_from_user(message, *values, default=None):
     """Pauses execution and asks user to select a value.
 
@@ -105,6 +110,7 @@ def get_selection_from_user(message, *values, default=None):
     return _validate_user_input(SelectionDialog(message, values, default))
 
 
+@rip
 def get_selections_from_user(message, *values):
     """Pauses execution and asks user to select multiple values.
 
