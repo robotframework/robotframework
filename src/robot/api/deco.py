@@ -19,6 +19,9 @@ import concurrent.futures
 import collections
 import robot.errors
 from functools import wraps
+from enum import Enum
+from dataclasses import dataclass
+import queue
 
 from typing import Any, Callable, Literal, Sequence, TypeVar, Union, overload
 
@@ -38,13 +41,32 @@ Converter = Union[Callable[[Any], Any], Callable[[Any, Any], Any]]
 DocFormat = Literal['ROBOT', 'HTML', 'TEXT', 'REST']
 
 
-def _process_worker_for_decorator(libnameIn, classname,  name, args, kwargs):
+@dataclass
+class _subprocess_call:
+    name: str
+    args: Sequence
+    kwargs: dict
+
+
+@dataclass
+class _subprocess_response:
+    is_exception: bool
+    value: Any
+
+
+def _process_worker_for_decorator(libnameIn, classname,  qToSubprocess, qFromSubprocess):
     infra = importlib.import_module("robot.api.deco")
     infra.run_in_its_own_process_decorator._trunk = False
     m = importlib.import_module(libnameIn)
     if classname:
         m = getattr(m, classname)
-    return getattr(m, name)(*args, **kwargs)
+    while True:
+        try:
+            call = qToSubprocess.get()
+            result = getattr(m, call.name)(*call.args, **call.kwargs)
+            qFromSubprocess.put(_subprocess_response(is_exception=False, value=result))
+        except Exception as e:
+            qFromSubprocess.put(_subprocess_response(is_exception=True, value=e))
 
 
 class run_in_its_own_process_decorator:
@@ -52,26 +74,39 @@ class run_in_its_own_process_decorator:
     def __init__(self, module_name, class_name=None, ctx="spawn"):
         self._module_name = module_name
         self._class_name = class_name
-        self._ctx = mp.get_context(ctx)
-        self._pools = concurrent.futures.ProcessPoolExecutor(max_workers=1, mp_context=self._ctx)
+        if self._trunk:
+            self._ctx = mp.get_context(ctx)
+            self._setup()
+
+    def _setup(self):
+        self._qToSubprocess = self._ctx.Queue()
+        self._qFromSubprocess = self._ctx.Queue()
+        self._process = self._ctx.Process(target=_process_worker_for_decorator, 
+                                          args=(self._module_name, self._class_name, self._qToSubprocess, self._qFromSubprocess),
+                                          daemon=True)
+        self._process.start()
 
     def __call__(self, fun):
         @wraps(fun)
         def wrapper(*args, **kwargs):
             if self._trunk:
-                future = self._pools.submit(_process_worker_for_decorator, self._module_name, self._class_name, fun.__name__, args, kwargs)
-                try:
-                    while True:
-                        try:
-                            return future.result(timeout=0.01)
-                        except concurrent.futures.TimeoutError:
-                            pass
-                except robot.errors.TimeoutError:
-                    for _, process in self._pools._processes.items():
-                        process.terminate()
-                        process.join()
-                    self._pools = concurrent.futures.ProcessPoolExecutor(max_workers=1, mp_context=self._ctx)
-                    raise
+                self._qToSubprocess.put(_subprocess_call(fun.__name__, args, kwargs))
+                while True:
+                    try:
+                        response = self._qFromSubprocess.get(timeout=0.01)
+                        if response.is_exception is False:
+                            return response.value
+                        else:
+                            raise response.value
+                    except queue.Empty:
+                        pass
+                    except robot.errors.TimeoutError:
+                        self._process.terminate()
+                        self._process.join()
+                        self._qToSubprocess.close()
+                        self._qFromSubprocess.close()
+                        self._setup()
+                        raise
             else:
                 return fun(*args, **kwargs)
         return wrapper
