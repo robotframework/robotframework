@@ -135,3 +135,6 @@ Grep File With Windows line endings
 
 Path as `pathlib.Path`
     Check Test Case    ${TESTNAME}
+
+read from fifo
+    Check Test Case    ${TESTNAME}    status=FAIL     message=Test timeout 250 milliseconds exceeded.

@@ -190,6 +190,18 @@ Path as `pathlib.Path`
     ${content} =    Grep File    ${PATH/'file.txt'}    t
     Should Be Equal    ${content}    content\nthree
 
+read from fifo
+    [Timeout]    0.250 second
+    IF   "os.name == 'posix'"
+        ${PIPE_NAME}=    Evaluate    "${PATH}/robot-fifo"
+        Run              mkfifo ${PIPE_NAME}
+    ELSE
+        ${PIPE_NAME}=    \\\\.\\pipe\\robot-pipe
+        Run              powershell -Command New-Object System.IO.Pipes.NamedPipeServerStream('${PIPE_NAME}', [System.IO.Pipes.PipeDirection]::InOut)
+    END
+    Get Binary File    ${PIPE_NAME}
+
+
 *** Keywords ***
 Get And Check File
     [Arguments]    ${path}    ${expected}
