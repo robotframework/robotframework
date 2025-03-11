@@ -13,12 +13,20 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import sys
 from collections.abc import Mapping, Sequence, Set
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 from enum import Enum
 from pathlib import Path
-from typing import Any, ForwardRef, get_type_hints, Literal, Union
+from typing import Any, ForwardRef, get_type_hints, get_origin, Literal, Union
+if sys.version_info >= (3, 11):
+    from typing import NotRequired, Required
+else:
+    try:
+        from typing_extensions import NotRequired, Required
+    except ImportError:
+        NotRequired = Required = object()
 
 from robot.conf import Languages, LanguagesLike
 from robot.errors import DataError
@@ -167,8 +175,7 @@ class TypeInfo(metaclass=SetterAwareType):
         - a sequence of supported type hints to create a union from such as
           ``[int, float]`` or ``('int', 'list[int]')``
 
-        In special cases, for example with dictionaries or sequences, using the
-        more specialized methods like :meth:`from_dict` or :meth:`from_sequence`
+        In special cases using a more specialized method like :meth:`from_sequence`
         may be more appropriate than using this generic method.
         """
         if hint is NOT_SET:
@@ -275,6 +282,26 @@ class TypeInfo(metaclass=SetterAwareType):
             ``ValueError`` is conversion fails.
         :return: Converted value.
         """
+        converter = self.get_converter(custom_converters, languages)
+        return converter.convert(value, name, kind)
+
+    def get_converter(self,
+                      custom_converters: 'CustomArgumentConverters|dict|None' = None,
+                      languages: 'LanguagesLike' = None) -> TypeConverter:
+        """Get argument converter for this ``TypeInfo``.
+
+        :param custom_converters: Custom argument converters.
+        :param languages: Language configuration. During execution, uses the
+            current language configuration by default.
+        :raises: ``TypeError`` if there is no converter for this type.
+        :return: ``TypeConverter``.
+
+        The :meth:`convert` method handles the common conversion case, but this
+        method can be used if the converter is needed multiple times or its
+        needed also for other purposes than conversion.
+
+        New in Robot Framework 7.2.
+        """
         if isinstance(custom_converters, dict):
             custom_converters = CustomArgumentConverters.from_dict(custom_converters)
         if not languages and EXECUTION_CONTEXTS.current:
@@ -283,8 +310,8 @@ class TypeInfo(metaclass=SetterAwareType):
             languages = Languages(languages)
         converter = TypeConverter.converter_for(self, custom_converters, languages)
         if not converter:
-            raise TypeError(f"No converter found for '{self}'.")
-        return converter.convert(value, name, kind)
+            raise TypeError(f"Cannot convert type '{self}'.")
+        return converter
 
     def __str__(self):
         if self.is_union:
@@ -307,11 +334,30 @@ class TypedDictInfo(TypeInfo):
 
     def __init__(self, name: str, type: type):
         super().__init__(name, type)
-        try:
-            type_hints = get_type_hints(type)
-        except Exception:
-            type_hints = type.__annotations__
-        self.annotations = {name: TypeInfo.from_type_hint(hint)
-                            for name, hint in type_hints.items()}
+        type_hints = self._get_type_hints(type)
         # __required_keys__ is new in Python 3.9.
         self.required = getattr(type, '__required_keys__', frozenset())
+        if sys.version_info < (3, 11):
+            self._handle_typing_extensions_required_and_not_required(type_hints)
+        self.annotations = {name: TypeInfo.from_type_hint(hint)
+                            for name, hint in type_hints.items()}
+
+    def _get_type_hints(self, type) -> 'dict[str, Any]':
+        try:
+            return get_type_hints(type)
+        except Exception:
+            return type.__annotations__
+
+    def _handle_typing_extensions_required_and_not_required(self, type_hints):
+        # NotRequired and Required are handled automatically by Python 3.11 and newer,
+        # but with older they appear in type hints and need to be handled separately.
+        required = set(self.required)
+        for key, hint in type_hints.items():
+            origin = get_origin(hint)
+            if origin is Required:
+                required.add(key)
+                type_hints[key] = hint.__args__[0]
+            elif origin is NotRequired:
+                required.discard(key)
+                type_hints[key] = hint.__args__[0]
+        self.required = frozenset(required)

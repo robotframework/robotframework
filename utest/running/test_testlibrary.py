@@ -4,13 +4,14 @@ import sys
 import unittest
 from pathlib import Path
 
+from robot.errors import DataError
+from robot.running import Keyword as KeywordData
 from robot.running.testlibraries import (TestLibrary, ClassLibrary,
                                          ModuleLibrary, DynamicLibrary)
 from robot.utils.asserts import (assert_equal, assert_false, assert_none,
                                  assert_not_none, assert_true,
                                  assert_raises, assert_raises_with_msg)
 from robot.utils import normalize
-from robot.errors import DataError
 
 from classes import (NameLibrary, DocLibrary, ArgInfoLibrary, GetattrLibrary,
                      SynonymLibrary, __file__ as classes_source)
@@ -363,7 +364,7 @@ class TestKeywords(unittest.TestCase):
         assert_equal(instance.kw_called, 0)
         kw, = lib.keywords
         for _ in range(42):
-            kw.create_runner('kw')._run(kw, [], None, _FakeContext())
+            kw.create_runner('kw')._run(KeywordData(), kw, _FakeContext())
         assert_true(lib._instance is instance)
         assert_equal(instance.kw_accessed, 44)
         assert_equal(instance.kw_called, 42)

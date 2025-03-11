@@ -221,6 +221,9 @@
 .. _running.UserKeyword: https://robot-framework.readthedocs.io/en/master/autodoc/robot.running.html#robot.running.resourcemodel.UserKeyword
 .. _running.LibraryKeyword: https://robot-framework.readthedocs.io/en/master/autodoc/robot.running.html#robot.running.librarykeyword.LibraryKeyword
 .. _running.InvalidKeyword: https://robot-framework.readthedocs.io/en/master/autodoc/robot.running.html#robot.running.invalidkeyword.InvalidKeyword
+.. _running.TestLibrary: https://robot-framework.readthedocs.io/en/stable/autodoc/robot.running.html#robot.running.testlibraries.TestLibrary
+.. _running.ResourceFile: https://robot-framework.readthedocs.io/en/stable/autodoc/robot.running.html#robot.running.resourcemodel.ResourceFile
+.. _running.Import: https://robot-framework.readthedocs.io/en/stable/autodoc/robot.running.html#robot.running.resourcemodel.Import
 .. _running model: http://robot-framework.readthedocs.org/en/master/autodoc/robot.running.html#module-robot.running.model
 .. _result.TestSuite: http://robot-framework.readthedocs.org/en/master/autodoc/robot.result.html#robot.result.model.TestSuite
 .. _result.TestCase: http://robot-framework.readthedocs.org/en/master/autodoc/robot.result.html#robot.result.model.TestCase

@@ -1,0 +1,995 @@
+{
+  "$ref": "#/definitions/TestSuite",
+  "definitions": {
+    "Keyword": {
+      "title": "Keyword",
+      "type": "object",
+      "properties": {
+        "lineno": {
+          "title": "Lineno",
+          "type": "integer"
+        },
+        "error": {
+          "title": "Error",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "args": {
+          "title": "Args",
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {}
+            ]
+          }
+        },
+        "named_args": {
+          "title": "Named Args",
+          "type": "object"
+        },
+        "assign": {
+          "title": "Assign",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "additionalProperties": false
+    },
+    "Var": {
+      "title": "Var",
+      "type": "object",
+      "properties": {
+        "lineno": {
+          "title": "Lineno",
+          "type": "integer"
+        },
+        "error": {
+          "title": "Error",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "scope": {
+          "title": "Scope",
+          "type": "string"
+        },
+        "separator": {
+          "title": "Separator",
+          "type": "string"
+        },
+        "type": {
+          "title": "Type",
+          "default": "VAR",
+          "const": "VAR",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "value"
+      ],
+      "additionalProperties": false
+    },
+    "Break": {
+      "title": "Break",
+      "type": "object",
+      "properties": {
+        "lineno": {
+          "title": "Lineno",
+          "type": "integer"
+        },
+        "error": {
+          "title": "Error",
+          "type": "string"
+        },
+        "type": {
+          "title": "Type",
+          "default": "BREAK",
+          "const": "BREAK",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "Continue": {
+      "title": "Continue",
+      "type": "object",
+      "properties": {
+        "lineno": {
+          "title": "Lineno",
+          "type": "integer"
+        },
+        "error": {
+          "title": "Error",
+          "type": "string"
+        },
+        "type": {
+          "title": "Type",
+          "default": "CONTINUE",
+          "const": "CONTINUE",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "Return": {
+      "title": "Return",
+      "type": "object",
+      "properties": {
+        "lineno": {
+          "title": "Lineno",
+          "type": "integer"
+        },
+        "error": {
+          "title": "Error",
+          "type": "string"
+        },
+        "values": {
+          "title": "Values",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "type": {
+          "title": "Type",
+          "default": "RETURN",
+          "const": "RETURN",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "Error": {
+      "title": "Error",
+      "type": "object",
+      "properties": {
+        "lineno": {
+          "title": "Lineno",
+          "type": "integer"
+        },
+        "error": {
+          "title": "Error",
+          "type": "string"
+        },
+        "values": {
+          "title": "Values",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "type": {
+          "title": "Type",
+          "default": "ERROR",
+          "const": "ERROR",
+          "type": "string"
+        }
+      },
+      "required": [
+        "error",
+        "values"
+      ],
+      "additionalProperties": false
+    },
+    "TryBranch": {
+      "title": "TryBranch",
+      "type": "object",
+      "properties": {
+        "lineno": {
+          "title": "Lineno",
+          "type": "integer"
+        },
+        "error": {
+          "title": "Error",
+          "type": "string"
+        },
+        "type": {
+          "title": "Type",
+          "enum": [
+            "TRY",
+            "EXCEPT",
+            "ELSE",
+            "FINALLY"
+          ],
+          "type": "string"
+        },
+        "patterns": {
+          "title": "Patterns",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "pattern_type": {
+          "title": "Pattern Type",
+          "type": "string"
+        },
+        "assign": {
+          "title": "Assign",
+          "type": "string"
+        },
+        "body": {
+          "title": "Body",
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions/Keyword"
+              },
+              {
+                "$ref": "#/definitions/For"
+              },
+              {
+                "$ref": "#/definitions/While"
+              },
+              {
+                "$ref": "#/definitions/Group"
+              },
+              {
+                "$ref": "#/definitions/If"
+              },
+              {
+                "$ref": "#/definitions/Try"
+              },
+              {
+                "$ref": "#/definitions/Var"
+              },
+              {
+                "$ref": "#/definitions/Break"
+              },
+              {
+                "$ref": "#/definitions/Continue"
+              },
+              {
+                "$ref": "#/definitions/Return"
+              },
+              {
+                "$ref": "#/definitions/Error"
+              }
+            ]
+          }
+        }
+      },
+      "required": [
+        "type",
+        "body"
+      ],
+      "additionalProperties": false
+    },
+    "Try": {
+      "title": "Try",
+      "type": "object",
+      "properties": {
+        "lineno": {
+          "title": "Lineno",
+          "type": "integer"
+        },
+        "error": {
+          "title": "Error",
+          "type": "string"
+        },
+        "body": {
+          "title": "Body",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TryBranch"
+          }
+        },
+        "type": {
+          "title": "Type",
+          "default": "TRY/EXCEPT ROOT",
+          "const": "TRY/EXCEPT ROOT",
+          "type": "string"
+        }
+      },
+      "required": [
+        "body"
+      ],
+      "additionalProperties": false
+    },
+    "IfBranch": {
+      "title": "IfBranch",
+      "type": "object",
+      "properties": {
+        "lineno": {
+          "title": "Lineno",
+          "type": "integer"
+        },
+        "error": {
+          "title": "Error",
+          "type": "string"
+        },
+        "type": {
+          "title": "Type",
+          "enum": [
+            "IF",
+            "ELSE IF",
+            "ELSE"
+          ],
+          "type": "string"
+        },
+        "condition": {
+          "title": "Condition",
+          "type": "string"
+        },
+        "body": {
+          "title": "Body",
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions/Keyword"
+              },
+              {
+                "$ref": "#/definitions/For"
+              },
+              {
+                "$ref": "#/definitions/While"
+              },
+              {
+                "$ref": "#/definitions/Group"
+              },
+              {
+                "$ref": "#/definitions/If"
+              },
+              {
+                "$ref": "#/definitions/Try"
+              },
+              {
+                "$ref": "#/definitions/Var"
+              },
+              {
+                "$ref": "#/definitions/Break"
+              },
+              {
+                "$ref": "#/definitions/Continue"
+              },
+              {
+                "$ref": "#/definitions/Return"
+              },
+              {
+                "$ref": "#/definitions/Error"
+              }
+            ]
+          }
+        }
+      },
+      "required": [
+        "type",
+        "body"
+      ],
+      "additionalProperties": false
+    },
+    "If": {
+      "title": "If",
+      "type": "object",
+      "properties": {
+        "lineno": {
+          "title": "Lineno",
+          "type": "integer"
+        },
+        "error": {
+          "title": "Error",
+          "type": "string"
+        },
+        "body": {
+          "title": "Body",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/IfBranch"
+          }
+        },
+        "type": {
+          "title": "Type",
+          "default": "IF/ELSE ROOT",
+          "const": "IF/ELSE ROOT",
+          "type": "string"
+        }
+      },
+      "required": [
+        "body"
+      ],
+      "additionalProperties": false
+    },
+    "Group": {
+      "title": "Group",
+      "type": "object",
+      "properties": {
+        "lineno": {
+          "title": "Lineno",
+          "type": "integer"
+        },
+        "error": {
+          "title": "Error",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "body": {
+          "title": "Body",
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions/Keyword"
+              },
+              {
+                "$ref": "#/definitions/For"
+              },
+              {
+                "$ref": "#/definitions/While"
+              },
+              {
+                "$ref": "#/definitions/Group"
+              },
+              {
+                "$ref": "#/definitions/If"
+              },
+              {
+                "$ref": "#/definitions/Try"
+              },
+              {
+                "$ref": "#/definitions/Var"
+              },
+              {
+                "$ref": "#/definitions/Break"
+              },
+              {
+                "$ref": "#/definitions/Continue"
+              },
+              {
+                "$ref": "#/definitions/Return"
+              },
+              {
+                "$ref": "#/definitions/Error"
+              }
+            ]
+          }
+        },
+        "type": {
+          "title": "Type",
+          "default": "GROUP",
+          "const": "GROUP",
+          "type": "string"
+        }
+      },
+      "required": [
+        "body"
+      ],
+      "additionalProperties": false
+    },
+    "While": {
+      "title": "While",
+      "type": "object",
+      "properties": {
+        "lineno": {
+          "title": "Lineno",
+          "type": "integer"
+        },
+        "error": {
+          "title": "Error",
+          "type": "string"
+        },
+        "condition": {
+          "title": "Condition",
+          "type": "string"
+        },
+        "limit": {
+          "title": "Limit",
+          "type": "string"
+        },
+        "on_limit": {
+          "title": "On Limit",
+          "type": "string"
+        },
+        "on_limit_message": {
+          "title": "On Limit Message",
+          "type": "string"
+        },
+        "body": {
+          "title": "Body",
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions/Keyword"
+              },
+              {
+                "$ref": "#/definitions/For"
+              },
+              {
+                "$ref": "#/definitions/While"
+              },
+              {
+                "$ref": "#/definitions/Group"
+              },
+              {
+                "$ref": "#/definitions/If"
+              },
+              {
+                "$ref": "#/definitions/Try"
+              },
+              {
+                "$ref": "#/definitions/Var"
+              },
+              {
+                "$ref": "#/definitions/Break"
+              },
+              {
+                "$ref": "#/definitions/Continue"
+              },
+              {
+                "$ref": "#/definitions/Return"
+              },
+              {
+                "$ref": "#/definitions/Error"
+              }
+            ]
+          }
+        },
+        "type": {
+          "title": "Type",
+          "default": "WHILE",
+          "const": "WHILE",
+          "type": "string"
+        }
+      },
+      "required": [
+        "body"
+      ],
+      "additionalProperties": false
+    },
+    "For": {
+      "title": "For",
+      "type": "object",
+      "properties": {
+        "lineno": {
+          "title": "Lineno",
+          "type": "integer"
+        },
+        "error": {
+          "title": "Error",
+          "type": "string"
+        },
+        "assign": {
+          "title": "Assign",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "flavor": {
+          "title": "Flavor",
+          "type": "string"
+        },
+        "values": {
+          "title": "Values",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "start": {
+          "title": "Start",
+          "type": "string"
+        },
+        "mode": {
+          "title": "Mode",
+          "type": "string"
+        },
+        "fill": {
+          "title": "Fill",
+          "type": "string"
+        },
+        "body": {
+          "title": "Body",
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions/Keyword"
+              },
+              {
+                "$ref": "#/definitions/For"
+              },
+              {
+                "$ref": "#/definitions/While"
+              },
+              {
+                "$ref": "#/definitions/Group"
+              },
+              {
+                "$ref": "#/definitions/If"
+              },
+              {
+                "$ref": "#/definitions/Try"
+              },
+              {
+                "$ref": "#/definitions/Var"
+              },
+              {
+                "$ref": "#/definitions/Break"
+              },
+              {
+                "$ref": "#/definitions/Continue"
+              },
+              {
+                "$ref": "#/definitions/Return"
+              },
+              {
+                "$ref": "#/definitions/Error"
+              }
+            ]
+          }
+        },
+        "type": {
+          "title": "Type",
+          "default": "FOR",
+          "const": "FOR",
+          "type": "string"
+        }
+      },
+      "required": [
+        "assign",
+        "flavor",
+        "values",
+        "body"
+      ],
+      "additionalProperties": false
+    },
+    "TestCase": {
+      "title": "TestCase",
+      "type": "object",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "doc": {
+          "title": "Doc",
+          "type": "string"
+        },
+        "tags": {
+          "title": "Tags",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "template": {
+          "title": "Template",
+          "type": "string"
+        },
+        "timeout": {
+          "title": "Timeout",
+          "type": "string"
+        },
+        "lineno": {
+          "title": "Lineno",
+          "type": "integer"
+        },
+        "error": {
+          "title": "Error",
+          "type": "string"
+        },
+        "setup": {
+          "$ref": "#/definitions/Keyword"
+        },
+        "teardown": {
+          "$ref": "#/definitions/Keyword"
+        },
+        "body": {
+          "title": "Body",
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions/Keyword"
+              },
+              {
+                "$ref": "#/definitions/For"
+              },
+              {
+                "$ref": "#/definitions/While"
+              },
+              {
+                "$ref": "#/definitions/Group"
+              },
+              {
+                "$ref": "#/definitions/If"
+              },
+              {
+                "$ref": "#/definitions/Try"
+              },
+              {
+                "$ref": "#/definitions/Var"
+              },
+              {
+                "$ref": "#/definitions/Error"
+              }
+            ]
+          }
+        }
+      },
+      "required": [
+        "name",
+        "body"
+      ],
+      "additionalProperties": false
+    },
+    "Import": {
+      "title": "Import",
+      "type": "object",
+      "properties": {
+        "type": {
+          "title": "Type",
+          "enum": [
+            "LIBRARY",
+            "RESOURCE",
+            "VARIABLES"
+          ],
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "args": {
+          "title": "Args",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "alias": {
+          "title": "Alias",
+          "type": "string"
+        },
+        "lineno": {
+          "title": "Lineno",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "type",
+        "name"
+      ],
+      "additionalProperties": false
+    },
+    "Variable": {
+      "title": "Variable",
+      "type": "object",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "lineno": {
+          "title": "Lineno",
+          "type": "integer"
+        },
+        "error": {
+          "title": "Error",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "value"
+      ],
+      "additionalProperties": false
+    },
+    "UserKeyword": {
+      "title": "UserKeyword",
+      "type": "object",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "args": {
+          "title": "Args",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "doc": {
+          "title": "Doc",
+          "type": "string"
+        },
+        "tags": {
+          "title": "Tags",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "timeout": {
+          "title": "Timeout",
+          "type": "string"
+        },
+        "lineno": {
+          "title": "Lineno",
+          "type": "integer"
+        },
+        "error": {
+          "title": "Error",
+          "type": "string"
+        },
+        "setup": {
+          "$ref": "#/definitions/Keyword"
+        },
+        "teardown": {
+          "$ref": "#/definitions/Keyword"
+        },
+        "body": {
+          "title": "Body",
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions/Keyword"
+              },
+              {
+                "$ref": "#/definitions/For"
+              },
+              {
+                "$ref": "#/definitions/While"
+              },
+              {
+                "$ref": "#/definitions/Group"
+              },
+              {
+                "$ref": "#/definitions/If"
+              },
+              {
+                "$ref": "#/definitions/Try"
+              },
+              {
+                "$ref": "#/definitions/Return"
+              },
+              {
+                "$ref": "#/definitions/Var"
+              },
+              {
+                "$ref": "#/definitions/Error"
+              }
+            ]
+          }
+        }
+      },
+      "required": [
+        "name",
+        "body"
+      ],
+      "additionalProperties": false
+    },
+    "Resource": {
+      "title": "Resource",
+      "type": "object",
+      "properties": {
+        "source": {
+          "title": "Source",
+          "type": "string",
+          "format": "path"
+        },
+        "doc": {
+          "title": "Doc",
+          "type": "string"
+        },
+        "imports": {
+          "title": "Imports",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Import"
+          }
+        },
+        "variables": {
+          "title": "Variables",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Variable"
+          }
+        },
+        "keywords": {
+          "title": "Keywords",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/UserKeyword"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "TestSuite": {
+      "title": "robot.running.TestSuite",
+      "description": "JSON schema for `robot.running.TestSuite`.\n\nCompatible with JSON Schema Draft 2020-12.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "doc": {
+          "title": "Doc",
+          "type": "string"
+        },
+        "metadata": {
+          "title": "Metadata",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "source": {
+          "title": "Source",
+          "type": "string",
+          "format": "path"
+        },
+        "rpa": {
+          "title": "Rpa",
+          "type": "boolean"
+        },
+        "setup": {
+          "$ref": "#/definitions/Keyword"
+        },
+        "teardown": {
+          "$ref": "#/definitions/Keyword"
+        },
+        "tests": {
+          "title": "Tests",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TestCase"
+          }
+        },
+        "suites": {
+          "title": "Suites",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TestSuite"
+          }
+        },
+        "resource": {
+          "$ref": "#/definitions/Resource"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "additionalProperties": false,
+      "$schema": "https://json-schema.org/draft/2020-12/schema"
+    }
+  }
+}

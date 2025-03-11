@@ -28,7 +28,7 @@ class TestETSource(unittest.TestCase):
         self._test_path(pathlib.Path(PATH), PATH, pathlib.Path(PATH))
 
     def test_opened_file_object(self):
-        with open(PATH) as f:
+        with open(PATH, encoding='UTF-8') as f:
             source = ETSource(f)
             with source as src:
                 assert_true(src.read().startswith('import os'))

@@ -770,6 +770,8 @@ to see the actual translations:
 - `French (fr)`_
 - `Hindi (hi)`_
 - `Italian (it)`_
+- `Japanese (ja)`_
+- `Korean (ko)`_
 - `Dutch (nl)`_
 - `Polish (pl)`_
 - `Portuguese (pt)`_
@@ -837,3 +839,35 @@ the `#localization` channel on our Slack_.
 
 __ https://robotframework.crowdin.com
 __ https://github.com/MarketSquare/localization
+
+Style
+-----
+
+Robot Framework syntax creates a simple programming language, and similarly as with
+other languages, it is important to think about the coding style. Robot Framework
+syntax is pretty flexible on purpose, but there are some generally recommended
+conventions:
+
+- Four space indentation.
+- Four space separation between keywords and arguments, settings and their values, etc...
+  In some cases it makes sense to use more than four spaces.
+  For example when aligning values in the Settings or Variables section or
+  in `data-driven style`_.
+- Global variables_ using capital letters like `${EXAMPLE}` and local variables
+  using lower-case letters like `${example}`.
+- Consistency within a single file and preferably within the whole project.
+
+One case where there currently is no strong convention is keyword capitalization.
+Robot Framework itself typically uses title case like :name:`Example Keyword` in
+documentation and elsewhere, and this style is often used in Robot Framework data
+as well. It does not work too well with longer, sentence-like keywords such as
+:name:`Log into system as an admin`, though.
+
+Teams and organizations using Robot Framework should have their own coding standards.
+The community developed `Robot Framework Style Guide`__ is an excellent
+starting point that can be amended as needed. It is also possible to enforce these
+conventions by using the Robocop__ linter and the Robotidy__ code formatter.
+
+__ https://docs.robotframework.org/docs/style_guide
+__ https://robocop.readthedocs.io/
+__ https://robotidy.readthedocs.io/

@@ -162,7 +162,7 @@ class TestXmlWriter(unittest.TestCase):
 
     def _get_content(self):
         self.writer.close()
-        with open(PATH) as f:
+        with open(PATH, encoding='UTF-8') as f:
             return f.read()
 
 

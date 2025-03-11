@@ -25,7 +25,7 @@ UK
 
 Nested UK
     [Arguments]    ${arg}
-    [Tags]    robot:flatten
+    [Tags]    ROBOT:${{'FLATTEN'}}
     Log    ${arg}
     Nest
 
@@ -35,7 +35,7 @@ Nest
     Log    not logged
 
 Loops and stuff
-    [Tags]    robot:flatten
+    [Tags]    robot: flatten
     FOR    ${i}    IN RANGE    5
         Log     inside for ${i}
         IF    ${i} > 1

@@ -73,6 +73,41 @@ Get Selection From User
     ...    This is a really long string and the window should change the size properly to content.
     Should Be Equal    ${value}    valuë
 
+Get Selection From User When Default Value Provided by Index
+    ${value}=    Get Selection From User
+    ...    Press OK or <Enter>.
+    ...    value 1    value 2    value 3    value 4
+    ...    default=1
+    Should Be Equal    ${value}    value 1
+
+Get Selection From User When Default Value Provided by String
+    ${value}=    Get Selection From User
+    ...    Press OK or <Enter>.
+    ...    xxx    yyy    zzz    ååå    äää    ööö
+    ...    default=ööö
+    Should Be Equal    ${value}    ööö
+
+Get Selection From User When Default Value Is Integer
+    ${value}=    Get Selection From User
+    ...    Press OK or <Enter>.
+    ...    -2    -1    0    1    2
+    ...    default=1
+    Should Be Equal    ${value}    1
+
+Get Selection From User When Default Value Index Is Out of Bounds
+    [Documentation]    FAIL ValueError: Default value index is out of bounds.
+    Get Selection From User
+    ...    Press OK or <Enter>.
+    ...    value 1    value 2    value 3    value 4
+    ...    default=5
+
+Get Selection From User When Default Value Cannot Be Found
+    [Documentation]  FAIL ValueError: Invalid default value 'asd'.
+    Get Selection From User
+    ...    Press OK or <Enter>.
+    ...    value 1    value 2    value 3    value 4
+    ...    default=asd
+
 Get Selection From User Cancelled
     [Documentation]  FAIL No value provided by user.
     Get Selection From User    Press <C> or <c>.    zip    zap    foo
@@ -117,3 +152,9 @@ Multiple dialogs in a row
     [Documentation]  FAIL No value provided by user.
     Pause Execution    Verify that dialog is closed immediately.\n\nAfter pressing OK or <Enter>.
     Get Value From User    Verify that dialog is closed immediately.\n\nAfter pressing Cancel or <Esc>.
+
+Garbage Collection In Thread Should Not Cause Problems
+    ${thread}=    Evaluate    threading.Thread(target=gc.collect)    modules=gc,threading
+    Pause Execution    Verify that the execution does not crash after pressing OK or <Enter>.
+    Call Method    ${thread}    start
+    Call Method    ${thread}    join

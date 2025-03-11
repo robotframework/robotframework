@@ -10,7 +10,7 @@ class V2:
 
     def start_suite(self, name, attrs):
         assert name == attrs['longname'] == 'Pass And Fail'
-        with open(VERSION_FILE, 'a') as f:
+        with open(VERSION_FILE, 'a', encoding='ASCII') as f:
             f.write(type(self).__name__ + '\n')
 
 
@@ -22,7 +22,7 @@ class V3Implicit:
 
     def start_suite(self, data, result):
         assert data.name == result.name == 'Pass And Fail'
-        with open(VERSION_FILE, 'a') as f:
+        with open(VERSION_FILE, 'a', encoding='ASCII') as f:
             f.write(type(self).__name__ + '\n')
 
 

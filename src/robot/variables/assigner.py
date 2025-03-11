@@ -20,7 +20,7 @@ from robot.errors import (DataError, ExecutionStatus, HandlerExecutionFailed,
                           VariableError)
 from robot.utils import (DotDict, ErrorDetails, format_assign_message,
                          get_error_message, is_dict_like, is_list_like,
-                         is_number, is_string, prepr, type_name)
+                         is_number, prepr, type_name)
 from .search import search_variable, VariableMatch
 
 
@@ -134,7 +134,7 @@ class VariableAssigner:
         return True
 
     def _variable_supports_extended_assign(self, var):
-        return not (is_string(var) or is_number(var))
+        return not isinstance(var, (str, int, float))
 
     def _is_valid_extended_attribute(self, attr):
         return self._valid_extended_attr.match(attr) is not None
@@ -142,7 +142,7 @@ class VariableAssigner:
     def _parse_sequence_index(self, index):
         if isinstance(index, (int, slice)):
             return index
-        if not is_string(index):
+        if not isinstance(index, str):
             raise ValueError
         if ':' not in index:
             return int(index)
@@ -254,7 +254,7 @@ class _MultiReturnValueResolver:
     def _convert_to_list(self, return_value):
         if return_value is None:
             return [None] * self._min_count
-        if is_string(return_value):
+        if isinstance(return_value, str):
             self._raise_expected_list(return_value)
         try:
             return list(return_value)

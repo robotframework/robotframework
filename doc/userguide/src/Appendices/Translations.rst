@@ -1164,6 +1164,264 @@ Boolean strings
     * - False
       - Falso, No, Off, Nessuno
 
+Japanese (ja)
+-------------
+
+New in Robot Framework 7.0.1.
+
+Section headers
+~~~~~~~~~~~~~~~
+
+.. list-table::
+    :class: tabular
+    :width: 40em
+    :widths: 2 3
+    :header-rows: 1
+
+    * - Header
+      - Translation
+    * - Settings
+      - 設定
+    * - Variables
+      - 変数
+    * - Test Cases
+      - テスト ケース
+    * - Tasks
+      - タスク
+    * - Keywords
+      - キーワード
+    * - Comments
+      - コメント
+
+Settings
+~~~~~~~~
+
+.. list-table::
+    :class: tabular
+    :width: 40em
+    :widths: 2 3
+    :header-rows: 1
+
+    * - Setting
+      - Translation
+    * - Library
+      - ライブラリ
+    * - Resource
+      - リソース
+    * - Variables
+      - 変数
+    * - Name
+      - 名前
+    * - Documentation
+      - ドキュメント
+    * - Metadata
+      - メタデータ
+    * - Suite Setup
+      - スイート セットアップ
+    * - Suite Teardown
+      - スイート ティアダウン
+    * - Test Setup
+      - テスト セットアップ
+    * - Task Setup
+      - タスク セットアップ
+    * - Test Teardown
+      - テスト ティアダウン
+    * - Task Teardown
+      - タスク ティアダウン
+    * - Test Template
+      - テスト テンプレート
+    * - Task Template
+      - タスク テンプレート
+    * - Test Timeout
+      - テスト タイムアウト
+    * - Task Timeout
+      - タスク タイムアウト
+    * - Test Tags
+      - テスト タグ
+    * - Task Tags
+      - タスク タグ
+    * - Keyword Tags
+      - キーワード タグ
+    * - Tags
+      - タグ
+    * - Setup
+      - セットアップ
+    * - Teardown
+      - ティアダウン
+    * - Template
+      - テンプレート
+    * - Timeout
+      - タイムアウト
+    * - Arguments
+      - 引数
+
+BDD prefixes
+~~~~~~~~~~~~
+
+.. list-table::
+    :class: tabular
+    :width: 40em
+    :widths: 2 3
+    :header-rows: 1
+
+    * - Prefix
+      - Translation
+    * - Given
+      - 仮定, 指定, 前提条件
+    * - When
+      - 条件, 次の場合, もし, 実行条件
+    * - Then
+      - アクション, その時, 動作
+    * - And
+      - および, 及び, かつ, 且つ, ならびに, 並びに, そして, それから
+    * - But
+      - ただし, 但し
+
+Boolean strings
+~~~~~~~~~~~~~~~
+
+.. list-table::
+    :class: tabular
+    :width: 40em
+    :widths: 2 3
+    :header-rows: 1
+
+    * - True/False
+      - Values
+    * - True
+      - 真, 有効, はい, オン
+    * - False
+      - 偽, 無効, いいえ, オフ
+
+Korean (ko)
+-----------
+
+New in Robot Framework 7.1.
+
+Section headers
+~~~~~~~~~~~~~~~
+
+.. list-table::
+    :class: tabular
+    :width: 40em
+    :widths: 2 3
+    :header-rows: 1
+
+    * - Header
+      - Translation
+    * - Settings
+      - 설정
+    * - Variables
+      - 변수
+    * - Test Cases
+      - 테스트 사례
+    * - Tasks
+      - 작업
+    * - Keywords
+      - 키워드
+    * - Comments
+      - 의견
+
+Settings
+~~~~~~~~
+
+.. list-table::
+    :class: tabular
+    :width: 40em
+    :widths: 2 3
+    :header-rows: 1
+
+    * - Setting
+      - Translation
+    * - Library
+      - 라이브러리
+    * - Resource
+      - 자료
+    * - Variables
+      - 변수
+    * - Name
+      - 이름
+    * - Documentation
+      - 문서
+    * - Metadata
+      - 메타데이터
+    * - Suite Setup
+      - 스위트 설정
+    * - Suite Teardown
+      - 스위트 중단
+    * - Test Setup
+      - 테스트 설정
+    * - Task Setup
+      - 작업 설정
+    * - Test Teardown
+      - 테스트 중단
+    * - Task Teardown
+      - 작업 중단
+    * - Test Template
+      - 테스트 템플릿
+    * - Task Template
+      - 작업 템플릿
+    * - Test Timeout
+      - 테스트 시간 초과
+    * - Task Timeout
+      - 작업 시간 초과
+    * - Test Tags
+      - 테스트 태그
+    * - Task Tags
+      - 작업 태그
+    * - Keyword Tags
+      - 키워드 태그
+    * - Tags
+      - 태그
+    * - Setup
+      - 설정
+    * - Teardown
+      - 중단
+    * - Template
+      - 템플릿
+    * - Timeout
+      - 시간 초과
+    * - Arguments
+      - 주장
+
+BDD prefixes
+~~~~~~~~~~~~
+
+.. list-table::
+    :class: tabular
+    :width: 40em
+    :widths: 2 3
+    :header-rows: 1
+
+    * - Prefix
+      - Translation
+    * - Given
+      - 주어진
+    * - When
+      - 때
+    * - Then
+      - 보다
+    * - And
+      - 그리고
+    * - But
+      - 하지만
+
+Boolean strings
+~~~~~~~~~~~~~~~
+
+.. list-table::
+    :class: tabular
+    :width: 40em
+    :widths: 2 3
+    :header-rows: 1
+
+    * - True/False
+      - Values
+    * - True
+      - 참, 네, 켜기
+    * - False
+      - 거짓, 아니오, 끄기
+
 Dutch (nl)
 ----------
 
@@ -1187,7 +1445,7 @@ Section headers
     * - Tasks
       - Taken
     * - Keywords
-      - Sleutelwoorden
+      - Actiewoorden
     * - Comments
       - Opmerkingen
 
@@ -1215,41 +1473,41 @@ Settings
     * - Metadata
       - Metadata
     * - Suite Setup
-      - Suite Preconditie
+      - Suitevoorbereiding
     * - Suite Teardown
-      - Suite Postconditie
+      - Suite-afronding
     * - Test Setup
-      - Test Preconditie
+      - Testvoorbereiding
     * - Task Setup
-      - Taak Preconditie
+      - Taakvoorbereiding
     * - Test Teardown
-      - Test Postconditie
+      - Testafronding
     * - Task Teardown
-      - Taak Postconditie
+      - Taakafronding
     * - Test Template
-      - Test Sjabloon
+      - Testsjabloon
     * - Task Template
-      - Taak Sjabloon
+      - Taaksjabloon
     * - Test Timeout
-      - Test Time-out
+      - Testtijdslimiet
     * - Task Timeout
-      - Taak Time-out
+      - Taaktijdslimiet
     * - Test Tags
-      - Test Labels
+      - Testlabels
     * - Task Tags
-      - Taak Labels
+      - Taaklabels
     * - Keyword Tags
-      - Sleutelwoord Labels
+      - Actiewoordlabels
     * - Tags
       - Labels
     * - Setup
-      - Preconditie
+      - Voorbereiding
     * - Teardown
-      - Postconditie
+      - Afronding
     * - Template
       - Sjabloon
     * - Timeout
-      - Time-out
+      - Tijdslimiet
     * - Arguments
       - Parameters
 

@@ -55,6 +55,11 @@ def i_execute_with(x, y):
     should_be_equal(y, "zap")
 
 
+@keyword(name='Select (case-insensitively) ${animal:(?i)dog|cat|COW}')
+def select(animal, expected):
+    should_be_equal(animal, expected)
+
+
 @keyword(name=r"Result of ${a:\d+} ${operator:[+-]} ${b:\d+} is ${result}")
 def result_of_is(a, operator, b, result):
     should_be_equal(eval("%s%s%s" % (a, operator, b)), float(result))

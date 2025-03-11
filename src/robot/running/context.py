@@ -13,8 +13,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import inspect
 import asyncio
+import inspect
+import sys
 from contextlib import contextmanager
 
 from robot.errors import DataError, ExecutionFailed
@@ -95,7 +96,6 @@ EXECUTION_CONTEXTS = ExecutionContexts()
 
 
 class _ExecutionContext:
-    _started_keywords_threshold = 100
 
     def __init__(self, suite, namespace, output, dry_run=False, asynchronous=None):
         self.suite = suite
@@ -180,8 +180,11 @@ class _ExecutionContext:
         return self.namespace.variables
 
     def continue_on_failure(self, default=False):
-        parents = ([self.test] if self.test else []) + self.user_keywords
-        for index, parent in enumerate(reversed(parents)):
+        parents = [result for _, result, implementation in reversed(self.steps)
+                   if implementation and implementation.type == 'USER KEYWORD']
+        if self.test:
+            parents.append(self.test)
+        for index, parent in enumerate(parents):
             robot = parent.tags.robot
             if index == 0 and robot('stop-on-failure'):
                 return False
@@ -195,10 +198,10 @@ class _ExecutionContext:
 
     @property
     def allow_loop_control(self):
-        for _, step in reversed(self.steps):
-            if step.type == 'ITERATION':
+        for _, result, _ in reversed(self.steps):
+            if result.type == 'ITERATION':
                 return True
-            if step.type == 'KEYWORD' and step.owner != 'BuiltIn':
+            if result.type == 'KEYWORD' and result.owner != 'BuiltIn':
                 return False
         return False
 
@@ -249,10 +252,8 @@ class _ExecutionContext:
         self.timeout_occurred = False
 
     def start_body_item(self, data, result, implementation=None):
-        self.steps.append((data, result))
-        if len(self.steps) > self._started_keywords_threshold:
-            raise DataError('Maximum limit of started keywords and control '
-                            'structures exceeded.')
+        self._prevent_execution_close_to_recursion_limit()
+        self.steps.append((data, result, implementation))
         output = self.output
         args = (data, result)
         if implementation:
@@ -274,6 +275,7 @@ class _ExecutionContext:
             method = {
                 result.FOR: output.start_for,
                 result.WHILE: output.start_while,
+                result.GROUP: output.start_group,
                 result.IF_ELSE_ROOT: output.start_if,
                 result.IF: output.start_if_branch,
                 result.ELSE: output.start_if_branch,
@@ -289,6 +291,14 @@ class _ExecutionContext:
                 result.ERROR: output.start_error,
             }[result.type]
         method(*args)
+
+    def _prevent_execution_close_to_recursion_limit(self):
+        try:
+            sys._getframe(sys.getrecursionlimit() - 100)
+        except (ValueError, AttributeError):
+            pass
+        else:
+            raise DataError('Recursive execution stopped.')
 
     def end_body_item(self, data, result, implementation=None):
         output = self.output
@@ -312,6 +322,7 @@ class _ExecutionContext:
             method = {
                 result.FOR: output.end_for,
                 result.WHILE: output.end_while,
+                result.GROUP: output.end_group,
                 result.IF_ELSE_ROOT: output.end_if,
                 result.IF: output.end_if_branch,
                 result.ELSE: output.end_if_branch,

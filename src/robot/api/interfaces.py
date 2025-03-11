@@ -53,7 +53,6 @@ else:
     UnionType = type
 
 from robot import result, running
-from robot.model import Message
 from robot.running import TestDefaults, TestSuite
 
 
@@ -366,7 +365,7 @@ class StartKeywordAttributes(OptionalKeywordAttributes):
     assign: 'list[str]'
     tags: 'list[str]'
     source: str
-    lineno: int
+    lineno: 'int|None'
     status: str
     starttime: str
 
@@ -478,20 +477,37 @@ class ListenerV2:
     def output_file(self, path: str):
         """Called after the output file has been created.
 
-        At this point the file is guaranteed to be closed.
+        ``path`` is an absolute path to the output file or
+        a string ``None`` if creating the output file is disabled.
         """
 
     def log_file(self, path: str):
-        """Called after the log file has been created."""
+        """Called after the log file has been created.
+
+        ``path`` is an absolute path to the log file.
+        Not called if creating the log file is disabled.
+        """
 
     def report_file(self, path: str):
-        """Called after the report file has been created."""
+        """Called after the report file has been created.
+
+        ``path`` is an absolute path to the report file.
+        Not called if creating the report file is disabled.
+        """
 
     def xunit_file(self, path: str):
-        """Called after the xunit compatible output file has been created."""
+        """Called after the xunit compatible output file has been created.
+
+        ``path`` is an absolute path to the xunit file.
+        Only called if creating the xunit file is enabled.
+        """
 
     def debug_file(self, path: str):
-        """Called after the debug file has been created."""
+        """Called after the debug file has been created.
+
+        ``path`` is an absolute path to the debug file.
+        Only called if creating the debug file is enabled.
+        """
 
     def close(self):
         """Called when the whole execution ends.
@@ -692,6 +708,24 @@ class ListenerV3:
         """
         self.end_body_item(data, result)
 
+    def start_group(self, data: running.Group, result: result.Group):
+        """Called when a GROUP starts.
+
+        The default implementation calls :meth:`start_body_item`.
+
+        New in Robot Framework 7.2.
+        """
+        self.start_body_item(data, result)
+
+    def end_group(self, data: running.Group, result: result.Group):
+        """Called when a GROUP ends.
+
+        The default implementation calls :meth:`end_body_item`.
+
+        New in Robot Framework 7.2.
+        """
+        self.end_body_item(data, result)
+
     def start_if(self, data: running.If, result: result.If):
         """Called when an IF/ELSE structure starts.
 
@@ -868,7 +902,7 @@ class ListenerV3:
         """
         pass
 
-    def log_message(self, message: Message):
+    def log_message(self, message: result.Message):
         """Called when a normal log message are emitted.
 
         The messages are typically logged by keywords, but also the framework
@@ -876,30 +910,79 @@ class ListenerV3:
         log.html.
         """
 
-    def message(self, message: Message):
+    def message(self, message: result.Message):
         """Called when framework's internal messages are emitted.
 
         Only logged by the framework itself. These messages end up to the syslog
         if it is enabled.
         """
 
-    def output_file(self, path: Path):
+    def library_import(self, library: running.TestLibrary, importer: running.Import):
+        """Called after a library has been imported.
+
+        ``library`` represents the imported library. It can be inspected and
+        also modified. ``importer`` contains information about the location where
+        the library was imported.
+
+        New in Robot Framework 7.1.
+        """
+
+    def resource_import(self, resource: running.ResourceFile, importer: running.Import):
+        """Called after a resource file has been imported.
+
+        ``resource`` represents the imported resource file. It can be inspected and
+        also modified. ``importer`` contains information about the location where
+        the resource was imported.
+
+        New in Robot Framework 7.1.
+        """
+
+    def variables_import(self, attrs: dict, importer: running.Import):
+        """Called after a variable file has been imported.
+
+        ``attrs`` contains information about the imported variable file. It can be
+        inspected, but modifications to it have no effect. `importer`` contains
+        information about the location where the variable file was imported.
+
+        New in Robot Framework 7.1. This method will be changed in the future
+        so that the ``attrs`` dictionary is replaced with an object representing
+        the imported variable file.
+        """
+
+    def output_file(self, path: 'Path | None'):
         """Called after the output file has been created.
 
-        At this point the file is guaranteed to be closed.
+        ``path`` is an absolute path to the output file or
+        ``None`` if creating the output file is disabled.
         """
 
     def log_file(self, path: Path):
-        """Called after the log file has been created."""
+        """Called after the log file has been created.
+
+        ``path`` is an absolute path to the log file.
+        Not called if creating the log file is disabled.
+        """
 
     def report_file(self, path: Path):
-        """Called after the report file has been created."""
+        """Called after the report file has been created.
+
+        ``path`` is an absolute path to the report file.
+        Not called if creating the report file is disabled.
+        """
 
     def xunit_file(self, path: Path):
-        """Called after the xunit compatible output file has been created."""
+        """Called after the xunit compatible output file has been created.
+
+        ``path`` is an absolute path to the xunit file.
+        Only called if creating the xunit file is enabled.
+        """
 
     def debug_file(self, path: Path):
-        """Called after the debug file has been created."""
+        """Called after the debug file has been created.
+
+        ``path`` is an absolute path to the debug file.
+        Only called if creating the debug file is enabled.
+        """
 
     def close(self):
         """Called when the whole execution ends.

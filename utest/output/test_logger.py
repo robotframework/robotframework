@@ -20,6 +20,7 @@ class LoggerMock:
     def __init__(self, *expected):
         self.expected = list(expected)
         self.logger = self
+        self.priority = 0
 
     def message(self, msg):
         exp_msg, exp_level = self.expected.pop(0)
@@ -32,6 +33,9 @@ class LoggerMock:
 
     def close(self):
         pass
+
+    def __iter__(self):
+        yield self
 
 
 class LoggerMock2(LoggerMock, LoggerApi):
@@ -192,7 +196,7 @@ class TestLogger(unittest.TestCase):
         listener = LoggerMock()
         lib_listener = LoggerMock()
         other = LoggerMock()
-        logger.register_xml_logger(xml)
+        logger.register_output_file(xml)
         logger.register_listeners(listener, lib_listener)
         logger.register_logger(other)
         assert_equal([proxy.logger for proxy in logger.start_loggers if not isinstance(proxy, LoggerApi)],

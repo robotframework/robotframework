@@ -29,8 +29,8 @@ from robot.api.deco import keyword
 from robot.utils import (abspath, ConnectionCache, console_decode, del_env_var,
                          get_env_var, get_env_vars, get_time, is_truthy,
                          is_string, normpath, parse_time, plural_or_not,
-                         safe_str, secs_to_timestr, seq2str,
-                         set_env_var, timestr_to_secs, CONSOLE_ENCODING, WINDOWS)
+                         safe_str, secs_to_timestr, seq2str, set_env_var,
+                         timestr_to_secs, CONSOLE_ENCODING, PY_VERSION, WINDOWS)
 
 __version__ = get_version()
 PROCESSES = ConnectionCache('No active processes.')
@@ -288,7 +288,7 @@ class OperatingSystem:
             return f.read().replace('\r\n', '\n')
 
     def _map_encoding(self, encoding):
-        return {'SYSTEM': None,
+        return {'SYSTEM': 'locale' if PY_VERSION > (3, 10) else None,
                 'CONSOLE': CONSOLE_ENCODING}.get(encoding.upper(), encoding)
 
     def get_binary_file(self, path):
@@ -1420,7 +1420,7 @@ class OperatingSystem:
             os.utime(path, (mtime, mtime))
             self._link("Touched existing file '%s'.", path)
         else:
-            open(path, 'w').close()
+            open(path, 'w', encoding='ASCII').close()
             self._link("Touched new file '%s'.", path)
 
     def _absnorm(self, path):

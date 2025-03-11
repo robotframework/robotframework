@@ -24,9 +24,9 @@ from ..loggerapi import LoggerApi
 
 class VerboseOutput(LoggerApi):
 
-    def __init__(self, width=78, colors='AUTO', markers='AUTO', stdout=None,
-                 stderr=None):
-        self.writer = VerboseWriter(width, colors, markers, stdout, stderr)
+    def __init__(self, width=78, colors='AUTO', links='AUTO', markers='AUTO',
+                 stdout=None, stderr=None):
+        self.writer = VerboseWriter(width, colors, links, markers, stdout, stderr)
         self.started = False
         self.started_keywords = 0
         self.running_test = False
@@ -67,17 +67,17 @@ class VerboseOutput(LoggerApi):
             self.writer.error(msg.message, msg.level, clear=self.running_test)
 
     def result_file(self, kind, path):
-        self.writer.output(kind, path)
+        self.writer.result_file(kind, path)
 
 
 class VerboseWriter:
     _status_length = len('| PASS |')
 
-    def __init__(self, width=78, colors='AUTO', markers='AUTO', stdout=None,
-                 stderr=None):
+    def __init__(self, width=78, colors='AUTO', links='AUTO', markers='AUTO',
+                 stdout=None, stderr=None):
         self.width = width
-        self.stdout = HighlightingStream(stdout or sys.__stdout__, colors)
-        self.stderr = HighlightingStream(stderr or sys.__stderr__, colors)
+        self.stdout = HighlightingStream(stdout or sys.__stdout__, colors, links)
+        self.stderr = HighlightingStream(stderr or sys.__stderr__, colors, links)
         self._keyword_marker = KeywordMarker(self.stdout, markers)
         self._last_info = None
 
@@ -146,8 +146,8 @@ class VerboseWriter:
         if self._should_clear_markers(clear):
             self._write_info()
 
-    def output(self, name, path):
-        self.stdout.write(f"{name+':':8} {path}\n")
+    def result_file(self, kind, path):
+        self.stdout.result_file(kind, path)
 
 
 class KeywordMarker:

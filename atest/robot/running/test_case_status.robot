@@ -41,12 +41,10 @@ Test Setup And Teardown Pass
     Check Test Case    ${TEST NAME}
 
 Test Teardown is Run When Setup Fails
-    ${test}    Check Test Case    ${TEST NAME}
-    ${td} =    Set Variable    ${test.teardown}
-    Should Not Be Equal    ${td}    ${None}    Teardown not run    No values
-    Length Should Be   ${td.msgs}    1
-    Check Log Message    ${td.msgs[0]}    Hello from teardown!
-    Length Should Be   ${td.kws}    0
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Should Not Be Equal    ${tc.teardown}         ${None}    Teardown not run    No values
+    Length Should Be       ${tc.teardown.body}    1
+    Check Log Message      ${tc.teardown[0]}      Hello from teardown!
 
 Test Setup And Teardown Fails
     Check Test Case    ${TEST NAME}

@@ -23,7 +23,7 @@ from datetime import datetime
 from pathlib import Path
 
 from robot.errors import DataError, FrameworkError
-from robot.output import LOGGER, loggerhelper
+from robot.output import LOGGER, LogLevel
 from robot.result.keywordremover import KeywordRemover
 from robot.result.flattenkeywordmatcher import validate_flatten_keyword
 from robot.utils import (abspath, create_destination_directory, escape,
@@ -68,6 +68,7 @@ class _BaseSettings:
                  'PreRebotModifiers': ('prerebotmodifier', []),
                  'StatusRC'         : ('statusrc', True),
                  'ConsoleColors'    : ('consolecolors', 'AUTO'),
+                 'ConsoleLinks'     : ('consolelinks', 'AUTO'),
                  'PythonPath'       : ('pythonpath', []),
                  'StdOut'           : ('stdout', None),
                  'StdErr'           : ('stderr', None)}
@@ -145,7 +146,7 @@ class _BaseSettings:
     def _process_doc(self, value):
         if isinstance(value, Path) or (os.path.isfile(value) and value.strip() == value):
             try:
-                with open(value) as f:
+                with open(value, encoding='UTF-8') as f:
                     value = f.read()
             except (OSError, IOError) as err:
                 self._raise_invalid('Doc', f"Reading documentation from '{value}' "
@@ -162,16 +163,17 @@ class _BaseSettings:
 
     def _split_log_level(self, level):
         if ':' in level:
-            log_level, visible_level = level.split(':', 1)
+            collect, show = level.split(':', 1)
         else:
-            log_level = visible_level = level
-        for level in log_level, visible_level:
-            if level not in loggerhelper.LEVELS:
-                self._raise_invalid('LogLevel', f"Invalid level '{level}'.")
-        if not loggerhelper.IsLogged(log_level)(visible_level):
-            self._raise_invalid('LogLevel', f"Level in log '{visible_level}' is lower "
-                                            f"than execution level '{log_level}'.")
-        return log_level, visible_level
+            collect = show = level
+        try:
+            collect,  show = LogLevel(collect), LogLevel(show)
+        except DataError as err:
+            self._raise_invalid('LogLevel', str(err))
+        if collect.priority > show.priority:
+            self._raise_invalid('LogLevel', f"Level in log '{show.level}' is lower "
+                                            f"than execution level '{collect.level}'.")
+        return collect.level, show.level
 
     def _process_max_error_lines(self, value):
         if not value or value.upper() == 'NONE':
@@ -455,6 +457,10 @@ class _BaseSettings:
         return self['ConsoleColors']
 
     @property
+    def console_links(self):
+        return self['ConsoleLinks']
+
+    @property
     def rpa(self):
         return self['RPA']
 
@@ -613,6 +619,7 @@ class RobotSettings(_BaseSettings):
             'type':    self.console_type,
             'width':   self.console_width,
             'colors':  self.console_colors,
+            'links': self.console_links,
             'markers': self.console_markers,
             'stdout':  self['StdOut'],
             'stderr':  self['StdErr']
@@ -736,6 +743,7 @@ class RebotSettings(_BaseSettings):
     def console_output_config(self):
         return {
             'colors':  self.console_colors,
+            'links': self.console_links,
             'stdout':  self['StdOut'],
             'stderr':  self['StdErr']
         }

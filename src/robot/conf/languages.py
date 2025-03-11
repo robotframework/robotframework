@@ -14,6 +14,7 @@
 #  limitations under the License.
 
 import inspect
+import re
 from itertools import chain
 from pathlib import Path
 from typing import cast, Iterable, Iterator, Union
@@ -52,11 +53,20 @@ class Languages:
         self.languages: 'list[Language]' = []
         self.headers: 'dict[str, str]' = {}
         self.settings: 'dict[str, str]' = {}
-        self.bdd_prefixes:  'set[str]' = set()
+        self.bdd_prefixes: 'set[str]' = set()
         self.true_strings: 'set[str]' = {'True', '1'}
         self.false_strings: 'set[str]' = {'False', '0', 'None', ''}
         for lang in self._get_languages(languages, add_english):
             self._add_language(lang)
+        self._bdd_prefix_regexp = None
+
+    @property
+    def bdd_prefix_regexp(self):
+        if not self._bdd_prefix_regexp:
+            prefixes = sorted(self.bdd_prefixes, key=len, reverse=True)
+            pattern = '|'.join(prefix.replace(' ', r'\s') for prefix in prefixes).lower()
+            self._bdd_prefix_regexp = re.compile(rf'({pattern})\s', re.IGNORECASE)
+        return self._bdd_prefix_regexp
 
     def reset(self, languages: Iterable[LanguageLike] = (), add_english: bool = True):
         """Resets the instance to the given languages."""
@@ -87,6 +97,7 @@ class Languages:
                     raise DataError(f'{err1} {err2}') from None
         for lang in languages:
             self._add_language(lang)
+        self._bdd_prefix_regexp = None
 
     def _exists(self, path: Path):
         try:
@@ -105,8 +116,7 @@ class Languages:
         self.false_strings |= {s.title() for s in lang.false_strings}
 
     def _get_languages(self, languages, add_english=True) -> 'list[Language]':
-        languages = self._resolve_languages(languages, add_english)
-        available = self._get_available_languages()
+        languages, available = self._resolve_languages(languages, add_english)
         returned: 'list[Language]' = []
         for lang in languages:
             if isinstance(lang, Language):
@@ -128,9 +138,11 @@ class Languages:
             languages = list(languages)
         else:
             languages = [languages]
+        # Get available languages only if custom languages are used to save time.
+        available = self._get_available_languages() if languages else {}
         if add_english:
             languages.append(En())
-        return languages
+        return languages, available
 
     def _get_available_languages(self) -> 'dict[str, type[Language]]':
         available = {}
@@ -395,7 +407,7 @@ class Nl(Language):
     variables_header = 'Variabelen'
     test_cases_header = 'Testgevallen'
     tasks_header = 'Taken'
-    keywords_header = 'Sleutelwoorden'
+    keywords_header = 'Actiewoorden'
     comments_header = 'Opmerkingen'
     library_setting = 'Bibliotheek'
     resource_setting = 'Resource'
@@ -403,24 +415,24 @@ class Nl(Language):
     name_setting = 'Naam'
     documentation_setting = 'Documentatie'
     metadata_setting = 'Metadata'
-    suite_setup_setting = 'Suite Preconditie'
-    suite_teardown_setting = 'Suite Postconditie'
-    test_setup_setting = 'Test Preconditie'
-    test_teardown_setting = 'Test Postconditie'
-    test_template_setting = 'Test Sjabloon'
-    test_timeout_setting = 'Test Time-out'
-    test_tags_setting = 'Test Labels'
-    task_setup_setting = 'Taak Preconditie'
-    task_teardown_setting = 'Taak Postconditie'
-    task_template_setting = 'Taak Sjabloon'
-    task_timeout_setting = 'Taak Time-out'
-    task_tags_setting = 'Taak Labels'
-    keyword_tags_setting = 'Sleutelwoord Labels'
+    suite_setup_setting = 'Suitevoorbereiding'
+    suite_teardown_setting = 'Suite-afronding'
+    test_setup_setting = 'Testvoorbereiding'
+    test_teardown_setting = 'Testafronding'
+    test_template_setting = 'Testsjabloon'
+    test_timeout_setting = 'Testtijdslimiet'
+    test_tags_setting = 'Testlabels'
+    task_setup_setting = 'Taakvoorbereiding'
+    task_teardown_setting = 'Taakafronding'
+    task_template_setting = 'Taaksjabloon'
+    task_timeout_setting = 'Taaktijdslimiet'
+    task_tags_setting = 'Taaklabels'
+    keyword_tags_setting = 'Actiewoordlabels'
     tags_setting = 'Labels'
-    setup_setting = 'Preconditie'
-    teardown_setting = 'Postconditie'
+    setup_setting = 'Voorbereiding'
+    teardown_setting = 'Afronding'
     template_setting = 'Sjabloon'
-    timeout_setting = 'Time-out'
+    timeout_setting = 'Tijdslimiet'
     arguments_setting = 'Parameters'
     given_prefixes = ['Stel', 'Gegeven']
     when_prefixes = ['Als']
@@ -545,11 +557,15 @@ class Fr(Language):
     template_setting = 'Modèle'
     timeout_setting = "Délai d'attente"
     arguments_setting = 'Arguments'
-    given_prefixes = ['Étant donné']
-    when_prefixes = ['Lorsque']
-    then_prefixes = ['Alors']
-    and_prefixes = ['Et']
-    but_prefixes = ['Mais']
+    given_prefixes = [
+        'Étant donné', 'Étant donné que', "Étant donné qu'", 'Soit', 'Sachant que',
+        "Sachant qu'", 'Sachant', 'Etant donné', 'Etant donné que', "Etant donné qu'",
+        'Etant donnée', 'Etant données'
+    ]
+    when_prefixes = ['Lorsque', 'Quand', "Lorsqu'"]
+    then_prefixes = ['Alors', 'Donc']
+    and_prefixes = ['Et', 'Et que', "Et qu'"]
+    but_prefixes = ['Mais', 'Mais que', "Mais qu'"]
     true_strings = ['Vrai', 'Oui', 'Actif']
     false_strings = ['Faux', 'Non', 'Désactivé', 'Aucun']
 
@@ -1255,3 +1271,93 @@ class Vi(Language):
     but_prefixes = ['Nhưng']
     true_strings = ['Đúng', 'Vâng', 'Mở']
     false_strings = ['Sai', 'Không', 'Tắt', 'Không Có Gì']
+
+
+class Ja(Language):
+    """Japanese
+
+    New in Robot Framework 7.0.1.
+    """
+    settings_header = '設定'
+    variables_header = '変数'
+    test_cases_header = 'テスト ケース'
+    tasks_header = 'タスク'
+    keywords_header = 'キーワード'
+    comments_header = 'コメント'
+    library_setting = 'ライブラリ'
+    resource_setting = 'リソース'
+    variables_setting = '変数'
+    name_setting = '名前'
+    documentation_setting = 'ドキュメント'
+    metadata_setting = 'メタデータ'
+    suite_setup_setting = 'スイート セットアップ'
+    suite_teardown_setting = 'スイート ティアダウン'
+    test_setup_setting = 'テスト セットアップ'
+    task_setup_setting = 'タスク セットアップ'
+    test_teardown_setting = 'テスト ティアダウン'
+    task_teardown_setting = 'タスク ティアダウン'
+    test_template_setting = 'テスト テンプレート'
+    task_template_setting = 'タスク テンプレート'
+    test_timeout_setting = 'テスト タイムアウト'
+    task_timeout_setting = 'タスク タイムアウト'
+    test_tags_setting = 'テスト タグ'
+    task_tags_setting = 'タスク タグ'
+    keyword_tags_setting = 'キーワード タグ'
+    setup_setting = 'セットアップ'
+    teardown_setting = 'ティアダウン'
+    template_setting = 'テンプレート'
+    tags_setting = 'タグ'
+    timeout_setting = 'タイムアウト'
+    arguments_setting = '引数'
+    given_prefixes = ['仮定', '指定', '前提条件']
+    when_prefixes = ['条件', '次の場合', 'もし', '実行条件']
+    then_prefixes = ['アクション', 'その時', '動作']
+    and_prefixes = ['および', '及び', 'かつ', '且つ', 'ならびに', '並びに', 'そして', 'それから']
+    but_prefixes = ['ただし', '但し']
+    true_strings = ['真', '有効', 'はい', 'オン']
+    false_strings = ['偽', '無効', 'いいえ', 'オフ']
+
+
+class Ko(Language):
+    """Korean
+
+    New in Robot Framework 7.1.
+    """
+    settings_header = '설정'
+    variables_header = '변수'
+    test_cases_header = '테스트 사례'
+    tasks_header = '작업'
+    keywords_header = '키워드'
+    comments_header = '의견'
+    library_setting = '라이브러리'
+    resource_setting = '자료'
+    variables_setting = '변수'
+    name_setting = '이름'
+    documentation_setting = '문서'
+    metadata_setting = '메타데이터'
+    suite_setup_setting = '스위트 설정'
+    suite_teardown_setting = '스위트 중단'
+    test_setup_setting = '테스트 설정'
+    task_setup_setting = '작업 설정'
+    test_teardown_setting = '테스트 중단'
+    task_teardown_setting = '작업 중단'
+    test_template_setting = '테스트 템플릿'
+    task_template_setting = '작업 템플릿'
+    test_timeout_setting = '테스트 시간 초과'
+    task_timeout_setting = '작업 시간 초과'
+    test_tags_setting = '테스트 태그'
+    task_tags_setting = '작업 태그'
+    keyword_tags_setting = '키워드 태그'
+    setup_setting = '설정'
+    teardown_setting = '중단'
+    template_setting = '템플릿'
+    tags_setting = '태그'
+    timeout_setting = '시간 초과'
+    arguments_setting = '주장'
+    given_prefixes = ['주어진']
+    when_prefixes = ['때']
+    then_prefixes = ['보다']
+    and_prefixes = ['그리고']
+    but_prefixes = ['하지만']
+    true_strings = ['참', '네', '켜기']
+    false_strings = ['거짓', '아니오', '끄기']

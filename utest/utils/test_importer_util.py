@@ -31,7 +31,7 @@ def assert_prefix(error, expected):
 def create_temp_file(name, attr=42, extra_content=''):
     TESTDIR.mkdir(exist_ok=True)
     path = TESTDIR / name
-    with open(path, 'w') as file:
+    with open(path, 'w', encoding='ASCII') as file:
         file.write(f'''
 attr = {attr}
 def func():
@@ -146,7 +146,7 @@ class test:
         self.logger.assert_message(msg, index=index)
 
     def _assert_removed_message(self, name, index=0):
-        msg = f"Removed module '{name}' from sys.modules to import fresh module."
+        msg = f"Removed module '{name}' from sys.modules to import a fresh module."
         self.logger.assert_message(msg, index=index)
 
 
@@ -266,7 +266,7 @@ class TestImportClassOrModule(unittest.TestCase):
     def test_invalid_file_by_path(self):
         path = TEMPDIR / 'robot_import_invalid_test_file.py'
         try:
-            with open(path, 'w') as file:
+            with open(path, 'w', encoding='ASCII') as file:
                 file.write('invalid content')
             error = assert_raises(DataError, self._import, path)
             assert_prefix(error, f"Importing '{path}' failed: SyntaxError:")

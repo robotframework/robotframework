@@ -82,7 +82,7 @@ class TestCompatibilityLayer(unittest.TestCase):
         with self.validate_deprecation('unic'):
             assert_equal(utils.unic(42), '42')
         with self.validate_deprecation('unic'):
-            assert_equal(utils.unic(b'Hyv\xe4'), r'Hyv\xe4')
+            assert_equal(utils.unic(b'Hyv\xe4'), 'Hyvä')
         with self.validate_deprecation('unic'):
             assert_equal(utils.unic(b'Paha'), 'Paha')
 

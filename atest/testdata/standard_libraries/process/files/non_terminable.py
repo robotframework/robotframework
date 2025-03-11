@@ -18,7 +18,7 @@ signal.signal(signal.SIGTERM, ignorer)
 if hasattr(signal, 'SIGBREAK'):
     signal.signal(signal.SIGBREAK, ignorer)
 
-with open(notify_path, 'w') as notify:
+with open(notify_path, 'w', encoding='ASCII') as notify:
     log('Starting non-terminable process.', notify)
 
 

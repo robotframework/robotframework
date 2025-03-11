@@ -98,6 +98,12 @@ class LoggerApi:
                             result: 'result.WhileIteration'):
         self.end_body_item(data, result)
 
+    def start_group(self, data: 'running.Group', result: 'result.Group'):
+        self.start_body_item(data, result)
+
+    def end_group(self, data: 'running.Group', result: 'result.Group'):
+        self.end_body_item(data, result)
+
     def start_if(self, data: 'running.If', result: 'result.If'):
         self.start_body_item(data, result)
 
@@ -209,6 +215,17 @@ class LoggerApi:
         pass
 
     def imported(self, import_type: str, name: str, attrs):
+        pass
+
+    def library_import(self, library: 'running.TestLibrary',
+                       importer: 'running.Import'):
+        pass
+
+    def resource_import(self, resource: 'running.ResourceFile',
+                        importer: 'running.Import'):
+        pass
+
+    def variables_import(self, attrs: dict, importer: 'running.Import'):
         pass
 
     def close(self):

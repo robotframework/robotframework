@@ -34,7 +34,6 @@ class ArgumentValidator:
                        any(is_dict_variable(arg) for arg in named)):
             return
         self._validate_no_multiple_values(positional, named, self.spec)
-        self._validate_no_positional_only_as_named(named, self.spec)
         self._validate_positional_limits(positional, named, self.spec)
         self._validate_no_mandatory_missing(positional, named, self.spec)
         self._validate_no_named_only_missing(named, self.spec)
@@ -48,13 +47,6 @@ class ArgumentValidator:
     def _raise_error(self, message):
         name = f"'{self.spec.name}' " if self.spec.name else ''
         raise DataError(f"{self.spec.type.capitalize()} {name}{message}.")
-
-    def _validate_no_positional_only_as_named(self, named, spec):
-        if not spec.var_named:
-            for name in named:
-                if name in spec.positional_only:
-                    self._raise_error(f"does not accept argument '{name}' as named "
-                                      f"argument")
 
     def _validate_positional_limits(self, positional, named, spec):
         count = len(positional) + self._named_positionals(named, spec)

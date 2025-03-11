@@ -5,9 +5,10 @@ import time
 class ListenAll:
     ROBOT_LISTENER_API_VERSION = '2'
 
-    def __init__(self, *path):
+    def __init__(self, *path, output_file_disabled=False):
         path = ':'.join(path) if path else self._get_default_path()
-        self.outfile = open(path, 'w')
+        self.outfile = open(path, 'w', encoding='UTF-8')
+        self.output_file_disabled = output_file_disabled
         self.start_attrs = []
 
     def _get_default_path(self):
@@ -66,7 +67,11 @@ class ListenAll:
     def _validate_start_attrs_at_end(self, end_attrs):
         start_attrs = self.start_attrs.pop()
         for key in start_attrs:
-            assert end_attrs[key] == start_attrs[key]
+            start = start_attrs[key]
+            end = end_attrs[key]
+            if not (end == start or (key == 'status' and start == 'NOT SET')):
+                raise AssertionError(f'End attr {end!r} is different to '
+                                     f'start attr {start!r}.')
 
     def end_test(self, name, attrs):
         if attrs['status'] == 'PASS':
@@ -90,12 +95,21 @@ class ListenAll:
     def log_file(self, path):
         self._out_file('Log', path)
 
+    def xunit_file(self, path):
+        self._out_file('Xunit', path)
+
     def debug_file(self, path):
         self._out_file('Debug', path)
 
     def _out_file(self, name, path):
-        assert isinstance(path, str) and os.path.isabs(path)
-        self.outfile.write('%s: %s\n' % (name, os.path.basename(path)))
+        if name == 'Output' and self.output_file_disabled:
+            if path != 'None':
+                raise AssertionError(f'Output should be disabled, got {path!r}.')
+        else:
+            if not (isinstance(path, str) and os.path.isabs(path)):
+                raise AssertionError(f'Path should be absolute, got {path!r}.')
+            path = os.path.basename(path)
+        self.outfile.write(f'{name}: {path}\n')
 
     def close(self):
         self.outfile.write('Closing...\n')

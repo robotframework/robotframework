@@ -13,9 +13,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from .totalstatistics import TotalStatisticsBuilder
-from .suitestatistics import SuiteStatisticsBuilder
-from .tagstatistics import TagStatisticsBuilder
+from .totalstatistics import TotalStatistics, TotalStatisticsBuilder
+from .suitestatistics import SuiteStatistics, SuiteStatisticsBuilder
+from .tagstatistics import TagStatistics, TagStatisticsBuilder
 from .visitor import SuiteVisitor
 
 
@@ -34,12 +34,16 @@ class Statistics:
                                            tag_stat_exclude, tag_stat_combine,
                                            tag_doc, tag_stat_link)
         suite.visit(StatisticsBuilder(total_builder, suite_builder, tag_builder))
-        #: Instance of :class:`~robot.model.totalstatistics.TotalStatistics`.
-        self.total = total_builder.stats
-        #: Instance of :class:`~robot.model.suitestatistics.SuiteStatistics`.
-        self.suite = suite_builder.stats
-        #: Instance of :class:`~robot.model.tagstatistics.TagStatistics`.
-        self.tags = tag_builder.stats
+        self.total: TotalStatistics = total_builder.stats
+        self.suite: SuiteStatistics = suite_builder.stats
+        self.tags: TagStatistics = tag_builder.stats
+
+    def to_dict(self):
+        return {
+            'total': self.total.stat.get_attributes(include_label=True),
+            'suites': [s.get_attributes(include_label=True) for s in self.suite],
+            'tags': [t.get_attributes(include_label=True) for t in self.tags],
+        }
 
     def visit(self, visitor):
         visitor.visit_statistics(self)

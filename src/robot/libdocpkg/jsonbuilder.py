@@ -50,7 +50,7 @@ class JsonDocBuilder:
     def _parse_spec_json(self, path):
         if not os.path.isfile(path):
             raise DataError(f"Spec file '{path}' does not exist.")
-        with open(path) as json_source:
+        with open(path, encoding='UTF-8') as json_source:
             libdoc_dict = json.load(json_source)
         return libdoc_dict
 

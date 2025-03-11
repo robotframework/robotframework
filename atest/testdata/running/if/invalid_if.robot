@@ -69,6 +69,29 @@ Recommend $var syntax if invalid condition contains ${var}
         Fail    Shouldn't be run
     END
 
+$var recommendation with multiple variables
+    [Documentation]    FAIL    Invalid IF condition: \
+    ...    Evaluating expression "x == 'x' or x == 'y'" failed: NameError: name 'x' is not defined nor importable as module
+    ...
+    ...    Variables in the original expression "\${x} == 'x' or \${x} == 'y'" were resolved before the expression was evaluated. \
+    ...    Try using "$x == 'x' or $x == 'y'" syntax to avoid that. See Evaluating Expressions appendix in Robot Framework User Guide for more details.
+    VAR    ${x}    x
+    IF    ${x} == 'x' or ${x} == 'y'
+        Fail    Shouldn't be run
+    END
+
+Remove quotes around variable in $var recommendation
+    [Documentation]    FAIL    GLOB: Invalid IF condition: \
+    ...    Evaluating expression '\\'\\'x"\\' == \\'x\\' or "\\'x"" == \\'x\\' or """"""y\\'\\'\\'""" == \\'y\\' or \\'\\'\\'"""y\\'\\'\\'\\'\\'\\' == \\'y\\'' failed: SyntaxError: *
+    ...
+    ...    Variables in the original expression '\\'\${x}\\' == \\'x\\' or "\${x}" == \\'x\\' or """\${y}""" == \\'y\\' or \\'\\'\\'\${y}\\'\\'\\' == \\'y\\'' were resolved before the expression was evaluated. \
+    ...    Try using "$x == 'x' or $x == 'x' or $y == 'y' or $y == 'y'" syntax to avoid that. See Evaluating Expressions appendix in Robot Framework User Guide for more details.
+    VAR    ${x}    'x"
+    VAR    ${y}    """y'''
+    IF    '${x}' == 'x' or "${x}" == 'x' or """${y}""" == 'y' or '''${y}''' == 'y'
+        Fail    Shouldn't be run
+    END
+
 IF without END
     [Documentation]    FAIL    IF must have closing END.
     IF    ${True}

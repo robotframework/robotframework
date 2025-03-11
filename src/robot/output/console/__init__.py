@@ -20,13 +20,13 @@ from .quiet import NoOutput, QuietOutput
 from .verbose import VerboseOutput
 
 
-def ConsoleOutput(type='verbose', width=78, colors='AUTO', markers='AUTO',
+def ConsoleOutput(type='verbose', width=78, colors='AUTO', links='AUTO', markers='AUTO',
                   stdout=None, stderr=None):
     upper = type.upper()
     if upper == 'VERBOSE':
-        return VerboseOutput(width, colors, markers, stdout, stderr)
+        return VerboseOutput(width, colors, links, markers, stdout, stderr)
     if upper == 'DOTTED':
-        return DottedOutput(width, colors, stdout, stderr)
+        return DottedOutput(width, colors, links, stdout, stderr)
     if upper == 'QUIET':
         return QuietOutput(colors, stderr)
     if upper == 'NONE':

@@ -1,0 +1,6 @@
+{
+  "extends": "@parcel/config-default",
+  "transformers": {
+    "*.x-handlebars-template": ["parcel-transformer-plaintext"]
+  }
+}

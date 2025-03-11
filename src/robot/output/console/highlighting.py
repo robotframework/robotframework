@@ -17,14 +17,24 @@
 # Andre Burgaud, licensed under the MIT License, and available here:
 # http://www.burgaud.com/bring-colors-to-the-windows-console-with-python/
 
-from contextlib import contextmanager
 import errno
 import os
 import sys
+from contextlib import contextmanager
 try:
-    from ctypes import windll, Structure, c_short, c_ushort, byref
+    from ctypes import windll
 except ImportError:  # Not on Windows
     windll = None
+else:
+    from ctypes import byref, c_ushort, Structure
+    from ctypes.wintypes import _COORD, DWORD, SMALL_RECT
+
+    class ConsoleScreenBufferInfo(Structure):
+        _fields_ = [('dwSize', _COORD),
+                    ('dwCursorPosition', _COORD),
+                    ('wAttributes', c_ushort),
+                    ('srWindow', SMALL_RECT),
+                    ('dwMaximumWindowSize', _COORD)]
 
 from robot.errors import DataError
 from robot.utils import console_encode, isatty, WINDOWS
@@ -32,11 +42,13 @@ from robot.utils import console_encode, isatty, WINDOWS
 
 class HighlightingStream:
 
-    def __init__(self, stream, colors='AUTO'):
-        self.stream = stream
-        self._highlighter = self._get_highlighter(stream, colors)
+    def __init__(self, stream, colors='AUTO', links='AUTO'):
+        self.stream = stream or NullStream()
+        self._highlighter = self._get_highlighter(stream, colors, links)
 
-    def _get_highlighter(self, stream, colors):
+    def _get_highlighter(self, stream, colors, links):
+        if not stream:
+            return NoHighlighting()
         options = {'AUTO': Highlighter if isatty(stream) else NoHighlighting,
                    'ON': Highlighter,
                    'OFF': NoHighlighting,
@@ -44,9 +56,12 @@ class HighlightingStream:
         try:
             highlighter = options[colors.upper()]
         except KeyError:
-            raise DataError("Invalid console color value '%s'. Available "
-                            "'AUTO', 'ON', 'OFF' and 'ANSI'." % colors)
-        return highlighter(stream)
+            raise DataError(f"Invalid console color value '{colors}'. "
+                            f"Available 'AUTO', 'ON', 'OFF' and 'ANSI'.")
+        if links.upper() not in ('AUTO', 'OFF'):
+            raise DataError(f"Invalid console link value '{links}. "
+                            f"Available 'AUTO' and 'OFF'.")
+        return highlighter(stream, links.upper() == 'AUTO')
 
     def write(self, text, flush=True):
         self._write(console_encode(text, stream=self.stream))
@@ -78,22 +93,18 @@ class HighlightingStream:
             self.stream.flush()
 
     def highlight(self, text, status=None, flush=True):
-        if self._must_flush_before_and_after_highlighting():
+        # Must flush before and after highlighting when using Windows APIs to make
+        # sure colors only affects the actual highlighted text.
+        if isinstance(self._highlighter, DosHighlighter):
             self.flush()
             flush = True
         with self._highlighting(status or text):
             self.write(text, flush)
 
-    def _must_flush_before_and_after_highlighting(self):
-        # Must flush on Windows before and after highlighting to make sure set
-        # console colors only affect the actual highlighted text. Problems
-        # only encountered with Python 3, but better to be safe than sorry.
-        return WINDOWS and not isinstance(self._highlighter, NoHighlighting)
-
     def error(self, message, level):
         self.write('[ ', flush=False)
         self.highlight(level, flush=False)
-        self.write(' ] %s\n' % message)
+        self.write(f' ] {message}\n')
 
     @contextmanager
     def _highlighting(self, status):
@@ -109,33 +120,62 @@ class HighlightingStream:
         finally:
             highlighter.reset()
 
+    def result_file(self, kind, path):
+        path = self._highlighter.link(path) if path else 'NONE'
+        self.write(f"{kind + ':':8} {path}\n")
 
-def Highlighter(stream):
+
+class NullStream:
+
+    def write(self, text):
+        pass
+
+    def flush(self):
+        pass
+
+
+def Highlighter(stream, links=True):
     if os.sep == '/':
-        return AnsiHighlighter(stream)
-    return DosHighlighter(stream) if windll else NoHighlighting(stream)
+        return AnsiHighlighter(stream, links)
+    if not windll:
+        return NoHighlighting(stream)
+    if virtual_terminal_enabled(stream):
+        return AnsiHighlighter(stream, links)
+    return DosHighlighter(stream)
 
 
 class AnsiHighlighter:
-    _ANSI_GREEN = '\033[32m'
-    _ANSI_RED = '\033[31m'
-    _ANSI_YELLOW = '\033[33m'
-    _ANSI_RESET = '\033[0m'
+    GREEN = '\033[32m'
+    RED = '\033[31m'
+    YELLOW = '\033[33m'
+    RESET = '\033[0m'
 
-    def __init__(self, stream):
+    def __init__(self, stream, links=True):
         self._stream = stream
+        self._links = links
 
     def green(self):
-        self._set_color(self._ANSI_GREEN)
+        self._set_color(self.GREEN)
 
     def red(self):
-        self._set_color(self._ANSI_RED)
+        self._set_color(self.RED)
 
     def yellow(self):
-        self._set_color(self._ANSI_YELLOW)
+        self._set_color(self.YELLOW)
 
     def reset(self):
-        self._set_color(self._ANSI_RESET)
+        self._set_color(self.RESET)
+
+    def link(self, path):
+        if not self._links:
+            return path
+        try:
+            uri = path.as_uri()
+        except ValueError:
+            return path
+        # Terminal hyperlink syntax is documented here:
+        # https://gist.github.com/egmontkob/eb114294efbcd5adb1944c9f3cb5feda
+        return f'\033]8;;{uri}\033\\{path}\033]8;;\033\\'
 
     def _set_color(self, color):
         self._stream.write(color)
@@ -143,71 +183,70 @@ class AnsiHighlighter:
 
 class NoHighlighting(AnsiHighlighter):
 
+    def __init__(self, stream=None, links=True):
+        super().__init__(stream, links)
+
+    def link(self, path):
+        return path
+
     def _set_color(self, color):
         pass
 
 
 class DosHighlighter:
-    _FOREGROUND_GREEN = 0x2
-    _FOREGROUND_RED = 0x4
-    _FOREGROUND_YELLOW = 0x6
-    _FOREGROUND_GREY = 0x7
-    _FOREGROUND_INTENSITY = 0x8
-    _BACKGROUND_MASK = 0xF0
-    _STDOUT_HANDLE = -11
-    _STDERR_HANDLE = -12
+    FOREGROUND_GREEN = 0x2
+    FOREGROUND_RED = 0x4
+    FOREGROUND_YELLOW = 0x6
+    FOREGROUND_GREY = 0x7
+    FOREGROUND_INTENSITY = 0x8
+    BACKGROUND_MASK = 0xF0
 
     def __init__(self, stream):
-        self._handle = self._get_std_handle(stream)
+        self._handle = get_std_handle(stream)
         self._orig_colors = self._get_colors()
-        self._background = self._orig_colors & self._BACKGROUND_MASK
+        self._background = self._orig_colors & self.BACKGROUND_MASK
 
     def green(self):
-        self._set_foreground_colors(self._FOREGROUND_GREEN)
+        self._set_foreground_colors(self.FOREGROUND_GREEN)
 
     def red(self):
-        self._set_foreground_colors(self._FOREGROUND_RED)
+        self._set_foreground_colors(self.FOREGROUND_RED)
 
     def yellow(self):
-        self._set_foreground_colors(self._FOREGROUND_YELLOW)
+        self._set_foreground_colors(self.FOREGROUND_YELLOW)
 
     def reset(self):
         self._set_colors(self._orig_colors)
 
-    def _get_std_handle(self, stream):
-        handle = self._STDOUT_HANDLE \
-            if stream is sys.__stdout__ else self._STDERR_HANDLE
-        return windll.kernel32.GetStdHandle(handle)
+    def link(self, path):
+        return path
 
     def _get_colors(self):
-        csbi = _CONSOLE_SCREEN_BUFFER_INFO()
-        ok = windll.kernel32.GetConsoleScreenBufferInfo(self._handle, byref(csbi))
+        info = ConsoleScreenBufferInfo()
+        ok = windll.kernel32.GetConsoleScreenBufferInfo(self._handle, byref(info))
         if not ok:  # Call failed, return default console colors (gray on black)
-            return self._FOREGROUND_GREY
-        return csbi.wAttributes
+            return self.FOREGROUND_GREY
+        return info.wAttributes
 
     def _set_foreground_colors(self, colors):
-        self._set_colors(colors | self._FOREGROUND_INTENSITY | self._background)
+        self._set_colors(colors | self.FOREGROUND_INTENSITY | self._background)
 
     def _set_colors(self, colors):
         windll.kernel32.SetConsoleTextAttribute(self._handle, colors)
 
 
-if windll:
+def get_std_handle(stream):
+    handle = -11 if stream is sys.__stdout__ else -12
+    return windll.kernel32.GetStdHandle(handle)
 
-    class _COORD(Structure):
-        _fields_ = [("X", c_short),
-                    ("Y", c_short)]
 
-    class _SMALL_RECT(Structure):
-        _fields_ = [("Left", c_short),
-                    ("Top", c_short),
-                    ("Right", c_short),
-                    ("Bottom", c_short)]
-
-    class _CONSOLE_SCREEN_BUFFER_INFO(Structure):
-        _fields_ = [("dwSize", _COORD),
-                    ("dwCursorPosition", _COORD),
-                    ("wAttributes", c_ushort),
-                    ("srWindow", _SMALL_RECT),
-                    ("dwMaximumWindowSize", _COORD)]
+def virtual_terminal_enabled(stream):
+    handle = get_std_handle(stream)
+    enable_vt = 0x0004
+    mode = DWORD()
+    if not windll.kernel32.GetConsoleMode(handle, byref(mode)):
+        return False    # Calling GetConsoleMode failed.
+    if mode.value & enable_vt:
+        return True     # VT already enabled.
+    # Try to enable VT.
+    return windll.kernel32.SetConsoleMode(handle, mode.value | enable_vt) != 0

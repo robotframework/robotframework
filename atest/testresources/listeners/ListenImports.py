@@ -5,7 +5,7 @@ class ListenImports:
     ROBOT_LISTENER_API_VERSION = 2
 
     def __init__(self, imports):
-        self.imports = open(imports, 'w')
+        self.imports = open(imports, 'w', encoding='UTF-8')
 
     def library_import(self, name, attrs):
         self._imported("Library", name, attrs)

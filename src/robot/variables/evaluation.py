@@ -27,9 +27,6 @@ from .search import VariableMatches
 from .notfound import variable_not_found
 
 
-PYTHON_BUILTINS = set(builtins.__dict__)
-
-
 def evaluate_expression(expression, variables, modules=None, namespace=None,
                         resolve_variables=False):
     original = expression
@@ -118,12 +115,31 @@ def _recommend_special_variables(expression):
         return ''
     example = []
     for match in matches:
-        example[-1:] += [match.before, match.identifier, match.base, match.after]
-    example = ''.join(example)
+        example[-1:] = [match.before, match.identifier + match.base, match.after]
+    example = ''.join(_remove_possible_quoting(example))
     return (f"Variables in the original expression {expression!r} were resolved "
             f"before the expression was evaluated. Try using {example!r} "
             f"syntax to avoid that. See Evaluating Expressions appendix in "
             f"Robot Framework User Guide for more details.")
+
+
+def _remove_possible_quoting(example_tokens):
+    before = var = after = None
+    for index, item in enumerate(example_tokens):
+        if index == 0:
+            before = item
+        elif index % 2 == 1:
+            var = item
+        else:
+            after = item
+            if before[-3:] in ('"""', "'''") and after[:3] == before[-3:]:
+                before, after = before[:-3], after[3:]
+            elif before[-1:] in ('"', "'") and after[:1] == before[-1:]:
+                before, after = before[:-1], after[1:]
+            yield before
+            yield var
+            before = after
+    yield after
 
 
 class EvaluationNamespace(MutableMapping):
@@ -146,7 +162,7 @@ class EvaluationNamespace(MutableMapping):
         self.namespace.pop(key)
 
     def _import_module(self, name):
-        if name in PYTHON_BUILTINS:
+        if hasattr(builtins, name):
             raise KeyError
         try:
             return __import__(name)

@@ -41,6 +41,6 @@ Library Search Order Is Case Insensitive
 
 Search Order Controlled Match Containing Embedded Arguments Wins Over Exact Match
     Check Test Case  ${TEST NAME}
-    
+
 Best Search Order Controlled Match Wins In Library
     Check Test Case  ${TEST NAME}

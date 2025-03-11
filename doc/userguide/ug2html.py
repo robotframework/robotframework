@@ -23,6 +23,7 @@ Version number to use is got automatically from 'src/robot/version.py' file.
 import os
 import sys
 import shutil
+from pathlib import Path
 
 from translations import update_translations
 
@@ -161,9 +162,13 @@ def create_userguide():
     publish_cmdline(writer_name='html', description=description, argv=arguments)
     os.unlink(version_file)
     os.unlink(install_file)
-    ugpath = os.path.abspath(arguments[-1])
-    print(ugpath)
+    ugpath = Path(arguments[-1]).absolute()
+    print(_link(ugpath))
     return ugpath, version
+
+
+def _link(path):
+    return f'\033]8;;{path.as_uri()}\033\\{path}\033]8;;\033\\'
 
 
 def _update_version():

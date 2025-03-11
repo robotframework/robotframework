@@ -137,7 +137,7 @@ require-yaml, require-lxml, require-screenshot
   Require specified Python module or some other external tool to be installed.
   Exclude like `--exclude require-lxml` if dependencies_ are not met.
 
-require-windows, require-py3.8, ...
+require-windows, require-py3.13, ...
   Tests that require certain operating system or Python interpreter.
   Excluded automatically outside these platforms.
 

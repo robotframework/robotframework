@@ -49,31 +49,37 @@ class LibraryKeywordRunner:
         with StatusReporter(data, result, context, run, implementation=kw):
             if run:
                 with assignment.assigner(context) as assigner:
-                    return_value = self._run(kw, data.args, result, context)
+                    return_value = self._run(data, kw, context)
                     assigner.assign(return_value)
                     return return_value
 
     def _config_result(self, result: KeywordResult, data: KeywordData,
                        kw: 'LibraryKeyword', assignment):
+        args = tuple(data.args)
+        if data.named_args:
+            args += tuple(f'{n}={v}' for n, v in data.named_args.items())
         result.config(name=self.name,
                       owner=kw.owner.name,
                       doc=kw.short_doc,
-                      args=data.args,
+                      args=args,
                       assign=tuple(assignment),
                       tags=kw.tags,
                       type=data.type)
 
-    def _run(self, kw: 'LibraryKeyword', args, result: KeywordResult, context):
+    def _run(self, data: KeywordData, kw: 'LibraryKeyword', context):
         if self.pre_run_messages:
             for message in self.pre_run_messages:
                 context.output.message(message)
         variables = context.variables if not context.dry_run else None
-        positional, named = kw.resolve_arguments(args, variables, self.languages)
+        positional, named = self._resolve_arguments(data, kw, variables)
         context.output.trace(lambda: self._trace_log_args(positional, named),
                              write_if_flat=False)
         if kw.error:
             raise DataError(kw.error)
         return self._execute(kw.method, positional, named, context)
+
+    def _resolve_arguments(self, data: KeywordData, kw: 'LibraryKeyword', variables=None):
+        return kw.resolve_arguments(data.args, data.named_args, variables, self.languages)
 
     def _trace_log_args(self, positional, named):
         args = [prepr(arg) for arg in positional]
@@ -125,20 +131,26 @@ class LibraryKeywordRunner:
         kw = self.keyword.bind(data)
         assignment = VariableAssignment(data.assign)
         self._config_result(result, data, kw, assignment)
-        with StatusReporter(data, result, context, run=False, implementation=kw):
+        with StatusReporter(data, result, context, implementation=kw,
+                            run=self._get_initial_dry_run_status(kw)):
             assignment.validate_assignment()
-            self._dry_run(kw, data.args, result, context)
+            if self._executed_in_dry_run(kw):
+                self._run(data, kw, context)
+            else:
+                self._resolve_arguments(data, kw)
+                self._dry_run(data, kw, result, context)
 
-    def _dry_run(self, kw: 'LibraryKeyword', args, result: KeywordResult, context):
-        if self._executed_in_dry_run(kw):
-            self._run(kw, args, result, context)
-        else:
-            kw.resolve_arguments(args, languages=self.languages)
+    def _get_initial_dry_run_status(self, kw):
+        return self._executed_in_dry_run(kw)
 
     def _executed_in_dry_run(self, kw: 'LibraryKeyword'):
         return (kw.owner.name == 'BuiltIn'
                 and kw.name in ('Import Library', 'Set Library Search Order',
-                                'Set Tags', 'Remove Tags'))
+                                'Set Tags', 'Remove Tags', 'Import Resource'))
+
+    def _dry_run(self, data: KeywordData, kw: 'LibraryKeyword', result: KeywordResult,
+                 context):
+        pass
 
 
 class EmbeddedArgumentsRunner(LibraryKeywordRunner):
@@ -147,11 +159,9 @@ class EmbeddedArgumentsRunner(LibraryKeywordRunner):
         super().__init__(keyword, name)
         self.embedded_args = keyword.embedded.match(name).groups()
 
-    def _run(self, kw: 'LibraryKeyword', args, result: KeywordResult, context):
-        return super()._run(kw, self.embedded_args + args, result, context)
-
-    def _dry_run(self, kw: 'LibraryKeyword', args, result: KeywordResult, context):
-        return super()._dry_run(kw, self.embedded_args + args, result, context)
+    def _resolve_arguments(self, data: KeywordData, kw: 'LibraryKeyword', variables=None):
+        return kw.resolve_arguments(self.embedded_args + data.args, data.named_args,
+                                    variables, self.languages)
 
     def _config_result(self, result: KeywordResult, data: KeywordData,
                        kw: 'LibraryKeyword', assignment):
@@ -161,9 +171,9 @@ class EmbeddedArgumentsRunner(LibraryKeywordRunner):
 
 class RunKeywordRunner(LibraryKeywordRunner):
 
-    def __init__(self, keyword: 'LibraryKeyword', execute_in_dry_run=False):
+    def __init__(self, keyword: 'LibraryKeyword', dry_run_children=False):
         super().__init__(keyword)
-        self.execute_in_dry_run = execute_in_dry_run
+        self._dry_run_children = dry_run_children
 
     def _get_timeout(self, context):
         # These keywords are not affected by timeouts. Keywords they execute are.
@@ -177,25 +187,31 @@ class RunKeywordRunner(LibraryKeywordRunner):
         finally:
             STOP_SIGNAL_MONITOR.stop_running_keyword()
 
-    def _dry_run(self, kw: 'LibraryKeyword', args, result: KeywordResult, context):
-        super()._dry_run(kw, args, result, context)
+    def _get_initial_dry_run_status(self, kw):
+        return self._dry_run_children or super()._get_initial_dry_run_status(kw)
+
+    def _dry_run(self, data: KeywordData, kw: 'LibraryKeyword', result: KeywordResult,
+                 context):
         wrapper = UserKeyword(name=kw.name,
-                              doc="Wraps keywords executed by '{kw.name}' in dry-run.",
+                              doc=f"Wraps keywords executed by '{kw.name}' in dry-run.",
                               parent=kw.parent)
-        wrapper.body = [k for k in self._get_dry_run_keywords(kw, args)
-                        if not contains_variable(k.name)]
+        for child in self._get_dry_run_children(kw, data.args):
+            if not contains_variable(child.name):
+                child.lineno = data.lineno
+                wrapper.body.append(child)
         BodyRunner(context).run(wrapper, result)
 
-    def _get_dry_run_keywords(self, kw: 'LibraryKeyword', args):
-        if not self.execute_in_dry_run:
+    def _get_dry_run_children(self, kw: 'LibraryKeyword', args):
+        if not self._dry_run_children:
             return []
         if kw.name == 'Run Keyword If':
-            return self._get_dry_run_keywords_for_run_keyword_if(args)
+            return self._get_dry_run_children_for_run_keyword_if(args)
         if kw.name == 'Run Keywords':
-            return self._get_dry_run_keywords_for_run_keyword(args)
-        return self._get_dry_run_keywords_based_on_name(kw, args)
+            return self._get_dry_run_children_for_run_keyword(args)
+        index = kw.args.positional.index('name')
+        return [KeywordData(name=args[index], args=args[index+1:])]
 
-    def _get_dry_run_keywords_for_run_keyword_if(self, given_args):
+    def _get_dry_run_children_for_run_keyword_if(self, given_args):
         for kw_call in self._get_run_kw_if_calls(given_args):
             if kw_call:
                 yield KeywordData(name=kw_call[0], args=kw_call[1:])
@@ -229,7 +245,7 @@ class RunKeywordRunner(LibraryKeywordRunner):
             return True
         return any(is_list_variable(item) for item in kw_call)
 
-    def _get_dry_run_keywords_for_run_keyword(self, given_args):
+    def _get_dry_run_children_for_run_keyword(self, given_args):
         for kw_call in self._get_run_kws_calls(given_args):
             yield KeywordData(name=kw_call[0], args=kw_call[1:])
 
@@ -244,7 +260,3 @@ class RunKeywordRunner(LibraryKeywordRunner):
                 yield kw_call
             if given_args:
                 yield given_args
-
-    def _get_dry_run_keywords_based_on_name(self, kw: 'LibraryKeyword', given_args):
-        index = kw.args.positional.index('name')
-        return [KeywordData(name=given_args[index], args=given_args[index+1:])]

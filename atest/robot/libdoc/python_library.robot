@@ -93,12 +93,11 @@ Keyword-only Arguments
     Keyword Arguments Should Be      1    *varargs    kwo    another=default
 
 Positional-only Arguments
-    [Tags]    require-py3.8
     Run Libdoc And Parse Output      ${DATADIR}/keywords/PositionalOnly.py
-    Keyword Arguments Should Be      2    arg    /
+    Keyword Arguments Should Be      1    arg    /
     Keyword Arguments Should Be      5    posonly    /    normal
     Keyword Arguments Should Be      0    required    optional=default    /
-    Keyword Arguments Should Be      4    first: int    second: float    /
+    Keyword Arguments Should Be      3    first: int    second: float    /
 
 Decorators
     Run Libdoc And Parse Output      ${TESTDATADIR}/Decorators.py
@@ -135,3 +134,8 @@ Deprecation
     ...
     ...                                       RF and Libdoc don't consider this being deprecated.
     Keyword Should Not Be Deprecated     3
+
+NOT_SET as default value
+    Run Libdoc And Parse Output      Collections
+    Keyword Name Should Be           17    Get From Dictionary
+    Keyword Arguments Should Be      17    dictionary    key    default=

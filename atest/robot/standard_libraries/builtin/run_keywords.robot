@@ -8,7 +8,7 @@ Resource          atest_resource.robot
 Passing keywords
     ${tc} =    Test Should Have Correct Keywords
     ...    BuiltIn.No Operation    Passing    BuiltIn.Log Variables
-    Check Log Message    ${tc.kws[0].kws[1].kws[0].msgs[0]}    Hello, world!
+    Check Log Message    ${tc[0, 1, 0, 0]}    Hello, world!
 
 Failing keyword
     Test Should Have Correct Keywords
@@ -17,18 +17,18 @@ Failing keyword
 Embedded arguments
     ${tc} =    Test Should Have Correct Keywords
     ...     Embedded "arg"    Embedded "\${1}"    Embedded object "\${OBJECT}"
-    Check Log Message    ${tc.kws[0].kws[0].kws[0].msgs[0]}   arg
-    Check Log Message    ${tc.kws[0].kws[1].kws[0].msgs[0]}   1
-    Check Log Message    ${tc.kws[0].kws[2].kws[0].msgs[0]}   Robot
+    Check Log Message    ${tc[0, 0, 0, 0]}   arg
+    Check Log Message    ${tc[0, 1, 0, 0]}   1
+    Check Log Message    ${tc[0, 2, 0, 0]}   Robot
 
 Embedded arguments with library keywords
     ${tc} =    Test Should Have Correct Keywords
     ...     embedded_args.Embedded "arg" in library
     ...     embedded_args.Embedded "\${1}" in library
     ...     embedded_args.Embedded object "\${OBJECT}" in library
-    Check Log Message    ${tc.kws[0].kws[0].msgs[0]}   arg
-    Check Log Message    ${tc.kws[0].kws[1].msgs[0]}   1
-    Check Log Message    ${tc.kws[0].kws[2].msgs[0]}   Robot
+    Check Log Message    ${tc[0, 0, 0]}   arg
+    Check Log Message    ${tc[0, 1, 0]}   1
+    Check Log Message    ${tc[0, 2, 0]}   Robot
 
 Keywords names needing escaping
     Test Should Have Correct Keywords
@@ -80,7 +80,7 @@ In test teardown with ExecutionPassed exception after continuable failure
     Check Test Case    ${TESTNAME}
 
 In suite setup
-    Check Log Message    ${SUITE.setup.kws[0].kws[0].msgs[0]}    Hello, world!
+    Check Log Message    ${SUITE.setup[0, 0, 0]}    Hello, world!
     Should Contain Keywords    ${SUITE.setup}    Passing    BuiltIn.No Operation
 
 In suite teardown

@@ -624,13 +624,13 @@ This approach is not enough to resolve all conflicts, but it helps in common
 cases and is generally recommended. Another benefit is that it makes arguments
 stand out from rest of the keyword.
 
-The problem of arguments matching too much occurs often when creating
-keywords that `ignore the given/when/then/and/but prefixes`__ typically used
-in Behavior Driven Development (BDD). For example,
-:name:`${name} goes home` matches :name:`Given Janne goes home` so
-that `${name}` gets value `Given Janne`. Quotes around the
-argument, like in :name:`"${name}" goes home`, resolve this problem
-easily.
+Prior to Robot Framework 7.1, embedded arguments starting the keyword name also
+matched possible `given/when/then/and/but prefixes`__ typically used in Behavior
+Driven Development (BDD). For example, :name:`${name} goes home` matched
+:name:`Given Janne goes home` so that `${name}` got value `Given Janne`.
+Nowadays the prefix is ignored and `${name}` will be `Janne` as expected.
+If older Robot Framework versions need to be supported, it is easiest to quote
+the argument like in :name:`"${name}" goes home` to get consistent behavior.
 
 An alternative solution for limiting what values arguments match is
 `using custom regular expressions`_.
@@ -732,6 +732,8 @@ A custom embedded argument regular expression is defined after the
 base name of the argument so that the argument and the regexp are
 separated with a colon. For example, an argument that should match
 only numbers can be defined like `${arg:\d+}`.
+If needed, custom patterns can be prefixed with `inline flags`__ such as
+`(?i)` for case-insensitivity.
 
 Using custom regular expressions is illustrated by the following examples.
 Notice that the first one shows how the earlier problem with
@@ -757,6 +759,10 @@ the keyword so that `${team}` can only contain non-whitespace characters.
        Deadline is 2022-09-21
        Deadline is today
 
+   Case-insensitive match
+       Select dog
+       Select CAT
+
    *** Keywords ***
    Select ${city} ${team:\S+}
        Log    Selected ${team} from ${city}.
@@ -773,9 +779,16 @@ the keyword so that `${team}` can only contain non-whitespace characters.
        END
        Log    Deadline is on ${date}.
 
+   Select ${animal:(?i)cat|dog}
+       [Documentation]    Inline flag `(?i)` makes the pattern case-insensitive.
+       Log    Selected ${animal}!
+
+.. note:: Support for inline flags is new in Robot Framework 7.2.
+
 __ http://en.wikipedia.org/wiki/Regular_expression
 __ `Embedded arguments matching wrong values`_
 __ `Resolving conflicts`_
+__ https://docs.python.org/3/library/re.html#regular-expression-syntax
 
 Supported regular expression syntax
 '''''''''''''''''''''''''''''''''''
@@ -1116,3 +1129,27 @@ HTML output files.
 .. note:: Private user keywords are new in Robot Framework 6.0.
 
 __ `User keyword tags`_
+
+Recursion
+---------
+
+User keywords can call themselves either directly or indirectly. This kind of
+recursive usage is fine as long as the recursion ends, typically based on some
+condition, before the recursion limit is exceeded. The limit exists because
+otherwise infinite recursion would crash the execution.
+
+Robot Framework's recursion detection works so, that it checks is the current
+recursion level close to the recursion limit of the underlying Python process.
+If it is close enough, no more new started keywords or control structures are
+allowed and execution fails.
+
+Python's default recursion limit is 1000 stack frames, which in practice means that
+it is possible to start approximately 140 keywords or control structures.
+If that is not enough, Python's recursion limit can be raised using the
+`sys.setrecursionlimit()`__ function. As the documentation of the function explains,
+this should be done with care, because a too-high level can lead to a crash.
+
+__ https://docs.python.org/3/library/sys.html#sys.setrecursionlimit
+
+.. note:: Prior to Robot Framework 7.2, the recursion limit was hard-coded to
+          100 started keywords or control structures.

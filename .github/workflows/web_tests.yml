@@ -1,0 +1,30 @@
+name: Web tests with jest
+
+on:
+  push:
+    branches:
+      - main
+      - master
+      - v*-maintenance
+
+    paths:
+      - '.github/workflows/**'
+      - 'src/web**'
+      - '!**/*.rst'
+
+jobs:
+  jest_tests:
+
+    runs-on: 'ubuntu-latest'
+
+    name: Jest tests for the web components
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "16"
+      - name: Run tests
+        working-directory: ./src/web
+        run: npm install && npm run test

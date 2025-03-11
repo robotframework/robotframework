@@ -115,7 +115,7 @@ its value as-is and the value can be any object. If the variable is not used
 alone, like `${GREER}, ${NAME}!!` above, its value is first converted into
 a string and then concatenated with the other data.
 
-.. note:: Variable values are used as-is without conversions also when
+.. note:: Variable values are used as-is without string conversion also when
           passing arguments to keywords using the `named arguments`_
           syntax like `argname=${var}`.
 
@@ -131,8 +131,6 @@ object:
 
      def __str__():
          return "Hi, terra!"
-
-
 
 With these two variables set, we then have the following test data:
 
@@ -153,13 +151,58 @@ the arguments as explained below:
 - :name:`KW 3` gets a string `I said "Hello, world!"`
 - :name:`KW 4` gets a string `You said "Hi, terra!"`
 
-.. Note:: Converting variables to Unicode obviously fails if the variable
-          cannot be represented as Unicode. This can happen, for example,
-          if you try to use byte sequences as arguments to keywords so that
-          you catenate the values together like `${byte1}${byte2}`.
-          A workaround is creating a variable that contains the whole value
-          and using it alone in the cell (e.g. `${bytes}`) because then
-          the value is used as-is.
+Scalar variables containing bytes
+'''''''''''''''''''''''''''''''''
+
+Variables containing bytes__ or bytearrays__ are handled slightly differently
+than other variables containing non-string values:
+
+- If they are used alone, everything works exactly as with other objects and
+  their values are passed to keywords as-is.
+
+- If they are concatenated only with other variables that also contain bytes or
+  bytearrays, the result is bytes instead of a string.
+
+- If they are concatenated with strings or with variables containing other
+  types than bytes or bytearrays, they are converted to strings like other
+  objects, but they have a different string representation than they normally
+  have in Python. With Python the string representation contains surrounding
+  quotes and a `b` prefix like `b'\x00'`, but with Robot Framework quotes
+  and the prefix are omitted, and each byte is mapped to a Unicode code point
+  with the same ordinal. In practice this is same as converting bytes to strings
+  using the Latin-1 encoding. This format has a big benefit that the resulting
+  string can be converted back to bytes, for example, by using the BuiltIn_
+  keyword :name:`Convert To Bytes` or by automatic `argument conversion`_.
+
+The following examples demonstrates using bytes and bytearrays would work
+exactly the same way. Variable `${a}` is expected to contain bytes `\x00\x01`
+and variable `${b}` bytes `a\xe4`.
+
+.. sourcecode:: robotframework
+
+    *** Test Cases ***
+    Bytes alone
+        [Documentation]    Keyword gets bytes '\x00\x01'.
+        Keyword    ${a}
+
+    Bytes concatenated with bytes
+        [Documentation]    Keyword gets bytes '\x00\x01a\xe4'.
+        Keyword    ${a}${b}
+
+    Bytes concatenated with others
+        [Documentation]    Keyword gets string '=\x00\x01a\xe4='.
+        Keyword    =${a}${b}=
+
+__ https://docs.python.org/3/library/stdtypes.html#bytes-objects
+__ https://docs.python.org/3/library/stdtypes.html#bytearray-objects
+
+.. note:: Getting bytes when variables containing bytes are concatenated is new
+          in Robot Framework 7.2. With earlier versions the result was a string.
+
+.. note:: All bytes being mapped to matching Unicode code points in string
+          representation is new Robot Framework 7.2. With earlier versions
+          only bytes in the ASCII range were mapped directly code points and
+          other bytes were represented in an escaped format.
 
 .. _list variable:
 .. _list variables:
@@ -912,9 +955,31 @@ Scope
 
 Variables created with the `VAR` syntax are are available only within the test
 or user keyword where they are created. That can, however, be altered by using
-the `scope` configuration option. Supported values are `LOCAL` (default),
-`TEST` (available within the current test), `TASK` (alias for `TEST`), `SUITE`
-(available within the current suite) and `GLOBAL` (available globally).
+the `scope` configuration option. Supported values are:
+
+`LOCAL`
+    Make the variable available in the current local scope. This is the default.
+
+`TEST`
+    Make the variable available within the current test. This includes all keywords
+    called by the test. If used on the suite level, makes the variable available in
+    suite setup and teardown, but not in tests or possible child suites.
+    Prior to Robot Framework 7.2, using this scope on the suite level was an error.
+
+`TASK`
+    Alias for `TEST` that can be used when `creating tasks`_.
+
+`SUITE`
+    Make the variable available within the current suite. This includes all subsequent
+    tests in that suite, but not tests in possible child suites.
+
+`SUITES`
+    Make the variable available within the current suite and in its child suites.
+    New in Robot Framework 7.1.
+
+`GLOBAL`
+    Make the variable available globally. This includes all subsequent keywords and tests.
+
 Although Robot Framework variables are case-insensitive, it is recommended to
 use capital letters with non-local variable names.
 
@@ -926,32 +991,39 @@ use capital letters with non-local variable names.
     *** Test Cases ***
     Scope example
         VAR    ${local}     local value
-        VAR    ${TEST}      test value      scope=TEST
-        VAR    ${SUITE}     suite value     scope=SUITE
-        VAR    ${GLOBAL}    global value    scope=GLOBAL
+        VAR    ${TEST}      test value            scope=TEST
+        VAR    ${SUITE}     suite value           scope=SUITE
+        VAR    ${SUITES}    nested suite value    scope=SUITES
+        VAR    ${GLOBAL}    global value          scope=GLOBAL
         Should Be Equal    ${local}     local value
         Should Be Equal    ${TEST}      test value
         Should Be Equal    ${SUITE}     suite value
+        Should Be Equal    ${SUITES}    nested suite value
         Should Be Equal    ${GLOBAL}    global value
         Keyword
         Should Be Equal    ${TEST}      new test value
         Should Be Equal    ${SUITE}     new suite value
+        Should Be Equal    ${SUITES}    new nested suite value
         Should Be Equal    ${GLOBAL}    new global value
 
     Scope example, part 2
         Should Be Equal    ${SUITE}     new suite value
+        Should Be Equal    ${SUITES}    new nested suite value
         Should Be Equal    ${GLOBAL}    new global value
 
     *** Keywords ***
     Keyword
         Should Be Equal    ${TEST}      test value
         Should Be Equal    ${SUITE}     suite value
+        Should Be Equal    ${SUITES}    nested suite value
         Should Be Equal    ${GLOBAL}    global value
         VAR    ${TEST}      new ${TEST}      scope=TEST
         VAR    ${SUITE}     new ${SUITE}     scope=SUITE
+        VAR    ${SUITES}    new ${SUITES}    scope=SUITES
         VAR    ${GLOBAL}    new ${GLOBAL}    scope=GLOBAL
         Should Be Equal    ${TEST}      new test value
         Should Be Equal    ${SUITE}     new suite value
+        Should Be Equal    ${SUITES}    new nested suite value
         Should Be Equal    ${GLOBAL}    new global value
 
 Creating variables conditionally
@@ -1284,9 +1356,13 @@ can be changed dynamically using keywords from the `BuiltIn`_ library.
    |                        | - `${OPTIONS.include}` (:option:`--include`)          |            |
    |                        | - `${OPTIONS.skip}` (:option:`--skip`)                |            |
    |                        | - `${OPTIONS.skip_on_failure}`                        |            |
-   |                        |   (:option:`--skiponfailure`)                         |            |
+   |                        |   (:option:`--skip-on-failure`)                       |            |
+   |                        | - `${OPTIONS.console_width}`                          |            |
+   |                        |   (:option:`--console-width`)                         |            |
    |                        |                                                       |            |
-   |                        | New in RF 5.0. More options can be exposed later.     |            |
+   |                        | `${OPTIONS}` itself was added in RF 5.0 and           |            |
+   |                        | `${OPTIONS.console_width}` in RF 7.1.                 |            |
+   |                        | More options can be exposed later.                    |            |
    +------------------------+-------------------------------------------------------+------------+
 
 Suite related variables `${SUITE SOURCE}`, `${SUITE NAME}`, `${SUITE DOCUMENTATION}`
@@ -1413,11 +1489,18 @@ Variables with the test case scope are visible in a test case and in
 all user keywords the test uses. Initially there are no variables in
 this scope, but it is possible to create them by using the `VAR syntax`_ or
 the :name:`Set Test Variable` keyword anywhere in a test case.
-Trying to create test variables in suite setup or suite teardown causes
-and error.
+
+If a variable with the test scope is created in suite setup, the variable is
+available everywhere within that suite setup as well as in the corresponding suite
+teardown, but it is not seen by tests or possible child suites. If such
+a variable is created in a suite teardown, the variable is available only
+in that teardown.
 
 Also variables in the test case scope are to some extend global. It is
 thus generally recommended to use capital letters with them too.
+
+.. note:: Creating variables with the test scope in a suite setup or teardown
+          caused an error prior to Robot Framework 7.2.
 
 Local scope
 '''''''''''

@@ -1,21 +1,32 @@
+import json
 import unittest
 from datetime import timedelta
+from pathlib import Path
+
+try:
+    from jsonschema import Draft202012Validator as JSONValidator
+except ImportError:
+    def JSONValidator(*a, **k):
+        raise unittest.SkipTest('jsonschema module is not available')
 
 from robot.utils.asserts import assert_equal
 from robot.model.statistics import Statistics
+from robot.model.stats import SuiteStat, TagStat
 from robot.result import TestCase, TestSuite
 
 
 def verify_stat(stat, name, passed, failed, skipped,
-                combined=None, id=None, elapsed=0.0):
+                combined=None, id=None, elapsed=0.0, doc='', links=None):
     assert_equal(stat.name, name, 'stat.name')
     assert_equal(stat.passed, passed)
     assert_equal(stat.failed, failed)
     assert_equal(stat.skipped, skipped)
     assert_equal(stat.total, passed + failed + skipped)
-    if hasattr(stat, 'combined'):
+    if isinstance(stat, TagStat):
         assert_equal(stat.combined, combined)
-    if hasattr(stat, 'id'):
+        assert_equal(stat.doc, doc)
+        assert_equal(stat.links, links or [])
+    if isinstance(stat, SuiteStat):
         assert_equal(stat.id, id)
     assert_equal(stat.elapsed, timedelta(seconds=elapsed))
 
@@ -44,6 +55,19 @@ def generate_suite():
     return suite
 
 
+def validate_schema(statistics):
+    with open(Path(__file__).parent / '../../doc/schema/result.json', encoding='UTF-8') as file:
+        schema = json.load(file)
+    validator = JSONValidator(schema=schema)
+    data = {'generator': 'unit tests',
+            'generated': '2024-09-23T14:55:00.123456',
+            'rpa': False,
+            'suite': {'name': 'S', 'elapsed_time': 0, 'status': 'FAIL'},
+            'statistics': statistics.to_dict(),
+            'errors': []}
+    validator.validate(data)
+
+
 class TestStatisticsSimple(unittest.TestCase):
 
     def setUp(self):
@@ -53,7 +77,7 @@ class TestStatisticsSimple(unittest.TestCase):
         self.statistics = Statistics(suite)
 
     def test_total(self):
-        verify_stat(self.statistics.total._stat, 'All Tests', 2, 1, 1)
+        verify_stat(self.statistics.total.stat, 'All Tests', 2, 1, 1)
 
     def test_suite(self):
         verify_suite(self.statistics.suite, 'Hello', 's1', 2, 1, 1)
@@ -61,16 +85,33 @@ class TestStatisticsSimple(unittest.TestCase):
     def test_tags(self):
         assert_equal(list(self.statistics.tags), [])
 
+    def test_to_dict(self):
+        assert_equal(self.statistics.to_dict(), {
+            'total': {'pass': 2, 'fail': 1, 'skip': 1, 'label': 'All Tests'},
+            'suites': [{'pass': 2, 'fail': 1, 'skip': 1, 'label': 'Hello',
+                        'name': 'Hello', 'id': 's1'}],
+            'tags': []
+        })
+        validate_schema(self.statistics)
+
 
 class TestStatisticsNotSoSimple(unittest.TestCase):
 
     def setUp(self):
         suite = generate_suite()
-        self.statistics = Statistics(suite, 2, ['t*','smoke'], ['t3'],
-                                     [('t? & smoke', ''), ('none NOT t1', 'a title')])
+        self.statistics = Statistics(
+            suite,
+            suite_stat_level=2,
+            tag_stat_include=['t*','smoke'],
+            tag_stat_exclude=['t3'],
+            tag_stat_combine=[('t? & smoke', ''), ('none NOT t1', 'a title')],
+            tag_doc=[('smoke', 'something is burning')],
+            tag_stat_link=[('t2', 'uri', 'title'),
+                           ('t?', 'http://uri/%1', 'title %1')]
+        )
 
     def test_total(self):
-        verify_stat(self.statistics.total._stat, 'All Tests', 4, 3, 2)
+        verify_stat(self.statistics.total.stat, 'All Tests', 4, 3, 2)
 
     def test_suite(self):
         suite = self.statistics.suite
@@ -84,17 +125,36 @@ class TestStatisticsNotSoSimple(unittest.TestCase):
     def test_tags(self):
         # Tag stats are tested more thoroughly in test_tagstatistics.py
         tags = self.statistics.tags
-        verify_stat(tags.tags['smoke'], 'smoke', 2, 2, 0)
-        verify_stat(tags.tags['t1'], 't1', 3, 2, 1)
-        verify_stat(tags.tags['t2'], 't2', 2, 1, 0)
-        expected = [('a title', 0, 0, 0, 'none NOT t1'),
-                    ('t? & smoke', 2, 2, 0, 't? & smoke'),
-                    ('smoke', 2, 2, 0),
-                    ('t1', 3, 2, 1),
-                    ('t2', 2, 1, 0)]
-        assert_equal(len(list(tags)), len(expected))
-        for t, e in zip(tags, expected):
-            verify_stat(t, *e)
+        assert_equal(len(list(tags)), 5)
+        verify_stat(tags.tags['smoke'], 'smoke', 2, 2, 0, doc='something is burning')
+        verify_stat(tags.tags['t1'], 't1', 3, 2, 1,
+                    links=[('http://uri/1', 'title 1')])
+        verify_stat(tags.tags['t2'], 't2', 2, 1, 0,
+                    links=[('uri', 'title'), ('http://uri/2', 'title 2')])
+        verify_stat(tags.combined[0], 't? & smoke', 2, 2, 0, 't? & smoke')
+        verify_stat(tags.combined[1], 'a title', 0, 0, 0, 'none NOT t1')
+
+    def test_to_dict(self):
+        assert_equal(self.statistics.to_dict(), {
+            'total': {'pass': 4, 'fail': 3, 'skip': 2, 'label': 'All Tests'},
+            'suites': [{'pass': 4, 'fail': 3, 'skip': 2,
+                        'id': 's1', 'name': 'Root Suite', 'label': 'Root Suite'},
+                       {'pass': 4, 'fail': 2, 'skip': 1, 'label': 'Root Suite.First Sub Suite',
+                        'id': 's1-s1', 'name': 'First Sub Suite'},
+                       {'pass': 0, 'fail': 1, 'skip': 1, 'label': 'Root Suite.Second Sub Suite',
+                        'id': 's1-s2', 'name': 'Second Sub Suite'}],
+            'tags': [{'pass': 0, 'fail': 0, 'skip': 0, 'label': 'a title',
+                      'info': 'combined', 'combined': 'none NOT t1'},
+                     {'pass': 2, 'fail': 2, 'skip': 0, 'label': 't? & smoke',
+                      'info': 'combined', 'combined': 't? & smoke'},
+                     {'pass': 2, 'fail': 2, 'skip': 0, 'label': 'smoke',
+                      'doc': 'something is burning'},
+                     {'pass': 3, 'fail': 2, 'skip': 1, 'label': 't1',
+                      'links': 'title 1:http://uri/1'},
+                     {'pass': 2, 'fail': 1, 'skip': 0, 'label': 't2',
+                      'links': 'title:uri:::title 2:http://uri/2'}]
+        })
+        validate_schema(self.statistics)
 
 
 class TestSuiteStatistics(unittest.TestCase):
@@ -179,7 +239,7 @@ class TestElapsedTime(unittest.TestCase):
         self.stats = Statistics(suite, tag_stat_combine=[('?2', 'combined')])
 
     def test_total_stats(self):
-        assert_equal(self.stats.total._stat.elapsed, timedelta(seconds=11.001))
+        assert_equal(self.stats.total.stat.elapsed, timedelta(seconds=11.001))
 
     def test_tag_stats(self):
         t1, t2, t3 = self.stats.tags.tags.values()

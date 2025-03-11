@@ -1,20 +1,38 @@
+import sys
 from typing import (Any, Dict, List, Mapping, MutableMapping, MutableSet,
-                    MutableSequence, Set, Sequence, Tuple, Union)
-try:
-    from typing_extensions import TypedDict
-except ImportError:
-    from typing import TypedDict
+                    MutableSequence, Set, Sequence, Tuple, TypedDict, Union)
+
+if sys.version_info < (3, 9):
+    from typing_extensions import TypedDict as TypedDictWithRequiredKeys
+else:
+    TypedDictWithRequiredKeys = TypedDict
+if sys.version_info < (3, 11):
+    from typing_extensions import NotRequired, Required
+else:
+    from typing import NotRequired, Required
 
 
 TypedDict.robot_not_keyword = True
 
 
-class Point2D(TypedDict):
+class Point2D(TypedDictWithRequiredKeys):
     x: int
     y: int
 
 
 class Point(Point2D, total=False):
+    z: int
+
+
+class NotRequiredAnnotation(TypedDict):
+    x: int
+    y: 'int | float'
+    z: NotRequired[int]
+
+
+class RequiredAnnotation(TypedDict, total=False):
+    x: Required[int]
+    y: Required['int | float']
     z: int
 
 
@@ -97,6 +115,14 @@ def typeddict(argument: Point2D, expected=None):
 
 
 def typeddict_with_optional(argument: Point, expected=None):
+    _validate_type(argument, expected)
+
+
+def not_required(argument: NotRequiredAnnotation, expected=None):
+    _validate_type(argument, expected)
+
+
+def required(argument: RequiredAnnotation, expected=None):
     _validate_type(argument, expected)
 
 

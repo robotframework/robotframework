@@ -68,9 +68,12 @@ class Variables:
     def clear(self):
         self.store.clear()
 
-    def copy(self):
+    def copy(self, exclude=None):
         variables = Variables()
         variables.store.data = self.store.data.copy()
+        if exclude:
+            for name in exclude:
+                variables.store.data.pop(name[2:-1])
         return variables
 
     def update(self, variables):

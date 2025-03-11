@@ -3,20 +3,24 @@ def one_argument(arg, /):
 
 
 def three_arguments(a, b, c, /):
-    return '-'.join([a, b, c])
+    return _format(a, b, c)
 
 
 def with_normal(posonly, /, normal):
-    return posonly + '-' + normal
+    return _format(posonly, normal)
+
+
+def with_kwargs(x, /, **y):
+    return _format(x, *[f'{k}: {y[k]}' for k in y])
 
 
 def defaults(required, optional='default', /):
-    return required + '-' + optional
+    return _format(required, optional)
 
 
 def types(first: int, second: float, /):
     return first + second
 
 
-def kwargs(x, /, **y):
-    return '%s, %s' % (x, ', '.join('%s: %s' % item for item in y.items()))
+def _format(*args):
+    return ', '.join(args)

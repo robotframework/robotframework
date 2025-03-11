@@ -29,6 +29,8 @@ import warnings
 
 if not sys.warnoptions:
     warnings.simplefilter('always')
+    if sys.version_info >= (3, 10):
+        warnings.simplefilter('error', EncodingWarning)
 
 
 base = os.path.abspath(os.path.normpath(os.path.split(sys.argv[0])[0]))

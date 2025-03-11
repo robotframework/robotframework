@@ -8,26 +8,26 @@ Variables         ${DATADIR}/running/expbytevalues.py
 *** Test Cases ***
 In Message
     ${tc}=    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    ${exp_log_msg}
+    Check Log Message    ${tc[0, 0]}    ${exp_log_msg}
 
 In Multiline Message
     ${tc}=    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    ${exp_log_multiline_msg}
+    Check Log Message    ${tc[0, 0]}    ${exp_log_multiline_msg}
 
 In Return Value
     [Documentation]    Return value is not altered by the framework and thus it
     ...    contains the exact same bytes that the keyword returned.
     ${tc} =    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    \${retval} = ${exp_return_msg}
+    Check Log Message    ${tc[0, 0]}    \${retval} = ${exp_return_msg}
 
 In Exception
     ${tc} =    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    ${exp_error_msg}    FAIL
+    Check Log Message    ${tc[0, 0]}    ${exp_error_msg}    FAIL
 
 In Exception In Setup
     ${tc} =    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc.setup.msgs[0]}    ${exp_error_msg}    FAIL
+    Check Log Message    ${tc.setup[0]}    ${exp_error_msg}    FAIL
 
 In Exception In Teardown
     ${tc} =    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc.teardown.msgs[0]}    ${exp_error_msg}    FAIL
+    Check Log Message    ${tc.teardown[0]}    ${exp_error_msg}    FAIL

@@ -14,6 +14,10 @@ class TestTestSuite(unittest.TestCase):
     def setUp(self):
         self.suite = TestSuite(metadata={'M': 'V'})
 
+    def test_type(self):
+        assert_equal(self.suite.type, 'SUITE')
+        assert_equal(self.suite.type, self.suite.SUITE)
+
     def test_modify_medatata(self):
         self.suite.metadata['m'] = 'v'
         self.suite.metadata['n'] = 'w'

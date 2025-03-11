@@ -71,9 +71,9 @@ Keyword Not Created And Warning Shown When Getting Arguments Fails
 Check test case and its doc
     [Arguments]    ${expected doc}    @{msgs}
     ${tc} =    Check Test case    ${TESTNAME}
-    Should Be Equal    ${tc.kws[0].doc}    ${expected doc}
-    FOR    ${kw}    ${msg}    IN ZIP    ${tc.kws}    ${msgs}
-        Check Log Message    ${kw.msgs[0]}    ${msg}    level=IGNORE
+    Should Be Equal    ${tc[0].doc}    ${expected doc}
+    FOR    ${kw}    ${msg}    IN ZIP    ${tc.body}    ${msgs}
+        Check Log Message    ${kw[0]}    ${msg}    level=IGNORE
     END
 
 Check Creating Keyword Failed Due To Invalid Doc Message

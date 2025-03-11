@@ -18,10 +18,13 @@ from ast import literal_eval
 from itertools import chain
 
 from robot.api import logger
-from robot.utils import (get_error_message, is_dict_like, is_list_like, Matcher,
-                         NOT_SET, plural_or_not as s, seq2str, seq2str2, type_name)
+from robot.utils import (is_dict_like, is_list_like, Matcher, NotSet,
+                         plural_or_not as s, seq2str, seq2str2, type_name)
 from robot.utils.asserts import assert_equal
 from robot.version import get_version
+
+
+NOT_SET = NotSet()
 
 
 class _List:
@@ -452,9 +455,8 @@ class _List:
         normalize = Normalizer(ignore_case).normalize
         list1 = normalize(list1)
         list2 = normalize(list2)
-        diffs = ', '.join(str(item) for item in list2 if item not in list1)
-        _verify_condition(not diffs,
-                          f'Following values were not found from first list: {diffs}',
+        diffs = [item for item in list2 if item not in list1]
+        _verify_condition(not diffs, f'Following values are missing: {seq2str(diffs)}',
                           msg, values)
 
     def log_list(self, list_, level='INFO'):
@@ -781,7 +783,8 @@ class _Dictionary:
         )
 
     def dictionaries_should_be_equal(self, dict1, dict2, msg=None, values=True,
-                                     ignore_keys=None, ignore_case=False):
+                                     ignore_keys=None, ignore_case=False,
+                                     ignore_value_order=False):
         """Fails if the given dictionaries are not equal.
 
         First the equality of dictionaries' keys is checked and after that all
@@ -805,9 +808,15 @@ class _Dictionary:
         The ``ignore_case`` argument can be used to make comparison case-insensitive.
         See the `Ignore case` section for more details. This option is new in
         Robot Framework 7.0.
+
+        The ``ignore_value_order`` argument can be used to make comparison in case of
+        list-like values to ignore the order of the elements in the lists.
+        Using it requires items to be sortable.
+        This option is new in Robot Framework 7.2.
         """
         self._validate_dictionary(dict1, dict2)
-        normalizer = Normalizer(ignore_case, ignore_keys=ignore_keys)
+        normalizer = Normalizer(ignore_case=ignore_case, ignore_keys=ignore_keys,
+                                ignore_order=ignore_value_order)
         dict1 = normalizer.normalize(dict1)
         dict2 = normalizer.normalize(dict2)
         self._should_have_same_keys(dict1, dict2, msg, values)
@@ -837,7 +846,8 @@ class _Dictionary:
             _report_error(error, message, values)
 
     def dictionary_should_contain_sub_dictionary(self, dict1, dict2, msg=None,
-                                                 values=True, ignore_case=False):
+                                                 values=True, ignore_case=False,
+                                                 ignore_value_order=False):
         """Fails unless all items in ``dict2`` are found from ``dict1``.
 
         See `Lists Should Be Equal` for more information about configuring
@@ -846,9 +856,15 @@ class _Dictionary:
         The ``ignore_case`` argument can be used to make comparison case-insensitive.
         See the `Ignore case` section for more details. This option is new in
         Robot Framework 7.0.
+
+        The ``ignore_value_order`` argument can be used to make comparison in case of
+        list-like values to ignore the order of the elements in the lists.
+        Using it requires items to be sortable.
+        This option is new in Robot Framework 7.2.
         """
         self._validate_dictionary(dict1, dict2)
-        normalizer = Normalizer(ignore_case)
+        normalizer = Normalizer(ignore_case=ignore_case,
+                                ignore_order=ignore_value_order)
         dict1 = normalizer.normalize(dict1)
         dict2 = normalizer.normalize(dict2)
         self._should_have_same_keys(dict1, dict2, msg, values, validate_both=False)
@@ -1124,7 +1140,6 @@ def _report_error(default_message, message, values=False):
 class Normalizer:
 
     def __init__(self, ignore_case=False, ignore_order=False, ignore_keys=None):
-        print(ignore_case)
         self.ignore_case = ignore_case
         if isinstance(ignore_case, str):
             self.ignore_key_case = ignore_case.upper() not in ('VALUE', 'VALUES')
@@ -1163,9 +1178,9 @@ class Normalizer:
 
     def normalize_list(self, value):
         cls = type(value)
+        value = [self.normalize(v) for v in value]
         if self.ignore_order:
             value = sorted(value)
-        value = [self.normalize(v) for v in value]
         return self._try_to_preserve_type(value, cls)
 
     def _try_to_preserve_type(self, value, cls):

@@ -19,8 +19,8 @@ class NotSet:
     Can be used instead of the standard ``None`` in cases where ``None``
     itself is a valid value.
 
-    Use the constant ``robot.utils.NOT_SET`` instead of creating new instances
-    of the class.
+    ``robot.utils.NOT_SET`` is an instance of this class, but it in same cases
+    it is better to create a separate instance.
 
     New in Robot Framework 7.0.
     """
@@ -30,4 +30,3 @@ class NotSet:
 
 
 NOT_SET = NotSet()
-

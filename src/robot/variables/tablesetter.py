@@ -13,8 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from contextlib import contextmanager
-from typing import Sequence, TYPE_CHECKING
+from typing import Any, Sequence, TYPE_CHECKING
 
 from robot.errors import DataError
 from robot.utils import DotDict, split_from_equals
@@ -23,7 +22,7 @@ from .resolvable import Resolvable
 from .search import is_assign, is_list_variable, is_dict_variable
 
 if TYPE_CHECKING:
-    from robot.running.model import Var, Variable
+    from robot.running import Var, Variable
     from .store import VariableStore
 
 
@@ -35,8 +34,8 @@ class VariableTableSetter:
     def set(self, variables: 'Sequence[Variable]', overwrite: bool = False):
         for var in variables:
             try:
-                value = VariableResolver.from_variable(var)
-                self.store.add(var.name, value, overwrite)
+                resolver = VariableResolver.from_variable(var)
+                self.store.add(var.name, resolver, overwrite)
             except DataError as err:
                 var.report_error(str(err))
 
@@ -46,7 +45,8 @@ class VariableResolver(Resolvable):
     def __init__(self, value: Sequence[str], error_reporter=None):
         self.value = tuple(value)
         self.error_reporter = error_reporter
-        self._resolving = False
+        self.resolving = False
+        self.resolved = False
 
     @classmethod
     def from_name_and_value(cls, name: str, value: 'str|Sequence[str]',
@@ -69,22 +69,19 @@ class VariableResolver(Resolvable):
         return cls.from_name_and_value(var.name, var.value, var.separator,
                                        getattr(var, 'report_error', None))
 
-    def resolve(self, variables):
-        with self._avoid_recursion:
-            return self._replace_variables(variables)
-
-    @property
-    @contextmanager
-    def _avoid_recursion(self):
-        if self._resolving:
+    def resolve(self, variables) -> Any:
+        if self.resolving:
             raise DataError('Recursive variable definition.')
-        self._resolving = True
-        try:
-            yield
-        finally:
-            self._resolving = False
+        if not self.resolved:
+            self.resolving = True
+            try:
+                self.value = self._replace_variables(variables)
+            finally:
+                self.resolving = False
+            self.resolved = True
+        return self.value
 
-    def _replace_variables(self, variables):
+    def _replace_variables(self, variables) -> Any:
         raise NotImplementedError
 
     def report_error(self, error):

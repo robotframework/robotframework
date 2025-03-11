@@ -21,8 +21,7 @@ from itertools import chain
 from robot.errors import DataError, KeywordError
 from robot.libraries import STDLIBS
 from robot.output import LOGGER, Message
-from robot.utils import (eq, find_file, is_string, normalize, RecommendationFinder,
-                         seq2str2)
+from robot.utils import eq, find_file, normalize, RecommendationFinder, seq2str2
 
 from .context import EXECUTION_CONTEXTS
 from .importer import ImportCache, Importer
@@ -87,9 +86,7 @@ class Namespace:
             self.variables.set_from_variable_section(resource.variables, overwrite)
             self._kw_store.resources[path] = resource
             self._handle_imports(resource.imports)
-            LOGGER.imported("Resource", resource.name,
-                            importer=str(import_setting.source),
-                            source=path)
+            LOGGER.resource_import(resource, import_setting)
         else:
             LOGGER.info(f"Resource file '{path}' already imported by "
                         f"suite '{self._suite_name}'.")
@@ -109,10 +106,10 @@ class Namespace:
         if overwrite or (path, args) not in self._imported_variable_files:
             self._imported_variable_files.add((path, args))
             self.variables.set_from_file(path, args, overwrite)
-            LOGGER.imported("Variables", os.path.basename(path),
-                            args=list(args),
-                            importer=str(import_setting.source),
-                            source=path)
+            LOGGER.variables_import({'name': os.path.basename(path),
+                                     'args': args,
+                                     'source': path},
+                                    importer=import_setting)
         else:
             msg = f"Variable file '{path}'"
             if args:
@@ -131,11 +128,7 @@ class Namespace:
                         f"'{self._suite_name}'.")
             return
         if notify:
-            LOGGER.imported("Library", lib.name,
-                            args=list(import_setting.args),
-                            originalname=lib.real_name,
-                            importer=str(import_setting.source),
-                            source=str(lib.source or ''))
+            LOGGER.library_import(lib, import_setting)
         self._kw_store.libraries[lib.name] = lib
         lib.scope_manager.start_suite()
         if self._running_test:
@@ -215,6 +208,10 @@ class Namespace:
         return library
 
     def get_runner(self, name, recommend_on_failure=True):
+        # TODO: Consider changing the default value of `recommend_on_failure` to False.
+        # Recommendations are not needed in all contexts and collecting them has a
+        # performance effect that has caused issues #4659 and #5051. It is possible to
+        # opt-out from collecting recommendations, but making it opt-in could be safer.
         try:
             return self._kw_store.get_runner(name, recommend_on_failure)
         except DataError as err:
@@ -233,7 +230,7 @@ class KeywordStore:
     def get_library(self, name_or_instance):
         if name_or_instance is None:
             raise DataError("Library can not be None.")
-        if is_string(name_or_instance):
+        if isinstance(name_or_instance, str):
             return self._get_lib_by_name(name_or_instance)
         return self._get_lib_by_instance(name_or_instance)
 
@@ -283,30 +280,30 @@ class KeywordStore:
         else:
             raise KeywordError(message)
 
-    def _get_runner(self, name):
+    def _get_runner(self, name, strip_bdd_prefix=True):
         if not name:
             raise DataError('Keyword name cannot be empty.')
-        if not is_string(name):
+        if not isinstance(name, str):
             raise DataError('Keyword name must be a string.')
-        runner = self._get_runner_from_suite_file(name)
+        runner = None
+        if strip_bdd_prefix:
+            runner = self._get_bdd_style_runner(name)
+        if not runner:
+            runner = self._get_runner_from_suite_file(name)
         if not runner and '.' in name:
             runner = self._get_explicit_runner(name)
         if not runner:
             runner = self._get_implicit_runner(name)
-        if not runner:
-            runner = self._get_bdd_style_runner(name, self.languages.bdd_prefixes)
         return runner
 
-    def _get_bdd_style_runner(self, name, prefixes):
-        parts = name.split()
-        for index in range(1, len(parts)):
-            prefix = ' '.join(parts[:index]).title()
-            if prefix in prefixes:
-                runner = self._get_runner(' '.join(parts[index:]))
-                if runner:
-                    runner = copy.copy(runner)
-                    runner.name = name
-                    return runner
+    def _get_bdd_style_runner(self, name):
+        match = self.languages.bdd_prefix_regexp.match(name)
+        if match:
+            runner = self._get_runner(name[match.end():], strip_bdd_prefix=False)
+            if runner:
+                runner = copy.copy(runner)
+                runner.name = name
+                return runner
         return None
 
     def _get_implicit_runner(self, name):

@@ -5,10 +5,10 @@ import time
 
 def countdown(path):
     for i in range(10, 0, -1):
-        with open(path, 'w') as f:
+        with open(path, 'w', encoding='ASCII') as f:
             f.write('%d\n' % i)
         time.sleep(0.2)
-    with open(path, 'w') as f:
+    with open(path, 'w', encoding='ASCII') as f:
         f.write('BLASTOFF')
 
 

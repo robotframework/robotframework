@@ -19,7 +19,8 @@ from robot.errors import ExecutionFailed, ExecutionStatus, DataError, PassExecut
 from robot.model import SuiteVisitor, TagPatterns
 from robot.result import (Keyword as KeywordResult, TestCase as TestResult,
                           TestSuite as SuiteResult, Result)
-from robot.utils import is_list_like, NormalizedDict, test_or_task
+from robot.utils import (is_list_like, NormalizedDict, plural_or_not as s, seq2str,
+                         test_or_task)
 from robot.variables import VariableScopes
 
 from .bodyrunner import BodyRunner, KeywordRunner
@@ -60,7 +61,7 @@ class SuiteRunner(SuiteVisitor):
                              start_time=datetime.now(),
                              rpa=self.settings.rpa)
         if not self.result:
-            self.result = Result(root_suite=result, rpa=self.settings.rpa)
+            self.result = Result(suite=result, rpa=self.settings.rpa)
             self.result.configure(status_rc=self.settings.status_rc,
                                   stat_config=self.settings.statistics_config)
         else:
@@ -125,19 +126,20 @@ class SuiteRunner(SuiteVisitor):
 
     def visit_test(self, data: TestData):
         settings = self.settings
-        if data.tags.robot('exclude'):
-            return
-        if data.name in self.executed[-1]:
-            self.output.warn(
-                test_or_task(f"Multiple {{test}}s with name '{data.name}' executed in "
-                             f"suite '{data.parent.full_name}'.", settings.rpa))
-        self.executed[-1][data.name] = True
         result = self.suite_result.tests.create(self._resolve_setting(data.name),
                                                 self._resolve_setting(data.doc),
                                                 self._resolve_setting(data.tags),
                                                 self._get_timeout(data),
                                                 data.lineno,
                                                 start_time=datetime.now())
+        if result.tags.robot('exclude'):
+            self.suite_result.tests.pop()
+            return
+        if result.name in self.executed[-1]:
+            self.output.warn(
+                test_or_task(f"Multiple {{test}}s with name '{result.name}' executed "
+                             f"in suite '{result.parent.full_name}'.", settings.rpa))
+        self.executed[-1][result.name] = True
         self.context.start_test(data, result)
         status = TestStatus(self.suite_status, result, settings.skip_on_failure,
                             settings.rpa)
@@ -154,14 +156,14 @@ class SuiteRunner(SuiteVisitor):
                 if settings.rpa:
                     data.error = data.error.replace('Test', 'Task')
                 status.test_failed(data.error)
-            elif data.tags.robot('skip'):
+            elif result.tags.robot('skip'):
                 status.test_skipped(
-                    test_or_task("{Test} skipped using 'robot:skip' tag.",
-                                 settings.rpa))
-            elif self.skipped_tags.match(data.tags):
+                    self._get_skipped_message(['robot:skip'], settings.rpa)
+                )
+            elif self.skipped_tags.match(result.tags):
                 status.test_skipped(
-                    test_or_task("{Test} skipped using '--skip' command line option.",
-                                 settings.rpa))
+                    self._get_skipped_message(self.skipped_tags, settings.rpa)
+                )
         self._run_setup(data, status, result)
         if status.passed:
             runner = BodyRunner(self.context, templated=bool(data.template))
@@ -197,6 +199,11 @@ class SuiteRunner(SuiteVisitor):
             status.failure_occurred()
         self.context.end_test(result)
         self._clear_result(result)
+
+    def _get_skipped_message(self, tags, rpa):
+        kind = 'tag' if getattr(tags, 'is_constant', True) else 'tag pattern'
+        return test_or_task(f"{{Test}} skipped using {seq2str(tags)} {kind}{s(tags)}.",
+                            rpa)
 
     def _clear_result(self, result: 'SuiteResult|TestResult'):
         if result.has_setup:

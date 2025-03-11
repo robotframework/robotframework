@@ -5,7 +5,7 @@ Resource          atest_resource.robot
 *** Test Cases ***
 Passing, Logging and Returning
     ${tc} =    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    Hi tellus
+    Check Log Message    ${tc[0, 0]}    Hi tellus
 
 Failing
     Check Test Case    ${TESTNAME}
@@ -34,13 +34,13 @@ Not Found Keyword
 
 Dynamic libraries should work without argument specification
     ${tc}=    Check test Case    ${TESTNAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    print this
-    Check Log Message    ${tc.kws[1].msgs[0]}    x: something, y: something else
-    Check Log Message    ${tc.kws[2].msgs[0]}    x: something, y: 0
+    Check Log Message    ${tc[0, 0]}    print this
+    Check Log Message    ${tc[1, 0]}    x: something, y: something else
+    Check Log Message    ${tc[2, 0]}    x: something, y: 0
 
 Dynamic libraries should match named arguments same way as with user keywords
     ${tc}=    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    x y=1 z=2
+    Check Log Message    ${tc[0, 0]}    x y=1 z=2
 
 Embedded Keyword Arguments
     Check Test Case    ${TESTNAME}

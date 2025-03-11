@@ -13,6 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from typing import Iterator, Sequence
+
 from robot.model import ItemList, Message
 from robot.utils import setter
 
@@ -24,31 +26,29 @@ class ExecutionErrors:
     """
     id = 'errors'
 
-    def __init__(self, messages=None):
-        #: A :class:`list-like object <robot.model.itemlist.ItemList>` of
-        #: :class:`~robot.model.message.Message` instances.
+    def __init__(self, messages: Sequence[Message] = ()):
         self.messages = messages
 
     @setter
-    def messages(self, messages):
+    def messages(self, messages) -> ItemList[Message]:
         return ItemList(Message, {'parent': self}, items=messages)
 
-    def add(self, other):
+    def add(self, other: 'ExecutionErrors'):
         self.messages.extend(other.messages)
 
     def visit(self, visitor):
         visitor.visit_errors(self)
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[Message]:
         return iter(self.messages)
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.messages)
 
-    def __getitem__(self, index):
+    def __getitem__(self, index) -> Message:
         return self.messages[index]
 
-    def __str__(self):
+    def __str__(self) -> str:
         if not self:
             return 'No execution errors'
         if len(self) == 1:

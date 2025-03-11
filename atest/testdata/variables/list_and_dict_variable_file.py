@@ -8,8 +8,8 @@ def get_variables(*args):
     tuple_ = tuple(list_)
     dict_ = {'a': 1, 2: 'b', 'nested': {'key': 'value'}}
     ordered = OrderedDict((chr(o), o) for o in range(97, 107))
-    open_file = open(__file__)
-    closed_file = open(__file__)
+    open_file = open(__file__, encoding='UTF-8')
+    closed_file = open(__file__, 'rb')
     closed_file.close()
     return {'LIST__list': list_,
             'LIST__tuple': tuple_,

@@ -13,6 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from typing import Iterator
+
 from .stats import SuiteStat
 
 
@@ -20,30 +22,27 @@ class SuiteStatistics:
     """Container for suite statistics."""
 
     def __init__(self, suite):
-        #: Instance of :class:`~robot.model.stats.SuiteStat`.
         self.stat = SuiteStat(suite)
-        #: List of :class:`~robot.model.testsuite.TestSuite` objects.
-        self.suites = []
+        self.suites: list[SuiteStatistics] = []
 
     def visit(self, visitor):
         visitor.visit_suite_statistics(self)
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[SuiteStat]:
         yield self.stat
         for child in self.suites:
-            for stat in child:
-                yield stat
+            yield from child
 
 
 class SuiteStatisticsBuilder:
 
     def __init__(self, suite_stat_level):
         self._suite_stat_level = suite_stat_level
-        self._stats_stack = []
-        self.stats = None
+        self._stats_stack: list[SuiteStatistics] = []
+        self.stats: SuiteStatistics | None = None
 
     @property
-    def current(self):
+    def current(self) -> 'SuiteStatistics|None':
         return self._stats_stack[-1] if self._stats_stack else None
 
     def start_suite(self, suite):

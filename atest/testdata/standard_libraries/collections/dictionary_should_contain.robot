@@ -4,8 +4,10 @@ Library           CollectionsHelperLibrary.py
 
 *** Variables ***
 @{LIST}          a    B
+@{LIST_2}        B    a
 ${TUPLE}         ${{'a', 'B'}}
 &{D}             a=x    B=Y    c=${3}   ${4}=E    ß=Straße    list=${LIST}    ${TUPLE}=tuple
+&{D_2}           a=x    B=Y    list=${LIST_2}    ${TUPLE}=tuple
 
 *** Test Cases ***
 ### Should (Not) Contain Key ###
@@ -243,6 +245,15 @@ Should contain sub dictionary with `ignore_case`
     ${D}    ${{{'list': ['A', 'b'], ('a', 'B'): 'TUPLE'}}}        ignore_case=value
     ${D}    ${{{'ss': 'Straße', ('A', 'b'): 'tuple'}}}            ignore_case=key
     ${D}    ${{{'a': 'x', 'ss': 'Straße', 'non': 'existing'}}}    ignore_case=value
+
+Should contain sub dictionary with `ignore_value_order`
+    Dictionary Should Contain Sub Dictionary    ${D}    ${D_2}    ignore_value_order=True
+
+Should contain sub dictionary with `ignore_value_order` set to False when dictionaries have lists in different order
+    [Documentation]    FAIL
+    ...    Following keys have different values:
+    ...    Key list: ['a', 'B'] != ['B', 'a']
+    Dictionary Should Contain Sub Dictionary    ${D}    ${D_2}
 
 ### Misc ###
 

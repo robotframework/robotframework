@@ -89,3 +89,9 @@ def log_with_format():
 
 def log_something():
     logging.info('something')
+
+
+def log_non_strings():
+    logging.info(42)
+    logging.info(True)
+    logging.info(None)

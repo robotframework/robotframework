@@ -16,6 +16,7 @@
 import os
 import signal as signal_module
 import subprocess
+import sys
 import time
 from tempfile import TemporaryFile
 
@@ -25,6 +26,9 @@ from robot.utils import (cmdline2list, ConnectionCache, console_decode, console_
                          NormalizedDict, secs_to_timestr, system_decode, system_encode,
                          timestr_to_secs, WINDOWS)
 from robot.version import get_version
+
+
+LOCALE_ENCODING = 'locale' if sys.version_info >= (3, 10) else None
 
 
 class Process:
@@ -894,10 +898,10 @@ class ProcessConfiguration:
 
     def _new_stream(self, name):
         if name == 'DEVNULL':
-            return open(os.devnull, 'w')
+            return open(os.devnull, 'w', encoding=LOCALE_ENCODING)
         if name:
             path = os.path.normpath(os.path.join(self.cwd, name))
-            return open(path, 'w')
+            return open(path, 'w', encoding=LOCALE_ENCODING)
         return subprocess.PIPE
 
     def _get_stderr(self, stderr, stdout, stdout_stream):
@@ -918,7 +922,7 @@ class ProcessConfiguration:
             return subprocess.PIPE
         path = os.path.normpath(os.path.join(self.cwd, stdin))
         if os.path.isfile(path):
-            return open(path)
+            return open(path, encoding=LOCALE_ENCODING)
         stdin_file = TemporaryFile()
         stdin_file.write(console_encode(stdin, self.output_encoding, force=True))
         stdin_file.seek(0)

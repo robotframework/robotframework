@@ -115,8 +115,13 @@ class ExampleLibrary:
         return '\\' * int(count)
 
     def read_and_log_file(self, path, binary=False):
-        mode = binary and 'rb' or 'r'
-        _file = open(path, mode)
+        if binary:
+            mode = 'rb'
+            encoding = None
+        else:
+            mode = 'r'
+            encoding = 'UTF-8'
+        _file = open(path, mode, encoding=encoding)
         print(_file.read())
         _file.close()
 
@@ -138,7 +143,7 @@ class ExampleLibrary:
                 print('Looping forever: %d' % i)
 
     def write_to_file_after_sleeping(self, path, sec, msg=None):
-        with open(path, 'w') as file:
+        with open(path, 'w', encoding='UTF-8') as file:
             self._sleep(sec)
             file.write(msg or 'Slept %s seconds' % sec)
 
@@ -174,12 +179,22 @@ class ExampleLibrary:
         return FailingStr(), FailingStr()
 
     def fail_with_suppressed_exception_name(self, msg):
-        raise MyException(msg)
+        raise ExceptionWithSuppressedName(msg)
+
+    def exception_with_empty_message_and_name(self):
+        raise ExceptionWithEmptyName('')
 
 
 class _MyList(list):
     pass
 
 
-class MyException(AssertionError):
+class ExceptionWithSuppressedName(AssertionError):
     ROBOT_SUPPRESS_NAME = True
+
+
+class ExceptionWithEmptyName(AssertionError):
+    pass
+
+
+ExceptionWithEmptyName.__name__ = ''

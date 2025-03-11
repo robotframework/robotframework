@@ -73,7 +73,7 @@ class SuiteConfigurer(SuiteVisitor):
         parts = []
         for separator, explanation, selectors in [
                 (None, 'matching name', self.include_tests),
-                ('or', 'matching tags', self.include_tags),
+                ('and', 'matching tags', self.include_tags),
                 ('and', 'not matching tags', self.exclude_tags)
         ]:
             if selectors:

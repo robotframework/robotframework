@@ -2,6 +2,7 @@
 Suite Setup        Run Libdoc And Parse Model From JSON    ${TESTDATADIR}/ReturnType.py
 Test Template      Return type should be
 Resource           libdoc_resource.robot
+Test Tags          require-jsonschema
 
 *** Test Cases ***
 No return

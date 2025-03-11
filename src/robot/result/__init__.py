@@ -38,7 +38,7 @@ __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#
 """
 
 from .executionresult import Result
-from .model import (Break, Continue, Error, For, ForIteration, If, IfBranch, Keyword,
+from .model import (Break, Continue, Error, For, ForIteration, Group, If, IfBranch, Keyword,
                     Message, Return, TestCase, TestSuite, Try, TryBranch, Var, While,
                     WhileIteration)
 from .resultbuilder import ExecutionResult, ExecutionResultBuilder

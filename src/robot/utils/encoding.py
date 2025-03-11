@@ -18,7 +18,6 @@ import sys
 
 from .encodingsniffer import get_console_encoding, get_system_encoding
 from .misc import isatty
-from .robottypes import is_string
 from .unic import safe_str
 
 
@@ -37,7 +36,7 @@ def console_decode(string, encoding=CONSOLE_ENCODING):
 
     If `string` is already Unicode, it is returned as-is.
     """
-    if is_string(string):
+    if isinstance(string, str):
         return string
     encoding = {'CONSOLE': CONSOLE_ENCODING,
                 'SYSTEM': SYSTEM_ENCODING}.get(encoding.upper(), encoding)
@@ -59,7 +58,7 @@ def console_encode(string, encoding=None, errors='replace', stream=sys.__stdout_
     Decodes bytes back to Unicode by default, because Python 3 APIs in general
     work with strings. Use `force=True` if that is not desired.
     """
-    if not is_string(string):
+    if not isinstance(string, str):
         string = safe_str(string)
     if encoding:
         encoding = {'CONSOLE': CONSOLE_ENCODING,
@@ -82,8 +81,8 @@ def _get_console_encoding(stream):
 
 
 def system_decode(string):
-    return string if is_string(string) else safe_str(string)
+    return string if isinstance(string, str) else safe_str(string)
 
 
 def system_encode(string):
-    return string if is_string(string) else safe_str(string)
+    return string if isinstance(string, str) else safe_str(string)

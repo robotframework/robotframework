@@ -143,13 +143,13 @@ class ExecutionStatus(RobotError):
     def can_continue(self, context, templated=False):
         if context.dry_run:
             return True
-        if self.syntax or self.exit or self.skip or self.test_timeout:
+        if self.syntax or self.exit or self.test_timeout:
             return False
         if templated:
             return context.continue_on_failure(default=True)
+        if self.skip:
+            return False
         if self.keyword_timeout:
-            if context.in_teardown:
-                self.keyword_timeout = False
             return False
         return self.continue_on_failure or context.continue_on_failure()
 

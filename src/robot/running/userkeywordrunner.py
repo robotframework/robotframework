@@ -55,13 +55,16 @@ class UserKeywordRunner:
 
     def _config_result(self, result: KeywordResult, data: KeywordData,
                        kw: 'UserKeyword', assignment, variables):
+        args = tuple(data.args)
+        if data.named_args:
+            args += tuple(f'{n}={v}' for n, v in data.named_args.items())
         doc = variables.replace_string(kw.doc, ignore_errors=True)
         doc, tags = split_tags_from_doc(doc)
         tags = variables.replace_list(kw.tags, ignore_errors=True) + tags
         result.config(name=self.name,
                       owner=kw.owner.name,
                       doc=getshortdoc(doc),
-                      args=data.args,
+                      args=args,
                       assign=tuple(assignment),
                       tags=tags,
                       type=data.type)
@@ -71,7 +74,7 @@ class UserKeywordRunner:
             for message in self.pre_run_messages:
                 context.output.message(message)
         variables = context.variables
-        positional, named = self._resolve_arguments(kw, data.args, variables)
+        positional, named = self._resolve_arguments(data, kw, variables)
         with context.user_keyword(kw):
             self._set_arguments(kw, positional, named, context)
             if kw.timeout:
@@ -82,6 +85,10 @@ class UserKeywordRunner:
             with context.timeout(timeout):
                 exception, return_value = self._execute(kw, result, context)
                 if exception and not exception.can_continue(context):
+                    if context.in_teardown and exception.keyword_timeout:
+                        # Allow execution to continue on teardowns after timeout.
+                        # https://github.com/robotframework/robotframework/issues/3398
+                        exception.keyword_timeout = False
                     raise exception
                 return_value = self._handle_return_value(return_value, variables)
                 if exception:
@@ -89,8 +96,8 @@ class UserKeywordRunner:
                     raise exception
                 return return_value
 
-    def _resolve_arguments(self, kw: 'UserKeyword', args, variables=None):
-        return kw.resolve_arguments(args, variables)
+    def _resolve_arguments(self, data: KeywordData, kw: 'UserKeyword', variables=None):
+        return kw.resolve_arguments(data.args, data.named_args, variables)
 
     def _set_arguments(self, kw: 'UserKeyword', positional, named, context):
         variables = context.variables
@@ -134,6 +141,8 @@ class UserKeywordRunner:
         args = [f'${{{arg}}}' for arg in spec.positional]
         if spec.var_positional:
             args.append(f'@{{{spec.var_positional}}}')
+        if spec.named_only:
+            args.extend(f'${{{arg}}}' for arg in spec.named_only)
         if spec.var_named:
             args.append(f'&{{{spec.var_named}}}')
         return args
@@ -220,7 +229,7 @@ class UserKeywordRunner:
         if self.pre_run_messages:
             for message in self.pre_run_messages:
                 context.output.message(message)
-        self._resolve_arguments(kw, data.args)
+        self._resolve_arguments(data, kw)
         with context.user_keyword(kw):
             if kw.timeout:
                 timeout = KeywordTimeout(kw.timeout, context.variables)
@@ -236,8 +245,8 @@ class EmbeddedArgumentsRunner(UserKeywordRunner):
         super().__init__(keyword, name)
         self.embedded_args = keyword.embedded.match(name).groups()
 
-    def _resolve_arguments(self, kw: 'UserKeyword', args, variables=None):
-        result = super()._resolve_arguments(kw, args, variables)
+    def _resolve_arguments(self, data: KeywordData, kw: 'UserKeyword', variables=None):
+        result = super()._resolve_arguments(data, kw, variables)
         if variables:
             embedded = [variables.replace_scalar(e) for e in self.embedded_args]
             self.embedded_args = kw.embedded.map(embedded)

@@ -12,10 +12,13 @@ class TraceLogArgsLibrary:
     def mandatory_and_varargs(self, mand, *varargs):
         pass
 
+    def named_only(self, *, no1='value', no2):
+        pass
+
     def kwargs(self, **kwargs):
         pass
 
-    def all_args(self, positional, *varargs, **kwargs):
+    def all_args(self, positional, *varargs, named_only, **kwargs):
         pass
 
     def return_object_with_non_ascii_repr(self):

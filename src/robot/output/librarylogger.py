@@ -19,29 +19,30 @@ This is exposed via :py:mod:`robot.api.logger`. Implementation must reside
 here to avoid cyclic imports.
 """
 
-import threading
-from typing import Callable
+from threading import current_thread
+from typing import Any
+
+from robot.utils import safe_str
 
 from .logger import LOGGER
 from .loggerhelper import Message, write_to_console
 
 
-LOGGING_THREADS = ('MainThread', 'RobotFrameworkTimeoutThread')
+# This constant is used by BackgroundLogger.
+# https://github.com/robotframework/robotbackgroundlogger
+LOGGING_THREADS = ['MainThread', 'RobotFrameworkTimeoutThread']
 
 
-def write(msg: 'str | Callable[[], str]', level: str, html: bool = False):
-    # Callable messages allow lazy logging internally, but we don't want to
-    # expose this functionality publicly. See the following issue for details:
-    # https://github.com/robotframework/robotframework/issues/1505
-    if callable(msg):
-        msg = str(msg)
+def write(msg: Any, level: str, html: bool = False):
+    if not isinstance(msg, str):
+        msg = safe_str(msg)
     if level.upper() not in ('TRACE', 'DEBUG', 'INFO', 'HTML', 'WARN', 'ERROR'):
         if level.upper() == 'CONSOLE':
             level = 'INFO'
             console(msg)
         else:
-            raise RuntimeError("Invalid log level '%s'." % level)
-    if threading.current_thread().name in LOGGING_THREADS:
+            raise RuntimeError(f"Invalid log level '{level}'.")
+    if current_thread().name in LOGGING_THREADS:
         LOGGER.log_message(Message(msg, level, html))
 
 

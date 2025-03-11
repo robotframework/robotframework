@@ -20,7 +20,6 @@ from datetime import datetime, timedelta
 
 from .normalizing import normalize
 from .misc import plural_or_not
-from .robottypes import is_number, is_string
 
 
 _timer_re = re.compile(r'^([+-])?(\d+:)?(\d+):(\d+)(\.\d+)?$')
@@ -49,7 +48,7 @@ def timestr_to_secs(timestr, round_to=3):
     The result is rounded according to the `round_to` argument.
     Use `round_to=None` to disable rounding altogether.
     """
-    if is_string(timestr) or is_number(timestr):
+    if isinstance(timestr, (str, int, float)):
         converters = [_number_to_secs, _timer_to_secs, _time_string_to_secs]
         for converter in converters:
             secs = converter(timestr)
@@ -86,7 +85,7 @@ def _time_string_to_secs(timestr):
     timestr = _normalize_timestr(timestr)
     if not timestr:
         return None
-    nanos = micros = millis = secs = mins = hours = days = 0
+    nanos = micros = millis = secs = mins = hours = days = weeks = 0
     if timestr[0] == '-':
         sign = -1
         timestr = timestr[1:]
@@ -102,13 +101,14 @@ def _time_string_to_secs(timestr):
             elif c == 'm': mins   = float(''.join(temp)); temp = []
             elif c == 'h': hours  = float(''.join(temp)); temp = []
             elif c == 'd': days   = float(''.join(temp)); temp = []
+            elif c == 'w': weeks  = float(''.join(temp)); temp = []
             else: temp.append(c)
         except ValueError:
             return None
     if temp:
         return None
     return sign * (nanos/1E9 + micros/1E6 + millis/1000 + secs +
-                   mins*60 + hours*60*60 + days*60*60*24)
+                   mins*60 + hours*60*60 + days*60*60*24 + weeks*60*60*24*7)
 
 
 def _normalize_timestr(timestr):
@@ -120,7 +120,8 @@ def _normalize_timestr(timestr):
                                ('s', ['second', 'sec']),
                                ('m', ['minute', 'min']),
                                ('h', ['hour']),
-                               ('d', ['day'])]:
+                               ('d', ['day']),
+                               ('w', ['week'])]:
         plural_aliases = [a+'s' for a in aliases if not a.endswith('s')]
         for alias in plural_aliases + aliases:
             if alias in timestr:
@@ -192,7 +193,7 @@ def format_time(timetuple_or_epochsecs, daysep='', daytimesep=' ', timesep=':',
     """Deprecated in Robot Framework 7.0. Will be removed in Robot Framework 8.0."""
     warnings.warn("'robot.utils.format_time' is deprecated and will be "
                   "removed in Robot Framework 8.0.")
-    if is_number(timetuple_or_epochsecs):
+    if isinstance(timetuple_or_epochsecs, (int, float)):
         timetuple = _get_timetuple(timetuple_or_epochsecs)
     else:
         timetuple = timetuple_or_epochsecs

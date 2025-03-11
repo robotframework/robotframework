@@ -1,22 +1,28 @@
 import json
 import os
+import re
 import sys
 import tempfile
 import unittest
 import warnings
 from datetime import datetime, timedelta
-from io import StringIO
+from io import StringIO, TextIOBase
 from pathlib import Path
 from xml.etree import ElementTree as ET
 
-from jsonschema import Draft202012Validator
+try:
+    from jsonschema import Draft202012Validator as JSONValidator
+except ImportError:
+    def JSONValidator(*a, **k):
+        raise unittest.SkipTest('jsonschema module is not available')
 
 from robot.model import Tags, BodyItem
 from robot.result import (Break, Continue, Error, ExecutionResult, For, If, IfBranch,
-                          Keyword, Message, Return, TestCase, TestSuite, Try, TryBranch,
-                          Var, While)
+                          Keyword, Message, Result, Return, TestCase, TestSuite, Try,
+                          TryBranch, Var, While)
 from robot.utils.asserts import (assert_equal, assert_false, assert_raises,
                                  assert_raises_with_msg, assert_true)
+from robot.version import get_full_version
 
 
 CURDIR = Path(__file__).resolve().parent
@@ -612,9 +618,9 @@ class TestToFromDictAndJson(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        with open(CURDIR / '../../doc/schema/result.json') as file:
+        with open(CURDIR / '../../doc/schema/result_suite.json', encoding='UTF-8') as file:
             schema = json.load(file)
-        cls.validator = Draft202012Validator(schema=schema)
+        cls.validator = JSONValidator(schema=schema)
         cls.maxDiff = 2000
 
     def test_keyword(self):
@@ -660,6 +666,14 @@ class TestToFromDictAndJson(unittest.TestCase):
                      body=[{'type': 'ITERATION', 'assign': {'${x}': '1'}, 'status': 'FAIL', 'elapsed_time': 0,
                             'body': [{'name': 'K1', 'status': 'FAIL', 'elapsed_time': 0}]}])
 
+    def test_for_with_message_in_iterations(self):
+        root = For()
+        root.body.create_iteration()
+        root.body.create_message('xxx')
+        self._verify(root, type='FOR', assign=(), flavor='IN', values=(), status='FAIL', elapsed_time=0,
+                     body=[{'type': 'ITERATION', 'status': 'FAIL', 'elapsed_time': 0, 'assign': {}, 'body': []},
+                           {'type': 'MESSAGE', 'message': 'xxx', 'level': 'INFO'}])
+
     def test_while(self):
         self._verify(While(limit='1', on_limit_message='Ooops!', status='PASS'),
                      type='WHILE', limit='1', on_limit_message='Ooops!', status='PASS', elapsed_time=0, body=[])
@@ -668,8 +682,15 @@ class TestToFromDictAndJson(unittest.TestCase):
         iter_.body.create_keyword('K')
         self._verify(root, type='WHILE', condition='True', status='FAIL', elapsed_time=0,
                      body=[{'type': 'ITERATION', 'status': 'FAIL', 'elapsed_time': 0,
-                           'body': [{'name': 'K', 'status': 'FAIL', 'elapsed_time': 0}]}
-                           ])
+                           'body': [{'name': 'K', 'status': 'FAIL', 'elapsed_time': 0}]}])
+
+    def test_while_with_message_in_iterations(self):
+        root = While('True')
+        root.body.create_iteration()
+        root.body.create_message('xxx')
+        self._verify(root, type=BodyItem.WHILE, condition='True', status="FAIL", elapsed_time=0,
+                     body=[{'type': 'ITERATION', 'status': 'FAIL', 'elapsed_time': 0, 'body': []},
+                           {'type': 'MESSAGE', 'message': 'xxx', 'level': 'INFO'}])
 
     def test_if(self):
         now = datetime.now()
@@ -686,6 +707,15 @@ class TestToFromDictAndJson(unittest.TestCase):
         }
         self._verify(if_, type=BodyItem.IF_ELSE_ROOT, status="FAIL", message="I failed", start_time=now.isoformat(),
                      elapsed_time=0.1, body=[exp_branch])
+
+    def test_if_with_message_in_branches(self):
+        root = If()
+        root.body.create_branch(condition='True')
+        root.body.create_message('Hello!')
+        self._verify(root, type=BodyItem.IF_ELSE_ROOT, status="FAIL", elapsed_time=0,
+                     body=[{'type': 'IF', 'condition': 'True', 'elapsed_time': 0.0,
+                            'status': 'FAIL', 'body': []},
+                           {'type': 'MESSAGE', 'level': 'INFO', 'message': 'Hello!'}])
 
     def test_try_structure(self):
         root = Try()
@@ -706,25 +736,45 @@ class TestToFromDictAndJson(unittest.TestCase):
                            {'type': 'FINALLY', 'status': 'FAIL', 'elapsed_time': 0,
                             'body': [{'name': 'K4', 'status': 'FAIL', 'elapsed_time': 0}]}])
 
+    def test_try_with_message_in_branches(self):
+        root = Try()
+        root.body.create_branch(Try.TRY).body.create_keyword('K1')
+        root.body.create_message('Hello', timestamp='2024-11-16 02:46')
+        root.body.create_branch(Try.FINALLY).body.create_keyword('K2')
+        self._verify(root,
+                     status='FAIL',
+                     elapsed_time=0,
+                     type='TRY/EXCEPT ROOT',
+                     body=[{'type': 'TRY', 'status': 'FAIL', 'elapsed_time': 0,
+                            'body': [{'name': 'K1', 'status': 'FAIL', 'elapsed_time': 0}]},
+                           {'type': 'MESSAGE', 'message': 'Hello', 'level': 'INFO',
+                            'timestamp': '2024-11-16T02:46:00'},
+                           {'type': 'FINALLY', 'status': 'FAIL', 'elapsed_time': 0,
+                            'body': [{'name': 'K2', 'status': 'FAIL', 'elapsed_time': 0}]}])
+
     def test_return_continue_break(self):
         self._verify(Return(('x', 'y')),
                      type='RETURN', values=('x', 'y'), status='FAIL', elapsed_time=0)
         self._verify(Continue(), type='CONTINUE', status='FAIL', elapsed_time=0)
         self._verify(Break(), type='BREAK', status='FAIL', elapsed_time=0)
         ret = Return()
-        ret.body.create_message('something', 'WARN', True)
+        ret.body.create_message('something', 'WARN', True, '2024-09-23 14:05:00.123456')
         self._verify(ret, type='RETURN', status='FAIL', elapsed_time=0,
                      body=[{'message': 'something', 'level': 'WARN', 'html': True,
+                            'timestamp': '2024-09-23T14:05:00.123456',
                             'type': BodyItem.MESSAGE}])
 
     def test_message(self):
         now = datetime.now()
-        self._verify(Message('a msg', 'DEBUG', False, now),
-                     type=BodyItem.MESSAGE, message='a msg', level='DEBUG', html=False,
+        self._verify(Message('a msg', 'DEBUG', timestamp=now),
+                     type=BodyItem.MESSAGE, message='a msg', level='DEBUG',
                      timestamp=now.isoformat())
+        self._verify(Message('<b>msg</b>', 'WARN', html=True, timestamp=now),
+                     type=BodyItem.MESSAGE, message='<b>msg</b>', level='WARN',
+                     html=True, timestamp=now.isoformat())
 
     def test_test(self):
-        self._verify(TestCase(), name='', status='FAIL', body=[], elapsed_time=0)
+        self._verify(TestCase(), name='', id='t1', status='FAIL', body=[], elapsed_time=0)
 
     def test_testcase_structure(self):
         test = TestCase('TC', 'my doc', ['T1', 'T2'], '1 minute', 42)
@@ -736,6 +786,7 @@ class TestToFromDictAndJson(unittest.TestCase):
             body.create_keyword('K2', status='PASS')
         self._verify(test,
                      name='TC',
+                     id='t1',
                      status='FAIL',
                      doc='my doc',
                      tags=('T1', 'T2'),
@@ -759,19 +810,21 @@ class TestToFromDictAndJson(unittest.TestCase):
         suite.teardown.config(name='Teardown', args='a', status='PASS')
         suite.tests.create('T1', status='PASS').body.create_keyword('K', status='PASS')
         suite.suites.create('Child').tests.create('T2')
-        self._verify(suite,
-                     status='FAIL',
-                     name='Root',
-                     elapsed_time=0,
-                     setup={'name': 'Setup', 'status': 'PASS', 'elapsed_time': 0},
-                     teardown={'name': 'Teardown', 'args': ('a',), 'status': 'PASS',
-                               'elapsed_time': 0},
-                     tests=[{'name': 'T1', 'status': 'PASS', 'elapsed_time': 0,
-                             'body': [{'name': 'K', 'status': 'PASS', 'elapsed_time': 0}]}],
-                     suites=[{'name': 'Child', 'status': 'FAIL', 'elapsed_time': 0,
-                              'tests': [{'name': 'T2', 'status': 'FAIL', 'elapsed_time': 0, 'body': []}]
-                            }],
-                     )
+        self._verify(
+            suite,
+            status='FAIL',
+            name='Root',
+            id='s1',
+            elapsed_time=0,
+            setup={'name': 'Setup', 'status': 'PASS', 'elapsed_time': 0},
+            teardown={'name': 'Teardown', 'args': ('a',), 'status': 'PASS',
+                      'elapsed_time': 0},
+            tests=[{'name': 'T1', 'id': 's1-t1', 'status': 'PASS', 'elapsed_time': 0,
+                    'body': [{'name': 'K', 'status': 'PASS', 'elapsed_time': 0}]}],
+            suites=[{'name': 'Child', 'id': 's1-s1', 'status': 'FAIL', 'elapsed_time': 0,
+                     'tests': [{'name': 'T2', 'id': 's1-s1-t1', 'status': 'FAIL',
+                                'elapsed_time': 0, 'body': []}]}]
+        )
 
     def _verify(self, obj, **expected):
         data = obj.to_dict()
@@ -903,6 +956,130 @@ class TestSuiteToFromXml(unittest.TestCase):
         kws = {'strict': True} if sys.version_info >= (3, 10) else {}
         for exp, act in zip(self.xml.splitlines(), xml.splitlines(), **kws):
             assert_equal(exp.replace(' />', '/>'), act)
+
+
+class TestJsonResult(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        cls.data = json.dumps({
+            'generator': 'Unit tests',
+            'generated': '2024-09-21 21:49:12.345678',
+            'rpa': False,
+            'suite': {
+                'name': 'S',
+                'tests': [{'name': 'T1', 'status': 'PASS', 'tags': ['tag'],
+                           'body': [{'name': 'Këüẅörd', 'status': 'PASS',
+                                     'start_time': '2023-12-18 22:35:12.345678',
+                                     'elapsed_time': 0.123}]},
+                          {'name': 'T2', 'status': 'FAIL', 'elapsed_time': 0.01},
+                          {'name': 'T3', 'status': 'SKIP'}],
+            },
+            'statistics': 'ignored by from_json',
+            'errors': [{'message': 'Hello!',
+                        'level': 'WARN',
+                        'timestamp': '2024-09-21 21:47:12.345678'}]
+        })
+        cls.path = Path(os.getenv('TEMPDIR', tempfile.gettempdir()), 'robot-utest.json')
+        cls.path.write_text(cls.data, encoding='UTF-8')
+        with open(CURDIR / '../../doc/schema/result.json', encoding='UTF-8') as file:
+            schema = json.load(file)
+        cls.validator = JSONValidator(schema=schema)
+
+    def test_json_string(self):
+        self._verify(self.data)
+
+    def test_json_bytes(self):
+        self._verify(self.data.encode('UTF-8'))
+
+    def test_json_path(self):
+        self._verify(self.path)
+        self._verify(str(self.path))
+
+    def test_json_file(self):
+        with open(self.path, encoding='UTF-8') as file:
+            self._verify(file)
+
+    def test_suite_data_only(self):
+        data = json.loads(self.data)['suite']
+        self._verify(json.dumps(data), full=False, generator='unknown',
+                     generation_time=None)
+
+    def test_to_json(self):
+        result = ExecutionResult(self.data)
+        data = json.loads(result.to_json())
+        assert_equal(list(data), ['generator', 'generated', 'rpa', 'suite',
+                                  'statistics', 'errors'])
+        assert_equal(data['generator'], get_full_version('Rebot'))
+        assert_true(re.fullmatch(r'20\d\d-\d\d-\d\dT\d\d:\d\d:\d\d\.\d{6}',
+                                 data['generated']))
+        assert_equal(data['rpa'], False)
+        assert_equal(data['suite'], {
+            'name': 'S',
+            'id': 's1',
+            'tests': [
+                {'name': 'T1', 'id': 's1-t1', 'tags': ['tag'],
+                 'body': [{'name': 'Këüẅörd',
+                           'status': 'PASS', 'elapsed_time': 0.123,
+                           'start_time': '2023-12-18T22:35:12.345678'}],
+                 'status': 'PASS', 'elapsed_time': 0.123},
+                {'name': 'T2', 'id': 's1-t2', 'body': [], 'status': 'FAIL', 'elapsed_time': 0.01},
+                {'name': 'T3', 'id': 's1-t3', 'body': [], 'status': 'SKIP', 'elapsed_time': 0.0}
+            ],
+            'status': 'FAIL', 'elapsed_time': 0.133
+        })
+        assert_equal(data['statistics'], {
+            'total': {'pass': 1, 'fail': 1, 'skip': 1, 'label': 'All Tests'},
+            'suites': [{'name': 'S', 'label': 'S', 'id': 's1',
+                        'pass': 1, 'fail': 1, 'skip': 1}],
+            'tags': [{'pass': 1, 'fail': 0, 'skip': 0, 'label': 'tag'}]
+        })
+        assert_equal(data['errors'], [{'message': 'Hello!', 'level': 'WARN',
+                                       'timestamp': '2024-09-21T21:47:12.345678'}])
+
+    def test_to_json_roundtrip(self):
+        result = ExecutionResult(self.data)
+        for json_data in (result.to_json(),
+                          result.to_json(include_statistics=False),
+                          result.to_json().replace('"rpa":false', '"rpa":true')):
+            data = json.loads(json_data)
+            self._verify(json_data,
+                         generator=get_full_version('Rebot'),
+                         generation_time=datetime.fromisoformat(data['generated']),
+                         rpa=data['rpa'])
+
+    def _verify(self, source, full=True, generator='Unit tests',
+                generation_time=datetime(2024, 9, 21, 21, 49, 12, 345678),
+                rpa=False):
+        execution_result = ExecutionResult(source)
+        if isinstance(source, TextIOBase):
+            source.seek(0)
+        result_from_json = Result.from_json(source)
+        for result in execution_result, result_from_json:
+            assert_equal(result.generator, generator)
+            assert_equal(result.generation_time, generation_time)
+            assert_equal(result.rpa, rpa)
+            assert_equal(result.suite.rpa, rpa)
+            assert_equal(result.suite.name, 'S')
+            assert_equal(result.suite.elapsed_time.total_seconds(), 0.133)
+            assert_equal(result.suite.tests[0].name, 'T1')
+            assert_equal(result.suite.tests[0].tags, ['tag'])
+            assert_equal(result.suite.tests[0].body[0].name, 'Këüẅörd')
+            assert_equal(result.suite.tests[0].body[0].start_time,
+                         datetime(2023, 12, 18, 22, 35, 12, 345678))
+            assert_equal(result.statistics.total.passed, 1)
+            assert_equal(result.statistics.total.failed, 1)
+            assert_equal(result.statistics.total.skipped, 1)
+            if full:
+                assert_equal(len(result.errors), 1)
+                assert_equal(result.errors[0].message, 'Hello!')
+                assert_equal(result.errors[0].level, 'WARN')
+                assert_equal(result.errors[0].timestamp,
+                             datetime(2024, 9, 21, 21, 47, 12, 345678))
+            else:
+                assert_equal(len(result.errors), 0)
+            assert_equal(result.return_code, 1)
+            self.validator.validate(instance=json.loads(result.to_json()))
 
 
 if __name__ == '__main__':

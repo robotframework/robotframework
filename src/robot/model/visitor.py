@@ -105,9 +105,9 @@ removed altogether if they get in the way.
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from robot.model import (Break, BodyItem, Continue, Error, For, If, IfBranch,
-                             Keyword, Message, Return, TestCase, TestSuite, Try,
-                             TryBranch, Var, While)
+    from robot.model import (Break, BodyItem, Continue, Error, For, Group, If,
+                             IfBranch, Keyword, Message, Return, TestCase, TestSuite,
+                             Try, TryBranch, Var, While)
     from robot.result import ForIteration, WhileIteration
 
 
@@ -426,6 +426,32 @@ class SuiteVisitor:
         By default, calls :meth:`end_body_item` which, by default, does nothing.
         """
         self.end_body_item(iteration)
+
+    def visit_group(self, group: 'Group'):
+        """Visits GROUP elements.
+
+        Can be overridden to allow modifying the passed in ``group`` without
+        calling :meth:`start_group` or :meth:`end_group` nor visiting body.
+        """
+        if self.start_group(group) is not False:
+            group.body.visit(self)
+            self.end_group(group)
+
+    def start_group(self, group: 'Group') -> 'bool|None':
+        """Called when a GROUP element starts.
+
+        By default, calls :meth:`start_body_item` which, by default, does nothing.
+
+        Can return explicit ``False`` to stop visiting.
+        """
+        return self.start_body_item(group)
+
+    def end_group(self, group: 'Group'):
+        """Called when a GROUP element ends.
+
+        By default, calls :meth:`end_body_item` which, by default, does nothing.
+        """
+        self.end_body_item(group)
 
     def visit_var(self, var: 'Var'):
         """Visits a VAR elements."""

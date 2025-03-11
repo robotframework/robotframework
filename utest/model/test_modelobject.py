@@ -136,18 +136,18 @@ class TestFromDictAndJson(unittest.TestCase):
         )
 
     def test_invalid_json_syntax(self):
-        error = self._get_json_load_error('bad')
+        error = self._get_json_load_error('{invalid: syntax}')
         assert_raises_with_msg(
             DataError,
             f"Loading JSON data failed: Invalid JSON data: {error}",
-            ModelObject.from_json, 'bad'
+            ModelObject.from_json, '{invalid: syntax}'
         )
 
     def test_invalid_json_content(self):
         assert_raises_with_msg(
             DataError,
             "Loading JSON data failed: Expected dictionary, got list.",
-            ModelObject.from_json, '["bad"]'
+            ModelObject.from_json, io.StringIO('["bad"]')
         )
 
     def _get_json_load_error(self, value):

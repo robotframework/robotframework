@@ -43,7 +43,7 @@ from typing import Literal, Mapping, overload, Sequence, Union, TextIO, TypeVar
 from robot import model
 from robot.model import (BodyItem, create_fixture, DataDict, Tags, TestSuites,
                          TotalStatistics, TotalStatisticsBuilder)
-from robot.utils import is_dict_like, is_list_like, setter
+from robot.utils import setter
 
 from .configurer import SuiteConfigurer
 from .messagefilter import MessageFilter
@@ -55,20 +55,21 @@ from .suiteteardownfailed import SuiteTeardownFailed, SuiteTeardownFailureHandle
 IT = TypeVar('IT', bound='IfBranch|TryBranch')
 FW = TypeVar('FW', bound='ForIteration|WhileIteration')
 BodyItemParent = Union['TestSuite', 'TestCase', 'Keyword', 'For', 'ForIteration', 'If',
-                       'IfBranch', 'Try', 'TryBranch', 'While', 'WhileIteration', None]
+                       'IfBranch', 'Try', 'TryBranch', 'While', 'WhileIteration',
+                       'Group', None]
 
 
-class Body(model.BaseBody['Keyword', 'For', 'While', 'If', 'Try', 'Var', 'Return',
+class Body(model.BaseBody['Keyword', 'For', 'While', 'Group', 'If', 'Try', 'Var', 'Return',
                           'Continue', 'Break', 'Message', 'Error']):
     __slots__ = ()
 
 
-class Branches(model.BaseBranches['Keyword', 'For', 'While', 'If', 'Try', 'Var', 'Return',
+class Branches(model.BaseBranches['Keyword', 'For', 'While', 'Group', 'If', 'Try', 'Var', 'Return',
                                   'Continue', 'Break', 'Message', 'Error', IT]):
     __slots__ = ()
 
 
-class Iterations(model.BaseIterations['Keyword', 'For', 'While', 'If', 'Try', 'Var', 'Return',
+class Iterations(model.BaseIterations['Keyword', 'For', 'While', 'Group', 'If', 'Try', 'Var', 'Return',
                                       'Continue', 'Break', 'Message', 'Error', FW]):
     __slots__ = ()
 
@@ -79,16 +80,10 @@ class Iterations(model.BaseIterations['Keyword', 'For', 'While', 'If', 'Try', 'V
 class Message(model.Message):
     __slots__ = ()
 
-    def to_dict(self) -> DataDict:
-        data: DataDict = {
-            'type': self.type,
-            'message': self.message,
-            'level': self.level,
-            'html': self.html,
-        }
-        if self.timestamp:
-            data['timestamp'] = self.timestamp.isoformat()
-        return data
+    def to_dict(self, include_type=True) -> DataDict:
+        if not include_type:
+            return super().to_dict()
+        return {'type': self.type, **super().to_dict()}
 
 
 class StatusMixin:
@@ -407,6 +402,33 @@ class While(model.While, StatusMixin, DeprecatedAttributesMixin):
         return {**super().to_dict(), **StatusMixin.to_dict(self)}
 
 
+@Body.register
+class Group(model.Group, StatusMixin, DeprecatedAttributesMixin):
+    body_class = Body
+    __slots__ = ['status', 'message', '_start_time', '_end_time', '_elapsed_time']
+
+    def __init__(self, name: str = '',
+                 status: str = 'FAIL',
+                 message: str = '',
+                 start_time: 'datetime|str|None' = None,
+                 end_time: 'datetime|str|None' = None,
+                 elapsed_time: 'timedelta|int|float|None' = None,
+                 parent: BodyItemParent = None):
+        super().__init__(name, parent)
+        self.status = status
+        self.message = message
+        self.start_time = start_time
+        self.end_time = end_time
+        self.elapsed_time = elapsed_time
+
+    @property
+    def _log_name(self):
+        return self.name
+
+    def to_dict(self) -> DataDict:
+        return {**super().to_dict(), **StatusMixin.to_dict(self)}
+
+
 class IfBranch(model.IfBranch, StatusMixin, DeprecatedAttributesMixin):
     body_class = Body
     __slots__ = ['status', 'message', '_start_time', '_end_time', '_elapsed_time']
@@ -710,7 +732,7 @@ class Keyword(model.Keyword, StatusMixin):
                  owner: 'str|None' = None,
                  source_name: 'str|None' = None,
                  doc: str = '',
-                 args: model.Arguments = (),
+                 args: Sequence[str] = (),
                  assign: Sequence[str] = (),
                  tags: Sequence[str] = (),
                  timeout: 'str|None' = None,
@@ -739,35 +761,11 @@ class Keyword(model.Keyword, StatusMixin):
         self.body = ()
 
     @setter
-    def args(self, args: model.Arguments) -> 'tuple[str, ...]':
-        """Keyword arguments.
-
-        Arguments originating from normal data are given as a list of strings.
-        Programmatically it is possible to use also other types and named arguments
-        can be specified using name-value tuples. Additionally, it is possible
-        o give arguments directly as a list of positional arguments and a dictionary
-        of named arguments. In all these cases arguments are stored as strings.
-        """
-        if len(args) == 2 and is_list_like(args[0]) and is_dict_like(args[1]):
-            positional = [str(a) for a in args[0]]
-            named = [f'{n}={v}' for n, v in args[1].items()]
-            return tuple(positional + named)
-        return tuple([a if isinstance(a, str) else self._arg_to_str(a) for a in args])
-
-    def _arg_to_str(self, arg):
-        if isinstance(arg, tuple):
-            if len(arg) == 2:
-                return f'{arg[0]}={arg[1]}'
-            if len(arg) == 1:
-                return str(arg[0])
-        return str(arg)
-
-    @setter
     def body(self, body: 'Sequence[BodyItem|DataDict]') -> Body:
-        """Possible keyword body as a :class:`~.Body` object.
+        """Keyword body as a :class:`~.Body` object.
 
         Body can consist of child keywords, messages, and control structures
-        such as IF/ELSE. Library keywords typically have an empty body.
+        such as IF/ELSE.
         """
         return self.body_class(self, body)
 
@@ -960,7 +958,12 @@ class TestCase(model.TestCase[Keyword], StatusMixin):
         return self.body_class(self, body)
 
     def to_dict(self) -> DataDict:
-        return {**super().to_dict(), **StatusMixin.to_dict(self)}
+        return {'id': self.id, **super().to_dict(), **StatusMixin.to_dict(self)}
+
+    @classmethod
+    def from_dict(cls, data: DataDict) -> 'TestCase':
+        data.pop('id', None)
+        return super().from_dict(data)
 
 
 class TestSuite(model.TestSuite[Keyword, TestCase], StatusMixin):
@@ -1113,7 +1116,52 @@ class TestSuite(model.TestSuite[Keyword, TestCase], StatusMixin):
         self.visit(SuiteTeardownFailed(message, skipped=True))
 
     def to_dict(self) -> DataDict:
-        return {**super().to_dict(), **StatusMixin.to_dict(self)}
+        return {'id': self.id, **super().to_dict(), **StatusMixin.to_dict(self)}
+
+    @classmethod
+    def from_dict(cls, data: DataDict) -> 'TestSuite':
+        """Create suite based on result data in a dictionary.
+
+        ``data`` can either contain only the suite data got, for example, from
+        the :meth:`to_dict` method, or it can contain full result data with
+        execution errors and other such information in addition to the suite data.
+        In the latter case only the suite data is used, though.
+
+        Support for full result data is new in Robot Framework 7.2.
+        """
+        if 'suite' in data:
+            data = data['suite']
+        # `body` on the suite level means that a listener has logged something or
+        # executed a keyword in a `start/end_suite` method. Throwing such data
+        # away isn't great, but it's better than data being invalid and properly
+        # handling it would be complicated. We handle such XML outputs (see
+        # `xmlelementhandlers`), but with JSON there can even be one `body` in
+        # the beginning and other at the end, and even preserving them both
+        # would be hard.
+        data.pop('body', None)
+        data.pop('id', None)
+        return super().from_dict(data)
+
+    @classmethod
+    def from_json(cls, source: 'str|bytes|TextIO|Path') -> 'TestSuite':
+        """Create suite based on results in JSON.
+
+        The data is given as the ``source`` parameter. It can be:
+
+        - a string containing the data directly,
+        - an open file object where to read the data from, or
+        - a path (``pathlib.Path`` or string) to a UTF-8 encoded file to read.
+
+        Supports JSON produced by :meth:`to_json` that contains only the suite
+        information, as well as full result JSON that contains also execution
+        errors and other information. In the latter case errors and all other
+        information is silently ignored, though. If that is a problem,
+        :class:`~robot.result.resultbuilder.ExecutionResult` should be used
+        instead.
+
+        Support for full result JSON is new in Robot Framework 7.2.
+        """
+        return super().from_json(source)
 
     @overload
     def to_xml(self, file: None = None) -> str:
@@ -1157,7 +1205,7 @@ class TestSuite(model.TestSuite[Keyword, TestCase], StatusMixin):
         if output is None:
             output = StringIO()
         elif isinstance(output, (Path, str)):
-            output = open(output, 'w')
+            output = open(output, 'w', encoding='UTF-8')
             close = True
         return output, close
 

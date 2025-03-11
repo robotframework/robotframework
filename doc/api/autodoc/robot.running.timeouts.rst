@@ -9,6 +9,14 @@ robot.running.timeouts package
 Submodules
 ----------
 
+robot.running.timeouts.nosupport module
+---------------------------------------
+
+.. automodule:: robot.running.timeouts.nosupport
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 robot.running.timeouts.posix module
 -----------------------------------
 

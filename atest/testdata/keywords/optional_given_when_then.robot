@@ -48,6 +48,20 @@ Keyword can be used with and without prefix
     Then we are in Berlin city
     we are in Berlin city
 
+Only single prefixes are a processed
+    [Documentation]  FAIL No keyword with name 'but then we are in Berlin city' found.
+    Given we are in Berlin city
+    but then we are in Berlin city
+
+First word of a keyword can be a prefix
+    Given the prefix is part of the keyword
+
+First word in a keyword can be an argument
+    Given we don't drink too many beers
+    Then Pekka drinks lonkero instead
+    and Miikka drinks water instead
+    Étant donné Miikka drinks water instead
+
 Localized prefixes
     Oletetaan we don't drink too many beers
     Kun we are in  museum  cafe
@@ -66,7 +80,7 @@ Prefix consisting of multiple words
     Fie ca multipart prefixes didn't work with RF 6.0
 
 Prefix must be followed by space
-    [Documentation]  FAIL
+    [Documentation]    FAIL
     ...    No keyword with name 'Givenwe don't drink too many beers' found. Did you mean:
     ...    ${SPACE*4}We don't drink too many beers
     Givenwe don't drink too many beers
@@ -76,27 +90,36 @@ We don't drink too many beers
     No Operation
 
 We are in
-    [Arguments]  ${a1}  ${a2}
-    Should Be Equal  ${a1}-${a2}  museum-cafe
+    [Arguments]    ${a1}    ${a2}
+    Should Be Equal    ${a1}-${a2}    museum-cafe
 
 Time
-    [Arguments]  @{args}
-    Length Should Be  ${args}  4
+    [Arguments]    @{args}
+    Length Should Be    ${args}    4
 
 we get this feature ready today
     Given we don't drink too many beers
 
 We Are In ${name} city
-    Should be equal  ${name}  Berlin
+    Should be equal    ${name}    Berlin
 
 It Does Not ${x}
-    Should Be Equal  ${x}  rain
+    Should Be Equal    ${x}    rain
 
 We ${x} This ${thing} Implemented
-    Should Be Equal  ${x}-${thing}  get-feature
+    Should Be Equal    ${x}-${thing}    get-feature
 
 We Go To ${somewhere}
-    Should Be Equal  ${somewhere}  walking tour
+    Should Be Equal    ${somewhere}    walking tour
+
+${person} drinks lonkero instead
+    Should be equal    ${person}    Pekka
+
+${person} drinks water instead
+    Should be equal    ${person}    Miikka
 
 Multipart prefixes didn't work with RF 6.0
     No Operation
+
+Given the prefix is part of the keyword
+    No operation

@@ -28,10 +28,13 @@ from .model import Body, BodyItemParent, Keyword, TestSuite
 from .userkeywordrunner import UserKeywordRunner, EmbeddedArgumentsRunner
 
 if TYPE_CHECKING:
+    from robot.conf import LanguagesLike
     from robot.parsing import File
 
 
 class ResourceFile(ModelObject):
+    """Represents a resource file."""
+
     repr_args = ('source',)
     __slots__ = ('_source', 'owner', 'doc', 'keyword_finder')
 
@@ -234,7 +237,8 @@ class UserKeyword(KeywordImplementation):
         """
         return bool(self._teardown)
 
-    def create_runner(self, name: 'str|None', languages=None) \
+    def create_runner(self, name: 'str|None',
+                      languages: 'LanguagesLike' = None) \
             -> 'UserKeywordRunner|EmbeddedArgumentsRunner':
         if self.embedded:
             return EmbeddedArgumentsRunner(self, name)
@@ -317,8 +321,12 @@ class Variable(ModelObject):
             data['error'] = self.error
         return data
 
+    def _include_in_repr(self, name: str, value: Any) -> bool:
+        return not (name == 'separator' and value is None)
+
 
 class Import(ModelObject):
+    """Represents library, resource file or variable file import."""
     repr_args = ('type', 'name', 'args', 'alias')
     LIBRARY = 'LIBRARY'
     RESOURCE = 'RESOURCE'

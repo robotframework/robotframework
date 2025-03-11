@@ -25,7 +25,7 @@ def output_should_be(actual, expected, **replaced):
 
 
 def _read_file(path, title, replaced=None):
-    with open(path) as file:
+    with open(path, encoding='UTF-8') as file:
         content = file.read()
     if replaced:
         for item in replaced:

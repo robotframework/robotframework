@@ -96,5 +96,5 @@ def announce_port(socket, port_file=None):
     sys.stdout.write(f'Remote server starting on port {port}.\n')
     sys.stdout.flush()
     if port_file:
-        with open(port_file, 'w') as f:
+        with open(port_file, 'w', encoding='ASCII') as f:
             f.write(str(port))

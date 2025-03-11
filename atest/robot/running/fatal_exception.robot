@@ -5,7 +5,7 @@ Resource          atest_resource.robot
 Exit From Python Keyword
     Run Tests    ${EMPTY}    running/fatal_exception/01__python_library_kw.robot
     ${tc}=    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc.teardown.msgs[0]}    This should be executed
+    Check Log Message    ${tc.teardown[0]}    This should be executed
     Check Test Case    Test That Should Not Be Run 1
 
 robot.api.FatalError
@@ -42,7 +42,7 @@ Multiple Suite Aware Exiting From Suite Setup
     Run Tests    ${EMPTY}    running/fatal_exception_suite_setup/
     Check Test Case    Test That Should Not Be Run 1
     ${ts1} =    Get Test Suite    Suite Setup
-    Should End With    ${ts1.teardown.msgs[0].message}    Tearing down 1
+    Should End With    ${ts1.teardown[0].message}    Tearing down 1
     Check Test Case    Test That Should Not Be Run 2.1
     Check Test Case    Test That Should Not Be Run 2.2
     ${ts2} =    Get Test Suite    Irrelevant

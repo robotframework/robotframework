@@ -9,6 +9,9 @@ Resource          atest_resource.robot
 Evaluate
     Check Test Case    ${TESTNAME}
 
+Custom additions to builtins are supported
+    Check Test Case    ${TESTNAME}
+
 Modules are imported automatically
     Check Test Case    ${TESTNAME}
 

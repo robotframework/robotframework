@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 
-"""JSON schema for ``robot.running.TestSuite`` model structure.
+"""JSON schema for the `robot.running.TestSuite` structure.
 
 The schema is modeled using Pydantic in this file. After updating the model,
-execute this file to regenerate the actual schema file in ``running.json``.
+execute this file to regenerate the actual schema file in `running_suite.json`.
 
 Requires Pydantic 1.10. https://docs.pydantic.dev/1.10/
 """
@@ -56,7 +56,8 @@ class Error(BodyItem):
 
 class Keyword(BodyItem):
     name: str
-    args: Sequence[Any | tuple[Any] | tuple[str, Any]] | tuple[list[Any], dict[str, Any]] | None
+    args: Sequence[str|Any] | None
+    named_args: dict[str, Any] | None
     assign: Sequence[str] | None
 
 
@@ -68,7 +69,7 @@ class For(BodyItem):
     start: str | None
     mode: str | None
     fill: str | None
-    body: list['Keyword | For | While | If | Try | Var | Break | Continue | Return | Error']
+    body: list['Keyword | For | While | Group | If | Try | Var | Break | Continue | Return | Error']
 
 
 class While(BodyItem):
@@ -77,13 +78,19 @@ class While(BodyItem):
     limit: str | None
     on_limit: str | None
     on_limit_message: str | None
-    body: list['Keyword | For | While | If | Try | Var | Break | Continue | Return | Error']
+    body: list['Keyword | For | While | Group | If | Try | Var | Break | Continue | Return | Error']
+
+
+class Group(BodyItem):
+    type = Field('GROUP', const=True)
+    name: str | None
+    body: list['Keyword | For | While | Group | If | Try | Var | Break | Continue | Return | Error']
 
 
 class IfBranch(BodyItem):
     type: Literal['IF', 'ELSE IF', 'ELSE']
     condition: str | None
-    body: list['Keyword | For | While | If | Try | Var | Break | Continue | Return | Error']
+    body: list['Keyword | For | While | Group | If | Try | Var | Break | Continue | Return | Error']
 
 
 class If(BodyItem):
@@ -96,7 +103,7 @@ class TryBranch(BodyItem):
     patterns: Sequence[str] | None
     pattern_type: str | None
     assign: str | None
-    body: list['Keyword | For | While | If | Try | Var | Break | Continue | Return | Error']
+    body: list['Keyword | For | While | Group | If | Try | Var | Break | Continue | Return | Error']
 
 
 class Try(BodyItem):
@@ -114,7 +121,7 @@ class TestCase(BaseModel):
     error: str | None
     setup: Keyword | None
     teardown: Keyword | None
-    body: list[Keyword | For | While | If | Try | Var | Error]
+    body: list[Keyword | For | While | Group | If | Try | Var | Error]
 
 
 class TestSuite(BaseModel):
@@ -134,6 +141,7 @@ class TestSuite(BaseModel):
     resource: 'Resource | None'
 
     class Config:
+        title = 'robot.running.TestSuite'
         # pydantic doesn't add schema version automatically.
         # https://github.com/samuelcolvin/pydantic/issues/1478
         schema_extra = {
@@ -166,7 +174,7 @@ class UserKeyword(BaseModel):
     error: str | None
     setup: Keyword | None
     teardown: Keyword | None
-    body: list[Keyword | For | While | If | Try | Return | Var | Error]
+    body: list[Keyword | For | While | Group | If | Try | Return | Var | Error]
 
 
 class Resource(BaseModel):
@@ -176,13 +184,12 @@ class Resource(BaseModel):
     variables: list[Variable] | None
     keywords: list[UserKeyword] | None
 
-
-for cls in [For, While, IfBranch, TryBranch, TestSuite]:
+for cls in [For, While, Group, IfBranch, TryBranch, TestSuite]:
     cls.update_forward_refs()
 
 
 if __name__ == '__main__':
-    path = Path(__file__).parent / 'running.json'
+    path = Path(__file__).parent / 'running_suite.json'
     with open(path, 'w') as f:
         f.write(TestSuite.schema_json(indent=2))
     print(path.absolute())

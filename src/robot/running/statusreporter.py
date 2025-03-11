@@ -52,25 +52,30 @@ class StatusReporter:
             message = ' ' + doc.split('*', 2)[-1].strip()
             self.context.warn(f"Keyword '{name}' is deprecated.{message}")
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(self, exc_type, exc_value, exc_traceback):
         context = self.context
         result = self.result
-        failure = self._get_failure(exc_type, exc_val, exc_tb, context)
+        failure = self._get_failure(exc_value, context)
         if failure is None:
             result.status = self.pass_status
         else:
             result.status = failure.status
             if not isinstance(failure, (BreakLoop, ContinueLoop, ReturnFromKeyword)):
                 result.message = failure.message
-        if self.initial_test_status == 'PASS':
+        if self.initial_test_status == 'PASS' and result.status != 'NOT RUN':
             context.test.status = result.status
         result.elapsed_time = datetime.now() - result.start_time
+        orig_status = (result.status, result.message)
         context.end_body_item(self.data, result, self.implementation)
-        if failure is not exc_val and not self.suppress:
+        if orig_status != (result.status, result.message):
+            if result.passed or result.not_run:
+                return True
+            raise ExecutionFailed(result.message, skip=result.skipped)
+        if failure is not exc_value and not self.suppress:
             raise failure
         return self.suppress
 
-    def _get_failure(self, exc_type, exc_value, exc_tb, context):
+    def _get_failure(self, exc_value, context):
         if exc_value is None:
             return None
         if isinstance(exc_value, ExecutionStatus):

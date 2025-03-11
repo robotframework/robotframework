@@ -17,6 +17,8 @@ Contents
   how they work.
 - `<ArgumentModifier.py>`_ modifies keyword arguments and can be used with
   `<keyword_arguments.robot>`_.
+- `<ChangeStatus.py>`_ modifies keyword statuses and can be used with
+  `<change_status.robot>`_. Requires Robot Framework 7.1.
 
 Usage
 -----
@@ -37,3 +39,7 @@ To validate that all listener methods are executed, use this::
 To see how keyword arguments can be modified::
 
     robot --listener ArgumentModifier.py keyword_arguments.robot
+
+To see how keyword statuses can be modified::
+
+    robot --listener ChangeStatus.py change_status.robot

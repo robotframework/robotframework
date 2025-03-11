@@ -45,8 +45,8 @@ Debugfile timestamps are accurate
     ${tc} =    Check Test Case    LibraryAddsTimestampAsInteger
     ${content} =     Get file     ${CLI OUTDIR}/debug.txt
     Debug file should contain    ${content}
-    ...    ${tc.kws[0].msgs[0].timestamp} - INFO - Known timestamp
-    ...    ${tc.kws[0].msgs[1].timestamp} - INFO - <b>Current</b>
+    ...    ${tc[0, 0].timestamp} - INFO - Known timestamp
+    ...    ${tc[0, 1].timestamp} - INFO - <b>Current</b>
 
 Writing Non-ASCII To Debugfile
     [Documentation]    Tests also that '.txt' is appended if no extension given

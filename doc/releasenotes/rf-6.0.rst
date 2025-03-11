@@ -127,7 +127,7 @@ When using keywords with embedded arguments, it is pretty common that a keyword
 that is used matches multiple keyword implementations. For example,
 `Execute "ls" with "-lh"` in this example matches both of the keywords:
 
-.. sourcecode:: robotframework
+.. code:: robotframework
 
    *** Test Cases ***
    Automatic conflict resolution

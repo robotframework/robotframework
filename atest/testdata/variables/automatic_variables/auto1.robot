@@ -77,7 +77,7 @@ Suite Variables Are Available At Import Time
     name        Automatic Variables.Auto1
     doc         This is suite documentation. With \${VARIABLE}.
     metadata    {'MeTa1': 'Value', 'meta2': '\${VARIABLE}'}
-    options     {'include': ['include this test'], 'exclude': ['exclude', 'e2'], 'skip': ['skip_me'], 'skip_on_failure': ['sof']}
+    options     {'include': ['include this test'], 'exclude': ['exclude', 'e2'], 'skip': ['skip_me'], 'skip_on_failure': ['sof'], 'console_width': 99}
 
 Suite Status And Suite Message Are Not Visible In Tests
     Variable Should Not Exist    $SUITE_STATUS
@@ -123,3 +123,4 @@ Previous Test Variables Should Have Correct Values When That Test Fails
             Should Contain    ${OPTIONS.${name}}     ${exp.upper()}
         END
     END
+    Should Be Equal    ${OPTIONS.console_width}    ${99}

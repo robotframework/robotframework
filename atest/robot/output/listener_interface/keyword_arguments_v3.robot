@@ -7,32 +7,36 @@ ${SOURCE}         output/listener_interface/body_items_v3/keyword_arguments.robo
 ${MODIFIER}       output/listener_interface/body_items_v3/ArgumentModifier.py
 
 *** Test Cases ***
-Arguments as strings
+Library keyword arguments
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Keyword Data    ${tc.body[0]}    Library.Library Keyword
     ...    args=\${STATE}, number=\${123}, obj=None, escape=c:\\\\temp\\\\new
     Check Keyword Data    ${tc.body[1]}    Library.Library Keyword
     ...    args=new, 123, c:\\\\temp\\\\new, NONE
+    Check Keyword Data    ${tc.body[2]}    Library.Library Keyword
+    ...    args=new, number=\${42}, escape=c:\\\\temp\\\\new, obj=Object(42)
+    Check Keyword Data    ${tc.body[3]}    Library.Library Keyword
+    ...    args=number=1.0, escape=c:\\\\temp\\\\new, obj=Object(1), state=new
 
-Arguments as tuples
+User keyword arguments
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Keyword Data    ${tc.body[0]}    Library.Library Keyword
-    ...    args=\${STATE}, escape=c:\\\\temp\\\\new, obj=Object(123), number=\${123}
-    Check Keyword Data    ${tc.body[1]}    Library.Library Keyword
-    ...    args=new, 1.0, obj=Object(1), escape=c:\\\\temp\\\\new
+    Check Keyword Data    ${tc.body[0]}    User keyword
+    ...    args=A, B, C, D
+    Check Keyword Data    ${tc.body[1]}    User keyword
+    ...    args=A, B, d=D, c=\${{"c".upper()}}
 
-Arguments directly as positional and named
-    ${tc} =    Check Test Case    ${TEST NAME}
-    Check Keyword Data    ${tc.body[0]}    Library.Library Keyword
-    ...    args=\${XXX}, 456, c:\\temp\\new, obj=Object(456)
-    Check Keyword Data    ${tc.body[1]}    Library.Library Keyword
-    ...    args=state=\${XXX}, obj=Object(1), number=1.0, escape=c:\\temp\\new
+Invalid keyword arguments
+    ${tc} =    Check Test Case    Library keyword arguments
+    Check Keyword Data    ${tc.body[4]}    Non-existing
+    ...    args=p, n=1    status=FAIL
 
 Too many arguments
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Keyword Data    ${tc.body[0]}    Library.Library Keyword
     ...    args=a, b, c, d, e, f, g    status=FAIL
-    Check Keyword Data    ${tc.body[1]}    Library.Library Keyword
+    Check Keyword Data    ${tc.body[1]}    User keyword
+    ...    args=a, b, c, d, e, f, g    status=FAIL
+    Check Keyword Data    ${tc.body[2]}    Library.Library Keyword
     ...    args=${{', '.join(str(i) for i in range(100))}}    status=FAIL
 
 Conversion error
@@ -42,14 +46,7 @@ Conversion error
     Check Keyword Data    ${tc.body[1]}    Library.Library Keyword
     ...    args=number=bad    status=FAIL
 
-Named argument not matching
-    ${tc} =    Check Test Case    ${TEST NAME}
-    Check Keyword Data    ${tc.body[0]}    Library.Library Keyword
-    ...    args=no=match    status=FAIL
-    Check Keyword Data    ${tc.body[1]}    Library.Library Keyword
-    ...    args=o, k, bad=name    status=FAIL
-
 Positional after named
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Keyword Data    ${tc.body[0]}    Library.Library Keyword
-    ...    args=positional, name=value, ooops    status=FAIL
+    ...    args=positional, number=-1, ooops    status=FAIL

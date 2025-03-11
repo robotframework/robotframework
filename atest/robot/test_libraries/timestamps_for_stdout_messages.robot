@@ -13,8 +13,8 @@ Library adds timestamp as float
 Test's timestamps should be correct
     [Arguments]    ${micro}
     ${tc} =    Check Test Case    ${TESTNAME}
-    Known timestamp should be correct    ${tc.body[0].msgs[0]}    ${micro}
-    Current timestamp should be smaller than kw end time    ${tc.body[0]}
+    Known timestamp should be correct    ${tc[0, 0]}    ${micro}
+    Current timestamp should be smaller than kw end time    ${tc[0]}
 
 Known timestamp should be correct
     [Arguments]    ${msg}    ${micro}
@@ -23,5 +23,5 @@ Known timestamp should be correct
 
 Current timestamp should be smaller than kw end time
     [Arguments]    ${kw}
-    Check Log Message    ${kw.msgs[1]}    <b>Current</b>    INFO    html=True
-    Should Be True    $kw.end_time > $kw.msgs[1].timestamp
+    Check Log Message    ${kw[1]}    <b>Current</b>    INFO    html=True
+    Should Be True    $kw.end_time > $kw[1].timestamp

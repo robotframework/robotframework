@@ -31,13 +31,13 @@ IT = TypeVar('IT', bound='IfBranch|TryBranch')
 FW = TypeVar('FW', bound='ForIteration|WhileIteration')
 
 
-class Branches(BaseBranches['Keyword', 'For', 'While', 'If', 'Try', 'Var', 'Return',
-                            'Continue', 'Break', 'Message', 'Error', IT]):
+class Branches(BaseBranches['Keyword', 'For', 'While', 'Group', 'If', 'Try', 'Var',
+                            'Return', 'Continue', 'Break', 'Message', 'Error', IT]):
     __slots__ = ()
 
 
-class Iterations(BaseIterations['Keyword', 'For', 'While', 'If', 'Try', 'Var', 'Return',
-                                'Continue', 'Break', 'Message', 'Error', FW]):
+class Iterations(BaseIterations['Keyword', 'For', 'While', 'Group', 'If', 'Try', 'Var',
+                                'Return', 'Continue', 'Break', 'Message', 'Error', FW]):
     __slots__ = ()
 
 
@@ -226,6 +226,37 @@ class While(BodyItem):
             parts.append(f'on_limit={self.on_limit}')
         if self.on_limit_message is not None:
             parts.append(f'on_limit_message={self.on_limit_message}')
+        return '    '.join(parts)
+
+
+@Body.register
+class Group(BodyItem):
+    """Represents ``GROUP``."""
+    type = BodyItem.GROUP
+    body_class = Body
+    repr_args = ('name',)
+    __slots__ = ['name']
+
+    def __init__(self, name: str = '',
+                 parent: BodyItemParent = None):
+        self.name = name
+        self.parent = parent
+        self.body = ()
+
+    @setter
+    def body(self, body: 'Sequence[BodyItem|DataDict]') -> Body:
+        return self.body_class(self, body)
+
+    def visit(self, visitor: SuiteVisitor):
+        visitor.visit_group(self)
+
+    def to_dict(self) -> DataDict:
+        return {'type': self.type, 'name': self.name, 'body': self.body.to_dicts()}
+
+    def __str__(self) -> str:
+        parts = ['GROUP']
+        if self.name:
+            parts.append(self.name)
         return '    '.join(parts)
 
 

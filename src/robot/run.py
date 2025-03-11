@@ -31,13 +31,14 @@ that can be used programmatically. Other code is for internal usage.
 """
 
 import sys
+from threading import current_thread
 
 if __name__ == '__main__' and 'robot' not in sys.modules:
     import pythonpathsetter
 
 from robot.conf import RobotSettings
 from robot.model import ModelModifier
-from robot.output import LOGGER, pyloggingconf
+from robot.output import librarylogger, LOGGER, pyloggingconf
 from robot.reporting import ResultWriter
 from robot.running.builder import TestSuiteBuilder
 from robot.utils import Application, text
@@ -238,7 +239,6 @@ Options
                           pattern. Documentation is shown in `Test Details` and
                           also as a tooltip in `Statistics by Tag`. Pattern can
                           use `*`, `?` and `[]` as wildcards like --test.
-                          Documentation can contain formatting like --doc.
                           Examples: --tagdoc mytag:Example
                                     --tagdoc "owner-*:Original author"
     --tagstatlink pattern:link:title *  Add external links into `Statistics by
@@ -261,8 +261,8 @@ Options
                           all:     remove data from all keywords
                           passed:  remove data only from keywords in passed
                                    test cases and suites
-                          for:     remove passed iterations from for loops
-                          while:   remove passed iterations from while loops
+                          for:     remove passed iterations from FOR loops
+                          while:   remove passed iterations from WHILE loops
                           wuks:    remove all but the last failing keyword
                                    inside `BuiltIn.Wait Until Keyword Succeeds`
                           name:<pattern>:  remove data from keywords that match
@@ -341,6 +341,9 @@ Options
                           on:   always use colors
                           ansi: like `on` but use ANSI colors also on Windows
                           off:  disable colors altogether
+    --consolelinks auto|off  Control making paths to results files hyperlinks.
+                          auto: use links when colors are enabled (default)
+                          off: disable links unconditionally
  -K --consolemarkers auto|on|off  Show markers on the console when top level
                           keywords in a test case end. Values have same
                           semantics as with --consolecolors.
@@ -400,6 +403,17 @@ ROBOT_SYSLOG_LEVEL        Log level to use when writing to the syslog file.
 ROBOT_INTERNAL_TRACES     When set to any non-empty value, Robot Framework's
                           internal methods are included in error tracebacks.
 
+Return Codes
+============
+
+0                         All tests passed.
+1-249                     Returned number of tests failed.
+250                       250 or more failures.
+251                       Help or version information printed.
+252                       Invalid data or command line options.
+253                       Execution stopped by user.
+255                       Unexpected internal error.
+
 Examples
 ========
 
@@ -456,16 +470,17 @@ class RobotFramework(Application):
             old_max_assign_length = text.MAX_ASSIGN_LENGTH
             text.MAX_ERROR_LINES = settings.max_error_lines
             text.MAX_ASSIGN_LENGTH = settings.max_assign_length
+            librarylogger.LOGGING_THREADS[0] = current_thread().name
             try:
                 result = suite.run(settings)
             finally:
                 text.MAX_ERROR_LINES = old_max_error_lines
                 text.MAX_ASSIGN_LENGTH = old_max_assign_length
-            LOGGER.info("Tests execution ended. Statistics:\n%s"
-                        % result.suite.stat_message)
+                librarylogger.LOGGING_THREADS[0] = 'MainThread'
+            LOGGER.info(f"Tests execution ended. "
+                        f"Statistics:\n{result.suite.stat_message}")
             if settings.log or settings.report or settings.xunit:
-                writer = ResultWriter(settings.output if settings.log
-                                      else result)
+                writer = ResultWriter(settings.output if settings.log else result)
                 writer.write_results(settings.get_rebot_settings())
         return result.return_code
 

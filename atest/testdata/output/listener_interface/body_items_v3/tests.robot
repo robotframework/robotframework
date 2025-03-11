@@ -59,6 +59,16 @@ WHILE
         BREAK
     END
 
+WHILE with modified limit
+    [Documentation]    FAIL
+    ...    WHILE loop was aborted because it did not finish within the limit of 1 iterations. \
+    ...    Use the 'limit' argument to increase or remove the limit if needed.
+    VAR    ${x}    ${0}
+    WHILE     True    limit=1
+        VAR    ${x}    ${x + 1}
+    END
+    Should Be Equal    ${x}   ${2}
+
 VAR
     VAR    ${x}    value
     VAR    ${y}    value    scope=suite

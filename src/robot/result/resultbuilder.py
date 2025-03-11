@@ -13,8 +13,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from pathlib import Path
-
 from robot.errors import DataError
 from robot.model import SuiteVisitor
 from robot.utils import ET, ETSource, get_error_message
@@ -23,7 +21,6 @@ from .executionresult import CombinedResult, is_json_source, Result
 from .flattenkeywordmatcher import (create_flatten_message, FlattenByNameMatcher,
                                     FlattenByTypeMatcher, FlattenByTags)
 from .merger import Merger
-from .model import TestSuite
 from .xmlelementhandlers import XmlElementHandler
 
 
@@ -81,10 +78,12 @@ def _single_result(source, options):
 
 def _json_result(source, options):
     try:
-        suite = TestSuite.from_json(source)
+        return Result.from_json(source, rpa=options.get('rpa'))
+    except IOError as err:
+        error = err.strerror
     except Exception:
-        raise DataError(f"Reading JSON source '{source}' failed: {get_error_message()}")
-    return Result(source, suite, rpa=options.pop('rpa', None))
+        error = get_error_message()
+    raise DataError(f"Reading JSON source '{source}' failed: {error}")
 
 
 def _xml_result(source, options):
@@ -100,7 +99,7 @@ def _xml_result(source, options):
 
 
 class ExecutionResultBuilder:
-    """Builds :class:`~.executionresult.Result` objects based on output files.
+    """Builds :class:`~.executionresult.Result` objects based on XML output files.
 
     Instead of using this builder directly, it is recommended to use the
     :func:`ExecutionResult` factory method.
@@ -150,27 +149,27 @@ class ExecutionResultBuilder:
                 elem.clear()
 
     def _omit_keywords(self, context):
-        omitted_kws = 0
+        omitted_elements = {'kw', 'for', 'while', 'if', 'try'}
+        omitted = 0
         for event, elem in context:
             # Teardowns aren't omitted yet to allow checking suite teardown status.
             # They'll be removed later when not needed in `build()`.
-            omit = elem.tag in ('kw', 'for', 'if') and elem.get('type') != 'TEARDOWN'
+            omit = elem.tag in omitted_elements and elem.get('type') != 'TEARDOWN'
             start = event == 'start'
             if omit and start:
-                omitted_kws += 1
-            if not omitted_kws:
+                omitted += 1
+            if not omitted:
                 yield event, elem
             elif not start:
                 elem.clear()
             if omit and not start:
-                omitted_kws -= 1
+                omitted -= 1
 
     def _flatten_keywords(self, context, flattened):
         # Performance optimized. Do not change without profiling!
         name_match, by_name = self._get_matcher(FlattenByNameMatcher, flattened)
         type_match, by_type = self._get_matcher(FlattenByTypeMatcher, flattened)
         started = -1    # if 0 or more, we are flattening
-        tags = []
         containers = {'kw', 'for', 'while', 'iter', 'if', 'try'}
         inside = 0    # to make sure we don't read tags from a test
         for event, elem in context:
@@ -185,7 +184,6 @@ class ExecutionResultBuilder:
                         started = 0
                     elif by_type and type_match(tag):
                         started = 0
-                    tags = []
             else:
                 if tag in containers:
                     inside -= 1

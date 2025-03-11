@@ -8,7 +8,7 @@ Non-ASCII Log Messages
     Sleep    0.001
 
 Non-ASCII Return Value
-    ${msg} =    Evaluate    u'Fran\\xe7ais'
+    ${msg} =    Evaluate    'Fran\\xe7ais'
     Should Be Equal    ${msg}    Français
     Log    ${msg}
 

@@ -108,7 +108,7 @@ class TestSuiteBuilder:
         self.included_files = tuple(included_files or ())
         self.rpa = rpa
         self.allow_empty_suite = allow_empty_suite
-        # TODO: Remove in RF 7.
+        # TODO: Remove in RF 8.0.
         if included_suites != 'DEPRECATED':
             warnings.warn("'TestSuiteBuilder' argument 'included_suites' is deprecated "
                           "and has no effect. Use the new 'included_files' argument "
