@@ -192,12 +192,13 @@ Path as `pathlib.Path`
 
 read from fifo
     [Timeout]    0.250 second
-    IF   "os.name == 'posix'"
-        ${PIPE_NAME}=    Evaluate    "${PATH}/robot-fifo"
-        Run              mkfifo ${PIPE_NAME}
-    ELSE
+    ${os_name}=    Evaluate    os.name    os
+    IF    '${os_name}' == 'nt'
         ${PIPE_NAME}=    \\\\.\\pipe\\robot-pipe
         Run              powershell -Command New-Object System.IO.Pipes.NamedPipeServerStream('${PIPE_NAME}', [System.IO.Pipes.PipeDirection]::InOut)
+    ELSE
+        ${PIPE_NAME}=    Evaluate    "${PATH}/robot-fifo"
+        Run              mkfifo ${PIPE_NAME}
     END
     Get Binary File    ${PIPE_NAME}
 
