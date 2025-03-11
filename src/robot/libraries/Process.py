@@ -994,16 +994,12 @@ class ProcessConfiguration:
                   'shell': self.shell,
                   'cwd': self.cwd,
                   'env': self.env}
-        # Close file descriptors regardless the Python version:
-        # https://github.com/robotframework/robotframework/issues/2794
-        if not WINDOWS:
-            config['close_fds'] = True
         self._add_process_group_config(config)
         return config
 
     def _add_process_group_config(self, config):
         if hasattr(os, 'setsid'):
-            config['preexec_fn'] = os.setsid
+            config['start_new_session'] = True
         if hasattr(subprocess, 'CREATE_NEW_PROCESS_GROUP'):
             config['creationflags'] = subprocess.CREATE_NEW_PROCESS_GROUP
 
