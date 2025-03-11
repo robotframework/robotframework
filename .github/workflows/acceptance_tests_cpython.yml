@@ -6,6 +6,7 @@ on:
       - main
       - master
       - v*-maintenance
+      - keywords_in_process
     paths:
       - '.github/workflows/**'
       - 'src/**'
