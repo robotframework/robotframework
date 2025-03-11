@@ -525,13 +525,20 @@ class Process:
 
     def _wait(self, process):
         result = self._results[process]
-        # Popen.communicate() does not like closed PIPEs.
+        # Popen.communicate() does not like closed PIPEs. Due to us using
+        # a timeout, we only need to care about stdin.
         # https://github.com/python/cpython/issues/131064
-        for name in 'stdin', 'stdout', 'stderr':
-            stream = getattr(process, name)
-            if stream and stream.closed:
-                setattr(process, name, None)
-        result.stdout, result.stderr = process.communicate()
+        if process.stdin and process.stdin.closed:
+            process.stdin = None
+        # Use timeout with communicate() to allow Robot's timeouts to stop
+        # keyword execution. Process is left running in that case.
+        while True:
+            try:
+                result.stdout, result.stderr = process.communicate(timeout=0.1)
+            except subprocess.TimeoutExpired:
+                pass
+            else:
+                break
         result.rc = process.returncode
         result.close_streams()
         logger.info('Process completed.')

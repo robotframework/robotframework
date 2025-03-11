@@ -129,8 +129,8 @@ Read standard streams when they are already closed externally
     Should Be True    ${process.stdout.closed}
     Should Be True    ${process.stderr.closed}
     ${result} =    Wait For Process
-    Should Be Empty    ${result.stdout}
-    Should Be Empty    ${result.stderr}
+    Should Be Equal    ${result.stdout}    42
+    Should Be Equal    ${result.stderr}    ${EMPTY}
 
 Read standard streams when they are already closed externally and only one is PIPE
     [Documentation]    Popen.communicate() behavior with closed PIPEs is strange.
