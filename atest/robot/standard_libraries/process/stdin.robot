@@ -27,5 +27,5 @@ Stdin as `pathlib.Path`
 Stdin as text
     Check Test Case    ${TESTNAME}
 
-Stdin as stdout from other process
+Stdin as stdout from another process
     Check Test Case    ${TESTNAME}

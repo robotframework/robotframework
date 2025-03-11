@@ -5,25 +5,16 @@ Suite Setup      Run Tests    ${EMPTY}    standard_libraries/process/process_lib
 Resource         atest_resource.robot
 
 *** Test Cases ***
-Library Namespace should be global
+Library namespace should be global
     Check Test Case    ${TESTNAME}
 
 Error in exit code and stderr output
     Check Test Case    ${TESTNAME}
 
-Start And Wait Process
+Change current working directory
     Check Test Case    ${TESTNAME}
 
-Change Current Working Directory
-    Check Test Case    ${TESTNAME}
-
-Running a process in a shell
-    Check Test Case    ${TESTNAME}
-
-Input things to process
-    Check Test Case    ${TESTNAME}
-
-Assign process object to variable
+Run process in shell
     Check Test Case    ${TESTNAME}
 
 Get process id

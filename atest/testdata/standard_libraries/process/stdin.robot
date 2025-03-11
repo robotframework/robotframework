@@ -49,10 +49,9 @@ Stdin as text
     ${result} =    Run Process    python    -c    import sys; print(sys.stdin.read())    stdin=Hyvää päivää maailma!
     Should Be Equal    ${result.stdout}    Hyvää päivää maailma!
 
-Stdin as stdout from other process
-    Start Process    python    -c    print('Hello, world!')
-    ${process} =    Get Process Object
-    ${child} =    Run Process    python    -c    import sys; print(sys.stdin.read())    stdin=${process.stdout}
-    ${parent} =    Wait For Process
-    Should Be Equal   ${child.stdout}    Hello, world!\n
-    Should Be Equal   ${parent.stdout}    ${empty}
+Stdin as stdout from another process
+    ${process} =    Start Process    python    -c    print('Hello, world!')
+    ${result1} =    Run Process    python    -c    import sys; print(sys.stdin.read().upper())    stdin=${process.stdout}
+    ${result2} =    Wait For Process
+    Should Be Equal   ${result1.stdout}    HELLO, WORLD!\n
+    Should Be Equal   ${result2.stdout}    ${EMPTY}
