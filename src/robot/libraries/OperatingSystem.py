@@ -297,6 +297,7 @@ class OperatingSystem:
         return {'SYSTEM': 'locale' if PY_VERSION > (3, 10) else None,
                 'CONSOLE': CONSOLE_ENCODING}.get(encoding.upper(), encoding)
 
+    @rip
     def get_binary_file(self, path):
         """Returns the contents of a specified file.
 

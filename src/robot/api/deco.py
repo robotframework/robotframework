@@ -106,7 +106,7 @@ class run_in_its_own_process_decorator:
                 self._qToSubprocess.put(_subprocess_call(fun.__name__, args, kwargs))
                 while True:
                     try:
-                        response = self._qFromSubprocess.get(timeout=0.010)
+                        response = self._qFromSubprocess.get(timeout=None)
                         if response.response_type ==  responses.SUCCESS:
                             return response.value
                         elif response.response_type == responses.EXCEPTION:
