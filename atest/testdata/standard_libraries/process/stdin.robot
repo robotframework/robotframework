@@ -3,12 +3,18 @@ Resource           process_resource.robot
 
 *** Test Cases ***
 Stdin is NONE by default
-    ${process} =    Start Process    python    -c    import sys; print('Hello, world!')
+    ${process} =    Start Process    python    -c    print('Hello, world!')
     Should Be Equal    ${process.stdin}    ${None}
     ${result} =    Wait For Process
     Should Be Equal    ${result.stdout}    Hello, world!
 
 Stdin can be set to PIPE
+    ${process} =    Start Process    python    -c    import sys; print(sys.stdin.read())    stdin=PIPE
+    Call Method    ${process.stdin}    write    ${{b'Hello, world!'}}
+    ${result} =    Wait For Process
+    Should Be Equal    ${result.stdout}    Hello, world!
+
+Stdin PIPE can be closed
     ${process} =    Start Process    python    -c    import sys; print(sys.stdin.read())    stdin=PIPE
     Call Method    ${process.stdin}    write    ${{b'Hello, world!'}}
     Call Method    ${process.stdin}    close

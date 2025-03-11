@@ -9,6 +9,9 @@ Stdin is NONE by default
 Stdin can be set to PIPE
     Check Test Case    ${TESTNAME}
 
+Stdin PIPE can be closed
+    Check Test Case    ${TESTNAME}
+
 Stdin can be disabled explicitly
     Check Test Case    ${TESTNAME}
 
