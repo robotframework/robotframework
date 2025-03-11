@@ -18,6 +18,7 @@ import re
 import time
 from collections import OrderedDict
 from collections.abc import Sequence
+from typing import NoReturn
 
 from robot.api import logger, SkipExecution
 from robot.api.deco import keyword
@@ -502,7 +503,7 @@ class _Verify(_BuiltInBase):
         if set_tags:
             self.set_tags(*set_tags)
 
-    def fail(self, msg=None, *tags):
+    def fail(self, msg=None, *tags) -> NoReturn:
         """Fails the test with the given message and optionally alters its tags.
 
         The error message is specified using the ``msg`` argument.
@@ -528,7 +529,7 @@ class _Verify(_BuiltInBase):
         self._set_and_remove_tags(tags)
         raise AssertionError(msg) if msg is not None else AssertionError()
 
-    def fatal_error(self, msg=None):
+    def fatal_error(self, msg=None) -> NoReturn:
         """Stops the whole test execution.
 
         The test or suite where this keyword is used fails with the provided
@@ -2570,7 +2571,7 @@ class _RunKeyword(_BuiltInBase):
 
 class _Control(_BuiltInBase):
 
-    def skip(self, msg='Skipped with Skip keyword.'):
+    def skip(self, msg='Skipped with Skip keyword.') -> NoReturn:
         """Skips the rest of the current test.
 
         Skips the remaining keywords in the current test and sets the given
@@ -2873,7 +2874,7 @@ class _Control(_BuiltInBase):
         if self._is_true(condition):
             self.run_keyword_and_return(name, *args)
 
-    def pass_execution(self, message, *tags):
+    def pass_execution(self, message, *tags) -> NoReturn:
         """Skips rest of the current test, setup, or teardown with PASS status.
 
         This keyword can be used anywhere in the test data, but the place where
