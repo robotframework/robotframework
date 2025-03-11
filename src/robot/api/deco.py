@@ -41,6 +41,11 @@ Converter = Union[Callable[[Any], Any], Callable[[Any, Any], Any]]
 DocFormat = Literal['ROBOT', 'HTML', 'TEXT', 'REST']
 
 
+class responses(Enum):
+    SUCCESS = 1
+    EXCEPTION = 2
+    LOG = 3
+
 @dataclass
 class _subprocess_call:
     name: str
@@ -50,13 +55,16 @@ class _subprocess_call:
 
 @dataclass
 class _subprocess_response:
-    is_exception: bool
+    response_type: responses
     value: Any
 
 
 def _process_worker_for_decorator(libnameIn, classname,  qToSubprocess, qFromSubprocess):
     infra = importlib.import_module("robot.api.deco")
     infra.run_in_its_own_process_decorator._trunk = False
+    logger = importlib.import_module("robot.api.logger")
+    for item in {"trace", "debug", "console", "info", "warn", "error", "write"}:
+        setattr(logger, item, lambda *args, **kwargs: qFromSubprocess.put(_subprocess_response(response_type=responses.LOG, value=(item, args, kwargs))))
     m = importlib.import_module(libnameIn)
     if classname:
         m = getattr(m, classname)
@@ -64,9 +72,9 @@ def _process_worker_for_decorator(libnameIn, classname,  qToSubprocess, qFromSub
         try:
             call = qToSubprocess.get()
             result = getattr(m, call.name)(*call.args, **call.kwargs)
-            qFromSubprocess.put(_subprocess_response(is_exception=False, value=result))
+            qFromSubprocess.put(_subprocess_response(response_type=responses.SUCCESS, value=result))
         except Exception as e:
-            qFromSubprocess.put(_subprocess_response(is_exception=True, value=e))
+            qFromSubprocess.put(_subprocess_response(response_type=responses.EXCEPTION, value=e))
 
 
 class run_in_its_own_process_decorator:
@@ -94,10 +102,14 @@ class run_in_its_own_process_decorator:
                 while True:
                     try:
                         response = self._qFromSubprocess.get(timeout=0.01)
-                        if response.is_exception:
-                            raise response.value
-                        else:
-                            return response.value
+                        match response.response_type:
+                            case responses.SUCCESS:
+                                return response.value
+                            case responses.EXCEPTION:
+                                raise response.value
+                            case responses.LOG:
+                                msgType, args, kwargs = response.value
+                                getattr(robot.api.logger, msgType)(*args, **kwargs)
                     except queue.Empty:
                         pass
                     except robot.errors.TimeoutError:
