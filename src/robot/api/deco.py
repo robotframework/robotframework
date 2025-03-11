@@ -22,7 +22,7 @@ from functools import wraps
 from enum import Enum
 from dataclasses import dataclass
 import queue
-
+import robot.api.logger
 from typing import Any, Callable, Literal, Sequence, TypeVar, Union, overload
 
 from .interfaces import TypeHints
@@ -63,8 +63,12 @@ def _process_worker_for_decorator(libnameIn, classname,  qToSubprocess, qFromSub
     infra = importlib.import_module("robot.api.deco")
     infra.run_in_its_own_process_decorator._trunk = False
     logger = importlib.import_module("robot.api.logger")
-    for item in {"trace", "debug", "console", "info", "warn", "error", "write"}:
-        setattr(logger, item, lambda *args, **kwargs: qFromSubprocess.put(_subprocess_response(response_type=responses.LOG, value=(item, args, kwargs))))
+
+    for logfunction in ["trace", "debug", "console", "info", "warn", "error", "write"]:
+        def _worker(*args, **kwargs):
+            qFromSubprocess.put(_subprocess_response(response_type=responses.LOG, value=(logfunction, args, kwargs)))
+        setattr(logger, logfunction, _worker)
+
     m = importlib.import_module(libnameIn)
     if classname:
         m = getattr(m, classname)
@@ -108,8 +112,9 @@ class run_in_its_own_process_decorator:
                             case responses.EXCEPTION:
                                 raise response.value
                             case responses.LOG:
-                                msgType, args, kwargs = response.value
-                                getattr(robot.api.logger, msgType)(*args, **kwargs)
+                                (method, args, kwargs,) = response.value
+                                getattr(robot.api.logger, method)(*args, **kwargs)
+                                print((method, args, kwargs,))
                     except queue.Empty:
                         pass
                     except robot.errors.TimeoutError:
