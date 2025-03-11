@@ -94,10 +94,10 @@ class run_in_its_own_process_decorator:
                 while True:
                     try:
                         response = self._qFromSubprocess.get(timeout=0.01)
-                        if response.is_exception is False:
-                            return response.value
-                        else:
+                        if response.is_exception:
                             raise response.value
+                        else:
+                            return response.value
                     except queue.Empty:
                         pass
                     except robot.errors.TimeoutError:
