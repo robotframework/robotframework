@@ -41,3 +41,7 @@ Trailing Newline Is Removed Automatically
 
 It Is Possible To Start Background Processes
     Check Test Case    ${TESTNAME}
+
+check timeout of run command
+    Check Test Case    ${TESTNAME}    status=FAIL     message=Test timeout 250 milliseconds exceeded.
+    file_should_not_exist    ${TEMPDIR}${/}timeout.txt

@@ -83,6 +83,11 @@ It Is Possible To Start Background Processes
     Should Contain    ${output}    foo
     Should Contain    ${output}    bar
 
+check timeout of run command
+    [Timeout]    0.250 second
+    Run    python -c "import time; time.sleep(1); open('${TEMPDIR}${/}timeout.txt', 'w')"
+
+
 *** Keywords ***
 Run And Check RC
     [Arguments]    ${command}    ${expected}

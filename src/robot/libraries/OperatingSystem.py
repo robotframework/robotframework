@@ -160,6 +160,7 @@ class OperatingSystem:
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
     ROBOT_LIBRARY_VERSION = __version__
 
+    @rip
     def run(self, command):
         """Runs the given command in the system and returns the output.
 
