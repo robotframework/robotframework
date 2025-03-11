@@ -102,19 +102,21 @@ class run_in_its_own_process_decorator:
         @wraps(fun)
         def wrapper(*args, **kwargs):
             if self._trunk:
+                assert self._process.is_alive(), "Subprocess has died"
                 self._qToSubprocess.put(_subprocess_call(fun.__name__, args, kwargs))
                 while True:
                     try:
                         response = self._qFromSubprocess.get(timeout=0.01)
-                        match response.response_type:
-                            case responses.SUCCESS:
-                                return response.value
-                            case responses.EXCEPTION:
-                                raise response.value
-                            case responses.LOG:
-                                (method, args, kwargs,) = response.value
-                                getattr(robot.api.logger, method)(*args, **kwargs)
-                                print((method, args, kwargs,))
+                        if response.response_type ==  responses.SUCCESS:
+                            return response.value
+                        elif response.response_type == responses.EXCEPTION:
+                            raise response.value
+                        elif response.response_type == responses.LOG:
+                            (method, args, kwargs,) = response.value
+                            getattr(robot.api.logger, method)(*args, **kwargs)
+                            print((method, args, kwargs,))
+                        else:
+                            assert False, "Unknown response type"
                     except queue.Empty:
                         pass
                     except robot.errors.TimeoutError:
