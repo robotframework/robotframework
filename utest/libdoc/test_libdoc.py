@@ -4,8 +4,6 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from jsonschema import Draft202012Validator
-
 from robot.utils import PY_VERSION
 from robot.utils.asserts import assert_equal
 from robot.libdocpkg import LibraryDocumentation
@@ -18,10 +16,15 @@ get_text = HtmlToText().html_to_plain_text
 CURDIR = Path(__file__).resolve().parent
 DATADIR = (CURDIR / '../../atest/testdata/libdoc/').resolve()
 TEMPDIR = Path(os.getenv('TEMPDIR') or tempfile.gettempdir())
-VALIDATOR = Draft202012Validator(
-    json.loads((CURDIR / '../../doc/schema/libdoc.json').read_text(encoding='UTF-8'))
-)
 
+try:
+    from jsonschema import Draft202012Validator
+except ImportError:
+    VALIDATOR = None
+else:
+    VALIDATOR = Draft202012Validator(
+        json.loads((CURDIR / '../../doc/schema/libdoc.json').read_text(encoding='UTF-8'))
+    )
 try:
     from typing_extensions import TypedDict
 except ImportError:
@@ -42,6 +45,8 @@ def verify_keyword_short_doc(doc_format, doc_input, expected):
 
 
 def run_libdoc_and_validate_json(filename):
+    if not VALIDATOR:
+        raise unittest.SkipTest('jsonschema module is not available')
     library = DATADIR / filename
     json_spec = LibraryDocumentation(library).to_json()
     VALIDATOR.validate(instance=json.loads(json_spec))

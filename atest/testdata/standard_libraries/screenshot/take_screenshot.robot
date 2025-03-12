@@ -24,7 +24,7 @@ Basename May Be Defined
 Basename With Extension Turns Off Index Generation
     Repeat Keyword    3    Take Screenshot    xxx.jpg
     Repeat Keyword    2    Take Screenshot    yyy.jpeg
-    Screenshots Should Exist  ${OUTPUTDIR}    xxx.jpg    yyy.jpeg
+    Screenshots Should Exist    ${OUTPUTDIR}    xxx.jpg    yyy.jpeg
 
 Name as `pathlib.Path`
     Take Screenshot    ${{pathlib.Path('name.jpg')}}
@@ -35,7 +35,7 @@ Screenshot Width Can Be Given
     Screenshots Should Exist    ${OUTPUTDIR}    ${FIRST_SCREENSHOT}
 
 Basename With Non-existing Directories Fails
-    [Documentation]  FAIL Directory '${OUTPUTDIR}${/}non-existing' where to save the screenshot does not exist
+    [Documentation]    FAIL Directory '${OUTPUTDIR}${/}non-existing' where to save the screenshot does not exist
     Take Screenshot    ${OUTPUTDIR}${/}non-existing${/}foo
 
 Without Embedding

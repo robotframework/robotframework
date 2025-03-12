@@ -120,7 +120,7 @@ from .context import EXECUTION_CONTEXTS
 from .keywordimplementation import KeywordImplementation
 from .invalidkeyword import InvalidKeyword
 from .librarykeyword import LibraryKeyword
-from .model import (Break, Continue, Error, For, ForIteration, If, IfBranch, Keyword,
+from .model import (Break, Continue, Error, For, ForIteration, Group, If, IfBranch, Keyword,
                     Return, TestCase, TestSuite, Try, TryBranch, Var, While,
                     WhileIteration)
 from .resourcemodel import Import, ResourceFile, UserKeyword, Variable

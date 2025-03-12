@@ -6,8 +6,8 @@ Exit-on-failure is not initiated if test fails and skip-on-failure is active
     Run Tests    --exit-on-failure --skip-on-failure skip-on-failure --include skip-on-failure    running/skip/skip.robot
     Should Contain Tests    ${SUITE}
     ...    Skipped with --SkipOnFailure
-    ...    Skipped with --SkipOnFailure when Failure in Test Setup
-    ...    Skipped with --SkipOnFailure when Failure in Test Teardown
+    ...    Skipped with --SkipOnFailure when failure in setup
+    ...    Skipped with --SkipOnFailure when failure in teardown
 
 Exit-on-failure is not initiated if suite setup fails and skip-on-failure is active with all tests
     Run Tests    --exit-on-failure --skip-on-failure tag1 --variable SUITE_SETUP:Fail

@@ -26,15 +26,15 @@ Template can contain '=' without escaping
 
 Format String From Template File
     ${tc} =    Check Test Case    ${TESTNAME}
-    Check Reading Template Message    ${tc.kws[0].msgs[0]}    format_string_template.txt
+    Check Reading Template Message    ${tc[0, 0]}    format_string_template.txt
 
 Format String From Template Non-ASCII File
     ${tc} =    Check Test Case    ${TESTNAME}
-    Check Reading Template Message    ${tc.kws[0].msgs[0]}    format_string_nonasccii_template.txt
+    Check Reading Template Message    ${tc[0, 0]}    format_string_nonasccii_template.txt
 
 Format String From Trailling Whitespace Template File
     ${tc} =    Check Test Case    ${TESTNAME}
-    Check Reading Template Message    ${tc.kws[0].msgs[0]}    format_string_trailling_white_space_template.txt
+    Check Reading Template Message    ${tc[0, 0]}    format_string_trailling_white_space_template.txt
 
 Attribute access
     Check Test Case    ${TESTNAME}

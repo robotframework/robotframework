@@ -22,7 +22,7 @@ Variables in values
         Log    ${num}
         Log    Hello from for loop
         No Operation
-        Run Keyword If    ${num} in [2,6]    Log    Presidential Candidate!    WARN
+        Run Keyword If    ${num} in [2, 6]    Log    Presidential Candidate!    WARN
     END    # I can haz comments??!?
 
 Indentation is not required

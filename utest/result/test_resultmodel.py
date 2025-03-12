@@ -10,7 +10,11 @@ from io import StringIO, TextIOBase
 from pathlib import Path
 from xml.etree import ElementTree as ET
 
-from jsonschema import Draft202012Validator
+try:
+    from jsonschema import Draft202012Validator as JSONValidator
+except ImportError:
+    def JSONValidator(*a, **k):
+        raise unittest.SkipTest('jsonschema module is not available')
 
 from robot.model import Tags, BodyItem
 from robot.result import (Break, Continue, Error, ExecutionResult, For, If, IfBranch,
@@ -616,7 +620,7 @@ class TestToFromDictAndJson(unittest.TestCase):
     def setUpClass(cls):
         with open(CURDIR / '../../doc/schema/result_suite.json', encoding='UTF-8') as file:
             schema = json.load(file)
-        cls.validator = Draft202012Validator(schema=schema)
+        cls.validator = JSONValidator(schema=schema)
         cls.maxDiff = 2000
 
     def test_keyword(self):
@@ -770,7 +774,7 @@ class TestToFromDictAndJson(unittest.TestCase):
                      html=True, timestamp=now.isoformat())
 
     def test_test(self):
-        self._verify(TestCase(), name='', status='FAIL', body=[], elapsed_time=0)
+        self._verify(TestCase(), name='', id='t1', status='FAIL', body=[], elapsed_time=0)
 
     def test_testcase_structure(self):
         test = TestCase('TC', 'my doc', ['T1', 'T2'], '1 minute', 42)
@@ -782,6 +786,7 @@ class TestToFromDictAndJson(unittest.TestCase):
             body.create_keyword('K2', status='PASS')
         self._verify(test,
                      name='TC',
+                     id='t1',
                      status='FAIL',
                      doc='my doc',
                      tags=('T1', 'T2'),
@@ -805,19 +810,21 @@ class TestToFromDictAndJson(unittest.TestCase):
         suite.teardown.config(name='Teardown', args='a', status='PASS')
         suite.tests.create('T1', status='PASS').body.create_keyword('K', status='PASS')
         suite.suites.create('Child').tests.create('T2')
-        self._verify(suite,
-                     status='FAIL',
-                     name='Root',
-                     elapsed_time=0,
-                     setup={'name': 'Setup', 'status': 'PASS', 'elapsed_time': 0},
-                     teardown={'name': 'Teardown', 'args': ('a',), 'status': 'PASS',
-                               'elapsed_time': 0},
-                     tests=[{'name': 'T1', 'status': 'PASS', 'elapsed_time': 0,
-                             'body': [{'name': 'K', 'status': 'PASS', 'elapsed_time': 0}]}],
-                     suites=[{'name': 'Child', 'status': 'FAIL', 'elapsed_time': 0,
-                              'tests': [{'name': 'T2', 'status': 'FAIL', 'elapsed_time': 0, 'body': []}]
-                            }],
-                     )
+        self._verify(
+            suite,
+            status='FAIL',
+            name='Root',
+            id='s1',
+            elapsed_time=0,
+            setup={'name': 'Setup', 'status': 'PASS', 'elapsed_time': 0},
+            teardown={'name': 'Teardown', 'args': ('a',), 'status': 'PASS',
+                      'elapsed_time': 0},
+            tests=[{'name': 'T1', 'id': 's1-t1', 'status': 'PASS', 'elapsed_time': 0,
+                    'body': [{'name': 'K', 'status': 'PASS', 'elapsed_time': 0}]}],
+            suites=[{'name': 'Child', 'id': 's1-s1', 'status': 'FAIL', 'elapsed_time': 0,
+                     'tests': [{'name': 'T2', 'id': 's1-s1-t1', 'status': 'FAIL',
+                                'elapsed_time': 0, 'body': []}]}]
+        )
 
     def _verify(self, obj, **expected):
         data = obj.to_dict()
@@ -977,7 +984,7 @@ class TestJsonResult(unittest.TestCase):
         cls.path.write_text(cls.data, encoding='UTF-8')
         with open(CURDIR / '../../doc/schema/result.json', encoding='UTF-8') as file:
             schema = json.load(file)
-        cls.validator = Draft202012Validator(schema=schema)
+        cls.validator = JSONValidator(schema=schema)
 
     def test_json_string(self):
         self._verify(self.data)
@@ -995,7 +1002,8 @@ class TestJsonResult(unittest.TestCase):
 
     def test_suite_data_only(self):
         data = json.loads(self.data)['suite']
-        self._verify(json.dumps(data), full=False, generator='unknown')
+        self._verify(json.dumps(data), full=False, generator='unknown',
+                     generation_time=None)
 
     def test_to_json(self):
         result = ExecutionResult(self.data)
@@ -1008,13 +1016,16 @@ class TestJsonResult(unittest.TestCase):
         assert_equal(data['rpa'], False)
         assert_equal(data['suite'], {
             'name': 'S',
-            'tests': [{'name': 'T1', 'tags': ['tag'],
-                       'body': [{'name': 'Këüẅörd',
-                                 'status': 'PASS', 'elapsed_time': 0.123,
-                                 'start_time': '2023-12-18T22:35:12.345678'}],
-                       'status': 'PASS', 'elapsed_time': 0.123},
-                      {'name': 'T2', 'body': [], 'status': 'FAIL', 'elapsed_time': 0.01},
-                      {'name': 'T3', 'body': [], 'status': 'SKIP', 'elapsed_time': 0.0}],
+            'id': 's1',
+            'tests': [
+                {'name': 'T1', 'id': 's1-t1', 'tags': ['tag'],
+                 'body': [{'name': 'Këüẅörd',
+                           'status': 'PASS', 'elapsed_time': 0.123,
+                           'start_time': '2023-12-18T22:35:12.345678'}],
+                 'status': 'PASS', 'elapsed_time': 0.123},
+                {'name': 'T2', 'id': 's1-t2', 'body': [], 'status': 'FAIL', 'elapsed_time': 0.01},
+                {'name': 'T3', 'id': 's1-t3', 'body': [], 'status': 'SKIP', 'elapsed_time': 0.0}
+            ],
             'status': 'FAIL', 'elapsed_time': 0.133
         })
         assert_equal(data['statistics'], {
@@ -1028,19 +1039,25 @@ class TestJsonResult(unittest.TestCase):
 
     def test_to_json_roundtrip(self):
         result = ExecutionResult(self.data)
-        generator = get_full_version('Rebot')
-        self._verify(result.to_json(), generator=generator)
-        self._verify(result.to_json(include_statistics=False), generator=generator)
-        self._verify(result.to_json().replace('"rpa":false', '"rpa":true'),
-                     generator=generator, rpa=True)
+        for json_data in (result.to_json(),
+                          result.to_json(include_statistics=False),
+                          result.to_json().replace('"rpa":false', '"rpa":true')):
+            data = json.loads(json_data)
+            self._verify(json_data,
+                         generator=get_full_version('Rebot'),
+                         generation_time=datetime.fromisoformat(data['generated']),
+                         rpa=data['rpa'])
 
-    def _verify(self, source, full=True, generator='Unit tests', rpa=False):
+    def _verify(self, source, full=True, generator='Unit tests',
+                generation_time=datetime(2024, 9, 21, 21, 49, 12, 345678),
+                rpa=False):
         execution_result = ExecutionResult(source)
         if isinstance(source, TextIOBase):
             source.seek(0)
         result_from_json = Result.from_json(source)
         for result in execution_result, result_from_json:
             assert_equal(result.generator, generator)
+            assert_equal(result.generation_time, generation_time)
             assert_equal(result.rpa, rpa)
             assert_equal(result.suite.rpa, rpa)
             assert_equal(result.suite.name, 'S')

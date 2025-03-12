@@ -196,7 +196,7 @@ class TestLogger(unittest.TestCase):
         listener = LoggerMock()
         lib_listener = LoggerMock()
         other = LoggerMock()
-        logger.register_xml_logger(xml)
+        logger.register_output_file(xml)
         logger.register_listeners(listener, lib_listener)
         logger.register_logger(other)
         assert_equal([proxy.logger for proxy in logger.start_loggers if not isinstance(proxy, LoggerApi)],

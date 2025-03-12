@@ -10,4 +10,4 @@ Subsequent tests are not executed after `Fatal Error` keyword has been used
     Check Test Case    ${TESTNAME}
 
 Suite teardown is executed after `Fatal Error` keyword
-    Check Log Message    ${SUITE.teardown.msgs[0]}    AssertionError    FAIL
+    Check Log Message    ${SUITE.teardown[0]}    AssertionError    FAIL

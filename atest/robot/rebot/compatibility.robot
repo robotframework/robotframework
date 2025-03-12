@@ -21,9 +21,9 @@ Suite only
 Message directly under test
     Run Rebot And Validate Statistics    rebot/issue-3762.xml      1      0
     ${tc} =    Check Test Case    test A
-    Check Log Message    ${tc.body[0]}            Hi from test          WARN
-    Check Log Message    ${tc.body[1].body[0]}    Hi from keyword       WARN
-    Check Log Message    ${tc.body[2]}            Hi from test again    INFO
+    Check Log Message    ${tc[0]}       Hi from test          WARN
+    Check Log Message    ${tc[1, 0]}    Hi from keyword       WARN
+    Check Log Message    ${tc[2]}       Hi from test again    INFO
 
 *** Keywords ***
 Run Rebot And Validate Statistics

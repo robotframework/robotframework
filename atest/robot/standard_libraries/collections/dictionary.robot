@@ -18,9 +18,9 @@ Set To Dictionary With **kwargs
 
 Remove From Dictionary
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    Removed item with key 'b' and value '2'.
-    Check Log Message    ${tc.kws[0].msgs[1]}    Key 'x' not found.
-    Check Log Message    ${tc.kws[0].msgs[2]}    Key '2' not found.
+    Check Log Message    ${tc[0, 0]}    Removed item with key 'b' and value '2'.
+    Check Log Message    ${tc[0, 1]}    Key 'x' not found.
+    Check Log Message    ${tc[0, 2]}    Key '2' not found.
 
 Keep In Dictionary
     Check Test Case    ${TEST NAME}
@@ -72,17 +72,17 @@ Log Dictionary With Different Log Levels
     ...    a: 1
     ...    b: 2
     ...    c:
-    Check Log Message    ${tc.kws[0].msgs[0]}    ${expected}    INFO
-    Should Be Empty    ${tc.kws[1].msgs}
-    Check Log Message    ${tc.kws[2].msgs[0]}    ${expected}    WARN
-    Check Log Message    ${tc.kws[3].msgs[0]}    ${expected}    DEBUG
-    Check Log Message    ${tc.kws[4].msgs[0]}    ${expected}    INFO
+    Check Log Message    ${tc[0, 0]}    ${expected}    INFO
+    Should Be Empty      ${tc[1].body}
+    Check Log Message    ${tc[2, 0]}    ${expected}    WARN
+    Check Log Message    ${tc[3, 0]}    ${expected}    DEBUG
+    Check Log Message    ${tc[4, 0]}    ${expected}    INFO
 
 Log Dictionary With Different Dictionaries
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    Dictionary is empty.
-    Check Log Message    ${tc.kws[1].msgs[0]}    Dictionary has one item:\na: 1
-    Check Log Message    ${tc.kws[3].msgs[0]}    Dictionary size is 3 and it contains following items:\nTrue: xxx\nfoo: []\n(1, 2, 3): 3.14
+    Check Log Message    ${tc[0, 0]}    Dictionary is empty.
+    Check Log Message    ${tc[1, 0]}    Dictionary has one item:\na: 1
+    Check Log Message    ${tc[3, 0]}    Dictionary size is 3 and it contains following items:\nTrue: xxx\nfoo: []\n(1, 2, 3): 3.14
 
 Pop From Dictionary Without Default
     Check Test Case    ${TEST NAME}

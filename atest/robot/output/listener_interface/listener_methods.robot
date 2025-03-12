@@ -47,8 +47,8 @@ Keyword Status
 Executing Keywords from Listeners
     Run Tests    --listener listeners.KeywordExecutingListener    misc/pass_and_fail.robot
     ${tc}=    Get Test Case    Pass
-    Check Log Message    ${tc.kws[0].msgs[0]}    Start Pass
-    Check Log Message    ${tc.kws[4].msgs[0]}    End Pass
+    Check Log Message    ${tc[0, 0]}    Start Pass
+    Check Log Message    ${tc[4, 0]}    End Pass
 
 Test Template
     ${listener} =    Normalize Path    ${LISTENER DIR}/verify_template_listener.py

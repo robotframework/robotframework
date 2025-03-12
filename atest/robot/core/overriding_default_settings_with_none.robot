@@ -26,11 +26,11 @@ Overriding Test Template
 
 Overriding Test Timeout
     ${tc}=  Check Test Case  ${TESTNAME}
-    Check Log Message  ${tc.body[0].msgs[0]}  Slept 123 milliseconds.
+    Check Log Message  ${tc.body[0][0]}  Slept 123 milliseconds.
 
 Overriding Test Timeout from Command Line
     ${tc}=  Check Test Case  ${TESTNAME}
-    Check Log Message  ${tc.body[0].msgs[0]}  Slept 123 milliseconds.
+    Check Log Message  ${tc.body[0][0]}  Slept 123 milliseconds.
 
 Overriding Default Tags
     ${tc}=  Check Test Case  ${TESTNAME}

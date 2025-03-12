@@ -131,6 +131,16 @@ a {
   padding-right: 15px;
 }
 
+#language-container svg {
+  width: 20px;
+  height: 20px;
+}
+
+#language-container svg path {
+  stroke: var(--text-color);
+  fill: var(--background-color);
+}
+
 #language-container ul {
   list-style: none;
   margin: 0;
@@ -476,6 +486,15 @@ input.hamburger-menu:checked ~ span.hamburger-menu-3 {
   .shortcuts {
     max-width: 100vw;
     overscroll-behavior: none;
+  }
+
+  #language-container {
+    right: 50px;
+    width: 100px;
+  }
+
+  #language-container button {
+    cursor: pointer;
   }
 }
 

@@ -62,9 +62,10 @@ class BodyRunner:
             raise ExecutionFailures(errors)
 
     def _handle_skip_with_templates(self, errors, result):
-        if len(result.body) == 1 or not any(e.skip for e in errors):
+        iterations = result.body.filter(messages=False)
+        if len(iterations) < 2 or not any(e.skip for e in errors):
             return errors
-        if all(item.skipped for item in result.body):
+        if all(i.skipped for i in iterations):
             raise ExecutionFailed('All iterations skipped.', skip=True)
         return [e for e in errors if not e.skip]
 
@@ -461,6 +462,36 @@ class WhileRunner:
         except Exception:
             msg = get_error_message()
             raise DataError(f'Invalid WHILE loop condition: {msg}')
+
+
+class GroupRunner:
+
+    def __init__(self, context, run=True, templated=False):
+        self._context = context
+        self._run = run
+        self._templated = templated
+
+    def run(self, data, result):
+        if self._run:
+            error = self._initialize(data, result)
+            run = error is None
+        else:
+            error = None
+            run = False
+        with StatusReporter(data, result, self._context, run=run):
+            runner = BodyRunner(self._context, run, self._templated)
+            runner.run(data, result)
+            if error:
+                raise error
+
+    def _initialize(self, data, result):
+        if data.error:
+            return DataError(data.error, syntax=True)
+        try:
+            result.name = self._context.variables.replace_string(result.name)
+        except DataError as err:
+            return err
+        return None
 
 
 class IfRunner:

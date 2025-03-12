@@ -11,9 +11,9 @@ Catenate
 
 Comment
     ${tc} =    Check Test Case    ${TEST NAME}
-    Should Be Empty    ${tc.kws[0].msgs}
-    Should Be Empty    ${tc.kws[1].msgs}
-    Should Be Empty    ${tc.kws[2].msgs}
+    Should Be Empty    ${tc[0].body}
+    Should Be Empty    ${tc[1].body}
+    Should Be Empty    ${tc[2].body}
 
 Regexp Escape
     Check Test Case    ${TEST NAME}

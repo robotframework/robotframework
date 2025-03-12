@@ -42,6 +42,7 @@ class TestSuite(ModelObject, Generic[KW, TC]):
     Extended by :class:`robot.running.model.TestSuite` and
     :class:`robot.result.model.TestSuite`.
     """
+    type = 'SUITE'
     # FIXME: Type Ignore declarations: Typevars only accept subclasses of the bound class
     # assigning `Type[KW]` to `Keyword` results in an error. In RF 7 the class should be
     # made impossible to instantiate directly, and the assignments can be replaced with

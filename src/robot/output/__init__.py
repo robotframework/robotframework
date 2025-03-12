@@ -19,7 +19,8 @@ Not part of the public API, and also subject to change in the future when
 test execution is refactored.
 """
 
-from .output import Output
 from .logger import LOGGER
+from .loggerhelper import LEVELS, Message
+from .loglevel import LogLevel
+from .output import Output
 from .xmllogger import XmlLogger
-from .loggerhelper import IsLogged, LEVELS, Message

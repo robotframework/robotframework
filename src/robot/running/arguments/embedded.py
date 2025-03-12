@@ -76,7 +76,7 @@ class EmbeddedArgumentParser:
     _variable_pattern = r'\$\{[^\}]+\}'
 
     def parse(self, string: str) -> 'EmbeddedArguments|None':
-        name_parts = ['^']
+        name_parts = []
         args = []
         custom_patterns = {}
         after = string
@@ -86,11 +86,11 @@ class EmbeddedArgumentParser:
             if is_custom:
                 custom_patterns[arg] = pattern
                 pattern = self._format_custom_regexp(pattern)
-            name_parts.extend([re.escape(match.before), f'({pattern})'])
+            name_parts.extend([re.escape(match.before), '(', pattern, ')'])
             after = match.after
         if not args:
             return None
-        name_parts.extend([re.escape(after), '$'])
+        name_parts.append(re.escape(after))
         name = self._compile_regexp(''.join(name_parts))
         return EmbeddedArguments(name, args, custom_patterns)
 

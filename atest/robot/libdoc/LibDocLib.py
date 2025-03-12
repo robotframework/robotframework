@@ -5,7 +5,10 @@ import shlex
 from pathlib import Path
 from subprocess import run, PIPE, STDOUT
 
-from jsonschema import Draft202012Validator
+try:
+    from jsonschema import Draft202012Validator as JSONValidator
+except ImportError:
+    JSONValidator = None
 from xmlschema import XMLSchema
 
 from robot.api import logger
@@ -21,8 +24,13 @@ class LibDocLib:
     def __init__(self, interpreter=None):
         self.interpreter = interpreter
         self.xml_schema = XMLSchema(str(ROOT/'doc/schema/libdoc.xsd'))
+        self.json_schema = self._load_json_schema()
+
+    def _load_json_schema(self):
+        if not JSONValidator:
+            return None
         with open(ROOT/'doc/schema/libdoc.json', encoding='UTF-8') as f:
-            self.json_schema = Draft202012Validator(json.load(f))
+            return JSONValidator(json.load(f))
 
     @property
     def libdoc(self):
@@ -60,6 +68,8 @@ class LibDocLib:
         self.xml_schema.validate(path)
 
     def validate_json_spec(self, path):
+        if not self.json_schema:
+            raise RuntimeError('jsonschema module is not installed!')
         with open(path, encoding='UTF-8') as f:
             self.json_schema.validate(json.load(f))
 

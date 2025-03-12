@@ -41,7 +41,7 @@ If failing in else keyword
 
 Expression evaluation time is included in elapsed time
     ${tc} =    Check Test Case    ${TESTNAME}
-    Elapsed Time Should Be Valid    ${tc.body[0].elapsed_time}            minimum=0.2
-    Elapsed Time Should Be Valid    ${tc.body[0].body[0].elapsed_time}    minimum=0.1
-    Elapsed Time Should Be Valid    ${tc.body[0].body[1].elapsed_time}    minimum=0.1
-    Elapsed Time Should Be Valid    ${tc.body[0].body[2].elapsed_time}    maximum=1.0
+    Elapsed Time Should Be Valid    ${tc[0].elapsed_time}       minimum=0.2
+    Elapsed Time Should Be Valid    ${tc[0, 0].elapsed_time}    minimum=0.1
+    Elapsed Time Should Be Valid    ${tc[0, 1].elapsed_time}    minimum=0.1
+    Elapsed Time Should Be Valid    ${tc[0, 2].elapsed_time}    maximum=1.0

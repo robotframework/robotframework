@@ -42,6 +42,7 @@ Format in XML
 
 Format in JSON RAW
     [Template]    Test Format in JSON
+    [Tags]    require-jsonschema
     ${RAW DOC}    TEXT     -F TEXT --specdocformat rAw    DocFormat.py
     ${RAW DOC}    ROBOT    --docfor RoBoT -s RAW          DocFormatHtml.py
     ${RAW DOC}    HTML     -s raw                         DocFormatHtml.py
@@ -55,6 +56,7 @@ Format in LIBSPEC
 
 Format in JSON
     [Template]    Test Format in JSON
+    [Tags]    require-jsonschema
     <p>${HTML DOC}</p>    HTML    --format jSoN --specdocformat hTML    DocFormat.py
     <p>${HTML DOC}</p>    HTML    --format jSoN                         DocFormat.py
     <p>${HTML DOC}</p>    HTML    --docfor RoBoT -f JSON -s HTML        DocFormatHtml.py
@@ -68,6 +70,7 @@ Format from XML spec
 
 Format from JSON RAW spec
     [Template]    NONE
+    [Tags]    require-jsonschema
     Test Format In JSON    ${RAW DOC}    ROBOT    -F Robot -s RAW    lib=DocFormat.py
     Copy File    ${OUTJSON}    ${OUTBASE}-2.json
     Test Format In JSON    <p>${HTML DOC}</p>    HTML    lib=${OUTBASE}-2.json
@@ -80,6 +83,7 @@ Format from LIBSPEC spec
 
 Format from JSON spec
     [Template]    NONE
+    [Tags]    require-jsonschema
     Test Format In JSON    <p>${HTML DOC}</p>    HTML    -F Robot    lib=DocFormat.py
     Copy File    ${OUTJSON}    ${OUTBASE}-2.json
     Test Format In JSON    <p>${HTML DOC}</p>    HTML    lib=${OUTBASE}-2.json

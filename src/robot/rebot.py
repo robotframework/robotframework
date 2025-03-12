@@ -182,7 +182,6 @@ Options
                           pattern. Documentation is shown in `Test Details` and
                           also as a tooltip in `Statistics by Tag`. Pattern can
                           use `*`, `?` and `[]` as wildcards like --test.
-                          Documentation can contain formatting like --doc.
                           Examples: --tagdoc mytag:Example
                                     --tagdoc "owner-*:Original author"
     --tagstatlink pattern:link:title *  Add external links into `Statistics by
@@ -205,8 +204,8 @@ Options
                           all:     remove data from all keywords
                           passed:  remove data only from keywords in passed
                                    test cases and suites
-                          for:     remove passed iterations from for loops
-                          while:   remove passed iterations from while loops
+                          for:     remove passed iterations from FOR loops
+                          while:   remove passed iterations from WHILE loops
                           wuks:    remove all but the last failing keyword
                                    inside `BuiltIn.Wait Until Keyword Succeeds`
                           name:<pattern>:  remove data from keywords that match

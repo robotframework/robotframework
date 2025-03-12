@@ -421,6 +421,9 @@
                 "$ref": "#/definitions/While"
               },
               {
+                "$ref": "#/definitions/Group"
+              },
+              {
                 "$ref": "#/definitions/If"
               },
               {
@@ -451,8 +454,7 @@
       "required": [
         "elapsed_time",
         "status",
-        "type",
-        "body"
+        "type"
       ],
       "additionalProperties": false
     },
@@ -495,6 +497,9 @@
                 "$ref": "#/definitions/While"
               },
               {
+                "$ref": "#/definitions/Group"
+              },
+              {
                 "$ref": "#/definitions/If"
               },
               {
@@ -530,8 +535,7 @@
       },
       "required": [
         "elapsed_time",
-        "status",
-        "body"
+        "status"
       ],
       "additionalProperties": false
     },
@@ -584,6 +588,9 @@
                 "$ref": "#/definitions/While"
               },
               {
+                "$ref": "#/definitions/Group"
+              },
+              {
                 "$ref": "#/definitions/If"
               },
               {
@@ -614,8 +621,7 @@
       "required": [
         "elapsed_time",
         "status",
-        "type",
-        "body"
+        "type"
       ],
       "additionalProperties": false
     },
@@ -658,6 +664,9 @@
                 "$ref": "#/definitions/While"
               },
               {
+                "$ref": "#/definitions/Group"
+              },
+              {
                 "$ref": "#/definitions/If"
               },
               {
@@ -693,8 +702,89 @@
       },
       "required": [
         "elapsed_time",
-        "status",
-        "body"
+        "status"
+      ],
+      "additionalProperties": false
+    },
+    "Group": {
+      "title": "Group",
+      "type": "object",
+      "properties": {
+        "elapsed_time": {
+          "title": "Elapsed Time",
+          "type": "number"
+        },
+        "status": {
+          "title": "Status",
+          "type": "string"
+        },
+        "start_time": {
+          "title": "Start Time",
+          "type": "string",
+          "format": "date-time"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "body": {
+          "title": "Body",
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions/Keyword"
+              },
+              {
+                "$ref": "#/definitions/For"
+              },
+              {
+                "$ref": "#/definitions/While"
+              },
+              {
+                "$ref": "#/definitions/Group"
+              },
+              {
+                "$ref": "#/definitions/If"
+              },
+              {
+                "$ref": "#/definitions/Try"
+              },
+              {
+                "$ref": "#/definitions/Var"
+              },
+              {
+                "$ref": "#/definitions/Break"
+              },
+              {
+                "$ref": "#/definitions/Continue"
+              },
+              {
+                "$ref": "#/definitions/Return"
+              },
+              {
+                "$ref": "#/definitions/Error"
+              },
+              {
+                "$ref": "#/definitions/Message"
+              }
+            ]
+          }
+        },
+        "type": {
+          "title": "Type",
+          "default": "GROUP",
+          "const": "GROUP",
+          "type": "string"
+        }
+      },
+      "required": [
+        "elapsed_time",
+        "status"
       ],
       "additionalProperties": false
     },
@@ -734,6 +824,9 @@
                 "$ref": "#/definitions/While"
               },
               {
+                "$ref": "#/definitions/Group"
+              },
+              {
                 "$ref": "#/definitions/If"
               },
               {
@@ -769,8 +862,7 @@
       },
       "required": [
         "elapsed_time",
-        "status",
-        "body"
+        "status"
       ],
       "additionalProperties": false
     },
@@ -829,6 +921,9 @@
                 "$ref": "#/definitions/WhileIteration"
               },
               {
+                "$ref": "#/definitions/Group"
+              },
+              {
                 "$ref": "#/definitions/If"
               },
               {
@@ -864,8 +959,7 @@
       },
       "required": [
         "elapsed_time",
-        "status",
-        "body"
+        "status"
       ],
       "additionalProperties": false
     },
@@ -912,6 +1006,9 @@
                 "$ref": "#/definitions/While"
               },
               {
+                "$ref": "#/definitions/Group"
+              },
+              {
                 "$ref": "#/definitions/If"
               },
               {
@@ -948,8 +1045,7 @@
       "required": [
         "elapsed_time",
         "status",
-        "assign",
-        "body"
+        "assign"
       ],
       "additionalProperties": false
     },
@@ -1022,6 +1118,9 @@
                 "$ref": "#/definitions/While"
               },
               {
+                "$ref": "#/definitions/Group"
+              },
+              {
                 "$ref": "#/definitions/If"
               },
               {
@@ -1060,8 +1159,7 @@
         "status",
         "assign",
         "flavor",
-        "values",
-        "body"
+        "values"
       ],
       "additionalProperties": false
     },
@@ -1148,6 +1246,9 @@
                 "$ref": "#/definitions/While"
               },
               {
+                "$ref": "#/definitions/Group"
+              },
+              {
                 "$ref": "#/definitions/If"
               },
               {
@@ -1207,6 +1308,10 @@
           "title": "Name",
           "type": "string"
         },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
         "doc": {
           "title": "Doc",
           "type": "string"
@@ -1255,6 +1360,9 @@
                 "$ref": "#/definitions/While"
               },
               {
+                "$ref": "#/definitions/Group"
+              },
+              {
                 "$ref": "#/definitions/If"
               },
               {
@@ -1276,8 +1384,7 @@
       "required": [
         "elapsed_time",
         "status",
-        "name",
-        "body"
+        "name"
       ],
       "additionalProperties": false
     },
@@ -1304,6 +1411,10 @@
         },
         "name": {
           "title": "Name",
+          "type": "string"
+        },
+        "id": {
+          "title": "Id",
           "type": "string"
         },
         "doc": {

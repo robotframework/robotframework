@@ -229,7 +229,9 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  | * `tags`: `Keyword tags`_ as a list of strings.                |
    |                  |                  | * `source`: An absolute path of the file where the keyword was |
    |                  |                  |   used. New in RF 4.0.                                         |
-   |                  |                  | * `lineno`: Line where the keyword was used. New in RF 4.0.    |
+   |                  |                  | * `lineno`: Line where the keyword was used. Typically an      |
+   |                  |                  |   integer, but can be `None` if a keyword has been executed by |
+   |                  |                  |   a listener. New in RF 4.0.                                   |
    |                  |                  | * `status`: Initial keyword status. `NOT RUN` if keyword is    |
    |                  |                  |   not executed (e.g. due to an earlier failure), `NOT SET`     |
    |                  |                  |   otherwise. New in RF 4.0.                                    |
@@ -527,6 +529,7 @@ and in the API docs of the optional ListenerV3_ base class.
    | start_if_branch,      |                  |                                                                    |
    | start_try,            |                  |                                                                    |
    | start_try_branch,     |                  |                                                                    |
+   | start_group,          |                  |                                                                    |
    | start_var,            |                  |                                                                    |
    | start_continue,       |                  |                                                                    |
    | start_break,          |                  |                                                                    |
@@ -540,6 +543,7 @@ and in the API docs of the optional ListenerV3_ base class.
    | end_if_branch,        |                  |                                                                    |
    | end_try,              |                  |                                                                    |
    | end_try_branch,       |                  |                                                                    |
+   | end_group,            |                  |                                                                    |
    | end_var,              |                  |                                                                    |
    | end_continue,         |                  |                                                                    |
    | end_break,            |                  |                                                                    |

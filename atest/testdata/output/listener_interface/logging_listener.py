@@ -1,5 +1,6 @@
 import logging
 from robot.api import logger
+from robot.libraries.BuiltIn import BuiltIn
 
 
 ROBOT_LISTENER_API_VERSION = 2
@@ -25,6 +26,12 @@ def get_logging_listener_method(name):
             message = name
         logging.info(message)
         logger.warn(message)
+        # `set_xxx_variable` methods log normally, but they shouldn't log
+        # if they are used by a listener when no keyword is started.
+        if name == 'start_suite':
+            BuiltIn().set_suite_variable('${SUITE}', 'value')
+        if name == 'start_test':
+            BuiltIn().set_test_variable('${TEST}', 'value')
         RECURSION = False
 
     return listener_method

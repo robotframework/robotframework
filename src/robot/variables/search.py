@@ -17,12 +17,11 @@ import re
 from typing import Iterator, Sequence
 
 from robot.errors import VariableError
-from robot.utils import is_string
 
 
 def search_variable(string: str, identifiers: Sequence[str] = '$@&%*',
                     ignore_errors: bool = False) -> 'VariableMatch':
-    if not (is_string(string) and '{' in string):
+    if not (isinstance(string, str) and '{' in string):
         return VariableMatch(string)
     return _search_variable(string, identifiers, ignore_errors)
 

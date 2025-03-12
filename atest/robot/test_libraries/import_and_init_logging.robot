@@ -5,9 +5,9 @@ Resource        atest_resource.robot
 
 *** Test Cases ***
 Test case should not get import/init messages
-    ${tc} =  Check test case  No import/init time messages here
-    Should be empty  ${tc.kws[0].msgs}
-    Should be empty  ${tc.kws[1].msgs}
+    ${tc} =    Check test case    No import/init time messages here
+    Should be empty    ${tc[0].messages}
+    Should be empty    ${tc[1].messages}
 
 Python library logging at import via stdout and stderr
     Syslog Should Contain  | WARN \ | Warning via stdout in import\n
@@ -36,8 +36,8 @@ Python library logging in import via logging API
     Stderr Should Contain  [ WARN ] Warning via API in init 2\n
 
 Importing and initializing libraries in init
-    ${tc} =  Check Test Case  ${TEST NAME}
-    Check log message  ${tc.kws[0].msgs[0]}  Keyword from library with importing __init__.
-    Check log message  ${tc.kws[2].msgs[0]}  Keyword from library with initting __init__.
-    Check log message  ${tc.kws[2].msgs[1]}  Keyword from library initted by __init__ (id: 42).
-    Check log message  ${tc.kws[3].msgs[0]}  Keyword from library initted by __init__ (id: 42).
+    ${tc} =    Check Test Case  ${TEST NAME}
+    Check log message    ${tc[0, 0]}    Keyword from library with importing __init__.
+    Check log message    ${tc[2, 0]}    Keyword from library with initting __init__.
+    Check log message    ${tc[2, 1]}    Keyword from library initted by __init__ (id: 42).
+    Check log message    ${tc[3, 0]}    Keyword from library initted by __init__ (id: 42).

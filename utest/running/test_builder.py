@@ -65,7 +65,7 @@ class TestBuilding(unittest.TestCase):
 
     def test_assign(self):
         kw = build('non_ascii.robot').tests[1].body[0]
-        assert_keyword(kw, ('${msg} =',), 'Evaluate', (r"u'Fran\\xe7ais'",))
+        assert_keyword(kw, ('${msg} =',), 'Evaluate', (r"'Fran\\xe7ais'",))
 
     def test_directory_suite(self):
         suite = build('suites')

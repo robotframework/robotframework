@@ -103,6 +103,7 @@ class Token:
     CONTINUE = 'CONTINUE'
     BREAK = 'BREAK'
     OPTION = 'OPTION'
+    GROUP = 'GROUP'
 
     SEPARATOR = 'SEPARATOR'
     COMMENT = 'COMMENT'
@@ -174,7 +175,7 @@ class Token:
                 Token.END: 'END', Token.VAR: 'VAR', Token.CONTINUE: 'CONTINUE',
                 Token.BREAK: 'BREAK', Token.RETURN_STATEMENT: 'RETURN',
                 Token.CONTINUATION: '...', Token.EOL: '\n', Token.WITH_NAME: 'AS',
-                Token.AS: 'AS'
+                Token.AS: 'AS', Token.GROUP: 'GROUP'
             }.get(type, '')    # type: ignore
         self.value = cast(str, value)
         self.lineno = lineno

@@ -61,9 +61,10 @@
     </xs:complexType>
     <xs:complexType name="Error">
         <xs:choice maxOccurs="unbounded">
-        <xs:element name="value" type="xs:string" minOccurs="1" maxOccurs="unbounded" />
-        <xs:element name="msg" type="Message" />
-        <xs:element name="status" type="Status" />
+            <xs:element name="value" type="xs:string" minOccurs="1" maxOccurs="unbounded" />
+            <xs:element name="msg" type="Message" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="kw" type="Keyword" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="status" type="Status" />
         </xs:choice>
     </xs:complexType>
     <xs:complexType name="Test">
@@ -73,6 +74,7 @@
             <xs:element name="if" type="If" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="try" type="Try" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="while" type="While" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="group" type="Group" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="variable" type="Var" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="error" type="Error" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="msg" type="Message" minOccurs="0" maxOccurs="unbounded" />
@@ -94,6 +96,7 @@
             <xs:element name="if" type="If" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="try" type="Try" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="while" type="While" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="group" type="Group" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="variable" type="Var" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="error" type="Error" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="return" type="Return" minOccurs="0" maxOccurs="unbounded" />
@@ -148,6 +151,7 @@
             <xs:element name="if" type="If" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="try" type="Try" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="while" type="While" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="group" type="Group" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="variable" type="Var" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="return" type="Return" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="break" type="Break" minOccurs="0" maxOccurs="unbounded" />
@@ -178,6 +182,7 @@
             <xs:element name="if" type="If" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="try" type="Try" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="while" type="While" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="group" type="Group" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="variable" type="Var" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="return" type="Return" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="break" type="Break" minOccurs="0" maxOccurs="unbounded" />
@@ -211,6 +216,7 @@
             <xs:element name="if" type="If" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="try" type="Try" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="while" type="While" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="group" type="Group" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="variable" type="Var" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="return" type="Return" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="break" type="Break" minOccurs="0" maxOccurs="unbounded" />
@@ -250,6 +256,7 @@
             <xs:element name="if" type="If" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="try" type="Try" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="while" type="While" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="group" type="Group" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="variable" type="Var" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="return" type="Return" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="break" type="Break" minOccurs="0" maxOccurs="unbounded" />
@@ -258,6 +265,24 @@
             <xs:element name="msg" type="Message" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="status" type="Status" />
         </xs:choice>
+    </xs:complexType>
+    <xs:complexType name="Group">
+        <xs:choice maxOccurs="unbounded">
+            <xs:element name="kw" type="Keyword" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="for" type="For" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="if" type="If" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="try" type="Try" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="while" type="While" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="group" type="Group" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="variable" type="Var" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="return" type="Return" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="break" type="Break" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="continue" type="Continue" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="error" type="Error" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="msg" type="Message" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="status" type="Status" />
+        </xs:choice>
+        <xs:attribute name="name" type="xs:string" />
     </xs:complexType>
     <xs:complexType name="Var">
         <xs:choice maxOccurs="unbounded">

@@ -35,9 +35,7 @@ TRY Branch Should Be Empty
 Keyword Should Not Be Empty
     [Arguments]    ${kw}    ${name}    @{args}
     Check Keyword Name And Args    ${kw}    ${name}    @{args}
-    ${num_keywords}=    Get Length    ${kw.kws}
-    ${num_messages}=    Get Length    ${kw.messages}
-    Should Be True    ${num_keywords} + ${num_messages} > 0
+    Should Not Be Empty    ${kw.body}
 
 Check Keyword Name And Args
     [Arguments]    ${kw}    ${name}    @{args}

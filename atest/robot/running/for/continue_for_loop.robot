@@ -26,8 +26,8 @@ Continue For Loop In User Keyword Without For Loop Should Fail
 
 Continue For Loop Keyword Should Log Info
     ${tc} =    Check Test Case    Simple Continue For Loop
-    Should Be Equal    ${tc.kws[0].kws[0].kws[0].full_name}    BuiltIn.Continue For Loop
-    Check Log Message   ${tc.kws[0].kws[0].kws[0].msgs[0]}   Continuing for loop from the next iteration.
+    Should Be Equal    ${tc[0, 0, 0].full_name}    BuiltIn.Continue For Loop
+    Check Log Message   ${tc[0, 0, 0, 0]}   Continuing for loop from the next iteration.
 
 Continue For Loop In Test Teardown
     Test And All Keywords Should Have Passed

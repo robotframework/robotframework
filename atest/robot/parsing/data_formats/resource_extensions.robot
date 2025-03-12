@@ -5,11 +5,11 @@ Resource         atest_resource.robot
 *** Test Cases ***
 Resource with '*.resource' extension
     ${tc} =    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc.kws[0].kws[0].kws[1].msgs[0]}    nested.resource
-    Check Log Message    ${tc.kws[0].kws[3].msgs[0]}           resource.resource
-    Check Log Message    ${tc.kws[1].kws[1].msgs[0]}           nested.resource
-    Check Log Message    ${tc.kws[4].msgs[0]}                  resource.resource
-    Check Log Message    ${tc.kws[5].msgs[0]}                  nested.resource
+    Check Log Message    ${tc[0, 0, 1, 0]}    nested.resource
+    Check Log Message    ${tc[0, 3, 0]}       resource.resource
+    Check Log Message    ${tc[1, 1, 0]}       nested.resource
+    Check Log Message    ${tc[4, 0]}          resource.resource
+    Check Log Message    ${tc[5, 0]}          nested.resource
 
 '*.resource' files are not parsed for tests
     Should Contain Suites    ${SUITE}    Tests

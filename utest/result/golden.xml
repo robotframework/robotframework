@@ -113,7 +113,7 @@
 <stat pass="1" fail="0" skip="0">t1</stat>
 </tag>
 <suite>
-<stat pass="1" fail="0" skip="0" id="s1" name="Normal">Normal</stat>
+<stat name="Normal" id="s1" pass="1" fail="0" skip="0">Normal</stat>
 </suite>
 </statistics>
 <errors>

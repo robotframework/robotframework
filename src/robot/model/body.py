@@ -25,8 +25,8 @@ from .modelobject import DataDict, full_name, ModelObject
 
 if TYPE_CHECKING:
     from robot.running.model import ResourceFile, UserKeyword
-    from .control import (Break, Continue, Error, For, ForIteration, If, IfBranch,
-                          Return, Try, TryBranch, Var, While, WhileIteration)
+    from .control import (Break, Continue, Error, For, ForIteration, Group, If,
+                          IfBranch, Return, Try, TryBranch, Var, While, WhileIteration)
     from .keyword import Keyword
     from .message import Message
     from .testcase import TestCase
@@ -34,12 +34,14 @@ if TYPE_CHECKING:
 
 
 BodyItemParent = Union['TestSuite', 'TestCase', 'UserKeyword', 'For', 'ForIteration',
-                       'If', 'IfBranch', 'Try', 'TryBranch', 'While', 'WhileIteration',
-                       'Keyword', 'Var', 'Return', 'Continue', 'Break', 'Error', None]
+                       'If', 'IfBranch', 'Try', 'TryBranch', 'While', 'Group',
+                       'WhileIteration', 'Keyword', 'Var', 'Return', 'Continue',
+                       'Break', 'Error', None]
 BI = TypeVar('BI', bound='BodyItem')
 KW = TypeVar('KW', bound='Keyword')
 F = TypeVar('F', bound='For')
 W = TypeVar('W', bound='While')
+G = TypeVar('G', bound='Group')
 I = TypeVar('I', bound='If')
 T = TypeVar('T', bound='Try')
 V = TypeVar('V', bound='Var')
@@ -53,28 +55,7 @@ FW = TypeVar('FW', bound='ForIteration|WhileIteration')
 
 
 class BodyItem(ModelObject):
-    KEYWORD = 'KEYWORD'
-    SETUP = 'SETUP'
-    TEARDOWN = 'TEARDOWN'
-    FOR = 'FOR'
-    ITERATION = 'ITERATION'
-    IF_ELSE_ROOT = 'IF/ELSE ROOT'
-    IF = 'IF'
-    ELSE_IF = 'ELSE IF'
-    ELSE = 'ELSE'
-    TRY_EXCEPT_ROOT = 'TRY/EXCEPT ROOT'
-    TRY = 'TRY'
-    EXCEPT = 'EXCEPT'
-    FINALLY = 'FINALLY'
-    WHILE = 'WHILE'
-    VAR = 'VAR'
-    RETURN = 'RETURN'
-    CONTINUE = 'CONTINUE'
-    BREAK = 'BREAK'
-    ERROR = 'ERROR'
-    MESSAGE = 'MESSAGE'
-    KEYWORD_TYPES = (KEYWORD, SETUP, TEARDOWN)
-    type = None
+    body: 'BaseBody'
     __slots__ = ['parent']
 
     @property
@@ -100,28 +81,27 @@ class BodyItem(ModelObject):
         # or linking to warnings and errors won't work.
         steps = []
         if getattr(parent, 'has_setup', False):
-            steps.append(parent.setup)          # type: ignore - Use Protocol with RF 7.
+            steps.append(parent.setup)
         if hasattr(parent, 'body'):
-            steps.extend(step for step in
-                         parent.body.flatten()  # type: ignore - Use Protocol with RF 7.
-                         if step.type != self.MESSAGE)
+            steps.extend(parent.body.flatten(messages=False))
         if getattr(parent, 'has_teardown', False):
-            steps.append(parent.teardown)       # type: ignore - Use Protocol with RF 7.
+            steps.append(parent.teardown)
         index = steps.index(self) if self in steps else len(steps)
-        parent_id = getattr(parent, 'id', None)
-        return f'{parent_id}-k{index + 1}' if parent_id else f'k{index + 1}'
+        pid = parent.id    # IF/TRY root id is None. Avoid calling property twice.
+        return f'{pid}-k{index + 1}' if pid else f'k{index + 1}'
 
     def to_dict(self) -> DataDict:
         raise NotImplementedError
 
 
-class BaseBody(ItemList[BodyItem], Generic[KW, F, W, I, T, V, R, C, B, M, E]):
+class BaseBody(ItemList[BodyItem], Generic[KW, F, W, G, I, T, V, R, C, B, M, E]):
     """Base class for Body and Branches objects."""
-    __slots__ = []
+    __slots__ = ()
     # Set using 'BaseBody.register' when these classes are created.
     keyword_class: Type[KW] = KnownAtRuntime
     for_class: Type[F] = KnownAtRuntime
     while_class: Type[W] = KnownAtRuntime
+    group_class: Type[G] = KnownAtRuntime
     if_class: Type[I] = KnownAtRuntime
     try_class: Type[T] = KnownAtRuntime
     var_class: Type[V] = KnownAtRuntime
@@ -190,6 +170,10 @@ class BaseBody(ItemList[BodyItem], Generic[KW, F, W, I, T, V, R, C, B, M, E]):
     def create_while(self, *args, **kwargs) -> while_class:
         return self._create(self.while_class, 'create_while', args, kwargs)
 
+    @copy_signature(group_class)
+    def create_group(self, *args, **kwargs) -> group_class:
+        return self._create(self.group_class, 'create_group', args, kwargs)
+
     @copy_signature(var_class)
     def create_var(self, *args, **kwargs) -> var_class:
         return self._create(self.var_class, 'create_var', args, kwargs)
@@ -215,7 +199,7 @@ class BaseBody(ItemList[BodyItem], Generic[KW, F, W, I, T, V, R, C, B, M, E]):
         return self._create(self.error_class, 'create_error', args, kwargs)
 
     def filter(self, keywords: 'bool|None' = None, messages: 'bool|None' = None,
-               predicate: 'Callable[[T], bool]|None' = None):
+               predicate: 'Callable[[T], bool]|None' = None) -> 'list[BodyItem]':
         """Filter body items based on type and/or custom predicate.
 
         To include or exclude items based on types, give matching arguments
@@ -239,9 +223,6 @@ class BaseBody(ItemList[BodyItem], Generic[KW, F, W, I, T, V, R, C, B, M, E]):
         use ``body.filter(keywords=False``, messages=False)``. For more detailed
         filtering it is possible to use ``predicate``.
         """
-        if messages is not None and self.message_class is KnownAtRuntime:
-            raise TypeError(f"'{full_name(self)}' object does not support "
-                            f"filtering by 'messages'.")
         return self._filter([(self.keyword_class, keywords),
                              (self.message_class, messages)], predicate)
 
@@ -259,38 +240,41 @@ class BaseBody(ItemList[BodyItem], Generic[KW, F, W, I, T, V, R, C, B, M, E]):
             items = [item for item in items if predicate(item)]
         return items
 
-    def flatten(self) -> 'list[BodyItem]':
+    def flatten(self, **filter_config) -> 'list[BodyItem]':
         """Return steps so that IF and TRY structures are flattened.
 
         Basically the IF/ELSE and TRY/EXCEPT root elements are replaced
-        with their branches. This is how they are shown in log files.
+        with their branches. This is how they are shown in the log file.
+
+        ``filter_config`` can be used to filter steps using the :meth:`filter`
+        method before flattening. New in Robot Framework 7.2.
         """
         roots = BodyItem.IF_ELSE_ROOT, BodyItem.TRY_EXCEPT_ROOT
-        steps = []
-        for item in self:
+        steps = self if not filter_config else self.filter(**filter_config)
+        flat = []
+        for item in steps:
             if item.type in roots:
-                item = cast('Try|If', item)
-                steps.extend(item.body)
+                flat.extend(item.body)
             else:
-                steps.append(item)
-        return steps
+                flat.append(item)
+        return flat
 
 
-class Body(BaseBody['Keyword', 'For', 'While', 'If', 'Try', 'Var', 'Return',
-                    'Continue', 'Break', 'Message', 'Error']):
+class Body(BaseBody['Keyword', 'For', 'While', 'Group', 'If', 'Try', 'Var',
+                     'Return', 'Continue', 'Break', 'Message', 'Error']):
     """A list-like object representing a body of a test, keyword, etc.
 
     Body contains the keywords and other structures such as FOR loops.
     """
-    pass
+    __slots__ = ()
 
 
 # BaseBranches cannot extend Generic[IT] directly with BaseBody[...].
 class BranchType(Generic[IT]):
-    pass
+    __slots__ = ()
 
 
-class BaseBranches(BaseBody[KW, F, W, I, T, V, R, C, B, M, E], BranchType[IT]):
+class BaseBranches(BaseBody[KW, F, W, G, I, T, V, R, C, B, M, E], BranchType[IT]):
     """A list-like object representing IF and TRY branches."""
     __slots__ = ['branch_class']
     branch_type: Type[IT] = KnownAtRuntime
@@ -314,10 +298,10 @@ class BaseBranches(BaseBody[KW, F, W, I, T, V, R, C, B, M, E], BranchType[IT]):
 
 # BaseIterations cannot extend Generic[IT] directly with BaseBody[...].
 class IterationType(Generic[FW]):
-    pass
+    __slots__ = ()
 
 
-class BaseIterations(BaseBody[KW, F, W, I, T, V, R, C, B, M, E], IterationType[FW]):
+class BaseIterations(BaseBody[KW, F, W, G, I, T, V, R, C, B, M, E], IterationType[FW]):
     __slots__ = ['iteration_class']
     iteration_type: Type[FW] = KnownAtRuntime
 
@@ -328,10 +312,10 @@ class BaseIterations(BaseBody[KW, F, W, I, T, V, R, C, B, M, E], IterationType[F
         super().__init__(parent, items)
 
     def _item_from_dict(self, data: DataDict) -> BodyItem:
-        try:
-            return self.iteration_class.from_dict(data)
-        except DataError:
+        # Non-iteration data is typically caused by listeners.
+        if data.get('type') != 'ITERATION':
             return super()._item_from_dict(data)
+        return self.iteration_class.from_dict(data)
 
     @copy_signature(iteration_type)
     def create_iteration(self, *args, **kwargs) -> FW:

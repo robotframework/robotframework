@@ -3,7 +3,11 @@ import unittest
 from datetime import timedelta
 from pathlib import Path
 
-from jsonschema import Draft202012Validator
+try:
+    from jsonschema import Draft202012Validator as JSONValidator
+except ImportError:
+    def JSONValidator(*a, **k):
+        raise unittest.SkipTest('jsonschema module is not available')
 
 from robot.utils.asserts import assert_equal
 from robot.model.statistics import Statistics
@@ -54,7 +58,7 @@ def generate_suite():
 def validate_schema(statistics):
     with open(Path(__file__).parent / '../../doc/schema/result.json', encoding='UTF-8') as file:
         schema = json.load(file)
-    validator = Draft202012Validator(schema=schema)
+    validator = JSONValidator(schema=schema)
     data = {'generator': 'unit tests',
             'generated': '2024-09-23T14:55:00.123456',
             'rpa': False,

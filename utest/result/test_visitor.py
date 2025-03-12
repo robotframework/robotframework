@@ -145,61 +145,65 @@ class TestVisitingSuite(unittest.TestCase):
         RunningSuite.from_model(get_model('''
 *** Test Cases ***
 Example
-    IF    True
-        WHILE    True
-            BREAK
-        END
-    ELSE IF    True
-        FOR    ${x}    IN    @{stuff}
-            CONTINUE
-        END
-    ELSE
-        TRY
-            Keyword
-        EXCEPT    Something
-            Keyword
+    GROUP
+        IF    True
+            WHILE    True
+                BREAK
+            END
+        ELSE IF    True
+            FOR    ${x}    IN    @{stuff}
+                CONTINUE
+            END
         ELSE
-            Keyword
-        FINALLY
-            Keyword
+            TRY
+                Keyword
+            EXCEPT    Something
+                Keyword
+            ELSE
+                Keyword
+            FINALLY
+                Keyword
+            END
         END
     END
 ''')).visit(visitor)
         expected = '''
-START IF/ELSE ROOT
-    START IF
-        START WHILE
-            START BREAK
-            END BREAK
-        END WHILE
-    END IF
-    START ELSE IF
-        START FOR
-            START CONTINUE
-            END CONTINUE
-        END FOR
-    END ELSE IF
-    START ELSE
-        START TRY/EXCEPT ROOT
-            START TRY
-                START KEYWORD
-                END KEYWORD
-            END TRY
-            START EXCEPT
-                START KEYWORD
-                END KEYWORD
-            END EXCEPT
-            START ELSE
-                START KEYWORD
-                END KEYWORD
-            END ELSE
-            START FINALLY
-                START KEYWORD
-                END KEYWORD
-            END FINALLY
-        END TRY/EXCEPT ROOT
-    END ELSE
-END IF/ELSE ROOT
+START GROUP
+    START IF/ELSE ROOT
+        START IF
+            START WHILE
+                START BREAK
+                END BREAK
+            END WHILE
+        END IF
+        START ELSE IF
+            START FOR
+                START CONTINUE
+                END CONTINUE
+            END FOR
+        END ELSE IF
+        START ELSE
+            START TRY/EXCEPT ROOT
+                START TRY
+                    START KEYWORD
+                    END KEYWORD
+                END TRY
+                START EXCEPT
+                    START KEYWORD
+                    END KEYWORD
+                END EXCEPT
+                START ELSE
+                    START KEYWORD
+                    END KEYWORD
+                END ELSE
+                START FINALLY
+                    START KEYWORD
+                    END KEYWORD
+                END FINALLY
+            END TRY/EXCEPT ROOT
+        END ELSE
+    END IF/ELSE ROOT
+END GROUP
 '''.strip().splitlines()
         assert_equal(visitor.visited, [e.strip() for e in expected])
 

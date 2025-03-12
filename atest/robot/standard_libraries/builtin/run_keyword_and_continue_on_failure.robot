@@ -5,16 +5,16 @@ Resource          atest_resource.robot
 *** Test Cases ***
 Run Keyword And Continue On Failure
     ${tc}=    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc.kws[0].kws[0].msgs[0]}    Expected Failure    FAIL
-    Check Log Message    ${tc.kws[1].kws[0].msgs[0]}    Expected Failure 2    FAIL
-    Check Log Message    ${tc.kws[2].msgs[0]}    This should be executed
+    Check Log Message    ${tc[0, 0, 0]}    Expected Failure    FAIL
+    Check Log Message    ${tc[1, 0, 0]}    Expected Failure 2    FAIL
+    Check Log Message    ${tc[2, 0]}    This should be executed
 
 Run Keyword And Continue On Failure In For Loop
     Check Test Case    ${TESTNAME}
 
 Run User keyword And Continue On Failure
     ${tc}=    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc.kws[1].msgs[0]}    This should be executed
+    Check Log Message    ${tc[1, 0]}    This should be executed
 
 Run Keyword And Continue On Failure With For Loops
     Check Test Case    ${TESTNAME}

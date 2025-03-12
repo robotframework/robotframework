@@ -703,9 +703,9 @@ Nesting `WHILE` loops
 
     *** Test Cases ***
     Nesting WHILE
-        ${x} =   Set Variable    10
+        VAR    ${x}    10
         WHILE    ${x} > 0
-            ${y} =   Set Variable    ${x}
+            VAR    ${y}    ${x}
             WHILE    ${y} > 0
                 ${y} =    Evaluate    ${y} - 1
             END
@@ -725,11 +725,6 @@ It is possible to `remove or flatten unnecessary keywords`__ using
 :option:`--removekeywords` and :option:`--flattenkeywords` command line options.
 
 __ `Removing and flattening keywords`_
-
-.. _if:
-.. _if/else:
-.. _if/else structures:
-
 
 .. _BREAK:
 .. _CONTINUE:
@@ -800,6 +795,10 @@ keyword called in the loop body is invalid.
 
 .. note:: Also the RETURN_ statement can be used to a exit loop. It only works
           when loops are used inside a `user keyword`_.
+
+.. _if:
+.. _if/else:
+.. _if/else structures:
 
 `IF/ELSE` syntax
 ----------------
@@ -1310,3 +1309,115 @@ There are also other methods to execute keywords conditionally:
 
 __ `Test teardown`_
 __ `User keyword teardown`_
+
+`GROUP` syntax
+--------------
+
+The `GROUP` syntax allows grouping related keywords and control structures together:
+
+.. sourcecode:: robotframework
+
+    *** Test Cases ***
+    Valid login
+        GROUP    Open browser to login page
+            Open Browser    ${LOGIN URL}
+            Title Should Be    Login Page
+        END
+        GROUP    Submit credentials
+            Input Username    username_field    demo
+            Input Password    password_field    mode
+            Click Button    login_button
+        END
+        GROUP    Login should have succeeded
+            Title Should Be    Welcome Page
+        END
+
+    Anonymous group
+        GROUP
+            Log    Group name is optional.
+        END
+
+    Nesting
+        GROUP
+            GROUP    Nested group
+                Log    Groups can be nested.
+            END
+            IF    True
+                GROUP
+                    Log    Groups can also be nested with other control structures.
+                END
+            END
+        END
+
+As the above examples demonstrates, groups can have a name, but the name is
+optional. Groups can also be nested freely with each others and with other
+control structures.
+
+`User keywords`_ are in general recommended over the `GROUP` syntax, because
+they are reusable and because they simplify tests or keywords where they are
+used by hiding and encapsulating lower level details. In the log file user
+keywords and groups look the same, though, except that instead of a `KEYWORD`
+label there is a `GROUP` label.
+
+All groups within a test or a keyword share the same variable namespace.
+This means that, unlike when using keywords, there is no need to use arguments
+or return values for sharing values. This can be a benefit in simple cases,
+but if there are lot of variables, the benefit can turn into a problem and
+cause a huge mess.
+
+.. note:: The `GROUP` syntax is new in Robot Framework 7.2.
+
+`GROUP` with templates
+~~~~~~~~~~~~~~~~~~~~~~
+
+The `GROUP` syntax can be used for grouping iterations with `test templates`_:
+
+.. sourcecode:: robotframework
+
+    *** Settings ***
+    Library           String
+    Test Template     Upper case should be
+
+    *** Test Cases ***
+    Template example
+        GROUP    ASCII characters
+            a    A
+            z    Z
+        END
+        GROUP    Latin-1 characters
+            ä    Ä
+            ß    SS
+        END
+        GROUP    Numbers
+            1    1
+            9    9
+        END
+
+    *** Keywords ***
+    Upper case should be
+        [Arguments]    ${char}    ${expected}
+        ${actual} =    Convert To Upper Case    ${char}
+        Should Be Equal    ${actual}    ${expected}
+
+Programmatic usage
+~~~~~~~~~~~~~~~~~~
+
+One of the primary usages for groups is making it possible to create structured
+tests and user keywords programmatically. For example, the following
+`pre-run modifier`_ adds a group with two keywords at the end of each modified
+test. Groups can be added also by `listeners`_ that use the
+`listener API version 3`__.
+
+.. sourcecode:: python
+
+    from robot.api import SuiteVisitor
+
+
+    class GroupAdder(SuiteVisitor):
+
+        def start_test(self, test):
+            group = test.body.create_group(name='Example')
+            group.body.create_keyword(name='Log', args=['Hello, world!'])
+            group.body.create_keyword(name='No Operation')
+
+__ `Listener version 3`_

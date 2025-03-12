@@ -1,16 +1,8 @@
 import unittest
 
-from robot.errors import DataError
-from robot.output.loggerhelper import AbstractLogger, Message
+from robot.output.loggerhelper import Message
 from robot.result import Message as ResultMessage
 from robot.utils.asserts import assert_equal, assert_raises, assert_true
-
-
-class TestAbstractLogger(unittest.TestCase):
-
-    def test_set_invalid_threshold(self):
-        logger = AbstractLogger('trace')
-        assert_raises(DataError, logger.set_level, 'INVALID THRESHOLD')
 
 
 class TestMessage(unittest.TestCase):

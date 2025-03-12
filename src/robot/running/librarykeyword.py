@@ -82,7 +82,7 @@ class LibraryKeyword(KeywordImplementation):
             return EmbeddedArgumentsRunner(self, name)
         if self._resolve_args_until is not None:
             dry_run = RUN_KW_REGISTER.get_dry_run(self.owner.real_name, self.name)
-            return RunKeywordRunner(self, execute_in_dry_run=dry_run)
+            return RunKeywordRunner(self, dry_run_children=dry_run)
         return LibraryKeywordRunner(self, languages=languages)
 
     def resolve_arguments(self, args: 'Sequence[str|Any]',

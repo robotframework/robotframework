@@ -365,7 +365,7 @@ class StartKeywordAttributes(OptionalKeywordAttributes):
     assign: 'list[str]'
     tags: 'list[str]'
     source: str
-    lineno: int
+    lineno: 'int|None'
     status: str
     starttime: str
 
@@ -705,6 +705,24 @@ class ListenerV3:
         The default implementation calls :meth:`end_body_item`.
 
         New in Robot Framework 7.0.
+        """
+        self.end_body_item(data, result)
+
+    def start_group(self, data: running.Group, result: result.Group):
+        """Called when a GROUP starts.
+
+        The default implementation calls :meth:`start_body_item`.
+
+        New in Robot Framework 7.2.
+        """
+        self.start_body_item(data, result)
+
+    def end_group(self, data: running.Group, result: result.Group):
+        """Called when a GROUP ends.
+
+        The default implementation calls :meth:`end_body_item`.
+
+        New in Robot Framework 7.2.
         """
         self.end_body_item(data, result)
 

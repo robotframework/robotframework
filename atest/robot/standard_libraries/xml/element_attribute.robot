@@ -27,7 +27,7 @@ Modifying returned attributes does not affect original element
 
 Element attribute should be
     ${tc} =    Check Test Case    ${TESTNAME}
-    Should Be Empty    ${tc.kws[0].msgs}
+    Should Be Empty    ${tc[0].messages}
 
 Element attribute should be when no attribute exists
     Check Test Case    ${TESTNAME}
@@ -37,7 +37,7 @@ Element attribute should be with custom error message
 
 Element attribute should match
     ${tc} =    Check Test Case    ${TESTNAME}
-    Should Be Empty    ${tc.kws[0].msgs}
+    Should Be Empty    ${tc[0].messages}
 
 Element attribute should match when no attribute exists
     Check Test Case    ${TESTNAME}

@@ -11,8 +11,8 @@ Failing
 
 Logging
     ${test} =  Check Test Case  ${TESTNAME}
-    Check Log Message  ${test.kws[0].msgs[0]}  Hello from module library
-    Check Log Message  ${test.kws[0].msgs[1]}  WARNING!  WARN
+    Check Log Message  ${test[0, 0]}  Hello from module library
+    Check Log Message  ${test[0, 1]}  WARNING!  WARN
 
 Returning
     Check Test Case  ${TESTNAME}

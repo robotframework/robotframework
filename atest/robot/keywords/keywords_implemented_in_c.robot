@@ -5,7 +5,7 @@ Resource          atest_resource.robot
 *** Test Cases ***
 Use with correct arguments
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[-1].msgs[0]}    This is a bit weird ...
+    Check Log Message    ${tc[-1, 0]}    This is a bit weird ...
 
 Use with incorrect arguments
     ${error} =    Set Variable If    ${INTERPRETER.is_pypy} or ${INTERPRETER.version_info} >= (3, 7)

@@ -1939,7 +1939,8 @@ class _Variables(_BuiltInBase):
         return resolver.resolve(self._variables)
 
     def _log_set_variable(self, name, value):
-        self.log(format_assign_message(name, value))
+        if self._context.steps:
+            logger.info(format_assign_message(name, value))
 
 
 class _RunKeyword(_BuiltInBase):
@@ -1964,7 +1965,7 @@ class _RunKeyword(_BuiltInBase):
         if not (ctx.dry_run or self._accepts_embedded_arguments(name, ctx)):
             name, args = self._replace_variables_in_name([name] + list(args))
         if ctx.steps:
-            data, result = ctx.steps[-1]
+            data, result, _ = ctx.steps[-1]
             lineno = data.lineno
         else:    # Called, typically by a listener, when no keyword started.
             data = lineno = None
@@ -2867,8 +2868,8 @@ class _Control(_BuiltInBase):
 
         *NOTE:* Robot Framework 5.0 added support for native ``RETURN`` statement
         and for inline ``IF``, and that combination should be used instead of this
-        keyword. For example, ``Return From Keyword`` usage in the example below
-        could be replaced with
+        keyword. For example, `Return From Keyword If` usage in the `Find Index`
+        example below could be replaced with this:
 
         | IF    '${item}' == '${element}'    RETURN    ${index}
 
@@ -3141,7 +3142,7 @@ class _Misc(_BuiltInBase):
         Formatter options ``type`` and ``len`` are new in Robot Framework 5.0.
         The CONSOLE level is new in Robot Framework 6.1.
         """
-        # TODO: Remove `repr` altogether in RF 7.0. It was deprecated in RF 5.0.
+        # TODO: Remove `repr` altogether in RF 8.0. It was deprecated in RF 5.0.
         if repr == 'DEPRECATED':
             formatter = self._get_formatter(formatter)
         else:

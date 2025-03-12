@@ -14,16 +14,16 @@ Lot of spaces
 
 Trailing spaces
     ${tc} =    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    No spaces at end
-    Check Log Message    ${tc.kws[1].msgs[0]}    One space at end
-    Check Log Message    ${tc.kws[2].msgs[0]}    Two spaces at end
-    Check Log Message    ${tc.kws[3].msgs[0]}    Ten spaces at end
-    Check Log Message    ${tc.kws[4].msgs[0]}    Tab at end
+    Check Log Message    ${tc[0, 0]}    No spaces at end
+    Check Log Message    ${tc[1, 0]}    One space at end
+    Check Log Message    ${tc[2, 0]}    Two spaces at end
+    Check Log Message    ${tc[3, 0]}    Ten spaces at end
+    Check Log Message    ${tc[4, 0]}    Tab at end
 
 Tabs
     ${tc} =    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    I ignore tabs    DEBUG
+    Check Log Message    ${tc[0, 0]}    I ignore tabs    DEBUG
 
 Tabs and spaces
     ${tc} =    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    I ignore tabs (and spaces)    DEBUG
+    Check Log Message    ${tc[0, 0]}    I ignore tabs (and spaces)    DEBUG
