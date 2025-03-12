@@ -224,7 +224,9 @@ a string and it can have the following three values:
   modules are always global.
 
 .. note:: If a library is imported multiple times with different arguments__,
-          a new instance is created every time regardless the scope.
+          a new instance is created every time regardless the scope. If a 
+          library is imported multiple times using the same destination
+          the initial instance remains available unaffected by the new imports.
 
 When the `SUITE` or `GLOBAL` scopes are used with libraries that have a state,
 it is recommended that libraries have some
