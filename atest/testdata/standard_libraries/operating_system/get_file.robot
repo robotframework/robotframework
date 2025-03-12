@@ -190,18 +190,6 @@ Path as `pathlib.Path`
     ${content} =    Grep File    ${PATH/'file.txt'}    t
     Should Be Equal    ${content}    content\nthree
 
-read from fifo
-    [Timeout]    0.250 second
-    ${os_name}=    Evaluate    os.name    os
-    IF    '${os_name}' == 'nt'
-        ${PIPE}=    Evaluate    multiprocessing.connection.Listener()    modules=multiprocessing.connection
-        ${PIPE_NAME}=       Evaluate    $PIPE.address
-    ELSE
-        ${PIPE_NAME}=    Evaluate    "${PATH}/robot-fifo"
-        Run              mkfifo ${PIPE_NAME}
-    END
-    Get Binary File    ${PIPE_NAME}
-
 *** Keywords ***
 Get And Check File
     [Arguments]    ${path}    ${expected}

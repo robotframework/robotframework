@@ -34,7 +34,6 @@ from robot.utils import (abspath, ConnectionCache, console_decode, del_env_var,
 
 from robot.api.deco import run_in_its_own_process_decorator
 
-rip = run_in_its_own_process_decorator("robot.libraries.OperatingSystem", "OperatingSystem")
 
 __version__ = get_version()
 PROCESSES = ConnectionCache('No active processes.')
@@ -160,7 +159,6 @@ class OperatingSystem:
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
     ROBOT_LIBRARY_VERSION = __version__
 
-    @rip
     def run(self, command):
         """Runs the given command in the system and returns the output.
 
@@ -255,7 +253,6 @@ class OperatingSystem:
         rc = process.close()
         return rc, stdout
 
-    @rip
     def get_file(self, path, encoding='UTF-8', encoding_errors='strict'):
         """Returns the contents of a specified file.
 
@@ -297,7 +294,6 @@ class OperatingSystem:
         return {'SYSTEM': 'locale' if PY_VERSION > (3, 10) else None,
                 'CONSOLE': CONSOLE_ENCODING}.get(encoding.upper(), encoding)
 
-    @rip
     def get_binary_file(self, path):
         """Returns the contents of a specified file.
 
