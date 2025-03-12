@@ -34,12 +34,8 @@ DocFormat = Literal['ROBOT', 'HTML', 'TEXT', 'REST']
 if sys.platform in {'linux', 'darwin', 'win32', 'cygwin'}:
     from robot.api._run_in_its_own_process_decorator import run_in_its_own_process_decorator
 else:
-    class run_in_its_own_process_decorator:
-        def __init__(self, module_name, class_name=None, ctx="spawn"):
-            pass
-
-        def __call__(self, fun):
-            return fun
+    def run_in_its_own_process_decorator(module_name, class_name=None, ctx="spawn"):
+         return lambda x:x
 
 
 def not_keyword(func: F) -> F:
