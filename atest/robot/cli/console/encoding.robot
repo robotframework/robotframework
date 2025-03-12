@@ -39,7 +39,11 @@ Invalid encoding configuration
     ...    shell=True
     ...    stdout=${STDOUT}
     ...    stderr=${STDERR}
-    IF    not $INTERPRETER.is_pypy    Should Be Empty    ${result.stderr}
+    IF    not $INTERPRETER.is_pypy
+        Should Be Empty    ${result.stderr}
+    ELSE
+        Log    ${result.stderr}
+    END
     # Non-ASCII characters are replaced with `?`.
     Should Contain    ${result.stdout}    Circle is 360?, Hyv?? ??t?, ?? ? ? ? ? ? ?
     Should Contain    ${result.stdout}    ???-????? T??t ??d K?yw?rd N?m?s, ???????${SPACE*29}| PASS |
