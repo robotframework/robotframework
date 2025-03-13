@@ -26,7 +26,7 @@ PYTHONIOENCODING is honored in console output
     Should Contain    ${result.stdout}    ???-????? T??t ??d K?yw?rd N?m?s, Спасибо${SPACE*29}| PASS |
 
 Invalid encoding configuration
-    [Tags]    no-windows    no-osx
+    [Tags]    no-windows    no-osx    no-pypy
     ${cmd} =    Join command line
     ...    LANG=invalid
     ...    LC_TYPE=invalid
@@ -39,11 +39,7 @@ Invalid encoding configuration
     ...    shell=True
     ...    stdout=${STDOUT}
     ...    stderr=${STDERR}
-    IF    not $INTERPRETER.is_pypy
-        Should Be Empty    ${result.stderr}
-    ELSE
-        Log    ${result.stderr}
-    END
+    Should Be Empty    ${result.stderr}
     # Non-ASCII characters are replaced with `?`.
     Should Contain    ${result.stdout}    Circle is 360?, Hyv?? ??t?, ?? ? ? ? ? ? ?
     Should Contain    ${result.stdout}    ???-????? T??t ??d K?yw?rd N?m?s, ???????${SPACE*29}| PASS |

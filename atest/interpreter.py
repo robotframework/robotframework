@@ -1,8 +1,8 @@
 import os
-from pathlib import Path
 import re
 import subprocess
 import sys
+from pathlib import Path
 
 
 ROBOT_DIR = Path(__file__).parent.parent / 'src/robot'
@@ -33,7 +33,7 @@ class Interpreter:
                                              stderr=subprocess.STDOUT,
                                              encoding='UTF-8')
         except (subprocess.CalledProcessError, FileNotFoundError) as err:
-            raise ValueError('Failed to get interpreter version: %s' % err)
+            raise ValueError(f'Failed to get interpreter version: {err}')
         name, version = output.split()[:2]
         name = name if 'PyPy' not in output else 'PyPy'
         version = re.match(r'\d+\.\d+\.\d+', version).group()
@@ -50,13 +50,14 @@ class Interpreter:
 
     @property
     def output_name(self):
-        return '{i.name}-{i.version}-{i.os}'.format(i=self).replace(' ', '')
+        return f'{self.name}-{self.version}-{self.os}'.replace(' ', '')
 
     @property
     def excludes(self):
         if self.is_pypy:
+            yield 'no-pypy'
             yield 'require-lxml'
-        for require in [(3, 7), (3, 8), (3, 9), (3, 10)]:
+        for require in [(3, 8), (3, 9), (3, 10)]:
             if self.version_info < require:
                 yield 'require-py%d.%d' % require
         if self.is_windows:
