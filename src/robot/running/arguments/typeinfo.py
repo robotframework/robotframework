@@ -19,7 +19,7 @@ from datetime import date, datetime, timedelta
 from decimal import Decimal
 from enum import Enum
 from pathlib import Path
-from typing import Any, ForwardRef, get_type_hints, get_origin, Literal, Union
+from typing import Any, ForwardRef, get_args, get_origin, get_type_hints, Literal, Union
 if sys.version_info >= (3, 11):
     from typing import NotRequired, Required
 else:
@@ -30,7 +30,7 @@ else:
 
 from robot.conf import Languages, LanguagesLike
 from robot.errors import DataError
-from robot.utils import (has_args, is_union, NOT_SET, plural_or_not as s, setter,
+from robot.utils import (is_union, NOT_SET, plural_or_not as s, setter,
                          SetterAwareType, type_name, type_repr, typeddict_types)
 
 from ..context import EXECUTION_CONTEXTS
@@ -185,17 +185,18 @@ class TypeInfo(metaclass=SetterAwareType):
         if isinstance(hint, typeddict_types):
             return TypedDictInfo(hint.__name__, hint)
         if is_union(hint):
-            nested = [cls.from_type_hint(a) for a in hint.__args__]
+            nested = [cls.from_type_hint(a) for a in get_args(hint)]
             return cls('Union', nested=nested)
-        if hasattr(hint, '__origin__'):
-            if hint.__origin__ is Literal:
+        origin = get_origin(hint)
+        if origin:
+            if origin is Literal:
                 nested = [cls(repr(a) if not isinstance(a, Enum) else a.name, a)
-                          for a in hint.__args__]
-            elif has_args(hint):
-                nested = [cls.from_type_hint(a) for a in hint.__args__]
+                          for a in get_args(hint)]
+            elif get_args(hint):
+                nested = [cls.from_type_hint(a) for a in get_args(hint)]
             else:
                 nested = None
-            return cls(type_repr(hint, nested=False), hint.__origin__, nested)
+            return cls(type_repr(hint, nested=False), origin, nested)
         if isinstance(hint, str):
             return cls.from_string(hint)
         if isinstance(hint, (tuple, list)):
@@ -356,8 +357,8 @@ class TypedDictInfo(TypeInfo):
             origin = get_origin(hint)
             if origin is Required:
                 required.add(key)
-                type_hints[key] = hint.__args__[0]
+                type_hints[key] = get_args(hint)[0]
             elif origin is NotRequired:
                 required.discard(key)
-                type_hints[key] = hint.__args__[0]
+                type_hints[key] = get_args(hint)[0]
         self.required = frozenset(required)

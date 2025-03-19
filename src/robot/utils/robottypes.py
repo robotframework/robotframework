@@ -13,11 +13,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import warnings
 from collections.abc import Iterable, Mapping
 from collections import UserString
 from io import IOBase
 from os import PathLike
-from typing import Literal, Union, TypedDict, TypeVar
+from typing import get_args, get_origin, Literal, TypedDict, Union
 try:
     from types import UnionType
 except ImportError:    # Python < 3.10
@@ -67,8 +68,7 @@ def is_dict_like(item):
 
 
 def is_union(item):
-    return (isinstance(item, UnionType)
-            or getattr(item, '__origin__', None) is Union)
+    return isinstance(item, UnionType) or get_origin(item) is Union
 
 
 def type_name(item, capitalize=False):
@@ -76,15 +76,16 @@ def type_name(item, capitalize=False):
 
     For example, 'integer' instead of 'int' and 'file' instead of 'TextIOWrapper'.
     """
-    if getattr(item, '__origin__', None):
-        item = item.__origin__
+    if is_union(item):
+        return 'Union'
+    origin = get_origin(item)
+    if origin:
+        item = origin
     if hasattr(item, '_name') and item._name:
-        # Prior to Python 3.10 Union, Any, etc. from typing didn't have `__name__`.
+        # Prior to Python 3.10, Union, Any, etc. from typing didn't have `__name__`.
         # but instead had `_name`. Python 3.10 has both and newer only `__name__`.
         # Also, pandas.Series has `_name` but it's None.
         name = item._name
-    elif is_union(item):
-        name = 'Union'
     elif isinstance(item, IOBase):
         name = 'file'
     else:
@@ -106,16 +107,17 @@ def type_repr(typ, nested=True):
     if typ is Ellipsis:
         return '...'
     if is_union(typ):
-        return ' | '.join(type_repr(a) for a in typ.__args__) if nested else 'Union'
-    if getattr(typ, '__origin__', None) is Literal:
+        return ' | '.join(type_repr(a) for a in get_args(typ)) if nested else 'Union'
+    if get_origin(typ) is Literal:
         if nested:
-            args = ', '.join(repr(a) for a in typ.__args__)
+            args = ', '.join(repr(a) for a in get_args(typ))
             return f'Literal[{args}]'
         return 'Literal'
     name = _get_type_name(typ)
-    if nested and has_args(typ):
-        args = ', '.join(type_repr(a) for a in typ.__args__)
-        return f'{name}[{args}]'
+    if nested:
+        args = ', '.join(type_repr(a) for a in get_args(typ))
+        if args:
+            return f'{name}[{args}]'
     return name
 
 
@@ -128,18 +130,16 @@ def _get_type_name(typ):
     return str(typ)
 
 
+# TODO: Remove has_args in RF 8.
 def has_args(type):
     """Helper to check has type valid ``__args__``.
 
-   ``__args__`` contains TypeVars when accessed directly from ``typing.List`` and
-   other such types with Python 3.8. Python 3.9+ don't have ``__args__`` at all.
-   Parameterize usages like ``List[int].__args__`` always work the same way.
-
-    This helper can be removed in favor of using ``hasattr(type, '__args__')``
-    when we support only Python 3.9 and newer.
+    Deprecated in Robot Framework 7.3 and will be removed in Robot Framework 8.0.
+    ``typing.get_args`` can be used instead.
     """
-    args = getattr(type, '__args__', None)
-    return bool(args and not all(isinstance(a, TypeVar) for a in args))
+    warnings.warn("'robot.utils.has_args' is deprecated and will be removed in "
+                  "Robot Framework 8.0. Use 'typing.get_args' instead.")
+    return bool(get_args(type))
 
 
 def is_truthy(item):
