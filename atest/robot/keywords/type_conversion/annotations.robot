@@ -239,3 +239,8 @@ Default value is used if explicit type conversion fails
 
 Explicit conversion failure is used if both conversions fail
     Check Test Case    ${TESTNAME}
+
+Deferred evaluation of annotations
+    [Documentation]    https://peps.python.org/pep-0649
+    [Tags]    require-py3.14
+    Check Test Case    ${TESTNAME}
