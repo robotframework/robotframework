@@ -340,10 +340,11 @@ class Process:
         if timeout is defined the default action on timeout is ``terminate``.
 
         Process outputs are, by default, written into in-memory buffers.
-        If there is a lot of output, these buffers may get full causing
-        the process to hang. To avoid that, process outputs can be redirected
-        using the ``stdout`` and ``stderr`` configuration parameters. For more
-        information see the `Standard output and error streams` section.
+        This typically works fine, but there can be problems if the amount of
+        output is large or unlimited. To avoid such problems, outputs can be
+        redirected to files using the ``stdout`` and ``stderr`` configuration
+        parameters. For more information see the `Standard output and error streams`
+        section.
 
         Returns a `result object` containing information about the execution.
 
