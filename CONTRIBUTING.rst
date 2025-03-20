@@ -133,8 +133,7 @@ new code. An important guideline is that the code should be clear enough that
 comments are generally not needed.
 
 All code, including test code, must be compatible with all supported Python
-interpreters and versions. Most importantly this means that the code must
-support both Python 2 and Python 3.
+interpreters and versions.
 
 Line length
 '''''''''''
@@ -173,6 +172,24 @@ internal code. When docstrings are added, they should follow `PEP-257
 <https://www.python.org/dev/peps/pep-0257/>`_. See `API documentation`_
 section below for more details about documentation syntax, generating
 API docs, etc.
+
+Type hints / Annotations
+''''''''''''''''''''''''
+
+Keywords and functions / methods in the public api should be annotated with type hints.
+These annotations should follow the Python `Typing Best Practices
+<https://typing.python.org/en/latest/reference/best_practices.html>`_ with the
+following exceptions / restrictions:
+
+- Annotation features are restricted to the minimum Python version supported by
+  Robot Framework.
+- This means that at this time, for example, `TypeAlias` can not yet be used.
+- Annotations should use the stringified format for annotations not natively
+  availabe by the minimum supported Python version. For example `'int | float'`
+  instead of `Union[int, float]` or `'list[int]'` instead of `List[int]`.
+- Due to automatic type conversion by Robot Framework, `'int | float'` should not be
+  annotated as `'float'` since this would convert any `int` argument to a `float`.
+- No `-> None` annotation on functions / method that do not return.
 
 Documentation
 ~~~~~~~~~~~~~
