@@ -320,7 +320,7 @@ Other backwards incompatible changes
 ------------------------------------
 
 - JSON output format produced by Rebot has changed (`#5160`_).
-- Source distribution format has been changed from `zip` to `tag.gz`. The reason
+- Source distribution format has been changed from `zip` to `tar.gz`. The reason
   is that the Python source distributions format has been standardized to `tar.gz`
   by `PEP 625 <https://peps.python.org/pep-0625/>`__ and `zip` distributions are
   deprecated (`#5296`_).
@@ -539,7 +539,7 @@ Full list of fixes and enhancements
     * - `#5296`_
       - enhancement
       - medium
-      - Change source distribution format from deprecated `zip` to `tag.gz`
+      - Change source distribution format from deprecated `zip` to `tar.gz`
     * - `#5202`_
       - bug
       - low
