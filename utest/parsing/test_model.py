@@ -1081,11 +1081,38 @@ ${x${y}}  nested name
         )
         get_and_assert_model(data, expected, depth=0)
 
+    def test_types(self):
+        data = '''
+*** Variables ***
+${a: int}        1
+@{a: int}        1    2
+&{a: int}        a=1
+&{a: str=int}    b=2
+'''
+        expected = VariableSection(
+            header=SectionHeader(
+                tokens=[Token(Token.VARIABLE_HEADER, '*** Variables ***', 1, 0)]
+            ),
+            body=[
+                Variable([Token(Token.VARIABLE, '${a: int}', 2, 0),
+                          Token(Token.ARGUMENT, '1', 2, 17)]),
+                Variable([Token(Token.VARIABLE, '@{a: int}', 3, 0),
+                          Token(Token.ARGUMENT, '1', 3, 17),
+                          Token(Token.ARGUMENT, '2', 3, 22)]),
+                Variable([Token(Token.VARIABLE, '&{a: int}', 4, 0),
+                          Token(Token.ARGUMENT, 'a=1', 4, 17)]),
+                Variable([Token(Token.VARIABLE, '&{a: str=int}', 5, 0),
+                          Token(Token.ARGUMENT, 'b=2', 5, 17)]),
+            ]
+        )
+        get_and_assert_model(data, expected, depth=0)
+
     def test_separator(self):
         data = '''
 *** Variables ***
 ${x}      a    b    c    separator=-
 ${y}      separator=
+${z: int}    1    separator=
 '''
         expected = VariableSection(
             header=SectionHeader(
@@ -1099,6 +1126,9 @@ ${y}      separator=
                           Token(Token.OPTION, 'separator=-', 2, 25)]),
                 Variable([Token(Token.VARIABLE, '${y}', 3, 0),
                           Token(Token.OPTION, 'separator=', 3, 10)]),
+                Variable([Token(Token.VARIABLE, '${z: int}', 4, 0),
+                          Token(Token.ARGUMENT, '1', 4, 13),
+                          Token(Token.OPTION, 'separator=', 4, 18)]),
             ]
         )
         get_and_assert_model(data, expected, depth=0)
@@ -1112,6 +1142,8 @@ ${x}==    invalid
 ${not     closed
           invalid
 &{dict}   invalid    ${invalid}
+${x: invalid}        1
+${x: list[broken}    1    2
 '''
         expected = VariableSection(
             header=SectionHeader(
@@ -1152,6 +1184,17 @@ ${not     closed
                             "Invalid dictionary variable item '${invalid}'. "
                             "Items must use 'name=value' syntax or be dictionary variables themselves.")
                 ),
+                Variable(
+                    tokens=[Token(Token.VARIABLE, '${x: invalid}', 8, 0),
+                            Token(Token.ARGUMENT, '1', 8, 21)],
+                    errors=("Unrecognized type 'invalid'.",)
+                ),
+                Variable(
+                    tokens=[Token(Token.VARIABLE, '${x: list[broken}', 9, 0),
+                            Token(Token.ARGUMENT, '1', 9, 21),
+                            Token(Token.ARGUMENT, '2', 9, 26)],
+                    errors=("Parsing type 'list[broken' failed: Error at end: Closing ']' missing.",)
+                ),
             ]
         )
         get_and_assert_model(data, expected, depth=0)
@@ -1183,11 +1226,41 @@ Test
                      Token(Token.ARGUMENT, 'one=item', 5, 23)]),
                 Var([Token(Token.VAR, 'VAR', 6, 4),
                      Token(Token.VARIABLE, '${x${y}}', 6, 11),
-                     Token(Token.ARGUMENT, 'nested name', 6, 23)])
+                     Token(Token.ARGUMENT, 'nested name', 6, 23)]),
             ]
         )
         test = get_and_assert_model(data, expected, depth=1)
         assert_equal([v.name for v in test.body], ['${x}', '@{y}', '&{z}', '${x${y}}'])
+
+    def test_types(self):
+        data = '''
+*** Test Cases ***
+Test
+    VAR    ${a: int}       1
+    VAR    @{a: int}       1    2
+    VAR    &{a: int}       a=1
+    VAR    &{a: str=int}   b=2
+'''
+        expected = TestCase(
+            header=TestCaseName([Token(Token.TESTCASE_NAME, 'Test', 2, 0)]),
+            body=[
+                Var([Token(Token.VAR, 'VAR', 3, 4),
+                     Token(Token.VARIABLE, '${a: int}', 3, 11),
+                     Token(Token.ARGUMENT, '1', 3, 27)]),
+                Var([Token(Token.VAR, 'VAR', 4, 4),
+                     Token(Token.VARIABLE, '@{a: int}', 4, 11),
+                     Token(Token.ARGUMENT, '1', 4, 27),
+                     Token(Token.ARGUMENT, '2', 4, 32)]),
+                Var([Token(Token.VAR, 'VAR', 5, 4),
+                     Token(Token.VARIABLE, '&{a: int}', 5, 11),
+                     Token(Token.ARGUMENT, 'a=1', 5, 27)]),
+                Var([Token(Token.VAR, 'VAR', 6, 4),
+                     Token(Token.VARIABLE, '&{a: str=int}', 6, 11),
+                     Token(Token.ARGUMENT, 'b=2', 6, 27)]),
+            ]
+        )
+        test = get_and_assert_model(data, expected, depth=1)
+        assert_equal([v.name for v in test.body], ['${a: int}', '@{a: int}', '&{a: int}', '&{a: str=int}'])
 
     def test_equals(self):
         data = '''
@@ -1267,6 +1340,8 @@ Keyword
     ...
     VAR    &{d}     o=k    bad
     VAR    ${x}     ok     scope=bad
+    VAR    ${a: bad}            1
+    VAR    ${a: list[broken}    1
 '''
         expected = Keyword(
             header=KeywordName([Token(Token.KEYWORD_NAME, 'Keyword', 2, 0)]),
@@ -1300,6 +1375,14 @@ Keyword
                      Token(Token.OPTION, 'scope=bad', 10, 27)],
                     ["VAR option 'scope' does not accept value 'bad'. Valid values "
                      "are 'LOCAL', 'TEST', 'TASK', 'SUITE', 'SUITES' and 'GLOBAL'."]),
+                Var([Token(Token.VAR, 'VAR', 11, 4),
+                     Token(Token.VARIABLE, '${a: bad}', 11, 11),
+                     Token(Token.ARGUMENT, '1', 11, 32)],
+                    ["Unrecognized type 'bad'."]),
+                Var([Token(Token.VAR, 'VAR', 12, 4),
+                     Token(Token.VARIABLE, '${a: list[broken}', 12, 11),
+                     Token(Token.ARGUMENT, '1', 12, 32)],
+                    ["Parsing type 'list[broken' failed: Error at end: Closing ']' missing."]),
             ]
         )
         get_and_assert_model(data, expected, depth=1)
@@ -1316,6 +1399,8 @@ Test
     ${x} =    Keyword    with assign
     ${x}    @{y}=    Keyword
     &{x}    Keyword
+    ${y: int}    Keyword
+    &{z: str=int}    Keyword
 '''
         expected = TestCase(
             header=TestCaseName([Token(Token.TESTCASE_NAME, 'Test', 2, 0)]),
@@ -1331,7 +1416,11 @@ Test
                              Token(Token.ASSIGN, '@{y}=', 6, 12),
                              Token(Token.KEYWORD, 'Keyword', 6, 21)]),
                 KeywordCall([Token(Token.ASSIGN, '&{x}', 7, 4),
-                             Token(Token.KEYWORD, 'Keyword', 7, 12)])
+                             Token(Token.KEYWORD, 'Keyword', 7, 12)]),
+                KeywordCall([Token(Token.ASSIGN, '${y: int}', 8, 4),
+                             Token(Token.KEYWORD, 'Keyword', 8, 17)]),
+                KeywordCall([Token(Token.ASSIGN, '&{z: str=int}', 9, 4),
+                             Token(Token.KEYWORD, 'Keyword', 9, 21)]),
             ]
         )
         get_and_assert_model(data, expected, depth=1)
@@ -1343,6 +1432,10 @@ Test
     ${x} =    ${y}      Marker in wrong place
     @{x}      @{y} =    Multiple lists
     ${x}      &{y}      Dict works only alone
+    ${a: wrong}         Bad type
+    ${x: wrong}      ${y: int} =            Bad type
+    ${x: wrong}      ${y: list[broken} =    Broken type
+    ${x: int=float}                         This type works only with dicts
 '''
         expected = TestCase(
             header=TestCaseName([Token(Token.TESTCASE_NAME, 'Test', 2, 0)]),
@@ -1361,6 +1454,23 @@ Test
                              Token(Token.KEYWORD, 'Dict works only alone', 5, 24)],
                             errors=('Dictionary variable cannot be assigned with '
                                     'other variables.',)),
+                KeywordCall([Token(Token.ASSIGN, '${a: wrong}', 6, 4),
+                             Token(Token.KEYWORD, 'Bad type', 6, 24)],
+                            errors=("Unrecognized type 'wrong'.",)),
+                KeywordCall([Token(Token.ASSIGN, '${x: wrong}', 7, 4),
+                             Token(Token.ASSIGN, '${y: int} =', 7, 21),
+                             Token(Token.KEYWORD, 'Bad type', 7, 44)],
+                            errors=("Unrecognized type 'wrong'.",)),
+                KeywordCall([Token(Token.ASSIGN, '${x: wrong}', 8, 4),
+                             Token(Token.ASSIGN, '${y: list[broken} =', 8, 21),
+                             Token(Token.KEYWORD, 'Broken type', 8, 44)],
+                            errors=(
+                                "Unrecognized type 'wrong'.",
+                                "Parsing type 'list[broken' failed: Error at end: Closing ']' missing.",
+                            )),
+                KeywordCall([Token(Token.ASSIGN, '${x: int=float}', 9, 4),
+                             Token(Token.KEYWORD, 'This type works only with dicts', 9, 44)],
+                            errors=("Unrecognized type 'int=float'.",)),
             ]
         )
         get_and_assert_model(data, expected, depth=1)
@@ -1453,6 +1563,36 @@ Invalid
                 ),
                 KeywordCall(
                     tokens=[Token(Token.KEYWORD, 'Keyword', 5, 4)])
+            ],
+        )
+        get_and_assert_model(data, expected, depth=1)
+
+    def test_invalid_arg_types(self):
+        data = '''
+*** Keywords ***
+Invalid
+    [Arguments]    ${x: bad}    ${y: list[bad]}    ${z: list[broken}    &{k: str=int}
+    Keyword
+'''
+        expected = Keyword(
+            header=KeywordName(
+                tokens=[Token(Token.KEYWORD_NAME, 'Invalid', 2, 0)]
+            ),
+            body=[
+                Arguments(
+                    tokens=[Token(Token.ARGUMENTS, '[Arguments]', 3, 4),
+                            Token(Token.ARGUMENT, '${x: bad}', 3, 19),
+                            Token(Token.ARGUMENT, '${y: list[bad]}', 3, 32),
+                            Token(Token.ARGUMENT, '${z: list[broken}', 3, 51),
+                            Token(Token.ARGUMENT, '&{k: str=int}', 3, 72)],
+                    errors=("Invalid argument '${x: bad}': Unrecognized type 'bad'.",
+                            "Invalid argument '${y: list[bad]}': Unrecognized type 'bad'.",
+                            "Invalid argument '${z: list[broken}': "
+                            "Parsing type 'list[broken' failed: Error at end: Closing ']' missing.",
+                            "Invalid argument '&{k: str=int}': Unrecognized type 'str=int'.")
+                ),
+                KeywordCall(
+                    tokens=[Token(Token.KEYWORD, 'Keyword', 4, 4)])
             ],
         )
         get_and_assert_model(data, expected, depth=1)

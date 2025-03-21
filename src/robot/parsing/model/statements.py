@@ -21,6 +21,8 @@ from collections.abc import Iterator, Sequence
 from typing import cast, ClassVar, Literal, overload, TYPE_CHECKING, Type, TypeVar
 
 from robot.conf import Language
+from robot.errors import DataError
+from robot.running import TypeInfo
 from robot.running.arguments import UserKeywordArgumentParser
 from robot.utils import normalize_whitespace, seq2str, split_from_equals, test_or_task
 from robot.variables import (contains_variable, is_scalar_assign, is_dict_variable,
@@ -874,6 +876,11 @@ class KeywordCall(Statement):
         assignment = VariableAssignment(self.assign)
         if assignment.error:
             self.errors += (assignment.error.message,)
+        for variable in assignment:
+            try:
+                TypeInfo.from_variable(variable)
+            except DataError as err:
+                self.errors += (str(err),)
 
 
 @Statement.register
@@ -1427,11 +1434,16 @@ class VariableValidator:
 
     def validate(self, statement: Statement):
         name = statement.get_value(Token.VARIABLE, '')
-        match = search_variable(name, ignore_errors=True)
+        match = search_variable(name, ignore_errors=True, parse_type=True)
         if not match.is_assign(allow_assign_mark=True, allow_nested=True):
             statement.errors += (f"Invalid variable name '{name}'.",)
+            return
         if match.identifier == '&':
             self._validate_dict_items(statement)
+        try:
+            TypeInfo.from_variable(match)
+        except DataError as err:
+            statement.errors += (str(err),)
 
     def _validate_dict_items(self, statement: Statement):
         for item in statement.get_values(Token.ARGUMENT):

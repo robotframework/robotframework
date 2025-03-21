@@ -20,7 +20,7 @@ from robot.errors import (DataError, ExecutionStatus, HandlerExecutionFailed,
                           VariableError)
 from robot.utils import (DotDict, ErrorDetails, format_assign_message,
                          get_error_message, is_dict_like, is_list_like,
-                         is_number, prepr, type_name)
+                         prepr, type_name)
 from .search import search_variable, VariableMatch
 
 
@@ -107,7 +107,7 @@ class VariableAssigner:
         context = self._context
         context.output.trace(lambda: f'Return: {prepr(return_value)}',
                              write_if_flat=False)
-        resolver = ReturnValueResolver(self._assignment)
+        resolver = ReturnValueResolver.from_assignment(self._assignment)
         for name, items, value in resolver.resolve(return_value):
             if items:
                 value = self._item_assign(name, items, value, context.variables)
@@ -205,45 +205,65 @@ class VariableAssigner:
         return value if name[0] == '$' else variables[name]
 
 
-def ReturnValueResolver(assignment):
-    if not assignment:
-        return NoReturnValueResolver()
-    if len(assignment) == 1:
-        return OneReturnValueResolver(assignment[0])
-    if any(a[0] == '@' for a in assignment):
-        return ScalarsAndListReturnValueResolver(assignment)
-    return ScalarsOnlyReturnValueResolver(assignment)
+class ReturnValueResolver:
+
+    @classmethod
+    def from_assignment(cls, assignment):
+        if not assignment:
+            return NoReturnValueResolver()
+        if len(assignment) == 1:
+            return OneReturnValueResolver(assignment[0])
+        if any(a[0] == '@' for a in assignment):
+            return ScalarsAndListReturnValueResolver(assignment)
+        return ScalarsOnlyReturnValueResolver(assignment)
+
+    def resolve(self, return_value):
+        raise NotImplementedError
+
+    def _split_assignment(self, assignment, handle_list_and_dict=True):
+        match: VariableMatch = search_variable(assignment, parse_type=True)
+        from robot.running import TypeInfo
+        info = TypeInfo.from_variable(match, handle_list_and_dict)
+        return match.name, info, match.items
+
+    def _convert(self, return_value, type_):
+        if type_:
+            from robot.running import TypeInfo
+            info = TypeInfo.from_type_hint(type_)
+            return_value = info.convert(return_value, kind='Return value')
+        return return_value
 
 
-class NoReturnValueResolver:
+class NoReturnValueResolver(ReturnValueResolver):
 
     def resolve(self, return_value):
         return []
 
 
-class OneReturnValueResolver:
+class OneReturnValueResolver(ReturnValueResolver):
 
     def __init__(self, assignment):
-        match: VariableMatch = search_variable(assignment)
-        self._name = match.name
-        self._items = match.items
+        self._name, self._type, self._items = self._split_assignment(assignment)
 
     def resolve(self, return_value):
         if return_value is None:
             identifier = self._name[0]
             return_value = {'$': None, '@': [], '&': {}}[identifier]
+        return_value = self._convert(return_value, self._type)
         return [(self._name, self._items, return_value)]
 
 
-class _MultiReturnValueResolver:
+class MultiReturnValueResolver(ReturnValueResolver):
 
     def __init__(self, assignments):
         self._names = []
+        self._types = []
         self._items = []
         for assign in assignments:
-            match: VariableMatch = search_variable(assign)
-            self._names.append(match.name)
-            self._items.append(match.items)
+            name, type_, items = self._split_assignment(assign, handle_list_and_dict=False)
+            self._names.append(name)
+            self._types.append(type_)
+            self._items.append(items)
         self._min_count = len(assignments)
 
     def resolve(self, return_value):
@@ -274,17 +294,19 @@ class _MultiReturnValueResolver:
         raise NotImplementedError
 
 
-class ScalarsOnlyReturnValueResolver(_MultiReturnValueResolver):
+class ScalarsOnlyReturnValueResolver(MultiReturnValueResolver):
 
     def _validate(self, return_count):
         if return_count != self._min_count:
             self._raise(f'Expected {self._min_count} return values, got {return_count}.')
 
     def _resolve(self, return_value):
+        return_value = [self._convert(rv, t)
+                        for rv, t in zip(return_value, self._types)]
         return list(zip(self._names, self._items, return_value))
 
 
-class ScalarsAndListReturnValueResolver(_MultiReturnValueResolver):
+class ScalarsAndListReturnValueResolver(MultiReturnValueResolver):
 
     def __init__(self, assignments):
         super().__init__(assignments)
@@ -296,7 +318,7 @@ class ScalarsAndListReturnValueResolver(_MultiReturnValueResolver):
                         f'got {return_count}.')
 
     def _resolve(self, return_value):
-        list_index = [a[0][0] for a in self._names].index('@')
+        list_index = [a[0] for a in self._names].index('@')
         list_len = len(return_value) - len(self._names) + 1
         elements_before_list = list(zip(
             self._names[:list_index],
@@ -313,4 +335,12 @@ class ScalarsAndListReturnValueResolver(_MultiReturnValueResolver):
             self._items[list_index],
             return_value[list_index:list_index+list_len],
         )]
-        return elements_before_list + list_elements + elements_after_list
+        result = elements_before_list + list_elements + elements_after_list
+        for index, (name, items, value) in enumerate(result):
+            type_ = self._types[index]
+            if index == list_index:
+                value = [self._convert(v, type_) for v in value]
+            else:
+                value = self._convert(value, type_)
+            result[index] = (name, items, value)
+        return result

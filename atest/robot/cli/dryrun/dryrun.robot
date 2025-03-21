@@ -24,6 +24,14 @@ Keywords with embedded arguments
     Check Keyword Data    ${tc[3]}         Some embedded and normal args     args=\${does not exist}
     Check Keyword Data    ${tc[3, 0]}      BuiltIn.No Operation              status=NOT RUN
 
+Keywords with types
+    Check Test Case    ${TESTNAME}
+
+Keywords with types that would fail
+    Check Test Case    ${TESTNAME}
+    Error In File    1    cli/dryrun/dryrun.robot    214
+    ...    Creating keyword 'Invalid type' failed: Invalid argument specification: Invalid argument '\${arg: bad}': Unrecognized type 'bad'.
+
 Library keyword with embedded arguments
     ${tc}=    Check Test Case    ${TESTNAME}
     Length Should Be      ${tc.body}       2
@@ -102,7 +110,7 @@ Non-existing keyword name
 
 Invalid syntax in UK
     Check Test Case    ${TESTNAME}
-    Error In File    0    cli/dryrun/dryrun.robot    174
+    Error In File    0    cli/dryrun/dryrun.robot    210
     ...    SEPARATOR=\n
     ...    Creating keyword 'Invalid Syntax UK' failed: Invalid argument specification: Multiple errors:
     ...    - Invalid argument syntax '\${oops'.
@@ -121,11 +129,11 @@ Avoid keyword in dry-run
     Keyword should have been validated           ${tc[3]}
 
 Invalid imports
-    Error in file    1    cli/dryrun/dryrun.robot    7
+    Error in file    2    cli/dryrun/dryrun.robot    7
     ...    Importing library 'DoesNotExist' failed: *Error: *
-    Error in file    2    cli/dryrun/dryrun.robot    8
+    Error in file    3    cli/dryrun/dryrun.robot    8
     ...    Variable file 'wrong_path.py' does not exist.
-    Error in file    3    cli/dryrun/dryrun.robot    9
+    Error in file    4    cli/dryrun/dryrun.robot    9
     ...    Resource file 'NonExisting.robot' does not exist.
     [Teardown]    NONE
 

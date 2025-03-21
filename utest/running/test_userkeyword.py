@@ -54,6 +54,7 @@ class TestEmbeddedArgs(unittest.TestCase):
 
     def test_truthy(self):
         assert_true(EmbeddedArguments.from_name('${Yes} embedded args here'))
+        assert_true(EmbeddedArguments.from_name('${Yes: int} embedded args here'))
         assert_true(not EmbeddedArguments.from_name('No embedded args here'))
 
     def test_get_embedded_arg_and_regexp(self):

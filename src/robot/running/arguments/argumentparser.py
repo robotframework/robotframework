@@ -18,10 +18,11 @@ from inspect import isclass, signature, Parameter
 from typing import Any, Callable, get_type_hints
 
 from robot.errors import DataError
-from robot.utils import split_from_equals
-from robot.variables import is_assign, is_scalar_assign
+from robot.utils import NOT_SET, split_from_equals
+from robot.variables import is_assign, is_scalar_assign, search_variable
 
 from .argumentspec import ArgumentSpec
+from .typeinfo import TypeInfo
 
 
 class ArgumentParser(ABC):
@@ -118,10 +119,14 @@ class ArgumentSpecParser(ArgumentParser):
         named_only = []
         var_named = None
         defaults = {}
+        types = {}
         named_only_separator_seen = positional_only_separator_seen = False
         target = positional_or_named
         for arg in arguments:
-            arg = self._validate_arg(arg)
+            arg, default = self._validate_arg(arg)
+            arg, type_ = self._split_type(arg)
+            if type_:
+                types[self._format_arg(arg)] = type_
             if var_named:
                 self._report_error('Only last argument can be kwargs.')
             elif self._is_positional_only_separator(arg):
@@ -133,8 +138,7 @@ class ArgumentSpecParser(ArgumentParser):
                 positional_only = positional_or_named
                 target = positional_or_named = []
                 positional_only_separator_seen = True
-            elif isinstance(arg, tuple):
-                arg, default = arg
+            elif default is not NOT_SET:
                 arg = self._format_arg(arg)
                 target.append(arg)
                 defaults[arg] = default
@@ -153,7 +157,8 @@ class ArgumentSpecParser(ArgumentParser):
                 arg = self._format_arg(arg)
                 target.append(arg)
         return ArgumentSpec(name, self.type, positional_only, positional_or_named,
-                            var_positional, named_only, var_named, defaults)
+                            var_positional, named_only, var_named, defaults,
+                            types=types)
 
     @abstractmethod
     def _validate_arg(self, arg):
@@ -192,6 +197,8 @@ class ArgumentSpecParser(ArgumentParser):
         target.append(arg)
         return arg
 
+    def _split_type(self, arg):
+        return arg, None
 
 class DynamicArgumentParser(ArgumentSpecParser):
 
@@ -199,12 +206,13 @@ class DynamicArgumentParser(ArgumentSpecParser):
         if isinstance(arg, tuple):
             if not self._is_valid_tuple(arg):
                 self._report_error(f'Invalid argument "{arg}".')
+                return None, NOT_SET
             if len(arg) == 1:
-                return arg[0]
-            return arg
+                return arg[0], NOT_SET
+            return arg[0], arg[1]
         if '=' in arg:
             return tuple(arg.split('=', 1))
-        return arg
+        return arg, NOT_SET
 
     def _is_valid_tuple(self, arg):
         return (len(arg) in (1, 2)
@@ -236,8 +244,9 @@ class UserKeywordArgumentParser(ArgumentSpecParser):
         arg, default = split_from_equals(arg)
         if not (is_assign(arg) or arg == '@{}'):
             self._report_error(f"Invalid argument syntax '{arg}'.")
+            return None, NOT_SET
         if default is None:
-            return arg
+            return arg, NOT_SET
         if not is_scalar_assign(arg):
             typ = 'list' if arg[0] == '@' else 'dictionary'
             self._report_error(f"Only normal arguments accept default values, "
@@ -263,4 +272,13 @@ class UserKeywordArgumentParser(ArgumentSpecParser):
         return varargs[2:-1]
 
     def _format_arg(self, arg):
-        return arg[2:-1]
+        return arg[2:-1] if arg else ''
+
+    def _split_type(self, arg):
+        match = search_variable(arg, parse_type=True)
+        try:
+            info = TypeInfo.from_variable(match, handle_list_and_dict=False)
+        except DataError as err:
+            info = None
+            self._report_error(f"Invalid argument '{arg}': {err}")
+        return match.name, info
