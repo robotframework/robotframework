@@ -16,7 +16,7 @@
 import sys
 from threading import current_thread
 from tkinter import (BOTH, Button, END, Entry, Frame, Label, LEFT, Listbox, Tk,
-                     Toplevel, W)
+                     Toplevel, W, Canvas)
 from typing import Any, Union
 
 
@@ -25,6 +25,21 @@ class TkDialog(Toplevel):
     right_button = 'Cancel'
 
     def __init__(self, message, value=None, **config):
+        self.bg_color = "#232627"   # Dialog background color
+        self.button_normal_color ="#009A91"
+        self.button_hover_color = "#1AB4A4"
+        self.button_click_color = "#009A91"
+        self.button_text_color = "white"
+        self.button_radius = 7
+        self.button_width = 130
+        self.button_height = 40
+        self.text_font = ("Arial", 11)
+        self.button_font = ("Arial", 10, "bold")
+        self.input_bg_color = "#6B7376"
+        self.input_fg_color = "white"
+        self.lable_fg_color = None if sys.platform == "darwin" else "white"
+        self.widget_text_color = None if sys.platform == "darwin" else "white"
+
         self._prevent_execution_with_timeouts()
         self._button_bindings = {}
         super().__init__(self._get_root())
@@ -41,16 +56,49 @@ class TkDialog(Toplevel):
 
     def _get_root(self) -> Tk:
         root = Tk()
-        root.withdraw()
+        if sys.platform.startswith("linux"):
+            root.wait_visibility(root)
+            root.attributes('-alpha', 0)
+        else:
+            root.withdraw()
         return root
 
     def _initialize_dialog(self):
-        self.withdraw()    # Remove from display until finalized.
-        self.title('Robot Framework')
+        self.withdraw()
+        self.attributes("-topmost",True)
+        if sys.platform == "darwin":
+            self.title("Robot Framework")
+        else:
+            self.configure(bg=self.bg_color)
+            self.overrideredirect(True)  
+
+            # Create a custom title bar
+            title_bar = Frame(self, bg=self.bg_color, relief="flat", bd=2)
+            title_bar.pack(fill="x")
+            # Add a title label
+            title_label = Label(title_bar, text="Robot Framework", fg="white", bg=self.bg_color, font=("Arial", 10, "bold"))
+            title_label.pack(side=LEFT, padx=10,pady=10)
+            # Enable dragging functionality
+            for widget in (title_bar, title_label):
+                widget.bind("<ButtonPress-1>", self._start_move)
+                widget.bind("<B1-Motion>", self._on_move)
+                
         self.protocol("WM_DELETE_WINDOW", self._close)
         self.bind("<Escape>", self._close)
         if self.left_button == TkDialog.left_button:
             self.bind("<Return>", self._left_button_clicked)
+
+    # Enable Dragging Functions
+    def _start_move(self, event):
+        """ Records the initial mouse position when clicking the title bar. """
+        self.x_offset = event.x
+        self.y_offset = event.y
+
+    def _on_move(self, event):
+        """ Moves the window when dragging the title bar. """
+        x = self.winfo_x() + (event.x - self.x_offset)
+        y = self.winfo_y() + (event.y - self.y_offset)
+        self.geometry(f"+{x}+{y}")
 
     def _finalize_dialog(self):
         self.update()    # Needed to get accurate dialog size.
@@ -65,13 +113,16 @@ class TkDialog(Toplevel):
         self.geometry(f'{width}x{height}+{x}+{y}')
         self.lift()
         self.deiconify()
+        self.focus_force()
+        self.grab_set()
         if self.widget:
             self.widget.focus_set()
 
     def _create_body(self, message, value, **config) -> Union[Entry, Listbox, None]:
-        frame = Frame(self)
+        frame = Frame(self, bg=self.bg_color if sys.platform != "darwin" else None)     #type:ignore
         max_width = self.winfo_screenwidth() // 2
-        label = Label(frame, text=message, anchor=W, justify=LEFT, wraplength=max_width)
+        label = Label(frame, text=message, anchor=W, justify=LEFT, wraplength=max_width,
+                      bg=self.bg_color if sys.platform != "darwin" else None, fg=self.lable_fg_color, font=self.text_font)  #type:ignore
         label.pack(fill=BOTH)
         widget = self._create_widget(frame, value, **config)
         if widget:
@@ -83,15 +134,80 @@ class TkDialog(Toplevel):
         return None
 
     def _create_buttons(self):
-        frame = Frame(self)
+        frame = Frame(self, bg=self.bg_color if sys.platform != "darwin" else None)
         self._create_button(frame, self.left_button, self._left_button_clicked)
         self._create_button(frame, self.right_button, self._right_button_clicked)
-        frame.pack()
+        frame.pack(pady=10)
 
     def _create_button(self, parent, label, callback):
         if label:
-            button = Button(parent, text=label, width=10, command=callback, underline=0)
-            button.pack(side=LEFT, padx=5, pady=5)
+            if sys.platform == "darwin":
+                button = Button(parent, text=label, width=10, command=callback, underline=0,font=self.button_font)
+                button.pack(side=LEFT, padx=5, pady=5)
+            else:
+
+                frame = Frame(parent, bg=self.bg_color)
+                frame.pack(side=LEFT, padx=10, pady=10)
+
+                canvas = Canvas(frame, width=self.button_width, height=self.button_height,
+                                bg=self.bg_color, highlightthickness=0)
+                canvas.pack()
+
+                x0, y0, x1, y1 = 5, 5, self.button_width - 5, self.button_height - 5
+
+                rounded_rect = [
+                    canvas.create_oval(x0, y0, x0 + self.button_radius, y0 + self.button_radius,
+                                    fill=self.button_normal_color, outline=self.button_normal_color),
+                    canvas.create_oval(x1 - self.button_radius, y0, x1, y0 + self.button_radius,
+                                    fill=self.button_normal_color, outline=self.button_normal_color),
+                    canvas.create_oval(x0, y1 - self.button_radius, x0 + self.button_radius, y1,
+                                    fill=self.button_normal_color, outline=self.button_normal_color),
+                    canvas.create_oval(x1 - self.button_radius, y1 - self.button_radius, x1, y1,
+                                    fill=self.button_normal_color, outline=self.button_normal_color),
+                    canvas.create_rectangle(x0 + self.button_radius // 2, y0, x1 - self.button_radius // 2, y1,
+                                            fill=self.button_normal_color, outline=self.button_normal_color),
+                    canvas.create_rectangle(x0, y0 + self.button_radius // 2, x1, y1 - self.button_radius // 2,
+                                            fill=self.button_normal_color, outline=self.button_normal_color)
+                ]
+
+                button = Button(frame, text=label, font=self.button_font,
+                                bg=self.button_normal_color, fg=self.button_text_color,
+                                activebackground=self.button_normal_color, activeforeground="white",
+                                borderwidth=0, relief="flat", cursor="hand2",
+                                highlightthickness=0, bd=0,
+                                command=callback)
+
+                button_window = canvas.create_window(self.button_width // 2, self.button_height // 2,
+                                                    window=button, width=100, height=30)
+
+                def on_hover(event):
+                    for shape in rounded_rect:
+                        canvas.itemconfig(shape, fill=self.button_hover_color, outline=self.button_hover_color)
+                    button.config(bg=self.button_hover_color, activebackground=self.button_hover_color)
+
+                def on_leave(event):
+                    for shape in rounded_rect:
+                        canvas.itemconfig(shape, fill=self.button_normal_color, outline=self.button_normal_color)
+                    button.config(bg=self.button_normal_color, activebackground=self.button_normal_color)
+
+                def on_click(event):
+                    for shape in rounded_rect:
+                        canvas.itemconfig(shape, fill=self.button_click_color, outline=self.button_click_color)
+                    button.config(bg=self.button_click_color, activebackground=self.button_click_color)
+
+                def on_release(event):
+                    on_hover(event)  # Restore hover color after click
+
+                button.bind("<Enter>", on_hover)
+                button.bind("<Leave>", on_leave)
+                button.bind("<ButtonPress-1>", on_click)
+                button.bind("<ButtonRelease-1>", on_release)
+
+                canvas.bind("<Enter>", on_hover)
+                canvas.bind("<Leave>", on_leave)
+                canvas.bind("<ButtonPress-1>", on_click)
+                canvas.bind("<ButtonRelease-1>", on_release)
+
             for char in label[0].upper(), label[0].lower():
                 self.bind(char, callback)
                 self._button_bindings[char] = callback
@@ -124,7 +240,7 @@ class TkDialog(Toplevel):
 
 
 class MessageDialog(TkDialog):
-    right_button = None
+    right_button = None     #type:ignore
 
 
 class InputDialog(TkDialog):
@@ -133,7 +249,13 @@ class InputDialog(TkDialog):
         super().__init__(message, default, hidden=hidden)
 
     def _create_widget(self, parent, default, hidden=False) -> Entry:
-        widget = Entry(parent, show='*' if hidden else '')
+        # Create a wrapper frame to control spacing
+        input_frame = Frame(parent, bg=self.bg_color if sys.platform != "darwin" else None)     #type:ignore
+        input_frame.pack(pady=5)  # Adjust this value to increase/decrease spacing
+        # Create the Entry widget inside the frame
+        widget = Entry(input_frame, bg=self.input_bg_color if sys.platform != "darwin" else None,fg=self.input_fg_color, show='*' if hidden else '')        #type:ignore
+        widget.pack(ipadx=70,ipady=5,padx=5, pady=10)  # Adds some internal padding for spacing
+
         widget.insert(0, default)
         widget.select_range(0, END)
         widget.bind('<FocusIn>', self._unbind_buttons)
@@ -158,7 +280,7 @@ class SelectionDialog(TkDialog):
         super().__init__(message, values, default=default)
 
     def _create_widget(self, parent, values, default=None) -> Listbox:
-        widget = Listbox(parent)
+        widget = Listbox(parent,background=self.input_bg_color, foreground=self.widget_text_color)
         for item in values:
             widget.insert(END, item)
         if default is not None:
@@ -187,7 +309,7 @@ class SelectionDialog(TkDialog):
 class MultipleSelectionDialog(TkDialog):
 
     def _create_widget(self, parent, values) -> Listbox:
-        widget = Listbox(parent, selectmode='multiple')
+        widget = Listbox(parent, background=self.input_bg_color, foreground=self.widget_text_color, selectmode='multiple')
         for item in values:
             widget.insert(END, item)
         widget.config(width=0)
