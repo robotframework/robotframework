@@ -14,4 +14,5 @@ Keyword timeout
 *** Keywords ***
 Keyword timeout
     [Timeout]    0.5s
-    Run Process    python    -c    import time; time.sleep(5)
+    Start Process    python    -c    import time; time.sleep(5)
+    Wait For Process

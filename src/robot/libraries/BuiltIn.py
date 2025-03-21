@@ -2493,7 +2493,7 @@ class _RunKeyword(_BuiltInBase):
         # We need to reset it here to not continue unnecessarily:
         # https://github.com/robotframework/robotframework/issues/5237
         if context.in_teardown:
-            timeouts = [t for t in context.timeouts if t.type == 'Keyword']
+            timeouts = [t for t in context.timeouts if t.kind == 'KEYWORD']
             if timeouts and min(timeouts).timed_out():
                 err.keyword_timeout = True
 

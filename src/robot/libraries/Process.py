@@ -21,6 +21,7 @@ import time
 from tempfile import TemporaryFile
 
 from robot.api import logger
+from robot.errors import TimeoutError
 from robot.utils import (cmdline2list, ConnectionCache, console_decode, console_encode,
                          is_list_like, is_pathlike, is_string, is_truthy,
                          NormalizedDict, secs_to_timestr, system_decode, system_encode,
@@ -482,7 +483,7 @@ class Process:
         See `Terminate Process` keyword for more details how processes are
         terminated and killed.
 
-        If the process ends before the timeout or it is terminated or killed,
+        If the process ends before the timeout, or it is terminated or killed,
         this keyword returns a `result object` containing information about
         the execution. If the process is left running, Python ``None`` is
         returned instead.
@@ -500,6 +501,11 @@ class Process:
         | ${result} =                 | Wait For Process | timeout=1min 30s | on_timeout=kill |
         | Process Should Be Stopped   |                  |                  |
         | Should Be Equal As Integers | ${result.rc}     | -9               |
+
+        Note: If Robot Framework's test or keyword timeout is exceeded while
+        this keyword is waiting for the process to end, the process is killed
+        to avoid leaving it running on the background. This is new in Robot
+        Framework 7.3.
         """
         process = self._processes[handle]
         logger.info('Waiting for process to complete.')
@@ -526,18 +532,21 @@ class Process:
 
     def _wait(self, process):
         result = self._results[process]
-        # Popen.communicate() does not like closed PIPEs. Due to us using
-        # a timeout, we only need to care about stdin.
+        # Popen.communicate() does not like closed stdin/stdout/stderr PIPEs.
+        # Due to us using a timeout, we only need to care about stdin.
         # https://github.com/python/cpython/issues/131064
         if process.stdin and process.stdin.closed:
             process.stdin = None
-        # Use timeout with communicate() to allow Robot's timeouts to stop
-        # keyword execution. Process is left running in that case.
+        # Timeout is used with communicate() to support Robot's timeouts.
         while True:
             try:
                 result.stdout, result.stderr = process.communicate(timeout=0.1)
             except subprocess.TimeoutExpired:
-                pass
+                continue
+            except TimeoutError as err:
+                logger.info(f'{err.kind.title()} timeout exceeded.')
+                self._kill(process)
+                raise
             else:
                 break
         result.rc = process.returncode
@@ -550,7 +559,7 @@ class Process:
 
         If ``handle`` is not given, uses the current `active process`.
 
-        By default first tries to stop the process gracefully. If the process
+        By default, first tries to stop the process gracefully. If the process
         does not stop in 30 seconds, or ``kill`` argument is given a true value,
         (see `Boolean arguments`) kills the process forcefully. Stops also all
         the child processes of the originally started process.
@@ -618,7 +627,7 @@ class Process:
         This keyword can be used in suite teardown or elsewhere to make
         sure that all processes are stopped,
 
-        By default tries to terminate processes gracefully, but can be
+        Tries to terminate processes gracefully by default, but can be
         configured to forcefully kill them immediately. See `Terminate Process`
         that this keyword uses internally for more details.
         """
