@@ -432,8 +432,8 @@ class Var(model.Var, WithSource):
 
     def _resolve_name_and_value(self, variables):
         name = self.name[:2] + variables.replace_string(self.name[2:-1]) + '}'
-        value = VariableResolver.from_variable(self).resolve(variables)
-        return name, value
+        resolver = VariableResolver.from_name_and_value(name, self.value)
+        return resolver.name, resolver.resolve(variables)
 
     def to_dict(self) -> DataDict:
         data = super().to_dict()

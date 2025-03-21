@@ -94,7 +94,7 @@ class TypeInfo(metaclass=SetterAwareType):
                  type: Any = NOT_SET,
                  nested: 'Sequence[TypeInfo]|None' = None):
         if type is NOT_SET:
-            type = TYPE_NAMES.get(name.lower()) if name else None
+            type = TYPE_NAMES.get(name.lower()) if name else NOT_SET
         self.name = name
         self.type = type
         self.nested = nested
@@ -180,6 +180,8 @@ class TypeInfo(metaclass=SetterAwareType):
         """
         if hint is NOT_SET:
             return cls()
+        if isinstance(hint, cls):
+            return hint
         if isinstance(hint, ForwardRef):
             hint = hint.__forward_arg__
         if isinstance(hint, typeddict_types):

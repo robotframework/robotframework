@@ -21,6 +21,7 @@ from robot.errors import (DataError, ExecutionStatus, HandlerExecutionFailed,
 from robot.utils import (DotDict, ErrorDetails, format_assign_message,
                          get_error_message, is_dict_like, is_list_like,
                          is_number, prepr, type_name)
+from robot.utils.notset import NOT_SET
 from .search import search_variable, VariableMatch
 
 
@@ -224,8 +225,15 @@ class NoReturnValueResolver:
 class OneReturnValueResolver:
 
     def __init__(self, assignment):
-        match: VariableMatch = search_variable(assignment)
-        self._name = match.name
+        match = search_variable(assignment)
+        if ': ' in match.base:
+            x, type_ = match.base.rsplit(': ', 1)
+            name = f'{match.identifier}{{{x}}}'
+        else:
+            name = match.name
+            type_ = NOT_SET
+        self._name = name
+        self._typ = type_
         self._items = match.items
 
     def resolve(self, return_value):

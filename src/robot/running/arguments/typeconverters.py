@@ -28,6 +28,7 @@ from robot.conf import Languages
 from robot.libraries.DateTime import convert_date, convert_time
 from robot.utils import (eq, get_error_message, plural_or_not as s, safe_str,
                          seq2str, type_name)
+from robot.utils.notset import NOT_SET, NotSet
 
 
 if TYPE_CHECKING:
@@ -422,6 +423,25 @@ class NoneConverter(TypeConverter):
         if value.upper() == 'NONE':
             return None
         raise ValueError
+
+
+@TypeConverter.register
+class NotSetConverter(TypeConverter):
+    type  = NotSet
+    type_name = 'NotSet'
+
+    def no_conversion_needed(self, value):
+        return True
+
+    @classmethod
+    def handles(cls, type_info: 'TypeInfo') -> bool:
+        return isinstance(type_info.type, NotSet)
+
+    def _convert(self, value):
+        return value
+
+    def _handles_value(self, value):
+        return True
 
 
 @TypeConverter.register
