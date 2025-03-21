@@ -431,9 +431,10 @@ class Var(model.Var, WithSource):
             raise DataError(f"Invalid VAR scope: {err}")
 
     def _resolve_name_and_value(self, variables):
+        # FIXME: Check type before resolving variables in name
         name = self.name[:2] + variables.replace_string(self.name[2:-1]) + '}'
-        value = VariableResolver.from_variable(self).resolve(variables)
-        return name, value
+        resolver = VariableResolver.from_name_and_value(name, self.value, self.separator)
+        return resolver.name, resolver.resolve(variables)
 
     def to_dict(self) -> DataDict:
         data = super().to_dict()

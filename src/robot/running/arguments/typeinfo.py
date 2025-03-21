@@ -180,6 +180,8 @@ class TypeInfo(metaclass=SetterAwareType):
         """
         if hint is NOT_SET:
             return cls()
+        if isinstance(hint, cls):
+            return hint
         if isinstance(hint, ForwardRef):
             hint = hint.__forward_arg__
         if isinstance(hint, typeddict_types):
