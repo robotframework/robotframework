@@ -19,7 +19,7 @@ from robot.errors import DataError
 from robot.utils import DotDict, split_from_equals
 
 from .resolvable import Resolvable
-from .search import is_assign, is_list_variable, is_dict_variable
+from .search import is_list_variable, is_dict_variable, search_variable
 
 if TYPE_CHECKING:
     from robot.running import Var, Variable
@@ -35,15 +35,17 @@ class VariableTableSetter:
         for var in variables:
             try:
                 resolver = VariableResolver.from_variable(var)
-                self.store.add(var.name, resolver, overwrite)
+                self.store.add(resolver.name, resolver, overwrite)
             except DataError as err:
                 var.report_error(str(err))
 
 
 class VariableResolver(Resolvable):
 
-    def __init__(self, value: Sequence[str], error_reporter=None):
+    def __init__(self, value: Sequence[str], name=None, type=None, error_reporter=None):
         self.value = tuple(value)
+        self.name = name
+        self.type = type
         self.error_reporter = error_reporter
         self.resolving = False
         self.resolved = False
@@ -52,15 +54,16 @@ class VariableResolver(Resolvable):
     def from_name_and_value(cls, name: str, value: 'str|Sequence[str]',
                             separator: 'str|None' = None,
                             error_reporter=None) -> 'VariableResolver':
-        if not is_assign(name, allow_nested=True):
+        match = search_variable(name, parse_type=True)
+        if not match.is_assign(allow_nested=True):
             raise DataError(f"Invalid variable name '{name}'.")
-        if name[0] == '$':
-            return ScalarVariableResolver(value, separator, error_reporter)
+        if match.identifier == '$':
+            return ScalarVariableResolver(value, separator, match.name, match.type, error_reporter)
         if separator is not None:
             raise DataError('Only scalar variables support separators.')
         klass = {'@': ListVariableResolver,
-                 '&': DictVariableResolver}[name[0]]
-        return klass(value, error_reporter)
+                 '&': DictVariableResolver}[match.identifier]
+        return klass(value, match.name, match.type, error_reporter)
 
     @classmethod
     def from_variable(cls, var: 'Var|Variable') -> 'VariableResolver':
@@ -75,14 +78,23 @@ class VariableResolver(Resolvable):
         if not self.resolved:
             self.resolving = True
             try:
-                self.value = self._replace_variables(variables)
+                value = self._replace_variables(variables)
             finally:
                 self.resolving = False
+            self.value = self._convert(value, self.type) if self.type else value
             self.resolved = True
         return self.value
 
     def _replace_variables(self, variables) -> Any:
         raise NotImplementedError
+
+    def _convert(self, value, type_):
+        from robot.running.arguments import TypeInfo
+        info = TypeInfo.from_type_hint(type_)
+        try:
+            return info.convert(value, kind='Value')
+        except (ValueError, TypeError) as err:
+            raise DataError(str(err))
 
     def report_error(self, error):
         if self.error_reporter:
@@ -94,9 +106,9 @@ class VariableResolver(Resolvable):
 class ScalarVariableResolver(VariableResolver):
 
     def __init__(self, value: 'str|Sequence[str]', separator: 'str|None' = None,
-                 error_reporter=None):
+                 name=None, type=None, error_reporter=None):
         value, separator = self._get_value_and_separator(value, separator)
-        super().__init__(value, error_reporter)
+        super().__init__(value, name, type, error_reporter)
         self.separator = separator
 
     def _get_value_and_separator(self, value, separator):
@@ -127,11 +139,14 @@ class ListVariableResolver(VariableResolver):
     def _replace_variables(self, variables):
         return variables.replace_list(self.value)
 
+    def _convert(self, value, type_):
+        return super()._convert(value, f'list[{type_}]')
+
 
 class DictVariableResolver(VariableResolver):
 
-    def __init__(self, value: Sequence[str], error_reporter=None):
-        super().__init__(tuple(self._yield_formatted(value)), error_reporter)
+    def __init__(self, value: Sequence[str], name=None, type=None, error_reporter=None):
+        super().__init__(tuple(self._yield_formatted(value)), name, type, error_reporter)
 
     def _yield_formatted(self, values):
         for item in values:
@@ -159,3 +174,7 @@ class DictVariableResolver(VariableResolver):
                 yield replace_scalar(key), replace_scalar(values)
             else:
                 yield from replace_scalar(item).items()
+
+    def _convert(self, value, type_):
+        k_type, v_type = self.type.split('=', 1) if '=' in type_ else ("Any", type_)
+        return super()._convert(value, f'dict[{k_type}, {v_type}]')

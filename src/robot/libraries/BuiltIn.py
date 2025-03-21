@@ -1775,8 +1775,12 @@ class _Variables(_BuiltInBase):
         *NOTE:* Prior to Robot Framework 7.2, using `Set Test Variable` in a suite
         setup or teardown was an error.
         """
-        name = self._get_var_name(name)
+        match = search_variable(name, parse_type=True)
+        info = TypeInfo.from_variable(match)
+        name = self._get_var_name(match.name)
         value = self._get_var_value(name, values)
+        if info.type:
+            value = info.convert(value, name)
         self._variables.set_test(name, value)
         self._log_set_variable(name, value)
 
@@ -1850,7 +1854,9 @@ class _Variables(_BuiltInBase):
         | VAR    @{LIST}      First item    Second item    scope=SUITE
         | VAR    &{DICT}      key=value     foo=bar        scope=SUITE
         """
-        name = self._get_var_name(name)
+        match = search_variable(name, parse_type=True)
+        info = TypeInfo.from_variable(match)
+        name = self._get_var_name(match.name)
         if values and is_string(values[-1]) and values[-1].startswith('children='):
             children = self._variables.replace_scalar(values[-1][9:])
             children = is_truthy(children)
@@ -1858,6 +1864,8 @@ class _Variables(_BuiltInBase):
         else:
             children = False
         value = self._get_var_value(name, values)
+        if info.type:
+            value = info.convert(value, name)
         self._variables.set_suite(name, value, children=children)
         self._log_set_variable(name, value)
 

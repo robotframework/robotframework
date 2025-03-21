@@ -22,6 +22,7 @@ from robot.utils import split_from_equals
 from robot.variables import is_assign, is_scalar_assign
 
 from .argumentspec import ArgumentSpec
+from .typeinfo import TypeInfo
 
 
 class ArgumentParser(ABC):
@@ -118,10 +119,14 @@ class ArgumentSpecParser(ArgumentParser):
         named_only = []
         var_named = None
         defaults = {}
+        types = {}
         named_only_separator_seen = positional_only_separator_seen = False
         target = positional_or_named
         for arg in arguments:
             arg = self._validate_arg(arg)
+            arg, type_ = self._split_type(arg)
+            if type_:
+                types[self._format_arg(arg)] = type_
             if var_named:
                 self._report_error('Only last argument can be kwargs.')
             elif self._is_positional_only_separator(arg):
@@ -153,7 +158,8 @@ class ArgumentSpecParser(ArgumentParser):
                 arg = self._format_arg(arg)
                 target.append(arg)
         return ArgumentSpec(name, self.type, positional_only, positional_or_named,
-                            var_positional, named_only, var_named, defaults)
+                            var_positional, named_only, var_named, defaults,
+                            types=types)
 
     @abstractmethod
     def _validate_arg(self, arg):
@@ -192,6 +198,8 @@ class ArgumentSpecParser(ArgumentParser):
         target.append(arg)
         return arg
 
+    def _split_type(self, arg):
+        return arg, None
 
 class DynamicArgumentParser(ArgumentSpecParser):
 
@@ -264,3 +272,14 @@ class UserKeywordArgumentParser(ArgumentSpecParser):
 
     def _format_arg(self, arg):
         return arg[2:-1]
+
+    def _split_type(self, arg):
+        try:
+            info = TypeInfo.from_variable(arg, handle_list_and_dict=False)
+        except DataError as err:
+            info = None
+            self._report_error(f"Invalid argument '{arg}': {err}")
+        # TODO: Handle splitting type in better way
+        if ': ' in arg:
+            arg = arg.rsplit(': ')[0] + "}"
+        return arg, info
