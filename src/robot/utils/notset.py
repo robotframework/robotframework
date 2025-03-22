@@ -28,5 +28,8 @@ class NotSet:
     def __repr__(self):
         return ''
 
+    def __bool__(self):
+        return False
+
 
 NOT_SET = NotSet()
