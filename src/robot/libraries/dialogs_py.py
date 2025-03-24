@@ -19,10 +19,15 @@ from tkinter import (BOTH, Button, END, Entry, Frame, Label, LEFT, Listbox, Tk,
                      Toplevel, W)
 from typing import Any, Union
 
+from robot.utils import WINDOWS
+
 
 class TkDialog(Toplevel):
     left_button = 'OK'
     right_button = 'Cancel'
+    font = (None, 12)
+    padding = 8 if WINDOWS else 16
+    background = None    # Can be used to change the dialog background.
 
     def __init__(self, message, value=None, **config):
         self._prevent_execution_with_timeouts()
@@ -47,6 +52,7 @@ class TkDialog(Toplevel):
     def _initialize_dialog(self):
         self.withdraw()    # Remove from display until finalized.
         self.title('Robot Framework')
+        self.configure(padx=self.padding, background=self.background)
         self.protocol("WM_DELETE_WINDOW", self._close)
         self.bind("<Escape>", self._close)
         if self.left_button == TkDialog.left_button:
@@ -56,8 +62,8 @@ class TkDialog(Toplevel):
         self.update()    # Needed to get accurate dialog size.
         screen_width = self.winfo_screenwidth()
         screen_height = self.winfo_screenheight()
-        min_width = screen_width // 6
-        min_height = screen_height // 10
+        min_width = screen_width // 5
+        min_height = screen_height // 8
         width = max(self.winfo_reqwidth(), min_width)
         height = max(self.winfo_reqheight(), min_height)
         x = (screen_width - width) // 2
@@ -69,29 +75,31 @@ class TkDialog(Toplevel):
             self.widget.focus_set()
 
     def _create_body(self, message, value, **config) -> Union[Entry, Listbox, None]:
-        frame = Frame(self)
+        frame = Frame(self, background=self.background)
         max_width = self.winfo_screenwidth() // 2
-        label = Label(frame, text=message, anchor=W, justify=LEFT, wraplength=max_width)
+        label = Label(frame, text=message, anchor=W, justify=LEFT, wraplength=max_width,
+                      pady=self.padding, background=self.background, font=self.font)
         label.pack(fill=BOTH)
         widget = self._create_widget(frame, value, **config)
         if widget:
-            widget.pack(fill=BOTH)
-        frame.pack(padx=5, pady=5, expand=1, fill=BOTH)
+            widget.pack(fill=BOTH, pady=self.padding)
+        frame.pack(expand=1, fill=BOTH)
         return widget
 
     def _create_widget(self, frame, value) -> Union[Entry, Listbox, None]:
         return None
 
     def _create_buttons(self):
-        frame = Frame(self)
+        frame = Frame(self, pady=self.padding, background=self.background)
         self._create_button(frame, self.left_button, self._left_button_clicked)
         self._create_button(frame, self.right_button, self._right_button_clicked)
         frame.pack()
 
     def _create_button(self, parent, label, callback):
         if label:
-            button = Button(parent, text=label, width=10, command=callback, underline=0)
-            button.pack(side=LEFT, padx=5, pady=5)
+            button = Button(parent, text=label, command=callback, width=10, underline=0,
+                            font=self.font)
+            button.pack(side=LEFT, padx=self.padding)
             for char in label[0].upper(), label[0].lower():
                 self.bind(char, callback)
                 self._button_bindings[char] = callback
@@ -133,7 +141,7 @@ class InputDialog(TkDialog):
         super().__init__(message, default, hidden=hidden)
 
     def _create_widget(self, parent, default, hidden=False) -> Entry:
-        widget = Entry(parent, show='*' if hidden else '')
+        widget = Entry(parent, show='*' if hidden else '', font=self.font)
         widget.insert(0, default)
         widget.select_range(0, END)
         widget.bind('<FocusIn>', self._unbind_buttons)
@@ -158,7 +166,7 @@ class SelectionDialog(TkDialog):
         super().__init__(message, values, default=default)
 
     def _create_widget(self, parent, values, default=None) -> Listbox:
-        widget = Listbox(parent)
+        widget = Listbox(parent, font=self.font)
         for item in values:
             widget.insert(END, item)
         if default is not None:
@@ -187,7 +195,7 @@ class SelectionDialog(TkDialog):
 class MultipleSelectionDialog(TkDialog):
 
     def _create_widget(self, parent, values) -> Listbox:
-        widget = Listbox(parent, selectmode='multiple')
+        widget = Listbox(parent, selectmode='multiple', font=self.font)
         for item in values:
             widget.insert(END, item)
         widget.config(width=0)
