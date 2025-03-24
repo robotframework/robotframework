@@ -17,7 +17,6 @@ import sys
 from threading import current_thread
 from tkinter import (BOTH, Button, END, Entry, Frame, Label, LEFT, Listbox, Tk,
                      Toplevel, W)
-from typing import Any, Union
 
 from robot.utils import WINDOWS
 
@@ -74,7 +73,7 @@ class TkDialog(Toplevel):
         if self.widget:
             self.widget.focus_set()
 
-    def _create_body(self, message, value, **config) -> Union[Entry, Listbox, None]:
+    def _create_body(self, message, value, **config) -> 'Entry | Listbox | None':
         frame = Frame(self, background=self.background)
         max_width = self.winfo_screenwidth() // 2
         label = Label(frame, text=message, anchor=W, justify=LEFT, wraplength=max_width,
@@ -86,7 +85,7 @@ class TkDialog(Toplevel):
         frame.pack(expand=1, fill=BOTH)
         return widget
 
-    def _create_widget(self, frame, value) -> Union[Entry, Listbox, None]:
+    def _create_widget(self, frame, value) -> 'Entry | Listbox | None':
         return None
 
     def _create_buttons(self):
@@ -112,7 +111,7 @@ class TkDialog(Toplevel):
     def _validate_value(self) -> bool:
         return True
 
-    def _get_value(self) -> Any:
+    def _get_value(self) -> 'str|list[str]|bool|None':
         return None
 
     def _close(self, event=None):
@@ -123,10 +122,10 @@ class TkDialog(Toplevel):
         self._result = self._get_right_button_value()
         self._close()
 
-    def _get_right_button_value(self) -> Any:
+    def _get_right_button_value(self) -> 'str|list[str]|bool|None':
         return None
 
-    def show(self) -> Any:
+    def show(self) -> 'str|list[str]|bool|None':
         self.wait_window(self)
         return self._result
 
@@ -201,7 +200,7 @@ class MultipleSelectionDialog(TkDialog):
         widget.config(width=0)
         return widget
 
-    def _get_value(self) -> list:
+    def _get_value(self) -> 'list[str]':
         selected_values = [self.widget.get(i) for i in self.widget.curselection()]
         return selected_values
 
