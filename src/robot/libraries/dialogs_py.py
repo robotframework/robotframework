@@ -13,10 +13,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+
+import os
 import sys
 from threading import current_thread
-from tkinter import (BOTH, Button, END, Entry, Frame, Label, LEFT, Listbox, Tk,
-                     Toplevel, W)
+from tkinter import BOTH, END, LEFT, Tk, Toplevel, W
+from tkinter import ttk
 from typing import Any, Union
 
 
@@ -28,6 +30,7 @@ class TkDialog(Toplevel):
         self._prevent_execution_with_timeouts()
         self._button_bindings = {}
         super().__init__(self._get_root())
+        self.style = self.master.style
         self._initialize_dialog()
         self.widget = self._create_body(message, value, **config)
         self._create_buttons()
@@ -41,12 +44,19 @@ class TkDialog(Toplevel):
 
     def _get_root(self) -> Tk:
         root = Tk()
+        root.title('Robot Framework')
         root.withdraw()
+        root.style = ttk.Style(root)
+        theme_path = os.path.join(os.path.dirname(__file__), 'themes/robot/theme.tcl')
+        root.tk.call("source", theme_path)
+        root.tk.call("set_theme", "auto")
         return root
 
     def _initialize_dialog(self):
         self.withdraw()    # Remove from display until finalized.
         self.title('Robot Framework')
+        bg_color = self.style.lookup('TFrame', 'background') or '#f0f0f0'
+        self.configure(background=bg_color)
         self.protocol("WM_DELETE_WINDOW", self._close)
         self.bind("<Escape>", self._close)
         if self.left_button == TkDialog.left_button:
@@ -68,10 +78,10 @@ class TkDialog(Toplevel):
         if self.widget:
             self.widget.focus_set()
 
-    def _create_body(self, message, value, **config) -> Union[Entry, Listbox, None]:
-        frame = Frame(self)
+    def _create_body(self, message, value, **config) -> Union[ttk.Entry, ttk.Treeview, None]:
+        frame = ttk.Frame(self)
         max_width = self.winfo_screenwidth() // 2
-        label = Label(frame, text=message, anchor=W, justify=LEFT, wraplength=max_width)
+        label = ttk.Label(frame, text=message, anchor=W, justify=LEFT, wraplength=max_width)
         label.pack(fill=BOTH)
         widget = self._create_widget(frame, value, **config)
         if widget:
@@ -79,18 +89,18 @@ class TkDialog(Toplevel):
         frame.pack(padx=5, pady=5, expand=1, fill=BOTH)
         return widget
 
-    def _create_widget(self, frame, value) -> Union[Entry, Listbox, None]:
+    def _create_widget(self, frame, value) -> Union[ttk.Entry, ttk.Treeview, None]:
         return None
 
     def _create_buttons(self):
-        frame = Frame(self)
+        frame = ttk.Frame(self)
         self._create_button(frame, self.left_button, self._left_button_clicked)
         self._create_button(frame, self.right_button, self._right_button_clicked)
         frame.pack()
 
     def _create_button(self, parent, label, callback):
         if label:
-            button = Button(parent, text=label, width=10, command=callback, underline=0)
+            button = ttk.Button(parent, text=label, width=10, command=callback)
             button.pack(side=LEFT, padx=5, pady=5)
             for char in label[0].upper(), label[0].lower():
                 self.bind(char, callback)
@@ -132,8 +142,8 @@ class InputDialog(TkDialog):
     def __init__(self, message, default='', hidden=False):
         super().__init__(message, default, hidden=hidden)
 
-    def _create_widget(self, parent, default, hidden=False) -> Entry:
-        widget = Entry(parent, show='*' if hidden else '')
+    def _create_widget(self, parent, default, hidden=False) -> ttk.Entry:
+        widget = ttk.Entry(parent, show='*' if hidden else '')
         widget.insert(0, default)
         widget.select_range(0, END)
         widget.bind('<FocusIn>', self._unbind_buttons)
@@ -157,13 +167,15 @@ class SelectionDialog(TkDialog):
     def __init__(self, message, values, default=None):
         super().__init__(message, values, default=default)
 
-    def _create_widget(self, parent, values, default=None) -> Listbox:
-        widget = Listbox(parent)
-        for item in values:
-            widget.insert(END, item)
+    def _create_widget(self, parent, values, default=None) -> ttk.Treeview:
+        widget = ttk.Treeview(parent, show="tree", selectmode="browse", height=min(len(values), 10))
+        for i, item in enumerate(values):
+            widget.insert("", i, text=item, iid=str(i))
         if default is not None:
-            widget.select_set(self._get_default_value_index(default, values))
-        widget.config(width=0)
+            index = self._get_default_value_index(default, values)
+            widget.selection_set(str(index))
+            widget.see(str(index))
+        widget.column("#0", width=0)  # Auto-width
         return widget
 
     def _get_default_value_index(self, default, values) -> int:
@@ -178,24 +190,24 @@ class SelectionDialog(TkDialog):
         return index
 
     def _validate_value(self) -> bool:
-        return bool(self.widget.curselection())
+        return bool(self.widget.selection())
 
     def _get_value(self) -> str:
-        return self.widget.get(self.widget.curselection())
+        selection = self.widget.selection()[0]
+        return self.widget.item(selection, "text")
 
 
 class MultipleSelectionDialog(TkDialog):
 
-    def _create_widget(self, parent, values) -> Listbox:
-        widget = Listbox(parent, selectmode='multiple')
-        for item in values:
-            widget.insert(END, item)
-        widget.config(width=0)
+    def _create_widget(self, parent, values) -> ttk.Treeview:
+        widget = ttk.Treeview(parent, show="tree", selectmode="extended", height=min(len(values), 10))
+        for i, item in enumerate(values):
+            widget.insert("", i, text=item, iid=str(i))
+        widget.column("#0", width=0)  # Auto-width
         return widget
 
     def _get_value(self) -> list:
-        selected_values = [self.widget.get(i) for i in self.widget.curselection()]
-        return selected_values
+        return [self.widget.item(item, "text") for item in self.widget.selection()]
 
 
 class PassFailDialog(TkDialog):
