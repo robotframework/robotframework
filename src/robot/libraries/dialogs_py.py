@@ -14,14 +14,13 @@
 #  limitations under the License.
 
 import sys
+import tkinter as tk
 from threading import current_thread
-from tkinter import (BOTH, Button, END, Entry, Frame, Label, LEFT, Listbox, Tk,
-                     Toplevel, W)
 
 from robot.utils import WINDOWS
 
 
-class TkDialog(Toplevel):
+class TkDialog(tk.Toplevel):
     left_button = 'OK'
     right_button = 'Cancel'
     font = (None, 12)
@@ -43,8 +42,8 @@ class TkDialog(Toplevel):
             raise RuntimeError('Dialogs library is not supported with '
                                'timeouts on Python on this platform.')
 
-    def _get_root(self) -> Tk:
-        root = Tk()
+    def _get_root(self) -> tk.Tk:
+        root = tk.Tk()
         root.withdraw()
         return root
 
@@ -73,32 +72,33 @@ class TkDialog(Toplevel):
         if self.widget:
             self.widget.focus_set()
 
-    def _create_body(self, message, value, **config) -> 'Entry | Listbox | None':
-        frame = Frame(self, background=self.background)
+    def _create_body(self, message, value, **config) -> 'tk.Entry|tk.Listbox|None':
+        frame = tk.Frame(self, background=self.background)
         max_width = self.winfo_screenwidth() // 2
-        label = Label(frame, text=message, anchor=W, justify=LEFT, wraplength=max_width,
-                      pady=self.padding, background=self.background, font=self.font)
-        label.pack(fill=BOTH)
+        label = tk.Label(frame, text=message, anchor=tk.W, justify=tk.LEFT,
+                         wraplength=max_width, pady=self.padding,
+                         background=self.background, font=self.font)
+        label.pack(fill=tk.BOTH)
         widget = self._create_widget(frame, value, **config)
         if widget:
-            widget.pack(fill=BOTH, pady=self.padding)
-        frame.pack(expand=1, fill=BOTH)
+            widget.pack(fill=tk.BOTH, pady=self.padding)
+        frame.pack(expand=1, fill=tk.BOTH)
         return widget
 
-    def _create_widget(self, frame, value) -> 'Entry | Listbox | None':
+    def _create_widget(self, frame, value) -> 'tk.Entry|tk.Listbox|None':
         return None
 
     def _create_buttons(self):
-        frame = Frame(self, pady=self.padding, background=self.background)
+        frame = tk.Frame(self, pady=self.padding, background=self.background)
         self._create_button(frame, self.left_button, self._left_button_clicked)
         self._create_button(frame, self.right_button, self._right_button_clicked)
         frame.pack()
 
     def _create_button(self, parent, label, callback):
         if label:
-            button = Button(parent, text=label, command=callback, width=10, underline=0,
-                            font=self.font)
-            button.pack(side=LEFT, padx=self.padding)
+            button = tk.Button(parent, text=label, command=callback, width=10,
+                               underline=0, font=self.font)
+            button.pack(side=tk.LEFT, padx=self.padding)
             for char in label[0].upper(), label[0].lower():
                 self.bind(char, callback)
                 self._button_bindings[char] = callback
@@ -139,10 +139,10 @@ class InputDialog(TkDialog):
     def __init__(self, message, default='', hidden=False):
         super().__init__(message, default, hidden=hidden)
 
-    def _create_widget(self, parent, default, hidden=False) -> Entry:
-        widget = Entry(parent, show='*' if hidden else '', font=self.font)
+    def _create_widget(self, parent, default, hidden=False) -> tk.Entry:
+        widget = tk.Entry(parent, show='*' if hidden else '', font=self.font)
         widget.insert(0, default)
-        widget.select_range(0, END)
+        widget.select_range(0, tk.END)
         widget.bind('<FocusIn>', self._unbind_buttons)
         widget.bind('<FocusOut>', self._rebind_buttons)
         return widget
@@ -164,10 +164,10 @@ class SelectionDialog(TkDialog):
     def __init__(self, message, values, default=None):
         super().__init__(message, values, default=default)
 
-    def _create_widget(self, parent, values, default=None) -> Listbox:
-        widget = Listbox(parent, font=self.font)
+    def _create_widget(self, parent, values, default=None) -> tk.Listbox:
+        widget = tk.Listbox(parent, font=self.font)
         for item in values:
-            widget.insert(END, item)
+            widget.insert(tk.END, item)
         if default is not None:
             widget.select_set(self._get_default_value_index(default, values))
         widget.config(width=0)
@@ -193,10 +193,10 @@ class SelectionDialog(TkDialog):
 
 class MultipleSelectionDialog(TkDialog):
 
-    def _create_widget(self, parent, values) -> Listbox:
-        widget = Listbox(parent, selectmode='multiple', font=self.font)
+    def _create_widget(self, parent, values) -> tk.Listbox:
+        widget = tk.Listbox(parent, selectmode='multiple', font=self.font)
         for item in values:
-            widget.insert(END, item)
+            widget.insert(tk.END, item)
         widget.config(width=0)
         return widget
 
