@@ -47,7 +47,7 @@ class TkDialog(Toplevel):
         root.title('Robot Framework')
         root.withdraw()
         root.style = ttk.Style(root)
-        theme_path = os.path.join(os.path.dirname(__file__), 'themes/robot/theme.tcl')
+        theme_path = os.path.join(os.path.dirname(__file__), 'themes/robot/theme.tcl')  # zipsafe
         root.tk.call("source", theme_path)
         root.tk.call("set_theme", "auto")
         return root
