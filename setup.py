@@ -39,9 +39,10 @@ DESCRIPTION = ('Generic automation framework for acceptance testing '
                'and robotic process automation (RPA)')
 KEYWORDS = ('robotframework automation testautomation rpa '
             'testing acceptancetesting atdd bdd')
-PACKAGE_DATA = [join('htmldata', directory, pattern)
-                for directory in ('rebot', 'libdoc', 'testdoc', 'lib', 'common')
-                for pattern in ('*.html', '*.css', '*.js')] + ['api/py.typed']
+PACKAGE_DATA = ([join('htmldata', directory, pattern)
+                 for directory in ('rebot', 'libdoc', 'testdoc', 'lib', 'common')
+                 for pattern in ('*.html', '*.css', '*.js')]
+                 + ['api/py.typed', 'logo.png'])
 
 
 setup(
