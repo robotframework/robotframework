@@ -16,8 +16,16 @@
 import sys
 import tkinter as tk
 from threading import current_thread
+from importlib.resources import read_binary
 
 from robot.utils import WINDOWS
+
+
+if WINDOWS:
+    # A hack to override the default taskbar icon on Windows. See, for example:
+    # https://stackoverflow.com/questions/1551605/how-to-set-applications-taskbar-icon-in-windows-7/1552105
+    from ctypes import windll
+    windll.shell32.SetCurrentProcessExplicitAppUserModelID('robot.dialogs')
 
 
 class TkDialog(tk.Toplevel):
@@ -45,6 +53,8 @@ class TkDialog(tk.Toplevel):
     def _get_root(self) -> tk.Tk:
         root = tk.Tk()
         root.withdraw()
+        icon = tk.PhotoImage(master=root, data=read_binary('robot', 'logo.png'))
+        root.iconphoto(True, icon)
         return root
 
     def _initialize_dialog(self):
