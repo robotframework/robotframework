@@ -74,7 +74,7 @@ class _Timeout(Sortable):
         if not self.active:
             raise FrameworkError('Timeout is not active')
         timeout = self.time_left()
-        error = TimeoutError(self._timeout_error, kind=self.kind)
+        error = TimeoutError(self._timeout_error, test_timeout=self.kind != 'KEYWORD')
         if timeout <= 0:
             raise error
         executable = lambda: runnable(*(args or ()), **(kwargs or {}))

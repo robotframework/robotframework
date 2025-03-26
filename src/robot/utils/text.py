@@ -182,5 +182,11 @@ def getshortdoc(doc_or_item, linesep='\n'):
     if not doc_or_item:
         return ''
     doc = doc_or_item if isinstance(doc_or_item, str) else getdoc(doc_or_item)
-    lines = takewhile(lambda line: line.strip(), doc.splitlines())
+    if not doc:
+        return ''
+    lines = []
+    for line in doc.splitlines():
+        if not line.strip():
+            break
+        lines.append(line)
     return linesep.join(lines)

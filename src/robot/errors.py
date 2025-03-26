@@ -83,41 +83,24 @@ class KeywordError(DataError):
 
 
 class TimeoutError(RobotError):
-    """Used when a test, task or keyword timeout exceeded.
+    """Used when a test or keyword timeout occurs.
 
     This exception cannot be caught be TRY/EXCEPT or by keywords running
     other keywords such as `Wait Until Keyword Succeeds`.
 
     Library keywords can catch this exception to handle cleanup activities if
     a timeout occurs. They should reraise it immediately when they are done.
-
-    :attr:`kind` specifies what kind of timeout occurred. Possible values are
-    ``TEST``, ``TASK`` (an alias for ``TEST``) and ``KEYWORD``.
-    This attribute is new in Robot Framework 7.3.
+    Attributes :attr:`test_timeout` and :attr:`keyword_timeout` are not part
+    of the public API and should not be used by libraries.
     """
 
-    def __init__(self, message='', kind='TEST'):
+    def __init__(self, message='', test_timeout=True):
         super().__init__(message)
-        self.kind = kind.upper()
-        if self.kind not in ('TEST', 'TASK', 'KEYWORD'):
-            raise ValueError(f"Expected 'kind' to be 'TEST', 'TASK' or 'KEYWORD, "
-                             f"got '{kind}'.")
+        self.test_timeout = test_timeout
 
     @property
-    def test_timeout(self) -> bool:
-        """`True` if exception was caused by a test (or task) timeout.
-
-        For the exact timeout type use :attr:`kind`.
-        """
-        return self.kind in ('TEST', 'TASK')
-
-    @property
-    def keyword_timeout(self) -> bool:
-        """`True` if exception was caused by a keyword timeout.
-
-        For the exact timeout type use :attr:`kind`.
-        """
-        return self.kind == 'KEYWORD'
+    def keyword_timeout(self):
+        return not self.test_timeout
 
 
 class Information(RobotError):

@@ -13,39 +13,44 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 import os
-import sys
-from threading import current_thread
-from tkinter import BOTH, END, LEFT, Tk, Toplevel, W
+import time
+import tkinter as tk
 from tkinter import ttk
-from typing import Any, Union
+from importlib.resources import read_binary
+
+from robot.utils import WINDOWS
 
 
-class TkDialog(Toplevel):
-    left_button = 'OK'
-    right_button = 'Cancel'
+if WINDOWS:
+    # A hack to override the default taskbar icon on Windows. See, for example:
+    # https://stackoverflow.com/questions/1551605/how-to-set-applications-taskbar-icon-in-windows-7/1552105
+    from ctypes import windll
+    windll.shell32.SetCurrentProcessExplicitAppUserModelID('robot.dialogs')
+
+
+class TkDialog(tk.Toplevel):
+    left_button: 'str|None' = 'OK'
+    right_button: 'str|None' = 'Cancel'
+    padding = 3
+    background = None    # Can be used to change the dialog background.
 
     def __init__(self, message, value=None, **config):
-        self._prevent_execution_with_timeouts()
-        self._button_bindings = {}
         super().__init__(self._get_root())
+        self._button_bindings = {}
         self.style = self.master.style
         self._initialize_dialog()
         self.widget = self._create_body(message, value, **config)
         self._create_buttons()
         self._finalize_dialog()
         self._result = None
+        self._closed = False
 
-    def _prevent_execution_with_timeouts(self):
-        if 'linux' not in sys.platform and current_thread().name != 'MainThread':
-            raise RuntimeError('Dialogs library is not supported with '
-                               'timeouts on Python on this platform.')
-
-    def _get_root(self) -> Tk:
-        root = Tk()
-        root.title('Robot Framework')
+    def _get_root(self) -> tk.Tk:
+        root = tk.Tk()
         root.withdraw()
+        icon = tk.PhotoImage(master=root, data=read_binary('robot', 'logo.png'))
+        root.iconphoto(True, icon)
         root.style = ttk.Style(root)
         theme_path = os.path.join(os.path.dirname(__file__), 'themes/robot/theme.tcl')  # zipsafe
         root.tk.call("source", theme_path)
@@ -55,8 +60,8 @@ class TkDialog(Toplevel):
     def _initialize_dialog(self):
         self.withdraw()    # Remove from display until finalized.
         self.title('Robot Framework')
-        bg_color = self.style.lookup('TFrame', 'background') or '#f0f0f0'
-        self.configure(background=bg_color)
+        bg_color = self.style.lookup('TFrame', 'background') or self.background
+        self.configure(padx=self.padding, pady=self.padding, background=bg_color)
         self.protocol("WM_DELETE_WINDOW", self._close)
         self.bind("<Escape>", self._close)
         if self.left_button == TkDialog.left_button:
@@ -66,8 +71,8 @@ class TkDialog(Toplevel):
         self.update()    # Needed to get accurate dialog size.
         screen_width = self.winfo_screenwidth()
         screen_height = self.winfo_screenheight()
-        min_width = screen_width // 6
-        min_height = screen_height // 10
+        min_width = screen_width // 5
+        min_height = screen_height // 8
         width = max(self.winfo_reqwidth(), min_width)
         height = max(self.winfo_reqheight(), min_height)
         x = (screen_width - width) // 2
@@ -78,18 +83,18 @@ class TkDialog(Toplevel):
         if self.widget:
             self.widget.focus_set()
 
-    def _create_body(self, message, value, **config) -> Union[ttk.Entry, ttk.Treeview, None]:
+    def _create_body(self, message, value, **config) -> 'ttk.Entry|ttk.Treeview|None':
         frame = ttk.Frame(self)
         max_width = self.winfo_screenwidth() // 2
-        label = ttk.Label(frame, text=message, anchor=W, justify=LEFT, wraplength=max_width)
-        label.pack(fill=BOTH)
+        label = ttk.Label(frame, text=message, anchor=tk.W, justify=tk.LEFT, wraplength=max_width)
+        label.pack(fill=tk.BOTH)
         widget = self._create_widget(frame, value, **config)
         if widget:
-            widget.pack(fill=BOTH)
-        frame.pack(padx=5, pady=5, expand=1, fill=BOTH)
+            widget.pack(fill=tk.BOTH)
+        frame.pack(expand=1, fill=tk.BOTH)
         return widget
 
-    def _create_widget(self, frame, value) -> Union[ttk.Entry, ttk.Treeview, None]:
+    def _create_widget(self, frame, value) -> 'ttk.Entry|ttk.Treeview|None':
         return None
 
     def _create_buttons(self):
@@ -100,8 +105,8 @@ class TkDialog(Toplevel):
 
     def _create_button(self, parent, label, callback):
         if label:
-            button = ttk.Button(parent, text=label, width=10, command=callback, underline=0)
-            button.pack(side=LEFT, padx=5, pady=5)
+            button = ttk.Button(parent, text=label, command=callback, width=10, underline=0)
+            button.pack(side=tk.LEFT, padx=self.padding, pady=self.padding)
             for char in label[0].upper(), label[0].lower():
                 self.bind(char, callback)
                 self._button_bindings[char] = callback
@@ -114,22 +119,29 @@ class TkDialog(Toplevel):
     def _validate_value(self) -> bool:
         return True
 
-    def _get_value(self) -> Any:
+    def _get_value(self) -> 'str|list[str]|bool|None':
         return None
-
-    def _close(self, event=None):
-        self.destroy()
-        self.update() # Needed on linux to close the window (Issue #1466)
 
     def _right_button_clicked(self, event=None):
         self._result = self._get_right_button_value()
         self._close()
 
-    def _get_right_button_value(self) -> Any:
+    def _get_right_button_value(self) -> 'str|list[str]|bool|None':
         return None
 
-    def show(self) -> Any:
-        self.wait_window(self)
+    def _close(self, event=None):
+        self._closed = True
+
+    def show(self) -> 'str|list[str]|bool|None':
+        # Use a loop with `update()` instead of `wait_window()` to allow
+        # timeouts and signals stop execution.
+        try:
+            while not self._closed:
+                time.sleep(0.1)
+                self.update()
+        finally:
+            self.destroy()
+            self.update()  # Needed on Linux to close the dialog (#1466, #4993)
         return self._result
 
 
@@ -145,7 +157,7 @@ class InputDialog(TkDialog):
     def _create_widget(self, parent, default, hidden=False) -> ttk.Entry:
         widget = ttk.Entry(parent, show='*' if hidden else '')
         widget.insert(0, default)
-        widget.select_range(0, END)
+        widget.select_range(0, tk.END)
         widget.bind('<FocusIn>', self._unbind_buttons)
         widget.bind('<FocusOut>', self._rebind_buttons)
         return widget
@@ -186,7 +198,7 @@ class SelectionDialog(TkDialog):
         except ValueError:
             raise ValueError(f"Invalid default value '{default}'.")
         if index < 0 or index >= len(values):
-            raise ValueError(f"Default value index is out of bounds.")
+            raise ValueError("Default value index is out of bounds.")
         return index
 
     def _validate_value(self) -> bool:

@@ -68,7 +68,8 @@ proc create_robot_theme {theme_name colors_array} {
         # Frame styles
         ttk::style configure TFrame \
             -background $colors(-bg) \
-            -borderwidth 0
+            -borderwidth 0 \
+            -padding {3 3}
 
         # Label styles
         ttk::style configure TLabel \
@@ -92,7 +93,7 @@ proc create_robot_theme {theme_name colors_array} {
             -foreground $colors(-buttonfg) \
             -relief flat \
             -borderwidth 1 \
-            -padding {6 4} \
+            -padding {3 3} \
             -focuscolor $colors(-focusborder) \
             -anchor center \
             -cornerradius 4
@@ -133,7 +134,7 @@ proc create_robot_theme {theme_name colors_array} {
         ttk::style configure TCombobox \
             -fieldbackground $colors(-inputbg) \
             -foreground $colors(-fg) \
-            -padding 5 \
+            -padding {3 3} \
             -cornerradius 4 \
             -borderwidth 1
 
