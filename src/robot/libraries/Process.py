@@ -543,8 +543,8 @@ class Process:
                 result.stdout, result.stderr = process.communicate(timeout=0.1)
             except subprocess.TimeoutExpired:
                 continue
-            except TimeoutError as err:
-                logger.info(f'{err.kind.title()} timeout exceeded.')
+            except TimeoutError:
+                logger.info('Timeout exceeded.')
                 self._kill(process)
                 raise
             else:
