@@ -29,7 +29,13 @@ class Asynchronous:
     @property
     def event_loop(self):
         if self._loop_ref is None:
-            self._loop_ref = asyncio.new_event_loop()
+            try:
+                self._loop_ref = asyncio.get_event_loop()
+                if self._loop_ref.is_closed():
+                    raise RuntimeError()
+            except RuntimeError:
+                self._loop_ref = asyncio.new_event_loop()
+                asyncio.set_event_loop(self._loop_ref)
         return self._loop_ref
 
     def close_loop(self):
