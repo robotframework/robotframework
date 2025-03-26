@@ -139,7 +139,13 @@ class TestBuilder(Builder):
                     self._html(test.doc),
                     tuple(self._string(t) for t in test.tags),
                     self._get_status(test),
-                    self._build_body(body, split=True))
+                    self._build_body(body, split=True),
+                    tuple(self._yield_metadata(test)))
+        
+    def _yield_metadata(self, test):
+        for name, value in test.metadata.items():
+            yield self._string(name)
+            yield self._html(value)
 
     def _get_body_items(self, test):
         body = test.body.flatten()

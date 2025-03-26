@@ -940,8 +940,9 @@ class TestCase(model.TestCase[Keyword], StatusMixin):
                  start_time: 'datetime|str|None' = None,
                  end_time: 'datetime|str|None' = None,
                  elapsed_time: 'timedelta|int|float|None' = None,
-                 parent: 'TestSuite|None' = None):
-        super().__init__(name, doc, tags, timeout, lineno, parent)
+                 parent: 'TestSuite|None' = None,
+                 metadata: 'Mapping[str, str]|None' = None,):
+        super().__init__(name, doc, tags, timeout, lineno, parent, metadata)
         self.status = status
         self.message = message
         self.start_time = start_time

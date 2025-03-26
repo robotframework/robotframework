@@ -574,8 +574,9 @@ class TestCase(model.TestCase[Keyword]):
                  lineno: 'int|None' = None,
                  parent: 'TestSuite|None' = None,
                  template: 'str|None' = None,
-                 error: 'str|None' = None):
-        super().__init__(name, doc, tags, timeout, lineno, parent)
+                 error: 'str|None' = None,
+                 metadata: 'Mapping[str, str]|None' = None,):
+        super().__init__(name, doc, tags, timeout, lineno, parent, metadata)
         #: Name of the keyword that has been used as a template when building the test.
         # ``None`` if template is not used.
         self.template = template
