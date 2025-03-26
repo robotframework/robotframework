@@ -180,7 +180,9 @@ class SelectionDialog(TkDialog):
         for item in values:
             widget.insert(tk.END, item)
         if default is not None:
-            widget.select_set(self._get_default_value_index(default, values))
+            index = self._get_default_value_index(default, values)
+            widget.select_set(index)
+            widget.activate(index)
         widget.config(width=0)
         return widget
 
