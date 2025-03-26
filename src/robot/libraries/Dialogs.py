@@ -26,7 +26,6 @@ The library has a known limitation that it cannot be used with timeouts.
 """
 
 from robot.version import get_version
-from robot.utils import is_truthy
 
 from .dialogs_py import (InputDialog, MessageDialog, MultipleSelectionDialog,
                          PassFailDialog, SelectionDialog)
@@ -79,8 +78,7 @@ def get_value_from_user(message, default_value='', hidden=False):
     | ${username} = | Get Value From User | Input user name | default    |
     | ${password} = | Get Value From User | Input password  | hidden=yes |
     """
-    return _validate_user_input(InputDialog(message, default_value,
-                                            is_truthy(hidden)))
+    return _validate_user_input(InputDialog(message, default_value, hidden))
 
 
 def get_selection_from_user(message, *values, default=None):
