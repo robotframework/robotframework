@@ -45,7 +45,10 @@ class TkDialog(tk.Toplevel):
         self._finalize_dialog()
         self._result = None
         self._closed = False
+        self._closed = False
 
+    def _get_root(self) -> tk.Tk:
+        root = tk.Tk()
     def _get_root(self) -> tk.Tk:
         root = tk.Tk()
         root.withdraw()
@@ -73,6 +76,8 @@ class TkDialog(tk.Toplevel):
         screen_height = self.winfo_screenheight()
         min_width = screen_width // 5
         min_height = screen_height // 8
+        min_width = screen_width // 5
+        min_height = screen_height // 8
         width = max(self.winfo_reqwidth(), min_width)
         height = max(self.winfo_reqheight(), min_height)
         x = (screen_width - width) // 2
@@ -86,14 +91,21 @@ class TkDialog(tk.Toplevel):
     def _create_body(self, message, value, **config) -> 'ttk.Entry|ttk.Treeview|None':
         frame = ttk.Frame(self)
         max_width = self.winfo_screenwidth() // 2
+        label = tk.Label(frame, text=message, anchor=tk.W, justify=tk.LEFT,
+                         wraplength=max_width, pady=self.padding,
+                         background=self.background, font=self.font)
+        label.pack(fill=tk.BOTH)
         label = ttk.Label(frame, text=message, anchor=tk.W, justify=tk.LEFT, wraplength=max_width)
         label.pack(fill=tk.BOTH)
         widget = self._create_widget(frame, value, **config)
         if widget:
+            widget.pack(fill=tk.BOTH, pady=self.padding)
+        frame.pack(expand=1, fill=tk.BOTH)
             widget.pack(fill=tk.BOTH)
         frame.pack(expand=1, fill=tk.BOTH)
         return widget
 
+    def _create_widget(self, frame, value) -> 'tk.Entry|tk.Listbox|None':
     def _create_widget(self, frame, value) -> 'ttk.Entry|ttk.Treeview|None':
         return None
 
@@ -120,6 +132,7 @@ class TkDialog(tk.Toplevel):
         return True
 
     def _get_value(self) -> 'str|list[str]|bool|None':
+    def _get_value(self) -> 'str|list[str]|bool|None':
         return None
 
     def _right_button_clicked(self, event=None):
@@ -127,8 +140,22 @@ class TkDialog(tk.Toplevel):
         self._close()
 
     def _get_right_button_value(self) -> 'str|list[str]|bool|None':
+    def _get_right_button_value(self) -> 'str|list[str]|bool|None':
         return None
 
+    def _close(self, event=None):
+        self._closed = True
+
+    def show(self) -> 'str|list[str]|bool|None':
+        # Use a loop with `update()` instead of `wait_window()` to allow
+        # timeouts and signals stop execution.
+        try:
+            while not self._closed:
+                time.sleep(0.1)
+                self.update()
+        finally:
+            self.destroy()
+            self.update()  # Needed on Linux to close the dialog (#1466, #4993)
     def _close(self, event=None):
         self._closed = True
 
@@ -157,6 +184,7 @@ class InputDialog(TkDialog):
     def _create_widget(self, parent, default, hidden=False) -> ttk.Entry:
         widget = ttk.Entry(parent, show='*' if hidden else '')
         widget.insert(0, default)
+        widget.select_range(0, tk.END)
         widget.select_range(0, tk.END)
         widget.bind('<FocusIn>', self._unbind_buttons)
         widget.bind('<FocusOut>', self._rebind_buttons)
