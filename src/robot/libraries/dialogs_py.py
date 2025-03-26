@@ -13,9 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import sys
+import time
 import tkinter as tk
-from threading import current_thread
 from importlib.resources import read_binary
 
 from robot.utils import WINDOWS
@@ -36,19 +35,14 @@ class TkDialog(tk.Toplevel):
     background = None    # Can be used to change the dialog background.
 
     def __init__(self, message, value=None, **config):
-        self._prevent_execution_with_timeouts()
-        self._button_bindings = {}
         super().__init__(self._get_root())
+        self._button_bindings = {}
         self._initialize_dialog()
         self.widget = self._create_body(message, value, **config)
         self._create_buttons()
         self._finalize_dialog()
         self._result = None
-
-    def _prevent_execution_with_timeouts(self):
-        if 'linux' not in sys.platform and current_thread().name != 'MainThread':
-            raise RuntimeError('Dialogs library is not supported with '
-                               'timeouts on Python on this platform.')
+        self._closed = False
 
     def _get_root(self) -> tk.Tk:
         root = tk.Tk()
@@ -124,10 +118,6 @@ class TkDialog(tk.Toplevel):
     def _get_value(self) -> 'str|list[str]|bool|None':
         return None
 
-    def _close(self, event=None):
-        self.destroy()
-        self.update() # Needed on linux to close the window (Issue #1466)
-
     def _right_button_clicked(self, event=None):
         self._result = self._get_right_button_value()
         self._close()
@@ -135,8 +125,19 @@ class TkDialog(tk.Toplevel):
     def _get_right_button_value(self) -> 'str|list[str]|bool|None':
         return None
 
+    def _close(self, event=None):
+        self._closed = True
+
     def show(self) -> 'str|list[str]|bool|None':
-        self.wait_window(self)
+        # Use a loop with `update()` instead of `wait_window()` to allow
+        # timeouts and signals stop execution.
+        try:
+            while not self._closed:
+                time.sleep(0.1)
+                self.update()
+        finally:
+            self.destroy()
+            self.update()  # Needed on Linux to close the dialog (#1466, #4993)
         return self._result
 
 

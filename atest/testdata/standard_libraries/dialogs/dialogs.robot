@@ -158,3 +158,8 @@ Garbage Collection In Thread Should Not Cause Problems
     Pause Execution    Press OK or <Enter> and verify that execution does not crash.
     Call Method    ${thread}    start
     Call Method    ${thread}    join
+
+Timeout can close dialog
+    [Documentation]    FAIL Test timeout 1 second exceeded.
+    [Timeout]    1 second
+    Pause Execution    Wait for timeout.

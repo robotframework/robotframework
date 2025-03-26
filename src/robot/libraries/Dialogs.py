@@ -21,8 +21,6 @@ for pausing the test or task execution and getting input from users.
 Long lines in the provided messages are wrapped automatically. If you want
 to wrap lines manually, you can add newlines using the ``\\n`` character
 sequence.
-
-The library has a known limitation that it cannot be used with timeouts.
 """
 
 from robot.version import get_version
