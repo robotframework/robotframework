@@ -100,7 +100,7 @@ class TkDialog(Toplevel):
 
     def _create_button(self, parent, label, callback):
         if label:
-            button = ttk.Button(parent, text=label, width=10, command=callback)
+            button = ttk.Button(parent, text=label, width=10, command=callback, underline=0)
             button.pack(side=LEFT, padx=5, pady=5)
             for char in label[0].upper(), label[0].lower():
                 self.bind(char, callback)
