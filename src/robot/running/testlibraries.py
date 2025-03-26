@@ -260,8 +260,8 @@ class ModuleLibrary(TestLibrary):
         raise TypeError(f"Cannot create '{cls.__name__}' from class.")
 
     def create_keywords(self):
-        excludes = getattr(self.code, '__all__', None)
-        StaticKeywordCreator(self, excluded_names=excludes).create_keywords()
+        includes = getattr(self.code, '__all__', None)
+        StaticKeywordCreator(self, included_names=includes).create_keywords()
 
 
 class ClassLibrary(TestLibrary):
@@ -415,9 +415,9 @@ class KeywordCreator:
 class StaticKeywordCreator(KeywordCreator):
 
     def __init__(self, library: TestLibrary, getting_method_failed_level='INFO',
-                 excluded_names=None, avoid_properties=False):
+                 included_names=None, avoid_properties=False):
         super().__init__(library, getting_method_failed_level)
-        self.excluded_names = excluded_names
+        self.included_names = included_names
         self.avoid_properties = avoid_properties
 
     def get_keyword_names(self) -> 'list[str]':
@@ -430,30 +430,28 @@ class StaticKeywordCreator(KeywordCreator):
                             f"failed: {message}", details)
 
     def _get_names(self, instance) -> 'list[str]':
-        def explicitly_included(name):
-            candidate = inspect.getattr_static(instance, name)
-            if isinstance(candidate, (classmethod, staticmethod)):
-                candidate = candidate.__func__
-            try:
-                return hasattr(candidate, 'robot_name')
-            except Exception:
-                return False
-
         names = []
         auto_keywords = getattr(instance, 'ROBOT_AUTO_KEYWORDS', True)
-        excluded_names = self.excluded_names
+        included_names = self.included_names
         for name in dir(instance):
-            if not auto_keywords:
-                if not explicitly_included(name):
-                    continue
-            elif name[:1] == '_':
-                if not explicitly_included(name):
-                    continue
-            elif excluded_names is not None:
-                if name not in excluded_names:
-                    continue
-            names.append(name)
+            if self._is_included(name, instance, auto_keywords, included_names):
+                names.append(name)
         return names
+
+    def _is_included(self, name, instance, auto_keywords, included_names):
+        if not (auto_keywords and name[:1] != '_'
+                or self._is_explicitly_included(name, instance)):
+            return False
+        return included_names is None or name in included_names
+
+    def _is_explicitly_included(self, name, instance):
+        candidate = inspect.getattr_static(instance, name)
+        if isinstance(candidate, (classmethod, staticmethod)):
+            candidate = candidate.__func__
+        try:
+            return hasattr(candidate, 'robot_name')
+        except Exception:
+            return False
 
     def _create_keyword(self, instance, name) -> 'StaticKeyword|None':
         if self.avoid_properties:
