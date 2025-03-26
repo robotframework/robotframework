@@ -45,10 +45,7 @@ class TkDialog(tk.Toplevel):
         self._finalize_dialog()
         self._result = None
         self._closed = False
-        self._closed = False
 
-    def _get_root(self) -> tk.Tk:
-        root = tk.Tk()
     def _get_root(self) -> tk.Tk:
         root = tk.Tk()
         root.withdraw()
@@ -76,8 +73,6 @@ class TkDialog(tk.Toplevel):
         screen_height = self.winfo_screenheight()
         min_width = screen_width // 5
         min_height = screen_height // 8
-        min_width = screen_width // 5
-        min_height = screen_height // 8
         width = max(self.winfo_reqwidth(), min_width)
         height = max(self.winfo_reqheight(), min_height)
         x = (screen_width - width) // 2
@@ -88,25 +83,19 @@ class TkDialog(tk.Toplevel):
         if self.widget:
             self.widget.focus_set()
 
-    def _create_body(self, message, value, **config) -> 'ttk.Entry|ttk.Treeview|None':
+    def _create_body(self, message, value, **config) -> 'tk.Widget|None':
         frame = ttk.Frame(self)
         max_width = self.winfo_screenwidth() // 2
-        label = tk.Label(frame, text=message, anchor=tk.W, justify=tk.LEFT,
-                         wraplength=max_width, pady=self.padding,
-                         background=self.background, font=self.font)
-        label.pack(fill=tk.BOTH)
-        label = ttk.Label(frame, text=message, anchor=tk.W, justify=tk.LEFT, wraplength=max_width)
+        label = ttk.Label(frame, text=message, anchor=tk.W, justify=tk.LEFT,
+                          wraplength=max_width, padding=(self.padding,self.padding))
         label.pack(fill=tk.BOTH)
         widget = self._create_widget(frame, value, **config)
         if widget:
-            widget.pack(fill=tk.BOTH, pady=self.padding)
-        frame.pack(expand=1, fill=tk.BOTH)
-            widget.pack(fill=tk.BOTH)
+            widget.pack(fill=tk.BOTH, padx=self.padding, pady=self.padding)
         frame.pack(expand=1, fill=tk.BOTH)
         return widget
 
-    def _create_widget(self, frame, value) -> 'tk.Entry|tk.Listbox|None':
-    def _create_widget(self, frame, value) -> 'ttk.Entry|ttk.Treeview|None':
+    def _create_widget(self, frame, value) -> 'tk.Widget|None':
         return None
 
     def _create_buttons(self):
@@ -132,7 +121,6 @@ class TkDialog(tk.Toplevel):
         return True
 
     def _get_value(self) -> 'str|list[str]|bool|None':
-    def _get_value(self) -> 'str|list[str]|bool|None':
         return None
 
     def _right_button_clicked(self, event=None):
@@ -140,22 +128,8 @@ class TkDialog(tk.Toplevel):
         self._close()
 
     def _get_right_button_value(self) -> 'str|list[str]|bool|None':
-    def _get_right_button_value(self) -> 'str|list[str]|bool|None':
         return None
 
-    def _close(self, event=None):
-        self._closed = True
-
-    def show(self) -> 'str|list[str]|bool|None':
-        # Use a loop with `update()` instead of `wait_window()` to allow
-        # timeouts and signals stop execution.
-        try:
-            while not self._closed:
-                time.sleep(0.1)
-                self.update()
-        finally:
-            self.destroy()
-            self.update()  # Needed on Linux to close the dialog (#1466, #4993)
     def _close(self, event=None):
         self._closed = True
 
@@ -185,7 +159,6 @@ class InputDialog(TkDialog):
         widget = ttk.Entry(parent, show='*' if hidden else '')
         widget.insert(0, default)
         widget.select_range(0, tk.END)
-        widget.select_range(0, tk.END)
         widget.bind('<FocusIn>', self._unbind_buttons)
         widget.bind('<FocusOut>', self._rebind_buttons)
         return widget
@@ -203,20 +176,27 @@ class InputDialog(TkDialog):
 
 
 class SelectionDialog(TkDialog):
+    item_tree = None
 
     def __init__(self, message, values, default=None):
         super().__init__(message, values, default=default)
 
-    def _create_widget(self, parent, values, default=None) -> ttk.Treeview:
-        widget = ttk.Treeview(parent, show="tree", selectmode="browse", height=min(len(values), 10))
+    def _create_widget(self, parent, values, default=None) -> tk.Widget:
+        frame = ttk.Frame(parent)
+        tree = ttk.Treeview(frame, show="tree", selectmode="browse", height=min(len(values), 10))
+        scrollbar = ttk.Scrollbar(frame, orient=tk.VERTICAL, command=tree.yview)
+        tree.configure(yscrollcommand=scrollbar.set)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        tree.pack(fill=tk.BOTH)
         for i, item in enumerate(values):
-            widget.insert("", i, text=item, iid=str(i))
+            tree.insert("", i, text=item, iid=str(i))
         if default is not None:
             index = self._get_default_value_index(default, values)
-            widget.selection_set(str(index))
-            widget.see(str(index))
-        widget.column("#0", width=0)  # Auto-width
-        return widget
+            tree.selection_set(str(index))
+            tree.see(str(index))
+        tree.column("#0", width=0)  # Auto-width
+        self.item_tree = tree
+        return frame
 
     def _get_default_value_index(self, default, values) -> int:
         if default in values:
@@ -230,24 +210,38 @@ class SelectionDialog(TkDialog):
         return index
 
     def _validate_value(self) -> bool:
-        return bool(self.widget.selection())
+        return self.item_tree is not None and bool(self.item_tree.selection())
 
-    def _get_value(self) -> str:
-        selection = self.widget.selection()[0]
-        return self.widget.item(selection, "text")
+    def _get_value(self) -> 'str|None':
+        if self.item_tree is None:
+            return None
+        selection = self.item_tree.selection()[0]
+        return self.item_tree.item(selection, "text")
 
 
 class MultipleSelectionDialog(TkDialog):
 
-    def _create_widget(self, parent, values) -> ttk.Treeview:
-        widget = ttk.Treeview(parent, show="tree", selectmode="extended", height=min(len(values), 10))
-        for i, item in enumerate(values):
-            widget.insert("", i, text=item, iid=str(i))
-        widget.column("#0", width=0)  # Auto-width
-        return widget
+    def __init__(self, message, values, default=None):
+        super().__init__(message, values, default=default)
+        self.item_tree = None
 
-    def _get_value(self) -> list:
-        return [self.widget.item(item, "text") for item in self.widget.selection()]
+    def _create_widget(self, parent, values, default=None) -> ttk.Widget:
+        frame = ttk.Frame(parent)
+        tree = ttk.Treeview(frame, show="tree", selectmode="extended", height=min(len(values), 10))
+        for i, item in enumerate(values):
+            tree.insert("", i, text=item, iid=str(i))
+        scrollbar = ttk.Scrollbar(frame, orient=tk.VERTICAL, command=tree.yview)
+        tree.configure(yscrollcommand=scrollbar.set)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        tree.column("#0", width=0)  # Auto-width
+        tree.pack(fill=tk.BOTH)
+        self.item_tree = tree
+        return frame
+
+    def _get_value(self) -> 'list|None':
+        if self.item_tree is None:
+            return None
+        return [self.item_tree.item(item, "text") for item in self.item_tree.selection()]
 
 
 class PassFailDialog(TkDialog):

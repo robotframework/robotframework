@@ -13,9 +13,9 @@ proc get_dark_colors {} {
         -disabledbg     "#3E3E42" \
         -selectfg       "#FFFFFF" \
         -selectbg       "#0078D7" \
-        -accent         "#1DE9B6" \
-        -accenthover    "#64FFDA" \
-        -accentpressed  "#00BFA5" \
+        -accent         "#2AC9C0" \
+        -accenthover    "#64DDD0" \
+        -accentpressed  "#259F9C" \
         -border         "#3F3F46" \
         -inputbg        "#333337" \
         -focusborder    "#111111" \
@@ -41,9 +41,9 @@ proc get_light_colors {} {
         -disabledbg     "#E6E6E6" \
         -selectfg       "#FFFFFF" \
         -selectbg       "#0078D7" \
-        -accent         "#1DE9B6" \
-        -accenthover    "#64FFDA" \
-        -accentpressed  "#00BFA5" \
+        -accent         "#2AC9C0" \
+        -accenthover    "#64DDD0" \
+        -accentpressed  "#259F9C" \
         -border         "#DFDFDF" \
         -inputbg        "#FFFFFF" \
         -focusborder    "#111111" \
@@ -203,11 +203,13 @@ proc create_robot_theme {theme_name colors_array} {
             -background $colors(-bg) \
             -troughcolor $colors(-scrollbartroughbg) \
             -borderwidth 0 \
-            -arrowcolor $colors(-accent)
+            -arrowcolor $colors(-accent) \
+            -relief flat
 
         ttk::style map TScrollbar \
             -background [list hover $colors(-accent) pressed $colors(-accentpressed)] \
-            -troughcolor [list hover $colors(-scrollbarhover)]
+            -troughcolor [list hover $colors(-scrollbarhover)] \
+            -arrowcolor [list hover $colors(-accenthover) pressed $colors(-accentpressed)]
 
         # Spinbox styles
         ttk::style configure TSpinbox \
