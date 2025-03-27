@@ -32,8 +32,9 @@ class LibDocLib:
         cmd = self.libdoc + self._split_args(args)
         cmd[-1] = cmd[-1].replace('/', os.sep)
         logger.info(' '.join(cmd))
+        pythonpath = os.getenv('PYTHONPATH', '')
         result = run(cmd, cwd=ROOT/'src', stdout=PIPE, stderr=STDOUT,
-                     encoding=SYSTEM_ENCODING, timeout=120, universal_newlines=True)
+                     encoding=SYSTEM_ENCODING, timeout=120, universal_newlines=True, env={"PYTHONPATH": f"{pythonpath}:{ROOT}/src"})
         logger.info(result.stdout)
         return result.stdout
 
