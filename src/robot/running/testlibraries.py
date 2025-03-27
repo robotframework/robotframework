@@ -372,7 +372,8 @@ class KeywordCreator:
             try:
                 kw = self._create_keyword(instance, name)
             except DataError as err:
-                self._adding_keyword_failed(name, err, self.getting_method_failed_level)
+                self._adding_keyword_failed(name, err.message, err.details,
+                                            self.getting_method_failed_level)
             else:
                 if not kw:
                     continue
@@ -382,7 +383,7 @@ class KeywordCreator:
                     else:
                         self._handle_duplicates(kw, seen)
                 except DataError as err:
-                    self._adding_keyword_failed(kw.name, err)
+                    self._adding_keyword_failed(kw.name, err.message, err.details)
                 else:
                     keywords.append(kw)
                     library._logger.debug(f"Created keyword '{kw.name}'.")
@@ -403,10 +404,10 @@ class KeywordCreator:
                             f'arguments as it has embedded arguments.')
         kw.args.embedded = kw.embedded.args
 
-    def _adding_keyword_failed(self, name, error, level='ERROR'):
+    def _adding_keyword_failed(self, name, error, details, level='ERROR'):
         self.library.report_error(
             f"Adding keyword '{name}' failed: {error}",
-            error.details,
+            details,
             level=level,
             details_level='DEBUG'
         )
@@ -438,14 +439,23 @@ class StaticKeywordCreator(KeywordCreator):
                 names.append(name)
         return names
 
-    def _is_included(self, name, instance, auto_keywords, included_names):
+    def _is_included(self, name, instance, auto_keywords, included_names) -> bool:
         if not (auto_keywords and name[:1] != '_'
                 or self._is_explicitly_included(name, instance)):
             return False
         return included_names is None or name in included_names
 
-    def _is_explicitly_included(self, name, instance):
-        candidate = inspect.getattr_static(instance, name)
+    def _is_explicitly_included(self, name, instance) -> bool:
+        try:
+            candidate = inspect.getattr_static(instance, name)
+        except AttributeError:  # Attribute is dynamic. Try harder.
+            try:
+                candidate = getattr(instance, name)
+            except Exception:  # Attribute is invalid. Report.
+                msg, details = get_error_details()
+                self._adding_keyword_failed(name, msg, details,
+                                            self.getting_method_failed_level)
+                return False
         if isinstance(candidate, (classmethod, staticmethod)):
             candidate = candidate.__func__
         try:
@@ -455,8 +465,7 @@ class StaticKeywordCreator(KeywordCreator):
 
     def _create_keyword(self, instance, name) -> 'StaticKeyword|None':
         if self.avoid_properties:
-            candidate = inspect.getattr_static(instance, name)
-            self._pre_validate_method(candidate)
+            self._pre_validate_method(instance, name)
         try:
             method = getattr(instance, name)
         except Exception:
@@ -466,9 +475,13 @@ class StaticKeywordCreator(KeywordCreator):
         try:
             return StaticKeyword.from_name(name, self.library)
         except DataError as err:
-            self._adding_keyword_failed(name, err)
+            self._adding_keyword_failed(name, err.message, err.details)
 
-    def _pre_validate_method(self, candidate):
+    def _pre_validate_method(self, instance, name):
+        try:
+            candidate = inspect.getattr_static(instance, name)
+        except AttributeError:  # Attribute is dynamic. Cannot pre-validate.
+            return
         if isinstance(candidate, classmethod):
             candidate = candidate.__func__
         if isinstance(candidate, cached_property) or not inspect.isroutine(candidate):
