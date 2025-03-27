@@ -222,10 +222,10 @@ class SelectionDialog(TkDialog):
 
 
 class MultipleSelectionDialog(TkDialog):
+    item_tree = None
 
     def __init__(self, message, values, default=None):
         super().__init__(message, values, default=default)
-        self.item_tree = None
 
     def _create_widget(self, parent, values, default=None) -> ttk.Widget:
         frame = ttk.Frame(parent)
