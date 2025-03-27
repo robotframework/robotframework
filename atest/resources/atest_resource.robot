@@ -38,7 +38,7 @@ ${RUNNER DEFAULTS}
 Run Tests
     [Arguments]    ${options}=    ${sources}=    ${default options}=${RUNNER DEFAULTS}    ${output}=${OUTFILE}    ${validate output}=None
     [Documentation]    *OUTDIR:* file://${OUTDIR} (regenerated for every run)
-    ${result} =    Execute    ${INTERPRETER.runner}   ${options}    ${sources}    ${default options}
+    ${result} =    Execute    ${INTERPRETER.runner}   ${options}    ${sources}    ${default options}    env:{INTERPRETER.robot_source_path}
     Log Many    RC: ${result.rc}    STDERR:\n${result.stderr}    STDOUT:\n${result.stdout}
     Process Output    ${output}    validate=${validate output}
     RETURN    ${result}
@@ -46,14 +46,14 @@ Run Tests
 Run Tests Without Processing Output
     [Arguments]    ${options}=    ${sources}=    ${default options}=${RUNNER DEFAULTS}
     [Documentation]    *OUTDIR:* file://${OUTDIR} (regenerated for every run)
-    ${result} =    Execute    ${INTERPRETER.runner}   ${options}    ${sources}    ${default options}
+    ${result} =    Execute    ${INTERPRETER.runner}   ${options}    ${sources}    ${default options}     env:{INTERPRETER.robot_source_path}
     Log Many    RC: ${result.rc}    STDERR:\n${result.stderr}    STDOUT:\n${result.stdout}
     RETURN    ${result}
 
 Run Rebot
     [Arguments]    ${options}=    ${sources}=    ${default options}=${COMMON DEFAULTS}    ${output}=${OUTFILE}    ${validate output}=None
     [Documentation]    *OUTDIR:* file://${OUTDIR} (regenerated for every run)
-    ${result} =    Execute    ${INTERPRETER.rebot}   ${options}    ${sources}    ${default options}
+    ${result} =    Execute    ${INTERPRETER.rebot}   ${options}    ${sources}    ${default options}    env:{INTERPRETER.robot_source_path}
     Log Many    RC: ${result.rc}    STDERR:\n${result.stderr}    STDOUT:\n${result.stdout}
     Process Output    ${output}    validate=${validate output}
     RETURN    ${result}
@@ -61,7 +61,7 @@ Run Rebot
 Run Rebot Without Processing Output
     [Arguments]    ${options}=    ${sources}=    ${default options}=${COMMON DEFAULTS}
     [Documentation]    *OUTDIR:* file://${OUTDIR} (regenerated for every run)
-    ${result} =    Execute    ${INTERPRETER.rebot}   ${options}    ${sources}    ${default options}
+    ${result} =    Execute    ${INTERPRETER.rebot}   ${options}    ${sources}    ${default options}    env:{INTERPRETER.robot_source_path}
     Log Many    RC: ${result.rc}    STDERR:\n${result.stderr}    STDOUT:\n${result.stdout}
     RETURN    ${result}
 

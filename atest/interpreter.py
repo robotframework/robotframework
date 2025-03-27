@@ -108,5 +108,9 @@ class Interpreter:
     def underline(self):
         return '-' * len(str(self))
 
+    @property
+    def robot_source_path(self):
+        return str(ROBOT_DIR.parent)
+
     def __str__(self):
         return f'{self.name} {self.version} on {self.os}'
