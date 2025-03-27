@@ -21,6 +21,7 @@ from importlib.resources import read_binary
 
 from robot.utils import WINDOWS
 
+from .dialogs_theme import RobotTheme
 
 if WINDOWS:
     # A hack to override the default taskbar icon on Windows. See, for example:
@@ -38,7 +39,6 @@ class TkDialog(tk.Toplevel):
     def __init__(self, message, value=None, **config):
         super().__init__(self._get_root())
         self._button_bindings = {}
-        self.style = self.master.style
         self._initialize_dialog()
         self.widget = self._create_body(message, value, **config)
         self._create_buttons()
@@ -46,22 +46,24 @@ class TkDialog(tk.Toplevel):
         self._result = None
         self._closed = False
 
-    def _get_root(self) -> tk.Tk:
-        root = tk.Tk()
-        root.withdraw()
-        icon = tk.PhotoImage(master=root, data=read_binary('robot', 'logo.png'))
-        root.iconphoto(True, icon)
-        root.style = ttk.Style(root)
-        theme_path = os.path.join(os.path.dirname(__file__), 'themes/robot/theme.tcl')  # zipsafe
-        root.tk.call("source", theme_path)
-        root.tk.call("set_theme", "auto")
-        return root
+    __root_tk = None
+
+    @staticmethod
+    def _get_root() -> tk.Tk:
+        if TkDialog.__root_tk is None:
+            root = tk.Tk()
+            root.withdraw()
+            icon = tk.PhotoImage(master=root, data=read_binary('robot', 'logo.png'))
+            root.iconphoto(True, icon)
+            RobotTheme.set_theme(root)
+            TkDialog.__root_tk = root
+
+        return TkDialog.__root_tk
 
     def _initialize_dialog(self):
         self.withdraw()    # Remove from display until finalized.
         self.title('Robot Framework')
-        bg_color = self.style.lookup('TFrame', 'background') or self.background
-        self.configure(padx=self.padding, pady=self.padding, background=bg_color)
+        self.configure(padx=self.padding, pady=self.padding)
         self.protocol("WM_DELETE_WINDOW", self._close)
         self.bind("<Escape>", self._close)
         if self.left_button == TkDialog.left_button:
