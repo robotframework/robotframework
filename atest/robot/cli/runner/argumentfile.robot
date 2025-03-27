@@ -2,7 +2,7 @@
 Test Setup        Create Output Directory
 Suite Teardown    Remove Files    ${ARGFILE}    ${ARGFILE 2}    ${ÄRGFÏLË}
 Resource          cli_resource.robot
-
+Library           Collections
 *** Variables ***
 ${ARGFILE}        %{TEMPDIR}/arg_file_1.txt
 ${ARGFILE 2}      %{TEMPDIR}/arg_file_2.txt
@@ -66,8 +66,9 @@ Arguments From Stdin
     ...    --doc    from command line
     ...    --argumentfile    stdin
     ...    ${test dir}${/}pass_and_fail.robot
+    ${PYTHONPATH}=    Get Environment Variable    PYTHONPATH         default=${EMPTY}
     ${result} =    Run Process    ${cmd} < ${ARG FILE}    shell=True
-    ...    stdout=${STDOUT FILE}    stderr=${STDERR FILE}
+    ...    stdout=${STDOUT FILE}    stderr=${STDERR FILE}    env:PYTHONPATH=${INTERPRETER.robot_source_path}:${PYTHONPATH}
     Execution Should Have Succeeded    ${result}    rc=1
     Should Contain    ${result.stdout}    Normal
     Should Contain    ${result.stdout}    Pass And Fail
