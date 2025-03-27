@@ -110,7 +110,8 @@ def _run(args, tempdir, interpreter, schema_validation):
                    TEMPDIR=str(tempdir),
                    PYTHONCASEOK='True',
                    PYTHONIOENCODING='',
-                   PYTHONWARNDEFAULTENCODING='True')
+                   PYTHONWARNDEFAULTENCODING='True',
+                   PYTHONPATH=str(CURDIR.parent / 'src'))
     if schema_validation:
         environ['ATEST_VALIDATE_OUTPUT'] = 'TRUE'
     print(f"{interpreter}\n{interpreter.underline}\n")
