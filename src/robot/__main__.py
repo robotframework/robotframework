@@ -17,8 +17,19 @@
 
 import sys
 
+import pathlib
+
 if __name__ == '__main__' and 'robot' not in sys.modules:
-    import pythonpathsetter
+    try:
+        import robot as __ignore
+    except ModuleNotFoundError:
+        import pythonpathsetter
+        import logging
+        logging.warning("depricated running without having python path setup proactively, please either install or configure python path before running __main__.py")
+
+import robot as __ignore
+assert pathlib.Path(__file__).absolute.parent() == pathlib.Path(__ignore.__file__).absolute.parent(), "you run run.py using a robot package from a different path... this is not suported"
+
 
 from robot import run_cli
 
