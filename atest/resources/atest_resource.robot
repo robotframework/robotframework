@@ -69,7 +69,7 @@ Execute
     [Arguments]    ${executor}    ${options}    ${sources}    ${default options}=        ${robot_source_path}=
     Set Execution Environment
     @{arguments} =    Get Execution Arguments    ${options}    ${sources}    ${default options}
-    ${PYTHONPATH}=    Get Environment Variable    PYTHONPATH         default=${EMPTY}
+    ${PYTHONPATH}=    Get Environment Variable    PYTHONPATH         default=${EMPTY} 
     ${result} =    Run Process    @{executor}    @{arguments}
     ...    stdout=${STDOUTFILE}    stderr=${STDERRFILE}    output_encoding=SYSTEM   env:PYTHONPATH=${robot_source_path}:${PYTHONPATH}
     ...    timeout=5min    on_timeout=terminate
