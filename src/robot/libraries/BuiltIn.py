@@ -1975,9 +1975,10 @@ class _RunKeyword(_BuiltInBase):
         return kw.run(result, ctx)
 
     def _accepts_embedded_arguments(self, name, ctx):
+        # KeywordRunner.run has similar logic that's used with setups/teardowns.
         if '{' in name:
             runner = ctx.get_runner(name, recommend_on_failure=False)
-            return runner and hasattr(runner, 'embedded_args')
+            return hasattr(runner, 'embedded_args')
         return False
 
     def _replace_variables_in_name(self, name_and_args):

@@ -76,12 +76,33 @@ class KeywordRunner:
         self._context = context
         self._run = run
 
-    def run(self, data, result, name=None):
+    def run(self, data, result, setup_or_teardown=False):
         context = self._context
-        runner = context.get_runner(name or data.name, recommend_on_failure=self._run)
+        runner = self._get_runner(data.name, setup_or_teardown, context)
+        if not runner:
+            return None
         if context.dry_run:
             return runner.dry_run(data, result, context)
         return runner.run(data, result, context, self._run)
+
+    def _get_runner(self, name, setup_or_teardown, context):
+        if setup_or_teardown:
+            # Don't replace variables in name if it contains embedded arguments
+            # to support non-string values. BuiltIn.run_keyword has similar
+            # logic, but, for example, handling 'NONE' differs.
+            if '{' in name:
+                runner = context.get_runner(name, recommend_on_failure=False)
+                if hasattr(runner, 'embedded_args'):
+                    return runner
+            try:
+                name = context.variables.replace_string(name)
+            except DataError as err:
+                if context.dry_run:
+                    return None
+                raise ExecutionFailed(err.message)
+            if name.upper() in ('', 'NONE'):
+                return None
+        return context.get_runner(name, recommend_on_failure=self._run)
 
 
 def ForRunner(context, flavor='IN', run=True, templated=False):

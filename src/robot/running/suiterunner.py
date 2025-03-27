@@ -259,14 +259,6 @@ class SuiteRunner(SuiteVisitor):
 
     def _run_setup_or_teardown(self, data: KeywordData, result: KeywordResult):
         try:
-            name = self.variables.replace_string(data.name)
-        except DataError as err:
-            if self.settings.dry_run:
-                return None
-            return ExecutionFailed(message=err.message)
-        if name.upper() in ('', 'NONE'):
-            return None
-        try:
-            KeywordRunner(self.context).run(data, result, name=name)
+            KeywordRunner(self.context).run(data, result, setup_or_teardown=True)
         except ExecutionStatus as err:
             return err

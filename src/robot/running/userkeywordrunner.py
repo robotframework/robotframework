@@ -201,15 +201,7 @@ class UserKeywordRunner:
     def _run_setup_or_teardown(self, data: KeywordData, result: KeywordResult,
                                context):
         try:
-            name = context.variables.replace_string(data.name)
-        except DataError as err:
-            if context.dry_run:
-                return None
-            return ExecutionFailed(err.message, syntax=True)
-        if name.upper() in ('', 'NONE'):
-            return None
-        try:
-            KeywordRunner(context).run(data, result, name)
+            KeywordRunner(context).run(data, result, setup_or_teardown=True)
         except PassExecution:
             return None
         except ExecutionStatus as err:
