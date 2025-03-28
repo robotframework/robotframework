@@ -32,4 +32,5 @@ jobs:
       - name: Run unit tests
         run: |
           python -m pip install -r utest/requirements.txt
+          python -m pip install -e .
           python utest/run.py -v
