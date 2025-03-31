@@ -389,7 +389,7 @@
                 </ul>
               </div>
             {{else}}
-              {{# if items}}
+              {{#if items}}
               <div class="dt-items">
                 <h4>{{t "dictStructure"}}</h4>
                   <div class="typed-dict-annotation">
@@ -402,8 +402,8 @@
                     {{else}}
                       class="td-item"
                     {{/if}}
-                   >'${key}': </span>
-                     <span class="td-type">&lt;${type}&gt;</span>
+                   >'{{key}}': </span>
+                     <span class="td-type">&lt;{{type}}&gt;</span>
                      {{/each}}<br>
                     }</span>
                   </div>
