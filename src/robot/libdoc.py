@@ -95,7 +95,7 @@ Options
                           based on the browser color scheme. New in RF 6.0.
     --language lang       Set the default language in documentation. `lang`
                           must be a code of a built-in language, which are
-                          `en`, `fi`, `fr`, `nl`, `pt-BR`, and `pt-PT`.
+                          `en`, `fi`, `fr`, `it`, `nl`, `pt-BR`, and `pt-PT`.
                           New in RF 7.2.
  -n --name name           Sets the name of the documented library or resource.
  -v --version version     Sets the version of the documented library or
@@ -232,7 +232,8 @@ class LibDoc(Application):
         return theme
 
     def _validate_lang(self, lang, format):
-        theme = self._validate('Language', lang, 'FI', 'EN', 'FR', 'NL', 'PT-BR', 'PT-PT', 'NONE')
+        theme = self._validate('Language', lang,
+                               'FI', 'EN', 'FR', 'IT', 'NL', 'PT-BR', 'PT-PT', 'NONE')
         if not theme or theme == 'NONE':
             return None
         if format != 'HTML':
