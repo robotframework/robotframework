@@ -60,6 +60,10 @@
   margin-left: -90px;
 }
 
+.dtdoc pre {
+  margin-left: -110px;
+}
+
 .doc code,
 .docutils.literal {
   font-size: 1.1em;
