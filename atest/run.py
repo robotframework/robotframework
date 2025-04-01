@@ -125,7 +125,7 @@ def _rebot(rc, output_dir, interpreter):
     if rc == 0:
         print('All tests passed, not generating log or report.')
     else:
-        command = [sys.executable, '-m', 'robot/rebot',
+        command = [sys.executable, '-m', 'robot.rebot',
                    '--output-dir', str(output_dir), str(output)]
         subprocess.call(command)
     latest = Path(LATEST.format(interpreter=interpreter))
