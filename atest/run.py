@@ -105,11 +105,12 @@ def _get_arguments(interpreter, output_dir):
 
 def _run(args, tempdir, interpreter, schema_validation):
     command = [str(c) for c in
-               [sys.executable, "-m", 'robot.run'] + args]
+                [sys.executable, CURDIR.parent / 'src/robot/run.py'] + args]
     environ = dict(os.environ,
                    TEMPDIR=str(tempdir),
                    PYTHONCASEOK='True',
                    PYTHONIOENCODING='',
+                   PYTHONPATH="",
                    PYTHONWARNDEFAULTENCODING='True')
     if schema_validation:
         environ['ATEST_VALIDATE_OUTPUT'] = 'TRUE'

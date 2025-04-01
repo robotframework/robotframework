@@ -34,6 +34,13 @@ import sys
 from threading import current_thread
 import pathlib
 
+try:
+    file = globals()["__file__"]
+    if file:
+        sys.path = [item for item in sys.path if item != str(pathlib.Path(file).parent)]
+except KeyError:
+    pass
+
 if __name__ == '__main__' and 'robot' not in sys.modules:
     try:
         import robot as __ignore
