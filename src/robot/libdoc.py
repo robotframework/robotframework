@@ -44,10 +44,6 @@ if __name__ == '__main__' and 'robot' not in sys.modules:
         import logging
         logging.warning("depricated running without having python path setup proactively, please either install or configure python path before running libdoc.py")
 
-import robot as __ignore
-assert Path(__file__).absolute().parent == Path(__ignore.__file__).absolute().parent, "you run run.py using a robot package from a different path... this is not suported" # zipsafe
-
-
 from robot.utils import Application, seq2str
 from robot.errors import DataError
 from robot.libdocpkg import LibraryDocumentation, ConsoleViewer
