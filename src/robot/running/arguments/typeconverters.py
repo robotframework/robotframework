@@ -62,7 +62,7 @@ class TypeConverter:
         if not type_info.nested:
             return None
         return [self.converter_for(info, custom_converters, languages)
-                or UnknownConverter(info) for info in type_info.nested]
+                for info in type_info.nested]
 
     def _get_type_name(self) -> str:
         if self.type_name and not self.nested:
@@ -88,19 +88,20 @@ class TypeConverter:
     @classmethod
     def converter_for(cls, type_info: 'TypeInfo',
                       custom_converters: 'CustomArgumentConverters|None' = None,
-                      languages: 'Languages|None' = None) -> 'TypeConverter|None':
+                      languages: 'Languages|None' = None) -> 'TypeConverter':
         if type_info.type is None:
-            return None
+            return UnknownConverter(type_info)
         if custom_converters:
             info = custom_converters.get_converter_info(type_info.type)
             if info:
                 return CustomConverter(type_info, info, languages)
         if type_info.type in cls._converters:
-            return cls._converters[type_info.type](type_info, custom_converters, languages)
+            conv_class = cls._converters[type_info.type]
+            return conv_class(type_info, custom_converters, languages)
         for converter in cls._converters.values():
             if converter.handles(type_info):
                 return converter(type_info, custom_converters, languages)
-        return None
+        return UnknownConverter(type_info)
 
     @classmethod
     def handles(cls, type_info: 'TypeInfo') -> bool:
@@ -129,6 +130,14 @@ class TypeConverter:
             if self.type and self.type is not self.type_info.type:
                 return isinstance(value, self.type)
             raise
+
+    def validate(self):
+        if self.nested:
+            self._validate(self.nested)
+
+    def _validate(self, nested):
+        for converter in nested:
+            converter.validate()
 
     def _handles_value(self, value):
         return isinstance(value, self.value_types)
@@ -507,13 +516,18 @@ class TupleConverter(TypeConverter):
         return tuple(c.convert(v, name=str(i), kind='Item')
                      for i, (c, v) in enumerate(zip(self.nested, value)))
 
+    def _validate(self, nested: 'list[TypeConverter]'):
+        if self.homogenous:
+            nested = nested[:-1]
+        super()._validate(nested)
+
 
 @TypeConverter.register
 class TypedDictConverter(TypeConverter):
     type = 'TypedDict'
     value_types = (str, Mapping)
     type_info: 'TypedDictInfo'
-    nested: 'dict[str, TypeInfo]'
+    nested: 'dict[str, TypeConverter]'
 
     def _get_nested(self, type_info: 'TypedDictInfo',
                     custom_converters: 'CustomArgumentConverters|None',
@@ -565,6 +579,9 @@ class TypedDictConverter(TypeConverter):
             raise ValueError(f"Required item{s(missing)} "
                              f"{seq2str(sorted(missing))} missing.")
         return value
+
+    def _validate(self, nested: 'dict[str, TypeConverter]'):
+        super()._validate(nested.values())
 
 
 @TypeConverter.register
@@ -705,9 +722,9 @@ class LiteralConverter(TypeConverter):
     @classmethod
     def converter_for(cls, type_info: 'TypeInfo',
                       custom_converters: 'CustomArgumentConverters|None' = None,
-                      languages: 'Languages|None' = None) -> 'TypeConverter|None':
-        type_info = type(type_info)(type_info.name, type(type_info.type))
-        return super().converter_for(type_info, custom_converters, languages)
+                      languages: 'Languages|None' = None) -> TypeConverter:
+        info = type(type_info)(type_info.name, type(type_info.type))
+        return super().converter_for(info, custom_converters, languages)
 
     @classmethod
     def handles(cls, type_info: 'TypeInfo') -> bool:
@@ -775,17 +792,16 @@ class CustomConverter(TypeConverter):
             raise ValueError(get_error_message())
 
 
-class UnknownConverter:
-
-    def __init__(self, type_info: 'TypeInfo'):
-        self.type_info = type_info
-        self.type_name = str(type_info)
+class UnknownConverter(TypeConverter):
 
     def convert(self, value, name=None, kind='Argument'):
         return value
 
     def no_conversion_needed(self, value):
         return False
+
+    def validate(self):
+        raise TypeError(f"Unrecognized type '{self.type_name}'.")
 
     def __bool__(self):
         return False

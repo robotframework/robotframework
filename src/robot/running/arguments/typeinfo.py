@@ -268,7 +268,8 @@ class TypeInfo(metaclass=SetterAwareType):
                 name: 'str|None' = None,
                 custom_converters: 'CustomArgumentConverters|dict|None' = None,
                 languages: 'LanguagesLike' = None,
-                kind: str = 'Argument'):
+                kind: str = 'Argument',
+                allow_unknown: bool = False):
         """Convert ``value`` based on type information this ``TypeInfo`` contains.
 
         :param value: Value to convert.
@@ -279,22 +280,30 @@ class TypeInfo(metaclass=SetterAwareType):
             current language configuration by default.
         :param kind: Type of the thing to be converted.
             Used only for error reporting.
-        :raises: ``TypeError`` if there is no converter for this type or
-            ``ValueError`` is conversion fails.
+        :param allow_unknown: If ``False``, a ``TypeError`` is raised if there
+            is no converter for this type or to its nested types. If ``True``,
+            conversion returns the original value instead.
+        :raises: ``ValueError`` is conversion fails and ``TypeError`` if there
+            is no converter and unknown converters are not accepted.
         :return: Converted value.
         """
-        converter = self.get_converter(custom_converters, languages)
+        converter = self.get_converter(custom_converters, languages, allow_unknown)
         return converter.convert(value, name, kind)
 
     def get_converter(self,
                       custom_converters: 'CustomArgumentConverters|dict|None' = None,
-                      languages: 'LanguagesLike' = None) -> TypeConverter:
+                      languages: 'LanguagesLike' = None,
+                      allow_unknown: bool = False) -> TypeConverter:
         """Get argument converter for this ``TypeInfo``.
 
         :param custom_converters: Custom argument converters.
         :param languages: Language configuration. During execution, uses the
             current language configuration by default.
-        :raises: ``TypeError`` if there is no converter for this type.
+        :param allow_unknown: If ``False``, a ``TypeError`` is raised if there
+            is no converter for this type or to its nested types. If ``True``,
+            a special ``UnknownConverter`` is returned instead.
+        :raises: ``TypeError`` if there is no converter and unknown converters
+            are not accepted.
         :return: ``TypeConverter``.
 
         The :meth:`convert` method handles the common conversion case, but this
@@ -310,8 +319,8 @@ class TypeInfo(metaclass=SetterAwareType):
         elif not isinstance(languages, Languages):
             languages = Languages(languages)
         converter = TypeConverter.converter_for(self, custom_converters, languages)
-        if not converter:
-            raise TypeError(f"Cannot convert type '{self}'.")
+        if not allow_unknown:
+            converter.validate()
         return converter
 
     def __str__(self):

@@ -16,6 +16,7 @@
 from typing import TYPE_CHECKING
 
 from robot.variables import contains_variable
+from .typeconverters import UnknownConverter
 
 from .typeinfo import TypeInfo
 
@@ -71,12 +72,15 @@ class ArgumentConverter:
         # Primarily convert arguments based on type hints.
         if name in spec.types:
             info: TypeInfo = spec.types[name]
-            try:
-                return info.convert(value, name, self.custom_converters, self.languages)
-            except ValueError as err:
-                conversion_error = err
-            except TypeError:
-                pass
+            converter = info.get_converter(self.custom_converters, self.languages,
+                                           allow_unknown=True)
+            # If type is unknown, don't attempt conversion. It would succeed, but
+            # we want to, for now, attempt conversion based on the default value.
+            if not isinstance(converter, UnknownConverter):
+                try:
+                    return converter.convert(value, name)
+                except ValueError as err:
+                    conversion_error = err
         # Try conversion also based on the default value type. We probably should
         # do this only if there is no explicit type hint, but Python < 3.11
         # handling `arg: type = None` differently than newer versions would mean
