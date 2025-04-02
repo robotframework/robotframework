@@ -7,6 +7,8 @@ See BUILD.rst for packaging and releasing instructions.
 """
 
 from pathlib import Path
+import json
+import subprocess
 import sys
 
 assert Path.cwd().resolve() == Path(__file__).resolve().parent
@@ -145,6 +147,34 @@ def release_notes(ctx, version=None, username=None, password=None, write=False):
     generator = ReleaseNotesGenerator(REPOSITORY, RELEASE_NOTES_TITLE,
                                       RELEASE_NOTES_INTRO)
     generator.generate(version, username, password, file)
+
+
+@task
+def build_libdoc(ctx):
+    """Update libdoc html template and language support.
+
+    Regenerates `libdoc.html`, the static template used by libdoc.
+
+    Update the language support by reading the translations file from the libdoc
+    web project and updates the languages that are used in the libdoc command line
+    tool for help and language validation.
+
+    This task needs to be run if there are any changes to libdoc.
+    """
+    subprocess.run(['npm', 'run', 'build', '--prefix', 'src/web/'])
+
+    src_path = Path(__file__).parent / "src" / "web" / "libdoc" / "i18n" / "translations.json"
+    data = json.loads(open(src_path).read())
+    keys = sorted([key.upper() for key in data.keys()])
+
+    target_path = Path(__file__).parent / "src" / "robot" / "libdocpkg" / "languages.py"
+    orig_content = open(target_path).readlines()
+    with open(target_path, "w") as out:
+        for line in orig_content:
+            if line.startswith('LANGUAGES'):
+                out.write(f"LANGUAGES = {keys}\n")
+            else:
+                out.write(line)
 
 
 @task
