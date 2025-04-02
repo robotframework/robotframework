@@ -15,7 +15,15 @@
 
 
 # This is modified by invoke, do not edit by hand
-LANGUAGES = ['EN', 'FI', 'FR', 'IT', 'NL', 'PT-BR', 'PT-PT']
+LANGUAGES = [
+    'EN',
+    'FI',
+    'FR',
+    'IT',
+    'NL',
+    'PT-BR',
+    'PT-PT',
+]
 
 def format_languages():
     indent = 26 * ' '

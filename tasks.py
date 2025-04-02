@@ -163,16 +163,21 @@ def build_libdoc(ctx):
     """
     subprocess.run(['npm', 'run', 'build', '--prefix', 'src/web/'])
 
-    src_path = Path(__file__).parent / "src" / "web" / "libdoc" / "i18n" / "translations.json"
+    src_path = Path("src/web/libdoc/i18n/translations.json")
     data = json.loads(open(src_path).read())
-    keys = sorted([key.upper() for key in data.keys()])
+    languages = sorted([key.upper() for key in data])
 
-    target_path = Path(__file__).parent / "src" / "robot" / "libdocpkg" / "languages.py"
-    orig_content = open(target_path).readlines()
+    target_path = Path("src/robot/libdocpkg/languages.py")
+    orig_content = target_path.read_text(encoding='utf-8').splitlines()
     with open(target_path, "w") as out:
         for line in orig_content:
             if line.startswith('LANGUAGES'):
-                out.write(f"LANGUAGES = {keys}\n")
+                out.write('LANGUAGES = [\n')
+                for lang in languages:
+                    out.write(f"    '{lang}',\n")
+                out.write(']\n')
+            elif line.startswith("    '") or line.startswith("]"):
+                continue
             else:
                 out.write(line)
 
