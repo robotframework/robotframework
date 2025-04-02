@@ -129,7 +129,7 @@ class TypeConverter:
             # Used type wasn't a class. Compare to generic type instead.
             if self.type and self.type is not self.type_info.type:
                 return isinstance(value, self.type)
-            raise
+            return False
 
     def validate(self):
         if self.nested:
@@ -682,16 +682,9 @@ class UnionConverter(TypeConverter):
         return True
 
     def no_conversion_needed(self, value):
-        for converter, info in zip(self.nested, self.type_info.nested):
-            if converter:
-                if converter.no_conversion_needed(value):
-                    return True
-            else:
-                try:
-                    if isinstance(value, info.type):
-                        return True
-                except TypeError:
-                    pass
+        for converter in self.nested:
+            if converter.no_conversion_needed(value):
+                return True
         return False
 
     def _convert(self, value):
@@ -796,9 +789,6 @@ class UnknownConverter(TypeConverter):
 
     def convert(self, value, name=None, kind='Argument'):
         return value
-
-    def no_conversion_needed(self, value):
-        return False
 
     def validate(self):
         raise TypeError(f"Unrecognized type '{self.type_name}'.")

@@ -266,7 +266,7 @@ class TestTypeInfo(unittest.TestCase):
     def test_unknown_converter_can_be_accepted(self):
         for hint in 'Unknown', 'Unknown[int]', Unknown:
             info = TypeInfo.from_type_hint(hint)
-            for value in 'hi', 1, None:
+            for value in 'hi', 1, None, Unknown():
                 converter = info.get_converter(allow_unknown=True)
                 assert_equal(converter.convert(value), value)
                 assert_equal(info.convert(value, allow_unknown=True), value)

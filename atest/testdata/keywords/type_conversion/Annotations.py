@@ -6,6 +6,7 @@ from functools import wraps
 from numbers import Integral, Real
 from os import PathLike
 from pathlib import Path, PurePath
+from typing import Union
 
 # Needed by `eval()` in `_validate_type()`.
 import collections
@@ -44,7 +45,12 @@ class MyIntFlag(IntFlag):
 
 
 class Unknown:
-    pass
+
+    def __init__(self, value):
+        self.value = int(value)
+
+    def __eq__(self, other):
+        return isinstance(other, Unknown) and other.value == self.value
 
 
 def integer(argument: int, expected=None):
@@ -183,6 +189,10 @@ def unknown(argument: Unknown, expected=None):
     _validate_type(argument, expected)
 
 
+def unknown_in_union(argument: Union[str, Unknown], expected=None):
+    _validate_type(argument, expected)
+
+
 def non_type(argument: 'this is just a random string', expected=None):
     _validate_type(argument, expected)
 
@@ -221,6 +231,14 @@ def forward_referenced_concrete_type(argument: 'int', expected=None):
 
 
 def forward_referenced_abc(argument: 'abc.Sequence', expected=None):
+    _validate_type(argument, expected)
+
+
+def unknown_forward_reference(argument: 'Bad', expected=None):
+    _validate_type(argument, expected)
+
+
+def nested_unknown_forward_reference(argument: 'list[Bad]', expected=None):
     _validate_type(argument, expected)
 
 

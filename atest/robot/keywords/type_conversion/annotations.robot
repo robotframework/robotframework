@@ -177,6 +177,9 @@ Invalid frozenset
 Unknown types are not converted
     Check Test Case    ${TESTNAME}
 
+Unknown types are not converted in union
+    Check Test Case    ${TESTNAME}
+
 Non-type values don't cause errors
     Check Test Case    ${TESTNAME}
 
@@ -214,6 +217,9 @@ None as default with unknown type
     Check Test Case    ${TESTNAME}
 
 Forward references
+    Check Test Case    ${TESTNAME}
+
+Unknown forward references
     Check Test Case    ${TESTNAME}
 
 @keyword decorator overrides annotations

@@ -14,6 +14,7 @@ ${MAPPING}               ${{type('M', (collections.abc.Mapping,), {'__getitem__'
 ${SEQUENCE}              ${{type('S', (collections.abc.Sequence,), {'__getitem__': lambda s, i: ['x'][i], '__len__': lambda s: 1})()}}
 ${PATH}                  ${{pathlib.Path('x/y')}}
 ${PUREPATH}              ${{pathlib.PurePath('x/y')}}
+${UNKNOWN}               ${{Annotations.Unknown(42)}}
 
 *** Test Cases ***
 Integer
@@ -517,6 +518,11 @@ Unknown types are not converted
     Unknown              None                      'None'
     Unknown              none                      'none'
     Unknown              []                        '[]'
+    Unknown              ${UNKNOWN}                ${UNKNOWN}
+
+Unknown types are not converted in union
+    Unknown in union     ${UNKNOWN}                ${UNKNOWN}
+    Unknown in union     ${42}                     '42'
 
 Non-type values don't cause errors
     Non type             foo                       'foo'
@@ -591,8 +597,13 @@ None as default with unknown type
     None as default with unknown type          None     None
 
 Forward references
-    Forward referenced concrete type           42    42
-    Forward referenced ABC                     []    []
+    Forward referenced concrete type           42         42
+    Forward referenced ABC                     [1, 2]     [1, 2]
+    Forward referenced ABC                     ${LIST}    ${LIST}
+
+Unknown forward references
+    Unknown forward reference                  42         '42'
+    Nested unknown forward reference           ${LIST}    ${LIST}
 
 @keyword decorator overrides annotations
     Types via keyword deco override            42    timedelta(seconds=42)
