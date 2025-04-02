@@ -90,19 +90,19 @@ class Interpreter:
 
     @property
     def runner(self):
-        return self.interpreter + ['-m', 'robot.run')]
+        return self.interpreter + ['-m', 'robot.run']
 
     @property
     def rebot(self):
-        return self.interpreter + ['-m', 'robot.rebot')]
+        return self.interpreter + ['-m', 'robot.rebot']
 
     @property
     def libdoc(self):
-        return self.interpreter + ['-m', 'robot.libdoc')]
+        return self.interpreter + ['-m', 'robot.libdoc']
 
     @property
     def testdoc(self):
-        return self.interpreter + ['-m', 'robot.testdoc')]
+        return self.interpreter + ['-m', 'robot.testdoc']
 
     @property
     def underline(self):
