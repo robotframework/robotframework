@@ -22,7 +22,7 @@ import sys
 import string
 import warnings
 from pathlib import Path
-
+from string import Template
 from robot.errors import DataError, Information, FrameworkError
 from robot.version import get_full_version
 
@@ -30,7 +30,7 @@ from .encoding import console_decode, system_decode
 from .filereader import FileReader
 from .misc import plural_or_not
 from .robottypes import is_falsy, is_integer, is_string
-
+from robot.utils.normalizing import NormalizedDict
 
 def cmdline2list(args, escaping=False):
     if isinstance(args, Path):
@@ -415,3 +415,43 @@ class ArgFileParser:
         if ' ' not in line:
             return '='
         return ' ' if line.index(' ') < line.index('=') else '='
+
+
+class EnvironmentVariableExpander:
+    def __init__(self, ignore_case=os.name == 'nt'):
+        self._ignore_case = ignore_case
+        self._env = NormalizedDict(os.environ, caseless=self._ignore_case)
+
+    def resolve_env_variable(self, value):
+        if not isinstance(value, str):
+            return value
+
+        if os.name == 'nt':
+            # first transform '%VAR%' into '$VAR' on Windows ( %USERPROFILE% -> $USERPROFILE)
+            value = re.sub(r'%([^%]+)%', r'$\1', value)
+
+        template = Template(value)
+        expanded = template.safe_substitute(self._env)
+
+        return expanded
+
+    def expand_arguments(self, options, arguments):
+        expanded_options = {}
+        for key, val in options.items():
+            if isinstance(val, list):
+                expanded_options[key] = [
+                    self.resolve_env_variable(item) if isinstance(item, str) else item
+                    for item in val
+                ]
+            elif isinstance(val, str):
+                expanded_options[key] = self.resolve_env_variable(val)
+            else:
+                # this to handle cases like --dryrun (no values associated to this flag)
+                expanded_options[key] = val
+
+        expanded_arguments = [
+            self.resolve_env_variable(arg) if isinstance(arg, str) else arg
+            for arg in arguments
+        ]
+
+        return expanded_options, expanded_arguments
