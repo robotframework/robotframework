@@ -32,14 +32,6 @@ that can be used programmatically. Other code is for internal usage.
 
 import sys
 from threading import current_thread
-import pathlib
-
-try:
-    file = globals()["__file__"]
-    if file:
-        sys.path = [item for item in sys.path if item != str(pathlib.Path(file).parent)]
-except KeyError:
-    pass
 
 if __name__ == '__main__' and 'robot' not in sys.modules:
     try:

@@ -90,19 +90,19 @@ class Interpreter:
 
     @property
     def runner(self):
-        return self.interpreter + [str(ROBOT_DIR / 'run.py')]
+        return self.interpreter + ['-m', 'robot.run')]
 
     @property
     def rebot(self):
-        return self.interpreter + [str(ROBOT_DIR / 'rebot.py')]
+        return self.interpreter + ['-m', 'robot.rebot')]
 
     @property
     def libdoc(self):
-        return self.interpreter + [str(ROBOT_DIR / 'libdoc.py')]
+        return self.interpreter + ['-m', 'robot.libdoc')]
 
     @property
     def testdoc(self):
-        return self.interpreter + [str(ROBOT_DIR / 'testdoc.py')]
+        return self.interpreter + ['-m', 'robot.testdoc')]
 
     @property
     def underline(self):

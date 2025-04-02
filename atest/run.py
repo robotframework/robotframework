@@ -105,7 +105,7 @@ def _get_arguments(interpreter, output_dir):
 
 def _run(args, tempdir, interpreter, schema_validation):
     command = [str(c) for c in
-                [sys.executable, CURDIR.parent / 'src/robot/run.py'] + args]
+                [sys.executable, '-m', 'robot.run']  + args]
     environ = dict(os.environ,
                    TEMPDIR=str(tempdir),
                    PYTHONCASEOK='True',
