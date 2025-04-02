@@ -131,7 +131,8 @@ class SuiteRunner(SuiteVisitor):
                                                 self._resolve_setting(data.tags),
                                                 self._get_timeout(data),
                                                 data.lineno,
-                                                start_time=datetime.now())
+                                                start_time=datetime.now(),
+                                                metadata=data.metadata)
         if result.tags.robot('exclude'):
             self.suite_result.tests.pop()
             return
