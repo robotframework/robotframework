@@ -151,6 +151,24 @@ Release notes
 
 __ https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/creating-a-personal-access-token
 
+
+Update libdoc generated files
+-----------------------------
+
+Run
+
+    invoke build-libdoc
+
+This step can be skipped if there are no changes to Libdoc. Prerequisites
+are listed in `<src/web/README.md>`_.
+
+This will regenerate the libdoc html template and update libdoc command line
+with the latest supported lagnuages.
+
+Commit & push if there are changes any changes to either
+`src/robot/htmldata/libdoc/libdoc.html` or `src/robot/libdocpkg/languages.py`.
+
+
 Set version
 -----------
 
@@ -188,13 +206,6 @@ Creating distributions
    ``dist`` directories::
 
       invoke clean
-
-3. Build `libdoc.html`::
-
-      npm run build --prefix src/web/
-
-   This step can be skipped if there are no changes to Libdoc. Prerequisites
-   are listed in `<src/web/README.md>`_.
 
 4. Create and validate source distribution and `wheel <https://pythonwheels.com>`_::
 

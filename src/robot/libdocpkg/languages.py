@@ -13,11 +13,18 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-"""Implements the `Libdoc` tool.
 
-The public Libdoc API is exposed via the :mod:`robot.libdoc` module.
-"""
+# This is modified by invoke, do not edit by hand
+LANGUAGES = [
+    'EN',
+    'FI',
+    'FR',
+    'IT',
+    'NL',
+    'PT-BR',
+    'PT-PT',
+]
 
-from .builder import LibraryDocumentation
-from .consoleviewer import ConsoleViewer
-from .languages import format_languages, LANGUAGES
+def format_languages():
+    indent = 26 * ' '
+    return '\n'.join(f'{indent}- {lang}' for lang in LANGUAGES)
