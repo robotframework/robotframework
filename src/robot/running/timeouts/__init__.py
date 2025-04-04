@@ -16,7 +16,7 @@
 import time
 
 from robot.utils import Sortable, secs_to_timestr, timestr_to_secs, WINDOWS
-from robot.errors import TimeoutError, DataError, FrameworkError
+from robot.errors import DataError, FrameworkError, TimeoutExceeded
 
 if WINDOWS:
     from .windows import Timeout
@@ -74,7 +74,8 @@ class _Timeout(Sortable):
         if not self.active:
             raise FrameworkError('Timeout is not active')
         timeout = self.time_left()
-        error = TimeoutError(self._timeout_error, test_timeout=self.kind != 'KEYWORD')
+        error = TimeoutExceeded(self._timeout_error,
+                                test_timeout=self.kind != 'KEYWORD')
         if timeout <= 0:
             raise error
         executable = lambda: runnable(*(args or ()), **(kwargs or {}))

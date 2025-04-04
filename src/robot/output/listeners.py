@@ -18,7 +18,7 @@ from abc import ABC
 from pathlib import Path
 from typing import Any, Iterable
 
-from robot.errors import DataError, TimeoutError
+from robot.errors import DataError, TimeoutExceeded
 from robot.model import BodyItem
 from robot.utils import (get_error_details, Importer, safe_str,
                          split_args_from_name_or_path, type_name)
@@ -585,7 +585,7 @@ class ListenerMethod:
         try:
             if self.method is not None:
                 self.method(*args)
-        except TimeoutError:
+        except TimeoutExceeded:
             # Propagate possible timeouts:
             # https://github.com/robotframework/robotframework/issues/2763
             raise

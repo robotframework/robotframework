@@ -21,7 +21,7 @@ import time
 from tempfile import TemporaryFile
 
 from robot.api import logger
-from robot.errors import TimeoutError
+from robot.errors import TimeoutExceeded
 from robot.utils import (cmdline2list, ConnectionCache, console_decode, console_encode,
                          is_list_like, is_pathlike, is_string, is_truthy,
                          NormalizedDict, secs_to_timestr, system_decode, system_encode,
@@ -543,7 +543,7 @@ class Process:
                 result.stdout, result.stderr = process.communicate(timeout=0.1)
             except subprocess.TimeoutExpired:
                 continue
-            except TimeoutError:
+            except TimeoutExceeded:
                 logger.info('Timeout exceeded.')
                 self._kill(process)
                 raise
