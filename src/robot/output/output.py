@@ -49,7 +49,7 @@ class Output(AbstractLogger, LoggerApi):
 
     @property
     def delayed_logging(self):
-        return LOGGER.delayed_logging
+        return self.output_file.delayed_logging
 
     def close(self, result):
         self.output_file.statistics(result.statistics)

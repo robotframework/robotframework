@@ -56,7 +56,6 @@ class Logger(AbstractLogger):
         self._lib_listeners = None
         self._other_loggers = []
         self._message_cache = []
-        self._log_message_cache = None
         self._log_message_parents = []
         self._library_import_logging = 0
         self._error_occurred = False
@@ -179,19 +178,6 @@ class Logger(AbstractLogger):
         finally:
             self._cache_only = False
 
-    @property
-    @contextmanager
-    def delayed_logging(self):
-        prev_cache = self._log_message_cache
-        self._log_message_cache = []
-        try:
-            yield
-        finally:
-            messages = self._log_message_cache
-            self._log_message_cache = prev_cache
-            for msg in messages or ():
-                self._log_message(msg, no_cache=True)
-
     def log_message(self, msg, no_cache=False):
         if self._log_message_parents and not self._library_import_logging:
             self._log_message(msg, no_cache)
@@ -200,10 +186,6 @@ class Logger(AbstractLogger):
 
     def _log_message(self, msg, no_cache=False):
         """Log messages written (mainly) by libraries."""
-        if self._log_message_cache is not None and not no_cache:
-            msg.resolve_delayed_message()
-            self._log_message_cache.append(msg)
-            return
         for logger in self:
             logger.log_message(msg)
         if self._log_message_parents and self._output_file.is_logged(msg):
