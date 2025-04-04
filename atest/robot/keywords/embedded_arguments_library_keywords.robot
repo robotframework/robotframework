@@ -44,8 +44,15 @@ Embedded Arguments as Variables
     File Should Contain        ${OUTFILE}    name="User \${42} Selects \${EMPTY} From Webshop"
     File Should Contain        ${OUTFILE}    owner="embedded_args_in_lk_1"
     File Should Contain        ${OUTFILE}    source_name="User \${user} Selects \${item} From Webshop"
-    File Should Contain        ${OUTFILE}    name="User \${name} Selects \${SPACE * 10} From Webshop"
+    File Should Contain        ${OUTFILE}    name="User \${name} Selects \${SPACE * 100}[:10] From Webshop"
     File Should Not Contain    ${OUTFILE}    source_name="Log"
+
+Embedded arguments as variables and other content
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Keyword Data         ${tc[0]}      embedded_args_in_lk_1.User \${foo}\${EMPTY}\${bar} Selects \${foo}, \${bar} and \${zap} From Webshop    \${name}, \${item}
+
+Embedded arguments as variables containing characters in keyword name
+    Check Test Case    ${TEST NAME}
 
 Embedded Arguments as List And Dict Variables
     ${tc} =    Check Test Case    ${TEST NAME}
@@ -71,6 +78,9 @@ Grouping Custom Regexp
     Check Test Case    ${TEST NAME}
 
 Custom Regexp Matching Variables
+    Check Test Case    ${TEST NAME}
+
+Custom regexp with inline Python evaluation
     Check Test Case    ${TEST NAME}
 
 Non Matching Variable Is Accepted With Custom Regexp (But Not For Long)

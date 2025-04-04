@@ -37,11 +37,24 @@ Argument Namespaces with Embedded Arguments
 Embedded Arguments as Variables
     ${name}    ${item} =    User ${42} Selects ${EMPTY} From Webshop
     Should Be Equal    ${name}-${item}    42-
-    ${name}    ${item} =    User ${name} Selects ${SPACE * 10} From Webshop
+    ${name}    ${item} =    User ${name} Selects ${SPACE * 100}[:10] From Webshop
     Should Be Equal    ${name}-${item}    42-${SPACE*10}
     ${name}    ${item} =    User ${name} Selects ${TEST TAGS} From Webshop
     Should Be Equal    ${name}    ${42}
     Should Be Equal    ${item}    ${{[]}}
+    ${name}    ${item} =    User ${foo.title()} Selects ${{[$foo, $bar]}}[1][:2] From Webshop
+    Should Be Equal    ${name}-${item}    Foo-ba
+
+Embedded arguments as variables and other content
+    ${name}    ${item} =    User ${foo}${EMPTY}${bar} Selects ${foo}, ${bar} and ${zap} From Webshop
+    Should Be Equal    ${name}    ${foo}${bar}
+    Should Be Equal    ${item}    ${foo}, ${bar} and ${zap}
+
+Embedded arguments as variables containing characters in keyword name
+    ${1} + ${2} = ${3}
+    ${1 + 2} + ${3} = ${6}
+    ${1} + ${2 + 3} = ${6}
+    ${1 + 2} + ${3 + 4} = ${10}
 
 Embedded Arguments as List And Dict Variables
     ${inp1}    ${inp2} =    Evaluate    (1, 2, 3, 'neljä'), {'a': 1, 'b': 2}
@@ -90,8 +103,14 @@ Grouping Custom Regexp
 Custom Regexp Matching Variables
     [Documentation]    FAIL bar != foo
     I execute "${foo}"
-    I execute "${bar}" with "${zap}"
+    I execute "${bar}" with "${zap + 'xxx'}[:3]"
     I execute "${bar}"
+
+Custom regexp with inline Python evaluation
+    [Documentation]    FAIL bar != foo
+    I execute "${{'foo'}}"
+    I execute "${{'BAR'.lower()}}" with "${{"a".join("zp")}}"
+    I execute "${{'bar'}}"
 
 Non Matching Variable Is Accepted With Custom Regexp (But Not For Long)
     [Documentation]    FAIL    foo != bar    # ValueError: Embedded argument 'x' got value 'foo' that does not match custom pattern 'bar'.

@@ -235,7 +235,7 @@ class EmbeddedArgumentsRunner(UserKeywordRunner):
 
     def __init__(self, keyword: 'UserKeyword', name: str):
         super().__init__(keyword, name)
-        self.embedded_args = keyword.embedded.match(name).groups()
+        self.embedded_args = keyword.embedded.parse_args(name)
 
     def _resolve_arguments(self, data: KeywordData, kw: 'UserKeyword', variables=None):
         result = super()._resolve_arguments(data, kw, variables)

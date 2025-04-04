@@ -157,7 +157,7 @@ class EmbeddedArgumentsRunner(LibraryKeywordRunner):
 
     def __init__(self, keyword: 'LibraryKeyword', name: 'str'):
         super().__init__(keyword, name)
-        self.embedded_args = keyword.embedded.match(name).groups()
+        self.embedded_args = keyword.embedded.parse_args(name)
 
     def _resolve_arguments(self, data: KeywordData, kw: 'LibraryKeyword', variables=None):
         return kw.resolve_arguments(self.embedded_args + data.args, data.named_args,

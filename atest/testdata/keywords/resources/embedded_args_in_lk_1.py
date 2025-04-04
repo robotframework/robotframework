@@ -19,6 +19,11 @@ def this(ignored_prefix, item, somearg):
     log("%s-%s" % (item, somearg))
 
 
+@keyword(name='${x} + ${y} = ${z}')
+def add(x, y, z):
+    should_be_equal(x + y, z)
+
+
 @keyword(name="My embedded ${var}")
 def my_embedded(var):
     should_be_equal(var, "warrior")

@@ -39,12 +39,18 @@ Argument Namespaces with Embedded Arguments
 Embedded Arguments as Variables
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Keyword Data         ${tc[0]}      User \${42} Selects \${EMPTY} From Webshop    \${name}, \${item}
-    Check Keyword Data         ${tc[2]}      User \${name} Selects \${SPACE * 10} From Webshop    \${name}, \${item}
+    Check Keyword Data         ${tc[2]}      User \${name} Selects \${SPACE * 100}[:10] From Webshop    \${name}, \${item}
     File Should Contain        ${OUTFILE}    name="User \${42} Selects \${EMPTY} From Webshop"
-    File Should Contain        ${OUTFILE}    source_name="User \${user} Selects \${item} From Webshop"
-    File Should Contain        ${OUTFILE}    name="User \${name} Selects \${SPACE * 10} From Webshop"
+    File Should Contain        ${OUTFILE}    name="User \${name} Selects \${SPACE * 100}[:10] From Webshop"
     File Should Contain        ${OUTFILE}    source_name="User \${user} Selects \${item} From Webshop"
     File Should Not Contain    ${OUTFILE}    source_name="Log">
+
+Embedded arguments as variables and other content
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Keyword Data         ${tc[0]}      User \${foo}\${EMPTY}\${bar} Selects \${foo}, \${bar} and \${zap} From Webshop    \${name}, \${item}
+
+Embedded arguments as variables containing characters in keyword name
+    Check Test Case    ${TEST NAME}
 
 Embedded Arguments as List And Dict Variables
     ${tc} =    Check Test Case    ${TEST NAME}
@@ -81,6 +87,9 @@ Grouping Custom Regexp
 Custom Regexp Matching Variables
     Check Test Case    ${TEST NAME}
 
+Custom regexp with inline Python evaluation
+    Check Test Case    ${TEST NAME}
+
 Non Matching Variable Is Accepted With Custom Regexp (But Not For Long)
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc[0][0]}
@@ -101,7 +110,7 @@ Custom regexp with inline flag
 
 Invalid Custom Regexp
     Check Test Case    ${TEST NAME}
-    Creating Keyword Failed    0    310
+    Creating Keyword Failed    0    334
     ...    Invalid \${x:(} Regexp
     ...    Compiling embedded arguments regexp failed: *
 
