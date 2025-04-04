@@ -17,7 +17,6 @@ from contextlib import contextmanager
 from typing import TYPE_CHECKING
 
 from robot.errors import DataError
-from robot.output import LOGGER
 from robot.result import Keyword as KeywordResult
 from robot.utils import prepr, safe_str
 from robot.variables import contains_variable, is_list_variable, VariableAssignment
@@ -85,16 +84,6 @@ class LibraryKeywordRunner:
         args = [prepr(arg) for arg in positional]
         args += ['%s=%s' % (safe_str(n), prepr(v)) for n, v in named]
         return 'Arguments: [ %s ]' % ' | '.join(args)
-
-    def _runner_for(self, method, positional, named, context):
-        timeout = self._get_timeout(context)
-        if timeout and timeout.active:
-            def runner():
-                with LOGGER.delayed_logging:
-                    context.output.debug(timeout.get_message)
-                    return timeout.run(method, args=positional, kwargs=named)
-            return runner
-        return lambda: method(*positional, **named)
 
     def _get_timeout(self, context):
         return min(context.timeouts) if context.timeouts else None
