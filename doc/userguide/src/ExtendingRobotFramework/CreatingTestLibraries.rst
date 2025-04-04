@@ -3549,6 +3549,96 @@ the keyword name and arguments.
 A good example of using the hybrid API is Robot Framework's own
 Telnet_ library.
 
+Handling Robot Framework's timeouts
+-----------------------------------
+
+Robot Framework has its own timeouts_ that can be used for stopping keyword
+execution if a test or a keyword takes too much time.
+There are two things to take into account related to them.
+
+Doing cleanup if timeout occurs
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Timeouts are technically implemented using `robot.errors.TimeoutExceeded`
+exception that can occur any time during a keyword execution. If a keyword
+wants to make sure possible cleanup activities are always done, it needs to
+handle these exceptions. Probably the simplest way to handle exceptions is
+using Python's `try/finally` structure:
+
+.. sourcecode:: python
+
+    def example():
+        try:
+            do_something()
+        finally:
+            do_cleanup()
+
+A benefit of the above is that cleanup is done regardless of the exception.
+If there is a need to handle timeouts specially, it is possible to catch
+`TimeoutExceeded` explicitly. In that case it is important to re-raise the
+original exception afterwards:
+
+.. sourcecode:: python
+
+    from robot.errors import TimeoutExceeded
+
+    def example():
+        try:
+            do_something()
+        except TimeoutExceeded:
+            do_cleanup()
+            raise
+
+.. note:: The `TimeoutExceeded` exception was named `TimeoutError` prior to
+          Robot Framework 7.3. It was renamed to avoid a conflict with Python's
+          standard exception with the same name. The old name still exists as
+          a backwards compatible alias in the `robot.errors` module and can
+          be used if older Robot Framework versions need to be supported.
+
+Allowing timeouts to stop execution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Robot Framework's timeouts can stop normal Python code, but if the code calls
+functionality implemented using C or some other language, timeouts may
+not work. Well behaving keywords should thus avoid long blocking calls that
+cannot be interrupted.
+
+As an example, `subprocess.run`__ cannot be interrupted on Windows, so
+the following simple keyword cannot be stopped by timeouts there:
+
+.. sourcecode:: python
+
+   import subprocess
+
+
+   def run_command(command, *args):
+       result = subprocess.run([command, *args], encoding='UTF-8')
+       print(f'stdout: {result.stdout}\nstderr: {result.stderr}')
+
+This problem can be avoided by using the lower level `subprocess.Popen`__
+and handling waiting in a loop with short timeouts. This adds quite a lot
+of complexity, though, so it may not be worth the effort in all cases.
+
+.. sourcecode:: python
+
+   import subprocess
+
+
+   def run_command(command, *args):
+       process = subprocess.Popen([command, *args], encoding='UTF-8',
+                                  stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+       while True:
+           try:
+               stdout, stderr = process.communicate(timeout=0.1)
+           except subprocess.TimeoutExpired:
+               continue
+           else:
+               break
+       print(f'stdout: {stdout}\nstderr: {stderr}')
+
+__ https://docs.python.org/3/library/subprocess.html#subprocess.run
+__ https://docs.python.org/3/library/subprocess.html#subprocess.Popen
+
 Using Robot Framework's internal modules
 ----------------------------------------
 
