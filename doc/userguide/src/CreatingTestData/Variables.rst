@@ -1358,10 +1358,13 @@ can be changed dynamically using keywords from the `BuiltIn`_ library.
    |                        | - `${OPTIONS.skip_on_failure}`                        |            |
    |                        |   (:option:`--skip-on-failure`)                       |            |
    |                        | - `${OPTIONS.console_width}`                          |            |
-   |                        |   (:option:`--console-width`)                         |            |
+   |                        |   (integer, :option:`--console-width`)                |            |
+   |                        | - `${OPTIONS.rpa}`                                    |            |
+   |                        |   (boolean, :option:`--rpa`)                          |            |
    |                        |                                                       |            |
-   |                        | `${OPTIONS}` itself was added in RF 5.0 and           |            |
-   |                        | `${OPTIONS.console_width}` in RF 7.1.                 |            |
+   |                        | `${OPTIONS}` itself was added in RF 5.0,              |            |
+   |                        | `${OPTIONS.console_width}` in RF 7.1 and              |            |
+   |                        | `${OPTIONS.rpa}` in RF 7.3.                           |            |
    |                        | More options can be exposed later.                    |            |
    +------------------------+-------------------------------------------------------+------------+
 

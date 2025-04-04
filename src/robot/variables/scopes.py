@@ -198,6 +198,7 @@ class GlobalVariables(Variables):
         for name, value in [('${TEMPDIR}', abspath(tempfile.gettempdir())),
                             ('${EXECDIR}', abspath('.')),
                             ('${OPTIONS}', DotDict({
+                                'rpa': settings.rpa,
                                 'include': Tags(settings.include),
                                 'exclude': Tags(settings.exclude),
                                 'skip': Tags(settings.skip),
