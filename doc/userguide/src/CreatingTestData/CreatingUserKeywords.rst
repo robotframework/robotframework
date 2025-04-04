@@ -833,24 +833,43 @@ to parse the variable syntax correctly. If there are matching braces like in
 Using variables with custom embedded argument regular expressions
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
-When embedded arguments are used with custom regular expressions, Robot
-Framework automatically enhances the specified regexps so that they
-match variables in addition to the text matching the pattern.
-For example, the following test case would pass
-using the keywords from the earlier example.
+When using embedded arguments with custom regular expressions, specifying
+values using values has certain limitations. Variables work fine if
+they match the whole embedded argument, but not if the value contains
+a variable with any additional content. For example, the first test below
+succeeds because the variable `${DATE}` matches the argument `${date}` fully,
+but the second test fails because `${YEAR}-${MONTH}-${DAY}` is not a single
+variable.
 
 .. sourcecode:: robotframework
 
+   *** Settings ***
+   Library           DateTime
+
    *** Variables ***
-   ${DATE}    2011-06-27
+   ${DATE}           2011-06-27
+   ${YEAR}           2011
+   ${MONTH}          06
+   ${DAY}            27
 
    *** Test Cases ***
-   Example
+   Succeeds
        Deadline is ${DATE}
-       ${1} + ${2} = ${3}
 
-A limitation of using variables is that their actual values are not matched against
-custom regular expressions. As the result keywords may be called with
+   Fails
+       Deadline is ${YEAR}-${MONTH}-${DAY}
+
+   *** Keywords ***
+   Deadline is ${date:(\d{4}-\d{2}-\d{2}|today)}
+       IF    '${date}' == 'today'
+           ${date} =    Get Current Date
+       ELSE
+           ${date} =    Convert Date    ${date}
+       END
+       Log    Deadline is on ${date}.
+
+Another limitation of using variables is that their actual values are not matched
+against custom regular expressions. As the result keywords may be called with
 values that their custom regexps would not allow. This behavior is deprecated
 starting from Robot Framework 6.0 and values will be validated in the future.
 For more information see issue `#4462`__.
