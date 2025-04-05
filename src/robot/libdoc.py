@@ -196,7 +196,7 @@ class LibDoc(Application):
                 or format in ('JSON', 'LIBSPEC') and specdocformat != 'RAW'):
             libdoc.convert_docs_to_html()
         libdoc.save(output, format, self._validate_theme(theme, format),
-                    self._validate_lang(language, format))
+                    self._validate_lang(language))
         if not quiet:
             self.console(Path(output).absolute())
 
@@ -231,13 +231,9 @@ class LibDoc(Application):
             raise DataError("The --theme option is only applicable with HTML outputs.")
         return theme
 
-    def _validate_lang(self, lang, format):
-        theme = self._validate('Language', lang, LANGUAGES + ['NONE'])
-        if not theme or theme == 'NONE':
-            return None
-        if format != 'HTML':
-            raise DataError("The --theme option is only applicable with HTML outputs.")
-        return theme
+    def _validate_lang(self, lang):
+        valid = LANGUAGES + ['NONE']
+        return self._validate('Language', lang, *valid)
 
 
 def libdoc_cli(arguments=None, exit=True):
