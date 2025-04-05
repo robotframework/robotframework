@@ -37,7 +37,12 @@ import sys
 from pathlib import Path
 
 if __name__ == '__main__' and 'robot' not in sys.modules:
-    import pythonpathsetter
+    try:
+        import robot as __ignore
+    except ModuleNotFoundError:
+        import pythonpathsetter
+        import logging
+        logging.warning("depricated running without having python path setup proactively, please either install or configure python path before running libdoc.py")
 
 from robot.utils import Application, seq2str
 from robot.errors import DataError

@@ -32,8 +32,16 @@ that can be used programmatically. Other code is for internal usage.
 
 import sys
 
+import pathlib
+
 if __name__ == '__main__' and 'robot' not in sys.modules:
-    import pythonpathsetter
+    try:
+        import robot as __ignore
+    except ModuleNotFoundError:
+        import pythonpathsetter
+        import logging
+        logging.warning("depricated running without having python path setup proactively, please either install or configure python path before running rebot.py")
+
 
 from robot.conf import RebotSettings
 from robot.errors import DataError

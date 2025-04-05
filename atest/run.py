@@ -105,11 +105,12 @@ def _get_arguments(interpreter, output_dir):
 
 def _run(args, tempdir, interpreter, schema_validation):
     command = [str(c) for c in
-               [sys.executable, CURDIR.parent / 'src/robot/run.py'] + args]
+                [sys.executable, '-m', 'robot.run']  + args]
     environ = dict(os.environ,
                    TEMPDIR=str(tempdir),
                    PYTHONCASEOK='True',
                    PYTHONIOENCODING='',
+                   PYTHONPATH="",
                    PYTHONWARNDEFAULTENCODING='True')
     if schema_validation:
         environ['ATEST_VALIDATE_OUTPUT'] = 'TRUE'
@@ -125,7 +126,7 @@ def _rebot(rc, output_dir, interpreter):
     if rc == 0:
         print('All tests passed, not generating log or report.')
     else:
-        command = [sys.executable, str(CURDIR.parent / 'src/robot/rebot.py'),
+        command = [sys.executable, '-m', 'robot.rebot',
                    '--output-dir', str(output_dir), str(output)]
         subprocess.call(command)
     latest = Path(LATEST.format(interpreter=interpreter))

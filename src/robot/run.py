@@ -34,7 +34,13 @@ import sys
 from threading import current_thread
 
 if __name__ == '__main__' and 'robot' not in sys.modules:
-    import pythonpathsetter
+    try:
+        import robot as __ignore
+    except ModuleNotFoundError:
+        import pythonpathsetter
+        import logging
+        logging.warning("depricated running without having python path setup proactively, please either install or configure python path before running run.py")
+
 
 from robot.conf import RobotSettings
 from robot.model import ModelModifier
