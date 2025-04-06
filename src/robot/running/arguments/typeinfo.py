@@ -107,31 +107,35 @@ class TypeInfo(metaclass=SetterAwareType):
         """
         typ = self.type
         if self.is_union:
-            self._validate_union(nested)
-        elif nested is None:
+            return self._validate_union(nested)
+        if nested is None:
             return None
-        elif typ is None:
+        if typ is None:
             return tuple(nested)
-        elif typ is Literal:
-            self._validate_literal(nested)
-        elif not isinstance(typ, type):
-            self._report_nested_error(nested)
-        elif issubclass(typ, tuple):
-            if nested[-1].type is Ellipsis:
-                self._validate_nested_count(nested, 2, 'Homogenous tuple', offset=-1)
-        elif issubclass(typ, Sequence) and not issubclass(typ, (str, bytes, bytearray)):
-            self._validate_nested_count(nested, 1)
-        elif issubclass(typ, Set):
-            self._validate_nested_count(nested, 1)
-        elif issubclass(typ, Mapping):
-            self._validate_nested_count(nested, 2)
-        elif typ in TYPE_NAMES.values():
+        if typ is Literal:
+            return self._validate_literal(nested)
+        if isinstance(typ, type):
+            if issubclass(typ, tuple):
+                if nested[-1].type is Ellipsis:
+                    return self._validate_nested_count(
+                        nested, 2, 'Homogenous tuple', offset=-1
+                    )
+                return tuple(nested)
+            if (issubclass(typ, Sequence)
+                    and not issubclass(typ, (str, bytes, bytearray))):
+                return self._validate_nested_count(nested, 1)
+            if issubclass(typ, Set):
+                return self._validate_nested_count(nested, 1)
+            if issubclass(typ, Mapping):
+                return self._validate_nested_count(nested, 2)
+        if typ in TYPE_NAMES.values():
             self._report_nested_error(nested)
         return tuple(nested)
 
     def _validate_union(self, nested):
         if not nested:
             raise DataError('Union cannot be empty.')
+        return tuple(nested)
 
     def _validate_literal(self, nested):
         if not nested:
@@ -141,10 +145,12 @@ class TypeInfo(metaclass=SetterAwareType):
                 raise DataError(f'Literal supports only integers, strings, bytes, '
                                 f'Booleans, enums and None, value {info.name} is '
                                 f'{type_name(info.type)}.')
+        return tuple(nested)
 
     def _validate_nested_count(self, nested, expected, kind=None, offset=0):
         if len(nested) != expected:
             self._report_nested_error(nested, expected, kind, offset)
+        return tuple(nested)
 
     def _report_nested_error(self, nested, expected=0, kind=None, offset=0):
         expected += offset

@@ -2,8 +2,8 @@ import unittest
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
-from typing import (Any, Dict, Generic, List, Literal, Mapping, Sequence, Set, Tuple,
-                    TypedDict, TypeVar, Union)
+from typing import (Annotated, Any, Dict, Generic, List, Literal, Mapping, Sequence,
+                    Set, Tuple, TypedDict, TypeVar, Union)
 
 from robot.errors import DataError
 from robot.running.arguments.typeinfo import TypeInfo, TYPE_NAMES
@@ -100,6 +100,11 @@ class TestTypeInfo(unittest.TestCase):
         for typ in List, Sequence, Set, Tuple, Dict, Mapping, list, tuple, dict:
             info = TypeInfo.from_type_hint(typ)
             assert_equal(info.nested, None)
+
+    def test_parameterized_special_form(self):
+        info = TypeInfo.from_type_hint(Annotated[int, 'xxx'])
+        assert_info(info, 'Annotated', Annotated,
+                    (TypeInfo.from_type_hint(int), TypeInfo('xxx')))
 
     def test_invalid_sequence_params(self):
         for typ in 'list[int, str]', 'SEQUENCE[x, y]', 'Set[x, y]', 'frozenset[x, y]':
