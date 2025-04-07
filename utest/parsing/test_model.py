@@ -1305,6 +1305,66 @@ Keyword
         get_and_assert_model(data, expected, depth=1)
 
 
+class TestKeywordCall(unittest.TestCase):
+
+    def test_valid(self):
+        data = '''
+*** Test Cases ***
+Test
+    Keyword
+    Keyword    with    ${args}
+    ${x} =    Keyword    with assign
+    ${x}    @{y}=    Keyword
+    &{x}    Keyword
+'''
+        expected = TestCase(
+            header=TestCaseName([Token(Token.TESTCASE_NAME, 'Test', 2, 0)]),
+            body=[
+                KeywordCall([Token(Token.KEYWORD, 'Keyword', 3, 4)]),
+                KeywordCall([Token(Token.KEYWORD, 'Keyword', 4, 4),
+                             Token(Token.ARGUMENT, 'with', 4, 15),
+                             Token(Token.ARGUMENT, '${args}', 4, 23)]),
+                KeywordCall([Token(Token.ASSIGN, '${x} =', 5, 4),
+                             Token(Token.KEYWORD, 'Keyword', 5, 14),
+                             Token(Token.ARGUMENT, 'with assign', 5, 25)]),
+                KeywordCall([Token(Token.ASSIGN, '${x}', 6, 4),
+                             Token(Token.ASSIGN, '@{y}=', 6, 12),
+                             Token(Token.KEYWORD, 'Keyword', 6, 21)]),
+                KeywordCall([Token(Token.ASSIGN, '&{x}', 7, 4),
+                             Token(Token.KEYWORD, 'Keyword', 7, 12)])
+            ]
+        )
+        get_and_assert_model(data, expected, depth=1)
+
+    def test_invalid_assign(self):
+        data = '''
+*** Test Cases ***
+Test
+    ${x} =    ${y}      Marker in wrong place
+    @{x}      @{y} =    Multiple lists
+    ${x}      &{y}      Dict works only alone
+'''
+        expected = TestCase(
+            header=TestCaseName([Token(Token.TESTCASE_NAME, 'Test', 2, 0)]),
+            body=[
+                KeywordCall([Token(Token.ASSIGN, '${x} =', 3, 4),
+                             Token(Token.ASSIGN, '${y}', 3, 14),
+                             Token(Token.KEYWORD, 'Marker in wrong place', 3, 24)],
+                            errors=("Assign mark '=' can be used only with the "
+                                    "last variable.",)),
+                KeywordCall([Token(Token.ASSIGN, '@{x}', 4, 4),
+                             Token(Token.ASSIGN, '@{y} =', 4, 14),
+                             Token(Token.KEYWORD, 'Multiple lists', 4, 24)],
+                            errors=('Assignment can contain only one list variable.',)),
+                KeywordCall([Token(Token.ASSIGN, '${x}', 5, 4),
+                             Token(Token.ASSIGN, '&{y}', 5, 14),
+                             Token(Token.KEYWORD, 'Dict works only alone', 5, 24)],
+                            errors=('Dictionary variable cannot be assigned with '
+                                    'other variables.',)),
+            ]
+        )
+        get_and_assert_model(data, expected, depth=1)
+
 class TestTestCase(unittest.TestCase):
 
     def test_empty_test(self):

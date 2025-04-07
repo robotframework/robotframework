@@ -24,7 +24,7 @@ from robot.conf import Language
 from robot.running.arguments import UserKeywordArgumentParser
 from robot.utils import normalize_whitespace, seq2str, split_from_equals, test_or_task
 from robot.variables import (contains_variable, is_scalar_assign, is_dict_variable,
-                             search_variable)
+                             search_variable, VariableAssignment)
 
 from ..lexer import Token
 
@@ -869,6 +869,11 @@ class KeywordCall(Statement):
     @property
     def assign(self) -> 'tuple[str, ...]':
         return self.get_values(Token.ASSIGN)
+
+    def validate(self, ctx: 'ValidationContext'):
+        assignment = VariableAssignment(self.assign)
+        if assignment.error:
+            self.errors += (assignment.error.message,)
 
 
 @Statement.register
