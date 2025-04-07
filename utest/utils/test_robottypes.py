@@ -4,6 +4,15 @@ from array import array
 from collections import UserDict, UserList, UserString
 from collections.abc import Mapping
 from typing import Any, Dict, List, Literal, Optional, Set, Tuple, Union
+from typing_extensions import Annotated as ExtAnnotated, TypeForm as ExtTypeForm
+try:
+    from typing import Annotated
+except ImportError:
+    Annotated = ExtAnnotated
+try:
+    from typing import TypeForm
+except ImportError:
+    TypeForm = ExtTypeForm
 
 from robot.utils import (is_bytes, is_falsy, is_dict_like, is_list_like, is_string,
                          is_truthy, is_union, PY_VERSION, type_name, type_repr)
@@ -162,6 +171,13 @@ class TestTypeName(unittest.TestCase):
                           (Any, 'Any')]:
             assert_equal(type_name(item), exp)
 
+    def test_parameterized_special_forms(self):
+        for item, exp in [(Annotated[int, 'xxx'], 'Annotated'),
+                          (ExtAnnotated[int, 'xxx'], 'Annotated'),
+                          (TypeForm['str | int'], 'TypeForm'),
+                          (ExtTypeForm['str | int'], 'TypeForm')]:
+            assert_equal(type_name(item), exp)
+
     if PY_VERSION >= (3, 10):
         def test_union_syntax(self):
             assert_equal(type_name(int | float), 'Union')
@@ -214,6 +230,13 @@ class TestTypeRepr(unittest.TestCase):
     def test_literal(self):
         assert_equal(type_repr(Literal['x', 1, True]), "Literal['x', 1, True]")
         assert_equal(type_repr(Literal['x', 1, True], nested=False), "Literal")
+
+    def test_parameterized_special_forms(self):
+        for item, exp in [(Annotated[int, 'xxx'], "Annotated[int, 'xxx']"),
+                          (ExtAnnotated[int, 'xxx'], "Annotated[int, 'xxx']"),
+                          (TypeForm[int], 'TypeForm[int]'),
+                          (ExtTypeForm[int  ], 'TypeForm[int]')]:
+            assert_equal(type_repr(item), exp)
 
 
 class TestIsTruthyFalsy(unittest.TestCase):

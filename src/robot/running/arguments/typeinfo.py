@@ -20,6 +20,12 @@ from decimal import Decimal
 from enum import Enum
 from pathlib import Path
 from typing import Any, ForwardRef, get_args, get_origin, get_type_hints, Literal, Union
+if sys.version_info < (3, 9):
+    try:
+        # get_args and get_origin handle at least Annotated wrong in Python 3.8.
+        from typing_extensions import get_args, get_origin
+    except ImportError:
+        pass
 if sys.version_info >= (3, 11):
     from typing import NotRequired, Required
 else:

@@ -13,15 +13,22 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import sys
 import warnings
 from collections.abc import Iterable, Mapping
 from collections import UserString
 from io import IOBase
 from os import PathLike
-from typing import get_args, get_origin, Literal, TypedDict, Union
-try:
-    from types import UnionType
-except ImportError:    # Python < 3.10
+from typing import get_args, get_origin, TypedDict, Union
+if sys.version_info < (3, 9):
+    try:
+        # get_args and get_origin handle at least Annotated wrong in Python 3.8.
+        from typing_extensions import get_args, get_origin
+    except ImportError:
+        pass
+if sys.version_info >= (3, 10):
+    from types import UnionType  # In Python 3.14+ this is same as typing.Union.
+else:
     UnionType = ()
 
 try:
@@ -108,25 +115,26 @@ def type_repr(typ, nested=True):
         return '...'
     if is_union(typ):
         return ' | '.join(type_repr(a) for a in get_args(typ)) if nested else 'Union'
-    if get_origin(typ) is Literal:
-        if nested:
-            args = ', '.join(repr(a) for a in get_args(typ))
-            return f'Literal[{args}]'
-        return 'Literal'
     name = _get_type_name(typ)
     if nested:
-        args = ', '.join(type_repr(a) for a in get_args(typ))
+        # At least Literal and Annotated can have strings as in args.
+        args = ', '.join(type_repr(a) if not isinstance(a, str) else repr(a)
+                         for a in get_args(typ))
         if args:
             return f'{name}[{args}]'
     return name
 
 
-def _get_type_name(typ):
+def _get_type_name(typ, try_origin=True):
     # See comment in `type_name` for explanation about `_name`.
     for attr in '__name__', '_name':
         name = getattr(typ, attr, None)
         if name:
             return name
+    # Special forms may not have name directly but their origin can have it.
+    origin = get_origin(typ)
+    if origin and try_origin:
+        return _get_type_name(origin, try_origin=False)
     return str(typ)
 
 
