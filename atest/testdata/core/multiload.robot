@@ -7,6 +7,8 @@ Library          multiload.py    num=3    AS    Test1
 Load the same library multiple times using different parameters
     ${num}=      Get Num
     Should Be Equal As Numbers    ${num}    1
+    ${num}=      get_global_num 
+    Should Be Equal As Numbers    ${num}    3
     BuiltIn.Import Library    ${CURDIR}/multiload.py    num=4    AS    Test4
     BuiltIn.Import Library    ${CURDIR}/multiload.py    num=4    AS    Test1
     ${num}=      Test1.Get Num
