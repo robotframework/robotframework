@@ -161,8 +161,8 @@ class VariableMatch:
     def __str__(self) -> str:
         if not self:
             return '<no match>'
-        items = ''.join('[%s]' % i for i in self.items) if self.items else ''
-        return '%s{%s}%s' % (self.identifier, self.base, items)
+        items = ''.join([f'[{i}]' for i in self.items]) if self.items else ''
+        return f'{self.identifier}{{{self.base}}}{items}'
 
 
 def _search_variable(string: str, identifiers: Sequence[str],
@@ -179,33 +179,28 @@ def _search_variable(string: str, identifiers: Sequence[str],
     indices_and_chars = enumerate(string[start+2:], start=start+2)
 
     for index, char in indices_and_chars:
-        if char == left_brace and not escaped:
-            open_braces += 1
-
-        elif char == right_brace and not escaped:
+        if char == right_brace and not escaped:
             open_braces -= 1
-
             if open_braces == 0:
-                next_char = string[index+1] if index+1 < len(string) else None
-
-                if left_brace == '{':     # Parsing name.
+                _, next_char = next(indices_and_chars, (-1, None))
+                # Parsing name.
+                if left_brace == '{':
                     match.base = string[start+2:index]
-                    if match.identifier not in '$@&' or next_char != '[':
+                    if next_char != '[' or match.identifier not in '$@&':
                         match.end = index + 1
                         break
                     left_brace, right_brace = '[', ']'
-
-                else:                      # Parsing items.
+                # Parsing items.
+                else:
                     items.append(string[start+1:index])
                     if next_char != '[':
                         match.end = index + 1
                         match.items = tuple(items)
                         break
-
-                next(indices_and_chars)    # Consume '['.
-                start = index + 1          # Start of the next item.
+                start = index + 1  # Start of the next item.
                 open_braces = 1
-
+        elif char == left_brace and not escaped:
+            open_braces += 1
         else:
             escaped = False if char != '\\' else not escaped
 
@@ -277,9 +272,4 @@ class VariableMatches:
         return sum(1 for _ in self)
 
     def __bool__(self) -> bool:
-        try:
-            next(iter(self))
-        except StopIteration:
-            return False
-        else:
-            return True
+        return bool(search_variable(self.string, self.identifiers, self.ignore_errors))
