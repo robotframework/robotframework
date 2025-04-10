@@ -16,7 +16,6 @@
 import inspect
 import os.path
 import re
-from itertools import takewhile
 from pathlib import Path
 
 from .charwidth import get_char_width
