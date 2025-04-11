@@ -70,7 +70,7 @@ class VariableScopes:
         self._variables_set.end_suite()
 
     def start_test(self):
-        self._test = self._suite.copy(exclude=self._suite_locals[-1])
+        self._test = self._suite.copy(update=self._suite_locals[-1])
         self._scopes.append(self._test)
         self._variables_set.start_test()
 
@@ -80,8 +80,8 @@ class VariableScopes:
         self._variables_set.end_test()
 
     def start_keyword(self):
-        exclude = self._suite_locals[-1] if self._test else ()
-        kw = self._suite.copy(exclude)
+        update = self._suite_locals[-1] if self._test else None
+        kw = self._suite.copy(update)
         self._variables_set.start_keyword()
         self._variables_set.update(kw)
         self._scopes.append(kw)
@@ -155,8 +155,11 @@ class VariableScopes:
                 name, value = self._set_global_suite_or_test(scope, name, value)
             self._variables_set.set_test(name, value)
         else:
+            # Set test scope variable on suite level. Keep track on added and
+            # overridden variables to allow updating variables when test starts.
+            prev = self._suite.get(name)
             self.set_suite(name, value)
-            self._suite_locals[-1][name] = None
+            self._suite_locals[-1][name] = prev
 
     def set_keyword(self, name, value):
         self.current[name] = value

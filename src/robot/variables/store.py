@@ -71,6 +71,11 @@ class VariableStore:
                 raise
             return default
 
+    def pop(self, name, decorated=True):
+        if decorated:
+            name = self._undecorate(name)
+        return self.data.pop(name)
+
     def update(self, store):
         self.data.update(store.data)
 
