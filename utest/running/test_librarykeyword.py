@@ -315,7 +315,7 @@ class TestSourceAndLineno(unittest.TestCase):
         from robot.variables.search import __file__ as source
         from robot.variables import __file__ as init_source
         lib = TestLibrary.from_name('robot.variables')
-        self._verify(lib, 'search_variable', source, 22)
+        self._verify(lib, 'search_variable', source, 23)
         self._verify(lib, 'init', init_source, None)
 
     def test_decorated(self):
