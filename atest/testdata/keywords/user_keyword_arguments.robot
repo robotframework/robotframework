@@ -202,7 +202,7 @@ Invalid Arguments Spec - Invalid argument syntax
 Invalid Arguments Spec - Non-default after defaults
     [Documentation]    FAIL
     ...    Invalid argument specification: Non-default argument after default arguments.
-    Non-default after defaults
+    Non-default after defaults    what    ever    args=accepted
 
 Invalid Arguments Spec - Default with varargs
     [Documentation]    FAIL

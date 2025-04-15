@@ -117,10 +117,17 @@ Non-existing keyword name
 
 Invalid syntax in UK
     [Documentation]    FAIL
-    ...    Invalid argument specification: Multiple errors:
+    ...    Several failures occurred:
+    ...
+    ...    1) Invalid argument specification: Multiple errors:
+    ...    - Invalid argument syntax '\${oops'.
+    ...    - Non-default argument after default arguments.
+    ...
+    ...    2) Invalid argument specification: Multiple errors:
     ...    - Invalid argument syntax '\${oops'.
     ...    - Non-default argument after default arguments.
     Invalid Syntax UK
+    Invalid Syntax UK    what    ever    args=accepted
     This is validated
 
 Multiple Failures

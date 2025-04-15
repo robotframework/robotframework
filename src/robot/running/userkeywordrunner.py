@@ -45,6 +45,7 @@ class UserKeywordRunner:
         assignment = VariableAssignment(data.assign)
         self._config_result(result, data, kw, assignment, context.variables)
         with StatusReporter(data, result, context, run, implementation=kw):
+            self._validate(kw)
             if kw.private:
                 context.warn_on_invalid_private_call(kw)
             with assignment.assigner(context) as assigner:
@@ -68,6 +69,14 @@ class UserKeywordRunner:
                       assign=tuple(assignment),
                       tags=tags,
                       type=data.type)
+
+    def _validate(self, kw: 'UserKeyword'):
+        if kw.error:
+            raise DataError(kw.error)
+        if not kw.name:
+            raise DataError('User keyword name cannot be empty.')
+        if not kw.body:
+            raise DataError('User keyword cannot be empty.')
 
     def _run(self, data: KeywordData, kw: 'UserKeyword', result: KeywordResult, context):
         if self.pre_run_messages:
@@ -152,12 +161,6 @@ class UserKeywordRunner:
         return f'Arguments: [ {args} ]'
 
     def _execute(self, kw: 'UserKeyword', result: KeywordResult, context):
-        if kw.error:
-            raise DataError(kw.error)
-        if not kw.body:
-            raise DataError('User keyword cannot be empty.')
-        if not kw.name:
-            raise DataError('User keyword name cannot be empty.')
         if context.dry_run and kw.tags.robot('no-dry-run'):
             return None, None
         error = success = return_value = None
@@ -213,6 +216,7 @@ class UserKeywordRunner:
         assignment = VariableAssignment(data.assign)
         self._config_result(result, data, kw, assignment, context.variables)
         with StatusReporter(data, result, context, implementation=kw):
+            self._validate(kw)
             assignment.validate_assignment()
             self._dry_run(data, kw, result, context)
 
