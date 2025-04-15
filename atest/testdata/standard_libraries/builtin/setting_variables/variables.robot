@@ -9,6 +9,7 @@ Library           Collections
 ${SCALAR}         Hi tellus
 @{LIST}           Hello    world
 &{DICT}           key=value    foo=bar
+${SUITE}          default
 ${PARENT SUITE SETUP CHILD SUITE VAR 1}    This is overridden by __init__
 ${SCALAR LIST ERROR}
 ...               Setting list value to scalar variable '\${SCALAR}' is not
@@ -215,7 +216,10 @@ Test variables set on suite level is not seen in tests
     Should Be Equal    ${suite_setup_test_var_to_be_overridden_by_suite_var}         Overridded by suite variable!
     Should Be Equal    ${suite_setup_test_var_to_be_overridden_by_global_var}        Overridded by global variable!
 
-Test variable set on suite levvel can be overridden as suite variable
+Test variable set on suite level does not hide existing suite variable
+    Should Be Equal    ${SUITE}    default
+
+Test variable set on suite level can be overridden as suite variable
     Should Be Equal    ${suite_setup_test_var_to_be_overridden_by_suite_var}         Overridded by suite variable!
     Should Be Equal    ${suite_setup_test_var_to_be_overridden_by_global_var}        Overridded by global variable!
 
@@ -562,6 +566,8 @@ My Suite Setup
     Set Test Variable    $suite_setup_test_var    New in RF 7.2!
     Set Test Variable    $suite_setup_test_var_to_be_overridden_by_suite_var    Will be overridden
     Set Test Variable    $suite_setup_test_var_to_be_overridden_by_global_var    Will be overridden
+    Should Be Equal      ${SUITE}    default
+    Set Test Variable    ${SUITE}    suite level test variable
     Set Suite Variable    $suite_setup_suite_var    Suite var set in suite setup
     @{suite_setup_suite_var_list} =    Create List    Suite var set in    suite setup
     Set Suite Variable    @suite_setup_suite_var_list
@@ -590,6 +596,7 @@ My Suite Teardown
     Should Be Equal    ${suite_setup_test_var}    New in RF 7.2!
     Should Be Equal    ${suite_setup_test_var_to_be_overridden_by_suite_var}     Overridded by suite variable!
     Should Be Equal    ${suite_setup_test_var_to_be_overridden_by_global_var}    Overridded by global variable!
+    Should Be Equal    ${SUITE}    suite level test variable
     Should Be Equal    ${suite_setup_suite_var}    Suite var set in suite setup
     Should Be Equal    ${test_level_suite_var}    Suite var set in test
     Should Be Equal    ${uk_level_suite_var}    Suite var set in user keyword

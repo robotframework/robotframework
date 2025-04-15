@@ -23,7 +23,7 @@ class TestStringRepr(unittest.TestCase):
 
     def test_default_as_bytes(self):
         self._verify('b=ytes', ['b'], defaults={'b': b'ytes'})
-        self._verify('ä=\\xe4', ['ä'], defaults={'ä': b'\xe4'})
+        self._verify('ä=\xe4', ['ä'], defaults={'ä': b'\xe4'})
 
     def test_type_as_class(self):
         self._verify('a: int, b: bool', ['a', 'b'], types={'a': int, 'b': bool})

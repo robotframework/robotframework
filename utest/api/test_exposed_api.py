@@ -50,7 +50,7 @@ class TestExposedApi(unittest.TestCase):
     def test_parsing_model_blocks(self):
         for name in ('File', 'SettingSection', 'VariableSection', 'TestCaseSection',
                      'KeywordSection', 'CommentSection', 'TestCase', 'Keyword', 'For',
-                     'If', 'Try', 'While'):
+                     'If', 'Try', 'While', 'Group'):
             assert_equal(getattr(api_parsing, name), getattr(parsing.model, name))
         assert_true(not hasattr(api_parsing, 'Block'))
 

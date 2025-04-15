@@ -119,7 +119,7 @@ class SuiteHandler(ElementHandler):
     def get_child_handler(self, tag):
         if tag == 'status':
             return StatusHandler(set_status=False)
-        return ElementHandler.get_child_handler(self, tag)
+        return super().get_child_handler(tag)
 
 
 @ElementHandler.register
@@ -127,7 +127,7 @@ class TestHandler(ElementHandler):
     tag = 'test'
     # 'tags' is for RF < 4 compatibility.
     children = frozenset(('doc', 'tags', 'tag', 'timeout', 'status', 'kw', 'if', 'for',
-                          'try', 'while', 'variable', 'return', 'break', 'continue',
+                          'try', 'while', 'group', 'variable', 'return', 'break', 'continue',
                           'error', 'msg'))
 
     def start(self, elem, result):
@@ -143,7 +143,8 @@ class KeywordHandler(ElementHandler):
     # 'arguments', 'assign' and 'tags' are for RF < 4 compatibility.
     children = frozenset(('doc', 'arguments', 'arg', 'assign', 'var', 'tags', 'tag',
                           'timeout', 'status', 'msg', 'kw', 'if', 'for', 'try',
-                          'while', 'variable', 'return', 'break', 'continue', 'error'))
+                          'while', 'group', 'variable', 'return', 'break', 'continue',
+                          'error'))
 
     def start(self, elem, result):
         elem_type = elem.get('type')
@@ -227,10 +228,20 @@ class WhileHandler(ElementHandler):
 class IterationHandler(ElementHandler):
     tag = 'iter'
     children = frozenset(('var', 'doc', 'status', 'kw', 'if', 'for', 'msg', 'try',
-                          'while', 'variable', 'return', 'break', 'continue', 'error'))
+                          'while', 'group', 'variable', 'return', 'break', 'continue', 'error'))
 
     def start(self, elem, result):
         return result.body.create_iteration()
+
+
+@ElementHandler.register
+class GroupHandler(ElementHandler):
+    tag = 'group'
+    children = frozenset(('status', 'kw', 'if', 'for', 'try', 'while', 'group', 'msg',
+                          'variable', 'return', 'break', 'continue', 'error'))
+
+    def start(self, elem, result):
+        return result.body.create_group(name=elem.get('name', ''))
 
 
 @ElementHandler.register
@@ -245,8 +256,9 @@ class IfHandler(ElementHandler):
 @ElementHandler.register
 class BranchHandler(ElementHandler):
     tag = 'branch'
-    children = frozenset(('status', 'kw', 'if', 'for', 'try', 'while', 'msg', 'doc',
-                          'variable', 'return', 'pattern', 'break', 'continue', 'error'))
+    children = frozenset(('status', 'kw', 'if', 'for', 'try', 'while', 'group', 'msg',
+                          'doc', 'variable', 'return', 'pattern', 'break', 'continue',
+                          'error'))
 
     def start(self, elem, result):
         if 'variable' in elem.attrib:    # RF < 7.0 compatibility.
@@ -313,7 +325,7 @@ class BreakHandler(ElementHandler):
 @ElementHandler.register
 class ErrorHandler(ElementHandler):
     tag = 'error'
-    children = frozenset(('status', 'msg', 'value'))
+    children = frozenset(('status', 'msg', 'value', 'kw'))
 
     def start(self, elem, result):
         return result.body.create_error()
@@ -353,9 +365,9 @@ class StatusHandler(ElementHandler):
     def end(self, elem, result):
         if self.set_status:
             result.status = elem.get('status', 'FAIL')
-        if 'start' in elem.attrib:    # RF >= 7
-            result.start_time = elem.attrib['start']
+        if 'elapsed' in elem.attrib:  # RF >= 7
             result.elapsed_time = float(elem.attrib['elapsed'])
+            result.start_time = elem.get('start')
         else:                         # RF < 7
             result.start_time = self._legacy_timestamp(elem, 'starttime')
             result.end_time = self._legacy_timestamp(elem, 'endtime')

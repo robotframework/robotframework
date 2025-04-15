@@ -140,7 +140,7 @@ class KeywordImplementation(ModelObject):
         is done against the name.
         """
         if self.embedded:
-            return self.embedded.match(name) is not None
+            return self.embedded.matches(name)
         return eq(self.name, name, ignore='_')
 
     def resolve_arguments(self, args: 'Sequence[str|Any]',

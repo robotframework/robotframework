@@ -15,21 +15,25 @@
 
 from robot.utils import file_writer
 
-from .loggerhelper import AbstractLogger
 from .loggerapi import LoggerApi
+from .loggerhelper import AbstractLogger
+from .loglevel import LogLevel
 
 
 class FileLogger(AbstractLogger, LoggerApi):
 
     def __init__(self, path, level):
-        super().__init__(level)
+        self._log_level = LogLevel(level)
         self._writer = self._get_writer(path)  # unit test hook
 
     def _get_writer(self, path):
         return file_writer(path, usage='syslog')
 
+    def set_level(self, level):
+        self._log_level.set(level)
+
     def message(self, msg):
-        if self._is_logged(msg.level) and not self._writer.closed:
+        if self._log_level.is_logged(msg) and not self._writer.closed:
             entry = '%s | %s | %s\n' % (msg.timestamp, msg.level.ljust(5),
                                         msg.message)
             self._writer.write(entry)

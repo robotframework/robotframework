@@ -26,19 +26,15 @@ from .stdoutlogsplitter import StdoutLogSplitter
 
 def start_body_item(method):
     def wrapper(self, *args):
-        # TODO: Could _prev_log_message_handlers be used also here?
-        self._started_keywords += 1
-        self.log_message = self._log_message
+        self._log_message_parents.append(args[-1])
         method(self, *args)
     return wrapper
 
 
 def end_body_item(method):
     def wrapper(self, *args):
-        self._started_keywords -= 1
         method(self, *args)
-        if not self._started_keywords:
-            self.log_message = self.message
+        self._log_message_parents.pop()
     return wrapper
 
 
@@ -55,16 +51,15 @@ class Logger(AbstractLogger):
     def __init__(self, register_console_logger=True):
         self._console_logger = None
         self._syslog = None
-        self._xml_logger = None
+        self._output_file = None
         self._cli_listeners = None
         self._lib_listeners = None
         self._other_loggers = []
         self._message_cache = []
-        self._log_message_cache = None
-        self._started_keywords = 0
+        self._log_message_parents = []
+        self._library_import_logging = 0
         self._error_occurred = False
         self._error_listener = None
-        self._prev_log_message_handlers = []
         self._enabled = 0
         self._cache_only = False
         if register_console_logger:
@@ -79,14 +74,14 @@ class Logger(AbstractLogger):
     @property
     def start_loggers(self):
         loggers = (self._other_loggers
-                   + [self._console_logger, self._syslog, self._xml_logger]
+                   + [self._console_logger, self._syslog, self._output_file]
                    + self._listeners)
         return [logger for logger in loggers if logger]
 
     @property
     def end_loggers(self):
         loggers = (self._listeners
-                   + [self._console_logger, self._syslog, self._xml_logger]
+                   + [self._console_logger, self._syslog, self._output_file]
                    + self._other_loggers)
         return [logger for logger in loggers if logger]
 
@@ -133,11 +128,11 @@ class Logger(AbstractLogger):
         else:
             self._syslog = self._wrap_and_relay(syslog)
 
-    def register_xml_logger(self, logger):
-        self._xml_logger = self._wrap_and_relay(logger)
+    def register_output_file(self, logger):
+        self._output_file = self._wrap_and_relay(logger)
 
-    def unregister_xml_logger(self):
-        self._xml_logger = None
+    def unregister_output_file(self):
+        self._output_file = None
 
     def register_listeners(self, listeners, library_listeners):
         self._cli_listeners = listeners
@@ -183,42 +178,30 @@ class Logger(AbstractLogger):
         finally:
             self._cache_only = False
 
-    @property
-    @contextmanager
-    def delayed_logging(self):
-        prev_cache = self._log_message_cache
-        self._log_message_cache = []
-        try:
-            yield
-        finally:
-            messages = self._log_message_cache
-            self._log_message_cache = prev_cache
-            for msg in messages or ():
-                self._log_message(msg, no_cache=True)
+    def log_message(self, msg, no_cache=False):
+        if self._log_message_parents and not self._library_import_logging:
+            self._log_message(msg, no_cache)
+        else:
+            self.message(msg)
 
     def _log_message(self, msg, no_cache=False):
         """Log messages written (mainly) by libraries."""
-        if self._log_message_cache is not None and not no_cache:
-            msg.resolve_delayed_message()
-            self._log_message_cache.append(msg)
-            return
         for logger in self:
             logger.log_message(msg)
+        if self._log_message_parents and self._output_file.is_logged(msg):
+            self._log_message_parents[-1].body.append(msg)
         if msg.level in ('WARN', 'ERROR'):
             self.message(msg)
-
-    log_message = message
 
     def log_output(self, output):
         for msg in StdoutLogSplitter(output):
             self.log_message(msg)
 
     def enable_library_import_logging(self):
-        self._prev_log_message_handlers.append(self.log_message)
-        self.log_message = self.message
+        self._library_import_logging += 1
 
     def disable_library_import_logging(self):
-        self.log_message = self._prev_log_message_handlers.pop()
+        self._library_import_logging -= 1
 
     def start_suite(self, data, result):
         for logger in self.start_loggers:
@@ -229,12 +212,14 @@ class Logger(AbstractLogger):
             logger.end_suite(data, result)
 
     def start_test(self, data, result):
+        self._log_message_parents.append(result)
         for logger in self.start_loggers:
             logger.start_test(data, result)
 
     def end_test(self, data, result):
         for logger in self.end_loggers:
             logger.end_test(data, result)
+        self._log_message_parents.pop()
 
     @start_body_item
     def start_keyword(self, data, result):
@@ -315,6 +300,16 @@ class Logger(AbstractLogger):
     def end_while_iteration(self, data, result):
         for logger in self.end_loggers:
             logger.end_while_iteration(data, result)
+
+    @start_body_item
+    def start_group(self, data, result):
+        for logger in self.start_loggers:
+            logger.start_group(data, result)
+
+    @end_body_item
+    def end_group(self, data, result):
+        for logger in self.end_loggers:
+            logger.end_group(data, result)
 
     @start_body_item
     def start_if(self, data, result):

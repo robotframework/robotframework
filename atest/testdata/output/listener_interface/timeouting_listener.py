@@ -1,4 +1,4 @@
-from robot.errors import TimeoutError
+from robot.errors import TimeoutExceeded
 
 
 class timeouting_listener:
@@ -14,4 +14,4 @@ class timeouting_listener:
     def log_message(self, message):
         if self.timeout:
             self.timeout = False
-            raise TimeoutError('Emulated timeout inside log_message')
+            raise TimeoutExceeded('Emulated timeout inside log_message')

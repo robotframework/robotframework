@@ -5,18 +5,18 @@ Resource          atest_resource.robot
 *** Test Cases ***
 Variable Values Should Not Be Visible As Keyword's Arguments
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Keyword Data    ${tc.kws[0]}                                 BuiltIn.Run Keyword    args=My UK, Log, \${OBJECT}
-    Check Keyword Data    ${tc.kws[0].kws[0]}                          My UK    args=Log, \${OBJECT}
-    Check Keyword Data    ${tc.kws[0].kws[0].kws[0]}                   BuiltIn.Run Keyword    args=\${name}, \@{args}
-    Check Keyword Data    ${tc.kws[0].kws[0].kws[0].kws[0]}            BuiltIn.Log    args=\@{args}
-    Check Log Message     ${tc.kws[0].kws[0].kws[0].kws[0].msgs[0]}    Robot
-    Check Keyword Data    ${tc.kws[0].kws[0].kws[1].kws[0]}            BuiltIn.Log    args=\${args}[0]
-    Check Log Message     ${tc.kws[0].kws[0].kws[1].kws[0].msgs[0]}    Robot
+    Check Keyword Data    ${tc[0]}                BuiltIn.Run Keyword    args=My UK, Log, \${OBJECT}
+    Check Keyword Data    ${tc[0, 0]}             My UK                  args=Log, \${OBJECT}
+    Check Keyword Data    ${tc[0, 0, 0]}          BuiltIn.Run Keyword    args=\${name}, \@{args}
+    Check Keyword Data    ${tc[0, 0, 0, 0]}       BuiltIn.Log            args=\@{args}
+    Check Log Message     ${tc[0, 0, 0, 0, 0]}    Robot
+    Check Keyword Data    ${tc[0, 0, 1, 0]}       BuiltIn.Log            args=\${args}[0]
+    Check Log Message     ${tc[0, 0, 1, 0, 0]}    Robot
 
 Run Keyword When Keyword and Arguments Are in List Variable
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Keyword Data    ${tc.kws[0].kws[0]}    \\Log Many    args=c:\\\\temp\\\\foo, \\\${notvar}
-    Check Keyword Data    ${tc.kws[1].kws[0]}    \\Log Many    args=\\\${notvar}
+    Check Keyword Data    ${tc[0, 0]}             \\Log Many             args=c:\\\\temp\\\\foo, \\\${notvar}
+    Check Keyword Data    ${tc[1, 0]}             \\Log Many             args=\\\${notvar}
 
 Run Keyword With Empty List Variable
     Check Test Case    ${TEST NAME}
@@ -57,7 +57,7 @@ Run Keyword If With List And One Argument That needs to Be Processed
 *** Keywords ***
 Check Keyword Arguments And Messages
     [Arguments]    ${tc}
-    Check Keyword Data    ${tc.kws[0].kws[0]}    \\Log Many    args=\@{ARGS}
-    Check Keyword Data    ${tc.kws[0].kws[0].kws[0]}    BuiltIn.Log Many    args=\@{args}
-    Check Log Message    ${tc.kws[0].kws[0].kws[0].msgs[0]}    c:\\temp\\foo
-    Check Log Message    ${tc.kws[0].kws[0].kws[0].msgs[1]}    \${notvar}
+    Check Keyword Data    ${tc[0, 0]}          \\Log Many          args=\@{ARGS}
+    Check Keyword Data    ${tc[0, 0, 0]}       BuiltIn.Log Many    args=\@{args}
+    Check Log Message     ${tc[0, 0, 0, 0]}    c:\\temp\\foo
+    Check Log Message     ${tc[0, 0, 0, 1]}    \${notvar}

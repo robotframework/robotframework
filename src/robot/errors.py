@@ -82,12 +82,20 @@ class KeywordError(DataError):
         super().__init__(message, details)
 
 
-class TimeoutError(RobotError):
+class TimeoutExceeded(RobotError):
     """Used when a test or keyword timeout occurs.
 
-    This exception is handled specially so that execution of the
-    current test is always stopped immediately and it is not caught by
-    keywords executing other keywords (e.g. `Run Keyword And Expect Error`).
+    This exception cannot be caught be TRY/EXCEPT or by keywords running
+    other keywords such as `Wait Until Keyword Succeeds`.
+
+    Library keywords can catch this exception to handle cleanup activities if
+    a timeout occurs. They should reraise it immediately when they are done.
+    Attributes :attr:`test_timeout` and :attr:`keyword_timeout` are not part
+    of the public API and should not be used by libraries.
+
+    Prior to Robot Framework 7.3, this exception was named ``TimeoutError``.
+    It was renamed to not conflict with Python's standard exception with
+    the same name. The old name still exists as a backwards compatible alias.
     """
 
     def __init__(self, message='', test_timeout=True):
@@ -97,6 +105,10 @@ class TimeoutError(RobotError):
     @property
     def keyword_timeout(self):
         return not self.test_timeout
+
+
+# Backward compatible alias.
+TimeoutError = TimeoutExceeded
 
 
 class Information(RobotError):
@@ -143,10 +155,12 @@ class ExecutionStatus(RobotError):
     def can_continue(self, context, templated=False):
         if context.dry_run:
             return True
-        if self.syntax or self.exit or self.skip or self.test_timeout:
+        if self.syntax or self.exit or self.test_timeout:
             return False
         if templated:
             return context.continue_on_failure(default=True)
+        if self.skip:
+            return False
         if self.keyword_timeout:
             return False
         return self.continue_on_failure or context.continue_on_failure()
@@ -167,7 +181,7 @@ class HandlerExecutionFailed(ExecutionFailed):
 
     def __init__(self, details):
         error = details.error
-        timeout = isinstance(error, TimeoutError)
+        timeout = isinstance(error, TimeoutExceeded)
         test_timeout = timeout and error.test_timeout
         keyword_timeout = timeout and error.keyword_timeout
         syntax = isinstance(error, DataError) and error.syntax

@@ -53,7 +53,6 @@ else:
     UnionType = type
 
 from robot import result, running
-from robot.model import Message
 from robot.running import TestDefaults, TestSuite
 
 
@@ -366,7 +365,7 @@ class StartKeywordAttributes(OptionalKeywordAttributes):
     assign: 'list[str]'
     tags: 'list[str]'
     source: str
-    lineno: int
+    lineno: 'int|None'
     status: str
     starttime: str
 
@@ -709,6 +708,24 @@ class ListenerV3:
         """
         self.end_body_item(data, result)
 
+    def start_group(self, data: running.Group, result: result.Group):
+        """Called when a GROUP starts.
+
+        The default implementation calls :meth:`start_body_item`.
+
+        New in Robot Framework 7.2.
+        """
+        self.start_body_item(data, result)
+
+    def end_group(self, data: running.Group, result: result.Group):
+        """Called when a GROUP ends.
+
+        The default implementation calls :meth:`end_body_item`.
+
+        New in Robot Framework 7.2.
+        """
+        self.end_body_item(data, result)
+
     def start_if(self, data: running.If, result: result.If):
         """Called when an IF/ELSE structure starts.
 
@@ -885,7 +902,7 @@ class ListenerV3:
         """
         pass
 
-    def log_message(self, message: Message):
+    def log_message(self, message: result.Message):
         """Called when a normal log message are emitted.
 
         The messages are typically logged by keywords, but also the framework
@@ -893,7 +910,7 @@ class ListenerV3:
         log.html.
         """
 
-    def message(self, message: Message):
+    def message(self, message: result.Message):
         """Called when framework's internal messages are emitted.
 
         Only logged by the framework itself. These messages end up to the syslog

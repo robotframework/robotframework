@@ -2,8 +2,16 @@ import unittest
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
-from typing import (Any, Dict, Generic, List, Literal, Mapping, Sequence, Set, Tuple,
-                    TypeVar, Union)
+from typing import (Any, Dict, Generic, List, Literal, Mapping, Sequence,
+                    Set, Tuple, TypedDict, TypeVar, Union)
+try:
+    from typing import Annotated
+except ImportError:
+    from typing_extensions import Annotated
+try:
+    from typing import TypeForm
+except ImportError:
+    from typing_extensions import TypeForm
 
 from robot.errors import DataError
 from robot.running.arguments.typeinfo import TypeInfo, TYPE_NAMES
@@ -101,6 +109,13 @@ class TestTypeInfo(unittest.TestCase):
             info = TypeInfo.from_type_hint(typ)
             assert_equal(info.nested, None)
 
+    def test_parameterized_special_form(self):
+        info = TypeInfo.from_type_hint(Annotated[int, 'xxx'])
+        int_info = TypeInfo.from_type_hint(int)
+        assert_info(info, 'Annotated', Annotated, (int_info, TypeInfo('xxx')))
+        info = TypeInfo.from_type_hint(TypeForm[int])
+        assert_info(info, 'TypeForm', TypeForm, (int_info,))
+
     def test_invalid_sequence_params(self):
         for typ in 'list[int, str]', 'SEQUENCE[x, y]', 'Set[x, y]', 'frozenset[x, y]':
             name = typ.split('[')[0]
@@ -196,6 +211,13 @@ class TestTypeInfo(unittest.TestCase):
     def test_conversion(self):
         assert_equal(TypeInfo.from_type_hint(int).convert('42'), 42)
         assert_equal(TypeInfo.from_type_hint('list[int]').convert('[4, 2]'), [4, 2])
+        assert_equal(TypeInfo.from_type_hint('Literal["Dog", "Cat"]').convert('dog'), 'Dog')
+
+    def test_no_conversion_needed_with_literal(self):
+        converter = TypeInfo.from_type_hint('Literal["Dog", "Cat"]').get_converter()
+        assert_equal(converter.no_conversion_needed('Dog'), True)
+        assert_equal(converter.no_conversion_needed('dog'), False)
+        assert_equal(converter.no_conversion_needed('bad'), False)
 
     def test_failing_conversion(self):
         assert_raises_with_msg(
@@ -241,17 +263,51 @@ class TestTypeInfo(unittest.TestCase):
         assert_equal(info.convert('kyllä', languages='Finnish'), True)
         assert_equal(info.convert('ei', languages=['de', 'fi']), False)
 
-    def test_no_converter(self):
-        assert_raises_with_msg(
-            TypeError,
-            "No converter found for 'Unknown'.",
-            TypeInfo.from_type_hint(type('Unknown', (), {})).convert, 'whatever'
-        )
-        assert_raises_with_msg(
-            TypeError,
-            "No converter found for 'unknown[int]'.",
-            TypeInfo.from_type_hint('unknown[int]').convert, 'whatever'
-        )
+    def test_unknown_converter_is_not_accepted_by_default(self):
+        for hint in ('Unknown',
+                     Unknown,
+                     'dict[str, Unknown]',
+                     'dict[Unknown, int]',
+                     'tuple[Unknown, ...]',
+                     'list[str|Unknown|AnotherUnknown]',
+                     'list[list[list[list[list[Unknown]]]]]',
+                     List[Unknown],
+                     TypedDictWithUnknown):
+            info = TypeInfo.from_type_hint(hint)
+            error = "Unrecognized type 'Unknown'."
+            assert_raises_with_msg(TypeError, error, info.convert, 'whatever')
+            assert_raises_with_msg(TypeError, error, info.get_converter)
+
+    def test_unknown_converter_can_be_accepted(self):
+        for hint in 'Unknown', 'Unknown[int]', Unknown:
+            info = TypeInfo.from_type_hint(hint)
+            for value in 'hi', 1, None, Unknown():
+                converter = info.get_converter(allow_unknown=True)
+                assert_equal(converter.convert(value), value)
+                assert_equal(info.convert(value, allow_unknown=True), value)
+
+    def test_nested_unknown_converter_can_be_accepted(self):
+        for hint in 'dict[Unknown, int]', Dict[Unknown, int], TypedDictWithUnknown:
+            info = TypeInfo.from_type_hint(hint)
+            expected = {'x': 1, 'y': 2}
+            for value in {'x': '1', 'y': 2}, "{'x': '1', 'y': 2}":
+                converter = info.get_converter(allow_unknown=True)
+                assert_equal(converter.convert(value), expected)
+                assert_equal(info.convert(value, allow_unknown=True), expected)
+            assert_raises_with_msg(
+                ValueError,
+                f"Argument 'bad' cannot be converted to {info}: Invalid expression.",
+                info.convert, 'bad', allow_unknown=True
+            )
+
+
+class Unknown:
+    pass
+
+
+class TypedDictWithUnknown(TypedDict):
+    x: int
+    y: Unknown
 
 
 if __name__ == '__main__':

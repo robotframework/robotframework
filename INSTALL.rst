@@ -259,8 +259,8 @@ Another installation alternative is getting Robot Framework source code
 and installing it using the provided `setup.py` script. This approach is
 recommended only if you do not have pip_ available for some reason.
 
-You can get the source code by downloading a source distribution as a zip
-package from PyPI_ and extracting it. An alternative is cloning the GitHub_
+You can get the source code by downloading a source distribution package
+from PyPI_ and extracting it. An alternative is cloning the GitHub_
 repository and checking out the needed release tag.
 
 Once you have the source code, you can install it with the following command:

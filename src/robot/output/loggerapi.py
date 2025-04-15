@@ -98,6 +98,12 @@ class LoggerApi:
                             result: 'result.WhileIteration'):
         self.end_body_item(data, result)
 
+    def start_group(self, data: 'running.Group', result: 'result.Group'):
+        self.start_body_item(data, result)
+
+    def end_group(self, data: 'running.Group', result: 'result.Group'):
+        self.end_body_item(data, result)
+
     def start_if(self, data: 'running.If', result: 'result.If'):
         self.start_body_item(data, result)
 

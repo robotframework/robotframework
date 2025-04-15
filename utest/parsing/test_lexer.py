@@ -1034,6 +1034,50 @@ Name
                       get_resource_tokens, data_only=True)
 
 
+class TestGroup(unittest.TestCase):
+
+    def test_group_header(self):
+        header = 'GROUP    Name'
+        expected = [
+            (T.GROUP, 'GROUP', 3, 4),
+            (T.ARGUMENT, 'Name', 3, 13),
+            (T.EOS, '', 3, 17)
+        ]
+        self._verify(header, expected)
+
+    def _verify(self, header, expected_header):
+        data = '''\
+*** %s ***
+Name
+    %s
+        Keyword
+    END
+'''
+        body_and_end = [
+            (T.KEYWORD, 'Keyword', 4, 8),
+            (T.EOS, '', 4, 15),
+            (T.END, 'END', 5, 4),
+            (T.EOS, '', 5, 7)
+        ]
+        expected = [
+            (T.TESTCASE_HEADER, '*** Test Cases ***', 1, 0),
+            (T.EOS, '', 1, 18),
+            (T.TESTCASE_NAME, 'Name', 2, 0),
+            (T.EOS, '', 2, 4)
+        ] + expected_header + body_and_end
+        assert_tokens(data % ('Test Cases', header), expected, data_only=True)
+
+        expected = [
+            (T.KEYWORD_HEADER, '*** Keywords ***', 1, 0),
+            (T.EOS, '', 1, 16),
+            (T.KEYWORD_NAME, 'Name', 2, 0),
+            (T.EOS, '', 2, 4)
+        ] + expected_header + body_and_end
+        assert_tokens(data % ('Keywords', header), expected, data_only=True)
+        assert_tokens(data % ('Keywords', header), expected,
+                      get_resource_tokens, data_only=True)
+
+
 class TestIf(unittest.TestCase):
 
     def test_if_only(self):
@@ -2469,19 +2513,17 @@ Dokumentaatio    Documentation
 
     def test_per_file_config(self):
         data = '''\
-language: pt    not recognized
+ignored
 language: fi
 ignored    language: pt
-Language:German    # ok!
+Language:Ger    man    # ok!
 *** Asetukset ***
 Dokumentaatio    Documentation
 '''
         expected = [
-            (T.COMMENT, 'language: pt', 1, 0),
-            (T.SEPARATOR, '    ', 1, 12),
-            (T.COMMENT, 'not recognized', 1, 16),
-            (T.EOL, '\n', 1, 30),
-            (T.EOS, '', 1, 31),
+            (T.COMMENT, 'ignored', 1, 0),
+            (T.EOL, '\n', 1, 7),
+            (T.EOS, '', 1, 8),
             (T.CONFIG, 'language: fi', 2, 0),
             (T.EOL, '\n', 2, 12),
             (T.EOS, '', 2, 13),
@@ -2490,11 +2532,13 @@ Dokumentaatio    Documentation
             (T.COMMENT, 'language: pt', 3, 11),
             (T.EOL, '\n', 3, 23),
             (T.EOS, '', 3, 24),
-            (T.CONFIG, 'Language:German', 4, 0),
-            (T.SEPARATOR, '    ', 4, 15),
-            (T.COMMENT, '# ok!', 4, 19),
-            (T.EOL, '\n', 4, 24),
-            (T.EOS, '', 4, 25),
+            (T.CONFIG, 'Language:Ger', 4, 0),
+            (T.SEPARATOR, '    ', 4, 12),
+            (T.CONFIG, 'man', 4, 16),
+            (T.SEPARATOR, '    ', 4, 19),
+            (T.COMMENT, '# ok!', 4, 23),
+            (T.EOL, '\n', 4, 28),
+            (T.EOS, '', 4, 29),
             (T.SETTING_HEADER, '*** Asetukset ***', 5, 0),
             (T.EOL, '\n', 5, 17),
             (T.EOS, '', 5, 18),
@@ -2513,7 +2557,7 @@ Dokumentaatio    Documentation
     def test_invalid_per_file_config(self):
         data = '''\
 language: in:va:lid
-language: bad again    but not recognized as config and ignored
+language: bad    again
 Language: Finnish
 *** Asetukset ***
 Dokumentaatio    Documentation
@@ -2524,11 +2568,15 @@ Dokumentaatio    Documentation
              "nor importable as a language module."),
             (T.EOL, '\n', 1, 19),
             (T.EOS, '', 1, 20),
-            (T.COMMENT, 'language: bad again', 2, 0),
-            (T.SEPARATOR, '    ', 2, 19),
-            (T.COMMENT, 'but not recognized as config and ignored', 2, 23),
-            (T.EOL, '\n', 2, 63),
-            (T.EOS, '', 2, 64),
+            (T.ERROR, 'language: bad', 2, 0,
+             "Invalid language configuration: Language 'bad again' not found "
+             "nor importable as a language module."),
+            (T.SEPARATOR, '    ', 2, 13),
+            (T.ERROR, 'again', 2, 17,
+             "Invalid language configuration: Language 'bad again' not found "
+             "nor importable as a language module."),
+            (T.EOL, '\n', 2, 22),
+            (T.EOS, '', 2, 23),
             (T.CONFIG, 'Language: Finnish', 3, 0),
             (T.EOL, '\n', 3, 17),
             (T.EOS, '', 3, 18),

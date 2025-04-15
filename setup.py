@@ -6,7 +6,7 @@ from setuptools import find_packages, setup
 
 # Version number typically updated by running `invoke set-version <version>`.
 # Run `invoke --help set-version` or see tasks.py for details.
-VERSION = '7.2.dev1'
+VERSION = '7.3.dev1'
 with open(join(dirname(abspath(__file__)), 'README.rst')) as f:
     LONG_DESCRIPTION = f.read()
     base_url = 'https://github.com/robotframework/robotframework/blob/master'
@@ -39,9 +39,10 @@ DESCRIPTION = ('Generic automation framework for acceptance testing '
                'and robotic process automation (RPA)')
 KEYWORDS = ('robotframework automation testautomation rpa '
             'testing acceptancetesting atdd bdd')
-PACKAGE_DATA = [join('htmldata', directory, pattern)
-                for directory in ('rebot', 'libdoc', 'testdoc', 'lib', 'common')
-                for pattern in ('*.html', '*.css', '*.js')] + ['api/py.typed']
+PACKAGE_DATA = ([join('htmldata', directory, pattern)
+                 for directory in ('rebot', 'libdoc', 'testdoc', 'lib', 'common')
+                 for pattern in ('*.html', '*.css', '*.js')]
+                 + ['api/py.typed', 'logo.png'])
 
 
 setup(

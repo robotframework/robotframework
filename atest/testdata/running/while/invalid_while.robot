@@ -88,3 +88,11 @@ Non-existing variable in condition causes normal error
     EXCEPT    Invalid WHILE loop condition: Evaluating expression '\${bad}' failed: Variable '\${bad}' not found.
         No Operation
     END
+
+Templatest are not supported
+    [Documentation]    FAIL WHILE does not support templates.
+    [Template]    Log
+    WHILE    True
+        1
+        2
+    END

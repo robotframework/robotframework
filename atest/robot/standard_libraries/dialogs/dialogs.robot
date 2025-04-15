@@ -84,3 +84,6 @@ Multiple dialogs in a row
 
 Garbage Collection In Thread Should Not Cause Problems
     Check Test Case    ${TESTNAME}
+
+Timeout can close dialog
+    Check Test Case    ${TESTNAME}

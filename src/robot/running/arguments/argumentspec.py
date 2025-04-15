@@ -39,7 +39,7 @@ class ArgumentSpec(metaclass=SetterAwareType):
                  var_named: 'str|None' = None,
                  defaults: 'Mapping[str, Any]|None' = None,
                  embedded: Sequence[str] = (),
-                 types: 'Mapping[str, TypeInfo]|None' = None,
+                 types: 'Mapping|Sequence|None' = None,
                  return_type: 'TypeInfo|None' = None):
         self.name = name
         self.type = type
@@ -62,7 +62,7 @@ class ArgumentSpec(metaclass=SetterAwareType):
         self._name = name
 
     @setter
-    def types(self, types) -> 'dict[str, TypeInfo]|None':
+    def types(self, types: 'Mapping|Sequence|None') -> 'dict[str, TypeInfo]|None':
         return TypeValidator(self).validate(types)
 
     @setter

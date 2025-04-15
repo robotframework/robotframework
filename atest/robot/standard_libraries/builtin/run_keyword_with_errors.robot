@@ -5,13 +5,13 @@ Resource          atest_resource.robot
 *** Test Cases ***
 Ignore Error When Keyword Passes
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[0].kws[0].msgs[0]}    My message
+    Check Log Message    ${tc[0, 0, 0]}    My message
 
 Ignore Error When Keyword Fails
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[0].kws[0].msgs[0]}    My error message    FAIL
-    Should Be Equal    ${tc.kws[0].kws[0].status}    FAIL
-    Should Be Equal    ${tc.kws[0].status}    PASS
+    Should Be Equal      ${tc[0].status}       PASS
+    Should Be Equal      ${tc[0, 0].status}    FAIL
+    Check Log Message    ${tc[0, 0, 0]}        My error message    FAIL
 
 Ignore Error Returns When Keyword Passes
     Check Test Case    ${TEST NAME}
@@ -21,22 +21,22 @@ Ignore Error Returns When Keyword Fails
 
 Ignore Error With User Keyword When Keywords Pass
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[0].kws[0].kws[0].msgs[0]}    Hello world
-    Check Keyword Data    ${tc.kws[0].kws[0].kws[2]}    BuiltIn.Evaluate    \${ret}   1+2
+    Check Log Message     ${tc[0, 0, 0, 0]}    Hello world
+    Check Keyword Data    ${tc[0, 0, 2]}       BuiltIn.Evaluate    \${ret}   1+2
 
 Ignore Error With User Keyword When Keyword Fails
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[0].kws[0].kws[0].kws[0].msgs[0]}    Hello world
-    Check Log Message    ${tc.kws[0].kws[0].kws[1].msgs[0]}    Expected failure in UK    FAIL
-    Length Should Be     ${tc.kws[0].kws[0].kws}    3
-    Should Be Equal      ${tc.kws[0].kws[0].kws[-1].status}    NOT RUN
+    Check Log Message    ${tc[0, 0, 0, 0, 0]}      Hello world
+    Check Log Message    ${tc[0, 0, 1, 0]}         Expected failure in UK    FAIL
+    Length Should Be     ${tc[0, 0].body}          3
+    Should Be Equal      ${tc[0, 0, -1].status}    NOT RUN
 
 Ignore Error With Arguments That Needs To Be Escaped
     Check Test Case    ${TEST NAME}
 
 Ignore Error When Timeout Occurs
     ${tc} =    Check Test Case    ${TEST NAME}
-    Should Be Equal    ${tc.kws[0].status}    FAIL    Run Keyword And Ignore Error captured timeout even though it should not    no values
+    Should Be Equal    ${tc[0].status}    FAIL    Run Keyword And Ignore Error captured timeout even though it should not    no values
 
 Ignore Error When Timeout Occurs In UK
     Check Test Case    ${TEST NAME}
@@ -75,9 +75,9 @@ Ignore Error With "Passing" Exceptions
 
 Expect Error When Error Occurs
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[0].kws[0].msgs[0]}    My error message    FAIL
-    Should Be Equal    ${tc.kws[0].kws[0].status}    FAIL
-    Should Be Equal    ${tc.kws[0].status}    PASS
+    Should Be Equal      ${tc[0].status}       PASS
+    Should Be Equal      ${tc[0, 0].status}    FAIL
+    Check Log Message    ${tc[0, 0, 0]}        My error message    FAIL
 
 Expect Error When Different Error Occurs
     Check Test Case    ${TEST NAME}
@@ -97,24 +97,24 @@ Expected Error Should Be Returned
 
 Expect Error With User Keyword When Keywords Pass
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[0].kws[0].kws[0].msgs[0]}    Hello world
-    Check Keyword Data    ${tc.kws[0].kws[0].kws[2]}    BuiltIn.Evaluate    \${ret}   1+2
+    Check Log Message     ${tc[0, 0, 0, 0]}    Hello world
+    Check Keyword Data    ${tc[0, 0, 2]}       BuiltIn.Evaluate    \${ret}   1+2
 
 Expect Error With User Keyword When Keyword Fails
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[0].kws[0].kws[0].kws[0].msgs[0]}    Hello world
-    Check Log Message    ${tc.kws[0].kws[0].kws[1].msgs[0]}    Expected failure in UK    FAIL
-    Length Should Be     ${tc.kws[0].kws[0].kws}    3
-    Should Be Equal      ${tc.kws[0].kws[0].kws[-1].status}    NOT RUN
+    Check Log Message    ${tc[0, 0, 0, 0, 0]}      Hello world
+    Check Log Message    ${tc[0, 0, 1, 0]}         Expected failure in UK    FAIL
+    Length Should Be     ${tc[0, 0].body}          3
+    Should Be Equal      ${tc[0, 0, -1].status}    NOT RUN
 
 Expect Error With Arguments That Needs To Be Escaped
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[1].kws[0].msgs[0]}    c:\\temp\\foo\\not_new_line
-    Check Log Message    ${tc.kws[1].kws[0].msgs[1]}    \${notvar}
+    Check Log Message    ${tc[1, 0, 0]}    c:\\temp\\foo\\not_new_line
+    Check Log Message    ${tc[1, 0, 1]}    \${notvar}
 
 Expect Error When Timeout Occurs
     ${tc} =    Check Test Case    ${TEST NAME}
-    Should Be Equal    ${tc.kws[0].status}    FAIL    Run Keyword And Expect Error captured timeout even though it should not    no values
+    Should Be Equal    ${tc[0].status}    FAIL    Run Keyword And Expect Error captured timeout even though it should not    no values
 
 Expect Error When Timeout Occurs In UK
     Check Test Case    ${TEST NAME}
@@ -171,4 +171,4 @@ Expect Error With "Passing" Exceptions
 
 Variable Values Should Not Be Visible As Keyword's Arguments
     ${tc} =    Check Test Case    Ignore Error With Arguments That Needs To be Escaped
-    Check Keyword Data    ${tc.kws[3].kws[0]}    BuiltIn.Create List    args=\@{NEEDS ESCAPING}
+    Check Keyword Data    ${tc[3, 0]}    BuiltIn.Create List    args=\@{NEEDS ESCAPING}

@@ -833,24 +833,43 @@ to parse the variable syntax correctly. If there are matching braces like in
 Using variables with custom embedded argument regular expressions
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
-When embedded arguments are used with custom regular expressions, Robot
-Framework automatically enhances the specified regexps so that they
-match variables in addition to the text matching the pattern.
-For example, the following test case would pass
-using the keywords from the earlier example.
+When using embedded arguments with custom regular expressions, specifying
+values using values has certain limitations. Variables work fine if
+they match the whole embedded argument, but not if the value contains
+a variable with any additional content. For example, the first test below
+succeeds because the variable `${DATE}` matches the argument `${date}` fully,
+but the second test fails because `${YEAR}-${MONTH}-${DAY}` is not a single
+variable.
 
 .. sourcecode:: robotframework
 
+   *** Settings ***
+   Library           DateTime
+
    *** Variables ***
-   ${DATE}    2011-06-27
+   ${DATE}           2011-06-27
+   ${YEAR}           2011
+   ${MONTH}          06
+   ${DAY}            27
 
    *** Test Cases ***
-   Example
+   Succeeds
        Deadline is ${DATE}
-       ${1} + ${2} = ${3}
 
-A limitation of using variables is that their actual values are not matched against
-custom regular expressions. As the result keywords may be called with
+   Fails
+       Deadline is ${YEAR}-${MONTH}-${DAY}
+
+   *** Keywords ***
+   Deadline is ${date:(\d{4}-\d{2}-\d{2}|today)}
+       IF    '${date}' == 'today'
+           ${date} =    Get Current Date
+       ELSE
+           ${date} =    Convert Date    ${date}
+       END
+       Log    Deadline is on ${date}.
+
+Another limitation of using variables is that their actual values are not matched
+against custom regular expressions. As the result keywords may be called with
 values that their custom regexps would not allow. This behavior is deprecated
 starting from Robot Framework 6.0 and values will be validated in the future.
 For more information see issue `#4462`__.
@@ -1129,3 +1148,27 @@ HTML output files.
 .. note:: Private user keywords are new in Robot Framework 6.0.
 
 __ `User keyword tags`_
+
+Recursion
+---------
+
+User keywords can call themselves either directly or indirectly. This kind of
+recursive usage is fine as long as the recursion ends, typically based on some
+condition, before the recursion limit is exceeded. The limit exists because
+otherwise infinite recursion would crash the execution.
+
+Robot Framework's recursion detection works so, that it checks is the current
+recursion level close to the recursion limit of the underlying Python process.
+If it is close enough, no more new started keywords or control structures are
+allowed and execution fails.
+
+Python's default recursion limit is 1000 stack frames, which in practice means that
+it is possible to start approximately 140 keywords or control structures.
+If that is not enough, Python's recursion limit can be raised using the
+`sys.setrecursionlimit()`__ function. As the documentation of the function explains,
+this should be done with care, because a too-high level can lead to a crash.
+
+__ https://docs.python.org/3/library/sys.html#sys.setrecursionlimit
+
+.. note:: Prior to Robot Framework 7.2, the recursion limit was hard-coded to
+          100 started keywords or control structures.

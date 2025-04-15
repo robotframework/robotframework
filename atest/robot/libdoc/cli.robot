@@ -61,6 +61,11 @@ Theme
     --theme light String ${OUTHTML}    HTML    String    theme=light
     --theme NoNe String ${OUTHTML}     HTML    String    theme=
 
+Language
+    --language EN String ${OUTHTML}     HTML    String    lang=en
+    --language fI String ${OUTHTML}     HTML    String    lang=fi
+    --language NoNe String ${OUTHTML}   HTML    String    language=
+
 Relative path with Python libraries
     [Template]    NONE
     ${dir in libdoc exec dir}=    Normalize Path     ${ROBOTPATH}/../TempDirInExecDir
@@ -86,12 +91,14 @@ Non-existing resource
 
 *** Keywords ***
 Run Libdoc And Verify Created Output File
-    [Arguments]    ${args}   ${format}    ${name}    ${version}=    ${path}=${OUTHTML}    ${theme}=    ${quiet}=False
+    [Arguments]    ${args}   ${format}    ${name}    ${version}=    ${path}=${OUTHTML}    ${theme}=    ${lang}=    ${quiet}=False
     ${stdout} =    Run Libdoc    ${args}
     Run Keyword    ${format} Doc Should Have Been Created    ${path}    ${name}    ${version}
     File Should Have Correct Line Separators    ${path}
     IF    "${theme}"
         File Should Contain    ${path}    "theme": "${theme}"
+    ELSE IF    "${lang}"
+        File Should Contain    ${path}    "lang": "${lang}"
     ELSE
         File Should Not Contain    ${path}    "theme":
     END

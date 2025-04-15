@@ -1,9 +1,9 @@
-import unittest
+import os
 import sys
 import time
-import os
+import unittest
 
-from robot.errors import TimeoutError
+from robot.errors import TimeoutExceeded
 from robot.running.timeouts import TestTimeout, KeywordTimeout
 from robot.utils.asserts import (assert_equal, assert_false, assert_true,
                                  assert_raises, assert_raises_with_msg)
@@ -137,14 +137,14 @@ class TestRun(unittest.TestCase):
         # This is why we need to have an action that really will take some time (sleep 5 secs)
         # to (almost) ensure that the 'ROBOT_THREAD_TESTING' setting is not executed before
         # timeout exception occurs
-        assert_raises_with_msg(TimeoutError, 'Test timeout 1 second exceeded.',
+        assert_raises_with_msg(TimeoutExceeded, 'Test timeout 1 second exceeded.',
                                self.tout.run, sleeping, (5,))
         assert_equal(os.environ['ROBOT_THREAD_TESTING'], 'initial value')
 
     def test_zero_and_negative_timeout(self):
         for tout in [0, 0.0, -0.01, -1, -1000]:
             self.tout.time_left = lambda: tout
-            assert_raises(TimeoutError, self.tout.run, sleeping, (10,))
+            assert_raises(TimeoutExceeded, self.tout.run, sleeping, (10,))
 
 
 class TestMessage(unittest.TestCase):

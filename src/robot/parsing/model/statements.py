@@ -24,7 +24,7 @@ from robot.conf import Language
 from robot.running.arguments import UserKeywordArgumentParser
 from robot.utils import normalize_whitespace, seq2str, split_from_equals, test_or_task
 from robot.variables import (contains_variable, is_scalar_assign, is_dict_variable,
-                             search_variable)
+                             search_variable, VariableAssignment)
 
 from ..lexer import Token
 
@@ -870,6 +870,11 @@ class KeywordCall(Statement):
     def assign(self) -> 'tuple[str, ...]':
         return self.get_values(Token.ASSIGN)
 
+    def validate(self, ctx: 'ValidationContext'):
+        assignment = VariableAssignment(self.assign)
+        if assignment.error:
+            self.errors += (assignment.error.message,)
+
 
 @Statement.register
 class TemplateArguments(Statement):
@@ -1205,6 +1210,35 @@ class WhileHeader(Statement):
 
 
 @Statement.register
+class GroupHeader(Statement):
+    type = Token.GROUP
+
+    @classmethod
+    def from_params(cls, name: str = '',
+                    indent: str = FOUR_SPACES, separator: str = FOUR_SPACES,
+                    eol: str = EOL) -> 'GroupHeader':
+        tokens = [Token(Token.SEPARATOR, indent),
+                  Token(Token.GROUP)]
+        if name:
+            tokens.extend(
+                [Token(Token.SEPARATOR, separator),
+                Token(Token.ARGUMENT, name)]
+            )
+        tokens.append(Token(Token.EOL, eol))
+        return cls(tokens)
+
+    @property
+    def name(self) -> str:
+        return ', '.join(self.get_values(Token.ARGUMENT))
+
+    def validate(self, ctx: 'ValidationContext'):
+        names = self.get_values(Token.ARGUMENT)
+        if len(names) > 1:
+            self.errors += (f"GROUP accepts only one argument as name, got {len(names)} "
+                            f"arguments {seq2str(names)}.",)
+
+
+@Statement.register
 class Var(Statement):
     type = Token.VAR
     options = {
@@ -1343,8 +1377,9 @@ class Config(Statement):
 
     @property
     def language(self) -> 'Language|None':
-        value = self.get_value(Token.CONFIG)
-        return Language.from_name(value[len('language:'):]) if value else None
+        value = ' '.join(self.get_values(Token.CONFIG))
+        lang = value.split(':', 1)[1].strip()
+        return Language.from_name(lang) if lang else None
 
 
 @Statement.register

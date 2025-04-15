@@ -23,20 +23,18 @@ class TestSafeStr(unittest.TestCase):
         result = safe_str(objects)
         assert_equal(result, '[Hyvä, Hyvä]')
 
-    def test_bytes_below_128(self):
+    def test_bytes(self):
         assert_equal(safe_str('\x00-\x01-\x02-\x7f'), '\x00-\x01-\x02-\x7f')
-
-    def test_bytes_above_128(self):
-        assert_equal(safe_str(b'hyv\xe4'), 'hyv\\xe4')
-        assert_equal(safe_str(b'\x00-\x01-\x02-\xe4'), '\x00-\x01-\x02-\\xe4')
+        assert_equal(safe_str(b'hyv\xe4'), 'hyvä')
+        assert_equal(safe_str(b'\x00-\x01-\x02-\xe4-\xff'), '\x00-\x01-\x02-\xe4-\xff')
 
     def test_bytes_with_newlines_tabs_etc(self):
-        assert_equal(safe_str(b"\x00\xe4\n\t\r\\'"), "\x00\\xe4\n\t\r\\'")
+        assert_equal(safe_str(b"\x00\xe4\n\t\r\\'"), "\x00\xe4\n\t\r\\'")
 
     def test_bytearray(self):
-        assert_equal(safe_str(bytearray(b'hyv\xe4')), 'hyv\\xe4')
-        assert_equal(safe_str(bytearray(b'\x00-\x01-\x02-\xe4')), '\x00-\x01-\x02-\\xe4')
-        assert_equal(safe_str(bytearray(b"\x00\xe4\n\t\r\\'")), "\x00\\xe4\n\t\r\\'")
+        assert_equal(safe_str(bytearray(b'hyv\xe4')), 'hyv\xe4')
+        assert_equal(safe_str(bytearray(b'\x00-\x01-\x02-\xe4')), '\x00-\x01-\x02-\xe4')
+        assert_equal(safe_str(bytearray(b"\x00\xe4\n\t\r\\'")), "\x00\xe4\n\t\r\\'")
 
     def test_failure_in_str(self):
         failing = StrFails()

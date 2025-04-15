@@ -221,9 +221,9 @@
 <stat pass="2" fail="0" skip="0">t1</stat>
 </tag>
 <suite>
-<stat pass="2" fail="0" skip="0" id="s1" name="Normal &amp; Normal">Normal &amp; Normal</stat>
-<stat pass="1" fail="0" skip="0" id="s1-s1" name="Normal">Normal &amp; Normal.Normal</stat>
-<stat pass="1" fail="0" skip="0" id="s1-s2" name="Normal">Normal &amp; Normal.Normal</stat>
+<stat name="Normal &amp; Normal" id="s1" pass="2" fail="0" skip="0">Normal &amp; Normal</stat>
+<stat name="Normal" id="s1-s1" pass="1" fail="0" skip="0">Normal &amp; Normal.Normal</stat>
+<stat name="Normal" id="s1-s2" pass="1" fail="0" skip="0">Normal &amp; Normal.Normal</stat>
 </suite>
 </statistics>
 <errors>

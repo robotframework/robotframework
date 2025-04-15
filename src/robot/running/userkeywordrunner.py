@@ -201,15 +201,7 @@ class UserKeywordRunner:
     def _run_setup_or_teardown(self, data: KeywordData, result: KeywordResult,
                                context):
         try:
-            name = context.variables.replace_string(data.name)
-        except DataError as err:
-            if context.dry_run:
-                return None
-            return ExecutionFailed(err.message, syntax=True)
-        if name.upper() in ('', 'NONE'):
-            return None
-        try:
-            KeywordRunner(context).run(data, result, name)
+            KeywordRunner(context).run(data, result, setup_or_teardown=True)
         except PassExecution:
             return None
         except ExecutionStatus as err:
@@ -243,7 +235,7 @@ class EmbeddedArgumentsRunner(UserKeywordRunner):
 
     def __init__(self, keyword: 'UserKeyword', name: str):
         super().__init__(keyword, name)
-        self.embedded_args = keyword.embedded.match(name).groups()
+        self.embedded_args = keyword.embedded.parse_args(name)
 
     def _resolve_arguments(self, data: KeywordData, kw: 'UserKeyword', variables=None):
         result = super()._resolve_arguments(data, kw, variables)

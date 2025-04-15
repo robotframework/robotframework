@@ -16,22 +16,25 @@
 import os.path
 from abc import ABC
 from pathlib import Path
+from typing import Any, Iterable
 
-from robot.errors import DataError, TimeoutError
+from robot.errors import DataError, TimeoutExceeded
 from robot.model import BodyItem
 from robot.utils import (get_error_details, Importer, safe_str,
                          split_args_from_name_or_path, type_name)
 
 from .loggerapi import LoggerApi
-from .loggerhelper import IsLogged
 from .logger import LOGGER
+from .loglevel import LogLevel
 
 
 class Listeners:
     _listeners: 'list[ListenerFacade]'
 
-    def __init__(self, listeners=(), log_level='INFO'):
-        self._is_logged = IsLogged(log_level)
+    def __init__(self, listeners: Iterable['str|Any'] = (),
+                 log_level: 'LogLevel|str' = 'INFO'):
+        self._log_level = log_level \
+                if isinstance(log_level, LogLevel) else LogLevel(log_level)
         self._listeners = self._import_listeners(listeners)
 
     # Must be property to allow LibraryListeners to override it.
@@ -67,8 +70,8 @@ class Listeners:
             # Modules have `__name__`, with others better to use `type_name`.
             name = getattr(listener, '__name__', None) or type_name(listener)
         if self._get_version(listener) == 2:
-            return ListenerV2Facade(listener, name, self._is_logged, library)
-        return ListenerV3Facade(listener, name, self._is_logged, library)
+            return ListenerV2Facade(listener, name, self._log_level, library)
+        return ListenerV3Facade(listener, name, self._log_level, library)
 
     def _get_version(self, listener):
         version = getattr(listener, 'ROBOT_LISTENER_API_VERSION', 3)
@@ -80,9 +83,6 @@ class Listeners:
             raise DataError(f"Unsupported API version '{version}'.")
         return version
 
-    def set_log_level(self, level):
-        self._is_logged.set_level(level)
-
     def __iter__(self):
         return iter(self.listeners)
 
@@ -93,7 +93,7 @@ class Listeners:
 class LibraryListeners(Listeners):
     _listeners: 'list[list[ListenerFacade]]'
 
-    def __init__(self, log_level='INFO'):
+    def __init__(self, log_level: 'LogLevel|str' = 'INFO'):
         super().__init__(log_level=log_level)
 
     @property
@@ -122,10 +122,10 @@ class LibraryListeners(Listeners):
 
 class ListenerFacade(LoggerApi, ABC):
 
-    def __init__(self, listener, name, is_logged, library=None):
+    def __init__(self, listener, name, log_level, library=None):
         self.listener = listener
         self.name = name
-        self._is_logged = is_logged
+        self._is_logged = log_level.is_logged
         self.library = library
         self.priority = self._get_priority(listener)
 
@@ -141,7 +141,7 @@ class ListenerFacade(LoggerApi, ABC):
             method = getattr(self.listener, method_name, None)
             if method:
                 return ListenerMethod(method, self.name)
-        return ListenerMethod(None, self.name) if fallback is None else fallback
+        return fallback or ListenerMethod(None, self.name)
 
     def _get_method_names(self, name):
         names = [name, self._to_camelCase(name)] if '_' in name else [name]
@@ -156,8 +156,8 @@ class ListenerFacade(LoggerApi, ABC):
 
 class ListenerV3Facade(ListenerFacade):
 
-    def __init__(self, listener, name, is_logged, library=None):
-        super().__init__(listener, name, is_logged, library)
+    def __init__(self, listener, name, log_level, library=None):
+        super().__init__(listener, name, log_level, library)
         get = self._get_method
         # Suite
         self.start_suite = get('start_suite')
@@ -166,8 +166,8 @@ class ListenerV3Facade(ListenerFacade):
         self.start_test = get('start_test')
         self.end_test = get('end_test')
         # Fallbacks for body items
-        start_body_item = self._get_method('start_body_item')
-        end_body_item = self._get_method('end_body_item')
+        start_body_item = get('start_body_item')
+        end_body_item = get('end_body_item')
         # Keywords
         self.start_keyword = get('start_keyword', start_body_item)
         self.end_keyword = get('end_keyword', end_body_item)
@@ -197,6 +197,9 @@ class ListenerV3Facade(ListenerFacade):
         self.end_while = get('end_while', end_body_item)
         self.start_while_iteration = get('start_while_iteration', start_body_item)
         self.end_while_iteration = get('end_while_iteration', end_body_item)
+        # GROUP
+        self.start_group = get('start_group', start_body_item)
+        self.end_group = get('end_group', end_body_item)
         # VAR
         self.start_var = get('start_var', start_body_item)
         self.end_var = get('end_var', end_body_item)
@@ -265,38 +268,39 @@ class ListenerV3Facade(ListenerFacade):
             self.end_keyword(data, result)
 
     def log_message(self, message):
-        if self._is_logged(message.level):
+        if self._is_logged(message):
             self._log_message(message)
 
 
 class ListenerV2Facade(ListenerFacade):
 
-    def __init__(self, listener, name, is_logged, library=None):
-        super().__init__(listener, name, is_logged, library)
+    def __init__(self, listener, name, log_level, library=None):
+        super().__init__(listener, name, log_level, library)
+        get = self._get_method
         # Suite
-        self._start_suite = self._get_method('start_suite')
-        self._end_suite = self._get_method('end_suite')
+        self._start_suite = get('start_suite')
+        self._end_suite = get('end_suite')
         # Test
-        self._start_test = self._get_method('start_test')
-        self._end_test = self._get_method('end_test')
+        self._start_test = get('start_test')
+        self._end_test = get('end_test')
         # Keyword and control structures
-        self._start_kw = self._get_method('start_keyword')
-        self._end_kw = self._get_method('end_keyword')
+        self._start_kw = get('start_keyword')
+        self._end_kw = get('end_keyword')
         # Messages
-        self._log_message = self._get_method('log_message')
-        self._message = self._get_method('message')
+        self._log_message = get('log_message')
+        self._message = get('message')
         # Imports
-        self._library_import = self._get_method('library_import')
-        self._resource_import = self._get_method('resource_import')
-        self._variables_import = self._get_method('variables_import')
+        self._library_import = get('library_import')
+        self._resource_import = get('resource_import')
+        self._variables_import = get('variables_import')
         # Result files
-        self._output_file = self._get_method('output_file')
-        self._report_file = self._get_method('report_file')
-        self._log_file = self._get_method('log_file')
-        self._xunit_file = self._get_method('xunit_file')
-        self._debug_file = self._get_method('debug_file')
+        self._output_file = get('output_file')
+        self._report_file = get('report_file')
+        self._log_file = get('log_file')
+        self._xunit_file = get('xunit_file')
+        self._debug_file = get('debug_file')
         # Close
-        self._close = self._get_method('close')
+        self._close = get('close')
 
     def start_suite(self, data, result):
         self._start_suite(result.name, self._suite_attrs(data, result))
@@ -362,6 +366,12 @@ class ListenerV2Facade(ListenerFacade):
 
     def end_while_iteration(self, data, result):
         self._end_kw(result._log_name, self._attrs(data, result, end=True))
+
+    def start_group(self, data, result):
+        self._start_kw(result._log_name, self._attrs(data, result, name=result.name))
+
+    def end_group(self, data, result):
+        self._end_kw(result._log_name, self._attrs(data, result, name=result.name, end=True))
 
     def start_if_branch(self, data, result):
         extra = {'condition': result.condition} if result.type != result.ELSE else {}
@@ -430,7 +440,7 @@ class ListenerV2Facade(ListenerFacade):
         return {'name': result.name, 'value': value, 'scope': result.scope or 'LOCAL'}
 
     def log_message(self, message):
-        if self._is_logged(message.level):
+        if self._is_logged(message):
             self._log_message(self._message_attributes(message))
 
     def message(self, message):
@@ -566,22 +576,16 @@ class ListenerV2Facade(ListenerFacade):
 
 
 class ListenerMethod:
-    # Flag to avoid recursive listener calls.
-    called = False
 
     def __init__(self, method, name):
         self.method = method
         self.listener_name = name
 
     def __call__(self, *args):
-        if self.method is None:
-            return
-        if self.called:
-            return
         try:
-            ListenerMethod.called = True
-            self.method(*args)
-        except TimeoutError:
+            if self.method is not None:
+                self.method(*args)
+        except TimeoutExceeded:
             # Propagate possible timeouts:
             # https://github.com/robotframework/robotframework/issues/2763
             raise
@@ -590,8 +594,6 @@ class ListenerMethod:
             LOGGER.error(f"Calling method '{self.method.__name__}' of listener "
                          f"'{self.listener_name}' failed: {message}")
             LOGGER.info(f"Details:\n{details}")
-        finally:
-            ListenerMethod.called = False
 
     def __bool__(self):
         return self.method is not None

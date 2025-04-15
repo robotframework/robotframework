@@ -24,7 +24,7 @@ Keywords with variable in name are ignored also when variable is argument
     Higher order fun    ${name}
 
 Run Keyword With UK
-    Run Keyword  UK
+    Run Keyword If    True    UK
 
 Run Keyword With Failing UK
     [Documentation]  FAIL ${LOG GOT WRONG ARGS} 0.

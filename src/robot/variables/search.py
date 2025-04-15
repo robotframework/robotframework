@@ -14,17 +14,19 @@
 #  limitations under the License.
 
 import re
+from functools import partial
 from typing import Iterator, Sequence
 
 from robot.errors import VariableError
-from robot.utils import is_string
 
 
-def search_variable(string: str, identifiers: Sequence[str] = '$@&%*',
+def search_variable(string: str,
+                    identifiers: Sequence[str] = '$@&%*',
+                    parse_type: bool = False,
                     ignore_errors: bool = False) -> 'VariableMatch':
-    if not (is_string(string) and '{' in string):
+    if not (isinstance(string, str) and '{' in string):
         return VariableMatch(string)
-    return _search_variable(string, identifiers, ignore_errors)
+    return _search_variable(string, identifiers, parse_type, ignore_errors)
 
 
 def contains_variable(string: str, identifiers: Sequence[str] = '$@&') -> bool:
@@ -84,12 +86,14 @@ class VariableMatch:
     def __init__(self, string: str,
                  identifier: 'str|None' = None,
                  base: 'str|None' = None,
+                 type: 'str|None' = None,
                  items: 'tuple[str, ...]' = (),
                  start: int = -1,
                  end: int = -1):
         self.string = string
         self.identifier = identifier
         self.base = base
+        self.type = type
         self.items = items
         self.start = start
         self.end = end
@@ -162,11 +166,14 @@ class VariableMatch:
     def __str__(self) -> str:
         if not self:
             return '<no match>'
-        items = ''.join('[%s]' % i for i in self.items) if self.items else ''
-        return '%s{%s}%s' % (self.identifier, self.base, items)
+        type = f': {self.type}' if self.type else ''
+        items = ''.join([f'[{i}]' for i in self.items]) if self.items else ''
+        return f'{self.identifier}{{{self.base}{type}}}{items}'
 
 
-def _search_variable(string: str, identifiers: Sequence[str],
+def _search_variable(string: str,
+                     identifiers: Sequence[str],
+                     parse_type: bool = False,
                      ignore_errors: bool = False) -> VariableMatch:
     start = _find_variable_start(string, identifiers)
     if start < 0:
@@ -180,33 +187,28 @@ def _search_variable(string: str, identifiers: Sequence[str],
     indices_and_chars = enumerate(string[start+2:], start=start+2)
 
     for index, char in indices_and_chars:
-        if char == left_brace and not escaped:
-            open_braces += 1
-
-        elif char == right_brace and not escaped:
+        if char == right_brace and not escaped:
             open_braces -= 1
-
             if open_braces == 0:
-                next_char = string[index+1] if index+1 < len(string) else None
-
-                if left_brace == '{':     # Parsing name.
+                _, next_char = next(indices_and_chars, (-1, None))
+                # Parsing name.
+                if left_brace == '{':
                     match.base = string[start+2:index]
-                    if match.identifier not in '$@&' or next_char != '[':
+                    if next_char != '[' or match.identifier not in '$@&':
                         match.end = index + 1
                         break
                     left_brace, right_brace = '[', ']'
-
-                else:                      # Parsing items.
+                # Parsing items.
+                else:
                     items.append(string[start+1:index])
                     if next_char != '[':
                         match.end = index + 1
                         match.items = tuple(items)
                         break
-
-                next(indices_and_chars)    # Consume '['.
-                start = index + 1          # Start of the next item.
+                start = index + 1  # Start of the next item.
                 open_braces = 1
-
+        elif char == left_brace and not escaped:
+            open_braces += 1
         else:
             escaped = False if char != '\\' else not escaped
 
@@ -217,6 +219,9 @@ def _search_variable(string: str, identifiers: Sequence[str],
         if left_brace == '{':
             raise VariableError(f"Variable '{incomplete}' was not closed properly.")
         raise VariableError(f"Variable item '{incomplete}' was not closed properly.")
+
+    if parse_type and ': ' in match.base:
+        match.base, match.type = match.base.rsplit(': ', 1)
 
     return match
 
@@ -260,15 +265,19 @@ def unescape_variable_syntax(item):
 class VariableMatches:
 
     def __init__(self, string: str, identifiers: Sequence[str] = '$@&%',
-                 ignore_errors: bool = False):
+                 parse_type: bool = False, ignore_errors: bool = False):
         self.string = string
-        self.identifiers = identifiers
-        self.ignore_errors = ignore_errors
+        self.search_variable = partial(
+            search_variable,
+            identifiers=identifiers,
+            parse_type=parse_type,
+            ignore_errors=ignore_errors
+        )
 
     def __iter__(self) -> Iterator[VariableMatch]:
         remaining = self.string
         while True:
-            match = search_variable(remaining, self.identifiers, self.ignore_errors)
+            match = self.search_variable(remaining)
             if not match:
                 break
             remaining = match.after
@@ -278,9 +287,4 @@ class VariableMatches:
         return sum(1 for _ in self)
 
     def __bool__(self) -> bool:
-        try:
-            next(iter(self))
-        except StopIteration:
-            return False
-        else:
-            return True
+        return bool(self.search_variable(self.string))

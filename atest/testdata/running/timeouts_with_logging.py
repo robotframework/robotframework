@@ -9,10 +9,9 @@ from robot.output.pyloggingconf import RobotHandler
 # message formatting in https://github.com/robotframework/robotframework/pull/4147
 # Without this change execution on PyPy failed about every third time so that
 # timeout was somehow ignored. On CI the problem occurred also with Python 3.9.
-# Not sure why the problem occurred but it seems to be related to the logging
+# Not sure why the problem occurred, but it seems to be related to the logging
 # module and not related to the bug that this library is testing. This hack ought
-# ought to thus be safe. With it was able to run tests locally 100 times using
-# PyPy without problems.
+# to thus be safe.
 for handler in logging.getLogger().handlers:
     if isinstance(handler, RobotHandler):
         handler.format = lambda record: record.getMessage()
@@ -31,7 +30,7 @@ def python_logger():
 
 def _log_a_lot(info):
     # Assigning local variables is performance optimization to give as much
-    # time as as possible for actual logging.
+    # time as possible for actual logging.
     msg = MSG
     sleep = time.sleep
     current = time.time

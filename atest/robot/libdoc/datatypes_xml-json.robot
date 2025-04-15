@@ -2,6 +2,7 @@
 Resource          libdoc_resource.robot
 Suite Setup       Run Libdoc And Parse Model From JSON    ${TESTDATADIR}/DataTypesLibrary.xml
 Test Template     Should Be Equal Multiline
+Test Tags         require-jsonschema
 
 *** Test Cases ***
 Documentation

@@ -125,7 +125,7 @@ Invalid syntax in UK
 
 Multiple Failures
     [Documentation]    FAIL    Several failures occurred:\n\n
-    ...    1) Keyword 'BuiltIn.Should Be Equal' expected 2 to 8 arguments, got 1.\n\n
+    ...    1) Keyword 'BuiltIn.Should Be Equal' expected 2 to 10 arguments, got 1.\n\n
     ...    2) Invalid argument specification: Multiple errors:\n
     ...    - Invalid argument syntax '\${oops'.\n
     ...    - Non-default argument after default arguments.\n\n

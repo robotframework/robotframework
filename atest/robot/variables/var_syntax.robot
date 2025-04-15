@@ -122,9 +122,9 @@ With TRY
 *** Keywords ***
 Validate VAR
     [Arguments]    ${var}    ${name}    @{value}    ${scope}=${None}    ${separator}=${None}    ${log}
-    Should Be Equal    ${var.type}         VAR
-    Should Be Equal    ${var.name}         ${name}
-    Should Be Equal    ${var.value}        ${{tuple($value)}}
-    Should Be Equal    ${var.scope}        ${scope}
-    Should Be Equal    ${var.separator}    ${separator}
-    Check Log Message    ${var.msgs[0]}    ${name} = ${log}
+    Should Be Equal      ${var.type}         VAR
+    Should Be Equal      ${var.name}         ${name}
+    Should Be Equal      ${var.value}        ${{tuple($value)}}
+    Should Be Equal      ${var.scope}        ${scope}
+    Should Be Equal      ${var.separator}    ${separator}
+    Check Log Message    ${var[0]}           ${name} = ${log}

@@ -19,7 +19,13 @@ from datetime import date, datetime, timedelta
 from decimal import Decimal
 from enum import Enum
 from pathlib import Path
-from typing import Any, ForwardRef, get_type_hints, get_origin, Literal, Union
+from typing import Any, ForwardRef, get_args, get_origin, get_type_hints, Literal, Union
+if sys.version_info < (3, 9):
+    try:
+        # get_args and get_origin handle at least Annotated wrong in Python 3.8.
+        from typing_extensions import get_args, get_origin
+    except ImportError:
+        pass
 if sys.version_info >= (3, 11):
     from typing import NotRequired, Required
 else:
@@ -30,7 +36,7 @@ else:
 
 from robot.conf import Languages, LanguagesLike
 from robot.errors import DataError
-from robot.utils import (has_args, is_union, NOT_SET, plural_or_not as s, setter,
+from robot.utils import (is_union, NOT_SET, plural_or_not as s, setter,
                          SetterAwareType, type_name, type_repr, typeddict_types)
 
 from ..context import EXECUTION_CONTEXTS
@@ -107,31 +113,35 @@ class TypeInfo(metaclass=SetterAwareType):
         """
         typ = self.type
         if self.is_union:
-            self._validate_union(nested)
-        elif nested is None:
+            return self._validate_union(nested)
+        if nested is None:
             return None
-        elif typ is None:
+        if typ is None:
             return tuple(nested)
-        elif typ is Literal:
-            self._validate_literal(nested)
-        elif not isinstance(typ, type):
-            self._report_nested_error(nested)
-        elif issubclass(typ, tuple):
-            if nested[-1].type is Ellipsis:
-                self._validate_nested_count(nested, 2, 'Homogenous tuple', offset=-1)
-        elif issubclass(typ, Sequence) and not issubclass(typ, (str, bytes, bytearray)):
-            self._validate_nested_count(nested, 1)
-        elif issubclass(typ, Set):
-            self._validate_nested_count(nested, 1)
-        elif issubclass(typ, Mapping):
-            self._validate_nested_count(nested, 2)
-        elif typ in TYPE_NAMES.values():
+        if typ is Literal:
+            return self._validate_literal(nested)
+        if isinstance(typ, type):
+            if issubclass(typ, tuple):
+                if nested[-1].type is Ellipsis:
+                    return self._validate_nested_count(
+                        nested, 2, 'Homogenous tuple', offset=-1
+                    )
+                return tuple(nested)
+            if (issubclass(typ, Sequence)
+                    and not issubclass(typ, (str, bytes, bytearray))):
+                return self._validate_nested_count(nested, 1)
+            if issubclass(typ, Set):
+                return self._validate_nested_count(nested, 1)
+            if issubclass(typ, Mapping):
+                return self._validate_nested_count(nested, 2)
+        if typ in TYPE_NAMES.values():
             self._report_nested_error(nested)
         return tuple(nested)
 
     def _validate_union(self, nested):
         if not nested:
             raise DataError('Union cannot be empty.')
+        return tuple(nested)
 
     def _validate_literal(self, nested):
         if not nested:
@@ -141,10 +151,12 @@ class TypeInfo(metaclass=SetterAwareType):
                 raise DataError(f'Literal supports only integers, strings, bytes, '
                                 f'Booleans, enums and None, value {info.name} is '
                                 f'{type_name(info.type)}.')
+        return tuple(nested)
 
     def _validate_nested_count(self, nested, expected, kind=None, offset=0):
         if len(nested) != expected:
             self._report_nested_error(nested, expected, kind, offset)
+        return tuple(nested)
 
     def _report_nested_error(self, nested, expected=0, kind=None, offset=0):
         expected += offset
@@ -185,17 +197,18 @@ class TypeInfo(metaclass=SetterAwareType):
         if isinstance(hint, typeddict_types):
             return TypedDictInfo(hint.__name__, hint)
         if is_union(hint):
-            nested = [cls.from_type_hint(a) for a in hint.__args__]
+            nested = [cls.from_type_hint(a) for a in get_args(hint)]
             return cls('Union', nested=nested)
-        if hasattr(hint, '__origin__'):
-            if hint.__origin__ is Literal:
+        origin = get_origin(hint)
+        if origin:
+            if origin is Literal:
                 nested = [cls(repr(a) if not isinstance(a, Enum) else a.name, a)
-                          for a in hint.__args__]
-            elif has_args(hint):
-                nested = [cls.from_type_hint(a) for a in hint.__args__]
+                          for a in get_args(hint)]
+            elif get_args(hint):
+                nested = [cls.from_type_hint(a) for a in get_args(hint)]
             else:
                 nested = None
-            return cls(type_repr(hint, nested=False), hint.__origin__, nested)
+            return cls(type_repr(hint, nested=False), origin, nested)
         if isinstance(hint, str):
             return cls.from_string(hint)
         if isinstance(hint, (tuple, list)):
@@ -267,7 +280,8 @@ class TypeInfo(metaclass=SetterAwareType):
                 name: 'str|None' = None,
                 custom_converters: 'CustomArgumentConverters|dict|None' = None,
                 languages: 'LanguagesLike' = None,
-                kind: str = 'Argument'):
+                kind: str = 'Argument',
+                allow_unknown: bool = False):
         """Convert ``value`` based on type information this ``TypeInfo`` contains.
 
         :param value: Value to convert.
@@ -278,9 +292,37 @@ class TypeInfo(metaclass=SetterAwareType):
             current language configuration by default.
         :param kind: Type of the thing to be converted.
             Used only for error reporting.
-        :raises: ``TypeError`` if there is no converter for this type or
-            ``ValueError`` is conversion fails.
+        :param allow_unknown: If ``False``, a ``TypeError`` is raised if there
+            is no converter for this type or to its nested types. If ``True``,
+            conversion returns the original value instead.
+        :raises: ``ValueError`` is conversion fails and ``TypeError`` if there
+            is no converter and unknown converters are not accepted.
         :return: Converted value.
+        """
+        converter = self.get_converter(custom_converters, languages, allow_unknown)
+        return converter.convert(value, name, kind)
+
+    def get_converter(self,
+                      custom_converters: 'CustomArgumentConverters|dict|None' = None,
+                      languages: 'LanguagesLike' = None,
+                      allow_unknown: bool = False) -> TypeConverter:
+        """Get argument converter for this ``TypeInfo``.
+
+        :param custom_converters: Custom argument converters.
+        :param languages: Language configuration. During execution, uses the
+            current language configuration by default.
+        :param allow_unknown: If ``False``, a ``TypeError`` is raised if there
+            is no converter for this type or to its nested types. If ``True``,
+            a special ``UnknownConverter`` is returned instead.
+        :raises: ``TypeError`` if there is no converter and unknown converters
+            are not accepted.
+        :return: ``TypeConverter``.
+
+        The :meth:`convert` method handles the common conversion case, but this
+        method can be used if the converter is needed multiple times or its
+        needed also for other purposes than conversion.
+
+        New in Robot Framework 7.2.
         """
         if isinstance(custom_converters, dict):
             custom_converters = CustomArgumentConverters.from_dict(custom_converters)
@@ -289,9 +331,9 @@ class TypeInfo(metaclass=SetterAwareType):
         elif not isinstance(languages, Languages):
             languages = Languages(languages)
         converter = TypeConverter.converter_for(self, custom_converters, languages)
-        if not converter:
-            raise TypeError(f"No converter found for '{self}'.")
-        return converter.convert(value, name, kind)
+        if not allow_unknown:
+            converter.validate()
+        return converter
 
     def __str__(self):
         if self.is_union:
@@ -336,8 +378,8 @@ class TypedDictInfo(TypeInfo):
             origin = get_origin(hint)
             if origin is Required:
                 required.add(key)
-                type_hints[key] = hint.__args__[0]
+                type_hints[key] = get_args(hint)[0]
             elif origin is NotRequired:
                 required.discard(key)
-                type_hints[key] = hint.__args__[0]
+                type_hints[key] = get_args(hint)[0]
         self.required = frozenset(required)

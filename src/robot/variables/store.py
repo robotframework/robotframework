@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.errors import DataError, VariableError
+from robot.errors import DataError
 from robot.utils import (DotDict, is_dict_like, is_list_like, NormalizedDict, NOT_SET,
                          type_name)
 
@@ -70,6 +70,11 @@ class VariableStore:
             if default is NOT_SET:
                 raise
             return default
+
+    def pop(self, name, decorated=True):
+        if decorated:
+            name = self._undecorate(name)
+        return self.data.pop(name)
 
     def update(self, store):
         self.data.update(store.data)

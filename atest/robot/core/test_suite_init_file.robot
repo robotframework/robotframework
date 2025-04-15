@@ -21,14 +21,14 @@ Suite Documentation
 
 Suite Setup
     [Documentation]   Setting and not setting setup using suite file
-    Check Log Message   ${suite.setup.kws[0].msgs[0]}   Setup of test suite directory
+    Check Log Message   ${suite.setup[0, 0]}   Setup of test suite directory
     Setup Should Not Be Defined   ${subsuite_with_init}
     Setup Should Not Be Defined   ${subsuite_without_init}
 
 Suite Teardown
     [Documentation]   Setting and not setting teardown using suite file
-    Check Log Message   ${suite.teardown.kws[1].msgs[0]}   Teardown of test suite directory
-    Check Log Message   ${subsuite_with_init.teardown.kws[1].msgs[0]}   Teardown of sub test suite directory
+    Check Log Message   ${suite.teardown[1, 0]}   Teardown of test suite directory
+    Check Log Message   ${subsuite_with_init.teardown[1, 0]}   Teardown of sub test suite directory
     Teardown Should Not Be Defined   ${subsuite_without_init}
 
 Invalid Suite Setting

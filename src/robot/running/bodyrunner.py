@@ -56,8 +56,18 @@ class BodyRunner:
                 self._run = exception.can_continue(self._context, self._templated)
         if passed:
             raise passed
+        if errors and self._templated:
+            errors = self._handle_skip_with_templates(errors, result)
         if errors:
             raise ExecutionFailures(errors)
+
+    def _handle_skip_with_templates(self, errors, result):
+        iterations = result.body.filter(messages=False)
+        if len(iterations) < 2 or not any(e.skip for e in errors):
+            return errors
+        if all(i.skipped for i in iterations):
+            raise ExecutionFailed('All iterations skipped.', skip=True)
+        return [e for e in errors if not e.skip]
 
 
 class KeywordRunner:
@@ -66,12 +76,33 @@ class KeywordRunner:
         self._context = context
         self._run = run
 
-    def run(self, data, result, name=None):
+    def run(self, data, result, setup_or_teardown=False):
         context = self._context
-        runner = context.get_runner(name or data.name, recommend_on_failure=self._run)
+        runner = self._get_runner(data.name, setup_or_teardown, context)
+        if not runner:
+            return None
         if context.dry_run:
             return runner.dry_run(data, result, context)
         return runner.run(data, result, context, self._run)
+
+    def _get_runner(self, name, setup_or_teardown, context):
+        if setup_or_teardown:
+            # Don't replace variables in name if it contains embedded arguments
+            # to support non-string values. BuiltIn.run_keyword has similar
+            # logic, but, for example, handling 'NONE' differs.
+            if '{' in name:
+                runner = context.get_runner(name, recommend_on_failure=False)
+                if hasattr(runner, 'embedded_args'):
+                    return runner
+            try:
+                name = context.variables.replace_string(name)
+            except DataError as err:
+                if context.dry_run:
+                    return None
+                raise ExecutionFailed(err.message)
+            if name.upper() in ('', 'NONE'):
+                return None
+        return context.get_runner(name, recommend_on_failure=self._run)
 
 
 def ForRunner(context, flavor='IN', run=True, templated=False):
@@ -133,6 +164,8 @@ class ForInRunner:
                 if not failed.can_continue(self._context, self._templated):
                     break
         if errors:
+            if self._templated and len(errors) > 1 and all(e.skip for e in errors):
+                raise ExecutionFailed('All iterations skipped.', skip=True)
             raise ExecutionFailures(errors)
         return executed
 
@@ -450,6 +483,36 @@ class WhileRunner:
         except Exception:
             msg = get_error_message()
             raise DataError(f'Invalid WHILE loop condition: {msg}')
+
+
+class GroupRunner:
+
+    def __init__(self, context, run=True, templated=False):
+        self._context = context
+        self._run = run
+        self._templated = templated
+
+    def run(self, data, result):
+        if self._run:
+            error = self._initialize(data, result)
+            run = error is None
+        else:
+            error = None
+            run = False
+        with StatusReporter(data, result, self._context, run=run):
+            runner = BodyRunner(self._context, run, self._templated)
+            runner.run(data, result)
+            if error:
+                raise error
+
+    def _initialize(self, data, result):
+        if data.error:
+            return DataError(data.error, syntax=True)
+        try:
+            result.name = self._context.variables.replace_string(result.name)
+        except DataError as err:
+            return err
+        return None
 
 
 class IfRunner:

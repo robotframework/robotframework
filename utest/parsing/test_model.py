@@ -6,14 +6,15 @@ from pathlib import Path
 
 from robot.parsing import get_model, get_resource_model, ModelVisitor, ModelTransformer, Token
 from robot.parsing.model.blocks import (
-    File, For, If, ImplicitCommentSection, InvalidSection, Try, While,
+    File, For, Group, If, ImplicitCommentSection, InvalidSection, Try, While,
     Keyword, KeywordSection, SettingSection, TestCase, TestCaseSection, VariableSection
 )
 from robot.parsing.model.statements import (
-    Arguments, Break, Comment, Config, Continue, Documentation, ForHeader, End, ElseHeader,
-    ElseIfHeader, EmptyLine, Error, IfHeader, InlineIfHeader, TryHeader, ExceptHeader,
-    FinallyHeader, KeywordCall, KeywordName, Return, ReturnSetting, ReturnStatement,
-    SectionHeader, TestCaseName, TestTags, Var, Variable, WhileHeader
+    Arguments, Break, Comment, Config, Continue, Documentation, ForHeader, End,
+    ElseHeader, ElseIfHeader, EmptyLine, Error, GroupHeader, IfHeader, InlineIfHeader,
+    TemplateArguments, TryHeader, ExceptHeader, FinallyHeader, KeywordCall,
+    KeywordName, Return, ReturnSetting, ReturnStatement, SectionHeader, TestCaseName,
+    TestTags, Var, Variable, WhileHeader
 )
 from robot.utils.asserts import assert_equal, assert_raises_with_msg
 
@@ -130,14 +131,15 @@ EXPECTED = File(sections=[
 ])
 
 
-def get_and_assert_model(data, expected, depth=2):
+def get_and_assert_model(data, expected, depth=2, indices=None):
     for data_only in True, False:
         model = get_model(data.strip(), data_only=data_only)
         if not data_only:
             remove_non_data(model)
         node = model.sections[0]
-        for _ in range(depth):
-            node = node.body[0]
+        for i in range(depth):
+            index = indices[i] if indices else 0
+            node = node.body[index]
         assert_model(node, expected)
     return node
 
@@ -457,6 +459,122 @@ Example
             errors=('WHILE loop cannot be empty.',)
         )
         get_and_assert_model(data, expected)
+
+    def test_templates_not_allowed(self):
+        data = '''
+*** Test Cases ***
+Example
+    [Template]    Log
+    WHILE    True
+        Hello, world!
+    END
+'''
+        expected = While(
+            header=WhileHeader([
+                Token(Token.WHILE, 'WHILE', 4, 4),
+                Token(Token.ARGUMENT, 'True', 4, 13)
+            ]),
+            body=[
+                TemplateArguments([Token(Token.ARGUMENT, 'Hello, world!', 5, 8)])
+            ],
+            end=End([Token(Token.END, 'END', 6, 4)]),
+            errors=('WHILE does not support templates.',)
+        )
+        get_and_assert_model(data, expected, indices=[0, 1])
+
+
+class TestGroup(unittest.TestCase):
+
+    def test_valid(self):
+        data = '''
+*** Test Cases ***
+Example
+    GROUP    Name
+        Log    ${x}
+    END
+'''
+        expected = Group(
+            header=GroupHeader([
+                Token(Token.GROUP, 'GROUP', 3, 4),
+                Token(Token.ARGUMENT, 'Name', 3, 13),
+            ]),
+            body=[
+                KeywordCall([Token(Token.KEYWORD, 'Log', 4, 8),
+                             Token(Token.ARGUMENT, '${x}', 4, 15)])
+            ],
+            end=End([Token(Token.END, 'END', 5, 4)]),
+        )
+        group = get_and_assert_model(data, expected)
+        assert_equal(group.name, 'Name')
+        assert_equal(group.header.name, 'Name')
+
+    def test_empty_name(self):
+        data = '''
+*** Test Cases ***
+Example
+    GROUP
+        Log    ${x}
+    END
+'''
+        expected = Group(
+            header=GroupHeader([
+                Token(Token.GROUP, 'GROUP', 3, 4)
+            ]),
+            body=[
+                KeywordCall([Token(Token.KEYWORD, 'Log', 4, 8),
+                             Token(Token.ARGUMENT, '${x}', 4, 15)])
+            ],
+            end=End([Token(Token.END, 'END', 5, 4)]),
+        )
+        group = get_and_assert_model(data, expected)
+        assert_equal(group.name, '')
+        assert_equal(group.header.name, '')
+
+    def test_invalid_two_args(self):
+        data = '''
+*** Test Cases ***
+Example
+    GROUP   one   two
+        Log    ${x}
+'''
+        expected = Group(
+            header=GroupHeader([
+                Token(Token.GROUP, 'GROUP', 3, 4),
+                Token(Token.ARGUMENT, 'one', 3, 12),
+                Token(Token.ARGUMENT, 'two', 3, 18)
+            ],
+                errors=("GROUP accepts only one argument as name, got 2 arguments 'one' and 'two'.",)
+            ),
+            body=[
+                KeywordCall([Token(Token.KEYWORD, 'Log', 4, 8),
+                             Token(Token.ARGUMENT, '${x}', 4, 15)])
+            ],
+            errors=('GROUP must have closing END.',)
+        )
+        group = get_and_assert_model(data, expected)
+        assert_equal(group.name, 'one, two')
+        assert_equal(group.header.name, 'one, two')
+
+    def test_invalid_no_END(self):
+        data = '''
+*** Test Cases ***
+Example
+    GROUP
+        Log    ${x}
+'''
+        expected = Group(
+            header=GroupHeader([
+                Token(Token.GROUP, 'GROUP', 3, 4)
+            ]),
+            body=[
+                KeywordCall([Token(Token.KEYWORD, 'Log', 4, 8),
+                             Token(Token.ARGUMENT, '${x}', 4, 15)])
+            ],
+            errors=('GROUP must have closing END.',)
+        )
+        group = get_and_assert_model(data, expected)
+        assert_equal(group.name, '')
+        assert_equal(group.header.name, '')
 
 
 class TestIf(unittest.TestCase):
@@ -907,6 +1025,33 @@ Example
         )
         get_and_assert_model(data, expected)
 
+    def test_templates_not_allowed(self):
+        data = '''
+*** Test Cases ***
+Example
+    [Template]    Log
+    TRY
+        Hello, world!
+    FINALLY
+        Hello, again!
+    END
+'''
+        expected = Try(
+            header=TryHeader([Token(Token.TRY, 'TRY', 4, 4)]),
+            body=[
+                TemplateArguments([Token(Token.ARGUMENT, 'Hello, world!', 5, 8)])
+            ],
+            next=Try(
+                header=FinallyHeader([Token(Token.FINALLY, 'FINALLY', 6, 4)]),
+                body=[
+                    TemplateArguments([Token(Token.ARGUMENT, 'Hello, again!', 7, 8)])
+                ],
+            ),
+            end=End([Token(Token.END, 'END', 8, 4)]),
+            errors=("TRY does not support templates.",),
+        )
+        get_and_assert_model(data, expected, indices=[0, 1])
+
 
 class TestVariables(unittest.TestCase):
 
@@ -1159,6 +1304,66 @@ Keyword
         )
         get_and_assert_model(data, expected, depth=1)
 
+
+class TestKeywordCall(unittest.TestCase):
+
+    def test_valid(self):
+        data = '''
+*** Test Cases ***
+Test
+    Keyword
+    Keyword    with    ${args}
+    ${x} =    Keyword    with assign
+    ${x}    @{y}=    Keyword
+    &{x}    Keyword
+'''
+        expected = TestCase(
+            header=TestCaseName([Token(Token.TESTCASE_NAME, 'Test', 2, 0)]),
+            body=[
+                KeywordCall([Token(Token.KEYWORD, 'Keyword', 3, 4)]),
+                KeywordCall([Token(Token.KEYWORD, 'Keyword', 4, 4),
+                             Token(Token.ARGUMENT, 'with', 4, 15),
+                             Token(Token.ARGUMENT, '${args}', 4, 23)]),
+                KeywordCall([Token(Token.ASSIGN, '${x} =', 5, 4),
+                             Token(Token.KEYWORD, 'Keyword', 5, 14),
+                             Token(Token.ARGUMENT, 'with assign', 5, 25)]),
+                KeywordCall([Token(Token.ASSIGN, '${x}', 6, 4),
+                             Token(Token.ASSIGN, '@{y}=', 6, 12),
+                             Token(Token.KEYWORD, 'Keyword', 6, 21)]),
+                KeywordCall([Token(Token.ASSIGN, '&{x}', 7, 4),
+                             Token(Token.KEYWORD, 'Keyword', 7, 12)])
+            ]
+        )
+        get_and_assert_model(data, expected, depth=1)
+
+    def test_invalid_assign(self):
+        data = '''
+*** Test Cases ***
+Test
+    ${x} =    ${y}      Marker in wrong place
+    @{x}      @{y} =    Multiple lists
+    ${x}      &{y}      Dict works only alone
+'''
+        expected = TestCase(
+            header=TestCaseName([Token(Token.TESTCASE_NAME, 'Test', 2, 0)]),
+            body=[
+                KeywordCall([Token(Token.ASSIGN, '${x} =', 3, 4),
+                             Token(Token.ASSIGN, '${y}', 3, 14),
+                             Token(Token.KEYWORD, 'Marker in wrong place', 3, 24)],
+                            errors=("Assign mark '=' can be used only with the "
+                                    "last variable.",)),
+                KeywordCall([Token(Token.ASSIGN, '@{x}', 4, 4),
+                             Token(Token.ASSIGN, '@{y} =', 4, 14),
+                             Token(Token.KEYWORD, 'Multiple lists', 4, 24)],
+                            errors=('Assignment can contain only one list variable.',)),
+                KeywordCall([Token(Token.ASSIGN, '${x}', 5, 4),
+                             Token(Token.ASSIGN, '&{y}', 5, 14),
+                             Token(Token.KEYWORD, 'Dict works only alone', 5, 24)],
+                            errors=('Dictionary variable cannot be assigned with '
+                                    'other variables.',)),
+            ]
+        )
+        get_and_assert_model(data, expected, depth=1)
 
 class TestTestCase(unittest.TestCase):
 
@@ -1889,9 +2094,10 @@ class TestLanguageConfig(unittest.TestCase):
     def test_config(self):
         model = get_model('''\
 language: fi
+ignored
 language: bad
-language: bad    but ignored
-language: de     # ok
+language: b    a    d
+LANGUAGE:GER    MAN    # OK!
 *** Einstellungen ***
 Dokumentaatio    Header is de and setting is fi.
 ''')
@@ -1903,36 +2109,50 @@ Dokumentaatio    Header is de and setting is fi.
                         Token('CONFIG', 'language: fi', 1, 0),
                         Token('EOL', '\n', 1, 12)
                     ]),
+                    Comment([
+                        Token('COMMENT', 'ignored', 2, 0),
+                        Token('EOL', '\n', 2, 7)
+                    ]),
                     Error([
-                        Token('ERROR', 'language: bad', 2, 0,
+                        Token('ERROR', 'language: bad', 3, 0,
                               "Invalid language configuration: Language 'bad' "
                               "not found nor importable as a language module."),
-                        Token('EOL', '\n', 2, 13)
+                        Token('EOL', '\n', 3, 13)
                     ]),
-                    Comment([
-                        Token('COMMENT', 'language: bad', 3, 0),
-                        Token('SEPARATOR', '    ', 3, 13),
-                        Token('COMMENT', 'but ignored', 3, 17),
-                        Token('EOL', '\n', 3, 28)
+                    Error([
+                        Token('ERROR', 'language: b', 4, 0,
+                              "Invalid language configuration: Language 'b a d' "
+                              "not found nor importable as a language module."),
+                        Token('SEPARATOR', '    ', 4, 11),
+                        Token('ERROR', 'a', 4, 15,
+                              "Invalid language configuration: Language 'b a d' "
+                              "not found nor importable as a language module."),
+                        Token('SEPARATOR', '    ', 4, 16),
+                        Token('ERROR', 'd', 4, 20,
+                              "Invalid language configuration: Language 'b a d' "
+                              "not found nor importable as a language module."),
+                        Token('EOL', '\n', 4, 21)
                     ]),
                     Config([
-                        Token('CONFIG', 'language: de', 4, 0),
-                        Token('SEPARATOR', '     ', 4, 12),
-                        Token('COMMENT', '# ok', 4, 17),
-                        Token('EOL', '\n', 4, 21)
+                        Token('CONFIG', 'LANGUAGE:GER', 5, 0),
+                        Token('SEPARATOR', '    ', 5, 12),
+                        Token('CONFIG', 'MAN', 5, 16),
+                        Token('SEPARATOR', '    ', 5, 19),
+                        Token('COMMENT', '# OK!', 5, 23),
+                        Token('EOL', '\n', 5, 28)
                     ]),
                 ]),
                 SettingSection(
                     header=SectionHeader([
-                        Token('SETTING HEADER', '*** Einstellungen ***', 5, 0),
-                        Token('EOL', '\n', 5, 21)
+                        Token('SETTING HEADER', '*** Einstellungen ***', 6, 0),
+                        Token('EOL', '\n', 6, 21)
                     ]),
                     body=[
                         Documentation([
-                            Token('DOCUMENTATION', 'Dokumentaatio', 6, 0),
-                            Token('SEPARATOR', '    ', 6, 13),
-                            Token('ARGUMENT', 'Header is de and setting is fi.', 6, 17),
-                            Token('EOL', '\n', 6, 48)
+                            Token('DOCUMENTATION', 'Dokumentaatio', 7, 0),
+                            Token('SEPARATOR', '    ', 7, 13),
+                            Token('ARGUMENT', 'Header is de and setting is fi.', 7, 17),
+                            Token('EOL', '\n', 7, 48)
                         ])
                     ]
                 )

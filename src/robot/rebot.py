@@ -122,7 +122,6 @@ Options
     --processemptysuite   Processes output also if the top level suite is
                           empty. Useful e.g. with --include/--exclude when it
                           is not an error that there are no matches.
-                          Use --skiponfailure when starting execution instead.
  -d --outputdir dir       Where to create output files. The default is the
                           directory where Rebot is run from and the given path
                           is considered relative to that unless it is absolute.
@@ -183,7 +182,6 @@ Options
                           pattern. Documentation is shown in `Test Details` and
                           also as a tooltip in `Statistics by Tag`. Pattern can
                           use `*`, `?` and `[]` as wildcards like --test.
-                          Documentation can contain formatting like --doc.
                           Examples: --tagdoc mytag:Example
                                     --tagdoc "owner-*:Original author"
     --tagstatlink pattern:link:title *  Add external links into `Statistics by
@@ -206,8 +204,8 @@ Options
                           all:     remove data from all keywords
                           passed:  remove data only from keywords in passed
                                    test cases and suites
-                          for:     remove passed iterations from for loops
-                          while:   remove passed iterations from while loops
+                          for:     remove passed iterations from FOR loops
+                          while:   remove passed iterations from WHILE loops
                           wuks:    remove all but the last failing keyword
                                    inside `BuiltIn.Wait Until Keyword Succeeds`
                           name:<pattern>:  remove data from keywords that match
@@ -306,6 +304,16 @@ ROBOT_SYSLOG_FILE         Path to a file where Robot Framework writes internal
 ROBOT_SYSLOG_LEVEL        Log level to use when writing to the syslog file.
                           Available levels are the same as for --loglevel
                           command line option and the default is INFO.
+
+Return Codes
+============
+
+0                         All tests passed.
+1-249                     Returned number of tests failed.
+250                       250 or more failures.
+251                       Help or version information printed.
+252                       Invalid data or command line options.
+255                       Unexpected internal error.
 
 Examples
 ========

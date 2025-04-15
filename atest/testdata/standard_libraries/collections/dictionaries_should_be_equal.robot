@@ -3,7 +3,8 @@ Library           Collections
 Library           CollectionsHelperLibrary.py
 
 *** Variables ***
-@{LIST}          a    B
+@{LIST_1}        a    B
+@{LIST_2}        B    a
 ${TUPLE}         ${{'a', 'B'}}
 &{D0}
 &{D1}            a=x
@@ -13,9 +14,14 @@ ${TUPLE}         ${{'a', 'B'}}
 &{D3C}           A=X    b=Y    C=${3}
 &{D9A}           a=1    b=2    c=3    d=4    e=5    f=6    g=7    h=8    i=9
 &{D9B}           d=4    e=5    i=9    a=1    f=6    g=7    b=2    h=8    c=3
+&{D10A}          d=4    e=5    i=9    a=1    f=6    g=7    b=2    h=8    c=3    list=${LIST_1}
+&{D10B}          d=4    e=5    i=9    a=1    f=6    g=7    b=2    h=8    c=3    list=${LIST_2}
+&{D10C}          d=4    e=5    i=9    a=1    f=6    g=7    b=2    h=8    c=3    list=${LIST_2}    dict_list=@{DICTS}
+&{D10D}          d=4    e=5    i=9    a=1    f=6    g=7    b=2    h=8    c=3    list=${LIST_2}    dict_list=@{DICTS_1}
 &{DX}            a=x    B=Y    c=${3}   ${4}=E    ß=Straße
-...              list=${LIST}    ${TUPLE}=tuple    dict=${D2}
+...              list=${LIST_1}    ${TUPLE}=tuple    dict=${D2}
 @{DICTS}         ${D0}    ${D1}    ${D2}    ${D3}    ${D3B}    ${D3C}    ${D9A}    ${D9B}    ${DX}
+@{DICTS_1}       ${DX}    ${D9B}    ${D9A}    ${D3C}    ${D3B}    ${D3}    ${D2}    ${D1}    ${D0}
 
 *** Test Cases ***
 Comparison with itself
@@ -134,3 +140,12 @@ Different values and custom error message with values
     ...    Dictionary {'a': 1, 'A': 2} contains multiple keys that are normalized to 'a'. \
     ...    Try normalizing only dictionary values like 'ignore_case=values'.
     Dictionaries Should Be Equal    ${{{'a': 1, 'A': 2}}}    ${{{'a': 2, 'A': 1}}}    ignore_case=True
+
+`ignore_value_order` set to True
+    Dictionaries Should Be Equal    ${D10A}    ${D10B}    ignore_value_order=True
+
+`ignore_value_order` set to False and dictionaries have lists in different order
+    [Documentation]    FAIL
+    ...    Following keys have different values:
+    ...    Key list: ['a', 'B'] != ['B', 'a']
+    Dictionaries Should Be Equal    ${D10A}    ${D10B}

@@ -17,7 +17,7 @@ Get Line Count
 
 Split To Lines
     ${tc} =    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    2 lines returned
+    Check Log Message    ${tc[0, 0]}    2 lines returned
 
 Split To Lines With Start Only
     Check Test Case    ${TESTNAME}

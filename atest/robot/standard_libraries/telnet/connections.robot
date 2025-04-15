@@ -5,11 +5,11 @@ Resource          telnet_resource.robot
 *** Test Cases ***
 Open Connection
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    Opening connection to localhost:23 with prompt: xxx
+    Check Log Message    ${tc[0, 0]}    Opening connection to localhost:23 with prompt: xxx
 
 Close Connection
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[1].msgs[0]}    *hello    pattern=yes
+    Check Log Message    ${tc[1, 0]}    *hello    pattern=yes
 
 Closing already closed connection is OK
     Check Test Case    ${TEST NAME}

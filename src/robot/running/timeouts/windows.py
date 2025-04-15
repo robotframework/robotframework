@@ -62,10 +62,14 @@ class Timeout:
         self._raise_timeout()
 
     def _raise_timeout(self):
-        # See, for example, http://tomerfiliba.com/recipes/Thread2/
-        # for more information about using PyThreadState_SetAsyncExc
-        tid = ctypes.c_long(self._runner_thread_id)
+        # See the following for the original recipe and API docs.
+        # https://code.activestate.com/recipes/496960-thread2-killable-threads/
+        # https://docs.python.org/3/c-api/init.html#c.PyThreadState_SetAsyncExc
+        tid = ctypes.c_ulong(self._runner_thread_id)
         error = ctypes.py_object(type(self._error))
-        while ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, error) > 1:
-            ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, None)
-            time.sleep(0)  # give time for other threads
+        modified = ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, error)
+        # This should never happen. Better anyway to check the return value
+        # and report the very unlikely error than ignore it.
+        if modified != 1:
+            raise ValueError(f"Expected 'PyThreadState_SetAsyncExc' to return 1, "
+                             f"got {modified}.")

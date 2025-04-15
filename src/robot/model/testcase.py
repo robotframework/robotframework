@@ -40,6 +40,7 @@ class TestCase(ModelObject, Generic[KW]):
     Extended by :class:`robot.running.model.TestCase` and
     :class:`robot.result.model.TestCase`.
     """
+    type = 'TEST'
     body_class = Body
     # See model.TestSuite on removing the type ignore directive
     fixture_class: Type[KW] = Keyword    # type: ignore

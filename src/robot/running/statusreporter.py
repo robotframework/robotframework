@@ -62,7 +62,7 @@ class StatusReporter:
             result.status = failure.status
             if not isinstance(failure, (BreakLoop, ContinueLoop, ReturnFromKeyword)):
                 result.message = failure.message
-        if self.initial_test_status == 'PASS':
+        if self.initial_test_status == 'PASS' and result.status != 'NOT RUN':
             context.test.status = result.status
         result.elapsed_time = datetime.now() - result.start_time
         orig_status = (result.status, result.message)

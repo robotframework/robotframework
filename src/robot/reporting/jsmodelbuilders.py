@@ -25,7 +25,7 @@ STATUSES = {'FAIL': 0, 'PASS': 1, 'SKIP': 2, 'NOT RUN': 3}
 KEYWORD_TYPES = {'KEYWORD': 0, 'SETUP': 1, 'TEARDOWN': 2,
                  'FOR': 3, 'ITERATION': 4, 'IF': 5, 'ELSE IF': 6, 'ELSE': 7,
                  'RETURN': 8, 'VAR': 9, 'TRY': 10, 'EXCEPT': 11, 'FINALLY': 12,
-                 'WHILE': 13, 'CONTINUE': 14, 'BREAK': 15, 'ERROR': 16}
+                 'WHILE': 13, 'GROUP': 14, 'CONTINUE': 15, 'BREAK': 16, 'ERROR': 17}
 
 
 class JsModelBuilder:

@@ -22,7 +22,7 @@ from typing import cast, Iterator, Sequence, TextIO, Union
 from robot.utils import file_writer, test_or_task
 
 from .statements import (Break, Continue, ElseHeader, ElseIfHeader, End, ExceptHeader,
-                         Error, FinallyHeader, ForHeader, IfHeader, KeywordCall,
+                         Error, FinallyHeader, ForHeader, GroupHeader, IfHeader, KeywordCall,
                          KeywordName, Node, ReturnSetting, ReturnStatement,
                          SectionHeader, Statement, TemplateArguments, TestCaseName,
                          TryHeader, Var, WhileHeader)
@@ -99,7 +99,7 @@ class Block(Container, ABC):
     def _body_is_empty(self):
         # This works with tests, keywords, and blocks inside them, not with sections.
         valid = (KeywordCall, TemplateArguments, Var, Continue, Break, ReturnSetting,
-                 ReturnStatement, NestedBlock, Error)
+                 Group, ReturnStatement, NestedBlock, Error)
         return not any(isinstance(node, valid) for node in self.body)
 
 
@@ -328,6 +328,7 @@ class Try(NestedBlock):
         if self.type == Token.TRY:
             self._validate_structure()
             self._validate_end()
+            TemplatesNotAllowed('TRY').check(self)
 
     def _validate_body(self):
         if self._body_is_empty():
@@ -395,6 +396,21 @@ class While(NestedBlock):
             self.errors += ('WHILE loop cannot be empty.',)
         if not self.end:
             self.errors += ('WHILE loop must have closing END.',)
+        TemplatesNotAllowed('WHILE').check(self)
+
+
+class Group(NestedBlock):
+    header: GroupHeader
+
+    @property
+    def name(self) -> str:
+        return self.header.name
+
+    def validate(self, ctx: 'ValidationContext'):
+        if self._body_is_empty():
+            self.errors += ('GROUP cannot be empty.',)
+        if not self.end:
+            self.errors += ('GROUP must have closing END.',)
 
 
 class ModelWriter(ModelVisitor):
@@ -504,3 +520,19 @@ class LastStatementFinder(ModelVisitor):
 
     def visit_Statement(self, statement: Statement):
         self.statement = statement
+
+
+class TemplatesNotAllowed(ModelVisitor):
+
+    def __init__(self, kind: str):
+        self.kind = kind
+        self.found = False
+
+    def check(self, model: Node):
+        self.found = False
+        self.visit(model)
+        if self.found:
+            model.errors += (f'{self.kind} does not support templates.',)
+
+    def visit_TemplateArguments(self, node: None):
+        self.found = True

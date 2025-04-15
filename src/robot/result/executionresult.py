@@ -19,8 +19,7 @@ from typing import overload, TextIO
 
 from robot.errors import DataError
 from robot.model import Statistics
-from robot.model.modelobject import JsonDumper, JsonLoader    # FIXME: Expose via `robot.model` or move to `robot.utils`.
-from robot.utils import setter
+from robot.utils import JsonDumper, JsonLoader, setter
 from robot.version import get_full_version
 
 from .executionerrors import ExecutionErrors
@@ -65,7 +64,7 @@ class Result:
                  errors: 'ExecutionErrors|None' = None,
                  rpa: 'bool|None' = None,
                  generator: str = 'unknown',
-                 generation_time: 'datetime|None' = None):
+                 generation_time: 'datetime|str|None' = None):
         self.source = Path(source) if isinstance(source, str) else source
         self.suite = suite or TestSuite()
         self.errors = errors or ExecutionErrors()
@@ -85,6 +84,14 @@ class Result:
         suite.rpa = rpa
         for child in suite.suites:
             self._set_suite_rpa(child, rpa)
+
+    @setter
+    def generation_time(self, timestamp: 'datetime|str|None') -> 'datetime|None':
+        if datetime is None:
+            return None
+        if isinstance(timestamp, str):
+            return datetime.fromisoformat(timestamp)
+        return timestamp
 
     @property
     def statistics(self) -> Statistics:
@@ -141,7 +148,8 @@ class Result:
         self._stat_config = stat_config or {}
 
     @classmethod
-    def from_json(cls, source: 'str|bytes|TextIO|Path') -> 'Result':
+    def from_json(cls, source: 'str|bytes|TextIO|Path',
+                  rpa: 'bool|None' = None) -> 'Result':
         """Construct a result object from JSON data.
 
         The data is given as the ``source`` parameter. It can be:
@@ -160,6 +168,9 @@ class Result:
         :attr:`statistics` are populated automatically based on suite information
         and thus ignored if they are present in the data.
 
+        The ``rpa`` argument can be used to override the RPA mode. The mode is
+        got from the data by default.
+
         New in Robot Framework 7.2.
         """
         try:
@@ -170,6 +181,7 @@ class Result:
             result = cls._from_full_json(data)
         else:
             result = cls._from_suite_json(data)
+        result.rpa = data.get('rpa', False) if rpa is None else rpa
         if isinstance(source, Path):
             result.source = source
         elif isinstance(source, str) and source[0] != '{' and Path(source).exists():
@@ -178,17 +190,14 @@ class Result:
 
     @classmethod
     def _from_full_json(cls, data) -> 'Result':
-        result = Result(suite=TestSuite.from_dict(data['suite']),
-                        errors=ExecutionErrors(data.get('errors')),
-                        rpa=data.get('rpa'),
-                        generator=data.get('generator'))
-        if data.get('generation_time'):
-            result.generation_time = datetime.fromisoformat(data['generation_time'])
-        return result
+        return Result(suite=TestSuite.from_dict(data['suite']),
+                      errors=ExecutionErrors(data.get('errors')),
+                      generator=data.get('generator'),
+                      generation_time=data.get('generated'))
 
     @classmethod
     def _from_suite_json(cls, data) -> 'Result':
-        return Result(suite=TestSuite.from_dict(data), rpa=data.get('rpa', False))
+        return Result(suite=TestSuite.from_dict(data))
 
     @overload
     def to_json(self, file: None = None, *,

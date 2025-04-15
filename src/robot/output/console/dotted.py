@@ -14,13 +14,16 @@
 #  limitations under the License.
 
 import sys
+from typing import TYPE_CHECKING
 
 from robot.model import SuiteVisitor
-from robot.result import TestCase, TestSuite
 from robot.utils import plural_or_not as s, secs_to_timestr
 
 from .highlighting import HighlightingStream
 from ..loggerapi import LoggerApi
+
+if TYPE_CHECKING:
+    from robot.result import TestCase, TestSuite
 
 
 class DottedOutput(LoggerApi):
@@ -72,7 +75,7 @@ class StatusReporter(SuiteVisitor):
         self.stream = stream
         self.width = width
 
-    def report(self, suite: TestSuite):
+    def report(self, suite: 'TestSuite'):
         suite.visit(self)
         stats = suite.statistics
         ts = ('test' if not suite.rpa else 'task') + s(stats.total)
@@ -83,7 +86,7 @@ class StatusReporter(SuiteVisitor):
         self.stream.highlight(suite.status + ed, suite.status)
         self.stream.write(f'\n{stats.message}\n')
 
-    def visit_test(self, test: TestCase):
+    def visit_test(self, test: 'TestCase'):
         if test.failed and not test.tags.robot('exit'):
             self.stream.write('-' * self.width + '\n')
             self.stream.highlight('FAIL')

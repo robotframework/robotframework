@@ -24,7 +24,7 @@ from robot.api.deco import keyword
 from robot.errors import (BreakLoop, ContinueLoop, DataError, ExecutionFailed,
                           ExecutionFailures, ExecutionPassed, PassExecution,
                           ReturnFromKeyword, VariableError)
-from robot.running import Keyword, RUN_KW_REGISTER
+from robot.running import Keyword, RUN_KW_REGISTER, TypeInfo
 from robot.running.context import EXECUTION_CONTEXTS
 from robot.utils import (DotDict, escape, format_assign_message, get_error_message,
                          get_time, html_escape, is_falsy, is_integer, is_list_like,
@@ -341,8 +341,8 @@ class _Converter(_BuiltInBase):
         - ``text:`` Converts text to bytes character by character. All
           characters with ordinal below 256 can be used and are converted to
           bytes with same values. Many characters are easiest to represent
-          using escapes like ``\x00`` or ``\xff``. Supports both Unicode
-          strings and bytes.
+          using escapes like ``\x00`` or ``\xff``. In practice this is the same
+          as Latin-1 encoding.
 
         - ``int:`` Converts integers separated by spaces to bytes. Similarly as
           with `Convert To Integer`, it is possible to use binary, octal, or
@@ -380,10 +380,10 @@ class _Converter(_BuiltInBase):
         """
         try:
             try:
-                ordinals = getattr(self, f'_get_ordinals_from_{input_type}')
+                get_ordinals = getattr(self, f'_get_ordinals_from_{input_type}')
             except AttributeError:
                 raise RuntimeError(f"Invalid input type '{input_type}'.")
-            return bytes(bytearray(o for o in ordinals(input)))
+            return bytes(o for o in get_ordinals(input))
         except:
             raise RuntimeError("Creating bytes failed: " + get_error_message())
 
@@ -583,8 +583,8 @@ class _Verify(_BuiltInBase):
 
     def should_be_equal(self, first, second, msg=None, values=True,
                         ignore_case=False, formatter='str', strip_spaces=False,
-                        collapse_spaces=False):
-        """Fails if the given objects are unequal.
+                        collapse_spaces=False, type=None, types=None):
+        r"""Fails if the given objects are unequal.
 
         Optional ``msg``, ``values`` and ``formatter`` arguments specify how
         to construct the error message if this keyword fails:
@@ -614,15 +614,33 @@ class _Verify(_BuiltInBase):
         arguments are strings, the comparison is done with all white spaces replaced by
         a single space character.
 
+        The ``type`` and ``types`` arguments control optional type conversion:
+        - If ``type`` is used, the argument ``second`` is converted to that type.
+          In addition to that, the argument ``first`` is validated to match the type.
+        - If ``types`` is used, both ``first`` and ``second`` are converted.
+        - Supported types are the same as supported by
+          [https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#supported-conversions|
+          automatic argument conversion] such as ``int``, ``bytes`` and ``list``.
+          Also parameterized types like ``list[int]`` and unions like ``int | float``
+          are supported.
+        - When using ``type``, a special value ``auto`` can be used to convert
+          ``second`` to the same type that ``first`` has.
+        - Using both ``type`` and ``types`` at the same time is an error.
+
         Examples:
         | Should Be Equal | ${x} | expected |
         | Should Be Equal | ${x} | expected | Custom error message |
         | Should Be Equal | ${x} | expected | Custom message | values=False |
         | Should Be Equal | ${x} | expected | ignore_case=True | formatter=repr |
+        | Should Be Equal | ${x} | \x00\x01 | type=bytes |
+        | Should Be Equal | ${x} | ${y}     | types=int|float |
 
         ``strip_spaces`` is new in Robot Framework 4.0 and
         ``collapse_spaces`` is new in Robot Framework 4.1.
+        ``type`` and ``types`` are new in Robot Framework 7.2.
         """
+        if type or types:
+            first, second = self._type_convert(first, second, type, types)
         self._log_types_at_info_if_different(first, second)
         if is_string(first) and is_string(second):
             if ignore_case:
@@ -635,6 +653,21 @@ class _Verify(_BuiltInBase):
                 first = self._collapse_spaces(first)
                 second = self._collapse_spaces(second)
         self._should_be_equal(first, second, msg, values, formatter)
+
+    def _type_convert(self, first, second, type, types, type_builtin=type):
+        if type and types:
+            raise TypeError("Cannot use both 'type' and 'types' arguments.")
+        elif types:
+            type = types
+        elif isinstance(type, str) and type.upper() == 'AUTO':
+            type = type_builtin(first)
+        converter = TypeInfo.from_type_hint(type).get_converter()
+        if types:
+            first = converter.convert(first, 'first')
+        elif not converter.no_conversion_needed(first):
+            raise ValueError(f"Argument 'first' got value {first!r} that "
+                             f"does not match type {type!r}.")
+        return first, converter.convert(second, 'second')
 
     def _should_be_equal(self, first, second, msg, values, formatter='str'):
         include_values = self._include_values(values)
@@ -1906,7 +1939,8 @@ class _Variables(_BuiltInBase):
         return resolver.resolve(self._variables)
 
     def _log_set_variable(self, name, value):
-        self.log(format_assign_message(name, value))
+        if self._context.steps:
+            logger.info(format_assign_message(name, value))
 
 
 class _RunKeyword(_BuiltInBase):
@@ -1931,7 +1965,7 @@ class _RunKeyword(_BuiltInBase):
         if not (ctx.dry_run or self._accepts_embedded_arguments(name, ctx)):
             name, args = self._replace_variables_in_name([name] + list(args))
         if ctx.steps:
-            data, result = ctx.steps[-1]
+            data, result, _ = ctx.steps[-1]
             lineno = data.lineno
         else:    # Called, typically by a listener, when no keyword started.
             data = lineno = None
@@ -1941,9 +1975,10 @@ class _RunKeyword(_BuiltInBase):
         return kw.run(result, ctx)
 
     def _accepts_embedded_arguments(self, name, ctx):
+        # KeywordRunner.run has similar logic that's used with setups/teardowns.
         if '{' in name:
             runner = ctx.get_runner(name, recommend_on_failure=False)
-            return runner and hasattr(runner, 'embedded_args')
+            return hasattr(runner, 'embedded_args')
         return False
 
     def _replace_variables_in_name(self, name_and_args):
@@ -2459,7 +2494,7 @@ class _RunKeyword(_BuiltInBase):
         # We need to reset it here to not continue unnecessarily:
         # https://github.com/robotframework/robotframework/issues/5237
         if context.in_teardown:
-            timeouts = [t for t in context.timeouts if t.type == 'Keyword']
+            timeouts = [t for t in context.timeouts if t.kind == 'KEYWORD']
             if timeouts and min(timeouts).timed_out():
                 err.keyword_timeout = True
 
@@ -2834,8 +2869,8 @@ class _Control(_BuiltInBase):
 
         *NOTE:* Robot Framework 5.0 added support for native ``RETURN`` statement
         and for inline ``IF``, and that combination should be used instead of this
-        keyword. For example, ``Return From Keyword`` usage in the example below
-        could be replaced with
+        keyword. For example, `Return From Keyword If` usage in the `Find Index`
+        example below could be replaced with this:
 
         | IF    '${item}' == '${element}'    RETURN    ${index}
 
@@ -3108,7 +3143,7 @@ class _Misc(_BuiltInBase):
         Formatter options ``type`` and ``len`` are new in Robot Framework 5.0.
         The CONSOLE level is new in Robot Framework 6.1.
         """
-        # TODO: Remove `repr` altogether in RF 7.0. It was deprecated in RF 5.0.
+        # TODO: Remove `repr` altogether in RF 8.0. It was deprecated in RF 5.0.
         if repr == 'DEPRECATED':
             formatter = self._get_formatter(formatter)
         else:
@@ -3579,12 +3614,16 @@ class _Misc(_BuiltInBase):
             return re.escape(patterns[0])
         return [re.escape(p) for p in patterns]
 
-    def set_test_message(self, message, append=False):
+    def set_test_message(self, message, append=False, separator=' '):
         """Sets message for the current test case.
 
         If the optional ``append`` argument is given a true value (see `Boolean
         arguments`), the given ``message`` is added after the possible earlier
-        message by joining the messages with a space.
+        message.
+
+        An optional ``separator`` argument can be used to provide custom separator
+        string when appending to the old text. A single space is used as separator
+        by default.
 
         In test teardown this keyword can alter the possible failure message,
         but otherwise failures override messages set by this keyword. Notice
@@ -3601,19 +3640,21 @@ class _Misc(_BuiltInBase):
         | Set Test Message | `*`HTML`*` <b>Hello!</b> |                      |
 
         This keyword can not be used in suite setup or suite teardown.
+
+        The ``separator`` argument is new in Robot Framework 7.2.
         """
         test = self._context.test
         if not test:
             raise RuntimeError("'Set Test Message' keyword cannot be used in "
                                "suite setup or teardown.")
-        test.message = self._get_new_text(test.message, message,
-                                          append, handle_html=True)
+        test.message = self._get_new_text(
+            test.message, message, append, handle_html=True, separator=separator)
         if self._context.in_test_teardown:
             self._variables.set_test("${TEST_MESSAGE}", test.message)
         message, level = self._get_logged_test_message_and_level(test.message)
         self.log(f'Set test message to:\n{message}', level)
 
-    def _get_new_text(self, old, new, append, handle_html=False):
+    def _get_new_text(self, old, new, append, handle_html=False, separator=' '):
         if not is_string(new):
             new = str(new)
         if not (is_truthy(append) and old):
@@ -3623,35 +3664,43 @@ class _Misc(_BuiltInBase):
                 new = new[6:].lstrip()
                 if not old.startswith('*HTML*'):
                     old = f'*HTML* {html_escape(old)}'
+                separator = html_escape(separator)
             elif old.startswith('*HTML*'):
                 new = html_escape(new)
-        return f'{old} {new}'
+                separator = html_escape(separator)
+        return f'{old}{separator}{new}'
 
     def _get_logged_test_message_and_level(self, message):
         if message.startswith('*HTML*'):
             return message[6:].lstrip(), 'HTML'
         return message, 'INFO'
 
-    def set_test_documentation(self, doc, append=False):
+    def set_test_documentation(self, doc, append=False, separator=' '):
         """Sets documentation for the current test case.
 
-        By default the possible existing documentation is overwritten, but
+        The possible existing documentation is overwritten by default, but
         this can be changed using the optional ``append`` argument similarly
         as with `Set Test Message` keyword.
+
+        An optional ``separator`` argument can be used to provide custom separator
+        string when appending to the old text. A single space is used as separator
+        by default.
 
         The current test documentation is available as a built-in variable
         ``${TEST DOCUMENTATION}``. This keyword can not be used in suite
         setup or suite teardown.
+
+        The ``separator`` argument is new in Robot Framework 7.2.
         """
         test = self._context.test
         if not test:
             raise RuntimeError("'Set Test Documentation' keyword cannot be "
                                "used in suite setup or teardown.")
-        test.doc = self._get_new_text(test.doc, doc, append)
+        test.doc = self._get_new_text(test.doc, doc, append, separator=separator)
         self._variables.set_test('${TEST_DOCUMENTATION}', test.doc)
         self.log(f'Set test documentation to:\n{test.doc}')
 
-    def set_suite_documentation(self, doc, append=False, top=False):
+    def set_suite_documentation(self, doc, append=False, top=False, separator=' '):
         """Sets documentation for the current test suite.
 
         By default, the possible existing documentation is overwritten, but
@@ -3663,15 +3712,21 @@ class _Misc(_BuiltInBase):
         arguments`), the documentation of the top level suite is altered
         instead.
 
+        An optional ``separator`` argument can be used to provide custom separator
+        string when appending to the old text. A single space is used as separator
+        by default.
+
         The documentation of the current suite is available as a built-in
         variable ``${SUITE DOCUMENTATION}``.
+
+        The ``separator`` argument is new in Robot Framework 7.2.
         """
         suite = self._get_context(top).suite
-        suite.doc = self._get_new_text(suite.doc, doc, append)
+        suite.doc = self._get_new_text(suite.doc, doc, append, separator=separator)
         self._variables.set_suite('${SUITE_DOCUMENTATION}', suite.doc, top)
         self.log(f'Set suite documentation to:\n{suite.doc}')
 
-    def set_suite_metadata(self, name, value, append=False, top=False):
+    def set_suite_metadata(self, name, value, append=False, top=False, separator=' '):
         """Sets metadata for the current test suite.
 
         By default, possible existing metadata values are overwritten, but
@@ -3682,15 +3737,22 @@ class _Misc(_BuiltInBase):
         If the optional ``top`` argument is given a true value (see `Boolean
         arguments`), the metadata of the top level suite is altered instead.
 
+        An optional ``separator`` argument can be used to provide custom separator
+        string when appending to the old text. A single space is used as separator
+        by default.
+
         The metadata of the current suite is available as a built-in variable
         ``${SUITE METADATA}`` in a Python dictionary. Notice that modifying this
         variable directly has no effect on the actual metadata the suite has.
+
+        The ``separator`` argument is new in Robot Framework 7.2.
         """
         if not is_string(name):
             name = str(name)
         metadata = self._get_context(top).suite.metadata
         original = metadata.get(name, '')
-        metadata[name] = self._get_new_text(original, value, append)
+        metadata[name] = self._get_new_text(original, value, append,
+                                            separator=separator)
         self._variables.set_suite('${SUITE_METADATA}', metadata.copy(), top)
         self.log(f"Set suite metadata '{name}' to value '{metadata[name]}'.")
 

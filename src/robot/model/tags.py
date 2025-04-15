@@ -108,6 +108,10 @@ class TagPatterns(Sequence['TagPattern']):
     def __init__(self, patterns: Iterable[str] = ()):
         self._patterns = tuple(TagPattern.from_string(p) for p in Tags(patterns))
 
+    @property
+    def is_constant(self):
+        return all(p.is_constant for p in self._patterns)
+
     def match(self, tags: Iterable[str]) -> bool:
         if not self._patterns:
             return False
@@ -132,6 +136,7 @@ class TagPatterns(Sequence['TagPattern']):
 
 
 class TagPattern(ABC):
+    is_constant = False
 
     @classmethod
     def from_string(cls, pattern: str) -> 'TagPattern':
@@ -165,6 +170,11 @@ class SingleTagPattern(TagPattern):
         # This way we can normalize tags only once.
         self._matcher = Matcher(normalize(pattern, ignore='_'),
                                 caseless=False, spaceless=False)
+
+    @property
+    def is_constant(self):
+        pattern = self._matcher.pattern
+        return not ('*' in pattern or '?' in pattern or '[' in pattern)
 
     def match(self, tags: Iterable[str]) -> bool:
         tags = normalize_tags(tags)

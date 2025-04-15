@@ -7,7 +7,11 @@ import warnings
 from inspect import getattr_static
 from pathlib import Path
 
-from jsonschema import Draft202012Validator
+try:
+    from jsonschema import Draft202012Validator as JSONValidator
+except ImportError:
+    def JSONValidator(*a, **k):
+        raise unittest.SkipTest('jsonschema module is not available')
 
 from robot import api, model
 from robot.model.modelobject import ModelObject
@@ -264,7 +268,7 @@ class TestToFromDictAndJson(unittest.TestCase):
     def setUpClass(cls):
         with open(CURDIR / '../../doc/schema/running_suite.json', encoding='UTF-8') as file:
             schema = json.load(file)
-        cls.validator = Draft202012Validator(schema=schema)
+        cls.validator = JSONValidator(schema=schema)
 
     def test_keyword(self):
         self._verify(Keyword(), name='')

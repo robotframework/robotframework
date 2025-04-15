@@ -2,12 +2,14 @@ import unittest
 
 from robot.libdocpkg.standardtypes import STANDARD_TYPE_DOCS
 from robot.running.arguments.typeconverters import (
-    EnumConverter, CustomConverter, TypeConverter, TypedDictConverter, UnionConverter
+    EnumConverter, CustomConverter, TypeConverter, TypedDictConverter, UnionConverter,
+    UnknownConverter
 )
 
 
 class TestStandardTypeDocs(unittest.TestCase):
-    no_std_docs = (EnumConverter, CustomConverter, TypedDictConverter, UnionConverter)
+    no_std_docs = (EnumConverter, CustomConverter, TypedDictConverter,
+                   UnionConverter, UnknownConverter)
 
     def test_all_standard_types_have_docs(self):
         for cls in TypeConverter.__subclasses__():

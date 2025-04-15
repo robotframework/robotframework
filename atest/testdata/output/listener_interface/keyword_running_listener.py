@@ -23,8 +23,14 @@ def end_test(name, attrs):
 
 
 def start_keyword(name, attrs):
-    run_keyword('Log', 'start_keyword')
+    if not recursive(name, attrs['args']):
+        run_keyword('Log', 'start_keyword')
 
 
 def end_keyword(name, attrs):
-    run_keyword('Log', 'end_keyword')
+    if not recursive(name, attrs['args']):
+        run_keyword('Log', 'end_keyword')
+
+
+def recursive(name, args):
+    return name == 'BuiltIn.Log' and args in (['start_keyword'], ['end_keyword'])

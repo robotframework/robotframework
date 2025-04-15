@@ -8,7 +8,7 @@ from robot.variables.search import (search_variable, unescape_variable_syntax,
 
 
 class TestSearchVariable(unittest.TestCase):
-    _identifiers = ['$', '@', '%', '&', '*']
+    identifiers = ('$', '@', '%', '&', '*')
 
     def test_empty(self):
         self._test('')
@@ -178,7 +178,7 @@ class TestSearchVariable(unittest.TestCase):
             self._test(inp, '${y}', start, identifiers=['$'])
 
     def test_identifier_as_variable_name(self):
-        for i in self._identifiers:
+        for i in self.identifiers:
             for count in 1, 2, 3, 42:
                 var = '%s{%s}' % (i, i*count)
                 self._test(var, var)
@@ -187,7 +187,7 @@ class TestSearchVariable(unittest.TestCase):
                 self._test(i+var+i, var, start=1)
 
     def test_identifier_as_variable_name_with_internal_vars(self):
-        for i in self._identifiers:
+        for i in self.identifiers:
             for count in 1, 2, 3, 42:
                 var = '%s{%s{%s}}' % (i, i*count, i)
                 self._test(var, var)
@@ -206,8 +206,18 @@ class TestSearchVariable(unittest.TestCase):
         self._test('${x}[${${PER}SON${2}[${i}]}]', '${x}',
                    items='${${PER}SON${2}[${i}]}')
 
-    def _test(self, inp, variable=None, start=0, items=None,
-              identifiers=_identifiers, ignore_errors=False):
+    def test_parse_type(self):
+        self._test('${h: int}', '${h: int}', type=None, parse_type=False)
+        self._test('${h:int}', '${h:int}', type=None, parse_type=True)
+        self._test('${h: int}', '${h}', type='int', parse_type=True)
+        self._test('${h: unknown}', '${h}', type='unknown', parse_type=True)
+        self._test('${h: int: hint}', '${h: int}', type='hint', parse_type=True)
+
+    def _test(self, inp, variable=None, start=0, type=None, items=None,
+              identifiers=identifiers, parse_type=False, ignore_errors=False):
+        match_str = variable or '<no match>'
+        type_str = f': {type}' if type else ''
+        match_str = match_str.replace('}', type_str + '}')
         if isinstance(items, str):
             items = (items,)
         elif items is None:
@@ -221,16 +231,17 @@ class TestSearchVariable(unittest.TestCase):
         else:
             identifier = variable[0]
             base = variable[2:-1]
-            end = start + len(variable)
-            is_var = inp == variable
+            end = start + len(variable) + len(type_str)
+            is_var = inp == variable or bool(type)
             if items:
                 items_str = ''.join(f'[{i}]' for i in items)
                 end += len(items_str)
-                is_var = inp == f'{variable}{items_str}'
+                is_var = inp == f'{variable}{items_str}' or bool(type)
+                match_str += items_str
             is_list_var = is_var and inp[0] == '@'
             is_dict_var = is_var and inp[0] == '&'
             is_scal_var = is_var and inp[0] == '$'
-        match = search_variable(inp, identifiers, ignore_errors)
+        match = search_variable(inp, identifiers, parse_type, ignore_errors)
         assert_equal(match.base, base, f'{inp!r} base')
         assert_equal(match.start, start, f'{inp!r} start')
         assert_equal(match.end, end, f'{inp!r} end')
@@ -238,11 +249,13 @@ class TestSearchVariable(unittest.TestCase):
         assert_equal(match.match, inp[start:end] if end != -1 else None)
         assert_equal(match.after, inp[end:] if end != -1 else '')
         assert_equal(match.identifier, identifier, f'{inp!r} identifier')
+        assert_equal(match.type, type)
         assert_equal(match.items, items, f'{inp!r} item')
         assert_equal(match.is_variable(), is_var)
         assert_equal(match.is_scalar_variable(), is_scal_var)
         assert_equal(match.is_list_variable(), is_list_var)
         assert_equal(match.is_dict_variable(), is_dict_var)
+        assert_equal(str(match), match_str)
 
     def test_is_variable(self):
         for no in ['', 'xxx', '${var} not alone', r'\${notvar}', r'\\${var}',
@@ -301,10 +314,16 @@ class TestVariableMatches(unittest.TestCase):
         self._assert_match(list(matches)[0], 'one ', '${var}', ' here')
         self._assert_match(list(matches)[0], 'one ', '${var}', ' here')
 
-    def _assert_match(self, match, before, variable, after):
+    def test_parse_type(self):
+        x, y = VariableMatches('${x: int} and ${y: float}', parse_type=True)
+        self._assert_match(x, '', '${x: int}', ' and ${y: float}', 'int')
+        self._assert_match(y, ' and ', '${y: float}', '', 'float')
+
+    def _assert_match(self, match, before, variable, after, type=None):
         assert_equal(match.before, before)
         assert_equal(match.match, variable)
         assert_equal(match.after, after)
+        assert_equal(match.type, type)
 
 
 class TestUnescapeVariableSyntax(unittest.TestCase):

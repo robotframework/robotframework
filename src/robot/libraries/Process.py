@@ -21,6 +21,7 @@ import time
 from tempfile import TemporaryFile
 
 from robot.api import logger
+from robot.errors import TimeoutExceeded
 from robot.utils import (cmdline2list, ConnectionCache, console_decode, console_encode,
                          is_list_like, is_pathlike, is_string, is_truthy,
                          NormalizedDict, secs_to_timestr, system_decode, system_encode,
@@ -148,33 +149,34 @@ class Process:
     == Standard output and error streams ==
 
     By default, processes are run so that their standard output and standard
-    error streams are kept in the memory. This works fine normally,
-    but if there is a lot of output, the output buffers may get full and
-    the program can hang.
+    error streams are kept in the memory. This typically works fine, but there
+    can be problems if the amount of output is large or unlimited. Prior to
+    Robot Framework 7.3 the limit was smaller than nowadays and reaching it
+    caused a deadlock.
 
     To avoid the above-mentioned problems, it is possible to use ``stdout``
     and ``stderr`` arguments to specify files on the file system where to
-    redirect the outputs. This can also be useful if other processes or
-    other keywords need to read or manipulate the outputs somehow.
+    redirect the output. This can also be useful if other processes or
+    other keywords need to read or manipulate the output somehow.
 
     Given ``stdout`` and ``stderr`` paths are relative to the `current working
     directory`. Forward slashes in the given paths are automatically converted
     to backslashes on Windows.
-
-    As a special feature, it is possible to redirect the standard error to
-    the standard output by using ``stderr=STDOUT``.
 
     Regardless are outputs redirected to files or not, they are accessible
     through the `result object` returned when the process ends. Commands are
     expected to write outputs using the console encoding, but `output encoding`
     can be configured using the ``output_encoding`` argument if needed.
 
-    If you are not interested in outputs at all, you can explicitly ignore them
-    by using a special value ``DEVNULL`` both with ``stdout`` and ``stderr``. For
+    As a special feature, it is possible to redirect the standard error to
+    the standard output by using ``stderr=STDOUT``.
+
+    If you are not interested in output at all, you can explicitly ignore it by
+    using a special value ``DEVNULL`` both with ``stdout`` and ``stderr``. For
     example, ``stdout=DEVNULL`` is the same as redirecting output on console
     with ``> /dev/null`` on UNIX-like operating systems or ``> NUL`` on Windows.
-    This way the process will not hang even if there would be a lot of output,
-    but naturally output is not available after execution either.
+    This way even a huge amount of output cannot cause problems, but naturally
+    the output is not available after execution either.
 
     Examples:
     | ${result} = | `Run Process` | program | stdout=${TEMPDIR}/stdout.txt | stderr=${TEMPDIR}/stderr.txt |
@@ -184,7 +186,7 @@ class Process:
     | ${result} = | `Run Process` | program | stdout=DEVNULL | stderr=DEVNULL |
 
     Note that the created output files are not automatically removed after
-    the test run. The user is responsible to remove them if needed.
+    execution. The user is responsible to remove them if needed.
 
     == Standard input stream ==
 
@@ -244,7 +246,7 @@ class Process:
     = Active process =
 
     The library keeps record which of the started processes is currently active.
-    By default it is the latest process started with `Start Process`,
+    By default, it is the latest process started with `Start Process`,
     but `Switch Process` can be used to activate a different process. Using
     `Run Process` does not affect the active process.
 
@@ -344,10 +346,11 @@ class Process:
         then log level will be ``info`` as default.
         
         Process outputs are, by default, written into in-memory buffers.
-        If there is a lot of output, these buffers may get full causing
-        the process to hang. To avoid that, process outputs can be redirected
-        using the ``stdout`` and ``stderr`` configuration parameters. For more
-        information see the `Standard output and error streams` section.
+        This typically works fine, but there can be problems if the amount of
+        output is large or unlimited. To avoid such problems, outputs can be
+        redirected to files using the ``stdout`` and ``stderr`` configuration
+        parameters. For more information see the `Standard output and error streams`
+        section.
 
         Returns a `result object` containing information about the execution.
 
@@ -510,7 +513,7 @@ class Process:
         See `Terminate Process` keyword for more details how processes are
         terminated and killed.
 
-        If the process ends before the timeout or it is terminated or killed,
+        If the process ends before the timeout, or it is terminated or killed,
         this keyword returns a `result object` containing information about
         the execution. If the process is left running, Python ``None`` is
         returned instead.
@@ -535,6 +538,11 @@ class Process:
         | Should Be Equal As Integers | ${result.rc}     | -9               |
         
         ``log_level`` is new in Robot Framework 7.2.
+
+        Note: If Robot Framework's test or keyword timeout is exceeded while
+        this keyword is waiting for the process to end, the process is killed
+        to avoid leaving it running on the background. This is new in Robot
+        Framework 7.3.
         """
         process = self._processes[handle]
         self._get_log_by_level('Waiting for process to complete.',log_level)
@@ -561,7 +569,24 @@ class Process:
 
     def _wait(self, process, log_level):
         result = self._results[process]
-        result.rc = process.wait() or 0
+        # Popen.communicate() does not like closed stdin/stdout/stderr PIPEs.
+        # Due to us using a timeout, we only need to care about stdin.
+        # https://github.com/python/cpython/issues/131064
+        if process.stdin and process.stdin.closed:
+            process.stdin = None
+        # Timeout is used with communicate() to support Robot's timeouts.
+        while True:
+            try:
+                result.stdout, result.stderr = process.communicate(timeout=0.1)
+            except subprocess.TimeoutExpired:
+                continue
+            except TimeoutExceeded:
+                logger.info('Timeout exceeded.')
+                self._kill(process)
+                raise
+            else:
+                break
+        result.rc = process.returncode
         result.close_streams()
         self._get_log_by_level('Process completed.',log_level)
         return result
@@ -571,7 +596,7 @@ class Process:
 
         If ``handle`` is not given, uses the current `active process`.
 
-        By default first tries to stop the process gracefully. If the process
+        By default, first tries to stop the process gracefully. If the process
         does not stop in 30 seconds, or ``kill`` argument is given a true value,
         (see `Boolean arguments`) kills the process forcefully. Stops also all
         the child processes of the originally started process.
@@ -646,7 +671,7 @@ class Process:
         This keyword can be used in suite teardown or elsewhere to make
         sure that all processes are stopped,
 
-        By default tries to terminate processes gracefully, but can be
+        Tries to terminate processes gracefully by default, but can be
         configured to forcefully kill them immediately. See `Terminate Process`
         that this keyword uses internally for more details.
         """
@@ -880,11 +905,19 @@ class ExecutionResult:
             self._read_stdout()
         return self._stdout
 
+    @stdout.setter
+    def stdout(self, stdout):
+        self._stdout = self._format_output(stdout)
+
     @property
     def stderr(self):
         if self._stderr is None:
             self._read_stderr()
         return self._stderr
+
+    @stderr.setter
+    def stderr(self, stderr):
+        self._stderr = self._format_output(stderr)
 
     def _read_stdout(self):
         self._stdout = self._read_stream(self.stdout_path, self._process.stdout)
@@ -910,6 +943,8 @@ class ExecutionResult:
         return stream and not stream.closed
 
     def _format_output(self, output):
+        if output is None:
+            return None
         output = console_decode(output, self._output_encoding)
         output = output.replace('\r\n', '\n')
         if output.endswith('\n'):
@@ -924,9 +959,9 @@ class ExecutionResult:
 
     def _get_and_read_standard_streams(self, process):
         stdin, stdout, stderr = process.stdin, process.stdout, process.stderr
-        if stdout:
+        if self._is_open(stdout):
             self._read_stdout()
-        if stderr:
+        if self._is_open(stderr):
             self._read_stderr()
         return [stdin, stdout, stderr]
 
@@ -1021,16 +1056,12 @@ class ProcessConfiguration:
                   'shell': self.shell,
                   'cwd': self.cwd,
                   'env': self.env}
-        # Close file descriptors regardless the Python version:
-        # https://github.com/robotframework/robotframework/issues/2794
-        if not WINDOWS:
-            config['close_fds'] = True
         self._add_process_group_config(config)
         return config
 
     def _add_process_group_config(self, config):
         if hasattr(os, 'setsid'):
-            config['preexec_fn'] = os.setsid
+            config['start_new_session'] = True
         if hasattr(subprocess, 'CREATE_NEW_PROCESS_GROUP'):
             config['creationflags'] = subprocess.CREATE_NEW_PROCESS_GROUP
 

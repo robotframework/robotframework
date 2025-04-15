@@ -151,6 +151,24 @@ Release notes
 
 __ https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/creating-a-personal-access-token
 
+
+Update libdoc generated files
+-----------------------------
+
+Run
+
+    invoke build-libdoc
+
+This step can be skipped if there are no changes to Libdoc. Prerequisites
+are listed in `<src/web/README.md>`_.
+
+This will regenerate the libdoc html template and update libdoc command line
+with the latest supported lagnuages.
+
+Commit & push if there are changes any changes to either
+`src/robot/htmldata/libdoc/libdoc.html` or `src/robot/libdocpkg/languages.py`.
+
+
 Set version
 -----------
 
@@ -189,27 +207,26 @@ Creating distributions
 
       invoke clean
 
-3. Create and validate source distribution in zip format and
-   `wheel <https://pythonwheels.com>`_::
+4. Create and validate source distribution and `wheel <https://pythonwheels.com>`_::
 
-      python setup.py sdist --formats zip bdist_wheel
+      python setup.py sdist bdist_wheel
       ls -l dist
       twine check dist/*
 
    Distributions can be tested locally if needed.
 
-4. Upload distributions to PyPI::
+5. Upload distributions to PyPI::
 
       twine upload dist/*
 
-5. Verify that project pages at `PyPI
+6. Verify that project pages at `PyPI
    <https://pypi.python.org/pypi/robotframework>`_ look good.
 
-6. Test installation::
+7. Test installation::
 
       pip install --pre --upgrade robotframework
 
-7. Documentation
+8. Documentation
 
    - For a reproducible build, set the ``SOURCE_DATE_EPOCH``
      environment variable to a constant value, corresponding to the

@@ -162,7 +162,7 @@ class TestRun(RunningTestCase):
         stderr = StringIO()
         assert_equal(run(self.data, loglevel='INV', stderr=stderr), 252)
         self._assert_output(stderr, [("[ ERROR ] Invalid value for option '--loglevel': "
-                                      "Invalid level 'INV'.", 1)])
+                                      "Invalid log level 'INV'.", 1)])
         self._assert_outputs()
 
     def test_invalid_option(self):
@@ -235,7 +235,7 @@ class TestRebot(RunningTestCase):
         stderr = StringIO()
         assert_equal(rebot(self.data, loglevel='INFO:INV', stderr=stderr), 252)
         self._assert_output(stderr, [("[ ERROR ] Invalid value for option '--loglevel': "
-                                      "Invalid level 'INV'.", 1)])
+                                      "Invalid log level 'INV'.", 1)])
         self._assert_outputs()
 
     def test_invalid_option(self):

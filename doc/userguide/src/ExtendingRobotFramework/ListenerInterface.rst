@@ -229,7 +229,9 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  | * `tags`: `Keyword tags`_ as a list of strings.                |
    |                  |                  | * `source`: An absolute path of the file where the keyword was |
    |                  |                  |   used. New in RF 4.0.                                         |
-   |                  |                  | * `lineno`: Line where the keyword was used. New in RF 4.0.    |
+   |                  |                  | * `lineno`: Line where the keyword was used. Typically an      |
+   |                  |                  |   integer, but can be `None` if a keyword has been executed by |
+   |                  |                  |   a listener. New in RF 4.0.                                   |
    |                  |                  | * `status`: Initial keyword status. `NOT RUN` if keyword is    |
    |                  |                  |   not executed (e.g. due to an earlier failure), `NOT SET`     |
    |                  |                  |   otherwise. New in RF 4.0.                                    |
@@ -527,6 +529,7 @@ and in the API docs of the optional ListenerV3_ base class.
    | start_if_branch,      |                  |                                                                    |
    | start_try,            |                  |                                                                    |
    | start_try_branch,     |                  |                                                                    |
+   | start_group,          |                  |                                                                    |
    | start_var,            |                  |                                                                    |
    | start_continue,       |                  |                                                                    |
    | start_break,          |                  |                                                                    |
@@ -540,6 +543,7 @@ and in the API docs of the optional ListenerV3_ base class.
    | end_if_branch,        |                  |                                                                    |
    | end_try,              |                  |                                                                    |
    | end_try_branch,       |                  |                                                                    |
+   | end_group,            |                  |                                                                    |
    | end_var,              |                  |                                                                    |
    | end_continue,         |                  |                                                                    |
    | end_break,            |                  |                                                                    |
@@ -991,15 +995,28 @@ as a class and also uses type hints:
             if msg.level == 'WARN' and not msg.html:
                 msg.message = f'<b style="font-size: 1.5em">{msg.message}</b>'
                 msg.html = True
+            if self._message_is_not_relevant(msg.message):
+                msg.message = None
+
+        def _message_is_not_relevant(self, message: str) -> bool:
+            ...
 
 A limitation is that modifying the name of the current test suite or test
 case is not possible because it has already been written to the `output.xml`_
 file when listeners are called. Due to the same reason modifying already
 finished tests in the `end_suite` method has no effect either.
 
+When modifying logged messages, it is possible to remove a message altogether
+by setting `message` to `None` as the above example demonstrates. This can be
+used for removing sensitive or non-relevant messages so that there is nothing
+visible in the log file.
+
 This API is very similar to the `pre-Rebot modifier`_ API that can be used
 to modify results before report and log are generated. The main difference is
 that listeners modify also the created :file:`output.xml` file.
+
+.. note:: Removing messages altogether by setting them to `None` is new in
+          Robot Framework 7.2.
 
 Changing keyword and control structure status
 '''''''''''''''''''''''''''''''''''''''''''''

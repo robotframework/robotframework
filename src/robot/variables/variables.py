@@ -39,8 +39,14 @@ class Variables:
     def __getitem__(self, name):
         return self.store.get(name)
 
+    def __delitem__(self, name):
+        self.store.pop(name)
+
     def __contains__(self, name):
         return name in self.store
+
+    def get(self, name, default=None):
+        return self.store.get(name, default)
 
     def resolve_delayed(self):
         self.store.resolve_delayed()
@@ -68,12 +74,15 @@ class Variables:
     def clear(self):
         self.store.clear()
 
-    def copy(self, exclude=None):
+    def copy(self, update=None):
         variables = Variables()
         variables.store.data = self.store.data.copy()
-        if exclude:
-            for name in exclude:
-                variables.store.data.pop(name[2:-1])
+        if update:
+            for name, value in update.items():
+                if value is not None:
+                    variables[name] = value
+                else:
+                    del variables[name]
         return variables
 
     def update(self, variables):

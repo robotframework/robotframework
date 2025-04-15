@@ -13,6 +13,8 @@ type Libdoc = {
   inits: Array<Keyword>;
   keywords: Array<Keyword>;
   typedocs: Array<TypeDoc>;
+  theme: string | null;
+  lang: string | null;
 };
 
 type Keyword = {
@@ -77,3 +79,5 @@ interface RuntimeLibdoc extends Libdoc {
 interface RuntimeKeyword extends Keyword {
   hidden?: boolean;
 }
+
+export type { Libdoc, RuntimeLibdoc };

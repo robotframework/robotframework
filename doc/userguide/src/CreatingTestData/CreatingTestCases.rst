@@ -669,13 +669,23 @@ special meaning otherwise than with the :setting:`[Tags]` setting. If there is
 a need to set a tag starting with a hyphen with :setting:`[Tags]`, it is possible
 to use the escaped__ format like `\-tag`.
 
+At the moment the `-tag` syntax can be used for removing tags only with the
+:setting:`[Tags]` setting, but the plan is to support this functionality also
+with the :setting:`Test Tags` setting in Robot Framework 8.0 (`#5250`__).
+Setting tags having a literal value that starts with a hyphen in :setting:`Test Tags`
+was deprecated in Robot Framework 7.2 (`#5252`__). The escaped format like `\-tag`
+can be used if tags with such values are needed.
+
 .. note:: The :setting:`Test Tags` setting is new in Robot Framework 6.0.
           Earlier versions support :setting:`Force Tags` and :setting:`Default Tags`
           settings discussed in the next section.
 
-.. note:: The `-tag` syntax for removing common tags is new in Robot Framework 7.0.
+.. note:: The `-tag` syntax for removing tags using the :setting:`[Tags]` setting
+          is new in Robot Framework 7.0.
 
 __ escaping_
+__ https://github.com/robotframework/robotframework/issues/5250
+__ https://github.com/robotframework/robotframework/issues/5252
 
 Deprecation of :setting:`Force Tags` and :setting:`Default Tags`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -922,13 +932,18 @@ an empty value for :setting:`[Template]` means that the test has no
 template even when :setting:`Test Template` is used. It is also possible
 to use value `NONE` to indicate that a test has no template.
 
+Using keywords with `default values`_ or accepting `variable number of arguments`_,
+as well as using `named arguments`_ and `free named arguments`_, work with templates
+exactly like they work otherwise. Using variables_ in arguments is also
+supported normally.
+
+Templates with multiple iterations
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 If a templated test case has multiple data rows in its body, the template
 is applied for all the rows one by one. This
 means that the same keyword is executed multiple times, once with data
-on each row. Templated tests are also special so that all the rounds
-are executed even if one or more of them fails. It is possible to use this
-kind of `continue on failure`_ mode with normal tests too, but with
-the templated tests the mode is on automatically.
+on each row.
 
 .. sourcecode:: robotframework
 
@@ -941,10 +956,25 @@ the templated tests the mode is on automatically.
        second round 1    second round 2
        third round 1     third round 2
 
-Using keywords with `default values`_ or accepting `variable number of arguments`_,
-as well as using `named arguments`_ and `free named arguments`_, work with templates
-exactly like they work otherwise. Using variables_ in arguments is also
-supported normally.
+Templated tests are special so that all iterations are executed even if one
+or more of them is failed or skipped. The aggregated result of a templated
+test with multiple iterations is:
+
+- FAIL if any of the iterations failed.
+- PASS if there were no failures and at least one iteration passed.
+- SKIP if all iterations were skipped.
+
+.. note:: It is possible to use the `continue on failure`_ mode also with normal
+          tests, but with the templated tests the mode is on automatically. If
+          needed, the mode can also be disabled__ with templates by using the
+          `robot:stop-on-failure` tag.
+
+.. note:: Running all iterations if one or more is skipped is new in Robot
+          Framework 7.2. With earlier versions the execution stopped for the
+          first skipped iteration and the test got the SKIP status regardless
+          of the status of the earlier iterations.
+
+__ `Disabling continue-on-failure using tags`_
 
 Templates with embedded arguments
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -1,6 +1,7 @@
 *** Settings ***
 Suite Setup       Run Libdoc And Parse Model From JSON    ${TESTDATADIR}/DataTypesLibrary.py
 Test Template     Should Be Equal Multiline
+Test Tags         require-jsonschema
 Resource          libdoc_resource.robot
 
 *** Test Cases ***

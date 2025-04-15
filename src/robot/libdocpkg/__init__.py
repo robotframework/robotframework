@@ -20,3 +20,4 @@ The public Libdoc API is exposed via the :mod:`robot.libdoc` module.
 
 from .builder import LibraryDocumentation
 from .consoleviewer import ConsoleViewer
+from .languages import format_languages, LANGUAGES

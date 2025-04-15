@@ -76,7 +76,6 @@ Run And Check Include And Exclude
 Tag Statistics Should Be
     [Arguments]    @{tags}
     ${stats} =    Get Tag Stat Nodes
-    Should Be Equal    ${{ len($stats) }}    ${{ len($tags) }}
-    FOR    ${stat}    ${tag}    IN ZIP    ${stats}    ${tags}
+    FOR    ${stat}    ${tag}    IN ZIP    ${stats}    ${tags}    mode=STRICT
         Should Be Equal    ${stat.text}    ${tag}
     END

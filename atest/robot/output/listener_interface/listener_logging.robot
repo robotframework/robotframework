@@ -10,16 +10,29 @@ Logging from listener does not break output file
 All start and end methods can log warnings to execution errors
     Correct warnings should be shown in execution errors
 
-Methods inside start_keyword and end_keyword can log normal messages
+Methods under tests can log normal messages
     Correct messages should be logged to normal log
 
-Methods outside start_keyword and end_keyword can log messages to syslog
+Methods outside tests can log messages to syslog
+    Correct messages should be logged to syslog
+
+Logging from listener when using JSON output
+    [Setup]    Run Tests With Logging Listener    format=json
+    Test statuses should be correct
+    Log and report should be created
+    Correct messages should be logged to normal log
+    Correct warnings should be shown in execution errors
     Correct messages should be logged to syslog
 
 *** Keywords ***
 Run Tests With Logging Listener
-    ${path} =    Normalize Path    ${LISTENER DIR}/logging_listener.py
-    Run Tests    --listener ${path} -l l.html -r r.html    misc/pass_and_fail.robot
+    [Arguments]    ${format}=xml
+    Should Be True    $format in ('xml', 'json')
+    VAR    ${output}      ${OUTDIR}/output.${format}
+    VAR    ${options}
+    ...    --listener ${LISTENER DIR}/logging_listener.py
+    ...    -o ${output} -l l.html -r r.html
+    Run Tests    ${options}    misc/pass_and_fail.robot    output=${output}
 
 Test statuses should be correct
     Check Test Case    Pass
@@ -73,73 +86,79 @@ Get start/end messages
 Correct messages should be logged to normal log
     'My Keyword' has correct messages    ${SUITE.setup}    Suite Setup
     ${tc} =    Check Test Case    Pass
-    'My Keyword' has correct messages    ${tc.kws[0]}    Pass
+    Check Log Message    ${tc[0]}   start_test    INFO
+    Check Log Message    ${tc[1]}   start_test    WARN
+    'My Keyword' has correct messages    ${tc[2]}    Pass
+    Check Log Message    ${tc[5]}   end_test    INFO
+    Check Log Message    ${tc[6]}   end_test    WARN
     ${tc} =    Check Test Case    Fail
-    'My Keyword' has correct messages    ${tc.kws[0]}    Fail
-    'Fail' has correct messages    ${tc.kws[1]}
+    Check Log Message    ${tc[0]}   start_test    INFO
+    Check Log Message    ${tc[1]}   start_test    WARN
+    'My Keyword' has correct messages    ${tc[2]}    Fail
+    'Fail' has correct messages    ${tc[3]}
+    Check Log Message    ${tc[4]}   end_test    INFO
+    Check Log Message    ${tc[5]}   end_test    WARN
 
 'My Keyword' has correct messages
     [Arguments]    ${kw}    ${name}
     IF    '${name}' == 'Suite Setup'
-        ${type} =    Set Variable    setup
+        VAR    ${type}     setup
     ELSE
-        ${type} =    Set Variable    keyword
+        VAR    ${type}     keyword
     END
-    Check Log Message    ${kw.body[0]}            start ${type}    INFO
-    Check Log Message    ${kw.body[1]}            start ${type}    WARN
-    Check Log Message    ${kw.body[2].body[0]}    start keyword    INFO
-    Check Log Message    ${kw.body[2].body[1]}    start keyword    WARN
-    Check Log Message    ${kw.body[2].body[2]}    log_message: INFO Hello says "${name}"!    INFO
-    Check Log Message    ${kw.body[2].body[3]}    log_message: INFO Hello says "${name}"!    WARN
-    Check Log Message    ${kw.body[2].body[4]}    Hello says "${name}"!    INFO
-    Check Log Message    ${kw.body[2].body[5]}    end keyword      INFO
-    Check Log Message    ${kw.body[2].body[6]}    end keyword      WARN
-    Check Log Message    ${kw.body[3].body[0]}    start keyword    INFO
-    Check Log Message    ${kw.body[3].body[1]}    start keyword    WARN
-    Check Log Message    ${kw.body[3].body[2]}    end keyword      INFO
-    Check Log Message    ${kw.body[3].body[3]}    end keyword      WARN
-    Check Log Message    ${kw.body[4].body[0]}    start keyword    INFO
-    Check Log Message    ${kw.body[4].body[1]}    start keyword    WARN
-    Check Log Message    ${kw.body[4].body[2]}    log_message: INFO \${assign} = JUST TESTING...    INFO
-    Check Log Message    ${kw.body[4].body[3]}    log_message: INFO \${assign} = JUST TESTING...    WARN
-    Check Log Message    ${kw.body[4].body[4]}    \${assign} = JUST TESTING...    INFO
-    Check Log Message    ${kw.body[4].body[5]}    end keyword      INFO
-    Check Log Message    ${kw.body[4].body[6]}    end keyword      WARN
-    Check Log Message    ${kw.body[5].body[0]}    start var        INFO
-    Check Log Message    ${kw.body[5].body[1]}    start var        WARN
-    Check Log Message    ${kw.body[5].body[2]}    log_message: INFO \${expected} = JUST TESTING...    INFO
-    Check Log Message    ${kw.body[5].body[3]}    log_message: INFO \${expected} = JUST TESTING...    WARN
-    Check Log Message    ${kw.body[5].body[4]}    \${expected} = JUST TESTING...    INFO
-    Check Log Message    ${kw.body[5].body[5]}    end var          INFO
-    Check Log Message    ${kw.body[5].body[6]}    end var          WARN
-    Check Log Message    ${kw.body[6].body[0]}    start keyword    INFO
-    Check Log Message    ${kw.body[6].body[1]}    start keyword    WARN
-    Check Log Message    ${kw.body[6].body[2]}    end keyword      INFO
-    Check Log Message    ${kw.body[6].body[3]}    end keyword      WARN
-    Check Log Message    ${kw.body[7].body[0]}    start return     INFO
-    Check Log Message    ${kw.body[7].body[1]}    start return     WARN
-    Check Log Message    ${kw.body[7].body[2]}    end return       INFO
-    Check Log Message    ${kw.body[7].body[3]}    end return       WARN
-    Check Log Message    ${kw.body[8]}            end ${type}      INFO
-    Check Log Message    ${kw.body[9]}            end ${type}      WARN
+    Check Log Message    ${kw[0]}       start ${type}    INFO
+    Check Log Message    ${kw[1]}       start ${type}    WARN
+    Check Log Message    ${kw[2, 0]}    start keyword    INFO
+    Check Log Message    ${kw[2, 1]}    start keyword    WARN
+    Check Log Message    ${kw[2, 2]}    log_message: INFO Hello says "${name}"!    INFO
+    Check Log Message    ${kw[2, 3]}    log_message: INFO Hello says "${name}"!    WARN
+    Check Log Message    ${kw[2, 4]}    Hello says "${name}"!    INFO
+    Check Log Message    ${kw[2, 5]}    end keyword      INFO
+    Check Log Message    ${kw[2, 6]}    end keyword      WARN
+    Check Log Message    ${kw[3, 0]}    start keyword    INFO
+    Check Log Message    ${kw[3, 1]}    start keyword    WARN
+    Check Log Message    ${kw[3, 2]}    end keyword      INFO
+    Check Log Message    ${kw[3, 3]}    end keyword      WARN
+    Check Log Message    ${kw[4, 0]}    start keyword    INFO
+    Check Log Message    ${kw[4, 1]}    start keyword    WARN
+    Check Log Message    ${kw[4, 2]}    log_message: INFO \${assign} = JUST TESTING...    INFO
+    Check Log Message    ${kw[4, 3]}    log_message: INFO \${assign} = JUST TESTING...    WARN
+    Check Log Message    ${kw[4, 4]}    \${assign} = JUST TESTING...    INFO
+    Check Log Message    ${kw[4, 5]}    end keyword      INFO
+    Check Log Message    ${kw[4, 6]}    end keyword      WARN
+    Check Log Message    ${kw[5, 0]}    start var        INFO
+    Check Log Message    ${kw[5, 1]}    start var        WARN
+    Check Log Message    ${kw[5, 2]}    log_message: INFO \${expected} = JUST TESTING...    INFO
+    Check Log Message    ${kw[5, 3]}    log_message: INFO \${expected} = JUST TESTING...    WARN
+    Check Log Message    ${kw[5, 4]}    \${expected} = JUST TESTING...    INFO
+    Check Log Message    ${kw[5, 5]}    end var          INFO
+    Check Log Message    ${kw[5, 6]}    end var          WARN
+    Check Log Message    ${kw[6, 0]}    start keyword    INFO
+    Check Log Message    ${kw[6, 1]}    start keyword    WARN
+    Check Log Message    ${kw[6, 2]}    end keyword      INFO
+    Check Log Message    ${kw[6, 3]}    end keyword      WARN
+    Check Log Message    ${kw[7, 0]}    start return     INFO
+    Check Log Message    ${kw[7, 1]}    start return     WARN
+    Check Log Message    ${kw[7, 2]}    end return       INFO
+    Check Log Message    ${kw[7, 3]}    end return       WARN
+    Check Log Message    ${kw[8]}       end ${type}      INFO
+    Check Log Message    ${kw[9]}       end ${type}      WARN
 
 'Fail' has correct messages
     [Arguments]    ${kw}
-    Check Log Message    ${kw.body[0]}    start keyword    INFO
-    Check Log Message    ${kw.body[1]}    start keyword    WARN
-    Check Log Message    ${kw.body[2]}    log_message: FAIL Expected failure    INFO
-    Check Log Message    ${kw.body[3]}    log_message: FAIL Expected failure    WARN
-    Check Log Message    ${kw.body[4]}    Expected failure    FAIL
-    Check Log Message    ${kw.body[5]}    end keyword    INFO
-    Check Log Message    ${kw.body[6]}    end keyword    WARN
+    Check Log Message    ${kw[0]}    start keyword    INFO
+    Check Log Message    ${kw[1]}    start keyword    WARN
+    Check Log Message    ${kw[2]}    log_message: FAIL Expected failure    INFO
+    Check Log Message    ${kw[3]}    log_message: FAIL Expected failure    WARN
+    Check Log Message    ${kw[4]}    Expected failure    FAIL
+    Check Log Message    ${kw[5]}    end keyword    INFO
+    Check Log Message    ${kw[6]}    end keyword    WARN
 
 Correct messages should be logged to syslog
     FOR    ${msg}    IN
     ...    message: INFO Robot Framework
     ...    start_suite
     ...    end_suite
-    ...    start_test
-    ...    end_test
     ...    output_file
     ...    log_file
     ...    report_file

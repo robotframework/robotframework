@@ -61,7 +61,10 @@ class Message(BodyItem):
     def id(self):
         if not self.parent:
             return 'm1'
-        messages = self.parent.messages
+        if hasattr(self.parent, 'messages'):
+            messages = self.parent.messages
+        else:
+            messages = self.parent.body.filter(messages=True)
         index = messages.index(self) if self in messages else len(messages)
         return f'{self.parent.id}-m{index + 1}'
 
@@ -80,10 +83,3 @@ class Message(BodyItem):
 
     def __str__(self):
         return self.message
-
-
-class Messages(ItemList):
-    __slots__ = []
-
-    def __init__(self, message_class=Message, parent=None, messages=None):
-        ItemList.__init__(self, message_class, {'parent': parent}, messages)

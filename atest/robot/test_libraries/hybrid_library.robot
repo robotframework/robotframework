@@ -5,14 +5,14 @@ Resource          atest_resource.robot
 *** Test Cases ***
 Passing, Logging And Returning
     ${tc} =    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    Hello world
+    Check Log Message    ${tc[0, 0]}    Hello world
 
 Failing
     Check Test Case    ${TESTNAME}
 
 Keyword Implemented In Library Class Itself
     ${tc} =    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    No need for __getattr__ here!!
+    Check Log Message    ${tc[0, 0]}    No need for __getattr__ here!!
 
 Non Existing Attribute
     Check Test Case    ${TESTNAME}
@@ -47,7 +47,7 @@ Embedded Keyword Arguments
 Name starting with an underscore is OK
     ${tc} =    Check Test Case    ${TESTNAME}
     Check Keyword Data    ${tc.body[0]}            GetKeywordNamesLibrary.Starting With Underscore Is Ok
-    Check Log Message     ${tc.body[0].msgs[0]}    This is explicitly returned from 'get_keyword_names' anyway.
+    Check Log Message     ${tc.body[0][0]}    This is explicitly returned from 'get_keyword_names' anyway.
 
 Invalid get_keyword_names
     Error in file    3    test_libraries/hybrid_library.robot    3
