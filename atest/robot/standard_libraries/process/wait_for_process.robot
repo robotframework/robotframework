@@ -10,18 +10,18 @@ Wait For Process
 
 Wait For Process With Info Log Level
     ${tc} =   Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc.kws[1].msgs[0]}    Waiting for process to complete.
-    Check Log Message    ${tc.kws[1].msgs[1]}    Process completed.
+    Check Log Message    ${tc[1, 0]}    Waiting for process to complete.
+    Check Log Message    ${tc[1, 1]}    Process completed.
 
 Wait For Process With Debug Log Level
     ${tc} =   Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc.kws[1].msgs[0]}    Waiting for process to complete.
-    Check Log Message    ${tc.kws[1].msgs[1]}    Process completed.
+    Check Log Message    ${tc[1, 0]}    Waiting for process to complete.
+    Check Log Message    ${tc[1, 1]}    Process completed.
 
 Wait For Process With Error Log Level
     ${tc} =   Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc.kws[1].msgs[0]}    Waiting for process to complete.
-    Check Log Message    ${tc.kws[1].msgs[1]}    Process completed.
+    Check Log Message    ${tc[1, 0]}    Waiting for process to complete.
+    Check Log Message    ${tc[1, 1]}    Process completed.
 
 Wait For Process Timeout
     ${tc} =    Check Test Case    ${TESTNAME}

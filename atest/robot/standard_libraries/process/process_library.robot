@@ -26,7 +26,6 @@ Running a process in a shell with log level
 Input things to process
     Check Test Case    ${TESTNAME}
 
-Assign process object to variable
 Run process in shell
     Check Test Case    ${TESTNAME}
 
