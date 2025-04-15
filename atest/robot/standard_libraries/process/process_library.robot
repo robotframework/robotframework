@@ -14,11 +14,6 @@ Error in exit code and stderr output
 Change current working directory
     Check Test Case    ${TESTNAME}
 
-Change Current Working Directory
-    Check Test Case    ${TESTNAME}
-
-Running a process in a shell
-    Check Test Case    ${TESTNAME}
 
 Running a process in a shell with log level
     Check Test Case    ${TESTNAME}

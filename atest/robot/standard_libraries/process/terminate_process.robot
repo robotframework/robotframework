@@ -10,8 +10,8 @@ Terminate process
 
 Terminate process with debug log level
     ${tc} =    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc[1, 0]}    Gracefully terminating process.
-    Check Log Message    ${tc[1, 0]}    Process completed.
+    Check Log Message    ${tc[1, 0]}    Gracefully terminating process.    
+    Check Log Message    ${tc[1, 1]}    Process completed.
 
 Kill process
     ${tc} =    Check Test Case    ${TESTNAME}
@@ -26,10 +26,6 @@ Kill process running on shell
     Check Test Case    ${TESTNAME}
 
 Also child processes are terminated
-    Check Test Case    ${TESTNAME}
-
-Also child processes are killedWait For Process With Info Log Level
-    [Tags]    no-windows
     Check Test Case    ${TESTNAME}
 
 Kill process when terminate fails
