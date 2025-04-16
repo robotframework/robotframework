@@ -537,7 +537,7 @@ class Process:
         | Process Should Be Stopped   |                  |                  |
         | Should Be Equal As Integers | ${result.rc}     | -9               |
         
-        ``log_level`` is new in Robot Framework 7.2.
+        ``log_level`` is new in Robot Framework 7.4.
 
         Note: If Robot Framework's test or keyword timeout is exceeded while
         this keyword is waiting for the process to end, the process is killed
@@ -627,7 +627,7 @@ class Process:
         - On Windows forceful kill only stops the main process, not possible
           child processes.
           
-        ``log_level`` is new in Robot Framework 7.2.
+        ``log_level`` is new in Robot Framework 7.4.
         """
         process = self._processes[handle]
         if not hasattr(process, 'terminate'):
@@ -712,7 +712,7 @@ class Process:
         be ``info``,``debug`` or ``error``. When ``log_level`` is not defined,
         then log level will be ``info`` as default.
         
-        ``log_level`` is new in Robot Framework 7.2.
+        ``log_level`` is new in Robot Framework 7.4.
         """
         if os.sep == '\\':
             raise RuntimeError('This keyword does not work on Windows.')
