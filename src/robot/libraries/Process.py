@@ -368,7 +368,7 @@ class Process:
 
         This keyword does not change the `active process`.
         
-        ``log_level`` is new in Robot Framework 7.2.
+        ``log_level`` is new in Robot Framework 7.4.
         """
         current = self._processes.current
         timeout = configuration.pop('timeout', None)
