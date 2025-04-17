@@ -14,6 +14,13 @@ Error in exit code and stderr output
 Change current working directory
     Check Test Case    ${TESTNAME}
 
+
+Running a process in a shell with log level
+    Check Test Case    ${TESTNAME}
+
+Input things to process
+    Check Test Case    ${TESTNAME}
+
 Run process in shell
     Check Test Case    ${TESTNAME}
 

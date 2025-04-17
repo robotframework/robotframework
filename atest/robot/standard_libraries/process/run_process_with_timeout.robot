@@ -1,6 +1,6 @@
 *** Settings ***
-Suite Setup      Run Tests    ${EMPTY}    standard_libraries/process/run_process_with_timeout.robot
-Resource         atest_resource.robot
+Suite Setup       Run Tests    ${EMPTY}    standard_libraries/process/run_process_with_timeout.robot
+Resource          atest_resource.robot
 
 *** Test Cases ***
 Finish before timeout

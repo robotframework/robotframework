@@ -1,11 +1,16 @@
 *** Settings ***
-Suite Setup      Run Tests    ${EMPTY}    standard_libraries/process/terminate_process.robot
-Resource         atest_resource.robot
+Suite Setup       Run Tests    ${EMPTY}    standard_libraries/process/terminate_process.robot
+Resource          atest_resource.robot
 
 *** Test Cases ***
 Terminate process
     ${tc} =    Check Test Case    ${TESTNAME}
     Check Log Message    ${tc[1, 0]}    Gracefully terminating process.
+    Check Log Message    ${tc[1, 1]}    Process completed.
+
+Terminate process with debug log level
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc[1, 0]}    Gracefully terminating process.    
     Check Log Message    ${tc[1, 1]}    Process completed.
 
 Kill process
@@ -21,10 +26,6 @@ Kill process running on shell
     Check Test Case    ${TESTNAME}
 
 Also child processes are terminated
-    Check Test Case    ${TESTNAME}
-
-Also child processes are killed
-    [Tags]    no-windows
     Check Test Case    ${TESTNAME}
 
 Kill process when terminate fails

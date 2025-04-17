@@ -40,3 +40,6 @@ Sending signal to a process with a handle
 
 Sending signal to a process with a wrong handle
     Check Test Case    ${TESTNAME}
+
+Sending signal to a process with a wrong handle with info log level
+    Check Test Case    ${TESTNAME}
