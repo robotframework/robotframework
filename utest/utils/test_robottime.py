@@ -63,6 +63,9 @@ class TestTime(unittest.TestCase):
 
     def test_timestr_to_secs_with_time_string(self):
         for inp, exp in [('1s', 1),
+                         ('1.2s', 1.2),
+                         ('1e2s', 100),
+                         ('1E2S', 100),
                          ('0 day 1 MINUTE 2 S 42 millis', 62.042),
                          ('1minute 0sec 10 millis', 60.01),
                          ('9 9 secs    5  3 4 m i l l i s e co n d s', 99.534),
@@ -183,8 +186,8 @@ class TestTime(unittest.TestCase):
         assert_equal(timestr_to_secs(str(secs), round_to=None), secs)
 
     def test_timestr_to_secs_with_invalid(self):
-        for inv in ['', 'foo', 'foo days', '1sec 42 millis 3', '1min 2y', '1x',
-                    '01:02:03:04', '01:02:03foo', 'foo01:02:03', None]:
+        for inv in ['', 'foo', 'foo days', '1sec 42 millis 3', '1min 2y', '1s 2s',
+                    '1x', '01:02:03:04', '01:02:03foo', 'foo01:02:03', None]:
             assert_raises_with_msg(ValueError, f"Invalid time string '{inv}'.",
                                    timestr_to_secs, inv)
 

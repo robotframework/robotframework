@@ -82,8 +82,9 @@ def _timer_to_secs(number):
 
 
 def _time_string_to_secs(timestr):
-    timestr = _normalize_timestr(timestr)
-    if not timestr:
+    try:
+        timestr = _normalize_timestr(timestr)
+    except ValueError:
         return None
     nanos = micros = millis = secs = mins = hours = days = weeks = 0
     if timestr[0] == '-':
@@ -113,6 +114,9 @@ def _time_string_to_secs(timestr):
 
 def _normalize_timestr(timestr):
     timestr = normalize(timestr)
+    if not timestr:
+        raise ValueError
+    seen = []
     for specifier, aliases in [('n', ['nanosecond', 'ns']),
                                ('u', ['microsecond', 'us', 'μs']),
                                ('M', ['millisecond', 'millisec', 'millis',
@@ -126,6 +130,11 @@ def _normalize_timestr(timestr):
         for alias in plural_aliases + aliases:
             if alias in timestr:
                 timestr = timestr.replace(alias, specifier)
+        if specifier in timestr:  # There are false positives but that's fine.
+            seen.append(specifier)
+    for specifier in seen:
+        if timestr.count(specifier) > 1:
+            raise ValueError
     return timestr
 
 
