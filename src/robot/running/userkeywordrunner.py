@@ -121,6 +121,9 @@ class UserKeywordRunner:
         for name, value in chain(zip(spec.positional, positional), named_only):
             if isinstance(value, DefaultValue):
                 value = value.resolve(variables)
+                type_info = spec.types.get(name)
+                if type_info:
+                    value = type_info.convert(value, name, kind='Argument default value')
             variables[f'${{{name}}}'] = value
         if spec.var_positional:
             variables[f'@{{{spec.var_positional}}}'] = var_positional

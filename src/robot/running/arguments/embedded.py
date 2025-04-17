@@ -14,9 +14,10 @@
 #  limitations under the License.
 
 import re
-from typing import Any, Mapping, Sequence
+from typing import Any, List, Mapping, Sequence
 
 from robot.errors import DataError
+from robot.running.arguments.typeinfo import TypeInfo
 from robot.utils import get_error_message
 from robot.variables import VariableMatches
 
@@ -30,10 +31,12 @@ class EmbeddedArguments:
 
     def __init__(self, name: re.Pattern,
                  args: Sequence[str] = (),
-                 custom_patterns: 'Mapping[str, str]|None' = None):
+                 custom_patterns: 'Mapping[str, str]|None' = None,
+                 types: List['str|None'] = []):
         self.name = name
         self.args = tuple(args)
         self.custom_patterns = custom_patterns or None
+        self.types = types
 
     @classmethod
     def from_name(cls, name: str) -> 'EmbeddedArguments|None':
@@ -45,8 +48,20 @@ class EmbeddedArguments:
 
     def parse_args(self, name: str) -> 'tuple[str, ...]':
         args, placeholders = self._parse_args(name)
+        converted_args = []
+        for type_, arg in zip(self.types, args):
+            if type_ is None:
+                converted_args.append(arg)
+                continue
+            info = TypeInfo.from_type_hint(type_)
+            try:
+                converted_args.append(info.convert(arg))
+            except TypeError:
+                raise DataError(f"Unrecognized type '{info.name}'.")
+            except ValueError:
+                raise DataError(f"Invalid value '{arg}' for type '{info.name}'.")
         if not placeholders:
-            return args
+            return tuple(converted_args)
         return tuple([self._replace_placeholders(a, placeholders) for a in args])
 
     def _parse_args(self, name: str) -> 'tuple[tuple[str, ...], dict[str, str]]':
@@ -107,7 +122,8 @@ class EmbeddedArgumentParser:
         args = []
         custom_patterns = {}
         after = string
-        for match in VariableMatches(' '.join(string.split()), identifiers='$'):
+        types = []
+        for match in VariableMatches(' '.join(string.split()), identifiers='$', parse_type=True):
             arg, pattern, is_custom = self._get_name_and_pattern(match.base)
             args.append(arg)
             if is_custom:
@@ -115,11 +131,12 @@ class EmbeddedArgumentParser:
                 pattern = self._format_custom_regexp(pattern)
             name_parts.extend([re.escape(match.before), '(', pattern, ')'])
             after = match.after
+            types.append(match.type)
         if not args:
             return None
         name_parts.append(re.escape(after))
         name = self._compile_regexp(''.join(name_parts))
-        return EmbeddedArguments(name, args, custom_patterns)
+        return EmbeddedArguments(name, args, custom_patterns, types)
 
     def _get_name_and_pattern(self, name: str) -> 'tuple[str, str, bool]':
         if ':' in name:

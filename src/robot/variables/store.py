@@ -19,7 +19,7 @@ from robot.utils import (DotDict, is_dict_like, is_list_like, NormalizedDict, NO
 
 from .notfound import variable_not_found
 from .resolvable import GlobalVariableValue, Resolvable
-from .search import is_assign, unescape_variable_syntax
+from .search import search_variable
 
 
 class VariableStore:
@@ -91,11 +91,11 @@ class VariableStore:
             self.data[name] = value
 
     def _undecorate(self, name):
-        if not is_assign(name, allow_nested=True):
+        match = search_variable(name, parse_type=True)
+        if not match.is_assign(allow_nested=True):
             raise DataError(f"Invalid variable name '{name}'.")
-        return self._variables.replace_string(
-            name[2:-1], custom_unescaper=unescape_variable_syntax
-        )
+        match.resolve_base(self._variables)
+        return str(match)[2:-1]
 
     def _undecorate_and_validate(self, name, value):
         undecorated = self._undecorate(name)
