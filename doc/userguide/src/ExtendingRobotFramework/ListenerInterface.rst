@@ -828,7 +828,7 @@ Listener examples
 -----------------
 
 This section contains examples using the listener interface. First examples
-illustrate getting notifications durin execution and latter examples modify
+illustrate getting notifications during execution and latter examples modify
 executed tests and created results.
 
 Getting information
