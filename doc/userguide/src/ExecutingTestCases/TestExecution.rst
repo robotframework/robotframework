@@ -692,6 +692,11 @@ fatal and execution stopped so that remaining tests are marked failed. With
 parsing errors encountered before execution even starts, this means that no
 tests are actually run.
 
+When this option is enabled, using `ERROR` level in logs, such as `Log` keyword
+from BuiltIn or Python's standard logging module, will also fail the execution.
+Additionally, the TRY/EXCEPT stucture does not catch log messages with `ERROR`
+level, even when :option:`--exitonerror` is used.
+
 __ `Errors and warnings during execution`_
 
 Handling teardowns
