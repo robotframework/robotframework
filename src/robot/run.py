@@ -370,6 +370,8 @@ Options
                           |  path/to/test/directory/
                           Examples:
                           --argumentfile argfile.txt --argumentfile STDIN
+    --customsettings tag *  Name of custom setting to process inside the
+                          suites. Can be used multiple times.      
  -h -? --help             Print usage instructions.
  --version                Print version information.
 
