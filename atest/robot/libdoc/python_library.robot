@@ -83,12 +83,12 @@ Keyword Source Info
     Keyword Lineno Should Be         7    1009
 
 KwArgs and VarArgs
-    Run Libdoc And Parse Output      Process
-    Keyword Name Should Be           7    Run Process
-    Keyword Arguments Should Be      7    command    *arguments    **configuration
+    Run Libdoc And Parse Output      ${TESTDATADIR}/KwArgs.py
+    Keyword Arguments Should Be      2    *varargs    **kwargs
+    Keyword Arguments Should Be      3    a    /    b    c=d    *e    f    g=h    **i
 
 Keyword-only Arguments
-    Run Libdoc And Parse Output      ${TESTDATADIR}/KeywordOnlyArgs.py
+    Run Libdoc And Parse Output      ${TESTDATADIR}/KwArgs.py
     Keyword Arguments Should Be      0    *    kwo
     Keyword Arguments Should Be      1    *varargs    kwo    another=default
 

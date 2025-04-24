@@ -185,7 +185,7 @@ class TestLibdocJsonWriter(unittest.TestCase):
         run_libdoc_and_validate_json('InternalLinking.py')
 
     def test_KeywordOnlyArgs(self):
-        run_libdoc_and_validate_json('KeywordOnlyArgs.py')
+        run_libdoc_and_validate_json('KwArgs.py')
 
     def test_LibraryDecorator(self):
         run_libdoc_and_validate_json('LibraryDecorator.py')
