@@ -1140,7 +1140,9 @@ class _Verify(_BuiltInBase):
             raise AssertionError(self._get_string_msg(orig_container, item, msg,
                                                       values, 'does not contain'))
 
-    def should_contain_any(self, container, *items, **configuration):
+    def should_contain_any(self, container, *items, msg=None, values=True,
+                           ignore_case=False, strip_spaces=False,
+                           collapse_spaces=False):
         """Fails if ``container`` does not contain any of the ``*items``.
 
         Works with strings, lists, and anything that supports Python's ``in``
@@ -1152,26 +1154,14 @@ class _Verify(_BuiltInBase):
         names have with `Should Contain`. These arguments must always
         be given using ``name=value`` syntax after all ``items``.
 
-        Note that possible equal signs in ``items`` must be escaped with
-        a backslash (e.g. ``foo\\=bar``) to avoid them to be passed in
-        as ``**configuration``.
-
         Examples:
         | Should Contain Any | ${string} | substring 1 | substring 2 |
         | Should Contain Any | ${list}   | item 1 | item 2 | item 3 |
         | Should Contain Any | ${list}   | item 1 | item 2 | item 3 | ignore_case=True |
         | Should Contain Any | ${list}   | @{items} | msg=Custom message | values=False |
         """
-        msg = configuration.pop('msg', None)
-        values = configuration.pop('values', True)
-        ignore_case = is_truthy(configuration.pop('ignore_case', False))
-        strip_spaces = configuration.pop('strip_spaces', False)
-        collapse_spaces = is_truthy(configuration.pop('collapse_spaces', False))
-        if configuration:
-            raise RuntimeError(f"Unsupported configuration parameter{s(configuration)}: "
-                               f"{seq2str(sorted(configuration))}.")
         if not items:
-            raise RuntimeError('One or more items required.')
+            raise RuntimeError('One or more item required.')
         orig_container = container
         if ignore_case:
             items = [x.casefold() if is_string(x) else x for x in items]
@@ -1199,20 +1189,19 @@ class _Verify(_BuiltInBase):
                                        quote_item2=False)
             raise AssertionError(msg)
 
-    def should_not_contain_any(self, container, *items, **configuration):
+    def should_not_contain_any(self, container, *items, msg=None, values=True,
+                               ignore_case=False, strip_spaces=False,
+                               collapse_spaces=False):
         """Fails if ``container`` contains one or more of the ``*items``.
 
         Works with strings, lists, and anything that supports Python's ``in``
         operator.
 
         Supports additional configuration parameters ``msg``, ``values``,
-        ``ignore_case`` and ``strip_spaces``, and ``collapse_spaces`` which have exactly
-        the same semantics as arguments with same names have with `Should Contain`.
-        These arguments must always be given using ``name=value`` syntax after all ``items``.
-
-        Note that possible equal signs in ``items`` must be escaped with
-        a backslash (e.g. ``foo\\=bar``) to avoid them to be passed in
-        as ``**configuration``.
+        ``ignore_case`` and ``strip_spaces``, and ``collapse_spaces``
+        which have exactly the same semantics as arguments with same
+        names have with `Should Contain`. These arguments must always
+        be given using ``name=value`` syntax after all ``items``.
 
         Examples:
         | Should Not Contain Any | ${string} | substring 1 | substring 2 |
@@ -1220,16 +1209,8 @@ class _Verify(_BuiltInBase):
         | Should Not Contain Any | ${list}   | item 1 | item 2 | item 3 | ignore_case=True |
         | Should Not Contain Any | ${list}   | @{items} | msg=Custom message | values=False |
         """
-        msg = configuration.pop('msg', None)
-        values = configuration.pop('values', True)
-        ignore_case = is_truthy(configuration.pop('ignore_case', False))
-        strip_spaces = configuration.pop('strip_spaces', False)
-        collapse_spaces = is_truthy(configuration.pop('collapse_spaces', False))
-        if configuration:
-            raise RuntimeError(f"Unsupported configuration parameter{s(configuration)}: "
-                               f"{seq2str(sorted(configuration))}.")
         if not items:
-            raise RuntimeError('One or more items required.')
+            raise RuntimeError('One or more item required.')
         orig_container = container
         if ignore_case:
             items = [x.casefold() if is_string(x) else x for x in items]

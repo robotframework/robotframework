@@ -77,25 +77,24 @@ class Process:
     = Process configuration =
 
     `Run Process` and `Start Process` keywords can be configured using
-    optional ``**configuration`` keyword arguments. Configuration arguments
-    must be given after other arguments passed to these keywords and must
-    use syntax like ``name=value``. Available configuration arguments are
-    listed below and discussed further in sections afterward.
+    optional configuration arguments. These arguments must be given
+    after other arguments passed to these keywords and must use the
+    ``name=value`` syntax. Available configuration arguments are
+    listed below and discussed further in the subsequent sections.
 
-    |  = Name =  |                  = Explanation =                      |
-    | shell      | Specifies whether to run the command in shell or not. |
-    | cwd        | Specifies the working directory.                      |
-    | env        | Specifies environment variables given to the process. |
-    | env:<name> | Overrides the named environment variable(s) only.     |
-    | stdout     | Path of a file where to write standard output.        |
-    | stderr     | Path of a file where to write standard error.         |
-    | stdin      | Configure process standard input. New in RF 4.1.2.    |
-    | output_encoding | Encoding to use when reading command outputs.    |
-    | alias      | Alias given to the process.                           |
+    |  = Name =   |                  = Explanation =                      |
+    | shell       | Specify whether to run the command in a shell or not. |
+    | cwd         | Specify the working directory.                        |
+    | env         | Specify environment variables given to the process.   |
+    | **env_extra | Override named environment variables using ``env:<name>=<value>`` syntax. |
+    | stdout      | Path to a file where to write standard output.        |
+    | stderr      | Path to a file where to write standard error.         |
+    | stdin       | Configure process standard input. New in RF 4.1.2.    |
+    | output_encoding | Encoding to use when reading command outputs.     |
+    | alias       | A custom name given to the process.                   |
 
-    Note that because ``**configuration`` is passed using ``name=value`` syntax,
-    possible equal signs in other arguments passed to `Run Process` and
-    `Start Process` must be escaped with a backslash like ``name\\=value``.
+    Note that possible equal signs in other arguments passed to `Run Process`
+    and `Start Process` must be escaped with a backslash like ``name\\=value``.
     See `Run Process` for an example.
 
     == Running processes in shell ==
@@ -325,20 +324,23 @@ class Process:
         self._processes = ConnectionCache('No active process.')
         self._results = {}
 
-    def run_process(self, command, *arguments, **configuration):
+    def run_process(self, command, *arguments, cwd=None, shell=False, stdout=None,
+                    stderr=None, stdin=None, output_encoding='CONSOLE', alias=None,
+                    timeout=None, on_timeout='terminate', env=None, **env_extra):
         """Runs a process and waits for it to complete.
 
-        ``command`` and ``*arguments`` specify the command to execute and
+        ``command`` and ``arguments`` specify the command to execute and
         arguments passed to it. See `Specifying command and arguments` for
         more details.
 
-        ``**configuration`` contains additional configuration related to
-        starting processes and waiting for them to finish. See `Process
-        configuration` for more details about configuration related to starting
-        processes. Configuration related to waiting for processes consists of
-        ``timeout`` and ``on_timeout`` arguments that have same semantics as
-        with `Wait For Process` keyword. By default, there is no timeout, and
-        if timeout is defined the default action on timeout is ``terminate``.
+        The started process can be configured using ``cwd``, ``shell``, ``stdout``,
+        ``stderr``, ``stdin``, ``output_encoding``, ``alias``, ``env`` and
+        ``env_extra`` parameters that are documented in the `Process configuration`
+        section.
+
+        Configuration related to waiting for processes consists of ``timeout``
+        and ``on_timeout`` parameters that have same semantics than with the
+        `Wait For Process` keyword.
 
         Process outputs are, by default, written into in-memory buffers.
         This typically works fine, but there can be problems if the amount of
@@ -349,9 +351,8 @@ class Process:
 
         Returns a `result object` containing information about the execution.
 
-        Note that possible equal signs in ``*arguments`` must be escaped
-        with a backslash (e.g. ``name\\=value``) to avoid them to be passed in
-        as ``**configuration``.
+        Note that possible equal signs in ``command`` and ``arguments`` must
+        be escaped with a backslash (e.g. ``name\\=value``).
 
         Examples:
         | ${result} = | Run Process | python | -c | print('Hello, world!') |
@@ -363,18 +364,30 @@ class Process:
         This keyword does not change the `active process`.
         """
         current = self._processes.current
-        timeout = configuration.pop('timeout', None)
-        on_timeout = configuration.pop('on_timeout', 'terminate')
         try:
-            handle = self.start_process(command, *arguments, **configuration)
+            handle = self.start_process(
+                command,
+                *arguments,
+                cwd=cwd,
+                shell=shell,
+                stdout=stdout,
+                stderr=stderr,
+                stdin=stdin,
+                output_encoding=output_encoding,
+                alias=alias,
+                env=env,
+                **env_extra
+            )
             return self.wait_for_process(handle, timeout, on_timeout)
         finally:
             self._processes.current = current
 
-    def start_process(self, command, *arguments, **configuration):
+    def start_process(self, command, *arguments, cwd=None, shell=False, stdout=None,
+                    stderr=None, stdin=None, output_encoding='CONSOLE', alias=None,
+                    env=None, **env_extra):
         """Starts a new process on background.
 
-        See `Specifying command and arguments` and `Process configuration`
+        See `Specifying command and arguments` and `Process configuration` sections
         for more information about the arguments, and `Run Process` keyword
         for related examples. This includes information about redirecting
         process outputs to avoid process handing due to output buffers getting
@@ -411,7 +424,17 @@ class Process:
         Earlier versions returned a generic handle and getting the process object
         required using `Get Process Object` separately.
         """
-        conf = ProcessConfiguration(**configuration)
+        conf = ProcessConfiguration(
+            cwd=cwd,
+            shell=shell,
+            stdout=stdout,
+            stderr=stderr,
+            stdin=stdin,
+            output_encoding=output_encoding,
+            alias=alias,
+            env=env,
+            **env_extra
+        )
         command = conf.get_command(command, list(arguments))
         self._log_start(command, conf)
         process = subprocess.Popen(command, **conf.popen_config)
@@ -921,7 +944,7 @@ class ExecutionResult:
 class ProcessConfiguration:
 
     def __init__(self, cwd=None, shell=False, stdout=None, stderr=None, stdin=None,
-                 output_encoding='CONSOLE', alias=None, env=None, **rest):
+                 output_encoding='CONSOLE', alias=None, env=None, **env_extra):
         self.cwd = os.path.normpath(cwd) if cwd else os.path.abspath('.')
         self.shell = is_truthy(shell)
         self.alias = alias
@@ -929,7 +952,7 @@ class ProcessConfiguration:
         self.stdout_stream = self._new_stream(stdout)
         self.stderr_stream = self._get_stderr(stderr, stdout, self.stdout_stream)
         self.stdin_stream = self._get_stdin(stdin)
-        self.env = self._construct_env(env, rest)
+        self.env = self._construct_env(env, env_extra)
 
     def _new_stream(self, name):
         if name == 'DEVNULL':

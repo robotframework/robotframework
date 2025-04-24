@@ -980,7 +980,7 @@ class OperatingSystem:
         self._info("Environment variable '%s' set to value '%s'."
                    % (name, value))
 
-    def append_to_environment_variable(self, name, *values, **config):
+    def append_to_environment_variable(self, name, *values, separator=os.pathsep):
         """Appends given ``values`` to environment variable ``name``.
 
         If the environment variable already exists, values are added after it,
@@ -988,8 +988,7 @@ class OperatingSystem:
 
         Values are, by default, joined together using the operating system
         path separator (``;`` on Windows, ``:`` elsewhere). This can be changed
-        by giving a separator after the values like ``separator=value``. No
-        other configuration parameters are accepted.
+        by giving a separator after the values like ``separator=value``.
 
         Examples (assuming ``NAME`` and ``NAME2`` do not exist initially):
         | Append To Environment Variable | NAME     | first  |       |
@@ -1005,11 +1004,6 @@ class OperatingSystem:
         initial = self.get_environment_variable(name, sentinel)
         if initial is not sentinel:
             values = (initial,) + values
-        separator = config.pop('separator', os.pathsep)
-        if config:
-            config = ['='.join(i) for i in sorted(config.items())]
-            self._error('Configuration %s not accepted.'
-                        % seq2str(config, lastsep=' or '))
         self.set_environment_variable(name, separator.join(values))
 
     def remove_environment_variable(self, *names):
