@@ -30,10 +30,12 @@ class EmbeddedArguments:
 
     def __init__(self, name: re.Pattern,
                  args: Sequence[str] = (),
-                 custom_patterns: 'Mapping[str, str]|None' = None):
+                 custom_patterns: 'Mapping[str, str]|None' = None,
+                 types: Sequence['str|None'] = ()):
         self.name = name
         self.args = tuple(args)
         self.custom_patterns = custom_patterns or None
+        self.types = types
 
     @classmethod
     def from_name(cls, name: str) -> 'EmbeddedArguments|None':
@@ -69,7 +71,20 @@ class EmbeddedArguments:
 
     def map(self, args: Sequence[Any]) -> 'list[tuple[str, Any]]':
         self.validate(args)
-        return list(zip(self.args, args))
+        converted_args = []
+        from robot.running import TypeInfo
+        for type_, arg in zip(self.types, args):
+            if type_ is None:
+                converted_args.append(arg)
+                continue
+            info = TypeInfo.from_type_hint(type_)
+            try:
+                converted_args.append(info.convert(arg))
+            except TypeError:
+                raise DataError(f"Unrecognized type '{info.name}'.")
+            except ValueError:
+                raise DataError(f"Invalid value '{arg}' for type '{info.name}'.")
+        return list(zip(self.args, converted_args))
 
     def validate(self, args: Sequence[Any]):
         """Validate that embedded args match custom regexps.
@@ -107,7 +122,8 @@ class EmbeddedArgumentParser:
         args = []
         custom_patterns = {}
         after = string
-        for match in VariableMatches(' '.join(string.split()), identifiers='$'):
+        types = []
+        for match in VariableMatches(' '.join(string.split()), identifiers='$', parse_type=True):
             arg, pattern, is_custom = self._get_name_and_pattern(match.base)
             args.append(arg)
             if is_custom:
@@ -115,11 +131,12 @@ class EmbeddedArgumentParser:
                 pattern = self._format_custom_regexp(pattern)
             name_parts.extend([re.escape(match.before), '(', pattern, ')'])
             after = match.after
+            types.append(match.type)
         if not args:
             return None
         name_parts.append(re.escape(after))
         name = self._compile_regexp(''.join(name_parts))
-        return EmbeddedArguments(name, args, custom_patterns)
+        return EmbeddedArguments(name, args, custom_patterns, types)
 
     def _get_name_and_pattern(self, name: str) -> 'tuple[str, str, bool]':
         if ':' in name:

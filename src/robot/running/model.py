@@ -431,9 +431,9 @@ class Var(model.Var, WithSource):
             raise DataError(f"Invalid VAR scope: {err}")
 
     def _resolve_name_and_value(self, variables):
-        name = self.name[:2] + variables.replace_string(self.name[2:-1]) + '}'
-        value = VariableResolver.from_variable(self).resolve(variables)
-        return name, value
+        resolver = VariableResolver.from_variable(self)
+        resolver.resolve(variables)
+        return resolver.name, resolver.value
 
     def to_dict(self) -> DataDict:
         data = super().to_dict()

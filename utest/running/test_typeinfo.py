@@ -4,6 +4,8 @@ from decimal import Decimal
 from pathlib import Path
 from typing import (Any, Dict, Generic, List, Literal, Mapping, Sequence,
                     Set, Tuple, TypedDict, TypeVar, Union)
+
+from robot.variables.search import search_variable
 try:
     from typing import Annotated
 except ImportError:
@@ -187,6 +189,60 @@ class TestTypeInfo(unittest.TestCase):
                                                TypeInfo('None', None),
                                                TypeInfo('True', True)))
         assert_equal(str(info), "Literal['int', None, True]")
+
+    def test_from_variable(self):
+        info = TypeInfo.from_variable('${x}')
+        assert_info(info, None)
+        info = TypeInfo.from_variable('${x: int}')
+        assert_info(info, 'int', int)
+
+    def test_from_variable_list_and_dict(self):
+        int_info = TypeInfo.from_type_hint(int)
+        any_info = TypeInfo.from_type_hint(Any)
+        str_info = TypeInfo.from_type_hint(str)
+        info = TypeInfo.from_variable('${x: int}')
+        assert_info(info, 'int', int)
+        info = TypeInfo.from_variable('@{x: int}')
+        assert_info(info, 'list', list, (int_info,))
+        info = TypeInfo.from_variable('&{x: int}')
+        assert_info(info, 'dict', dict, (any_info, int_info))
+        info = TypeInfo.from_variable('&{x: str=int}')
+        assert_info(info, 'dict', dict, (str_info, int_info))
+        match = search_variable('&{x: str=int}', parse_type=True)
+        info = TypeInfo.from_variable(match)
+        assert_info(info, 'dict', dict, (str_info, int_info))
+
+    def test_from_variable_invalid(self):
+        assert_raises_with_msg(
+            DataError,
+            "Unrecognized type 'unknown'.",
+            TypeInfo.from_variable,
+            '${x: unknown}'
+        )
+        assert_raises_with_msg(
+            DataError,
+            "Unrecognized type 'unknown'.",
+            TypeInfo.from_variable,
+            '${x: list[unknown]}'
+        )
+        assert_raises_with_msg(
+            DataError,
+            "Unrecognized type 'unknown'.",
+            TypeInfo.from_variable,
+            '${x: int|set[unknown]}'
+        )
+        assert_raises_with_msg(
+            DataError,
+            "Parsing type 'list[broken' failed: Error at end: Closing ']' missing.",
+            TypeInfo.from_variable,
+            '${x: list[broken}'
+        )
+        assert_raises_with_msg(
+            DataError,
+            "Unrecognized type 'int=float'.",
+            TypeInfo.from_variable,
+            '${x: int=float}'
+        )
 
     def test_non_type(self):
         for item in 42, object(), set(), b'hello':

@@ -281,6 +281,48 @@ class TestSearchVariable(unittest.TestCase):
         assert_true(search_variable('&{yzy}[afa]').is_dict_variable())
         assert_true(search_variable('&{x}[k][foo][bar][1]').is_dict_variable())
 
+    def test_has_type(self):
+        match = search_variable('${x}', parse_type=True)
+        assert_true(match.type is None)
+        assert_true(match.name == '${x}')
+        match = search_variable('${x: int}', parse_type=True)
+        assert_true(match.type == 'int')
+        assert_true(match.name == '${x}')
+        match = search_variable('@{x: int}', parse_type=True)
+        assert_true(match.type == 'int')
+        assert_true(match.name == '@{x}')
+        match = search_variable('&{x: int}', parse_type=True)
+        assert_true(match.type == 'int')
+        assert_true(match.name == '&{x}')
+        match = search_variable('&{x: str=int}', parse_type=True)
+        assert_true(match.type == 'str=int')
+        assert_true(match.name == '&{x}')
+
+    def test_has_type_like(self):
+        match = search_variable('xxx: int')
+        assert_true(match.type is None)
+        assert_true(match.string == "xxx: int")
+        match = search_variable('xxx: int', parse_type=True)
+        assert_true(match.type is None)
+        assert_true(match.string == "xxx: int")
+        match = search_variable('{"xxx": "int"}')
+        assert_true(match.type is None)
+        assert_true(match.string == '{"xxx": "int"}')
+        match = search_variable('no type: ${var}')
+        assert_true(match.type is None)
+        assert_true(match.string == 'no type: ${var}')
+        match = search_variable('${no type: ${var}}')
+        assert_true(match.type is None)
+        assert_true(match.string == '${no type: ${var}}')
+
+    def test_has_inline_evaluation(self):
+        match = search_variable('${{{"1": 2, "3": 4}}}')
+        assert_true(match.type is None)
+        assert_true(match.name == '${{{"1": 2, "3": 4}}}')
+        match = search_variable('${{{"1": 2, "3": 4}}}', parse_type=True)
+        assert_true(match.type == "4}}", f"'{match.type}'")
+        assert_true(match.name == '${{{"1": 2, "3"}', f"'{match.name}'")
+
 
 class TestVariableMatches(unittest.TestCase):
 

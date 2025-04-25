@@ -20,6 +20,8 @@ from decimal import Decimal
 from enum import Enum
 from pathlib import Path
 from typing import Any, ForwardRef, get_args, get_origin, get_type_hints, Literal, Union
+
+from robot.variables.search import VariableMatch, search_variable
 if sys.version_info < (3, 9):
     try:
         # get_args and get_origin handle at least Annotated wrong in Python 3.8.
@@ -192,6 +194,8 @@ class TypeInfo(metaclass=SetterAwareType):
         """
         if hint is NOT_SET:
             return cls()
+        if isinstance(hint, cls):
+            return hint
         if isinstance(hint, ForwardRef):
             hint = hint.__forward_arg__
         if isinstance(hint, typeddict_types):
@@ -275,6 +279,37 @@ class TypeInfo(metaclass=SetterAwareType):
         if len(infos) == 1:
             return infos[0]
         return cls('Union', nested=infos)
+
+    @classmethod
+    def from_variable(cls, variable: 'str|VariableMatch',
+                      handle_list_and_dict: bool = True) -> 'TypeInfo|None':
+        """Construct a ``TypeInfo`` based on a variable."""
+        if isinstance(variable, str):
+            variable = search_variable(variable, parse_type=True)
+        if not variable.type:
+            return cls()
+        type_ = variable.type
+        if handle_list_and_dict:
+            if variable.identifier == '@':
+                type_ = f'list[{type_}]'
+            elif variable.identifier == '&':
+                if '=' in type_:
+                    kt, vt = variable.type.split('=', 1)
+                else:
+                    kt, vt = 'Any', variable.type
+                type_ = f'dict[{kt}, {vt}]'
+        info = cls.from_string(type_)
+        cls._validate_var_type(info)
+        return info
+
+    @classmethod
+    def _validate_var_type(cls, info):
+        if info.type is None:
+            raise DataError(f"Unrecognized type '{info.name}'.")
+        if info.nested and info.type is not Literal:
+            for nested in info.nested:
+                cls._validate_var_type(nested)
+
 
     def convert(self, value: Any,
                 name: 'str|None' = None,
