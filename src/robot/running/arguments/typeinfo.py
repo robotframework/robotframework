@@ -21,7 +21,6 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, ForwardRef, get_args, get_origin, get_type_hints, Literal, Union
 
-from robot.variables.search import VariableMatch, search_variable
 if sys.version_info < (3, 9):
     try:
         # get_args and get_origin handle at least Annotated wrong in Python 3.8.
@@ -40,6 +39,7 @@ from robot.conf import Languages, LanguagesLike
 from robot.errors import DataError
 from robot.utils import (is_union, NOT_SET, plural_or_not as s, setter,
                          SetterAwareType, type_name, type_repr, typeddict_types)
+from robot.variables import search_variable, VariableMatch
 
 from ..context import EXECUTION_CONTEXTS
 from .customconverters import CustomArgumentConverters
@@ -283,7 +283,13 @@ class TypeInfo(metaclass=SetterAwareType):
     @classmethod
     def from_variable(cls, variable: 'str|VariableMatch',
                       handle_list_and_dict: bool = True) -> 'TypeInfo|None':
-        """Construct a ``TypeInfo`` based on a variable."""
+        """Construct a ``TypeInfo`` based on a variable.
+
+        Type can be specified using syntax like `${x: int}`. Supports both
+        strings and already parsed `VariableMatch` objects.
+
+        New in Robot Framework 7.3.
+        """
         if isinstance(variable, str):
             variable = search_variable(variable, parse_type=True)
         if not variable.type:
@@ -294,9 +300,9 @@ class TypeInfo(metaclass=SetterAwareType):
                 type_ = f'list[{type_}]'
             elif variable.identifier == '&':
                 if '=' in type_:
-                    kt, vt = variable.type.split('=', 1)
+                    kt, vt = type_.split('=', 1)
                 else:
-                    kt, vt = 'Any', variable.type
+                    kt, vt = 'Any', type_
                 type_ = f'dict[{kt}, {vt}]'
         info = cls.from_string(type_)
         cls._validate_var_type(info)
@@ -309,7 +315,6 @@ class TypeInfo(metaclass=SetterAwareType):
         if info.nested and info.type is not Literal:
             for nested in info.nested:
                 cls._validate_var_type(nested)
-
 
     def convert(self, value: Any,
                 name: 'str|None' = None,

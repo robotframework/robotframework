@@ -21,7 +21,8 @@ from robot.errors import (DataError, ExecutionStatus, HandlerExecutionFailed,
 from robot.utils import (DotDict, ErrorDetails, format_assign_message,
                          get_error_message, is_dict_like, is_list_like,
                          prepr, type_name)
-from .search import search_variable, VariableMatch
+
+from .search import search_variable
 
 
 class VariableAssignment:
@@ -220,18 +221,16 @@ class ReturnValueResolver:
     def resolve(self, return_value):
         raise NotImplementedError
 
-    def _split_assignment(self, assignment, handle_list_and_dict=True):
-        match: VariableMatch = search_variable(assignment, parse_type=True)
+    def _split_assignment(self, assignment):
         from robot.running import TypeInfo
-        info = TypeInfo.from_variable(match, handle_list_and_dict)
+        match = search_variable(assignment, parse_type=True)
+        info = TypeInfo.from_variable(match) if match.type else None
         return match.name, info, match.items
 
-    def _convert(self, return_value, type_):
-        if type_:
-            from robot.running import TypeInfo
-            info = TypeInfo.from_type_hint(type_)
-            return_value = info.convert(return_value, kind='Return value')
-        return return_value
+    def _convert(self, return_value, type_info):
+        if not type_info:
+            return return_value
+        return type_info.convert(return_value, kind='Return value')
 
 
 class NoReturnValueResolver(ReturnValueResolver):
@@ -260,7 +259,7 @@ class MultiReturnValueResolver(ReturnValueResolver):
         self._types = []
         self._items = []
         for assign in assignments:
-            name, type_, items = self._split_assignment(assign, handle_list_and_dict=False)
+            name, type_, items = self._split_assignment(assign)
             self._names.append(name)
             self._types.append(type_)
             self._items.append(items)
@@ -336,11 +335,5 @@ class ScalarsAndListReturnValueResolver(MultiReturnValueResolver):
             return_value[list_index:list_index+list_len],
         )]
         result = elements_before_list + list_elements + elements_after_list
-        for index, (name, items, value) in enumerate(result):
-            type_ = self._types[index]
-            if index == list_index:
-                value = [self._convert(v, type_) for v in value]
-            else:
-                value = self._convert(value, type_)
-            result[index] = (name, items, value)
-        return result
+        return [(name, items, self._convert(value, info))
+                for (name, items, value), info in zip(result, self._types)]

@@ -38,13 +38,13 @@ Variable section
     Variable should not exist    ${NONE_TYPE: None}
     Should be equal    ${NO_TYPE_FROM_VAR: int}    42    type=str
 
-Variable section: list
+Variable section: List
     Should be equal    ${LIST_IN_LIST}    [[1, 2], [1, 2, 3]]    type=list
     Variable should not exist    ${LIST_IN_LIST: list[int]}
     Should be equal    ${LIST}    ${{[1, 2, 3]}}
     Variable should not exist    ${LIST: int}
 
-Variable section: dictionary
+Variable section: Dictionary
     Should be equal    ${DICT_1}    {"a": "1", "b": 2, "c": "None"}    type=dict
     Variable should not exist    ${DICT_1: str=int|str}
     Should be equal    ${DICT_2}    {1: [1, 2, 3], 2: [4, 5, 6]}    type=dict
@@ -52,7 +52,7 @@ Variable section: dictionary
     Should be equal    ${DICT_3}    {"10": [3, 2], "20": [1, 0]}    type=dict
     Variable should not exist    ${DICT_3: list[int]}
 
-Variable section: with invalid values or types
+Variable section: With invalid values or types
     Variable should not exist    ${BAD_VALUE}
     Variable should not exist    ${BAD_VALUE: int}
     Variable should not exist    ${BAD_TYPE}
@@ -76,7 +76,7 @@ VAR syntax
     VAR    ${x: int}    1    2    3    separator=
     Should be equal    ${x}    123    type=int
 
-VAR syntax: list
+VAR syntax: List
     VAR    ${x: list}    [1, "2", 3]
     Should be equal    ${x}    [1, "2", 3]    type=list
     VAR    @{x: int}    1    2    3
@@ -84,7 +84,7 @@ VAR syntax: list
     VAR    @{x: list[int]}    [1, 2]    [2, 3, 4]
     Should be equal    ${x}    [[1, 2], [2, 3, 4]]    type=list
 
-VAR syntax: dictionary
+VAR syntax: Dictionary
     VAR    &{x: int}    1=2    3=4
     Should be equal    ${x}    {"1": 2, "3": 4}    type=dict
     VAR    &{x: int=str}    3=4    5=6
@@ -92,7 +92,7 @@ VAR syntax: dictionary
     VAR    &{x: int=dict[str, float]}    30={"key": 1}    40={"key": 2.3}
     Should be equal    ${x}    {30: {"key": 1.0}, 40: {"key": 2.3}}    type=dict
 
-VAR syntax: invalid scalar value
+VAR syntax: Invalid scalar value
     [Documentation]    FAIL
     ...    Setting variable '\${x: int}' failed: \
     ...    Value 'KALA' cannot be converted to integer.
@@ -102,12 +102,12 @@ VAR syntax: Invalid scalar type
     [Documentation]    FAIL    Unrecognized type 'hahaa'.
     VAR    ${x: hahaa}    KALA
 
-VAR syntax: type can not be set as variable
+VAR syntax: Type can not be set as variable
     [Documentation]    FAIL    Unrecognized type '\${type}'.
     VAR    ${type}    int
     VAR    ${x: ${type}}    1
 
-VAR syntax: type syntax is not resolved from variable
+VAR syntax: Type syntax is not resolved from variable
     VAR    ${type}    : int
     VAR    ${safari${type}}    42
     Should be equal    ${safari: int}    42    type=str
@@ -119,7 +119,7 @@ Vvariable assignment
     ${x: int} =    Set Variable    42
     Should be equal    ${x}    42    type=int
 
-Variable assignment: list
+Variable assignment: List
     @{x: int} =    Create List    1    2    3
     Should be equal    ${x}    [1, 2, 3]    type=list
     @{x: list[INT]} =    Create List    [1, 2]    [2, 3, 4]
@@ -127,7 +127,7 @@ Variable assignment: list
     ${x: list[integer]} =    Create List    1    2    3
     Should be equal    ${x}    [1, 2, 3]    type=list
 
-Variable assignment: dictionary
+Variable assignment: Dictionary
     &{x: int} =    Create Dictionary    1=2    ${3}=${4.0}
     Should be equal    ${x}    {"1": 2, 3: 4}    type=dict
     &{x: int=str} =    Create Dictionary    1=2    ${3}=${4.0}
@@ -137,13 +137,13 @@ Variable assignment: dictionary
     &{x: int=dict[str, int]} =    Create Dictionary    1={2: 3}    4={5: 6}
     Should be equal    ${x}    {1: {"2": 3}, 4: {"5": 6}}    type=dict
 
-Variable assignment: invalid value
+Variable assignment: Invalid value
     [Documentation]    FAIL
     ...    ValueError: Return value 'kala' cannot be converted to list[int]: \
     ...    Invalid expression.
     ${x: list[int]} =    Set Variable    kala
 
-Variable assignment: invalid type
+Variable assignment: Invalid type
     [Documentation]    FAIL Unrecognized type 'not_a_type'.
     ${x: list[not_a_type]} =    Set Variable    1    2
 
@@ -162,12 +162,12 @@ Variable assignment: Invalid variable type for dictionary
     [Documentation]    FAIL    Unrecognized type 'int=str'.
     ${x: int=str} =    Create dictionary    1=2    3=4
 
-Variable assignment: multiple
+Variable assignment: Multiple
     ${a: int}    ${b: float} =    Create List    1    2.3
     Should be equal    ${a}    1     type=int
     Should be equal    ${b}    2.3   type=float
 
-Variable assignment: multiple list and scalars
+Variable assignment: Multiple list and scalars
     ${a: int}    @{b: float} =    Create List    1    2    3.4
     Should be equal    ${a}    ${1}
     Should be equal    ${b}    [2.0, 3.4]    type=list
@@ -188,17 +188,17 @@ Variable assignment: Invalid type for list in multiple variable assignment
     [Documentation]    FAIL    Unrecognized type 'bad'.
     ${a: int}    @{b: bad} =    Create List    9    8    7
 
-Variable assignment: type can not be set as variable
+Variable assignment: Type can not be set as variable
     [Documentation]    FAIL    Unrecognized type '\${type}'.
     VAR    ${type}    int
     ${a: ${type}} =    Set variable    123
 
-Variable assignment: type syntax is not resolved from variable
+Variable assignment: Type syntax is not resolved from variable
     VAR    ${type}    x: int
     ${${type}} =    Set variable    12
     Should be equal    ${x: int}    12
 
-Variable assignment: extended
+Variable assignment: Extended
     [Documentation]    FAIL
     ...    ValueError: Return value 'kala' cannot be converted to integer.
     Should be equal    ${OBJ.name}    dude    type=str
@@ -206,7 +206,7 @@ Variable assignment: extended
     Should be equal    ${OBJ.name}    ${42}    type=int
     ${OBJ.name: int} =    Set variable    kala
 
-Variable assignment: item
+Variable assignment: Item
     [Documentation]    FAIL
     ...    ValueError: Return value 'kala' cannot be converted to integer.
     VAR    @{x}    1    2
@@ -221,29 +221,29 @@ User keyword
     Kwargs    a=1    b=2.3
     Combination of all args    1.0    2    3    4    a=5    b=6
 
-User keyword: default value
+User keyword: Default value
     Default
     Default    1
     Default as string
     Default as string    ${42}
 
-User keyword: wrong default value 1
+User keyword: Wrong default value 1
     [Documentation]    FAIL
     ...    ValueError: Argument default value 'arg' got value 'wrong' that cannot be converted to integer.
     Wrong default
 
-User keyword: wrong default value 2
+User keyword: Wrong default value 2
     [Documentation]    FAIL
     ...    ValueError: Argument 'arg' got value 'yyy' that cannot be converted to integer.
     Wrong default    yyy
 
-User keyword: invalid value
+User keyword: Invalid value
     [Documentation]    FAIL
     ...    ValueError: Argument 'type' got value 'bad' that cannot be \
     ...    converted to 'int', 'float' or 'third value in literal'.
     Keyword    1.2    1.2    bad
 
-User keyword: invalid type
+User keyword: Invalid type
     [Documentation]    FAIL
     ...    Invalid argument specification: \
     ...    Invalid argument '\${arg: bad}': \
@@ -262,17 +262,23 @@ Embedded arguments
     Embedded 1 and 2
     Embedded type 1 and no type 2
     Embedded type with custom regular expression 111
+
+Embedded arguments: With variables
     VAR    ${x}    1
-    VAR    ${y}    2
+    VAR    ${y}    ${2.0}
     Embedded ${x} and ${y}
 
-Embedded arguments: Invalid type
-    [Documentation]    FAIL    Unrecognized type 'invalid'.
-    Embedded invalid type 1
-
 Embedded arguments: Invalid value
-    [Documentation]    FAIL    Invalid value 'kala' for type 'int'.
+    [Documentation]    FAIL    ValueError: Argument 'kala' cannot be converted to integer.
     Embedded 1 and kala
+
+Embedded arguments: Invalid value from variable
+    [Documentation]    FAIL    ValueError: Argument '[2, 3]' (list) cannot be converted to integer.
+    Embedded 1 and ${{[2, 3]}}
+
+Embedded arguments: Invalid type
+    [Documentation]    FAIL    Invalid embedded argument '${x: invalid}': Unrecognized type 'invalid'.
+    Embedded invalid type ${x: invalid}
 
 Variable usage does not support type syntax 1
     [Documentation]    FAIL
@@ -287,7 +293,7 @@ Variable usage does not support type syntax 2
     ...    Variable '\${abc_not_here}' not found.
     Log    ${abc_not_here: int}: fails
 
-Set global/suite/test/local variable: no support
+Set global/suite/test/local variable: No support
     Set local variable    ${local: int}     1
     Should be equal       ${local: int}     1    type=str
     Set test variable     ${test: xxx}      2

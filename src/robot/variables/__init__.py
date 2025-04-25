@@ -28,6 +28,6 @@ from .search import (search_variable, contains_variable,
                      is_scalar_variable, is_scalar_assign,
                      is_dict_variable, is_dict_assign,
                      is_list_variable, is_list_assign,
-                     VariableMatches)
+                     VariableMatch, VariableMatches)
 from .tablesetter import VariableResolver, DictVariableResolver
 from .variables import Variables
