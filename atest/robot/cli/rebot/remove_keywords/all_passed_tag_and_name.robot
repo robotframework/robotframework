@@ -35,16 +35,16 @@ Warnings Are Removed In All Mode
 
 Errors Are Removed In All Mode
     ${tc} =    Check Test Case    Error in test case
-    Keyword Should Be Empty    ${tc.body[0]}    Error in test case
+    Keyword Should Be Empty    ${tc[0]}    Error in test case
     Logged Errors Are Preserved In Execution Errors
 
 IF/ELSE in All mode
     ${tc} =    Check Test Case    IF structure
-    Length Should Be             ${tc.body}            2
-    Length Should Be             ${tc.body[1].body}    3
-    IF Branch Should Be Empty    ${tc[1, 0]}           IF         '\${x}' == 'wrong'
-    IF Branch Should Be Empty    ${tc[1, 1]}           ELSE IF    '\${x}' == 'value'
-    IF Branch Should Be Empty    ${tc[1, 2]}           ELSE
+    Length Should Be             ${tc.body}       2
+    Length Should Be             ${tc[1].body}    3
+    IF Branch Should Be Empty    ${tc[1, 0]}      IF         '\${x}' == 'wrong'
+    IF Branch Should Be Empty    ${tc[1, 1]}      ELSE IF    '\${x}' == 'value'
+    IF Branch Should Be Empty    ${tc[1, 2]}      ELSE
 
 FOR in All mode
     ${tc1} =    Check Test Case    FOR

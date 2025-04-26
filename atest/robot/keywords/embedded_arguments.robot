@@ -92,14 +92,14 @@ Custom regexp with inline Python evaluation
 
 Non Matching Variable Is Accepted With Custom Regexp (But Not For Long)
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc[0][0]}
+    Check Log Message    ${tc[0, 0]}
     ...    Embedded argument 'x' got value 'foo' that does not match custom pattern 'bar'. The argument is still accepted, but this behavior will change in Robot Framework 8.0.    WARN
 
 Partially Matching Variable Is Accepted With Custom Regexp (But Not For Long)
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc[0][0]}
+    Check Log Message    ${tc[0, 0]}
     ...    Embedded argument 'x' got value 'ba' that does not match custom pattern 'bar'. The argument is still accepted, but this behavior will change in Robot Framework 8.0.    WARN
-    Check Log Message    ${tc[0][1]}
+    Check Log Message    ${tc[0, 1]}
     ...    Embedded argument 'y' got value 'zapzap' that does not match custom pattern '...'. The argument is still accepted, but this behavior will change in Robot Framework 8.0.    WARN
 
 Non String Variable Is Accepted With Custom Regexp

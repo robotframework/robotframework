@@ -101,12 +101,12 @@ Variable Values Should Not Be Visible In Keyword Arguments
 Strict retry interval
     ${tc} =    Check Test Case    ${TESTNAME}
     Length Should Be    ${tc[0].body}    4
-    Elapsed Time Should Be Valid    ${tc.body[0].elapsed_time}    minimum=0.3    maximum=0.9
+    Elapsed Time Should Be Valid    ${tc[0].elapsed_time}    minimum=0.3    maximum=0.9
 
 Fail with strict retry interval
     ${tc} =    Check Test Case    ${TESTNAME}
     Length Should Be    ${tc[0].non_messages}    3
-    Elapsed Time Should Be Valid    ${tc.body[0].elapsed_time}    minimum=0.2    maximum=0.6
+    Elapsed Time Should Be Valid    ${tc[0].elapsed_time}    minimum=0.2    maximum=0.6
 
 Strict retry interval violation
     ${tc} =    Check Test Case    ${TESTNAME}
