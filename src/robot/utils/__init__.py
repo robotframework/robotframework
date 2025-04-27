@@ -136,14 +136,9 @@ from .robottime import (
 )
 from .robottypes import (
     has_args as has_args,
-    is_bytes as is_bytes,
     is_dict_like as is_dict_like,
     is_falsy as is_falsy,
-    is_integer as is_integer,
     is_list_like as is_list_like,
-    is_number as is_number,
-    is_pathlike as is_pathlike,
-    is_string as is_string,
     is_truthy as is_truthy,
     is_union as is_union,
     type_name as type_name,
@@ -188,6 +183,7 @@ def __getattr__(name):
     # https://github.com/robotframework/robotframework/issues/4501
 
     from io import StringIO
+    from os import PathLike
     from xml.etree import ElementTree as ET
     from .robottypes import FALSE_STRINGS, TRUE_STRINGS
 
@@ -201,6 +197,21 @@ def __getattr__(name):
     def py3to2(cls):
         return cls
 
+    def is_integer(item):
+        return isinstance(item, int)
+
+    def is_number(item):
+        return isinstance(item, (int, float))
+
+    def is_bytes(item):
+        return isinstance(item, (bytes, bytearray))
+
+    def is_string(item):
+        return isinstance(item, str)
+
+    def is_pathlike(item):
+        return isinstance(item, PathLike)
+
     deprecated = {
         'FALSE_STRINGS': FALSE_STRINGS,
         'TRUE_STRINGS': TRUE_STRINGS,
@@ -210,6 +221,11 @@ def __getattr__(name):
         'PY2': False,
         'JYTHON': False,
         'IRONPYTHON': False,
+        'is_number': is_number,
+        'is_integer': is_integer,
+        'is_pathlike': is_pathlike,
+        'is_bytes': is_bytes,
+        'is_string': is_string,
         'is_unicode': is_string,
         'unicode': str,
         'roundup': round,

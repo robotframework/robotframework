@@ -1,5 +1,4 @@
 from robot.libraries.BuiltIn import BuiltIn
-from robot.utils import is_string
 
 
 def get_result_or_error(*args):
@@ -16,6 +15,6 @@ def pretty(*args, **kwargs):
 
 
 def to_str(arg):
-    if is_string(arg):
+    if isinstance(arg, str):
         return arg
     return '%s (%s)' % (arg, type(arg).__name__)

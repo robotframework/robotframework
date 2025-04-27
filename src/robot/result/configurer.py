@@ -14,7 +14,7 @@
 #  limitations under the License.
 
 from robot import model
-from robot.utils import is_string, parse_timestamp
+from robot.utils import parse_timestamp
 
 
 class SuiteConfigurer(model.SuiteConfigurer):
@@ -41,7 +41,7 @@ class SuiteConfigurer(model.SuiteConfigurer):
     def _get_remove_keywords(self, value):
         if value is None:
             return []
-        if is_string(value):
+        if isinstance(value, str):
             return [value]
         return value
 

@@ -18,14 +18,14 @@ import signal as signal_module
 import subprocess
 import sys
 import time
+from pathlib import Path
 from tempfile import TemporaryFile
 
 from robot.api import logger
 from robot.errors import TimeoutExceeded
 from robot.utils import (cmdline2list, ConnectionCache, console_decode, console_encode,
-                         is_list_like, is_pathlike, is_string, is_truthy,
-                         NormalizedDict, secs_to_timestr, system_decode, system_encode,
-                         timestr_to_secs, WINDOWS)
+                         is_list_like, NormalizedDict, secs_to_timestr, system_decode,
+                         system_encode, timestr_to_secs, WINDOWS)
 from robot.version import get_version
 
 
@@ -540,7 +540,7 @@ class Process:
         return self._wait(process)
 
     def _get_timeout(self, timeout):
-        if (is_string(timeout) and timeout.upper() == 'NONE') or not timeout:
+        if (isinstance(timeout, str) and timeout.upper() == 'NONE') or not timeout:
             return -1
         return timestr_to_secs(timeout)
 
@@ -612,7 +612,7 @@ class Process:
         if not hasattr(process, 'terminate'):
             raise RuntimeError('Terminating processes is not supported '
                                'by this Python version.')
-        terminator = self._kill if is_truthy(kill) else self._terminate
+        terminator = self._kill if kill else self._terminate
         try:
             terminator(process)
         except OSError:
@@ -691,7 +691,7 @@ class Process:
         process = self._processes[handle]
         signum = self._get_signal_number(signal)
         logger.info(f'Sending signal {signal} ({signum}).')
-        if is_truthy(group) and hasattr(os, 'killpg'):
+        if group and hasattr(os, 'killpg'):
             os.killpg(process.pid, signum)
         elif hasattr(process, 'send_signal'):
             process.send_signal(signum)
@@ -790,7 +790,6 @@ class Process:
     def _get_result_attributes(self, result, *includes):
         attributes = (result.rc, result.stdout, result.stderr,
                       result.stdout_path, result.stderr_path)
-        includes = (is_truthy(incl) for incl in includes)
         return tuple(attr for attr, incl in zip(attributes, includes) if incl)
 
     def switch_process(self, handle):
@@ -946,7 +945,7 @@ class ProcessConfiguration:
     def __init__(self, cwd=None, shell=False, stdout=None, stderr=None, stdin=None,
                  output_encoding='CONSOLE', alias=None, env=None, **env_extra):
         self.cwd = os.path.normpath(cwd) if cwd else os.path.abspath('.')
-        self.shell = is_truthy(shell)
+        self.shell = shell
         self.alias = alias
         self.output_encoding = output_encoding
         self.stdout_stream = self._new_stream(stdout)
@@ -970,9 +969,9 @@ class ProcessConfiguration:
         return self._new_stream(stderr)
 
     def _get_stdin(self, stdin):
-        if is_pathlike(stdin):
+        if isinstance(stdin, Path):
             stdin = str(stdin)
-        elif not is_string(stdin):
+        elif not isinstance(stdin, str):
             return stdin
         elif stdin.upper() == 'NONE':
             return None

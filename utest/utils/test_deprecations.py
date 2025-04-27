@@ -1,6 +1,7 @@
 import unittest
 import warnings
 from contextlib import contextmanager
+from pathlib import Path
 from xml.etree import ElementTree as ET
 
 from robot.utils.asserts import assert_equal, assert_false, assert_raises, assert_true
@@ -57,15 +58,46 @@ class TestDeprecations(unittest.TestCase):
         assert_false(X())
         assert_equal(str(X()), 'Hyvä!')
 
-    def test_is_unicode(self):
+    def test_is_string_unicode(self):
+        with self.validate_deprecation('is_string'):
+            is_string = utils.is_string
         with self.validate_deprecation('is_unicode'):
-            assert_true(utils.is_unicode('Hyvä'))
-        with self.validate_deprecation('is_unicode'):
-            assert_true(utils.is_unicode('Paha'))
-        with self.validate_deprecation('is_unicode'):
-            assert_false(utils.is_unicode(b'xxx'))
-        with self.validate_deprecation('is_unicode'):
-            assert_false(utils.is_unicode(42))
+            is_unicode = utils.is_unicode
+        for meth in is_string, is_unicode:
+            assert_true(meth('Hyvä'))
+            assert_true(meth('Paha'))
+            assert_false(meth(b'xxx'))
+            assert_false(meth(42))
+
+    def test_is_bytes(self):
+        with self.validate_deprecation('is_bytes'):
+            assert_true(utils.is_bytes(b'xxx'))
+        with self.validate_deprecation('is_bytes'):
+            assert_true(utils.is_bytes(bytearray()))
+        with self.validate_deprecation('is_bytes'):
+            assert_false(utils.is_bytes('xxx'))
+
+    def test_is_number(self):
+        with self.validate_deprecation('is_number'):
+            assert_true(utils.is_number(1))
+        with self.validate_deprecation('is_number'):
+            assert_true(utils.is_number(1.2))
+        with self.validate_deprecation('is_number'):
+            assert_false(utils.is_number('xxx'))
+
+    def test_is_integer(self):
+        with self.validate_deprecation('is_integer'):
+            assert_true(utils.is_integer(1))
+        with self.validate_deprecation('is_integer'):
+            assert_false(utils.is_integer(1.2))
+        with self.validate_deprecation('is_integer'):
+            assert_false(utils.is_integer('xxx'))
+
+    def test_is_pathlike(self):
+        with self.validate_deprecation('is_pathlike'):
+            assert_true(utils.is_pathlike(Path('xxx')))
+        with self.validate_deprecation('is_pathlike'):
+            assert_false(utils.is_pathlike('xxx'))
 
     def test_roundup(self):
         with self.validate_deprecation('roundup'):

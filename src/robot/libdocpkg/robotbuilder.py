@@ -20,7 +20,7 @@ import re
 from robot.errors import DataError
 from robot.running import (ArgumentSpec, ResourceFileBuilder, TestLibrary,
                            TestSuiteBuilder, TypeInfo)
-from robot.utils import is_string, split_tags_from_doc, unescape
+from robot.utils import split_tags_from_doc, unescape
 from robot.variables import search_variable
 
 from .datatypes import TypeDoc
@@ -171,7 +171,7 @@ class KeywordDocBuilder:
 
     def _escape_strings_in_defaults(self, defaults):
         for name, value in defaults.items():
-            if is_string(value):
+            if isinstance(value, str):
                 value = re.sub(r'[\\\r\n\t]', lambda x: repr(str(x.group()))[1:-1], value)
                 value = self._escape_variables(value)
                 defaults[name] = re.sub('^(?= )|(?<= )$|(?<= )(?= )', r'\\', value)

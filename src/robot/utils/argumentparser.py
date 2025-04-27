@@ -29,7 +29,7 @@ from robot.version import get_full_version
 from .encoding import console_decode, system_decode
 from .filereader import FileReader
 from .misc import plural_or_not
-from .robottypes import is_falsy, is_integer, is_string
+from .robottypes import is_falsy
 
 
 def cmdline2list(args, escaping=False):
@@ -268,7 +268,7 @@ class ArgumentParser:
             self._raise_option_multiple_times_in_usage('--' + opt)
 
     def _get_pythonpath(self, paths):
-        if is_string(paths):
+        if isinstance(paths, str):
             paths = [paths]
         temp = []
         for path in self._split_pythonpath(paths):
@@ -321,7 +321,7 @@ class ArgLimitValidator:
     def _parse_arg_limits(self, arg_limits):
         if arg_limits is None:
             return 0, sys.maxsize
-        if is_integer(arg_limits):
+        if isinstance(arg_limits, int):
             return arg_limits, arg_limits
         if len(arg_limits) == 1:
             return arg_limits[0], sys.maxsize

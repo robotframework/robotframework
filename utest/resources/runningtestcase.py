@@ -5,8 +5,6 @@ from io import StringIO
 from os import remove
 from os.path import exists
 
-from robot.utils import is_integer
-
 
 class RunningTestCase(unittest.TestCase):
     remove_files = []
@@ -54,7 +52,7 @@ class RunningTestCase(unittest.TestCase):
             raise AssertionError('Expected output to be empty:\n%s' % output)
 
     def _assert_output_contains(self, output, content, count):
-        if is_integer(count):
+        if isinstance(count, int):
             if output.count(content) != count:
                 raise AssertionError("'%s' not %d times in output:\n%s"
                                      % (content, count, output))

@@ -27,8 +27,8 @@ from robot.errors import (BreakLoop, ContinueLoop, DataError, ExecutionFailed,
 from robot.running import Keyword, RUN_KW_REGISTER, TypeInfo
 from robot.running.context import EXECUTION_CONTEXTS
 from robot.utils import (DotDict, escape, format_assign_message, get_error_message,
-                         get_time, html_escape, is_falsy, is_integer, is_list_like,
-                         is_string, is_truthy, Matcher, normalize,
+                         get_time, html_escape, is_falsy, is_list_like,
+                         is_truthy, Matcher, normalize,
                          normalize_whitespace, parse_re_flags, parse_time, prepr,
                          plural_or_not as s, RERAISED_EXCEPTIONS, safe_str,
                          secs_to_timestr, seq2str, split_from_equals,
@@ -100,7 +100,7 @@ class _BuiltInBase:
         return matcher.match(string)
 
     def _is_true(self, condition):
-        if is_string(condition):
+        if isinstance(condition, str):
             condition = self.evaluate(condition)
         return bool(condition)
 
@@ -157,7 +157,7 @@ class _Converter(_BuiltInBase):
                                f"{get_error_message()}")
 
     def _get_base(self, item, base):
-        if not is_string(item):
+        if not isinstance(item, str):
             return item, base
         item = normalize(item)
         if item.startswith(('-', '+')):
@@ -326,7 +326,7 @@ class _Converter(_BuiltInBase):
         using Python's ``bool()`` method.
         """
         self._log_types(item)
-        if is_string(item):
+        if isinstance(item, str):
             if item.upper() == 'TRUE':
                 return True
             if item.upper() == 'FALSE':
@@ -389,7 +389,7 @@ class _Converter(_BuiltInBase):
 
     def _get_ordinals_from_text(self, input):
         for char in input:
-            ordinal = char if is_integer(char) else ord(char)
+            ordinal = char if isinstance(char, int) else ord(char)
             yield self._test_ordinal(ordinal, char, 'Character')
 
     def _test_ordinal(self, ordinal, original, type):
@@ -398,9 +398,9 @@ class _Converter(_BuiltInBase):
         raise RuntimeError(f"{type} '{original}' cannot be represented as a byte.")
 
     def _get_ordinals_from_int(self, input):
-        if is_string(input):
+        if isinstance(input, str):
             input = input.split()
-        elif is_integer(input):
+        elif isinstance(input, int):
             input = [input]
         for integer in input:
             ordinal = self._convert_to_integer(integer)
@@ -417,7 +417,7 @@ class _Converter(_BuiltInBase):
             yield self._test_ordinal(ordinal, token, 'Binary value')
 
     def _input_to_tokens(self, input, length):
-        if not is_string(input):
+        if not isinstance(input, str):
             return input
         input = ''.join(input.split())
         if len(input) % length != 0:
@@ -642,7 +642,7 @@ class _Verify(_BuiltInBase):
         if type or types:
             first, second = self._type_convert(first, second, type, types)
         self._log_types_at_info_if_different(first, second)
-        if is_string(first) and is_string(second):
+        if isinstance(first, str) and isinstance(second, str):
             if ignore_case:
                 first = first.casefold()
                 second = second.casefold()
@@ -674,7 +674,7 @@ class _Verify(_BuiltInBase):
         formatter = self._get_formatter(formatter)
         if first == second:
             return
-        if include_values and is_string(first) and is_string(second):
+        if include_values and isinstance(first, str) and isinstance(second, str):
             self._raise_multi_diff(first, second, msg, formatter)
         assert_equal(first, second, msg, include_values, formatter)
 
@@ -701,9 +701,9 @@ class _Verify(_BuiltInBase):
         return is_truthy(values) and str(values).upper() != 'NO VALUES'
 
     def _strip_spaces(self, value, strip_spaces):
-        if not is_string(value):
+        if not isinstance(value, str):
             return value
-        if not is_string(strip_spaces):
+        if not isinstance(strip_spaces, str):
             return value.strip() if strip_spaces else value
         if strip_spaces.upper() == 'LEADING':
             return value.lstrip()
@@ -712,7 +712,7 @@ class _Verify(_BuiltInBase):
         return value.strip() if is_truthy(strip_spaces) else value
 
     def _collapse_spaces(self, value):
-        return re.sub(r'\s+', ' ', value) if is_string(value) else value
+        return re.sub(r'\s+', ' ', value) if isinstance(value, str) else value
 
     def should_not_be_equal(self, first, second, msg=None, values=True,
                             ignore_case=False, strip_spaces=False,
@@ -739,7 +739,7 @@ class _Verify(_BuiltInBase):
         in Robot Framework 4.1.
         """
         self._log_types_at_info_if_different(first, second)
-        if is_string(first) and is_string(second):
+        if isinstance(first, str) and isinstance(second, str):
             if ignore_case:
                 first = first.casefold()
                 second = second.casefold()
@@ -1049,21 +1049,21 @@ class _Verify(_BuiltInBase):
         # This same logic should be used with all keywords supporting
         # case-insensitive comparisons.
         orig_container = container
-        if ignore_case and is_string(item):
+        if ignore_case and isinstance(item, str):
             item = item.casefold()
-            if is_string(container):
+            if isinstance(container, str):
                 container = container.casefold()
             elif is_list_like(container):
-                container = set(x.casefold() if is_string(x) else x for x in container)
-        if strip_spaces and is_string(item):
+                container = set(x.casefold() if isinstance(x, str) else x for x in container)
+        if strip_spaces and isinstance(item, str):
             item = self._strip_spaces(item, strip_spaces)
-            if is_string(container):
+            if isinstance(container, str):
                 container = self._strip_spaces(container, strip_spaces)
             elif is_list_like(container):
                 container = set(self._strip_spaces(x, strip_spaces) for x in container)
-        if collapse_spaces and is_string(item):
+        if collapse_spaces and isinstance(item, str):
             item = self._collapse_spaces(item)
-            if is_string(container):
+            if isinstance(container, str):
                 container = self._collapse_spaces(container)
             elif is_list_like(container):
                 container = set(self._collapse_spaces(x) for x in container)
@@ -1118,21 +1118,21 @@ class _Verify(_BuiltInBase):
                     raise ValueError(f'{item!r} cannot be encoded into bytes.')
             elif isinstance(item, int) and item not in range(256):
                 raise ValueError(f'Byte must be in range 0-255, got {item}.')
-        if ignore_case and is_string(item):
+        if ignore_case and isinstance(item, str):
             item = item.casefold()
-            if is_string(container):
+            if isinstance(container, str):
                 container = container.casefold()
             elif is_list_like(container):
-                container = set(x.casefold() if is_string(x) else x for x in container)
-        if strip_spaces and is_string(item):
+                container = set(x.casefold() if isinstance(x, str) else x for x in container)
+        if strip_spaces and isinstance(item, str):
             item = self._strip_spaces(item, strip_spaces)
-            if is_string(container):
+            if isinstance(container, str):
                 container = self._strip_spaces(container, strip_spaces)
             elif is_list_like(container):
                 container = set(self._strip_spaces(x, strip_spaces) for x in container)
-        if collapse_spaces and is_string(item):
+        if collapse_spaces and isinstance(item, str):
             item = self._collapse_spaces(item)
-            if is_string(container):
+            if isinstance(container, str):
                 container = self._collapse_spaces(container)
             elif is_list_like(container):
                 container = set(self._collapse_spaces(x) for x in container)
@@ -1164,20 +1164,20 @@ class _Verify(_BuiltInBase):
             raise RuntimeError('One or more item required.')
         orig_container = container
         if ignore_case:
-            items = [x.casefold() if is_string(x) else x for x in items]
-            if is_string(container):
+            items = [x.casefold() if isinstance(x, str) else x for x in items]
+            if isinstance(container, str):
                 container = container.casefold()
             elif is_list_like(container):
-                container = set(x.casefold() if is_string(x) else x for x in container)
+                container = set(x.casefold() if isinstance(x, str) else x for x in container)
         if strip_spaces:
             items = [self._strip_spaces(x, strip_spaces) for x in items]
-            if is_string(container):
+            if isinstance(container, str):
                 container = self._strip_spaces(container, strip_spaces)
             elif is_list_like(container):
                 container = set(self._strip_spaces(x, strip_spaces) for x in container)
         if collapse_spaces:
             items = [self._collapse_spaces(x) for x in items]
-            if is_string(container):
+            if isinstance(container, str):
                 container = self._collapse_spaces(container)
             elif is_list_like(container):
                 container = set(self._collapse_spaces(x) for x in container)
@@ -1213,20 +1213,20 @@ class _Verify(_BuiltInBase):
             raise RuntimeError('One or more item required.')
         orig_container = container
         if ignore_case:
-            items = [x.casefold() if is_string(x) else x for x in items]
-            if is_string(container):
+            items = [x.casefold() if isinstance(x, str) else x for x in items]
+            if isinstance(container, str):
                 container = container.casefold()
             elif is_list_like(container):
-                container = set(x.casefold() if is_string(x) else x for x in container)
+                container = set(x.casefold() if isinstance(x, str) else x for x in container)
         if strip_spaces:
             items = [self._strip_spaces(x, strip_spaces) for x in items]
-            if is_string(container):
+            if isinstance(container, str):
                 container = self._strip_spaces(container, strip_spaces)
             elif is_list_like(container):
                 container = set(self._strip_spaces(x, strip_spaces) for x in container)
         if collapse_spaces:
             items = [self._collapse_spaces(x) for x in items]
-            if is_string(container):
+            if isinstance(container, str):
                 container = self._collapse_spaces(container)
             elif is_list_like(container):
                 container = set(self._collapse_spaces(x) for x in container)
@@ -1271,22 +1271,22 @@ class _Verify(_BuiltInBase):
         """
         count = self._convert_to_integer(count)
         orig_container = container
-        if is_string(item):
+        if isinstance(item, str):
             if ignore_case:
                 item = item.casefold()
-                if is_string(container):
+                if isinstance(container, str):
                     container = container.casefold()
                 elif is_list_like(container):
-                    container = [x.casefold() if is_string(x) else x for x in container]
+                    container = [x.casefold() if isinstance(x, str) else x for x in container]
             if strip_spaces:
                 item = self._strip_spaces(item, strip_spaces)
-                if is_string(container):
+                if isinstance(container, str):
                     container = self._strip_spaces(container, strip_spaces)
                 elif is_list_like(container):
                     container = [self._strip_spaces(x, strip_spaces) for x in container]
             if collapse_spaces:
                 item = self._collapse_spaces(item)
-                if is_string(container):
+                if isinstance(container, str):
                     container = self._collapse_spaces(container)
                 elif is_list_like(container):
                     container = [self._collapse_spaces(x) for x in container]
@@ -1832,7 +1832,7 @@ class _Variables(_BuiltInBase):
         | VAR    &{DICT}      key=value     foo=bar        scope=SUITE
         """
         name = self._get_var_name(name)
-        if values and is_string(values[-1]) and values[-1].startswith('children='):
+        if values and isinstance(values[-1], str) and values[-1].startswith('children='):
             children = self._variables.replace_scalar(values[-1][9:])
             children = is_truthy(children)
             values = values[:-1]
@@ -1940,7 +1940,7 @@ class _RunKeyword(_BuiltInBase):
         can be a variable and thus set dynamically, e.g. from a return value of
         another keyword or from the command line.
         """
-        if not is_string(name):
+        if not isinstance(name, str):
             raise RuntimeError('Keyword name must be a string.')
         ctx = self._context
         if not (ctx.dry_run or self._accepts_embedded_arguments(name, ctx)):
@@ -1968,7 +1968,7 @@ class _RunKeyword(_BuiltInBase):
         if not resolved:
             raise DataError(f'Keyword name missing: Given arguments {name_and_args} '
                             f'resolved to an empty list.')
-        if not is_string(resolved[0]):
+        if not isinstance(resolved[0], str):
             raise RuntimeError('Keyword name must be a string.')
         return resolved[0], resolved[1:]
 
@@ -2437,7 +2437,7 @@ class _RunKeyword(_BuiltInBase):
             if count <= 0:
                 raise ValueError(f'Retry count {count} is not positive.')
             message = f'{count} time{s(count)}'
-        if is_string(retry_interval) and normalize(retry_interval).startswith('strict:'):
+        if isinstance(retry_interval, str) and normalize(retry_interval).startswith('strict:'):
             retry_interval = retry_interval.split(':', 1)[1].strip()
             strict_interval = True
         else:
@@ -3636,7 +3636,7 @@ class _Misc(_BuiltInBase):
         self.log(f'Set test message to:\n{message}', level)
 
     def _get_new_text(self, old, new, append, handle_html=False, separator=' '):
-        if not is_string(new):
+        if not isinstance(new, str):
             new = str(new)
         if not (is_truthy(append) and old):
             return new
@@ -3728,7 +3728,7 @@ class _Misc(_BuiltInBase):
 
         The ``separator`` argument is new in Robot Framework 7.2.
         """
-        if not is_string(name):
+        if not isinstance(name, str):
             name = str(name)
         metadata = self._get_context(top).suite.metadata
         original = metadata.get(name, '')

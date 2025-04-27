@@ -20,13 +20,12 @@ from pathlib import Path
 from robot.errors import DataError
 
 from .error import get_error_message
-from .robottypes import is_pathlike
 
 
 def file_writer(path=None, encoding='UTF-8', newline=None, usage=None):
     if not path:
         return io.StringIO(newline=newline)
-    if is_pathlike(path):
+    if isinstance(path, Path):
         path = str(path)
     create_destination_directory(path, usage)
     try:
@@ -39,7 +38,7 @@ def file_writer(path=None, encoding='UTF-8', newline=None, usage=None):
 
 def binary_file_writer(path=None):
     if path:
-        if is_pathlike(path):
+        if isinstance(path, Path):
             path = str(path)
         return io.open(path, 'wb')
     f = io.BytesIO()
@@ -49,7 +48,7 @@ def binary_file_writer(path=None):
 
 
 def create_destination_directory(path: 'Path|str', usage=None):
-    if not is_pathlike(path):
+    if not isinstance(path, Path):
         path = Path(path)
     if not path.parent.exists():
         try:

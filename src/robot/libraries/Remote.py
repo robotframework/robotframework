@@ -24,8 +24,7 @@ from datetime import date, datetime, timedelta
 from xml.parsers.expat import ExpatError
 
 from robot.errors import RemoteError
-from robot.utils import (DotDict, is_bytes, is_dict_like, is_list_like, is_number,
-                         is_string, safe_str, timestr_to_secs)
+from robot.utils import DotDict, is_dict_like, is_list_like, safe_str, timestr_to_secs
 
 
 class Remote:
@@ -110,18 +109,19 @@ class ArgumentCoercer:
     binary = re.compile('[\x00-\x08\x0B\x0C\x0E-\x1F]')
 
     def coerce(self, argument):
-        for handles, handler in [(is_string, self._handle_string),
-                                 (self._no_conversion_needed, self._pass_through),
-                                 (self._is_date, self._handle_date),
-                                 (self._is_timedelta, self._handle_timedelta),
-                                 (is_dict_like, self._coerce_dict),
-                                 (is_list_like, self._coerce_list)]:
+        for handles, handler in [
+            ((str,), self._handle_string),
+            ((int, float, bytes, bytearray, datetime), self._pass_through),
+            ((date,), self._handle_date),
+            ((timedelta,), self._handle_timedelta),
+            (is_dict_like, self._coerce_dict),
+            (is_list_like, self._coerce_list)
+        ]:
+            if isinstance(handles, tuple):
+                handles = lambda arg, types=handles: isinstance(arg, types)
             if handles(argument):
                 return handler(argument)
         return self._to_string(argument)
-
-    def _no_conversion_needed(self, arg):
-        return is_number(arg) or is_bytes(arg) or isinstance(arg, datetime)
 
     def _handle_string(self, arg):
         if self.binary.search(arg):
@@ -138,14 +138,8 @@ class ArgumentCoercer:
     def _pass_through(self, arg):
         return arg
 
-    def _is_date(self, arg):
-        return isinstance(arg, date)
-
     def _handle_date(self, arg):
         return datetime(arg.year, arg.month, arg.day)
-
-    def _is_timedelta(self, arg):
-        return isinstance(arg, timedelta)
 
     def _handle_timedelta(self, arg):
         return arg.total_seconds()

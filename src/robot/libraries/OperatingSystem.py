@@ -27,9 +27,8 @@ from robot.version import get_version
 from robot.api import logger
 from robot.api.deco import keyword
 from robot.utils import (abspath, ConnectionCache, console_decode, del_env_var,
-                         get_env_var, get_env_vars, get_time, is_truthy,
-                         is_string, normpath, parse_time, plural_or_not,
-                         safe_str, secs_to_timestr, seq2str, set_env_var,
+                         get_env_var, get_env_vars, get_time, normpath, parse_time,
+                         plural_or_not, safe_str, secs_to_timestr, seq2str, set_env_var,
                          timestr_to_secs, CONSOLE_ENCODING, PY_VERSION, WINDOWS)
 
 __version__ = get_version()
@@ -632,7 +631,7 @@ class OperatingSystem:
         encoding. `File Should Not Exist` can be used to avoid overwriting
         existing files.
         """
-        if is_string(content):
+        if isinstance(content, str):
             content = bytes(ord(c) for c in content)
         path = self._write_to_file(path, content, mode='wb')
         self._link("Created binary file '%s'.", path)
@@ -726,7 +725,7 @@ class OperatingSystem:
         elif not os.path.isdir(path):
             self._error("Path '%s' is not a directory." % path)
         else:
-            if is_truthy(recursive):
+            if recursive:
                 shutil.rmtree(path)
             else:
                 self.directory_should_be_empty(
@@ -1381,7 +1380,7 @@ class OperatingSystem:
         items = sorted(safe_str(item) for item in os.listdir(path))
         if pattern:
             items = [i for i in items if fnmatch.fnmatchcase(i, pattern)]
-        if is_truthy(absolute):
+        if absolute:
             path = os.path.normpath(path)
             items = [os.path.join(path, item) for item in items]
         return items

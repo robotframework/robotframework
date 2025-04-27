@@ -14,8 +14,8 @@
 #  limitations under the License.
 
 from robot.errors import DataError
-from robot.utils import (get_error_details, Importer, is_string,
-                         split_args_from_name_or_path, type_name)
+from robot.utils import (get_error_details, Importer, split_args_from_name_or_path,
+                         type_name)
 
 from .visitor import SuiteVisitor
 
@@ -42,7 +42,7 @@ class ModelModifier(SuiteVisitor):
     def _yield_visitors(self, visitors, logger):
         importer = Importer('model modifier', logger=logger)
         for visitor in visitors:
-            if is_string(visitor):
+            if isinstance(visitor, str):
                 name, args = split_args_from_name_or_path(visitor)
                 try:
                     yield importer.import_class_or_module(name, args)

@@ -28,8 +28,8 @@ except ImportError:
 
 from robot.api import logger
 from robot.api.deco import keyword
-from robot.utils import (ConnectionCache, is_bytes, is_string, is_truthy,
-                         secs_to_timestr, seq2str, timestr_to_secs)
+from robot.utils import (ConnectionCache, is_truthy, secs_to_timestr, seq2str,
+                         timestr_to_secs)
 from robot.version import get_version
 
 
@@ -394,6 +394,8 @@ class Telnet:
         environ_user = environ_user or self._environ_user
         if terminal_emulation is None:
             terminal_emulation = self._terminal_emulation
+        else:
+            terminal_emulation = is_truthy(terminal_emulation)
         terminal_type = terminal_type or self._terminal_type
         telnetlib_log_level = telnetlib_log_level or self._telnetlib_log_level
         if not prompt:
@@ -401,12 +403,12 @@ class Telnet:
         logger.info('Opening connection to %s:%s with prompt: %s%s'
                     % (host, port, prompt, ' (regexp)' if prompt_is_regexp else ''))
         self._conn = self._get_connection(host, port, timeout, newline,
-                                          prompt, is_truthy(prompt_is_regexp),
+                                          prompt, prompt_is_regexp,
                                           encoding, encoding_errors,
                                           default_log_level,
                                           window_size,
                                           environ_user,
-                                          is_truthy(terminal_emulation),
+                                          terminal_emulation,
                                           terminal_type,
                                           telnetlib_log_level,
                                           connection_timeout)
@@ -589,7 +591,7 @@ class TelnetConnection(telnetlib.Telnet):
         return old
 
     def _set_prompt(self, prompt, prompt_is_regexp):
-        if is_truthy(prompt_is_regexp):
+        if prompt_is_regexp:
             self._prompt = (re.compile(prompt), True)
         else:
             self._prompt = (prompt, False)
@@ -628,7 +630,7 @@ class TelnetConnection(telnetlib.Telnet):
         self._encoding = (encoding.upper(), errors)
 
     def _encode(self, text):
-        if is_bytes(text):
+        if isinstance(text, (bytes, bytearray)):
             return text
         if self._encoding[0] == 'NONE':
             return text.encode('ASCII')
@@ -679,7 +681,7 @@ class TelnetConnection(telnetlib.Telnet):
     def _is_valid_log_level(self, level):
         if level is None:
             return True
-        if not is_string(level):
+        if not isinstance(level, str):
             return False
         return level.upper() in ('TRACE', 'DEBUG', 'INFO', 'WARN')
 
@@ -782,7 +784,7 @@ class TelnetConnection(telnetlib.Telnet):
         return self.read_until(self._newline, loglevel)
 
     def _get_newline_for(self, text):
-        if is_bytes(text):
+        if isinstance(text, (bytes, bytearray)):
             return self._encode(self._newline)
         return self._newline
 
@@ -931,7 +933,7 @@ class TelnetConnection(telnetlib.Telnet):
         self._verify_connection()
         if self._terminal_emulator:
             return self._terminal_read_until_regexp(expected)
-        expected = [self._encode(exp) if is_string(exp) else exp
+        expected = [self._encode(exp) if isinstance(exp, str) else exp
                     for exp in expected]
         return self._telnet_read_until_regexp(expected)
 
@@ -960,12 +962,12 @@ class TelnetConnection(telnetlib.Telnet):
         return index != -1, self._decode(output)
 
     def _to_byte_regexp(self, exp):
-        if is_bytes(exp):
+        if isinstance(exp, (bytes, bytearray)):
             return re.compile(exp)
-        if is_string(exp):
+        if isinstance(exp, str):
             return re.compile(self._encode(exp))
         pattern = exp.pattern
-        if is_bytes(pattern):
+        if isinstance(pattern, (bytes, bytearray)):
             return exp
         return re.compile(self._encode(pattern))
 
@@ -1001,7 +1003,7 @@ class TelnetConnection(telnetlib.Telnet):
         success, output = self._read_until_regexp(*expected)
         self._log(output, loglevel)
         if not success:
-            expected = [exp if is_string(exp) else exp.pattern
+            expected = [exp if isinstance(exp, str) else exp.pattern
                         for exp in expected]
             raise NoMatchError(expected, self._timeout, output)
         return output
@@ -1033,7 +1035,7 @@ class TelnetConnection(telnetlib.Telnet):
             raise AssertionError("Prompt '%s' not found in %s."
                                  % (prompt if not regexp else prompt.pattern,
                                     secs_to_timestr(self._timeout)))
-        if is_truthy(strip_prompt):
+        if strip_prompt:
             output = self._strip_prompt(output)
         return output
 
@@ -1232,7 +1234,7 @@ class NoMatchError(AssertionError):
 
     def _get_message(self):
         expected = "'%s'" % self.expected \
-                   if is_string(self.expected) \
+                   if isinstance(self.expected, str) \
                    else seq2str(self.expected, lastsep=' or ')
         msg = "No match found for %s in %s." % (expected, self.timeout)
         if self.output is not None:

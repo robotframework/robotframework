@@ -14,8 +14,8 @@ try:
 except ImportError:
     TypeForm = ExtTypeForm
 
-from robot.utils import (is_bytes, is_falsy, is_dict_like, is_list_like, is_string,
-                         is_truthy, is_union, PY_VERSION, type_name, type_repr)
+from robot.utils import (is_falsy, is_dict_like, is_list_like, is_truthy, is_union,
+                         PY_VERSION, type_name, type_repr)
 from robot.utils.asserts import assert_equal, assert_true
 
 
@@ -36,16 +36,6 @@ def generator():
 
 
 class TestIsMisc(unittest.TestCase):
-
-    def test_strings(self):
-        for thing in ['string', 'hyvä', '']:
-            assert_equal(is_string(thing), True, thing)
-            assert_equal(is_bytes(thing), False, thing)
-
-    def test_bytes(self):
-        for thing in [b'bytes', bytearray(b'ba'), b'', bytearray()]:
-            assert_equal(is_bytes(thing), True, thing)
-            assert_equal(is_string(thing), False, thing)
 
     def test_is_union(self):
         assert is_union(Union[int, str])
@@ -258,7 +248,7 @@ class TestIsTruthyFalsy(unittest.TestCase):
 
     def _strings_also_in_different_cases(self, item):
         yield item
-        if is_string(item):
+        if isinstance(item, str):
             yield item.lower()
             yield item.upper()
             yield item.title()

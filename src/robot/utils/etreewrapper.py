@@ -15,9 +15,8 @@
 
 from io import BytesIO
 from os import fsdecode
+from pathlib import Path
 import re
-
-from .robottypes import is_bytes, is_pathlike, is_string
 
 
 class ETSource:
@@ -33,24 +32,24 @@ class ETSource:
     def _open_if_necessary(self, source):
         if self._is_path(source) or self._is_already_open(source):
             return None
-        if is_bytes(source):
+        if isinstance(source, (bytes, bytearray)):
             return BytesIO(source)
         encoding = self._find_encoding(source)
         return BytesIO(source.encode(encoding))
 
     def _is_path(self, source):
-        if is_pathlike(source):
+        if isinstance(source, Path):
             return True
-        elif is_string(source):
+        elif isinstance(source, str):
             prefix = '<'
-        elif is_bytes(source):
+        elif isinstance(source, (bytes, bytearray)):
             prefix = b'<'
         else:
             return False
         return not source.lstrip().startswith(prefix)
 
     def _is_already_open(self, source):
-        return not (is_string(source) or is_bytes(source))
+        return not isinstance(source, (str, bytes, bytearray))
 
     def _find_encoding(self, source):
         match = re.match(r"\s*<\?xml .*encoding=(['\"])(.*?)\1.*\?>", source)
@@ -69,8 +68,8 @@ class ETSource:
         return '<in-memory file>'
 
     def _path_to_string(self, path):
-        if is_pathlike(path):
+        if isinstance(path, Path):
             return str(path)
-        if is_bytes(path):
+        if isinstance(path, bytes):
             return fsdecode(path)
         return path

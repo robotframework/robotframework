@@ -24,7 +24,7 @@ from robot.errors import (BreakLoop, ContinueLoop, DataError, ExecutionFailed,
                           ExecutionFailures, ExecutionPassed, ExecutionStatus)
 from robot.output import librarylogger as logger
 from robot.utils import (cut_assign_value, frange, get_error_message, is_list_like,
-                         is_number, normalize, plural_or_not as s, secs_to_timestr, seq2str,
+                         normalize, plural_or_not as s, secs_to_timestr, seq2str,
                          split_from_equals, type_name, Matcher, timestr_to_secs)
 from robot.variables import is_dict_variable, evaluate_expression
 
@@ -283,10 +283,10 @@ class ForInRangeRunner(ForInRunner):
         return super()._map_values_to_rounds(values, per_round)
 
     def _to_number_with_arithmetic(self, item):
-        if is_number(item):
+        if isinstance(item, (int, float)):
             return item
         number = eval(str(item), {})
-        if not is_number(number):
+        if not isinstance(number, (int, float)):
             raise TypeError(f'Expected number, got {type_name(item)}.')
         return number
 

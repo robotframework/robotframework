@@ -18,9 +18,6 @@ from io import StringIO
 from pathlib import Path
 from typing import TextIO, Union
 
-from .robottypes import is_bytes, is_pathlike, is_string
-
-
 Source = Union[Path, str, TextIO]
 
 
@@ -51,7 +48,7 @@ class FileReader:  # FIXME: Rename to SourceReader
         if path:
             file = open(path, 'rb')
             opened = True
-        elif is_string(source):
+        elif isinstance(source, str):
             file = StringIO(source)
             opened = True
         else:
@@ -60,9 +57,9 @@ class FileReader:  # FIXME: Rename to SourceReader
         return file, opened
 
     def _get_path(self, source: Source, accept_text: bool):
-        if is_pathlike(source):
+        if isinstance(source, Path):
             return str(source)
-        if not is_string(source):
+        if not isinstance(source, str):
             return None
         if not accept_text:
             return source
@@ -96,7 +93,7 @@ class FileReader:  # FIXME: Rename to SourceReader
             first_line = False
 
     def _decode(self, content: 'str|bytes', remove_bom: bool = True) -> str:
-        if is_bytes(content):
+        if isinstance(content, bytes):
             content = content.decode('UTF-8')
         if remove_bom and content.startswith('\ufeff'):
             content = content[1:]

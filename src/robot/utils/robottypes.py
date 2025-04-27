@@ -18,7 +18,6 @@ import warnings
 from collections.abc import Iterable, Mapping
 from collections import UserString
 from io import IOBase
-from os import PathLike
 from typing import get_args, get_origin, TypedDict, Union
 if sys.version_info < (3, 9):
     try:
@@ -42,26 +41,6 @@ FALSE_STRINGS = {'FALSE', 'NO', 'OFF', '0', 'NONE', ''}
 typeddict_types = (type(TypedDict('Dummy', {})),)
 if ExtTypedDict:
     typeddict_types += (type(ExtTypedDict('Dummy', {})),)
-
-
-def is_integer(item):
-    return isinstance(item, int)
-
-
-def is_number(item):
-    return isinstance(item, (int, float))
-
-
-def is_bytes(item):
-    return isinstance(item, (bytes, bytearray))
-
-
-def is_string(item):
-    return isinstance(item, str)
-
-
-def is_pathlike(item):
-    return isinstance(item, PathLike)
 
 
 def is_list_like(item):
