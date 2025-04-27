@@ -21,8 +21,26 @@ this module directly, issue should be submitted about exposing it explicitly via
 :mod:`robot.api.parsing`.
 """
 
-from .lexer import get_tokens, get_resource_tokens, get_init_tokens, Token
-from .model import File, ModelTransformer, ModelVisitor
-from .parser import get_model, get_resource_model, get_init_model
-from .suitestructure import (SuiteFile, SuiteDirectory, SuiteStructure,
-                             SuiteStructureBuilder, SuiteStructureVisitor)
+from .lexer import (
+    get_init_tokens as get_init_tokens,
+    get_resource_tokens as get_resource_tokens,
+    get_tokens as get_tokens,
+    Token as Token,
+)
+from .model import (
+    File as File,
+    ModelTransformer as ModelTransformer,
+    ModelVisitor as ModelVisitor,
+)
+from .parser import (
+    get_init_model as get_init_model,
+    get_model as get_model,
+    get_resource_model as get_resource_model,
+)
+from .suitestructure import (
+    SuiteDirectory as SuiteDirectory,
+    SuiteFile as SuiteFile,
+    SuiteStructure as SuiteStructure,
+    SuiteStructureBuilder as SuiteStructureBuilder,
+    SuiteStructureVisitor as SuiteStructureVisitor,
+)

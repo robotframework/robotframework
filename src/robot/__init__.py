@@ -40,8 +40,8 @@ this package are for internal usage and may change without prior notice.
 import sys
 import warnings
 
-from robot.rebot import rebot, rebot_cli
-from robot.run import run, run_cli
+from robot.rebot import rebot as rebot, rebot_cli as rebot_cli
+from robot.run import run as run, run_cli as run_cli
 from robot.version import get_version
 
 

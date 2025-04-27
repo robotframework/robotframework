@@ -13,4 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from .parser import get_model, get_resource_model, get_init_model
+from .parser import (
+    get_init_model as get_init_model,
+    get_model as get_model,
+    get_resource_model as get_resource_model,
+)

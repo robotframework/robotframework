@@ -19,15 +19,26 @@ This package is mainly for internal usage, but utilities for finding
 variables can be used externally as well.
 """
 
-from .assigner import VariableAssignment
-from .evaluation import evaluate_expression
-from .notfound import variable_not_found
-from .scopes import VariableScopes
-from .search import (search_variable, contains_variable,
-                     is_variable, is_assign,
-                     is_scalar_variable, is_scalar_assign,
-                     is_dict_variable, is_dict_assign,
-                     is_list_variable, is_list_assign,
-                     VariableMatch, VariableMatches)
-from .tablesetter import VariableResolver, DictVariableResolver
-from .variables import Variables
+from .assigner import VariableAssignment as VariableAssignment
+from .evaluation import evaluate_expression as evaluate_expression
+from .notfound import variable_not_found as variable_not_found
+from .scopes import VariableScopes as VariableScopes
+from .search import (
+    contains_variable as contains_variable,
+    is_assign as is_assign,
+    is_dict_assign as is_dict_assign,
+    is_dict_variable as is_dict_variable,
+    is_list_assign as is_list_assign,
+    is_list_variable as is_list_variable,
+    is_scalar_assign as is_scalar_assign,
+    is_scalar_variable as is_scalar_variable,
+    is_variable as is_variable,
+    search_variable as search_variable,
+    VariableMatch as VariableMatch,
+    VariableMatches as VariableMatches,
+)
+from .tablesetter import (
+    DictVariableResolver as DictVariableResolver,
+    VariableResolver as VariableResolver,
+)
+from .variables import Variables as Variables

@@ -25,19 +25,42 @@ elsewhere.
 This package is considered stable.
 """
 
-from .body import BaseBody, Body, BodyItem, BaseBranches, BaseIterations
-from .configurer import SuiteConfigurer
-from .control import (Break, Continue, Error, For, ForIteration, Group, If,
-                      IfBranch, Return, Try, TryBranch, Var, While, WhileIteration)
-from .fixture import create_fixture
-from .itemlist import ItemList
-from .keyword import Keyword
-from .message import Message, MessageLevel
-from .modelobject import DataDict, ModelObject
-from .modifier import ModelModifier
-from .statistics import Statistics
-from .tags import Tags, TagPattern, TagPatterns
-from .testcase import TestCase, TestCases
-from .testsuite import TestSuite, TestSuites
-from .totalstatistics import TotalStatistics, TotalStatisticsBuilder
-from .visitor import SuiteVisitor
+from .body import (
+    BaseBody as BaseBody,
+    BaseBranches as BaseBranches,
+    BaseIterations as BaseIterations,
+    Body as Body,
+    BodyItem as BodyItem,
+)
+from .configurer import SuiteConfigurer as SuiteConfigurer
+from .control import (
+    Break as Break,
+    Continue as Continue,
+    Error as Error,
+    For as For,
+    ForIteration as ForIteration,
+    Group as Group,
+    If as If,
+    IfBranch as IfBranch,
+    Return as Return,
+    Try as Try,
+    TryBranch as TryBranch,
+    Var as Var,
+    While as While,
+    WhileIteration as WhileIteration,
+)
+from .fixture import create_fixture as create_fixture
+from .itemlist import ItemList as ItemList
+from .keyword import Keyword as Keyword
+from .message import Message as Message, MessageLevel as MessageLevel
+from .modelobject import DataDict as DataDict, ModelObject as ModelObject
+from .modifier import ModelModifier as ModelModifier
+from .statistics import Statistics as Statistics
+from .tags import TagPattern as TagPattern, TagPatterns as TagPatterns, Tags as Tags
+from .testcase import TestCase as TestCase, TestCases as TestCases
+from .testsuite import TestSuite as TestSuite, TestSuites as TestSuites
+from .totalstatistics import (
+    TotalStatistics as TotalStatistics,
+    TotalStatisticsBuilder as TotalStatisticsBuilder,
+)
+from .visitor import SuiteVisitor as SuiteVisitor

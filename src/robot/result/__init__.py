@@ -37,9 +37,29 @@ __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#
 __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#listener-interface
 """
 
-from .executionresult import Result
-from .model import (Break, Continue, Error, For, ForIteration, Group, If, IfBranch, Keyword,
-                    Message, Return, TestCase, TestSuite, Try, TryBranch, Var, While,
-                    WhileIteration)
-from .resultbuilder import ExecutionResult, ExecutionResultBuilder
-from .visitor import ResultVisitor
+from .executionresult import Result as Result
+from .model import (
+    Break as Break,
+    Continue as Continue,
+    Error as Error,
+    For as For,
+    ForIteration as ForIteration,
+    Group as Group,
+    If as If,
+    IfBranch as IfBranch,
+    Keyword as Keyword,
+    Message as Message,
+    Return as Return,
+    TestCase as TestCase,
+    TestSuite as TestSuite,
+    Try as Try,
+    TryBranch as TryBranch,
+    Var as Var,
+    While as While,
+    WhileIteration as WhileIteration,
+)
+from .resultbuilder import (
+    ExecutionResult as ExecutionResult,
+    ExecutionResultBuilder as ExecutionResultBuilder,
+)
+from .visitor import ResultVisitor as ResultVisitor

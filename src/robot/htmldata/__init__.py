@@ -18,8 +18,8 @@
 This package is considered stable, but it is not part of the public API.
 """
 
-from .htmlfilewriter import HtmlFileWriter, ModelWriter
-from .jsonwriter import JsonWriter
+from .htmlfilewriter import HtmlFileWriter as HtmlFileWriter, ModelWriter as ModelWriter
+from .jsonwriter import JsonWriter as JsonWriter
 
 
 LOG = 'rebot/log.html'
