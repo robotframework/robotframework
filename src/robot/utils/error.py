@@ -19,8 +19,6 @@ import traceback
 
 from robot.errors import RobotError
 
-from .platform import RERAISED_EXCEPTIONS
-
 
 EXCLUDE_ROBOT_TRACES = not os.getenv('ROBOT_INTERNAL_TRACES')
 
@@ -55,7 +53,7 @@ class ErrorDetails:
                  exclude_robot_traces=EXCLUDE_ROBOT_TRACES):
         if not error:
             error = sys.exc_info()[1]
-        if isinstance(error, RERAISED_EXCEPTIONS):
+        if isinstance(error, (KeyboardInterrupt, SystemExit, MemoryError)):
             raise error
         self.error = error
         self._full_traceback = full_traceback

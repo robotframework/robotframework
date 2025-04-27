@@ -98,7 +98,6 @@ from .notset import NOT_SET as NOT_SET, NotSet as NotSet
 from .platform import (
     PY_VERSION as PY_VERSION,
     PYPY as PYPY,
-    RERAISED_EXCEPTIONS as RERAISED_EXCEPTIONS,
     UNIXY as UNIXY,
     WINDOWS as WINDOWS,
 )
@@ -213,6 +212,7 @@ def __getattr__(name):
         return isinstance(item, PathLike)
 
     deprecated = {
+        'RERAISED_EXCEPTIONS': (KeyboardInterrupt, SystemExit, MemoryError),
         'FALSE_STRINGS': FALSE_STRINGS,
         'TRUE_STRINGS': TRUE_STRINGS,
         'ET': ET,

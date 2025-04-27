@@ -21,7 +21,6 @@ PY_VERSION = sys.version_info[:3]
 PYPY = 'PyPy' in sys.version
 UNIXY = os.sep == '/'
 WINDOWS = not UNIXY
-RERAISED_EXCEPTIONS = (KeyboardInterrupt, SystemExit, MemoryError)
 
 
 def isatty(stream):
