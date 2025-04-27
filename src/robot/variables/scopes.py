@@ -186,7 +186,7 @@ class GlobalVariables(Variables):
                 if name.lower().endswith(self._import_by_path_ends):
                     name = find_file(name, file_type='Variable file')
                 self.set_from_file(name, args)
-            except:
+            except Exception:
                 msg, details = get_error_details()
                 LOGGER.error(msg)
                 LOGGER.info(details)

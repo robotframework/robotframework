@@ -30,7 +30,7 @@ from robot.utils import (DotDict, escape, format_assign_message, get_error_messa
                          get_time, html_escape, is_falsy, is_list_like,
                          is_truthy, Matcher, normalize,
                          normalize_whitespace, parse_re_flags, parse_time, prepr,
-                         plural_or_not as s, RERAISED_EXCEPTIONS, safe_str,
+                         plural_or_not as s, safe_str,
                          secs_to_timestr, seq2str, split_from_equals,
                          timestr_to_secs)
 from robot.utils.asserts import assert_equal, assert_not_equal
@@ -152,7 +152,7 @@ class _Converter(_BuiltInBase):
             if base:
                 return int(item, self._convert_to_integer(base))
             return int(item)
-        except:
+        except Exception:
             raise RuntimeError(f"'{orig}' cannot be converted to an integer: "
                                f"{get_error_message()}")
 
@@ -295,7 +295,7 @@ class _Converter(_BuiltInBase):
     def _convert_to_number_without_precision(self, item):
         try:
             return float(item)
-        except:
+        except (ValueError, TypeError):
             error = get_error_message()
             try:
                 return float(self._convert_to_integer(item))
@@ -384,7 +384,7 @@ class _Converter(_BuiltInBase):
             except AttributeError:
                 raise RuntimeError(f"Invalid input type '{input_type}'.")
             return bytes(o for o in get_ordinals(input))
-        except:
+        except Exception:
             raise RuntimeError("Creating bytes failed: " + get_error_message())
 
     def _get_ordinals_from_text(self, input):
@@ -1309,7 +1309,7 @@ class _Verify(_BuiltInBase):
         if not hasattr(container, 'count'):
             try:
                 container = list(container)
-            except:
+            except Exception:
                 raise RuntimeError(f"Converting '{container}' to list failed: "
                                    f"{get_error_message()}")
         count = container.count(item)
@@ -1439,24 +1439,16 @@ class _Verify(_BuiltInBase):
     def _get_length(self, item):
         try:
             return len(item)
-        except RERAISED_EXCEPTIONS:
-            raise
-        except:
+        except Exception:
             try:
                 return item.length()
-            except RERAISED_EXCEPTIONS:
-                raise
-            except:
+            except Exception:
                 try:
                     return item.size()
-                except RERAISED_EXCEPTIONS:
-                    raise
-                except:
+                except Exception:
                     try:
                         return item.length
-                    except RERAISED_EXCEPTIONS:
-                        raise
-                    except:
+                    except Exception:
                         raise RuntimeError(f"Could not get length of '{item}'.")
 
     def length_should_be(self, item, length, msg=None):
@@ -1578,8 +1570,6 @@ class _Variables(_BuiltInBase):
                     name = '$' + name[1:]
             if name[0] == '&':
                 value = OrderedDict(value)
-        except RERAISED_EXCEPTIONS:
-            raise
         except Exception:
             name = '$' + name[1:]
         return name, value

@@ -132,7 +132,7 @@ class ExtendedFinder:
                                 % (name, err.message))
         try:
             return eval('_BASE_VAR_' + extended, {'_BASE_VAR_': variable})
-        except:
+        except Exception:
             raise VariableError("Resolving variable '%s' failed: %s"
                                 % (name, get_error_message()))
 

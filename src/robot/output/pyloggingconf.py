@@ -72,7 +72,7 @@ class RobotHandler(logging.Handler):
     def _get_message(self, record):
         try:
             return self.format(record), None
-        except:
+        except Exception:
             message = 'Failed to log following message properly: %s' \
                         % safe_str(record.msg)
             error = '\n'.join(get_error_details())

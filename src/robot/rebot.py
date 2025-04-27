@@ -341,7 +341,7 @@ class Rebot(RobotFramework):
     def main(self, datasources, **options):
         try:
             settings = RebotSettings(options)
-        except:
+        except DataError:
             LOGGER.register_console_logger(stdout=options.get('stdout'),
                                            stderr=options.get('stderr'))
             raise

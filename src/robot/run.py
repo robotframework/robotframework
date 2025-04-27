@@ -38,6 +38,7 @@ if __name__ == '__main__' and 'robot' not in sys.modules:
     set_pythonpath()
 
 from robot.conf import RobotSettings
+from robot.errors import DataError
 from robot.model import ModelModifier
 from robot.output import librarylogger, LOGGER, pyloggingconf
 from robot.reporting import ResultWriter
@@ -446,7 +447,7 @@ class RobotFramework(Application):
     def main(self, datasources, **options):
         try:
             settings = RobotSettings(options)
-        except:
+        except DataError:
             LOGGER.register_console_logger(stdout=options.get('stdout'),
                                            stderr=options.get('stderr'))
             raise
