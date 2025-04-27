@@ -1,12 +1,13 @@
 import unittest
 import warnings
 from contextlib import contextmanager
+from xml.etree import ElementTree as ET
 
 from robot.utils.asserts import assert_equal, assert_false, assert_raises, assert_true
 from robot import utils
 
 
-class TestCompatibilityLayer(unittest.TestCase):
+class TestDeprecations(unittest.TestCase):
 
     @contextmanager
     def validate_deprecation(self, name):
@@ -90,6 +91,10 @@ class TestCompatibilityLayer(unittest.TestCase):
         import io
         with self.validate_deprecation('StringIO'):
             assert_true(utils.StringIO is io.StringIO)
+
+    def test_ET(self):
+        with self.validate_deprecation('ET'):
+            assert_true(utils.ET is ET)
 
     def test_non_existing_attribute(self):
         assert_raises(AttributeError, getattr, utils, 'xxx')

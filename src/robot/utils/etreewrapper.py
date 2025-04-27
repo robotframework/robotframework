@@ -19,14 +19,6 @@ import re
 
 from .robottypes import is_bytes, is_pathlike, is_string
 
-try:
-    from xml.etree import cElementTree as ET
-except ImportError:
-    try:
-        from xml.etree import ElementTree as ET
-    except ImportError:
-        raise ImportError('No valid ElementTree XML parser module found')
-
 
 class ETSource:
 

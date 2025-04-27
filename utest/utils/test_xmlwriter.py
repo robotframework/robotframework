@@ -2,9 +2,10 @@ from collections import OrderedDict
 import os
 import unittest
 import tempfile
+from xml.etree import ElementTree as ET
 
 from robot. errors import DataError
-from robot.utils import ET, ETSource, XmlWriter
+from robot.utils import ETSource, XmlWriter
 from robot.utils.asserts import assert_equal, assert_raises, assert_true
 
 PATH = os.path.join(tempfile.gettempdir(), 'test_xmlwriter.xml')

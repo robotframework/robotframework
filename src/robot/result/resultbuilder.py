@@ -13,9 +13,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from xml.etree import ElementTree as ET
+
 from robot.errors import DataError
 from robot.model import SuiteVisitor
-from robot.utils import ET, ETSource, get_error_message
+from robot.utils import ETSource, get_error_message
 
 from .executionresult import CombinedResult, is_json_source, Result
 from .flattenkeywordmatcher import (create_flatten_message, FlattenByNameMatcher,

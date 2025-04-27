@@ -14,10 +14,11 @@
 #  limitations under the License.
 
 import os.path
+from xml.etree import ElementTree as ET
 
 from robot.errors import DataError
 from robot.running import ArgInfo, TypeInfo
-from robot.utils import ET, ETSource
+from robot.utils import ETSource
 
 from .datatypes import EnumMember, TypedDictItem, TypeDoc
 from .model import LibraryDoc, KeywordDoc

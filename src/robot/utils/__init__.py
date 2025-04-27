@@ -62,7 +62,7 @@ from .escaping import (
     split_from_equals as split_from_equals,
     unescape as unescape,
 )
-from .etreewrapper import ET as ET, ETSource as ETSource
+from .etreewrapper import ETSource as ETSource
 from .filereader import FileReader as FileReader, Source as Source
 from .frange import frange as frange
 from .importer import Importer as Importer
@@ -188,6 +188,7 @@ def __getattr__(name):
     # https://github.com/robotframework/robotframework/issues/4501
 
     from io import StringIO
+    from xml.etree import ElementTree as ET
     from .robottypes import FALSE_STRINGS, TRUE_STRINGS
 
     def py2to3(cls):
@@ -203,6 +204,7 @@ def __getattr__(name):
     deprecated = {
         'FALSE_STRINGS': FALSE_STRINGS,
         'TRUE_STRINGS': TRUE_STRINGS,
+        'ET': ET,
         'StringIO': StringIO,
         'PY3': True,
         'PY2': False,

@@ -16,6 +16,7 @@
 import copy
 import os
 import re
+from xml.etree import ElementTree as ET
 
 try:
     from lxml import etree as lxml_etree
@@ -34,7 +35,7 @@ else:
 from robot.api import logger
 from robot.api.deco import keyword
 from robot.libraries.BuiltIn import BuiltIn
-from robot.utils import asserts, ET, ETSource, plural_or_not as s
+from robot.utils import asserts, ETSource, plural_or_not as s
 from robot.version import get_version
 
 

@@ -1,9 +1,10 @@
 import unittest
 from io import BytesIO, StringIO
+from xml.etree import ElementTree as ET
 
 from robot.result import ExecutionResult
 from robot.reporting.outputwriter import OutputWriter
-from robot.utils import ET, ETSource, XmlWriter
+from robot.utils import ETSource, XmlWriter
 from robot.utils.asserts import assert_equal
 
 from test_resultbuilder import GOLDEN_XML, GOLDEN_XML_TWICE

@@ -1,9 +1,10 @@
 import os
 import unittest
 import pathlib
+from xml.etree import ElementTree as ET
 
 from robot.utils.asserts import assert_equal, assert_true
-from robot.utils.etreewrapper import ETSource, ET
+from robot.utils import ETSource
 
 
 PATH = os.path.join(os.path.dirname(__file__), 'test_etreesource.py')
