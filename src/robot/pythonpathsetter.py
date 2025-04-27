@@ -27,6 +27,7 @@ Does nothing if the `robot` module is already imported.
 import sys
 from pathlib import Path
 
-if 'robot' not in sys.modules:
+
+def set_pythonpath():
     robot_dir = Path(__file__).absolute().parent    # zipsafe
     sys.path = [str(robot_dir.parent)] + [p for p in sys.path if Path(p) != robot_dir]

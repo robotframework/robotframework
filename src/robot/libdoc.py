@@ -37,7 +37,8 @@ import sys
 from pathlib import Path
 
 if __name__ == '__main__' and 'robot' not in sys.modules:
-    import pythonpathsetter
+    from pythonpathsetter import set_pythonpath
+    set_pythonpath()
 
 from robot.utils import Application, seq2str
 from robot.errors import DataError

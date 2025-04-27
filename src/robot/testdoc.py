@@ -34,7 +34,8 @@ import time
 from pathlib import Path
 
 if __name__ == '__main__' and 'robot' not in sys.modules:
-    import pythonpathsetter
+    from pythonpathsetter import set_pythonpath
+    set_pythonpath()
 
 from robot.conf import RobotSettings
 from robot.htmldata import HtmlFileWriter, ModelWriter, JsonWriter, TESTDOC
