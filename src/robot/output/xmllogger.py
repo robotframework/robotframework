@@ -214,6 +214,10 @@ class XmlLogger(ResultVisitor):
     def end_test(self, test):
         self._writer.element('doc', test.doc)
         self._write_list('tag', test.tags)
+        for name, value in test.metadata.items():
+            self._writer.element('meta', value, {'name': name})
+        for name, value in test.custom_settings.items():
+            self._writer.element('custom_setting', value, {'name': name})
         if test.timeout:
             self._writer.element('timeout', attrs={'value': str(test.timeout)})
         self._write_status(test)
@@ -229,6 +233,8 @@ class XmlLogger(ResultVisitor):
         self._writer.element('doc', suite.doc)
         for name, value in suite.metadata.items():
             self._writer.element('meta', value, {'name': name})
+        for name, value in suite.custom_settings.items():
+            self._writer.element('custom_setting', value, {'name': name})    
         self._write_status(suite)
         self._writer.end('suite')
 

@@ -14,7 +14,7 @@
 #  limitations under the License.
 
 from collections.abc import Sequence
-from typing import TypedDict
+from typing import Mapping, TypedDict
 
 from ..model import TestCase
 
@@ -51,12 +51,14 @@ class TestDefaults:
                  setup: 'FixtureDict|None' = None,
                  teardown: 'FixtureDict|None' = None,
                  tags: 'Sequence[str]' = (),
-                 timeout: 'str|None' = None):
+                 timeout: 'str|None' = None,
+                 metadata: 'Mapping[str, str]|None' = None):
         self.parent = parent
         self.setup = setup
         self.teardown = teardown
         self.tags = tags
         self.timeout = timeout
+        self.metadata = metadata
 
     @property
     def setup(self) -> 'FixtureDict|None':
@@ -112,6 +114,18 @@ class TestDefaults:
     def timeout(self, timeout: 'str|None'):
         self._timeout = timeout
 
+    @property
+    def metadata(self) -> 'Mapping[str, str]|None':
+        if self._metadata:
+            return self._metadata
+        if self.parent:
+            return self.parent.metadata
+        return None
+
+    @metadata.setter
+    def metadata(self, metadata:'Mapping[str, str]|None'):
+        self._metadata = metadata
+
     def set_to(self, test: TestCase):
         """Sets defaults to the given test.
 
@@ -126,6 +140,8 @@ class TestDefaults:
             test.teardown.config(**self.teardown)
         if self.timeout and not test.timeout:
             test.timeout = self.timeout
+        if self.metadata and not test.metadata:
+            test.metadata = self.metadata
 
 
 class FileSettings:

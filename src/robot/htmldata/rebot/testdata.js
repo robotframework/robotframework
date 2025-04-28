@@ -125,7 +125,8 @@ window.testdata = function () {
             },
             times: model.Times(times(status)),
             tags: tags(element[3], strings),
-            isChildrenLoaded: typeof(element[5]) !== 'number'
+            isChildrenLoaded: typeof(element[5]) !== 'number',
+            metadata: parseMetadata(element[6], strings)
         });
         lazyPopulateKeywordsFromFile(test, element[5], strings);
         return test;

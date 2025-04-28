@@ -36,7 +36,8 @@ class Settings(ABC):
         'Test Template',
         'Timeout',
         'Template',
-        'Name'
+        'Name',
+        'Customsetting'
     )
     name_and_arguments = (
         'Metadata',
@@ -55,7 +56,9 @@ class Settings(ABC):
         'Library',
     )
 
-    def __init__(self, languages: Languages):
+    def __init__(self, languages: Languages, custom_settings = {}):
+        for n in custom_settings: 
+            self.names = self.names + n
         self.settings: 'dict[str, list[Token]|None]' = {n: None for n in self.names}
         self.languages = languages
 
@@ -76,7 +79,7 @@ class Settings(ABC):
         return name
 
     def _validate(self, orig: str, name: str, statement: StatementTokens):
-        if name not in self.settings:
+        if name not in self.settings and name not in self.settings['Customsetting'].keys():
             message = self._get_non_existing_setting_message(orig, name)
             raise ValueError(message)
         if self.settings[name] is not None and name not in self.multi_use:
@@ -162,7 +165,8 @@ class SuiteFileSettings(FileSettings):
         'Keyword Tags',
         'Library',
         'Resource',
-        'Variables'
+        'Variables',
+        'Customsetting'
     )
     aliases = {
         'Force Tags': 'Test Tags',
@@ -225,7 +229,9 @@ class TestCaseSettings(Settings):
         'Setup',
         'Teardown',
         'Template',
-        'Timeout'
+        'Timeout',
+        'Metadata',
+        'Customsetting'
     )
 
     def __init__(self, parent: SuiteFileSettings):
