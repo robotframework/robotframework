@@ -586,7 +586,11 @@ class Date:
         return dt.strftime('%Y-%m-%d %H:%M:%S') + f'.{ms:03d}'
 
     def _convert_to_epoch(self, dt):
-        return dt.timestamp()
+        try:
+            return dt.timestamp()
+        except OSError:
+            # https://github.com/python/cpython/issues/81708
+            return time.mktime(dt.timetuple()) + dt.microsecond / 1e6
 
     def __add__(self, other):
         if isinstance(other, Time):

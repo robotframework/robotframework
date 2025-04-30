@@ -21,10 +21,12 @@ def year_range(start, end, step=1, format='timestamp'):
     end = int(end)
     step = int(step)
     while dt.year <= end:
-        if format == 'datetime':
+        if format == "datetime":
             yield dt
-        if format == 'timestamp':
-            yield dt.strftime('%Y-%m-%d %H:%M:%S')
-        if format == 'epocn':
-            yield time.mktime(dt.timetuple())
+        elif format == "timestamp":
+            yield dt.strftime("%Y-%m-%d %H:%M:%S")
+        elif format == "epoch":
+            yield dt.timestamp() if dt.year != 1970 else 0
+        else:
+            raise ValueError(f"Invalid format: {format}")
         dt = dt.replace(year=dt.year + step)
