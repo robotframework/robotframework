@@ -53,13 +53,13 @@ class OutputFile(LoggerApi):
     @property
     @contextmanager
     def delayed_logging(self):
-        self._delayed_messages, prev_messages = [], self._delayed_messages
+        self._delayed_messages, previous = [], self._delayed_messages
         try:
             yield
         finally:
-            self._delayed_messages, messages = None, self._delayed_messages
-            for msg in messages or ():
-                self.log_message(msg)
+            self._delayed_messages, messages = previous, self._delayed_messages
+            for msg in messages:
+                self.log_message(msg, no_delay=True)
 
     def start_suite(self, data, result):
         self.logger.start_suite(result)
@@ -170,14 +170,15 @@ class OutputFile(LoggerApi):
     def end_error(self, data, result):
         self.logger.end_error(result)
 
-    def log_message(self, message):
+    def log_message(self, message, no_delay=False):
         if self.is_logged(message):
-            if self._delayed_messages is None:
+            if self._delayed_messages is None or no_delay:
                 # Use the real logger also when flattening.
                 self.real_logger.message(message)
             else:
-                # Logging is delayed when using timeouts to avoid timeouts
-                # killing output writing that could corrupt the output.
+                # Logging is delayed when using timeouts to avoid writing to output
+                # files being interrupted. There are still problems, though:
+                # https://github.com/robotframework/robotframework/issues/5417
                 self._delayed_messages.append(message)
 
     def message(self, message):

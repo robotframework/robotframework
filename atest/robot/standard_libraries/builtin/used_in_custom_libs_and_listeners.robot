@@ -29,6 +29,9 @@ Use BuiltIn keywords with timeouts
     Check Log Message    ${tc[3, 0, 1]}    42
     Check Log Message    ${tc[3, 1, 0]}    Test timeout 1 day active. * seconds left.    level=DEBUG    pattern=True
     Check Log Message    ${tc[3, 1, 1]}    \xff
+    # This message is in wrong place due to it being delayed and child keywords being logged first.
+    # It should be in position [3, 0], not [3, 2].
+    Check Log Message    ${tc[3, 2]}       Test timeout 1 day active. * seconds left.    level=DEBUG    pattern=True
 
 User keyword used via 'Run Keyword'
     ${tc} =    Check Test Case    ${TESTNAME}
