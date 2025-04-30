@@ -24,8 +24,11 @@ class Metadata(NormalizedDict[str]):
     Keys are case, space, and underscore insensitive.
     """
 
-    def __init__(self, initial: 'Mapping[str, str]|Iterable[tuple[str, str]]|None' = None):
-        super().__init__(initial, ignore='_')
+    def __init__(
+        self,
+        initial: "Mapping[str, str]|Iterable[tuple[str, str]]|None" = None,
+    ):
+        super().__init__(initial, ignore="_")
 
     def __setitem__(self, key: str, value: str):
         if not isinstance(key, str):
@@ -35,5 +38,5 @@ class Metadata(NormalizedDict[str]):
         super().__setitem__(key, value)
 
     def __str__(self):
-        items = ', '.join(f'{key}: {self[key]}' for key in self)
-        return f'{{{items}}}'
+        items = ", ".join(f"{key}: {self[key]}" for key in self)
+        return f"{{{items}}}"

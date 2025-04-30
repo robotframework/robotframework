@@ -14,36 +14,41 @@
 #  limitations under the License.
 
 import os
-import sys
 import re
+import sys
 
 from robot.errors import DataError
-from robot.running import (ArgumentSpec, ResourceFileBuilder, TestLibrary,
-                           TestSuiteBuilder, TypeInfo)
+from robot.running import (
+    ArgumentSpec, ResourceFileBuilder, TestLibrary, TestSuiteBuilder, TypeInfo
+)
 from robot.utils import split_tags_from_doc, unescape
 from robot.variables import search_variable
 
 from .datatypes import TypeDoc
-from .model import LibraryDoc, KeywordDoc
+from .model import KeywordDoc, LibraryDoc
 
 
 class LibraryDocBuilder:
-    _argument_separator = '::'
+    _argument_separator = "::"
 
     def build(self, library):
         name, args = self._split_library_name_and_args(library)
         lib = TestLibrary.from_name(name, args=args)
-        libdoc = LibraryDoc(name=lib.name,
-                            doc=self._get_doc(lib),
-                            version=lib.version,
-                            scope=lib.scope.name,
-                            doc_format=lib.doc_format,
-                            source=lib.source,
-                            lineno=lib.lineno)
+        libdoc = LibraryDoc(
+            name=lib.name,
+            doc=self._get_doc(lib),
+            version=lib.version,
+            scope=lib.scope.name,
+            doc_format=lib.doc_format,
+            source=lib.source,
+            lineno=lib.lineno,
+        )
         libdoc.inits = self._get_initializers(lib)
         libdoc.keywords = KeywordDocBuilder().build_keywords(lib)
-        libdoc.type_docs = self._get_type_docs(libdoc.inits + libdoc.keywords,
-                                               lib.converters)
+        libdoc.type_docs = self._get_type_docs(
+            libdoc.inits + libdoc.keywords,
+            lib.converters,
+        )
         return libdoc
 
     def _split_library_name_and_args(self, library):
@@ -52,7 +57,7 @@ class LibraryDocBuilder:
         return self._normalize_library_path(name), args
 
     def _normalize_library_path(self, library):
-        path = library.replace('/', os.sep)
+        path = library.replace("/", os.sep)
         if os.path.exists(path):
             return os.path.abspath(path)
         return library
@@ -84,7 +89,7 @@ class LibraryDocBuilder:
                 yield arg.name, type_info
         if args.return_type:
             for type_info in self._yield_infos(args.return_type):
-                yield 'return', type_info
+                yield "return", type_info
 
     def _yield_infos(self, info: TypeInfo):
         if not info.is_union:
@@ -94,17 +99,19 @@ class LibraryDocBuilder:
 
 
 class ResourceDocBuilder:
-    type = 'RESOURCE'
+    type = "RESOURCE"
 
     def build(self, path):
         path = self._find_resource_file(path)
         resource, name = self._import_resource(path)
-        libdoc = LibraryDoc(name=name,
-                            doc=self._get_doc(resource, name),
-                            type=self.type,
-                            scope='GLOBAL',
-                            source=resource.source,
-                            lineno=1)
+        libdoc = LibraryDoc(
+            name=name,
+            doc=self._get_doc(resource, name),
+            type=self.type,
+            scope="GLOBAL",
+            source=resource.source,
+            lineno=1,
+        )
         libdoc.keywords = KeywordDocBuilder(resource=True).build_keywords(resource)
         return libdoc
 
@@ -128,15 +135,15 @@ class ResourceDocBuilder:
 
 
 class SuiteDocBuilder(ResourceDocBuilder):
-    type = 'SUITE'
+    type = "SUITE"
 
     def _import_resource(self, path):
         builder = TestSuiteBuilder(process_curdir=False)
-        if os.path.basename(path).lower() == '__init__.robot':
+        if os.path.basename(path).lower() == "__init__.robot":
             path = os.path.dirname(path)
             builder.allow_empty_suite = True
             # Hack to disable parsing nested files.
-            builder.included_files = ('-no-files-included-',)
+            builder.included_files = ("-no-files-included-",)
         suite = builder.build(path)
         return suite.resource, suite.name
 
@@ -155,35 +162,45 @@ class KeywordDocBuilder:
     def build_keyword(self, kw):
         doc, tags = self._get_doc_and_tags(kw)
         if kw.error:
-            doc = f'*Creating keyword failed:* {kw.error}'
+            doc = f"*Creating keyword failed:* {kw.error}"
         if not self._resource:
             self._escape_strings_in_defaults(kw.args.defaults)
         if kw.args.embedded:
             self._remove_embedded(kw.args)
-        return KeywordDoc(name=kw.name,
-                          args=kw.args,
-                          doc=doc,
-                          tags=tags,
-                          private=tags.robot('private'),
-                          deprecated=doc.startswith('*DEPRECATED') and '*' in doc[1:],
-                          source=kw.source,
-                          lineno=kw.lineno)
+        return KeywordDoc(
+            name=kw.name,
+            args=kw.args,
+            doc=doc,
+            tags=tags,
+            private=tags.robot("private"),
+            deprecated=doc.startswith("*DEPRECATED") and "*" in doc[1:],
+            source=kw.source,
+            lineno=kw.lineno,
+        )
 
     def _escape_strings_in_defaults(self, defaults):
         for name, value in defaults.items():
             if isinstance(value, str):
-                value = re.sub(r'[\\\r\n\t]', lambda x: repr(str(x.group()))[1:-1], value)
+                value = re.sub(
+                    r"[\\\r\n\t]",
+                    lambda x: repr(str(x.group()))[1:-1],
+                    value,
+                )
                 value = self._escape_variables(value)
-                defaults[name] = re.sub('^(?= )|(?<= )$|(?<= )(?= )', r'\\', value)
+                defaults[name] = re.sub(
+                    "^(?= )|(?<= )$|(?<= )(?= )",
+                    r"\\",
+                    value,
+                )
 
     def _escape_variables(self, value):
-        result = ''
+        result = ""
+        escape = self._escape_variables
         match = search_variable(value)
         while match:
-            result += r'%s\%s{%s}' % (match.before, match.identifier,
-                                      self._escape_variables(match.base))
+            result += rf"{match.before}\{match.identifier}{{{escape(match.base)}}}"
             for item in match.items:
-                result += '[%s]' % self._escape_variables(item)
+                result += f"[{escape(item)}]"
             match = search_variable(match.after)
         return result + match.string
 
@@ -202,5 +219,5 @@ class KeywordDocBuilder:
         pos_only = len(spec.positional_only)
         spec.positional_only = spec.positional_only[embedded:]
         if embedded > pos_only:
-            spec.positional_or_named = spec.positional_or_named[embedded-pos_only:]
+            spec.positional_or_named = spec.positional_or_named[embedded - pos_only :]
         spec.embedded = ()

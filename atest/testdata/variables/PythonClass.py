@@ -1,7 +1,7 @@
 class PythonClass:
-    python_string = 'hello'
+    python_string = "hello"
     python_integer = None
-    LIST__python_list = ['a', 'b', 'c']
+    LIST__python_list = ["a", "b", "c"]
 
     def __init__(self):
         self.python_integer = 42
@@ -11,4 +11,4 @@ class PythonClass:
 
     @property
     def python_property(self):
-        return 'value'
+        return "value"

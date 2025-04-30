@@ -29,5 +29,5 @@ from pathlib import Path
 
 
 def set_pythonpath():
-    robot_dir = Path(__file__).absolute().parent    # zipsafe
+    robot_dir = Path(__file__).absolute().parent  # zipsafe
     sys.path = [str(robot_dir.parent)] + [p for p in sys.path if Path(p) != robot_dir]

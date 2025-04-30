@@ -13,17 +13,16 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import os
-import sys
 import importlib
 import inspect
+import os
+import sys
 
 from robot.errors import DataError
 
 from .error import get_error_details
-from .misc import seq2str
-from .robotpath import abspath, normpath
 from .robotinspect import is_init
+from .robotpath import abspath, normpath
 from .robottypes import type_name
 
 
@@ -42,16 +41,22 @@ class Importer:
             Currently only needs the ``info`` method, but other level specific
             methods may be needed in the future. If not given, logging is disabled.
         """
-        self._type = type or ''
+        self._type = type or ""
         self._logger = logger or NoLogger()
-        library_import = type and type.upper() == 'LIBRARY'
-        self._importers = (ByPathImporter(logger, library_import),
-                           NonDottedImporter(logger, library_import),
-                           DottedImporter(logger, library_import))
+        library_import = type and type.upper() == "LIBRARY"
+        self._importers = (
+            ByPathImporter(logger, library_import),
+            NonDottedImporter(logger, library_import),
+            DottedImporter(logger, library_import),
+        )
         self._by_path_importer = self._importers[0]
 
-    def import_class_or_module(self, name_or_path, instantiate_with_args=None,
-                               return_source=False):
+    def import_class_or_module(
+        self,
+        name_or_path,
+        instantiate_with_args=None,
+        return_source=False,
+    ):
         """Imports Python class or module based on the given name or path.
 
         :param name_or_path:
@@ -133,9 +138,9 @@ class Importer:
     def _sanitize_source(self, source):
         source = normpath(source)
         if os.path.isdir(source):
-            candidate = os.path.join(source, '__init__.py')
-        elif source.endswith('.pyc'):
-            candidate = source[:-4] + '.py'
+            candidate = os.path.join(source, "__init__.py")
+        elif source.endswith(".pyc"):
+            candidate = source[:-4] + ".py"
         else:
             return source
         return candidate if os.path.exists(candidate) else source
@@ -164,13 +169,13 @@ class Importer:
             self._raise_import_failed(path, err)
 
     def _log_import_succeeded(self, item, name, source):
-        prefix = f'Imported {self._type.lower()}' if self._type else 'Imported'
-        item_type = 'module' if inspect.ismodule(item) else 'class'
-        source = f"'{source}'" if source else 'unknown location'
+        prefix = f"Imported {self._type.lower()}" if self._type else "Imported"
+        item_type = "module" if inspect.ismodule(item) else "class"
+        source = f"'{source}'" if source else "unknown location"
         self._logger.info(f"{prefix} {item_type} '{name}' from {source}.")
 
     def _raise_import_failed(self, name, error):
-        prefix = f'Importing {self._type.lower()}' if self._type else 'Importing'
+        prefix = f"Importing {self._type.lower()}" if self._type else "Importing"
         raise DataError(f"{prefix} '{name}' failed: {error}")
 
     def _instantiate_if_needed(self, imported, args):
@@ -192,13 +197,13 @@ class Importer:
             return imported(*positional, **dict(named))
         except Exception:
             message, traceback = get_error_details()
-            raise DataError(f'Creating instance failed: {message}\n{traceback}')
+            raise DataError(f"Creating instance failed: {message}\n{traceback}")
 
     def _get_arg_spec(self, imported):
         # Avoid cyclic import. Yuck.
         from robot.running.arguments import ArgumentSpec, PythonArgumentParser
 
-        init = getattr(imported, '__init__', None)
+        init = getattr(imported, "__init__", None)
         name = imported.__name__
         if not is_init(init):
             return ArgumentSpec(name, self._type)
@@ -213,20 +218,21 @@ class _Importer:
 
     def _import(self, name, fromlist=None):
         if name in sys.builtin_module_names:
-            raise DataError('Cannot import custom module with same name as '
-                            'Python built-in module.')
+            raise DataError(
+                "Cannot import custom module with same name as Python built-in module."
+            )
         importlib.invalidate_caches()
         try:
             return __import__(name, fromlist=fromlist)
         except Exception:
             message, traceback = get_error_details(full_traceback=False)
-            path = '\n'.join(f'  {p}' for p in sys.path)
-            raise DataError(f'{message}\n{traceback}\nPYTHONPATH:\n{path}')
+            path = "\n".join(f"  {p}" for p in sys.path)
+            raise DataError(f"{message}\n{traceback}\nPYTHONPATH:\n{path}")
 
     def _verify_type(self, imported):
         if inspect.isclass(imported) or inspect.ismodule(imported):
             return imported
-        raise DataError(f'Expected class or module, got {type_name(imported)}.')
+        raise DataError(f"Expected class or module, got {type_name(imported)}.")
 
     def _get_possible_class(self, module, name=None):
         cls = self._get_class_matching_module_name(module, name)
@@ -240,9 +246,12 @@ class _Importer:
 
     def _get_decorated_library_class_in_imported_module(self, module):
         def predicate(item):
-            return (inspect.isclass(item)
-                    and hasattr(item, 'ROBOT_AUTO_KEYWORDS')
-                    and item.__module__ == module.__name__)
+            return (
+                inspect.isclass(item)
+                and hasattr(item, "ROBOT_AUTO_KEYWORDS")
+                and item.__module__ == module.__name__
+            )
+
         classes = [cls for _, cls in inspect.getmembers(module, predicate)]
         return classes[0] if len(classes) == 1 else None
 
@@ -255,7 +264,7 @@ class _Importer:
 
 
 class ByPathImporter(_Importer):
-    _valid_import_extensions = ('.py', '')
+    _valid_import_extensions = (".py", "")
 
     def handles(self, path):
         return os.path.isabs(path)
@@ -270,19 +279,20 @@ class ByPathImporter(_Importer):
 
     def _verify_import_path(self, path):
         if not os.path.exists(path):
-            raise DataError('File or directory does not exist.')
+            raise DataError("File or directory does not exist.")
         if not os.path.isabs(path):
-            raise DataError('Import path must be absolute.')
-        if not os.path.splitext(path)[1] in self._valid_import_extensions:
-            raise DataError('Not a valid file or directory to import.')
+            raise DataError("Import path must be absolute.")
+        if os.path.splitext(path)[1] not in self._valid_import_extensions:
+            raise DataError("Not a valid file or directory to import.")
 
     def _remove_wrong_module_from_sys_modules(self, path):
         importing_from, name = self._split_path_to_module(path)
-        importing_package = os.path.splitext(path)[1] == ''
+        importing_package = os.path.splitext(path)[1] == ""
         if self._wrong_module_imported(name, importing_from, importing_package):
             del sys.modules[name]
-            self.logger.info(f"Removed module '{name}' from sys.modules to import "
-                             f"a fresh module.")
+            self.logger.info(
+                f"Removed module '{name}' from sys.modules to import a fresh module."
+            )
 
     def _split_path_to_module(self, path):
         module_dir, module_file = os.path.split(abspath(path))
@@ -292,17 +302,19 @@ class ByPathImporter(_Importer):
     def _wrong_module_imported(self, name, importing_from, importing_package):
         if name not in sys.modules:
             return False
-        source = getattr(sys.modules[name], '__file__', None)
+        source = getattr(sys.modules[name], "__file__", None)
         if not source:  # play safe
             return True
         imported_from, imported_package = self._get_import_information(source)
-        return (normpath(importing_from, case_normalize=True) !=
-                normpath(imported_from, case_normalize=True) or
-                importing_package != imported_package)
+        return (
+            normpath(importing_from, case_normalize=True)
+            != normpath(imported_from, case_normalize=True)
+            or importing_package != imported_package
+        )
 
     def _get_import_information(self, source):
         imported_from, imported_file = self._split_path_to_module(source)
-        imported_package = imported_file == '__init__'
+        imported_package = imported_file == "__init__"
         if imported_package:
             imported_from = os.path.dirname(imported_from)
         return imported_from, imported_package
@@ -319,7 +331,7 @@ class ByPathImporter(_Importer):
 class NonDottedImporter(_Importer):
 
     def handles(self, name):
-        return '.' not in name
+        return "." not in name
 
     def import_(self, name, get_class=True):
         imported = self._import(name)
@@ -331,10 +343,10 @@ class NonDottedImporter(_Importer):
 class DottedImporter(_Importer):
 
     def handles(self, name):
-        return '.' in name
+        return "." in name
 
     def import_(self, name, get_class=True):
-        parent_name, lib_name = name.rsplit('.', 1)
+        parent_name, lib_name = name.rsplit(".", 1)
         parent = self._import(parent_name, fromlist=[str(lib_name)])
         try:
             imported = getattr(parent, lib_name)

@@ -36,21 +36,31 @@ class Stat(Sortable):
         self.failed = 0
         self.skipped = 0
         self.elapsed = timedelta()
-        self._norm_name = normalize(name, ignore='_')
+        self._norm_name = normalize(name, ignore="_")
 
-    def get_attributes(self, include_label=False, include_elapsed=False,
-                       exclude_empty=True, values_as_strings=False, html_escape=False):
+    def get_attributes(
+        self,
+        include_label=False,
+        include_elapsed=False,
+        exclude_empty=True,
+        values_as_strings=False,
+        html_escape=False,
+    ):
         attrs = {
-            **({'label': self.name} if include_label else {}),
+            **({"label": self.name} if include_label else {}),
             **self._get_custom_attrs(),
-            **{'pass': self.passed, 'fail': self.failed, 'skip': self.skipped},
+            "pass": self.passed,
+            "fail": self.failed,
+            "skip": self.skipped,
         }
         if include_elapsed:
-            attrs['elapsed'] = elapsed_time_to_string(self.elapsed, include_millis=False)
+            attrs["elapsed"] = elapsed_time_to_string(
+                self.elapsed, include_millis=False
+            )
         if exclude_empty:
-            attrs = {k: v for k, v in attrs.items() if v not in ('', None)}
+            attrs = {k: v for k, v in attrs.items() if v not in ("", None)}
         if values_as_strings:
-            attrs = {k: str(v if v is not None else '') for k, v in attrs.items()}
+            attrs = {k: str(v if v is not None else "") for k, v in attrs.items()}
         if html_escape:
             attrs = {k: self._html_escape(v) for k, v in attrs.items()}
         return attrs
@@ -93,12 +103,14 @@ class Stat(Sortable):
 
 class TotalStat(Stat):
     """Stores statistic values for a test run."""
-    type = 'total'
+
+    type = "total"
 
 
 class SuiteStat(Stat):
     """Stores statistics values for a single suite."""
-    type = 'suite'
+
+    type = "suite"
 
     def __init__(self, suite):
         super().__init__(suite.full_name)
@@ -107,7 +119,7 @@ class SuiteStat(Stat):
         self._name = suite.name
 
     def _get_custom_attrs(self):
-        return {'name': self._name, 'id': self.id}
+        return {"name": self._name, "id": self.id}
 
     def _update_elapsed(self, test):
         pass
@@ -120,9 +132,10 @@ class SuiteStat(Stat):
 
 class TagStat(Stat):
     """Stores statistic values for a single tag."""
-    type = 'tag'
 
-    def __init__(self, name, doc='', links=None, combined=None):
+    type = "tag"
+
+    def __init__(self, name, doc="", links=None, combined=None):
         super().__init__(name)
         #: Documentation of tag as a string.
         self.doc = doc
@@ -135,18 +148,22 @@ class TagStat(Stat):
     @property
     def info(self):
         """Returns additional information of the tag statistics
-           are about. Either `combined` or an empty string.
+        are about. Either `combined` or an empty string.
         """
         if self.combined:
-            return 'combined'
-        return ''
+            return "combined"
+        return ""
 
     def _get_custom_attrs(self):
-        return {'doc': self.doc, 'links': self._get_links_as_string(),
-                'info': self.info, 'combined': self.combined}
+        return {
+            "doc": self.doc,
+            "links": self._get_links_as_string(),
+            "info": self.info,
+            "combined": self.combined,
+        }
 
     def _get_links_as_string(self):
-        return ':::'.join('%s:%s' % (title, url) for url, title in self.links)
+        return ":::".join(f"{title}:{url}" for url, title in self.links)
 
     @property
     def _sort_key(self):
@@ -155,7 +172,7 @@ class TagStat(Stat):
 
 class CombinedTagStat(TagStat):
 
-    def __init__(self, pattern, name=None, doc='', links=None):
+    def __init__(self, pattern, name=None, doc="", links=None):
         super().__init__(name or pattern, doc, links, combined=pattern)
         self.pattern = TagPattern.from_string(pattern)
 

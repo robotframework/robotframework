@@ -14,7 +14,7 @@
 #  limitations under the License.
 
 from abc import ABC, abstractmethod
-from inspect import isclass, signature, Parameter
+from inspect import isclass, Parameter, signature
 from typing import Any, Callable, get_type_hints
 
 from robot.errors import DataError
@@ -27,20 +27,23 @@ from .typeinfo import TypeInfo
 
 class ArgumentParser(ABC):
 
-    def __init__(self, type: str = 'Keyword',
-                 error_reporter: 'Callable[[str], None] | None' = None):
+    def __init__(
+        self,
+        type: str = "Keyword",
+        error_reporter: "Callable[[str], None]|None" = None,
+    ):
         self.type = type
         self.error_reporter = error_reporter
 
     @abstractmethod
-    def parse(self, source: Any, name: 'str|None' = None) -> ArgumentSpec:
+    def parse(self, source: Any, name: "str|None" = None) -> ArgumentSpec:
         raise NotImplementedError
 
     def _report_error(self, error: str):
         if self.error_reporter:
             self.error_reporter(error)
         else:
-            raise DataError(f'Invalid argument specification: {error}')
+            raise DataError(f"Invalid argument specification: {error}")
 
 
 class PythonArgumentParser(ArgumentParser):
@@ -48,8 +51,8 @@ class PythonArgumentParser(ArgumentParser):
     def parse(self, method, name=None):
         try:
             sig = signature(method)
-        except ValueError:        # Can occur with C functions (incl. many builtins).
-            return ArgumentSpec(name, self.type, var_positional='args')
+        except ValueError:  # Can occur with C functions (incl. many builtins).
+            return ArgumentSpec(name, self.type, var_positional="args")
         except TypeError as err:  # Occurs if handler isn't actually callable.
             raise DataError(str(err))
         parameters = list(sig.parameters.values())
@@ -57,7 +60,7 @@ class PythonArgumentParser(ArgumentParser):
         # inspecting keywords. `__init__` is got directly from class (i.e. isn't bound)
         # so we need to handle that case ourselves.
         # Partial objects do not have __name__ at least in Python =< 3.10.
-        if getattr(method, '__name__', None) == '__init__':
+        if getattr(method, "__name__", None) == "__init__":
             parameters = parameters[1:]
         spec = self._create_spec(parameters, name)
         self._set_types(spec, method)
@@ -84,13 +87,21 @@ class PythonArgumentParser(ArgumentParser):
                 var_named = param.name
             if param.default is not param.empty:
                 defaults[param.name] = param.default
-        return ArgumentSpec(name, self.type, positional_only, positional_or_named,
-                            var_positional, named_only, var_named, defaults)
+        return ArgumentSpec(
+            name,
+            self.type,
+            positional_only,
+            positional_or_named,
+            var_positional,
+            named_only,
+            var_named,
+            defaults,
+        )
 
     def _set_types(self, spec, method):
         types = self._get_types(method)
-        if isinstance(types, dict) and 'return' in types:
-            spec.return_type = types.pop('return')
+        if isinstance(types, dict) and "return" in types:
+            spec.return_type = types.pop("return")
         spec.types = types
 
     def _get_types(self, method):
@@ -99,7 +110,7 @@ class PythonArgumentParser(ArgumentParser):
         # type hints.
         if isclass(method):
             method = method.__init__
-        types = getattr(method, 'robot_types', ())
+        types = getattr(method, "robot_types", ())
         if types or types is None:
             return types
         try:
@@ -107,7 +118,7 @@ class PythonArgumentParser(ArgumentParser):
         except Exception:  # Can raise pretty much anything
             # Not all functions have `__annotations__`.
             # https://github.com/robotframework/robotframework/issues/4059
-            return getattr(method, '__annotations__', {})
+            return getattr(method, "__annotations__", {})
 
 
 class ArgumentSpecParser(ArgumentParser):
@@ -128,13 +139,14 @@ class ArgumentSpecParser(ArgumentParser):
             if type_:
                 types[self._format_arg(arg)] = type_
             if var_named:
-                self._report_error('Only last argument can be kwargs.')
+                self._report_error("Only last argument can be kwargs.")
             elif self._is_positional_only_separator(arg):
                 if positional_only_separator_seen:
-                    self._report_error('Too many positional-only separators.')
+                    self._report_error("Too many positional-only separators.")
                 if named_only_separator_seen:
-                    self._report_error('Positional-only separator must be before '
-                                       'named-only arguments.')
+                    self._report_error(
+                        "Positional-only separator must be before named-only arguments."
+                    )
                 positional_only = positional_or_named
                 target = positional_or_named = []
                 positional_only_separator_seen = True
@@ -146,19 +158,27 @@ class ArgumentSpecParser(ArgumentParser):
                 var_named = self._format_var_named(arg)
             elif self._is_var_positional(arg):
                 if named_only_separator_seen:
-                    self._report_error('Cannot have multiple varargs.')
+                    self._report_error("Cannot have multiple varargs.")
                 if not self._is_named_only_separator(arg):
                     var_positional = self._format_var_positional(arg)
                 named_only_separator_seen = True
                 target = named_only
             elif defaults and not named_only_separator_seen:
-                self._report_error('Non-default argument after default arguments.')
+                self._report_error("Non-default argument after default arguments.")
             else:
                 arg = self._format_arg(arg)
                 target.append(arg)
-        return ArgumentSpec(name, self.type, positional_only, positional_or_named,
-                            var_positional, named_only, var_named, defaults,
-                            types=types)
+        return ArgumentSpec(
+            name,
+            self.type,
+            positional_only,
+            positional_or_named,
+            var_positional,
+            named_only,
+            var_named,
+            defaults,
+            types=types,
+        )
 
     @abstractmethod
     def _validate_arg(self, arg):
@@ -200,6 +220,7 @@ class ArgumentSpecParser(ArgumentParser):
     def _split_type(self, arg):
         return arg, None
 
+
 class DynamicArgumentParser(ArgumentSpecParser):
 
     def _validate_arg(self, arg):
@@ -210,29 +231,31 @@ class DynamicArgumentParser(ArgumentSpecParser):
             if len(arg) == 1:
                 return arg[0], NOT_SET
             return arg[0], arg[1]
-        if '=' in arg:
-            return tuple(arg.split('=', 1))
+        if "=" in arg:
+            return tuple(arg.split("=", 1))
         return arg, NOT_SET
 
     def _is_valid_tuple(self, arg):
-        return (len(arg) in (1, 2)
-                and isinstance(arg[0], str)
-                and not (arg[0].startswith('*') and len(arg) == 2))
+        return (
+            len(arg) in (1, 2)
+            and isinstance(arg[0], str)
+            and not (arg[0].startswith("*") and len(arg) == 2)
+        )
 
     def _is_var_named(self, arg):
-        return arg[:2] == '**'
+        return arg[:2] == "**"
 
     def _format_var_named(self, kwargs):
         return kwargs[2:]
 
     def _is_var_positional(self, arg):
-        return arg and arg[0] == '*'
+        return arg and arg[0] == "*"
 
     def _is_positional_only_separator(self, arg):
-        return arg == '/'
+        return arg == "/"
 
     def _is_named_only_separator(self, arg):
-        return arg == '*'
+        return arg == "*"
 
     def _format_var_positional(self, varargs):
         return varargs[1:]
@@ -242,37 +265,39 @@ class UserKeywordArgumentParser(ArgumentSpecParser):
 
     def _validate_arg(self, arg):
         arg, default = split_from_equals(arg)
-        if not (is_assign(arg) or arg == '@{}'):
+        if not (is_assign(arg) or arg == "@{}"):
             self._report_error(f"Invalid argument syntax '{arg}'.")
             return None, NOT_SET
         if default is None:
             return arg, NOT_SET
         if not is_scalar_assign(arg):
-            typ = 'list' if arg[0] == '@' else 'dictionary'
-            self._report_error(f"Only normal arguments accept default values, "
-                               f"{typ} arguments like '{arg}' do not.")
+            typ = "list" if arg[0] == "@" else "dictionary"
+            self._report_error(
+                f"Only normal arguments accept default values, "
+                f"{typ} arguments like '{arg}' do not."
+            )
         return arg, default
 
     def _is_var_named(self, arg):
-        return arg and arg[0] == '&'
+        return arg and arg[0] == "&"
 
     def _format_var_named(self, kwargs):
         return kwargs[2:-1]
 
     def _is_var_positional(self, arg):
-        return arg and arg[0] == '@'
+        return arg and arg[0] == "@"
 
     def _is_positional_only_separator(self, arg):
         return False
 
     def _is_named_only_separator(self, arg):
-        return arg == '@{}'
+        return arg == "@{}"
 
     def _format_var_positional(self, varargs):
         return varargs[2:-1]
 
     def _format_arg(self, arg):
-        return arg[2:-1] if arg else ''
+        return arg[2:-1] if arg else ""
 
     def _split_type(self, arg):
         match = search_variable(arg, parse_type=True)

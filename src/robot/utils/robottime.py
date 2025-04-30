@@ -18,11 +18,10 @@ import time
 import warnings
 from datetime import datetime, timedelta
 
+from .misc import plural_or_not as s
 from .normalizing import normalize
-from .misc import plural_or_not
 
-
-_timer_re = re.compile(r'^([+-])?(\d+:)?(\d+):(\d+)(\.\d+)?$')
+_timer_re = re.compile(r"^([+-])?(\d+:)?(\d+):(\d+)(\.\d+)?$")
 
 
 def _get_timetuple(epoch_secs=None):
@@ -30,13 +29,13 @@ def _get_timetuple(epoch_secs=None):
         epoch_secs = time.time()
     secs, millis = _float_secs_to_secs_and_millis(epoch_secs)
     timetuple = time.localtime(secs)[:6]  # from year to secs
-    return timetuple + (millis,)
+    return (*timetuple, millis)
 
 
 def _float_secs_to_secs_and_millis(secs):
     isecs = int(secs)
     millis = round((secs - isecs) * 1000)
-    return (isecs, millis) if millis < 1000 else (isecs+1, 0)
+    return (isecs, millis) if millis < 1000 else (isecs + 1, 0)
 
 
 def timestr_to_secs(timestr, round_to=3):
@@ -75,8 +74,8 @@ def _timer_to_secs(number):
     if hours:
         seconds += float(hours[:-1]) * 60 * 60
     if millis:
-        seconds += float(millis[1:]) / 10**len(millis[1:])
-    if prefix == '-':
+        seconds += float(millis[1:]) / 10 ** len(millis[1:])
+    if prefix == "-":
         seconds *= -1
     return seconds
 
@@ -87,29 +86,49 @@ def _time_string_to_secs(timestr):
     except ValueError:
         return None
     nanos = micros = millis = secs = mins = hours = days = weeks = 0
-    if timestr[0] == '-':
+    if timestr[0] == "-":
         sign = -1
         timestr = timestr[1:]
     else:
         sign = 1
     temp = []
     for c in timestr:
-        try:
-            if   c == 'n': nanos  = float(''.join(temp)); temp = []
-            elif c == 'u': micros = float(''.join(temp)); temp = []
-            elif c == 'M': millis = float(''.join(temp)); temp = []
-            elif c == 's': secs   = float(''.join(temp)); temp = []
-            elif c == 'm': mins   = float(''.join(temp)); temp = []
-            elif c == 'h': hours  = float(''.join(temp)); temp = []
-            elif c == 'd': days   = float(''.join(temp)); temp = []
-            elif c == 'w': weeks  = float(''.join(temp)); temp = []
-            else: temp.append(c)
-        except ValueError:
-            return None
+        if c in ("n", "u", "M", "s", "m", "h", "d", "w"):
+            try:
+                value = float("".join(temp))
+            except ValueError:
+                return None
+            if c == "n":
+                nanos = value
+            elif c == "u":
+                micros = value
+            elif c == "M":
+                millis = value
+            elif c == "s":
+                secs = value
+            elif c == "m":
+                mins = value
+            elif c == "h":
+                hours = value
+            elif c == "d":
+                days = value
+            elif c == "w":
+                weeks = value
+            temp = []
+        else:
+            temp.append(c)
     if temp:
         return None
-    return sign * (nanos/1E9 + micros/1E6 + millis/1000 + secs +
-                   mins*60 + hours*60*60 + days*60*60*24 + weeks*60*60*24*7)
+    return sign * (
+        nanos / 1e9
+        + micros / 1e6
+        + millis / 1e3
+        + secs
+        + mins * 60
+        + hours * 60 * 60
+        + days * 60 * 60 * 24
+        + weeks * 60 * 60 * 24 * 7
+    )
 
 
 def _normalize_timestr(timestr):
@@ -117,16 +136,17 @@ def _normalize_timestr(timestr):
     if not timestr:
         raise ValueError
     seen = []
-    for specifier, aliases in [('n', ['nanosecond', 'ns']),
-                               ('u', ['microsecond', 'us', 'μs']),
-                               ('M', ['millisecond', 'millisec', 'millis',
-                                      'msec', 'ms']),
-                               ('s', ['second', 'sec']),
-                               ('m', ['minute', 'min']),
-                               ('h', ['hour']),
-                               ('d', ['day']),
-                               ('w', ['week'])]:
-        plural_aliases = [a+'s' for a in aliases if not a.endswith('s')]
+    for specifier, aliases in [
+        ("n", ["nanosecond", "ns"]),
+        ("u", ["microsecond", "us", "μs"]),
+        ("M", ["millisecond", "millisec", "millis", "msec", "ms"]),
+        ("s", ["second", "sec"]),
+        ("m", ["minute", "min"]),
+        ("h", ["hour"]),
+        ("d", ["day"]),
+        ("w", ["week"]),
+    ]:
+        plural_aliases = [a + "s" for a in aliases if not a.endswith("s")]
         for alias in plural_aliases + aliases:
             if alias in timestr:
                 timestr = timestr.replace(alias, specifier)
@@ -138,7 +158,7 @@ def _normalize_timestr(timestr):
     return timestr
 
 
-def secs_to_timestr(secs: 'int|float|timedelta', compact=False) -> str:
+def secs_to_timestr(secs: "int|float|timedelta", compact=False) -> str:
     """Converts time in seconds to a string representation.
 
     Returned string is in format like
@@ -163,16 +183,16 @@ class _SecsToTimestrHelper:
         self._compact = compact
         self._ret = []
         self._sign, ms, sec, min, hour, day = self._secs_to_components(float_secs)
-        self._add_item(day, 'd', 'day')
-        self._add_item(hour, 'h', 'hour')
-        self._add_item(min, 'min', 'minute')
-        self._add_item(sec, 's', 'second')
-        self._add_item(ms, 'ms', 'millisecond')
+        self._add_item(day, "d", "day")
+        self._add_item(hour, "h", "hour")
+        self._add_item(min, "min", "minute")
+        self._add_item(sec, "s", "second")
+        self._add_item(ms, "ms", "millisecond")
 
     def get_value(self):
         if len(self._ret) > 0:
-            return self._sign + ' '.join(self._ret)
-        return '0s' if self._compact else '0 seconds'
+            return self._sign + " ".join(self._ret)
+        return "0s" if self._compact else "0 seconds"
 
     def _add_item(self, value, compact_suffix, long_suffix):
         if value == 0:
@@ -180,15 +200,15 @@ class _SecsToTimestrHelper:
         if self._compact:
             suffix = compact_suffix
         else:
-            suffix = ' %s%s' % (long_suffix, plural_or_not(value))
-        self._ret.append('%d%s' % (value, suffix))
+            suffix = f" {long_suffix}{s(value)}"
+        self._ret.append(f"{value}{suffix}")
 
     def _secs_to_components(self, float_secs):
         if float_secs < 0:
-            sign = '- '
+            sign = "- "
             float_secs = abs(float_secs)
         else:
-            sign = ''
+            sign = ""
         int_secs, millis = _float_secs_to_secs_and_millis(float_secs)
         secs = int_secs % 60
         mins = int_secs // 60 % 60
@@ -197,23 +217,30 @@ class _SecsToTimestrHelper:
         return sign, millis, secs, mins, hours, days
 
 
-def format_time(timetuple_or_epochsecs, daysep='', daytimesep=' ', timesep=':',
-                millissep=None):
+def format_time(
+    timetuple_or_epochsecs,
+    daysep="",
+    daytimesep=" ",
+    timesep=":",
+    millissep=None,
+):
     """Deprecated in Robot Framework 7.0. Will be removed in Robot Framework 8.0."""
-    warnings.warn("'robot.utils.format_time' is deprecated and will be "
-                  "removed in Robot Framework 8.0.")
+    warnings.warn(
+        "'robot.utils.format_time' is deprecated and will be "
+        "removed in Robot Framework 8.0."
+    )
     if isinstance(timetuple_or_epochsecs, (int, float)):
         timetuple = _get_timetuple(timetuple_or_epochsecs)
     else:
         timetuple = timetuple_or_epochsecs
-    daytimeparts = ['%02d' % t for t in timetuple[:6]]
-    day = daysep.join(daytimeparts[:3])
-    time_ = timesep.join(daytimeparts[3:6])
-    millis = millissep and '%s%03d' % (millissep, timetuple[6]) or ''
+    parts = [f"{t:02}" for t in timetuple[:6]]
+    day = daysep.join(parts[:3])
+    time_ = timesep.join(parts[3:6])
+    millis = f"{millissep}{timetuple[6]:03}" if millissep else ""
     return day + daytimesep + time_ + millis
 
 
-def get_time(format='timestamp', time_=None):
+def get_time(format="timestamp", time_=None):
     """Return the given or current time in requested format.
 
     If time is not given, current time is used. How time is returned is
@@ -233,25 +260,30 @@ def get_time(format='timestamp', time_=None):
     time_ = int(time.time() if time_ is None else time_)
     format = format.lower()
     # 1) Return time in seconds since epoc
-    if 'epoch' in format:
+    if "epoch" in format:
         return time_
     dt = datetime.fromtimestamp(time_)
     parts = []
-    for part, name in [(dt.year, 'year'), (dt.month, 'month'), (dt.day, 'day'),
-                       (dt.hour, 'hour'), (dt.minute, 'min'), (dt.second, 'sec')]:
+    for part, name in [
+        (dt.year, "year"),
+        (dt.month, "month"),
+        (dt.day, "day"),
+        (dt.hour, "hour"),
+        (dt.minute, "min"),
+        (dt.second, "sec"),
+    ]:
         if name in format:
-            parts.append(f'{part:02}')
+            parts.append(f"{part:02}")
     # 2) Return time as timestamp
     if not parts:
-        return dt.isoformat(' ', timespec='seconds')
+        return dt.isoformat(" ", timespec="seconds")
     # Return requested parts of the time
-    elif len(parts) == 1:
+    if len(parts) == 1:
         return parts[0]
-    else:
-        return parts
+    return parts
 
 
-def parse_timestamp(timestamp: 'str|datetime') -> datetime:
+def parse_timestamp(timestamp: "str|datetime") -> datetime:
     """Parse timestamp in ISO 8601-like formats into a ``datetime``.
 
     Months, days, hours, minutes and seconds must use two digits and
@@ -283,14 +315,20 @@ def parse_timestamp(timestamp: 'str|datetime') -> datetime:
     except ValueError:
         pass
     orig = timestamp
-    for sep in ('-', '_', ' ', 'T', ':', '.'):
+    for sep in ("-", "_", " ", "T", ":", "."):
         if sep in timestamp:
-            timestamp = timestamp.replace(sep, '')
-    timestamp = timestamp.ljust(20, '0')
+            timestamp = timestamp.replace(sep, "")
+    timestamp = timestamp.ljust(20, "0")
     try:
-        return datetime(int(timestamp[0:4]), int(timestamp[4:6]), int(timestamp[6:8]),
-                        int(timestamp[8:10]), int(timestamp[10:12]), int(timestamp[12:14]),
-                        int(timestamp[14:20]))
+        return datetime(
+            int(timestamp[0:4]),
+            int(timestamp[4:6]),
+            int(timestamp[6:8]),
+            int(timestamp[8:10]),
+            int(timestamp[10:12]),
+            int(timestamp[12:14]),
+            int(timestamp[14:20]),
+        )
     except ValueError:
         raise ValueError(f"Invalid timestamp '{orig}'.")
 
@@ -310,13 +348,11 @@ def parse_time(timestr):
 
     Seconds are rounded down to avoid getting times in the future.
     """
-    for method in [_parse_time_epoch,
-                   _parse_time_timestamp,
-                   _parse_time_now_and_utc]:
+    for method in [_parse_time_epoch, _parse_time_timestamp, _parse_time_now_and_utc]:
         seconds = method(timestr)
         if seconds is not None:
             return int(seconds)
-    raise ValueError("Invalid time format '%s'." % timestr)
+    raise ValueError(f"Invalid time format '{timestr}'.")
 
 
 def _parse_time_epoch(timestr):
@@ -325,7 +361,7 @@ def _parse_time_epoch(timestr):
     except ValueError:
         return None
     if ret < 0:
-        raise ValueError("Epoch time must be positive (got %s)." % timestr)
+        raise ValueError(f"Epoch time must be positive, got '{timestr}'.")
     return ret
 
 
@@ -337,7 +373,7 @@ def _parse_time_timestamp(timestr):
 
 
 def _parse_time_now_and_utc(timestr):
-    timestr = timestr.replace(' ', '').lower()
+    timestr = timestr.replace(" ", "").lower()
     base = _parse_time_now_and_utc_base(timestr[:3])
     if base is not None:
         extra = _parse_time_now_and_utc_extra(timestr[3:])
@@ -348,9 +384,9 @@ def _parse_time_now_and_utc(timestr):
 
 def _parse_time_now_and_utc_base(base):
     now = time.time()
-    if base == 'now':
+    if base == "now":
         return now
-    if base == 'utc':
+    if base == "utc":
         zone = time.altzone if time.localtime().tm_isdst else time.timezone
         return now + zone
     return None
@@ -359,9 +395,9 @@ def _parse_time_now_and_utc_base(base):
 def _parse_time_now_and_utc_extra(extra):
     if not extra:
         return 0
-    if extra[0] not in ['+', '-']:
+    if extra[0] not in ["+", "-"]:
         return None
-    return (1 if extra[0] == '+' else -1) * timestr_to_secs(extra[1:])
+    return (1 if extra[0] == "+" else -1) * timestr_to_secs(extra[1:])
 
 
 def _get_dst_difference(time1, time2):
@@ -373,49 +409,68 @@ def _get_dst_difference(time1, time2):
     return difference if time1_is_dst else -difference
 
 
-def get_timestamp(daysep='', daytimesep=' ', timesep=':', millissep='.'):
+def get_timestamp(daysep="", daytimesep=" ", timesep=":", millissep="."):
     """Deprecated in Robot Framework 7.0. Will be removed in Robot Framework 8.0."""
-    warnings.warn("'robot.utils.get_timestamp' is deprecated and will be "
-                  "removed in Robot Framework 8.0.")
+    warnings.warn(
+        "'robot.utils.get_timestamp' is deprecated and will be "
+        "removed in Robot Framework 8.0."
+    )
     dt = datetime.now()
-    parts = [str(dt.year), daysep, f'{dt.month:02}', daysep, f'{dt.day:02}', daytimesep,
-             f'{dt.hour:02}', timesep, f'{dt.minute:02}', timesep, f'{dt.second:02}']
+    parts = [
+        str(dt.year),
+        daysep,
+        f"{dt.month:02}",
+        daysep,
+        f"{dt.day:02}",
+        daytimesep,
+        f"{dt.hour:02}",
+        timesep,
+        f"{dt.minute:02}",
+        timesep,
+        f"{dt.second:02}",
+    ]
     if millissep:
         # Make sure milliseconds is < 1000. Good enough for a deprecated function.
         millis = min(round(dt.microsecond, -3) // 1000, 999)
-        parts.extend([millissep, f'{millis:03}'])
-    return ''.join(parts)
+        parts.extend([millissep, f"{millis:03}"])
+    return "".join(parts)
 
 
 def timestamp_to_secs(timestamp, seps=None):
     """Deprecated in Robot Framework 7.0. Will be removed in Robot Framework 8.0."""
-    warnings.warn("'robot.utils.timestamp_to_secs' is deprecated and will be "
-                  "removed in Robot Framework 8.0. User 'parse_timestamp' instead.")
+    warnings.warn(
+        "'robot.utils.timestamp_to_secs' is deprecated and will be "
+        "removed in Robot Framework 8.0. User 'parse_timestamp' instead."
+    )
     try:
         secs = _timestamp_to_millis(timestamp, seps) / 1000.0
     except (ValueError, OverflowError):
-        raise ValueError("Invalid timestamp '%s'." % timestamp)
+        raise ValueError(f"Invalid timestamp '{timestamp}'.")
     else:
         return round(secs, 3)
 
 
 def secs_to_timestamp(secs, seps=None, millis=False):
     """Deprecated in Robot Framework 7.0. Will be removed in Robot Framework 8.0."""
-    warnings.warn("'robot.utils.secs_to_timestamp' is deprecated and will be "
-                  "removed in Robot Framework 8.0.")
+    warnings.warn(
+        "'robot.utils.secs_to_timestamp' is deprecated and will be "
+        "removed in Robot Framework 8.0."
+    )
     if not seps:
-        seps = ('', ' ', ':', '.' if millis else None)
+        seps = ("", " ", ":", "." if millis else None)
     ttuple = time.localtime(secs)[:6]
     if millis:
         millis = (secs - int(secs)) * 1000
-        ttuple = ttuple + (round(millis),)
+        ttuple = (*ttuple, round(millis))
     return format_time(ttuple, *seps)
 
 
 def get_elapsed_time(start_time, end_time):
     """Deprecated in Robot Framework 7.0. Will be removed in Robot Framework 8.0."""
-    warnings.warn("'robot.utils.get_elapsed_time' is deprecated and will be "
-                  "removed in Robot Framework 8.0.")
+    warnings.warn(
+        "'robot.utils.get_elapsed_time' is deprecated and will be "
+        "removed in Robot Framework 8.0."
+    )
     if start_time == end_time or not (start_time and end_time):
         return 0
     if start_time[:-4] == end_time[:-4]:
@@ -425,9 +480,11 @@ def get_elapsed_time(start_time, end_time):
     return end_millis - start_millis
 
 
-def elapsed_time_to_string(elapsed: 'int|float|timedelta',
-                           include_millis: bool = True,
-                           seconds: bool = False):
+def elapsed_time_to_string(
+    elapsed: "int|float|timedelta",
+    include_millis: bool = True,
+    seconds: bool = False,
+):
     """Converts elapsed time to format 'hh:mm:ss.mil'.
 
     Elapsed time as an integer or as a float is currently considered to be
@@ -446,14 +503,15 @@ def elapsed_time_to_string(elapsed: 'int|float|timedelta',
         elapsed = elapsed.total_seconds()
     elif not seconds:
         elapsed /= 1000
-        warnings.warn("'robot.utils.elapsed_time_to_string' currently accepts "
-                      "input as milliseconds, but that will be changed to seconds "
-                      "in Robot Framework 8.0. Use 'seconds=True' to change the "
-                      "behavior already now and to avoid this warning. Alternatively "
-                      "pass the elapsed time as a 'timedelta'.")
-    prefix = ''
+        warnings.warn(
+            "'robot.utils.elapsed_time_to_string' currently accepts input as "
+            "milliseconds, but that will be changed to seconds in Robot Framework 8.0. "
+            "Use 'seconds=True' to change the behavior already now and to avoid this "
+            "warning. Alternatively pass the elapsed time as a 'timedelta'."
+        )
+    prefix = ""
     if elapsed < 0:
-        prefix = '-'
+        prefix = "-"
         elapsed = abs(elapsed)
     if include_millis:
         return prefix + _elapsed_time_to_string_with_millis(elapsed)
@@ -466,14 +524,14 @@ def _elapsed_time_to_string_with_millis(elapsed):
     millis = round((elapsed - secs) * 1000)
     mins, secs = divmod(secs, 60)
     hours, mins = divmod(mins, 60)
-    return f'{hours:02}:{mins:02}:{secs:02}.{millis:03}'
+    return f"{hours:02}:{mins:02}:{secs:02}.{millis:03}"
 
 
 def _elapsed_time_to_string_without_millis(elapsed):
     secs = round(elapsed)
     mins, secs = divmod(secs, 60)
     hours, mins = divmod(mins, 60)
-    return f'{hours:02}:{mins:02}:{secs:02}'
+    return f"{hours:02}:{mins:02}:{secs:02}"
 
 
 def _timestamp_to_millis(timestamp, seps=None):
@@ -481,15 +539,15 @@ def _timestamp_to_millis(timestamp, seps=None):
         timestamp = _normalize_timestamp(timestamp, seps)
     Y, M, D, h, m, s, millis = _split_timestamp(timestamp)
     secs = time.mktime((Y, M, D, h, m, s, 0, 0, -1))
-    return round(1000*secs + millis)
+    return round(1000 * secs + millis)
 
 
 def _normalize_timestamp(ts, seps):
     for sep in seps:
         if sep in ts:
-            ts = ts.replace(sep, '')
-    ts = ts.ljust(17, '0')
-    return f'{ts[:8]} {ts[8:10]}:{ts[10:12]}:{ts[12:14]}.{ts[14:17]}'
+            ts = ts.replace(sep, "")
+    ts = ts.ljust(17, "0")
+    return f"{ts[:8]} {ts[8:10]}:{ts[10:12]}:{ts[12:14]}.{ts[14:17]}"
 
 
 def _split_timestamp(timestamp):

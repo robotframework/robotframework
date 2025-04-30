@@ -27,8 +27,9 @@ class DotDict(OrderedDict):
 
     def _convert_nested_initial_dicts(self, value):
         items = value.items() if is_dict_like(value) else value
-        return OrderedDict((key, self._convert_nested_dicts(value))
-                           for key, value in items)
+        return OrderedDict(
+            (key, self._convert_nested_dicts(value)) for key, value in items
+        )
 
     def _convert_nested_dicts(self, value):
         if isinstance(value, DotDict):
@@ -46,7 +47,7 @@ class DotDict(OrderedDict):
             raise AttributeError(key)
 
     def __setattr__(self, key, value):
-        if not key.startswith('_OrderedDict__'):
+        if not key.startswith("_OrderedDict__"):
             self[key] = value
         else:
             OrderedDict.__setattr__(self, key, value)
@@ -64,7 +65,8 @@ class DotDict(OrderedDict):
         return not self == other
 
     def __str__(self):
-        return '{%s}' % ', '.join('%r: %r' % (key, self[key]) for key in self)
+        items = ", ".join(f"{key!r}: {self[key]!r}" for key in self)
+        return f"{{{items}}}"
 
     # Must use original dict.__repr__ to allow customising PrettyPrinter.
     __repr__ = dict.__repr__

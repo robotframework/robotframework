@@ -15,8 +15,9 @@
 
 import sys
 
-from robot.errors import (INFO_PRINTED, DATA_ERROR, STOPPED_BY_USER,
-                          FRAMEWORK_ERROR, Information, DataError)
+from robot.errors import (
+    DATA_ERROR, DataError, FRAMEWORK_ERROR, INFO_PRINTED, Information, STOPPED_BY_USER
+)
 
 from .argumentparser import ArgumentParser
 from .encoding import console_encode
@@ -25,10 +26,25 @@ from .error import get_error_details
 
 class Application:
 
-    def __init__(self, usage, name=None, version=None, arg_limits=None,
-                 env_options=None, logger=None, **auto_options):
-        self._ap = ArgumentParser(usage, name, version, arg_limits,
-                                  self.validate, env_options, **auto_options)
+    def __init__(
+        self,
+        usage,
+        name=None,
+        version=None,
+        arg_limits=None,
+        env_options=None,
+        logger=None,
+        **auto_options,
+    ):
+        self._ap = ArgumentParser(
+            usage,
+            name,
+            version,
+            arg_limits,
+            self.validate,
+            env_options,
+            **auto_options,
+        )
         self._logger = logger or DefaultLogger()
 
     def main(self, arguments, **options):
@@ -39,7 +55,7 @@ class Application:
 
     def execute_cli(self, cli_arguments, exit=True):
         with self._logger:
-            self._logger.info('%s %s' % (self._ap.name, self._ap.version))
+            self._logger.info(f"{self._ap.name} {self._ap.version}")
             options, arguments = self._parse_arguments(cli_arguments)
             rc = self._execute(arguments, options)
         if exit:
@@ -58,7 +74,7 @@ class Application:
         except DataError as err:
             self._report_error(err.message, help=True, exit=True)
         else:
-            self._logger.info('Arguments: %s' % ','.join(arguments))
+            self._logger.info(f"Arguments: {','.join(arguments)}")
             return options, arguments
 
     def parse_arguments(self, cli_args):
@@ -73,7 +89,7 @@ class Application:
 
     def execute(self, *arguments, **options):
         with self._logger:
-            self._logger.info('%s %s' % (self._ap.name, self._ap.version))
+            self._logger.info(f"{self._ap.name} {self._ap.version}")
             return self._execute(list(arguments), options)
 
     def _execute(self, arguments, options):
@@ -82,12 +98,12 @@ class Application:
         except DataError as err:
             return self._report_error(err.message, help=True)
         except (KeyboardInterrupt, SystemExit):
-            return self._report_error('Execution stopped by user.',
-                                      rc=STOPPED_BY_USER)
+            return self._report_error("Execution stopped by user.", rc=STOPPED_BY_USER)
         except Exception:
             error, details = get_error_details(exclude_robot_traces=False)
-            return self._report_error('Unexpected error: %s' % error,
-                                      details, rc=FRAMEWORK_ERROR)
+            return self._report_error(
+                f"Unexpected error: {error}", details, rc=FRAMEWORK_ERROR
+            )
         else:
             return rc or 0
 
@@ -95,12 +111,18 @@ class Application:
         self.console(message)
         self._exit(INFO_PRINTED)
 
-    def _report_error(self, message, details=None, help=False, rc=DATA_ERROR,
-                      exit=False):
+    def _report_error(
+        self,
+        message,
+        details=None,
+        help=False,
+        rc=DATA_ERROR,
+        exit=False,
+    ):
         if help:
-            message += '\n\nTry --help for usage information.'
+            message += "\n\nTry --help for usage information."
         if details:
-            message += '\n' + details
+            message += "\n" + details
         self._logger.error(message)
         if exit:
             self._exit(rc)

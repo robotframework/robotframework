@@ -15,7 +15,7 @@
 
 from . import pyloggingconf
 from .debugfile import DebugFile
-from .listeners import Listeners, LibraryListeners
+from .listeners import LibraryListeners, Listeners
 from .logger import LOGGER
 from .loggerapi import LoggerApi
 from .loggerhelper import AbstractLogger
@@ -27,8 +27,12 @@ class Output(AbstractLogger, LoggerApi):
 
     def __init__(self, settings):
         self.log_level = LogLevel(settings.log_level)
-        self.output_file = OutputFile(settings.output, self.log_level, settings.rpa,
-                                      legacy_output=settings.legacy_output)
+        self.output_file = OutputFile(
+            settings.output,
+            self.log_level,
+            settings.rpa,
+            legacy_output=settings.legacy_output,
+        )
         self.listeners = Listeners(settings.listeners, self.log_level)
         self.library_listeners = LibraryListeners(self.log_level)
         self._register_loggers(DebugFile(settings.debug_file))
@@ -55,7 +59,7 @@ class Output(AbstractLogger, LoggerApi):
         self.output_file.statistics(result.statistics)
         self.output_file.close()
         LOGGER.unregister_output_file()
-        LOGGER.output_file(self._settings['Output'])
+        LOGGER.output_file(self._settings["Output"])
 
     def start_suite(self, data, result):
         LOGGER.start_suite(data, result)
@@ -182,7 +186,7 @@ class Output(AbstractLogger, LoggerApi):
 
     def trace(self, msg, write_if_flat=True):
         if write_if_flat or not self.output_file.flatten_level:
-            self.write(msg, 'TRACE')
+            self.write(msg, "TRACE")
 
     def set_log_level(self, level):
         old = self.log_level.set(level)

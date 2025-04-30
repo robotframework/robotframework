@@ -43,16 +43,18 @@ class _MarkupWriter:
         self._start(name, attrs, newline)
 
     def _start(self, name, attrs, newline):
-        self._write(f'<{name} {attrs}>' if attrs else f'<{name}>', newline)
+        self._write(f"<{name} {attrs}>" if attrs else f"<{name}>", newline)
 
     def _format_attrs(self, attrs, write_empty):
         if not attrs:
-            return ''
+            return ""
         if write_empty is None:
             write_empty = self._write_empty
-        return ' '.join(f"{name}=\"{attribute_escape(value or '')}\""
-                        for name, value in self._order_attrs(attrs)
-                        if write_empty or value)
+        return " ".join(
+            f'{name}="{attribute_escape(value or "")}"'
+            for name, value in self._order_attrs(attrs)
+            if write_empty or value
+        )
 
     def _order_attrs(self, attrs):
         return attrs.items()
@@ -65,10 +67,17 @@ class _MarkupWriter:
         raise NotImplementedError
 
     def end(self, name, newline=True):
-        self._write(f'</{name}>', newline)
+        self._write(f"</{name}>", newline)
 
-    def element(self, name, content=None, attrs=None, escape=True, newline=True,
-                write_empty=None):
+    def element(
+        self,
+        name,
+        content=None,
+        attrs=None,
+        escape=True,
+        newline=True,
+        write_empty=None,
+    ):
         attrs = self._format_attrs(attrs, write_empty)
         if write_empty is None:
             write_empty = self._write_empty
@@ -84,7 +93,7 @@ class _MarkupWriter:
     def _write(self, text, newline=False):
         self.output.write(text)
         if newline:
-            self.output.write('\n')
+            self.output.write("\n")
 
 
 class HtmlWriter(_MarkupWriter):
@@ -104,8 +113,15 @@ class XmlWriter(_MarkupWriter):
     def _escape(self, text):
         return xml_escape(text)
 
-    def element(self, name, content=None, attrs=None, escape=True, newline=True,
-                write_empty=None):
+    def element(
+        self,
+        name,
+        content=None,
+        attrs=None,
+        escape=True,
+        newline=True,
+        write_empty=None,
+    ):
         if content:
             super().element(name, content, attrs, escape, newline, write_empty)
         else:
@@ -116,7 +132,7 @@ class XmlWriter(_MarkupWriter):
         if write_empty is None:
             write_empty = self._write_empty
         if write_empty or attrs:
-            self._write(f'<{name} {attrs}/>' if attrs else f'<{name}/>', newline)
+            self._write(f"<{name} {attrs}/>" if attrs else f"<{name}/>", newline)
 
 
 class NullMarkupWriter:

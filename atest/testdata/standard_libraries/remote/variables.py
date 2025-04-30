@@ -3,7 +3,7 @@ from collections.abc import Mapping
 
 class MyObject:
 
-    def __init__(self, name='<MyObject>'):
+    def __init__(self, name="<MyObject>"):
         self.name = name
 
     def __str__(self):

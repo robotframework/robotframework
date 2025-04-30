@@ -1,6 +1,6 @@
 import sys
 
-from remoteserver import RemoteServer, keyword
+from remoteserver import keyword, RemoteServer
 
 
 class KeywordTags:
@@ -23,14 +23,14 @@ class KeywordTags:
     def empty_robot_tags_means_no_tags(self):
         pass
 
-    @keyword(tags=['foo', 'bar', 'FOO', '42'])
+    @keyword(tags=["foo", "bar", "FOO", "42"])
     def robot_tags(self):
         pass
 
-    @keyword(tags=['foo', 'bar'])
+    @keyword(tags=["foo", "bar"])
     def robot_tags_and_doc_tags(self):
         """Tags: bar, zap"""
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     RemoteServer(KeywordTags(), *sys.argv[1:])

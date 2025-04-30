@@ -15,10 +15,11 @@
 
 import sys
 import warnings
-from collections.abc import Iterable, Mapping
 from collections import UserString
+from collections.abc import Iterable, Mapping
 from io import IOBase
 from typing import get_args, get_origin, TypedDict, Union
+
 if sys.version_info < (3, 9):
     try:
         # get_args and get_origin handle at least Annotated wrong in Python 3.8.
@@ -36,11 +37,11 @@ except ImportError:
     ExtTypedDict = None
 
 
-TRUE_STRINGS = {'TRUE', 'YES', 'ON', '1'}
-FALSE_STRINGS = {'FALSE', 'NO', 'OFF', '0', 'NONE', ''}
-typeddict_types = (type(TypedDict('Dummy', {})),)
+TRUE_STRINGS = {"TRUE", "YES", "ON", "1"}
+FALSE_STRINGS = {"FALSE", "NO", "OFF", "0", "NONE", ""}
+typeddict_types = (type(TypedDict("Dummy", {})),)
 if ExtTypedDict:
-    typeddict_types += (type(ExtTypedDict('Dummy', {})),)
+    typeddict_types += (type(ExtTypedDict("Dummy", {})),)
 
 
 def is_list_like(item):
@@ -63,22 +64,27 @@ def type_name(item, capitalize=False):
     For example, 'integer' instead of 'int' and 'file' instead of 'TextIOWrapper'.
     """
     if is_union(item):
-        return 'Union'
+        return "Union"
     origin = get_origin(item)
     if origin:
         item = origin
-    if hasattr(item, '_name') and item._name:
+    if hasattr(item, "_name") and item._name:
         # Prior to Python 3.10, Union, Any, etc. from typing didn't have `__name__`.
         # but instead had `_name`. Python 3.10 has both and newer only `__name__`.
         # Also, pandas.Series has `_name` but it's None.
         name = item._name
     elif isinstance(item, IOBase):
-        name = 'file'
+        name = "file"
     else:
         typ = type(item) if not isinstance(item, type) else item
-        named_types = {str: 'string', bool: 'boolean', int: 'integer',
-                       type(None): 'None', dict: 'dictionary'}
-        name = named_types.get(typ, typ.__name__.strip('_'))
+        named_types = {
+            str: "string",
+            bool: "boolean",
+            int: "integer",
+            type(None): "None",
+            dict: "dictionary",
+        }
+        name = named_types.get(typ, typ.__name__.strip("_"))
     return name.capitalize() if capitalize and name.islower() else name
 
 
@@ -89,24 +95,23 @@ def type_repr(typ, nested=True):
     instead of 'typing.List[typing.Any]'.
     """
     if typ is type(None):
-        return 'None'
+        return "None"
     if typ is Ellipsis:
-        return '...'
+        return "..."
     if is_union(typ):
-        return ' | '.join(type_repr(a) for a in get_args(typ)) if nested else 'Union'
+        return " | ".join(type_repr(a) for a in get_args(typ)) if nested else "Union"
     name = _get_type_name(typ)
     if nested:
-        # At least Literal and Annotated can have strings as in args.
-        args = ', '.join(type_repr(a) if not isinstance(a, str) else repr(a)
-                         for a in get_args(typ))
+        # At least Literal and Annotated can have strings in args.
+        args = [repr(a) if isinstance(a, str) else type_repr(a) for a in get_args(typ)]
         if args:
-            return f'{name}[{args}]'
+            return f"{name}[{', '.join(args)}]"
     return name
 
 
 def _get_type_name(typ, try_origin=True):
     # See comment in `type_name` for explanation about `_name`.
-    for attr in '__name__', '_name':
+    for attr in "__name__", "_name":
         name = getattr(typ, attr, None)
         if name:
             return name
@@ -124,8 +129,10 @@ def has_args(type):
     Deprecated in Robot Framework 7.3 and will be removed in Robot Framework 8.0.
     ``typing.get_args`` can be used instead.
     """
-    warnings.warn("'robot.utils.has_args' is deprecated and will be removed in "
-                  "Robot Framework 8.0. Use 'typing.get_args' instead.")
+    warnings.warn(
+        "'robot.utils.has_args' is deprecated and will be removed in "
+        "Robot Framework 8.0. Use 'typing.get_args' instead."
+    )
     return bool(get_args(type))
 
 

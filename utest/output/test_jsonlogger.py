@@ -5,47 +5,75 @@ from typing import cast
 
 from robot.model import Statistics
 from robot.output.jsonlogger import JsonLogger
-from robot.result import *
+from robot.result import (
+    Break, Continue, Error, For, ForIteration, Group, If, IfBranch, Keyword, Message,
+    Return, TestCase, TestSuite, Try, TryBranch, Var, While, WhileIteration
+)
 
 
 class TestJsonLogger(unittest.TestCase):
-    start = '2024-12-03T12:27:00.123456'
+    start = "2024-12-03T12:27:00.123456"
 
     def setUp(self):
         self.logger = JsonLogger(StringIO())
 
     def test_start(self):
-        self.verify('''{
+        self.verify(
+            """
+{
 "generator":"Robot * (* on *)",
 "generated":"20??-??-??T??:??:??.??????",
-"rpa":false''', glob=True)
+"rpa":false
+            """.strip(),
+            glob=True,
+        )
 
     def test_start_suite(self):
         self.test_start()
         self.logger.start_suite(TestSuite())
-        self.verify(''',
+        self.verify(
+            """
+,
 "suite":{
-"id":"s1"''')
+"id":"s1"
+            """.strip()
+        )
 
     def test_end_suite(self):
         self.test_start_suite()
         self.logger.end_suite(TestSuite())
-        self.verify(''',
+        self.verify(
+            """
+,
 "status":"SKIP",
 "elapsed_time":0.000000
-}''')
+}
+            """.strip()
+        )
 
     def test_suite_with_config(self):
         self.test_start()
-        suite = TestSuite(name='Suite', doc='The doc!', metadata={'N': 'V', 'n2': 'v2'},
-                          source='tests.robot', rpa=True, start_time=self.start,
-                          elapsed_time=3.14, message="Message")
+        suite = TestSuite(
+            name="Suite",
+            doc="The doc!",
+            metadata={"N": "V", "n2": "v2"},
+            source="tests.robot",
+            rpa=True,
+            start_time=self.start,
+            elapsed_time=3.14,
+            message="Message",
+        )
         self.logger.start_suite(suite)
-        self.verify(''',
+        self.verify(
+            """,
 "suite":{
-"id":"s1"''')
+"id":"s1"
+            """.strip()
+        )
         self.logger.end_suite(suite)
-        self.verify(''',
+        self.verify(
+            """
+,
 "name":"Suite",
 "doc":"The doc!",
 "metadata":{"N":"V","n2":"v2"},
@@ -55,148 +83,215 @@ class TestJsonLogger(unittest.TestCase):
 "message":"Message",
 "start_time":"2024-12-03T12:27:00.123456",
 "elapsed_time":3.140000
-}''')
+}
+            """.strip()
+        )
 
     def test_child_suite(self):
         self.test_start_suite()
-        suite = TestSuite(name='C', doc='Child', start_time=self.start)
-        suite.tests.create(name='T', status='PASS', elapsed_time=1)
+        suite = TestSuite(name="C", doc="Child", start_time=self.start)
+        suite.tests.create(name="T", status="PASS", elapsed_time=1)
         self.logger.start_suite(suite)
-        self.verify(''',
+        self.verify(
+            """
+,
 "suites":[{
-"id":"s1"''')
+"id":"s1"
+            """.strip()
+        )
         self.logger.end_suite(suite)
-        self.verify(''',
+        self.verify(
+            """
+,
 "name":"C",
 "doc":"Child",
 "status":"PASS",
 "start_time":"2024-12-03T12:27:00.123456",
 "elapsed_time":1.000000
-}''')
+}
+            """.strip()
+        )
 
     def test_suite_setup(self):
         self.test_start_suite()
-        setup = Keyword(type=Keyword.SETUP, name='S', start_time=self.start)
+        setup = Keyword(type=Keyword.SETUP, name="S", start_time=self.start)
         self.logger.start_keyword(setup)
-        self.verify(''',
-"setup":{''')
+        self.verify(
+            """
+,
+"setup":{
+            """.strip()
+        )
         self.logger.end_keyword(setup)
-        self.verify('''
+        self.verify(
+            """
 "name":"S",
 "status":"FAIL",
 "start_time":"2024-12-03T12:27:00.123456",
 "elapsed_time":0.000000
-}''')
+}
+            """.rstrip()
+        )
 
     def test_suite_teardown(self):
         self.test_suite_setup()
         suite = TestSuite()
-        suite.teardown.config(name='T', status='PASS')
+        suite.teardown.config(name="T", status="PASS")
         self.logger.start_keyword(suite.teardown)
-        self.verify(''',
-"teardown":{''')
+        self.verify(
+            """,
+"teardown":{"""
+        )
         self.logger.end_keyword(suite.teardown)
-        self.verify('''
+        self.verify(
+            """
 "name":"T",
 "status":"PASS",
 "elapsed_time":0.000000
-}''')
+}
+            """.rstrip()
+        )
 
     def test_suite_teardown_after_suites(self):
         self.test_child_suite()
         suite = TestSuite()
-        suite.teardown.config(name='T', status='PASS')
+        suite.teardown.config(name="T", status="PASS")
         self.logger.start_keyword(suite.teardown)
-        self.verify('''],
-"teardown":{''')
+        self.verify(
+            """
+],
+"teardown":{
+            """.strip()
+        )
         self.logger.end_keyword(suite.teardown)
-        self.verify('''
+        self.verify(
+            """
 "name":"T",
 "status":"PASS",
 "elapsed_time":0.000000
-}''')
+}
+            """.rstrip()
+        )
 
     def test_suite_teardown_after_tests(self):
         self.test_end_test()
         suite = TestSuite()
-        suite.teardown.config(name='T', doc='suite teardown', status='PASS')
+        suite.teardown.config(name="T", doc="suite teardown", status="PASS")
         self.logger.start_keyword(suite.teardown)
-        self.verify('''],
-"teardown":{''')
+        self.verify(
+            """
+],
+"teardown":{
+            """.strip()
+        )
         self.logger.end_keyword(suite.teardown)
-        self.verify('''
+        self.verify(
+            """
 "name":"T",
 "doc":"suite teardown",
 "status":"PASS",
 "elapsed_time":0.000000
-}''')
+}
+            """.rstrip()
+        )
 
     def test_suite_structure(self):
         root = TestSuite()
         self.test_start_suite()
-        self.logger.start_suite(root.suites.create(name='Child', doc='child'))
-        self.verify(''',
+        self.logger.start_suite(root.suites.create(name="Child", doc="child"))
+        self.verify(
+            """
+,
 "suites":[{
-"id":"s1-s1"''')
-        self.logger.start_suite(root.suites[0].suites.create(name='GC', doc='gc'))
-        self.verify(''',
+"id":"s1-s1"
+            """.strip()
+        )
+        self.logger.start_suite(root.suites[0].suites.create(name="GC", doc="gc"))
+        self.verify(
+            """
+,
 "suites":[{
-"id":"s1-s1-s1"''')
-        self.logger.start_test(root.suites[0].suites[0].tests.create(name='1', doc='1'))
+"id":"s1-s1-s1"
+            """.strip()
+        )
+        self.logger.start_test(root.suites[0].suites[0].tests.create(name="1", doc="1"))
         self.logger.end_test(root.suites[0].suites[0].tests[0])
-        self.verify(''',
+        self.verify(
+            """
+,
 "tests":[{
 "id":"s1-s1-s1-t1",
 "name":"1",
 "doc":"1",
 "status":"FAIL",
 "elapsed_time":0.000000
-}''')
-        self.logger.start_test(root.suites[0].suites[0].tests.create(name='2', doc='2',
-                                                                     status='PASS'))
+}
+            """.strip()
+        )
+        self.logger.start_test(
+            root.suites[0].suites[0].tests.create(name="2", doc="2", status="PASS")
+        )
         self.logger.end_test(root.suites[0].suites[0].tests[1])
-        self.verify(''',{
+        self.verify(
+            """
+,{
 "id":"s1-s1-s1-t2",
 "name":"2",
 "doc":"2",
 "status":"PASS",
 "elapsed_time":0.000000
-}''')
+}
+            """.strip()
+        )
         self.logger.end_suite(root.suites[0].suites[0])
-        self.verify('''],
+        self.verify(
+            """
+],
 "name":"GC",
 "doc":"gc",
 "status":"FAIL",
 "elapsed_time":0.000000
-}''')
-        self.logger.start_suite(root.suites[0].suites.create(name='GC2'))
+}
+            """.strip()
+        )
+        self.logger.start_suite(root.suites[0].suites.create(name="GC2"))
         self.logger.end_suite(root.suites[0].suites[1])
-        self.verify(''',{
+        self.verify(
+            """
+,{
 "id":"s1-s1-s2",
 "name":"GC2",
 "status":"SKIP",
 "elapsed_time":0.000000
-}''')
+}
+            """.strip()
+        )
         self.logger.end_suite(root.suites[0])
-        self.verify('''],
+        self.verify(
+            """
+],
 "name":"Child",
 "doc":"child",
 "status":"FAIL",
 "elapsed_time":0.000000
-}''')
+}
+            """.strip()
+        )
 
     def test_suite_with_suites_and_tests(self):
         self.test_start_suite()
         root = TestSuite()
-        suite1 = root.suites.create('Suite 1')
-        suite2 = root.suites.create('Suite 2')
-        test1 = root.tests.create('Test 1')
-        test2 = root.tests.create('Test 2')
+        suite1 = root.suites.create("Suite 1")
+        suite2 = root.suites.create("Suite 2")
+        test1 = root.tests.create("Test 1")
+        test2 = root.tests.create("Test 2")
         self.logger.start_suite(suite1)
         self.logger.end_suite(suite1)
         self.logger.start_suite(suite2)
         self.logger.end_suite(suite2)
-        self.verify(''',
+        self.verify(
+            """
+,
 "suites":[{
 "id":"s1-s1",
 "name":"Suite 1",
@@ -207,12 +302,16 @@ class TestJsonLogger(unittest.TestCase):
 "name":"Suite 2",
 "status":"SKIP",
 "elapsed_time":0.000000
-}''')
+}
+            """.strip()
+        )
         self.logger.start_test(test1)
         self.logger.end_test(test1)
         self.logger.start_test(test2)
         self.logger.end_test(test2)
-        self.verify('''],
+        self.verify(
+            """
+],
 "tests":[{
 "id":"s1-t1",
 "name":"Test 1",
@@ -223,34 +322,58 @@ class TestJsonLogger(unittest.TestCase):
 "name":"Test 2",
 "status":"FAIL",
 "elapsed_time":0.000000
-}''')
+}
+            """.strip()
+        )
 
     def test_start_test(self):
         self.test_start_suite()
         self.logger.start_test(TestCase())
-        self.verify(''',
+        self.verify(
+            """
+,
 "tests":[{
-"id":"t1"''')
+"id":"t1"
+            """.strip()
+        )
 
     def test_end_test(self):
         self.test_start_test()
         self.logger.end_test(TestCase())
-        self.verify(''',
+        self.verify(
+            """
+,
 "status":"FAIL",
 "elapsed_time":0.000000
-}''')
+}
+            """.strip()
+        )
 
     def test_test_with_config(self):
         self.test_start_suite()
-        test = TestCase(name='First!', doc='Doc', tags=['t1', 't2'], lineno=42,
-                        timeout='1 hour', status='PASS', message='Hello, world!',
-                        start_time=self.start, elapsed_time=1)
+        test = TestCase(
+            name="First!",
+            doc="Doc",
+            tags=["t1", "t2"],
+            lineno=42,
+            timeout="1 hour",
+            status="PASS",
+            message="Hello, world!",
+            start_time=self.start,
+            elapsed_time=1,
+        )
         self.logger.start_test(test)
-        self.verify(''',
+        self.verify(
+            """
+,
 "tests":[{
-"id":"t1"''')
+"id":"t1"
+            """.strip()
+        )
         self.logger.end_test(test)
-        self.verify(''',
+        self.verify(
+            """
+,
 "name":"First!",
 "doc":"Doc",
 "tags":["t1","t2"],
@@ -260,98 +383,157 @@ class TestJsonLogger(unittest.TestCase):
 "message":"Hello, world!",
 "start_time":"2024-12-03T12:27:00.123456",
 "elapsed_time":1.000000
-}''')
+}
+            """.strip()
+        )
 
     def test_start_subsequent_test(self):
         self.test_end_test()
-        self.logger.start_test(TestCase(name='Second!'))
-        self.verify(''',{
-"id":"t1"''')
+        self.logger.start_test(TestCase(name="Second!"))
+        self.verify(
+            """
+,{
+"id":"t1"
+            """.strip()
+        )
 
     def test_test_setup(self):
         self.test_start_test()
-        setup = Keyword(type=Keyword.SETUP, name='S', start_time=self.start)
+        setup = Keyword(type=Keyword.SETUP, name="S", start_time=self.start)
         self.logger.start_keyword(setup)
-        self.verify(''',
-"setup":{''')
+        self.verify(
+            """
+,
+"setup":{
+            """.strip()
+        )
         self.logger.end_keyword(setup)
-        self.verify('''
+        self.verify(
+            """
 "name":"S",
 "status":"FAIL",
 "start_time":"2024-12-03T12:27:00.123456",
 "elapsed_time":0.000000
-}''')
+}
+            """.rstrip()
+        )
 
     def test_test_teardown(self):
         self.test_test_setup()
         test = TestCase()
-        test.teardown.config(name='T', status='PASS')
+        test.teardown.config(name="T", status="PASS")
         self.logger.start_keyword(test.teardown)
-        self.verify(''',
-"teardown":{''')
+        self.verify(
+            """
+,
+"teardown":{
+            """.strip()
+        )
         self.logger.end_keyword(test.teardown)
-        self.verify('''
+        self.verify(
+            """
 "name":"T",
 "status":"PASS",
 "elapsed_time":0.000000
-}''')
+}
+            """.rstrip()
+        )
 
     def test_test_structure(self):
         self.test_test_setup()
-        kw = Keyword(name='K', status='PASS', elapsed_time=1.234567)
-        td = Keyword(type=Keyword.TEARDOWN, name='T', status='PASS')
+        kw = Keyword(name="K", status="PASS", elapsed_time=1.234567)
+        td = Keyword(type=Keyword.TEARDOWN, name="T", status="PASS")
         self.logger.start_keyword(kw)
         self.logger.end_keyword(kw)
-        self.verify(''',
+        self.verify(
+            """
+,
 "body":[{
 "name":"K",
 "status":"PASS",
 "elapsed_time":1.234567
-}''')
+}
+            """.strip()
+        )
         self.logger.start_keyword(kw)
         self.logger.end_keyword(kw)
-        self.verify(''',{
+        self.verify(
+            """
+,{
 "name":"K",
 "status":"PASS",
 "elapsed_time":1.234567
-}''')
+}
+            """.strip()
+        )
         self.logger.start_keyword(td)
         self.logger.end_keyword(td)
-        self.verify('''],
+        self.verify(
+            """
+],
 "teardown":{
 "name":"T",
 "status":"PASS",
 "elapsed_time":0.000000
-}''')
+}
+            """.strip()
+        )
         self.logger.end_test(TestCase())
-        self.verify(''',
+        self.verify(
+            """
+,
 "status":"FAIL",
 "elapsed_time":0.000000
-}''')
+}
+            """.strip()
+        )
 
     def test_keyword(self):
         self.test_start_test()
-        kw = Keyword(name='K')
+        kw = Keyword(name="K")
         self.logger.start_keyword(kw)
-        self.verify(''',
-"body":[{''')
+        self.verify(
+            """
+,
+"body":[{
+            """.strip()
+        )
         self.logger.end_keyword(kw)
-        self.verify('''
+        self.verify(
+            """
 "name":"K",
 "status":"FAIL",
 "elapsed_time":0.000000
-}''')
+}
+            """.rstrip()
+        )
 
     def test_keyword_with_config(self):
         self.test_start_test()
-        kw = Keyword(name='K', owner='O', source_name='sn', doc='D', args=['a', 2],
-                     assign=['${x}'], tags=['t1', 't2'], timeout='1 day', status='PASS',
-                     message="msg", start_time=self.start, elapsed_time=0.654321)
+        kw = Keyword(
+            name="K",
+            owner="O",
+            source_name="sn",
+            doc="D",
+            args=["a", 2],
+            assign=["${x}"],
+            tags=["t1", "t2"],
+            timeout="1 day",
+            status="PASS",
+            message="msg",
+            start_time=self.start,
+            elapsed_time=0.654321,
+        )
         self.logger.start_keyword(kw)
-        self.verify(''',
-"body":[{''')
+        self.verify(
+            """
+,
+"body":[{
+            """.strip()
+        )
         self.logger.end_keyword(kw)
-        self.verify('''
+        self.verify(
+            """
 "name":"K",
 "owner":"O",
 "source_name":"sn",
@@ -364,52 +546,76 @@ class TestJsonLogger(unittest.TestCase):
 "message":"msg",
 "start_time":"2024-12-03T12:27:00.123456",
 "elapsed_time":0.654321
-}''')
+}
+            """.rstrip()
+        )
 
     def test_start_for(self):
         self.test_start_test()
         self.logger.start_for(For())
-        self.verify(''',
+        self.verify(
+            """
+,
 "body":[{
-"type":"FOR"''')
+"type":"FOR"
+            """.strip()
+        )
 
     def test_end_for(self):
         self.test_start_for()
-        self.logger.end_for(For(['${x}'], 'IN', ['a', 'b']))
-        self.verify(''',
+        self.logger.end_for(For(["${x}"], "IN", ["a", "b"]))
+        self.verify(
+            """
+,
 "flavor":"IN",
 "assign":["${x}"],
 "values":["a","b"],
 "status":"FAIL",
 "elapsed_time":0.000000
-}''')
+}
+            """.strip()
+        )
 
     def test_for_in_enumerate(self):
         self.test_start_test()
-        item = For(['${i}', '${x}'], 'IN ENUMERATE', ['a', 'b'], start='1')
+        item = For(["${i}", "${x}"], "IN ENUMERATE", ["a", "b"], start="1")
         self.logger.start_for(item)
-        self.verify(''',
+        self.verify(
+            """
+,
 "body":[{
-"type":"FOR"''')
+"type":"FOR"
+            """.strip()
+        )
         self.logger.end_for(item)
-        self.verify(''',
+        self.verify(
+            """
+,
 "flavor":"IN ENUMERATE",
 "start":"1",
 "assign":["${i}","${x}"],
 "values":["a","b"],
 "status":"FAIL",
 "elapsed_time":0.000000
-}''')
+}
+            """.strip()
+        )
 
     def test_for_in_zip(self):
         self.test_start_test()
-        item = For(['${item}'], 'IN ZIP', ['${X}', '${Y}'], mode='LONGEST', fill='')
+        item = For(["${item}"], "IN ZIP", ["${X}", "${Y}"], mode="LONGEST", fill="")
         self.logger.start_for(item)
-        self.verify(''',
+        self.verify(
+            """
+,
 "body":[{
-"type":"FOR"''')
+"type":"FOR"
+            """.strip()
+        )
         self.logger.end_for(item)
-        self.verify(''',
+        self.verify(
+            """
+,
 "flavor":"IN ZIP",
 "mode":"LONGEST",
 "fill":"",
@@ -417,52 +623,75 @@ class TestJsonLogger(unittest.TestCase):
 "values":["${X}","${Y}"],
 "status":"FAIL",
 "elapsed_time":0.000000
-}''')
+}
+            """.strip()
+        )
 
     def test_for_iteration(self):
         self.test_start_for()
-        item = ForIteration(assign={'${x}': 'value'})
+        item = ForIteration(assign={"${x}": "value"})
         self.logger.start_for_iteration(item)
-        self.verify(''',
+        self.verify(
+            """
+,
 "body":[{
-"type":"ITERATION"'''
+"type":"ITERATION"
+            """.strip()
         )
         self.logger.end_for_iteration(item)
-        self.verify(''',
+        self.verify(
+            """
+,
 "assign":{"${x}":"value"},
 "status":"FAIL",
 "elapsed_time":0.000000
-}''')
+}
+            """.strip()
+        )
         self.logger.start_for_iteration(item)
         self.logger.end_for_iteration(item)
-        self.verify(''',{
+        self.verify(
+            """
+,{
 "type":"ITERATION",
 "assign":{"${x}":"value"},
 "status":"FAIL",
 "elapsed_time":0.000000
-}''')
+}
+            """.strip()
+        )
 
     def test_start_while(self):
         self.test_start_test()
         self.logger.start_while(While())
-        self.verify(''',
+        self.verify(
+            """
+,
 "body":[{
-"type":"WHILE"''')
+"type":"WHILE"
+            """.strip()
+        )
 
     def test_end_while(self):
         self.test_start_while()
         self.logger.end_while(While())
-        self.verify(''',
+        self.verify(
+            """
+,
 "status":"FAIL",
 "elapsed_time":0.000000
-}''')
+}
+            """.strip()
+        )
 
     def test_start_while_with_config(self):
         self.test_start_test()
-        item = While('$x > 0', '100', 'PASS', 'A message', status='PASS', message='M')
+        item = While("$x > 0", "100", "PASS", "A message", status="PASS", message="M")
         self.logger.start_while(item)
         self.logger.end_while(item)
-        self.verify(''',
+        self.verify(
+            """
+,
 "body":[{
 "type":"WHILE",
 "condition":"$x > 0",
@@ -472,167 +701,274 @@ class TestJsonLogger(unittest.TestCase):
 "status":"PASS",
 "message":"M",
 "elapsed_time":0.000000
-}''')
+}
+            """.strip()
+        )
 
     def test_while_iteration(self):
         self.test_start_while()
-        item = WhileIteration(status='SKIP', start_time=self.start)
+        item = WhileIteration(status="SKIP", start_time=self.start)
         self.logger.start_while_iteration(item)
-        self.verify(''',
+        self.verify(
+            """
+,
 "body":[{
-"type":"ITERATION"''')
+"type":"ITERATION"
+            """.strip()
+        )
         self.logger.end_while_iteration(item)
-        self.verify(''',
+        self.verify(
+            """
+,
 "status":"SKIP",
 "start_time":"2024-12-03T12:27:00.123456",
 "elapsed_time":0.000000
-}''')
+}
+            """.strip()
+        )
 
     def test_start_if(self):
         self.test_start_test()
         self.logger.start_if(If())
-        self.verify(''',
+        self.verify(
+            """
+,
 "body":[{
-"type":"IF/ELSE ROOT"''')
+"type":"IF/ELSE ROOT"
+            """.strip()
+        )
 
     def test_end_if(self):
         self.test_start_if()
         self.logger.end_if(If())
-        self.verify(''',
+        self.verify(
+            """
+,
 "status":"FAIL",
 "elapsed_time":0.000000
-}''')
+}
+            """.strip()
+        )
 
     def test_if_branch(self):
         self.test_start_if()
         self.logger.start_if_branch(IfBranch())
-        self.verify(''',
+        self.verify(
+            """
+,
 "body":[{
-"type":"IF"''')
+"type":"IF"
+            """.strip()
+        )
         self.logger.end_if_branch(IfBranch())
-        self.verify(''',
+        self.verify(
+            """
+,
 "status":"FAIL",
 "elapsed_time":0.000000
-}''')
-        self.logger.end_if(If(status='PASS'))
-        self.verify('''],
+}
+            """.strip()
+        )
+        self.logger.end_if(If(status="PASS"))
+        self.verify(
+            """
+],
 "status":"PASS",
 "elapsed_time":0.000000
-}''')
+}
+            """.strip()
+        )
 
     def test_if_branch_with_config(self):
         self.test_start_if()
-        item = IfBranch(IfBranch.ELSE_IF, '$x > 0')
+        item = IfBranch(IfBranch.ELSE_IF, "$x > 0")
         self.logger.start_if_branch(item)
-        self.verify(''',
+        self.verify(
+            """
+,
 "body":[{
-"type":"ELSE IF"''')
+"type":"ELSE IF"
+            """.strip()
+        )
         self.logger.end_if_branch(item)
-        self.verify(''',
+        self.verify(
+            """
+,
 "condition":"$x > 0",
 "status":"FAIL",
 "elapsed_time":0.000000
-}''')
+}
+            """.strip()
+        )
 
     def test_start_try(self):
         self.test_start_test()
         self.logger.start_try(Try())
-        self.verify(''',
+        self.verify(
+            """
+,
 "body":[{
-"type":"TRY/EXCEPT ROOT"''')
+"type":"TRY/EXCEPT ROOT"
+            """.strip()
+        )
 
     def test_end_try(self):
         self.test_start_try()
-        self.logger.end_try(Try(status='PASS'))
-        self.verify(''',
+        self.logger.end_try(Try(status="PASS"))
+        self.verify(
+            """
+,
 "status":"PASS",
 "elapsed_time":0.000000
-}''')
+}
+            """.strip()
+        )
 
     def test_try_branch(self):
         self.test_start_try()
         self.logger.start_try_branch(TryBranch())
-        self.verify(''',
+        self.verify(
+            """
+,
 "body":[{
-"type":"TRY"''')
+"type":"TRY"
+            """.strip()
+        )
         self.logger.end_try_branch(TryBranch())
-        self.verify(''',
+        self.verify(
+            """
+,
 "status":"FAIL",
 "elapsed_time":0.000000
-}''')
-        self.logger.end_try(Try(status='PASS'))
-        self.verify('''],
+}
+            """.strip()
+        )
+        self.logger.end_try(Try(status="PASS"))
+        self.verify(
+            """
+],
 "status":"PASS",
 "elapsed_time":0.000000
-}''')
+}
+            """.strip()
+        )
 
     def test_try_branch_with_config(self):
         self.test_start_try()
-        item = TryBranch(TryBranch.EXCEPT, patterns=['x', 'y'], pattern_type='GLOB',
-                         assign='${err}')
+        item = TryBranch(
+            TryBranch.EXCEPT,
+            patterns=["x", "y"],
+            pattern_type="GLOB",
+            assign="${err}",
+        )
         self.logger.start_try_branch(item)
-        self.verify(''',
+        self.verify(
+            """
+,
 "body":[{
-"type":"EXCEPT"''')
+"type":"EXCEPT"
+            """.strip()
+        )
         self.logger.end_try_branch(item)
-        self.verify(''',
+        self.verify(
+            """
+,
 "patterns":["x","y"],
 "pattern_type":"GLOB",
 "assign":"${err}",
 "status":"FAIL",
 "elapsed_time":0.000000
-}''')
+}
+            """.strip()
+        )
 
     def test_group(self):
         self.test_start_test()
-        named = Group('named', status='PASS', start_time=self.start, elapsed_time=1)
+        named = Group("named", status="PASS", start_time=self.start, elapsed_time=1)
         anonymous = Group()
         self.logger.start_group(named)
-        self.verify(''',
+        self.verify(
+            """
+,
 "body":[{
-"type":"GROUP"''')
+"type":"GROUP"
+            """.strip()
+        )
         self.logger.start_group(anonymous)
-        self.verify(''',
+        self.verify(
+            """
+,
 "body":[{
-"type":"GROUP"''')
+"type":"GROUP"
+            """.strip()
+        )
         self.logger.end_group(anonymous)
-        self.verify(''',
+        self.verify(
+            """
+,
 "status":"FAIL",
 "elapsed_time":0.000000
-}''')
+}
+            """.strip()
+        )
         self.logger.end_group(named)
-        self.verify('''],
+        self.verify(
+            """
+],
 "name":"named",
 "status":"PASS",
 "start_time":"2024-12-03T12:27:00.123456",
 "elapsed_time":1.000000
-}''')
+}
+            """.strip()
+        )
 
     def test_var(self):
         self.test_start_test()
-        var = Var(name='${x}', value=['y'])
+        var = Var(name="${x}", value=["y"])
         self.logger.start_var(var)
-        self.verify(''',
+        self.verify(
+            """
+,
 "body":[{
-"type":"VAR"''')
+"type":"VAR"
+            """.strip()
+        )
         self.logger.end_var(var)
-        self.verify(''',
+        self.verify(
+            """
+,
 "name":"${x}",
 "value":["y"],
 "status":"FAIL",
 "elapsed_time":0.000000
-}''')
+}
+            """.strip()
+        )
 
     def test_var_with_config(self):
         self.test_start_test()
-        var = Var(name='${x}', value=['a', 'b'], scope='TEST', separator='',
-                  status='PASS', start_time=self.start, elapsed_time=1.2)
+        var = Var(
+            name="${x}",
+            value=["a", "b"],
+            scope="TEST",
+            separator="",
+            status="PASS",
+            start_time=self.start,
+            elapsed_time=1.2,
+        )
         self.logger.start_var(var)
-        self.verify(''',
+        self.verify(
+            """
+,
 "body":[{
-"type":"VAR"''')
+"type":"VAR"
+            """.strip()
+        )
         self.logger.end_var(var)
-        self.verify(''',
+        self.verify(
+            """
+,
 "name":"${x}",
 "scope":"TEST",
 "separator":"",
@@ -640,29 +976,41 @@ class TestJsonLogger(unittest.TestCase):
 "status":"PASS",
 "start_time":"2024-12-03T12:27:00.123456",
 "elapsed_time":1.200000
-}''')
+}
+            """.strip()
+        )
 
     def test_return(self):
         self.test_start_test()
-        item = Return(values=['a', 'b'])
+        item = Return(values=["a", "b"])
         self.logger.start_return(item)
-        self.verify(''',
+        self.verify(
+            """
+,
 "body":[{
-"type":"RETURN"''')
+"type":"RETURN"
+            """.strip()
+        )
         self.logger.end_return(item)
-        self.verify(''',
+        self.verify(
+            """
+,
 "values":["a","b"],
 "status":"FAIL",
 "elapsed_time":0.000000
-}''')
+}
+            """.strip()
+        )
 
     def test_continue_and_break(self):
         self.test_start_test()
         self.logger.start_continue(Continue())
         self.logger.end_continue(Continue())
         self.logger.start_break(Break())
-        self.logger.end_break(Break(status='PASS'))
-        self.verify(''',
+        self.logger.end_break(Break(status="PASS"))
+        self.verify(
+            """
+,
 "body":[{
 "type":"CONTINUE",
 "status":"FAIL",
@@ -671,15 +1019,19 @@ class TestJsonLogger(unittest.TestCase):
 "type":"BREAK",
 "status":"PASS",
 "elapsed_time":0.000000
-}''')
+}
+            """.strip()
+        )
 
     def test_error(self):
         self.test_start_test()
-        item = Error(values=['bad', 'things'])
+        item = Error(values=["bad", "things"])
         self.logger.start_error(item)
-        self.logger.message(Message('Something bad happened!'))
+        self.logger.message(Message("Something bad happened!"))
         self.logger.end_error(item)
-        self.verify(''',
+        self.verify(
+            """
+,
 "body":[{
 "type":"ERROR",
 "body":[{
@@ -690,38 +1042,64 @@ class TestJsonLogger(unittest.TestCase):
 "values":["bad","things"],
 "status":"FAIL",
 "elapsed_time":0.000000
-}''')
+}
+            """.strip()
+        )
 
     def test_message(self):
         self.test_start_test()
         self.logger.message(Message())
-        self.verify(''',
+        self.verify(
+            """
+,
 "body":[{
 "type":"MESSAGE",
 "level":"INFO"
-}''')
-        self.logger.message(Message('Hello!', 'DEBUG', html=True, timestamp=self.start))
-        self.verify(''',{
+}
+            """.strip()
+        )
+        self.logger.message(
+            Message(
+                "Hello!",
+                "DEBUG",
+                html=True,
+                timestamp=self.start,
+            )
+        )
+        self.verify(
+            """
+,{
 "type":"MESSAGE",
 "message":"Hello!",
 "level":"DEBUG",
 "html":true,
 "timestamp":"2024-12-03T12:27:00.123456"
-}''')
+}
+            """.strip()
+        )
 
     def test_statistics(self):
         self.test_end_suite()
-        suite = TestSuite.from_dict({
-            'name': 'Root',
-            'suites': [{'name': 'Child 1',
-                        'tests': [{'status': 'PASS', 'tags': ['t1', 't2', 't3']},
-                                  {'status': 'FAIL', 'tags': ['t1', 't2']}]},
-                       {'name': 'Child 2',
-                        'tests': [{'status': 'PASS', 'tags': ['t1']}]}]
-        })
-        stats = Statistics(suite, tag_doc=[('t2', 'doc for t2')])
+        suite = TestSuite.from_dict(
+            {
+                "name": "Root",
+                "suites": [
+                    {
+                        "name": "Child 1",
+                        "tests": [
+                            {"status": "PASS", "tags": ["t1", "t2", "t3"]},
+                            {"status": "FAIL", "tags": ["t1", "t2"]},
+                        ],
+                    },
+                    {"name": "Child 2", "tests": [{"status": "PASS", "tags": ["t1"]}]},
+                ],
+            }
+        )
+        stats = Statistics(suite, tag_doc=[("t2", "doc for t2")])
         self.logger.statistics(stats)
-        self.verify(''',
+        self.verify(
+            """
+,
 "statistics":{
 "total":{
 "label":"All Tests",
@@ -768,19 +1146,31 @@ class TestJsonLogger(unittest.TestCase):
 "fail":0,
 "skip":0
 }]
-}''')
+}
+            """.strip()
+        )
 
     def test_no_errors(self):
         self.test_end_suite()
         self.logger.errors([])
-        self.verify(''',
-"errors":[]''')
+        self.verify(
+            """
+,
+"errors":[]
+            """.strip()
+        )
 
     def test_errors(self):
         self.test_end_suite()
-        self.logger.errors([Message('Something bad happened!', level='ERROR'),
-                            Message('!', level='WARN', html=True, timestamp=self.start)])
-        self.verify(''',
+        self.logger.errors(
+            [
+                Message("Something bad happened!", level="ERROR"),
+                Message("!", level="WARN", html=True, timestamp=self.start),
+            ]
+        )
+        self.verify(
+            """
+,
 "errors":[{
 "message":"Something bad happened!",
 "level":"ERROR"
@@ -789,7 +1179,9 @@ class TestJsonLogger(unittest.TestCase):
 "level":"WARN",
 "html":true,
 "timestamp":"2024-12-03T12:27:00.123456"
-}]''')
+}]
+            """.strip()
+        )
 
     def verify(self, expected, glob=False):
         file = cast(StringIO, self.logger.writer.file)
@@ -801,8 +1193,9 @@ class TestJsonLogger(unittest.TestCase):
         else:
             match = actual == expected
         if not match:
-            raise AssertionError(f'Value does not match.\n\n'
-                                 f'Expected:\n{expected}\n\nActual:\n{actual}')
+            raise AssertionError(
+                f"Value does not match.\n\nExpected:\n{expected}\n\nActual:\n{actual}"
+            )
 
 
 if __name__ == "__main__":

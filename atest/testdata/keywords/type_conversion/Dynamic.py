@@ -6,23 +6,34 @@ from robot.api.deco import keyword
 class Dynamic:
 
     def get_keyword_names(self):
-        return [name for name in dir(self)
-                if hasattr(getattr(self, name), 'robot_name')]
+        return [
+            name for name in dir(self) if hasattr(getattr(self, name), "robot_name")
+        ]
 
     def run_keyword(self, name, args, kwargs):
         return getattr(self, name)(*args, **kwargs)
 
     def get_keyword_arguments(self, name):
-        if name == 'default_values':
-            return [('first', 1), ('first_expected', 1),
-                    ('middle', None), ('middle_expected', None),
-                    ('last', True), ('last_expected', True)]
-        if name == 'kwonly_defaults':
-            return [('*',), ('first', 1), ('first_expected', 1),
-                    ('last', True), ('last_expected', True)]
-        if name == 'default_values_when_types_are_none':
-            return [('value', True), ('expected', None)]
-        return ['value', 'expected=None']
+        if name == "default_values":
+            return [
+                ("first", 1),
+                ("first_expected", 1),
+                ("middle", None),
+                ("middle_expected", None),
+                ("last", True),
+                ("last_expected", True),
+            ]
+        if name == "kwonly_defaults":
+            return [
+                ("*",),
+                ("first", 1),
+                ("first_expected", 1),
+                ("last", True),
+                ("last_expected", True),
+            ]
+        if name == "default_values_when_types_are_none":
+            return [("value", True), ("expected", None)]
+        return ["value", "expected=None"]
 
     def get_keyword_types(self, name):
         return getattr(self, name).robot_types
@@ -31,29 +42,34 @@ class Dynamic:
     def list_of_types(self, value, expected=None):
         self._validate_type(value, expected)
 
-    @keyword(types={'value': Decimal, 'return': None})
+    @keyword(types={"value": Decimal, "return": None})
     def dict_of_types(self, value, expected=None):
         self._validate_type(value, expected)
 
-    @keyword(types=['bytes'])
+    @keyword(types=["bytes"])
     def list_of_aliases(self, value, expected=None):
         self._validate_type(value, expected)
 
-    @keyword(types={'value': 'Dictionary'})
+    @keyword(types={"value": "Dictionary"})
     def dict_of_aliases(self, value, expected=None):
         self._validate_type(value, expected)
 
     @keyword
-    def default_values(self, first=1, first_expected=1,
-                       middle=None, middle_expected=None,
-                       last=True, last_expected=True):
+    def default_values(
+        self,
+        first=1,
+        first_expected=1,
+        middle=None,
+        middle_expected=None,
+        last=True,
+        last_expected=True,
+    ):
         self._validate_type(first, first_expected)
         self._validate_type(middle, middle_expected)
         self._validate_type(last, last_expected)
 
     @keyword
-    def kwonly_defaults(self, first=1, first_expected=1,
-                        last=True, last_expected=True):
+    def kwonly_defaults(self, first=1, first_expected=1, last=True, last_expected=True):
         self._validate_type(first, first_expected)
         self._validate_type(last, last_expected)
 
@@ -64,7 +80,7 @@ class Dynamic:
     def _validate_type(self, argument, expected):
         if isinstance(expected, str):
             expected = eval(expected)
-        if argument != expected or type(argument) != type(expected):
-            raise AssertionError('%r (%s) != %r (%s)'
-                                 % (argument, type(argument).__name__,
-                                    expected, type(expected).__name__))
+        if argument != expected or type(argument) is not type(expected):
+            atype = type(argument).__name__
+            etype = type(expected).__name__
+            raise AssertionError(f"{argument!r} ({atype}) != {expected!r} ({etype})")

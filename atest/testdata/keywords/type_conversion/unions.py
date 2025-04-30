@@ -1,5 +1,5 @@
-from datetime import date, timedelta
 from collections.abc import Mapping
+from datetime import date, timedelta
 from numbers import Rational
 from typing import List, Optional, TypedDict, Union
 
@@ -16,7 +16,7 @@ class AnotherObject:
 
 class BadRationalMeta(type(Rational)):
     def __instancecheck__(self, instance):
-        raise TypeError('Bang!')
+        raise TypeError("Bang!")
 
 
 class XD(TypedDict):
@@ -67,7 +67,11 @@ def union_with_typeddict(argument: Union[XD, None], expected):
     assert_equal(argument, eval(expected))
 
 
-def union_with_str_and_typeddict(argument: Union[str, XD], expected, non_dict_mapping=False):
+def union_with_str_and_typeddict(
+    argument: Union[str, XD],
+    expected,
+    non_dict_mapping=False,
+):
     if non_dict_mapping:
         assert isinstance(argument, Mapping) and not isinstance(argument, dict)
         argument = dict(argument)
@@ -78,7 +82,10 @@ def union_with_item_not_liking_isinstance(argument: Union[BadRational, int], exp
     assert_equal(argument, expected)
 
 
-def union_with_multiple_types(argument: Union[int, float, None, date, timedelta], expected=object()):
+def union_with_multiple_types(
+    argument: Union[int, float, None, date, timedelta],
+    expected=object(),
+):
     assert_equal(argument, expected)
 
 
@@ -106,7 +113,10 @@ def optional_argument_with_default(argument: Optional[float] = None, expected=ob
     assert_equal(argument, expected)
 
 
-def optional_string_with_none_default(argument: Optional[str] = None, expected=object()):
+def optional_string_with_none_default(
+    argument: Optional[str] = None,
+    expected=object(),
+):
     assert_equal(argument, expected)
 
 
@@ -122,16 +132,21 @@ def incompatible_default(argument: Union[None, int] = 1.1, expected=object()):
     assert_equal(argument, expected)
 
 
-def unrecognized_type_with_incompatible_default(argument: Union[MyObject, int] = 1.1,
-                                                expected=object()):
+def unrecognized_type_with_incompatible_default(
+    argument: Union[MyObject, int] = 1.1,
+    expected=object(),
+):
     assert_equal(argument, expected)
 
 
-def union_with_invalid_types(argument: Union['nonex', 'references'], expected):
+def union_with_invalid_types(
+    argument: Union["nonex", "references"],  # noqa: F821
+    expected,
+):
     assert_equal(argument, expected)
 
 
-def tuple_with_invalid_types(argument: ('invalid', 666), expected):
+def tuple_with_invalid_types(argument: ("invalid", 666), expected):  # noqa: F821
     assert_equal(argument, expected)
 
 

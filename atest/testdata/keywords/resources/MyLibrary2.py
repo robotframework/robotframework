@@ -32,4 +32,4 @@ class MyLibrary2:
         return BuiltIn().run_keyword_if(expression, name, *args)
 
 
-register_run_keyword('MyLibrary2', 'run_keyword_if', 2, deprecation_warning=False)
+register_run_keyword("MyLibrary2", "run_keyword_if", 2, deprecation_warning=False)

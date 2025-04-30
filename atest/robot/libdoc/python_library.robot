@@ -26,7 +26,7 @@ Scope
 
 Source info
     Source should be                 ${CURDIR}/../../../src/robot/libraries/Telnet.py
-    Lineno should be                 36
+    Lineno should be                 37
 
 Spec version
     Spec version should be correct
@@ -45,7 +45,7 @@ Init Arguments
 
 Init Source Info
     Keyword Should Not Have Source   0    xpath=inits/init
-    Keyword Lineno Should Be         0    281      xpath=inits/init
+    Keyword Lineno Should Be         0    283      xpath=inits/init
 
 Keyword Names
     Keyword Name Should Be           0    Close All Connections
@@ -76,11 +76,11 @@ Keyword Source Info
     # This keyword is from the "main library".
     Keyword Name Should Be           0    Close All Connections
     Keyword Should Not Have Source   0
-    Keyword Lineno Should Be         0    472
+    Keyword Lineno Should Be         0    513
     # This keyword is from an external library component.
     Keyword Name Should Be           7    Read Until Prompt
     Keyword Should Not Have Source   7
-    Keyword Lineno Should Be         7    1011
+    Keyword Lineno Should Be         7    1083
 
 KwArgs and VarArgs
     Run Libdoc And Parse Output      ${TESTDATADIR}/KwArgs.py
@@ -104,10 +104,10 @@ Decorators
     Keyword Name Should Be           0    Keyword Using Decorator
     Keyword Arguments Should Be      0    *args    **kwargs
     Keyword Should Not Have Source   0
-    Keyword Lineno Should Be         0    8
+    Keyword Lineno Should Be         0    7
     Keyword Name Should Be           1    Keyword Using Decorator With Wraps
     Keyword Arguments Should Be      1    args    are    preserved=True
-    Keyword Lineno Should Be         1    26
+    Keyword Lineno Should Be         1    27
 
 Documentation set in __init__
     Run Libdoc And Parse Output      ${TESTDATADIR}/DocSetInInit.py

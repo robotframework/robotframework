@@ -16,18 +16,17 @@
 import os
 import sys
 
-
 PY_VERSION = sys.version_info[:3]
-PYPY = 'PyPy' in sys.version
-UNIXY = os.sep == '/'
+PYPY = "PyPy" in sys.version
+UNIXY = os.sep == "/"
 WINDOWS = not UNIXY
 
 
 def isatty(stream):
     # first check if buffer was detached
-    if hasattr(stream, 'buffer') and stream.buffer is None:
+    if hasattr(stream, "buffer") and stream.buffer is None:
         return False
-    if not hasattr(stream, 'isatty'):
+    if not hasattr(stream, "isatty"):
         return False
     try:
         return stream.isatty()
@@ -42,9 +41,12 @@ def __getattr__(name):
 
     import warnings
 
-    if name == 'PY2':
-        warnings.warn("'robot.utils.platform.PY2' is deprecated and will be removed "
-                      "in Robot Framework 9.0.", DeprecationWarning)
+    if name == "PY2":
+        warnings.warn(
+            "'robot.utils.platform.PY2' is deprecated and will be removed "
+            "in Robot Framework 9.0.",
+            DeprecationWarning,
+        )
         return False
 
     raise AttributeError(f"'robot.utils.platform' has no attribute '{name}'.")

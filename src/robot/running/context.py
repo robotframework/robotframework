@@ -40,12 +40,14 @@ class Asynchronous:
         task = self.event_loop.create_task(coroutine)
         try:
             return self.event_loop.run_until_complete(task)
-        except ExecutionFailed as e:
-            if e.dont_continue:
+        except ExecutionFailed as err:
+            if err.dont_continue:
                 task.cancel()
-                # wait for task and its children to cancel
-                self.event_loop.run_until_complete(asyncio.gather(task, return_exceptions=True))
-            raise e
+                # Wait for task and its children to cancel.
+                self.event_loop.run_until_complete(
+                    asyncio.gather(task, return_exceptions=True)
+                )
+            raise err
 
     def is_loop_required(self, obj):
         return inspect.iscoroutine(obj) and not self._is_loop_running()
@@ -126,8 +128,8 @@ class _ExecutionContext:
 
     @contextmanager
     def test_teardown(self, test):
-        self.variables.set_test('${TEST_STATUS}', test.status)
-        self.variables.set_test('${TEST_MESSAGE}', test.message)
+        self.variables.set_test("${TEST_STATUS}", test.status)
+        self.variables.set_test("${TEST_MESSAGE}", test.message)
         self.in_test_teardown = True
         self._remove_timeout(test.timeout)
         try:
@@ -137,8 +139,8 @@ class _ExecutionContext:
 
     @contextmanager
     def keyword_teardown(self, error):
-        self.variables.set_keyword('${KEYWORD_STATUS}', 'FAIL' if error else 'PASS')
-        self.variables.set_keyword('${KEYWORD_MESSAGE}', str(error or ''))
+        self.variables.set_keyword("${KEYWORD_STATUS}", "FAIL" if error else "PASS")
+        self.variables.set_keyword("${KEYWORD_MESSAGE}", str(error or ""))
         self.in_keyword_teardown += 1
         try:
             yield
@@ -158,8 +160,10 @@ class _ExecutionContext:
     def warn_on_invalid_private_call(self, handler):
         parent = self.user_keywords[-1] if self.user_keywords else None
         if not parent or parent.source != handler.source:
-            self.warn(f"Keyword '{handler.full_name}' is private and should only "
-                      f"be called by keywords in the same file.")
+            self.warn(
+                f"Keyword '{handler.full_name}' is private and should only "
+                f"be called by keywords in the same file."
+            )
 
     @contextmanager
     def timeout(self, timeout):
@@ -171,66 +175,71 @@ class _ExecutionContext:
 
     @property
     def in_teardown(self):
-        return bool(self.in_suite_teardown or
-                    self.in_test_teardown or
-                    self.in_keyword_teardown)
+        return bool(
+            self.in_suite_teardown or self.in_test_teardown or self.in_keyword_teardown
+        )
 
     @property
     def variables(self):
         return self.namespace.variables
 
     def continue_on_failure(self, default=False):
-        parents = [result for _, result, implementation in reversed(self.steps)
-                   if implementation and implementation.type == 'USER KEYWORD']
+        parents = [
+            result
+            for _, result, implementation in reversed(self.steps)
+            if implementation and implementation.type == "USER KEYWORD"
+        ]
         if self.test:
             parents.append(self.test)
         for index, parent in enumerate(parents):
             robot = parent.tags.robot
-            if index == 0 and robot('stop-on-failure'):
+            if index == 0 and robot("stop-on-failure"):
                 return False
-            if index == 0 and robot('continue-on-failure'):
+            if index == 0 and robot("continue-on-failure"):
                 return True
-            if robot('recursive-stop-on-failure'):
+            if robot("recursive-stop-on-failure"):
                 return False
-            if robot('recursive-continue-on-failure'):
+            if robot("recursive-continue-on-failure"):
                 return True
         return default or self.in_teardown
 
     @property
     def allow_loop_control(self):
         for _, result, _ in reversed(self.steps):
-            if result.type == 'ITERATION':
+            if result.type == "ITERATION":
                 return True
-            if result.type == 'KEYWORD' and result.owner != 'BuiltIn':
+            if result.type == "KEYWORD" and result.owner != "BuiltIn":
                 return False
         return False
 
     def end_suite(self, data, result):
-        for name in ['${PREV_TEST_NAME}',
-                     '${PREV_TEST_STATUS}',
-                     '${PREV_TEST_MESSAGE}']:
+        for name in [
+            "${PREV_TEST_NAME}",
+            "${PREV_TEST_STATUS}",
+            "${PREV_TEST_MESSAGE}",
+        ]:
             self.variables.set_global(name, self.variables[name])
         self.output.end_suite(data, result)
         self.namespace.end_suite(data)
         EXECUTION_CONTEXTS.end_suite()
 
     def set_suite_variables(self, suite):
-        self.variables['${SUITE_NAME}'] = suite.full_name
-        self.variables['${SUITE_SOURCE}'] = str(suite.source or '')
-        self.variables['${SUITE_DOCUMENTATION}'] = suite.doc
-        self.variables['${SUITE_METADATA}'] = suite.metadata.copy()
+        self.variables["${SUITE_NAME}"] = suite.full_name
+        self.variables["${SUITE_SOURCE}"] = str(suite.source or "")
+        self.variables["${SUITE_DOCUMENTATION}"] = suite.doc
+        self.variables["${SUITE_METADATA}"] = suite.metadata.copy()
 
     def report_suite_status(self, status, message):
-        self.variables['${SUITE_STATUS}'] = status
-        self.variables['${SUITE_MESSAGE}'] = message
+        self.variables["${SUITE_STATUS}"] = status
+        self.variables["${SUITE_MESSAGE}"] = message
 
     def start_test(self, data, result):
         self.test = result
         self._add_timeout(result.timeout)
         self.namespace.start_test()
-        self.variables.set_test('${TEST_NAME}', result.name)
-        self.variables.set_test('${TEST_DOCUMENTATION}', result.doc)
-        self.variables.set_test('@{TEST_TAGS}', list(result.tags))
+        self.variables.set_test("${TEST_NAME}", result.name)
+        self.variables.set_test("${TEST_DOCUMENTATION}", result.doc)
+        self.variables.set_test("@{TEST_TAGS}", list(result.tags))
         self.output.start_test(data, result)
 
     def _add_timeout(self, timeout):
@@ -246,9 +255,9 @@ class _ExecutionContext:
         self.test = None
         self._remove_timeout(test.timeout)
         self.namespace.end_test()
-        self.variables.set_suite('${PREV_TEST_NAME}', test.name)
-        self.variables.set_suite('${PREV_TEST_STATUS}', test.status)
-        self.variables.set_suite('${PREV_TEST_MESSAGE}', test.message)
+        self.variables.set_suite("${PREV_TEST_NAME}", test.name)
+        self.variables.set_suite("${PREV_TEST_STATUS}", test.status)
+        self.variables.set_suite("${PREV_TEST_MESSAGE}", test.message)
         self.timeout_occurred = False
 
     def start_body_item(self, data, result, implementation=None):
@@ -298,7 +307,7 @@ class _ExecutionContext:
         except (ValueError, AttributeError):
             pass
         else:
-            raise DataError('Recursive execution stopped.')
+            raise DataError("Recursive execution stopped.")
 
     def end_body_item(self, data, result, implementation=None):
         output = self.output

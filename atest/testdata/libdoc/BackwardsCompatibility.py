@@ -6,27 +6,30 @@ Examples are only using features compatible with all tested versions.
 
 from enum import Enum
 from typing import Union
+
 try:
     from typing_extensions import TypedDict
 except ImportError:
     from typing import TypedDict
 
 
-ROBOT_LIBRARY_VERSION = '1.0'
+ROBOT_LIBRARY_VERSION = "1.0"
 
 
-__all__ = ['simple', 'arguments', 'types', 'special_types', 'union']
+__all__ = ["simple", "arguments", "types", "special_types", "union"]
 
 
 class Color(Enum):
     """RGB colors."""
-    RED = 'R'
-    GREEN = 'G'
-    BLUE = 'B'
+
+    RED = "R"
+    GREEN = "G"
+    BLUE = "B"
 
 
 class Size(TypedDict):
     """Some size."""
+
     width: int
     height: int
 

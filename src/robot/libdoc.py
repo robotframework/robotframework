@@ -36,14 +36,16 @@ Libdoc itself is implemented in the :mod:`~robot.libdocpkg` package.
 import sys
 from pathlib import Path
 
-if __name__ == '__main__' and 'robot' not in sys.modules:
+if __name__ == "__main__" and "robot" not in sys.modules:
     from pythonpathsetter import set_pythonpath
+
     set_pythonpath()
 
-from robot.utils import Application, seq2str
 from robot.errors import DataError
-from robot.libdocpkg import LibraryDocumentation, ConsoleViewer, LANGUAGES, format_languages
-
+from robot.libdocpkg import (
+    ConsoleViewer, format_languages, LANGUAGES, LibraryDocumentation
+)
+from robot.utils import Application, seq2str
 
 USAGE = f"""Libdoc -- Robot Framework library documentation generator
 
@@ -94,8 +96,8 @@ Options
                           Use dark or light HTML theme. If this option is not
                           used, or the value is NONE, the theme is selected
                           based on the browser color scheme. New in RF 6.0.
-    --language lang       Set the default language in documentation. `lang`
-                          must be a code of a built-in language, which are
+    --language lang       Set the default language used in HTML outputs.
+                          `lang` must be one of the built-in language codes:
 {format_languages()}
                           New in RF 7.2.
  -n --name name           Sets the name of the documented library or resource.
@@ -170,18 +172,29 @@ http://robotframework.org/robotframework/#built-in-tools.
 class LibDoc(Application):
 
     def __init__(self):
-        Application.__init__(self, USAGE, arg_limits=(2,), auto_version=False)
+        super().__init__(USAGE, arg_limits=(2,), auto_version=False)
 
     def validate(self, options, arguments):
         if ConsoleViewer.handles(arguments[1]):
             ConsoleViewer.validate_command(arguments[1], arguments[2:])
             return options, arguments
         if len(arguments) > 2:
-            raise DataError('Only two arguments allowed when writing output.')
+            raise DataError("Only two arguments allowed when writing output.")
         return options, arguments
 
-    def main(self, args, name='', version='', format=None, docformat=None,
-             specdocformat=None, theme=None, language=None, pythonpath=None, quiet=False):
+    def main(
+        self,
+        args,
+        name="",
+        version="",
+        format=None,
+        docformat=None,
+        specdocformat=None,
+        theme=None,
+        language=None,
+        pythonpath=None,
+        quiet=False,
+    ):
         if pythonpath:
             sys.path = pythonpath + sys.path
         lib_or_res, output = args[:2]
@@ -190,51 +203,71 @@ class LibDoc(Application):
         if ConsoleViewer.handles(output):
             ConsoleViewer(libdoc).view(output, *args[2:])
             return
-        format, specdocformat \
-            = self._get_format_and_specdocformat(format, specdocformat, output)
-        if (format == 'HTML'
-                or specdocformat == 'HTML'
-                or format in ('JSON', 'LIBSPEC') and specdocformat != 'RAW'):
+        format, specdocformat = self._get_format_and_specdocformat(
+            format, specdocformat, output
+        )
+        if (
+            format == "HTML"
+            or specdocformat == "HTML"
+            or (format in ("JSON", "LIBSPEC") and specdocformat != "RAW")
+        ):
             libdoc.convert_docs_to_html()
-        libdoc.save(output, format, self._validate_theme(theme, format),
-                    self._validate_lang(language))
+        libdoc.save(
+            output,
+            format,
+            self._validate_theme(theme, format),
+            self._validate_lang(language),
+        )
         if not quiet:
             self.console(Path(output).absolute())
 
     def _get_docformat(self, docformat):
-        return self._validate('Doc format', docformat, 'ROBOT', 'TEXT', 'HTML', 'REST')
+        return self._validate(
+            "Doc format",
+            docformat,
+            ("ROBOT", "TEXT", "HTML", "REST"),
+        )
 
     def _get_format_and_specdocformat(self, format, specdocformat, output):
         extension = Path(output).suffix[1:]
-        format = self._validate('Format', format or extension,
-                                'HTML', 'XML', 'JSON', 'LIBSPEC', allow_none=False)
-        specdocformat = self._validate('Spec doc format', specdocformat, 'RAW', 'HTML')
-        if format == 'HTML' and specdocformat:
-            raise DataError("The --specdocformat option is not applicable with "
-                            "HTML outputs.")
+        format = self._validate(
+            "Format",
+            format or extension,
+            ("HTML", "XML", "JSON", "LIBSPEC"),
+            allow_none=False,
+        )
+        specdocformat = self._validate(
+            "Spec doc format",
+            specdocformat,
+            ("RAW", "HTML"),
+        )
+        if format == "HTML" and specdocformat:
+            raise DataError(
+                "The --specdocformat option is not applicable with HTML outputs."
+            )
         return format, specdocformat
 
-    def _validate(self, kind, value, *valid, allow_none=True):
+    def _validate(self, kind, value, valid, allow_none=True):
         if value:
             value = value.upper()
         elif allow_none:
             return None
         if value not in valid:
-            raise DataError(f"{kind} must be {seq2str(valid, lastsep=' or ')}, "
-                            f"got '{value}'.")
+            raise DataError(
+                f"{kind} must be {seq2str(valid, lastsep=' or ')}, got '{value}'."
+            )
         return value
 
     def _validate_theme(self, theme, format):
-        theme = self._validate('Theme', theme, 'DARK', 'LIGHT', 'NONE')
-        if not theme or theme == 'NONE':
+        theme = self._validate("Theme", theme, ("DARK", "LIGHT", "NONE"))
+        if not theme or theme == "NONE":
             return None
-        if format != 'HTML':
+        if format != "HTML":
             raise DataError("The --theme option is only applicable with HTML outputs.")
         return theme
 
     def _validate_lang(self, lang):
-        valid = LANGUAGES + ['NONE']
-        return self._validate('Language', lang, *valid)
+        return self._validate("Language", lang, valid=[*LANGUAGES, "NONE"])
 
 
 def libdoc_cli(arguments=None, exit=True):
@@ -257,8 +290,16 @@ def libdoc_cli(arguments=None, exit=True):
     LibDoc().execute_cli(arguments, exit=exit)
 
 
-def libdoc(library_or_resource, outfile, name='', version='', format=None,
-           docformat=None, specdocformat=None, quiet=False):
+def libdoc(
+    library_or_resource,
+    outfile,
+    name="",
+    version="",
+    format=None,
+    docformat=None,
+    specdocformat=None,
+    quiet=False,
+):
     """Executes Libdoc.
 
     :param library_or_resource: Name or path of the library or resource
@@ -292,10 +333,16 @@ def libdoc(library_or_resource, outfile, name='', version='', format=None,
         libdoc('MyLibrary.py', 'MyLibrary.html', version='1.0')
     """
     return LibDoc().execute(
-        library_or_resource, outfile, name=name, version=version, format=format,
-        docformat=docformat, specdocformat=specdocformat, quiet=quiet
+        library_or_resource,
+        outfile,
+        name=name,
+        version=version,
+        format=format,
+        docformat=docformat,
+        specdocformat=specdocformat,
+        quiet=quiet,
     )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     libdoc_cli(sys.argv[1:])

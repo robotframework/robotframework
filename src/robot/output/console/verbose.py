@@ -18,14 +18,21 @@ import sys
 from robot.errors import DataError
 from robot.utils import get_console_length, getshortdoc, isatty, pad_console_length
 
-from .highlighting import HighlightingStream
 from ..loggerapi import LoggerApi
+from .highlighting import HighlightingStream
 
 
 class VerboseOutput(LoggerApi):
 
-    def __init__(self, width=78, colors='AUTO', links='AUTO', markers='AUTO',
-                 stdout=None, stderr=None):
+    def __init__(
+        self,
+        width=78,
+        colors="AUTO",
+        links="AUTO",
+        markers="AUTO",
+        stdout=None,
+        stderr=None,
+    ):
         self.writer = VerboseWriter(width, colors, links, markers, stdout, stderr)
         self.started = False
         self.started_keywords = 0
@@ -63,7 +70,7 @@ class VerboseOutput(LoggerApi):
             self.writer.keyword_marker(result.status)
 
     def message(self, msg):
-        if msg.level in ('WARN', 'ERROR'):
+        if msg.level in ("WARN", "ERROR"):
             self.writer.error(msg.message, msg.level, clear=self.running_test)
 
     def result_file(self, kind, path):
@@ -71,10 +78,17 @@ class VerboseOutput(LoggerApi):
 
 
 class VerboseWriter:
-    _status_length = len('| PASS |')
+    _status_length = len("| PASS |")
 
-    def __init__(self, width=78, colors='AUTO', links='AUTO', markers='AUTO',
-                 stdout=None, stderr=None):
+    def __init__(
+        self,
+        width=78,
+        colors="AUTO",
+        links="AUTO",
+        markers="AUTO",
+        stdout=None,
+        stderr=None,
+    ):
         self.width = width
         self.stdout = HighlightingStream(stdout or sys.__stdout__, colors, links)
         self.stderr = HighlightingStream(stderr or sys.__stderr__, colors, links)
@@ -92,31 +106,31 @@ class VerboseWriter:
 
     def _get_info_width_and_separator(self, start_suite):
         if start_suite:
-            return self.width, '\n'
-        return self.width - self._status_length - 1, ' '
+            return self.width, "\n"
+        return self.width - self._status_length - 1, " "
 
     def _get_info(self, name, doc, width):
         if get_console_length(name) > width:
             return pad_console_length(name, width)
-        doc = getshortdoc(doc, linesep=' ')
-        info = f'{name} :: {doc}' if doc else name
+        doc = getshortdoc(doc, linesep=" ")
+        info = f"{name} :: {doc}" if doc else name
         return pad_console_length(info, width)
 
     def suite_separator(self):
-        self._fill('=')
+        self._fill("=")
 
     def test_separator(self):
-        self._fill('-')
+        self._fill("-")
 
     def _fill(self, char):
-        self.stdout.write(f'{char * self.width}\n')
+        self.stdout.write(f"{char * self.width}\n")
 
     def status(self, status, clear=False):
         if self._should_clear_markers(clear):
             self._clear_status()
-        self.stdout.write('| ', flush=False)
+        self.stdout.write("| ", flush=False)
         self.stdout.highlight(status, flush=False)
-        self.stdout.write(' |\n')
+        self.stdout.write(" |\n")
 
     def _should_clear_markers(self, clear):
         return clear and self._keyword_marker.marking_enabled
@@ -131,7 +145,7 @@ class VerboseWriter:
 
     def message(self, message):
         if message:
-            self.stdout.write(message.strip() + '\n')
+            self.stdout.write(message.strip() + "\n")
 
     def keyword_marker(self, status):
         if self._keyword_marker.marker_count == self._status_length:
@@ -158,18 +172,22 @@ class KeywordMarker:
         self.marker_count = 0
 
     def _marking_enabled(self, markers, highlighter):
-        options = {'AUTO': isatty(highlighter.stream),
-                   'ON': True,
-                   'OFF': False}
+        options = {
+            "AUTO": isatty(highlighter.stream),
+            "ON": True,
+            "OFF": False,
+        }
         try:
             return options[markers.upper()]
         except KeyError:
-            raise DataError(f"Invalid console marker value '{markers}'. "
-                            f"Available 'AUTO', 'ON' and 'OFF'.")
+            raise DataError(
+                f"Invalid console marker value '{markers}'. "
+                f"Available 'AUTO', 'ON' and 'OFF'."
+            )
 
     def mark(self, status):
         if self.marking_enabled:
-            marker, status = ('.', 'PASS') if status != 'FAIL' else ('F', 'FAIL')
+            marker, status = (".", "PASS") if status != "FAIL" else ("F", "FAIL")
             self.highlighter.highlight(marker, status)
             self.marker_count += 1
 

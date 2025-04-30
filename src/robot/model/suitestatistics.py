@@ -42,7 +42,7 @@ class SuiteStatisticsBuilder:
         self.stats: SuiteStatistics | None = None
 
     @property
-    def current(self) -> 'SuiteStatistics|None':
+    def current(self) -> "SuiteStatistics|None":
         return self._stats_stack[-1] if self._stats_stack else None
 
     def start_suite(self, suite):

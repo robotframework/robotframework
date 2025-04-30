@@ -8,4 +8,4 @@ class PartialMethod:
             value = value.lower()
         assert value == expected
 
-    partial_method = partialmethod(method, expected='value')
+    partial_method = partialmethod(method, expected="value")

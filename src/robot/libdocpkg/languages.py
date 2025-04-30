@@ -13,18 +13,17 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
-# This is modified by invoke, do not edit by hand
+# This is maintained by `invoke build-libdoc`. Do not edit by hand!
 LANGUAGES = [
-    'EN',
-    'FI',
-    'FR',
-    'IT',
-    'NL',
-    'PT-BR',
-    'PT-PT',
+    "EN",
+    "FI",
+    "FR",
+    "IT",
+    "NL",
+    "PT-BR",
+    "PT-PT",
 ]
 
+
 def format_languages():
-    indent = 26 * ' '
-    return '\n'.join(f'{indent}- {lang}' for lang in LANGUAGES)
+    return "\n".join(f"{' ' * 26}- {lang}" for lang in LANGUAGES)

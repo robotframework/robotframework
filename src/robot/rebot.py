@@ -32,17 +32,17 @@ that can be used programmatically. Other code is for internal usage.
 
 import sys
 
-if __name__ == '__main__' and 'robot' not in sys.modules:
+if __name__ == "__main__" and "robot" not in sys.modules:
     from pythonpathsetter import set_pythonpath
+
     set_pythonpath()
 
 from robot.conf import RebotSettings
 from robot.errors import DataError
-from robot.reporting import ResultWriter
 from robot.output import LOGGER
-from robot.utils import Application
+from robot.reporting import ResultWriter
 from robot.run import RobotFramework
-
+from robot.utils import Application
 
 USAGE = """Rebot -- Robot Framework report and log generator
 
@@ -335,15 +335,22 @@ $ python -m robot.rebot --name Combined outputs/*.xml
 class Rebot(RobotFramework):
 
     def __init__(self):
-        Application.__init__(self, USAGE, arg_limits=(1,), env_options='REBOT_OPTIONS',
-                             logger=LOGGER)
+        Application.__init__(
+            self,
+            USAGE,
+            arg_limits=(1,),
+            env_options="REBOT_OPTIONS",
+            logger=LOGGER,
+        )
 
     def main(self, datasources, **options):
         try:
             settings = RebotSettings(options)
         except DataError:
-            LOGGER.register_console_logger(stdout=options.get('stdout'),
-                                           stderr=options.get('stderr'))
+            LOGGER.register_console_logger(
+                stdout=options.get("stdout"),
+                stderr=options.get("stderr"),
+            )
             raise
         LOGGER.register_console_logger(**settings.console_output_config)
         if settings.pythonpath:
@@ -351,7 +358,7 @@ class Rebot(RobotFramework):
         LOGGER.disable_message_cache()
         rc = ResultWriter(*datasources).write_results(settings)
         if rc < 0:
-            raise DataError('No outputs created.')
+            raise DataError("No outputs created.")
         return rc
 
 
@@ -413,5 +420,5 @@ def rebot(*outputs, **options):
     return Rebot().execute(*outputs, **options)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     rebot_cli(sys.argv[1:])

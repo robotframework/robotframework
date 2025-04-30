@@ -8,7 +8,7 @@ class Class1:
         pass
 
 
-@library(scope='SUITE')
+@library(scope="SUITE")
 class Class2:
     @keyword
     def class2_keyword(self):

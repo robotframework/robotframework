@@ -13,22 +13,18 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from typing import Any, Callable, Literal, Sequence, TypeVar, Union, overload
+from typing import Any, Callable, Literal, overload, Sequence, TypeVar, Union
 
 from .interfaces import TypeHints
 
-
-# Current annotations report `attr-defined` errors. This can be solved once Python 3.10
-# becomes the minimum version (error-free conditional typing proved too complex).
-# See: https://discuss.python.org/t/questions-related-to-typing-overload-style/38130
-F = TypeVar('F', bound=Callable[..., Any])    # Any function.
-K = TypeVar('K', bound=Callable[..., Any])    # Keyword function.
-L = TypeVar('L', bound=type)                  # Library class.
+F = TypeVar("F", bound=Callable[..., Any])
+K = TypeVar("K", bound=Callable[..., Any])
+L = TypeVar("L", bound=type)
 KeywordDecorator = Callable[[K], K]
 LibraryDecorator = Callable[[L], L]
-Scope = Literal['GLOBAL', 'SUITE', 'TEST', 'TASK']
+Scope = Literal["GLOBAL", "SUITE", "TEST", "TASK"]
 Converter = Union[Callable[[Any], Any], Callable[[Any, Any], Any]]
-DocFormat = Literal['ROBOT', 'HTML', 'TEXT', 'REST']
+DocFormat = Literal["ROBOT", "HTML", "TEXT", "REST"]
 
 
 def not_keyword(func: F) -> F:
@@ -57,21 +53,23 @@ not_keyword.robot_not_keyword = True
 
 
 @overload
-def keyword(func: K, /) -> K:
-    ...
+def keyword(func: K, /) -> K: ...
 
 
 @overload
-def keyword(name: 'str | None' = None,
-            tags: Sequence[str] = (),
-            types: 'TypeHints | None' = ()) -> KeywordDecorator:
-    ...
+def keyword(
+    name: "str|None" = None,
+    tags: Sequence[str] = (),
+    types: "TypeHints|None" = (),
+) -> KeywordDecorator: ...
 
 
 @not_keyword
-def keyword(name: 'K | str | None' = None,
-            tags: Sequence[str] = (),
-            types: 'TypeHints | None' = ()) -> 'K | KeywordDecorator':
+def keyword(
+    name: "K|str|None" = None,
+    tags: Sequence[str] = (),
+    types: "TypeHints|None" = (),
+) -> "K|KeywordDecorator":
     """Decorator to set custom name, tags and argument types to keywords.
 
     This decorator creates ``robot_name``, ``robot_tags`` and ``robot_types``
@@ -126,27 +124,29 @@ def keyword(name: 'K | str | None' = None,
 
 
 @overload
-def library(cls: L, /) -> L:
-    ...
+def library(cls: L, /) -> L: ...
 
 
 @overload
-def library(scope: 'Scope | None' = None,
-            version: 'str | None' = None,
-            converters: 'dict[type, Converter] | None' = None,
-            doc_format: 'DocFormat | None' = None,
-            listener: 'Any | None' = None,
-            auto_keywords: bool = False) -> LibraryDecorator:
-    ...
+def library(
+    scope: "Scope|None" = None,
+    version: "str|None" = None,
+    converters: "dict[type, Converter]|None" = None,
+    doc_format: "DocFormat|None" = None,
+    listener: "Any|None" = None,
+    auto_keywords: bool = False,
+) -> LibraryDecorator: ...
 
 
 @not_keyword
-def library(scope: 'L | Scope | None' = None,
-            version: 'str | None' = None,
-            converters: 'dict[type, Converter] | None' = None,
-            doc_format: 'DocFormat | None' = None,
-            listener: 'Any | None' = None,
-            auto_keywords: bool = False) -> 'L | LibraryDecorator':
+def library(
+    scope: "L|Scope|None" = None,
+    version: "str|None" = None,
+    converters: "dict[type, Converter]|None" = None,
+    doc_format: "DocFormat|None" = None,
+    listener: "Any|None" = None,
+    auto_keywords: bool = False,
+) -> "L|LibraryDecorator":
     """Class decorator to control keyword discovery and other library settings.
 
     Disables automatic keyword detection by setting class attribute

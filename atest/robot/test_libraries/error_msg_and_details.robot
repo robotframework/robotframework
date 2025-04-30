@@ -50,7 +50,7 @@ Message and Internal Trace Are Removed From Details When Exception In External C
     [Template]    NONE
     ${tc} =    Verify Test Case And Error In Log    External Failure    UnboundLocalError: Raised from an external object!
     Traceback Should Be    ${tc[0, 1]}
-    ...    ../testresources/testlibs/ExampleLibrary.py    external_exception    ObjectToReturn('failure').exception(name, msg)
+    ...    ../testresources/testlibs/ExampleLibrary.py    external_exception    ObjectToReturn("failure").exception(name, msg)
     ...    ../testresources/testlibs/objecttoreturn.py    exception             raise exception(msg)
     ...    error=UnboundLocalError: Raised from an external object!
 

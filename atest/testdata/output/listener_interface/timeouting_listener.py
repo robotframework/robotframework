@@ -6,7 +6,7 @@ class timeouting_listener:
     timeout = False
 
     def start_keyword(self, name, info):
-        self.timeout = name == 'BuiltIn.Log'
+        self.timeout = name == "BuiltIn.Log"
 
     def end_keyword(self, name, info):
         self.timeout = False
@@ -14,4 +14,4 @@ class timeouting_listener:
     def log_message(self, message):
         if self.timeout:
             self.timeout = False
-            raise TimeoutExceeded('Emulated timeout inside log_message')
+            raise TimeoutExceeded("Emulated timeout inside log_message")

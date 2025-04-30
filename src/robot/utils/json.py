@@ -20,33 +20,31 @@ from typing import Any, Dict, overload, TextIO
 from .error import get_error_message
 from .robottypes import type_name
 
-
 DataDict = Dict[str, Any]
 
 
 class JsonLoader:
-
-    def load(self, source: 'str|bytes|TextIO|Path') -> DataDict:
+    def load(self, source: "str|bytes|TextIO|Path") -> DataDict:
         try:
             data = self._load(source)
         except (json.JSONDecodeError, TypeError):
-            raise ValueError(f'Invalid JSON data: {get_error_message()}')
+            raise ValueError(f"Invalid JSON data: {get_error_message()}")
         if not isinstance(data, dict):
             raise TypeError(f"Expected dictionary, got {type_name(data)}.")
         return data
 
     def _load(self, source):
         if self._is_path(source):
-            with open(source, encoding='UTF-8') as file:
+            with open(source, encoding="UTF-8") as file:
                 return json.load(file)
-        if hasattr(source, 'read'):
+        if hasattr(source, "read"):
             return json.load(source)
         return json.loads(source)
 
     def _is_path(self, source):
         if isinstance(source, Path):
             return True
-        return isinstance(source, str) and '{' not in source
+        return isinstance(source, str) and "{" not in source
 
 
 class JsonDumper:
@@ -55,21 +53,20 @@ class JsonDumper:
         self.config = config
 
     @overload
-    def dump(self, data: DataDict, output: None = None) -> str:
-        ...
+    def dump(self, data: DataDict, output: None = None) -> str: ...
 
     @overload
-    def dump(self, data: DataDict, output: 'TextIO|Path|str') -> None:
-        ...
+    def dump(self, data: DataDict, output: "TextIO|Path|str") -> None: ...
 
-    def dump(self, data: DataDict, output: 'None|TextIO|Path|str' = None) -> 'None|str':
+    def dump(self, data: DataDict, output: "None|TextIO|Path|str" = None) -> "None|str":
         if not output:
             return json.dumps(data, **self.config)
         elif isinstance(output, (str, Path)):
-            with open(output, 'w', encoding='UTF-8') as file:
+            with open(output, "w", encoding="UTF-8") as file:
                 json.dump(data, file, **self.config)
-        elif hasattr(output, 'write'):
+        elif hasattr(output, "write"):
             json.dump(data, output, **self.config)
         else:
-            raise TypeError(f"Output should be None, path or open file, "
-                            f"got {type_name(output)}.")
+            raise TypeError(
+                f"Output should be None, path or open file, got {type_name(output)}."
+            )

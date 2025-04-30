@@ -49,18 +49,20 @@ class RunningTestCase(unittest.TestCase):
 
     def _assert_no_output(self, output):
         if output:
-            raise AssertionError('Expected output to be empty:\n%s' % output)
+            raise AssertionError(f"Expected output to be empty:{output}")
 
     def _assert_output_contains(self, output, content, count):
         if isinstance(count, int):
             if output.count(content) != count:
-                raise AssertionError("'%s' not %d times in output:\n%s"
-                                     % (content, count, output))
+                raise AssertionError(
+                    f"'{content}' not {count} times in output:\n{output}"
+                )
         else:
-            min_count, max_count = count
-            if not (min_count <= output.count(content) <= max_count):
-                raise AssertionError("'%s' not %d-%d times in output:\n%s"
-                                     % (content, min_count,max_count, output))
+            minc, maxc = count
+            if not (minc <= output.count(content) <= maxc):
+                raise AssertionError(
+                    f"'{content}' not {minc}-{maxc} times in output:\n{output}"
+                )
 
     def _remove_files(self):
         for pattern in self.remove_files:

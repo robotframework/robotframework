@@ -1,10 +1,8 @@
+import logging
 import unittest
 
-from robot.utils.asserts import assert_equal
-
 from robot.output.pyloggingconf import RobotHandler
-
-import logging
+from robot.utils.asserts import assert_equal
 
 
 class MessageMock:

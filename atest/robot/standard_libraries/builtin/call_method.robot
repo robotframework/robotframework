@@ -19,7 +19,7 @@ Called Method Fails
     ...
     ...    RuntimeError: Calling method 'my_method' failed: Expected failure
     Traceback Should Be    ${tc[0, 1]}
-    ...    standard_libraries/builtin/objects_for_call_method.py    my_method    raise RuntimeError('Expected failure')
+    ...    standard_libraries/builtin/objects_for_call_method.py    my_method    raise RuntimeError("Expected failure")
     ...    error=${error}
 
 Call Method With Kwargs

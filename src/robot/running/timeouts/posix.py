@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from signal import setitimer, signal, SIGALRM, ITIMER_REAL
+from signal import ITIMER_REAL, setitimer, SIGALRM, signal
 
 
 class Timeout:

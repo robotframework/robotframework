@@ -25,12 +25,11 @@ from .encoding import system_decode
 from .platform import WINDOWS
 from .unic import safe_str
 
-
 if WINDOWS:
     CASE_INSENSITIVE_FILESYSTEM = True
 else:
     try:
-        CASE_INSENSITIVE_FILESYSTEM = os.listdir('/tmp') == os.listdir('/TMP')
+        CASE_INSENSITIVE_FILESYSTEM = os.listdir("/tmp") == os.listdir("/TMP")
     except OSError:
         CASE_INSENSITIVE_FILESYSTEM = False
 
@@ -52,8 +51,8 @@ def normpath(path, case_normalize=False):
     path = os.path.normpath(path)
     if case_normalize and CASE_INSENSITIVE_FILESYSTEM:
         path = path.lower()
-    if WINDOWS and len(path) == 2 and path[1] == ':':
-        return path + '\\'
+    if WINDOWS and len(path) == 2 and path[1] == ":":
+        return path + "\\"
     return path
 
 
@@ -81,7 +80,7 @@ def get_link_path(target, base):
     path = _get_link_path(target, base)
     url = path_to_url(path)
     if os.path.isabs(path):
-        url = 'file:' + url
+        url = "file:" + url
     return url
 
 
@@ -91,7 +90,7 @@ def _get_link_path(target, base):
     if os.path.isfile(base):
         base = os.path.dirname(base)
     if base == target:
-        return '.'
+        return "."
     base_drive, base_path = os.path.splitdrive(base)
     # Target and base on different drives
     if os.path.splitdrive(target)[0] != base_drive:
@@ -102,7 +101,7 @@ def _get_link_path(target, base):
     if common_len == len(base_drive) + len(os.sep):
         common_len -= len(os.sep)
     dirs_up = os.sep.join([os.pardir] * base[common_len:].count(os.sep))
-    path = os.path.join(dirs_up, target[common_len + len(os.sep):])
+    path = os.path.join(dirs_up, target[common_len + len(os.sep) :])
     return os.path.normpath(path)
 
 
@@ -115,10 +114,10 @@ def _common_path(p1, p2):
     """
     # os.path.dirname doesn't normalize leading double slash
     # https://github.com/robotframework/robotframework/issues/3844
-    if p1.startswith('//'):
-        p1 = '/' + p1.lstrip('/')
-    if p2.startswith('//'):
-        p2 = '/' + p2.lstrip('/')
+    if p1.startswith("//"):
+        p1 = "/" + p1.lstrip("/")
+    if p2.startswith("//"):
+        p2 = "/" + p2.lstrip("/")
     while p1 and p2:
         if p1 == p2:
             return p1
@@ -126,11 +125,11 @@ def _common_path(p1, p2):
             p1 = os.path.dirname(p1)
         else:
             p2 = os.path.dirname(p2)
-    return ''
+    return ""
 
 
-def find_file(path, basedir='.', file_type=None):
-    path = os.path.normpath(path.replace('/', os.sep))
+def find_file(path, basedir=".", file_type=None):
+    path = os.path.normpath(path.replace("/", os.sep))
     if os.path.isabs(path):
         ret = _find_absolute_path(path)
     else:
@@ -147,7 +146,7 @@ def _find_absolute_path(path):
 
 
 def _find_relative_path(path, basedir):
-    for base in [basedir] + sys.path:
+    for base in [basedir, *sys.path]:
         if not (base and os.path.isdir(base)):
             continue
         if not isinstance(base, str):
@@ -159,5 +158,6 @@ def _find_relative_path(path, basedir):
 
 
 def _is_valid_file(path):
-    return os.path.isfile(path) or \
-        (os.path.isdir(path) and os.path.isfile(os.path.join(path, '__init__.py')))
+    return os.path.isfile(path) or (
+        os.path.isdir(path) and os.path.isfile(os.path.join(path, "__init__.py"))
+    )

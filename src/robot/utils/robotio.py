@@ -13,8 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import io
 import os.path
+from io import BytesIO, StringIO
 from pathlib import Path
 
 from robot.errors import DataError
@@ -22,38 +22,38 @@ from robot.errors import DataError
 from .error import get_error_message
 
 
-def file_writer(path=None, encoding='UTF-8', newline=None, usage=None):
+def file_writer(path=None, encoding="UTF-8", newline=None, usage=None):
     if not path:
-        return io.StringIO(newline=newline)
+        return StringIO(newline=newline)
     if isinstance(path, Path):
         path = str(path)
     create_destination_directory(path, usage)
     try:
-        return io.open(path, 'w', encoding=encoding, newline=newline)
+        return open(path, "w", encoding=encoding, newline=newline)
     except EnvironmentError:
-        usage = '%s file' % usage if usage else 'file'
-        raise DataError("Opening %s '%s' failed: %s"
-                        % (usage, path, get_error_message()))
+        usage = f"{usage} file" if usage else "file"
+        raise DataError(f"Opening {usage} '{path}' failed: {get_error_message()}")
 
 
 def binary_file_writer(path=None):
     if path:
         if isinstance(path, Path):
             path = str(path)
-        return io.open(path, 'wb')
-    f = io.BytesIO()
-    getvalue = f.getvalue
-    f.getvalue = lambda encoding='UTF-8': getvalue().decode(encoding)
-    return f
+        return open(path, "wb")
+    writer = BytesIO()
+    getvalue = writer.getvalue
+    writer.getvalue = lambda encoding="UTF-8": getvalue().decode(encoding)
+    return writer
 
 
-def create_destination_directory(path: 'Path|str', usage=None):
+def create_destination_directory(path: "Path|str", usage=None):
     if not isinstance(path, Path):
         path = Path(path)
     if not path.parent.exists():
         try:
             os.makedirs(path.parent, exist_ok=True)
         except EnvironmentError:
-            usage = f'{usage} directory' if usage else 'directory'
-            raise DataError(f"Creating {usage} '{path.parent}' failed: "
-                            f"{get_error_message()}")
+            usage = f"{usage} directory" if usage else "directory"
+            raise DataError(
+                f"Creating {usage} '{path.parent}' failed: {get_error_message()}"
+            )

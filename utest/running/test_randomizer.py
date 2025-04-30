@@ -1,7 +1,8 @@
 import unittest
 
-from robot.running import TestSuite, TestCase
+from robot.running import TestCase, TestSuite
 from robot.utils.asserts import assert_equal, assert_not_equal
+
 
 class TestRandomizing(unittest.TestCase):
     names = [str(i) for i in range(100)]
@@ -12,7 +13,7 @@ class TestRandomizing(unittest.TestCase):
     def _generate_suite(self):
         s = TestSuite()
         s.suites = self._generate_suites()
-        s.tests  = self._generate_tests()
+        s.tests = self._generate_tests()
         return s
 
     def _generate_suites(self):
@@ -55,21 +56,29 @@ class TestRandomizing(unittest.TestCase):
         self._assert_randomized(self.suite.suites[1].tests)
 
     def test_randomizing_changes_ids(self):
-        assert_equal([s.id for s in self.suite.suites],
-                      ['s1-s%d' % i for i in range(1, 101)])
-        assert_equal([t.id for t in self.suite.tests],
-                      ['s1-t%d' % i for i in range(1, 101)])
+        assert_equal(
+            [s.id for s in self.suite.suites],
+            [f"s1-s{i}" for i in range(1, 101)],
+        )
+        assert_equal(
+            [t.id for t in self.suite.tests],
+            [f"s1-t{i}" for i in range(1, 101)],
+        )
         self.suite.randomize(suites=True, tests=True)
-        assert_equal([s.id for s in self.suite.suites],
-                      ['s1-s%d' % i for i in range(1, 101)])
-        assert_equal([t.id for t in self.suite.tests],
-                      ['s1-t%d' % i for i in range(1, 101)])
+        assert_equal(
+            [s.id for s in self.suite.suites],
+            [f"s1-s{i}" for i in range(1, 101)],
+        )
+        assert_equal(
+            [t.id for t in self.suite.tests],
+            [f"s1-t{i}" for i in range(1, 101)],
+        )
 
     def _gen_random_suite(self, seed):
         suite = self._generate_suite()
         suite.randomize(suites=True, tests=True, seed=seed)
         random_order_suites = [i.name for i in suite.suites]
-        random_order_tests  = [i.name for i in suite.tests]
+        random_order_tests = [i.name for i in suite.tests]
         return (random_order_suites, random_order_tests)
 
     def test_randomize_seed(self):
@@ -80,8 +89,9 @@ class TestRandomizing(unittest.TestCase):
         """
         (random_order_suites1, random_order_tests1) = self._gen_random_suite(1234)
         (random_order_suites2, random_order_tests2) = self._gen_random_suite(1234)
-        assert_equal( random_order_suites1, random_order_suites2 )
-        assert_equal( random_order_tests1, random_order_tests2 )
+        assert_equal(random_order_suites1, random_order_suites2)
+        assert_equal(random_order_tests1, random_order_tests2)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

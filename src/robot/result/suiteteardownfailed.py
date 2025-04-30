@@ -34,10 +34,10 @@ class SuiteTeardownFailureHandler(SuiteVisitor):
 
 
 class SuiteTeardownFailed(SuiteVisitor):
-    _normal_msg = 'Parent suite teardown failed:\n%s'
-    _also_msg = '\n\nAlso parent suite teardown failed:\n%s'
-    _normal_skip_msg = 'Skipped in parent suite teardown:\n%s'
-    _also_skip_msg = 'Skipped in parent suite teardown:\n%s\n\nEarlier message:\n%s'
+    _normal_msg = "Parent suite teardown failed:\n%s"
+    _also_msg = "\n\nAlso parent suite teardown failed:\n%s"
+    _normal_skip_msg = "Skipped in parent suite teardown:\n%s"
+    _also_skip_msg = "Skipped in parent suite teardown:\n%s\n\nEarlier message:\n%s"
 
     def __init__(self, message, skipped=False):
         self.message = message

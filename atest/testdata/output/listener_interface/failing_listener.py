@@ -10,10 +10,22 @@ class ListenerMethod:
     def __call__(self, *args, **kws):
         if not self.failed:
             self.failed = True
-            raise AssertionError("Expected failure in %s!" % self.__name__)
+            raise AssertionError(f"Expected failure in {self.__name__}!")
 
 
-for name in ['start_suite', 'end_suite', 'start_test', 'end_test',
-             'start_keyword', 'end_keyword', 'log_message', 'message',
-             'output_file', 'log_file', 'report_file', 'debug_file', 'close']:
+for name in [
+    "start_suite",
+    "end_suite",
+    "start_test",
+    "end_test",
+    "start_keyword",
+    "end_keyword",
+    "log_message",
+    "message",
+    "output_file",
+    "log_file",
+    "report_file",
+    "debug_file",
+    "close",
+]:
     globals()[name] = ListenerMethod(name)

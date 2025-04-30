@@ -19,8 +19,8 @@ from robot.errors import DataError
 from robot.utils import is_dict_like, split_from_equals
 from robot.variables import is_dict_variable
 
-from .argumentvalidator import ArgumentValidator
 from ..model import Argument
+from .argumentvalidator import ArgumentValidator
 
 if TYPE_CHECKING:
     from .argumentspec import ArgumentSpec
@@ -28,12 +28,18 @@ if TYPE_CHECKING:
 
 class ArgumentResolver:
 
-    def __init__(self, spec: 'ArgumentSpec',
-                 resolve_named: bool = True,
-                 resolve_args_until: 'int|None' = None,
-                 dict_to_kwargs: bool = False):
-        self.named_resolver = NamedArgumentResolver(spec) \
-              if resolve_named else NullNamedArgumentResolver()
+    def __init__(
+        self,
+        spec: "ArgumentSpec",
+        resolve_named: bool = True,
+        resolve_args_until: "int|None" = None,
+        dict_to_kwargs: bool = False,
+    ):
+        self.named_resolver = (
+            NamedArgumentResolver(spec)
+            if resolve_named
+            else NullNamedArgumentResolver()
+        )
         self.variable_replacer = VariableReplacer(spec, resolve_args_until)
         self.dict_to_kwargs = DictToKwargs(spec, dict_to_kwargs)
         self.argument_validator = ArgumentValidator(spec)
@@ -51,12 +57,14 @@ class ArgumentResolver:
 
 class NamedArgumentResolver:
 
-    def __init__(self, spec: 'ArgumentSpec'):
+    def __init__(self, spec: "ArgumentSpec"):
         self.spec = spec
 
     def resolve(self, arguments, variables=None):
-        known_positional_count = max(len(self.spec.positional_only),
-                                     len(self.spec.embedded))
+        known_positional_count = max(
+            len(self.spec.positional_only),
+            len(self.spec.embedded),
+        )
         positional = list(arguments[:known_positional_count])
         named = []
         for arg in arguments[known_positional_count:]:
@@ -91,8 +99,10 @@ class NamedArgumentResolver:
         return name in self.spec.named
 
     def _raise_positional_after_named(self):
-        raise DataError(f"{self.spec.type.capitalize()} '{self.spec.name}' "
-                        f"got positional argument after named arguments.")
+        raise DataError(
+            f"{self.spec.type.capitalize()} '{self.spec.name}' "
+            f"got positional argument after named arguments."
+        )
 
 
 class NullNamedArgumentResolver:
@@ -103,7 +113,7 @@ class NullNamedArgumentResolver:
 
 class DictToKwargs:
 
-    def __init__(self, spec: 'ArgumentSpec', enabled: bool = False):
+    def __init__(self, spec: "ArgumentSpec", enabled: bool = False):
         self.maxargs = spec.maxargs
         self.enabled = enabled and bool(spec.var_named)
 
@@ -120,7 +130,7 @@ class DictToKwargs:
 
 class VariableReplacer:
 
-    def __init__(self, spec: 'ArgumentSpec', resolve_until: 'int|None' = None):
+    def __init__(self, spec: "ArgumentSpec", resolve_until: "int|None" = None):
         self.spec = spec
         self.resolve_until = resolve_until
 
@@ -144,7 +154,7 @@ class VariableReplacer:
         for item in named:
             for name, value in self._get_replaced_named(item, replace_scalar):
                 if not isinstance(name, str):
-                    raise DataError('Argument names must be strings.')
+                    raise DataError("Argument names must be strings.")
                 yield name, value
 
     def _get_replaced_named(self, item, replace_scalar):

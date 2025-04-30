@@ -24,16 +24,17 @@ class ExecutionErrors:
 
     An error might be, for example, that importing a library has failed.
     """
-    id = 'errors'
+
+    id = "errors"
 
     def __init__(self, messages: Sequence[Message] = ()):
         self.messages = messages
 
     @setter
     def messages(self, messages) -> ItemList[Message]:
-        return ItemList(Message, {'parent': self}, items=messages)
+        return ItemList(Message, {"parent": self}, items=messages)
 
-    def add(self, other: 'ExecutionErrors'):
+    def add(self, other: "ExecutionErrors"):
         self.messages.extend(other.messages)
 
     def visit(self, visitor):
@@ -50,7 +51,7 @@ class ExecutionErrors:
 
     def __str__(self) -> str:
         if not self:
-            return 'No execution errors'
+            return "No execution errors"
         if len(self) == 1:
-            return f'Execution error: {self[0]}'
-        return '\n'.join(['Execution errors:'] + ['- ' + str(m) for m in self])
+            return f"Execution error: {self[0]}"
+        return "\n".join(["Execution errors:"] + ["- " + str(m) for m in self])

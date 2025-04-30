@@ -14,8 +14,9 @@
 #  limitations under the License.
 
 from robot.errors import DataError
-from robot.utils import (get_error_details, Importer, split_args_from_name_or_path,
-                         type_name)
+from robot.utils import (
+    get_error_details, Importer, split_args_from_name_or_path, type_name
+)
 
 from .visitor import SuiteVisitor
 
@@ -33,14 +34,17 @@ class ModelModifier(SuiteVisitor):
                 suite.visit(visitor)
             except Exception:
                 message, details = get_error_details()
-                self._log_error(f"Executing model modifier '{type_name(visitor)}' "
-                                f"failed: {message}\n{details}")
+                self._log_error(
+                    f"Executing model modifier '{type_name(visitor)}' "
+                    f"failed: {message}\n{details}"
+                )
         if not (suite.has_tests or self._empty_suite_ok):
-            raise DataError(f"Suite '{suite.name}' contains no tests after "
-                            f"model modifiers.")
+            raise DataError(
+                f"Suite '{suite.name}' contains no tests after model modifiers."
+            )
 
     def _yield_visitors(self, visitors, logger):
-        importer = Importer('model modifier', logger=logger)
+        importer = Importer("model modifier", logger=logger)
         for visitor in visitors:
             if isinstance(visitor, str):
                 name, args = split_args_from_name_or_path(visitor)

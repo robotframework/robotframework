@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+
 class NotSet:
     """Represents value that is not set.
 
@@ -26,7 +27,7 @@ class NotSet:
     """
 
     def __repr__(self):
-        return ''
+        return ""
 
 
 NOT_SET = NotSet()

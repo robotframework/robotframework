@@ -1,13 +1,13 @@
 from datetime import date, datetime
-from typing import Dict, List, Set, Tuple, Union
 from types import ModuleType
+from typing import Dict, List, Set, Tuple, Union
+
 try:
     from typing import TypedDict
 except ImportError:
     from typing_extensions import TypedDict
 
 from robot.api.deco import not_keyword
-
 
 not_keyword(TypedDict)
 
@@ -18,7 +18,7 @@ class Number:
 
 def string_to_int(value: str) -> int:
     try:
-        return ['zero', 'one', 'two', 'three', 'four'].index(value.lower())
+        return ["zero", "one", "two", "three", "four"].index(value.lower())
     except ValueError:
         raise ValueError(f"Don't know number {value!r}.")
 
@@ -29,16 +29,18 @@ class String:
 
 def int_to_string_with_lib(value: int, library) -> str:
     if library is None:
-        raise AssertionError('Expected library, got none')
+        raise AssertionError("Expected library, got none")
     if not isinstance(library, ModuleType):
-        raise AssertionError(f'Expected library to be instance of {ModuleType}, was {type(library)}')
+        raise AssertionError(
+            f"Expected library to be instance of {ModuleType}, was {type(library)}"
+        )
     return str(value)
 
 
 def parse_bool(value: Union[str, int, bool]):
     if isinstance(value, str):
         value = value.lower()
-    return value not in ['false', '', 'epätosi', '\u2639', False, 0]
+    return value not in ["false", "", "epätosi", "\u2639", False, 0]
 
 
 class UsDate(date):
@@ -47,7 +49,7 @@ class UsDate(date):
         if not isinstance(value, str):
             raise TypeError("Only strings accepted!")
         try:
-            return cls.fromordinal(datetime.strptime(value, '%m/%d/%Y').toordinal())
+            return cls.fromordinal(datetime.strptime(value, "%m/%d/%Y").toordinal())
         except ValueError:
             raise ValueError("Value does not match '%m/%d/%Y'.")
 
@@ -56,14 +58,14 @@ class FiDate(date):
     @classmethod
     def from_string(cls, value: str, ign1=None, *ign2, ign3=None, **ign4):
         try:
-            return cls.fromordinal(datetime.strptime(value, '%d.%m.%Y').toordinal())
+            return cls.fromordinal(datetime.strptime(value, "%d.%m.%Y").toordinal())
         except ValueError:
             raise RuntimeError("Value does not match '%d.%m.%Y'.")
 
 
 class ClassAsConverter:
     def __init__(self, name):
-        self.greeting = f'Hello, {name}!'
+        self.greeting = f"Hello, {name}!"
 
 
 class ClassWithHintsAsConverter:
@@ -83,9 +85,11 @@ class OnlyVarArg:
         self.value = varargs[0]
         library = varargs[1]
         if library is None:
-            raise AssertionError('Expected library, got none')
+            raise AssertionError("Expected library, got none")
         if not isinstance(library, ModuleType):
-            raise AssertionError(f'Expected library to be instance of {ModuleType}, was {type(library)}')
+            raise AssertionError(
+                f"Expected library to be instance of {ModuleType}, was {type(library)}"
+            )
 
 
 class Strict:
@@ -115,22 +119,24 @@ class KwOnlyNotOk:
         pass
 
 
-ROBOT_LIBRARY_CONVERTERS = {Number: string_to_int,
-                            bool: parse_bool,
-                            String: int_to_string_with_lib,
-                            UsDate: UsDate.from_string,
-                            FiDate: FiDate.from_string,
-                            ClassAsConverter: ClassAsConverter,
-                            ClassWithHintsAsConverter: ClassWithHintsAsConverter,
-                            AcceptSubscriptedGenerics: AcceptSubscriptedGenerics,
-                            OnlyVarArg: OnlyVarArg,
-                            Strict: None,
-                            Invalid: 666,
-                            TooFewArgs: TooFewArgs,
-                            TooManyArgs: TooManyArgs,
-                            NoPositionalArg: NoPositionalArg,
-                            KwOnlyNotOk: KwOnlyNotOk,
-                            'Bad': int}
+ROBOT_LIBRARY_CONVERTERS = {
+    Number: string_to_int,
+    bool: parse_bool,
+    String: int_to_string_with_lib,
+    UsDate: UsDate.from_string,
+    FiDate: FiDate.from_string,
+    ClassAsConverter: ClassAsConverter,
+    ClassWithHintsAsConverter: ClassWithHintsAsConverter,
+    AcceptSubscriptedGenerics: AcceptSubscriptedGenerics,
+    OnlyVarArg: OnlyVarArg,
+    Strict: None,
+    Invalid: 666,
+    TooFewArgs: TooFewArgs,
+    TooManyArgs: TooManyArgs,
+    NoPositionalArg: NoPositionalArg,
+    KwOnlyNotOk: KwOnlyNotOk,
+    "Bad": int,
+}
 
 
 def only_var_arg(argument: OnlyVarArg, expected):
@@ -140,7 +146,7 @@ def only_var_arg(argument: OnlyVarArg, expected):
 
 def number(argument: Number, expected: int = 0):
     if argument != expected:
-        raise AssertionError(f'Expected value to be {expected!r}, got {argument!r}.')
+        raise AssertionError(f"Expected value to be {expected!r}, got {argument!r}.")
 
 
 def true(argument: bool):
@@ -151,7 +157,7 @@ def false(argument: bool):
     assert argument is False
 
 
-def string(argument: String, expected: str = '123'):
+def string(argument: String, expected: str = "123"):
     if argument != expected:
         raise AssertionError
 
@@ -164,7 +170,7 @@ def fi_date(argument: FiDate, expected: date = None):
     assert argument == expected
 
 
-def dates(us: 'UsDate', fi: 'FiDate'):
+def dates(us: "UsDate", fi: "FiDate"):
     assert us == fi
 
 
@@ -180,7 +186,12 @@ def accept_subscripted_generics(argument: AcceptSubscriptedGenerics, expected):
     assert argument.sum == expected
 
 
-def with_generics(a: List[Number], b: Tuple[FiDate, UsDate], c: Dict[Number, FiDate], d: Set[Number]):
+def with_generics(
+    a: List[Number],
+    b: Tuple[FiDate, UsDate],
+    c: Dict[Number, FiDate],
+    d: Set[Number],
+):
     expected_date = date(2022, 9, 28)
     assert a == [1, 2, 3], a
     assert b == (expected_date, expected_date), b
@@ -188,8 +199,8 @@ def with_generics(a: List[Number], b: Tuple[FiDate, UsDate], c: Dict[Number, FiD
     assert d == {1, 2, 3}, d
 
 
-def typeddict(dates: TypedDict('Dates', {'fi': FiDate, 'us': UsDate})):
-    fi, us = dates['fi'], dates['us']
+def typeddict(dates: TypedDict("Dates", {"fi": FiDate, "us": UsDate})):
+    fi, us = dates["fi"], dates["us"]
     exp = date(2022, 9, 29)
     assert isinstance(fi, FiDate) and isinstance(us, UsDate) and fi == us == exp
 
@@ -207,10 +218,10 @@ def strict(argument: Strict):
 
 
 def invalid(a: Invalid, b: TooFewArgs, c: TooManyArgs, d: KwOnlyNotOk):
-    assert (a, b, c, d) == ('a', 'b', 'c', 'd')
+    assert (a, b, c, d) == ("a", "b", "c", "d")
 
 
-def non_type_annotation(arg1: 'Hello world!', arg2: 2 = 2):
+def non_type_annotation(arg1: "Hello world!", arg2: 2 = 2):  # noqa: F722
     assert arg1 == arg2
 
 
@@ -230,7 +241,7 @@ class StatefulLibrary:
 
 
 class StatefulGlobalLibrary:
-    ROBOT_LIBRARY_SCOPE = 'GLOBAL'
+    ROBOT_LIBRARY_SCOPE = "GLOBAL"
     ROBOT_LIBRARY_CONVERTERS = {Number: multiplying_converter}
 
     def __init__(self):

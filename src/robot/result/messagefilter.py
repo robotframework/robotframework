@@ -20,18 +20,17 @@ from .visitor import ResultVisitor
 
 class MessageFilter(ResultVisitor):
 
-    def __init__(self, level='TRACE'):
-        log_level = output.LogLevel(level or 'TRACE')
-        self.log_all = log_level.level == 'TRACE'
+    def __init__(self, level="TRACE"):
+        log_level = output.LogLevel(level or "TRACE")
+        self.log_all = log_level.level == "TRACE"
         self.is_logged = log_level.is_logged
-
 
     def start_suite(self, suite):
         if self.log_all:
             return False
 
     def start_body_item(self, item):
-        if hasattr(item, 'body'):
+        if hasattr(item, "body"):
             for msg in item.body.filter(messages=True):
                 if not self.is_logged(msg):
                     item.body.remove(msg)

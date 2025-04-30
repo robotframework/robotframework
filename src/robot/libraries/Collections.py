@@ -18,11 +18,12 @@ from ast import literal_eval
 from itertools import chain
 
 from robot.api import logger
-from robot.utils import (is_dict_like, is_list_like, Matcher, NotSet,
-                         plural_or_not as s, seq2str, seq2str2, type_name)
+from robot.utils import (
+    is_dict_like, is_list_like, Matcher, NotSet, plural_or_not as s, seq2str, seq2str2,
+    type_name
+)
 from robot.utils.asserts import assert_equal
 from robot.version import get_version
-
 
 NOT_SET = NotSet()
 
@@ -167,7 +168,7 @@ class _List:
             if item not in ret:
                 ret.append(item)
         removed = len(list_) - len(ret)
-        logger.info(f'{removed} duplicate{s(removed)} removed.')
+        logger.info(f"{removed} duplicate{s(removed)} removed.")
         return ret
 
     def get_from_list(self, list_, index):
@@ -314,8 +315,11 @@ class _List:
         """
         self._validate_list(list_)
         normalize = Normalizer(ignore_case).normalize
-        _verify_condition(normalize(value) in normalize(list_),
-                          f"{seq2str2(list_)} does not contain value '{value}'.", msg)
+        _verify_condition(
+            normalize(value) in normalize(list_),
+            f"{seq2str2(list_)} does not contain value '{value}'.",
+            msg,
+        )
 
     def list_should_not_contain_value(self, list_, value, msg=None, ignore_case=False):
         """Fails if the ``value`` is found from ``list``.
@@ -328,8 +332,11 @@ class _List:
         """
         self._validate_list(list_)
         normalize = Normalizer(ignore_case).normalize
-        _verify_condition(normalize(value) not in normalize(list_),
-                          f"{seq2str2(list_)} contains value '{value}'.", msg)
+        _verify_condition(
+            normalize(value) not in normalize(list_),
+            f"{seq2str2(list_)} contains value '{value}'.",
+            msg,
+        )
 
     def list_should_not_contain_duplicates(self, list_, msg=None, ignore_case=False):
         """Fails if any element in the ``list`` is found from it more than once.
@@ -356,10 +363,18 @@ class _List:
                     logger.info(f"'{item}' found {count} times.")
                     dupes.append(item)
         if dupes:
-            raise AssertionError(msg or f'{seq2str(dupes)} found multiple times.')
+            raise AssertionError(msg or f"{seq2str(dupes)} found multiple times.")
 
-    def lists_should_be_equal(self, list1, list2, msg=None, values=True,
-                              names=None, ignore_order=False, ignore_case=False):
+    def lists_should_be_equal(
+        self,
+        list1,
+        list2,
+        msg=None,
+        values=True,
+        names=None,
+        ignore_order=False,
+        ignore_case=False,
+    ):
         """Fails if given lists are unequal.
 
         The keyword first verifies that the lists have equal lengths, and then
@@ -411,16 +426,23 @@ class _List:
         self._validate_lists(list1, list2)
         len1 = len(list1)
         len2 = len(list2)
-        _verify_condition(len1 == len2,
-                          f'Lengths are different: {len1} != {len2}',
-                          msg, values)
+        _verify_condition(
+            len1 == len2,
+            f"Lengths are different: {len1} != {len2}",
+            msg,
+            values,
+        )
         names = self._get_list_index_name_mapping(names, len1)
         normalize = Normalizer(ignore_case, ignore_order).normalize
-        diffs = '\n'.join(self._yield_list_diffs(normalize(list1), normalize(list2),
-                                                 names))
-        _verify_condition(not diffs,
-                          f'Lists are different:\n{diffs}',
-                          msg, values)
+        diffs = "\n".join(
+            self._yield_list_diffs(normalize(list1), normalize(list2), names)
+        )
+        _verify_condition(
+            not diffs,
+            f"Lists are different:\n{diffs}",
+            msg,
+            values,
+        )
 
     def _get_list_index_name_mapping(self, names, list_length):
         if not names:
@@ -431,14 +453,20 @@ class _List:
 
     def _yield_list_diffs(self, list1, list2, names):
         for index, (item1, item2) in enumerate(zip(list1, list2)):
-            name = f' ({names[index]})' if index in names else ''
+            name = f" ({names[index]})" if index in names else ""
             try:
-                assert_equal(item1, item2, msg=f'Index {index}{name}')
+                assert_equal(item1, item2, msg=f"Index {index}{name}")
             except AssertionError as err:
                 yield str(err)
 
-    def list_should_contain_sub_list(self, list1, list2, msg=None, values=True,
-                                     ignore_case=False):
+    def list_should_contain_sub_list(
+        self,
+        list1,
+        list2,
+        msg=None,
+        values=True,
+        ignore_case=False,
+    ):
         """Fails if not all elements in ``list2`` are found in ``list1``.
 
         The order of values and the number of values are not taken into
@@ -456,10 +484,14 @@ class _List:
         list1 = normalize(list1)
         list2 = normalize(list2)
         diffs = [item for item in list2 if item not in list1]
-        _verify_condition(not diffs, f'Following values are missing: {seq2str(diffs)}',
-                          msg, values)
+        _verify_condition(
+            not diffs,
+            f"Following values are missing: {seq2str(diffs)}",
+            msg,
+            values,
+        )
 
-    def log_list(self, list_, level='INFO'):
+    def log_list(self, list_, level="INFO"):
         """Logs the length and contents of the ``list`` using given ``level``.
 
         Valid levels are TRACE, DEBUG, INFO (default), and WARN.
@@ -468,17 +500,17 @@ class _List:
         the BuiltIn library.
         """
         self._validate_list(list_)
-        logger.write('\n'.join(self._log_list(list_)), level)
+        logger.write("\n".join(self._log_list(list_)), level)
 
     def _log_list(self, list_):
         if not list_:
-            yield 'List is empty.'
+            yield "List is empty."
         elif len(list_) == 1:
-            yield f'List has one item:\n{list_[0]}'
+            yield f"List has one item:\n{list_[0]}"
         else:
-            yield f'List length is {len(list_)} and it contains following items:'
+            yield f"List length is {len(list_)} and it contains following items:"
             for index, item in enumerate(list_):
-                yield f'{index}: {item}'
+                yield f"{index}: {item}"
 
     def _index_to_int(self, index, empty_to_zero=False):
         if empty_to_zero and not index:
@@ -489,12 +521,14 @@ class _List:
             raise ValueError(f"Cannot convert index '{index}' to an integer.")
 
     def _index_error(self, list_, index):
-        raise IndexError(f'Given index {index} is out of the range 0-{len(list_)-1}.')
+        raise IndexError(f"Given index {index} is out of the range 0-{len(list_) - 1}.")
 
     def _validate_list(self, list_, position=1):
         if not is_list_like(list_):
-            raise TypeError(f"Expected argument {position} to be a list or list-like, "
-                            f"got {type_name(list_)} instead.")
+            raise TypeError(
+                f"Expected argument {position} to be a list or list-like, "
+                f"got {type_name(list_)} instead."
+            )
 
     def _validate_lists(self, *lists):
         for index, item in enumerate(lists, start=1):
@@ -538,10 +572,12 @@ class _Dictionary:
         """
         self._validate_dictionary(dictionary)
         if len(key_value_pairs) % 2 != 0:
-            raise ValueError("Adding data to a dictionary failed. There "
-                             "should be even number of key-value-pairs.")
+            raise ValueError(
+                "Adding data to a dictionary failed. There should be even "
+                "number of key-value-pairs."
+            )
         for i in range(0, len(key_value_pairs), 2):
-            dictionary[key_value_pairs[i]] = key_value_pairs[i+1]
+            dictionary[key_value_pairs[i]] = key_value_pairs[i + 1]
         dictionary.update(items)
         return dictionary
 
@@ -695,8 +731,13 @@ class _Dictionary:
                 return default
             raise RuntimeError(f"Dictionary does not contain key '{key}'.")
 
-    def dictionary_should_contain_key(self, dictionary, key, msg=None,
-                                      ignore_case=False):
+    def dictionary_should_contain_key(
+        self,
+        dictionary,
+        key,
+        msg=None,
+        ignore_case=False,
+    ):
         """Fails if ``key`` is not found from ``dictionary``.
 
         Use the ``msg`` argument to override the default error message.
@@ -709,11 +750,17 @@ class _Dictionary:
         norm = Normalizer(ignore_case)
         _verify_condition(
             norm.normalize_key(key) in norm.normalize(dictionary),
-            f"Dictionary does not contain key '{key}'.", msg
+            f"Dictionary does not contain key '{key}'.",
+            msg,
         )
 
-    def dictionary_should_not_contain_key(self, dictionary, key, msg=None,
-                                          ignore_case=False):
+    def dictionary_should_not_contain_key(
+        self,
+        dictionary,
+        key,
+        msg=None,
+        ignore_case=False,
+    ):
         """Fails if ``key`` is found from ``dictionary``.
 
         Use the ``msg`` argument to override the default error message.
@@ -726,11 +773,18 @@ class _Dictionary:
         norm = Normalizer(ignore_case)
         _verify_condition(
             norm.normalize_key(key) not in norm.normalize(dictionary),
-            f"Dictionary contains key '{key}'.", msg
+            f"Dictionary contains key '{key}'.",
+            msg,
         )
 
-    def dictionary_should_contain_item(self, dictionary, key, value, msg=None,
-                                       ignore_case=False):
+    def dictionary_should_contain_item(
+        self,
+        dictionary,
+        key,
+        value,
+        msg=None,
+        ignore_case=False,
+    ):
         """An item of ``key`` / ``value`` must be found in a ``dictionary``.
 
         Use the ``msg`` argument to override the default error message.
@@ -745,11 +799,17 @@ class _Dictionary:
         assert_equal(
             norm.normalize(dictionary)[norm.normalize_key(key)],
             norm.normalize_value(value),
-            msg or f"Value of dictionary key '{key}' does not match", values=not msg
+            msg or f"Value of dictionary key '{key}' does not match",
+            values=not msg,
         )
 
-    def dictionary_should_contain_value(self, dictionary, value, msg=None,
-                                        ignore_case=False):
+    def dictionary_should_contain_value(
+        self,
+        dictionary,
+        value,
+        msg=None,
+        ignore_case=False,
+    ):
         """Fails if ``value`` is not found from ``dictionary``.
 
         Use the ``msg`` argument to override the default error message.
@@ -762,11 +822,17 @@ class _Dictionary:
         norm = Normalizer(ignore_case)
         _verify_condition(
             norm.normalize_value(value) in norm.normalize(dictionary).values(),
-            f"Dictionary does not contain value '{value}'.", msg
+            f"Dictionary does not contain value '{value}'.",
+            msg,
         )
 
-    def dictionary_should_not_contain_value(self, dictionary, value, msg=None,
-                                            ignore_case=False):
+    def dictionary_should_not_contain_value(
+        self,
+        dictionary,
+        value,
+        msg=None,
+        ignore_case=False,
+    ):
         """Fails if ``value`` is found from ``dictionary``.
 
         Use the ``msg`` argument to override the default error message.
@@ -779,12 +845,20 @@ class _Dictionary:
         norm = Normalizer(ignore_case)
         _verify_condition(
             norm.normalize_value(value) not in norm.normalize(dictionary).values(),
-            f"Dictionary contains value '{value}'.", msg
+            f"Dictionary contains value '{value}'.",
+            msg,
         )
 
-    def dictionaries_should_be_equal(self, dict1, dict2, msg=None, values=True,
-                                     ignore_keys=None, ignore_case=False,
-                                     ignore_value_order=False):
+    def dictionaries_should_be_equal(
+        self,
+        dict1,
+        dict2,
+        msg=None,
+        values=True,
+        ignore_keys=None,
+        ignore_case=False,
+        ignore_value_order=False,
+    ):
         """Fails if the given dictionaries are not equal.
 
         First the equality of dictionaries' keys is checked and after that all
@@ -815,8 +889,11 @@ class _Dictionary:
         This option is new in Robot Framework 7.2.
         """
         self._validate_dictionary(dict1, dict2)
-        normalizer = Normalizer(ignore_case=ignore_case, ignore_keys=ignore_keys,
-                                ignore_order=ignore_value_order)
+        normalizer = Normalizer(
+            ignore_case=ignore_case,
+            ignore_keys=ignore_keys,
+            ignore_order=ignore_value_order,
+        )
         dict1 = normalizer.normalize(dict1)
         dict2 = normalizer.normalize(dict2)
         self._should_have_same_keys(dict1, dict2, msg, values)
@@ -824,7 +901,7 @@ class _Dictionary:
 
     def _should_have_same_keys(self, dict1, dict2, message, values, validate_both=True):
         missing = seq2str([k for k in dict2 if k not in dict1])
-        error = ''
+        error = ""
         if missing:
             error = f"Following keys missing from first dictionary: {missing}"
         if validate_both:
@@ -838,16 +915,22 @@ class _Dictionary:
         errors = []
         for key in dict2:
             try:
-                assert_equal(dict1[key], dict2[key], msg=f'Key {key}')
+                assert_equal(dict1[key], dict2[key], msg=f"Key {key}")
             except AssertionError as err:
                 errors.append(str(err))
         if errors:
-            error = '\n'.join([f'Following keys have different values:', *errors])
+            error = "\n".join(["Following keys have different values:", *errors])
             _report_error(error, message, values)
 
-    def dictionary_should_contain_sub_dictionary(self, dict1, dict2, msg=None,
-                                                 values=True, ignore_case=False,
-                                                 ignore_value_order=False):
+    def dictionary_should_contain_sub_dictionary(
+        self,
+        dict1,
+        dict2,
+        msg=None,
+        values=True,
+        ignore_case=False,
+        ignore_value_order=False,
+    ):
         """Fails unless all items in ``dict2`` are found from ``dict1``.
 
         See `Lists Should Be Equal` for more information about configuring
@@ -863,14 +946,16 @@ class _Dictionary:
         This option is new in Robot Framework 7.2.
         """
         self._validate_dictionary(dict1, dict2)
-        normalizer = Normalizer(ignore_case=ignore_case,
-                                ignore_order=ignore_value_order)
+        normalizer = Normalizer(
+            ignore_case=ignore_case,
+            ignore_order=ignore_value_order,
+        )
         dict1 = normalizer.normalize(dict1)
         dict2 = normalizer.normalize(dict2)
         self._should_have_same_keys(dict1, dict2, msg, values, validate_both=False)
         self._should_have_same_values(dict1, dict2, msg, values)
 
-    def log_dictionary(self, dictionary, level='INFO'):
+    def log_dictionary(self, dictionary, level="INFO"):
         """Logs the size and contents of the ``dictionary`` using given ``level``.
 
         Valid levels are TRACE, DEBUG, INFO (default), and WARN.
@@ -879,23 +964,25 @@ class _Dictionary:
         the BuiltIn library.
         """
         self._validate_dictionary(dictionary)
-        logger.write('\n'.join(self._log_dictionary(dictionary)), level)
+        logger.write("\n".join(self._log_dictionary(dictionary)), level)
 
     def _log_dictionary(self, dictionary):
         if not dictionary:
-            yield 'Dictionary is empty.'
+            yield "Dictionary is empty."
         elif len(dictionary) == 1:
-            yield 'Dictionary has one item:'
+            yield "Dictionary has one item:"
         else:
-            yield f'Dictionary size is {len(dictionary)} and it contains following items:'
+            yield f"Dictionary size is {len(dictionary)} and it contains following items:"
         for key in self.get_dictionary_keys(dictionary):
-            yield f'{key}: {dictionary[key]}'
+            yield f"{key}: {dictionary[key]}"
 
     def _validate_dictionary(self, *dictionaries):
         for index, dictionary in enumerate(dictionaries, start=1):
             if not is_dict_like(dictionary):
-                raise TypeError(f"Expected argument {index} to be a dictionary, "
-                                f"got {type_name(dictionary)} instead.")
+                raise TypeError(
+                    f"Expected argument {index} to be a dictionary, "
+                    f"got {type_name(dictionary)} instead."
+                )
 
 
 class Collections(_List, _Dictionary):
@@ -989,14 +1076,19 @@ class Collections(_List, _Dictionary):
     means ``{'a': 1}`` and ``${D3}`` means ``{'a': 1, 'b': 2, 'c': 3}``.
     """
 
-    ROBOT_LIBRARY_SCOPE = 'GLOBAL'
+    ROBOT_LIBRARY_SCOPE = "GLOBAL"
     ROBOT_LIBRARY_VERSION = get_version()
 
-    def should_contain_match(self, list, pattern, msg=None,
-                             case_insensitive: 'bool|None' = None,
-                             whitespace_insensitive: 'bool|None' = None,
-                             ignore_case: bool = False,
-                             ignore_whitespace: bool = False):
+    def should_contain_match(
+        self,
+        list,
+        pattern,
+        msg=None,
+        case_insensitive: "bool|None" = None,
+        whitespace_insensitive: "bool|None" = None,
+        ignore_case: bool = False,
+        ignore_whitespace: bool = False,
+    ):
         """Fails if ``pattern`` is not found in ``list``.
 
         By default, pattern matching is similar to matching files in a shell
@@ -1038,34 +1130,53 @@ class Collections(_List, _Dictionary):
         | Should Contain Match | ${list} | ab* | ignore_whitespace=true | ignore_case=true | # Same as the above but also ignore case. |
         """
         _List._validate_list(self, list)
-        matches = self._get_matches(list, pattern, case_insensitive,
-                                    whitespace_insensitive, ignore_case,
-                                    ignore_whitespace)
+        matches = self._get_matches(
+            list,
+            pattern,
+            case_insensitive,
+            whitespace_insensitive,
+            ignore_case,
+            ignore_whitespace,
+        )
         default = f"{seq2str2(list)} does not contain match for pattern '{pattern}'."
         _verify_condition(matches, default, msg)
 
-    def should_not_contain_match(self, list, pattern, msg=None,
-                                 case_insensitive: 'bool|None' = None,
-                                 whitespace_insensitive: 'bool|None' = None,
-                                 ignore_case: bool = False,
-                                 ignore_whitespace: bool = False):
+    def should_not_contain_match(
+        self,
+        list,
+        pattern,
+        msg=None,
+        case_insensitive: "bool|None" = None,
+        whitespace_insensitive: "bool|None" = None,
+        ignore_case: bool = False,
+        ignore_whitespace: bool = False,
+    ):
         """Fails if ``pattern`` is found in ``list``.
 
         Exact opposite of `Should Contain Match` keyword. See that keyword
         for information about arguments and usage in general.
         """
         _List._validate_list(self, list)
-        matches = self._get_matches(list, pattern, case_insensitive,
-                                    whitespace_insensitive, ignore_case,
-                                    ignore_whitespace)
+        matches = self._get_matches(
+            list,
+            pattern,
+            case_insensitive,
+            whitespace_insensitive,
+            ignore_case,
+            ignore_whitespace,
+        )
         default = f"{seq2str2(list)} contains match for pattern '{pattern}'."
         _verify_condition(not matches, default, msg)
 
-    def get_matches(self, list, pattern,
-                    case_insensitive: 'bool|None' = None,
-                    whitespace_insensitive: 'bool|None' = None,
-                    ignore_case: bool = False,
-                    ignore_whitespace: bool = False):
+    def get_matches(
+        self,
+        list,
+        pattern,
+        case_insensitive: "bool|None" = None,
+        whitespace_insensitive: "bool|None" = None,
+        ignore_case: bool = False,
+        ignore_whitespace: bool = False,
+    ):
         """Returns a list of matches to ``pattern`` in ``list``.
 
         For more information on ``pattern``, ``case_insensitive/ignore_case``, and
@@ -1077,15 +1188,24 @@ class Collections(_List, _Dictionary):
         | ${matches}= | Get Matches | ${list} | a* | ignore_case=True | # ${matches} will contain any string beginning with 'a' or 'A' |
         """
         _List._validate_list(self, list)
-        return self._get_matches(list, pattern, case_insensitive,
-                                 whitespace_insensitive, ignore_case,
-                                 ignore_whitespace)
+        return self._get_matches(
+            list,
+            pattern,
+            case_insensitive,
+            whitespace_insensitive,
+            ignore_case,
+            ignore_whitespace,
+        )
 
-    def get_match_count(self, list, pattern,
-                        case_insensitive: 'bool|None' = None,
-                        whitespace_insensitive: 'bool|None' = None,
-                        ignore_case: bool = False,
-                        ignore_whitespace: bool = False):
+    def get_match_count(
+        self,
+        list,
+        pattern,
+        case_insensitive: "bool|None" = None,
+        whitespace_insensitive: "bool|None" = None,
+        ignore_case: bool = False,
+        ignore_whitespace: bool = False,
+    ):
         """Returns the count of matches to ``pattern`` in ``list``.
 
         For more information on ``pattern``, ``case_insensitive/ignore_case``, and
@@ -1097,14 +1217,26 @@ class Collections(_List, _Dictionary):
         | ${count}= | Get Match Count | ${list} | a* | case_insensitive=${True} | # ${matches} will be the count of strings beginning with 'a' or 'A' |
         """
         _List._validate_list(self, list)
-        return len(self.get_matches(list, pattern, case_insensitive,
-                                    whitespace_insensitive, ignore_case,
-                                    ignore_whitespace))
+        matches = self.get_matches(
+            list,
+            pattern,
+            case_insensitive,
+            whitespace_insensitive,
+            ignore_case,
+            ignore_whitespace,
+        )
+        return len(matches)
 
-    def _get_matches(self, iterable, pattern, case_insensitive=None,
-                     whitespace_insensitive=None, ignore_case=True,
-                     ignore_whitespace=False):
-        # `ignore_xxx` were added in RF  7.0 for consistency reasons.
+    def _get_matches(
+        self,
+        iterable,
+        pattern,
+        case_insensitive=None,
+        whitespace_insensitive=None,
+        ignore_case=True,
+        ignore_whitespace=False,
+    ):
+        # `ignore_xxx` were added in RF 7.0 for consistency reasons.
         # The idea is that they eventually replace `xxx_insensitive`.
         # TODO: Emit deprecation warnings in RF 8.0.
         if case_insensitive is not None:
@@ -1114,14 +1246,20 @@ class Collections(_List, _Dictionary):
         if not isinstance(pattern, str):
             raise TypeError(f"Pattern must be string, got '{type_name(pattern)}'.")
         regexp = False
-        if pattern.startswith('regexp='):
+        if pattern.startswith("regexp="):
             pattern = pattern[7:]
             regexp = True
-        elif pattern.startswith('glob='):
+        elif pattern.startswith("glob="):
             pattern = pattern[5:]
-        matcher = Matcher(pattern, caseless=ignore_case, spaceless=ignore_whitespace,
-                          regexp=regexp)
-        return [item for item in iterable if isinstance(item, str) and matcher.match(item)]
+        matcher = Matcher(
+            pattern,
+            caseless=ignore_case,
+            spaceless=ignore_whitespace,
+            regexp=regexp,
+        )
+        return [
+            item for item in iterable if isinstance(item, str) and matcher.match(item)
+        ]
 
 
 def _verify_condition(condition, default_message, message, values=False):
@@ -1132,8 +1270,8 @@ def _verify_condition(condition, default_message, message, values=False):
 def _report_error(default_message, message, values=False):
     if not message:
         message = default_message
-    elif values and not (isinstance(values, str) and values.upper() == 'NO VALUES'):
-        message += '\n' + default_message
+    elif values and not (isinstance(values, str) and values.upper() == "NO VALUES"):
+        message += "\n" + default_message
     raise AssertionError(message)
 
 
@@ -1142,8 +1280,8 @@ class Normalizer:
     def __init__(self, ignore_case=False, ignore_order=False, ignore_keys=None):
         self.ignore_case = ignore_case
         if isinstance(ignore_case, str):
-            self.ignore_key_case = ignore_case.upper() not in ('VALUE', 'VALUES')
-            self.ignore_value_case = ignore_case.upper() not in ('KEY', 'KEYS')
+            self.ignore_key_case = ignore_case.upper() not in ("VALUE", "VALUES")
+            self.ignore_value_case = ignore_case.upper() not in ("KEY", "KEYS")
         else:
             self.ignore_key_case = self.ignore_value_case = self.ignore_case
         self.ignore_order = ignore_order
@@ -1158,8 +1296,9 @@ class Normalizer:
             if not is_list_like(ignore_keys):
                 raise ValueError
         except Exception:
-            raise ValueError(f"'ignore_keys' value '{ignore_keys}' cannot be "
-                             f"converted to a list.")
+            raise ValueError(
+                f"'ignore_keys' value '{ignore_keys}' cannot be converted to a list."
+            )
         return {self.normalize_key(k) for k in ignore_keys}
 
     def normalize(self, value):
@@ -1222,6 +1361,8 @@ class Normalizer:
             self.ignore_case = ignore_case
 
     def __bool__(self):
-        return bool(self.ignore_case
-                    or self.ignore_order
-                    or getattr(self, 'ignore_keys', False))
+        return bool(
+            self.ignore_case
+            or self.ignore_order
+            or getattr(self, "ignore_keys", False)
+        )  # fmt: skip

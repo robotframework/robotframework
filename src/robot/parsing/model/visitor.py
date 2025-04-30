@@ -18,32 +18,31 @@ from typing import Callable
 
 from .statements import Node
 
-
 # Unbound method and thus needs `NodeVisitor` as `self`.
-VisitorMethod = Callable[[NodeVisitor, Node], 'None|Node|list[Node]']
+VisitorMethod = Callable[[NodeVisitor, Node], "None|Node|list[Node]"]
 
 
 class VisitorFinder:
-    __visitor_cache: 'dict[type[Node], VisitorMethod]'
+    __visitor_cache: "dict[type[Node], VisitorMethod]"
 
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)
         cls.__visitor_cache = {}
 
     @classmethod
-    def _find_visitor(cls, node_cls: 'type[Node]') -> VisitorMethod:
+    def _find_visitor(cls, node_cls: "type[Node]") -> VisitorMethod:
         if node_cls not in cls.__visitor_cache:
             visitor = cls._find_visitor_from_class(node_cls)
             cls.__visitor_cache[node_cls] = visitor or cls.generic_visit
         return cls.__visitor_cache[node_cls]
 
     @classmethod
-    def _find_visitor_from_class(cls, node_cls: 'type[Node]') -> 'VisitorMethod|None':
-        method_name = 'visit_' + node_cls.__name__
+    def _find_visitor_from_class(cls, node_cls: "type[Node]") -> "VisitorMethod|None":
+        method_name = "visit_" + node_cls.__name__
         method = getattr(cls, method_name, None)
         if callable(method):
             return method
-        if method_name in ('visit_TestTags', 'visit_Return'):
+        if method_name in ("visit_TestTags", "visit_Return"):
             method = cls._backwards_compatibility(method_name)
             if callable(method):
                 return method
@@ -56,11 +55,13 @@ class VisitorFinder:
 
     @classmethod
     def _backwards_compatibility(cls, method_name):
-        name = {'visit_TestTags': 'visit_ForceTags',
-                'visit_Return': 'visit_ReturnStatement'}[method_name]
+        name = {
+            "visit_TestTags": "visit_ForceTags",
+            "visit_Return": "visit_ReturnStatement",
+        }[method_name]
         return getattr(cls, name, None)
 
-    def generic_visit(self, node: Node) -> 'None|Node|list[Node]':
+    def generic_visit(self, node: Node) -> "None|Node|list[Node]":
         raise NotImplementedError
 
 
@@ -95,6 +96,6 @@ class ModelTransformer(NodeTransformer, VisitorFinder):
     <https://docs.python.org/library/ast.html#ast.NodeTransformer>`__.
     """
 
-    def visit(self, node: Node) -> 'None|Node|list[Node]':
+    def visit(self, node: Node) -> "None|Node|list[Node]":
         visitor_method = self._find_visitor(type(node))
         return visitor_method(self, node)

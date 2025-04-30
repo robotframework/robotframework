@@ -2,12 +2,12 @@ import unittest
 from io import BytesIO, StringIO
 from xml.etree import ElementTree as ET
 
-from robot.result import ExecutionResult
+from test_resultbuilder import GOLDEN_XML, GOLDEN_XML_TWICE
+
 from robot.reporting.outputwriter import OutputWriter
+from robot.result import ExecutionResult
 from robot.utils import ETSource, XmlWriter
 from robot.utils.asserts import assert_equal
-
-from test_resultbuilder import GOLDEN_XML, GOLDEN_XML_TWICE
 
 
 class StreamXmlWriter(XmlWriter):
@@ -31,8 +31,10 @@ class TestResultSerializer(unittest.TestCase):
         output = StringIO()
         writer = TestableOutputWriter(output)
         ExecutionResult(GOLDEN_XML).visit(writer)
-        self._assert_xml_content(self._xml_lines(output.getvalue()),
-                                 self._xml_lines(GOLDEN_XML))
+        self._assert_xml_content(
+            self._xml_lines(output.getvalue()),
+            self._xml_lines(GOLDEN_XML),
+        )
 
     def _xml_lines(self, text):
         with ETSource(text) as source:
@@ -44,15 +46,21 @@ class TestResultSerializer(unittest.TestCase):
     def _assert_xml_content(self, actual, expected):
         assert_equal(len(actual), len(expected))
         for index, (act, exp) in enumerate(list(zip(actual, expected))[2:]):
-            assert_equal(act, exp.strip(), 'Different values on line %d' % index)
+            assert_equal(
+                act,
+                exp.strip(),
+                f"Different values on line {index}",
+            )
 
     def test_combining_results(self):
         output = StringIO()
         writer = TestableOutputWriter(output)
         ExecutionResult(GOLDEN_XML, GOLDEN_XML).visit(writer)
-        self._assert_xml_content(self._xml_lines(output.getvalue()),
-                                 self._xml_lines(GOLDEN_XML_TWICE))
+        self._assert_xml_content(
+            self._xml_lines(output.getvalue()),
+            self._xml_lines(GOLDEN_XML_TWICE),
+        )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

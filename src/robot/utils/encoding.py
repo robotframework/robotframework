@@ -20,10 +20,10 @@ from .encodingsniffer import get_console_encoding, get_system_encoding
 from .misc import isatty
 from .unic import safe_str
 
-
 CONSOLE_ENCODING = get_console_encoding()
 SYSTEM_ENCODING = get_system_encoding()
-PYTHONIOENCODING = os.getenv('PYTHONIOENCODING')
+CUSTOM_ENCODINGS = {"CONSOLE": CONSOLE_ENCODING, "SYSTEM": SYSTEM_ENCODING}
+PYTHONIOENCODING = os.getenv("PYTHONIOENCODING")
 
 
 def console_decode(string, encoding=CONSOLE_ENCODING):
@@ -38,16 +38,20 @@ def console_decode(string, encoding=CONSOLE_ENCODING):
     """
     if isinstance(string, str):
         return string
-    encoding = {'CONSOLE': CONSOLE_ENCODING,
-                'SYSTEM': SYSTEM_ENCODING}.get(encoding.upper(), encoding)
+    encoding = CUSTOM_ENCODINGS.get(encoding.upper(), encoding)
     try:
         return string.decode(encoding)
     except UnicodeError:
         return safe_str(string)
 
 
-def console_encode(string, encoding=None, errors='replace', stream=sys.__stdout__,
-                   force=False):
+def console_encode(
+    string,
+    encoding=None,
+    errors="replace",
+    stream=sys.__stdout__,
+    force=False,
+):
     """Encodes the given string so that it can be used in the console.
 
     If encoding is not given, determines it based on the given stream and system
@@ -61,18 +65,17 @@ def console_encode(string, encoding=None, errors='replace', stream=sys.__stdout_
     if not isinstance(string, str):
         string = safe_str(string)
     if encoding:
-        encoding = {'CONSOLE': CONSOLE_ENCODING,
-                    'SYSTEM': SYSTEM_ENCODING}.get(encoding.upper(), encoding)
+        encoding = CUSTOM_ENCODINGS.get(encoding.upper(), encoding)
     else:
         encoding = _get_console_encoding(stream)
-    if encoding.upper() != 'UTF-8':
+    if encoding.upper() != "UTF-8":
         encoded = string.encode(encoding, errors)
         return encoded if force else encoded.decode(encoding)
     return string.encode(encoding, errors) if force else string
 
 
 def _get_console_encoding(stream):
-    encoding = getattr(stream, 'encoding', None)
+    encoding = getattr(stream, "encoding", None)
     if isatty(stream):
         return encoding or CONSOLE_ENCODING
     if PYTHONIOENCODING:

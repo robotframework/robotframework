@@ -23,9 +23,8 @@ from .jsonbuilder import JsonDocBuilder
 from .robotbuilder import LibraryDocBuilder, ResourceDocBuilder, SuiteDocBuilder
 from .xmlbuilder import XmlDocBuilder
 
-
-RESOURCE_EXTENSIONS = ('resource', 'robot', 'txt', 'tsv', 'rst', 'rest')
-XML_EXTENSIONS = ('xml', 'libspec')
+RESOURCE_EXTENSIONS = ("resource", "robot", "txt", "tsv", "rst", "rest")
+XML_EXTENSIONS = ("xml", "libspec")
 
 
 def LibraryDocumentation(library_or_resource, name=None, version=None, doc_format=None):
@@ -83,18 +82,18 @@ class DocumentationBuilder:
     def _get_builder(self, source):
         if os.path.exists(source):
             extension = self._get_extension(source)
-            if extension == 'resource':
+            if extension == "resource":
                 return ResourceDocBuilder()
             if extension in RESOURCE_EXTENSIONS:
                 return SuiteDocBuilder()
             if extension in XML_EXTENSIONS:
                 return XmlDocBuilder()
-            if extension == 'json':
+            if extension == "json":
                 return JsonDocBuilder()
         return LibraryDocBuilder()
 
     def _get_extension(self, source):
-        path, *args = source.split('::')
+        path, *args = source.split("::")
         return os.path.splitext(path)[1][1:].lower()
 
     def _build(self, builder, source):
@@ -104,13 +103,17 @@ class DocumentationBuilder:
             # Possible resource file in PYTHONPATH. Something like `xxx.resource` that
             # did not exist has been considered to be a library earlier, now we try to
             # parse it as a resource file.
-            if (isinstance(builder, LibraryDocBuilder)
-                    and not os.path.exists(source)
-                    and self._get_extension(source) in RESOURCE_EXTENSIONS):
+            if (
+                isinstance(builder, LibraryDocBuilder)
+                and not os.path.exists(source)
+                and self._get_extension(source) in RESOURCE_EXTENSIONS
+            ):
                 return self._build(ResourceDocBuilder(), source)
             # Resource file with other extension than '.resource' parsed as a suite file.
             if isinstance(builder, SuiteDocBuilder):
                 return self._build(ResourceDocBuilder(), source)
             raise
         except Exception:
-            raise DataError(f"Building library '{source}' failed: {get_error_message()}")
+            raise DataError(
+                f"Building library '{source}' failed: {get_error_message()}"
+            )

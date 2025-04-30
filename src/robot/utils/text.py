@@ -22,12 +22,11 @@ from .charwidth import get_char_width
 from .misc import seq2str2
 from .unic import safe_str
 
-
 MAX_ERROR_LINES = 40
 MAX_ASSIGN_LENGTH = 200
 _MAX_ERROR_LINE_LENGTH = 78
-_ERROR_CUT_EXPLN = '    [ Message content over the limit has been removed. ]'
-_TAGS_RE = re.compile(r'\s*tags:(.*)', re.IGNORECASE)
+_ERROR_CUT_EXPLN = "    [ Message content over the limit has been removed. ]"
+_TAGS_RE = re.compile(r"\s*tags:(.*)", re.IGNORECASE)
 
 
 def cut_long_message(msg):
@@ -39,7 +38,7 @@ def cut_long_message(msg):
         return msg
     start = _prune_excess_lines(lines, lengths)
     end = _prune_excess_lines(lines, lengths, from_end=True)
-    return '\n'.join(start + [_ERROR_CUT_EXPLN] + end)
+    return "\n".join([*start, _ERROR_CUT_EXPLN, *end])
 
 
 def _prune_excess_lines(lines, lengths, from_end=False):
@@ -65,9 +64,9 @@ def _cut_long_line(line, used, from_end):
     available_chars = available_lines * _MAX_ERROR_LINE_LENGTH - 3
     if len(line) > available_chars:
         if not from_end:
-            line = line[:available_chars] + '...'
+            line = line[:available_chars] + "..."
         else:
-            line = '...' + line[-available_chars:]
+            line = "..." + line[-available_chars:]
     return line
 
 
@@ -79,25 +78,26 @@ def _get_virtual_line_length(line):
 
 
 def format_assign_message(variable, value, items=None, cut_long=True):
-    formatter = {'$': safe_str, '@': seq2str2, '&': _dict_to_str}[variable[0]]
+    formatter = {"$": safe_str, "@": seq2str2, "&": _dict_to_str}[variable[0]]
     value = formatter(value)
     if cut_long:
         value = cut_assign_value(value)
-    decorated_items = ''.join(f'[{item}]' for item in items) if items else ''
-    return f'{variable}{decorated_items} = {value}'
+    decorated_items = "".join(f"[{item}]" for item in items) if items else ""
+    return f"{variable}{decorated_items} = {value}"
 
 
 def _dict_to_str(d):
     if not d:
-        return '{ }'
-    return '{ %s }' % ' | '.join('%s=%s' % (safe_str(k), safe_str(d[k])) for k in d)
+        return "{ }"
+    items = " | ".join(f"{safe_str(k)}={safe_str(d[k])}" for k in d)
+    return f"{{ {items} }}"
 
 
 def cut_assign_value(value):
     if not isinstance(value, str):
         value = safe_str(value)
     if len(value) > MAX_ASSIGN_LENGTH:
-        value = value[:MAX_ASSIGN_LENGTH] + '...'
+        value = value[:MAX_ASSIGN_LENGTH] + "..."
     return value
 
 
@@ -110,13 +110,13 @@ def pad_console_length(text, width):
         width = 5
     diff = get_console_length(text) - width
     if diff > 0:
-        text = _lose_width(text, diff+3) + '...'
+        text = _lose_width(text, diff + 3) + "..."
     return _pad_width(text, width)
 
 
 def _pad_width(text, width):
     more = width - get_console_length(text)
-    return text + ' ' * more
+    return text + " " * more
 
 
 def _lose_width(text, diff):
@@ -140,7 +140,7 @@ def split_args_from_name_or_path(name):
     index = _get_arg_separator_index_from_name_or_path(name)
     if index == -1:
         return name, []
-    args = name[index+1:].split(name[index])
+    args = name[index + 1 :].split(name[index])
     name = name[:index]
     if os.path.exists(name):
         name = os.path.abspath(name)
@@ -148,11 +148,11 @@ def split_args_from_name_or_path(name):
 
 
 def _get_arg_separator_index_from_name_or_path(name):
-    colon_index = name.find(':')
+    colon_index = name.find(":")
     # Handle absolute Windows paths
-    if colon_index == 1 and name[2:3] in ('/', '\\'):
-        colon_index = name.find(':', colon_index+1)
-    semicolon_index = name.find(';')
+    if colon_index == 1 and name[2:3] in ("/", "\\"):
+        colon_index = name.find(":", colon_index + 1)
+    semicolon_index = name.find(";")
     if colon_index == -1:
         return semicolon_index
     if semicolon_index == -1:
@@ -168,21 +168,21 @@ def split_tags_from_doc(doc):
     lines = doc.splitlines()
     match = _TAGS_RE.match(lines[-1])
     if match:
-        doc = '\n'.join(lines[:-1]).rstrip()
-        tags = [tag.strip() for tag in match.group(1).split(',')]
+        doc = "\n".join(lines[:-1]).rstrip()
+        tags = [tag.strip() for tag in match.group(1).split(",")]
     return doc, tags
 
 
 def getdoc(item):
-    return inspect.getdoc(item) or ''
+    return inspect.getdoc(item) or ""
 
 
-def getshortdoc(doc_or_item, linesep='\n'):
+def getshortdoc(doc_or_item, linesep="\n"):
     if not doc_or_item:
-        return ''
+        return ""
     doc = doc_or_item if isinstance(doc_or_item, str) else getdoc(doc_or_item)
     if not doc:
-        return ''
+        return ""
     lines = []
     for line in doc.splitlines():
         if not line.strip():

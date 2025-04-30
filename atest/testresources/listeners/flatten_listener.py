@@ -1,5 +1,5 @@
 class Listener:
-    ROBOT_LISTENER_API_VERSION = '2'
+    ROBOT_LISTENER_API_VERSION = "2"
 
     def __init__(self):
         self.start_kw_count = 0

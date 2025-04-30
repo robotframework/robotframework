@@ -28,9 +28,8 @@ class LibdocOutput:
         self._output_file = None
 
     def __enter__(self):
-        if self._format == 'HTML':
-            self._output_file = file_writer(self._output_path,
-                                            usage='Libdoc output')
+        if self._format == "HTML":
+            self._output_file = file_writer(self._output_path, usage="Libdoc output")
             return self._output_file
         return self._output_path
 
@@ -50,6 +49,6 @@ def get_generation_time():
     This timestamp is to be used for embedding in output files, so
     that builds can be made reproducible.
     """
-    ts = float(os.getenv('SOURCE_DATE_EPOCH', time.time()))
+    ts = float(os.getenv("SOURCE_DATE_EPOCH", time.time()))
     dt = datetime.datetime.fromtimestamp(round(ts), datetime.timezone.utc)
     return dt.isoformat()

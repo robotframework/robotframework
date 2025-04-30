@@ -14,8 +14,9 @@
 #  limitations under the License.
 
 from functools import total_ordering
-from typing import (Any, Iterable, Iterator, MutableSequence, overload, TYPE_CHECKING,
-                    Type, TypeVar)
+from typing import (
+    Any, Iterable, Iterator, MutableSequence, overload, Type, TYPE_CHECKING, TypeVar
+)
 
 from robot.utils import copy_signature, KnownAtRuntime, type_name
 
@@ -25,8 +26,8 @@ if TYPE_CHECKING:
     from .visitor import SuiteVisitor
 
 
-T = TypeVar('T')
-Self = TypeVar('Self', bound='ItemList')
+T = TypeVar("T")
+Self = TypeVar("Self", bound="ItemList")
 
 
 @total_ordering
@@ -44,16 +45,19 @@ class ItemList(MutableSequence[T]):
     passed to the type as keyword arguments.
     """
 
-    __slots__ = ['_item_class', '_common_attrs', '_items']
     # TypeVar T needs to be applied to a variable to be compatible with @copy_signature
     item_type: Type[T] = KnownAtRuntime
+    __slots__ = ("_item_class", "_common_attrs", "_items")
 
-    def __init__(self, item_class: Type[T],
-                 common_attrs: 'dict[str, Any]|None' = None,
-                 items: 'Iterable[T|DataDict]' = ()):
+    def __init__(
+        self,
+        item_class: Type[T],
+        common_attrs: "dict[str, Any]|None" = None,
+        items: "Iterable[T|DataDict]" = (),
+    ):
         self._item_class = item_class
         self._common_attrs = common_attrs
-        self._items: 'list[T]' = []
+        self._items: "list[T]" = []
         if items:
             self.extend(items)
 
@@ -62,32 +66,34 @@ class ItemList(MutableSequence[T]):
         """Create a new item using the provided arguments."""
         return self.append(self._item_class(*args, **kwargs))
 
-    def append(self, item: 'T|DataDict') -> T:
+    def append(self, item: "T|DataDict") -> T:
         item = self._check_type_and_set_attrs(item)
         self._items.append(item)
         return item
 
-    def _check_type_and_set_attrs(self, item: 'T|DataDict') -> T:
+    def _check_type_and_set_attrs(self, item: "T|DataDict") -> T:
         if not isinstance(item, self._item_class):
             if isinstance(item, dict):
                 item = self._item_from_dict(item)
             else:
-                raise TypeError(f'Only {type_name(self._item_class)} objects '
-                                f'accepted, got {type_name(item)}.')
+                raise TypeError(
+                    f"Only {type_name(self._item_class)} objects "
+                    f"accepted, got {type_name(item)}."
+                )
         if self._common_attrs:
             for attr, value in self._common_attrs.items():
                 setattr(item, attr, value)
         return item
 
     def _item_from_dict(self, data: DataDict) -> T:
-        if hasattr(self._item_class, 'from_dict'):
-            return self._item_class.from_dict(data)    # type: ignore
+        if hasattr(self._item_class, "from_dict"):
+            return self._item_class.from_dict(data)  # type: ignore
         return self._item_class(**data)
 
-    def extend(self, items: 'Iterable[T|DataDict]'):
+    def extend(self, items: "Iterable[T|DataDict]"):
         self._items.extend(self._check_type_and_set_attrs(i) for i in items)
 
-    def insert(self, index: int, item: 'T|DataDict'):
+    def insert(self, index: int, item: "T|DataDict"):
         item = self._check_type_and_set_attrs(item)
         self._items.insert(index, item)
 
@@ -97,9 +103,9 @@ class ItemList(MutableSequence[T]):
     def clear(self):
         self._items = []
 
-    def visit(self, visitor: 'SuiteVisitor'):
+    def visit(self, visitor: "SuiteVisitor"):
         for item in self:
-            item.visit(visitor)    # type: ignore
+            item.visit(visitor)  # type: ignore
 
     def __iter__(self) -> Iterator[T]:
         index = 0
@@ -108,14 +114,12 @@ class ItemList(MutableSequence[T]):
             index += 1
 
     @overload
-    def __getitem__(self, index: int, /) -> T:
-        ...
+    def __getitem__(self, index: int, /) -> T: ...
 
     @overload
-    def __getitem__(self: Self, index: slice, /) -> Self:
-        ...
+    def __getitem__(self: Self, index: slice, /) -> Self: ...
 
-    def __getitem__(self: Self, index: 'int|slice', /) -> 'T|Self':
+    def __getitem__(self: Self, index: "int|slice", /) -> "T|Self":
         if isinstance(index, slice):
             return self._create_new_from(self._items[index])
         return self._items[index]
@@ -129,21 +133,20 @@ class ItemList(MutableSequence[T]):
         return new
 
     @overload
-    def __setitem__(self, index: int, item: 'T|DataDict', /):
-        ...
+    def __setitem__(self, index: int, item: "T|DataDict", /): ...
 
     @overload
-    def __setitem__(self, index: slice, items: 'Iterable[T|DataDict]', /):
-        ...
+    def __setitem__(self, index: slice, items: "Iterable[T|DataDict]", /): ...
 
-    def __setitem__(self, index: 'int|slice',
-                    item: 'T|DataDict|Iterable[T|DataDict]', /):
+    def __setitem__(
+        self, index: "int|slice", item: "T|DataDict|Iterable[T|DataDict]", /
+    ):
         if isinstance(index, slice):
             self._items[index] = [self._check_type_and_set_attrs(i) for i in item]
         else:
             self._items[index] = self._check_type_and_set_attrs(item)
 
-    def __delitem__(self, index: 'int|slice', /):
+    def __delitem__(self, index: "int|slice", /):
         del self._items[index]
 
     def __contains__(self, item: Any, /) -> bool:
@@ -158,7 +161,7 @@ class ItemList(MutableSequence[T]):
     def __repr__(self) -> str:
         class_name = type(self).__name__
         item_name = self._item_class.__name__
-        return f'{class_name}(item_class={item_name}, items={self._items})'
+        return f"{class_name}(item_class={item_name}, items={self._items})"
 
     def count(self, item: T) -> int:
         return self._items.count(item)
@@ -176,31 +179,35 @@ class ItemList(MutableSequence[T]):
             index += 1
 
     def __eq__(self, other: object) -> bool:
-        return (isinstance(other, ItemList)
-                and self._is_compatible(other)
-                and self._items == other._items)
+        return (
+            isinstance(other, ItemList)
+            and self._is_compatible(other)
+            and self._items == other._items
+        )
 
     def _is_compatible(self, other) -> bool:
-        return (self._item_class is other._item_class
-                and self._common_attrs == other._common_attrs)
+        return (
+            self._item_class is other._item_class
+            and self._common_attrs == other._common_attrs
+        )
 
-    def __lt__(self, other: 'ItemList[T]') -> bool:
+    def __lt__(self, other: "ItemList[T]") -> bool:
         if not isinstance(other, ItemList):
-            raise TypeError(f'Cannot order ItemList and {type_name(other)}.')
+            raise TypeError(f"Cannot order ItemList and {type_name(other)}.")
         if not self._is_compatible(other):
-            raise TypeError('Cannot order incompatible ItemLists.')
+            raise TypeError("Cannot order incompatible ItemLists.")
         return self._items < other._items
 
-    def __add__(self: Self, other: 'ItemList[T]') -> Self:
+    def __add__(self: Self, other: "ItemList[T]") -> Self:
         if not isinstance(other, ItemList):
-            raise TypeError(f'Cannot add ItemList and {type_name(other)}.')
+            raise TypeError(f"Cannot add ItemList and {type_name(other)}.")
         if not self._is_compatible(other):
-            raise TypeError('Cannot add incompatible ItemLists.')
+            raise TypeError("Cannot add incompatible ItemLists.")
         return self._create_new_from(self._items + other._items)
 
     def __iadd__(self: Self, other: Iterable[T]) -> Self:
         if isinstance(other, ItemList) and not self._is_compatible(other):
-            raise TypeError('Cannot add incompatible ItemLists.')
+            raise TypeError("Cannot add incompatible ItemLists.")
         self.extend(other)
         return self
 
@@ -214,7 +221,7 @@ class ItemList(MutableSequence[T]):
     def __rmul__(self: Self, count: int) -> Self:
         return self * count
 
-    def to_dicts(self) -> 'list[DataDict]':
+    def to_dicts(self) -> "list[DataDict]":
         """Return list of items converted to dictionaries.
 
         Items are converted to dictionaries using the ``to_dict`` method, if
@@ -222,6 +229,6 @@ class ItemList(MutableSequence[T]):
 
         New in Robot Framework 6.1.
         """
-        if not hasattr(self._item_class, 'to_dict'):
+        if not hasattr(self._item_class, "to_dict"):
             return [vars(item) for item in self]
-        return [item.to_dict() for item in self]    # type: ignore
+        return [item.to_dict() for item in self]  # type: ignore

@@ -23,41 +23,50 @@ from tokenize import generate_tokens, untokenize
 from robot.errors import DataError
 from robot.utils import get_error_message, type_name
 
-from .search import VariableMatches
 from .notfound import variable_not_found
+from .search import VariableMatches
 
 
-def evaluate_expression(expression, variables, modules=None, namespace=None,
-                        resolve_variables=False):
+def evaluate_expression(
+    expression,
+    variables,
+    modules=None,
+    namespace=None,
+    resolve_variables=False,
+):
     original = expression
     try:
         if not isinstance(expression, str):
-            raise TypeError(f'Expression must be string, got {type_name(expression)}.')
+            raise TypeError(f"Expression must be string, got {type_name(expression)}.")
         if resolve_variables:
             expression = variables.replace_scalar(expression)
             if not isinstance(expression, str):
                 return expression
         if not expression:
-            raise ValueError('Expression cannot be empty.')
+            raise ValueError("Expression cannot be empty.")
         return _evaluate(expression, variables.store, modules, namespace)
     except DataError as err:
         error = str(err)
-        variable_recommendation = ''
+        variable_recommendation = ""
     except Exception as err:
         error = get_error_message()
-        variable_recommendation = ''
-        if isinstance(err, NameError) and 'RF_VAR_' in error:
-            name = re.search(r'RF_VAR_([\w_]*)', error).group(1)
-            error = (f"Robot Framework variable '${name}' is used in a scope "
-                     f"where it cannot be seen.")
+        variable_recommendation = ""
+        if isinstance(err, NameError) and "RF_VAR_" in error:
+            name = re.search(r"RF_VAR_([\w_]*)", error).group(1)
+            error = (
+                f"Robot Framework variable '${name}' is used in a scope "
+                f"where it cannot be seen."
+            )
         else:
             variable_recommendation = _recommend_special_variables(original)
-    raise DataError(f'Evaluating expression {expression!r} failed: {error}\n\n'
-                    f'{variable_recommendation}'.strip())
+    raise DataError(
+        f"Evaluating expression {expression!r} failed: {error}\n\n"
+        f"{variable_recommendation}".strip()
+    )
 
 
 def _evaluate(expression, variable_store, modules=None, namespace=None):
-    if '$' in expression:
+    if "$" in expression:
         expression = _decorate_variables(expression, variable_store)
     # Given namespace must be included in our custom local namespace to make
     # it possible to detect which names are not found and should be imported
@@ -80,15 +89,17 @@ def _decorate_variables(expression, variable_store):
         if variable_started:
             if toknum == token.NAME:
                 if tokval not in variable_store:
-                    variable_not_found(f'${tokval}',
-                                       variable_store.as_dict(decoration=False),
-                                       deco_braces=False)
-                tokval = 'RF_VAR_' + tokval
+                    variable_not_found(
+                        f"${tokval}",
+                        variable_store.as_dict(decoration=False),
+                        deco_braces=False,
+                    )
+                tokval = "RF_VAR_" + tokval
                 variable_found = True
             else:
-                tokens.append((prev_toknum, '$'))
+                tokens.append((prev_toknum, "$"))
             variable_started = False
-        if tokval == '$':
+        if tokval == "$":
             variable_started = True
             prev_toknum = toknum
         else:
@@ -98,13 +109,13 @@ def _decorate_variables(expression, variable_store):
 
 def _import_modules(module_names):
     modules = {}
-    for name in module_names.replace(' ', '').split(','):
+    for name in module_names.replace(" ", "").split(","):
         if not name:
             continue
         modules[name] = __import__(name)
         # If we just import module 'root.sub', module 'root' is not found.
-        while '.' in name:
-            name, _ = name.rsplit('.', 1)
+        while "." in name:
+            name, _ = name.rsplit(".", 1)
             modules[name] = __import__(name)
     return modules
 
@@ -112,15 +123,17 @@ def _import_modules(module_names):
 def _recommend_special_variables(expression):
     matches = VariableMatches(expression)
     if not matches:
-        return ''
+        return ""
     example = []
     for match in matches:
         example[-1:] = [match.before, match.identifier + match.base, match.after]
-    example = ''.join(_remove_possible_quoting(example))
-    return (f"Variables in the original expression {expression!r} were resolved "
-            f"before the expression was evaluated. Try using {example!r} "
-            f"syntax to avoid that. See Evaluating Expressions appendix in "
-            f"Robot Framework User Guide for more details.")
+    example = "".join(_remove_possible_quoting(example))
+    return (
+        f"Variables in the original expression {expression!r} were resolved before "
+        f"the expression was evaluated. Try using {example!r} syntax to avoid that. "
+        f"See Evaluating Expressions appendix in Robot Framework User Guide for more "
+        f"details."
+    )
 
 
 def _remove_possible_quoting(example_tokens):
@@ -149,7 +162,7 @@ class EvaluationNamespace(MutableMapping):
         self.variables = variable_store
 
     def __getitem__(self, key):
-        if key.startswith('RF_VAR_'):
+        if key.startswith("RF_VAR_"):
             return self.variables[key[7:]]
         if key in self.namespace:
             return self.namespace[key]

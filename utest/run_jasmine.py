@@ -1,20 +1,19 @@
 #!/usr/bin/env python
 
-from io import BytesIO
+import os
+import shutil
 from glob import glob
-from os.path import join, exists, dirname, abspath
+from io import BytesIO
+from os.path import abspath, dirname, exists, join
 from subprocess import call
 from urllib.request import urlopen
 from zipfile import ZipFile
-import os
-import shutil
 
-
-JASMINE_REPORTER_URL='https://github.com/larrymyers/jasmine-reporters/zipball/0.2.1'
+JASMINE_REPORTER_URL = "https://github.com/larrymyers/jasmine-reporters/zipball/0.2.1"
 BASE = abspath(dirname(__file__))
-REPORT_DIR = join(BASE, 'jasmine-results')
-EXT_LIB = join(BASE, '..', 'ext-lib')
-JARDIR = join(EXT_LIB, 'jasmine-reporters', 'ext')
+REPORT_DIR = join(BASE, "jasmine-results")
+EXT_LIB = join(BASE, "..", "ext-lib")
+JARDIR = join(EXT_LIB, "jasmine-reporters", "ext")
 
 
 def run_tests():
@@ -27,9 +26,16 @@ def run_tests():
 
 
 def run():
-    cmd = ['java', '-cp', '%s%s%s' % (join(JARDIR, 'js.jar'), os.pathsep, join(JARDIR, 'jline.jar')),
-           'org.mozilla.javascript.tools.shell.Main',  '-opt', '-1', 'envjs.bootstrap.js',
-           join(BASE, 'webcontent', 'SpecRunner.html')]
+    cmd = [
+        "java",
+        "-cp",
+        os.pathsep.join([join(JARDIR, "js.jar"), join(JARDIR, "jline.jar")]),
+        "org.mozilla.javascript.tools.shell.Main",
+        "-opt",
+        "-1",
+        "envjs.bootstrap.js",
+        join(BASE, "webcontent", "SpecRunner.html"),
+    ]
     call(cmd)
 
 
@@ -40,17 +46,17 @@ def clear_reports():
 
 
 def download_jasmine_reporters():
-    if exists(join(EXT_LIB, 'jasmine-reporters')):
+    if exists(join(EXT_LIB, "jasmine-reporters")):
         return
     if not exists(EXT_LIB):
         os.mkdir(EXT_LIB)
     reporter = urlopen(JASMINE_REPORTER_URL)
     z = ZipFile(BytesIO(reporter.read()))
     z.extractall(EXT_LIB)
-    extraction_dir = glob(join(EXT_LIB, 'larrymyers-jasmine-reporters*'))[0]
-    print('Extracting Jasmine-Reporters to', extraction_dir)
-    shutil.move(extraction_dir, join(EXT_LIB, 'jasmine-reporters'))
+    extraction_dir = glob(join(EXT_LIB, "larrymyers-jasmine-reporters*"))[0]
+    print("Extracting Jasmine-Reporters to", extraction_dir)
+    shutil.move(extraction_dir, join(EXT_LIB, "jasmine-reporters"))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     run_tests()

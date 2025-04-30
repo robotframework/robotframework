@@ -71,5 +71,6 @@ class Timeout:
         # This should never happen. Better anyway to check the return value
         # and report the very unlikely error than ignore it.
         if modified != 1:
-            raise ValueError(f"Expected 'PyThreadState_SetAsyncExc' to return 1, "
-                             f"got {modified}.")
+            raise ValueError(
+                f"Expected 'PyThreadState_SetAsyncExc' to return 1, got {modified}."
+            )

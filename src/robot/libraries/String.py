@@ -21,7 +21,7 @@ from string import ascii_lowercase, ascii_uppercase, digits
 
 from robot.api import logger
 from robot.api.deco import keyword
-from robot.utils import FileReader, parse_re_flags, type_name
+from robot.utils import FileReader, parse_re_flags, plural_or_not as s, type_name
 from robot.version import get_version
 
 
@@ -46,7 +46,8 @@ class String:
     - `Convert To String`
     - `Convert To Bytes`
     """
-    ROBOT_LIBRARY_SCOPE = 'GLOBAL'
+
+    ROBOT_LIBRARY_SCOPE = "GLOBAL"
     ROBOT_LIBRARY_VERSION = get_version()
 
     def convert_to_lower_case(self, string):
@@ -119,25 +120,25 @@ class String:
         to "It'S An Ok Iphone".
         """
         if not isinstance(string, str):
-            raise TypeError('This keyword works only with strings.')
+            raise TypeError("This keyword works only with strings.")
         if isinstance(exclude, str):
-            exclude = [e.strip() for e in exclude.split(',')]
+            exclude = [e.strip() for e in exclude.split(",")]
         elif not exclude:
             exclude = []
-        exclude = [re.compile('^%s$' % e) for e in exclude]
+        exclude = [re.compile(f"^{e}$") for e in exclude]
 
         def title(word):
             if any(e.match(word) for e in exclude) or not word.islower():
                 return word
             for index, char in enumerate(word):
                 if char.isalpha():
-                    return word[:index] + word[index].title() + word[index+1:]
+                    return word[:index] + word[index].title() + word[index + 1 :]
             return word
 
-        tokens = re.split(r'(\s+)', string, flags=re.UNICODE)
-        return ''.join(title(token) for token in tokens)
+        tokens = re.split(r"(\s+)", string, flags=re.UNICODE)
+        return "".join(title(token) for token in tokens)
 
-    def encode_string_to_bytes(self, string, encoding, errors='strict'):
+    def encode_string_to_bytes(self, string, encoding, errors="strict"):
         """Encodes the given ``string`` to bytes using the given ``encoding``.
 
         ``errors`` argument controls what to do if encoding some characters fails.
@@ -160,7 +161,7 @@ class String:
         """
         return bytes(string.encode(encoding, errors))
 
-    def decode_bytes_to_string(self, bytes, encoding, errors='strict'):
+    def decode_bytes_to_string(self, bytes, encoding, errors="strict"):
         """Decodes the given ``bytes`` to a string using the given ``encoding``.
 
         ``errors`` argument controls what to do if decoding some bytes fails.
@@ -181,7 +182,7 @@ class String:
         convert arbitrary objects to strings.
         """
         if isinstance(bytes, str):
-            raise TypeError('Cannot decode strings.')
+            raise TypeError("Cannot decode strings.")
         return bytes.decode(encoding, errors)
 
     def format_string(self, template, /, *positional, **named):
@@ -210,9 +211,11 @@ class String:
         be escaped with a backslash like ``x\\={}`.
         """
         if os.path.isabs(template) and os.path.isfile(template):
-            template = template.replace('/', os.sep)
-            logger.info(f'Reading template from file '
-                        f'<a href="{template}">{template}</a>.', html=True)
+            template = template.replace("/", os.sep)
+            logger.info(
+                f'Reading template from file <a href="{template}">{template}</a>.',
+                html=True,
+            )
             with FileReader(template) as reader:
                 template = reader.read()
         return template.format(*positional, **named)
@@ -220,7 +223,7 @@ class String:
     def get_line_count(self, string):
         """Returns and logs the number of lines in the given string."""
         count = len(string.splitlines())
-        logger.info(f'{count} lines.')
+        logger.info(f"{count} lines.")
         return count
 
     def split_to_lines(self, string, start=0, end=None):
@@ -244,10 +247,10 @@ class String:
 
         Use `Get Line` if you only need to get a single line.
         """
-        start = self._convert_to_index(start, 'start')
-        end = self._convert_to_index(end, 'end')
+        start = self._convert_to_index(start, "start")
+        end = self._convert_to_index(end, "end")
         lines = string.splitlines()[start:end]
-        logger.info('%d lines returned' % len(lines))
+        logger.info(f"{len(lines)} line{s(lines)} returned.")
         return lines
 
     def get_line(self, string, line_number):
@@ -263,12 +266,16 @@ class String:
 
         Use `Split To Lines` if all lines are needed.
         """
-        line_number = self._convert_to_integer(line_number, 'line_number')
+        line_number = self._convert_to_integer(line_number, "line_number")
         return string.splitlines()[line_number]
 
-    def get_lines_containing_string(self, string: str, pattern: str,
-                                    case_insensitive: 'bool|None' = None,
-                                    ignore_case: bool = False):
+    def get_lines_containing_string(
+        self,
+        string: str,
+        pattern: str,
+        case_insensitive: "bool|None" = None,
+        ignore_case: bool = False,
+    ):
         """Returns lines of the given ``string`` that contain the ``pattern``.
 
         The ``pattern`` is always considered to be a normal string, not a glob
@@ -300,9 +307,13 @@ class String:
             contains = lambda line: pattern in line
         return self._get_matching_lines(string, contains)
 
-    def get_lines_matching_pattern(self, string: str, pattern: str,
-                                   case_insensitive: 'bool|None' = None,
-                                   ignore_case: bool = False):
+    def get_lines_matching_pattern(
+        self,
+        string: str,
+        pattern: str,
+        case_insensitive: "bool|None" = None,
+        ignore_case: bool = False,
+    ):
         """Returns lines of the given ``string`` that match the ``pattern``.
 
         The ``pattern`` is a _glob pattern_ where:
@@ -339,7 +350,13 @@ class String:
             matches = lambda line: fnmatchcase(line, pattern)
         return self._get_matching_lines(string, matches)
 
-    def get_lines_matching_regexp(self, string, pattern, partial_match=False, flags=None):
+    def get_lines_matching_regexp(
+        self,
+        string,
+        pattern,
+        partial_match=False,
+        flags=None,
+    ):
         """Returns lines of the given ``string`` that match the regexp ``pattern``.
 
         See `BuiltIn.Should Match Regexp` for more information about
@@ -380,8 +397,8 @@ class String:
     def _get_matching_lines(self, string, matches):
         lines = string.splitlines()
         matching = [line for line in lines if matches(line)]
-        logger.info(f'{len(matching)} out of {len(lines)} lines matched.')
-        return '\n'.join(matching)
+        logger.info(f"{len(matching)} out of {len(lines)} lines matched.")
+        return "\n".join(matching)
 
     def get_regexp_matches(self, string, pattern, *groups, flags=None):
         """Returns a list of all non-overlapping matches in the given string.
@@ -449,10 +466,17 @@ class String:
         | ${str} =        | Replace String | Hello, world!  | l     | ${EMPTY} | count=1 |
         | Should Be Equal | ${str}         | Helo, world!   |       |          |
         """
-        count = self._convert_to_integer(count, 'count')
+        count = self._convert_to_integer(count, "count")
         return string.replace(search_for, replace_with, count)
 
-    def replace_string_using_regexp(self, string, pattern, replace_with, count=-1, flags=None):
+    def replace_string_using_regexp(
+        self,
+        string,
+        pattern,
+        replace_with,
+        count=-1,
+        flags=None,
+    ):
         """Replaces ``pattern`` in the given ``string`` with ``replace_with``.
 
         This keyword is otherwise identical to `Replace String`, but
@@ -474,11 +498,17 @@ class String:
 
         The ``flags`` argument is new in Robot Framework 6.0.
         """
-        count = self._convert_to_integer(count, 'count')
+        count = self._convert_to_integer(count, "count")
         # re.sub handles 0 and negative counts differently than string.replace
         if count == 0:
             return string
-        return re.sub(pattern, replace_with, string, max(count, 0), flags=parse_re_flags(flags))
+        return re.sub(
+            pattern,
+            replace_with,
+            string,
+            count=max(count, 0),
+            flags=parse_re_flags(flags),
+        )
 
     def remove_string(self, string, *removables):
         """Removes all ``removables`` from the given ``string``.
@@ -501,7 +531,7 @@ class String:
         | Should Be Equal | ${str}        | R Framewrk      |
         """
         for removable in removables:
-            string = self.replace_string(string, removable, '')
+            string = self.replace_string(string, removable, "")
         return string
 
     def remove_string_using_regexp(self, string, *patterns, flags=None):
@@ -522,7 +552,7 @@ class String:
         The ``flags`` argument is new in Robot Framework 6.0.
         """
         for pattern in patterns:
-            string = self.replace_string_using_regexp(string, pattern, '', flags=flags)
+            string = self.replace_string_using_regexp(string, pattern, "", flags=flags)
         return string
 
     @keyword(types=None)
@@ -546,9 +576,9 @@ class String:
         from right, and `Fetch From Left` and `Fetch From Right` if
         you only want to get first/last part of the string.
         """
-        if separator == '':
+        if separator == "":
             separator = None
-        max_split = self._convert_to_integer(max_split, 'max_split')
+        max_split = self._convert_to_integer(max_split, "max_split")
         return string.split(separator, max_split)
 
     @keyword(types=None)
@@ -562,9 +592,9 @@ class String:
         | ${first} | ${rest} = | Split String            | ${string} | - | 1 |
         | ${rest}  | ${last} = | Split String From Right | ${string} | - | 1 |
         """
-        if separator == '':
+        if separator == "":
             separator = None
-        max_split = self._convert_to_integer(max_split, 'max_split')
+        max_split = self._convert_to_integer(max_split, "max_split")
         return string.rsplit(separator, max_split)
 
     def split_string_to_characters(self, string):
@@ -595,7 +625,7 @@ class String:
         """
         return string.split(marker)[-1]
 
-    def generate_random_string(self, length=8, chars='[LETTERS][NUMBERS]'):
+    def generate_random_string(self, length=8, chars="[LETTERS][NUMBERS]"):
         """Generates a string with a desired ``length`` from the given ``chars``.
 
         ``length`` can be given as a number, a string representation of a number,
@@ -622,21 +652,25 @@ class String:
 
         Giving ``length`` as a range of values is new in Robot Framework 5.0.
         """
-        if length == '':
+        if length == "":
             length = 8
-        if isinstance(length, str) and re.match(r'^\d+-\d+$', length):
-            min_length, max_length = length.split('-')
-            length = randint(self._convert_to_integer(min_length, "length"),
-                             self._convert_to_integer(max_length, "length"))
+        if isinstance(length, str) and re.match(r"^\d+-\d+$", length):
+            min_length, max_length = length.split("-")
+            length = randint(
+                self._convert_to_integer(min_length, "length"),
+                self._convert_to_integer(max_length, "length"),
+            )
         else:
-            length = self._convert_to_integer(length, 'length')
-        for name, value in [('[LOWER]', ascii_lowercase),
-                            ('[UPPER]', ascii_uppercase),
-                            ('[LETTERS]', ascii_lowercase + ascii_uppercase),
-                            ('[NUMBERS]', digits)]:
+            length = self._convert_to_integer(length, "length")
+        for name, value in [
+            ("[LOWER]", ascii_lowercase),
+            ("[UPPER]", ascii_uppercase),
+            ("[LETTERS]", ascii_lowercase + ascii_uppercase),
+            ("[NUMBERS]", digits),
+        ]:
             chars = chars.replace(name, value)
         maxi = len(chars) - 1
-        return ''.join(chars[randint(0, maxi)] for _ in range(length))
+        return "".join(chars[randint(0, maxi)] for _ in range(length))
 
     def get_substring(self, string, start, end=None):
         """Returns a substring from ``start`` index to ``end`` index.
@@ -652,12 +686,12 @@ class String:
         | ${first two} =    | Get Substring | ${string} | 0  | 1  |
         | ${last two} =     | Get Substring | ${string} | -2 |    |
         """
-        start = self._convert_to_index(start, 'start')
-        end = self._convert_to_index(end, 'end')
+        start = self._convert_to_index(start, "start")
+        end = self._convert_to_index(end, "end")
         return string[start:end]
 
     @keyword(types=None)
-    def strip_string(self, string, mode='both', characters=None):
+    def strip_string(self, string, mode="both", characters=None):
         """Remove leading and/or trailing whitespaces from the given string.
 
         ``mode`` is either ``left`` to remove leading characters, ``right`` to
@@ -679,12 +713,14 @@ class String:
         | Should Be Equal | ${stripped} | Hello | |
         """
         try:
-            method = {'BOTH': string.strip,
-                      'LEFT': string.lstrip,
-                      'RIGHT': string.rstrip,
-                      'NONE': lambda characters: string}[mode.upper()]
+            method = {
+                "BOTH": string.strip,
+                "LEFT": string.lstrip,
+                "RIGHT": string.rstrip,
+                "NONE": lambda characters: string,
+            }[mode.upper()]
         except KeyError:
-            raise ValueError("Invalid mode '%s'." % mode)
+            raise ValueError(f"Invalid mode '{mode}'.")
         return method(characters)
 
     def should_be_string(self, item, msg=None):
@@ -783,7 +819,7 @@ class String:
             raise AssertionError(msg or f"{string!r} is not title case.")
 
     def _convert_to_index(self, value, name):
-        if value == '':
+        if value == "":
             return 0
         if value is None:
             return None
@@ -793,5 +829,6 @@ class String:
         try:
             return int(value)
         except ValueError:
-            raise ValueError(f"Cannot convert {name!r} argument {value!r} "
-                             f"to an integer.")
+            raise ValueError(
+                f"Cannot convert {name!r} argument {value!r} to an integer."
+            )

@@ -22,4 +22,4 @@ class Timeout:
         pass
 
     def execute(self, runnable):
-        raise DataError('Timeouts are not supported on this platform.')
+        raise DataError("Timeouts are not supported on this platform.")

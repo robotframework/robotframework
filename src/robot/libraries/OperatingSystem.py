@@ -23,16 +23,18 @@ import tempfile
 import time
 from datetime import datetime
 
-from robot.version import get_version
 from robot.api import logger
 from robot.api.deco import keyword
-from robot.utils import (abspath, ConnectionCache, console_decode, del_env_var,
-                         get_env_var, get_env_vars, get_time, normpath, parse_time,
-                         plural_or_not, safe_str, secs_to_timestr, seq2str, set_env_var,
-                         timestr_to_secs, CONSOLE_ENCODING, PY_VERSION, WINDOWS)
+from robot.utils import (
+    abspath, ConnectionCache, console_decode, CONSOLE_ENCODING, del_env_var,
+    get_env_var, get_env_vars, get_time, normpath, parse_time, plural_or_not as s,
+    PY_VERSION, safe_str, secs_to_timestr, seq2str, set_env_var, timestr_to_secs,
+    WINDOWS
+)
+from robot.version import get_version
 
 __version__ = get_version()
-PROCESSES = ConnectionCache('No active processes.')
+PROCESSES = ConnectionCache("No active processes.")
 
 
 class OperatingSystem:
@@ -152,7 +154,8 @@ class OperatingSystem:
     |     `File Should Exist`    ${PATH}
     |     `Copy File`            ${PATH}    ~/file.txt
     """
-    ROBOT_LIBRARY_SCOPE = 'GLOBAL'
+
+    ROBOT_LIBRARY_SCOPE = "GLOBAL"
     ROBOT_LIBRARY_VERSION = __version__
 
     def run(self, command):
@@ -244,12 +247,12 @@ class OperatingSystem:
 
     def _run(self, command):
         process = _Process(command)
-        self._info("Running command '%s'." % process)
+        self._info(f"Running command '{process}'.")
         stdout = process.read()
         rc = process.close()
         return rc, stdout
 
-    def get_file(self, path, encoding='UTF-8', encoding_errors='strict'):
+    def get_file(self, path, encoding="UTF-8", encoding_errors="strict"):
         """Returns the contents of a specified file.
 
         This keyword reads the specified file and returns the contents.
@@ -283,12 +286,14 @@ class OperatingSystem:
         # depend on these semantics. Best solution would probably be making
         # `newline` configurable.
         # FIXME: Make `newline` configurable or at least submit an issue about that.
-        with open(path, encoding=encoding, errors=encoding_errors, newline='') as f:
-            return f.read().replace('\r\n', '\n')
+        with open(path, encoding=encoding, errors=encoding_errors, newline="") as f:
+            return f.read().replace("\r\n", "\n")
 
     def _map_encoding(self, encoding):
-        return {'SYSTEM': 'locale' if PY_VERSION > (3, 10) else None,
-                'CONSOLE': CONSOLE_ENCODING}.get(encoding.upper(), encoding)
+        return {
+            "SYSTEM": "locale" if PY_VERSION > (3, 10) else None,
+            "CONSOLE": CONSOLE_ENCODING,
+        }.get(encoding.upper(), encoding)
 
     def get_binary_file(self, path):
         """Returns the contents of a specified file.
@@ -298,11 +303,17 @@ class OperatingSystem:
         """
         path = self._absnorm(path)
         self._link("Getting file '%s'.", path)
-        with open(path, 'rb') as f:
+        with open(path, "rb") as f:
             return f.read()
 
-    def grep_file(self, path, pattern, encoding='UTF-8', encoding_errors='strict',
-                  regexp=False):
+    def grep_file(
+        self,
+        path,
+        pattern,
+        encoding="UTF-8",
+        encoding_errors="strict",
+        regexp=False,
+    ):
         r"""Returns the lines of the specified file that match the ``pattern``.
 
         This keyword reads a file from the file system using the defined
@@ -339,7 +350,7 @@ class OperatingSystem:
         """
         path = self._absnorm(path)
         if not regexp:
-            pattern = fnmatch.translate(f'{pattern}*')
+            pattern = fnmatch.translate(f"{pattern}*")
         reobj = re.compile(pattern)
         encoding = self._map_encoding(encoding)
         lines = []
@@ -348,13 +359,13 @@ class OperatingSystem:
         with open(path, encoding=encoding, errors=encoding_errors) as file:
             for line in file:
                 total_lines += 1
-                line = line.rstrip('\r\n')
+                line = line.rstrip("\r\n")
                 if reobj.search(line):
                     lines.append(line)
-            self._info('%d out of %d lines matched' % (len(lines), total_lines))
-            return '\n'.join(lines)
+            self._info(f"{len(lines)} out of {total_lines} lines matched.")
+            return "\n".join(lines)
 
-    def log_file(self, path, encoding='UTF-8', encoding_errors='strict'):
+    def log_file(self, path, encoding="UTF-8", encoding_errors="strict"):
         """Wrapper for `Get File` that also logs the returned file.
 
         The file is logged with the INFO level. If you want something else,
@@ -380,7 +391,7 @@ class OperatingSystem:
         """
         path = self._absnorm(path)
         if not self._glob(path):
-            self._fail(msg, "Path '%s' does not exist." % path)
+            self._fail(msg, f"Path '{path}' does not exist.")
         self._link("Path '%s' exists.", path)
 
     def should_not_exist(self, path, msg=None):
@@ -394,19 +405,19 @@ class OperatingSystem:
         path = self._absnorm(path)
         matches = self._glob(path)
         if matches:
-            self._fail(msg, self._get_matches_error('Path', path, matches))
+            self._fail(msg, self._get_matches_error("Path", path, matches))
         self._link("Path '%s' does not exist.", path)
 
     def _glob(self, path):
         return glob.glob(path) if not os.path.exists(path) else [path]
 
-    def _get_matches_error(self, what, path, matches):
+    def _get_matches_error(self, kind, path, matches):
         if not self._is_glob_path(path):
-            return "%s '%s' exists." % (what, path)
-        return "%s '%s' matches %s." % (what, path, seq2str(sorted(matches)))
+            return f"{kind} '{path}' exists."
+        return f"{kind} '{path}' matches {seq2str(sorted(matches))}."
 
     def _is_glob_path(self, path):
-        return '*' in path or '?' in path or ('[' in path and ']' in path)
+        return "*" in path or "?" in path or ("[" in path and "]" in path)
 
     def file_should_exist(self, path, msg=None):
         """Fails unless the given ``path`` points to an existing file.
@@ -419,7 +430,7 @@ class OperatingSystem:
         path = self._absnorm(path)
         matches = [p for p in self._glob(path) if os.path.isfile(p)]
         if not matches:
-            self._fail(msg, "File '%s' does not exist." % path)
+            self._fail(msg, f"File '{path}' does not exist.")
         self._link("File '%s' exists.", path)
 
     def file_should_not_exist(self, path, msg=None):
@@ -433,7 +444,7 @@ class OperatingSystem:
         path = self._absnorm(path)
         matches = [p for p in self._glob(path) if os.path.isfile(p)]
         if matches:
-            self._fail(msg, self._get_matches_error('File', path, matches))
+            self._fail(msg, self._get_matches_error("File", path, matches))
         self._link("File '%s' does not exist.", path)
 
     def directory_should_exist(self, path, msg=None):
@@ -447,7 +458,7 @@ class OperatingSystem:
         path = self._absnorm(path)
         matches = [p for p in self._glob(path) if os.path.isdir(p)]
         if not matches:
-            self._fail(msg, "Directory '%s' does not exist." % path)
+            self._fail(msg, f"Directory '{path}' does not exist.")
         self._link("Directory '%s' exists.", path)
 
     def directory_should_not_exist(self, path, msg=None):
@@ -461,12 +472,12 @@ class OperatingSystem:
         path = self._absnorm(path)
         matches = [p for p in self._glob(path) if os.path.isdir(p)]
         if matches:
-            self._fail(msg, self._get_matches_error('Directory', path, matches))
+            self._fail(msg, self._get_matches_error("Directory", path, matches))
         self._link("Directory '%s' does not exist.", path)
 
     # Waiting file/dir to appear/disappear
 
-    def wait_until_removed(self, path, timeout='1 minute'):
+    def wait_until_removed(self, path, timeout="1 minute"):
         """Waits until the given file or directory is removed.
 
         The path can be given as an exact path or as a glob pattern.
@@ -487,12 +498,11 @@ class OperatingSystem:
         maxtime = time.time() + timeout
         while self._glob(path):
             if timeout >= 0 and time.time() > maxtime:
-                self._fail("'%s' was not removed in %s."
-                           % (path, secs_to_timestr(timeout)))
+                self._fail(f"'{path}' was not removed in {secs_to_timestr(timeout)}.")
             time.sleep(0.1)
         self._link("'%s' was removed.", path)
 
-    def wait_until_created(self, path, timeout='1 minute'):
+    def wait_until_created(self, path, timeout="1 minute"):
         """Waits until the given file or directory is created.
 
         The path can be given as an exact path or as a glob pattern.
@@ -513,8 +523,7 @@ class OperatingSystem:
         maxtime = time.time() + timeout
         while not self._glob(path):
             if timeout >= 0 and time.time() > maxtime:
-                self._fail("'%s' was not created in %s."
-                           % (path, secs_to_timestr(timeout)))
+                self._fail(f"'{path}' was not created in {secs_to_timestr(timeout)}.")
             time.sleep(0.1)
         self._link("'%s' was created.", path)
 
@@ -528,8 +537,8 @@ class OperatingSystem:
         path = self._absnorm(path)
         items = self._list_dir(path)
         if items:
-            self._fail(msg, "Directory '%s' is not empty. Contents: %s."
-                            % (path, seq2str(items, lastsep=', ')))
+            contents = seq2str(items, lastsep=", ")
+            self._fail(msg, f"Directory '{path}' is not empty. Contents: {contents}.")
         self._link("Directory '%s' is empty.", path)
 
     def directory_should_not_be_empty(self, path, msg=None):
@@ -540,9 +549,8 @@ class OperatingSystem:
         path = self._absnorm(path)
         items = self._list_dir(path)
         if not items:
-            self._fail(msg, "Directory '%s' is empty." % path)
-        self._link("Directory '%%s' contains %d item%s."
-                   % (len(items), plural_or_not(items)), path)
+            self._fail(msg, f"Directory '{path}' is empty.")
+        self._link(f"Directory '%s' contains {len(items)} item{s(items)}.", path)
 
     def file_should_be_empty(self, path, msg=None):
         """Fails unless the specified file is empty.
@@ -551,11 +559,10 @@ class OperatingSystem:
         """
         path = self._absnorm(path)
         if not os.path.isfile(path):
-            self._error("File '%s' does not exist." % path)
+            self._error(f"File '{path}' does not exist.")
         size = os.stat(path).st_size
         if size > 0:
-            self._fail(msg,
-                       "File '%s' is not empty. Size: %d bytes." % (path, size))
+            self._fail(msg, f"File '{path}' is not empty. Size: {size} byte{s(size)}.")
         self._link("File '%s' is empty.", path)
 
     def file_should_not_be_empty(self, path, msg=None):
@@ -565,15 +572,15 @@ class OperatingSystem:
         """
         path = self._absnorm(path)
         if not os.path.isfile(path):
-            self._error("File '%s' does not exist." % path)
+            self._error(f"File '{path}' does not exist.")
         size = os.stat(path).st_size
         if size == 0:
-            self._fail(msg, "File '%s' is empty." % path)
-        self._link("File '%%s' contains %d bytes." % size, path)
+            self._fail(msg, f"File '{path}' is empty.")
+        self._link(f"File '%s' contains {size} bytes.", path)
 
     # Creating and removing files and directory
 
-    def create_file(self, path, content='', encoding='UTF-8'):
+    def create_file(self, path, content="", encoding="UTF-8"):
         """Creates a file with the given content and encoding.
 
         If the directory where the file is created does not exist, it is
@@ -599,7 +606,7 @@ class OperatingSystem:
         path = self._write_to_file(path, content, encoding)
         self._link("Created file '%s'.", path)
 
-    def _write_to_file(self, path, content, encoding=None, mode='w'):
+    def _write_to_file(self, path, content, encoding=None, mode="w"):
         path = self._absnorm(path)
         parent = os.path.dirname(path)
         if not os.path.exists(parent):
@@ -633,10 +640,10 @@ class OperatingSystem:
         """
         if isinstance(content, str):
             content = bytes(ord(c) for c in content)
-        path = self._write_to_file(path, content, mode='wb')
+        path = self._write_to_file(path, content, mode="wb")
         self._link("Created binary file '%s'.", path)
 
-    def append_to_file(self, path, content, encoding='UTF-8'):
+    def append_to_file(self, path, content, encoding="UTF-8"):
         """Appends the given content to the specified file.
 
         If the file exists, the given text is written to its end. If the file
@@ -646,7 +653,7 @@ class OperatingSystem:
         exactly like `Create File`. See its documentation for more details
         about the usage.
         """
-        path = self._write_to_file(path, content, encoding, mode='a')
+        path = self._write_to_file(path, content, encoding, mode="a")
         self._link("Appended to file '%s'.", path)
 
     def remove_file(self, path):
@@ -665,7 +672,7 @@ class OperatingSystem:
             self._link("File '%s' does not exist.", path)
         for match in matches:
             if not os.path.isfile(match):
-                self._error("Path '%s' is not a file." % match)
+                self._error(f"Path '{path}' is not a file.")
             os.remove(match)
             self._link("Removed file '%s'.", match)
 
@@ -702,9 +709,9 @@ class OperatingSystem:
         """
         path = self._absnorm(path)
         if os.path.isdir(path):
-            self._link("Directory '%s' already exists.", path )
+            self._link("Directory '%s' already exists.", path)
         elif os.path.exists(path):
-            self._error("Path '%s' is not a directory." % path)
+            self._error(f"Path '{path}' is not a directory.")
         else:
             os.makedirs(path)
             self._link("Created directory '%s'.", path)
@@ -723,13 +730,14 @@ class OperatingSystem:
         if not os.path.exists(path):
             self._link("Directory '%s' does not exist.", path)
         elif not os.path.isdir(path):
-            self._error("Path '%s' is not a directory." % path)
+            self._error(f"Path '{path}' is not a directory.")
         else:
             if recursive:
                 shutil.rmtree(path)
             else:
                 self.directory_should_be_empty(
-                    path, "Directory '%s' is not empty." % path)
+                    path, f"Directory '{path}' is not empty."
+                )
                 os.rmdir(path)
             self._link("Removed directory '%s'.", path)
 
@@ -762,8 +770,7 @@ class OperatingSystem:
 
         See also `Copy Files`, `Move File`, and `Move Files`.
         """
-        source, destination = \
-            self._prepare_copy_and_move_file(source, destination)
+        source, destination = self._prepare_copy_and_move_file(source, destination)
         if not self._are_source_and_destination_same_file(source, destination):
             source, destination = self._atomic_copy(source, destination)
             self._link("Copied file from '%s' to '%s'.", source, destination)
@@ -780,19 +787,19 @@ class OperatingSystem:
         source = self._absnorm(source)
         sources = self._glob(source)
         if len(sources) > 1:
-            self._error("Multiple matches with source pattern '%s'." % source)
+            self._error(f"Multiple matches with source pattern '{source}'.")
         if sources:
             source = sources[0]
         if not os.path.exists(source):
-            self._error("Source file '%s' does not exist." % source)
+            self._error(f"Source file '{source}' does not exist.")
         if not os.path.isfile(source):
-            self._error("Source file '%s' is not a regular file." % source)
+            self._error(f"Source file '{source}' is not a regular file.")
         return source
 
     def _normalize_copy_and_move_destination(self, destination):
         if isinstance(destination, pathlib.Path):
             destination = str(destination)
-        is_dir = os.path.isdir(destination) or destination.endswith(('/', '\\'))
+        is_dir = os.path.isdir(destination) or destination.endswith(("/", "\\"))
         destination = self._absnorm(destination)
         directory = destination if is_dir else os.path.dirname(destination)
         self._ensure_destination_directory_exists(directory)
@@ -802,12 +809,15 @@ class OperatingSystem:
         if not os.path.exists(path):
             os.makedirs(path)
         elif not os.path.isdir(path):
-            self._error("Destination '%s' exists and is not a directory." % path)
+            self._error(f"Destination '{path}' exists and is not a directory.")
 
     def _are_source_and_destination_same_file(self, source, destination):
         if self._force_normalize(source) == self._force_normalize(destination):
-            self._link("Source '%s' and destination '%s' point to the same "
-                       "file.", source, destination)
+            self._link(
+                "Source '%s' and destination '%s' point to the same file.",
+                source,
+                destination,
+            )
             return True
         return False
 
@@ -854,8 +864,7 @@ class OperatingSystem:
 
         See also `Move Files`, `Copy File`, and `Copy Files`.
         """
-        source, destination = \
-            self._prepare_copy_and_move_file(source, destination)
+        source, destination = self._prepare_copy_and_move_file(source, destination)
         if not self._are_source_and_destination_same_file(destination, source):
             shutil.move(source, destination)
             self._link("Moved file from '%s' to '%s'.", source, destination)
@@ -877,14 +886,13 @@ class OperatingSystem:
 
         See also `Copy File`, `Move File`, and `Move Files`.
         """
-        sources, destination \
-            = self._prepare_copy_and_move_files(sources_and_destination)
+        sources, dest = self._prepare_copy_and_move_files(sources_and_destination)
         for source in sources:
-            self.copy_file(source, destination)
+            self.copy_file(source, dest)
 
     def _prepare_copy_and_move_files(self, items):
         if len(items) < 2:
-            self._error('Must contain destination and at least one source.')
+            self._error("Must contain destination and at least one source.")
         sources = self._glob_files(items[:-1])
         destination = self._absnorm(items[-1])
         self._ensure_destination_directory_exists(destination)
@@ -903,10 +911,9 @@ class OperatingSystem:
 
         See also `Move File`, `Copy File`, and `Copy Files`.
         """
-        sources, destination \
-            = self._prepare_copy_and_move_files(sources_and_destination)
+        sources, dest = self._prepare_copy_and_move_files(sources_and_destination)
         for source in sources:
-            self.move_file(source, destination)
+            self.move_file(source, dest)
 
     def copy_directory(self, source, destination):
         """Copies the source directory into the destination.
@@ -923,11 +930,11 @@ class OperatingSystem:
         source = self._absnorm(source)
         destination = self._absnorm(destination)
         if not os.path.exists(source):
-            self._error("Source '%s' does not exist." % source)
+            self._error(f"Source '{source}' does not exist.")
         if not os.path.isdir(source):
-            self._error("Source '%s' is not a directory." % source)
+            self._error(f"Source '{source}' is not a directory.")
         if os.path.exists(destination) and not os.path.isdir(destination):
-            self._error("Destination '%s' is not a directory." % destination)
+            self._error(f"Destination '{destination}' is not a directory.")
         if os.path.exists(destination):
             base = os.path.basename(source)
             destination = os.path.join(destination, base)
@@ -944,8 +951,7 @@ class OperatingSystem:
         ``destination`` arguments have exactly same semantics as with
         that keyword.
         """
-        source, destination \
-            = self._prepare_copy_and_move_directory(source, destination)
+        source, destination = self._prepare_copy_and_move_directory(source, destination)
         shutil.move(source, destination)
         self._link("Moved directory from '%s' to '%s'.", source, destination)
 
@@ -966,7 +972,7 @@ class OperatingSystem:
         """
         value = get_env_var(name, default)
         if value is None:
-            self._error("Environment variable '%s' does not exist." % name)
+            self._error(f"Environment variable '{name}' does not exist.")
         return value
 
     def set_environment_variable(self, name, value):
@@ -976,8 +982,7 @@ class OperatingSystem:
         automatically encoded using the system encoding.
         """
         set_env_var(name, value)
-        self._info("Environment variable '%s' set to value '%s'."
-                   % (name, value))
+        self._info(f"Environment variable '{name}' set to value '{value}'.")
 
     def append_to_environment_variable(self, name, *values, separator=os.pathsep):
         """Appends given ``values`` to environment variable ``name``.
@@ -1002,7 +1007,7 @@ class OperatingSystem:
         sentinel = object()
         initial = self.get_environment_variable(name, sentinel)
         if initial is not sentinel:
-            values = (initial,) + values
+            values = (initial, *values)
         self.set_environment_variable(name, separator.join(values))
 
     def remove_environment_variable(self, *names):
@@ -1016,9 +1021,9 @@ class OperatingSystem:
         for name in names:
             value = del_env_var(name)
             if value:
-                self._info("Environment variable '%s' deleted." % name)
+                self._info(f"Environment variable '{name}' deleted.")
             else:
-                self._info("Environment variable '%s' does not exist." % name)
+                self._info(f"Environment variable '{name}' does not exist.")
 
     def environment_variable_should_be_set(self, name, msg=None):
         """Fails if the specified environment variable is not set.
@@ -1027,8 +1032,8 @@ class OperatingSystem:
         """
         value = get_env_var(name)
         if not value:
-            self._fail(msg, "Environment variable '%s' is not set." % name)
-        self._info("Environment variable '%s' is set to '%s'." % (name, value))
+            self._fail(msg, f"Environment variable '{name}' is not set.")
+        self._info(f"Environment variable '{name}' is set to '{value}'.")
 
     def environment_variable_should_not_be_set(self, name, msg=None):
         """Fails if the specified environment variable is set.
@@ -1037,9 +1042,8 @@ class OperatingSystem:
         """
         value = get_env_var(name)
         if value:
-            self._fail(msg, "Environment variable '%s' is set to '%s'."
-                            % (name, value))
-        self._info("Environment variable '%s' is not set." % name)
+            self._fail(msg, f"Environment variable '{name}' is set to '{value}'.")
+        self._info(f"Environment variable '{name}' is not set.")
 
     def get_environment_variables(self):
         """Returns currently available environment variables as a dictionary.
@@ -1050,7 +1054,7 @@ class OperatingSystem:
         """
         return get_env_vars()
 
-    def log_environment_variables(self, level='INFO'):
+    def log_environment_variables(self, level="INFO"):
         """Logs all environment variables using the given log level.
 
         Environment variables are also returned the same way as with
@@ -1058,7 +1062,7 @@ class OperatingSystem:
         """
         variables = get_env_vars()
         for name in sorted(variables, key=lambda item: item.lower()):
-            self._log('%s = %s' % (name, variables[name]), level)
+            self._log(f"{name} = {variables[name]}", level)
         return variables
 
     # Path
@@ -1083,8 +1087,11 @@ class OperatingSystem:
         - ${p4} = '/path'
         - ${p5} = '/my/path2'
         """
-        parts = [str(p) if isinstance(p, pathlib.Path) else p.replace('/', os.sep)
-                 for p in (base,) + parts]
+        # FIXME: Is normalizing parts needed anymore?
+        parts = [
+            str(p) if isinstance(p, pathlib.Path) else p.replace("/", os.sep)
+            for p in (base, *parts)
+        ]
         return self.normalize_path(os.path.join(*parts))
 
     def join_paths(self, base, *paths):
@@ -1130,7 +1137,7 @@ class OperatingSystem:
         if isinstance(path, pathlib.Path):
             path = str(path)
         else:
-            path = path.replace('/', os.sep)
+            path = path.replace("/", os.sep)
         path = os.path.normpath(os.path.expanduser(path))
         # os.path.normcase doesn't normalize on OSX which also, by default,
         # has case-insensitive file system. Our robot.utils.normpath would
@@ -1138,7 +1145,7 @@ class OperatingSystem:
         # utility do, desirable.
         if case_normalize:
             path = os.path.normcase(path)
-        return path or '.'
+        return path or "."
 
     def split_path(self, path):
         """Splits the given path from the last path separator (``/`` or ``\\``).
@@ -1187,16 +1194,16 @@ class OperatingSystem:
         """
         path = self.normalize_path(path)
         basename = os.path.basename(path)
-        if basename.startswith('.' * basename.count('.')):
-            return path, ''
-        if path.endswith('.'):
-            path2 = path.rstrip('.')
-            trailing_dots = '.' * (len(path) - len(path2))
+        if basename.startswith("." * basename.count(".")):
+            return path, ""
+        if path.endswith("."):
+            path2 = path.rstrip(".")
+            trailing_dots = "." * (len(path) - len(path2))
             path = path2
         else:
-            trailing_dots = ''
+            trailing_dots = ""
         basepath, extension = os.path.splitext(path)
-        if extension.startswith('.'):
+        if extension.startswith("."):
             extension = extension[1:]
         if extension:
             extension += trailing_dots
@@ -1206,7 +1213,7 @@ class OperatingSystem:
 
     # Misc
 
-    def get_modified_time(self, path, format='timestamp'):
+    def get_modified_time(self, path, format="timestamp"):
         """Returns the last modification time of a file or directory.
 
         How time is returned is determined based on the given ``format``
@@ -1243,9 +1250,9 @@ class OperatingSystem:
         """
         path = self._absnorm(path)
         if not os.path.exists(path):
-            self._error("Path '%s' does not exist." % path)
+            self._error(f"Path '{path}' does not exist.")
         mtime = get_time(format, os.stat(path).st_mtime)
-        self._link("Last modified time of '%%s' is %s." % mtime, path)
+        self._link(f"Last modified time of '%s' is {mtime}.", path)
         return mtime
 
     def set_modified_time(self, path, mtime):
@@ -1287,22 +1294,21 @@ class OperatingSystem:
         mtime = parse_time(mtime)
         path = self._absnorm(path)
         if not os.path.exists(path):
-            self._error("File '%s' does not exist." % path)
+            self._error(f"File '{path}' does not exist.")
         if not os.path.isfile(path):
-            self._error("Path '%s' is not a regular file." % path)
+            self._error(f"Path '{path}' is not a regular file.")
         os.utime(path, (mtime, mtime))
-        time.sleep(0.1)    # Give OS some time to really set these times.
-        tstamp = datetime.fromtimestamp(mtime).isoformat(' ', timespec='seconds')
-        self._link("Set modified time of '%%s' to %s." % tstamp, path)
+        time.sleep(0.1)  # Give OS some time to really set these times.
+        tstamp = datetime.fromtimestamp(mtime).isoformat(" ", timespec="seconds")
+        self._link(f"Set modified time of '%s' to {tstamp}.", path)
 
     def get_file_size(self, path):
         """Returns and logs file size as an integer in bytes."""
         path = self._absnorm(path)
         if not os.path.isfile(path):
-            self._error("File '%s' does not exist." % path)
+            self._error(f"File '{path}' does not exist.")
         size = os.stat(path).st_size
-        plural = plural_or_not(size)
-        self._link("Size of file '%%s' is %d byte%s." % (size, plural), path)
+        self._link(f"Size of file '%s' is {size} byte{s(size)}.", path)
         return size
 
     def list_directory(self, path, pattern=None, absolute=False):
@@ -1329,23 +1335,20 @@ class OperatingSystem:
         | ${count} = | Count Files In Directory | ${CURDIR} | ??? |
         """
         items = self._list_dir(path, pattern, absolute)
-        self._info('%d item%s:\n%s' % (len(items), plural_or_not(items),
-                                       '\n'.join(items)))
+        self._info(f"{len(items)} item{s(items)}:\n" + "\n".join(items))
         return items
 
     def list_files_in_directory(self, path, pattern=None, absolute=False):
         """Wrapper for `List Directory` that returns only files."""
         files = self._list_files_in_dir(path, pattern, absolute)
-        self._info('%d file%s:\n%s' % (len(files), plural_or_not(files),
-                                       '\n'.join(files)))
+        self._info(f"{len(files)} file{s(files)}:\n" + "\n".join(files))
         return files
 
     def list_directories_in_directory(self, path, pattern=None, absolute=False):
         """Wrapper for `List Directory` that returns only directories."""
         dirs = self._list_dirs_in_dir(path, pattern, absolute)
-        self._info('%d director%s:\n%s' % (len(dirs),
-                                           'y' if len(dirs) == 1 else 'ies',
-                                           '\n'.join(dirs)))
+        label = "directory" if len(dirs) == 1 else "directories"
+        self._info(f"{len(dirs)} {label}:\n" + "\n".join(dirs))
         return dirs
 
     def count_items_in_directory(self, path, pattern=None):
@@ -1356,26 +1359,27 @@ class OperatingSystem:
         with the built-in keyword `Should Be Equal As Integers`.
         """
         count = len(self._list_dir(path, pattern))
-        self._info("%s item%s." % (count, plural_or_not(count)))
+        self._info(f"{count} item{s(count)}.")
         return count
 
     def count_files_in_directory(self, path, pattern=None):
         """Wrapper for `Count Items In Directory` returning only file count."""
         count = len(self._list_files_in_dir(path, pattern))
-        self._info("%s file%s." % (count, plural_or_not(count)))
+        self._info(f"{count} file{s(count)}.")
         return count
 
     def count_directories_in_directory(self, path, pattern=None):
         """Wrapper for `Count Items In Directory` returning only directory count."""
         count = len(self._list_dirs_in_dir(path, pattern))
-        self._info("%s director%s." % (count, 'y' if count == 1 else 'ies'))
+        label = "directory" if count == 1 else "directories"
+        self._info(f"{count} {label}.")
         return count
 
     def _list_dir(self, path, pattern=None, absolute=False):
         path = self._absnorm(path)
         self._link("Listing contents of directory '%s'.", path)
         if not os.path.isdir(path):
-            self._error("Directory '%s' does not exist." % path)
+            self._error(f"Directory '{path}' does not exist.")
         # result is already unicode but safe_str also handles NFC normalization
         items = sorted(safe_str(item) for item in os.listdir(path))
         if pattern:
@@ -1386,12 +1390,18 @@ class OperatingSystem:
         return items
 
     def _list_files_in_dir(self, path, pattern=None, absolute=False):
-        return [item for item in self._list_dir(path, pattern, absolute)
-                if os.path.isfile(os.path.join(path, item))]
+        return [
+            item
+            for item in self._list_dir(path, pattern, absolute)
+            if os.path.isfile(os.path.join(path, item))
+        ]
 
     def _list_dirs_in_dir(self, path, pattern=None, absolute=False):
-        return [item for item in self._list_dir(path, pattern, absolute)
-                if os.path.isdir(os.path.join(path, item))]
+        return [
+            item
+            for item in self._list_dir(path, pattern, absolute)
+            if os.path.isdir(os.path.join(path, item))
+        ]
 
     def touch(self, path):
         """Emulates the UNIX touch command.
@@ -1404,16 +1414,17 @@ class OperatingSystem:
         """
         path = self._absnorm(path)
         if os.path.isdir(path):
-            self._error("Cannot touch '%s' because it is a directory." % path)
+            self._error(f"Cannot touch '{path}' because it is a directory.")
         if not os.path.exists(os.path.dirname(path)):
-            self._error("Cannot touch '%s' because its parent directory does "
-                        "not exist." % path)
+            self._error(
+                f"Cannot touch '{path}' because its parent directory does not exist."
+            )
         if os.path.exists(path):
             mtime = round(time.time())
             os.utime(path, (mtime, mtime))
             self._link("Touched existing file '%s'.", path)
         else:
-            open(path, 'w', encoding='ASCII').close()
+            open(path, "w", encoding="ASCII").close()
             self._link("Touched new file '%s'.", path)
 
     def _absnorm(self, path):
@@ -1426,14 +1437,14 @@ class OperatingSystem:
         raise RuntimeError(msg)
 
     def _info(self, msg):
-        self._log(msg, 'INFO')
+        self._log(msg, "INFO")
 
     def _link(self, msg, *paths):
-        paths = tuple('<a href="file://%s">%s</a>' % (p, p) for p in paths)
-        self._log(msg % paths, 'HTML')
+        paths = tuple(f'<a href="file://{p}">{p}</a>' for p in paths)
+        self._log(msg % paths, "HTML")
 
     def _warn(self, msg):
-        self._log(msg, 'WARN')
+        self._log(msg, "WARN")
 
     def _log(self, msg, level):
         logger.write(msg, level)
@@ -1468,16 +1479,16 @@ class _Process:
         return rc >> 8
 
     def _process_command(self, command):
-        if '>' not in command:
-            if command.endswith('&'):
-                command = command[:-1] + ' 2>&1 &'
+        if ">" not in command:
+            if command.endswith("&"):
+                command = command[:-1] + " 2>&1 &"
             else:
-                command += ' 2>&1'
+                command += " 2>&1"
         return command
 
     def _process_output(self, output):
-        if '\r\n' in output:
-            output = output.replace('\r\n', '\n')
-        if output.endswith('\n'):
+        if "\r\n" in output:
+            output = output.replace("\r\n", "\n")
+        if output.endswith("\n"):
             output = output[:-1]
         return console_decode(output)

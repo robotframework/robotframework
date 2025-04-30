@@ -15,11 +15,13 @@
 
 from robot.errors import DataError, VariableError
 from robot.output import librarylogger as logger
-from robot.utils import (DotDict, escape, get_error_message, is_dict_like, is_list_like,
-                         safe_str, type_name, unescape)
+from robot.utils import (
+    DotDict, escape, get_error_message, is_dict_like, is_list_like, safe_str, type_name,
+    unescape
+)
 
 from .finders import VariableFinder
-from .search import VariableMatch, search_variable
+from .search import search_variable, VariableMatch
 
 
 class VariableReplacer:
@@ -105,15 +107,17 @@ class VariableReplacer:
         if match.string:
             parts.append(unescaper(match.string))
         if all(isinstance(p, (bytes, bytearray)) for p in parts):
-            return b''.join(parts)
-        return ''.join(safe_str(p) for p in parts)
+            return b"".join(parts)
+        return "".join(safe_str(p) for p in parts)
 
     def _get_variable_value(self, match, ignore_errors):
         match.resolve_base(self, ignore_errors)
         # TODO: Do we anymore need to reserve `*{var}` syntax for anything?
-        if match.identifier == '*':
-            logger.warn(rf"Syntax '{match}' is reserved for future use. Please "
-                        rf"escape it like '\{match}'.")
+        if match.identifier == "*":
+            logger.warn(
+                rf"Syntax '{match}' is reserved for future use. "
+                rf"Please escape it like '\{match}'."
+            )
             return str(match)
         try:
             value = self._finder.find(match)
@@ -136,7 +140,7 @@ class VariableReplacer:
         for item in match.items:
             if is_dict_like(value):
                 value = self._get_dict_variable_item(name, value, item)
-            elif hasattr(value, '__getitem__'):
+            elif hasattr(value, "__getitem__"):
                 value = self._get_sequence_variable_item(name, value, item)
             else:
                 raise VariableError(
@@ -145,7 +149,7 @@ class VariableReplacer:
                     f"is not possible. To use '[{item}]' as a literal value, "
                     f"it needs to be escaped like '\\[{item}]'."
                 )
-            name = f'{name}[{item}]'
+            name = f"{name}[{item}]"
         return value
 
     def _get_sequence_variable_item(self, name, variable, index):
@@ -176,11 +180,11 @@ class VariableReplacer:
             return index
         if not isinstance(index, str):
             raise ValueError
-        if ':' not in index:
+        if ":" not in index:
             return int(index)
-        if index.count(':') > 2:
+        if index.count(":") > 2:
             raise ValueError
-        return slice(*[int(i) if i else None for i in index.split(':')])
+        return slice(*[int(i) if i else None for i in index.split(":")])
 
     def _get_dict_variable_item(self, name, variable, key):
         key = self.replace_scalar(key)
@@ -192,14 +196,16 @@ class VariableReplacer:
             raise VariableError(f"Dictionary '{name}' used with invalid key: {err}")
 
     def _validate_value(self, match, value):
-        if match.identifier == '@':
+        if match.identifier == "@":
             if not is_list_like(value):
-                raise VariableError(f"Value of variable '{match}' is not list "
-                                    f"or list-like.")
+                raise VariableError(
+                    f"Value of variable '{match}' is not list or list-like."
+                )
             return list(value)
-        if match.identifier == '&':
+        if match.identifier == "&":
             if not is_dict_like(value):
-                raise VariableError(f"Value of variable '{match}' is not dictionary "
-                                    f"or dictionary-like.")
+                raise VariableError(
+                    f"Value of variable '{match}' is not dictionary or dictionary-like."
+                )
             return DotDict(value)
         return value

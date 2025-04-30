@@ -35,6 +35,11 @@ Split To Lines
     Length Should Be    ${result}    2
     Should be equal    ${result}[0]    ${FIRST LINE}
     Should be equal    ${result}[1]    ${SECOND LINE}
+    @{result} =    Split To Lines    Just one line!
+    Length Should Be    ${result}    1
+    Should be equal    ${result}[0]    Just one line!
+    @{result} =    Split To Lines    ${EMPTY}
+    Length Should Be    ${result}    0
 
 Split To Lines With Start Only
     @{result} =    Split To Lines    ${TEXT IN COLUMNS}    1

@@ -1,10 +1,9 @@
 from DynamicWithoutKwargs import DynamicWithoutKwargs
 
-
 KEYWORDS = {
-    'Kwargs': ['**kwargs'],
-    'Args & Kwargs': ['a', 'b=default', ('c', 'xxx'), '**kwargs'],
-    'Args, Varargs & Kwargs': ['a', 'b=default', '*varargs', '**kws'],
+    "Kwargs": ["**kwargs"],
+    "Args & Kwargs": ["a", "b=default", ("c", "xxx"), "**kwargs"],
+    "Args, Varargs & Kwargs": ["a", "b=default", "*varargs", "**kws"],
 }
 
 

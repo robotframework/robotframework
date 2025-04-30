@@ -1,5 +1,3 @@
-
-
 class RecLibrary2:
 
     def keyword_only_in_library_2(self):

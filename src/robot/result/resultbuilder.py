@@ -20,8 +20,9 @@ from robot.model import SuiteVisitor
 from robot.utils import ETSource, get_error_message
 
 from .executionresult import CombinedResult, is_json_source, Result
-from .flattenkeywordmatcher import (create_flatten_message, FlattenByNameMatcher,
-                                    FlattenByTypeMatcher, FlattenByTags)
+from .flattenkeywordmatcher import (
+    create_flatten_message, FlattenByNameMatcher, FlattenByTags, FlattenByTypeMatcher
+)
 from .merger import Merger
 from .xmlelementhandlers import XmlElementHandler
 
@@ -51,8 +52,8 @@ def ExecutionResult(*sources, **options):
     package. See the :mod:`robot.result` package for a usage example.
     """
     if not sources:
-        raise DataError('One or more data source needed.')
-    if options.pop('merge', False):
+        raise DataError("One or more data source needed.")
+    if options.pop("merge", False):
         return _merge_results(sources[0], sources[1:], options)
     if len(sources) > 1:
         return _combine_results(sources, options)
@@ -80,7 +81,7 @@ def _single_result(source, options):
 
 def _json_result(source, options):
     try:
-        return Result.from_json(source, rpa=options.get('rpa'))
+        return Result.from_json(source, rpa=options.get("rpa"))
     except IOError as err:
         error = err.strerror
     except Exception:
@@ -90,7 +91,7 @@ def _json_result(source, options):
 
 def _xml_result(source, options):
     ets = ETSource(source)
-    result = Result(source, rpa=options.pop('rpa', None))
+    result = Result(source, rpa=options.pop("rpa", None))
     try:
         return ExecutionResultBuilder(ets, **options).build(result)
     except IOError as err:
@@ -118,8 +119,7 @@ class ExecutionResultBuilder:
             and control structures to flatten. See the documentation of
             the ``--flattenkeywords`` option for more details.
         """
-        self._source = source \
-            if isinstance(source, ETSource) else ETSource(source)
+        self._source = source if isinstance(source, ETSource) else ETSource(source)
         self._include_keywords = include_keywords
         self._flattened_keywords = flattened_keywords
 
@@ -138,26 +138,26 @@ class ExecutionResultBuilder:
         return result
 
     def _parse(self, source, start, end):
-        context = ET.iterparse(source, events=('start', 'end'))
+        context = ET.iterparse(source, events=("start", "end"))
         if not self._include_keywords:
             context = self._omit_keywords(context)
         elif self._flattened_keywords:
             context = self._flatten_keywords(context, self._flattened_keywords)
         for event, elem in context:
-            if event == 'start':
+            if event == "start":
                 start(elem)
             else:
                 end(elem)
                 elem.clear()
 
     def _omit_keywords(self, context):
-        omitted_elements = {'kw', 'for', 'while', 'if', 'try'}
+        omitted_elements = {"kw", "for", "while", "if", "try"}
         omitted = 0
         for event, elem in context:
             # Teardowns aren't omitted yet to allow checking suite teardown status.
             # They'll be removed later when not needed in `build()`.
-            omit = elem.tag in omitted_elements and elem.get('type') != 'TEARDOWN'
-            start = event == 'start'
+            omit = elem.tag in omitted_elements and elem.get("type") != "TEARDOWN"
+            start = event == "start"
             if omit and start:
                 omitted += 1
             if not omitted:
@@ -171,31 +171,33 @@ class ExecutionResultBuilder:
         # Performance optimized. Do not change without profiling!
         name_match, by_name = self._get_matcher(FlattenByNameMatcher, flattened)
         type_match, by_type = self._get_matcher(FlattenByTypeMatcher, flattened)
-        started = -1    # if 0 or more, we are flattening
-        containers = {'kw', 'for', 'while', 'iter', 'if', 'try'}
-        inside = 0    # to make sure we don't read tags from a test
+        started = -1  # If 0 or more, we are flattening.
+        containers = {"kw", "for", "while", "iter", "if", "try"}
+        inside = 0  # To make sure we don't read tags from a test.
         for event, elem in context:
             tag = elem.tag
-            if event == 'start':
+            if event == "start":
                 if tag in containers:
                     inside += 1
                     if started >= 0:
                         started += 1
-                    elif by_name and name_match(elem.get('name', ''), elem.get('owner')
-                                                or elem.get('library')):
+                    elif by_name and name_match(
+                        elem.get("name", ""),
+                        elem.get("owner") or elem.get("library"),
+                    ):
                         started = 0
                     elif by_type and type_match(tag):
                         started = 0
             else:
                 if tag in containers:
                     inside -= 1
-                elif started == 0 and tag == 'status':
+                elif started == 0 and tag == "status":
                     elem.text = create_flatten_message(elem.text)
-            if started <= 0 or tag == 'msg':
+            if started <= 0 or tag == "msg":
                 yield event, elem
             else:
                 elem.clear()
-            if started >= 0 and event == 'end' and tag in containers:
+            if started >= 0 and event == "end" and tag in containers:
                 started -= 1
 
     def _get_matcher(self, matcher_class, flattened):

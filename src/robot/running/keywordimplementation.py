@@ -33,21 +33,25 @@ if TYPE_CHECKING:
 
 class KeywordImplementation(ModelObject):
     """Base class for different keyword implementations."""
-    USER_KEYWORD = 'USER KEYWORD'
-    LIBRARY_KEYWORD = 'LIBRARY KEYWORD'
-    INVALID_KEYWORD = 'INVALID KEYWORD'
-    repr_args = ('name', 'args')
-    __slots__ = ['embedded', '_name', '_doc', '_lineno', 'owner', 'parent', 'error']
-    type: Literal['USER KEYWORD', 'LIBRARY KEYWORD', 'INVALID KEYWORD']
 
-    def __init__(self, name: str = '',
-                 args: 'ArgumentSpec|None' = None,
-                 doc: str = '',
-                 tags: 'Tags|Sequence[str]' = (),
-                 lineno: 'int|None' = None,
-                 owner: 'ResourceFile|TestLibrary|None' = None,
-                 parent: 'BodyItemParent|None' = None,
-                 error: 'str|None' = None):
+    USER_KEYWORD = "USER KEYWORD"
+    LIBRARY_KEYWORD = "LIBRARY KEYWORD"
+    INVALID_KEYWORD = "INVALID KEYWORD"
+    type: Literal["USER KEYWORD", "LIBRARY KEYWORD", "INVALID KEYWORD"]
+    repr_args = ("name", "args")
+    __slots__ = ("_name", "embedded", "_doc", "_lineno", "owner", "parent", "error")
+
+    def __init__(
+        self,
+        name: str = "",
+        args: "ArgumentSpec|None" = None,
+        doc: str = "",
+        tags: "Tags|Sequence[str]" = (),
+        lineno: "int|None" = None,
+        owner: "ResourceFile|TestLibrary|None" = None,
+        parent: "BodyItemParent|None" = None,
+        error: "str|None" = None,
+    ):
         self._name = name
         self.embedded = self._get_embedded(name)
         self.args = args
@@ -58,7 +62,7 @@ class KeywordImplementation(ModelObject):
         self.parent = parent
         self.error = error
 
-    def _get_embedded(self, name) -> 'EmbeddedArguments|None':
+    def _get_embedded(self, name) -> "EmbeddedArguments|None":
         return EmbeddedArguments.from_name(name)
 
     @property
@@ -75,11 +79,11 @@ class KeywordImplementation(ModelObject):
     @property
     def full_name(self) -> str:
         if self.owner and self.owner.name:
-            return f'{self.owner.name}.{self.name}'
+            return f"{self.owner.name}.{self.name}"
         return self.name
 
     @setter
-    def args(self, spec: 'ArgumentSpec|None') -> ArgumentSpec:
+    def args(self, spec: "ArgumentSpec|None") -> ArgumentSpec:
         """Information about accepted arguments.
 
         It would be more correct to use term *parameter* instead of
@@ -113,23 +117,23 @@ class KeywordImplementation(ModelObject):
         return getshortdoc(self.doc)
 
     @setter
-    def tags(self, tags: 'Tags|Sequence[str]') -> Tags:
+    def tags(self, tags: "Tags|Sequence[str]") -> Tags:
         return Tags(tags)
 
     @property
-    def lineno(self) -> 'int|None':
+    def lineno(self) -> "int|None":
         return self._lineno
 
     @lineno.setter
-    def lineno(self, lineno: 'int|None'):
+    def lineno(self, lineno: "int|None"):
         self._lineno = lineno
 
     @property
     def private(self) -> bool:
-        return bool(self.tags and self.tags.robot('private'))
+        return bool(self.tags and self.tags.robot("private"))
 
     @property
-    def source(self) -> 'Path|None':
+    def source(self) -> "Path|None":
         return self.owner.source if self.owner is not None else None
 
     def matches(self, name: str) -> bool:
@@ -141,26 +145,32 @@ class KeywordImplementation(ModelObject):
         """
         if self.embedded:
             return self.embedded.matches(name)
-        return eq(self.name, name, ignore='_')
+        return eq(self.name, name, ignore="_")
 
-    def resolve_arguments(self, args: 'Sequence[str|Any]',
-                          named_args: 'Mapping[str, Any]|None' = None,
-                          variables=None,
-                          languages: 'LanguagesLike' = None) -> 'tuple[list, list]':
+    def resolve_arguments(
+        self,
+        args: "Sequence[str|Any]",
+        named_args: "Mapping[str, Any]|None" = None,
+        variables=None,
+        languages: "LanguagesLike" = None,
+    ) -> "tuple[list, list]":
         return self.args.resolve(args, named_args, variables, languages=languages)
 
-    def create_runner(self, name: 'str|None', languages: 'LanguagesLike' = None) \
-            -> 'LibraryKeywordRunner|UserKeywordRunner':
+    def create_runner(
+        self,
+        name: "str|None",
+        languages: "LanguagesLike" = None,
+    ) -> "LibraryKeywordRunner|UserKeywordRunner":
         raise NotImplementedError
 
-    def bind(self, data: Keyword) -> 'KeywordImplementation':
+    def bind(self, data: Keyword) -> "KeywordImplementation":
         raise NotImplementedError
 
     def _include_in_repr(self, name: str, value: Any) -> bool:
-        return name == 'name' or value
+        return name == "name" or value
 
     def _repr_format(self, name: str, value: Any) -> str:
-        if name == 'args':
+        if name == "args":
             value = [self._decorate_arg(a) for a in self.args]
         return super()._repr_format(name, value)
 

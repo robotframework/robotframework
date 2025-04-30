@@ -19,7 +19,7 @@ from unicodedata import normalize
 
 
 def safe_str(item):
-    return normalize('NFC', _safe_str(item))
+    return normalize("NFC", _safe_str(item))
 
 
 def _safe_str(item):
@@ -27,7 +27,7 @@ def _safe_str(item):
         return item
     if isinstance(item, (bytes, bytearray)):
         # Map each byte to Unicode code point with same ordinal.
-        return item.decode('latin-1')
+        return item.decode("latin-1")
     try:
         return str(item)
     except Exception:
@@ -63,4 +63,4 @@ def _unrepresentable_object(item):
     from .error import get_error_message
 
     error = get_error_message()
-    return f'<Unrepresentable object {type(item).__name__}. Error: {error}>'
+    return f"<Unrepresentable object {type(item).__name__}. Error: {error}>"

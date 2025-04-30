@@ -1,24 +1,22 @@
+import collections  # noqa: F401 Needed by `eval()` in `_validate_type()`.
 from collections import abc
-from datetime import datetime, date, timedelta
+from datetime import date, datetime, timedelta
 from decimal import Decimal
-from enum import Flag, Enum, IntFlag, IntEnum
+from enum import Enum, Flag, IntEnum, IntFlag
+from fractions import Fraction  # noqa: F401 Needed by `eval()` in `_validate_type()`.
 from functools import wraps
 from numbers import Integral, Real
 from os import PathLike
 from pathlib import Path, PurePath
 from typing import Union
 
-# Needed by `eval()` in `_validate_type()`.
-import collections
-from fractions import Fraction
-
 from robot.api.deco import keyword
 
 
 class MyEnum(Enum):
     FOO = 1
-    bar = 'xxx'
-    foo = 'yyy'
+    bar = "xxx"
+    foo = "yyy"
     normalize_me = True
 
 
@@ -89,7 +87,7 @@ def bytearray_(argument: bytearray, expected=None):
     _validate_type(argument, expected)
 
 
-def bytestring_replacement(argument: 'bytes | bytearray', expected=None):
+def bytestring_replacement(argument: "bytes | bytearray", expected=None):
     _validate_type(argument, expected)
 
 
@@ -193,7 +191,7 @@ def unknown_in_union(argument: Union[str, Unknown], expected=None):
     _validate_type(argument, expected)
 
 
-def non_type(argument: 'this is just a random string', expected=None):
+def non_type(argument: "this is just a random string", expected=None):  # noqa: F722
     _validate_type(argument, expected)
 
 
@@ -202,7 +200,7 @@ def unhashable(argument: {}, expected=None):
 
 
 # Causes SyntaxError with `typing.get_type_hints`
-def invalid(argument: 'import sys', expected=None):
+def invalid(argument: "import sys", expected=None):  # noqa: F722
     _validate_type(argument, expected)
 
 
@@ -226,19 +224,22 @@ def none_as_default_with_unknown_type(argument: Unknown = None, expected=None):
     _validate_type(argument, expected)
 
 
-def forward_referenced_concrete_type(argument: 'int', expected=None):
+def forward_referenced_concrete_type(argument: "int", expected=None):
     _validate_type(argument, expected)
 
 
-def forward_referenced_abc(argument: 'abc.Sequence', expected=None):
+def forward_referenced_abc(argument: "abc.Sequence", expected=None):
     _validate_type(argument, expected)
 
 
-def unknown_forward_reference(argument: 'Bad', expected=None):
+def unknown_forward_reference(argument: "Bad", expected=None):  # noqa: F821
     _validate_type(argument, expected)
 
 
-def nested_unknown_forward_reference(argument: 'list[Bad]', expected=None):
+def nested_unknown_forward_reference(
+    argument: "list[Bad]",  # noqa: F821
+    expected=None,
+):
     _validate_type(argument, expected)
 
 
@@ -247,12 +248,12 @@ def return_value_annotation(argument: int, expected=None) -> float:
     return float(argument)
 
 
-@keyword(types={'argument': timedelta})
+@keyword(types={"argument": timedelta})
 def types_via_keyword_deco_override(argument: int, expected=None):
     _validate_type(argument, expected)
 
 
-@keyword(name='None as types via @keyword disables', types=None)
+@keyword(name="None as types via @keyword disables", types=None)
 def none_as_types(argument: int, expected=None):
     _validate_type(argument, expected)
 
@@ -270,6 +271,7 @@ def keyword_deco_alone_does_not_override(argument: int, expected=None):
 def decorator(func):
     def wrapper(*args, **kws):
         return func(*args, **kws)
+
     return wrapper
 
 
@@ -277,6 +279,7 @@ def decorator_with_wraps(func):
     @wraps(func)
     def wrapper(*args, **kws):
         return func(*args, **kws)
+
     return wrapper
 
 
@@ -309,7 +312,7 @@ def type_and_default_4(argument: list = [], expected=None):
 def _validate_type(argument, expected):
     if isinstance(expected, str):
         expected = eval(expected)
-    if argument != expected or type(argument) != type(expected):
-        raise AssertionError('%r (%s) != %r (%s)'
-                             % (argument, type(argument).__name__,
-                                expected, type(expected).__name__))
+    if argument != expected or type(argument) is not type(expected):
+        atype = type(argument).__name__
+        etype = type(expected).__name__
+        raise AssertionError(f"{argument!r} ({atype}) != {expected!r} ({etype})")

@@ -21,7 +21,7 @@ def E_union_return() -> Union[int, float]:
     return 42
 
 
-def F_stringified_return() -> 'int | float':
+def F_stringified_return() -> "int | float":
     return 42
 
 
@@ -33,5 +33,5 @@ def G_unknown_return() -> Unknown:
     return Unknown()
 
 
-def H_invalid_return() -> 'list[int':
+def H_invalid_return() -> "list[int":  # noqa: F722
     pass

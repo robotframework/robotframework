@@ -7,9 +7,8 @@ class MyObject:
         return 42 // self.value
 
     def __str__(self):
-        return 'MyObject'
+        return "MyObject"
 
 
 def get_variables():
-    return {'object': MyObject(1),
-            'object_failing': MyObject(0)}
+    return {"object": MyObject(1), "object_failing": MyObject(0)}

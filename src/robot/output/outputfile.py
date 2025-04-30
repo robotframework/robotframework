@@ -19,16 +19,21 @@ from pathlib import Path
 from robot.errors import DataError
 from robot.utils import get_error_message
 
+from .jsonlogger import JsonLogger
 from .loggerapi import LoggerApi
 from .loglevel import LogLevel
-from .jsonlogger import JsonLogger
 from .xmllogger import LegacyXmlLogger, NullLogger, XmlLogger
 
 
 class OutputFile(LoggerApi):
 
-    def __init__(self, path: 'Path|None', log_level: LogLevel, rpa: bool = False,
-                 legacy_output: bool = False):
+    def __init__(
+        self,
+        path: "Path|None",
+        log_level: LogLevel,
+        rpa: bool = False,
+        legacy_output: bool = False,
+    ):
         # `self.logger` is replaced with `NullLogger` when flattening.
         self.logger = self.real_logger = self._get_logger(path, rpa, legacy_output)
         self.is_logged = log_level.is_logged
@@ -40,11 +45,12 @@ class OutputFile(LoggerApi):
         if not path:
             return NullLogger()
         try:
-            file = open(path, 'w', encoding='UTF-8')
+            file = open(path, "w", encoding="UTF-8")
         except Exception:
-            raise DataError(f"Opening output file '{path}' failed: "
-                            f"{get_error_message()}")
-        if path.suffix.lower() == '.json':
+            raise DataError(
+                f"Opening output file '{path}' failed: {get_error_message()}"
+            )
+        if path.suffix.lower() == ".json":
             return JsonLogger(file, rpa)
         if legacy_output:
             return LegacyXmlLogger(file, rpa)
@@ -75,12 +81,12 @@ class OutputFile(LoggerApi):
 
     def start_keyword(self, data, result):
         self.logger.start_keyword(result)
-        if result.tags.robot('flatten'):
+        if result.tags.robot("flatten"):
             self.flatten_level += 1
             self.logger = NullLogger()
 
     def end_keyword(self, data, result):
-        if self.flatten_level and result.tags.robot('flatten'):
+        if self.flatten_level and result.tags.robot("flatten"):
             self.flatten_level -= 1
             if self.flatten_level == 0:
                 self.logger = self.real_logger
@@ -182,7 +188,7 @@ class OutputFile(LoggerApi):
                 self._delayed_messages.append(message)
 
     def message(self, message):
-        if message.level in ('WARN', 'ERROR'):
+        if message.level in ("WARN", "ERROR"):
             self.errors.append(message)
 
     def statistics(self, stats):

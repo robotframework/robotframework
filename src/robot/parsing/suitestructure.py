@@ -26,64 +26,72 @@ from robot.utils import get_error_message
 
 
 class SuiteStructure(ABC):
-    source: 'Path|None'
-    init_file: 'Path|None'
-    children: 'list[SuiteStructure]|None'
+    source: "Path|None"
+    init_file: "Path|None"
+    children: "list[SuiteStructure]|None"
 
-    def __init__(self, extensions: 'ValidExtensions', source: 'Path|None',
-                 init_file: 'Path|None' = None,
-                 children: 'Sequence[SuiteStructure]|None' = None):
+    def __init__(
+        self,
+        extensions: "ValidExtensions",
+        source: "Path|None",
+        init_file: "Path|None" = None,
+        children: "Sequence[SuiteStructure]|None" = None,
+    ):
         self._extensions = extensions
         self.source = source
         self.init_file = init_file
         self.children = list(children) if children is not None else None
 
     @property
-    def extension(self) -> 'str|None':
+    def extension(self) -> "str|None":
         source = self._get_source_file()
         return self._extensions.get_extension(source) if source else None
 
     @abstractmethod
-    def _get_source_file(self) -> 'Path|None':
+    def _get_source_file(self) -> "Path|None":
         raise NotImplementedError
 
     @abstractmethod
-    def visit(self, visitor: 'SuiteStructureVisitor'):
+    def visit(self, visitor: "SuiteStructureVisitor"):
         raise NotImplementedError
 
 
 class SuiteFile(SuiteStructure):
     source: Path
 
-    def __init__(self, extensions: 'ValidExtensions', source: Path):
+    def __init__(self, extensions: "ValidExtensions", source: Path):
         super().__init__(extensions, source)
 
     def _get_source_file(self) -> Path:
         return self.source
 
-    def visit(self, visitor: 'SuiteStructureVisitor'):
+    def visit(self, visitor: "SuiteStructureVisitor"):
         visitor.visit_file(self)
 
 
 class SuiteDirectory(SuiteStructure):
-    children: 'list[SuiteStructure]'
+    children: "list[SuiteStructure]"
 
-    def __init__(self, extensions: 'ValidExtensions', source: 'Path|None' = None,
-                 init_file: 'Path|None' = None,
-                 children: Sequence[SuiteStructure] = ()):
+    def __init__(
+        self,
+        extensions: "ValidExtensions",
+        source: "Path|None" = None,
+        init_file: "Path|None" = None,
+        children: Sequence[SuiteStructure] = (),
+    ):
         super().__init__(extensions, source, init_file, children)
 
-    def _get_source_file(self) -> 'Path|None':
+    def _get_source_file(self) -> "Path|None":
         return self.init_file
 
     @property
     def is_multi_source(self) -> bool:
         return self.source is None
 
-    def add(self, child: 'SuiteStructure'):
+    def add(self, child: "SuiteStructure"):
         self.children.append(child)
 
-    def visit(self, visitor: 'SuiteStructureVisitor'):
+    def visit(self, visitor: "SuiteStructureVisitor"):
         visitor.visit_directory(self)
 
 
@@ -106,11 +114,14 @@ class SuiteStructureVisitor:
 
 
 class SuiteStructureBuilder:
-    ignored_prefixes = ('_', '.')
-    ignored_dirs = ('CVS',)
+    ignored_prefixes = ("_", ".")
+    ignored_dirs = ("CVS",)
 
-    def __init__(self, extensions: Sequence[str] = ('.robot', '.rbt', '.robot.rst'),
-                 included_files: Sequence[str] = ()):
+    def __init__(
+        self,
+        extensions: Sequence[str] = (".robot", ".rbt", ".robot.rst"),
+        included_files: Sequence[str] = (),
+    ):
         self.extensions = ValidExtensions(extensions, included_files)
         self.included_files = IncludedFiles(included_files)
 
@@ -139,16 +150,18 @@ class SuiteStructureBuilder:
                 LOGGER.info(f"Ignoring file or directory '{item}'.")
         return structure
 
-    def _list_dir(self, path: Path) -> 'list[Path]':
+    def _list_dir(self, path: Path) -> "list[Path]":
         try:
             return sorted(path.iterdir(), key=lambda p: p.name.lower())
         except OSError:
             raise DataError(f"Reading directory '{path}' failed: {get_error_message()}")
 
     def _is_init_file(self, path: Path) -> bool:
-        return (path.stem.lower() == '__init__'
-                and self.extensions.match(path)
-                and path.is_file())
+        return (
+            path.stem.lower() == "__init__"
+            and self.extensions.match(path)
+            and path.is_file()
+        )
 
     def _is_included(self, path: Path) -> bool:
         if path.name.startswith(self.ignored_prefixes):
@@ -175,19 +188,15 @@ class SuiteStructureBuilder:
 
 class ValidExtensions:
 
-    def __init__(self, extensions: Sequence[str],
-                 included_files: Sequence[str] = ()):
-        self.extensions = {ext.lstrip('.').lower() for ext in extensions}
+    def __init__(self, extensions: Sequence[str], included_files: Sequence[str] = ()):
+        self.extensions = {ext.lstrip(".").lower() for ext in extensions}
         for pattern in included_files:
             ext = os.path.splitext(pattern)[1]
             if ext:
-                self.extensions.add(ext.lstrip('.').lower())
+                self.extensions.add(ext.lstrip(".").lower())
 
     def match(self, path: Path) -> bool:
-        for ext in self._extensions_from(path):
-            if ext in self.extensions:
-                return True
-        return False
+        return any(ext in self.extensions for ext in self._extensions_from(path))
 
     def get_extension(self, path: Path) -> str:
         for ext in self._extensions_from(path):
@@ -198,34 +207,34 @@ class ValidExtensions:
     def _extensions_from(self, path: Path) -> Iterator[str]:
         suffixes = path.suffixes
         while suffixes:
-            yield ''.join(suffixes).lower()[1:]
+            yield "".join(suffixes).lower()[1:]
             suffixes.pop(0)
 
 
 class IncludedFiles:
 
-    def __init__(self, patterns: 'Sequence[str|Path]' = ()):
+    def __init__(self, patterns: "Sequence[str|Path]" = ()):
         self.patterns = [self._compile(i) for i in patterns]
 
-    def _compile(self, pattern: 'str|Path') -> 're.Pattern':
+    def _compile(self, pattern: "str|Path") -> "re.Pattern":
         pattern = self._dir_to_recursive(self._path_to_abs(self._normalize(pattern)))
         # Handle recursive glob patterns.
-        parts = [self._translate(p) for p in pattern.split('**')]
-        return re.compile('.*'.join(parts), re.IGNORECASE)
+        parts = [self._translate(p) for p in pattern.split("**")]
+        return re.compile(".*".join(parts), re.IGNORECASE)
 
-    def _normalize(self, pattern: 'str|Path') -> str:
+    def _normalize(self, pattern: "str|Path") -> str:
         if isinstance(pattern, Path):
             pattern = str(pattern)
-        return os.path.normpath(pattern).replace('\\', '/')
+        return os.path.normpath(pattern).replace("\\", "/")
 
     def _path_to_abs(self, pattern: str) -> str:
-        if '/' in pattern or '.' not in pattern or os.path.exists(pattern):
-            pattern = os.path.abspath(pattern).replace('\\', '/')
+        if "/" in pattern or "." not in pattern or os.path.exists(pattern):
+            pattern = os.path.abspath(pattern).replace("\\", "/")
         return pattern
 
     def _dir_to_recursive(self, pattern: str) -> str:
-        if '.' not in os.path.basename(pattern) or os.path.isdir(pattern):
-            pattern += '/**'
+        if "." not in os.path.basename(pattern) or os.path.isdir(pattern):
+            pattern += "/**"
         return pattern
 
     def _translate(self, glob_pattern: str) -> str:
@@ -234,7 +243,7 @@ class IncludedFiles:
         # in future Python versions, but we have tests and ought to notice that.
         re_pattern = fnmatch.translate(glob_pattern)[4:-3]
         # Unlike `fnmatch`, we want `*` to match only a single path segment.
-        return re_pattern.replace('.*', '[^/]*')
+        return re_pattern.replace(".*", "[^/]*")
 
     def match(self, path: Path) -> bool:
         if not self.patterns:

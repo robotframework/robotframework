@@ -13,9 +13,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import signal
 import sys
 from threading import current_thread, main_thread
-import signal
 
 from robot.errors import ExecutionFailed
 from robot.output import LOGGER
@@ -31,20 +31,20 @@ class _StopSignalMonitor:
 
     def __call__(self, signum, frame):
         self._signal_count += 1
-        LOGGER.info(f'Received signal: {signum}.')
+        LOGGER.info(f"Received signal: {signum}.")
         if self._signal_count > 1:
-            self._write_to_stderr('Execution forcefully stopped.')
-            raise SystemExit()
-        self._write_to_stderr('Second signal will force exit.')
+            self._write_to_stderr("Execution forcefully stopped.")
+            raise SystemExit
+        self._write_to_stderr("Second signal will force exit.")
         if self._running_keyword:
             self._stop_execution_gracefully()
 
     def _write_to_stderr(self, message):
         if sys.__stderr__:
-            sys.__stderr__.write(message + '\n')
+            sys.__stderr__.write(message + "\n")
 
     def _stop_execution_gracefully(self):
-        raise ExecutionFailed('Execution terminated by signal', exit=True)
+        raise ExecutionFailed("Execution terminated by signal", exit=True)
 
     def __enter__(self):
         if self._can_register_signal:
@@ -67,14 +67,16 @@ class _StopSignalMonitor:
         try:
             signal.signal(signum, self)
         except ValueError as err:
-            self._warn_about_registeration_error(signum, err)
-
-    def _warn_about_registeration_error(self, signum, err):
-        name, ctrlc = {signal.SIGINT: ('INT', 'or with Ctrl-C '),
-                       signal.SIGTERM: ('TERM', '')}[signum]
-        LOGGER.warn('Registering signal %s failed. Stopping execution '
-                    'gracefully with this signal %sis not possible. '
-                    'Original error was: %s' % (name, ctrlc, err))
+            if signum == signal.SIGINT:
+                name = "INT"
+                or_ctrlc = "or with Ctrl-C "
+            else:
+                name = "TERM"
+                or_ctrlc = ""
+            LOGGER.warn(
+                f"Registering signal {name} failed. Stopping execution gracefully with "
+                f"this signal {or_ctrlc}is not possible. Original error was: {err}"
+            )
 
     def start_running_keyword(self, in_teardown):
         self._running_keyword = True

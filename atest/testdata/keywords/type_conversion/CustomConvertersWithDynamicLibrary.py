@@ -5,7 +5,7 @@ class CustomConvertersWithDynamicLibrary:
     ROBOT_LIBRARY_CONVERTERS = {Number: string_to_int}
 
     def get_keyword_names(self):
-        return ['dynamic keyword']
+        return ["dynamic keyword"]
 
     def run_keyword(self, name, args, named):
         self._validate(*args, **named)
@@ -14,7 +14,7 @@ class CustomConvertersWithDynamicLibrary:
         assert argument == expected
 
     def get_keyword_arguments(self, name):
-        return ['argument', 'expected']
+        return ["argument", "expected"]
 
     def get_keyword_types(self, name):
         return [Number, int]

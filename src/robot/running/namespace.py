@@ -16,7 +16,6 @@
 import copy
 import os
 from collections import OrderedDict
-from itertools import chain
 
 from robot.errors import DataError, KeywordError
 from robot.libraries import STDLIBS
@@ -29,14 +28,18 @@ from .invalidkeyword import InvalidKeyword
 from .resourcemodel import Import
 from .runkwregister import RUN_KW_REGISTER
 
-
 IMPORTER = Importer()
 
 
 class Namespace:
-    _default_libraries = ('BuiltIn', 'Easter')
-    _library_import_by_path_ends = ('.py', '/', os.sep)
-    _variables_import_by_path_ends = _library_import_by_path_ends + ('.yaml', '.yml') + ('.json',)
+    _default_libraries = ("BuiltIn", "Easter")
+    _library_import_by_path_ends = (".py", "/", os.sep)
+    _variables_import_by_path_ends = (
+        *_library_import_by_path_ends,
+        ".yaml",
+        ".yml",
+        ".json",
+    )
 
     def __init__(self, variables, suite, resource, languages):
         LOGGER.info(f"Initializing namespace for suite '{suite.full_name}'.")
@@ -58,21 +61,23 @@ class Namespace:
 
     def _import_default_libraries(self):
         for name in self._default_libraries:
-            self.import_library(name, notify=name == 'BuiltIn')
+            self.import_library(name, notify=name == "BuiltIn")
 
     def _handle_imports(self, import_settings):
         for item in import_settings:
             try:
                 if not item.name:
-                    raise DataError(f'{item.setting_name} setting requires value.')
+                    raise DataError(f"{item.setting_name} setting requires value.")
                 self._import(item)
             except DataError as err:
                 item.report_error(err.message)
 
     def _import(self, import_setting):
-        action = import_setting.select(self._import_library,
-                                       self._import_resource,
-                                       self._import_variables)
+        action = import_setting.select(
+            self._import_library,
+            self._import_resource,
+            self._import_variables,
+        )
         action(import_setting)
 
     def import_resource(self, name, overwrite=True):
@@ -88,14 +93,15 @@ class Namespace:
             self._handle_imports(resource.imports)
             LOGGER.resource_import(resource, import_setting)
         else:
-            LOGGER.info(f"Resource file '{path}' already imported by "
-                        f"suite '{self._suite_name}'.")
+            name = self._suite_name
+            LOGGER.info(f"Resource file '{path}' already imported by suite '{name}'.")
 
     def _validate_not_importing_init_file(self, path):
         name = os.path.splitext(os.path.basename(path))[0]
-        if name.lower() == '__init__':
-            raise DataError(f"Initialization file '{path}' cannot be imported as "
-                            f"a resource file.")
+        if name.lower() == "__init__":
+            raise DataError(
+                f"Initialization file '{path}' cannot be imported as a resource file."
+            )
 
     def import_variables(self, name, args, overwrite=False):
         self._import_variables(Import(Import.VARIABLES, name, args), overwrite)
@@ -106,10 +112,10 @@ class Namespace:
         if overwrite or (path, args) not in self._imported_variable_files:
             self._imported_variable_files.add((path, args))
             self.variables.set_from_file(path, args, overwrite)
-            LOGGER.variables_import({'name': os.path.basename(path),
-                                     'args': args,
-                                     'source': path},
-                                    importer=import_setting)
+            LOGGER.variables_import(
+                {"name": os.path.basename(path), "args": args, "source": path},
+                importer=import_setting,
+            )
         else:
             msg = f"Variable file '{path}'"
             if args:
@@ -121,11 +127,16 @@ class Namespace:
 
     def _import_library(self, import_setting, notify=True):
         name = self._resolve_name(import_setting)
-        lib = IMPORTER.import_library(name, import_setting.args,
-                                      import_setting.alias, self.variables)
+        lib = IMPORTER.import_library(
+            name,
+            import_setting.args,
+            import_setting.alias,
+            self.variables,
+        )
         if lib.name in self._kw_store.libraries:
-            LOGGER.info(f"Library '{lib.name}' already imported by suite "
-                        f"'{self._suite_name}'.")
+            LOGGER.info(
+                f"Library '{lib.name}' already imported by suite '{self._suite_name}'."
+            )
             return
         if notify:
             LOGGER.library_import(lib, import_setting)
@@ -141,13 +152,14 @@ class Namespace:
         except DataError as err:
             self._raise_replacing_vars_failed(setting, err)
         if self._is_import_by_path(setting.type, name):
-            file_type = setting.select('Library', 'Resource file', 'Variable file')
+            file_type = setting.select("Library", "Resource file", "Variable file")
             return find_file(name, setting.directory, file_type=file_type)
         return name
 
     def _raise_replacing_vars_failed(self, setting, error):
-        raise DataError(f"Replacing variables from setting '{setting.setting_name}' "
-                        f"failed: {error}")
+        raise DataError(
+            f"Replacing variables from setting '{setting.setting_name}' failed: {error}"
+        )
 
     def _is_import_by_path(self, import_type, path):
         if import_type == Import.LIBRARY:
@@ -199,8 +211,7 @@ class Namespace:
         return self._kw_store.get_library(name).instance
 
     def get_library_instances(self):
-        return dict((name, lib.instance)
-                    for name, lib in self._kw_store.libraries.items())
+        return {name: lib.instance for name, lib in self._kw_store.libraries.items()}
 
     def reload_library(self, name_or_instance):
         library = self._kw_store.get_library(name_or_instance)
@@ -260,37 +271,38 @@ class KeywordStore:
         return runner
 
     def _raise_no_keyword_found(self, name, recommend=True):
-        if name.strip(': ').upper() == 'FOR':
+        if name.strip(": ").upper() == "FOR":
             raise KeywordError(
                 f"Support for the old FOR loop syntax has been removed. "
                 f"Replace '{name}' with 'FOR', end the loop with 'END', and "
                 f"remove escaping backslashes."
             )
-        if name == '\\':
+        if name == "\\":
             raise KeywordError(
                 "No keyword with name '\\' found. If it is used inside a for "
                 "loop, remove escaping backslashes and end the loop with 'END'."
             )
         message = f"No keyword with name '{name}' found."
         if recommend:
-            finder = KeywordRecommendationFinder(self.suite_file,
-                                                 *self.libraries.values(),
-                                                 *self.resources.values())
+            finder = KeywordRecommendationFinder(
+                self.suite_file,
+                *self.libraries.values(),
+                *self.resources.values(),
+            )
             raise KeywordError(finder.recommend_similar_keywords(name, message))
-        else:
-            raise KeywordError(message)
+        raise KeywordError(message)
 
     def _get_runner(self, name, strip_bdd_prefix=True):
         if not name:
-            raise DataError('Keyword name cannot be empty.')
+            raise DataError("Keyword name cannot be empty.")
         if not isinstance(name, str):
-            raise DataError('Keyword name must be a string.')
+            raise DataError("Keyword name must be a string.")
         runner = None
         if strip_bdd_prefix:
             runner = self._get_bdd_style_runner(name)
         if not runner:
             runner = self._get_runner_from_suite_file(name)
-        if not runner and '.' in name:
+        if not runner and "." in name:
             runner = self._get_explicit_runner(name)
         if not runner:
             runner = self._get_implicit_runner(name)
@@ -299,7 +311,7 @@ class KeywordStore:
     def _get_bdd_style_runner(self, name):
         match = self.languages.bdd_prefix_regexp.match(name)
         if match:
-            runner = self._get_runner(name[match.end():], strip_bdd_prefix=False)
+            runner = self._get_runner(name[match.end() :], strip_bdd_prefix=False)
             if runner:
                 runner = copy.copy(runner)
                 runner.name = name
@@ -307,8 +319,10 @@ class KeywordStore:
         return None
 
     def _get_implicit_runner(self, name):
-        return (self._get_runner_from_resource_files(name) or
-                self._get_runner_from_libraries(name))
+        return (
+            self._get_runner_from_resource_files(name)
+            or self._get_runner_from_libraries(name)
+        )  # fmt: skip
 
     def _get_runner_from_suite_file(self, name):
         keywords = self.suite_file.find_keywords(name)
@@ -321,15 +335,18 @@ class KeywordStore:
         runner = keywords[0].create_runner(name, self.languages)
         ctx = EXECUTION_CONTEXTS.current
         caller = ctx.user_keywords[-1] if ctx.user_keywords else ctx.test
-        if caller and runner.keyword.source != caller.source:
-            if self._exists_in_resource_file(name, caller.source):
-                message = (
-                    f"Keyword '{caller.full_name}' called keyword '{name}' that exists "
-                    f"both in the same resource file as the caller and in the suite "
-                    f"file using that resource. The keyword in the suite file is used "
-                    f"now, but this will change in Robot Framework 8.0."
-                )
-                runner.pre_run_messages += Message(message, level='WARN'),
+        if (
+            caller
+            and runner.keyword.source != caller.source
+            and self._exists_in_resource_file(name, caller.source)
+        ):
+            message = (
+                f"Keyword '{caller.full_name}' called keyword '{name}' that exists "
+                f"both in the same resource file as the caller and in the suite "
+                f"file using that resource. The keyword in the suite file is used "
+                f"now, but this will change in Robot Framework 8.0."
+            )
+            runner.pre_run_messages += (Message(message, level="WARN"),)
         return runner
 
     def _select_best_matches(self, keywords):
@@ -337,15 +354,18 @@ class KeywordStore:
         normal = [kw for kw in keywords if not kw.embedded]
         if normal:
             return normal
-        matches = [kw for kw in keywords
-                   if not self._is_worse_match_than_others(kw, keywords)]
+        matches = [
+            kw for kw in keywords if not self._is_worse_match_than_others(kw, keywords)
+        ]
         return matches or keywords
 
     def _is_worse_match_than_others(self, candidate, alternatives):
         for other in alternatives:
-            if (candidate is not other
-                    and self._is_better_match(other, candidate)
-                    and not self._is_better_match(candidate, other)):
+            if (
+                candidate is not other
+                and self._is_better_match(other, candidate)
+                and not self._is_better_match(candidate, other)
+            ):
                 return True
         return False
 
@@ -361,8 +381,9 @@ class KeywordStore:
         return False
 
     def _get_runner_from_resource_files(self, name):
-        keywords = [kw for resource in self.resources.values()
-                    for kw in resource.find_keywords(name)]
+        keywords = [
+            kw for res in self.resources.values() for kw in res.find_keywords(name)
+        ]
         if not keywords:
             return None
         if len(keywords) > 1:
@@ -376,8 +397,9 @@ class KeywordStore:
         return keywords[0].create_runner(name, self.languages)
 
     def _get_runner_from_libraries(self, name):
-        keywords = [kw for lib in self.libraries.values()
-                    for kw in lib.find_keywords(name)]
+        keywords = [
+            kw for lib in self.libraries.values() for kw in lib.find_keywords(name)
+        ]
         if not keywords:
             return None
         pre_run_message = None
@@ -415,7 +437,7 @@ class KeywordStore:
         warning = None
         if len(keywords) != 2:
             return keywords, warning
-        stdlibs_without_remote = STDLIBS - {'Remote'}
+        stdlibs_without_remote = STDLIBS - {"Remote"}
         if keywords[0].owner.real_name in stdlibs_without_remote:
             standard, custom = keywords
         elif keywords[1].owner.real_name in stdlibs_without_remote:
@@ -423,11 +445,11 @@ class KeywordStore:
         else:
             return keywords, warning
         if not RUN_KW_REGISTER.is_run_keyword(custom.owner.real_name, custom.name):
-            warning = self._custom_and_standard_keyword_conflict_warning(custom, standard)
+            warning = self._get_conflict_warning(custom, standard)
         return [custom], warning
 
-    def _custom_and_standard_keyword_conflict_warning(self, custom, standard):
-        custom_with_name = standard_with_name = ''
+    def _get_conflict_warning(self, custom, standard):
+        custom_with_name = standard_with_name = ""
         if custom.owner.name != custom.owner.real_name:
             custom_with_name = f" imported as '{custom.owner.name}'"
         if standard.owner.name != standard.owner.real_name:
@@ -437,13 +459,14 @@ class KeywordStore:
             f"'{custom.owner.real_name}'{custom_with_name} and a standard library "
             f"'{standard.owner.real_name}'{standard_with_name}. The custom keyword "
             f"is used. To select explicitly, and to get rid of this warning, use "
-            f"either '{custom.full_name}' or '{standard.full_name}'.", level='WARN'
+            f"either '{custom.full_name}' or '{standard.full_name}'.",
+            level="WARN",
         )
 
     def _get_explicit_runner(self, name):
         kws_and_names = []
         for owner_name, kw_name in self._get_owner_and_kw_names(name):
-            for owner in chain(self.libraries.values(), self.resources.values()):
+            for owner in (*self.libraries.values(), *self.resources.values()):
                 if eq(owner.name, owner_name):
                     for kw in owner.find_keywords(kw_name):
                         kws_and_names.append((kw, kw_name))
@@ -460,9 +483,11 @@ class KeywordStore:
         return kw.create_runner(kw_name, self.languages)
 
     def _get_owner_and_kw_names(self, full_name):
-        tokens = full_name.split('.')
-        return [('.'.join(tokens[:index]), '.'.join(tokens[index:]))
-                for index in range(1, len(tokens))]
+        tokens = full_name.split(".")
+        return [
+            (".".join(tokens[:index]), ".".join(tokens[index:]))
+            for index in range(1, len(tokens))
+        ]
 
     def _raise_multiple_keywords_found(self, keywords, name, implicit=True):
         if any(kw.embedded for kw in keywords):
@@ -472,7 +497,7 @@ class KeywordStore:
             if implicit:
                 error += ". Give the full name of the keyword you want to use"
         names = sorted(kw.full_name for kw in keywords)
-        raise KeywordError('\n    '.join([error+':'] + names))
+        raise KeywordError("\n    ".join([error + ":", *names]))
 
 
 class KeywordRecommendationFinder:
@@ -482,12 +507,16 @@ class KeywordRecommendationFinder:
 
     def recommend_similar_keywords(self, name, message):
         """Return keyword names similar to `name`."""
-        candidates = self._get_candidates(use_full_name='.' in name)
+        candidates = self._get_candidates(use_full_name="." in name)
         finder = RecommendationFinder(
-            lambda name: normalize(candidates.get(name, name), ignore='_')
+            lambda name: normalize(candidates.get(name, name), ignore="_")
         )
-        return finder.find_and_format(name, candidates, message,
-                                      check_missing_argument_separator=True)
+        return finder.find_and_format(
+            name,
+            candidates,
+            message,
+            check_missing_argument_separator=True,
+        )
 
     @staticmethod
     def format_recommendations(message, recommendations):
@@ -495,9 +524,12 @@ class KeywordRecommendationFinder:
 
     def _get_candidates(self, use_full_name=False):
         candidates = {}
-        names = sorted((owner.name or '', kw.name)
-                       for owner in self.owners for kw in owner.keywords)
+        names = sorted(
+            (owner.name or "", kw.name)
+            for owner in self.owners
+            for kw in owner.keywords
+        )
         for owner, name in names:
-            full_name = f'{owner}.{name}' if owner else name
+            full_name = f"{owner}.{name}" if owner else name
             candidates[full_name] = full_name if use_full_name else name
         return candidates

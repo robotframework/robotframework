@@ -14,13 +14,12 @@
 #  limitations under the License.
 
 from collections.abc import Iterator
-from typing import cast, List
+from typing import List
 
 from robot.variables import VariableMatches
 
-
 # Type alias to ease typing elsewhere
-StatementTokens = List['Token']
+StatementTokens = List["Token"]
 
 
 class Token:
@@ -42,85 +41,85 @@ class Token:
     :attr:`IF` or `:attr:`EOL`, the value is set automatically.
     """
 
-    SETTING_HEADER = 'SETTING HEADER'
-    VARIABLE_HEADER = 'VARIABLE HEADER'
-    TESTCASE_HEADER = 'TESTCASE HEADER'
-    TASK_HEADER = 'TASK HEADER'
-    KEYWORD_HEADER = 'KEYWORD HEADER'
-    COMMENT_HEADER = 'COMMENT HEADER'
-    INVALID_HEADER = 'INVALID HEADER'
-    FATAL_INVALID_HEADER = 'FATAL INVALID HEADER'    # TODO: Remove in RF 8.
+    SETTING_HEADER = "SETTING HEADER"
+    VARIABLE_HEADER = "VARIABLE HEADER"
+    TESTCASE_HEADER = "TESTCASE HEADER"
+    TASK_HEADER = "TASK HEADER"
+    KEYWORD_HEADER = "KEYWORD HEADER"
+    COMMENT_HEADER = "COMMENT HEADER"
+    INVALID_HEADER = "INVALID HEADER"
+    FATAL_INVALID_HEADER = "FATAL INVALID HEADER"  # TODO: Remove in RF 8.
 
-    TESTCASE_NAME = 'TESTCASE NAME'
-    KEYWORD_NAME = 'KEYWORD NAME'
-    SUITE_NAME = 'SUITE NAME'
-    DOCUMENTATION = 'DOCUMENTATION'
-    SUITE_SETUP = 'SUITE SETUP'
-    SUITE_TEARDOWN = 'SUITE TEARDOWN'
-    METADATA = 'METADATA'
-    TEST_SETUP = 'TEST SETUP'
-    TEST_TEARDOWN = 'TEST TEARDOWN'
-    TEST_TEMPLATE = 'TEST TEMPLATE'
-    TEST_TIMEOUT = 'TEST TIMEOUT'
-    TEST_TAGS = 'TEST TAGS'
-    FORCE_TAGS = TEST_TAGS    # TODO: Remove in RF 8.
-    DEFAULT_TAGS = 'DEFAULT TAGS'
-    KEYWORD_TAGS = 'KEYWORD TAGS'
-    LIBRARY = 'LIBRARY'
-    RESOURCE = 'RESOURCE'
-    VARIABLES = 'VARIABLES'
-    SETUP = 'SETUP'
-    TEARDOWN = 'TEARDOWN'
-    TEMPLATE = 'TEMPLATE'
-    TIMEOUT = 'TIMEOUT'
-    TAGS = 'TAGS'
-    ARGUMENTS = 'ARGUMENTS'
-    RETURN = 'RETURN'          # TODO: Change to mean RETURN statement in RF 8.
-    RETURN_SETTING = RETURN    # TODO: Remove in RF 8.
+    TESTCASE_NAME = "TESTCASE NAME"
+    KEYWORD_NAME = "KEYWORD NAME"
+    SUITE_NAME = "SUITE NAME"
+    DOCUMENTATION = "DOCUMENTATION"
+    SUITE_SETUP = "SUITE SETUP"
+    SUITE_TEARDOWN = "SUITE TEARDOWN"
+    METADATA = "METADATA"
+    TEST_SETUP = "TEST SETUP"
+    TEST_TEARDOWN = "TEST TEARDOWN"
+    TEST_TEMPLATE = "TEST TEMPLATE"
+    TEST_TIMEOUT = "TEST TIMEOUT"
+    TEST_TAGS = "TEST TAGS"
+    FORCE_TAGS = TEST_TAGS  # TODO: Remove in RF 8.
+    DEFAULT_TAGS = "DEFAULT TAGS"
+    KEYWORD_TAGS = "KEYWORD TAGS"
+    LIBRARY = "LIBRARY"
+    RESOURCE = "RESOURCE"
+    VARIABLES = "VARIABLES"
+    SETUP = "SETUP"
+    TEARDOWN = "TEARDOWN"
+    TEMPLATE = "TEMPLATE"
+    TIMEOUT = "TIMEOUT"
+    TAGS = "TAGS"
+    ARGUMENTS = "ARGUMENTS"
+    RETURN = "RETURN"  # TODO: Change to mean RETURN statement in RF 8.
+    RETURN_SETTING = RETURN  # TODO: Remove in RF 8.
 
-    AS = 'AS'
-    WITH_NAME = AS             # TODO: Remove in RF 8.
+    AS = "AS"
+    WITH_NAME = AS  # TODO: Remove in RF 8.
 
-    NAME = 'NAME'
-    VARIABLE = 'VARIABLE'
-    ARGUMENT = 'ARGUMENT'
-    ASSIGN = 'ASSIGN'
-    KEYWORD = 'KEYWORD'
-    FOR = 'FOR'
-    FOR_SEPARATOR = 'FOR SEPARATOR'
-    END = 'END'
-    IF = 'IF'
-    INLINE_IF = 'INLINE IF'
-    ELSE_IF = 'ELSE IF'
-    ELSE = 'ELSE'
-    TRY = 'TRY'
-    EXCEPT = 'EXCEPT'
-    FINALLY = 'FINALLY'
-    WHILE = 'WHILE'
-    VAR = 'VAR'
-    RETURN_STATEMENT = 'RETURN STATEMENT'
-    CONTINUE = 'CONTINUE'
-    BREAK = 'BREAK'
-    OPTION = 'OPTION'
-    GROUP = 'GROUP'
+    NAME = "NAME"
+    VARIABLE = "VARIABLE"
+    ARGUMENT = "ARGUMENT"
+    ASSIGN = "ASSIGN"
+    KEYWORD = "KEYWORD"
+    FOR = "FOR"
+    FOR_SEPARATOR = "FOR SEPARATOR"
+    END = "END"
+    IF = "IF"
+    INLINE_IF = "INLINE IF"
+    ELSE_IF = "ELSE IF"
+    ELSE = "ELSE"
+    TRY = "TRY"
+    EXCEPT = "EXCEPT"
+    FINALLY = "FINALLY"
+    WHILE = "WHILE"
+    VAR = "VAR"
+    RETURN_STATEMENT = "RETURN STATEMENT"
+    CONTINUE = "CONTINUE"
+    BREAK = "BREAK"
+    OPTION = "OPTION"
+    GROUP = "GROUP"
 
-    SEPARATOR = 'SEPARATOR'
-    COMMENT = 'COMMENT'
-    CONTINUATION = 'CONTINUATION'
-    CONFIG = 'CONFIG'
-    EOL = 'EOL'
-    EOS = 'EOS'
-    ERROR = 'ERROR'
-    FATAL_ERROR = 'FATAL ERROR'    # TODO: Remove in RF 8.
+    SEPARATOR = "SEPARATOR"
+    COMMENT = "COMMENT"
+    CONTINUATION = "CONTINUATION"
+    CONFIG = "CONFIG"
+    EOL = "EOL"
+    EOS = "EOS"
+    ERROR = "ERROR"
+    FATAL_ERROR = "FATAL ERROR"  # TODO: Remove in RF 8.
 
-    NON_DATA_TOKENS = frozenset((
+    NON_DATA_TOKENS = {
         SEPARATOR,
         COMMENT,
         CONTINUATION,
         EOL,
-        EOS
-    ))
-    SETTING_TOKENS = frozenset((
+        EOS,
+    }
+    SETTING_TOKENS = {
         DOCUMENTATION,
         SUITE_NAME,
         SUITE_SETUP,
@@ -142,40 +141,66 @@ class Token:
         TIMEOUT,
         TAGS,
         ARGUMENTS,
-        RETURN
-    ))
-    HEADER_TOKENS = frozenset((
+        RETURN,
+    }
+    HEADER_TOKENS = {
         SETTING_HEADER,
         VARIABLE_HEADER,
         TESTCASE_HEADER,
         TASK_HEADER,
         KEYWORD_HEADER,
         COMMENT_HEADER,
-        INVALID_HEADER
-    ))
-    ALLOW_VARIABLES = frozenset((
+        INVALID_HEADER,
+    }
+    ALLOW_VARIABLES = {
         NAME,
         ARGUMENT,
         TESTCASE_NAME,
-        KEYWORD_NAME
-    ))
-    __slots__ = ['type', 'value', 'lineno', 'col_offset', 'error',
-                 '_add_eos_before', '_add_eos_after']
+        KEYWORD_NAME,
+    }
+    __slots__ = (
+        "type",
+        "value",
+        "lineno",
+        "col_offset",
+        "error",
+        "_add_eos_before",
+        "_add_eos_after",
+    )
 
-    def __init__(self, type: 'str|None' = None, value: 'str|None' = None,
-                 lineno: int = -1, col_offset: int = -1, error: 'str|None' = None):
+    def __init__(
+        self,
+        type: "str|None" = None,
+        value: "str|None" = None,
+        lineno: int = -1,
+        col_offset: int = -1,
+        error: "str|None" = None,
+    ):
         self.type = type
         if value is None:
-            value = {
-                Token.IF: 'IF', Token.INLINE_IF: 'IF', Token.ELSE_IF: 'ELSE IF',
-                Token.ELSE: 'ELSE', Token.FOR: 'FOR', Token.WHILE: 'WHILE',
-                Token.TRY: 'TRY', Token.EXCEPT: 'EXCEPT', Token.FINALLY: 'FINALLY',
-                Token.END: 'END', Token.VAR: 'VAR', Token.CONTINUE: 'CONTINUE',
-                Token.BREAK: 'BREAK', Token.RETURN_STATEMENT: 'RETURN',
-                Token.CONTINUATION: '...', Token.EOL: '\n', Token.WITH_NAME: 'AS',
-                Token.AS: 'AS', Token.GROUP: 'GROUP'
-            }.get(type, '')    # type: ignore
-        self.value = cast(str, value)
+            defaults = {
+                Token.IF: "IF",
+                Token.INLINE_IF: "IF",
+                Token.ELSE_IF: "ELSE IF",
+                Token.ELSE: "ELSE",
+                Token.FOR: "FOR",
+                Token.WHILE: "WHILE",
+                Token.TRY: "TRY",
+                Token.EXCEPT: "EXCEPT",
+                Token.FINALLY: "FINALLY",
+                Token.END: "END",
+                Token.VAR: "VAR",
+                Token.CONTINUE: "CONTINUE",
+                Token.BREAK: "BREAK",
+                Token.RETURN_STATEMENT: "RETURN",
+                Token.CONTINUATION: "...",
+                Token.EOL: "\n",
+                Token.WITH_NAME: "AS",
+                Token.AS: "AS",
+                Token.GROUP: "GROUP",
+            }
+            value = defaults.get(type, "")
+        self.value = value
         self.lineno = lineno
         self.col_offset = col_offset
         self.error = error
@@ -193,7 +218,7 @@ class Token:
         self.type = Token.ERROR
         self.error = error
 
-    def tokenize_variables(self) -> 'Iterator[Token]':
+    def tokenize_variables(self) -> "Iterator[Token]":
         """Tokenizes possible variables in token value.
 
         Yields the token itself if the token does not allow variables (see
@@ -209,13 +234,13 @@ class Token:
             return self._tokenize_no_variables()
         return self._tokenize_variables(matches)
 
-    def _tokenize_no_variables(self) -> 'Iterator[Token]':
+    def _tokenize_no_variables(self) -> "Iterator[Token]":
         yield self
 
-    def _tokenize_variables(self, matches) -> 'Iterator[Token]':
+    def _tokenize_variables(self, matches) -> "Iterator[Token]":
         lineno = self.lineno
         col_offset = self.col_offset
-        after = ''
+        after = ""
         for match in matches:
             if match.before:
                 yield Token(self.type, match.before, lineno, col_offset)
@@ -229,28 +254,31 @@ class Token:
         return self.value
 
     def __repr__(self) -> str:
-        typ = self.type.replace(' ', '_') if self.type else 'None'
-        error = '' if not self.error else f', {self.error!r}'
-        return f'Token({typ}, {self.value!r}, {self.lineno}, {self.col_offset}{error})'
+        typ = self.type.replace(" ", "_") if self.type else "None"
+        error = "" if not self.error else f", {self.error!r}"
+        return f"Token({typ}, {self.value!r}, {self.lineno}, {self.col_offset}{error})"
 
     def __eq__(self, other) -> bool:
-        return (isinstance(other, Token)
-                and self.type == other.type
-                and self.value == other.value
-                and self.lineno == other.lineno
-                and self.col_offset == other.col_offset
-                and self.error == other.error)
+        return (
+            isinstance(other, Token)
+            and self.type == other.type
+            and self.value == other.value
+            and self.lineno == other.lineno
+            and self.col_offset == other.col_offset
+            and self.error == other.error
+        )
 
 
 class EOS(Token):
     """Token representing end of a statement."""
-    __slots__ = []
+
+    __slots__ = ()
 
     def __init__(self, lineno: int = -1, col_offset: int = -1):
-        super().__init__(Token.EOS, '', lineno, col_offset)
+        super().__init__(Token.EOS, "", lineno, col_offset)
 
     @classmethod
-    def from_token(cls, token: Token, before: bool = False) -> 'EOS':
+    def from_token(cls, token: Token, before: bool = False) -> "EOS":
         col_offset = token.col_offset if before else token.end_col_offset
         return cls(token.lineno, col_offset)
 
@@ -261,12 +289,13 @@ class END(Token):
     Virtual END tokens have '' as their value, with "real" END tokens the
     value is 'END'.
     """
-    __slots__ = []
+
+    __slots__ = ()
 
     def __init__(self, lineno: int = -1, col_offset: int = -1, virtual: bool = False):
-        value = 'END' if not virtual else ''
+        value = "END" if not virtual else ""
         super().__init__(Token.END, value, lineno, col_offset)
 
     @classmethod
-    def from_token(cls, token: Token, virtual: bool = False) -> 'END':
+    def from_token(cls, token: Token, virtual: bool = False) -> "END":
         return cls(token.lineno, token.end_col_offset, virtual)

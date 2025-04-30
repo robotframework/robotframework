@@ -7,8 +7,11 @@ class AsyncDynamicLibrary:
         await asyncio.sleep(0.1)
         return ["async_keyword"]
 
-    async def run_keyword(self, name, *args, **kwargs):
-        print("Running keyword '%s' with positional arguments %s and named arguments %s." % (name, args, kwargs))
+    async def run_keyword(self, name, *args, **named):
+        print(
+            f"Running keyword '{name}' with positional arguments {args} "
+            f"and named arguments {named}."
+        )
         await asyncio.sleep(0.1)
         if name == "async_keyword":
             return await self.async_keyword()

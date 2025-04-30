@@ -43,10 +43,10 @@ class FileReader:  # FIXME: Rename to SourceReader
     def __init__(self, source: Source, accept_text: bool = False):
         self.file, self._opened = self._get_file(source, accept_text)
 
-    def _get_file(self, source: Source, accept_text: bool) -> 'tuple[TextIO, bool]':
+    def _get_file(self, source: Source, accept_text: bool) -> "tuple[TextIO, bool]":
         path = self._get_path(source, accept_text)
         if path:
-            file = open(path, 'rb')
+            file = open(path, "rb")
             opened = True
         elif isinstance(source, str):
             file = StringIO(source)
@@ -63,18 +63,18 @@ class FileReader:  # FIXME: Rename to SourceReader
             return None
         if not accept_text:
             return source
-        if '\n' in source:
+        if "\n" in source:
             return None
         path = Path(source)
         try:
             is_path = path.is_absolute() or path.exists()
-        except OSError:    # Can happen on Windows w/ Python < 3.10.
+        except OSError:  # Can happen on Windows w/ Python < 3.10.
             is_path = False
         return source if is_path else None
 
     @property
     def name(self) -> str:
-        return getattr(self.file, 'name', '<in-memory file>')
+        return getattr(self.file, "name", "<in-memory file>")
 
     def __enter__(self):
         return self
@@ -86,17 +86,17 @@ class FileReader:  # FIXME: Rename to SourceReader
     def read(self) -> str:
         return self._decode(self.file.read())
 
-    def readlines(self) -> 'Iterator[str]':
+    def readlines(self) -> "Iterator[str]":
         first_line = True
         for line in self.file.readlines():
             yield self._decode(line, remove_bom=first_line)
             first_line = False
 
-    def _decode(self, content: 'str|bytes', remove_bom: bool = True) -> str:
+    def _decode(self, content: "str|bytes", remove_bom: bool = True) -> str:
         if isinstance(content, bytes):
-            content = content.decode('UTF-8')
-        if remove_bom and content.startswith('\ufeff'):
+            content = content.decode("UTF-8")
+        if remove_bom and content.startswith("\ufeff"):
             content = content[1:]
-        if '\r\n' in content:
-            content = content.replace('\r\n', '\n')
+        if "\r\n" in content:
+            content = content.replace("\r\n", "\n")
         return content

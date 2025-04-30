@@ -32,8 +32,8 @@ except ImportError:
 
 from robot.api import logger
 from robot.libraries.BuiltIn import BuiltIn
-from robot.version import get_version
 from robot.utils import abspath, get_error_message, get_link_path
+from robot.version import get_version
 
 
 class Screenshot:
@@ -83,7 +83,7 @@ class Screenshot:
     quality, using GIFs and video capturing.
     """
 
-    ROBOT_LIBRARY_SCOPE = 'TEST SUITE'
+    ROBOT_LIBRARY_SCOPE = "TEST SUITE"
     ROBOT_LIBRARY_VERSION = get_version()
 
     def __init__(self, screenshot_directory=None, screenshot_module=None):
@@ -110,10 +110,6 @@ class Screenshot:
     def _norm_path(self, path):
         if not path:
             return path
-        elif isinstance(path, os.PathLike):
-            path = str(path)
-        else:
-            path = path.replace('/', os.sep)
         return os.path.normpath(path)
 
     @property
@@ -123,9 +119,9 @@ class Screenshot:
     @property
     def _log_dir(self):
         variables = BuiltIn().get_variables()
-        outdir = variables['${OUTPUTDIR}']
-        log = variables['${LOGFILE}']
-        log = os.path.dirname(log) if log != 'NONE' else '.'
+        outdir = variables["${OUTPUTDIR}"]
+        log = variables["${LOGFILE}"]
+        log = os.path.dirname(log) if log != "NONE" else "."
         return self._norm_path(os.path.join(outdir, log))
 
     def set_screenshot_directory(self, path):
@@ -138,7 +134,7 @@ class Screenshot:
         """
         path = self._norm_path(path)
         if not os.path.isdir(path):
-            raise RuntimeError("Directory '%s' does not exist." % path)
+            raise RuntimeError(f"Directory '{path}' does not exist.")
         old = self._screenshot_dir
         self._given_screenshot_dir = path
         return old
@@ -184,132 +180,147 @@ class Screenshot:
         return path
 
     def _save_screenshot(self, name):
-        name = str(name) if isinstance(name, os.PathLike) else name.replace('/', os.sep)
+        name = str(name) if isinstance(name, os.PathLike) else name.replace("/", os.sep)
         path = self._get_screenshot_path(name)
         return self._screenshot_to_file(path)
 
     def _screenshot_to_file(self, path):
         path = self._validate_screenshot_path(path)
-        logger.debug('Using %s module/tool for taking screenshot.'
-                     % self._screenshot_taker.module)
+        module = self._screenshot_taker.module
+        logger.debug(f"Using {module} module/tool for taking screenshot.")
         try:
             self._screenshot_taker(path)
         except Exception:
-            logger.warn('Taking screenshot failed: %s\n'
-                        'Make sure tests are run with a physical or virtual '
-                        'display.' % get_error_message())
+            logger.warn(
+                f"Taking screenshot failed: {get_error_message()}\n"
+                f"Make sure tests are run with a physical or virtual display."
+            )
         return path
 
     def _validate_screenshot_path(self, path):
         path = abspath(self._norm_path(path))
-        if not os.path.exists(os.path.dirname(path)):
-            raise RuntimeError("Directory '%s' where to save the screenshot "
-                               "does not exist" % os.path.dirname(path))
+        dire = os.path.dirname(path)
+        if not os.path.exists(dire):
+            raise RuntimeError(
+                f"Directory '{dire}' where to save the screenshot does not exist."
+            )
         return path
 
     def _get_screenshot_path(self, basename):
-        if basename.lower().endswith(('.jpg', '.jpeg')):
+        if basename.lower().endswith((".jpg", ".jpeg")):
             return os.path.join(self._screenshot_dir, basename)
         index = 0
         while True:
             index += 1
-            path = os.path.join(self._screenshot_dir, "%s_%d.jpg" % (basename, index))
+            path = os.path.join(self._screenshot_dir, f"{basename}_{index}.jpg")
             if not os.path.exists(path):
                 return path
 
     def _embed_screenshot(self, path, width):
         link = get_link_path(path, self._log_dir)
-        logger.info('<a href="%s"><img src="%s" width="%s"></a>'
-                    % (link, link, width), html=True)
+        logger.info(
+            f'<a href="{link}"><img src="{link}" width="{width}"></a>',
+            html=True,
+        )
 
     def _link_screenshot(self, path):
         link = get_link_path(path, self._log_dir)
-        logger.info("Screenshot saved to '<a href=\"%s\">%s</a>'."
-                    % (link, path), html=True)
+        logger.info(
+            f"Screenshot saved to '<a href=\"{link}\">{path}</a>'.",
+            html=True,
+        )
 
 
 class ScreenshotTaker:
 
     def __init__(self, module_name=None):
         self._screenshot = self._get_screenshot_taker(module_name)
-        self.module = self._screenshot.__name__.split('_')[1]
+        self.module = self._screenshot.__name__.split("_")[1]
         self._wx_app_reference = None
 
     def __call__(self, path):
         self._screenshot(path)
 
     def __bool__(self):
-        return self.module != 'no'
+        return self.module != "no"
 
     def test(self, path=None):
         if not self:
             print("Cannot take screenshots.")
             return False
-        print("Using '%s' to take screenshot." % self.module)
+        print(f"Using '{self.module}' to take screenshot.")
         if not path:
             print("Not taking test screenshot.")
             return True
-        print("Taking test screenshot to '%s'." % path)
+        print(f"Taking test screenshot to '{path}'.")
         try:
             self(path)
         except Exception:
-            print("Failed: %s" % get_error_message())
+            print(f"Failed: {get_error_message()}")
             return False
         else:
             print("Success!")
             return True
 
     def _get_screenshot_taker(self, module_name=None):
-        if sys.platform == 'darwin':
+        if sys.platform == "darwin":
             return self._osx_screenshot
         if module_name:
             return self._get_named_screenshot_taker(module_name.lower())
         return self._get_default_screenshot_taker()
 
     def _get_named_screenshot_taker(self, name):
-        screenshot_takers = {'wxpython': (wx, self._wx_screenshot),
-                             'pygtk': (gdk, self._gtk_screenshot),
-                             'pil': (ImageGrab, self._pil_screenshot),
-                             'scrot': (self._scrot, self._scrot_screenshot)}
+        screenshot_takers = {
+            "wxpython": (wx, self._wx_screenshot),
+            "pygtk": (gdk, self._gtk_screenshot),
+            "pil": (ImageGrab, self._pil_screenshot),
+            "scrot": (self._scrot, self._scrot_screenshot),
+        }
         if name not in screenshot_takers:
-            raise RuntimeError("Invalid screenshot module or tool '%s'." % name)
+            raise RuntimeError(f"Invalid screenshot module or tool '{name}'.")
         supported, screenshot_taker = screenshot_takers[name]
         if not supported:
-            raise RuntimeError("Screenshot module or tool '%s' not installed."
-                               % name)
+            raise RuntimeError(f"Screenshot module or tool '{name}' not installed.")
         return screenshot_taker
 
     def _get_default_screenshot_taker(self):
-        for module, screenshot_taker in [(wx, self._wx_screenshot),
-                                         (gdk, self._gtk_screenshot),
-                                         (ImageGrab, self._pil_screenshot),
-                                         (self._scrot, self._scrot_screenshot),
-                                         (True, self._no_screenshot)]:
+        for module, screenshot_taker in [
+            (wx, self._wx_screenshot),
+            (gdk, self._gtk_screenshot),
+            (ImageGrab, self._pil_screenshot),
+            (self._scrot, self._scrot_screenshot),
+            (True, self._no_screenshot),
+        ]:
             if module:
                 return screenshot_taker
 
     def _osx_screenshot(self, path):
-        if self._call('screencapture', '-t', 'jpg', path) != 0:
+        if self._call("screencapture", "-t", "jpg", path) != 0:
             raise RuntimeError("Using 'screencapture' failed.")
 
     def _call(self, *command):
         try:
-            return subprocess.call(command, stdout=subprocess.PIPE,
-                                   stderr=subprocess.STDOUT)
+            return subprocess.call(
+                command,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+            )
         except OSError:
             return -1
 
     @property
     def _scrot(self):
-        return os.sep == '/' and self._call('scrot', '--version') == 0
+        return os.sep == "/" and self._call("scrot", "--version") == 0
 
     def _scrot_screenshot(self, path):
-        if not path.endswith(('.jpg', '.jpeg')):
-            raise RuntimeError("Scrot requires extension to be '.jpg' or "
-                               "'.jpeg', got '%s'." % os.path.splitext(path)[1])
+        if not path.endswith((".jpg", ".jpeg")):
+            ext = os.path.splitext(path)[1]
+            raise RuntimeError(
+                f"Scrot requires extension to be '.jpg' or '.jpeg', got '{ext}'."
+            )
         if os.path.exists(path):
             os.remove(path)
-        if self._call('scrot', '--silent', path) != 0:
+        if self._call("scrot", "--silent", path) != 0:
             raise RuntimeError("Using 'scrot' failed.")
 
     def _wx_screenshot(self, path):
@@ -317,7 +328,7 @@ class ScreenshotTaker:
             self._wx_app_reference = wx.App(False)
         context = wx.ScreenDC()
         width, height = context.GetSize()
-        if wx.__version__ >= '4':
+        if wx.__version__ >= "4":
             bitmap = wx.Bitmap(width, height, -1)
         else:
             bitmap = wx.EmptyBitmap(width, height, -1)
@@ -330,27 +341,30 @@ class ScreenshotTaker:
     def _gtk_screenshot(self, path):
         window = gdk.get_default_root_window()
         if not window:
-            raise RuntimeError('Taking screenshot failed.')
+            raise RuntimeError("Taking screenshot failed.")
         width, height = window.get_size()
         pb = gdk.Pixbuf(gdk.COLORSPACE_RGB, False, 8, width, height)
-        pb = pb.get_from_drawable(window, window.get_colormap(),
-                                  0, 0, 0, 0, width, height)
+        pb = pb.get_from_drawable(
+            window, window.get_colormap(), 0, 0, 0, 0, width, height
+        )
         if not pb:
-            raise RuntimeError('Taking screenshot failed.')
-        pb.save(path, 'jpeg')
+            raise RuntimeError("Taking screenshot failed.")
+        pb.save(path, "jpeg")
 
     def _pil_screenshot(self, path):
-        ImageGrab.grab().save(path, 'JPEG')
+        ImageGrab.grab().save(path, "JPEG")
 
     def _no_screenshot(self, path):
-        raise RuntimeError('Taking screenshots is not supported on this platform '
-                           'by default. See library documentation for details.')
+        raise RuntimeError(
+            "Taking screenshots is not supported on this platform "
+            "by default. See library documentation for details."
+        )
 
 
 if __name__ == "__main__":
     if len(sys.argv) not in [2, 3]:
-        sys.exit("Usage: %s <path>|test [wxpython|pygtk|pil|scrot]"
-                 % os.path.basename(sys.argv[0]))
-    path = sys.argv[1] if sys.argv[1] != 'test' else None
+        prog = os.path.basename(sys.argv[0])
+        sys.exit(f"Usage: {prog} <path>|test [wxpython|pygtk|pil|scrot]")
+    path = sys.argv[1] if sys.argv[1] != "test" else None
     module = sys.argv[2] if len(sys.argv) > 2 else None
     ScreenshotTaker(module).test(path)

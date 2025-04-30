@@ -18,25 +18,22 @@ import sys
 
 # Version number typically updated by running `invoke set-version <version>`.
 # Run `invoke --help set-version` or see tasks.py for details.
-VERSION = '7.3.dev1'
+VERSION = "7.3.dev1"
 
 
 def get_version(naked=False):
     if naked:
-        return re.split('(a|b|rc|.dev)', VERSION)[0]
+        return re.split("(a|b|rc|.dev)", VERSION)[0]
     return VERSION
 
 
 def get_full_version(program=None, naked=False):
-    version = '%s %s (%s %s on %s)' % (program or '',
-                                       get_version(naked),
-                                       get_interpreter(),
-                                       sys.version.split()[0],
-                                       sys.platform)
-    return version.strip()
+    program = f"{program or ''} {get_version(naked)}".strip()
+    interpreter = f"{get_interpreter()} {sys.version.split()[0]}"
+    return f"{program} ({interpreter} on {sys.platform})"
 
 
 def get_interpreter():
-    if 'PyPy' in sys.version:
-        return 'PyPy'
-    return 'Python'
+    if "PyPy" in sys.version:
+        return "PyPy"
+    return "Python"

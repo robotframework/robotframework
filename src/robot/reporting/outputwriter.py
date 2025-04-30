@@ -13,18 +13,18 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.output.xmllogger import XmlLogger, LegacyXmlLogger
+from robot.output.xmllogger import LegacyXmlLogger, XmlLogger
 
 
 class OutputWriter(XmlLogger):
-    generator = 'Rebot'
+    generator = "Rebot"
 
     def end_result(self, result):
         self.close()
 
 
 class LegacyOutputWriter(LegacyXmlLogger):
-    generator = 'Rebot'
+    generator = "Rebot"
 
     def end_result(self, result):
         self.close()

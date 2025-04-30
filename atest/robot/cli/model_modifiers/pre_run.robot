@@ -63,8 +63,8 @@ Modifiers are used before normal configuration
 
 Modifiers can use special Argument objects in arguments
     ${tc} =    Check Test Case    Created
-    Check Log Message    ${tc[1, 0]}    Argument object!
-    Check Keyword Data    ${tc[1]}    BuiltIn.Log    args=Argument object!, level=INFO
+    Check Log Message    ${tc[1, 0]}    Argument object
+    Check Keyword Data    ${tc[1]}    BuiltIn.Log    args=Argument object, level=INFO
     Check Keyword Data    ${tc[2]}    BuiltIn.Should Contain    args=(1, 2, 3), item=2
 
 Modifiers can pass positional and named arguments separately

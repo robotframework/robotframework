@@ -166,13 +166,16 @@ from .unic import prepr as prepr, safe_str as safe_str
 
 def read_rest_data(rstfile):
     from .restreader import read_rest_data
+
     return read_rest_data(rstfile)
 
 
 def unic(item):
     # Cannot be deprecated using '__getattr__' because a module with same name exists.
-    warnings.warn("'robot.utils.unic' is deprecated and will be removed in "
-                  "Robot Framework 9.0.", DeprecationWarning)
+    warnings.warn(
+        "'robot.utils.unic' is deprecated and will be removed in Robot Framework 9.0.",
+        DeprecationWarning,
+    )
     return safe_str(item)
 
 
@@ -184,12 +187,13 @@ def __getattr__(name):
     from io import StringIO
     from os import PathLike
     from xml.etree import ElementTree as ET
+
     from .robottypes import FALSE_STRINGS, TRUE_STRINGS
 
     def py2to3(cls):
-        if hasattr(cls, '__unicode__'):
+        if hasattr(cls, "__unicode__"):
             cls.__str__ = lambda self: self.__unicode__()
-        if hasattr(cls, '__nonzero__'):
+        if hasattr(cls, "__nonzero__"):
             cls.__bool__ = lambda self: self.__nonzero__()
         return cls
 
@@ -212,33 +216,36 @@ def __getattr__(name):
         return isinstance(item, PathLike)
 
     deprecated = {
-        'RERAISED_EXCEPTIONS': (KeyboardInterrupt, SystemExit, MemoryError),
-        'FALSE_STRINGS': FALSE_STRINGS,
-        'TRUE_STRINGS': TRUE_STRINGS,
-        'ET': ET,
-        'StringIO': StringIO,
-        'PY3': True,
-        'PY2': False,
-        'JYTHON': False,
-        'IRONPYTHON': False,
-        'is_number': is_number,
-        'is_integer': is_integer,
-        'is_pathlike': is_pathlike,
-        'is_bytes': is_bytes,
-        'is_string': is_string,
-        'is_unicode': is_string,
-        'unicode': str,
-        'roundup': round,
-        'py2to3': py2to3,
-        'py3to2': py3to2,
+        "RERAISED_EXCEPTIONS": (KeyboardInterrupt, SystemExit, MemoryError),
+        "FALSE_STRINGS": FALSE_STRINGS,
+        "TRUE_STRINGS": TRUE_STRINGS,
+        "ET": ET,
+        "StringIO": StringIO,
+        "PY3": True,
+        "PY2": False,
+        "JYTHON": False,
+        "IRONPYTHON": False,
+        "is_number": is_number,
+        "is_integer": is_integer,
+        "is_pathlike": is_pathlike,
+        "is_bytes": is_bytes,
+        "is_string": is_string,
+        "is_unicode": is_string,
+        "unicode": str,
+        "roundup": round,
+        "py2to3": py2to3,
+        "py3to2": py3to2,
     }
 
     if name in deprecated:
         # TODO: Change DeprecationWarning to more visible UserWarning in RF 8.0.
         # https://github.com/robotframework/robotframework/issues/4501
         # Remember also 'unic' above '__getattr__' and 'PY2' in 'platform.py'.
-        warnings.warn(f"'robot.utils.{name}' is deprecated and will be removed in "
-                      f"Robot Framework 9.0.", DeprecationWarning)
+        warnings.warn(
+            f"'robot.utils.{name}' is deprecated and will be removed in "
+            f"Robot Framework 9.0.",
+            DeprecationWarning,
+        )
         return deprecated[name]
 
     raise AttributeError(f"'robot.utils' has no attribute '{name}'.")
