@@ -103,8 +103,10 @@ class LibraryKeywordRunner:
         )
 
     def _trace_log_args(self, positional, named):
-        args = [prepr(arg) for arg in positional]
-        args += [f"{safe_str(n)}={prepr(v)}" for n, v in named]
+        args = [
+            *[prepr(arg) for arg in positional],
+            *[f"{safe_str(n)}={prepr(v)}" for n, v in named],
+        ]
         return f"Arguments: [ {' | '.join(args)} ]"
 
     def _get_timeout(self, context):

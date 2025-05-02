@@ -73,7 +73,6 @@ class LinkFormatter:
 
 
 class LineFormatter:
-    handles = lambda self, line: True
     newline = "\n"
     _bold = re.compile(
         r"""
@@ -119,6 +118,9 @@ class LineFormatter:
             ("``", self._format_code),
             ("", LinkFormatter().format_link),
         ]
+
+    def handles(self, line):
+        return True
 
     def format(self, line):
         for marker, formatter in self._formatters:
@@ -236,7 +238,7 @@ class ParagraphFormatter(_Formatter):
     _format_line = LineFormatter().format
 
     def __init__(self, other_formatters):
-        _Formatter.__init__(self)
+        super().__init__()
         self._other_formatters = other_formatters
 
     def _handles(self, line):
@@ -261,10 +263,10 @@ class TableFormatter(_Formatter):
         return [cell.strip() for cell in self._line_splitter.split(line[1:-1])]
 
     def _format_table(self, rows):
-        maxlen = max(len(row) for row in rows)
+        row_len = max(len(row) for row in rows)
         table = ['<table border="1">']
         for row in rows:
-            row += [""] * (maxlen - len(row))  # fix ragged tables
+            row += [""] * (row_len - len(row))  # fix ragged tables
             table.append("<tr>")
             table.extend(self._format_cell(cell) for cell in row)
             table.append("</tr>")
