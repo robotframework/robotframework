@@ -18,7 +18,7 @@ import sys
 from robot.errors import (INFO_PRINTED, DATA_ERROR, STOPPED_BY_USER,
                           FRAMEWORK_ERROR, Information, DataError)
 
-from .argumentparser import ArgumentParser, enable_expandvars_in_argumentparser
+from .argumentparser import ArgumentParser
 from .encoding import console_encode
 from .error import get_error_details
 
@@ -29,7 +29,6 @@ class Application:
                  env_options=None, logger=None, **auto_options):
         self._ap = ArgumentParser(usage, name, version, arg_limits,
                                   self.validate, env_options, **auto_options)
-        enable_expandvars_in_argumentparser(self._ap)
         self._logger = logger or DefaultLogger()
 
     def main(self, arguments, **options):

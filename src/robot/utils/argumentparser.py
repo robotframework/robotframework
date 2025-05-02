@@ -390,22 +390,60 @@ class ArgFileParser:
 
     def _process_file(self, content):
         args = []
-        for line in content.splitlines():
+        lines = content.splitlines()
+        
+        # Extract pragma handling to dedicated function
+        expand_vars = self._parse_expandvars_pragma(lines)
+        
+        for line in lines:
             line = line.strip()
             if line.startswith("-"):
-                args.extend(self._split_option(line))
+                args.extend(self._split_option(line, expand_vars))
             elif line and not line.startswith("#"):
-                args.append(line)
+                args.append(self._expand_vars(line) if expand_vars else line)
         return args
+    
+    def _parse_expandvars_pragma(self, lines):
+        # 
+        #
+        # design resume:
+        # - must be on the first line
+        # - default is off (False)
+        # - values 'false', 'no', 'off' are considered False
+        # - empty values are considered False
+        # - all other values are considered True
+        if not lines:
+            return False
+        
+        first_line = lines[0].strip().lower()
+        if not first_line.startswith('# expandvars:'):
+            return False
+        
+        pragma_value = first_line.split(':', 1)[1].strip().lower()
+        
+        if not pragma_value:
+            return False
+        
+        if pragma_value in ('false', 'no', 'off'):
+            return False
+        
+        return True
 
-    def _split_option(self, line):
+    def _split_option(self, line, expand_vars=False):
         separator = self._get_option_separator(line)
         if not separator:
             return [line]
         option, value = line.split(separator, 1)
         if separator == " ":
             value = value.strip()
+        if expand_vars:
+            value = self._expand_vars(value)
         return [option, value]
+
+    def _expand_vars(self, value):
+        # Handle escaping with Template.safe_substitute 
+        # (fail gracefully without raising errors for missing variable
+        return Template(value).safe_substitute(os.environ)
 
     def _get_option_separator(self, line):
         if " " not in line and "=" not in line:
@@ -415,76 +453,3 @@ class ArgFileParser:
         if " " not in line:
             return "="
         return " " if line.index(" ") < line.index("=") else "="
-
-class ExpandVarsArgFileParser(ArgFileParser):
-
-    def __init__(self, options, base_parser=None):
-        super().__init__(options)
-        self._base_parser = base_parser
-        self._pragma_values = {
-            'true': True, 'yes': True, 'on': True,
-            'false': False, 'no': False, 'off': False
-        }
-
-    def _process_file(self, content):
-        # Environment variable expansion is controlled by a pragma in the first line
-        # Default is off for backward compatibility
-        args = []
-        lines = content.splitlines()
-        
-        # Check for pragma in first line
-        expand_vars = self._get_pragma_value(lines[0] if lines else '')
-        
-        for line in lines:
-            line = line.strip()
-            if self._is_pragma_line(line):
-                continue
-            if line.startswith('-'):
-                args.extend(self._split_option(line, expand_vars))
-            elif line and not line.startswith('#'):
-                args.append(self._expand_variables(line) if expand_vars else line)
-        return args
-
-    def _is_pragma_line(self, line):
-        # design decision: pragma lines if we want to expand vars
-        return line.strip().startswith('#') and 'expandvars:' in line.lower()
-
-    def _get_pragma_value(self, line):
-        # Extract pragma value - default is False for backward compatibility
-        if not self._is_pragma_line(line):
-            return False
-        try:
-            value = line.split(':', 1)[1].strip().lower()
-            return self._pragma_values.get(value, False)
-        except (IndexError, KeyError):
-            return False
-
-    def _expand_variables(self, line):
-        # design decision: expand variables in the line using the Template class
-        template = Template(line)
-        return template.safe_substitute(os.environ)
-
-    def _split_option(self, line, expand_vars=False):
-        separator = self._get_option_separator(line)
-        if not separator:
-            return [self._expand_variables(line) if expand_vars else line]
-        option, value = line.split(separator, 1)
-        if separator == ' ':
-            value = value.strip()
-        if expand_vars:
-            value = self._expand_variables(value)
-        return [option, value]
-
-
-def enable_expandvars_in_argumentparser(parser):
-    # Patches parser to use ExpandVarsArgFileParser which supports the expandvars pragma
-    # Only expands variables in files with "# expandvars: true" in first line
-    def patched_process(args):
-        options = ['--argumentfile']
-        for short_opt, long_opt in parser._short_to_long.items():
-            if long_opt == 'argumentfile':
-                options.append('-'+short_opt)
-        return ExpandVarsArgFileParser(options).process(args)
-    
-    parser._process_possible_argfile = patched_process
-    return parser
