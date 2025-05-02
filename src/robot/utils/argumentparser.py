@@ -22,6 +22,7 @@ import sys
 import string
 import warnings
 from pathlib import Path
+from string import Template
 
 from robot.errors import DataError, Information, FrameworkError
 from robot.version import get_full_version
@@ -343,7 +344,7 @@ class ArgLimitValidator:
 
 
 class ArgFileParser:
-
+    
     def __init__(self, options):
         self._options = options
 
@@ -357,21 +358,21 @@ class ArgFileParser:
 
     def _get_index(self, args):
         for opt in self._options:
-            start = opt + '=' if opt.startswith('--') else opt
+            start = opt + "=" if opt.startswith("--") else opt
             for index, arg in enumerate(args):
                 normalized_arg = (
-                    '--' + arg.lower().replace('-', '') if opt.startswith('--') else arg
+                    "--" + arg.lower().replace("-", "") if opt.startswith("--") else arg
                 )
                 # Handles `--argumentfile foo` and `-A foo`
                 if normalized_arg == opt and index + 1 < len(args):
-                    return args[index+1], slice(index, index+2)
+                    return args[index + 1], slice(index, index + 2)
                 # Handles `--argumentfile=foo` and `-Afoo`
                 if normalized_arg.startswith(start):
-                    return arg[len(start):], slice(index, index+1)
+                    return arg[len(start) :], slice(index, index + 1)
         return None, -1
 
     def _get_args(self, path):
-        if path.upper() != 'STDIN':
+        if path.upper() != "STDIN":
             content = self._read_from_file(path)
         else:
             content = self._read_from_stdin()
@@ -382,8 +383,7 @@ class ArgFileParser:
             with FileReader(path) as reader:
                 return reader.read()
         except (IOError, UnicodeError) as err:
-            raise DataError("Opening argument file '%s' failed: %s"
-                            % (path, err))
+            raise DataError(f"Opening argument file '{path}' failed: {err}")
 
     def _read_from_stdin(self):
         return console_decode(sys.__stdin__.read())
@@ -392,9 +392,9 @@ class ArgFileParser:
         args = []
         for line in content.splitlines():
             line = line.strip()
-            if line.startswith('-'):
+            if line.startswith("-"):
                 args.extend(self._split_option(line))
-            elif line and not line.startswith('#'):
+            elif line and not line.startswith("#"):
                 args.append(line)
         return args
 
@@ -403,15 +403,88 @@ class ArgFileParser:
         if not separator:
             return [line]
         option, value = line.split(separator, 1)
-        if separator == ' ':
+        if separator == " ":
             value = value.strip()
         return [option, value]
 
     def _get_option_separator(self, line):
-        if ' ' not in line and '=' not in line:
+        if " " not in line and "=" not in line:
             return None
-        if '=' not in line:
-            return ' '
-        if ' ' not in line:
-            return '='
-        return ' ' if line.index(' ') < line.index('=') else '='
+        if "=" not in line:
+            return " "
+        if " " not in line:
+            return "="
+        return " " if line.index(" ") < line.index("=") else "="
+
+class ExpandVarsArgFileParser(ArgFileParser):
+
+    def __init__(self, options, base_parser=None):
+        super().__init__(options)
+        self._base_parser = base_parser
+        self._pragma_values = {
+            'true': True, 'yes': True, 'on': True,
+            'false': False, 'no': False, 'off': False
+        }
+
+    def _process_file(self, content):
+        # Environment variable expansion is controlled by a pragma in the first line
+        # Default is off for backward compatibility
+        args = []
+        lines = content.splitlines()
+        
+        # Check for pragma in first line
+        expand_vars = self._get_pragma_value(lines[0] if lines else '')
+        
+        for line in lines:
+            line = line.strip()
+            if self._is_pragma_line(line):
+                continue
+            if line.startswith('-'):
+                args.extend(self._split_option(line, expand_vars))
+            elif line and not line.startswith('#'):
+                args.append(self._expand_variables(line) if expand_vars else line)
+        return args
+
+    def _is_pragma_line(self, line):
+        # design decision: pragma lines if we want to expand vars
+        return line.strip().startswith('#') and 'expandvars:' in line.lower()
+
+    def _get_pragma_value(self, line):
+        # Extract pragma value - default is False for backward compatibility
+        if not self._is_pragma_line(line):
+            return False
+        try:
+            value = line.split(':', 1)[1].strip().lower()
+            return self._pragma_values.get(value, False)
+        except (IndexError, KeyError):
+            return False
+
+    def _expand_variables(self, line):
+        # design decision: expand variables in the line using the Template class
+        template = Template(line)
+        return template.safe_substitute(os.environ)
+
+    def _split_option(self, line, expand_vars=False):
+        separator = self._get_option_separator(line)
+        if not separator:
+            return [self._expand_variables(line) if expand_vars else line]
+        option, value = line.split(separator, 1)
+        if separator == ' ':
+            value = value.strip()
+        if expand_vars:
+            value = self._expand_variables(value)
+        return [option, value]
+
+
+def enable_expandvars_in_argumentparser(parser):
+    # Patches parser to use ExpandVarsArgFileParser which supports the expandvars pragma
+    # Only expands variables in files with "# expandvars: true" in first line
+    def patched_process(args):
+        options = ['--argumentfile']
+        for short_opt, long_opt in parser._short_to_long.items():
+            if long_opt == 'argumentfile':
+                options.append('-'+short_opt)
+        return ExpandVarsArgFileParser(options).process(args)
+    
+    parser._process_possible_argfile = patched_process
+    return parser
