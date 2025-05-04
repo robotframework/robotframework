@@ -827,9 +827,9 @@ That method is always called when the library goes out of its scope.
 Listener examples
 -----------------
 
-This section contains examples using the listener interface. First examples
-illustrate getting notifications durin execution and latter examples modify
-executed tests and created results.
+This section contains examples using the listener interface. The first examples
+illustrate how to get notifications during execution. Later examples also
+modify executed tests and created results.
 
 Getting information
 ~~~~~~~~~~~~~~~~~~~
