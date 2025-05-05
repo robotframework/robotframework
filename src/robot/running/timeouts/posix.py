@@ -13,14 +13,16 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from signal import ITIMER_REAL, setitimer, SIGALRM, signal
+from signal import ITIMER_REAL, setitimer, SIG_DFL, SIGALRM, signal
 
 
 class Timeout:
+    _started = 0
 
     def __init__(self, timeout, error):
         self._timeout = timeout
         self._error = error
+        self._orig_alrm = None
 
     def execute(self, runnable):
         self._start_timer()
@@ -30,11 +32,16 @@ class Timeout:
             self._stop_timer()
 
     def _start_timer(self):
-        signal(SIGALRM, self._raise_timeout_error)
-        setitimer(ITIMER_REAL, self._timeout)
+        if not self._started:
+            self._orig_alrm = signal(SIGALRM, self._raise_timeout_error)
+            setitimer(ITIMER_REAL, self._timeout)
+        type(self)._started += 1
 
     def _raise_timeout_error(self, signum, frame):
         raise self._error
 
     def _stop_timer(self):
-        setitimer(ITIMER_REAL, 0)
+        type(self)._started -= 1
+        if not self._started:
+            setitimer(ITIMER_REAL, 0)
+            signal(SIGALRM, self._orig_alrm or SIG_DFL)

@@ -32,3 +32,8 @@ User keyword used via 'Run Keyword' with timeout and trace level
     [Setup]    Set Log Level    TRACE
     [Timeout]    1 day
     User Keyword via Run Keyword
+
+Timeout in parent keyword after running keyword
+    [Documentation]    FAIL    Test timeout 100 milliseconds exceeded.
+    [Timeout]    0.1 s
+    Timeout in parent keyword after running keyword

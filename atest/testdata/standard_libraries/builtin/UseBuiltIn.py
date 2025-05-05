@@ -1,3 +1,5 @@
+import time
+
 from robot.libraries.BuiltIn import BuiltIn
 
 
@@ -25,3 +27,9 @@ def use_run_keyword_with_non_string_values():
 
 def user_keyword_via_run_keyword():
     BuiltIn().run_keyword("UseBuiltInResource.Keyword", "This is x", 911)
+
+
+def timeout_in_parent_keyword_after_running_keyword():
+    BuiltIn().run_keyword("Log", "Hello!")
+    while True:
+        time.sleep(0)

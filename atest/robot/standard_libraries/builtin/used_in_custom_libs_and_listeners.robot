@@ -40,3 +40,6 @@ User keyword used via 'Run Keyword'
 User keyword used via 'Run Keyword' with timeout and trace level
     ${tc} =    Check Test Case    ${TESTNAME}
     Check Log Message    ${tc[0, 1, 0, 1]}    This is x-911-zzz
+
+Timeout in parent keyword after running keyword
+    Check Test Case    ${TESTNAME}
