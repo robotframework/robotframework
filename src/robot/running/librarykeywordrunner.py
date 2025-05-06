@@ -114,7 +114,7 @@ class LibraryKeywordRunner:
 
     def _execute(self, method, positional, named, context):
         timeout = self._get_timeout(context)
-        if timeout and timeout.active:
+        if timeout:
             method = self._wrap_with_timeout(method, timeout, context.output)
         with self._monitor(context):
             result = method(*positional, **dict(named))

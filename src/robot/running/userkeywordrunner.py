@@ -102,7 +102,7 @@ class UserKeywordRunner:
             self._set_arguments(kw, positional, named, context)
             if kw.timeout:
                 timeout = KeywordTimeout(kw.timeout, variables)
-                result.timeout = str(timeout)
+                result.timeout = str(timeout) if timeout else None
             else:
                 timeout = None
             with context.timeout(timeout):

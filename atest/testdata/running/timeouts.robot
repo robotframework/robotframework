@@ -317,7 +317,7 @@ Timeouted UK Using Timeouted UK
 
 Run Keyword With Timeout
     [Timeout]    200 milliseconds
-    Run Keyword Unless    False    Log    Hello
+    Run Keyword    Log    Hello
     Run Keyword If    True    Sleep    3
 
 Keyword timeout from variable
