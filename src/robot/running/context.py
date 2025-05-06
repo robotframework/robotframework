@@ -102,7 +102,8 @@ class _ExecutionContext:
     def __init__(self, suite, namespace, output, dry_run=False, asynchronous=None):
         self.suite = suite
         self.test = None
-        self.timeouts = set()
+        self.timeouts = []
+        self.active_timeouts = []
         self.namespace = namespace
         self.output = output
         self.dry_run = dry_run
@@ -166,12 +167,38 @@ class _ExecutionContext:
             )
 
     @contextmanager
-    def timeout(self, timeout):
+    def keyword_timeout(self, timeout):
         self._add_timeout(timeout)
         try:
             yield
         finally:
             self._remove_timeout(timeout)
+
+    @contextmanager
+    def timeout(self, timeout):
+        runner = timeout.get_runner()
+        self.active_timeouts.append(runner)
+        with self.output.delayed_logging:
+            self.output.debug(timeout.get_message)
+            try:
+                yield runner
+            finally:
+                self.active_timeouts.pop()
+
+    @property
+    @contextmanager
+    def paused_timeouts(self):
+        if not self.active_timeouts:
+            yield
+            return
+        for runner in self.active_timeouts:
+            runner.pause()
+        with self.output.delayed_logging_paused:
+            try:
+                yield
+            finally:
+                for runner in self.active_timeouts:
+                    runner.resume()
 
     @property
     def in_teardown(self):
@@ -245,7 +272,7 @@ class _ExecutionContext:
     def _add_timeout(self, timeout):
         if timeout:
             timeout.start()
-            self.timeouts.add(timeout)
+            self.timeouts.append(timeout)
 
     def _remove_timeout(self, timeout):
         if timeout in self.timeouts:

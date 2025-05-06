@@ -2166,7 +2166,8 @@ class _RunKeyword(_BuiltInBase):
             else:
                 result = ctx.suite.teardown
         kw = Keyword(name, args=args, parent=data, lineno=lineno)
-        return kw.run(result, ctx)
+        with ctx.paused_timeouts:
+            return kw.run(result, ctx)
 
     def _accepts_embedded_arguments(self, name, ctx):
         # KeywordRunner.run has similar logic that's used with setups/teardowns.

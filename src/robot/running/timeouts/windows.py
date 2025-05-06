@@ -51,7 +51,8 @@ class WindowsRunner(Runner):
 
     def _timeout_exceeded(self):
         self.exceeded = True
-        self._raise_timeout()
+        if not self.paused:
+            self._raise_timeout()
 
     def _raise_timeout(self):
         # See the following for the original recipe and API docs.

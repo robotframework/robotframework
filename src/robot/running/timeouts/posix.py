@@ -46,7 +46,9 @@ class PosixRunner(Runner):
         type(self)._started += 1
 
     def _raise_timeout(self, signum, frame):
-        raise self.timeout_error
+        self.exceeded = True
+        if not self.paused:
+            raise self.timeout_error
 
     def _stop_timer(self):
         type(self)._started -= 1

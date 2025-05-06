@@ -105,7 +105,7 @@ class UserKeywordRunner:
                 result.timeout = str(timeout) if timeout else None
             else:
                 timeout = None
-            with context.timeout(timeout):
+            with context.keyword_timeout(timeout):
                 exception, return_value = self._execute(kw, result, context)
                 if exception and not exception.can_continue(context):
                     if context.in_teardown and exception.keyword_timeout:

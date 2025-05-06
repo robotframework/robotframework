@@ -32,6 +32,7 @@ class Runner:
         self.timeout_error = timeout_error
         self.data_error = data_error
         self.exceeded = False
+        self.paused = False
 
     @classmethod
     def for_platform(
@@ -74,3 +75,11 @@ class Runner:
 
     def _run(self, runnable: "Callable[[], object]") -> object:
         raise NotImplementedError
+
+    def pause(self):
+        self.paused = True
+
+    def resume(self):
+        self.paused = False
+        if self.exceeded:
+            raise self.timeout_error

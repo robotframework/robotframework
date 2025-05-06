@@ -63,9 +63,22 @@ class OutputFile(LoggerApi):
         try:
             yield
         finally:
-            self._delayed_messages, messages = previous, self._delayed_messages
-            for msg in messages:
-                self.log_message(msg, no_delay=True)
+            self._release_delayed_messages()
+            self._delayed_messages = previous
+
+    @property
+    @contextmanager
+    def delayed_logging_paused(self):
+        self._release_delayed_messages()
+        self._delayed_messages = None
+        try:
+            yield
+        finally:
+            self._delayed_messages = []
+
+    def _release_delayed_messages(self):
+        for msg in self._delayed_messages:
+            self.log_message(msg, no_delay=True)
 
     def start_suite(self, data, result):
         self.logger.start_suite(result)
