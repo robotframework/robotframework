@@ -279,7 +279,6 @@ class JsonWriter:
         ).encode
         self.file = file
         self.comma = False
-        self.newline = False
 
     def _handle_custom(self, value):
         if isinstance(value, Path):
@@ -300,12 +299,11 @@ class JsonWriter:
         self._write(char)
         self.comma = False
 
-    def _newline(self, comma: "bool|None" = None, newline: "bool|None" = None):
+    def _newline(self, comma: "bool|None" = None, newline: bool = True):
         if self.comma if comma is None else comma:
             self._write(",")
-        if self.newline if newline is None else newline:
+        if newline:
             self._write("\n")
-        self.newline = True
 
     def _name(self, name):
         if name:
