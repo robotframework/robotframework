@@ -834,17 +834,13 @@ Using variables with custom embedded argument regular expressions
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 When using embedded arguments with custom regular expressions, specifying
-values using values has certain limitations. Variables work fine if
-they match the whole embedded argument, but not if the value contains
-a variable with any additional content. For example, the first test below
-succeeds because the variable `${DATE}` matches the argument `${date}` fully,
-but the second test fails because `${YEAR}-${MONTH}-${DAY}` is not a single
-variable.
+values using variables works only if variables match the whole embedded
+argument, not if there is any additional content with the variable.
+For example, the first test below succeeds because the variable `${DATE}`
+is used on its own, but the last test fails because `${YEAR}-${MONTH}-${DAY}`
+is not a single variable.
 
 .. sourcecode:: robotframework
-
-   *** Settings ***
-   Library           DateTime
 
    *** Variables ***
    ${DATE}           2011-06-27
@@ -856,17 +852,15 @@ variable.
    Succeeds
        Deadline is ${DATE}
 
+   Succeeds without variables
+       Deadline is 2011-06-27
+
    Fails
        Deadline is ${YEAR}-${MONTH}-${DAY}
 
    *** Keywords ***
-   Deadline is ${date:(\d{4}-\d{2}-\d{2}|today)}
-       IF    '${date}' == 'today'
-           ${date} =    Get Current Date
-       ELSE
-           ${date} =    Convert Date    ${date}
-       END
-       Log    Deadline is on ${date}.
+   Deadline is ${date:\d{4}-\d{2}-\d{2}}
+       Log    Deadline is ${date}
 
 Another limitation of using variables is that their actual values are not matched
 against custom regular expressions. As the result keywords may be called with
