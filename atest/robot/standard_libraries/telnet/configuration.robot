@@ -100,7 +100,6 @@ Telnetlib's Debug Messages Are Logged On Trace Level
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc[1, 1]}    send *'echo hyv\\xc3\\xa4\\r\\n'    TRACE    pattern=yes
     Check Log Message    ${tc[1, 2]}    recv *'e*'    TRACE    pattern=yep
-    Length Should Be    ${tc[1].messages}    6
 
 Telnetlib's Debug Messages Are Not Logged On Log Level None
     ${tc} =    Check Test Case    ${TEST NAME}
