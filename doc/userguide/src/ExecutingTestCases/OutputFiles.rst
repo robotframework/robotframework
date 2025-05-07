@@ -268,10 +268,16 @@ log levels are:
 `FAIL`
    Used when a keyword fails. Can be used only by Robot Framework itself.
 
-`WARN`
-   Used to display warnings. They shown also in `the console and in
+`ERROR`
+   Used for displaying errors. Errors are shown in `the console and in
    the Test Execution Errors section in log files`__, but they
-   do not affect the test case status.
+   do not affect test case statuses. If the `--exitonerror option is enabled`__,
+   errors stop the whole execution, though,
+
+`WARN`
+   Used for displaying warnings. Warnings are shown in `the console and in
+   the Test Execution Errors section in log files`__, but they
+   do not affect test case statuses.
 
 `INFO`
    The default level for normal messages. By default,
@@ -288,6 +294,8 @@ log levels are:
    are automatically logged using this level.
 
 __ `Logging information`_
+__ `Errors and warnings during execution`_
+__ `Stopping on parsing or execution error`_
 __ `Errors and warnings during execution`_
 
 Setting log level
