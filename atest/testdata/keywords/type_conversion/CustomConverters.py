@@ -8,6 +8,7 @@ except ImportError:
     from typing_extensions import TypedDict
 
 from robot.api.deco import not_keyword
+from robot.running.arguments import TypeConverter
 
 not_keyword(TypedDict)
 
@@ -42,6 +43,20 @@ def parse_bool(value: Union[str, int, bool]):
         value = value.lower()
     return value not in ["false", "", "epätosi", "\u2639", False, 0]
 
+
+class AutoConvertedNumber:
+    """type placeholder"""
+
+@TypeConverter.register
+class AutoConvertedNumberConverter(TypeConverter):
+    type = AutoConvertedNumber
+    type_name = AutoConvertedNumber.__name__
+
+    def _convert(self, value):
+        try:
+            return ["zero", "one", "two", "three", "four"].index(value.lower())
+        except ValueError:
+            raise ValueError(f"Don't know number {value!r}.")
 
 class UsDate(date):
     @classmethod

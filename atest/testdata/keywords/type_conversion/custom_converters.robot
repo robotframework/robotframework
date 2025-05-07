@@ -2,6 +2,7 @@
 Library           CustomConverters.py
 Library           CustomConverters.StatefulLibrary
 Library           CustomConverters.StatefulGlobalLibrary
+Library           CustomConvertersWithRegisteredType.py
 Library           CustomConvertersWithLibraryDecorator.py
 Library           CustomConvertersWithDynamicLibrary.py
 Library           InvalidCustomConverters.py
@@ -102,6 +103,10 @@ Invalid converters
 Non-type annotation
     Non type annotation    x    x
     Non type annotation    ${2}
+
+From registered type
+    From registered type    zero    0
+    From registered type    four    4
 
 Using library decorator
     Using library decorator    one    1
