@@ -29,9 +29,9 @@ def use_run_keyword_with_non_string_values():
 
 
 def user_keyword_via_run_keyword():
-    logger.info('Before')
+    logger.info("Before")
     BuiltIn().run_keyword("UseBuiltInResource.Keyword", "This is x", 911)
-    logger.info('After')
+    logger.info("After")
 
 
 def run_keyword_that_logs_huge_message_until_timeout():
