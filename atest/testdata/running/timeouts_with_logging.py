@@ -27,12 +27,9 @@ def python_logger():
     _log_a_lot(logging.info)
 
 
-def _log_a_lot(info):
-    # Assigning local variables is performance optimization to give as much
-    # time as possible for actual logging.
-    msg = MSG
-    sleep = time.sleep
-    current = time.time
+# Binding global values to argument default values is a performance optimization
+# to give as much time as possible for actual logging.
+def _log_a_lot(info, msg=MSG, sleep=time.sleep, current=time.time):
     end = current() + 1
     while current() < end:
         info(msg)
