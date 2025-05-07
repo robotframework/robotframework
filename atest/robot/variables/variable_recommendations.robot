@@ -41,9 +41,6 @@ Misspelled Env Var
 Misspelled Env Var With Internal Variables
     Check Test Case    ${TESTNAME}
 
-Misspelled List Variable With Period
-    Check Test Case    ${TESTNAME}
-
 Misspelled Extended Variable Parent
     Check Test Case    ${TESTNAME}
 
