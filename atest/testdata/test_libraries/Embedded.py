@@ -13,11 +13,3 @@ class Embedded:
             raise AssertionError(
                 f"Called {self.called} time(s), expected {times} time(s)."
             )
-
-    @keyword("Embedded invalid type in library ${value: bad}")
-    def bad_type(self, value: str):
-        return value
-
-    @keyword("Type only in embedded ${value: int}")
-    def no_type(self, value):
-        return value

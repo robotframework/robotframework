@@ -457,6 +457,15 @@ class KeywordCreator:
                 "Keyword must accept at least as many positional arguments "
                 "as it has embedded arguments."
             )
+        if any(kw.embedded.types):
+            arg, typ = next(
+                (a, t) for a, t in zip(kw.embedded.args, kw.embedded.types) if t
+            )
+            raise DataError(
+                f"Library keywords do not support type information with "
+                f"embedded arguments like '${{{arg}: {typ}}}'. "
+                f"Use type hints with function arguments instead."
+            )
         kw.args.embedded = kw.embedded.args
 
     def _adding_keyword_failed(self, name, error, details, level="ERROR"):

@@ -280,16 +280,6 @@ Embedded arguments: With variables
     VAR    ${y}    ${2.0}
     Embedded ${x} and ${y}
 
-Embedded arguments: Invalid type in library
-    [Documentation]    FAIL    No keyword with name 'Embedded Invalid type in library 111' found.
-    Embedded Invalid type in library 111
-
-Embedded arguments: Type only in embedded
-    [Documentation]    FAIL
-    ...    Embedded arguments do not support type information with library keywords: \
-    ...    'Embedded.Type only in embedded \${value: int}'. Use normal type hints instead.
-    Type only in embedded 987
-
 Embedded arguments: Invalid value
     [Documentation]    FAIL    ValueError: Argument 'kala' cannot be converted to integer.
     Embedded 1 and kala

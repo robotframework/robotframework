@@ -179,3 +179,13 @@ def number_of_animals_should_be(animals, count, activity="walking"):
 @keyword("Conversion with embedded ${number} and normal")
 def conversion_with_embedded_and_normal(num1: int, /, num2: int):
     assert num1 == num2 == 42
+
+
+@keyword("Embedded ${arg: int} with type is not supported")
+def embedded_types_not_supported(arg):
+    raise Exception("Not executed")
+
+
+@keyword("Embedded type can be ${invalid: bad}")
+def embedded_types_can_be_invalid(arg):
+    raise Exception("Not executed")

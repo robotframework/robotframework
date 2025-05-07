@@ -17,8 +17,8 @@ Variable section: With invalid values or types
 
 Variable section: Invalid syntax
     Error In File
-    ...    3    variables/variable_types.robot
-    ...    18    Setting variable '\${BAD_TYPE: hahaa}' failed: Unrecognized type 'hahaa'.
+    ...    3    variables/variable_types.robot    18
+    ...    Setting variable '\${BAD_TYPE: hahaa}' failed: Unrecognized type 'hahaa'.
     Error In File
     ...    4    variables/variable_types.robot    20
     ...    Setting variable '\@{BAD_LIST_TYPE: xxxxx}' failed: Unrecognized type 'xxxxx'.
@@ -38,19 +38,19 @@ Variable section: Invalid syntax
     ...    Error at index 18: Extra content after 'dict[int, listint]'.
     ...    pattern=False
     Error In File
-    ...    9    variables/variable_types.robot    21
+    ...    8    variables/variable_types.robot    21
     ...    Setting variable '\&{BAD_DICT_VALUE: str=int}' failed:
     ...    Value '{'x': 'a', 'y': 'b'}' (DotDict) cannot be converted to dict[str, int]:
     ...    Item 'x' got value 'a' that cannot be converted to integer.
     ...    pattern=False
     Error In File
-    ...    10    variables/variable_types.robot    19
+    ...    9    variables/variable_types.robot    19
     ...    Setting variable '\@{BAD_LIST_VALUE: int}' failed:
     ...    Value '['1', 'hahaa']' (list) cannot be converted to list[int]:
     ...    Item '1' got value 'hahaa' that cannot be converted to integer.
     ...    pattern=False
     Error In File
-    ...    11    variables/variable_types.robot    17
+    ...    10    variables/variable_types.robot    17
     ...    Setting variable '\${BAD_VALUE: int}' failed: Value 'not int' cannot be converted to integer.
     ...    pattern=False
 
@@ -139,7 +139,7 @@ User keyword: Invalid value
 User keyword: Invalid type
     Check Test Case    ${TESTNAME}
     Error In File
-    ...    0    variables/variable_types.robot    355
+    ...    0    variables/variable_types.robot    345
     ...    Creating keyword 'Bad type' failed:
     ...    Invalid argument specification: Invalid argument '\${arg: bad}':
     ...    Unrecognized type 'bad'.
@@ -147,7 +147,7 @@ User keyword: Invalid type
 User keyword: Invalid assignment with kwargs k_type=v_type declaration
     Check Test Case    ${TESTNAME}
     Error In File
-    ...    1    variables/variable_types.robot    359
+    ...    1    variables/variable_types.robot    349
     ...    Creating keyword 'Kwargs does not support key=value type syntax' failed:
     ...    Invalid argument specification: Invalid argument '\&{kwargs: int=float}':
     ...    Unrecognized type 'int=float'.
@@ -156,17 +156,6 @@ Embedded arguments
     Check Test Case    ${TESTNAME}
 
 Embedded arguments: With variables
-    Check Test Case    ${TESTNAME}
-
-Embedded arguments: Invalid type in library
-    Check Test Case    ${TESTNAME}
-    Error in library
-    ...    Embedded
-    ...    Adding keyword 'bad_type' failed:
-    ...    Invalid embedded argument '\${value: bad}': Unrecognized type 'bad'.
-    ...    index=8
-
-Embedded arguments: Type only in embedded
     Check Test Case    ${TESTNAME}
 
 Embedded arguments: Invalid value
@@ -178,7 +167,7 @@ Embedded arguments: Invalid value from variable
 Embedded arguments: Invalid type
     Check Test Case    ${TESTNAME}
     Error In File
-    ...    2    variables/variable_types.robot    379
+    ...    2    variables/variable_types.robot    369
     ...    Creating keyword 'Embedded invalid type \${x: invalid}' failed:
     ...    Invalid embedded argument '\${x: invalid}':
     ...    Unrecognized type 'invalid'.

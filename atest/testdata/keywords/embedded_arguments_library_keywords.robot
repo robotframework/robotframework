@@ -222,3 +222,11 @@ Same name with same regexp fails
     ...    ${INDENT}embedded_args_in_lk_1.It is totally ${same}
     ...    ${INDENT}embedded_args_in_lk_1.It is totally ${same}
     It is totally same
+
+Embedded arguments cannot have type information
+    [Documentation]    FAIL No keyword with name 'Embedded 123 with type is not supported' found.
+    Embedded 123 with type is not supported
+
+Embedded type can nevertheless be invalid
+    [Documentation]    FAIL No keyword with name 'Embedded type can be invalid' found.
+    Embedded type can be invalid

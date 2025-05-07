@@ -185,12 +185,6 @@ class EmbeddedArgumentsRunner(LibraryKeywordRunner):
 
     def __init__(self, keyword: "LibraryKeyword", name: "str"):
         super().__init__(keyword, name)
-        if any(keyword.embedded.types):
-            raise DataError(
-                "Embedded arguments do not support type information "
-                f"with library keywords: '{keyword.full_name}'. "
-                "Use normal type hints instead."
-            )
         self.embedded_args = keyword.embedded.parse_args(name)
 
     def _resolve_arguments(
