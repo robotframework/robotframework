@@ -402,7 +402,7 @@ override possible existing class attributes.
 
 When a class is decorated with the `@library` decorator, it is used as a library
 even when a `library import refers only to a module containing it`__. This is done
-regardless does the the class name match the module name or not.
+regardless does the class name match the module name or not.
 
 .. note:: The `@library` decorator is new in Robot Framework 3.2,
           the `converters` argument is new in Robot Framework 5.0, and
