@@ -1,17 +1,10 @@
-# External Python modules required by acceptance tests.
+# Dependencies required by acceptance tests.
 # See atest/README.rst for more information.
 
-docutils >= 0.10
 pygments
 pyyaml
-
-telnetlib-313-and-up; python_version >= '3.13'
-
-# On Linux installing lxml with pip may require compilation and development
-# headers. Alternatively it can be installed using a package manager like
-# `sudo apt-get install python-lxml`.
-lxml; platform_python_implementation == 'CPython'
-
+lxml
 pillow >= 7.1.0; platform_system == 'Windows'
+telnetlib-313-and-up; python_version >= '3.13'
 
 -r ../utest/requirements.txt
