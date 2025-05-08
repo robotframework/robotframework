@@ -69,7 +69,7 @@
       "shortdoc": "",
       "tags": [],
       "source": "BackwardsCompatibility.py",
-      "lineno": 45
+      "lineno": 39
     },
     {
       "name": "Simple",
@@ -80,7 +80,7 @@
         "example"
       ],
       "source": "BackwardsCompatibility.py",
-      "lineno": 37
+      "lineno": 31
     },
     {
       "name": "Special Types",

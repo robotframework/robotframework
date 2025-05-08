@@ -1,11 +1,6 @@
 from datetime import date, datetime
 from types import ModuleType
-from typing import Dict, List, Set, Tuple, Union
-
-try:
-    from typing import TypedDict
-except ImportError:
-    from typing_extensions import TypedDict
+from typing import Dict, List, Set, Tuple, TypedDict, Union
 
 from robot.api.deco import not_keyword
 

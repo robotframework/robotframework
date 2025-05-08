@@ -1,10 +1,9 @@
+import sys
 from enum import Enum, IntEnum
-from typing import Any, Dict, List, Literal, Optional, Union
+from typing import Any, Dict, List, Literal, Optional, TypedDict, Union
 
-try:
+if sys.version_info < (3, 9):
     from typing_extensions import TypedDict
-except ImportError:
-    from typing import TypedDict
 
 from robot.api.deco import library
 

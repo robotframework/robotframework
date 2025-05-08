@@ -64,14 +64,14 @@ Validate keyword 'Simple'
     Keyword Name Should Be             1    Simple
     Keyword Doc Should Be              1    Some doc.
     Keyword Tags Should Be             1    example
-    Keyword Lineno Should Be           1    37
+    Keyword Lineno Should Be           1    31
     Keyword Arguments Should Be        1
 
 Validate keyword 'Arguments'
     Keyword Name Should Be             0    Arguments
     Keyword Doc Should Be              0    ${EMPTY}
     Keyword Tags Should Be             0
-    Keyword Lineno Should Be           0    45
+    Keyword Lineno Should Be           0    39
     Keyword Arguments Should Be        0    a    b=2    *c    d=4    e    **f
 
 Validate keyword 'Types'
