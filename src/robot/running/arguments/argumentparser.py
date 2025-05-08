@@ -19,7 +19,7 @@ from typing import Any, Callable, get_type_hints
 
 from robot.errors import DataError
 from robot.utils import NOT_SET, split_from_equals
-from robot.variables import is_assign, is_scalar_assign, search_variable
+from robot.variables import search_variable
 
 from .argumentspec import ArgumentSpec
 from .typeinfo import TypeInfo
@@ -275,7 +275,7 @@ class UserKeywordArgumentParser(ArgumentSpecParser):
             default = NOT_SET
         elif default is None:
             default = NOT_SET
-        elif arg[0] != '$':
+        elif arg[0] != "$":
             kind = "list" if arg[0] == "@" else "dictionary"
             self._report_error(
                 f"Only normal arguments accept default values, "

@@ -13,10 +13,13 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from itertools import chain
 from typing import Any, Callable, Sequence, TYPE_CHECKING
 
 from robot.errors import DataError
 from robot.utils import DotDict, split_from_equals
+from robot.utils.robottypes import is_list_like
+from robot.utils.secret import Secret
 
 from .resolvable import Resolvable
 from .search import is_dict_variable, is_list_variable, search_variable
@@ -111,6 +114,15 @@ class VariableResolver(Resolvable):
     def _replace_variables(self, variables) -> Any:
         raise NotImplementedError
 
+    def _handle_secret(self, value, name, type_=None):
+        type_ = type_ or self.type or "Any"
+        if (
+            type_.upper() == "SECRET"
+            and search_variable(name, identifiers="%").is_variable()
+        ):
+            return Secret(value)
+        return value
+
     def _convert(self, value, type_):
         from robot.running import TypeInfo
 
@@ -128,6 +140,7 @@ class VariableResolver(Resolvable):
 
 
 class ScalarVariableResolver(VariableResolver):
+    value: list[str]
 
     def __init__(
         self,
@@ -152,7 +165,8 @@ class ScalarVariableResolver(VariableResolver):
     def _replace_variables(self, variables):
         value, separator = self.value, self.separator
         if self._is_single_value(value, separator):
-            return variables.replace_scalar(value[0])
+            value = variables.replace_scalar(value[0])
+            return self._handle_secret(value, self.value[0])
         if separator is None:
             separator = " "
         else:
@@ -165,9 +179,19 @@ class ScalarVariableResolver(VariableResolver):
 
 
 class ListVariableResolver(VariableResolver):
+    value: list[str]
 
     def _replace_variables(self, variables):
-        return variables.replace_list(self.value)
+        values = []
+        for value in self.value:
+            values.extend(self._warp_secret(variables, value))
+        return values
+
+    def _warp_secret(self, variables, name):
+        value = variables.replace_scalar(name)
+        if is_list_like(value):
+            return [self._handle_secret(v, name) for v in value]
+        return [self._handle_secret(value, name)]
 
     def _convert(self, value, type_):
         return super()._convert(value, f"list[{type_}]")
@@ -198,13 +222,22 @@ class DictVariableResolver(VariableResolver):
             raise DataError(f"Creating dictionary variable failed: {err}")
 
     def _yield_replaced(self, values, replace_scalar):
+        if not self.type:
+            k_type = v_type = None
+        elif "=" in self.type:
+            k_type, v_type = self.type.split("=", 1)
+        else:
+            k_type, v_type = None, self.type
         for item in values:
             if isinstance(item, tuple):
-                key, values = item
-                yield replace_scalar(key), replace_scalar(values)
+                key, value = item
+                yield (
+                    self._handle_secret(replace_scalar(key), key, k_type),
+                    self._handle_secret(replace_scalar(value), value, v_type),
+                )
             else:
                 yield from replace_scalar(item).items()
 
     def _convert(self, value, type_):
-        k_type, v_type = self.type.split("=", 1) if "=" in type_ else ("Any", type_)
+        k_type, v_type = type_.split("=", 1) if "=" in type_ else ("Any", type_)
         return super()._convert(value, f"dict[{k_type}, {v_type}]")
