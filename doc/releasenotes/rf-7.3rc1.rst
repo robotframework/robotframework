@@ -390,7 +390,7 @@ Full list of fixes and enhancements
       - Dialogs: Enhance look and feel
       - rc 1
     * - `#5387`_
-      - ---
+      - enhancement
       - high
       - Automatic code formatting
       - rc 1
