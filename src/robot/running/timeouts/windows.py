@@ -15,58 +15,51 @@
 
 import ctypes
 import time
-from threading import current_thread, Lock, Timer
+from threading import current_thread, Timer
+
+from robot.errors import DataError, TimeoutExceeded
+
+from .runner import Runner
 
 
-class Timeout:
+class WindowsRunner(Runner):
 
-    def __init__(self, timeout, error):
+    def __init__(
+        self,
+        timeout: float,
+        timeout_error: TimeoutExceeded,
+        data_error: "DataError|None" = None,
+    ):
+        super().__init__(timeout, timeout_error, data_error)
         self._runner_thread_id = current_thread().ident
-        self._timer = Timer(timeout, self._timed_out)
-        self._error = error
-        self._timeout_occurred = False
-        self._finished = False
-        self._lock = Lock()
 
-    def execute(self, runnable):
+    def _run(self, runnable):
+        timer = Timer(self.timeout, self._timeout_exceeded)
         try:
-            self._start_timer()
+            timer.start()
             try:
                 result = runnable()
             finally:
-                self._cancel_timer()
-            self._wait_for_raised_timeout()
+                timer.cancel()
+            # This code is executed only if there was no timeout or other exception.
+            if self.exceeded:
+                self._wait_for_raised_timeout()
             return result
         finally:
-            if self._timeout_occurred:
-                raise self._error
+            if self.exceeded:
+                raise self.timeout_error
 
-    def _start_timer(self):
-        self._timer.start()
-
-    def _cancel_timer(self):
-        with self._lock:
-            self._finished = True
-            self._timer.cancel()
-
-    def _wait_for_raised_timeout(self):
-        if self._timeout_occurred:
-            while True:
-                time.sleep(0)
-
-    def _timed_out(self):
-        with self._lock:
-            if self._finished:
-                return
-            self._timeout_occurred = True
-        self._raise_timeout()
+    def _timeout_exceeded(self):
+        self.exceeded = True
+        if not self.paused:
+            self._raise_timeout()
 
     def _raise_timeout(self):
         # See the following for the original recipe and API docs.
         # https://code.activestate.com/recipes/496960-thread2-killable-threads/
         # https://docs.python.org/3/c-api/init.html#c.PyThreadState_SetAsyncExc
         tid = ctypes.c_ulong(self._runner_thread_id)
-        error = ctypes.py_object(type(self._error))
+        error = ctypes.py_object(type(self.timeout_error))
         modified = ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, error)
         # This should never happen. Better anyway to check the return value
         # and report the very unlikely error than ignore it.
@@ -74,3 +67,8 @@ class Timeout:
             raise ValueError(
                 f"Expected 'PyThreadState_SetAsyncExc' to return 1, got {modified}."
             )
+
+    def _wait_for_raised_timeout(self):
+        # Wait for asynchronously raised timeout that hasn't yet been received.
+        while True:
+            time.sleep(0)

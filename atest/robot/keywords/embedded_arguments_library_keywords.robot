@@ -136,6 +136,7 @@ Must accept at least as many positional arguments as there are embedded argument
     Error in library    embedded_args_in_lk_1
     ...    Adding keyword 'Wrong \${number} of embedded \${args}' failed:
     ...    Keyword must accept at least as many positional arguments as it has embedded arguments.
+    ...    index=2
 
 Optional Non-Embedded Args Are Okay
     Check Test Case    ${TESTNAME}
@@ -157,3 +158,18 @@ Same name with different regexp matching multiple fails
 
 Same name with same regexp fails
     Check Test Case    ${TEST NAME}
+
+Embedded arguments cannot have type information
+    Check Test Case    ${TEST NAME}
+    Error in library    embedded_args_in_lk_1
+    ...    Adding keyword 'Embedded \${arg: int} with type is not supported' failed:
+    ...    Library keywords do not support type information with embedded arguments like '\${arg: int}'.
+    ...    Use type hints with function arguments instead.
+    ...    index=1
+
+Embedded type can nevertheless be invalid
+    Check Test Case    ${TEST NAME}
+    Error in library    embedded_args_in_lk_1
+    ...    Adding keyword 'embedded_types_can_be_invalid' failed:
+    ...    Invalid embedded argument '\${invalid: bad}': Unrecognized type 'bad'.
+    ...    index=0

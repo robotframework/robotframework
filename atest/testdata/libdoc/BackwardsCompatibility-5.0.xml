@@ -11,7 +11,7 @@ Examples are only using features compatible with all tested versions.</doc>
 <inits>
 </inits>
 <keywords>
-<kw name="Arguments" lineno="45">
+<kw name="Arguments" lineno="39">
 <arguments repr="a, b=2, *c, d=4, e, **f">
 <arg kind="POSITIONAL_OR_NAMED" required="true" repr="a">
 <name>a</name>
@@ -37,7 +37,7 @@ Examples are only using features compatible with all tested versions.</doc>
 <doc/>
 <shortdoc/>
 </kw>
-<kw name="Simple" lineno="37">
+<kw name="Simple" lineno="31">
 <arguments repr="">
 </arguments>
 <doc>Some doc.</doc>

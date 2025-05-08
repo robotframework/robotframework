@@ -5,13 +5,7 @@ Examples are only using features compatible with all tested versions.
 """
 
 from enum import Enum
-from typing import Union
-
-try:
-    from typing_extensions import TypedDict
-except ImportError:
-    from typing import TypedDict
-
+from typing import TypedDict, Union
 
 ROBOT_LIBRARY_VERSION = "1.0"
 

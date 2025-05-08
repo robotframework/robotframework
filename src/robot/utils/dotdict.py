@@ -23,7 +23,7 @@ class DotDict(OrderedDict):
     def __init__(self, *args, **kwds):
         args = [self._convert_nested_initial_dicts(a) for a in args]
         kwds = self._convert_nested_initial_dicts(kwds)
-        OrderedDict.__init__(self, *args, **kwds)
+        super().__init__(*args, **kwds)
 
     def _convert_nested_initial_dicts(self, value):
         items = value.items() if is_dict_like(value) else value

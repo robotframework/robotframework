@@ -167,14 +167,7 @@ class TestLibrary:
                 import_name, return_source=True
             )
         return cls.from_code(
-            code,
-            name,
-            real_name,
-            source,
-            args,
-            variables,
-            create_keywords,
-            logger,
+            code, name, real_name, source, args, variables, create_keywords, logger
         )
 
     @classmethod
@@ -191,25 +184,15 @@ class TestLibrary:
     ) -> "TestLibrary":
         if inspect.ismodule(code):
             lib = cls.from_module(
-                code,
-                name,
-                real_name,
-                source,
-                create_keywords,
-                logger,
+                code, name, real_name, source, create_keywords, logger
             )
             if args:  # Resolving arguments reports an error.
                 lib.init.resolve_arguments(args, variables=variables)
             return lib
+        if args is None:
+            args = ()
         return cls.from_class(
-            code,
-            name,
-            real_name,
-            source,
-            args or (),
-            variables,
-            create_keywords,
-            logger,
+            code, name, real_name, source, args, variables, create_keywords, logger
         )
 
     @classmethod
@@ -223,12 +206,7 @@ class TestLibrary:
         logger=LOGGER,
     ) -> "TestLibrary":
         return ModuleLibrary.from_module(
-            module,
-            name,
-            real_name,
-            source,
-            create_keywords,
-            logger,
+            module, name, real_name, source, create_keywords, logger
         )
 
     @classmethod
@@ -250,29 +228,30 @@ class TestLibrary:
         else:
             library = DynamicLibrary
         return library.from_class(
-            klass,
-            name,
-            real_name,
-            source,
-            args,
-            variables,
-            create_keywords,
-            logger,
+            klass, name, real_name, source, args, variables, create_keywords, logger
         )
 
     def create_keywords(self):
         raise NotImplementedError
 
     @overload
-    def find_keywords(self, name: str, count: Literal[1]) -> "LibraryKeyword": ...
+    def find_keywords(
+        self,
+        name: str,
+        count: Literal[1],
+    ) -> LibraryKeyword: ...
 
     @overload
     def find_keywords(
-        self, name: str, count: "int|None" = None
+        self,
+        name: str,
+        count: "int|None" = None,
     ) -> "list[LibraryKeyword]": ...
 
     def find_keywords(
-        self, name: str, count: "int|None" = None
+        self,
+        name: str,
+        count: "int|None" = None,
     ) -> "list[LibraryKeyword]|LibraryKeyword":
         return self.keyword_finder.find(name, count)
 
@@ -465,18 +444,27 @@ class KeywordCreator:
     def _create_keyword(self, instance, name) -> "LibraryKeyword|None":
         raise NotImplementedError
 
-    def _handle_duplicates(self, kw, seen: NormalizedDict):
+    def _handle_duplicates(self, kw: LibraryKeyword, seen: NormalizedDict):
         if kw.name in seen:
             error = "Keyword with same name defined multiple times."
             seen[kw.name].error = error
             raise DataError(error)
         seen[kw.name] = kw
 
-    def _validate_embedded(self, kw):
+    def _validate_embedded(self, kw: LibraryKeyword):
         if len(kw.embedded.args) > kw.args.maxargs:
             raise DataError(
-                "Keyword must accept at least as many positional "
-                "arguments as it has embedded arguments."
+                "Keyword must accept at least as many positional arguments "
+                "as it has embedded arguments."
+            )
+        if any(kw.embedded.types):
+            arg, typ = next(
+                (a, t) for a, t in zip(kw.embedded.args, kw.embedded.types) if t
+            )
+            raise DataError(
+                f"Library keywords do not support type information with "
+                f"embedded arguments like '${{{arg}: {typ}}}'. "
+                f"Use type hints with function arguments instead."
             )
         kw.args.embedded = kw.embedded.args
 
@@ -564,6 +552,7 @@ class StaticKeywordCreator(KeywordCreator):
             return StaticKeyword.from_name(name, self.library)
         except DataError as err:
             self._adding_keyword_failed(name, err.message, err.details)
+        return None
 
     def _pre_validate_method(self, instance, name):
         try:

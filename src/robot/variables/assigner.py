@@ -123,7 +123,7 @@ class VariableAssigner:
             context.info(format_assign_message(name, value, items))
 
     def _extended_assign(self, name, value, variables):
-        if name[0] != "$" or "." not in name or name in variables:
+        if "." not in name or name in variables:
             return False
         base, attr = [token.strip() for token in name[2:-1].rsplit(".", 1)]
         try:
@@ -136,12 +136,9 @@ class VariableAssigner:
         ):
             return False
         try:
-            setattr(var, attr, value)
+            setattr(var, attr, self._handle_list_and_dict(value, name[0]))
         except Exception:
-            raise VariableError(
-                f"Setting attribute '{attr}' to variable '${{{base}}}' failed: "
-                f"{get_error_message()}"
-            )
+            raise VariableError(f"Setting '{name}' failed: {get_error_message()}")
         return True
 
     def _variable_supports_extended_assign(self, var):
@@ -168,12 +165,12 @@ class VariableAssigner:
         value_type = type_name(value)
         raise VariableError(f"Expected {expected}-like value, got {value_type}.")
 
-    def _validate_item_assign(self, name, value):
-        if name[0] == "@":
+    def _handle_list_and_dict(self, value, identifier):
+        if identifier == "@":
             if not is_list_like(value):
                 self._raise_cannot_set_type(value, "list")
             value = list(value)
-        if name[0] == "&":
+        if identifier == "&":
             if not is_dict_like(value):
                 self._raise_cannot_set_type(value, "dictionary")
             value = DotDict(value)
@@ -195,8 +192,7 @@ class VariableAssigner:
             except ValueError:
                 pass
         try:
-            value = self._validate_item_assign(name, value)
-            var[selector] = value
+            var[selector] = self._handle_list_and_dict(value, name[0])
         except (IndexError, TypeError, Exception):
             raise VariableError(
                 f"Setting value to {type_name(var)} variable "

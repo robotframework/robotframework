@@ -109,13 +109,14 @@ class TestLanguage(unittest.TestCase):
 
     def test_bdd_prefixes_are_sorted_by_length(self):
         class X(Language):
-            given_prefixes = ["1", "longest"]
+            given_prefixes = ["x", "longest"]
             when_prefixes = ["XX"]
+            then_prefixes = ["xxx"]
 
-        pattern = Languages([X()]).bdd_prefix_regexp.pattern
-        expected = r"\(longest\|given\|.*\|xx\|1\)\\s"
-        if not re.fullmatch(expected, pattern):
-            raise AssertionError(f"Pattern '{pattern}' did not match '{expected}'.")
+        pattern = Languages(X(), add_english=False).bdd_prefix_regexp.pattern
+        expected = r"(longest|xxx|xx|x)\s"
+        if pattern != expected:
+            raise AssertionError(f"Expected pattern {expected}, got '{pattern}'.")
 
 
 class TestLanguageFromName(unittest.TestCase):

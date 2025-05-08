@@ -133,7 +133,7 @@ Keyword Timeout Should Not Be Active For Run Keyword Variants But To Keywords Th
 Logging With Timeouts
     [Documentation]    Testing that logging works with timeouts
     ${tc} =    Check Test Case    Timeouted Keyword Passes
-    Check Log Message    ${tc[0, 1]}           Testing logging in timeouted test
+    Check Log Message    ${tc[0, 1]}       Testing logging in timeouted test
     Check Log Message    ${tc[1, 0, 1]}    Testing logging in timeouted keyword
 
 Timeouted Keyword Called With Wrong Number of Arguments
@@ -160,14 +160,14 @@ Keyword Timeout Logging
 
 Zero timeout is ignored
     ${tc} =    Check Test Case    ${TEST NAME}
-    Should Be Equal    ${tc.timeout}    0 seconds
-    Should Be Equal    ${tc[0].timeout}    0 seconds
+    Should Be Equal    ${tc.timeout}       ${None}
+    Should Be Equal    ${tc[0].timeout}    ${None}
     Elapsed Time Should Be Valid    ${tc[0].elapsed_time}    minimum=0.099
 
 Negative timeout is ignored
     ${tc} =    Check Test Case    ${TEST NAME}
-    Should Be Equal    ${tc[0].timeout}    - 1 second
-    Should Be Equal    ${tc[0].timeout}    - 1 second
+    Should Be Equal    ${tc.timeout}       ${None}
+    Should Be Equal    ${tc[0].timeout}    ${None}
     Elapsed Time Should Be Valid    ${tc[0].elapsed_time}    minimum=0.099
 
 Invalid test timeout

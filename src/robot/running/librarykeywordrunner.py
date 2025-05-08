@@ -55,6 +55,7 @@ class LibraryKeywordRunner:
                     return_value = self._run(data, kw, context)
                     assigner.assign(return_value)
                     return return_value
+        return None
 
     def _config_result(
         self,
@@ -103,8 +104,10 @@ class LibraryKeywordRunner:
         )
 
     def _trace_log_args(self, positional, named):
-        args = [prepr(arg) for arg in positional]
-        args += [f"{safe_str(n)}={prepr(v)}" for n, v in named]
+        args = [
+            *[prepr(arg) for arg in positional],
+            *[f"{safe_str(n)}={prepr(v)}" for n, v in named],
+        ]
         return f"Arguments: [ {' | '.join(args)} ]"
 
     def _get_timeout(self, context):
@@ -112,19 +115,18 @@ class LibraryKeywordRunner:
 
     def _execute(self, method, positional, named, context):
         timeout = self._get_timeout(context)
-        if timeout and timeout.active:
-            method = self._wrap_with_timeout(method, timeout, context.output)
+        if timeout:
+            method = self._wrap_with_timeout(method, timeout, context)
         with self._monitor(context):
             result = method(*positional, **dict(named))
             if context.asynchronous.is_loop_required(result):
                 return context.asynchronous.run_until_complete(result)
             return result
 
-    def _wrap_with_timeout(self, method, timeout, output):
+    def _wrap_with_timeout(self, method, timeout, context):
         def wrapper(*args, **kwargs):
-            with output.delayed_logging:
-                output.debug(timeout.get_message)
-                return timeout.run(method, args=args, kwargs=kwargs)
+            with context.timeout(timeout) as runner:
+                return runner.run(method, args=args, kwargs=kwargs)
 
         return wrapper
 

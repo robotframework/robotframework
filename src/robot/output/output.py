@@ -55,6 +55,10 @@ class Output(AbstractLogger, LoggerApi):
     def delayed_logging(self):
         return self.output_file.delayed_logging
 
+    @property
+    def delayed_logging_paused(self):
+        return self.output_file.delayed_logging_paused
+
     def close(self, result):
         self.output_file.statistics(result.statistics)
         self.output_file.close()

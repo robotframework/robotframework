@@ -13,16 +13,26 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from signal import ITIMER_REAL, setitimer, SIGALRM, signal
+from signal import ITIMER_REAL, setitimer, SIG_DFL, SIGALRM, signal
+
+from robot.errors import DataError, TimeoutExceeded
+
+from .runner import Runner
 
 
-class Timeout:
+class PosixRunner(Runner):
+    _started = 0
 
-    def __init__(self, timeout, error):
-        self._timeout = timeout
-        self._error = error
+    def __init__(
+        self,
+        timeout: float,
+        timeout_error: TimeoutExceeded,
+        data_error: "DataError|None" = None,
+    ):
+        super().__init__(timeout, timeout_error, data_error)
+        self._orig_alrm = None
 
-    def execute(self, runnable):
+    def _run(self, runnable):
         self._start_timer()
         try:
             return runnable()
@@ -30,11 +40,18 @@ class Timeout:
             self._stop_timer()
 
     def _start_timer(self):
-        signal(SIGALRM, self._raise_timeout_error)
-        setitimer(ITIMER_REAL, self._timeout)
+        if not self._started:
+            self._orig_alrm = signal(SIGALRM, self._raise_timeout)
+            setitimer(ITIMER_REAL, self.timeout)
+        type(self)._started += 1
 
-    def _raise_timeout_error(self, signum, frame):
-        raise self._error
+    def _raise_timeout(self, signum, frame):
+        self.exceeded = True
+        if not self.paused:
+            raise self.timeout_error
 
     def _stop_timer(self):
-        setitimer(ITIMER_REAL, 0)
+        type(self)._started -= 1
+        if not self._started:
+            setitimer(ITIMER_REAL, 0)
+            signal(SIGALRM, self._orig_alrm or SIG_DFL)

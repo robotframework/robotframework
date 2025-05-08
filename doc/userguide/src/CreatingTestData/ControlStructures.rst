@@ -1040,7 +1040,12 @@ they also mostly work the same way. A difference is that Python uses lower case
 upper case letters. A bigger difference is that with Python exceptions are objects
 and with Robot Framework you are dealing with error messages as strings.
 
+.. note:: It is not possible to catch errors caused by invalid syntax or errors
+          that `stop the whole execution`__.
+
+
 __ https://docs.python.org/tutorial/errors.html#handling-exceptions
+__ `Stopping test execution gracefully`_
 
 Catching exceptions with `EXCEPT`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1116,8 +1121,6 @@ other `EXCEPT` branches:
         EXCEPT                     # Match any that did not match the above.
             Error Handler 2
         END
-
-.. note:: It is not possible to catch exceptions caused by invalid syntax.
 
 Matching errors using patterns
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

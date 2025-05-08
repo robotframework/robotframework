@@ -1,4 +1,5 @@
 *** Settings ***
+Library         ../test_libraries/Embedded.py
 Variables       extended_variables.py
 
 
@@ -75,6 +76,9 @@ VAR syntax
     Should be equal    ${x}    123    type=int
     VAR    ${x: int}    1    2    3    separator=
     Should be equal    ${x}    123    type=int
+    VAR    ${name}    x
+    VAR    ${${name}: int}    432
+    Should be equal    ${x}    432    type=int
 
 VAR syntax: List
     VAR    ${x: list}    [1, "2", 3]
@@ -89,6 +93,8 @@ VAR syntax: Dictionary
     Should be equal    ${x}    {"1": 2, "3": 4}    type=dict
     VAR    &{x: int=str}    3=4    5=6
     Should be equal    ${x}    {3: "4", 5: "6"}    type=dict
+    VAR    &{x: int = str}    100=200    300=400
+    Should be equal    ${x}    {100: "200", 300: "400"}    type=dict
     VAR    &{x: int=dict[str, float]}    30={"key": 1}    40={"key": 2.3}
     Should be equal    ${x}    {30: {"key": 1.0}, 40: {"key": 2.3}}    type=dict
 
@@ -115,7 +121,7 @@ VAR syntax: Type syntax is not resolved from variable
     VAR    ${${type}}    4242
     Should be equal    ${tidii: int}    4242    type=str
 
-Vvariable assignment
+Variable assignment
     ${x: int} =    Set Variable    42
     Should be equal    ${x}    42    type=int
 
@@ -161,6 +167,13 @@ Variable assignment: Invalid type for list
 Variable assignment: Invalid variable type for dictionary
     [Documentation]    FAIL    Unrecognized type 'int=str'.
     ${x: int=str} =    Create dictionary    1=2    3=4
+
+Variable assignment: No type when using variable
+    [Documentation]    FAIL
+    ...    Resolving variable '\${x: str}' failed: SyntaxError: invalid syntax (<string>, line 1)
+    ${x: date}    Set Variable    2025-04-30
+    Should be equal    ${x}    2025-04-30    type=date
+    Should be equal    ${x: str}    2025-04-30    type=str
 
 Variable assignment: Multiple
     ${a: int}    ${b: float} =    Create List    1    2.3
@@ -258,7 +271,6 @@ User keyword: Invalid assignment with kwargs k_type=v_type declaration
     Kwargs does not support key=value type syntax
 
 Embedded arguments
-    [Tags]    kala
     Embedded 1 and 2
     Embedded type 1 and no type 2
     Embedded type with custom regular expression 111

@@ -1,4 +1,9 @@
+import time
+
+from robot.api import logger
 from robot.libraries.BuiltIn import BuiltIn
+
+MSG = "A rather long message that is slow to write on the disk. " * 10000
 
 
 def log_messages_and_set_log_level():
@@ -24,4 +29,21 @@ def use_run_keyword_with_non_string_values():
 
 
 def user_keyword_via_run_keyword():
+    logger.info("Before")
     BuiltIn().run_keyword("UseBuiltInResource.Keyword", "This is x", 911)
+    logger.info("After")
+
+
+def run_keyword_that_logs_huge_message_until_timeout():
+    while True:
+        BuiltIn().run_keyword("Log Huge Message")
+
+
+def log_huge_message():
+    logger.info(MSG)
+
+
+def timeout_in_parent_keyword_after_running_keyword():
+    BuiltIn().run_keyword("Log", "Hello!")
+    while True:
+        time.sleep(0)

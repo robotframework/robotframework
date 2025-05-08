@@ -15,11 +15,10 @@
 
 from robot.errors import DataError
 
+from .runner import Runner
 
-class Timeout:
 
-    def __init__(self, timeout, error):
-        pass
+class NoSupportRunner(Runner):
 
-    def execute(self, runnable):
+    def _run(self, runnable):
         raise DataError("Timeouts are not supported on this platform.")
