@@ -469,7 +469,7 @@ class Var(model.Var, WithSource):
             set_variable = getattr(context.variables, f"set_{scope}")
             try:
                 name, value = self._resolve_name_and_value(context.variables)
-                if scope != 'local' and not value and name[:1] == '$':
+                if scope != "local" and not value and name[:1] == "$":
                     context.warn(
                         f"Using the VAR syntax to create a scalar variable without "
                         f"a value in other than the local scope like "
