@@ -3793,7 +3793,7 @@ class _Misc(_BuiltInBase):
         Example:
             Library  foo  AS  BAR
             Evaluate  BAR.baz() -->  Evaluate  foo.baz()
-            
+
             Library foo   AS  BAR
             Evaluate BAR.BAR.baz() --> Evaluate  foo.BAR.baz()
         """
@@ -3801,7 +3801,7 @@ class _Misc(_BuiltInBase):
         for library in libraries.values():
             for name, module_obj in libraries.items():
                 if name != library.name and (
-                    module_obj.real_name == library.name or 
+                    module_obj.real_name == library.name or
                     module_obj.real_name == library.real_name):
                     raise DataError("Evaluate Expression failed: "
                        f"Ambiguous aliases with Library '{name}' "
@@ -3812,7 +3812,7 @@ class _Misc(_BuiltInBase):
                 escaped_name = re.escape(library.name)
                 search_regex = re.compile(r'(?<!\.)' + escaped_name + r'\.')
                 if re.search(search_regex, expression):
-                    expression = re.sub(search_regex, 
+                    expression = re.sub(search_regex,
                                         f"{library.real_name}.",
                                         expression)
         try:
