@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import sys
 import difflib
 import re
 import time
@@ -3781,6 +3782,39 @@ class _Misc(_BuiltInBase):
         evaluation namespace. It needed to be taken into use explicitly like
         ``modules=rootmod, rootmod.submod``.
         """
+
+        """
+        If Libraries are aliased when imported, substitute alias for actual library
+        This is so the correct library can be passed to the python execution
+        The first for loop is to ensure there are no ambiguous substitutions
+        The second executes the substitutions for any assumed object dereference
+            operations
+        Currently this will execute the substitution inside a string
+        Example:
+            Library  foo  AS  BAR
+            Evaluate  BAR.baz() -->  Evaluate  foo.baz()
+            
+            Library foo   AS  BAR
+            Evaluate BAR.BAR.baz() --> Evaluate  foo.BAR.baz()
+        """
+        libraries = self._namespace._kw_store.libraries
+        for library in libraries.values():
+            for name, module_obj in libraries.items():
+                if name != library.name and (
+                    module_obj.real_name == library.name or 
+                    module_obj.real_name == library.real_name):
+                    raise DataError("Evaluate Expression failed: "
+                       f"Ambiguous aliases with Library '{name}' "
+                       f"As '{module_obj.real_name}' and Library "
+                       f"'{library.name}' As '{library.real_name}'")
+        for library in libraries.values():
+            if library.name != library.real_name:
+                escaped_name = re.escape(library.name)
+                search_regex = re.compile(r'(?<!\.)' + escaped_name + r'\.')
+                if re.search(search_regex, expression):
+                    expression = re.sub(search_regex, 
+                                        f"{library.real_name}.",
+                                        expression)
         try:
             return evaluate_expression(
                 expression,
