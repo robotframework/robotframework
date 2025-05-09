@@ -50,6 +50,14 @@ User keyword used via 'Run Keyword' with timeout and trace level
     Check Log Message    ${tc[0, 4]}          After
     Check Log Message    ${tc[0, 5]}          Return: None    level=TRACE
 
+Recursive 'Run Keyword' usage
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc[0, 0, 0]}    1
+    Check Log Message    ${tc[0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0]}    10
+
+Recursive 'Run Keyword' usage with timeout
+    Check Test Case    ${TESTNAME}
+
 Timeout when running keyword that logs huge message
     Check Test Case    ${TESTNAME}
 

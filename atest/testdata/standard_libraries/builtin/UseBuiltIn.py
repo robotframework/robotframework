@@ -34,6 +34,12 @@ def user_keyword_via_run_keyword():
     logger.info("After")
 
 
+def recursive_run_keyword(limit: int, round: int = 1):
+    if round <= limit:
+        BuiltIn().run_keyword("Log", round)
+        BuiltIn().run_keyword("Recursive Run Keyword", limit, round + 1)
+
+
 def run_keyword_that_logs_huge_message_until_timeout():
     while True:
         BuiltIn().run_keyword("Log Huge Message")

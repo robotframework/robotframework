@@ -33,6 +33,14 @@ User keyword used via 'Run Keyword' with timeout and trace level
     [Timeout]    1 day
     User Keyword via Run Keyword
 
+Recursive 'Run Keyword' usage
+    Recursive Run Keyword    10
+
+Recursive 'Run Keyword' usage with timeout
+    [Documentation]    FAIL    Test timeout 10 milliseconds exceeded.
+    [Timeout]    0.01 s
+    Recursive Run Keyword    1000
+
 Timeout when running keyword that logs huge message
     [Documentation]    FAIL    Test timeout 100 milliseconds exceeded.
     [Timeout]    0.1 s

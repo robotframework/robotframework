@@ -32,7 +32,7 @@ class Runner:
         self.timeout_error = timeout_error
         self.data_error = data_error
         self.exceeded = False
-        self.paused = False
+        self.paused = 0
 
     @classmethod
     def for_platform(
@@ -77,9 +77,9 @@ class Runner:
         raise NotImplementedError
 
     def pause(self):
-        self.paused = True
+        self.paused += 1
 
     def resume(self):
-        self.paused = False
+        self.paused -= 1
         if self.exceeded:
             raise self.timeout_error
