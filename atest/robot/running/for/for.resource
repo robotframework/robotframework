@@ -10,6 +10,7 @@ Check test and get loop
 Check test and failed loop
     [Arguments]    ${test name}    ${type}=FOR    ${loop index}=0    &{config}
     ${loop} =    Check test and get loop    ${test name}    ${loop index}
+    Log    ${loop.body}
     Length Should Be    ${loop.body}       2
     Should Be Equal     ${loop[0].type}    ITERATION
     Should Be Equal     ${loop[1].type}    MESSAGE

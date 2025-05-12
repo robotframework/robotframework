@@ -1183,6 +1183,7 @@ class ForHeader(Statement):
     def validate(self, ctx: "ValidationContext"):
         if not self.assign:
             self._add_error("no loop variables")
+        VariableValidator().validate(self)
         if not self.flavor:
             self._add_error("no 'IN' or other valid separator")
         else:
@@ -1217,6 +1218,7 @@ class IfElseHeader(Statement, ABC):
                 f"{self.type} cannot have more than one condition, "
                 f"got {seq2str(c.value for c in conditions)}.",
             )
+        VariableValidator().validate(self, Token.ASSIGN)
 
 
 @Statement.register
@@ -1743,8 +1745,10 @@ class EmptyLine(Statement):
 
 class VariableValidator:
 
-    def validate(self, statement: Statement):
-        name = statement.get_value(Token.VARIABLE, "")
+    def validate(self, statement: Statement, token_type: str = Token.VARIABLE):
+        name = statement.get_value(token_type, "")
+        if not name and token_type == Token.ASSIGN:
+            return
         match = search_variable(name, ignore_errors=True, parse_type=True)
         if not match.is_assign(allow_assign_mark=True, allow_nested=True):
             statement.errors += (f"Invalid variable name '{name}'.",)

@@ -337,7 +337,10 @@ No loop values
     Fail    Not Executed
 
 No loop variables
-    [Documentation]    FAIL    FOR loop has no loop variables.
+    [Documentation]    FAIL
+    ...    Multiple errors:
+    ...    - FOR loop has no loop variables.
+    ...    - Invalid variable name ''.
     FOR    IN    one    two
         Fail    Not Executed
     END

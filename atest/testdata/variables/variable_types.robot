@@ -171,14 +171,14 @@ Variable assignment: Invalid variable type for dictionary
 Variable assignment: No type when using variable
     [Documentation]    FAIL
     ...    Resolving variable '\${x: str}' failed: SyntaxError: invalid syntax (<string>, line 1)
-    ${x: date}    Set Variable    2025-04-30
+    ${x: date} =    Set Variable    2025-04-30
     Should be equal    ${x}    2025-04-30    type=date
     Should be equal    ${x: str}    2025-04-30    type=str
 
 Variable assignment: Multiple
     ${a: int}    ${b: float} =    Create List    1    2.3
-    Should be equal    ${a}    1     type=int
-    Should be equal    ${b}    2.3   type=float
+    Should be equal    ${a}    1    type=int
+    Should be equal    ${b}    2.3    type=float
 
 Variable assignment: Multiple list and scalars
     ${a: int}    @{b: float} =    Create List    1    2    3.4
@@ -191,7 +191,7 @@ Variable assignment: Multiple list and scalars
     Should be equal    ${a}    ${1}
     Should be equal    ${b}    [2.0]    type=list
     Should be equal    ${c}    ${3.4}
-    ${a: int}    @{b: float}    ${c: float}     ${d: float}=    Create List    1    2    3.4
+    ${a: int}    @{b: float}    ${c: float}    ${d: float} =    Create List    1    2    3.4
     Should be equal    ${a}    ${1}
     Should be equal    ${b}    []    type=list
     Should be equal    ${c}    ${2.0}
@@ -305,6 +305,134 @@ Variable usage does not support type syntax 2
     ...    Variable '\${abc_not_here}' not found.
     Log    ${abc_not_here: int}: fails
 
+Statement: FOR
+    VAR    ${expected: int}    1
+    FOR    ${x: int}    IN    1    2    3
+        Should Be Equal    ${x}    ${expected}    type=int
+        ${expected} =    Evaluate    ${expected} + ${1}
+    END
+
+Statement: FOR no type
+    VAR    ${expected: int}    1
+    FOR    ${x}    IN    1    2    3
+        VAR    ${expected_str: str}    ${expected}
+        Should Be Equal    ${x}    ${expected_str}    type=str
+        ${expected} =    Evaluate    ${expected} + ${1}
+    END
+
+Statement: FOR multiple variables
+    VAR    ${expected: int}    1
+    VAR    @{langs_en}    cat    dog    horse
+    VAR    @{langs_fi}    kissa    koira    hevonen
+    FOR    ${index: int}    ${english: str}    ${finnish: str}    IN
+    ...    1    cat    kissa
+    ...    2    dog    koira
+    ...    3    horse    hevonen
+        Should Be Equal    ${index}    ${expected}    type=int
+        Should Be Equal    ${english}    ${langs_en[${index}-1]}    type=str
+        Should Be Equal    ${finnish}    ${langs_fi[${index}-1]}    type=str
+        ${expected} =    Evaluate    ${expected} + ${1}
+    END
+
+Statement: FOR dictionary
+    VAR    ${expected: int}    1
+    VAR    &{dict}    1=2    3=4
+    FOR    ${key: int}    ${value: int}    IN    &{dict}
+        Should Be Equal    ${key}    ${expected}    type=int
+        Should Be Equal    ${value}    ${expected + 1}    type=int
+        ${expected} =    Evaluate    ${expected} + ${2}
+    END
+    Should Be Equal    ${key}    3    type=int
+
+Statement: FOR dictionary key=value
+    FOR    ${key: str}    ${value: str}    IN    1=2    3=4
+        Should Be Equal    ${key}    1=2    type=str
+        Should Be Equal    ${value}    3=4    type=str
+    END
+
+Statement: FOR IN RANGE
+    VAR    ${expected: int}    0
+    FOR    ${x: int}    IN RANGE    10
+        Should Be Equal    ${x}    ${expected}    type=int
+        ${expected} =    Evaluate    ${expected} + ${1}
+    END
+    Should Be Equal    ${x}    ${9}    type=int
+
+Statement: FOR IN RANGE no type
+    VAR    ${expected: int}    0
+    FOR    ${x}    IN RANGE    3
+        Should Be Equal    ${x}    ${expected}    type=int
+        ${expected} =    Evaluate    ${expected} + ${1}
+    END
+
+
+Statement: FOR IN ENUMERATE
+    VAR    ${expected: int}    1
+    VAR    @{list}    1    2    3
+    FOR    ${i: str}    ${x: int}    IN ENUMERATE    @{list}    start=1
+        VAR    ${expected_str: str}    ${expected}
+        Should Be Equal    ${x}    ${expected}    type=int
+        Should Be Equal    ${i}    ${expected_str}    type=str
+        ${expected} =    Evaluate    ${expected} + ${1}
+    END
+    Should Be Equal    ${x}    ${3}    type=int
+    Should Be Equal    ${i}    ${3}    type=str
+
+Statement: FOR IN ENUMERATE no type
+    VAR    ${expected: int}    1
+    VAR    @{list}    1    2    3
+    FOR    ${i}    ${x}    IN ENUMERATE    @{list}    start=1
+        VAR    ${expected_str: str}    ${expected}
+        Should Be Equal    ${x}    ${expected_str}    type=str
+        Should Be Equal    ${i}    ${expected_str}    type=int
+        ${expected} =    Evaluate    ${expected} + ${1}
+    END
+
+Statement: FOR IN ENUMERATE dictionary
+    VAR    ${expected: int}    1
+    VAR    ${expected_index: int}    0
+    VAR    &{dict}    1=2    3=4
+    FOR    ${index: str}    ${key: int}    ${value: int}    IN ENUMERATE    &{dict}
+        Should Be Equal    ${key}    ${expected}    type=int
+        Should Be Equal    ${value}    ${expected + 1}    type=int
+        VAR    ${expected_index_str: str}    ${expected_index}
+        Should Be Equal    ${index}    ${expected_index_str}    type=str
+        ${expected} =    Evaluate    ${expected} + ${2}
+        ${expected_index} =    Evaluate    ${expected_index} + ${1}
+    END
+
+Statement: FOR IN ZIP
+    VAR    ${expected: int}    1
+    VAR    @{list1}    ${1}    ${2}    ${3}
+    VAR    @{list2}    1    2    3
+    VAR    @{list3}    one    two    three
+    FOR    ${l1: str}    ${l2: int}    ${l3: str}    IN ZIP    ${list1}    ${list2}    ${list3}
+        VAR    ${expected_str: str}    ${expected}
+        Should Be Equal    ${l1}    ${expected_str}    type=str
+        Should Be Equal    ${l2}    ${expected}    type=int
+        Should Be Equal    ${l3}    ${list3[${expected}-1]}    type=str
+        ${expected} =    Evaluate    ${expected} + ${1}
+    END
+
+Statement: FOR IN ZIP no type
+    VAR    ${expected: int}    1
+    VAR    @{list1}    ${1}    ${2}    ${3}
+    VAR    @{list2}    1    2    3
+    VAR    @{list3}    one    two    three
+    FOR    ${l1}    ${l2}    ${l3}    IN ZIP    ${list1}    ${list2}    ${list3}
+        VAR    ${expected_str: str}    ${expected}
+        Should Be Equal    ${l1}    ${expected}    type=int
+        Should Be Equal    ${l2}    ${expected_str}    type=str
+        Should Be Equal    ${l3}    ${list3[${expected}-1]}    type=str
+        ${expected} =    Evaluate    ${expected} + ${1}
+    END
+
+Statement: Inline If
+    ${x: int} =    IF    True    Default as string    ELSE    Default
+    Should be equal    ${x}    42    type=int
+    ${x: str} =    IF    False    Default as string    ELSE    Default
+    Should be equal    ${x}    1    type=str
+
 Set global/suite/test/local variable: No support
     Set local variable    ${local: int}     1
     Should be equal       ${local: int}     1    type=str
@@ -332,10 +460,12 @@ Kwargs
 Default
     [Arguments]    ${arg: int}=1
     Should be equal    ${arg}    1    type=int
+    RETURN    ${arg}
 
 Default as string
     [Arguments]    ${arg: str}=${42}
     Should be equal    ${arg}    42    type=str
+    RETURN    ${arg}
 
 Wrong default
     [Arguments]    ${arg: int}=wrong

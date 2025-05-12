@@ -18,7 +18,7 @@ import time
 from collections import OrderedDict
 from contextlib import contextmanager
 from datetime import datetime
-from itertools import zip_longest
+from itertools import repeat, zip_longest
 
 from robot.errors import (
     BreakLoop, ContinueLoop, DataError, ExecutionFailed, ExecutionFailures,
@@ -31,6 +31,7 @@ from robot.utils import (
     type_name
 )
 from robot.variables import evaluate_expression, is_dict_variable
+from robot.variables.search import search_variable
 
 from .statusreporter import StatusReporter
 
@@ -135,27 +136,32 @@ class ForInRunner:
                 error = DataError(data.error, syntax=True)
             else:
                 run = True
+        assign_to_rounds = self._get_assign_names(data)
         with StatusReporter(data, result, self._context, run) as status:
             if run:
                 try:
-                    values_for_rounds = self._get_values_for_rounds(data)
+                    values_for_rounds, assign_to_rounds = self._get_values_for_rounds(
+                        data
+                    )
                 except DataError as err:
                     error = err
                 else:
-                    if self._run_loop(data, result, values_for_rounds):
+                    if self._run_loop(
+                        data, result, values_for_rounds, assign_to_rounds
+                    ):
                         return
             status.pass_status = result.NOT_RUN
-            self._run_one_round(data, result, run=False)
+            self._run_one_round(data, result, next(assign_to_rounds), run=False)
             if error:
                 raise error
 
-    def _run_loop(self, data, result, values_for_rounds):
+    def _run_loop(self, data, result, values_for_rounds, assign_to_rounds):
         errors = []
         executed = False
-        for values in values_for_rounds:
+        for values, assign in zip(values_for_rounds, assign_to_rounds):
             executed = True
             try:
-                self._run_one_round(data, result, values)
+                self._run_one_round(data, result, assign, values)
             except (BreakLoop, ContinueLoop) as ctrl:
                 if ctrl.earlier_failures:
                     errors.extend(ctrl.earlier_failures.get_errors())
@@ -175,16 +181,31 @@ class ForInRunner:
         return executed
 
     def _get_values_for_rounds(self, data):
+        assign = self._get_assign_names(data)
         if self._context.dry_run:
-            return [None]
+            return [None], assign
         values_per_round = len(data.assign)
+        infos = self._get_type_infos(data)
         if self._is_dict_iteration(data.values):
-            values = self._resolve_dict_values(data.values)
-            values = self._map_dict_values_to_rounds(values, values_per_round)
+            values = self._resolve_dict_values(data.values, infos)
+            values = self._map_dict_values_to_rounds(values, values_per_round, infos)
         else:
             values = self._resolve_values(data.values)
-            values = self._map_values_to_rounds(values, values_per_round)
-        return values
+            values = self._map_values_to_rounds(values, values_per_round, infos)
+        return values, assign
+
+    def _get_type_infos(self, data):
+        from robot.running import TypeInfo
+
+        return [TypeInfo.from_variable(assign) for assign in data.assign]
+
+    def _get_assign_names(self, data) -> list[str]:
+        return repeat(
+            [
+                search_variable(v, parse_type=True, ignore_errors=True).name
+                for v in data.assign
+            ]
+        )
 
     def _is_dict_iteration(self, values):
         all_name_value = True
@@ -205,12 +226,20 @@ class ForInRunner:
             )
         return False
 
-    def _resolve_dict_values(self, values):
+    def _resolve_dict_values(self, values, infos):
         result = OrderedDict()
         replace_scalar = self._context.variables.replace_scalar
         for item in values:
             if is_dict_variable(item):
-                result.update(replace_scalar(item))
+                value = replace_scalar(item)
+                converted = {}
+                k_info = infos[0]
+                i_info = infos[1]
+                for key, item in value.items():
+                    key = self._convert(key, k_info)
+                    item = self._convert(item, i_info)
+                    converted[key] = item
+                result.update(converted)
             else:
                 key, value = split_from_equals(item)
                 if value is None:
@@ -227,7 +256,7 @@ class ForInRunner:
                     raise DataError(f"Invalid dictionary item '{item}': {err}")
         return result.items()
 
-    def _map_dict_values_to_rounds(self, values, per_round):
+    def _map_dict_values_to_rounds(self, values, per_round, infos):
         if per_round > 2:
             raise DataError(
                 f"Number of FOR loop variables must be 1 or 2 when iterating "
@@ -239,12 +268,17 @@ class ForInRunner:
     def _resolve_values(self, values):
         return self._context.variables.replace_list(values)
 
-    def _map_values_to_rounds(self, values, per_round):
+    def _map_values_to_rounds(self, values, per_round, infos):
         count = len(values)
         if count % per_round != 0:
             self._raise_wrong_variable_count(per_round, count)
         # Map list of values to list of lists containing values per round.
-        return (values[i : i + per_round] for i in range(0, count, per_round))
+        for i in range(0, count, per_round):
+            result = []
+            for info_index, value in enumerate(values[i : i + per_round]):
+                info = infos[info_index]
+                result.append(self._convert(value, info))
+            yield tuple(result)
 
     def _raise_wrong_variable_count(self, variables, values):
         raise DataError(
@@ -252,7 +286,7 @@ class ForInRunner:
             f"Got {variables} variables but {values} value{s(values)}."
         )
 
-    def _run_one_round(self, data, result, values=None, run=True):
+    def _run_one_round(self, data, result, assigns, values=None, run=True):
         iter_data = data.get_iteration()
         iter_result = result.body.create_iteration()
         if values is not None:
@@ -260,30 +294,39 @@ class ForInRunner:
         else:  # Not really run (earlier failure, un-executed IF branch, dry-run)
             variables = {}
             values = [""] * len(data.assign)
-        for name, value in self._map_variables_and_values(data.assign, values):
-            variables[name] = value
-            iter_data.assign[name] = value
-            iter_result.assign[name] = cut_assign_value(value)
+        for (
+            name,
+            value,
+            assign,
+        ) in self._map_variables_and_values(data.assign, values, assigns):
+            variables[assign] = value  # No type
+            iter_data.assign[name] = value  # type ??
+            iter_result.assign[name] = cut_assign_value(value)  # With type
         runner = BodyRunner(self._context, run, self._templated)
         with StatusReporter(iter_data, iter_result, self._context, run):
             runner.run(iter_data, iter_result)
 
-    def _map_variables_and_values(self, variables, values):
-        if len(variables) == 1 and len(values) != 1:
-            return [(variables[0], tuple(values))]
-        return zip(variables, values)
+    def _map_variables_and_values(self, variables, values, assign):
+        if len(variables) == 1 and len(values) != 1 and len(assign) == 1:
+            return [(variables[0], tuple(values), assign[0])]
+        return zip(variables, values, assign)
+
+    def _convert(self, value, info):
+        if info.type:
+            return info.convert(value)
+        return value
 
 
 class ForInRangeRunner(ForInRunner):
     flavor = "IN RANGE"
 
-    def _resolve_dict_values(self, values):
+    def _resolve_dict_values(self, values, infos):
         raise DataError(
             "FOR IN RANGE loops do not support iterating over dictionaries.",
             syntax=True,
         )
 
-    def _map_values_to_rounds(self, values, per_round):
+    def _map_values_to_rounds(self, values, per_round, infos):
         if not 1 <= len(values) <= 3:
             raise DataError(
                 f"FOR IN RANGE expected 1-3 values, got {len(values)}.",
@@ -295,7 +338,7 @@ class ForInRangeRunner(ForInRunner):
             msg = get_error_message()
             raise DataError(f"Converting FOR IN RANGE values failed: {msg}.")
         values = frange(*values)
-        return super()._map_values_to_rounds(values, per_round)
+        return super()._map_values_to_rounds(values, per_round, infos)
 
     def _to_number_with_arithmetic(self, item):
         if isinstance(item, (int, float)):
@@ -338,23 +381,33 @@ class ForInZipRunner(ForInRunner):
         except DataError as err:
             raise DataError(f"Invalid FOR IN ZIP fill value: {err}")
 
-    def _resolve_dict_values(self, values):
+    def _resolve_dict_values(self, values, infos):
         raise DataError(
             "FOR IN ZIP loops do not support iterating over dictionaries.",
             syntax=True,
         )
 
-    def _map_values_to_rounds(self, values, per_round):
+    def _map_values_to_rounds(self, values, per_round, infos):
         self._validate_types(values)
         if len(values) % per_round != 0:
             self._raise_wrong_variable_count(per_round, len(values))
+        result = []
+        for index, value in enumerate(values):
+            info = infos[index]
+            if not info.type:
+                result.append(value)
+                continue
+            value_result = []
+            for item in value:
+                value_result.append(info.convert(item))
+            result.append(value_result)
         if self._mode == "LONGEST":
-            return zip_longest(*values, fillvalue=self._fill)
+            return zip_longest(*result, fillvalue=self._fill)
         if self._mode == "STRICT":
-            self._validate_strict_lengths(values)
+            self._validate_strict_lengths(result)
         if self._mode is None:
-            self._deprecate_different_lengths(values)
-        return zip(*values)
+            self._deprecate_different_lengths(result)
+        return zip(*result)
 
     def _validate_types(self, values):
         for index, item in enumerate(values, start=1):
@@ -412,21 +465,34 @@ class ForInEnumerateRunner(ForInRunner):
         except DataError as err:
             raise DataError(f"Invalid FOR IN ENUMERATE start value: {err}")
 
-    def _map_dict_values_to_rounds(self, values, per_round):
+    def _resolve_dict_values(self, values, infos):
+        dict_infos = infos[1:]
+        return super()._resolve_dict_values(values, dict_infos)
+
+    def _map_dict_values_to_rounds(self, values, per_round, infos):
         if per_round > 3:
             raise DataError(
                 f"Number of FOR IN ENUMERATE loop variables must be 1-3 "
                 f"when iterating over dictionaries, got {per_round}.",
                 syntax=True,
             )
+        info = infos[0]
         if per_round == 2:
-            return ((i, v) for i, v in enumerate(values, start=self._start))
-        return ((i, *v) for i, v in enumerate(values, start=self._start))
+            return (
+                (self._convert(i, info), v)
+                for i, v in enumerate(values, start=self._start)
+            )
+        return (
+            (self._convert(i, info), *v)
+            for i, v in enumerate(values, start=self._start)
+        )
 
-    def _map_values_to_rounds(self, values, per_round):
+    def _map_values_to_rounds(self, values, per_round, infos):
         per_round = max(per_round - 1, 1)
-        values = super()._map_values_to_rounds(values, per_round)
-        return ((i, *v) for i, v in enumerate(values, start=self._start))
+        values = super()._map_values_to_rounds(values, per_round, [infos[1]])
+        info = infos[0]
+        for i, v in enumerate(values, start=self._start):
+            yield (self._convert(i, info), *v)
 
     def _raise_wrong_variable_count(self, variables, values):
         raise DataError(

@@ -344,6 +344,69 @@ Example
         )
         get_and_assert_model(data, expected)
 
+    def test_valid_with_type(self):
+        data = """
+*** Test Cases ***
+Example
+    FOR    ${x: int}    IN    1    2    3
+        Log    ${x}
+    END
+"""
+        expected = For(
+            header=ForHeader(
+                tokens=[
+                    Token(Token.FOR, "FOR", 3, 4),
+                    Token(Token.VARIABLE, "${x: int}", 3, 11),
+                    Token(Token.FOR_SEPARATOR, "IN", 3, 24),
+                    Token(Token.ARGUMENT, "1", 3, 30),
+                    Token(Token.ARGUMENT, "2", 3, 35),
+                    Token(Token.ARGUMENT, "3", 3, 40),
+                ]
+            ),
+            body=[
+                KeywordCall(
+                    tokens=[
+                        Token(Token.KEYWORD, "Log", 4, 8),
+                        Token(Token.ARGUMENT, "${x}", 4, 15),
+                    ]
+                )
+            ],
+            end=End([Token(Token.END, "END", 5, 4)]),
+        )
+        get_and_assert_model(data, expected)
+
+    def test_invalid_with_type(self):
+        data = """
+*** Test Cases ***
+Example
+    FOR    ${x: bad}    IN    1    2    3
+        Log    ${x}
+    END
+"""
+        expected = For(
+            header=ForHeader(
+                tokens=[
+                    Token(Token.FOR, "FOR", 3, 4),
+                    Token(Token.VARIABLE, "${x: bad}", 3, 11),
+                    Token(Token.FOR_SEPARATOR, "IN", 3, 24),
+                    Token(Token.ARGUMENT, "1", 3, 30),
+                    Token(Token.ARGUMENT, "2", 3, 35),
+                    Token(Token.ARGUMENT, "3", 3, 40),
+                ],
+                errors=("Unrecognized type 'bad'.",),
+            ),
+            body=[
+                KeywordCall(
+                    tokens=[
+                        Token(Token.KEYWORD, "Log", 4, 8),
+                        Token(Token.ARGUMENT, "${x}", 4, 15),
+                    ]
+                )
+            ],
+            end=End([Token(Token.END, "END", 5, 4)]),
+        )
+        get_and_assert_model(data, expected)
+
     def test_invalid(self):
         data1 = """
 *** Test Cases ***
@@ -362,6 +425,7 @@ Example
                 tokens=[Token(Token.FOR, "FOR", 3, 4)],
                 errors=(
                     "FOR loop has no loop variables.",
+                    "Invalid variable name ''.",
                     "FOR loop has no 'IN' or other valid separator.",
                 ),
             ),
@@ -382,6 +446,7 @@ Example
                     Token(Token.FOR_SEPARATOR, "IN", 3, 20),
                 ],
                 errors=(
+                    "Invalid variable name 'wrong'.",
                     "FOR loop has invalid loop variable 'wrong'.",
                     "FOR loop has no loop values.",
                 ),
@@ -974,6 +1039,29 @@ Example
         )
         get_and_assert_model(data, expected)
 
+    def test_assign_with_type(self):
+        data = """
+*** Test Cases ***
+Example
+    ${x: int} =    IF    True    K1    ELSE    K2
+"""
+        expected = If(
+            header=InlineIfHeader(
+                tokens=[
+                    Token(Token.ASSIGN, "${x: int} =", 3, 4),
+                    Token(Token.INLINE_IF, "IF", 3, 19),
+                    Token(Token.ARGUMENT, "True", 3, 25),
+                ]
+            ),
+            body=[KeywordCall([Token(Token.KEYWORD, "K1", 3, 33)])],
+            orelse=If(
+                header=ElseHeader([Token(Token.ELSE, "ELSE", 3, 39)]),
+                body=[KeywordCall([Token(Token.KEYWORD, "K2", 3, 47)])],
+            ),
+            end=End([Token(Token.END, "", 3, 49)]),
+        )
+        get_and_assert_model(data, expected)
+
     def test_invalid(self):
         data1 = """
 *** Test Cases ***
@@ -1020,6 +1108,30 @@ Example
         )
         get_and_assert_model(data1, expected1)
         get_and_assert_model(data2, expected2)
+
+    def test_invalid_type(self):
+        data = """
+*** Test Cases ***
+Example
+    ${x: bad} =    IF    True    K1    ELSE    K2
+"""
+        expected = If(
+            header=InlineIfHeader(
+                tokens=[
+                    Token(Token.ASSIGN, "${x: bad} =", 3, 4),
+                    Token(Token.INLINE_IF, "IF", 3, 19),
+                    Token(Token.ARGUMENT, "True", 3, 25),
+                ],
+                errors=("Unrecognized type 'bad'.",),
+            ),
+            body=[KeywordCall([Token(Token.KEYWORD, "K1", 3, 33)])],
+            orelse=If(
+                header=ElseHeader([Token(Token.ELSE, "ELSE", 3, 39)]),
+                body=[KeywordCall([Token(Token.KEYWORD, "K2", 3, 47)])],
+            ),
+            end=End([Token(Token.END, "", 3, 49)]),
+        )
+        get_and_assert_model(data, expected)
 
 
 class TestTry(unittest.TestCase):
