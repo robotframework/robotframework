@@ -61,6 +61,13 @@ class TestTimer(unittest.TestCase):
         assert_true(tout.time_left() < 0)
         assert_true(tout.timed_out())
 
+    def test_not_started(self):
+        assert_raises_with_msg(
+            ValueError,
+            "Timeout is not started.",
+            TestTimeout(1).time_left,
+        )
+
     def test_cannot_start_inactive_timeout(self):
         assert_raises_with_msg(
             ValueError,
@@ -131,10 +138,12 @@ class TestRun(unittest.TestCase):
 
     def test_timeout_exceeded(self):
         os.environ["ROBOT_THREAD_TESTING"] = "initial value"
+        timeout = TestTimeout(0.05)
+        timeout.start()
         assert_raises_with_msg(
             TimeoutExceeded,
             "Test timeout 50 milliseconds exceeded.",
-            TestTimeout(0.05).run,
+            timeout.run,
             sleeping,
             (5,),
         )

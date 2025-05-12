@@ -57,8 +57,8 @@ class Timeout(Sortable):
         self.start_time = time.time()
 
     def time_left(self) -> float:
-        if self.timeout is None:
-            raise ValueError("Timeout not active.")
+        if self.start_time < 0:
+            raise ValueError("Timeout is not started.")
         return self.timeout - (time.time() - self.start_time)
 
     def timed_out(self) -> bool:
