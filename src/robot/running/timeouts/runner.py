@@ -81,5 +81,5 @@ class Runner:
 
     def resume(self):
         self.paused -= 1
-        if self.exceeded:
+        if self.exceeded and not self.paused:
             raise self.timeout_error
