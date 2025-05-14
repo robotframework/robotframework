@@ -32,29 +32,28 @@ class WindowsRunner(Runner):
     ):
         super().__init__(timeout, timeout_error, data_error)
         self._runner_thread_id = current_thread().ident
+        self._timeout_pending = False
 
     def _run(self, runnable):
         timer = Timer(self.timeout, self._timeout_exceeded)
+        timer.start()
         try:
-            timer.start()
-            try:
-                result = runnable()
-            finally:
-                timer.cancel()
-            # This code is executed only if there was no timeout or other exception.
-            if self.exceeded:
-                self._wait_for_raised_timeout()
-            return result
+            result = runnable()
+        except TimeoutExceeded:
+            self._timeout_pending = False
+            raise
         finally:
-            if self.exceeded:
-                raise self.timeout_error
+            timer.cancel()
+        self._wait_for_pending_timeout()
+        return result
 
     def _timeout_exceeded(self):
         self.exceeded = True
         if not self.paused:
-            self._raise_timeout()
+            self._timeout_pending = True
+            self._raise_async_timeout()
 
-    def _raise_timeout(self):
+    def _raise_async_timeout(self):
         # See the following for the original recipe and API docs.
         # https://code.activestate.com/recipes/496960-thread2-killable-threads/
         # https://docs.python.org/3/c-api/init.html#c.PyThreadState_SetAsyncExc
@@ -68,7 +67,18 @@ class WindowsRunner(Runner):
                 f"Expected 'PyThreadState_SetAsyncExc' to return 1, got {modified}."
             )
 
-    def _wait_for_raised_timeout(self):
+    def _wait_for_pending_timeout(self):
         # Wait for asynchronously raised timeout that hasn't yet been received.
-        while True:
-            time.sleep(0)
+        # This can happen if a timeout occurs at the same time when the executed
+        # function returns. If the execution ever gets here, the timeout should
+        # happen immediately. The while loop shouldn't need a limit, but better
+        # to have it to avoid a deadlock even if our code had a bug.
+        if self._timeout_pending:
+            self._timeout_pending = False
+            end = time.time() + 1
+            while time.time() < end:
+                time.sleep(0)
+
+    def pause(self):
+        super().pause()
+        self._wait_for_pending_timeout()

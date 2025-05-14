@@ -154,38 +154,39 @@ class TestRun(unittest.TestCase):
             assert_raises(TimeoutExceeded, self.timeout.run, sleeping, (10,))
 
     def test_pause_runner(self):
-        def pauser():
-            runner.pause()
-            time.sleep(0.043)  # Timeout is not raised yet because runner is paused.
-            assert_raises_with_msg(
-                TimeoutExceeded,
-                "Test timeout 42 milliseconds exceeded.",
-                runner.resume,  # Timeout is raised on resume.
-            )
-
-        timeout = TestTimeout(0.042)
-        timeout.start()
-        runner = timeout.get_runner()
-        runner.run(pauser)
+        runner = TestTimeout(0.01, start=True).get_runner()
+        runner.pause()
+        runner.run(sleeping, [0.02])  # No timeout because runner is paused.
+        assert_raises_with_msg(
+            TimeoutExceeded,
+            "Test timeout 10 milliseconds exceeded.",
+            runner.resume,  # Timeout is raised on resume.
+        )
 
     def test_pause_nested(self):
-        def pauser():
-            for i in range(7):
-                runner.pause()
-            runner.resume()
-            time.sleep(0.101)  # Runner is still paused so no timeout yet.
-            for i in range(5):
-                runner.resume()  # Not fully resumed so still no timeout.
-            assert_raises_with_msg(
-                TimeoutExceeded,
-                "Test timeout 100 milliseconds exceeded.",
-                runner.resume,  # Timeout is raised when fully resumed.
-            )
+        runner = TestTimeout(0.01, start=True).get_runner()
+        for i in range(7):
+            runner.pause()
+        runner.resume()
+        runner.run(sleeping, [0.02])
+        for i in range(5):
+            runner.resume()  # Not fully resumed so still no timeout.
+        assert_raises_with_msg(
+            TimeoutExceeded,
+            "Test timeout 10 milliseconds exceeded.",
+            runner.resume,  # Timeout is raised when fully resumed.
+        )
 
-        timeout = TestTimeout(0.1)
-        timeout.start()
-        runner = timeout.get_runner()
-        runner.run(pauser)
+    def test_timeout_close_to_function_end(self):
+        delay = 0.05
+        while delay < 0.15:
+            try:
+                result = TestTimeout(0.1, start=True).run(sleeping, [delay])
+            except TimeoutExceeded as err:
+                assert_equal(str(err), "Test timeout 100 milliseconds exceeded.")
+            else:
+                assert_equal(result, delay)
+            delay += 0.02
 
     def test_no_support(self):
         from robot.running.timeouts.nosupport import NoSupportRunner

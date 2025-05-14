@@ -71,7 +71,11 @@ class Runner:
             raise self.data_error
         if self.timeout <= 0:
             raise self.timeout_error
-        return self._run(lambda: runnable(*(args or ()), **(kwargs or {})))
+        try:
+            return self._run(lambda: runnable(*(args or ()), **(kwargs or {})))
+        finally:
+            if self.exceeded and not self.paused:
+                raise self.timeout_error from None
 
     def _run(self, runnable: "Callable[[], object]") -> object:
         raise NotImplementedError
