@@ -129,34 +129,30 @@ class TestRun(unittest.TestCase):
             ("hello world",),
         )
 
-    def test_sleeping(self):
-        assert_equal(self.timeout.run(sleeping, args=(0.01,)), 0.01)
-
     def test_timeout_not_exceeded(self):
         os.environ["ROBOT_THREAD_TESTING"] = "initial value"
-        self.timeout.run(sleeping, (0.05,))
+        assert_equal(self.timeout.run(sleeping, [0.05]), 0.05)
         assert_equal(os.environ["ROBOT_THREAD_TESTING"], "0.05")
 
     def test_timeout_exceeded(self):
         os.environ["ROBOT_THREAD_TESTING"] = "initial value"
         assert_raises_with_msg(
             TimeoutExceeded,
-            "Test timeout 50 milliseconds exceeded.",
-            TestTimeout(0.05, start=True).run,
+            "Test timeout 10 milliseconds exceeded.",
+            TestTimeout(0.01, start=True).run,
             sleeping,
-            (5,),
         )
         assert_equal(os.environ["ROBOT_THREAD_TESTING"], "initial value")
 
     def test_zero_and_negative_timeout(self):
         for tout in [0, 0.0, -0.01, -1, -1000]:
             self.timeout.time_left = lambda: tout
-            assert_raises(TimeoutExceeded, self.timeout.run, sleeping, (10,))
+            assert_raises(TimeoutExceeded, self.timeout.run, sleeping)
 
     def test_pause_runner(self):
         runner = TestTimeout(0.01, start=True).get_runner()
         runner.pause()
-        runner.run(sleeping, [0.02])  # No timeout because runner is paused.
+        runner.run(sleeping, [0.05])  # No timeout because runner is paused.
         assert_raises_with_msg(
             TimeoutExceeded,
             "Test timeout 10 milliseconds exceeded.",
@@ -168,7 +164,7 @@ class TestRun(unittest.TestCase):
         for i in range(7):
             runner.pause()
         runner.resume()
-        runner.run(sleeping, [0.02])
+        runner.run(sleeping, [0.05])
         for i in range(5):
             runner.resume()  # Not fully resumed so still no timeout.
         assert_raises_with_msg(

@@ -10,7 +10,7 @@ def passing(*args):
     pass
 
 
-def sleeping(seconds):
+def sleeping(seconds=1):
     orig = seconds
     while seconds > 0:
         time.sleep(min(seconds, 0.1))
