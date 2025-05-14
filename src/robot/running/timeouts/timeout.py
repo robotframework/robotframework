@@ -25,7 +25,12 @@ from .runner import Runner
 class Timeout(Sortable):
     kind: str
 
-    def __init__(self, timeout: "float|str|None" = None, variables=None):
+    def __init__(
+        self,
+        timeout: "float|str|None" = None,
+        variables=None,
+        start: bool = False,
+    ):
         try:
             self.timeout = self._parse(timeout, variables)
         except (DataError, ValueError) as err:
@@ -35,7 +40,10 @@ class Timeout(Sortable):
         else:
             self.string = secs_to_timestr(self.timeout) if self.timeout else "NONE"
             self.error = None
-        self.start_time = -1
+        if start:
+            self.start()
+        else:
+            self.start_time = -1
 
     def _parse(self, timeout, variables) -> "float|None":
         if not timeout:
@@ -114,9 +122,15 @@ class TestTimeout(Timeout):
     kind = "TEST"
     _keyword_timeout_occurred = False
 
-    def __init__(self, timeout=None, variables=None, rpa=False):
+    def __init__(
+        self,
+        timeout: "float|str|None" = None,
+        variables=None,
+        start: bool = False,
+        rpa: bool = False,
+    ):
         self.kind = "TASK" if rpa else self.kind
-        super().__init__(timeout, variables)
+        super().__init__(timeout, variables, start)
 
     def set_keyword_timeout(self, timeout_occurred):
         if timeout_occurred:

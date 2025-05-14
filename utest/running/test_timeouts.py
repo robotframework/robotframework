@@ -47,16 +47,14 @@ class TestInit(unittest.TestCase):
 class TestTimer(unittest.TestCase):
 
     def test_time_left(self):
-        tout = TestTimeout("1s")
-        tout.start()
+        tout = TestTimeout("1s", start=True)
         assert_true(tout.time_left() > 0.9)
         time.sleep(0.1)
         assert_true(tout.time_left() <= 0.9)
         assert_false(tout.timed_out())
 
     def test_exceeded(self):
-        tout = TestTimeout("1ms")
-        tout.start()
+        tout = TestTimeout("1ms", start=True)
         time.sleep(0.02)
         assert_true(tout.time_left() < 0)
         assert_true(tout.timed_out())
@@ -74,6 +72,12 @@ class TestTimer(unittest.TestCase):
             "Cannot start inactive timeout.",
             TestTimeout().start,
         )
+        assert_raises_with_msg(
+            ValueError,
+            "Cannot start inactive timeout.",
+            TestTimeout,
+            start=True,
+        )
 
 
 class TestComparison(unittest.TestCase):
@@ -81,9 +85,7 @@ class TestComparison(unittest.TestCase):
     def setUp(self):
         self.timeouts = []
         for string in ["1 min", "42 s", "45", "1 h 1 min", "99"]:
-            timeout = TestTimeout(string)
-            timeout.start()
-            self.timeouts.append(timeout)
+            self.timeouts.append(TestTimeout(string, start=True))
 
     def test_compare(self):
         assert_equal(min(self.timeouts).string, "42 seconds")
@@ -108,8 +110,7 @@ class TestComparison(unittest.TestCase):
 class TestRun(unittest.TestCase):
 
     def setUp(self):
-        self.timeout = TestTimeout("1s")
-        self.timeout.start()
+        self.timeout = TestTimeout("1s", start=True)
 
     def test_passing(self):
         assert_equal(self.timeout.run(passing), None)
@@ -138,12 +139,10 @@ class TestRun(unittest.TestCase):
 
     def test_timeout_exceeded(self):
         os.environ["ROBOT_THREAD_TESTING"] = "initial value"
-        timeout = TestTimeout(0.05)
-        timeout.start()
         assert_raises_with_msg(
             TimeoutExceeded,
             "Test timeout 50 milliseconds exceeded.",
-            timeout.run,
+            TestTimeout(0.05, start=True).run,
             sleeping,
             (5,),
         )
@@ -211,9 +210,7 @@ class TestMessage(unittest.TestCase):
         assert_equal(TestTimeout().get_message(), "Test timeout not active.")
 
     def test_active(self):
-        tout = KeywordTimeout("42s")
-        tout.start()
-        msg = tout.get_message()
+        msg = KeywordTimeout("42s", start=True).get_message()
         assert_true(msg.startswith("Keyword timeout 42 seconds active."), msg)
         assert_true(msg.endswith("seconds left."), msg)
 
