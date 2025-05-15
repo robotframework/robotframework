@@ -152,12 +152,17 @@ class TestTypeName(unittest.TestCase):
 
         assert_equal(type_name(_Foo_), "Foo")
 
-    def test_none_as_underscore_name(self):
-        class C:
+    def test_underscore_name_is_not_used(self):
+        class StrName:
+            _name = "Don't use me!"
+
+        class NoneName:
             _name = None
 
-        assert_equal(type_name(C()), "C")
-        assert_equal(type_name(C(), capitalize=True), "C")
+        assert_equal(type_name(StrName()), "StrName")
+        assert_equal(type_name(StrName), "StrName")
+        assert_equal(type_name(NoneName()), "NoneName")
+        assert_equal(type_name(NoneName), "NoneName")
 
     def test_typing(self):
         for item, exp in [
@@ -176,17 +181,16 @@ class TestTypeName(unittest.TestCase):
             (Literal, "Literal"),
             (Literal["x", 1], "Literal"),
             (Any, "Any"),
-        ]:
-            assert_equal(type_name(item), exp)
-
-    def test_parameterized_special_forms(self):
-        for item, exp in [
+            (Annotated, "Annotated"),
             (Annotated[int, "xxx"], "Annotated"),
+            (ExtAnnotated, "Annotated"),
             (ExtAnnotated[int, "xxx"], "Annotated"),
+            (TypeForm, "TypeForm"),
             (TypeForm["str | int"], "TypeForm"),
+            (ExtTypeForm, "TypeForm"),
             (ExtTypeForm["str | int"], "TypeForm"),
         ]:
-            assert_equal(type_name(item), exp)
+            assert_equal(type_name(item), exp, str(item))
 
     if PY_VERSION >= (3, 10):
 
@@ -200,7 +204,7 @@ class TestTypeName(unittest.TestCase):
         class CamelClass:
             pass
 
-        assert_equal(type_name("string", capitalize=True), "String")
+        assert_equal(type_name("hello!", capitalize=True), "String")
         assert_equal(type_name(None, capitalize=True), "None")
         assert_equal(type_name(lowerclass(), capitalize=True), "Lowerclass")
         assert_equal(type_name(CamelClass(), capitalize=True), "CamelClass")

@@ -18,7 +18,7 @@ import warnings
 from collections import UserString
 from collections.abc import Iterable, Mapping
 from io import IOBase
-from typing import get_args, get_origin, TypedDict, Union
+from typing import _SpecialForm, get_args, get_origin, TypedDict, Union
 
 if sys.version_info < (3, 9):
     try:
@@ -68,15 +68,14 @@ def type_name(item, capitalize=False):
     origin = get_origin(item)
     if origin:
         item = origin
-    if hasattr(item, "_name") and item._name:
-        # Prior to Python 3.10, Union, Any, etc. from typing didn't have `__name__`.
-        # but instead had `_name`. Python 3.10 has both and newer only `__name__`.
-        # Also, pandas.Series has `_name` but it's None.
-        name = item._name
+    if isinstance(item, _SpecialForm):
+        # Prior to Python 3.10, typing special forms (Any, Union, ...) didn't
+        # have `__name__` but instead they had `_name`.
+        name = item.__name__ if hasattr(item, "__name__") else item._name
     elif isinstance(item, IOBase):
         name = "file"
     else:
-        typ = type(item) if not isinstance(item, type) else item
+        typ = item if isinstance(item, type) else type(item)
         named_types = {
             str: "string",
             bool: "boolean",

@@ -241,7 +241,7 @@ class ModelObject(metaclass=SetterAwareType):
 
 
 def full_name(obj_or_cls):
-    cls = type(obj_or_cls) if not isinstance(obj_or_cls, type) else obj_or_cls
+    cls = obj_or_cls if isinstance(obj_or_cls, type) else type(obj_or_cls)
     parts = [*cls.__module__.split("."), cls.__name__]
     if len(parts) > 1 and parts[0] == "robot":
         parts[2:-1] = []

@@ -1,5 +1,6 @@
 import unittest
 
+from robot import model, running
 from robot.model.itemlist import ItemList
 from robot.utils.asserts import (
     assert_equal, assert_false, assert_raises, assert_raises_with_msg, assert_true
@@ -64,22 +65,31 @@ class TestItemLists(unittest.TestCase):
     def test_only_matching_types_can_be_added(self):
         assert_raises_with_msg(
             TypeError,
-            "Only integer objects accepted, got string.",
+            "Only 'int' objects accepted, got 'str'.",
             ItemList(int).append,
             "not integer",
         )
         assert_raises_with_msg(
             TypeError,
-            "Only integer objects accepted, got Object.",
+            "Only 'int' objects accepted, got 'Object'.",
             ItemList(int).extend,
             [Object()],
         )
         assert_raises_with_msg(
             TypeError,
-            "Only Object objects accepted, got integer.",
+            "Only 'Object' objects accepted, got 'int'.",
             ItemList(Object).insert,
             0,
             42,
+        )
+
+    def test_include_module_in_non_matching_type_error_with_robot_objects(self):
+        assert_raises_with_msg(
+            TypeError,
+            "Only 'robot.running.TestSuite' objects accepted, "
+            "got 'robot.model.TestSuite'.",
+            ItemList(running.TestSuite).append,
+            model.TestSuite(),
         )
 
     def test_initial_items(self):
@@ -169,7 +179,7 @@ class TestItemLists(unittest.TestCase):
     def test_setitem_slice_invalid_type(self):
         assert_raises_with_msg(
             TypeError,
-            "Only integer objects accepted, got float.",
+            "Only 'int' objects accepted, got 'float'.",
             ItemList(int).__setitem__,
             slice(0),
             [1, 1.1],
@@ -348,13 +358,13 @@ class TestItemLists(unittest.TestCase):
         assert_false(ItemList(int) == ItemList(int, {"a": 1}))
         assert_raises_with_msg(
             TypeError,
-            "Cannot order incompatible ItemLists.",
+            "Cannot order incompatible 'ItemList' objects.",
             ItemList(int).__gt__,
             ItemList(str),
         )
         assert_raises_with_msg(
             TypeError,
-            "Cannot order incompatible ItemLists.",
+            "Cannot order incompatible 'ItemList' objects.",
             ItemList(int).__gt__,
             ItemList(int, {"a": 1}),
         )
@@ -369,19 +379,19 @@ class TestItemLists(unittest.TestCase):
         assert_true(items != (1, 2, 3))
         assert_raises_with_msg(
             TypeError,
-            "Cannot order ItemList and integer.",
+            "Cannot order 'ItemList' and 'int'.",
             items.__gt__,
             1,
         )
         assert_raises_with_msg(
             TypeError,
-            "Cannot order ItemList and list.",
+            "Cannot order 'ItemList' and 'list'.",
             items.__lt__,
             [1, 2, 3],
         )
         assert_raises_with_msg(
             TypeError,
-            "Cannot order ItemList and tuple.",
+            "Cannot order 'ItemList' and 'tuple'.",
             items.__ge__,
             (1, 2, 3),
         )
@@ -395,19 +405,19 @@ class TestItemLists(unittest.TestCase):
     def test_add_incompatible(self):
         assert_raises_with_msg(
             TypeError,
-            "Cannot add ItemList and list.",
+            "Cannot add 'ItemList' and 'list'.",
             ItemList(int).__add__,
             [],
         )
         assert_raises_with_msg(
             TypeError,
-            "Cannot add incompatible ItemLists.",
+            "Cannot add incompatible 'ItemList' objects.",
             ItemList(int).__add__,
             ItemList(str),
         )
         assert_raises_with_msg(
             TypeError,
-            "Cannot add incompatible ItemLists.",
+            "Cannot add incompatible 'ItemList' objects.",
             ItemList(int).__add__,
             ItemList(int, {"a": 1}),
         )
@@ -425,13 +435,13 @@ class TestItemLists(unittest.TestCase):
         items = ItemList(int, items=[1, 2])
         assert_raises_with_msg(
             TypeError,
-            "Cannot add incompatible ItemLists.",
+            "Cannot add incompatible 'ItemList' objects.",
             items.__iadd__,
             ItemList(str),
         )
         assert_raises_with_msg(
             TypeError,
-            "Cannot add incompatible ItemLists.",
+            "Cannot add incompatible 'ItemList' objects.",
             items.__iadd__,
             ItemList(int, {"a": 1}),
         )
@@ -439,7 +449,7 @@ class TestItemLists(unittest.TestCase):
     def test_iadd_wrong_type(self):
         assert_raises_with_msg(
             TypeError,
-            "Only integer objects accepted, got string.",
+            "Only 'int' objects accepted, got 'str'.",
             ItemList(int).__iadd__,
             ["a", "b", "c"],
         )

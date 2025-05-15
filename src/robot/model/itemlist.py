@@ -18,9 +18,9 @@ from typing import (
     Any, Iterable, Iterator, MutableSequence, overload, Type, TYPE_CHECKING, TypeVar
 )
 
-from robot.utils import copy_signature, KnownAtRuntime, type_name
+from robot.utils import copy_signature, KnownAtRuntime
 
-from .modelobject import DataDict
+from .modelobject import DataDict, full_name, ModelObject
 
 if TYPE_CHECKING:
     from .visitor import SuiteVisitor
@@ -77,13 +77,17 @@ class ItemList(MutableSequence[T]):
                 item = self._item_from_dict(item)
             else:
                 raise TypeError(
-                    f"Only {type_name(self._item_class)} objects "
-                    f"accepted, got {type_name(item)}."
+                    f"Only '{self._type_name(self._item_class)}' objects accepted, "
+                    f"got '{self._type_name(item)}'."
                 )
         if self._common_attrs:
             for attr, value in self._common_attrs.items():
                 setattr(item, attr, value)
         return item
+
+    def _type_name(self, item: "type|object") -> str:
+        typ = item if isinstance(item, type) else type(item)
+        return full_name(typ) if issubclass(typ, ModelObject) else typ.__name__
 
     def _item_from_dict(self, data: DataDict) -> T:
         if hasattr(self._item_class, "from_dict"):
@@ -193,21 +197,21 @@ class ItemList(MutableSequence[T]):
 
     def __lt__(self, other: "ItemList[T]") -> bool:
         if not isinstance(other, ItemList):
-            raise TypeError(f"Cannot order ItemList and {type_name(other)}.")
+            raise TypeError(f"Cannot order 'ItemList' and '{self._type_name(other)}'.")
         if not self._is_compatible(other):
-            raise TypeError("Cannot order incompatible ItemLists.")
+            raise TypeError("Cannot order incompatible 'ItemList' objects.")
         return self._items < other._items
 
     def __add__(self: Self, other: "ItemList[T]") -> Self:
         if not isinstance(other, ItemList):
-            raise TypeError(f"Cannot add ItemList and {type_name(other)}.")
+            raise TypeError(f"Cannot add 'ItemList' and '{self._type_name(other)}'.")
         if not self._is_compatible(other):
-            raise TypeError("Cannot add incompatible ItemLists.")
+            raise TypeError("Cannot add incompatible 'ItemList' objects.")
         return self._create_new_from(self._items + other._items)
 
     def __iadd__(self: Self, other: Iterable[T]) -> Self:
         if isinstance(other, ItemList) and not self._is_compatible(other):
-            raise TypeError("Cannot add incompatible ItemLists.")
+            raise TypeError("Cannot add incompatible 'ItemList' objects.")
         self.extend(other)
         return self
 

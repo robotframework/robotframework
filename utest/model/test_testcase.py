@@ -141,7 +141,8 @@ class TestTestCases(unittest.TestCase):
         assert_true(all(t.parent is self.suite for t in tests))
         assert_raises_with_msg(
             TypeError,
-            "Only TestCase objects accepted, got TestSuite.",
+            "Only 'robot.model.TestCase' objects accepted, "
+            "got 'robot.model.TestSuite'.",
             tests.__setitem__,
             slice(0),
             [self.suite],
