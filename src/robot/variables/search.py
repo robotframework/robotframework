@@ -102,7 +102,6 @@ class VariableMatch:
         items: "tuple[str, ...]" = (),
         start: int = -1,
         end: int = -1,
-        type_=None,
     ):
         self.string = string
         self.identifier = identifier
@@ -111,7 +110,6 @@ class VariableMatch:
         self.items = items
         self.start = start
         self.end = end
-        self.type = type_
 
     def resolve_base(self, variables, ignore_errors=False):
         if self.identifier:
