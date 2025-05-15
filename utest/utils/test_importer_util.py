@@ -29,8 +29,8 @@ def assert_prefix(error, expected):
 
 
 def create_temp_file(name, attr=42, extra_content=""):
-    TESTDIR.mkdir(exist_ok=True)
     path = TESTDIR / name
+    path.parent.mkdir(parents=True, exist_ok=True)
     with open(path, "w", encoding="ASCII") as file:
         file.write(
             f"""
@@ -73,15 +73,36 @@ class TestImportByPath(unittest.TestCase):
         if TESTDIR.exists():
             shutil.rmtree(TESTDIR)
 
-    def test_python_file(self):
+    def test_file_as_path_object(self):
         path = create_temp_file("test.py")
         self._import_and_verify(path, remove="test")
         self._assert_imported_message("test", path)
 
-    def test_python_directory(self):
+    def test_file_as_str(self):
+        path = create_temp_file("test.py")
+        self._import_and_verify(str(path), remove="test")
+        self._assert_imported_message("test", path)
+
+    def test_directory_as_path_object(self):
         create_temp_file("__init__.py")
         self._import_and_verify(TESTDIR, remove=TESTDIR.name)
         self._assert_imported_message(TESTDIR.name, TESTDIR)
+
+    def test_directory_as_str(self):
+        create_temp_file("__init__.py")
+        self._import_and_verify(str(TESTDIR), remove=TESTDIR.name)
+        self._assert_imported_message(TESTDIR.name, TESTDIR)
+
+    def test_relative_path_as_path_object(self):
+        # Separate test validates that this doesn't work with str.
+        orig_cwd = os.getcwd()
+        path = create_temp_file("test.py")
+        os.chdir(path.parent)
+        try:
+            self._import_and_verify(Path("test.py"), remove="test")
+            self._assert_imported_message("test", path)
+        finally:
+            os.chdir(orig_cwd)
 
     def test_import_same_file_multiple_times(self):
         path = create_temp_file("test.py")
@@ -107,6 +128,12 @@ class TestImportByPath(unittest.TestCase):
         self._assert_removed_message("test")
         self._assert_imported_message("test", path3, index=1)
 
+    def test_import_different_file_same_name_without_logger(self):
+        path1 = create_temp_file("test.py", attr=1)
+        self._import_and_verify(path1, attr=1, remove="test")
+        path2 = create_temp_file("sub/test.py", attr=2)
+        self._import_and_verify(path2, attr=2, directory=path2.parent, logger=False)
+
     def test_import_class_from_file(self):
         path = create_temp_file(
             "test.py",
@@ -128,24 +155,29 @@ class test:
         assert_prefix(error, f"Importing '{path}' failed: SyntaxError:")
 
     def _import_and_verify(
-        self, path, attr=42, directory=TESTDIR, name=None, remove=None
+        self,
+        path,
+        attr=42,
+        directory=TESTDIR,
+        name=None,
+        remove=None,
+        logger=True,
     ):
-        module = self._import(path, name, remove)
+        module = self._import(path, name, remove, logger)
         assert_equal(module.attr, attr)
         assert_equal(module.func(), attr)
         if hasattr(module, "__file__"):
             assert_true(Path(module.__file__).parent.samefile(directory))
 
-    def _import(self, path, name=None, remove=None):
+    def _import(self, path, name=None, remove=None, logger=True):
         if remove and remove in sys.modules:
             sys.modules.pop(remove)
-        self.logger = LoggerStub()
+        self.logger = LoggerStub() if logger else None
         importer = Importer(name, self.logger)
         sys_path_before = sys.path[:]
-        try:
-            return importer.import_class_or_module_by_path(path)
-        finally:
-            assert_equal(sys.path, sys_path_before)
+        imported = importer.import_class_or_module_by_path(path)
+        assert_equal(sys.path, sys_path_before)
+        return imported
 
     def _assert_imported_message(self, name, source, type="module", index=0):
         msg = f"Imported {type} '{name}' from '{source}'."
@@ -174,7 +206,8 @@ class TestInvalidImportPath(unittest.TestCase):
             path,
         )
 
-    def test_non_absolute(self):
+    def test_non_absolute_str(self):
+        # Separate test validates that relative paths work with Path objects.
         path = os.listdir(".")[0]
         assert_raises_with_msg(
             DataError,

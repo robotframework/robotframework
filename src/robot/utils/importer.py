@@ -15,8 +15,11 @@
 
 import importlib
 import inspect
-import os
+import os.path
 import sys
+from collections.abc import Sequence
+from pathlib import Path
+from typing import NoReturn
 
 from robot.errors import DataError
 
@@ -41,26 +44,28 @@ class Importer:
             Currently only needs the ``info`` method, but other level specific
             methods may be needed in the future. If not given, logging is disabled.
         """
-        self._type = type or ""
-        self._logger = logger or NoLogger()
+        self.type = type or ""
+        self.logger = logger or NoLogger()
         library_import = type and type.upper() == "LIBRARY"
         self._importers = (
-            ByPathImporter(logger, library_import),
-            NonDottedImporter(logger, library_import),
-            DottedImporter(logger, library_import),
+            ByPathImporter(self.logger, library_import),
+            NonDottedImporter(self.logger, library_import),
+            DottedImporter(self.logger, library_import),
         )
         self._by_path_importer = self._importers[0]
 
     def import_class_or_module(
         self,
-        name_or_path,
-        instantiate_with_args=None,
-        return_source=False,
+        name_or_path: "str|Path",
+        instantiate_with_args: "Sequence|None" = None,
+        return_source: bool = False,
     ):
         """Imports Python class or module based on the given name or path.
 
         :param name_or_path:
-            Name or path of the module or class to import.
+            Name or path of the module or class to import. If a path is given as
+            a string, it must be absolute. Paths given as ``Path`` objects can be
+            relative starting from Robot Framework 7.3.
         :param instantiate_with_args:
             When arguments are given, imported classes are automatically initialized
             using them.
@@ -99,11 +104,13 @@ class Importer:
         else:
             return self._handle_return_values(imported, source, return_source)
 
-    def import_module(self, name_or_path):
+    def import_module(self, name_or_path: "str|Path"):
         """Imports Python module based on the given name or path.
 
         :param name_or_path:
-            Name or path of the module to import.
+            Name or path of the module to import. If a path is given as a string,
+            it must be absolute. Paths given as ``Path`` objects can be relative
+            starting from Robot Framework 7.3.
 
         The module to import can be specified either as a name, in which
         case it must be in the module search path, or as a path to the file or
@@ -127,6 +134,7 @@ class Importer:
         for importer in self._importers:
             if importer.handles(name):
                 return importer.import_(name, get_class)
+        assert False
 
     def _handle_return_values(self, imported, source, return_source=False):
         if not return_source:
@@ -145,11 +153,17 @@ class Importer:
             return source
         return candidate if os.path.exists(candidate) else source
 
-    def import_class_or_module_by_path(self, path, instantiate_with_args=None):
+    def import_class_or_module_by_path(
+        self,
+        path: "str|Path",
+        instantiate_with_args: "Sequence|None" = None,
+    ):
         """Import a Python module or class using a file system path.
 
         :param path:
-            Path to the module or class to import.
+            Path to the module or class to import. If a path is given as a string,
+            it must be absolute. Paths given as ``Path`` objects can be relative
+            starting from Robot Framework 7.3.
         :param instantiate_with_args:
             When arguments are given, imported classes are automatically initialized
             using them.
@@ -169,13 +183,13 @@ class Importer:
             self._raise_import_failed(path, err)
 
     def _log_import_succeeded(self, item, name, source):
-        prefix = f"Imported {self._type.lower()}" if self._type else "Imported"
+        prefix = f"Imported {self.type.lower()}" if self.type else "Imported"
         item_type = "module" if inspect.ismodule(item) else "class"
         source = f"'{source}'" if source else "unknown location"
-        self._logger.info(f"{prefix} {item_type} '{name}' from {source}.")
+        self.logger.info(f"{prefix} {item_type} '{name}' from {source}.")
 
-    def _raise_import_failed(self, name, error):
-        prefix = f"Importing {self._type.lower()}" if self._type else "Importing"
+    def _raise_import_failed(self, name, error) -> NoReturn:
+        prefix = f"Importing {self.type.lower()}" if self.type else "Importing"
         raise DataError(f"{prefix} '{name}' failed: {error}")
 
     def _instantiate_if_needed(self, imported, args):
@@ -206,8 +220,8 @@ class Importer:
         init = getattr(imported, "__init__", None)
         name = imported.__name__
         if not is_init(init):
-            return ArgumentSpec(name, self._type)
-        return PythonArgumentParser(self._type).parse(init, name)
+            return ArgumentSpec(name, self.type)
+        return PythonArgumentParser(self.type).parse(init, name)
 
 
 class _Importer:
@@ -267,10 +281,10 @@ class ByPathImporter(_Importer):
     _valid_import_extensions = (".py", "")
 
     def handles(self, path):
-        return os.path.isabs(path)
+        return os.path.isabs(path) or isinstance(path, Path)
 
     def import_(self, path, get_class=True):
-        self._verify_import_path(path)
+        path = self._verify_import_path(path)
         self._remove_wrong_module_from_sys_modules(path)
         imported = self._import_by_path(path)
         if get_class:
@@ -281,9 +295,13 @@ class ByPathImporter(_Importer):
         if not os.path.exists(path):
             raise DataError("File or directory does not exist.")
         if not os.path.isabs(path):
-            raise DataError("Import path must be absolute.")
+            if isinstance(path, Path):
+                path = path.absolute()
+            else:
+                raise DataError("Import path must be absolute.")
         if os.path.splitext(path)[1] not in self._valid_import_extensions:
             raise DataError("Not a valid file or directory to import.")
+        return os.path.normpath(path)
 
     def _remove_wrong_module_from_sys_modules(self, path):
         importing_from, name = self._split_path_to_module(path)
