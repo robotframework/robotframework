@@ -324,11 +324,20 @@ class TestTypeInfo(unittest.TestCase):
         )
         assert_raises_with_msg(
             ValueError,
-            "Thingy 't' got value 'bad' that cannot be converted to list[int]: Invalid expression.",
+            "Thingy 't' got value 'bad' that cannot be converted to list[int]: "
+            "Invalid expression.",
             TypeInfo.from_type_hint("list[int]").convert,
             "bad",
             "t",
-            kind="Thingy",
+            kind="thingy",
+        )
+        assert_raises_with_msg(
+            ValueError,
+            "FOR var '${i: int}' got value 'bad' that cannot be converted to integer.",
+            TypeInfo.from_variable("${i: int}").convert,
+            "bad",
+            "${i: int}",
+            kind="FOR var",
         )
 
     def test_custom_converter(self):

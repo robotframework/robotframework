@@ -163,17 +163,15 @@ class TypeConverter:
         raise NotImplementedError
 
     def _handle_error(self, value, name, kind, error=None):
-        value_type = "" if isinstance(value, str) else f" ({type_name(value)})"
+        typ = "" if isinstance(value, str) else f" ({type_name(value)})"
         value = safe_str(value)
+        kind = kind.capitalize() if kind.islower() else kind
         ending = f": {error}" if (error and error.args) else "."
+        cannot_be_converted = f"cannot be converted to {self.type_name}{ending}"
         if name is None:
-            raise ValueError(
-                f"{kind.capitalize()} '{value}'{value_type} "
-                f"cannot be converted to {self.type_name}{ending}"
-            )
+            raise ValueError(f"{kind} '{value}'{typ} {cannot_be_converted}")
         raise ValueError(
-            f"{kind.capitalize()} '{name}' got value '{value}'{value_type} that "
-            f"cannot be converted to {self.type_name}{ending}"
+            f"{kind} '{name}' got value '{value}'{typ} that {cannot_be_converted}"
         )
 
     def _literal_eval(self, value, expected):
