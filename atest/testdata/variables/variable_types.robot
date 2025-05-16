@@ -100,16 +100,15 @@ VAR syntax: Dictionary
 
 VAR syntax: Invalid scalar value
     [Documentation]    FAIL
-    ...    Setting variable '\${x: int}' failed: \
-    ...    Value 'KALA' cannot be converted to integer.
+    ...    Setting variable '\${x: int}' failed: Value 'KALA' cannot be converted to integer.
     VAR    ${x: int}    KALA
 
 VAR syntax: Invalid scalar type
-    [Documentation]    FAIL    Unrecognized type 'hahaa'.
+    [Documentation]    FAIL    Invalid variable '\${x: hahaa}': Unrecognized type 'hahaa'.
     VAR    ${x: hahaa}    KALA
 
 VAR syntax: Type can not be set as variable
-    [Documentation]    FAIL    Unrecognized type '\${type}'.
+    [Documentation]    FAIL    Invalid variable '\${x: \${type}}': Unrecognized type '\${type}'.
     VAR    ${type}    int
     VAR    ${x: ${type}}    1
 
@@ -168,34 +167,27 @@ Variable assignment: Invalid variable type for dictionary
     [Documentation]    FAIL    Unrecognized type 'int=str'.
     ${x: int=str} =    Create dictionary    1=2    3=4
 
-Variable assignment: No type when using variable
-    [Documentation]    FAIL
-    ...    Resolving variable '\${x: str}' failed: SyntaxError: invalid syntax (<string>, line 1)
-    ${x: date}    Set Variable    2025-04-30
-    Should be equal    ${x}    2025-04-30    type=date
-    Should be equal    ${x: str}    2025-04-30    type=str
-
 Variable assignment: Multiple
     ${a: int}    ${b: float} =    Create List    1    2.3
-    Should be equal    ${a}    1     type=int
-    Should be equal    ${b}    2.3   type=float
+    Should be equal    ${a}    1      type=int
+    Should be equal    ${b}    2.3    type=float
 
 Variable assignment: Multiple list and scalars
     ${a: int}    @{b: float} =    Create List    1    2    3.4
-    Should be equal    ${a}    ${1}
+    Should be equal    ${a}    1             type=int
     Should be equal    ${b}    [2.0, 3.4]    type=list
     @{a: int}    ${b: float} =    Create List    1    2    3.4
     Should be equal    ${a}    [1, 2]    type=list
-    Should be equal    ${b}    ${3.4}
+    Should be equal    ${b}    3.4       type=float
     ${a: int}    @{b: float}    ${c: float} =    Create List    1    2    3.4
-    Should be equal    ${a}    ${1}
+    Should be equal    ${a}    1        type=int
     Should be equal    ${b}    [2.0]    type=list
-    Should be equal    ${c}    ${3.4}
-    ${a: int}    @{b: float}    ${c: float}     ${d: float}=    Create List    1    2    3.4
-    Should be equal    ${a}    ${1}
-    Should be equal    ${b}    []    type=list
-    Should be equal    ${c}    ${2.0}
-    Should be equal    ${d}    ${3.4}
+    Should be equal    ${c}    3.4      type=float
+    ${a: int}    @{b: float}    ${c: float}    ${d: float} =    Create List    1    2    3.4
+    Should be equal    ${a}    1      type=int
+    Should be equal    ${b}    []     type=list
+    Should be equal    ${c}    2.0    type=float
+    Should be equal    ${d}    3.4    type=float
 
 Variable assignment: Invalid type for list in multiple variable assignment
     [Documentation]    FAIL    Unrecognized type 'bad'.
@@ -212,16 +204,14 @@ Variable assignment: Type syntax is not resolved from variable
     Should be equal    ${x: int}    12
 
 Variable assignment: Extended
-    [Documentation]    FAIL
-    ...    ValueError: Return value 'kala' cannot be converted to integer.
-    Should be equal    ${OBJ.name}    dude    type=str
+    [Documentation]    FAIL    ValueError: Return value 'kala' cannot be converted to integer.
+    Should be equal    ${OBJ.name}    dude
     ${OBJ.name: int} =    Set variable    42
-    Should be equal    ${OBJ.name}    ${42}    type=int
+    Should be equal    ${OBJ.name}    42    type=int
     ${OBJ.name: int} =    Set variable    kala
 
 Variable assignment: Item
-    [Documentation]    FAIL
-    ...    ValueError: Return value 'kala' cannot be converted to integer.
+    [Documentation]    FAIL    ValueError: Return value 'kala' cannot be converted to integer.
     VAR    @{x}    1    2
     ${x: int}[0] =    Set variable    3
     Should be equal    ${x}    [3, "2"]    type=list
@@ -289,13 +279,11 @@ Embedded arguments: Invalid value from variable
     Embedded 1 and ${{[2, 3]}}
 
 Embedded arguments: Invalid type
-    [Documentation]    FAIL    Invalid embedded argument '${x: invalid}': Unrecognized type 'invalid'.
+    [Documentation]    FAIL    Invalid embedded argument '\${x: invalid}': Unrecognized type 'invalid'.
     Embedded invalid type ${x: invalid}
 
 Variable usage does not support type syntax 1
-    [Documentation]    FAIL
-    ...    STARTS: Resolving variable '\${x: int}' failed: \
-    ...    SyntaxError:
+    [Documentation]    FAIL    STARTS: Resolving variable '\${x: int}' failed: SyntaxError:
     VAR    ${x}    1
     Log    This fails: ${x: int}
 
@@ -304,6 +292,142 @@ Variable usage does not support type syntax 2
     ...    Resolving variable '\${abc_not_here: int}' failed: \
     ...    Variable '\${abc_not_here}' not found.
     Log    ${abc_not_here: int}: fails
+
+FOR
+    VAR    ${expected: int}    1
+    FOR    ${item: int}    IN    1    2    3
+        Should Be Equal    ${item}    ${expected}
+        ${expected} =    Evaluate    ${expected} + 1
+    END
+
+FOR: Multiple variables
+    VAR    @{english}    cat      dog      horse
+    VAR    @{finnish}    kissa    koira    hevonen
+    VAR    ${index: int}    1
+    FOR    ${i: int}    ${en: Literal["cat", "dog", "horse"]}    ${fi: str}    IN
+    ...    1    cat      kissa
+    ...    2    Dog      koira
+    ...    3    HORSE    hevonen
+        Should Be Equal    ${i}     ${index}
+        Should Be Equal    ${en}    ${english}[${index-1}]
+        Should Be Equal    ${fi}    ${finnish}[${index-1}]
+        ${index} =    Evaluate    ${index} + 1
+    END
+
+FOR: Dictionary
+    VAR    &{dict}    1=2    3=4
+    VAR    ${index: int}    1
+    FOR    ${key: int}    ${value: int}    IN    &{dict}    5=6
+        Should Be Equal    ${key}      ${index}
+        Should Be Equal    ${value}    ${index + 1}
+        ${index} =    Evaluate    ${index} + 2
+    END
+    VAR    ${index: int}    1
+    FOR    ${item: tuple[int, int]}    IN    1=ignored    &{dict}    5=6
+        Should Be Equal    ${item}      ${{($index, $index+1)}}
+        ${index} =    Evaluate    ${index} + 2
+    END
+
+FOR IN RANGE
+    VAR    ${expected: int}    0
+    FOR    ${x: timedelta}    IN RANGE    10
+        Should Be Equal    ${x.total_seconds()}    ${expected}
+        ${expected} =    Evaluate    ${expected} + 1
+    END
+
+FOR IN ENUMERATE
+    VAR    ${index: int}    0
+    FOR    ${i: str}    ${x: int}    IN ENUMERATE    0    1    2    3    4    5
+        Should Be Equal    ${i}    ${index}    type=str
+        Should Be Equal    ${x}    ${index}    type=int
+        ${index} =    Evaluate    ${index} + 1
+    END
+    VAR    ${index: int}    1
+    FOR    ${item: tuple[str, int]}    IN ENUMERATE    1    2    3    start=1
+        Should Be Equal    ${item}    ${{($index, $index)}}    type=tuple[str, int]
+        ${index} =    Evaluate    ${index} + 1
+    END
+
+FOR IN ENUMERATE: Dictionary
+    VAR    &{dict}    0=1    1=${2}    ${2}=3
+    VAR    ${index: int}    0
+    FOR    ${i: str}    ${key: int}    ${value: int}    IN ENUMERATE    &{dict}
+        Should Be Equal    ${i}        ${index}    type=str
+        Should Be Equal    ${key}      ${index}
+        Should Be Equal    ${value}    ${index + 1}
+        ${index} =    Evaluate    ${index} + 1
+    END
+    VAR    ${index: int}    0
+    FOR    ${i: str}    ${item: tuple[int, int]}    IN ENUMERATE    &{dict}    3=${4.0}
+        Should Be Equal    ${i}       ${index}    type=str
+        Should Be Equal    ${item}    ${{($index, $index+1)}}    type=tuple[int, int]
+        ${index} =    Evaluate    ${index} + 1
+    END
+    VAR    ${index: int}    0
+    FOR    ${all: list[str]}    IN ENUMERATE    0=ignore    &{dict}    3=4    ${4}=${5}
+        Should Be Equal    ${all}    ${{[$index, $index, $index+1]}}    type=list[str]
+        ${index} =    Evaluate    ${index} + 1
+    END
+
+FOR IN ZIP
+    VAR    @{list1}    ${1}    ${2}    ${3}
+    VAR    @{list2}    1    2    3
+    VAR    ${index: int}    1
+    FOR    ${i1: str}    ${i2: int}    IN ZIP    ${list1}    ${list2}
+        Should Be Equal    ${i1}    ${index}    type=str
+        Should Be Equal    ${i2}    ${index}
+        ${index} =    Evaluate    ${index} + 1
+    END
+    VAR    ${index: int}    1
+    FOR    ${item: tuple[str, int]}    IN ZIP    ${list1}    ${list2}
+        Should Be Equal    ${item}    ${{($index, $index)}}    type=tuple[str, int]
+        ${index} =    Evaluate    ${index} + 1
+    END
+
+FOR: Failing conversion 1
+    [Documentation]    FAIL
+    ...    ValueError: FOR loop variable '\${x: float}' got value 'bad' \
+    ...    that cannot be converted to float.
+    FOR    ${x: float}    IN    1    bad    3
+        Should Be Equal    ${x}    1    type=float
+    END
+
+FOR: Failing conversion 2
+    [Documentation]    FAIL
+    ...    ValueError: FOR loop variable '\${x: int}' got value '0.1' (float) \
+    ...    that cannot be converted to integer: Conversion would lose precision.
+    FOR    ${x: int}    IN RANGE    0    1    0.1
+        Should Be Equal    ${x}    0    type=int
+    END
+
+FOR: Failing conversion 3
+    [Documentation]    FAIL
+    ...    ValueError: FOR loop variable '\${i: Literal[0, 1, 2]}' got value '3' (integer) \
+    ...    that cannot be converted to 0, 1 or 2.
+    VAR    ${expected: int}    0
+    FOR    ${i: Literal[0, 1, 2]}    ${c: Literal["a", "b", "c"]}    IN ENUMERATE    a    B    c    d    e
+        Should Be Equal    ${i}    ${expected}
+        Should Be Equal    ${c}    ${{"abc"[$expected]}}
+        ${expected} =    Evaluate    ${expected} + 1
+    END
+
+FOR: Invalid type
+    [Documentation]    FAIL
+    ...    Invalid FOR loop variable '\${item: bad}': Unrecognized type 'bad'.
+    FOR    ${item: bad}    IN ENUMERATE    whatever
+        Fail    Not run
+    END
+
+Inline IF
+    ${x: int} =    IF    True    Default as string    ELSE    Default
+    Should be equal    ${x}    42    type=int
+    ${x: str} =    IF    False    Default as string    ELSE    Default
+    Should be equal    ${x}    1    type=str
+    ${first: int}    @{rest: int | float} =    IF    True    Create List    1    2.3    4
+    Should be equal    ${first}    1    type=int
+    Should be equal    ${rest}    [2.3, 4]    type=list
+    @{x: int} =    IF    False    Fail    Not run
+    Should be equal    ${x}    []    type=list
 
 Set global/suite/test/local variable: No support
     Set local variable    ${local: int}     1
@@ -332,10 +456,12 @@ Kwargs
 Default
     [Arguments]    ${arg: int}=1
     Should be equal    ${arg}    1    type=int
+    RETURN    ${arg}
 
 Default as string
     [Arguments]    ${arg: str}=${42}
     Should be equal    ${arg}    42    type=str
+    RETURN    ${arg}
 
 Wrong default
     [Arguments]    ${arg: int}=wrong

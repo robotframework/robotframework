@@ -30,7 +30,7 @@ from robot.utils import (
     plural_or_not as s, secs_to_timestr, seq2str, split_from_equals, timestr_to_secs,
     type_name
 )
-from robot.variables import evaluate_expression, is_dict_variable
+from robot.variables import evaluate_expression, is_dict_variable, search_variable
 
 from .statusreporter import StatusReporter
 
@@ -138,24 +138,25 @@ class ForInRunner:
         with StatusReporter(data, result, self._context, run) as status:
             if run:
                 try:
+                    assign, types = self._split_types(data)
                     values_for_rounds = self._get_values_for_rounds(data)
                 except DataError as err:
                     error = err
                 else:
-                    if self._run_loop(data, result, values_for_rounds):
+                    if self._run_loop(data, result, assign, types, values_for_rounds):
                         return
             status.pass_status = result.NOT_RUN
-            self._run_one_round(data, result, run=False)
+            self._no_run_one_round(data, result)
             if error:
                 raise error
 
-    def _run_loop(self, data, result, values_for_rounds):
+    def _run_loop(self, data, result, assign, types, values_for_rounds):
         errors = []
         executed = False
         for values in values_for_rounds:
             executed = True
             try:
-                self._run_one_round(data, result, values)
+                self._run_one_round(data, result, assign, types, values)
             except (BreakLoop, ContinueLoop) as ctrl:
                 if ctrl.earlier_failures:
                     errors.extend(ctrl.earlier_failures.get_errors())
@@ -174,9 +175,23 @@ class ForInRunner:
             raise ExecutionFailures(errors)
         return executed
 
+    def _split_types(self, data):
+        from .arguments import TypeInfo
+
+        assign = []
+        types = []
+        for variable in data.assign:
+            match = search_variable(variable, parse_type=True)
+            assign.append(match.name)
+            try:
+                types.append(TypeInfo.from_variable(match) if match.type else None)
+            except DataError as err:
+                raise DataError(f"Invalid FOR loop variable '{variable}': {err}")
+        return assign, types
+
     def _get_values_for_rounds(self, data):
         if self._context.dry_run:
-            return [None]
+            return [[""] * len(data.assign)]
         values_per_round = len(data.assign)
         if self._is_dict_iteration(data.values):
             values = self._resolve_dict_values(data.values)
@@ -252,26 +267,32 @@ class ForInRunner:
             f"Got {variables} variables but {values} value{s(values)}."
         )
 
-    def _run_one_round(self, data, result, values=None, run=True):
+    def _run_one_round(self, data, result, assign, types, values, run=True):
+        ctx = self._context
         iter_data = data.get_iteration()
         iter_result = result.body.create_iteration()
-        if values is not None:
-            variables = self._context.variables
-        else:  # Not really run (earlier failure, un-executed IF branch, dry-run)
-            variables = {}
-            values = [""] * len(data.assign)
-        for name, value in self._map_variables_and_values(data.assign, values):
+        variables = ctx.variables if run and not ctx.dry_run else {}
+        if len(assign) == 1 and len(values) != 1:
+            values = [tuple(values)]
+        for orig, name, type_info, value in zip(data.assign, assign, types, values):
+            if type_info and not ctx.dry_run:
+                value = type_info.convert(value, orig, kind="FOR loop variable")
             variables[name] = value
-            iter_data.assign[name] = value
-            iter_result.assign[name] = cut_assign_value(value)
+            iter_data.assign[orig] = value
+            iter_result.assign[orig] = cut_assign_value(value)
         runner = BodyRunner(self._context, run, self._templated)
         with StatusReporter(iter_data, iter_result, self._context, run):
             runner.run(iter_data, iter_result)
 
-    def _map_variables_and_values(self, variables, values):
-        if len(variables) == 1 and len(values) != 1:
-            return [(variables[0], tuple(values))]
-        return zip(variables, values)
+    def _no_run_one_round(self, data, result):
+        self._run_one_round(
+            data,
+            result,
+            assign=data.assign,
+            types=[None] * len(data.assign),
+            values=[""] * len(data.assign),
+            run=False,
+        )
 
 
 class ForInRangeRunner(ForInRunner):
@@ -424,8 +445,7 @@ class ForInEnumerateRunner(ForInRunner):
         return ((i, *v) for i, v in enumerate(values, start=self._start))
 
     def _map_values_to_rounds(self, values, per_round):
-        per_round = max(per_round - 1, 1)
-        values = super()._map_values_to_rounds(values, per_round)
+        values = super()._map_values_to_rounds(values, max(per_round - 1, 1))
         return ((i, *v) for i, v in enumerate(values, start=self._start))
 
     def _raise_wrong_variable_count(self, variables, values):

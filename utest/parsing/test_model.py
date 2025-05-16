@@ -344,6 +344,37 @@ Example
         )
         get_and_assert_model(data, expected)
 
+    def test_with_type(self):
+        data = """
+*** Test Cases ***
+Example
+    FOR    ${x: int}    IN    1    2    3
+        Log    ${x}
+    END
+"""
+        expected = For(
+            header=ForHeader(
+                tokens=[
+                    Token(Token.FOR, "FOR", 3, 4),
+                    Token(Token.VARIABLE, "${x: int}", 3, 11),
+                    Token(Token.FOR_SEPARATOR, "IN", 3, 24),
+                    Token(Token.ARGUMENT, "1", 3, 30),
+                    Token(Token.ARGUMENT, "2", 3, 35),
+                    Token(Token.ARGUMENT, "3", 3, 40),
+                ]
+            ),
+            body=[
+                KeywordCall(
+                    tokens=[
+                        Token(Token.KEYWORD, "Log", 4, 8),
+                        Token(Token.ARGUMENT, "${x}", 4, 15),
+                    ]
+                )
+            ],
+            end=End([Token(Token.END, "END", 5, 4)]),
+        )
+        get_and_assert_model(data, expected)
+
     def test_invalid(self):
         data1 = """
 *** Test Cases ***
@@ -355,13 +386,13 @@ Example
         data2 = """
 *** Test Cases ***
 Example
-    FOR    wrong    IN
+    FOR    bad    @{bad}    ${x: bad}    IN
 """
         expected1 = For(
             header=ForHeader(
                 tokens=[Token(Token.FOR, "FOR", 3, 4)],
                 errors=(
-                    "FOR loop has no loop variables.",
+                    "FOR loop has no variables.",
                     "FOR loop has no 'IN' or other valid separator.",
                 ),
             ),
@@ -378,12 +409,16 @@ Example
             header=ForHeader(
                 tokens=[
                     Token(Token.FOR, "FOR", 3, 4),
-                    Token(Token.VARIABLE, "wrong", 3, 11),
-                    Token(Token.FOR_SEPARATOR, "IN", 3, 20),
+                    Token(Token.VARIABLE, "bad", 3, 11),
+                    Token(Token.VARIABLE, "@{bad}", 3, 18),
+                    Token(Token.VARIABLE, "${x: bad}", 3, 28),
+                    Token(Token.FOR_SEPARATOR, "IN", 3, 41),
                 ],
                 errors=(
-                    "FOR loop has invalid loop variable 'wrong'.",
-                    "FOR loop has no loop values.",
+                    "Invalid FOR loop variable 'bad'.",
+                    "Invalid FOR loop variable '@{bad}'.",
+                    "Invalid FOR loop variable '${x: bad}': Unrecognized type 'bad'.",
+                    "FOR loop has no values.",
                 ),
             ),
             errors=("FOR loop cannot be empty.", "FOR loop must have closing END."),
@@ -974,11 +1009,34 @@ Example
         )
         get_and_assert_model(data, expected)
 
+    def test_assign_with_type(self):
+        data = """
+*** Test Cases ***
+Example
+    ${x: int} =    IF    True    K1    ELSE    K2
+"""
+        expected = If(
+            header=InlineIfHeader(
+                tokens=[
+                    Token(Token.ASSIGN, "${x: int} =", 3, 4),
+                    Token(Token.INLINE_IF, "IF", 3, 19),
+                    Token(Token.ARGUMENT, "True", 3, 25),
+                ]
+            ),
+            body=[KeywordCall([Token(Token.KEYWORD, "K1", 3, 33)])],
+            orelse=If(
+                header=ElseHeader([Token(Token.ELSE, "ELSE", 3, 39)]),
+                body=[KeywordCall([Token(Token.KEYWORD, "K2", 3, 47)])],
+            ),
+            end=End([Token(Token.END, "", 3, 49)]),
+        )
+        get_and_assert_model(data, expected)
+
     def test_invalid(self):
         data1 = """
 *** Test Cases ***
 Example
-    ${x} =    ${y}    IF    ELSE    ooops    ELSE IF
+    ${x} =    &{y: bad}    IF    ELSE    ooops    ELSE IF
 """
         data2 = """
 *** Test Cases ***
@@ -989,20 +1047,25 @@ Example
             header=InlineIfHeader(
                 tokens=[
                     Token(Token.ASSIGN, "${x} =", 3, 4),
-                    Token(Token.ASSIGN, "${y}", 3, 14),
-                    Token(Token.INLINE_IF, "IF", 3, 22),
-                    Token(Token.ARGUMENT, "ELSE", 3, 28),
-                ]
+                    Token(Token.ASSIGN, "&{y: bad}", 3, 14),
+                    Token(Token.INLINE_IF, "IF", 3, 27),
+                    Token(Token.ARGUMENT, "ELSE", 3, 33),
+                ],
+                errors=(
+                    "Assign mark '=' can be used only with the last variable.",
+                    "Dictionary variable cannot be assigned with other variables.",
+                    "Invalid variable '&{y: bad}': Unrecognized type 'bad'.",
+                ),
             ),
-            body=[KeywordCall([Token(Token.KEYWORD, "ooops", 3, 36)])],
+            body=[KeywordCall([Token(Token.KEYWORD, "ooops", 3, 41)])],
             orelse=If(
                 header=ElseIfHeader(
-                    tokens=[Token(Token.ELSE_IF, "ELSE IF", 3, 45)],
+                    tokens=[Token(Token.ELSE_IF, "ELSE IF", 3, 50)],
                     errors=("ELSE IF must have a condition.",),
                 ),
                 errors=("ELSE IF branch cannot be empty.",),
             ),
-            end=End([Token(Token.END, "", 3, 52)]),
+            end=End([Token(Token.END, "", 3, 57)]),
         )
         expected2 = If(
             header=InlineIfHeader(
@@ -1178,8 +1241,9 @@ Example
                                             Token(Token.OPTION, "type=invalid", 11, 20),
                                         ],
                                         errors=(
-                                            "EXCEPT option 'type' does not accept value 'invalid'. "
-                                            "Valid values are 'GLOB', 'REGEXP', 'START' and 'LITERAL'.",
+                                            "EXCEPT option 'type' does not accept "
+                                            "value 'invalid'. Valid values are 'GLOB', "
+                                            "'REGEXP', 'START' and 'LITERAL'.",
                                         ),
                                     ),
                                     errors=("EXCEPT branch cannot be empty.",),
@@ -1365,7 +1429,7 @@ ${x}==    invalid
 ${not     closed
           invalid
 &{dict}   invalid    ${invalid}
-${x: invalid}        1
+${x: bad}            1
 ${x: list[broken}    1    2
 """
         expected = VariableSection(
@@ -1415,18 +1479,18 @@ ${x: list[broken}    1    2
                         Token(Token.ARGUMENT, "${invalid}", 7, 21),
                     ],
                     errors=(
-                        "Invalid dictionary variable item 'invalid'. "
-                        "Items must use 'name=value' syntax or be dictionary variables themselves.",
-                        "Invalid dictionary variable item '${invalid}'. "
-                        "Items must use 'name=value' syntax or be dictionary variables themselves.",
+                        "Invalid dictionary variable item 'invalid'. Items must use "
+                        "'name=value' syntax or be dictionary variables themselves.",
+                        "Invalid dictionary variable item '${invalid}'. Items must use "
+                        "'name=value' syntax or be dictionary variables themselves.",
                     ),
                 ),
                 Variable(
                     tokens=[
-                        Token(Token.VARIABLE, "${x: invalid}", 8, 0),
+                        Token(Token.VARIABLE, "${x: bad}", 8, 0),
                         Token(Token.ARGUMENT, "1", 8, 21),
                     ],
-                    errors=("Unrecognized type 'invalid'.",),
+                    errors=("Invalid variable '${x: bad}': Unrecognized type 'bad'.",),
                 ),
                 Variable(
                     tokens=[
@@ -1435,7 +1499,8 @@ ${x: list[broken}    1    2
                         Token(Token.ARGUMENT, "2", 9, 26),
                     ],
                     errors=(
-                        "Parsing type 'list[broken' failed: Error at end: Closing ']' missing.",
+                        "Invalid variable '${x: list[broken}': Parsing type "
+                        "'list[broken' failed: Error at end: Closing ']' missing.",
                     ),
                 ),
             ],
@@ -1724,7 +1789,7 @@ Keyword
                         Token(Token.VARIABLE, "${a: bad}", 11, 11),
                         Token(Token.ARGUMENT, "1", 11, 32),
                     ],
-                    errors=("Unrecognized type 'bad'.",),
+                    errors=("Invalid variable '${a: bad}': Unrecognized type 'bad'.",),
                 ),
                 Var(
                     tokens=[
@@ -1733,8 +1798,8 @@ Keyword
                         Token(Token.ARGUMENT, "1", 12, 32),
                     ],
                     errors=(
-                        "Parsing type 'list[broken' failed: "
-                        "Error at end: Closing ']' missing.",
+                        "Invalid variable '${a: list[broken}': Parsing type "
+                        "'list[broken' failed: Error at end: Closing ']' missing.",
                     ),
                 ),
             ],
@@ -1807,13 +1872,13 @@ Test
         data = """
 *** Test Cases ***
 Test
-    ${x} =    ${y}      Marker in wrong place
-    @{x}      @{y} =    Multiple lists
-    ${x}      &{y}      Dict works only alone
-    ${a: wrong}         Bad type
-    ${x: wrong}      ${y: int} =            Bad type
-    ${x: wrong}      ${y: list[broken} =    Broken type
-    ${x: int=float}                         This type works only with dicts
+    ${x} =       ${y}           Marker in wrong place
+    @{x}         @{y} =         Only one list allowed
+    ${x}         &{y}           Dict works only alone
+    ${a: bad}                   Bad type
+    ${x: bad}    ${y: int} =    Bad type with good type
+    ${x: list[broken} =         Broken type
+    ${x: int=float}             Valid only with dicts
 """
         expected = TestCase(
             header=TestCaseName([Token(Token.TESTCASE_NAME, "Test", 2, 0)]),
@@ -1821,8 +1886,8 @@ Test
                 KeywordCall(
                     tokens=[
                         Token(Token.ASSIGN, "${x} =", 3, 4),
-                        Token(Token.ASSIGN, "${y}", 3, 14),
-                        Token(Token.KEYWORD, "Marker in wrong place", 3, 24),
+                        Token(Token.ASSIGN, "${y}", 3, 17),
+                        Token(Token.KEYWORD, "Marker in wrong place", 3, 32),
                     ],
                     errors=(
                         "Assign mark '=' can be used only with the last variable.",
@@ -1831,16 +1896,16 @@ Test
                 KeywordCall(
                     tokens=[
                         Token(Token.ASSIGN, "@{x}", 4, 4),
-                        Token(Token.ASSIGN, "@{y} =", 4, 14),
-                        Token(Token.KEYWORD, "Multiple lists", 4, 24),
+                        Token(Token.ASSIGN, "@{y} =", 4, 17),
+                        Token(Token.KEYWORD, "Only one list allowed", 4, 32),
                     ],
                     errors=("Assignment can contain only one list variable.",),
                 ),
                 KeywordCall(
                     tokens=[
                         Token(Token.ASSIGN, "${x}", 5, 4),
-                        Token(Token.ASSIGN, "&{y}", 5, 14),
-                        Token(Token.KEYWORD, "Dict works only alone", 5, 24),
+                        Token(Token.ASSIGN, "&{y}", 5, 17),
+                        Token(Token.KEYWORD, "Dict works only alone", 5, 32),
                     ],
                     errors=(
                         "Dictionary variable cannot be assigned with other variables.",
@@ -1848,36 +1913,39 @@ Test
                 ),
                 KeywordCall(
                     tokens=[
-                        Token(Token.ASSIGN, "${a: wrong}", 6, 4),
-                        Token(Token.KEYWORD, "Bad type", 6, 24),
+                        Token(Token.ASSIGN, "${a: bad}", 6, 4),
+                        Token(Token.KEYWORD, "Bad type", 6, 32),
                     ],
-                    errors=("Unrecognized type 'wrong'.",),
+                    errors=("Invalid variable '${a: bad}': Unrecognized type 'bad'.",),
                 ),
                 KeywordCall(
                     tokens=[
-                        Token(Token.ASSIGN, "${x: wrong}", 7, 4),
-                        Token(Token.ASSIGN, "${y: int} =", 7, 21),
-                        Token(Token.KEYWORD, "Bad type", 7, 44),
+                        Token(Token.ASSIGN, "${x: bad}", 7, 4),
+                        Token(Token.ASSIGN, "${y: int} =", 7, 17),
+                        Token(Token.KEYWORD, "Bad type with good type", 7, 32),
                     ],
-                    errors=("Unrecognized type 'wrong'.",),
+                    errors=("Invalid variable '${x: bad}': Unrecognized type 'bad'.",),
                 ),
                 KeywordCall(
                     tokens=[
-                        Token(Token.ASSIGN, "${x: wrong}", 8, 4),
-                        Token(Token.ASSIGN, "${y: list[broken} =", 8, 21),
-                        Token(Token.KEYWORD, "Broken type", 8, 44),
+                        Token(Token.ASSIGN, "${x: list[broken} =", 8, 4),
+                        Token(Token.KEYWORD, "Broken type", 8, 32),
                     ],
                     errors=(
-                        "Unrecognized type 'wrong'.",
-                        "Parsing type 'list[broken' failed: Error at end: Closing ']' missing.",
+                        "Invalid variable '${x: list[broken}': "
+                        "Parsing type 'list[broken' failed: "
+                        "Error at end: Closing ']' missing.",
                     ),
                 ),
                 KeywordCall(
                     tokens=[
                         Token(Token.ASSIGN, "${x: int=float}", 9, 4),
-                        Token(Token.KEYWORD, "This type works only with dicts", 9, 44),
+                        Token(Token.KEYWORD, "Valid only with dicts", 9, 32),
                     ],
-                    errors=("Unrecognized type 'int=float'.",),
+                    errors=(
+                        "Invalid variable '${x: int=float}': "
+                        "Unrecognized type 'int=float'.",
+                    ),
                 ),
             ],
         )
@@ -2000,8 +2068,8 @@ Invalid
                     errors=(
                         "Invalid argument '${x: bad}': Unrecognized type 'bad'.",
                         "Invalid argument '${y: list[bad]}': Unrecognized type 'bad'.",
-                        "Invalid argument '${z: list[broken}': "
-                        "Parsing type 'list[broken' failed: Error at end: Closing ']' missing.",
+                        "Invalid argument '${z: list[broken}': Parsing type "
+                        "'list[broken' failed: Error at end: Closing ']' missing.",
                         "Invalid argument '&{k: str=int}': Unrecognized type 'str=int'.",
                     ),
                 ),
@@ -2801,7 +2869,7 @@ language: bad
 language: b    a    d
 LANGUAGE:GER    MAN    # OK!
 *** Einstellungen ***
-Dokumentaatio    Header is de and setting is fi.
+Dokumentaatio    DE header w/ FI setting
 """
         )
         expected = File(
@@ -2889,10 +2957,8 @@ Dokumentaatio    Header is de and setting is fi.
                             tokens=[
                                 Token("DOCUMENTATION", "Dokumentaatio", 7, 0),
                                 Token("SEPARATOR", "    ", 7, 13),
-                                Token(
-                                    "ARGUMENT", "Header is de and setting is fi.", 7, 17
-                                ),
-                                Token("EOL", "\n", 7, 48),
+                                Token("ARGUMENT", "DE header w/ FI setting", 7, 17),
+                                Token("EOL", "\n", 7, 40),
                             ]
                         )
                     ],

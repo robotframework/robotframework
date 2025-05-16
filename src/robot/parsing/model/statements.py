@@ -1077,14 +1077,7 @@ class KeywordCall(Statement):
         return self.get_values(Token.ASSIGN)
 
     def validate(self, ctx: "ValidationContext"):
-        assignment = VariableAssignment(self.assign)
-        if assignment.error:
-            self.errors += (assignment.error.message,)
-        for variable in assignment:
-            try:
-                TypeInfo.from_variable(variable)
-            except DataError as err:
-                self.errors += (str(err),)
+        AssignmentValidator().validate(self)
 
 
 @Statement.register
@@ -1182,19 +1175,22 @@ class ForHeader(Statement):
 
     def validate(self, ctx: "ValidationContext"):
         if not self.assign:
-            self._add_error("no loop variables")
+            self.errors += ("FOR loop has no variables.",)
         if not self.flavor:
-            self._add_error("no 'IN' or other valid separator")
+            self.errors += ("FOR loop has no 'IN' or other valid separator.",)
         else:
             for var in self.assign:
-                if not is_scalar_assign(var):
-                    self._add_error(f"invalid loop variable '{var}'")
+                match = search_variable(var, ignore_errors=True, parse_type=True)
+                if not match.is_scalar_assign():
+                    self.errors += (f"Invalid FOR loop variable '{var}'.",)
+                elif match.type:
+                    try:
+                        TypeInfo.from_variable(match)
+                    except DataError as err:
+                        self.errors += (f"Invalid FOR loop variable '{var}': {err}",)
             if not self.values:
-                self._add_error("no loop values")
+                self.errors += ("FOR loop has no values.",)
         self._validate_options()
-
-    def _add_error(self, error: str):
-        self.errors += (f"FOR loop has {error}.",)
 
 
 class IfElseHeader(Statement, ABC):
@@ -1265,6 +1261,10 @@ class InlineIfHeader(IfElseHeader):
             Token(Token.ARGUMENT, condition),
         ]
         return cls(tokens)
+
+    def validate(self, ctx: "ValidationContext"):
+        super().validate(ctx)
+        AssignmentValidator().validate(self)
 
 
 @Statement.register
@@ -1754,7 +1754,7 @@ class VariableValidator:
         try:
             TypeInfo.from_variable(match)
         except DataError as err:
-            statement.errors += (str(err),)
+            statement.errors += (f"Invalid variable '{name}': {err}",)
 
     def _validate_dict_items(self, statement: Statement):
         for item in statement.get_values(Token.ARGUMENT):
@@ -1767,3 +1767,17 @@ class VariableValidator:
     def _is_valid_dict_item(self, item: str) -> bool:
         name, value = split_from_equals(item)
         return value is not None or is_dict_variable(item)
+
+
+class AssignmentValidator:
+
+    def validate(self, statement: Statement):
+        assignment = statement.get_values(Token.ASSIGN)
+        if assignment:
+            assignment = VariableAssignment(assignment)
+            statement.errors += assignment.errors
+            for variable in assignment:
+                try:
+                    TypeInfo.from_variable(variable)
+                except DataError as err:
+                    statement.errors += (f"Invalid variable '{variable}': {err}",)
