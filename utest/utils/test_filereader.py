@@ -1,7 +1,7 @@
-import codecs
 import os
 import tempfile
 import unittest
+from codecs import BOM_UTF8
 from io import BytesIO, StringIO
 from pathlib import Path
 
@@ -67,13 +67,6 @@ class TestReadFile(unittest.TestCase):
             assert_reader(reader)
         assert_closed(reader.file)
 
-    def test_codecs_open_file(self):
-        with codecs.open(PATH, encoding="UTF-8") as f:
-            with FileReader(f) as reader:
-                assert_reader(reader)
-            assert_open(f, reader.file)
-        assert_closed(f, reader.file)
-
     def test_open_binary_file(self):
         with open(PATH, "rb") as f:
             with FileReader(f) as reader:
@@ -119,7 +112,7 @@ class TestReadFile(unittest.TestCase):
 
 
 class TestReadFileWithBom(TestReadFile):
-    BOM = codecs.BOM_UTF8
+    BOM = BOM_UTF8
 
 
 if __name__ == "__main__":

@@ -398,6 +398,8 @@ class TestTypeInfo(unittest.TestCase):
             error = "Unrecognized type 'Unknown'."
             assert_raises_with_msg(TypeError, error, info.convert, "whatever")
             assert_raises_with_msg(TypeError, error, info.get_converter)
+            converter = info.get_converter(allow_unknown=True)
+            assert_raises_with_msg(TypeError, error, converter.validate)
 
     def test_unknown_converter_can_be_accepted(self):
         for hint in "Unknown", "Unknown[int]", Unknown:

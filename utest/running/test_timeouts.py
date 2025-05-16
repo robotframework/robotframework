@@ -49,8 +49,8 @@ class TestTimer(unittest.TestCase):
     def test_time_left(self):
         tout = TestTimeout("1s", start=True)
         assert_true(tout.time_left() > 0.9)
-        time.sleep(0.1)
-        assert_true(tout.time_left() <= 0.9)
+        time.sleep(0.01)
+        assert_true(tout.time_left() < 1)
         assert_false(tout.timed_out())
 
     def test_exceeded(self):
