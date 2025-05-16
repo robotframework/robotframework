@@ -8,10 +8,9 @@ from pathlib import Path
 from robot.utils import FileReader
 from robot.utils.asserts import assert_equal, assert_raises
 
-
-TEMPDIR = os.getenv('TEMPDIR') or tempfile.gettempdir()
-PATH = os.path.join(TEMPDIR, 'filereader.test')
-STRING = 'Hyvää\ntyötä\nCпасибо\n'
+TEMPDIR = os.getenv("TEMPDIR") or tempfile.gettempdir()
+PATH = os.path.join(TEMPDIR, "filereader.test")
+STRING = "Hyvää\ntyötä\nCпасибо\n"
 
 
 def assert_reader(reader, name=PATH):
@@ -31,7 +30,7 @@ def assert_closed(*files):
 
 
 class TestReadFile(unittest.TestCase):
-    BOM = b''
+    BOM = b""
     created_files = set()
 
     @classmethod
@@ -39,10 +38,10 @@ class TestReadFile(unittest.TestCase):
         cls._create()
 
     @classmethod
-    def _create(cls, content=STRING, path=PATH, encoding='UTF-8'):
-        with open(path, 'wb') as f:
+    def _create(cls, content=STRING, path=PATH, encoding="UTF-8"):
+        with open(path, "wb") as f:
             f.write(cls.BOM)
-            f.write(content.replace('\n', os.linesep).encode(encoding))
+            f.write(content.replace("\n", os.linesep).encode(encoding))
         cls.created_files.add(path)
 
     @classmethod
@@ -57,7 +56,7 @@ class TestReadFile(unittest.TestCase):
         assert_closed(reader.file)
 
     def test_open_text_file(self):
-        with open(PATH, encoding='UTF-8') as f:
+        with open(PATH, encoding="UTF-8") as f:
             with FileReader(f) as reader:
                 assert_reader(reader)
             assert_open(f, reader.file)
@@ -69,14 +68,14 @@ class TestReadFile(unittest.TestCase):
         assert_closed(reader.file)
 
     def test_codecs_open_file(self):
-        with codecs.open(PATH, encoding='UTF-8') as f:
+        with codecs.open(PATH, encoding="UTF-8") as f:
             with FileReader(f) as reader:
                 assert_reader(reader)
             assert_open(f, reader.file)
         assert_closed(f, reader.file)
 
     def test_open_binary_file(self):
-        with open(PATH, 'rb') as f:
+        with open(PATH, "rb") as f:
             with FileReader(f) as reader:
                 assert_reader(reader)
             assert_open(f, reader.file)
@@ -85,22 +84,22 @@ class TestReadFile(unittest.TestCase):
     def test_stringio(self):
         f = StringIO(STRING)
         with FileReader(f) as reader:
-            assert_reader(reader, '<in-memory file>')
+            assert_reader(reader, "<in-memory file>")
         assert_open(f)
 
     def test_bytesio(self):
-        f = BytesIO(self.BOM + STRING.encode('UTF-8'))
+        f = BytesIO(self.BOM + STRING.encode("UTF-8"))
         with FileReader(f) as reader:
-            assert_reader(reader, '<in-memory file>')
+            assert_reader(reader, "<in-memory file>")
         assert_open(f)
 
     def test_text(self):
         with FileReader(STRING, accept_text=True) as reader:
-            assert_reader(reader, '<in-memory file>')
+            assert_reader(reader, "<in-memory file>")
         assert_closed(reader.file)
 
     def test_text_with_special_chars(self):
-        for text in '!"#¤%&/()=?', '*** Test Cases ***', 'in:va:lid':
+        for text in '!"#¤%&/()=?', "*** Test Cases ***", "in:va:lid":
             with FileReader(text, accept_text=True) as reader:
                 assert_equal(reader.read(), text)
 
@@ -113,8 +112,8 @@ class TestReadFile(unittest.TestCase):
 
     def test_invalid_encoding(self):
         russian = STRING.split()[-1]
-        path = os.path.join(TEMPDIR, 'filereader.iso88595')
-        self._create(russian, path, encoding='ISO-8859-5')
+        path = os.path.join(TEMPDIR, "filereader.iso88595")
+        self._create(russian, path, encoding="ISO-8859-5")
         with FileReader(path) as reader:
             assert_raises(UnicodeDecodeError, reader.read)
 
@@ -123,5 +122,5 @@ class TestReadFileWithBom(TestReadFile):
     BOM = codecs.BOM_UTF8
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

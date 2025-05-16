@@ -34,7 +34,7 @@ Conversion fails with `type`
     ${42}               bad              type=int
 
 Invalid type with `type`
-    [Documentation]    FAIL    TypeError: Cannot convert type 'bad'.
+    [Documentation]    FAIL    TypeError: Unrecognized type 'bad'.
     ${42}               whatever         type=bad
 
 Convert both arguments using `types`
@@ -56,7 +56,7 @@ Conversion fails with `types`
     1                   bad              types=decimal
 
 Invalid type with `types`
-    [Documentation]    FAIL    TypeError: Cannot convert type 'oooops'.
+    [Documentation]    FAIL    TypeError: Unrecognized type 'oooops'.
     ${42}               whatever         types=oooops
 
 Cannot use both `type` and `types`
@@ -64,5 +64,5 @@ Cannot use both `type` and `types`
     1                   1                type=int    types=int
 
 Automatic type doesn't work with `types`
-    [Documentation]    FAIL    TypeError: Cannot convert type 'auto'.
+    [Documentation]    FAIL    TypeError: Unrecognized type 'auto'.
     ${42}               ${42}            types=auto

@@ -16,18 +16,18 @@
 from robot.errors import DataError
 
 from .htmlwriter import LibdocHtmlWriter
-from .xmlwriter import LibdocXmlWriter
 from .jsonwriter import LibdocJsonWriter
+from .xmlwriter import LibdocXmlWriter
 
 
 def LibdocWriter(format=None, theme=None, lang=None):
-    format = (format or 'HTML')
-    if format == 'HTML':
+    format = format or "HTML"
+    if format == "HTML":
         return LibdocHtmlWriter(theme, lang)
-    if format == 'XML':
+    if format == "XML":
         return LibdocXmlWriter()
-    if format == 'LIBSPEC':
+    if format == "LIBSPEC":
         return LibdocXmlWriter()
-    if format == 'JSON':
+    if format == "JSON":
         return LibdocJsonWriter()
-    raise DataError("Invalid format '%s'." % format)
+    raise DataError(f"Invalid format '{format}'.")

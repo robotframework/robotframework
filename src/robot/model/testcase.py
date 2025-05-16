@@ -30,8 +30,8 @@ if TYPE_CHECKING:
     from .visitor import SuiteVisitor
 
 
-TC = TypeVar('TC', bound='TestCase')
-KW = TypeVar('KW', bound='Keyword', covariant=True)
+TC = TypeVar("TC", bound="TestCase")
+KW = TypeVar("KW", bound="Keyword", covariant=True)
 
 
 class TestCase(ModelObject, Generic[KW]):
@@ -40,19 +40,23 @@ class TestCase(ModelObject, Generic[KW]):
     Extended by :class:`robot.running.model.TestCase` and
     :class:`robot.result.model.TestCase`.
     """
-    type = 'TEST'
+
+    type = "TEST"
     body_class = Body
     # See model.TestSuite on removing the type ignore directive
-    fixture_class: Type[KW] = Keyword    # type: ignore
-    repr_args = ('name',)
-    __slots__ = ['parent', 'name', 'doc', 'timeout', 'lineno', '_setup', '_teardown']
+    fixture_class: Type[KW] = Keyword  # type: ignore
+    repr_args = ("name",)
+    __slots__ = ("parent", "name", "doc", "timeout", "lineno", "_setup", "_teardown")
 
-    def __init__(self, name: str = '',
-                 doc: str = '',
-                 tags: 'Tags|Sequence[str]' = (),
-                 timeout: 'str|None' = None,
-                 lineno: 'int|None' = None,
-                 parent: 'TestSuite[KW, TestCase[KW]]|None' = None):
+    def __init__(
+        self,
+        name: str = "",
+        doc: str = "",
+        tags: "Tags|Sequence[str]" = (),
+        timeout: "str|None" = None,
+        lineno: "int|None" = None,
+        parent: "TestSuite[KW, TestCase[KW]]|None" = None,
+    ):
         self.name = name
         self.doc = doc
         self.tags = tags
@@ -60,16 +64,16 @@ class TestCase(ModelObject, Generic[KW]):
         self.lineno = lineno
         self.parent = parent
         self.body = []
-        self._setup: 'KW|None' = None
-        self._teardown: 'KW|None' = None
+        self._setup: "KW|None" = None
+        self._teardown: "KW|None" = None
 
     @setter
-    def body(self, body: 'Sequence[BodyItem|DataDict]') -> Body:
+    def body(self, body: "Sequence[BodyItem|DataDict]") -> Body:
         """Test body as a :class:`~robot.model.body.Body` object."""
         return self.body_class(self, body)
 
     @setter
-    def tags(self, tags: 'Tags|Sequence[str]') -> Tags:
+    def tags(self, tags: "Tags|Sequence[str]") -> Tags:
         """Test tags as a :class:`~.model.tags.Tags` object."""
         return Tags(tags)
 
@@ -99,12 +103,22 @@ class TestCase(ModelObject, Generic[KW]):
         ``test.keywords.setup``.
         """
         if self._setup is None:
-            self._setup = create_fixture(self.fixture_class, None, self, Keyword.SETUP)
+            self._setup = create_fixture(
+                self.fixture_class,
+                None,
+                self,
+                Keyword.SETUP,
+            )
         return self._setup
 
     @setup.setter
-    def setup(self, setup: 'KW|DataDict|None'):
-        self._setup = create_fixture(self.fixture_class, setup, self, Keyword.SETUP)
+    def setup(self, setup: "KW|DataDict|None"):
+        self._setup = create_fixture(
+            self.fixture_class,
+            setup,
+            self,
+            Keyword.SETUP,
+        )
 
     @property
     def has_setup(self) -> bool:
@@ -127,12 +141,22 @@ class TestCase(ModelObject, Generic[KW]):
         See :attr:`setup` for more information.
         """
         if self._teardown is None:
-            self._teardown = create_fixture(self.fixture_class, None, self, Keyword.TEARDOWN)
+            self._teardown = create_fixture(
+                self.fixture_class,
+                None,
+                self,
+                Keyword.TEARDOWN,
+            )
         return self._teardown
 
     @teardown.setter
-    def teardown(self, teardown: 'KW|DataDict|None'):
-        self._teardown = create_fixture(self.fixture_class, teardown, self, Keyword.TEARDOWN)
+    def teardown(self, teardown: "KW|DataDict|None"):
+        self._teardown = create_fixture(
+            self.fixture_class,
+            teardown,
+            self,
+            Keyword.TEARDOWN,
+        )
 
     @property
     def has_teardown(self) -> bool:
@@ -152,17 +176,17 @@ class TestCase(ModelObject, Generic[KW]):
         more information.
         """
         if not self.parent:
-            return 't1'
+            return "t1"
         tests = self.parent.tests
         index = tests.index(self) if self in tests else len(tests)
-        return f'{self.parent.id}-t{index + 1}'
+        return f"{self.parent.id}-t{index + 1}"
 
     @property
     def full_name(self) -> str:
         """Test name prefixed with the full name of the parent suite."""
         if not self.parent:
             return self.name
-        return f'{self.parent.full_name}.{self.name}'
+        return f"{self.parent.full_name}.{self.name}"
 
     @property
     def longname(self) -> str:
@@ -170,38 +194,41 @@ class TestCase(ModelObject, Generic[KW]):
         return self.full_name
 
     @property
-    def source(self) -> 'Path|None':
+    def source(self) -> "Path|None":
         return self.parent.source if self.parent is not None else None
 
-    def visit(self, visitor: 'SuiteVisitor'):
+    def visit(self, visitor: "SuiteVisitor"):
         """:mod:`Visitor interface <robot.model.visitor>` entry-point."""
         visitor.visit_test(self)
 
-    def to_dict(self) -> 'dict[str, Any]':
-        data: 'dict[str, Any]' = {'name': self.name}
+    def to_dict(self) -> "dict[str, Any]":
+        data: "dict[str, Any]" = {"name": self.name}
         if self.doc:
-            data['doc'] = self.doc
+            data["doc"] = self.doc
         if self.tags:
-            data['tags'] = tuple(self.tags)
+            data["tags"] = tuple(self.tags)
         if self.timeout:
-            data['timeout'] = self.timeout
+            data["timeout"] = self.timeout
         if self.lineno:
-            data['lineno'] = self.lineno
+            data["lineno"] = self.lineno
         if self.has_setup:
-            data['setup'] = self.setup.to_dict()
+            data["setup"] = self.setup.to_dict()
         if self.has_teardown:
-            data['teardown'] = self.teardown.to_dict()
-        data['body'] = self.body.to_dicts()
+            data["teardown"] = self.teardown.to_dict()
+        data["body"] = self.body.to_dicts()
         return data
 
 
 class TestCases(ItemList[TC]):
-    __slots__ = []
+    __slots__ = ()
 
-    def __init__(self, test_class: Type[TC] = TestCase,
-                 parent: 'TestSuite|None' = None,
-                 tests: 'Sequence[TC|DataDict]' = ()):
-        super().__init__(test_class, {'parent': parent}, tests)
+    def __init__(
+        self,
+        test_class: Type[TC] = TestCase,
+        parent: "TestSuite|None" = None,
+        tests: "Sequence[TC|DataDict]" = (),
+    ):
+        super().__init__(test_class, {"parent": parent}, tests)
 
     def _check_type_and_set_attrs(self, test):
         test = super()._check_type_and_set_attrs(test)

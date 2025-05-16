@@ -26,6 +26,10 @@ Debugfile
     Stdout Should Match Regexp  .*Debug: {3}${path}.*
     Syslog Should Match Regexp  .*Debug: ${path}.*
 
+Debug file messages are not delayed when timeouts are active
+    Run Tests    -b debug.txt    cli/runner/debugfile.robot
+    Check Test Case    ${TEST NAME}
+
 Debugfile Log Level Should Always Be Debug
     [Documentation]  --loglevel option should not affect what's written to debugfile
     Run Tests Without Processing Output  --outputdir ${CLI OUTDIR} -b debug.txt -o o.xml --loglevel WARN  ${TESTFILE}

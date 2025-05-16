@@ -23,8 +23,14 @@ class _RunKeywordRegister:
     def __init__(self):
         self._libs = {}
 
-    def register_run_keyword(self, libname, keyword, args_to_process,
-                             deprecation_warning=True, dry_run=False):
+    def register_run_keyword(
+        self,
+        libname,
+        keyword,
+        args_to_process,
+        deprecation_warning=True,
+        dry_run=False,
+    ):
         """Deprecated API for registering "run keyword variants".
 
         Registered keywords are handled specially by Robot so that:
@@ -63,10 +69,10 @@ class _RunKeywordRegister:
                 "For more information see "
                 "https://github.com/robotframework/robotframework/issues/2190. "
                 "Use with `deprecation_warning=False` to avoid this warning.",
-                UserWarning
+                UserWarning,
             )
         if libname not in self._libs:
-            self._libs[libname] = NormalizedDict(ignore=['_'])
+            self._libs[libname] = NormalizedDict(ignore=["_"])
         self._libs[libname][keyword] = (int(args_to_process), dry_run)
 
     def get_args_to_process(self, libname, kwname):

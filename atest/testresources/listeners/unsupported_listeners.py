@@ -2,7 +2,7 @@ import sys
 
 
 def close():
-    sys.exit('This should not be called')
+    sys.exit("This should not be called")
 
 
 class V1Listener:
@@ -13,14 +13,14 @@ class V1Listener:
 
 
 class V4Listener:
-    ROBOT_LISTENER_API_VERSION = '4'
+    ROBOT_LISTENER_API_VERSION = "4"
 
     def close(self):
         close()
 
 
 class InvalidVersionListener:
-    ROBOT_LISTENER_API_VERSION = 'kekkonen'
+    ROBOT_LISTENER_API_VERSION = "kekkonen"
 
     def close(self):
         close()

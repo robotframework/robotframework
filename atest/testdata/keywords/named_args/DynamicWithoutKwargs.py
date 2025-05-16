@@ -1,13 +1,12 @@
 from helper import pretty
 
-
 KEYWORDS = {
-    'One Arg': ['arg'],
-    'Two Args': ['first', 'second'],
-    'Four Args': ['a=1', ('b', '2'), ('c', 3), ('d', 4)],
-    'Defaults w/ Specials': ['a=${notvar}', 'b=\n', 'c=\\n', 'd=\\'],
-    'Args & Varargs': ['a', 'b=default', '*varargs'],
-    'Nön-ÄSCII names': ['nönäscii', '官话'],
+    "One Arg": ["arg"],
+    "Two Args": ["first", "second"],
+    "Four Args": ["a=1", ("b", "2"), ("c", 3), ("d", 4)],
+    "Defaults w/ Specials": ["a=${notvar}", "b=\n", "c=\\n", "d=\\"],
+    "Args & Varargs": ["a", "b=default", "*varargs"],
+    "Nön-ÄSCII names": ["nönäscii", "官话"],
 }
 
 

@@ -18,17 +18,19 @@ import signal as signal_module
 import subprocess
 import sys
 import time
+from pathlib import Path
 from tempfile import TemporaryFile
 
 from robot.api import logger
-from robot.utils import (cmdline2list, ConnectionCache, console_decode, console_encode,
-                         is_list_like, is_pathlike, is_string, is_truthy,
-                         NormalizedDict, secs_to_timestr, system_decode, system_encode,
-                         timestr_to_secs, WINDOWS)
+from robot.errors import TimeoutExceeded
+from robot.utils import (
+    cmdline2list, ConnectionCache, console_decode, console_encode, is_list_like,
+    NormalizedDict, secs_to_timestr, system_decode, system_encode, timestr_to_secs,
+    WINDOWS
+)
 from robot.version import get_version
 
-
-LOCALE_ENCODING = 'locale' if sys.version_info >= (3, 10) else None
+LOCALE_ENCODING = "locale" if sys.version_info >= (3, 10) else None
 
 
 class Process:
@@ -76,25 +78,24 @@ class Process:
     = Process configuration =
 
     `Run Process` and `Start Process` keywords can be configured using
-    optional ``**configuration`` keyword arguments. Configuration arguments
-    must be given after other arguments passed to these keywords and must
-    use syntax like ``name=value``. Available configuration arguments are
-    listed below and discussed further in sections afterward.
+    optional configuration arguments. These arguments must be given
+    after other arguments passed to these keywords and must use the
+    ``name=value`` syntax. Available configuration arguments are
+    listed below and discussed further in the subsequent sections.
 
-    |  = Name =  |                  = Explanation =                      |
-    | shell      | Specifies whether to run the command in shell or not. |
-    | cwd        | Specifies the working directory.                      |
-    | env        | Specifies environment variables given to the process. |
-    | env:<name> | Overrides the named environment variable(s) only.     |
-    | stdout     | Path of a file where to write standard output.        |
-    | stderr     | Path of a file where to write standard error.         |
-    | stdin      | Configure process standard input. New in RF 4.1.2.    |
-    | output_encoding | Encoding to use when reading command outputs.    |
-    | alias      | Alias given to the process.                           |
+    |  = Name =   |                  = Explanation =                      |
+    | shell       | Specify whether to run the command in a shell or not. |
+    | cwd         | Specify the working directory.                        |
+    | env         | Specify environment variables given to the process.   |
+    | **env_extra | Override named environment variables using ``env:<name>=<value>`` syntax. |
+    | stdout      | Path to a file where to write standard output.        |
+    | stderr      | Path to a file where to write standard error.         |
+    | stdin       | Configure process standard input. New in RF 4.1.2.    |
+    | output_encoding | Encoding to use when reading command outputs.     |
+    | alias       | A custom name given to the process.                   |
 
-    Note that because ``**configuration`` is passed using ``name=value`` syntax,
-    possible equal signs in other arguments passed to `Run Process` and
-    `Start Process` must be escaped with a backslash like ``name\\=value``.
+    Note that possible equal signs in other arguments passed to `Run Process`
+    and `Start Process` must be escaped with a backslash like ``name\\=value``.
     See `Run Process` for an example.
 
     == Running processes in shell ==
@@ -148,33 +149,34 @@ class Process:
     == Standard output and error streams ==
 
     By default, processes are run so that their standard output and standard
-    error streams are kept in the memory. This works fine normally,
-    but if there is a lot of output, the output buffers may get full and
-    the program can hang.
+    error streams are kept in the memory. This typically works fine, but there
+    can be problems if the amount of output is large or unlimited. Prior to
+    Robot Framework 7.3 the limit was smaller than nowadays and reaching it
+    caused a deadlock.
 
     To avoid the above-mentioned problems, it is possible to use ``stdout``
     and ``stderr`` arguments to specify files on the file system where to
-    redirect the outputs. This can also be useful if other processes or
-    other keywords need to read or manipulate the outputs somehow.
+    redirect the output. This can also be useful if other processes or
+    other keywords need to read or manipulate the output somehow.
 
     Given ``stdout`` and ``stderr`` paths are relative to the `current working
     directory`. Forward slashes in the given paths are automatically converted
     to backslashes on Windows.
-
-    As a special feature, it is possible to redirect the standard error to
-    the standard output by using ``stderr=STDOUT``.
 
     Regardless are outputs redirected to files or not, they are accessible
     through the `result object` returned when the process ends. Commands are
     expected to write outputs using the console encoding, but `output encoding`
     can be configured using the ``output_encoding`` argument if needed.
 
-    If you are not interested in outputs at all, you can explicitly ignore them
-    by using a special value ``DEVNULL`` both with ``stdout`` and ``stderr``. For
+    As a special feature, it is possible to redirect the standard error to
+    the standard output by using ``stderr=STDOUT``.
+
+    If you are not interested in output at all, you can explicitly ignore it by
+    using a special value ``DEVNULL`` both with ``stdout`` and ``stderr``. For
     example, ``stdout=DEVNULL`` is the same as redirecting output on console
     with ``> /dev/null`` on UNIX-like operating systems or ``> NUL`` on Windows.
-    This way the process will not hang even if there would be a lot of output,
-    but naturally output is not available after execution either.
+    This way even a huge amount of output cannot cause problems, but naturally
+    the output is not available after execution either.
 
     Examples:
     | ${result} = | `Run Process` | program | stdout=${TEMPDIR}/stdout.txt | stderr=${TEMPDIR}/stderr.txt |
@@ -184,7 +186,7 @@ class Process:
     | ${result} = | `Run Process` | program | stdout=DEVNULL | stderr=DEVNULL |
 
     Note that the created output files are not automatically removed after
-    the test run. The user is responsible to remove them if needed.
+    execution. The user is responsible to remove them if needed.
 
     == Standard input stream ==
 
@@ -244,7 +246,7 @@ class Process:
     = Active process =
 
     The library keeps record which of the started processes is currently active.
-    By default it is the latest process started with `Start Process`,
+    By default, it is the latest process started with `Start Process`,
     but `Switch Process` can be used to activate a different process. Using
     `Run Process` does not affect the active process.
 
@@ -314,41 +316,58 @@ class Process:
     |     ${result} =    `Wait For Process`    First
     |     `Should Be Equal As Integers`    ${result.rc}    0
     """
-    ROBOT_LIBRARY_SCOPE = 'GLOBAL'
+
+    ROBOT_LIBRARY_SCOPE = "GLOBAL"
     ROBOT_LIBRARY_VERSION = get_version()
     TERMINATE_TIMEOUT = 30
     KILL_TIMEOUT = 10
 
     def __init__(self):
-        self._processes = ConnectionCache('No active process.')
+        self._processes = ConnectionCache("No active process.")
         self._results = {}
 
-    def run_process(self, command, *arguments, **configuration):
+    def run_process(
+        self,
+        command,
+        *arguments,
+        cwd=None,
+        shell=False,
+        stdout=None,
+        stderr=None,
+        stdin=None,
+        output_encoding="CONSOLE",
+        alias=None,
+        timeout=None,
+        on_timeout="terminate",
+        env=None,
+        **env_extra,
+    ):
         """Runs a process and waits for it to complete.
 
-        ``command`` and ``*arguments`` specify the command to execute and
+        ``command`` and ``arguments`` specify the command to execute and
         arguments passed to it. See `Specifying command and arguments` for
         more details.
 
-        ``**configuration`` contains additional configuration related to
-        starting processes and waiting for them to finish. See `Process
-        configuration` for more details about configuration related to starting
-        processes. Configuration related to waiting for processes consists of
-        ``timeout`` and ``on_timeout`` arguments that have same semantics as
-        with `Wait For Process` keyword. By default, there is no timeout, and
-        if timeout is defined the default action on timeout is ``terminate``.
+        The started process can be configured using ``cwd``, ``shell``, ``stdout``,
+        ``stderr``, ``stdin``, ``output_encoding``, ``alias``, ``env`` and
+        ``env_extra`` parameters that are documented in the `Process configuration`
+        section.
+
+        Configuration related to waiting for processes consists of ``timeout``
+        and ``on_timeout`` parameters that have same semantics than with the
+        `Wait For Process` keyword.
 
         Process outputs are, by default, written into in-memory buffers.
-        If there is a lot of output, these buffers may get full causing
-        the process to hang. To avoid that, process outputs can be redirected
-        using the ``stdout`` and ``stderr`` configuration parameters. For more
-        information see the `Standard output and error streams` section.
+        This typically works fine, but there can be problems if the amount of
+        output is large or unlimited. To avoid such problems, outputs can be
+        redirected to files using the ``stdout`` and ``stderr`` configuration
+        parameters. For more information see the `Standard output and error streams`
+        section.
 
         Returns a `result object` containing information about the execution.
 
-        Note that possible equal signs in ``*arguments`` must be escaped
-        with a backslash (e.g. ``name\\=value``) to avoid them to be passed in
-        as ``**configuration``.
+        Note that possible equal signs in ``command`` and ``arguments`` must
+        be escaped with a backslash (e.g. ``name\\=value``).
 
         Examples:
         | ${result} = | Run Process | python | -c | print('Hello, world!') |
@@ -360,18 +379,41 @@ class Process:
         This keyword does not change the `active process`.
         """
         current = self._processes.current
-        timeout = configuration.pop('timeout', None)
-        on_timeout = configuration.pop('on_timeout', 'terminate')
         try:
-            handle = self.start_process(command, *arguments, **configuration)
+            handle = self.start_process(
+                command,
+                *arguments,
+                cwd=cwd,
+                shell=shell,
+                stdout=stdout,
+                stderr=stderr,
+                stdin=stdin,
+                output_encoding=output_encoding,
+                alias=alias,
+                env=env,
+                **env_extra,
+            )
             return self.wait_for_process(handle, timeout, on_timeout)
         finally:
             self._processes.current = current
 
-    def start_process(self, command, *arguments, **configuration):
+    def start_process(
+        self,
+        command,
+        *arguments,
+        cwd=None,
+        shell=False,
+        stdout=None,
+        stderr=None,
+        stdin=None,
+        output_encoding="CONSOLE",
+        alias=None,
+        env=None,
+        **env_extra,
+    ):
         """Starts a new process on background.
 
-        See `Specifying command and arguments` and `Process configuration`
+        See `Specifying command and arguments` and `Process configuration` sections
         for more information about the arguments, and `Run Process` keyword
         for related examples. This includes information about redirecting
         process outputs to avoid process handing due to output buffers getting
@@ -408,7 +450,17 @@ class Process:
         Earlier versions returned a generic handle and getting the process object
         required using `Get Process Object` separately.
         """
-        conf = ProcessConfiguration(**configuration)
+        conf = ProcessConfiguration(
+            cwd=cwd,
+            shell=shell,
+            stdout=stdout,
+            stderr=stderr,
+            stdin=stdin,
+            output_encoding=output_encoding,
+            alias=alias,
+            env=env,
+            **env_extra,
+        )
         command = conf.get_command(command, list(arguments))
         self._log_start(command, conf)
         process = subprocess.Popen(command, **conf.popen_config)
@@ -419,8 +471,8 @@ class Process:
     def _log_start(self, command, config):
         if is_list_like(command):
             command = self.join_command_line(command)
-        logger.info(f'Starting process:\n{system_decode(command)}')
-        logger.debug(f'Process configuration:\n{config}')
+        logger.info(f"Starting process:\n{system_decode(command)}")
+        logger.debug(f"Process configuration:\n{config}")
 
     def is_process_running(self, handle=None):
         """Checks is the process running or not.
@@ -431,8 +483,11 @@ class Process:
         """
         return self._processes[handle].poll() is None
 
-    def process_should_be_running(self, handle=None,
-                                  error_message='Process is not running.'):
+    def process_should_be_running(
+        self,
+        handle=None,
+        error_message="Process is not running.",
+    ):
         """Verifies that the process is running.
 
         If ``handle`` is not given, uses the current `active process`.
@@ -442,8 +497,11 @@ class Process:
         if not self.is_process_running(handle):
             raise AssertionError(error_message)
 
-    def process_should_be_stopped(self, handle=None,
-                                  error_message='Process is running.'):
+    def process_should_be_stopped(
+        self,
+        handle=None,
+        error_message="Process is running.",
+    ):
         """Verifies that the process is not running.
 
         If ``handle`` is not given, uses the current `active process`.
@@ -453,7 +511,7 @@ class Process:
         if self.is_process_running(handle):
             raise AssertionError(error_message)
 
-    def wait_for_process(self, handle=None, timeout=None, on_timeout='continue'):
+    def wait_for_process(self, handle=None, timeout=None, on_timeout="continue"):
         """Waits for the process to complete or to reach the given timeout.
 
         The process to wait for must have been started earlier with
@@ -480,7 +538,7 @@ class Process:
         See `Terminate Process` keyword for more details how processes are
         terminated and killed.
 
-        If the process ends before the timeout or it is terminated or killed,
+        If the process ends before the timeout, or it is terminated or killed,
         this keyword returns a `result object` containing information about
         the execution. If the process is left running, Python ``None`` is
         returned instead.
@@ -498,35 +556,55 @@ class Process:
         | ${result} =                 | Wait For Process | timeout=1min 30s | on_timeout=kill |
         | Process Should Be Stopped   |                  |                  |
         | Should Be Equal As Integers | ${result.rc}     | -9               |
+
+        Note: If Robot Framework's test or keyword timeout is exceeded while
+        this keyword is waiting for the process to end, the process is killed
+        to avoid leaving it running on the background. This is new in Robot
+        Framework 7.3.
         """
         process = self._processes[handle]
-        logger.info('Waiting for process to complete.')
+        logger.info("Waiting for process to complete.")
         timeout = self._get_timeout(timeout)
-        if timeout > 0:
-            if not self._process_is_stopped(process, timeout):
-                logger.info(f'Process did not complete in {secs_to_timestr(timeout)}.')
-                return self._manage_process_timeout(handle, on_timeout.lower())
+        if timeout > 0 and not self._process_is_stopped(process, timeout):
+            logger.info(f"Process did not complete in {secs_to_timestr(timeout)}.")
+            return self._manage_process_timeout(handle, on_timeout.lower())
         return self._wait(process)
 
     def _get_timeout(self, timeout):
-        if (is_string(timeout) and timeout.upper() == 'NONE') or not timeout:
+        if (isinstance(timeout, str) and timeout.upper() == "NONE") or not timeout:
             return -1
         return timestr_to_secs(timeout)
 
     def _manage_process_timeout(self, handle, on_timeout):
-        if on_timeout == 'terminate':
+        if on_timeout == "terminate":
             return self.terminate_process(handle)
-        elif on_timeout == 'kill':
+        if on_timeout == "kill":
             return self.terminate_process(handle, kill=True)
-        else:
-            logger.info('Leaving process intact.')
-            return None
+        logger.info("Leaving process intact.")
+        return None
 
     def _wait(self, process):
         result = self._results[process]
-        result.rc = process.wait() or 0
+        # Popen.communicate() does not like closed stdin/stdout/stderr PIPEs.
+        # Due to us using a timeout, we only need to care about stdin.
+        # https://github.com/python/cpython/issues/131064
+        if process.stdin and process.stdin.closed:
+            process.stdin = None
+        # Timeout is used with communicate() to support Robot's timeouts.
+        while True:
+            try:
+                result.stdout, result.stderr = process.communicate(timeout=0.1)
+            except subprocess.TimeoutExpired:
+                continue
+            except TimeoutExceeded:
+                logger.info("Timeout exceeded.")
+                self._kill(process)
+                raise
+            else:
+                break
+        result.rc = process.returncode
         result.close_streams()
-        logger.info('Process completed.')
+        logger.info("Process completed.")
         return result
 
     def terminate_process(self, handle=None, kill=False):
@@ -534,7 +612,7 @@ class Process:
 
         If ``handle`` is not given, uses the current `active process`.
 
-        By default first tries to stop the process gracefully. If the process
+        By default, first tries to stop the process gracefully. If the process
         does not stop in 30 seconds, or ``kill`` argument is given a true value,
         (see `Boolean arguments`) kills the process forcefully. Stops also all
         the child processes of the originally started process.
@@ -561,39 +639,40 @@ class Process:
           child processes.
         """
         process = self._processes[handle]
-        if not hasattr(process, 'terminate'):
-            raise RuntimeError('Terminating processes is not supported '
-                               'by this Python version.')
-        terminator = self._kill if is_truthy(kill) else self._terminate
+        if not hasattr(process, "terminate"):
+            raise RuntimeError(
+                "Terminating processes is not supported by this Python version."
+            )
+        terminator = self._kill if kill else self._terminate
         try:
             terminator(process)
         except OSError:
             if not self._process_is_stopped(process, self.KILL_TIMEOUT):
                 raise
-            logger.debug('Ignored OSError because process was stopped.')
+            logger.debug("Ignored OSError because process was stopped.")
         return self._wait(process)
 
     def _kill(self, process):
-        logger.info('Forcefully killing process.')
-        if hasattr(os, 'killpg'):
+        logger.info("Forcefully killing process.")
+        if hasattr(os, "killpg"):
             os.killpg(process.pid, signal_module.SIGKILL)
         else:
             process.kill()
         if not self._process_is_stopped(process, self.KILL_TIMEOUT):
-            raise RuntimeError('Failed to kill process.')
+            raise RuntimeError("Failed to kill process.")
 
     def _terminate(self, process):
-        logger.info('Gracefully terminating process.')
+        logger.info("Gracefully terminating process.")
         # Sends signal to the whole process group both on POSIX and on Windows
         # if supported by the interpreter.
-        if hasattr(os, 'killpg'):
+        if hasattr(os, "killpg"):
             os.killpg(process.pid, signal_module.SIGTERM)
-        elif hasattr(signal_module, 'CTRL_BREAK_EVENT'):
+        elif hasattr(signal_module, "CTRL_BREAK_EVENT"):
             process.send_signal(signal_module.CTRL_BREAK_EVENT)
         else:
             process.terminate()
         if not self._process_is_stopped(process, self.TERMINATE_TIMEOUT):
-            logger.info('Graceful termination failed.')
+            logger.info("Graceful termination failed.")
             self._kill(process)
 
     def terminate_all_processes(self, kill=False):
@@ -602,7 +681,7 @@ class Process:
         This keyword can be used in suite teardown or elsewhere to make
         sure that all processes are stopped,
 
-        By default tries to terminate processes gracefully, but can be
+        Tries to terminate processes gracefully by default, but can be
         configured to forcefully kill them immediately. See `Terminate Process`
         that this keyword uses internally for more details.
         """
@@ -638,18 +717,19 @@ class Process:
         To send the signal to the whole process group, ``group`` argument can
         be set to any true value (see `Boolean arguments`).
         """
-        if os.sep == '\\':
-            raise RuntimeError('This keyword does not work on Windows.')
+        if os.sep == "\\":
+            raise RuntimeError("This keyword does not work on Windows.")
         process = self._processes[handle]
         signum = self._get_signal_number(signal)
-        logger.info(f'Sending signal {signal} ({signum}).')
-        if is_truthy(group) and hasattr(os, 'killpg'):
+        logger.info(f"Sending signal {signal} ({signum}).")
+        if group and hasattr(os, "killpg"):
             os.killpg(process.pid, signum)
-        elif hasattr(process, 'send_signal'):
+        elif hasattr(process, "send_signal"):
             process.send_signal(signum)
         else:
-            raise RuntimeError('Sending signals is not supported '
-                               'by this Python version.')
+            raise RuntimeError(
+                "Sending signals is not supported by this Python version."
+            )
 
     def _get_signal_number(self, int_or_name):
         try:
@@ -659,8 +739,9 @@ class Process:
 
     def _convert_signal_name_to_number(self, name):
         try:
-            return getattr(signal_module,
-                           name if name.startswith('SIG') else 'SIG' + name)
+            return getattr(
+                signal_module, name if name.startswith("SIG") else "SIG" + name
+            )
         except AttributeError:
             raise RuntimeError(f"Unsupported signal '{name}'.")
 
@@ -686,8 +767,15 @@ class Process:
         """
         return self._processes[handle]
 
-    def get_process_result(self, handle=None, rc=False, stdout=False,
-                           stderr=False, stdout_path=False, stderr_path=False):
+    def get_process_result(
+        self,
+        handle=None,
+        rc=False,
+        stdout=False,
+        stderr=False,
+        stdout_path=False,
+        stderr_path=False,
+    ):
         """Returns the specified `result object` or some of its attributes.
 
         The given ``handle`` specifies the process whose results should be
@@ -729,20 +817,31 @@ class Process:
         """
         result = self._results[self._processes[handle]]
         if result.rc is None:
-            raise RuntimeError('Getting results of unfinished processes '
-                               'is not supported.')
-        attributes = self._get_result_attributes(result, rc, stdout, stderr,
-                                                 stdout_path, stderr_path)
+            raise RuntimeError(
+                "Getting results of unfinished processes is not supported."
+            )
+        attributes = self._get_result_attributes(
+            result,
+            rc,
+            stdout,
+            stderr,
+            stdout_path,
+            stderr_path,
+        )
         if not attributes:
             return result
-        elif len(attributes) == 1:
+        if len(attributes) == 1:
             return attributes[0]
         return attributes
 
     def _get_result_attributes(self, result, *includes):
-        attributes = (result.rc, result.stdout, result.stderr,
-                      result.stdout_path, result.stderr_path)
-        includes = (is_truthy(incl) for incl in includes)
+        attributes = (
+            result.rc,
+            result.stdout,
+            result.stderr,
+            result.stdout_path,
+            result.stderr_path,
+        )
         return tuple(attr for attr, incl in zip(attributes, includes) if incl)
 
     def switch_process(self, handle):
@@ -805,8 +904,15 @@ class Process:
 
 class ExecutionResult:
 
-    def __init__(self, process, stdout, stderr, stdin=None, rc=None,
-                 output_encoding=None):
+    def __init__(
+        self,
+        process,
+        stdout,
+        stderr,
+        stdin=None,
+        rc=None,
+        output_encoding=None,
+    ):
         self._process = process
         self.stdout_path = self._get_path(stdout)
         self.stderr_path = self._get_path(stderr)
@@ -814,8 +920,11 @@ class ExecutionResult:
         self._output_encoding = output_encoding
         self._stdout = None
         self._stderr = None
-        self._custom_streams = [stream for stream in (stdout, stderr, stdin)
-                                if self._is_custom_stream(stream)]
+        self._custom_streams = [
+            stream
+            for stream in (stdout, stderr, stdin)
+            if self._is_custom_stream(stream)
+        ]
 
     def _get_path(self, stream):
         return stream.name if self._is_custom_stream(stream) else None
@@ -829,11 +938,19 @@ class ExecutionResult:
             self._read_stdout()
         return self._stdout
 
+    @stdout.setter
+    def stdout(self, stdout):
+        self._stdout = self._format_output(stdout)
+
     @property
     def stderr(self):
         if self._stderr is None:
             self._read_stderr()
         return self._stderr
+
+    @stderr.setter
+    def stderr(self, stderr):
+        self._stderr = self._format_output(stderr)
 
     def _read_stdout(self):
         self._stdout = self._read_stream(self.stdout_path, self._process.stdout)
@@ -843,13 +960,13 @@ class ExecutionResult:
 
     def _read_stream(self, stream_path, stream):
         if stream_path:
-            stream = open(stream_path, 'rb')
+            stream = open(stream_path, "rb")
         elif not self._is_open(stream):
-            return ''
+            return ""
         try:
             content = stream.read()
         except IOError:
-            content = ''
+            content = ""
         finally:
             if stream_path:
                 stream.close()
@@ -859,9 +976,11 @@ class ExecutionResult:
         return stream and not stream.closed
 
     def _format_output(self, output):
+        if output is None:
+            return None
         output = console_decode(output, self._output_encoding)
-        output = output.replace('\r\n', '\n')
-        if output.endswith('\n'):
+        output = output.replace("\r\n", "\n")
+        if output.endswith("\n"):
             output = output[:-1]
         return output
 
@@ -873,52 +992,62 @@ class ExecutionResult:
 
     def _get_and_read_standard_streams(self, process):
         stdin, stdout, stderr = process.stdin, process.stdout, process.stderr
-        if stdout:
+        if self._is_open(stdout):
             self._read_stdout()
-        if stderr:
+        if self._is_open(stderr):
             self._read_stderr()
         return [stdin, stdout, stderr]
 
     def __str__(self):
-        return f'<result object with rc {self.rc}>'
+        return f"<result object with rc {self.rc}>"
 
 
 class ProcessConfiguration:
 
-    def __init__(self, cwd=None, shell=False, stdout=None, stderr=None, stdin=None,
-                 output_encoding='CONSOLE', alias=None, env=None, **rest):
-        self.cwd = os.path.normpath(cwd) if cwd else os.path.abspath('.')
-        self.shell = is_truthy(shell)
+    def __init__(
+        self,
+        cwd=None,
+        shell=False,
+        stdout=None,
+        stderr=None,
+        stdin=None,
+        output_encoding="CONSOLE",
+        alias=None,
+        env=None,
+        **env_extra,
+    ):
+        self.cwd = os.path.normpath(cwd) if cwd else os.path.abspath(".")
+        self.shell = shell
         self.alias = alias
         self.output_encoding = output_encoding
         self.stdout_stream = self._new_stream(stdout)
         self.stderr_stream = self._get_stderr(stderr, stdout, self.stdout_stream)
         self.stdin_stream = self._get_stdin(stdin)
-        self.env = self._construct_env(env, rest)
+        self.env = self._construct_env(env, env_extra)
 
     def _new_stream(self, name):
-        if name == 'DEVNULL':
-            return open(os.devnull, 'w', encoding=LOCALE_ENCODING)
+        if name == "DEVNULL":
+            return open(os.devnull, "w", encoding=LOCALE_ENCODING)
         if name:
             path = os.path.normpath(os.path.join(self.cwd, name))
-            return open(path, 'w', encoding=LOCALE_ENCODING)
+            return open(path, "w", encoding=LOCALE_ENCODING)
         return subprocess.PIPE
 
     def _get_stderr(self, stderr, stdout, stdout_stream):
-        if stderr and stderr in ['STDOUT', stdout]:
+        if stderr and stderr in ["STDOUT", stdout]:
             if stdout_stream != subprocess.PIPE:
                 return stdout_stream
             return subprocess.STDOUT
         return self._new_stream(stderr)
 
     def _get_stdin(self, stdin):
-        if is_pathlike(stdin):
+        if isinstance(stdin, Path):
             stdin = str(stdin)
-        elif not is_string(stdin):
+        elif not isinstance(stdin, str):
             return stdin
-        elif stdin.upper() == 'NONE':
+        elif stdin.upper() == "NONE":
             return None
-        elif stdin == 'PIPE':
+        elif stdin == "PIPE":
             return subprocess.PIPE
         path = os.path.normpath(os.path.join(self.cwd, stdin))
         if os.path.isfile(path):
@@ -936,25 +1065,26 @@ class ProcessConfiguration:
             env = NormalizedDict(env, spaceless=False)
         self._add_to_env(env, extra)
         if WINDOWS:
-            env = dict((key.upper(), env[key]) for key in env)
+            env = {key.upper(): env[key] for key in env}
         return env
 
     def _get_initial_env(self, env, extra):
         if env:
-            return dict((system_encode(k), system_encode(env[k])) for k in env)
+            return {system_encode(k): system_encode(env[k]) for k in env}
         if extra:
             return os.environ.copy()
         return None
 
     def _add_to_env(self, env, extra):
         for name in extra:
-            if not name.startswith('env:'):
-                raise RuntimeError(f"Keyword argument '{name}' is not supported by "
-                                   f"this keyword.")
+            if not name.startswith("env:"):
+                raise RuntimeError(
+                    f"Keyword argument '{name}' is not supported by this keyword."
+                )
             env[system_encode(name[4:])] = system_encode(extra[name])
 
     def get_command(self, command, arguments):
-        command = [system_encode(item) for item in [command] + arguments]
+        command = [system_encode(item) for item in (command, *arguments)]
         if not self.shell:
             return command
         if arguments:
@@ -963,45 +1093,47 @@ class ProcessConfiguration:
 
     @property
     def popen_config(self):
-        config = {'stdout': self.stdout_stream,
-                  'stderr': self.stderr_stream,
-                  'stdin': self.stdin_stream,
-                  'shell': self.shell,
-                  'cwd': self.cwd,
-                  'env': self.env}
-        # Close file descriptors regardless the Python version:
-        # https://github.com/robotframework/robotframework/issues/2794
-        if not WINDOWS:
-            config['close_fds'] = True
+        config = {
+            "stdout": self.stdout_stream,
+            "stderr": self.stderr_stream,
+            "stdin": self.stdin_stream,
+            "shell": self.shell,
+            "cwd": self.cwd,
+            "env": self.env,
+        }
         self._add_process_group_config(config)
         return config
 
     def _add_process_group_config(self, config):
-        if hasattr(os, 'setsid'):
-            config['preexec_fn'] = os.setsid
-        if hasattr(subprocess, 'CREATE_NEW_PROCESS_GROUP'):
-            config['creationflags'] = subprocess.CREATE_NEW_PROCESS_GROUP
+        if hasattr(os, "setsid"):
+            config["start_new_session"] = True
+        if hasattr(subprocess, "CREATE_NEW_PROCESS_GROUP"):
+            config["creationflags"] = subprocess.CREATE_NEW_PROCESS_GROUP
 
     @property
     def result_config(self):
-        return {'stdout': self.stdout_stream,
-                'stderr': self.stderr_stream,
-                'stdin': self.stdin_stream,
-                'output_encoding': self.output_encoding}
+        return {
+            "stdout": self.stdout_stream,
+            "stderr": self.stderr_stream,
+            "stdin": self.stdin_stream,
+            "output_encoding": self.output_encoding,
+        }
 
     def __str__(self):
-        return f'''\
+        return f"""\
 cwd:     {self.cwd}
 shell:   {self.shell}
 stdout:  {self._stream_name(self.stdout_stream)}
 stderr:  {self._stream_name(self.stderr_stream)}
 stdin:   {self._stream_name(self.stdin_stream)}
 alias:   {self.alias}
-env:     {self.env}'''
+env:     {self.env}"""
 
     def _stream_name(self, stream):
-        if hasattr(stream, 'name'):
+        if hasattr(stream, "name"):
             return stream.name
-        return {subprocess.PIPE: 'PIPE',
-                subprocess.STDOUT: 'STDOUT',
-                None: 'None'}.get(stream, stream)
+        return {
+            subprocess.PIPE: "PIPE",
+            subprocess.STDOUT: "STDOUT",
+            None: "None",
+        }.get(stream, stream)

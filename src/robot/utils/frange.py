@@ -13,18 +13,16 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from .robottypes import is_integer, is_string
-
 
 def frange(*args):
     """Like ``range()`` but accepts float arguments."""
-    if all(is_integer(arg) for arg in args):
+    if all(isinstance(arg, int) for arg in args):
         return list(range(*args))
     start, stop, step = _get_start_stop_step(args)
     digits = max(_digits(start), _digits(stop), _digits(step))
     factor = pow(10, digits)
-    return [x / factor
-            for x in range(round(start*factor), round(stop*factor), round(step*factor))]
+    scaled = range(round(start * factor), round(stop * factor), round(step * factor))
+    return [x / factor for x in scaled]
 
 
 def _get_start_stop_step(args):
@@ -34,28 +32,28 @@ def _get_start_stop_step(args):
         return args[0], args[1], 1
     if len(args) == 3:
         return args
-    raise TypeError('frange expected 1-3 arguments, got %d.' % len(args))
+    raise TypeError(f"frange expected 1-3 arguments, got {len(args)}.")
 
 
 def _digits(number):
-    if not is_string(number):
+    if not isinstance(number, str):
         number = repr(number)
-    if 'e' in number:
+    if "e" in number:
         return _digits_with_exponent(number)
-    if '.' in number:
+    if "." in number:
         return _digits_with_fractional(number)
     return 0
 
 
 def _digits_with_exponent(number):
-    mantissa, exponent = number.split('e')
+    mantissa, exponent = number.split("e")
     mantissa_digits = _digits(mantissa)
     exponent_digits = int(exponent) * -1
     return max(mantissa_digits + exponent_digits, 0)
 
 
 def _digits_with_fractional(number):
-    fractional = number.split('.')[1]
-    if fractional == '0':
+    fractional = number.split(".")[1]
+    if fractional == "0":
         return 0
     return len(fractional)

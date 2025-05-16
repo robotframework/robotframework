@@ -330,56 +330,56 @@ Invalid END
     END    ooops
 
 No loop values
-    [Documentation]    FAIL    FOR loop has no loop values.
+    [Documentation]    FAIL    FOR loop has no values.
     FOR    ${var}    IN
         Fail    Not Executed
     END
     Fail    Not Executed
 
 No loop variables
-    [Documentation]    FAIL    FOR loop has no loop variables.
+    [Documentation]    FAIL    FOR loop has no variables.
     FOR    IN    one    two
         Fail    Not Executed
     END
     Fail    Not Executed
 
 Invalid loop variable 1
-    [Documentation]    FAIL    FOR loop has invalid loop variable 'ooops'.
+    [Documentation]    FAIL    Invalid FOR loop variable 'ooops'.
     FOR    ooops    IN    a    b    c
         Fail    Not Executed
     END
     Fail    Not Executed
 
 Invalid loop variable 2
-    [Documentation]    FAIL    FOR loop has invalid loop variable 'ooops'.
+    [Documentation]    FAIL    Invalid FOR loop variable 'ooops'.
     FOR    ${var}    ooops    IN    a    b    c
         Fail    Not Executed
     END
     Fail    Not Executed
 
 Invalid loop variable 3
-    [Documentation]    FAIL    FOR loop has invalid loop variable '\@{ooops}'.
+    [Documentation]    FAIL    Invalid FOR loop variable '\@{ooops}'.
     FOR    @{ooops}    IN    a    b    c
         Fail    Not Executed
     END
     Fail    Not Executed
 
 Invalid loop variable 4
-    [Documentation]    FAIL    FOR loop has invalid loop variable '\&{ooops}'.
+    [Documentation]    FAIL    Invalid FOR loop variable '\&{ooops}'.
     FOR    &{ooops}    IN    a    b    c
         Fail    Not Executed
     END
     Fail    Not Executed
 
 Invalid loop variable 5
-    [Documentation]    FAIL    FOR loop has invalid loop variable '$var'.
+    [Documentation]    FAIL    Invalid FOR loop variable '$var'.
     FOR    $var    IN    one    two
         Fail    Not Executed
     END
     Fail    Not Executed
 
 Invalid loop variable 6
-    [Documentation]    FAIL    FOR loop has invalid loop variable '\${not closed'.
+    [Documentation]    FAIL    Invalid FOR loop variable '\${not closed'.
     FOR    ${not closed    IN    one    two    three
         Fail    Not Executed
     END
@@ -422,7 +422,7 @@ Separator is case- and space-sensitive 4
 FOR without any paramenters
     [Documentation]    FAIL
     ...    Multiple errors:
-    ...    - FOR loop has no loop variables.
+    ...    - FOR loop has no variables.
     ...    - FOR loop has no 'IN' or other valid separator.
     FOR
        Fail    Not Executed
@@ -430,7 +430,7 @@ FOR without any paramenters
     Fail    Not Executed
 
 Syntax error in nested loop 1
-    [Documentation]    FAIL    FOR loop has invalid loop variable 'y'.
+    [Documentation]    FAIL    Invalid FOR loop variable 'y'.
     FOR    ${x}    IN    ok
         FOR    y    IN    nok
             Fail    Should not be executed

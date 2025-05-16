@@ -13,35 +13,33 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from typing import Generic, Literal, overload, TypeVar, TYPE_CHECKING
+from typing import Generic, Literal, overload, TYPE_CHECKING, TypeVar
 
 from robot.utils import NormalizedDict, plural_or_not as s, seq2str
 
 from .keywordimplementation import KeywordImplementation
 
 if TYPE_CHECKING:
-    from .testlibraries import TestLibrary
     from .resourcemodel import ResourceFile
+    from .testlibraries import TestLibrary
 
 
-K = TypeVar('K', bound=KeywordImplementation)
+K = TypeVar("K", bound=KeywordImplementation)
 
 
 class KeywordFinder(Generic[K]):
 
-    def __init__(self, owner: 'TestLibrary|ResourceFile'):
+    def __init__(self, owner: "TestLibrary|ResourceFile"):
         self.owner = owner
-        self.cache: KeywordCache|None = None
+        self.cache: KeywordCache | None = None
 
     @overload
-    def find(self, name: str, count: Literal[1]) -> 'K':
-        ...
+    def find(self, name: str, count: Literal[1]) -> "K": ...
 
     @overload
-    def find(self, name: str, count: 'int|None' = None) -> 'list[K]':
-        ...
+    def find(self, name: str, count: "int|None" = None) -> "list[K]": ...
 
-    def find(self, name: str, count: 'int|None' = None) -> 'list[K]|K':
+    def find(self, name: str, count: "int|None" = None) -> "list[K]|K":
         """Find keywords based on the given ``name``.
 
         With normal keywords matching is a case, space and underscore insensitive
@@ -65,8 +63,8 @@ class KeywordFinder(Generic[K]):
 
 class KeywordCache(Generic[K]):
 
-    def __init__(self, keywords: 'list[K]'):
-        self.normal = NormalizedDict[K](ignore='_')
+    def __init__(self, keywords: "list[K]"):
+        self.normal = NormalizedDict[K](ignore="_")
         self.embedded: list[K] = []
         add_normal = self.normal.__setitem__
         add_embedded = self.embedded.append
@@ -76,16 +74,18 @@ class KeywordCache(Generic[K]):
             else:
                 add_normal(kw.name, kw)
 
-    def find(self, name: str, count: 'int|None' = None) -> 'list[K]|K':
+    def find(self, name: str, count: "int|None" = None) -> "list[K]|K":
         try:
             keywords = [self.normal[name]]
         except KeyError:
             keywords = [kw for kw in self.embedded if kw.matches(name)]
         if count is not None:
             if len(keywords) != count:
-                names = ': ' + seq2str([kw.name for kw in keywords]) if keywords else '.'
-                raise ValueError(f"Expected {count} keyword{s(count)} matching name "
-                                 f"'{name}', found {len(keywords)}{names}")
+                names = ": " + seq2str([k.name for k in keywords]) if keywords else "."
+                raise ValueError(
+                    f"Expected {count} keyword{s(count)} matching name '{name}', "
+                    f"found {len(keywords)}{names}"
+                )
             if count == 1:
                 return keywords[0]
         return keywords

@@ -26,25 +26,27 @@ def get_all_stats(path):
 
 
 def _get_output_line(path, prefix):
-    logger.info("Getting '%s' from '<a href=\"file://%s\">%s</a>'."
-                % (prefix, path, path), html=True)
-    prefix += ' = '
-    with open(path, encoding='UTF-8') as file:
+    logger.info(
+        f"Getting '{prefix}' from '<a href=\"file://{path}\">{path}</a>'.",
+        html=True,
+    )
+    prefix += " = "
+    with open(path, encoding="UTF-8") as file:
         for line in file:
             if line.startswith(prefix):
-                logger.info('Found: %s' % line)
-                return line[len(prefix):-2]
+                logger.info(f"Found: {line}")
+                return line[len(prefix) : -2]
 
 
 def verify_stat(stat, *attrs):
-    stat.pop('elapsed')
+    stat.pop("elapsed")
     expected = dict(_get_expected_stat(attrs))
     if stat != expected:
-        raise WrongStat('\n%-9s: %s\n%-9s: %s' % ('Got', stat, 'Expected', expected))
+        raise WrongStat(f"\nGot      : {stat}\nExpected : {expected}")
 
 
 def _get_expected_stat(attrs):
-    for key, value in (a.split(':', 1) for a in attrs):
+    for key, value in (a.split(":", 1) for a in attrs):
         value = int(value) if value.isdigit() else str(value)
         yield str(key), value
 

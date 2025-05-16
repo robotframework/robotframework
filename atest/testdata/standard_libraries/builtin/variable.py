@@ -7,4 +7,4 @@ class Object:
         return self.name
 
 
-OBJECT = Object('Robot')
+OBJECT = Object("Robot")

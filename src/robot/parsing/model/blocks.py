@@ -21,16 +21,16 @@ from typing import cast, Iterator, Sequence, TextIO, Union
 
 from robot.utils import file_writer, test_or_task
 
-from .statements import (Break, Continue, ElseHeader, ElseIfHeader, End, ExceptHeader,
-                         Error, FinallyHeader, ForHeader, GroupHeader, IfHeader, KeywordCall,
-                         KeywordName, Node, ReturnSetting, ReturnStatement,
-                         SectionHeader, Statement, TemplateArguments, TestCaseName,
-                         TryHeader, Var, WhileHeader)
-from .visitor import ModelVisitor
 from ..lexer import Token
+from .statements import (
+    Break, Continue, ElseHeader, ElseIfHeader, End, Error, ExceptHeader, FinallyHeader,
+    ForHeader, GroupHeader, IfHeader, KeywordCall, KeywordName, Node, ReturnSetting,
+    ReturnStatement, SectionHeader, Statement, TemplateArguments, TestCaseName,
+    TryHeader, Var, WhileHeader
+)
+from .visitor import ModelVisitor
 
-
-Body = Sequence[Union[Statement, 'Block']]
+Body = Sequence[Union[Statement, "Block"]]
 Errors = Sequence[str]
 
 
@@ -59,22 +59,26 @@ class Container(Node, ABC):
     def validate_model(self):
         ModelValidator().visit(self)
 
-    def validate(self, ctx: 'ValidationContext'):
+    def validate(self, ctx: "ValidationContext"):
         pass
 
 
 class File(Container):
-    _fields = ('sections',)
-    _attributes = ('source', 'languages') + Container._attributes
+    _fields = ("sections",)
+    _attributes = ("source", "languages", *Container._attributes)
 
-    def __init__(self, sections: 'Sequence[Section]' = (), source: 'Path|None' = None,
-                 languages: Sequence[str] = ()):
+    def __init__(
+        self,
+        sections: "Sequence[Section]" = (),
+        source: "Path|None" = None,
+        languages: Sequence[str] = (),
+    ):
         super().__init__()
         self.sections = list(sections)
         self.source = source
         self.languages = list(languages)
 
-    def save(self, output: 'Path|str|TextIO|None' = None):
+    def save(self, output: "Path|str|TextIO|None" = None):
         """Save model to the given ``output`` or to the original source file.
 
         The ``output`` can be a path to a file or an already opened file
@@ -83,28 +87,45 @@ class File(Container):
         """
         output = output or self.source
         if output is None:
-            raise TypeError('Saving model requires explicit output '
-                            'when original source is not path.')
+            raise TypeError(
+                "Saving model requires explicit output when original source "
+                "is not path."
+            )
         ModelWriter(output).write(self)
 
 
 class Block(Container, ABC):
-    _fields = ('header', 'body')
+    _fields = ("header", "body")
 
-    def __init__(self, header: 'Statement|None', body: Body = (), errors: Errors = ()):
+    def __init__(
+        self,
+        header: "Statement|None",
+        body: Body = (),
+        errors: Errors = (),
+    ):
         self.header = header
         self.body = list(body)
         self.errors = tuple(errors)
 
     def _body_is_empty(self):
         # This works with tests, keywords, and blocks inside them, not with sections.
-        valid = (KeywordCall, TemplateArguments, Var, Continue, Break, ReturnSetting,
-                 Group, ReturnStatement, NestedBlock, Error)
+        valid = (
+            KeywordCall,
+            TemplateArguments,
+            Var,
+            Continue,
+            Break,
+            ReturnSetting,
+            Group,
+            ReturnStatement,
+            NestedBlock,
+            Error,
+        )
         return not any(isinstance(node, valid) for node in self.body)
 
 
 class Section(Block):
-    header: 'SectionHeader|None'
+    header: "SectionHeader|None"
 
 
 class SettingSection(Section):
@@ -129,14 +150,18 @@ class KeywordSection(Section):
 
 
 class CommentSection(Section):
-    header: 'SectionHeader|None'
+    header: "SectionHeader|None"
 
 
 class ImplicitCommentSection(CommentSection):
     header: None
 
-    def __init__(self, header: 'Statement|None' = None, body: Body = (),
-                 errors: Errors = ()):
+    def __init__(
+        self,
+        header: "Statement|None" = None,
+        body: Body = (),
+        errors: Errors = (),
+    ):
         body = ([header] if header is not None else []) + list(body)
         super().__init__(None, body, errors)
 
@@ -152,9 +177,9 @@ class TestCase(Block):
     def name(self) -> str:
         return self.header.name
 
-    def validate(self, ctx: 'ValidationContext'):
+    def validate(self, ctx: "ValidationContext"):
         if self._body_is_empty():
-            self.errors += (test_or_task('{Test} cannot be empty.', ctx.tasks),)
+            self.errors += (test_or_task("{Test} cannot be empty.", ctx.tasks),)
 
 
 class Keyword(Block):
@@ -164,16 +189,21 @@ class Keyword(Block):
     def name(self) -> str:
         return self.header.name
 
-    def validate(self, ctx: 'ValidationContext'):
+    def validate(self, ctx: "ValidationContext"):
         if self._body_is_empty():
             self.errors += ("User keyword cannot be empty.",)
 
 
 class NestedBlock(Block):
-    _fields = ('header', 'body', 'end')
+    _fields = ("header", "body", "end")
 
-    def __init__(self, header: Statement, body: Body = (), end: 'End|None' = None,
-                 errors: Errors = ()):
+    def __init__(
+        self,
+        header: Statement,
+        body: Body = (),
+        end: "End|None" = None,
+        errors: Errors = (),
+    ):
         super().__init__(header, body, errors)
         self.end = end
 
@@ -184,11 +214,18 @@ class If(NestedBlock):
     Used with IF, Inline IF, ELSE IF and ELSE nodes. The :attr:`type` attribute
     specifies the type.
     """
-    _fields = ('header', 'body', 'orelse', 'end')
-    header: 'IfHeader|ElseIfHeader|ElseHeader'
 
-    def __init__(self, header: Statement, body: Body = (), orelse: 'If|None' = None,
-                 end: 'End|None' = None, errors: Errors = ()):
+    _fields = ("header", "body", "orelse", "end")
+    header: "IfHeader|ElseIfHeader|ElseHeader"
+
+    def __init__(
+        self,
+        header: Statement,
+        body: Body = (),
+        orelse: "If|None" = None,
+        end: "End|None" = None,
+        errors: Errors = (),
+    ):
         super().__init__(header, body, end, errors)
         self.orelse = orelse
 
@@ -197,14 +234,14 @@ class If(NestedBlock):
         return self.header.type
 
     @property
-    def condition(self) -> 'str|None':
+    def condition(self) -> "str|None":
         return self.header.condition
 
     @property
-    def assign(self) -> 'tuple[str, ...]':
+    def assign(self) -> "tuple[str, ...]":
         return self.header.assign
 
-    def validate(self, ctx: 'ValidationContext'):
+    def validate(self, ctx: "ValidationContext"):
         self._validate_body()
         if self.type == Token.IF:
             self._validate_structure()
@@ -215,8 +252,8 @@ class If(NestedBlock):
 
     def _validate_body(self):
         if self._body_is_empty():
-            type = self.type if self.type != Token.INLINE_IF else 'IF'
-            self.errors += (f'{type} branch cannot be empty.',)
+            type = self.type if self.type != Token.INLINE_IF else "IF"
+            self.errors += (f"{type} branch cannot be empty.",)
 
     def _validate_structure(self):
         orelse = self.orelse
@@ -224,9 +261,9 @@ class If(NestedBlock):
         while orelse:
             if else_seen:
                 if orelse.type == Token.ELSE:
-                    error = 'Only one ELSE allowed.'
+                    error = "Only one ELSE allowed."
                 else:
-                    error = 'ELSE IF not allowed after ELSE.'
+                    error = "ELSE IF not allowed after ELSE."
                 if error not in self.errors:
                     self.errors += (error,)
             else_seen = else_seen or orelse.type == Token.ELSE
@@ -234,7 +271,7 @@ class If(NestedBlock):
 
     def _validate_end(self):
         if not self.end:
-            self.errors += ('IF must have closing END.',)
+            self.errors += ("IF must have closing END.",)
 
     def _validate_inline_if(self):
         branch = self
@@ -243,12 +280,13 @@ class If(NestedBlock):
             if branch.body:
                 item = cast(Statement, branch.body[0])
                 if assign and item.type != Token.KEYWORD:
-                    self.errors += ('Inline IF with assignment can only contain '
-                                    'keyword calls.',)
-                if getattr(item, 'assign', None):
-                    self.errors += ('Inline IF branches cannot contain assignments.',)
+                    self.errors += (
+                        "Inline IF with assignment can only contain keyword calls.",
+                    )
+                if getattr(item, "assign", None):
+                    self.errors += ("Inline IF branches cannot contain assignments.",)
                 if item.type == Token.INLINE_IF:
-                    self.errors += ('Inline IF cannot be nested.',)
+                    self.errors += ("Inline IF cannot be nested.",)
             branch = branch.orelse
 
 
@@ -256,48 +294,56 @@ class For(NestedBlock):
     header: ForHeader
 
     @property
-    def assign(self) -> 'tuple[str, ...]':
+    def assign(self) -> "tuple[str, ...]":
         return self.header.assign
 
     @property
-    def variables(self) -> 'tuple[str, ...]':    # TODO: Remove in RF 8.0.
-        warnings.warn("'For.variables' is deprecated and will be removed in "
-                      "Robot Framework 8.0. Use 'For.assign' instead.")
+    def variables(self) -> "tuple[str, ...]":  # TODO: Remove in RF 8.0.
+        warnings.warn(
+            "'For.variables' is deprecated and will be removed in "
+            "Robot Framework 8.0. Use 'For.assign' instead."
+        )
         return self.assign
 
     @property
-    def values(self) -> 'tuple[str, ...]':
+    def values(self) -> "tuple[str, ...]":
         return self.header.values
 
     @property
-    def flavor(self) -> 'str|None':
+    def flavor(self) -> "str|None":
         return self.header.flavor
 
     @property
-    def start(self) -> 'str|None':
+    def start(self) -> "str|None":
         return self.header.start
 
     @property
-    def mode(self) -> 'str|None':
+    def mode(self) -> "str|None":
         return self.header.mode
 
     @property
-    def fill(self) -> 'str|None':
+    def fill(self) -> "str|None":
         return self.header.fill
 
-    def validate(self, ctx: 'ValidationContext'):
+    def validate(self, ctx: "ValidationContext"):
         if self._body_is_empty():
-            self.errors += ('FOR loop cannot be empty.',)
+            self.errors += ("FOR loop cannot be empty.",)
         if not self.end:
-            self.errors += ('FOR loop must have closing END.',)
+            self.errors += ("FOR loop must have closing END.",)
 
 
 class Try(NestedBlock):
-    _fields = ('header', 'body', 'next', 'end')
-    header: 'TryHeader|ExceptHeader|ElseHeader|FinallyHeader'
+    _fields = ("header", "body", "next", "end")
+    header: "TryHeader|ExceptHeader|ElseHeader|FinallyHeader"
 
-    def __init__(self, header: Statement, body: Body = (), next: 'Try|None' = None,
-                 end: 'End|None' = None, errors: Errors = ()):
+    def __init__(
+        self,
+        header: Statement,
+        body: Body = (),
+        next: "Try|None" = None,
+        end: "End|None" = None,
+        errors: Errors = (),
+    ):
         super().__init__(header, body, end, errors)
         self.next = next
 
@@ -306,33 +352,35 @@ class Try(NestedBlock):
         return self.header.type
 
     @property
-    def patterns(self) -> 'tuple[str, ...]':
-        return getattr(self.header, 'patterns', ())
+    def patterns(self) -> "tuple[str, ...]":
+        return getattr(self.header, "patterns", ())
 
     @property
-    def pattern_type(self) -> 'str|None':
-        return getattr(self.header, 'pattern_type', None)
+    def pattern_type(self) -> "str|None":
+        return getattr(self.header, "pattern_type", None)
 
     @property
-    def assign(self) -> 'str|None':
-        return getattr(self.header, 'assign', None)
+    def assign(self) -> "str|None":
+        return getattr(self.header, "assign", None)
 
     @property
-    def variable(self) -> 'str|None':    # TODO: Remove in RF 8.0.
-        warnings.warn("'Try.variable' is deprecated and will be removed in "
-                      "Robot Framework 8.0. Use 'Try.assign' instead.")
+    def variable(self) -> "str|None":  # TODO: Remove in RF 8.0.
+        warnings.warn(
+            "'Try.variable' is deprecated and will be removed in "
+            "Robot Framework 8.0. Use 'Try.assign' instead."
+        )
         return self.assign
 
-    def validate(self, ctx: 'ValidationContext'):
+    def validate(self, ctx: "ValidationContext"):
         self._validate_body()
         if self.type == Token.TRY:
             self._validate_structure()
             self._validate_end()
-            TemplatesNotAllowed('TRY').check(self)
+            TemplatesNotAllowed("TRY").check(self)
 
     def _validate_body(self):
         if self._body_is_empty():
-            self.errors += (f'{self.type} branch cannot be empty.',)
+            self.errors += (f"{self.type} branch cannot be empty.",)
 
     def _validate_structure(self):
         else_count = 0
@@ -343,33 +391,33 @@ class Try(NestedBlock):
         while branch:
             if branch.type == Token.EXCEPT:
                 if else_count:
-                    self.errors += ('EXCEPT not allowed after ELSE.',)
+                    self.errors += ("EXCEPT not allowed after ELSE.",)
                 if finally_count:
-                    self.errors += ('EXCEPT not allowed after FINALLY.',)
+                    self.errors += ("EXCEPT not allowed after FINALLY.",)
                 if branch.patterns and empty_except_count:
-                    self.errors += ('EXCEPT without patterns must be last.',)
+                    self.errors += ("EXCEPT without patterns must be last.",)
                 if not branch.patterns:
                     empty_except_count += 1
                 except_count += 1
             if branch.type == Token.ELSE:
                 if finally_count:
-                    self.errors += ('ELSE not allowed after FINALLY.',)
+                    self.errors += ("ELSE not allowed after FINALLY.",)
                 else_count += 1
             if branch.type == Token.FINALLY:
                 finally_count += 1
             branch = branch.next
         if finally_count > 1:
-            self.errors += ('Only one FINALLY allowed.',)
+            self.errors += ("Only one FINALLY allowed.",)
         if else_count > 1:
-            self.errors += ('Only one ELSE allowed.',)
+            self.errors += ("Only one ELSE allowed.",)
         if empty_except_count > 1:
-            self.errors += ('Only one EXCEPT without patterns allowed.',)
+            self.errors += ("Only one EXCEPT without patterns allowed.",)
         if not (except_count or finally_count):
-            self.errors += ('TRY structure must have EXCEPT or FINALLY branch.',)
+            self.errors += ("TRY structure must have EXCEPT or FINALLY branch.",)
 
     def _validate_end(self):
         if not self.end:
-            self.errors += ('TRY must have closing END.',)
+            self.errors += ("TRY must have closing END.",)
 
 
 class While(NestedBlock):
@@ -380,23 +428,23 @@ class While(NestedBlock):
         return self.header.condition
 
     @property
-    def limit(self) -> 'str|None':
+    def limit(self) -> "str|None":
         return self.header.limit
 
     @property
-    def on_limit(self) -> 'str|None':
+    def on_limit(self) -> "str|None":
         return self.header.on_limit
 
     @property
-    def on_limit_message(self) -> 'str|None':
+    def on_limit_message(self) -> "str|None":
         return self.header.on_limit_message
 
-    def validate(self, ctx: 'ValidationContext'):
+    def validate(self, ctx: "ValidationContext"):
         if self._body_is_empty():
-            self.errors += ('WHILE loop cannot be empty.',)
+            self.errors += ("WHILE loop cannot be empty.",)
         if not self.end:
-            self.errors += ('WHILE loop must have closing END.',)
-        TemplatesNotAllowed('WHILE').check(self)
+            self.errors += ("WHILE loop must have closing END.",)
+        TemplatesNotAllowed("WHILE").check(self)
 
 
 class Group(NestedBlock):
@@ -406,16 +454,16 @@ class Group(NestedBlock):
     def name(self) -> str:
         return self.header.name
 
-    def validate(self, ctx: 'ValidationContext'):
+    def validate(self, ctx: "ValidationContext"):
         if self._body_is_empty():
-            self.errors += ('GROUP cannot be empty.',)
+            self.errors += ("GROUP cannot be empty.",)
         if not self.end:
-            self.errors += ('GROUP must have closing END.',)
+            self.errors += ("GROUP must have closing END.",)
 
 
 class ModelWriter(ModelVisitor):
 
-    def __init__(self, output: 'Path|str|TextIO'):
+    def __init__(self, output: "Path|str|TextIO"):
         if isinstance(output, (Path, str)):
             self.writer = file_writer(output)
             self.close_writer = True
@@ -463,7 +511,7 @@ class ValidationContext:
             self.blocks.pop()
 
     @property
-    def parent_block(self) -> 'Block|None':
+    def parent_block(self) -> "Block|None":
         return self.blocks[-1] if self.blocks else None
 
     @property
@@ -490,10 +538,10 @@ class ValidationContext:
 class FirstStatementFinder(ModelVisitor):
 
     def __init__(self):
-        self.statement: 'Statement|None' = None
+        self.statement: "Statement|None" = None
 
     @classmethod
-    def find_from(cls, model: Node) -> 'Statement|None':
+    def find_from(cls, model: Node) -> "Statement|None":
         finder = cls()
         finder.visit(model)
         return finder.statement
@@ -510,10 +558,10 @@ class FirstStatementFinder(ModelVisitor):
 class LastStatementFinder(ModelVisitor):
 
     def __init__(self):
-        self.statement: 'Statement|None' = None
+        self.statement: "Statement|None" = None
 
     @classmethod
-    def find_from(cls, model: Node) -> 'Statement|None':
+    def find_from(cls, model: Node) -> "Statement|None":
         finder = cls()
         finder.visit(model)
         return finder.statement
@@ -532,7 +580,7 @@ class TemplatesNotAllowed(ModelVisitor):
         self.found = False
         self.visit(model)
         if self.found:
-            model.errors += (f'{self.kind} does not support templates.',)
+            model.errors += (f"{self.kind} does not support templates.",)
 
     def visit_TemplateArguments(self, node: None):
         self.found = True

@@ -13,19 +13,20 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from contextlib import contextmanager
 import logging
+from contextlib import contextmanager
 
 from robot.utils import get_error_details, safe_str
 
 from . import librarylogger
 
-
-LEVELS = {'TRACE': logging.NOTSET,
-          'DEBUG': logging.DEBUG,
-          'INFO': logging.INFO,
-          'WARN': logging.WARNING,
-          'ERROR': logging.ERROR}
+LEVELS = {
+    "TRACE": logging.NOTSET,
+    "DEBUG": logging.DEBUG,
+    "INFO": logging.INFO,
+    "WARN": logging.WARNING,
+    "ERROR": logging.ERROR,
+}
 
 
 @contextmanager
@@ -72,10 +73,11 @@ class RobotHandler(logging.Handler):
     def _get_message(self, record):
         try:
             return self.format(record), None
-        except:
-            message = 'Failed to log following message properly: %s' \
-                        % safe_str(record.msg)
-            error = '\n'.join(get_error_details())
+        except Exception:
+            message = (
+                f"Failed to log following message properly: {safe_str(record.msg)}"
+            )
+            error = "\n".join(get_error_details())
             return message, error
 
     def _get_logger_method(self, level):

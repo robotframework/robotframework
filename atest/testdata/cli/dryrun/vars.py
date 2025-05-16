@@ -1,1 +1,1 @@
-RESOURCE_PATH_FROM_VARS = 'resource.robot'
+RESOURCE_PATH_FROM_VARS = "resource.robot"

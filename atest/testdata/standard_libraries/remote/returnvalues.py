@@ -7,7 +7,7 @@ from remoteserver import RemoteServer
 class ReturnValues:
 
     def string(self):
-        return 'Hyvä tulos!'
+        return "Hyvä tulos!"
 
     def integer(self):
         return 42
@@ -22,11 +22,11 @@ class ReturnValues:
         return datetime.datetime(2023, 9, 14, 17, 30, 23)
 
     def list(self):
-        return [1, 2, 'lolme']
+        return [1, 2, "lolme"]
 
     def dict(self):
-        return {'a': 1, 'b': [2, 3]}
+        return {"a": 1, "b": [2, 3]}
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     RemoteServer(ReturnValues(), *sys.argv[1:])

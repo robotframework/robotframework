@@ -19,13 +19,13 @@ class DataDescriptor(NonDataDescriptor):
 class FailingNonDataDescriptor(NonDataDescriptor):
 
     def __get__(self, instance, owner):
-        return 1/0
+        return 1 / 0
 
 
 class FailingDataDescriptor(DataDescriptor):
 
     def __get__(self, instance, owner):
-        return 1/0
+        return 1 / 0
 
 
 class AvoidProperties:
@@ -95,4 +95,3 @@ class AvoidProperties:
     @FailingDataDescriptor
     def failing_classmethod_data_descriptor(self):
         pass
-

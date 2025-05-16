@@ -13,12 +13,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from typing import Callable, Generic, overload, TypeVar, Type, Union
+from typing import Callable, Generic, overload, Type, TypeVar, Union
 
-
-T = TypeVar('T')
-V = TypeVar('V')
-A = TypeVar('A')
+T = TypeVar("T")
+V = TypeVar("V")
+A = TypeVar("A")
 
 
 class setter(Generic[T, V, A]):
@@ -57,18 +56,16 @@ class setter(Generic[T, V, A]):
 
     def __init__(self, method: Callable[[T, V], A]):
         self.method = method
-        self.attr_name = '_setter__' + method.__name__
+        self.attr_name = "_setter__" + method.__name__
         self.__doc__ = method.__doc__
 
     @overload
-    def __get__(self, instance: None, owner: Type[T]) -> 'setter':
-        ...
+    def __get__(self, instance: None, owner: Type[T]) -> "setter": ...
 
     @overload
-    def __get__(self, instance: T, owner: Type[T]) -> A:
-        ...
+    def __get__(self, instance: T, owner: Type[T]) -> A: ...
 
-    def __get__(self, instance: Union[T, None], owner: Type[T]) -> Union[A, 'setter']:
+    def __get__(self, instance: Union[T, None], owner: Type[T]) -> Union[A, "setter"]:
         if instance is None:
             return self
         try:
@@ -85,10 +82,10 @@ class SetterAwareType(type):
     """Metaclass for adding attributes used by :class:`setter` to ``__slots__``."""
 
     def __new__(cls, name, bases, dct):
-        if '__slots__' in dct:
-            slots = list(dct['__slots__'])
+        if "__slots__" in dct:
+            slots = list(dct["__slots__"])
             for item in dct.values():
                 if isinstance(item, setter):
                     slots.append(item.attr_name)
-            dct['__slots__'] = slots
+            dct["__slots__"] = slots
         return type.__new__(cls, name, bases, dct)

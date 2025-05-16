@@ -22,22 +22,25 @@ from robot.utils.htmlformatters import HeaderFormatter
 
 
 class DocFormatter:
-    _header_regexp = re.compile(r'<h([234])>(.+?)</h\1>')
-    _name_regexp = re.compile('`(.+?)`')
+    _header_regexp = re.compile(r"<h([234])>(.+?)</h\1>")
+    _name_regexp = re.compile("`(.+?)`")
 
-    def __init__(self, keywords, type_info, introduction, doc_format='ROBOT'):
+    def __init__(self, keywords, type_info, introduction, doc_format="ROBOT"):
         self._doc_to_html = DocToHtml(doc_format)
-        self._targets = self._get_targets(keywords, introduction,
-                                          robot_format=doc_format == 'ROBOT')
+        self._targets = self._get_targets(
+            keywords,
+            introduction,
+            robot_format=doc_format == "ROBOT",
+        )
         self._type_info_targets = self._get_type_info_targets(type_info)
 
     def _get_targets(self, keywords, introduction, robot_format):
         targets = {
-            'introduction': 'Introduction',
-            'library introduction': 'Introduction',
-            'importing': 'Importing',
-            'library importing': 'Importing',
-            'keywords': 'Keywords',
+            "introduction": "Introduction",
+            "library introduction": "Introduction",
+            "importing": "Importing",
+            "library importing": "Importing",
+            "keywords": "Keywords",
         }
         for kw in keywords:
             targets[kw.name] = kw.name
@@ -58,12 +61,14 @@ class DocFormatter:
                 yield match.group(2)
 
     def _escape_and_encode_targets(self, targets):
-        return NormalizedDict((html_escape(key), self._encode_uri_component(value))
-                              for key, value in targets.items())
+        return NormalizedDict(
+            (html_escape(key), self._encode_uri_component(value))
+            for key, value in targets.items()
+        )
 
     def _encode_uri_component(self, value):
         # Emulates encodeURIComponent javascript function
-        return quote(value.encode('UTF-8'), safe="-_.!~*'()")
+        return quote(value.encode("UTF-8"), safe="-_.!~*'()")
 
     def html(self, doc, intro=False):
         doc = self._doc_to_html(doc)
@@ -77,7 +82,7 @@ class DocFormatter:
         types = self._type_info_targets
         if name in targets:
             return f'<a href="#{targets[name]}" class="name">{name}</a>'
-        elif name in types:
+        if name in types:
             return f'<a href="#type-{types[name]}" class="name">{name}</a>'
         return f'<span class="name">{name}</span>'
 
@@ -89,10 +94,12 @@ class DocToHtml:
 
     def _get_formatter(self, doc_format):
         try:
-            return {'ROBOT': html_format,
-                    'TEXT': self._format_text,
-                    'HTML': lambda doc: doc,
-                    'REST': self._format_rest}[doc_format]
+            return {
+                "ROBOT": html_format,
+                "TEXT": self._format_text,
+                "HTML": lambda doc: doc,
+                "REST": self._format_rest,
+            }[doc_format]
         except KeyError:
             raise DataError(f"Invalid documentation format '{doc_format}'.")
 
@@ -104,9 +111,12 @@ class DocToHtml:
             from docutils.core import publish_parts
         except ImportError:
             raise DataError("reST format requires 'docutils' module to be installed.")
-        parts = publish_parts(doc, writer_name='html',
-                              settings_overrides={'syntax_highlight': 'short'})
-        return parts['html_body']
+        parts = publish_parts(
+            doc,
+            writer_name="html",
+            settings_overrides={"syntax_highlight": "short"},
+        )
+        return parts["html_body"]
 
     def __call__(self, doc):
         return self._formatter(doc)
@@ -114,34 +124,36 @@ class DocToHtml:
 
 class HtmlToText:
     html_tags = {
-        'b': '*',
-        'i': '_',
-        'strong': '*',
-        'em': '_',
-        'code': '``',
-        'div.*?': ''
+        "b": "*",
+        "i": "_",
+        "strong": "*",
+        "em": "_",
+        "code": "``",
+        "div.*?": "",
     }
     html_chars = {
-        '<br */?>': '\n',
-        '&amp;': '&',
-        '&lt;': '<',
-        '&gt;': '>',
-        '&quot;': '"',
-        '&apos;': "'"
+        "<br */?>": "\n",
+        "&amp;": "&",
+        "&lt;": "<",
+        "&gt;": ">",
+        "&quot;": '"',
+        "&apos;": "'",
     }
 
     def get_short_doc_from_html(self, doc):
-        match = re.search(r'<p.*?>(.*?)</?p>', doc, re.DOTALL)
+        match = re.search(r"<p.*?>(.*?)</?p>", doc, re.DOTALL)
         if match:
             doc = match.group(1)
-        doc = self.html_to_plain_text(doc)
-        return doc
+        return self.html_to_plain_text(doc)
 
     def html_to_plain_text(self, doc):
         for tag, repl in self.html_tags.items():
-            doc = re.sub(r'<%(tag)s>(.*?)</%(tag)s>' % {'tag': tag},
-                         r'%(repl)s\1%(repl)s' % {'repl': repl}, doc,
-                         flags=re.DOTALL)
+            doc = re.sub(
+                rf"<{tag}>(.*?)</{tag}>",
+                rf"{repl}\1{repl}",
+                doc,
+                flags=re.DOTALL,
+            )
         for html, text in self.html_chars.items():
             doc = re.sub(html, text, doc)
         return doc

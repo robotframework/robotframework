@@ -18,12 +18,16 @@ from decimal import Decimal
 from pathlib import Path
 from typing import Any, Literal
 
+try:
+    from types import NoneType
+except ImportError:  # Python < 3.10
+    NoneType = type(None)
 
 STANDARD_TYPE_DOCS = {
-    Any: '''\
+    Any: """\
 Any value is accepted. No conversion is done.
-''',
-    bool: '''\
+""",
+    bool: """\
 Strings ``TRUE``, ``YES``, ``ON`` and ``1`` are converted to Boolean ``True``,
 the empty string as well as strings ``FALSE``, ``NO``, ``OFF`` and ``0``
 are converted to Boolean ``False``, and the string ``NONE`` is converted
@@ -33,8 +37,8 @@ needed. All string comparisons are case-insensitive.
 
 Examples: ``TRUE`` (converted to ``True``), ``off`` (converted to ``False``),
 ``example`` (used as-is)
-''',
-    int: '''\
+""",
+    int: """\
 Conversion is done using Python's [https://docs.python.org/library/functions.html#int|int]
 built-in function. Floating point
 numbers are accepted only if they can be represented as integers exactly.
@@ -47,8 +51,8 @@ Starting from RF 4.1, spaces and underscores can be used as visual separators
 for digit grouping purposes.
 
 Examples: ``42``, ``-1``, ``0b1010``, ``10 000 000``, ``0xBAD_C0FFEE``
-''',
-    float: '''\
+""",
+    float: """\
 Conversion is done using Python's
 [https://docs.python.org/library/functions.html#float|float] built-in function.
 
@@ -56,8 +60,8 @@ Starting from RF 4.1, spaces and underscores can be used as visual separators
 for digit grouping purposes.
 
 Examples: ``3.14``, ``2.9979e8``, ``10 000.000 01``
-''',
-    Decimal: '''\
+""",
+    Decimal: """\
 Conversion is done using Python's
 [https://docs.python.org/library/decimal.html#decimal.Decimal|Decimal] class.
 
@@ -65,18 +69,18 @@ Starting from RF 4.1, spaces and underscores can be used as visual separators
 for digit grouping purposes.
 
 Examples: ``3.14``, ``10 000.000 01``
-''',
-    str: 'All arguments are converted to Unicode strings.',
-    bytes: '''\
+""",
+    str: "All arguments are converted to Unicode strings.",
+    bytes: """\
 Strings are converted to bytes so that each Unicode code point
 below 256 is directly mapped to a matching byte. Higher code
 points are not allowed. Robot Framework's ``\\xHH`` escape syntax is
 convenient with bytes having non-printable values.
 
 Examples: ``good``, ``hyvä`` (same as ``hyv\\xE4``), ``\\x00`` (the null byte)
-''',
-    bytearray: 'Set below to same value as `bytes`.',
-    datetime: '''\
+""",
+    bytearray: "Set below to same value as `bytes`.",
+    datetime: """\
 Strings are expected to be a timestamp in
 [https://en.wikipedia.org/wiki/ISO_8601|ISO 8601] like
 format ``YYYY-MM-DD hh:mm:ss.mmmmmm``, where any non-digit
@@ -90,8 +94,8 @@ the [https://en.wikipedia.org/wiki/Unix_time|Unix epoch].
 
 Examples: ``2022-02-09T16:39:43.632269``, ``2022-02-09 16:39``,
 ``${1644417583.632269}`` (Epoch time)
-''',
-    date: '''\
+""",
+    date: """\
 Strings are expected to be a timestamp in
 [https://en.wikipedia.org/wiki/ISO_8601|ISO 8601] like date format
 ``YYYY-MM-DD``, where any non-digit character can be used as a separator
@@ -99,8 +103,8 @@ or separators can be omitted altogether. Possible time components are
 only allowed if they are zeros.
 
 Examples: ``2022-02-09``, ``2022-02-09 00:00``
-''',
-    timedelta: '''\
+""",
+    timedelta: """\
 Strings are expected to represent a time interval in one of
 the time formats Robot Framework supports:
 - a number representing seconds like ``42`` or ``10.5``
@@ -111,18 +115,18 @@ Integers and floats are considered to be seconds.
 
 See the [https://robotframework.org/robotframework/|Robot Framework User Guide]
 for more details about the supported time formats.
-''',
-    Path: '''\
+""",
+    Path: """\
 Strings are converted [https://docs.python.org/library/pathlib.html|Path] objects.
 On Windows ``/`` is converted to ``\\`` automatically.
 
 Examples: ``/tmp/absolute/path``, ``relative/path/to/file.ext``, ``name.txt``
-''',
-    type(None): '''\
+""",
+    NoneType: """\
 String ``NONE`` (case-insensitive) is converted to Python ``None`` object.
 Other values cause an error.
-''',
-    list: '''\
+""",
+    list: """\
 Strings must be Python [https://docs.python.org/library/stdtypes.html#list|list]
 literals. They are converted to actual lists using the
 [https://docs.python.org/library/ast.html#ast.literal_eval|ast.literal_eval]
@@ -133,8 +137,8 @@ If the type has nested types like ``list[int]``, items are converted
 to those types automatically. This in new in Robot Framework 6.0.
 
 Examples: ``['one', 'two']``, ``[('one', 1), ('two', 2)]``
-''',
-    tuple: '''\
+""",
+    tuple: """\
 Strings must be Python [https://docs.python.org/library/stdtypes.html#tuple|tuple]
 literals. They are converted to actual tuples using the
 [https://docs.python.org/library/ast.html#ast.literal_eval|ast.literal_eval]
@@ -145,8 +149,8 @@ If the type has nested types like ``tuple[str, int, int]``, items are converted
 to those types automatically. This in new in Robot Framework 6.0.
 
 Examples: ``('one', 'two')``, ``(('one', 1), ('two', 2))``
-''',
-    dict: '''\
+""",
+    dict: """\
 Strings must be Python [https://docs.python.org/library/stdtypes.html#dict|dictionary]
 literals. They are converted to actual dictionaries using the
 [https://docs.python.org/library/ast.html#ast.literal_eval|ast.literal_eval]
@@ -157,8 +161,8 @@ If the type has nested types like ``dict[str, int]``, items are converted
 to those types automatically. This in new in Robot Framework 6.0.
 
 Examples: ``{'a': 1, 'b': 2}``, ``{'key': 1, 'nested': {'key': 2}}``
-''',
-    set: '''\
+""",
+    set: """\
 Strings must be Python [https://docs.python.org/library/stdtypes.html#set|set]
 literals. They are converted to actual sets using the
 [https://docs.python.org/library/ast.html#ast.literal_eval|ast.literal_eval]
@@ -168,8 +172,8 @@ If the type has nested types like ``set[int]``, items are converted
 to those types automatically. This in new in Robot Framework 6.0.
 
 Examples: ``{1, 2, 3, 42}``, ``set()`` (an empty set)
-''',
-    frozenset:  '''\
+""",
+    frozenset: """\
 Strings must be Python [https://docs.python.org/library/stdtypes.html#set|set]
 literals. They are converted to actual sets using the
 [https://docs.python.org/library/ast.html#ast.literal_eval|ast.literal_eval]
@@ -180,15 +184,15 @@ If the type has nested types like ``frozenset[int]``, items are converted
 to those types automatically. This in new in Robot Framework 6.0.
 
 Examples: ``{1, 2, 3, 42}``, ``set()`` (an empty set)
-''',
-    Literal: '''\
+""",
+    Literal: """\
 Only specified values are accepted. Values can be strings,
 integers, bytes, Booleans, enums and None, and used arguments
 are converted using the value type specific conversion logic.
 
 Strings are case, space, underscore and hyphen insensitive,
 but exact matches have precedence over normalized matches.
-'''
+""",
 }
 
 STANDARD_TYPE_DOCS[bytearray] = STANDARD_TYPE_DOCS[bytes]

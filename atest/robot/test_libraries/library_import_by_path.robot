@@ -57,4 +57,4 @@ Import failure when path contains non-ASCII characters is handled correctly
     ${path} =    Normalize path    ${DATADIR}/test_libraries/nön_äscii_dïr/invalid.py
     Error in file    -1    test_libraries/library_import_by_path.robot    15
     ...    Importing library '${path}' failed: Ööööps!
-    ...    traceback=File "${path}", line 1, in <module>\n*raise RuntimeError('Ööööps!')
+    ...    traceback=File "${path}", line 1, in <module>\n*raise RuntimeError("Ööööps!")

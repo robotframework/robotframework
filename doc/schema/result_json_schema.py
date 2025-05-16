@@ -33,47 +33,47 @@ class WithStatus(BaseModel):
 
 
 class Var(WithStatus):
-    type = Field('VAR', const=True)
+    type = Field("VAR", const=True)
     name: str
     value: Sequence[str]
     scope: str | None
     separator: str | None
-    body: list['Keyword | Message'] | None
+    body: list["Keyword | Message"] | None
 
 
 class Return(WithStatus):
-    type = Field('RETURN', const=True)
+    type = Field("RETURN", const=True)
     values: Sequence[str] | None
-    body: list['Keyword | Message'] | None
+    body: list["Keyword | Message"] | None
 
 
 class Continue(WithStatus):
-    type = Field('CONTINUE', const=True)
-    body: list['Keyword | Message'] | None
+    type = Field("CONTINUE", const=True)
+    body: list["Keyword | Message"] | None
 
 
 class Break(WithStatus):
-    type = Field('BREAK', const=True)
-    body: list['Keyword | Message'] | None
+    type = Field("BREAK", const=True)
+    body: list["Keyword | Message"] | None
 
 
 class Error(WithStatus):
-    type = Field('ERROR', const=True)
+    type = Field("ERROR", const=True)
     values: Sequence[str]
-    body: list['Keyword | Message'] | None
+    body: list["Keyword | Message"] | None
 
 
 class Message(BaseModel):
-    type = Field('MESSAGE', const=True)
+    type = Field("MESSAGE", const=True)
     message: str
-    level: Literal['TRACE', 'DEBUG', 'INFO', 'WARN', 'ERROR', 'FAIL', 'SKIP']
+    level: Literal["TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FAIL", "SKIP"]
     html: bool | None
     timestamp: datetime | None
 
 
 class ErrorMessage(BaseModel):
     message: str
-    level: Literal['ERROR', 'WARN']
+    level: Literal["ERROR", "WARN"]
     html: bool | None
     timestamp: datetime | None
 
@@ -87,70 +87,70 @@ class Keyword(WithStatus):
     doc: str | None
     tags: Sequence[str] | None
     timeout: str | None
-    setup: 'Keyword | None'
-    teardown: 'Keyword | None'
-    body: list['Keyword | For | While | Group | If | Try | Var | Break | Continue | Return | Error | Message'] | None
+    setup: "Keyword | None"
+    teardown: "Keyword | None"
+    body: list["Keyword | For | While | Group | If | Try | Var | Break | Continue | Return | Error | Message"] | None
 
 
 class For(WithStatus):
-    type = Field('FOR', const=True)
+    type = Field("FOR", const=True)
     assign: Sequence[str]
     flavor: str
     values: Sequence[str]
     start: str | None
     mode: str | None
     fill: str | None
-    body: list['Keyword | For | ForIteration | While | Group | If | Try | Var | Break | Continue | Return | Error | Message'] | None
+    body: list["Keyword | For | ForIteration | While | Group | If | Try | Var | Break | Continue | Return | Error | Message"] | None
 
 
 class ForIteration(WithStatus):
-    type = Field('ITERATION', const=True)
+    type = Field("ITERATION", const=True)
     assign: dict[str, str]
-    body: list['Keyword | For | While | Group | If | Try | Var | Break | Continue | Return | Error | Message'] | None
+    body: list["Keyword | For | While | Group | If | Try | Var | Break | Continue | Return | Error | Message"] | None
 
 
 class While(WithStatus):
-    type = Field('WHILE', const=True)
+    type = Field("WHILE", const=True)
     condition: str | None
     limit: str | None
     on_limit: str | None
     on_limit_message: str | None
-    body: list['Keyword | For | While | WhileIteration | Group | If | Try | Var | Break | Continue | Return | Error | Message'] | None
+    body: list["Keyword | For | While | WhileIteration | Group | If | Try | Var | Break | Continue | Return | Error | Message"] | None
 
 
 class WhileIteration(WithStatus):
-    type = Field('ITERATION', const=True)
-    body: list['Keyword | For | While | Group | If | Try | Var | Break | Continue | Return | Error | Message'] | None
+    type = Field("ITERATION", const=True)
+    body: list["Keyword | For | While | Group | If | Try | Var | Break | Continue | Return | Error | Message"] | None
 
 
 class Group(WithStatus):
-    type = Field('GROUP', const=True)
+    type = Field("GROUP", const=True)
     name: str | None
-    body: list['Keyword | For | While | Group | If | Try | Var | Break | Continue | Return | Error | Message'] | None
+    body: list["Keyword | For | While | Group | If | Try | Var | Break | Continue | Return | Error | Message"] | None
 
 
 class IfBranch(WithStatus):
-    type: Literal['IF', 'ELSE IF', 'ELSE']
+    type: Literal["IF", "ELSE IF", "ELSE"]
     condition: str | None
-    body: list['Keyword | For | While | Group | If | Try | Var | Break | Continue | Return | Error | Message'] | None
+    body: list["Keyword | For | While | Group | If | Try | Var | Break | Continue | Return | Error | Message"] | None
 
 
 class If(WithStatus):
-    type = Field('IF/ELSE ROOT', const=True)
-    body: list['IfBranch | Keyword | For | While | Group | If | Try | Var | Break | Continue | Return | Error | Message'] | None
+    type = Field("IF/ELSE ROOT", const=True)
+    body: list["IfBranch | Keyword | For | While | Group | If | Try | Var | Break | Continue | Return | Error | Message"] | None
 
 
 class TryBranch(WithStatus):
-    type: Literal['TRY', 'EXCEPT', 'ELSE', 'FINALLY']
+    type: Literal["TRY", "EXCEPT", "ELSE", "FINALLY"]
     patterns: Sequence[str] | None
     pattern_type: str | None
     assign: str | None
-    body: list['Keyword | For | While | Group | If | Try | Var | Break | Continue | Return | Error | Message'] | None
+    body: list["Keyword | For | While | Group | If | Try | Var | Break | Continue | Return | Error | Message"] | None
 
 
 class Try(WithStatus):
-    type = Field('TRY/EXCEPT ROOT', const=True)
-    body: list['TryBranch | Keyword | For | While | Group | If | Try | Var | Break | Continue | Return | Error | Message'] | None
+    type = Field("TRY/EXCEPT ROOT", const=True)
+    body: list["TryBranch | Keyword | For | While | Group | If | Try | Var | Break | Continue | Return | Error | Message"] | None
 
 
 class TestCase(WithStatus):
@@ -177,7 +177,7 @@ class TestSuite(WithStatus):
     setup: Keyword | None
     teardown: Keyword | None
     tests: list[TestCase] | None
-    suites: list['TestSuite'] | None
+    suites: list["TestSuite"] | None
 
 
 class RootSuite(TestSuite):
@@ -190,17 +190,17 @@ class RootSuite(TestSuite):
     """
 
     class Config:
-        title = 'robot.result.TestSuite'
-        # pydantic doesn't add schema version automatically.
+        title = "robot.result.TestSuite"
+        # pydantic doesn"t add schema version automatically.
         # https://github.com/samuelcolvin/pydantic/issues/1478
         schema_extra = {
-            '$schema': 'https://json-schema.org/draft/2020-12/schema'
+            "$schema": "https://json-schema.org/draft/2020-12/schema"
         }
 
 
 class Stat(BaseModel):
     label: str
-    pass_: int = Field(alias='pass')
+    pass_: int = Field(alias="pass")
     fail: int
     skip: int
 
@@ -242,7 +242,7 @@ class Result(BaseModel):
         # pydantic doesn't add schema version automatically.
         # https://github.com/samuelcolvin/pydantic/issues/1478
         schema_extra = {
-            '$schema': 'https://json-schema.org/draft/2020-12/schema'
+            "$schema": "https://json-schema.org/draft/2020-12/schema"
         }
 
 
@@ -253,11 +253,11 @@ for cls in [Keyword, For, ForIteration, While, WhileIteration, Group, If, IfBran
 
 def generate(model, file_name):
     path = Path(__file__).parent / file_name
-    with open(path, 'w') as f:
+    with open(path, "w") as f:
         f.write(model.schema_json(indent=2))
     print(path.absolute())
 
 
-if __name__ == '__main__':
-    generate(Result, 'result.json')
-    generate(RootSuite, 'result_suite.json')
+if __name__ == "__main__":
+    generate(Result, "result.json")
+    generate(RootSuite, "result_suite.json")

@@ -67,7 +67,7 @@ Flatten controls in keyword
     ...    FOR: 0    1    FOR: 1    1    FOR: 2    1
     ...    WHILE: 2    1    \${i} = 1    WHILE: 1    1    \${i} = 0
     ...    AssertionError    1    finally
-    FOR    ${msg}    ${exp}    IN ZIP    ${tc.body[0].body}    ${expected}
+    FOR    ${msg}    ${exp}    IN ZIP    ${tc[0].body}    ${expected}
         Check Log Message    ${msg}    ${exp}    level=IGNORE
     END
 
@@ -107,26 +107,26 @@ Flatten FOR iterations
 Flatten WHILE
     Run Rebot    --flatten WHile    ${OUTFILE COPY}
     ${tc} =    Check Test Case    WHILE loop
-    Should Be Equal     ${tc.body[1].type}        WHILE
-    Should Be Equal     ${tc.body[1].message}     *HTML* ${FLATTENED}
-    Check Counts        ${tc.body[1]}             70
+    Should Be Equal     ${tc[1].type}        WHILE
+    Should Be Equal     ${tc[1].message}     *HTML* ${FLATTENED}
+    Check Counts        ${tc[1]}             70
     FOR    ${index}    IN RANGE    10
-        Check Log Message    ${tc.body[1][${index * 7 + 0}]}    index: ${index}
-        Check Log Message    ${tc.body[1][${index * 7 + 1}]}    3
-        Check Log Message    ${tc.body[1][${index * 7 + 2}]}    2
-        Check Log Message    ${tc.body[1][${index * 7 + 3}]}    1
-        Check Log Message    ${tc.body[1][${index * 7 + 4}]}    2
-        Check Log Message    ${tc.body[1][${index * 7 + 5}]}    1
+        Check Log Message    ${tc[1, ${index * 7 + 0}]}    index: ${index}
+        Check Log Message    ${tc[1, ${index * 7 + 1}]}    3
+        Check Log Message    ${tc[1, ${index * 7 + 2}]}    2
+        Check Log Message    ${tc[1, ${index * 7 + 3}]}    1
+        Check Log Message    ${tc[1, ${index * 7 + 4}]}    2
+        Check Log Message    ${tc[1, ${index * 7 + 5}]}    1
         ${i}=    Evaluate     $index + 1
-        Check Log Message    ${tc.body[1][${index * 7 + 6}]}    \${i} = ${i}
+        Check Log Message    ${tc[1, ${index * 7 + 6}]}    \${i} = ${i}
     END
 
 Flatten WHILE iterations
     Run Rebot    --flatten iteration    ${OUTFILE COPY}
     ${tc} =    Check Test Case    WHILE loop
-    Should Be Equal     ${tc.body[1].type}        WHILE
-    Should Be Equal     ${tc.body[1].message}     ${EMPTY}
-    Check Counts        ${tc.body[1]}             0    10
+    Should Be Equal     ${tc[1].type}        WHILE
+    Should Be Equal     ${tc[1].message}     ${EMPTY}
+    Check Counts        ${tc[1]}             0    10
     FOR    ${index}    IN RANGE    10
         Should Be Equal      ${tc[1, ${index}].type}       ITERATION
         Should Be Equal      ${tc[1, ${index}].message}    *HTML* ${FLATTENED}

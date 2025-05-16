@@ -17,6 +17,7 @@ from typing import TYPE_CHECKING
 
 from robot.variables import contains_variable
 
+from .typeconverters import UnknownConverter
 from .typeinfo import TypeInfo
 
 if TYPE_CHECKING:
@@ -28,10 +29,13 @@ if TYPE_CHECKING:
 
 class ArgumentConverter:
 
-    def __init__(self, arg_spec: 'ArgumentSpec',
-                 custom_converters: 'CustomArgumentConverters',
-                 dry_run: bool = False,
-                 languages: 'LanguagesLike' = None):
+    def __init__(
+        self,
+        arg_spec: "ArgumentSpec",
+        custom_converters: "CustomArgumentConverters",
+        dry_run: bool = False,
+        languages: "LanguagesLike" = None,
+    ):
         self.spec = arg_spec
         self.custom_converters = custom_converters
         self.dry_run = dry_run
@@ -42,23 +46,29 @@ class ArgumentConverter:
 
     def _convert_positional(self, positional):
         names = self.spec.positional
-        converted = [self._convert(name, value)
-                     for name, value in zip(names, positional)]
+        converted = [self._convert(n, v) for n, v in zip(names, positional)]
         if self.spec.var_positional:
-            converted.extend(self._convert(self.spec.var_positional, value)
-                             for value in positional[len(names):])
+            converted.extend(
+                self._convert(self.spec.var_positional, value)
+                for value in positional[len(names) :]
+            )
         return converted
 
     def _convert_named(self, named):
         names = set(self.spec.positional) | set(self.spec.named_only)
         var_named = self.spec.var_named
-        return [(name, self._convert(name if name in names else var_named, value))
-                for name, value in named]
+        return [
+            (name, self._convert(name if name in names else var_named, value))
+            for name, value in named
+        ]
 
     def _convert(self, name, value):
         spec = self.spec
-        if (spec.types is None
-                or self.dry_run and contains_variable(value, identifiers='$@&%')):
+        if (
+            spec.types is None
+            or self.dry_run
+            and contains_variable(value, identifiers="$@&%")
+        ):
             return value
         conversion_error = None
         # Don't convert None if argument has None as a default value.
@@ -71,12 +81,18 @@ class ArgumentConverter:
         # Primarily convert arguments based on type hints.
         if name in spec.types:
             info: TypeInfo = spec.types[name]
-            try:
-                return info.convert(value, name, self.custom_converters, self.languages)
-            except ValueError as err:
-                conversion_error = err
-            except TypeError:
-                pass
+            converter = info.get_converter(
+                self.custom_converters,
+                self.languages,
+                allow_unknown=True,
+            )
+            # If type is unknown, don't attempt conversion. It would succeed, but
+            # we want to, for now, attempt conversion based on the default value.
+            if not isinstance(converter, UnknownConverter):
+                try:
+                    return converter.convert(value, name)
+                except ValueError as err:
+                    conversion_error = err
         # Try conversion also based on the default value type. We probably should
         # do this only if there is no explicit type hint, but Python < 3.11
         # handling `arg: type = None` differently than newer versions would mean
@@ -85,9 +101,9 @@ class ArgumentConverter:
         # https://github.com/robotframework/robotframework/issues/4881
         if name in spec.defaults:
             typ = type(spec.defaults[name])
-            if typ == str:      # Don't convert arguments to strings.
+            if typ is str:  # Don't convert arguments to strings.
                 info = TypeInfo()
-            elif typ == int:    # Try also conversion to float.
+            elif typ is int:  # Try also conversion to float.
                 info = TypeInfo.from_sequence([int, float])
             else:
                 info = TypeInfo.from_type(typ)

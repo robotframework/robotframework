@@ -268,10 +268,16 @@ log levels are:
 `FAIL`
    Used when a keyword fails. Can be used only by Robot Framework itself.
 
-`WARN`
-   Used to display warnings. They shown also in `the console and in
+`ERROR`
+   Used for displaying errors. Errors are shown in `the console and in
    the Test Execution Errors section in log files`__, but they
-   do not affect the test case status.
+   do not affect test case statuses. If the `--exitonerror option is enabled`__,
+   errors stop the whole execution, though,
+
+`WARN`
+   Used for displaying warnings. Warnings are shown in `the console and in
+   the Test Execution Errors section in log files`__, but they
+   do not affect test case statuses.
 
 `INFO`
    The default level for normal messages. By default,
@@ -288,6 +294,8 @@ log levels are:
    are automatically logged using this level.
 
 __ `Logging information`_
+__ `Errors and warnings during execution`_
+__ `Stopping on parsing or execution error`_
 __ `Errors and warnings during execution`_
 
 Setting log level
@@ -605,21 +613,15 @@ option described in the previous chapter, e.g. all content except for log messag
 from under the keyword having the tag. One important difference is that in this case, the removed
 content is not written to the output file at all, and thus cannot be accessed at later time.
 
-Some examples
-
 .. sourcecode:: robotframework
 
     *** Keywords ***
-    Flattening affects this keyword and all it's children
+    Example
         [Tags]    robot:flatten
-        Log    something
-        FOR     ${i}     IN RANGE     2
-             Log    The message is preserved but for loop iteration is not
+        Log    Keywords and the loop are removed, but logged messages are preserved.
+        FOR     ${i}     IN RANGE     1    101
+             Log    Iteration ${i}/100.
         END
-
-    *** Settings ***
-    # Flatten content of all uer keywords
-    Keyword Tags    robot:flatten
 
 __ `Reserved tags`_
 __ `Keyword tags`_

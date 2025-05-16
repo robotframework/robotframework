@@ -4,10 +4,8 @@ from threading import Thread
 
 from robot.output import LOGGER
 from robot.output.loggerhelper import AbstractLogger
-from robot.utils.asserts import assert_equal
-
 from robot.running.signalhandler import _StopSignalMonitor
-
+from robot.utils.asserts import assert_equal
 
 LOGGER.unregister_console_logger()
 
@@ -18,9 +16,11 @@ def assert_signal_handler_equal(signum, expected):
 
 
 class LoggerStub(AbstractLogger):
+
     def __init__(self):
         AbstractLogger.__init__(self)
         self.messages = []
+
     def message(self, msg):
         self.messages.append(msg)
 
@@ -39,22 +39,30 @@ class TestSignalHandlerRegisteringFailures(unittest.TestCase):
 
     def test_error_messages(self):
         def raise_value_error(signum, handler):
-            raise ValueError("Got signal %d" % signum)
+            raise ValueError(f"Got signal {signum}")
+
         signal.signal = raise_value_error
         _StopSignalMonitor().__enter__()
         assert_equal(len(self.logger.messages), 2)
-        self._verify_warning(self.logger.messages[0], 'INT',
-                             'Got signal %d' % signal.SIGINT)
-        self._verify_warning(self.logger.messages[1], 'TERM',
-                             'Got signal %d' % signal.SIGTERM)
+        self._verify_warning(
+            self.logger.messages[0],
+            "INT",
+            f"Got signal {signal.SIGINT}",
+        )
+        self._verify_warning(
+            self.logger.messages[1],
+            "TERM",
+            f"Got signal {signal.SIGTERM}",
+        )
 
     def _verify_warning(self, msg, signame, err):
-        ctrlc = 'or with Ctrl-C ' if signame == 'INT' else ''
-        assert_equal(msg.message,
-                     'Registering signal %s failed. Stopping execution '
-                     'gracefully with this signal %sis not possible. '
-                     'Original error was: %s' % (signame, ctrlc, err))
-        assert_equal(msg.level, 'WARN')
+        or_ctrl_c = "or with Ctrl-C " if signame == "INT" else ""
+        assert_equal(
+            msg.message,
+            f"Registering signal {signame} failed. Stopping execution gracefully with "
+            f"this signal {or_ctrl_c}is not possible. Original error was: {err}",
+        )
+        assert_equal(msg.level, "WARN")
 
     def test_failure_but_no_warning_when_not_in_main_thread(self):
         t = Thread(target=_StopSignalMonitor().__enter__)
@@ -113,5 +121,5 @@ class TestRestoringOriginalHandlers(unittest.TestCase):
         assert_equal(self.get_term(), signal.SIG_DFL)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

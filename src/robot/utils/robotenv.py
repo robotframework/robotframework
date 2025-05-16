@@ -38,7 +38,9 @@ def del_env_var(name):
     return value
 
 
-def get_env_vars(upper=os.sep != '/'):
+def get_env_vars(upper=os.sep != "/"):
     # by default, name is upper-cased on Windows regardless interpreter
-    return dict((name if not upper else name.upper(), get_env_var(name))
-                for name in (decode(name) for name in os.environ))
+    return {
+        name.upper() if upper else name: get_env_var(name)
+        for name in (decode(name) for name in os.environ)
+    }

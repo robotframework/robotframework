@@ -11,10 +11,10 @@ def with_normal(posonly, /, normal):
 
 
 def with_kwargs(x, /, **y):
-    return _format(x, *[f'{k}: {y[k]}' for k in y])
+    return _format(x, *[f"{k}: {y[k]}" for k in y])
 
 
-def defaults(required, optional='default', /):
+def defaults(required, optional="default", /):
     return _format(required, optional)
 
 
@@ -23,4 +23,4 @@ def types(first: int, second: float, /):
 
 
 def _format(*args):
-    return ', '.join(args)
+    return ", ".join(args)

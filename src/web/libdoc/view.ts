@@ -84,6 +84,11 @@ class View {
     this.renderShortcuts();
     this.renderKeywords();
     this.renderLibdocTemplate("data-types");
+    // This is needed to remove extra whitespace handlebars adds when rendering
+    // the pre blocks.
+    document.querySelectorAll(".dtdoc pre, .kwdoc pre").forEach(e => {
+      e.textContent = e.textContent.split('\n').map(t => t.trim()).join('\n')
+    })
     this.renderLibdocTemplate("footer");
   }
 

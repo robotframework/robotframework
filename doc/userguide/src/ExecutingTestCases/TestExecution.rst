@@ -692,6 +692,10 @@ fatal and execution stopped so that remaining tests are marked failed. With
 parsing errors encountered before execution even starts, this means that no
 tests are actually run.
 
+.. note:: Also logging something with the `ERROR` `log level`_ is considered
+          an error and stops the execution if the :option:`--exitonerror` option
+          is used.
+
 __ `Errors and warnings during execution`_
 
 Handling teardowns

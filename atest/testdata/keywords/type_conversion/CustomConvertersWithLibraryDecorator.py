@@ -1,6 +1,6 @@
-from robot.api.deco import keyword, library
-
 from CustomConverters import Number, string_to_int
+
+from robot.api.deco import keyword, library
 
 
 @library(converters={Number: string_to_int})

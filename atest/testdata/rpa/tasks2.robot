@@ -1,6 +1,9 @@
+*** Variables ***
+${RPA}           True
+
 *** Tasks ***
 Passing
-    No operation
+    Should Be Equal    ${OPTIONS.rpa}    ${RPA}    type=bool
 
 Failing
     [Documentation]    FAIL Error

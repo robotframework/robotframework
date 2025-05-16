@@ -73,7 +73,7 @@ All of the above classes can be imported like::
     from robot.api import ClassName
 
 The public API intends to follow the `distributing type information specification
-<https://typing.readthedocs.io/en/latest/spec/distributing.html#distributing-type-information>`_ 
+<https://typing.readthedocs.io/en/latest/spec/distributing.html#distributing-type-information>`_
 originally specified in `PEP 484 <https://peps.python.org/pep-0484/>`_.
 
 See documentations of the individual APIs for more details.
@@ -85,29 +85,29 @@ See documentations of the individual APIs for more details.
 from robot.conf.languages import Language as Language, Languages as Languages
 from robot.model import SuiteVisitor as SuiteVisitor
 from robot.parsing import (
-    get_tokens as get_tokens,
-    get_resource_tokens as get_resource_tokens,
+    get_init_model as get_init_model,
     get_init_tokens as get_init_tokens,
     get_model as get_model,
     get_resource_model as get_resource_model,
-    get_init_model as get_init_model,
-    Token as Token
+    get_resource_tokens as get_resource_tokens,
+    get_tokens as get_tokens,
+    Token as Token,
 )
 from robot.reporting import ResultWriter as ResultWriter
 from robot.result import (
     ExecutionResult as ExecutionResult,
-    ResultVisitor as ResultVisitor
+    ResultVisitor as ResultVisitor,
 )
 from robot.running import (
     TestSuite as TestSuite,
     TestSuiteBuilder as TestSuiteBuilder,
-    TypeInfo as TypeInfo
+    TypeInfo as TypeInfo,
 )
 
 from .exceptions import (
     ContinuableFailure as ContinuableFailure,
+    Error as Error,
     Failure as Failure,
     FatalError as FatalError,
-    Error as Error,
-    SkipExecution as SkipExecution
+    SkipExecution as SkipExecution,
 )

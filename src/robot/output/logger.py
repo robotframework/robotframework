@@ -13,8 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from contextlib import contextmanager
 import os
+from contextlib import contextmanager
 
 from robot.errors import DataError
 
@@ -28,6 +28,7 @@ def start_body_item(method):
     def wrapper(self, *args):
         self._log_message_parents.append(args[-1])
         method(self, *args)
+
     return wrapper
 
 
@@ -35,6 +36,7 @@ def end_body_item(method):
     def wrapper(self, *args):
         method(self, *args)
         self._log_message_parents.pop()
+
     return wrapper
 
 
@@ -56,7 +58,6 @@ class Logger(AbstractLogger):
         self._lib_listeners = None
         self._other_loggers = []
         self._message_cache = []
-        self._log_message_cache = None
         self._log_message_parents = []
         self._library_import_logging = 0
         self._error_occurred = False
@@ -74,16 +75,24 @@ class Logger(AbstractLogger):
 
     @property
     def start_loggers(self):
-        loggers = (self._other_loggers
-                   + [self._console_logger, self._syslog, self._output_file]
-                   + self._listeners)
+        loggers = (
+            *self._other_loggers,
+            self._console_logger,
+            self._syslog,
+            self._output_file,
+            *self._listeners,
+        )
         return [logger for logger in loggers if logger]
 
     @property
     def end_loggers(self):
-        loggers = (self._listeners
-                   + [self._console_logger, self._syslog, self._output_file]
-                   + self._other_loggers)
+        loggers = (
+            *self._listeners,
+            self._console_logger,
+            self._syslog,
+            self._output_file,
+            *self._other_loggers,
+        )
         return [logger for logger in loggers if logger]
 
     def __iter__(self):
@@ -99,8 +108,16 @@ class Logger(AbstractLogger):
         if not self._enabled:
             self.close()
 
-    def register_console_logger(self, type='verbose', width=78, colors='AUTO',
-                                links='AUTO', markers='AUTO', stdout=None, stderr=None):
+    def register_console_logger(
+        self,
+        type="verbose",
+        width=78,
+        colors="AUTO",
+        links="AUTO",
+        markers="AUTO",
+        stdout=None,
+        stderr=None,
+    ):
         logger = ConsoleOutput(type, width, colors, links, markers, stdout, stderr)
         self._console_logger = self._wrap_and_relay(logger)
 
@@ -116,16 +133,16 @@ class Logger(AbstractLogger):
     def unregister_console_logger(self):
         self._console_logger = None
 
-    def register_syslog(self, path=None, level='INFO'):
+    def register_syslog(self, path=None, level="INFO"):
         if not path:
-            path = os.environ.get('ROBOT_SYSLOG_FILE', 'NONE')
-            level = os.environ.get('ROBOT_SYSLOG_LEVEL', level)
-        if path.upper() == 'NONE':
+            path = os.environ.get("ROBOT_SYSLOG_FILE", "NONE")
+            level = os.environ.get("ROBOT_SYSLOG_LEVEL", level)
+        if path.upper() == "NONE":
             return
         try:
             syslog = FileLogger(path, level)
         except DataError as err:
-            self.error("Opening syslog file '%s' failed: %s" % (path, err.message))
+            self.error(f"Opening syslog file '{path}' failed: {err}")
         else:
             self._syslog = self._wrap_and_relay(syslog)
 
@@ -148,7 +165,7 @@ class Logger(AbstractLogger):
 
     def unregister_logger(self, *loggers):
         for logger in loggers:
-            self._other_loggers = [l for l in self._other_loggers if l is not logger]
+            self._other_loggers = [lo for lo in self._other_loggers if lo is not logger]
 
     def disable_message_cache(self):
         self._message_cache = None
@@ -165,7 +182,7 @@ class Logger(AbstractLogger):
                 logger.message(msg)
         if self._message_cache is not None:
             self._message_cache.append(msg)
-        if msg.level == 'ERROR':
+        if msg.level == "ERROR":
             self._error_occurred = True
             if self._error_listener:
                 self._error_listener()
@@ -179,19 +196,6 @@ class Logger(AbstractLogger):
         finally:
             self._cache_only = False
 
-    @property
-    @contextmanager
-    def delayed_logging(self):
-        prev_cache = self._log_message_cache
-        self._log_message_cache = []
-        try:
-            yield
-        finally:
-            messages = self._log_message_cache
-            self._log_message_cache = prev_cache
-            for msg in messages or ():
-                self._log_message(msg, no_cache=True)
-
     def log_message(self, msg, no_cache=False):
         if self._log_message_parents and not self._library_import_logging:
             self._log_message(msg, no_cache)
@@ -200,15 +204,11 @@ class Logger(AbstractLogger):
 
     def _log_message(self, msg, no_cache=False):
         """Log messages written (mainly) by libraries."""
-        if self._log_message_cache is not None and not no_cache:
-            msg.resolve_delayed_message()
-            self._log_message_cache.append(msg)
-            return
         for logger in self:
             logger.log_message(msg)
         if self._log_message_parents and self._output_file.is_logged(msg):
             self._log_message_parents[-1].body.append(msg)
-        if msg.level in ('WARN', 'ERROR'):
+        if msg.level in ("WARN", "ERROR"):
             self.message(msg)
 
     def log_output(self, output):
@@ -452,7 +452,7 @@ class Logger(AbstractLogger):
             logger.debug_file(path)
 
     def result_file(self, kind, path):
-        kind_file = getattr(self, f'{kind.lower()}_file')
+        kind_file = getattr(self, f"{kind.lower()}_file")
         kind_file(path)
 
     def close(self):

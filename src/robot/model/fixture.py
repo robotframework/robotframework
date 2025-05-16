@@ -14,20 +14,22 @@
 #  limitations under the License.
 
 from collections.abc import Mapping
-from typing import Type, TypeVar, TYPE_CHECKING
+from typing import Type, TYPE_CHECKING, TypeVar
 
 if TYPE_CHECKING:
     from robot.model import DataDict, Keyword, TestCase, TestSuite
     from robot.running.model import UserKeyword
 
 
-T = TypeVar('T', bound='Keyword')
+T = TypeVar("T", bound="Keyword")
 
 
-def create_fixture(fixture_class: Type[T],
-                   fixture: 'T|DataDict|None',
-                   parent: 'TestCase|TestSuite|Keyword|UserKeyword',
-                   fixture_type: str) -> T:
+def create_fixture(
+    fixture_class: Type[T],
+    fixture: "T|DataDict|None",
+    parent: "TestCase|TestSuite|Keyword|UserKeyword",
+    fixture_type: str,
+) -> T:
     """Create or configure a `fixture_class` instance."""
     # If a fixture instance has been passed in update the config
     if isinstance(fixture, fixture_class):

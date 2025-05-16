@@ -34,7 +34,7 @@ Log exception
     ...    Error occurred!
     ...    Traceback (most recent call last):
     ...    ${SPACE*2}File "*", line 56, in log_exception
-    ...    ${SPACE*4}raise ValueError('Bang!')
+    ...    ${SPACE*4}raise ValueError("Bang!")
     ...    ValueError: Bang!
     Check Log Message    ${tc[0, 0]}    ${message}    ERROR    pattern=True    traceback=True
 

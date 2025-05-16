@@ -24,7 +24,7 @@ Log Variables In Suite Setup
     Check Variable Message    \${LOG_LEVEL} = INFO
     Check Variable Message    \${None} = None
     Check Variable Message    \${null} = None
-    Check Variable Message    \&{OPTIONS} = { include=[] | exclude=[] | skip=[] | skip_on_failure=[] | console_width=78 }
+    Check Variable Message    \&{OPTIONS} = { rpa=False | include=[] | exclude=[] | skip=[] | skip_on_failure=[] | console_width=78 }
     Check Variable Message    \${OUTPUT_DIR} = *    pattern=yes
     Check Variable Message    \${OUTPUT_FILE} = *    pattern=yes
     Check Variable Message    \${PREV_TEST_MESSAGE} =
@@ -67,7 +67,7 @@ Log Variables In Test
     Check Variable Message    \${LOG_LEVEL} = TRACE
     Check Variable Message    \${None} = None
     Check Variable Message    \${null} = None
-    Check Variable Message    \&{OPTIONS} = { include=[] | exclude=[] | skip=[] | skip_on_failure=[] | console_width=78 }
+    Check Variable Message    \&{OPTIONS} = { rpa=False | include=[] | exclude=[] | skip=[] | skip_on_failure=[] | console_width=78 }
     Check Variable Message    \${OUTPUT_DIR} = *    pattern=yes
     Check Variable Message    \${OUTPUT_FILE} = *    pattern=yes
     Check Variable Message    \${PREV_TEST_MESSAGE} =
@@ -114,7 +114,7 @@ Log Variables After Setting New Variables
     Check Variable Message    \${LOG_LEVEL} = TRACE    DEBUG
     Check Variable Message    \${None} = None    DEBUG
     Check Variable Message    \${null} = None    DEBUG
-    Check Variable Message    \&{OPTIONS} = { include=[] | exclude=[] | skip=[] | skip_on_failure=[] | console_width=78 }    DEBUG
+    Check Variable Message    \&{OPTIONS} = { rpa=False | include=[] | exclude=[] | skip=[] | skip_on_failure=[] | console_width=78 }    DEBUG
     Check Variable Message    \${OUTPUT_DIR} = *    DEBUG    pattern=yes
     Check Variable Message    \${OUTPUT_FILE} = *    DEBUG    pattern=yes
     Check Variable Message    \${PREV_TEST_MESSAGE} =    DEBUG
@@ -160,7 +160,7 @@ Log Variables In User Keyword
     Check Variable Message    \${LOG_LEVEL} = TRACE
     Check Variable Message    \${None} = None
     Check Variable Message    \${null} = None
-    Check Variable Message    \&{OPTIONS} = { include=[] | exclude=[] | skip=[] | skip_on_failure=[] | console_width=78 }
+    Check Variable Message    \&{OPTIONS} = { rpa=False | include=[] | exclude=[] | skip=[] | skip_on_failure=[] | console_width=78 }
     Check Variable Message    \${OUTPUT_DIR} = *    pattern=yes
     Check Variable Message    \${OUTPUT_FILE} = *    pattern=yes
     Check Variable Message    \${PREV_TEST_MESSAGE} =

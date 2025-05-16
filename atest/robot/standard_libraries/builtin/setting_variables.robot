@@ -70,7 +70,10 @@ Test Variables Set In One Suite Are Not Available In Another
 Test variables set on suite level is not seen in tests
     Check Test Case    ${TESTNAME}
 
-Test variable set on suite levvel can be overridden as suite variable
+Test variable set on suite level does not hide existing suite variable
+    Check Test Case    ${TESTNAME}
+
+Test variable set on suite level can be overridden as suite variable
     Check Test Case    ${TESTNAME}
 
 Set Task Variable as alias for Set Test Variable

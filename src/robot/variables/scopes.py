@@ -18,7 +18,7 @@ import tempfile
 
 from robot.model import Tags
 from robot.output import LOGGER
-from robot.utils import abspath, find_file, get_error_details, DotDict, NormalizedDict
+from robot.utils import abspath, DotDict, find_file, get_error_details, NormalizedDict
 
 from .resolvable import GlobalVariableValue
 from .variables import Variables
@@ -59,7 +59,7 @@ class VariableScopes:
     def start_suite(self):
         self._suite = self._global.copy()
         self._scopes.append(self._suite)
-        self._suite_locals.append(NormalizedDict(ignore='_'))
+        self._suite_locals.append(NormalizedDict(ignore="_"))
         self._variables_set.start_suite()
         self._variables_set.update(self._suite)
 
@@ -70,7 +70,7 @@ class VariableScopes:
         self._variables_set.end_suite()
 
     def start_test(self):
-        self._test = self._suite.copy(exclude=self._suite_locals[-1])
+        self._test = self._suite.copy(update=self._suite_locals[-1])
         self._scopes.append(self._test)
         self._variables_set.start_test()
 
@@ -80,8 +80,8 @@ class VariableScopes:
         self._variables_set.end_test()
 
     def start_keyword(self):
-        exclude = self._suite_locals[-1] if self._test else ()
-        kw = self._suite.copy(exclude)
+        update = self._suite_locals[-1] if self._test else None
+        kw = self._suite.copy(update)
         self._variables_set.start_keyword()
         self._variables_set.update(kw)
         self._scopes.append(kw)
@@ -132,8 +132,8 @@ class VariableScopes:
     def _set_global_suite_or_test(self, scope, name, value):
         scope[name] = value
         # Avoid creating new list/dict objects in different scopes.
-        if name[0] != '$':
-            name = '$' + name[1:]
+        if name[0] != "$":
+            name = "$" + name[1:]
             value = scope[name]
         return name, value
 
@@ -155,8 +155,11 @@ class VariableScopes:
                 name, value = self._set_global_suite_or_test(scope, name, value)
             self._variables_set.set_test(name, value)
         else:
+            # Set test scope variable on suite level. Keep track on added and
+            # overridden variables to allow updating variables when test starts.
+            prev = self._suite.get(name)
             self.set_suite(name, value)
-            self._suite_locals[-1][name] = None
+            self._suite_locals[-1][name] = prev
 
     def set_keyword(self, name, value):
         self.current[name] = value
@@ -170,7 +173,7 @@ class VariableScopes:
 
 
 class GlobalVariables(Variables):
-    _import_by_path_ends = ('.py', '/', os.sep, '.yaml', '.yml', '.json')
+    _import_by_path_ends = (".py", "/", os.sep, ".yaml", ".yml", ".json")
 
     def __init__(self, settings):
         super().__init__()
@@ -181,46 +184,50 @@ class GlobalVariables(Variables):
         for name, args in settings.variable_files:
             try:
                 if name.lower().endswith(self._import_by_path_ends):
-                    name = find_file(name, file_type='Variable file')
+                    name = find_file(name, file_type="Variable file")
                 self.set_from_file(name, args)
-            except:
+            except Exception:
                 msg, details = get_error_details()
                 LOGGER.error(msg)
                 LOGGER.info(details)
         for varstr in settings.variables:
             try:
-                name, value = varstr.split(':', 1)
+                name, value = varstr.split(":", 1)
             except ValueError:
-                name, value = varstr, ''
-            self['${%s}' % name] = value
+                name, value = varstr, ""
+            self[f"${{{name}}}"] = value
 
     def _set_built_in_variables(self, settings):
-        for name, value in [('${TEMPDIR}', abspath(tempfile.gettempdir())),
-                            ('${EXECDIR}', abspath('.')),
-                            ('${OPTIONS}', DotDict({
-                                'include': Tags(settings.include),
-                                'exclude': Tags(settings.exclude),
-                                'skip': Tags(settings.skip),
-                                'skip_on_failure': Tags(settings.skip_on_failure),
-                                'console_width': settings.console_width
-                            })),
-                            ('${/}', os.sep),
-                            ('${:}', os.pathsep),
-                            ('${\\n}', os.linesep),
-                            ('${SPACE}', ' '),
-                            ('${True}', True),
-                            ('${False}', False),
-                            ('${None}', None),
-                            ('${null}', None),
-                            ('${OUTPUT_DIR}', str(settings.output_directory)),
-                            ('${OUTPUT_FILE}', str(settings.output or 'NONE')),
-                            ('${REPORT_FILE}', str(settings.report or 'NONE')),
-                            ('${LOG_FILE}', str(settings.log or 'NONE')),
-                            ('${DEBUG_FILE}', str(settings.debug_file or 'NONE')),
-                            ('${LOG_LEVEL}', settings.log_level),
-                            ('${PREV_TEST_NAME}', ''),
-                            ('${PREV_TEST_STATUS}', ''),
-                            ('${PREV_TEST_MESSAGE}', '')]:
+        options = DotDict(
+            rpa=settings.rpa,
+            include=Tags(settings.include),
+            exclude=Tags(settings.exclude),
+            skip=Tags(settings.skip),
+            skip_on_failure=Tags(settings.skip_on_failure),
+            console_width=settings.console_width,
+        )
+        for name, value in [
+            ("${TEMPDIR}", abspath(tempfile.gettempdir())),
+            ("${EXECDIR}", abspath(".")),
+            ("${OPTIONS}", options),
+            ("${/}", os.sep),
+            ("${:}", os.pathsep),
+            ("${\\n}", os.linesep),
+            ("${SPACE}", " "),
+            ("${True}", True),
+            ("${False}", False),
+            ("${None}", None),
+            ("${null}", None),
+            ("${OUTPUT_DIR}", str(settings.output_directory)),
+            ("${OUTPUT_FILE}", str(settings.output or "NONE")),
+            ("${REPORT_FILE}", str(settings.report or "NONE")),
+            ("${LOG_FILE}", str(settings.log or "NONE")),
+            ("${DEBUG_FILE}", str(settings.debug_file or "NONE")),
+            ("${LOG_LEVEL}", settings.log_level),
+            ("${PREV_TEST_NAME}", ""),
+            ("${PREV_TEST_STATUS}", ""),
+            ("${PREV_TEST_MESSAGE}", ""),
+        ]:
             self[name] = GlobalVariableValue(value)
 
 
@@ -233,7 +240,7 @@ class SetVariables:
 
     def start_suite(self):
         if not self._scopes:
-            self._suite = NormalizedDict(ignore='_')
+            self._suite = NormalizedDict(ignore="_")
         else:
             self._suite = self._scopes[-1].copy()
         self._scopes.append(self._suite)

@@ -3,7 +3,9 @@ Resource    atest_resource.robot
 
 *** Test Cases ***
 Annotations
-    Run Tests    --dryrun    keywords/type_conversion/annotations.robot
+    # Exclude test requiring Python 3.14 unconditionally to avoid a failure with
+    # older versions. It can be included once Python 3.14 is our minimum versoin.
+    Run Tests    --dryrun --exclude require-py3.14    keywords/type_conversion/annotations.robot
     Should be equal    ${SUITE.status}    PASS
 
 Keyword Decorator

@@ -833,24 +833,37 @@ to parse the variable syntax correctly. If there are matching braces like in
 Using variables with custom embedded argument regular expressions
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
-When embedded arguments are used with custom regular expressions, Robot
-Framework automatically enhances the specified regexps so that they
-match variables in addition to the text matching the pattern.
-For example, the following test case would pass
-using the keywords from the earlier example.
+When using embedded arguments with custom regular expressions, specifying
+values using variables works only if variables match the whole embedded
+argument, not if there is any additional content with the variable.
+For example, the first test below succeeds because the variable `${DATE}`
+is used on its own, but the last test fails because `${YEAR}-${MONTH}-${DAY}`
+is not a single variable.
 
 .. sourcecode:: robotframework
 
    *** Variables ***
-   ${DATE}    2011-06-27
+   ${DATE}           2011-06-27
+   ${YEAR}           2011
+   ${MONTH}          06
+   ${DAY}            27
 
    *** Test Cases ***
-   Example
+   Succeeds
        Deadline is ${DATE}
-       ${1} + ${2} = ${3}
 
-A limitation of using variables is that their actual values are not matched against
-custom regular expressions. As the result keywords may be called with
+   Succeeds without variables
+       Deadline is 2011-06-27
+
+   Fails
+       Deadline is ${YEAR}-${MONTH}-${DAY}
+
+   *** Keywords ***
+   Deadline is ${date:\d{4}-\d{2}-\d{2}}
+       Log    Deadline is ${date}
+
+Another limitation of using variables is that their actual values are not matched
+against custom regular expressions. As the result keywords may be called with
 values that their custom regexps would not allow. This behavior is deprecated
 starting from Robot Framework 6.0 and values will be validated in the future.
 For more information see issue `#4462`__.

@@ -22,19 +22,22 @@ from .loggerhelper import Message, write_to_console
 class StdoutLogSplitter:
     """Splits messages logged through stdout (or stderr) into Message objects"""
 
-    _split_from_levels = re.compile(r'^(?:\*'
-                                    r'(TRACE|DEBUG|INFO|CONSOLE|HTML|WARN|ERROR)'
-                                    r'(:\d+(?:\.\d+)?)?'  # Optional timestamp
-                                    r'\*)', re.MULTILINE)
+    _split_from_levels = re.compile(
+        r"^(?:\*"
+        r"(TRACE|DEBUG|INFO|CONSOLE|HTML|WARN|ERROR)"
+        r"(:\d+(?:\.\d+)?)?"  # Optional timestamp
+        r"\*)",
+        re.MULTILINE,
+    )
 
     def __init__(self, output):
         self._messages = list(self._get_messages(output.strip()))
 
     def _get_messages(self, output):
         for level, timestamp, msg in self._split_output(output):
-            if level == 'CONSOLE':
+            if level == "CONSOLE":
                 write_to_console(msg.lstrip())
-                level = 'INFO'
+                level = "INFO"
             if timestamp:
                 timestamp = datetime.fromtimestamp(float(timestamp[1:]) / 1000)
             yield Message(msg.strip(), level, timestamp=timestamp)
@@ -43,15 +46,15 @@ class StdoutLogSplitter:
         tokens = self._split_from_levels.split(output)
         tokens = self._add_initial_level_and_time_if_needed(tokens)
         for i in range(0, len(tokens), 3):
-            yield tokens[i:i+3]
+            yield tokens[i : i + 3]
 
     def _add_initial_level_and_time_if_needed(self, tokens):
         if self._output_started_with_level(tokens):
             return tokens[1:]
-        return ['INFO', None] + tokens
+        return ["INFO", None, *tokens]
 
     def _output_started_with_level(self, tokens):
-        return tokens[0] == ''
+        return tokens[0] == ""
 
     def __iter__(self):
         return iter(self._messages)

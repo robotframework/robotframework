@@ -17,7 +17,9 @@ Get Line Count
 
 Split To Lines
     ${tc} =    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc[0, 0]}    2 lines returned
+    Check Log Message    ${tc[0, 0]}    2 lines returned.
+    Check Log Message    ${tc[4, 0]}    1 line returned.
+    Check Log Message    ${tc[7, 0]}    0 lines returned.
 
 Split To Lines With Start Only
     Check Test Case    ${TESTNAME}
@@ -72,4 +74,3 @@ Strip String With Given Characters
 
 Strip String With Given Characters none
     Check Test Case    ${TESTNAME}
-

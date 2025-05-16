@@ -6,7 +6,7 @@ Resource          for.resource
 *** Test Cases ***
 Simple loop
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message          ${tc[0][0]}          Not yet in FOR
+    Check Log Message          ${tc[0, 0]}          Not yet in FOR
     Should be FOR loop         ${tc[1]}             2
     Should be FOR iteration    ${tc[1, 0]}          \${var}=one
     Check Log Message          ${tc[1, 0, 0, 0]}    var: one
@@ -188,13 +188,13 @@ Multiple loop variables
     ${loop} =    Set Variable     ${tc[0]}
     Should be FOR loop            ${loop}             4
     Should be FOR iteration       ${loop[0]}          \${x}=1    \${y}=a
-    Check Log Message             ${loop[0, 0][0]}    1a
+    Check Log Message             ${loop[0, 0, 0]}    1a
     Should be FOR iteration       ${loop[1]}          \${x}=2    \${y}=b
-    Check Log Message             ${loop[1, 0][0]}    2b
+    Check Log Message             ${loop[1, 0, 0]}    2b
     Should be FOR iteration       ${loop[2]}          \${x}=3    \${y}=c
-    Check Log Message             ${loop[2, 0][0]}    3c
+    Check Log Message             ${loop[2, 0, 0]}    3c
     Should be FOR iteration       ${loop[3]}          \${x}=4    \${y}=d
-    Check Log Message             ${loop[3, 0][0]}    4d
+    Check Log Message             ${loop[3, 0, 0]}    4d
     ${loop} =    Set Variable     ${tc[2]}
     Should be FOR loop            ${loop}       2
     Should be FOR iteration       ${loop[0]}    \${a}=1    \${b}=2    \${c}=3    \${d}=4    \${e}=5

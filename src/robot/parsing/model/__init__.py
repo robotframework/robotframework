@@ -13,9 +13,26 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from .blocks import (Block, CommentSection, Container, File, For, If, Group,
-                     ImplicitCommentSection, InvalidSection, Keyword,
-                     KeywordSection, NestedBlock, Section, SettingSection,
-                     TestCase, TestCaseSection, Try, VariableSection, While)
-from .statements import Config, End, Statement
-from .visitor import ModelTransformer, ModelVisitor
+from .blocks import (
+    Block as Block,
+    CommentSection as CommentSection,
+    Container as Container,
+    File as File,
+    For as For,
+    Group as Group,
+    If as If,
+    ImplicitCommentSection as ImplicitCommentSection,
+    InvalidSection as InvalidSection,
+    Keyword as Keyword,
+    KeywordSection as KeywordSection,
+    NestedBlock as NestedBlock,
+    Section as Section,
+    SettingSection as SettingSection,
+    TestCase as TestCase,
+    TestCaseSection as TestCaseSection,
+    Try as Try,
+    VariableSection as VariableSection,
+    While as While,
+)
+from .statements import Config as Config, End as End, Statement as Statement
+from .visitor import ModelTransformer as ModelTransformer, ModelVisitor as ModelVisitor

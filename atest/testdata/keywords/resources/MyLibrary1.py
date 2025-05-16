@@ -39,7 +39,7 @@ class MyLibrary1:
     def name_set_in_method_signature(self):
         print("My name was set using 'robot.api.deco.keyword' decorator!")
 
-    @keyword(name='Custom nön-ÄSCII name')
+    @keyword(name="Custom nön-ÄSCII name")
     def non_ascii_would_not_work_here(self):
         pass
 
@@ -51,7 +51,7 @@ class MyLibrary1:
     def no_custom_name_given_2(self):
         pass
 
-    @keyword(r'Add ${number:\d+} Copies Of ${product:\w+} To Cart')
+    @keyword(r"Add ${number:\d+} Copies Of ${product:\w+} To Cart")
     def add_copies_to_cart(self, num, thing):
         return num, thing
 
@@ -61,11 +61,11 @@ class MyLibrary1:
 
     @keyword("Function name can be whatever")
     def _(self):
-        print('Real name set by @keyword')
+        print("Real name set by @keyword")
 
     @keyword
     def __(self):
-        print('This name reduces to an empty string and is invalid')
+        print("This name reduces to an empty string and is invalid")
 
     @property
     def should_not_be_accessed(self):

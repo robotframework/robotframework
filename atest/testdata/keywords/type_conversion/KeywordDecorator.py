@@ -1,8 +1,8 @@
 from collections import abc
-from datetime import datetime, date, timedelta
+from datetime import date, datetime, timedelta
 from decimal import Decimal
-from enum import Flag, Enum, IntFlag, IntEnum
-from fractions import Fraction    # Needed by `eval()` in `_validate_type()`.
+from enum import Enum, Flag, IntEnum, IntFlag
+from fractions import Fraction  # noqa: F401
 from numbers import Integral, Real
 from os import PathLike
 from pathlib import Path, PurePath
@@ -13,8 +13,8 @@ from robot.api.deco import keyword
 
 class MyEnum(Enum):
     FOO = 1
-    bar = 'xxx'
-    foo = 'yyy'
+    bar = "xxx"
+    foo = "yyy"
     normalize_me = True
 
 
@@ -38,92 +38,92 @@ class Unknown:
     pass
 
 
-@keyword(types={'argument': int})
+@keyword(types={"argument": int})
 def integer(argument, expected=None):
     _validate_type(argument, expected)
 
 
-@keyword(types={'argument': Integral})
+@keyword(types={"argument": Integral})
 def integral(argument, expected=None):
     _validate_type(argument, expected)
 
 
-@keyword(types={'argument': float})
+@keyword(types={"argument": float})
 def float_(argument, expected=None):
     _validate_type(argument, expected)
 
 
-@keyword(types={'argument': Real})
+@keyword(types={"argument": Real})
 def real(argument, expected=None):
     _validate_type(argument, expected)
 
 
-@keyword(types={'argument': Decimal})
+@keyword(types={"argument": Decimal})
 def decimal(argument, expected=None):
     _validate_type(argument, expected)
 
 
-@keyword(types={'argument': bool})
+@keyword(types={"argument": bool})
 def boolean(argument, expected=None):
     _validate_type(argument, expected)
 
 
-@keyword(types={'argument': str})
+@keyword(types={"argument": str})
 def string(argument, expected=None):
     _validate_type(argument, expected)
 
 
-@keyword(types={'argument': bytes})
+@keyword(types={"argument": bytes})
 def bytes_(argument, expected=None):
     _validate_type(argument, expected)
 
 
-@keyword(types={'argument': bytearray})
+@keyword(types={"argument": bytearray})
 def bytearray_(argument, expected=None):
     _validate_type(argument, expected)
 
 
-@keyword(types={'argument': (bytes, bytearray)})
+@keyword(types={"argument": (bytes, bytearray)})
 def bytestring_replacement(argument, expected=None):
     _validate_type(argument, expected)
 
 
-@keyword(types={'argument': datetime})
+@keyword(types={"argument": datetime})
 def datetime_(argument, expected=None):
     _validate_type(argument, expected)
 
 
-@keyword(types={'argument': date})
+@keyword(types={"argument": date})
 def date_(argument, expected=None):
     _validate_type(argument, expected)
 
 
-@keyword(types={'argument': timedelta})
+@keyword(types={"argument": timedelta})
 def timedelta_(argument, expected=None):
     _validate_type(argument, expected)
 
 
-@keyword(types={'argument': Path})
+@keyword(types={"argument": Path})
 def path(argument, expected=None):
     _validate_type(argument, expected)
 
 
-@keyword(types={'argument': PurePath})
+@keyword(types={"argument": PurePath})
 def pure_path(argument, expected=None):
     _validate_type(argument, expected)
 
 
-@keyword(types={'argument': PathLike})
+@keyword(types={"argument": PathLike})
 def path_like(argument, expected=None):
     _validate_type(argument, expected)
 
 
-@keyword(types={'argument': MyEnum})
+@keyword(types={"argument": MyEnum})
 def enum(argument, expected=None):
     _validate_type(argument, expected)
 
 
-@keyword(types={'argument': MyFlag})
+@keyword(types={"argument": MyFlag})
 def flag(argument, expected=None):
     _validate_type(argument, expected)
 
@@ -138,108 +138,108 @@ def int_flag(argument, expected=None):
     _validate_type(argument, expected)
 
 
-@keyword(types={'argument': type(None)})
+@keyword(types={"argument": type(None)})
 def nonetype(argument, expected=None):
     _validate_type(argument, expected)
 
 
-@keyword(types={'argument': None})
+@keyword(types={"argument": None})
 def none(argument, expected=None):
     _validate_type(argument, expected)
 
 
-@keyword(types={'argument': list})
+@keyword(types={"argument": list})
 def list_(argument, expected=None):
     _validate_type(argument, expected)
 
 
-@keyword(types={'argument': abc.Sequence})
+@keyword(types={"argument": abc.Sequence})
 def sequence(argument, expected=None):
     _validate_type(argument, expected)
 
 
-@keyword(types={'argument': abc.MutableSequence})
+@keyword(types={"argument": abc.MutableSequence})
 def mutable_sequence(argument, expected=None):
     _validate_type(argument, expected)
 
 
-@keyword(types={'argument': tuple})
+@keyword(types={"argument": tuple})
 def tuple_(argument, expected=None):
     _validate_type(argument, expected)
 
 
-@keyword(types={'argument': dict})
+@keyword(types={"argument": dict})
 def dictionary(argument, expected=None):
     _validate_type(argument, expected)
 
 
-@keyword(types={'argument': abc.Mapping})
+@keyword(types={"argument": abc.Mapping})
 def mapping(argument, expected=None):
     _validate_type(argument, expected)
 
 
-@keyword(types={'argument': abc.MutableMapping})
+@keyword(types={"argument": abc.MutableMapping})
 def mutable_mapping(argument, expected=None):
     _validate_type(argument, expected)
 
 
-@keyword(types={'argument': set})
+@keyword(types={"argument": set})
 def set_(argument, expected=None):
     _validate_type(argument, expected)
 
 
-@keyword(types={'argument': abc.Set})
+@keyword(types={"argument": abc.Set})
 def set_abc(argument, expected=None):
     _validate_type(argument, expected)
 
 
-@keyword(types={'argument': abc.MutableSet})
+@keyword(types={"argument": abc.MutableSet})
 def mutable_set(argument, expected=None):
     _validate_type(argument, expected)
 
 
-@keyword(types={'argument': frozenset})
+@keyword(types={"argument": frozenset})
 def frozenset_(argument, expected=None):
     _validate_type(argument, expected)
 
 
-@keyword(types={'argument': Unknown})
+@keyword(types={"argument": Unknown})
 def unknown(argument, expected=None):
     _validate_type(argument, expected)
 
 
-@keyword(types={'argument': 'this is just a random string'})
+@keyword(types={"argument": "this is just a random string"})
 def non_type(argument, expected=None):
     _validate_type(argument, expected)
 
 
-@keyword(types={'argument': int})
+@keyword(types={"argument": int})
 def varargs(*argument, **expected):
-    expected = expected.pop('expected', None)
+    expected = expected.pop("expected", None)
     _validate_type(argument, expected)
 
 
-@keyword(types={'argument': int})
+@keyword(types={"argument": int})
 def kwargs(expected=None, **argument):
     _validate_type(argument, expected)
 
 
-@keyword(types={'argument': float})
+@keyword(types={"argument": float})
 def kwonly(*, argument, expected=None):
     _validate_type(argument, expected)
 
 
-@keyword(types='invalid')
+@keyword(types="invalid")
 def invalid_type_spec():
-    raise RuntimeError('Should not be executed')
+    raise RuntimeError("Should not be executed")
 
 
-@keyword(types={'no_match': int, 'xxx': 42})
+@keyword(types={"no_match": int, "xxx": 42})
 def non_matching_name(argument):
-    raise RuntimeError('Should not be executed')
+    raise RuntimeError("Should not be executed")
 
 
-@keyword(types={'argument': int, 'return': float})
+@keyword(types={"argument": int, "return": float})
 def return_type(argument, expected=None):
     _validate_type(argument, expected)
 
@@ -259,12 +259,12 @@ def type_and_default_3(argument=0, expected=None):
     _validate_type(argument, expected)
 
 
-@keyword(types={'argument': Union[int, None, float]})
+@keyword(types={"argument": Union[int, None, float]})
 def multiple_types_using_union(argument, expected=None):
     _validate_type(argument, expected)
 
 
-@keyword(types={'argument': (int, None, float)})
+@keyword(types={"argument": (int, None, float)})
 def multiple_types_using_tuple(argument, expected=None):
     _validate_type(argument, expected)
 
@@ -272,7 +272,7 @@ def multiple_types_using_tuple(argument, expected=None):
 def _validate_type(argument, expected):
     if isinstance(expected, str):
         expected = eval(expected)
-    if argument != expected or type(argument) != type(expected):
-        raise AssertionError('%r (%s) != %r (%s)'
-                             % (argument, type(argument).__name__,
-                                expected, type(expected).__name__))
+    if argument != expected or type(argument) is not type(expected):
+        atype = type(argument).__name__
+        etype = type(expected).__name__
+        raise AssertionError(f"{argument!r} ({atype}) != {expected!r} ({etype})")

@@ -3,25 +3,27 @@ from collections.abc import Mapping
 
 
 def get_variables(type):
-    return {'dict': get_dict,
-            'mydict': MyDict,
-            'Mapping': get_MyMapping,
-            'UserDict': get_UserDict,
-            'MyUserDict': MyUserDict}[type]()
+    return {
+        "dict": get_dict,
+        "mydict": MyDict,
+        "Mapping": get_MyMapping,
+        "UserDict": get_UserDict,
+        "MyUserDict": MyUserDict,
+    }[type]()
 
 
 def get_dict():
-    return {'from dict': 'This From Dict', 'from dict2': 2}
+    return {"from dict": "This From Dict", "from dict2": 2}
 
 
 class MyDict(dict):
 
     def __init__(self):
-        super().__init__(from_my_dict='This From My Dict', from_my_dict2=2)
+        super().__init__(from_my_dict="This From My Dict", from_my_dict2=2)
 
 
 def get_MyMapping():
-    data = {'from Mapping': 'This From Mapping', 'from Mapping2': 2}
+    data = {"from Mapping": "This From Mapping", "from Mapping2": 2}
 
     class MyMapping(Mapping):
 
@@ -41,11 +43,12 @@ def get_MyMapping():
 
 
 def get_UserDict():
-    return UserDict({'from UserDict': 'This From UserDict', 'from UserDict2': 2})
+    return UserDict({"from UserDict": "This From UserDict", "from UserDict2": 2})
 
 
 class MyUserDict(UserDict):
 
     def __init__(self):
-        super().__init__({'from MyUserDict': 'This From MyUserDict',
-                          'from MyUserDict2': 2})
+        super().__init__(
+            {"from MyUserDict": "This From MyUserDict", "from MyUserDict2": 2}
+        )

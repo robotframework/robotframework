@@ -1,2 +1,2 @@
 def conflict():
-    raise AssertionError('Should not be executed')
+    raise AssertionError("Should not be executed")

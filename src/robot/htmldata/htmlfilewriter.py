@@ -26,11 +26,11 @@ from .template import HtmlTemplate
 
 class HtmlFileWriter:
 
-    def __init__(self, output: TextIOBase, model_writer: 'ModelWriter'):
+    def __init__(self, output: TextIOBase, model_writer: "ModelWriter"):
         self.output = output
         self.model_writer = model_writer
 
-    def write(self, template: 'Path|str'):
+    def write(self, template: "Path|str"):
         if not isinstance(template, Path):
             template = Path(template)
         writers = self._get_writers(template.parent)
@@ -42,11 +42,13 @@ class HtmlFileWriter:
 
     def _get_writers(self, base_dir: Path):
         writer = HtmlWriter(self.output)
-        return (self.model_writer,
-                JsFileWriter(writer, base_dir),
-                CssFileWriter(writer, base_dir),
-                GeneratorWriter(writer),
-                LineWriter(self.output))
+        return (
+            self.model_writer,
+            JsFileWriter(writer, base_dir),
+            CssFileWriter(writer, base_dir),
+            GeneratorWriter(writer),
+            LineWriter(self.output),
+        )
 
 
 class Writer(ABC):
@@ -61,7 +63,7 @@ class Writer(ABC):
 
 
 class ModelWriter(Writer, ABC):
-    handles_line = '<!-- JS MODEL -->'
+    handles_line = "<!-- JS MODEL -->"
 
     def handles(self, line: str):
         return line.strip().startswith(self.handles_line)
@@ -76,7 +78,7 @@ class LineWriter(Writer):
         return True
 
     def write(self, line: str):
-        self.output.write(line + '\n')
+        self.output.write(line + "\n")
 
 
 class GeneratorWriter(Writer):
@@ -86,8 +88,8 @@ class GeneratorWriter(Writer):
         self.writer = writer
 
     def write(self, line: str):
-        version = get_full_version('Robot Framework')
-        self.writer.start('meta', {'name': 'Generator', 'content': version})
+        version = get_full_version("Robot Framework")
+        self.writer.start("meta", {"name": "Generator", "content": version})
 
 
 class InliningWriter(Writer, ABC):
@@ -96,7 +98,7 @@ class InliningWriter(Writer, ABC):
         self.writer = writer
         self.base_dir = base_dir
 
-    def inline_file(self, path: 'Path|str', tag: str, attrs: dict):
+    def inline_file(self, path: "Path|str", tag: str, attrs: dict):
         self.writer.start(tag, attrs)
         for line in HtmlTemplate(self.base_dir / path):
             self.writer.content(line, escape=False, newline=True)
@@ -108,7 +110,7 @@ class JsFileWriter(InliningWriter):
 
     def write(self, line: str):
         src = re.search('src="([^"]+)"', line).group(1)
-        self.inline_file(src, 'script', {'type': 'text/javascript'})
+        self.inline_file(src, "script", {"type": "text/javascript"})
 
 
 class CssFileWriter(InliningWriter):
@@ -116,4 +118,4 @@ class CssFileWriter(InliningWriter):
 
     def write(self, line: str):
         href, media = re.search('href="([^"]+)" media="([^"]+)"', line).groups()
-        self.inline_file(href, 'style', {'media': media})
+        self.inline_file(href, "style", {"media": media})

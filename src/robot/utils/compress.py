@@ -18,5 +18,5 @@ import zlib
 
 
 def compress_text(text):
-    compressed = zlib.compress(text.encode('UTF-8'), 9)
-    return base64.b64encode(compressed).decode('ASCII')
+    compressed = zlib.compress(text.encode("UTF-8"), 9)
+    return base64.b64encode(compressed).decode("ASCII")

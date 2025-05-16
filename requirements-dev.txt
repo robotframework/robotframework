@@ -2,10 +2,14 @@
 # See BUILD.rst for details about the latter
 invoke >= 0.20
 rellu >= 0.7
-twine >= 1.12
+setuptools > 75
+twine > 6
 wheel
 docutils
 pygments >= 2.8
 sphinx
 pydantic < 2
 telnetlib-313-and-up; python_version >= "3.13"
+black >= 24
+ruff
+isort
