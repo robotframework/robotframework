@@ -146,6 +146,7 @@ class TypeConverter:
             return False
 
     def validate(self):
+        """Validate converter. Raise ``TypeError`` for unrecognized types."""
         if self.nested:
             self._validate(self.nested)
 

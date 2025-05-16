@@ -300,11 +300,20 @@ class TypeInfo(metaclass=SetterAwareType):
         cls,
         variable: "str|VariableMatch",
         handle_list_and_dict: bool = True,
-    ) -> "TypeInfo|None":
+    ) -> "TypeInfo":
         """Construct a ``TypeInfo`` based on a variable.
 
-        Type can be specified using syntax like `${x: int}`. Supports both
-        strings and already parsed `VariableMatch` objects.
+        Type can be specified using syntax like ``${x: int}``.
+
+        :param variable: Variable as a string or as an already parsed
+            ``VariableMatch`` object.
+        :param handle_list_and_dict: When ``True``, types in list and dictionary
+            variables get ``list[]`` and ``dict[]`` decoration implicitly.
+            For example, ``@{x: int}``, ``&{x: int}`` and ``&{x: str=int}``
+            yield types ``list[int]``, ``dict[Any, int]`` and ``dict[str, int]``,
+            respectively.
+        :raises: ``DataError`` if variable has an unrecognized type. Variable
+            not having a type is not an error.
 
         New in Robot Framework 7.3.
         """
@@ -342,7 +351,7 @@ class TypeInfo(metaclass=SetterAwareType):
         languages: "LanguagesLike" = None,
         kind: str = "Argument",
         allow_unknown: bool = False,
-    ):
+    ) -> object:
         """Convert ``value`` based on type information this ``TypeInfo`` contains.
 
         :param value: Value to convert.
@@ -356,8 +365,8 @@ class TypeInfo(metaclass=SetterAwareType):
         :param allow_unknown: If ``False``, a ``TypeError`` is raised if there
             is no converter for this type or to its nested types. If ``True``,
             conversion returns the original value instead.
-        :raises: ``ValueError`` is conversion fails and ``TypeError`` if there
-            is no converter and unknown converters are not accepted.
+        :raises: ``ValueError`` if conversion fails and ``TypeError`` if there is
+            no converter for this type and unknown converters are not accepted.
         :return: Converted value.
         """
         converter = self.get_converter(custom_converters, languages, allow_unknown)

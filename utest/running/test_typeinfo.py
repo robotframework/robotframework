@@ -118,7 +118,13 @@ class TestTypeInfo(unittest.TestCase):
             info = TypeInfo.from_type_hint(typ)
             assert_equal(len(info.nested), 1)
             assert_equal(info.nested[0].type, int)
-        for typ in Dict[int, str], Mapping[int, str], "dict[int, str]", "MAP[INT,STR]":
+
+        for typ in (
+            Dict[int, str],
+            Mapping[int, str],
+            "dict[int, str]",
+            "MAP[INTEGER, STRING]",
+        ):
             info = TypeInfo.from_type_hint(typ)
             assert_equal(len(info.nested), 2)
             assert_equal(info.nested[0].type, int)
@@ -287,6 +293,7 @@ class TestTypeInfo(unittest.TestCase):
             (TypeInfo(nested=[TypeInfo("int"), TypeInfo("str")]), "[int, str]"),
         ]:
             assert_equal(str(info), expected)
+
         for hint in [
             "int",
             "x",
@@ -305,8 +312,7 @@ class TestTypeInfo(unittest.TestCase):
         assert_equal(TypeInfo.from_type_hint(int).convert("42"), 42)
         assert_equal(TypeInfo.from_type_hint("list[int]").convert("[4, 2]"), [4, 2])
         assert_equal(
-            TypeInfo.from_type_hint('Literal["Dog", "Cat"]').convert("dog"),
-            "Dog",
+            TypeInfo.from_type_hint('Literal["Dog", "Cat"]').convert("dog"), "Dog"
         )
 
     def test_no_conversion_needed_with_literal(self):
