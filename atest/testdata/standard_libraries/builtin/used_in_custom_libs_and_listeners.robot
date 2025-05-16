@@ -39,6 +39,7 @@ Recursive 'Run Keyword' usage
 Recursive 'Run Keyword' usage with timeout
     [Documentation]    FAIL    Test timeout 10 milliseconds exceeded.
     [Timeout]    0.01 s
+    [Setup]    NONE
     Recursive Run Keyword    1000
 
 Timeout when running keyword that logs huge message
