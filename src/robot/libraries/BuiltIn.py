@@ -4382,7 +4382,10 @@ def register_run_keyword(library, keyword, args_to_process=0, deprecation_warnin
     - Their arguments are not resolved normally (use ``args_to_process``
       to control that). This basically means not replacing variables or
       handling escapes.
-    - They are not stopped by timeouts.
+    - They are not stopped by timeouts. Prior to Robot Framework 7.3, timeouts
+      occurring when these keywords were executing other keywords could corrupt
+      output files. That bug has been fixed, so this use case why to register
+      keywords as run keyword variants is not relevant anymore.
     - If there are conflicts with keyword names, these keywords have
       *lower* precedence than other keywords.
 
