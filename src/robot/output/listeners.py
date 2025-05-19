@@ -174,15 +174,34 @@ class ListenerV3Facade(ListenerFacade):
         # Fallbacks for body items
         start_body_item = get("start_body_item")
         end_body_item = get("end_body_item")
+        # Fallbacks for keywords
+        start_keyword = get("start_keyword", start_body_item)
+        end_keyword = get("end_keyword", end_body_item)
         # Keywords
-        self.start_keyword = get("start_keyword", start_body_item)
-        self.end_keyword = get("end_keyword", end_body_item)
-        self._start_user_keyword = get("start_user_keyword")
-        self._end_user_keyword = get("end_user_keyword")
-        self._start_library_keyword = get("start_library_keyword")
-        self._end_library_keyword = get("end_library_keyword")
-        self._start_invalid_keyword = get("start_invalid_keyword")
-        self._end_invalid_keyword = get("end_invalid_keyword")
+        self.start_user_keyword = get(
+            "start_user_keyword",
+            lambda data, implementation, result: start_keyword(data, result),
+        )
+        self.end_user_keyword = get(
+            "end_user_keyword",
+            lambda data, implementation, result: end_keyword(data, result),
+        )
+        self.start_library_keyword = get(
+            "start_library_keyword",
+            lambda data, implementation, result: start_keyword(data, result),
+        )
+        self.end_library_keyword = get(
+            "end_library_keyword",
+            lambda data, implementation, result: end_keyword(data, result),
+        )
+        self.start_invalid_keyword = get(
+            "start_invalid_keyword",
+            lambda data, implementation, result: start_keyword(data, result),
+        )
+        self.end_invalid_keyword = get(
+            "end_invalid_keyword",
+            lambda data, implementation, result: end_keyword(data, result),
+        )
         # IF
         self.start_if = get("start_if", start_body_item)
         self.end_if = get("end_if", end_body_item)
@@ -236,42 +255,6 @@ class ListenerV3Facade(ListenerFacade):
         self.debug_file = get("debug_file")
         # Close
         self.close = get("close")
-
-    def start_user_keyword(self, data, implementation, result):
-        if self._start_user_keyword:
-            self._start_user_keyword(data, implementation, result)
-        else:
-            self.start_keyword(data, result)
-
-    def end_user_keyword(self, data, implementation, result):
-        if self._end_user_keyword:
-            self._end_user_keyword(data, implementation, result)
-        else:
-            self.end_keyword(data, result)
-
-    def start_library_keyword(self, data, implementation, result):
-        if self._start_library_keyword:
-            self._start_library_keyword(data, implementation, result)
-        else:
-            self.start_keyword(data, result)
-
-    def end_library_keyword(self, data, implementation, result):
-        if self._end_library_keyword:
-            self._end_library_keyword(data, implementation, result)
-        else:
-            self.end_keyword(data, result)
-
-    def start_invalid_keyword(self, data, implementation, result):
-        if self._start_invalid_keyword:
-            self._start_invalid_keyword(data, implementation, result)
-        else:
-            self.start_keyword(data, result)
-
-    def end_invalid_keyword(self, data, implementation, result):
-        if self._end_invalid_keyword:
-            self._end_invalid_keyword(data, implementation, result)
-        else:
-            self.end_keyword(data, result)
 
     def log_message(self, message):
         if self._is_logged(message):
