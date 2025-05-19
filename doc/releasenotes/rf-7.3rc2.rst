@@ -1,19 +1,20 @@
 =======================================
-Robot Framework 7.3 release candidate 1
+Robot Framework 7.3 release candidate 2
 =======================================
 
 .. default-role:: code
 
 `Robot Framework`_ 7.3 is a feature release with variable type conversion,
-enhancements and fixes related to timeouts, and various other exciting new
-features and high priority bug fixes. This release candidate contains all
-planned code changes.
+enhancements and fixes related to timeouts, official Python 3.14 compatibility
+and various other exciting new features and high priority bug fixes. This
+release candidate contains all planned code changes.
 
 Questions and comments related to the release can be sent to the `#devel`
 channel on `Robot Framework Slack`_ and possible bugs submitted to
 the `issue tracker`_.
 
 If you have pip_ installed, just run
+
 
 ::
 
@@ -23,15 +24,16 @@ to install the latest available release or use
 
 ::
 
-   pip install robotframework==7.3rc1
+   pip install robotframework==7.3rc2
 
 to install exactly this version. Alternatively you can download the package
 from PyPI_ and install it manually. For more details and other installation
 approaches, see the `installation instructions`_.
 
-Robot Framework 7.3 rc 1 was released on Thursday May 8, 2025.
-It was followed by the `second release candidate <rf-7.3rc2.rst>`_
-on Monday May 19, 2025.
+Robot Framework 7.3 rc 2 was released on Monday May 19, 2025. Compared to the
+`first release candidate <rf-7.3rc1.rst>`_, it mainly contains some more
+enhancements related to variable type conversion and further fixes related to
+timeouts. The final release is targeted for Thursday May 22, 2025.
 
 .. _Robot Framework: http://robotframework.org
 .. _Robot Framework Foundation: http://robotframework.org/foundation
@@ -63,8 +65,8 @@ means that the value of the variable `${number}` is converted to an integer.
 __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#supported-conversions
 
 Variable types work in the Variables section, with the `VAR` syntax, when creating
-variables based on keyword return values and, very importantly, with user keyword
-arguments. All these usages are demonstrated by the following examples:
+variables based on keyword return values, with FOR loops and, very importantly, with
+user keyword arguments. All these usages are demonstrated by the following examples:
 
 .. sourcecode:: robotframework
 
@@ -104,6 +106,11 @@ arguments. All these usages are demonstrated by the following examples:
        Should Be Equal    ${match}      RF 7.3
        Should Be Equal    ${version}    ${7.3}
 
+   FOR loop
+       FOR    ${fib: int}    IN    0    1    1    2    3    5    8    13
+           Log    ${fib}
+       END
+
    Keyword arguments
        # Argument conversion with user keywords is very convenient!
        Move    10    down    slow=no
@@ -136,18 +143,18 @@ Avoid output file corruption
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Library keywords can use `BuiltIn.run_keyword` as an API to execute other keywords.
-If Robot Framework timeouts occur when that is done, the timeout can interrupt
-Robot Framework's own code that is preparing the new keyword to be executed.
-That situation is otherwise handled fine, but if the timeout occurs when Robot
-Framework is writing information to the output file, the output file can be
-corrupted and it is not possible to generate log and report after the execution.
+If Robot Framework timeouts occurred when that was done, the timeout could interrupt
+Robot Framework's own code that was preparing the new keyword to be executed.
+That situation was otherwise handled fine, but if the timeout occurred when Robot
+Framework was writing information to the output file, the output file could be
+corrupted and it was not possible to generate log and report after the execution.
 This severe problem has now been fixed by automatically pausing timeouts when
 `BuiltIn.run_keyword` is used (`#5417`_).
 
-Normally the odds that a timeout occurs after the parent keyword has called
-`BuiltIn.run_keyword` but before the child keyword has actually started running
-are pretty small, but if there are lof of such calls and also if child keywords
-write a lot of log messages, the odds grow bigger. It is very likely that some
+Normally the odds that a timeout occurred after the parent keyword had called
+`BuiltIn.run_keyword`, but before the child keyword had actually started running,
+were pretty small, but if there were lof of such calls and also if child keywords
+logged lot of messages, the odds grew bigger. It is very likely that some
 of the mysterious problems with output files being corrupted that have been
 reported to our issue tracker have been caused by this issue. Hopefully we get
 less such reports in the future!
@@ -192,8 +199,8 @@ The Dialogs library is widely used in cases where something cannot be fully
 automated or execution needs to be paused for some reason. It got two major
 enhancements in this release.
 
-Support timeouts and closing with Ctrl-C
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Support timeouts and close dialogs with Ctrl-C
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Robot Framework's timeouts are now finally able to kill opened dialogs (`#5386`_).
 Earlier execution hang indefinitely if dialogs were open even if a timeout occurred,
@@ -225,9 +232,9 @@ Avoid deadlock if process produces lot of output
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 It has been possible to avoid the deadlock by redirecting `stdout` and `stderr`
-to files, but that is not necessary anymore (`#4173`_). Redirecting outputs to
-files is often a good idea anyway, and should be done at least if a process
-produces a huge amount of output.
+to files, but that is normally not necessary anymore (`#4173`_). Redirecting
+outputs to files is often a good idea anyway, and should be done at least if
+a process produces a huge amount of output.
 
 Better support for Robot Framework's timeouts
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -235,12 +242,21 @@ Better support for Robot Framework's timeouts
 The Process library has its own timeout mechanism, but it now works better also
 with Robot Framework's test and keyword timeouts:
 
-- Robot Framework's timeouts were not able to interrupt `Run Process` and
-  `Wait For Process` at all on Windows earlier (`#5345`_). In the worst case
-  the execution could hang.
+- Robot Framework's timeouts were earlier not able to interrupt `Run Process` and
+  `Wait For Process` at all on Windows (`#5345`_). In the worst case the execution
+  could hang.
 - Nowadays the process that is waited for is killed if Robot Framework timeout
   occurs (`#5376`_). This is better than leaving the process running on
   the background.
+
+Python 3.14 compatibility
+-------------------------
+
+Robot Framework 7.3 is officially compatible with the forthcoming `Python 3.14`__
+release (`#5352`_). No code changes were needed so also older Robot Framework
+versions ought to work fine.
+
+__ https://docs.python.org/3.14/whatsnew/3.14.html
 
 Automatic code formatting
 -------------------------
@@ -351,7 +367,6 @@ development.
 Full list of fixes and enhancements
 ===================================
 
-
 .. list-table::
     :header-rows: 1
 
@@ -375,6 +390,11 @@ Full list of fixes and enhancements
       - critical
       - Variable type conversion
       - rc 1
+    * - `#5352`_
+      - enhancement
+      - critical
+      - Python 3.14 compatibility
+      - rc 2
     * - `#4173`_
       - bug
       - high
@@ -460,6 +480,11 @@ Full list of fixes and enhancements
       - medium
       - Log messages are in wrong order if library keyword uses `BuiltIn.run_keyword` and timeouts are used
       - rc 1
+    * - `#5433`_
+      - bug
+      - medium
+      - Confusing error messages when adding incompatible objects to `TestSuite` structure
+      - rc 2
     * - `#5150`_
       - enhancement
       - medium
@@ -525,6 +550,11 @@ Full list of fixes and enhancements
       - low
       - DateTime: Getting timestamp as epoch seconds fails close to the epoch on Windows
       - rc 1
+    * - `#5432`_
+      - bug
+      - low
+      - Small bugs in `robot.utils.Importer`
+      - rc 2
     * - `#5332`_
       - enhancement
       - low
@@ -551,11 +581,12 @@ Full list of fixes and enhancements
       - Document ERROR level and that logging with it stops execution if `--exit-on-error` is enabled
       - rc 1
 
-Altogether 38 issues. View on the `issue tracker <https://github.com/robotframework/robotframework/issues?q=milestone%3Av7.3>`__.
+Altogether 41 issues. View on the `issue tracker <https://github.com/robotframework/robotframework/issues?q=milestone%3Av7.3>`__.
 
 .. _#5368: https://github.com/robotframework/robotframework/issues/5368
 .. _#5417: https://github.com/robotframework/robotframework/issues/5417
 .. _#3278: https://github.com/robotframework/robotframework/issues/3278
+.. _#5352: https://github.com/robotframework/robotframework/issues/5352
 .. _#4173: https://github.com/robotframework/robotframework/issues/4173
 .. _#5386: https://github.com/robotframework/robotframework/issues/5386
 .. _#5334: https://github.com/robotframework/robotframework/issues/5334
@@ -573,6 +604,7 @@ Altogether 38 issues. View on the `issue tracker <https://github.com/robotframew
 .. _#5405: https://github.com/robotframework/robotframework/issues/5405
 .. _#5422: https://github.com/robotframework/robotframework/issues/5422
 .. _#5423: https://github.com/robotframework/robotframework/issues/5423
+.. _#5433: https://github.com/robotframework/robotframework/issues/5433
 .. _#5150: https://github.com/robotframework/robotframework/issues/5150
 .. _#5351: https://github.com/robotframework/robotframework/issues/5351
 .. _#5357: https://github.com/robotframework/robotframework/issues/5357
@@ -586,6 +618,7 @@ Altogether 38 issues. View on the `issue tracker <https://github.com/robotframew
 .. _#5403: https://github.com/robotframework/robotframework/issues/5403
 .. _#5404: https://github.com/robotframework/robotframework/issues/5404
 .. _#5418: https://github.com/robotframework/robotframework/issues/5418
+.. _#5432: https://github.com/robotframework/robotframework/issues/5432
 .. _#5332: https://github.com/robotframework/robotframework/issues/5332
 .. _#5396: https://github.com/robotframework/robotframework/issues/5396
 .. _#5397: https://github.com/robotframework/robotframework/issues/5397
