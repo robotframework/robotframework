@@ -77,7 +77,7 @@ class OutputFile(LoggerApi):
             self._delayed_messages = []
 
     def _release_delayed_messages(self):
-        for msg in self._delayed_messages:
+        for msg in self._delayed_messages or ():
             self.log_message(msg, no_delay=True)
 
     def start_suite(self, data, result):
