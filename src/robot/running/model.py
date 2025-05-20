@@ -45,6 +45,7 @@ from robot.errors import (
 )
 from robot.model import BodyItem, DataDict, TestSuites
 from robot.output import LOGGER, Output, pyloggingconf
+from robot.result import Result
 from robot.utils import format_assign_message, setter
 from robot.variables import VariableResolver
 
@@ -837,7 +838,7 @@ class TestSuite(model.TestSuite[Keyword, TestCase]):
     def suites(self, suites: "Sequence[TestSuite|DataDict]") -> TestSuites["TestSuite"]:
         return TestSuites["TestSuite"](self.__class__, self, suites)
 
-    def run(self, settings=None, **options):
+    def run(self, settings=None, **options) -> Result:
         """Executes the suite based on the given ``settings`` or ``options``.
 
         :param settings: :class:`~robot.conf.settings.RobotSettings` object

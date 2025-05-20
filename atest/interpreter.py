@@ -4,8 +4,6 @@ import subprocess
 import sys
 from pathlib import Path
 
-ROBOT_DIR = Path(__file__).parent.parent / "src/robot"
-
 
 def get_variables(path, name=None, version=None):
     return {"INTERPRETER": Interpreter(path, name, version)}
@@ -21,6 +19,7 @@ class Interpreter:
         self.name = name
         self.version = version
         self.version_info = tuple(int(item) for item in version.split("."))
+        self.src_dir = Path(__file__).parent.parent / "src"
 
     def _get_interpreter(self, path):
         path = path.replace("/", os.sep)
@@ -94,19 +93,19 @@ class Interpreter:
 
     @property
     def runner(self):
-        return self.interpreter + [str(ROBOT_DIR / "run.py")]
+        return self.interpreter + [str(self.src_dir / "robot/run.py")]
 
     @property
     def rebot(self):
-        return self.interpreter + [str(ROBOT_DIR / "rebot.py")]
+        return self.interpreter + [str(self.src_dir / "robot/rebot.py")]
 
     @property
     def libdoc(self):
-        return self.interpreter + [str(ROBOT_DIR / "libdoc.py")]
+        return self.interpreter + [str(self.src_dir / "robot/libdoc.py")]
 
     @property
     def testdoc(self):
-        return self.interpreter + [str(ROBOT_DIR / "testdoc.py")]
+        return self.interpreter + [str(self.src_dir / "robot/testdoc.py")]
 
     @property
     def underline(self):

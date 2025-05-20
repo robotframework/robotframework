@@ -95,6 +95,17 @@ Two SIGTERM Signals Should Stop Async Test Execution Forcefully
     Start And Send Signal    async_stop.robot    Two SIGTERMs    5
     Check Tests Have Been Forced To Shutdown
 
+Signal handler is reset after execution
+    [Tags]    no-windows
+    ${result} =    Run Process
+    ...    @{INTERPRETER.interpreter}
+    ...    ${DATADIR}/running/stopping_with_signal/test_signalhandler_is_reset.py
+    ...    stderr=STDOUT
+    ...    env:PYTHONPATH=${INTERPRETER.src_dir}
+    Log     ${result.stdout}
+    Should Contain X Times    ${result.stdout}    Execution terminated by signal    count=1
+    Should Be Equal    ${result.rc}    ${0}
+
 *** Keywords ***
 Start And Send Signal
     [Arguments]    ${datasource}    ${signals}    ${sleep}=0s    @{extra options}

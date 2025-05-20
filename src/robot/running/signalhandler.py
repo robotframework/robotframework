@@ -55,6 +55,7 @@ class _StopSignalMonitor:
         return self
 
     def __exit__(self, *exc_info):
+        self._signal_count = 0
         if self._can_register_signal:
             signal.signal(signal.SIGINT, self._orig_sigint or signal.SIG_DFL)
             signal.signal(signal.SIGTERM, self._orig_sigterm or signal.SIG_DFL)
