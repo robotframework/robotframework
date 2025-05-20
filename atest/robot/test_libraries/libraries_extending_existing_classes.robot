@@ -16,4 +16,4 @@ Keyword In Python Class Using Method From Parent Class
     Check Test Case  Keyword In Python Class Using Method From Parent Class
 
 Message Of Importing Library Should Be In Syslog
-    Syslog Should Contain  Imported library 'ExtendPythonLib' with arguments [ ] (version <unknown>, class type, TEST scope, 33 keywords)
+    Syslog Should Contain  Imported library 'ExtendPythonLib' with arguments [ ] (version <unknown>, class type, TEST scope, 34 keywords)

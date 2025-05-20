@@ -68,18 +68,27 @@ class ConverterInfo:
     @classmethod
     def for_converter(cls, type_, converter, library):
         if not isinstance(type_, type):
-            raise TypeError(f'Custom converters must be specified using types, '
-                            f'got {type_name(type_)} {type_!r}.')
+            raise TypeError(
+                f"Custom converters must be specified using types, "
+                f"got {type_name(type_)} {type_!r}."
+            )
         if converter is None:
+
             def converter(arg):
-                raise TypeError(f'Only {type_.__name__} instances are accepted, '
-                                f'got {type_name(arg)}.')
+                raise TypeError(
+                    f"Only {type_.__name__} instances are accepted, "
+                    f"got {type_name(arg)}."
+                )
+
         if not callable(converter):
-            raise TypeError(f'Custom converters must be callable, converter for '
-                            f'{type_name(type_)} is {type_name(converter)}.')
+            raise TypeError(
+                f"Custom converters must be callable, converter for "
+                f"{type_name(type_)} is {type_name(converter)}."
+            )
         spec = cls._get_arg_spec(converter)
-        type_info = spec.types.get(spec.positional[0] if spec.positional
-                                   else spec.var_positional)
+        type_info = spec.types.get(
+            spec.positional[0] if spec.positional else spec.var_positional
+        )
         if type_info is None:
             accepts = ()
         elif type_info.is_union:
@@ -95,22 +104,27 @@ class ConverterInfo:
         # Avoid cyclic import. Yuck.
         from .argumentparser import PythonArgumentParser
 
-        spec = PythonArgumentParser(type='Converter').parse(converter)
+        spec = PythonArgumentParser(type="Converter").parse(converter)
         if spec.minargs > 2:
             required = seq2str([a for a in spec.positional if a not in spec.defaults])
-            raise TypeError(f"Custom converters cannot have more than two mandatory "
-                            f"arguments, '{converter.__name__}' has {required}.")
+            raise TypeError(
+                f"Custom converters cannot have more than two mandatory "
+                f"arguments, '{converter.__name__}' has {required}."
+            )
         if not spec.maxargs:
-            raise TypeError(f"Custom converters must accept one positional argument, "
-                            f"'{converter.__name__}' accepts none.")
+            raise TypeError(
+                f"Custom converters must accept one positional argument, "
+                f"'{converter.__name__}' accepts none."
+            )
         if spec.named_only and set(spec.named_only) - set(spec.defaults):
             required = seq2str(sorted(set(spec.named_only) - set(spec.defaults)))
-            raise TypeError(f"Custom converters cannot have mandatory keyword-only "
-                            f"arguments, '{converter.__name__}' has {required}.")
+            raise TypeError(
+                f"Custom converters cannot have mandatory keyword-only "
+                f"arguments, '{converter.__name__}' has {required}."
+            )
         return spec
 
     def convert(self, value):
         if not self.library:
             return self.converter(value)
         return self.converter(value, self.library.instance)
-

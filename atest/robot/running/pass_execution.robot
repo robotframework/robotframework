@@ -1,9 +1,9 @@
 *** Settings ***
-Suite Setup      Run Tests    ${EMPTY}    running/pass_execution.robot
-Resource         atest_resource.robot
+Suite Setup     Run Tests    ${EMPTY}    running/pass_execution.robot
+Resource        atest_resource.robot
 
 *** Variables ***
-${PREFIX}=       Execution passed with message:\n
+${PREFIX}=      Execution passed with message:\n
 
 *** Test Cases ***
 Message is required
@@ -11,11 +11,11 @@ Message is required
 
 With message
     ${tc}=    Check Test Tags    ${TESTNAME}    force1    force2
-    Check Log Message    ${tc.kws[0].msgs[0]}    ${PREFIX}My message
+    Check Log Message    ${tc[0, 0]}    ${PREFIX}My message
 
 With HTML message
     ${tc}=    Check Test Tags    ${TESTNAME}    force1    force2
-    Check Log Message    ${tc.kws[0].msgs[0]}    ${PREFIX}<b>Message</b>    HTML
+    Check Log Message    ${tc[0, 0]}    ${PREFIX}<b>Message</b>    HTML
 
 Empty message is not allowed
     Check Test Case    ${TESTNAME}
@@ -40,17 +40,17 @@ Used in template keyword
 
 Used in for loop
     ${tc}=    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc.kws[0].kws[0].kws[0].msgs[0]}    ${PREFIX}Message with 'foo'
+    Check Log Message    ${tc[0, 0, 0, 0]}    ${PREFIX}Message with 'foo'
 
 Used in setup
     ${tc} =    Check Test Case    ${TESTNAME}
-    Keyword Should Have Been Executed    ${tc.kws[0]}
+    Keyword Should Have Been Executed    ${tc[0]}
     Keyword Should Have Been Executed    ${tc.teardown}
 
 Used in teardown
     ${tc}=    Check Test Case    ${TESTNAME}
     Should Be Equal    ${tc.teardown.status}    PASS
-    Check Log Message    ${tc.teardown.kws[0].msgs[0]}    ${PREFIX}This message is used.
+    Check Log Message    ${tc.teardown[0, 0]}    ${PREFIX}This message is used.
 
 Before failing teardown
     Check Test Case    ${TESTNAME}
@@ -60,14 +60,14 @@ After continuable failure
 
 After continuable failure in user keyword
     ${tc}=    Check Test Case    ${TESTNAME}
-    Should Be Equal    ${tc.kws[0].status}    FAIL
+    Should Be Equal    ${tc[0].status}    FAIL
 
 After continuable failure in FOR loop
     ${tc}=    Check Test Case    ${TESTNAME}
-    Should Be Equal    ${tc.kws[0].status}    FAIL
-    Should Be Equal    ${tc.kws[0].kws[0].status}    FAIL
-    Should Be Equal    ${tc.kws[0].kws[0].kws[0].status}    FAIL
-    Should Be Equal    ${tc.kws[0].kws[0].kws[1].status}    PASS
+    Should Be Equal    ${tc[0].status}          FAIL
+    Should Be Equal    ${tc[0, 0].status}       FAIL
+    Should Be Equal    ${tc[0, 0, 0].status}    FAIL
+    Should Be Equal    ${tc[0, 0, 1].status}    PASS
 
 After continuable failure and before failing teardown
     Check Test Case    ${TESTNAME}
@@ -86,57 +86,57 @@ After continuable failure in keyword teardown
 
 Remove one tag
     ${tc}=    Check Test Tags    ${TESTNAME}    force2
-    Check Log Message    ${tc.kws[0].msgs[0]}     Removed tag 'force1'.
-    Check Log Message    ${tc.kws[0].msgs[1]}     ${PREFIX}Message
+    Check Log Message    ${tc[0, 0]}    Removed tag 'force1'.
+    Check Log Message    ${tc[0, 1]}    ${PREFIX}Message
 
 Remove multiple tags
     ${tc}=    Check Test Tags    ${TESTNAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}     Removed tags 'force1' and 'force2'.
-    Check Log Message    ${tc.kws[0].msgs[1]}     ${PREFIX}Message
+    Check Log Message    ${tc[0, 0]}    Removed tags 'force1' and 'force2'.
+    Check Log Message    ${tc[0, 1]}    ${PREFIX}Message
 
 Remove tags with pattern
     ${tc}=    Check Test Tags    ${TESTNAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}     Removed tag 'force?'.
-    Check Log Message    ${tc.kws[0].msgs[1]}     ${PREFIX}Message
+    Check Log Message    ${tc[0, 0]}    Removed tag 'force?'.
+    Check Log Message    ${tc[0, 1]}    ${PREFIX}Message
 
 Set one tag
     ${tc}=    Check Test Tags    ${TESTNAME}    force1    force2    tag
-    Check Log Message    ${tc.kws[0].msgs[0]}     Set tag 'tag'.
-    Check Log Message    ${tc.kws[0].msgs[1]}     ${PREFIX}Message
+    Check Log Message    ${tc[0, 0]}    Set tag 'tag'.
+    Check Log Message    ${tc[0, 1]}    ${PREFIX}Message
 
 Set multiple tags
     ${tc}=    Check Test Tags    ${TESTNAME}    force1    force2    tag1    tag2
-    Check Log Message    ${tc.kws[0].msgs[0]}     Set tags 'tag1' and 'tag2'.
-    Check Log Message    ${tc.kws[0].msgs[1]}     ${PREFIX}Message
+    Check Log Message    ${tc[0, 0]}    Set tags 'tag1' and 'tag2'.
+    Check Log Message    ${tc[0, 1]}    ${PREFIX}Message
 
 Set and remove tags
     ${tc}=    Check Test Tags    ${TESTNAME}    tag1    tag2
-    Check Log Message    ${tc.kws[0].msgs[0]}     Removed tag 'force?'.
-    Check Log Message    ${tc.kws[0].msgs[1]}     Set tags 'tag1' and 'tag2'.
-    Check Log Message    ${tc.kws[0].msgs[2]}     ${PREFIX}Message
+    Check Log Message    ${tc[0, 0]}    Removed tag 'force?'.
+    Check Log Message    ${tc[0, 1]}    Set tags 'tag1' and 'tag2'.
+    Check Log Message    ${tc[0, 2]}    ${PREFIX}Message
 
 Set tags are not removed
     ${tc}=    Check Test Tags    ${TESTNAME}    force1    force2    tag1    tag2
-    Check Log Message    ${tc.kws[0].msgs[0]}     Removed tag 'tag?'.
-    Check Log Message    ${tc.kws[0].msgs[1]}     Set tags 'tag1' and 'tag2'.
-    Check Log Message    ${tc.kws[0].msgs[2]}     ${PREFIX}Message
+    Check Log Message    ${tc[0, 0]}    Removed tag 'tag?'.
+    Check Log Message    ${tc[0, 1]}    Set tags 'tag1' and 'tag2'.
+    Check Log Message    ${tc[0, 2]}    ${PREFIX}Message
 
 Set tags in teardown
     ${tc}=    Check Test Tags    ${TESTNAME}    tag1    tag2
-    Check Log Message    ${tc.teardown.msgs[0]}    Removed tag 'force?'.
-    Check Log Message    ${tc.teardown.msgs[1]}    Set tags 'tag1' and 'tag2'.
-    Check Log Message    ${tc.teardown.msgs[2]}    ${PREFIX}Message
+    Check Log Message    ${tc.teardown[0]}    Removed tag 'force?'.
+    Check Log Message    ${tc.teardown[1]}    Set tags 'tag1' and 'tag2'.
+    Check Log Message    ${tc.teardown[2]}    ${PREFIX}Message
 
 Pass Execution If when condition is true
     Check Test Case    ${TESTNAME}
 
 Pass Execution If when condition is false
     ${tc} =    Check Test Case    ${TESTNAME}
-    Keyword Should Have Been Executed    ${tc.kws[1]}
+    Keyword Should Have Been Executed    ${tc[1]}
 
 Pass Execution If resolves variables only condition is true
     ${tc} =    Check Test Case    ${TESTNAME}
-    Keyword Should Have Been Executed    ${tc.kws[1]}
+    Keyword Should Have Been Executed    ${tc[1]}
 
 Pass Execution If with multiple variables
     Check Test Tags    ${TESTNAME}    force1    force2    my    tags

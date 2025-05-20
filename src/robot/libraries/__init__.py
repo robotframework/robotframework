@@ -26,6 +26,19 @@ to find the generated library documentations, for example, via
 the http://robotframework.org web site.
 """
 
-STDLIBS = frozenset(('BuiltIn', 'Collections', 'DateTime', 'Dialogs', 'Easter',
-                     'OperatingSystem', 'Process', 'Remote', 'Screenshot',
-                     'String', 'Telnet', 'XML'))
+STDLIBS = frozenset(
+    (
+        "BuiltIn",
+        "Collections",
+        "DateTime",
+        "Dialogs",
+        "Easter",
+        "OperatingSystem",
+        "Process",
+        "Remote",
+        "Screenshot",
+        "String",
+        "Telnet",
+        "XML",
+    )
+)

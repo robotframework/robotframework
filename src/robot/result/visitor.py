@@ -39,6 +39,7 @@ class ResultVisitor(SuiteVisitor):
     For more information about the visitor algorithm see documentation in
     :mod:`robot.model.visitor` module.
     """
+
     def visit_result(self, result):
         if self.start_result(result) is not False:
             result.suite.visit(self)

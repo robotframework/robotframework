@@ -17,7 +17,7 @@ Test Cases section
 
 Keywords section
     ${tc} =    Check Test Case    Test Case
-    Check Log Message    ${tc.kws[1].kws[0].kws[0].msgs[0]}    "Keywords" was executed
+    Check Log Message    ${tc[1, 0, 0, 0]}    "Keywords" was executed
 
 Comments section
     Check Test Case    Comment section exist
@@ -40,7 +40,7 @@ Invalid sections
     [Setup]    Run Tests    ${EMPTY}    parsing/invalid_table_names.robot
     ${tc} =    Check Test Case    Test in valid table
     ${path} =    Normalize Path    ${DATADIR}/parsing/invalid_tables_resource.robot
-    Check Log Message    ${tc.kws[0].kws[0].msgs[0]}    Keyword in valid table
+    Check Log Message    ${tc[0, 0, 0]}    Keyword in valid table
     Length Should Be    ${ERRORS}    4
     Invalid Section Error    0    invalid_table_names.robot        1     *** Error ***
     Invalid Section Error    1    invalid_table_names.robot        8     *** ***
@@ -51,7 +51,7 @@ Invalid sections
 Check First Log Entry
     [Arguments]    ${test case name}    ${expected}
     ${tc} =    Check Test Case    ${test case name}
-    Check Log Message    ${tc.kws[0].msgs[0]}    ${expected}
+    Check Log Message    ${tc[0, 0]}    ${expected}
 
 Invalid Section Error
     [Arguments]    ${index}    ${file}    ${lineno}    ${header}    ${test and task}=, 'Test Cases', 'Tasks'

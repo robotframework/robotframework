@@ -111,8 +111,8 @@ Validate Directory Suite
             Should Contain Tags    ${test}            tag from init
             Should Be Equal        ${test.timeout}    42 seconds
             IF    '${test.name}' != 'Empty'
-                Check Log Message    ${test.setup.msgs[0]}       setup from init
-                Check Log Message    ${test.teardown.msgs[0]}    teardown from init
+                Check Log Message    ${test.setup[0]}       setup from init
+                Check Log Message    ${test.teardown[0]}    teardown from init
             END
         ELSE
             Should Not Be True    ${test.tags}

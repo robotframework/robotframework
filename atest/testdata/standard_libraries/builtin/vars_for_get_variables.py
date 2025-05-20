@@ -1,1 +1,1 @@
-var_in_variable_file = 'Hello, world!'
+var_in_variable_file = "Hello, world!"

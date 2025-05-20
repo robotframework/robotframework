@@ -65,3 +65,9 @@ Different values and custom error message with values
 
 `ignore_case` when normalized keys have conflict
     Check Test Case    ${TESTNAME}
+
+`ignore_value_order` set to True
+    Check Test Case    ${TESTNAME}
+
+`ignore_value_order` set to False and dictionaries have lists in different order
+    Check Test Case    ${TESTNAME}

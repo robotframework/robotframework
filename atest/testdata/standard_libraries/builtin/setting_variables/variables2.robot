@@ -5,7 +5,8 @@ ${VARIABLE TABLE IN VARIABLES 2 (3)}         Initial value
 
 *** Test Cases ***
 Test Variables Set In One Suite Are Not Available In Another
-    [Documentation]    Also checks that variables created in the variable table of the other suite are not available here.
+    [Documentation]    Also checks that variables created in the variable section of the other suite
+    ...                or test variables created on suite level there are not available here.
     Variable Should Not Exist    $new_var
     Variable Should Not Exist    $uk_var_1
     Variable Should Not Exist    $uk_var_2
@@ -13,6 +14,8 @@ Test Variables Set In One Suite Are Not Available In Another
     Variable Should Not Exist    @uk_var_3
     Variable Should Not Exist    \${scalar}
     Variable Should Not Exist    \@{list}
+    Variable Should Not Exist    $parent_suite_setup_test_var
+    Variable Should Not Exist    $suite_setup_test_var
 
 Suite Variables Set In One Suite Are Not Available In Another
     Variable Should Not Exist    \${suite_setup_suite_var}

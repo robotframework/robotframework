@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# ruff: noqa: E402
 
 """rundevel.py -- script to run the current Robot Framework code
 
@@ -15,43 +16,47 @@ Examples:
     ./rundevel.py rebot --name Example out.robot      # Rebot
 """
 
-from os.path import abspath, dirname, exists, join
 import os
 import sys
-
+from os.path import abspath, dirname, exists, join
 
 if len(sys.argv) == 1:
     sys.exit(__doc__)
 
 curdir = dirname(abspath(__file__))
-src = join(curdir, 'src')
-tmp = join(curdir, 'tmp')
-tmp2 = join(tmp, 'rundevel')
+src = join(curdir, "src")
+tmp = join(curdir, "tmp")
+tmp2 = join(tmp, "rundevel")
 if not exists(tmp):
     os.mkdir(tmp)
 if not exists(tmp2):
     os.mkdir(tmp2)
 
-os.environ['ROBOT_SYSLOG_FILE'] = join(tmp, 'syslog.txt')
-if 'ROBOT_INTERNAL_TRACES' not in os.environ:
-    os.environ['ROBOT_INTERNAL_TRACES'] = 'true'
-os.environ['TEMPDIR'] = tmp2          # Used by tests under atest/testdata
-if 'PYTHONPATH' not in os.environ:    # Allow executed scripts to import robot
-    os.environ['PYTHONPATH'] = src
+os.environ["ROBOT_SYSLOG_FILE"] = join(tmp, "syslog.txt")
+if "ROBOT_INTERNAL_TRACES" not in os.environ:
+    os.environ["ROBOT_INTERNAL_TRACES"] = "true"
+os.environ["TEMPDIR"] = tmp2  # Used by tests under atest/testdata
+if "PYTHONPATH" not in os.environ:  # Allow executed scripts to import robot
+    os.environ["PYTHONPATH"] = src
 else:
-    os.environ['PYTHONPATH'] = os.pathsep.join([src, os.environ['PYTHONPATH']])
+    os.environ["PYTHONPATH"] = os.pathsep.join([src, os.environ["PYTHONPATH"]])
 
 sys.path.insert(0, src)
-from robot import run_cli, rebot_cli
+from robot import rebot_cli, run_cli
 
-if sys.argv[1] == 'rebot':
+if sys.argv[1] == "rebot":
     runner = rebot_cli
     args = sys.argv[2:]
 else:
     runner = run_cli
-    args = ['--pythonpath', join(curdir, 'atest', 'testresources', 'testlibs'),
-            '--pythonpath', tmp,
-            '--loglevel', 'DEBUG']
-    args += sys.argv[2:] if sys.argv[1] == 'run' else sys.argv[1:]
+    args = [
+        "--pythonpath",
+        join(curdir, "atest", "testresources", "testlibs"),
+        "--pythonpath",
+        tmp,
+        "--loglevel",
+        "DEBUG",
+    ]
+    args += sys.argv[2:] if sys.argv[1] == "run" else sys.argv[1:]
 
-runner(['--outputdir', tmp] + args)
+runner(["--outputdir", tmp] + args)

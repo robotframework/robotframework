@@ -26,7 +26,7 @@ class StringCache:
     _use_compressed_threshold = 1.1
 
     def __init__(self):
-        self._cache = {('', False): self.empty}
+        self._cache = {("", False): self.empty}
 
     def add(self, text, html=False):
         if not text:
@@ -47,4 +47,4 @@ class StringCache:
             if len(compressed) * self._use_compressed_threshold < len(text):
                 return compressed
         # Strings starting with '*' are raw, others are compressed.
-        return '*' + text
+        return "*" + text

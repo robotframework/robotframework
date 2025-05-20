@@ -10,8 +10,8 @@ ${FILLER} =     Wräp < & シ${SPACE}
 Pause Execution
     Pause Execution    Press OK button.
     Pause Execution    Press <Enter> key.
-    Pause Execution    Press <O> key.
     Pause Execution    Press <o> key.
+    Pause Execution    Press <O> key.
 
 Pause Execution With Long Line
     Pause Execution    Verify that the long text below is wrapped nicely.\n\n${FILLER*200}\n\nThen press OK or <Enter>.
@@ -20,9 +20,8 @@ Pause Execution With Multiple Lines
     Pause Execution    Verify that\nthis multi\nline text\nis displayed\nnicely.\n\nʕ•ᴥ•ʔ\n\nThen press <Esc>.
 
 Execute Manual Step Passing
-    Execute Manual Step    Press PASS.
-    Execute Manual Step    Press <Enter> and validate that the dialog is *NOT* closed.\n\nThen press PASS.
-    Execute Manual Step    Press <P> or <p>.    This should not be shown!!
+    Execute Manual Step    Verify the taskbar icon.\n\nPress PASS if it is ok.    Invalid taskbar icon.
+    Execute Manual Step    Press <Enter> and validate that the dialog is *NOT* closed.\n\nThen press <P> or <p>
 
 Execute Manual Step Failing
     [Documentation]  FAIL Predefined error message
@@ -53,7 +52,7 @@ Get Hidden Value From User
 Get Value From User Cancelled
     [Documentation]  FAIL No value provided by user.
     Get Value From User
-    ...    Press Cancel.\n\nAlso verify that the default value below is not hidded.
+    ...    Press Cancel.\n\nAlso verify that the default value below is not hidden.
     ...    Default value.    hidden=no
 
 Get Value From User Exited
@@ -72,6 +71,41 @@ Get Selection From User
     ...    zip    zap    v v v    valuë    ^ ^ ^    ʕ•ᴥ•ʔ
     ...    This is a really long string and the window should change the size properly to content.
     Should Be Equal    ${value}    valuë
+
+Get Selection From User When Default Value Provided by Index
+    ${value}=    Get Selection From User
+    ...    Press OK or <Enter>.
+    ...    value 1    value 2    value 3    value 4
+    ...    default=1
+    Should Be Equal    ${value}    value 1
+
+Get Selection From User When Default Value Provided by String
+    ${value}=    Get Selection From User
+    ...    Press OK or <Enter>.
+    ...    xxx    yyy    zzz    ååå    äää    ööö
+    ...    default=ööö
+    Should Be Equal    ${value}    ööö
+
+Get Selection From User When Default Value Is Integer
+    ${value}=    Get Selection From User
+    ...    Press OK or <Enter>.
+    ...    -2    -1    0    1    2
+    ...    default=1
+    Should Be Equal    ${value}    1
+
+Get Selection From User When Default Value Index Is Out of Bounds
+    [Documentation]    FAIL ValueError: Default value index is out of bounds.
+    Get Selection From User
+    ...    Press OK or <Enter>.
+    ...    value 1    value 2    value 3    value 4
+    ...    default=5
+
+Get Selection From User When Default Value Cannot Be Found
+    [Documentation]  FAIL ValueError: Invalid default value 'asd'.
+    Get Selection From User
+    ...    Press OK or <Enter>.
+    ...    value 1    value 2    value 3    value 4
+    ...    default=asd
 
 Get Selection From User Cancelled
     [Documentation]  FAIL No value provided by user.
@@ -115,11 +149,17 @@ Get Selections From User Exited
 
 Multiple dialogs in a row
     [Documentation]  FAIL No value provided by user.
-    Pause Execution    Verify that dialog is closed immediately.\n\nAfter pressing OK or <Enter>.
-    Get Value From User    Verify that dialog is closed immediately.\n\nAfter pressing Cancel or <Esc>.
+    Pause Execution    Press OK or <Enter> and verify that dialog is closed immediately.\n\nNext dialog is opened after 1 second.
+    Sleep    1 second
+    Get Value From User    Press Cancel or <Esc> and verify that dialog is closed immediately.
 
 Garbage Collection In Thread Should Not Cause Problems
-    ${thread}=    Evaluate    threading.Thread(target=gc.collect)    modules=gc,threading
-    Pause Execution    Verify that the execution does not crash after pressing OK or <Enter>.
+    ${thread}=    Evaluate    threading.Thread(target=gc.collect)
+    Pause Execution    Press OK or <Enter> and verify that execution does not crash.
     Call Method    ${thread}    start
     Call Method    ${thread}    join
+
+Timeout can close dialog
+    [Documentation]    FAIL Test timeout 1 second exceeded.
+    [Timeout]    1 second
+    Pause Execution    Wait for timeout.

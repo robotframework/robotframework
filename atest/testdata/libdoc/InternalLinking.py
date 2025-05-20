@@ -1,5 +1,5 @@
 class InternalLinking:
-    u"""Library for testing libdoc's internal linking.
+    """Library for testing libdoc's internal linking.
 
     = Linking to sections =
 
@@ -61,7 +61,7 @@ class InternalLinking:
         """
 
     def escaping(self):
-        u"""Escaped links:
+        """Escaped links:
         - `Percent encoding: !"#%/()=?|+-_.!~*'()`
         - `HTML entities: &<>`
         - `Non-ASCII: \xe4\u2603`

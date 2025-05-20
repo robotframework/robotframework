@@ -7,7 +7,7 @@ class DynamicLibraryWithoutGetKwArgsAndDoc:
             self.__doc__ = doc
 
     def get_keyword_names(self):
-        return ['Keyword']
+        return ["Keyword"]
 
     def run_keyword(self, name, args):
         pass

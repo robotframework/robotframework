@@ -8,12 +8,13 @@ class _BaseLib:
 
     def should_be_registered(self, *expected):
         if self.registered != set(expected):
-            raise AssertionError('Wrong registered: %s != %s'
-                                 % (sorted(self.registered), sorted(expected)))
+            raise AssertionError(
+                f"Wrong registered: {sorted(self.registered)} != {sorted(expected)}"
+            )
 
 
 class Global(_BaseLib):
-    ROBOT_LIBRARY_SCOPE = 'global'
+    ROBOT_LIBRARY_SCOPE = "global"
     initializations = 0
 
     def __init__(self):
@@ -27,28 +28,28 @@ class Global(_BaseLib):
 
 
 class Suite(_BaseLib):
-    ROBOT_LIBRARY_SCOPE = 'SUITE'
+    ROBOT_LIBRARY_SCOPE = "SUITE"
 
 
 class TestSuite(_BaseLib):
-    ROBOT_LIBRARY_SCOPE = 'TEST_SUITE'
+    ROBOT_LIBRARY_SCOPE = "TEST_SUITE"
 
 
 class Test(_BaseLib):
-    ROBOT_LIBRARY_SCOPE = 'TeSt'
+    ROBOT_LIBRARY_SCOPE = "TeSt"
 
 
 class TestCase(_BaseLib):
-    ROBOT_LIBRARY_SCOPE = 'TeSt CAse'
+    ROBOT_LIBRARY_SCOPE = "TeSt CAse"
 
 
 class Task(_BaseLib):
     # Any non-recognized value is mapped to TEST scope.
-    ROBOT_LIBRARY_SCOPE = 'TASK'
+    ROBOT_LIBRARY_SCOPE = "TASK"
 
 
 class InvalidValue(_BaseLib):
-    ROBOT_LIBRARY_SCOPE = 'invalid'
+    ROBOT_LIBRARY_SCOPE = "invalid"
 
 
 class InvalidEmpty(_BaseLib):

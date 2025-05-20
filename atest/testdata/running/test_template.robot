@@ -158,7 +158,7 @@ Nested FOR
 Invalid FOR
     [Documentation]    FAIL
     ...    Multiple errors:
-    ...    - FOR loop has no loop values.
+    ...    - FOR loop has no values.
     ...    - FOR loop must have closing END.
     FOR    ${x}    IN
         ${x}    not run
@@ -338,7 +338,7 @@ Templated test continues after non-syntax errors
     ...
     ...    1) Variable '\${this does not exist}' not found.
     ...
-    ...    2) Keyword 'BuiltIn.Should Be Equal' expected 2 to 8 arguments, got 1.
+    ...    2) Keyword 'BuiltIn.Should Be Equal' expected 2 to 10 arguments, got 1.
     ...
     ...    3) Compared and not equal != Fails
     ${this does not exist}    ${this does not exist either}

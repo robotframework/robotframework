@@ -44,5 +44,5 @@ Dots in library name and keyword name with full name
 
 Conflicting names with dots
     ${tc} =    Check Test Case    ${TESTNAME}
-    Check log message    ${tc.kws[0].msgs[0]}    Running keyword 'Conflict'.
-    Check log message    ${tc.kws[1].msgs[0]}    Executing keyword 'In.name.conflict'.
+    Check log message    ${tc[0, 0]}    Running keyword 'Conflict'.
+    Check log message    ${tc[1, 0]}    Executing keyword 'In.name.conflict'.

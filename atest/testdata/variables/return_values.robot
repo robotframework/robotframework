@@ -120,8 +120,10 @@ Only One List Variable Allowed 1
     @{list}    @{list2} =    Fail    Not executed
 
 Only One List Variable Allowed 2
-    [Documentation]    FAIL Assignment can contain only one list variable.
-    @{list}    ${scalar}    @{list2} =    Fail    Not executed
+    [Documentation]    FAIL Multiple errors:
+    ...    - Assign mark '=' can be used only with the last variable.
+    ...    - Assignment can contain only one list variable.
+    @{list}    ${scalar} =    @{list2} =    Fail    Not executed
 
 List After Scalars
     ${first}    @{rest} =    Evaluate    range(5)
@@ -209,8 +211,10 @@ Dictionary only allowed alone 3
     &{d}    @{l} =    Fail    Not executed
 
 Dictionary only allowed alone 4
-    [Documentation]     FAIL Dictionary variable cannot be assigned with other variables.
-    @{l}    &{d} =    Fail    Not executed
+    [Documentation]     FAIL Multiple errors:
+    ...    - Assign mark '=' can be used only with the last variable.
+    ...    - Dictionary variable cannot be assigned with other variables.
+    @{l}=    &{d} =    Fail    Not executed
 
 Dictionary only allowed alone 5
     [Documentation]     FAIL Dictionary variable cannot be assigned with other variables.

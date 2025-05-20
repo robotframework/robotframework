@@ -5,35 +5,35 @@ Resource          builtin_resource.robot
 *** Test Cases ***
 Should Be Equal As Integers
     ${tc}=    Check test case    ${TESTNAME}
-    Verify argument type message    ${tc.kws[0].msgs[0]}
+    Verify argument type message    ${tc[0, 0]}
 
 Should Be Equal As Integers with base
     Check test case    ${TESTNAME}
 
 Should Not Be Equal As Integers
     ${tc}=    Check test case    ${TESTNAME}
-    Verify argument type message    ${tc.kws[0].msgs[0]}
+    Verify argument type message    ${tc[0, 0]}
 
 Should Not Be Equal As Integers with base
     Check test case    ${TESTNAME}
 
 Should Be Equal As Numbers
     ${tc}=    Check test case    ${TESTNAME}
-    Verify argument type message    ${tc.kws[0].msgs[0]}
+    Verify argument type message    ${tc[0, 0]}
 
 Should Be Equal As Numbers with precision
     Check test case    ${TESTNAME}
 
 Should Not Be Equal As Numbers
     ${tc}=    Check test case    ${TESTNAME}
-    Verify argument type message    ${tc.kws[0].msgs[0]}
+    Verify argument type message    ${tc[0, 0]}
 
 Should Not Be Equal As Numbers with precision
     Check test case    ${TESTNAME}
 
 Should Be Equal As Strings
     ${tc}=    Check test case    ${TESTNAME}
-    Verify argument type message    ${tc.kws[0].msgs[0]}    int
+    Verify argument type message    ${tc[0, 0]}    int
 
 Should Be Equal As Strings does NFC normalization
     Check test case    ${TESTNAME}
@@ -70,7 +70,7 @@ Should Be Equal As Strings repr multiline
 
 Should Not Be Equal As Strings
     ${tc}=    Check test case    ${TESTNAME}
-    Verify argument type message    ${tc.kws[0].msgs[0]}    str    float
+    Verify argument type message    ${tc[0, 0]}    str    float
 
 Should Not Be Equal As Strings case-insensitive
     Check test case    ${TESTNAME}

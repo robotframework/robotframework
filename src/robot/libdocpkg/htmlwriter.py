@@ -13,28 +13,34 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.htmldata import HtmlFileWriter, ModelWriter, LIBDOC
+from robot.htmldata import HtmlFileWriter, LIBDOC, ModelWriter
 
 
 class LibdocHtmlWriter:
 
-    def __init__(self, theme=None):
+    def __init__(self, theme=None, lang=None):
         self.theme = theme
+        self.lang = lang
 
     def write(self, libdoc, output):
-        model_writer = LibdocModelWriter(output, libdoc, self.theme)
+        model_writer = LibdocModelWriter(output, libdoc, self.theme, self.lang)
         HtmlFileWriter(output, model_writer).write(LIBDOC)
 
 
 class LibdocModelWriter(ModelWriter):
 
-    def __init__(self, output, libdoc, theme=None):
+    def __init__(self, output, libdoc, theme=None, lang=None):
         self.output = output
         self.libdoc = libdoc
         self.theme = theme
+        self.lang = lang
 
     def write(self, line):
-        data = self.libdoc.to_json(include_private=False, theme=self.theme)
-        self.output.write(f'<script type="text/javascript">\n'
-                          f'libdoc = {data}\n'
-                          f'</script>\n')
+        data = self.libdoc.to_json(
+            include_private=False,
+            theme=self.theme,
+            lang=self.lang,
+        )
+        self.output.write(
+            f'<script type="text/javascript">\nlibdoc = {data}\n</script>\n'
+        )

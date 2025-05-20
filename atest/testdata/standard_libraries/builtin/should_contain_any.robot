@@ -5,9 +5,9 @@ Variables         variables_to_verify.py
 Should Contain Any
     [Template]    Should Contain Any
     abcdefg    c
-    åäö        x    y    z    ä    b
-    ${LIST}    x    y    z    e    b    c
-    ${DICT}    x    y    z    a    b    c
+    åäö        x    y    z=3    ä    b
+    ${LIST}    x    y    z=3    e    b    c
+    ${DICT}    x    y    z=3    a    b    c
     ${LIST}    41    ${42}    43
 
 Should Contain Any failing
@@ -119,12 +119,12 @@ Should Contain Any and collapse spaces
     ${DICT 5}     e \n \t e              collapse_spaces=TRUE
 
 Should Contain Any without items fails
-    [Documentation]    FAIL    One or more items required.
+    [Documentation]    FAIL    One or more item required.
     Should Contain Any    foo
 
 Should Contain Any with invalid configuration
-    [Documentation]    FAIL    Unsupported configuration parameters: 'bad parameter' and 'шта'.
-    Should Contain Any    abcdefg    +    \=    msg=Message    bad parameter=True    шта=?
+    [Documentation]    FAIL    Keyword 'BuiltIn.Should Contain Any' got unexpected named arguments 'bad parameter' and 'шта'.
+    Should Contain Any    abcdefg    +    ok=True    msg=Message    bad parameter=True    шта=?
 
 Should Not Contain Any
     [Template]    Should Not Contain Any
@@ -250,9 +250,9 @@ Should Not Contain Any and collapse spaces
     ${DICT 5}    e\te       collapse_spaces=TRUE
 
 Should Not Contain Any without items fails
-    [Documentation]    FAIL    One or more items required.
+    [Documentation]    FAIL    One or more item required.
     Should Not Contain Any    foo
 
 Should Not Contain Any with invalid configuration
-    [Documentation]    FAIL    Unsupported configuration parameter: 'bad parameter'.
-    Should Not Contain Any    abcdefg    +    \=    msg=Message    bad parameter=True
+    [Documentation]    FAIL    Keyword 'BuiltIn.Should Not Contain Any' got unexpected named argument 'bad parameter'.
+    Should Not Contain Any    abcdefg    +    ok=True    msg=Message    bad parameter=True

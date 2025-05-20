@@ -20,10 +20,10 @@ from robot.utils import MultiMatcher
 
 class NamePatterns(Iterable[str]):
 
-    def __init__(self, patterns: Sequence[str] = (), ignore: Sequence[str] = '_'):
+    def __init__(self, patterns: Sequence[str] = (), ignore: Sequence[str] = "_"):
         self.matcher = MultiMatcher(patterns, ignore)
 
-    def match(self, name: str, full_name: 'str|None' = None) -> bool:
+    def match(self, name: str, full_name: "str|None" = None) -> bool:
         match = self.matcher.match
         return bool(match(name) or full_name and match(full_name))
 

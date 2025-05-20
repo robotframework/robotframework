@@ -1,1 +1,1 @@
-raise RuntimeError('Ööööps!')
+raise RuntimeError("Ööööps!")

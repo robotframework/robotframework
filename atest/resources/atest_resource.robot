@@ -113,15 +113,32 @@ Check Test Tags
     Should Contain Tags    ${tc}    @{expected}
     RETURN    ${tc}
 
+Check Body Item Data
+    [Arguments]    ${item}    ${type}=KEYWORD    ${status}=PASS    ${message}=    ${children}=-1    &{others}
+    FOR    ${key}    ${expected}    IN    type=${type}    status=${status}    type=${type}    message=${message}    &{others}
+        IF    $key == 'status' and $type == 'MESSAGE'    CONTINUE
+        VAR    ${actual}    ${item.${key}}
+        IF    isinstance($actual, collections.abc.Iterable) and not isinstance($actual, str)
+            Should Be Equal    ${{', '.join($actual)}}     ${expected}
+        ELSE
+            Should Be Equal    ${actual}    ${expected}
+        END
+    END
+    IF    ${children} >= 0
+    ...    Length Should Be    ${item.body}    ${children}
+
 Check Keyword Data
-    [Arguments]    ${kw}    ${name}    ${assign}=    ${args}=    ${status}=PASS    ${tags}=    ${doc}=*    ${type}=KEYWORD
+    [Arguments]    ${kw}    ${name}    ${assign}=    ${args}=    ${status}=PASS    ${tags}=    ${doc}=*    ${message}=*    ${type}=KEYWORD    ${children}=-1
     Should Be Equal    ${kw.full_name}               ${name}
     Should Be Equal    ${{', '.join($kw.assign)}}    ${assign}
     Should Be Equal    ${{', '.join($kw.args)}}      ${args}
     Should Be Equal    ${kw.status}                  ${status}
     Should Be Equal    ${{', '.join($kw.tags)}}      ${tags}
     Should Match       ${kw.doc}                     ${doc}
+    Should Match       ${kw.message}                 ${message}
     Should Be Equal    ${kw.type}                    ${type}
+    IF    ${children} >= 0
+    ...    Length Should Be    ${kw.body}            ${children}
 
 Check TRY Data
     [Arguments]    ${try}    ${patterns}=    ${pattern_type}=${None}    ${assign}=${None}    ${status}=PASS
@@ -410,4 +427,6 @@ Traceback Should Be
         ${path} =    Normalize Path    ${DATADIR}/${path}
         ${exp} =    Set Variable    ${exp}\n${SPACE*2}File "${path}", line *, in ${func}\n${SPACE*4}${text}
     END
+    # Remove '~~~^^^' lines.
+    ${msg.message} =    Evaluate    '\\n'.join(line for line in $msg.message.splitlines() if line.strip('~^ ') or not line)
     Check Log Message    ${msg}    ${exp}\n${error}    DEBUG    pattern=True    traceback=True

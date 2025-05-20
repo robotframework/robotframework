@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup       Run Tests    --listener ${LISTENER DIR}/v3.py -l l -r r -b d -x x    misc/pass_and_fail.robot
+Suite Setup       Run Tests    --listener ${LISTENER DIR}/v3.py -l l -r r -b d -x x -L trace    misc/pass_and_fail.robot
 Resource          listener_resource.robot
 
 *** Variables ***
@@ -8,11 +8,11 @@ ${SEPARATOR}      ${EMPTY + '-' * 78}
 *** Test Cases ***
 New tests and keywords can be added
     ${tc} =    Check test case    Added by start_suite [start suite]   FAIL    [start] [end]
-    Check keyword data    ${tc.kws[0]}    BuiltIn.No Operation
+    Check keyword data    ${tc[0]}    BuiltIn.No Operation
     ${tc} =    Check test case    Added by startTest    PASS    Dynamically added! [end]
-    Check keyword data    ${tc.kws[0]}    BuiltIn.Fail    args=Dynamically added!    status=FAIL
+    Check keyword data    ${tc[0]}    BuiltIn.Fail    args=Dynamically added!    status=FAIL
     ${tc} =    Check test case    Added by end_Test    FAIL    [start] [end]
-    Check keyword data    ${tc.kws[0]}    BuiltIn.Log    args=Dynamically added!, INFO
+    Check keyword data    ${tc[0]}    BuiltIn.Log    args=Dynamically added!, INFO
     Stdout Should Contain    SEPARATOR=\n
     ...    Added by start_suite [start suite] :: [start suite] ${SPACE*17} | FAIL |
     ...    [start] [end]
@@ -63,12 +63,34 @@ Changing current element docs does not change console output, but does change ou
     Check Test Doc    Pass [start suite]    [start suite] [start test] [end test]
 
 Log messages and timestamps can be changed
-    ${tc} =   Get test case    Pass [start suite]
-    Check log message    ${tc.kws[0].kws[0].msgs[0]}    HELLO SAYS "PASS"!
-    Should be equal    ${tc.kws[0].kws[0].msgs[0].timestamp}    ${datetime(2015, 12, 16, 15, 51, 20, 141000)}
+    ${tc} =   Get Test Case    Pass [start suite]
+    Check Keyword Data    ${tc[0, 0]}   BuiltIn.Log    args=Hello says "\${who}"!, \${LEVEL1}
+    Check Log Message     ${tc[0, 0, 0]}    HELLO SAYS "PASS"!
+    Should Be Equal       ${tc[0, 0, 0].timestamp}    ${datetime(2015, 12, 16, 15, 51, 20, 141000)}
+
+Log message can be removed by setting message to `None`
+    ${tc} =   Get Test Case    Fail [start suite]
+    Check Keyword Data    ${tc[0, 0]}   BuiltIn.Log    args=Hello says "\${who}"!, \${LEVEL1}
+    Should Be Empty       ${tc[0, 0].body}
+    File Should Not Contain    ${OUTDIR}/d.txt    HELLO SAYS "FAIL"!
+    File Should Not Contain    ${OUTDIR}/d.txt    None
 
 Syslog messages can be changed
     Syslog Should Contain Match    2015-12-16 15:51:20.141000 | INFO \ | TESTS EXECUTION ENDED. STATISTICS:
+
+Library import
+    Stdout Should Contain    Imported library 'BuiltIn' with 107 keywords.
+    Stdout Should Contain    Imported library 'String' with 32 keywords.
+    ${tc} =   Get Test Case    Pass [start suite]
+    Check Keyword Data    ${tc[0, 0]}    BuiltIn.Log    doc=Changed!    args=Hello says "\${who}"!, \${LEVEL1}
+
+Resource import
+    Stdout Should Contain    Imported resource 'example' with 2 keywords.
+    ${tc} =   Get Test Case    Pass [start suite]
+    Check Keyword Data    ${tc[1, 1]}    example.New!    doc=Dynamically created.
+
+Variables import
+    Stdout Should Contain    Imported variables 'variables.py' without much info.
 
 File methods and close are called
     Stderr Should Be Equal To    SEPARATOR=\n
@@ -77,4 +99,10 @@ File methods and close are called
     ...    Xunit: x.xml
     ...    Log: l.html
     ...    Report: r.html
+    ...    Close\n
+
+File methods when files are disabled
+    Run Tests Without Processing Output    --listener ${LISTENER DIR}/v3.py -o NONE -r NONE -l NONE    misc/pass_and_fail.robot
+    Stderr Should Be Equal To    SEPARATOR=\n
+    ...    Output: None
     ...    Close\n

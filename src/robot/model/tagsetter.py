@@ -25,19 +25,22 @@ if TYPE_CHECKING:
 
 class TagSetter(SuiteVisitor):
 
-    def __init__(self, add: 'Sequence[str]|str' = (),
-                 remove: 'Sequence[str]|str' = ()):
+    def __init__(
+        self,
+        add: "Sequence[str]|str" = (),
+        remove: "Sequence[str]|str" = (),
+    ):
         self.add = add
         self.remove = remove
 
-    def start_suite(self, suite: 'TestSuite'):
+    def start_suite(self, suite: "TestSuite"):
         return bool(self)
 
-    def visit_test(self, test: 'TestCase'):
+    def visit_test(self, test: "TestCase"):
         test.tags.add(self.add)
         test.tags.remove(self.remove)
 
-    def visit_keyword(self, keyword: 'Keyword'):
+    def visit_keyword(self, keyword: "Keyword"):
         pass
 
     def __bool__(self):

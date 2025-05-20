@@ -28,6 +28,12 @@ ELSE IF with invalid condition
 Recommend $var syntax if invalid condition contains ${var}
     FAIL    index=1
 
+$var recommendation with multiple variables
+    FAIL    index=1
+
+Remove quotes around variable in $var recommendation
+    FAIL    index=2
+
 IF without END
     FAIL
 
@@ -44,7 +50,7 @@ ELSE IF without condition
 ELSE IF with multiple conditions
     [Template]    NONE
     ${tc} =    Branch statuses should be    FAIL    NOT RUN    NOT RUN
-    Should Be Equal    ${tc.body[0].body[1].condition}    \${False}, ooops, \${True}
+    Should Be Equal    ${tc[0, 1].condition}    \${False}, ooops, \${True}
 
 ELSE with condition
     FAIL    NOT RUN

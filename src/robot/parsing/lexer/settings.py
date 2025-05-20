@@ -22,41 +22,41 @@ from .tokens import StatementTokens, Token
 
 
 class Settings(ABC):
-    names: 'tuple[str, ...]' = ()
-    aliases: 'dict[str, str]' = {}
+    names: "tuple[str, ...]" = ()
+    aliases: "dict[str, str]" = {}
     multi_use = (
-        'Metadata',
-        'Library',
-        'Resource',
-        'Variables'
+        "Metadata",
+        "Library",
+        "Resource",
+        "Variables",
     )
     single_value = (
-        'Resource',
-        'Test Timeout',
-        'Test Template',
-        'Timeout',
-        'Template',
-        'Name'
+        "Resource",
+        "Test Timeout",
+        "Test Template",
+        "Timeout",
+        "Template",
+        "Name",
     )
     name_and_arguments = (
-        'Metadata',
-        'Suite Setup',
-        'Suite Teardown',
-        'Test Setup',
-        'Test Teardown',
-        'Test Template',
-        'Setup',
-        'Teardown',
-        'Template',
-        'Resource',
-        'Variables'
+        "Metadata",
+        "Suite Setup",
+        "Suite Teardown",
+        "Test Setup",
+        "Test Teardown",
+        "Test Template",
+        "Setup",
+        "Teardown",
+        "Template",
+        "Resource",
+        "Variables",
     )
     name_arguments_and_with_name = (
-        'Library',
-    )
+        "Library",
+    )  # fmt: skip
 
     def __init__(self, languages: Languages):
-        self.settings: 'dict[str, list[Token]|None]' = {n: None for n in self.names}
+        self.settings: "dict[str, list[Token]|None]" = dict.fromkeys(self.names)
         self.languages = languages
 
     def lex(self, statement: StatementTokens):
@@ -80,11 +80,13 @@ class Settings(ABC):
             message = self._get_non_existing_setting_message(orig, name)
             raise ValueError(message)
         if self.settings[name] is not None and name not in self.multi_use:
-            raise ValueError(f"Setting '{orig}' is allowed only once. "
-                             f"Only the first value is used.")
+            raise ValueError(
+                f"Setting '{orig}' is allowed only once. Only the first value is used."
+            )
         if name in self.single_value and len(statement) > 2:
-            raise ValueError(f"Setting '{orig}' accepts only one value, "
-                             f"got {len(statement)-1}.")
+            raise ValueError(
+                f"Setting '{orig}' accepts only one value, got {len(statement) - 1}."
+            )
 
     def _get_non_existing_setting_message(self, name: str, normalized: str) -> str:
         if self._is_valid_somewhere(normalized, Settings.__subclasses__()):
@@ -92,13 +94,16 @@ class Settings(ABC):
         return RecommendationFinder(normalize).find_and_format(
             name=normalized,
             candidates=tuple(self.settings) + tuple(self.aliases),
-            message=f"Non-existing setting '{name}'."
+            message=f"Non-existing setting '{name}'.",
         )
 
-    def _is_valid_somewhere(self, name: str, classes: 'list[type[Settings]]') -> bool:
+    def _is_valid_somewhere(self, name: str, classes: "list[type[Settings]]") -> bool:
         for cls in classes:
-            if (name in cls.names or name in cls.aliases
-                    or self._is_valid_somewhere(name, cls.__subclasses__())):
+            if (
+                name in cls.names
+                or name in cls.aliases
+                or self._is_valid_somewhere(name, cls.__subclasses__())
+            ):
                 return True
         return False
 
@@ -112,8 +117,10 @@ class Settings(ABC):
             token.type = Token.COMMENT
 
     def _lex_setting(self, statement: StatementTokens, name: str):
-        statement[0].type = {'Test Tags': Token.TEST_TAGS,
-                             'Name': Token.SUITE_NAME}.get(name, name.upper())
+        statement[0].type = {
+            "Test Tags": Token.TEST_TAGS,
+            "Name": Token.SUITE_NAME,
+        }.get(name, name.upper())
         self.settings[name] = values = statement[1:]
         if name in self.name_and_arguments:
             self._lex_name_and_arguments(values)
@@ -121,9 +128,11 @@ class Settings(ABC):
             self._lex_name_arguments_and_with_name(values)
         else:
             self._lex_arguments(values)
-        if name == 'Return':
-            statement[0].error = ("The '[Return]' setting is deprecated. "
-                                  "Use the 'RETURN' statement instead.")
+        if name == "Return":
+            statement[0].error = (
+                "The '[Return]' setting is deprecated. "
+                "Use the 'RETURN' statement instead."
+            )
 
     def _lex_name_and_arguments(self, tokens: StatementTokens):
         if tokens:
@@ -132,8 +141,8 @@ class Settings(ABC):
 
     def _lex_name_arguments_and_with_name(self, tokens: StatementTokens):
         self._lex_name_and_arguments(tokens)
-        if len(tokens) > 1 and \
-                normalize_whitespace(tokens[-2].value) in ('WITH NAME', 'AS'):
+        marker = tokens[-2].value if len(tokens) > 1 else None
+        if marker and normalize_whitespace(marker) in ("WITH NAME", "AS"):
             tokens[-2].type = Token.AS
             tokens[-1].type = Token.NAME
 
@@ -148,29 +157,29 @@ class FileSettings(Settings, ABC):
 
 class SuiteFileSettings(FileSettings):
     names = (
-        'Documentation',
-        'Metadata',
-        'Name',
-        'Suite Setup',
-        'Suite Teardown',
-        'Test Setup',
-        'Test Teardown',
-        'Test Template',
-        'Test Timeout',
-        'Test Tags',
-        'Default Tags',
-        'Keyword Tags',
-        'Library',
-        'Resource',
-        'Variables'
+        "Documentation",
+        "Metadata",
+        "Name",
+        "Suite Setup",
+        "Suite Teardown",
+        "Test Setup",
+        "Test Teardown",
+        "Test Template",
+        "Test Timeout",
+        "Test Tags",
+        "Default Tags",
+        "Keyword Tags",
+        "Library",
+        "Resource",
+        "Variables",
     )
     aliases = {
-        'Force Tags': 'Test Tags',
-        'Task Tags': 'Test Tags',
-        'Task Setup': 'Test Setup',
-        'Task Teardown': 'Test Teardown',
-        'Task Template': 'Test Template',
-        'Task Timeout': 'Test Timeout',
+        "Force Tags": "Test Tags",
+        "Task Tags": "Test Tags",
+        "Task Setup": "Test Setup",
+        "Task Teardown": "Test Teardown",
+        "Task Template": "Test Template",
+        "Task Timeout": "Test Timeout",
     }
 
     def _not_valid_here(self, name: str) -> str:
@@ -179,26 +188,26 @@ class SuiteFileSettings(FileSettings):
 
 class InitFileSettings(FileSettings):
     names = (
-        'Documentation',
-        'Metadata',
-        'Name',
-        'Suite Setup',
-        'Suite Teardown',
-        'Test Setup',
-        'Test Teardown',
-        'Test Timeout',
-        'Test Tags',
-        'Keyword Tags',
-        'Library',
-        'Resource',
-        'Variables'
+        "Documentation",
+        "Metadata",
+        "Name",
+        "Suite Setup",
+        "Suite Teardown",
+        "Test Setup",
+        "Test Teardown",
+        "Test Timeout",
+        "Test Tags",
+        "Keyword Tags",
+        "Library",
+        "Resource",
+        "Variables",
     )
     aliases = {
-        'Force Tags': 'Test Tags',
-        'Task Tags': 'Test Tags',
-        'Task Setup': 'Test Setup',
-        'Task Teardown': 'Test Teardown',
-        'Task Timeout': 'Test Timeout',
+        "Force Tags": "Test Tags",
+        "Task Tags": "Test Tags",
+        "Task Setup": "Test Setup",
+        "Task Teardown": "Test Teardown",
+        "Task Timeout": "Test Timeout",
     }
 
     def _not_valid_here(self, name: str) -> str:
@@ -207,11 +216,11 @@ class InitFileSettings(FileSettings):
 
 class ResourceFileSettings(FileSettings):
     names = (
-        'Documentation',
-        'Keyword Tags',
-        'Library',
-        'Resource',
-        'Variables'
+        "Documentation",
+        "Keyword Tags",
+        "Library",
+        "Resource",
+        "Variables",
     )
 
     def _not_valid_here(self, name: str) -> str:
@@ -220,12 +229,12 @@ class ResourceFileSettings(FileSettings):
 
 class TestCaseSettings(Settings):
     names = (
-        'Documentation',
-        'Tags',
-        'Setup',
-        'Teardown',
-        'Template',
-        'Timeout'
+        "Documentation",
+        "Tags",
+        "Setup",
+        "Teardown",
+        "Template",
+        "Timeout",
     )
 
     def __init__(self, parent: SuiteFileSettings):
@@ -237,18 +246,18 @@ class TestCaseSettings(Settings):
 
     @property
     def template_set(self) -> bool:
-        template = self.settings['Template']
+        template = self.settings["Template"]
         if self._has_disabling_value(template):
             return False
-        parent_template = self.parent.settings['Test Template']
+        parent_template = self.parent.settings["Test Template"]
         return self._has_value(template) or self._has_value(parent_template)
 
-    def _has_disabling_value(self, setting: 'StatementTokens|None') -> bool:
+    def _has_disabling_value(self, setting: "StatementTokens|None") -> bool:
         if setting is None:
             return False
-        return setting == [] or setting[0].value.upper() == 'NONE'
+        return setting == [] or setting[0].value.upper() == "NONE"
 
-    def _has_value(self, setting: 'StatementTokens|None') -> bool:
+    def _has_value(self, setting: "StatementTokens|None") -> bool:
         return bool(setting and setting[0].value)
 
     def _not_valid_here(self, name: str) -> str:
@@ -257,13 +266,13 @@ class TestCaseSettings(Settings):
 
 class KeywordSettings(Settings):
     names = (
-        'Documentation',
-        'Arguments',
-        'Setup',
-        'Teardown',
-        'Timeout',
-        'Tags',
-        'Return'
+        "Documentation",
+        "Arguments",
+        "Setup",
+        "Teardown",
+        "Timeout",
+        "Tags",
+        "Return",
     )
 
     def __init__(self, parent: FileSettings):

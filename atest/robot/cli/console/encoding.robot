@@ -26,7 +26,7 @@ PYTHONIOENCODING is honored in console output
     Should Contain    ${result.stdout}    ???-????? T??t ??d K?yw?rd N?m?s, Спасибо${SPACE*29}| PASS |
 
 Invalid encoding configuration
-    [Tags]    no-windows    no-osx
+    [Tags]    no-windows    no-osx    no-pypy
     ${cmd} =    Join command line
     ...    LANG=invalid
     ...    LC_TYPE=invalid

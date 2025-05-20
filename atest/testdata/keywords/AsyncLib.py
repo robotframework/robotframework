@@ -11,7 +11,7 @@ class Hanger:
 
     async def start_async_process(self):
         while True:
-            self.ticks.append('tick')
+            self.ticks.append("tick")
             await asyncio.sleep(0.01)
 
 
@@ -19,12 +19,13 @@ class AsyncLib:
 
     async def basic_async_test(self):
         await asyncio.sleep(0.1)
-        return 'Got it'
+        return "Got it"
 
     def async_with_run_inside(self):
         async def inner():
             await asyncio.sleep(0.1)
-            return 'Works'
+            return "Works"
+
         return asyncio.run(inner())
 
     async def can_use_gather(self):

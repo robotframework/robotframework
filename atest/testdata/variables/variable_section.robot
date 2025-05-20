@@ -1,3 +1,6 @@
+*** Settings ***
+Documentation           Dictionary variables are tested in a separate suite.
+
 *** Variables ***
 ${STRING}               Hello world!
 ${INTEGER}              ${42}
@@ -13,6 +16,10 @@ ${NO VALUE}             ${EMPTY}
 @{LIST CREATED FROM LIST WITH ESCAPES}    @{LIST WITH ESCAPES}
 @{SPACE ESC LIST}       \ lead    trail \    \ \ 2 \ \    \ \ \ 3 \ \ \
 @{EMPTY LIST}
+${MUTABLE}              ${{[]}}
+&{DICT}                 dicts=are mostly tested elsewhere
+@{AAA MUTABLE ITEMS}    ${MUTABLE}    ${LIST}    ${DICT}
+@{ZZZ MUTABLE ITEMS}    ${MUTABLE}    ${LIST}    ${DICT}
 ${lowercase}            Variable name in lower case
 @{lowercaselist}        Variable name in lower case
 ${S P a c e s }         Variable name with spaces
@@ -94,6 +101,16 @@ List With No Items
     Should Be True    ${EMPTY LIST} == []
     ${ret} =    Catenate    @{EMPTY LIST}    @{EMPTY LIST}    only value    @{EMPTY LIST}
     Should Be Equal    ${ret}    only value
+
+List With Mutable Items
+    [Documentation]    Resolving variables with mutable items had a bug that depended on alphabetical order.
+    ...                https://github.com/robotframework/robotframework/issues/5181
+    Should Be True     $AAA_MUTABLE_ITEMS[0] is $MUTABLE
+    Should Be True     $AAA_MUTABLE_ITEMS[1] is $LIST
+    Should Be True     $AAA_MUTABLE_ITEMS[2] is $DICT
+    Should Be True     $ZZZ_MUTABLE_ITEMS[0] is $MUTABLE
+    Should Be True     $ZZZ_MUTABLE_ITEMS[1] is $LIST
+    Should Be True     $ZZZ_MUTABLE_ITEMS[2] is $DICT
 
 Variable Names Are Case Insensitive
     Should Be Equal    ${lowercase}    Variable name in lower case

@@ -3,6 +3,7 @@ Resource          libdoc_resource.robot
 Library           ${TESTDATADIR}/default_escaping.py
 Resource          ${TESTDATADIR}/default_escaping.resource
 Suite Setup       Run Libdoc And Parse Model From JSON    ${TESTDATADIR}/default_escaping.py
+Test Tags         require-jsonschema
 
 *** Comments ***
 This test checks if the libdoc.html presented strings are the ones that can be

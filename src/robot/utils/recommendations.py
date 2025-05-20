@@ -23,15 +23,21 @@ class RecommendationFinder:
     def __init__(self, normalizer=None):
         self.normalizer = normalizer or (lambda x: x)
 
-    def find_and_format(self, name, candidates, message, max_matches=10,
-                        check_missing_argument_separator=False):
+    def find_and_format(
+        self,
+        name,
+        candidates,
+        message,
+        max_matches=10,
+        check_missing_argument_separator=False,
+    ):
         recommendations = self.find(name, candidates, max_matches)
         if recommendations:
             return self.format(message, recommendations)
         if check_missing_argument_separator and name:
             recommendation = self._check_missing_argument_separator(name, candidates)
             if recommendation:
-                return f'{message} {recommendation}'
+                return f"{message} {recommendation}"
         return message
 
     def find(self, name, candidates, max_matches=10):
@@ -59,7 +65,7 @@ class RecommendationFinder:
         if recommendations:
             message += " Did you mean:"
             for rec in recommendations:
-                message += "\n    %s" % rec
+                message += f"\n    {rec}"
         return message
 
     def _get_normalized_candidates(self, candidates):
@@ -90,5 +96,7 @@ class RecommendationFinder:
         if not matches:
             return None
         candidates = self._get_original_candidates(matches, candidates)
-        return (f"Did you try using keyword {seq2str(candidates, lastsep=' or ')} "
-                f"and forgot to use enough whitespace between keyword and arguments?")
+        return (
+            f"Did you try using keyword {seq2str(candidates, lastsep=' or ')} "
+            f"and forgot to use enough whitespace between keyword and arguments?"
+        )

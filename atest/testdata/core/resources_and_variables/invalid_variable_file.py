@@ -1,1 +1,1 @@
-raise Exception('This is an invalid variable file')
+raise Exception("This is an invalid variable file")

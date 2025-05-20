@@ -15,13 +15,17 @@ Output And Log
     Run Tests Without Processing Output    --outputdir ${CLI OUTDIR} --output myoutput.xml --report none --log mylog.html    ${TESTFILE}
     Output Directory Should Contain    mylog.html    myoutput.xml
 
-Disabling output XML only disables log with a warning
+Disabling only output file disables log with a warning
     Run Tests Without Processing Output    --outputdir ${CLI OUTDIR} -o nOnE -r report.html -l mylog.html    ${TESTFILE}
+    Stdout Should Contain              Output: \ NONE\nReport:
+    Stderr Should Match Regexp         \\[ ERROR \\] Log file cannot be created if output.xml is disabled.
     Output Directory Should Contain    report.html
-    Stderr Should Match Regexp    \\[ ERROR \\] Log file cannot be created if output.xml is disabled.
 
 All output files disabled
-    Run Tests Without Processing Output    --outputdir ${CLI OUTDIR} -o nOnE -r NONE -l none    ${TESTFILE}
+    [Documentation]    Turning colors on turns also hyperlinks on console and `NONE` cannot be linked.
+    Run Tests Without Processing Output    --outputdir ${CLI OUTDIR} -o nOnE -r NONE -l none --console-colors ON   ${TESTFILE}
+    Stdout Should Contain              Output: \ NONE\n
+    Stderr Should Be Empty
     Output Directory Should Be Empty
 
 Debug, Xunit And Report File Can Be Created When Output Is NONE

@@ -5,8 +5,8 @@ Resource         atest_resource.robot
 *** Test Cases ***
 Set attributes to Python object
     ${tc} =    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    \${VAR.attr} = new value
-    Check Log Message    ${tc.kws[1].msgs[0]}    \${ v a r . attr2 } = nv2
+    Check Log Message    ${tc[0, 0]}    \${VAR.attr} = new value
+    Check Log Message    ${tc[1, 0]}    \${ v a r . attr2 } = nv2
 
 Set nested attribute
     Check Test Case    ${TESTNAME}
@@ -18,6 +18,12 @@ Set item to list attribute
     Check Test Case    ${TESTNAME}
 
 Set item to dict attribute
+    Check Test Case    ${TESTNAME}
+
+Set using @-syntax
+    Check Test Case    ${TESTNAME}
+
+Set using &-syntax
     Check Test Case    ${TESTNAME}
 
 Trying to set un-settable attribute
@@ -36,7 +42,4 @@ Strings and integers do not support extended assign
     Check Test Case    ${TESTNAME}
 
 Attribute name must be valid
-    Check Test Case    ${TESTNAME}
-
-Extended syntax is ignored with list variables
     Check Test Case    ${TESTNAME}

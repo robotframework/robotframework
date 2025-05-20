@@ -19,20 +19,20 @@ from robot.errors import DataError
 
 try:
     from docutils.core import publish_doctree
-    from docutils.parsers.rst import directives
-    from docutils.parsers.rst import roles
+    from docutils.parsers.rst import directives, roles
     from docutils.parsers.rst.directives import register_directive
     from docutils.parsers.rst.directives.body import CodeBlock
     from docutils.parsers.rst.directives.misc import Include
 except ImportError:
-    raise DataError("Using reStructuredText test data requires having "
-                    "'docutils' module version 0.9 or newer installed.")
+    raise DataError(
+        "Using reStructuredText test data requires having "
+        "'docutils' module version 0.9 or newer installed."
+    )
 
 
 class RobotDataStorage:
-
     def __init__(self, doctree):
-        if not hasattr(doctree, '_robot_data'):
+        if not hasattr(doctree, "_robot_data"):
             doctree._robot_data = []
         self._robot_data = doctree._robot_data
 
@@ -40,7 +40,7 @@ class RobotDataStorage:
         self._robot_data.extend(rows)
 
     def get_data(self):
-        return '\n'.join(self._robot_data)
+        return "\n".join(self._robot_data)
 
     def has_data(self):
         return bool(self._robot_data)
@@ -49,15 +49,15 @@ class RobotDataStorage:
 class RobotCodeBlock(CodeBlock):
 
     def run(self):
-        if 'robotframework' in self.arguments:
+        if "robotframework" in self.arguments:
             store = RobotDataStorage(self.state_machine.document)
             store.add_data(self.content)
         return []
 
 
-register_directive('code', RobotCodeBlock)
-register_directive('code-block', RobotCodeBlock)
-register_directive('sourcecode', RobotCodeBlock)
+register_directive("code", RobotCodeBlock)
+register_directive("code-block", RobotCodeBlock)
+register_directive("sourcecode", RobotCodeBlock)
 
 
 relevant_directives = (RobotCodeBlock, Include)
@@ -68,7 +68,7 @@ def directive(*args, **kwargs):
     directive_class, messages = directive.__wrapped__(*args, **kwargs)
     if directive_class not in relevant_directives:
         # Skipping unknown or non-relevant directive entirely
-        directive_class = (lambda *args, **kwargs: [])
+        directive_class = lambda *args, **kwargs: []
     return directive_class, messages
 
 
@@ -88,9 +88,7 @@ def read_rest_data(rstfile):
     doctree = publish_doctree(
         rstfile.read(),
         source_path=rstfile.name,
-        settings_overrides={
-            'input_encoding': 'UTF-8',
-            'report_level': 4
-        })
+        settings_overrides={"input_encoding": "UTF-8", "report_level": 4},
+    )
     store = RobotDataStorage(doctree)
     return store.get_data()

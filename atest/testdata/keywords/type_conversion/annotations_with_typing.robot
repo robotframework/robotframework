@@ -150,21 +150,30 @@ TypedDict
     TypedDict                 {'x': -10_000, 'y': '2'}    {'x': -10000, 'y': 2}
     TypedDict                 ${{{'x': 1, 'y': '2'}}}     {'x': 1, 'y': 2}
     TypedDict with optional   {'x': 1, 'y': 2, 'z': 3}    {'x': 1, 'y': 2, 'z': 3}
+    NotRequired               {'x': 1, 'y': 2, 'z': 3}    {'x': 1, 'y': 2, 'z': 3}
+    Required                  {'x': 1, 'y': 2, 'z': 3}    {'x': 1, 'y': 2, 'z': 3}
 
 Stringified TypedDict types
     Stringified TypedDict     {'a': 1, 'b': 2}            {'a': 1, 'b': 2}
     Stringified TypedDict     {'a': 1, 'b': 2.3}          {'a': 1, 'b': 2.3}
     Stringified TypedDict     {'a': '1', 'b': '2.3'}      {'a': 1, 'b': 2.3}
 
-Optional TypedDict keys can be omitted
+Optional TypedDict keys can be omitted (total=False)
     TypedDict with optional   {'x': 0, 'y': '0'}          {'x': 0, 'y': 0}
     TypedDict with optional   ${{{'x': 0, 'y': '0'}}}     {'x': 0, 'y': 0}
+
+Not required TypedDict keys can be omitted (NotRequired/Required)
+    NotRequired               {'x': 0, 'y': '0.1'}        {'x': 0, 'y': 0.1}
+    NotRequired               ${{{'x': 0, 'y': '0'}}}     {'x': 0, 'y': 0}
+    Required                  {'x': 0, 'y': '0.1'}        {'x': 0, 'y': 0.1}
+    Required                  ${{{'x': 0, 'y': '0'}}}     {'x': 0, 'y': 0}
 
 Required TypedDict keys cannot be omitted
     [Documentation]           This test would fail if using Python 3.8 without typing_extensions!
     ...                       In that case there's no information about required/optional keys.
     [Template]                Conversion Should Fail
     TypedDict                 {'x': 123}                  type=Point2D                  error=Required item 'y' missing.
+    Required                  {'y': 0.1}                  type=RequiredAnnotation       error=Required item 'x' missing.
     TypedDict                 {}                          type=Point2D                  error=Required items 'x' and 'y' missing.
     TypedDict with optional   {}                          type=Point                    error=Required items 'x' and 'y' missing.
 

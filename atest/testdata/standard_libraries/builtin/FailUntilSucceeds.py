@@ -2,7 +2,7 @@ import time
 
 
 class FailUntilSucceeds:
-    ROBOT_LIBRARY_SCOPE = 'TESTCASE'
+    ROBOT_LIBRARY_SCOPE = "TESTCASE"
 
     def __init__(self, times_to_fail=0):
         self.times_to_fail = int(times_to_fail)
@@ -14,5 +14,5 @@ class FailUntilSucceeds:
         self.times_to_fail -= 1
         time.sleep(sleep)
         if self.times_to_fail >= 0:
-            raise Exception('Still %d times to fail!' % self.times_to_fail)
+            raise Exception(f"Still {self.times_to_fail} times to fail!")
         return message

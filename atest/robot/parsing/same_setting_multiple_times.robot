@@ -28,7 +28,7 @@ Test Teardown
 
 Test Template
     ${tc} =    Check Test Case    Use Defaults
-    Check Keyword Data     ${tc.kws[0]}    BuiltIn.Log Many    args=Sleep, 0.1s
+    Check Keyword Data     ${tc[0]}    BuiltIn.Log Many    args=Sleep, 0.1s
 
 Test Timeout
     ${tc} =    Check Test Case    Use Defaults
@@ -36,9 +36,9 @@ Test Timeout
 
 Test [Documentation]
     ${tc} =    Check Test Case    Test Settings
-    Should Be Equal    ${tc.kws[0].type}    ERROR
-    Should Be Equal    ${tc.kws[0].status}    FAIL
-    Should Be Equal     ${tc.kws[0].values[0]}    [Documentation]
+    Should Be Equal    ${tc[0].type}    ERROR
+    Should Be Equal    ${tc[0].status}    FAIL
+    Should Be Equal     ${tc[0].values[0]}    [Documentation]
 
 Test [Tags]
     Check Test Tags    Test Settings
@@ -53,7 +53,7 @@ Test [Teardown]
 
 Test [Template]
     ${tc} =    Check Test Case    Test Settings
-    Check Keyword Data     ${tc.kws[7]}    BuiltIn.Log    args=No Operation
+    Check Keyword Data     ${tc[7]}    BuiltIn.Log    args=No Operation
 
 Test [Timeout]
     ${tc} =    Check Test Case    Test Settings
@@ -61,20 +61,20 @@ Test [Timeout]
 
 Keyword [Arguments]
     ${tc} =    Check Test Case    Keyword Settings
-    Check Keyword Data    ${tc.kws[0]}    Keyword Settings    assign=\${ret}    args=1, 2, 3    tags=K1    status=FAIL
-    Check Log Message    ${tc.kws[0].msgs[0]}    Arguments: [ \${a1}='1' | \${a2}='2' | \${a3}='3' ]    TRACE
+    Check Keyword Data    ${tc[0]}    Keyword Settings    assign=\${ret}    args=1, 2, 3    tags=K1    status=FAIL
+    Check Log Message    ${tc[0, 0]}    Arguments: [ \${a1}='1' | \${a2}='2' | \${a3}='3' ]    TRACE
 
 Keyword [Documentation]
     ${tc} =    Check Test Case    Keyword Settings
-    Should Be Equal    ${tc.kws[0].doc}    ${EMPTY}
+    Should Be Equal    ${tc[0].doc}    ${EMPTY}
 
 Keyword [Tags]
     ${tc} =    Check Test Case    Keyword Settings
-    Should Be True    list($tc.kws[0].tags) == ['K1']
+    Should Be True    list($tc[0].tags) == ['K1']
 
 Keyword [Timeout]
     ${tc} =    Check Test Case    Keyword Settings
-    Should Be Equal    ${tc.kws[0].timeout}    ${NONE}
+    Should Be Equal    ${tc[0].timeout}    ${NONE}
 
 Keyword [Return]
     Check Test Case    Keyword Settings

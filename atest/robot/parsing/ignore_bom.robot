@@ -7,12 +7,12 @@ Resource       atest_resource.robot
 Byte order mark in plain text file
     [Setup]    File Should Have Bom    parsing/bom.robot
     ${tc} =    Check test case  ${TESTNAME}
-    Check log message    ${tc.kws[0].msgs[0]}    Hyvää päivää €åppa!
+    Check log message    ${tc[0, 0]}    Hyvää päivää €åppa!
 
 Byte order mark in TSV file
     [Setup]    File Should Have Bom    parsing/bom.robot
     ${tc} =    Check test case  ${TESTNAME}
-    Check log message    ${tc.kws[0].msgs[0]}    Hyvää päivää €åppa!
+    Check log message    ${tc[0, 0]}    Hyvää päivää €åppa!
 
 *** Keywords ***
 File Should Have Bom

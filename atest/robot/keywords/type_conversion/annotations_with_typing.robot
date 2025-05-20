@@ -75,7 +75,10 @@ TypedDict
 Stringified TypedDict types
     Check Test Case    ${TESTNAME}
 
-Optional TypedDict keys can be omitted
+Optional TypedDict keys can be omitted (total=False)
+    Check Test Case    ${TESTNAME}
+
+Not required TypedDict keys can be omitted (NotRequired/Required)
     Check Test Case    ${TESTNAME}
 
 Required TypedDict keys cannot be omitted

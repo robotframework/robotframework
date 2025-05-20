@@ -67,32 +67,20 @@ Invalid on_limit
     END
 
 Invalid on_limit from variable
-    [Documentation]    FAIL Invalid WHILE loop 'on_limit' value: Value 'inValid' is not accepted. Valid values are 'PASS' and 'FAIL'.
+    [Documentation]    FAIL Invalid WHILE loop 'on_limit': Value 'inValid' is not accepted. Valid values are 'PASS' and 'FAIL'.
     WHILE    True    limit=5    on_limit=${{'inValid'}}
         Fail   Should not be executed
     END
 
-On limit without limit defined
+On limit without limit
     [Documentation]    FAIL WHILE option 'on_limit' cannot be used without 'limit'.
     WHILE    True    on_limit=PaSS
         Fail   Should not be executed
     END
 
 On limit with invalid variable
-    [Documentation]    FAIL Invalid WHILE loop 'on_limit' value: Variable '\${does not exist}' not found.
+    [Documentation]    FAIL Invalid WHILE loop 'on_limit': Variable '\${does not exist}' not found.
     WHILE    True    limit=5    on_limit=${does not exist}
-        Fail   Should not be executed
-    END
-
-On limit message without limit
-    [Documentation]     FAIL Error
-    WHILE    $variable < 2    on_limit_message=Error
-        Log     ${variable}
-    END
-
-Wrong WHILE argument
-    [Documentation]     FAIL WHILE accepts only one condition, got 3 conditions '$variable < 2', 'limit=5' and 'limit_exceed_messag=Custom error message'.
-    WHILE    $variable < 2    limit=5    limit_exceed_messag=Custom error message
         Fail   Should not be executed
     END
 
@@ -100,6 +88,12 @@ On limit message
     [Documentation]     FAIL Custom error message
     WHILE    $variable < 2    limit=${limit}    on_limit_message=Custom error message
         Log     ${variable}
+    END
+
+On limit message without limit
+    [Documentation]     FAIL Error
+    WHILE    True    on_limit_message=Error
+        No Operation
     END
 
 On limit message from variable
@@ -114,7 +108,7 @@ Part of on limit message from variable
         Log     ${variable}
     END
 
-No on limit message
+On limit message is not used if limit is not hit
     WHILE    $variable < 3    limit=10    on_limit_message=${errorMsg} 2
         Log     ${variable}
         ${variable}=    Evaluate    $variable + 1
@@ -136,6 +130,6 @@ On limit message before limit
 
 On limit message with invalid variable
     [Documentation]     FAIL Invalid WHILE loop 'on_limit_message': 'Variable '${nonExisting}' not found.
-    WHILE    $variable < 2    on_limit_message=${nonExisting}    limit=5
+    WHILE    $variable < 2    on_limit_message=${nonExisting}
         Fail   Should not be executed
     END

@@ -17,11 +17,11 @@ Returned in nested structure
 
 Logged
     ${tc} =    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    ${EMPTY}
-    Check Log Message    ${tc.kws[1].msgs[0]}    RF
-    Should Be Empty    ${tc.kws[2].msgs}
+    Check Log Message    ${tc[0, 0]}    ${EMPTY}
+    Check Log Message    ${tc[1, 0]}    RF
+    Should Be Empty      ${tc[2].messages}
 
 Failed
     ${tc} =    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    Error: RF    FAIL
-    Check Log Message    ${tc.kws[0].msgs[1]}    Traceback: RF    DEBUG
+    Check Log Message    ${tc[0, 0]}    Error: RF    FAIL
+    Check Log Message    ${tc[0, 1]}    Traceback: RF    DEBUG

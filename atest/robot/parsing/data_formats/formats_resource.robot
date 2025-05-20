@@ -33,7 +33,7 @@ Run Sample File And Check Tests
     ${test} =    Check Test Case    Test Timeout
     Should Be Equal    ${test.timeout}    10 milliseconds
     ${test} =    Check Test Case    Keyword Timeout
-    Should Be Equal    ${test.kws[0].timeout}    2 milliseconds
+    Should Be Equal    ${test[0].timeout}    2 milliseconds
     Check Test Doc    Document    Testing the metadata parsing.
     ${test} =    Check Test Case    Default Fixture
     Setup Should Not Be Defined     ${test}
@@ -62,7 +62,7 @@ Check Suite With Init
     [Arguments]    ${suite}
     Should Be Equal    ${suite.name}    With Init
     Should Be Equal    ${suite.doc}    Testing suite init file
-    Check Log Message    ${suite.setup.kws[0].messages[0]}    Running suite setup
+    Check Log Message    ${suite.setup[0].messages[0]}    Running suite setup
     Teardown Should Not Be Defined    ${suite}
     Should Contain Suites    ${suite}    Sub Suite1    Sub Suite2
     Should Contain Tests    ${suite}    @{SUBSUITE_TESTS}

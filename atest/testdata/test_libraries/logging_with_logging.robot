@@ -40,3 +40,6 @@ Logging when timeout is in use
 
 Log with format
     Log with format
+
+Log non-strings
+    Log non strings

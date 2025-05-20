@@ -13,7 +13,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from itertools import chain
 import re
 
 from robot.utils import NormalizedDict
@@ -26,26 +25,29 @@ class TagStatistics:
     """Container for tag statistics."""
 
     def __init__(self, combined_stats):
-        #: Dictionary, where key is the name of the tag as a string and value
-        #: is an instance of :class:`~robot.model.stats.TagStat`.
-        self.tags = NormalizedDict(ignore='_')
-        #: List of :class:`~robot.model.stats.CombinedTagStat` objects.
+        self.tags = NormalizedDict(ignore="_")
         self.combined = combined_stats
 
     def visit(self, visitor):
         visitor.visit_tag_statistics(self)
 
     def __iter__(self):
-        return iter(sorted(chain(self.combined, self.tags.values())))
+        return iter(sorted([*self.combined, *self.tags.values()]))
 
 
 class TagStatisticsBuilder:
 
-    def __init__(self, included=None, excluded=None, combined=None, docs=None,
-                 links=None):
+    def __init__(
+        self,
+        included=None,
+        excluded=None,
+        combined=None,
+        docs=None,
+        links=None,
+    ):
         self._included = TagPatterns(included)
         self._excluded = TagPatterns(excluded)
-        self._reserved = TagPatterns('robot:*')
+        self._reserved = TagPatterns("robot:*")
         self._info = TagStatInfo(docs, links)
         self.stats = TagStatistics(self._info.get_combined_stats(combined))
 
@@ -88,11 +90,15 @@ class TagStatInfo:
 
     def _get_combined_stat(self, pattern, name=None):
         name = name or pattern
-        return CombinedTagStat(pattern, name, self.get_doc(name),
-                               self.get_links(name))
+        return CombinedTagStat(
+            pattern,
+            name,
+            self.get_doc(name),
+            self.get_links(name),
+        )
 
     def get_doc(self, tag):
-        return ' & '.join(doc.text for doc in self._docs if doc.match(tag))
+        return " & ".join(doc.text for doc in self._docs if doc.match(tag))
 
     def get_links(self, tag):
         return [link.get_link(tag) for link in self._links if link.match(tag)]
@@ -109,12 +115,12 @@ class TagStatDoc:
 
 
 class TagStatLink:
-    _match_pattern_tokenizer = re.compile(r'(\*|\?+)')
+    _match_pattern_tokenizer = re.compile(r"(\*|\?+)")
 
     def __init__(self, pattern, link, title):
         self._regexp = self._get_match_regexp(pattern)
         self._link = link
-        self._title = title.replace('_', ' ')
+        self._title = title.replace("_", " ")
 
     def match(self, tag):
         return self._regexp.match(tag) is not None
@@ -127,21 +133,23 @@ class TagStatLink:
         return link, title
 
     def _replace_groups(self, link, title, match):
-        for index, group in enumerate(match.groups()):
-            placefolder = '%%%d' % (index+1)
+        for index, group in enumerate(match.groups(), start=1):
+            placefolder = f"%{index}"
             link = link.replace(placefolder, group)
             title = title.replace(placefolder, group)
         return link, title
 
     def _get_match_regexp(self, pattern):
-        pattern = '^%s$' % ''.join(self._yield_match_pattern(pattern))
+        pattern = "".join(self._yield_match_pattern(pattern))
         return re.compile(pattern, re.IGNORECASE)
 
     def _yield_match_pattern(self, pattern):
+        yield "^"
         for token in self._match_pattern_tokenizer.split(pattern):
-            if token.startswith('?'):
-                yield '(%s)' % ('.'*len(token))
-            elif token == '*':
-                yield '(.*)'
+            if token.startswith("?"):
+                yield f"({'.' * len(token)})"
+            elif token == "*":
+                yield "(.*)"
             else:
                 yield re.escape(token)
+        yield "$"

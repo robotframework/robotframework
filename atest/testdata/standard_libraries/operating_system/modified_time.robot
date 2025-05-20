@@ -37,7 +37,7 @@ Get Modified Time Fails When Path Does Not Exist
     Get Modified Time    ${CURDIR}/does_not_exist
 
 Set Modified Time Using Epoch
-    [Documentation]    FAIL ValueError: Epoch time must be positive (got -1).
+    [Documentation]    FAIL ValueError: Epoch time must be positive, got '-1'.
     Create File    ${TESTFILE}
     ${epoch} =    Evaluate    1542892422.0 + time.timezone
     Set Modified Time    ${TESTFILE}    ${epoch}

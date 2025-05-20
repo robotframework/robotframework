@@ -13,8 +13,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import inspect
 import asyncio
+import inspect
+import sys
 from contextlib import contextmanager
 
 from robot.errors import DataError, ExecutionFailed
@@ -39,12 +40,14 @@ class Asynchronous:
         task = self.event_loop.create_task(coroutine)
         try:
             return self.event_loop.run_until_complete(task)
-        except ExecutionFailed as e:
-            if e.dont_continue:
+        except ExecutionFailed as err:
+            if err.dont_continue:
                 task.cancel()
-                # wait for task and its children to cancel
-                self.event_loop.run_until_complete(asyncio.gather(task, return_exceptions=True))
-            raise e
+                # Wait for task and its children to cancel.
+                self.event_loop.run_until_complete(
+                    asyncio.gather(task, return_exceptions=True)
+                )
+            raise err
 
     def is_loop_required(self, obj):
         return inspect.iscoroutine(obj) and not self._is_loop_running()
@@ -95,12 +98,12 @@ EXECUTION_CONTEXTS = ExecutionContexts()
 
 
 class _ExecutionContext:
-    _started_keywords_threshold = 100
 
     def __init__(self, suite, namespace, output, dry_run=False, asynchronous=None):
         self.suite = suite
         self.test = None
-        self.timeouts = set()
+        self.timeouts = []
+        self.active_timeouts = []
         self.namespace = namespace
         self.output = output
         self.dry_run = dry_run
@@ -126,8 +129,8 @@ class _ExecutionContext:
 
     @contextmanager
     def test_teardown(self, test):
-        self.variables.set_test('${TEST_STATUS}', test.status)
-        self.variables.set_test('${TEST_MESSAGE}', test.message)
+        self.variables.set_test("${TEST_STATUS}", test.status)
+        self.variables.set_test("${TEST_MESSAGE}", test.message)
         self.in_test_teardown = True
         self._remove_timeout(test.timeout)
         try:
@@ -137,8 +140,8 @@ class _ExecutionContext:
 
     @contextmanager
     def keyword_teardown(self, error):
-        self.variables.set_keyword('${KEYWORD_STATUS}', 'FAIL' if error else 'PASS')
-        self.variables.set_keyword('${KEYWORD_MESSAGE}', str(error or ''))
+        self.variables.set_keyword("${KEYWORD_STATUS}", "FAIL" if error else "PASS")
+        self.variables.set_keyword("${KEYWORD_MESSAGE}", str(error or ""))
         self.in_keyword_teardown += 1
         try:
             yield
@@ -158,82 +161,118 @@ class _ExecutionContext:
     def warn_on_invalid_private_call(self, handler):
         parent = self.user_keywords[-1] if self.user_keywords else None
         if not parent or parent.source != handler.source:
-            self.warn(f"Keyword '{handler.full_name}' is private and should only "
-                      f"be called by keywords in the same file.")
+            self.warn(
+                f"Keyword '{handler.full_name}' is private and should only "
+                f"be called by keywords in the same file."
+            )
 
     @contextmanager
-    def timeout(self, timeout):
+    def keyword_timeout(self, timeout):
         self._add_timeout(timeout)
         try:
             yield
         finally:
             self._remove_timeout(timeout)
 
+    @contextmanager
+    def timeout(self, timeout):
+        runner = timeout.get_runner()
+        self.active_timeouts.append(runner)
+        with self.output.delayed_logging:
+            self.output.debug(timeout.get_message)
+            try:
+                yield runner
+            finally:
+                self.active_timeouts.pop()
+
+    @property
+    @contextmanager
+    def paused_timeouts(self):
+        if not self.active_timeouts:
+            yield
+            return
+        for runner in self.active_timeouts:
+            runner.pause()
+        with self.output.delayed_logging_paused:
+            try:
+                yield
+            finally:
+                for runner in self.active_timeouts:
+                    runner.resume()
+
     @property
     def in_teardown(self):
-        return bool(self.in_suite_teardown or
-                    self.in_test_teardown or
-                    self.in_keyword_teardown)
+        return bool(
+            self.in_suite_teardown or self.in_test_teardown or self.in_keyword_teardown
+        )
 
     @property
     def variables(self):
         return self.namespace.variables
 
     def continue_on_failure(self, default=False):
-        parents = ([self.test] if self.test else []) + self.user_keywords
-        for index, parent in enumerate(reversed(parents)):
+        parents = [
+            result
+            for _, result, implementation in reversed(self.steps)
+            if implementation and implementation.type == "USER KEYWORD"
+        ]
+        if self.test:
+            parents.append(self.test)
+        for index, parent in enumerate(parents):
             robot = parent.tags.robot
-            if index == 0 and robot('stop-on-failure'):
+            if index == 0 and robot("stop-on-failure"):
                 return False
-            if index == 0 and robot('continue-on-failure'):
+            if index == 0 and robot("continue-on-failure"):
                 return True
-            if robot('recursive-stop-on-failure'):
+            if robot("recursive-stop-on-failure"):
                 return False
-            if robot('recursive-continue-on-failure'):
+            if robot("recursive-continue-on-failure"):
                 return True
         return default or self.in_teardown
 
     @property
     def allow_loop_control(self):
-        for _, step in reversed(self.steps):
-            if step.type == 'ITERATION':
+        for _, result, _ in reversed(self.steps):
+            if result.type == "ITERATION":
                 return True
-            if step.type == 'KEYWORD' and step.owner != 'BuiltIn':
+            if result.type == "KEYWORD" and result.owner != "BuiltIn":
                 return False
         return False
 
     def end_suite(self, data, result):
-        for name in ['${PREV_TEST_NAME}',
-                     '${PREV_TEST_STATUS}',
-                     '${PREV_TEST_MESSAGE}']:
+        for name in [
+            "${PREV_TEST_NAME}",
+            "${PREV_TEST_STATUS}",
+            "${PREV_TEST_MESSAGE}",
+        ]:
             self.variables.set_global(name, self.variables[name])
         self.output.end_suite(data, result)
         self.namespace.end_suite(data)
         EXECUTION_CONTEXTS.end_suite()
 
     def set_suite_variables(self, suite):
-        self.variables['${SUITE_NAME}'] = suite.full_name
-        self.variables['${SUITE_SOURCE}'] = str(suite.source or '')
-        self.variables['${SUITE_DOCUMENTATION}'] = suite.doc
-        self.variables['${SUITE_METADATA}'] = suite.metadata.copy()
+        self.variables["${SUITE_NAME}"] = suite.full_name
+        self.variables["${SUITE_SOURCE}"] = str(suite.source or "")
+        self.variables["${SUITE_DOCUMENTATION}"] = suite.doc
+        self.variables["${SUITE_METADATA}"] = suite.metadata.copy()
 
     def report_suite_status(self, status, message):
-        self.variables['${SUITE_STATUS}'] = status
-        self.variables['${SUITE_MESSAGE}'] = message
+        self.variables["${SUITE_STATUS}"] = status
+        self.variables["${SUITE_MESSAGE}"] = message
 
     def start_test(self, data, result):
         self.test = result
         self._add_timeout(result.timeout)
         self.namespace.start_test()
-        self.variables.set_test('${TEST_NAME}', result.name)
-        self.variables.set_test('${TEST_DOCUMENTATION}', result.doc)
-        self.variables.set_test('@{TEST_TAGS}', list(result.tags))
+        self.variables.set_test("${TEST_NAME}", result.name)
+        self.variables.set_test("${TEST_DOCUMENTATION}", result.doc)
+        self.variables.set_test("@{TEST_TAGS}", list(result.tags))
         self.output.start_test(data, result)
 
     def _add_timeout(self, timeout):
         if timeout:
             timeout.start()
-            self.timeouts.add(timeout)
+            self.timeouts.append(timeout)
 
     def _remove_timeout(self, timeout):
         if timeout in self.timeouts:
@@ -243,16 +282,14 @@ class _ExecutionContext:
         self.test = None
         self._remove_timeout(test.timeout)
         self.namespace.end_test()
-        self.variables.set_suite('${PREV_TEST_NAME}', test.name)
-        self.variables.set_suite('${PREV_TEST_STATUS}', test.status)
-        self.variables.set_suite('${PREV_TEST_MESSAGE}', test.message)
+        self.variables.set_suite("${PREV_TEST_NAME}", test.name)
+        self.variables.set_suite("${PREV_TEST_STATUS}", test.status)
+        self.variables.set_suite("${PREV_TEST_MESSAGE}", test.message)
         self.timeout_occurred = False
 
     def start_body_item(self, data, result, implementation=None):
-        self.steps.append((data, result))
-        if len(self.steps) > self._started_keywords_threshold:
-            raise DataError('Maximum limit of started keywords and control '
-                            'structures exceeded.')
+        self._prevent_execution_close_to_recursion_limit()
+        self.steps.append((data, result, implementation))
         output = self.output
         args = (data, result)
         if implementation:
@@ -274,6 +311,7 @@ class _ExecutionContext:
             method = {
                 result.FOR: output.start_for,
                 result.WHILE: output.start_while,
+                result.GROUP: output.start_group,
                 result.IF_ELSE_ROOT: output.start_if,
                 result.IF: output.start_if_branch,
                 result.ELSE: output.start_if_branch,
@@ -289,6 +327,14 @@ class _ExecutionContext:
                 result.ERROR: output.start_error,
             }[result.type]
         method(*args)
+
+    def _prevent_execution_close_to_recursion_limit(self):
+        try:
+            sys._getframe(sys.getrecursionlimit() - 100)
+        except (ValueError, AttributeError):
+            pass
+        else:
+            raise DataError("Recursive execution stopped.")
 
     def end_body_item(self, data, result, implementation=None):
         output = self.output
@@ -312,6 +358,7 @@ class _ExecutionContext:
             method = {
                 result.FOR: output.end_for,
                 result.WHILE: output.end_while,
+                result.GROUP: output.end_group,
                 result.IF_ELSE_ROOT: output.end_if,
                 result.IF: output.end_if_branch,
                 result.ELSE: output.end_if_branch,

@@ -15,26 +15,30 @@
 
 import re
 
-from .htmlformatters import LinkFormatter, HtmlFormatter
-
+from .htmlformatters import HtmlFormatter, LinkFormatter
 
 _format_url = LinkFormatter().format_url
 _format_html = HtmlFormatter().format
-_generic_escapes = (('&', '&amp;'), ('<', '&lt;'), ('>', '&gt;'))
-_attribute_escapes = _generic_escapes \
-         + (('"', '&quot;'), ('\n', '&#10;'), ('\r', '&#13;'), ('\t', '&#09;'))
-_illegal_chars_in_xml = re.compile('[\x00-\x08\x0B\x0C\x0E-\x1F\uFFFE\uFFFF]')
+_generic_escapes = (("&", "&amp;"), ("<", "&lt;"), (">", "&gt;"))
+_attribute_escapes = (
+    *_generic_escapes,
+    ('"', "&quot;"),
+    ("\n", "&#10;"),
+    ("\r", "&#13;"),
+    ("\t", "&#09;"),
+)
+_illegal_chars_in_xml = re.compile("[\x00-\x08\x0b\x0c\x0e-\x1f\ufffe\uffff]")
 
 
 def html_escape(text, linkify=True):
     text = _escape(text)
-    if linkify and '://' in text:
+    if linkify and "://" in text:
         text = _format_url(text)
     return text
 
 
 def xml_escape(text):
-    return _illegal_chars_in_xml.sub('', _escape(text))
+    return _illegal_chars_in_xml.sub("", _escape(text))
 
 
 def html_format(text):
@@ -43,7 +47,7 @@ def html_format(text):
 
 def attribute_escape(attr):
     attr = _escape(attr, _attribute_escapes)
-    return _illegal_chars_in_xml.sub('', attr)
+    return _illegal_chars_in_xml.sub("", attr)
 
 
 def _escape(text, escapes=_generic_escapes):

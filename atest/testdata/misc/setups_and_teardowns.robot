@@ -5,6 +5,7 @@ Suite Setup       ${SUITE SETUP}
 Suite Teardown    ${SUITE TEARDOWN}
 Test Setup        ${TEST SETUP}
 Test Teardown     ${TEST TEARDOWN}
+Test Tags         tag1    tag2
 
 *** Variables ***
 ${SUITE SETUP}       Suite Setup
@@ -20,6 +21,7 @@ Test with failing setup
     [Documentation]    FAIL
     ...    Setup failed:
     ...    Test Setup
+    [Tags]    -tag2
     [Setup]    Fail    Test Setup
     Fail    Should not be executed
 

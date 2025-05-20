@@ -1,8 +1,8 @@
 Language: DE
-LANGUAGE: Brazilian Portuguese
+LANGUAGE:     Brazilian    Portuguese
 
 language: invalid
-language: bad again    but not recognized due to this text
+language: another    invalid    value
 
 language: THAI         # comment here is fine
 language:ukrainian

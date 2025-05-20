@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from typing import Any, Dict, List, Sequence, Tuple, TYPE_CHECKING, Union
+from typing import Sequence, TYPE_CHECKING
 
 from .body import Body, BodyItem, BodyItemParent
 from .modelobject import DataDict
@@ -22,28 +22,25 @@ if TYPE_CHECKING:
     from .visitor import SuiteVisitor
 
 
-Arguments = Union[Sequence[Union[Any, Tuple[Any], Tuple[str, Any]]],
-                  Tuple[List[Any], Dict[str, Any]]]
-
-
 @Body.register
 class Keyword(BodyItem):
     """Base model for a single keyword.
 
     Extended by :class:`robot.running.model.Keyword` and
     :class:`robot.result.model.Keyword`.
-
-    Arguments from normal data are always strings, but other types are possible in
-    programmatic usage. See the docstrings of the extending classes for more details.
     """
-    repr_args = ('name', 'args', 'assign')
-    __slots__ = ['name', 'args', 'assign', 'type']
 
-    def __init__(self, name: 'str|None' = '',
-                 args: Arguments = (),
-                 assign: Sequence[str] = (),
-                 type: str = BodyItem.KEYWORD,
-                 parent: BodyItemParent = None):
+    repr_args = ("name", "args", "assign")
+    __slots__ = ("name", "args", "assign", "type")
+
+    def __init__(
+        self,
+        name: "str|None" = "",
+        args: Sequence[str] = (),
+        assign: Sequence[str] = (),
+        type: str = BodyItem.KEYWORD,
+        parent: BodyItemParent = None,
+    ):
         self.name = name
         self.args = tuple(args)
         self.assign = tuple(assign)
@@ -51,12 +48,12 @@ class Keyword(BodyItem):
         self.parent = parent
 
     @property
-    def id(self) -> 'str|None':
+    def id(self) -> "str|None":
         if not self:
             return None
         return super().id
 
-    def visit(self, visitor: 'SuiteVisitor'):
+    def visit(self, visitor: "SuiteVisitor"):
         """:mod:`Visitor interface <robot.model.visitor>` entry-point."""
         if self:
             visitor.visit_keyword(self)
@@ -65,13 +62,13 @@ class Keyword(BodyItem):
         return self.name is not None
 
     def __str__(self) -> str:
-        parts = list(self.assign) + [self.name] + list(self.args)
-        return '    '.join(str(p) for p in parts)
+        parts = (*self.assign, self.name, *self.args)
+        return "    ".join(str(p) for p in parts)
 
     def to_dict(self) -> DataDict:
-        data: DataDict = {'name': self.name}
+        data: DataDict = {"name": self.name}
         if self.args:
-            data['args'] = self.args
+            data["args"] = self.args
         if self.assign:
-            data['assign'] = self.assign
+            data["assign"] = self.assign
         return data

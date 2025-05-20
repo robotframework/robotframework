@@ -7,4 +7,4 @@ def raise_pass_execution_exception(msg):
 
 
 def call_pass_execution_method(msg):
-    BuiltIn().pass_execution(msg, 'lol')
+    BuiltIn().pass_execution(msg, "lol")

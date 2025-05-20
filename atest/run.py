@@ -24,6 +24,9 @@ environment variable to `TRUE`.
 
 Use `--rerun-failed (`-R`)` to re-execute failed tests from the previous run.
 
+The output directory is set based on the interpreter version and operating
+system by default. It can be changed using the normal `--outputdir` option.
+
 Examples:
 $ atest/run.py
 $ atest/run.py --exclude no-ci atest/robot/standard_libraries
@@ -46,10 +49,9 @@ from pathlib import Path
 
 from interpreter import Interpreter
 
-
 CURDIR = Path(__file__).parent
-LATEST = str(CURDIR / 'results/{interpreter.output_name}-latest.xml')
-ARGUMENTS = '''
+LATEST = str(CURDIR / "results/{interpreter.output_name}-latest.xml")
+ARGUMENTS = """
 --doc Robot Framework acceptance tests
 --metadata interpreter:{interpreter}
 --variable-file {variable_file};{interpreter.path};{interpreter.name};{interpreter.version}
@@ -61,11 +63,11 @@ ARGUMENTS = '''
 --suite-stat-level 3
 --log NONE
 --report NONE
-'''.strip()
+""".strip()
 
 
-def atests(interpreter, arguments, schema_validation=False):
-    output_dir, temp_dir = _get_directories(interpreter)
+def atests(interpreter, arguments, output_dir=None, schema_validation=False):
+    output_dir, temp_dir = _get_directories(interpreter, output_dir)
     arguments = list(_get_arguments(interpreter, output_dir)) + list(arguments)
     rc = _run(arguments, temp_dir, interpreter, schema_validation)
     if rc < 251:
@@ -73,10 +75,13 @@ def atests(interpreter, arguments, schema_validation=False):
     return rc
 
 
-def _get_directories(interpreter):
+def _get_directories(interpreter, output_dir=None):
     name = interpreter.output_name
-    output_dir = CURDIR / 'results' / name
-    temp_dir = Path(tempfile.gettempdir()) / 'robotatest' / name
+    if output_dir:
+        output_dir = Path(output_dir)
+    else:
+        output_dir = CURDIR / "results" / name
+    temp_dir = Path(tempfile.gettempdir()) / "robotatest" / name
     if output_dir.exists():
         shutil.rmtree(output_dir)
     if temp_dir.exists():
@@ -86,26 +91,32 @@ def _get_directories(interpreter):
 
 
 def _get_arguments(interpreter, output_dir):
-    arguments = ARGUMENTS.format(interpreter=interpreter,
-                                 variable_file=CURDIR / 'interpreter.py',
-                                 pythonpath=CURDIR / 'resources',
-                                 output_dir=output_dir)
+    arguments = ARGUMENTS.format(
+        interpreter=interpreter,
+        variable_file=CURDIR / "interpreter.py",
+        pythonpath=CURDIR / "resources",
+        output_dir=output_dir,
+    )
     for line in arguments.splitlines():
-        yield from line.split(' ', 1)
+        yield from line.split(" ", 1)
     for exclude in interpreter.excludes:
-        yield '--exclude'
+        yield "--exclude"
         yield exclude
 
 
 def _run(args, tempdir, interpreter, schema_validation):
-    command = [str(c) for c in
-               [sys.executable, CURDIR.parent / 'src/robot/run.py'] + args]
-    environ = dict(os.environ,
-                   TEMPDIR=str(tempdir),
-                   PYTHONCASEOK='True',
-                   PYTHONIOENCODING='')
+    command = [
+        str(c) for c in [sys.executable, CURDIR.parent / "src/robot/run.py", *args]
+    ]
+    environ = dict(
+        os.environ,
+        TEMPDIR=str(tempdir),
+        PYTHONCASEOK="True",
+        PYTHONIOENCODING="",
+        PYTHONWARNDEFAULTENCODING="True",
+    )
     if schema_validation:
-        environ['ATEST_VALIDATE_OUTPUT'] = 'TRUE'
+        environ["ATEST_VALIDATE_OUTPUT"] = "TRUE"
     print(f"{interpreter}\n{interpreter.underline}\n")
     print(f"Running command:\n{' '.join(command)}\n")
     sys.stdout.flush()
@@ -114,38 +125,51 @@ def _run(args, tempdir, interpreter, schema_validation):
 
 
 def _rebot(rc, output_dir, interpreter):
-    output = output_dir / 'output.xml'
+    output = output_dir / "output.xml"
     if rc == 0:
-        print('All tests passed, not generating log or report.')
+        print("All tests passed, not generating log or report.")
     else:
-        command = [sys.executable, str(CURDIR.parent / 'src/robot/rebot.py'),
-                   '--output-dir', str(output_dir), str(output)]
+        command = [
+            sys.executable,
+            str(CURDIR.parent / "src/robot/rebot.py"),
+            "--output-dir",
+            str(output_dir),
+            str(output),
+        ]
         subprocess.call(command)
     latest = Path(LATEST.format(interpreter=interpreter))
     latest.unlink(missing_ok=True)
     shutil.copy(output, latest)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     parser = argparse.ArgumentParser(add_help=False)
-    parser.add_argument('-I', '--interpreter', default=sys.executable)
-    parser.add_argument('-S', '--schema-validation', action='store_true')
-    parser.add_argument('-R', '--rerun-failed', action='store_true')
-    parser.add_argument('-h', '--help', action='store_true')
+    parser.add_argument("-I", "--interpreter", default=sys.executable)
+    parser.add_argument("-S", "--schema-validation", action="store_true")
+    parser.add_argument("-R", "--rerun-failed", action="store_true")
+    parser.add_argument("-d", "--outputdir")
+    parser.add_argument("-h", "--help", action="store_true")
     options, robot_args = parser.parse_known_args()
     try:
         interpreter = Interpreter(options.interpreter)
     except ValueError as err:
         sys.exit(str(err))
     if options.rerun_failed:
-        robot_args[:0] = ['--rerun-failed', LATEST.format(interpreter=interpreter)]
+        robot_args[:0] = ["--rerun-failed", LATEST.format(interpreter=interpreter)]
     last = Path(robot_args[-1]) if robot_args else None
-    source_given = last and (last.is_dir() or last.is_file() and last.suffix == '.robot')
+    source_given = last and (
+        last.is_dir() or last.is_file() and last.suffix == ".robot"
+    )
     if not source_given:
-        robot_args += ['--exclude', 'no-ci', CURDIR / 'robot']
+        robot_args += ["--exclude", "no-ci", CURDIR / "robot"]
     if options.help:
         print(__doc__)
         rc = 251
     else:
-        rc = atests(interpreter, robot_args, options.schema_validation)
+        rc = atests(
+            interpreter,
+            robot_args,
+            options.outputdir,
+            options.schema_validation,
+        )
     sys.exit(rc)

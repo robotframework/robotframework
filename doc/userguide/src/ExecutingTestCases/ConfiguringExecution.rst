@@ -112,7 +112,7 @@ __ `reStructuredText format`_
 __ `JSON format`_
 __ `Supported file formats`_
 
-.. note:: `--parseinclude` is new in Robot Framework 6.1.
+.. note:: :option:`--parseinclude` is new in Robot Framework 6.1.
 
 Selecting files by extension
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -266,16 +266,25 @@ combining individual tags or patterns together::
    --exclude xxORyyORzz
    --include fooNOTbar
 
-Starting from RF 5.0, it is also possible to use the reserved
-tag `robot:exclude` to achieve
-the same effect as with using the `--exclude` option:
+Another way to exclude tests by tags is using the `robot:exclude` `reserved tag`__.
+This tag can also be set using a variable, which allows excluding test
+dynamically during execution.
 
 .. sourcecode:: robotframework
 
+   *** Variables ***
+   ${EXCLUDE}        robot:exclude
+
    *** Test Cases ***
-   Example
+   Literal
+      [Documentation]    Unconditionally excluded.
       [Tags]    robot:exclude
-      Fail      This is not executed
+      Log    This is not executed
+
+   As variable
+      [Documentation]    Excluded unless ${EXCLUDE} is set to a different value.
+      [Tags]    ${EXCLUDE}
+      Log    This is not executed by default
 
 Selecting test cases by tags is a very flexible mechanism and allows
 many interesting possibilities:
@@ -295,25 +304,26 @@ many interesting possibilities:
 
 Options :option:`--include` and :option:`--exclude` can be used in combination
 with :option:`--suite` and :option:`--test` discussed in the previous section.
-The general rules how they work together are as follows:
-
-- If :option:`--suite` is used, tests must be in the specified suite in addition
-  to satisfying other selection criteria.
-
-- If :option:`--include` is used with :option:`--test`, it is enough for a test
-  to match either of them.
-
-- If :option:`--exclude` is used, tests matching it are never selected.
-
-The above rules are demonstrated in the following examples::
+In that case tests that are selected must match all selection criteria::
 
   --suite example --include tag    # Match test if it is in suite 'example' and has tag 'tag'.
   --suite example --exclude tag    # Match test if it is in suite 'example' and does not have tag 'tag'.
-  --test example --include tag     # Match test if it has name 'example' or it has tag 'tag'.
+  --test ex* --include tag         # Match test if its name starts with 'ex' and it has tag 'tag'.
   --test ex* --exclude tag         # Match test if its name starts with 'ex' and it does not have tag 'tag'.
 
-.. note:: Prior to Robot Framework 7.0 using `--include` and `--test` together
-          required test to have both a matching tag and a matching name.
+.. note:: `robot:exclude` is new in Robot Framework 5.0.
+
+.. note:: Using variables with `robot:exclude` is new in Robot Framework 7.2.
+          Using variables with tags matched against :option:`--include` and
+          :option:`--exclude` is not supported.
+
+.. note:: In Robot Framework 7.0 :option:`--include` and :option:`--test` were cumulative
+          and selected tests needed to match only either of these options. That behavior
+          caused `backwards incompatibility problems`__ and it was reverted already in
+          Robot Framework 7.0.1.
+
+__ `Reserved tags`_
+__ https://github.com/robotframework/robotframework/issues/5023
 
 Re-executing failed test cases
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -366,7 +376,7 @@ When no tests match selection
 By default when no tests match the selection criteria test execution fails
 with an error like::
 
-    [ ERROR ] Suite 'Example' with includes 'xxx' contains no test cases.
+    [ ERROR ] Suite 'Example' contains no tests matching tag 'xxx'.
 
 Because no outputs are generated, this behavior can be problematic if tests
 are executed and results processed automatically. Luckily a command line
@@ -808,8 +818,8 @@ Console colors
 
 The :option:`--consolecolors (-C)` option is used to control whether
 colors should be used in the console output. Colors are implemented
-using `ANSI colors`__ except on Windows where, by default, Windows
-APIs are used instead.
+using `ANSI escape codes`__ with a backup mechanism for older Windows
+versions that do not support ANSI codes.
 
 This option supports the following case-insensitive values:
 
@@ -821,13 +831,37 @@ This option supports the following case-insensitive values:
     Colors are used also when outputs are redirected. Does not work on Windows.
 
 `ansi`
-    Same as `on` but uses ANSI colors also on Windows. Useful, for example,
-    when redirecting output to a program that understands ANSI colors.
+    Same as `on` but forces ANSI codes to be used unconditionally on Windows.
 
 `off`
     Colors are disabled.
 
 __ http://en.wikipedia.org/wiki/ANSI_escape_code
+
+.. note:: Using ANSI codes on Windows by default is new in Robot Framework 7.1.
+
+Console links
+~~~~~~~~~~~~~
+
+Result file paths written to the console at the end of the execution are, by default,
+hyperlinks. This behavior can be controlled with the :option:`--consolelinks` option
+that accepts the following case-insensitive values:
+
+`auto`
+    Paths are converted to links when `console colors`_ are enabled. This is the default.
+
+`off`
+    Links are unconditionally disabled.
+
+The hyperlink support depends also on the console that is used, but nowadays
+the `support is pretty good`__. The commonly used `Windows Console`__ does not
+support links, though, but the newer `Windows Terminal`__ does.
+
+.. note:: Hyperlink support is new in Robot Framework 7.1.
+
+__ https://github.com/Alhadis/OSC8-Adoption
+__ https://en.wikipedia.org/wiki/Windows_Console
+__ https://en.wikipedia.org/wiki/Windows_Terminal
 
 Console markers
 ~~~~~~~~~~~~~~~

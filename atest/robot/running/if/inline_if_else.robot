@@ -22,10 +22,10 @@ Not executed after failure
 Not executed after failure with assignment
     [Template]    NONE
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check IF/ELSE Status    NOT RUN    NOT RUN    root=${tc.body[1]}    run=False
-    Check IF/ELSE Status    NOT RUN    NOT RUN    root=${tc.body[2]}    run=False
-    Check Keyword Data      ${tc.body[1].body[0].body[0]}    Not run    assign=\${x}           status=NOT RUN
-    Check Keyword Data      ${tc.body[2].body[0].body[0]}    Not run    assign=\${x}, \@{y}    status=NOT RUN
+    Check IF/ELSE Status    NOT RUN    NOT RUN           root=${tc[1]}    run=False
+    Check IF/ELSE Status    NOT RUN    NOT RUN           root=${tc[2]}    run=False
+    Check Keyword Data      ${tc[1, 0, 0]}    Not run    assign=\${x}           status=NOT RUN
+    Check Keyword Data      ${tc[2, 0, 0]}    Not run    assign=\${x}, \@{y}    status=NOT RUN
 
 ELSE IF not executed
     NOT RUN    NOT RUN    PASS       index=0
@@ -79,20 +79,20 @@ Assign when no branch is run
 Inside FOR
     [Template]    NONE
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check IF/ELSE Status    NOT RUN    PASS       root=${tc.body[0].body[0].body[0]}
-    Check IF/ELSE Status    NOT RUN    PASS       root=${tc.body[0].body[1].body[0]}
-    Check IF/ELSE Status    FAIL       NOT RUN    root=${tc.body[0].body[2].body[0]}
+    Check IF/ELSE Status    NOT RUN    PASS       root=${tc[0, 0, 0]}
+    Check IF/ELSE Status    NOT RUN    PASS       root=${tc[0, 1, 0]}
+    Check IF/ELSE Status    FAIL       NOT RUN    root=${tc[0, 2, 0]}
 
 Inside normal IF
     [Template]    NONE
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check IF/ELSE Status    NOT RUN    PASS       root=${tc.body[0].body[0].body[1]}
-    Check IF/ELSE Status    NOT RUN    NOT RUN    root=${tc.body[0].body[1].body[0]}    run=False
+    Check IF/ELSE Status    NOT RUN    PASS       root=${tc[0, 0, 1]}
+    Check IF/ELSE Status    NOT RUN    NOT RUN    root=${tc[0, 1, 0]}    run=False
 
 In keyword
     [Template]    NONE
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check IF/ELSE Status    PASS       NOT RUN                       root=${tc.body[0].body[0]}
-    Check IF/ELSE Status    NOT RUN    PASS       NOT RUN            root=${tc.body[0].body[1]}
+    Check IF/ELSE Status    PASS       NOT RUN                       root=${tc[0, 0]}
+    Check IF/ELSE Status    NOT RUN    PASS       NOT RUN            root=${tc[0, 1]}
     Check IF/ELSE Status    NOT RUN    NOT RUN    NOT RUN    FAIL
-    ...                     NOT RUN    NOT RUN    NOT RUN            root=${tc.body[0].body[2]}
+    ...                     NOT RUN    NOT RUN    NOT RUN            root=${tc[0, 2]}

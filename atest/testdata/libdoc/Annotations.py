@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Any, Dict, List, Literal, Union, Tuple
+from typing import Any, Dict, List, Literal, Tuple, Union
 
 
 class UnknownType:
@@ -14,17 +14,17 @@ class Small(Enum):
 
 
 class ManySmall(Enum):
-    A = 'a'
-    B = 'b'
-    C = 'c'
-    D = 'd'
-    E = 'd'
-    F = 'e'
-    G = 'g'
-    H = 'h'
-    I = 'i'
-    J = 'j'
-    K = 'k'
+    A = "a"
+    B = "b"
+    C = "c"
+    D = "d"
+    E = "d"
+    F = "e"
+    G = "g"
+    H = "h"
+    I = "i"  # noqa: E741
+    J = "j"
+    K = "k"
 
 
 class Big(Enum):
@@ -46,7 +46,7 @@ def C_annotation_and_default(integer: int = 42, list_: list = None, enum: Small 
     pass
 
 
-def D_annotated_kw_only_args(*, kwo: int, with_default: str='value'):
+def D_annotated_kw_only_args(*, kwo: int, with_default: str = "value"):
     pass
 
 
@@ -58,8 +58,10 @@ def F_unknown_types(unknown: UnknownType, unrecognized: Ellipsis):
     pass
 
 
-def G_non_type_annotations(arg: 'One of the usages in PEP-3107',
-                           *varargs: 'But surely feels odd...'):
+def G_non_type_annotations(
+    arg: "One of the usages in PEP-3107",  # noqa: F722
+    *varargs: "But surely feels odd...",  # noqa: F722
+):
     pass
 
 
@@ -75,26 +77,32 @@ def J_union_from_typing_with_default(a: Union[int, str, Union[list, tuple]] = No
     pass
 
 
-def K_nested(a: List[int],
-             b: List[Union[int, float]],
-             c: Tuple[Tuple[UnknownType], Dict[str, Tuple[float]]]):
+def K_nested(
+    a: List[int],
+    b: List[Union[int, float]],
+    c: Tuple[Tuple[UnknownType], Dict[str, Tuple[float]]],
+):
     pass
 
 
-def L_iteral(a: Literal['on', 'off', 'int'],
-              b: Literal[1, 2, 3],
-              c: Literal[Small.one, True, None]):
+def L_iteral(
+    a: Literal["on", "off", "int"],
+    b: Literal[1, 2, 3],
+    c: Literal[Small.one, True, None],
+):
     pass
 
 
 try:
-    exec('''
+    exec(
+        """
 def M_union_syntax(a: int | str | list | tuple):
     pass
 
 
 def N_union_syntax_with_default(a: int | str | list | tuple = None):
     pass
-''')
-except TypeError:    # Python < 3.10
+"""
+    )
+except TypeError:  # Python < 3.10
     pass

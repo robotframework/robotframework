@@ -1,5 +1,5 @@
 *** Settings ***
-Force Tags      force    robot:just-an-example    ROBOT : XXX
+Test Tags      force    robot:just-an-example    ROBOT : XXX
 
 *** Test Cases ***
 Incl-1
@@ -26,6 +26,10 @@ Excl-123
     [Tags]  excl_1  excl_2  excl_3
     No Operation
 
-Robot-exclude
-    [Tags]  robot:exclude  ROBOT:EXCLUDE
-    Fail  This test will never be run
+robot:exclude
+    [Tags]    robot:exclude
+    Fail    This test will never be run
+
+robot:exclude using variable
+    [Tags]    ROBOT${{':'}}EXCLUDE
+    Fail    This test will never be run

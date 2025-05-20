@@ -24,6 +24,5 @@ Outputfile Variables Should Contain Correct Paths
     [Arguments]    ${test name}    @{files}
     ${tc} =    Check Test Case    ${test name}
     FOR    ${index}    ${file}    IN ENUMERATE    @{files}
-        Check Log Message    ${tc.body[0].msgs[${index}]}    ${file}
+        Check Log Message    ${tc[0, ${index}]}    ${file}
     END
-

@@ -30,3 +30,6 @@ __pycache__
 .settings
 .jython_cache
 .mypy_cache/
+node_modules
+.cache/
+.parcel-cache/

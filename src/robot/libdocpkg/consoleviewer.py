@@ -16,7 +16,7 @@
 import textwrap
 
 from robot.errors import DataError
-from robot.utils import MultiMatcher, console_encode
+from robot.utils import console_encode, MultiMatcher
 
 
 class ConsoleViewer:
@@ -27,13 +27,13 @@ class ConsoleViewer:
 
     @classmethod
     def handles(cls, command):
-        return command.lower() in ['list', 'show', 'version']
+        return command.lower() in ["list", "show", "version"]
 
     @classmethod
     def validate_command(cls, command, args):
         if not cls.handles(command):
-            raise DataError("Unknown command '%s'." % command)
-        if command.lower() == 'version' and args:
+            raise DataError(f"Unknown command '{command}'.")
+        if command.lower() == "version" and args:
             raise DataError("Command 'version' does not take arguments.")
 
     def view(self, command, *args):
@@ -41,11 +41,11 @@ class ConsoleViewer:
         getattr(self, command.lower())(*args)
 
     def list(self, *patterns):
-        for kw in self._keywords.search('*%s*' % p for p in patterns):
+        for kw in self._keywords.search(f"*{p}*" for p in patterns):
             self._console(kw.name)
 
     def show(self, *names):
-        if MultiMatcher(names, match_if_no_patterns=True).match('intro'):
+        if MultiMatcher(names, match_if_no_patterns=True).match("intro"):
             self._show_intro(self._libdoc)
             if self._libdoc.inits:
                 self._show_inits(self._libdoc)
@@ -53,47 +53,47 @@ class ConsoleViewer:
             self._show_keyword(kw)
 
     def version(self):
-        self._console(self._libdoc.version or 'N/A')
+        self._console(self._libdoc.version or "N/A")
 
     def _console(self, msg):
         print(console_encode(msg))
 
     def _show_intro(self, lib):
-        self._header(lib.name, underline='=')
-        self._data([('Version', lib.version),
-                    ('Scope', lib.scope if lib.type == 'LIBRARY' else None)])
+        self._header(lib.name, underline="=")
+        scope = lib.scope if lib.type == "LIBRARY" else None
+        self._data(Version=lib.version, Scope=scope)
         self._doc(lib.doc)
 
     def _show_inits(self, lib):
-        self._header('Importing', underline='-')
+        self._header("Importing", underline="-")
         for init in lib.inits:
             self._show_keyword(init, show_name=False)
 
     def _show_keyword(self, kw, show_name=True):
         if show_name:
-            self._header(kw.name, underline='-')
-        self._data([('Arguments', '[%s]' % str(kw.args))])
+            self._header(kw.name, underline="-")
+        self._data(Arguments=f"[{kw.args}]")
         self._doc(kw.doc)
 
     def _header(self, name, underline):
-        self._console('%s\n%s' % (name, underline * len(name)))
+        self._console(f"{name}\n{underline * len(name)}")
 
-    def _data(self, items):
-        ljust = max(len(name) for name, _ in items) + 3
-        for name, value in items:
+    def _data(self, **items):
+        length = max(len(name) for name in items) + 3
+        for name, value in items.items():
             if value:
-                text = '%s%s' % ((name+':').ljust(ljust), value)
-                self._console(self._wrap(text, subsequent_indent=' '*ljust))
+                text = f"{name + ':':{length}}{value}"
+                self._console(self._wrap(text, subsequent_indent=" " * length))
 
     def _doc(self, doc):
-        self._console('')
+        self._console("")
         for line in doc.splitlines():
             self._console(self._wrap(line))
         if doc:
-            self._console('')
+            self._console("")
 
     def _wrap(self, text, width=78, **config):
-        return '\n'.join(textwrap.wrap(text, width=width, **config))
+        return "\n".join(textwrap.wrap(text, width=width, **config))
 
 
 class KeywordMatcher:

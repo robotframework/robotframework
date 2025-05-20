@@ -10,7 +10,7 @@ Valid positional args
     Normal and varargs and kwargs   1    2    3    4
 
 Too few arguments
-    [Documentation]  FAIL Keyword 'BuiltIn.Should Be Equal' expected 2 to 8 arguments, got 1.
+    [Documentation]  FAIL Keyword 'BuiltIn.Should Be Equal' expected 2 to 10 arguments, got 1.
     Should Be Equal    1
 
 Too few arguments for UK

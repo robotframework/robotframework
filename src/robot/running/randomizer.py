@@ -34,14 +34,15 @@ class Randomizer(SuiteVisitor):
         if self.randomize_tests:
             self._shuffle(suite.tests)
         if not suite.parent:
-            suite.metadata['Randomized'] = self._get_message()
+            suite.metadata["Randomized"] = self._get_message()
 
     def _get_message(self):
-        possibilities = {(True, True): 'Suites and tests',
-                         (True, False): 'Suites',
-                         (False, True): 'Tests'}
-        randomized = (self.randomize_suites, self.randomize_tests)
-        return '%s (seed %s)' % (possibilities[randomized], self.seed)
+        randomized = {
+            (True, True): "Suites and tests",
+            (True, False): "Suites",
+            (False, True): "Tests",
+        }[(self.randomize_suites, self.randomize_tests)]
+        return f"{randomized} (seed {self.seed})"
 
     def visit_test(self, test):
         pass

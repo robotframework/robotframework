@@ -17,7 +17,6 @@ from typing import Any
 
 from .normalizing import NormalizedDict
 
-
 Connection = Any
 
 
@@ -33,14 +32,14 @@ class ConnectionCache:
     SSHLibrary, etc. Backwards compatibility is thus important when doing changes.
     """
 
-    def __init__(self, no_current_msg='No open connection.'):
+    def __init__(self, no_current_msg="No open connection."):
         self._no_current = NoConnection(no_current_msg)
         self.current = self._no_current  #: Current active connection.
         self._connections = []
         self._aliases = NormalizedDict[int]()
 
     @property
-    def current_index(self) -> 'int|None':
+    def current_index(self) -> "int|None":
         if not self:
             return None
         for index, conn in enumerate(self):
@@ -48,13 +47,13 @@ class ConnectionCache:
                 return index + 1
 
     @current_index.setter
-    def current_index(self, index: 'int|None'):
+    def current_index(self, index: "int|None"):
         if index is None:
             self.current = self._no_current
         else:
             self.current = self._connections[index - 1]
 
-    def register(self, connection: Connection, alias: 'str|None' = None):
+    def register(self, connection: Connection, alias: "str|None" = None):
         """Registers given connection with optional alias and returns its index.
 
         Given connection is set to be the :attr:`current` connection.
@@ -72,7 +71,7 @@ class ConnectionCache:
             self._aliases[alias] = index
         return index
 
-    def switch(self, identifier: 'int|str|Connection') -> Connection:
+    def switch(self, identifier: "int|str|Connection") -> Connection:
         """Switches to the connection specified using the ``identifier``.
 
         Identifier can be an index, an alias, or a registered connection.
@@ -83,7 +82,10 @@ class ConnectionCache:
         self.current = self.get_connection(identifier)
         return self.current
 
-    def get_connection(self, identifier: 'int|str|Connection|None' = None) -> Connection:
+    def get_connection(
+        self,
+        identifier: "int|str|Connection|None" = None,
+    ) -> Connection:
         """Returns the connection specified using the ``identifier``.
 
         Identifier can be an index (integer or string), an alias, a registered
@@ -99,9 +101,9 @@ class ConnectionCache:
             index = self.get_connection_index(identifier)
         except ValueError as err:
             raise RuntimeError(err.args[0])
-        return self._connections[index-1]
+        return self._connections[index - 1]
 
-    def get_connection_index(self, identifier: 'int|str|Connection') -> int:
+    def get_connection_index(self, identifier: "int|str|Connection") -> int:
         """Returns the index of the connection specified using the ``identifier``.
 
         Identifier can be an index (integer or string), an alias, or a registered
@@ -130,7 +132,7 @@ class ConnectionCache:
         # earliest in RF 8.0.
         return self.get_connection_index(alias_or_index)
 
-    def close_all(self, closer_method: str = 'close'):
+    def close_all(self, closer_method: str = "close"):
         """Closes connections using the specified closer method and empties cache.
 
         If simply calling the closer method is not adequate for closing
@@ -169,7 +171,7 @@ class NoConnection:
         self.message = message
 
     def __getattr__(self, name):
-        if name.startswith('__') and name.endswith('__'):
+        if name.startswith("__") and name.endswith("__"):
             raise AttributeError
         self.raise_error()
 

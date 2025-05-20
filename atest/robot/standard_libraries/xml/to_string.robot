@@ -14,10 +14,10 @@ Child element to string
 
 Log element
     ${tc}=    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    <root>\n\t<täg attr="hyvä">sisältö</täg>\n</root>
-    Check Log Message    ${tc.kws[2].msgs[0]}    <root><tag a="1" c="3">päivää</tag></root>    DEBUG
-    Check Log Message    ${tc.kws[3].msgs[0]}    <test name="root">*</test>    pattern=yes
+    Check Log Message    ${tc[0, 0]}    <root>\n\t<täg attr="hyvä">sisältö</täg>\n</root>
+    Check Log Message    ${tc[2, 0]}    <root><tag a="1" c="3">päivää</tag></root>    DEBUG
+    Check Log Message    ${tc[3, 0]}    <test name="root">*</test>    pattern=yes
 
 Log child element
     ${tc}=    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    <täg attr="hyvä">sisältö</täg>
+    Check Log Message    ${tc[0, 0]}    <täg attr="hyvä">sisältö</täg>

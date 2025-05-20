@@ -5,7 +5,7 @@ Resource          atest_resource.robot
 
 *** Test Cases ***
 Log Variables In Suite Setup
-    Set Test Variable    ${KW}    ${SUITE.setup.body[7]}
+    Set Test Variable    ${KW}    ${SUITE.setup[7]}
     Set Test Variable    ${INDEX}    ${0}
     Check Variable Message    \${/} = *    pattern=yes
     Check Variable Message    \${:} = ${:}
@@ -24,7 +24,7 @@ Log Variables In Suite Setup
     Check Variable Message    \${LOG_LEVEL} = INFO
     Check Variable Message    \${None} = None
     Check Variable Message    \${null} = None
-    Check Variable Message    \&{OPTIONS} = { include=[] | exclude=[] | skip=[] | skip_on_failure=[] }
+    Check Variable Message    \&{OPTIONS} = { rpa=False | include=[] | exclude=[] | skip=[] | skip_on_failure=[] | console_width=78 }
     Check Variable Message    \${OUTPUT_DIR} = *    pattern=yes
     Check Variable Message    \${OUTPUT_FILE} = *    pattern=yes
     Check Variable Message    \${PREV_TEST_MESSAGE} =
@@ -48,7 +48,7 @@ Log Variables In Suite Setup
 
 Log Variables In Test
     ${test} =    Check Test Case    Log Variables
-    Set Test Variable    ${KW}    ${test.body[0]}
+    Set Test Variable    ${KW}    ${test[0]}
     Set Test Variable    ${INDEX}    ${1}
     Check Variable Message    \${/} = *    pattern=yes
     Check Variable Message    \${:} = ${:}
@@ -67,7 +67,7 @@ Log Variables In Test
     Check Variable Message    \${LOG_LEVEL} = TRACE
     Check Variable Message    \${None} = None
     Check Variable Message    \${null} = None
-    Check Variable Message    \&{OPTIONS} = { include=[] | exclude=[] | skip=[] | skip_on_failure=[] }
+    Check Variable Message    \&{OPTIONS} = { rpa=False | include=[] | exclude=[] | skip=[] | skip_on_failure=[] | console_width=78 }
     Check Variable Message    \${OUTPUT_DIR} = *    pattern=yes
     Check Variable Message    \${OUTPUT_FILE} = *    pattern=yes
     Check Variable Message    \${PREV_TEST_MESSAGE} =
@@ -93,7 +93,7 @@ Log Variables In Test
 
 Log Variables After Setting New Variables
     ${test} =    Check Test Case    Log Variables
-    Set Test Variable    ${KW}    ${test.body[4]}
+    Set Test Variable    ${KW}    ${test[4]}
     Set Test Variable    ${INDEX}    ${1}
     Check Variable Message    \${/} = *    DEBUG    pattern=yes
     Check Variable Message    \${:} = ${:}    DEBUG
@@ -114,7 +114,7 @@ Log Variables After Setting New Variables
     Check Variable Message    \${LOG_LEVEL} = TRACE    DEBUG
     Check Variable Message    \${None} = None    DEBUG
     Check Variable Message    \${null} = None    DEBUG
-    Check Variable Message    \&{OPTIONS} = { include=[] | exclude=[] | skip=[] | skip_on_failure=[] }    DEBUG
+    Check Variable Message    \&{OPTIONS} = { rpa=False | include=[] | exclude=[] | skip=[] | skip_on_failure=[] | console_width=78 }    DEBUG
     Check Variable Message    \${OUTPUT_DIR} = *    DEBUG    pattern=yes
     Check Variable Message    \${OUTPUT_FILE} = *    DEBUG    pattern=yes
     Check Variable Message    \${PREV_TEST_MESSAGE} =    DEBUG
@@ -141,7 +141,7 @@ Log Variables After Setting New Variables
 
 Log Variables In User Keyword
     ${test} =    Check Test Case    Log Variables
-    Set Test Variable    ${KW}    ${test.body[5].body[2]}
+    Set Test Variable    ${KW}    ${test[5, 2]}
     Set Test Variable    ${INDEX}    ${1}
     Check Variable Message    \${/} = *    pattern=yes
     Check Variable Message    \${:} = ${:}
@@ -160,7 +160,7 @@ Log Variables In User Keyword
     Check Variable Message    \${LOG_LEVEL} = TRACE
     Check Variable Message    \${None} = None
     Check Variable Message    \${null} = None
-    Check Variable Message    \&{OPTIONS} = { include=[] | exclude=[] | skip=[] | skip_on_failure=[] }
+    Check Variable Message    \&{OPTIONS} = { rpa=False | include=[] | exclude=[] | skip=[] | skip_on_failure=[] | console_width=78 }
     Check Variable Message    \${OUTPUT_DIR} = *    pattern=yes
     Check Variable Message    \${OUTPUT_FILE} = *    pattern=yes
     Check Variable Message    \${PREV_TEST_MESSAGE} =
@@ -191,5 +191,5 @@ List and dict variables failing during iteration
 *** Keywords ***
 Check Variable Message
     [Arguments]    ${expected}    ${level}=INFO    ${pattern}=
-    Check Log Message    ${KW.msgs[${INDEX}]}    ${expected}    ${level}    pattern=${pattern}
+    Check Log Message    ${KW[${INDEX}]}    ${expected}    ${level}    pattern=${pattern}
     Set Test Variable    ${INDEX}    ${INDEX + 1}

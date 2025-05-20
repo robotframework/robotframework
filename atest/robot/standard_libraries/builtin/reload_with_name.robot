@@ -5,7 +5,7 @@ Resource         atest_resource.robot
 *** Test Cases ***
 Reload with name
     ${tc}=    Check Test Case    ${TESTNAME}
-    Check log message     ${tc.kws[1].msgs[0]}    Reloaded library foo with 7 keywords.
+    Check log message     ${tc[1, 0]}    Reloaded library foo with 7 keywords.
 
 Reload with instance
     Check Test Case    ${TESTNAME}

@@ -15,8 +15,7 @@
 
 from datetime import timedelta
 
-from robot.utils import (Sortable, elapsed_time_to_string, html_escape,
-                         is_string, normalize)
+from robot.utils import elapsed_time_to_string, html_escape, normalize, Sortable
 
 from .tags import TagPattern
 
@@ -37,31 +36,40 @@ class Stat(Sortable):
         self.failed = 0
         self.skipped = 0
         self.elapsed = timedelta()
-        self._norm_name = normalize(name, ignore='_')
+        self._norm_name = normalize(name, ignore="_")
 
-    def get_attributes(self, include_label=False, include_elapsed=False,
-                       exclude_empty=True, values_as_strings=False,
-                       html_escape=False):
-        attrs = {'pass': self.passed, 'fail': self.failed, 'skip': self.skipped}
-        attrs.update(self._get_custom_attrs())
-        if include_label:
-            attrs['label'] = self.name
+    def get_attributes(
+        self,
+        include_label=False,
+        include_elapsed=False,
+        exclude_empty=True,
+        values_as_strings=False,
+        html_escape=False,
+    ):
+        attrs = {
+            **({"label": self.name} if include_label else {}),
+            **self._get_custom_attrs(),
+            "pass": self.passed,
+            "fail": self.failed,
+            "skip": self.skipped,
+        }
         if include_elapsed:
-            attrs['elapsed'] = elapsed_time_to_string(self.elapsed, include_millis=False)
+            attrs["elapsed"] = elapsed_time_to_string(
+                self.elapsed, include_millis=False
+            )
         if exclude_empty:
-            attrs = dict((k, v) for k, v in attrs.items() if v not in ('', None))
+            attrs = {k: v for k, v in attrs.items() if v not in ("", None)}
         if values_as_strings:
-            attrs = dict((k, str(v) if v is not None else '')
-                         for k, v in attrs.items())
+            attrs = {k: str(v if v is not None else "") for k, v in attrs.items()}
         if html_escape:
-            attrs = dict((k, self._html_escape(v)) for k, v in attrs.items())
+            attrs = {k: self._html_escape(v) for k, v in attrs.items()}
         return attrs
 
     def _get_custom_attrs(self):
         return {}
 
     def _html_escape(self, item):
-        return html_escape(item) if is_string(item) else item
+        return html_escape(item) if isinstance(item, str) else item
 
     @property
     def total(self):
@@ -95,12 +103,14 @@ class Stat(Sortable):
 
 class TotalStat(Stat):
     """Stores statistic values for a test run."""
-    type = 'total'
+
+    type = "total"
 
 
 class SuiteStat(Stat):
     """Stores statistics values for a single suite."""
-    type = 'suite'
+
+    type = "suite"
 
     def __init__(self, suite):
         super().__init__(suite.full_name)
@@ -109,7 +119,7 @@ class SuiteStat(Stat):
         self._name = suite.name
 
     def _get_custom_attrs(self):
-        return {'id': self.id, 'name': self._name}
+        return {"name": self._name, "id": self.id}
 
     def _update_elapsed(self, test):
         pass
@@ -122,9 +132,10 @@ class SuiteStat(Stat):
 
 class TagStat(Stat):
     """Stores statistic values for a single tag."""
-    type = 'tag'
 
-    def __init__(self, name, doc='', links=None, combined=None):
+    type = "tag"
+
+    def __init__(self, name, doc="", links=None, combined=None):
         super().__init__(name)
         #: Documentation of tag as a string.
         self.doc = doc
@@ -137,18 +148,22 @@ class TagStat(Stat):
     @property
     def info(self):
         """Returns additional information of the tag statistics
-           are about. Either `combined` or an empty string.
+        are about. Either `combined` or an empty string.
         """
         if self.combined:
-            return 'combined'
-        return ''
+            return "combined"
+        return ""
 
     def _get_custom_attrs(self):
-        return {'doc': self.doc, 'links': self._get_links_as_string(),
-                'info': self.info, 'combined': self.combined}
+        return {
+            "doc": self.doc,
+            "links": self._get_links_as_string(),
+            "info": self.info,
+            "combined": self.combined,
+        }
 
     def _get_links_as_string(self):
-        return ':::'.join('%s:%s' % (title, url) for url, title in self.links)
+        return ":::".join(f"{title}:{url}" for url, title in self.links)
 
     @property
     def _sort_key(self):
@@ -157,7 +172,7 @@ class TagStat(Stat):
 
 class CombinedTagStat(TagStat):
 
-    def __init__(self, pattern, name=None, doc='', links=None):
+    def __init__(self, pattern, name=None, doc="", links=None):
         super().__init__(name or pattern, doc, links, combined=pattern)
         self.pattern = TagPattern.from_string(pattern)
 

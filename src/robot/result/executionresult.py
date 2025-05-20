@@ -13,35 +13,40 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from datetime import datetime
 from pathlib import Path
+from typing import overload, TextIO
 
 from robot.errors import DataError
 from robot.model import Statistics
+from robot.utils import JsonDumper, JsonLoader, setter
+from robot.version import get_full_version
 
 from .executionerrors import ExecutionErrors
 from .model import TestSuite
 
 
-def is_json_source(source):
+def is_json_source(source) -> bool:
     if isinstance(source, bytes):
-        # Latin-1 is most likely not the right encoding, but decoding bytes with it
-        # always succeeds and characters we care about will be correct as well.
-        source = source.decode('Latin-1')
+        # ISO-8859-1 is most likely *not* the right encoding, but decoding bytes
+        # with it always succeeds and characters we care about ought to be correct
+        # at least if the right encoding is UTF-8 or any ISO-8859-x encoding.
+        source = source.decode("ISO-8859-1")
     if isinstance(source, str):
         source = source.strip()
-        first, last = (source[0], source[-1]) if source else ('', '')
-        if (first, last) == ('{', '}'):
+        first, last = (source[0], source[-1]) if source else ("", "")
+        if (first, last) == ("{", "}"):
             return True
-        if (first, last) == ('<', '>'):
+        if (first, last) == ("<", ">"):
             return False
         path = Path(source)
     elif isinstance(source, Path):
         path = source
-    elif hasattr(source, 'name') and isinstance(source.name, str):
+    elif hasattr(source, "name") and isinstance(source.name, str):
         path = Path(source.name)
     else:
         return False
-    return bool(path and path.suffix.lower() == '.json')
+    return bool(path and path.suffix.lower() == ".json")
 
 
 class Result:
@@ -54,27 +59,48 @@ class Result:
     method.
     """
 
-    def __init__(self, source=None, root_suite=None, errors=None, rpa=None):
-        #: Path to the XML file where results are read from.
-        self.source = source
-        #: Hierarchical execution results as a
-        #: :class:`~.result.model.TestSuite` object.
-        self.suite = root_suite or TestSuite()
-        #: Execution errors as an
-        #: :class:`~.executionerrors.ExecutionErrors` object.
+    def __init__(
+        self,
+        source: "Path|str|None" = None,
+        suite: "TestSuite|None" = None,
+        errors: "ExecutionErrors|None" = None,
+        rpa: "bool|None" = None,
+        generator: str = "unknown",
+        generation_time: "datetime|str|None" = None,
+    ):
+        self.source = Path(source) if isinstance(source, str) else source
+        self.suite = suite or TestSuite()
         self.errors = errors or ExecutionErrors()
-        self.generated_by_robot = True
+        self.rpa = rpa
+        self.generator = generator
+        self.generation_time = generation_time
         self._status_rc = True
         self._stat_config = {}
-        self.rpa = rpa
+
+    @setter
+    def rpa(self, rpa: "bool|None") -> "bool|None":
+        if rpa is not None:
+            self._set_suite_rpa(self.suite, rpa)
+        return rpa
+
+    def _set_suite_rpa(self, suite, rpa):
+        suite.rpa = rpa
+        for child in suite.suites:
+            self._set_suite_rpa(child, rpa)
+
+    @setter
+    def generation_time(self, timestamp: "datetime|str|None") -> "datetime|None":
+        if datetime is None:
+            return None
+        if isinstance(timestamp, str):
+            return datetime.fromisoformat(timestamp)
+        return timestamp
 
     @property
-    def statistics(self):
-        """Test execution statistics.
+    def statistics(self) -> Statistics:
+        """Execution statistics.
 
-        Statistics are an instance of
-        :class:`~robot.model.statistics.Statistics` that is created based
-        on the contained ``suite`` and possible
+        Statistics are created based on the contained ``suite`` and possible
         :func:`configuration <configure>`.
 
         Statistics are created every time this property is accessed. Saving
@@ -94,15 +120,19 @@ class Result:
         return Statistics(self.suite, rpa=self.rpa, **self._stat_config)
 
     @property
-    def return_code(self):
-        """Return code (integer) of test execution.
+    def return_code(self) -> int:
+        """Execution return code.
 
-        By default returns the number of failed tests (max 250),
+        By default, returns the number of failed tests or tasks (max 250),
         but can be :func:`configured <configure>` to always return 0.
         """
         if self._status_rc:
             return min(self.suite.statistics.failed, 250)
         return 0
+
+    @property
+    def generated_by_robot(self) -> bool:
+        return self.generator.split()[0].upper() == "ROBOT"
 
     def configure(self, status_rc=True, suite_config=None, stat_config=None):
         """Configures the result object and objects it contains.
@@ -120,35 +150,161 @@ class Result:
         self._status_rc = status_rc
         self._stat_config = stat_config or {}
 
+    @classmethod
+    def from_json(
+        cls,
+        source: "str|bytes|TextIO|Path",
+        rpa: "bool|None" = None,
+    ) -> "Result":
+        """Construct a result object from JSON data.
+
+        The data is given as the ``source`` parameter. It can be:
+
+        - a string (or bytes) containing the data directly,
+        - an open file object where to read the data from, or
+        - a path (``pathlib.Path`` or string) to a UTF-8 encoded file to read.
+
+        Data can contain either:
+
+        - full result data (contains suite information, execution errors, etc.)
+          got, for example, from the :meth:`to_json` method, or
+        - only suite information got, for example, from
+          :meth:`result.testsuite.TestSuite.to_json <TestSuite.to_json>`.
+
+        :attr:`statistics` are populated automatically based on suite information
+        and thus ignored if they are present in the data.
+
+        The ``rpa`` argument can be used to override the RPA mode. The mode is
+        got from the data by default.
+
+        New in Robot Framework 7.2.
+        """
+        try:
+            data = JsonLoader().load(source)
+        except (TypeError, ValueError) as err:
+            raise DataError(f"Loading JSON data failed: {err}")
+        if "suite" in data:
+            result = cls._from_full_json(data)
+        else:
+            result = cls._from_suite_json(data)
+        result.rpa = data.get("rpa", False) if rpa is None else rpa
+        if isinstance(source, Path):
+            result.source = source
+        elif isinstance(source, str) and source[0] != "{" and Path(source).exists():
+            result.source = Path(source)
+        return result
+
+    @classmethod
+    def _from_full_json(cls, data) -> "Result":
+        return Result(
+            suite=TestSuite.from_dict(data["suite"]),
+            errors=ExecutionErrors(data.get("errors")),
+            generator=data.get("generator"),
+            generation_time=data.get("generated"),
+        )
+
+    @classmethod
+    def _from_suite_json(cls, data) -> "Result":
+        return Result(suite=TestSuite.from_dict(data))
+
+    @overload
+    def to_json(
+        self,
+        file: None = None,
+        *,
+        include_statistics: bool = True,
+        ensure_ascii: bool = False,
+        indent: int = 0,
+        separators: "tuple[str, str]" = (",", ":"),
+    ) -> str: ...
+
+    @overload
+    def to_json(
+        self,
+        file: "TextIO|Path|str",
+        *,
+        include_statistics: bool = True,
+        ensure_ascii: bool = False,
+        indent: int = 0,
+        separators: "tuple[str, str]" = (",", ":"),
+    ) -> None: ...
+
+    def to_json(
+        self,
+        file: "None|TextIO|Path|str" = None,
+        *,
+        include_statistics: bool = True,
+        ensure_ascii: bool = False,
+        indent: int = 0,
+        separators: "tuple[str, str]" = (",", ":"),
+    ) -> "str|None":
+        """Serialize results into JSON.
+
+        The ``file`` parameter controls what to do with the resulting JSON data.
+        It can be:
+
+        - ``None`` (default) to return the data as a string,
+        - an open file object where to write the data to, or
+        - a path (``pathlib.Path`` or string) to a file where to write
+          the data using UTF-8 encoding.
+
+        The ``include_statistics`` controls including statistics information
+        in the resulting JSON data. Statistics are not needed if the serialized
+        JSON data is converted back to a ``Result`` object, but they can be
+        useful for external tools.
+
+        The remaining optional parameters are used for JSON formatting.
+        They are passed directly to the underlying json__ module, but
+        the defaults differ from what ``json`` uses.
+
+        New in Robot Framework 7.2.
+
+        __ https://docs.python.org/3/library/json.html
+        """
+        data = {
+            "generator": get_full_version("Rebot"),
+            "generated": datetime.now().isoformat(),
+            "rpa": self.rpa,
+            "suite": self.suite.to_dict(),
+        }
+        if include_statistics:
+            data["statistics"] = self.statistics.to_dict()
+        data["errors"] = self.errors.messages.to_dicts()
+        return JsonDumper(
+            ensure_ascii=ensure_ascii,
+            indent=indent,
+            separators=separators,
+        ).dump(data, file)
+
     def save(self, target=None, legacy_output=False):
         """Save results as XML or JSON file.
 
         :param target: Target where to save results to. Can be a path
             (``pathlib.Path`` or ``str``) or an open file object. If omitted,
             uses the :attr:`source` which overwrites the original file.
-        :param legacy_output: Save result in Robot Framework 6.x compatible
+        :param legacy_output: Save XML results in Robot Framework 6.x compatible
             format. New in Robot Framework 7.0.
 
         File type is got based on the ``target``. The type is JSON if the ``target``
         is a path that has a ``.json`` suffix or if it is an open file that has
         a ``name`` attribute with a ``.json`` suffix. Otherwise, the type is XML.
 
-        Notice that saved JSON files only contain suite information, no statics
-        or errors like XML files. This is likely to change in the future so
-        that JSON files get a new root object with the current suite as a child
-        and statics and errors as additional children. Robot Framework's own
-        functions and methods accepting JSON results will continue to work
-        also with JSON files containing only a suite.
+        It is also possible to use :meth:`to_json` for JSON serialization. Compared
+        to this method, it allows returning the JSON in addition to writing it
+        into a file, and it also supports customizing JSON formatting.
+
+        Support for saving results in JSON is new in Robot Framework 7.0.
+        Originally only suite information was saved in that case, but starting
+        from Robot Framework 7.2, also JSON results contain full result data
+        including, for example, execution errors and statistics.
         """
         from robot.reporting.outputwriter import LegacyOutputWriter, OutputWriter
 
         target = target or self.source
         if not target:
-            raise ValueError('Path required.')
+            raise ValueError("Path required.")
         if is_json_source(target):
-            # This writes only suite information, not stats or errors. This
-            # should be changed when we add JSON support to execution.
-            self.suite.to_json(target)
+            self.to_json(target)
         else:
             writer = OutputWriter if not legacy_output else LegacyOutputWriter
             self.visit(writer(target, rpa=self.rpa))
@@ -179,11 +335,12 @@ class Result:
         elif self.rpa is None:
             self.rpa = other.rpa
         elif self.rpa is not other.rpa:
-            this, that = ('task', 'test') if other.rpa else ('test', 'task')
-            raise DataError("Conflicting execution modes. File '%s' has %ss "
-                            "but files parsed earlier have %ss. Use '--rpa' "
-                            "or '--norpa' options to set the execution mode "
-                            "explicitly." % (other.source, this, that))
+            this, that = ("task", "test") if other.rpa else ("test", "task")
+            raise DataError(
+                f"Conflicting execution modes. File '{other.source}' has {this}s "
+                f"but files parsed earlier have {that}s. Use '--rpa' or '--norpa' "
+                f"options to set the execution mode explicitly."
+            )
 
 
 class CombinedResult(Result):

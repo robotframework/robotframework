@@ -40,8 +40,8 @@ class DynamicMethod:
 
     @property
     def _camelCaseName(self):
-        tokens = self._underscore_name.split('_')
-        return ''.join([tokens[0]] + [t.capitalize() for t in tokens[1:]])
+        tokens = self._underscore_name.split("_")
+        return "".join([tokens[0]] + [t.capitalize() for t in tokens[1:]])
 
     @property
     def name(self):
@@ -55,8 +55,9 @@ class DynamicMethod:
                 result = ctx.asynchronous.run_until_complete(result)
             return self._handle_return_value(result)
         except Exception:
-            raise DataError(f"Calling dynamic method '{self.name}' failed: "
-                            f"{get_error_message()}")
+            raise DataError(
+                f"Calling dynamic method '{self.name}' failed: {get_error_message()}"
+            )
 
     def _handle_return_value(self, value):
         raise NotImplementedError
@@ -65,13 +66,13 @@ class DynamicMethod:
         if isinstance(value, str):
             return value
         if isinstance(value, bytes):
-            return value.decode('UTF-8')
+            return value.decode("UTF-8")
         if allow_tuple and is_list_like(value) and len(value) > 0:
             return tuple(value)
         if allow_none and value is None:
             return value
-        allowed = 'a string or a non-empty tuple' if allow_tuple else 'a string'
-        raise DataError(f'Return value must be {allowed}, got {type_name(value)}.')
+        allowed = "a string or a non-empty tuple" if allow_tuple else "a string"
+        raise DataError(f"Return value must be {allowed}, got {type_name(value)}.")
 
     def _to_list(self, value):
         if value is None:
@@ -82,19 +83,21 @@ class DynamicMethod:
 
     def _to_list_of_strings(self, value, allow_tuples=False):
         try:
-            return [self._to_string(item, allow_tuples)
-                    for item in self._to_list(value)]
+            return [
+                self._to_string(item, allow_tuples) for item in self._to_list(value)
+            ]
         except DataError:
-            allowed = 'strings or non-empty tuples' if allow_tuples else 'strings'
-            raise DataError(f'Return value must be a list of {allowed}, '
-                            f'got {type_name(value)}.')
+            allowed = "strings or non-empty tuples" if allow_tuples else "strings"
+            raise DataError(
+                f"Return value must be a list of {allowed}, got {type_name(value)}."
+            )
 
     def __bool__(self):
         return self.method is not no_dynamic_method
 
 
 class GetKeywordNames(DynamicMethod):
-    _underscore_name = 'get_keyword_names'
+    _underscore_name = "get_keyword_names"
 
     def _handle_return_value(self, value):
         names = self._to_list_of_strings(value)
@@ -109,10 +112,14 @@ class GetKeywordNames(DynamicMethod):
 
 
 class RunKeyword(DynamicMethod):
-    _underscore_name = 'run_keyword'
+    _underscore_name = "run_keyword"
 
-    def __init__(self, instance, keyword_name: 'str|None' = None,
-                 supports_named_args: 'bool|None' = None):
+    def __init__(
+        self,
+        instance,
+        keyword_name: "str|None" = None,
+        supports_named_args: "bool|None" = None,
+    ):
         super().__init__(instance)
         self.keyword_name = keyword_name
         self._supports_named_args = supports_named_args
@@ -129,24 +136,26 @@ class RunKeyword(DynamicMethod):
             args = (self.keyword_name, positional, named)
         elif named:
             # This should never happen.
-            raise ValueError(f"'named' should not be used when named-argument "
-                             f"support is not enabled, got {named}.")
+            raise ValueError(
+                f"'named' should not be used when named-argument support is "
+                f"not enabled, got {named}."
+            )
         else:
             args = (self.keyword_name, positional)
         return self.method(*args)
 
 
 class GetKeywordDocumentation(DynamicMethod):
-    _underscore_name = 'get_keyword_documentation'
+    _underscore_name = "get_keyword_documentation"
 
     def _handle_return_value(self, value):
-        return self._to_string(value or '')
+        return self._to_string(value or "")
 
 
 class GetKeywordArguments(DynamicMethod):
-    _underscore_name = 'get_keyword_arguments'
+    _underscore_name = "get_keyword_arguments"
 
-    def __init__(self, instance, supports_named_args: 'bool|None' = None):
+    def __init__(self, instance, supports_named_args: "bool|None" = None):
         super().__init__(instance)
         if supports_named_args is None:
             self.supports_named_args = RunKeyword(instance).supports_named_args
@@ -156,27 +165,27 @@ class GetKeywordArguments(DynamicMethod):
     def _handle_return_value(self, value):
         if value is None:
             if self.supports_named_args:
-                return ['*varargs', '**kwargs']
-            return ['*varargs']
+                return ["*varargs", "**kwargs"]
+            return ["*varargs"]
         return self._to_list_of_strings(value, allow_tuples=True)
 
 
 class GetKeywordTypes(DynamicMethod):
-    _underscore_name = 'get_keyword_types'
+    _underscore_name = "get_keyword_types"
 
     def _handle_return_value(self, value):
         return value if self else {}
 
 
 class GetKeywordTags(DynamicMethod):
-    _underscore_name = 'get_keyword_tags'
+    _underscore_name = "get_keyword_tags"
 
     def _handle_return_value(self, value):
         return self._to_list_of_strings(value)
 
 
 class GetKeywordSource(DynamicMethod):
-    _underscore_name = 'get_keyword_source'
+    _underscore_name = "get_keyword_source"
 
     def _handle_return_value(self, value):
         return self._to_string(value, allow_none=True)

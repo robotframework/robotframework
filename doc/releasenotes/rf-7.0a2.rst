@@ -74,7 +74,7 @@ the syntax for creating variables in different scopes. Except for the mandatory
 `VAR` marker, the syntax is also the same as when creating variables in the
 Variables section. The syntax is best explained with examples:
 
-.. sourcecode:: robotframework
+.. code:: robotframework
 
     *** Test Cases ***
     Example
@@ -100,7 +100,7 @@ in the Variables section, it is possible to create also `@{list}` and `&{dict}`
 variables. Unlike in the Variables section, variables can be created conditionally
 using IF/ELSE structures:
 
-.. sourcecode:: robotframework
+.. code:: robotframework
 
     *** Test Cases ***
     Long value
@@ -144,7 +144,7 @@ accepts more arguments than there are embedded arguments, the remaining argument
 can be passed in as normal arguments. This is illustrated by the following example
 keyword:
 
-.. sourcecode:: python
+.. code:: python
 
     @keyword('Number of ${animals} should be')
     def example(animals, count):
@@ -152,7 +152,7 @@ keyword:
 
 The above keyword could be used like this:
 
-.. sourcecode:: robotframework
+.. code:: robotframework
 
     *** Test Cases ***
     Example
@@ -170,7 +170,7 @@ section with `Test Tags` or `Keyword Tags` settings by using the `-tag` syntax
 (`#4374`_). For example, tests `T1` and `T3` below are given tags `all` and
 `most`, and test `T2` gets tags `all` and `one`:
 
-.. sourcecode:: robotframework
+.. code:: robotframework
 
     *** Settings ***
     Test Tags      all    most
@@ -216,7 +216,7 @@ Support for stringified generics and unions has now been added also to
 Robot Framework's argument conversion (`#4711`_). For example,
 the following typing now also works with Python 3.8:
 
-.. sourcecode:: python
+.. code:: python
 
     def example(a: 'list[int]', b: 'int | float'):
         ...
@@ -310,7 +310,7 @@ are now stored to `start` and `elapsed` attributes and message times to `time`.
 
 Examples:
 
-.. sourcecode:: xml
+.. code:: xml
 
     <!-- Old format -->
     <msg timestamp="20231108 15:36:34.278" level="INFO">Hello world!</msg>
@@ -342,7 +342,7 @@ the result model.
 
 Examples:
 
-.. sourcecode:: xml
+.. code:: xml
 
     <!-- Old format -->
     <kw name="Log" library="BuiltIn">...</kw>

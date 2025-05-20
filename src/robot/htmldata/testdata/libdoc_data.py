@@ -26,19 +26,19 @@ from typing import TypedDict, Union
 
 from robot.api.deco import keyword, not_keyword
 
-
 not_keyword(TypedDict)
 
 
 @not_keyword
 def parse_date(value: str):
     """Date in format ``dd.mm.yyyy``."""
-    d, m, y = [int(v) for v in value.split('.')]
+    d, m, y = [int(v) for v in value.split(".")]
     return date(y, m, d)
 
 
 class Direction(Enum):
     """Move direction."""
+
     UP = 1
     DOWN = 2
     LEFT = 3
@@ -47,6 +47,7 @@ class Direction(Enum):
 
 class Point(TypedDict):
     """Pointless point."""
+
     x: int
     y: int
 
@@ -58,7 +59,14 @@ class date2(date):
 ROBOT_LIBRARY_CONVERTERS = {date: parse_date}
 
 
-def type_hints(a: int, b: Direction, c: Point, d: date, e: bool = True, f: Union[int, date] = None):
+def type_hints(
+    a: int,
+    b: Direction,
+    c: Point,
+    d: date,
+    e: bool = True,
+    f: Union[int, date] = None,
+):
     """We use `integer`, `date`, `Direction`, and many other types."""
     pass
 
@@ -78,7 +86,7 @@ def one_paragraph(one):
     """Hello, world!"""
 
 
-def multiple_paragraphs(one, two, three='default'):
+def multiple_paragraphs(one, two, three="default"):
     """Hello, world!
 
     Second paragraph *has formatting* and [http://example.com|link].
@@ -152,15 +160,17 @@ def images():
     """
 
 
-@keyword('Nön-ÄSCÏÏ', tags=['Nön', 'äscïï', 'tägß'])
-def non_ascii(ärg='ööööö'):
+@keyword("Nön-ÄSCÏÏ", tags=["Nön", "äscïï", "tägß"])
+def non_ascii(ärg="ööööö"):
     """Älsö döc häs nön-äscïï stüff. Ïnclüdïng \u2603."""
 
 
-@keyword('Special ½!"#¤%&/()=?<|>+-_.!~*\'() chars',
-         tags=['½!"#¤%&/()=?', "<|>+-_.!~*\'()"])
+@keyword(
+    "Special ½!\"#¤%&/()=?<|>+-_.!~*'() chars",
+    tags=['½!"#¤%&/()=?', "<|>+-_.!~*'()"],
+)
 def special_chars():
-    """ Also doc has ½!"#¤%&/()=?<|>+-_.!~*'()."""
+    """Also doc has ½!"#¤%&/()=?<|>+-_.!~*'()."""
 
 
 def zzz_long_documentation():
