@@ -28,8 +28,9 @@ ${${NAME}}                              42
 
 *** Test Cases ***
 Command line
-    Should Be Equal    ${CLI}    2025-05-20    type=date
-    Should Be Equal    ${NOT}    INT:1
+    Should Be Equal    ${CLI}     2025-05-20    type=date
+    Should Be Equal    ${NOT}     INT:1
+    Should Be Equal    ${NOT2}    ${SPACE}leading space, no 2nd colon
 
 Variable section
     Should be equal    ${INTEGER}    42    type=int

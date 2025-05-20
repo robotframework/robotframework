@@ -1,5 +1,7 @@
 *** Settings ***
-Suite Setup       Run Tests    -v "CLI: date:2025-05-20" -v NOT:INT:1    variables/variable_types.robot
+Suite Setup       Run Tests
+...               -v "CLI: date:2025-05-20" -v NOT:INT:1 -v "NOT2: leading space, no 2nd colon"
+...               variables/variable_types.robot
 Resource          atest_resource.robot
 Resource          ../cli/runner/cli_resource.robot
 
@@ -149,7 +151,7 @@ User keyword: Invalid value
 User keyword: Invalid type
     Check Test Case    ${TESTNAME}
     Error In File
-    ...    0    variables/variable_types.robot    475
+    ...    0    variables/variable_types.robot    476
     ...    Creating keyword 'Bad type' failed:
     ...    Invalid argument specification: Invalid argument '\${arg: bad}':
     ...    Unrecognized type 'bad'.
@@ -157,7 +159,7 @@ User keyword: Invalid type
 User keyword: Invalid assignment with kwargs k_type=v_type declaration
     Check Test Case    ${TESTNAME}
     Error In File
-    ...    1    variables/variable_types.robot    479
+    ...    1    variables/variable_types.robot    480
     ...    Creating keyword 'Kwargs does not support key=value type syntax' failed:
     ...    Invalid argument specification: Invalid argument '\&{kwargs: int=float}':
     ...    Unrecognized type 'int=float'.
@@ -177,7 +179,7 @@ Embedded arguments: Invalid value from variable
 Embedded arguments: Invalid type
     Check Test Case    ${TESTNAME}
     Error In File
-    ...    2    variables/variable_types.robot    499
+    ...    2    variables/variable_types.robot    500
     ...    Creating keyword 'Embedded invalid type \${x: invalid}' failed:
     ...    Invalid embedded argument '\${x: invalid}':
     ...    Unrecognized type 'invalid'.
