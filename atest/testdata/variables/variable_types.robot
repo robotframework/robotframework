@@ -27,8 +27,12 @@ ${${NAME}}                              42
 
 
 *** Test Cases ***
+Command line
+    Should Be Equal    ${CLI}    2025-05-20    type=date
+    Should Be Equal    ${NOT}    INT:1
+
 Variable section
-    Should be equal    ${INTEGER}    ${42}
+    Should be equal    ${INTEGER}    42    type=int
     Variable should not exist    ${INTEGER: int}
     Should be equal    ${INT_LIST}    [42, 1]    type=list
     Variable should not exist    ${INT_LIST: list[int]}

@@ -1,8 +1,12 @@
 *** Settings ***
-Suite Setup       Run Tests    ${EMPTY}    variables/variable_types.robot
+Suite Setup       Run Tests    -v "CLI: date:2025-05-20" -v NOT:INT:1    variables/variable_types.robot
 Resource          atest_resource.robot
+Resource          ../cli/runner/cli_resource.robot
 
 *** Test Cases ***
+Command line
+    Check Test Case    ${TESTNAME}
+
 Variable section
     Check Test Case    ${TESTNAME}
 
@@ -145,7 +149,7 @@ User keyword: Invalid value
 User keyword: Invalid type
     Check Test Case    ${TESTNAME}
     Error In File
-    ...    0    variables/variable_types.robot    471
+    ...    0    variables/variable_types.robot    475
     ...    Creating keyword 'Bad type' failed:
     ...    Invalid argument specification: Invalid argument '\${arg: bad}':
     ...    Unrecognized type 'bad'.
@@ -153,7 +157,7 @@ User keyword: Invalid type
 User keyword: Invalid assignment with kwargs k_type=v_type declaration
     Check Test Case    ${TESTNAME}
     Error In File
-    ...    1    variables/variable_types.robot    475
+    ...    1    variables/variable_types.robot    479
     ...    Creating keyword 'Kwargs does not support key=value type syntax' failed:
     ...    Invalid argument specification: Invalid argument '\&{kwargs: int=float}':
     ...    Unrecognized type 'int=float'.
@@ -173,7 +177,7 @@ Embedded arguments: Invalid value from variable
 Embedded arguments: Invalid type
     Check Test Case    ${TESTNAME}
     Error In File
-    ...    2    variables/variable_types.robot    495
+    ...    2    variables/variable_types.robot    499
     ...    Creating keyword 'Embedded invalid type \${x: invalid}' failed:
     ...    Invalid embedded argument '\${x: invalid}':
     ...    Unrecognized type 'invalid'.
@@ -216,3 +220,13 @@ Inline IF
 
 Set global/suite/test/local variable: No support
     Check Test Case    ${TESTNAME}
+
+Invalid value on CLI
+    Run Should Fail
+    ...    -v "BAD_VALUE: int:bad" ${DATADIR}/misc/pass_and_fail.robot
+    ...    Command line variable '\${BAD_VALUE: int}' got value 'bad' that cannot be converted to integer.
+
+Invalid type on CLI
+    Run Should Fail
+    ...    -v "BAD TYPE: bad:whatever" ${DATADIR}/misc/pass_and_fail.robot
+    ...    Invalid command line variable '\${BAD TYPE: bad}': Unrecognized type 'bad'.

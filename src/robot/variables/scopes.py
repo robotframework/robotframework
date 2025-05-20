@@ -14,8 +14,10 @@
 #  limitations under the License.
 
 import os
+import re
 import tempfile
 
+from robot.errors import DataError
 from robot.model import Tags
 from robot.output import LOGGER
 from robot.utils import abspath, DotDict, find_file, get_error_details, NormalizedDict
@@ -191,11 +193,28 @@ class GlobalVariables(Variables):
                 LOGGER.error(msg)
                 LOGGER.info(details)
         for varstr in settings.variables:
-            try:
+            match = re.fullmatch("([^:]+): ([^:]+):(.*)", varstr)
+            if match:
+                name, typ, value = match.groups()
+                value = self._convert_cli_variable(name, typ, value)
+            elif ":" in varstr:
                 name, value = varstr.split(":", 1)
-            except ValueError:
+            else:
                 name, value = varstr, ""
             self[f"${{{name}}}"] = value
+
+    def _convert_cli_variable(self, name, typ, value):
+        from robot.running import TypeInfo
+
+        var = f"${{{name}: {typ}}}"
+        try:
+            info = TypeInfo.from_variable(var)
+        except DataError as err:
+            raise DataError(f"Invalid command line variable '{var}': {err}")
+        try:
+            return info.convert(value, var, kind="Command line variable")
+        except ValueError as err:
+            raise DataError(err)
 
     def _set_built_in_variables(self, settings):
         options = DotDict(
