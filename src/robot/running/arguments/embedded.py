@@ -14,7 +14,8 @@
 #  limitations under the License.
 
 import re
-from typing import Any, Mapping, Sequence
+import warnings
+from typing import Mapping, Sequence
 
 from robot.errors import DataError
 from robot.utils import get_error_message
@@ -44,11 +45,24 @@ class EmbeddedArguments:
     def from_name(cls, name: str) -> "EmbeddedArguments|None":
         return EmbeddedArgumentParser().parse(name) if "${" in name else None
 
+    def match(self, name: str) -> 're.Match|None':
+        """Deprecated since Robot Framework 7.3."""
+        warnings.warn(
+            "'EmbeddedArguments.match()' is deprecated since Robot Framework 7.3. Use "
+            "new 'EmbeddedArguments.matches()' or 'EmbeddedArguments.parse_args()' "
+            "instead. Alternatively, use 'EmbeddedArguments.name.fullmatch()' to "
+            "preserve the old behavior and to be compatible with earlier Robot "
+            "Framework versions."
+        )
+        return self.name.fullmatch(name)
+
     def matches(self, name: str) -> bool:
+        """Return ``True`` if ``name`` matches these embedded arguments."""
         args, _ = self._parse_args(name)
         return bool(args)
 
     def parse_args(self, name: str) -> "tuple[str, ...]":
+        """Parse arguments matching these embedded arguments from ``name``."""
         args, placeholders = self._parse_args(name)
         if not placeholders:
             return args
@@ -72,12 +86,12 @@ class EmbeddedArguments:
                 arg = arg.replace(ph, placeholders[ph])
         return arg
 
-    def map(self, args: Sequence[Any]) -> "list[tuple[str, Any]]":
-        args = [i.convert(a) if i else a for a, i in zip(args, self.types)]
+    def map(self, args: Sequence[object]) -> "list[tuple[str, object]]":
+        args = [t.convert(a) if t else a for a, t in zip(args, self.types)]
         self.validate(args)
         return list(zip(self.args, args))
 
-    def validate(self, args: Sequence[Any]):
+    def validate(self, args: Sequence[object]):
         """Validate that embedded args match custom regexps.
 
         Initial validation is done already when matching keywords, but this
