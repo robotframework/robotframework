@@ -1303,18 +1303,25 @@ Other types cause conversion failures.
    | bytearray_   |               |            | str_,        | Same conversion as with bytes_, but the result is a bytearray_.|                                      |
    |              |               |            | bytes_       |                                                                |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | `datetime    |               |            | str_,        | Strings are expected to be timestamps in `ISO 8601`_ like      | | `2022-02-09T16:39:43.632269`       |
-   | <dt-mod_>`__ |               |            | int_,        | format `YYYY-MM-DD hh:mm:ss.mmmmmm`, where any non-digit       | | `2022-02-09 16:39`                 |
+   | `datetime    |               |            | str_,        | String timestamps are expected to be in `ISO 8601`_ like       | | `2022-02-09T16:39:43.632269`       |
+   | <dt-mod_>`__ |               |            | int_,        | format `YYYY-MM-DD hh:mm:ss.mmmmmm`, where any non-digit       | | `20220209 16:39`                   |
    |              |               |            | float_       | character can be used as a separator or separators can be      | | `2022-02-09`                       |
-   |              |               |            |              | omitted altogether. Additionally, only the date part is        | | `${1644417583.632269}` (Epoch time)|
-   |              |               |            |              | mandatory, all possibly missing time components are considered |                                      |
+   |              |               |            |              | omitted altogether. Additionally, only the date part is        | | `now` (current local date and time)|
+   |              |               |            |              | mandatory, all possibly missing time components are considered | | `${1644417583.632269}` (Epoch time)|
    |              |               |            |              | to be zeros.                                                   |                                      |
+   |              |               |            |              |                                                                |                                      |
+   |              |               |            |              | A special value ``NOW`` (case-insensitive) can be used to get  |                                      |
+   |              |               |            |              | the current local date and time. This is new in Robot Framework|                                      |
+   |              |               |            |              | 7.3                                                            |                                      |
    |              |               |            |              |                                                                |                                      |
    |              |               |            |              | Integers and floats are considered to represent seconds since  |                                      |
    |              |               |            |              | the `Unix epoch`_.                                             |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | date_        |               |            | str_         | Same string conversion as with `datetime <dt-mod_>`__, but all | | `2018-09-12`                       |
-   |              |               |            |              | time components are expected to be omitted or to be zeros.     |                                      |
+   | date_        |               |            | str_         | Same timestamp conversion as with `datetime <dt-mod_>`__, but  | | `2018-09-12`                       |
+   |              |               |            |              | all time components are expected to be omitted or to be zeros. | | `20180912`                         |
+   |              |               |            |              |                                                                | | `today` (current local date)       |
+   |              |               |            |              | A special value ``TODAY`` (case-insensitive) can be used to get|                                      |
+   |              |               |            |              | the current local date. This is new in Robot Framework 7.3.    |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | timedelta_   |               |            | str_,        | Strings are expected to represent a time interval in one of    | | `42` (42 seconds)                  |
    |              |               |            | int_,        | the time formats Robot Framework supports: `time as number`_,  | | `1 minute 2 seconds`               |
@@ -1382,7 +1389,7 @@ Other types cause conversion failures.
    |              |               |            |              |                                                                |                                      |
    |              |               |            |              | Alias `sequence` is new in Robot Framework 7.0.                |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | tuple_       |               |            | str_,        | Same as `list`, but string arguments must tuple literals.      | | `('one', 'two')`                   |
+   | tuple_       |               |            | str_,        | Same as `list`, but string arguments must be tuple literals.   | | `('one', 'two')`                   |
    |              |               |            | Sequence_    |                                                                |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | set_         | `Set          |            | str_,        | Same as `list`, but string arguments must be set literals or   | | `{1, 2, 3, 42}`                    |

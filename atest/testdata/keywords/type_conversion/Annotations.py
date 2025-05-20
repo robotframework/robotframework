@@ -95,8 +95,19 @@ def datetime_(argument: datetime, expected=None):
     _validate_type(argument, expected)
 
 
+def datetime_now(argument: datetime):
+    diff = (datetime.now() - argument).total_seconds()
+    if not (0 <= diff < 0.5):
+        raise AssertionError
+
+
 def date_(argument: date, expected=None):
     _validate_type(argument, expected)
+
+
+def date_today(argument: date):
+    if argument != date.today():
+        raise AssertionError
 
 
 def timedelta_(argument: timedelta, expected=None):

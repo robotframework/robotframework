@@ -81,7 +81,7 @@ Examples: ``good``, ``hyvä`` (same as ``hyv\\xE4``), ``\\x00`` (the null byte)
 """,
     bytearray: "Set below to same value as `bytes`.",
     datetime: """\
-Strings are expected to be a timestamp in
+String timestamps are expected to be in
 [https://en.wikipedia.org/wiki/ISO_8601|ISO 8601] like
 format ``YYYY-MM-DD hh:mm:ss.mmmmmm``, where any non-digit
 character can be used as a separator or separators can be
@@ -89,20 +89,26 @@ omitted altogether. Additionally, only the date part is
 mandatory, all possibly missing time components are considered
 to be zeros.
 
+A special value ``NOW`` (case-insensitive) can be used to get the
+current local date and time. This is new in Robot Framework 7.3.
+
 Integers and floats are considered to represent seconds since
 the [https://en.wikipedia.org/wiki/Unix_time|Unix epoch].
 
-Examples: ``2022-02-09T16:39:43.632269``, ``2022-02-09 16:39``,
-``${1644417583.632269}`` (Epoch time)
+Examples: ``2022-02-09T16:39:43.632269``, ``20220209 16:39``,
+``now``, ``${1644417583.632269}`` (Epoch time)
 """,
     date: """\
-Strings are expected to be a timestamp in
+String timestamps are expected to be in
 [https://en.wikipedia.org/wiki/ISO_8601|ISO 8601] like date format
 ``YYYY-MM-DD``, where any non-digit character can be used as a separator
 or separators can be omitted altogether. Possible time components are
 only allowed if they are zeros.
 
-Examples: ``2022-02-09``, ``2022-02-09 00:00``
+A special value ``TODAY`` (case-insensitive) can be used to get
+the current local date. This is new in Robot Framework 7.3.
+
+Examples: ``2022-02-09``, ``2022-02-09 00:00``, ``today``
 """,
     timedelta: """\
 Strings are expected to represent a time interval in one of
