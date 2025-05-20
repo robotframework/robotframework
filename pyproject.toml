@@ -1,15 +1,10 @@
-[project]
-requires-python = ">=3.8"
-
 [tool.black]
 line_length = 88
-extend-exclude = "atest/result/"
+# When we add [project] with requires-python, remove this and Ruff's target-version
+target-version = ["py38", "py39", "py310", "py311", "py312", "py313"]
 
 [tool.ruff]
-extend-exclude = ["atest/result/"]
-
-[tool.ruff.format]
-quote-style = "double"
+target-version = "py38"
 
 [tool.ruff.lint]
 extend-select = ["I"]  # imports
@@ -33,7 +28,6 @@ order-by-type = false
 # https://pycqa.github.io/isort/docs/configuration/multi_line_output_modes.html
 multi_line_output = 5
 extend_skip = ["__init__.py", "src/robot/api/parsing.py"]
-skip_glob = ["atest/result/*"]
 combine_as_imports = true
 order_by_type = false
 line_length = 88

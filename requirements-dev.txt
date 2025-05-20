@@ -2,7 +2,7 @@
 # See BUILD.rst for details about the latter
 invoke >= 0.20
 rellu >= 0.7
-setuptools == 67.8.0
+setuptools > 75
 twine > 6
 wheel
 docutils
