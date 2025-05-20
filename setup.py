@@ -77,8 +77,8 @@ setup(
     packages=find_packages("src"),
     entry_points={
         "console_scripts": [
-            "robot = robot.run:run_cli",
-            "rebot = robot.rebot:rebot_cli",
+            "robot = robot:run_cli",
+            "rebot = robot:rebot_cli",
             "libdoc = robot.libdoc:libdoc_cli",
         ]
     },
