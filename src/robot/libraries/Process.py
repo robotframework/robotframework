@@ -279,6 +279,9 @@ class Process:
     | `Should Be Equal`      | ${stdout}             | ${result.stdout}      |
     | `File Should Be Empty` | ${result.stderr_path} |                       |
 
+    Notice that possible trailing newlines in captured``stdout`` and ``stderr``
+    are removed automatically.
+
     = Boolean arguments =
 
     Some keywords accept arguments that are handled as Boolean values true or
