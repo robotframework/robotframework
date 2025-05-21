@@ -33,3 +33,8 @@ Generate Random String With [LETTERS]
 Generate Random String With [NUMBERS]
     Check Test Case    ${TESTNAME}
 
+Generate Random String With [ARABIC]
+    Check Test Case    ${TESTNAME}
+
+Generate Random String With [POLISH]
+    Check Test Case    ${TESTNAME}
