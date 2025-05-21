@@ -1,5 +1,5 @@
 =======================================
-Robot Framework 7.3 release candidate 2
+Robot Framework 7.3 release candidate 3
 =======================================
 
 .. default-role:: code
@@ -23,16 +23,16 @@ to install the latest available release or use
 
 ::
 
-   pip install robotframework==7.3rc2
+   pip install robotframework==7.3rc3
 
 to install exactly this version. Alternatively you can download the package
 from PyPI_ and install it manually. For more details and other installation
 approaches, see the `installation instructions`_.
 
-Robot Framework 7.3 rc 2 was released on Monday May 19, 2025. Compared to the
-`first release candidate <rf-7.3rc1.rst>`_, it mainly contains some more
-enhancements related to variable type conversion and further fixes related to
-timeouts. It was followed by the third release candidate on Wednesday May 21, 2025.
+Robot Framework 7.3 rc 3 was released on Wednesday May 21, 2025. Compared to the
+`second release candidate <rf-7.3rc2.rst>`_, it mainly contains support for
+variable conversion also from the command line and some more bug fixes.
+The final release is targeted for Tuesday May 27, 2025.
 
 .. _Robot Framework: http://robotframework.org
 .. _Robot Framework Foundation: http://robotframework.org/foundation
@@ -56,12 +56,17 @@ Variable type conversion
 ------------------------
 
 The most important new feature in Robot Framework 7.3 is variable type conversion
-(`#3278`_). The syntax to specify variable types is `${name: type}` and the space
-after the colon is mandatory. Variable type conversion supports the same types
-that the `argument conversion`__ supports. For example, `${number: int}`
-means that the value of the variable `${number}` is converted to an integer.
+in the data (`#3278`_) and with the command line variables (`#2946`_). The syntax
+to specify variable types is `${name: type}` in the data and `name: type:value`
+on the command line, and the space after the colon is mandatory in both cases.
+Variable type conversion supports the same types that the `argument conversion`__
+supports. For example, `${number: int}` means that the value of the variable
+`${number}` is converted to an integer.
 
 __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#supported-conversions
+
+Variable conversion in data
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Variable types work in the Variables section, with the `VAR` syntax, when creating
 variables based on keyword return values, with FOR loops and, very importantly, with
@@ -129,6 +134,21 @@ user keyword arguments. All these usages are demonstrated by the following examp
 
    Move ${distance: int | float} meters
        Should Be Equal    ${distance}     ${3.14}
+
+Variable conversion on command line
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Variable conversion works also with variables given from the command line using
+the `--variable` option. The syntax is `name: type:value` and, due to the space
+being mandatory, the whole option value typically needs to be quoted. Following
+examples demonstrate some possible usages for this functionality::
+
+    --variable "ITERATIONS: int:99"
+    --variable "PAYLOAD: dict:{'id': 1, 'name': 'Robot'}"
+    --variable "START_TIME: datetime:now"
+
+Notice that the last conversion uses the new `datetime` conversion that allows
+getting the current local date and time with the special value `now` (`#5440`_).
 
 Fixes and enhancements for timeouts
 -----------------------------------
@@ -282,19 +302,36 @@ __ https://github.com/robotframework/robotframework/blob/master/CONTRIBUTING.rst
 Backwards incompatible changes
 ==============================
 
-There is only one known backwards incompatible change in this release, but
-`every change can break someones workflow`__.
+All known backwards incompatible changes in this release are related to
+the variable conversion syntax, but `every change can break someones workflow`__
+so we recommend everyone to test this release before using it in production.
 
 __ https://xkcd.com/1172/
 
-Variable type syntax may clash with existing variables
-------------------------------------------------------
+Variable type syntax in data may clash with existing variables
+--------------------------------------------------------------
 
-The syntax to specify variable types like `${x: int}` (`#3278`_) may clash with
-existing variables having names with colons. This is not very likely, though,
-because the type syntax requires having a space after the colon and names like
-`${foo:bar}` are thus not affected. If someone actually has a variable with
-a space after a colon, the space needs to be removed.
+The syntax to specify variable types in the data like `${x: int}` (`#3278`_)
+may clash with existing variables having names with colons. This is not very
+likely, though, because the type syntax requires having a space after the colon
+and names like `${x:int}` are thus not affected. If someone actually has
+a variable with a space after a colon, the space needs to be removed.
+
+Command line variable type syntax may clash with existing values
+----------------------------------------------------------------
+
+The variable type syntax can cause problems also with variables given from
+the command line (`#2946`_). Also the syntax to specify variables without a type
+uses a colon like `--variable NAME:value`, but because the type syntax requires
+a space after the colon like `--variable X: int:42`, there typically are no
+problems. In practice there are problems only if a value starts with a space and
+contains one or more colons::
+
+    --variable NAME: this is :not: common
+
+In such cases an explicit type needs to be added::
+
+    --variable NAME: str: this is :not: common
 
 Deprecated features
 ===================
@@ -355,8 +392,8 @@ community has provided some great contributions:
 - `Lucian D. Crainic <https://github.com/LucianCrainic>`__ added Italian Libdoc UI
   translation (`#5351`_)
 
-Big thanks to Robot Framework Foundation, to community members listed above, and to
-everyone else who has tested preview releases, submitted bug reports, proposed
+Big thanks to Robot Framework Foundation, to community members listed above, and
+to everyone else who has tested preview releases, submitted bug reports, proposed
 enhancements, debugged problems, or otherwise helped with Robot Framework 7.3
 development.
 
@@ -404,6 +441,11 @@ Full list of fixes and enhancements
       - high
       - Dialogs: Not possible to stop execution with timeouts or by pressing Ctrl⁠-⁠C
       - rc 1
+    * - `#2946`_
+      - enhancement
+      - high
+      - Variable type conversion with command line variables
+      - rc 3
     * - `#5334`_
       - enhancement
       - high
@@ -419,6 +461,16 @@ Full list of fixes and enhancements
       - medium
       - Writing messages to debug file and to console is delayed when timeouts are used
       - rc 1
+    * - `#4514`_
+      - bug
+      - medium
+      - Cannot interrupt `robot.run` or `robot.run_cli` and call it again
+      - rc 3
+    * - `#5098`_
+      - bug
+      - medium
+      - `buildout` cannot create start-up scripts using current entry point configuration
+      - rc 3
     * - `#5330`_
       - bug
       - medium
@@ -529,6 +581,11 @@ Full list of fixes and enhancements
       - medium
       - Deprecate `is_string`, `is_bytes`, `is_number`, `is_integer` and `is_pathlike` utility functions
       - rc 1
+    * - `#5440`_
+      - enhancement
+      - medium
+      - Support `now` and `today` as special values in `datetime` and `date` conversion, respectively
+      - rc 3
     * - `#5398`_
       - bug
       - low
@@ -580,7 +637,7 @@ Full list of fixes and enhancements
       - Document ERROR level and that logging with it stops execution if `--exit-on-error` is enabled
       - rc 1
 
-Altogether 41 issues. View on the `issue tracker <https://github.com/robotframework/robotframework/issues?q=milestone%3Av7.3>`__.
+Altogether 45 issues. View on the `issue tracker <https://github.com/robotframework/robotframework/issues?q=milestone%3Av7.3>`__.
 
 .. _#5368: https://github.com/robotframework/robotframework/issues/5368
 .. _#5417: https://github.com/robotframework/robotframework/issues/5417
@@ -588,9 +645,12 @@ Altogether 41 issues. View on the `issue tracker <https://github.com/robotframew
 .. _#5352: https://github.com/robotframework/robotframework/issues/5352
 .. _#4173: https://github.com/robotframework/robotframework/issues/4173
 .. _#5386: https://github.com/robotframework/robotframework/issues/5386
+.. _#2946: https://github.com/robotframework/robotframework/issues/2946
 .. _#5334: https://github.com/robotframework/robotframework/issues/5334
 .. _#5387: https://github.com/robotframework/robotframework/issues/5387
 .. _#3644: https://github.com/robotframework/robotframework/issues/3644
+.. _#4514: https://github.com/robotframework/robotframework/issues/4514
+.. _#5098: https://github.com/robotframework/robotframework/issues/5098
 .. _#5330: https://github.com/robotframework/robotframework/issues/5330
 .. _#5340: https://github.com/robotframework/robotframework/issues/5340
 .. _#5345: https://github.com/robotframework/robotframework/issues/5345
@@ -613,6 +673,7 @@ Altogether 41 issues. View on the `issue tracker <https://github.com/robotframew
 .. _#5412: https://github.com/robotframework/robotframework/issues/5412
 .. _#5414: https://github.com/robotframework/robotframework/issues/5414
 .. _#5416: https://github.com/robotframework/robotframework/issues/5416
+.. _#5440: https://github.com/robotframework/robotframework/issues/5440
 .. _#5398: https://github.com/robotframework/robotframework/issues/5398
 .. _#5403: https://github.com/robotframework/robotframework/issues/5403
 .. _#5404: https://github.com/robotframework/robotframework/issues/5404
