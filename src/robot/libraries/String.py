@@ -642,6 +642,8 @@ class String:
         | ``[UPPER]``   | Uppercase ASCII characters from ``A`` to ``Z``. |
         | ``[LETTERS]`` | Lowercase and uppercase ASCII characters.       |
         | ``[NUMBERS]`` | Numbers from 0 to 9.                            |
+        | ``[ARABIC]``  | Arabic characters from 0x0600 to 0x0700 unicode |
+        | ``[POLISH]``  | ASCII characters and Polish diacritical signs.  |
 
         Examples:
         | ${ret} = | Generate Random String |
@@ -652,6 +654,21 @@ class String:
 
         Giving ``length`` as a range of values is new in Robot Framework 5.0.
         """
+
+        marker_map = {
+            '[LOWER]': ascii_lowercase,
+            '[UPPER]': ascii_uppercase,
+            '[LETTERS]': ascii_lowercase + ascii_uppercase,
+            '[NUMBERS]': digits,
+            '[ARABIC]':  ''.join(chr(c) for c in range(0x0614, 0x0700)),
+            '[POLISH]': (
+                ascii_lowercase + ascii_uppercase +
+                    ''.join([
+                        "\u0105", "\u0107", "\u0119", "\u0142", "\u0144", "\u00F3", "\u015B", "\u017A", "\u017C",
+                        "\u0104", "\u0106", "\u0118", "\u0141", "\u0143", "\u00D3", "\u015A", "\u0179", "\u017B"
+                    ])
+            )
+        }
         if length == "":
             length = 8
         if isinstance(length, str) and re.match(r"^\d+-\d+$", length):
@@ -661,13 +678,8 @@ class String:
                 self._convert_to_integer(max_length, "length"),
             )
         else:
-            length = self._convert_to_integer(length, "length")
-        for name, value in [
-            ("[LOWER]", ascii_lowercase),
-            ("[UPPER]", ascii_uppercase),
-            ("[LETTERS]", ascii_lowercase + ascii_uppercase),
-            ("[NUMBERS]", digits),
-        ]:
+            length = self._convert_to_integer(length, 'length')
+        for name, value in marker_map.items():
             chars = chars.replace(name, value)
         maxi = len(chars) - 1
         return "".join(chars[randint(0, maxi)] for _ in range(length))
