@@ -279,8 +279,10 @@ class Process:
     | `Should Be Equal`      | ${stdout}             | ${result.stdout}      |
     | `File Should Be Empty` | ${result.stderr_path} |                       |
 
-    Notice that possible trailing newlines in captured``stdout`` and ``stderr``
-    are removed automatically.
+    Notice that in ``stdout`` and ``stderr`` content possible trailing newline
+    is removed and ``\\r\\n`` converted to ``\\n`` automatically. If you
+    need to see the original process output, redirect it to a file using
+    `process configuration` and read it from there.
 
     = Boolean arguments =
 
