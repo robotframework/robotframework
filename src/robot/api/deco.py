@@ -205,10 +205,13 @@ def library(
 
 
 @not_keyword
-def register_converter(target_class):
-    class ConverterProxy(TypeConverter):
-        type = target_class
-        type_name = target_class.__name__
-        _convert = target_class._convert
-    TypeConverter.register(ConverterProxy)
-    return target_class
+def register_converter(*args):
+    def decorator(target_class):
+        class ConverterProxy(TypeConverter):
+            type = target_class
+            type_name = target_class.__name__
+            if args: value_types = args
+            _convert = target_class._convert
+        TypeConverter.register(ConverterProxy)
+        return target_class
+    return decorator
