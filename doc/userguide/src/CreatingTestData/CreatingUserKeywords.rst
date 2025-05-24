@@ -480,6 +480,42 @@ with and without default values is not important.
        [Arguments]    @{}    ${optional}=default    ${mandatory}    ${mandatory 2}    ${optional 2}=default 2    ${mandatory 3}
        Log Many    ${optional}    ${mandatory}    ${mandatory 2}    ${optional 2}    ${mandatory 3}
 
+Variable type in user keywords
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Arguments in user keywords support optional type definition syntax, as it
+is explained in `Variable type definition`_ chapter. The type definition
+syntax starts with a colon, contains a space and is followed by the type
+name, then variable must be closed with closing curly brace. The type
+definition is stripped from the variable name and variable must be used
+without it in the keyword body. In the example below, the `${arg: int}`,
+contains type int, the type definition `: int` is stripped from the
+variable name and the variable is used as `${arg}` in the keyword body.
+
+.. sourcecode:: robotframework
+
+   *** Keywords ***
+   Default
+       [Arguments]    ${arg: int}=1
+       Should be equal    ${arg}    1    type=int
+
+Free named arguments can also have type definitions, but the argument
+does not support type definition for keys. Only type for value(s) can be
+defined. In Python the key is always string. In the example below, the
+`${named: `int|float`}` contains type `int|float`. All the keys are
+strings and values are converted either to int or float.
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   Test
+       Type With Free Names Only    a=1    b=2.3
+
+   *** Keywords ***
+   Type With Free Names Only
+       [Arguments]    ${named: `int|float`}
+       Should be equal    ${named}    {"a":1, "b":2.3}    type=dict
+
 __ https://www.python.org/dev/peps/pep-3102
 __ `Variable number of arguments with user keywords`_
 __ `Positional arguments with user keywords`_
