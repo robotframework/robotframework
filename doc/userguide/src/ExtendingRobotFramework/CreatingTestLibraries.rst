@@ -2072,6 +2072,17 @@ with embedded arguments:
     def add_copies_to_cart(quantity: int, item: str):
         ...
 
+It is not possible to define types in embedded arguments, like it is possible
+with user keywords embedded arguments. Instead the type must be defined in
+the function arguments or in the keyword decorator. If type is defined in
+embedded argument it will cause an error:
+
+.. sourcecode:: python
+
+    @keyword('Remove ${quantity: int} ${item: str} from cart') # Type in here causes an error
+    def remove_from_cart(quantity, item):
+        ...
+
 .. note:: Support for mixing embedded arguments and normal arguments is new
           in Robot Framework 7.0.
 
