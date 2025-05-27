@@ -105,11 +105,6 @@ def date_(argument: date, expected=None):
     _validate_type(argument, expected)
 
 
-def date_today(argument: date):
-    if argument != date.today():
-        raise AssertionError
-
-
 def timedelta_(argument: timedelta, expected=None):
     _validate_type(argument, expected)
 

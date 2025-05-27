@@ -1307,12 +1307,12 @@ Other types cause conversion failures.
    | <dt-mod_>`__ |               |            | int_,        | format `YYYY-MM-DD hh:mm:ss.mmmmmm`, where any non-digit       | | `20220209 16:39`                   |
    |              |               |            | float_       | character can be used as a separator or separators can be      | | `2022-02-09`                       |
    |              |               |            |              | omitted altogether. Additionally, only the date part is        | | `now` (current local date and time)|
-   |              |               |            |              | mandatory, all possibly missing time components are considered | | `${1644417583.632269}` (Epoch time)|
-   |              |               |            |              | to be zeros.                                                   |                                      |
+   |              |               |            |              | mandatory, all possibly missing time components are considered | | `TODAY` (same as above)            |
+   |              |               |            |              | to be zeros.                                                   | | `${1644417583.632269}` (Epoch time)|
    |              |               |            |              |                                                                |                                      |
-   |              |               |            |              | A special value ``NOW`` (case-insensitive) can be used to get  |                                      |
-   |              |               |            |              | the current local date and time. This is new in Robot Framework|                                      |
-   |              |               |            |              | 7.3                                                            |                                      |
+   |              |               |            |              | Special values `NOW` and `TODAY` (case-insensitive) can be     |                                      |
+   |              |               |            |              | used to get the current local `datetime`. This is new in       |                                      |
+   |              |               |            |              | Robot Framework 7.3.                                           |                                      |
    |              |               |            |              |                                                                |                                      |
    |              |               |            |              | Integers and floats are considered to represent seconds since  |                                      |
    |              |               |            |              | the `Unix epoch`_.                                             |                                      |
@@ -1320,8 +1320,9 @@ Other types cause conversion failures.
    | date_        |               |            | str_         | Same timestamp conversion as with `datetime <dt-mod_>`__, but  | | `2018-09-12`                       |
    |              |               |            |              | all time components are expected to be omitted or to be zeros. | | `20180912`                         |
    |              |               |            |              |                                                                | | `today` (current local date)       |
-   |              |               |            |              | A special value ``TODAY`` (case-insensitive) can be used to get|                                      |
-   |              |               |            |              | the current local date. This is new in Robot Framework 7.3.    |                                      |
+   |              |               |            |              | Special values `NOW` and `TODAY` (case-insensitive) can be     | | `NOW` (same as above)              |
+   |              |               |            |              | used to get the current local `date`. This is new in Robot     |                                      |
+   |              |               |            |              | Framework 7.3.                                                 |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | timedelta_   |               |            | str_,        | Strings are expected to represent a time interval in one of    | | `42` (42 seconds)                  |
    |              |               |            | int_,        | the time formats Robot Framework supports: `time as number`_,  | | `1 minute 2 seconds`               |

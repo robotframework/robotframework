@@ -413,7 +413,7 @@ class DateTimeConverter(TypeConverter):
     value_types = (str, int, float)
 
     def _convert(self, value):
-        if isinstance(value, str) and value.lower() == "now":
+        if isinstance(value, str) and value.lower() in ("now", "today"):
             return datetime.now()
         return convert_date(value, result_format="datetime")
 
@@ -424,7 +424,7 @@ class DateConverter(TypeConverter):
     type_name = "date"
 
     def _convert(self, value):
-        if isinstance(value, str) and value.lower() == "today":
+        if isinstance(value, str) and value.lower() in ("now", "today"):
             return date.today()
         dt = convert_date(value, result_format="datetime")
         if dt.hour or dt.minute or dt.second or dt.microsecond:

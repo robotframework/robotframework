@@ -232,9 +232,10 @@ Datetime
     DateTime             ${0.0}                    datetime.fromtimestamp(0)
     DateTime             ${1612230445.1}           datetime.fromtimestamp(1612230445.1)
 
-Datetime now
+Datetime with now and today
     Datetime now         now
     Datetime now         NOW
+    Datetime now         Today
 
 Invalid datetime
     [Template]           Conversion Should Fail
@@ -248,9 +249,10 @@ Date
     Date                 20180808                  date(2018, 8, 8)
     Date                 20180808000000000000      date(2018, 8, 8)
 
-Date today
-    Date today           today
-    Date today           ToDaY
+Date with now and today
+    Date                 NOW                       date.today()
+    Date                 today                     date.today()
+    Date                 ToDaY                     date.today()
 
 Invalid date
     [Template]           Conversion Should Fail
