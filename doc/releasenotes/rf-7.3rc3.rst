@@ -365,10 +365,9 @@ __ https://docs.python.org/3/using/cmdline.html#cmdoption-W
 Acknowledgements
 ================
 
-Robot Framework development is sponsored by the `Robot Framework Foundation`_
-and its over 70 member organizations. If your organization is using Robot Framework
-and benefiting from it, consider joining the foundation to support its
-development as well.
+Robot Framework is developed with support from the Robot Framework Foundation
+and its 80+ member organizations. Join the journey — support the project by
+`joining the Foundation <Robot Framework Foundation_>`_.
 
 Robot Framework 7.3 team funded by the foundation consisted of `Pekka Klärck`_ and
 `Janne Härkönen <https://github.com/yanne>`_. Janne worked only part-time and was
@@ -376,9 +375,10 @@ mainly responsible on Libdoc related fixes. In addition to work done by them, th
 community has provided some great contributions:
 
 - `Tatu Aalto <https://github.com/aaltat>`__ worked with Pekka to implement
-  variable type conversion (`#3278`_). That was big task so huge thanks for
-  Tatu and his employer `OP <https://www.op.fi/>`__ who let Tatu to use his
-  work time for this enhancement.
+  variable type conversion (`#3278`_), the biggest new feature in this release.
+  Huge thanks to Tatu and to his employer `OP <https://www.op.fi/>`__, a member
+  of the `Robot Framework Foundation`_, for dedicating work time to make this
+  happen!
 
 - `@franzhaas <https://github.com/franzhaas>`__ helped with the Process library.
   He provided initial implementation both for avoiding deadlock (`#4173`_) and
