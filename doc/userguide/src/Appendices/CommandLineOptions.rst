@@ -170,7 +170,7 @@ Command line options for post-processing outputs
 .. _SkipTeardownOnExit: `Handling Teardowns`_
 .. _DryRun: `Dry run`_
 .. _Randomizes: `Randomizing execution order`_
-.. _individual variables: `Setting variables in command line`_
+.. _individual variables: `Command line variables`_
 
 .. _create output files: `Output directory`_
 .. _Robot Framework 6.x compatible format: `Legacy XML format`_

@@ -484,7 +484,7 @@ Variable type in user keywords
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Arguments in user keywords support optional type definition syntax, as it
-is explained in `Variable type definition`_ chapter. The type definition
+is explained in `Variable type conversion`_ section. The type definition
 syntax starts with a colon, contains a space and is followed by the type
 name, then variable must be closed with closing curly brace. The type
 definition is stripped from the variable name and variable must be used

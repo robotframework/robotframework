@@ -572,7 +572,7 @@ illustrate how to use these options::
   --variablefile myvars.py:possible:arguments:here
   --variable ENVIRONMENT:Windows --variablefile c:\resources\windows.py
 
-__ `Setting variables in command line`_
+__ `Command line variables`_
 
 Dry run
 -------
