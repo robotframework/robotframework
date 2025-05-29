@@ -43,13 +43,15 @@ def parse_bool(value: Union[str, int, bool]):
     return value not in ["false", "", "epätosi", "\u2639", False, 0]
 
 
-@register_converter(str)
 class AutoConvertedNumber:
-    def _convert(self, value):
-        try:
-            return ["zero", "one", "two", "three", "four"].index(value.lower())
-        except ValueError:
-            raise ValueError(f"Don't know number {value!r}.")
+    """type placeholder"""
+
+@register_converter(AutoConvertedNumber, str)
+def autonumber_from_str(value):
+    try:
+        return ["zero", "one", "two", "three", "four"].index(value.lower())
+    except ValueError:
+        raise ValueError(f"Don't know number {value!r}.")
 
 
 class UsDate(date):
