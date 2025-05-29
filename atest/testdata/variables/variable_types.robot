@@ -268,7 +268,11 @@ User keyword: Invalid assignment with kwargs k_type=v_type declaration
 Embedded arguments
     Embedded 1 and 2
     Embedded type 1 and no type 2
+
+Embedded arguments: With custom regexp
+    [Documentation]    FAIL    No keyword with name 'Embedded type with custom regular expression 1.1' found.
     Embedded type with custom regular expression 111
+    Embedded type with custom regular expression 1.1
 
 Embedded arguments: With variables
     VAR    ${x}    1
@@ -494,7 +498,7 @@ Embedded type ${x: int} and no type ${y}
     Should be equal    ${x}    1    type=int
     Should be equal    ${y}    2    type=str
 
-Embedded type with custom regular expression ${x:.+: int}
+Embedded type with custom regular expression ${x: int:\d+}
     Should be equal    ${x}    111    type=int
 
 Embedded invalid type ${x: invalid}

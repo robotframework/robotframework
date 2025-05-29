@@ -130,14 +130,16 @@ class EmbeddedArgumentParser:
         custom_patterns = {}
         after = string = " ".join(string.split())
         types = []
-        for match in VariableMatches(string, identifiers="$", parse_type=True):
-            arg, pattern, is_custom = self._get_name_and_pattern(match.base)
+        for match in VariableMatches(string, identifiers="$"):
+            arg, typ, pattern = self._parse_arg(match.base)
             args.append(arg)
-            if is_custom:
+            types.append(None if typ is None else self._get_type_info(arg, typ))
+            if pattern is None:
+                pattern = self._default_pattern
+            else:
                 custom_patterns[arg] = pattern
                 pattern = self._format_custom_regexp(pattern)
             name_parts.extend([re.escape(match.before), "(", pattern, ")"])
-            types.append(self._get_type_info(match))
             after = match.after
         if not args:
             return None
@@ -145,14 +147,15 @@ class EmbeddedArgumentParser:
         name = self._compile_regexp("".join(name_parts))
         return EmbeddedArguments(name, args, custom_patterns, types)
 
-    def _get_name_and_pattern(self, name: str) -> "tuple[str, str, bool]":
-        if ":" in name:
-            name, pattern = name.split(":", 1)
-            custom = True
-        else:
-            pattern = self._default_pattern
-            custom = False
-        return name, pattern, custom
+    def _parse_arg(self, arg: str) -> "tuple[str, str|None, str|None]":
+        if ":" not in arg:
+            return arg, None, None
+        match = re.fullmatch("([^:]+): ([^:]+)(:(.*))?", arg)
+        if match:
+            arg, typ, _, pattern = match.groups()
+            return arg, typ, pattern
+        arg, pattern = arg.split(":", 1)
+        return arg, None, pattern
 
     def _format_custom_regexp(self, pattern: str) -> str:
         for formatter in (
@@ -192,13 +195,12 @@ class EmbeddedArgumentParser:
     def _add_variable_placeholder_pattern(self, pattern: str) -> str:
         return rf"{pattern}|={VARIABLE_PLACEHOLDER}-\d+="
 
-    def _get_type_info(self, match: VariableMatch) -> "TypeInfo|None":
-        if not match.type:
-            return None
+    def _get_type_info(self, name: str, typ: str) -> "TypeInfo|None":
+        var = f"${{{name}: {typ}}}"
         try:
-            return TypeInfo.from_variable(match)
+            return TypeInfo.from_variable(var)
         except DataError as err:
-            raise DataError(f"Invalid embedded argument '{match}': {err}")
+            raise DataError(f"Invalid embedded argument '{var}': {err}")
 
     def _compile_regexp(self, pattern: str) -> re.Pattern:
         try:
