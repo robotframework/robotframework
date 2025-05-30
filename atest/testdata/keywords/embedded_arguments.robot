@@ -15,6 +15,12 @@ Embedded Arguments In User Keyword Name
     ${name}    ${book} =    User Juha Selects Playboy From Webshop
     Should Be Equal    ${name}-${book}    Juha-Playboy
 
+Embedded arguments with type conversion
+    [Documentation]    Type conversion is tested more thorougly in 'variables/variable_types.robot'.
+    ...    FAIL    ValueError: Argument 'item' got value 'horse' that cannot be converted to 'book' or 'bottle'.
+    Buy 99 bottles
+    Buy 2 horses
+
 Complex Embedded Arguments
     # Notice that Given/When/Then is part of the keyword name
     Given this "feature" works
@@ -48,7 +54,7 @@ Embedded arguments as variables and other content
     Should Be Equal    ${name}    ${foo}${bar}
     Should Be Equal    ${item}    ${foo}, ${bar} and ${zap}
 
-Embedded arguments as variables containing characters in keyword name
+Embedded arguments as variables containing characters that exist also in keyword name
     ${1} + ${2} = ${3}
     ${1 + 2} + ${3} = ${6}
     ${1} + ${2 + 3} = ${6}
@@ -106,6 +112,9 @@ Grouping Custom Regexp
     Should Be Equal    ${matches}    Custom-Regexp(erts)
     ${matches} =    Grouping Cuts Regexperts
     Should Be Equal    ${matches}    Cuts-Regexperts
+
+Custom Regex With Leading And Trailing Spaces
+    Custom Regexs With Leading And Trailing Spaces: " x ", " y " and " z "
 
 Custom Regexp Matching Variables
     [Documentation]    FAIL bar != foo
@@ -260,6 +269,10 @@ User ${user} Selects ${item} From Webshop
     Log    This is always executed
     RETURN    ${user}    ${item}
 
+Buy ${quantity: int} ${item: Literal['book', 'bottle']}s
+    Should Be Equal    ${quantity}    ${99}
+    Should Be Equal    ${item}        bottle
+
 ${prefix:Given|When|Then} this "${item}" ${no good name for this arg ...}
     Log    ${item}-${no good name for this arg ...}
 
@@ -322,6 +335,9 @@ Custom Regexp With ${pattern:\\{}}
 
 Grouping ${x:Cu(st|ts)(om)?} ${y:Regexp\(?erts\)?}
     RETURN    ${x}-${y}
+
+Custom Regexs With Leading And Trailing Spaces: "${x:\ x }", "${y:( y )}" and "${z: str: z }"
+    Should Be Equal    ${x}-${y}-${z}    ${SPACE}x - y - z${SPACE}
 
 Custom regexp with ignore-case ${flag:(?i)flag}
     [Arguments]    ${expected}=flag

@@ -13,6 +13,10 @@ Embedded Arguments In User Keyword Name
     File Should Contain        ${OUTFILE}        source_name="User \${user} Selects \${item} From Webshop"
     File Should Not Contain    ${OUTFILE}        source_name="Log"
 
+Embedded arguments with type conversion
+    [Documentation]    This is tested more thorougly in 'variables/variable_types.robot'.
+    Check Test Case    ${TEST NAME}
+
 Complex Embedded Arguments
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message          ${tc[0, 0, 0]}    feature-works
@@ -49,7 +53,7 @@ Embedded arguments as variables and other content
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Keyword Data         ${tc[0]}      User \${foo}\${EMPTY}\${bar} Selects \${foo}, \${bar} and \${zap} From Webshop    \${name}, \${item}
 
-Embedded arguments as variables containing characters in keyword name
+Embedded arguments as variables containing characters that exist also in keyword name
     Check Test Case    ${TEST NAME}
 
 Embedded Arguments as List And Dict Variables
@@ -84,6 +88,9 @@ Custom Regexp With Escape Chars
 Grouping Custom Regexp
     Check Test Case    ${TEST NAME}
 
+Custom Regex With Leading And Trailing Spaces
+    Check Test Case    ${TEST NAME}
+
 Custom Regexp Matching Variables
     Check Test Case    ${TEST NAME}
 
@@ -110,7 +117,7 @@ Custom regexp with inline flag
 
 Invalid Custom Regexp
     Check Test Case    ${TEST NAME}
-    Creating Keyword Failed    0    334
+    Creating Keyword Failed    0    350
     ...    Invalid \${x:(} Regexp
     ...    Compiling embedded arguments regexp failed: *
 
