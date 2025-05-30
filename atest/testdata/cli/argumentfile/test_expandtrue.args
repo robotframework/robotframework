@@ -1,0 +1,4 @@
+# expandvars: true
+--output $TEST_DIR/output.xml
+--log ${TEST_DIR}/log.html
+atest/testdata/cli/argumentfile/testfile.robot

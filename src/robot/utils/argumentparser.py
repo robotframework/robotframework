@@ -22,6 +22,7 @@ import string
 import sys
 import warnings
 from pathlib import Path
+from string import Template
 
 from robot.errors import DataError, FrameworkError, Information
 from robot.version import get_full_version
@@ -361,7 +362,8 @@ class ArgLimitValidator:
         raise DataError(f"{expectation}, got {arg_count}.")
 
 
-class ArgFileParser:
+class ArgFileParser:    
+
     def __init__(self, options):
         self._options = options
 
@@ -407,22 +409,60 @@ class ArgFileParser:
 
     def _process_file(self, content):
         args = []
-        for line in content.splitlines():
+        lines = content.splitlines()
+        
+        # Extract pragma handling to dedicated function
+        expand_vars = self._parse_expandvars_pragma(lines)
+        
+        for line in lines:
             line = line.strip()
             if line.startswith("-"):
-                args.extend(self._split_option(line))
+                args.extend(self._split_option(line, expand_vars))
             elif line and not line.startswith("#"):
-                args.append(line)
+                args.append(self._expand_vars(line) if expand_vars else line)
         return args
+    
+    def _parse_expandvars_pragma(self, lines):
+        # 
+        #
+        # design resume:
+        # - must be on the first line
+        # - default is off (False)
+        # - values 'false', 'no', 'off' are considered False
+        # - empty values are considered False
+        # - all other values are considered True
+        if not lines:
+            return False
+        
+        first_line = lines[0].strip().lower()
+        if not first_line.startswith('# expandvars:'):
+            return False
+        
+        pragma_value = first_line.split(':', 1)[1].strip().lower()
+        
+        if not pragma_value:
+            return False
+        
+        if pragma_value in ('false', 'no', 'off'):
+            return False
+        
+        return True
 
-    def _split_option(self, line):
+    def _split_option(self, line, expand_vars=False):
         separator = self._get_option_separator(line)
         if not separator:
             return [line]
         option, value = line.split(separator, 1)
         if separator == " ":
             value = value.strip()
+        if expand_vars:
+            value = self._expand_vars(value)
         return [option, value]
+
+    def _expand_vars(self, value):
+        # Handle escaping with Template.safe_substitute 
+        # (fail gracefully without raising errors for missing variable
+        return Template(value).safe_substitute(os.environ)
 
     def _get_option_separator(self, line):
         if " " not in line and "=" not in line:
