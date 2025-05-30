@@ -19,7 +19,7 @@ from typing import Mapping, Sequence
 
 from robot.errors import DataError
 from robot.utils import get_error_message
-from robot.variables import VariableMatch, VariableMatches
+from robot.variables import VariableMatches
 
 from ..context import EXECUTION_CONTEXTS
 from .typeinfo import TypeInfo
@@ -45,7 +45,7 @@ class EmbeddedArguments:
     def from_name(cls, name: str) -> "EmbeddedArguments|None":
         return EmbeddedArgumentParser().parse(name) if "${" in name else None
 
-    def match(self, name: str) -> 're.Match|None':
+    def match(self, name: str) -> "re.Match|None":
         """Deprecated since Robot Framework 7.3."""
         warnings.warn(
             "'EmbeddedArguments.match()' is deprecated since Robot Framework 7.3. Use "
@@ -87,7 +87,10 @@ class EmbeddedArguments:
         return arg
 
     def map(self, args: Sequence[object]) -> "list[tuple[str, object]]":
-        args = [t.convert(a) if t else a for a, t in zip(args, self.types)]
+        args = [
+            info.convert(value, name) if info else value
+            for info, name, value in zip(self.types, self.args, args)
+        ]
         self.validate(args)
         return list(zip(self.args, args))
 

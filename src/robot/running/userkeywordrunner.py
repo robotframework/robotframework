@@ -138,7 +138,7 @@ class UserKeywordRunner:
                 value = value.resolve(variables)
                 info = spec.types.get(name)
                 if info:
-                    value = info.convert(value, name, kind="Argument default value")
+                    value = info.convert(value, name, kind="Default value for argument")
             variables[f"${{{name}}}"] = value
         if spec.var_positional:
             variables[f"@{{{spec.var_positional}}}"] = var_positional

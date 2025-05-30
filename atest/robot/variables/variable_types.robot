@@ -141,7 +141,7 @@ User keyword
 User keyword: Default value
     Check Test Case    ${TESTNAME}
 
-User keyword: Wrong default value
+User keyword: Invalid default value
     Check Test Case    ${TESTNAME} 1
     Check Test Case    ${TESTNAME} 2
 
@@ -151,7 +151,7 @@ User keyword: Invalid value
 User keyword: Invalid type
     Check Test Case    ${TESTNAME}
     Error In File
-    ...    0    variables/variable_types.robot    480
+    ...    0    variables/variable_types.robot    481
     ...    Creating keyword 'Bad type' failed:
     ...    Invalid argument specification: Invalid argument '\${arg: bad}':
     ...    Unrecognized type 'bad'.
@@ -159,7 +159,7 @@ User keyword: Invalid type
 User keyword: Invalid assignment with kwargs k_type=v_type declaration
     Check Test Case    ${TESTNAME}
     Error In File
-    ...    1    variables/variable_types.robot    484
+    ...    1    variables/variable_types.robot    485
     ...    Creating keyword 'Kwargs does not support key=value type syntax' failed:
     ...    Invalid argument specification: Invalid argument '\&{kwargs: int=float}':
     ...    Unrecognized type 'int=float'.
@@ -182,7 +182,7 @@ Embedded arguments: Invalid value from variable
 Embedded arguments: Invalid type
     Check Test Case    ${TESTNAME}
     Error In File
-    ...    2    variables/variable_types.robot    504
+    ...    2    variables/variable_types.robot    505
     ...    Creating keyword 'Embedded invalid type \${x: invalid}' failed:
     ...    Invalid embedded argument '\${x: invalid}':
     ...    Unrecognized type 'invalid'.
