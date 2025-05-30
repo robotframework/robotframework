@@ -671,8 +671,8 @@ dynamically based on another variable:
    Dynamically created name
        Should Be Equal    ${Y}    Z
 
-Variable file
-~~~~~~~~~~~~~
+Using variable files
+~~~~~~~~~~~~~~~~~~~~
 
 Variable files are the most powerful mechanism for creating different
 kind of variables. It is possible to assign variables to any object
@@ -1130,6 +1130,172 @@ __ `Command line variables`_
 __ `Variable scopes`_
 __ `Return values from keywords`_
 
+Variable type conversion
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+Variable values are typically strings, but non-string values are often needed
+as well. Various ways how to create variables with non-string values has
+already been discussed:
+
+- `Variable files`_ allow creating any kind of objects.
+- `Return values from keywords`_ can contain any objects.
+- Variables can be created based on existing variables that contain non-string values.
+- `@{list}` and `&{dict}` syntax allows creating lists and dictionaries natively.
+
+In addition to the above, it is possible to specify the variable type like
+`${name: int}` when creating variables, and the value is converted to
+the specified type automatically. This is called *variable type conversion*
+and how it works in practice is discussed in this section.
+
+.. note:: Variable type conversion is new in Robot Framework 7.3.
+
+Variable type syntax
+''''''''''''''''''''
+
+The general variable types syntax is `${name: type}` `in the data`__ and
+`name: type:value` `on the command line`__. The space after the colon is mandatory
+in both cases. Although variable name can in some contexts be created dynamically
+based on another variable, the type and the type separator must be always specified
+as literal values.
+
+Variable type conversion supports the same base types that the `argument conversion`__
+supports with library keywords. For example, `${number: int}` means that the value
+of the variable `${number}` is converted to an integer.
+
+Variable type conversion supports also `specifying multiple possible types`_
+using the union syntax. For example, `${number: int | float}` means that the
+value is first converted to an integer and, if that fails, then to a floating
+point number.
+
+Also `parameterized types`_ are supported. For example, `${numbers: list[int]}`
+means that the value is converted to a list of integers.
+
+The biggest limitations compared to the argument conversion with library
+keywords is that `Enum` and `TypedDict` conversions are not supported and
+that custom converters cannot be used. These limitations may be lifted in
+the future versions.
+
+.. note:: Variable conversion is supported only when variables are created,
+          not when they are used.
+
+__ `Variable conversion in data`_
+__ `Variable conversion on command line`_
+__ `Supported conversions`_
+
+Variable conversion in data
+'''''''''''''''''''''''''''
+
+In the data variable conversion works when creating variables in the
+`Variable section`_, with the `VAR syntax`_ and based on
+`return values from keywords`_:
+
+.. sourcecode:: robotframework
+
+   *** Variables ***
+   ${VERSION: float}         7.3
+   ${CRITICAL: list[int]}    [3278, 5368, 5417]
+
+   *** Test Cases ***
+   Variables section
+       Should Be Equal    ${VERSION}       ${7.3}
+       Should Be Equal    ${CRITICAL}      ${{[3278, 5368, 5417]}}
+
+   VAR syntax
+       VAR    ${number: int}      42
+       Should Be Equal    ${number}    ${42}
+
+   Assignment
+       # In simple cases the VAR syntax is more convenient.
+       ${number: int} =    Set Variable    42
+       Should Be Equal    ${number}    ${42}
+       # In this case conversion is more useful.
+       ${match}    ${version: float} =    Should Match Regexp    RF 7.3    ^RF (\\d+\\.\\d+)$
+       Should Be Equal    ${match}      RF 7.3
+       Should Be Equal    ${version}    ${7.3}
+
+.. note:: In addition to the above, variable type conversion works also with
+          `user keyword arguments`_ and with `FOR loops`_. See their documentation
+          for more details.
+
+.. note:: Variable type conversion *does not* work with `Set Test/Suite/Global Variable
+          keywords`_. The `VAR syntax`_ needs to be used instead.
+
+Conversion with `@{list}` and `&{dict}` variables
+'''''''''''''''''''''''''''''''''''''''''''''''''
+
+Type conversion works also when creating lists__ and dictionaries__ using
+`@{list}` and `&{dict}` syntax. With lists the type is specified
+like `@{name: type}` and the type is the type of the list items. With dictionaries
+the type of the dictionary values can be specified like `&{name: type}`. If
+there is a need to specify also the key type, it is possible to use syntax
+`&{name: ktype=vtype}`.
+
+.. sourcecode:: robotframework
+
+   *** Variables ***
+   @{NUMBERS: int}           1    2    3    4    5
+   &{DATES: date}            rc1=2025-05-08    final=2025-05-30
+   &{PRIORITIES: int=str}    3278=Critical    4173=High    5334=High
+
+An alternative way to create lists and dictionaries is creating `${scalar}` variables,
+using `list` and `dict` types, possibly parameterizing them, and giving values as
+Python list and dictionary literals:
+
+.. sourcecode:: robotframework
+
+   *** Variables ***
+   ${NUMBERS: list[int]}            [1, 2, 3, 4, 5]
+   ${DATES: list[date]}             {'rc1': '2025-05-08', 'final': '2025-05-30'}
+   ${PRIORITIES: dict[int, str]}    {3278: 'Critical', 4173: 'High', 5334: 'High'}
+
+Using Python list and dictionary literals can be somewhat complicated especially
+for non-programmers. The main benefit of this approach is that it supports also
+nested structures without needing to use temporary values. The following examples
+create the same `${PAYLOAD}` variable using different approaches:
+
+.. sourcecode:: robotframework
+
+   *** Variables ***
+   ${PAYLOAD: dict}            {'id': 1, 'name': 'Robot', 'children': [2, 13, 15]}
+
+.. sourcecode:: robotframework
+
+   *** Variables ***
+   @{CHILDREN: int}            2    13    15
+   &{PAYLOAD: dict}            id=${1}    name=Robot    children=${CHILDREN}
+
+__ `Creating lists`_
+__ `Creating dictionaries`_
+
+Variable conversion on command line
+'''''''''''''''''''''''''''''''''''
+
+Variable conversion works also with the `command line variables`_ that are
+created using the `--variable` option. The syntax is `name: type:value` and,
+due to the space being mandatory, the whole option value typically needs to
+be quoted. Following examples demonstrate some possible usages for this
+functionality::
+
+    --variable "ITERATIONS: int:99"
+    --variable "PAYLOAD: dict:{'id': 1, 'name': 'Robot', 'children': [2, 13, 15]}"
+    --variable "START_TIME: datetime:now"
+
+Failing conversion
+''''''''''''''''''
+
+If type conversion fails, there is an error and the variable is not created.
+Conversion fails if the value cannot be converted to the specified
+type or if the type itself is not supported:
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   Invalid value
+       VAR    ${example: int}    invalid
+
+   Invalid type
+       VAR    ${example: invalid}    123
+
 .. _built-in variable:
 
 Built-in variables
@@ -1545,192 +1711,6 @@ __ `Command line variables`_
 __ `Return values from keywords`_
 __ `User keyword arguments`_
 
-Variable type conversion
-------------------------
-
-As explained earlier, by default variables are unicode strings. But
-variables can have optional type definition, which is part of variable
-name inside of the curly brackets. Type definition comes after the
-variable name and is started with a colon, continued with space and then
-defining a type. After the type definition, variable must be closed with
-the closing curly bracket. When the test data is parsed, the type is
-checked and saved internally for conversion usage. The type definition is
-removed from the variable name and the variable must be used without the
-type definition.
-
-In example below, variable `${value: int}` is created with type `int` and
-string `123` is converted to integer. The type definition `: int` is
-stripped from the variable name and the variable must be used with the
-name `${value}`.
-
-.. sourcecode:: robotframework
-
-   *** Test Cases ***
-   Integer
-       VAR    ${value: int}    123
-       Should be equal    ${value}    123    type=int
-
-If type conversion fails, then the test case fails and defined variable is
-not created. Conversion can fail if the type is not one of the library API
-`supported conversions`_ types or if the value can not be converted to the
-defined type. In the examples below, the `Invalid type` test case has type
-which is not one of supported types and therefore the test case fails. The
-`Invalid value` test case has string value which can not be converted to
-the integer type and therefore the test case fails. The variables are not
-created in either case.
-
-.. sourcecode:: robotframework
-
-   *** Test Cases ***
-   Invalid type
-       VAR    ${value: invalid}    123.45
-
-   Invalid value
-       VAR    ${value: int}    bad
-
-
-Although variable name can be created dynamically in Robot Framework,
-variable type can not be created dynamically by a another variable. If type
-definition is defined by variable, in this case the type definition is not
-removed and variable is created with colon, space and type in the name.
-Therefore type definition must be static in the variable name when
-variable is created. If just the type, like `int`, without the colon and
-space, is defined by a variable, then test case fails and variable is not
-created.
-
-.. sourcecode:: robotframework
-
-   *** Test Cases ***
-   Dynamic types not supported
-       VAR    ${type}    : int
-       VAR    ${value${int}    123
-       Should be equal    ${value: int}    123    type=str
-       Variable should not exist    ${value}
-
-   Type in variable fails
-       VAR    ${type}    int
-       VAR    ${value: ${int}    123    # Fails on: Unrecognized type '${type}'.
-
-Type definition is supported when variable is assigned a value, example in
-the `variable section`_, `var syntax`_ or `return values from keywords`_.
-Variable type definition is not supported when variable is used, example
-when variable is given as keyword argument. In the example below, at the
-variable table variable `${VALUE}` is created because value `123` is
-assigned to the variable. The `Assign value` test case passes because the
-`Set Variable` keyword is used to assign the value `2025-04-30` to the
-variable `${date}`. The `Using variable` test case fails because type can
-not be defined when variable is used.
-
-.. sourcecode:: robotframework
-
-   *** Variables ***
-   ${VALUE: int}    123
-
-   *** Test Cases ***
-   Assign value
-       ${date: date}    Set Variable    2025-04-30
-       Should be equal    ${date}    2025-04-30    type=date
-
-   Using fails
-       Should be equal    ${VALUE: str}    123    # This fails on syntax error.
-
-.. note:: The exception to variable type definition usage on assignment
-          are the `Set Local/Test/Suite/Global Variable` keywords. These
-          keywords do not support type definition in the variable name.
-          Instead use the `var syntax`_ for defining variable type and
-          scope.
-
-Variable types in scalars
-~~~~~~~~~~~~~~~~~~~~~~~~~
-
-When creating scalar variables, the syntax is familiar to the Python
-`function annotations`_ and it is possible to do conversion to same
-types that are supported by the library API `supported conversions`_.
-Using customer converters or other types than ones listed in the
-supported conversions table are not supported.
-
-
-Variable types in lists
-~~~~~~~~~~~~~~~~~~~~~~~
-
-List variable types are defined using the same syntax as scalar variables,
-a colon, space and type definition. Because in Robot Framework test data,
-list variable starts explicitly with `@`, therefore in test data type
-definition only supports type definition for item(s) inside of the list.
-In the example in below `@{list_of_int: int}` is created with type
-definition `int` and the list items are converted to integers. The type
-definition is stripped from the variable name and the variable can be used
-with the name `@{list_of_int}`.
-
-.. sourcecode:: robotframework
-
-   *** Test Cases ***
-   List
-        VAR    @{list_of_int: int}    1    2    3
-        Should be equal    ${list_of_int}    [1, 2, 3]    type=list
-
-Although Robot Framework type conversion is versatile and supports many
-different type of conversions, not all possible combination are possible
-with list. In example below, the `Not a list` fails because Robot
-Framework can not convert ["1", "2", "3"] to a float. To fix the test
-case, replace `$` with `@` sing and then conversion works as expected.
-The `This is a list` and `List here` test cases passes because the scalar
-variable has correct type `list[float]`. In the `This is a list` test,
-list items are converted to floats. In the `List here` test case,
-value is converted to list and then items are converted to floats.
-
-.. sourcecode:: robotframework
-
-   *** Test Cases ***
-   Not a list
-        ${x: float} =    Create List    1    2    3
-
-   This is a list
-        ${x: list[float]} =    Create List    1    2    3
-        Should be equal    ${x}    [1.0, 2.0, 3.0]    type=list
-
-    List here
-        VAR    ${x: list[float]}    [1, "2", 3]
-        Should be equal    ${x}    [1.0, 2.0, 3.0]    type=list
-
-Variable types in dictionaries
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Dictionary variable types are defined using the same syntax as scalar or
-list variables, a colon, space and type definition, closed by a closing
-curly brace. But because dictionary contains key value pairs, the type
-definition can contain type for both key and value or only the value. In
-later case the key type is set to `Python Any`_. When defining type for
-both key and value, the type defintion is consists two types separated
-with a equal sing. As with scalar and list variables, the type definition
-is stripped from the variable name. The dictionary key(s) can not be
-converted to all types found from `supported conversions`_, instead key
-must be Python immutable type, see more details from the
-`Python documentation`_.
-
-In the example below, `&{dict_of_str: int=str}` is created with type
-`int=str` and the dictionary keys are converted to integers and the
-values are converted to strings. The type definition, `: int=str` is
-stripped from the variable name and the variable can be used with the
-name `&{dict_of_str}`. The `&{dict_of_int: int}` is created with type
-definition `Any=int` and the dictionary keys are kept as is (`Any` in
-practice means no conversion) and the values are converted to integers.
-The type definition `: int` is stripped from the variable name and the
-variable can be used with the name `&{dict_of_int}`.
-
-.. sourcecode:: robotframework
-
-   *** Test Cases ***
-   Dictionary
-       VAR    &{dict_of_str: int=str}    1=2    3=4    5=6
-       Should be equal    ${dict_of_str}    {1: '2', 3: '4', 5: '6'}    type=dict
-       VAR    &{dict_of_int: int}    7=8    9=10
-       Should be equal    ${dict_of_int}    {'7': 8, '9': 10}    type=dict
-
-.. _function annotations: https://www.python.org/dev/peps/pep-3107/
-.. _Python Any: https://docs.python.org/3/library/typing.html#the-any-type
-.. _Python documentation: https://docs.python.org/3/reference/datamodel.html
-
 Advanced variable features
 --------------------------
 
@@ -1750,8 +1730,8 @@ arguments, can make the test data pretty complicated to understand.
 If that happens, it is recommended to move the code into a library.
 
 The most common usages of extended variable syntax are illustrated
-in the example below. First assume that we have the following `variable file`_
-and test case:
+in the example below. First assume that we have the following `variable file
+<Variable files>`__ and test case:
 
 .. sourcecode:: python
 

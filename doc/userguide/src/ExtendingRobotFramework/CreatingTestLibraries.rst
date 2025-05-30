@@ -1562,8 +1562,8 @@ attempted at all.
 __ https://peps.python.org/pep-0604/
 .. _Union: https://docs.python.org/3/library/typing.html#typing.Union
 
-Type conversion with generics
-'''''''''''''''''''''''''''''
+Parameterized types
+'''''''''''''''''''
 
 With generics also the parameterized syntax like `list[int]` or `dict[str, int]`
 works. When this syntax is used, the given value is first converted to the base
@@ -2073,19 +2073,14 @@ with embedded arguments:
     def add_copies_to_cart(quantity: int, item: str):
         ...
 
-It is not possible to define types in embedded arguments, like it is possible
-with user keywords embedded arguments. Instead the type must be defined in
-the function arguments or in the keyword decorator. If type is defined in
-embedded argument it will cause an error:
-
-.. sourcecode:: python
-
-    @keyword('Remove ${quantity: int} ${item: str} from cart') # Type in here causes an error
-    def remove_from_cart(quantity, item):
-        ...
+.. note:: Embedding type information to keyword names like
+          `Add ${quantity: int} copies of ${item: str} to cart` similarly
+          as with `user keywords`__ *is not supported* with library keywords.
 
 .. note:: Support for mixing embedded arguments and normal arguments is new
           in Robot Framework 7.0.
+
+__ `Argument conversion with embedded arguments`_
 
 Asynchronous keywords
 ~~~~~~~~~~~~~~~~~~~~~
@@ -2096,6 +2091,7 @@ functions (created by `async def`) just like normal functions:
 .. sourcecode:: python
 
     import asyncio
+
     from robot.api.deco import keyword
 
 

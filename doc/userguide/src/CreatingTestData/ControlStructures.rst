@@ -534,6 +534,28 @@ requires using dictionaries as `list variables`_:
           Robot Framework 3.2. With earlier version it is possible to iterate
           over dictionary keys like the last example above demonstrates.
 
+Loop variable conversion
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+`Variable type conversion`_ works also with FOR loop variables. The desired type
+can be added to any loop variable by using the familiar `${name: type}` syntax.
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   Variable conversion
+       FOR    ${value: bytes}    IN    Hello!    Hyvä!    \x00\x00\x07
+           Log    ${value}    formatter=repr
+       END
+       FOR    ${index}    ${date: date}    IN ENUMERATE   2023-06-15    2025-05-30    today
+           Log    ${date}     formatter=repr
+       END
+       FOR    ${item: tuple[str, date]}    IN ENUMERATE   2023-06-15    2025-05-30    today
+           Log    ${item}     formatter=repr
+       END
+
+.. note:: Variable type conversion is new in Robot Framework 7.3.
+
 Removing unnecessary keywords from outputs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
