@@ -2,8 +2,8 @@
   "specversion": 3,
   "name": "String",
   "doc": "A library for string manipulation and verification.\n\n``String`` is Robot Framework's standard library for manipulating\nstrings (e.g. `Replace String Using Regexp`, `Split To Lines`) and\nverifying their contents (e.g. `Should Be String`).\n\nFollowing keywords from ``BuiltIn`` library can also be used with strings:\n\n- `Catenate`\n- `Get Length`\n- `Length Should Be`\n- `Should (Not) Be Empty`\n- `Should (Not) Be Equal (As Strings/Integers/Numbers)`\n- `Should (Not) Match (Regexp)`\n- `Should (Not) Contain`\n- `Should (Not) Start With`\n- `Should (Not) End With`\n- `Convert To String`\n- `Convert To Bytes`",
-  "version": "7.2.2",
-  "generated": "2025-02-07T20:58:18+00:00",
+  "version": "7.3",
+  "generated": "2025-05-30T14:36:10+00:00",
   "type": "LIBRARY",
   "scope": "GLOBAL",
   "docFormat": "ROBOT",
@@ -29,7 +29,7 @@
       "shortdoc": "Converts string to lower case.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 52
+      "lineno": 53
     },
     {
       "name": "Convert To Title Case",
@@ -56,7 +56,7 @@
       "shortdoc": "Converts string to title case.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 83
+      "lineno": 84
     },
     {
       "name": "Convert To Upper Case",
@@ -75,7 +75,7 @@
       "shortdoc": "Converts string to upper case.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 67
+      "lineno": 68
     },
     {
       "name": "Decode Bytes To String",
@@ -110,7 +110,7 @@
       "shortdoc": "Decodes the given ``bytes`` to a string using the given ``encoding``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 163
+      "lineno": 164
     },
     {
       "name": "Encode String To Bytes",
@@ -145,7 +145,7 @@
       "shortdoc": "Encodes the given ``string`` to bytes using the given ``encoding``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 140
+      "lineno": 141
     },
     {
       "name": "Fetch From Left",
@@ -172,7 +172,7 @@
       "shortdoc": "Returns contents of the ``string`` before the first occurrence of ``marker``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 578
+      "lineno": 608
     },
     {
       "name": "Fetch From Right",
@@ -199,7 +199,7 @@
       "shortdoc": "Returns contents of the ``string`` after the last occurrence of ``marker``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 588
+      "lineno": 618
     },
     {
       "name": "Format String",
@@ -242,7 +242,7 @@
       "shortdoc": "Formats a ``template`` using the given ``positional`` and ``named`` arguments.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 187
+      "lineno": 188
     },
     {
       "name": "Generate Random String",
@@ -269,7 +269,7 @@
       "shortdoc": "Generates a string with a desired ``length`` from the given ``chars``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 598
+      "lineno": 628
     },
     {
       "name": "Get Line",
@@ -296,7 +296,7 @@
       "shortdoc": "Returns the specified line from the given ``string``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 253
+      "lineno": 256
     },
     {
       "name": "Get Line Count",
@@ -315,7 +315,7 @@
       "shortdoc": "Returns and logs the number of lines in the given string.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 220
+      "lineno": 223
     },
     {
       "name": "Get Lines Containing String",
@@ -391,7 +391,7 @@
       "shortdoc": "Returns lines of the given ``string`` that contain the ``pattern``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 269
+      "lineno": 272
     },
     {
       "name": "Get Lines Matching Pattern",
@@ -467,7 +467,7 @@
       "shortdoc": "Returns lines of the given ``string`` that match the ``pattern``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 303
+      "lineno": 310
     },
     {
       "name": "Get Lines Matching Regexp",
@@ -510,7 +510,7 @@
       "shortdoc": "Returns lines of the given ``string`` that match the regexp ``pattern``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 342
+      "lineno": 353
     },
     {
       "name": "Get Regexp Matches",
@@ -553,7 +553,7 @@
       "shortdoc": "Returns a list of all non-overlapping matches in the given string.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 386
+      "lineno": 403
     },
     {
       "name": "Get Substring",
@@ -588,7 +588,7 @@
       "shortdoc": "Returns a substring from ``start`` index to ``end`` index.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 641
+      "lineno": 675
     },
     {
       "name": "Remove String",
@@ -615,7 +615,7 @@
       "shortdoc": "Removes all ``removables`` from the given ``string``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 483
+      "lineno": 513
     },
     {
       "name": "Remove String Using Regexp",
@@ -650,7 +650,7 @@
       "shortdoc": "Removes ``patterns`` from the given ``string``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 507
+      "lineno": 537
     },
     {
       "name": "Replace String",
@@ -693,7 +693,7 @@
       "shortdoc": "Replaces ``search_for`` in the given ``string`` with ``replace_with``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 431
+      "lineno": 448
     },
     {
       "name": "Replace String Using Regexp",
@@ -744,7 +744,7 @@
       "shortdoc": "Replaces ``pattern`` in the given ``string`` with ``replace_with``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 455
+      "lineno": 472
     },
     {
       "name": "Should Be Byte String",
@@ -771,7 +771,7 @@
       "shortdoc": "Fails if the given ``item`` is not a byte string.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 714
+      "lineno": 750
     },
     {
       "name": "Should Be Lower Case",
@@ -798,7 +798,7 @@
       "shortdoc": "Fails if the given ``string`` is not in lower case.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 724
+      "lineno": 760
     },
     {
       "name": "Should Be String",
@@ -825,7 +825,7 @@
       "shortdoc": "Fails if the given ``item`` is not a string.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 690
+      "lineno": 726
     },
     {
       "name": "Should Be Title Case",
@@ -860,7 +860,7 @@
       "shortdoc": "Fails if given ``string`` is not title.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 753
+      "lineno": 789
     },
     {
       "name": "Should Be Unicode String",
@@ -887,7 +887,7 @@
       "shortdoc": "Fails if the given ``item`` is not a Unicode string.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 706
+      "lineno": 742
     },
     {
       "name": "Should Be Upper Case",
@@ -914,7 +914,7 @@
       "shortdoc": "Fails if the given ``string`` is not in upper case.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 738
+      "lineno": 774
     },
     {
       "name": "Should Not Be String",
@@ -941,7 +941,7 @@
       "shortdoc": "Fails if the given ``item`` is a string.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 698
+      "lineno": 734
     },
     {
       "name": "Split String",
@@ -976,7 +976,7 @@
       "shortdoc": "Splits the ``string`` using ``separator`` as a delimiter string.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 529
+      "lineno": 559
     },
     {
       "name": "Split String From Right",
@@ -1011,7 +1011,7 @@
       "shortdoc": "Splits the ``string`` using ``separator`` starting from right.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 555
+      "lineno": 585
     },
     {
       "name": "Split String To Characters",
@@ -1030,7 +1030,7 @@
       "shortdoc": "Splits the given ``string`` to characters.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 570
+      "lineno": 600
     },
     {
       "name": "Split To Lines",
@@ -1065,7 +1065,7 @@
       "shortdoc": "Splits the given string to lines.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 226
+      "lineno": 229
     },
     {
       "name": "Strip String",
@@ -1100,7 +1100,7 @@
       "shortdoc": "Remove leading and/or trailing whitespaces from the given string.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/String.py",
-      "lineno": 660
+      "lineno": 694
     }
   ],
   "typedocs": [

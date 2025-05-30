@@ -2,13 +2,13 @@
   "specversion": 3,
   "name": "OperatingSystem",
   "doc": "A library providing keywords for operating system related tasks.\n\n``OperatingSystem`` is Robot Framework's standard library that\nenables various operating system related tasks to be performed in\nthe system where Robot Framework is running. It can, among other\nthings, execute commands (e.g. `Run`), create and remove files and\ndirectories (e.g. `Create File`, `Remove Directory`), check\nwhether files or directories exists or contain something\n(e.g. `File Should Exist`, `Directory Should Be Empty`) and\nmanipulate environment variables (e.g. `Set Environment Variable`).\n\n== Table of contents ==\n\n- `Path separators`\n- `Pattern matching`\n- `Tilde expansion`\n- `pathlib.Path support`\n- `Boolean arguments`\n- `Example`\n- `Keywords`\n\n= Path separators =\n\nBecause Robot Framework uses the backslash (``\\``) as an escape character\nin its data, using a literal backslash requires duplicating it like\nin ``c:\\\\path\\\\file.txt``. That can be inconvenient especially with\nlonger Windows paths, and thus all keywords expecting paths as arguments\nconvert forward slashes to backslashes automatically on Windows. This also\nmeans that paths like ``${CURDIR}/path/file.txt`` are operating system\nindependent.\n\nNotice that the automatic path separator conversion does not work if\nthe path is only a part of an argument like with the `Run` keyword.\nIn these cases the built-in variable ``${/}`` that contains ``\\`` or ``/``,\ndepending on the operating system, can be used instead.\n\n= Pattern matching =\n\nMany keywords accept arguments as either _glob_ or _regular expression_ patterns.\n\n== Glob patterns ==\n\nSome keywords, for example `List Directory`, support so called\n[http://en.wikipedia.org/wiki/Glob_(programming)|glob patterns] where:\n\n| ``*``        | matches any string, even an empty string                |\n| ``?``        | matches any single character                            |\n| ``[chars]``  | matches one character in the bracket                    |\n| ``[!chars]`` | matches one character not in the bracket                |\n| ``[a-z]``    | matches one character from the range in the bracket     |\n| ``[!a-z]``   | matches one character not from the range in the bracket |\n\nUnless otherwise noted, matching is case-insensitive on case-insensitive\noperating systems such as Windows.\n\n== Regular expressions ==\n\nSome keywords, for example `Grep File`, support\n[http://en.wikipedia.org/wiki/Regular_expression|regular expressions]\nthat are more powerful but also more complicated that glob patterns.\nThe regular expression support is implemented using Python's\n[http://docs.python.org/library/re.html|re module] and its documentation\nshould be consulted for more information about the syntax.\n\nBecause the backslash character (``\\``) is an escape character in\nRobot Framework data, possible backslash characters in regular\nexpressions need to be escaped with another backslash like ``\\\\d\\\\w+``.\nStrings that may contain special characters but should be handled\nas literal strings, can be escaped with the `Regexp Escape` keyword\nfrom the BuiltIn library.\n\n= Tilde expansion =\n\nPaths beginning with ``~`` or ``~username`` are expanded to the current or\nspecified user's home directory, respectively. The resulting path is\noperating system dependent, but typically e.g. ``~/robot`` is expanded to\n``C:\\Users\\<user>\\robot`` on Windows and ``/home/<user>/robot`` on Unixes.\n\n= pathlib.Path support =\n\nStarting from Robot Framework 6.0, arguments representing paths can be given\nas [https://docs.python.org/3/library/pathlib.html|pathlib.Path] instances\nin addition to strings.\n\nAll keywords returning paths return them as strings. This may change in\nthe future so that the return value type matches the argument type.\n\n= Boolean arguments =\n\nSome keywords accept arguments that are handled as Boolean values true or\nfalse. If such an argument is given as a string, it is considered false if\nit is an empty string or equal to ``FALSE``, ``NONE``, ``NO``, ``OFF`` or\n``0``, case-insensitively. Other strings are considered true regardless\ntheir value, and other argument types are tested using the same\n[http://docs.python.org/library/stdtypes.html#truth|rules as in Python].\n\nTrue examples:\n| `Remove Directory` | ${path} | recursive=True    | # Strings are generally true.    |\n| `Remove Directory` | ${path} | recursive=yes     | # Same as the above.             |\n| `Remove Directory` | ${path} | recursive=${TRUE} | # Python ``True`` is true.       |\n| `Remove Directory` | ${path} | recursive=${42}   | # Numbers other than 0 are true. |\n\nFalse examples:\n| `Remove Directory` | ${path} | recursive=False    | # String ``false`` is false.   |\n| `Remove Directory` | ${path} | recursive=no       | # Also string ``no`` is false. |\n| `Remove Directory` | ${path} | recursive=${EMPTY} | # Empty string is false.       |\n| `Remove Directory` | ${path} | recursive=${FALSE} | # Python ``False`` is false.   |\n\n= Example =\n\n| ***** Settings *****\n| Library         OperatingSystem\n|\n| ***** Variables *****\n| ${PATH}         ${CURDIR}/example.txt\n|\n| ***** Test Cases *****\n| Example\n|     `Create File`          ${PATH}    Some text\n|     `File Should Exist`    ${PATH}\n|     `Copy File`            ${PATH}    ~/file.txt",
-  "version": "7.2.2",
-  "generated": "2025-02-07T20:58:18+00:00",
+  "version": "7.3",
+  "generated": "2025-05-30T14:36:10+00:00",
   "type": "LIBRARY",
   "scope": "GLOBAL",
   "docFormat": "ROBOT",
   "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-  "lineno": 39,
+  "lineno": 40,
   "tags": [],
   "inits": [],
   "keywords": [
@@ -32,20 +32,20 @@
           "repr": "*values"
         },
         {
-          "name": "config",
+          "name": "separator",
           "type": null,
-          "defaultValue": null,
-          "kind": "VAR_NAMED",
+          "defaultValue": ":",
+          "kind": "NAMED_ONLY",
           "required": false,
-          "repr": "**config"
+          "repr": "separator=:"
         }
       ],
       "returnType": null,
-      "doc": "Appends given ``values`` to environment variable ``name``.\n\nIf the environment variable already exists, values are added after it,\nand otherwise a new environment variable is created.\n\nValues are, by default, joined together using the operating system\npath separator (``;`` on Windows, ``:`` elsewhere). This can be changed\nby giving a separator after the values like ``separator=value``. No\nother configuration parameters are accepted.\n\nExamples (assuming ``NAME`` and ``NAME2`` do not exist initially):\n| Append To Environment Variable | NAME     | first  |       |\n| Should Be Equal                | %{NAME}  | first  |       |\n| Append To Environment Variable | NAME     | second | third |\n| Should Be Equal                | %{NAME}  | first${:}second${:}third |\n| Append To Environment Variable | NAME2    | first  | separator=-     |\n| Should Be Equal                | %{NAME2} | first  |                 |\n| Append To Environment Variable | NAME2    | second | separator=-     |\n| Should Be Equal                | %{NAME2} | first-second             |",
+      "doc": "Appends given ``values`` to environment variable ``name``.\n\nIf the environment variable already exists, values are added after it,\nand otherwise a new environment variable is created.\n\nValues are, by default, joined together using the operating system\npath separator (``;`` on Windows, ``:`` elsewhere). This can be changed\nby giving a separator after the values like ``separator=value``.\n\nExamples (assuming ``NAME`` and ``NAME2`` do not exist initially):\n| Append To Environment Variable | NAME     | first  |       |\n| Should Be Equal                | %{NAME}  | first  |       |\n| Append To Environment Variable | NAME     | second | third |\n| Should Be Equal                | %{NAME}  | first${:}second${:}third |\n| Append To Environment Variable | NAME2    | first  | separator=-     |\n| Should Be Equal                | %{NAME2} | first  |                 |\n| Append To Environment Variable | NAME2    | second | separator=-     |\n| Should Be Equal                | %{NAME2} | first-second             |",
       "shortdoc": "Appends given ``values`` to environment variable ``name``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 983
+      "lineno": 987
     },
     {
       "name": "Append To File",
@@ -80,7 +80,7 @@
       "shortdoc": "Appends the given content to the specified file.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 640
+      "lineno": 646
     },
     {
       "name": "Copy Directory",
@@ -107,7 +107,7 @@
       "shortdoc": "Copies the source directory into the destination.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 912
+      "lineno": 918
     },
     {
       "name": "Copy File",
@@ -134,7 +134,7 @@
       "shortdoc": "Copies the source file into the destination.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 739
+      "lineno": 746
     },
     {
       "name": "Copy Files",
@@ -153,7 +153,7 @@
       "shortdoc": "Copies specified files to the target directory.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 865
+      "lineno": 873
     },
     {
       "name": "Count Directories In Directory",
@@ -180,7 +180,7 @@
       "shortdoc": "Wrapper for `Count Items In Directory` returning only directory count.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 1375
+      "lineno": 1371
     },
     {
       "name": "Count Files In Directory",
@@ -207,7 +207,7 @@
       "shortdoc": "Wrapper for `Count Items In Directory` returning only file count.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 1369
+      "lineno": 1365
     },
     {
       "name": "Count Items In Directory",
@@ -234,7 +234,7 @@
       "shortdoc": "Returns and logs the number of all items in the given directory.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 1358
+      "lineno": 1354
     },
     {
       "name": "Create Binary File",
@@ -261,7 +261,7 @@
       "shortdoc": "Creates a binary file with the given content.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 614
+      "lineno": 620
     },
     {
       "name": "Create Directory",
@@ -280,7 +280,7 @@
       "shortdoc": "Creates the specified directory.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 697
+      "lineno": 703
     },
     {
       "name": "Create File",
@@ -315,7 +315,7 @@
       "shortdoc": "Creates a file with the given content and encoding.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 577
+      "lineno": 583
     },
     {
       "name": "Directory Should Be Empty",
@@ -342,7 +342,7 @@
       "shortdoc": "Fails unless the specified directory is empty.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 524
+      "lineno": 532
     },
     {
       "name": "Directory Should Exist",
@@ -369,7 +369,7 @@
       "shortdoc": "Fails unless the given path points to an existing directory.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 440
+      "lineno": 450
     },
     {
       "name": "Directory Should Not Be Empty",
@@ -396,7 +396,7 @@
       "shortdoc": "Fails if the specified directory is empty.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 536
+      "lineno": 544
     },
     {
       "name": "Directory Should Not Exist",
@@ -423,7 +423,7 @@
       "shortdoc": "Fails if the given path points to an existing file.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 454
+      "lineno": 464
     },
     {
       "name": "Empty Directory",
@@ -442,7 +442,7 @@
       "shortdoc": "Deletes all the content from the given directory.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 682
+      "lineno": 688
     },
     {
       "name": "Environment Variable Should Be Set",
@@ -469,7 +469,7 @@
       "shortdoc": "Fails if the specified environment variable is not set.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 1030
+      "lineno": 1028
     },
     {
       "name": "Environment Variable Should Not Be Set",
@@ -496,7 +496,7 @@
       "shortdoc": "Fails if the specified environment variable is set.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 1040
+      "lineno": 1038
     },
     {
       "name": "File Should Be Empty",
@@ -523,7 +523,7 @@
       "shortdoc": "Fails unless the specified file is empty.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 548
+      "lineno": 555
     },
     {
       "name": "File Should Exist",
@@ -550,7 +550,7 @@
       "shortdoc": "Fails unless the given ``path`` points to an existing file.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 412
+      "lineno": 422
     },
     {
       "name": "File Should Not Be Empty",
@@ -577,7 +577,7 @@
       "shortdoc": "Fails if the specified file is empty.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 562
+      "lineno": 568
     },
     {
       "name": "File Should Not Exist",
@@ -604,7 +604,7 @@
       "shortdoc": "Fails if the given path points to an existing file.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 426
+      "lineno": 436
     },
     {
       "name": "Get Binary File",
@@ -623,7 +623,7 @@
       "shortdoc": "Returns the contents of a specified file.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 294
+      "lineno": 298
     },
     {
       "name": "Get Environment Variable",
@@ -650,7 +650,7 @@
       "shortdoc": "Returns the value of an environment variable with the given name.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 956
+      "lineno": 961
     },
     {
       "name": "Get Environment Variables",
@@ -660,7 +660,7 @@
       "shortdoc": "Returns currently available environment variables as a dictionary.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 1051
+      "lineno": 1048
     },
     {
       "name": "Get File",
@@ -695,7 +695,7 @@
       "shortdoc": "Returns the contents of a specified file.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 253
+      "lineno": 255
     },
     {
       "name": "Get File Size",
@@ -792,7 +792,7 @@
       "shortdoc": "Returns the lines of the specified file that match the ``pattern``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 305
+      "lineno": 309
     },
     {
       "name": "Join Path",
@@ -819,7 +819,7 @@
       "shortdoc": "Joins the given path part(s) to the given base path.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 1073
+      "lineno": 1070
     },
     {
       "name": "Join Paths",
@@ -881,7 +881,7 @@
       "shortdoc": "Wrapper for `List Directory` that returns only directories.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 1350
+      "lineno": 1347
     },
     {
       "name": "List Directory",
@@ -916,7 +916,7 @@
       "shortdoc": "Returns and logs items in a directory, optionally filtered with ``pattern``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 1315
+      "lineno": 1314
     },
     {
       "name": "List Files In Directory",
@@ -951,7 +951,7 @@
       "shortdoc": "Wrapper for `List Directory` that returns only files.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 1343
+      "lineno": 1341
     },
     {
       "name": "Log Environment Variables",
@@ -970,7 +970,7 @@
       "shortdoc": "Logs all environment variables using the given log level.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 1060
+      "lineno": 1057
     },
     {
       "name": "Log File",
@@ -1005,7 +1005,7 @@
       "shortdoc": "Wrapper for `Get File` that also logs the returned file.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 358
+      "lineno": 368
     },
     {
       "name": "Move Directory",
@@ -1032,7 +1032,7 @@
       "shortdoc": "Moves the source directory into a destination.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 941
+      "lineno": 947
     },
     {
       "name": "Move File",
@@ -1059,7 +1059,7 @@
       "shortdoc": "Moves the source file into the destination.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 846
+      "lineno": 855
     },
     {
       "name": "Move Files",
@@ -1078,7 +1078,7 @@
       "shortdoc": "Moves specified files to the target directory.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 900
+      "lineno": 907
     },
     {
       "name": "Normalize Path",
@@ -1132,7 +1132,7 @@
       "shortdoc": "Removes the directory pointed to by the given ``path``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 713
+      "lineno": 719
     },
     {
       "name": "Remove Environment Variable",
@@ -1151,7 +1151,7 @@
       "shortdoc": "Deletes the specified environment variable.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 1015
+      "lineno": 1013
     },
     {
       "name": "Remove File",
@@ -1170,7 +1170,7 @@
       "shortdoc": "Removes a file with the given path.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 653
+      "lineno": 659
     },
     {
       "name": "Remove Files",
@@ -1189,7 +1189,7 @@
       "shortdoc": "Uses `Remove File` to remove multiple files one-by-one.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 673
+      "lineno": 679
     },
     {
       "name": "Run",
@@ -1208,7 +1208,7 @@
       "shortdoc": "Runs the given command in the system and returns the output.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 159
+      "lineno": 161
     },
     {
       "name": "Run And Return Rc",
@@ -1227,7 +1227,7 @@
       "shortdoc": "Runs the given command in the system and returns the return code.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 197
+      "lineno": 199
     },
     {
       "name": "Run And Return Rc And Output",
@@ -1246,7 +1246,7 @@
       "shortdoc": "Runs the given command in the system and returns the RC and output.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 224
+      "lineno": 226
     },
     {
       "name": "Set Environment Variable",
@@ -1273,7 +1273,7 @@
       "shortdoc": "Sets an environment variable to a specified value.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 973
+      "lineno": 978
     },
     {
       "name": "Set Modified Time",
@@ -1327,7 +1327,7 @@
       "shortdoc": "Fails unless the given path (file or directory) exists.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 374
+      "lineno": 384
     },
     {
       "name": "Should Not Exist",
@@ -1354,7 +1354,7 @@
       "shortdoc": "Fails if the given path (file or directory) exists.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 387
+      "lineno": 397
     },
     {
       "name": "Split Extension",
@@ -1411,7 +1411,7 @@
       "shortdoc": "Emulates the UNIX touch command.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 1403
+      "lineno": 1406
     },
     {
       "name": "Wait Until Created",
@@ -1438,7 +1438,7 @@
       "shortdoc": "Waits until the given file or directory is created.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 496
+      "lineno": 505
     },
     {
       "name": "Wait Until Removed",
@@ -1465,7 +1465,7 @@
       "shortdoc": "Waits until the given file or directory is removed.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 470
+      "lineno": 480
     }
   ],
   "typedocs": []

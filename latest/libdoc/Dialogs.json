@@ -1,9 +1,9 @@
 {
   "specversion": 3,
   "name": "Dialogs",
-  "doc": "A library providing dialogs for interacting with users.\n\n``Dialogs`` is Robot Framework's standard library that provides means\nfor pausing the test or task execution and getting input from users.\n\nLong lines in the provided messages are wrapped automatically. If you want\nto wrap lines manually, you can add newlines using the ``\\n`` character\nsequence.\n\nThe library has a known limitation that it cannot be used with timeouts.",
-  "version": "7.2.2",
-  "generated": "2025-02-07T20:58:18+00:00",
+  "doc": "A library providing dialogs for interacting with users.\n\n``Dialogs`` is Robot Framework's standard library that provides means\nfor pausing the test or task execution and getting input from users.\n\nLong lines in the provided messages are wrapped automatically. If you want\nto wrap lines manually, you can add newlines using the ``\\n`` character\nsequence.",
+  "version": "7.3",
+  "generated": "2025-05-30T14:36:10+00:00",
   "type": "LIBRARY",
   "scope": "GLOBAL",
   "docFormat": "ROBOT",
@@ -37,7 +37,7 @@
       "shortdoc": "Pauses execution until user sets the keyword status.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Dialogs.py",
-      "lineno": 48
+      "lineno": 50
     },
     {
       "name": "Get Selection From User",
@@ -72,7 +72,7 @@
       "shortdoc": "Pauses execution and asks user to select a value.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Dialogs.py",
-      "lineno": 86
+      "lineno": 87
     },
     {
       "name": "Get Selections From User",
@@ -99,7 +99,7 @@
       "shortdoc": "Pauses execution and asks user to select multiple values.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Dialogs.py",
-      "lineno": 108
+      "lineno": 109
     },
     {
       "name": "Get Value From User",
@@ -134,7 +134,7 @@
       "shortdoc": "Pauses execution and asks user to input a value.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Dialogs.py",
-      "lineno": 63
+      "lineno": 65
     },
     {
       "name": "Pause Execution",
@@ -153,7 +153,7 @@
       "shortdoc": "Pauses execution until user clicks ``Ok`` button.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Dialogs.py",
-      "lineno": 40
+      "lineno": 42
     }
   ],
   "typedocs": []

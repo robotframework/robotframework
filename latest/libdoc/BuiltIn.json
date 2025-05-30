@@ -2,13 +2,13 @@
   "specversion": 3,
   "name": "BuiltIn",
   "doc": "An always available standard library with often needed keywords.\n\n``BuiltIn`` is Robot Framework's standard library that provides a set\nof generic keywords needed often. It is imported automatically and\nthus always available. The provided keywords can be used, for example,\nfor verifications (e.g. `Should Be Equal`, `Should Contain`),\nconversions (e.g. `Convert To Integer`) and for various other purposes\n(e.g. `Log`, `Sleep`, `Run Keyword If`, `Set Global Variable`).\n\n== Table of contents ==\n\n- `HTML error messages`\n- `Evaluating expressions`\n- `Using variables with keywords creating or accessing variables`\n- `Boolean arguments`\n- `Pattern matching`\n- `Multiline string comparison`\n- `String representations`\n- `Keywords`\n\n= HTML error messages =\n\nMany of the keywords accept an optional error message to use if the keyword\nfails, and it is possible to use HTML in these messages by prefixing them\nwith ``*HTML*``. See `Fail` keyword for a usage example. Notice that using\nHTML in messages is not limited to BuiltIn library but works with any\nerror message.\n\n= Evaluating expressions =\n\nMany keywords, such as `Evaluate`, `Run Keyword If` and `Should Be True`,\naccept an expression that is evaluated in Python.\n\n== Evaluation namespace ==\n\nExpressions are evaluated using Python's\n[http://docs.python.org/library/functions.html#eval|eval] function so\nthat all Python built-ins like ``len()`` and ``int()`` are available.\nIn addition to that, all unrecognized variables are considered to be\nmodules that are automatically imported. It is possible to use all\navailable Python modules, including the standard modules and the installed\nthird party modules.\n\nExamples:\n| `Should Be True`    len('${result}') > 3\n| `Run Keyword If`    os.sep == '/'    Non-Windows Keyword\n| ${version} =    `Evaluate`    robot.__version__\n\n`Evaluate` also allows configuring the execution namespace with a custom\nnamespace and with custom modules to be imported. The latter functionality\nis useful in special cases where the automatic module import does not work\nsuch as when using nested modules like ``rootmod.submod`` or list\ncomprehensions. See the documentation of the `Evaluate` keyword for mode\ndetails.\n\n== Variables in expressions ==\n\nWhen a variable is used in the expressing using the normal ``${variable}``\nsyntax, its value is replaced before the expression is evaluated. This\nmeans that the value used in the expression will be the string\nrepresentation of the variable value, not the variable value itself.\nThis is not a problem with numbers and other objects that have a string\nrepresentation that can be evaluated directly, but with other objects\nthe behavior depends on the string representation. Most importantly,\nstrings must always be quoted, and if they can contain newlines, they must\nbe triple quoted.\n\nExamples:\n| `Should Be True`    ${rc} < 10                   Return code greater than 10\n| `Run Keyword If`    '${status}' == 'PASS'        Log    Passed\n| `Run Keyword If`    'FAIL' in '''${output}'''    Log    Output contains FAIL\n\nActual variables values are also available in the evaluation namespace.\nThey can be accessed using special variable syntax without the curly\nbraces like ``$variable``. These variables should never be quoted.\n\nExamples:\n| `Should Be True`    $rc < 10             Return code greater than 10\n| `Run Keyword If`    $status == 'PASS'    `Log`    Passed\n| `Run Keyword If`    'FAIL' in $output    `Log`    Output contains FAIL\n| `Should Be True`    len($result) > 1 and $result[1] == 'OK'\n| `Should Be True`    $result is not None\n\nUsing the ``$variable`` syntax slows down expression evaluation a little.\nThis should not typically matter, but should be taken into account if\ncomplex expressions are evaluated often and there are strict time\nconstrains.\n\nNotice that instead of creating complicated expressions, it is often better\nto move the logic into a library. That eases maintenance and can also\nenhance execution speed.\n\n= Using variables with keywords creating or accessing variables =\n\nThis library has special keywords `Set Global Variable`, `Set Suite Variable`,\n`Set Test Variable` and `Set Local Variable` for creating variables in\ndifferent scopes. These keywords take the variable name and its value as\narguments. The name can be given using the normal ``${variable}`` syntax or\nin escaped format either like ``$variable`` or ``\\${variable}``. For example,\nthese are typically equivalent and create new suite level variable\n``${name}`` with value ``value``:\n\n| Set Suite Variable    ${name}     value\n| Set Suite Variable    $name       value\n| Set Suite Variable    \\${name}    value\n\nA problem with using the normal ``${variable}`` syntax is that these\nkeywords cannot easily know is the idea to create a variable with exactly\nthat name or does that variable actually contain the name of the variable\nto create. If the variable does not initially exist, it will always be\ncreated. If it exists and its value is a variable name either in the normal\nor in the escaped syntax, variable with _that_ name is created instead.\nFor example, if ``${name}`` variable would exist and contain value\n``$example``, these examples would create different variables:\n\n| Set Suite Variable    ${name}     value    # Creates ${example}.\n| Set Suite Variable    $name       value    # Creates ${name}.\n| Set Suite Variable    \\${name}    value    # Creates ${name}.\n\nBecause the behavior when using the normal ``${variable}`` syntax depends\non the possible existing value of the variable, it is *highly recommended\nto use the escaped ``$variable`` or ``\\${variable}`` format instead*.\n\nThis same problem occurs also with special keywords for accessing variables\n`Get Variable Value`, `Variable Should Exist` and `Variable Should Not Exist`.\n\n*NOTE:* It is recommended to use the ``VAR`` syntax introduced in Robot\nFramework 7.0 for creating variables in different scopes instead of the\n`Set Global/Suite/Test/Local Variable` keywords. It makes creating variables\nuniform and avoids all the problems discussed above.\n\n= Boolean arguments =\n\nSome keywords accept arguments that are handled as Boolean values true or\nfalse. If such an argument is given as a string, it is considered false if\nit is an empty string or equal to ``FALSE``, ``NONE``, ``NO``, ``OFF`` or\n``0``, case-insensitively. Keywords verifying something that allow dropping\nactual and expected values from the possible error message also consider\nstring ``no values`` to be false. Other strings are considered true unless\nthe keyword documentation explicitly states otherwise, and other argument\ntypes are tested using the same\n[http://docs.python.org/library/stdtypes.html#truth|rules as in Python].\n\nTrue examples:\n| `Should Be Equal`    ${x}    ${y}    Custom error    values=True         # Strings are generally true.\n| `Should Be Equal`    ${x}    ${y}    Custom error    values=yes          # Same as the above.\n| `Should Be Equal`    ${x}    ${y}    Custom error    values=${TRUE}      # Python ``True`` is true.\n| `Should Be Equal`    ${x}    ${y}    Custom error    values=${42}        # Numbers other than 0 are true.\n\nFalse examples:\n| `Should Be Equal`    ${x}    ${y}    Custom error    values=False        # String ``false`` is false.\n| `Should Be Equal`    ${x}    ${y}    Custom error    values=no           # Also string ``no`` is false.\n| `Should Be Equal`    ${x}    ${y}    Custom error    values=${EMPTY}     # Empty string is false.\n| `Should Be Equal`    ${x}    ${y}    Custom error    values=${FALSE}     # Python ``False`` is false.\n| `Should Be Equal`    ${x}    ${y}    Custom error    values=no values    # ``no values`` works with ``values`` argument\n\n= Pattern matching =\n\nMany keywords accept arguments as either glob or regular expression patterns.\n\n== Glob patterns ==\n\nSome keywords, for example `Should Match`, support so called\n[http://en.wikipedia.org/wiki/Glob_(programming)|glob patterns] where:\n\n| ``*``        | matches any string, even an empty string                |\n| ``?``        | matches any single character                            |\n| ``[chars]``  | matches one character in the bracket                    |\n| ``[!chars]`` | matches one character not in the bracket                |\n| ``[a-z]``    | matches one character from the range in the bracket     |\n| ``[!a-z]``   | matches one character not from the range in the bracket |\n\nUnlike with glob patterns normally, path separator characters ``/`` and\n``\\`` and the newline character ``\\n`` are matches by the above\nwildcards.\n\n== Regular expressions ==\n\nSome keywords, for example `Should Match Regexp`, support\n[http://en.wikipedia.org/wiki/Regular_expression|regular expressions]\nthat are more powerful but also more complicated that glob patterns.\nThe regular expression support is implemented using Python's\n[http://docs.python.org/library/re.html|re module] and its documentation\nshould be consulted for more information about the syntax.\n\nBecause the backslash character (``\\``) is an escape character in\nRobot Framework test data, possible backslash characters in regular\nexpressions need to be escaped with another backslash like ``\\\\d\\\\w+``.\nStrings that may contain special characters but should be handled\nas literal strings, can be escaped with the `Regexp Escape` keyword.\n\n= Multiline string comparison =\n\n`Should Be Equal` and `Should Be Equal As Strings` report the failures using\n[http://en.wikipedia.org/wiki/Diff_utility#Unified_format|unified diff\nformat] if both strings have more than two lines.\n\nExample:\n| ${first} =     `Catenate`    SEPARATOR=\\n    Not in second    Same    Differs    Same\n| ${second} =    `Catenate`    SEPARATOR=\\n    Same    Differs2    Same    Not in first\n| `Should Be Equal`    ${first}    ${second}\n\nResults in the following error message:\n\n| Multiline strings are different:\n| --- first\n| +++ second\n| @@ -1,4 +1,4 @@\n| -Not in second\n|  Same\n| -Differs\n| +Differs2\n|  Same\n| +Not in first\n\n= String representations =\n\nSeveral keywords log values explicitly (e.g. `Log`) or implicitly (e.g.\n`Should Be Equal` when there are failures). By default, keywords log values\nusing human-readable string representation, which means that strings\nlike ``Hello`` and numbers like ``42`` are logged as-is. Most of the time\nthis is the desired behavior, but there are some problems as well:\n\n- It is not possible to see difference between different objects that\n  have the same string representation like string ``42`` and integer ``42``.\n  `Should Be Equal` and some other keywords add the type information to\n  the error message in these cases, though.\n\n- Non-printable characters such as the null byte are not visible.\n\n- Trailing whitespace is not visible.\n\n- Different newlines (``\\r\\n`` on Windows, ``\\n`` elsewhere) cannot\n  be separated from each others.\n\n- There are several Unicode characters that are different but look the\n  same. One example is the Latin ``a`` (``\\u0061``) and the Cyrillic\n  ``\u0430`` (``\\u0430``). Error messages like ``a != \u0430`` are not very helpful.\n\n- Some Unicode characters can be represented using\n  [https://en.wikipedia.org/wiki/Unicode_equivalence|different forms].\n  For example, ``\u00e4`` can be represented either as a single code point\n  ``\\u00e4`` or using two combined code points ``\\u0061`` and ``\\u0308``.\n  Such forms are considered canonically equivalent, but strings\n  containing them are not considered equal when compared in Python. Error\n  messages like ``\u00e4 != \u00e4`` are not that helpful either.\n\n- Containers such as lists and dictionaries are formatted into a single\n  line making it hard to see individual items they contain.\n\nTo overcome the above problems, some keywords such as `Log` and\n`Should Be Equal` have an optional ``formatter`` argument that can be\nused to configure the string representation. The supported values are\n``str`` (default), ``repr``, and ``ascii`` that work similarly as\n[https://docs.python.org/library/functions.html|Python built-in functions]\nwith same names. More detailed semantics are explained below.\n\n== str ==\n\nUse the human-readable string representation. Equivalent to using ``str()``\nin Python. This is the default.\n\n== repr ==\n\nUse the machine-readable string representation. Similar to using ``repr()``\nin Python, which means that strings like ``Hello`` are logged like\n``'Hello'``, newlines and non-printable characters are escaped like ``\\n``\nand ``\\x00``, and so on. Non-ASCII characters are shown as-is like ``\u00e4``.\n\nIn this mode bigger lists, dictionaries and other containers are\npretty-printed so that there is one item per row.\n\n== ascii ==\n\nSame as using ``ascii()`` in Python. Similar to using ``repr`` explained above\nbut with the following differences:\n\n- Non-ASCII characters are escaped like ``\\xe4`` instead of\n  showing them as-is like ``\u00e4``. This makes it easier to see differences\n  between Unicode characters that look the same but are not equal.\n- Containers are not pretty-printed.",
-  "version": "7.2.2",
-  "generated": "2025-02-07T20:58:18+00:00",
+  "version": "7.3",
+  "generated": "2025-05-30T14:36:10+00:00",
   "type": "LIBRARY",
   "scope": "GLOBAL",
   "docFormat": "ROBOT",
   "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-  "lineno": 3845,
+  "lineno": 4078,
   "tags": [],
   "inits": [],
   "keywords": [
@@ -53,7 +53,7 @@
       "shortdoc": "Calls the named method of the given object with the provided arguments.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3567
+      "lineno": 3794
     },
     {
       "name": "Catenate",
@@ -72,7 +72,7 @@
       "shortdoc": "Catenates the given items together and returns the resulted string.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3061
+      "lineno": 3272
     },
     {
       "name": "Comment",
@@ -91,7 +91,7 @@
       "shortdoc": "Displays the given messages in the log file as keyword arguments.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3231
+      "lineno": 3454
     },
     {
       "name": "Continue For Loop",
@@ -101,7 +101,7 @@
       "shortdoc": "Skips the current FOR loop iteration and continues from the next.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2664
+      "lineno": 2875
     },
     {
       "name": "Continue For Loop If",
@@ -120,7 +120,7 @@
       "shortdoc": "Skips the current FOR loop iteration if the ``condition`` is true.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2700
+      "lineno": 2911
     },
     {
       "name": "Convert To Binary",
@@ -163,7 +163,7 @@
       "shortdoc": "Converts the given item to a binary string.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 173
+      "lineno": 180
     },
     {
       "name": "Convert To Boolean",
@@ -182,7 +182,7 @@
       "shortdoc": "Converts the given item to Boolean true or false.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 320
+      "lineno": 334
     },
     {
       "name": "Convert To Bytes",
@@ -209,7 +209,7 @@
       "shortdoc": "Converts the given ``input`` to bytes according to the ``input_type``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 336
+      "lineno": 350
     },
     {
       "name": "Convert To Hex",
@@ -260,7 +260,7 @@
       "shortdoc": "Converts the given item to a hexadecimal string.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 217
+      "lineno": 224
     },
     {
       "name": "Convert To Integer",
@@ -287,7 +287,7 @@
       "shortdoc": "Converts the given item to an integer number.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 120
+      "lineno": 126
     },
     {
       "name": "Convert To Number",
@@ -314,7 +314,7 @@
       "shortdoc": "Converts the given item to a floating point number.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 256
+      "lineno": 269
     },
     {
       "name": "Convert To Octal",
@@ -357,7 +357,7 @@
       "shortdoc": "Converts the given item to an octal string.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 195
+      "lineno": 202
     },
     {
       "name": "Convert To String",
@@ -376,7 +376,7 @@
       "shortdoc": "Converts the given item to a Unicode string.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 306
+      "lineno": 320
     },
     {
       "name": "Create Dictionary",
@@ -395,7 +395,7 @@
       "shortdoc": "Creates and returns a dictionary based on the given ``items``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 441
+      "lineno": 455
     },
     {
       "name": "Create List",
@@ -414,7 +414,7 @@
       "shortdoc": "Returns a list containing given items.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 427
+      "lineno": 441
     },
     {
       "name": "Evaluate",
@@ -449,7 +449,7 @@
       "shortdoc": "Evaluates the given expression in Python and returns the result.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3511
+      "lineno": 3734
     },
     {
       "name": "Exit For Loop",
@@ -459,7 +459,7 @@
       "shortdoc": "Stops executing the enclosing FOR loop.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2731
+      "lineno": 2942
     },
     {
       "name": "Exit For Loop If",
@@ -478,7 +478,7 @@
       "shortdoc": "Stops executing the enclosing FOR loop if the ``condition`` is true.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2767
+      "lineno": 2978
     },
     {
       "name": "Fail",
@@ -505,7 +505,7 @@
       "shortdoc": "Fails the test with the given message and optionally alters its tags.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 505
+      "lineno": 520
     },
     {
       "name": "Fatal Error",
@@ -524,7 +524,7 @@
       "shortdoc": "Stops the whole test execution.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 531
+      "lineno": 546
     },
     {
       "name": "Get Count",
@@ -551,7 +551,7 @@
       "shortdoc": "Returns and logs how many times ``item`` is found from ``container``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1318
+      "lineno": 1482
     },
     {
       "name": "Get Length",
@@ -570,7 +570,7 @@
       "shortdoc": "Returns and logs the length of the given item as an integer.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1433
+      "lineno": 1614
     },
     {
       "name": "Get Library Instance",
@@ -597,7 +597,7 @@
       "shortdoc": "Returns the currently active instance of the specified library.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3811
+      "lineno": 4044
     },
     {
       "name": "Get Time",
@@ -624,7 +624,7 @@
       "shortdoc": "Returns the given time in the requested format.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3428
+      "lineno": 3651
     },
     {
       "name": "Get Variable Value",
@@ -651,7 +651,7 @@
       "shortdoc": "Returns variable value or ``default`` if the variable does not exist.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1555
+      "lineno": 1737
     },
     {
       "name": "Get Variables",
@@ -670,7 +670,7 @@
       "shortdoc": "Returns a dictionary containing all variables in the current scope.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1525
+      "lineno": 1707
     },
     {
       "name": "Import Library",
@@ -697,7 +697,7 @@
       "shortdoc": "Imports a library with the given name and optional arguments.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3285
+      "lineno": 3508
     },
     {
       "name": "Import Resource",
@@ -716,7 +716,7 @@
       "shortdoc": "Imports a resource file with the given path.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3346
+      "lineno": 3569
     },
     {
       "name": "Import Variables",
@@ -743,7 +743,7 @@
       "shortdoc": "Imports a variable file with the given path and optional arguments.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3321
+      "lineno": 3544
     },
     {
       "name": "Keyword Should Exist",
@@ -770,7 +770,7 @@
       "shortdoc": "Fails unless the given keyword exists in the current scope.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3410
+      "lineno": 3633
     },
     {
       "name": "Length Should Be",
@@ -805,7 +805,7 @@
       "shortdoc": "Verifies that the length of the given item is correct.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1481
+      "lineno": 1654
     },
     {
       "name": "Log",
@@ -864,7 +864,7 @@
       "shortdoc": "Logs the given message with the given level.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3087
+      "lineno": 3298
     },
     {
       "name": "Log Many",
@@ -883,7 +883,7 @@
       "shortdoc": "Logs the given messages as separate entries using the INFO level.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3169
+      "lineno": 3393
     },
     {
       "name": "Log To Console",
@@ -926,7 +926,7 @@
       "shortdoc": "Logs the given message to the console.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3197
+      "lineno": 3420
     },
     {
       "name": "Log Variables",
@@ -945,7 +945,7 @@
       "shortdoc": "Logs all variables in the current scope with given log level.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1582
+      "lineno": 1764
     },
     {
       "name": "No Operation",
@@ -955,7 +955,7 @@
       "shortdoc": "Does absolutely nothing.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3021
+      "lineno": 3232
     },
     {
       "name": "Pass Execution",
@@ -982,7 +982,7 @@
       "shortdoc": "Skips rest of the current test, setup, or teardown with PASS status.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2947
+      "lineno": 3158
     },
     {
       "name": "Pass Execution If",
@@ -1017,7 +1017,7 @@
       "shortdoc": "Conditionally skips rest of the current test, setup, or teardown with PASS status.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2999
+      "lineno": 3210
     },
     {
       "name": "Regexp Escape",
@@ -1036,7 +1036,7 @@
       "shortdoc": "Returns each argument string escaped for use as a regular expression.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3598
+      "lineno": 3826
     },
     {
       "name": "Reload Library",
@@ -1055,7 +1055,7 @@
       "shortdoc": "Rechecks what keywords the specified library provides.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3271
+      "lineno": 3494
     },
     {
       "name": "Remove Tags",
@@ -1074,7 +1074,7 @@
       "shortdoc": "Removes given ``tags`` from the current test or all tests in a suite.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3783
+      "lineno": 4016
     },
     {
       "name": "Repeat Keyword",
@@ -1109,7 +1109,7 @@
       "shortdoc": "Executes the specified keyword multiple times.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2326
+      "lineno": 2532
     },
     {
       "name": "Replace Variables",
@@ -1128,7 +1128,7 @@
       "shortdoc": "Replaces variables in the given text with their current values.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1654
+      "lineno": 1840
     },
     {
       "name": "Reset Log Level",
@@ -1138,7 +1138,7 @@
       "shortdoc": "Resets the log level to the original value.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3259
+      "lineno": 3482
     },
     {
       "name": "Return From Keyword",
@@ -1157,7 +1157,7 @@
       "shortdoc": "Returns from the enclosing user keyword.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2799
+      "lineno": 3010
     },
     {
       "name": "Return From Keyword If",
@@ -1184,7 +1184,7 @@
       "shortdoc": "Returns from the enclosing user keyword if ``condition`` is true.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2864
+      "lineno": 3075
     },
     {
       "name": "Run Keyword",
@@ -1211,7 +1211,7 @@
       "shortdoc": "Executes the given keyword with the given arguments.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1955
+      "lineno": 2145
     },
     {
       "name": "Run Keyword And Continue On Failure",
@@ -1238,7 +1238,7 @@
       "shortdoc": "Runs the keyword and continues execution even if a failure occurs.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2232
+      "lineno": 2434
     },
     {
       "name": "Run Keyword And Expect Error",
@@ -1273,7 +1273,7 @@
       "shortdoc": "Runs the keyword and checks that the expected error occurred.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2252
+      "lineno": 2454
     },
     {
       "name": "Run Keyword And Ignore Error",
@@ -1300,7 +1300,7 @@
       "shortdoc": "Runs the given keyword with the given arguments and ignores possible error.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2166
+      "lineno": 2368
     },
     {
       "name": "Run Keyword And Return",
@@ -1327,7 +1327,7 @@
       "shortdoc": "Runs the specified keyword and returns from the enclosing user keyword.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2903
+      "lineno": 3114
     },
     {
       "name": "Run Keyword And Return If",
@@ -1362,7 +1362,7 @@
       "shortdoc": "Runs the specified keyword and returns from the enclosing user keyword.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2929
+      "lineno": 3140
     },
     {
       "name": "Run Keyword And Return Status",
@@ -1389,7 +1389,7 @@
       "shortdoc": "Runs the given keyword with given arguments and returns the status as a Boolean value.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2211
+      "lineno": 2413
     },
     {
       "name": "Run Keyword And Warn On Failure",
@@ -1416,7 +1416,7 @@
       "shortdoc": "Runs the specified keyword logs a warning if the keyword fails.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2192
+      "lineno": 2394
     },
     {
       "name": "Run Keyword If",
@@ -1451,7 +1451,7 @@
       "shortdoc": "Runs the given keyword with the given arguments, if ``condition`` is true.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2072
+      "lineno": 2273
     },
     {
       "name": "Run Keyword If All Tests Passed",
@@ -1478,7 +1478,7 @@
       "shortdoc": "Runs the given keyword with the given arguments, if all tests passed.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2609
+      "lineno": 2820
     },
     {
       "name": "Run Keyword If Any Tests Failed",
@@ -1505,7 +1505,7 @@
       "shortdoc": "Runs the given keyword with the given arguments, if one or more tests failed.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2623
+      "lineno": 2834
     },
     {
       "name": "Run Keyword If Test Failed",
@@ -1532,7 +1532,7 @@
       "shortdoc": "Runs the given keyword with the given arguments, if the test failed.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2561
+      "lineno": 2772
     },
     {
       "name": "Run Keyword If Test Passed",
@@ -1559,7 +1559,7 @@
       "shortdoc": "Runs the given keyword with the given arguments, if the test passed.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2575
+      "lineno": 2786
     },
     {
       "name": "Run Keyword If Timeout Occurred",
@@ -1586,7 +1586,7 @@
       "shortdoc": "Runs the given keyword if either a test or a keyword timeout has occurred.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2589
+      "lineno": 2800
     },
     {
       "name": "Run Keyword Unless",
@@ -1621,7 +1621,7 @@
       "shortdoc": "*DEPRECATED since RF 5.0. Use Native IF/ELSE or `Run Keyword If` instead.*",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2154,
+      "lineno": 2356,
       "deprecated": true
     },
     {
@@ -1641,7 +1641,7 @@
       "shortdoc": "Executes all the given keywords in a sequence.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1994
+      "lineno": 2195
     },
     {
       "name": "Set Global Variable",
@@ -1668,7 +1668,7 @@
       "shortdoc": "Makes a variable available globally in all tests and suites.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1865
+      "lineno": 2054
     },
     {
       "name": "Set Library Search Order",
@@ -1687,7 +1687,7 @@
       "shortdoc": "Sets the resolution order to use when a name matches multiple keywords.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3368
+      "lineno": 3591
     },
     {
       "name": "Set Local Variable",
@@ -1714,7 +1714,7 @@
       "shortdoc": "Makes a variable available everywhere within the local scope.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1708
+      "lineno": 1893
     },
     {
       "name": "Set Log Level",
@@ -1733,7 +1733,7 @@
       "shortdoc": "Sets the log threshold to the specified level.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3242
+      "lineno": 3465
     },
     {
       "name": "Set Suite Documentation",
@@ -1776,7 +1776,7 @@
       "shortdoc": "Sets documentation for the current test suite.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3702
+      "lineno": 3934
     },
     {
       "name": "Set Suite Metadata",
@@ -1827,7 +1827,7 @@
       "shortdoc": "Sets metadata for the current test suite.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3728
+      "lineno": 3960
     },
     {
       "name": "Set Suite Variable",
@@ -1854,7 +1854,7 @@
       "shortdoc": "Makes a variable available everywhere within the scope of the current suite.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1796
+      "lineno": 1981
     },
     {
       "name": "Set Tags",
@@ -1873,7 +1873,7 @@
       "shortdoc": "Adds given ``tags`` for the current test or all tests in a suite.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3758
+      "lineno": 3991
     },
     {
       "name": "Set Task Variable",
@@ -1900,7 +1900,7 @@
       "shortdoc": "Makes a variable available everywhere within the scope of the current task.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1784
+      "lineno": 1969
     },
     {
       "name": "Set Test Documentation",
@@ -1935,7 +1935,7 @@
       "shortdoc": "Sets documentation for the current test case.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3677
+      "lineno": 3907
     },
     {
       "name": "Set Test Message",
@@ -1970,7 +1970,7 @@
       "shortdoc": "Sets message for the current test case.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3616
+      "lineno": 3844
     },
     {
       "name": "Set Test Variable",
@@ -1997,7 +1997,7 @@
       "shortdoc": "Makes a variable available everywhere within the scope of the current test.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1748
+      "lineno": 1933
     },
     {
       "name": "Set Variable",
@@ -2016,7 +2016,7 @@
       "shortdoc": "Returns the given values which can then be assigned to a variables.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1673
+      "lineno": 1859
     },
     {
       "name": "Set Variable If",
@@ -2043,7 +2043,7 @@
       "shortdoc": "Sets variable based on the given condition.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2501
+      "lineno": 2712
     },
     {
       "name": "Should Be Empty",
@@ -2070,7 +2070,7 @@
       "shortdoc": "Verifies that the given item is empty.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1493
+      "lineno": 1667
     },
     {
       "name": "Should Be Equal",
@@ -2161,7 +2161,7 @@
       "shortdoc": "Fails if the given objects are unequal.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 584
+      "lineno": 599
     },
     {
       "name": "Should Be Equal As Integers",
@@ -2212,7 +2212,7 @@
       "shortdoc": "Fails if objects are unequal after converting them to integers.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 774
+      "lineno": 823
     },
     {
       "name": "Should Be Equal As Numbers",
@@ -2263,7 +2263,7 @@
       "shortdoc": "Fails if objects are unequal after converting them to real numbers.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 811
+      "lineno": 875
     },
     {
       "name": "Should Be Equal As Strings",
@@ -2338,7 +2338,7 @@
       "shortdoc": "Fails if objects are unequal after converting them to strings.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 890
+      "lineno": 967
     },
     {
       "name": "Should Be True",
@@ -2365,7 +2365,7 @@
       "shortdoc": "Fails if the given condition is not true.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 553
+      "lineno": 568
     },
     {
       "name": "Should Contain",
@@ -2432,7 +2432,7 @@
       "shortdoc": "Fails if ``container`` does not contain ``item`` one or more times.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1074
+      "lineno": 1203
     },
     {
       "name": "Should Contain Any",
@@ -2454,20 +2454,52 @@
           "repr": "*items"
         },
         {
-          "name": "configuration",
+          "name": "msg",
           "type": null,
-          "defaultValue": null,
-          "kind": "VAR_NAMED",
+          "defaultValue": "None",
+          "kind": "NAMED_ONLY",
           "required": false,
-          "repr": "**configuration"
+          "repr": "msg=None"
+        },
+        {
+          "name": "values",
+          "type": null,
+          "defaultValue": "True",
+          "kind": "NAMED_ONLY",
+          "required": false,
+          "repr": "values=True"
+        },
+        {
+          "name": "ignore_case",
+          "type": null,
+          "defaultValue": "False",
+          "kind": "NAMED_ONLY",
+          "required": false,
+          "repr": "ignore_case=False"
+        },
+        {
+          "name": "strip_spaces",
+          "type": null,
+          "defaultValue": "False",
+          "kind": "NAMED_ONLY",
+          "required": false,
+          "repr": "strip_spaces=False"
+        },
+        {
+          "name": "collapse_spaces",
+          "type": null,
+          "defaultValue": "False",
+          "kind": "NAMED_ONLY",
+          "required": false,
+          "repr": "collapse_spaces=False"
         }
       ],
       "returnType": null,
-      "doc": "Fails if ``container`` does not contain any of the ``*items``.\n\nWorks with strings, lists, and anything that supports Python's ``in``\noperator.\n\nSupports additional configuration parameters ``msg``, ``values``,\n``ignore_case`` and ``strip_spaces``, and ``collapse_spaces``\nwhich have exactly the same semantics as arguments with same\nnames have with `Should Contain`. These arguments must always\nbe given using ``name=value`` syntax after all ``items``.\n\nNote that possible equal signs in ``items`` must be escaped with\na backslash (e.g. ``foo\\=bar``) to avoid them to be passed in\nas ``**configuration``.\n\nExamples:\n| Should Contain Any | ${string} | substring 1 | substring 2 |\n| Should Contain Any | ${list}   | item 1 | item 2 | item 3 |\n| Should Contain Any | ${list}   | item 1 | item 2 | item 3 | ignore_case=True |\n| Should Contain Any | ${list}   | @{items} | msg=Custom message | values=False |",
+      "doc": "Fails if ``container`` does not contain any of the ``*items``.\n\nWorks with strings, lists, and anything that supports Python's ``in``\noperator.\n\nSupports additional configuration parameters ``msg``, ``values``,\n``ignore_case`` and ``strip_spaces``, and ``collapse_spaces``\nwhich have exactly the same semantics as arguments with same\nnames have with `Should Contain`. These arguments must always\nbe given using ``name=value`` syntax after all ``items``.\n\nExamples:\n| Should Contain Any | ${string} | substring 1 | substring 2 |\n| Should Contain Any | ${list}   | item 1 | item 2 | item 3 |\n| Should Contain Any | ${list}   | item 1 | item 2 | item 3 | ignore_case=True |\n| Should Contain Any | ${list}   | @{items} | msg=Custom message | values=False |",
       "shortdoc": "Fails if ``container`` does not contain any of the ``*items``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1143
+      "lineno": 1289
     },
     {
       "name": "Should Contain X Times",
@@ -2534,7 +2566,7 @@
       "shortdoc": "Fails if ``container`` does not contain ``item`` ``count`` times.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1260
+      "lineno": 1413
     },
     {
       "name": "Should End With",
@@ -2601,7 +2633,7 @@
       "shortdoc": "Fails if the string ``str1`` does not end with the string ``str2``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 996
+      "lineno": 1106
     },
     {
       "name": "Should Match",
@@ -2652,7 +2684,7 @@
       "shortdoc": "Fails if the given ``string`` does not match the given ``pattern``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1356
+      "lineno": 1528
     },
     {
       "name": "Should Match Regexp",
@@ -2703,7 +2735,7 @@
       "shortdoc": "Fails if ``string`` does not match ``pattern`` as a regular expression.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1375
+      "lineno": 1547
     },
     {
       "name": "Should Not Be Empty",
@@ -2730,7 +2762,7 @@
       "shortdoc": "Verifies that the given item is not empty.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1502
+      "lineno": 1676
     },
     {
       "name": "Should Not Be Equal",
@@ -2797,7 +2829,7 @@
       "shortdoc": "Fails if the given objects are equal.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 717
+      "lineno": 750
     },
     {
       "name": "Should Not Be Equal As Integers",
@@ -2848,7 +2880,7 @@
       "shortdoc": "Fails if objects are equal after converting them to integers.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 757
+      "lineno": 797
     },
     {
       "name": "Should Not Be Equal As Numbers",
@@ -2899,7 +2931,7 @@
       "shortdoc": "Fails if objects are equal after converting them to real numbers.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 794
+      "lineno": 852
     },
     {
       "name": "Should Not Be Equal As Strings",
@@ -2966,7 +2998,7 @@
       "shortdoc": "Fails if objects are equal after converting them to strings.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 849
+      "lineno": 919
     },
     {
       "name": "Should Not Be True",
@@ -2993,7 +3025,7 @@
       "shortdoc": "Fails if the given condition is true.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 544
+      "lineno": 559
     },
     {
       "name": "Should Not Contain",
@@ -3060,7 +3092,7 @@
       "shortdoc": "Fails if ``container`` contains ``item`` one or more times.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1017
+      "lineno": 1136
     },
     {
       "name": "Should Not Contain Any",
@@ -3082,20 +3114,52 @@
           "repr": "*items"
         },
         {
-          "name": "configuration",
+          "name": "msg",
           "type": null,
-          "defaultValue": null,
-          "kind": "VAR_NAMED",
+          "defaultValue": "None",
+          "kind": "NAMED_ONLY",
           "required": false,
-          "repr": "**configuration"
+          "repr": "msg=None"
+        },
+        {
+          "name": "values",
+          "type": null,
+          "defaultValue": "True",
+          "kind": "NAMED_ONLY",
+          "required": false,
+          "repr": "values=True"
+        },
+        {
+          "name": "ignore_case",
+          "type": null,
+          "defaultValue": "False",
+          "kind": "NAMED_ONLY",
+          "required": false,
+          "repr": "ignore_case=False"
+        },
+        {
+          "name": "strip_spaces",
+          "type": null,
+          "defaultValue": "False",
+          "kind": "NAMED_ONLY",
+          "required": false,
+          "repr": "strip_spaces=False"
+        },
+        {
+          "name": "collapse_spaces",
+          "type": null,
+          "defaultValue": "False",
+          "kind": "NAMED_ONLY",
+          "required": false,
+          "repr": "collapse_spaces=False"
         }
       ],
       "returnType": null,
-      "doc": "Fails if ``container`` contains one or more of the ``*items``.\n\nWorks with strings, lists, and anything that supports Python's ``in``\noperator.\n\nSupports additional configuration parameters ``msg``, ``values``,\n``ignore_case`` and ``strip_spaces``, and ``collapse_spaces`` which have exactly\nthe same semantics as arguments with same names have with `Should Contain`.\nThese arguments must always be given using ``name=value`` syntax after all ``items``.\n\nNote that possible equal signs in ``items`` must be escaped with\na backslash (e.g. ``foo\\=bar``) to avoid them to be passed in\nas ``**configuration``.\n\nExamples:\n| Should Not Contain Any | ${string} | substring 1 | substring 2 |\n| Should Not Contain Any | ${list}   | item 1 | item 2 | item 3 |\n| Should Not Contain Any | ${list}   | item 1 | item 2 | item 3 | ignore_case=True |\n| Should Not Contain Any | ${list}   | @{items} | msg=Custom message | values=False |",
+      "doc": "Fails if ``container`` contains one or more of the ``*items``.\n\nWorks with strings, lists, and anything that supports Python's ``in``\noperator.\n\nSupports additional configuration parameters ``msg``, ``values``,\n``ignore_case`` and ``strip_spaces``, and ``collapse_spaces``\nwhich have exactly the same semantics as arguments with same\nnames have with `Should Contain`. These arguments must always\nbe given using ``name=value`` syntax after all ``items``.\n\nExamples:\n| Should Not Contain Any | ${string} | substring 1 | substring 2 |\n| Should Not Contain Any | ${list}   | item 1 | item 2 | item 3 |\n| Should Not Contain Any | ${list}   | item 1 | item 2 | item 3 | ignore_case=True |\n| Should Not Contain Any | ${list}   | @{items} | msg=Custom message | values=False |",
       "shortdoc": "Fails if ``container`` contains one or more of the ``*items``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1202
+      "lineno": 1351
     },
     {
       "name": "Should Not End With",
@@ -3162,7 +3226,7 @@
       "shortdoc": "Fails if the string ``str1`` ends with the string ``str2``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 974
+      "lineno": 1076
     },
     {
       "name": "Should Not Match",
@@ -3213,7 +3277,7 @@
       "shortdoc": "Fails if the given ``string`` matches the given ``pattern``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1338
+      "lineno": 1503
     },
     {
       "name": "Should Not Match Regexp",
@@ -3264,7 +3328,7 @@
       "shortdoc": "Fails if ``string`` matches ``pattern`` as a regular expression.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1424
+      "lineno": 1597
     },
     {
       "name": "Should Not Start With",
@@ -3331,7 +3395,7 @@
       "shortdoc": "Fails if the string ``str1`` starts with the string ``str2``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 931
+      "lineno": 1016
     },
     {
       "name": "Should Start With",
@@ -3398,7 +3462,7 @@
       "shortdoc": "Fails if the string ``str1`` does not start with the string ``str2``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 953
+      "lineno": 1046
     },
     {
       "name": "Skip",
@@ -3417,7 +3481,7 @@
       "shortdoc": "Skips the rest of the current test.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2644
+      "lineno": 2855
     },
     {
       "name": "Skip If",
@@ -3444,7 +3508,7 @@
       "shortdoc": "Skips the rest of the current test if the ``condition`` is True.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2652
+      "lineno": 2863
     },
     {
       "name": "Sleep",
@@ -3471,7 +3535,7 @@
       "shortdoc": "Pauses the test executed for the given time.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 3024
+      "lineno": 3235
     },
     {
       "name": "Variable Should Exist",
@@ -3498,7 +3562,7 @@
       "shortdoc": "Fails unless the given variable exists within the current scope.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1607
+      "lineno": 1787
     },
     {
       "name": "Variable Should Not Exist",
@@ -3525,7 +3589,7 @@
       "shortdoc": "Fails if the given variable exists within the current scope.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 1630
+      "lineno": 1813
     },
     {
       "name": "Wait Until Keyword Succeeds",
@@ -3568,7 +3632,7 @@
       "shortdoc": "Runs the specified keyword and retries if it fails.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py",
-      "lineno": 2404
+      "lineno": 2610
     }
   ],
   "typedocs": []
