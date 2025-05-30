@@ -1731,7 +1731,7 @@ If that happens, it is recommended to move the code into a library.
 
 The most common usages of extended variable syntax are illustrated
 in the example below. First assume that we have the following `variable file
-<Variable files>`__ and test case:
+<Variable files_>`__ and test case:
 
 .. sourcecode:: python
 
