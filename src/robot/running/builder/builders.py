@@ -276,7 +276,7 @@ class SuiteStructureParser(SuiteStructureVisitor):
             if not suite.tests:
                 LOGGER.info(f"Data source '{source}' has no tests or tasks.")
         except DataError as err:
-            raise DataError(f"Parsing '{source}' failed: {err.message}")
+            raise DataError(f"Parsing '{source}' failed: {err.message}") from err
         return suite
 
     def _build_suite_directory(self, structure: SuiteDirectory):

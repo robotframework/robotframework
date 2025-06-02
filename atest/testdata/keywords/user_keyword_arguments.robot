@@ -199,10 +199,15 @@ Invalid Arguments Spec - Invalid argument syntax
     ...    Invalid argument specification: Invalid argument syntax 'no deco'.
     Invalid argument syntax
 
-Invalid Arguments Spec - Non-default after defaults
+Invalid Arguments Spec - Non-default after default
     [Documentation]    FAIL
     ...    Invalid argument specification: Non-default argument after default arguments.
-    Non-default after defaults    what    ever    args=accepted
+    Non-default after default    what    ever    args=accepted
+
+Invalid Arguments Spec - Non-default after default w/ types
+    [Documentation]    FAIL
+    ...    Invalid argument specification: Non-default argument after default arguments.
+    Non-default after default w/ types
 
 Invalid Arguments Spec - Default with varargs
     [Documentation]    FAIL
@@ -214,10 +219,25 @@ Invalid Arguments Spec - Default with kwargs
     ...    Invalid argument specification: Only normal arguments accept default values, dictionary arguments like '&{kwargs}' do not.
     Default with kwargs
 
+Invalid Arguments Spec - Multiple varargs
+    [Documentation]    FAIL
+    ...    Invalid argument specification: Cannot have multiple varargs.
+    Multiple varargs
+
+Invalid Arguments Spec - Multiple varargs w/ types
+    [Documentation]    FAIL
+    ...    Invalid argument specification: Cannot have multiple varargs.
+    Multiple varargs w/ types
+
 Invalid Arguments Spec - Kwargs not last
     [Documentation]    FAIL
     ...    Invalid argument specification: Only last argument can be kwargs.
     Kwargs not last
+
+Invalid Arguments Spec - Kwargs not last w/ types
+    [Documentation]    FAIL
+    ...    Invalid argument specification: Only last argument can be kwargs.
+    Kwargs not last w/ types
 
 Invalid Arguments Spec - Multiple errors
     [Documentation]    FAIL
@@ -338,8 +358,12 @@ Invalid argument syntax
     [Arguments]    no deco
     Fail    Not executed
 
-Non-default after defaults
-    [Arguments]    ${named}=value    ${positional}
+Non-default after default
+    [Arguments]    ${with}=value    ${without}
+    Fail    Not executed
+
+Non-default after default w/ types
+    [Arguments]    ${with: str}=value    ${without: int}
     Fail    Not executed
 
 Default with varargs
@@ -350,8 +374,20 @@ Default with kwargs
     [Arguments]    &{kwargs}=invalid
     Fail    Not executed
 
+Multiple varargs
+    [Arguments]    @{v}    @{w}
+    Fail    Not executed
+
+Multiple varargs w/ types
+    [Arguments]    @{v: int}    ${kwo}    @{w: int}
+    Fail    Not executed
+
 Kwargs not last
     [Arguments]    &{kwargs}    ${positional}
+    Fail    Not executed
+
+Kwargs not last w/ types
+    [Arguments]    &{k1: int}    ${k2: str}
     Fail    Not executed
 
 Multiple errors

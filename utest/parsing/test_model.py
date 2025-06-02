@@ -2018,7 +2018,7 @@ class TestUserKeyword(unittest.TestCase):
 *** Keywords ***
 Invalid
     [Arguments]    ooops    ${optional}=default    ${required}
-    ...    @{too}    @{many}    &{notlast}    ${x}
+    ...    @{too}    @{}    @{many}    &{notlast}    ${x}
     Keyword
 """
         expected = Keyword(
@@ -2031,12 +2031,46 @@ Invalid
                         Token(Token.ARGUMENT, "${optional}=default", 3, 28),
                         Token(Token.ARGUMENT, "${required}", 3, 51),
                         Token(Token.ARGUMENT, "@{too}", 4, 11),
-                        Token(Token.ARGUMENT, "@{many}", 4, 21),
-                        Token(Token.ARGUMENT, "&{notlast}", 4, 32),
-                        Token(Token.ARGUMENT, "${x}", 4, 46),
+                        Token(Token.ARGUMENT, "@{}", 4, 21),
+                        Token(Token.ARGUMENT, "@{many}", 4, 28),
+                        Token(Token.ARGUMENT, "&{notlast}", 4, 39),
+                        Token(Token.ARGUMENT, "${x}", 4, 53),
                     ],
                     errors=(
                         "Invalid argument syntax 'ooops'.",
+                        "Non-default argument after default arguments.",
+                        "Cannot have multiple varargs.",
+                        "Cannot have multiple varargs.",
+                        "Only last argument can be kwargs.",
+                    ),
+                ),
+                KeywordCall(tokens=[Token(Token.KEYWORD, "Keyword", 5, 4)]),
+            ],
+        )
+        get_and_assert_model(data, expected, depth=1)
+
+    def test_invalid_arg_spec_with_types(self):
+        data = """
+*** Keywords ***
+Invalid
+    [Arguments]    ${optional: str}=default    ${required: bool}
+    ...    @{too: int}    @{many: float}    &{not: bool}    &{last: bool}
+    Keyword
+"""
+        expected = Keyword(
+            header=KeywordName(tokens=[Token(Token.KEYWORD_NAME, "Invalid", 2, 0)]),
+            body=[
+                Arguments(
+                    tokens=[
+                        Token(Token.ARGUMENTS, "[Arguments]", 3, 4),
+                        Token(Token.ARGUMENT, "${optional: str}=default", 3, 19),
+                        Token(Token.ARGUMENT, "${required: bool}", 3, 47),
+                        Token(Token.ARGUMENT, "@{too: int}", 4, 11),
+                        Token(Token.ARGUMENT, "@{many: float}", 4, 26),
+                        Token(Token.ARGUMENT, "&{not: bool}", 4, 44),
+                        Token(Token.ARGUMENT, "&{last: bool}", 4, 60),
+                    ],
+                    errors=(
                         "Non-default argument after default arguments.",
                         "Cannot have multiple varargs.",
                         "Only last argument can be kwargs.",
