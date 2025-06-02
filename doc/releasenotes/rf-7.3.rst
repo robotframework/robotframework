@@ -541,7 +541,7 @@ Full list of fixes and enhancements
     * - `#5440`_
       - enhancement
       - medium
-      - Support `now` and `today` as special values in `datetime` and `date` conversion, respectively
+      - Support `now` and `today` as special values in `datetime` and `date` conversion
     * - `#5398`_
       - bug
       - low
