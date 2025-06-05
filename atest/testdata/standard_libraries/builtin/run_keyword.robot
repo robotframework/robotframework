@@ -92,16 +92,16 @@ Run Keyword With Test Timeout Passing
     Run Keyword    Log    Timeout is not exceeded
 
 Run Keyword With Test Timeout Exceeded
-    [Documentation]    FAIL Test timeout 1 second 234 milliseconds exceeded.
-    [Timeout]    1234 milliseconds
+    [Documentation]    FAIL Test timeout 300 milliseconds exceeded.
+    [Timeout]    0.3 s
     Run Keyword    Log    Before Timeout
-    Run Keyword    Sleep    1.3s
+    Run Keyword    Sleep    5 s
 
 Run Keyword With KW Timeout Passing
     Run Keyword    Timeoutted UK Passing
 
 Run Keyword With KW Timeout Exceeded
-    [Documentation]    FAIL Keyword timeout 300 milliseconds exceeded.
+    [Documentation]    FAIL Keyword timeout 50 milliseconds exceeded.
     Run Keyword    Timeoutted UK Timeouting
 
 Run Keyword With Invalid Keyword Name
@@ -122,7 +122,7 @@ Timeoutted UK Passing
     No Operation
 
 Timeoutted UK Timeouting
-    [Timeout]    300 milliseconds
+    [Timeout]    50 milliseconds
     Sleep    1 second
 
 Embedded "${arg}"
