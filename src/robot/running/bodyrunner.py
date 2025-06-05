@@ -81,31 +81,35 @@ class KeywordRunner:
 
     def run(self, data, result, setup_or_teardown=False):
         context = self._context
-        runner = self._get_runner(data.name, setup_or_teardown, context)
+        if setup_or_teardown:
+            runner = self._get_setup_teardown_runner(data, context)
+        else:
+            runner = context.get_runner(data.name, recommend_on_failure=self._run)
         if not runner:
             return None
         if context.dry_run:
             return runner.dry_run(data, result, context)
         return runner.run(data, result, context, self._run)
 
-    def _get_runner(self, name, setup_or_teardown, context):
-        if setup_or_teardown:
-            # Don't replace variables in name if it contains embedded arguments
-            # to support non-string values. BuiltIn.run_keyword has similar
-            # logic, but, for example, handling 'NONE' differs.
-            if "{" in name:
-                runner = context.get_runner(name, recommend_on_failure=False)
-                if hasattr(runner, "embedded_args"):
-                    return runner
-            try:
-                name = context.variables.replace_string(name)
-            except DataError as err:
-                if context.dry_run:
-                    return None
-                raise ExecutionFailed(err.message)
-            if name.upper() in ("", "NONE"):
+    def _get_setup_teardown_runner(self, data, context):
+        try:
+            name = context.variables.replace_string(data.name)
+        except DataError as err:
+            if context.dry_run:
                 return None
-        return context.get_runner(name, recommend_on_failure=self._run)
+            raise ExecutionFailed(err.message)
+        if name.upper() in ("NONE", ""):
+            return None
+        # If the matched runner accepts embedded arguments, use the original name
+        # instead of the one where variables are already replaced and converted to
+        # strings. This allows using non-string values as embedded arguments also
+        # in this context. An exact match after variables have been replaced has
+        # a precedence over a possible embedded match with the original name, though.
+        # BuiltIn.run_keyword has the same logic.
+        runner = context.get_runner(name, recommend_on_failure=self._run)
+        if hasattr(runner, "embedded_args") and name != data.name:
+            runner = context.get_runner(data.name)
+        return runner
 
 
 def ForRunner(context, flavor="IN", run=True, templated=False):

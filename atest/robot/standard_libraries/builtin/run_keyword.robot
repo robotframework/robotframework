@@ -61,10 +61,17 @@ With keyword accepting embedded arguments as variables containing objects
 
 With library keyword accepting embedded arguments as variables containing objects
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Run Keyword With Embedded Args    ${tc[0]}    Embedded "\${OBJECT}" in library          Robot
+    Check Run Keyword With Embedded Args    ${tc[0]}    Embedded "\${OBJECT}" in library           Robot
     Check Run Keyword With Embedded Args    ${tc[1]}    Embedded object "\${OBJECT}" in library    Robot
 
-Run Keyword In For Loop
+Exact match after replacing variables has higher precedence than embedded arguments
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Run Keyword    ${tc[1]}            Embedded "not"
+    Check Log Message    ${tc[1][0][0][0]}   Nothing embedded in this user keyword!
+    Check Run Keyword    ${tc[2]}            embedded_args.Embedded "not" in library
+    Check Log Message    ${tc[2][0][0]}      Nothing embedded in this library keyword!
+
+Run Keyword In FOR Loop
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Run Keyword          ${tc[0, 0, 0]}    BuiltIn.Log    hello from for loop
     Check Run Keyword In UK    ${tc[0, 2, 0]}    BuiltIn.Log    hei maailma

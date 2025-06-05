@@ -31,7 +31,7 @@ from robot.utils import (
     DotDict, escape, format_assign_message, get_error_message, get_time, html_escape,
     is_falsy, is_list_like, is_truthy, Matcher, normalize, normalize_whitespace,
     parse_re_flags, parse_time, plural_or_not as s, prepr, safe_str, secs_to_timestr,
-    seq2str, split_from_equals, timestr_to_secs
+    seq2str, split_from_equals, timestr_to_secs, unescape
 )
 from robot.utils.asserts import assert_equal, assert_not_equal
 from robot.variables import (
@@ -2149,11 +2149,10 @@ class _RunKeyword(_BuiltInBase):
         can be a variable and thus set dynamically, e.g. from a return value of
         another keyword or from the command line.
         """
+        ctx = self._context
+        name, args = self._replace_variables_in_name(name, args, ctx)
         if not isinstance(name, str):
             raise RuntimeError("Keyword name must be a string.")
-        ctx = self._context
-        if not (ctx.dry_run or self._accepts_embedded_arguments(name, ctx)):
-            name, args = self._replace_variables_in_name([name, *args])
         if ctx.steps:
             data, result, _ = ctx.steps[-1]
             lineno = data.lineno
@@ -2169,26 +2168,41 @@ class _RunKeyword(_BuiltInBase):
         with ctx.paused_timeouts:
             return kw.run(result, ctx)
 
-    def _accepts_embedded_arguments(self, name, ctx):
-        # KeywordRunner.run has similar logic that's used with setups/teardowns.
-        if "{" in name:
-            runner = ctx.get_runner(name, recommend_on_failure=False)
-            return hasattr(runner, "embedded_args")
-        return False
+    def _replace_variables_in_name(self, name, args, ctx):
+        match = search_variable(name)
+        if not match or ctx.dry_run:
+            return unescape(name), args
+        if match.is_list_variable():
+            return self._replace_variables_in_name_with_list_variable(name, args, ctx)
+        # If the matched runner accepts embedded arguments, use the original name
+        # instead of the one where variables are already replaced and converted to
+        # strings. This allows using non-string values as embedded arguments also
+        # in this context. An exact match after variables have been replaced has
+        # a precedence over a possible embedded match with the original name, though.
+        # TODO: This functionality exists also in 'KeywordRunner.run'. Reuse that to
+        # avoid duplication. We probably could pass an argument like 'dynamic_name=True'
+        # to 'Keyword.run', but then it would be better if 'Run Keyword' would support
+        # 'NONE' as a special value to not run anything similarly as setup/teardown.
+        replaced = ctx.variables.replace_scalar(name, ignore_errors=ctx.in_teardown)
+        runner = ctx.get_runner(replaced, recommend_on_failure=False)
+        if hasattr(runner, "embedded_args"):
+            return name, args
+        return replaced, args
 
-    def _replace_variables_in_name(self, name_and_args):
-        resolved = self._variables.replace_list(
-            name_and_args,
+    def _replace_variables_in_name_with_list_variable(self, name, args, ctx):
+        # TODO: This seems to be the only place where `replace_until` is used.
+        # That functionality should be removed from `replace_list` and implemented
+        # here. Alternatively we could disallow passing name as a list variable.
+        resolved = ctx.variables.replace_list(
+            [name, *args],
             replace_until=1,
-            ignore_errors=self._context.in_teardown,
+            ignore_errors=ctx.in_teardown,
         )
         if not resolved:
             raise DataError(
-                f"Keyword name missing: Given arguments {name_and_args} resolved "
+                f"Keyword name missing: Given arguments {[name, *args]} resolved "
                 f"to an empty list."
             )
-        if not isinstance(resolved[0], str):
-            raise RuntimeError("Keyword name must be a string.")
         return resolved[0], resolved[1:]
 
     @run_keyword_variant(resolve=0, dry_run=True)

@@ -73,7 +73,12 @@ With library keyword accepting embedded arguments as variables containing object
     Run Keyword    Embedded "${OBJECT}" in library
     Run Keyword    Embedded object "${OBJECT}" in library
 
-Run Keyword In For Loop
+Exact match after replacing variables has higher precedence than embedded arguments
+    VAR    ${not}    not
+    Run Keyword    Embedded "${not}"
+    Run Keyword    Embedded "${{'NOT'}}" in library
+
+Run Keyword In FOR Loop
     [Documentation]    FAIL Expected failure in For Loop
     FOR    ${kw}              ${arg1}                ${arg2}    IN
     ...    Log                hello from for loop    INFO
@@ -131,3 +136,6 @@ Embedded "${arg}"
 Embedded object "${obj}"
     Log    ${obj}
     Should Be Equal    ${obj.name}    Robot
+
+Embedded "not"
+    Log    Nothing embedded in this user keyword!
