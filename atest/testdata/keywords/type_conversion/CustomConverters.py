@@ -2,7 +2,7 @@ from datetime import date, datetime
 from types import ModuleType
 from typing import Dict, List, Set, Tuple, TypedDict, Union
 
-from robot.api.deco import not_keyword
+from robot.api.deco import not_keyword, register_converter
 
 not_keyword(TypedDict)
 
@@ -36,6 +36,17 @@ def parse_bool(value: Union[str, int, bool]):
     if isinstance(value, str):
         value = value.lower()
     return value not in ["false", "", "epätosi", "\u2639", False, 0]
+
+
+class AutoConvertedNumber:
+    """type placeholder"""
+
+@register_converter(AutoConvertedNumber, str)
+def autonumber_from_str(value):
+    try:
+        return ["zero", "one", "two", "three", "four"].index(value.lower())
+    except ValueError:
+        raise ValueError(f"Don't know number {value!r}.")
 
 
 class UsDate(date):

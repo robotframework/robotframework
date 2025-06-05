@@ -16,6 +16,7 @@
 from typing import Any, Callable, Literal, overload, Sequence, TypeVar, Union
 
 from .interfaces import TypeHints
+from robot.running.arguments import TypeConverter
 
 F = TypeVar("F", bound=Callable[..., Any])
 K = TypeVar("K", bound=Callable[..., Any])
@@ -200,4 +201,18 @@ def library(
         cls.ROBOT_AUTO_KEYWORDS = auto_keywords
         return cls
 
+    return decorator
+
+
+@not_keyword
+def register_converter(target_type, *args):
+    def decorator(func):
+        class ConverterProxy(TypeConverter):
+            type = target_type
+            type_name = target_type.__name__
+            if args: value_types = args
+            def _convert(self, value):
+                return func(value)
+        TypeConverter.register(ConverterProxy)
+        return func
     return decorator
