@@ -84,11 +84,16 @@ Preparation
       git pull --rebase
       git push
 
-2. Clean up::
+2. Make sure code is formatted properly::
+
+      invoke format
+      git status
+
+3. Clean up::
 
       invoke clean
 
-3. Set version information to a shell variable to ease copy-pasting further
+4. Set version information to a shell variable to ease copy-pasting further
    commands. Add ``aN``, ``bN`` or ``rcN`` postfix if creating a pre-release::
 
       VERSION=<version>
@@ -139,9 +144,8 @@ Release notes
    issue tracker than in the generated release notes. This allows re-generating
    the list of issues later if more issues are added.
 
-6. Add, commit and push::
+6. Commit and push changes::
 
-      git add doc/releasenotes/rf-$VERSION.rst
       git commit -m "Release notes for $VERSION" doc/releasenotes/rf-$VERSION.rst
       git push
 
@@ -151,23 +155,21 @@ Release notes
 
 __ https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/creating-a-personal-access-token
 
+Update Libdoc templates
+-----------------------
 
-Update libdoc generated files
------------------------------
+1  Prerequisites are listed in `<src/web/README.md>`_. This step can be skipped
+   if there are no changes to Libdoc.
 
-Run
+2. Regenerate HTML template and update the list of supported localizations
+   in `--help`::
 
-    invoke build-libdoc
+      invoke build-libdoc
 
-This step can be skipped if there are no changes to Libdoc. Prerequisites
-are listed in `<src/web/README.md>`_.
+3. Commit and push changes::
 
-This will regenerate the libdoc html template and update libdoc command line
-with the latest supported lagnuages.
-
-Commit & push if there are changes any changes to either
-`src/robot/htmldata/libdoc/libdoc.html` or `src/robot/libdocpkg/languages.py`.
-
+      git commit -m "Update Libdoc templates" src/robot/htmldata/libdoc/libdoc.html src/robot/libdocpkg/languages.py
+      git push
 
 Set version
 -----------
@@ -273,28 +275,12 @@ Post actions
 Announcements
 -------------
 
-1. `robotframework-users <https://groups.google.com/group/robotframework-users>`_
-   and
-   `robotframework-announce <https://groups.google.com/group/robotframework-announce>`_
-   lists. The latter is not needed with preview releases but should be used
-   at least with major updates. Notice that sending to it requires admin rights.
+1. ``#announcements`` channel on `Slack <https://slack.robotframework.org/>`_.
+   Use ``@channel`` at least with major releases.
 
-2. Twitter. Either Tweet something yourself and make sure it's re-tweeted
-   by `@robotframework <http://twitter.com/robotframework>`_, or send the
-   message directly as `@robotframework`. This makes the note appear also
-   at http://robotframework.org.
+2. `Forum <https://forum.robotframework.org/>`_.
 
-   Should include a link to more information. Possibly a link to the full
-   release notes or an email to the aforementioned mailing lists.
+3. `LinkedIn group <https://www.linkedin.com/groups/3710899/>`_. A personal
+    LinkedIn post is a good idea at least with bigger releases.
 
-3. ``#devel`` and ``#general`` channels on Slack.
-
-4. `Robot Framework LinkedIn
-   <https://www.linkedin.com/groups/3710899/>`_ group.
-
-5. Consider sending announcements, at least with major releases, also to other
-   forums where we want to make the framework more well known. For example:
-
-   - http://opensourcetesting.org
-   - http://tech.groups.yahoo.com/group/agile-testing
-   - http://lists.idyll.org/listinfo/testing-in-python
+4. `robotframework-users <https://groups.google.com/group/robotframework-users>`_
