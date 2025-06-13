@@ -14,6 +14,10 @@ ${STDERR}         %{TEMPDIR}/redirect_stderr.txt
 
 *** Test Cases ***
 PYTHONIOENCODING is honored in console output
+    [Tags]    kala
+    Log    ${COMMAND}
+    Log    ${DATADIR}
+    Log    ${DATADIR}/misc/non_ascii.robot
     ${result} =    Run Process
     ...    @{COMMAND}
     ...    env:PYTHONIOENCODING=ISO-8859-5

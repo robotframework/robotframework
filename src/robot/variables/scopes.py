@@ -21,6 +21,7 @@ from robot.errors import DataError
 from robot.model import Tags
 from robot.output import LOGGER
 from robot.utils import abspath, DotDict, find_file, get_error_details, NormalizedDict
+from robot.utils.secret import Secret
 
 from .resolvable import GlobalVariableValue
 from .variables import Variables
@@ -211,10 +212,12 @@ class GlobalVariables(Variables):
             info = TypeInfo.from_variable(var)
         except DataError as err:
             raise DataError(f"Invalid command line variable '{var}': {err}")
+        if info.type is Secret:
+            return Secret(value)
         try:
             return info.convert(value, var, kind="Command line variable")
         except ValueError as err:
-            raise DataError(err)
+            raise DataError(str(err))
 
     def _set_built_in_variables(self, settings):
         options = DotDict(

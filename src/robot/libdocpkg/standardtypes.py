@@ -23,6 +23,8 @@ try:
 except ImportError:  # Python < 3.10
     NoneType = type(None)
 
+from robot.utils import Secret
+
 STANDARD_TYPE_DOCS = {
     Any: """\
 Any value is accepted. No conversion is done.
@@ -198,6 +200,9 @@ are converted using the value type specific conversion logic.
 
 Strings are case, space, underscore and hyphen insensitive,
 but exact matches have precedence over normalized matches.
+""",
+    Secret: """\
+FIX ME
 """,
 }
 
