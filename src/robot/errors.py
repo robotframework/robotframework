@@ -22,10 +22,10 @@ Unless noted otherwise, external libraries should not use exceptions defined her
 # RC below 250 is the number of failed critical tests and exactly 250
 # means that number or more such failures.
 # fmt: off
-INFO_PRINTED    = 251    # --help or --version
-DATA_ERROR      = 252    # Invalid data or cli args
-STOPPED_BY_USER = 253    # KeyboardInterrupt or SystemExit
-FRAMEWORK_ERROR = 255    # Unexpected error
+INFO_PRINTED    = 251  # --help or --version
+DATA_ERROR      = 252  # Invalid data or cli args
+STOPPED_BY_USER = 253  # KeyboardInterrupt or SystemExit
+FRAMEWORK_ERROR = 255  # Unexpected error
 # fmt: on
 
 
