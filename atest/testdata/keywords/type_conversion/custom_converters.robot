@@ -69,6 +69,8 @@ Failing conversion
     True       ${1.0}        type=boolean    arg_type=float
     Class with hints as converter
     ...        ${1.2}        type=ClassWithHintsAsConverter    arg_type=float
+    Special number
+    ...        four          type=AutoConvertedSpecialNumber    error=Number 'four' isn't a special number.
 
 `None` as strict converter
     Strict    ${{CustomConverters.Strict()}}
@@ -107,6 +109,7 @@ Non-type annotation
 From registered type
     From registered type    zero    0
     From registered type    four    4
+    From registered type special    seven    7
 
 Using library decorator
     Using library decorator    one    1

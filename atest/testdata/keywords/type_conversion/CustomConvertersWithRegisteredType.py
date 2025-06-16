@@ -1,4 +1,4 @@
-from CustomConverters import AutoConvertedNumber
+from CustomConverters import AutoConvertedNumber, AutoConvertedSpecialNumber
 
 
 class CustomConvertersWithRegisteredType:
@@ -8,4 +8,7 @@ class CustomConvertersWithRegisteredType:
     """
 
     def from_registered_type(self, value: AutoConvertedNumber, expected: int):
+        assert value == expected, f"value [{value}] == expected [{expected}]"
+
+    def from_registered_type_special(self, value: AutoConvertedSpecialNumber, expected: int):
         assert value == expected, f"value [{value}] == expected [{expected}]"

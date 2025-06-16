@@ -219,7 +219,10 @@ def register_converter(target_type, *args, type_name=None):
                 if type_name: self.type_info.name = type_name
 
             def _convert(self, value):
-                return func(value)
+                if func.__code__.co_argcount == 2:
+                    return func(value, self.type_info)
+                else:
+                    return func(value)
 
         STANDARD_TYPE_DOCS[target_type] = ConverterProxy.doc
         TypeConverter.register(ConverterProxy)
