@@ -57,7 +57,6 @@ from robot import result, running
 from robot.running import TestDefaults, TestSuite
 
 # Type aliases used by DynamicLibrary and HybridLibrary.
-# fmt: off
 Name = str
 PositArgs = Sequence[Any]
 NamedArgs = Mapping[str, Any]
@@ -68,20 +67,19 @@ Arguments = Sequence[
         "tuple[str]",          # Name without a default like `("arg",)`.
         "tuple[str, Any]"      # Name and default like `("arg", 1)`.
     ]
-]
+]  # fmt: skip
 TypeHint = Union[
     type,                      # Actual type.
     str,                       # Type name or alias.
     UnionType,                 # Union syntax (e.g. `int | float`).
     "tuple[TypeHint, ...]"     # Tuple of type hints. Behaves like a union.
-]
+]  # fmt: skip
 TypeHints = Union[
     Mapping[str, TypeHint],    # Types by name.
     Sequence["TypeHint|None"]  # Types by position.
-]
+]  # fmt: skip
 Tags = Sequence[str]
 Source = str
-# fmt: on
 
 
 class DynamicLibrary(ABC):
