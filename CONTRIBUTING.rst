@@ -328,33 +328,76 @@ Handle Boolean expressions
 Autoformatting handles Boolean expressions having two items that do not fit into
 a single line *really* strangely:
 
-.. sourcecode::
+.. sourcecode:: python
 
     ext = getattr(self.parser, 'EXTENSION', None) or getattr(
         self.parser, 'extension', None
     )
 
-    runner = self._get_runner_from_resource_files(
+    return self._get_runner_from_resource_files(
         name
     ) or self._get_runner_from_libraries(name)
 
 Expressions having three or more items would be grouped with parentheses and
 `there is an issue`__ about doing that also if there are two items. A workaround
-is using parentheses and disabling formatting:
+is using parentheses and disabling formatting with the ``# fmt: skip`` pragma:
 
-.. sourcecode::
+.. sourcecode:: python
 
     ext = (
         getattr(self.parser, 'EXTENSION', None)
         or getattr(self.parser, 'extension', None)
     )  # fmt: skip
 
-    runner = (
+    return (
         self._get_runner_from_resource_files(name)
         or self._get_runner_from_libraries(name)
     )  # fmt: skip
 
 __ https://github.com/psf/black/issues/2156
+
+Inline comment handling
+```````````````````````
+
+Autoformatting normalizes the number of spaces before an inline comment into two.
+That is typically fine, but if subsequent lines use inline comments, the result
+can be suboptimal__:
+
+.. sourcecode:: python
+
+    TypeHint = Union[
+        type,  # Actual type.
+        str,  # Type name or alias.
+        UnionType,  # Union syntax (e.g. `int | float`).
+        'tuple[TypeHint, ...]',  # Tuple of type hints. Behaves like a union.
+    ]
+
+A solution is manually aligning comments and disabling autoformatting:
+
+.. sourcecode:: python
+
+    TypeHint = Union[
+        type,                   # Actual type.
+        str,                    # Type name or alias.
+        UnionType,              # Union syntax (e.g. `int | float`).
+        "tuple[TypeHint, ...]"  # Tuple of type hints. Behaves like a union.
+    ]  # fmt: skip
+
+In the above example formatting is disabled with the ``# fmt: skip`` pragma, but
+it does not work if inline comments are not related to a single statement. In such
+cases the ``# fmt: off`` and ``# fmt: on`` pair can be used instead. In this example
+formatting is disabled to allow aligning constant values in addition to comments:
+
+.. sourcecode:: python
+
+    # fmt: off
+    INFO_PRINTED    = 251  # --help or --version
+    DATA_ERROR      = 252  # Invalid data or cli args
+    STOPPED_BY_USER = 253  # KeyboardInterrupt or SystemExit
+    FRAMEWORK_ERROR = 255  # Unexpected error
+    # fmt: on
+
+__ https://github.com/psf/black/issues/4651
 
 Docstrings
 ''''''''''
@@ -380,6 +423,7 @@ following exceptions:
 - Annotations should use the stringified format for annotations not supported
   by the minimum supported Python version. For example, ``"int | float"``
   instead of ``Union[int, float]`` and ``"list[int]"`` instead of ``List[int]``.
+  Type aliases are an exception to this rule.
 - Keywords accepting either an integer or a float should typically be annotated as
   ``int | float`` instead of just ``float``. This way argument conversion tries to
   first convert arguments to an integer and only converts to a float if that fails.
@@ -397,7 +441,7 @@ User Guide
 Robot Framework's features are explained in the `User Guide
 <http://robotframework.org/robotframework/#user-guide>`_. It is generated
 using a custom script based on the source in `reStructuredText
-<http://docutils.sourceforge.net/rst.html>`_ format. For more details about
+<https://docutils.sourceforge.io/rst.html>`_ format. For more details about
 editing and generating it see `<doc/userguide/README.rst>`_.
 
 Libraries
