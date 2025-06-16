@@ -34,8 +34,8 @@ first ask on the ``#devel`` channel on our Slack_. Slack and other such forums,
 not the issue tracker, are also places where to ask general questions about
 the framework.
 
-Before submitting a new issue, it is always a good idea to check is the
-same bug or enhancement already reported. If it is, please add your comments
+Before submitting a new issue, it is always a good idea to check if the
+same bug or enhancement is already reported. If it is, please add your comments
 to the existing issue instead of creating a new one.
 
 Reporting bugs
@@ -158,7 +158,7 @@ or files::
 
 Formatting is done in multiple phases:
 
-    1. Code is listed using `Ruff <https://docs.astral.sh/ruff/>`_ . If linting
+    1. Code is linted using `Ruff <https://docs.astral.sh/ruff/>`_ . If linting
        fails, the formatting process is stopped.
     2. Code is formatted code using `Black <https://black.readthedocs.io/>`_.
        We plan to switch to Ruff as soon as they stop removing the
