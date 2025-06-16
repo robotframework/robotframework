@@ -282,6 +282,6 @@ Announcements
 2. `Forum <https://forum.robotframework.org/>`_.
 
 3. `LinkedIn group <https://www.linkedin.com/groups/3710899/>`_. A personal
-    LinkedIn post is a good idea at least with bigger releases.
+   LinkedIn post is a good idea at least with bigger releases.
 
 4. `robotframework-users <https://groups.google.com/group/robotframework-users>`_
