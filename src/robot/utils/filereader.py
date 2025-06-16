@@ -88,7 +88,7 @@ class FileReader:  # FIXME: Rename to SourceReader
 
     def readlines(self) -> "Iterator[str]":
         first_line = True
-        for line in self.file.readlines():
+        for line in self.file:
             yield self._decode(line, remove_bom=first_line)
             first_line = False
 
