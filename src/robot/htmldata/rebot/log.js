@@ -8,11 +8,9 @@ function toggleTest(testId) {
     var test = window.testdata.findLoaded(testId);
     var autoExpand = test.status == "FAIL" || test.status == "SKIP";
     var closed = $('#' + testId).children('.element-header').hasClass('closed');
-
-    if (autoExpand)
+    if (autoExpand && closed)
         expandFailed(test);
-
-    if (!autoExpand || !closed)
+    else
         toggleElement(testId, ['keyword']);
 }
 
