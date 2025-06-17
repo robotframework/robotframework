@@ -1545,7 +1545,9 @@ class _Verify(_BuiltInBase):
                 self._get_string_msg(string, pattern, msg, values, "does not match")
             )
 
-    def should_match_regexp(self, string, pattern, msg=None, values=True, flags=None) -> str:
+    def should_match_regexp(
+        self, string, pattern, msg=None, values=True, flags=None
+    ) -> str:
         """Fails if ``string`` does not match ``pattern`` as a regular expression.
 
         See the `Regular expressions` section for more information about

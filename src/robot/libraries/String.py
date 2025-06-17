@@ -582,7 +582,9 @@ class String:
         return string.split(separator, max_split)
 
     @keyword(types=None)
-    def split_string_from_right(self, string, separator=None, max_split=-1) -> list[str]:
+    def split_string_from_right(
+        self, string, separator=None, max_split=-1
+    ) -> list[str]:
         """Splits the ``string`` using ``separator`` starting from right.
 
         Same as `Split String`, but splitting is started from right. This has

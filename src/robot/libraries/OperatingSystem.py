@@ -1344,7 +1344,9 @@ class OperatingSystem:
         self._info(f"{len(files)} file{s(files)}:\n" + "\n".join(files))
         return files
 
-    def list_directories_in_directory(self, path, pattern=None, absolute=False) -> list[str]:
+    def list_directories_in_directory(
+        self, path, pattern=None, absolute=False
+    ) -> list[str]:
         """Wrapper for `List Directory` that returns only directories."""
         dirs = self._list_dirs_in_dir(path, pattern, absolute)
         label = "directory" if len(dirs) == 1 else "directories"

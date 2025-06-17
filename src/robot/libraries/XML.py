@@ -480,7 +480,9 @@ class XML:
             )
         self._ns_stripper = NameSpaceStripper(self.etree, self.lxml_etree)
 
-    def parse_xml(self, source, keep_clark_notation=False, strip_namespaces=False) -> Any:
+    def parse_xml(
+        self, source, keep_clark_notation=False, strip_namespaces=False
+    ) -> Any:
         """Parses the given XML file or string into an element structure.
 
         The ``source`` can either be a path to an XML file or a string
@@ -696,7 +698,9 @@ class XML:
     def _normalize_whitespace(self, text):
         return " ".join(text.split())
 
-    def get_elements_texts(self, source, xpath, normalize_whitespace=False) -> list[str]:
+    def get_elements_texts(
+        self, source, xpath, normalize_whitespace=False
+    ) -> list[str]:
         """Returns text of all elements matching ``xpath`` as a list.
 
         The elements whose text to return is specified using ``source`` and

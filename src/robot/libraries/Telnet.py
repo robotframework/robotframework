@@ -17,11 +17,10 @@ import inspect
 import re
 import socket
 import struct
-from typing import Any
-
 import telnetlib
 import time
 from contextlib import contextmanager
+from typing import Any
 
 try:
     import pyte

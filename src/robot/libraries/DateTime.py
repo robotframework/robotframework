@@ -528,7 +528,9 @@ def add_time_to_time(time1, time2, result_format="number", exclude_millis=False)
     return time.convert(result_format, millis=not exclude_millis)
 
 
-def subtract_time_from_time(time1, time2, result_format="number", exclude_millis=False) -> Any:
+def subtract_time_from_time(
+    time1, time2, result_format="number", exclude_millis=False
+) -> Any:
     """Subtracts time from another time and returns the resulting time.
 
     Arguments:
