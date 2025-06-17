@@ -65,7 +65,7 @@ class String:
         """
         return string.lower()
 
-    def convert_to_upper_case(self, string):
+    def convert_to_upper_case(self, string) -> str:
         """Converts string to upper case.
 
         Uses Python's standard
@@ -81,7 +81,7 @@ class String:
         return string.upper()
 
     @keyword(types=None)
-    def convert_to_title_case(self, string, exclude=None):
+    def convert_to_title_case(self, string, exclude=None) -> str:
         """Converts string to title case.
 
         Uses the following algorithm:
@@ -138,7 +138,7 @@ class String:
         tokens = re.split(r"(\s+)", string, flags=re.UNICODE)
         return "".join(title(token) for token in tokens)
 
-    def encode_string_to_bytes(self, string, encoding, errors="strict"):
+    def encode_string_to_bytes(self, string, encoding, errors="strict") -> bytes:
         """Encodes the given ``string`` to bytes using the given ``encoding``.
 
         ``errors`` argument controls what to do if encoding some characters fails.
@@ -161,7 +161,7 @@ class String:
         """
         return bytes(string.encode(encoding, errors))
 
-    def decode_bytes_to_string(self, bytes, encoding, errors="strict"):
+    def decode_bytes_to_string(self, bytes, encoding, errors="strict") -> str:
         """Decodes the given ``bytes`` to a string using the given ``encoding``.
 
         ``errors`` argument controls what to do if decoding some bytes fails.
@@ -185,7 +185,7 @@ class String:
             raise TypeError("Cannot decode strings.")
         return bytes.decode(encoding, errors)
 
-    def format_string(self, template, /, *positional, **named):
+    def format_string(self, template, /, *positional, **named) -> str:
         """Formats a ``template`` using the given ``positional`` and ``named`` arguments.
 
         The template can be either be a string or an absolute path to
@@ -220,13 +220,13 @@ class String:
                 template = reader.read()
         return template.format(*positional, **named)
 
-    def get_line_count(self, string):
+    def get_line_count(self, string) -> int:
         """Returns and logs the number of lines in the given string."""
         count = len(string.splitlines())
         logger.info(f"{count} lines.")
         return count
 
-    def split_to_lines(self, string, start=0, end=None):
+    def split_to_lines(self, string, start=0, end=None) -> list[str]:
         """Splits the given string to lines.
 
         It is possible to get only a selection of lines from ``start``
@@ -253,7 +253,7 @@ class String:
         logger.info(f"{len(lines)} line{s(lines)} returned.")
         return lines
 
-    def get_line(self, string, line_number):
+    def get_line(self, string, line_number) -> str:
         """Returns the specified line from the given ``string``.
 
         Line numbering starts from 0, and it is possible to use
@@ -275,7 +275,7 @@ class String:
         pattern: str,
         case_insensitive: "bool|None" = None,
         ignore_case: bool = False,
-    ):
+    ) -> str:
         """Returns lines of the given ``string`` that contain the ``pattern``.
 
         The ``pattern`` is always considered to be a normal string, not a glob
@@ -313,7 +313,7 @@ class String:
         pattern: str,
         case_insensitive: "bool|None" = None,
         ignore_case: bool = False,
-    ):
+    ) -> str:
         """Returns lines of the given ``string`` that match the ``pattern``.
 
         The ``pattern`` is a _glob pattern_ where:
@@ -356,7 +356,7 @@ class String:
         pattern,
         partial_match=False,
         flags=None,
-    ):
+    ) -> str:
         """Returns lines of the given ``string`` that match the regexp ``pattern``.
 
         See `BuiltIn.Should Match Regexp` for more information about
@@ -394,13 +394,13 @@ class String:
         match = regexp.search if partial_match else regexp.fullmatch
         return self._get_matching_lines(string, match)
 
-    def _get_matching_lines(self, string, matches):
+    def _get_matching_lines(self, string, matches) -> str:
         lines = string.splitlines()
         matching = [line for line in lines if matches(line)]
         logger.info(f"{len(matching)} out of {len(lines)} lines matched.")
         return "\n".join(matching)
 
-    def get_regexp_matches(self, string, pattern, *groups, flags=None):
+    def get_regexp_matches(self, string, pattern, *groups, flags=None) -> list[str]:
         """Returns a list of all non-overlapping matches in the given string.
 
         ``string`` is the string to find matches from and ``pattern`` is the
@@ -445,7 +445,7 @@ class String:
         except ValueError:
             return group
 
-    def replace_string(self, string, search_for, replace_with, count=-1):
+    def replace_string(self, string, search_for, replace_with, count=-1) -> str:
         """Replaces ``search_for`` in the given ``string`` with ``replace_with``.
 
         ``search_for`` is used as a literal string. See `Replace String
@@ -476,7 +476,7 @@ class String:
         replace_with,
         count=-1,
         flags=None,
-    ):
+    ) -> str:
         """Replaces ``pattern`` in the given ``string`` with ``replace_with``.
 
         This keyword is otherwise identical to `Replace String`, but
@@ -510,7 +510,7 @@ class String:
             flags=parse_re_flags(flags),
         )
 
-    def remove_string(self, string, *removables):
+    def remove_string(self, string, *removables) -> str:
         """Removes all ``removables`` from the given ``string``.
 
         ``removables`` are used as literal strings. Each removable will be
@@ -534,7 +534,7 @@ class String:
             string = self.replace_string(string, removable, "")
         return string
 
-    def remove_string_using_regexp(self, string, *patterns, flags=None):
+    def remove_string_using_regexp(self, string, *patterns, flags=None) -> str:
         """Removes ``patterns`` from the given ``string``.
 
         This keyword is otherwise identical to `Remove String`, but
@@ -556,7 +556,7 @@ class String:
         return string
 
     @keyword(types=None)
-    def split_string(self, string, separator=None, max_split=-1):
+    def split_string(self, string, separator=None, max_split=-1) -> list[str]:
         """Splits the ``string`` using ``separator`` as a delimiter string.
 
         If a ``separator`` is not given, any whitespace string is a
@@ -582,7 +582,7 @@ class String:
         return string.split(separator, max_split)
 
     @keyword(types=None)
-    def split_string_from_right(self, string, separator=None, max_split=-1):
+    def split_string_from_right(self, string, separator=None, max_split=-1) -> list[str]:
         """Splits the ``string`` using ``separator`` starting from right.
 
         Same as `Split String`, but splitting is started from right. This has
@@ -597,7 +597,7 @@ class String:
         max_split = self._convert_to_integer(max_split, "max_split")
         return string.rsplit(separator, max_split)
 
-    def split_string_to_characters(self, string):
+    def split_string_to_characters(self, string) -> list[str]:
         """Splits the given ``string`` to characters.
 
         Example:
@@ -605,7 +605,7 @@ class String:
         """
         return list(string)
 
-    def fetch_from_left(self, string, marker):
+    def fetch_from_left(self, string, marker) -> str:
         """Returns contents of the ``string`` before the first occurrence of ``marker``.
 
         If the ``marker`` is not found, whole string is returned.
@@ -615,7 +615,7 @@ class String:
         """
         return string.split(marker)[0]
 
-    def fetch_from_right(self, string, marker):
+    def fetch_from_right(self, string, marker) -> str:
         """Returns contents of the ``string`` after the last occurrence of ``marker``.
 
         If the ``marker`` is not found, whole string is returned.
@@ -625,7 +625,7 @@ class String:
         """
         return string.split(marker)[-1]
 
-    def generate_random_string(self, length=8, chars="[LETTERS][NUMBERS]"):
+    def generate_random_string(self, length=8, chars="[LETTERS][NUMBERS]") -> str:
         """Generates a string with a desired ``length`` from the given ``chars``.
 
         ``length`` can be given as a number, a string representation of a number,
@@ -672,7 +672,7 @@ class String:
         maxi = len(chars) - 1
         return "".join(chars[randint(0, maxi)] for _ in range(length))
 
-    def get_substring(self, string, start, end=None):
+    def get_substring(self, string, start, end=None) -> str:
         """Returns a substring from ``start`` index to ``end`` index.
 
         The ``start`` index is inclusive and ``end`` is exclusive.
@@ -691,7 +691,7 @@ class String:
         return string[start:end]
 
     @keyword(types=None)
-    def strip_string(self, string, mode="both", characters=None):
+    def strip_string(self, string, mode="both", characters=None) -> str:
         """Remove leading and/or trailing whitespaces from the given string.
 
         ``mode`` is either ``left`` to remove leading characters, ``right`` to
@@ -818,14 +818,14 @@ class String:
         if string != self.convert_to_title_case(string, exclude):
             raise AssertionError(msg or f"{string!r} is not title case.")
 
-    def _convert_to_index(self, value, name):
+    def _convert_to_index(self, value, name) -> int | None:
         if value == "":
             return 0
         if value is None:
             return None
         return self._convert_to_integer(value, name)
 
-    def _convert_to_integer(self, value, name):
+    def _convert_to_integer(self, value, name) -> int:
         try:
             return int(value)
         except ValueError:

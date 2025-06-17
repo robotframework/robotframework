@@ -158,7 +158,7 @@ class OperatingSystem:
     ROBOT_LIBRARY_SCOPE = "GLOBAL"
     ROBOT_LIBRARY_VERSION = __version__
 
-    def run(self, command):
+    def run(self, command) -> str:
         """Runs the given command in the system and returns the output.
 
         The execution status of the command *is not checked* by this
@@ -196,7 +196,7 @@ class OperatingSystem:
         """
         return self._run(command)[1]
 
-    def run_and_return_rc(self, command):
+    def run_and_return_rc(self, command) -> int:
         """Runs the given command in the system and returns the return code.
 
         The return code (RC) is returned as a positive integer in
@@ -223,7 +223,7 @@ class OperatingSystem:
         """
         return self._run(command)[0]
 
-    def run_and_return_rc_and_output(self, command):
+    def run_and_return_rc_and_output(self, command) -> tuple[int, str]:
         """Runs the given command in the system and returns the RC and output.
 
         The return code (RC) is returned similarly as with `Run And Return RC`
@@ -252,7 +252,7 @@ class OperatingSystem:
         rc = process.close()
         return rc, stdout
 
-    def get_file(self, path, encoding="UTF-8", encoding_errors="strict"):
+    def get_file(self, path, encoding="UTF-8", encoding_errors="strict") -> str:
         """Returns the contents of a specified file.
 
         This keyword reads the specified file and returns the contents.
@@ -295,7 +295,7 @@ class OperatingSystem:
             "CONSOLE": CONSOLE_ENCODING,
         }.get(encoding.upper(), encoding)
 
-    def get_binary_file(self, path):
+    def get_binary_file(self, path) -> bytes:
         """Returns the contents of a specified file.
 
         This keyword reads the specified file and returns the contents as is.
@@ -313,7 +313,7 @@ class OperatingSystem:
         encoding="UTF-8",
         encoding_errors="strict",
         regexp=False,
-    ):
+    ) -> str:
         r"""Returns the lines of the specified file that match the ``pattern``.
 
         This keyword reads a file from the file system using the defined
@@ -365,7 +365,7 @@ class OperatingSystem:
             self._info(f"{len(lines)} out of {total_lines} lines matched.")
             return "\n".join(lines)
 
-    def log_file(self, path, encoding="UTF-8", encoding_errors="strict"):
+    def log_file(self, path, encoding="UTF-8", encoding_errors="strict") -> str:
         """Wrapper for `Get File` that also logs the returned file.
 
         The file is logged with the INFO level. If you want something else,
@@ -743,7 +743,7 @@ class OperatingSystem:
 
     # Moving and copying files and directories
 
-    def copy_file(self, source, destination):
+    def copy_file(self, source, destination) -> str:
         r"""Copies the source file into the destination.
 
         Source must be a path to an existing file or a glob pattern (see
@@ -852,7 +852,7 @@ class OperatingSystem:
             shutil.rmtree(temp_directory)
         return source, destination
 
-    def move_file(self, source, destination):
+    def move_file(self, source, destination) -> str:
         """Moves the source file into the destination.
 
         Arguments have exactly same semantics as with `Copy File` keyword.
@@ -926,7 +926,7 @@ class OperatingSystem:
         shutil.copytree(source, destination)
         self._link("Copied directory from '%s' to '%s'.", source, destination)
 
-    def _prepare_copy_and_move_directory(self, source, destination):
+    def _prepare_copy_and_move_directory(self, source, destination) -> tuple[str, str]:
         source = self._absnorm(source)
         destination = self._absnorm(destination)
         if not os.path.exists(source):
@@ -958,7 +958,7 @@ class OperatingSystem:
     # Environment Variables
 
     @keyword(types=None)
-    def get_environment_variable(self, name, default=None):
+    def get_environment_variable(self, name, default=None) -> str:
         """Returns the value of an environment variable with the given name.
 
         If no environment variable is found, returns possible default value.
@@ -1045,7 +1045,7 @@ class OperatingSystem:
             self._fail(msg, f"Environment variable '{name}' is set to '{value}'.")
         self._info(f"Environment variable '{name}' is not set.")
 
-    def get_environment_variables(self):
+    def get_environment_variables(self) -> dict[str, str]:
         """Returns currently available environment variables as a dictionary.
 
         Both keys and values are decoded to Unicode using the system encoding.
@@ -1054,7 +1054,7 @@ class OperatingSystem:
         """
         return get_env_vars()
 
-    def log_environment_variables(self, level="INFO"):
+    def log_environment_variables(self, level="INFO") -> dict[str, str]:
         """Logs all environment variables using the given log level.
 
         Environment variables are also returned the same way as with
@@ -1067,7 +1067,7 @@ class OperatingSystem:
 
     # Path
 
-    def join_path(self, base, *parts):
+    def join_path(self, base, *parts) -> str:
         """Joins the given path part(s) to the given base path.
 
         The path separator (``/`` or ``\\``) is inserted when needed and
@@ -1094,7 +1094,7 @@ class OperatingSystem:
         ]
         return self.normalize_path(os.path.join(*parts))
 
-    def join_paths(self, base, *paths):
+    def join_paths(self, base, *paths) -> list[str]:
         """Joins given paths with base and returns resulted paths.
 
         See `Join Path` for more information.
@@ -1110,7 +1110,7 @@ class OperatingSystem:
         """
         return [self.join_path(base, path) for path in paths]
 
-    def normalize_path(self, path, case_normalize=False):
+    def normalize_path(self, path, case_normalize=False) -> str:
         """Normalizes the given path.
 
         - Collapses redundant separators and up-level references.
@@ -1147,7 +1147,7 @@ class OperatingSystem:
             path = os.path.normcase(path)
         return path or "."
 
-    def split_path(self, path):
+    def split_path(self, path) -> tuple[str, str]:
         """Splits the given path from the last path separator (``/`` or ``\\``).
 
         The given path is first normalized (e.g. a possible trailing
@@ -1166,7 +1166,7 @@ class OperatingSystem:
         """
         return os.path.split(self.normalize_path(path))
 
-    def split_extension(self, path):
+    def split_extension(self, path) -> tuple[str, str]:
         """Splits the extension from the given path.
 
         The given path is first normalized (e.g. possible trailing
@@ -1213,7 +1213,7 @@ class OperatingSystem:
 
     # Misc
 
-    def get_modified_time(self, path, format="timestamp"):
+    def get_modified_time(self, path, format="timestamp") -> int | str | list:
         """Returns the last modification time of a file or directory.
 
         How time is returned is determined based on the given ``format``
@@ -1302,7 +1302,7 @@ class OperatingSystem:
         tstamp = datetime.fromtimestamp(mtime).isoformat(" ", timespec="seconds")
         self._link(f"Set modified time of '%s' to {tstamp}.", path)
 
-    def get_file_size(self, path):
+    def get_file_size(self, path) -> int:
         """Returns and logs file size as an integer in bytes."""
         path = self._absnorm(path)
         if not os.path.isfile(path):
@@ -1311,7 +1311,7 @@ class OperatingSystem:
         self._link(f"Size of file '%s' is {size} byte{s(size)}.", path)
         return size
 
-    def list_directory(self, path, pattern=None, absolute=False):
+    def list_directory(self, path, pattern=None, absolute=False) -> list[str]:
         """Returns and logs items in a directory, optionally filtered with ``pattern``.
 
         File and directory names are returned in case-sensitive alphabetical
@@ -1338,20 +1338,20 @@ class OperatingSystem:
         self._info(f"{len(items)} item{s(items)}:\n" + "\n".join(items))
         return items
 
-    def list_files_in_directory(self, path, pattern=None, absolute=False):
+    def list_files_in_directory(self, path, pattern=None, absolute=False) -> list[str]:
         """Wrapper for `List Directory` that returns only files."""
         files = self._list_files_in_dir(path, pattern, absolute)
         self._info(f"{len(files)} file{s(files)}:\n" + "\n".join(files))
         return files
 
-    def list_directories_in_directory(self, path, pattern=None, absolute=False):
+    def list_directories_in_directory(self, path, pattern=None, absolute=False) -> list[str]:
         """Wrapper for `List Directory` that returns only directories."""
         dirs = self._list_dirs_in_dir(path, pattern, absolute)
         label = "directory" if len(dirs) == 1 else "directories"
         self._info(f"{len(dirs)} {label}:\n" + "\n".join(dirs))
         return dirs
 
-    def count_items_in_directory(self, path, pattern=None):
+    def count_items_in_directory(self, path, pattern=None) -> int:
         """Returns and logs the number of all items in the given directory.
 
         The argument ``pattern`` has the same semantics as with `List Directory`
@@ -1362,13 +1362,13 @@ class OperatingSystem:
         self._info(f"{count} item{s(count)}.")
         return count
 
-    def count_files_in_directory(self, path, pattern=None):
+    def count_files_in_directory(self, path, pattern=None) -> int:
         """Wrapper for `Count Items In Directory` returning only file count."""
         count = len(self._list_files_in_dir(path, pattern))
         self._info(f"{count} file{s(count)}.")
         return count
 
-    def count_directories_in_directory(self, path, pattern=None):
+    def count_directories_in_directory(self, path, pattern=None) -> int:
         """Wrapper for `Count Items In Directory` returning only directory count."""
         count = len(self._list_dirs_in_dir(path, pattern))
         label = "directory" if count == 1 else "directories"

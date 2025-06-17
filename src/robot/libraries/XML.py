@@ -16,6 +16,7 @@
 import copy
 import os
 import re
+from typing import Any
 from xml.etree import ElementTree as ET
 
 try:
@@ -479,7 +480,7 @@ class XML:
             )
         self._ns_stripper = NameSpaceStripper(self.etree, self.lxml_etree)
 
-    def parse_xml(self, source, keep_clark_notation=False, strip_namespaces=False):
+    def parse_xml(self, source, keep_clark_notation=False, strip_namespaces=False) -> Any:
         """Parses the given XML file or string into an element structure.
 
         The ``source`` can either be a path to an XML file or a string
@@ -522,7 +523,7 @@ class XML:
             self._ns_stripper.strip(root, preserve=not strip_namespaces)
         return root
 
-    def get_element(self, source, xpath="."):
+    def get_element(self, source, xpath=".") -> Any:
         """Returns an element in the ``source`` matching the ``xpath``.
 
         The ``source`` can be a path to an XML file, a string containing XML, or
@@ -565,7 +566,7 @@ class XML:
             return f"One element matching '{xpath}' found."
         return f"Multiple elements ({count}) matching '{xpath}' found."
 
-    def get_elements(self, source, xpath):
+    def get_elements(self, source, xpath) -> list:
         """Returns a list of elements in the ``source`` matching the ``xpath``.
 
         The ``source`` can be a path to an XML file, a string containing XML, or
@@ -587,7 +588,7 @@ class XML:
         finder = ElementFinder(self.etree, self.modern_etree, self.lxml_etree)
         return finder.find_all(source, xpath)
 
-    def get_child_elements(self, source, xpath="."):
+    def get_child_elements(self, source, xpath=".") -> list:
         """Returns the child elements of the specified element as a list.
 
         The element whose children to return is specified using ``source`` and
@@ -605,7 +606,7 @@ class XML:
         """
         return list(self.get_element(source, xpath))
 
-    def get_element_count(self, source, xpath="."):
+    def get_element_count(self, source, xpath=".") -> int:
         """Returns and logs how many elements the given ``xpath`` matches.
 
         Arguments ``source`` and ``xpath`` have exactly the same semantics as
@@ -647,7 +648,7 @@ class XML:
         if count:
             self._raise_wrong_number_of_matches(count, xpath, message)
 
-    def get_element_text(self, source, xpath=".", normalize_whitespace=False):
+    def get_element_text(self, source, xpath=".", normalize_whitespace=False) -> str:
         """Returns all text of the element, possibly whitespace normalized.
 
         The element whose text to return is specified using ``source`` and
@@ -695,7 +696,7 @@ class XML:
     def _normalize_whitespace(self, text):
         return " ".join(text.split())
 
-    def get_elements_texts(self, source, xpath, normalize_whitespace=False):
+    def get_elements_texts(self, source, xpath, normalize_whitespace=False) -> list[str]:
         """Returns text of all elements matching ``xpath`` as a list.
 
         The elements whose text to return is specified using ``source`` and
@@ -777,7 +778,7 @@ class XML:
         should_match(text, pattern, message, values=False)
 
     @keyword(types=None)
-    def get_element_attribute(self, source, name, xpath=".", default=None):
+    def get_element_attribute(self, source, name, xpath=".", default=None) -> Any:
         """Returns the named attribute of the specified element.
 
         The element whose attribute to return is specified using ``source`` and
@@ -799,7 +800,7 @@ class XML:
         """
         return self.get_element(source, xpath).get(name, default)
 
-    def get_element_attributes(self, source, xpath="."):
+    def get_element_attributes(self, source, xpath=".") -> dict:
         """Returns all attributes of the specified element.
 
         The element whose attributes to return is specified using ``source`` and
@@ -1009,7 +1010,7 @@ class XML:
         for child, tail in zip(element, tails):
             child.tail = tail
 
-    def set_element_tag(self, source, tag, xpath="."):
+    def set_element_tag(self, source, tag, xpath=".") -> Any:
         """Sets the tag of the specified element.
 
         The element whose tag to set is specified using ``source`` and
@@ -1031,7 +1032,7 @@ class XML:
         self.get_element(source, xpath).tag = tag
         return source
 
-    def set_elements_tag(self, source, tag, xpath="."):
+    def set_elements_tag(self, source, tag, xpath=".") -> Any:
         """Sets the tag of the specified elements.
 
         Like `Set Element Tag` but sets the tag of all elements matching
@@ -1043,7 +1044,7 @@ class XML:
         return source
 
     @keyword(types=None)
-    def set_element_text(self, source, text=None, tail=None, xpath="."):
+    def set_element_text(self, source, text=None, tail=None, xpath=".") -> Any:
         """Sets text and/or tail text of the specified element.
 
         The element whose text to set is specified using ``source`` and
@@ -1075,7 +1076,7 @@ class XML:
         return source
 
     @keyword(types=None)
-    def set_elements_text(self, source, text=None, tail=None, xpath="."):
+    def set_elements_text(self, source, text=None, tail=None, xpath=".") -> Any:
         """Sets text and/or tail text of the specified elements.
 
         Like `Set Element Text` but sets the text or tail of all elements
@@ -1086,7 +1087,7 @@ class XML:
             self.set_element_text(elem, text, tail)
         return source
 
-    def set_element_attribute(self, source, name, value, xpath="."):
+    def set_element_attribute(self, source, name, value, xpath=".") -> Any:
         """Sets attribute ``name`` of the specified element to ``value``.
 
         The element whose attribute to set is specified using ``source`` and
@@ -1113,7 +1114,7 @@ class XML:
         self.get_element(source, xpath).attrib[name] = value
         return source
 
-    def set_elements_attribute(self, source, name, value, xpath="."):
+    def set_elements_attribute(self, source, name, value, xpath=".") -> Any:
         """Sets attribute ``name`` of the specified elements to ``value``.
 
         Like `Set Element Attribute` but sets the attribute of all elements
@@ -1124,7 +1125,7 @@ class XML:
             self.set_element_attribute(elem, name, value)
         return source
 
-    def remove_element_attribute(self, source, name, xpath="."):
+    def remove_element_attribute(self, source, name, xpath=".") -> Any:
         """Removes attribute ``name`` from the specified element.
 
         The element whose attribute to remove is specified using ``source`` and
@@ -1149,7 +1150,7 @@ class XML:
             attrib.pop(name)
         return source
 
-    def remove_elements_attribute(self, source, name, xpath="."):
+    def remove_elements_attribute(self, source, name, xpath=".") -> Any:
         """Removes attribute ``name`` from the specified elements.
 
         Like `Remove Element Attribute` but removes the attribute of all
@@ -1160,7 +1161,7 @@ class XML:
             self.remove_element_attribute(elem, name)
         return source
 
-    def remove_element_attributes(self, source, xpath="."):
+    def remove_element_attributes(self, source, xpath=".") -> Any:
         """Removes all attributes from the specified element.
 
         The element whose attributes to remove is specified using ``source`` and
@@ -1182,7 +1183,7 @@ class XML:
         self.get_element(source, xpath).attrib.clear()
         return source
 
-    def remove_elements_attributes(self, source, xpath="."):
+    def remove_elements_attributes(self, source, xpath=".") -> Any:
         """Removes all attributes from the specified elements.
 
         Like `Remove Element Attributes` but removes all attributes of all
@@ -1193,7 +1194,7 @@ class XML:
             self.remove_element_attributes(elem)
         return source
 
-    def add_element(self, source, element, index=None, xpath="."):
+    def add_element(self, source, element, index=None, xpath=".") -> Any:
         """Adds a child element to the specified element.
 
         The element to whom to add the new element is specified using ``source``
@@ -1229,7 +1230,7 @@ class XML:
             parent.insert(int(index), element)
         return source
 
-    def remove_element(self, source, xpath="", remove_tail=False):
+    def remove_element(self, source, xpath="", remove_tail=False) -> Any:
         """Removes the element matching ``xpath`` from the ``source`` structure.
 
         The element to remove from the ``source`` is specified with ``xpath``
@@ -1255,7 +1256,7 @@ class XML:
         self._remove_element(source, self.get_element(source, xpath), remove_tail)
         return source
 
-    def remove_elements(self, source, xpath="", remove_tail=False):
+    def remove_elements(self, source, xpath="", remove_tail=False) -> Any:
         """Removes all elements matching ``xpath`` from the ``source`` structure.
 
         The elements to remove from the ``source`` are specified with ``xpath``
@@ -1302,7 +1303,7 @@ class XML:
             sibling = parent[index - 1]
             sibling.tail = (sibling.tail or "") + element.tail
 
-    def clear_element(self, source, xpath=".", clear_tail=False):
+    def clear_element(self, source, xpath=".", clear_tail=False) -> Any:
         """Clears the contents of the specified element.
 
         The element to clear is specified using ``source`` and ``xpath``. They
@@ -1335,7 +1336,7 @@ class XML:
             element.tail = tail
         return source
 
-    def copy_element(self, source, xpath="."):
+    def copy_element(self, source, xpath=".") -> Any:
         """Returns a copy of the specified element.
 
         The element to copy is specified using ``source`` and ``xpath``. They
@@ -1356,7 +1357,7 @@ class XML:
         """
         return copy.deepcopy(self.get_element(source, xpath))
 
-    def element_to_string(self, source, xpath=".", encoding=None):
+    def element_to_string(self, source, xpath=".", encoding=None) -> str:
         """Returns the string representation of the specified element.
 
         The element to convert to a string is specified using ``source`` and
@@ -1378,7 +1379,7 @@ class XML:
             string = string.encode(encoding)
         return string
 
-    def log_element(self, source, level="INFO", xpath="."):
+    def log_element(self, source, level="INFO", xpath=".") -> str:
         """Logs the string representation of the specified element.
 
         The element specified with ``source`` and ``xpath`` is first converted
@@ -1432,7 +1433,7 @@ class XML:
                 tree.write(output, **config)
         logger.info(f'XML saved to <a href="file://{path}">{path}</a>.', html=True)
 
-    def evaluate_xpath(self, source, expression, context="."):
+    def evaluate_xpath(self, source, expression, context=".") -> Any:
         """Evaluates the given xpath expression and returns results.
 
         The element in which context the expression is executed is specified

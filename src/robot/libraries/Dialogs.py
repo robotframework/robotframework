@@ -22,6 +22,7 @@ Long lines in the provided messages are wrapped automatically. If you want
 to wrap lines manually, you can add newlines using the ``\\n`` character
 sequence.
 """
+from typing import Any
 
 from robot.version import get_version
 
@@ -62,7 +63,7 @@ def execute_manual_step(message, default_error=""):
         raise AssertionError(msg)
 
 
-def get_value_from_user(message, default_value="", hidden=False):
+def get_value_from_user(message, default_value="", hidden=False) -> Any:
     """Pauses execution and asks user to input a value.
 
     Value typed by the user, or the possible default value, is returned.
@@ -84,7 +85,7 @@ def get_value_from_user(message, default_value="", hidden=False):
     return _validate_user_input(InputDialog(message, default_value, hidden))
 
 
-def get_selection_from_user(message, *values, default=None):
+def get_selection_from_user(message, *values, default=None) -> Any:
     """Pauses execution and asks user to select a value.
 
     The selected value is returned. Pressing ``Cancel`` fails the keyword.
@@ -106,7 +107,7 @@ def get_selection_from_user(message, *values, default=None):
     return _validate_user_input(SelectionDialog(message, values, default))
 
 
-def get_selections_from_user(message, *values):
+def get_selections_from_user(message, *values) -> list:
     """Pauses execution and asks user to select multiple values.
 
     The selected values are returned as a list. Selecting no values is OK

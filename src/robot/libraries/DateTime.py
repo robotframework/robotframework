@@ -307,6 +307,7 @@ Additionally, helper classes ``Date`` and ``Time`` can be used directly:
 import datetime
 import sys
 import time
+from typing import Any
 
 from robot.utils import (
     elapsed_time_to_string, secs_to_timestr, timestr_to_secs, type_name
@@ -377,7 +378,7 @@ def convert_date(
     result_format="timestamp",
     exclude_millis=False,
     date_format=None,
-):
+) -> "datetime|float":
     """Converts between supported `date formats`.
 
     Arguments:
@@ -398,7 +399,7 @@ def convert_date(
     return Date(date, date_format).convert(result_format, millis=not exclude_millis)
 
 
-def convert_time(time, result_format="number", exclude_millis=False):
+def convert_time(time, result_format="number", exclude_millis=False) -> Any:
     """Converts between supported `time formats`.
 
     Arguments:
@@ -425,7 +426,7 @@ def subtract_date_from_date(
     exclude_millis=False,
     date1_format=None,
     date2_format=None,
-):
+) -> Any:
     """Subtracts date from another date and returns time between.
 
     Arguments:
@@ -455,7 +456,7 @@ def add_time_to_date(
     result_format="timestamp",
     exclude_millis=False,
     date_format=None,
-):
+) -> "datetime|float":
     """Adds time to date and returns the resulting date.
 
     Arguments:
@@ -484,7 +485,7 @@ def subtract_time_from_date(
     result_format="timestamp",
     exclude_millis=False,
     date_format=None,
-):
+) -> Any:
     """Subtracts time from date and returns the resulting date.
 
     Arguments:
@@ -507,7 +508,7 @@ def subtract_time_from_date(
     return date.convert(result_format, millis=not exclude_millis)
 
 
-def add_time_to_time(time1, time2, result_format="number", exclude_millis=False):
+def add_time_to_time(time1, time2, result_format="number", exclude_millis=False) -> Any:
     """Adds time to another time and returns the resulting time.
 
     Arguments:
@@ -527,7 +528,7 @@ def add_time_to_time(time1, time2, result_format="number", exclude_millis=False)
     return time.convert(result_format, millis=not exclude_millis)
 
 
-def subtract_time_from_time(time1, time2, result_format="number", exclude_millis=False):
+def subtract_time_from_time(time1, time2, result_format="number", exclude_millis=False) -> Any:
     """Subtracts time from another time and returns the resulting time.
 
     Arguments:

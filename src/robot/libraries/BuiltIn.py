@@ -18,6 +18,7 @@ import re
 import time
 from collections import OrderedDict
 from collections.abc import Sequence
+from typing import Any
 
 from robot.api import logger, SkipExecution
 from robot.api.deco import keyword
@@ -123,7 +124,7 @@ class _BuiltInBase:
 
 class _Converter(_BuiltInBase):
 
-    def convert_to_integer(self, item, base=None):
+    def convert_to_integer(self, item, base=None) -> int:
         """Converts the given item to an integer number.
 
         If the given item is a string, it is by default expected to be an
@@ -177,7 +178,7 @@ class _Converter(_BuiltInBase):
             return sign + item, base
         return sign + item[2:], bases[item[:2]]
 
-    def convert_to_binary(self, item, base=None, prefix=None, length=None):
+    def convert_to_binary(self, item, base=None, prefix=None, length=None) -> str:
         """Converts the given item to a binary string.
 
         The ``item``, with an optional ``base``, is first converted to an
@@ -199,7 +200,7 @@ class _Converter(_BuiltInBase):
         """
         return self._convert_to_bin_oct_hex(item, base, prefix, length, "b")
 
-    def convert_to_octal(self, item, base=None, prefix=None, length=None):
+    def convert_to_octal(self, item, base=None, prefix=None, length=None) -> str:
         """Converts the given item to an octal string.
 
         The ``item``, with an optional ``base``, is first converted to an
@@ -228,7 +229,7 @@ class _Converter(_BuiltInBase):
         prefix=None,
         length=None,
         lowercase=False,
-    ):
+    ) -> str:
         """Converts the given item to a hexadecimal string.
 
         The ``item``, with an optional ``base``, is first converted to an
@@ -266,7 +267,7 @@ class _Converter(_BuiltInBase):
             ret = ret.rjust(self._convert_to_integer(length), "0")
         return prefix + ret
 
-    def convert_to_number(self, item, precision=None):
+    def convert_to_number(self, item, precision=None) -> float:
         """Converts the given item to a floating point number.
 
         If the optional ``precision`` is positive or zero, the returned number
@@ -317,7 +318,7 @@ class _Converter(_BuiltInBase):
                     f"'{item}' cannot be converted to a floating point number: {error}"
                 )
 
-    def convert_to_string(self, item):
+    def convert_to_string(self, item) -> str:
         """Converts the given item to a Unicode string.
 
         Strings are also [https://en.wikipedia.org/wiki/Unicode_equivalence|
@@ -331,7 +332,7 @@ class _Converter(_BuiltInBase):
         self._log_types(item)
         return safe_str(item)
 
-    def convert_to_boolean(self, item):
+    def convert_to_boolean(self, item) -> bool:
         """Converts the given item to Boolean true or false.
 
         Handles strings ``True`` and ``False`` (case-insensitive) as expected,
@@ -347,7 +348,7 @@ class _Converter(_BuiltInBase):
                 return False
         return bool(item)
 
-    def convert_to_bytes(self, input, input_type="text"):
+    def convert_to_bytes(self, input, input_type="text") -> bytes:
         r"""Converts the given ``input`` to bytes according to the ``input_type``.
 
         Valid input types are listed below:
@@ -438,7 +439,7 @@ class _Converter(_BuiltInBase):
             raise RuntimeError(f"Expected input to be multiple of {length}.")
         return (input[i : i + length] for i in range(0, len(input), length))
 
-    def create_list(self, *items):
+    def create_list(self, *items) -> list:
         """Returns a list containing given items.
 
         The returned list can be assigned both to ``${scalar}`` and ``@{list}``
@@ -452,7 +453,7 @@ class _Converter(_BuiltInBase):
         return list(items)
 
     @run_keyword_variant(resolve=0)
-    def create_dictionary(self, *items):
+    def create_dictionary(self, *items) -> dict:
         """Creates and returns a dictionary based on the given ``items``.
 
         Items are typically given using the ``key=value`` syntax same way as
@@ -1479,7 +1480,7 @@ class _Verify(_BuiltInBase):
             )
         self.should_be_equal_as_integers(x, count, msg, values=False)
 
-    def get_count(self, container, item):
+    def get_count(self, container, item) -> int:
         """Returns and logs how many times ``item`` is found from ``container``.
 
         This keyword works with Python strings and lists and all objects
@@ -1544,7 +1545,7 @@ class _Verify(_BuiltInBase):
                 self._get_string_msg(string, pattern, msg, values, "does not match")
             )
 
-    def should_match_regexp(self, string, pattern, msg=None, values=True, flags=None):
+    def should_match_regexp(self, string, pattern, msg=None, values=True, flags=None) -> str:
         """Fails if ``string`` does not match ``pattern`` as a regular expression.
 
         See the `Regular expressions` section for more information about
@@ -1611,7 +1612,7 @@ class _Verify(_BuiltInBase):
                 self._get_string_msg(string, pattern, msg, values, "matches")
             )
 
-    def get_length(self, item):
+    def get_length(self, item) -> int:
         """Returns and logs the length of the given item as an integer.
 
         The item can be anything that has a length, for example, a string,
@@ -1704,7 +1705,7 @@ class _Verify(_BuiltInBase):
 
 class _Variables(_BuiltInBase):
 
-    def get_variables(self, no_decoration=False):
+    def get_variables(self, no_decoration=False) -> dict:
         """Returns a dictionary containing all variables in the current scope.
 
         Variables are returned as a special dictionary that allows accessing
@@ -1734,7 +1735,7 @@ class _Variables(_BuiltInBase):
 
     @keyword(types=None)
     @run_keyword_variant(resolve=0)
-    def get_variable_value(self, name, default=None):
+    def get_variable_value(self, name, default=None) -> Any:
         r"""Returns variable value or ``default`` if the variable does not exist.
 
         The name of the variable can be given either as a normal variable name
@@ -1837,7 +1838,7 @@ class _Variables(_BuiltInBase):
                 else f"Variable '{name}' exists."
             )
 
-    def replace_variables(self, text):
+    def replace_variables(self, text) -> str:
         """Replaces variables in the given text with their current values.
 
         If the text contains undefined variables, this keyword fails.
@@ -1856,7 +1857,7 @@ class _Variables(_BuiltInBase):
         """
         return self._variables.replace_scalar(text)
 
-    def set_variable(self, *values):
+    def set_variable(self, *values) -> Any:
         """Returns the given values which can then be assigned to a variables.
 
         This keyword is mainly used for setting scalar variables.
@@ -2142,7 +2143,7 @@ class _RunKeyword(_BuiltInBase):
     # at the end of this file.
 
     @run_keyword_variant(resolve=0, dry_run=True)
-    def run_keyword(self, name, *args):
+    def run_keyword(self, name, *args) -> Any:
         """Executes the given keyword with the given arguments.
 
         Because the name of the keyword to execute is given as an argument, it
@@ -2284,7 +2285,7 @@ class _RunKeyword(_BuiltInBase):
         yield keywords
 
     @run_keyword_variant(resolve=1, dry_run=True)
-    def run_keyword_if(self, condition, name, *args):
+    def run_keyword_if(self, condition, name, *args) -> Any:
         """Runs the given keyword with the given arguments, if ``condition`` is true.
 
         *NOTE:* Robot Framework 4.0 introduced built-in IF/ELSE support and using
@@ -2367,7 +2368,7 @@ class _RunKeyword(_BuiltInBase):
         return args[:index], branch
 
     @run_keyword_variant(resolve=1, dry_run=True)
-    def run_keyword_unless(self, condition, name, *args):
+    def run_keyword_unless(self, condition, name, *args) -> Any:
         """*DEPRECATED since RF 5.0. Use Native IF/ELSE or `Run Keyword If` instead.*
 
         Runs the given keyword with the given arguments if ``condition`` is false.
@@ -2379,7 +2380,7 @@ class _RunKeyword(_BuiltInBase):
             return self.run_keyword(name, *args)
 
     @run_keyword_variant(resolve=0, dry_run=True)
-    def run_keyword_and_ignore_error(self, name, *args):
+    def run_keyword_and_ignore_error(self, name, *args) -> tuple[str, Any]:
         """Runs the given keyword with the given arguments and ignores possible error.
 
         This keyword returns two values, so that the first is either string
@@ -2405,7 +2406,7 @@ class _RunKeyword(_BuiltInBase):
             return "FAIL", str(err)
 
     @run_keyword_variant(resolve=0, dry_run=True)
-    def run_keyword_and_warn_on_failure(self, name, *args):
+    def run_keyword_and_warn_on_failure(self, name, *args) -> tuple[str, Any]:
         """Runs the specified keyword logs a warning if the keyword fails.
 
         This keyword is similar to `Run Keyword And Ignore Error` but if the executed
@@ -2424,7 +2425,7 @@ class _RunKeyword(_BuiltInBase):
         return status, message
 
     @run_keyword_variant(resolve=0, dry_run=True)
-    def run_keyword_and_return_status(self, name, *args):
+    def run_keyword_and_return_status(self, name, *args) -> bool:
         """Runs the given keyword with given arguments and returns the status as a Boolean value.
 
         This keyword returns Boolean ``True`` if the keyword that is executed
@@ -2445,7 +2446,7 @@ class _RunKeyword(_BuiltInBase):
         return status == "PASS"
 
     @run_keyword_variant(resolve=0, dry_run=True)
-    def run_keyword_and_continue_on_failure(self, name, *args):
+    def run_keyword_and_continue_on_failure(self, name, *args) -> Any:
         """Runs the keyword and continues execution even if a failure occurs.
 
         The keyword name and arguments work as with `Run Keyword`.
@@ -2465,7 +2466,7 @@ class _RunKeyword(_BuiltInBase):
             raise err
 
     @run_keyword_variant(resolve=1, dry_run=True)
-    def run_keyword_and_expect_error(self, expected_error, name, *args):
+    def run_keyword_and_expect_error(self, expected_error, name, *args) -> str:
         """Runs the keyword and checks that the expected error occurred.
 
         The keyword to execute and its arguments are specified using ``name``
@@ -2621,7 +2622,7 @@ class _RunKeyword(_BuiltInBase):
             yield name, args
 
     @run_keyword_variant(resolve=2, dry_run=True)
-    def wait_until_keyword_succeeds(self, retry, retry_interval, name, *args):
+    def wait_until_keyword_succeeds(self, retry, retry_interval, name, *args) -> Any:
         """Runs the specified keyword and retries if it fails.
 
         ``name`` and ``args`` define the keyword that is executed similarly
@@ -2723,7 +2724,7 @@ class _RunKeyword(_BuiltInBase):
                 err.keyword_timeout = True
 
     @run_keyword_variant(resolve=1)
-    def set_variable_if(self, condition, *values):
+    def set_variable_if(self, condition, *values) -> Any:
         """Sets variable based on the given condition.
 
         The basic usage is giving a condition and two values. The
@@ -2783,7 +2784,7 @@ class _RunKeyword(_BuiltInBase):
         return values
 
     @run_keyword_variant(resolve=0, dry_run=True)
-    def run_keyword_if_test_failed(self, name, *args):
+    def run_keyword_if_test_failed(self, name, *args) -> Any:
         """Runs the given keyword with the given arguments, if the test failed.
 
         This keyword can only be used in a test teardown. Trying to use it
@@ -2797,7 +2798,7 @@ class _RunKeyword(_BuiltInBase):
             return self.run_keyword(name, *args)
 
     @run_keyword_variant(resolve=0, dry_run=True)
-    def run_keyword_if_test_passed(self, name, *args):
+    def run_keyword_if_test_passed(self, name, *args) -> Any:
         """Runs the given keyword with the given arguments, if the test passed.
 
         This keyword can only be used in a test teardown. Trying to use it
@@ -2811,7 +2812,7 @@ class _RunKeyword(_BuiltInBase):
             return self.run_keyword(name, *args)
 
     @run_keyword_variant(resolve=0, dry_run=True)
-    def run_keyword_if_timeout_occurred(self, name, *args):
+    def run_keyword_if_timeout_occurred(self, name, *args) -> Any:
         """Runs the given keyword if either a test or a keyword timeout has occurred.
 
         This keyword can only be used in a test teardown. Trying to use it
@@ -2831,7 +2832,7 @@ class _RunKeyword(_BuiltInBase):
         raise RuntimeError(f"Keyword '{kwname}' can only be used in test teardown.")
 
     @run_keyword_variant(resolve=0, dry_run=True)
-    def run_keyword_if_all_tests_passed(self, name, *args):
+    def run_keyword_if_all_tests_passed(self, name, *args) -> Any:
         """Runs the given keyword with the given arguments, if all tests passed.
 
         This keyword can only be used in a suite teardown. Trying to use it
@@ -2845,7 +2846,7 @@ class _RunKeyword(_BuiltInBase):
             return self.run_keyword(name, *args)
 
     @run_keyword_variant(resolve=0, dry_run=True)
-    def run_keyword_if_any_tests_failed(self, name, *args):
+    def run_keyword_if_any_tests_failed(self, name, *args) -> Any:
         """Runs the given keyword with the given arguments, if one or more tests failed.
 
         This keyword can only be used in a suite teardown. Trying to use it
@@ -3283,7 +3284,7 @@ class _Misc(_BuiltInBase):
                 break
             time.sleep(min(remaining, 0.01))
 
-    def catenate(self, *items):
+    def catenate(self, *items) -> str:
         """Catenates the given items together and returns the resulted string.
 
         By default, items are catenated with spaces, but if the first item
@@ -3476,7 +3477,7 @@ class _Misc(_BuiltInBase):
         """
         pass
 
-    def set_log_level(self, level):
+    def set_log_level(self, level) -> str:
         """Sets the log threshold to the specified level.
 
         Messages below the level will not logged. The default logging level is
@@ -3493,7 +3494,7 @@ class _Misc(_BuiltInBase):
         self.log(f"Log level changed from {old} to {level.upper()}.", level="DEBUG")
         return old
 
-    def reset_log_level(self):
+    def reset_log_level(self) -> str:
         """Resets the log level to the original value.
 
         The original log level is set from the command line with the ``--loglevel``
@@ -3662,7 +3663,7 @@ class _Misc(_BuiltInBase):
         except DataError as err:
             raise AssertionError(msg or err.message)
 
-    def get_time(self, format="timestamp", time_="NOW"):
+    def get_time(self, format="timestamp", time_="NOW") -> "int|str|list":
         """Returns the given time in the requested format.
 
         *NOTE:* DateTime library contains much more flexible keywords for
@@ -3745,7 +3746,7 @@ class _Misc(_BuiltInBase):
         """
         return get_time(format, parse_time(time_))
 
-    def evaluate(self, expression, modules=None, namespace=None):
+    def evaluate(self, expression, modules=None, namespace=None) -> Any:
         """Evaluates the given expression in Python and returns the result.
 
         ``expression`` is evaluated in Python as explained in the
@@ -3805,7 +3806,7 @@ class _Misc(_BuiltInBase):
         except DataError as err:
             raise RuntimeError(err.message)
 
-    def call_method(self, object, method_name, *args, **kwargs):
+    def call_method(self, object, method_name, *args, **kwargs) -> Any:
         """Calls the named method of the given object with the provided arguments.
 
         The possible return value from the method is returned and can be
@@ -3837,7 +3838,7 @@ class _Misc(_BuiltInBase):
             msg = get_error_message()
             raise RuntimeError(f"Calling method '{method_name}' failed: {msg}") from err
 
-    def regexp_escape(self, *patterns):
+    def regexp_escape(self, *patterns) -> "str|list[str]":
         """Returns each argument string escaped for use as a regular expression.
 
         This keyword can be used to escape strings to be used with
@@ -4055,7 +4056,7 @@ class _Misc(_BuiltInBase):
             raise RuntimeError("'Remove Tags' cannot be used in suite teardown.")
         self.log(f"Removed tag{s(tags)} {seq2str(tags)}.")
 
-    def get_library_instance(self, name=None, all=False):
+    def get_library_instance(self, name=None, all=False) -> Any:
         """Returns the currently active instance of the specified library.
 
         This keyword makes it easy for libraries to interact with

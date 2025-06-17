@@ -124,7 +124,7 @@ class Screenshot:
         log = os.path.dirname(log) if log != "NONE" else "."
         return self._norm_path(os.path.join(outdir, log))
 
-    def set_screenshot_directory(self, path):
+    def set_screenshot_directory(self, path) -> str:
         """Sets the directory where screenshots are saved.
 
         It is possible to use ``/`` as a path separator in all operating
@@ -139,7 +139,7 @@ class Screenshot:
         self._given_screenshot_dir = path
         return old
 
-    def take_screenshot(self, name="screenshot", width="800px"):
+    def take_screenshot(self, name="screenshot", width="800px") -> str:
         """Takes a screenshot in JPEG format and embeds it into the log file.
 
         Name of the file where the screenshot is stored is derived from the
@@ -168,7 +168,7 @@ class Screenshot:
         self._embed_screenshot(path, width)
         return path
 
-    def take_screenshot_without_embedding(self, name="screenshot"):
+    def take_screenshot_without_embedding(self, name="screenshot") -> str:
         """Takes a screenshot and links it from the log file.
 
         This keyword is otherwise identical to `Take Screenshot` but the saved

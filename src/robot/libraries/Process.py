@@ -20,6 +20,7 @@ import sys
 import time
 from pathlib import Path
 from tempfile import TemporaryFile
+from typing import Any
 
 from robot.api import logger
 from robot.errors import TimeoutExceeded
@@ -346,7 +347,7 @@ class Process:
         on_timeout="terminate",
         env=None,
         **env_extra,
-    ):
+    ) -> Any:
         """Runs a process and waits for it to complete.
 
         ``command`` and ``arguments`` specify the command to execute and
@@ -415,7 +416,7 @@ class Process:
         alias=None,
         env=None,
         **env_extra,
-    ):
+    ) -> Any:
         """Starts a new process on background.
 
         See `Specifying command and arguments` and `Process configuration` sections
@@ -479,7 +480,7 @@ class Process:
         logger.info(f"Starting process:\n{system_decode(command)}")
         logger.debug(f"Process configuration:\n{config}")
 
-    def is_process_running(self, handle=None):
+    def is_process_running(self, handle=None) -> bool:
         """Checks is the process running or not.
 
         If ``handle`` is not given, uses the current `active process`.
@@ -516,7 +517,7 @@ class Process:
         if self.is_process_running(handle):
             raise AssertionError(error_message)
 
-    def wait_for_process(self, handle=None, timeout=None, on_timeout="continue"):
+    def wait_for_process(self, handle=None, timeout=None, on_timeout="continue") -> Any:
         """Waits for the process to complete or to reach the given timeout.
 
         The process to wait for must have been started earlier with
@@ -612,7 +613,7 @@ class Process:
         logger.info("Process completed.")
         return result
 
-    def terminate_process(self, handle=None, kill=False):
+    def terminate_process(self, handle=None, kill=False) -> Any:
         """Stops the process gracefully or forcefully.
 
         If ``handle`` is not given, uses the current `active process`.
@@ -750,7 +751,7 @@ class Process:
         except AttributeError:
             raise RuntimeError(f"Unsupported signal '{name}'.")
 
-    def get_process_id(self, handle=None):
+    def get_process_id(self, handle=None) -> int:
         """Returns the process ID (pid) of the process as an integer.
 
         If ``handle`` is not given, uses the current `active process`.
@@ -761,7 +762,7 @@ class Process:
         """
         return self._processes[handle].pid
 
-    def get_process_object(self, handle=None):
+    def get_process_object(self, handle=None) -> Any:
         """Return the underlying ``subprocess.Popen`` object.
 
         If ``handle`` is not given, uses the current `active process`.
@@ -780,7 +781,7 @@ class Process:
         stderr=False,
         stdout_path=False,
         stderr_path=False,
-    ):
+    ) -> Any:
         """Returns the specified `result object` or some of its attributes.
 
         The given ``handle`` specifies the process whose results should be
@@ -871,7 +872,7 @@ class Process:
             time.sleep(min(0.1, timeout))
         return stopped()
 
-    def split_command_line(self, args, escaping=False):
+    def split_command_line(self, args, escaping=False) -> list:
         """Splits command line string into a list of arguments.
 
         String is split from spaces, but argument surrounded in quotes may
@@ -888,7 +889,7 @@ class Process:
         """
         return cmdline2list(args, escaping=escaping)
 
-    def join_command_line(self, *args):
+    def join_command_line(self, *args) -> str:
         """Joins arguments into one command line string.
 
         In resulting command line string arguments are delimited with a space,

@@ -16,6 +16,7 @@
 import copy
 from ast import literal_eval
 from itertools import chain
+from typing import Any
 
 from robot.api import logger
 from robot.utils import (
@@ -30,7 +31,7 @@ NOT_SET = NotSet()
 
 class _List:
 
-    def convert_to_list(self, item):
+    def convert_to_list(self, item) -> list:
         """Converts the given ``item`` to a Python ``list`` type.
 
         Mainly useful for converting tuples and other iterable to lists.
@@ -76,7 +77,7 @@ class _List:
         self._validate_list(list_)
         list_.insert(self._index_to_int(index), value)
 
-    def combine_lists(self, *lists):
+    def combine_lists(self, *lists) -> list:
         """Combines the given ``lists`` together and returns the result.
 
         The given lists are not altered by this keyword.
@@ -133,7 +134,7 @@ class _List:
             while value in list_:
                 list_.remove(value)
 
-    def remove_from_list(self, list_, index):
+    def remove_from_list(self, list_, index) -> Any:
         """Removes and returns the value specified with an ``index`` from ``list``.
 
         Index ``0`` means the first position, ``1`` the second and so on.
@@ -154,7 +155,7 @@ class _List:
         except IndexError:
             self._index_error(list_, index)
 
-    def remove_duplicates(self, list_):
+    def remove_duplicates(self, list_) -> list:
         """Returns a list without duplicates based on the given ``list``.
 
         Creates and returns a new list that contains all items in the given
@@ -171,7 +172,7 @@ class _List:
         logger.info(f"{removed} duplicate{s(removed)} removed.")
         return ret
 
-    def get_from_list(self, list_, index):
+    def get_from_list(self, list_, index) -> Any:
         """Returns the value specified with an ``index`` from ``list``.
 
         The given list is never altered by this keyword.
@@ -196,7 +197,7 @@ class _List:
         except IndexError:
             self._index_error(list_, index)
 
-    def get_slice_from_list(self, list_, start=0, end=None):
+    def get_slice_from_list(self, list_, start=0, end=None) -> list:
         """Returns a slice of the given list between ``start`` and ``end`` indexes.
 
         The given list is never altered by this keyword.
@@ -226,7 +227,7 @@ class _List:
             end = self._index_to_int(end)
         return list_[start:end]
 
-    def count_values_in_list(self, list_, value, start=0, end=None):
+    def count_values_in_list(self, list_, value, start=0, end=None) -> int:
         """Returns the number of occurrences of the given ``value`` in ``list``.
 
         The search can be narrowed to the selected sublist by the ``start`` and
@@ -242,7 +243,7 @@ class _List:
         self._validate_list(list_)
         return self.get_slice_from_list(list_, start, end).count(value)
 
-    def get_index_from_list(self, list_, value, start=0, end=None):
+    def get_index_from_list(self, list_, value, start=0, end=None) -> int:
         """Returns the index of the first occurrence of the ``value`` on the list.
 
         The search can be narrowed to the selected sublist by the ``start`` and
@@ -264,7 +265,7 @@ class _List:
         except ValueError:
             return -1
 
-    def copy_list(self, list_, deepcopy=False):
+    def copy_list(self, list_, deepcopy=False) -> list:
         """Returns a copy of the given list.
 
         By default, returns a new list with same items as in the original.
@@ -537,7 +538,7 @@ class _List:
 
 class _Dictionary:
 
-    def convert_to_dictionary(self, item):
+    def convert_to_dictionary(self, item) -> dict:
         """Converts the given ``item`` to a Python ``dict`` type.
 
         Mainly useful for converting other mappings to normal dictionaries.
@@ -549,7 +550,7 @@ class _Dictionary:
         """
         return dict(item)
 
-    def set_to_dictionary(self, dictionary, *key_value_pairs, **items):
+    def set_to_dictionary(self, dictionary, *key_value_pairs, **items) -> dict:
         """Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.
 
         If given items already exist in the dictionary, their values are updated.
@@ -634,7 +635,7 @@ class _Dictionary:
         remove_keys = [k for k in dictionary if k not in keys]
         self.remove_from_dictionary(dictionary, *remove_keys)
 
-    def copy_dictionary(self, dictionary, deepcopy=False):
+    def copy_dictionary(self, dictionary, deepcopy=False) -> dict:
         """Returns a copy of the given dictionary.
 
         By default, returns a new dictionary with same items as in the original.
@@ -648,7 +649,7 @@ class _Dictionary:
             return copy.deepcopy(dictionary)
         return dictionary.copy()
 
-    def get_dictionary_keys(self, dictionary, sort_keys=True):
+    def get_dictionary_keys(self, dictionary, sort_keys=True) -> list:
         """Returns keys of the given ``dictionary`` as a list.
 
         By default, keys are returned in sorted order (assuming they are
@@ -669,7 +670,7 @@ class _Dictionary:
                 pass
         return list(dictionary)
 
-    def get_dictionary_values(self, dictionary, sort_keys=True):
+    def get_dictionary_values(self, dictionary, sort_keys=True) -> list:
         """Returns values of the given ``dictionary`` as a list.
 
         Uses `Get Dictionary Keys` to get keys and then returns corresponding
@@ -686,7 +687,7 @@ class _Dictionary:
         keys = self.get_dictionary_keys(dictionary, sort_keys=sort_keys)
         return [dictionary[k] for k in keys]
 
-    def get_dictionary_items(self, dictionary, sort_keys=True):
+    def get_dictionary_items(self, dictionary, sort_keys=True) -> list:
         """Returns items of the given ``dictionary`` as a list.
 
         Uses `Get Dictionary Keys` to get keys and then returns corresponding
@@ -707,7 +708,7 @@ class _Dictionary:
         keys = self.get_dictionary_keys(dictionary, sort_keys=sort_keys)
         return [i for key in keys for i in (key, dictionary[key])]
 
-    def get_from_dictionary(self, dictionary, key, default=NOT_SET):
+    def get_from_dictionary(self, dictionary, key, default=NOT_SET) -> Any:
         """Returns a value from the given ``dictionary`` based on the given ``key``.
 
         If the given ``key`` cannot be found from the ``dictionary``, this
@@ -1176,7 +1177,7 @@ class Collections(_List, _Dictionary):
         whitespace_insensitive: "bool|None" = None,
         ignore_case: bool = False,
         ignore_whitespace: bool = False,
-    ):
+    ) -> list:
         """Returns a list of matches to ``pattern`` in ``list``.
 
         For more information on ``pattern``, ``case_insensitive/ignore_case``, and
@@ -1205,7 +1206,7 @@ class Collections(_List, _Dictionary):
         whitespace_insensitive: "bool|None" = None,
         ignore_case: bool = False,
         ignore_whitespace: bool = False,
-    ):
+    ) -> int:
         """Returns the count of matches to ``pattern`` in ``list``.
 
         For more information on ``pattern``, ``case_insensitive/ignore_case``, and

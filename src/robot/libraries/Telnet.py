@@ -17,6 +17,8 @@ import inspect
 import re
 import socket
 import struct
+from typing import Any
+
 import telnetlib
 import time
 from contextlib import contextmanager
@@ -335,7 +337,7 @@ class Telnet:
         self._conn = None
         self._conn_kws = self._lib_kws = None
 
-    def get_keyword_names(self):
+    def get_keyword_names(self) -> list[str]:
         return self._get_library_keywords() + self._get_connection_keywords()
 
     def _get_library_keywords(self):
@@ -394,7 +396,7 @@ class Telnet:
         terminal_type=None,
         telnetlib_log_level=None,
         connection_timeout=None,
-    ):
+    ) -> int:
         """Opens a new Telnet connection to the given host and port.
 
         The ``timeout``, ``newline``, ``prompt``, ``prompt_is_regexp``,
@@ -474,7 +476,7 @@ class Telnet:
         if self._connection_timeout:
             self._connection_timeout = timestr_to_secs(connection_timeout)
 
-    def switch_connection(self, index_or_alias):
+    def switch_connection(self, index_or_alias) -> int:
         """Switches between active connections using an index or an alias.
 
         Aliases can be given to `Open Connection` keyword which also always
@@ -565,7 +567,7 @@ class TelnetConnection(telnetlib.Telnet):
         self._set_telnetlib_log_level(telnetlib_log_level)
         self._opt_responses = []
 
-    def set_timeout(self, timeout):
+    def set_timeout(self, timeout) -> str:
         """Sets the timeout used for waiting output in the current connection.
 
         Read operations that expect some output to appear (`Read Until`, `Read
@@ -591,7 +593,7 @@ class TelnetConnection(telnetlib.Telnet):
     def _set_timeout(self, timeout):
         self._timeout = timestr_to_secs(timeout)
 
-    def set_newline(self, newline):
+    def set_newline(self, newline) -> str:
         """Sets the newline used by `Write` keyword in the current connection.
 
         The old newline is returned and can be used to restore the newline later.
@@ -616,7 +618,7 @@ class TelnetConnection(telnetlib.Telnet):
         newline = str(newline).upper()
         self._newline = newline.replace("LF", "\n").replace("CR", "\r")
 
-    def set_prompt(self, prompt, prompt_is_regexp=False):
+    def set_prompt(self, prompt, prompt_is_regexp=False) -> tuple[Any, bool]:
         """Sets the prompt used by `Read Until Prompt` and `Login` in the current connection.
 
         If ``prompt_is_regexp`` is given a true value (see `Boolean arguments`),
@@ -654,7 +656,7 @@ class TelnetConnection(telnetlib.Telnet):
         return self._prompt[0] is not None
 
     @keyword(types=None)
-    def set_encoding(self, encoding=None, errors=None):
+    def set_encoding(self, encoding=None, errors=None) -> tuple[Any, Any]:
         """Sets the encoding to use for `writing and reading` in the current connection.
 
         The given ``encoding`` specifies the encoding to use when written/read
@@ -697,7 +699,7 @@ class TelnetConnection(telnetlib.Telnet):
             return bytes
         return bytes.decode(*self._encoding)
 
-    def set_telnetlib_log_level(self, level):
+    def set_telnetlib_log_level(self, level) -> str:
         """Sets the log level used for `logging` in the underlying ``telnetlib``.
 
         Note that ``telnetlib`` can be very noisy thus using the level ``NONE``
@@ -715,7 +717,7 @@ class TelnetConnection(telnetlib.Telnet):
             raise AssertionError(f"Invalid log level '{level}'")
         self._telnetlib_log_level = level.upper()
 
-    def set_default_log_level(self, level):
+    def set_default_log_level(self, level) -> str:
         """Sets the default log level used for `logging` in the current connection.
 
         The old default log level is returned and can be used to restore the
@@ -741,7 +743,7 @@ class TelnetConnection(telnetlib.Telnet):
             return False
         return level.upper() in ("TRACE", "DEBUG", "INFO", "WARN")
 
-    def close_connection(self, loglevel=None):
+    def close_connection(self, loglevel=None) -> str:
         """Closes the current Telnet connection.
 
         Remaining output in the connection is read, logged, and returned.
@@ -767,7 +769,7 @@ class TelnetConnection(telnetlib.Telnet):
         password_prompt="Password: ",
         login_timeout="1 second",
         login_incorrect="Login incorrect",
-    ):
+    ) -> str:
         """Logs in to the Telnet server with the given user information.
 
         This keyword reads from the connection until the ``login_prompt`` is
@@ -822,7 +824,7 @@ class TelnetConnection(telnetlib.Telnet):
         success = incorrect not in output
         return success, output
 
-    def write(self, text, loglevel=None):
+    def write(self, text, loglevel=None) -> str:
         """Writes the given text plus a newline into the connection.
 
         The newline character sequence to use can be [#Configuration|configured]
@@ -870,7 +872,7 @@ class TelnetConnection(telnetlib.Telnet):
         timeout,
         retry_interval,
         loglevel=None,
-    ):
+    ) -> str:
         """Writes the given ``text`` repeatedly, until ``expected`` appears in the output.
 
         ``text`` is written without appending a newline and it is consumed from
@@ -945,7 +947,7 @@ class TelnetConnection(telnetlib.Telnet):
         except KeyError:
             raise RuntimeError(f"Unsupported control character '{name}'.")
 
-    def read(self, loglevel=None):
+    def read(self, loglevel=None) -> str:
         """Reads everything that is currently available in the output.
 
         Read output is both returned and logged. See `Logging` section for more
@@ -959,7 +961,7 @@ class TelnetConnection(telnetlib.Telnet):
         self._log(output, loglevel)
         return output
 
-    def read_until(self, expected, loglevel=None):
+    def read_until(self, expected, loglevel=None) -> str:
         """Reads output until ``expected`` text is encountered.
 
         Text up to and including the match is returned and logged. If no match
@@ -1044,7 +1046,7 @@ class TelnetConnection(telnetlib.Telnet):
             return exp
         return re.compile(self._encode(pattern))
 
-    def read_until_regexp(self, *expected):
+    def read_until_regexp(self, *expected) -> str:
         """Reads output until any of the ``expected`` regular expressions match.
 
         This keyword accepts any number of regular expressions patterns or
@@ -1080,7 +1082,7 @@ class TelnetConnection(telnetlib.Telnet):
             raise NoMatchError(expected, self._timeout, output)
         return output
 
-    def read_until_prompt(self, loglevel=None, strip_prompt=False):
+    def read_until_prompt(self, loglevel=None, strip_prompt=False) -> str:
         """Reads output until the prompt is encountered.
 
         This keyword requires the prompt to be [#Configuration|configured]
@@ -1126,7 +1128,7 @@ class TelnetConnection(telnetlib.Telnet):
             length = match.end() - match.start()
         return output[:-length]
 
-    def execute_command(self, command, loglevel=None, strip_prompt=False):
+    def execute_command(self, command, loglevel=None, strip_prompt=False) -> str:
         """Executes the given ``command`` and reads, logs, and returns everything until the prompt.
 
         This keyword requires the prompt to be [#Configuration|configured]
