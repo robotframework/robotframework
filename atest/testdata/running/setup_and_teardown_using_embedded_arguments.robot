@@ -1,19 +1,30 @@
 *** Settings ***
-Suite Setup       Embedded ${LIST}
-Suite Teardown    Embedded ${LIST}
+Suite Setup       Embedded "arg"
+Suite Teardown    Object ${LIST}
 
 *** Variables ***
+${ARG}            arg
 @{LIST}           one    ${2}
 ${NOT}            not, exact match instead
 
 *** Test Cases ***
 Test setup and teardown
-    [Setup]       Embedded ${LIST}
+    [Setup]       Embedded "arg"
     No Operation
-    [Teardown]    Embedded ${LIST}
+    [Teardown]    Embedded "arg"
 
 Keyword setup and teardown
     Keyword setup and teardown
+
+Argument as variable
+    [Setup]       Embedded "${ARG}"
+    Keyword setup and teardown as variable
+    [Teardown]    Embedded "${ARG}"
+
+Argument as non-string variable
+    [Setup]       Object ${LIST}
+    Keyword setup and teardown as non-string variable
+    [Teardown]    Object ${LIST}
 
 Exact match after replacing variables has higher precedence
     [Setup]       Embedded ${NOT}
@@ -21,13 +32,26 @@ Exact match after replacing variables has higher precedence
     [Teardown]    Embedded ${NOT}
 
 *** Keywords ***
-Keyword setup and teardown
-    [Setup]       Embedded ${LIST}
-    No Operation
-    [Teardown]    Embedded ${LIST}
+Embedded "${arg}"
+    Should Be Equal    ${arg}    arg
 
-Embedded ${args}
-    Should Be Equal    ${args}    ${LIST}
+Object ${arg}
+    Should Be Equal    ${arg}    ${LIST}
+
+Keyword setup and teardown
+    [Setup]       Embedded "arg"
+    No Operation
+    [Teardown]    Embedded "arg"
+
+Keyword setup and teardown as variable
+    [Setup]       Embedded "${ARG}"
+    No Operation
+    [Teardown]    Embedded "${ARG}"
+
+Keyword setup and teardown as non-string variable
+    [Setup]       Object ${LIST}
+    No Operation
+    [Teardown]    Object ${LIST}
 
 Embedded not, exact match instead
     No Operation
