@@ -23,6 +23,7 @@ class ExecutionTimeChecker(ResultVisitor):
         if test.status == 'PASS' and test.elapsedtime > self.max_milliseconds:
             test.status = 'FAIL'
             test.message = 'Test execution took too long.'
+        return super().visit_test(test)
 
 
 def check_tests(seconds, inpath, outpath=None):
