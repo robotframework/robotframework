@@ -4,6 +4,7 @@ Suite Teardown    Object ${LIST}
 
 *** Variables ***
 ${ARG}            arg
+${QUOTED}         "${ARG}"
 @{LIST}           one    ${2}
 ${NOT}            not, exact match instead
 
@@ -25,6 +26,11 @@ Argument as non-string variable
     [Setup]       Object ${LIST}
     Keyword setup and teardown as non-string variable
     [Teardown]    Object ${LIST}
+
+Argument matching only after replacing variables
+    [Setup]       Embedded ${QUOTED}
+    Keyword setup and teardown matching only after replacing variables
+    [Teardown]    Embedded ${QUOTED}
 
 Exact match after replacing variables has higher precedence
     [Setup]       Embedded ${NOT}
@@ -52,6 +58,11 @@ Keyword setup and teardown as non-string variable
     [Setup]       Object ${LIST}
     No Operation
     [Teardown]    Object ${LIST}
+
+Keyword setup and teardown matching only after replacing variables
+    [Setup]       Embedded ${QUOTED}
+    No Operation
+    [Teardown]    Embedded ${QUOTED}
 
 Embedded not, exact match instead
     No Operation

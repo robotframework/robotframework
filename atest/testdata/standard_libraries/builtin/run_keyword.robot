@@ -73,10 +73,18 @@ With library keyword accepting embedded arguments as variables containing object
     Run Keyword    Embedded "${OBJECT}" in library
     Run Keyword    Embedded object "${OBJECT}" in library
 
+Embedded arguments matching only after replacing variables
+    VAR    ${arg}    "arg"
+    Run Keyword    Embedded ${arg}
+    Run Keyword    Embedded ${arg} in library
+
 Exact match after replacing variables has higher precedence than embedded arguments
     VAR    ${not}    not
     Run Keyword    Embedded "${not}"
     Run Keyword    Embedded "${{'NOT'}}" in library
+    VAR    ${not}    "not"
+    Run Keyword    Embedded ${not}
+    Run Keyword    Embedded ${not} in library
 
 Run Keyword In FOR Loop
     [Documentation]    FAIL Expected failure in For Loop

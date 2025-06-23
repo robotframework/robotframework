@@ -31,6 +31,13 @@ Argument as non-string variable
     Should Be Equal    ${tc[0].teardown.name}    Object \${LIST}
     Should Be Equal    ${tc.teardown.name}       Object \${LIST}
 
+Argument matching only after replacing variables
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Should Be Equal    ${tc.setup.name}          Embedded "arg"
+    Should Be Equal    ${tc[0].setup.name}       Embedded "arg"
+    Should Be Equal    ${tc[0].teardown.name}    Embedded "arg"
+    Should Be Equal    ${tc.teardown.name}       Embedded "arg"
+
 Exact match after replacing variables has higher precedence
     ${tc} =    Check Test Case    ${TESTNAME}
     Should Be Equal    ${tc.setup.name}          Embedded not, exact match instead

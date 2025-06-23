@@ -108,7 +108,9 @@ class KeywordRunner:
         # BuiltIn.run_keyword has the same logic.
         runner = context.get_runner(name, recommend_on_failure=self._run)
         if hasattr(runner, "embedded_args") and name != data.name:
-            runner = context.get_runner(data.name)
+            candidate = context.get_runner(data.name)
+            if hasattr(candidate, "embedded_args"):
+                runner = candidate
         return runner
 
 

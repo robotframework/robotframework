@@ -2184,10 +2184,13 @@ class _RunKeyword(_BuiltInBase):
         # to 'Keyword.run', but then it would be better if 'Run Keyword' would support
         # 'NONE' as a special value to not run anything similarly as setup/teardown.
         replaced = ctx.variables.replace_scalar(name, ignore_errors=ctx.in_teardown)
-        runner = ctx.get_runner(replaced, recommend_on_failure=False)
-        if hasattr(runner, "embedded_args"):
+        if self._accepts_embedded(replaced, ctx) and self._accepts_embedded(name, ctx):
             return name, args
         return replaced, args
+
+    def _accepts_embedded(self, name, ctx):
+        runner = ctx.get_runner(name, recommend_on_failure=False)
+        return hasattr(runner, "embedded_args")
 
     def _replace_variables_in_name_with_list_variable(self, name, args, ctx):
         # TODO: This seems to be the only place where `replace_until` is used.
