@@ -99,7 +99,12 @@ LogLevel = Literal["TRACE", "DEBUG", "INFO", "CONSOLE", "HTML", "WARN", "ERROR"]
 LOGLEVEL = LogLevel
 
 
-def write(msg: str, level: LogLevel = "INFO", html: bool = False):
+def write(
+    msg: str,
+    level: LogLevel = "INFO",
+    html: bool = False,
+    also_console: "bool|None" = None,
+):
     """Writes the message to the log file using the given level.
 
     Valid log levels are ``TRACE``, ``DEBUG``, ``INFO`` (default), ``WARN``,
@@ -111,10 +116,14 @@ def write(msg: str, level: LogLevel = "INFO", html: bool = False):
     Instead of using this method, it is generally better to use the level
     specific methods such as ``info`` and ``debug``.
 
-    The ``CONSOLE`` pseudo level is new in Robot Framework 6.1.
+    The ``also_console`` parameter controls writing the message to the console
+    in addition to the log file.
+
+    The ``CONSOLE`` pseudo level is new in Robot Framework 6.1 and
+    the ``also_console`` argument is new in Robot Framework 7.4.
     """
     if EXECUTION_CONTEXTS.current is not None:
-        librarylogger.write(msg, level, html)
+        librarylogger.write(msg, level, html, also_console)
     else:
         logger = logging.getLogger("RobotFramework")
         level_int = {
@@ -142,22 +151,28 @@ def debug(msg: str, html: bool = False):
 def info(msg: str, html: bool = False, also_console: bool = False):
     """Writes the message to the log file using the ``INFO`` level.
 
-    If ``also_console`` argument is set to ``True``, the message is
+    If the ``also_console`` argument is set to ``True``, the message is
     written both to the log file and to the console.
     """
-    write(msg, "INFO", html)
-    if also_console:
-        console(msg)
+    write(msg, "INFO", html, also_console)
 
 
-def warn(msg: str, html: bool = False):
-    """Writes the message to the log file using the ``WARN`` level."""
-    write(msg, "WARN", html)
+def warn(msg: str, html: bool = False, also_console: bool = True):
+    """Writes the message to the log file using the ``WARN`` level.
+
+    If the ``also_console`` argument is set to ``True`` (the default), the
+    message is written both to the log file and to the console.
+    """
+    write(msg, "WARN", html, also_console)
 
 
-def error(msg: str, html: bool = False):
-    """Writes the message to the log file using the ``ERROR`` level."""
-    write(msg, "ERROR", html)
+def error(msg: str, html: bool = False, also_console: bool = True):
+    """Writes the message to the log file using the ``ERROR`` level.
+
+    If the ``also_console`` argument is set to ``True`` (the default), the
+    message is written both to the log file and to the console.
+    """
+    write(msg, "ERROR", html, also_console)
 
 
 def console(
