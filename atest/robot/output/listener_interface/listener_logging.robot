@@ -48,7 +48,7 @@ Correct warnings should be shown in execution errors
 
 Execution errors should have messages from message and log_message methods
     Check Log Message    ${ERRORS[0]}     message: INFO Robot Framework *       WARN    pattern=yes
-    Check Log Message    ${ERRORS[-4]}    log_message: FAIL Expected failure    WARN
+    Check Log Message    ${ERRORS[-7]}    log_message: FAIL Expected failure    WARN
 
 Correct start/end warnings should be shown in execution errors
     ${msgs} =    Get start/end messages    ${ERRORS}
@@ -64,10 +64,12 @@ Correct start/end warnings should be shown in execution errors
     ...    @{uk}
     ...    start keyword    start keyword    end keyword    end keyword
     ...    @{kw}
+    ...    start teardown    end teardown
     ...    end_test
     ...    start_test
     ...    @{uk}
     ...    @{kw}
+    ...    start teardown    end teardown
     ...    end_test
     ...    end_suite
          Check Log Message    ${msgs}[${index}]    ${method}    WARN
@@ -91,6 +93,7 @@ Correct messages should be logged to normal log
     'My Keyword' has correct messages    ${tc[2]}    Pass
     Check Log Message    ${tc[5]}   end_test    INFO
     Check Log Message    ${tc[6]}   end_test    WARN
+    Teardown has correct messages    ${tc.teardown}
     ${tc} =    Check Test Case    Fail
     Check Log Message    ${tc[0]}   start_test    INFO
     Check Log Message    ${tc[1]}   start_test    WARN
@@ -98,6 +101,7 @@ Correct messages should be logged to normal log
     'Fail' has correct messages    ${tc[3]}
     Check Log Message    ${tc[4]}   end_test    INFO
     Check Log Message    ${tc[5]}   end_test    WARN
+    Teardown has correct messages    ${tc.teardown}
 
 'My Keyword' has correct messages
     [Arguments]    ${kw}    ${name}
@@ -143,6 +147,16 @@ Correct messages should be logged to normal log
     Check Log Message    ${kw[7, 3]}    end return       WARN
     Check Log Message    ${kw[8]}       end ${type}      INFO
     Check Log Message    ${kw[9]}       end ${type}      WARN
+
+Teardown has correct messages
+    [Arguments]    ${teardown}
+    Check Log Message    ${teardown[0]}   start teardown    INFO
+    Check Log Message    ${teardown[1]}   start teardown    WARN
+    Check Log Message    ${teardown[2]}   log_message: INFO Teardown!    INFO
+    Check Log Message    ${teardown[3]}   log_message: INFO Teardown!    WARN
+    Check Log Message    ${teardown[4]}   Teardown!
+    Check Log Message    ${teardown[5]}   end teardown    INFO
+    Check Log Message    ${teardown[6]}   end teardown    WARN
 
 'Fail' has correct messages
     [Arguments]    ${kw}

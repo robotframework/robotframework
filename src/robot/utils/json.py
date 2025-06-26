@@ -24,6 +24,13 @@ DataDict = Dict[str, Any]
 
 
 class JsonLoader:
+    """Generic JSON loader.
+
+    JSON source can be a string or bytes, a path or an open file object.
+
+    As a special feature handles duplicate items so that lists are merged.
+    """
+
     def load(self, source: "str|bytes|TextIO|Path") -> DataDict:
         try:
             data = self._load(source)
@@ -33,21 +40,38 @@ class JsonLoader:
             raise TypeError(f"Expected dictionary, got {type_name(data)}.")
         return data
 
-    def _load(self, source):
+    def _load(self, source: "str|bytes|TextIO|Path") -> object:
+        config = {"object_pairs_hook": self._merge_duplicate_lists}
         if self._is_path(source):
             with open(source, encoding="UTF-8") as file:
-                return json.load(file)
+                return json.load(file, **config)
         if hasattr(source, "read"):
-            return json.load(source)
-        return json.loads(source)
+            return json.load(source, **config)
+        return json.loads(source, **config)
 
-    def _is_path(self, source):
+    def _merge_duplicate_lists(self, items: "list[tuple[str, object]]") -> dict:
+        data = {}
+        for name, value in items:
+            if name in data and isinstance(value, list):
+                data[name].extend(value)
+            else:
+                data[name] = value
+        return data
+
+    def _is_path(self, source: "str|bytes|TextIO|Path") -> bool:
         if isinstance(source, Path):
             return True
         return isinstance(source, str) and "{" not in source
 
 
 class JsonDumper:
+    """Generic JSON dumper.
+
+    JSON can be written to a file given as a path or as an open file object.
+    If no output is given, JSON is returned as a string.
+
+    Supports the same configuration as the underlying ``json`` module.
+    """
 
     def __init__(self, **config):
         self.config = config
@@ -64,8 +88,10 @@ class JsonDumper:
         elif isinstance(output, (str, Path)):
             with open(output, "w", encoding="UTF-8") as file:
                 json.dump(data, file, **self.config)
+            return None
         elif hasattr(output, "write"):
             json.dump(data, output, **self.config)
+            return None
         else:
             raise TypeError(
                 f"Output should be None, path or open file, got {type_name(output)}."

@@ -20,7 +20,7 @@ from robot.result import (
 )
 from robot.result.executionerrors import ExecutionErrors
 from robot.result.model import Body, Iterations
-from robot.utils import eq, get_error_details, is_truthy, Matcher
+from robot.utils import eq, get_error_details, is_truthy, JsonLoader, Matcher
 from robot.utils.asserts import assert_equal
 
 
@@ -199,8 +199,7 @@ class TestCheckerLibrary:
         return result
 
     def _build_result_from_json(self, path):
-        with open(path, encoding="UTF-8") as file:
-            data = json.load(file)
+        data = JsonLoader().load(path)
         return Result(
             source=path,
             suite=ATestTestSuite.from_dict(data["suite"]),

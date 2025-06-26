@@ -327,7 +327,7 @@ class KeywordStore:
         # Some prefix matched, but there was no matching keyword. Go through all
         # prefixes individually to see were there possibly multiple matching ones.
         # https://github.com/robotframework/robotframework/issues/5456
-        name = " ".join(name.split()).title()    # Normalize spaces and case.
+        name = " ".join(name.split()).title()  # Normalize spaces and case.
         for prefix in sorted(self.languages.bdd_prefixes, key=len, reverse=True):
             prefix += " "
             if name.startswith(prefix):

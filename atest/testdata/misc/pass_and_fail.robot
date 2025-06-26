@@ -1,6 +1,7 @@
 *** Settings ***
 Documentation     Some tests here
 Suite Setup       My Keyword    Suite Setup
+Test Teardown     Log    Teardown!
 Test Tags         force
 Library           String
 Resource          example.resource

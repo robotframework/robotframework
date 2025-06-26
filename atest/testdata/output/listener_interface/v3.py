@@ -109,7 +109,7 @@ def library_import(library, importer):
         assert_equal(importer.name, "String")
         assert_equal(importer.args, ())
         assert_equal(importer.source.name, "pass_and_fail.robot")
-        assert_equal(importer.lineno, 5)
+        assert_equal(importer.lineno, 6)
     print(f"Imported library '{library.name}' with {len(library.keywords)} keywords.")
 
 
@@ -119,7 +119,7 @@ def resource_import(resource, importer):
     assert_equal(importer.name, "example.resource")
     assert_equal(importer.args, ())
     assert_equal(importer.source.name, "pass_and_fail.robot")
-    assert_equal(importer.lineno, 6)
+    assert_equal(importer.lineno, 7)
     kw = resource.find_keywords("Resource Keyword", count=1)
     kw.body.create_keyword("New!")
     new = resource.keywords.create("New!", doc="Dynamically created.")
@@ -136,7 +136,7 @@ def variables_import(attrs, importer):
     assert_equal(importer.name, "variables.py")
     assert_equal(importer.args, ("arg ${1}",))
     assert_equal(importer.source.name, "pass_and_fail.robot")
-    assert_equal(importer.lineno, 7)
+    assert_equal(importer.lineno, 8)
     assert_equal(importer.owner.owner.source.name, "pass_and_fail.robot")
     print(f"Imported variables '{attrs['name']}' without much info.")
 

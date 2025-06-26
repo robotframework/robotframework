@@ -252,7 +252,7 @@ class TestLineNumberAndSource(unittest.TestCase):
         assert_false(hasattr(self.suite, "lineno"))
 
     def test_import(self):
-        self._assert_lineno_and_source(self.suite.resource.imports[0], 5)
+        self._assert_lineno_and_source(self.suite.resource.imports[0], 6)
 
     def test_import_without_source(self):
         suite = TestSuite()
@@ -268,17 +268,17 @@ class TestLineNumberAndSource(unittest.TestCase):
             assert_equal(suite.resource.imports[0].directory, source.parent)
 
     def test_variable(self):
-        self._assert_lineno_and_source(self.suite.resource.variables[0], 10)
+        self._assert_lineno_and_source(self.suite.resource.variables[0], 11)
 
     def test_test(self):
-        self._assert_lineno_and_source(self.suite.tests[0], 14)
+        self._assert_lineno_and_source(self.suite.tests[0], 15)
 
     def test_user_keyword(self):
-        self._assert_lineno_and_source(self.suite.resource.keywords[0], 28)
+        self._assert_lineno_and_source(self.suite.resource.keywords[0], 29)
 
     def test_keyword_call(self):
-        self._assert_lineno_and_source(self.suite.tests[0].body[0], 17)
-        self._assert_lineno_and_source(self.suite.resource.keywords[0].body[0], 31)
+        self._assert_lineno_and_source(self.suite.tests[0].body[0], 18)
+        self._assert_lineno_and_source(self.suite.resource.keywords[0].body[0], 32)
 
     def _assert_lineno_and_source(self, item, lineno):
         assert_equal(item.source, self.source)
