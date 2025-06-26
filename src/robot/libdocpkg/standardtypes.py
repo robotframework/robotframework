@@ -23,6 +23,8 @@ try:
 except ImportError:  # Python < 3.10
     NoneType = type(None)
 
+from robot.utils import Secret
+
 STANDARD_TYPE_DOCS = {
     Any: """\
 Any value is accepted. No conversion is done.
@@ -198,6 +200,49 @@ are converted using the value type specific conversion logic.
 
 Strings are case, space, underscore and hyphen insensitive,
 but exact matches have precedence over normalized matches.
+""",
+    Secret: """\
+The Secret type has two purposes. First, it is used to
+prevent putting the secret value in Robot Framework
+test data as plain text. Second, it is used to hide secret
+from Robot Framework logs and reports.
+
+Usage of the Secret type does not fully prevent the value
+being from logged in libraries that uses the Secret type,
+because example Browser or SeleniumLibrary will need
+pass at some the value as plain text in to the corresponding
+API calls of those tools and those underlying tools might log
+the value in their logs own files or use Python standard
+logging that might reveal the value also in the Robot
+Framework logs. Also user may access the Secret type
+value attribute to get the actual secret and this can
+reveal the value in the logs. If value is exposed as plain
+text, the Robot Framework logging system will not prevent value
+being logged in Robot Framework output files. The only protection
+that is provided is the encapsulation of the value in a
+Secret class which prevents the value being directly logged in
+Robot Framework logs and reports.
+
+The creation of Secret is more restricted than normal variable
+types. Normal variable types can be created from anywhere,
+example in variable table, but Secret type can not be created
+directly in the Robot Framework test data. With the exception of
+environment variables, which can be used to create secrets
+also in Robot Framework test data.
+
+To create a Secret type of variable, there are four ways to
+create it. 1) Secret can be created from command line
+2) Secret can be returned from a library keyword 3) Secret
+can be created in a variable file and 4) Secret can be created
+from environment variable.
+
+The Secret type can be used in user keywords argument types,
+like any other standard
+[https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#supported-conversions|supported conversion]
+types to enforce that the variable is actually a Secret type.
+But to exception to other supported conversion types, if the
+variable type is not Secret, an error is raised when keyword
+is called.
 """,
 }
 

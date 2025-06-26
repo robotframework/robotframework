@@ -144,6 +144,7 @@ from .robottypes import (
     type_repr as type_repr,
     typeddict_types as typeddict_types,
 )
+from .secret import Secret as Secret
 from .setter import setter as setter, SetterAwareType as SetterAwareType
 from .sortable import Sortable as Sortable
 from .text import (
