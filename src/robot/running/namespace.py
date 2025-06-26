@@ -17,6 +17,7 @@ import copy
 import os
 from collections import OrderedDict
 
+from robot.conf import Languages
 from robot.errors import DataError, KeywordError
 from robot.libraries import STDLIBS
 from robot.output import LOGGER, Message
@@ -231,7 +232,7 @@ class Namespace:
 
 class KeywordStore:
 
-    def __init__(self, suite_file, languages):
+    def __init__(self, suite_file, languages: Languages):
         self.suite_file = suite_file
         self.libraries = OrderedDict()
         self.resources = ImportCache()
@@ -300,6 +301,9 @@ class KeywordStore:
         runner = None
         if strip_bdd_prefix:
             runner = self._get_bdd_style_runner(name)
+            if runner:
+                runner = copy.copy(runner)
+                runner.name = name
         if not runner:
             runner = self._get_runner_from_suite_file(name)
         if not runner and "." in name:
@@ -309,13 +313,27 @@ class KeywordStore:
         return runner
 
     def _get_bdd_style_runner(self, name):
+        # TODO: Consider using 'startswith' instead of regexps for checking does any
+        # prefix match. That ought to make that check a bit faster (especially if the
+        # tuple of prefixes is pre-built in 'Languages'), but finding the keyword if
+        # there's a match can be a bit slower. It also makes it explicit that prefixes
+        # are constants, not patterns, and allows deprecating 'bdd_prefix_regexp'.
         match = self.languages.bdd_prefix_regexp.match(name)
-        if match:
-            runner = self._get_runner(name[match.end() :], strip_bdd_prefix=False)
-            if runner:
-                runner = copy.copy(runner)
-                runner.name = name
-                return runner
+        if not match:
+            return None
+        runner = self._get_runner(name[match.end() :], strip_bdd_prefix=False)
+        if runner:
+            return runner
+        # Some prefix matched, but there was no matching keyword. Go through all
+        # prefixes individually to see were there possibly multiple matching ones.
+        # https://github.com/robotframework/robotframework/issues/5456
+        name = " ".join(name.split()).title()    # Normalize spaces and case.
+        for prefix in sorted(self.languages.bdd_prefixes, key=len, reverse=True):
+            prefix += " "
+            if name.startswith(prefix):
+                runner = self._get_runner(name[len(prefix) :], strip_bdd_prefix=False)
+                if runner:
+                    return runner
         return None
 
     def _get_implicit_runner(self, name):
