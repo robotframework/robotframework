@@ -170,9 +170,13 @@ class TestFromDictAndJson(unittest.TestCase):
 
     def _get_json_load_error(self, value):
         try:
-            json.loads(value)
+            # `object_pairs_hook` needed because it strangely changes the error
+            # slightly when using PyPy and JsonLoader uses it.
+            json.loads(value, object_pairs_hook=dict)
         except Exception:
             return get_error_message()
+        else:
+            raise ValueError("Expected failure not raised")
 
 
 class TestToJson(unittest.TestCase):
