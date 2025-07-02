@@ -173,26 +173,21 @@ class ExecutionResultBuilder:
         type_match, by_type = self._get_matcher(FlattenByTypeMatcher, flattened)
         started = -1  # If 0 or more, we are flattening.
         containers = {"kw", "for", "while", "iter", "if", "try"}
-        inside = 0  # To make sure we don't read tags from a test.
         for event, elem in context:
             tag = elem.tag
             if event == "start":
                 if tag in containers:
-                    inside += 1
                     if started >= 0:
                         started += 1
-                    elif by_name and name_match(
+                    elif by_name and tag == "kw" and name_match(
                         elem.get("name", ""),
                         elem.get("owner") or elem.get("library"),
                     ):
                         started = 0
                     elif by_type and type_match(tag):
                         started = 0
-            else:
-                if tag in containers:
-                    inside -= 1
-                elif started == 0 and tag == "status":
-                    elem.text = create_flatten_message(elem.text)
+            elif started == 0 and tag == "status":
+                elem.text = create_flatten_message(elem.text)
             if started <= 0 or tag == "msg":
                 yield event, elem
             else:
