@@ -88,6 +88,8 @@ Flatten controls in keyword
     FOR    ${i}    IN RANGE    3
         Log   FOR: ${i}
         Keyword 1
+        CONTINUE
+        Fail    Not run
     END
     WHILE    $i > 0
         Log   WHILE: ${i}
@@ -103,6 +105,11 @@ Flatten controls in keyword
     FINALLY
         Log    finally
     END
+    GROUP
+        Log    Inside GROUP
+    END
+    VAR    ${x}    Using VAR
+    RETURN    return value
 
 Countdown
     [Arguments]    ${count}=${3}

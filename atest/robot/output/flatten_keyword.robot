@@ -68,14 +68,14 @@ Flattened in log after execution
 
 Flatten controls in keyword
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Counts        ${tc[0]}              23
     @{expected} =    Create List
     ...    Outside IF    Inside IF    1    Nested IF
     ...    3    2    1    BANG!
     ...    FOR: 0    1    FOR: 1    1    FOR: 2    1
     ...    WHILE: 2    1    \${i} = 1    WHILE: 1    1    \${i} = 0
     ...    AssertionError    1    finally
-    FOR    ${msg}    ${exp}    IN ZIP    ${tc[0].body}    ${expected}
+    ...    Inside GROUP    \${x} = Using VAR
+    FOR    ${msg}    ${exp}    IN ZIP    ${tc[0].body}    ${expected}    mode=STRICT
         Check Log Message    ${msg}    ${exp}    level=IGNORE
     END
 
