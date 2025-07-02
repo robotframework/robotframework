@@ -394,11 +394,11 @@ class TestCheckerLibrary:
             if not Matcher(name).match_any(actual):
                 raise AssertionError(f"Suite {name} not found.")
 
-    def should_contain_tags(self, test, *tags):
-        logger.info(f"Test has tags: {test.tags}")
-        assert_equal(len(test.tags), len(tags), "Wrong number of tags")
+    def should_have_tags(self, item, *tags):
+        logger.info(f"{item.type.title()} has tags: {item.tags}")
+        assert_equal(len(item.tags), len(tags), "Wrong number of tags")
         tags = sorted(tags, key=lambda s: s.lower().replace("_", "").replace(" ", ""))
-        for act, exp in zip(test.tags, tags):
+        for act, exp in zip(item.tags, tags):
             assert_equal(act, exp)
 
     def should_contain_keywords(self, item, *kw_names):

@@ -8,7 +8,7 @@ Multiline suite documentation and metadata
     Should Be Equal    ${SUITE.metadata['Name']}    1.1\n1.2\n\n2.1\n2.2\n2.3\n\n3.1
 
 Multiline suite level settings
-    Should Contain Tags   ${SUITE.tests[0]}
+    Should Have Tags   ${SUITE.tests[0]}
     ...    ...    t1    t2    t3    t4    t5    t6    t7    t8    t9
     Check Log Message    ${SUITE.tests[0].teardown[0]}      1st
     Check Log Message    ${SUITE.tests[0].teardown[1]}      ${EMPTY}
@@ -48,8 +48,7 @@ Multiline in user keyword
 
 Multiline test settings
     ${tc} =    Check Test Case    ${TEST NAME}
-    @{expected} =   Evaluate    ['my'+str(i) for i in range(1,6)]
-    Should Contain Tags   ${tc}    @{expected}
+    Should Have Tags   ${tc}    @{{[f'my{i}' for i in range(1,6)]}}
     Should Be Equal    ${tc.doc}    One.\nTwo.\nThree.\n\n${SPACE*32}Second paragraph.
     Check Log Message    ${tc.setup[0]}    first
     Check Log Message    ${tc.setup[1]}    ${EMPTY}

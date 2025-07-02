@@ -110,7 +110,7 @@ Check Test Doc
 Check Test Tags
     [Arguments]    ${name}    @{expected}
     ${tc} =    Check Test Case    ${name}
-    Should Contain Tags    ${tc}    @{expected}
+    Should Have Tags    ${tc}    @{expected}
     RETURN    ${tc}
 
 Check Body Item Data
