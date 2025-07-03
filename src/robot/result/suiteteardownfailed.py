@@ -19,12 +19,12 @@ from robot.model import SuiteVisitor
 class SuiteTeardownFailureHandler(SuiteVisitor):
 
     def end_suite(self, suite):
-        teardown = suite.teardown
-        # Both 'PASS' and 'NOT RUN' statuses are OK.
-        if teardown and teardown.status == teardown.FAIL:
-            suite.suite_teardown_failed(teardown.message)
-        if teardown and teardown.status == teardown.SKIP:
-            suite.suite_teardown_skipped(teardown.message)
+        if suite.has_teardown:
+            teardown = suite.teardown
+            if teardown.status == teardown.FAIL:
+                suite.suite_teardown_failed(teardown.message)
+            if teardown.status == teardown.SKIP:
+                suite.suite_teardown_skipped(teardown.message)
 
     def visit_test(self, test):
         pass
