@@ -15,21 +15,47 @@
 
 import json
 from pathlib import Path
-from typing import Any, Dict, overload, TextIO
+from typing import Dict, overload, TextIO
 
 from .error import get_error_message
 from .robottypes import type_name
 
-DataDict = Dict[str, Any]
+DataDict = Dict[str, object]
 
 
 class JsonLoader:
-    """Generic JSON loader.
+    """Generic JSON object loader.
 
     JSON source can be a string or bytes, a path or an open file object.
+    The top level JSON item must always be a dictionary.
 
-    As a special feature handles duplicate items so that lists are merged.
+    Supports the same configuration parameters as the underlying  `json.load`__
+    except for ``object_pairs_hook``. As a special feature, handles duplicate
+    items so that lists are merged.
+
+    __ https://docs.python.org/3/library/json.html#json.load
     """
+
+    def __init__(self, **config):
+        self.config = self._add_hook_to_merge_duplicate_lists(config)
+
+    def _add_hook_to_merge_duplicate_lists(self, config):
+        if "object_pairs_hook" in config:
+            raise ValueError("'object_pairs_hook' is not supported.")
+
+        def merge_duplicate_lists(items: "list[tuple[str, object]]") -> DataDict:
+            data = {}
+            for name, value in items:
+                if name in data and isinstance(value, list):
+                    data[name].extend(value)
+                else:
+                    data[name] = value
+            if "object_hook" in config:
+                data = config["object_hook"](data)
+            return data
+
+        config["object_pairs_hook"] = merge_duplicate_lists
+        return config
 
     def load(self, source: "str|bytes|TextIO|Path") -> DataDict:
         try:
@@ -41,22 +67,12 @@ class JsonLoader:
         return data
 
     def _load(self, source: "str|bytes|TextIO|Path") -> object:
-        config = {"object_pairs_hook": self._merge_duplicate_lists}
         if self._is_path(source):
             with open(source, encoding="UTF-8") as file:
-                return json.load(file, **config)
+                return json.load(file, **self.config)
         if hasattr(source, "read"):
-            return json.load(source, **config)
-        return json.loads(source, **config)
-
-    def _merge_duplicate_lists(self, items: "list[tuple[str, object]]") -> dict:
-        data = {}
-        for name, value in items:
-            if name in data and isinstance(value, list):
-                data[name].extend(value)
-            else:
-                data[name] = value
-        return data
+            return json.load(source, **self.config)
+        return json.loads(source, **self.config)
 
     def _is_path(self, source: "str|bytes|TextIO|Path") -> bool:
         if isinstance(source, Path):
@@ -70,7 +86,9 @@ class JsonDumper:
     JSON can be written to a file given as a path or as an open file object.
     If no output is given, JSON is returned as a string.
 
-    Supports the same configuration as the underlying ``json`` module.
+    Supports the same configuration as the underlying `json.dump`__.
+
+    __ https://docs.python.org/3/library/json.html#json.load
     """
 
     def __init__(self, **config):
