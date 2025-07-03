@@ -18,7 +18,7 @@ from pathlib import Path
 from typing import overload, TextIO
 
 from robot.errors import DataError
-from robot.model import Statistics
+from robot.model import Statistics, SuiteVisitor
 from robot.utils import JsonDumper, JsonLoader, setter
 from robot.version import get_full_version
 
@@ -154,17 +154,23 @@ class Result:
     def from_json(
         cls,
         source: "str|bytes|TextIO|Path",
+        include_keywords: bool = True,
         rpa: "bool|None" = None,
     ) -> "Result":
         """Construct a result object from JSON data.
 
-        The data is given as the ``source`` parameter. It can be:
+        :param source: JSON data as a string or bytes containing the data directly,
+            an open file object where to read the data from, or a path (``pathlib.Path``
+            or string) to a UTF-8 encoded file to read.
+        :param include_keywords: When ``False``, keyword and control structure information
+            is not parsed. This can save considerable amount of time and memory. New
+            in RF 7.3.2.
+        :param rpa: Setting ``rpa`` either to ``True`` (RPA mode) or ``False`` (test
+            automation) sets the execution mode explicitly. By default, the mode is got
+            from the parsed data.
+        :returns: :class:`Result` instance.
 
-        - a string (or bytes) containing the data directly,
-        - an open file object where to read the data from, or
-        - a path (``pathlib.Path`` or string) to a UTF-8 encoded file to read.
-
-        Data can contain either:
+        The data can contain either:
 
         - full result data (contains suite information, execution errors, etc.)
           got, for example, from the :meth:`to_json` method, or
@@ -174,13 +180,11 @@ class Result:
         :attr:`statistics` are populated automatically based on suite information
         and thus ignored if they are present in the data.
 
-        The ``rpa`` argument can be used to override the RPA mode. The mode is
-        got from the data by default.
-
         New in Robot Framework 7.2.
         """
+        loader = cls._get_json_loader(include_keywords)
         try:
-            data = JsonLoader().load(source)
+            data = loader.load(source)
         except (TypeError, ValueError) as err:
             raise DataError(f"Loading JSON data failed: {err}")
         if "suite" in data:
@@ -193,7 +197,23 @@ class Result:
         elif isinstance(source, str) and source[0] != "{" and Path(source).exists():
             result.source = Path(source)
         result.handle_suite_teardown_failures()
+        if not include_keywords:
+            result.suite.visit(KeywordRemover())
         return result
+
+    @classmethod
+    def _get_json_loader(cls, include_keywords: bool) -> JsonLoader:
+        if include_keywords:
+            return JsonLoader()
+
+        def remove_keywords(obj):
+            obj.pop("body", None)
+            obj.pop("setup", None)
+            # Teardowns cannot be removed yet, because we need to check suite
+            # teardown status. They are removed later using KeywordRemover.
+            return obj
+
+        return JsonLoader(object_hook=remove_keywords)
 
     @classmethod
     def _from_full_json(cls, data) -> "Result":
@@ -356,3 +376,13 @@ class CombinedResult(Result):
         self.set_execution_mode(other)
         self.suite.suites.append(other.suite)
         self.errors.add(other.errors)
+
+
+class KeywordRemover(SuiteVisitor):
+
+    def start_suite(self, suite):
+        suite.setup = suite.teardown = None
+
+    def visit_test(self, test):
+        test.setup = test.teardown = None
+        test.body = []

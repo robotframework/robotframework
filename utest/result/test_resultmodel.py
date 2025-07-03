@@ -1301,6 +1301,7 @@ class TestJsonResult(unittest.TestCase):
                             "name": "T1",
                             "status": "PASS",
                             "tags": ["tag"],
+                            "setup": {"name": "TS", "status": "PASS"},
                             "body": [
                                 {
                                     "name": "Këüẅörd",
@@ -1309,10 +1310,13 @@ class TestJsonResult(unittest.TestCase):
                                     "elapsed_time": 0.123,
                                 }
                             ],
+                            "teardown": {"name": "TT", "status": "PASS"},
+                            "elapsed_time": 0.123,
                         },
                         {"name": "T2", "status": "FAIL", "elapsed_time": 0.01},
                         {"name": "T3", "status": "SKIP"},
                     ],
+                    "teardown": {"name": "ST", "status": "PASS"},
                 },
                 "statistics": "ignored by from_json",
                 "errors": [
@@ -1353,6 +1357,23 @@ class TestJsonResult(unittest.TestCase):
             generation_time=None,
         )
 
+    def test_exclude_keywords(self):
+        self._verify(self.data, include_keywords=False)
+
+    def test_suite_teardown_failed(self):
+        data = json.loads(self.data)
+        data["generator"] = "Robot"
+        data["suite"]["teardown"]["status"] = "FAIL"
+        self._verify(json.dumps(data), generator="Robot", stats=(0, 2, 1))
+
+    def test_suite_teardown_failed_when_keywords_excluded(self):
+        data = json.loads(self.data)
+        data["generator"] = "Robot"
+        data["suite"]["teardown"]["status"] = "FAIL"
+        self._verify(
+            json.dumps(data), include_keywords=False, generator="Robot", stats=(0, 2, 1)
+        )
+
     def test_to_json(self):
         result = ExecutionResult(self.data)
         data = json.loads(result.to_json())
@@ -1375,14 +1396,24 @@ class TestJsonResult(unittest.TestCase):
                         "name": "T1",
                         "id": "s1-t1",
                         "tags": ["tag"],
+                        "setup": {
+                            "name": "TS",
+                            "status": "PASS",
+                            "elapsed_time": 0.0,
+                        },
                         "body": [
                             {
                                 "name": "Këüẅörd",
                                 "status": "PASS",
-                                "elapsed_time": 0.123,
                                 "start_time": "2023-12-18T22:35:12.345678",
+                                "elapsed_time": 0.123,
                             }
                         ],
+                        "teardown": {
+                            "name": "TT",
+                            "status": "PASS",
+                            "elapsed_time": 0.0,
+                        },
                         "status": "PASS",
                         "elapsed_time": 0.123,
                     },
@@ -1401,6 +1432,7 @@ class TestJsonResult(unittest.TestCase):
                         "elapsed_time": 0.0,
                     },
                 ],
+                "teardown":  {'name': 'ST', 'status': 'PASS', 'elapsed_time': 0.0},
                 "status": "FAIL",
                 "elapsed_time": 0.133,
             },
@@ -1451,15 +1483,17 @@ class TestJsonResult(unittest.TestCase):
     def _verify(
         self,
         source,
+        include_keywords=True,
         full=True,
         generator="Unit tests",
         generation_time=datetime(2024, 9, 21, 21, 49, 12, 345678),
         rpa=False,
+        stats=(1, 1, 1),
     ):
-        execution_result = ExecutionResult(source)
+        execution_result = ExecutionResult(source, include_keywords=include_keywords)
         if isinstance(source, TextIOBase):
             source.seek(0)
-        result_from_json = Result.from_json(source)
+        result_from_json = Result.from_json(source, include_keywords=include_keywords)
         for result in execution_result, result_from_json:
             assert_equal(result.generator, generator)
             assert_equal(result.generation_time, generation_time)
@@ -1467,16 +1501,23 @@ class TestJsonResult(unittest.TestCase):
             assert_equal(result.suite.rpa, rpa)
             assert_equal(result.suite.name, "S")
             assert_equal(result.suite.elapsed_time.total_seconds(), 0.133)
-            assert_equal(result.suite.tests[0].name, "T1")
-            assert_equal(result.suite.tests[0].tags, ["tag"])
-            assert_equal(result.suite.tests[0].body[0].name, "Këüẅörd")
-            assert_equal(
-                result.suite.tests[0].body[0].start_time,
-                datetime(2023, 12, 18, 22, 35, 12, 345678),
-            )
-            assert_equal(result.statistics.total.passed, 1)
-            assert_equal(result.statistics.total.failed, 1)
-            assert_equal(result.statistics.total.skipped, 1)
+            test = result.suite.tests[0]
+            assert_equal(test.name, "T1")
+            assert_equal(test.tags, ["tag"])
+            if include_keywords:
+                assert_equal(result.suite.teardown.name, 'ST')
+                assert_equal(test.setup.name, "TS")
+                assert_equal(test.teardown.name, "TT")
+                kw = test.body[0]
+                assert_equal(kw.name, "Këüẅörd")
+                assert_equal(kw.start_time, datetime(2023, 12, 18, 22, 35, 12, 345678))
+            else:
+                assert_equal(result.suite.teardown.name, None)
+                assert_equal(test.setup.name, None)
+                assert_equal(test.teardown.name, None)
+                assert_equal(len(test.body), 0)
+            total = result.statistics.total
+            assert_equal((total.passed, total.failed, total.skipped), stats)
             if full:
                 assert_equal(len(result.errors), 1)
                 assert_equal(result.errors[0].message, "Hello!")
@@ -1487,7 +1528,7 @@ class TestJsonResult(unittest.TestCase):
                 )
             else:
                 assert_equal(len(result.errors), 0)
-            assert_equal(result.return_code, 1)
+            assert_equal(result.return_code, stats[1])
             self.validator.validate(instance=json.loads(result.to_json()))
 
 

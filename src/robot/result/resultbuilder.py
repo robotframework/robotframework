@@ -17,10 +17,9 @@ from typing import Sequence
 from xml.etree import ElementTree as ET
 
 from robot.errors import DataError
-from robot.model import SuiteVisitor
 from robot.utils import ETSource, get_error_message
 
-from .executionresult import CombinedResult, is_json_source, Result
+from .executionresult import CombinedResult, is_json_source, KeywordRemover, Result
 from .flattenkeywordmatcher import (
     create_flatten_message, FlattenByNameMatcher, FlattenByTags, FlattenByTypeMatcher
 )
@@ -95,7 +94,7 @@ def _single_result(source, options):
 
 def _json_result(source, include_keywords, flattened_keywords, rpa):
     try:
-        return Result.from_json(source, rpa=rpa)
+        return Result.from_json(source, include_keywords=include_keywords, rpa=rpa)
     except IOError as err:
         error = err.strerror
     except Exception:
@@ -152,7 +151,7 @@ class ExecutionResultBuilder:
             # flatten based on them when parsing output.xml.
             result.suite.visit(FlattenByTags(self._flattened_keywords))
         if not self._include_keywords:
-            result.suite.visit(RemoveKeywords())
+            result.suite.visit(KeywordRemover())
         return result
 
     def _parse(self, source, start, end):
@@ -169,11 +168,11 @@ class ExecutionResultBuilder:
                 elem.clear()
 
     def _omit_keywords(self, context):
-        omitted_elements = {"kw", "for", "while", "if", "try"}
+        omitted_elements = {"kw", "for", "while", "if", "try", "group", "variable"}
         omitted = 0
         for event, elem in context:
-            # Teardowns aren't omitted yet to allow checking suite teardown status.
-            # They'll be removed later when not needed in `build()`.
+            # Teardowns cannot be removed yet, because we need to check suite
+            # teardown status. They are removed later using KeywordRemover.
             omit = elem.tag in omitted_elements and elem.get("type") != "TEARDOWN"
             start = event == "start"
             if omit and start:
@@ -220,13 +219,3 @@ class ExecutionResultBuilder:
     def _get_matcher(self, matcher_class, flattened):
         matcher = matcher_class(flattened)
         return matcher.match, bool(matcher)
-
-
-class RemoveKeywords(SuiteVisitor):
-
-    def start_suite(self, suite):
-        suite.setup = None
-        suite.teardown = None
-
-    def visit_test(self, test):
-        test.body = []
