@@ -192,6 +192,7 @@ class Result:
             result.source = source
         elif isinstance(source, str) and source[0] != "{" and Path(source).exists():
             result.source = Path(source)
+        result.handle_suite_teardown_failures()
         return result
 
     @classmethod

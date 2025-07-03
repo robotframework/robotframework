@@ -1,7 +1,6 @@
 import json
 import os
 import re
-from datetime import datetime
 from pathlib import Path
 
 try:
@@ -18,9 +17,8 @@ from robot.result import (
     Group, If, IfBranch, Keyword, Result, ResultVisitor, Return, TestCase, TestSuite,
     Try, TryBranch, Var, While, WhileIteration
 )
-from robot.result.executionerrors import ExecutionErrors
 from robot.result.model import Body, Iterations
-from robot.utils import eq, get_error_details, is_truthy, JsonLoader, Matcher
+from robot.utils import eq, get_error_details, is_truthy, Matcher
 from robot.utils.asserts import assert_equal
 
 
@@ -199,15 +197,9 @@ class TestCheckerLibrary:
         return result
 
     def _build_result_from_json(self, path):
-        data = JsonLoader().load(path)
-        return Result(
-            source=path,
-            suite=ATestTestSuite.from_dict(data["suite"]),
-            errors=ExecutionErrors(data.get("errors")),
-            rpa=data.get("rpa"),
-            generator=data.get("generator"),
-            generation_time=datetime.fromisoformat(data["generated"]),
-        )
+        result = Result.from_json(path)
+        result.suite = ATestTestSuite.from_dict(result.suite.to_dict())
+        return result
 
     def _validate_output(self, path):
         version = self._get_schema_version(path)
