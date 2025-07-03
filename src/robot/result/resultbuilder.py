@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from typing import Sequence
 from xml.etree import ElementTree as ET
 
 from robot.errors import DataError
@@ -27,20 +28,28 @@ from .merger import Merger
 from .xmlelementhandlers import XmlElementHandler
 
 
-def ExecutionResult(*sources, **options):
+def ExecutionResult(
+    *sources,
+    merge: bool = False,
+    include_keywords: bool = True,
+    flattened_keywords: Sequence[str] = (),
+    rpa: "bool|None" = None,
+):
     """Factory method to constructs :class:`~.executionresult.Result` objects.
 
     :param sources: XML or JSON source(s) containing execution results.
         Can be specified as paths (``pathlib.Path`` or ``str``), opened file
         objects, or strings/bytes containing XML/JSON directly.
-    :param options: Configuration options.
-        Using ``merge=True`` causes multiple results to be combined so that
-        tests in the latter results replace the ones in the original.
-        Setting ``rpa`` either to ``True`` (RPA mode) or ``False`` (test
-        automation) sets execution mode explicitly. By default, it is got
+    :param merge: When ``True`` and multiple sources are given, results are merged
+        instead of combined.
+    :param include_keywords: When ``False``, keyword and control structure information
+        is not parsed. This can save considerable amount of time and memory.
+    :param flattened_keywords: List of patterns controlling what keywords
+        and control structures to flatten. See the documentation of
+        the ``--flattenkeywords`` option for more details.
+    :param rpa: Setting ``rpa`` either to ``True`` (RPA mode) or ``False`` (test
+        automation) sets the execution mode explicitly. By default, the mode is got
         from processed output files and conflicting modes cause an error.
-        Other options are passed directly to the
-        :class:`ExecutionResultBuilder` object used internally.
     :returns: :class:`~.executionresult.Result` instance.
 
     A source is considered to be JSON in these cases:
@@ -53,7 +62,12 @@ def ExecutionResult(*sources, **options):
     """
     if not sources:
         raise DataError("One or more data source needed.")
-    if options.pop("merge", False):
+    options = {
+        "include_keywords": include_keywords,
+        "flattened_keywords": flattened_keywords,
+        "rpa": rpa,
+    }
+    if merge:
         return _merge_results(sources[0], sources[1:], options)
     if len(sources) > 1:
         return _combine_results(sources, options)
@@ -63,8 +77,8 @@ def ExecutionResult(*sources, **options):
 def _merge_results(original, merged, options):
     result = ExecutionResult(original, **options)
     merger = Merger(result, rpa=result.rpa)
-    for path in merged:
-        merged = ExecutionResult(path, **options)
+    for source in merged:
+        merged = ExecutionResult(source, **options)
         merger.merge(merged)
     return result
 
@@ -75,13 +89,13 @@ def _combine_results(sources, options):
 
 def _single_result(source, options):
     if is_json_source(source):
-        return _json_result(source, options)
-    return _xml_result(source, options)
+        return _json_result(source, **options)
+    return _xml_result(source, **options)
 
 
-def _json_result(source, options):
+def _json_result(source, include_keywords, flattened_keywords, rpa):
     try:
-        return Result.from_json(source, rpa=options.get("rpa"))
+        return Result.from_json(source, rpa=rpa)
     except IOError as err:
         error = err.strerror
     except Exception:
@@ -89,11 +103,12 @@ def _json_result(source, options):
     raise DataError(f"Reading JSON source '{source}' failed: {error}")
 
 
-def _xml_result(source, options):
+def _xml_result(source, include_keywords, flattened_keywords, rpa):
     ets = ETSource(source)
-    result = Result(source, rpa=options.pop("rpa", None))
+    builder = ExecutionResultBuilder(ets, include_keywords, flattened_keywords)
+    result = Result(source, rpa=rpa)
     try:
-        return ExecutionResultBuilder(ets, **options).build(result)
+        return builder.build(result)
     except IOError as err:
         error = err.strerror
     except Exception:
@@ -101,6 +116,9 @@ def _xml_result(source, options):
     raise DataError(f"Reading XML source '{ets}' failed: {error}")
 
 
+# TODO:
+# - Rename e.g. to XmlExecutionResultBuilder. Probably best done in a major release.
+# - Add Result.from_xml as a more convenient API. Could be done in RF 7.4.
 class ExecutionResultBuilder:
     """Builds :class:`~.executionresult.Result` objects based on XML output files.
 
@@ -108,7 +126,7 @@ class ExecutionResultBuilder:
     :func:`ExecutionResult` factory method.
     """
 
-    def __init__(self, source, include_keywords=True, flattened_keywords=None):
+    def __init__(self, source, include_keywords=True, flattened_keywords=()):
         """
         :param source: Path to the XML output file to build
             :class:`~.executionresult.Result` objects from.
