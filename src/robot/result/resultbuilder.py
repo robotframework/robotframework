@@ -94,7 +94,7 @@ def _single_result(source, options):
 
 def _json_result(source, include_keywords, flattened_keywords, rpa):
     try:
-        return Result.from_json(source, include_keywords=include_keywords, rpa=rpa)
+        return Result.from_json(source, include_keywords, flattened_keywords, rpa)
     except IOError as err:
         error = err.strerror
     except Exception:

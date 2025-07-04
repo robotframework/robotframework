@@ -15,7 +15,7 @@
 
 from datetime import datetime
 from pathlib import Path
-from typing import overload, TextIO
+from typing import overload, Sequence, TextIO
 
 from robot.errors import DataError
 from robot.model import Statistics, SuiteVisitor
@@ -23,6 +23,7 @@ from robot.utils import JsonDumper, JsonLoader, setter
 from robot.version import get_full_version
 
 from .executionerrors import ExecutionErrors
+from .flattenkeywordmatcher import Flattener
 from .model import TestSuite
 
 
@@ -155,19 +156,23 @@ class Result:
         cls,
         source: "str|bytes|TextIO|Path",
         include_keywords: bool = True,
+        flattened_keywords: Sequence[str] = (),
         rpa: "bool|None" = None,
     ) -> "Result":
         """Construct a result object from JSON data.
 
-        :param source: JSON data as a string or bytes containing the data directly,
-            an open file object where to read the data from, or a path (``pathlib.Path``
-            or string) to a UTF-8 encoded file to read.
-        :param include_keywords: When ``False``, keyword and control structure information
-            is not parsed. This can save considerable amount of time and memory. New
-            in RF 7.3.2.
-        :param rpa: Setting ``rpa`` either to ``True`` (RPA mode) or ``False`` (test
-            automation) sets the execution mode explicitly. By default, the mode is got
-            from the parsed data.
+        :param source: JSON data as a string or bytes containing the data
+            directly, an open file object where to read the data from, or a path
+            (``pathlib.Path`` or string) to a UTF-8 encoded file to read.
+        :param include_keywords: When ``False``, keyword and control structure
+            information is not parsed. This can save considerable amount of time
+            and memory. New in RF 7.3.2.
+        :param flattened_keywords: List of patterns controlling what keywords
+            and control structures to flatten. See the documentation of
+            the ``--flattenkeywords`` option for more details. New in RF 7.3.2.
+        :param rpa: Setting ``rpa`` either to ``True`` (RPA mode) or ``False``
+            (test automation) sets the execution mode explicitly. By default,
+            the mode is got from the parsed data.
         :returns: :class:`Result` instance.
 
         The data can contain either:
@@ -199,6 +204,8 @@ class Result:
         result.handle_suite_teardown_failures()
         if not include_keywords:
             result.suite.visit(KeywordRemover())
+        if flattened_keywords:
+            result.suite.visit(Flattener(flattened_keywords))
         return result
 
     @classmethod
