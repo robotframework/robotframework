@@ -152,6 +152,9 @@ class SuiteRunner(SuiteVisitor):
             data.lineno,
             start_time=datetime.now(),
         )
+        # Copy custom metadata from running model to result model
+        if hasattr(data, 'custom_metadata') and data.custom_metadata:
+            result.custom_metadata = data.custom_metadata
         if result.tags.robot("exclude"):
             self.suite_result.tests.pop()
             return

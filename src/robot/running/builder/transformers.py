@@ -222,6 +222,12 @@ class BodyBuilder(ModelVisitor):
             lineno=node.lineno,
         )
 
+    def visit_CustomMetadata(self, node):
+        # For test cases and user keywords, custom metadata should be handled by 
+        # their specific builders, not added to body. For other contexts (like FOR, IF, etc.),
+        # we should not encounter custom metadata, but if we do, ignore it rather than crash.
+        pass
+
     def visit_TemplateArguments(self, node):
         self.model.body.create_keyword(args=node.args, lineno=node.lineno)
 
@@ -338,6 +344,17 @@ class TestCaseBuilder(BodyBuilder):
     def visit_Template(self, node):
         self.model.template = node.value
 
+    def visit_CustomMetadata(self, node):
+        metadata_value = " ".join(node.values) if node.values else ""
+        # Get current metadata or create empty dict
+        try:
+            current_metadata = dict(self.model.custom_metadata)
+        except AttributeError:
+            # If custom_metadata not accessible, initialize empty
+            current_metadata = {}
+        current_metadata[node.key] = metadata_value
+        self.model.custom_metadata = current_metadata
+
 
 class KeywordBuilder(BodyBuilder):
     model: UserKeyword
@@ -423,6 +440,17 @@ class KeywordBuilder(BodyBuilder):
             assign=node.assign,
             lineno=node.lineno,
         )
+
+    def visit_CustomMetadata(self, node):
+        metadata_value = " ".join(node.values) if node.values else ""
+        # Get current metadata or create empty dict
+        try:
+            current_metadata = dict(self.model.custom_metadata)
+        except AttributeError:
+            # If custom_metadata not accessible, initialize empty
+            current_metadata = {}
+        current_metadata[node.key] = metadata_value
+        self.model.custom_metadata = current_metadata
 
 
 class ForBuilder(BodyBuilder):

@@ -77,6 +77,9 @@ class UserKeywordRunner:
             tags=tags,
             type=data.type,
         )
+        # Copy custom metadata from running model to result model
+        if hasattr(kw, 'custom_metadata') and kw.custom_metadata:
+            result.custom_metadata = kw.custom_metadata
 
     def _validate(self, kw: "UserKeyword"):
         if kw.error:

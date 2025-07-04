@@ -13,11 +13,13 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from collections.abc import Mapping
 from pathlib import Path
 from typing import Any, Iterable, Literal, overload, Sequence, TYPE_CHECKING
 
 from robot import model
 from robot.model import BodyItem, create_fixture, DataDict, ModelObject, Tags
+from robot.model.metadata import Metadata
 from robot.output import LOGGER
 from robot.utils import NOT_SET, setter
 
@@ -173,7 +175,7 @@ class UserKeyword(KeywordImplementation):
 
     type = KeywordImplementation.USER_KEYWORD
     fixture_class = Keyword
-    __slots__ = ("timeout", "_setup", "_teardown")
+    __slots__ = ("timeout", "_setup", "_teardown", "_custom_metadata")
 
     def __init__(
         self,
@@ -191,6 +193,7 @@ class UserKeyword(KeywordImplementation):
         self.timeout = timeout
         self._setup = None
         self._teardown = None
+        self._custom_metadata = None
         self.body = []
 
     @setter
@@ -215,6 +218,11 @@ class UserKeyword(KeywordImplementation):
         if self._setup is None:
             self.setup = None
         return self._setup
+
+    @setter
+    def custom_metadata(self, custom_metadata: "Mapping[str, str]|None") -> Metadata:
+        """Custom metadata as a :class:`~.model.metadata.Metadata` object."""
+        return Metadata(custom_metadata)
 
     @setup.setter
     def setup(self, setup: "Keyword|DataDict|None"):
@@ -256,6 +264,14 @@ class UserKeyword(KeywordImplementation):
         New in Robot Framework 6.1.
         """
         return bool(self._teardown)
+    
+    @property
+    def has_custom_metadata(self) -> bool:
+        """Check does a test have custom metadata without creating a metadata object.
+        
+        New in Robot Framework 7.0.
+        """
+        return bool(self._custom_metadata)
 
     def create_runner(
         self,
@@ -281,6 +297,8 @@ class UserKeyword(KeywordImplementation):
         # Avoid possible errors setting name with invalid embedded args.
         kw._name = self._name
         kw.embedded = self.embedded
+        if hasattr(self, 'custom_metadata') and self.custom_metadata:
+            kw.custom_metadata = self.custom_metadata
         if self.has_setup:
             kw.setup = self.setup.to_dict()
         if self.has_teardown:
@@ -305,6 +323,8 @@ class UserKeyword(KeywordImplementation):
         data["body"] = self.body.to_dicts()
         if self.has_teardown:
             data["teardown"] = self.teardown.to_dict()
+        if self.has_custom_metadata:
+            data["custom_metadata"] = dict(self.custom_metadata)
         return data
 
     def _decorate_arg(self, arg: ArgInfo) -> str:

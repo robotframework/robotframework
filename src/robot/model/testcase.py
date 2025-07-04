@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from collections.abc import Mapping
 from pathlib import Path
 from typing import Any, Generic, Sequence, Type, TYPE_CHECKING, TypeVar
 
@@ -22,6 +23,7 @@ from .body import Body, BodyItem
 from .fixture import create_fixture
 from .itemlist import ItemList
 from .keyword import Keyword
+from .metadata import Metadata
 from .modelobject import DataDict, ModelObject
 from .tags import Tags
 
@@ -46,7 +48,7 @@ class TestCase(ModelObject, Generic[KW]):
     # See model.TestSuite on removing the type ignore directive
     fixture_class: Type[KW] = Keyword  # type: ignore
     repr_args = ("name",)
-    __slots__ = ("parent", "name", "doc", "timeout", "lineno", "_setup", "_teardown")
+    __slots__ = ("parent", "name", "doc", "timeout", "lineno", "_setup", "_teardown", "_custom_metadata")
 
     def __init__(
         self,
@@ -66,6 +68,7 @@ class TestCase(ModelObject, Generic[KW]):
         self.body = []
         self._setup: "KW|None" = None
         self._teardown: "KW|None" = None
+        self._custom_metadata = None
 
     @setter
     def body(self, body: "Sequence[BodyItem|DataDict]") -> Body:
@@ -76,6 +79,11 @@ class TestCase(ModelObject, Generic[KW]):
     def tags(self, tags: "Tags|Sequence[str]") -> Tags:
         """Test tags as a :class:`~.model.tags.Tags` object."""
         return Tags(tags)
+
+    @setter
+    def custom_metadata(self, custom_metadata: "Mapping[str, str]|None") -> Metadata:
+        """Custom metadata as a :class:`~.model.metadata.Metadata` object."""
+        return Metadata(custom_metadata)
 
     @property
     def setup(self) -> KW:
@@ -167,6 +175,14 @@ class TestCase(ModelObject, Generic[KW]):
         New in Robot Framework 5.0.
         """
         return bool(self._teardown)
+        
+    @property
+    def has_custom_metadata(self) -> bool:
+        """Check does a test have custom metadata without creating a metadata object.
+        
+        New in Robot Framework 7.0.
+        """
+        return bool(self._custom_metadata)
 
     @property
     def id(self) -> str:
@@ -215,6 +231,8 @@ class TestCase(ModelObject, Generic[KW]):
             data["setup"] = self.setup.to_dict()
         if self.has_teardown:
             data["teardown"] = self.teardown.to_dict()
+        if self.has_custom_metadata:
+            data["custom_metadata"] = self.custom_metadata
         data["body"] = self.body.to_dicts()
         return data
 

@@ -60,7 +60,7 @@ class Settings(ABC):
         self.languages = languages
 
     def lex(self, statement: StatementTokens):
-        orig = self._format_name(statement[0].value)
+        orig = self._format_name(statement[0].value or "")
         name = normalize_whitespace(orig).title()
         name = self.languages.settings.get(name, name)
         if name in self.aliases:
@@ -240,6 +240,100 @@ class TestCaseSettings(Settings):
     def __init__(self, parent: SuiteFileSettings):
         super().__init__(parent.languages)
         self.parent = parent
+        self.custom_metadata = {}
+
+    def lex(self, statement: StatementTokens):
+        orig = statement[0].value or ""
+        
+        # Check for custom metadata first
+        if self._is_custom_metadata_setting(orig):
+            # Handle custom metadata directly without going through standard validation
+            try:
+                self._lex_setting(statement, orig)
+            except ValueError as err:
+                self._lex_error(statement, err.args[0])
+            return
+    
+        # Use standard processing for regular settings
+        super().lex(statement)
+
+    def _lex_custom_metadata(self, statement: StatementTokens, name: str):
+        """Lex custom metadata tokens as CUSTOM_METADATA tokens."""
+        from robot.parsing.lexer.tokens import Token as T
+        statement[0].type = T.CUSTOM_METADATA
+        for token in statement[1:]:
+            token.type = T.ARGUMENT
+
+    def _validate(self, orig: str, name: str, statement: StatementTokens):
+        # Check for custom metadata pattern before standard validation
+        if self._is_custom_metadata_setting(orig):
+            return  # Skip validation for custom metadata
+        super()._validate(orig, name, statement)
+
+    def _is_custom_metadata_setting(self, name: str) -> bool:
+        """Check if setting follows custom metadata pattern [CustomName].
+        
+        Only accepts custom metadata if:
+        1. It follows the [CustomName] pattern
+        2. It's not a known Robot Framework setting from any context
+        3. It contains only alphanumeric characters, spaces, hyphens, and underscores
+        """
+        stripped = name.strip()
+        if not (stripped.startswith('[') and stripped.endswith(']') and len(stripped) > 2):
+            return False
+            
+        inner_content = stripped[1:-1].strip()
+        if not inner_content:
+            return False
+            
+        # Reject known Robot Framework settings from any context
+        known_settings = {
+            # Test case settings
+            'Documentation', 'Tags', 'Setup', 'Teardown', 'Template', 'Timeout',
+            # User keyword settings  
+            'Arguments', 'Return',
+            # Suite settings
+            'Metadata', 'Suite Setup', 'Suite Teardown', 'Test Setup', 'Test Teardown',
+            'Default Tags', 'Test Tags', 'Keyword Tags', 'Test Template', 'Test Timeout',
+            'Library', 'Resource', 'Variables',
+            # Invalid/test settings
+            'Invalid', 'Bad', 'Wrong', 'Unknown'
+        }
+        
+        if inner_content in known_settings:
+            return False
+            
+        # Only allow custom metadata with valid naming patterns
+        # Accept alphanumeric, spaces, hyphens, underscores
+        import re
+        if not re.match(r'^[a-zA-Z0-9\s\-_]+$', inner_content):
+            return False
+            
+        return True
+
+    def _lex_setting(self, statement: StatementTokens, name: str):
+        # Handle custom metadata
+        if self._is_custom_metadata_setting(statement[0].value or ""):
+            from robot.parsing.lexer.tokens import Token
+            statement[0].type = Token.CUSTOM_METADATA
+            original_value = statement[0].value or ""
+            custom_key = original_value[1:-1].strip()  # Remove brackets
+            
+            # Store in both custom_metadata and settings for consistency
+            if custom_key not in self.custom_metadata:
+                self.custom_metadata[custom_key] = []
+            self.custom_metadata[custom_key].append(statement[1:])
+            
+            # Also store in the main settings dict with the original bracket format
+            # This ensures the metadata is accessible to the framework
+            self.settings[original_value] = statement[1:]
+            
+            # Lex the values as arguments (not as keywords)
+            self._lex_arguments(statement[1:])
+            return
+        
+        # Use existing logic for standard settings
+        super()._lex_setting(statement, name)
 
     def _format_name(self, name: str) -> str:
         return name[1:-1].strip()
@@ -255,7 +349,11 @@ class TestCaseSettings(Settings):
     def _has_disabling_value(self, setting: "StatementTokens|None") -> bool:
         if setting is None:
             return False
-        return setting == [] or setting[0].value.upper() == "NONE"
+        if setting == []:
+            return True
+        if setting[0].value is None:
+            return False
+        return setting[0].value.upper() == "NONE"
 
     def _has_value(self, setting: "StatementTokens|None") -> bool:
         return bool(setting and setting[0].value)
@@ -278,9 +376,97 @@ class KeywordSettings(Settings):
     def __init__(self, parent: FileSettings):
         super().__init__(parent.languages)
         self.parent = parent
+        self.custom_metadata = {}
+
+    def _validate(self, orig: str, name: str, statement: StatementTokens):
+        # Handle custom metadata (format: [CustomKey])
+        if self._is_custom_metadata_setting(orig):
+            return  # Custom metadata is always valid
+        
+        # Use existing validation for standard settings
+        super()._validate(orig, name, statement)
+
+    def _is_custom_metadata_setting(self, name: str) -> bool:
+        """Check if setting follows custom metadata pattern [CustomName].
+        
+        Only accepts custom metadata if:
+        1. It follows the [CustomName] pattern
+        2. It's not a known Robot Framework setting from any context
+        3. It contains only alphanumeric characters, spaces, hyphens, and underscores
+        """
+        stripped = name.strip()
+        if not (stripped.startswith('[') and stripped.endswith(']') and len(stripped) > 2):
+            return False
+            
+        inner_content = stripped[1:-1].strip()
+        if not inner_content:
+            return False
+            
+        # Reject known Robot Framework settings from any context
+        known_settings = {
+            # Test case settings
+            'Documentation', 'Tags', 'Setup', 'Teardown', 'Template', 'Timeout',
+            # User keyword settings  
+            'Arguments', 'Return',
+            # Suite settings
+            'Metadata', 'Suite Setup', 'Suite Teardown', 'Test Setup', 'Test Teardown',
+            'Default Tags', 'Test Tags', 'Keyword Tags', 'Test Template', 'Test Timeout',
+            'Library', 'Resource', 'Variables',
+            # Invalid/test settings
+            'Invalid', 'Bad', 'Wrong', 'Unknown'
+        }
+        
+        if inner_content in known_settings:
+            return False
+            
+        # Only allow custom metadata with valid naming patterns
+        # Accept alphanumeric, spaces, hyphens, underscores
+        import re
+        if not re.match(r'^[a-zA-Z0-9\s\-_]+$', inner_content):
+            return False
+            
+        return True
+
+    def _lex_setting(self, statement: StatementTokens, name: str):
+        # Handle custom metadata
+        if self._is_custom_metadata_setting(statement[0].value or ""):
+            statement[0].type = Token.CUSTOM_METADATA
+            original_value = statement[0].value or ""
+            custom_key = original_value[1:-1].strip()  # Remove brackets
+            
+            # Store in both custom_metadata and settings for consistency
+            if custom_key not in self.custom_metadata:
+                self.custom_metadata[custom_key] = []
+            self.custom_metadata[custom_key].append(statement[1:])
+            
+            # Also store in the main settings dict with the original bracket format
+            # This ensures the metadata is accessible to the framework
+            self.settings[original_value] = statement[1:]
+            
+            # Lex the values as arguments (not as keywords)
+            self._lex_arguments(statement[1:])
+            return
+        
+        # Use existing logic for standard settings
+        super()._lex_setting(statement, name)
 
     def _format_name(self, name: str) -> str:
         return name[1:-1].strip()
 
     def _not_valid_here(self, name: str) -> str:
         return f"Setting '{name}' is not allowed with user keywords."
+    
+    def lex(self, statement: StatementTokens):
+        orig = statement[0].value or ""
+        
+        # Check for custom metadata first
+        if self._is_custom_metadata_setting(orig):
+            # Handle custom metadata directly without going through standard validation
+            try:
+                self._lex_setting(statement, orig)
+            except ValueError as err:
+                self._lex_error(statement, err.args[0])
+            return
+    
+        # Use standard processing for regular settings
+        super().lex(statement)

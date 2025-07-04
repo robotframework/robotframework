@@ -44,6 +44,7 @@ from robot.errors import (
     BreakLoop, ContinueLoop, DataError, ReturnFromKeyword, VariableError
 )
 from robot.model import BodyItem, DataDict, TestSuites
+from robot.model.metadata import Metadata
 from robot.output import LOGGER, Output, pyloggingconf
 from robot.result import Result
 from robot.utils import format_assign_message, setter
@@ -640,7 +641,7 @@ class TestCase(model.TestCase[Keyword]):
 
     body_class = Body  #: Internal usage only.
     fixture_class = Keyword  #: Internal usage only.
-    __slots__ = ("template", "error")
+    __slots__ = ("template", "error", "_setter__custom_metadata")
 
     def __init__(
         self,
@@ -666,6 +667,16 @@ class TestCase(model.TestCase[Keyword]):
         if self.error:
             data["error"] = self.error
         return data
+
+    @property
+    def has_custom_metadata(self) -> bool:
+        """Check does a test have custom metadata without creating a metadata object."""
+        return hasattr(self, '_setter__custom_metadata') and bool(getattr(self, '_setter__custom_metadata', None))
+
+    @setter
+    def custom_metadata(self, custom_metadata: "Mapping[str, str]|None") -> Metadata:
+        """Custom metadata as a :class:`~robot.model.metadata.Metadata` object."""
+        return Metadata(custom_metadata)
 
     @setter
     def body(self, body: "Sequence[BodyItem|DataDict]") -> Body:

@@ -76,6 +76,10 @@ class XmlLogger(ResultVisitor):
         self._writer.element("doc", kw.doc)
         if kw.timeout:
             self._writer.element("timeout", attrs={"value": str(kw.timeout)})
+        # Write custom metadata for user keywords
+        if hasattr(kw, 'custom_metadata') and kw.custom_metadata:
+            for name, value in kw.custom_metadata.items():
+                self._writer.element("meta", value, {"name": name})
         self._write_status(kw)
         self._writer.end("kw")
 
@@ -225,6 +229,10 @@ class XmlLogger(ResultVisitor):
         self._write_list("tag", test.tags)
         if test.timeout:
             self._writer.element("timeout", attrs={"value": str(test.timeout)})
+        # Write custom metadata for test cases
+        if hasattr(test, 'custom_metadata') and test.custom_metadata:
+            for name, value in test.custom_metadata.items():
+                self._writer.element("meta", value, {"name": name})
         self._write_status(test)
         self._writer.end("test")
 

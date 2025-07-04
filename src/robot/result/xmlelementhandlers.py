@@ -139,7 +139,7 @@ class TestHandler(ElementHandler):
     # "tags" is for RF < 4 compatibility.
     children = frozenset((
         "doc", "tags", "tag", "timeout", "status", "kw", "if", "for", "try", "while",
-        "group", "variable", "return", "break", "continue", "error", "msg"
+        "group", "variable", "return", "break", "continue", "error", "msg", "meta"
     ))  # fmt: skip
 
     def start(self, elem, result):
@@ -156,7 +156,7 @@ class KeywordHandler(ElementHandler):
     children = frozenset((
         "doc", "arguments", "arg", "assign", "var", "tags", "tag", "timeout", "status",
         "msg", "kw", "if", "for", "try", "while", "group", "variable", "return",
-        "break", "continue", "error"
+        "break", "continue", "error", "meta"
     ))  # fmt: skip
 
     def start(self, elem, result):
@@ -432,7 +432,27 @@ class MetaHandler(ElementHandler):
     tag = "meta"
 
     def end(self, elem, result):
-        result.metadata[elem.get("name", "")] = elem.text or ""
+        name = elem.get("name", "")
+        value = elem.text or ""
+        
+        # Import here to avoid circular imports
+        from .model import TestCase as ResultTestCase, Keyword as ResultKeyword
+        
+        # Check if this is a TestCase or Keyword object
+        if isinstance(result, (ResultTestCase, ResultKeyword)):
+            # This is a TestCase or Keyword result object
+            try:
+                # Try to access custom_metadata
+                metadata = result.custom_metadata
+            except AttributeError:
+                # Initialize custom_metadata using the setter
+                from robot.model.metadata import Metadata
+                result.custom_metadata = Metadata()
+                metadata = result.custom_metadata
+            metadata[name] = value
+        else:
+            # This is a Suite object with regular metadata
+            result.metadata[name] = value
 
 
 @ElementHandler.register
