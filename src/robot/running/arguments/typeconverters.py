@@ -27,7 +27,7 @@ from typing import Any, Literal, TYPE_CHECKING, Union
 from robot.conf import Languages
 from robot.libraries.DateTime import convert_date, convert_time
 from robot.utils import (
-    eq, get_error_message, plural_or_not as s, safe_str, seq2str, type_name
+    eq, get_error_message, plural_or_not as s, safe_str, Secret, seq2str, type_name
 )
 
 if TYPE_CHECKING:
@@ -792,6 +792,21 @@ class LiteralConverter(TypeConverter):
         if matches:
             raise ValueError("No unique match found.")
         raise ValueError
+
+
+@TypeConverter.register
+class SecretConverter(TypeConverter):
+    type = Secret
+
+    def _convert(self, value):
+        raise ValueError
+
+    def _handle_error(self, value, name, kind, error=None):
+        kind = kind.capitalize() if kind.islower() else kind
+        typ = type_name(value)
+        if name is None:
+            raise ValueError(f"{kind} must have type 'Secret', got {typ}.")
+        raise ValueError(f"{kind} '{name}' must have type 'Secret', got {typ}.")
 
 
 class CustomConverter(TypeConverter):

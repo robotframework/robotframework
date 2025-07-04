@@ -38,7 +38,7 @@ else:
 from robot.conf import Languages, LanguagesLike
 from robot.errors import DataError
 from robot.utils import (
-    is_union, NOT_SET, plural_or_not as s, setter, SetterAwareType, type_name,
+    is_union, NOT_SET, plural_or_not as s, Secret, setter, SetterAwareType, type_name,
     type_repr, typeddict_types
 )
 from robot.variables import search_variable, VariableMatch
@@ -80,6 +80,7 @@ TYPE_NAMES = {
     "frozenset": frozenset,
     "union": Union,
     "literal": Literal,
+    "secret": Secret,
 }
 LITERAL_TYPES = (int, str, bytes, bool, Enum, type(None))
 
