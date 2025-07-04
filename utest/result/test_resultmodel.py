@@ -1432,7 +1432,7 @@ class TestJsonResult(unittest.TestCase):
                         "elapsed_time": 0.0,
                     },
                 ],
-                "teardown":  {'name': 'ST', 'status': 'PASS', 'elapsed_time': 0.0},
+                "teardown": {"name": "ST", "status": "PASS", "elapsed_time": 0.0},
                 "status": "FAIL",
                 "elapsed_time": 0.133,
             },
@@ -1505,7 +1505,7 @@ class TestJsonResult(unittest.TestCase):
             assert_equal(test.name, "T1")
             assert_equal(test.tags, ["tag"])
             if include_keywords:
-                assert_equal(result.suite.teardown.name, 'ST')
+                assert_equal(result.suite.teardown.name, "ST")
                 assert_equal(test.setup.name, "TS")
                 assert_equal(test.teardown.name, "TT")
                 kw = test.body[0]

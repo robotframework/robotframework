@@ -40,7 +40,9 @@ class JsonLoader:
         self.config = self._add_hook_to_merge_duplicate_lists(config)
 
     def _add_hook_to_merge_duplicate_lists(self, config):
-        if "object_pairs_hook" in config:
+        object_hook = config.get("object_hook")
+        object_pairs_hook = config.get("object_pairs_hook")
+        if object_pairs_hook:
             raise ValueError("'object_pairs_hook' is not supported.")
 
         def merge_duplicate_lists(items: "list[tuple[str, object]]") -> DataDict:
@@ -50,9 +52,7 @@ class JsonLoader:
                     data[name].extend(value)
                 else:
                     data[name] = value
-            if "object_hook" in config:
-                data = config["object_hook"](data)
-            return data
+            return object_hook(data) if object_hook else data
 
         config["object_pairs_hook"] = merge_duplicate_lists
         return config

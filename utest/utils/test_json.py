@@ -27,14 +27,20 @@ class TestJsonLoader(unittest.TestCase):
         assert_equal(data["x"], 3.3)
         assert_equal(data["y"], [1, 2, 3])
         assert_equal(data["z"], "new item")
+        data = JsonLoader(object_hook=None).load(self.data)
+        assert_equal(data["x"], 2.2)
+        assert_equal(data["y"], [1, 2, 3])
 
-    def test_object_pairs_hook_is_not_supported(self):
+    def test_object_pairs_hook_cannot_be_set(self):
         assert_raises_with_msg(
             ValueError,
             "'object_pairs_hook' is not supported.",
             JsonLoader,
             object_pairs_hook=dict,
         )
+        data = JsonLoader(object_pairs_hook=None).load(self.data)
+        assert_equal(data["x"], 2.2)
+        assert_equal(data["y"], [1, 2, 3])
 
     def test_top_level_item_must_be_dictionary(self):
         assert_raises_with_msg(
