@@ -1,0 +1,3 @@
+--output output.xml
+--log log.html
+atest/testdata/cli/argumentfile/testfile.robot
