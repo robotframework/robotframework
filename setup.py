@@ -6,7 +6,7 @@ from setuptools import find_packages, setup
 
 # Version number typically updated by running `invoke set-version <version>`.
 # Run `invoke --help set-version` or see tasks.py for details.
-VERSION = "7.3.2.dev1"
+VERSION = "7.3.3.dev1"
 with open(join(dirname(abspath(__file__)), "README.rst")) as f:
     LONG_DESCRIPTION = f.read()
     base_url = "https://github.com/robotframework/robotframework/blob/master"
