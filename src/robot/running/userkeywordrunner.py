@@ -19,6 +19,7 @@ from robot.errors import (
     DataError, ExecutionFailed, ExecutionPassed, ExecutionStatus, PassExecution,
     ReturnFromKeyword, UserKeywordExecutionFailed, VariableError
 )
+from robot.model.metadata import Metadata
 from robot.result import Keyword as KeywordResult
 from robot.utils import DotDict, getshortdoc, prepr, split_tags_from_doc
 from robot.variables import is_list_variable, VariableAssignment
@@ -77,9 +78,13 @@ class UserKeywordRunner:
             tags=tags,
             type=data.type,
         )
-        # Copy custom metadata from running model to result model
+        # Copy custom metadata from running model to result model with variable resolution
         if hasattr(kw, 'custom_metadata') and kw.custom_metadata:
-            result.custom_metadata = kw.custom_metadata
+            resolved_metadata = {
+                variables.replace_string(name, ignore_errors=True): variables.replace_string(value, ignore_errors=True)
+                for name, value in kw.custom_metadata.items()
+            }
+            result.custom_metadata = Metadata(resolved_metadata)
 
     def _validate(self, kw: "UserKeyword"):
         if kw.error:

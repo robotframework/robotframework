@@ -1784,14 +1784,14 @@ class AssignmentValidator:
 
 
 @Statement.register
-class CustomMetadata(MultiValue):
+class CustomMetadata(DocumentationOrMetadata):
     type = Token.CUSTOM_METADATA
 
     @classmethod
     def from_params(
         cls,
         key: str,
-        values: "Sequence[str]",
+        value: str,
         indent: str = FOUR_SPACES,
         separator: str = FOUR_SPACES,
         eol: str = EOL,
@@ -1799,13 +1799,21 @@ class CustomMetadata(MultiValue):
         tokens = [
             Token(Token.SEPARATOR, indent),
             Token(Token.CUSTOM_METADATA, f"[{key}]"),
+            Token(Token.SEPARATOR, separator),
         ]
-        for value in values:
+        metadata_lines = value.splitlines()
+        if metadata_lines:
             tokens += [
-                Token(Token.SEPARATOR, separator),
-                Token(Token.ARGUMENT, value),
+                Token(Token.ARGUMENT, metadata_lines[0]),
+                Token(Token.EOL, eol),
             ]
-        tokens += [Token(Token.EOL, eol)]
+        for line in metadata_lines[1:]:
+            tokens += [
+                Token(Token.CONTINUATION),
+                Token(Token.SEPARATOR, separator),
+                Token(Token.ARGUMENT, line),
+                Token(Token.EOL, eol),
+            ]
         return cls(tokens)
 
     @property
@@ -1817,7 +1825,11 @@ class CustomMetadata(MultiValue):
         return custom_token
 
     @property
-    def value(self) -> str:
-        """Return the first value as a string for simple metadata."""
-        values = self.values
-        return values[0] if values else ""
+    def values(self) -> "tuple[str, ...]":
+        """Return values for backward compatibility."""
+        return (self.value,) if self.value else ()
+
+    @property
+    def name(self) -> str:
+        """Return the metadata key for compatibility with Metadata class."""
+        return self.key

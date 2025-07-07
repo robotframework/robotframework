@@ -164,7 +164,7 @@ class TestBuilder(Builder):
         body = self._get_body_items(test)
         with self._context.prune_input(test.body):
             metadata_tuple = tuple(
-                (self._string(name), self._string(value))
+                (self._string(name), self._string(value.replace('\n', '<br>'), escape=False))
                 for name, value in test.custom_metadata.items()
             ) if hasattr(test, 'custom_metadata') and test.custom_metadata else ()
             
@@ -214,7 +214,7 @@ class BodyItemBuilder(Builder):
             body.append(kw.teardown)
         
         metadata_tuple = tuple(
-            (self._string(name), self._string(value))
+            (self._string(name), self._string(value.replace('\n', '<br>'), escape=False))
             for name, value in kw.custom_metadata.items()
         ) if hasattr(kw, 'custom_metadata') and kw.custom_metadata else ()
         
