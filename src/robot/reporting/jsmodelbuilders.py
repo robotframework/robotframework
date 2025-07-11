@@ -163,21 +163,21 @@ class TestBuilder(Builder):
     def build(self, test):
         body = self._get_body_items(test)
         with self._context.prune_input(test.body):
-            metadata_tuple = tuple(
-                (self._string(name), self._string(value.replace('\n', '<br>'), escape=False))
-                for name, value in test.custom_metadata.items()
-            ) if hasattr(test, 'custom_metadata') and test.custom_metadata else ()
-            
-            # Always include metadata tuple to maintain consistent array structure
             return (
                 self._string(test.name, attr=True),
                 self._string(test.timeout),
                 self._html(test.doc),
                 tuple(self._string(t) for t in test.tags),
-                metadata_tuple,
+                tuple(self._yield_custom_metadata(test)),
                 self._get_status(test),
                 self._build_body(body, split=True),
             )
+
+    def _yield_custom_metadata(self, test):
+        if hasattr(test, 'custom_metadata') and test.custom_metadata:
+            # Group metadata into pairs [name, value] for each metadata item
+            for name, value in test.custom_metadata.items():
+                yield [self._string(name), self._html(value)]
 
     def _get_body_items(self, test):
         body = test.body.flatten()
@@ -213,12 +213,9 @@ class BodyItemBuilder(Builder):
         if kw.has_teardown:
             body.append(kw.teardown)
         
-        metadata_tuple = tuple(
-            (self._string(name), self._string(value.replace('\n', '<br>'), escape=False))
-            for name, value in kw.custom_metadata.items()
-        ) if hasattr(kw, 'custom_metadata') and kw.custom_metadata else ()
+        # Format custom metadata the same way as suite metadata
+        metadata_tuple = tuple(self._yield_custom_metadata(kw))
         
-        # Always include metadata tuple to maintain consistent array structure
         return self._build(
             kw,
             kw.name or "",
@@ -232,6 +229,12 @@ class BodyItemBuilder(Builder):
             body,
             split=split,
         )
+
+    def _yield_custom_metadata(self, item):
+        if hasattr(item, 'custom_metadata') and item.custom_metadata:
+            # Group metadata into pairs [name, value] for each metadata item
+            for name, value in item.custom_metadata.items():
+                yield [self._string(name), self._html(value)]
 
     def _build(
         self,

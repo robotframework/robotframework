@@ -70,7 +70,7 @@ window.testdata = function () {
             assign: strings.get(element[6]),
             tags: strings.get(element[7]),
             metadata: element[8] ? element[8].map(function(meta) {
-                return {name: strings.get(meta[0]), value: strings.get(meta[1])};
+                return [strings.get(meta[0]), strings.get(meta[1])];
             }) : [],
             doc: function () {
                 var doc = strings.get(element[4]);
@@ -121,7 +121,7 @@ window.testdata = function () {
             },
             timeout: strings.get(element[1]),
             metadata: element[4] ? element[4].map(function(meta) {
-                return {name: strings.get(meta[0]), value: strings.get(meta[1])};
+                return [strings.get(meta[0]), strings.get(meta[1])];
             }) : [],
             status: parseStatus(status),
             message: function () {

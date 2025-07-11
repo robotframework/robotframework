@@ -345,7 +345,8 @@ class TestCaseBuilder(BodyBuilder):
         self.model.template = node.value
 
     def visit_CustomMetadata(self, node):
-        metadata_value = " ".join(node.values) if node.values else ""
+        # Use node.value and strip leading/trailing whitespace to avoid line break issues
+        metadata_value = node.value.strip() if node.value else ""
         # Get current metadata or create empty dict
         try:
             current_metadata = dict(self.model.custom_metadata)
@@ -442,7 +443,8 @@ class KeywordBuilder(BodyBuilder):
         )
 
     def visit_CustomMetadata(self, node):
-        metadata_value = " ".join(node.values) if node.values else ""
+        # Use node.value and strip leading/trailing whitespace to avoid line break issues
+        metadata_value = node.value.strip() if node.value else ""
         # Get current metadata or create empty dict
         try:
             current_metadata = dict(self.model.custom_metadata)

@@ -274,14 +274,12 @@ function addExecutionLog(main) {
           <td>{{html tags.join(', ')}}</td>
         </tr>
         {{/if}}
-        {{if metadata && metadata.length}}
         {{each metadata}}
         <tr>
-          <th>{{html $value.name}}:</th>
-          <td>{{html $value.value}}</td>
+          <th>{{html $value[0]}}:</th>
+          <td class="doc">{{html $value[1]}}</td>
         </tr>
         {{/each}}
-        {{/if}}
         {{if timeout}}
         <tr>
           <th>Timeout:</th>
@@ -339,14 +337,12 @@ function addExecutionLog(main) {
           <td>{{html tags}}</td>
         </tr>
         {{/if}}
-        {{if metadata && metadata.length}}
         {{each metadata}}
         <tr>
-          <th>{{html $value.name}}:</th>
-          <td>{{html $value.value}}</td>
+          <th>{{html $value[0]}}:</th>
+          <td class="doc">{{html $value[1]}}</td>
         </tr>
         {{/each}}
-        {{/if}}
         {{if timeout}}
         <tr>
           <th>Timeout:</th>
