@@ -7,4 +7,4 @@ def function(value, expected, lower=False):
     assert value == expected
 
 
-partial_function = partial(function, expected='value')
+partial_function = partial(function, expected="value")

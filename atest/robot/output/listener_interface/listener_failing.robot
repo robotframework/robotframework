@@ -43,7 +43,7 @@ Listener errors should be reported
 
 Library listener errors should be reported
     FOR    ${index}    ${method}    IN ENUMERATE
-    ...    start_suite    start_test    start_keyword    log_message
+    ...    message    start_suite    start_test    start_keyword    log_message
     ...    end_keyword    end_test    end_suite
         Error should be reported in execution errors    ${index}    ${method}    failing_listener
     END

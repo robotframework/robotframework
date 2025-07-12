@@ -89,13 +89,13 @@ Wrong number of variables
     END
 
 No values
-    [Documentation]    FAIL    FOR loop has no loop values.
+    [Documentation]    FAIL    FOR loop has no values.
     FOR    ${index}    ${item}    IN ENUMERATE
         Fail    Should not be executed.
     END
 
 No values with start
-    [Documentation]    FAIL    FOR loop has no loop values.
+    [Documentation]    FAIL    FOR loop has no values.
     FOR    ${index}    ${item}    IN ENUMERATE    start=0
         Fail    Should not be executed.
     END

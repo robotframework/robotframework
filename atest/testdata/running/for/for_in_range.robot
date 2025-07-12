@@ -90,7 +90,7 @@ Too many arguments
     Fail    Not executed
 
 No arguments
-    [Documentation]    FAIL    FOR loop has no loop values.
+    [Documentation]    FAIL    FOR loop has no values.
     FOR    ${i}    IN RANGE
         Fail    Not executed
     END

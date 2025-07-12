@@ -1,0 +1,1505 @@
+{
+  "title": "robot.result.TestSuite",
+  "description": "JSON schema for `robot.result.TestSuite`.\n\nThe whole result model with, for example, errors and statistics has its\nown schema.\n\nCompatible with JSON Schema Draft 2020-12.",
+  "type": "object",
+  "properties": {
+    "elapsed_time": {
+      "title": "Elapsed Time",
+      "type": "number"
+    },
+    "status": {
+      "title": "Status",
+      "type": "string"
+    },
+    "start_time": {
+      "title": "Start Time",
+      "type": "string",
+      "format": "date-time"
+    },
+    "message": {
+      "title": "Message",
+      "type": "string"
+    },
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "doc": {
+      "title": "Doc",
+      "type": "string"
+    },
+    "metadata": {
+      "title": "Metadata",
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "source": {
+      "title": "Source",
+      "type": "string",
+      "format": "path"
+    },
+    "rpa": {
+      "title": "Rpa",
+      "type": "boolean"
+    },
+    "setup": {
+      "$ref": "#/definitions/Keyword"
+    },
+    "teardown": {
+      "$ref": "#/definitions/Keyword"
+    },
+    "tests": {
+      "title": "Tests",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/TestCase"
+      }
+    },
+    "suites": {
+      "title": "Suites",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/TestSuite"
+      }
+    }
+  },
+  "required": [
+    "elapsed_time",
+    "status",
+    "name"
+  ],
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "definitions": {
+    "Message": {
+      "title": "Message",
+      "type": "object",
+      "properties": {
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "level": {
+          "title": "Level",
+          "enum": [
+            "TRACE",
+            "DEBUG",
+            "INFO",
+            "WARN",
+            "ERROR",
+            "FAIL",
+            "SKIP"
+          ],
+          "type": "string"
+        },
+        "html": {
+          "title": "Html",
+          "type": "boolean"
+        },
+        "timestamp": {
+          "title": "Timestamp",
+          "type": "string",
+          "format": "date-time"
+        },
+        "type": {
+          "title": "Type",
+          "default": "MESSAGE",
+          "const": "MESSAGE",
+          "type": "string"
+        }
+      },
+      "required": [
+        "message",
+        "level"
+      ],
+      "additionalProperties": false
+    },
+    "Var": {
+      "title": "Var",
+      "type": "object",
+      "properties": {
+        "elapsed_time": {
+          "title": "Elapsed Time",
+          "type": "number"
+        },
+        "status": {
+          "title": "Status",
+          "type": "string"
+        },
+        "start_time": {
+          "title": "Start Time",
+          "type": "string",
+          "format": "date-time"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "scope": {
+          "title": "Scope",
+          "type": "string"
+        },
+        "separator": {
+          "title": "Separator",
+          "type": "string"
+        },
+        "body": {
+          "title": "Body",
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions/Keyword"
+              },
+              {
+                "$ref": "#/definitions/Message"
+              }
+            ]
+          }
+        },
+        "type": {
+          "title": "Type",
+          "default": "VAR",
+          "const": "VAR",
+          "type": "string"
+        }
+      },
+      "required": [
+        "elapsed_time",
+        "status",
+        "name",
+        "value"
+      ],
+      "additionalProperties": false
+    },
+    "Break": {
+      "title": "Break",
+      "type": "object",
+      "properties": {
+        "elapsed_time": {
+          "title": "Elapsed Time",
+          "type": "number"
+        },
+        "status": {
+          "title": "Status",
+          "type": "string"
+        },
+        "start_time": {
+          "title": "Start Time",
+          "type": "string",
+          "format": "date-time"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "body": {
+          "title": "Body",
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions/Keyword"
+              },
+              {
+                "$ref": "#/definitions/Message"
+              }
+            ]
+          }
+        },
+        "type": {
+          "title": "Type",
+          "default": "BREAK",
+          "const": "BREAK",
+          "type": "string"
+        }
+      },
+      "required": [
+        "elapsed_time",
+        "status"
+      ],
+      "additionalProperties": false
+    },
+    "Continue": {
+      "title": "Continue",
+      "type": "object",
+      "properties": {
+        "elapsed_time": {
+          "title": "Elapsed Time",
+          "type": "number"
+        },
+        "status": {
+          "title": "Status",
+          "type": "string"
+        },
+        "start_time": {
+          "title": "Start Time",
+          "type": "string",
+          "format": "date-time"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "body": {
+          "title": "Body",
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions/Keyword"
+              },
+              {
+                "$ref": "#/definitions/Message"
+              }
+            ]
+          }
+        },
+        "type": {
+          "title": "Type",
+          "default": "CONTINUE",
+          "const": "CONTINUE",
+          "type": "string"
+        }
+      },
+      "required": [
+        "elapsed_time",
+        "status"
+      ],
+      "additionalProperties": false
+    },
+    "Return": {
+      "title": "Return",
+      "type": "object",
+      "properties": {
+        "elapsed_time": {
+          "title": "Elapsed Time",
+          "type": "number"
+        },
+        "status": {
+          "title": "Status",
+          "type": "string"
+        },
+        "start_time": {
+          "title": "Start Time",
+          "type": "string",
+          "format": "date-time"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "values": {
+          "title": "Values",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "body": {
+          "title": "Body",
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions/Keyword"
+              },
+              {
+                "$ref": "#/definitions/Message"
+              }
+            ]
+          }
+        },
+        "type": {
+          "title": "Type",
+          "default": "RETURN",
+          "const": "RETURN",
+          "type": "string"
+        }
+      },
+      "required": [
+        "elapsed_time",
+        "status"
+      ],
+      "additionalProperties": false
+    },
+    "Error": {
+      "title": "Error",
+      "type": "object",
+      "properties": {
+        "elapsed_time": {
+          "title": "Elapsed Time",
+          "type": "number"
+        },
+        "status": {
+          "title": "Status",
+          "type": "string"
+        },
+        "start_time": {
+          "title": "Start Time",
+          "type": "string",
+          "format": "date-time"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "values": {
+          "title": "Values",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "body": {
+          "title": "Body",
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions/Keyword"
+              },
+              {
+                "$ref": "#/definitions/Message"
+              }
+            ]
+          }
+        },
+        "type": {
+          "title": "Type",
+          "default": "ERROR",
+          "const": "ERROR",
+          "type": "string"
+        }
+      },
+      "required": [
+        "elapsed_time",
+        "status",
+        "values"
+      ],
+      "additionalProperties": false
+    },
+    "TryBranch": {
+      "title": "TryBranch",
+      "type": "object",
+      "properties": {
+        "elapsed_time": {
+          "title": "Elapsed Time",
+          "type": "number"
+        },
+        "status": {
+          "title": "Status",
+          "type": "string"
+        },
+        "start_time": {
+          "title": "Start Time",
+          "type": "string",
+          "format": "date-time"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "type": {
+          "title": "Type",
+          "enum": [
+            "TRY",
+            "EXCEPT",
+            "ELSE",
+            "FINALLY"
+          ],
+          "type": "string"
+        },
+        "patterns": {
+          "title": "Patterns",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "pattern_type": {
+          "title": "Pattern Type",
+          "type": "string"
+        },
+        "assign": {
+          "title": "Assign",
+          "type": "string"
+        },
+        "body": {
+          "title": "Body",
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions/Keyword"
+              },
+              {
+                "$ref": "#/definitions/For"
+              },
+              {
+                "$ref": "#/definitions/While"
+              },
+              {
+                "$ref": "#/definitions/Group"
+              },
+              {
+                "$ref": "#/definitions/If"
+              },
+              {
+                "$ref": "#/definitions/Try"
+              },
+              {
+                "$ref": "#/definitions/Var"
+              },
+              {
+                "$ref": "#/definitions/Break"
+              },
+              {
+                "$ref": "#/definitions/Continue"
+              },
+              {
+                "$ref": "#/definitions/Return"
+              },
+              {
+                "$ref": "#/definitions/Error"
+              },
+              {
+                "$ref": "#/definitions/Message"
+              }
+            ]
+          }
+        }
+      },
+      "required": [
+        "elapsed_time",
+        "status",
+        "type"
+      ],
+      "additionalProperties": false
+    },
+    "Try": {
+      "title": "Try",
+      "type": "object",
+      "properties": {
+        "elapsed_time": {
+          "title": "Elapsed Time",
+          "type": "number"
+        },
+        "status": {
+          "title": "Status",
+          "type": "string"
+        },
+        "start_time": {
+          "title": "Start Time",
+          "type": "string",
+          "format": "date-time"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "body": {
+          "title": "Body",
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions/TryBranch"
+              },
+              {
+                "$ref": "#/definitions/Keyword"
+              },
+              {
+                "$ref": "#/definitions/For"
+              },
+              {
+                "$ref": "#/definitions/While"
+              },
+              {
+                "$ref": "#/definitions/Group"
+              },
+              {
+                "$ref": "#/definitions/If"
+              },
+              {
+                "$ref": "#/definitions/Try"
+              },
+              {
+                "$ref": "#/definitions/Var"
+              },
+              {
+                "$ref": "#/definitions/Break"
+              },
+              {
+                "$ref": "#/definitions/Continue"
+              },
+              {
+                "$ref": "#/definitions/Return"
+              },
+              {
+                "$ref": "#/definitions/Error"
+              },
+              {
+                "$ref": "#/definitions/Message"
+              }
+            ]
+          }
+        },
+        "type": {
+          "title": "Type",
+          "default": "TRY/EXCEPT ROOT",
+          "const": "TRY/EXCEPT ROOT",
+          "type": "string"
+        }
+      },
+      "required": [
+        "elapsed_time",
+        "status"
+      ],
+      "additionalProperties": false
+    },
+    "IfBranch": {
+      "title": "IfBranch",
+      "type": "object",
+      "properties": {
+        "elapsed_time": {
+          "title": "Elapsed Time",
+          "type": "number"
+        },
+        "status": {
+          "title": "Status",
+          "type": "string"
+        },
+        "start_time": {
+          "title": "Start Time",
+          "type": "string",
+          "format": "date-time"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "type": {
+          "title": "Type",
+          "enum": [
+            "IF",
+            "ELSE IF",
+            "ELSE"
+          ],
+          "type": "string"
+        },
+        "condition": {
+          "title": "Condition",
+          "type": "string"
+        },
+        "body": {
+          "title": "Body",
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions/Keyword"
+              },
+              {
+                "$ref": "#/definitions/For"
+              },
+              {
+                "$ref": "#/definitions/While"
+              },
+              {
+                "$ref": "#/definitions/Group"
+              },
+              {
+                "$ref": "#/definitions/If"
+              },
+              {
+                "$ref": "#/definitions/Try"
+              },
+              {
+                "$ref": "#/definitions/Var"
+              },
+              {
+                "$ref": "#/definitions/Break"
+              },
+              {
+                "$ref": "#/definitions/Continue"
+              },
+              {
+                "$ref": "#/definitions/Return"
+              },
+              {
+                "$ref": "#/definitions/Error"
+              },
+              {
+                "$ref": "#/definitions/Message"
+              }
+            ]
+          }
+        }
+      },
+      "required": [
+        "elapsed_time",
+        "status",
+        "type"
+      ],
+      "additionalProperties": false
+    },
+    "If": {
+      "title": "If",
+      "type": "object",
+      "properties": {
+        "elapsed_time": {
+          "title": "Elapsed Time",
+          "type": "number"
+        },
+        "status": {
+          "title": "Status",
+          "type": "string"
+        },
+        "start_time": {
+          "title": "Start Time",
+          "type": "string",
+          "format": "date-time"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "body": {
+          "title": "Body",
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions/IfBranch"
+              },
+              {
+                "$ref": "#/definitions/Keyword"
+              },
+              {
+                "$ref": "#/definitions/For"
+              },
+              {
+                "$ref": "#/definitions/While"
+              },
+              {
+                "$ref": "#/definitions/Group"
+              },
+              {
+                "$ref": "#/definitions/If"
+              },
+              {
+                "$ref": "#/definitions/Try"
+              },
+              {
+                "$ref": "#/definitions/Var"
+              },
+              {
+                "$ref": "#/definitions/Break"
+              },
+              {
+                "$ref": "#/definitions/Continue"
+              },
+              {
+                "$ref": "#/definitions/Return"
+              },
+              {
+                "$ref": "#/definitions/Error"
+              },
+              {
+                "$ref": "#/definitions/Message"
+              }
+            ]
+          }
+        },
+        "type": {
+          "title": "Type",
+          "default": "IF/ELSE ROOT",
+          "const": "IF/ELSE ROOT",
+          "type": "string"
+        }
+      },
+      "required": [
+        "elapsed_time",
+        "status"
+      ],
+      "additionalProperties": false
+    },
+    "Group": {
+      "title": "Group",
+      "type": "object",
+      "properties": {
+        "elapsed_time": {
+          "title": "Elapsed Time",
+          "type": "number"
+        },
+        "status": {
+          "title": "Status",
+          "type": "string"
+        },
+        "start_time": {
+          "title": "Start Time",
+          "type": "string",
+          "format": "date-time"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "body": {
+          "title": "Body",
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions/Keyword"
+              },
+              {
+                "$ref": "#/definitions/For"
+              },
+              {
+                "$ref": "#/definitions/While"
+              },
+              {
+                "$ref": "#/definitions/Group"
+              },
+              {
+                "$ref": "#/definitions/If"
+              },
+              {
+                "$ref": "#/definitions/Try"
+              },
+              {
+                "$ref": "#/definitions/Var"
+              },
+              {
+                "$ref": "#/definitions/Break"
+              },
+              {
+                "$ref": "#/definitions/Continue"
+              },
+              {
+                "$ref": "#/definitions/Return"
+              },
+              {
+                "$ref": "#/definitions/Error"
+              },
+              {
+                "$ref": "#/definitions/Message"
+              }
+            ]
+          }
+        },
+        "type": {
+          "title": "Type",
+          "default": "GROUP",
+          "const": "GROUP",
+          "type": "string"
+        }
+      },
+      "required": [
+        "elapsed_time",
+        "status"
+      ],
+      "additionalProperties": false
+    },
+    "WhileIteration": {
+      "title": "WhileIteration",
+      "type": "object",
+      "properties": {
+        "elapsed_time": {
+          "title": "Elapsed Time",
+          "type": "number"
+        },
+        "status": {
+          "title": "Status",
+          "type": "string"
+        },
+        "start_time": {
+          "title": "Start Time",
+          "type": "string",
+          "format": "date-time"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "body": {
+          "title": "Body",
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions/Keyword"
+              },
+              {
+                "$ref": "#/definitions/For"
+              },
+              {
+                "$ref": "#/definitions/While"
+              },
+              {
+                "$ref": "#/definitions/Group"
+              },
+              {
+                "$ref": "#/definitions/If"
+              },
+              {
+                "$ref": "#/definitions/Try"
+              },
+              {
+                "$ref": "#/definitions/Var"
+              },
+              {
+                "$ref": "#/definitions/Break"
+              },
+              {
+                "$ref": "#/definitions/Continue"
+              },
+              {
+                "$ref": "#/definitions/Return"
+              },
+              {
+                "$ref": "#/definitions/Error"
+              },
+              {
+                "$ref": "#/definitions/Message"
+              }
+            ]
+          }
+        },
+        "type": {
+          "title": "Type",
+          "default": "ITERATION",
+          "const": "ITERATION",
+          "type": "string"
+        }
+      },
+      "required": [
+        "elapsed_time",
+        "status"
+      ],
+      "additionalProperties": false
+    },
+    "While": {
+      "title": "While",
+      "type": "object",
+      "properties": {
+        "elapsed_time": {
+          "title": "Elapsed Time",
+          "type": "number"
+        },
+        "status": {
+          "title": "Status",
+          "type": "string"
+        },
+        "start_time": {
+          "title": "Start Time",
+          "type": "string",
+          "format": "date-time"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "condition": {
+          "title": "Condition",
+          "type": "string"
+        },
+        "limit": {
+          "title": "Limit",
+          "type": "string"
+        },
+        "on_limit": {
+          "title": "On Limit",
+          "type": "string"
+        },
+        "on_limit_message": {
+          "title": "On Limit Message",
+          "type": "string"
+        },
+        "body": {
+          "title": "Body",
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions/Keyword"
+              },
+              {
+                "$ref": "#/definitions/For"
+              },
+              {
+                "$ref": "#/definitions/While"
+              },
+              {
+                "$ref": "#/definitions/WhileIteration"
+              },
+              {
+                "$ref": "#/definitions/Group"
+              },
+              {
+                "$ref": "#/definitions/If"
+              },
+              {
+                "$ref": "#/definitions/Try"
+              },
+              {
+                "$ref": "#/definitions/Var"
+              },
+              {
+                "$ref": "#/definitions/Break"
+              },
+              {
+                "$ref": "#/definitions/Continue"
+              },
+              {
+                "$ref": "#/definitions/Return"
+              },
+              {
+                "$ref": "#/definitions/Error"
+              },
+              {
+                "$ref": "#/definitions/Message"
+              }
+            ]
+          }
+        },
+        "type": {
+          "title": "Type",
+          "default": "WHILE",
+          "const": "WHILE",
+          "type": "string"
+        }
+      },
+      "required": [
+        "elapsed_time",
+        "status"
+      ],
+      "additionalProperties": false
+    },
+    "ForIteration": {
+      "title": "ForIteration",
+      "type": "object",
+      "properties": {
+        "elapsed_time": {
+          "title": "Elapsed Time",
+          "type": "number"
+        },
+        "status": {
+          "title": "Status",
+          "type": "string"
+        },
+        "start_time": {
+          "title": "Start Time",
+          "type": "string",
+          "format": "date-time"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "assign": {
+          "title": "Assign",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "body": {
+          "title": "Body",
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions/Keyword"
+              },
+              {
+                "$ref": "#/definitions/For"
+              },
+              {
+                "$ref": "#/definitions/While"
+              },
+              {
+                "$ref": "#/definitions/Group"
+              },
+              {
+                "$ref": "#/definitions/If"
+              },
+              {
+                "$ref": "#/definitions/Try"
+              },
+              {
+                "$ref": "#/definitions/Var"
+              },
+              {
+                "$ref": "#/definitions/Break"
+              },
+              {
+                "$ref": "#/definitions/Continue"
+              },
+              {
+                "$ref": "#/definitions/Return"
+              },
+              {
+                "$ref": "#/definitions/Error"
+              },
+              {
+                "$ref": "#/definitions/Message"
+              }
+            ]
+          }
+        },
+        "type": {
+          "title": "Type",
+          "default": "ITERATION",
+          "const": "ITERATION",
+          "type": "string"
+        }
+      },
+      "required": [
+        "elapsed_time",
+        "status",
+        "assign"
+      ],
+      "additionalProperties": false
+    },
+    "For": {
+      "title": "For",
+      "type": "object",
+      "properties": {
+        "elapsed_time": {
+          "title": "Elapsed Time",
+          "type": "number"
+        },
+        "status": {
+          "title": "Status",
+          "type": "string"
+        },
+        "start_time": {
+          "title": "Start Time",
+          "type": "string",
+          "format": "date-time"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "assign": {
+          "title": "Assign",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "flavor": {
+          "title": "Flavor",
+          "type": "string"
+        },
+        "values": {
+          "title": "Values",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "start": {
+          "title": "Start",
+          "type": "string"
+        },
+        "mode": {
+          "title": "Mode",
+          "type": "string"
+        },
+        "fill": {
+          "title": "Fill",
+          "type": "string"
+        },
+        "body": {
+          "title": "Body",
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions/Keyword"
+              },
+              {
+                "$ref": "#/definitions/For"
+              },
+              {
+                "$ref": "#/definitions/ForIteration"
+              },
+              {
+                "$ref": "#/definitions/While"
+              },
+              {
+                "$ref": "#/definitions/Group"
+              },
+              {
+                "$ref": "#/definitions/If"
+              },
+              {
+                "$ref": "#/definitions/Try"
+              },
+              {
+                "$ref": "#/definitions/Var"
+              },
+              {
+                "$ref": "#/definitions/Break"
+              },
+              {
+                "$ref": "#/definitions/Continue"
+              },
+              {
+                "$ref": "#/definitions/Return"
+              },
+              {
+                "$ref": "#/definitions/Error"
+              },
+              {
+                "$ref": "#/definitions/Message"
+              }
+            ]
+          }
+        },
+        "type": {
+          "title": "Type",
+          "default": "FOR",
+          "const": "FOR",
+          "type": "string"
+        }
+      },
+      "required": [
+        "elapsed_time",
+        "status",
+        "assign",
+        "flavor",
+        "values"
+      ],
+      "additionalProperties": false
+    },
+    "Keyword": {
+      "title": "Keyword",
+      "type": "object",
+      "properties": {
+        "elapsed_time": {
+          "title": "Elapsed Time",
+          "type": "number"
+        },
+        "status": {
+          "title": "Status",
+          "type": "string"
+        },
+        "start_time": {
+          "title": "Start Time",
+          "type": "string",
+          "format": "date-time"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "args": {
+          "title": "Args",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "assign": {
+          "title": "Assign",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "owner": {
+          "title": "Owner",
+          "type": "string"
+        },
+        "source_name": {
+          "title": "Source Name",
+          "type": "string"
+        },
+        "doc": {
+          "title": "Doc",
+          "type": "string"
+        },
+        "tags": {
+          "title": "Tags",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "timeout": {
+          "title": "Timeout",
+          "type": "string"
+        },
+        "setup": {
+          "$ref": "#/definitions/Keyword"
+        },
+        "teardown": {
+          "$ref": "#/definitions/Keyword"
+        },
+        "body": {
+          "title": "Body",
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions/Keyword"
+              },
+              {
+                "$ref": "#/definitions/For"
+              },
+              {
+                "$ref": "#/definitions/While"
+              },
+              {
+                "$ref": "#/definitions/Group"
+              },
+              {
+                "$ref": "#/definitions/If"
+              },
+              {
+                "$ref": "#/definitions/Try"
+              },
+              {
+                "$ref": "#/definitions/Var"
+              },
+              {
+                "$ref": "#/definitions/Break"
+              },
+              {
+                "$ref": "#/definitions/Continue"
+              },
+              {
+                "$ref": "#/definitions/Return"
+              },
+              {
+                "$ref": "#/definitions/Error"
+              },
+              {
+                "$ref": "#/definitions/Message"
+              }
+            ]
+          }
+        }
+      },
+      "required": [
+        "elapsed_time",
+        "status",
+        "name"
+      ],
+      "additionalProperties": false
+    },
+    "TestCase": {
+      "title": "TestCase",
+      "type": "object",
+      "properties": {
+        "elapsed_time": {
+          "title": "Elapsed Time",
+          "type": "number"
+        },
+        "status": {
+          "title": "Status",
+          "type": "string"
+        },
+        "start_time": {
+          "title": "Start Time",
+          "type": "string",
+          "format": "date-time"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "doc": {
+          "title": "Doc",
+          "type": "string"
+        },
+        "tags": {
+          "title": "Tags",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "template": {
+          "title": "Template",
+          "type": "string"
+        },
+        "timeout": {
+          "title": "Timeout",
+          "type": "string"
+        },
+        "lineno": {
+          "title": "Lineno",
+          "type": "integer"
+        },
+        "error": {
+          "title": "Error",
+          "type": "string"
+        },
+        "setup": {
+          "$ref": "#/definitions/Keyword"
+        },
+        "teardown": {
+          "$ref": "#/definitions/Keyword"
+        },
+        "body": {
+          "title": "Body",
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions/Keyword"
+              },
+              {
+                "$ref": "#/definitions/For"
+              },
+              {
+                "$ref": "#/definitions/While"
+              },
+              {
+                "$ref": "#/definitions/Group"
+              },
+              {
+                "$ref": "#/definitions/If"
+              },
+              {
+                "$ref": "#/definitions/Try"
+              },
+              {
+                "$ref": "#/definitions/Var"
+              },
+              {
+                "$ref": "#/definitions/Error"
+              },
+              {
+                "$ref": "#/definitions/Message"
+              }
+            ]
+          }
+        }
+      },
+      "required": [
+        "elapsed_time",
+        "status",
+        "name"
+      ],
+      "additionalProperties": false
+    },
+    "TestSuite": {
+      "title": "TestSuite",
+      "type": "object",
+      "properties": {
+        "elapsed_time": {
+          "title": "Elapsed Time",
+          "type": "number"
+        },
+        "status": {
+          "title": "Status",
+          "type": "string"
+        },
+        "start_time": {
+          "title": "Start Time",
+          "type": "string",
+          "format": "date-time"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "doc": {
+          "title": "Doc",
+          "type": "string"
+        },
+        "metadata": {
+          "title": "Metadata",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "source": {
+          "title": "Source",
+          "type": "string",
+          "format": "path"
+        },
+        "rpa": {
+          "title": "Rpa",
+          "type": "boolean"
+        },
+        "setup": {
+          "$ref": "#/definitions/Keyword"
+        },
+        "teardown": {
+          "$ref": "#/definitions/Keyword"
+        },
+        "tests": {
+          "title": "Tests",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TestCase"
+          }
+        },
+        "suites": {
+          "title": "Suites",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TestSuite"
+          }
+        }
+      },
+      "required": [
+        "elapsed_time",
+        "status",
+        "name"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

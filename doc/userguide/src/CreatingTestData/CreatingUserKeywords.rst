@@ -486,6 +486,82 @@ __ `Positional arguments with user keywords`_
 __ `Free named arguments with user keywords`_
 __ `Default values with user keywords`_
 
+Argument conversion with user keywords
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+User keywords support automatic argument conversion based on explicitly specified
+types. The type syntax `${name: type}` is the same, and the supported conversions
+are the same, as when `creating variables`__.
+
+The basic usage with normal arguments is very simple. You only need to specify
+the type like `${count: int}` and the used value is converted automatically.
+If an argument has a default value like `${count: int}=1`, also the default
+value will be converted. If conversion fails, calling the keyword fails with
+an informative error message.
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   Move around
+       Move    3
+       Turn    LEFT
+       Move    2.3    log=True
+       Turn    right
+
+   Failing move
+       Move    bad
+
+   Failing turn
+       Turn    oops
+
+   *** Keywords ***
+   Move
+       [Arguments]    ${distance: float}    ${log: bool}=False
+       IF    ${log}
+           Log    Moving ${distance} meters.
+       END
+
+    Turn
+       [Arguments]    ${direction: Literal["LEFT", "RIGHT"]}
+       Log    Turning ${direction}.
+
+.. tip:: Using `Literal`, like in the above example, is a convenient way to
+         limit what values are accepted.
+
+When using `variable number of arguments`__, the type is specified like
+`@{numbers: int}` and is applied to all arguments. If arguments may have
+different types, it is possible to use an union like `@{numbers: float | int}`.
+With `free named arguments`__ the type is specified like `&{named: int}` and
+it is applied to all argument values. Converting argument names is not supported.
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   Varargs
+       Send bytes    Hello!    Hyvä!    \x00\x00\x07
+
+   Free named
+       Log releases    rc 1=2025-05-08    rc 2=2025-05-19    rc 3=2025-05-21    final=2025-05-30
+
+   *** Keywords ***
+   Send bytes
+       [Arguments]    @{data: bytes}
+       FOR    ${value}    IN    @{data}
+           Log    ${value}    formatter=repr
+       END
+
+   Log releases
+       [Arguments]    &{releases: date}
+       FOR    ${version}    ${date}    IN    &{releases}
+           Log    RF 7.3 ${version} was released on ${date.day}.${date.month}.${date.year}.
+       END
+
+.. note:: Argument conversion with user keywords is new in Robot Framework 7.3.
+
+__ `Variable type syntax`_
+__ `Variable number of arguments with user keywords`_
+__ `Free named arguments with user keywords`_
+
 .. _Embedded argument syntax:
 
 Embedding arguments into keyword name
@@ -624,13 +700,13 @@ This approach is not enough to resolve all conflicts, but it helps in common
 cases and is generally recommended. Another benefit is that it makes arguments
 stand out from rest of the keyword.
 
-The problem of arguments matching too much occurs often when creating
-keywords that `ignore the given/when/then/and/but prefixes`__ typically used
-in Behavior Driven Development (BDD). For example,
-:name:`${name} goes home` matches :name:`Given Janne goes home` so
-that `${name}` gets value `Given Janne`. Quotes around the
-argument, like in :name:`"${name}" goes home`, resolve this problem
-easily.
+Prior to Robot Framework 7.1, embedded arguments starting the keyword name also
+matched possible `given/when/then/and/but prefixes`__ typically used in Behavior
+Driven Development (BDD). For example, :name:`${name} goes home` matched
+:name:`Given Janne goes home` so that `${name}` got value `Given Janne`.
+Nowadays the prefix is ignored and `${name}` will be `Janne` as expected.
+If older Robot Framework versions need to be supported, it is easiest to quote
+the argument like in :name:`"${name}" goes home` to get consistent behavior.
 
 An alternative solution for limiting what values arguments match is
 `using custom regular expressions`_.
@@ -732,17 +808,16 @@ A custom embedded argument regular expression is defined after the
 base name of the argument so that the argument and the regexp are
 separated with a colon. For example, an argument that should match
 only numbers can be defined like `${arg:\d+}`.
+If needed, custom patterns can be prefixed with `inline flags`__ such as
+`(?i)` for case-insensitivity.
 
 Using custom regular expressions is illustrated by the following examples.
-Notice that the first one shows how the earlier problem with
-:name:`Select ${city} ${team}` not matching :name:`Select Los Angeles Lakers`
-properly can be resolved without quoting. That is achieved by implementing
-the keyword so that `${team}` can only contain non-whitespace characters.
+The first one shows how the earlier problem with :name:`Select ${city} ${team}`
+not matching :name:`Select Los Angeles Lakers` properly can be resolved without
+quoting by implementing the keyword so that `${team}` can only contain non-whitespace
+characters.
 
 .. sourcecode:: robotframework
-
-   *** Settings ***
-   Library          DateTime
 
    *** Test Cases ***
    Do not match whitespace characters
@@ -757,6 +832,10 @@ the keyword so that `${team}` can only contain non-whitespace characters.
        Deadline is 2022-09-21
        Deadline is today
 
+   Case-insensitive match
+       Select dog
+       Select CAT
+
    *** Keywords ***
    Select ${city} ${team:\S+}
        Log    Selected ${team} from ${city}.
@@ -765,17 +844,21 @@ the keyword so that `${team}` can only contain non-whitespace characters.
        ${result} =    Evaluate    ${number1} ${operator} ${number2}
        Should Be Equal As Integers    ${result}    ${expected}
 
-   Deadline is ${date:(\d{4}-\d{2}-\d{2}|today)}
-       IF    '${date}' == 'today'
-           ${date} =    Get Current Date
-       ELSE
-           ${date} =    Convert Date    ${date}
-       END
-       Log    Deadline is on ${date}.
+   Deadline is ${deadline: date:\d{4}-\d{2}-\d{2}|today}
+       # The ': date' part of the above argument specifies the argument type.
+       # See the separate section about argument conversion for more information.
+       Log    Deadline is ${deadline.day}.${deadline.month}.${deadline.year}.
+
+   Select ${animal:(?i)cat|dog}
+       [Documentation]    Inline flag `(?i)` makes the pattern case-insensitive.
+       Log    Selected ${animal}!
+
+.. note:: Support for inline flags is new in Robot Framework 7.2.
 
 __ http://en.wikipedia.org/wiki/Regular_expression
 __ `Embedded arguments matching wrong values`_
 __ `Resolving conflicts`_
+__ https://docs.python.org/3/library/re.html#regular-expression-syntax
 
 Supported regular expression syntax
 '''''''''''''''''''''''''''''''''''
@@ -820,29 +903,76 @@ to parse the variable syntax correctly. If there are matching braces like in
 Using variables with custom embedded argument regular expressions
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
-When embedded arguments are used with custom regular expressions, Robot
-Framework automatically enhances the specified regexps so that they
-match variables in addition to the text matching the pattern.
-For example, the following test case would pass
-using the keywords from the earlier example.
+When using embedded arguments with custom regular expressions, specifying
+values using variables works only if variables match the whole embedded
+argument, not if there is any additional content with the variable.
+For example, the first test below succeeds because the variable `${DATE}`
+is used on its own, but the last test fails because `${YEAR}-${MONTH}-${DAY}`
+is not a single variable.
 
 .. sourcecode:: robotframework
 
    *** Variables ***
-   ${DATE}    2011-06-27
+   ${DATE}           2011-06-27
+   ${YEAR}           2011
+   ${MONTH}          06
+   ${DAY}            27
 
    *** Test Cases ***
-   Example
+   Succeeds
        Deadline is ${DATE}
-       ${1} + ${2} = ${3}
 
-A limitation of using variables is that their actual values are not matched against
-custom regular expressions. As the result keywords may be called with
+   Succeeds without variables
+       Deadline is 2011-06-27
+
+   Fails
+       Deadline is ${YEAR}-${MONTH}-${DAY}
+
+   *** Keywords ***
+   Deadline is ${deadline:\d{4}-\d{2}-\d{2}}
+       Should Be Equal    ${deadline}    2011-06-27
+
+Another limitation of using variables is that their actual values are not matched
+against custom regular expressions. As the result keywords may be called with
 values that their custom regexps would not allow. This behavior is deprecated
 starting from Robot Framework 6.0 and values will be validated in the future.
 For more information see issue `#4462`__.
 
 __ https://github.com/robotframework/robotframework/issues/4462
+
+Argument conversion with embedded arguments
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+User keywords accepting embedded arguments support argument conversion with type
+syntax `${name: type}` similarly as `normal user keywords`__. If a `custom pattern`__
+is needed, it can be separated with an additional colon like `${name: type:pattern}`.
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   Example
+       Buy 3 books
+       Deadline is 2025-05-30
+
+   *** Keywords ***
+   Buy ${quantity: int} books
+       Should Be Equal    ${quantity}    ${3}
+
+   Deadline is ${deadline: date:\d{4}-\d{2}-\d{2}}
+       Should Be Equal    ${deadline.year}     ${2025}
+       Should Be Equal    ${deadline.month}    ${5}
+       Should Be Equal    ${deadline.day}      ${30}
+
+Because the type separator is a colon followed by a space (e.g. `${arg: int}`)
+and the pattern separator is just a colon (e.g. `${arg:\d+}`), there typically
+are no conflicts when using only a type or only a pattern. The only exception
+is using a pattern starting with a space, but in that case the space can be
+escaped like `${arg:\ abc}` or a type added like `${arg: str: abc}`.
+
+.. note:: Argument conversion with user keywords is new in Robot Framework 7.3.
+
+__ `Argument conversion with user keywords`_
+__ `Using custom regular expressions`_
 
 Behavior-driven development example
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1116,3 +1246,27 @@ HTML output files.
 .. note:: Private user keywords are new in Robot Framework 6.0.
 
 __ `User keyword tags`_
+
+Recursion
+---------
+
+User keywords can call themselves either directly or indirectly. This kind of
+recursive usage is fine as long as the recursion ends, typically based on some
+condition, before the recursion limit is exceeded. The limit exists because
+otherwise infinite recursion would crash the execution.
+
+Robot Framework's recursion detection works so, that it checks is the current
+recursion level close to the recursion limit of the underlying Python process.
+If it is close enough, no more new started keywords or control structures are
+allowed and execution fails.
+
+Python's default recursion limit is 1000 stack frames, which in practice means that
+it is possible to start approximately 140 keywords or control structures.
+If that is not enough, Python's recursion limit can be raised using the
+`sys.setrecursionlimit()`__ function. As the documentation of the function explains,
+this should be done with care, because a too-high level can lead to a crash.
+
+__ https://docs.python.org/3/library/sys.html#sys.setrecursionlimit
+
+.. note:: Prior to Robot Framework 7.2, the recursion limit was hard-coded to
+          100 started keywords or control structures.

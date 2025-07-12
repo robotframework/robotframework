@@ -33,7 +33,7 @@ Element attribute should be with custom error message
 
 Element attribute should match
     ${tc} =    Check Test Case    ${TESTNAME}
-    Should Be Empty    ${tc.kws[0].msgs}
+    Should Be Empty    ${tc[0].messages}
 
 Element attribute should match when no attribute exists
     Check Test Case    ${TESTNAME}

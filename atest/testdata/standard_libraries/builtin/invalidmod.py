@@ -1,1 +1,1 @@
-raise TypeError('This module cannot be imported!')
+raise TypeError("This module cannot be imported!")

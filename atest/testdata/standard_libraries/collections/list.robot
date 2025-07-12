@@ -344,8 +344,12 @@ List Should Contain Sub List
     List Should Contain Sub List    ${LONG}    ${L4}
 
 List Should Contain Sub List With Missing Values
-    [Documentation]    FAIL Following values were not found from first list: 1, 1, 2, 1, 2
+    [Documentation]    FAIL Following values are missing: '1', '1', '2', '1' and '2'
     List Should Contain Sub List    ${L4}    ${LONG}
+
+List Should Contain Sub List When The Only Missing Value Is Empty String
+    [Documentation]    FAIL Following values are missing: ''
+    List Should Contain Sub List    ${L4}    ${{['41', 42, '', '43']}}
 
 List Should Contain Sub List With Missing Values And Own Error Message
     [Documentation]    FAIL My error message!
@@ -353,8 +357,8 @@ List Should Contain Sub List With Missing Values And Own Error Message
 
 List Should Contain Sub List With Missing Values And Own And Default Error Messages
     [Documentation]    FAIL My error message!
-    ...    Following values were not found from first list: 1, 1, 2, 1, 2
-    List Should Contain Sub List    ${L4}    ${LONG}    My error message!    values=please
+    ...    Following values are missing: 'x' and 'y'
+    List Should Contain Sub List    ${L4}    ${{'x', 'y'}}    My error message!    values=please
 
 Log List With Different Log Levels
     Log List    ${L3}
@@ -668,6 +672,12 @@ List Should Not Contain Duplicates With Ignore Case
 List Should Contain Value With Ignore Case And Nested List and Dictionary
     [Setup]    Create Lists For Testing Ignore Case
     List Should Contain Value  ${L4}  value=d    ignore_case=${True}
+    
+Lists Should be equal with Ignore Case and Order
+    [Setup]    Create Lists For Testing Ignore Case
+    [Template]    Lists Should Be Equal
+    list1=${L7}    list2=${L8}    ignore_order=${True}    ignore_case=${True}
+    list1=${L9}    list2=${L10}    ignore_order=${True}    ignore_case=${True}
 
 *** Keywords ***
 Validate invalid argument error
@@ -745,3 +755,11 @@ Create Lists For Testing Ignore Case
     Set Test Variable    \${L5}
     ${L6}    Create List    ${L1}    d    D    3   ${D1}
     Set Test Variable    \${L6}
+    ${L7}    Create List    apple    Banana    cherry
+    Set Test Variable    \${L7}
+    ${L8}    Create List    BANANA    cherry    APPLE
+    Set Test Variable    \${L8}
+    ${L9}    Create List    zebra!    ${EMPTY}    Elephant<    "Dog"    "Dog"
+    Set Test Variable    \${L9}
+    ${L10}    Create List    "dog"    ZEBRA!    "Dog"    elephant<    ${EMPTY}
+    Set Test Variable    \${L10}

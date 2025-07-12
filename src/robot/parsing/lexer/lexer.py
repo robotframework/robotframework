@@ -18,18 +18,22 @@ from itertools import chain
 
 from robot.conf import LanguagesLike
 from robot.errors import DataError
-from robot.utils import get_error_message, FileReader, Source
+from robot.utils import FileReader, get_error_message, Source
 
 from .blocklexers import FileLexer
-from .context import (InitFileContext, LexingContext, SuiteFileContext,
-                      ResourceFileContext)
+from .context import (
+    InitFileContext, LexingContext, ResourceFileContext, SuiteFileContext
+)
 from .tokenizer import Tokenizer
-from .tokens import EOS, END, Token
+from .tokens import END, EOS, Token
 
 
-def get_tokens(source: Source, data_only: bool = False,
-               tokenize_variables: bool = False,
-               lang: LanguagesLike = None) -> 'Iterator[Token]':
+def get_tokens(
+    source: Source,
+    data_only: bool = False,
+    tokenize_variables: bool = False,
+    lang: LanguagesLike = None,
+) -> "Iterator[Token]":
     """Parses the given source to tokens.
 
     :param source: The source where to read the data. Can be a path to
@@ -57,9 +61,12 @@ def get_tokens(source: Source, data_only: bool = False,
     return lexer.get_tokens()
 
 
-def get_resource_tokens(source: Source, data_only: bool = False,
-                        tokenize_variables: bool = False,
-                        lang: LanguagesLike = None) -> 'Iterator[Token]':
+def get_resource_tokens(
+    source: Source,
+    data_only: bool = False,
+    tokenize_variables: bool = False,
+    lang: LanguagesLike = None,
+) -> "Iterator[Token]":
     """Parses the given source to resource file tokens.
 
     Same as :func:`get_tokens` otherwise, but the source is considered to be
@@ -70,9 +77,12 @@ def get_resource_tokens(source: Source, data_only: bool = False,
     return lexer.get_tokens()
 
 
-def get_init_tokens(source: Source, data_only: bool = False,
-                    tokenize_variables: bool = False,
-                    lang: LanguagesLike = None) -> 'Iterator[Token]':
+def get_init_tokens(
+    source: Source,
+    data_only: bool = False,
+    tokenize_variables: bool = False,
+    lang: LanguagesLike = None,
+) -> "Iterator[Token]":
     """Parses the given source to init file tokens.
 
     Same as :func:`get_tokens` otherwise, but the source is considered to be
@@ -86,12 +96,16 @@ def get_init_tokens(source: Source, data_only: bool = False,
 
 class Lexer:
 
-    def __init__(self, ctx: LexingContext, data_only: bool = False,
-                 tokenize_variables: bool = False):
+    def __init__(
+        self,
+        ctx: LexingContext,
+        data_only: bool = False,
+        tokenize_variables: bool = False,
+    ):
         self.lexer = FileLexer(ctx)
         self.data_only = data_only
         self.tokenize_variables = tokenize_variables
-        self.statements: 'list[list[Token]]' = []
+        self.statements: "list[list[Token]]" = []
 
     def input(self, source: Source):
         for statement in Tokenizer().tokenize(self._read(source), self.data_only):
@@ -112,7 +126,7 @@ class Lexer:
         except Exception:
             raise DataError(get_error_message())
 
-    def get_tokens(self) -> 'Iterator[Token]':
+    def get_tokens(self) -> "Iterator[Token]":
         self.lexer.lex()
         if self.data_only:
             statements = self.statements
@@ -126,7 +140,7 @@ class Lexer:
             tokens = self._tokenize_variables(tokens)
         return tokens
 
-    def _get_tokens(self, statements: 'Iterable[list[Token]]') -> 'Iterator[Token]':
+    def _get_tokens(self, statements: "Iterable[list[Token]]") -> "Iterator[Token]":
         if self.data_only:
             ignored_types = {None, Token.COMMENT}
         else:
@@ -154,8 +168,10 @@ class Lexer:
                     yield END.from_token(last, virtual=True)
                     yield EOS.from_token(last)
 
-    def _split_trailing_commented_and_empty_lines(self, statement: 'list[Token]') \
-            -> 'list[list[Token]]':
+    def _split_trailing_commented_and_empty_lines(
+        self,
+        statement: "list[Token]",
+    ) -> "list[list[Token]]":
         lines = self._split_to_lines(statement)
         commented_or_empty = []
         for line in reversed(lines):
@@ -164,11 +180,11 @@ class Lexer:
             commented_or_empty.append(line)
         if not commented_or_empty:
             return [statement]
-        lines = lines[:-len(commented_or_empty)]
+        lines = lines[: -len(commented_or_empty)]
         statement = list(chain.from_iterable(lines))
-        return [statement] + list(reversed(commented_or_empty))
+        return [statement, *reversed(commented_or_empty)]
 
-    def _split_to_lines(self, statement: 'list[Token]') -> 'list[list[Token]]':
+    def _split_to_lines(self, statement: "list[Token]") -> "list[list[Token]]":
         lines = []
         current = []
         for token in statement:
@@ -180,7 +196,7 @@ class Lexer:
             lines.append(current)
         return lines
 
-    def _is_commented_or_empty(self, line: 'list[Token]') -> bool:
+    def _is_commented_or_empty(self, line: "list[Token]") -> bool:
         separator_or_ignore = (Token.SEPARATOR, None)
         comment_or_eol = (Token.COMMENT, Token.EOL)
         for token in line:
@@ -188,6 +204,6 @@ class Lexer:
                 return token.type in comment_or_eol
         return False
 
-    def _tokenize_variables(self, tokens: 'Iterator[Token]') -> 'Iterator[Token]':
+    def _tokenize_variables(self, tokens: "Iterator[Token]") -> "Iterator[Token]":
         for token in tokens:
             yield from token.tokenize_variables()

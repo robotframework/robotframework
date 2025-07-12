@@ -7,5 +7,6 @@ class StaticLibrary:
         def f(x):
             """This doc for static"""
             return x
+
         setattr(self, name, f)
         BuiltIn().reload_library(self)

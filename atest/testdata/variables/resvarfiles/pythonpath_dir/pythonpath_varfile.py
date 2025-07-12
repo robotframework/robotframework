@@ -1,3 +1,5 @@
 def get_variables(*args):
-    return {'PYTHONPATH VAR %d' % len(args): 'Varfile found from PYTHONPATH',
-            'PYTHONPATH ARGS %d' % len(args): '-'.join(args)}
+    return {
+        f"PYTHONPATH VAR {len(args)}": "Varfile found from PYTHONPATH",
+        f"PYTHONPATH ARGS {len(args)}": "-".join(args),
+    }

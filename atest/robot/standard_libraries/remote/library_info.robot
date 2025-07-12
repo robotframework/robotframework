@@ -16,13 +16,13 @@ Types
 
 Documentation
     ${tc} =    Check Test Case    Types
-    Should Be Equal    ${tc.body[0].doc}    Documentation for 'some_keyword'.
-    Should Be Equal    ${tc.body[4].doc}    Documentation for 'keyword_42'.
+    Should Be Equal    ${tc[0].doc}    Documentation for 'some_keyword'.
+    Should Be Equal    ${tc[4].doc}    Documentation for 'keyword_42'.
 
 Tags
     ${tc} =    Check Test Case    Types
-    Should Be Equal As Strings    ${tc.body[0].tags}    [tag]
-    Should Be Equal As Strings    ${tc.body[4].tags}    [tag]
+    Should Be Equal As Strings    ${tc[0].tags}    [tag]
+    Should Be Equal As Strings    ${tc[4].tags}    [tag]
 
 __intro__ is not exposed
     Check Test Case    ${TESTNAME}

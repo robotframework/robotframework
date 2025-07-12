@@ -20,16 +20,19 @@ from contextlib import contextmanager
 from datetime import datetime
 from itertools import zip_longest
 
-from robot.errors import (BreakLoop, ContinueLoop, DataError, ExecutionFailed,
-                          ExecutionFailures, ExecutionPassed, ExecutionStatus)
+from robot.errors import (
+    BreakLoop, ContinueLoop, DataError, ExecutionFailed, ExecutionFailures,
+    ExecutionPassed, ExecutionStatus
+)
 from robot.output import librarylogger as logger
-from robot.utils import (cut_assign_value, frange, get_error_message, is_list_like,
-                         is_number, normalize, plural_or_not as s, secs_to_timestr, seq2str,
-                         split_from_equals, type_name, Matcher, timestr_to_secs)
-from robot.variables import is_dict_variable, evaluate_expression
+from robot.utils import (
+    cut_assign_value, frange, get_error_message, is_list_like, Matcher, normalize,
+    plural_or_not as s, secs_to_timestr, seq2str, split_from_equals, timestr_to_secs,
+    type_name
+)
+from robot.variables import evaluate_expression, is_dict_variable, search_variable
 
 from .statusreporter import StatusReporter
-
 
 DEFAULT_WHILE_LIMIT = 10_000
 
@@ -56,8 +59,18 @@ class BodyRunner:
                 self._run = exception.can_continue(self._context, self._templated)
         if passed:
             raise passed
+        if errors and self._templated:
+            errors = self._handle_skip_with_templates(errors, result)
         if errors:
             raise ExecutionFailures(errors)
+
+    def _handle_skip_with_templates(self, errors, result):
+        iterations = result.body.filter(messages=False)
+        if len(iterations) < 2 or not any(e.skip for e in errors):
+            return errors
+        if all(i.skipped for i in iterations):
+            raise ExecutionFailed("All iterations skipped.", skip=True)
+        return [e for e in errors if not e.skip]
 
 
 class KeywordRunner:
@@ -66,25 +79,54 @@ class KeywordRunner:
         self._context = context
         self._run = run
 
-    def run(self, data, result, name=None):
+    def run(self, data, result, setup_or_teardown=False):
         context = self._context
-        runner = context.get_runner(name or data.name)
+        if setup_or_teardown:
+            runner = self._get_setup_teardown_runner(data, context)
+        else:
+            runner = context.get_runner(data.name, recommend_on_failure=self._run)
+        if not runner:
+            return None
         if context.dry_run:
             return runner.dry_run(data, result, context)
         return runner.run(data, result, context, self._run)
 
+    def _get_setup_teardown_runner(self, data, context):
+        try:
+            name = context.variables.replace_string(data.name)
+        except DataError as err:
+            if context.dry_run:
+                return None
+            raise ExecutionFailed(err.message)
+        if name.upper() in ("NONE", ""):
+            return None
+        # If the matched runner accepts embedded arguments, use the original name
+        # instead of the one where variables are already replaced and converted to
+        # strings. This allows using non-string values as embedded arguments also
+        # in this context. An exact match after variables have been replaced has
+        # a precedence over a possible embedded match with the original name, though.
+        # BuiltIn.run_keyword has the same logic.
+        runner = context.get_runner(name, recommend_on_failure=self._run)
+        if hasattr(runner, "embedded_args") and name != data.name:
+            candidate = context.get_runner(data.name)
+            if hasattr(candidate, "embedded_args"):
+                runner = candidate
+        return runner
 
-def ForRunner(context, flavor='IN', run=True, templated=False):
-    runners = {'IN': ForInRunner,
-               'IN RANGE': ForInRangeRunner,
-               'IN ZIP': ForInZipRunner,
-               'IN ENUMERATE': ForInEnumerateRunner}
-    runner = runners[flavor or 'IN']
+
+def ForRunner(context, flavor="IN", run=True, templated=False):
+    runners = {
+        "IN": ForInRunner,
+        "IN RANGE": ForInRangeRunner,
+        "IN ZIP": ForInZipRunner,
+        "IN ENUMERATE": ForInEnumerateRunner,
+    }
+    runner = runners[flavor or "IN"]
     return runner(context, run, templated)
 
 
 class ForInRunner:
-    flavor = 'IN'
+    flavor = "IN"
 
     def __init__(self, context, run=True, templated=False):
         self._context = context
@@ -102,24 +144,25 @@ class ForInRunner:
         with StatusReporter(data, result, self._context, run) as status:
             if run:
                 try:
+                    assign, types = self._split_types(data)
                     values_for_rounds = self._get_values_for_rounds(data)
                 except DataError as err:
                     error = err
                 else:
-                    if self._run_loop(data, result, values_for_rounds):
+                    if self._run_loop(data, result, assign, types, values_for_rounds):
                         return
             status.pass_status = result.NOT_RUN
-            self._run_one_round(data, result, run=False)
+            self._no_run_one_round(data, result)
             if error:
                 raise error
 
-    def _run_loop(self, data, result, values_for_rounds):
+    def _run_loop(self, data, result, assign, types, values_for_rounds):
         errors = []
         executed = False
         for values in values_for_rounds:
             executed = True
             try:
-                self._run_one_round(data, result, values)
+                self._run_one_round(data, result, assign, types, values)
             except (BreakLoop, ContinueLoop) as ctrl:
                 if ctrl.earlier_failures:
                     errors.extend(ctrl.earlier_failures.get_errors())
@@ -133,12 +176,28 @@ class ForInRunner:
                 if not failed.can_continue(self._context, self._templated):
                     break
         if errors:
+            if self._templated and len(errors) > 1 and all(e.skip for e in errors):
+                raise ExecutionFailed("All iterations skipped.", skip=True)
             raise ExecutionFailures(errors)
         return executed
 
+    def _split_types(self, data):
+        from .arguments import TypeInfo
+
+        assign = []
+        types = []
+        for variable in data.assign:
+            match = search_variable(variable, parse_type=True)
+            assign.append(match.name)
+            try:
+                types.append(TypeInfo.from_variable(match) if match.type else None)
+            except DataError as err:
+                raise DataError(f"Invalid FOR loop variable '{variable}': {err}")
+        return assign, types
+
     def _get_values_for_rounds(self, data):
         if self._context.dry_run:
-            return [None]
+            return [[""] * len(data.assign)]
         values_per_round = len(data.assign)
         if self._is_dict_iteration(data.values):
             values = self._resolve_dict_values(data.values)
@@ -158,12 +217,12 @@ class ForInRunner:
         if all_name_value and values:
             name, value = split_from_equals(values[0])
             logger.warn(
-                f"FOR loop iteration over values that are all in 'name=value' "
-                f"format like '{values[0]}' is deprecated. In the future this syntax "
-                f"will mean iterating over names and values separately like "
-                f"when iterating over '&{{dict}} variables. Escape at least one "
-                f"of the values like '{name}\\={value}' to use normal FOR loop "
-                f"iteration and to disable this warning."
+                f"FOR loop iteration over values that are all in 'name=value' format "
+                f"like '{values[0]}' is deprecated. In the future this syntax will "
+                f"mean iterating over names and values separately like when iterating "
+                f"over '&{{dict}} variables. Escape at least one of the values like "
+                f"'{name}\\={value}' to use normal FOR loop iteration and to disable "
+                f"this warning."
             )
         return False
 
@@ -176,9 +235,12 @@ class ForInRunner:
             else:
                 key, value = split_from_equals(item)
                 if value is None:
-                    raise DataError(f"Invalid FOR loop value '{item}'. When iterating "
-                                    f"over dictionaries, values must be '&{{dict}}' "
-                                    f"variables or use 'key=value' syntax.", syntax=True)
+                    raise DataError(
+                        f"Invalid FOR loop value '{item}'. When iterating "
+                        f"over dictionaries, values must be '&{{dict}}' "
+                        f"variables or use 'key=value' syntax.",
+                        syntax=True,
+                    )
                 try:
                     result[replace_scalar(key)] = replace_scalar(value)
                 except TypeError:
@@ -188,9 +250,11 @@ class ForInRunner:
 
     def _map_dict_values_to_rounds(self, values, per_round):
         if per_round > 2:
-            raise DataError(f'Number of FOR loop variables must be 1 or 2 when '
-                            f'iterating over dictionaries, got {per_round}.',
-                            syntax=True)
+            raise DataError(
+                f"Number of FOR loop variables must be 1 or 2 when iterating "
+                f"over dictionaries, got {per_round}.",
+                syntax=True,
+            )
         return values
 
     def _resolve_values(self, values):
@@ -201,65 +265,76 @@ class ForInRunner:
         if count % per_round != 0:
             self._raise_wrong_variable_count(per_round, count)
         # Map list of values to list of lists containing values per round.
-        return (values[i:i+per_round] for i in range(0, count, per_round))
+        return (values[i : i + per_round] for i in range(0, count, per_round))
 
     def _raise_wrong_variable_count(self, variables, values):
-        raise DataError(f'Number of FOR loop values should be multiple of its '
-                        f'variables. Got {variables} variables but {values} '
-                        f'value{s(values)}.')
+        raise DataError(
+            f"Number of FOR loop values should be multiple of its variables. "
+            f"Got {variables} variables but {values} value{s(values)}."
+        )
 
-    def _run_one_round(self, data, result, values=None, run=True):
+    def _run_one_round(self, data, result, assign, types, values, run=True):
+        ctx = self._context
         iter_data = data.get_iteration()
         iter_result = result.body.create_iteration()
-        if values is not None:
-            variables = self._context.variables
-        else:    # Not really run (earlier failure, un-executed IF branch, dry-run)
-            variables = {}
-            values = [''] * len(data.assign)
-        for name, value in self._map_variables_and_values(data.assign, values):
+        variables = ctx.variables if run and not ctx.dry_run else {}
+        if len(assign) == 1 and len(values) != 1:
+            values = [tuple(values)]
+        for orig, name, type_info, value in zip(data.assign, assign, types, values):
+            if type_info and not ctx.dry_run:
+                value = type_info.convert(value, orig, kind="FOR loop variable")
             variables[name] = value
-            iter_data.assign[name] = value
-            iter_result.assign[name] = cut_assign_value(value)
+            iter_data.assign[orig] = value
+            iter_result.assign[orig] = cut_assign_value(value)
         runner = BodyRunner(self._context, run, self._templated)
         with StatusReporter(iter_data, iter_result, self._context, run):
             runner.run(iter_data, iter_result)
 
-    def _map_variables_and_values(self, variables, values):
-        if len(variables) == 1 and len(values) != 1:
-            return [(variables[0], tuple(values))]
-        return zip(variables, values)
+    def _no_run_one_round(self, data, result):
+        self._run_one_round(
+            data,
+            result,
+            assign=data.assign,
+            types=[None] * len(data.assign),
+            values=[""] * len(data.assign),
+            run=False,
+        )
 
 
 class ForInRangeRunner(ForInRunner):
-    flavor = 'IN RANGE'
+    flavor = "IN RANGE"
 
     def _resolve_dict_values(self, values):
-        raise DataError('FOR IN RANGE loops do not support iterating over '
-                        'dictionaries.', syntax=True)
+        raise DataError(
+            "FOR IN RANGE loops do not support iterating over dictionaries.",
+            syntax=True,
+        )
 
     def _map_values_to_rounds(self, values, per_round):
         if not 1 <= len(values) <= 3:
-            raise DataError(f'FOR IN RANGE expected 1-3 values, got {len(values)}.',
-                            syntax=True)
+            raise DataError(
+                f"FOR IN RANGE expected 1-3 values, got {len(values)}.",
+                syntax=True,
+            )
         try:
             values = [self._to_number_with_arithmetic(v) for v in values]
         except Exception:
             msg = get_error_message()
-            raise DataError(f'Converting FOR IN RANGE values failed: {msg}.')
+            raise DataError(f"Converting FOR IN RANGE values failed: {msg}.")
         values = frange(*values)
         return super()._map_values_to_rounds(values, per_round)
 
     def _to_number_with_arithmetic(self, item):
-        if is_number(item):
+        if isinstance(item, (int, float)):
             return item
         number = eval(str(item), {})
-        if not is_number(number):
-            raise TypeError(f'Expected number, got {type_name(item)}.')
+        if not isinstance(number, (int, float)):
+            raise TypeError(f"Expected number, got {type_name(item)}.")
         return number
 
 
 class ForInZipRunner(ForInRunner):
-    flavor = 'IN ZIP'
+    flavor = "IN ZIP"
     _mode = None
     _fill = None
 
@@ -273,12 +348,14 @@ class ForInZipRunner(ForInRunner):
             return None
         try:
             mode = self._context.variables.replace_string(mode)
-            if mode.upper() in ('STRICT', 'SHORTEST', 'LONGEST'):
+            valid = ("STRICT", "SHORTEST", "LONGEST")
+            if mode.upper() in valid:
                 return mode.upper()
-            raise DataError(f"Value '{mode}' is not accepted. Valid values "
-                            f"are 'STRICT', 'SHORTEST' and 'LONGEST'.")
+            raise DataError(
+                f"Value '{mode}' is not accepted. Valid values are {seq2str(valid)}."
+            )
         except DataError as err:
-            raise DataError(f'Invalid FOR IN ZIP mode: {err}')
+            raise DataError(f"Invalid FOR IN ZIP mode: {err}")
 
     def _resolve_fill(self, fill):
         if not fill or self._context.dry_run:
@@ -286,19 +363,21 @@ class ForInZipRunner(ForInRunner):
         try:
             return self._context.variables.replace_scalar(fill)
         except DataError as err:
-            raise DataError(f'Invalid FOR IN ZIP fill value: {err}')
+            raise DataError(f"Invalid FOR IN ZIP fill value: {err}")
 
     def _resolve_dict_values(self, values):
-        raise DataError('FOR IN ZIP loops do not support iterating over dictionaries.',
-                        syntax=True)
+        raise DataError(
+            "FOR IN ZIP loops do not support iterating over dictionaries.",
+            syntax=True,
+        )
 
     def _map_values_to_rounds(self, values, per_round):
         self._validate_types(values)
         if len(values) % per_round != 0:
             self._raise_wrong_variable_count(per_round, len(values))
-        if self._mode == 'LONGEST':
+        if self._mode == "LONGEST":
             return zip_longest(*values, fillvalue=self._fill)
-        if self._mode == 'STRICT':
+        if self._mode == "STRICT":
             self._validate_strict_lengths(values)
         if self._mode is None:
             self._deprecate_different_lengths(values)
@@ -307,8 +386,10 @@ class ForInZipRunner(ForInRunner):
     def _validate_types(self, values):
         for index, item in enumerate(values, start=1):
             if not is_list_like(item):
-                raise DataError(f"FOR IN ZIP items must be list-like, but item {index} "
-                                f"is {type_name(item)}.")
+                raise DataError(
+                    f"FOR IN ZIP items must be list-like, "
+                    f"but item {index} is {type_name(item)}."
+                )
 
     def _validate_strict_lengths(self, values):
         lengths = []
@@ -316,24 +397,30 @@ class ForInZipRunner(ForInRunner):
             try:
                 lengths.append(len(item))
             except TypeError:
-                raise DataError(f"FOR IN ZIP items must have length in the STRICT "
-                                f"mode, but item {index} does not.")
+                raise DataError(
+                    f"FOR IN ZIP items must have length in the STRICT mode, "
+                    f"but item {index} does not."
+                )
         if len(set(lengths)) > 1:
-            raise DataError(f"FOR IN ZIP items must have equal lengths in the STRICT "
-                            f"mode, but lengths are {seq2str(lengths, quote='')}.")
+            raise DataError(
+                f"FOR IN ZIP items must have equal lengths in the STRICT mode, "
+                f"but lengths are {seq2str(lengths, quote='')}."
+            )
 
     def _deprecate_different_lengths(self, values):
         try:
             self._validate_strict_lengths(values)
         except DataError as err:
-            logger.warn(f"FOR IN ZIP default mode will be changed from SHORTEST to "
-                        f"STRICT in Robot Framework 8.0. Use 'mode=SHORTEST' to keep "
-                        f"using the SHORTEST mode. If the mode is not changed, "
-                        f"execution will fail like this in the future: {err}")
+            logger.warn(
+                f"FOR IN ZIP default mode will be changed from SHORTEST to STRICT in "
+                f"Robot Framework 8.0. Use 'mode=SHORTEST' to keep using the SHORTEST "
+                f"mode. If the mode is not changed, execution will fail like this in "
+                f"the future: {err}"
+            )
 
 
 class ForInEnumerateRunner(ForInRunner):
-    flavor = 'IN ENUMERATE'
+    flavor = "IN ENUMERATE"
     _start = 0
 
     def _get_values_for_rounds(self, data):
@@ -350,26 +437,29 @@ class ForInEnumerateRunner(ForInRunner):
             except ValueError:
                 raise DataError(f"Value must be an integer, got '{start}'.")
         except DataError as err:
-            raise DataError(f'Invalid FOR IN ENUMERATE start value: {err}')
+            raise DataError(f"Invalid FOR IN ENUMERATE start value: {err}")
 
     def _map_dict_values_to_rounds(self, values, per_round):
         if per_round > 3:
-            raise DataError(f'Number of FOR IN ENUMERATE loop variables must be 1-3 '
-                            f'when iterating over dictionaries, got {per_round}.',
-                            syntax=True)
+            raise DataError(
+                f"Number of FOR IN ENUMERATE loop variables must be 1-3 "
+                f"when iterating over dictionaries, got {per_round}.",
+                syntax=True,
+            )
         if per_round == 2:
             return ((i, v) for i, v in enumerate(values, start=self._start))
-        return ((i,) + v for i, v in enumerate(values, start=self._start))
+        return ((i, *v) for i, v in enumerate(values, start=self._start))
 
     def _map_values_to_rounds(self, values, per_round):
-        per_round = max(per_round-1, 1)
-        values = super()._map_values_to_rounds(values, per_round)
-        return ([i] + v for i, v in enumerate(values, start=self._start))
+        values = super()._map_values_to_rounds(values, max(per_round - 1, 1))
+        return ((i, *v) for i, v in enumerate(values, start=self._start))
 
     def _raise_wrong_variable_count(self, variables, values):
-        raise DataError(f'Number of FOR IN ENUMERATE loop values should be multiple of '
-                        f'its variables (excluding the index). Got {variables} '
-                        f'variables but {values} value{s(values)}.')
+        raise DataError(
+            f"Number of FOR IN ENUMERATE loop values should be multiple of its "
+            f"variables (excluding the index). Got {variables} variables but "
+            f"{values} value{s(values)}."
+        )
 
 
 class WhileRunner:
@@ -383,7 +473,6 @@ class WhileRunner:
         ctx = self._context
         error = None
         run = False
-        limit = None
         result.start_time = datetime.now()
         iter_result = result.body.create_iteration(start_time=datetime.now())
         if self._run:
@@ -391,15 +480,17 @@ class WhileRunner:
                 error = DataError(data.error, syntax=True)
             elif not ctx.dry_run:
                 try:
-                    limit = WhileLimit.create(data.limit,
-                                              data.on_limit,
-                                              data.on_limit_message,
-                                              ctx.variables)
                     run = self._should_run(data.condition, ctx.variables)
                 except DataError as err:
                     error = err
         with StatusReporter(data, result, self._context, run):
             iter_data = data.get_iteration()
+            if run:
+                try:
+                    limit = WhileLimit.create(data, ctx.variables)
+                except DataError as err:
+                    error = err
+                    run = False
             if ctx.dry_run or not run:
                 self._run_iteration(iter_data, iter_result, run)
                 if error:
@@ -444,11 +535,44 @@ class WhileRunner:
         if not condition:
             return True
         try:
-            return evaluate_expression(condition, variables.current,
-                                       resolve_variables=True)
+            return evaluate_expression(
+                condition,
+                variables.current,
+                resolve_variables=True,
+            )
         except Exception:
             msg = get_error_message()
-            raise DataError(f'Invalid WHILE loop condition: {msg}')
+            raise DataError(f"Invalid WHILE loop condition: {msg}")
+
+
+class GroupRunner:
+
+    def __init__(self, context, run=True, templated=False):
+        self._context = context
+        self._run = run
+        self._templated = templated
+
+    def run(self, data, result):
+        if self._run:
+            error = self._initialize(data, result)
+            run = error is None
+        else:
+            error = None
+            run = False
+        with StatusReporter(data, result, self._context, run=run):
+            runner = BodyRunner(self._context, run, self._templated)
+            runner.run(data, result)
+            if error:
+                raise error
+
+    def _initialize(self, data, result):
+        if data.error:
+            return DataError(data.error, syntax=True)
+        try:
+            result.name = self._context.variables.replace_string(result.name)
+        except DataError as err:
+            return err
+        return None
 
 
 class IfRunner:
@@ -465,7 +589,12 @@ class IfRunner:
             with StatusReporter(data, result, self._context, self._run):
                 for branch in data.body:
                     try:
-                        if self._run_if_branch(branch, result, recursive_dry_run, data.error):
+                        if self._run_if_branch(
+                            branch,
+                            result,
+                            recursive_dry_run,
+                            data.error,
+                        ):
                             self._run = False
                     except ExecutionStatus as err:
                         error = err
@@ -488,8 +617,11 @@ class IfRunner:
 
     def _run_if_branch(self, data, result, recursive_dry_run=False, syntax_error=None):
         context = self._context
-        result = result.body.create_branch(data.type, data.condition,
-                                           start_time=datetime.now())
+        result = result.body.create_branch(
+            data.type,
+            data.condition,
+            start_time=datetime.now(),
+        )
         error = None
         if syntax_error:
             run_branch = False
@@ -516,11 +648,14 @@ class IfRunner:
         if data.condition is None:
             return True
         try:
-            return evaluate_expression(data.condition, context.variables.current,
-                                       resolve_variables=True)
+            return evaluate_expression(
+                data.condition,
+                context.variables.current,
+                resolve_variables=True,
+            )
         except Exception:
             msg = get_error_message()
-            raise DataError(f'Invalid {data.type} condition: {msg}')
+            raise DataError(f"Invalid {data.type} condition: {msg}")
 
 
 class TryRunner:
@@ -551,9 +686,19 @@ class TryRunner:
     def _run_invalid(self, data, result):
         error_reported = False
         for branch in data.body:
-            branch_result = result.body.create_branch(branch.type, branch.patterns,
-                                                      branch.pattern_type, branch.assign)
-            with StatusReporter(branch, branch_result, self._context, run=False, suppress=True):
+            branch_result = result.body.create_branch(
+                branch.type,
+                branch.patterns,
+                branch.pattern_type,
+                branch.assign,
+            )
+            with StatusReporter(
+                branch,
+                branch_result,
+                self._context,
+                run=False,
+                suppress=True,
+            ):
                 runner = BodyRunner(self._context, run=False, templated=self._templated)
                 runner.run(branch, branch_result)
                 if not error_reported:
@@ -593,8 +738,12 @@ class TryRunner:
                 pattern_error = err
             else:
                 pattern_error = None
-            branch_result = result.body.create_branch(branch.type, branch.patterns,
-                                                      branch.pattern_type, branch.assign)
+            branch_result = result.body.create_branch(
+                branch.type,
+                branch.patterns,
+                branch.pattern_type,
+                branch.assign,
+            )
             if run_branch:
                 if branch.assign:
                     self._context.variables[branch.assign] = str(error)
@@ -608,19 +757,21 @@ class TryRunner:
         if not branch.patterns:
             return True
         matchers = {
-            'GLOB': lambda m, p: Matcher(p, spaceless=False, caseless=False).match(m),
-            'REGEXP': lambda m, p: re.fullmatch(p, m) is not None,
-            'START': lambda m, p: m.startswith(p),
-            'LITERAL': lambda m, p: m == p,
+            "GLOB": lambda m, p: Matcher(p, spaceless=False, caseless=False).match(m),
+            "REGEXP": lambda m, p: re.fullmatch(p, m) is not None,
+            "START": lambda m, p: m.startswith(p),
+            "LITERAL": lambda m, p: m == p,
         }
         if branch.pattern_type:
             pattern_type = self._context.variables.replace_string(branch.pattern_type)
         else:
-            pattern_type = 'LITERAL'
+            pattern_type = "LITERAL"
         matcher = matchers.get(pattern_type.upper())
         if not matcher:
-            raise DataError(f"Invalid EXCEPT pattern type '{pattern_type}'. "
-                            f"Valid values are {seq2str(matchers)}.")
+            raise DataError(
+                f"Invalid EXCEPT pattern type '{pattern_type}'. "
+                f"Valid values are {seq2str(matchers)}."
+            )
         for pattern in branch.patterns:
             if matcher(error.message, self._context.variables.replace_string(pattern)):
                 return True
@@ -651,50 +802,68 @@ class WhileLimit:
         self.on_limit_message = on_limit_message
 
     @classmethod
-    def create(cls, limit, on_limit, on_limit_message, variables):
-        if on_limit_message:
-            try:
-                on_limit_message = variables.replace_string(on_limit_message)
-            except DataError as err:
-                raise DataError(f"Invalid WHILE loop 'on_limit_message': '{err}")
-        on_limit = cls._parse_on_limit(variables, on_limit)
+    def create(cls, data, variables):
+        limit = cls._parse_limit(data.limit, variables)
+        on_limit = cls._parse_on_limit(data.on_limit, variables)
+        on_limit_msg = cls._parse_on_limit_message(data.on_limit_message, variables)
         if not limit:
-            return IterationCountLimit(DEFAULT_WHILE_LIMIT, on_limit, on_limit_message)
-        limit = variables.replace_string(limit)
-        if limit.upper() == 'NONE':
+            return IterationCountLimit(DEFAULT_WHILE_LIMIT, on_limit, on_limit_msg)
+        if limit.upper() == "NONE":
             return NoLimit()
         try:
             count = cls._parse_limit_as_count(limit)
         except ValueError:
             seconds = cls._parse_limit_as_timestr(limit)
-            return DurationLimit(seconds, on_limit, on_limit_message)
+            return DurationLimit(seconds, on_limit, on_limit_msg)
         else:
-            return IterationCountLimit(count, on_limit, on_limit_message)
+            return IterationCountLimit(count, on_limit, on_limit_msg)
 
     @classmethod
-    def _parse_on_limit(cls, variables, on_limit):
-        if on_limit is None:
+    def _parse_limit(cls, limit, variables):
+        if not limit:
+            return None
+        try:
+            return variables.replace_string(limit)
+        except DataError as err:
+            raise DataError(f"Invalid WHILE loop limit: {err}")
+
+    @classmethod
+    def _parse_on_limit(cls, on_limit, variables):
+        if not on_limit:
             return None
         try:
             on_limit = variables.replace_string(on_limit)
-            if on_limit.upper() in ('PASS', 'FAIL'):
+            if on_limit.upper() in ("PASS", "FAIL"):
                 return on_limit.upper()
-            raise DataError(f"Value '{on_limit}' is not accepted. Valid values "
-                            f"are 'PASS' and 'FAIL'.")
+            raise DataError(
+                f"Value '{on_limit}' is not accepted. Valid values are "
+                f"'PASS' and 'FAIL'."
+            )
         except DataError as err:
-            raise DataError(f"Invalid WHILE loop 'on_limit' value: {err}")
+            raise DataError(f"Invalid WHILE loop 'on_limit': {err}")
+
+    @classmethod
+    def _parse_on_limit_message(cls, on_limit_message, variables):
+        if not on_limit_message:
+            return None
+        try:
+            return variables.replace_string(on_limit_message)
+        except DataError as err:
+            raise DataError(f"Invalid WHILE loop 'on_limit_message': '{err}")
 
     @classmethod
     def _parse_limit_as_count(cls, limit):
         limit = normalize(limit)
-        if limit.endswith('times'):
+        if limit.endswith("times"):
             limit = limit[:-5]
-        elif limit.endswith('x'):
+        elif limit.endswith("x"):
             limit = limit[:-1]
         count = int(limit)
         if count <= 0:
-            raise DataError(f"Invalid WHILE loop limit: Iteration count must be "
-                            f"a positive integer, got '{count}'.")
+            raise DataError(
+                f"Invalid WHILE loop limit: Iteration count must be a positive "
+                f"integer, got '{count}'."
+            )
         return count
 
     @classmethod
@@ -702,18 +871,18 @@ class WhileLimit:
         try:
             return timestr_to_secs(limit)
         except ValueError as err:
-            raise DataError(f'Invalid WHILE loop limit: {err.args[0]}')
+            raise DataError(f"Invalid WHILE loop limit: {err.args[0]}")
 
     def limit_exceeded(self):
-        on_limit_pass = self.on_limit == 'PASS'
         if self.on_limit_message:
-            raise LimitExceeded(on_limit_pass, self.on_limit_message)
+            message = self.on_limit_message
         else:
-            raise LimitExceeded(
-                on_limit_pass,
-                f"WHILE loop was aborted because it did not finish within the limit of {self}. "
-                f"Use the 'limit' argument to increase or remove the limit if needed."
+            message = (
+                f"WHILE loop was aborted because it did not finish within the limit "
+                f"of {self}. Use the 'limit' argument to increase or remove the limit "
+                f"if needed."
             )
+        raise LimitExceeded(self.on_limit == "PASS", message)
 
     def __enter__(self):
         raise NotImplementedError
@@ -752,7 +921,7 @@ class IterationCountLimit(WhileLimit):
         self.current_iterations += 1
 
     def __str__(self):
-        return f'{self.max_iterations} iterations'
+        return f"{self.max_iterations} iterations"
 
 
 class NoLimit(WhileLimit):

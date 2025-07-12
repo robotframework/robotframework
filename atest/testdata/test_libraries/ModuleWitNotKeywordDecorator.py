@@ -1,8 +1,7 @@
 # None of these decorators should be exposed as keywords.
-from robot.api.deco import keyword, library, not_keyword
-
 from os.path import abspath
 
+from robot.api.deco import keyword, not_keyword
 
 not_keyword(abspath)
 

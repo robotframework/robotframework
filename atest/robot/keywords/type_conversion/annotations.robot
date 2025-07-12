@@ -75,10 +75,16 @@ Bytestring replacement
 Datetime
     Check Test Case    ${TESTNAME}
 
+Datetime with now and today
+    Check Test Case    ${TESTNAME}
+
 Invalid datetime
     Check Test Case    ${TESTNAME}
 
 Date
+    Check Test Case    ${TESTNAME}
+
+Date with now and today
     Check Test Case    ${TESTNAME}
 
 Invalid date
@@ -177,6 +183,9 @@ Invalid frozenset
 Unknown types are not converted
     Check Test Case    ${TESTNAME}
 
+Unknown types are not converted in union
+    Check Test Case    ${TESTNAME}
+
 Non-type values don't cause errors
     Check Test Case    ${TESTNAME}
 
@@ -216,6 +225,9 @@ None as default with unknown type
 Forward references
     Check Test Case    ${TESTNAME}
 
+Unknown forward references
+    Check Test Case    ${TESTNAME}
+
 @keyword decorator overrides annotations
     Check Test Case    ${TESTNAME}
 
@@ -238,4 +250,9 @@ Default value is used if explicit type conversion fails
     Check Test Case    ${TESTNAME}
 
 Explicit conversion failure is used if both conversions fail
+    Check Test Case    ${TESTNAME}
+
+Deferred evaluation of annotations
+    [Documentation]    https://peps.python.org/pep-0649
+    [Tags]    require-py3.14
     Check Test Case    ${TESTNAME}

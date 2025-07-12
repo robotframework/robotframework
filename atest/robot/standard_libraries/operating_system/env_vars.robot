@@ -42,8 +42,8 @@ Set Environment Variable In One Test And Use In Another
 
 Get And Log Environment Variables
     ${tc}=    Check test case    ${TEST NAME}
-    Check log message    ${tc.kws[9].msgs[0]}    0 = value
-    Check log message    ${tc.kws[9].msgs[1]}    1 = äiti
+    Check log message    ${tc[9, 0]}    0 = value
+    Check log message    ${tc[9, 1]}    1 = äiti
 
 Non-string names and values are converted to strings automatically
     Check test case    ${TEST NAME}

@@ -24,5 +24,5 @@ Standard libraries can be imported through `robot.libraries.`
 
 In test data standard libraries can be imported directly
     ${tc} =    Check Test Case    ${TESTNAME}
-    Should Be Equal    ${tc.kws[0].full_name}    OperatingSystem.Directory Should Exist
-    Should Be Equal    ${tc.kws[1].full_name}    OperatingSystem.Directory Should Exist
+    Should Be Equal    ${tc[0].full_name}    OperatingSystem.Directory Should Exist
+    Should Be Equal    ${tc[1].full_name}    OperatingSystem.Directory Should Exist

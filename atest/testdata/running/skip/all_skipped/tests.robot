@@ -1,6 +1,6 @@
 *** Settings ***
-Suite Setup       Fail    Because all tests are skipped
-Suite Teardown    Fail    these should not be run
+Suite Setup       Fail    Because all tests are skipped or excluded,
+Suite Teardown    Fail    suite setup and teardown should not be run.
 
 *** Test Cases ***
 Skip using robot:skip
@@ -9,7 +9,7 @@ Skip using robot:skip
     Fail    Should not be run
 
 Skip using --skip
-    [Documentation]    SKIP    Test skipped using '--skip' command line option.
+    [Documentation]    SKIP    Test skipped using 'skip-this' tag.
     [Tags]    skip-this
     Fail    Should not be run
 

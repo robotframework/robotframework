@@ -12,7 +12,7 @@ class AnotherObject:
 
 class BadRationalMeta(type(Rational)):
     def __instancecheck__(self, instance):
-        raise TypeError('Bang!')
+        raise TypeError("Bang!")
 
 
 class BadRational(Rational, metaclass=BadRationalMeta):
@@ -52,19 +52,19 @@ def union_with_str_and_abc(argument: str | Rational, expected):
 
 
 def union_with_subscripted_generics(argument: list[int] | int, expected=object()):
-    assert argument == eval(expected), '%r != %s' % (argument, expected)
+    assert argument == eval(expected), f"{argument!r} != {expected!r}"
 
 
 def union_with_subscripted_generics_and_str(argument: list[str] | str, expected):
-    assert argument == eval(expected), '%r != %s' % (argument, expected)
+    assert argument == eval(expected), f"{argument!r} != {expected!r}"
 
 
 def union_with_typeddict(argument: XD | None, expected):
-    assert argument == eval(expected), '%r != %s' % (argument, expected)
+    assert argument == eval(expected), f"{argument!r} != {expected!r}"
 
 
 def union_with_item_not_liking_isinstance(argument: BadRational | bool, expected):
-    assert argument == expected, '%r != %r' % (argument, expected)
+    assert argument == expected, f"{argument!r} != {expected!r}"
 
 
 def custom_type_in_union(argument: MyObject | str, expected_type):

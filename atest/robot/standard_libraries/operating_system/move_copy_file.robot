@@ -56,29 +56,29 @@ Name Contains Glob
 
 Copy File to same path
     ${tc} =    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc.kws[1].msgs[0]}    ${SAME FILE}    pattern=True    html=True
+    Check Log Message    ${tc[1, 0]}    ${SAME FILE}    pattern=True    html=True
 
 Move File to same path
     ${tc} =    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc.kws[1].msgs[0]}    ${SAME FILE}    pattern=True    html=True
+    Check Log Message    ${tc[1, 0]}    ${SAME FILE}    pattern=True    html=True
 
 Copy File to same directory
     ${tc} =    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc.kws[1].msgs[0]}    ${SAME FILE}    pattern=True    html=True
+    Check Log Message    ${tc[1, 0]}    ${SAME FILE}    pattern=True    html=True
 
 Move File to same directory
     ${tc} =    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc.kws[1].msgs[0]}    ${SAME FILE}    pattern=True    html=True
+    Check Log Message    ${tc[1, 0]}    ${SAME FILE}    pattern=True    html=True
 
 Copy File to same path with different case on Windows
     [Tags]    require-windows
     ${tc} =    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc.kws[1].msgs[0]}    ${SAME FILE}    pattern=True    html=True
+    Check Log Message    ${tc[1, 0]}    ${SAME FILE}    pattern=True    html=True
 
 Move File to same path with different case on Windows
     [Tags]    require-windows
     ${tc} =    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc.kws[1].msgs[0]}    ${SAME FILE}    pattern=True    html=True
+    Check Log Message    ${tc[1, 0]}    ${SAME FILE}    pattern=True    html=True
 
 Copy File to same path when file doesn't exist
     Check Test Case    ${TESTNAME}

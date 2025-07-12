@@ -1,5 +1,5 @@
 *** Settings ***
-Test Tags       -in-settings    tag1    tag2    tag3    ${TAG}
+Test Tags       -in-settings    tag1    tag2    tag3    ${TAG}    \-escaped-in-settings
 Keyword Tags    -in-settings    kw1    kw2
 Resource        -tag_syntax.resource
 
@@ -9,11 +9,11 @@ ${VAR}          -variable
 
 *** Test Cases ***
 Remove from test
-    [Tags]    -tag2    tag4    -${tag}    --in-settings
+    [Tags]    -tag2    tag4    -${tag}    --in-settings    -\-escaped-in-settings
     Remove from keyword
 
 Remove from test using pattern
-    [Tags]    -tag[12]
+    [Tags]    -tag[12]    -*esc*
     Remove from keyword using pattern
 
 Escaped

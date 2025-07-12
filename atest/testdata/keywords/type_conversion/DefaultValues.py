@@ -1,14 +1,14 @@
-from enum import Flag, Enum, IntFlag, IntEnum
-from datetime import datetime, date, timedelta
+from datetime import date, datetime, timedelta
 from decimal import Decimal
-from pathlib import Path, PurePath    # Path needed by `eval()` in `_validate_type()`.
+from enum import Enum, Flag, IntEnum, IntFlag
+from pathlib import Path, PurePath
 
 from robot.api.deco import keyword
 
 
 class MyEnum(Enum):
     FOO = 1
-    bar = 'xxx'
+    bar = "xxx"
 
 
 class MyFlag(Flag):
@@ -39,7 +39,7 @@ def float_(argument=-1.0, expected=None):
     _validate_type(argument, expected)
 
 
-def decimal(argument=Decimal('1.2'), expected=None):
+def decimal(argument=Decimal("1.2"), expected=None):
     _validate_type(argument, expected)
 
 
@@ -47,11 +47,11 @@ def boolean(argument=True, expected=None):
     _validate_type(argument, expected)
 
 
-def string(argument='', expected=None):
+def string(argument="", expected=None):
     _validate_type(argument, expected)
 
 
-def bytes_(argument=b'', expected=None):
+def bytes_(argument=b"", expected=None):
     _validate_type(argument, expected)
 
 
@@ -99,23 +99,23 @@ def none(argument=None, expected=None):
     _validate_type(argument, expected)
 
 
-def list_(argument=['mutable', 'defaults', 'are', 'bad'], expected=None):
+def list_(argument=["mutable", "defaults", "are", "bad"], expected=None):
     _validate_type(argument, expected)
 
 
-def tuple_(argument=('immutable', 'defaults', 'are', 'ok'), expected=None):
+def tuple_(argument=("immutable", "defaults", "are", "ok"), expected=None):
     _validate_type(argument, expected)
 
 
-def dictionary(argument={'mutable defaults': 'are bad'}, expected=None):
+def dictionary(argument={"mutable defaults": "are bad"}, expected=None):
     _validate_type(argument, expected)
 
 
-def set_(argument={'mutable', 'defaults', 'are', 'bad'}, expected=None):
+def set_(argument={"mutable", "defaults", "are", "bad"}, expected=None):
     _validate_type(argument, expected)
 
 
-def frozenset_(argument=frozenset({'immutable', 'ok'}), expected=None):
+def frozenset_(argument=frozenset({"immutable", "ok"}), expected=None):
     _validate_type(argument, expected)
 
 
@@ -127,12 +127,12 @@ def kwonly(*, argument=0.0, expected=None):
     _validate_type(argument, expected)
 
 
-@keyword(types={'argument': timedelta})
+@keyword(types={"argument": timedelta})
 def types_via_keyword_deco_override(argument=0, expected=None):
     _validate_type(argument, expected)
 
 
-@keyword(name='None as types via @keyword disables', types=None)
+@keyword(name="None as types via @keyword disables", types=None)
 def none_as_types(argument=0, expected=None):
     _validate_type(argument, expected)
 
@@ -150,7 +150,7 @@ def keyword_deco_alone_does_not_override(argument=0, expected=None):
 def _validate_type(argument, expected):
     if isinstance(expected, str):
         expected = eval(expected)
-    if argument != expected or type(argument) != type(expected):
-        raise AssertionError('%r (%s) != %r (%s)'
-                             % (argument, type(argument).__name__,
-                                expected, type(expected).__name__))
+    if argument != expected or type(argument) is not type(expected):
+        atype = type(argument).__name__
+        etype = type(expected).__name__
+        raise AssertionError(f"{argument!r} ({atype}) != {expected!r} ({etype})")

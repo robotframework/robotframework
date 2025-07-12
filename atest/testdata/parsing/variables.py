@@ -1,1 +1,1 @@
-variable_file = 'variable in variable file'
+variable_file = "variable in variable file"

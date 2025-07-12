@@ -7,8 +7,8 @@ ${USE LIMIT}   Use the 'limit' argument to increase or remove the limit if neede
 *** Test Cases ***
 Default limit is 10000 iterations
     [Documentation]     FAIL WHILE loop was aborted because it did not finish within the limit of 10000 iterations. ${USE LIMIT}
-    WHILE    $variable < 2
-        Log    ${variable}
+    WHILE    True
+        No Operation
     END
 
 Limit with iteration count
@@ -57,8 +57,7 @@ Part of limit from variable
     END
 
 Limit can be disabled
-    WHILE    $variable < 110    limit=NoNe
-        Log     ${variable}
+    WHILE    $variable < 10042    limit=NoNe
         ${variable}=    Evaluate    $variable + 1
     END
 
@@ -111,6 +110,12 @@ Invalid limit invalid value
 Invalid limit mistyped prefix
     [Documentation]     FAIL WHILE accepts only one condition, got 2 conditions '$variable < 2' and 'limitation=2'.
     WHILE    $variable < 2    limitation=2
+        Fail    Should not be executed
+    END
+
+Limit with non-existing variable
+    [Documentation]     FAIL Invalid WHILE loop limit: Variable '\${bad}' not found.
+    WHILE    limit=${bad}
         Fail    Should not be executed
     END
 

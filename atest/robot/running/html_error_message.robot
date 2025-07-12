@@ -9,15 +9,15 @@ ${FAILURE}            <a href='http://robotframework.org'>Robot Framework</a>
 *** Test Cases ***
 Set Test Message
     ${tc} =    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    Set test message to:\n${MESSAGE}    html=True
+    Check Log Message    ${tc[0, 0]}    Set test message to:\n${MESSAGE}    html=True
 
 HTML failure
     ${tc} =    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    ${FAILURE}    FAIL    html=True
+    Check Log Message    ${tc[0, 0]}    ${FAILURE}    FAIL    html=True
 
 HTML failure with non-generic exception
     ${tc} =    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    ValueError: Invalid <b>value</b>    FAIL    html=True
+    Check Log Message    ${tc[0, 0]}    ValueError: Invalid <b>value</b>    FAIL    html=True
 
 HTML failure in setup
     Check Test Case    ${TESTNAME}
@@ -30,8 +30,8 @@ Normal failure in body and HTML failure in teardown
 
 HTML failure in body and normal failure teardown
     ${tc} =    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    Should be <b>HTML</b>    FAIL    html=True
-    Check Log Message    ${tc.teardown.msgs[0]}    Should NOT be <b>HTML</b>    FAIL    html=False
+    Check Log Message    ${tc[0, 0]}    Should be <b>HTML</b>    FAIL    html=True
+    Check Log Message    ${tc.teardown[0]}    Should NOT be <b>HTML</b>    FAIL    html=False
 
 HTML failure in body and in teardown
     Check Test Case    ${TESTNAME}

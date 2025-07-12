@@ -39,7 +39,7 @@ Conflicting headers with --rpa are fine
 
 Conflicting headers with --norpa are fine
     [Template]    Run and validate test cases
-    --NorPA -v TIMEOUT:Test    rpa/                    @{ALL TASKS}
+    --NorPA -v TIMEOUT:Test -v RPA:False    rpa/       @{ALL TASKS}
 
 Conflicting headers in same file cause error
     [Documentation]    Using --rpa or --norpa doesn't affect the behavior.

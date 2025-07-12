@@ -36,15 +36,18 @@ Libdoc itself is implemented in the :mod:`~robot.libdocpkg` package.
 import sys
 from pathlib import Path
 
-if __name__ == '__main__' and 'robot' not in sys.modules:
-    import pythonpathsetter
+if __name__ == "__main__" and "robot" not in sys.modules:
+    from pythonpathsetter import set_pythonpath
 
-from robot.utils import Application, seq2str
+    set_pythonpath()
+
 from robot.errors import DataError
-from robot.libdocpkg import LibraryDocumentation, ConsoleViewer
+from robot.libdocpkg import (
+    ConsoleViewer, format_languages, LANGUAGES, LibraryDocumentation
+)
+from robot.utils import Application, seq2str
 
-
-USAGE = """Libdoc -- Robot Framework library documentation generator
+USAGE = f"""Libdoc -- Robot Framework library documentation generator
 
 Version:  <VERSION>
 
@@ -67,9 +70,6 @@ the normal installation. Alternatively it is possible to execute the
 can be replaced with any supported Python interpreter. Yet another alternative
 is running the module as a script like `python path/to/robot/libdoc.py`.
 
-The separate `libdoc` command and the support for JSON spec files are new in
-Robot Framework 4.0.
-
 Options
 =======
 
@@ -85,7 +85,7 @@ Options
                           documentation format and HTML means converting
                           documentation to HTML. The default is RAW with XML
                           spec files and HTML with JSON specs and when using
-                          the special LIBSPEC format. New in RF 4.0.
+                          the special LIBSPEC format.
  -F --docformat ROBOT|HTML|TEXT|REST
                           Specifies the source documentation format. Possible
                           values are Robot Framework's documentation format,
@@ -96,11 +96,15 @@ Options
                           Use dark or light HTML theme. If this option is not
                           used, or the value is NONE, the theme is selected
                           based on the browser color scheme. New in RF 6.0.
+    --language lang       Set the default language used in HTML outputs.
+                          `lang` must be one of the built-in language codes:
+{format_languages()}
+                          New in RF 7.2.
  -n --name name           Sets the name of the documented library or resource.
  -v --version version     Sets the version of the documented library or
                           resource.
     --quiet               Do not print the path of the generated output file
-                          to the console. New in RF 4.0.
+                          to the console.
  -P --pythonpath path *   Additional locations where to search for libraries
                           and resources.
  -h -? --help             Print this help.
@@ -168,18 +172,29 @@ http://robotframework.org/robotframework/#built-in-tools.
 class LibDoc(Application):
 
     def __init__(self):
-        Application.__init__(self, USAGE, arg_limits=(2,), auto_version=False)
+        super().__init__(USAGE, arg_limits=(2,), auto_version=False)
 
     def validate(self, options, arguments):
         if ConsoleViewer.handles(arguments[1]):
             ConsoleViewer.validate_command(arguments[1], arguments[2:])
             return options, arguments
         if len(arguments) > 2:
-            raise DataError('Only two arguments allowed when writing output.')
+            raise DataError("Only two arguments allowed when writing output.")
         return options, arguments
 
-    def main(self, args, name='', version='', format=None, docformat=None,
-             specdocformat=None, theme=None, pythonpath=None, quiet=False):
+    def main(
+        self,
+        args,
+        name="",
+        version="",
+        format=None,
+        docformat=None,
+        specdocformat=None,
+        theme=None,
+        language=None,
+        pythonpath=None,
+        quiet=False,
+    ):
         if pythonpath:
             sys.path = pythonpath + sys.path
         lib_or_res, output = args[:2]
@@ -188,54 +203,79 @@ class LibDoc(Application):
         if ConsoleViewer.handles(output):
             ConsoleViewer(libdoc).view(output, *args[2:])
             return
-        format, specdocformat \
-            = self._get_format_and_specdocformat(format, specdocformat, output)
-        if (format == 'HTML'
-                or specdocformat == 'HTML'
-                or format in ('JSON', 'LIBSPEC') and specdocformat != 'RAW'):
+        format, specdocformat = self._get_format_and_specdocformat(
+            format, specdocformat, output
+        )
+        if (
+            format == "HTML"
+            or specdocformat == "HTML"
+            or (format in ("JSON", "LIBSPEC") and specdocformat != "RAW")
+        ):
             libdoc.convert_docs_to_html()
-        libdoc.save(output, format, self._validate_theme(theme, format))
+        libdoc.save(
+            output,
+            format,
+            self._validate_theme(theme, format),
+            self._validate_lang(language),
+        )
         if not quiet:
             self.console(Path(output).absolute())
 
     def _get_docformat(self, docformat):
-        return self._validate('Doc format', docformat, 'ROBOT', 'TEXT', 'HTML', 'REST')
+        return self._validate(
+            "Doc format",
+            docformat,
+            ("ROBOT", "TEXT", "HTML", "REST"),
+        )
 
     def _get_format_and_specdocformat(self, format, specdocformat, output):
         extension = Path(output).suffix[1:]
-        format = self._validate('Format', format or extension,
-                                'HTML', 'XML', 'JSON', 'LIBSPEC', allow_none=False)
-        specdocformat = self._validate('Spec doc format', specdocformat, 'RAW', 'HTML')
-        if format == 'HTML' and specdocformat:
-            raise DataError("The --specdocformat option is not applicable with "
-                            "HTML outputs.")
+        format = self._validate(
+            "Format",
+            format or extension,
+            ("HTML", "XML", "JSON", "LIBSPEC"),
+            allow_none=False,
+        )
+        specdocformat = self._validate(
+            "Spec doc format",
+            specdocformat,
+            ("RAW", "HTML"),
+        )
+        if format == "HTML" and specdocformat:
+            raise DataError(
+                "The --specdocformat option is not applicable with HTML outputs."
+            )
         return format, specdocformat
 
-    def _validate(self, kind, value, *valid, allow_none=True):
+    def _validate(self, kind, value, valid, allow_none=True):
         if value:
             value = value.upper()
         elif allow_none:
             return None
         if value not in valid:
-            raise DataError(f"{kind} must be {seq2str(valid, lastsep=' or ')}, "
-                            f"got '{value}'.")
+            raise DataError(
+                f"{kind} must be {seq2str(valid, lastsep=' or ')}, got '{value}'."
+            )
         return value
 
     def _validate_theme(self, theme, format):
-        theme = self._validate('Theme', theme, 'DARK', 'LIGHT', 'NONE')
-        if not theme or theme == 'NONE':
+        theme = self._validate("Theme", theme, ("DARK", "LIGHT", "NONE"))
+        if not theme or theme == "NONE":
             return None
-        if format != 'HTML':
+        if format != "HTML":
             raise DataError("The --theme option is only applicable with HTML outputs.")
         return theme
+
+    def _validate_lang(self, lang):
+        return self._validate("Language", lang, valid=[*LANGUAGES, "NONE"])
 
 
 def libdoc_cli(arguments=None, exit=True):
     """Executes Libdoc similarly as from the command line.
 
     :param arguments: Command line options and arguments as a list of strings.
-        Starting from RF 4.0, defaults to ``sys.argv[1:]`` if not given.
-    :param exit: If ``True``, call ``sys.exit`` automatically. New in RF 4.0.
+        Defaults to ``sys.argv[1:]`` if not given.
+    :param exit: If ``True``, call ``sys.exit`` automatically.
 
     The :func:`libdoc` function may work better in programmatic usage.
 
@@ -250,8 +290,16 @@ def libdoc_cli(arguments=None, exit=True):
     LibDoc().execute_cli(arguments, exit=exit)
 
 
-def libdoc(library_or_resource, outfile, name='', version='', format=None,
-           docformat=None, specdocformat=None, quiet=False):
+def libdoc(
+    library_or_resource,
+    outfile,
+    name="",
+    version="",
+    format=None,
+    docformat=None,
+    specdocformat=None,
+    quiet=False,
+):
     """Executes Libdoc.
 
     :param library_or_resource: Name or path of the library or resource
@@ -271,9 +319,8 @@ def libdoc(library_or_resource, outfile, name='', version='', format=None,
         files is converted to HTML regardless of the original documentation
         format. Possible values are ``'HTML'`` (convert to HTML) and ``'RAW'``
         (use original format). The default depends on the output format.
-        New in Robot Framework 4.0.
     :param quiet: When true, the path of the generated output file is not
-        printed the console. New in Robot Framework 4.0.
+        printed the console.
 
     Arguments have same semantics as Libdoc command line options with same names.
     Run ``libdoc --help`` or consult the Libdoc section in the Robot Framework
@@ -286,10 +333,16 @@ def libdoc(library_or_resource, outfile, name='', version='', format=None,
         libdoc('MyLibrary.py', 'MyLibrary.html', version='1.0')
     """
     return LibDoc().execute(
-        library_or_resource, outfile, name=name, version=version, format=format,
-        docformat=docformat, specdocformat=specdocformat, quiet=quiet
+        library_or_resource,
+        outfile,
+        name=name,
+        version=version,
+        format=format,
+        docformat=docformat,
+        specdocformat=specdocformat,
+        quiet=quiet,
     )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     libdoc_cli(sys.argv[1:])

@@ -35,12 +35,12 @@ Append To Environment Variable
 Append To Environment Variable With Custom Separator
     Append To Environment Variable    ${NAME}    first    separator=-
     Should Be Equal    %{${NAME}}    first
-    Append To Environment Variable    ${NAME}    second    3rd\=x    separator=-
+    Append To Environment Variable    ${NAME}    second    3rd=x    separator=-
     Should Be Equal    %{${NAME}}    first-second-3rd=x
 
 Append To Environment Variable With Invalid Config
-    [Documentation]    FAIL Configuration 'not=ok' or 'these=are' not accepted.
-    Append To Environment Variable    ${NAME}    value    these=are    not=ok
+    [Documentation]    FAIL Keyword 'OperatingSystem.Append To Environment Variable' got unexpected named argument 'not_ok'.
+    Append To Environment Variable    ${NAME}    value    separator=value    not_ok=True
 
 Remove Environment Variable
     Set Environment Variable    ${NAME}    Hello

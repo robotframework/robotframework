@@ -44,7 +44,7 @@ Keyword Arguments
     Keyword Arguments Should Be      12    a    b    *args    **kwargs
 
 Non-ASCII Bytes Defaults
-    Keyword Arguments Should Be      6     arg=hyv\\xe4
+    Keyword Arguments Should Be      6     arg=hyvä
 
 Non-ASCII String Defaults
     Keyword Arguments Should Be      9     arg=hyvä
@@ -100,9 +100,9 @@ Keyword tags
 Keyword source info
     Keyword Name Should Be           0     Get Hello
     Keyword Should Not Have Source   0
-    Keyword Lineno Should Be         0     17
+    Keyword Lineno Should Be         0     16
 
 Keyword source info with decorated function
     Keyword Name Should Be           13    Takes \${embedded} \${args}
     Keyword Should Not Have Source   13
-    Keyword Lineno Should Be         13    71
+    Keyword Lineno Should Be         13    70

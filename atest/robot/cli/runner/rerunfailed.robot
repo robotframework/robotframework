@@ -49,7 +49,7 @@ Suite initialization
     Run Tests    ${EMPTY}    ${SUITE DIR}
     Copy File    ${OUTFILE}    ${RUN FAILED FROM}
     Copy File    ${ORIG DIR}/runfailed2.robot    ${SUITE DIR}/runfailed.robot
-    Run Tests    --rerunfailed ${RUN FAILED FROM} --test Selected --exclude excluded_tag    ${SUITE DIR}
+    Run Tests    --rerunfailed ${RUN FAILED FROM} --test Selected --include common --exclude excluded_tag    ${SUITE DIR}
 
 Test Should Have Been Executed
     [Arguments]    ${name}

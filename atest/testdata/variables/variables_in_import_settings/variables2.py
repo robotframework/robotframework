@@ -1,1 +1,1 @@
-greetings = 'Hi, Tellus!'
+greetings = "Hi, Tellus!"

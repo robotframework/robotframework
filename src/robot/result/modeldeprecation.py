@@ -21,16 +21,19 @@ from robot.model import Tags
 def deprecated(method):
     def wrapper(self, *args, **kws):
         """Deprecated."""
-        warnings.warn(f"'robot.result.{type(self).__name__}.{method.__name__}' is "
-                      f"deprecated and will be removed in Robot Framework 8.0.",
-                      stacklevel=1)
+        warnings.warn(
+            f"'robot.result.{type(self).__name__}.{method.__name__}' is "
+            f"deprecated and will be removed in Robot Framework 8.0.",
+            stacklevel=1,
+        )
         return method(self, *args, **kws)
+
     return wrapper
 
 
 class DeprecatedAttributesMixin:
-    __slots__ = []
-    _log_name = ''
+    _log_name = ""
+    __slots__ = ()
 
     @property
     @deprecated
@@ -70,4 +73,4 @@ class DeprecatedAttributesMixin:
     @property
     @deprecated
     def doc(self):
-        return ''
+        return ""

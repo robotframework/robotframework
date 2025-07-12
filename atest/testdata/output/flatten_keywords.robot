@@ -32,11 +32,15 @@ Flatten controls in keyword
 *** Keywords ***
 Keyword 3
     [Documentation]    Doc of keyword 3
+    [Tags]    kw3
+    [Timeout]    3 minutes
     Log    3
     Keyword 2
 
 Keyword 2
     [Documentation]    Doc of keyword 2
+    [Tags]    kw2
+    [Timeout]    2m
     Log    2
     Keyword 1
 
@@ -53,16 +57,16 @@ Keyword calling others
 
 Keyword with tags not flatten
     [Documentation]    Doc of keyword not flatten
-    [Tags]   hello    kitty
+    [Tags]    hello    kitty
     Keyword 1
 
 Keyword with tags and message flatten
     [Documentation]    Doc of flat keyword.
-    [Tags]   hello    flatten
+    [Tags]    hello    flatten
     Keyword 1    error=Expected e&<aped failure!
 
 Keyword with tags and no doc flatten
-    [Tags]   hello    flatten
+    [Tags]    hi    flatten
     Keyword 1
 
 Flatten controls in keyword
@@ -84,6 +88,8 @@ Flatten controls in keyword
     FOR    ${i}    IN RANGE    3
         Log   FOR: ${i}
         Keyword 1
+        CONTINUE
+        Fail    Not run
     END
     WHILE    $i > 0
         Log   WHILE: ${i}
@@ -99,6 +105,11 @@ Flatten controls in keyword
     FINALLY
         Log    finally
     END
+    GROUP
+        Log    Inside GROUP
+    END
+    VAR    ${x}    Using VAR
+    RETURN    return value
 
 Countdown
     [Arguments]    ${count}=${3}

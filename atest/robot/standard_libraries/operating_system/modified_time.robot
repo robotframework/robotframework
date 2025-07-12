@@ -8,11 +8,11 @@ ${TESTFILE}       %{TEMPDIR}${/}robot-os-tests${/}f1.txt
 *** Test Cases ***
 Get Modified Time As Timestamp
     ${tc} =    Check Test Case    ${TESTNAME}
-    Should Match Regexp    ${tc.kws[0].msgs[0].message}    Last modified time of '<a href=.*</a>' is \\d\\d\\d\\d-\\d\\d-\\d\\d \\d\\d:\\d\\d:\\d\\d
+    Should Match Regexp    ${tc[0, 0].message}    Last modified time of '<a href=.*</a>' is \\d\\d\\d\\d-\\d\\d-\\d\\d \\d\\d:\\d\\d:\\d\\d
 
 Get Modified Time As Seconds After Epoch
     ${tc} =    Check Test Case    ${TESTNAME}
-    Should Match Regexp    ${tc.kws[0].msgs[0].message}    Last modified time of '<a href=.*</a>' is \\d+
+    Should Match Regexp    ${tc[0, 0].message}    Last modified time of '<a href=.*</a>' is \\d+
 
 Get Modified Time As Parts
     Check Test Case    ${TESTNAME}
@@ -22,14 +22,14 @@ Get Modified Time Fails When Path Does Not Exist
 
 Set Modified Time Using Epoch
     ${tc} =    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc.kws[2].msgs[0]}    Set modified time of '<a href="file://${TESTFILE}">${TESTFILE}</a>' to 2018-11-22 13:13:42.    HTML
+    Check Log Message    ${tc[2, 0]}    Set modified time of '<a href="file://${TESTFILE}">${TESTFILE}</a>' to 2018-11-22 13:13:42.    HTML
 
 Set Modified Time Using Timestamp
     ${tc} =    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc.kws[2].kws[0].kws[0].msgs[0]}    Set modified time of '<a href="file://${TESTFILE}">${TESTFILE}</a>' to 2018-11-22 13:13:42.    HTML
-    Check Log Message    ${tc.kws[2].kws[1].kws[0].msgs[0]}    Set modified time of '<a href="file://${TESTFILE}">${TESTFILE}</a>' to 2018-11-22 13:13:42.    HTML
-    Check Log Message    ${tc.kws[2].kws[2].kws[0].msgs[0]}    Set modified time of '<a href="file://${TESTFILE}">${TESTFILE}</a>' to 2018-11-22 13:13:42.    HTML
-    Check Log Message    ${tc.kws[2].kws[3].kws[0].msgs[0]}    Set modified time of '<a href="file://${TESTFILE}">${TESTFILE}</a>' to 2018-11-22 13:13:42.    HTML
+    Check Log Message    ${tc[2, 0, 0, 0]}    Set modified time of '<a href="file://${TESTFILE}">${TESTFILE}</a>' to 2018-11-22 13:13:42.    HTML
+    Check Log Message    ${tc[2, 1, 0, 0]}    Set modified time of '<a href="file://${TESTFILE}">${TESTFILE}</a>' to 2018-11-22 13:13:42.    HTML
+    Check Log Message    ${tc[2, 2, 0, 0]}    Set modified time of '<a href="file://${TESTFILE}">${TESTFILE}</a>' to 2018-11-22 13:13:42.    HTML
+    Check Log Message    ${tc[2, 3, 0, 0]}    Set modified time of '<a href="file://${TESTFILE}">${TESTFILE}</a>' to 2018-11-22 13:13:42.    HTML
 
 Set Modified Time Using Invalid Timestamp
     Check Test Case    ${TESTNAME}

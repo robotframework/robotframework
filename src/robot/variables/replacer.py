@@ -15,11 +15,13 @@
 
 from robot.errors import DataError, VariableError
 from robot.output import librarylogger as logger
-from robot.utils import (DotDict, escape, get_error_message, is_dict_like, is_list_like,
-                         is_string, safe_str, type_name, unescape)
+from robot.utils import (
+    DotDict, escape, get_error_message, is_dict_like, is_list_like, safe_str, type_name,
+    unescape
+)
 
 from .finders import VariableFinder
-from .search import VariableMatch, search_variable
+from .search import search_variable, VariableMatch
 
 
 class VariableReplacer:
@@ -59,14 +61,11 @@ class VariableReplacer:
         result = []
         for item in items:
             match = search_variable(item, ignore_errors=ignore_errors)
-            if not match:
-                result.append(unescape(item))
+            value = self._replace(match, ignore_errors)
+            if match.is_list_variable() and is_list_like(value):
+                result.extend(value)
             else:
-                value = self._replace_scalar(match, ignore_errors)
-                if match.is_list_variable() and is_list_like(value):
-                    result.extend(value)
-                else:
-                    result.append(value)
+                result.append(value)
         return result
 
     def replace_scalar(self, item, ignore_errors=False):
@@ -80,44 +79,45 @@ class VariableReplacer:
             match = item
         else:
             match = search_variable(item, ignore_errors=ignore_errors)
-        if not match:
-            return unescape(match.string)
-        return self._replace_scalar(match, ignore_errors)
-
-    def _replace_scalar(self, match, ignore_errors=False):
-        if match.is_variable():
-            return self._get_variable_value(match, ignore_errors)
-        return self._replace_string(match, unescape, ignore_errors)
+        return self._replace(match, ignore_errors)
 
     def replace_string(self, item, custom_unescaper=None, ignore_errors=False):
         """Replaces variables from a string. Result is always a string.
 
         Input can also be an already found VariableMatch.
         """
-        unescaper = custom_unescaper or unescape
         if isinstance(item, VariableMatch):
             match = item
         else:
             match = search_variable(item, ignore_errors=ignore_errors)
-        if not match:
-            return safe_str(unescaper(match.string))
-        return self._replace_string(match, unescaper, ignore_errors)
+        result = self._replace(match, ignore_errors, custom_unescaper or unescape)
+        return safe_str(result)
 
-    def _replace_string(self, match, unescaper, ignore_errors):
+    def _replace(self, match, ignore_errors, unescaper=unescape):
+        if not match:
+            return unescaper(match.string)
+        if match.is_variable():
+            return self._get_variable_value(match, ignore_errors)
         parts = []
         while match:
-            parts.append(unescaper(match.before))
-            parts.append(safe_str(self._get_variable_value(match, ignore_errors)))
+            if match.before:
+                parts.append(unescaper(match.before))
+            parts.append(self._get_variable_value(match, ignore_errors))
             match = search_variable(match.after, ignore_errors=ignore_errors)
-        parts.append(unescaper(match.string))
-        return ''.join(parts)
+        if match.string:
+            parts.append(unescaper(match.string))
+        if all(isinstance(p, (bytes, bytearray)) for p in parts):
+            return b"".join(parts)
+        return "".join(safe_str(p) for p in parts)
 
     def _get_variable_value(self, match, ignore_errors):
         match.resolve_base(self, ignore_errors)
         # TODO: Do we anymore need to reserve `*{var}` syntax for anything?
-        if match.identifier == '*':
-            logger.warn(rf"Syntax '{match}' is reserved for future use. Please "
-                        rf"escape it like '\{match}'.")
+        if match.identifier == "*":
+            logger.warn(
+                rf"Syntax '{match}' is reserved for future use. "
+                rf"Please escape it like '\{match}'."
+            )
             return str(match)
         try:
             value = self._finder.find(match)
@@ -140,7 +140,7 @@ class VariableReplacer:
         for item in match.items:
             if is_dict_like(value):
                 value = self._get_dict_variable_item(name, value, item)
-            elif hasattr(value, '__getitem__'):
+            elif hasattr(value, "__getitem__"):
                 value = self._get_sequence_variable_item(name, value, item)
             else:
                 raise VariableError(
@@ -149,7 +149,7 @@ class VariableReplacer:
                     f"is not possible. To use '[{item}]' as a literal value, "
                     f"it needs to be escaped like '\\[{item}]'."
                 )
-            name = f'{name}[{item}]'
+            name = f"{name}[{item}]"
         return value
 
     def _get_sequence_variable_item(self, name, variable, index):
@@ -178,13 +178,13 @@ class VariableReplacer:
     def _parse_sequence_variable_index(self, index):
         if isinstance(index, (int, slice)):
             return index
-        if not is_string(index):
+        if not isinstance(index, str):
             raise ValueError
-        if ':' not in index:
+        if ":" not in index:
             return int(index)
-        if index.count(':') > 2:
+        if index.count(":") > 2:
             raise ValueError
-        return slice(*[int(i) if i else None for i in index.split(':')])
+        return slice(*[int(i) if i else None for i in index.split(":")])
 
     def _get_dict_variable_item(self, name, variable, key):
         key = self.replace_scalar(key)
@@ -196,14 +196,16 @@ class VariableReplacer:
             raise VariableError(f"Dictionary '{name}' used with invalid key: {err}")
 
     def _validate_value(self, match, value):
-        if match.identifier == '@':
+        if match.identifier == "@":
             if not is_list_like(value):
-                raise VariableError(f"Value of variable '{match}' is not list "
-                                    f"or list-like.")
+                raise VariableError(
+                    f"Value of variable '{match}' is not list or list-like."
+                )
             return list(value)
-        if match.identifier == '&':
+        if match.identifier == "&":
             if not is_dict_like(value):
-                raise VariableError(f"Value of variable '{match}' is not dictionary "
-                                    f"or dictionary-like.")
+                raise VariableError(
+                    f"Value of variable '{match}' is not dictionary or dictionary-like."
+                )
             return DotDict(value)
         return value

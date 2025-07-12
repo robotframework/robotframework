@@ -14,21 +14,21 @@ Wait For Process
 Wait For Process Timeout
     ${process} =    Start Python Process    while True: pass
     Process Should Be Running    ${process}
-    ${result} =    Wait For Process    ${process}    timeout=1s
+    ${result} =    Wait For Process    ${process}    timeout=0.25s
     Process Should Be Running    ${process}
     Should Be Equal    ${result}    ${NONE}
 
 Wait For Process Terminate On Timeout
     ${process} =   Start Python Process    while True: pass
     Process Should Be Running    ${process}
-    ${result} =    Wait For Process    ${process}    timeout=1s    on_timeout=terminate
+    ${result} =    Wait For Process    ${process}    timeout=0.25s    on_timeout=terminate
     Process Should Be Stopped    ${process}
     Should Not Be Equal As Integers    ${result.rc}    0
 
 Wait For Process Kill On Timeout
     ${process} =   Start Python Process    while True: pass
     Process Should Be Running    ${process}
-    ${result} =    Wait For Process    ${process}    timeout=1s    on_timeout=kill
+    ${result} =    Wait For Process    ${process}    timeout=0.25s    on_timeout=kill
     Process Should Be Stopped    ${process}
     Should Not Be Equal As Integers    ${result.rc}    0
 

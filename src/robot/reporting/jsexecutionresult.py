@@ -20,8 +20,17 @@ from .stringcache import StringIndex
 
 class JsExecutionResult:
 
-    def __init__(self, suite, statistics, errors, strings, basemillis=None,
-                 split_results=None, min_level=None, expand_keywords=None):
+    def __init__(
+        self,
+        suite,
+        statistics,
+        errors,
+        strings,
+        basemillis=None,
+        split_results=None,
+        min_level=None,
+        expand_keywords=None,
+    ):
         self.suite = suite
         self.strings = strings
         self.min_level = min_level
@@ -29,17 +38,19 @@ class JsExecutionResult:
         self.split_results = split_results or []
 
     def _get_data(self, statistics, errors, basemillis, expand_keywords):
-        return {'stats': statistics,
-                'errors': errors,
-                'baseMillis': basemillis,
-                'generated': int(time.time() * 1000) - basemillis,
-                'expand_keywords': expand_keywords}
+        return {
+            "stats": statistics,
+            "errors": errors,
+            "baseMillis": basemillis,
+            "generated": int(time.time() * 1000) - basemillis,
+            "expand_keywords": expand_keywords,
+        }
 
     def remove_data_not_needed_in_report(self):
-        self.data.pop('errors')
-        remover = _KeywordRemover()
-        self.suite = remover.remove_keywords(self.suite)
-        self.suite, self.strings = remover.remove_unused_strings(self.suite, self.strings)
+        self.data.pop("errors")
+        rm = _KeywordRemover()
+        self.suite = rm.remove_keywords(self.suite)
+        self.suite, self.strings = rm.remove_unused_strings(self.suite, self.strings)
 
 
 class _KeywordRemover:
@@ -48,9 +59,13 @@ class _KeywordRemover:
         return self._remove_keywords_from_suite(suite)
 
     def _remove_keywords_from_suite(self, suite):
-        return suite[:6] + (self._remove_keywords_from_suites(suite[6]),
-                            self._remove_keywords_from_tests(suite[7]),
-                            (), suite[9])
+        return (
+            *suite[:6],
+            self._remove_keywords_from_suites(suite[6]),
+            self._remove_keywords_from_tests(suite[7]),
+            (),
+            suite[9],
+        )
 
     def _remove_keywords_from_suites(self, suites):
         return tuple(self._remove_keywords_from_suite(s) for s in suites)
@@ -73,8 +88,7 @@ class _KeywordRemover:
             if isinstance(item, StringIndex):
                 yield item
             elif isinstance(item, tuple):
-                for i in self._get_used_indices(item):
-                    yield i
+                yield from self._get_used_indices(item)
 
     def _get_used_strings(self, strings, used_indices, remap):
         offset = 0

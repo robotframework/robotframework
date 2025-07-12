@@ -15,8 +15,7 @@
 
 from typing import Any, Callable, TypeVar
 
-
-T = TypeVar('T', bound=Callable[..., Any])
+T = TypeVar("T", bound=Callable[..., Any])
 
 # Type Alias for objects that are only known at runtime. This should be Used as a
 # default value for generic classes that also use `@copy_signature` decorator
@@ -28,6 +27,7 @@ def copy_signature(target: T) -> Callable[..., T]:
     see https://github.com/python/typing/issues/270#issuecomment-555966301 for source
     and discussion.
     """
+
     def decorator(func):
         return func
 

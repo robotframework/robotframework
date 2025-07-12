@@ -23,7 +23,7 @@ if TYPE_CHECKING:
 
 class ArgumentMapper:
 
-    def __init__(self, arg_spec: 'ArgumentSpec'):
+    def __init__(self, arg_spec: "ArgumentSpec"):
         self.arg_spec = arg_spec
 
     def map(self, positional, named, replace_defaults=True):
@@ -37,15 +37,16 @@ class ArgumentMapper:
 
 class KeywordCallTemplate:
 
-    def __init__(self, spec: 'ArgumentSpec'):
+    def __init__(self, spec: "ArgumentSpec"):
         self.spec = spec
-        self.positional = [DefaultValue(spec.defaults[arg])
-                           if arg in spec.defaults else None
-                           for arg in spec.positional]
+        self.positional = [
+            DefaultValue(spec.defaults[arg]) if arg in spec.defaults else None
+            for arg in spec.positional
+        ]
         self.named = []
 
     def fill_positional(self, positional):
-        self.positional[:len(positional)] = positional
+        self.positional[: len(positional)] = positional
 
     def fill_named(self, named):
         spec = self.spec
@@ -80,4 +81,4 @@ class DefaultValue:
         try:
             return variables.replace_scalar(self.value)
         except DataError as err:
-            raise DataError(f'Resolving argument default values failed: {err}')
+            raise DataError(f"Resolving argument default values failed: {err}")

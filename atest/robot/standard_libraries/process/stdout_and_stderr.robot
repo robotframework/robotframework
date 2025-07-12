@@ -60,5 +60,11 @@ Run multiple times
 Run multiple times using custom streams
     Check Test Case    ${TESTNAME}
 
+Lot of output to stdout and stderr pipes
+    Check Test Case    ${TESTNAME}
+
 Read standard streams when they are already closed externally
+    Check Test Case    ${TESTNAME}
+
+Read standard streams when they are already closed externally and only one is PIPE
     Check Test Case    ${TESTNAME}

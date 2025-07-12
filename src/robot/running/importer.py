@@ -15,16 +15,23 @@
 
 import os
 
+from robot.errors import DataError, FrameworkError
 from robot.output import LOGGER
-from robot.errors import FrameworkError, DataError
 from robot.utils import normpath, seq2str, seq2str2
 
 from .builder import ResourceFileBuilder
 from .testlibraries import TestLibrary
 
-
-RESOURCE_EXTENSIONS = {'.resource', '.robot', '.txt', '.tsv', '.rst', '.rest',
-                       '.json', '.rsrc'}
+RESOURCE_EXTENSIONS = {
+    ".resource",
+    ".robot",
+    ".txt",
+    ".tsv",
+    ".rst",
+    ".rest",
+    ".json",
+    ".rsrc",
+}
 
 
 class Importer:
@@ -41,14 +48,17 @@ class Importer:
             lib.scope_manager.close_global_listeners()
 
     def import_library(self, name, args, alias, variables):
-        lib = TestLibrary.from_name(name, args=args, variables=variables,
-                                    create_keywords=False)
+        lib = TestLibrary.from_name(
+            name,
+            args=args,
+            variables=variables,
+            create_keywords=False,
+        )
         positional, named = lib.init.positional, lib.init.named
-        args_str = seq2str2(positional + [f'{n}={named[n]}' for n in named])
+        args_str = seq2str2(positional + [f"{n}={named[n]}" for n in named])
         key = (name, positional, named)
         if key in self._library_cache:
-            LOGGER.info(f"Found library '{name}' with arguments {args_str} "
-                        f"from cache.")
+            LOGGER.info(f"Found library '{name}' with arguments {args_str} from cache.")
             lib = self._library_cache[key]
         else:
             lib.create_keywords()
@@ -74,16 +84,19 @@ class Importer:
     def _validate_resource_extension(self, path):
         extension = os.path.splitext(path)[1]
         if extension.lower() not in RESOURCE_EXTENSIONS:
-            extensions = seq2str(sorted(RESOURCE_EXTENSIONS))
-            raise DataError(f"Invalid resource file extension '{extension}'. "
-                            f"Supported extensions are {extensions}.")
+            raise DataError(
+                f"Invalid resource file extension '{extension}'. "
+                f"Supported extensions are {seq2str(sorted(RESOURCE_EXTENSIONS))}."
+            )
 
     def _log_imported_library(self, name, args_str, lib):
-        kind = type(lib).__name__.replace('Library', '').lower()
-        listener = ', with listener' if lib.listeners else ''
-        LOGGER.info(f"Imported library '{name}' with arguments {args_str} "
-                    f"(version {lib.version or '<unknown>'}, {kind} type, "
-                    f"{lib.scope.name} scope, {len(lib.keywords)} keywords{listener}).")
+        kind = type(lib).__name__.replace("Library", "").lower()
+        listener = ", with listener" if lib.listeners else ""
+        LOGGER.info(
+            f"Imported library '{name}' with arguments {args_str} "
+            f"(version {lib.version or '<unknown>'}, {kind} type, "
+            f"{lib.scope.name} scope, {len(lib.keywords)} keywords{listener})."
+        )
         if not (lib.keywords or lib.listeners):
             LOGGER.warn(f"Imported library '{name}' contains no keywords.")
 
@@ -101,7 +114,7 @@ class ImportCache:
 
     def __setitem__(self, key, item):
         if not isinstance(key, (str, tuple)):
-            raise FrameworkError('Invalid key for ImportCache')
+            raise FrameworkError("Invalid key for ImportCache")
         key = self._norm_path_key(key)
         if key not in self._keys:
             self._keys.append(key)

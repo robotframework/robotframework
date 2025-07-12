@@ -1,0 +1,33 @@
+[tool.black]
+line_length = 88
+# When we add [project] with requires-python, remove this and Ruff's target-version
+target-version = ["py38", "py39", "py310", "py311", "py312", "py313"]
+
+[tool.ruff]
+target-version = "py38"
+
+[tool.ruff.lint]
+extend-select = ["I"]  # imports
+ignore = ["E731"]  # lambda assignment
+
+[tool.ruff.lint.pyflakes]
+# Needed due to https://github.com/astral-sh/ruff/issues/9298
+extend-generics = ["robot.model.body.BaseBranches"]
+
+[tool.ruff.lint.isort]
+# Ruff is used to sort and fix imports first. Multiline imports are organized so
+# that each item is on its own line. This is same as the Vertical Hanging Indent
+# mode with isort.
+combine-as-imports = true
+order-by-type = false
+
+[tool.isort]
+# isort is used after Ruff to sort "normal" imports so that multiline imports use
+# the Hanging Grid Grouped mode. Files contained redundant import aliases denoting
+# module/package API are excluded. For details about multiline modes see:
+# https://pycqa.github.io/isort/docs/configuration/multi_line_output_modes.html
+multi_line_output = 5
+extend_skip = ["__init__.py", "src/robot/api/parsing.py"]
+combine_as_imports = true
+order_by_type = false
+line_length = 88

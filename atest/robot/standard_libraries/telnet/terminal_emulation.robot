@@ -53,13 +53,13 @@ Lots and lots of pages
 
 Write & Read Non-ASCII
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    echo Hyvää yötä    WARN
-    Check Log Message    ${tc.kws[1].msgs[0]}    Hyvää yötä\n${FULL PROMPT}    DEBUG
+    Check Log Message    ${tc[0, 0]}    echo Hyvää yötä    WARN
+    Check Log Message    ${tc[1, 0]}    Hyvää yötä\n${FULL PROMPT}    DEBUG
 
 Write & Read non-ISO-LATIN-1
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    echo \u2603    WARN
-    Check Log Message    ${tc.kws[1].msgs[0]}    \u2603\n${FULL PROMPT}    DEBUG
+    Check Log Message    ${tc[0, 0]}    echo \u2603    WARN
+    Check Log Message    ${tc[1, 0]}    \u2603\n${FULL PROMPT}    DEBUG
 
 Write ASCII-Only Unicode When Encoding Is ASCII
     Check Test Case    ${TEST NAME}

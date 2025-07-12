@@ -15,6 +15,12 @@ Embedded Arguments In User Keyword Name
     ${name}    ${book} =    User Juha Selects Playboy From Webshop
     Should Be Equal    ${name}-${book}    Juha-Playboy
 
+Embedded arguments with type conversion
+    [Documentation]    Type conversion is tested more thorougly in 'variables/variable_types.robot'.
+    ...    FAIL    ValueError: Argument 'item' got value 'horse' that cannot be converted to 'book' or 'bottle'.
+    Buy 99 bottles
+    Buy 2 horses
+
 Complex Embedded Arguments
     # Notice that Given/When/Then is part of the keyword name
     Given this "feature" works
@@ -35,11 +41,24 @@ Argument Namespaces with Embedded Arguments
 Embedded Arguments as Variables
     ${name}    ${item} =    User ${42} Selects ${EMPTY} From Webshop
     Should Be Equal    ${name}-${item}    42-
-    ${name}    ${item} =    User ${name} Selects ${SPACE * 10} From Webshop
+    ${name}    ${item} =    User ${name} Selects ${SPACE * 100}[:10] From Webshop
     Should Be Equal    ${name}-${item}    42-${SPACE*10}
     ${name}    ${item} =    User ${name} Selects ${TEST TAGS} From Webshop
     Should Be Equal    ${name}    ${42}
     Should Be Equal    ${item}    ${{[]}}
+    ${name}    ${item} =    User ${foo.title()} Selects ${{[$foo, $bar]}}[1][:2] From Webshop
+    Should Be Equal    ${name}-${item}    Foo-ba
+
+Embedded arguments as variables and other content
+    ${name}    ${item} =    User ${foo}${EMPTY}${bar} Selects ${foo}, ${bar} and ${zap} From Webshop
+    Should Be Equal    ${name}    ${foo}${bar}
+    Should Be Equal    ${item}    ${foo}, ${bar} and ${zap}
+
+Embedded arguments as variables containing characters that exist also in keyword name
+    ${1} + ${2} = ${3}
+    ${1 + 2} + ${3} = ${6}
+    ${1} + ${2 + 3} = ${6}
+    ${1 + 2} + ${3 + 4} = ${10}
 
 Embedded Arguments as List And Dict Variables
     ${i1}    ${i2} =    Evaluate    [1, 2, 3, 'neljä'], {'a': 1, 'b': 2}
@@ -94,11 +113,20 @@ Grouping Custom Regexp
     ${matches} =    Grouping Cuts Regexperts
     Should Be Equal    ${matches}    Cuts-Regexperts
 
+Custom Regex With Leading And Trailing Spaces
+    Custom Regexs With Leading And Trailing Spaces: " x ", " y " and " z "
+
 Custom Regexp Matching Variables
     [Documentation]    FAIL bar != foo
     I execute "${foo}"
-    I execute "${bar}" with "${zap}"
+    I execute "${bar}" with "${zap + 'xxx'}[:3]"
     I execute "${bar}"
+
+Custom regexp with inline Python evaluation
+    [Documentation]    FAIL bar != foo
+    I execute "${{'foo'}}"
+    I execute "${{'BAR'.lower()}}" with "${{"a".join("zp")}}"
+    I execute "${{'bar'}}"
 
 Non Matching Variable Is Accepted With Custom Regexp (But Not For Long)
     [Documentation]    FAIL    foo != bar    # ValueError: Embedded argument 'x' got value 'foo' that does not match custom pattern 'bar'.
@@ -113,6 +141,16 @@ Non String Variable Is Accepted With Custom Regexp
     Result of ${3} + ${-1} is ${2}
     Result of ${40} - ${-2} is ${42}
     I execute "${42}"
+
+Custom regexp with inline flag
+    VAR   ${flag}   flag
+    VAR   ${flng}   fl\ng
+    Custom regexp with ignore-case flag
+    Custom regexp with ignore-case FLAG    expected=FLAG
+    Custom regexp with ignore-case ${flag}
+    Custom regexp with dot-matches-all flag
+    Custom regexp with dot-matches-all ${flag}
+    Custom regexp with dot-matches-all ${flng}    expected=${flng}
 
 Regexp Extensions Are Not Supported
     [Documentation]    FAIL Regexp extensions are not allowed in embedded arguments.
@@ -231,6 +269,10 @@ User ${user} Selects ${item} From Webshop
     Log    This is always executed
     RETURN    ${user}    ${item}
 
+Buy ${quantity: int} ${item: Literal['book', 'bottle']}s
+    Should Be Equal    ${quantity}    ${99}
+    Should Be Equal    ${item}        bottle
+
 ${prefix:Given|When|Then} this "${item}" ${no good name for this arg ...}
     Log    ${item}-${no good name for this arg ...}
 
@@ -245,6 +287,11 @@ ${a}-tc-${b}
 
 ${a}+tc+${b}
     Log    ${a}+tc+${b}
+
+${x} + ${y} = ${z}
+    Should Be True    ${x} + ${y} == ${z}
+    Should Be True    isinstance($x, int) and isinstance($y, int) and isinstance($z, int)
+    Should Be True    $x + $y == $z
 
 I execute "${x:[^"]*}"
     Should Be Equal    ${x}    foo
@@ -289,8 +336,16 @@ Custom Regexp With ${pattern:\\{}}
 Grouping ${x:Cu(st|ts)(om)?} ${y:Regexp\(?erts\)?}
     RETURN    ${x}-${y}
 
-Regexp extensions like ${x:(?x)re} are not supported
-    This is not executed
+Custom Regexs With Leading And Trailing Spaces: "${x:\ x }", "${y:( y )}" and "${z: str: z }"
+    Should Be Equal    ${x}-${y}-${z}    ${SPACE}x - y - z${SPACE}
+
+Custom regexp with ignore-case ${flag:(?i)flag}
+    [Arguments]    ${expected}=flag
+    Should Be Equal    ${flag}    ${expected}
+
+Custom regexp with dot-matches-all ${flag:(?sax)f...}
+    [Arguments]    ${expected}=flag
+    Should Be Equal    ${flag}    ${expected}
 
 Invalid ${x:(} Regexp
     This is not executed

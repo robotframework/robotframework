@@ -8,6 +8,6 @@ Not None Shall Not Pass
 
 None Shall Pass
     ${tc} =    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}
+    Check Log Message    ${tc[0, 0]}
     ...    <iframe * src="https://www.youtube-nocookie.com/embed/*
     ...    HTML    pattern=yes

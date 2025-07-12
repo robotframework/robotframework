@@ -48,7 +48,7 @@ Environment Variables In Test Metadata
 
 Environment Variables In User Keyword Metadata
     ${tc} =  Check Test Case  ${TESTNAME}
-    Should Be Equal  ${tc.kws[0].doc}  Env var value in a uk doc
+    Should Be Equal  ${tc[0].doc}  Env var value in a uk doc
 
 Escaping Environment Variables
     Check Test Case  ${TESTNAME}

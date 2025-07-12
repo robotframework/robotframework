@@ -37,6 +37,11 @@ Variable Number of Arguments
     ...    \${mand}='mandatory' | \@{vargs}=[]
     ...    'mandatory'
 
+Named only
+    Check Argument Value Trace
+    ...    \${no1}='a' | \${no2}='b'
+    ...    no1='a' | no2='b'
+
 Kwargs
     Check Argument Value Trace
     ...    \&{kwargs}={}
@@ -46,8 +51,8 @@ Kwargs
 
 All args
     Check Argument Value Trace
-    ...    \${positional}='1' | \@{varargs}=['2', '3'] | \&{kwargs}={'d': '4'}
-    ...    '1' | '2' | '3' | d='4'
+    ...    \${positional}='1' | \@{varargs}=['2', '3'] | \${named_only}='4' | \&{kwargs}={'free': '5'}
+    ...    '1' | '2' | '3' | named_only='4' | free='5'
 
 Non String Object as Argument
     Check Argument Value Trace
@@ -68,18 +73,18 @@ Object With Unicode Repr as Argument
 
 Arguments With Run Keyword
     ${tc}=    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[1].msgs[0]}    Arguments: [ '\${keyword name}' | '\@{VALUES}' ]    TRACE
-    Check Log Message    ${tc.kws[1].kws[0].msgs[0]}    Arguments: [ 'a' | 'b' | 'c' | 'd' ]    TRACE
+    Check Log Message    ${tc[1, 0]}       Arguments: [ '\${keyword name}' | '\@{VALUES}' ]    TRACE
+    Check Log Message    ${tc[1, 1, 0]}    Arguments: [ 'a' | 'b' | 'c' | 'd' ]    TRACE
 
 Embedded Arguments
     ${tc}=    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    Arguments: [ \${first}='foo' | \${second}=42 | \${what}='UK' ]    TRACE
-    Check Log Message    ${tc.kws[1].msgs[0]}    Arguments: [ 'bar' | 'Embedded Arguments' ]                       TRACE
-    Check Log Message    ${tc.kws[2].msgs[0]}    Arguments: [ \${embedded}='embedded' | \${normal}='argument' ]    TRACE
-    Check Log Message    ${tc.kws[3].msgs[0]}    Arguments: [ \${embedded}='embedded' | \${normal}='argument' ]    TRACE
-    FOR    ${kw}    IN    @{tc.kws}
-        Check Log Message    ${kw.msgs[-1]}    Return: None    TRACE
-        Length Should Be     ${kw.msgs}    2
+    Check Log Message    ${tc[0, 0]}    Arguments: [ \${first}='foo' | \${second}=42 | \${what}='UK' ]    TRACE
+    Check Log Message    ${tc[1, 0]}    Arguments: [ 'bar' | 'Embedded Arguments' ]                       TRACE
+    Check Log Message    ${tc[2, 0]}    Arguments: [ \${embedded}='embedded' | \${normal}='argument' ]    TRACE
+    Check Log Message    ${tc[3, 0]}    Arguments: [ \${embedded}='embedded' | \${normal}='argument' ]    TRACE
+    FOR    ${kw}    IN    @{tc.body}
+        Check Log Message    ${kw[-1]}         Return: None    TRACE
+        Length Should Be     ${kw.messages}    2
     END
 
 *** Keywords ***
@@ -88,7 +93,7 @@ Check Argument Value Trace
     ${tc} =    Check Test Case    ${TEST NAME}
     ${length} =    Get Length    ${expected}
     FOR    ${index}    IN RANGE    0    ${length}
-        Check Log Message    ${tc.kws[${index}].msgs[0]}    Arguments: [ ${expected}[${index}] ]    TRACE
+        Check Log Message    ${tc[${index}, 0]}    Arguments: [ ${expected}[${index}] ]    TRACE
     END
 
 Check UKW Default, LKW Default, UKW Varargs, and LKW Varargs

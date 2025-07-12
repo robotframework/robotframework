@@ -30,6 +30,9 @@ List Created From List With Escapes
 List With No Items
     Check Test Case    ${TEST NAME}
 
+List With Mutable Items
+    Check Test Case    ${TEST NAME}
+
 Variable Names Are Case Insensitive
     Check Test Case    ${TEST NAME}
 
@@ -52,17 +55,17 @@ Named based on another variable
     Check Test Case     ${TEST NAME}
 
 Non-existing variable in name
-    Creating Variable Should Have Failed    0    32    \${BASED ON \${BAD}}
+    Creating Variable Should Have Failed    0    39    \${BASED ON \${BAD}}
     ...    Variable '\${BAD}' not found.
 
 Invalid variable name
-    Creating Variable Should Have Failed    1    33    Invalid Name
+    Creating Variable Should Have Failed    1    40    Invalid Name
     ...    Invalid variable name 'Invalid Name'.
-    Creating Variable Should Have Failed    2    34    \${}
+    Creating Variable Should Have Failed    2    41    \${}
     ...    Invalid variable name '\${}'.
-    Creating Variable Should Have Failed    3    35    \${not
+    Creating Variable Should Have Failed    3    42    \${not
     ...    Invalid variable name '\${not'.
-    Creating Variable Should Have Failed    4    36    \${not}[[]ok]
+    Creating Variable Should Have Failed    4    43    \${not}[[]ok]
     ...    Invalid variable name '\${not}[[]ok]'.
 
 Scalar catenated from multiple values
@@ -76,19 +79,19 @@ Scalar catenated from multiple values with 'separator' option
 
 Creating variable using non-existing variable fails
     Check Test Case    ${TEST NAME}
-    Creating Variable Should Have Failed    8     37    \${NONEX 1}
+    Creating Variable Should Have Failed    8     44    \${NONEX 1}
     ...    Variable '\${NON EXISTING}' not found.
-    Creating Variable Should Have Failed    9     38    \${NONEX 2A}
+    Creating Variable Should Have Failed    9     45    \${NONEX 2A}
     ...    Variable '\${NON EX}' not found.*
-    Creating Variable Should Have Failed    10    39    \${NONEX 2B}
+    Creating Variable Should Have Failed    10    46    \${NONEX 2B}
     ...    Variable '\${NONEX 2A}' not found.*
 
 Using variable created from non-existing variable in imports fails
-    Creating Variable Should Have Failed    5    40    \${NONEX 3}
+    Creating Variable Should Have Failed    5     47    \${NONEX 3}
     ...    Variable '\${NON EXISTING VARIABLE}' not found.
-    Import Should Have Failed               6    43    Resource
+    Import Should Have Failed               6     50    Resource
     ...    Variable '\${NONEX 3}' not found.*
-    Import Should Have Failed               7    44    Library
+    Import Should Have Failed               7     51    Library
     ...    Variable '\${NONEX 3}' not found.*
 
 *** Keywords ***

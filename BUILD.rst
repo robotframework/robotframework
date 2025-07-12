@@ -76,7 +76,7 @@ __ https://github.com/robotframework/robotframework/tree/master/atest#schema-val
 Preparation
 -----------
 
-1. Check that you are on the master branch and have nothing left to commit,
+1. Check that you are on the right branch and have nothing left to commit,
    pull, or push::
 
       git branch
@@ -84,22 +84,27 @@ Preparation
       git pull --rebase
       git push
 
-2. Clean up::
+2. Make sure code is formatted properly::
+
+      invoke format
+      git status
+
+3. Clean up::
 
       invoke clean
 
-3. Set version information to a shell variable to ease copy-pasting further
+4. Set version information to a shell variable to ease copy-pasting further
    commands. Add ``aN``, ``bN`` or ``rcN`` postfix if creating a pre-release::
 
       VERSION=<version>
 
-   For example, ``VERSION=3.0.1`` or ``VERSION=3.1a2``.
+   For example, ``VERSION=7.1.1`` or ``VERSION=7.2a2``. No ``v`` prefix!
 
 Release notes
 -------------
 
-1. Create personal `GitHub access token`__ to be able to access issue tracker
-   programmatically. The token needs only the `repo/public_repo` scope.
+1. Create a personal `GitHub access token`__ to be able to access issue tracker
+   programmatically. The token needs only the ``repo/public_repo`` scope.
 
 2. Set GitHub user information into shell variables to ease running the
    ``invoke release-notes`` command in the next step::
@@ -119,7 +124,7 @@ Release notes
    <Set version_>`__. Omit the ``-w`` option if you just want to get release
    notes printed to the console, not written to a file.
 
-   When generating release notes for a preview release like ``3.0.2rc1``,
+   When generating release notes for a preview release like ``7.2rc1``,
    the list of issues is only going to contain issues with that label
    (e.g. ``rc1``) or with a label of an earlier preview release (e.g.
    ``alpha1``, ``beta2``).
@@ -139,7 +144,7 @@ Release notes
    issue tracker than in the generated release notes. This allows re-generating
    the list of issues later if more issues are added.
 
-6. Add, commit and push::
+6. Commit and push changes::
 
       git add doc/releasenotes/rf-$VERSION.rst
       git commit -m "Release notes for $VERSION" doc/releasenotes/rf-$VERSION.rst
@@ -150,6 +155,22 @@ Release notes
    often impossible.
 
 __ https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/creating-a-personal-access-token
+
+Update Libdoc templates
+-----------------------
+
+1. Prerequisites are listed in `<src/web/README.md>`_. This step can be skipped
+   if there are no changes to Libdoc.
+
+2. Regenerate HTML template and update the list of supported localizations in
+   the ``--help`` text::
+
+      invoke build-libdoc
+
+3. Commit and push changes::
+
+      git commit -m "Update Libdoc templates" src/robot/htmldata/libdoc/libdoc.html src/robot/libdocpkg/languages.py
+      git push
 
 Set version
 -----------
@@ -189,27 +210,26 @@ Creating distributions
 
       invoke clean
 
-3. Create and validate source distribution in zip format and
-   `wheel <https://pythonwheels.com>`_::
+4. Create and validate source distribution and `wheel <https://pythonwheels.com>`_::
 
-      python setup.py sdist --formats zip bdist_wheel
+      python setup.py sdist bdist_wheel
       ls -l dist
       twine check dist/*
 
    Distributions can be tested locally if needed.
 
-4. Upload distributions to PyPI::
+5. Upload distributions to PyPI::
 
       twine upload dist/*
 
-5. Verify that project pages at `PyPI
+6. Verify that project pages at `PyPI
    <https://pypi.python.org/pypi/robotframework>`_ look good.
 
-6. Test installation::
+7. Test installation::
 
       pip install --pre --upgrade robotframework
 
-7. Documentation
+8. Documentation
 
    - For a reproducible build, set the ``SOURCE_DATE_EPOCH``
      environment variable to a constant value, corresponding to the
@@ -229,14 +249,14 @@ Creating distributions
 
         git checkout gh-pages
         invoke add-docs $VERSION --push
-        git checkout master
+        git checkout master    # replace master with v*-maintenance if needed!
 
 Post actions
 ------------
 
 1. Back to master if needed::
 
-      git checkout master
+      git checkout master    # replace master with v*-maintenance if needed!
 
 2. Set dev version based on the previous version::
 
@@ -256,28 +276,12 @@ Post actions
 Announcements
 -------------
 
-1. `robotframework-users <https://groups.google.com/group/robotframework-users>`_
-   and
-   `robotframework-announce <https://groups.google.com/group/robotframework-announce>`_
-   lists. The latter is not needed with preview releases but should be used
-   at least with major updates. Notice that sending to it requires admin rights.
+1. ``#announcements`` channel on `Slack <https://slack.robotframework.org/>`_.
+   Use ``@channel`` at least with major releases.
 
-2. Twitter. Either Tweet something yourself and make sure it's re-tweeted
-   by `@robotframework <http://twitter.com/robotframework>`_, or send the
-   message directly as `@robotframework`. This makes the note appear also
-   at http://robotframework.org.
+2. `Forum <https://forum.robotframework.org/>`_.
 
-   Should include a link to more information. Possibly a link to the full
-   release notes or an email to the aforementioned mailing lists.
+3. `LinkedIn group <https://www.linkedin.com/groups/3710899/>`_. A personal
+   LinkedIn post is a good idea at least with bigger releases.
 
-3. ``#devel`` and ``#general`` channels on Slack.
-
-4. `Robot Framework LinkedIn
-   <https://www.linkedin.com/groups/3710899/>`_ group.
-
-5. Consider sending announcements, at least with major releases, also to other
-   forums where we want to make the framework more well known. For example:
-
-   - http://opensourcetesting.org
-   - http://tech.groups.yahoo.com/group/agile-testing
-   - http://lists.idyll.org/listinfo/testing-in-python
+4. `robotframework-users <https://groups.google.com/group/robotframework-users>`_

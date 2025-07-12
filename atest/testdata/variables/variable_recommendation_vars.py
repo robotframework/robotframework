@@ -1,6 +1,6 @@
 class ExampleObject:
-    def __init__(self, name='<noname>'):
+    def __init__(self, name="<noname>"):
         self.name = name
 
 
-OBJ = ExampleObject('dude')
+OBJ = ExampleObject("dude")

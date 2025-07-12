@@ -7,7 +7,7 @@ ${SOURCE}         output/listener_interface/body_items_v3/tests.robot
 ${MODIFIER}       output/listener_interface/body_items_v3/Modifier.py
 @{ALL TESTS}      Library keyword    User keyword    Non-existing keyword
 ...               Empty keyword    Duplicate keyword    Invalid keyword
-...               IF    TRY    FOR    WHILE    VAR    RETURN
+...               IF    TRY    FOR    WHILE    WHILE with modified limit    VAR    RETURN
 ...               Invalid syntax    Run Keyword
 
 *** Test Cases ***
@@ -25,40 +25,47 @@ Modify invalid keyword
 
 Modify keyword results
     ${tc} =    Get Test Case    Invalid keyword
-    Check Keyword Data    ${tc.body[0]}    Invalid keyword
+    Check Keyword Data    ${tc[0]}    Invalid keyword
     ...    args=\${secret}
     ...    tags=end, fixed, start
     ...    doc=Results can be modified both in start and end!
 
 Modify FOR
     ${tc} =    Check Test Case    FOR       FAIL    Listener failed me at 'b'!
-    Length Should Be    ${tc.body[0].body}                     2
-    Should Be Equal     ${tc.body[0].assign}[0]                secret
-    Should Be Equal     ${tc.body[0].body[0].assign}[\${x}]    xxx
-    Should Be Equal     ${tc.body[0].body[1].assign}[\${x}]    xxx
+    Length Should Be    ${tc[0].body}                2
+    Should Be Equal     ${tc[0].assign}[0]           secret
+    Should Be Equal     ${tc[0, 0].assign}[\${x}]    xxx
+    Should Be Equal     ${tc[0, 1].assign}[\${x}]    xxx
 
 Modify WHILE
     ${tc} =    Check Test Case    WHILE     FAIL    Fail at iteration 10.
-    Length Should Be    ${tc.body[0].body}                     10
+    Length Should Be    ${tc[0].body}                     10
+
+Modify WHILE limit
+    ${tc} =    Check Test Case    WHILE with modified limit     PASS    ${EMPTY}
+    Length Should Be    ${tc[1].body}        3
+    Check Log Message   ${tc[1, 0, 0, 0]}    \${x} = 1
+    Check Log Message   ${tc[1, 1, 0, 0]}    \${x} = 2
+    Check Log Message   ${tc[1, 2]}          Modified limit message.
 
 Modify IF
     ${tc} =    Check Test Case    IF        FAIL    Executed!
-    Should Be Equal     ${tc.body[0].body[0].message}          Secret message!
-    Should Be Equal     ${tc.body[0].body[1].message}          Secret message!
-    Should Be Equal     ${tc.body[0].body[2].message}          Executed!
+    Should Be Equal     ${tc[0, 0].message}    Secret message!
+    Should Be Equal     ${tc[0, 1].message}    Secret message!
+    Should Be Equal     ${tc[0, 2].message}    Executed!
 
 Modify TRY
     ${tc} =    Check Test Case    TRY       FAIL    Not caught!
-    Length Should Be    ${tc.body[0].body}                     3
+    Length Should Be    ${tc[0].body}                     3
 
 Modify VAR
     ${tc} =    Check Test Case    VAR       FAIL    value != VAR by listener
-    Should Be Equal     ${tc.body[0].value}[0]                secret
-    Should Be Equal     ${tc.body[1].value}[0]                secret
+    Should Be Equal     ${tc[0].value}[0]    secret
+    Should Be Equal     ${tc[1].value}[0]    secret
 
 Modify RETURN
     ${tc} =    Check Test Case    RETURN    FAIL    RETURN by listener != value
-    Should Be Equal     ${tc.body[0].body[1].values}[0]       secret
+    Should Be Equal     ${tc[0, 1].values}[0]       secret
 
 Validate that all methods are called correctly
     Run Tests    --variable VALIDATE_EVENTS:True    ${SOURCE}

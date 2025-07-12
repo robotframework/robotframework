@@ -1,5 +1,6 @@
 *** Settings ***
 Library                  Annotations.py
+Library                  DeferredAnnotations.py
 Library                  OperatingSystem
 Resource                 conversion.resource
 
@@ -13,6 +14,7 @@ ${MAPPING}               ${{type('M', (collections.abc.Mapping,), {'__getitem__'
 ${SEQUENCE}              ${{type('S', (collections.abc.Sequence,), {'__getitem__': lambda s, i: ['x'][i], '__len__': lambda s: 1})()}}
 ${PATH}                  ${{pathlib.Path('x/y')}}
 ${PUREPATH}              ${{pathlib.PurePath('x/y')}}
+${UNKNOWN}               ${{Annotations.Unknown(42)}}
 
 *** Test Cases ***
 Integer
@@ -230,6 +232,11 @@ Datetime
     DateTime             ${0.0}                    datetime.fromtimestamp(0)
     DateTime             ${1612230445.1}           datetime.fromtimestamp(1612230445.1)
 
+Datetime with now and today
+    Datetime now         now
+    Datetime now         NOW
+    Datetime now         Today
+
 Invalid datetime
     [Template]           Conversion Should Fail
     DateTime             foobar                                          error=Invalid timestamp 'foobar'.
@@ -241,6 +248,11 @@ Date
     Date                 2014-06-11                date(2014, 6, 11)
     Date                 20180808                  date(2018, 8, 8)
     Date                 20180808000000000000      date(2018, 8, 8)
+
+Date with now and today
+    Date                 NOW                       date.today()
+    Date                 today                     date.today()
+    Date                 ToDaY                     date.today()
 
 Invalid date
     [Template]           Conversion Should Fail
@@ -516,6 +528,11 @@ Unknown types are not converted
     Unknown              None                      'None'
     Unknown              none                      'none'
     Unknown              []                        '[]'
+    Unknown              ${UNKNOWN}                ${UNKNOWN}
+
+Unknown types are not converted in union
+    Unknown in union     ${UNKNOWN}                ${UNKNOWN}
+    Unknown in union     ${42}                     '42'
 
 Non-type values don't cause errors
     Non type             foo                       'foo'
@@ -590,8 +607,13 @@ None as default with unknown type
     None as default with unknown type          None     None
 
 Forward references
-    Forward referenced concrete type           42    42
-    Forward referenced ABC                     []    []
+    Forward referenced concrete type           42         42
+    Forward referenced ABC                     [1, 2]     [1, 2]
+    Forward referenced ABC                     ${LIST}    ${LIST}
+
+Unknown forward references
+    Unknown forward reference                  42         '42'
+    Nested unknown forward reference           ${LIST}    ${LIST}
 
 @keyword decorator overrides annotations
     Types via keyword deco override            42    timedelta(seconds=42)
@@ -634,3 +656,8 @@ Explicit conversion failure is used if both conversions fail
     [Template]    Conversion Should Fail
     Type and default 4    BANG!    type=list         error=Invalid expression.
     Type and default 3    BANG!    type=timedelta    error=Invalid time string 'BANG!'.
+
+Deferred evaluation of annotations
+    [Tags]    require-py3.14
+    ${value} =    Deferred evaluation of annotations    PEP 649
+    Should be equal    ${value}    PEP 649

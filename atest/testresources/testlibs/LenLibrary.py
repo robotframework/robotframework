@@ -8,6 +8,7 @@ class LenLibrary:
     >>> l.set_length(1)
     >>> assert l
     """
+
     def __init__(self):
         self._length = 0
 

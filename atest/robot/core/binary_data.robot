@@ -28,13 +28,13 @@ Print Bytes
     ...    116    t
     ...    123    {
     ...    127    \x7f
-        Check Log Message    ${tc.kws[0].msgs[${index}]}    Byte ${index}: '${exp}'
+        Check Log Message    ${tc[0, ${index}]}    Byte ${index}: '${exp}'
     END
     # Check that all bytes were really written without errors.
     FOR    ${index}    IN RANGE    256
-        Should Start With    ${tc.kws[0].msgs[${index}].message}    Byte ${index}:
+        Should Start With    ${tc[0, ${index}].message}    Byte ${index}:
     END
-    Check Log Message    ${tc.kws[0].msgs[-1]}    All bytes printed successfully
+    Check Log Message    ${tc[0, -1]}    All bytes printed successfully
 
 Byte Error
     [Documentation]    Check an exception containing control chars is handled ok
@@ -46,7 +46,7 @@ Byte Error In Setup And Teardown
 Binary Data
     [Documentation]    Make sure even totally binary data doesn't break anything
     ${tc} =    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc.kws[0].msgs[1]}    Binary data printed successfully
+    Check Log Message    ${tc[0, 1]}    Binary data printed successfully
 
 *** Keywords ***
 My Run Tests

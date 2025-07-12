@@ -1,2 +1,4 @@
+# Dependencies for the acceptance test runner.
+
 jsonschema >= 4.0
 xmlschema

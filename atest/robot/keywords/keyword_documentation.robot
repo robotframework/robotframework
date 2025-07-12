@@ -26,4 +26,4 @@ Multiline documentation with split short doc
 Verify Documentation
     [Arguments]    ${doc}    ${test}=${TEST NAME}
     ${tc} =    Check Test Case    ${test}
-    Should Be Equal    ${tc.kws[0].doc}    ${doc}
+    Should Be Equal    ${tc[0].doc}    ${doc}

@@ -1,4 +1,5 @@
 import sys
+
 from remoteserver import DirectResultRemoteServer
 
 
@@ -11,7 +12,7 @@ class Invalid:
         return {}
 
     def invalid_char_in_xml(self):
-        return {'status': 'PASS', 'return': '\x00'}
+        return {"status": "PASS", "return": "\x00"}
 
     def exception(self, message):
         raise Exception(message)
@@ -20,5 +21,5 @@ class Invalid:
         sys.exit()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     DirectResultRemoteServer(Invalid(), *sys.argv[1:])

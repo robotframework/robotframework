@@ -205,7 +205,7 @@ FINALLY before ELSE
     END
 
 Template with TRY
-    [Documentation]    FAIL    Templates cannot be used with TRY.
+    [Documentation]    FAIL    TRY does not support templates.
     [Template]    Log many
     TRY
         Fail   Should not be executed
@@ -214,7 +214,7 @@ Template with TRY
     END
 
 Template with TRY inside IF
-    [Documentation]    FAIL    Templates cannot be used with TRY.
+    [Documentation]    FAIL    TRY does not support templates.
     [Template]    Log many
     IF    True
         TRY
@@ -228,7 +228,7 @@ Template with IF inside TRY
     [Documentation]    FAIL
     ...    Multiple errors:
     ...    - TRY must have closing END.
-    ...    - Templates cannot be used with TRY.
+    ...    - TRY does not support templates.
     [Template]    Log many
     TRY
         IF    True

@@ -25,19 +25,25 @@ def variable_not_found(name, candidates, message=None, deco_braces=True):
     Return recommendations for similar variable names if any are found.
     """
     candidates = _decorate_candidates(name[0], candidates, deco_braces)
-    normalizer = partial(normalize, ignore='$@&%{}_')
+    normalizer = partial(normalize, ignore="$@&%{}_")
     message = RecommendationFinder(normalizer).find_and_format(
-        name, candidates,
-        message=message or "Variable '%s' not found." % name
+        name,
+        candidates,
+        message=message or f"Variable '{name}' not found.",
     )
     raise VariableError(message)
 
 
 def _decorate_candidates(identifier, candidates, deco_braces=True):
-    template = '%s{%s}' if deco_braces else '%s%s'
-    is_included = {'$': lambda value: True,
-                   '@': is_list_like,
-                   '&': is_dict_like,
-                   '%': lambda value: True}[identifier]
-    return [template % (identifier, name)
-            for name in candidates if is_included(candidates[name])]
+    template = "%s{%s}" if deco_braces else "%s%s"
+    is_included = {
+        "$": lambda value: True,
+        "@": is_list_like,
+        "&": is_dict_like,
+        "%": lambda value: True,
+    }[identifier]
+    return [
+        template % (identifier, name)
+        for name in candidates
+        if is_included(candidates[name])
+    ]

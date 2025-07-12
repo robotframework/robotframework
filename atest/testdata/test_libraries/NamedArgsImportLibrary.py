@@ -5,7 +5,10 @@ class NamedArgsImportLibrary:
         self.arg2 = arg2
         self.kws = kws
 
-    def check_init_arguments(self, exp_arg1, exp_arg2, **kws):
-        if self.arg1 != exp_arg1 or self.arg2 != exp_arg2 or kws != self.kws:
-            raise AssertionError('Wrong initialization values. Got (%s, %s, %r), expected (%s, %s, %r)'
-                                 % (self.arg1, self.arg2, self.kws, exp_arg1, exp_arg2, kws))
+    def check_init_arguments(self, arg1, arg2, **kws):
+        if self.arg1 != arg1 or self.arg2 != arg2 or kws != self.kws:
+            raise AssertionError(
+                f"Wrong initialization values. "
+                f"Got ({self.arg1!r}, {self.arg2!r}, {self.kws!r}), "
+                f"expected ({arg1!r}, {arg2!r}, {kws!r})"
+            )

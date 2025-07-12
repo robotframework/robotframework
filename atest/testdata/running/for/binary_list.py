@@ -1,2 +1,1 @@
-LIST__illegal_values = ('illegal:\x00\x08\x0B\x0C\x0E\x1F',
-                        'more:\uFFFE\uFFFF')
+LIST__illegal_values = ("illegal:\x00\x08\x0b\x0c\x0e\x1f", "more:\ufffe\uffff")

@@ -2,12 +2,6 @@
 Robot Framework 7.0
 ===================
 
-
-..
-     GitHub fails to render this file at the moment.
-     View rf-7.0.pdf until the problem is resolved.
-
-
 .. default-role:: code
 
 `Robot Framework`_ 7.0 is a new major release with highly enhanced listener interface
@@ -95,7 +89,7 @@ version 3 has been extended to support also keywords and control structures (`#3
 For example, a listener having the following methods prints information
 about started keywords and ended WHILE loops:
 
-.. sourcecode:: python
+.. code:: python
 
     from robot import result, running
 
@@ -112,7 +106,7 @@ With keyword calls it is possible to also get more information about the actuall
 executed keyword. For example, the following listener prints some information
 about the executed keyword and the library it belongs to:
 
-.. sourcecode:: python
+.. code:: python
 
     from robot.running import Keyword as KeywordData, LibraryKeyword
     from robot.result import Keyword as KeywordResult
@@ -173,7 +167,7 @@ in the `__init__` method. Robot Framework 7.0 makes it possible to use string
 that a listener can be specified as a class attribute and not only in `__init__`.
 This is especially convenient when using the `@library` decorator:
 
-.. sourcecode:: python
+.. code:: python
 
     from robot.api.deco import keyword, library
 
@@ -216,7 +210,7 @@ the syntax for creating variables in different scopes. Except for the mandatory
 `VAR` marker, the syntax is also the same as when creating variables in the
 Variables section. The syntax is best explained with examples:
 
-.. sourcecode:: robotframework
+.. code:: robotframework
 
     *** Test Cases ***
     Example
@@ -242,7 +236,7 @@ in the Variables section, it is possible to create also `@{list}` and `&{dict}`
 variables. Unlike in the Variables section, variables can be created conditionally
 using IF/ELSE structures:
 
-.. sourcecode:: robotframework
+.. code:: robotframework
 
     *** Test Cases ***
     Long value
@@ -286,7 +280,7 @@ accepts more arguments than there are embedded arguments, the remaining argument
 can be passed in as normal arguments. This is illustrated by the following example
 keyword:
 
-.. sourcecode:: python
+.. code:: python
 
     @keyword('Number of ${animals} should be')
     def example(animals, count):
@@ -294,7 +288,7 @@ keyword:
 
 The above keyword could be used like this:
 
-.. sourcecode:: robotframework
+.. code:: robotframework
 
     *** Test Cases ***
     Example
@@ -353,7 +347,7 @@ In Python, the Literal__ type makes it possible to type arguments so that type
 checkers accept only certain values. For example, this function only accepts
 strings `x`, `y` and `z`:
 
-.. sourcecode:: python
+.. code:: python
 
    def example(arg: Literal['x', 'y', 'z']):
        ...
@@ -392,7 +386,7 @@ Support for stringified generics and unions has now been added also to
 Robot Framework's argument conversion (`#4711`_). For example,
 the following typing now also works with Python 3.8:
 
-.. sourcecode:: python
+.. code:: python
 
     def example(a: 'list[int]', b: 'int | float'):
         ...
@@ -412,7 +406,7 @@ the `-tag` syntax with their own `[Tags]` setting (`#4374`_). For example,
 tests `T1` and `T3` below get tags `all` and `most`, and test `T2` gets
 tags `all` and `one`:
 
-.. sourcecode:: robotframework
+.. code:: robotframework
 
     *** Settings ***
     Test Tags      all    most
@@ -536,7 +530,7 @@ are now stored to `start` and `elapsed` attributes and message times to `time`.
 
 Examples:
 
-.. sourcecode:: xml
+.. code:: xml
 
     <!-- Old format -->
     <msg timestamp="20231108 15:36:34.278" level="INFO">Hello world!</msg>
@@ -568,7 +562,7 @@ the result model.
 
 Examples:
 
-.. sourcecode:: xml
+.. code:: xml
 
     <!-- Old format -->
     <kw name="Log" library="BuiltIn">...</kw>

@@ -9,6 +9,9 @@ Stdin is NONE by default
 Stdin can be set to PIPE
     Check Test Case    ${TESTNAME}
 
+Stdin PIPE can be closed
+    Check Test Case    ${TESTNAME}
+
 Stdin can be disabled explicitly
     Check Test Case    ${TESTNAME}
 
@@ -24,5 +27,5 @@ Stdin as `pathlib.Path`
 Stdin as text
     Check Test Case    ${TESTNAME}
 
-Stdin as stdout from other process
+Stdin as stdout from another process
     Check Test Case    ${TESTNAME}
