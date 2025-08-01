@@ -292,15 +292,32 @@ class TestCaseSettings(Settings):
         if not inner_content:
             return False
             
-        # Reject known Robot Framework settings from any context
-        known_settings = {
-            'Documentation', 'Tags', 'Setup', 'Teardown', 'Template', 'Timeout',
-            'Arguments', 'Return', 'Metadata', 'Suite Setup', 'Suite Teardown', 
-            'Test Setup', 'Test Teardown', 'Default Tags', 'Test Tags', 'Keyword Tags', 
-            'Test Template', 'Test Timeout', 'Library', 'Resource', 'Variables'
-        }
+        # Use Robot Framework's own logic to check if this could be a valid setting
+        # Normalize the same way Robot Framework does
+        from robot.utils import normalize_whitespace
+        normalized = normalize_whitespace(inner_content).title()
         
-        if inner_content in known_settings:
+        # Check if this normalized name would be a valid setting in current context
+        if normalized in self.names:
+            return False
+            
+        # Check if this normalized name would be a valid setting in parent context
+        if hasattr(self.parent, 'names') and normalized in self.parent.names:
+            return False
+            
+        # Check aliases in current context
+        if normalized in self.aliases:
+            return False
+            
+        # Check aliases in parent context  
+        if hasattr(self.parent, 'aliases') and normalized in self.parent.aliases:
+            return False
+            
+        # Check language-specific settings
+        canonical = self.languages.settings.get(normalized, normalized)
+        if canonical in self.names or canonical in self.aliases:
+            return False
+        if hasattr(self.parent, 'names') and (canonical in self.parent.names or canonical in self.parent.aliases):
             return False
             
         # Only allow custom metadata with valid naming patterns
