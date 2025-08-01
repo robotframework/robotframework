@@ -168,6 +168,12 @@ Options
                           after the path using colon or semicolon as separator.
                           Examples: --variablefile path/vars.yaml
                                     --variablefile environment.py:testing
+    --custommetadata name *  Specify allowed custom metadata names. Custom metadata
+                          can be used in test cases and keywords using square
+                          bracket syntax like [Owner] or [Priority]. Only the
+                          specified names are allowed as custom metadata.
+                          Examples: --custommetadata Owner --custommetadata Priority
+                                    --custommetadata "Component" --custommetadata "Requirement"
  -d --outputdir dir       Where to create output files. The default is the
                           directory where tests are run from and the given path
                           is considered relative to that unless it is absolute.
@@ -468,6 +474,7 @@ class RobotFramework(Application):
             rpa=settings.rpa,
             lang=settings.languages,
             allow_empty_suite=settings.run_empty_suite,
+            custom_metadata=settings.custom_metadata,
         )
         suite = builder.build(*datasources)
         if settings.pre_run_modifiers:

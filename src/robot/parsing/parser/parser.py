@@ -29,6 +29,7 @@ def get_model(
     data_only: bool = False,
     curdir: "str|None" = None,
     lang: LanguagesLike = None,
+    allowed_custom_metadata: "list[str]|None" = None,
 ) -> File:
     """Parses the given source into a model represented as an AST.
 
@@ -57,7 +58,7 @@ def get_model(
     Use :func:`get_resource_model` or :func:`get_init_model` when parsing
     resource or suite initialization files, respectively.
     """
-    return _get_model(get_tokens, source, data_only, curdir, lang)
+    return _get_model(get_tokens, source, data_only, curdir, lang, allowed_custom_metadata)
 
 
 def get_resource_model(
@@ -65,13 +66,14 @@ def get_resource_model(
     data_only: bool = False,
     curdir: "str|None" = None,
     lang: LanguagesLike = None,
+    allowed_custom_metadata: "list[str]|None" = None,
 ) -> File:
     """Parses the given source into a resource file model.
 
     Same as :func:`get_model` otherwise, but the source is considered to be
     a resource file. This affects, for example, what settings are valid.
     """
-    return _get_model(get_resource_tokens, source, data_only, curdir, lang)
+    return _get_model(get_resource_tokens, source, data_only, curdir, lang, allowed_custom_metadata)
 
 
 def get_init_model(
@@ -79,6 +81,7 @@ def get_init_model(
     data_only: bool = False,
     curdir: "str|None" = None,
     lang: LanguagesLike = None,
+    allowed_custom_metadata: "list[str]|None" = None,
 ) -> File:
     """Parses the given source into an init file model.
 
@@ -86,7 +89,7 @@ def get_init_model(
     a suite initialization file. This affects, for example, what settings are
     valid.
     """
-    return _get_model(get_init_tokens, source, data_only, curdir, lang)
+    return _get_model(get_init_tokens, source, data_only, curdir, lang, allowed_custom_metadata)
 
 
 def _get_model(
@@ -95,8 +98,9 @@ def _get_model(
     data_only: bool,
     curdir: "str|None",
     lang: LanguagesLike,
+    allowed_custom_metadata: "list[str]|None",
 ):
-    tokens = token_getter(source, data_only, lang=lang)
+    tokens = token_getter(source, data_only, lang=lang, allowed_custom_metadata=allowed_custom_metadata)
     statements = _tokens_to_statements(tokens, curdir)
     model = _statements_to_model(statements, source)
     ConfigParser.parse(model)

@@ -47,9 +47,10 @@ class Parser(ABC):
 class RobotParser(Parser):
     extensions = ()
 
-    def __init__(self, lang: LanguagesLike = None, process_curdir: bool = True):
+    def __init__(self, lang: LanguagesLike = None, process_curdir: bool = True, custom_metadata: "list[str]|None" = None):
         self.lang = lang
         self.process_curdir = process_curdir
+        self.custom_metadata = custom_metadata
 
     def parse_suite_file(self, source: Path, defaults: TestDefaults) -> TestSuite:
         model = get_model(
@@ -57,6 +58,7 @@ class RobotParser(Parser):
             data_only=True,
             curdir=self._get_curdir(source),
             lang=self.lang,
+            allowed_custom_metadata=self.custom_metadata,
         )
         model.source = source
         return self.parse_model(model, defaults)

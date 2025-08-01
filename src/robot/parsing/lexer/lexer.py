@@ -33,6 +33,7 @@ def get_tokens(
     data_only: bool = False,
     tokenize_variables: bool = False,
     lang: LanguagesLike = None,
+    allowed_custom_metadata: "list[str]|None" = None,
 ) -> "Iterator[Token]":
     """Parses the given source to tokens.
 
@@ -52,11 +53,13 @@ def get_tokens(
         an initialized :class:`~robot.conf.languages.Language` subclass,
         a list containing such strings or instances, or a
         :class:`~robot.conf.languages.Languages` instance.
+    :param allowed_custom_metadata: List of allowed custom metadata names.
+        If provided, only these custom metadata values will be accepted.
 
     Returns a generator that yields :class:`~robot.parsing.lexer.tokens.Token`
     instances.
     """
-    lexer = Lexer(SuiteFileContext(lang=lang), data_only, tokenize_variables)
+    lexer = Lexer(SuiteFileContext(lang=lang, allowed_custom_metadata=allowed_custom_metadata), data_only, tokenize_variables)
     lexer.input(source)
     return lexer.get_tokens()
 
@@ -66,13 +69,14 @@ def get_resource_tokens(
     data_only: bool = False,
     tokenize_variables: bool = False,
     lang: LanguagesLike = None,
+    allowed_custom_metadata: "list[str]|None" = None,
 ) -> "Iterator[Token]":
     """Parses the given source to resource file tokens.
 
     Same as :func:`get_tokens` otherwise, but the source is considered to be
     a resource file. This affects, for example, what settings are valid.
     """
-    lexer = Lexer(ResourceFileContext(lang=lang), data_only, tokenize_variables)
+    lexer = Lexer(ResourceFileContext(lang=lang, allowed_custom_metadata=allowed_custom_metadata), data_only, tokenize_variables)
     lexer.input(source)
     return lexer.get_tokens()
 
@@ -82,6 +86,7 @@ def get_init_tokens(
     data_only: bool = False,
     tokenize_variables: bool = False,
     lang: LanguagesLike = None,
+    allowed_custom_metadata: "list[str]|None" = None,
 ) -> "Iterator[Token]":
     """Parses the given source to init file tokens.
 
@@ -89,7 +94,7 @@ def get_init_tokens(
     a suite initialization file. This affects, for example, what settings are
     valid.
     """
-    lexer = Lexer(InitFileContext(lang=lang), data_only, tokenize_variables)
+    lexer = Lexer(InitFileContext(lang=lang, allowed_custom_metadata=allowed_custom_metadata), data_only, tokenize_variables)
     lexer.input(source)
     return lexer.get_tokens()
 
