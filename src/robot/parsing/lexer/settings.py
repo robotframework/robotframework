@@ -313,13 +313,20 @@ class TestCaseSettings(Settings):
         if hasattr(self.parent, 'aliases') and normalized in self.parent.aliases:
             return False
             
-        # Check language-specific settings
+        # Check language-specific settings - this is crucial for translations
         canonical = self.languages.settings.get(normalized, normalized)
         if canonical in self.names or canonical in self.aliases:
             return False
         if hasattr(self.parent, 'names') and (canonical in self.parent.names or canonical in self.parent.aliases):
             return False
             
+        # Also check the reverse - if the inner content is a translated setting name
+        # Get all setting translations for this language
+        for english_name, translated_name in self.languages.settings.items():
+            if translated_name.lower() == inner_content.lower():
+                # This is a translated setting name, not custom metadata
+                return False
+        
         # Only allow custom metadata with valid naming patterns
         import re
         if not re.match(r'^[a-zA-Z0-9\s\-_]+$', inner_content):
@@ -399,6 +406,40 @@ class KeywordSettings(Settings):
         if not inner_content:
             return False
             
+        # First check if this could be a valid setting using Robot Framework's own normalization logic
+        from robot.utils import normalize_whitespace
+        normalized = normalize_whitespace(inner_content).title()
+        
+        # Check if this normalized name would be a valid setting in current context
+        if normalized in self.names:
+            return False
+            
+        # Check if this normalized name would be a valid setting in parent context
+        if hasattr(self.parent, 'names') and normalized in self.parent.names:
+            return False
+            
+        # Check aliases in current context
+        if normalized in self.aliases:
+            return False
+            
+        # Check aliases in parent context  
+        if hasattr(self.parent, 'aliases') and normalized in self.parent.aliases:
+            return False
+            
+        # Check language-specific settings - this is crucial for translations
+        canonical = self.languages.settings.get(normalized, normalized)
+        if canonical in self.names or canonical in self.aliases:
+            return False
+        if hasattr(self.parent, 'names') and (canonical in self.parent.names or canonical in self.parent.aliases):
+            return False
+            
+        # Also check the reverse - if the inner content is a translated setting name
+        # Get all setting translations for this language
+        for english_name, translated_name in self.languages.settings.items():
+            if translated_name.lower() == inner_content.lower():
+                # This is a translated setting name, not custom metadata
+                return False
+        
         # Reject known Robot Framework settings from any context
         known_settings = {
             'Documentation', 'Tags', 'Setup', 'Teardown', 'Template', 'Timeout',
