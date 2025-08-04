@@ -349,7 +349,11 @@ class TestCaseBuilder(BodyBuilder):
         metadata_value = node.value.strip() if node.value else ""
         # Get current metadata or create empty dict
         try:
-            current_metadata = dict(self.model.custom_metadata)
+            current_metadata = self.model.custom_metadata
+            if current_metadata is None:
+                current_metadata = {}
+            else:
+                current_metadata = dict(current_metadata)
         except AttributeError:
             # If custom_metadata not accessible, initialize empty
             current_metadata = {}
@@ -447,7 +451,11 @@ class KeywordBuilder(BodyBuilder):
         metadata_value = node.value.strip() if node.value else ""
         # Get current metadata or create empty dict
         try:
-            current_metadata = dict(self.model.custom_metadata)
+            current_metadata = self.model.custom_metadata
+            if current_metadata is None:
+                current_metadata = {}
+            else:
+                current_metadata = dict(current_metadata)
         except AttributeError:
             # If custom_metadata not accessible, initialize empty
             current_metadata = {}

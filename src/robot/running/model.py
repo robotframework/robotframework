@@ -659,6 +659,8 @@ class TestCase(model.TestCase[Keyword]):
         # ``None`` if template is not used.
         self.template = template
         self.error = error
+        # Initialize the custom metadata setter attribute to prevent AttributeError during copy
+        self._setter__custom_metadata = None
 
     def to_dict(self) -> DataDict:
         data = super().to_dict()
