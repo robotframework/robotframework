@@ -330,7 +330,7 @@ class TestCaseSettings(Settings):
         
         # Only allow custom metadata with valid naming patterns
         import re
-        if not re.match(r'^[a-zA-Z0-9\s\-_]+$', inner_content):
+        if not re.match(r'^[a-zA-Z0-9\s\-_.]+$', inner_content):
             return False
             
         return True
@@ -449,7 +449,7 @@ class KeywordSettings(Settings):
             
         # Only allow custom metadata with valid naming patterns
         import re
-        if not re.match(r'^[a-zA-Z0-9\s\-_]+$', inner_content):
+        if not re.match(r'^[a-zA-Z0-9\s\-_.]+$', inner_content):
             return False
             
         return True

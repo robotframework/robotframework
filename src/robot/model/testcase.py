@@ -63,6 +63,7 @@ class TestCase(ModelObject, Generic[KW]):
         self.doc = doc
         self.tags = tags
         self.timeout = timeout
+        self.custom_metadata = {}
         self.lineno = lineno
         self.parent = parent
         self.body = []
