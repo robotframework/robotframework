@@ -172,7 +172,13 @@ class FileSettings(Settings, ABC):
     def is_custom_metadata_allowed(self, metadata_name: str) -> bool:
         """Check if the given custom metadata name is allowed."""
         if not self.allowed_custom_metadata:
-            return False  # No custom metadata allowed without explicit specification
+            return True  # All custom metadata allowed when no explicit specification
+        return metadata_name in self.allowed_custom_metadata
+    
+    def should_include_custom_metadata(self, metadata_name: str) -> bool:
+        """Check if custom metadata should be included in the results."""
+        if not self.allowed_custom_metadata:
+            return True  # Include all custom metadata when no explicit specification
         return metadata_name in self.allowed_custom_metadata
 
 
@@ -267,12 +273,7 @@ class TestCaseSettings(Settings):
         
         # Check for custom metadata first
         if self._is_custom_metadata_setting(orig):
-            # Validate custom metadata
-            inner_content = orig.strip()[1:-1].strip()
-            if not self.parent.is_custom_metadata_allowed(inner_content):
-                self._lex_error(statement, f"Custom metadata '{inner_content}' is not allowed. Use --custommetadata to specify allowed metadata.")
-                return
-            
+            # Always allow custom metadata during parsing - filtering happens later in transformers
             # Lex custom metadata as CUSTOM_METADATA token
             statement[0].type = Token.CUSTOM_METADATA
             self.settings[orig] = statement[1:]
@@ -381,12 +382,7 @@ class KeywordSettings(Settings):
         
         # Check for custom metadata first
         if self._is_custom_metadata_setting(orig):
-            # Validate custom metadata
-            inner_content = orig.strip()[1:-1].strip()
-            if not self.parent.is_custom_metadata_allowed(inner_content):
-                self._lex_error(statement, f"Custom metadata '{inner_content}' is not allowed. Use --custommetadata to specify allowed metadata.")
-                return
-            
+            # Always allow custom metadata during parsing - filtering happens later in transformers
             # Lex custom metadata as CUSTOM_METADATA token
             statement[0].type = Token.CUSTOM_METADATA
             self.settings[orig] = statement[1:]

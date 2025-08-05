@@ -1415,6 +1415,13 @@
               }
             ]
           }
+        },
+        "custom_metadata": {
+          "title": "Custom Metadata",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
         }
       },
       "required": [

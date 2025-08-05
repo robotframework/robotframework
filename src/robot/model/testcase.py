@@ -182,7 +182,7 @@ class TestCase(ModelObject, Generic[KW]):
         
         New in Robot Framework 7.0.
         """
-        return bool(self._custom_metadata)
+        return bool(getattr(self, '_setter__custom_metadata', None))
 
     @property
     def id(self) -> str:
@@ -232,7 +232,7 @@ class TestCase(ModelObject, Generic[KW]):
         if self.has_teardown:
             data["teardown"] = self.teardown.to_dict()
         if self.has_custom_metadata:
-            data["custom_metadata"] = self.custom_metadata
+            data["custom_metadata"] = dict(self.custom_metadata)
         data["body"] = self.body.to_dicts()
         return data
 

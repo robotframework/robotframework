@@ -69,6 +69,7 @@ class RobotParser(Parser):
             data_only=True,
             curdir=self._get_curdir(source),
             lang=self.lang,
+            allowed_custom_metadata=self.custom_metadata,
         )
         model.source = source
         suite = TestSuite(
@@ -76,7 +77,7 @@ class RobotParser(Parser):
             source=source.parent,
             rpa=None,
         )
-        SuiteBuilder(suite, InitFileSettings(defaults)).build(model)
+        SuiteBuilder(suite, InitFileSettings(defaults, self.custom_metadata)).build(model)
         return suite
 
     def parse_model(
@@ -86,7 +87,7 @@ class RobotParser(Parser):
     ) -> TestSuite:
         name = TestSuite.name_from_source(model.source, self.extensions)
         suite = TestSuite(name=name, source=model.source)
-        SuiteBuilder(suite, FileSettings(defaults)).build(model)
+        SuiteBuilder(suite, FileSettings(defaults, self.custom_metadata)).build(model)
         return suite
 
     def _get_curdir(self, source: Path) -> "str|None":
@@ -101,13 +102,14 @@ class RobotParser(Parser):
             data_only=True,
             curdir=self._get_curdir(source),
             lang=self.lang,
+            allowed_custom_metadata=self.custom_metadata,
         )
         model.source = source
         return self.parse_resource_model(model)
 
     def parse_resource_model(self, model: File) -> ResourceFile:
         resource = ResourceFile(source=model.source)
-        ResourceBuilder(resource).build(model)
+        ResourceBuilder(resource, self.custom_metadata).build(model)
         return resource
 
 

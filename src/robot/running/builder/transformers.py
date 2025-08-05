@@ -154,9 +154,9 @@ class SuiteBuilder(ModelVisitor):
 
 class ResourceBuilder(ModelVisitor):
 
-    def __init__(self, resource: ResourceFile):
+    def __init__(self, resource: ResourceFile, custom_metadata: "list[str]|None" = None):
         self.resource = resource
-        self.settings = FileSettings()
+        self.settings = FileSettings(custom_metadata=custom_metadata)
         self.seen_keywords = NormalizedDict(ignore="_")
 
     def build(self, model: File):
@@ -345,6 +345,10 @@ class TestCaseBuilder(BodyBuilder):
         self.model.template = node.value
 
     def visit_CustomMetadata(self, node):
+        # Check if this custom metadata should be included in results
+        if not self.settings.should_include_custom_metadata(node.key):
+            return  # Skip this custom metadata - don't include in results
+            
         # Use node.value and strip leading/trailing whitespace to avoid line break issues
         metadata_value = node.value.strip() if node.value else ""
         # Get current metadata or create empty dict
@@ -372,6 +376,7 @@ class KeywordBuilder(BodyBuilder):
     ):
         super().__init__(resource.keywords.create(tags=settings.keyword_tags))
         self.resource = resource
+        self.settings = settings  # Store settings for custom metadata filtering
         self.seen_keywords = seen_keywords
         self.return_setting = None
 
@@ -447,6 +452,10 @@ class KeywordBuilder(BodyBuilder):
         )
 
     def visit_CustomMetadata(self, node):
+        # Check if this custom metadata should be included in results
+        if not self.settings.should_include_custom_metadata(node.key):
+            return  # Skip this custom metadata - don't include in results
+            
         # Use node.value and strip leading/trailing whitespace to avoid line break issues
         metadata_value = node.value.strip() if node.value else ""
         # Get current metadata or create empty dict
