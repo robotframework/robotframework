@@ -167,18 +167,22 @@ class FileSettings(Settings, ABC):
     
     def __init__(self, languages: Languages, allowed_custom_metadata: "list[str]|None" = None):
         super().__init__(languages)
-        self.allowed_custom_metadata = allowed_custom_metadata or []
+        self.allowed_custom_metadata = allowed_custom_metadata
         
     def is_custom_metadata_allowed(self, metadata_name: str) -> bool:
         """Check if the given custom metadata name is allowed."""
-        if not self.allowed_custom_metadata:
+        if self.allowed_custom_metadata is None:
             return True  # All custom metadata allowed when no explicit specification
+        if not self.allowed_custom_metadata:
+            return False  # No custom metadata allowed when empty list is specified
         return metadata_name in self.allowed_custom_metadata
     
     def should_include_custom_metadata(self, metadata_name: str) -> bool:
         """Check if custom metadata should be included in the results."""
-        if not self.allowed_custom_metadata:
+        if self.allowed_custom_metadata is None:
             return True  # Include all custom metadata when no explicit specification
+        if not self.allowed_custom_metadata:
+            return False  # Include no custom metadata when empty list is specified
         return metadata_name in self.allowed_custom_metadata
 
 
@@ -328,11 +332,12 @@ class TestCaseSettings(Settings):
                 # This is a translated setting name, not custom metadata
                 return False
         
-        # Only allow custom metadata with valid naming patterns
+        # Validate custom metadata name pattern - allow letters, numbers, spaces, hyphens, underscores, dots, slashes
         import re
-        if not re.match(r'^[a-zA-Z0-9\s\-_.]+$', inner_content):
+        if not re.match(r'^[a-zA-Z0-9\s\-_./]+$', inner_content):
             return False
             
+        # Always accept valid custom metadata during parsing - filtering happens later
         return True
 
     def _format_name(self, name: str) -> str:
@@ -447,11 +452,12 @@ class KeywordSettings(Settings):
         if inner_content in known_settings:
             return False
             
-        # Only allow custom metadata with valid naming patterns
+        # Validate custom metadata name pattern - allow letters, numbers, spaces, hyphens, underscores, dots, slashes
         import re
-        if not re.match(r'^[a-zA-Z0-9\s\-_.]+$', inner_content):
+        if not re.match(r'^[a-zA-Z0-9\s\-_./]+$', inner_content):
             return False
             
+        # Always accept valid custom metadata during parsing - filtering happens later
         return True
 
     def _format_name(self, name: str) -> str:

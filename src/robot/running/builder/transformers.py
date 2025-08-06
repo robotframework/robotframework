@@ -289,6 +289,8 @@ class TestCaseBuilder(BodyBuilder):
             template=settings.test_template,
             lineno=node.lineno,
         )
+        # Initialize custom metadata to empty dict to ensure it's always available
+        self.model.custom_metadata = {}
         if settings.test_setup:
             self.model.setup.config(**settings.test_setup)
         if settings.test_teardown:
@@ -349,8 +351,11 @@ class TestCaseBuilder(BodyBuilder):
         if not self.settings.should_include_custom_metadata(node.key):
             return  # Skip this custom metadata - don't include in results
             
-        # Use node.value and strip leading/trailing whitespace to avoid line break issues
-        metadata_value = node.value.strip() if node.value else ""
+        # Handle line continuations by replacing newlines with spaces
+        if node.value:
+            metadata_value = ' '.join(node.value.split())
+        else:
+            metadata_value = ""
         # Get current metadata or create empty dict
         try:
             current_metadata = self.model.custom_metadata
@@ -388,6 +393,8 @@ class KeywordBuilder(BodyBuilder):
             if not node.name:
                 raise DataError("User keyword name cannot be empty.")
             kw.config(name=node.name, lineno=node.lineno)
+            # Initialize custom metadata to empty dict for consistent behavior
+            kw.custom_metadata = {}
         except DataError as err:
             # Errors other than name being empty mean that name contains invalid
             # embedded arguments. Need to set `_name` to bypass `@property`.
@@ -456,8 +463,11 @@ class KeywordBuilder(BodyBuilder):
         if not self.settings.should_include_custom_metadata(node.key):
             return  # Skip this custom metadata - don't include in results
             
-        # Use node.value and strip leading/trailing whitespace to avoid line break issues
-        metadata_value = node.value.strip() if node.value else ""
+        # Handle line continuations by replacing newlines with spaces
+        if node.value:
+            metadata_value = ' '.join(node.value.split())
+        else:
+            metadata_value = ""
         # Get current metadata or create empty dict
         try:
             current_metadata = self.model.custom_metadata

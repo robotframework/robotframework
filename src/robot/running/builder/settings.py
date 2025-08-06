@@ -143,12 +143,14 @@ class FileSettings:
         self.test_template = None
         self.default_tags = ()
         self.keyword_tags = ()
-        self.allowed_custom_metadata = custom_metadata or []
+        self.allowed_custom_metadata = custom_metadata
     
     def should_include_custom_metadata(self, metadata_name: str) -> bool:
         """Check if custom metadata should be included in the results."""
-        if not self.allowed_custom_metadata:
+        if self.allowed_custom_metadata is None:
             return True  # Include all custom metadata when no explicit specification
+        if not self.allowed_custom_metadata:
+            return False  # Include no custom metadata when empty list is specified
         return metadata_name in self.allowed_custom_metadata
 
     @property

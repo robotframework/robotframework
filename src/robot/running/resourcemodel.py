@@ -271,7 +271,7 @@ class UserKeyword(KeywordImplementation):
         
         New in Robot Framework 7.0.
         """
-        return bool(self._custom_metadata)
+        return bool(getattr(self, '_setter__custom_metadata', None))
 
     def create_runner(
         self,

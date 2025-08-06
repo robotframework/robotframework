@@ -510,7 +510,7 @@ class RobotSettings(_BaseSettings):
         "RunEmptySuite"      : ("runemptysuite", False),
         "Variables"          : ("variable", []),
         "VariableFiles"      : ("variablefile", []),
-        "CustomMetadata"     : ("custommetadata", []),
+        "CustomMetadata"     : ("custommetadata", None),
         "Parsers"            : ("parser", []),
         "PreRunModifiers"    : ("prerunmodifier", []),
         "Listeners"          : ("listener", []),
