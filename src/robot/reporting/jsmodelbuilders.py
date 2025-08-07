@@ -175,9 +175,9 @@ class TestBuilder(Builder):
 
     def _yield_custom_metadata(self, test):
         if hasattr(test, 'custom_metadata') and test.custom_metadata:
-            # Group metadata into pairs [name, value] for each metadata item
+            # Group metadata into pairs (name, value) for each metadata item
             for name, value in test.custom_metadata.items():
-                yield [self._string(name), self._html(value)]
+                yield (self._string(name), self._html(value))
 
     def _get_body_items(self, test):
         body = test.body.flatten()
@@ -232,9 +232,9 @@ class BodyItemBuilder(Builder):
 
     def _yield_custom_metadata(self, item):
         if hasattr(item, 'custom_metadata') and item.custom_metadata:
-            # Group metadata into pairs [name, value] for each metadata item
+            # Group metadata into pairs (name, value) for each metadata item
             for name, value in item.custom_metadata.items():
-                yield [self._string(name), self._html(value)]
+                yield (self._string(name), self._html(value))
 
     def _build(
         self,

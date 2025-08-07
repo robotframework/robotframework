@@ -184,7 +184,7 @@ Documentation     Suite doc
             (T.EOS, "", 2, 18),
             (T.CUSTOM_METADATA, "[Bug-ID]", 3, 4),
             (T.ARGUMENT, "BUG-1234", 3, 22),
-            (T.EOS, "", 3, 31),
+            (T.EOS, "", 3, 30),
             (T.CUSTOM_METADATA, "[Test_Level]", 4, 4),
             (T.ARGUMENT, "Component", 4, 22),
             (T.EOS, "", 4, 31),
