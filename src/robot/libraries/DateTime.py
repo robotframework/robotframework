@@ -307,6 +307,7 @@ Additionally, helper classes ``Date`` and ``Time`` can be used directly:
 import datetime
 import sys
 import time
+from typing import Optional, Union
 
 from robot.utils import (
     elapsed_time_to_string, secs_to_timestr, timestr_to_secs, type_name
@@ -327,11 +328,11 @@ __all__ = [
 
 
 def get_current_date(
-    time_zone="local",
-    increment=0,
-    result_format="timestamp",
-    exclude_millis=False,
-):
+    time_zone: str = "local",
+    increment: Union[str, float, int, datetime.timedelta] = 0,
+    result_format: str = "timestamp",
+    exclude_millis: bool = False,
+) -> Union[str, datetime.datetime, float]:
     """Returns current local or UTC time with an optional increment.
 
     Arguments:
@@ -373,11 +374,11 @@ def get_current_date(
 
 
 def convert_date(
-    date,
-    result_format="timestamp",
-    exclude_millis=False,
-    date_format=None,
-):
+    date: Union[str, datetime.date, datetime.datetime, float, int],
+    result_format: str = "timestamp",
+    exclude_millis: bool = False,
+    date_format: Optional[str] = None,
+) -> Union[str, datetime.datetime, float]:
     """Converts between supported `date formats`.
 
     Arguments:
@@ -398,7 +399,11 @@ def convert_date(
     return Date(date, date_format).convert(result_format, millis=not exclude_millis)
 
 
-def convert_time(time, result_format="number", exclude_millis=False):
+def convert_time(
+    time: Union[str, float, int, datetime.timedelta],
+    result_format: str = "number",
+    exclude_millis: bool = False,
+) -> Union[str, float, datetime.timedelta]:
     """Converts between supported `time formats`.
 
     Arguments:
@@ -419,13 +424,13 @@ def convert_time(time, result_format="number", exclude_millis=False):
 
 
 def subtract_date_from_date(
-    date1,
-    date2,
-    result_format="number",
-    exclude_millis=False,
-    date1_format=None,
-    date2_format=None,
-):
+    date1: Union[str, datetime.date, datetime.datetime, float, int],
+    date2: Union[str, datetime.date, datetime.datetime, float, int],
+    result_format: str = "number",
+    exclude_millis: bool = False,
+    date1_format: Optional[str] = None,
+    date2_format: Optional[str] = None,
+) -> Union[str, float, datetime.timedelta]:
     """Subtracts date from another date and returns time between.
 
     Arguments:
@@ -450,12 +455,12 @@ def subtract_date_from_date(
 
 
 def add_time_to_date(
-    date,
-    time,
-    result_format="timestamp",
-    exclude_millis=False,
-    date_format=None,
-):
+    date: Union[str, datetime.date, datetime.datetime, float, int],
+    time: Union[str, float, int, datetime.timedelta],
+    result_format: str = "timestamp",
+    exclude_millis: bool = False,
+    date_format: Optional[str] = None,
+) -> Union[str, datetime.datetime, float]:
     """Adds time to date and returns the resulting date.
 
     Arguments:
@@ -479,12 +484,12 @@ def add_time_to_date(
 
 
 def subtract_time_from_date(
-    date,
-    time,
-    result_format="timestamp",
-    exclude_millis=False,
-    date_format=None,
-):
+    date: Union[str, datetime.date, datetime.datetime, float, int],
+    time: Union[str, float, int, datetime.timedelta],
+    result_format: str = "timestamp",
+    exclude_millis: bool = False,
+    date_format: Optional[str] = None,
+) -> Union[str, datetime.datetime, float]:
     """Subtracts time from date and returns the resulting date.
 
     Arguments:
@@ -507,7 +512,12 @@ def subtract_time_from_date(
     return date.convert(result_format, millis=not exclude_millis)
 
 
-def add_time_to_time(time1, time2, result_format="number", exclude_millis=False):
+def add_time_to_time(
+    time1: Union[str, float, int, datetime.timedelta],
+    time2: Union[str, float, int, datetime.timedelta],
+    result_format: str = "number",
+    exclude_millis: bool = False,
+) -> Union[str, float, datetime.timedelta]:
     """Adds time to another time and returns the resulting time.
 
     Arguments:
@@ -527,7 +537,12 @@ def add_time_to_time(time1, time2, result_format="number", exclude_millis=False)
     return time.convert(result_format, millis=not exclude_millis)
 
 
-def subtract_time_from_time(time1, time2, result_format="number", exclude_millis=False):
+def subtract_time_from_time(
+    time1: Union[str, float, int, datetime.timedelta],
+    time2: Union[str, float, int, datetime.timedelta],
+    result_format: str = "number",
+    exclude_millis: bool = False,
+) -> Union[str, float, datetime.timedelta]:
     """Subtracts time from another time and returns the resulting time.
 
     Arguments:
