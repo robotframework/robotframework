@@ -549,16 +549,23 @@ def subtract_time_from_time(time1, time2, result_format="number", exclude_millis
 
 
 class Date:
-
-    def __init__(self, date, input_format=None):
-        self.datetime = self._convert_to_datetime(date, input_format)
+    def __init__(
+        self,
+        date: Union[str, datetime.date, datetime.datetime, float, int],
+        input_format: Optional[str] = None,
+    ):
+        self.datetime: datetime.datetime = self._convert_to_datetime(date, input_format)
 
     @property
-    def seconds(self):
+    def seconds(self) -> float:
         # Mainly for backwards compatibility with RF 2.9.1 and earlier.
         return self._convert_to_epoch(self.datetime)
 
-    def _convert_to_datetime(self, date, input_format):
+    def _convert_to_datetime(
+        self,
+        date: Union[str, datetime.date, datetime.datetime, float, int],
+        input_format: Optional[str],
+    ) -> datetime.datetime:
         if isinstance(date, datetime.datetime):
             return date
         if isinstance(date, datetime.date):
@@ -569,16 +576,18 @@ class Date:
             return self._string_to_datetime(date, input_format)
         raise ValueError(f"Unsupported input '{date}'.")
 
-    def _epoch_seconds_to_datetime(self, secs):
+    def _epoch_seconds_to_datetime(self, secs: float) -> datetime.datetime:
         return datetime.datetime.fromtimestamp(secs)
 
-    def _string_to_datetime(self, ts, input_format):
+    def _string_to_datetime(
+        self, ts: str, input_format: Optional[str]
+    ) -> datetime.datetime:
         if not input_format:
             ts = self._normalize_timestamp(ts)
             input_format = "%Y-%m-%d %H:%M:%S.%f"
         return datetime.datetime.strptime(ts, input_format)
 
-    def _normalize_timestamp(self, timestamp):
+    def _normalize_timestamp(self, timestamp: str) -> str:
         numbers = "".join(d for d in timestamp if d.isdigit())
         if not (8 <= len(numbers) <= 20):
             raise ValueError(f"Invalid timestamp '{timestamp}'.")
@@ -586,7 +595,9 @@ class Date:
         t = numbers[8:].ljust(12, "0")
         return f"{d[:4]}-{d[4:6]}-{d[6:8]} {t[:2]}:{t[2:4]}:{t[4:6]}.{t[6:]}"
 
-    def convert(self, format, millis=True):
+    def convert(
+        self, format: str, millis: bool = True
+    ) -> Union[str, datetime.datetime, float]:
         dt = self.datetime
         if not millis:
             secs = 1 if dt.microsecond >= 5e5 else 0
@@ -602,10 +613,10 @@ class Date:
             return self._convert_to_epoch(dt)
         raise ValueError(f"Unknown format '{format}'.")
 
-    def _convert_to_custom_timestamp(self, dt, format):
+    def _convert_to_custom_timestamp(self, dt: datetime.datetime, format: str) -> str:
         return dt.strftime(format)
 
-    def _convert_to_timestamp(self, dt, millis=True):
+    def _convert_to_timestamp(self, dt: datetime.datetime, millis: bool = True) -> str:
         if not millis:
             return dt.strftime("%Y-%m-%d %H:%M:%S")
         ms = round(dt.microsecond / 1000)
@@ -614,19 +625,19 @@ class Date:
             ms = 0
         return dt.strftime("%Y-%m-%d %H:%M:%S") + f".{ms:03d}"
 
-    def _convert_to_epoch(self, dt):
+    def _convert_to_epoch(self, dt: datetime.datetime) -> float:
         try:
             return dt.timestamp()
         except OSError:
             # https://github.com/python/cpython/issues/81708
             return time.mktime(dt.timetuple()) + dt.microsecond / 1e6
 
-    def __add__(self, other):
+    def __add__(self, other: "Time") -> "Date":
         if isinstance(other, Time):
             return Date(self.datetime + other.timedelta)
         raise TypeError(f"Can only add Time to Date, got {type_name(other)}.")
 
-    def __sub__(self, other):
+    def __sub__(self, other: Union["Date", "Time"]) -> Union["Date", "Time"]:
         if isinstance(other, Date):
             return Time(self.datetime - other.datetime)
         if isinstance(other, Time):
@@ -651,7 +662,9 @@ class Time:
     def timedelta(self) -> datetime.timedelta:
         return datetime.timedelta(seconds=self.seconds)
 
-    def convert(self, format: str, millis: bool = True) -> Union[str, float, datetime.timedelta]:
+    def convert(
+        self, format: str, millis: bool = True
+    ) -> Union[str, float, datetime.timedelta]:
         try:
             result_converter = getattr(self, f"_convert_to_{format.lower()}")
         except AttributeError:

@@ -15,9 +15,9 @@
 
 import re
 import time
-from typing import Union
 import warnings
 from datetime import datetime, timedelta
+from typing import Union
 
 from .misc import plural_or_not as s
 from .normalizing import normalize
