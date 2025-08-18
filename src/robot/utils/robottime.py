@@ -15,6 +15,7 @@
 
 import re
 import time
+from typing import Union
 import warnings
 from datetime import datetime, timedelta
 
@@ -38,7 +39,7 @@ def _float_secs_to_secs_and_millis(secs):
     return (isecs, millis) if millis < 1000 else (isecs + 1, 0)
 
 
-def timestr_to_secs(timestr, round_to=3):
+def timestr_to_secs(timestr: Union[str, int, float, timedelta], round_to=3) -> float:
     """Parses time strings like '1h 10s', '01:00:10' and '42' and returns seconds.
 
     Time can also be given as an integer or float or, starting from RF 6.0.1,

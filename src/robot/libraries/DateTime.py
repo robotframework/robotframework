@@ -637,20 +637,21 @@ class Date:
 
 
 class Time:
+    def __init__(self, time: Union[str, float, int, datetime.timedelta]):
+        self.seconds: float = self._convert_time_to_seconds(time)
 
-    def __init__(self, time):
-        self.seconds = float(self._convert_time_to_seconds(time))
-
-    def _convert_time_to_seconds(self, time):
+    def _convert_time_to_seconds(
+        self, time: Union[str, float, int, datetime.timedelta]
+    ) -> float:
         if isinstance(time, datetime.timedelta):
             return time.total_seconds()
         return timestr_to_secs(time, round_to=None)
 
     @property
-    def timedelta(self):
+    def timedelta(self) -> datetime.timedelta:
         return datetime.timedelta(seconds=self.seconds)
 
-    def convert(self, format, millis=True):
+    def convert(self, format: str, millis: bool = True) -> Union[str, float, datetime.timedelta]:
         try:
             result_converter = getattr(self, f"_convert_to_{format.lower()}")
         except AttributeError:
@@ -658,27 +659,27 @@ class Time:
         seconds = self.seconds if millis else float(round(self.seconds))
         return result_converter(seconds, millis)
 
-    def _convert_to_number(self, seconds, millis=True):
+    def _convert_to_number(self, seconds: float, _) -> float:
         return seconds
 
-    def _convert_to_verbose(self, seconds, millis=True):
+    def _convert_to_verbose(self, seconds: float, _) -> str:
         return secs_to_timestr(seconds)
 
-    def _convert_to_compact(self, seconds, millis=True):
+    def _convert_to_compact(self, seconds: float, _) -> str:
         return secs_to_timestr(seconds, compact=True)
 
-    def _convert_to_timer(self, seconds, millis=True):
+    def _convert_to_timer(self, seconds: float, millis: bool = True) -> str:
         return elapsed_time_to_string(seconds, include_millis=millis, seconds=True)
 
-    def _convert_to_timedelta(self, seconds, millis=True):
+    def _convert_to_timedelta(self, seconds: float, _) -> datetime.timedelta:
         return datetime.timedelta(seconds=seconds)
 
-    def __add__(self, other):
+    def __add__(self, other: "Time") -> "Time":
         if isinstance(other, Time):
             return Time(self.seconds + other.seconds)
         raise TypeError(f"Can only add Time to Time, got {type_name(other)}.")
 
-    def __sub__(self, other):
+    def __sub__(self, other: "Time") -> "Time":
         if isinstance(other, Time):
             return Time(self.seconds - other.seconds)
         raise TypeError(f"Can only subtract Time from Time, got {type_name(other)}.")
