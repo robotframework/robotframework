@@ -14,6 +14,7 @@
 #  limitations under the License.
 
 import re
+from typing import Optional
 
 from .unic import safe_str
 
@@ -126,7 +127,7 @@ def isatty(stream):
         return False
 
 
-def parse_re_flags(flags=None):
+def parse_re_flags(flags: Optional[str] = None) -> int:
     result = 0
     if not flags:
         return result
