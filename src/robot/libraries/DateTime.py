@@ -312,6 +312,7 @@ from __future__ import annotations
 import datetime
 import sys
 import time
+from typing import Union
 
 from robot.utils import (
     elapsed_time_to_string, secs_to_timestr, timestr_to_secs, type_name
@@ -330,12 +331,12 @@ __all__ = [
     "subtract_time_from_time",
 ]
 
-FloatOrString = float | str
-FloatOrStringOrInt = FloatOrString | int
-DatetimeMixed = datetime.datetime | FloatOrString
-DateTimeExpanded = datetime.datetime | datetime.date | FloatOrStringOrInt
-TimedeltaExpanded = datetime.timedelta | FloatOrStringOrInt
-TimedeltaMixed = datetime.timedelta | FloatOrString
+FloatOrString = Union[float, str]
+FloatOrStringOrInt = Union[FloatOrString, int]
+DatetimeMixed = Union[datetime.datetime, FloatOrString]
+DateTimeExpanded = Union[datetime.datetime, datetime.date, FloatOrStringOrInt]
+TimedeltaExpanded = Union[datetime.timedelta, FloatOrStringOrInt]
+TimedeltaMixed = Union[datetime.timedelta, FloatOrString]
 
 
 def get_current_date(
@@ -388,7 +389,7 @@ def convert_date(
     date: DateTimeExpanded,
     result_format: str = "timestamp",
     exclude_millis: bool = False,
-    date_format: str | None = None,
+    date_format: "str|None" = None,
 ) -> DatetimeMixed:
     """Converts between supported `date formats`.
 
@@ -439,8 +440,8 @@ def subtract_date_from_date(
     date2: DateTimeExpanded,
     result_format: str = "number",
     exclude_millis: bool = False,
-    date1_format: str | None = None,
-    date2_format: str | None = None,
+    date1_format: "str|None" = None,
+    date2_format: "str|None" = None,
 ) -> TimedeltaMixed:
     """Subtracts date from another date and returns time between.
 
@@ -470,7 +471,7 @@ def add_time_to_date(
     time: TimedeltaExpanded,
     result_format: str = "timestamp",
     exclude_millis: bool = False,
-    date_format: str | None = None,
+    date_format: "str|None" = None,
 ) -> DatetimeMixed:
     """Adds time to date and returns the resulting date.
 
@@ -499,7 +500,7 @@ def subtract_time_from_date(
     time: TimedeltaExpanded,
     result_format: str = "timestamp",
     exclude_millis: bool = False,
-    date_format: str | None = None,
+    date_format: "str|None" = None,
 ) -> DatetimeMixed:
     """Subtracts time from date and returns the resulting date.
 
@@ -578,7 +579,7 @@ class Date:
     def __init__(
         self,
         date: DateTimeExpanded,
-        input_format: str | None = None,
+        input_format: "str|None" = None,
     ):
         self.datetime: datetime.datetime = self._convert_to_datetime(date, input_format)
 
@@ -590,7 +591,7 @@ class Date:
     def _convert_to_datetime(
         self,
         date: DateTimeExpanded,
-        input_format: str | None,
+        input_format: "str|None",
     ) -> datetime.datetime:
         if isinstance(date, datetime.datetime):
             return date
@@ -606,7 +607,7 @@ class Date:
         return datetime.datetime.fromtimestamp(secs)
 
     def _string_to_datetime(
-        self, ts: str, input_format: str | None
+        self, ts: str, input_format: "str|None"
     ) -> datetime.datetime:
         if not input_format:
             ts = self._normalize_timestamp(ts)
