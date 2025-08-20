@@ -304,10 +304,14 @@ Additionally, helper classes ``Date`` and ``Time`` can be used directly:
 |     # ...
 """
 
+# can be removed when using Python 3.13+
+# needed for typing to use | operator together with forward referenceing
+# see: def __sub__(self, other: Date | Time) -> Date | Time:
+from __future__ import annotations
+
 import datetime
 import sys
 import time
-from typing import Optional, Union
 
 from robot.utils import (
     elapsed_time_to_string, secs_to_timestr, timestr_to_secs, type_name
@@ -329,10 +333,10 @@ __all__ = [
 
 def get_current_date(
     time_zone: str = "local",
-    increment: Union[str, float, int, datetime.timedelta] = 0,
+    increment: str | float | int | datetime.timedelta = 0,
     result_format: str = "timestamp",
     exclude_millis: bool = False,
-) -> Union[str, datetime.datetime, float]:
+) -> str | datetime.datetime | float:
     """Returns current local or UTC time with an optional increment.
 
     Arguments:
@@ -374,11 +378,11 @@ def get_current_date(
 
 
 def convert_date(
-    date: Union[str, datetime.date, datetime.datetime, float, int],
+    date: str | datetime.date | datetime.datetime | float | int,
     result_format: str = "timestamp",
     exclude_millis: bool = False,
-    date_format: Optional[str] = None,
-) -> Union[str, datetime.datetime, float]:
+    date_format: str | None = None,
+) -> str | datetime.datetime | float:
     """Converts between supported `date formats`.
 
     Arguments:
@@ -400,10 +404,10 @@ def convert_date(
 
 
 def convert_time(
-    time: Union[str, float, int, datetime.timedelta],
+    time: str | float | int | datetime.timedelta,
     result_format: str = "number",
     exclude_millis: bool = False,
-) -> Union[str, float, datetime.timedelta]:
+) -> str | float | datetime.timedelta:
     """Converts between supported `time formats`.
 
     Arguments:
@@ -424,13 +428,13 @@ def convert_time(
 
 
 def subtract_date_from_date(
-    date1: Union[str, datetime.date, datetime.datetime, float, int],
-    date2: Union[str, datetime.date, datetime.datetime, float, int],
+    date1: str | datetime.date | datetime.datetime | float | int,
+    date2: str | datetime.date | datetime.datetime | float | int,
     result_format: str = "number",
     exclude_millis: bool = False,
-    date1_format: Optional[str] = None,
-    date2_format: Optional[str] = None,
-) -> Union[str, float, datetime.timedelta]:
+    date1_format: str | None = None,
+    date2_format: str | None = None,
+) -> str | float | datetime.timedelta:
     """Subtracts date from another date and returns time between.
 
     Arguments:
@@ -455,12 +459,12 @@ def subtract_date_from_date(
 
 
 def add_time_to_date(
-    date: Union[str, datetime.date, datetime.datetime, float, int],
-    time: Union[str, float, int, datetime.timedelta],
+    date: str | datetime.date | datetime.datetime | float | int,
+    time: str | float | int | datetime.timedelta,
     result_format: str = "timestamp",
     exclude_millis: bool = False,
-    date_format: Optional[str] = None,
-) -> Union[str, datetime.datetime, float]:
+    date_format: str | None = None,
+) -> str | datetime.datetime | float:
     """Adds time to date and returns the resulting date.
 
     Arguments:
@@ -484,12 +488,12 @@ def add_time_to_date(
 
 
 def subtract_time_from_date(
-    date: Union[str, datetime.date, datetime.datetime, float, int],
-    time: Union[str, float, int, datetime.timedelta],
+    date: str | datetime.date | datetime.datetime | float | int,
+    time: str | float | int | datetime.timedelta,
     result_format: str = "timestamp",
     exclude_millis: bool = False,
-    date_format: Optional[str] = None,
-) -> Union[str, datetime.datetime, float]:
+    date_format: str | None = None,
+) -> str | datetime.datetime | float:
     """Subtracts time from date and returns the resulting date.
 
     Arguments:
@@ -513,11 +517,11 @@ def subtract_time_from_date(
 
 
 def add_time_to_time(
-    time1: Union[str, float, int, datetime.timedelta],
-    time2: Union[str, float, int, datetime.timedelta],
+    time1: str | float | int | datetime.timedelta,
+    time2: str | float | int | datetime.timedelta,
     result_format: str = "number",
     exclude_millis: bool = False,
-) -> Union[str, float, datetime.timedelta]:
+) -> str | float | datetime.timedelta:
     """Adds time to another time and returns the resulting time.
 
     Arguments:
@@ -538,11 +542,11 @@ def add_time_to_time(
 
 
 def subtract_time_from_time(
-    time1: Union[str, float, int, datetime.timedelta],
-    time2: Union[str, float, int, datetime.timedelta],
+    time1: str | float | int | datetime.timedelta,
+    time2: str | float | int | datetime.timedelta,
     result_format: str = "number",
     exclude_millis: bool = False,
-) -> Union[str, float, datetime.timedelta]:
+) -> str | float | datetime.timedelta:
     """Subtracts time from another time and returns the resulting time.
 
     Arguments:
@@ -566,8 +570,8 @@ def subtract_time_from_time(
 class Date:
     def __init__(
         self,
-        date: Union[str, datetime.date, datetime.datetime, float, int],
-        input_format: Optional[str] = None,
+        date: str | datetime.date | datetime.datetime | float | int,
+        input_format: str | None = None,
     ):
         self.datetime: datetime.datetime = self._convert_to_datetime(date, input_format)
 
@@ -578,8 +582,8 @@ class Date:
 
     def _convert_to_datetime(
         self,
-        date: Union[str, datetime.date, datetime.datetime, float, int],
-        input_format: Optional[str],
+        date: str | datetime.date | datetime.datetime | float | int,
+        input_format: str | None,
     ) -> datetime.datetime:
         if isinstance(date, datetime.datetime):
             return date
@@ -595,7 +599,7 @@ class Date:
         return datetime.datetime.fromtimestamp(secs)
 
     def _string_to_datetime(
-        self, ts: str, input_format: Optional[str]
+        self, ts: str, input_format: str | None
     ) -> datetime.datetime:
         if not input_format:
             ts = self._normalize_timestamp(ts)
@@ -612,7 +616,7 @@ class Date:
 
     def convert(
         self, format: str, millis: bool = True
-    ) -> Union[str, datetime.datetime, float]:
+    ) -> str | datetime.datetime | float:
         dt = self.datetime
         if not millis:
             secs = 1 if dt.microsecond >= 5e5 else 0
@@ -647,12 +651,12 @@ class Date:
             # https://github.com/python/cpython/issues/81708
             return time.mktime(dt.timetuple()) + dt.microsecond / 1e6
 
-    def __add__(self, other: "Time") -> "Date":
+    def __add__(self, other: Time) -> Date:
         if isinstance(other, Time):
             return Date(self.datetime + other.timedelta)
         raise TypeError(f"Can only add Time to Date, got {type_name(other)}.")
 
-    def __sub__(self, other: Union["Date", "Time"]) -> Union["Date", "Time"]:
+    def __sub__(self, other: Date | Time) -> Date | Time:
         if isinstance(other, Date):
             return Time(self.datetime - other.datetime)
         if isinstance(other, Time):
@@ -663,11 +667,11 @@ class Date:
 
 
 class Time:
-    def __init__(self, time: Union[str, float, int, datetime.timedelta]):
+    def __init__(self, time: str | float | int | datetime.timedelta):
         self.seconds: float = self._convert_time_to_seconds(time)
 
     def _convert_time_to_seconds(
-        self, time: Union[str, float, int, datetime.timedelta]
+        self, time: str | float | int | datetime.timedelta
     ) -> float:
         if isinstance(time, datetime.timedelta):
             return time.total_seconds()
@@ -679,7 +683,7 @@ class Time:
 
     def convert(
         self, format: str, millis: bool = True
-    ) -> Union[str, float, datetime.timedelta]:
+    ) -> str | float | datetime.timedelta:
         try:
             result_converter = getattr(self, f"_convert_to_{format.lower()}")
         except AttributeError:
@@ -702,12 +706,12 @@ class Time:
     def _convert_to_timedelta(self, seconds: float, _) -> datetime.timedelta:
         return datetime.timedelta(seconds=seconds)
 
-    def __add__(self, other: "Time") -> "Time":
+    def __add__(self, other: Time) -> Time:
         if isinstance(other, Time):
             return Time(self.seconds + other.seconds)
         raise TypeError(f"Can only add Time to Time, got {type_name(other)}.")
 
-    def __sub__(self, other: "Time") -> "Time":
+    def __sub__(self, other: Time) -> Time:
         if isinstance(other, Time):
             return Time(self.seconds - other.seconds)
         raise TypeError(f"Can only subtract Time from Time, got {type_name(other)}.")
