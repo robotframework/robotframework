@@ -63,7 +63,7 @@ Invalid input
     2014-06-5     Invalid timestamp '2014-06-5'.
     2014-06-05    *                                 %Y-%m-%d %H:%M:%S.%f
     2015-xxx      *                                 %Y-%f
-    ${NONE}       Unsupported input 'None'.
+    ${NONE}       Invalid timestamp 'None'.
 
 *** Keywords ***
 Date Conversion Should Succeed
