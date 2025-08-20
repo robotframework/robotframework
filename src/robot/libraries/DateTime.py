@@ -607,7 +607,9 @@ class Date:
         return datetime.datetime.fromtimestamp(secs)
 
     def _string_to_datetime(
-        self, timestamp: str, input_format: "str|None"
+        self,
+        timestamp: str,
+        input_format: "str|None",
     ) -> datetime.datetime:
         if not input_format:
             timestamp = self._normalize_timestamp(timestamp)
