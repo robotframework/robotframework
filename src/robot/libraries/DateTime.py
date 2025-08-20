@@ -607,12 +607,12 @@ class Date:
         return datetime.datetime.fromtimestamp(secs)
 
     def _string_to_datetime(
-        self, ts: str, input_format: "str|None"
+        self, timestamp: str, input_format: "str|None"
     ) -> datetime.datetime:
         if not input_format:
-            ts = self._normalize_timestamp(ts)
+            timestamp = self._normalize_timestamp(timestamp)
             input_format = "%Y-%m-%d %H:%M:%S.%f"
-        return datetime.datetime.strptime(ts, input_format)
+        return datetime.datetime.strptime(timestamp, input_format)
 
     def _normalize_timestamp(self, timestamp: str) -> str:
         numbers = "".join(d for d in timestamp if d.isdigit())
