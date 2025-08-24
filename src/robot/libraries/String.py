@@ -83,7 +83,9 @@ class String:
 
     @keyword(types=None)
     def convert_to_title_case(
-        self, string: str, exclude: str | list[str] | None = None
+        self,
+        string: str,
+        exclude: str | list[str] | None = None,
     ) -> str:
         """Converts string to title case.
 
@@ -198,7 +200,13 @@ class String:
             raise TypeError("Cannot decode strings.")
         return bytes.decode(encoding, errors)
 
-    def format_string(self, template: str, /, *positional: object, **named: object) -> str:
+    def format_string(
+        self,
+        template: str,
+        /,
+        *positional: object,
+        **named: object,
+    ) -> str:
         """Formats a ``template`` using the given ``positional`` and ``named`` arguments.
 
         The template can be either be a string or an absolute path to
@@ -240,7 +248,10 @@ class String:
         return count
 
     def split_to_lines(
-        self, string: str, start: int | str | None = 0, end: int | str | None = None
+        self,
+        string: str,
+        start: int | str | None = 0,
+        end: int | str | None = None,
     ) -> list[str]:
         """Splits the given string to lines.
 
@@ -409,7 +420,11 @@ class String:
         match = regexp.search if partial_match else regexp.fullmatch
         return self._get_matching_lines(string, match)
 
-    def _get_matching_lines(self, string: str, matches: Callable[[str], bool | re.Match[str] | None]) -> str:
+    def _get_matching_lines(
+        self,
+        string: str,
+        matches: Callable[[str], bool | re.Match[str] | None],
+    ) -> str:
         lines = string.splitlines()
         matching = [line for line in lines if matches(line)]
         logger.info(f"{len(matching)} out of {len(lines)} lines matched.")
@@ -467,7 +482,11 @@ class String:
             return group
 
     def replace_string(
-        self, string: str, search_for: str, replace_with: str, count: str | int = -1
+        self,
+        string: str,
+        search_for: str,
+        replace_with: str,
+        count: str | int = -1,
     ) -> str:
         """Replaces ``search_for`` in the given ``string`` with ``replace_with``.
 
@@ -558,7 +577,10 @@ class String:
         return string
 
     def remove_string_using_regexp(
-        self, string: str, *patterns: object, flags: str | None = None
+        self,
+        string: str,
+        *patterns: object,
+        flags: str | None = None,
     ) -> str:
         """Removes ``patterns`` from the given ``string``.
 
@@ -582,7 +604,10 @@ class String:
 
     @keyword(types=None)
     def split_string(
-        self, string: str, separator: str | None = None, max_split: int | str = -1
+        self,
+        string: str,
+        separator: str | None = None,
+        max_split: int | str = -1,
     ) -> list[str]:
         """Splits the ``string`` using ``separator`` as a delimiter string.
 
@@ -613,7 +638,7 @@ class String:
         self,
         string: str,
         separator: str | None = None,
-        max_split: int | str  = -1,
+        max_split: int | str = -1,
     ) -> list[str]:
         """Splits the ``string`` using ``separator`` starting from right.
 
@@ -658,7 +683,9 @@ class String:
         return string.split(marker)[-1]
 
     def generate_random_string(
-        self, length: int | str = 8, chars: str = "[LETTERS][NUMBERS]"
+        self,
+        length: int | str = 8,
+        chars: str = "[LETTERS][NUMBERS]",
     ) -> str:
         """Generates a string with a desired ``length`` from the given ``chars``.
 
@@ -707,7 +734,10 @@ class String:
         return "".join(chars[randint(0, maxi)] for _ in range(length))
 
     def get_substring(
-        self, string: str, start: int | str | None, end: int | str | None = None
+        self,
+        string: str,
+        start: int | str | None,
+        end: int | str | None = None,
     ) -> str:
         """Returns a substring from ``start`` index to ``end`` index.
 
@@ -728,7 +758,10 @@ class String:
 
     @keyword(types=None)
     def strip_string(
-        self, string: str, mode: str = "both", characters: str | None = None
+        self,
+        string: str,
+        mode: str = "both",
+        characters: str | None = None,
     ) -> str:
         """Remove leading and/or trailing whitespaces from the given string.
 
