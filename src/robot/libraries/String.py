@@ -85,7 +85,7 @@ class String:
     def convert_to_title_case(
         self,
         string: str,
-        exclude: str | list[str] | None = None,
+        exclude: "str|list[str]|None" = None,
     ) -> str:
         """Converts string to title case.
 
@@ -250,8 +250,8 @@ class String:
     def split_to_lines(
         self,
         string: str,
-        start: int | str | None = 0,
-        end: int | str | None = None,
+        start: "int|str|None" = 0,
+        end: "int|str|None" = None,
     ) -> list[str]:
         """Splits the given string to lines.
 
@@ -279,7 +279,7 @@ class String:
         logger.info(f"{len(lines)} line{s(lines)} returned.")
         return lines
 
-    def get_line(self, string: str, line_number: int | str) -> str:
+    def get_line(self, string: str, line_number: "int|str") -> str:
         """Returns the specified line from the given ``string``.
 
         Line numbering starts from 0, and it is possible to use
@@ -381,7 +381,7 @@ class String:
         string: str,
         pattern,
         partial_match: bool = False,
-        flags: str | None = None,
+        flags: "str|None" = None,
     ) -> str:
         """Returns lines of the given ``string`` that match the regexp ``pattern``.
 
@@ -423,7 +423,7 @@ class String:
     def _get_matching_lines(
         self,
         string: str,
-        matches: Callable[[str], bool | re.Match[str] | None],
+        matches: Callable[[str], "bool|re.Match[str]|None"],
     ) -> str:
         lines = string.splitlines()
         matching = [line for line in lines if matches(line)]
@@ -435,8 +435,8 @@ class String:
         string: str,
         pattern: str,
         *groups: object,
-        flags: str | None = None,
-    ) -> list[str | tuple]:
+        flags: "str|None" = None,
+    ) -> "list[str|tuple]":
         """Returns a list of all non-overlapping matches in the given string.
 
         ``string`` is the string to find matches from and ``pattern`` is the
@@ -475,7 +475,7 @@ class String:
         groups = [self._parse_group(g) for g in groups]
         return [m.group(*groups) for m in regexp.finditer(string)]
 
-    def _parse_group(self, group: str | int) -> str | int:
+    def _parse_group(self, group: "str|int") -> "str|int":
         try:
             return int(group)
         except ValueError:
@@ -486,7 +486,7 @@ class String:
         string: str,
         search_for: str,
         replace_with: str,
-        count: str | int = -1,
+        count: "str|int" = -1,
     ) -> str:
         """Replaces ``search_for`` in the given ``string`` with ``replace_with``.
 
@@ -516,8 +516,8 @@ class String:
         string: str,
         pattern: str,
         replace_with: str,
-        count: int | str = -1,
-        flags: str | None = None,
+        count: "int|str" = -1,
+        flags: "str|None" = None,
     ) -> str:
         """Replaces ``pattern`` in the given ``string`` with ``replace_with``.
 
@@ -580,7 +580,7 @@ class String:
         self,
         string: str,
         *patterns: object,
-        flags: str | None = None,
+        flags: "str|None" = None,
     ) -> str:
         """Removes ``patterns`` from the given ``string``.
 
@@ -606,8 +606,8 @@ class String:
     def split_string(
         self,
         string: str,
-        separator: str | None = None,
-        max_split: int | str = -1,
+        separator: "str|None" = None,
+        max_split: "int|str" = -1,
     ) -> list[str]:
         """Splits the ``string`` using ``separator`` as a delimiter string.
 
@@ -637,8 +637,8 @@ class String:
     def split_string_from_right(
         self,
         string: str,
-        separator: str | None = None,
-        max_split: int | str = -1,
+        separator: "str|None" = None,
+        max_split: "int|str" = -1,
     ) -> list[str]:
         """Splits the ``string`` using ``separator`` starting from right.
 
@@ -684,7 +684,7 @@ class String:
 
     def generate_random_string(
         self,
-        length: int | str = 8,
+        length: "int|str" = 8,
         chars: str = "[LETTERS][NUMBERS]",
     ) -> str:
         """Generates a string with a desired ``length`` from the given ``chars``.
@@ -736,8 +736,8 @@ class String:
     def get_substring(
         self,
         string: str,
-        start: int | str | None,
-        end: int | str | None = None,
+        start: "int|str|None",
+        end: "int|str|None" = None,
     ) -> str:
         """Returns a substring from ``start`` index to ``end`` index.
 
@@ -761,7 +761,7 @@ class String:
         self,
         string: str,
         mode: str = "both",
-        characters: str | None = None,
+        characters: "str|None" = None,
     ) -> str:
         """Remove leading and/or trailing whitespaces from the given string.
 
@@ -794,7 +794,7 @@ class String:
             raise ValueError(f"Invalid mode '{mode}'.")
         return method(characters)
 
-    def should_be_string(self, item: object, msg: str | None = None):
+    def should_be_string(self, item: object, msg: "str|None" = None):
         """Fails if the given ``item`` is not a string.
 
         The default error message can be overridden with the optional ``msg`` argument.
@@ -802,7 +802,7 @@ class String:
         if not isinstance(item, str):
             raise AssertionError(msg or f"{item!r} is {type_name(item)}, not a string.")
 
-    def should_not_be_string(self, item: object, msg: str | None = None):
+    def should_not_be_string(self, item: object, msg: "str|None" = None):
         """Fails if the given ``item`` is a string.
 
         The default error message can be overridden with the optional ``msg`` argument.
@@ -810,7 +810,7 @@ class String:
         if isinstance(item, str):
             raise AssertionError(msg or f"{item!r} is a string.")
 
-    def should_be_unicode_string(self, item: object, msg: str | None = None):
+    def should_be_unicode_string(self, item: object, msg: "str|None" = None):
         """Fails if the given ``item`` is not a Unicode string.
 
         On Python 3 this keyword behaves exactly the same way `Should Be String`.
@@ -818,7 +818,7 @@ class String:
         """
         self.should_be_string(item, msg)
 
-    def should_be_byte_string(self, item: object, msg: str | None = None):
+    def should_be_byte_string(self, item: object, msg: "str|None" = None):
         """Fails if the given ``item`` is not a byte string.
 
         Use `Should Be String` if you want to verify the ``item`` is a string.
@@ -828,7 +828,7 @@ class String:
         if not isinstance(item, bytes):
             raise AssertionError(msg or f"{item!r} is not a byte string.")
 
-    def should_be_lower_case(self, string: str | bytes, msg: str | None = None):
+    def should_be_lower_case(self, string: str | bytes, msg: "str|None" = None):
         """Fails if the given ``string`` is not in lower case.
 
         For example, ``'string'`` and ``'with specials!'`` would pass, and
@@ -842,7 +842,7 @@ class String:
         if not string.islower():
             raise AssertionError(msg or f"{string!r} is not lower case.")
 
-    def should_be_upper_case(self, string: str | bytes, msg: str | None = None):
+    def should_be_upper_case(self, string: str | bytes, msg: "str|None" = None):
         """Fails if the given ``string`` is not in upper case.
 
         For example, ``'STRING'`` and ``'WITH SPECIALS!'`` would pass, and
@@ -860,8 +860,8 @@ class String:
     def should_be_title_case(
         self,
         string: str,
-        msg: str | None = None,
-        exclude: str | list[str] | None = None,
+        msg: "str|None" = None,
+        exclude: "str|list[str]|None" = None,
     ):
         """Fails if given ``string`` is not title.
 
@@ -894,14 +894,14 @@ class String:
         if string != self.convert_to_title_case(string, exclude):
             raise AssertionError(msg or f"{string!r} is not title case.")
 
-    def _convert_to_index(self, value: int | str | None, name: str) -> int | None:
+    def _convert_to_index(self, value: "int|str|None", name: str) -> "int|None":
         if value == "":
             return 0
         if value is None:
             return None
         return self._convert_to_integer(value, name)
 
-    def _convert_to_integer(self, value: int | str, name: str) -> int:
+    def _convert_to_integer(self, value: "int|str", name: str) -> int:
         try:
             return int(value)
         except ValueError:
