@@ -18,6 +18,7 @@ import re
 from fnmatch import fnmatchcase
 from random import randint
 from string import ascii_lowercase, ascii_uppercase, digits
+from typing import Callable
 
 from robot.api import logger
 from robot.api.deco import keyword
@@ -50,7 +51,7 @@ class String:
     ROBOT_LIBRARY_SCOPE = "GLOBAL"
     ROBOT_LIBRARY_VERSION = get_version()
 
-    def convert_to_lower_case(self, string):
+    def convert_to_lower_case(self, string: str) -> str:
         """Converts string to lower case.
 
         Uses Python's standard
@@ -65,7 +66,7 @@ class String:
         """
         return string.lower()
 
-    def convert_to_upper_case(self, string):
+    def convert_to_upper_case(self, string: str) -> str:
         """Converts string to upper case.
 
         Uses Python's standard
@@ -81,7 +82,9 @@ class String:
         return string.upper()
 
     @keyword(types=None)
-    def convert_to_title_case(self, string, exclude=None):
+    def convert_to_title_case(
+        self, string: str, exclude: str | list[str] | None = None
+    ) -> str:
         """Converts string to title case.
 
         Uses the following algorithm:
@@ -138,7 +141,12 @@ class String:
         tokens = re.split(r"(\s+)", string, flags=re.UNICODE)
         return "".join(title(token) for token in tokens)
 
-    def encode_string_to_bytes(self, string, encoding, errors="strict"):
+    def encode_string_to_bytes(
+        self,
+        string: str,
+        encoding: str,
+        errors: str = "strict",
+    ) -> bytes:
         """Encodes the given ``string`` to bytes using the given ``encoding``.
 
         ``errors`` argument controls what to do if encoding some characters fails.
@@ -161,7 +169,12 @@ class String:
         """
         return bytes(string.encode(encoding, errors))
 
-    def decode_bytes_to_string(self, bytes, encoding, errors="strict"):
+    def decode_bytes_to_string(
+        self,
+        bytes: bytes,
+        encoding: str,
+        errors: str = "strict",
+    ) -> str:
         """Decodes the given ``bytes`` to a string using the given ``encoding``.
 
         ``errors`` argument controls what to do if decoding some bytes fails.
@@ -185,7 +198,7 @@ class String:
             raise TypeError("Cannot decode strings.")
         return bytes.decode(encoding, errors)
 
-    def format_string(self, template, /, *positional, **named):
+    def format_string(self, template: str, /, *positional: object, **named: object) -> str:
         """Formats a ``template`` using the given ``positional`` and ``named`` arguments.
 
         The template can be either be a string or an absolute path to
@@ -220,13 +233,15 @@ class String:
                 template = reader.read()
         return template.format(*positional, **named)
 
-    def get_line_count(self, string):
+    def get_line_count(self, string: str) -> int:
         """Returns and logs the number of lines in the given string."""
         count = len(string.splitlines())
         logger.info(f"{count} lines.")
         return count
 
-    def split_to_lines(self, string, start=0, end=None):
+    def split_to_lines(
+        self, string: str, start: int | str | None = 0, end: int | str | None = None
+    ) -> list[str]:
         """Splits the given string to lines.
 
         It is possible to get only a selection of lines from ``start``
@@ -253,7 +268,7 @@ class String:
         logger.info(f"{len(lines)} line{s(lines)} returned.")
         return lines
 
-    def get_line(self, string, line_number):
+    def get_line(self, string: str, line_number: int | str) -> str:
         """Returns the specified line from the given ``string``.
 
         Line numbering starts from 0, and it is possible to use
@@ -275,7 +290,7 @@ class String:
         pattern: str,
         case_insensitive: "bool|None" = None,
         ignore_case: bool = False,
-    ):
+    ) -> str:
         """Returns lines of the given ``string`` that contain the ``pattern``.
 
         The ``pattern`` is always considered to be a normal string, not a glob
@@ -313,7 +328,7 @@ class String:
         pattern: str,
         case_insensitive: "bool|None" = None,
         ignore_case: bool = False,
-    ):
+    ) -> str:
         """Returns lines of the given ``string`` that match the ``pattern``.
 
         The ``pattern`` is a _glob pattern_ where:
@@ -352,11 +367,11 @@ class String:
 
     def get_lines_matching_regexp(
         self,
-        string,
+        string: str,
         pattern,
-        partial_match=False,
-        flags=None,
-    ):
+        partial_match: bool = False,
+        flags: str | None = None,
+    ) -> str:
         """Returns lines of the given ``string`` that match the regexp ``pattern``.
 
         See `BuiltIn.Should Match Regexp` for more information about
@@ -394,13 +409,19 @@ class String:
         match = regexp.search if partial_match else regexp.fullmatch
         return self._get_matching_lines(string, match)
 
-    def _get_matching_lines(self, string, matches):
+    def _get_matching_lines(self, string: str, matches: Callable[[str], bool | re.Match[str] | None]) -> str:
         lines = string.splitlines()
         matching = [line for line in lines if matches(line)]
         logger.info(f"{len(matching)} out of {len(lines)} lines matched.")
         return "\n".join(matching)
 
-    def get_regexp_matches(self, string, pattern, *groups, flags=None):
+    def get_regexp_matches(
+        self,
+        string: str,
+        pattern: str,
+        *groups: object,
+        flags: str | None = None,
+    ) -> list[str | tuple]:
         """Returns a list of all non-overlapping matches in the given string.
 
         ``string`` is the string to find matches from and ``pattern`` is the
@@ -439,13 +460,15 @@ class String:
         groups = [self._parse_group(g) for g in groups]
         return [m.group(*groups) for m in regexp.finditer(string)]
 
-    def _parse_group(self, group):
+    def _parse_group(self, group: str | int) -> str | int:
         try:
             return int(group)
         except ValueError:
             return group
 
-    def replace_string(self, string, search_for, replace_with, count=-1):
+    def replace_string(
+        self, string: str, search_for: str, replace_with: str, count: str | int = -1
+    ) -> str:
         """Replaces ``search_for`` in the given ``string`` with ``replace_with``.
 
         ``search_for`` is used as a literal string. See `Replace String
@@ -471,12 +494,12 @@ class String:
 
     def replace_string_using_regexp(
         self,
-        string,
-        pattern,
-        replace_with,
-        count=-1,
-        flags=None,
-    ):
+        string: str,
+        pattern: str,
+        replace_with: str,
+        count: int | str = -1,
+        flags: str | None = None,
+    ) -> str:
         """Replaces ``pattern`` in the given ``string`` with ``replace_with``.
 
         This keyword is otherwise identical to `Replace String`, but
@@ -510,7 +533,7 @@ class String:
             flags=parse_re_flags(flags),
         )
 
-    def remove_string(self, string, *removables):
+    def remove_string(self, string: str, *removables: str) -> str:
         """Removes all ``removables`` from the given ``string``.
 
         ``removables`` are used as literal strings. Each removable will be
@@ -534,7 +557,9 @@ class String:
             string = self.replace_string(string, removable, "")
         return string
 
-    def remove_string_using_regexp(self, string, *patterns, flags=None):
+    def remove_string_using_regexp(
+        self, string: str, *patterns: object, flags: str | None = None
+    ) -> str:
         """Removes ``patterns`` from the given ``string``.
 
         This keyword is otherwise identical to `Remove String`, but
@@ -556,7 +581,9 @@ class String:
         return string
 
     @keyword(types=None)
-    def split_string(self, string, separator=None, max_split=-1):
+    def split_string(
+        self, string: str, separator: str | None = None, max_split: int | str = -1
+    ) -> list[str]:
         """Splits the ``string`` using ``separator`` as a delimiter string.
 
         If a ``separator`` is not given, any whitespace string is a
@@ -582,7 +609,12 @@ class String:
         return string.split(separator, max_split)
 
     @keyword(types=None)
-    def split_string_from_right(self, string, separator=None, max_split=-1):
+    def split_string_from_right(
+        self,
+        string: str,
+        separator: str | None = None,
+        max_split: int | str  = -1,
+    ) -> list[str]:
         """Splits the ``string`` using ``separator`` starting from right.
 
         Same as `Split String`, but splitting is started from right. This has
@@ -597,7 +629,7 @@ class String:
         max_split = self._convert_to_integer(max_split, "max_split")
         return string.rsplit(separator, max_split)
 
-    def split_string_to_characters(self, string):
+    def split_string_to_characters(self, string: str) -> list[str]:
         """Splits the given ``string`` to characters.
 
         Example:
@@ -605,7 +637,7 @@ class String:
         """
         return list(string)
 
-    def fetch_from_left(self, string, marker):
+    def fetch_from_left(self, string: str, marker: str) -> str:
         """Returns contents of the ``string`` before the first occurrence of ``marker``.
 
         If the ``marker`` is not found, whole string is returned.
@@ -615,7 +647,7 @@ class String:
         """
         return string.split(marker)[0]
 
-    def fetch_from_right(self, string, marker):
+    def fetch_from_right(self, string: str, marker: str) -> str:
         """Returns contents of the ``string`` after the last occurrence of ``marker``.
 
         If the ``marker`` is not found, whole string is returned.
@@ -625,7 +657,9 @@ class String:
         """
         return string.split(marker)[-1]
 
-    def generate_random_string(self, length=8, chars="[LETTERS][NUMBERS]"):
+    def generate_random_string(
+        self, length: int | str = 8, chars: str = "[LETTERS][NUMBERS]"
+    ) -> str:
         """Generates a string with a desired ``length`` from the given ``chars``.
 
         ``length`` can be given as a number, a string representation of a number,
@@ -672,7 +706,9 @@ class String:
         maxi = len(chars) - 1
         return "".join(chars[randint(0, maxi)] for _ in range(length))
 
-    def get_substring(self, string, start, end=None):
+    def get_substring(
+        self, string: str, start: int | str | None, end: int | str | None = None
+    ) -> str:
         """Returns a substring from ``start`` index to ``end`` index.
 
         The ``start`` index is inclusive and ``end`` is exclusive.
@@ -691,7 +727,9 @@ class String:
         return string[start:end]
 
     @keyword(types=None)
-    def strip_string(self, string, mode="both", characters=None):
+    def strip_string(
+        self, string: str, mode: str = "both", characters: str | None = None
+    ) -> str:
         """Remove leading and/or trailing whitespaces from the given string.
 
         ``mode`` is either ``left`` to remove leading characters, ``right`` to
@@ -723,7 +761,7 @@ class String:
             raise ValueError(f"Invalid mode '{mode}'.")
         return method(characters)
 
-    def should_be_string(self, item, msg=None):
+    def should_be_string(self, item: object, msg: str | None = None):
         """Fails if the given ``item`` is not a string.
 
         The default error message can be overridden with the optional ``msg`` argument.
@@ -731,7 +769,7 @@ class String:
         if not isinstance(item, str):
             raise AssertionError(msg or f"{item!r} is {type_name(item)}, not a string.")
 
-    def should_not_be_string(self, item, msg=None):
+    def should_not_be_string(self, item: object, msg: str | None = None):
         """Fails if the given ``item`` is a string.
 
         The default error message can be overridden with the optional ``msg`` argument.
@@ -739,7 +777,7 @@ class String:
         if isinstance(item, str):
             raise AssertionError(msg or f"{item!r} is a string.")
 
-    def should_be_unicode_string(self, item, msg=None):
+    def should_be_unicode_string(self, item: object, msg: str | None = None):
         """Fails if the given ``item`` is not a Unicode string.
 
         On Python 3 this keyword behaves exactly the same way `Should Be String`.
@@ -747,7 +785,7 @@ class String:
         """
         self.should_be_string(item, msg)
 
-    def should_be_byte_string(self, item, msg=None):
+    def should_be_byte_string(self, item: object, msg: str | None = None):
         """Fails if the given ``item`` is not a byte string.
 
         Use `Should Be String` if you want to verify the ``item`` is a string.
@@ -757,7 +795,7 @@ class String:
         if not isinstance(item, bytes):
             raise AssertionError(msg or f"{item!r} is not a byte string.")
 
-    def should_be_lower_case(self, string, msg=None):
+    def should_be_lower_case(self, string: str | bytes, msg: str | None = None):
         """Fails if the given ``string`` is not in lower case.
 
         For example, ``'string'`` and ``'with specials!'`` would pass, and
@@ -771,7 +809,7 @@ class String:
         if not string.islower():
             raise AssertionError(msg or f"{string!r} is not lower case.")
 
-    def should_be_upper_case(self, string, msg=None):
+    def should_be_upper_case(self, string: str | bytes, msg: str | None = None):
         """Fails if the given ``string`` is not in upper case.
 
         For example, ``'STRING'`` and ``'WITH SPECIALS!'`` would pass, and
@@ -786,7 +824,12 @@ class String:
             raise AssertionError(msg or f"{string!r} is not upper case.")
 
     @keyword(types=None)
-    def should_be_title_case(self, string, msg=None, exclude=None):
+    def should_be_title_case(
+        self,
+        string: str,
+        msg: str | None = None,
+        exclude: str | list[str] | None = None,
+    ):
         """Fails if given ``string`` is not title.
 
         ``string`` is a title cased string if there is at least one upper case
@@ -818,14 +861,14 @@ class String:
         if string != self.convert_to_title_case(string, exclude):
             raise AssertionError(msg or f"{string!r} is not title case.")
 
-    def _convert_to_index(self, value, name):
+    def _convert_to_index(self, value: int | str | None, name: str) -> int | None:
         if value == "":
             return 0
         if value is None:
             return None
         return self._convert_to_integer(value, name)
 
-    def _convert_to_integer(self, value, name):
+    def _convert_to_integer(self, value: int | str, name: str) -> int:
         try:
             return int(value)
         except ValueError:
