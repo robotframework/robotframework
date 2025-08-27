@@ -97,7 +97,14 @@ class LibraryDoc:
 
     @property
     def all_tags(self):
-        return Tags(chain.from_iterable(kw.tags for kw in self.keywords))
+        return self._get_tags()
+
+    def _get_tags(self, include_private=True):
+        if include_private:
+            keywords = self.keywords
+        else:
+            keywords = (kw for kw in self.keywords if not kw.private)
+        return Tags(chain.from_iterable(kw.tags for kw in keywords))
 
     def save(self, output=None, format="HTML", theme=None, lang=None):
         with LibdocOutput(output, format) as outfile:
@@ -138,7 +145,7 @@ class LibraryDoc:
             "docFormat": self.doc_format,
             "source": str(self.source) if self.source else None,
             "lineno": self.lineno,
-            "tags": list(self.all_tags),
+            "tags": list(self._get_tags(include_private)),
             "inits": [init.to_dictionary() for init in self.inits],
             "keywords": [
                 kw.to_dictionary()
