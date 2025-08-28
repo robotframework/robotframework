@@ -15,6 +15,9 @@ Library decorator with arguments disables automatic keyword discovery by default
 Library decorator can enable automatic keyword discovery
     Check Test Case    ${TESTNAME}
 
+Library decorator can signal possible absence of keywords
+    Check Test Case    ${TESTNAME}
+
 When importing a module and there is one decorated class, the class is used as a library
     Check Test Case    ${TESTNAME}
 
@@ -29,11 +32,12 @@ Imported decorated classes are not considered to be libraries automatically
 
 Set library info
     [Template]    Library should have been imported
-    LibraryDecorator.py                    scope=TEST      keywords=3
-    LibraryDecoratorWithArgs.py            scope=SUITE     keywords=1    version=1.2.3    listener=True
-    LibraryDecoratorWithAutoKeywords.py    scope=GLOBAL    keywords=2
-    multiple_library_decorators.Class2     scope=SUITE     keywords=1
-    extend_decorated_library.py            scope=TEST      keywords=2    version=extended
+    LibraryDecorator.py                        scope=TEST      keywords=3
+    LibraryDecoratorWithArgs.py                scope=SUITE     keywords=1    version=1.2.3    listener=True
+    LibraryDecoratorWithAutoKeywords.py        scope=GLOBAL    keywords=2
+    LibraryDecoratorWithAutoKeywordsNone.py    scope=TEST      keywords=0    listener=False
+    multiple_library_decorators.Class2         scope=SUITE     keywords=1
+    extend_decorated_library.py                scope=TEST      keywords=2    version=extended
 
 *** Keywords ***
 Library should have been imported
