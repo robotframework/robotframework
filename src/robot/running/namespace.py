@@ -62,7 +62,7 @@ class Namespace:
 
     def _import_default_libraries(self):
         for name in self._default_libraries:
-            self.import_library(name, notify=name == "BuiltIn")
+            self._import_library(Import(Import.LIBRARY, name), notify=name == "BuiltIn")
 
     def _handle_imports(self, import_settings):
         for item in import_settings:
@@ -82,17 +82,26 @@ class Namespace:
         action(import_setting)
 
     def import_resource(self, name, overwrite=True):
-        self._import_resource(Import(Import.RESOURCE, name), overwrite=overwrite)
+        owner, lineno = self._current_owner_and_lineno()
+        import_ = Import(Import.RESOURCE, name, owner=owner, lineno=lineno)
+        self._import_resource(import_, overwrite=overwrite)
 
-    def _import_resource(self, import_setting, overwrite=False):
-        path = self._resolve_name(import_setting)
+    def _current_owner_and_lineno(self):
+        ctx = EXECUTION_CONTEXTS.current
+        if not ctx.steps:
+            return None, -1
+        owner = ctx.steps[-1][0]
+        return owner, owner.lineno
+
+    def _import_resource(self, import_, overwrite=False):
+        path = self._resolve_name(import_)
         self._validate_not_importing_init_file(path)
         if overwrite or path not in self._kw_store.resources:
             resource = IMPORTER.import_resource(path, self.languages)
             self.variables.set_from_variable_section(resource.variables, overwrite)
             self._kw_store.resources[path] = resource
             self._handle_imports(resource.imports)
-            LOGGER.resource_import(resource, import_setting)
+            LOGGER.resource_import(resource, import_)
         else:
             name = self._suite_name
             LOGGER.info(f"Resource file '{path}' already imported by suite '{name}'.")
@@ -105,17 +114,19 @@ class Namespace:
             )
 
     def import_variables(self, name, args, overwrite=False):
-        self._import_variables(Import(Import.VARIABLES, name, args), overwrite)
+        owner, lineno = self._current_owner_and_lineno()
+        import_ = Import(Import.VARIABLES, name, args, owner=owner, lineno=lineno)
+        self._import_variables(import_, overwrite=overwrite)
 
-    def _import_variables(self, import_setting, overwrite=False):
-        path = self._resolve_name(import_setting)
-        args = self._resolve_args(import_setting)
+    def _import_variables(self, import_, overwrite=False):
+        path = self._resolve_name(import_)
+        args = self._resolve_args(import_)
         if overwrite or (path, args) not in self._imported_variable_files:
             self._imported_variable_files.add((path, args))
             self.variables.set_from_file(path, args, overwrite)
             LOGGER.variables_import(
                 {"name": os.path.basename(path), "args": args, "source": path},
-                importer=import_setting,
+                importer=import_,
             )
         else:
             msg = f"Variable file '{path}'"
@@ -123,24 +134,21 @@ class Namespace:
                 msg += f" with arguments {seq2str2(args)}"
             LOGGER.info(f"{msg} already imported by suite '{self._suite_name}'.")
 
-    def import_library(self, name, args=(), alias=None, notify=True):
-        self._import_library(Import(Import.LIBRARY, name, args, alias), notify=notify)
+    def import_library(self, name, args=(), alias=None):
+        owner, lineno = self._current_owner_and_lineno()
+        import_ = Import(Import.LIBRARY, name, args, alias, owner, lineno)
+        self._import_library(import_)
 
-    def _import_library(self, import_setting, notify=True):
-        name = self._resolve_name(import_setting)
-        lib = IMPORTER.import_library(
-            name,
-            import_setting.args,
-            import_setting.alias,
-            self.variables,
-        )
+    def _import_library(self, import_, notify=True):
+        name = self._resolve_name(import_)
+        lib = IMPORTER.import_library(name, import_.args, import_.alias, self.variables)
         if lib.name in self._kw_store.libraries:
             LOGGER.info(
                 f"Library '{lib.name}' already imported by suite '{self._suite_name}'."
             )
             return
         if notify:
-            LOGGER.library_import(lib, import_setting)
+            LOGGER.library_import(lib, import_)
         self._kw_store.libraries[lib.name] = lib
         lib.scope_manager.start_suite()
         if self._running_test:

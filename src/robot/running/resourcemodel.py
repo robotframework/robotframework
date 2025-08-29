@@ -378,7 +378,7 @@ class Import(ModelObject):
         name: str,
         args: Sequence[str] = (),
         alias: "str|None" = None,
-        owner: "ResourceFile|None" = None,
+        owner: "ResourceFile|Keyword|None" = None,
         lineno: "int|None" = None,
     ):
         if type not in (self.LIBRARY, self.RESOURCE, self.VARIABLES):
