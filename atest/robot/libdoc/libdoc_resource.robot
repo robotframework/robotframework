@@ -1,7 +1,6 @@
 *** Settings ***
 Resource          atest_resource.robot
 Library           LibDocLib.py    ${INTERPRETER}
-Library           OperatingSystem
 
 *** Variables ***
 ${TESTDATADIR}    ${DATADIR}/libdoc
