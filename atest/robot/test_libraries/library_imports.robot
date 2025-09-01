@@ -1,5 +1,6 @@
 *** Settings ***
-Documentation     Importing test libraries normally, using variable in library name, and importing libraries accepting arguments.
+Documentation     Importing test libraries normally, using variable in library name,
+...               and importing libraries accepting arguments.
 Suite Setup       Run Tests    ${EMPTY}    test_libraries/library_import_normal.robot
 Resource          atest_resource.robot
 
@@ -15,9 +16,9 @@ Library Import With Spaces In Name Does Not Work
     ...    traceback=None
 
 Importing Library Class Should Have Been Syslogged
-    ${source} =    Normalize Path And Ignore Drive    ${CURDIR}/../../../src/robot/libraries/OperatingSystem
+    ${source} =    Normalize Path    ${CURDIR}/../../../src/robot/libraries/OperatingSystem
     Syslog Should Contain Match    | INFO \ |    Imported library class 'robot.libraries.OperatingSystem' from '${source}*'
-    ${base} =    Normalize Path And Ignore Drive    ${CURDIR}/../../testresources/testlibs
+    ${base} =    Normalize Path    ${CURDIR}/../../testresources/testlibs
     Syslog Should Contain Match    | INFO \ |    Imported library module 'libmodule' from '${base}${/}libmodule*'
     Syslog Should Contain Match    | INFO \ |    Imported library class 'libmodule.LibClass2' from '${base}${/}libmodule*'
 
@@ -58,10 +59,3 @@ Arguments To Library
     Check Test Case    Two Default Parameters
     Check Test Case    One Default and One Set Parameter
     Check Test Case    Two Set Parameters
-
-*** Keywords ***
-Normalize Path And Ignore Drive
-    [Arguments]    ${path}
-    ${path} =    Normalize Path    ${path}
-    Return From Keyword If    os.sep == '/'    ${path}
-    Return From Keyword    ?${path[1:]}
