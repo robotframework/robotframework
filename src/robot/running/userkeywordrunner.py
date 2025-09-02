@@ -48,11 +48,12 @@ class UserKeywordRunner:
             self._validate(kw)
             if kw.private:
                 context.warn_on_invalid_private_call(kw)
+            if not run:
+                return None
             with assignment.assigner(context) as assigner:
-                if run:
-                    return_value = self._run(data, kw, result, context)
-                    assigner.assign(return_value)
-                    return return_value
+                return_value = self._run(data, kw, result, context)
+                assigner.assign(return_value)
+                return return_value
 
     def _config_result(
         self,

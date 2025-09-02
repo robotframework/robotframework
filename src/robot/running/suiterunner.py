@@ -276,21 +276,22 @@ class SuiteRunner(SuiteVisitor):
         status: "SuiteStatus|TestStatus",
         result: "SuiteResult|TestResult",
     ):
-        if status.teardown_allowed:
-            if item.has_teardown:
-                exception = self._run_setup_or_teardown(item.teardown, result.teardown)
+        if not status.teardown_allowed:
+            return None
+        if item.has_teardown:
+            exception = self._run_setup_or_teardown(item.teardown, result.teardown)
+        else:
+            exception = None
+        status.teardown_executed(exception)
+        failed = exception and not isinstance(exception, PassExecution)
+        if isinstance(result, TestResult) and exception:
+            if failed or status.skipped or exception.skip:
+                result.message = status.message
             else:
-                exception = None
-            status.teardown_executed(exception)
-            failed = exception and not isinstance(exception, PassExecution)
-            if isinstance(result, TestResult) and exception:
-                if failed or status.skipped or exception.skip:
-                    result.message = status.message
-                else:
-                    # Pass execution used in teardown,
-                    # and it overrides previous failure message
-                    result.message = exception.message
-            return exception if failed else None
+                # Pass execution has been used in teardown,
+                # and it overrides previous failure message
+                result.message = exception.message
+        return exception if failed else None
 
     def _run_setup_or_teardown(self, data: KeywordData, result: KeywordResult):
         try:
