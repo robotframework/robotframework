@@ -143,9 +143,7 @@ class Namespace:
         name = self._resolve_name(import_)
         lib = IMPORTER.import_library(name, import_.args, import_.alias, self.variables)
         if lib.name in self._kw_store.libraries:
-            LOGGER.info(
-                f"Library '{lib.name}' already imported by suite '{self._suite_name}'."
-            )
+            self._duplicate_library_import_warning(lib, import_.source, import_.lineno)
             return
         if notify:
             LOGGER.library_import(lib, import_)
@@ -176,6 +174,27 @@ class Namespace:
         if import_type == Import.VARIABLES:
             return path.lower().endswith(self._variables_import_by_path_ends)
         return True
+
+    def _duplicate_library_import_warning(self, lib, source, lineno):
+        prev = self._kw_store.libraries[lib.name]
+        prefix = f"Error in file '{source}' on line {lineno}: " if source else ""
+        level = "WARN"
+        if lib.real_name != prev.real_name:
+            explanation = f"another library with name '{lib.name}'"
+        elif (
+            lib.init.positional != prev.init.positional
+            or lib.init.named != prev.init.named
+        ):
+            explanation = f"library '{lib.name}' with different arguments"
+        else:
+            explanation = f"library '{lib.name}' with same arguments"
+            prefix = ""
+            level = "INFO"
+        LOGGER.write(
+            f"{prefix}Suite '{self._suite_name}' has already imported {explanation}. "
+            f"This import is ignored.",
+            level
+        )
 
     def _resolve_args(self, import_setting):
         try:

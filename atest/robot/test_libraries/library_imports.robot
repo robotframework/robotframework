@@ -36,6 +36,9 @@ Importing Python Class From Module
 Namespace is initialized during library init
     Check Test Case    ${TEST NAME}
 
+Second import without parameters is ignored without warning
+    Syslog Should Contain    | INFO \ |    Suite 'Library Import Normal' has already imported library 'libmodule' with same arguments. This import is ignored.
+
 Library Import With Variables
     Run Tests    ${EMPTY}    test_libraries/library_import_with_variable.robot
     Check Test Case    Verify Library Import With Variable In Name
@@ -55,7 +58,15 @@ Arguments To Library
     ...    test_libraries/library_with_0_parameters.robot
     ...    test_libraries/library_with_1_parameters.robot
     ...    test_libraries/library_with_2_parameters.robot
-    Run Tests    ${EMPTY}    ${sources}
+    Run Tests    --name Root    ${sources}
     Check Test Case    Two Default Parameters
     Check Test Case    One Default and One Set Parameter
     Check Test Case    Two Set Parameters
+
+Second import with same parameters is ignored without warning
+    Syslog Should Contain    | INFO \ |    Suite 'Root.Library With 1 Parameters' has already imported library 'ParameterLibrary' with same arguments. This import is ignored.
+
+Second import with different parameters is ignored with warning
+    Error in file    0    test_libraries/library_with_1_parameters.robot    4
+    ...    Suite 'Root.Library With 1 Parameters' has already imported library 'ParameterLibrary' with different arguments. This import is ignored.
+    ...    level=WARN

@@ -1,5 +1,7 @@
 *** Settings ***
 Library         ParameterLibrary    myhost
+Library         ParameterLibrary    myhost
+Library         ParameterLibrary    different!
 
 *** Test Cases ***
 One default and one set parameter
