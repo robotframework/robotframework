@@ -608,11 +608,11 @@ class Var(model.Var, StatusMixin, DeprecatedAttributesMixin):
 
     @setter
     def body(self, body: "Sequence[BodyItem|DataDict]") -> Body:
-        """Child keywords and messages as a :class:`~.Body` object.
+        """Child messages and possible other constructs.
 
-        Typically empty. Only contains something if running VAR has failed
-        due to a syntax error or listeners have logged messages or executed
-        keywords.
+        Contains the message logged about assignment. Contains something else
+        only if running VAR has failed due to a syntax error or listeners have
+        logged messages or executed keywords.
         """
         return self.body_class(self, body)
 
@@ -652,7 +652,7 @@ class Return(model.Return, StatusMixin, DeprecatedAttributesMixin):
 
     @setter
     def body(self, body: "Sequence[BodyItem|DataDict]") -> Body:
-        """Child keywords and messages as a :class:`~.Body` object.
+        """Child keywords and messages.
 
         Typically empty. Only contains something if running RETURN has failed
         due to a syntax error or listeners have logged messages or executed
@@ -691,7 +691,7 @@ class Continue(model.Continue, StatusMixin, DeprecatedAttributesMixin):
 
     @setter
     def body(self, body: "Sequence[BodyItem|DataDict]") -> Body:
-        """Child keywords and messages as a :class:`~.Body` object.
+        """Child keywords and messages.
 
         Typically empty. Only contains something if running CONTINUE has failed
         due to a syntax error or listeners have logged messages or executed
@@ -730,7 +730,7 @@ class Break(model.Break, StatusMixin, DeprecatedAttributesMixin):
 
     @setter
     def body(self, body: "Sequence[BodyItem|DataDict]") -> Body:
-        """Child keywords and messages as a :class:`~.Body` object.
+        """Child keywords and messages.
 
         Typically empty. Only contains something if running BREAK has failed
         due to a syntax error or listeners have logged messages or executed
@@ -770,10 +770,7 @@ class Error(model.Error, StatusMixin, DeprecatedAttributesMixin):
 
     @setter
     def body(self, body: "Sequence[BodyItem|DataDict]") -> Body:
-        """Messages as a :class:`~.Body` object.
-
-        Typically contains the message that caused the error.
-        """
+        """Body typically containing only the related error message."""
         return self.body_class(self, body)
 
     def to_dict(self) -> DataDict:
@@ -841,7 +838,7 @@ class Keyword(model.Keyword, StatusMixin):
 
     @setter
     def body(self, body: "Sequence[BodyItem|DataDict]") -> Body:
-        """Keyword body as a :class:`~.Body` object.
+        """Keyword body.
 
         Body can consist of child keywords, messages, and control structures
         such as IF/ELSE.
@@ -903,7 +900,7 @@ class Keyword(model.Keyword, StatusMixin):
 
     @property
     def setup(self) -> "Keyword":
-        """Keyword setup as a :class:`Keyword` object.
+        """Keyword setup.
 
         See :attr:`teardown` for more information. New in Robot Framework 7.0.
         """
@@ -925,7 +922,7 @@ class Keyword(model.Keyword, StatusMixin):
 
     @property
     def teardown(self) -> "Keyword":
-        """Keyword teardown as a :class:`Keyword` object.
+        """Keyword teardown.
 
         Teardown can be modified by setting attributes directly::
 
@@ -976,7 +973,7 @@ class Keyword(model.Keyword, StatusMixin):
 
     @setter
     def tags(self, tags: Sequence[str]) -> model.Tags:
-        """Keyword tags as a :class:`~.model.tags.Tags` object."""
+        """Keyword tags."""
         return Tags(tags)
 
     def to_dict(self) -> DataDict:
@@ -1037,7 +1034,7 @@ class TestCase(model.TestCase[Keyword], StatusMixin):
 
     @setter
     def body(self, body: "Sequence[BodyItem|DataDict]") -> Body:
-        """Test body as a :class:`~robot.result.Body` object."""
+        """Test body."""
         return self.body_class(self, body)
 
     def to_dict(self) -> DataDict:
@@ -1126,7 +1123,7 @@ class TestSuite(model.TestSuite[Keyword, TestCase], StatusMixin):
 
     @property
     def statistics(self) -> TotalStatistics:
-        """Suite statistics as a :class:`~robot.model.totalstatistics.TotalStatistics` object.
+        """Suite statistics.
 
         Recreated every time this property is accessed, so saving the results
         to a variable and inspecting it is often a good idea::
