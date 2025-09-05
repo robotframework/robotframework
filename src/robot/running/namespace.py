@@ -193,7 +193,7 @@ class Namespace:
         LOGGER.write(
             f"{prefix}Suite '{self._suite_name}' has already imported {explanation}. "
             f"This import is ignored.",
-            level
+            level,
         )
 
     def _resolve_args(self, import_setting):
