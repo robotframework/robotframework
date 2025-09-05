@@ -311,7 +311,7 @@ discussed in more detail in the section `Different output files`_.
 Return codes
 ~~~~~~~~~~~~
 
-Runner scripts communicate the overall test execution status to the
+Runner scripts communicate the overall execution status to the
 system running them using return codes. When the execution starts
 successfully and no tests fail, the return code is zero.
 All possible return codes are explained in the table below.
@@ -326,24 +326,27 @@ All possible return codes are explained in the table below.
    1-249     Returned number of tests failed.
    250       250 or more failures.
    251       Help or version information printed.
-   252       Invalid test data or command line options.
-   253       Test execution stopped by user.
+   252       Invalid data or command line option.
+   253       Execution stopped by user.
    255       Unexpected internal error.
    ========  ==========================================
 
 Return codes should always be easily available after the execution,
 which makes it easy to automatically determine the overall execution
-status. For example, in bash shell the return code is in special
-variable `$?`, and in Windows it is in `%ERRORLEVEL%`
+status. For example, in the Bash shell the return code is in the
+`$?` variable, and in Windows it is in the `%ERRORLEVEL%`
 variable. If you use some external tool for running tests, consult its
 documentation for how to get the return code.
 
-The return code can be set to 0 even if there are failures using
-the :option:`--NoStatusRC` command line option. This might be useful, for
+The return code can be set to zero regardless the execution status by using
+the :option:`--nostatusrc` command line option. This might be useful, for
 example, in continuous integration servers where post-processing of results
-is needed before the overall status of test execution can be determined.
+is needed before the overall status of execution can be determined.
 
 .. note:: Same return codes are also used with Rebot_.
+
+.. note:: When `getting help and version information`_, the :option:`--nostatusrc`
+          option has an effect only with Robot Framework 7.4 and newer.
 
 Errors and warnings during execution
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -449,20 +452,25 @@ arguments with a script::
 Getting help and version information
 ------------------------------------
 
-Both when executing test cases and when post-processing outputs, it is possible
+Both when executing tests and when post-processing outputs, it is possible
 to get command line help with the option :option:`--help (-h)`.
-These help texts have a short general overview and
-briefly explain the available command line options.
+This help text provides version information, a short general introduction
+and explanation of the available command line options.
 
-All runner scripts also support getting the version information with
+It is also possible to get just the version information with
 the option :option:`--version`. This information also contains Python
 version and the platform type::
 
    $ robot --version
-   Robot Framework 7.0 (Python 3.12.1 on darwin)
+   Robot Framework 7.4 (Python 3.14.0 on linux)
 
    C:\>rebot --version
-   Rebot 6.1.1 (Python 3.11.0 on win32)
+   Rebot 7.3.1 (Python 3.13.7 on win32)
+
+When help or version information is printed to the console, the execution
+exits with a special `return code`_ 251 by default. Starting from Robot
+Framework 7.4, the return code can be changed to zero by using the
+:option:`--nostatusrc` option like `robot --version --nostatusrc`.
 
 .. _start-up script:
 .. _start-up scripts:
