@@ -16,7 +16,8 @@
 from typing import Any, Callable, Sequence, TYPE_CHECKING
 
 from robot.errors import DataError
-from robot.utils import DotDict, split_from_equals
+from robot.utils import DotDict, Secret, split_from_equals, type_name
+from robot.utils.unic import safe_str
 
 from .resolvable import Resolvable
 from .search import is_dict_variable, is_list_variable, search_variable
@@ -111,6 +112,38 @@ class VariableResolver(Resolvable):
     def _replace_variables(self, variables) -> Any:
         raise NotImplementedError
 
+    def _handle_secrets(self, value, replace_scalar, typ=None):
+        typ = typ or self.type
+        if not typ or typ.title() != "Secret":
+            return value
+        match = search_variable(value, identifiers="$%")
+        if match.is_variable():
+            secret = replace_scalar(match.match)
+            if match.identifier == "%":
+                secret = Secret(secret)
+        else:
+            secret = self._handle_embedded_secrets(match, replace_scalar)
+        if isinstance(secret, Secret):
+            return secret
+        typ = type_name(value)
+        raise DataError(f"Value '{value}' must have type 'Secret', got {typ}.")
+
+    def _handle_embedded_secrets(self, match, replace_scalar):
+        parts = []
+        secret_seen = False
+        while match:
+            secret = replace_scalar(match.match)
+            if match.identifier == "%":
+                secret_seen = True
+            elif isinstance(secret, Secret):
+                secret_seen = True
+                secret = secret.value
+            parts.extend([match.before, secret])
+            match = search_variable(match.after, identifiers="$%")
+        parts.append(match.string)
+        value = "".join(safe_str(p) for p in parts)
+        return Secret(value) if secret_seen else value
+
     def _convert(self, value, type_):
         from robot.running import TypeInfo
 
@@ -152,7 +185,9 @@ class ScalarVariableResolver(VariableResolver):
     def _replace_variables(self, variables):
         value, separator = self.value, self.separator
         if self._is_single_value(value, separator):
-            return variables.replace_scalar(value[0])
+            replace_scalar = variables.replace_scalar
+            value = self._handle_secrets(value[0], replace_scalar)
+            return replace_scalar(value)
         if separator is None:
             separator = " "
         else:
@@ -167,7 +202,15 @@ class ScalarVariableResolver(VariableResolver):
 class ListVariableResolver(VariableResolver):
 
     def _replace_variables(self, variables):
-        return variables.replace_list(self.value)
+        if self.type and self.type.title() == "Secret":
+            replace_scalar = variables.replace_scalar
+            value = [
+                self._handle_secrets(value, replace_scalar) for value in self.value
+            ]
+            value = tuple(value)
+        else:
+            value = self.value
+        return variables.replace_list(value)
 
     def _convert(self, value, type_):
         return super()._convert(value, f"list[{type_}]")
@@ -198,13 +241,22 @@ class DictVariableResolver(VariableResolver):
             raise DataError(f"Creating dictionary variable failed: {err}")
 
     def _yield_replaced(self, values, replace_scalar):
+        if not self.type:
+            k_type = v_type = None
+        elif "=" in self.type:
+            k_type, v_type = self.type.split("=", 1)
+        else:
+            k_type, v_type = "Any", self.type
         for item in values:
             if isinstance(item, tuple):
-                key, values = item
-                yield replace_scalar(key), replace_scalar(values)
+                key, value = item
+                yield (
+                    replace_scalar(self._handle_secrets(key, replace_scalar, k_type)),
+                    replace_scalar(self._handle_secrets(value, replace_scalar, v_type)),
+                )
             else:
                 yield from replace_scalar(item).items()
 
     def _convert(self, value, type_):
-        k_type, v_type = self.type.split("=", 1) if "=" in type_ else ("Any", type_)
+        k_type, v_type = type_.split("=", 1) if "=" in type_ else ("Any", type_)
         return super()._convert(value, f"dict[{k_type}, {v_type}]")
