@@ -115,10 +115,53 @@ class _BuiltInBase:
 
     def _log_types_at_level(self, level, *args):
         msg = ["Argument types are:"] + [self._get_type(a) for a in args]
-        self.log("\n".join(msg), level)
+        logger.write("\n".join(msg), level)
 
     def _get_type(self, arg):
         return str(type(arg))
+
+    def _convert_to_integer(self, orig, base=None):
+        try:
+            item, base = self._get_base(orig, base)
+            if base:
+                return int(item, self._convert_to_integer(base))
+            return int(item)
+        except Exception:
+            raise RuntimeError(
+                f"'{orig}' cannot be converted to an integer: {get_error_message()}"
+            )
+
+    def _get_base(self, item, base):
+        if not isinstance(item, str):
+            return item, base
+        item = normalize(item)
+        if item.startswith(("-", "+")):
+            sign = item[0]
+            item = item[1:]
+        else:
+            sign = ""
+        bases = {"0b": 2, "0o": 8, "0x": 16}
+        if base or not item.startswith(tuple(bases)):
+            return sign + item, base
+        return sign + item[2:], bases[item[:2]]
+
+    def _convert_to_number(self, item, precision=None):
+        number = self._convert_to_number_without_precision(item)
+        if precision is not None:
+            number = float(round(number, self._convert_to_integer(precision)))
+        return number
+
+    def _convert_to_number_without_precision(self, item):
+        try:
+            return float(item)
+        except (ValueError, TypeError):
+            error = get_error_message()
+            try:
+                return float(self._convert_to_integer(item))
+            except RuntimeError:
+                raise RuntimeError(
+                    f"'{item}' cannot be converted to a floating point number: {error}"
+                )
 
 
 class _Converter(_BuiltInBase):
@@ -151,31 +194,6 @@ class _Converter(_BuiltInBase):
         """
         self._log_types(item)
         return self._convert_to_integer(item, base)
-
-    def _convert_to_integer(self, orig, base=None):
-        try:
-            item, base = self._get_base(orig, base)
-            if base:
-                return int(item, self._convert_to_integer(base))
-            return int(item)
-        except Exception:
-            raise RuntimeError(
-                f"'{orig}' cannot be converted to an integer: {get_error_message()}"
-            )
-
-    def _get_base(self, item, base):
-        if not isinstance(item, str):
-            return item, base
-        item = normalize(item)
-        if item.startswith(("-", "+")):
-            sign = item[0]
-            item = item[1:]
-        else:
-            sign = ""
-        bases = {"0b": 2, "0o": 8, "0x": 16}
-        if base or not item.startswith(tuple(bases)):
-            return sign + item, base
-        return sign + item[2:], bases[item[:2]]
 
     def convert_to_binary(self, item, base=None, prefix=None, length=None):
         """Converts the given item to a binary string.
@@ -241,7 +259,7 @@ class _Converter(_BuiltInBase):
         possible minus sign). If the value is initially shorter than
         the required length, it is padded with zeros.
 
-        By default the value is returned as an upper case string, but the
+        The value is returned as an upper case string by default, but the
         ``lowercase`` argument a true value (see `Boolean arguments`) turns
         the value (but not the given prefix) to lower case.
 
@@ -299,24 +317,6 @@ class _Converter(_BuiltInBase):
         self._log_types(item)
         return self._convert_to_number(item, precision)
 
-    def _convert_to_number(self, item, precision=None):
-        number = self._convert_to_number_without_precision(item)
-        if precision is not None:
-            number = float(round(number, self._convert_to_integer(precision)))
-        return number
-
-    def _convert_to_number_without_precision(self, item):
-        try:
-            return float(item)
-        except (ValueError, TypeError):
-            error = get_error_message()
-            try:
-                return float(self._convert_to_integer(item))
-            except RuntimeError:
-                raise RuntimeError(
-                    f"'{item}' cannot be converted to a floating point number: {error}"
-                )
-
     def convert_to_string(self, item):
         """Converts the given item to a Unicode string.
 
@@ -373,7 +373,7 @@ class _Converter(_BuiltInBase):
 
         In addition to giving the input as a string, it is possible to use
         lists or other iterables containing individual characters or numbers.
-        In that case numbers do not need to be padded to certain length and
+        In that case numbers do not need to be padded to certain length, and
         they cannot contain extra spaces.
 
         Examples (last column shows returned bytes):
@@ -714,7 +714,7 @@ class _Verify(_BuiltInBase):
         second_lines = second.splitlines(keepends=True)
         if len(first_lines) < 3 or len(second_lines) < 3:
             return
-        self.log(f"{first.rstrip()}\n\n!=\n\n{second.rstrip()}")
+        logger.info(f"{first.rstrip()}\n\n!=\n\n{second.rstrip()}")
         diffs = list(
             difflib.unified_diff(
                 first_lines,
@@ -1497,7 +1497,7 @@ class _Verify(_BuiltInBase):
                     f"Converting '{container}' to list failed: {get_error_message()}"
                 )
         count = container.count(item)
-        self.log(f"Item found from container {count} time{s(count)}.")
+        logger.info(f"Item found from container {count} time{s(count)}.")
         return count
 
     def should_not_match(
@@ -1633,7 +1633,7 @@ class _Verify(_BuiltInBase):
         Empty`.
         """
         length = self._get_length(item)
-        self.log(f"Length is {length}.")
+        logger.info(f"Length is {length}.")
         return length
 
     def _get_length(self, item):
@@ -1715,10 +1715,9 @@ class _Variables(_BuiltInBase):
         returned dictionary has no effect on the variables available in the
         current scope.
 
-        By default variables are returned with ``${}``, ``@{}`` or ``&{}``
-        decoration based on variable types. Giving a true value (see `Boolean
-        arguments`) to the optional argument ``no_decoration`` will return
-        the variables without the decoration.
+        Variables are returned with ``${}``, ``@{}`` or ``&{}`` decoration based
+        on variable types by default. Giving a true value (see `Boolean arguments`)
+        to the ``no_decoration`` argument allows getting variables without decoration.
 
         Example:
         | ${example_variable} =         | Set Variable | example value         |
@@ -1734,7 +1733,7 @@ class _Variables(_BuiltInBase):
 
     @keyword(types=None)
     @run_keyword_variant(resolve=0)
-    def get_variable_value(self, name, default=None):
+    def get_variable_value(self, name, default=None, /):
         r"""Returns variable value or ``default`` if the variable does not exist.
 
         The name of the variable can be given either as a normal variable name
@@ -1743,8 +1742,7 @@ class _Variables(_BuiltInBase):
         or accessing variables` section, using the escaped format is recommended.
 
         Notice that ``default`` must be given positionally like ``example`` and
-        not using the named-argument syntax like ``default=example``. We hope to
-        be able to remove this limitation in the future.
+        not using the named-argument syntax like ``default=example``.
 
         Examples:
         | ${x} =    `Get Variable Value`    $a    example
@@ -1767,7 +1765,7 @@ class _Variables(_BuiltInBase):
         for name in sorted(variables, key=lambda s: s[2:-1].casefold()):
             name, value = self._get_logged_variable(name, variables)
             msg = format_assign_message(name, value, cut_long=False)
-            self.log(msg, level)
+            logger.write(msg, level)
 
     def _get_logged_variable(self, name, variables):
         value = variables[name]
@@ -1784,7 +1782,7 @@ class _Variables(_BuiltInBase):
         return name, value
 
     @run_keyword_variant(resolve=0)
-    def variable_should_exist(self, name, message=None):
+    def variable_should_exist(self, name, message=None, /):
         r"""Fails unless the given variable exists within the current scope.
 
         The name of the variable can be given either as a normal variable name
@@ -1794,8 +1792,7 @@ class _Variables(_BuiltInBase):
 
         The default error message can be overridden with the ``message`` argument.
         Notice that it must be given positionally like ``A message`` and not
-        using the named-argument syntax like ``message=A message``. We hope to
-        be able to remove this limitation in the future.
+        using the named-argument syntax like ``message=A message``.
 
         See also `Variable Should Not Exist` and `Keyword Should Exist`.
         """
@@ -1810,7 +1807,7 @@ class _Variables(_BuiltInBase):
             )
 
     @run_keyword_variant(resolve=0)
-    def variable_should_not_exist(self, name, message=None):
+    def variable_should_not_exist(self, name, message=None, /):
         r"""Fails if the given variable exists within the current scope.
 
         The name of the variable can be given either as a normal variable name
@@ -1820,8 +1817,7 @@ class _Variables(_BuiltInBase):
 
         The default error message can be overridden with the ``message`` argument.
         Notice that it must be given positionally like ``A message`` and not
-        using the named-argument syntax like ``message=A message``. We hope to
-        be able to remove this limitation in the future.
+        using the named-argument syntax like ``message=A message``.
 
         See also `Variable Should Exist` and `Keyword Should Exist`.
         """
@@ -1842,7 +1838,7 @@ class _Variables(_BuiltInBase):
 
         If the text contains undefined variables, this keyword fails.
         If the given ``text`` contains only a single variable, its value is
-        returned as-is and it can be any object. Otherwise, this keyword
+        returned as-is, and it can be any object. Otherwise, this keyword
         always returns a string.
 
         Example:
@@ -1860,7 +1856,7 @@ class _Variables(_BuiltInBase):
         """Returns the given values which can then be assigned to a variables.
 
         This keyword is mainly used for setting scalar variables.
-        Additionally it can be used for converting a scalar variable
+        Additionally, it can be used for converting a scalar variable
         containing a list to a list variable or to multiple scalar variables.
         It is recommended to use `Create List` when creating new lists.
 
@@ -1890,7 +1886,7 @@ class _Variables(_BuiltInBase):
         return list(values)
 
     @run_keyword_variant(resolve=0)
-    def set_local_variable(self, name, *values):
+    def set_local_variable(self, name, /, *values):
         r"""Makes a variable available everywhere within the local scope.
 
         Variables set with this keyword are available within the
@@ -1930,7 +1926,7 @@ class _Variables(_BuiltInBase):
         self._log_set_variable(name, value)
 
     @run_keyword_variant(resolve=0)
-    def set_test_variable(self, name, *values):
+    def set_test_variable(self, name, /, *values):
         r"""Makes a variable available everywhere within the scope of the current test.
 
         Variables set with this keyword are available everywhere within the
@@ -1966,7 +1962,7 @@ class _Variables(_BuiltInBase):
         self._log_set_variable(name, value)
 
     @run_keyword_variant(resolve=0)
-    def set_task_variable(self, name, *values):
+    def set_task_variable(self, name, /, *values):
         """Makes a variable available everywhere within the scope of the current task.
 
         This is an alias for `Set Test Variable` that is more applicable when
@@ -1978,7 +1974,7 @@ class _Variables(_BuiltInBase):
         self.set_test_variable(name, *values)
 
     @run_keyword_variant(resolve=0)
-    def set_suite_variable(self, name, *values):
+    def set_suite_variable(self, name, /, *values):
         r"""Makes a variable available everywhere within the scope of the current suite.
 
         Variables set with this keyword are available everywhere within the
@@ -2051,12 +2047,12 @@ class _Variables(_BuiltInBase):
         self._log_set_variable(name, value)
 
     @run_keyword_variant(resolve=0)
-    def set_global_variable(self, name, *values):
+    def set_global_variable(self, name, /, *values):
         r"""Makes a variable available globally in all tests and suites.
 
         Variables set with this keyword are globally available in all
         subsequent test suites, test cases and user keywords. Also variables
-        created Variables sections are overridden. Variables assigned locally
+        created in the Variables sections are overridden. Variables assigned locally
         based on keyword return values or by using `Set Suite Variable`,
         `Set Test Variable` or `Set Local Variable` override these variables
         in that scope, but the global value is not changed in those cases.
@@ -2135,14 +2131,8 @@ class _Variables(_BuiltInBase):
 
 class _RunKeyword(_BuiltInBase):
 
-    # If you use any of these run keyword variants from another library, you
-    # should register those keywords with 'register_run_keyword' method. See
-    # the documentation of that method at the end of this file. There are also
-    # other run keyword variant keywords in BuiltIn which can also be seen
-    # at the end of this file.
-
     @run_keyword_variant(resolve=0, dry_run=True)
-    def run_keyword(self, name, *args):
+    def run_keyword(self, name, /, *args):
         """Executes the given keyword with the given arguments.
 
         Because the name of the keyword to execute is given as an argument, it
@@ -2216,7 +2206,7 @@ class _RunKeyword(_BuiltInBase):
         to take care of multiple actions and creating a new higher level user
         keyword would be an overkill.
 
-        By default all arguments are expected to be keywords to be executed.
+        By default, all arguments are expected to be keywords to be executed.
 
         Examples:
         | `Run Keywords` | `Initialize database` | `Start servers` | `Clear logs` |
@@ -2287,7 +2277,7 @@ class _RunKeyword(_BuiltInBase):
         yield keywords
 
     @run_keyword_variant(resolve=1, dry_run=True)
-    def run_keyword_if(self, condition, name, *args):
+    def run_keyword_if(self, condition, name, /, *args):
         """Runs the given keyword with the given arguments, if ``condition`` is true.
 
         *NOTE:* Robot Framework 4.0 introduced built-in IF/ELSE support and using
@@ -2370,7 +2360,7 @@ class _RunKeyword(_BuiltInBase):
         return args[:index], branch
 
     @run_keyword_variant(resolve=1, dry_run=True)
-    def run_keyword_unless(self, condition, name, *args):
+    def run_keyword_unless(self, condition, name, /, *args):
         """*DEPRECATED since RF 5.0. Use Native IF/ELSE or `Run Keyword If` instead.*
 
         Runs the given keyword with the given arguments if ``condition`` is false.
@@ -2378,11 +2368,12 @@ class _RunKeyword(_BuiltInBase):
         See `Run Keyword If` for more information and an example. Notice that this
         keyword does not support ELSE or ELSE IF branches like `Run Keyword If` does.
         """
-        if not self._is_true(condition):
-            return self.run_keyword(name, *args)
+        if self._is_true(condition):
+            return None
+        return self.run_keyword(name, *args)
 
     @run_keyword_variant(resolve=0, dry_run=True)
-    def run_keyword_and_ignore_error(self, name, *args):
+    def run_keyword_and_ignore_error(self, name, /, *args):
         """Runs the given keyword with the given arguments and ignores possible error.
 
         This keyword returns two values, so that the first is either string
@@ -2395,7 +2386,7 @@ class _RunKeyword(_BuiltInBase):
         `Run Keyword If` for a usage example.
 
         Errors caused by invalid syntax, timeouts, or fatal exceptions are not
-        caught by this keyword. Otherwise this keyword itself never fails.
+        caught by this keyword, but otherwise this keyword never fails.
 
         *NOTE:* Robot Framework 5.0 introduced native TRY/EXCEPT functionality
         that is generally recommended for error handling.
@@ -2408,7 +2399,7 @@ class _RunKeyword(_BuiltInBase):
             return "FAIL", str(err)
 
     @run_keyword_variant(resolve=0, dry_run=True)
-    def run_keyword_and_warn_on_failure(self, name, *args):
+    def run_keyword_and_warn_on_failure(self, name, /, *args):
         """Runs the specified keyword logs a warning if the keyword fails.
 
         This keyword is similar to `Run Keyword And Ignore Error` but if the executed
@@ -2417,7 +2408,7 @@ class _RunKeyword(_BuiltInBase):
         like `Run Keyword And Ignore Error` does.
 
         Errors caused by invalid syntax, timeouts, or fatal exceptions are not
-        caught by this keyword. Otherwise this keyword itself never fails.
+        caught by this keyword, but otherwise this keyword never fails.
 
         New in Robot Framework 4.0.
         """
@@ -2427,7 +2418,7 @@ class _RunKeyword(_BuiltInBase):
         return status, message
 
     @run_keyword_variant(resolve=0, dry_run=True)
-    def run_keyword_and_return_status(self, name, *args):
+    def run_keyword_and_return_status(self, name, /, *args):
         """Runs the given keyword with given arguments and returns the status as a Boolean value.
 
         This keyword returns Boolean ``True`` if the keyword that is executed
@@ -2442,13 +2433,13 @@ class _RunKeyword(_BuiltInBase):
         | `Run Keyword If` | ${passed} | Another keyword |
 
         Errors caused by invalid syntax, timeouts, or fatal exceptions are not
-        caught by this keyword. Otherwise this keyword itself never fails.
+        caught by this keyword, but otherwise this keyword never fails.
         """
         status, _ = self.run_keyword_and_ignore_error(name, *args)
         return status == "PASS"
 
     @run_keyword_variant(resolve=0, dry_run=True)
-    def run_keyword_and_continue_on_failure(self, name, *args):
+    def run_keyword_and_continue_on_failure(self, name, /, *args):
         """Runs the keyword and continues execution even if a failure occurs.
 
         The keyword name and arguments work as with `Run Keyword`.
@@ -2468,16 +2459,16 @@ class _RunKeyword(_BuiltInBase):
             raise err
 
     @run_keyword_variant(resolve=1, dry_run=True)
-    def run_keyword_and_expect_error(self, expected_error, name, *args):
+    def run_keyword_and_expect_error(self, expected_error, name, /, *args):
         """Runs the keyword and checks that the expected error occurred.
 
         The keyword to execute and its arguments are specified using ``name``
         and ``*args`` exactly like with `Run Keyword`.
 
         The expected error must be given in the same format as in Robot Framework
-        reports. By default it is interpreted as a glob pattern with ``*``, ``?``
-        and ``[chars]`` as wildcards, but that can be changed by using various
-        prefixes explained in the table below. Prefixes are case-sensitive and
+        reports. It is interpreted as a glob pattern with ``*``, ``?`` and ``[chars]``
+        as wildcards by default, but that can be changed by using various
+        prefixes explained in the table below. Prefixes are case-sensitive, and
         they must be separated from the actual message with a colon and an
         optional space like ``PREFIX: Message`` or ``PREFIX:Message``.
 
@@ -2490,7 +2481,7 @@ class _RunKeyword(_BuiltInBase):
         See the `Pattern matching` section for more information about glob
         patterns and regular expressions.
 
-        If the expected error occurs, the error message is returned and it can
+        If the expected error occurs, the error message is returned, and it can
         be further processed or tested if needed. If there is no error, or the
         error does not match the expected error, this keyword fails.
 
@@ -2509,7 +2500,7 @@ class _RunKeyword(_BuiltInBase):
 
         *NOTE:* Regular expression matching used to require only the beginning
         of the error to match the given pattern. That was changed in Robot
-        Framework 5.0 and nowadays the pattern must match the error fully.
+        Framework 5.0 and, nowadays, the pattern must match the error fully.
         To match only the beginning, add ``.*`` at the end of the pattern like
         ``REGEXP: Start.*``.
 
@@ -2546,7 +2537,7 @@ class _RunKeyword(_BuiltInBase):
         return matchers[prefix](error, expected_error.lstrip())
 
     @run_keyword_variant(resolve=1, dry_run=True)
-    def repeat_keyword(self, repeat, name, *args):
+    def repeat_keyword(self, repeat, name, /, *args):
         """Executes the specified keyword multiple times.
 
         ``name`` and ``args`` define the keyword that is executed similarly as
@@ -2607,24 +2598,24 @@ class _RunKeyword(_BuiltInBase):
 
     def _keywords_repeated_by_count(self, count, name, args):
         if count <= 0:
-            self.log(f"Keyword '{name}' repeated zero times.")
+            logger.info(f"Keyword '{name}' repeated zero times.")
         for i in range(count):
-            self.log(f"Repeating keyword, round {i + 1}/{count}.")
+            logger.info(f"Repeating keyword, round {i + 1}/{count}.")
             yield name, args
 
     def _keywords_repeated_by_timeout(self, timeout, name, args):
         if timeout <= 0:
-            self.log(f"Keyword '{name}' repeated zero times.")
+            logger.info(f"Keyword '{name}' repeated zero times.")
         round = 0
         maxtime = time.time() + timeout
         while time.time() < maxtime:
             round += 1
             remaining = secs_to_timestr(maxtime - time.time(), compact=True)
-            self.log(f"Repeating keyword, round {round}, {remaining} remaining.")
+            logger.info(f"Repeating keyword, round {round}, {remaining} remaining.")
             yield name, args
 
     @run_keyword_variant(resolve=2, dry_run=True)
-    def wait_until_keyword_succeeds(self, retry, retry_interval, name, *args):
+    def wait_until_keyword_succeeds(self, retry, retry_interval, name, /, *args):
         """Runs the specified keyword and retries if it fails.
 
         ``name`` and ``args`` define the keyword that is executed similarly
@@ -2726,7 +2717,7 @@ class _RunKeyword(_BuiltInBase):
                 err.keyword_timeout = True
 
     @run_keyword_variant(resolve=1)
-    def set_variable_if(self, condition, *values):
+    def set_variable_if(self, condition, /, *values):
         """Sets variable based on the given condition.
 
         The basic usage is giving a condition and two values. The
@@ -2753,7 +2744,7 @@ class _RunKeyword(_BuiltInBase):
         conditions without a limit.
 
         | ${var} = | Set Variable If | ${rc} == 0        | zero           |
-        | ...      | ${rc} > 0       | greater than zero | less then zero |
+        | ...      | ${rc} > 0       | greater than zero | less than zero |
         |          |
         | ${var} = | Set Variable If |
         | ...      | ${rc} == 0      | zero              |
@@ -2786,7 +2777,7 @@ class _RunKeyword(_BuiltInBase):
         return values
 
     @run_keyword_variant(resolve=0, dry_run=True)
-    def run_keyword_if_test_failed(self, name, *args):
+    def run_keyword_if_test_failed(self, name, /, *args):
         """Runs the given keyword with the given arguments, if the test failed.
 
         This keyword can only be used in a test teardown. Trying to use it
@@ -2800,7 +2791,7 @@ class _RunKeyword(_BuiltInBase):
             return self.run_keyword(name, *args)
 
     @run_keyword_variant(resolve=0, dry_run=True)
-    def run_keyword_if_test_passed(self, name, *args):
+    def run_keyword_if_test_passed(self, name, /, *args):
         """Runs the given keyword with the given arguments, if the test passed.
 
         This keyword can only be used in a test teardown. Trying to use it
@@ -2814,7 +2805,7 @@ class _RunKeyword(_BuiltInBase):
             return self.run_keyword(name, *args)
 
     @run_keyword_variant(resolve=0, dry_run=True)
-    def run_keyword_if_timeout_occurred(self, name, *args):
+    def run_keyword_if_timeout_occurred(self, name, /, *args):
         """Runs the given keyword if either a test or a keyword timeout has occurred.
 
         This keyword can only be used in a test teardown. Trying to use it
@@ -2834,7 +2825,7 @@ class _RunKeyword(_BuiltInBase):
         raise RuntimeError(f"Keyword '{kwname}' can only be used in test teardown.")
 
     @run_keyword_variant(resolve=0, dry_run=True)
-    def run_keyword_if_all_tests_passed(self, name, *args):
+    def run_keyword_if_all_tests_passed(self, name, /, *args):
         """Runs the given keyword with the given arguments, if all tests passed.
 
         This keyword can only be used in a suite teardown. Trying to use it
@@ -2848,7 +2839,7 @@ class _RunKeyword(_BuiltInBase):
             return self.run_keyword(name, *args)
 
     @run_keyword_variant(resolve=0, dry_run=True)
-    def run_keyword_if_any_tests_failed(self, name, *args):
+    def run_keyword_if_any_tests_failed(self, name, /, *args):
         """Runs the given keyword with the given arguments, if one or more tests failed.
 
         This keyword can only be used in a suite teardown. Trying to use it
@@ -2922,7 +2913,7 @@ class _Control(_BuiltInBase):
         """
         if not self._context.allow_loop_control:
             raise DataError("'Continue For Loop' can only be used inside a loop.")
-        self.log("Continuing for loop from the next iteration.")
+        logger.info("Continuing for loop from the next iteration.")
         raise ContinueLoop
 
     def continue_for_loop_if(self, condition):
@@ -2989,7 +2980,7 @@ class _Control(_BuiltInBase):
         """
         if not self._context.allow_loop_control:
             raise DataError("'Exit For Loop' can only be used inside a loop.")
-        self.log("Exiting for loop altogether.")
+        logger.info("Exiting for loop altogether.")
         raise BreakLoop
 
     def exit_for_loop_if(self, condition):
@@ -3065,7 +3056,7 @@ class _Control(_BuiltInBase):
         | Example
         |     ${index} =    Find Index    baz    @{LIST}
         |     Should Be Equal    ${index}    ${1}
-        |     ${index} =    Find Index    non existing    @{LIST}
+        |     ${index} =    Find Index    non-existing    @{LIST}
         |     Should Be Equal    ${index}    ${-1}
         |
         | ***** Keywords *****
@@ -3085,7 +3076,7 @@ class _Control(_BuiltInBase):
         self._return_from_keyword(return_values)
 
     def _return_from_keyword(self, return_values=None, failures=None):
-        self.log("Returning from the enclosing user keyword.")
+        logger.info("Returning from the enclosing user keyword.")
         raise ReturnFromKeyword(return_values, failures)
 
     @run_keyword_variant(resolve=1)
@@ -3128,7 +3119,7 @@ class _Control(_BuiltInBase):
             self._return_from_keyword(return_values)
 
     @run_keyword_variant(resolve=0, dry_run=True)
-    def run_keyword_and_return(self, name, *args):
+    def run_keyword_and_return(self, name, /, *args):
         """Runs the specified keyword and returns from the enclosing user keyword.
 
         The keyword to execute is defined with ``name`` and ``*args`` exactly
@@ -3143,8 +3134,8 @@ class _Control(_BuiltInBase):
         | ${result} =               | `My Keyword` | arg1 | arg2 |
         | `Return From Keyword`     | ${result}    |      |      |
 
-        Use `Run Keyword And Return If` if you want to run keyword and return
-        based on a condition.
+        If you want to run a keyword and return based on a condition, use
+        `Run Keyword And Return If`.
         """
         try:
             ret = self.run_keyword(name, *args)
@@ -3154,7 +3145,7 @@ class _Control(_BuiltInBase):
             self._return_from_keyword(return_values=[escape(ret)])
 
     @run_keyword_variant(resolve=1, dry_run=True)
-    def run_keyword_and_return_if(self, condition, name, *args):
+    def run_keyword_and_return_if(self, condition, name, /, *args):
         """Runs the specified keyword and returns from the enclosing user keyword.
 
         A wrapper for `Run Keyword And Return` to run and return based on
@@ -3166,8 +3157,8 @@ class _Control(_BuiltInBase):
         | # Above is equivalent to:   |
         | `Run Keyword If`            | ${rc} > 0 | `Run Keyword And Return` | `My Keyword ` | arg1 | arg2 |
 
-        Use `Return From Keyword If` if you want to return a certain value
-        based on a condition.
+        If you want to return a certain value based on a condition, use
+        `Return From Keyword If`
         """
         if self._is_true(condition):
             self.run_keyword_and_return(name, *args)
@@ -3189,7 +3180,7 @@ class _Control(_BuiltInBase):
         failures in executed teardowns, will fail the execution.
 
         It is mandatory to give a message explaining why execution was passed.
-        By default the message is considered plain text, but starting it with
+        The message is considered plain text by default, but starting it with
         ``*HTML*`` allows using HTML formatting.
 
         It is also possible to modify test tags passing tags after the message
@@ -3220,11 +3211,11 @@ class _Control(_BuiltInBase):
             raise RuntimeError("Message cannot be empty.")
         self._set_and_remove_tags(tags)
         log_message, level = self._get_logged_test_message_and_level(message)
-        self.log(f"Execution passed with message:\n{log_message}", level)
+        logger.write(f"Execution passed with message:\n{log_message}", level)
         raise PassExecution(message)
 
     @run_keyword_variant(resolve=1)
-    def pass_execution_if(self, condition, message, *tags):
+    def pass_execution_if(self, condition, message, /, *tags):
         """Conditionally skips rest of the current test, setup, or teardown with PASS status.
 
         A wrapper for `Pass Execution` to skip rest of the current test,
@@ -3271,9 +3262,9 @@ class _Misc(_BuiltInBase):
         if seconds < 0:
             seconds = 0
         self._sleep_in_parts(seconds)
-        self.log(f"Slept {secs_to_timestr(seconds)}.")
+        logger.info(f"Slept {secs_to_timestr(seconds)}.")
         if reason:
-            self.log(reason)
+            logger.info(reason)
 
     def _sleep_in_parts(self, seconds):
         # time.sleep can't be stopped in windows
@@ -3420,7 +3411,7 @@ class _Misc(_BuiltInBase):
         log levels, use HTML, or log to the console.
         """
         for msg in self._yield_logged_messages(messages):
-            self.log(msg)
+            logger.info(msg)
 
     def _yield_logged_messages(self, messages):
         for msg in messages:
@@ -3437,19 +3428,18 @@ class _Misc(_BuiltInBase):
     def log_to_console(self, message, stream="STDOUT", no_newline=False, format=""):
         """Logs the given message to the console.
 
-        By default uses the standard output stream. Using the standard error
+        Uses the standard output stream by default. Using the standard error
         stream is possible by giving the ``stream`` argument value ``STDERR``
         (case-insensitive).
 
-        By default appends a newline to the logged message. This can be
+        Appends a newline to the logged message by default. This can be
         disabled by giving the ``no_newline`` argument a true value (see
         `Boolean arguments`).
 
-        By default adds no alignment formatting. The ``format`` argument allows,
-        for example, alignment and customized padding of the log message. Please see the
-        [https://docs.python.org/3/library/string.html#formatspec|format specification] for
-        detailed alignment possibilities. This argument is new in Robot
-        Framework 5.0.
+        It is possible to add alignment and padding using the ``format`` argument.
+        See the
+        [https://docs.python.org/3/library/string.html#formatspec|format specification]
+        for more details about the syntax. This argument is new in Robot Framework 5.0.
 
         Examples:
         | Log To Console | Hello, console!             |                 |
@@ -3493,7 +3483,7 @@ class _Misc(_BuiltInBase):
         """
         old = self._context.output.set_log_level(level)
         self._namespace.variables.set_global("${LOG_LEVEL}", level.upper())
-        self.log(f"Log level changed from {old} to {level.upper()}.", level="DEBUG")
+        logger.debug(f"Log level changed from {old} to {level.upper()}.")
         return old
 
     def reset_log_level(self):
@@ -3519,10 +3509,10 @@ class _Misc(_BuiltInBase):
         calls this keyword as a method.
         """
         lib = self._namespace.reload_library(name_or_instance)
-        self.log(f"Reloaded library {lib.name} with {len(lib.keywords)} keywords.")
+        logger.info(f"Reloaded library {lib.name} with {len(lib.keywords)} keywords.")
 
     @run_keyword_variant(resolve=0)
-    def import_library(self, name, *args):
+    def import_library(self, name, /, *args):
         """Imports a library with the given name and optional arguments.
 
         This functionality allows dynamic importing of libraries while tests
@@ -3558,7 +3548,7 @@ class _Misc(_BuiltInBase):
         return args, None
 
     @run_keyword_variant(resolve=0)
-    def import_variables(self, path, *args):
+    def import_variables(self, path, /, *args):
         """Imports a variable file with the given path and optional arguments.
 
         Variables imported with this keyword are set into the test suite scope
@@ -3583,7 +3573,7 @@ class _Misc(_BuiltInBase):
             raise RuntimeError(str(err))
 
     @run_keyword_variant(resolve=0)
-    def import_resource(self, path):
+    def import_resource(self, path, /):
         """Imports a resource file with the given path.
 
         Resources imported with this keyword are set into the test suite scope
@@ -3689,7 +3679,7 @@ class _Misc(_BuiltInBase):
         3) Otherwise (and by default) the time is returned as a
            timestamp string in the format ``2006-02-24 15:08:31``.
 
-        By default this keyword returns the current local time, but
+        Returns the current local time by default, but
         that can be altered using ``time`` argument as explained below.
         Note that all checks involving strings are case-insensitive.
 
@@ -3772,7 +3762,7 @@ class _Misc(_BuiltInBase):
         be explicitly specified using the ``modules`` argument:
 
         - When nested modules like ``rootmod.submod`` are implemented so that
-          the root module does not automatically import sub modules. This is
+          the root module does not automatically import submodules. This is
           illustrated by the ``selenium.webdriver`` example below.
 
         - When using a module in the expression part of a list comprehension.
@@ -3898,7 +3888,7 @@ class _Misc(_BuiltInBase):
         if self._context.in_test_teardown:
             self._variables.set_test("${TEST_MESSAGE}", test.message)
         message, level = self._get_logged_test_message_and_level(test.message)
-        self.log(f"Set test message to:\n{message}", level)
+        logger.write(f"Set test message to:\n{message}", level)
 
     def _get_new_text(self, old, new, append, handle_html=False, separator=" "):
         if not isinstance(new, str):
@@ -3946,7 +3936,7 @@ class _Misc(_BuiltInBase):
             )
         test.doc = self._get_new_text(test.doc, doc, append, separator=separator)
         self._variables.set_test("${TEST_DOCUMENTATION}", test.doc)
-        self.log(f"Set test documentation to:\n{test.doc}")
+        logger.info(f"Set test documentation to:\n{test.doc}")
 
     def set_suite_documentation(self, doc, append=False, top=False, separator=" "):
         """Sets documentation for the current test suite.
@@ -3972,7 +3962,7 @@ class _Misc(_BuiltInBase):
         suite = self._get_context(top).suite
         suite.doc = self._get_new_text(suite.doc, doc, append, separator=separator)
         self._variables.set_suite("${SUITE_DOCUMENTATION}", suite.doc, top)
-        self.log(f"Set suite documentation to:\n{suite.doc}")
+        logger.info(f"Set suite documentation to:\n{suite.doc}")
 
     def set_suite_metadata(self, name, value, append=False, top=False, separator=" "):
         """Sets metadata for the current test suite.
@@ -4003,7 +3993,7 @@ class _Misc(_BuiltInBase):
             original, value, append, separator=separator
         )
         self._variables.set_suite("${SUITE_METADATA}", metadata.copy(), top)
-        self.log(f"Set suite metadata '{name}' to value '{metadata[name]}'.")
+        logger.info(f"Set suite metadata '{name}' to value '{metadata[name]}'.")
 
     def set_tags(self, *tags):
         """Adds given ``tags`` for the current test or all tests in a suite.
@@ -4028,7 +4018,7 @@ class _Misc(_BuiltInBase):
             ctx.suite.set_tags(tags, persist=True)
         else:
             raise RuntimeError("'Set Tags' cannot be used in suite teardown.")
-        self.log(f"Set tag{s(tags)} {seq2str(tags)}.")
+        logger.info(f"Set tag{s(tags)} {seq2str(tags)}.")
 
     def remove_tags(self, *tags):
         """Removes given ``tags`` from the current test or all tests in a suite.
@@ -4056,7 +4046,7 @@ class _Misc(_BuiltInBase):
             ctx.suite.set_tags(remove=tags, persist=True)
         else:
             raise RuntimeError("'Remove Tags' cannot be used in suite teardown.")
-        self.log(f"Removed tag{s(tags)} {seq2str(tags)}.")
+        logger.info(f"Removed tag{s(tags)} {seq2str(tags)}.")
 
     def get_library_instance(self, name=None, all=False):
         """Returns the currently active instance of the specified library.
@@ -4068,8 +4058,8 @@ class _Misc(_BuiltInBase):
         | from robot.libraries.BuiltIn import BuiltIn
         |
         | def title_should_start_with(expected):
-        |     seleniumlib = BuiltIn().get_library_instance('SeleniumLibrary')
-        |     title = seleniumlib.get_title()
+        |     lib = BuiltIn().get_library_instance('SeleniumLibrary')
+        |     title = lib.get_title()
         |     if not title.startswith(expected):
         |         raise AssertionError(f"Title '{title}' did not start with '{expected}'.")
 

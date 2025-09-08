@@ -122,6 +122,9 @@ Private keyword should be excluded
         Should Not Be Equal    ${keyword}[name]    Private
     END
 
+All tags does not include tags from private keywords
+    ${MODEL}[tags]    ['\${3}', '?!?!??', 'a', 'b', 'bar', 'dar', 'foo', 'Has', 'kw4', 'tags']
+
 *** Keywords ***
 Verify Argument Models
     [Arguments]    ${arg_models}    @{expected_reprs}

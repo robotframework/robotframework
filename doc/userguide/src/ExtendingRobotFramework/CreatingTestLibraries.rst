@@ -174,6 +174,22 @@ Example implementations for the libraries used in the above example:
            else:
                do_something_in_other_environments()
 
+If a library is imported multiple times with different arguments within a single
+suite, it needs to be given a `custom name`__ or otherwise latter imports are ignored:
+
+.. sourcecode:: robotframework
+
+   *** Settings ***
+   Library    MyLibrary     10.0.0.1    8080    AS    RemoteLibrary
+   Library    MyLibrary     127.0.0.1    AS    LocalLibrary
+
+   *** Test Cases ***
+   Example
+       RemoteLibrary.Send Message    Hello!
+       LocalLibrary.Send Message    Hi!
+
+__ `Setting custom name to library`_
+
 Library scope
 ~~~~~~~~~~~~~
 

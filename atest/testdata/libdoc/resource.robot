@@ -80,5 +80,5 @@ Deprecation
     No Operation
 
 Private
-    [Tags]    robot:private
+    [Tags]    robot:private    tags    tag-in-private
     No Operation

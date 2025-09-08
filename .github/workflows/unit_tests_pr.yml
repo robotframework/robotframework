@@ -15,13 +15,13 @@ jobs:
       fail-fast: true
       matrix:
         os: [ 'ubuntu-latest', 'windows-latest' ]
-        python-version: [ '3.8', '3.12' ]
+        python-version: [ '3.8', '3.13' ]
 
     runs-on: ${{ matrix.os }}
 
     name: Python ${{ matrix.python-version }} on ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup python ${{ matrix.python-version }}
         uses: actions/setup-python@v5.6.0

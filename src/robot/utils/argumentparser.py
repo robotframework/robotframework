@@ -169,20 +169,14 @@ class ArgumentParser:
         return []
 
     def _handle_special_options(self, opts, args):
-        if self._auto_help and opts.get("help"):
-            self._raise_help()
-        if self._auto_version and opts.get("version"):
-            self._raise_version()
-        if self._auto_pythonpath and opts.get("pythonpath"):
-            sys.path = self._get_pythonpath(opts["pythonpath"]) + sys.path
-        for auto, opt in [
-            (self._auto_help, "help"),
-            (self._auto_version, "version"),
-            (self._auto_pythonpath, "pythonpath"),
-            (self._auto_argumentfile, "argumentfile"),
-        ]:
-            if auto and opt in opts:
-                opts.pop(opt)
+        if self._auto_help and opts.pop("help", False):
+            self._raise_help(opts.get("statusrc"))
+        if self._auto_version and opts.pop("version", False):
+            self._raise_version(opts.get("statusrc"))
+        if self._auto_pythonpath:
+            sys.path = self._get_pythonpath(opts.pop("pythonpath", [])) + sys.path
+        if self._auto_argumentfile:
+            opts.pop("argumentfile", None)
         return opts, args
 
     def _parse_args(self, args):
@@ -320,14 +314,18 @@ class ArgumentParser:
             ret.append(drive)
         return ret
 
-    def _raise_help(self):
+    def _raise_help(self, status_rc=True):
         usage = self._usage
         if self.version:
             usage = usage.replace("<VERSION>", self.version)
-        raise Information(usage)
+        if status_rc is None:
+            status_rc = True
+        raise Information(usage, status_rc)
 
-    def _raise_version(self):
-        raise Information(f"{self.name} {self.version}")
+    def _raise_version(self, status_rc=True):
+        if status_rc is None:
+            status_rc = True
+        raise Information(f"{self.name} {self.version}", status_rc)
 
     def _raise_option_multiple_times_in_usage(self, opt):
         raise FrameworkError(f"Option '{opt}' multiple times in usage")

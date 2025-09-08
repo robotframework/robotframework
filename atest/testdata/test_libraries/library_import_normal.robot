@@ -5,6 +5,7 @@ Library           libmodule.LibClass1
 Library           libmodule.LibClass2
 Library           libmodule
 Library           NamespaceUsingLibrary
+Library           libmodule
 
 *** Test Cases ***
 Normal Library Import
