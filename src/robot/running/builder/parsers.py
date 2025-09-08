@@ -47,7 +47,12 @@ class Parser(ABC):
 class RobotParser(Parser):
     extensions = ()
 
-    def __init__(self, lang: LanguagesLike = None, process_curdir: bool = True, custom_metadata: "list[str]|None" = None):
+    def __init__(
+        self,
+        lang: LanguagesLike = None,
+        process_curdir: bool = True,
+        custom_metadata: "list[str]|None" = None,
+    ):
         self.lang = lang
         self.process_curdir = process_curdir
         self.custom_metadata = custom_metadata
@@ -77,7 +82,9 @@ class RobotParser(Parser):
             source=source.parent,
             rpa=None,
         )
-        SuiteBuilder(suite, InitFileSettings(defaults, self.custom_metadata)).build(model)
+        SuiteBuilder(suite, InitFileSettings(defaults, self.custom_metadata)).build(
+            model
+        )
         return suite
 
     def parse_model(

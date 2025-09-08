@@ -1820,7 +1820,7 @@ class CustomMetadata(DocumentationOrMetadata):
     def key(self) -> str:
         """Return the metadata key without brackets."""
         custom_token = self.get_value(Token.CUSTOM_METADATA, "")
-        if custom_token.startswith('[') and custom_token.endswith(']'):
+        if custom_token.startswith("[") and custom_token.endswith("]"):
             return custom_token[1:-1]
         return custom_token
 

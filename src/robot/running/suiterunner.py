@@ -154,9 +154,11 @@ class SuiteRunner(SuiteVisitor):
             start_time=datetime.now(),
         )
         # Copy custom metadata from running model to result model with variable resolution
-        if hasattr(data, 'custom_metadata') and data.custom_metadata:
+        if hasattr(data, "custom_metadata") and data.custom_metadata:
             resolved_metadata = {
-                self.variables.replace_string(name, ignore_errors=True): self.variables.replace_string(value, ignore_errors=True)
+                self.variables.replace_string(
+                    name, ignore_errors=True
+                ): self.variables.replace_string(value, ignore_errors=True)
                 for name, value in data.custom_metadata.items()
             }
             result.custom_metadata = Metadata(resolved_metadata)

@@ -48,7 +48,16 @@ class TestCase(ModelObject, Generic[KW]):
     # See model.TestSuite on removing the type ignore directive
     fixture_class: Type[KW] = Keyword  # type: ignore
     repr_args = ("name",)
-    __slots__ = ("parent", "name", "doc", "timeout", "lineno", "_setup", "_teardown", "_custom_metadata")
+    __slots__ = (
+        "parent",
+        "name",
+        "doc",
+        "timeout",
+        "lineno",
+        "_setup",
+        "_teardown",
+        "_custom_metadata",
+    )
 
     def __init__(
         self,
@@ -176,14 +185,14 @@ class TestCase(ModelObject, Generic[KW]):
         New in Robot Framework 5.0.
         """
         return bool(self._teardown)
-        
+
     @property
     def has_custom_metadata(self) -> bool:
         """Check does a test have custom metadata without creating a metadata object.
-        
+
         New in Robot Framework 7.0.
         """
-        return bool(getattr(self, '_setter__custom_metadata', None))
+        return bool(getattr(self, "_setter__custom_metadata", None))
 
     @property
     def id(self) -> str:

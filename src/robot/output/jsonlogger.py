@@ -57,15 +57,15 @@ class JsonLogger:
 
     def end_test(self, test):
         data = {
-            'name': test.name,
-            'doc': test.doc,
-            'tags': test.tags,
-            'lineno': test.lineno,
-            'timeout': str(test.timeout) if test.timeout else None,
-            **self._status(test)
+            "name": test.name,
+            "doc": test.doc,
+            "tags": test.tags,
+            "lineno": test.lineno,
+            "timeout": str(test.timeout) if test.timeout else None,
+            **self._status(test),
         }
-        if hasattr(test, 'custom_metadata') and test.custom_metadata:
-            data['custom_metadata'] = dict(test.custom_metadata)
+        if hasattr(test, "custom_metadata") and test.custom_metadata:
+            data["custom_metadata"] = dict(test.custom_metadata)
         self._end(**data)
 
     def start_keyword(self, kw):

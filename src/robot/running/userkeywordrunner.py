@@ -80,9 +80,11 @@ class UserKeywordRunner:
             type=data.type,
         )
         # Copy custom metadata from running model to result model with variable resolution
-        if hasattr(kw, 'custom_metadata') and kw.custom_metadata:
+        if hasattr(kw, "custom_metadata") and kw.custom_metadata:
             resolved_metadata = {
-                variables.replace_string(name, ignore_errors=True): variables.replace_string(value, ignore_errors=True)
+                variables.replace_string(
+                    name, ignore_errors=True
+                ): variables.replace_string(value, ignore_errors=True)
                 for name, value in kw.custom_metadata.items()
             }
             result.custom_metadata = Metadata(resolved_metadata)

@@ -154,7 +154,9 @@ class SuiteBuilder(ModelVisitor):
 
 class ResourceBuilder(ModelVisitor):
 
-    def __init__(self, resource: ResourceFile, custom_metadata: "list[str]|None" = None):
+    def __init__(
+        self, resource: ResourceFile, custom_metadata: "list[str]|None" = None
+    ):
         self.resource = resource
         self.settings = FileSettings(custom_metadata=custom_metadata)
         self.seen_keywords = NormalizedDict(ignore="_")
@@ -223,7 +225,7 @@ class BodyBuilder(ModelVisitor):
         )
 
     def visit_CustomMetadata(self, node):
-        # For test cases and user keywords, custom metadata should be handled by 
+        # For test cases and user keywords, custom metadata should be handled by
         # their specific builders, not added to body. For other contexts (like FOR, IF, etc.),
         # we should not encounter custom metadata, but if we do, ignore it rather than crash.
         pass
@@ -350,10 +352,10 @@ class TestCaseBuilder(BodyBuilder):
         # Check if this custom metadata should be included in results
         if not self.settings.should_include_custom_metadata(node.key):
             return  # Skip this custom metadata - don't include in results
-            
+
         # Handle line continuations by replacing newlines with spaces
         if node.value:
-            metadata_value = ' '.join(node.value.split())
+            metadata_value = " ".join(node.value.split())
         else:
             metadata_value = ""
         # Get current metadata or create empty dict
@@ -462,10 +464,10 @@ class KeywordBuilder(BodyBuilder):
         # Check if this custom metadata should be included in results
         if not self.settings.should_include_custom_metadata(node.key):
             return  # Skip this custom metadata - don't include in results
-            
+
         # Handle line continuations by replacing newlines with spaces
         if node.value:
-            metadata_value = ' '.join(node.value.split())
+            metadata_value = " ".join(node.value.split())
         else:
             metadata_value = ""
         # Get current metadata or create empty dict

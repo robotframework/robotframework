@@ -1,4 +1,5 @@
 import unittest
+
 from robot.parsing import get_tokens, Token
 from robot.utils.asserts import assert_equal
 
@@ -107,7 +108,9 @@ My Keyword
             (T.ARGUMENT, "Keyword body", 12, 22),
             (T.EOS, "", 12, 34),
         ]
-        assert_tokens(data, expected_filtered, data_only=True, allowed_custom_metadata=["Owner"])
+        assert_tokens(
+            data, expected_filtered, data_only=True, allowed_custom_metadata=["Owner"]
+        )
 
     def test_custom_metadata_mixed_with_regular_settings(self):
         """Test custom metadata mixed with regular settings and multiple values."""
@@ -205,7 +208,13 @@ Documentation     Suite doc
             (T.EOS, "", 10, 26),
             (T.SETTING_HEADER, "*** Settings ***", 12, 0),
             (T.EOS, "", 12, 16),
-            (T.ERROR, "[Owner]", 13, 0, "Custom metadata is not allowed in this context."),
+            (
+                T.ERROR,
+                "[Owner]",
+                13,
+                0,
+                "Custom metadata is not allowed in this context.",
+            ),
             (T.EOS, "", 13, 7),
             (T.DOCUMENTATION, "Documentation", 14, 0),
             (T.ARGUMENT, "Suite doc", 14, 18),

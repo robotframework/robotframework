@@ -59,7 +59,11 @@ def get_tokens(
     Returns a generator that yields :class:`~robot.parsing.lexer.tokens.Token`
     instances.
     """
-    lexer = Lexer(SuiteFileContext(lang=lang, allowed_custom_metadata=allowed_custom_metadata), data_only, tokenize_variables)
+    lexer = Lexer(
+        SuiteFileContext(lang=lang, allowed_custom_metadata=allowed_custom_metadata),
+        data_only,
+        tokenize_variables,
+    )
     lexer.input(source)
     return lexer.get_tokens()
 
@@ -76,7 +80,11 @@ def get_resource_tokens(
     Same as :func:`get_tokens` otherwise, but the source is considered to be
     a resource file. This affects, for example, what settings are valid.
     """
-    lexer = Lexer(ResourceFileContext(lang=lang, allowed_custom_metadata=allowed_custom_metadata), data_only, tokenize_variables)
+    lexer = Lexer(
+        ResourceFileContext(lang=lang, allowed_custom_metadata=allowed_custom_metadata),
+        data_only,
+        tokenize_variables,
+    )
     lexer.input(source)
     return lexer.get_tokens()
 
@@ -94,7 +102,11 @@ def get_init_tokens(
     a suite initialization file. This affects, for example, what settings are
     valid.
     """
-    lexer = Lexer(InitFileContext(lang=lang, allowed_custom_metadata=allowed_custom_metadata), data_only, tokenize_variables)
+    lexer = Lexer(
+        InitFileContext(lang=lang, allowed_custom_metadata=allowed_custom_metadata),
+        data_only,
+        tokenize_variables,
+    )
     lexer.input(source)
     return lexer.get_tokens()
 

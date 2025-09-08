@@ -134,7 +134,11 @@ class TestDefaults:
 
 class FileSettings:
 
-    def __init__(self, test_defaults: "TestDefaults|None" = None, custom_metadata: "list[str]|None" = None):
+    def __init__(
+        self,
+        test_defaults: "TestDefaults|None" = None,
+        custom_metadata: "list[str]|None" = None,
+    ):
         self.test_defaults = test_defaults or TestDefaults()
         self.test_setup = None
         self.test_teardown = None
@@ -144,7 +148,7 @@ class FileSettings:
         self.default_tags = ()
         self.keyword_tags = ()
         self.allowed_custom_metadata = custom_metadata
-    
+
     def should_include_custom_metadata(self, metadata_name: str) -> bool:
         """Check if custom metadata should be included in the results."""
         if self.allowed_custom_metadata is None:
