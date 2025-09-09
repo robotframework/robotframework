@@ -125,10 +125,10 @@ class String:
             exclude = [e.strip() for e in exclude.split(",")]
         elif not exclude:
             exclude = []
-        exclude = [re.compile(f"^{e}$") for e in exclude]
+        exclude = [re.compile(e) for e in exclude]
 
         def title(word):
-            if any(e.match(word) for e in exclude) or not word.islower():
+            if any(e.fullmatch(word) for e in exclude) or not word.islower():
                 return word
             for index, char in enumerate(word):
                 if char.isalpha():
@@ -136,7 +136,7 @@ class String:
             return word
 
         tokens = re.split(r"(\s+)", string, flags=re.UNICODE)
-        return "".join(title(token) for token in tokens)
+        return "".join(title(t) if i % 2 == 0 else t for i, t in enumerate(tokens))
 
     def encode_string_to_bytes(self, string, encoding, errors="strict"):
         """Encodes the given ``string`` to bytes using the given ``encoding``.
