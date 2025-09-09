@@ -304,11 +304,6 @@ Additionally, helper classes ``Date`` and ``Time`` can be used directly:
 |     # ...
 """
 
-# can be removed when using Python 3.13+
-# needed for typing to use | operator together with forward referenceing
-# see: def __sub__(self, other: Date | Time) -> Date | Time:
-from __future__ import annotations
-
 import datetime
 import sys
 import time
@@ -331,20 +326,18 @@ __all__ = [
     "subtract_time_from_time",
 ]
 
-FloatOrString = Union[float, str]
-FloatOrStringOrInt = Union[FloatOrString, int]
-DatetimeMixed = Union[datetime.datetime, FloatOrString]
-DateTimeExpanded = Union[datetime.datetime, datetime.date, FloatOrStringOrInt]
-TimedeltaExpanded = Union[datetime.timedelta, FloatOrStringOrInt]
-TimedeltaMixed = Union[datetime.timedelta, FloatOrString]
+DateOutput = Union[datetime.datetime, float, str]
+DateInput = Union[datetime.datetime, datetime.date, float, int, str]
+TimeInput = Union[datetime.timedelta, float, int, str]
+TimeOutput = Union[datetime.timedelta, float, str]
 
 
 def get_current_date(
     time_zone: str = "local",
-    increment: TimedeltaExpanded = 0,
+    increment: TimeInput = 0,
     result_format: str = "timestamp",
     exclude_millis: bool = False,
-) -> DatetimeMixed:
+) -> DateOutput:
     """Returns current local or UTC time with an optional increment.
 
     Arguments:
@@ -386,11 +379,11 @@ def get_current_date(
 
 
 def convert_date(
-    date: DateTimeExpanded,
+    date: DateInput,
     result_format: str = "timestamp",
     exclude_millis: bool = False,
-    date_format: "str|None" = None,
-) -> DatetimeMixed:
+    date_format: "str | None" = None,
+) -> DateOutput:
     """Converts between supported `date formats`.
 
     Arguments:
@@ -412,10 +405,10 @@ def convert_date(
 
 
 def convert_time(
-    time: TimedeltaExpanded,
+    time: TimeInput,
     result_format: str = "number",
     exclude_millis: bool = False,
-) -> TimedeltaMixed:
+) -> TimeOutput:
     """Converts between supported `time formats`.
 
     Arguments:
@@ -436,13 +429,13 @@ def convert_time(
 
 
 def subtract_date_from_date(
-    date1: DateTimeExpanded,
-    date2: DateTimeExpanded,
+    date1: DateInput,
+    date2: DateInput,
     result_format: str = "number",
     exclude_millis: bool = False,
-    date1_format: "str|None" = None,
-    date2_format: "str|None" = None,
-) -> TimedeltaMixed:
+    date1_format: "str | None" = None,
+    date2_format: "str | None" = None,
+) -> TimeOutput:
     """Subtracts date from another date and returns time between.
 
     Arguments:
@@ -467,12 +460,12 @@ def subtract_date_from_date(
 
 
 def add_time_to_date(
-    date: DateTimeExpanded,
-    time: TimedeltaExpanded,
+    date: DateInput,
+    time: TimeInput,
     result_format: str = "timestamp",
     exclude_millis: bool = False,
-    date_format: "str|None" = None,
-) -> DatetimeMixed:
+    date_format: "str | None" = None,
+) -> DateOutput:
     """Adds time to date and returns the resulting date.
 
     Arguments:
@@ -496,12 +489,12 @@ def add_time_to_date(
 
 
 def subtract_time_from_date(
-    date: DateTimeExpanded,
-    time: TimedeltaExpanded,
+    date: DateInput,
+    time: TimeInput,
     result_format: str = "timestamp",
     exclude_millis: bool = False,
-    date_format: "str|None" = None,
-) -> DatetimeMixed:
+    date_format: "str | None" = None,
+) -> DateOutput:
     """Subtracts time from date and returns the resulting date.
 
     Arguments:
@@ -525,11 +518,11 @@ def subtract_time_from_date(
 
 
 def add_time_to_time(
-    time1: TimedeltaExpanded,
-    time2: TimedeltaExpanded,
+    time1: TimeInput,
+    time2: TimeInput,
     result_format: str = "number",
     exclude_millis: bool = False,
-) -> TimedeltaMixed:
+) -> TimeOutput:
     """Adds time to another time and returns the resulting time.
 
     Arguments:
@@ -550,11 +543,11 @@ def add_time_to_time(
 
 
 def subtract_time_from_time(
-    time1: TimedeltaExpanded,
-    time2: TimedeltaExpanded,
+    time1: TimeInput,
+    time2: TimeInput,
     result_format: str = "number",
     exclude_millis: bool = False,
-) -> TimedeltaMixed:
+) -> TimeOutput:
     """Subtracts time from another time and returns the resulting time.
 
     Arguments:
@@ -576,12 +569,13 @@ def subtract_time_from_time(
 
 
 class Date:
+
     def __init__(
         self,
-        date: DateTimeExpanded,
-        input_format: "str|None" = None,
+        date: DateInput,
+        input_format: "str | None" = None,
     ):
-        self.datetime: datetime.datetime = self._convert_to_datetime(date, input_format)
+        self.datetime = self._convert_to_datetime(date, input_format)
 
     @property
     def seconds(self) -> float:
@@ -590,8 +584,8 @@ class Date:
 
     def _convert_to_datetime(
         self,
-        date: DateTimeExpanded,
-        input_format: "str|None",
+        date: DateInput,
+        input_format: "str | None",
     ) -> datetime.datetime:
         if isinstance(date, datetime.datetime):
             return date
@@ -609,7 +603,7 @@ class Date:
     def _string_to_datetime(
         self,
         timestamp: str,
-        input_format: "str|None",
+        input_format: "str | None",
     ) -> datetime.datetime:
         if not input_format:
             timestamp = self._normalize_timestamp(timestamp)
@@ -624,7 +618,7 @@ class Date:
         t = numbers[8:].ljust(12, "0")
         return f"{d[:4]}-{d[4:6]}-{d[6:8]} {t[:2]}:{t[2:4]}:{t[4:6]}.{t[6:]}"
 
-    def convert(self, format: str, millis: bool = True) -> DatetimeMixed:
+    def convert(self, format: str, millis: bool = True) -> DateOutput:
         dt = self.datetime
         if not millis:
             secs = 1 if dt.microsecond >= 5e5 else 0
@@ -659,12 +653,12 @@ class Date:
             # https://github.com/python/cpython/issues/81708
             return time.mktime(dt.timetuple()) + dt.microsecond / 1e6
 
-    def __add__(self, other: Time) -> Date:
+    def __add__(self, other: "Time") -> "Date":
         if isinstance(other, Time):
             return Date(self.datetime + other.timedelta)
         raise TypeError(f"Can only add Time to Date, got {type_name(other)}.")
 
-    def __sub__(self, other: Date | Time) -> Date | Time:
+    def __sub__(self, other: "Date | Time") -> "Date | Time":
         if isinstance(other, Date):
             return Time(self.datetime - other.datetime)
         if isinstance(other, Time):
@@ -675,10 +669,11 @@ class Date:
 
 
 class Time:
-    def __init__(self, time: TimedeltaExpanded):
-        self.seconds: float = self._convert_time_to_seconds(time)
 
-    def _convert_time_to_seconds(self, time: TimedeltaExpanded) -> float:
+    def __init__(self, time: TimeInput):
+        self.seconds = self._convert_time_to_seconds(time)
+
+    def _convert_time_to_seconds(self, time: TimeInput) -> float:
         if isinstance(time, datetime.timedelta):
             return time.total_seconds()
         return timestr_to_secs(time, round_to=None)
@@ -687,7 +682,7 @@ class Time:
     def timedelta(self) -> datetime.timedelta:
         return datetime.timedelta(seconds=self.seconds)
 
-    def convert(self, format: str, millis: bool = True) -> TimedeltaMixed:
+    def convert(self, format: str, millis: bool = True) -> TimeOutput:
         try:
             result_converter = getattr(self, f"_convert_to_{format.lower()}")
         except AttributeError:
@@ -710,12 +705,12 @@ class Time:
     def _convert_to_timedelta(self, seconds: float, _) -> datetime.timedelta:
         return datetime.timedelta(seconds=seconds)
 
-    def __add__(self, other: Time) -> Time:
+    def __add__(self, other: "Time") -> "Time":
         if isinstance(other, Time):
             return Time(self.seconds + other.seconds)
         raise TypeError(f"Can only add Time to Time, got {type_name(other)}.")
 
-    def __sub__(self, other: Time) -> Time:
+    def __sub__(self, other: "Time") -> "Time":
         if isinstance(other, Time):
             return Time(self.seconds - other.seconds)
         raise TypeError(f"Can only subtract Time from Time, got {type_name(other)}.")
