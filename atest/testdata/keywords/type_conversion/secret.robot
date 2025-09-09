@@ -17,12 +17,12 @@ ${JOIN4: Secret}            this fails ${2}!
 @{LIST1: Secret}            ${SECRET}    %{TEMPDIR}    =${SECRET}=
 @{LIST2: Secret}            ${SECRET}    @{LIST1}    @{EMPTY}
 @{LIST3: Secret}            this    ${SECRET}    fails
-@{LIST4: Secret}            @{LIST1}    @{{["this", "fails"]}}    ${SECRET}
+@{LIST4: Secret}            ${SECRET}    @{{["this", "fails"]}}    ${SECRET}
 &{DICT1: Secret}            var=${SECRET}    env=%{TEMPDIR}    join==${SECRET}=
 &{DICT2: Secret}            ${2}=${SECRET}    &{DICT1}    &{EMPTY}
 &{DICT3: Secret=Secret}     %{TEMPDIR}=${SECRET}    \=%{TEMPDIR}\===${SECRET}=
 &{DICT4: Secret}            ok=${SECRET}    this=fails
-&{DICT5: Secret}            ok=${SECRET}    &{DICT1}    &{{{"this": "fails"}}}
+&{DICT5: str=Secret}        ok=${SECRET}    &{DICT1}    &{{{"this": "fails"}}}
 
 *** Test Cases ***
 Command line
@@ -79,7 +79,7 @@ Variable section: Dict fail
 VAR: Based on existing variable
     [Documentation]    FAIL
     ...    Setting variable '${bad: secret}' failed: \
-    ...    Value '\${666}' must have type 'Secret', got integer.
+    ...    Value must have type 'Secret', got integer.
     VAR    ${x: Secret}    ${SECRET}
     Should Be Equal    ${x.value}    Secret value
     VAR    ${x: Secret | int}    ${SECRET}
@@ -107,7 +107,7 @@ VAR: Based on environment variable
 VAR: Joined
     [Documentation]    FAIL
     ...    Setting variable '\${zz: secret}' failed: \
-    ...    Value '111\${y}222' must have type 'Secret', got string.
+    ...    Value must have type 'Secret', got string.
     ${secret1} =    Library Get Secret    111
     ${secret2} =    Library Get Secret    222
     VAR    ${x: secret}    abc${secret1}
@@ -136,7 +136,8 @@ VAR: Broken variable
 VAR: List
     [Documentation]    FAIL
     ...    Setting variable '@{x: Secret | int}' failed: \
-    ...    Value '[Secret(value=<secret>), 'this', 'fails']' (list) cannot be converted to list[Secret | int]: \
+    ...    Value '[Secret(value=<secret>), 'this', 'fails']' (list) \
+    ...    cannot be converted to list[Secret | int]: \
     ...    Item '1' got value 'this' that cannot be converted to Secret or integer.
     VAR    @{x: secret}    ${SECRET}    %{TEMPDIR}    \${escaped} with ${SECRET}
     Should Be Equal
@@ -152,10 +153,11 @@ VAR: List
     Should Be Equal    ${z}    ${{[22, $SECRET, 44]}}
     VAR    @{x: Secret | int}    ${SECRET}    this    fails
 
-Create: Dict
+Create: Dict 1
     [Documentation]    FAIL
     ...    Setting variable '\&{x: secret}' failed: \
-    ...    Value 'fails' must have type 'Secret', got string.
+    ...    Value '{'this': 'fails'}' (DotDict) cannot be converted to dict[Any, secret]: \
+    ...    Item 'this' must have type 'Secret', got string.
     VAR    &{x: Secret}    var=${SECRET}    end=%{TEMPDIR}    join==${SECRET}=
     Should Be Equal
     ...    ${{{k: v.value for k, v in $DICT1.items()}}}
@@ -164,6 +166,14 @@ Create: Dict
     VAR    &{x: Secret=int}    ${SECRET}=42
     Should Be Equal    ${x}    ${{{$SECRET: 42}}}
     VAR    &{x: secret}    this=fails
+
+Create: Dict 2
+    [Documentation]    FAIL
+    ...    Setting variable '\&{x: Secret=int}' failed: \
+    ...    Value '{Secret(value=<secret>): '42', 'bad': '666'}' (DotDict) \
+    ...    cannot be converted to dict[Secret, int]: \
+    ...    Key must have type 'Secret', got string.
+    VAR    &{x: Secret=int}    ${SECRET}=42    bad=666
 
 Return value: Library keyword
     [Documentation]    FAIL
@@ -209,7 +219,8 @@ Library keyword: not secret 2
 Library keyword: TypedDict
     [Documentation]    FAIL
     ...    ValueError: Argument 'credential' got value \
-    ...    '{'username': 'login@email.com', 'password': 'This fails'}' (DotDict) that cannot be converted to Credential: \
+    ...    '{'username': 'login@email.com', 'password': 'This fails'}' (DotDict) \
+    ...    that cannot be converted to Credential: \
     ...    Item 'password' must have type 'Secret', got string.
     VAR    &{credentials}    username=login@email.com    password=${SECRET}
     ${data} =    Library Receive Credential    ${credentials}

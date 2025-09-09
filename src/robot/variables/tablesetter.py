@@ -114,28 +114,21 @@ class VariableResolver(Resolvable):
     def _handle_secrets(self, value, replace_scalar):
         match = search_variable(value, identifiers="$%")
         if match.is_variable():
-            secret = replace_scalar(match.match)
-            if match.identifier == "%":
-                secret = Secret(secret)
-        else:
-            secret = self._handle_embedded_secrets(match, replace_scalar)
-        if not isinstance(secret, Secret):
-            raise DataError(
-                f"Value '{value}' must have type 'Secret', got {type_name(secret)}."
-            )
-        return secret
+            value = replace_scalar(match.match)
+            return Secret(value) if match.identifier == "%" else value
+        return self._handle_embedded_secrets(match, replace_scalar)
 
     def _handle_embedded_secrets(self, match, replace_scalar):
         parts = []
         secret_seen = False
         while match:
-            secret = replace_scalar(match.match)
+            value = replace_scalar(match.match)
             if match.identifier == "%":
                 secret_seen = True
-            elif isinstance(secret, Secret):
+            elif isinstance(value, Secret):
+                value = value.value
                 secret_seen = True
-                secret = secret.value
-            parts.extend([unescape(match.before), secret])
+            parts.extend([unescape(match.before), value])
             match = search_variable(match.after, identifiers="$%")
         parts.append(unescape(match.string))
         value = "".join(safe_str(p) for p in parts)
