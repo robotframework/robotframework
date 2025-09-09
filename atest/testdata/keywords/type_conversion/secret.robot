@@ -47,11 +47,11 @@ Variable section: Scalar fail
 Variable section: List
     Should Be Equal
     ...    ${{[item.value for item in $LIST1]}}
-    ...    ["Secret value", "%{TEMPDIR}", "=Secret value="]
+    ...    ["Secret value", r"%{TEMPDIR}", "=Secret value="]
     ...    type=list
     Should Be Equal
     ...    ${{[item.value for item in $LIST2]}}
-    ...    ["Secret value", "Secret value", "%{TEMPDIR}", "=Secret value="]
+    ...    ["Secret value", "Secret value", r"%{TEMPDIR}", "=Secret value="]
     ...    type=list
 
 Variable section: List fail
@@ -61,15 +61,15 @@ Variable section: List fail
 Variable section: Dict
     Should Be Equal
     ...    ${{{k: v.value for k, v in $DICT1.items()}}}
-    ...    {"var": "Secret value", "env": "%{TEMPDIR}", "join": "=Secret value="}
+    ...    {"var": "Secret value", "env": r"%{TEMPDIR}", "join": "=Secret value="}
     ...    type=dict
     Should Be Equal
     ...    ${{{k: v.value for k, v in $DICT2.items()}}}
-    ...    {2: "Secret value", "var": "Secret value", "env": "%{TEMPDIR}", "join": "=Secret value="}
+    ...    {2: "Secret value", "var": "Secret value", "env": r"%{TEMPDIR}", "join": "=Secret value="}
     ...    type=dict
     Should Be Equal
     ...    ${{{k.value: v.value for k, v in $DICT3.items()}}}
-    ...    {"%{TEMPDIR}": "Secret value", "=%{TEMPDIR}=": "=Secret value="}
+    ...    {r"%{TEMPDIR}": "Secret value", r"=%{TEMPDIR}=": "=Secret value="}
     ...    type=dict
 
 Variable section: Dict fail
@@ -100,6 +100,8 @@ VAR: Based on environment variable
     Should Be Equal    ${secret.value}    VALUE2
     VAR    ${secret: secret}    %{NONEX=default}
     Should Be Equal    ${secret.value}    default
+    VAR    ${secret: secret}    %{=not so secret}
+    Should Be Equal    ${secret.value}    not so secret
     VAR    ${not_secret: Secret | str}    %{TEMPDIR}
     Should Be Equal    ${not_secret}    %{TEMPDIR}
     VAR    ${nonex: Secret}    %{NONEX}
@@ -142,12 +144,12 @@ VAR: List
     VAR    @{x: secret}    ${SECRET}    %{TEMPDIR}    \${escaped} with ${SECRET}
     Should Be Equal
     ...    ${{[item.value for item in $x]}}
-    ...    ["Secret value", "%{TEMPDIR}", "\${escaped} with Secret value"]
+    ...    ["Secret value", r"%{TEMPDIR}", "\${escaped} with Secret value"]
     ...    type=list
     VAR    @{y: Secret}    @{x}    @{EMPTY}    ${SECRET}
     Should Be Equal
     ...    ${{[item.value for item in $y]}}
-    ...    ["Secret value", "%{TEMPDIR}", "\${escaped} with Secret value", "Secret value"]
+    ...    ["Secret value", r"%{TEMPDIR}", "\${escaped} with Secret value", "Secret value"]
     ...    type=list
     VAR    @{z: int|secret}    22    ${SECRET}    44
     Should Be Equal    ${z}    ${{[22, $SECRET, 44]}}
@@ -161,7 +163,7 @@ Create: Dict 1
     VAR    &{x: Secret}    var=${SECRET}    end=%{TEMPDIR}    join==${SECRET}=
     Should Be Equal
     ...    ${{{k: v.value for k, v in $DICT1.items()}}}
-    ...    {"var": "Secret value", "env": "%{TEMPDIR}", "join": "=Secret value="}
+    ...    {"var": "Secret value", "env": r"%{TEMPDIR}", "join": "=Secret value="}
     ...    type=dict
     VAR    &{x: Secret=int}    ${SECRET}=42
     Should Be Equal    ${x}    ${{{$SECRET: 42}}}
