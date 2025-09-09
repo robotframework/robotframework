@@ -211,10 +211,14 @@ class GlobalVariables(Variables):
             info = TypeInfo.from_variable(var)
         except DataError as err:
             raise DataError(f"Invalid command line variable '{var}': {err}")
+        from robot.api import Secret
+
+        if info.type is Secret:
+            return Secret(value)
         try:
             return info.convert(value, var, kind="Command line variable")
         except ValueError as err:
-            raise DataError(err)
+            raise DataError(str(err))
 
     def _set_built_in_variables(self, settings):
         options = DotDict(
