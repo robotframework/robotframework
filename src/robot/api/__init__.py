@@ -103,7 +103,6 @@ from robot.running import (
     TestSuiteBuilder as TestSuiteBuilder,
     TypeInfo as TypeInfo,
 )
-from robot.utils import Secret as Secret
 
 from .exceptions import (
     ContinuableFailure as ContinuableFailure,

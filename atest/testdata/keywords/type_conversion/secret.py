@@ -1,6 +1,6 @@
 from typing import TypedDict
 
-from robot.api import Secret
+from robot.api.types import Secret
 
 
 class Credential(TypedDict):

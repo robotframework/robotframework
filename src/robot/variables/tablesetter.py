@@ -16,8 +16,7 @@
 from typing import Any, Callable, Sequence, TYPE_CHECKING
 
 from robot.errors import DataError
-from robot.utils import DotDict, Secret, split_from_equals, type_name
-from robot.utils.unic import safe_str
+from robot.utils import DotDict, safe_str, Secret, split_from_equals, type_name
 
 from .resolvable import Resolvable
 from .search import is_dict_variable, is_list_variable, search_variable
@@ -112,7 +111,7 @@ class VariableResolver(Resolvable):
     def _replace_variables(self, variables) -> Any:
         raise NotImplementedError
 
-    def _handle_secrets(self, value, replace_scalar, typ=None):
+    def _handle_secrets(self, value, replace_scalar):
         match = search_variable(value, identifiers="$%")
         if match.is_variable():
             secret = replace_scalar(match.match)
@@ -120,10 +119,11 @@ class VariableResolver(Resolvable):
                 secret = Secret(secret)
         else:
             secret = self._handle_embedded_secrets(match, replace_scalar)
-        if isinstance(secret, Secret):
-            return secret
-        typ = type_name(value)
-        raise DataError(f"Value '{value}' must have type 'Secret', got {typ}.")
+        if not isinstance(secret, Secret):
+            raise DataError(
+                f"Value '{value}' must have type 'Secret', got {type_name(value)}."
+            )
+        return secret
 
     def _handle_embedded_secrets(self, match, replace_scalar):
         parts = []
@@ -186,12 +186,9 @@ class ScalarVariableResolver(VariableResolver):
     def _replace_variables(self, variables):
         value, separator = self.value, self.separator
         if self._is_single_value(value, separator):
-            replace_scalar = variables.replace_scalar
             if self._is_secret_type():
-                value = self._handle_secrets(value[0], replace_scalar)
-            else:
-                value = value[0]
-            return replace_scalar(value)
+                return self._handle_secrets(value[0], variables.replace_scalar)
+            return variables.replace_scalar(value[0])
         if separator is None:
             separator = " "
         else:
@@ -207,14 +204,11 @@ class ListVariableResolver(VariableResolver):
 
     def _replace_variables(self, variables):
         if self._is_secret_type():
-            replace_scalar = variables.replace_scalar
-            value = [
-                self._handle_secrets(value, replace_scalar) for value in self.value
+            return [
+                self._handle_secrets(value, variables.replace_scalar)
+                for value in self.value
             ]
-            value = tuple(value)
-        else:
-            value = self.value
-        return variables.replace_list(value)
+        return variables.replace_list(self.value)
 
     def _convert(self, value, type_):
         return super()._convert(value, f"list[{type_}]")
@@ -246,27 +240,28 @@ class DictVariableResolver(VariableResolver):
 
     def _yield_replaced(self, values, replace_scalar):
         if not self.type:
-            k_type = v_type = None
-        elif "=" in self.type:
-            k_type, v_type = self.type.split("=", 1)
+            secret_key = secret_value = False
+        elif "=" not in self.type:
+            secret_key = False
+            secret_value = self._is_secret_type(self.type)
         else:
-            k_type, v_type = "Any", self.type
+            kt, vt = self.type.split("=", 1)
+            secret_key = self._is_secret_type(kt)
+            secret_value = self._is_secret_type(vt)
         for item in values:
-            yield from self.__yield_replaced(item, k_type, v_type, replace_scalar)
-
-    def __yield_replaced(self, item, k_type, v_type, replace_scalar):
-        if isinstance(item, tuple):
-            key, value = item
-            if self._is_secret_type(k_type):
-                key = self._handle_secrets(key, replace_scalar, k_type)
-            if self._is_secret_type(v_type):
-                value = self._handle_secrets(value, replace_scalar, v_type)
-            yield (
-                replace_scalar(key),
-                replace_scalar(value),
-            )
-        else:
-            yield from replace_scalar(item).items()
+            if isinstance(item, tuple):
+                key, value = item
+                if secret_key:
+                    key = self._handle_secrets(key, replace_scalar)
+                else:
+                    key = replace_scalar(key)
+                if secret_value:
+                    value = self._handle_secrets(value, replace_scalar)
+                else:
+                    value = replace_scalar(value)
+                yield key, value
+            else:
+                yield from replace_scalar(item).items()
 
     def _convert(self, value, type_):
         k_type, v_type = type_.split("=", 1) if "=" in type_ else ("Any", type_)
