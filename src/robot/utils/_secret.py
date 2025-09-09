@@ -35,3 +35,6 @@ class Secret:
 
     def __str__(self) -> str:
         return f"{type(self).__name__}(value=<secret>)"
+
+    def __repr__(self):
+        return str(self)

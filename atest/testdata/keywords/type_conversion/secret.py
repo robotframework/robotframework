@@ -31,7 +31,4 @@ def library_list_of_secrets(secrets: "list[Secret]") -> str:
 
 
 def get_variables():
-    return {
-        "VAR_FILE": Secret("From variable file"),
-        "VAR_FILE_SECRET": Secret("This is a secret used in tests"),
-    }
+    return {"VAR_FILE": Secret("Secret value")}

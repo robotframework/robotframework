@@ -8,66 +8,78 @@ Suite Setup     Run Tests    --variable "CLI: Secret:From command line"    keywo
 Command line
     Check Test Case    ${TESTNAME}
 
-Variable section: Scalar
+Variable section: Based on existing variable
     Check Test Case    ${TESTNAME}
+
+Variable section: Based on environment variable
+    Check Test Case    ${TESTNAME}
+
+Variable section: Joined
+    Check Test Case    ${TESTNAME}
+
+Variable section: Scalar fail
+    Check Test Case    ${TESTNAME}
+    Error In File
+    ...    6    keywords/type_conversion/secret.robot    11
+    ...    Setting variable '\${LITERAL: Secret}' failed:
+    ...    Value 'this fails' must have type 'Secret', got string.
+    Error In File
+    ...    0    keywords/type_conversion/secret.robot    12
+    ...    Setting variable '\${BAD: Secret}' failed:
+    ...    Value '\${666}' must have type 'Secret', got integer.
+    Error In File
+    ...    3    keywords/type_conversion/secret.robot    16
+    ...    Setting variable '\${JOIN4: Secret}' failed:
+    ...    Value 'this fails \${2}!' must have type 'Secret', got string.
 
 Variable section: List
     Check Test Case    ${TESTNAME}
 
+Variable section: List fail
+    Check Test Case    ${TESTNAME}
+    Error In File
+    ...    4    keywords/type_conversion/secret.robot    19
+    ...    Setting variable '\@{LIST3: Secret}' failed:
+    ...    Value 'this' must have type 'Secret', got string.
+    Error In File
+    ...    5    keywords/type_conversion/secret.robot    20
+    ...    Setting variable '\@{LIST4: Secret}' failed:
+    ...    Value '[Secret(value=<secret>), Secret(value=<secret>), Secret(value=<secret>), 'this', 'fails', Secret(value=<secret>)]' (list) cannot be converted to list[Secret]:
+    ...    Item '3' must have type 'Secret', got string.
+    ...    pattern=False
+
 Variable section: Dict
     Check Test Case    ${TESTNAME}
 
-Variable section: Invalid syntax
+Variable section: Dict fail
+    Check Test Case    ${TESTNAME}
     Error In File
-    ...    0    keywords/type_conversion/secret.robot    28
-    ...    Setting variable '\&{DICT3: Secret}' failed:
-    ...    Value '{'a': 'b'}' (DotDict) cannot be converted to dict[Any, Secret]:
-    ...    Item 'a' must have type 'Secret', got string.
-    ...    pattern=${False}
-    Error In File
-    ...    1    keywords/type_conversion/secret.robot    26
-    ...    Setting variable '\&{DICT_LITERAL: secret}' failed:
+    ...    1    keywords/type_conversion/secret.robot    24
+    ...    Setting variable '\&{DICT4: Secret}' failed:
     ...    Value 'fails' must have type 'Secret', got string.
     Error In File
-    ...    2    keywords/type_conversion/secret.robot    9
-    ...    Setting variable '\${FROM_LITERAL: Secret}' failed:
-    ...    Value 'this fails' must have type 'Secret', got string.
-    Error In File
-    ...    3    keywords/type_conversion/secret.robot    22
-    ...    Setting variable '\@{LIST2: Secret}' failed:
-    ...    Value '\@{LIST_NORMAL}' must have type 'Secret', got string.
-    Error In File
-    ...    4    keywords/type_conversion/secret.robot    23
-    ...    Setting variable '\@{LIST3: Secret}' failed:
-    ...    Value '\@{LIST}' must have type 'Secret', got string.
-    Error In File
-    ...    5    keywords/type_conversion/secret.robot    20
-    ...    Setting variable '\@{LIST_LITERAL: secret}' failed:
-    ...    Value 'this' must have type 'Secret', got string.
-    Error In File
-    ...    6    keywords/type_conversion/secret.robot    14
-    ...    Setting variable '\${NO_VAR: secret}' failed:
-    ...    Value '=\${42}=' must have type 'Secret', got string.
+    ...    2    keywords/type_conversion/secret.robot    25
+    ...    Setting variable '\&{DICT5: Secret}' failed:
+    ...    Value '{'ok': Secret(value=<secret>), 'var': Secret(value=<secret>), 'env': Secret(value=<secret>), 'join': Secret(value=<secret>), 'this': 'fails'}' (DotDict) cannot be converted to dict[Any, Secret]:
+    ...    Item 'this' must have type 'Secret', got string.
+    ...    pattern=False
 
-VAR: Env variable
+VAR: Based on existing variable
     Check Test Case    ${TESTNAME}
 
-VAR: Join secret
+VAR: Based on environment variable
+    Check Test Case    ${TESTNAME}
+
+VAR: Joined
     Check Test Case    ${TESTNAME}
 
 VAR: Broken variable
     Check Test Case    ${TESTNAME}
 
-Create: List
+VAR: List
     Check Test Case    ${TESTNAME}
 
-Create: List by extending
-    Check Test Case    ${TESTNAME}
-
-Create: List of dictionaries
-    Check Test Case    ${TESTNAME}
-
-Create: Dictionary
+Create: Dict
     Check Test Case    ${TESTNAME}
 
 Return value: Library keyword
