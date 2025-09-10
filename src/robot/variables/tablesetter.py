@@ -16,7 +16,7 @@
 from typing import Any, Callable, Sequence, TYPE_CHECKING
 
 from robot.errors import DataError
-from robot.utils import DotDict, safe_str, Secret, split_from_equals, type_name, unescape
+from robot.utils import DotDict, safe_str, Secret, split_from_equals, unescape
 
 from .resolvable import Resolvable
 from .search import is_dict_variable, is_list_variable, search_variable
