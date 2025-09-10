@@ -279,7 +279,7 @@ class String:
         logger.info(f"{len(lines)} line{s(lines)} returned.")
         return lines
 
-    def get_line(self, string: str, line_number: "int | str") -> str:
+    def get_line(self, string: str, line_number: int) -> str:
         """Returns the specified line from the given ``string``.
 
         Line numbering starts from 0, and it is possible to use
@@ -486,7 +486,7 @@ class String:
         string: str,
         search_for: str,
         replace_with: str,
-        count: "str | int" = -1,
+        count: int = -1,
     ) -> str:
         """Replaces ``search_for`` in the given ``string`` with ``replace_with``.
 
@@ -516,7 +516,7 @@ class String:
         string: str,
         pattern: str,
         replace_with: str,
-        count: "int | str" = -1,
+        count: int = -1,
         flags: "str | None" = None,
     ) -> str:
         """Replaces ``pattern`` in the given ``string`` with ``replace_with``.
@@ -607,7 +607,7 @@ class String:
         self,
         string: str,
         separator: "str | None" = None,
-        max_split: "int | str" = -1,
+        max_split: int = -1,
     ) -> list[str]:
         """Splits the ``string`` using ``separator`` as a delimiter string.
 
@@ -638,7 +638,7 @@ class String:
         self,
         string: str,
         separator: "str | None" = None,
-        max_split: "int | str" = -1,
+        max_split: int = -1,
     ) -> list[str]:
         """Splits the ``string`` using ``separator`` starting from right.
 
@@ -755,6 +755,9 @@ class String:
         start = self._convert_to_index(start, "start")
         end = self._convert_to_index(end, "end")
         return string[start:end]
+
+    # TODO(silentw0lf): Adding a note like "Some keywords also work with bytes in addition to strings."
+    # TODO(silentw0lf): Are there any keywords that you believe would benefit from bytes support?
 
     @keyword(types=None)
     def strip_string(

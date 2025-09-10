@@ -21,7 +21,7 @@ Replace String With Count 0
     Should Be Equal    ${result}    Robot Framework
 
 Replace String With Invalid Count
-    [Documentation]    FAIL ValueError: Cannot convert 'count' argument 'invalid' to an integer.
+    [Documentation]    ValueError: Argument 'count' got value 'invalid' that cannot be converted to integer
     Replace String    abc    b    c    invalid
 
 Replace String Using Regexp
