@@ -1428,6 +1428,16 @@ Other types cause conversion failures.
    |              |               |            |              | used earlier.                                                  |                                      |
    |              |               |            |              |                                                                | | `{'width': 1600, 'enabled': True}` |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
+   | Secret_      |               |            |              | Container to store secret data in variables. The Secret class  | .. sourcecode:: python               |
+   |              |               |            |              | instance stores the data in `value` attribute and `__str__`    |                                      |
+   |              |               |            |              | method is used to mask the real value of the secret. This      |    from robot.api import Secret      |
+   |              |               |            |              | prevents the value from being logged by Robot Framework in the |                                      |
+   |              |               |            |              | output files. Please note that libraries or other tools might  |    def login(token: Secret):         |
+   |              |               |            |              | log the value in some other way, so `Secret` does does not     |        do_something(token.value)     |
+   |              |               |            |              | guarantee to hide secret in all possible ways.                 |                                      |
+   |              |               |            |              |                                                                |                                      |
+   |              |               |            |              | New in Robot Framework 7.4.                                    |                                      |
+   +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
 
 .. note:: Starting from Robot Framework 5.0, types that have a converted are
           automatically shown in Libdoc_ outputs.
@@ -1435,6 +1445,13 @@ Other types cause conversion failures.
 .. note:: Prior to Robot Framework 4.0, most types supported converting string `NONE` (case-insensitively) to Python
           `None`. That support has been removed and `None` conversion is only done if an argument has `None` as an
           explicit type or as a default value.
+
+.. note:: Secret does not prevent libraries or other tools to log the value in
+          some way. Therefore `Secret` does does not guaranteed to hide secret
+          in all possible ways. Example, if Robot Framework log level is set to
+          DEBUG and SeleniumLibrary is used, then password is visible in the
+          log.html file, because selenium will log the all communication between
+          selenium and webdriver (like chromedriver.)
 
 .. _Any: https://docs.python.org/library/typing.html#typing.Any
 .. _bool: https://docs.python.org/library/functions.html#bool
@@ -1467,10 +1484,200 @@ Other types cause conversion failures.
 .. _abc.Set: https://docs.python.org/library/collections.abc.html#collections.abc.Set
 .. _frozenset: https://docs.python.org/library/stdtypes.html#frozenset
 .. _TypedDict: https://docs.python.org/library/typing.html#typing.TypedDict
+.. _Secret: https://github.com/robotframework/robotframework/blob/master/src/robot/utils/secret.py
 .. _Container: https://docs.python.org/library/collections.abc.html#collections.abc.Container
 .. _typing: https://docs.python.org/library/typing.html
 .. _ISO 8601: https://en.wikipedia.org/wiki/ISO_8601
 .. _ast.literal_eval: https://docs.python.org/library/ast.html#ast.literal_eval
+
+Secret type
+'''''''''''
+
+The `Secret` type has two purposes. First, it is used to prevent putting the
+secret value in Robot Framework test data as plain text. Second, it is used to
+hide secret from Robot Framework logs and reports. `Secret` is new feature in
+Robot Framework 7.4
+
+It is possible to use the `Secret` type to store secret data in variables. The
+`Secret` class is defined in the `robot.utils.secret` module and it stores the
+data in it's `value` attribute, where consumers of the `Secret` type must read
+the value. The `__str__` method of the `Secret` class is used to mask the real
+value of the secret, which prevents the value from being logged by Robot
+Framework in the output files. However, please note that at some point
+libraries or other tools might need to pass the secret as plain text and those
+libraries or tools might log the value in some way as clear text, therefore
+using `Secret` does not guarantee to hide the secret in all possible scenarios.
+
+The second aim of the `Secret` type is not to store value, like password or
+token, as a plaint text in Robot Framework test data. Therefore creation of
+`Secret` type variable is different from other types. The normal variable
+types can be created from anywhere, example in variable table, but Secret type
+can not be created directly in the Robot Framework test data. With the exception
+of environment variables, which can be used to create secrets also in Robot
+Framework test data. To create a Secret type of variable, there are four main
+ways to create it.
+
+1) Secret can be created from command line
+2) Secret can be created from environment variable in test data
+3) Secret can be returned from a library keyword
+4) Secret can be created in a variable file
+5) Secret can be catenated
+
+
+Creating Secret from command line
+'''''''''''''''''''''''''''''''''
+
+The easiest way to create secrets is to use the :option:`--variable` command line option
+with `Secret` type definition when running Robot Framework::
+
+  $ --variable "TOKEN: Secret:1234567890"
+
+This creates a variable named `${TOKEN}` which is of type `Secret` and has the value
+`1234567890`.
+
+Create Secret from environment variable
+'''''''''''''''''''''''''''''''''''''''
+
+`Secret` can be read from environment variable in Robot Framework test data in
+example following ways.
+
+.. sourcecode:: robotframework
+
+    *** Variables ***
+    ${TOKEN: Secret}    %{ACCESSTOKEN}
+
+    *** Test Cases ***
+    Example
+        VAR    ${password: secret}    %{USERPASSWORD}
+
+In the variable section, the `${TOKEN}` variable is created from the environment
+variable `ACCESSTOKEN`. In the Example test, `${password}` variable is created
+from the environment variable `USERPASSWORD`.
+
+Secret can be returned from a library keyword
+'''''''''''''''''''''''''''''''''''''''''''''
+
+`Secret` can be returned from a keyword. The keyword must return the `Secret` type
+and the value can be read from the `value` attribute of the `Secret` object.
+
+.. sourcecode:: robotframework
+
+    *** Test Cases ***
+    Use JWT token
+        ${jwt_token: Secret} =    Get JWT Token
+        ...
+
+If the keyword `Get JWT Token` returns a `Secret` type, the `${jwt_token}` variable
+will be of type `Secret`. But if the keyword returns example string or some other
+type, the variable assignment will fail with an error.
+
+Secret can be created in a variable file
+''''''''''''''''''''''''''''''''''''''''
+
+Variables with `Secret` type can be created in a Python `variable files`_.
+The following example creates a variable `${TOKEN}` of type `Secret` with the value
+that is read from environment variable `TOKEN`.
+
+.. sourcecode:: python
+
+    import os
+
+    from robot.utils import Secret
+
+    TOKEN = Secret(os.environ['TOKEN'])
+
+Secret can be catenated
+'''''''''''''''''''''''
+
+`Secret` type can be catenated with other `Secret` types or with other types
+variables or strings. This creates a new `Secret` type with the concatenated
+value.
+
+.. sourcecode:: robotframework
+
+    *** Test Cases ***
+    Use JWT token with pin
+        ${jwt_token: Secret} =    Get JWT Token
+        VAR    ${token1: Secret}    1234${jwt_token}
+        VAR    ${token2: Secret}    ${1234}${jwt_token}
+
+    Two part Token
+        ${part1: Secret} =    Get First Part
+        ${part2: Secret} =    Get Second Part
+        VAR    ${token: Secret}    ${part1}${part2}
+
+In the first test case, the `${jwt_token}` variable is of type `Secret` and it is
+catenated with string `1234` to create a new `Secret` type variable `${token1}`.
+The `${token2}` variable is created by concatenating the integer `1234` with the
+`${jwt_token}` variable. Both `${token1}` and `${token2}` are of type `Secret`.
+In the second test case, two `Secret` type variables `${part1}` and `${part2}`
+are catenated to create a new `Secret` type variable `${token}`.
+
+Using Secret type in type hints
+'''''''''''''''''''''''''''''''
+
+`Secret` type can be used in keywords argument hints like any other type. The
+`Secret` type can be used both user keyword and library keywords. In other
+types Robot Framework automatically converts the argument to the specified type,
+but for `Secret` type the value is not converted. If value is not `Secret` type,
+the keyword will fail with an error.
+
+.. sourcecode:: python
+
+    from robot.utils import Secret
+
+    def login_to_sut(user: str, token: Secret):
+        # Login somewhere with the token
+        SUT.login(user, token.value)
+
+.. sourcecode:: robotframework
+
+    *** Keywords ***
+    Login
+        [Arguments]    ${user: str}    ${token: Secret}
+        Login To Sut    ${user}    ${token}
+
+In the library keyword example above, the `token` argument must always receive
+value which type is `Secret`. If type is something else keyword will fail. Same
+logic applies to user keywords, in the example above the `token` argument must
+always receive value which type is `Secret`. If the type is something else, the
+keyword will also fail.
+
+`Secret` type can be used in lists or dictionaries as a type hint. Like in the
+keyword examples above, the value must be of type `Secret` or declaring the
+variable will fail.
+
+.. sourcecode:: robotframework
+
+    *** Test Cases ***
+    List and dictionary
+        VAR    @{list: secret}    ${TOKEN}    ${PASSWORD}
+        VAR    &{dict: secret}    username=user    password=${SECRET}
+
+The above example declares a list variable `${list}` and a dictionary variable
+`${dict}`. The list variable contains two `Secret` type values, `${TOKEN}` and
+`${PASSWORD}`. The dictionary variable contains two values key pairs and the
+`password` key contains `Secret` type value.
+
+.. sourcecode:: python
+
+    from typing import TypedDict
+
+    from robot.utils import Secret
+
+
+    class Credential(TypedDict):
+        username: str
+        password: Secret
+
+    def login(credentials: Credential):
+        # Login somewhere with the credentials
+        SUT.login(credentials['username'], credentials['password'].value)
+
+Using `Secret` type in complex type hints works similarly as with other types.
+The library keyword `login` uses type hint `Credential` which is a `TypedDict`_
+that contains a `Secret` type for the password key.
+
 
 Specifying multiple possible types
 ''''''''''''''''''''''''''''''''''

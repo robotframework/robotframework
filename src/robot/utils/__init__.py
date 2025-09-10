@@ -35,6 +35,7 @@ or::
 
 import warnings
 
+from ._secret import Secret as Secret
 from .application import Application as Application
 from .argumentparser import (
     ArgumentParser as ArgumentParser,
