@@ -43,7 +43,7 @@ Split String Separator not Found
     Result Should Contain Items In Given Order    ${result}    ${NSN}
 
 Split String With Invalid Max Split
-    [Documentation]    FAIL ValueError: Cannot convert 'max_split' argument 'invalid' to an integer.
+    [Documentation]    FAIL ValueError: Argument 'max_split' got value 'invalid' that cannot be converted to integer.
     ${result} =    Split String    ${NSN}    NSN    invalid
 
 Split String From Right
@@ -83,7 +83,7 @@ Split String From Right Separator not Found
     Result Should Contain Items In Given Order    ${result}    ${NSN}
 
 Split String From Right With Invalid Max Split
-    [Documentation]    FAIL ValueError: Cannot convert 'max_split' argument 'invalid' to an integer.
+    [Documentation]    FAIL ValueError: Argument 'max_split' got value 'invalid' that cannot be converted to integer.
     ${result} =    Split String From Right    ${NSN}    NSN    invalid
 
 Split String To Characters

@@ -18,10 +18,9 @@ import re
 from fnmatch import fnmatchcase
 from random import randint
 from string import ascii_lowercase, ascii_uppercase, digits
-from typing import Callable
+from typing import Callable, Iterable
 
 from robot.api import logger
-from robot.api.deco import keyword
 from robot.utils import FileReader, parse_re_flags, plural_or_not as s, type_name
 from robot.version import get_version
 
@@ -90,11 +89,10 @@ class String:
         """
         return string.upper()
 
-    @keyword(types=None)
     def convert_to_title_case(
         self,
         string: str,
-        exclude: "str | list[str] | None" = None,
+        exclude: "Iterable[str] | str | None" = None,
     ) -> str:
         """Converts string to title case.
 
@@ -611,7 +609,6 @@ class String:
             string = self.replace_string_using_regexp(string, pattern, "", flags=flags)
         return string
 
-    @keyword(types=None)
     def split_string(
         self,
         string: str,
@@ -642,7 +639,6 @@ class String:
         max_split = self._convert_to_integer(max_split, "max_split")
         return string.split(separator, max_split)
 
-    @keyword(types=None)
     def split_string_from_right(
         self,
         string: str,
@@ -766,7 +762,6 @@ class String:
     # TODO(silentw0lf): Adding a note like "Some keywords also work with bytes in addition to strings."
     # TODO(silentw0lf): Are there any keywords that you believe would benefit from bytes support?
 
-    @keyword(types=None)
     def strip_string(
         self,
         string: str,
@@ -866,12 +861,11 @@ class String:
         if not string.isupper():
             raise AssertionError(msg or f"{string!r} is not upper case.")
 
-    @keyword(types=None)
     def should_be_title_case(
         self,
-        string: str,
+        string: "str | bytes",
         msg: "str | None" = None,
-        exclude: "str | list[str] | None" = None,
+        exclude: "Iterable[str] | str | None" = None,
     ):
         """Fails if given ``string`` is not title.
 
