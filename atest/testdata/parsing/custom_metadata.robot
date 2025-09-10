@@ -26,7 +26,7 @@ Comprehensive Metadata Test
     [Empty Value]                  
     [Special Characters]           !@#$%^&*()_+-=[]{}|;:,.<>?/~`
     [Unicode Content]              测试数据    Тестовые данные    Données de test
-    [HTML Content]                 <b>Bold</b> and <i>italic</i>
+    [Formatted Content]            *Bold* and _italic_ text with ``code`` examples
     [JSON Data]                    {"type": "test", "priority": "high", "count": 42}
     [URL]                          https://api.example.com:8080/v1/test?param1=value1
     [Email]                        test@example.com
@@ -44,7 +44,7 @@ Edge Cases Test
     [kebab-case-key]               kebab-case value
     [Key With Spaces]              Value with spaces
     [UnicodeKey]                   Unicode key test
-    [HTML Tags]                    <div>HTML content</div>
+    [HTML Tags]                    Raw HTML like <div>content</div> stays as text
     [Numbers Only]                 1234567890
     [Boolean Like]                 True    False
     [Version Numbers]              1.0.0    2.1.3-beta.1
@@ -95,8 +95,8 @@ Data Processing Keyword
     [Documentation]    Keyword with data processing metadata
     [Input Format]                JSON    XML    CSV
     [Output Format]               Processed JSON
-    [Memory Usage]                Optimized for large datasets
-    [Quality Metrics]             Accuracy > 99.5%
+    [Memory Usage]                *Optimized* for _large datasets_
+    [Quality Metrics]             Accuracy > ``99.5%``
     [Scalability]                 Horizontal scaling support
     [Data Privacy]                PII anonymization
     Log                           Data processing execution
