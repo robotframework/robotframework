@@ -154,9 +154,11 @@ class SuiteBuilder(ModelVisitor):
 
 class ResourceBuilder(ModelVisitor):
 
-    def __init__(self, resource: ResourceFile):
+    def __init__(
+        self, resource: ResourceFile, custom_metadata: "list[str]|None" = None
+    ):
         self.resource = resource
-        self.settings = FileSettings()
+        self.settings = FileSettings(custom_metadata=custom_metadata)
         self.seen_keywords = NormalizedDict(ignore="_")
 
     def build(self, model: File):
@@ -222,6 +224,12 @@ class BodyBuilder(ModelVisitor):
             lineno=node.lineno,
         )
 
+    def visit_CustomMetadata(self, node):
+        # For test cases and user keywords, custom metadata should be handled by
+        # their specific builders, not added to body. For other contexts (like FOR, IF, etc.),
+        # we should not encounter custom metadata, but if we do, ignore it rather than crash.
+        pass
+
     def visit_TemplateArguments(self, node):
         self.model.body.create_keyword(args=node.args, lineno=node.lineno)
 
@@ -283,6 +291,8 @@ class TestCaseBuilder(BodyBuilder):
             template=settings.test_template,
             lineno=node.lineno,
         )
+        # Initialize custom metadata to empty dict to ensure it's always available
+        self.model.custom_metadata = {}
         if settings.test_setup:
             self.model.setup.config(**settings.test_setup)
         if settings.test_teardown:
@@ -338,6 +348,29 @@ class TestCaseBuilder(BodyBuilder):
     def visit_Template(self, node):
         self.model.template = node.value
 
+    def visit_CustomMetadata(self, node):
+        # Check if this custom metadata should be included in results
+        if not self.settings.should_include_custom_metadata(node.key):
+            return  # Skip this custom metadata - don't include in results
+
+        # Handle line continuations by replacing newlines with spaces
+        if node.value:
+            metadata_value = " ".join(node.value.split())
+        else:
+            metadata_value = ""
+        # Get current metadata or create empty dict
+        try:
+            current_metadata = self.model.custom_metadata
+            if current_metadata is None:
+                current_metadata = {}
+            else:
+                current_metadata = dict(current_metadata)
+        except AttributeError:
+            # If custom_metadata not accessible, initialize empty
+            current_metadata = {}
+        current_metadata[node.key] = metadata_value
+        self.model.custom_metadata = current_metadata
+
 
 class KeywordBuilder(BodyBuilder):
     model: UserKeyword
@@ -350,6 +383,7 @@ class KeywordBuilder(BodyBuilder):
     ):
         super().__init__(resource.keywords.create(tags=settings.keyword_tags))
         self.resource = resource
+        self.settings = settings  # Store settings for custom metadata filtering
         self.seen_keywords = seen_keywords
         self.return_setting = None
 
@@ -361,6 +395,8 @@ class KeywordBuilder(BodyBuilder):
             if not node.name:
                 raise DataError("User keyword name cannot be empty.")
             kw.config(name=node.name, lineno=node.lineno)
+            # Initialize custom metadata to empty dict for consistent behavior
+            kw.custom_metadata = {}
         except DataError as err:
             # Errors other than name being empty mean that name contains invalid
             # embedded arguments. Need to set `_name` to bypass `@property`.
@@ -423,6 +459,29 @@ class KeywordBuilder(BodyBuilder):
             assign=node.assign,
             lineno=node.lineno,
         )
+
+    def visit_CustomMetadata(self, node):
+        # Check if this custom metadata should be included in results
+        if not self.settings.should_include_custom_metadata(node.key):
+            return  # Skip this custom metadata - don't include in results
+
+        # Handle line continuations by replacing newlines with spaces
+        if node.value:
+            metadata_value = " ".join(node.value.split())
+        else:
+            metadata_value = ""
+        # Get current metadata or create empty dict
+        try:
+            current_metadata = self.model.custom_metadata
+            if current_metadata is None:
+                current_metadata = {}
+            else:
+                current_metadata = dict(current_metadata)
+        except AttributeError:
+            # If custom_metadata not accessible, initialize empty
+            current_metadata = {}
+        current_metadata[node.key] = metadata_value
+        self.model.custom_metadata = current_metadata
 
 
 class ForBuilder(BodyBuilder):
