@@ -307,7 +307,7 @@ Additionally, helper classes ``Date`` and ``Time`` can be used directly:
 import datetime
 import sys
 import time
-from typing import Union
+from typing import Literal, Union
 
 from robot.utils import (
     elapsed_time_to_string, secs_to_timestr, timestr_to_secs, type_name
@@ -326,16 +326,18 @@ __all__ = [
     "subtract_time_from_time",
 ]
 
-DateOutput = Union[datetime.datetime, float, str]
 DateInput = Union[datetime.datetime, datetime.date, float, int, str]
+DateOutput = Union[datetime.datetime, float, str]
+DateFormat = Union[Literal["timestamp", "datetime", "epoch"], str]
 TimeInput = Union[datetime.timedelta, float, int, str]
 TimeOutput = Union[datetime.timedelta, float, str]
+TimeFormat = Literal["number", "verbose", "compact", "timer", "timedelta"]
 
 
 def get_current_date(
-    time_zone: str = "local",
+    time_zone: Literal["local", "UTC"] = "local",
     increment: TimeInput = 0,
-    result_format: str = "timestamp",
+    result_format: DateFormat = "timestamp",
     exclude_millis: bool = False,
 ) -> DateOutput:
     """Returns current local or UTC time with an optional increment.
@@ -380,7 +382,7 @@ def get_current_date(
 
 def convert_date(
     date: DateInput,
-    result_format: str = "timestamp",
+    result_format: DateFormat = "timestamp",
     exclude_millis: bool = False,
     date_format: "str | None" = None,
 ) -> DateOutput:
@@ -406,7 +408,7 @@ def convert_date(
 
 def convert_time(
     time: TimeInput,
-    result_format: str = "number",
+    result_format: TimeFormat = "number",
     exclude_millis: bool = False,
 ) -> TimeOutput:
     """Converts between supported `time formats`.
@@ -431,7 +433,7 @@ def convert_time(
 def subtract_date_from_date(
     date1: DateInput,
     date2: DateInput,
-    result_format: str = "number",
+    result_format: TimeFormat = "number",
     exclude_millis: bool = False,
     date1_format: "str | None" = None,
     date2_format: "str | None" = None,
@@ -462,7 +464,7 @@ def subtract_date_from_date(
 def add_time_to_date(
     date: DateInput,
     time: TimeInput,
-    result_format: str = "timestamp",
+    result_format: DateFormat = "timestamp",
     exclude_millis: bool = False,
     date_format: "str | None" = None,
 ) -> DateOutput:
@@ -491,7 +493,7 @@ def add_time_to_date(
 def subtract_time_from_date(
     date: DateInput,
     time: TimeInput,
-    result_format: str = "timestamp",
+    result_format: DateFormat = "timestamp",
     exclude_millis: bool = False,
     date_format: "str | None" = None,
 ) -> DateOutput:
@@ -520,7 +522,7 @@ def subtract_time_from_date(
 def add_time_to_time(
     time1: TimeInput,
     time2: TimeInput,
-    result_format: str = "number",
+    result_format: TimeFormat = "number",
     exclude_millis: bool = False,
 ) -> TimeOutput:
     """Adds time to another time and returns the resulting time.
@@ -545,7 +547,7 @@ def add_time_to_time(
 def subtract_time_from_time(
     time1: TimeInput,
     time2: TimeInput,
-    result_format: str = "number",
+    result_format: TimeFormat = "number",
     exclude_millis: bool = False,
 ) -> TimeOutput:
     """Subtracts time from another time and returns the resulting time.
@@ -671,12 +673,7 @@ class Date:
 class Time:
 
     def __init__(self, time: TimeInput):
-        self.seconds = self._convert_time_to_seconds(time)
-
-    def _convert_time_to_seconds(self, time: TimeInput) -> float:
-        if isinstance(time, datetime.timedelta):
-            return time.total_seconds()
-        return timestr_to_secs(time, round_to=None)
+        self.seconds = timestr_to_secs(time, round_to=None)
 
     @property
     def timedelta(self) -> datetime.timedelta:

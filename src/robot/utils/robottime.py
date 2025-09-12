@@ -39,7 +39,8 @@ def _float_secs_to_secs_and_millis(secs):
 
 
 def timestr_to_secs(
-    timestr: "timedelta | int | float | str", round_to: int = 3
+    timestr: "timedelta | int | float | str",
+    round_to: "int | None" = 3,
 ) -> float:
     """Parses time strings like '1h 10s', '01:00:10' and '42' and returns seconds.
 
