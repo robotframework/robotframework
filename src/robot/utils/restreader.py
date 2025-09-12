@@ -14,6 +14,7 @@
 #  limitations under the License.
 
 import functools
+from contextlib import contextmanager
 
 from robot.errors import DataError
 
@@ -31,6 +32,7 @@ except ImportError:
 
 
 class RobotDataStorage:
+
     def __init__(self, doctree):
         if not hasattr(doctree, "_robot_data"):
             doctree._robot_data = []
@@ -55,18 +57,10 @@ class RobotCodeBlock(CodeBlock):
         return []
 
 
-register_directive("code", RobotCodeBlock)
-register_directive("code-block", RobotCodeBlock)
-register_directive("sourcecode", RobotCodeBlock)
-
-
-relevant_directives = (RobotCodeBlock, Include)
-
-
 @functools.wraps(directives.directive)
 def directive(*args, **kwargs):
     directive_class, messages = directive.__wrapped__(*args, **kwargs)
-    if directive_class not in relevant_directives:
+    if directive_class not in (RobotCodeBlock, Include):
         # Skipping unknown or non-relevant directive entirely
         directive_class = lambda *args, **kwargs: []
     return directive_class, messages
@@ -80,15 +74,28 @@ def role(*args, **kwargs):
     return role_function
 
 
-directives.directive = directive
-roles.role = role
+@contextmanager
+def docutils_config():
+    orig_directive, orig_role = directives.directive, roles.role
+    directives.directive, roles.role = directive, role
+    register_directive("code", RobotCodeBlock)
+    register_directive("code-block", RobotCodeBlock)
+    register_directive("sourcecode", RobotCodeBlock)
+    try:
+        yield
+    finally:
+        directives.directive, roles.role = orig_directive, orig_role
+        register_directive("code", CodeBlock)
+        register_directive("code-block", CodeBlock)
+        register_directive("sourcecode", CodeBlock)
 
 
 def read_rest_data(rstfile):
-    doctree = publish_doctree(
-        rstfile.read(),
-        source_path=rstfile.name,
-        settings_overrides={"input_encoding": "UTF-8", "report_level": 4},
-    )
-    store = RobotDataStorage(doctree)
+    with docutils_config():
+        doc = publish_doctree(
+            rstfile.read(),
+            source_path=rstfile.name,
+            settings_overrides={"input_encoding": "UTF-8", "report_level": 4},
+        )
+    store = RobotDataStorage(doc)
     return store.get_data()
