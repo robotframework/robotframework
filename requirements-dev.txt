@@ -8,6 +8,7 @@ wheel
 docutils
 pygments >= 2.8
 sphinx
+sphinx-rtd-theme
 pydantic < 2
 telnetlib-313-and-up; python_version >= "3.13"
 black >= 24
