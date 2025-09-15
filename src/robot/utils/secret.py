@@ -14,20 +14,37 @@
 #  limitations under the License.
 
 
-# FIXME: Consider moving this to robot.api
 class Secret:
-    """Represent a secret value that should not be logged or displayed in plain text.
+    """Encapsulates secrets to avoid them being shown in Robot Framework logs.
 
-    This class is used to encapsulate sensitive information, such as passwords or
-    API keys, ensuring that when the value is logged, it is not exposed by
-    Robot Framework by its original value. Please note when libraries or
-    tools use this class, they should ensure that the value is not logged
-    or displayed in any way that could compromise its confidentiality. In some
-    cases, this is not fully possible, example selenium or Playwright might
-    still reveal the value in log messages or other outputs.
+    The typical usage is using this class in library keyword type hints to
+    indicate that only ``Secret`` values are accepted. How to create these
+    objects in data and elsewhere is explained in the `User Guide`__.
 
-    Libraries or tools using the Secret class can use the value attribute to
-    access the actual secret value when necessary.
+    The encapsulated value is available in the :attr:`value` attribute, and it
+    is mainly meant to be accessed by library keywords. Values are not hidden
+    or encrypted, so they are available for all code that can access these
+    objects directly or indirectly via Robot Framework APIs.
+
+    The string representation of this class does not disclose encapsulated
+    values, so they are not visible in logs even if these objects themselves
+    are logged. Notice, though, that if a keyword passes the actual value
+    further, it may be logged or otherwise disclosed later.
+
+    This class should be imported via the :mod:`robot.api.types` module.
+
+    .. sourcecode:: python
+
+       from robot.api.types import Secret
+
+
+       def example(username: str, password: Secret):
+           user = authenticate(username, password.value)
+           ...
+
+    New in Robot Framework 7.4.
+
+    __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#secret-variables
     """
 
     def __init__(self, value: str):

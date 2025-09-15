@@ -13,4 +13,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import Secret as Secret
+"""Types for libraries and other extensions.
+
+Currently only exposes the :class:`~robot.utils.secret.Secret` type.
+
+New in Robot Framework 7.4.
+"""
+
+from robot.utils.secret import Secret as Secret
