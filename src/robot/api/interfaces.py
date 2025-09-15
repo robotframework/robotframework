@@ -22,8 +22,8 @@ Module contents:
 - :class:`ListenerV2` for `listener interface version 2`__.
 - :class:`ListenerV3` for `listener interface version 3`__.
 - :class:`Parser` for `custom parsers`__. Also
-  :class:`~robot.running.builder.settings.TestDefaults` used in ``Parser``
-  type hints can be imported via this module if needed.
+  :class:`~robot.running.builder.settings.TestDefaults` used in :class:`Parser`
+  type hints is exposed via this module.
 - Type definitions used by the aforementioned classes.
 
 Main benefit of using these base classes is that editors can provide automatic
@@ -54,7 +54,7 @@ else:
     UnionType = type
 
 from robot import result, running
-from robot.running import TestDefaults, TestSuite
+from robot.running import TestDefaults as TestDefaults, TestSuite
 
 # Type aliases used by DynamicLibrary and HybridLibrary.
 Name = str
