@@ -502,7 +502,6 @@ not effective after the test execution.
 
 .. note:: Support for specifying the default value is new in Robot Framework 3.2.
 
-
 Creating variables
 ------------------
 
@@ -516,7 +515,10 @@ Variables can be created using different approaches discussed in this section:
 - Using `Set Test/Suite/Global Variable keywords`_
 
 In addition to this, there are various automatically available `built-in variables`_
-and also `user keyword arguments`_ and `FOR loops`_ create variables.
+and also `user keyword arguments`_ and `FOR loops`_ create variables. In most
+places where variables are created, it is possible to use `variable type conversion`_
+to easily create variables with non-string values. An important application for
+conversions is creating `secret variables`_.
 
 __ `Command line variables`_
 
@@ -1256,13 +1258,13 @@ create the same `${PAYLOAD}` variable using different approaches:
 .. sourcecode:: robotframework
 
    *** Variables ***
-   ${PAYLOAD: dict}            {'id': 1, 'name': 'Robot', 'children': [2, 13, 15]}
+   @{CHILDREN: int}            2    13    15
+   &{PAYLOAD: dict}            id=${1}    name=Robot    children=${CHILDREN}
 
 .. sourcecode:: robotframework
 
    *** Variables ***
-   @{CHILDREN: int}            2    13    15
-   &{PAYLOAD: dict}            id=${1}    name=Robot    children=${CHILDREN}
+   ${PAYLOAD: dict}            {'id': 1, 'name': 'Robot', 'children': [2, 13, 15]}
 
 __ `Creating lists`_
 __ `Creating dictionaries`_
@@ -1295,6 +1297,116 @@ type or if the type itself is not supported:
 
    Invalid type
        VAR    ${example: invalid}    123
+
+Secret variables
+~~~~~~~~~~~~~~~~
+
+An important usage for `variable type conversion`_ is creating so called
+*secret variables*. These variables encapsulate their values so that the real
+values are `not logged even on the trace level`__ when variables are passed
+between keywords as arguments or return values.
+
+The actual value is available via the `value` attribute of a secret variable.
+It is mainly meant to be used by `library keywords`_ that accept `secret values`__,
+but it can be accessed also in the data using the `extended variable syntax`_
+like `${secret.value}`. Accessing the value in the data makes it visible in the
+log file similarly as if it was a normal variable, so that should only be done for
+debugging or testing purposes.
+
+.. warning:: Secret variables do not hide or encrypt their values. The real values
+             are thus available for all code that can access these variables directly
+             or indirectly via Robot Framework APIs.
+
+.. note:: Secret variables are new in Robot Framework 7.4.
+
+__ `Log levels`_
+__ `Secret type`_
+
+Creating secrets in data
+''''''''''''''''''''''''
+
+In the data secret variables can be created in the `Variable section`_ and
+by using the `VAR syntax`_. To avoid secrets being visible to everyone that
+has access to the data, it is not possible to create secret variables using
+literal values. Instead the value must be created using an existing secret variable
+or an `environment variable`_. In both cases joining the secret value with a literal
+value is allowed as well.
+
+.. sourcecode:: robotframework
+
+   *** Variables ***
+   ${NORMAL: Secret}     ${XXX}        # ${XXX} must itself be a secret variable.
+   ${ENVIRON: Secret}    %{ENV_VAR}    # Environment variables are supported directly.
+   ${JOIN: Secret}       ${XXX}-123    # Joining secrets with literals is ok.
+   ${LITERAL: Secret}    123           # This fails.
+
+.. note:: These examples utilize the Variable section, but the syntax to create
+          secret variables is exactly the same when using the `VAR` syntax.
+
+If showing the secret variable in the data is not an issue, it is possible to use
+environment variable default values like `%{NAME=default}`. The name can even be
+left empty like `%{=secret}`.
+
+Also list and dictionary variables support secret values:
+
+.. sourcecode:: robotframework
+
+   *** Variables ***
+   @{LIST: Secret}     ${XXX}    %{EXAMPLE}    ${XXX}-123    %{=secret}
+   &{DICT: Secret}     normal=${XXX}    env=%{ENV_VAR}    join=${XXX}-123    env_default=%{=secret}
+
+Creating secrets on command line
+''''''''''''''''''''''''''''''''
+
+`Command line variable conversion`__ supports secret values directly::
+
+    --variable "PASSWORD: Secret:robot123"
+
+Having the value directly visible on the command line history or in continues
+integration system logs can be a security risk. One way to mitigate that is using
+environvemt variables::
+
+    --variable "PASSWORD: Secret:$PASSWORD"
+
+Many systems running tests or tasks also support hiding secret values used on
+the command line.
+
+__ `Variable conversion on command line`
+
+Creating secrets programmatically
+'''''''''''''''''''''''''''''''''
+
+Secrets can be created programmatically by using the `robot.api.types.Secret`_
+class. This is most commonly done by libraries_ and `variable files`_, but also
+`pre-run modifiers`__ and listeners_ can utilize secrets if needed.
+
+The simplest possible example of the programmatic usage is a variable file:
+
+.. sourcecode:: python
+
+    from robot.api.types import Secret
+
+
+    USERNAME = "robot"
+    PASSWORD = Secret("robot123")
+
+Creting a keyword returning a secret is not much more complicated either:
+
+.. sourcecode:: python
+
+   from robot.api.types import Secret
+
+
+   def get_token():
+       return Secret("e5805f56-92e1-11f0-a798-8782a78eb4b5")
+
+
+.. note:: Both examples above have the actual secret value visible in the code.
+          When working with real secret values, it is typically better to read
+          secrets from environment variables, get them from external systems or
+          generate them randomly.
+
+__ `Programmatic modification of test data`
 
 .. _built-in variable:
 

@@ -17,9 +17,9 @@
 class Secret:
     """Encapsulates secrets to avoid them being shown in Robot Framework logs.
 
-    The typical usage is using this class in library keyword type hints to
-    indicate that only ``Secret`` values are accepted. How to create these
-    objects in data and elsewhere is explained in the `User Guide`__.
+    The typical usage is using this class in `library keyword type hints`__ to
+    indicate that only :class:`Secret` values are accepted. How to create these
+    objects in the data and elsewhere is explained in the `User Guide`__.
 
     The encapsulated value is available in the :attr:`value` attribute, and it
     is mainly meant to be accessed by library keywords. Values are not hidden
@@ -44,6 +44,7 @@ class Secret:
 
     New in Robot Framework 7.4.
 
+    __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#secret-type
     __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#secret-variables
     """
 
