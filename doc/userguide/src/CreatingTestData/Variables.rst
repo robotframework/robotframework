@@ -1332,28 +1332,29 @@ literal values. Instead the value must be created using an existing secret varia
 or an `environment variable`_. In both cases joining the secret value with a literal
 value is allowed as well.
 
+If showing the secret variable in the data is not an issue, it is possible to use
+environment variable default values like `%{NAME=default}`. The name can even be
+left empty like `%{=secret}` to always use the default value.
+
 .. sourcecode:: robotframework
 
    *** Variables ***
-   ${NORMAL: Secret}     ${XXX}        # ${XXX} must itself be a secret variable.
-   ${ENVIRON: Secret}    %{ENV_VAR}    # Environment variables are supported directly.
-   ${JOIN: Secret}       ${XXX}-123    # Joining secrets with literals is ok.
-   ${LITERAL: Secret}    123           # This fails.
-
-.. note:: These examples utilize the Variable section, but the syntax to create
-          secret variables is exactly the same when using the `VAR` syntax.
-
-If showing the secret variable in the data is not an issue, it is possible to use
-environment variable default values like `%{NAME=default}`. The name can even be
-left empty like `%{=secret}`.
+   ${NORMAL: Secret}     ${XXX}          # ${XXX} must itself be a secret variable.
+   ${ENVIRON: Secret}    %{ENV_VAR}      # Environment variables are supported directly.
+   ${DEFAULT: Secret}    %{=robot123}    # Environment variable defaults work as well.
+   ${JOIN: Secret}       ${XXX}-123      # Joining secrets with literals is ok.
+   ${LITERAL: Secret}    robot123        # This fails.
 
 Also list and dictionary variables support secret values:
 
 .. sourcecode:: robotframework
 
    *** Variables ***
-   @{LIST: Secret}     ${XXX}    %{EXAMPLE}    ${XXX}-123    %{=secret}
-   &{DICT: Secret}     normal=${XXX}    env=%{ENV_VAR}    join=${XXX}-123    env_default=%{=secret}
+   @{LIST: Secret}     ${XXX}    %{EXAMPLE}    ${XXX}-123    %{=robot123}
+   &{DICT: Secret}     normal=${XXX}    env=%{ENV_VAR}    join=${XXX}-123    env_default=%{=robot123}
+
+.. note:: The above examples utilize the Variable section, but the syntax to create
+          secret variables is exactly the same when using the `VAR syntax`_.
 
 Creating secrets on command line
 ''''''''''''''''''''''''''''''''
@@ -1364,7 +1365,7 @@ Creating secrets on command line
 
 Having the value directly visible on the command line history or in continues
 integration system logs can be a security risk. One way to mitigate that is using
-environvemt variables::
+environment variables::
 
     --variable "PASSWORD: Secret:$PASSWORD"
 
@@ -1390,7 +1391,7 @@ The simplest possible example of the programmatic usage is a variable file:
     USERNAME = "robot"
     PASSWORD = Secret("robot123")
 
-Creting a keyword returning a secret is not much more complicated either:
+Creating a keyword returning a secret is not much more complicated either:
 
 .. sourcecode:: python
 

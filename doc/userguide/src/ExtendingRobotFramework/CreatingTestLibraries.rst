@@ -1626,9 +1626,10 @@ __ https://peps.python.org/pep-0585/
 Secret type
 '''''''''''
 
-Robot Framework has a custom `robot.api.types.Secret <Secret_>`_ type that encapsulates values so that they
-are not shown in log files. If the `Secret` type is used as an argument type,
-only `Secret` objecs are accepted. The actual encapsulated value is available
+Robot Framework has a custom `robot.api.types.Secret <Secret_>`_ type that
+encapsulates values so that they are not shown in log files. If the `Secret`
+type is used as an argument type, only `Secret` objects are accepted and trying
+to use, for example, literal strings fails. The encapsulated value is available
 in the `value` attribute so keywords can access it easily:
 
 .. sourcecode:: python
@@ -3248,7 +3249,7 @@ As explained in the above table, default values can be specified with argument
 names either as a string like `'name=default'` or as a tuple like
 `('name', 'default')`. The main problem with the former syntax is that all
 default values are considered strings whereas the latter syntax allows using
-all objects like `('inteter', 1)` or `('boolean', True)`. When using other
+all objects like `('integer', 1)` or `('boolean', True)`. When using other
 objects than strings, Robot Framework can do `automatic argument conversion`__
 based on them.
 
