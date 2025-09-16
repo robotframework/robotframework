@@ -56,14 +56,17 @@ class JsonLogger:
         self._start("tests", id=test.id)
 
     def end_test(self, test):
-        self._end(
-            name=test.name,
-            doc=test.doc,
-            tags=test.tags,
-            lineno=test.lineno,
-            timeout=str(test.timeout) if test.timeout else None,
+        data = {
+            "name": test.name,
+            "doc": test.doc,
+            "tags": test.tags,
+            "lineno": test.lineno,
+            "timeout": str(test.timeout) if test.timeout else None,
             **self._status(test),
-        )
+        }
+        if hasattr(test, "custom_metadata") and test.custom_metadata:
+            data["custom_metadata"] = dict(test.custom_metadata)
+        self._end(**data)
 
     def start_keyword(self, kw):
         if kw.type in ("SETUP", "TEARDOWN"):
