@@ -80,7 +80,9 @@ class View {
 
   private renderTemplates() {
     this.renderLibdocTemplate("base", this.libdoc, "#root");
-    this.renderImporting();
+    if (this.libdoc.inits.length > 0) {
+      this.renderImporting();
+    }
     this.renderShortcuts();
     this.renderKeywords();
     this.renderLibdocTemplate("data-types");
