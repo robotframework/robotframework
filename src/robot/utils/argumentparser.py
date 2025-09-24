@@ -18,10 +18,10 @@ import glob
 import os
 import re
 import shlex
-import string
 import sys
 import warnings
 from pathlib import Path
+from string import ascii_letters
 
 from robot.errors import DataError, FrameworkError, Information
 from robot.version import get_full_version
@@ -306,7 +306,7 @@ class ArgumentParser:
             if drive:
                 ret.append(drive)
                 drive = ""
-            if len(item) == 1 and item in string.ascii_letters:
+            if len(item) == 1 and item in ascii_letters:
                 drive = item
             else:
                 ret.append(item)
@@ -360,8 +360,9 @@ class ArgLimitValidator:
 
 
 class ArgFileParser:
-    def __init__(self, options):
-        self._options = options
+
+    def __init__(self, config):
+        self.config = config
 
     def process(self, args):
         while True:
@@ -372,26 +373,30 @@ class ArgFileParser:
         return args
 
     def _get_index(self, args):
-        for opt in self._options:
-            start = opt + "=" if opt.startswith("--") else opt
+        for conf in self.config:
+            long = conf.startswith("--")
             for index, arg in enumerate(args):
-                normalized_arg = (
-                    "--" + arg.lower().replace("-", "") if opt.startswith("--") else arg
-                )
+                normalized = "--" + arg.lower().replace("-", "") if long else arg
                 # Handles `--argumentfile foo` and `-A foo`
-                if normalized_arg == opt and index + 1 < len(args):
+                if normalized == conf and index + 1 < len(args):
                     return args[index + 1], slice(index, index + 2)
-                # Handles `--argumentfile=foo` and `-Afoo`
-                if normalized_arg.startswith(start):
-                    return arg[len(start) :], slice(index, index + 1)
+                # Handles `--argumentfile=foo`
+                elif long and normalized.startswith(conf + "="):
+                    return arg[len(conf) + 1 :], slice(index, index + 1)
+                # Handles `-Afoo`
+                elif not long and normalized.startswith(conf):
+                    return arg[len(conf) :], slice(index, index + 1)
         return None, -1
 
     def _get_args(self, path):
-        if path.upper() != "STDIN":
-            content = self._read_from_file(path)
-        else:
+        if path.upper() == "STDIN":
             content = self._read_from_stdin()
+        else:
+            content = self._read_from_file(path)
         return self._process_file(content)
+
+    def _read_from_stdin(self):
+        return console_decode(sys.__stdin__.read())
 
     def _read_from_file(self, path):
         try:
@@ -399,9 +404,6 @@ class ArgFileParser:
                 return reader.read()
         except (IOError, UnicodeError) as err:
             raise DataError(f"Opening argument file '{path}' failed: {err}")
-
-    def _read_from_stdin(self):
-        return console_decode(sys.__stdin__.read())
 
     def _process_file(self, content):
         args = []
@@ -417,10 +419,10 @@ class ArgFileParser:
         separator = self._get_option_separator(line)
         if not separator:
             return [line]
-        option, value = line.split(separator, 1)
+        name, value = line.split(separator, 1)
         if separator == " ":
             value = value.strip()
-        return [option, value]
+        return [name, value]
 
     def _get_option_separator(self, line):
         if " " not in line and "=" not in line:
