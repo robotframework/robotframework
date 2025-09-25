@@ -35,6 +35,7 @@ class Asynchronous:
     def close_loop(self):
         if self._loop_ref:
             self._loop_ref.close()
+            self._loop_ref = None
 
     def run_until_complete(self, coroutine):
         task = self.event_loop.create_task(coroutine)
