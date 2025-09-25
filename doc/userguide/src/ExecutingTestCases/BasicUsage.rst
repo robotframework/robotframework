@@ -398,16 +398,16 @@ __ `Short and long options`_
 Argument file syntax
 ~~~~~~~~~~~~~~~~~~~~
 
-Argument files can contain both command line options and paths to the test data,
-one option or data source per line. Both short and long options are supported,
-but the latter are recommended because they are easier to understand.
+Argument files can contain both command line options and paths to the executed data,
+one option or a data source per line. Both short and long options are supported,
+but the latter are recommended in this context because they are easier to understand.
 Argument files can contain any characters without escaping, but spaces in
 the beginning and end of lines are ignored. Additionally, empty lines and
-lines starting with a hash mark (#) are ignored::
+lines starting with a hash mark (`#`) are ignored::
 
    --doc This is an example (where "special characters" are ok!)
    --metadata X:Value with spaces
-   --variable VAR:Hello, world!
+   --variable NAME:Hello, world!
    # This is a comment
    path/to/my/tests
 
@@ -421,7 +421,9 @@ identical::
     --name       An Example
 
 If argument files contain non-ASCII characters, they must be saved using
-UTF-8 encoding.
+the UTF-8 encoding. Argument files can use any extension. Typically :file:`.txt`
+works fine, but a custom extension like :file:`.args` can be used to separate
+argument files from normal text files.
 
 Using argument files
 ~~~~~~~~~~~~~~~~~~~~
@@ -434,9 +436,8 @@ option was. This means that options in argument files can override options
 before it, and its options can be overridden by options after it. It is possible
 to use :option:`--argumentfile` option multiple times or even recursively::
 
-   robot --argumentfile all_arguments.robot
-   robot --name Example --argumentfile other_options_and_paths.robot
-   robot --argumentfile default_options.txt --name Example my_tests.robot
+   robot --argumentfile all_options_and_arguments.txt
+   robot --argumentfile defaults.args --name Example tests.robot
    robot -A first.txt -A second.txt -A third.txt tests.robot
 
 Reading argument files from standard input

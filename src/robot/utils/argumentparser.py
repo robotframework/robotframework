@@ -414,20 +414,20 @@ class ArgFileParser:
                 args.append(line)
         return args
 
-    def _split_option(self, line):
-        separator = self._get_option_separator(line)
+    def _split_option(self, option):
+        separator = self._get_option_separator(option)
         if not separator:
-            return [line]
-        name, value = line.split(separator, 1)
+            return [option]
+        name, value = option.split(separator, 1)
         if separator == " ":
             value = value.strip()
         return [name, value]
 
-    def _get_option_separator(self, line):
-        if " " not in line and "=" not in line:
+    def _get_option_separator(self, option):
+        if " " not in option and "=" not in option:
             return None
-        if "=" not in line:
+        if "=" not in option:
             return " "
-        if " " not in line:
+        if " " not in option:
             return "="
-        return " " if line.index(" ") < line.index("=") else "="
+        return " " if option.index(" ") < option.index("=") else "="

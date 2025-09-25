@@ -27,24 +27,24 @@ Argument file
     ${result} =    Run Tests    -M Meta1:Overwritten --argumentfile ${ARGFILE} -M Meta2:cli    ${TESTFILE}
     ...    output=${CLI OUTDIR}/output.xml
     Execution Should Have Succeeded    ${result}
-    Should Be Equal    ${SUITE.name}    From Argfile With Spaces
-    Should Be Equal as Strings    ${SUITE.metadata}    {Meta1: From AF, Meta2: cli, Something: My Value}
+    Should Be Equal    ${SUITE.name}        From Argfile With Spaces
+    Should Be Equal    ${SUITE.metadata}    {Meta1: From AF, Meta2: cli, Something: My Value}    types=str
 
 Two argument files
     Create Argument File    ${ARGFILE}    --metadata A1:Value1    --metadata A2:to be overridden
     Create Argument File    ${ARGFILE2}    --metadata A2:Value2
     ${result} =    Run Tests    -A ${ARGFILE} --Argument-File ${ARGFILE2}    ${TESTFILE}
     Execution Should Have Succeeded    ${result}
-    Should Be Equal    ${SUITE.metadata['A1']}    Value1
-    Should Be Equal    ${SUITE.metadata['A2']}    Value2
+    Should Be Equal    ${SUITE.metadata}[A1]    Value1
+    Should Be Equal    ${SUITE.metadata}[A2]    Value2
 
 Recursive argument file
     Create Argument File    ${ARGFILE}    -M First:1    -M Second:overwritten    --ARGUMENTFILE ${ARGFILE2}
     Create Argument File    ${ARGFILE2}    --metadata Second:2
     ${result} =    Run Tests    -A ${ARGFILE}    ${TESTFILE}
     Execution Should Have Succeeded    ${result}
-    Should Be Equal    ${SUITE.metadata['First']}    1
-    Should Be Equal    ${SUITE.metadata['Second']}    2
+    Should Be Equal    ${SUITE.metadata}[First]     1
+    Should Be Equal    ${SUITE.metadata}[Second]    2
 
 Argument file with non-ASCII characters
     ${path} =    Copy File    ${DATADIR}/parsing/non_ascii_paths/test-auml-ouml.robot    %{TEMPDIR}/testäö.robot
@@ -75,12 +75,12 @@ Argumentfile from stdin
     Should Contain    ${result.stdout}    from command line
 
 Option name and value joined together
-    Create Argument File    ${ARGFILE}    --name My name
+    Create Argument File    ${ARGFILE}     --name My name
     Create Argument File    ${ARGFILE2}    --doc My docu
     ${result} =    Run Tests    --argumentfile\=${ARGFILE} -A${ARGFILE2}    ${TESTFILE}
     Execution Should Have Succeeded    ${result}
     Should Be Equal    ${SUITE.name}    My name
-    Should Be Equal    ${SUITE.doc}    My docu
+    Should Be Equal    ${SUITE.doc}     My docu
 
 Shortening --argumentfile is not possible
     Create Argument File    ${ARGFILE}    --name My name
