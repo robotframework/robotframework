@@ -14,9 +14,12 @@
 #  limitations under the License.
 
 import inspect
+import os
 import os.path
 import re
+from collections.abc import Mapping
 from pathlib import Path
+from string import Template
 
 from .charwidth import get_char_width
 from .misc import seq2str2
@@ -189,3 +192,55 @@ def getshortdoc(doc_or_item, linesep="\n"):
             break
         lines.append(line)
     return linesep.join(lines)
+
+
+def expand_variables(string, mapping=None):
+    """Expands variables in the ``string`` based on the ``mapping``.
+
+    If ``mapping`` is not given, defaults to using ``os.environ``. Variable names
+    are limited to ASCII letters, numbers and underscores, and they cannot start
+    with a number.
+
+    This is similar to ``os.path.expandvars``, but there are certain differences:
+
+    - Only ``$NAME`` and ``${NAME}`` styles are supported, ``%NAME%`` is not.
+    - Non-existing variables cause a ``ValueError``.
+    - Escaping is possible by doubling the dollar sign like ``$$XXX``.
+    - Default values are supported with syntax ``${NAME=default}``.
+
+    New in Robot Framework 7.4.
+    """
+    try:
+        return TemplateWithDefaults(string).substitute(mapping or os.environ)
+    except KeyError as err:
+        raise ValueError(f"Variable '{err.args[0]}' does not exist.")
+
+
+class TemplateWithDefaults(Template):
+    braceidpattern = r"(?a:[_a-z][_a-z0-9]*(=[^}]*)?)"
+
+    def substitute(self, mapping=None, /, **kwds):
+        ns = NamespaceWithDefaults(mapping, **kwds)
+        return super().substitute(ns)
+
+    def safe_substitute(self, mapping=None, /, **kwds):
+        ns = NamespaceWithDefaults(mapping, **kwds)
+        return super().safe_substitute(ns)
+
+
+class NamespaceWithDefaults(Mapping):
+
+    def __init__(self, data=None, /, **extra):
+        self.data = {**(data or {}), **extra}
+
+    def __getitem__(self, key):
+        if "=" in key:
+            key, default = key.split("=", 1)
+            return self.data.get(key, default)
+        return self.data[key]
+
+    def __iter__(self):
+        return iter(self.data)
+
+    def __len__(self):
+        return len(self.data)

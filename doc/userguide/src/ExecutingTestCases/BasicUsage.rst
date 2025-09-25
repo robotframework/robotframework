@@ -425,6 +425,40 @@ the UTF-8 encoding. Argument files can use any extension. Typically :file:`.txt`
 works fine, but a custom extension like :file:`.args` can be used to separate
 argument files from normal text files.
 
+Expanding environment variables
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Starting from Robot Framework 7.4, it is possible to use environment variables
+in argument files and get them replaced *before* files are processed otherwise.
+For backwards compatibility reasons, this functionality is not enabled by default,
+but it is easy to opt-in by starting an argument file with a line `# expandvars: true`.
+The functionality may be enabled by default in the future, and it is possible
+to opt-out already now by using `# expandvars: false`.
+
+Environment variables can be used in format `$NAME` and `${NAME}`. In addition to
+that, default values are supported like `${NAME=default}`. If a literal dollar sign
+is needed, it can be escaped by doubling it like `$$not_var`::
+
+    # expandvars: true
+    --name $NAME
+    --doc ${NAME}v${VERSION}
+    --metadata Default:${META=default value}
+    --metadata Escape:$$100
+
+Environment variables are not limited to option values. They can also contain
+option names, both names and values, and using the comment character even enables
+conditional options::
+
+    # expandvars: true
+    --${NAME} ${VALUE}
+    ${NAME_AND_VALUE}
+    ${COND1=}  --metadata COND1:This is enabled by default. Set 'COND1' to '#' to disable.
+    ${COND2=#} --metadata COND2:This is disabled by default. Set 'COND2' to '' to enable.
+
+Environment variable names are case-sensitive, limited to ASCII letters, numbers
+and underscores, and they cannot start with a number. Using a non-existing variable
+or an invalid variable name causes an error.
+
 Using argument files
 ~~~~~~~~~~~~~~~~~~~~
 

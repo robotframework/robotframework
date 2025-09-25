@@ -29,6 +29,8 @@ from robot.version import get_full_version
 from .encoding import console_decode, system_decode
 from .filereader import FileReader
 from .misc import plural_or_not as s
+from .robottypes import is_truthy
+from .text import expand_variables
 
 
 def cmdline2list(args, escaping=False):
@@ -392,7 +394,10 @@ class ArgFileParser:
             content = self._read_from_stdin()
         else:
             content = self._read_from_file(path)
-        return self._process_file(content)
+        try:
+            return self._process_file(content)
+        except ValueError as err:
+            raise DataError(f"Processing argument file '{path}' failed: {err}")
 
     def _read_from_stdin(self):
         return console_decode(sys.__stdin__.read())
@@ -406,6 +411,8 @@ class ArgFileParser:
 
     def _process_file(self, content):
         args = []
+        if self._parse_expandvars_pragma(content):
+            content = expand_variables(content)
         for line in content.splitlines():
             line = line.strip()
             if line.startswith("-"):
@@ -413,6 +420,10 @@ class ArgFileParser:
             elif line and not line.startswith("#"):
                 args.append(line)
         return args
+
+    def _parse_expandvars_pragma(self, content):
+        match = re.match(r"#\s*expandvars:\s*(.*)\s*\n", content, flags=re.IGNORECASE)
+        return is_truthy(match.group(1)) if match else False
 
     def _split_option(self, option):
         separator = self._get_option_separator(option)

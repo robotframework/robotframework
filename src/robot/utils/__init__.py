@@ -150,6 +150,7 @@ from .sortable import Sortable as Sortable
 from .text import (
     cut_assign_value as cut_assign_value,
     cut_long_message as cut_long_message,
+    expand_variables as expand_variables,
     format_assign_message as format_assign_message,
     get_console_length as get_console_length,
     getdoc as getdoc,

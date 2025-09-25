@@ -4,9 +4,9 @@ Suite Teardown    Remove Files    ${ARGFILE}    ${ARGFILE 2}    ${ÄRGFÏLË}
 Resource          cli_resource.robot
 
 *** Variables ***
-${ARGFILE}        %{TEMPDIR}/arg_file_1.txt
-${ARGFILE 2}      %{TEMPDIR}/arg_file_2.txt
-${ÄRGFÏLË}        %{TEMPDIR}/ärg_fïlë_3.txt
+${ARGFILE}        %{TEMPDIR}${/}arg_file_1.txt
+${ARGFILE 2}      %{TEMPDIR}${/}arg_file_2.txt
+${ÄRGFÏLË}        %{TEMPDIR}${/}ärg_fïlë_3.txt
 ${BOM}            \uFEFF
 
 *** Test Cases ***
@@ -87,6 +87,47 @@ Shortening --argumentfile is not possible
     ${result} =    Run Tests Without Processing Output    --argumentfil ${ARGFILE}    ${TESTFILE}
     Execution Should Have Failed    ${result}
     ...    Using '--argumentfile' option in shortened format like '--argumentf' is not supported.
+
+Expand environment variables
+    Set Environment Variable    ROBOT_NAME    Robot
+    Create Argument File    ${ARGFILE}
+    ...    \# expandvars: true
+    ...    --name $ROBOT_NAME
+    ...    --doc \${ROBOT_NAME}Framework
+    ...    --metadata Defaults:\${ROBOT_NAME=default not used} \${NON_EXISTING=Framework}
+    ...    --metadata Escape:$ROBOT_NAME and $$ROBOT_NAME and $$$ROBOT_NAME
+    ...    \${WHOLE_LINE=--metadata Whole line:True}
+    ...    \${CONDITIONAL=} --metadata Conditional:True
+    ...    \${CONDITIONAL=#} --metadata Conditional:False
+    Create Argument File    ${ARGFILE2}
+    ...    \# expandvars: false
+    ...    --metadata Disabled:$ROBOT_NAME
+    ${result} =    Run Tests    --argument-file ${ARGFILE} -A ${ARGFILE2}    ${TESTFILE}
+    Execution Should Have Succeeded    ${result}
+    Should Be Equal    ${SUITE.name}                     Robot
+    Should Be Equal    ${SUITE.doc}                      RobotFramework
+    Should Be Equal    ${SUITE.metadata}[Defaults]       Robot Framework
+    Should Be Equal    ${SUITE.metadata}[Escape]         Robot and $ROBOT_NAME and $Robot
+    Should Be Equal    ${SUITE.metadata}[Disabled]       $ROBOT_NAME
+    Should Be Equal    ${SUITE.metadata}[Whole line]     True
+    Should Be Equal    ${SUITE.metadata}[Conditional]    True
+    [Teardown]    Remove Environment Variable    ROBOT_NAME
+
+Non-existing environment variable
+    Create Argument File    ${ARGFILE}
+    ...    \# ExpandVars: True
+    ...    --name $ROBOT_NAME
+    ${result} =    Run Tests Without Processing Output    -A ${ARGFILE}    ${TESTFILE}
+    Execution Should Have Failed    ${result}
+    ...    Processing argument file '${ARGFILE}' failed: Variable 'ROBOT_NAME' does not exist.
+
+Invalid environment variable
+    Create Argument File    ${ARGFILE}
+    ...    \# EXPANDVARS: YES
+    ...    --name $3m
+    ${result} =    Run Tests Without Processing Output    -A ${ARGFILE}    ${TESTFILE}
+    Execution Should Have Failed    ${result}
+    ...    Processing argument file '${ARGFILE}' failed: Invalid placeholder in string: line 2, col 8
 
 *** Keywords ***
 Create Argument File
