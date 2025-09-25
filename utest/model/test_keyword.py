@@ -136,6 +136,71 @@ class TestKeyword(unittest.TestCase):
         assert_raises(AttributeError, Keyword().copy, bad="attr")
         assert_raises(AttributeError, Keyword().deepcopy, bad="attr")
 
+    def test_keyword_custom_metadata_basic(self):
+        """Test basic custom metadata functionality in base Keyword model."""
+        from robot.running import ResourceFile
+        from robot.running.resourcemodel import UserKeyword
+
+        # Create a UserKeyword (which supports custom_metadata)
+        res = ResourceFile()
+        kw = UserKeyword("Test Keyword", owner=res)
+
+        # Test custom_metadata property
+        kw.custom_metadata = {"Owner": "Alice", "Type": "Utility"}
+        self.assertTrue(hasattr(kw, "custom_metadata"))
+        self.assertEqual(
+            dict(kw.custom_metadata), {"Owner": "Alice", "Type": "Utility"}
+        )
+
+        # Test has_custom_metadata property
+        self.assertTrue(kw.has_custom_metadata)
+
+        # Test with empty metadata
+        kw.custom_metadata = {}
+        self.assertFalse(kw.has_custom_metadata)
+
+    def test_keyword_custom_metadata_serialization(self):
+        """Test custom metadata serialization in keyword to_dict."""
+        from robot.running import ResourceFile
+        from robot.running.resourcemodel import UserKeyword
+
+        res = ResourceFile()
+        kw = UserKeyword("Serialization Test", owner=res)
+        kw.custom_metadata = {"Component": "Core", "Priority": "High"}
+
+        # Test to_dict includes custom_metadata
+        data = kw.to_dict()
+        self.assertIn("custom_metadata", data)
+        self.assertEqual(
+            data["custom_metadata"], {"Component": "Core", "Priority": "High"}
+        )
+
+    def test_keyword_custom_metadata_with_copy_operations(self):
+        """Test custom metadata behavior with copy and deepcopy."""
+        from robot.running import ResourceFile
+        from robot.running.resourcemodel import UserKeyword
+
+        res = ResourceFile()
+        original = UserKeyword("Original Keyword", owner=res)
+        original.custom_metadata = {"Original": "True", "Version": "1.0"}
+
+        # Test binding (which performs internal copying)
+        from robot.running.model import TestCase
+
+        tc = TestCase()
+        bound = original.bind(tc.body.create_keyword())
+
+        # Custom metadata should be preserved in bound keyword
+        self.assertTrue(bound.has_custom_metadata)
+        self.assertEqual(
+            dict(bound.custom_metadata), {"Original": "True", "Version": "1.0"}
+        )
+
+        # Modifying bound keyword metadata shouldn't affect original
+        bound.custom_metadata = {"Bound": "True", "Version": "2.0"}
+        self.assertEqual(original.custom_metadata["Version"], "1.0")
+        self.assertEqual(bound.custom_metadata["Version"], "2.0")
+
 
 if __name__ == "__main__":
     unittest.main()

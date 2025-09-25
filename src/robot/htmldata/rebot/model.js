@@ -122,6 +122,7 @@ window.model = (function () {
         test.fullName = data.parent.fullName + '.' + test.name;
         test.formatParentName = function () { return util.formatParentName(test); };
         test.timeout = data.timeout;
+        test.metadata = data.metadata;
         test.populateKeywords = createIterablePopulator('Keyword');
         test.childrenNames = ['keyword'];
         test.isChildrenLoaded = data.isChildrenLoaded;
@@ -150,6 +151,7 @@ window.model = (function () {
         kw.assign = data.assign + (data.assign ? ' =  ' : '');
         kw.tags = data.tags;
         kw.timeout = data.timeout;
+        kw.metadata = data.metadata;
         kw.populateKeywords = createIterablePopulator('Keyword');
         kw.childrenNames = ['keyword'];
         kw.isChildrenLoaded = data.isChildrenLoaded;

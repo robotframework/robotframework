@@ -76,6 +76,7 @@ class Token:
     ARGUMENTS = "ARGUMENTS"
     RETURN = "RETURN"  # TODO: Change to mean RETURN statement in RF 8.
     RETURN_SETTING = RETURN  # TODO: Remove in RF 8.
+    CUSTOM_METADATA = "CUSTOM METADATA"
 
     AS = "AS"
     WITH_NAME = AS  # TODO: Remove in RF 8.
@@ -142,6 +143,7 @@ class Token:
         TAGS,
         ARGUMENTS,
         RETURN,
+        CUSTOM_METADATA,
     }
     HEADER_TOKENS = {
         SETTING_HEADER,

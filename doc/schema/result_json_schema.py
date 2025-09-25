@@ -165,6 +165,7 @@ class TestCase(WithStatus):
     setup: Keyword | None
     teardown: Keyword | None
     body: list[Keyword | For | While | Group | If | Try | Var | Error | Message ] | None
+    custom_metadata: dict[str, str] | None
 
 
 class TestSuite(WithStatus):

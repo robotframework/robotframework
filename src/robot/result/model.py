@@ -44,6 +44,7 @@ from robot.model import (
     BodyItem, create_fixture, DataDict, Tags, TestSuites, TotalStatistics,
     TotalStatisticsBuilder
 )
+from robot.model.metadata import Metadata
 from robot.utils import setter
 
 from .configurer import SuiteConfigurer
@@ -799,6 +800,7 @@ class Keyword(model.Keyword, StatusMixin):
         "_elapsed_time",
         "_setup",
         "_teardown",
+        "_custom_metadata",
     )
 
     def __init__(
@@ -834,6 +836,7 @@ class Keyword(model.Keyword, StatusMixin):
         self.elapsed_time = elapsed_time
         self._setup = None
         self._teardown = None
+        self._custom_metadata = None
         self.body = ()
 
     @setter
@@ -994,7 +997,27 @@ class Keyword(model.Keyword, StatusMixin):
             data["setup"] = self.setup.to_dict()
         if self.has_teardown:
             data["teardown"] = self.teardown.to_dict()
+        # Include custom metadata if present
+        if hasattr(self, "custom_metadata") and self.custom_metadata:
+            data["custom_metadata"] = dict(self.custom_metadata)
         return data
+
+    @setter
+    def custom_metadata(
+        self, metadata: "Metadata|Sequence[tuple[str, str]]"
+    ) -> Metadata:
+        """Custom metadata as a :class:`~robot.model.metadata.Metadata` object."""
+        return Metadata(metadata)
+
+    @property
+    def metadata(self):
+        """Compatibility property that maps to custom_metadata for XML parsing."""
+        try:
+            return self.custom_metadata
+        except AttributeError:
+            # Initialize custom_metadata if not set yet
+            self.custom_metadata = Metadata()
+            return self.custom_metadata
 
 
 class TestCase(model.TestCase[Keyword], StatusMixin):
@@ -1005,7 +1028,14 @@ class TestCase(model.TestCase[Keyword], StatusMixin):
 
     body_class = Body
     fixture_class = Keyword
-    __slots__ = ("status", "message", "_start_time", "_end_time", "_elapsed_time")
+    __slots__ = (
+        "status",
+        "message",
+        "_start_time",
+        "_end_time",
+        "_elapsed_time",
+        "_custom_metadata",
+    )
 
     def __init__(
         self,
@@ -1027,6 +1057,7 @@ class TestCase(model.TestCase[Keyword], StatusMixin):
         self.start_time = start_time
         self.end_time = end_time
         self.elapsed_time = elapsed_time
+        self._custom_metadata = None
 
     @property
     def not_run(self) -> bool:

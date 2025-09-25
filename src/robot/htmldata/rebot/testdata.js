@@ -58,7 +58,7 @@ window.testdata = function () {
     }
 
     function createKeyword(parent, element, strings, index) {
-        var status = element[8];
+        var status = element[9];
         var kw = model.Keyword({
             parent: parent,
             type: KEYWORD_TYPES[element[0]],
@@ -69,6 +69,9 @@ window.testdata = function () {
             args: strings.get(element[5]),
             assign: strings.get(element[6]),
             tags: strings.get(element[7]),
+            metadata: element[8] ? element[8].map(function(meta) {
+                return [strings.get(meta[0]), strings.get(meta[1])];
+            }) : [],
             doc: function () {
                 var doc = strings.get(element[4]);
                 this.doc = function () { return doc; };
@@ -80,10 +83,10 @@ window.testdata = function () {
                 this.message = function () { return msg; };
                 return msg;
             },
-            times: model.Times(times(element[8])),
-            isChildrenLoaded: typeof(element[9]) !== 'number'
+            times: model.Times(times(element[9])),
+            isChildrenLoaded: typeof(element[10]) !== 'number'
         });
-        lazyPopulateKeywordsFromFile(kw, element[9], strings);
+        lazyPopulateKeywordsFromFile(kw, element[10], strings);
         return kw;
     }
 
@@ -106,7 +109,7 @@ window.testdata = function () {
     }
 
     function createTest(parent, element, strings, index) {
-        var status = element[4];
+        var status = element[5];
         var test = model.Test({
             parent: parent,
             id: 't' + (index + 1),
@@ -117,6 +120,9 @@ window.testdata = function () {
                 return doc;
             },
             timeout: strings.get(element[1]),
+            metadata: element[4] ? element[4].map(function(meta) {
+                return [strings.get(meta[0]), strings.get(meta[1])];
+            }) : [],
             status: parseStatus(status),
             message: function () {
                 var msg = status.length == 4 ? strings.get(status[3]) : '';
@@ -125,9 +131,9 @@ window.testdata = function () {
             },
             times: model.Times(times(status)),
             tags: tags(element[3], strings),
-            isChildrenLoaded: typeof(element[5]) !== 'number'
+            isChildrenLoaded: typeof(element[6]) !== 'number'
         });
-        lazyPopulateKeywordsFromFile(test, element[5], strings);
+        lazyPopulateKeywordsFromFile(test, element[6], strings);
         return test;
     }
 

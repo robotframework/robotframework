@@ -510,6 +510,7 @@ class RobotSettings(_BaseSettings):
         "RunEmptySuite"      : ("runemptysuite", False),
         "Variables"          : ("variable", []),
         "VariableFiles"      : ("variablefile", []),
+        "CustomMetadata"     : ("custommetadata", None),
         "Parsers"            : ("parser", []),
         "PreRunModifiers"    : ("prerunmodifier", []),
         "Listeners"          : ("listener", []),
@@ -709,6 +710,10 @@ class RobotSettings(_BaseSettings):
     @property
     def variable_files(self):
         return self["VariableFiles"]
+
+    @property
+    def custom_metadata(self):
+        return self["CustomMetadata"]
 
     @property
     def extension(self):
