@@ -879,7 +879,7 @@ class Process:
 
         If ``escaping`` is given a true value, then backslash is treated as
         an escape character. It can escape unquoted spaces, quotes inside
-        quotes, and so on, but it also requires using doubling backslashes
+        quotes, and so on, but it also requires doubling backslashes
         in Windows paths and elsewhere.
 
         Examples:

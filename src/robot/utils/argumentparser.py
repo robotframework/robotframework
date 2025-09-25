@@ -29,14 +29,13 @@ from robot.version import get_full_version
 from .encoding import console_decode, system_decode
 from .filereader import FileReader
 from .misc import plural_or_not as s
-from .robottypes import is_falsy
 
 
 def cmdline2list(args, escaping=False):
     if isinstance(args, Path):
         return [str(args)]
     lexer = shlex.shlex(args, posix=True)
-    if is_falsy(escaping):
+    if not escaping:
         lexer.escape = ""
     lexer.escapedquotes = "\"'"
     lexer.commenters = ""
