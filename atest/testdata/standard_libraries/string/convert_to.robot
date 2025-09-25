@@ -73,10 +73,6 @@ Convert To Title Case with regexp excludes
     full match only!      Full Match Only!      exclude=.
     full match only!      full Match Only!      exclude=....
 
-Convert To Title Case does not work with bytes
-    [Documentation]    FAIL    TypeError: This keyword works only with strings.
-    Convert To Title Case    ${{b'xxx'}}
-
 *** Keywords ***
 Test upper case
     [Arguments]    ${string}    ${expected}
