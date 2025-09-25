@@ -90,10 +90,12 @@ Shortening --argumentfile is not possible
 
 Expand environment variables
     Set Environment Variable    ROBOT_NAME    Robot
+    Set Environment Variable    ROBOT_NONA    Räbät
     Create Argument File    ${ARGFILE}
     ...    \# expandvars: true
     ...    --name $ROBOT_NAME
     ...    --doc \${ROBOT_NAME}Framework
+    ...    --metadata Non-ASCII:$ROBOT_NONA
     ...    --metadata Defaults:\${ROBOT_NAME=default not used} \${NON_EXISTING=Framework}
     ...    --metadata Escape:$ROBOT_NAME and $$ROBOT_NAME and $$$ROBOT_NAME
     ...    \${WHOLE_LINE=--metadata Whole line:True}
@@ -106,12 +108,13 @@ Expand environment variables
     Execution Should Have Succeeded    ${result}
     Should Be Equal    ${SUITE.name}                     Robot
     Should Be Equal    ${SUITE.doc}                      RobotFramework
+    Should Be Equal    ${SUITE.metadata}[Non-ASCII]      Räbät
     Should Be Equal    ${SUITE.metadata}[Defaults]       Robot Framework
     Should Be Equal    ${SUITE.metadata}[Escape]         Robot and $ROBOT_NAME and $Robot
     Should Be Equal    ${SUITE.metadata}[Disabled]       $ROBOT_NAME
     Should Be Equal    ${SUITE.metadata}[Whole line]     True
     Should Be Equal    ${SUITE.metadata}[Conditional]    True
-    [Teardown]    Remove Environment Variable    ROBOT_NAME
+    [Teardown]    Remove Environment Variable    ROBOT_NAME    ROBOT_NONA
 
 Non-existing environment variable
     Create Argument File    ${ARGFILE}
