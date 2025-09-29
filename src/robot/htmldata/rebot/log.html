@@ -61,7 +61,122 @@ $(document).ready(function() {
         expandSuite(topsuite);
     }
     setTimeout(function () { loadAndExpandElementIds(window.output['expand_keywords']); }, 100);
+    $.tmpl('searchButton').appendTo($('body'));
+    $(document).bind('keydown', handleKeyDown);
 });
+
+function doSearch() {
+    let string = $('#search-string').val();
+    $("#results-table tr").remove();
+    let resultsArray = [];
+    if (string !== "") {
+        $('.keyword').each(function () {
+            const result = {};
+            let key = $(this)[0].id;
+            let elem = $(this).find('.element-header-left')
+            if (elem[0] && elem[0].title.toLowerCase().match(string.toLowerCase())) {
+                elem.addClass("highlighted")
+                result[key] = buildFullName(elem);
+                resultsArray.push(result);
+            } else {
+                elem.removeClass("highlighted")
+            }
+        });
+    }
+    $(createResults(resultsArray)).appendTo("#results-table tbody");
+    $("#results").show();
+}
+
+function buildFullName(elem) {
+    let longname = getLongname(elem[0], "test");
+    if (!longname) {
+        longname = getLongname(elem[0], "suite");
+    }
+    let parentKeywords = getParentKeywords(findAncestor(elem[0], "keyword"));
+    addKeywordLibraryName(parentKeywords, elem);
+    return longname
+        + " | "
+        + parentKeywords.slice(0, -1).join(' | ')
+        + parentKeywords.slice(-1)[0];
+}
+
+function getParentKeywords(ancestor) {
+    let name = [];
+    while (ancestor) {
+        name.push(ancestor.querySelector(".element-header-left").title);
+        ancestor = findAncestor(ancestor, "keyword");
+    }
+    return name.reverse();
+}
+
+function addKeywordLibraryName(parentKeywords, elem) {
+    return parentKeywords.splice(parentKeywords.length - 1, 0,
+        elem.find('.parent-name')[0].innerText.replaceAll(" ", ""));
+}
+
+function getLongname(ancestor, cls) {
+    ancestor = findAncestor(ancestor, cls);
+    if (ancestor) {
+        return ancestor.querySelector(".metadata td").innerText;
+    }
+    return "";
+}
+
+function findAncestor(el, cls) {
+    while ((el = el.parentElement) && !el.classList.contains(cls));
+    return el;
+}
+
+function createResults(resultsArray) {
+    let rows = "";
+    let url = document.URL.split("#")[0] + "#";
+    if (resultsArray.length === 0) {
+        rows += "<tr><td>No results found.</tr></td>";
+    }
+    $.each(resultsArray, function () {
+        rows += "<tr><td><a href="
+            + url + Object.keys(this)[0] + ">"
+            + escape(Object.values(this).toString())
+            + "</a></td></tr>";
+    });
+    return rows;
+}
+
+function escape(string) {
+    return string.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function openSearch() {
+    $('#search').show();
+    $('#open-search').hide();
+    $('#search-string').focus().select();
+}
+
+function closeSearch() {
+    $('#search').hide();
+    $('#open-search').show();
+}
+
+function resetSearch() {
+    $('.keyword').each(function () {
+        let elem = $(this).find('.element-header-left');
+        elem.removeClass("highlighted");
+    });
+    $('#search-string').val('');
+    $("#results-table tr").remove();
+    $("#results").hide();
+}
+
+function handleKeyDown(event) {
+    event = event || window.event;
+    var keyCode = event.keyCode || event.which;
+    if (keyCode === 27)  // esc
+        setTimeout(closeSearch, 0);
+    if (keyCode === 83 && $('#search').is(':hidden'))  // s
+        setTimeout(openSearch, 0);
+    if (keyCode === 13 && $('#search').is(':visible'))  // enter
+        setTimeout(doSearch, 0);
+}
 
 function addLogLevelSelector(minLevel, defaultLevel) {
     var controller = LogLevelController(minLevel, defaultLevel);
@@ -375,6 +490,34 @@ function addExecutionLog(main) {
       {{if showTrace()}}<option value="0">TRACE</option>{{/if}}
     </select>
   </div>
+</script>
+
+<script type="text/x-jquery-tmpl" id="searchButton">
+      <form id="search" action="javascript:void(0)">
+        <fieldset>
+            <legend id="search-title">Search keywords</legend>
+            <input type="text" id="search-string">
+            <p></p>
+            <div id="search-buttons">
+                <input type="button" value="Search" onclick="doSearch()"
+                       title="Search (shortcut: <Enter>)">
+                 <input type="button" value="Reset" onclick="resetSearch()"
+                       title="Reset search">
+                <input type="button" value="Close" onclick="closeSearch()"
+                       title="Close search (shortcut: <Esc>)">
+            </div>
+            <p></p><p></p>
+            <fieldset id="results">
+            <legend> Results </legend>
+            <table id="results-table">
+              <tbody>
+              </tbody>
+            </table>
+            </fieldset>
+            <p></p>
+        </fieldset>
+    </form>
+    <div id="open-search" onclick="openSearch()" title="Search keywords (shortcut: s)"></div>
 </script>
 
 </body>
