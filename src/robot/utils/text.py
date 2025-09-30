@@ -16,7 +16,6 @@
 import inspect
 import os
 import os.path
-import re
 from collections.abc import Mapping
 from pathlib import Path
 from string import Template
@@ -29,7 +28,6 @@ MAX_ERROR_LINES = 40
 MAX_ASSIGN_LENGTH = 200
 _MAX_ERROR_LINE_LENGTH = 78
 _ERROR_CUT_EXPLN = "    [ Message content over the limit has been removed. ]"
-_TAGS_RE = re.compile(r"\s*tags:(.*)", re.IGNORECASE)
 
 
 def cut_long_message(msg):
@@ -169,10 +167,9 @@ def split_tags_from_doc(doc):
     if not doc:
         return doc, tags
     lines = doc.splitlines()
-    match = _TAGS_RE.match(lines[-1])
-    if match:
+    if lines[-1].upper().strip().startswith("TAGS:"):
         doc = "\n".join(lines[:-1]).rstrip()
-        tags = [tag.strip() for tag in match.group(1).split(",")]
+        tags = [tag.strip() for tag in lines[-1].split(":", 1)[1].split(",")]
     return doc, tags
 
 

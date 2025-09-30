@@ -12,7 +12,7 @@ Documentation   This resource file has documentation.
 ...  | ${NONEX} | ${CURDIR} | ${TEMPDIR} |
 ...  | foo      |    bar    |
 ...  tabs \t\t\t here
-
+Keyword Tags    common
 
 *** Keywords ***
 kw  [Documentation]  foo bar `kw 2`.
@@ -29,7 +29,7 @@ kw 3
     No Operation
 
 kw 4  [Arguments]  ${positional}=default  @{varargs}  &{kwargs}
-      [Tags]    kw4    Has    tags    ?!?!??
+      [Tags]    kw4    Has    tags    -common    ?!?!??
       No Operation
 
 kw 5  [DocumeNtation]   foo bar `kw`.
@@ -49,7 +49,7 @@ kw 5  [DocumeNtation]   foo bar `kw`.
       ...  | = first = | = second = |
       ...  | foo       |    bar     |
       ...
-      ...  tags: a, b, ${3}
+      ...  tags: a, b, ${3}, -common
   No Operation
 
 kw 6

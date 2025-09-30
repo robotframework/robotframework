@@ -18,6 +18,7 @@ import re
 import sys
 
 from robot.errors import DataError
+from robot.model import Tags
 from robot.running import (
     ArgumentSpec, ResourceFileBuilder, TestLibrary, TestSuiteBuilder, TypeInfo
 )
@@ -205,9 +206,10 @@ class KeywordDocBuilder:
         return result + match.string
 
     def _get_doc_and_tags(self, kw):
-        doc = self._get_doc(kw)
-        doc, tags = split_tags_from_doc(doc)
-        return doc, kw.tags + tags
+        doc, doc_tags = split_tags_from_doc(self._get_doc(kw))
+        tags = Tags(kw.tags)
+        tags.add(doc_tags, remove_negated=self._resource)
+        return doc, tags
 
     def _get_doc(self, kw):
         if self._resource:

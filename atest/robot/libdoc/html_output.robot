@@ -123,7 +123,7 @@ Private keyword should be excluded
     END
 
 All tags does not include tags from private keywords
-    ${MODEL}[tags]    ['\${3}', '?!?!??', 'a', 'b', 'bar', 'dar', 'foo', 'Has', 'kw4', 'tags']
+    ${MODEL}[tags]    ['\${3}', '?!?!??', 'a', 'b', 'bar', 'common', 'dar', 'foo', 'Has', 'kw4', 'tags']
 
 *** Keywords ***
 Verify Argument Models

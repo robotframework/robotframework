@@ -42,8 +42,8 @@ Spec version
     Spec version should be correct
 
 Resource Tags
-    Specfile Tags Should Be          \${3}    ?!?!??    a      b    bar    dar
-    ...                              foo      Has       kw4    robot:private
+    Specfile Tags Should Be          \${3}    ?!?!??    a      b    bar    common
+    ...                              dar    foo      Has       kw4    robot:private
     ...                              tag-in-private     tags
 
 Resource Has No Inits
@@ -100,10 +100,10 @@ Deprecation
     END
 
 Keyword tags
-    Keyword Tags Should Be          6
+    Keyword Tags Should Be          6    common
     Keyword Tags Should Be          7    ?!?!??    Has    kw4    tags
     Keyword Tags Should Be          8    \${3}   a    b
-    Keyword Tags Should Be          9    bar    dar    foo
+    Keyword Tags Should Be          9    bar    common    dar    foo
 
 Non ASCII
     Keyword Doc Should Be           10    Hyvää yötä.\n\nСпасибо!

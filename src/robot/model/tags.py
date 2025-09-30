@@ -31,7 +31,8 @@ class Tags(Sequence[str]):
     def robot(self, name: str) -> bool:
         """Check do tags contain a reserved tag in format `robot:<name>`.
 
-        This is same as `'robot:<name>' in tags` but considerably faster.
+        `tags.robot('<name>')` is same as `'robot:<name>' in tags`,
+        but the former is considerably faster.
         """
         return name in self._reserved
 
@@ -48,11 +49,17 @@ class Tags(Sequence[str]):
             del nd[""]
         if "NONE" in nd:
             del nd["NONE"]
-        reserved = tuple(tag[6:] for tag in nd.normalized_keys if tag[:6] == "robot:")
-        return tuple(nd), reserved
+        reserved = [tag[6:] for tag in nd.normalized_keys if tag[:6] == "robot:"]
+        return tuple(nd), tuple(reserved)
 
-    def add(self, tags: Iterable[str]):
-        self.__init__(tuple(self) + tuple(Tags(tags)))
+    def add(self, tags: Iterable[str], remove_negated: bool = False):
+        tags = tuple(Tags(tags))
+        if remove_negated:
+            remove = [t[1:] for t in tags if t[0] == "-"]
+            if remove:
+                self.remove(remove)
+                tags = [t for t in tags if t[0] != "-"]
+        self.__init__(tuple(self) + tuple(tags))
 
     def remove(self, tags: Iterable[str]):
         match = TagPatterns(tags).match

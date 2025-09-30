@@ -328,11 +328,7 @@ class TestCaseBuilder(BodyBuilder):
         self.model.timeout = node.value
 
     def visit_Tags(self, node):
-        for tag in node.values:
-            if tag.startswith("-"):
-                self.model.tags.remove(tag[1:])
-            else:
-                self.model.tags.add(tag)
+        self.model.tags.add(node.values, remove_negated=True)
         self._test_has_tags = True
 
     def visit_Template(self, node):
