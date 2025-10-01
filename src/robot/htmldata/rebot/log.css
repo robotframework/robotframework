@@ -215,3 +215,17 @@
 #total-stats tr:hover, #tag-stats tr:hover {
     cursor: default;
 }
+/* Target highlight */
+@keyframes highlight {
+    0% {
+        background: var(--primary-color)
+    }
+    100% {
+        background: var(--target-color);
+    }
+}
+:target {
+    background: var(--target-color);
+    transition: background 0.3s;
+    animation: highlight 4s;
+}
