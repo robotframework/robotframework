@@ -12,13 +12,13 @@
     --elapsed-color: #999;
 }
 /* Containers */
-.suite, .test, #errors {
+.suite, .test, #errors, #errors .messages {
     border-color: #ccc; /* Fallback value */
     border-color: var(--secondary-color);
     border-width: 1px;
     border-style: solid;
-    padding: 0.3em 0.2em;
-    margin: 0.2em 0;
+    padding: 5px;
+    margin-top: 5px;
 }
 .test {
     border-style: dashed;
@@ -26,20 +26,21 @@
 .messages {
     width: 100%;
     border-spacing: 0;
-    padding: 0 3px;
-}
-#errors .messages {
-    padding: 3px;
+    padding: 0 5px;
 }
 .children {
     display: none;
-    margin-left: 1.4em;
+    margin-left: 18px;
+    margin-top: 2px;
 }
-.suite, .test, .keyword {
-    margin-left: -0.2em;
+#errors .children {
+    margin-left: 22px;
 }
-#s1, .suite > .children > .keyword {
-    margin-left: 0;
+.suite, .test {
+    margin-left: -5px;
+}
+#s1, #errors {
+    margin: 0;
 }
 /* Suite, test and kw headers */
 .element-header {

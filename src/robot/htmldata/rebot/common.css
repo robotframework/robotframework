@@ -106,15 +106,16 @@ select {
 #header {
     width: 65em;
     height: 3em;
-    margin: 20px 0 6px 0;
+    margin: 1em 0 0 0;
 }
 h1 {
     float: left;
-    margin: 0 0 0.5em 0;
+    margin: 0 0 1em 0;
     width: 75%;
 }
 h2 {
     clear: left;
+    margin: 1.5em 0 0.5em 0;
 }
 #generated {
     float: right;
