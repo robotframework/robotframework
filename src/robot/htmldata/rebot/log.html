@@ -80,6 +80,7 @@ function addErrors() {
         $.tmpl('errorHeaderTemplate').appendTo($('body'));
         drawErrorsRecursively(errors, $('#errors'));
     }
+    toggleSymbols('errorSection');
 }
 
 function drawErrorsRecursively(errors, target) {
@@ -159,7 +160,18 @@ function addExecutionLog(main) {
 
 <script type="text/x-jquery-tmpl" id="errorHeaderTemplate">
   <h2>{{= testOrTask('{Test}')}} Execution Errors</h2>
-  <table id="errors"></table>
+  <div id="errorSection" class="suite">
+        <div class="element-header closed" onclick="toggleSymbols('errorSection')">
+            <div class="element-header-left">
+                <span class="label error">ERRORS</span>
+                <span class="name">Execution Errors</span>
+            </div>
+            <div class="element-header-toggle" title="Toggle visibility"></div>
+        </div>
+        <div class="children">
+          <table id="errors"></table>
+        </div>
+    </div>
 </script>
 
 <script type="text/x-jquery-tmpl" id="errorTemplate">
