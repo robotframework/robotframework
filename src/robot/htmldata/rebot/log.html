@@ -114,7 +114,7 @@ function makeElementVisible(id) {
 }
 
 function addExecutionLog(main) {
-    $('body').append($(testOrTask('<h2>{Test} Execution Log</h2>')),
+    $('body').append('<h2>Execution Log</h2>',
                      $.tmpl('suiteTemplate', main));
 }
 </script>
@@ -159,7 +159,7 @@ function addExecutionLog(main) {
 </script>
 
 <script type="text/x-jquery-tmpl" id="errorHeaderTemplate">
-  <h2>{{= testOrTask('{Test}')}} Execution Errors</h2>
+  <h2>Execution Errors</h2>
   <div id="errors">
     <div class="element-header closed" onclick="toggleElement('errors')">
       <div class="element-header-toggle" title="Toggle visibility"></div>
