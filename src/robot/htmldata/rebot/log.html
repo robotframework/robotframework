@@ -78,9 +78,9 @@ function addErrors() {
     var errors = window.testdata.errorIterator();
     if (errors.hasNext()) {
         $.tmpl('errorHeaderTemplate').appendTo($('body'));
-        drawErrorsRecursively(errors, $('#errors'));
+        drawErrorsRecursively(errors, $('#errors .messages'));
     }
-    toggleSymbols('errorSection');
+    toggleElement('errors');
 }
 
 function drawErrorsRecursively(errors, target) {
@@ -160,23 +160,23 @@ function addExecutionLog(main) {
 
 <script type="text/x-jquery-tmpl" id="errorHeaderTemplate">
   <h2>{{= testOrTask('{Test}')}} Execution Errors</h2>
-  <div id="errorSection" class="suite">
-        <div class="element-header closed" onclick="toggleSymbols('errorSection')">
-            <div class="element-header-left">
-                <span class="label error">ERRORS</span>
-                <span class="name">Execution Errors</span>
-            </div>
-            <div class="element-header-toggle" title="Toggle visibility"></div>
-        </div>
-        <div class="children">
-          <table id="errors"></table>
-        </div>
+  <div id="errors">
+    <div class="element-header closed" onclick="toggleElement('errors')">
+      <div class="element-header-left">
+        <span class="label error">ERRORS</span>
+        <span class="name">Execution Errors</span>
+      </div>
+      <div class="element-header-toggle" title="Toggle visibility"></div>
     </div>
+    <div class="children">
+      <table class="messages"></table>
+    </div>
+  </div>
 </script>
 
 <script type="text/x-jquery-tmpl" id="errorTemplate">
   <tr id="${id}" class="message-row">
-    <td class="error-time">
+    <td class="time">
       {{if link}}
       <a onclick="makeElementVisible('${link}')" href="#${link}" title="Link to details">${date} ${time}</a>
       {{else}}

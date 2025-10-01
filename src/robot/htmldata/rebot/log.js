@@ -18,18 +18,14 @@ function toggleKeyword(kwId) {
     toggleElement(kwId, ['keyword']);
 }
 
-function toggleSymbols(elementId) {
+function toggleElement(elementId, childrenNames) {
     var element = $('#' + elementId);
     var children = element.children('.children');
     children.toggle(100, '', function () {
         element.children('.element-header').toggleClass('closed');
     });
-    return children;
-}
-
-function toggleElement(elementId, childrenNames) {
-    var children = toggleSymbols(elementId);
-    populateChildren(elementId, children, childrenNames);
+    if (childrenNames)
+        populateChildren(elementId, children, childrenNames);
 }
 
 function populateChildren(elementId, childElement, childrenNames) {

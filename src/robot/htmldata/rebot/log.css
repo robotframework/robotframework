@@ -23,9 +23,13 @@
 .test {
     border-style: dashed;
 }
-#errors, .messages {
+.messages {
     width: 100%;
     border-spacing: 0;
+    padding: 0 3px;
+}
+#errors .messages {
+    padding: 3px;
 }
 .children {
     display: none;
@@ -142,23 +146,18 @@
     background-color: var(--icon-highlight);
 }
 /* Messages and errors */
+.message-row {
+    height: 20px;
+}
 .messages .time, .messages .message {
     font-family: monospace;
     font-size: 1.1em;
 }
-#errors .message {
-    font-family: monospace;
-    font-size: 1.2em;
-}
-.message-row {
-    height: 20px;
-}
-.time {
+.messages .time {
     width: 7.5em;
 }
-.error-time {
-    width: 11em;
-    font-size: 0.9em;
+#errors .time {
+    width: 12.5em;
     white-space: nowrap;
 }
 .level {
