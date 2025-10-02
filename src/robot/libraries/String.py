@@ -24,6 +24,14 @@ from robot.api.deco import keyword
 from robot.utils import FileReader, parse_re_flags, plural_or_not as s, type_name
 from robot.version import get_version
 
+MARKERS = {
+            '[LOWER]': ascii_lowercase,
+            '[UPPER]': ascii_uppercase,
+            '[LETTERS]': ascii_lowercase + ascii_uppercase,
+            '[NUMBERS]': digits,
+            '[ARABIC]':  ''.join(chr(c) for c in range(0x0600, 0x0700)),
+            '[POLISH]': ascii_lowercase + ascii_uppercase + "ąćęłńóśźżĄĆĘŁŃÓŚŹŻ"
+        }
 
 class String:
     """A library for string manipulation and verification.
@@ -642,7 +650,7 @@ class String:
         | ``[UPPER]``   | Uppercase ASCII characters from ``A`` to ``Z``. |
         | ``[LETTERS]`` | Lowercase and uppercase ASCII characters.       |
         | ``[NUMBERS]`` | Numbers from 0 to 9.                            |
-        | ``[ARABIC]``  | Arabic characters from 0x0600 to 0x0700 unicode |
+        | ``[ARABIC]``  | Arabic characters from U+0600 to U+06FF (inclusive). |
         | ``[POLISH]``  | ASCII characters and Polish diacritical signs.  |
 
         Examples:
@@ -653,22 +661,9 @@ class String:
         | ${rnd} = | Generate Random String | 5-10 | # Generates a string 5 to 10 characters long |
 
         Giving ``length`` as a range of values is new in Robot Framework 5.0.
+        Support for markers ``[POLISH]`` and ``[ARABIC]`` is new in Robot Framework 7.4.
         """
 
-        marker_map = {
-            '[LOWER]': ascii_lowercase,
-            '[UPPER]': ascii_uppercase,
-            '[LETTERS]': ascii_lowercase + ascii_uppercase,
-            '[NUMBERS]': digits,
-            '[ARABIC]':  ''.join(chr(c) for c in range(0x0614, 0x0700)),
-            '[POLISH]': (
-                ascii_lowercase + ascii_uppercase +
-                    ''.join([
-                        "\u0105", "\u0107", "\u0119", "\u0142", "\u0144", "\u00F3", "\u015B", "\u017A", "\u017C",
-                        "\u0104", "\u0106", "\u0118", "\u0141", "\u0143", "\u00D3", "\u015A", "\u0179", "\u017B"
-                    ])
-            )
-        }
         if length == "":
             length = 8
         if isinstance(length, str) and re.match(r"^\d+-\d+$", length):
@@ -679,7 +674,7 @@ class String:
             )
         else:
             length = self._convert_to_integer(length, 'length')
-        for name, value in marker_map.items():
+        for name, value in MARKERS.items():
             chars = chars.replace(name, value)
         maxi = len(chars) - 1
         return "".join(chars[randint(0, maxi)] for _ in range(length))
