@@ -3,23 +3,24 @@ import unittest
 from robot.output.console.verbose import VerboseOutput
 from robot.output.logger import Logger
 from robot.output.loggerapi import LoggerApi
-from robot.utils.asserts import assert_equal, assert_false, assert_true
+from robot.utils.asserts import assert_equal, assert_true
 
 
 class MessageMock:
 
-    def __init__(self, timestamp, level, message):
-        self.timestamp = timestamp
-        self.level = level
+    def __init__(self, message, level="INFO"):
         self.message = message
+        self.level = level
 
 
-class LoggerMock:
+class LoggerMock(LoggerApi):
 
     def __init__(self, *expected):
         self.expected = list(expected)
-        self.logger = self
         self.priority = 0
+        self.msg = None
+        self.result_file_args = None
+        self.closed = False
 
     def message(self, msg):
         exp_msg, exp_level = self.expected.pop(0)
@@ -27,23 +28,17 @@ class LoggerMock:
         assert_equal(msg.message, exp_msg)
         self.msg = msg
 
+    def result_file(self, kind, path):
+        self.result_file_args = (kind, path)
+
     def copy(self):
         return LoggerMock(*self.expected)
 
     def close(self):
-        pass
+        self.closed = True
 
     def __iter__(self):
         yield self
-
-
-class LoggerMock2(LoggerMock, LoggerApi):
-
-    def result_file(self, kind, path):
-        self.result_file_args = (kind, path)
-
-    def close(self):
-        self.closed = True
 
 
 class TestLogger(unittest.TestCase):
@@ -55,52 +50,56 @@ class TestLogger(unittest.TestCase):
         logger = LoggerMock(("Hello, world!", "INFO"))
         self.logger.register_logger(logger)
         self.logger.write("Hello, world!", "INFO")
-        assert_true(logger.msg.timestamp.year >= 2023)
+        assert_true(logger.msg.timestamp.year >= 2025)
 
     def test_write_to_one_logger_with_trace_level(self):
         logger = LoggerMock(("expected message", "TRACE"))
         self.logger.register_logger(logger)
         self.logger.write("expected message", "TRACE")
-        assert_true(hasattr(logger, "msg"))
+        assert_equal(logger.msg.message, "expected message")
 
     def test_write_to_multiple_loggers(self):
-        logger = LoggerMock(("Hello, world!", "INFO"))
-        logger2 = logger.copy()
-        logger3 = logger.copy()
-        self.logger.register_logger(logger, logger2, logger3)
-        self.logger.message(MessageMock("", "INFO", "Hello, world!"))
-        assert_true(logger.msg is logger2.msg)
-        assert_true(logger.msg is logger.msg)
+        logger1 = LoggerMock(("Hello, world!", "INFO"))
+        logger2 = logger1.copy()
+        logger3 = logger1.copy()
+        message = MessageMock("Hello, world!")
+        self.logger.register_logger(logger1, logger2, logger3)
+        self.logger.message(message)
+        for logger in logger1, logger2, logger3:
+            assert_true(logger.msg is message)
 
     def test_write_multiple_messages(self):
-        msgs = [
+        messages = [
             ("0", "ERROR"),
             ("1", "WARN"),
             ("2", "INFO"),
             ("3", "DEBUG"),
             ("4", "TRACE"),
         ]
-        logger = LoggerMock(*msgs)
+        logger = LoggerMock(*messages)
         self.logger.register_logger(logger)
-        for msg, level in msgs:
+        for msg, level in messages:
             self.logger.write(msg, level)
             assert_equal(logger.msg.message, msg)
             assert_equal(logger.msg.level, level)
 
-    def test_all_methods(self):
-        logger = LoggerMock2(("Hello, world!", "INFO"))
+    def test_result_file_methods(self):
+        logger = LoggerMock()
         self.logger.register_logger(logger)
         self.logger.output_file("out.xml")
         assert_equal(logger.result_file_args, ("Output", "out.xml"))
         self.logger.log_file("log.html")
         assert_equal(logger.result_file_args, ("Log", "log.html"))
+
+    def test_close(self):
+        logger = LoggerMock()
+        self.logger.register_logger(logger)
         self.logger.close()
         assert_true(logger.closed)
 
     def test_close_removes_registered_loggers(self):
-        logger = LoggerMock(("Hello, world!", "INFO"))
-        logger2 = LoggerMock2(("Hello, world!", "INFO"))
-        self.logger.register_logger(logger, logger2)
+        self.logger.register_logger(LoggerMock(), LoggerMock(), LoggerMock())
+        assert_equal(len(self.logger._other_loggers), 3)
         self.logger.close()
         assert_equal(self.logger._other_loggers, [])
 
@@ -123,52 +122,45 @@ class TestLogger(unittest.TestCase):
         self.logger.write("This message is not cached", "INFO")
         logger = LoggerMock(("", ""))
         self.logger.register_logger(logger)
-        assert_false(hasattr(logger, "msg"))
+        assert_equal(logger.msg, None)
 
     def test_start_and_end_suite_test_and_keyword(self):
         class MyLogger(LoggerApi):
-            def start_suite(self, suite, result):
-                self.started_suite = suite
+            def start_suite(self, data, result):
+                self.started_suite = (data, result)
 
-            def end_suite(self, suite, result):
-                self.ended_suite = suite
+            def end_suite(self, data, result):
+                self.ended_suite = (data, result)
 
-            def start_test(self, test, result):
-                self.started_test = test
+            def start_test(self, data, result):
+                self.started_test = (data, result)
 
-            def end_test(self, test, result):
-                self.ended_test = test
+            def end_test(self, data, result):
+                self.ended_test = (data, result)
 
-            def start_keyword(self, keyword, result):
-                self.started_keyword = keyword
+            def start_keyword(self, data, result):
+                self.started_keyword = (data, result)
 
-            def end_keyword(self, keyword, result):
-                self.ended_keyword = keyword
-
-        class Arg:
-            type = None
-            tests = ()
-            suites = ()
-            test_count = 0
+            def end_keyword(self, data, result):
+                self.ended_keyword = (data, result)
 
         logger = MyLogger()
         self.logger.register_logger(logger)
         for name in "suite", "test", "keyword":
-            arg = Arg()
-            arg.result = arg
-            for stend in "start", "end":
-                getattr(self.logger, stend + "_" + name)(arg, arg)
-                assert_equal(getattr(logger, stend + "ed_" + name), arg)
+            for prefix in "start", "end":
+                data, result = object(), object()
+                getattr(self.logger, f"{prefix}_{name}")(data, result)
+                assert_equal(getattr(logger, f"{prefix}ed_{name}"), (data, result))
 
     def test_verbose_console_output_is_automatically_registered(self):
         logger = Logger()
-        start_suite = logger._console_logger.start_suite
+        start_suite = logger._console.start_suite
         assert_true(start_suite.__self__.__class__ is VerboseOutput)
 
     def test_automatic_console_logger_can_be_disabled(self):
         logger = Logger()
         logger.unregister_console_logger()
-        assert_equal(logger._console_logger, None)
+        assert_equal(logger._console, None)
         self._number_of_registered_loggers_should_be(0, logger)
 
     def test_automatic_console_logger_can_be_disabled_after_registering_logger(self):
@@ -194,7 +186,7 @@ class TestLogger(unittest.TestCase):
         logger = Logger()
         logger.register_console_logger(width=42)
         self._number_of_registered_loggers_should_be(1, logger)
-        assert_equal(logger._console_logger.start_suite.__self__.writer.width, 42)
+        assert_equal(logger._console.start_suite.__self__.writer.width, 42)
 
     def test_unregister_logger(self):
         logger1, logger2, logger3 = LoggerMock(), LoggerMock(), LoggerMock()
@@ -212,25 +204,22 @@ class TestLogger(unittest.TestCase):
 
     def test_start_and_end_loggers_and_iter(self):
         logger = Logger()
-        xml = LoggerMock()
+        console = logger._console
+        output = LoggerMock()
         listener = LoggerMock()
         lib_listener = LoggerMock()
         other = LoggerMock()
-        logger.register_output_file(xml)
+        logger.register_output_file(output)
         logger.register_listeners(listener, lib_listener)
         logger.register_logger(other)
-        start_loggers = [
-            proxy.logger
-            for proxy in logger.start_loggers
-            if not isinstance(proxy, LoggerApi)
-        ]
-        end_loggers = [
-            proxy.logger
-            for proxy in logger.end_loggers
-            if not isinstance(proxy, LoggerApi)
-        ]
-        assert_equal(start_loggers, [other, xml, listener, lib_listener])
-        assert_equal(end_loggers, [listener, lib_listener, xml, other])
+        assert_equal(
+            logger.start_loggers,
+            [other, console, output, listener, lib_listener],
+        )
+        assert_equal(
+            logger.end_loggers,
+            [listener, lib_listener, console, output, other],
+        )
         assert_equal(list(logger), list(logger.end_loggers))
 
     def _number_of_registered_loggers_should_be(self, number, logger=None):

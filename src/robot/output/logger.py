@@ -47,11 +47,11 @@ class Logger(AbstractLogger):
     notified.  Messages are also cached and cached messages written to new
     loggers when they are registered.
 
-    NOTE: This API is likely to change in future versions.
+    NOTE: This is a private API and likely to change in the future.
     """
 
     def __init__(self, register_console_logger=True):
-        self._console_logger = None
+        self._console = None
         self._syslog = None
         self._output_file = None
         self._cli_listeners = None
@@ -68,32 +68,23 @@ class Logger(AbstractLogger):
             self.register_console_logger()
 
     @property
+    def _std_loggers(self):
+        loggers = (self._console, self._syslog, self._output_file)
+        return [lo for lo in loggers if lo]
+
+    @property
     def _listeners(self):
-        cli_listeners = list(self._cli_listeners or [])
-        lib_listeners = list(self._lib_listeners or [])
+        cli_listeners = tuple(self._cli_listeners or ())
+        lib_listeners = tuple(self._lib_listeners or ())
         return sorted(cli_listeners + lib_listeners, key=lambda li: -li.priority)
 
     @property
     def start_loggers(self):
-        loggers = (
-            *self._other_loggers,
-            self._console_logger,
-            self._syslog,
-            self._output_file,
-            *self._listeners,
-        )
-        return [logger for logger in loggers if logger]
+        return [*self._other_loggers, *self._std_loggers, *self._listeners]
 
     @property
     def end_loggers(self):
-        loggers = (
-            *self._listeners,
-            self._console_logger,
-            self._syslog,
-            self._output_file,
-            *self._other_loggers,
-        )
-        return [logger for logger in loggers if logger]
+        return [*self._listeners, *self._std_loggers, *self._other_loggers]
 
     def __iter__(self):
         return iter(self.end_loggers)
@@ -118,12 +109,10 @@ class Logger(AbstractLogger):
         stdout=None,
         stderr=None,
     ):
-        logger = ConsoleOutput(type, width, colors, links, markers, stdout, stderr)
-        self._console_logger = self._wrap_and_relay(logger)
-
-    def _wrap_and_relay(self, logger):
-        self._relay_cached_messages(logger)
-        return logger
+        self._console = ConsoleOutput(
+            type, width, colors, links, markers, stdout, stderr
+        )
+        self._relay_cached_messages(self._console)
 
     def _relay_cached_messages(self, logger):
         if self._message_cache:
@@ -131,7 +120,7 @@ class Logger(AbstractLogger):
                 logger.message(msg)
 
     def unregister_console_logger(self):
-        self._console_logger = None
+        self._console = None
 
     def register_syslog(self, path=None, level="INFO"):
         if not path:
@@ -140,14 +129,15 @@ class Logger(AbstractLogger):
         if path.upper() == "NONE":
             return
         try:
-            syslog = FileLogger(path, level)
+            self._syslog = FileLogger(path, level)
         except DataError as err:
             self.error(f"Opening syslog file '{path}' failed: {err}")
         else:
-            self._syslog = self._wrap_and_relay(syslog)
+            self._relay_cached_messages(self._syslog)
 
     def register_output_file(self, logger):
-        self._output_file = self._wrap_and_relay(logger)
+        self._relay_cached_messages(logger)
+        self._output_file = logger
 
     def unregister_output_file(self):
         self._output_file = None
@@ -160,7 +150,7 @@ class Logger(AbstractLogger):
 
     def register_logger(self, *loggers):
         for logger in loggers:
-            logger = self._wrap_and_relay(logger)
+            self._relay_cached_messages(logger)
             self._other_loggers.append(logger)
 
     def unregister_logger(self, *loggers):
