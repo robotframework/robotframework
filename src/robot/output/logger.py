@@ -196,7 +196,11 @@ class Logger(AbstractLogger):
         """Log messages written (mainly) by libraries."""
         for logger in self:
             logger.log_message(msg)
-        if self._log_message_parents and self._output_file.is_logged(msg):
+        if (
+            self._log_message_parents
+            and self._output_file
+            and self._output_file.is_logged(msg)
+        ):
             self._log_message_parents[-1].body.append(msg)
         if msg.level in ("WARN", "ERROR"):
             self.message(msg)

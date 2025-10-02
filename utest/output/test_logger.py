@@ -19,14 +19,22 @@ class LoggerMock(LoggerApi):
         self.expected = list(expected)
         self.priority = 0
         self.msg = None
+        self.log_msg = None
         self.result_file_args = None
         self.closed = False
 
     def message(self, msg):
+        self._verify_message(msg)
+        self.msg = msg
+
+    def log_message(self, msg):
+        self._verify_message(msg)
+        self.log_msg = msg
+
+    def _verify_message(self, msg):
         exp_msg, exp_level = self.expected.pop(0)
         assert_equal(msg.level, exp_level)
         assert_equal(msg.message, exp_msg)
-        self.msg = msg
 
     def result_file(self, kind, path):
         self.result_file_args = (kind, path)
@@ -151,6 +159,23 @@ class TestLogger(unittest.TestCase):
                 data, result = object(), object()
                 getattr(self.logger, f"{prefix}_{name}")(data, result)
                 assert_equal(getattr(logger, f"{prefix}ed_{name}"), (data, result))
+
+    def test_log_message_when_no_message_parent(self):
+        logger = LoggerMock(("Hello, world!", "DEBUG"))
+        message = MessageMock("Hello, world!", "DEBUG")
+        self.logger.register_logger(logger)
+        self.logger.log_message(message)
+        assert_true(logger.msg is message)
+        assert_true(logger.log_msg is None)
+
+    def test_log_message(self):
+        logger = LoggerMock(("Hello, world!", "DEBUG"))
+        message = MessageMock("Hello, world!", "DEBUG")
+        self.logger.register_logger(logger)
+        self.logger.start_test(None, None)
+        self.logger.log_message(message)
+        assert_true(logger.msg is None)
+        assert_true(logger.log_msg is message)
 
     def test_verbose_console_output_is_automatically_registered(self):
         logger = Logger()
