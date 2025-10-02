@@ -98,9 +98,12 @@ class Message(BaseMessage):
         level: "MessageLevel|PseudoLevel" = "INFO",
         html: bool = False,
         timestamp: "datetime|str|None" = None,
+        also_console: bool = False,
     ):
         level, html = self._get_level_and_html(level, html)
-        super().__init__(message, level, html, timestamp or datetime.now())
+        super().__init__(
+            message, level, html, timestamp or datetime.now(), also_console
+        )
 
     def _get_level_and_html(self, level, html) -> "tuple[MessageLevel, bool]":
         level = level.upper()

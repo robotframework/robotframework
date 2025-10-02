@@ -74,7 +74,12 @@ from robot.running.context import EXECUTION_CONTEXTS
 LOGLEVEL = Literal["TRACE", "DEBUG", "INFO", "CONSOLE", "HTML", "WARN", "ERROR"]
 
 
-def write(msg: str, level: LOGLEVEL = "INFO", html: bool = False):
+def write(
+    msg: str,
+    level: LOGLEVEL = "INFO",
+    html: bool = False,
+    also_console: bool | None = None,
+):
     """Writes the message to the log file using the given level.
 
     Valid log levels are ``TRACE``, ``DEBUG``, ``INFO`` (default), ``WARN``,
@@ -88,8 +93,11 @@ def write(msg: str, level: LOGLEVEL = "INFO", html: bool = False):
     specific methods such as ``info`` and ``debug`` that have separate
     ``html`` argument to control the message format.
     """
+    if also_console is None:
+        also_console = level in ("WARN", "ERROR")
+
     if EXECUTION_CONTEXTS.current is not None:
-        librarylogger.write(msg, level, html)
+        librarylogger.write(msg, level, html, also_console)
     else:
         logger = logging.getLogger("RobotFramework")
         level_int = {
@@ -120,19 +128,17 @@ def info(msg: str, html: bool = False, also_console: bool = False):
     If ``also_console`` argument is set to ``True``, the message is
     written both to the log file and to the console.
     """
-    write(msg, "INFO", html)
-    if also_console:
-        console(msg)
+    write(msg, "INFO", html, also_console)
 
 
-def warn(msg: str, html: bool = False):
+def warn(msg: str, html: bool = False, also_console: bool = True):
     """Writes the message to the log file using the ``WARN`` level."""
-    write(msg, "WARN", html)
+    write(msg, "WARN", html, also_console)
 
 
-def error(msg: str, html: bool = False):
+def error(msg: str, html: bool = False, also_console: bool = True):
     """Writes the message to the log file using the ``ERROR`` level."""
-    write(msg, "ERROR", html)
+    write(msg, "ERROR", html, also_console)
 
 
 def console(
