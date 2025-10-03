@@ -29,15 +29,15 @@ class TestJsonConverter(unittest.TestCase):
             fullName="Misc",
             doc="<p>My doc</p>",
             metadata=[("1", "<p>2</p>"), ("abc", "<p>123</p>")],
-            numberOfTests=206,
+            numberOfTests=207,
             tests=[],
             keywords=[],
         )
         test_convert(
-            self.suite["suites"][0],
+            self.suite["suites"][1],
             source=str(DATADIR / "dummy_lib_test.robot"),
             relativeSource="misc/dummy_lib_test.robot",
-            id="s1-s1",
+            id="s1-s2",
             name="Dummy Lib Test",
             fullName="Misc.Dummy Lib Test",
             doc="",
@@ -47,12 +47,12 @@ class TestJsonConverter(unittest.TestCase):
             keywords=[],
         )
         test_convert(
-            self.suite["suites"][6]["suites"][1]["suites"][-1],
+            self.suite["suites"][7]["suites"][1]["suites"][-1],
             source=str(
                 DATADIR / "multiple_suites/02__sub.suite.1/second__.Sui.te.2..robot"
             ),
             relativeSource="misc/multiple_suites/02__sub.suite.1/second__.Sui.te.2..robot",
-            id="s1-s7-s2-s2",
+            id="s1-s8-s2-s2",
             name=".Sui.te.2.",
             fullName="Misc.Multiple Suites.Sub.Suite.1..Sui.te.2.",
             doc="",
@@ -105,8 +105,8 @@ class TestJsonConverter(unittest.TestCase):
 
     def test_test(self):
         test_convert(
-            self.suite["suites"][0]["tests"][0],
-            id="s1-s1-t1",
+            self.suite["suites"][1]["tests"][0],
+            id="s1-s2-t1",
             name="Dummy Test",
             fullName="Misc.Dummy Lib Test.Dummy Test",
             doc="",
@@ -114,8 +114,8 @@ class TestJsonConverter(unittest.TestCase):
             timeout="",
         )
         test_convert(
-            self.suite["suites"][5]["tests"][-7],
-            id="s1-s6-t5",
+            self.suite["suites"][6]["tests"][-7],
+            id="s1-s7-t5",
             name="Fifth",
             fullName="Misc.Many Tests.Fifth",
             doc="",
@@ -124,7 +124,7 @@ class TestJsonConverter(unittest.TestCase):
         )
         test_convert(
             self.suite["suites"][-4]["tests"][0],
-            id="s1-s14-t1",
+            id="s1-s15-t1",
             name="Default Test Timeout",
             fullName="Misc.Timeouts.Default Test Timeout",
             doc="<p>I have a timeout</p>",
@@ -150,13 +150,13 @@ class TestJsonConverter(unittest.TestCase):
 
     def test_keyword(self):
         test_convert(
-            self.suite["suites"][0]["tests"][0]["keywords"][0],
+            self.suite["suites"][1]["tests"][0]["keywords"][0],
             name="dummykw",
             arguments="",
             type="KEYWORD",
         )
         test_convert(
-            self.suite["suites"][5]["tests"][-7]["keywords"][0],
+            self.suite["suites"][6]["tests"][-7]["keywords"][0],
             name="Log",
             arguments="Test 5",
             type="KEYWORD",
@@ -164,13 +164,13 @@ class TestJsonConverter(unittest.TestCase):
 
     def test_suite_setup_and_teardown(self):
         test_convert(
-            self.suite["suites"][5]["keywords"][0],
+            self.suite["suites"][6]["keywords"][0],
             name="Log",
             arguments="Setup",
             type="SETUP",
         )
         test_convert(
-            self.suite["suites"][5]["keywords"][1],
+            self.suite["suites"][6]["keywords"][1],
             name="No operation",
             arguments="",
             type="TEARDOWN",
@@ -178,13 +178,13 @@ class TestJsonConverter(unittest.TestCase):
 
     def test_test_setup_and_teardown(self):
         test_convert(
-            self.suite["suites"][10]["tests"][0]["keywords"][0],
+            self.suite["suites"][11]["tests"][0]["keywords"][0],
             name="${TEST SETUP}",
             arguments="",
             type="SETUP",
         )
         test_convert(
-            self.suite["suites"][10]["tests"][0]["keywords"][2],
+            self.suite["suites"][11]["tests"][0]["keywords"][2],
             name="${TEST TEARDOWN}",
             arguments="",
             type="TEARDOWN",
@@ -192,13 +192,13 @@ class TestJsonConverter(unittest.TestCase):
 
     def test_for_loops(self):
         test_convert(
-            self.suite["suites"][2]["tests"][0]["keywords"][0],
+            self.suite["suites"][3]["tests"][0]["keywords"][0],
             name="${pet} IN [ @{ANIMALS} ]",
             arguments="",
             type="FOR",
         )
         test_convert(
-            self.suite["suites"][2]["tests"][1]["keywords"][0],
+            self.suite["suites"][3]["tests"][1]["keywords"][0],
             name="${i} IN RANGE [ 10 ]",
             arguments="",
             type="FOR",
@@ -206,7 +206,7 @@ class TestJsonConverter(unittest.TestCase):
 
     def test_assign(self):
         test_convert(
-            self.suite["suites"][7]["tests"][1]["keywords"][0],
+            self.suite["suites"][8]["tests"][1]["keywords"][0],
             name="${msg} = Evaluate",
             arguments=r"'Fran\\xe7ais'",
             type="KEYWORD",

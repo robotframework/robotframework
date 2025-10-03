@@ -55,6 +55,7 @@ class StreamWithOnlyWriteAndFlush:
 class TestRun(RunningTestCase):
     data = join(ROOT, "atest", "testdata", "misc", "pass_and_fail.robot")
     warn = join(ROOT, "atest", "testdata", "misc", "warnings_and_errors.robot")
+    async_ = join(ROOT, "atest", "testdata", "misc", "async.robot")
     nonex = join(TEMP, "non-existing-file-this-is.robot")
     remove_files = [LOG_PATH, REPORT_PATH, OUTPUT_PATH]
 
@@ -75,6 +76,16 @@ class TestRun(RunningTestCase):
     def test_run_error(self):
         assert_equal(run(self.nonex), 252)
         self._assert_outputs(stderr=[("[ ERROR ]", 1), (self.nonex, 1), ("--help", 1)])
+
+    def test_async(self):
+        assert_equal(run(self.async_, outputdir=TEMP, report=None), 0)
+        self._assert_outputs([("Async", 2), (LOG, 1), ("Report:", 0)])
+        assert exists(LOG_PATH)
+
+    def test_async_multiple_times(self):
+        assert_equal(run_without_outputs(self.async_), 0)
+        assert_equal(run_without_outputs(self.async_, name="New Name"), 0)
+        self._assert_outputs([("Async", 2), ("New Name", 2), (LOG, 0)])
 
     def test_custom_stdout(self):
         stdout = StringIO()
