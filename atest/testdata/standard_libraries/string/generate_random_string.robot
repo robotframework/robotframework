@@ -1,11 +1,14 @@
 *** Settings ***
 Library           String
+Library           BuiltIn
 
 *** Variables ***
 ${LOWER}          qwertyuiopasdfghjklzxcvbnm
 ${UPPER}          QWERTYUIOPASDFGHJKLZXCVBNM
 ${LETTERS}        ${LOWER}${UPPER}
 ${NUMBERS}        1234567890
+${ARABIC}         ؀؁؂؃؄؅؆؇؈؉؊؋،؍؎؏ؘؙؚؐؑؒؓؔؕؖؗ؛؝؞؟ؠءآأؤإئابةتثجحخدذرزسشصضطظعغػؼؽؾؿـفقكلمنهوىيًٌٍَُِّْٕٖٜٟٓٔٗ٘ٙٚٛٝٞ٠١٢٣٤٥٦٧٨٩٪٫٬٭ٮٯٰٱٲٳٴٵٶٷٸٹٺٻټٽپٿڀځڂڃڄڅچڇڈډڊڋڌڍڎڏڐڑڒړڔڕږڗژڙښڛڜڝڞڟڠڡڢڣڤڥڦڧڨکڪګڬڭڮگڰڱڲڳڴڵڶڷڸڹںڻڼڽھڿۀہۂۃۄۅۆۇۈۉۊۋیۍێۏېۑےۓ۔ەۖۗۘۙۚۛۜ۝۞ۣ۟۠ۡۢۤۥۦۧۨ۩۪ۭ۫۬ۮۯ۰۱۲۳۴۵۶۷۸۹ۺۻۼ۽۾ۿ؎
+${POLISH}         ${LETTERS}ąćęłńóśźżĄĆĘŁŃÓŚŹŻ
 
 *** Test Cases ***
 Generate Random String With Defaults
@@ -47,6 +50,12 @@ Generate Random String With [LETTERS]
 
 Generate Random String With [NUMBERS]
     Test Random String With    ${NUMBERS}    [NUMBERS]
+
+Generate Random String With [ARABIC]
+    Test Random String With    ${ARABIC}    [ARABIC]
+
+Generate Random String With [POLISH]
+    Test Random String With    ${POLISH}    [POLISH]
 
 *** Keywords ***
 String Length Should Be And It Should Consist Of
