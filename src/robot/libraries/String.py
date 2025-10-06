@@ -24,6 +24,15 @@ from robot.api.deco import keyword
 from robot.utils import FileReader, parse_re_flags, plural_or_not as s, type_name
 from robot.version import get_version
 
+MARKERS = {
+    "[LOWER]": ascii_lowercase,
+    "[UPPER]": ascii_uppercase,
+    "[LETTERS]": ascii_lowercase + ascii_uppercase,
+    "[NUMBERS]": digits,
+    "[ARABIC]": "".join(chr(c) for c in range(0x0600, 0x0700)),
+    "[POLISH]": ascii_lowercase + ascii_uppercase + "ąćęłńóśźżĄĆĘŁŃÓŚŹŻ",
+}
+
 
 class String:
     """A library for string manipulation and verification.
@@ -642,6 +651,8 @@ class String:
         | ``[UPPER]``   | Uppercase ASCII characters from ``A`` to ``Z``. |
         | ``[LETTERS]`` | Lowercase and uppercase ASCII characters.       |
         | ``[NUMBERS]`` | Numbers from 0 to 9.                            |
+        | ``[ARABIC]``  | Arabic characters from U+0600 to U+06FF (inclusive). |
+        | ``[POLISH]``  | ASCII characters and Polish diacritical signs.  |
 
         Examples:
         | ${ret} = | Generate Random String |
@@ -651,6 +662,7 @@ class String:
         | ${rnd} = | Generate Random String | 5-10 | # Generates a string 5 to 10 characters long |
 
         Giving ``length`` as a range of values is new in Robot Framework 5.0.
+        Support for markers ``[POLISH]`` and ``[ARABIC]`` is new in Robot Framework 7.4.
         """
         if length == "":
             length = 8
@@ -662,12 +674,7 @@ class String:
             )
         else:
             length = self._convert_to_integer(length, "length")
-        for name, value in [
-            ("[LOWER]", ascii_lowercase),
-            ("[UPPER]", ascii_uppercase),
-            ("[LETTERS]", ascii_lowercase + ascii_uppercase),
-            ("[NUMBERS]", digits),
-        ]:
+        for name, value in MARKERS.items():
             chars = chars.replace(name, value)
         maxi = len(chars) - 1
         return "".join(chars[randint(0, maxi)] for _ in range(length))
