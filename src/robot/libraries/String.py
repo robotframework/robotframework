@@ -664,7 +664,6 @@ class String:
         Giving ``length`` as a range of values is new in Robot Framework 5.0.
         Support for markers ``[POLISH]`` and ``[ARABIC]`` is new in Robot Framework 7.4.
         """
-
         if length == "":
             length = 8
         if isinstance(length, str) and re.match(r"^\d+-\d+$", length):
