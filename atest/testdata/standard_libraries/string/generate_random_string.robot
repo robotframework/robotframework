@@ -1,13 +1,12 @@
 *** Settings ***
 Library           String
-Library           BuiltIn
 
 *** Variables ***
 ${LOWER}          qwertyuiopasdfghjklzxcvbnm
 ${UPPER}          QWERTYUIOPASDFGHJKLZXCVBNM
 ${LETTERS}        ${LOWER}${UPPER}
 ${NUMBERS}        1234567890
-${ARABIC}         ؀؁؂؃؄؅؆؇؈؉؊؋،؍؎؏ؘؙؚؐؑؒؓؔؕؖؗ؛؝؞؟ؠءآأؤإئابةتثجحخدذرزسشصضطظعغػؼؽؾؿـفقكلمنهوىيًٌٍَُِّْٕٖٜٟٓٔٗ٘ٙٚٛٝٞ٠١٢٣٤٥٦٧٨٩٪٫٬٭ٮٯٰٱٲٳٴٵٶٷٸٹٺٻټٽپٿڀځڂڃڄڅچڇڈډڊڋڌڍڎڏڐڑڒړڔڕږڗژڙښڛڜڝڞڟڠڡڢڣڤڥڦڧڨکڪګڬڭڮگڰڱڲڳڴڵڶڷڸڹںڻڼڽھڿۀہۂۃۄۅۆۇۈۉۊۋیۍێۏېۑےۓ۔ەۖۗۘۙۚۛۜ۝۞ۣ۟۠ۡۢۤۥۦۧۨ۩۪ۭ۫۬ۮۯ۰۱۲۳۴۵۶۷۸۹ۺۻۼ۽۾ۿ؎
+${ARABIC}         ${{[chr(i) for i in range(0x600, 0x700)]}}
 ${POLISH}         ${LETTERS}ąćęłńóśźżĄĆĘŁŃÓŚŹŻ
 
 *** Test Cases ***
