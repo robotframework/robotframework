@@ -254,6 +254,9 @@ community has provided some great contributions:
 - `Sahil Thakor <https://github.com/kiteretsu-daihyakka>`__ added support to
   collapse execution errors and warnings in the log file (`#4888`_).
 
+- `Menium <https://github.com/menium878>`__ added Polish and Arabic support to
+  the `Generate Random String` keyword (`#5093`_).
+
 - `Son, Mai H. (Mason) <https://github.com/maisonsmd>`__ reported and fixed a bug in
   using the `robot.run` API multiple times if tests use use async keywords (`#5500`_).
 
@@ -341,6 +344,11 @@ Full list of fixes and enhancements
       - medium
       - BuiltIn: Explicitly mark arguments that are positional-only
       - beta 1
+    * - `#5093`_
+      - enhancement
+      - medium
+      - Add Arabic and Polish support to `Generate Random String` keyword
+      - beta 1
     * - `#5186`_
       - enhancement
       - medium
@@ -372,7 +380,7 @@ Full list of fixes and enhancements
       - Drop "Test/Task" prefixes from report and log headers
       - beta 1
 
-Altogether 19 issues. View on the `issue tracker <https://github.com/robotframework/robotframework/issues?q=milestone%3Av7.4>`__.
+Altogether 20 issues. View on the `issue tracker <https://github.com/robotframework/robotframework/issues?q=milestone%3Av7.4>`__.
 
 .. _#4537: https://github.com/robotframework/robotframework/issues/4537
 .. _#5439: https://github.com/robotframework/robotframework/issues/5439
@@ -387,6 +395,7 @@ Altogether 19 issues. View on the `issue tracker <https://github.com/robotframew
 .. _#3874: https://github.com/robotframework/robotframework/issues/3874
 .. _#4888: https://github.com/robotframework/robotframework/issues/4888
 .. _#5025: https://github.com/robotframework/robotframework/issues/5025
+.. _#5093: https://github.com/robotframework/robotframework/issues/5093
 .. _#5186: https://github.com/robotframework/robotframework/issues/5186
 .. _#5492: https://github.com/robotframework/robotframework/issues/5492
 .. _#5490: https://github.com/robotframework/robotframework/issues/5490
