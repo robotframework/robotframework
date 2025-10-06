@@ -1687,7 +1687,10 @@ with a `Secret` item:
              are thus available for all code that can access these objects directly
              or indirectly via Robot Framework APIs.
 
-.. note:: The `Secret` type is new in Robot Framework 7.4.
+.. warning:: Actual secret values that keywords pass forward may be logged or
+             otherwise disclosed by external modules or tools using them.
+
+.. note:: The Secret_ type is new in Robot Framework 7.4.
 
 Custom argument converters
 ''''''''''''''''''''''''''

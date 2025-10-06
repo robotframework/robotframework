@@ -1304,7 +1304,7 @@ Secret variables
 An important usage for `variable type conversion`_ is creating so called
 *secret variables*. These variables encapsulate their values so that the real
 values are `not logged even on the trace level`__ when variables are passed
-between keywords as arguments or return values.
+between keywords as arguments and return values.
 
 The actual value is available via the `value` attribute of a secret variable.
 It is mainly meant to be used by `library keywords`_ that accept `secret values`__,
@@ -1326,11 +1326,11 @@ Creating secrets in data
 ''''''''''''''''''''''''
 
 In the data secret variables can be created in the `Variable section`_ and
-by using the `VAR syntax`_. To avoid secrets being visible to everyone that
+by using the `VAR syntax`_. To avoid secret values being visible to everyone who
 has access to the data, it is not possible to create secret variables using
 literal values. Instead the value must be created using an existing secret variable
-or an `environment variable`_. In both cases joining the secret value with a literal
-value is allowed as well.
+or an `environment variable`_ like `%{NAME}`. In both cases joining a secret value
+with a literal value like `%{SECRET}123` is allowed as well.
 
 If showing the secret variable in the data is not an issue, it is possible to use
 environment variable default values like `%{NAME=default}`. The name can even be
@@ -1340,7 +1340,7 @@ left empty like `%{=secret}` to always use the default value.
 
    *** Variables ***
    ${NORMAL: Secret}     ${XXX}          # ${XXX} must itself be a secret variable.
-   ${ENVIRON: Secret}    %{ENV_VAR}      # Environment variables are supported directly.
+   ${ENVIRON: Secret}    %{EXAMPLE}      # Environment variables are supported directly.
    ${DEFAULT: Secret}    %{=robot123}    # Environment variable defaults work as well.
    ${JOIN: Secret}       ${XXX}-123      # Joining secrets with literals is ok.
    ${LITERAL: Secret}    robot123        # This fails.
@@ -1350,8 +1350,8 @@ Also list and dictionary variables support secret values:
 .. sourcecode:: robotframework
 
    *** Variables ***
-   @{LIST: Secret}     ${XXX}    %{EXAMPLE}    ${XXX}-123    %{=robot123}
-   &{DICT: Secret}     normal=${XXX}    env=%{ENV_VAR}    join=${XXX}-123    env_default=%{=robot123}
+   @{LIST: Secret}     ${XXX}    %{EXAMPLE}    %{=robot123}    ${XXX}-123
+   &{DICT: Secret}     normal=${XXX}    env=%{EXAMPLE}    env_default=%{=robot123}    join=${XXX}-123
 
 .. note:: The above examples utilize the Variable section, but the syntax to create
           secret variables is exactly the same when using the `VAR syntax`_.
@@ -1363,7 +1363,7 @@ Creating secrets on command line
 
     --variable "PASSWORD: Secret:robot123"
 
-Having the value directly visible on the command line history or in continues
+Having the secret value directly visible on the command line history or in continuous
 integration system logs can be a security risk. One way to mitigate that is using
 environment variables::
 
@@ -1377,7 +1377,7 @@ __ `Variable conversion on command line`
 Creating secrets programmatically
 '''''''''''''''''''''''''''''''''
 
-Secrets can be created programmatically by using the `robot.api.types.Secret`_
+Secrets can be created programmatically by using the `robot.api.types.Secret <Secret_>`_
 class. This is most commonly done by libraries_ and `variable files`_, but also
 `pre-run modifiers`__ and listeners_ can utilize secrets if needed.
 
@@ -1400,7 +1400,6 @@ Creating a keyword returning a secret is not much more complicated either:
 
    def get_token():
        return Secret("e5805f56-92e1-11f0-a798-8782a78eb4b5")
-
 
 .. note:: Both examples above have the actual secret value visible in the code.
           When working with real secret values, it is typically better to read
