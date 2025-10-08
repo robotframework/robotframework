@@ -97,7 +97,7 @@ class Importer:
             f"(version {lib.version or '<unknown>'}, {kind} type, "
             f"{lib.scope.name} scope, {len(lib.keywords)} keywords{listener})."
         )
-        if not (lib.keywords or lib.listeners):
+        if not (lib.keywords or lib.listeners) and lib._attr("ROBOT_AUTO_KEYWORDS") != "None":
             LOGGER.warn(f"Imported library '{name}' contains no keywords.")
 
 
