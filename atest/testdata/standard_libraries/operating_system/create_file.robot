@@ -2,8 +2,8 @@
 Suite Teardown    Remove Base Test Directory
 Test Setup        Create Base Test Directory
 Resource          os_resource.robot
-Variables         secret.py
 Library           secret.py
+Variables         secret.py
 
 *** Variables ***
 ${SYSTEM_ENCODING}          ASCII    # Should be overridden from CLI

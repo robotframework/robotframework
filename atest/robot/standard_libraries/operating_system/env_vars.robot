@@ -9,6 +9,10 @@ Get Environment Variable
 Set Environment Variable
     Check test case    ${TEST NAME}
 
+Set Environment Variable with Secret Content
+    Check test case    ${TEST NAME}
+    # TODO: Check if the secret value shows up in logfile
+
 Append To Environment Variable
     Check test case    ${TEST NAME}
 
@@ -17,6 +21,10 @@ Append To Environment Variable With Custom Separator
 
 Append To Environment Variable With Invalid Config
     Check test case    ${TEST NAME}
+
+Append To Environment Variable With Secret Value
+    Check test case    ${TEST NAME}
+    # TODO: Check if the secret value shows up in logfile
 
 Remove Environment Variable
     Check test case    ${TEST NAME}

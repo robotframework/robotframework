@@ -991,7 +991,12 @@ class OperatingSystem:
 
         Values are converted to strings automatically. Set variables are
         automatically encoded using the system encoding.
+
+        This keyword supports the value of `Secret` variables as value (new in
+        RobotFramework 7.4)
         """
+        if isinstance(value, Secret):
+            value = value.value
         set_env_var(name, value)
         self._info(f"Environment variable '{name}' set to value '{value}'.")
 
@@ -1014,12 +1019,17 @@ class OperatingSystem:
         | Should Be Equal                | %{NAME2} | first  |                 |
         | Append To Environment Variable | NAME2    | second | separator=-     |
         | Should Be Equal                | %{NAME2} | first-second             |
+
+        This keyword supports the value of `Secret` variables as value (new in
+        RobotFramework 7.4)
         """
         sentinel = object()
         initial = self.get_environment_variable(name, sentinel)
         if initial is not sentinel:
             values = (initial, *values)
-        self.set_environment_variable(name, separator.join(values))
+        self.set_environment_variable(name, separator.join(
+            [v.value if isinstance(v, Secret) else v for v in values]
+        ))
 
     def remove_environment_variable(self, *names):
         """Deletes the specified environment variable.
