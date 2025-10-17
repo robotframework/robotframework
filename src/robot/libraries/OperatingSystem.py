@@ -1027,9 +1027,10 @@ class OperatingSystem:
         initial = self.get_environment_variable(name, sentinel)
         if initial is not sentinel:
             values = (initial, *values)
-        self.set_environment_variable(name, separator.join(
-            [v.value if isinstance(v, Secret) else v for v in values]
-        ))
+        self.set_environment_variable(
+            name,
+            separator.join([v.value if isinstance(v, Secret) else v for v in values]),
+        )
 
     def remove_environment_variable(self, *names):
         """Deletes the specified environment variable.
