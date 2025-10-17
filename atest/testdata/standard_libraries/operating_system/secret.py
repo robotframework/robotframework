@@ -2,7 +2,7 @@ import os
 
 from robot.api.types import Secret
 
-SECRET_VALUE = "should-not-be-logged"
+SECRET_VALUE = "should-not-be-logged-1234567abcd"
 
 
 def verify_secret_content_in_file(filename):
@@ -21,4 +21,4 @@ def verify_secret_in_env_var(varname, prefix=""):
 
 
 def get_variables():
-    return {"SECRET_VAR": Secret("should-not-be-logged")}
+    return {"SECRET_VAR": Secret(SECRET_VALUE)}

@@ -62,8 +62,10 @@ Create File To Non-Existing Directory
     Create And Verify File    path=${TESTDIR}${/}file.txt
 
 Create File with Secret as Content
+    Set Log Level     TRACE
     Create file    ${TESTDIR}${/}secret1.txt    ${SECRET_VAR}
     Verify Secret Content in File    ${TESTDIR}${/}secret1.txt
+    [Teardown]    Reset Log Level
 
 Creating File Fails If Encoding Is Incorrect
     [Documentation]    FAIL REGEXP: Unicode(Encode|)Error: .*
@@ -102,8 +104,10 @@ Append To File
     Verify File       ${TESTFILE}    First line${\n}Second line${\n}3${\n}${\n}${\n}Lääst läin${\n}${\n}
 
 Append to File with Secret as Content
+    Set Log Level     TRACE
     Append To File    ${TESTDIR}${/}secret2.txt    ${SECRET_VAR}
     Verify Secret Content in File    ${TESTDIR}${/}secret2.txt
+    [Teardown]    Reset Log Level
 
 Path as `pathlib.Path`
     Create And Verify File    path=${PATH/'file.txt'}

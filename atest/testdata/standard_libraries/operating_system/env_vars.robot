@@ -29,8 +29,10 @@ Set Environment Variable
     Should Be Equal    %{${NAME}}    Moi
 
 Set Environment Variable with Secret Content
+    Set Log Level    TRACE
     Set Environment Variable    SECRET_ENV_VAR    ${SECRET_VAR}
     Verify Secret in Env Var    SECRET_ENV_VAR
+    [Teardown]    Reset Log Level
 
 Append To Environment Variable
     Append To Environment Variable    ${NAME}    first
@@ -49,9 +51,11 @@ Append To Environment Variable With Invalid Config
     Append To Environment Variable    ${NAME}    value    separator=value    not_ok=True
 
 Append To Environment Variable With Secret Value
+    Set Log Level    TRACE
     Set Environment Variable          SECRET_ENV_VAR    foo
     Append to Environment Variable    SECRET_ENV_VAR    ${SECRET_VAR}
     Verify Secret in Env Var    SECRET_ENV_VAR    prefix=foo:
+    [Teardown]    Reset Log Level
 
 Remove Environment Variable
     Set Environment Variable    ${NAME}    Hello

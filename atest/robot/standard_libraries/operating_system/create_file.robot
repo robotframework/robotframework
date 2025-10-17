@@ -36,8 +36,14 @@ Create File To Non-Existing Directory
     Check Test Case    ${TESTNAME}
 
 Create File with Secret as Content
-    Check Test Case    ${TESTNAME}
-    # TODO: Check if the secret value shows up in logfile
+    ${tc}=    Check Test Case    ${TESTNAME}
+    FOR    ${kw}    IN    @{tc.body}
+        FOR   ${msg}    IN    @{kw.messages}
+            Should Not Contain     should-not-be-logged-1234567abcd     ${msg.message}
+            ...    msg=Keyword "${kw.name}" logged the secret in message "${msg.message}"
+            ...    values=${FALSE}
+        END
+    END
 
 Creating File Fails If Encoding Is Incorrect
     Check Test Case    ${TESTNAME}
@@ -55,8 +61,13 @@ Append To File
     Check Test Case    ${TESTNAME}
 
 Append To File with Secret as Content
-    Check Test Case    ${TESTNAME}
-    # TODO: Check if the secret value shows up in logfile
+    ${tc}=    Check Test Case    ${TESTNAME}
+    FOR    ${kw}    IN    @{tc.body}
+        FOR   ${msg}    IN    @{kw.messages}
+            Should Not Contain     should-not-be-logged-1234567abcd     ${msg.message}
+            ...    msg=Keyword ${msg} logged the secret
+        END
+    END
 
 Path as `pathlib.Path`
     Check Test Case    ${TESTNAME}

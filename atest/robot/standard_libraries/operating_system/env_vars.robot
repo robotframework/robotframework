@@ -10,8 +10,14 @@ Set Environment Variable
     Check test case    ${TEST NAME}
 
 Set Environment Variable with Secret Content
-    Check test case    ${TEST NAME}
-    # TODO: Check if the secret value shows up in logfile
+    ${tc}=    Check Test Case    ${TESTNAME}
+    FOR    ${kw}    IN    @{tc.body}
+        FOR   ${msg}    IN    @{kw.messages}
+            Should Not Contain     should-not-be-logged-1234567abcd     ${msg.message}
+            ...    msg=Keyword "${kw.name}" logged the secret in message "${msg.message}"
+            ...    values=${FALSE}
+        END
+    END
 
 Append To Environment Variable
     Check test case    ${TEST NAME}
@@ -23,8 +29,14 @@ Append To Environment Variable With Invalid Config
     Check test case    ${TEST NAME}
 
 Append To Environment Variable With Secret Value
-    Check test case    ${TEST NAME}
-    # TODO: Check if the secret value shows up in logfile
+    ${tc}=    Check Test Case    ${TESTNAME}
+    FOR    ${kw}    IN    @{tc.body}
+        FOR   ${msg}    IN    @{kw.messages}
+            Should Not Contain     should-not-be-logged-1234567abcd     ${msg.message}
+            ...    msg=Keyword "${kw.name}" logged the secret in message "${msg.message}"
+            ...    values=${FALSE}
+        END
+    END
 
 Remove Environment Variable
     Check test case    ${TEST NAME}
