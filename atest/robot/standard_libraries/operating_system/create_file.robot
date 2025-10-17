@@ -65,7 +65,8 @@ Append To File with Secret as Content
     FOR    ${kw}    IN    @{tc.body}
         FOR   ${msg}    IN    @{kw.messages}
             Should Not Contain     should-not-be-logged-1234567abcd     ${msg.message}
-            ...    msg=Keyword ${msg} logged the secret
+            ...    msg=Keyword "${kw.name}" logged the secret in message "${msg.message}"
+            ...    values=${FALSE}
         END
     END
 
