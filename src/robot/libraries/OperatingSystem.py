@@ -25,6 +25,7 @@ from datetime import datetime
 
 from robot.api import logger
 from robot.api.deco import keyword
+from robot.api.types import Secret
 from robot.utils import (
     abspath, ConnectionCache, console_decode, CONSOLE_ENCODING, del_env_var,
     get_env_var, get_env_vars, get_time, normpath, parse_time, plural_or_not as s,
@@ -602,7 +603,12 @@ class OperatingSystem:
         and `Create Binary File` if you need to write bytes without encoding.
         `File Should Not Exist` can be used to avoid overwriting existing
         files.
+
+        This keyword supports the value of `Secret` variables as content (new in
+        RobotFramework 7.4)
         """
+        if isinstance(content, Secret):
+            content = content.value
         path = self._write_to_file(path, content, encoding)
         self._link("Created file '%s'.", path)
 
@@ -652,7 +658,12 @@ class OperatingSystem:
         Other than not overwriting possible existing files, this keyword works
         exactly like `Create File`. See its documentation for more details
         about the usage.
+
+        This keyword supports the value of `Secret` variables as content (new in
+        RobotFramework 7.4)
         """
+        if isinstance(content, Secret):
+            content = content.value
         path = self._write_to_file(path, content, encoding, mode="a")
         self._link("Appended to file '%s'.", path)
 

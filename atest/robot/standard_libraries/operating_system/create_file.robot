@@ -35,6 +35,10 @@ Create File With Space In Name
 Create File To Non-Existing Directory
     Check Test Case    ${TESTNAME}
 
+Create File with Secret as Content
+    Check Test Case    ${TESTNAME}
+    # TODO: Check if the secret value shows up in logfile
+
 Creating File Fails If Encoding Is Incorrect
     Check Test Case    ${TESTNAME}
 
@@ -49,6 +53,10 @@ Creating Binary File Using Unicode With Ordinal > 255 Fails
 
 Append To File
     Check Test Case    ${TESTNAME}
+
+Append To File with Secret as Content
+    Check Test Case    ${TESTNAME}
+    # TODO: Check if the secret value shows up in logfile
 
 Path as `pathlib.Path`
     Check Test Case    ${TESTNAME}
