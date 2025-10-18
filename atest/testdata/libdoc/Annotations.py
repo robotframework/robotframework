@@ -1,6 +1,8 @@
 from enum import Enum
 from typing import Any, Dict, List, Literal, Tuple, Union
 
+from robot.api.types import Secret
+
 
 class UnknownType:
     pass
@@ -93,14 +95,18 @@ def L_iteral(
     pass
 
 
+def M_secret(token: Secret) -> str:
+    return str(token.value)
+
+
 try:
     exec(
         """
-def M_union_syntax(a: int | str | list | tuple):
+def X_union_syntax(a: int | str | list | tuple):
     pass
 
 
-def N_union_syntax_with_default(a: int | str | list | tuple = None):
+def Y_union_syntax_with_default(a: int | str | list | tuple = None):
     pass
 """
     )
