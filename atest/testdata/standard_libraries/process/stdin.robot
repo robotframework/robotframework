@@ -1,5 +1,7 @@
 *** Settings ***
 Resource           process_resource.robot
+Library            secret.py
+Variables          secret.py
 
 *** Test Cases ***
 Stdin is NONE by default
@@ -55,3 +57,9 @@ Stdin as stdout from another process
     ${result2} =    Wait For Process
     Should Be Equal   ${result1.stdout}    HELLO, WORLD!\n
     Should Be Equal   ${result2.stdout}    ${EMPTY}
+
+Stdin as Secret text
+    Set Log Level    TRACE
+    ${result} =    Run Process    python3    -c    import sys; print(sys.stdin.read())    stdin=${SECRET_STDIN_VALUE}
+    Should Be Equal    ${result.stdout}    ${SECRET_STDIN_VALUE_STR}
+    [Teardown]    Reset Log Level

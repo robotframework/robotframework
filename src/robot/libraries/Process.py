@@ -22,6 +22,7 @@ from pathlib import Path
 from tempfile import TemporaryFile
 
 from robot.api import logger
+from robot.api.types import Secret
 from robot.errors import TimeoutExceeded
 from robot.utils import (
     cmdline2list, ConnectionCache, console_decode, console_encode, is_list_like,
@@ -381,6 +382,11 @@ class Process:
         | ${result} = | Run Process | ${command} | timeout=1min | on_timeout=continue |
         | ${result} = | Run Process | java -Dname\\=value Example | shell=True | cwd=${EXAMPLE} |
 
+        This keyword supports passing `Secret` variables as environment variable
+        values (both in ``env`` dict and ``env:*`` arguments) and as ``stdin``
+        content (new in RobotFramework 7.4). This prevents sensitive data like
+        API keys, passwords, and tokens from appearing in logs.
+
         This keyword does not change the `active process`.
         """
         current = self._processes.current
@@ -450,6 +456,11 @@ class Process:
         | ${result} = | `Run Process` | python | -c | import sys; print(sys.stdin.read().upper().strip()) | stdin=${process.stdout} |
         | `Wait For Process` | ${process} |
         | `Should Be Equal` | ${result.stdout} | HELLO, WORLD! |
+
+        This keyword supports passing `Secret` variables as environment variable
+        values (both in ``env`` dict and ``env:*`` arguments) and as ``stdin``
+        content (new in RobotFramework 7.4). This prevents sensitive data like
+        API keys, passwords, and tokens from appearing in logs.
 
         Returning a ``subprocess.Popen`` object is new in Robot Framework 5.0.
         Earlier versions returned a generic handle and getting the process object
@@ -1046,6 +1057,8 @@ class ProcessConfiguration:
         return self._new_stream(stderr)
 
     def _get_stdin(self, stdin):
+        if isinstance(stdin, Secret):
+            stdin = stdin.value
         if isinstance(stdin, Path):
             stdin = str(stdin)
         elif not isinstance(stdin, str):
@@ -1075,7 +1088,7 @@ class ProcessConfiguration:
 
     def _get_initial_env(self, env, extra):
         if env:
-            return {system_encode(k): system_encode(env[k]) for k in env}
+            return {system_encode(k): system_encode(env[k].value if isinstance(env[k], Secret) else env[k]) for k in env}
         if extra:
             return os.environ.copy()
         return None
@@ -1086,7 +1099,10 @@ class ProcessConfiguration:
                 raise RuntimeError(
                     f"Keyword argument '{name}' is not supported by this keyword."
                 )
-            env[system_encode(name[4:])] = system_encode(extra[name])
+            value = extra[name]
+            if isinstance(value, Secret):
+                value = value.value
+            env[system_encode(name[4:])] = system_encode(value)
 
     def get_command(self, command, arguments):
         command = [system_encode(item) for item in (command, *arguments)]

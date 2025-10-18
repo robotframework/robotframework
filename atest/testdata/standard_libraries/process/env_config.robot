@@ -1,6 +1,8 @@
 *** Settings ***
 Suite Setup       Set Environment Variable    v1    system
 Resource          process_resource.robot
+Library           secret.py
+Variables         secret.py
 
 *** Variables ***
 @{COMMAND}        python    -c    import os; print(' '.join([os.getenv('v1', '-'), os.getenv('v2', '-'), os.getenv('v3', '-')]))
@@ -41,6 +43,20 @@ Non-ASCII value
     ...    print('PASS' if xxx == u'hyv\\xe4' else 'FAIL')
     ${result} =   Run Process    python    -c    ${code}    env:XXX=hyvä    stderr=STDOUT
     Result should equal    ${result}    stdout=PASS
+
+Env with Secret value in dict
+    Set Log Level    TRACE
+    ${path} =    Get Environment Variable    PATH    default=.
+    ${env} =    Create Dictionary    SECRET_VAR=${SECRET_ENV_VALUE}    PATH=${path}
+    ${result} =    Run Process    python3    -c    import os; print(os.getenv('SECRET_VAR', 'NOT_FOUND'))    env=${env}
+    Should Be Equal    ${result.stdout}    ${SECRET_ENV_VALUE_STR}
+    [Teardown]    Reset Log Level
+
+Env with Secret value in keyword argument
+    Set Log Level    TRACE
+    ${result} =    Run Process    python3    -c    import os; print(os.getenv('SECRET_VAR', 'NOT_FOUND'))    env:SECRET_VAR=${SECRET_ENV_VALUE}
+    Should Be Equal    ${result.stdout}    ${SECRET_ENV_VALUE_STR}
+    [Teardown]    Reset Log Level
 
 *** Keywords ***
 Create environ

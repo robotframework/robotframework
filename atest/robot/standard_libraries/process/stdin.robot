@@ -29,3 +29,7 @@ Stdin as text
 
 Stdin as stdout from another process
     Check Test Case    ${TESTNAME}
+
+Stdin as Secret text
+    ${tc}=    Check Test Case    ${TESTNAME}
+    Check for Secret Value Not in Log Messages    ${tc}    secret-stdin-content-xyz

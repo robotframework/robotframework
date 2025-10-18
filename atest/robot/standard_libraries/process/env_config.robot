@@ -23,3 +23,11 @@ Invividually given overrides value in given environ
 
 Non-ASCII value
     Check Test Case    ${TESTNAME}
+
+Env with Secret value in dict
+    ${tc}=    Check Test Case    ${TESTNAME}
+    Check for Secret Value Not in Log Messages    ${tc}    secret-env-value-123
+
+Env with Secret value in keyword argument
+    ${tc}=    Check Test Case    ${TESTNAME}
+    Check for Secret Value Not in Log Messages    ${tc}    secret-env-value-123
