@@ -54,7 +54,7 @@ Append To Environment Variable With Secret Value
     Set Log Level    TRACE
     Set Environment Variable          SECRET_ENV_VAR    foo
     Append to Environment Variable    SECRET_ENV_VAR    ${SECRET_VAR}
-    Verify Secret in Env Var    SECRET_ENV_VAR    prefix=foo:
+    Verify Secret in Env Var    SECRET_ENV_VAR    prefix=foo${:}
     [Teardown]    Reset Log Level
 
 Remove Environment Variable
