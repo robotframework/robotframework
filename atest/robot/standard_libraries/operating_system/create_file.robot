@@ -47,10 +47,6 @@ Create Binary File Using Unicode
 Creating Binary File Using Unicode With Ordinal > 255 Fails
     Check Test Case    ${TESTNAME}
 
-Create Binary File with Secret as Content
-    ${tc}=    Check Test Case    ${TESTNAME}
-    Check for Secret Value Not in Log Messages    ${tc}    should-not-be-logged-1234567abcd
-
 Append To File
     Check Test Case    ${TESTNAME}
 

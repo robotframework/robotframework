@@ -25,6 +25,7 @@ from datetime import datetime
 
 from robot.api import logger
 from robot.api.deco import keyword
+from robot.api.types import Secret
 from robot.utils import (
     abspath, ConnectionCache, console_decode, CONSOLE_ENCODING, del_env_var,
     get_env_var, get_env_vars, get_time, normpath, parse_time, plural_or_not as s,
@@ -652,12 +653,7 @@ class OperatingSystem:
         Use `Create File` if you want to create a text file using a certain
         encoding. `File Should Not Exist` can be used to avoid overwriting
         existing files.
-
-        This keyword supports passing a `Secret` variable as content (new in
-        RobotFramework 7.4)
         """
-        if isinstance(content, Secret):
-            content = content.value
         if isinstance(content, str):
             content = bytes(ord(c) for c in content)
         path = self._write_to_file(path, content, mode="wb")
