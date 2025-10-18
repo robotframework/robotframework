@@ -13,10 +13,13 @@ def verify_secret_content_in_file(filename):
     )
 
 
-def verify_secret_in_env_var(varname, prefix=""):
-    expected_value = prefix + SECRET_VALUE
-    assert os.environ.get(varname) == expected_value, (
-        "The environment variable is not set or doesn't contain the secret value"
+def verify_secret_in_env_var(varname, prefix=''):
+    assert varname in os.environ, (
+        "The environment variable varname is not set"
+
+    )
+    assert os.environ[varname] == prefix + SECRET_VALUE, (
+        "The environment variable doesn't contain the secret value"
     )
 
 

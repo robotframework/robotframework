@@ -604,7 +604,7 @@ class OperatingSystem:
         `File Should Not Exist` can be used to avoid overwriting existing
         files.
 
-        This keyword supports the value of `Secret` variables as content (new in
+        This keyword supports passing a `Secret` variable as content (new in
         RobotFramework 7.4)
         """
         if isinstance(content, Secret):
@@ -659,7 +659,7 @@ class OperatingSystem:
         exactly like `Create File`. See its documentation for more details
         about the usage.
 
-        This keyword supports the value of `Secret` variables as content (new in
+        This keyword supports passing a `Secret` variable as content (new in
         RobotFramework 7.4)
         """
         if isinstance(content, Secret):
@@ -992,7 +992,7 @@ class OperatingSystem:
         Values are converted to strings automatically. Set variables are
         automatically encoded using the system encoding.
 
-        This keyword supports the value of `Secret` variables as value (new in
+        This keyword supports passing a `Secret` variable as value (new in
         RobotFramework 7.4)
         """
         if isinstance(value, Secret):
@@ -1020,7 +1020,7 @@ class OperatingSystem:
         | Append To Environment Variable | NAME2    | second | separator=-     |
         | Should Be Equal                | %{NAME2} | first-second             |
 
-        This keyword supports the value of `Secret` variables as value (new in
+        This keyword supports passing a `Secret` variable as value (new in
         RobotFramework 7.4)
         """
         sentinel = object()

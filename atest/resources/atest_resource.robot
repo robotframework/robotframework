@@ -430,3 +430,13 @@ Traceback Should Be
     # Remove '~~~^^^' lines.
     ${msg.message} =    Evaluate    '\\n'.join(line for line in $msg.message.splitlines() if line.strip('~^ ') or not line)
     Check Log Message    ${msg}    ${exp}\n${error}    DEBUG    pattern=True    traceback=True
+
+Check for Secret Value Not in Log Messages
+    [Arguments]    ${tc}    ${value}
+    FOR    ${kw}    IN    @{tc.body}
+        FOR   ${i}    ${msg}    IN ENUMERATE    @{kw.messages}
+            Should Not Contain     ${value}     ${msg.message}
+            ...    msg=Keyword "${kw.name}" logged the secret (log index ${i})
+            ...    values=${FALSE}
+        END
+    END
