@@ -193,6 +193,9 @@ class OperatingSystem:
         [http://robotframework.org/robotframework/latest/libraries/Process.html|
         Process library] supports better process configuration and is generally
         recommended as a replacement for this keyword.
+
+        This keyword supports passing a `Secret` variable as command (new in
+        RobotFramework 7.4)
         """
         return self._run(command)[1]
 
@@ -220,6 +223,9 @@ class OperatingSystem:
         [http://robotframework.org/robotframework/latest/libraries/Process.html|
         Process library] supports better process configuration and is generally
         recommended as a replacement for this keyword.
+
+        This keyword supports passing a `Secret` variable as command (new in
+        RobotFramework 7.4)
         """
         return self._run(command)[0]
 
@@ -242,12 +248,21 @@ class OperatingSystem:
         [http://robotframework.org/robotframework/latest/libraries/Process.html|
         Process library] supports better process configuration and is generally
         recommended as a replacement for this keyword.
+
+        This keyword supports passing a `Secret` variable as command (new in
+        RobotFramework 7.4)
         """
         return self._run(command)
 
     def _run(self, command):
+        is_secret = isinstance(command, Secret)
+        if is_secret:
+            command = command.value
         process = _Process(command)
-        self._info(f"Running command '{process}'.")
+        if is_secret:
+            self._info("Running command '<redacted>'.")
+        else:
+            self._info(f"Running command '{process}'.")
         stdout = process.read()
         rc = process.close()
         return rc, stdout
@@ -637,7 +652,12 @@ class OperatingSystem:
         Use `Create File` if you want to create a text file using a certain
         encoding. `File Should Not Exist` can be used to avoid overwriting
         existing files.
+
+        This keyword supports passing a `Secret` variable as content (new in
+        RobotFramework 7.4)
         """
+        if isinstance(content, Secret):
+            content = content.value
         if isinstance(content, str):
             content = bytes(ord(c) for c in content)
         path = self._write_to_file(path, content, mode="wb")

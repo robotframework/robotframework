@@ -41,3 +41,15 @@ Trailing Newline Is Removed Automatically
 
 It Is Possible To Start Background Processes
     Check Test Case    ${TESTNAME}
+
+Run With Secret Command
+    ${tc}=    Check Test Case    ${TESTNAME}
+    Check for Secret Value Not in Log Messages    ${tc}    echo should-not-be-logged-1234567abcd
+
+Run And Return RC With Secret Command
+    ${tc}=    Check Test Case    ${TESTNAME}
+    Check for Secret Value Not in Log Messages    ${tc}    echo should-not-be-logged-1234567abcd
+
+Run And Return RC And Output With Secret Command
+    ${tc}=    Check Test Case    ${TESTNAME}
+    Check for Secret Value Not in Log Messages    ${tc}    echo should-not-be-logged-1234567abcd

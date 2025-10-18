@@ -1,5 +1,7 @@
 *** Settings ***
 Library           OperatingSystem
+Library           secret.py
+Variables         secret.py
 
 *** Variables ***
 #                 Usage of prog.py: prog.py rc=0 stdout='' stderr='' count=1
@@ -82,6 +84,25 @@ It Is Possible To Start Background Processes
     ${output} =    Run    ${PROG} 0 foo bar&
     Should Contain    ${output}    foo
     Should Contain    ${output}    bar
+
+Run With Secret Command
+    Set Log Level    TRACE
+    ${output} =    Run    ${SECRET_COMMAND}
+    Verify Secret Run Command    ${output}
+    [Teardown]    Reset Log Level
+
+Run And Return RC With Secret Command
+    Set Log Level    TRACE
+    ${rc} =    Run And Return RC    ${SECRET_COMMAND}
+    Should Be Equal As Integers    ${rc}    0
+    [Teardown]    Reset Log Level
+
+Run And Return RC And Output With Secret Command
+    Set Log Level    TRACE
+    ${rc}    ${output} =    Run And Return RC And Output    ${SECRET_COMMAND}
+    Should Be Equal As Integers    ${rc}    0
+    Verify Secret Run Command    ${output}
+    [Teardown]    Reset Log Level
 
 *** Keywords ***
 Run And Check RC

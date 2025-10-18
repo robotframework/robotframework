@@ -85,6 +85,13 @@ Creating Binary File Using Unicode With Ordinal > 255 Fails
     [Documentation]    FAIL STARTS: ValueError:
     Create Binary File    ${TESTFILE}    \u0100
 
+Create Binary File with Secret as Content
+    Set Log Level     TRACE
+    ${secret_binary} =    Convert To Bytes    ${SECRET_VALUE_STR}
+    Create Binary File    ${TESTDIR}${/}secret_binary.txt    ${secret_binary}
+    Verify Binary File    ${TESTDIR}${/}secret_binary.txt    ${secret_binary}
+    [Teardown]    Reset Log Level
+
 Append To File
     Append To File    ${TESTFILE}    First line\n
     Append To File    ${TESTFILE}    Second            ASCII
