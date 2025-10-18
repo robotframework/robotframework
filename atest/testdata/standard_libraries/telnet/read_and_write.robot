@@ -168,6 +168,31 @@ Execute Command And Strip Prompt
     ${output} =    Execute Command    pwd    debUG    ${True}
     Should Be Equal    ${output}    ${HOME}\r\n
 
+Write With Secret Text
+    Set Log Level    TRACE
+    ${text} =    Write    ${SECRET_TEXT}
+    Should Be Equal    ${text}    secret-text-123\r\n
+    [Teardown]    Reset Log Level
+
+Write Bare With Secret Text
+    Set Log Level    TRACE
+    Write Bare    ${SECRET_TEXT}
+    ${out} =    Read Until    123
+    Should Be Equal    ${out}    secret-text-123
+    [Teardown]    Reset Log Level
+
+Execute Command With Secret Command
+    Set Log Level    TRACE
+    ${output} =    Execute Command    ${SECRET_COMMAND}
+    Should Contain    ${output}    secret-test-value
+    [Teardown]    Reset Log Level
+
+Write Until Expected Output With Secret Text
+    Set Log Level    TRACE
+    Write    a=10
+    Write Until Expected Output    ${SECRET_TEXT}\r\n    secret-text-123    2 s    10ms
+    [Teardown]    Reset Log Level
+
 Writing and reading fails if there is no connection
     [Setup]    NONE
     [Template]    Should fail because no connection

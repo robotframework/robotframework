@@ -24,6 +24,15 @@ Failed login with prompt
     Login    ${USERNAME}    ${EMPTY}    login_prompt=:    password_prompt=:
     ...    login_timeout=Not used    login_incorrect=This is not used
 
+Successful login with Secret username and password
+    Set Log Level    TRACE
+    Open Connection    ${HOST}    prompt=${PROMPT}
+    ${output} =    Login    ${SECRET_USERNAME}    ${SECRET_PASSWORD}
+    Should Contain Once    ${output}    login: test\r\n
+    Should Contain Once    ${output}    Password: \r\n
+    Should Contain Once    ${output}    ${FULL PROMPT}
+    [Teardown]    Reset Log Level
+
 *** Keywords ***
 Login and verify output
     ${output} =    Login    ${USERNAME}    ${PASSWORD}

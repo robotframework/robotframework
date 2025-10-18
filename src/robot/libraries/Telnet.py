@@ -28,6 +28,7 @@ except ImportError:
 
 from robot.api import logger
 from robot.api.deco import keyword
+from robot.api.types import Secret
 from robot.utils import (
     ConnectionCache, is_truthy, secs_to_timestr, seq2str, timestr_to_secs
 )
@@ -791,6 +792,9 @@ class TelnetConnection(telnetlib.Telnet):
 
         See `Configuration` section for more information about setting
         newline, timeout, and prompt.
+
+        This keyword supports passing `Secret` variables as username and password
+        (new in RobotFramework 7.4)
         """
         output = self._submit_credentials(
             username, password, login_prompt, password_prompt
@@ -810,6 +814,10 @@ class TelnetConnection(telnetlib.Telnet):
     def _submit_credentials(self, username, password, login_prompt, password_prompt):
         # Using write_bare here instead of write because don't want to wait for
         # newline: https://github.com/robotframework/robotframework/issues/1371
+        if isinstance(username, Secret):
+            username = username.value
+        if isinstance(password, Secret):
+            password = password.value
         output = self.read_until(login_prompt, "TRACE")
         self.write_bare(username + self._newline)
         output += self.read_until(password_prompt, "TRACE")
@@ -838,7 +846,12 @@ class TelnetConnection(telnetlib.Telnet):
         used. See `Writing and reading` section for more details.
 
         See `Logging` section for more information about log levels.
+
+        This keyword supports passing a `Secret` variable as text (new in
+        RobotFramework 7.4)
         """
+        if isinstance(text, Secret):
+            text = text.value
         newline = self._get_newline_for(text)
         if newline in text:
             raise RuntimeError(
@@ -859,7 +872,12 @@ class TelnetConnection(telnetlib.Telnet):
 
         This keyword does not append a newline nor consume the written text.
         Use `Write` if these features are needed.
+
+        This keyword supports passing a `Secret` variable as text (new in
+        RobotFramework 7.4)
         """
+        if isinstance(text, Secret):
+            text = text.value
         self._verify_connection()
         super().write(self._encode(text))
 
@@ -892,7 +910,12 @@ class TelnetConnection(telnetlib.Telnet):
         ``myprocess`` appears in the output. The command is written every 0.5
         seconds and the keyword fails if ``myprocess`` does not appear in
         the output in 5 seconds.
+
+        This keyword supports passing a `Secret` variable as text (new in
+        RobotFramework 7.4)
         """
+        if isinstance(text, Secret):
+            text = text.value
         timeout = timestr_to_secs(timeout)
         retry_interval = timestr_to_secs(retry_interval)
         maxtime = time.time() + timeout
@@ -1142,6 +1165,9 @@ class TelnetConnection(telnetlib.Telnet):
 
         See `Logging` section for more information about log levels and `Read
         Until Prompt` for more information about the ``strip_prompt`` parameter.
+
+        This keyword supports passing a `Secret` variable as command (new in
+        RobotFramework 7.4)
         """
         self.write(command, loglevel)
         return self.read_until_prompt(loglevel, strip_prompt)

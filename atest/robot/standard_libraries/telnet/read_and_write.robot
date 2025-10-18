@@ -100,5 +100,24 @@ Execute Command And Strip Prompt
     Check Log Message    ${tc[1, 1]}    ${HOME}\n${FULL PROMPT}
     Check Log Message    ${tc[3, 1]}    ${HOME}\n${FULL PROMPT}    DEBUG
 
+Write With Secret Text
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc[1, 0]}    secret-text-123
+    Check for Secret Value Not in Log Messages    ${tc}    secret-text-123
+
+Write Bare With Secret Text
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc[2, 0]}    secret-text-123
+    Check for Secret Value Not in Log Messages    ${tc}    secret-text-123
+
+Execute Command With Secret Command
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc[1, 0]}    echo secret-test-value
+    Check for Secret Value Not in Log Messages    ${tc}    echo secret-test-value
+
+Write Until Expected Output With Secret Text
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check for Secret Value Not in Log Messages    ${tc}    secret-text-123
+
 Writing and reading fails if there is no connection
     Check Test Case    ${TEST NAME}

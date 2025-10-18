@@ -16,12 +16,20 @@ Failed login without prompt
 Failed login with prompt
     Verify failed login    ${USERNAME}
 
+Successful login with Secret username and password
+    ${tc} =    Check Test Case    ${TEST NAME}
+    ${output} =    Set Variable    ${tc[2, 0, 0].message}
+    Should Contain Once    ${output}    login: test\n
+    Should Contain Once    ${output}    Password:
+    Should Contain Once    ${output}    ${FULL PROMPT.strip()}
+    Check for Secret Value Not in Log Messages    ${tc}    test
+
 *** Keywords ***
 Verify successful login
     ${tc} =    Check Test Case    ${TEST NAME}
     ${output} =    Set Variable    ${tc[1, 0, 0].message}
     Should Contain Once    ${output}    login: test\n
-    Should Contain Once    ${output}    Password: 
+    Should Contain Once    ${output}    Password:
     Should Contain Once    ${output}    ${FULL PROMPT.strip()}
     Should End With        ${output}    ${FULL PROMPT.strip()}
 
@@ -34,7 +42,7 @@ Verify failed login
     ${tc} =    Check Test Case    ${TEST NAME}
     ${output} =    Set Variable    ${tc[1, 0].message}
     Should Contain Once    ${output}    login: ${user}\n
-    Should Contain Once    ${output}    Password: 
+    Should Contain Once    ${output}    Password:
     Should Contain Once    ${output}    Login incorrect
     Should End With        ${output}    login:
     Should Not Contain     ${output}    ${PROMPT START}
