@@ -9,7 +9,7 @@ Check for Secret Value Not in Log Messages
         FOR   ${i}    ${msg}    IN ENUMERATE    @{kw.messages}
             Should Not Contain     ${value}     ${msg.message}
             ...    msg=Keyword "${kw.name}" logged the secret (log index ${i})
-            ...    values=${FALSE}
+            ...    values=False
         END
     END
 
