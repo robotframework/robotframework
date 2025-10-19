@@ -640,6 +640,7 @@ Examples::
 __ `Free suite metadata`_
 
 .. _pre-run modifier:
+.. _pre-run modifiers:
 
 Programmatic modification of test data
 --------------------------------------
@@ -685,6 +686,14 @@ executed test suite and test cases. Most importantly, options related to
 `selecting test cases`_ are processed after modifiers, making it possible to
 use options like :option:`--include` also with possible dynamically added
 tests.
+
+Another way to modify tests is using the `listener version 3`_ interface.
+Modifying the `data` argument passed to the `start_suite` listener method
+when it is called for the first time has in practice the same effect as using
+a pre-run modifier. The main difference is that `--include/--exclude` and other
+such options do not have an effect to the added tests. The main benefit of using
+listeners is that they allow making modifications dynamically based on what
+happens during the execution.
 
 .. tip:: Modifiers are taken into use from the command line exactly the same
          way as listeners_. See the `Registering listeners from command line`_
