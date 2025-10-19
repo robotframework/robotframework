@@ -797,6 +797,7 @@ class LiteralConverter(TypeConverter):
 @TypeConverter.register
 class SecretConverter(TypeConverter):
     type = Secret
+    type_name = "Secret"
 
     def _convert(self, value):
         raise ValueError

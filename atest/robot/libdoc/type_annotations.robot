@@ -42,7 +42,10 @@ Nested
 Literal
     Keyword Arguments Should Be    11    a: Literal['on', 'off', 'int']    b: Literal[1, 2, 3]   c: Literal[one, True, None]
 
+Secret type
+    Keyword Arguments Should Be    12    token: Secret
+
 Union syntax
     [Tags]    require-py3.10
-    Keyword Arguments Should Be    12    a: int | str | list | tuple
-    Keyword Arguments Should Be    13    a: int | str | list | tuple | None = None
+    Keyword Arguments Should Be    13    a: int | str | list | tuple
+    Keyword Arguments Should Be    14    a: int | str | list | tuple | None = None
