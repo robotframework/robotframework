@@ -646,7 +646,7 @@ class OperatingSystem:
         path = self._write_to_file(path, content, mode="wb")
         self._link("Created binary file '%s'.", path)
 
-    def append_to_file(self, path, content, encoding="UTF-8"):
+    def append_to_file(self, path: "str | Path", content: "str | Secret" = "", encoding: str = "UTF-8"):
         """Appends the given content to the specified file.
 
         If the file exists, the given text is written to its end. If the file
