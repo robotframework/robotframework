@@ -603,9 +603,6 @@ class OperatingSystem:
         and `Create Binary File` if you need to write bytes without encoding.
         `File Should Not Exist` can be used to avoid overwriting existing
         files.
-
-        This keyword supports passing a `Secret` variable as content (new in
-        RobotFramework 7.4)
         """
         if isinstance(content, Secret):
             content = content.value
@@ -658,9 +655,6 @@ class OperatingSystem:
         Other than not overwriting possible existing files, this keyword works
         exactly like `Create File`. See its documentation for more details
         about the usage.
-
-        This keyword supports passing a `Secret` variable as content (new in
-        RobotFramework 7.4)
         """
         if isinstance(content, Secret):
             content = content.value
@@ -991,9 +985,6 @@ class OperatingSystem:
 
         Values are converted to strings automatically. Set variables are
         automatically encoded using the system encoding.
-
-        This keyword supports passing a `Secret` variable as value (new in
-        RobotFramework 7.4)
         """
         if isinstance(value, Secret):
             value = value.value
@@ -1019,18 +1010,13 @@ class OperatingSystem:
         | Should Be Equal                | %{NAME2} | first  |                 |
         | Append To Environment Variable | NAME2    | second | separator=-     |
         | Should Be Equal                | %{NAME2} | first-second             |
-
-        This keyword supports passing a `Secret` variable as value (new in
-        RobotFramework 7.4)
         """
         sentinel = object()
         initial = self.get_environment_variable(name, sentinel)
         if initial is not sentinel:
             values = (initial, *values)
-        self.set_environment_variable(
-            name,
-            separator.join([v.value if isinstance(v, Secret) else v for v in values]),
-        )
+        values = [v.value if isinstance(v, Secret) else v for v in values]
+        self.set_environment_variable(name, separator.join(values))
 
     def remove_environment_variable(self, *names):
         """Deletes the specified environment variable.
