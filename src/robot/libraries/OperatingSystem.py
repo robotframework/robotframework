@@ -159,7 +159,7 @@ class OperatingSystem:
     ROBOT_LIBRARY_SCOPE = "GLOBAL"
     ROBOT_LIBRARY_VERSION = __version__
 
-    def run(self, command):
+    def run(self, command: "str | Secret"):
         """Runs the given command in the system and returns the output.
 
         The execution status of the command *is not checked* by this
@@ -194,13 +194,10 @@ class OperatingSystem:
         [http://robotframework.org/robotframework/latest/libraries/Process.html|
         Process library] supports better process configuration and is generally
         recommended as a replacement for this keyword.
-
-        This keyword supports passing a `Secret` variable as command (new in
-        RobotFramework 7.4)
         """
         return self._run(command)[1]
 
-    def run_and_return_rc(self, command):
+    def run_and_return_rc(self, command: "str | Secret"):
         """Runs the given command in the system and returns the return code.
 
         The return code (RC) is returned as a positive integer in
@@ -224,13 +221,10 @@ class OperatingSystem:
         [http://robotframework.org/robotframework/latest/libraries/Process.html|
         Process library] supports better process configuration and is generally
         recommended as a replacement for this keyword.
-
-        This keyword supports passing a `Secret` variable as command (new in
-        RobotFramework 7.4)
         """
         return self._run(command)[0]
 
-    def run_and_return_rc_and_output(self, command):
+    def run_and_return_rc_and_output(self, command: "str | Secret"):
         """Runs the given command in the system and returns the RC and output.
 
         The return code (RC) is returned similarly as with `Run And Return RC`
@@ -249,9 +243,6 @@ class OperatingSystem:
         [http://robotframework.org/robotframework/latest/libraries/Process.html|
         Process library] supports better process configuration and is generally
         recommended as a replacement for this keyword.
-
-        This keyword supports passing a `Secret` variable as command (new in
-        RobotFramework 7.4)
         """
         return self._run(command)
 

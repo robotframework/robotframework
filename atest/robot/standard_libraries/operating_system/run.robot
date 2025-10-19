@@ -44,15 +44,12 @@ It Is Possible To Start Background Processes
 
 Run With Secret Command
     ${tc}=    Check Test Case    ${TESTNAME}
-    Fail    TODO: fix log test
-    # Check for Secret Value Not in Log Messages    ${tc}    echo should-not-be-logged-1234567abcd    
+    Check Log Message    ${tc[1,1]}    Running command '<redacted>'.
 
 Run And Return RC With Secret Command
     ${tc}=    Check Test Case    ${TESTNAME}
-    Fail    TODO: fix log test
-    # Check for Secret Value Not in Log Messages    ${tc}    echo should-not-be-logged-1234567abcd
+    Check Log Message    ${tc[1,1]}    Running command '<redacted>'.
 
 Run And Return RC And Output With Secret Command
     ${tc}=    Check Test Case    ${TESTNAME}
-    Fail    TODO: fix log test
-    # Check for Secret Value Not in Log Messages    ${tc}    echo should-not-be-logged-1234567abcd
+    Check Log Message    ${tc[1,1]}    Running command '<redacted>'.
