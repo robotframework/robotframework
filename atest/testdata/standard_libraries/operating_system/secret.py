@@ -1,9 +1,9 @@
 import os
 
 from robot.api.types import Secret
+from robot.libraries.BuiltIn import BuiltIn
 
 SECRET_VALUE = "should-not-be-logged-1234567abcd"
-SECRET_COMMAND = f"echo {SECRET_VALUE}"         # should work under windows and linux?!
 
 def verify_secret_content_in_file(filename):
     with open(filename) as fd:
@@ -26,12 +26,16 @@ def verify_secret_in_env_var(varname, prefix=''):
 def verify_secret_run_command(output):
     """Verify that the command containing the secret was executed and returned output."""
     # The output should contain the secret value since the command echoes it
-    assert SECRET_VALUE in output.strip(), (
-        f"Expected output to contain '{SECRET_VALUE}', but got: {output!r}"
+    assert str(len(SECRET_VALUE)) in output.strip(), (
+        f"Expected output to contain '{len(SECRET_VALUE)}', but got: {output!r}"
     )
 
 
 def get_variables():
+    progname = BuiltIn().get_variable_value("${PROG}")
+    assert progname, "expected robot variable ${PROG} to be set"
+    SECRET_COMMAND = f"{progname} 42 {len(SECRET_VALUE)}"
+
     return {
         "SECRET_VAR": Secret(SECRET_VALUE),
         "SECRET_COMMAND": Secret(SECRET_COMMAND),

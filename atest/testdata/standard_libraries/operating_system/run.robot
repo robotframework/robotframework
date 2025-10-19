@@ -94,13 +94,13 @@ Run With Secret Command
 Run And Return RC With Secret Command
     Set Log Level    TRACE
     ${rc} =    Run And Return RC    ${SECRET_COMMAND}
-    Should Be Equal As Integers    ${rc}    0
+    Should Be Equal As Integers    ${rc}    42
     [Teardown]    Reset Log Level
 
 Run And Return RC And Output With Secret Command
     Set Log Level    TRACE
     ${rc}    ${output} =    Run And Return RC And Output    ${SECRET_COMMAND}
-    Should Be Equal As Integers    ${rc}    0
+    Should Be Equal As Integers    ${rc}    42
     Verify Secret Run Command    ${output}
     [Teardown]    Reset Log Level
 

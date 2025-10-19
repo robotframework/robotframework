@@ -2,6 +2,17 @@
 Suite Setup       Run Tests    ${EMPTY}    standard_libraries/operating_system/run.robot
 Resource          atest_resource.robot
 
+*** Keywords ***
+Check for Secret Value Not in Log Messages
+    [Arguments]    ${tc}    ${value}
+    FOR    ${kw}    IN    @{tc.body}
+        FOR   ${i}    ${msg}    IN ENUMERATE    @{kw.messages}
+            Should Not Contain     ${value}     ${msg.message}
+            ...    msg=Keyword "${kw.name}" logged the secret (log index ${i})
+            ...    values=False
+        END
+    END
+
 *** Test Cases ***
 Run
     Check Test Case    ${TESTNAME}
@@ -45,11 +56,14 @@ It Is Possible To Start Background Processes
 Run With Secret Command
     ${tc}=    Check Test Case    ${TESTNAME}
     Check Log Message    ${tc[1,1]}    Running command '<redacted>'.
+    Check for Secret Value Not in Log Messages    ${tc}    should-not-be-logged-1234567abcd
 
 Run And Return RC With Secret Command
     ${tc}=    Check Test Case    ${TESTNAME}
     Check Log Message    ${tc[1,1]}    Running command '<redacted>'.
+    Check for Secret Value Not in Log Messages    ${tc}    should-not-be-logged-1234567abcd
 
 Run And Return RC And Output With Secret Command
     ${tc}=    Check Test Case    ${TESTNAME}
     Check Log Message    ${tc[1,1]}    Running command '<redacted>'.
+    Check for Secret Value Not in Log Messages    ${tc}    should-not-be-logged-1234567abcd
