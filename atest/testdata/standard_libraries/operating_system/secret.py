@@ -25,7 +25,6 @@ def verify_secret_in_env_var(varname, prefix=''):
 
 def verify_secret_run_command(output):
     """Verify that the command containing the secret was executed and returned output."""
-    # The output should contain the secret value since the command echoes it
     assert str(len(SECRET_VALUE)) in output.strip(), (
         f"Expected output to contain '{len(SECRET_VALUE)}', but got: {output!r}"
     )
