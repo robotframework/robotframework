@@ -19,7 +19,8 @@ def verify_secret_in_env_var(varname, prefix=''):
 
     )
     assert os.environ[varname] == prefix + SECRET_VALUE, (
-        "The environment variable doesn't contain the secret value"
+        "The environment variable doesn't contain the secret value "
+        f"(instead it is set to {os.environ[varname]})"
     )
 
 

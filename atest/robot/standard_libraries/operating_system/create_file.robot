@@ -4,6 +4,17 @@ Suite Setup       Run Tests
 ...    standard_libraries/operating_system/create_file.robot
 Resource          atest_resource.robot
 
+*** Keywords ***
+Check for Secret Value Not in Log Messages
+    [Arguments]    ${tc}    ${value}
+    FOR    ${kw}    IN    @{tc.body}
+        FOR   ${i}    ${msg}    IN ENUMERATE    @{kw.messages}
+            Should Not Contain     ${value}     ${msg.message}
+            ...    msg=Keyword "${kw.name}" logged the secret (log index ${i})
+            ...    values=${FALSE}
+        END
+    END
+
 *** Test Cases ***
 Create File With Default Content
     Check Test Case    ${TESTNAME}

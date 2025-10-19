@@ -2,6 +2,17 @@
 Suite Setup       Run Tests With Environment Variables
 Resource          atest_resource.robot
 
+*** Keywords ***
+Check for Secret Value Not in Log Messages
+    [Arguments]    ${tc}    ${value}
+    FOR    ${kw}    IN    @{tc.body}
+        FOR   ${i}    ${msg}    IN ENUMERATE    @{kw.messages}
+            Should Not Contain     ${value}     ${msg.message}
+            ...    msg=Keyword "${kw.name}" logged the secret (log index ${i})
+            ...    values=${FALSE}
+        END
+    END
+
 *** Test Cases ***
 Get Environment Variable
     Check test case    ${TEST NAME}
