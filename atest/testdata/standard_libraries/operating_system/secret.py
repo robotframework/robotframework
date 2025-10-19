@@ -39,5 +39,4 @@ def get_variables():
     return {
         "SECRET_VAR": Secret(SECRET_VALUE),
         "SECRET_COMMAND": Secret(SECRET_COMMAND),
-        "SECRET_VALUE_STR": SECRET_VALUE
     }
