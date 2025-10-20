@@ -25,7 +25,6 @@ Non-ASCII value
     Check Test Case    ${TESTNAME}
 
 Secret in environment variable via env Dict
-    [tags]    robot:continue-on-failure
     ${tc} =    Check Test Case    ${TESTNAME}
     # TODO: Fix the below test
     #Check Log Message    ${tc[0, 1]}    *env:${SPACE*5}<env with secrets>*    DEBUG    pattern=yes

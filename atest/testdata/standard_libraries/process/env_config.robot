@@ -52,8 +52,8 @@ Secret in environment variable via env:name Syntax
     Should Be Equal    ${result.stdout}    system This is secret! -
 
 Multiple Secrets in environment variables
-    ${result} =    Run Process    @{COMMAND}    env:v1=${SECRET}    env:v2=${SECRET}
-    Should Be Equal    ${result.stdout}    This is secret! This is secret! -
+    ${result} =    Run Process    @{COMMAND}    env:v1=${SECRET}    env:v2=XX    env:v3=${SECRET}
+    Should Be Equal    ${result.stdout}    This is secret! XX This is secret!
 
 *** Keywords ***
 Create environ

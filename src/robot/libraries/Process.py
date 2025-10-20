@@ -1038,10 +1038,10 @@ class ProcessConfiguration:
         self.shell = shell
         self.alias = alias
         self.output_encoding = output_encoding
-        self.has_secret_env = False
         self.stdout_stream = self._new_stream(stdout)
         self.stderr_stream = self._get_stderr(stderr, stdout, self.stdout_stream)
         self.stdin_stream = self._get_stdin(stdin)
+        self.env_secret_keys = []
         self.env = self._construct_env(env, env_extra)
 
     def _new_stream(self, name):
@@ -1092,12 +1092,14 @@ class ProcessConfiguration:
     def _get_initial_env(self, env, extra):
         if env:
             result = {}
-            for k, v in env.items():
-                if isinstance(v, Secret):
-                    result[system_encode(k)] = system_encode(v.value)
-                    self.has_secret_env = True
+            for name, value in env.items():
+                name = system_encode(name)
+                if isinstance(value, Secret):
+                    result[name] = system_encode(value.value)
+                    # remember secrets
+                    self.env_secret_keys.append(name)
                 else:
-                    result[system_encode(k)] = system_encode(v)
+                    result[name] = system_encode(value)
             return result
         if extra:
             return os.environ.copy()
@@ -1109,11 +1111,12 @@ class ProcessConfiguration:
                 raise RuntimeError(
                     f"Keyword argument '{name}' is not supported by this keyword."
                 )
+            name = system_encode(name[4:])
             if isinstance(value, Secret):
-                self.has_secret_env = True
-                env[system_encode(name[4:])] = system_encode(value.value)
+                env[name] = system_encode(value.value)
+                self.env_secret_keys.append(name)
             else:
-                env[system_encode(name[4:])] = system_encode(value)
+                env[name] = system_encode(value)
 
     def get_command(self, command, arguments):
         command = [system_encode(item) for item in (command, *arguments)]
@@ -1152,6 +1155,12 @@ class ProcessConfiguration:
         }
 
     def __str__(self):
+        if self.env is None:
+            printable_env = None
+        else:
+            printable_env = self.env.copy()
+            for k in self.env_secret_keys:
+                printable_env[k] = "<redacted>"
         return f"""\
 cwd:     {self.cwd}
 shell:   {self.shell}
@@ -1159,7 +1168,7 @@ stdout:  {self._stream_name(self.stdout_stream)}
 stderr:  {self._stream_name(self.stderr_stream)}
 stdin:   {self._stream_name(self.stdin_stream)}
 alias:   {self.alias}
-env:     {"<env with secrets>" if self.has_secret_env else self.env}"""
+env:     {printable_env}"""
 
     def _stream_name(self, stream):
         if hasattr(stream, "name"):
