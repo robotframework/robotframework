@@ -1,10 +1,11 @@
 *** Settings ***
-Suite Setup       Remove Environment Variable    ${NAME}
+Suite Setup       Run Keywords
+...    Set Log Level    TRACE
+...    AND
+...    Remove Environment Variable    ${NAME}
 Test Teardown     Remove Environment Variable    ${NAME}
-Library           OperatingSystem
+Resource          os_resource.robot
 Library           files/HelperLib.py
-Library           secret.py
-Variables         secret.py
 
 *** Variables ***
 ${NAME}           EXAMPLE_ENV_VAR_32FDHT
@@ -29,10 +30,8 @@ Set Environment Variable
     Should Be Equal    %{${NAME}}    Moi
 
 Set Environment Variable with Secret Content
-    Set Log Level    TRACE
-    Set Environment Variable    SECRET_ENV_VAR    ${SECRET_VAR}
-    Verify Secret in Env Var    SECRET_ENV_VAR
-    [Teardown]    Reset Log Level
+    Set Environment Variable    ${NAME}    ${SECRET}
+    Should Be Equal    %{${NAME}}    This is secret!
 
 Append To Environment Variable
     Append To Environment Variable    ${NAME}    first
@@ -51,11 +50,10 @@ Append To Environment Variable With Invalid Config
     Append To Environment Variable    ${NAME}    value    separator=value    not_ok=True
 
 Append To Environment Variable With Secret Value
-    Set Log Level    TRACE
-    Set Environment Variable          SECRET_ENV_VAR    foo
-    Append to Environment Variable    SECRET_ENV_VAR    ${SECRET_VAR}    separator=_
-    Verify Secret in Env Var    SECRET_ENV_VAR    prefix=foo_
-    [Teardown]    Reset Log Level
+    Append to Environment Variable    ${NAME}    ${SECRET}
+    Should Be Equal    %{${NAME}}    This is secret!
+    Append to Environment Variable    ${NAME}    This is not!    ${SECRET}    separator=${SPACE}
+    Should Be Equal    %{${NAME}}    This is secret! This is not! This is secret!
 
 Remove Environment Variable
     Set Environment Variable    ${NAME}    Hello

@@ -2,8 +2,6 @@
 Suite Teardown    Remove Base Test Directory
 Test Setup        Create Base Test Directory
 Resource          os_resource.robot
-Library           secret.py
-Variables         secret.py
 
 *** Variables ***
 ${SYSTEM_ENCODING}          ASCII    # Should be overridden from CLI
@@ -63,8 +61,8 @@ Create File To Non-Existing Directory
 
 Create File with Secret as Content
     Set Log Level     TRACE
-    Create file    ${TESTDIR}${/}secret1.txt    ${SECRET_VAR}
-    Verify Secret Content in File    ${TESTDIR}${/}secret1.txt
+    Create file    ${TESTFILE}    ${SECRET}
+    Verify File    ${TESTFILE}    This is secret!
     [Teardown]    Reset Log Level
 
 Creating File Fails If Encoding Is Incorrect
@@ -105,8 +103,11 @@ Append To File
 
 Append to File with Secret as Content
     Set Log Level     TRACE
-    Append To File    ${TESTDIR}${/}secret2.txt    ${SECRET_VAR}
-    Verify Secret Content in File    ${TESTDIR}${/}secret2.txt
+    Append To File    ${TESTFILE}    ${SECRET}
+    Verify File       ${TESTFILE}    This is secret!
+    Append To File    ${TESTFILE}    ${SPACE}
+    Append To File    ${TESTFILE}    ${SECRET}
+    Verify File       ${TESTFILE}    This is secret! This is secret!
     [Teardown]    Reset Log Level
 
 Path as `pathlib.Path`

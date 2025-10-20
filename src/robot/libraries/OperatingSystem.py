@@ -581,7 +581,12 @@ class OperatingSystem:
 
     # Creating and removing files and directory
 
-    def create_file(self, path: "Path", content: "str | Secret" = "", encoding: str = "UTF-8"):
+    def create_file(
+        self,
+        path: "Path",
+        content: "str | Secret" = "",
+        encoding: str = "UTF-8",
+    ):
         """Creates a file with the given content and encoding.
 
         If the directory where the file is created does not exist, it is
@@ -646,7 +651,12 @@ class OperatingSystem:
         path = self._write_to_file(path, content, mode="wb")
         self._link("Created binary file '%s'.", path)
 
-    def append_to_file(self, path: "Path", content: "str | Secret" = "", encoding: str = "UTF-8"):
+    def append_to_file(
+        self,
+        path: "Path",
+        content: "str | Secret" = "",
+        encoding: str = "UTF-8",
+    ):
         """Appends the given content to the specified file.
 
         If the file exists, the given text is written to its end. If the file
@@ -988,10 +998,22 @@ class OperatingSystem:
         """
         if isinstance(value, Secret):
             value = value.value
-        set_env_var(name, value)
-        self._info(f"Environment variable '{name}' set to value '{value}'.")
+            secret = True
+        else:
+            secret = False
+        self._set_environment_variable(name, value, secret)
 
-    def append_to_environment_variable(self, name: str, *values: "str | Secret", separator: str = os.pathsep):
+    def _set_environment_variable(self, name, value, secret=False):
+        set_env_var(name, value)
+        set_to = "a secret value" if secret else f"value '{value}'"
+        self._info(f"Environment variable '{name}' set to {set_to}.")
+
+    def append_to_environment_variable(
+        self,
+        name: str,
+        *values: "str | Secret",
+        separator: str = os.pathsep,
+    ):
         """Appends given ``values`` to environment variable ``name``.
 
         If the environment variable already exists, values are added after it,
@@ -1015,8 +1037,12 @@ class OperatingSystem:
         initial = self.get_environment_variable(name, sentinel)
         if initial is not sentinel:
             values = (initial, *values)
-        values = [v.value if isinstance(v, Secret) else v for v in values]
-        self.set_environment_variable(name, separator.join(values))
+        if any(isinstance(v, Secret) for v in values):
+            values = [v.value if isinstance(v, Secret) else v for v in values]
+            secret = True
+        else:
+            secret = False
+        self._set_environment_variable(name, separator.join(values), secret)
 
     def remove_environment_variable(self, *names):
         """Deletes the specified environment variable.
