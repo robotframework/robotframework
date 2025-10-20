@@ -16,15 +16,16 @@
 import fnmatch
 import glob
 import os
-import pathlib
 import re
 import shutil
 import tempfile
 import time
 from datetime import datetime
+from pathlib import Path
 
 from robot.api import logger
 from robot.api.deco import keyword
+from robot.api.types import Secret
 from robot.utils import (
     abspath, ConnectionCache, console_decode, CONSOLE_ENCODING, del_env_var,
     get_env_var, get_env_vars, get_time, normpath, parse_time, plural_or_not as s,
@@ -580,7 +581,7 @@ class OperatingSystem:
 
     # Creating and removing files and directory
 
-    def create_file(self, path, content="", encoding="UTF-8"):
+    def create_file(self, path: "Path", content: "str | Secret" = "", encoding: str = "UTF-8"):
         """Creates a file with the given content and encoding.
 
         If the directory where the file is created does not exist, it is
@@ -603,6 +604,8 @@ class OperatingSystem:
         `File Should Not Exist` can be used to avoid overwriting existing
         files.
         """
+        if isinstance(content, Secret):
+            content = content.value
         path = self._write_to_file(path, content, encoding)
         self._link("Created file '%s'.", path)
 
@@ -643,7 +646,7 @@ class OperatingSystem:
         path = self._write_to_file(path, content, mode="wb")
         self._link("Created binary file '%s'.", path)
 
-    def append_to_file(self, path, content, encoding="UTF-8"):
+    def append_to_file(self, path: "Path", content: "str | Secret" = "", encoding: str = "UTF-8"):
         """Appends the given content to the specified file.
 
         If the file exists, the given text is written to its end. If the file
@@ -653,6 +656,8 @@ class OperatingSystem:
         exactly like `Create File`. See its documentation for more details
         about the usage.
         """
+        if isinstance(content, Secret):
+            content = content.value
         path = self._write_to_file(path, content, encoding, mode="a")
         self._link("Appended to file '%s'.", path)
 
@@ -797,7 +802,7 @@ class OperatingSystem:
         return source
 
     def _normalize_copy_and_move_destination(self, destination):
-        if isinstance(destination, pathlib.Path):
+        if isinstance(destination, Path):
             destination = str(destination)
         is_dir = os.path.isdir(destination) or destination.endswith(("/", "\\"))
         destination = self._absnorm(destination)
@@ -975,16 +980,18 @@ class OperatingSystem:
             self._error(f"Environment variable '{name}' does not exist.")
         return value
 
-    def set_environment_variable(self, name, value):
+    def set_environment_variable(self, name: str, value: "str | Secret"):
         """Sets an environment variable to a specified value.
 
         Values are converted to strings automatically. Set variables are
         automatically encoded using the system encoding.
         """
+        if isinstance(value, Secret):
+            value = value.value
         set_env_var(name, value)
         self._info(f"Environment variable '{name}' set to value '{value}'.")
 
-    def append_to_environment_variable(self, name, *values, separator=os.pathsep):
+    def append_to_environment_variable(self, name: str, *values: "str | Secret", separator: str = os.pathsep):
         """Appends given ``values`` to environment variable ``name``.
 
         If the environment variable already exists, values are added after it,
@@ -1008,6 +1015,7 @@ class OperatingSystem:
         initial = self.get_environment_variable(name, sentinel)
         if initial is not sentinel:
             values = (initial, *values)
+        values = [v.value if isinstance(v, Secret) else v for v in values]
         self.set_environment_variable(name, separator.join(values))
 
     def remove_environment_variable(self, *names):
@@ -1089,7 +1097,7 @@ class OperatingSystem:
         """
         # FIXME: Is normalizing parts needed anymore?
         parts = [
-            str(p) if isinstance(p, pathlib.Path) else p.replace("/", os.sep)
+            str(p) if isinstance(p, Path) else p.replace("/", os.sep)
             for p in (base, *parts)
         ]
         return self.normalize_path(os.path.join(*parts))
@@ -1134,7 +1142,7 @@ class OperatingSystem:
         On Windows result would use ``\\`` instead of ``/`` and home directory
         would be different.
         """
-        if isinstance(path, pathlib.Path):
+        if isinstance(path, Path):
             path = str(path)
         else:
             path = path.replace("/", os.sep)

@@ -2,6 +2,8 @@
 Suite Teardown    Remove Base Test Directory
 Test Setup        Create Base Test Directory
 Resource          os_resource.robot
+Library           secret.py
+Variables         secret.py
 
 *** Variables ***
 ${SYSTEM_ENCODING}          ASCII    # Should be overridden from CLI
@@ -59,6 +61,12 @@ Create File With Space In Name
 Create File To Non-Existing Directory
     Create And Verify File    path=${TESTDIR}${/}file.txt
 
+Create File with Secret as Content
+    Set Log Level     TRACE
+    Create file    ${TESTDIR}${/}secret1.txt    ${SECRET_VAR}
+    Verify Secret Content in File    ${TESTDIR}${/}secret1.txt
+    [Teardown]    Reset Log Level
+
 Creating File Fails If Encoding Is Incorrect
     [Documentation]    FAIL REGEXP: Unicode(Encode|)Error: .*
     Create File    ${TESTFILE}    Hyvää yötä!    ASCII
@@ -94,6 +102,12 @@ Append To File
     Append To File    ${TESTFILE}    \n
     Append To File    ${TESTFILE}    Lääst läin\n\n    UTF-8
     Verify File       ${TESTFILE}    First line${\n}Second line${\n}3${\n}${\n}${\n}Lääst läin${\n}${\n}
+
+Append to File with Secret as Content
+    Set Log Level     TRACE
+    Append To File    ${TESTDIR}${/}secret2.txt    ${SECRET_VAR}
+    Verify Secret Content in File    ${TESTDIR}${/}secret2.txt
+    [Teardown]    Reset Log Level
 
 Path as `pathlib.Path`
     Create And Verify File    path=${PATH/'file.txt'}

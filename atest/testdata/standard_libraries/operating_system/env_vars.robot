@@ -3,6 +3,8 @@ Suite Setup       Remove Environment Variable    ${NAME}
 Test Teardown     Remove Environment Variable    ${NAME}
 Library           OperatingSystem
 Library           files/HelperLib.py
+Library           secret.py
+Variables         secret.py
 
 *** Variables ***
 ${NAME}           EXAMPLE_ENV_VAR_32FDHT
@@ -26,6 +28,12 @@ Set Environment Variable
     Set Environment Variable    ${NAME}    Moi
     Should Be Equal    %{${NAME}}    Moi
 
+Set Environment Variable with Secret Content
+    Set Log Level    TRACE
+    Set Environment Variable    SECRET_ENV_VAR    ${SECRET_VAR}
+    Verify Secret in Env Var    SECRET_ENV_VAR
+    [Teardown]    Reset Log Level
+
 Append To Environment Variable
     Append To Environment Variable    ${NAME}    first
     Should Be Equal    %{${NAME}}    first
@@ -41,6 +49,13 @@ Append To Environment Variable With Custom Separator
 Append To Environment Variable With Invalid Config
     [Documentation]    FAIL Keyword 'OperatingSystem.Append To Environment Variable' got unexpected named argument 'not_ok'.
     Append To Environment Variable    ${NAME}    value    separator=value    not_ok=True
+
+Append To Environment Variable With Secret Value
+    Set Log Level    TRACE
+    Set Environment Variable          SECRET_ENV_VAR    foo
+    Append to Environment Variable    SECRET_ENV_VAR    ${SECRET_VAR}    separator=_
+    Verify Secret in Env Var    SECRET_ENV_VAR    prefix=foo_
+    [Teardown]    Reset Log Level
 
 Remove Environment Variable
     Set Environment Variable    ${NAME}    Hello
