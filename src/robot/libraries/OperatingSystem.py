@@ -581,7 +581,7 @@ class OperatingSystem:
 
     # Creating and removing files and directory
 
-    def create_file(self, path: "str | Path", content: "str | Secret" = "", encoding: str = "UTF-8"):
+    def create_file(self, path: "Path", content: "str | Secret" = "", encoding: str = "UTF-8"):
         """Creates a file with the given content and encoding.
 
         If the directory where the file is created does not exist, it is
@@ -646,7 +646,7 @@ class OperatingSystem:
         path = self._write_to_file(path, content, mode="wb")
         self._link("Created binary file '%s'.", path)
 
-    def append_to_file(self, path: "str | Path", content: "str | Secret" = "", encoding: str = "UTF-8"):
+    def append_to_file(self, path: "Path", content: "str | Secret" = "", encoding: str = "UTF-8"):
         """Appends the given content to the specified file.
 
         If the file exists, the given text is written to its end. If the file
