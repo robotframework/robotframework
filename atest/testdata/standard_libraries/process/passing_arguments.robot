@@ -49,3 +49,16 @@ Unsupported kwargs cause error
 Log process config
     Run Process    python -c pass    shell=yes    stdout=%{TEMPDIR}/stdout    cwd=%{TEMPDIR}    alias=äliäs
     Run Process    python    -c    pass    stderr=STDOUT    cwd=${CURDIR}    stdin=PIPE
+
+Run Process with Secret Argument
+    ${result} =    Run Process    python    ${SCRIPT}    ${SECRET}
+    Script result should equal    ${result}    stdout=This is secret!
+
+Run Process with Mixed Arguments Including Secret
+    ${result} =    Run Process    python    ${SCRIPT}    public_arg    ${SECRET}
+    Script result should equal    ${result}    stdout=public_arg    stderr=This is secret!
+
+Start Process with Secret Argument
+    ${handle} =    Start Process    python    ${SCRIPT}    ${SECRET}
+    ${result} =    Wait For Process    ${handle}
+    Script result should equal    ${result}    stdout=This is secret!

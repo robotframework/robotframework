@@ -22,6 +22,7 @@ from pathlib import Path
 from tempfile import TemporaryFile
 
 from robot.api import logger
+from robot.api.types import Secret
 from robot.errors import TimeoutExceeded
 from robot.utils import (
     cmdline2list, ConnectionCache, console_decode, console_encode, is_list_like,
@@ -455,6 +456,14 @@ class Process:
         Earlier versions returned a generic handle and getting the process object
         required using `Get Process Object` separately.
         """
+        # Check for secrets in arguments and unwrap them
+        secret = any(isinstance(arg, Secret) for arg in arguments)
+        if secret:
+            masked_arguments = tuple(
+                'Secret(value=<secret>)' if isinstance(arg, Secret) else arg
+                for arg in arguments
+            )
+            arguments = tuple(arg.value if isinstance(arg, Secret) else arg for arg in arguments)
         conf = ProcessConfiguration(
             cwd=cwd,
             shell=shell,
@@ -466,9 +475,13 @@ class Process:
             env=env,
             **env_extra,
         )
-        command = conf.get_command(command, list(arguments))
-        self._log_start(command, conf)
-        process = subprocess.Popen(command, **conf.popen_config)
+        actual_command = conf.get_command(command, list(arguments))
+        if secret:
+            masked_command = conf.get_command(command, list(masked_arguments))
+            self._log_start(masked_command, conf)
+        else:
+            self._log_start(actual_command, conf)
+        process = subprocess.Popen(actual_command, **conf.popen_config)
         self._results[process] = ExecutionResult(process, **conf.result_config)
         self._processes.register(process, alias=conf.alias)
         return self._processes.current
@@ -1025,6 +1038,7 @@ class ProcessConfiguration:
         self.shell = shell
         self.alias = alias
         self.output_encoding = output_encoding
+        self.has_secret_env = False
         self.stdout_stream = self._new_stream(stdout)
         self.stderr_stream = self._get_stderr(stderr, stdout, self.stdout_stream)
         self.stdin_stream = self._get_stdin(stdin)
@@ -1048,6 +1062,8 @@ class ProcessConfiguration:
     def _get_stdin(self, stdin):
         if isinstance(stdin, Path):
             stdin = str(stdin)
+        elif isinstance(stdin, Secret):
+            stdin = stdin.value
         elif not isinstance(stdin, str):
             return stdin
         elif stdin.upper() == "NONE":
@@ -1075,18 +1091,29 @@ class ProcessConfiguration:
 
     def _get_initial_env(self, env, extra):
         if env:
-            return {system_encode(k): system_encode(env[k]) for k in env}
+            result = {}
+            for k, v in env.items():
+                if isinstance(v, Secret):
+                    result[system_encode(k)] = system_encode(v.value)
+                    self.has_secret_env = True
+                else:
+                    result[system_encode(k)] = system_encode(v)
+            return result
         if extra:
             return os.environ.copy()
         return None
 
     def _add_to_env(self, env, extra):
-        for name in extra:
+        for name, value in extra.items():
             if not name.startswith("env:"):
                 raise RuntimeError(
                     f"Keyword argument '{name}' is not supported by this keyword."
                 )
-            env[system_encode(name[4:])] = system_encode(extra[name])
+            if isinstance(value, Secret):
+                self.has_secret_env = True
+                env[system_encode(name[4:])] = system_encode(value.value)
+            else:
+                env[system_encode(name[4:])] = system_encode(value)
 
     def get_command(self, command, arguments):
         command = [system_encode(item) for item in (command, *arguments)]
@@ -1132,7 +1159,7 @@ stdout:  {self._stream_name(self.stdout_stream)}
 stderr:  {self._stream_name(self.stderr_stream)}
 stdin:   {self._stream_name(self.stdin_stream)}
 alias:   {self.alias}
-env:     {self.env}"""
+env:     {"<env with secrets>" if self.has_secret_env else self.env}"""
 
     def _stream_name(self, stream):
         if hasattr(stream, "name"):

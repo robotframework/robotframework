@@ -55,3 +55,12 @@ Stdin as stdout from another process
     ${result2} =    Wait For Process
     Should Be Equal   ${result1.stdout}    HELLO, WORLD!\n
     Should Be Equal   ${result2.stdout}    ${EMPTY}
+
+Stdin as Secret
+    ${result} =    Run Process    python    -c    import sys; print(sys.stdin.read())    stdin=${SECRET}
+    Should Be Equal    ${result.stdout}    This is secret!
+
+Start Process with Stdin as Secret
+    ${handle} =    Start Process    python    -c    import sys; print(sys.stdin.read())    stdin=${SECRET}
+    ${result} =    Wait For Process    ${handle}
+    Should Be Equal    ${result.stdout}    This is secret!
