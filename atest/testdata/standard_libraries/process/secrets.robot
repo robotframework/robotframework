@@ -15,17 +15,17 @@ Run Process with Mixed Arguments Including Secret
     ${result} =    Run Process    python    ${SCRIPT}    public_arg    ${SECRET}
     Script result should equal    ${result}    stdout=public_arg    stderr=This is secret!
 
+Run Process with Stdin as Secret
+    ${result} =    Run Process    python    -c    import sys; print(sys.stdin.read())    stdin=${SECRET}    cwd=%{TEMPDIR}
+    Should Be Equal    ${result.stdout}    This is secret!
+
 Start Process with Secret Argument
     ${handle} =    Start Process    python    ${SCRIPT}    ${SECRET}
     ${result} =    Wait For Process    ${handle}
     Script result should equal    ${result}    stdout=This is secret!
 
-Stdin as Secret
-    ${result} =    Run Process    python    -c    import sys; print(sys.stdin.read())    stdin=${SECRET}
-    Should Be Equal    ${result.stdout}    This is secret!
-
 Start Process with Stdin as Secret
-    ${handle} =    Start Process    python    -c    import sys; print(sys.stdin.read())    stdin=${SECRET}
+    ${handle} =    Start Process    python    -c    import sys; print(sys.stdin.read())    stdin=${SECRET}    cwd=%{TEMPDIR}
     ${result} =    Wait For Process    ${handle}
     Should Be Equal    ${result.stdout}    This is secret!
 
