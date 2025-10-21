@@ -25,7 +25,7 @@ class QuietOutput(LoggerApi):
         self._stderr = HighlightingStream(stderr or sys.__stderr__, colors)
 
     def message(self, msg):
-        if msg.also_console:
+        if msg.console:
             self._stderr.error(msg.message, msg.level)
 
 

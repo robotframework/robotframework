@@ -32,7 +32,7 @@ class Message(BodyItem):
 
     type = BodyItem.MESSAGE
     repr_args = ("message", "level")
-    __slots__ = ("message", "level", "html", "also_console", "_timestamp")
+    __slots__ = ("message", "level", "html", "_timestamp")
 
     def __init__(
         self,
@@ -40,14 +40,12 @@ class Message(BodyItem):
         level: MessageLevel = "INFO",
         html: bool = False,
         timestamp: "datetime|str|None" = None,
-        also_console: bool = False,
         parent: "BodyItem|None" = None,
     ):
         self.message = message
         self.level = level
         self.html = html
         self.timestamp = timestamp
-        self.also_console = also_console
         self.parent = parent
 
     @setter
