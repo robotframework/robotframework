@@ -22,7 +22,6 @@ Secret in environment variable via env:name Syntax
 
 Multiple Secrets in environment variables
     ${tc} =    Check Test Case    ${TESTNAME}
-    # Check Log Message    ${tc[0, 1]}    *env:*'v1': '<redacted>'*v3': '<redacted>'    level=DEBUG    pattern=yes
     Check Log Message    ${tc[0, 1]}    *env:*'v1': '<redacted>'*    level=DEBUG    pattern=yes
     Check Log Message    ${tc[0, 1]}    *env:*'v3': '<redacted>'*    level=DEBUG    pattern=yes
 
