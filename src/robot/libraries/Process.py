@@ -20,6 +20,7 @@ import sys
 import time
 from pathlib import Path
 from tempfile import TemporaryFile
+from typing import Any
 
 from robot.api import logger
 from robot.api.types import Secret
@@ -334,19 +335,19 @@ class Process:
 
     def run_process(
         self,
-        command,
-        *arguments,
-        cwd=None,
-        shell=False,
-        stdout=None,
-        stderr=None,
-        stdin=None,
-        output_encoding="CONSOLE",
-        alias=None,
-        timeout=None,
-        on_timeout="terminate",
-        env=None,
-        **env_extra,
+        command: str,
+        *arguments: "str | Secret",
+        cwd: "str | None" = None,
+        shell: bool = False,
+        stdout: "str | None" = None,
+        stderr: "str | None" = None,
+        stdin: "str | Path | Secret | Any" = None,
+        output_encoding: str = "CONSOLE",
+        alias: "str | None" = None,
+        timeout: "str | None" = None,
+        on_timeout: str = "terminate",
+        env: "dict[str, str | Secret] | None" = None,
+        **env_extra: "str | Secret",
     ):
         """Runs a process and waits for it to complete.
 
@@ -405,17 +406,17 @@ class Process:
 
     def start_process(
         self,
-        command,
-        *arguments,
-        cwd=None,
-        shell=False,
-        stdout=None,
-        stderr=None,
-        stdin=None,
-        output_encoding="CONSOLE",
-        alias=None,
-        env=None,
-        **env_extra,
+        command: str,
+        *arguments: "str | Secret",
+        cwd: "str | None" = None,
+        shell: bool = False,
+        stdout: "str | None" = None,
+        stderr: "str | None" = None,
+        stdin: "str | Path | Secret | Any" = None,
+        output_encoding: str = "CONSOLE",
+        alias: "str | None" = None,
+        env: "dict[str, str | Secret] | None" = None,
+        **env_extra: "str | Secret",
     ):
         """Starts a new process on background.
 
