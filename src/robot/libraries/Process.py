@@ -459,11 +459,12 @@ class Process:
         # Check for secrets in arguments and unwrap them
         secret = any(isinstance(arg, Secret) for arg in arguments)
         if secret:
-            masked_arguments = tuple(
-                '<redacted>' if isinstance(arg, Secret) else arg
-                for arg in arguments
-            )
-            arguments = [arg.value if isinstance(arg, Secret) else arg for arg in arguments]
+            masked_arguments = [
+                "<redacted>" if isinstance(arg, Secret) else arg for arg in arguments
+            ]
+            arguments = [
+                arg.value if isinstance(arg, Secret) else arg for arg in arguments
+            ]
         conf = ProcessConfiguration(
             cwd=cwd,
             shell=shell,
