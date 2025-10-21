@@ -88,9 +88,14 @@ class Message(BaseMessage):
 
     Listeners can remove messages by setting the `message` attribute to `None`.
     These messages are not written to the output.xml at all.
+
+    The ``console`` parameter controls writing the message to the console in
+    addition to the log file. By default, messages with the ``WARN`` and
+    ``ERROR`` level are logged to the console and others are not.
+    This parameter is new in Robot Framework 7.4.
     """
 
-    __slots__ = ("_message",)
+    __slots__ = ("_message", "console")
 
     def __init__(
         self,
@@ -98,11 +103,14 @@ class Message(BaseMessage):
         level: "MessageLevel|PseudoLevel" = "INFO",
         html: bool = False,
         timestamp: "datetime|str|None" = None,
-        also_console: bool = False,
+        console: bool | None = None
     ):
         level, html = self._get_level_and_html(level, html)
+        if console is None:
+            console = level.upper() in ("WARN", "ERROR")
+        self.console = console
         super().__init__(
-            message, level, html, timestamp or datetime.now(), also_console
+            message, level, html, timestamp or datetime.now()
         )
 
     def _get_level_and_html(self, level, html) -> "tuple[MessageLevel, bool]":
