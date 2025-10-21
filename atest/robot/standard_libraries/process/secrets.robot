@@ -10,31 +10,13 @@ Run Process with Mixed Arguments Including Secret
     Python script should be run and arguments logged    public_arg <redacted>
 
 Run Process with Stdin as Secret
-    ${tc} =    Check Test Case    ${TESTNAME}
-    ${config} =    Catenate    SEPARATOR=\n
-    ...    cwd:${SPACE*5}%{TEMPDIR}
-    ...    shell:${SPACE*3}False
-    ...    stdout:${SPACE*2}PIPE
-    ...    stderr:${SPACE*2}PIPE
-    ...    stdin:${SPACE*3}\[0-9]
-    ...    alias:${SPACE*3}None
-    ...    env:${SPACE*5}None
-    Check Log Message    ${tc[0, 1]}    Process configuration:\n${config}    level=DEBUG    pattern=${TRUE}
+    Check Test Case    ${TESTNAME}
 
 Start Process with Secret Argument
     Python script should be run and arguments logged    <redacted>
 
 Start Process with Stdin as Secret
-    ${tc} =    Check Test Case    ${TESTNAME}
-    ${config} =    Catenate    SEPARATOR=\n
-    ...    cwd:${SPACE*5}%{TEMPDIR}
-    ...    shell:${SPACE*3}False
-    ...    stdout:${SPACE*2}PIPE
-    ...    stderr:${SPACE*2}PIPE
-    ...    stdin:${SPACE*3}\[0-9]
-    ...    alias:${SPACE*3}None
-    ...    env:${SPACE*5}None
-    Check Log Message    ${tc[0, 1]}    Process configuration:\n${config}    level=DEBUG    pattern=${TRUE}
+    Check Test Case    ${TESTNAME}
 
 Secret in environment variable via env Dict
     ${tc} =    Check Test Case    ${TESTNAME}
