@@ -24,17 +24,3 @@ Invividually given overrides value in given environ
 Non-ASCII value
     Check Test Case    ${TESTNAME}
 
-Secret in environment variable via env Dict
-    ${tc} =    Check Test Case    ${TESTNAME}
-    # TODO: Fix the below test
-    #Check Log Message    ${tc[0, 1]}    *env:${SPACE*5}<env with secrets>*    DEBUG    pattern=yes
-
-Secret in environment variable via env:name Syntax
-    ${tc} =    Check Test Case    ${TESTNAME}
-    # TODO: Fix the below test
-    #Check Log Message    ${tc[0, 1]}    *env:${SPACE*5}<env with secrets>*    DEBUG    pattern=yes
-
-Multiple Secrets in environment variables
-    ${tc} =    Check Test Case    ${TESTNAME}
-    # TODO: Fix the below test
-    #Check Log Message    ${tc[0, 1]}    *env:${SPACE*5}<env with secrets>*    DEBUG    pattern=yes

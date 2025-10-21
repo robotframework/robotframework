@@ -1,0 +1,41 @@
+*** Settings ***
+Suite Setup       Set Environment Variable    v1    system
+Resource          process_resource.robot
+
+*** Variables ***
+@{COMMAND}        python    -c    import os; print(' '.join([os.getenv('v1', '-'), os.getenv('v2', '-'), os.getenv('v3', '-')]))
+
+*** Test Cases ***
+Run Process with Secret Argument
+    ${result} =    Run Process    python    ${SCRIPT}    ${SECRET}
+    Script result should equal    ${result}    stdout=This is secret!
+
+Run Process with Mixed Arguments Including Secret
+    ${result} =    Run Process    python    ${SCRIPT}    public_arg    ${SECRET}
+    Script result should equal    ${result}    stdout=public_arg    stderr=This is secret!
+
+Start Process with Secret Argument
+    ${handle} =    Start Process    python    ${SCRIPT}    ${SECRET}
+    ${result} =    Wait For Process    ${handle}
+    Script result should equal    ${result}    stdout=This is secret!
+
+Secret in environment variable via env Dict
+    ${env} =    Create environ    v1    ${SECRET}
+    ${result} =    Run Process    @{COMMAND}    env=${env}
+    Should Be Equal    ${result.stdout}    This is secret! - -
+
+Secret in environment variable via env:name Syntax
+    ${result} =    Run Process    @{COMMAND}    env:v2=${SECRET}
+    Should Be Equal    ${result.stdout}    system This is secret! -
+
+Multiple Secrets in environment variables
+    ${result} =    Run Process    @{COMMAND}    env:v1=${SECRET}    env:v2=XX    env:v3=${SECRET}
+    Should Be Equal    ${result.stdout}    This is secret! XX This is secret!
+
+*** Keywords ***
+Create environ
+    [Arguments]    @{environ}
+    ${path} =    Get Environment Variable    PATH    default=.
+    ${systemroot} =    Get Environment Variable    SYSTEMROOT    default=.
+    ${environ} =    Create Dictionary    @{environ}    PATH=${path}    SYSTEMROOT=${SYSTEMROOT}
+    RETURN    ${environ}

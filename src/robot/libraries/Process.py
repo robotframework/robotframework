@@ -460,10 +460,10 @@ class Process:
         secret = any(isinstance(arg, Secret) for arg in arguments)
         if secret:
             masked_arguments = tuple(
-                'Secret(value=<secret>)' if isinstance(arg, Secret) else arg
+                '<redacted>' if isinstance(arg, Secret) else arg
                 for arg in arguments
             )
-            arguments = tuple(arg.value if isinstance(arg, Secret) else arg for arg in arguments)
+            arguments = [arg.value if isinstance(arg, Secret) else arg for arg in arguments]
         conf = ProcessConfiguration(
             cwd=cwd,
             shell=shell,

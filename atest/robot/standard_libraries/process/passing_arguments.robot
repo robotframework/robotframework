@@ -56,15 +56,6 @@ Log process config
     ...    env:${SPACE*5}None
     Check Log Message    ${tc[1, 1]}    Process configuration:\n${config}    level=DEBUG
 
-Run Process with Secret Argument
-    Secret(value=<secret>)
-
-Run Process with Mixed Arguments Including Secret
-    public_arg Secret(value=<secret>)
-
-Start Process with Secret Argument
-    Secret(value=<secret>)
-
 *** Keywords ***
 Python script should be run and arguments logged
     [Arguments]    ${arguments}    ${script}=script.py    ${index}=0

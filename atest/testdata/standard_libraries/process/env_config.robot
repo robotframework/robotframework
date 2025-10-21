@@ -42,19 +42,6 @@ Non-ASCII value
     ${result} =   Run Process    python    -c    ${code}    env:XXX=hyvä    stderr=STDOUT
     Result should equal    ${result}    stdout=PASS
 
-Secret in environment variable via env Dict
-    ${env} =    Create environ    v1    ${SECRET}
-    ${result} =    Run Process    @{COMMAND}    env=${env}
-    Should Be Equal    ${result.stdout}    This is secret! - -
-
-Secret in environment variable via env:name Syntax
-    ${result} =    Run Process    @{COMMAND}    env:v2=${SECRET}
-    Should Be Equal    ${result.stdout}    system This is secret! -
-
-Multiple Secrets in environment variables
-    ${result} =    Run Process    @{COMMAND}    env:v1=${SECRET}    env:v2=XX    env:v3=${SECRET}
-    Should Be Equal    ${result.stdout}    This is secret! XX This is secret!
-
 *** Keywords ***
 Create environ
     [Arguments]    @{environ}
