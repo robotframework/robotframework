@@ -12,6 +12,12 @@ Run Process with Mixed Arguments Including Secret
 Start Process with Secret Argument
     Python script should be run and arguments logged    <redacted>
 
+Stdin as Secret
+    Check Test Case    ${TESTNAME}
+
+Start Process with Stdin as Secret
+    Check Test Case    ${TESTNAME}
+
 Secret in environment variable via env Dict
     ${tc} =    Check Test Case    ${TESTNAME}
     Check Log Message    ${tc[1, 1]}    *env:*'v1': '<redacted>'*    level=DEBUG    pattern=yes

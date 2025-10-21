@@ -29,9 +29,3 @@ Stdin as text
 
 Stdin as stdout from another process
     Check Test Case    ${TESTNAME}
-
-Stdin as Secret
-    Check Test Case    ${TESTNAME}
-
-Start Process with Stdin as Secret
-    Check Test Case    ${TESTNAME}

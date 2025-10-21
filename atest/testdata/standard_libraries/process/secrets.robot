@@ -3,7 +3,8 @@ Suite Setup       Set Environment Variable    v1    system
 Resource          process_resource.robot
 
 *** Variables ***
-@{COMMAND}        python    -c    import os; print(' '.join([os.getenv('v1', '-'), os.getenv('v2', '-'), os.getenv('v3', '-')]))
+@{COMMAND}           python    -c    import os; print(' '.join([os.getenv('v1', '-'), os.getenv('v2', '-'), os.getenv('v3', '-')]))
+${SECRET: Secret}    %{=This is secret!}
 
 *** Test Cases ***
 Run Process with Secret Argument
@@ -18,6 +19,15 @@ Start Process with Secret Argument
     ${handle} =    Start Process    python    ${SCRIPT}    ${SECRET}
     ${result} =    Wait For Process    ${handle}
     Script result should equal    ${result}    stdout=This is secret!
+
+Stdin as Secret
+    ${result} =    Run Process    python    -c    import sys; print(sys.stdin.read())    stdin=${SECRET}
+    Should Be Equal    ${result.stdout}    This is secret!
+
+Start Process with Stdin as Secret
+    ${handle} =    Start Process    python    -c    import sys; print(sys.stdin.read())    stdin=${SECRET}
+    ${result} =    Wait For Process    ${handle}
+    Should Be Equal    ${result.stdout}    This is secret!
 
 Secret in environment variable via env Dict
     ${env} =    Create environ    v1    ${SECRET}

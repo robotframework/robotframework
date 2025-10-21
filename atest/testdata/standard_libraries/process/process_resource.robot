@@ -13,7 +13,6 @@ ${STDOUT}         %{TEMPDIR}/process-stdout-file.txt
 ${STDERR}         %{TEMPDIR}/process-stderr-file.txt
 ${STDIN}          %{TEMPDIR}/process-stdin-file.txt
 ${CWD}            %{TEMPDIR}/process-cwd
-${SECRET: Secret}    %{=This is secret!}
 
 *** Keywords ***
 Some process
