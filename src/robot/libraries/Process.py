@@ -457,9 +457,8 @@ class Process:
         Earlier versions returned a generic handle and getting the process object
         required using `Get Process Object` separately.
         """
-        # Check for secrets in arguments and unwrap them
-        secret = any(isinstance(arg, Secret) for arg in arguments)
-        if secret:
+        has_secrets = any(isinstance(arg, Secret) for arg in arguments)
+        if has_secrets:
             masked_arguments = [
                 "<secret>" if isinstance(arg, Secret) else arg for arg in arguments
             ]
@@ -477,9 +476,9 @@ class Process:
             env=env,
             **env_extra,
         )
-        actual_command = conf.get_command(command, list(arguments))
-        if secret:
-            masked_command = conf.get_command(command, list(masked_arguments))
+        actual_command = conf.get_command(command, arguments)
+        if has_secrets:
+            masked_command = conf.get_command(command, masked_arguments)
             self._log_start(masked_command, conf)
         else:
             self._log_start(actual_command, conf)
@@ -1043,7 +1042,7 @@ class ProcessConfiguration:
         self.stdout_stream = self._new_stream(stdout)
         self.stderr_stream = self._get_stderr(stderr, stdout, self.stdout_stream)
         self.stdin_stream = self._get_stdin(stdin)
-        self.env_secret_keys = []
+        self.secret_env_keys = []
         self.env = self._construct_env(env, env_extra)
 
     def _new_stream(self, name):
@@ -1098,8 +1097,7 @@ class ProcessConfiguration:
                 name = system_encode(name)
                 if isinstance(value, Secret):
                     result[name] = system_encode(value.value)
-                    # remember secrets
-                    self.env_secret_keys.append(name)
+                    self.secret_env_keys.append(name)
                 else:
                     result[name] = system_encode(value)
             return result
@@ -1116,7 +1114,7 @@ class ProcessConfiguration:
             name = system_encode(name[4:])
             if isinstance(value, Secret):
                 env[name] = system_encode(value.value)
-                self.env_secret_keys.append(name)
+                self.secret_env_keys.append(name)
             else:
                 env[name] = system_encode(value)
 
@@ -1161,7 +1159,7 @@ class ProcessConfiguration:
             printable_env = None
         else:
             printable_env = self.env.copy()
-            for k in self.env_secret_keys:
+            for k in self.secret_env_keys:
                 printable_env[k] = "<secret>"
         return f"""\
 cwd:     {self.cwd}
