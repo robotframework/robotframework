@@ -461,7 +461,7 @@ class Process:
         has_secrets = any(isinstance(arg, Secret) for arg in arguments)
         if has_secrets:
             masked_arguments = [
-                "<secret>" if isinstance(arg, Secret) else arg for arg in arguments
+                str(arg) if isinstance(arg, Secret) else arg for arg in arguments
             ]
             arguments = [
                 arg.value if isinstance(arg, Secret) else arg for arg in arguments
@@ -1161,7 +1161,7 @@ class ProcessConfiguration:
         else:
             printable_env = self.env.copy()
             for k in self.secret_env_keys:
-                printable_env[k] = "<secret>"
+                printable_env[k] = str(Secret(''))
         return f"""\
 cwd:     {self.cwd}
 shell:   {self.shell}
