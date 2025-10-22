@@ -16,8 +16,8 @@ def library_not_secret():
     return "This is a string, not a secret"
 
 
-def library_receive_secret(secret: Secret) -> str:
-    return secret.value
+def library_receive_secret(secret: Secret, expected: str = "Secret value"):
+    assert secret.value, expected
 
 
 def library_receive_credential(credential: Credential) -> str:

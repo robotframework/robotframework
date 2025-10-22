@@ -26,7 +26,7 @@ class Secret:
     or encrypted, so they are available for all code that can access these
     objects directly or indirectly via Robot Framework APIs.
 
-    The string representation of this class does not disclose encapsulated
+    The string representation of these objects does not disclose encapsulated
     values, so they are not visible in logs even if these objects themselves
     are logged. Notice, though, that if a keyword passes the actual value
     further, it may be logged or otherwise disclosed later.
@@ -52,7 +52,7 @@ class Secret:
         self.value = value
 
     def __str__(self) -> str:
-        return f"{type(self).__name__}(value=<secret>)"
+        return "<secret>"
 
     def __repr__(self):
-        return str(self)
+        return f"{type(self).__name__}(value=<secret>)"
