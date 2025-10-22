@@ -1155,9 +1155,8 @@ class ProcessConfiguration:
         }
 
     def __str__(self):
-        if self.env is None:
-            printable_env = None
-        else:
+        printable_env = self.env
+        if len(self.secret_env_keys):
             printable_env = self.env.copy()
             for k in self.secret_env_keys:
                 printable_env[k] = str(Secret(""))
