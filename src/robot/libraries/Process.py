@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import io
 import os
 import signal as signal_module
 import subprocess
@@ -341,7 +342,7 @@ class Process:
         shell: bool = False,
         stdout: "str | None" = None,
         stderr: "str | None" = None,
-        stdin: "str | Path | Secret | int | None" = None,
+        stdin: "str | Secret | Path | int | io.IOBase | None" = None,
         output_encoding: str = "CONSOLE",
         alias: "str | None" = None,
         timeout: "str | None" = None,
@@ -412,7 +413,7 @@ class Process:
         shell: bool = False,
         stdout: "str | None" = None,
         stderr: "str | None" = None,
-        stdin: "str | Path | Secret | int | None" = None,
+        stdin: "str | Secret | Path | int | io.IOBase | None" = None,
         output_encoding: str = "CONSOLE",
         alias: "str | None" = None,
         env: "dict[str, str | Secret] | None" = None,
