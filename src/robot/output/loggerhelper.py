@@ -103,7 +103,7 @@ class Message(BaseMessage):
         level: "MessageLevel|PseudoLevel" = "INFO",
         html: bool = False,
         timestamp: "datetime|str|None" = None,
-        console: bool | None = None
+        console: "bool|None" = None
     ):
         level, html = self._get_level_and_html(level, html)
         if console is None:
