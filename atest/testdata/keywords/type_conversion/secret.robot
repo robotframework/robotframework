@@ -155,7 +155,7 @@ VAR: List
     Should Be Equal    ${z}    ${{[22, $SECRET, 44]}}
     VAR    @{x: Secret | int}    ${SECRET}    this    fails
 
-Create: Dict 1
+VAR: Dict 1
     [Documentation]    FAIL
     ...    Setting variable '\&{x: secret}' failed: \
     ...    Value '{'this': 'fails'}' (DotDict) cannot be converted to dict[Any, secret]: \
@@ -169,22 +169,13 @@ Create: Dict 1
     Should Be Equal    ${x}    ${{{$SECRET: 42}}}
     VAR    &{x: secret}    this=fails
 
-Create: Dict 2
+VAR: Dict 2
     [Documentation]    FAIL
     ...    Setting variable '\&{x: Secret=int}' failed: \
     ...    Value '{Secret(value=<secret>): '42', 'bad': '666'}' (DotDict) \
     ...    cannot be converted to dict[Secret, int]: \
     ...    Key must have type 'Secret', got string.
     VAR    &{x: Secret=int}    ${SECRET}=42    bad=666
-
-Return value: Library keyword
-    [Documentation]    FAIL
-    ...    ValueError: Return value must have type 'Secret', got string.
-    ${x} =    Library Get Secret
-    Should Be Equal    ${x.value}    This is a secret
-    ${x: Secret} =    Library Get Secret    value of secret here
-    Should Be Equal    ${x.value}    value of secret here
-    ${x: secret} =    Library Not Secret
 
 Return value: User keyword
     [Documentation]    FAIL
@@ -195,30 +186,47 @@ Return value: User keyword
     Should Be Equal    ${x.value}    This is a secret
     ${x: secret} =    User Keyword: Return string
 
-User keyword: Receive not secret
+Return value: Library keyword
+    [Documentation]    FAIL
+    ...    ValueError: Return value must have type 'Secret', got string.
+    ${x} =    Library Get Secret
+    Should Be Equal    ${x.value}    This is a secret
+    ${x: Secret} =    Library Get Secret    value of secret here
+    Should Be Equal    ${x.value}    value of secret here
+    ${x: secret} =    Library Not Secret
+
+Arguments: User keyword
+    User Keyword: Receive secret    ${SECRET}
+
+Arguments: User keyword non-secret 1
     [Documentation]    FAIL
     ...    ValueError: Argument 'secret' must have type 'Secret', got string.
     User Keyword: Receive secret    xxx
 
-User keyword: Receive not secret var
+Arguments: User keyword non-secret 2
     [Documentation]    FAIL
     ...    ValueError: Argument 'secret' must have type 'Secret', got integer.
     User Keyword: Receive secret    ${666}
 
-Library keyword
-    User Keyword: Receive secret    ${SECRET}    Secret value
+Arguments: Library keyword
+    Library receive secret    ${SECRET}
 
-Library keyword: not secret 1
+Arguments: Library keyword non-secret 1
     [Documentation]    FAIL
     ...    ValueError: Argument 'secret' must have type 'Secret', got string.
     Library receive secret    111
 
-Library keyword: not secret 2
+Arguments: Library keyword non-secret 2
     [Documentation]    FAIL
     ...    ValueError: Argument 'secret' must have type 'Secret', got integer.
     Library receive secret    ${222}
 
-Library keyword: TypedDict
+Arguments: List of secrets
+    VAR    @{secrets: secret}    ${SECRET}    ${ENV2}
+    ${data} =    Library List Of Secrets    ${secrets}
+    Should Be Equal    ${data}    Secret value, kala
+
+Arguments: TypedDict
     [Documentation]    FAIL
     ...    ValueError: Argument 'credential' got value \
     ...    '{'username': 'login@email.com', 'password': 'This fails'}' (DotDict) \
@@ -230,18 +238,13 @@ Library keyword: TypedDict
     VAR    &{credentials}    username=login@email.com    password=This fails
     Library Receive Credential    ${credentials}
 
-Library keyword: List of secrets
-    VAR    @{secrets: secret}    ${SECRET}    ${SECRET}
-    ${data} =    Library List Of Secrets    ${secrets}
-    Should Be Equal    ${data}    Secret value, Secret value
-
 *** Keywords ***
 User Keyword: Receive secret
-    [Arguments]    ${secret: secret}    ${expected: str}=not set
+    [Arguments]    ${secret: secret}    ${expected: str}=Secret value
     Should Be Equal    ${secret.value}    ${expected}
 
 User Keyword: Return secret
-    ${secret}    Library Get Secret
+    ${secret} =    Library Get Secret
     RETURN    ${secret}
 
 User Keyword: Return string

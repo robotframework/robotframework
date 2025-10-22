@@ -1,8 +1,6 @@
 *** Settings ***
 Resource        atest_resource.robot
-
-Suite Setup     Run Tests    --variable "CLI: Secret:From command line"    keywords/type_conversion/secret.robot
-
+Suite Setup     Run Tests    --variable "CLI: Secret:From command line" -L trace    keywords/type_conversion/secret.robot
 
 *** Test Cases ***
 Command line
@@ -74,45 +72,59 @@ Variable section: Dict fail
     ...    pattern=False
 
 VAR: Based on existing variable
-    Check Test Case    ${TESTNAME}
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc[0, 0]}    \${x} = <secret>
 
 VAR: Based on environment variable
-    Check Test Case    ${TESTNAME}
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc[1, 0]}    \${secret} = <secret>
 
 VAR: Joined
-    Check Test Case    ${TESTNAME}
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc[2, 0]}    \${x} = <secret>
 
 VAR: Broken variable
     Check Test Case    ${TESTNAME}
 
 VAR: List
-    Check Test Case    ${TESTNAME}
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc[0, 0]}    \@{x} = [ <secret> | <secret> | <secret> ]
 
-Create: Dict
-    Check Test Case    ${TESTNAME} 1
+VAR: Dict
+    ${tc} =    Check Test Case    ${TESTNAME} 1
+    Check Log Message    ${tc[0, 0]}    \&{x} = { var=<secret> | end=<secret> | join=<secret> }
     Check Test Case    ${TESTNAME} 2
-
-Return value: Library keyword
-    Check Test Case    ${TESTNAME}
 
 Return value: User keyword
-    Check Test Case    ${TESTNAME}
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc[0, -2]}    Return: Secret(value=<secret>)    TRACE
+    Check Log Message    ${tc[0, -1]}    \${x} = <secret>
 
-User keyword: Receive not secret
-    Check Test Case    ${TESTNAME}
+Return value: Library keyword
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc[0, -2]}    Return: Secret(value=<secret>)    TRACE
+    Check Log Message    ${tc[0, -1]}    \${x} = <secret>
 
-User keyword: Receive not secret var
-    Check Test Case    ${TESTNAME}
+Arguments: User keyword
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc[0, 0]}    Arguments: [ \${secret}=Secret(value=<secret>) | \${expected}='Secret value' ]    TRACE
 
-Library keyword
-    Check Test Case    ${TESTNAME}
-
-Library keyword: not secret
+Arguments: User keyword non-secret
     Check Test Case    ${TESTNAME} 1
     Check Test Case    ${TESTNAME} 2
 
-Library keyword: TypedDict
-    Check Test Case    ${TESTNAME}
+Arguments: Library keyword
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc[0, 0]}    Arguments: [ Secret(value=<secret>) ]    TRACE
 
-Library keyword: List of secrets
-    Check Test Case    ${TESTNAME}
+Arguments: Library keyword non-secret
+    Check Test Case    ${TESTNAME} 1
+    Check Test Case    ${TESTNAME} 2
+
+Arguments: List of secrets
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc[1, 0]}    Arguments: [ [Secret(value=<secret>), Secret(value=<secret>)] ]    TRACE
+
+Arguments: TypedDict
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc[1, 0]}    Arguments: [ {'username': 'login@email.com', 'password': Secret(value=<secret>)} ]    TRACE
