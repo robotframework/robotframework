@@ -1749,7 +1749,7 @@ class _Variables(_BuiltInBase):
         | ${y} =    `Get Variable Value`    $a    ${b}
         | ${z} =    `Get Variable Value`    $z
         =>
-        - ``${x}`` gets value of ``${a}`` if ``${a}`` exists and string ``default`` otherwise
+        - ``${x}`` gets value of ``${a}`` if ``${a}`` exists and string ``example`` otherwise
         - ``${y}`` gets value of ``${a}`` if ``${a}`` exists and value of ``${b}`` otherwise
         - ``${z}`` is set to Python ``None`` if it does not exist previously
         """
