@@ -124,8 +124,9 @@ class HighlightingStream:
             "ERROR": highlighter.red,
             "WARN": highlighter.yellow,
             "SKIP": highlighter.yellow,
-        }[status]
-        start()
+        }.get(status)
+        if start:
+            start()
         try:
             yield
         finally:
