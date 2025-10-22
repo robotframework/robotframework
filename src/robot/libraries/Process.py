@@ -339,8 +339,8 @@ class Process:
         *arguments: "str | Secret",
         cwd: "str | None" = None,
         shell: bool = False,
-        stdout: "str | Path | None" = None,
-        stderr: "str | Path | None" = None,
+        stdout: "str | None" = None,
+        stderr: "str | None" = None,
         stdin: "str | Path | Secret | int | None" = None,
         output_encoding: str = "CONSOLE",
         alias: "str | None" = None,
@@ -410,8 +410,8 @@ class Process:
         *arguments: "str | Secret",
         cwd: "str | None" = None,
         shell: bool = False,
-        stdout: "str | Path | None" = None,
-        stderr: "str | Path | None" = None,
+        stdout: "str | None" = None,
+        stderr: "str | None" = None,
         stdin: "str | Path | Secret | int | None" = None,
         output_encoding: str = "CONSOLE",
         alias: "str | None" = None,
@@ -1047,8 +1047,6 @@ class ProcessConfiguration:
         self.env = self._construct_env(env, env_extra)
 
     def _new_stream(self, name):
-        if isinstance(name, Path):
-            name = str(name)
         if name == "DEVNULL":
             return open(os.devnull, "w", encoding=LOCALE_ENCODING)
         if name:
