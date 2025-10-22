@@ -1160,7 +1160,7 @@ class ProcessConfiguration:
         else:
             printable_env = self.env.copy()
             for k in self.secret_env_keys:
-                printable_env[k] = str(Secret(''))
+                printable_env[k] = str(Secret(""))
         return f"""\
 cwd:     {self.cwd}
 shell:   {self.shell}
