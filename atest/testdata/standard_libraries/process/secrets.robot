@@ -27,17 +27,17 @@ Start Process with Secret Argument
 Start Process with Stdin as Secret
     ${handle} =    Start Process    python    -c    import sys; print(sys.stdin.read())    stdin=${SECRET}    cwd=%{TEMPDIR}
     ${result} =    Wait For Process    ${handle}
-    result should equal    ${result}    stdout=This is secret!
+    Result should equal    ${result}    stdout=This is secret!
 
 Secret in environment variable via env Dict
     ${env} =    Create environ    v1=${SECRET}
     ${result} =    Run Process    @{COMMAND}    env=${env}
-    result should equal    ${result}    stdout=This is secret! - -
+    Result should equal    ${result}    stdout=This is secret! - -
 
 Secret in environment variable via env:name Syntax
     ${result} =    Run Process    @{COMMAND}    env:v2=${SECRET}
-    result should equal    ${result}    stdout=system This is secret! -
+    Result should equal    ${result}    stdout=system This is secret! -
 
 Multiple Secrets in environment variables
     ${result} =    Run Process    @{COMMAND}    env:v1=${SECRET}    env:v2=XX    env:v3=${SECRET}
-    result should equal    ${result}    stdout=This is secret! XX This is secret!
+    Result should equal    ${result}    stdout=This is secret! XX This is secret!
