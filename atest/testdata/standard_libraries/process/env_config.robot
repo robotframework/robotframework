@@ -11,7 +11,7 @@ By default environ is got from system
     Should Be Equal    ${result.stdout}    system - -
 
 Giving whole environ
-    ${environ} =    Create environ    v2    environ
+    ${environ} =    Create environ    v2=environ
     ${result} =    Run Process    @{COMMAND}    env=${environ}
     Should Be Equal    ${result.stdout}    - environ -
 
@@ -28,7 +28,7 @@ Invividually given overrides system variable
     Should Be Equal    ${result.stdout}    override - -
 
 Invividually given overrides value in given environ
-    ${env} =    Create environ    v1    environ1    v2    environ2
+    ${env} =    Create environ    v1=environ1    v2=environ2
     ${result} =    Run Process    @{COMMAND}    env:v3=new    env=${env}    env:v1=override
     Should Be Equal    ${result.stdout}    override environ2 new
 
@@ -41,11 +41,3 @@ Non-ASCII value
     ...    print('PASS' if xxx == u'hyv\\xe4' else 'FAIL')
     ${result} =   Run Process    python    -c    ${code}    env:XXX=hyvä    stderr=STDOUT
     Result should equal    ${result}    stdout=PASS
-
-*** Keywords ***
-Create environ
-    [Arguments]    @{environ}
-    ${path} =    Get Environment Variable    PATH    default=.
-    ${systemroot} =    Get Environment Variable    SYSTEMROOT    default=.
-    ${environ} =    Create Dictionary    @{environ}    PATH=${path}    SYSTEMROOT=${SYSTEMROOT}
-    RETURN    ${environ}

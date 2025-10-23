@@ -20,8 +20,10 @@ import sys
 import time
 from pathlib import Path
 from tempfile import TemporaryFile
+from typing import Any
 
 from robot.api import logger
+from robot.api.types import Secret
 from robot.errors import TimeoutExceeded
 from robot.utils import (
     cmdline2list, ConnectionCache, console_decode, console_encode, is_list_like,
@@ -333,19 +335,19 @@ class Process:
 
     def run_process(
         self,
-        command,
-        *arguments,
-        cwd=None,
-        shell=False,
-        stdout=None,
-        stderr=None,
-        stdin=None,
-        output_encoding="CONSOLE",
-        alias=None,
-        timeout=None,
-        on_timeout="terminate",
-        env=None,
-        **env_extra,
+        command: str,
+        *arguments: "str | Secret",
+        cwd: "str | None" = None,
+        shell: bool = False,
+        stdout: "str | None" = None,
+        stderr: "str | None" = None,
+        stdin: "str | Secret | Path | int | Any | None" = None,
+        output_encoding: str = "CONSOLE",
+        alias: "str | None" = None,
+        timeout: "str | None" = None,
+        on_timeout: str = "terminate",
+        env: "dict[str, str | Secret] | None" = None,
+        **env_extra: "str | Secret",
     ):
         """Runs a process and waits for it to complete.
 
@@ -404,17 +406,17 @@ class Process:
 
     def start_process(
         self,
-        command,
-        *arguments,
-        cwd=None,
-        shell=False,
-        stdout=None,
-        stderr=None,
-        stdin=None,
-        output_encoding="CONSOLE",
-        alias=None,
-        env=None,
-        **env_extra,
+        command: str,
+        *arguments: "str | Secret",
+        cwd: "str | None" = None,
+        shell: bool = False,
+        stdout: "str | None" = None,
+        stderr: "str | None" = None,
+        stdin: "str | Secret | Path | int | Any | None" = None,
+        output_encoding: str = "CONSOLE",
+        alias: "str | None" = None,
+        env: "dict[str, str | Secret] | None" = None,
+        **env_extra: "str | Secret",
     ):
         """Starts a new process on background.
 
@@ -455,6 +457,14 @@ class Process:
         Earlier versions returned a generic handle and getting the process object
         required using `Get Process Object` separately.
         """
+        has_secrets = any(isinstance(arg, Secret) for arg in arguments)
+        if has_secrets:
+            masked_arguments = [
+                str(arg) if isinstance(arg, Secret) else arg for arg in arguments
+            ]
+            arguments = [
+                arg.value if isinstance(arg, Secret) else arg for arg in arguments
+            ]
         conf = ProcessConfiguration(
             cwd=cwd,
             shell=shell,
@@ -466,9 +476,13 @@ class Process:
             env=env,
             **env_extra,
         )
-        command = conf.get_command(command, list(arguments))
-        self._log_start(command, conf)
-        process = subprocess.Popen(command, **conf.popen_config)
+        actual_command = conf.get_command(command, arguments)
+        if has_secrets:
+            masked_command = conf.get_command(command, masked_arguments)
+            self._log_start(masked_command, conf)
+        else:
+            self._log_start(actual_command, conf)
+        process = subprocess.Popen(actual_command, **conf.popen_config)
         self._results[process] = ExecutionResult(process, **conf.result_config)
         self._processes.register(process, alias=conf.alias)
         return self._processes.current
@@ -1028,6 +1042,7 @@ class ProcessConfiguration:
         self.stdout_stream = self._new_stream(stdout)
         self.stderr_stream = self._get_stderr(stderr, stdout, self.stdout_stream)
         self.stdin_stream = self._get_stdin(stdin)
+        self.secret_env_keys = []
         self.env = self._construct_env(env, env_extra)
 
     def _new_stream(self, name):
@@ -1048,6 +1063,8 @@ class ProcessConfiguration:
     def _get_stdin(self, stdin):
         if isinstance(stdin, Path):
             stdin = str(stdin)
+        elif isinstance(stdin, Secret):
+            stdin = stdin.value
         elif not isinstance(stdin, str):
             return stdin
         elif stdin.upper() == "NONE":
@@ -1075,18 +1092,31 @@ class ProcessConfiguration:
 
     def _get_initial_env(self, env, extra):
         if env:
-            return {system_encode(k): system_encode(env[k]) for k in env}
+            result = {}
+            for name, value in env.items():
+                name = system_encode(name)
+                if isinstance(value, Secret):
+                    result[name] = system_encode(value.value)
+                    self.secret_env_keys.append(name)
+                else:
+                    result[name] = system_encode(value)
+            return result
         if extra:
             return os.environ.copy()
         return None
 
     def _add_to_env(self, env, extra):
-        for name in extra:
+        for name, value in extra.items():
             if not name.startswith("env:"):
                 raise RuntimeError(
                     f"Keyword argument '{name}' is not supported by this keyword."
                 )
-            env[system_encode(name[4:])] = system_encode(extra[name])
+            name = system_encode(name[4:])
+            if isinstance(value, Secret):
+                env[name] = system_encode(value.value)
+                self.secret_env_keys.append(name)
+            else:
+                env[name] = system_encode(value)
 
     def get_command(self, command, arguments):
         command = [system_encode(item) for item in (command, *arguments)]
@@ -1125,6 +1155,11 @@ class ProcessConfiguration:
         }
 
     def __str__(self):
+        printable_env = self.env
+        if len(self.secret_env_keys):
+            printable_env = self.env.copy()
+            for k in self.secret_env_keys:
+                printable_env[k] = str(Secret(""))
         return f"""\
 cwd:     {self.cwd}
 shell:   {self.shell}
@@ -1132,7 +1167,7 @@ stdout:  {self._stream_name(self.stdout_stream)}
 stderr:  {self._stream_name(self.stderr_stream)}
 stdin:   {self._stream_name(self.stdin_stream)}
 alias:   {self.alias}
-env:     {self.env}"""
+env:     {printable_env}"""
 
     def _stream_name(self, stream):
         if hasattr(stream, "name"):

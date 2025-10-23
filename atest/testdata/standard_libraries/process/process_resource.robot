@@ -113,3 +113,10 @@ Countdown should not have stopped
 Blastoff Successful
     ${content} =    Get File    ${TEMPFILE}
     Should End With    ${content}    BLASTOFF
+
+Create environ
+    [Arguments]    &{environ}
+    ${path} =    Get Environment Variable    PATH    default=.
+    ${systemroot} =    Get Environment Variable    SYSTEMROOT    default=.
+    ${environ} =    Set To Dictionary    ${environ}    PATH=${path}    SYSTEMROOT=${SYSTEMROOT}
+    RETURN    ${environ}
