@@ -44,7 +44,7 @@ Write messages to console
     ${tc} =    Check Test Case    ${TEST NAME}
     Stdout Should Contain    To console only
     Stdout Should Contain    To console in two parts
-    Stdout Should Contain    To log and console
+    Stderr Should Contain    To log and console
     Check Log Message    ${tc[0, 0]}    To log and console    INFO
 
 Log non-strings
