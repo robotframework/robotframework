@@ -1207,9 +1207,7 @@ stdout:  {self._stream_name(self.stdout_stream)}
 stderr:  {self._stream_name(self.stderr_stream)}
 stdin:   {self._stream_name(self.stdin_stream)}
 alias:   {self.alias}
-env:     {self.env}
-log_level:  {self.log_level}
-'''
+env:     {self.env}"""
 
     def _stream_name(self, stream):
         if hasattr(stream, "name"):
