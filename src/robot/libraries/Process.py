@@ -345,71 +345,68 @@ class Process:
         timeout=None,
         on_timeout="terminate",
         env=None,
-        **env_extra,
+        **env_extra
     ):
         """Runs a process and waits for it to complete.
 
-        ``command`` and ``arguments`` specify the command to execute and
-        arguments passed to it. See `Specifying command and arguments` for
-        more details.
+            ``command`` and ``arguments`` specify the command to execute and
+            arguments passed to it. See `Specifying command and arguments` for
+            more details.
+            
+            The started process can be configured using ``cwd``, ``shell``, ``stdout``,
+            ``stderr``, ``stdin``, ``output_encoding``, ``alias``, ``env`` and
+            ``env_extra`` parameters that are documented in the `Process configuration`
+            section.
 
-        ``**configuration`` contains additional configuration related to
-        starting processes and waiting for them to finish. See `Process
-        configuration` for more details about configuration related to starting
-        processes. Configuration related to waiting for processes consists of
-        ``timeout`` and ``on_timeout`` arguments that have same semantics as
-        with `Wait For Process` keyword. By default, there is no timeout, and
-        if timeout is defined the default action on timeout is ``terminate``.
-        
-        ``log_level`` defines the level of log when running processes, 
-        starting processes and waiting for processes. Its value can 
-        be ``info``,``debug`` or ``error``. When ``log_level`` is not defined,
-        then log level will be ``info`` as default.
-        
-        The started process can be configured using ``cwd``, ``shell``, ``stdout``,
-        ``stderr``, ``stdin``, ``output_encoding``, ``alias``, ``env`` and
-        ``env_extra`` parameters that are documented in the `Process configuration`
-        section.
+            ``log_level`` defines the level of log when running processes,
+            starting processes and waiting for processes. Its value can 
+            be ``info``, ``debug`` or ``error``. When ``log_level`` is not defined,
+            then log level will be ``info`` as default.
 
-        Configuration related to waiting for processes consists of ``timeout``
-        and ``on_timeout`` parameters that have same semantics than with the
-        `Wait For Process` keyword.
+            Process outputs are, by default, written into in-memory buffers.
+            This typically works fine, but there can be problems if the amount of
+            output is large or unlimited. To avoid such problems, outputs can be
+            redirected to files using the ``stdout`` and ``stderr`` configuration
+            parameters. For more information see the `Standard output and error streams`
+            section.
 
-        Process outputs are, by default, written into in-memory buffers.
-        This typically works fine, but there can be problems if the amount of
-        output is large or unlimited. To avoid such problems, outputs can be
-        redirected to files using the ``stdout`` and ``stderr`` configuration
-        parameters. For more information see the `Standard output and error streams`
-        section.
+            Returns a `result object` containing information about the execution.
 
-        Returns a `result object` containing information about the execution.
+            Note that possible equal signs in ``*arguments`` must be escaped
+            with a backslash (e.g. ``name\\=value``) to avoid them to be passed in
+            as ``**env_extra``.
+            
+            Note that possible equal signs in ``command`` and ``arguments`` must
+            be escaped with a backslash (e.g. ``name\\=value``).
 
-        Note that possible equal signs in ``*arguments`` must be escaped
-        with a backslash (e.g. ``name\\=value``) to avoid them to be passed in
-        as ``**configuration``.
-        
-        Note that possible equal signs in ``command`` and ``arguments`` must
-        be escaped with a backslash (e.g. ``name\\=value``).
+            Examples:
+            | ${result} = | Run Process | python | -c | print('Hello, world!') |
+            | Should Be Equal | ${result.stdout} | Hello, world! |
+            | ${result} = | Run Process | ${command} | stdout=${CURDIR}/stdout.txt | stderr=STDOUT |
+            | ${result} = | Run Process | ${command} | timeout=1min | on_timeout=continue |
+            | ${result} = | Run Process | java -Dname\\=value Example | shell=True | cwd=${EXAMPLE} |
+            | ${result} = | Run Process | java -Dname\\=value Example | shell=True | cwd=${EXAMPLE} | 'info' |
 
-        Examples:
-        | ${result} = | Run Process | python | -c | print('Hello, world!') |
-        | Should Be Equal | ${result.stdout} | Hello, world! |
-        | ${result} = | Run Process | ${command} | stdout=${CURDIR}/stdout.txt | stderr=STDOUT |
-        | ${result} = | Run Process | ${command} | timeout=1min | on_timeout=continue |
-        | ${result} = | Run Process | java -Dname\\=value Example | shell=True | cwd=${EXAMPLE} |
-        | ${result} = | Run Process | java -Dname\\=value Example | shell=True | cwd=${EXAMPLE} | 'info' |
-
-        This keyword does not change the `active process`.
-        
-        ``log_level`` is new in Robot Framework 7.4.
-        """
+            This keyword does not change the `active process`.
+            
+            ``log_level`` is new in Robot Framework 7.4.
+            """
         current = self._processes.current
-        timeout = configuration.pop('timeout', None)
-        on_timeout = configuration.pop('on_timeout', 'terminate')
-        log_level = configuration.pop('log_level',None)
         try:
-            handle = self.start_process(command, *arguments, **configuration)
-            return self.wait_for_process(handle, timeout, on_timeout, log_level)
+            handle = self.start_process(
+                command,
+                *arguments,
+                cwd=cwd,
+                shell=shell,
+                stdout=stdout,
+                stderr=stderr,
+                stdin=stdin,
+                output_encoding=output_encoding,
+                alias=alias,
+                env=env,
+                **env_extra
+            )
+            return self.wait_for_process(handle, timeout, on_timeout)
         finally:
             self._processes.current = current
     def _get_log_by_level(self, msg, log_level):        
@@ -426,25 +423,6 @@ class Process:
         }
         log_func = log_func_dic.get(log_level, logger.info)
         log_func(msg)
-    def start_process(self, command, *arguments, **configuration):
-        try:
-            handle = self.start_process(
-                command,
-                *arguments,
-                cwd=cwd,
-                shell=shell,
-                stdout=stdout,
-                stderr=stderr,
-                stdin=stdin,
-                output_encoding=output_encoding,
-                alias=alias,
-                env=env,
-                **env_extra,
-            )
-            return self.wait_for_process(handle, timeout, on_timeout)
-        finally:
-            self._processes.current = current
-
     def start_process(
         self,
         command,
@@ -503,7 +481,7 @@ class Process:
         Earlier versions returned a generic handle and getting the process object
         required using `Get Process Object` separately.
         
-        ``log_level`` is new in RobotFramework 7.2.
+        ``log_level`` is new in RobotFramework 7.4.
         """
         conf = ProcessConfiguration(
             cwd=cwd,
@@ -517,16 +495,16 @@ class Process:
             **env_extra,
         )
         command = conf.get_command(command, list(arguments))
-        self._log_start(command, conf,**configuration)
+        self._log_start(command, conf,**env_extra)
         process = subprocess.Popen(command, **conf.popen_config)
         self._results[process] = ExecutionResult(process, **conf.result_config)
         self._processes.register(process, alias=conf.alias)
         return self._processes.current
 
-    def _log_start(self, command, config,**configuration):
+    def _log_start(self, command, config,**env_extra):
         if is_list_like(command):
             command = self.join_command_line(command)
-        log_level = configuration.pop('log_level',None)
+        log_level = env_extra.pop('log_level',None)
         self._get_log_by_level(f'Starting process:\n{system_decode(command)}',log_level)
         self._get_log_by_level(f'Process configuration:\n{config}','debug')
 
@@ -1092,8 +1070,7 @@ class ProcessConfiguration:
         output_encoding="CONSOLE",
         alias=None,
         env=None,
-        **env_extra, 
-        log_level=None
+        **env_extra
     ):
         self.cwd = os.path.normpath(cwd) if cwd else os.path.abspath(".")
         self.shell = shell
@@ -1103,7 +1080,6 @@ class ProcessConfiguration:
         self.stderr_stream = self._get_stderr(stderr, stdout, self.stdout_stream)
         self.stdin_stream = self._get_stdin(stdin)
         self.env = self._construct_env(env, env_extra)
-        self.log_level = log_level
 
     def _new_stream(self, name):
         if name == "DEVNULL":
