@@ -112,10 +112,12 @@ def invalid_set(a: set[int, float]):
 def _validate_type(argument, expected, same=False):
     if isinstance(expected, str):
         expected = eval(expected)
-    if argument != expected or type(argument) != type(expected):
+    if argument != expected or type(argument) is not type(expected):
         atype = type(argument).__name__
         etype = type(expected).__name__
-        raise AssertionError(f'{argument!r} ({atype}) != {expected!r} ({etype})')
+        raise AssertionError(f"{argument!r} ({atype}) != {expected!r} ({etype})")
     if same and argument is not expected:
-        raise AssertionError(f'{argument} (id: {id(argument)}) is not same '
-                             f'as {expected} (id: {id(expected)})')
+        raise AssertionError(
+            f"{argument} (id: {id(argument)}) is not same "
+            f"as {expected} (id: {id(expected)})"
+        )

@@ -9,5 +9,8 @@ Trailing newline is removed
 Internal newlines are preserved
     Check Test Case    ${TESTNAME}
 
+CRLF is converted to LF
+    Check Test Case    ${TESTNAME}
+
 Newlines with custom stream
     Check Test Case    ${TESTNAME}

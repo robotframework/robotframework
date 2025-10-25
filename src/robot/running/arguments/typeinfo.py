@@ -20,6 +20,7 @@ from decimal import Decimal
 from enum import Enum
 from pathlib import Path
 from typing import Any, ForwardRef, get_args, get_origin, get_type_hints, Literal, Union
+
 if sys.version_info < (3, 9):
     try:
         # get_args and get_origin handle at least Annotated wrong in Python 3.8.
@@ -36,47 +37,50 @@ else:
 
 from robot.conf import Languages, LanguagesLike
 from robot.errors import DataError
-from robot.utils import (is_union, NOT_SET, plural_or_not as s, setter,
-                         SetterAwareType, type_name, type_repr, typeddict_types)
+from robot.utils import (
+    is_union, NOT_SET, plural_or_not as s, Secret, setter, SetterAwareType, type_name,
+    type_repr, typeddict_types
+)
+from robot.variables import search_variable, VariableMatch
 
 from ..context import EXECUTION_CONTEXTS
 from .customconverters import CustomArgumentConverters
 from .typeconverters import TypeConverter
 
-
 TYPE_NAMES = {
-    '...': Ellipsis,
-    'ellipsis': Ellipsis,
-    'any': Any,
-    'str': str,
-    'string': str,
-    'unicode': str,
-    'bool': bool,
-    'boolean': bool,
-    'int': int,
-    'integer': int,
-    'long': int,
-    'float': float,
-    'double': float,
-    'decimal': Decimal,
-    'bytes': bytes,
-    'bytearray': bytearray,
-    'datetime': datetime,
-    'date': date,
-    'timedelta': timedelta,
-    'path': Path,
-    'none': type(None),
-    'list': list,
-    'sequence': list,
-    'tuple': tuple,
-    'dictionary': dict,
-    'dict': dict,
-    'mapping': dict,
-    'map': dict,
-    'set': set,
-    'frozenset': frozenset,
-    'union': Union,
-    'literal': Literal
+    "...": Ellipsis,
+    "ellipsis": Ellipsis,
+    "any": Any,
+    "str": str,
+    "string": str,
+    "unicode": str,
+    "bool": bool,
+    "boolean": bool,
+    "int": int,
+    "integer": int,
+    "long": int,
+    "float": float,
+    "double": float,
+    "decimal": Decimal,
+    "bytes": bytes,
+    "bytearray": bytearray,
+    "datetime": datetime,
+    "date": date,
+    "timedelta": timedelta,
+    "path": Path,
+    "none": type(None),
+    "list": list,
+    "sequence": list,
+    "tuple": tuple,
+    "dictionary": dict,
+    "dict": dict,
+    "mapping": dict,
+    "map": dict,
+    "set": set,
+    "frozenset": frozenset,
+    "union": Union,
+    "literal": Literal,
+    "secret": Secret,
 }
 LITERAL_TYPES = (int, str, bytes, bool, Enum, type(None))
 
@@ -93,12 +97,16 @@ class TypeInfo(metaclass=SetterAwareType):
     Part of the public API starting from Robot Framework 7.0. In such usage
     should be imported via the :mod:`robot.api` package.
     """
-    is_typed_dict = False
-    __slots__ = ('name', 'type')
 
-    def __init__(self, name: 'str|None' = None,
-                 type: Any = NOT_SET,
-                 nested: 'Sequence[TypeInfo]|None' = None):
+    is_typed_dict = False
+    __slots__ = ("name", "type")
+
+    def __init__(
+        self,
+        name: "str|None" = None,
+        type: Any = NOT_SET,
+        nested: "Sequence[TypeInfo]|None" = None,
+    ):
         if type is NOT_SET:
             type = TYPE_NAMES.get(name.lower()) if name else None
         self.name = name
@@ -106,7 +114,7 @@ class TypeInfo(metaclass=SetterAwareType):
         self.nested = nested
 
     @setter
-    def nested(self, nested: 'Sequence[TypeInfo]') -> 'tuple[TypeInfo, ...]|None':
+    def nested(self, nested: "Sequence[TypeInfo]") -> "tuple[TypeInfo, ...]|None":
         """Nested types as a tuple of ``TypeInfo`` objects.
 
         Used with parameterized types and unions.
@@ -124,11 +132,13 @@ class TypeInfo(metaclass=SetterAwareType):
             if issubclass(typ, tuple):
                 if nested[-1].type is Ellipsis:
                     return self._validate_nested_count(
-                        nested, 2, 'Homogenous tuple', offset=-1
+                        nested, 2, "Homogenous tuple", offset=-1
                     )
                 return tuple(nested)
-            if (issubclass(typ, Sequence)
-                    and not issubclass(typ, (str, bytes, bytearray))):
+            if (
+                issubclass(typ, Sequence)
+                and not issubclass(typ, (str, bytes, bytearray, memoryview))
+            ):  # fmt: skip
                 return self._validate_nested_count(nested, 1)
             if issubclass(typ, Set):
                 return self._validate_nested_count(nested, 1)
@@ -140,17 +150,18 @@ class TypeInfo(metaclass=SetterAwareType):
 
     def _validate_union(self, nested):
         if not nested:
-            raise DataError('Union cannot be empty.')
+            raise DataError("Union cannot be empty.")
         return tuple(nested)
 
     def _validate_literal(self, nested):
         if not nested:
-            raise DataError('Literal cannot be empty.')
+            raise DataError("Literal cannot be empty.")
         for info in nested:
             if not isinstance(info.type, LITERAL_TYPES):
-                raise DataError(f'Literal supports only integers, strings, bytes, '
-                                f'Booleans, enums and None, value {info.name} is '
-                                f'{type_name(info.type)}.')
+                raise DataError(
+                    f"Literal supports only integers, strings, bytes, Booleans, enums "
+                    f"and None, value {info.name} is {type_name(info.type)}."
+                )
         return tuple(nested)
 
     def _validate_nested_count(self, nested, expected, kind=None, offset=0):
@@ -161,20 +172,24 @@ class TypeInfo(metaclass=SetterAwareType):
     def _report_nested_error(self, nested, expected=0, kind=None, offset=0):
         expected += offset
         actual = len(nested) + offset
-        args = ', '.join(str(n) for n in nested)
+        args = ", ".join(str(n) for n in nested)
         kind = kind or f"'{self.name}{'[]' if expected > 0 else ''}'"
         if expected == 0:
-            raise DataError(f"{kind} does not accept parameters, "
-                            f"'{self.name}[{args}]' has {actual}.")
-        raise DataError(f"{kind} requires exactly {expected} parameter{s(expected)}, "
-                        f"'{self.name}[{args}]' has {actual}.")
+            raise DataError(
+                f"{kind} does not accept parameters, "
+                f"'{self.name}[{args}]' has {actual}."
+            )
+        raise DataError(
+            f"{kind} requires exactly {expected} parameter{s(expected)}, "
+            f"'{self.name}[{args}]' has {actual}."
+        )
 
     @property
     def is_union(self):
-        return self.name == 'Union'
+        return self.name == "Union"
 
     @classmethod
-    def from_type_hint(cls, hint: Any) -> 'TypeInfo':
+    def from_type_hint(cls, hint: Any) -> "TypeInfo":
         """Construct a ``TypeInfo`` based on a type hint.
 
         The type hint can be in various different formats:
@@ -192,18 +207,22 @@ class TypeInfo(metaclass=SetterAwareType):
         """
         if hint is NOT_SET:
             return cls()
+        if isinstance(hint, cls):
+            return hint
         if isinstance(hint, ForwardRef):
             hint = hint.__forward_arg__
         if isinstance(hint, typeddict_types):
             return TypedDictInfo(hint.__name__, hint)
         if is_union(hint):
             nested = [cls.from_type_hint(a) for a in get_args(hint)]
-            return cls('Union', nested=nested)
+            return cls("Union", nested=nested)
         origin = get_origin(hint)
         if origin:
             if origin is Literal:
-                nested = [cls(repr(a) if not isinstance(a, Enum) else a.name, a)
-                          for a in get_args(hint)]
+                nested = [
+                    cls(repr(a) if not isinstance(a, Enum) else a.name, a)
+                    for a in get_args(hint)
+                ]
             elif get_args(hint):
                 nested = [cls.from_type_hint(a) for a in get_args(hint)]
             else:
@@ -216,17 +235,17 @@ class TypeInfo(metaclass=SetterAwareType):
         if isinstance(hint, type):
             return cls(type_repr(hint), hint)
         if hint is None:
-            return cls('None', type(None))
-        if hint is Union:    # Plain `Union` without params.
-            return cls('Union')
+            return cls("None", type(None))
+        if hint is Union:  # Plain `Union` without params.
+            return cls("Union")
         if hint is Any:
-            return cls('Any', hint)
+            return cls("Any", hint)
         if hint is Ellipsis:
-            return cls('...', hint)
+            return cls("...", hint)
         return cls(str(hint))
 
     @classmethod
-    def from_type(cls, hint: type) -> 'TypeInfo':
+    def from_type(cls, hint: type) -> "TypeInfo":
         """Construct a ``TypeInfo`` based on an actual type.
 
         Use :meth:`from_type_hint` if the type hint can also be something else
@@ -235,7 +254,7 @@ class TypeInfo(metaclass=SetterAwareType):
         return cls(type_repr(hint), hint)
 
     @classmethod
-    def from_string(cls, hint: str) -> 'TypeInfo':
+    def from_string(cls, hint: str) -> "TypeInfo":
         """Construct a ``TypeInfo`` based on a string.
 
         In addition to just types names or their aliases like ``int`` or ``integer``,
@@ -247,13 +266,14 @@ class TypeInfo(metaclass=SetterAwareType):
         """
         # Needs to be imported here due to cyclic dependency.
         from .typeinfoparser import TypeInfoParser
+
         try:
             return TypeInfoParser(hint).parse()
         except ValueError as err:
             raise DataError(str(err))
 
     @classmethod
-    def from_sequence(cls, sequence: 'tuple|list') -> 'TypeInfo':
+    def from_sequence(cls, sequence: "tuple|list") -> "TypeInfo":
         """Construct a ``TypeInfo`` based on a sequence of types.
 
         Types can be actual types, strings, or anything else accepted by
@@ -274,14 +294,65 @@ class TypeInfo(metaclass=SetterAwareType):
                 infos.append(info)
         if len(infos) == 1:
             return infos[0]
-        return cls('Union', nested=infos)
+        return cls("Union", nested=infos)
 
-    def convert(self, value: Any,
-                name: 'str|None' = None,
-                custom_converters: 'CustomArgumentConverters|dict|None' = None,
-                languages: 'LanguagesLike' = None,
-                kind: str = 'Argument',
-                allow_unknown: bool = False):
+    @classmethod
+    def from_variable(
+        cls,
+        variable: "str|VariableMatch",
+        handle_list_and_dict: bool = True,
+    ) -> "TypeInfo":
+        """Construct a ``TypeInfo`` based on a variable.
+
+        Type can be specified using syntax like ``${x: int}``.
+
+        :param variable: Variable as a string or as an already parsed
+            ``VariableMatch`` object.
+        :param handle_list_and_dict: When ``True``, types in list and dictionary
+            variables get ``list[]`` and ``dict[]`` decoration implicitly.
+            For example, ``@{x: int}``, ``&{x: int}`` and ``&{x: str=int}``
+            yield types ``list[int]``, ``dict[Any, int]`` and ``dict[str, int]``,
+            respectively.
+        :raises: ``DataError`` if variable has an unrecognized type. Variable
+            not having a type is not an error.
+
+        New in Robot Framework 7.3.
+        """
+        if isinstance(variable, str):
+            variable = search_variable(variable, parse_type=True)
+        if not variable.type:
+            return cls()
+        type_ = variable.type
+        if handle_list_and_dict:
+            if variable.identifier == "@":
+                type_ = f"list[{type_}]"
+            elif variable.identifier == "&":
+                if "=" in type_:
+                    kt, vt = type_.split("=", 1)
+                else:
+                    kt, vt = "Any", type_
+                type_ = f"dict[{kt}, {vt}]"
+        info = cls.from_string(type_)
+        cls._validate_var_type(info)
+        return info
+
+    @classmethod
+    def _validate_var_type(cls, info):
+        if info.type is None:
+            raise DataError(f"Unrecognized type '{info.name}'.")
+        if info.nested and info.type is not Literal:
+            for nested in info.nested:
+                cls._validate_var_type(nested)
+
+    def convert(
+        self,
+        value: Any,
+        name: "str|None" = None,
+        custom_converters: "CustomArgumentConverters|dict|None" = None,
+        languages: "LanguagesLike" = None,
+        kind: str = "Argument",
+        allow_unknown: bool = False,
+    ) -> object:
         """Convert ``value`` based on type information this ``TypeInfo`` contains.
 
         :param value: Value to convert.
@@ -295,17 +366,19 @@ class TypeInfo(metaclass=SetterAwareType):
         :param allow_unknown: If ``False``, a ``TypeError`` is raised if there
             is no converter for this type or to its nested types. If ``True``,
             conversion returns the original value instead.
-        :raises: ``ValueError`` is conversion fails and ``TypeError`` if there
-            is no converter and unknown converters are not accepted.
+        :raises: ``ValueError`` if conversion fails and ``TypeError`` if there is
+            no converter for this type and unknown converters are not accepted.
         :return: Converted value.
         """
         converter = self.get_converter(custom_converters, languages, allow_unknown)
         return converter.convert(value, name, kind)
 
-    def get_converter(self,
-                      custom_converters: 'CustomArgumentConverters|dict|None' = None,
-                      languages: 'LanguagesLike' = None,
-                      allow_unknown: bool = False) -> TypeConverter:
+    def get_converter(
+        self,
+        custom_converters: "CustomArgumentConverters|dict|None" = None,
+        languages: "LanguagesLike" = None,
+        allow_unknown: bool = False,
+    ) -> TypeConverter:
         """Get argument converter for this ``TypeInfo``.
 
         :param custom_converters: Custom argument converters.
@@ -337,12 +410,12 @@ class TypeInfo(metaclass=SetterAwareType):
 
     def __str__(self):
         if self.is_union:
-            return ' | '.join(str(n) for n in self.nested)
-        name = self.name or ''
+            return " | ".join(str(n) for n in self.nested)
+        name = self.name or ""
         if self.nested is None:
             return name
-        nested = ', '.join(str(n) for n in self.nested)
-        return f'{name}[{nested}]'
+        nested = ", ".join(str(n) for n in self.nested)
+        return f"{name}[{nested}]"
 
     def __bool__(self):
         return self.name is not None
@@ -352,19 +425,20 @@ class TypedDictInfo(TypeInfo):
     """Represents ``TypedDict`` used as an argument."""
 
     is_typed_dict = True
-    __slots__ = ('annotations', 'required')
+    __slots__ = ("annotations", "required")
 
     def __init__(self, name: str, type: type):
         super().__init__(name, type)
         type_hints = self._get_type_hints(type)
         # __required_keys__ is new in Python 3.9.
-        self.required = getattr(type, '__required_keys__', frozenset())
+        self.required = getattr(type, "__required_keys__", frozenset())
         if sys.version_info < (3, 11):
             self._handle_typing_extensions_required_and_not_required(type_hints)
-        self.annotations = {name: TypeInfo.from_type_hint(hint)
-                            for name, hint in type_hints.items()}
+        self.annotations = {
+            name: TypeInfo.from_type_hint(hint) for name, hint in type_hints.items()
+        }
 
-    def _get_type_hints(self, type) -> 'dict[str, Any]':
+    def _get_type_hints(self, type) -> "dict[str, Any]":
         try:
             return get_type_hints(type)
         except Exception:

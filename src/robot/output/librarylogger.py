@@ -27,18 +27,17 @@ from robot.utils import safe_str
 from .logger import LOGGER
 from .loggerhelper import Message, write_to_console
 
-
 # This constant is used by BackgroundLogger.
 # https://github.com/robotframework/robotbackgroundlogger
-LOGGING_THREADS = ['MainThread', 'RobotFrameworkTimeoutThread']
+LOGGING_THREADS = ["MainThread", "RobotFrameworkTimeoutThread"]
 
 
 def write(msg: Any, level: str, html: bool = False):
     if not isinstance(msg, str):
         msg = safe_str(msg)
-    if level.upper() not in ('TRACE', 'DEBUG', 'INFO', 'HTML', 'WARN', 'ERROR'):
-        if level.upper() == 'CONSOLE':
-            level = 'INFO'
+    if level.upper() not in ("TRACE", "DEBUG", "INFO", "HTML", "WARN", "ERROR"):
+        if level.upper() == "CONSOLE":
+            level = "INFO"
             console(msg)
         else:
             raise RuntimeError(f"Invalid log level '{level}'.")
@@ -47,26 +46,26 @@ def write(msg: Any, level: str, html: bool = False):
 
 
 def trace(msg, html=False):
-    write(msg, 'TRACE', html)
+    write(msg, "TRACE", html)
 
 
 def debug(msg, html=False):
-    write(msg, 'DEBUG', html)
+    write(msg, "DEBUG", html)
 
 
 def info(msg, html=False, also_console=False):
-    write(msg, 'INFO', html)
+    write(msg, "INFO", html)
     if also_console:
         console(msg)
 
 
 def warn(msg, html=False):
-    write(msg, 'WARN', html)
+    write(msg, "WARN", html)
 
 
 def error(msg, html=False):
-    write(msg, 'ERROR', html)
+    write(msg, "ERROR", html)
 
 
-def console(msg: str, newline: bool = True, stream: str = 'stdout'):
+def console(msg: str, newline: bool = True, stream: str = "stdout"):
     write_to_console(msg, newline, stream)

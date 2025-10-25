@@ -25,7 +25,7 @@ Modify invalid keyword
 
 Modify keyword results
     ${tc} =    Get Test Case    Invalid keyword
-    Check Keyword Data    ${tc.body[0]}    Invalid keyword
+    Check Keyword Data    ${tc[0]}    Invalid keyword
     ...    args=\${secret}
     ...    tags=end, fixed, start
     ...    doc=Results can be modified both in start and end!

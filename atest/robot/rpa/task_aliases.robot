@@ -47,7 +47,7 @@ In init file
     ${tc} =    Check Test Tags    Defaults    file tag    task    tags
     Check timeout message    ${tc.setup[0]}       1 minute 10 seconds
     Check log message        ${tc.setup[1]}       Setup has an alias!
-    Check timeout message    ${tc.body[0][0]}     1 minute 10 seconds
+    Check timeout message    ${tc[0, 0]}          1 minute 10 seconds
     Check log message        ${tc.teardown[0]}    Also teardown has an alias!!
     Should be equal          ${tc.timeout}        1 minute 10 seconds
     ${tc} =    Check Test Tags    Override    file tag    task    tags    own

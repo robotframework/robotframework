@@ -14,16 +14,19 @@
 #  limitations under the License.
 
 import re
-from collections.abc import Iterator, Mapping, Sequence
-from typing import Any, MutableMapping, TypeVar
+from collections.abc import Iterable, Iterator, Mapping, Sequence
+from typing import MutableMapping, TypeVar
+
+V = TypeVar("V")
+Self = TypeVar("Self", bound="NormalizedDict")
 
 
-V = TypeVar('V')
-Self = TypeVar('Self', bound='NormalizedDict')
-
-
-def normalize(string: str, ignore: 'Sequence[str]' = (), caseless: bool = True,
-              spaceless: bool = True) -> str:
+def normalize(
+    string: str,
+    ignore: "Sequence[str]" = (),
+    caseless: bool = True,
+    spaceless: bool = True,
+) -> str:
     """Normalize the ``string`` according to the given spec.
 
     By default, string is turned to lower case (actually case-folded) and all
@@ -31,7 +34,7 @@ def normalize(string: str, ignore: 'Sequence[str]' = (), caseless: bool = True,
     in ``ignore`` list.
     """
     if spaceless:
-        string = ''.join(string.split())
+        string = "".join(string.split())
     if caseless:
         string = string.casefold()
         ignore = [i.casefold() for i in ignore]
@@ -39,20 +42,24 @@ def normalize(string: str, ignore: 'Sequence[str]' = (), caseless: bool = True,
     if ignore:
         for ign in ignore:
             if ign in string:
-                string = string.replace(ign, '')
+                string = string.replace(ign, "")
     return string
 
 
 def normalize_whitespace(string):
-    return re.sub(r'\s', ' ', string, flags=re.UNICODE)
+    return re.sub(r"\s", " ", string, flags=re.UNICODE)
 
 
 class NormalizedDict(MutableMapping[str, V]):
     """Custom dictionary implementation automatically normalizing keys."""
 
-    def __init__(self, initial: 'Mapping[str, V]|Iterable[tuple[str, V]]|None' = None,
-                 ignore: 'Sequence[str]' = (), caseless: bool = True,
-                 spaceless: bool = True):
+    def __init__(
+        self,
+        initial: "Mapping[str, V]|Iterable[tuple[str, V]]|None" = None,
+        ignore: "Sequence[str]" = (),
+        caseless: bool = True,
+        spaceless: bool = True,
+    ):
         """Initialized with possible initial value and normalizing spec.
 
         Initial values can be either a dictionary or an iterable of name/value
@@ -61,14 +68,14 @@ class NormalizedDict(MutableMapping[str, V]):
         Normalizing spec has exact same semantics as with the :func:`normalize`
         function.
         """
-        self._data: 'dict[str, V]' = {}
-        self._keys: 'dict[str, str]' = {}
+        self._data: "dict[str, V]" = {}
+        self._keys: "dict[str, str]" = {}
         self._normalize = lambda s: normalize(s, ignore, caseless, spaceless)
         if initial:
             self.update(initial)
 
     @property
-    def normalized_keys(self) -> 'tuple[str, ...]':
+    def normalized_keys(self) -> "tuple[str, ...]":
         return tuple(self._keys)
 
     def __getitem__(self, key: str) -> V:
@@ -84,22 +91,22 @@ class NormalizedDict(MutableMapping[str, V]):
         del self._data[norm_key]
         del self._keys[norm_key]
 
-    def __iter__(self) -> 'Iterator[str]':
+    def __iter__(self) -> "Iterator[str]":
         return (self._keys[norm_key] for norm_key in sorted(self._keys))
 
     def __len__(self) -> int:
         return len(self._data)
 
     def __str__(self) -> str:
-        items = ', '.join(f'{key!r}: {self[key]!r}' for key in self)
-        return f'{{{items}}}'
+        items = ", ".join(f"{key!r}: {self[key]!r}" for key in self)
+        return f"{{{items}}}"
 
     def __repr__(self) -> str:
         name = type(self).__name__
-        params = str(self) if self else ''
-        return f'{name}({params})'
+        params = str(self) if self else ""
+        return f"{name}({params})"
 
-    def __eq__(self, other: Any) -> bool:
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, Mapping):
             return False
         if not isinstance(other, NormalizedDict):

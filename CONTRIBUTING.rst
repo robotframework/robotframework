@@ -8,14 +8,16 @@ There are also many other projects in the larger `Robot Framework ecosystem
 <http://robotframework.org>`_ that you can contribute to. If you notice
 a library or tool missing, there is hardly any better way to contribute
 than creating your own project. Other great ways to contribute include
-answering questions and participating discussion on `robotframework-users
-<https://groups.google.com/forum/#!forum/robotframework-users>`_ mailing list
-and other forums, as well as spreading the word about the framework one way or
-the other.
+answering questions and participating discussion on our
+`Slack <https://slack.robotframework.org>`_,
+`Forum <https://forum.robotframework.org>`_,
+`LinkedIn group <https://www.linkedin.com/groups/3710899/>`_,
+or other such discussion forum, speaking at conferences or local events,
+and spreading the word about the framework otherwise.
 
 These guidelines expect readers to have a basic knowledge about open source
-as well as why and how to contribute to open source projects. If you are
-totally new to these topics, it may be a good idea to look at the generic
+as well as why and how to contribute to an open source project. If you are
+new to these topics, it may be a good idea to look at the generic
 `Open Source Guides <https://opensource.guide/>`_ first.
 
 .. contents::
@@ -26,29 +28,29 @@ Submitting issues
 -----------------
 
 Bugs and enhancements are tracked in the `issue tracker
-<https://github.com/robotframework/robotframework/issues>`_. If you are
-unsure if something is a bug or is a feature worth implementing, you can
-first ask on `robotframework-users`_ mailing list, on `IRC
-<http://webchat.freenode.net/?channels=robotframework&prompt=1>`_
-(#robotframework on irc.freenode.net), or on `Slack
-<https://robotframework-slack-invite.herokuapp.com>`_. These and other similar
-forums, not the issue tracker, are also places where to ask general questions.
+<https://github.com/robotframework/robotframework/issues>`_. If you are unsure
+if something is a bug or is a feature worth implementing, you can
+first ask on the ``#devel`` channel on our Slack_. Slack and other such forums,
+not the issue tracker, are also places where to ask general questions about
+the framework.
 
-Before submitting a new issue, it is always a good idea to check is the
-same bug or enhancement already reported. If it is, please add your comments
+Before submitting a new issue, it is always a good idea to check if the
+same bug or enhancement is already reported. If it is, please add your comments
 to the existing issue instead of creating a new one.
 
 Reporting bugs
 ~~~~~~~~~~~~~~
 
-Explain the bug you have encountered so that others can understand it
-and preferably also reproduce it. Key things to have in good bug report:
+Explain the bug you have encountered so that others can understand it and
+preferably also reproduce it. Key things to include in good bug report:
 
 1. Version information
 
    - Robot Framework version
    - Python interpreter version
    - Operating system and its version
+
+   Typically including the output of ``robot --version`` is enough.
 
 2. Steps to reproduce the problem. With more complex problems it is often
    a good idea to create a `short, self contained, correct example (SSCCE)
@@ -64,9 +66,11 @@ Enhancement requests
 
 Describe the new feature and use cases for it in as much detail as possible.
 Especially with larger enhancements, be prepared to contribute the code
-in the form of a pull request as explained below or to pay someone for the work.
-Consider also would it be better to implement this functionality as a separate
-tool outside the core framework.
+in the form of a pull request as explained below. If you would like to sponsor
+a development of a certain feature, you can contact the `Robot Framework
+Foundation <https://robotframework.org/foundation>`_.
+Consider also would it be better to implement new functionality as a separate
+library or tool outside the core framework.
 
 Code contributions
 ------------------
@@ -117,53 +121,283 @@ create dedicated topic branches for pull requests instead of creating
 them based on the master branch. This is especially important if you plan to
 work on multiple pull requests at the same time.
 
+Development dependencies
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+Code formatting and other tasks require external tools to be installed. All
+of them are listed in the `<requirements-dev.txt>`_ file and you can install
+them by running::
+
+    pip install -r requirements-dev.txt
+
 Coding conventions
 ~~~~~~~~~~~~~~~~~~
 
-General guidelines
-''''''''''''''''''
+Robot Framework follows the general Python code conventions defined in `PEP-8
+<https://peps.python.org/pep-0008/>`_. Code is `automatically formatted`__, but
+`manual adjustments`__ may sometimes be needed.
 
-Robot Framework uses the general Python code conventions defined in `PEP-8
-<https://www.python.org/dev/peps/pep-0008/>`_. In addition to that, we try
-to write `idiomatic Python
-<http://python.net/~goodger/projects/pycon/2007/idiomatic/handout.html>`_
-and follow the `SOLID principles
-<https://en.wikipedia.org/wiki/SOLID_(object-oriented_design)>`_ with all
-new code. An important guideline is that the code should be clear enough that
-comments are generally not needed.
+__ `Automatic formatting`_
+__ `Manual formatting adjustments`_
 
-All code, including test code, must be compatible with all supported Python
-interpreters and versions. Most importantly this means that the code must
-support both Python 2 and Python 3.
+Automatic formatting
+''''''''''''''''''''
 
-Line length
-'''''''''''
+The code is automatically linted and formatted using a combination of tools
+that are driven by an `Invoke <https://pyinvoke.org/>`_ task::
 
-Maximum line length with Python code, including docstrings and comments, is 88
-characters. This is also what `Black <https://pypi.org/project/black/>`__ uses
-by default and `their documentation
-<https://black.readthedocs.io/en/stable/the_black_code_style.html#line-length>`__
-explains why. Notice that we do not have immediate plans to actually take Black
-into use but we may consider that later.
+    invoke format
 
-With Robot Framework tests the maximum line length is 100.
+Make sure to run this command before creating a pull request!
 
-Whitespace
-''''''''''
+By default the task formats Python code under ``src``, ``atest`` and ``utest``
+directories, but it can be configured to format only certain directories
+or files::
 
-We are pretty picky about using whitespace. We follow `PEP-8`_ in how to use
-blank lines and whitespace in general, but we also have some stricter rules:
+    invoke format -t src
 
-- No blank lines inside functions.
-- No blank lines between a class declaration and class attributes or between
-  attributes.
-- Indentation using spaces, not tabs.
-- No trailing spaces.
-- No extra empty lines at the end of the file.
-- Files must end with a newline.
+Formatting is done in multiple phases:
 
-Most of these rules are such that any decent text editor or IDE can be
-configured to automatically format files according to them.
+    1. Code is linted using `Ruff <https://docs.astral.sh/ruff/>`_ . If linting
+       fails, the formatting process is stopped.
+    2. Code is formatted code using `Black <https://black.readthedocs.io/>`_.
+       We plan to switch to Ruff as soon as they stop removing the
+       `empty row after the class declaration`__.
+    3. Multiline imports are reformatted using `isort <https://pycqa.github.io/isort/>`_.
+       We use the "`hanging grid grouped`__" style to use less vertical space compared
+       to having each imported item on its own row. Public APIs using `redundant import
+       aliases`__ are not reformatted, though.
+
+Tool configurations are in the `<pyproject.toml>`_ file.
+
+__ https://github.com/astral-sh/ruff/issues/9745
+__ https://pycqa.github.io/isort/docs/configuration/multi_line_output_modes.html#5-hanging-grid-grouped
+__ https://typing.python.org/en/latest/spec/distributing.html#import-conventions
+
+Manual formatting adjustments
+'''''''''''''''''''''''''''''
+
+Automatic formatting works pretty well, but there are some cases where the results
+are suboptimal and manual adjustments are needed.
+
+.. note:: As a contributor, you do not need to care about this if you do not want to.
+          Maintainers can fix these issues themselves after merging your pull request.
+          Just running the aforementioned ``invoke format`` is enough.
+
+Force lists to have one item per row
+````````````````````````````````````
+
+Automatic formatting has three modes how to handle lists:
+
+- Short lists are formatted on a single row. This includes list items and opening
+  and closing braces and other markers.
+- If all list items fit into a single row, but the whole list with opening and
+  closing markers does not, items are placed into a single row and opening and
+  closing markers are on their own rows.
+- Long lists are formatted so that all list items are own their own rows and
+  opening and closing markers are on their own rows as well.
+
+In addition to lists and other containers, the above applies also to function
+calls and function signatures:
+
+.. sourcecode:: python
+
+    def short(first_arg: Iterable[int], second_arg: int = 0) -> int:
+        ...
+
+    def medium(
+        first_arg: Iterable[float], second_arg: float = 0.0, third_arg: bool = True
+    ) -> int:
+        ...
+
+    def long(
+        first_arg: Iterable[float],
+        second_arg: float = 0.0,
+        third_arg: bool = True,
+        fourth_arg: bool = False,
+    ) -> int:
+        ...
+
+This formatting is typically fine, but similar code being formatted differently
+in a single file can look inconsistent. Having multiple items in a single row, as in
+the ``medium`` example above, can also make the code hard to read. A simple fix
+is forcing list items to own rows by adding a `magic trailing comma`__ and running
+auto-formatter again:
+
+.. sourcecode:: python
+
+    def short(first_arg: Iterable[int], second_arg: int = 0) -> int:
+        ...
+
+    def medium(
+        first_arg: Iterable[float],
+        second_arg: float = 0.0,
+        third_arg: bool = True,
+    ) -> int:
+        ...
+
+    def long(
+        first_arg: Iterable[float],
+        second_arg: float = 0.0,
+        third_arg: bool = True,
+        fourth_arg: bool = False,
+    ) -> int:
+        ...
+
+Lists and signatures fitting into a single line, such as the ``short`` example above,
+should typically not be forced to multiple lines.
+
+__ https://black.readthedocs.io/en/stable/the_black_code_style/current_style.html#the-magic-trailing-comma
+
+Force multi-line lists to have multiple items per row
+`````````````````````````````````````````````````````
+
+Automatically formatting all list items into own rows uses a lot of vertical space.
+This is typically not a problem, but with long lists having simple items it can
+be somewhat annoying:
+
+.. sourcecode:: python
+
+    class Branches(
+        BaseBranches[
+            'Keyword',
+            'For',
+            'While',
+            'Group',
+            'If',
+            'Try',
+            'Var',
+            'Return',
+            'Continue',
+            'Break',
+            'Message',
+            'Error',
+            IT,
+        ]
+    ):
+        __slots__ = ()
+
+
+    added_in_rf60 = {
+        "bg",
+        "bs",
+        "cs",
+        "de",
+        "en",
+        "es",
+        "fi",
+        "fr",
+        "hi",
+        "it",
+        "nl",
+        "pl",
+        "pt",
+        "pt-BR",
+        "ro",
+        "ru",
+        "sv",
+        "th",
+        "tr",
+        "uk",
+        "zh-CN",
+        "zh-TW",
+    }
+
+The best way to fix this is disabling formatting altogether with the ``# fmt: skip``
+pragma. The code should be formatted so that opening and closing list markers
+are on their own rows, list items are wrapped, and the ``# fmt: skip`` pragma
+is placed after the closing list marker:
+
+.. sourcecode:: python
+
+    class Branches(BaseBranches[
+        "Keyword", "For", "While", "Group", "If", "Try", "Var", "Return", "Continue",
+        "Break", "Message", "Error", IT,
+    ]):  # fmt: skip
+        __slots__ = ()
+
+
+    added_in_rf60 = {
+        "bg", "bs", "cs", "de", "en", "es", "fi", "fr", "hi", "it", "nl", "pl",
+        "pt", "pt-BR", "ro", "ru", "sv", "th", "tr", "uk", "zh-CN", "zh-TW",
+    }  # fmt: skip
+
+Handle Boolean expressions
+``````````````````````````
+
+Autoformatting handles Boolean expressions having two items that do not fit into
+a single line *really* strangely:
+
+.. sourcecode:: python
+
+    ext = getattr(self.parser, 'EXTENSION', None) or getattr(
+        self.parser, 'extension', None
+    )
+
+    return self._get_runner_from_resource_files(
+        name
+    ) or self._get_runner_from_libraries(name)
+
+Expressions having three or more items would be grouped with parentheses and
+`there is an issue`__ about doing that also if there are two items. A workaround
+is using parentheses and disabling formatting with the ``# fmt: skip`` pragma:
+
+.. sourcecode:: python
+
+    ext = (
+        getattr(self.parser, 'EXTENSION', None)
+        or getattr(self.parser, 'extension', None)
+    )  # fmt: skip
+
+    return (
+        self._get_runner_from_resource_files(name)
+        or self._get_runner_from_libraries(name)
+    )  # fmt: skip
+
+__ https://github.com/psf/black/issues/2156
+
+Inline comment handling
+```````````````````````
+
+Autoformatting normalizes the number of spaces before an inline comment into two.
+That is typically fine, but if subsequent lines use inline comments, the result
+can be suboptimal__:
+
+.. sourcecode:: python
+
+    TypeHint = Union[
+        type,  # Actual type.
+        str,  # Type name or alias.
+        UnionType,  # Union syntax (e.g. `int | float`).
+        'tuple[TypeHint, ...]',  # Tuple of type hints. Behaves like a union.
+    ]
+
+A solution is manually aligning comments and disabling autoformatting:
+
+.. sourcecode:: python
+
+    TypeHint = Union[
+        type,                   # Actual type.
+        str,                    # Type name or alias.
+        UnionType,              # Union syntax (e.g. `int | float`).
+        "tuple[TypeHint, ...]"  # Tuple of type hints. Behaves like a union.
+    ]  # fmt: skip
+
+In the above example formatting is disabled with the ``# fmt: skip`` pragma, but
+it does not work if inline comments are not related to a single statement. In such
+cases the ``# fmt: off`` and ``# fmt: on`` pair can be used instead. In this example
+formatting is disabled to allow aligning constant values in addition to comments:
+
+.. sourcecode:: python
+
+    # fmt: off
+    INFO_PRINTED    = 251  # --help or --version
+    DATA_ERROR      = 252  # Invalid data or cli args
+    STOPPED_BY_USER = 253  # KeyboardInterrupt or SystemExit
+    FRAMEWORK_ERROR = 255  # Unexpected error
+    # fmt: on
+
+__ https://github.com/psf/black/issues/4651
 
 Docstrings
 ''''''''''
@@ -173,6 +407,27 @@ internal code. When docstrings are added, they should follow `PEP-257
 <https://www.python.org/dev/peps/pep-0257/>`_. See `API documentation`_
 section below for more details about documentation syntax, generating
 API docs, etc.
+
+Type hints
+''''''''''
+
+All public APIs must have type hints and adding type hints also to new internal
+code is recommended. Full type coverage is not a goal at the moment, though.
+
+Type hints should follow the Python `Typing Best Practices
+<https://typing.python.org/en/latest/reference/best_practices.html>`_ with the
+following exceptions:
+
+- Annotation features are restricted to the minimum Python version supported by
+  Robot Framework.
+- Annotations should use the stringified format for annotations not supported
+  by the minimum supported Python version. For example, ``"int | float"``
+  instead of ``Union[int, float]`` and ``"list[int]"`` instead of ``List[int]``.
+  Type aliases are an exception to this rule.
+- Keywords accepting either an integer or a float should typically be annotated as
+  ``int | float`` instead of just ``float``. This way argument conversion tries to
+  first convert arguments to an integer and only converts to a float if that fails.
+- No ``-> None`` annotation on functions that do not explicitly return anything.
 
 Documentation
 ~~~~~~~~~~~~~
@@ -186,7 +441,7 @@ User Guide
 Robot Framework's features are explained in the `User Guide
 <http://robotframework.org/robotframework/#user-guide>`_. It is generated
 using a custom script based on the source in `reStructuredText
-<http://docutils.sourceforge.net/rst.html>`_ format. For more details about
+<https://docutils.sourceforge.io/rst.html>`_ format. For more details about
 editing and generating it see `<doc/userguide/README.rst>`_.
 
 Libraries
@@ -201,6 +456,10 @@ tool. Documentation must use Robot Framework's own `documentation formatting
 <http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#documentation-formatting>`_
 and follow these guidelines:
 
+- All new enhancements or changes should have a note telling when the change
+  was introduced. Often adding something like ``New in Robot Framework 7.3.``
+  is enough.
+
 - Other keywords and sections in the library introduction can be referenced
   with internal links created with backticks like ```Example Keyword```.
 
@@ -210,12 +469,7 @@ and follow these guidelines:
 - Examples are recommended whenever the new keyword or enhanced functionality is
   not trivial.
 
-- All new enhancements or changes should have a note telling when the change
-  was introduced. Often adding something like ``New in Robot Framework 3.1.``
-  is enough.
-
-Library documentation can be generated using `Invoke <http://pyinvoke.org>`_
-by running command
+Library documentation can be generated using Invoke_ by running command
 
 ::
 
@@ -227,8 +481,7 @@ where ``<name>`` is the name of the library or its unique prefix. Run
 
     invoke --help library-docs
 
-for more information see `<BUILD.rst>`_ for details about installing and
-using Invoke.
+for more information.
 
 API documentation
 '''''''''''''''''
@@ -245,11 +498,6 @@ Documentation can be created locally using `<doc/api/generate.py>`_ script
 that unfortunately creates a lot of errors on the console. Releases API docs
 are visible at https://robot-framework.readthedocs.org/.
 
-Robot Framework's public API docs are lacking in many ways. All public
-classes are not yet documented, existing documentation is somewhat scarce,
-and there could be more examples. Documentation improvements are highly
-appreciated!
-
 Tests
 ~~~~~
 
@@ -262,23 +510,17 @@ or both.
 Make sure to run all of the tests before submitting a pull request to be sure
 that your changes do not break anything. If you can, test in multiple
 environments and interpreters (Windows, Linux, OS X, different Python
-versions etc). Pull requests are also automatically tested on
-continuous integration.
+versions etc). Pull requests are also automatically tested by GitHub Actions.
 
 Executing changed code
 ''''''''''''''''''''''
 
 If you want to manually verify the changes, an easy approach is directly
 running the `<src/robot/run.py>`_ script that is part of Robot Framework
-itself. Alternatively you can use the `<rundevel.py>`_ script that sets
+itself. Alternatively, you can use the `<rundevel.py>`_ script that sets
 some command line options and environment variables to ease executing tests
 under the `<atest/testdata>`_ directory. It also automatically creates a
 ``tmp`` directory in the project root and writes all outputs there.
-
-If you want to install the current code locally, you can do it like
-``python setup.py install`` as explained in `<INSTALL.rst>`_. For
-instructions how to create a distribution that allows installing elsewhere
-see `<BUILD.rst>`_.
 
 Acceptance tests
 ''''''''''''''''

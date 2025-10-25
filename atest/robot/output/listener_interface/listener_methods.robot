@@ -94,69 +94,75 @@ Check Listen All File
     @{expected}=    Create List    Got settings on level: INFO
     ...    SUITE START: Pass And Fail (s1) 'Some tests here' [ListenerMeta: Hello]
     ...    SETUP START: My Keyword ['Suite Setup'] (line 3)
-    ...    KEYWORD START: BuiltIn.Log ['Hello says "\${who}"!', '\${LEVEL1}'] (line 31)
+    ...    KEYWORD START: BuiltIn.Log ['Hello says "\${who}"!', '\${LEVEL1}'] (line 32)
     ...    LOG MESSAGE: [INFO] Hello says "Suite Setup"!
     ...    KEYWORD END: PASS
-    ...    KEYWORD START: BuiltIn.Log ['Debug message', '\${LEVEL2}'] (line 32)
+    ...    KEYWORD START: BuiltIn.Log ['Debug message', '\${LEVEL2}'] (line 33)
     ...    KEYWORD END: PASS
-    ...    KEYWORD START: \${assign} = String.Convert To Upper Case ['Just testing...'] (line 33)
+    ...    KEYWORD START: \${assign} = String.Convert To Upper Case ['Just testing...'] (line 34)
     ...    LOG MESSAGE: [INFO] \${assign} = JUST TESTING...
     ...    KEYWORD END: PASS
-    ...    VAR START: \${expected}${SPACE*4}JUST TESTING... (line 34)
+    ...    VAR START: \${expected}${SPACE*4}JUST TESTING... (line 35)
     ...    LOG MESSAGE: [INFO] \${expected} = JUST TESTING...
     ...    VAR END: PASS
-    ...    KEYWORD START: BuiltIn.Should Be Equal ['\${assign}', '\${expected}'] (line 35)
+    ...    KEYWORD START: BuiltIn.Should Be Equal ['\${assign}', '\${expected}'] (line 36)
     ...    KEYWORD END: PASS
-    ...    RETURN START: (line 36)
+    ...    RETURN START: (line 37)
     ...    RETURN END: PASS
     ...    SETUP END: PASS
-    ...    TEST START: Pass (s1-t1, line 14) '' ['force', 'pass']
-    ...    KEYWORD START: My Keyword ['Pass'] (line 17)
-    ...    KEYWORD START: BuiltIn.Log ['Hello says "\${who}"!', '\${LEVEL1}'] (line 31)
+    ...    TEST START: Pass (s1-t1, line 15) '' ['force', 'pass']
+    ...    KEYWORD START: My Keyword ['Pass'] (line 18)
+    ...    KEYWORD START: BuiltIn.Log ['Hello says "\${who}"!', '\${LEVEL1}'] (line 32)
     ...    LOG MESSAGE: [INFO] Hello says "Pass"!
     ...    KEYWORD END: PASS
-    ...    KEYWORD START: BuiltIn.Log ['Debug message', '\${LEVEL2}'] (line 32)
+    ...    KEYWORD START: BuiltIn.Log ['Debug message', '\${LEVEL2}'] (line 33)
     ...    KEYWORD END: PASS
-    ...    KEYWORD START: \${assign} = String.Convert To Upper Case ['Just testing...'] (line 33)
+    ...    KEYWORD START: \${assign} = String.Convert To Upper Case ['Just testing...'] (line 34)
     ...    LOG MESSAGE: [INFO] \${assign} = JUST TESTING...
     ...    KEYWORD END: PASS
-    ...    VAR START: \${expected}${SPACE*4}JUST TESTING... (line 34)
+    ...    VAR START: \${expected}${SPACE*4}JUST TESTING... (line 35)
     ...    LOG MESSAGE: [INFO] \${expected} = JUST TESTING...
     ...    VAR END: PASS
-    ...    KEYWORD START: BuiltIn.Should Be Equal ['\${assign}', '\${expected}'] (line 35)
+    ...    KEYWORD START: BuiltIn.Should Be Equal ['\${assign}', '\${expected}'] (line 36)
     ...    KEYWORD END: PASS
-    ...    RETURN START: (line 36)
+    ...    RETURN START: (line 37)
     ...    RETURN END: PASS
     ...    KEYWORD END: PASS
-    ...    KEYWORD START: example.Resource Keyword (line 18)
+    ...    KEYWORD START: example.Resource Keyword (line 19)
     ...    KEYWORD START: BuiltIn.Log ['Hello, resource!'] (line 3)
     ...    LOG MESSAGE: [INFO] Hello, resource!
     ...    KEYWORD END: PASS
     ...    KEYWORD END: PASS
-    ...    KEYWORD START: BuiltIn.Should Be Equal ['\${VARIABLE}', 'From variables.py with arg 1'] (line 19)
+    ...    KEYWORD START: BuiltIn.Should Be Equal ['\${VARIABLE}', 'From variables.py with arg 1'] (line 20)
     ...    KEYWORD END: PASS
+    ...    TEARDOWN START: BuiltIn.Log ['Teardown!'] (line 4)
+    ...    LOG MESSAGE: [INFO] Teardown!
+    ...    TEARDOWN END: PASS
     ...    TEST END: PASS
-    ...    TEST START: Fail (s1-t2, line 21) 'FAIL Expected failure' ['fail', 'force']
-    ...    KEYWORD START: My Keyword ['Fail'] (line 24)
-    ...    KEYWORD START: BuiltIn.Log ['Hello says "\${who}"!', '\${LEVEL1}'] (line 31)
+    ...    TEST START: Fail (s1-t2, line 22) 'FAIL Expected failure' ['fail', 'force']
+    ...    KEYWORD START: My Keyword ['Fail'] (line 25)
+    ...    KEYWORD START: BuiltIn.Log ['Hello says "\${who}"!', '\${LEVEL1}'] (line 32)
     ...    LOG MESSAGE: [INFO] Hello says "Fail"!
     ...    KEYWORD END: PASS
-    ...    KEYWORD START: BuiltIn.Log ['Debug message', '\${LEVEL2}'] (line 32)
+    ...    KEYWORD START: BuiltIn.Log ['Debug message', '\${LEVEL2}'] (line 33)
     ...    KEYWORD END: PASS
-    ...    KEYWORD START: \${assign} = String.Convert To Upper Case ['Just testing...'] (line 33)
+    ...    KEYWORD START: \${assign} = String.Convert To Upper Case ['Just testing...'] (line 34)
     ...    LOG MESSAGE: [INFO] \${assign} = JUST TESTING...
     ...    KEYWORD END: PASS
-    ...    VAR START: \${expected}${SPACE*4}JUST TESTING... (line 34)
+    ...    VAR START: \${expected}${SPACE*4}JUST TESTING... (line 35)
     ...    LOG MESSAGE: [INFO] \${expected} = JUST TESTING...
     ...    VAR END: PASS
-    ...    KEYWORD START: BuiltIn.Should Be Equal ['\${assign}', '\${expected}'] (line 35)
+    ...    KEYWORD START: BuiltIn.Should Be Equal ['\${assign}', '\${expected}'] (line 36)
     ...    KEYWORD END: PASS
-    ...    RETURN START: (line 36)
+    ...    RETURN START: (line 37)
     ...    RETURN END: PASS
     ...    KEYWORD END: PASS
-    ...    KEYWORD START: BuiltIn.Fail ['Expected failure'] (line 25)
+    ...    KEYWORD START: BuiltIn.Fail ['Expected failure'] (line 26)
     ...    LOG MESSAGE: [FAIL] Expected failure
     ...    KEYWORD END: FAIL
+    ...    TEARDOWN START: BuiltIn.Log ['Teardown!'] (line 4)
+    ...    LOG MESSAGE: [INFO] Teardown!
+    ...    TEARDOWN END: PASS
     ...    TEST END: FAIL Expected failure
     ...    SUITE END: FAIL 2 tests, 1 passed, 1 failed
     ...    Output: output.xml    Closing...

@@ -13,6 +13,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from .builders import TestSuiteBuilder, ResourceFileBuilder
-from .parsers import RobotParser
-from .settings import TestDefaults
+from .builders import (
+    ResourceFileBuilder as ResourceFileBuilder,
+    TestSuiteBuilder as TestSuiteBuilder,
+)
+from .parsers import RobotParser as RobotParser
+from .settings import TestDefaults as TestDefaults

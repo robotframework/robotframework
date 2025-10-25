@@ -19,14 +19,17 @@ from robot.conf import LanguagesLike
 from robot.utils import Source
 
 from ..lexer import get_init_tokens, get_resource_tokens, get_tokens, Token
-from ..model import File, Config, ModelVisitor, Statement
-
+from ..model import Config, File, ModelVisitor, Statement
 from .blockparsers import Parser
 from .fileparser import FileParser
 
 
-def get_model(source: Source, data_only: bool = False, curdir: 'str|None' = None,
-              lang: LanguagesLike = None) -> File:
+def get_model(
+    source: Source,
+    data_only: bool = False,
+    curdir: "str|None" = None,
+    lang: LanguagesLike = None,
+) -> File:
     """Parses the given source into a model represented as an AST.
 
     How to use the model is explained more thoroughly in the general
@@ -57,8 +60,12 @@ def get_model(source: Source, data_only: bool = False, curdir: 'str|None' = None
     return _get_model(get_tokens, source, data_only, curdir, lang)
 
 
-def get_resource_model(source: Source, data_only: bool = False,
-                       curdir: 'str|None' = None, lang: LanguagesLike = None) -> File:
+def get_resource_model(
+    source: Source,
+    data_only: bool = False,
+    curdir: "str|None" = None,
+    lang: LanguagesLike = None,
+) -> File:
     """Parses the given source into a resource file model.
 
     Same as :func:`get_model` otherwise, but the source is considered to be
@@ -67,8 +74,12 @@ def get_resource_model(source: Source, data_only: bool = False,
     return _get_model(get_resource_tokens, source, data_only, curdir, lang)
 
 
-def get_init_model(source: Source, data_only: bool = False, curdir: 'str|None' = None,
-                   lang: LanguagesLike = None) -> File:
+def get_init_model(
+    source: Source,
+    data_only: bool = False,
+    curdir: "str|None" = None,
+    lang: LanguagesLike = None,
+) -> File:
     """Parses the given source into an init file model.
 
     Same as :func:`get_model` otherwise, but the source is considered to be
@@ -78,8 +89,13 @@ def get_init_model(source: Source, data_only: bool = False, curdir: 'str|None' =
     return _get_model(get_init_tokens, source, data_only, curdir, lang)
 
 
-def _get_model(token_getter: Callable[..., Iterator[Token]], source: Source,
-               data_only: bool, curdir: 'str|None', lang: LanguagesLike):
+def _get_model(
+    token_getter: Callable[..., Iterator[Token]],
+    source: Source,
+    data_only: bool,
+    curdir: "str|None",
+    lang: LanguagesLike,
+):
     tokens = token_getter(source, data_only, lang=lang)
     statements = _tokens_to_statements(tokens, curdir)
     model = _statements_to_model(statements, source)
@@ -88,13 +104,15 @@ def _get_model(token_getter: Callable[..., Iterator[Token]], source: Source,
     return model
 
 
-def _tokens_to_statements(tokens: Iterator[Token],
-                          curdir: 'str|None') -> Iterator[Statement]:
+def _tokens_to_statements(
+    tokens: Iterator[Token],
+    curdir: "str|None",
+) -> Iterator[Statement]:
     statement = []
     EOS = Token.EOS
     for t in tokens:
-        if curdir and '${CURDIR}' in t.value:
-            t.value = t.value.replace('${CURDIR}', curdir)
+        if curdir and "${CURDIR}" in t.value:
+            t.value = t.value.replace("${CURDIR}", curdir)
         if t.type != EOS:
             statement.append(t)
         else:
@@ -104,7 +122,7 @@ def _tokens_to_statements(tokens: Iterator[Token],
 
 def _statements_to_model(statements: Iterator[Statement], source: Source) -> File:
     root = FileParser(source=source)
-    stack: 'list[Parser]' = [root]
+    stack: "list[Parser]" = [root]
     for statement in statements:
         while not stack[-1].handles(statement):
             stack.pop()

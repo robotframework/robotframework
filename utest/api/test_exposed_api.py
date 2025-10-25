@@ -1,10 +1,8 @@
 import unittest
-
 from os.path import join
 
 from robot import api, model, parsing, reporting, result, running
 from robot.api import parsing as api_parsing
-
 from robot.utils.asserts import assert_equal, assert_true
 
 
@@ -45,14 +43,26 @@ class TestExposedApi(unittest.TestCase):
     def test_parsing_model_statements(self):
         for cls in parsing.model.Statement.statement_handlers.values():
             assert_equal(getattr(api_parsing, cls.__name__), cls)
-        assert_true(not hasattr(api_parsing, 'Statement'))
+        assert_true(not hasattr(api_parsing, "Statement"))
 
     def test_parsing_model_blocks(self):
-        for name in ('File', 'SettingSection', 'VariableSection', 'TestCaseSection',
-                     'KeywordSection', 'CommentSection', 'TestCase', 'Keyword', 'For',
-                     'If', 'Try', 'While', 'Group'):
+        for name in (
+            "File",
+            "SettingSection",
+            "VariableSection",
+            "TestCaseSection",
+            "KeywordSection",
+            "CommentSection",
+            "TestCase",
+            "Keyword",
+            "For",
+            "If",
+            "Try",
+            "While",
+            "Group",
+        ):
             assert_equal(getattr(api_parsing, name), getattr(parsing.model, name))
-        assert_true(not hasattr(api_parsing, 'Block'))
+        assert_true(not hasattr(api_parsing, "Block"))
 
     def test_parsing_visitors(self):
         assert_equal(api_parsing.ModelVisitor, parsing.ModelVisitor)
@@ -80,17 +90,19 @@ class TestModelObjects(unittest.TestCase):
 class TestTestSuiteBuilder(unittest.TestCase):
     # This list has paths like `/path/file.py/../file.robot` on purpose.
     # They don't work unless normalized.
-    sources = [join(__file__, '../../../atest/testdata/misc', name)
-               for name in ('pass_and_fail.robot', 'normal.robot')]
+    sources = [
+        join(__file__, "../../../atest/testdata/misc", name)
+        for name in ("pass_and_fail.robot", "normal.robot")
+    ]
 
     def test_create_with_datasources_as_list(self):
         suite = api.TestSuiteBuilder().build(*self.sources)
-        assert_equal(suite.name, 'Pass And Fail & Normal')
+        assert_equal(suite.name, "Pass And Fail & Normal")
 
     def test_create_with_datasource_as_string(self):
         suite = api.TestSuiteBuilder().build(self.sources[0])
-        assert_equal(suite.name, 'Pass And Fail')
+        assert_equal(suite.name, "Pass And Fail")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

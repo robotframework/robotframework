@@ -18,13 +18,13 @@ def custom_converters(name, expected):
 
 def language_configuration():
     info = TypeInfo.from_type_hint(bool)
-    assert info.convert('kyllä', languages='Finnish') is True
-    assert info.convert('ei', languages=['de', 'fi']) is False
+    assert info.convert("kyllä", languages="Finnish") is True
+    assert info.convert("ei", languages=["de", "fi"]) is False
 
 
 def default_language_configuration():
     info = TypeInfo.from_type_hint(bool)
-    assert info.convert('ja') is True
-    assert info.convert('nein') is False
-    assert info.convert('ja', languages='fi') == 'ja'
-    assert info.convert('nein', languages='en') == 'nein'
+    assert info.convert("ja") is True
+    assert info.convert("nein") is False
+    assert info.convert("ja", languages="fi") == "ja"
+    assert info.convert("nein", languages="en") == "nein"

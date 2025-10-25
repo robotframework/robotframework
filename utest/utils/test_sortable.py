@@ -1,7 +1,7 @@
 import unittest
 
-from robot.utils.asserts import assert_true, assert_raises
 from robot.utils import Sortable
+from robot.utils.asserts import assert_raises, assert_true
 
 
 class MySortable(Sortable):
@@ -13,9 +13,9 @@ class MySortable(Sortable):
 class TestSortable(unittest.TestCase):
 
     def setUp(self):
-        self.a = MySortable('a')
-        self.a2 = MySortable('a')
-        self.b = MySortable('b')
+        self.a = MySortable("a")
+        self.a2 = MySortable("a")
+        self.b = MySortable("b")
 
     def test_eq(self):
         assert_true(self.a == self.a2)
@@ -50,5 +50,5 @@ class TestSortable(unittest.TestCase):
         assert_raises(TypeError, lambda: self.a >= 1)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

@@ -114,15 +114,45 @@ the results is possible using the
     ResultWriter('skynet.xml').write_results()
 """
 
-from .arguments import ArgInfo, ArgumentSpec, TypeConverter, TypeInfo
-from .builder import ResourceFileBuilder, TestDefaults, TestSuiteBuilder
-from .context import EXECUTION_CONTEXTS
-from .keywordimplementation import KeywordImplementation
-from .invalidkeyword import InvalidKeyword
-from .librarykeyword import LibraryKeyword
-from .model import (Break, Continue, Error, For, ForIteration, Group, If, IfBranch, Keyword,
-                    Return, TestCase, TestSuite, Try, TryBranch, Var, While,
-                    WhileIteration)
-from .resourcemodel import Import, ResourceFile, UserKeyword, Variable
-from .runkwregister import RUN_KW_REGISTER
-from .testlibraries import TestLibrary
+from .arguments import (
+    ArgInfo as ArgInfo,
+    ArgumentSpec as ArgumentSpec,
+    TypeConverter as TypeConverter,
+    TypeInfo as TypeInfo,
+)
+from .builder import (
+    ResourceFileBuilder as ResourceFileBuilder,
+    TestDefaults as TestDefaults,
+    TestSuiteBuilder as TestSuiteBuilder,
+)
+from .context import EXECUTION_CONTEXTS as EXECUTION_CONTEXTS
+from .invalidkeyword import InvalidKeyword as InvalidKeyword
+from .keywordimplementation import KeywordImplementation as KeywordImplementation
+from .librarykeyword import LibraryKeyword as LibraryKeyword
+from .model import (
+    Break as Break,
+    Continue as Continue,
+    Error as Error,
+    For as For,
+    ForIteration as ForIteration,
+    Group as Group,
+    If as If,
+    IfBranch as IfBranch,
+    Keyword as Keyword,
+    Return as Return,
+    TestCase as TestCase,
+    TestSuite as TestSuite,
+    Try as Try,
+    TryBranch as TryBranch,
+    Var as Var,
+    While as While,
+    WhileIteration as WhileIteration,
+)
+from .resourcemodel import (
+    Import as Import,
+    ResourceFile as ResourceFile,
+    UserKeyword as UserKeyword,
+    Variable as Variable,
+)
+from .runkwregister import RUN_KW_REGISTER as RUN_KW_REGISTER
+from .testlibraries import TestLibrary as TestLibrary

@@ -22,28 +22,29 @@ directly with syntax `%{ENV_VAR}`.
 
 Variables are useful, for example, in these cases:
 
-- When strings change often in the test data. With variables you only
-  need to make these changes in one place.
+- When values used in multiple places in the data change often. When using variables,
+  you only need to make changes in one place where the variable is defined.
 
-- When creating system-independent and operating-system-independent test
-  data. Using variables instead of hard-coded strings eases that considerably
+- When creating system-independent and operating-system-independent data.
+  Using variables instead of hard-coded values eases that considerably
   (for example, `${RESOURCES}` instead of `c:\resources`, or `${HOST}`
   instead of `10.0.0.1:8080`). Because variables can be `set from the
   command line`__ when tests are started, changing system-specific
-  variables is easy (for example, `--variable HOST:10.0.0.2:1234
-  --variable RESOURCES:/opt/resources`). This also facilitates
+  variables is easy (for example, `--variable RESOURCES:/opt/resources
+  --variable HOST:10.0.0.2:1234`). This also facilitates
   localization testing, which often involves running the same tests
-  with different strings.
+  with different localized strings.
 
 - When there is a need to have objects other than strings as arguments
-  for keywords. This is not possible without variables.
+  for keywords. This is not possible without variables, unless keywords
+  themselves support argument conversion.
 
 - When different keywords, even in different test libraries, need to
   communicate. You can assign a return value from one keyword to a
   variable and pass it as an argument to another.
 
 - When values in the test data are long or otherwise complicated. For
-  example, `${URL}` is shorter than
+  example, using `${URL}` is more convenient than using something like
   `http://long.domain.name:8080/path/to/service?foo=1&bar=2&zap=42`.
 
 If a non-existent variable is used in the test data, the keyword using
@@ -53,17 +54,17 @@ literal string, it must be `escaped with a backslash`__ as in `\${NAME}`.
 __ `Scalar variables`_
 __ `List variables`_
 __ `Dictionary variables`_
-__ `Setting variables in command line`_
+__ `Command line variables`_
 __ Escaping_
 
 Using variables
 ---------------
 
-This section explains how to use variables, including the normal scalar
-variable syntax `${var}`, how to use variables in list and dictionary
-contexts like `@{var}` and `&{var}`, respectively, and how to use environment
+This section explains how to use variables using the normal scalar
+variable syntax `${var}`, how to expand lists and dictionaries
+like `@{var}` and `&{var}`, respectively, and how to use environment
 variables like `%{var}`. Different ways how to create variables are discussed
-in the subsequent sections.
+in the next section.
 
 Robot Framework variables, similarly as keywords, are
 case-insensitive, and also spaces and underscores are
@@ -73,13 +74,17 @@ and small letters with local variables that are only available in certain
 test cases or user keywords (for example, `${my var}`). Much more
 importantly, though, case should be used consistently.
 
-Variable name consists of the variable type identifier (`$`, `@`, `&`, `%`),
-curly braces (`{`, `}`) and the actual variable name between the braces.
-Unlike in some programming languages where similar variable syntax is
-used, curly braces are always mandatory. Variable names can basically have
-any characters between the curly braces. However, using only alphabetic
-characters from a to z, numbers, underscore and space is recommended, and
-it is even a requirement for using the `extended variable syntax`_.
+A variable name, such as `${example}`, consists of the variable identifier
+(`$`, `@`, `&`, `%`), curly braces (`{`, `}`), and the base name between the
+braces. When creating variables, there may also be a `variable type definition`__
+after the base name like `${example: int}`.
+
+The variable base name can contain any characters. It is, however, highly
+recommended to use only alphabetic characters, numbers, underscores and spaces.
+That is a requirement for using the `extended variable syntax`_ already now and
+in the future that may be required with all variables.
+
+__ `Variable type conversion`_
 
 .. _scalar variable:
 .. _scalar variables:
@@ -96,7 +101,7 @@ lists, dictionaries, or even custom objects.
 The example below illustrates the usage of scalar variables. Assuming
 that the variables `${GREET}` and `${NAME}` are available
 and assigned to strings `Hello` and `world`, respectively,
-both the example test cases are equivalent.
+these two example test cases are equivalent:
 
 .. sourcecode:: robotframework
 
@@ -129,7 +134,7 @@ object:
 
  class MyObj:
 
-     def __str__():
+     def __str__(self):
          return "Hi, terra!"
 
 With these two variables set, we then have the following test data:
@@ -200,8 +205,8 @@ __ https://docs.python.org/3/library/stdtypes.html#bytearray-objects
           in Robot Framework 7.2. With earlier versions the result was a string.
 
 .. note:: All bytes being mapped to matching Unicode code points in string
-          representation is new Robot Framework 7.2. With earlier versions
-          only bytes in the ASCII range were mapped directly code points and
+          representation is new Robot Framework 7.2. With earlier versions,
+          only bytes in the ASCII range were mapped directly to code points and
           other bytes were represented in an escaped format.
 
 .. _list variable:
@@ -214,9 +219,11 @@ List variable syntax
 When a variable is used as a scalar like `${EXAMPLE}`, its value is be
 used as-is. If a variable value is a list or list-like, it is also possible
 to use it as a list variable like `@{EXAMPLE}`. In this case the list is expanded
-and individual items are passed in as separate arguments. This is easiest to explain
-with an example. Assuming that a variable `@{USER}` has value `['robot', 'secret']`,
-the following two test cases are equivalent:
+and individual items are passed in as separate arguments.
+
+This is easiest to explain with an example. Assuming that a variable `${USER}`
+contains a list with two items `robot` and `secret`, the first two of these tests
+are equivalent:
 
 .. sourcecode:: robotframework
 
@@ -224,14 +231,14 @@ the following two test cases are equivalent:
    Constants
        Login    robot    secret
 
-   List Variable
+   List variable
        Login    @{USER}
 
-Robot Framework stores its own variables in one internal storage and allows
-using them as scalars, lists or dictionaries. Using a variable as a list
-requires its value to be a Python list or list-like object. Robot Framework
-does not allow strings to be used as lists, but other iterable objects such
-as tuples or dictionaries are accepted.
+   List as scalar
+       Keyword    ${USER}
+
+The third test above illustrates that a variable containing a list can be used
+also as a scalar. In that test the keyword gets the whole list as a single argument.
 
 Starting from Robot Framework 4.0, list expansion can be used in combination with
 `list item access`__ making these usages possible:
@@ -284,7 +291,7 @@ those places where list variables are not supported.
    Suite Setup     Some Keyword        @{KW ARGS}     # This works
    Suite Setup     ${KEYWORD}          @{KW ARGS}     # This works
    Suite Setup     @{KEYWORD AND ARGS}                # This does not work
-   Default Tags    @{TAGS}                            # This works
+   Test Tags       @{TAGS}                            # This works
 
 .. _dictionary variable:
 .. _dictionary variables:
@@ -295,12 +302,12 @@ Dictionary variable syntax
 
 As discussed above, a variable containing a list can be used as a `list
 variable`_ to pass list items to a keyword as individual arguments.
-Similarly a variable containing a Python dictionary or a dictionary-like
+Similarly, a variable containing a Python dictionary or a dictionary-like
 object can be used as a dictionary variable like `&{EXAMPLE}`. In practice
 this means that the dictionary is expanded and individual items are passed as
-`named arguments`_ to the keyword. Assuming that a variable `&{USER}` has
-value `{'name': 'robot', 'password': 'secret'}`, the following two test cases
-are equivalent.
+`named arguments`_ to the keyword. Assuming that a variable `&{USER}` has a
+value `{'name': 'robot', 'password': 'secret'}`, the first two test cases
+below are equivalent:
 
 .. sourcecode:: robotframework
 
@@ -308,8 +315,14 @@ are equivalent.
    Constants
        Login    name=robot    password=secret
 
-   Dict Variable
+   Dictionary variable
        Login    &{USER}
+
+   Dictionary as scalar
+       Keyword    ${USER}
+
+The third test above illustrates that a variable containing a dictionary can be used
+also as a scalar. In that test the keyword gets the whole dictionary as a single argument.
 
 Starting from Robot Framework 4.0, dictionary expansion can be used in combination with
 `dictionary item access`__ making usages like `&{nested}[key]` possible.
@@ -355,7 +368,7 @@ Starting from Robot Framework 4.0, it is also possible to use item access togeth
 `list expansion`_ and `dictionary expansion`_ by using syntax `@{var}[item]` and
 `&{var}[item]`, respectively.
 
-.. note:: Prior to Robot Framework 3.1 the normal item access syntax was  `@{var}[item]`
+.. note:: Prior to Robot Framework 3.1, the normal item access syntax was  `@{var}[item]`
           with lists and `&{var}[item]` with dictionaries. Robot Framework 3.1 introduced
           the generic `${var}[item]` syntax along with some other nice enhancements and
           the old item access syntax was deprecated in Robot Framework 3.2.
@@ -386,8 +399,8 @@ integers, and it is also possible to use variables as indices.
        Keyword    ${SEQUENCE}[${INDEX}]
 
 Sequence item access supports also the `same "slice" functionality as Python`__
-with syntax like `${var}[1:]`. With this syntax you do not get a single
-item but a slice of the original sequence. Same way as with Python you can
+with syntax like `${var}[1:]`. With this syntax, you do not get a single
+item, but a *slice* of the original sequence. Same way as with Python, you can
 specify the start index, the end index, and the step:
 
 .. sourcecode:: robotframework
@@ -405,9 +418,6 @@ specify the start index, the end index, and the step:
    Step
        Keyword    ${SEQUENCE}[::2]
        Keyword    ${SEQUENCE}[1:-1:10]
-
-.. note:: The slice syntax is new in Robot Framework 3.1. It was extended to work
-          with `list expansion`_ like `@{var}[1:]` in Robot Framework 4.0.
 
 .. note:: Prior to Robot Framework 3.2, item and slice access was only supported
           with variables containing lists, tuples, or other objects considered
@@ -428,9 +438,9 @@ selected value. Keys are considered to be strings, but non-strings
 keys can be used as variables. Dictionary values accessed in this
 manner can be used similarly as scalar variables.
 
-If a key is a string, it is possible to access its value also using
-attribute access syntax `${NAME.key}`. See `Creating dictionary variables`_
-for more details about this syntax.
+If a dictionary is created in Robot Framework data, it is possible to access
+values also using the attribute access syntax like `${NAME.key}`. See the
+`Creating dictionaries`_ section for more details about this syntax.
 
 .. sourcecode:: robotframework
 
@@ -487,16 +497,30 @@ not effective after the test execution.
        Log    Current user: %{USER}
        Run    %{JAVA_HOME}${/}javac
 
-   Environment variables with defaults
-       Set port    %{APPLICATION_PORT=8080}
+   Environment variable with default
+       Set Port    %{APPLICATION_PORT=8080}
 
 .. note:: Support for specifying the default value is new in Robot Framework 3.2.
-
 
 Creating variables
 ------------------
 
-Variables can spring into existence from different sources.
+Variables can be created using different approaches discussed in this section:
+
+- In the `Variable section`_
+- Using `variable files`_
+- On the `command line`__
+- Based on `return values from keywords`_
+- Using the `VAR syntax`_
+- Using `Set Test/Suite/Global Variable keywords`_
+
+In addition to this, there are various automatically available `built-in variables`_
+and also `user keyword arguments`_ and `FOR loops`_ create variables. In most
+places where variables are created, it is possible to use `variable type conversion`_
+to easily create variables with non-string values. An important application for
+conversions is creating `secret variables`_.
+
+__ `Command line variables`_
 
 .. _Variable sections:
 
@@ -506,12 +530,12 @@ Variable section
 The most common source for variables are Variable sections in `suite files`_
 and `resource files`_. Variable sections are convenient, because they
 allow creating variables in the same place as the rest of the test
-data, and the needed syntax is very simple. Their main disadvantages are
-that values are always strings and they cannot be created dynamically.
-If either of these is a problem, `variable files`_ can be used instead.
+data, and the needed syntax is very simple. Their main disadvantage is that
+variables cannot be created dynamically. If that is a problem, `variable files`_
+can be used instead.
 
-Creating scalar variables
-'''''''''''''''''''''''''
+Creating scalar values
+''''''''''''''''''''''
 
 The simplest possible variable assignment is setting a string into a
 scalar variable. This is done by giving the variable name (including
@@ -538,7 +562,7 @@ variables slightly more explicit.
 
 If a scalar variable has a long value, it can be `split into multiple rows`__
 by using the `...` syntax. By default rows are concatenated together using
-a space, but this can be changed by using a having `separator` configuration
+a space, but this can be changed by using a `separator` configuration
 option after the last value:
 
 .. sourcecode:: robotframework
@@ -569,14 +593,14 @@ support also older versions.
 
 __ `Dividing data to several rows`_
 
-Creating list variables
-'''''''''''''''''''''''
+Creating lists
+''''''''''''''
 
-Creating list variables is as easy as creating scalar variables. Again, the
+Creating lists is as easy as creating scalar values. Again, the
 variable name is in the first column of the Variable section and
-values in the subsequent columns. A list variable can have any number
-of values, starting from zero, and if many values are needed, they
-can be `split into several rows`__.
+values in the subsequent columns, but this time the variable name must
+start with `@` instead of `$`. A list can have any number of items,
+including zero, and items can be `split into several rows`__ if needed.
 
 __ `Dividing data to several rows`_
 
@@ -589,14 +613,18 @@ __ `Dividing data to several rows`_
    @{MANY}         one         two      three      four
    ...             five        six      seven
 
-Creating dictionary variables
-'''''''''''''''''''''''''''''
+.. note:: As discussed in the `List variable syntax`_ section, variables
+          containing lists can be used as scalars like `${NAMES}` and
+          by using the list expansion syntax like `@{NAMES}`.
 
-Dictionary variables can be created in the Variable section similarly as
-list variables. The difference is that items need to be created using
-`name=value` syntax or existing dictionary variables. If there are multiple
-items with same name, the last value has precedence. If a name contains
-a literal equal sign, it can be escaped__ with a backslash like `\=`.
+Creating dictionaries
+'''''''''''''''''''''
+
+Dictionaries can be created in the Variable section similarly as lists.
+The differences are that the name must now start with `&` and that items need
+to be created using the `name=value` syntax or based on existing dictionary variables.
+If there are multiple items with same name, the last value has precedence.
+If a name contains a literal equal sign, it can be escaped__ with a backslash like `\=`.
 
 .. sourcecode:: robotframework
 
@@ -607,24 +635,24 @@ a literal equal sign, it can be escaped__ with a backslash like `\=`.
    &{EVEN MORE}    &{MANY}       first=override      empty=
    ...             =empty        key\=here=value
 
-Dictionary variables have two extra properties
-compared to normal Python dictionaries. First of all, values of these
-dictionaries can be accessed like attributes, which means that it is possible
+.. note:: As discussed in the `Dictionary variable syntax`_ section, variables
+          containing dictionaries can be used as scalars like `${USER 1}` and
+          by using the dictionary expansion syntax like `&{USER 1}`.
+
+Unlike with normal Python dictionaries, values of dictionaries created using
+this syntax can be accessed as attributes, which means that it is possible
 to use `extended variable syntax`_ like `${VAR.key}`. This only works if the
-key is a valid attribute name and does not match any normal attribute
-Python dictionaries have. For example, individual value `&{USER}[name]` can
-also be accessed like `${USER.name}` (notice that `$` is needed in this
-context), but using `${MANY.3}` is not possible.
+key is a valid attribute name and does not match any normal attribute Python
+dictionaries have, though. For example, individual value `${USER}[name]` can
+also be accessed like `${USER.name}`, but using `${MANY.3}` is not possible.
 
-.. tip:: With nested dictionary variables keys are accessible like
-         `${VAR.nested.key}`. This eases working with nested data structures.
+.. tip:: With nested dictionaries keys are accessible like `${DATA.nested.key}`.
 
-Another special property of dictionary variables is
-that they are ordered. This means that if these dictionaries are iterated,
-their items always come in the order they are defined. This can be useful
+Dictionaries are also ordered. This means that if they are iterated,
+their items always come in the order they are defined. This can be useful, for example,
 if dictionaries are used as `list variables`_ with `FOR loops`_ or otherwise.
 When a dictionary is used as a list variable, the actual value contains
-dictionary keys. For example, `@{MANY}` variable would have value `['first',
+dictionary keys. For example, `@{MANY}` variable would have a value `['first',
 'second', 3]`.
 
 __ Escaping_
@@ -645,8 +673,8 @@ dynamically based on another variable:
    Dynamically created name
        Should Be Equal    ${Y}    Z
 
-Variable file
-~~~~~~~~~~~~~
+Using variable files
+~~~~~~~~~~~~~~~~~~~~
 
 Variable files are the most powerful mechanism for creating different
 kind of variables. It is possible to assign variables to any object
@@ -654,37 +682,34 @@ using them, and they also enable creating variables dynamically. The
 variable file syntax and taking variable files into use is explained
 in section `Resource and variable files`_.
 
-Setting variables in command line
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Command line variables
+~~~~~~~~~~~~~~~~~~~~~~
 
 Variables can be set from the command line either individually with
-the :option:`--variable (-v)` option or using a variable file with the
-:option:`--variablefile (-V)` option. Variables set from the command line
+the :option:`--variable (-v)` option or using the aforementioned variable files
+with the :option:`--variablefile (-V)` option. Variables set from the command line
 are globally available for all executed test data files, and they also
 override possible variables with the same names in the Variable section and in
-variable files imported in the test data.
+variable files imported in the Setting section.
 
-The syntax for setting individual variables is :option:`--variable
-name:value`, where `name` is the name of the variable without
-`${}` and `value` is its value. Several variables can be
-set by using this option several times. Only scalar variables can be
-set using this syntax and they can only get string values.
+The syntax for setting individual variables is :option:`--variable name:value`,
+where `name` is the name of the variable without the `${}` decoration and `value`
+is its value. Several variables can be set by using this option several times.
 
 .. sourcecode:: bash
 
    --variable EXAMPLE:value
    --variable HOST:localhost:7272 --variable USER:robot
 
-In the examples above, variables are set so that
+In the examples above, variables are set so that:
 
-- `${EXAMPLE}` gets the value `value`
-- `${HOST}` and `${USER}` get the values
-  `localhost:7272` and `robot`
+- `${EXAMPLE}` gets value `value`, and
+- `${HOST}` and `${USER}` get values `localhost:7272` and `robot`, respectively.
 
-The basic syntax for taking `variable files`_ into use from the command line
-is :option:`--variablefile path/to/variables.py`, and `Taking variable files into
-use`_ section has more details. What variables actually are created depends on
-what variables there are in the referenced variable file.
+The basic syntax for taking `variable files`_ into use from the command line is
+:option:`--variablefile path/to/variables.py` and the `Taking variable files into
+use`_ section explains this more thoroughly. What variables actually are created
+depends on what variables there are in the referenced variable file.
 
 If both variable files and individual variables are given from the command line,
 the latter have `higher priority`__.
@@ -694,9 +719,9 @@ __ `Variable priorities and scopes`_
 Return values from keywords
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Return values from keywords can also be set into variables. This
-allows communication between different keywords even in different test
-libraries.
+Return values from keywords can also be assigned into variables. This
+allows communication between different keywords even in different libraries
+by passing created variables forward as arguments to other keywords.
 
 Variables set in this manner are otherwise similar to any other
 variables, but they are available only in the `local scope`_
@@ -706,7 +731,8 @@ because, in general, automated test cases should not depend on each
 other, and accidentally setting a variable that is used elsewhere
 could cause hard-to-debug errors. If there is a genuine need for
 setting a variable in one test case and using it in another, it is
-possible to use BuiltIn_ keywords as explained in the next section.
+possible to use the `VAR syntax`_ or `Set Test/Suite/Global Variable keywords`_
+as explained in the subsequent sections.
 
 Assigning scalar variables
 ''''''''''''''''''''''''''
@@ -723,7 +749,7 @@ As illustrated by the example below, the required syntax is very simple:
 
 In the above example the value returned by the :name:`Get X` keyword
 is first set into the variable `${x}` and then used by the :name:`Log`
-keyword. Having the equals sign `=` after the variable name is
+keyword. Having the equals sign `=` after the name of the assigned variable is
 not obligatory, but it makes the assignment more explicit. Creating
 local variables like this works both in test case and user keyword level.
 
@@ -734,13 +760,13 @@ variable`_ if it has a dictionary-like value.
 .. sourcecode:: robotframework
 
    *** Test Cases ***
-   Example
+   List assigned to scalar variable
        ${list} =    Create List    first    second    third
        Length Should Be    ${list}    3
        Log Many    @{list}
 
-Assigning variables with item values
-''''''''''''''''''''''''''''''''''''
+Assigning variable items
+''''''''''''''''''''''''
 
 Starting from Robot Framework 6.1, when working with variables that support
 item assignment such as lists or dictionaries, it is possible to set their values
@@ -750,15 +776,15 @@ where the `item` part can itself contain a variable:
 .. sourcecode:: robotframework
 
    *** Test Cases ***
-   Item assignment to list
+   List item assignment
        ${list} =          Create List      one    two    three    four
        ${list}[0] =       Set Variable     first
        ${list}[${1}] =    Set Variable     second
-       ${list}[2:3] =     Evaluate         ['third']
+       ${list}[2:3] =     Create List      third
        ${list}[-1] =      Set Variable     last
        Log Many           @{list}          # Logs 'first', 'second', 'third' and 'last'
 
-   Item assignment to dictionary
+   Dictionary item assignment
        ${dict} =                Create Dictionary    first_name=unknown
        ${dict}[first_name] =    Set Variable         John
        ${dict}[last_name] =     Set Variable         Doe
@@ -787,14 +813,15 @@ assign it to a `list variable`_:
 .. sourcecode:: robotframework
 
    *** Test Cases ***
-   Example
+   Assign to list variable
        @{list} =    Create List    first    second    third
        Length Should Be    ${list}    3
        Log Many    @{list}
 
 Because all Robot Framework variables are stored in the same namespace, there is
 not much difference between assigning a value to a scalar variable or a list
-variable. This can be seen by comparing the last two examples above. The main
+variable. This can be seen by comparing the above example with the earlier
+example with the `List assigned to scalar variable` test case. The main
 differences are that when creating a list variable, Robot Framework
 automatically verifies that the value is a list or list-like, and the stored
 variable value will be a new list created from the return value. When
@@ -810,7 +837,7 @@ to assign it to a `dictionary variable`_:
 .. sourcecode:: robotframework
 
    *** Test Cases ***
-   Example
+   Assign to dictionary variable
        &{dict} =    Create Dictionary    first=1    second=${2}    ${3}=third
        Length Should Be    ${dict}    3
        Do Something    &{dict}
@@ -818,16 +845,15 @@ to assign it to a `dictionary variable`_:
 
 Because all Robot Framework variables are stored in the same namespace, it would
 also be possible to assign a dictionary into a scalar variable and use it
-later as a dictionary when needed. There are, however, some actual benefits
+later as a dictionary when needed. There are, however, some concrete benefits
 in creating a dictionary variable explicitly. First of all, Robot Framework
 verifies that the returned value is a dictionary or dictionary-like similarly
 as it verifies that list variables can only get a list-like value.
 
 A bigger benefit is that the value is converted into a special dictionary
-that it uses also when `creating dictionary variables`_ in the Variable section.
+that is used also when `creating dictionaries`_ in the Variable section.
 Values in these dictionaries can be accessed using attribute access like
-`${dict.first}` in the above example. These dictionaries are also ordered, but
-if the original dictionary was not ordered, the resulting order is arbitrary.
+`${dict.first}` in the above example.
 
 Assigning multiple variables
 ''''''''''''''''''''''''''''
@@ -851,7 +877,7 @@ the following variables are created:
 - `${a}`, `${b}` and `${c}` with values `1`, `2`, and `3`, respectively.
 - `${first}` with value `1`, and `@{rest}` with value `[2, 3]`.
 - `@{before}` with value `[1, 2]` and `${last}` with value `3`.
-- `${begin}` with value `1`, `@{middle}` with value `[2]` and ${end} with
+- `${begin}` with value `1`, `@{middle}` with value `[2]` and `${end}` with
   value `3`.
 
 It is an error if the returned list has more or less values than there are
@@ -888,11 +914,11 @@ and it must be followed by a variable name and value. Other than the mandatory
 `VAR`, the overall syntax is mostly the same as when creating variables
 in the `Variable section`_.
 
-The new syntax is aims to make creating variables simpler and more uniform. It is
+The new syntax aims to make creating variables simpler and more uniform. It is
 especially indented to replace the BuiltIn_ keywords :name:`Set Variable`,
-:name:`Set Test Variable`, :name:`Set Suite Variable` and :name:`Set Global Variable`,
-but it can be used instead of :name:`Catenate`, :name:`Create List` and
-:name:`Create Dictionary` as well.
+:name:`Set Local Variable`, :name:`Set Test Variable`, :name:`Set Suite Variable`
+and :name:`Set Global Variable`, but it can be used instead of :name:`Catenate`,
+:name:`Create List` and :name:`Create Dictionary` as well.
 
 Creating scalar variables
 '''''''''''''''''''''''''
@@ -921,10 +947,11 @@ the `Variable section`_.
         ...                    As the result this becomes a multiline string.
         ...                    separator=\n
 
-Creating list and dictionary variables
-''''''''''''''''''''''''''''''''''''''
+Creating lists and dictionaries
+'''''''''''''''''''''''''''''''
 
-List and dictionary variables are created similarly as scalar variables.
+List and dictionary variables are created similarly as scalar variables,
+but the variable names must start with `@` and `&`, respectively.
 When creating dictionaries, items must be specified using the `name=value` syntax.
 
 .. sourcecode:: robotframework
@@ -1061,8 +1088,8 @@ another variable.
         VAR    ${${x}}    z    # Name created dynamically.
         Should Be Equal    ${y}    z
 
-Using :name:`Set Test/Suite/Global Variable` keywords
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+:name:`Set Test/Suite/Global Variable` keywords
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. note:: The `VAR` syntax is recommended over these keywords when using
           Robot Framework 7.0 or newer.
@@ -1092,8 +1119,8 @@ keyword.
 Variables set with :name:`Set Global Variable` keyword are globally
 available in all test cases and suites executed after setting
 them. Setting variables with this keyword thus has the same effect as
-`creating from the command line`__ using the options :option:`--variable` or
-:option:`--variablefile`. Because this keyword can change variables
+`creating variables on the command line`__ using the :option:`--variable` and
+:option:`--variablefile` options. Because this keyword can change variables
 everywhere, it should be used with care.
 
 .. note:: :name:`Set Test/Suite/Global Variable` keywords set named
@@ -1101,9 +1128,285 @@ everywhere, it should be used with care.
           and return nothing. On the other hand, another BuiltIn_ keyword
           :name:`Set Variable` sets local variables using `return values`__.
 
-__ `Setting variables in command line`_
+__ `Command line variables`_
 __ `Variable scopes`_
 __ `Return values from keywords`_
+
+Variable type conversion
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+Variable values are typically strings, but non-string values are often needed
+as well. Various ways how to create variables with non-string values has
+already been discussed:
+
+- `Variable files`_ allow creating any kind of objects.
+- `Return values from keywords`_ can contain any objects.
+- Variables can be created based on existing variables that contain non-string values.
+- `@{list}` and `&{dict}` syntax allows creating lists and dictionaries natively.
+
+In addition to the above, it is possible to specify the variable type like
+`${name: int}` when creating variables, and the value is converted to
+the specified type automatically. This is called *variable type conversion*
+and how it works in practice is discussed in this section.
+
+.. note:: Variable type conversion is new in Robot Framework 7.3.
+
+Variable type syntax
+''''''''''''''''''''
+
+The general variable types syntax is `${name: type}` `in the data`__ and
+`name: type:value` `on the command line`__. The space after the colon is mandatory
+in both cases. Although variable name can in some contexts be created dynamically
+based on another variable, the type and the type separator must be always specified
+as literal values.
+
+Variable type conversion supports the same base types that the `argument conversion`__
+supports with library keywords. For example, `${number: int}` means that the value
+of the variable `${number}` is converted to an integer.
+
+Variable type conversion supports also `specifying multiple possible types`_
+using the union syntax. For example, `${number: int | float}` means that the
+value is first converted to an integer and, if that fails, then to a floating
+point number.
+
+Also `parameterized types`_ are supported. For example, `${numbers: list[int]}`
+means that the value is converted to a list of integers.
+
+The biggest limitations compared to the argument conversion with library
+keywords is that `Enum` and `TypedDict` conversions are not supported and
+that custom converters cannot be used. These limitations may be lifted in
+the future versions.
+
+.. note:: Variable conversion is supported only when variables are created,
+          not when they are used.
+
+__ `Variable conversion in data`_
+__ `Variable conversion on command line`_
+__ `Supported conversions`_
+
+Variable conversion in data
+'''''''''''''''''''''''''''
+
+In the data variable conversion works when creating variables in the
+`Variable section`_, with the `VAR syntax`_ and based on
+`return values from keywords`_:
+
+.. sourcecode:: robotframework
+
+   *** Variables ***
+   ${VERSION: float}         7.3
+   ${CRITICAL: list[int]}    [3278, 5368, 5417]
+
+   *** Test Cases ***
+   Variables section
+       Should Be Equal    ${VERSION}       ${7.3}
+       Should Be Equal    ${CRITICAL}      ${{[3278, 5368, 5417]}}
+
+   VAR syntax
+       VAR    ${number: int}      42
+       Should Be Equal    ${number}    ${42}
+
+   Assignment
+       # In simple cases the VAR syntax is more convenient.
+       ${number: int} =    Set Variable    42
+       Should Be Equal    ${number}    ${42}
+       # In this case conversion is more useful.
+       ${match}    ${version: float} =    Should Match Regexp    RF 7.3    ^RF (\\d+\\.\\d+)$
+       Should Be Equal    ${match}      RF 7.3
+       Should Be Equal    ${version}    ${7.3}
+
+.. note:: In addition to the above, variable type conversion works also with
+          `user keyword arguments`_ and with `FOR loops`_. See their documentation
+          for more details.
+
+.. note:: Variable type conversion *does not* work with `Set Test/Suite/Global Variable
+          keywords`_. The `VAR syntax`_ needs to be used instead.
+
+Conversion with `@{list}` and `&{dict}` variables
+'''''''''''''''''''''''''''''''''''''''''''''''''
+
+Type conversion works also when creating lists__ and dictionaries__ using
+`@{list}` and `&{dict}` syntax. With lists the type is specified
+like `@{name: type}` and the type is the type of the list items. With dictionaries
+the type of the dictionary values can be specified like `&{name: type}`. If
+there is a need to specify also the key type, it is possible to use syntax
+`&{name: ktype=vtype}`.
+
+.. sourcecode:: robotframework
+
+   *** Variables ***
+   @{NUMBERS: int}           1    2    3    4    5
+   &{DATES: date}            rc1=2025-05-08    final=2025-05-30
+   &{PRIORITIES: int=str}    3278=Critical    4173=High    5334=High
+
+An alternative way to create lists and dictionaries is creating `${scalar}` variables,
+using `list` and `dict` types, possibly parameterizing them, and giving values as
+Python list and dictionary literals:
+
+.. sourcecode:: robotframework
+
+   *** Variables ***
+   ${NUMBERS: list[int]}            [1, 2, 3, 4, 5]
+   ${DATES: list[date]}             {'rc1': '2025-05-08', 'final': '2025-05-30'}
+   ${PRIORITIES: dict[int, str]}    {3278: 'Critical', 4173: 'High', 5334: 'High'}
+
+Using Python list and dictionary literals can be somewhat complicated especially
+for non-programmers. The main benefit of this approach is that it supports also
+nested structures without needing to use temporary values. The following examples
+create the same `${PAYLOAD}` variable using different approaches:
+
+.. sourcecode:: robotframework
+
+   *** Variables ***
+   @{CHILDREN: int}            2    13    15
+   &{PAYLOAD: dict}            id=${1}    name=Robot    children=${CHILDREN}
+
+.. sourcecode:: robotframework
+
+   *** Variables ***
+   ${PAYLOAD: dict}            {'id': 1, 'name': 'Robot', 'children': [2, 13, 15]}
+
+__ `Creating lists`_
+__ `Creating dictionaries`_
+
+Variable conversion on command line
+'''''''''''''''''''''''''''''''''''
+
+Variable conversion works also with the `command line variables`_ that are
+created using the `--variable` option. The syntax is `name: type:value` and,
+due to the space being mandatory, the whole option value typically needs to
+be quoted. Following examples demonstrate some possible usages for this
+functionality::
+
+    --variable "ITERATIONS: int:99"
+    --variable "PAYLOAD: dict:{'id': 1, 'name': 'Robot', 'children': [2, 13, 15]}"
+    --variable "START_TIME: datetime:now"
+
+Failing conversion
+''''''''''''''''''
+
+If type conversion fails, there is an error and the variable is not created.
+Conversion fails if the value cannot be converted to the specified
+type or if the type itself is not supported:
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   Invalid value
+       VAR    ${example: int}    invalid
+
+   Invalid type
+       VAR    ${example: invalid}    123
+
+Secret variables
+~~~~~~~~~~~~~~~~
+
+An important usage for `variable type conversion`_ is creating so called
+*secret variables*. These variables encapsulate their values so that the real
+values are `not logged even on the trace level`__ when variables are passed
+between keywords as arguments and return values.
+
+The actual value is available via the `value` attribute of a secret variable.
+It is mainly meant to be used by `library keywords`_ that accept `secret values`__,
+but it can be accessed also in the data using the `extended variable syntax`_
+like `${secret.value}`. Accessing the value in the data makes it visible in the
+log file similarly as if it was a normal variable, so that should only be done for
+debugging or testing purposes.
+
+.. warning:: Secret variables do not hide or encrypt their values. The real values
+             are thus available for all code that can access these variables directly
+             or indirectly via Robot Framework APIs.
+
+.. note:: Secret variables are new in Robot Framework 7.4.
+
+__ `Log levels`_
+__ `Secret type`_
+
+Creating secrets in data
+''''''''''''''''''''''''
+
+In the data secret variables can be created in the `Variable section`_ and
+by using the `VAR syntax`_. To avoid secret values being visible to everyone who
+has access to the data, it is not possible to create secret variables using
+literal values. Instead the value must be created using an existing secret variable
+or an `environment variable`_ like `%{NAME}`. In both cases joining a secret value
+with a literal value like `%{SECRET}123` is allowed as well.
+
+If showing the secret variable in the data is not an issue, it is possible to use
+environment variable default values like `%{NAME=default}`. The name can even be
+left empty like `%{=secret}` to always use the default value.
+
+.. sourcecode:: robotframework
+
+   *** Variables ***
+   ${NORMAL: Secret}     ${XXX}          # ${XXX} must itself be a secret variable.
+   ${ENVIRON: Secret}    %{EXAMPLE}      # Environment variables are supported directly.
+   ${DEFAULT: Secret}    %{=robot123}    # Environment variable defaults work as well.
+   ${JOIN: Secret}       ${XXX}-123      # Joining secrets with literals is ok.
+   ${LITERAL: Secret}    robot123        # This fails.
+
+Also list and dictionary variables support secret values:
+
+.. sourcecode:: robotframework
+
+   *** Variables ***
+   @{LIST: Secret}     ${XXX}    %{EXAMPLE}    %{=robot123}    ${XXX}-123
+   &{DICT: Secret}     normal=${XXX}    env=%{EXAMPLE}    env_default=%{=robot123}    join=${XXX}-123
+
+.. note:: The above examples utilize the Variable section, but the syntax to create
+          secret variables is exactly the same when using the `VAR syntax`_.
+
+Creating secrets on command line
+''''''''''''''''''''''''''''''''
+
+`Command line variable conversion`__ supports secret values directly::
+
+    --variable "PASSWORD: Secret:robot123"
+
+Having the secret value directly visible on the command line history or in continuous
+integration system logs can be a security risk. One way to mitigate that is using
+environment variables::
+
+    --variable "PASSWORD: Secret:$PASSWORD"
+
+Many systems running tests or tasks also support hiding secret values used on
+the command line.
+
+__ `Variable conversion on command line`
+
+Creating secrets programmatically
+'''''''''''''''''''''''''''''''''
+
+Secrets can be created programmatically by using the `robot.api.types.Secret <Secret_>`_
+class. This is most commonly done by libraries_ and `variable files`_, but also
+`pre-run modifiers`__ and listeners_ can utilize secrets if needed.
+
+The simplest possible example of the programmatic usage is a variable file:
+
+.. sourcecode:: python
+
+    from robot.api.types import Secret
+
+
+    USERNAME = "robot"
+    PASSWORD = Secret("robot123")
+
+Creating a keyword returning a secret is not much more complicated either:
+
+.. sourcecode:: python
+
+   from robot.api.types import Secret
+
+
+   def get_token():
+       return Secret("e5805f56-92e1-11f0-a798-8782a78eb4b5")
+
+.. note:: Both examples above have the actual secret value visible in the code.
+          When working with real secret values, it is typically better to read
+          secrets from environment variables, get them from external systems or
+          generate them randomly.
+
+__ `Programmatic modification of test data`
 
 .. _built-in variable:
 
@@ -1201,9 +1504,10 @@ be created using the variable syntax similarly as numbers.
    None
        Do XYZ    ${None}                   # Do XYZ gets Python None as an argument
 
-
-These variables are case-insensitive, so for example `${True}` and
-`${true}` are equivalent.
+These variables are case-insensitive, so for example `${True}` and `${true}`
+are equivalent. Keywords accepting Boolean values typically do automatic
+argument conversion and handle string values like `True` and `false` as
+expected. In such cases using the variable syntax is not required.
 
 Space and empty variables
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1214,7 +1518,7 @@ useful, for example, when there would otherwise be a need to `escape
 spaces or empty cells`__ with a backslash. If more than one space is
 needed, it is possible to use the `extended variable syntax`_ like
 `${SPACE * 5}`.  In the following example, :name:`Should Be
-Equal` keyword gets identical arguments but those using variables are
+Equal` keyword gets identical arguments, but those using variables are
 easier to understand than those using backslashes.
 
 .. sourcecode:: robotframework
@@ -1385,7 +1689,7 @@ Variable priorities
 
 *Variables from the command line*
 
-   Variables `set in the command line`__ have the highest priority of all
+   Variables `set on the command line`__ have the highest priority of all
    variables that can be set before the actual test execution starts. They
    override possible variables created in Variable sections in test case
    files, as well as in resource and variable files imported in the
@@ -1399,7 +1703,7 @@ Variable priorities
    Notice, though, that if multiple variable files have same variables, the
    ones in the file specified first have the highest priority.
 
-__ `Setting variables in command line`_
+__ `Command line variables`_
 
 *Variable section in a test case file*
 
@@ -1433,8 +1737,8 @@ __ `Setting variables in command line`_
 
 *Variables set during test execution*
 
-   Variables set during the test execution either using `return values
-   from keywords`_ or `using Set Test/Suite/Global Variable keywords`_
+   Variables set during the test execution using `return values from keywords`_,
+   `VAR syntax`_ or `Set Test/Suite/Global Variable keywords`_
    always override possible existing
    variables in the scope where they are set. In a sense they thus
    have the highest priority, but on the other hand they do not affect
@@ -1515,7 +1819,7 @@ and user keywords also get them as arguments__.
 
 It is recommended to use lower-case letters with local variables.
 
-__ `Setting variables in command line`_
+__ `Command line variables`_
 __ `Return values from keywords`_
 __ `User keyword arguments`_
 
@@ -1527,8 +1831,7 @@ Extended variable syntax
 
 Extended variable syntax allows accessing attributes of an object assigned
 to a variable (for example, `${object.attribute}`) and even calling
-its methods (for example, `${obj.getName()}`). It works both with
-scalar and list variables, but is mainly useful with the former.
+its methods (for example, `${obj.get_name()}`).
 
 Extended variable syntax is a powerful feature, but it should
 be used with care. Accessing attributes is normally not a problem, on
@@ -1536,11 +1839,11 @@ the contrary, because one variable containing an object with several
 attributes is often better than having several variables. On the
 other hand, calling methods, especially when they are used with
 arguments, can make the test data pretty complicated to understand.
-If that happens, it is recommended to move the code into a test library.
+If that happens, it is recommended to move the code into a library.
 
 The most common usages of extended variable syntax are illustrated
-in the example below. First assume that we have the following `variable file`_
-and test case:
+in the example below. First assume that we have the following `variable file
+<Variable files_>`__ and test case:
 
 .. sourcecode:: python
 
@@ -1550,10 +1853,11 @@ and test case:
            self.name = name
 
        def eat(self, what):
-           return '%s eats %s' % (self.name, what)
+           return f'{self.name} eats {what}'
 
        def __str__(self):
            return self.name
+
 
    OBJECT = MyObject('Robot')
    DICTIONARY = {1: 'one', 2: 'two', 3: 'three'}
@@ -1576,17 +1880,15 @@ explained below:
 The extended variable syntax is evaluated in the following order:
 
 1. The variable is searched using the full variable name. The extended
-   variable syntax is evaluated only if no matching variable
-   is found.
+   variable syntax is evaluated only if no matching variable is found.
 
 2. The name of the base variable is created. The body of the name
    consists of all the characters after the opening `{` until
-   the first occurrence of a character that is not an alphanumeric character
-   or a space. For example, base variables of `${OBJECT.name}`
-   and `${DICTIONARY[2]}`) are `OBJECT` and `DICTIONARY`,
-   respectively.
+   the first occurrence of a character that is not an alphanumeric character,
+   an underscore or a space. For example, base variables of `${OBJECT.name}`
+   and `${DICTIONARY[2]}`) are `OBJECT` and `DICTIONARY`, respectively.
 
-3. A variable matching the body is searched. If there is no match, an
+3. A variable matching the base name is searched. If there is no match, an
    exception is raised and the test case fails.
 
 4. The expression inside the curly brackets is evaluated as a Python
@@ -1609,12 +1911,12 @@ show few pretty good usages.
 
    *** Test Cases ***
    String
-       ${string} =    Set Variable    abc
+       VAR    ${string}    abc
        Log    ${string.upper()}      # Logs 'ABC'
        Log    ${string * 2}          # Logs 'abcabc'
 
    Number
-       ${number} =    Set Variable    ${-2}
+       VAR    ${number}    ${-2}
        Log    ${number * 10}         # Logs -20
        Log    ${number.__abs__()}    # Logs 2
 
@@ -1625,8 +1927,8 @@ must be in the beginning of the extended syntax. Using `__xxx__`
 methods in the test data like this is already a bit questionable, and
 it is normally better to move this kind of logic into test libraries.
 
-Extended variable syntax works also in `list variable`_ context.
-If, for example, an object assigned to a variable `${EXTENDED}` has
+Extended variable syntax works also in `list variable`_ and `dictionary variable`_
+contexts. If, for example, an object assigned to a variable `${EXTENDED}` has
 an attribute `attribute` that contains a list as a value, it can be
 used as a list variable `@{EXTENDED.attribute}`.
 
@@ -1681,8 +1983,7 @@ following rules:
 6. If the found variable is a string or a number, the extended syntax
    is ignored and a new variable created using the full name. This is
    done because you cannot add new attributes to Python strings or
-   numbers, and this way the new syntax is also less
-   backwards-incompatible.
+   numbers, and this way the syntax is also less backwards-incompatible.
 
 7. If all the previous rules match, the attribute is set to the base
    variable. If setting fails for any reason, an exception is raised

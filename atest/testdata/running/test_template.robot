@@ -158,7 +158,7 @@ Nested FOR
 Invalid FOR
     [Documentation]    FAIL
     ...    Multiple errors:
-    ...    - FOR loop has no loop values.
+    ...    - FOR loop has no values.
     ...    - FOR loop must have closing END.
     FOR    ${x}    IN
         ${x}    not run

@@ -2,7 +2,7 @@ from robot.api import logger
 from robot.api.deco import library
 
 
-@library(listener='SELF')
+@library(listener="SELF")
 class AddMessagesToTestBody:
 
     def __init__(self, name=None):

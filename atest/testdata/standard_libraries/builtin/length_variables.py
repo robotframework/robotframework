@@ -1,7 +1,7 @@
 class CustomLen:
 
     def __init__(self, length):
-        self._length=length
+        self._length = length
 
     def __len__(self):
         return self._length
@@ -13,7 +13,7 @@ class LengthMethod:
         return 40
 
     def __str__(self):
-        return 'length()'
+        return "length()"
 
 
 class SizeMethod:
@@ -22,14 +22,14 @@ class SizeMethod:
         return 41
 
     def __str__(self):
-        return 'size()'
+        return "size()"
 
 
 class LengthAttribute:
-    length=42
+    length = 42
 
     def __str__(self):
-        return 'length'
+        return "length"
 
 
 def get_variables():
@@ -40,5 +40,5 @@ def get_variables():
         CUSTOM_LEN_3=CustomLen(3),
         LENGTH_METHOD=LengthMethod(),
         SIZE_METHOD=SizeMethod(),
-        LENGTH_ATTRIBUTE=LengthAttribute()
+        LENGTH_ATTRIBUTE=LengthAttribute(),
     )

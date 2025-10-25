@@ -22,14 +22,14 @@ if TYPE_CHECKING:
 
 
 LEVELS = {
-  'NONE'  : 7,
-  'SKIP'  : 6,
-  'FAIL'  : 5,
-  'ERROR' : 4,
-  'WARN'  : 3,
-  'INFO'  : 2,
-  'DEBUG' : 1,
-  'TRACE' : 0,
+    "NONE": 7,
+    "SKIP": 6,
+    "FAIL": 5,
+    "ERROR": 4,
+    "WARN": 3,
+    "INFO": 2,
+    "DEBUG": 1,
+    "TRACE": 0,
 }
 
 
@@ -39,7 +39,7 @@ class LogLevel:
         self.priority = self._get_priority(level)
         self.level = level.upper()
 
-    def is_logged(self, msg: 'Message'):
+    def is_logged(self, msg: "Message"):
         return LEVELS[msg.level] >= self.priority and msg.message is not None
 
     def set(self, level):

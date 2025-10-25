@@ -13,6 +13,10 @@ Remove from keyword
     ${tc} =    Check Test Case    Remove from test
     Check Keyword Data    ${tc[0]}    ${TEST NAME}    tags=-in-settings, kw2
 
+Remove from keyword using documentation
+    ${tc} =    Check Test Case    Remove from test
+    Check Keyword Data    ${tc[1]}    ${TEST NAME}    tags=-escaped, -in-settings, -variable, kw2, kw3
+
 Remove from keyword using pattern
     ${tc} =    Check Test Case    Remove from test using pattern
     Check Keyword Data    ${tc[0]}    -tag_syntax.${TEST NAME}    tags=r1, r5, r6

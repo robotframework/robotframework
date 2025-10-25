@@ -14,18 +14,19 @@
 #  limitations under the License.
 
 from robot.errors import DataError
-from robot.utils import (DotDict, is_dict_like, is_list_like, NormalizedDict, NOT_SET,
-                         type_name)
+from robot.utils import (
+    DotDict, is_dict_like, is_list_like, NormalizedDict, NOT_SET, type_name
+)
 
 from .notfound import variable_not_found
 from .resolvable import GlobalVariableValue, Resolvable
-from .search import is_assign, unescape_variable_syntax
+from .search import search_variable
 
 
 class VariableStore:
 
     def __init__(self, variables):
-        self.data = NormalizedDict(ignore='_')
+        self.data = NormalizedDict(ignore="_")
         self._variables = variables
 
     def resolve_delayed(self, item=None):
@@ -36,6 +37,7 @@ class VariableStore:
                 self._resolve_delayed(name, value)
             except DataError:
                 pass
+        return None
 
     def _resolve_delayed(self, name, value):
         if not self._is_resolvable(value):
@@ -47,7 +49,7 @@ class VariableStore:
             if name in self.data:
                 self.data.pop(name)
                 value.report_error(str(err))
-            variable_not_found('${%s}' % name, self.data)
+            variable_not_found(f"${{{name}}}", self.data)
         return self.data[name]
 
     def _is_resolvable(self, value):
@@ -58,7 +60,7 @@ class VariableStore:
 
     def __getitem__(self, name):
         if name not in self.data:
-            variable_not_found('${%s}' % name, self.data)
+            variable_not_found(f"${{{name}}}", self.data)
         return self._resolve_delayed(name, self.data[name])
 
     def get(self, name, default=NOT_SET, decorated=True):
@@ -85,29 +87,33 @@ class VariableStore:
     def add(self, name, value, overwrite=True, decorated=True):
         if decorated:
             name, value = self._undecorate_and_validate(name, value)
-        if (overwrite
-                or name not in self.data
-                or isinstance(self.data[name], GlobalVariableValue)):
+        if (
+            overwrite
+            or name not in self.data
+            or isinstance(self.data[name], GlobalVariableValue)
+        ):
             self.data[name] = value
 
     def _undecorate(self, name):
-        if not is_assign(name, allow_nested=True):
+        match = search_variable(name, parse_type=True)
+        if not match.is_assign(allow_nested=True):
             raise DataError(f"Invalid variable name '{name}'.")
-        return self._variables.replace_string(
-            name[2:-1], custom_unescaper=unescape_variable_syntax
-        )
+        match.resolve_base(self._variables)
+        return str(match)[2:-1]
 
     def _undecorate_and_validate(self, name, value):
         undecorated = self._undecorate(name)
         if isinstance(value, Resolvable):
             return undecorated, value
-        if name[0] == '@':
+        if name[0] == "@":
             if not is_list_like(value):
-                raise DataError(f'Expected list-like value, got {type_name(value)}.')
+                raise DataError(f"Expected list-like value, got {type_name(value)}.")
             value = list(value)
-        if name[0] == '&':
+        if name[0] == "&":
             if not is_dict_like(value):
-                raise DataError(f'Expected dictionary-like value, got {type_name(value)}.')
+                raise DataError(
+                    f"Expected dictionary-like value, got {type_name(value)}."
+                )
             value = DotDict(value)
         return undecorated, value
 
@@ -125,13 +131,13 @@ class VariableStore:
             variables = (self._decorate(name, self[name]) for name in self)
         else:
             variables = self.data
-        return NormalizedDict(variables,  ignore='_')
+        return NormalizedDict(variables, ignore="_")
 
     def _decorate(self, name, value):
         if is_dict_like(value):
-            name = '&{%s}' % name
+            name = f"&{{{name}}}"
         elif is_list_like(value):
-            name = '@{%s}' % name
+            name = f"@{{{name}}}"
         else:
-            name = '${%s}' % name
+            name = f"${{{name}}}"
         return name, value

@@ -534,6 +534,28 @@ requires using dictionaries as `list variables`_:
           Robot Framework 3.2. With earlier version it is possible to iterate
           over dictionary keys like the last example above demonstrates.
 
+Loop variable conversion
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+`Variable type conversion`_ works also with FOR loop variables. The desired type
+can be added to any loop variable by using the familiar `${name: type}` syntax.
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   Variable conversion
+       FOR    ${value: bytes}    IN    Hello!    Hyvä!    \x00\x00\x07
+           Log    ${value}    formatter=repr
+       END
+       FOR    ${index}    ${date: date}    IN ENUMERATE   2023-06-15    2025-05-30    today
+           Log    ${date}     formatter=repr
+       END
+       FOR    ${item: tuple[str, date]}    IN ENUMERATE   2023-06-15    2025-05-30    today
+           Log    ${item}     formatter=repr
+       END
+
+.. note:: Variable type conversion is new in Robot Framework 7.3.
+
 Removing unnecessary keywords from outputs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1040,7 +1062,12 @@ they also mostly work the same way. A difference is that Python uses lower case
 upper case letters. A bigger difference is that with Python exceptions are objects
 and with Robot Framework you are dealing with error messages as strings.
 
+.. note:: It is not possible to catch errors caused by invalid syntax or errors
+          that `stop the whole execution`__.
+
+
 __ https://docs.python.org/tutorial/errors.html#handling-exceptions
+__ `Stopping test execution gracefully`_
 
 Catching exceptions with `EXCEPT`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1116,8 +1143,6 @@ other `EXCEPT` branches:
         EXCEPT                     # Match any that did not match the above.
             Error Handler 2
         END
-
-.. note:: It is not possible to catch exceptions caused by invalid syntax.
 
 Matching errors using patterns
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

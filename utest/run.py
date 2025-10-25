@@ -21,21 +21,20 @@ This will run only the unit tests in the subdirectory output
 
 import argparse
 import os
-import sys
 import re
+import sys
 import unittest
 import warnings
 
-
 if not sys.warnoptions:
-    warnings.simplefilter('always')
+    warnings.simplefilter("always")
     if sys.version_info >= (3, 10):
-        warnings.simplefilter('error', EncodingWarning)
+        warnings.simplefilter("error", EncodingWarning)  # noqa: F821
 
 
 base = os.path.abspath(os.path.normpath(os.path.split(sys.argv[0])[0]))
-for path in ['../src', '../atest/testresources/testlibs', '../utest/resources']:
-    path = os.path.join(base, path.replace('/', os.sep))
+for path in ["../src", "../atest/testresources/testlibs", "../utest/resources"]:
+    path = os.path.join(base, path.replace("/", os.sep))
     if path not in sys.path:
         sys.path.insert(0, path)
 
@@ -60,8 +59,9 @@ def get_tests(directory=None):
             modname = os.path.splitext(name)[0]
             if modname in imported:
                 print(
-                    f"Test module '{modname}' imported both as '{imported[modname]}' and "
-                    + "'{os.path.join(directory, name)}'. Rename one or fix test discovery.",
+                    f"Test module '{modname}' imported both as '{imported[modname]}' "
+                    f"and '{os.path.join(directory, name)}'. Rename one or fix test "
+                    f"discovery.",
                     file=sys.stderr,
                 )
                 sys.exit(1)
@@ -76,7 +76,7 @@ def usage_exit(msg=None):
     if msg is None:
         rc = 251
     else:
-        print('\nError:', msg)
+        print("\nError:", msg)
         rc = 252
     sys.exit(rc)
 
@@ -86,7 +86,7 @@ if __name__ == "__main__":
     parser.add_argument("-I", "--interpreter", default=sys.executable)
     parser.add_argument("-h", "--help", action="store_true")
     parser.add_argument("-q", "--quiet", dest="vrbst", action="store_const", const=0)
-    parser.add_argument("-v", "--verbose",dest="vrbst", action="store_const", const=2)
+    parser.add_argument("-v", "--verbose", dest="vrbst", action="store_const", const=2)
     parser.add_argument("-d", "--doc", dest="docs", action="store_true")
     parser.add_argument("-x", "--exit-on-failure", dest="failfast", action="store_true")
     parser.add_argument(dest="directory", nargs="?", action="store", default=None)
@@ -100,8 +100,11 @@ if __name__ == "__main__":
 
     tests = get_tests(args.directory)
     suite = unittest.TestSuite(tests)
-    runner = unittest.TextTestRunner(descriptions=args.docs, verbosity=args.vrbst,
-                                     failfast=args.failfast)
+    runner = unittest.TextTestRunner(
+        descriptions=args.docs,
+        verbosity=args.vrbst,
+        failfast=args.failfast,
+    )
     result = runner.run(suite)
     rc = len(result.failures) + len(result.errors)
     if rc > 250:

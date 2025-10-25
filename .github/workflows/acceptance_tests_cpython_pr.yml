@@ -26,10 +26,10 @@ jobs:
 
     name: Python ${{ matrix.python-version }} on ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup python for starting the tests
-        uses: actions/setup-python@v5.4.0
+        uses: actions/setup-python@v6.0.0
         with:
           python-version: '3.13'
           architecture: 'x64'
@@ -43,7 +43,7 @@ jobs:
         if: runner.os != 'Windows'
 
       - name: Setup python ${{ matrix.python-version }} for running the tests
-        uses: actions/setup-python@v5.4.0
+        uses: actions/setup-python@v6.0.0
         with:
           python-version: ${{ matrix.python-version }}
           architecture: 'x64'
@@ -76,39 +76,3 @@ jobs:
           name: at-results-${{ matrix.python-version }}-${{ matrix.os }}
           path: atest/results
         if: always() && job.status == 'failure'
-
-      - name: Install and run rflogs
-        if: failure()
-        env:
-          RFLOGS_API_KEY: ${{ secrets.RFLOGS_API_KEY }}
-        working-directory: atest/results
-        shell: python
-        run: |
-          import os
-          import glob
-          import subprocess
-
-          # Install rflogs
-          subprocess.check_call(["pip", "install", "rflogs"])
-
-          # Find the first directory containing log.html
-          log_files = glob.glob("**/log.html", recursive=True)
-          if log_files:
-              result_dir = os.path.dirname(log_files[0])
-              print(f"Result directory: {result_dir}")
-
-              # Construct the rflogs command
-              cmd = [
-                  "rflogs", "upload",
-                  "--tag", f"workflow:${{ github.workflow }}",
-                  "--tag", f"os:${{ runner.os }}",
-                  "--tag", f"python-version:${{ matrix.python-version }}",
-                  "--tag", f"branch:${{ github.head_ref || github.ref_name }}",
-                  result_dir
-              ]
-
-              # Run rflogs upload
-              subprocess.check_call(cmd)
-          else:
-              print("No directory containing log.html found")
-              exit(1)

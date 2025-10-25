@@ -1,1 +1,1 @@
-variables2 = 'Variable from variables2.py'
+variables2 = "Variable from variables2.py"

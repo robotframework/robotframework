@@ -13,7 +13,7 @@ class wait_until_library:
             self._run_after_sleeping(remover, p)
 
     def create_file_after_sleeping(self, path):
-        self._run_after_sleeping(lambda: open(path, 'w', encoding='ASCII').close())
+        self._run_after_sleeping(lambda: open(path, "w", encoding="ASCII").close())
 
     def create_dir_after_sleeping(self, path):
         self._run_after_sleeping(os.mkdir, path)

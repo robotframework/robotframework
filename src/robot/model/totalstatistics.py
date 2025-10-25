@@ -26,13 +26,13 @@ class TotalStatistics:
 
     def __init__(self, rpa: bool = False):
         #: Instance of :class:`~robot.model.stats.TotalStat` for all the tests.
-        self.stat = TotalStat(test_or_task('All {Test}s', rpa))
+        self.stat = TotalStat(test_or_task("All {Test}s", rpa))
         self._rpa = rpa
 
     def visit(self, visitor):
         visitor.visit_total_statistics(self.stat)
 
-    def __iter__(self) -> 'Iterator[TotalStat]':
+    def __iter__(self) -> "Iterator[TotalStat]":
         yield self.stat
 
     @property
@@ -61,10 +61,10 @@ class TotalStatistics:
         For example::
             2 tests, 1 passed, 1 failed
         """
-        kind = test_or_task('test', self._rpa) + plural_or_not(self.total)
-        msg = f'{self.total} {kind}, {self.passed} passed, {self.failed} failed'
+        kind = test_or_task("test", self._rpa) + plural_or_not(self.total)
+        msg = f"{self.total} {kind}, {self.passed} passed, {self.failed} failed"
         if self.skipped:
-            msg += f', {self.skipped} skipped'
+            msg += f", {self.skipped} skipped"
         return msg
 
 

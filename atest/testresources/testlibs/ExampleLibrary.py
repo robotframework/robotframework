@@ -3,14 +3,14 @@ import sys
 import time
 import traceback
 
-from robot.utils import eq, normalize, timestr_to_secs
-
 from objecttoreturn import ObjectToReturn
+
+from robot.utils import eq, normalize, timestr_to_secs
 
 
 class ExampleLibrary:
 
-    def print_(self, msg, stream='stdout'):
+    def print_(self, msg, stream="stdout"):
         """Print given message to selected stream (stdout or stderr)"""
         print(msg, file=getattr(sys, stream))
 
@@ -23,12 +23,12 @@ class ExampleLibrary:
     def print_many(self, *msgs):
         """Print given messages"""
         for msg in msgs:
-            print(msg, end=' ')
+            print(msg, end=" ")
         print()
 
     def print_to_stdout_and_stderr(self, msg):
-        print('stdout: ' + msg, file=sys.stdout)
-        print('stderr: ' + msg, file=sys.stderr)
+        print("stdout: " + msg, file=sys.stdout)
+        print("stderr: " + msg, file=sys.stderr)
 
     def single_line_doc(self):
         """One line keyword documentation."""
@@ -49,14 +49,14 @@ class ExampleLibrary:
         raise exception(msg)
 
     def external_exception(self, name, msg):
-        ObjectToReturn('failure').exception(name, msg)
+        ObjectToReturn("failure").exception(name, msg)
 
     def implicitly_chained_exception(self):
         try:
             try:
-                1/0
+                1 / 0
             except Exception:
-                ooops
+                ooops  # noqa: F821
         except Exception:
             self._log_python_traceback()
             raise
@@ -66,28 +66,28 @@ class ExampleLibrary:
             try:
                 assert False
             except Exception as err:
-                raise AssertionError('Expected error') from err
+                raise AssertionError("Expected error") from err
         except Exception:
             self._log_python_traceback()
             raise
 
     def _log_python_traceback(self):
-        print(''.join(traceback.format_exception(*sys.exc_info())).rstrip())
+        print("".join(traceback.format_exception(*sys.exc_info())).rstrip())
 
-    def return_string_from_library(self,string='This is a string from Library'):
+    def return_string_from_library(self, string="This is a string from Library"):
         return string
 
     def return_list_from_library(self, *args):
         return list(args)
 
-    def return_three_strings_from_library(self, one='one', two='two', three='three'):
+    def return_three_strings_from_library(self, one="one", two="two", three="three"):
         return one, two, three
 
-    def return_object(self, name='<noname>'):
+    def return_object(self, name="<noname>"):
         return ObjectToReturn(name)
 
     def check_object_name(self, object, name):
-        assert object.name == name, '%s != %s' % (object.name, name)
+        assert object.name == name, f"{object.name} != {name}"
 
     def set_object_name(self, object, name):
         object.name = name
@@ -102,37 +102,38 @@ class ExampleLibrary:
         try:
             actual = getattr(self, normalize(name))
         except AttributeError:
-            raise AssertionError("Attribute '%s' not set" % name)
+            raise AssertionError(f"Attribute '{name}' not set.")
         if not eq(actual, expected):
-            raise AssertionError("Attribute '%s' was '%s', expected '%s'"
-                                 % (name, actual, expected))
+            raise AssertionError(
+                f"Attribute '{name}' was '{actual}', expected '{expected}'."
+            )
 
     def check_attribute_not_set(self, name):
         if hasattr(self, normalize(name)):
-            raise AssertionError("Attribute '%s' should not be set" % name)
+            raise AssertionError(f"Attribute '{name}' should not be set.")
 
     def backslashes(self, count=1):
-        return '\\' * int(count)
+        return "\\" * int(count)
 
     def read_and_log_file(self, path, binary=False):
         if binary:
-            mode = 'rb'
+            mode = "rb"
             encoding = None
         else:
-            mode = 'r'
-            encoding = 'UTF-8'
+            mode = "r"
+            encoding = "UTF-8"
         _file = open(path, mode, encoding=encoding)
         print(_file.read())
         _file.close()
 
     def print_control_chars(self):
-        print('\033[31mRED\033[m\033[32mGREEN\033[m')
+        print("\033[31mRED\033[m\033[32mGREEN\033[m")
 
-    def long_message(self, line_length, line_count, chars='a'):
+    def long_message(self, line_length, line_count, chars="a"):
         line_length = int(line_length)
         line_count = int(line_count)
-        msg = chars*line_length + '\n'
-        print(msg*line_count)
+        msg = chars * line_length + "\n"
+        print(msg * line_count)
 
     def loop_forever(self, no_print=False):
         i = 0
@@ -140,12 +141,12 @@ class ExampleLibrary:
             i += 1
             self._sleep(1)
             if not no_print:
-                print('Looping forever: %d' % i)
+                print(f"Looping forever: {i}")
 
     def write_to_file_after_sleeping(self, path, sec, msg=None):
-        with open(path, 'w', encoding='UTF-8') as file:
+        with open(path, "w", encoding="UTF-8") as file:
             self._sleep(sec)
-            file.write(msg or 'Slept %s seconds' % sec)
+            file.write(msg or f"Slept {sec} seconds")
 
     def sleep_without_logging(self, timestr):
         seconds = timestr_to_secs(timestr)
@@ -182,7 +183,7 @@ class ExampleLibrary:
         raise ExceptionWithSuppressedName(msg)
 
     def exception_with_empty_message_and_name(self):
-        raise ExceptionWithEmptyName('')
+        raise ExceptionWithEmptyName("")
 
 
 class _MyList(list):
@@ -197,4 +198,4 @@ class ExceptionWithEmptyName(AssertionError):
     pass
 
 
-ExceptionWithEmptyName.__name__ = ''
+ExceptionWithEmptyName.__name__ = ""

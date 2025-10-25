@@ -81,6 +81,18 @@ Failing Suite Teardown
     Should Be Equal    ${SUITE.teardown.status}    FAIL
     Output should contain teardown error    ${error}
 
+Failing Suite Teardown when using JSON
+    Run Tests    --output output.json    core/failing_suite_teardown.robot    output=${OUTDIR}/output.json
+    ${error} =    Catenate    SEPARATOR=\n\n
+    ...    Several failures occurred:
+    ...    1) first
+    ...    2) second
+    Check Suite Status    ${SUITE}    FAIL
+    ...    Suite teardown failed:\n${error}\n\n3 tests, 0 passed, 2 failed, 1 skipped
+    ...    Passing    Failing    Skipping
+    Should Be Equal    ${SUITE.teardown.status}    FAIL
+    JSON output should contain teardown error    ${error}
+
 Erroring Suite Teardown
     Run Tests    ${EMPTY}    core/erroring_suite_teardown.robot
     Check Suite Status    ${SUITE}    FAIL
@@ -172,3 +184,9 @@ Output should contain teardown error
     [Arguments]    ${error}
     ${keywords} =    Get Elements    ${OUTFILE}    suite/kw
     Element Text Should Be    ${keywords[-1]}    ${error}    xpath=status
+
+JSON output should contain teardown error
+    [Arguments]    ${error}
+    ${path} =    Normalize Path    ${OUTDIR}/output.json
+    ${data} =    Evaluate    json.load(open($path, 'rb'))
+    Should Be Equal    ${data}[suite][teardown][message]    ${error}

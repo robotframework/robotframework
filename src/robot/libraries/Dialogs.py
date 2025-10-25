@@ -25,16 +25,21 @@ sequence.
 
 from robot.version import get_version
 
-from .dialogs_py import (InputDialog, MessageDialog, MultipleSelectionDialog,
-                         PassFailDialog, SelectionDialog)
-
+from .dialogs_py import (
+    InputDialog, MessageDialog, MultipleSelectionDialog, PassFailDialog, SelectionDialog
+)
 
 __version__ = get_version()
-__all__ = ['execute_manual_step', 'get_value_from_user',
-           'get_selection_from_user', 'pause_execution', 'get_selections_from_user']
+__all__ = [
+    "execute_manual_step",
+    "get_selection_from_user",
+    "get_selections_from_user",
+    "get_value_from_user",
+    "pause_execution",
+]
 
 
-def pause_execution(message='Execution paused. Press OK to continue.'):
+def pause_execution(message="Execution paused. Press OK to continue."):
     """Pauses execution until user clicks ``Ok`` button.
 
     ``message`` is the message shown in the dialog.
@@ -42,7 +47,7 @@ def pause_execution(message='Execution paused. Press OK to continue.'):
     MessageDialog(message).show()
 
 
-def execute_manual_step(message, default_error=''):
+def execute_manual_step(message, default_error=""):
     """Pauses execution until user sets the keyword status.
 
     User can press either ``PASS`` or ``FAIL`` button. In the latter case execution
@@ -53,11 +58,11 @@ def execute_manual_step(message, default_error=''):
     dialog.
     """
     if not _validate_user_input(PassFailDialog(message)):
-        msg = get_value_from_user('Give error message:', default_error)
+        msg = get_value_from_user("Give error message:", default_error)
         raise AssertionError(msg)
 
 
-def get_value_from_user(message, default_value='', hidden=False):
+def get_value_from_user(message, default_value="", hidden=False):
     """Pauses execution and asks user to input a value.
 
     Value typed by the user, or the possible default value, is returned.
@@ -120,5 +125,5 @@ def get_selections_from_user(message, *values):
 def _validate_user_input(dialog):
     value = dialog.show()
     if value is None:
-        raise RuntimeError('No value provided by user.')
+        raise RuntimeError("No value provided by user.")
     return value

@@ -13,11 +13,13 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.conf import Languages, LanguageLike, LanguagesLike
+from robot.conf import LanguageLike, Languages, LanguagesLike
 from robot.utils import normalize_whitespace
 
-from .settings import (InitFileSettings, FileSettings, Settings, SuiteFileSettings,
-                       ResourceFileSettings, TestCaseSettings, KeywordSettings)
+from .settings import (
+    FileSettings, InitFileSettings, KeywordSettings, ResourceFileSettings, Settings,
+    SuiteFileSettings, TestCaseSettings
+)
 from .tokens import StatementTokens, Token
 
 
@@ -36,21 +38,21 @@ class FileContext(LexingContext):
 
     def __init__(self, lang: LanguagesLike = None):
         languages = lang if isinstance(lang, Languages) else Languages(lang)
-        settings_class: 'type[FileSettings]' = type(self).__annotations__['settings']
+        settings_class: "type[FileSettings]" = type(self).__annotations__["settings"]
         settings = settings_class(languages)
         super().__init__(settings, languages)
 
     def add_language(self, lang: LanguageLike):
         self.languages.add_language(lang)
 
-    def keyword_context(self) -> 'KeywordContext':
+    def keyword_context(self) -> "KeywordContext":
         return KeywordContext(KeywordSettings(self.settings))
 
     def setting_section(self, statement: StatementTokens) -> bool:
-        return self._handles_section(statement, 'Settings')
+        return self._handles_section(statement, "Settings")
 
     def variable_section(self, statement: StatementTokens) -> bool:
-        return self._handles_section(statement, 'Variables')
+        return self._handles_section(statement, "Variables")
 
     def test_case_section(self, statement: StatementTokens) -> bool:
         return False
@@ -59,10 +61,10 @@ class FileContext(LexingContext):
         return False
 
     def keyword_section(self, statement: StatementTokens) -> bool:
-        return self._handles_section(statement, 'Keywords')
+        return self._handles_section(statement, "Keywords")
 
     def comment_section(self, statement: StatementTokens) -> bool:
-        return self._handles_section(statement, 'Comments')
+        return self._handles_section(statement, "Comments")
 
     def lex_invalid_section(self, statement: StatementTokens):
         header = statement[0]
@@ -76,7 +78,7 @@ class FileContext(LexingContext):
 
     def _handles_section(self, statement: StatementTokens, header: str) -> bool:
         marker = statement[0].value
-        if not marker or marker[0] != '*':
+        if not marker or marker[0] != "*":
             return False
         normalized = self._normalize(marker)
         if self.languages.headers.get(normalized) == header:
@@ -90,25 +92,26 @@ class FileContext(LexingContext):
         return False
 
     def _normalize(self, marker: str) -> str:
-        return normalize_whitespace(marker).strip('* ').title()
+        return normalize_whitespace(marker).strip("* ").title()
 
 
 class SuiteFileContext(FileContext):
     settings: SuiteFileSettings
 
-    def test_case_context(self) -> 'TestCaseContext':
+    def test_case_context(self) -> "TestCaseContext":
         return TestCaseContext(TestCaseSettings(self.settings))
 
     def test_case_section(self, statement: StatementTokens) -> bool:
-        return self._handles_section(statement, 'Test Cases')
+        return self._handles_section(statement, "Test Cases")
 
     def task_section(self, statement: StatementTokens) -> bool:
-        return self._handles_section(statement, 'Tasks')
+        return self._handles_section(statement, "Tasks")
 
     def _get_invalid_section_error(self, header: str) -> str:
-        return (f"Unrecognized section header '{header}'. Valid sections: "
-                f"'Settings', 'Variables', 'Test Cases', 'Tasks', 'Keywords' "
-                f"and 'Comments'.")
+        return (
+            f"Unrecognized section header '{header}'. Valid sections: 'Settings', "
+            f"'Variables', 'Test Cases', 'Tasks', 'Keywords' and 'Comments'."
+        )
 
 
 class ResourceFileContext(FileContext):
@@ -116,10 +119,12 @@ class ResourceFileContext(FileContext):
 
     def _get_invalid_section_error(self, header: str) -> str:
         name = self._normalize(header)
-        if self.languages.headers.get(name) in ('Test Cases', 'Tasks'):
+        if self.languages.headers.get(name) in ("Test Cases", "Tasks"):
             return f"Resource file with '{name}' section is invalid."
-        return (f"Unrecognized section header '{header}'. Valid sections: "
-                f"'Settings', 'Variables', 'Keywords' and 'Comments'.")
+        return (
+            f"Unrecognized section header '{header}'. Valid sections: "
+            f"'Settings', 'Variables', 'Keywords' and 'Comments'."
+        )
 
 
 class InitFileContext(FileContext):
@@ -127,10 +132,12 @@ class InitFileContext(FileContext):
 
     def _get_invalid_section_error(self, header: str) -> str:
         name = self._normalize(header)
-        if self.languages.headers.get(name) in ('Test Cases', 'Tasks'):
+        if self.languages.headers.get(name) in ("Test Cases", "Tasks"):
             return f"'{name}' section is not allowed in suite initialization file."
-        return (f"Unrecognized section header '{header}'. Valid sections: "
-                f"'Settings', 'Variables', 'Keywords' and 'Comments'.")
+        return (
+            f"Unrecognized section header '{header}'. Valid sections: "
+            f"'Settings', 'Variables', 'Keywords' and 'Comments'."
+        )
 
 
 class TestCaseContext(LexingContext):

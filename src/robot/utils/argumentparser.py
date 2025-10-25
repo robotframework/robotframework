@@ -19,70 +19,85 @@ import os
 import re
 import shlex
 import sys
-import string
 import warnings
 from pathlib import Path
+from string import ascii_letters
 
-from robot.errors import DataError, Information, FrameworkError
+from robot.errors import DataError, FrameworkError, Information
 from robot.version import get_full_version
 
 from .encoding import console_decode, system_decode
 from .filereader import FileReader
-from .misc import plural_or_not
-from .robottypes import is_falsy, is_integer, is_string
+from .misc import plural_or_not as s
+from .robottypes import is_truthy
+from .text import expand_variables
 
 
 def cmdline2list(args, escaping=False):
     if isinstance(args, Path):
         return [str(args)]
     lexer = shlex.shlex(args, posix=True)
-    if is_falsy(escaping):
-        lexer.escape = ''
-    lexer.escapedquotes = '"\''
-    lexer.commenters = ''
+    if not escaping:
+        lexer.escape = ""
+    lexer.escapedquotes = "\"'"
+    lexer.commenters = ""
     lexer.whitespace_split = True
     try:
         return list(lexer)
     except ValueError as err:
-        raise ValueError("Parsing '%s' failed: %s" % (args, err))
+        raise ValueError(f"Parsing '{args}' failed: {err}")
 
 
 class ArgumentParser:
-    _opt_line_re = re.compile(r'''
-    ^\s{1,4}      # 1-4 spaces in the beginning of the line
-    ((-\S\s)*)    # all possible short options incl. spaces (group 1)
-    --(\S{2,})    # required long option (group 3)
-    (\s\S+)?      # optional value (group 4)
-    (\s\*)?       # optional '*' telling option allowed multiple times (group 5)
-    ''', re.VERBOSE)
+    _opt_line_re = re.compile(
+        r"""
+        ^\s{1,4}      # 1-4 spaces in the beginning of the line
+        ((-\S\s)*)    # all possible short options incl. spaces (group 1)
+        --(\S{2,})    # required long option (group 3)
+        (\s\S+)?      # optional value (group 4)
+        (\s\*)?       # optional '*' telling option allowed multiple times (group 5)
+        """,
+        re.VERBOSE,
+    )
 
-    def __init__(self, usage, name=None, version=None, arg_limits=None,
-                 validator=None, env_options=None, auto_help=True,
-                 auto_version=True, auto_pythonpath='DEPRECATED',
-                 auto_argumentfile=True):
+    def __init__(
+        self,
+        usage,
+        name=None,
+        version=None,
+        arg_limits=None,
+        validator=None,
+        env_options=None,
+        auto_help=True,
+        auto_version=True,
+        auto_pythonpath="DEPRECATED",
+        auto_argumentfile=True,
+    ):
         """Available options and tool name are read from the usage.
 
         Tool name is got from the first row of the usage. It is either the
         whole row or anything before first ' -- '.
         """
         if not usage:
-            raise FrameworkError('Usage cannot be empty')
-        self.name = name or usage.splitlines()[0].split(' -- ')[0].strip()
+            raise FrameworkError("Usage cannot be empty")
+        self.name = name or usage.splitlines()[0].split(" -- ")[0].strip()
         self.version = version or get_full_version()
         self._usage = usage
         self._arg_limit_validator = ArgLimitValidator(arg_limits)
         self._validator = validator
         self._auto_help = auto_help
         self._auto_version = auto_version
-        if auto_pythonpath == 'DEPRECATED':
+        if auto_pythonpath == "DEPRECATED":
             auto_pythonpath = False
         else:
-            warnings.warn("ArgumentParser option 'auto_pythonpath' is deprecated "
-                          "since Robot Framework 5.0.")
+            warnings.warn(
+                "ArgumentParser option 'auto_pythonpath' is deprecated "
+                "since Robot Framework 5.0.",
+            )
         self._auto_pythonpath = auto_pythonpath
         self._auto_argumentfile = auto_argumentfile
         self._env_options = env_options
-        self._short_opts = ''
+        self._short_opts = ""
         self._long_opts = []
         self._multi_opts = []
         self._flag_opts = []
@@ -136,9 +151,11 @@ class ArgumentParser:
         if self._auto_argumentfile:
             args = self._process_possible_argfile(args)
         opts, args = self._parse_args(args)
-        if self._auto_argumentfile and opts.get('argumentfile'):
-            raise DataError("Using '--argumentfile' option in shortened format "
-                            "like '--argumentf' is not supported.")
+        if self._auto_argumentfile and opts.get("argumentfile"):
+            raise DataError(
+                "Using '--argumentfile' option in shortened format "
+                "like '--argumentf' is not supported."
+            )
         opts, args = self._handle_special_options(opts, args)
         self._arg_limit_validator(args)
         if self._validator:
@@ -153,18 +170,14 @@ class ArgumentParser:
         return []
 
     def _handle_special_options(self, opts, args):
-        if self._auto_help and opts.get('help'):
-            self._raise_help()
-        if self._auto_version and opts.get('version'):
-            self._raise_version()
-        if self._auto_pythonpath and opts.get('pythonpath'):
-            sys.path = self._get_pythonpath(opts['pythonpath']) + sys.path
-        for auto, opt in [(self._auto_help, 'help'),
-                          (self._auto_version, 'version'),
-                          (self._auto_pythonpath, 'pythonpath'),
-                          (self._auto_argumentfile, 'argumentfile')]:
-            if auto and opt in opts:
-                opts.pop(opt)
+        if self._auto_help and opts.pop("help", False):
+            self._raise_help(opts.get("statusrc"))
+        if self._auto_version and opts.pop("version", False):
+            self._raise_version(opts.get("statusrc"))
+        if self._auto_pythonpath:
+            sys.path = self._get_pythonpath(opts.pop("pythonpath", [])) + sys.path
+        if self._auto_argumentfile:
+            opts.pop("argumentfile", None)
         return opts, args
 
     def _parse_args(self, args):
@@ -176,18 +189,18 @@ class ArgumentParser:
         return self._process_opts(opts), self._glob_args(args)
 
     def _normalize_long_option(self, opt):
-        if not opt.startswith('--'):
+        if not opt.startswith("--"):
             return opt
-        if '=' not in opt:
-            return '--%s' % opt.lower().replace('-', '')
-        opt, value = opt.split('=', 1)
-        return '--%s=%s' % (opt.lower().replace('-', ''), value)
+        if "=" not in opt:
+            return f"--{opt.lower().replace('-', '')}"
+        opt, value = opt.split("=", 1)
+        return f"--{opt.lower().replace('-', '')}={value}"
 
     def _process_possible_argfile(self, args):
-        options = ['--argumentfile']
+        options = ["--argumentfile"]
         for short_opt, long_opt in self._short_to_long.items():
-            if long_opt == 'argumentfile':
-                options.append('-'+short_opt)
+            if long_opt == "argumentfile":
+                options.append("-" + short_opt)
         return ArgFileParser(options).process(args)
 
     def _process_opts(self, opt_tuple):
@@ -198,7 +211,7 @@ class ArgumentParser:
                 opts[name].append(value)
             elif name in self._flag_opts:
                 opts[name] = True
-            elif name.startswith('no') and name[2:] in self._flag_opts:
+            elif name.startswith("no") and name[2:] in self._flag_opts:
                 opts[name[2:]] = False
             else:
                 opts[name] = value
@@ -207,8 +220,8 @@ class ArgumentParser:
     def _get_default_opts(self):
         defaults = {}
         for opt in self._long_opts:
-            opt = opt.rstrip('=')
-            if opt.startswith('no') and opt[2:] in self._flag_opts:
+            opt = opt.rstrip("=")
+            if opt.startswith("no") and opt[2:] in self._flag_opts:
                 continue
             defaults[opt] = [] if opt in self._multi_opts else None
         return defaults
@@ -224,7 +237,7 @@ class ArgumentParser:
         return temp
 
     def _get_name(self, name):
-        name = name.lstrip('-')
+        name = name.lstrip("-")
         try:
             return self._short_to_long[name]
         except KeyError:
@@ -234,41 +247,43 @@ class ArgumentParser:
         for line in usage.splitlines():
             res = self._opt_line_re.match(line)
             if res:
-                self._create_option(short_opts=[o[1] for o in res.group(1).split()],
-                                    long_opt=res.group(3).lower().replace('-', ''),
-                                    takes_arg=bool(res.group(4)),
-                                    is_multi=bool(res.group(5)))
+                self._create_option(
+                    short_opts=[o[1] for o in res.group(1).split()],
+                    long_opt=res.group(3).lower().replace("-", ""),
+                    takes_arg=bool(res.group(4)),
+                    is_multi=bool(res.group(5)),
+                )
 
     def _create_option(self, short_opts, long_opt, takes_arg, is_multi):
         self._verify_long_not_already_used(long_opt, not takes_arg)
         for sopt in short_opts:
             if sopt in self._short_to_long:
-                self._raise_option_multiple_times_in_usage('-' + sopt)
+                self._raise_option_multiple_times_in_usage("-" + sopt)
             self._short_to_long[sopt] = long_opt
         if is_multi:
             self._multi_opts.append(long_opt)
         if takes_arg:
-            long_opt += '='
-            short_opts = [sopt+':' for sopt in short_opts]
+            long_opt += "="
+            short_opts = [sopt + ":" for sopt in short_opts]
         else:
-            if long_opt.startswith('no'):
+            if long_opt.startswith("no"):
                 long_opt = long_opt[2:]
-            self._long_opts.append('no' + long_opt)
+            self._long_opts.append("no" + long_opt)
             self._flag_opts.append(long_opt)
         self._long_opts.append(long_opt)
-        self._short_opts += (''.join(short_opts))
+        self._short_opts += "".join(short_opts)
 
     def _verify_long_not_already_used(self, opt, flag=False):
         if flag:
-            if opt.startswith('no'):
+            if opt.startswith("no"):
                 opt = opt[2:]
             self._verify_long_not_already_used(opt)
-            self._verify_long_not_already_used('no' + opt)
-        elif opt in [o.rstrip('=') for o in self._long_opts]:
-            self._raise_option_multiple_times_in_usage('--' + opt)
+            self._verify_long_not_already_used("no" + opt)
+        elif opt in [o.rstrip("=") for o in self._long_opts]:
+            self._raise_option_multiple_times_in_usage("--" + opt)
 
     def _get_pythonpath(self, paths):
-        if is_string(paths):
+        if isinstance(paths, str):
             paths = [paths]
         temp = []
         for path in self._split_pythonpath(paths):
@@ -277,22 +292,22 @@ class ArgumentParser:
 
     def _split_pythonpath(self, paths):
         # paths may already contain ':' as separator
-        tokens = ':'.join(paths).split(':')
-        if os.sep == '/':
+        tokens = ":".join(paths).split(":")
+        if os.sep == "/":
             return tokens
         # Fix paths split like 'c:\temp' -> 'c', '\temp'
         ret = []
-        drive = ''
+        drive = ""
         for item in tokens:
-            item = item.replace('/', '\\')
-            if drive and item.startswith('\\'):
-                ret.append('%s:%s' % (drive, item))
-                drive = ''
+            item = item.replace("/", "\\")
+            if drive and item.startswith("\\"):
+                ret.append(f"{drive}:{item}")
+                drive = ""
                 continue
             if drive:
                 ret.append(drive)
-                drive = ''
-            if len(item) == 1 and item in string.ascii_letters:
+                drive = ""
+            if len(item) == 1 and item in ascii_letters:
                 drive = item
             else:
                 ret.append(item)
@@ -300,17 +315,21 @@ class ArgumentParser:
             ret.append(drive)
         return ret
 
-    def _raise_help(self):
+    def _raise_help(self, status_rc=True):
         usage = self._usage
         if self.version:
-            usage = usage.replace('<VERSION>', self.version)
-        raise Information(usage)
+            usage = usage.replace("<VERSION>", self.version)
+        if status_rc is None:
+            status_rc = True
+        raise Information(usage, status_rc)
 
-    def _raise_version(self):
-        raise Information('%s %s' % (self.name, self.version))
+    def _raise_version(self, status_rc=True):
+        if status_rc is None:
+            status_rc = True
+        raise Information(f"{self.name} {self.version}", status_rc)
 
     def _raise_option_multiple_times_in_usage(self, opt):
-        raise FrameworkError("Option '%s' multiple times in usage" % opt)
+        raise FrameworkError(f"Option '{opt}' multiple times in usage")
 
 
 class ArgLimitValidator:
@@ -321,7 +340,7 @@ class ArgLimitValidator:
     def _parse_arg_limits(self, arg_limits):
         if arg_limits is None:
             return 0, sys.maxsize
-        if is_integer(arg_limits):
+        if isinstance(arg_limits, int):
             return arg_limits, arg_limits
         if len(arg_limits) == 1:
             return arg_limits[0], sys.maxsize
@@ -332,20 +351,19 @@ class ArgLimitValidator:
             self._raise_invalid_args(self._min_args, self._max_args, len(args))
 
     def _raise_invalid_args(self, min_args, max_args, arg_count):
-        min_end = plural_or_not(min_args)
         if min_args == max_args:
-            expectation = "%d argument%s" % (min_args, min_end)
+            expectation = f"Expected {min_args} argument{s(min_args)}"
         elif max_args != sys.maxsize:
-            expectation = "%d to %d arguments" % (min_args, max_args)
+            expectation = f"Expected {min_args} to {max_args} arguments"
         else:
-            expectation = "at least %d argument%s" % (min_args, min_end)
-        raise DataError("Expected %s, got %d." % (expectation, arg_count))
+            expectation = f"Expected at least {min_args} argument{s(min_args)}"
+        raise DataError(f"{expectation}, got {arg_count}.")
 
 
 class ArgFileParser:
 
-    def __init__(self, options):
-        self._options = options
+    def __init__(self, config):
+        self.config = config
 
     def process(self, args):
         while True:
@@ -356,62 +374,71 @@ class ArgFileParser:
         return args
 
     def _get_index(self, args):
-        for opt in self._options:
-            start = opt + '=' if opt.startswith('--') else opt
+        for conf in self.config:
+            long = conf.startswith("--")
             for index, arg in enumerate(args):
-                normalized_arg = (
-                    '--' + arg.lower().replace('-', '') if opt.startswith('--') else arg
-                )
+                normalized = "--" + arg.lower().replace("-", "") if long else arg
                 # Handles `--argumentfile foo` and `-A foo`
-                if normalized_arg == opt and index + 1 < len(args):
-                    return args[index+1], slice(index, index+2)
-                # Handles `--argumentfile=foo` and `-Afoo`
-                if normalized_arg.startswith(start):
-                    return arg[len(start):], slice(index, index+1)
+                if normalized == conf and index + 1 < len(args):
+                    return args[index + 1], slice(index, index + 2)
+                # Handles `--argumentfile=foo`
+                elif long and normalized.startswith(conf + "="):
+                    return arg[len(conf) + 1 :], slice(index, index + 1)
+                # Handles `-Afoo`
+                elif not long and normalized.startswith(conf):
+                    return arg[len(conf) :], slice(index, index + 1)
         return None, -1
 
     def _get_args(self, path):
-        if path.upper() != 'STDIN':
-            content = self._read_from_file(path)
-        else:
+        if path.upper() == "STDIN":
             content = self._read_from_stdin()
-        return self._process_file(content)
+        else:
+            content = self._read_from_file(path)
+        try:
+            return self._process_file(content)
+        except ValueError as err:
+            raise DataError(f"Processing argument file '{path}' failed: {err}")
+
+    def _read_from_stdin(self):
+        return console_decode(sys.__stdin__.read())
 
     def _read_from_file(self, path):
         try:
             with FileReader(path) as reader:
                 return reader.read()
         except (IOError, UnicodeError) as err:
-            raise DataError("Opening argument file '%s' failed: %s"
-                            % (path, err))
-
-    def _read_from_stdin(self):
-        return console_decode(sys.__stdin__.read())
+            raise DataError(f"Opening argument file '{path}' failed: {err}")
 
     def _process_file(self, content):
         args = []
+        if self._parse_expandvars_pragma(content):
+            content = expand_variables(content)
         for line in content.splitlines():
             line = line.strip()
-            if line.startswith('-'):
+            if line.startswith("-"):
                 args.extend(self._split_option(line))
-            elif line and not line.startswith('#'):
+            elif line and not line.startswith("#"):
                 args.append(line)
         return args
 
-    def _split_option(self, line):
-        separator = self._get_option_separator(line)
-        if not separator:
-            return [line]
-        option, value = line.split(separator, 1)
-        if separator == ' ':
-            value = value.strip()
-        return [option, value]
+    def _parse_expandvars_pragma(self, content):
+        match = re.match(r"#\s*expandvars:\s*(.*)\s*\n", content, flags=re.IGNORECASE)
+        return is_truthy(match.group(1)) if match else False
 
-    def _get_option_separator(self, line):
-        if ' ' not in line and '=' not in line:
+    def _split_option(self, option):
+        separator = self._get_option_separator(option)
+        if not separator:
+            return [option]
+        name, value = option.split(separator, 1)
+        if separator == " ":
+            value = value.strip()
+        return [name, value]
+
+    def _get_option_separator(self, option):
+        if " " not in option and "=" not in option:
             return None
-        if '=' not in line:
-            return ' '
-        if ' ' not in line:
-            return '='
-        return ' ' if line.index(' ') < line.index('=') else '='
+        if "=" not in option:
+            return " "
+        if " " not in option:
+            return "="
+        return " " if option.index(" ") < option.index("=") else "="

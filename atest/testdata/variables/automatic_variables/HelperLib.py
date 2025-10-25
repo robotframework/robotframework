@@ -12,4 +12,4 @@ class HelperLib:
         if not isinstance(actual, str):
             expected = eval(expected)
         if actual != expected:
-            raise AssertionError(f'{actual} != {expected}')
+            raise AssertionError(f"{actual} != {expected}")

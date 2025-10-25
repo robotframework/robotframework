@@ -22,15 +22,15 @@ Overriding Test Teardown from Command Line
 
 Overriding Test Template
     ${tc}=  Check Test Case  ${TESTNAME}
-    Should Be Equal  ${tc.body[0].full_name}  BuiltIn.No Operation
+    Should Be Equal  ${tc[0].full_name}  BuiltIn.No Operation
 
 Overriding Test Timeout
     ${tc}=  Check Test Case  ${TESTNAME}
-    Check Log Message  ${tc.body[0][0]}  Slept 123 milliseconds.
+    Check Log Message  ${tc[0, 0]}  Slept 123 milliseconds.
 
 Overriding Test Timeout from Command Line
     ${tc}=  Check Test Case  ${TESTNAME}
-    Check Log Message  ${tc.body[0][0]}  Slept 123 milliseconds.
+    Check Log Message  ${tc[0, 0]}  Slept 123 milliseconds.
 
 Overriding Default Tags
     ${tc}=  Check Test Case  ${TESTNAME}
@@ -44,5 +44,5 @@ Overriding Is Case Insensitive
     ${tc}=  Check Test Case  ${TESTNAME}
     Setup Should Not Be Defined  ${tc}
     Teardown Should Not Be Defined  ${tc}
-    Should Be Equal  ${tc.body[0].full_name}  BuiltIn.No Operation
+    Should Be Equal  ${tc[0].full_name}  BuiltIn.No Operation
     Should Be Empty  ${tc.tags}

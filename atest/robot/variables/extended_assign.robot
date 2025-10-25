@@ -20,6 +20,12 @@ Set item to list attribute
 Set item to dict attribute
     Check Test Case    ${TESTNAME}
 
+Set using @-syntax
+    Check Test Case    ${TESTNAME}
+
+Set using &-syntax
+    Check Test Case    ${TESTNAME}
+
 Trying to set un-settable attribute
     Check Test Case    ${TESTNAME}
 
@@ -36,7 +42,4 @@ Strings and integers do not support extended assign
     Check Test Case    ${TESTNAME}
 
 Attribute name must be valid
-    Check Test Case    ${TESTNAME}
-
-Extended syntax is ignored with list variables
     Check Test Case    ${TESTNAME}

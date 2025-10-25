@@ -15,15 +15,24 @@
 
 from datetime import datetime
 
-from robot.errors import (BreakLoop, ContinueLoop, DataError, ExecutionFailed,
-                          ExecutionStatus, HandlerExecutionFailed, ReturnFromKeyword)
+from robot.errors import (
+    BreakLoop, ContinueLoop, DataError, ExecutionFailed, ExecutionStatus,
+    HandlerExecutionFailed, ReturnFromKeyword
+)
 from robot.utils import ErrorDetails
 
 
 class StatusReporter:
 
-    def __init__(self, data, result, context, run=True, suppress=False,
-                 implementation=None):
+    def __init__(
+        self,
+        data,
+        result,
+        context,
+        run=True,
+        suppress=False,
+        implementation=None,
+    ):
         self.data = data
         self.result = result
         self.implementation = implementation
@@ -48,8 +57,8 @@ class StatusReporter:
         return self
 
     def _warn_if_deprecated(self, doc, name):
-        if doc.startswith('*DEPRECATED') and '*' in doc[1:]:
-            message = ' ' + doc.split('*', 2)[-1].strip()
+        if doc.startswith("*DEPRECATED") and "*" in doc[1:]:
+            message = " " + doc.split("*", 2)[-1].strip()
             self.context.warn(f"Keyword '{name}' is deprecated.{message}")
 
     def __exit__(self, exc_type, exc_value, exc_traceback):
@@ -62,7 +71,7 @@ class StatusReporter:
             result.status = failure.status
             if not isinstance(failure, (BreakLoop, ContinueLoop, ReturnFromKeyword)):
                 result.message = failure.message
-        if self.initial_test_status == 'PASS' and result.status != 'NOT RUN':
+        if self.initial_test_status == "PASS" and result.status != "NOT RUN":
             context.test.status = result.status
         result.elapsed_time = datetime.now() - result.start_time
         orig_status = (result.status, result.message)

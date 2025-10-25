@@ -75,10 +75,16 @@ Bytestring replacement
 Datetime
     Check Test Case    ${TESTNAME}
 
+Datetime with now and today
+    Check Test Case    ${TESTNAME}
+
 Invalid datetime
     Check Test Case    ${TESTNAME}
 
 Date
+    Check Test Case    ${TESTNAME}
+
+Date with now and today
     Check Test Case    ${TESTNAME}
 
 Invalid date

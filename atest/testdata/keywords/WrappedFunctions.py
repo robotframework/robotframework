@@ -5,6 +5,7 @@ def decorator(f):
     @wraps(f)
     def wrapper(*args, **kws):
         return f(*args, **kws)
+
     return wrapper
 
 

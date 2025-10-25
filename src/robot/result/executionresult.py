@@ -15,14 +15,15 @@
 
 from datetime import datetime
 from pathlib import Path
-from typing import overload, TextIO
+from typing import overload, Sequence, TextIO
 
 from robot.errors import DataError
-from robot.model import Statistics
+from robot.model import Statistics, SuiteVisitor
 from robot.utils import JsonDumper, JsonLoader, setter
 from robot.version import get_full_version
 
 from .executionerrors import ExecutionErrors
+from .flattenkeywordmatcher import Flattener
 from .model import TestSuite
 
 
@@ -31,22 +32,22 @@ def is_json_source(source) -> bool:
         # ISO-8859-1 is most likely *not* the right encoding, but decoding bytes
         # with it always succeeds and characters we care about ought to be correct
         # at least if the right encoding is UTF-8 or any ISO-8859-x encoding.
-        source = source.decode('ISO-8859-1')
+        source = source.decode("ISO-8859-1")
     if isinstance(source, str):
         source = source.strip()
-        first, last = (source[0], source[-1]) if source else ('', '')
-        if (first, last) == ('{', '}'):
+        first, last = (source[0], source[-1]) if source else ("", "")
+        if (first, last) == ("{", "}"):
             return True
-        if (first, last) == ('<', '>'):
+        if (first, last) == ("<", ">"):
             return False
         path = Path(source)
     elif isinstance(source, Path):
         path = source
-    elif hasattr(source, 'name') and isinstance(source.name, str):
+    elif hasattr(source, "name") and isinstance(source.name, str):
         path = Path(source.name)
     else:
         return False
-    return bool(path and path.suffix.lower() == '.json')
+    return bool(path and path.suffix.lower() == ".json")
 
 
 class Result:
@@ -59,12 +60,15 @@ class Result:
     method.
     """
 
-    def __init__(self, source: 'Path|str|None' = None,
-                 suite: 'TestSuite|None' = None,
-                 errors: 'ExecutionErrors|None' = None,
-                 rpa: 'bool|None' = None,
-                 generator: str = 'unknown',
-                 generation_time: 'datetime|str|None' = None):
+    def __init__(
+        self,
+        source: "Path|str|None" = None,
+        suite: "TestSuite|None" = None,
+        errors: "ExecutionErrors|None" = None,
+        rpa: "bool|None" = None,
+        generator: str = "unknown",
+        generation_time: "datetime|str|None" = None,
+    ):
         self.source = Path(source) if isinstance(source, str) else source
         self.suite = suite or TestSuite()
         self.errors = errors or ExecutionErrors()
@@ -75,7 +79,7 @@ class Result:
         self._stat_config = {}
 
     @setter
-    def rpa(self, rpa: 'bool|None') -> 'bool|None':
+    def rpa(self, rpa: "bool|None") -> "bool|None":
         if rpa is not None:
             self._set_suite_rpa(self.suite, rpa)
         return rpa
@@ -86,7 +90,7 @@ class Result:
             self._set_suite_rpa(child, rpa)
 
     @setter
-    def generation_time(self, timestamp: 'datetime|str|None') -> 'datetime|None':
+    def generation_time(self, timestamp: "datetime|str|None") -> "datetime|None":
         if datetime is None:
             return None
         if isinstance(timestamp, str):
@@ -129,7 +133,7 @@ class Result:
 
     @property
     def generated_by_robot(self) -> bool:
-        return self.generator.split()[0].upper() == 'ROBOT'
+        return self.generator.split()[0].upper() == "ROBOT"
 
     def configure(self, status_rc=True, suite_config=None, stat_config=None):
         """Configures the result object and objects it contains.
@@ -148,17 +152,30 @@ class Result:
         self._stat_config = stat_config or {}
 
     @classmethod
-    def from_json(cls, source: 'str|bytes|TextIO|Path',
-                  rpa: 'bool|None' = None) -> 'Result':
+    def from_json(
+        cls,
+        source: "str|bytes|TextIO|Path",
+        include_keywords: bool = True,
+        flattened_keywords: Sequence[str] = (),
+        rpa: "bool|None" = None,
+    ) -> "Result":
         """Construct a result object from JSON data.
 
-        The data is given as the ``source`` parameter. It can be:
+        :param source: JSON data as a string or bytes containing the data
+            directly, an open file object where to read the data from, or a path
+            (``pathlib.Path`` or string) to a UTF-8 encoded file to read.
+        :param include_keywords: When ``False``, keyword and control structure
+            information is not parsed. This can save considerable amount of time
+            and memory. New in RF 7.3.2.
+        :param flattened_keywords: List of patterns controlling what keywords
+            and control structures to flatten. See the documentation of
+            the ``--flattenkeywords`` option for more details. New in RF 7.3.2.
+        :param rpa: Setting ``rpa`` either to ``True`` (RPA mode) or ``False``
+            (test automation) sets the execution mode explicitly. By default,
+            the mode is got from the parsed data.
+        :returns: :class:`Result` instance.
 
-        - a string (or bytes) containing the data directly,
-        - an open file object where to read the data from, or
-        - a path (``pathlib.Path`` or string) to a UTF-8 encoded file to read.
-
-        Data can contain either:
+        The data can contain either:
 
         - full result data (contains suite information, execution errors, etc.)
           got, for example, from the :meth:`to_json` method, or
@@ -168,55 +185,87 @@ class Result:
         :attr:`statistics` are populated automatically based on suite information
         and thus ignored if they are present in the data.
 
-        The ``rpa`` argument can be used to override the RPA mode. The mode is
-        got from the data by default.
-
         New in Robot Framework 7.2.
         """
+        loader = cls._get_json_loader(include_keywords)
         try:
-            data = JsonLoader().load(source)
+            data = loader.load(source)
         except (TypeError, ValueError) as err:
-            raise DataError(f'Loading JSON data failed: {err}')
-        if 'suite' in data:
+            raise DataError(f"Loading JSON data failed: {err}")
+        if "suite" in data:
             result = cls._from_full_json(data)
         else:
             result = cls._from_suite_json(data)
-        result.rpa = data.get('rpa', False) if rpa is None else rpa
+        result.rpa = data.get("rpa", False) if rpa is None else rpa
         if isinstance(source, Path):
             result.source = source
-        elif isinstance(source, str) and source[0] != '{' and Path(source).exists():
+        elif isinstance(source, str) and source[0] != "{" and Path(source).exists():
             result.source = Path(source)
+        result.handle_suite_teardown_failures()
+        if not include_keywords:
+            result.suite.visit(KeywordRemover())
+        if flattened_keywords:
+            result.suite.visit(Flattener(flattened_keywords))
         return result
 
     @classmethod
-    def _from_full_json(cls, data) -> 'Result':
-        return Result(suite=TestSuite.from_dict(data['suite']),
-                      errors=ExecutionErrors(data.get('errors')),
-                      generator=data.get('generator'),
-                      generation_time=data.get('generated'))
+    def _get_json_loader(cls, include_keywords: bool) -> JsonLoader:
+        if include_keywords:
+            return JsonLoader()
+
+        def remove_keywords(obj):
+            obj.pop("body", None)
+            obj.pop("setup", None)
+            # Teardowns cannot be removed yet, because we need to check suite
+            # teardown status. They are removed later using KeywordRemover.
+            return obj
+
+        return JsonLoader(object_hook=remove_keywords)
 
     @classmethod
-    def _from_suite_json(cls, data) -> 'Result':
+    def _from_full_json(cls, data) -> "Result":
+        return Result(
+            suite=TestSuite.from_dict(data["suite"]),
+            errors=ExecutionErrors(data.get("errors")),
+            generator=data.get("generator"),
+            generation_time=data.get("generated"),
+        )
+
+    @classmethod
+    def _from_suite_json(cls, data) -> "Result":
         return Result(suite=TestSuite.from_dict(data))
 
     @overload
-    def to_json(self, file: None = None, *,
-                include_statistics: bool = True,
-                ensure_ascii: bool = False, indent: int = 0,
-                separators: 'tuple[str, str]' = (',', ':')) -> str:
-        ...
+    def to_json(
+        self,
+        file: None = None,
+        *,
+        include_statistics: bool = True,
+        ensure_ascii: bool = False,
+        indent: int = 0,
+        separators: "tuple[str, str]" = (",", ":"),
+    ) -> str: ...
 
     @overload
-    def to_json(self, file: 'TextIO|Path|str', *,
-                include_statistics: bool = True,
-                ensure_ascii: bool = False, indent: int = 0,
-                separators: 'tuple[str, str]' = (',', ':')) -> None:
-        ...
+    def to_json(
+        self,
+        file: "TextIO|Path|str",
+        *,
+        include_statistics: bool = True,
+        ensure_ascii: bool = False,
+        indent: int = 0,
+        separators: "tuple[str, str]" = (",", ":"),
+    ) -> None: ...
 
-    def to_json(self, file: 'None|TextIO|Path|str' = None, *,
-                include_statistics: bool = True,
-                ensure_ascii: bool = False, indent: int = 0,
-                separators: 'tuple[str, str]' = (',', ':')) -> 'str|None':
+    def to_json(
+        self,
+        file: "None|TextIO|Path|str" = None,
+        *,
+        include_statistics: bool = True,
+        ensure_ascii: bool = False,
+        indent: int = 0,
+        separators: "tuple[str, str]" = (",", ":"),
+    ) -> "str|None":
         """Serialize results into JSON.
 
         The ``file`` parameter controls what to do with the resulting JSON data.
@@ -240,15 +289,20 @@ class Result:
 
         __ https://docs.python.org/3/library/json.html
         """
-        data = {'generator': get_full_version('Rebot'),
-                'generated': datetime.now().isoformat(),
-                'rpa': self.rpa,
-                'suite': self.suite.to_dict()}
+        data = {
+            "generator": get_full_version("Rebot"),
+            "generated": datetime.now().isoformat(),
+            "rpa": self.rpa,
+            "suite": self.suite.to_dict(),
+        }
         if include_statistics:
-            data['statistics'] = self.statistics.to_dict()
-        data['errors'] = self.errors.messages.to_dicts()
-        return JsonDumper(ensure_ascii=ensure_ascii, indent=indent,
-                          separators=separators).dump(data, file)
+            data["statistics"] = self.statistics.to_dict()
+        data["errors"] = self.errors.messages.to_dicts()
+        return JsonDumper(
+            ensure_ascii=ensure_ascii,
+            indent=indent,
+            separators=separators,
+        ).dump(data, file)
 
     def save(self, target=None, legacy_output=False):
         """Save results as XML or JSON file.
@@ -276,7 +330,7 @@ class Result:
 
         target = target or self.source
         if not target:
-            raise ValueError('Path required.')
+            raise ValueError("Path required.")
         if is_json_source(target):
             self.to_json(target)
         else:
@@ -309,11 +363,12 @@ class Result:
         elif self.rpa is None:
             self.rpa = other.rpa
         elif self.rpa is not other.rpa:
-            this, that = ('task', 'test') if other.rpa else ('test', 'task')
-            raise DataError("Conflicting execution modes. File '%s' has %ss "
-                            "but files parsed earlier have %ss. Use '--rpa' "
-                            "or '--norpa' options to set the execution mode "
-                            "explicitly." % (other.source, this, that))
+            this, that = ("task", "test") if other.rpa else ("test", "task")
+            raise DataError(
+                f"Conflicting execution modes. File '{other.source}' has {this}s "
+                f"but files parsed earlier have {that}s. Use '--rpa' or '--norpa' "
+                f"options to set the execution mode explicitly."
+            )
 
 
 class CombinedResult(Result):
@@ -328,3 +383,13 @@ class CombinedResult(Result):
         self.set_execution_mode(other)
         self.suite.suites.append(other.suite)
         self.errors.add(other.errors)
+
+
+class KeywordRemover(SuiteVisitor):
+
+    def start_suite(self, suite):
+        suite.setup = suite.teardown = None
+
+    def visit_test(self, test):
+        test.setup = test.teardown = None
+        test.body = []

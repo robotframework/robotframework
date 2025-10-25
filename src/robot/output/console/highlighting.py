@@ -21,6 +21,7 @@ import errno
 import os
 import sys
 from contextlib import contextmanager
+
 try:
     from ctypes import windll
 except ImportError:  # Not on Windows
@@ -30,11 +31,14 @@ else:
     from ctypes.wintypes import _COORD, DWORD, SMALL_RECT
 
     class ConsoleScreenBufferInfo(Structure):
-        _fields_ = [('dwSize', _COORD),
-                    ('dwCursorPosition', _COORD),
-                    ('wAttributes', c_ushort),
-                    ('srWindow', SMALL_RECT),
-                    ('dwMaximumWindowSize', _COORD)]
+        _fields_ = [
+            ("dwSize", _COORD),
+            ("dwCursorPosition", _COORD),
+            ("wAttributes", c_ushort),
+            ("srWindow", SMALL_RECT),
+            ("dwMaximumWindowSize", _COORD),
+        ]
+
 
 from robot.errors import DataError
 from robot.utils import console_encode, isatty, WINDOWS
@@ -42,26 +46,31 @@ from robot.utils import console_encode, isatty, WINDOWS
 
 class HighlightingStream:
 
-    def __init__(self, stream, colors='AUTO', links='AUTO'):
+    def __init__(self, stream, colors="AUTO", links="AUTO"):
         self.stream = stream or NullStream()
         self._highlighter = self._get_highlighter(stream, colors, links)
 
     def _get_highlighter(self, stream, colors, links):
         if not stream:
             return NoHighlighting()
-        options = {'AUTO': Highlighter if isatty(stream) else NoHighlighting,
-                   'ON': Highlighter,
-                   'OFF': NoHighlighting,
-                   'ANSI': AnsiHighlighter}
+        options = {
+            "AUTO": Highlighter if isatty(stream) else NoHighlighting,
+            "ON": Highlighter,
+            "OFF": NoHighlighting,
+            "ANSI": AnsiHighlighter,
+        }
         try:
             highlighter = options[colors.upper()]
         except KeyError:
-            raise DataError(f"Invalid console color value '{colors}'. "
-                            f"Available 'AUTO', 'ON', 'OFF' and 'ANSI'.")
-        if links.upper() not in ('AUTO', 'OFF'):
-            raise DataError(f"Invalid console link value '{links}. "
-                            f"Available 'AUTO' and 'OFF'.")
-        return highlighter(stream, links.upper() == 'AUTO')
+            raise DataError(
+                f"Invalid console color value '{colors}'. "
+                f"Available 'AUTO', 'ON', 'OFF' and 'ANSI'."
+            )
+        if links.upper() not in ("AUTO", "OFF"):
+            raise DataError(
+                f"Invalid console link value '{links}. Available 'AUTO' and 'OFF'."
+            )
+        return highlighter(stream, links.upper() == "AUTO")
 
     def write(self, text, flush=True):
         self._write(console_encode(text, stream=self.stream))
@@ -77,7 +86,7 @@ class HighlightingStream:
         except IOError as err:
             if not (WINDOWS and err.errno == 0 and retry > 0):
                 raise
-            self._write(text, retry-1)
+            self._write(text, retry - 1)
 
     @property
     @contextmanager
@@ -102,18 +111,20 @@ class HighlightingStream:
             self.write(text, flush)
 
     def error(self, message, level):
-        self.write('[ ', flush=False)
+        self.write("[ ", flush=False)
         self.highlight(level, flush=False)
-        self.write(f' ] {message}\n')
+        self.write(f" ] {message}\n")
 
     @contextmanager
     def _highlighting(self, status):
         highlighter = self._highlighter
-        start = {'PASS': highlighter.green,
-                 'FAIL': highlighter.red,
-                 'ERROR': highlighter.red,
-                 'WARN': highlighter.yellow,
-                 'SKIP': highlighter.yellow}[status]
+        start = {
+            "PASS": highlighter.green,
+            "FAIL": highlighter.red,
+            "ERROR": highlighter.red,
+            "WARN": highlighter.yellow,
+            "SKIP": highlighter.yellow,
+        }[status]
         start()
         try:
             yield
@@ -121,7 +132,7 @@ class HighlightingStream:
             highlighter.reset()
 
     def result_file(self, kind, path):
-        path = self._highlighter.link(path) if path else 'NONE'
+        path = self._highlighter.link(path) if path else "NONE"
         self.write(f"{kind + ':':8} {path}\n")
 
 
@@ -135,7 +146,7 @@ class NullStream:
 
 
 def Highlighter(stream, links=True):
-    if os.sep == '/':
+    if os.sep == "/":
         return AnsiHighlighter(stream, links)
     if not windll:
         return NoHighlighting(stream)
@@ -145,10 +156,10 @@ def Highlighter(stream, links=True):
 
 
 class AnsiHighlighter:
-    GREEN = '\033[32m'
-    RED = '\033[31m'
-    YELLOW = '\033[33m'
-    RESET = '\033[0m'
+    GREEN = "\033[32m"
+    RED = "\033[31m"
+    YELLOW = "\033[33m"
+    RESET = "\033[0m"
 
     def __init__(self, stream, links=True):
         self._stream = stream
@@ -175,7 +186,7 @@ class AnsiHighlighter:
             return path
         # Terminal hyperlink syntax is documented here:
         # https://gist.github.com/egmontkob/eb114294efbcd5adb1944c9f3cb5feda
-        return f'\033]8;;{uri}\033\\{path}\033]8;;\033\\'
+        return f"\033]8;;{uri}\033\\{path}\033]8;;\033\\"
 
     def _set_color(self, color):
         self._stream.write(color)
@@ -245,8 +256,8 @@ def virtual_terminal_enabled(stream):
     enable_vt = 0x0004
     mode = DWORD()
     if not windll.kernel32.GetConsoleMode(handle, byref(mode)):
-        return False    # Calling GetConsoleMode failed.
+        return False  # Calling GetConsoleMode failed.
     if mode.value & enable_vt:
-        return True     # VT already enabled.
+        return True  # VT already enabled.
     # Try to enable VT.
     return windll.kernel32.SetConsoleMode(handle, mode.value | enable_vt) != 0

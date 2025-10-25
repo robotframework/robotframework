@@ -174,6 +174,22 @@ Example implementations for the libraries used in the above example:
            else:
                do_something_in_other_environments()
 
+If a library is imported multiple times with different arguments within a single
+suite, it needs to be given a `custom name`__ or otherwise latter imports are ignored:
+
+.. sourcecode:: robotframework
+
+   *** Settings ***
+   Library    MyLibrary     10.0.0.1    8080    AS    RemoteLibrary
+   Library    MyLibrary     127.0.0.1    AS    LocalLibrary
+
+   *** Test Cases ***
+   Example
+       RemoteLibrary.Send Message    Hello!
+       LocalLibrary.Send Message    Hi!
+
+__ `Setting custom name to library`_
+
 Library scope
 ~~~~~~~~~~~~~
 
@@ -402,7 +418,7 @@ override possible existing class attributes.
 
 When a class is decorated with the `@library` decorator, it is used as a library
 even when a `library import refers only to a module containing it`__. This is done
-regardless does the the class name match the module name or not.
+regardless does the class name match the module name or not.
 
 .. note:: The `@library` decorator is new in Robot Framework 3.2,
           the `converters` argument is new in Robot Framework 5.0, and
@@ -1303,18 +1319,26 @@ Other types cause conversion failures.
    | bytearray_   |               |            | str_,        | Same conversion as with bytes_, but the result is a bytearray_.|                                      |
    |              |               |            | bytes_       |                                                                |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | `datetime    |               |            | str_,        | Strings are expected to be timestamps in `ISO 8601`_ like      | | `2022-02-09T16:39:43.632269`       |
-   | <dt-mod_>`__ |               |            | int_,        | format `YYYY-MM-DD hh:mm:ss.mmmmmm`, where any non-digit       | | `2022-02-09 16:39`                 |
+   | `datetime    |               |            | str_,        | String timestamps are expected to be in `ISO 8601`_ like       | | `2022-02-09T16:39:43.632269`       |
+   | <dt-mod_>`__ |               |            | int_,        | format `YYYY-MM-DD hh:mm:ss.mmmmmm`, where any non-digit       | | `20220209 16:39`                   |
    |              |               |            | float_       | character can be used as a separator or separators can be      | | `2022-02-09`                       |
-   |              |               |            |              | omitted altogether. Additionally, only the date part is        | | `${1644417583.632269}` (Epoch time)|
-   |              |               |            |              | mandatory, all possibly missing time components are considered |                                      |
-   |              |               |            |              | to be zeros.                                                   |                                      |
+   |              |               |            |              | omitted altogether. Additionally, only the date part is        | | `now` (current local date and time)|
+   |              |               |            |              | mandatory, all possibly missing time components are considered | | `TODAY` (same as above)            |
+   |              |               |            |              | to be zeros.                                                   | | `${1644417583.632269}` (Epoch time)|
+   |              |               |            |              |                                                                |                                      |
+   |              |               |            |              | Special values `NOW` and `TODAY` (case-insensitive) can be     |                                      |
+   |              |               |            |              | used to get the current local `datetime`. This is new in       |                                      |
+   |              |               |            |              | Robot Framework 7.3.                                           |                                      |
    |              |               |            |              |                                                                |                                      |
    |              |               |            |              | Integers and floats are considered to represent seconds since  |                                      |
    |              |               |            |              | the `Unix epoch`_.                                             |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | date_        |               |            | str_         | Same string conversion as with `datetime <dt-mod_>`__, but all | | `2018-09-12`                       |
-   |              |               |            |              | time components are expected to be omitted or to be zeros.     |                                      |
+   | date_        |               |            | str_         | Same timestamp conversion as with `datetime <dt-mod_>`__, but  | | `2018-09-12`                       |
+   |              |               |            |              | all time components are expected to be omitted or to be zeros. | | `20180912`                         |
+   |              |               |            |              |                                                                | | `today` (current local date)       |
+   |              |               |            |              | Special values `NOW` and `TODAY` (case-insensitive) can be     | | `NOW` (same as above)              |
+   |              |               |            |              | used to get the current local `date`. This is new in Robot     |                                      |
+   |              |               |            |              | Framework 7.3.                                                 |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | timedelta_   |               |            | str_,        | Strings are expected to represent a time interval in one of    | | `42` (42 seconds)                  |
    |              |               |            | int_,        | the time formats Robot Framework supports: `time as number`_,  | | `1 minute 2 seconds`               |
@@ -1382,7 +1406,7 @@ Other types cause conversion failures.
    |              |               |            |              |                                                                |                                      |
    |              |               |            |              | Alias `sequence` is new in Robot Framework 7.0.                |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | tuple_       |               |            | str_,        | Same as `list`, but string arguments must tuple literals.      | | `('one', 'two')`                   |
+   | tuple_       |               |            | str_,        | Same as `list`, but string arguments must be tuple literals.   | | `('one', 'two')`                   |
    |              |               |            | Sequence_    |                                                                |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | set_         | `Set          |            | str_,        | Same as `list`, but string arguments must be set literals or   | | `{1, 2, 3, 42}`                    |
@@ -1403,6 +1427,14 @@ Other types cause conversion failures.
    |              |               |            |              | New in Robot Framework 6.0. Normal `dict` conversion was       |        enabled: bool                 |
    |              |               |            |              | used earlier.                                                  |                                      |
    |              |               |            |              |                                                                | | `{'width': 1600, 'enabled': True}` |
+   +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
+   | Secret_      |               |            |              | Using the `Secret type`_ as a type hint ensures that only      | .. sourcecode:: python               |
+   |              |               |            |              | `secret variables`_ are accepted as arguments.                 |                                      |
+   |              |               |            |              |                                                                |    from robot.api.types import Secret|
+   |              |               |            |              | New in Robot Framework 7.4.                                    |                                      |
+   |              |               |            |              |                                                                |                                      |
+   |              |               |            |              |                                                                |    def login(token: Secret):         |
+   |              |               |            |              |                                                                |        do_something(token.value)     |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
 
 .. note:: Starting from Robot Framework 5.0, types that have a converted are
@@ -1443,6 +1475,7 @@ Other types cause conversion failures.
 .. _abc.Set: https://docs.python.org/library/collections.abc.html#collections.abc.Set
 .. _frozenset: https://docs.python.org/library/stdtypes.html#frozenset
 .. _TypedDict: https://docs.python.org/library/typing.html#typing.TypedDict
+.. _Secret: https://robot-framework.readthedocs.io/en/master/autodoc/robot.utils.html#robot.utils.secret.Secret
 .. _Container: https://docs.python.org/library/collections.abc.html#collections.abc.Container
 .. _typing: https://docs.python.org/library/typing.html
 .. _ISO 8601: https://en.wikipedia.org/wiki/ISO_8601
@@ -1554,8 +1587,8 @@ attempted at all.
 __ https://peps.python.org/pep-0604/
 .. _Union: https://docs.python.org/3/library/typing.html#typing.Union
 
-Type conversion with generics
-'''''''''''''''''''''''''''''
+Parameterized types
+'''''''''''''''''''
 
 With generics also the parameterized syntax like `list[int]` or `dict[str, int]`
 works. When this syntax is used, the given value is first converted to the base
@@ -1569,9 +1602,9 @@ with different generic types works according to these rules:
   exactly that amount of items and they are converted to matching types.
 - To create a homogeneous tuple, it is possible to use exactly one type and
   ellipsis like `tuple[int, ...]`. In this case tuple can have any number
-  of items and they are all converted to the specified type.
+  of items, including zero, and they are all converted to the specified type.
 - With dictionaries there must be exactly two types like `dict[str, int]`.
-  Dictionary keys are converted using the former type and values using the latter.
+  Dictionary keys are converted using the first type and values using the second.
 - With sets there can be exactly one type like `set[float]`. Conversion logic
   is the same as with lists.
 
@@ -1582,13 +1615,82 @@ syntax like `'list[int]'`.
 
 .. note:: Support for converting nested types with generics is new in
           Robot Framework 6.0. Same syntax works also with earlier versions,
-          but arguments are only converted to the base type and nested types
-          are not used for anything.
+          but arguments are only converted to the base type and nested type
+          information is ignored.
 
 .. note:: Support for "stringly typed" parameterized generics is new in
           Robot Framework 7.0.
 
 __ https://peps.python.org/pep-0585/
+
+Secret type
+'''''''''''
+
+Robot Framework has a custom `robot.api.types.Secret <Secret_>`_ type that
+encapsulates values so that they are not shown in log files. If the `Secret`
+type is used as an argument type, only `Secret` objects are accepted and trying
+to use, for example, literal strings fails. The encapsulated value is available
+in the `value` attribute so keywords can access it easily:
+
+.. sourcecode:: python
+
+   from robot.api.types import Secret
+
+
+   def login_to_sut(user: str, token: Secret):
+       SUT.login(user, token.value)
+
+The `Secret variables`_ section explains how to create `Secret` objects
+in the data, on the command line, and elsewhere. In the data that involves
+using `variable type conversion`_ and, for example, `environment variables`_:
+
+.. sourcecode:: robotframework
+
+    *** Variables ***
+    ${USER}             robot
+    ${TOKEN: Secret}    %{ROBOT_TOKEN}
+
+    *** Test Cases ***
+    Example
+        Login to SUT    ${USER}    ${TOKEN}
+
+Using the `Secret` type in complex type hints works similarly as with other types.
+The following example is similar to the example above, but uses a `TypedDict`_
+with a `Secret` item:
+
+.. sourcecode:: python
+
+    from typing import TypedDict
+
+    from robot.api.types import Secret
+
+
+    class Credential(TypedDict):
+        user: str
+        token: Secret
+
+
+    def login_to_sut(credentials: Credential):
+        SUT.login(credentials["user"], credentials["token"].value)
+
+.. sourcecode:: robotframework
+
+    *** Variables ***
+    ${TOKEN: Secret}    %{ROBOT_TOKEN}
+    &{CREDENTIALS}      user=robot    token=${TOKEN}
+
+    *** Test Cases ***
+    Example
+        Login to SUT    ${CREDENTIALS}
+
+.. warning:: Secret objects do not hide or encrypt their values. The real values
+             are thus available for all code that can access these objects directly
+             or indirectly via Robot Framework APIs.
+
+.. warning:: Actual secret values that keywords pass forward may be logged or
+             otherwise disclosed by external modules or tools using them.
+
+.. note:: The Secret_ type is new in Robot Framework 7.4.
 
 Custom argument converters
 ''''''''''''''''''''''''''
@@ -2065,8 +2167,14 @@ with embedded arguments:
     def add_copies_to_cart(quantity: int, item: str):
         ...
 
+.. note:: Embedding type information to keyword names like
+          `Add ${quantity: int} copies of ${item: str} to cart` similarly
+          as with `user keywords`__ *is not supported* with library keywords.
+
 .. note:: Support for mixing embedded arguments and normal arguments is new
           in Robot Framework 7.0.
+
+__ `Argument conversion with embedded arguments`_
 
 Asynchronous keywords
 ~~~~~~~~~~~~~~~~~~~~~
@@ -2077,6 +2185,7 @@ functions (created by `async def`) just like normal functions:
 .. sourcecode:: python
 
     import asyncio
+
     from robot.api.deco import keyword
 
 
@@ -3143,7 +3252,7 @@ As explained in the above table, default values can be specified with argument
 names either as a string like `'name=default'` or as a tuple like
 `('name', 'default')`. The main problem with the former syntax is that all
 default values are considered strings whereas the latter syntax allows using
-all objects like `('inteter', 1)` or `('boolean', True)`. When using other
+all objects like `('integer', 1)` or `('boolean', True)`. When using other
 objects than strings, Robot Framework can do `automatic argument conversion`__
 based on them.
 

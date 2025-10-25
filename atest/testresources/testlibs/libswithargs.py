@@ -10,7 +10,7 @@ class Mandatory:
 
 class Defaults:
 
-    def __init__(self, mandatory, default1='value', default2=None):
+    def __init__(self, mandatory, default1="value", default2=None):
         self.mandatory = mandatory
         self.default1 = default1
         self.default2 = default2
@@ -22,11 +22,10 @@ class Defaults:
 class Varargs(Mandatory):
 
     def __init__(self, mandatory, *varargs):
-        Mandatory.__init__(self, mandatory, ' '.join(str(a) for a in varargs))
+        super().__init__(mandatory, " ".join(str(a) for a in varargs))
 
 
 class Mixed(Defaults):
 
     def __init__(self, mandatory, default=42, *extra):
-        Defaults.__init__(self, mandatory, default, 
-                          ' '.join(str(a) for a in extra))
+        super().__init__(mandatory, default, " ".join(str(a) for a in extra))

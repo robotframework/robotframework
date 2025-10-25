@@ -40,7 +40,7 @@ GROUP after failure
     ${tc} =    Check Test Case    ${TESTNAME}
     Should Not Be Run     ${tc[1:]}
     Should Not Be Run     ${tc[1].body}    2
-    Check Keyword Data    ${tc[1,1]}
+    Check Keyword Data    ${tc[1, 1]}
     ...    BuiltIn.Fail    assign=\${x}    args=This should not be run    status=NOT RUN
 
 FOR after failure
@@ -148,9 +148,9 @@ Failure in ELSE branch
 
 Failure in GROUP
     ${tc} =    Check Test Case    ${TESTNAME}
-    Should Not Be Run    ${tc[0,0][1:]}
+    Should Not Be Run    ${tc[0, 0][1:]}
     Should Not Be Run    ${tc[0][1:]}    2
-    Should Not Be Run    ${tc[0,2].body}
+    Should Not Be Run    ${tc[0, 2].body}
     Should Not Be Run    ${tc[1:]}
 
 Failure in FOR iteration

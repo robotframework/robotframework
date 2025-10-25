@@ -48,7 +48,7 @@ Keyword can be used with and without prefix
     Then we are in Berlin city
     we are in Berlin city
 
-Only single prefixes are a processed
+Only one prefix is processed
     [Documentation]  FAIL No keyword with name 'but then we are in Berlin city' found.
     Given we are in Berlin city
     but then we are in Berlin city
@@ -71,13 +71,18 @@ Localized prefixes
     ja we don't drink too many beers
 
 Prefix consisting of multiple words
-    Étant donné multipart prefixes didn't work with RF 6.0
+    Étant donné que multipart prefixes didn't work with RF 6.0
     Zakładając, że multipart prefixes didn't work with RF 6.0
     Diyelim ki multipart prefixes didn't work with RF 6.0
     Eğer ki multipart prefixes didn't work with RF 6.0
     O zaman multipart prefixes didn't work with RF 6.0
     В случай че multipart prefixes didn't work with RF 6.0
     Fie ca multipart prefixes didn't work with RF 6.0
+
+Prefix being part of another prefix
+    Étant donné que l'utilisateur se trouve sur la page de connexion
+    étant Donné QUE l'utilisateur SE trouve sur la pAGe de connexioN
+    Étant donné que if multiple prefixes match, longest prefix wins
 
 Prefix must be followed by space
     [Documentation]    FAIL
@@ -123,3 +128,12 @@ Multipart prefixes didn't work with RF 6.0
 
 Given the prefix is part of the keyword
     No operation
+
+que l'utilisateur se trouve sur la page de connexion
+    Log    This was broken in RF 7.3.
+
+que if multiple prefixes match, longest prefix wins
+    Fail    Should not be executed
+
+if multiple prefixes match, longest prefix wins
+    Log    Victory!

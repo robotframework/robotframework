@@ -13,19 +13,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import re
 from io import BytesIO
 from os import fsdecode
-import re
-
-from .robottypes import is_bytes, is_pathlike, is_string
-
-try:
-    from xml.etree import cElementTree as ET
-except ImportError:
-    try:
-        from xml.etree import ElementTree as ET
-    except ImportError:
-        raise ImportError('No valid ElementTree XML parser module found')
+from pathlib import Path
 
 
 class ETSource:
@@ -41,28 +32,26 @@ class ETSource:
     def _open_if_necessary(self, source):
         if self._is_path(source) or self._is_already_open(source):
             return None
-        if is_bytes(source):
+        if isinstance(source, (bytes, bytearray)):
             return BytesIO(source)
         encoding = self._find_encoding(source)
         return BytesIO(source.encode(encoding))
 
     def _is_path(self, source):
-        if is_pathlike(source):
+        if isinstance(source, Path):
             return True
-        elif is_string(source):
-            prefix = '<'
-        elif is_bytes(source):
-            prefix = b'<'
-        else:
-            return False
-        return not source.lstrip().startswith(prefix)
+        if isinstance(source, str):
+            return not source.lstrip().startswith("<")
+        if isinstance(source, bytes):
+            return not source.lstrip().startswith(b"<")
+        return False
 
     def _is_already_open(self, source):
-        return not (is_string(source) or is_bytes(source))
+        return not isinstance(source, (str, bytes, bytearray))
 
     def _find_encoding(self, source):
         match = re.match(r"\s*<\?xml .*encoding=(['\"])(.*?)\1.*\?>", source)
-        return match.group(2) if match else 'UTF-8'
+        return match.group(2) if match else "UTF-8"
 
     def __exit__(self, exc_type, exc_value, exc_trace):
         if self._opened:
@@ -72,13 +61,13 @@ class ETSource:
         source = self._source
         if self._is_path(source):
             return self._path_to_string(source)
-        if hasattr(source, 'name'):
+        if hasattr(source, "name"):
             return self._path_to_string(source.name)
-        return '<in-memory file>'
+        return "<in-memory file>"
 
     def _path_to_string(self, path):
-        if is_pathlike(path):
+        if isinstance(path, Path):
             return str(path)
-        if is_bytes(path):
+        if isinstance(path, bytes):
             return fsdecode(path)
         return path

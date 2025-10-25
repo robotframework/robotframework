@@ -20,7 +20,7 @@ from ..model import TestCase
 
 
 class OptionalItems(TypedDict, total=False):
-    args: 'Sequence[str]'
+    args: "Sequence[str]"
     lineno: int
 
 
@@ -29,6 +29,7 @@ class FixtureDict(OptionalItems):
 
     :attr:`args` and :attr:`lineno` are optional.
     """
+
     name: str
 
 
@@ -47,11 +48,14 @@ class TestDefaults:
     __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#parser-interface
     """
 
-    def __init__(self, parent: 'TestDefaults|None' = None,
-                 setup: 'FixtureDict|None' = None,
-                 teardown: 'FixtureDict|None' = None,
-                 tags: 'Sequence[str]' = (),
-                 timeout: 'str|None' = None):
+    def __init__(
+        self,
+        parent: "TestDefaults|None" = None,
+        setup: "FixtureDict|None" = None,
+        teardown: "FixtureDict|None" = None,
+        tags: "Sequence[str]" = (),
+        timeout: "str|None" = None,
+    ):
         self.parent = parent
         self.setup = setup
         self.teardown = teardown
@@ -59,7 +63,7 @@ class TestDefaults:
         self.timeout = timeout
 
     @property
-    def setup(self) -> 'FixtureDict|None':
+    def setup(self) -> "FixtureDict|None":
         """Default setup as a ``Keyword`` object or ``None`` when not set.
 
         Can be set also using a dictionary.
@@ -71,11 +75,11 @@ class TestDefaults:
         return None
 
     @setup.setter
-    def setup(self, setup: 'FixtureDict|None'):
+    def setup(self, setup: "FixtureDict|None"):
         self._setup = setup
 
     @property
-    def teardown(self) -> 'FixtureDict|None':
+    def teardown(self) -> "FixtureDict|None":
         """Default teardown as a ``Keyword`` object or ``None`` when not set.
 
         Can be set also using a dictionary.
@@ -87,20 +91,20 @@ class TestDefaults:
         return None
 
     @teardown.setter
-    def teardown(self, teardown: 'FixtureDict|None'):
+    def teardown(self, teardown: "FixtureDict|None"):
         self._teardown = teardown
 
     @property
-    def tags(self) -> 'tuple[str, ...]':
+    def tags(self) -> "tuple[str, ...]":
         """Default tags. Can be set also as a sequence."""
         return self._tags + self.parent.tags if self.parent else self._tags
 
     @tags.setter
-    def tags(self, tags: 'Sequence[str]'):
+    def tags(self, tags: "Sequence[str]"):
         self._tags = tuple(tags)
 
     @property
-    def timeout(self) -> 'str|None':
+    def timeout(self) -> "str|None":
         """Default timeout."""
         if self._timeout:
             return self._timeout
@@ -109,7 +113,7 @@ class TestDefaults:
         return None
 
     @timeout.setter
-    def timeout(self, timeout: 'str|None'):
+    def timeout(self, timeout: "str|None"):
         self._timeout = timeout
 
     def set_to(self, test: TestCase):
@@ -130,7 +134,7 @@ class TestDefaults:
 
 class FileSettings:
 
-    def __init__(self, test_defaults: 'TestDefaults|None' = None):
+    def __init__(self, test_defaults: "TestDefaults|None" = None):
         self.test_defaults = test_defaults or TestDefaults()
         self.test_setup = None
         self.test_teardown = None
@@ -141,76 +145,76 @@ class FileSettings:
         self.keyword_tags = ()
 
     @property
-    def test_setup(self) -> 'FixtureDict|None':
+    def test_setup(self) -> "FixtureDict|None":
         return self._test_setup or self.test_defaults.setup
 
     @test_setup.setter
-    def test_setup(self, setup: 'FixtureDict|None'):
+    def test_setup(self, setup: "FixtureDict|None"):
         self._test_setup = setup
 
     @property
-    def test_teardown(self) -> 'FixtureDict|None':
+    def test_teardown(self) -> "FixtureDict|None":
         return self._test_teardown or self.test_defaults.teardown
 
     @test_teardown.setter
-    def test_teardown(self, teardown: 'FixtureDict|None'):
+    def test_teardown(self, teardown: "FixtureDict|None"):
         self._test_teardown = teardown
 
     @property
-    def test_tags(self) -> 'tuple[str, ...]':
+    def test_tags(self) -> "tuple[str, ...]":
         return self._test_tags + self.test_defaults.tags
 
     @test_tags.setter
-    def test_tags(self, tags: 'Sequence[str]'):
+    def test_tags(self, tags: "Sequence[str]"):
         self._test_tags = tuple(tags)
 
     @property
-    def test_timeout(self) -> 'str|None':
+    def test_timeout(self) -> "str|None":
         return self._test_timeout or self.test_defaults.timeout
 
     @test_timeout.setter
-    def test_timeout(self, timeout: 'str|None'):
+    def test_timeout(self, timeout: "str|None"):
         self._test_timeout = timeout
 
     @property
-    def test_template(self) -> 'str|None':
+    def test_template(self) -> "str|None":
         return self._test_template
 
     @test_template.setter
-    def test_template(self, template: 'str|None'):
+    def test_template(self, template: "str|None"):
         self._test_template = template
 
     @property
-    def default_tags(self) -> 'tuple[str, ...]':
+    def default_tags(self) -> "tuple[str, ...]":
         return self._default_tags
 
     @default_tags.setter
-    def default_tags(self, tags: 'Sequence[str]'):
+    def default_tags(self, tags: "Sequence[str]"):
         self._default_tags = tuple(tags)
 
     @property
-    def keyword_tags(self) -> 'tuple[str, ...]':
+    def keyword_tags(self) -> "tuple[str, ...]":
         return self._keyword_tags
 
     @keyword_tags.setter
-    def keyword_tags(self, tags: 'Sequence[str]'):
+    def keyword_tags(self, tags: "Sequence[str]"):
         self._keyword_tags = tuple(tags)
 
 
 class InitFileSettings(FileSettings):
 
     @FileSettings.test_setup.setter
-    def test_setup(self, setup: 'FixtureDict|None'):
+    def test_setup(self, setup: "FixtureDict|None"):
         self.test_defaults.setup = setup
 
     @FileSettings.test_teardown.setter
-    def test_teardown(self, teardown: 'FixtureDict|None'):
+    def test_teardown(self, teardown: "FixtureDict|None"):
         self.test_defaults.teardown = teardown
 
     @FileSettings.test_tags.setter
-    def test_tags(self, tags: 'Sequence[str]'):
+    def test_tags(self, tags: "Sequence[str]"):
         self.test_defaults.tags = tags
 
     @FileSettings.test_timeout.setter
-    def test_timeout(self, timeout: 'str|None'):
+    def test_timeout(self, timeout: "str|None"):
         self.test_defaults.timeout = timeout

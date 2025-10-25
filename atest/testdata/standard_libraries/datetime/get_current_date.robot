@@ -24,7 +24,8 @@ UTC Time
     Compare Datatimes    ${utc2}    ${local}    difference=-${TIMEZONE}
 
 Invalid time zone
-    [Documentation]    FAIL ValueError: Unsupported timezone 'invalid'.
+    [Documentation]    FAIL
+    ...    ValueError: Argument 'time_zone' got value 'invalid' that cannot be converted to 'local' or 'UTC'.
     Get Current Date    invalid
 
 Increment

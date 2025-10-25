@@ -1,7 +1,7 @@
 import unittest
-from robot.utils.asserts import assert_equal, assert_raises
 
 from robot.utils import setter, SetterAwareType
+from robot.utils.asserts import assert_equal, assert_raises
 
 
 class ExampleWithSlots(metaclass=SetterAwareType):
@@ -31,7 +31,7 @@ class TestSetter(unittest.TestCase):
         assert_equal(self.item.attr, 2)
 
     def test_notset(self):
-        assert_raises(AttributeError, getattr, self.item, 'attr')
+        assert_raises(AttributeError, getattr, self.item, "attr")
 
     def test_set_other_attr(self):
         self.item.other_attr = 1
@@ -48,11 +48,11 @@ class TestSetterWithSlotsAndSetterAwareType(TestSetter):
         self.item = ExampleWithSlots()
 
     def test_set_other_attr(self):
-        assert_raises(AttributeError, setattr, self.item, 'other_attr', 1)
+        assert_raises(AttributeError, setattr, self.item, "other_attr", 1)
 
     def test_slots_as_tuple(self):
         class XY(metaclass=SetterAwareType):
-            __slots__ = ('x',)
+            __slots__ = ("x",)
 
             def __init__(self, x, y):
                 self.x = x
@@ -62,10 +62,10 @@ class TestSetterWithSlotsAndSetterAwareType(TestSetter):
             def y(self, y):
                 return y.upper()
 
-        xy = XY('x', 'y')
-        assert_equal((xy.x, xy.y), ('x', 'Y'))
-        assert_raises(AttributeError, setattr, xy, 'z', 'z')
+        xy = XY("x", "y")
+        assert_equal((xy.x, xy.y), ("x", "Y"))
+        assert_raises(AttributeError, setattr, xy, "z", "z")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

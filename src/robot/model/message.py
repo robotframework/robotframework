@@ -19,10 +19,8 @@ from typing import Literal
 from robot.utils import html_escape, setter
 
 from .body import BodyItem
-from .itemlist import ItemList
 
-
-MessageLevel = Literal['TRACE', 'DEBUG', 'INFO', 'WARN', 'ERROR', 'FAIL', 'SKIP']
+MessageLevel = Literal["TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FAIL", "SKIP"]
 
 
 class Message(BodyItem):
@@ -31,15 +29,19 @@ class Message(BodyItem):
     Can be a log message triggered by a keyword, or a warning or an error
     that occurred during parsing or test execution.
     """
-    type = BodyItem.MESSAGE
-    repr_args = ('message', 'level')
-    __slots__ = ['message', 'level', 'html', '_timestamp']
 
-    def __init__(self, message: str = '',
-                 level: MessageLevel = 'INFO',
-                 html: bool = False,
-                 timestamp: 'datetime|str|None' = None,
-                 parent: 'BodyItem|None' = None):
+    type = BodyItem.MESSAGE
+    repr_args = ("message", "level")
+    __slots__ = ("message", "level", "html", "_timestamp")
+
+    def __init__(
+        self,
+        message: str = "",
+        level: MessageLevel = "INFO",
+        html: bool = False,
+        timestamp: "datetime|str|None" = None,
+        parent: "BodyItem|None" = None,
+    ):
         self.message = message
         self.level = level
         self.html = html
@@ -47,7 +49,7 @@ class Message(BodyItem):
         self.parent = parent
 
     @setter
-    def timestamp(self, timestamp: 'datetime|str|None') -> 'datetime|None':
+    def timestamp(self, timestamp: "datetime|str|None") -> "datetime|None":
         if isinstance(timestamp, str):
             return datetime.fromisoformat(timestamp)
         return timestamp
@@ -60,25 +62,24 @@ class Message(BodyItem):
     @property
     def id(self):
         if not self.parent:
-            return 'm1'
-        if hasattr(self.parent, 'messages'):
+            return "m1"
+        if hasattr(self.parent, "messages"):
             messages = self.parent.messages
         else:
             messages = self.parent.body.filter(messages=True)
         index = messages.index(self) if self in messages else len(messages)
-        return f'{self.parent.id}-m{index + 1}'
+        return f"{self.parent.id}-m{index + 1}"
 
     def visit(self, visitor):
         """:mod:`Visitor interface <robot.model.visitor>` entry-point."""
         visitor.visit_message(self)
 
     def to_dict(self):
-        data = {'message': self.message,
-                'level': self.level}
+        data = {"message": self.message, "level": self.level}
         if self.html:
-            data['html'] = True
+            data["html"] = True
         if self.timestamp:
-            data['timestamp'] = self.timestamp.isoformat()
+            data["timestamp"] = self.timestamp.isoformat()
         return data
 
     def __str__(self):

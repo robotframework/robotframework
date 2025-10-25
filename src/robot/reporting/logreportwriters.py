@@ -14,9 +14,8 @@
 #  limitations under the License.
 
 from pathlib import Path
-from os.path import basename, splitext
 
-from robot.htmldata import HtmlFileWriter, ModelWriter, LOG, REPORT
+from robot.htmldata import HtmlFileWriter, LOG, ModelWriter, REPORT
 from robot.utils import file_writer
 
 from .jswriter import JsResultWriter, SplitLogWriter
@@ -29,8 +28,10 @@ class _LogReportWriter:
         self._js_model = js_model
 
     def _write_file(self, path: Path, config, template):
-        outfile = file_writer(path, usage=self.usage) \
-            if isinstance(path, Path) else path  # unit test hook
+        if isinstance(path, Path):
+            outfile = file_writer(path, usage=self.usage)
+        else:
+            outfile = path  # unit test hook
         with outfile:
             model_writer = RobotModelWriter(outfile, self._js_model, config)
             writer = HtmlFileWriter(outfile, model_writer)
@@ -38,9 +39,9 @@ class _LogReportWriter:
 
 
 class LogWriter(_LogReportWriter):
-    usage = 'log'
+    usage = "log"
 
-    def write(self, path: 'Path|str', config):
+    def write(self, path: "Path|str", config):
         if isinstance(path, str):
             path = Path(path)
         self._write_file(path, config, LOG)
@@ -48,21 +49,20 @@ class LogWriter(_LogReportWriter):
             self._write_split_logs(path)
 
     def _write_split_logs(self, path: Path):
-        for index, (keywords, strings) in enumerate(self._js_model.split_results,
-                                                    start=1):
-            name = f'{path.stem}-{index}.js'
-            self._write_split_log(index, keywords, strings, path.with_name(name))
+        for index, (kws, strings) in enumerate(self._js_model.split_results, start=1):
+            name = f"{path.stem}-{index}.js"
+            self._write_split_log(index, kws, strings, path.with_name(name))
 
-    def _write_split_log(self, index, keywords, strings, path: Path):
+    def _write_split_log(self, index, kws, strings, path: Path):
         with file_writer(path, usage=self.usage) as outfile:
             writer = SplitLogWriter(outfile)
-            writer.write(keywords, strings, index, path.name)
+            writer.write(kws, strings, index, path.name)
 
 
 class ReportWriter(_LogReportWriter):
-    usage = 'report'
+    usage = "report"
 
-    def write(self, path: 'Path|str', config):
+    def write(self, path: "Path|str", config):
         if isinstance(path, str):
             path = Path(path)
         self._write_file(path, config, REPORT)

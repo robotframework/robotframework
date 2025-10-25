@@ -6,11 +6,11 @@ Resource          atest_resource.robot
 Run Keyword If Test Failed when test fails
     ${tc} =    Check Test Case    ${TEST NAME}
     Should Be Equal    ${tc.teardown[0].full_name}    BuiltIn.Log
-    Check Log Message    ${tc.teardown[0][0]}    Hello from teardown!
+    Check Log Message    ${tc.teardown[0, 0]}    Hello from teardown!
 
 Run Keyword If Test Failed in user keyword when test fails
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.teardown[1, 0][0]}    Apparently test failed!    FAIL
+    Check Log Message    ${tc.teardown[1, 0, 0]}    Apparently test failed!    FAIL
 
 Run Keyword If Test Failed when test passes
     ${tc} =    Check Test Case    ${TEST NAME}
@@ -50,11 +50,11 @@ Run Keyword If test Failed Can't Be Used In Suite Setup or Teardown
 
 Run Keyword If Test Passed when test passes
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.teardown[0][0]}    Teardown of passing test
+    Check Log Message    ${tc.teardown[0, 0]}    Teardown of passing test
 
 Run Keyword If Test Passed in user keyword when test passes
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.teardown[1, 0][0]}    Apparently test passed!    FAIL
+    Check Log Message    ${tc.teardown[1, 0, 0]}    Apparently test passed!    FAIL
 
 Run Keyword If Test Passed when test fails
     ${tc} =    Check Test Case    ${TEST NAME}

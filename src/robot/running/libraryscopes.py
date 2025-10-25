@@ -32,14 +32,16 @@ class Scope(Enum):
 
 class ScopeManager:
 
-    def __init__(self, library: 'TestLibrary'):
+    def __init__(self, library: "TestLibrary"):
         self.library = library
 
     @classmethod
     def for_library(cls, library):
-        manager = {Scope.GLOBAL: GlobalScopeManager,
-                   Scope.SUITE: SuiteScopeManager,
-                   Scope.TEST: TestScopeManager}[library.scope]
+        manager = {
+            Scope.GLOBAL: GlobalScopeManager,
+            Scope.SUITE: SuiteScopeManager,
+            Scope.TEST: TestScopeManager,
+        }[library.scope]
         return manager(library)
 
     def start_suite(self):

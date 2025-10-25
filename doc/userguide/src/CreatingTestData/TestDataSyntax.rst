@@ -636,7 +636,7 @@ __ `Newlines`_
 
    *** Settings ***
    Documentation      Here we have documentation for this suite.\nDocumentation is often quite long.\n\nIt can also contain multiple paragraphs.
-   Default Tags       default tag 1    default tag 2    default tag 3    default tag 4    default tag 5
+   Test Tags          test tag 1    test tag 2    test tag 3    test tag 4    test tag 5
 
    *** Variables ***
    ${STRING}          This is a long string. It has multiple sentences. It does not have newlines.
@@ -657,8 +657,8 @@ __ `Newlines`_
    ...                Documentation is often quite long.
    ...
    ...                It can also contain multiple paragraphs.
-   Default Tags       default tag 1    default tag 2    default tag 3
-   ...                default tag 4    default tag 5
+   Test Tags          test tag 1    test tag 2    test tag 3
+   ...                test tag 4    test tag 5
 
    *** Variables ***
    ${STRING}          This is a long string.

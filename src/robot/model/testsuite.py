@@ -21,7 +21,7 @@ from robot.errors import DataError
 from robot.utils import seq2str, setter
 
 from .configurer import SuiteConfigurer
-from .filter import Filter, EmptySuiteRemover
+from .filter import EmptySuiteRemover, Filter
 from .fixture import create_fixture
 from .itemlist import ItemList
 from .keyword import Keyword
@@ -31,9 +31,9 @@ from .tagsetter import TagSetter
 from .testcase import TestCase, TestCases
 from .visitor import SuiteVisitor
 
-TS = TypeVar('TS', bound='TestSuite')
-KW = TypeVar('KW', bound=Keyword, covariant=True)
-TC = TypeVar('TC', bound=TestCase, covariant=True)
+TS = TypeVar("TS", bound="TestSuite")
+KW = TypeVar("KW", bound=Keyword, covariant=True)
+TC = TypeVar("TC", bound=TestCase, covariant=True)
 
 
 class TestSuite(ModelObject, Generic[KW, TC]):
@@ -42,7 +42,8 @@ class TestSuite(ModelObject, Generic[KW, TC]):
     Extended by :class:`robot.running.model.TestSuite` and
     :class:`robot.result.model.TestSuite`.
     """
-    type = 'SUITE'
+
+    type = "SUITE"
     # FIXME: Type Ignore declarations: Typevars only accept subclasses of the bound class
     # assigning `Type[KW]` to `Keyword` results in an error. In RF 7 the class should be
     # made impossible to instantiate directly, and the assignments can be replaced with
@@ -50,15 +51,18 @@ class TestSuite(ModelObject, Generic[KW, TC]):
     fixture_class: Type[KW] = Keyword  # type: ignore
     test_class: Type[TC] = TestCase  # type: ignore
 
-    repr_args = ('name',)
-    __slots__ = ['parent', '_name', 'doc', '_setup', '_teardown', 'rpa', '_my_visitors']
+    repr_args = ("name",)
+    __slots__ = ("parent", "_name", "doc", "_setup", "_teardown", "rpa", "_my_visitors")
 
-    def __init__(self, name: str = '',
-                 doc: str = '',
-                 metadata: 'Mapping[str, str]|None' = None,
-                 source: 'Path|str|None' = None,
-                 rpa: 'bool|None' = False,
-                 parent: 'TestSuite[KW, TC]|None' = None):
+    def __init__(
+        self,
+        name: str = "",
+        doc: str = "",
+        metadata: "Mapping[str, str]|None" = None,
+        source: "Path|str|None" = None,
+        rpa: "bool|None" = False,
+        parent: "TestSuite[KW, TC]|None" = None,
+    ):
         self._name = name
         self.doc = doc
         self.metadata = metadata
@@ -67,12 +71,12 @@ class TestSuite(ModelObject, Generic[KW, TC]):
         self.rpa = rpa
         self.suites = []
         self.tests = []
-        self._setup: 'KW|None' = None
-        self._teardown: 'KW|None' = None
-        self._my_visitors: 'list[SuiteVisitor]' = []
+        self._setup: "KW|None" = None
+        self._teardown: "KW|None" = None
+        self._my_visitors: "list[SuiteVisitor]" = []
 
     @staticmethod
-    def name_from_source(source: 'Path|str|None', extension: Sequence[str] = ()) -> str:
+    def name_from_source(source: "Path|str|None", extension: Sequence[str] = ()) -> str:
         """Create suite name based on the given ``source``.
 
         This method is used by Robot Framework itself when it builds suites.
@@ -104,13 +108,13 @@ class TestSuite(ModelObject, Generic[KW, TC]):
         __ https://docs.python.org/3/library/pathlib.html#pathlib.PurePath.stem
         """
         if not source:
-            return ''
+            return ""
         if not isinstance(source, Path):
             source = Path(source)
         name = TestSuite._get_base_name(source, extension)
-        if '__' in name:
-            name = name.split('__', 1)[1] or name
-        name = name.replace('_', ' ').strip()
+        if "__" in name:
+            name = name.split("__", 1)[1] or name
+        name = name.replace("_", " ").strip()
         return name.title() if name.islower() else name
 
     @staticmethod
@@ -122,14 +126,14 @@ class TestSuite(ModelObject, Generic[KW, TC]):
         if isinstance(extensions, str):
             extensions = [extensions]
         for ext in extensions:
-            ext = '.' + ext.lower().lstrip('.')
+            ext = "." + ext.lower().lstrip(".")
             if path.name.lower().endswith(ext):
-                return path.name[:-len(ext)]
-        raise ValueError(f"File '{path}' does not have extension "
-                         f"{seq2str(extensions, lastsep=' or ')}.")
+                return path.name[: -len(ext)]
+        valid_extensions = seq2str(extensions, lastsep=" or ")
+        raise ValueError(f"File '{path}' does not have extension {valid_extensions}.")
 
     @property
-    def _visitors(self) -> 'list[SuiteVisitor]':
+    def _visitors(self) -> "list[SuiteVisitor]":
         parent_visitors = self.parent._visitors if self.parent else []
         return self._my_visitors + parent_visitors
 
@@ -141,20 +145,25 @@ class TestSuite(ModelObject, Generic[KW, TC]):
         name is constructed from child suite names by concatenating them with
         `` & ``. If there are no child suites, name is an empty string.
         """
-        return (self._name
-                or self.name_from_source(self.source)
-                or ' & '.join(s.name for s in self.suites))
+        return (
+            self._name
+            or self.name_from_source(self.source)
+            or " & ".join(s.name for s in self.suites)
+        )
 
     @name.setter
     def name(self, name: str):
         self._name = name
 
     @setter
-    def source(self, source: 'Path|str|None') -> 'Path|None':
+    def source(self, source: "Path|str|None") -> "Path|None":
         return source if isinstance(source, (Path, type(None))) else Path(source)
 
-    def adjust_source(self, relative_to: 'Path|str|None' = None,
-                      root: 'Path|str|None' = None):
+    def adjust_source(
+        self,
+        relative_to: "Path|str|None" = None,
+        root: "Path|str|None" = None,
+    ):
         """Adjust suite source and child suite sources, recursively.
 
         :param relative_to: Make suite source relative to the given path. Calls
@@ -181,12 +190,14 @@ class TestSuite(ModelObject, Generic[KW, TC]):
         __ https://docs.python.org/3/library/pathlib.html#pathlib.PurePath.relative_to
         """
         if not self.source:
-            raise ValueError('Suite has no source.')
+            raise ValueError("Suite has no source.")
         if relative_to:
             self.source = self.source.relative_to(relative_to)
         if root:
             if self.source.is_absolute():
-                raise ValueError(f"Cannot set root for absolute source '{self.source}'.")
+                raise ValueError(
+                    f"Cannot set root for absolute source '{self.source}'."
+                )
             self.source = root / self.source
         for suite in self.suites:
             suite.adjust_source(relative_to, root)
@@ -199,7 +210,7 @@ class TestSuite(ModelObject, Generic[KW, TC]):
         """
         if not self.parent:
             return self.name
-        return f'{self.parent.full_name}.{self.name}'
+        return f"{self.parent.full_name}.{self.name}"
 
     @property
     def longname(self) -> str:
@@ -207,11 +218,11 @@ class TestSuite(ModelObject, Generic[KW, TC]):
         return self.full_name
 
     @setter
-    def metadata(self, metadata: 'Mapping[str, str]|None') -> Metadata:
+    def metadata(self, metadata: "Mapping[str, str]|None") -> Metadata:
         """Free suite metadata as a :class:`~.metadata.Metadata` object."""
         return Metadata(metadata)
 
-    def validate_execution_mode(self) -> 'bool|None':
+    def validate_execution_mode(self) -> "bool|None":
         """Validate that suite execution mode is set consistently.
 
         Raise an exception if the execution mode is not set (i.e. the :attr:`rpa`
@@ -227,7 +238,7 @@ class TestSuite(ModelObject, Generic[KW, TC]):
                     rpa = suite.rpa
                     name = suite.full_name
                 elif rpa is not suite.rpa:
-                    mode1, mode2 = ('tasks', 'tests') if rpa else ('tests', 'tasks')
+                    mode1, mode2 = ("tasks", "tests") if rpa else ("tests", "tasks")
                     raise DataError(
                         f"Conflicting execution modes: Suite '{name}' has {mode1} but "
                         f"suite '{suite.full_name}' has {mode2}. Resolve the conflict "
@@ -238,11 +249,13 @@ class TestSuite(ModelObject, Generic[KW, TC]):
         return self.rpa
 
     @setter
-    def suites(self, suites: 'Sequence[TestSuite|DataDict]') -> 'TestSuites[TestSuite[KW, TC]]':
-        return TestSuites['TestSuite'](self.__class__, self, suites)
+    def suites(
+        self, suites: "Sequence[TestSuite|DataDict]"
+    ) -> "TestSuites[TestSuite[KW, TC]]":
+        return TestSuites["TestSuite"](self.__class__, self, suites)
 
     @setter
-    def tests(self, tests: 'Sequence[TC|DataDict]') -> TestCases[TC]:
+    def tests(self, tests: "Sequence[TC|DataDict]") -> TestCases[TC]:
         return TestCases[TC](self.test_class, self, tests)
 
     @property
@@ -272,12 +285,22 @@ class TestSuite(ModelObject, Generic[KW, TC]):
         ``suite.keywords.setup``.
         """
         if self._setup is None:
-            self._setup = create_fixture(self.fixture_class, None, self, Keyword.SETUP)
+            self._setup = create_fixture(
+                self.fixture_class,
+                None,
+                self,
+                Keyword.SETUP,
+            )
         return self._setup
 
     @setup.setter
-    def setup(self, setup: 'KW|DataDict|None'):
-        self._setup = create_fixture(self.fixture_class, setup, self, Keyword.SETUP)
+    def setup(self, setup: "KW|DataDict|None"):
+        self._setup = create_fixture(
+            self.fixture_class,
+            setup,
+            self,
+            Keyword.SETUP,
+        )
 
     @property
     def has_setup(self) -> bool:
@@ -300,12 +323,22 @@ class TestSuite(ModelObject, Generic[KW, TC]):
         See :attr:`setup` for more information.
         """
         if self._teardown is None:
-            self._teardown = create_fixture(self.fixture_class, None, self, Keyword.TEARDOWN)
+            self._teardown = create_fixture(
+                self.fixture_class,
+                None,
+                self,
+                Keyword.TEARDOWN,
+            )
         return self._teardown
 
     @teardown.setter
-    def teardown(self, teardown: 'KW|DataDict|None'):
-        self._teardown = create_fixture(self.fixture_class, teardown, self, Keyword.TEARDOWN)
+    def teardown(self, teardown: "KW|DataDict|None"):
+        self._teardown = create_fixture(
+            self.fixture_class,
+            teardown,
+            self,
+            Keyword.TEARDOWN,
+        )
 
     @property
     def has_teardown(self) -> bool:
@@ -330,10 +363,10 @@ class TestSuite(ModelObject, Generic[KW, TC]):
         and in tests get ids like ``s1-k1``, ``s1-t1-k1``, and ``s1-s4-t2-k5``.
         """
         if not self.parent:
-            return 's1'
+            return "s1"
         suites = self.parent.suites
         index = suites.index(self) if self in suites else len(suites)
-        return f'{self.parent.id}-s{index + 1}'
+        return f"{self.parent.id}-s{index + 1}"
 
     @property
     def all_tests(self) -> Iterator[TestCase]:
@@ -355,8 +388,12 @@ class TestSuite(ModelObject, Generic[KW, TC]):
     def has_tests(self) -> bool:
         return bool(self.tests) or any(s.has_tests for s in self.suites)
 
-    def set_tags(self, add: Sequence[str] = (), remove: Sequence[str] = (),
-                 persist: bool = False):
+    def set_tags(
+        self,
+        add: Sequence[str] = (),
+        remove: Sequence[str] = (),
+        persist: bool = False,
+    ):
         """Add and/or remove specified tags to the tests in this suite.
 
         :param add: Tags to add as a list or, if adding only one,
@@ -371,10 +408,13 @@ class TestSuite(ModelObject, Generic[KW, TC]):
         if persist:
             self._my_visitors.append(setter)
 
-    def filter(self, included_suites: 'Sequence[str]|None' = None,
-               included_tests: 'Sequence[str]|None' = None,
-               included_tags: 'Sequence[str]|None' = None,
-               excluded_tags: 'Sequence[str]|None' = None):
+    def filter(
+        self,
+        included_suites: "Sequence[str]|None" = None,
+        included_tests: "Sequence[str]|None" = None,
+        included_tags: "Sequence[str]|None" = None,
+        excluded_tags: "Sequence[str]|None" = None,
+    ):
         """Select test cases and remove others from this suite.
 
         Parameters have the same semantics as ``--suite``, ``--test``,
@@ -390,8 +430,9 @@ class TestSuite(ModelObject, Generic[KW, TC]):
             suite.filter(included_tests=['Test 1', '* Example'],
                          included_tags='priority-1')
         """
-        self.visit(Filter(included_suites, included_tests,
-                          included_tags, excluded_tags))
+        self.visit(
+            Filter(included_suites, included_tests, included_tags, excluded_tags)
+        )
 
     def configure(self, **options):
         """A shortcut to configure a suite using one method call.
@@ -407,8 +448,9 @@ class TestSuite(ModelObject, Generic[KW, TC]):
         one call.
         """
         if self.parent is not None:
-            raise ValueError("'TestSuite.configure()' can only be used with "
-                             "the root test suite.")
+            raise ValueError(
+                "'TestSuite.configure()' can only be used with the root test suite."
+            )
         if options:
             self.visit(SuiteConfigurer(**options))
 
@@ -420,31 +462,34 @@ class TestSuite(ModelObject, Generic[KW, TC]):
         """:mod:`Visitor interface <robot.model.visitor>` entry-point."""
         visitor.visit_suite(self)
 
-    def to_dict(self) -> 'dict[str, Any]':
-        data: 'dict[str, Any]' = {'name': self.name}
+    def to_dict(self) -> "dict[str, Any]":
+        data: "dict[str, Any]" = {"name": self.name}
         if self.doc:
-            data['doc'] = self.doc
+            data["doc"] = self.doc
         if self.metadata:
-            data['metadata'] = dict(self.metadata)
+            data["metadata"] = dict(self.metadata)
         if self.source:
-            data['source'] = str(self.source)
+            data["source"] = str(self.source)
         if self.rpa:
-            data['rpa'] = self.rpa
+            data["rpa"] = self.rpa
         if self.has_setup:
-            data['setup'] = self.setup.to_dict()
+            data["setup"] = self.setup.to_dict()
         if self.has_teardown:
-            data['teardown'] = self.teardown.to_dict()
+            data["teardown"] = self.teardown.to_dict()
         if self.tests:
-            data['tests'] = self.tests.to_dicts()
+            data["tests"] = self.tests.to_dicts()
         if self.suites:
-            data['suites'] = self.suites.to_dicts()
+            data["suites"] = self.suites.to_dicts()
         return data
 
 
 class TestSuites(ItemList[TS]):
-    __slots__ = []
+    __slots__ = ()
 
-    def __init__(self, suite_class: Type[TS] = TestSuite,
-                 parent: 'TS|None' = None,
-                 suites: 'Sequence[TS|DataDict]' = ()):
-        super().__init__(suite_class, {'parent': parent}, suites)
+    def __init__(
+        self,
+        suite_class: Type[TS] = TestSuite,
+        parent: "TS|None" = None,
+        suites: "Sequence[TS|DataDict]" = (),
+    ):
+        super().__init__(suite_class, {"parent": parent}, suites)

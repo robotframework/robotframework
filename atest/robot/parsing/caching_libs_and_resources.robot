@@ -11,8 +11,8 @@ Import Libraries Only Once
     Should Contain X Times    ${SYSLOG}    Found library 'BuiltIn' with arguments [ ] from cache.    2
     Should Contain X Times    ${SYSLOG}    Imported library 'OperatingSystem' with arguments [ ] (version    1
     Should Contain X Times    ${SYSLOG}    Found library 'OperatingSystem' with arguments [ ] from cache.    3
-    Syslog Should Contain    | INFO \ |    Library 'OperatingSystem' already imported by suite 'Library Caching.File1'.
-    Syslog Should Contain    | INFO \ |    Library 'OperatingSystem' already imported by suite 'Library Caching.File2'.
+    Syslog Should Contain    | INFO \ |    Suite 'Library Caching.File1' has already imported library 'OperatingSystem' with same arguments. This import is ignored.
+    Syslog Should Contain    | INFO \ |    Suite 'Library Caching.File2' has already imported library 'OperatingSystem' with same arguments. This import is ignored.
 
 Process Resource Files Only Once
     [Setup]    Run Tests And Set $SYSLOG    parsing/resource_parsing

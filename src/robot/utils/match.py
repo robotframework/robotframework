@@ -13,15 +13,20 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import re
 import fnmatch
+import re
 from typing import Iterable, Iterator, Sequence
 
 from .normalizing import normalize
 
 
-def eq(str1: str, str2: str, ignore: Sequence[str] = (), caseless: bool = True,
-       spaceless: bool = True) -> bool:
+def eq(
+    str1: str,
+    str2: str,
+    ignore: Sequence[str] = (),
+    caseless: bool = True,
+    spaceless: bool = True,
+) -> bool:
     str1 = normalize(str1, ignore, caseless, spaceless)
     str2 = normalize(str2, ignore, caseless, spaceless)
     return str1 == str2
@@ -29,8 +34,14 @@ def eq(str1: str, str2: str, ignore: Sequence[str] = (), caseless: bool = True,
 
 class Matcher:
 
-    def __init__(self, pattern: str, ignore: Sequence[str] = (), caseless: bool = True,
-                 spaceless: bool = True, regexp: bool = False):
+    def __init__(
+        self,
+        pattern: str,
+        ignore: Sequence[str] = (),
+        caseless: bool = True,
+        spaceless: bool = True,
+        regexp: bool = False,
+    ):
         self.pattern = pattern
         if caseless or spaceless or ignore:
             self._normalize = lambda s: normalize(s, ignore, caseless, spaceless)
@@ -55,11 +66,19 @@ class Matcher:
 
 class MultiMatcher(Iterable[Matcher]):
 
-    def __init__(self, patterns: Iterable[str] = (), ignore: Sequence[str] = (),
-                 caseless: bool = True, spaceless: bool = True,
-                 match_if_no_patterns: bool = False, regexp: bool = False):
-        self.matchers = [Matcher(pattern, ignore, caseless, spaceless, regexp)
-                         for pattern in self._ensure_iterable(patterns)]
+    def __init__(
+        self,
+        patterns: Iterable[str] = (),
+        ignore: Sequence[str] = (),
+        caseless: bool = True,
+        spaceless: bool = True,
+        match_if_no_patterns: bool = False,
+        regexp: bool = False,
+    ):
+        self.matchers = [
+            Matcher(pattern, ignore, caseless, spaceless, regexp)
+            for pattern in self._ensure_iterable(patterns)
+        ]
         self.match_if_no_patterns = match_if_no_patterns
 
     def _ensure_iterable(self, patterns):

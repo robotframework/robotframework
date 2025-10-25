@@ -125,7 +125,7 @@ formatter=type
     Log    ${now}    formatter=type
 
 formatter=invalid
-    [Documentation]    FAIL ValueError: Invalid formatter 'invalid'. Available 'str', 'repr', 'ascii', 'len', and 'type'.
+    [Documentation]    FAIL ValueError: Invalid formatter 'invalid'. Available 'str', 'repr', 'ascii', 'len' and 'type'.
     Log    x    formatter=invalid
 
 Log callable

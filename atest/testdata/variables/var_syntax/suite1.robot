@@ -6,6 +6,8 @@ Suite Teardown   VAR in suite setup and teardown    suite1 teardown
 Scalar
     VAR    ${name}    value
     Should Be Equal    ${name}    value
+    VAR    ${name}
+    Should Be Equal    ${name}    ${EMPTY}
 
 Scalar with separator
     VAR    ${a}    ${1}    2       3       separator=\n
@@ -24,10 +26,14 @@ Scalar with separator
 List
     VAR    @{name}    v1    v2    separator=v3
     Should Be Equal    ${name}    ${{['v1', 'v2', 'separator=v3']}}
+    VAR    @{name}
+    Should Be Equal    ${name}    ${{[]}}
 
 Dict
     VAR    &{name}    k1=v1    k2=v2    separator=v3
     Should Be Equal    ${name}    ${{{'k1': 'v1', 'k2': 'v2', 'separator': 'v3'}}}
+    VAR    &{name}
+    Should Be Equal    ${name}    ${{{}}}
 
 Long values
     ${items} =    Create List
@@ -98,6 +104,24 @@ Scopes 2
     Should Be Equal    ${SUITES}    children too
     Should Be Equal    ${GLOBAL}    global
     Should Be Equal    ${ROOT}      set in root suite setup
+
+Scalar without value when using non-local scope is deprecated 1
+    VAR    ${scalar}    value
+    VAR    ${scalar}    scope=SUITE
+    Should Be Equal    ${scalar}    ${EMPTY}
+
+Scalar without value when using non-local scope is deprecated 2
+    Should Be Equal    ${scalar}    ${EMPTY}
+
+List and dict without value when using non-local scope creates empty value 1
+    VAR    @{LIST}    scope=SUITE
+    VAR    &{DICT}    scope=GLOBAL
+    Should Be Equal    ${LIST}    ${{[]}}
+    Should Be Equal    ${DICT}    ${{{}}}
+
+List and dict without value when using non-local scope creates empty value 2
+    Should Be Equal    ${LIST}    ${{[]}}
+    Should Be Equal    ${DICT}    ${{{}}}
 
 Invalid scope
     [Documentation]    FAIL    VAR option 'scope' does not accept value 'invalid'. Valid values are 'LOCAL', 'TEST', 'TASK', 'SUITE', 'SUITES' and 'GLOBAL'.

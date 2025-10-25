@@ -70,50 +70,50 @@ Get Binary File returns bytes as-is
 
 Grep File
     ${tc}=    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc[0, 0, 1]}    5 out of 5 lines matched
-    Check Log Message    ${tc[1, 0, 1]}    2 out of 5 lines matched
-    Check Log Message    ${tc[2, 0, 1]}    1 out of 5 lines matched
-    Check Log Message    ${tc[3, 0, 1]}    0 out of 5 lines matched
-    Check Log Message    ${tc[4, 0, 1]}    3 out of 5 lines matched
-    Check Log Message    ${tc[5, 0, 1]}    3 out of 5 lines matched
-    Check Log Message    ${tc[6, 0, 1]}    1 out of 5 lines matched
-    Check Log Message    ${tc[7, 0, 1]}    4 out of 5 lines matched
-    Check Log Message    ${tc[8, 0, 1]}    2 out of 5 lines matched
-    Check Log Message    ${tc[9, 0, 1]}    1 out of 5 lines matched
+    Check Log Message    ${tc[0, 0, 1]}    5 out of 5 lines matched.
+    Check Log Message    ${tc[1, 0, 1]}    2 out of 5 lines matched.
+    Check Log Message    ${tc[2, 0, 1]}    1 out of 5 lines matched.
+    Check Log Message    ${tc[3, 0, 1]}    0 out of 5 lines matched.
+    Check Log Message    ${tc[4, 0, 1]}    3 out of 5 lines matched.
+    Check Log Message    ${tc[5, 0, 1]}    3 out of 5 lines matched.
+    Check Log Message    ${tc[6, 0, 1]}    1 out of 5 lines matched.
+    Check Log Message    ${tc[7, 0, 1]}    4 out of 5 lines matched.
+    Check Log Message    ${tc[8, 0, 1]}    2 out of 5 lines matched.
+    Check Log Message    ${tc[9, 0, 1]}    1 out of 5 lines matched.
 
 Grep File with regexp
     ${tc}=    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc[0, 0, 1]}    5 out of 5 lines matched
-    Check Log Message    ${tc[1, 0, 1]}    2 out of 5 lines matched
-    Check Log Message    ${tc[2, 0, 1]}    1 out of 5 lines matched
-    Check Log Message    ${tc[3, 0, 1]}    0 out of 5 lines matched
-    Check Log Message    ${tc[4, 0, 1]}    3 out of 5 lines matched
-    Check Log Message    ${tc[5, 0, 1]}    3 out of 5 lines matched
-    Check Log Message    ${tc[6, 0, 1]}    1 out of 5 lines matched
-    Check Log Message    ${tc[7, 0, 1]}    4 out of 5 lines matched
-    Check Log Message    ${tc[8, 0, 1]}    2 out of 5 lines matched
-    Check Log Message    ${tc[9, 0, 1]}    1 out of 5 lines matched
+    Check Log Message    ${tc[0, 0, 1]}    5 out of 5 lines matched.
+    Check Log Message    ${tc[1, 0, 1]}    2 out of 5 lines matched.
+    Check Log Message    ${tc[2, 0, 1]}    1 out of 5 lines matched.
+    Check Log Message    ${tc[3, 0, 1]}    0 out of 5 lines matched.
+    Check Log Message    ${tc[4, 0, 1]}    3 out of 5 lines matched.
+    Check Log Message    ${tc[5, 0, 1]}    3 out of 5 lines matched.
+    Check Log Message    ${tc[6, 0, 1]}    1 out of 5 lines matched.
+    Check Log Message    ${tc[7, 0, 1]}    4 out of 5 lines matched.
+    Check Log Message    ${tc[8, 0, 1]}    2 out of 5 lines matched.
+    Check Log Message    ${tc[9, 0, 1]}    1 out of 5 lines matched.
 
 Grep File with empty file
     ${tc}=    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc[1, 0, 1]}    0 out of 0 lines matched
+    Check Log Message    ${tc[1, 0, 1]}    0 out of 0 lines matched.
 
 Grep File non Ascii
     ${tc}=    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc[0, 0, 1]}    1 out of 5 lines matched
-    Check Log Message    ${tc[1, 0, 1]}    1 out of 5 lines matched
+    Check Log Message    ${tc[0, 0, 1]}    1 out of 5 lines matched.
+    Check Log Message    ${tc[1, 0, 1]}    1 out of 5 lines matched.
 
 Grep File non Ascii with regexp
     ${tc}=    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc[0, 0, 1]}    1 out of 5 lines matched
-    Check Log Message    ${tc[1, 0, 1]}    1 out of 5 lines matched
+    Check Log Message    ${tc[0, 0, 1]}    1 out of 5 lines matched.
+    Check Log Message    ${tc[1, 0, 1]}    1 out of 5 lines matched.
 
 Grep File with UTF-16 files
     ${tc}=    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc[0, 0, 1]}    3 out of 4 lines matched
-    Check Log Message    ${tc[1, 0, 1]}    1 out of 2 lines matched
-    Check Log Message    ${tc[2, 0, 1]}    4 out of 5 lines matched
-    Check Log Message    ${tc[3, 0, 1]}    2 out of 3 lines matched
+    Check Log Message    ${tc[0, 0, 1]}    3 out of 4 lines matched.
+    Check Log Message    ${tc[1, 0, 1]}    1 out of 2 lines matched.
+    Check Log Message    ${tc[2, 0, 1]}    4 out of 5 lines matched.
+    Check Log Message    ${tc[3, 0, 1]}    2 out of 3 lines matched.
 
 Grep file with system encoding
     Check Test Case    ${TESTNAME}
@@ -123,15 +123,15 @@ Grep file with console encoding
 
 Grep File with 'ignore' Error Handler
     ${tc}=    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc[0, 0, 1]}    1 out of 5 lines matched
+    Check Log Message    ${tc[0, 0, 1]}    1 out of 5 lines matched.
 
 Grep File with 'replace' Error Handler
     ${tc}=    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc[0, 0, 1]}    1 out of 5 lines matched
+    Check Log Message    ${tc[0, 0, 1]}    1 out of 5 lines matched.
 
 Grep File With Windows line endings
     ${tc}=    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc[0, 0, 1]}    1 out of 5 lines matched
+    Check Log Message    ${tc[0, 0, 1]}    1 out of 5 lines matched.
 
 Path as `pathlib.Path`
     Check Test Case    ${TESTNAME}

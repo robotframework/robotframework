@@ -59,6 +59,12 @@ Create File With Space In Name
 Create File To Non-Existing Directory
     Create And Verify File    path=${TESTDIR}${/}file.txt
 
+Create File with Secret as Content
+    Set Log Level     TRACE
+    Create file    ${TESTFILE}    ${SECRET}
+    Verify File    ${TESTFILE}    This is secret!
+    [Teardown]    Reset Log Level
+
 Creating File Fails If Encoding Is Incorrect
     [Documentation]    FAIL REGEXP: Unicode(Encode|)Error: .*
     Create File    ${TESTFILE}    Hyvää yötä!    ASCII
@@ -94,6 +100,15 @@ Append To File
     Append To File    ${TESTFILE}    \n
     Append To File    ${TESTFILE}    Lääst läin\n\n    UTF-8
     Verify File       ${TESTFILE}    First line${\n}Second line${\n}3${\n}${\n}${\n}Lääst läin${\n}${\n}
+
+Append to File with Secret as Content
+    Set Log Level     TRACE
+    Append To File    ${TESTFILE}    ${SECRET}
+    Verify File       ${TESTFILE}    This is secret!
+    Append To File    ${TESTFILE}    ${SPACE}
+    Append To File    ${TESTFILE}    ${SECRET}
+    Verify File       ${TESTFILE}    This is secret! This is secret!
+    [Teardown]    Reset Log Level
 
 Path as `pathlib.Path`
     Create And Verify File    path=${PATH/'file.txt'}

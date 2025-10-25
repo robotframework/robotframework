@@ -4,7 +4,7 @@ import sys
 class Listener:
     ROBOT_LISTENER_API_VERSION = 2
 
-    def __init__(self, name='X'):
+    def __init__(self, name="X"):
         self.name = name
 
     def start_suite(self, name, attrs):

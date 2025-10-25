@@ -55,7 +55,9 @@ Number is float regardless are millis included or not
                       ${1000.123}        1000.0       ${1}
                       ${1000}            1000.0       no millis
 
-Invalid format        [Documentation]    FAIL ValueError: Unknown format 'invalid'.
+Invalid format        [Documentation]    FAIL
+                      ...    ValueError: Argument 'result_format' got value 'invalid' that cannot be \
+                      ...    converted to 'number', 'verbose', 'compact', 'timer' or 'timedelta'.
                       10s                invalid      0
 
 *** Keywords ***

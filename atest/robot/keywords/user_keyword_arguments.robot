@@ -85,22 +85,27 @@ Caller does not see modifications to varargs
 
 Invalid Arguments Spec
     [Template]    Verify Invalid Argument Spec
-    0    338    Invalid argument syntax       Invalid argument syntax 'no deco'.
-    1    342    Non-default after defaults    Non-default argument after default arguments.
-    2    346    Default with varargs          Only normal arguments accept default values, list arguments like '\@{varargs}' do not.
-    3    350    Default with kwargs           Only normal arguments accept default values, dictionary arguments like '\&{kwargs}' do not.
-    4    354    Kwargs not last               Only last argument can be kwargs.
-    5    358    Multiple errors               Multiple errors:
-    ...                                       - Invalid argument syntax 'invalid'.
-    ...                                       - Non-default argument after default arguments.
-    ...                                       - Cannot have multiple varargs.
-    ...                                       - Only last argument can be kwargs.
+    0    Invalid argument syntax               Invalid argument syntax 'no deco'.
+    1    Non-default after default             Non-default argument after default arguments.
+    2    Non-default after default w/ types    Non-default argument after default arguments.
+    3    Default with varargs                  Only normal arguments accept default values, list arguments like '\@{varargs}' do not.
+    4    Default with kwargs                   Only normal arguments accept default values, dictionary arguments like '\&{kwargs}' do not.
+    5    Multiple varargs                      Cannot have multiple varargs.
+    6    Multiple varargs w/ types             Cannot have multiple varargs.
+    7    Kwargs not last                       Only last argument can be kwargs.
+    8    Kwargs not last w/ types              Only last argument can be kwargs.
+    9    Multiple errors                       Multiple errors:
+    ...                                        - Invalid argument syntax 'invalid'.
+    ...                                        - Non-default argument after default arguments.
+    ...                                        - Cannot have multiple varargs.
+    ...                                        - Only last argument can be kwargs.
 
 *** Keywords ***
 Verify Invalid Argument Spec
-    [Arguments]    ${index}    ${lineno}    ${name}    @{error}
+    [Arguments]    ${index}    ${name}    @{error}
     Check Test Case    ${TEST NAME} - ${name}
-    ${error} =    Catenate    SEPARATOR=\n    @{error}
+    VAR    ${error}     @{error}    separator=\n
+    VAR    ${lineno}    ${{358 + ${index} * 4}}
     Error In File    ${index}    keywords/user_keyword_arguments.robot    ${lineno}
     ...    Creating keyword '${name}' failed:
     ...    Invalid argument specification: ${error}

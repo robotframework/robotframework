@@ -66,8 +66,9 @@ formatter=repr with multiline and different line endings
 
 formatter=repr/ascii with multiline and non-ASCII characters
     ${tc} =    Check test case    ${TESTNAME}
-    Check Log Message    ${tc[0, 1]}    Å\nÄ\n\Ö\n\n!=\n\nÅ\nÄ\n\Ö
-    Check Log Message    ${tc[1, 1]}    Å\nÄ\n\Ö\n\n!=\n\nÅ\nÄ\n\Ö
+    Check Log Message    ${tc[0, 1]}    Å\nÄ\n\Ö\n\n!=\n\nÅ\nA\u0308\n\Ö
+    Check Log Message    ${tc[1, 1]}    Å\nÄ\n\Ö\n\n!=\n\nÅ\nA\u0308\n\Ö
+    Check Log Message    ${tc[2, 1]}    Å\nÄ\n\Ö\n\n!=\n\nÅ\nA\u0308\n\Ö
 
 Invalid formatter
     Check test case    ${TESTNAME}

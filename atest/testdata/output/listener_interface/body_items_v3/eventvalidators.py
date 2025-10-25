@@ -29,7 +29,7 @@ class EventValidator:
             'ERROR',
             'KEYWORD', 'KEYWORD', 'KEYWORD', 'RETURN',
             'TEARDOWN'
-        ])
+        ])  # fmt: skip
         self.started = []
         self.errors = []
         self.suite = ()
@@ -43,26 +43,29 @@ class EventValidator:
     def validate(self):
         name = type(self).__name__
         if self.errors:
-            raise AssertionError(f'{len(self.errors)} errors in {name} listener:\n'
-                                 + '\n'.join(self.errors))
+            errors = "\n".join(self.errors)
+            raise AssertionError(
+                f"{len(self.errors)} errors in {name} listener:\n{errors}"
+            )
         if not self._started_events_are_consumed():
-            raise AssertionError(f'Listener {name} has not consumed all started events: '
-                                 f'{self.started}')
-        print(f'*INFO* Listener {name} is OK.')
+            raise AssertionError(
+                f"Listener {name} has not consumed all started events: {self.started}"
+            )
+        print(f"*INFO* Listener {name} is OK.")
 
     def _started_events_are_consumed(self):
         if len(self.started) == 1:
             data, result, implementation = self.started[0]
-            if data.type == result.type == 'TEARDOWN':
+            if data.type == result.type == "TEARDOWN":
                 return True
         return False
 
     def validate_start(self, data, result, implementation=None):
         event = next(self.events, None)
         if data.type != result.type:
-            self.error('Mismatching data and result types.')
+            self.error("Mismatching data and result types.")
         if data.type != event:
-            self.error(f'Expected event {event}, got {data.type}.')
+            self.error(f"Expected event {event}, got {data.type}.")
         self.validate_parent(data, self.suite[0])
         self.validate_parent(result, self.suite[1])
         if implementation:
@@ -73,13 +76,16 @@ class EventValidator:
         while model.parent:
             model = model.parent
         if model is not root:
-            self.error(f'Unexpected root: {model}')
+            self.error(f"Unexpected root: {model}")
 
     def validate_end(self, data, result, implementation=None):
         start_data, start_result, start_implementation = self.started.pop()
-        if (data is not start_data or result is not start_result
-                or implementation is not start_implementation):
-            self.error('Mismatching start/end arguments.')
+        if (
+            data is not start_data
+            or result is not start_result
+            or implementation is not start_implementation
+        ):
+            self.error("Mismatching start/end arguments.")
 
 
 class StartEndBobyItemOnly(EventValidator):
@@ -178,46 +184,46 @@ class SeparateMethods(EventValidator):
         self.validate_end(data, result)
 
     def start_body_item(self, data, result):
-        self.error('Should not be called.')
+        self.error("Should not be called.")
 
     def end_body_item(self, data, result):
-        self.error('Should not be called.')
+        self.error("Should not be called.")
 
 
 class SeparateMethodsAlsoForKeywords(SeparateMethods):
 
     def start_user_keyword(self, data, implementation, result):
         if implementation.type != implementation.USER_KEYWORD:
-            self.error('Invalid implementation type.')
+            self.error("Invalid implementation type.")
         self.validate_start(data, result, implementation)
 
     def endUserKeyword(self, data, implementation, result):
         if implementation.type != implementation.USER_KEYWORD:
-            self.error('Invalid implementation type.')
+            self.error("Invalid implementation type.")
         self.validate_end(data, result, implementation)
 
     def start_library_keyword(self, data, implementation, result):
         if implementation.type != implementation.LIBRARY_KEYWORD:
-            self.error('Invalid implementation type.')
+            self.error("Invalid implementation type.")
         self.validate_start(data, result, implementation)
 
     def end_library_keyword(self, data, implementation, result):
         if implementation.type != implementation.LIBRARY_KEYWORD:
-            self.error('Invalid implementation type.')
+            self.error("Invalid implementation type.")
         self.validate_end(data, result, implementation)
 
     def startInvalidKeyword(self, data, implementation, result):
         if not implementation.error:
-            self.error('Invalid implementation type.')
+            self.error("Invalid implementation type.")
         self.validate_start(data, result, implementation)
 
     def end_invalid_keyword(self, data, implementation, result):
         if not implementation.error:
-            self.error('Invalid implementation type.')
+            self.error("Invalid implementation type.")
         self.validate_end(data, result, implementation)
 
     def start_keyword(self, data, result):
-        self.error('Should not be called.')
+        self.error("Should not be called.")
 
     def end_keyword(self, data, result):
-        self.error('Should not be called.')
+        self.error("Should not be called.")

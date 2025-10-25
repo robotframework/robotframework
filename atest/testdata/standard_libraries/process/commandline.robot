@@ -49,7 +49,9 @@ Split command line with unbalanced quotes
 Split command line with escaping
     [Template]    Split command line should succeed
     c:\\temp                          c:temp                       escaping=True
-    c:\\\\temp                        c:\\temp                     escaping=True
+    c:\\temp                          c:\\temp                     escaping=False
+    c:\\\\temp                        c:\\temp                     escaping=yes
+    c:\\\\temp                        c:\\\\temp                   escaping=no
     "c:\\temp"                        c:\\temp                     escaping=True
     'c:\\temp'                        c:\\temp                     escaping=True
     C:\\\\Program\\ Files\\\\Blaah    C:\\Program Files\\Blaah     escaping=True

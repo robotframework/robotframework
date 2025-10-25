@@ -46,7 +46,7 @@ Keyword can be used with and without prefix
     Should Be Equal    ${tc[5].full_name}    Then we are in Berlin city
     Should Be Equal    ${tc[6].full_name}    we are in Berlin city
 
-Only single prefixes are a processed
+Only one prefix is processed
     ${tc} =    Check Test Case    ${TEST NAME}
     Should Be Equal    ${tc[0].full_name}    Given we are in Berlin city
     Should Be Equal    ${tc[1].full_name}    but then we are in Berlin city
@@ -73,13 +73,19 @@ Localized prefixes
 
 Prefix consisting of multiple words
     ${tc} =    Check Test Case    ${TEST NAME}
-    Should Be Equal    ${tc[0].full_name}    Étant donné multipart prefixes didn't work with RF 6.0
+    Should Be Equal    ${tc[0].full_name}    Étant donné que multipart prefixes didn't work with RF 6.0
     Should Be Equal    ${tc[1].full_name}    Zakładając, że multipart prefixes didn't work with RF 6.0
     Should Be Equal    ${tc[2].full_name}    Diyelim ki multipart prefixes didn't work with RF 6.0
     Should Be Equal    ${tc[3].full_name}    Eğer ki multipart prefixes didn't work with RF 6.0
     Should Be Equal    ${tc[4].full_name}    O zaman multipart prefixes didn't work with RF 6.0
     Should Be Equal    ${tc[5].full_name}    В случай че multipart prefixes didn't work with RF 6.0
     Should Be Equal    ${tc[6].full_name}    Fie ca multipart prefixes didn't work with RF 6.0
+
+Prefix being part of another prefix
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Should Be Equal    ${tc[0].full_name}    Étant donné que l'utilisateur se trouve sur la page de connexion
+    Should Be Equal    ${tc[1].full_name}    étant Donné QUE l'utilisateur SE trouve sur la pAGe de connexioN
+    Should Be Equal    ${tc[2].full_name}    Étant donné que if multiple prefixes match, longest prefix wins
 
 Prefix must be followed by space
     Check Test Case    ${TEST NAME}

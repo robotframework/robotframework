@@ -19,16 +19,21 @@ from pathlib import Path
 from robot.errors import DataError
 from robot.utils import get_error_message
 
+from .jsonlogger import JsonLogger
 from .loggerapi import LoggerApi
 from .loglevel import LogLevel
-from .jsonlogger import JsonLogger
 from .xmllogger import LegacyXmlLogger, NullLogger, XmlLogger
 
 
 class OutputFile(LoggerApi):
 
-    def __init__(self, path: 'Path|None', log_level: LogLevel, rpa: bool = False,
-                 legacy_output: bool = False):
+    def __init__(
+        self,
+        path: "Path|None",
+        log_level: LogLevel,
+        rpa: bool = False,
+        legacy_output: bool = False,
+    ):
         # `self.logger` is replaced with `NullLogger` when flattening.
         self.logger = self.real_logger = self._get_logger(path, rpa, legacy_output)
         self.is_logged = log_level.is_logged
@@ -40,11 +45,12 @@ class OutputFile(LoggerApi):
         if not path:
             return NullLogger()
         try:
-            file = open(path, 'w', encoding='UTF-8')
+            file = open(path, "w", encoding="UTF-8")
         except Exception:
-            raise DataError(f"Opening output file '{path}' failed: "
-                            f"{get_error_message()}")
-        if path.suffix.lower() == '.json':
+            raise DataError(
+                f"Opening output file '{path}' failed: {get_error_message()}"
+            )
+        if path.suffix.lower() == ".json":
             return JsonLogger(file, rpa)
         if legacy_output:
             return LegacyXmlLogger(file, rpa)
@@ -53,13 +59,26 @@ class OutputFile(LoggerApi):
     @property
     @contextmanager
     def delayed_logging(self):
-        self._delayed_messages, prev_messages = [], self._delayed_messages
+        self._delayed_messages, previous = [], self._delayed_messages
         try:
             yield
         finally:
-            self._delayed_messages, messages = None, self._delayed_messages
-            for msg in messages or ():
-                self.log_message(msg)
+            self._release_delayed_messages()
+            self._delayed_messages = previous
+
+    @property
+    @contextmanager
+    def delayed_logging_paused(self):
+        self._release_delayed_messages()
+        self._delayed_messages = None
+        try:
+            yield
+        finally:
+            self._delayed_messages = []
+
+    def _release_delayed_messages(self):
+        for msg in self._delayed_messages or ():
+            self.log_message(msg, no_delay=True)
 
     def start_suite(self, data, result):
         self.logger.start_suite(result)
@@ -75,12 +94,12 @@ class OutputFile(LoggerApi):
 
     def start_keyword(self, data, result):
         self.logger.start_keyword(result)
-        if result.tags.robot('flatten'):
+        if result.tags.robot("flatten"):
             self.flatten_level += 1
             self.logger = NullLogger()
 
     def end_keyword(self, data, result):
-        if self.flatten_level and result.tags.robot('flatten'):
+        if self.flatten_level and result.tags.robot("flatten"):
             self.flatten_level -= 1
             if self.flatten_level == 0:
                 self.logger = self.real_logger
@@ -170,18 +189,19 @@ class OutputFile(LoggerApi):
     def end_error(self, data, result):
         self.logger.end_error(result)
 
-    def log_message(self, message):
+    def log_message(self, message, no_delay=False):
         if self.is_logged(message):
-            if self._delayed_messages is None:
+            if self._delayed_messages is None or no_delay:
                 # Use the real logger also when flattening.
                 self.real_logger.message(message)
             else:
-                # Logging is delayed when using timeouts to avoid timeouts
-                # killing output writing that could corrupt the output.
+                # Logging is delayed when using timeouts to avoid writing to output
+                # files being interrupted. There are still problems, though:
+                # https://github.com/robotframework/robotframework/issues/5417
                 self._delayed_messages.append(message)
 
     def message(self, message):
-        if message.level in ('WARN', 'ERROR'):
+        if message.level in ("WARN", "ERROR"):
             self.errors.append(message)
 
     def statistics(self, stats):

@@ -14,8 +14,8 @@
 #  limitations under the License.
 
 from ast import literal_eval
-from enum import auto, Enum
 from dataclasses import dataclass
+from enum import auto, Enum
 from typing import Literal
 
 from .typeinfo import LITERAL_TYPES, TypeInfo
@@ -41,15 +41,15 @@ class Token:
 
 class TypeInfoTokenizer:
     markers = {
-        '[': TokenType.LEFT_SQUARE,
-        ']': TokenType.RIGHT_SQUARE,
-        '|': TokenType.PIPE,
-        ',': TokenType.COMMA,
+        "[": TokenType.LEFT_SQUARE,
+        "]": TokenType.RIGHT_SQUARE,
+        "|": TokenType.PIPE,
+        ",": TokenType.COMMA,
     }
 
     def __init__(self, source: str):
         self.source = source
-        self.tokens: 'list[Token]' = []
+        self.tokens: "list[Token]" = []
         self.start = 0
         self.current = 0
 
@@ -57,7 +57,7 @@ class TypeInfoTokenizer:
     def at_end(self) -> bool:
         return self.current >= len(self.source)
 
-    def tokenize(self) -> 'list[Token]':
+    def tokenize(self) -> "list[Token]":
         while not self.at_end:
             self.start = self.current
             char = self.advance()
@@ -72,7 +72,7 @@ class TypeInfoTokenizer:
         self.current += 1
         return char
 
-    def peek(self) -> 'str|None':
+    def peek(self) -> "str|None":
         try:
             return self.source[self.current]
         except IndexError:
@@ -81,11 +81,11 @@ class TypeInfoTokenizer:
     def name(self):
         end_at = set(self.markers) | {None}
         closing_quote = None
-        char = self.source[self.current-1]
+        char = self.source[self.current - 1]
         if char in ('"', "'"):
             end_at = {None}
             closing_quote = char
-        elif char == 'b' and self.peek() in ('"', "'"):
+        elif char == "b" and self.peek() in ('"', "'"):
             end_at = {None}
             closing_quote = self.advance()
         while True:
@@ -98,7 +98,7 @@ class TypeInfoTokenizer:
         self.add_token(TokenType.NAME)
 
     def add_token(self, type: TokenType):
-        value = self.source[self.start:self.current].strip()
+        value = self.source[self.start : self.current].strip()
         self.tokens.append(Token(type, value, self.start))
 
 
@@ -106,7 +106,7 @@ class TypeInfoParser:
 
     def __init__(self, source: str):
         self.source = source
-        self.tokens: 'list[Token]' = []
+        self.tokens: "list[Token]" = []
         self.current = 0
 
     @property
@@ -122,16 +122,16 @@ class TypeInfoParser:
 
     def type(self) -> TypeInfo:
         if not self.check(TokenType.NAME):
-            self.error('Type name missing.')
+            self.error("Type name missing.")
         info = TypeInfo(self.advance().value)
         if self.match(TokenType.LEFT_SQUARE):
             info.nested = self.params(literal=info.type is Literal)
         if self.match(TokenType.PIPE):
-            nested = [info] + self.union()
-            info = TypeInfo('Union', nested=nested)
+            nested = [info, *self.union()]
+            info = TypeInfo("Union", nested=nested)
         return info
 
-    def params(self, literal: bool = False) -> 'list[TypeInfo]':
+    def params(self, literal: bool = False) -> "list[TypeInfo]":
         params = []
         prev = None
         while True:
@@ -158,7 +158,7 @@ class TypeInfoParser:
             params.append(param)
             prev = token
         if literal and not params:
-            self.error('Literal cannot be empty.')
+            self.error("Literal cannot be empty.")
         return params
 
     def _literal_param(self, param: TypeInfo) -> TypeInfo:
@@ -178,7 +178,7 @@ class TypeInfoParser:
         else:
             return TypeInfo(repr(value), value)
 
-    def union(self) -> 'list[TypeInfo]':
+    def union(self) -> "list[TypeInfo]":
         types = []
         while not types or self.match(TokenType.PIPE):
             info = self.type()
@@ -199,21 +199,22 @@ class TypeInfoParser:
         peeked = self.peek()
         return peeked and peeked.type == expected
 
-    def advance(self) -> 'Token|None':
+    def advance(self) -> "Token|None":
         token = self.peek()
         if token:
             self.current += 1
         return token
 
-    def peek(self) -> 'Token|None':
+    def peek(self) -> "Token|None":
         try:
             return self.tokens[self.current]
         except IndexError:
             return None
 
-    def error(self, message: str, token: 'Token|None' = None):
+    def error(self, message: str, token: "Token|None" = None):
         if not token:
             token = self.peek()
-        position = f'index {token.position}' if token else 'end'
-        raise ValueError(f"Parsing type {self.source!r} failed: "
-                         f"Error at {position}: {message}")
+        position = f"index {token.position}" if token else "end"
+        raise ValueError(
+            f"Parsing type {self.source!r} failed: Error at {position}: {message}"
+        )

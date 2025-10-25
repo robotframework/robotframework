@@ -19,7 +19,7 @@ from robot.errors import DataError
 from robot.utils import normalize_whitespace
 from robot.variables import is_assign
 
-from .context import FileContext, LexingContext, KeywordContext, TestCaseContext
+from .context import FileContext, KeywordContext, LexingContext, TestCaseContext
 from .tokens import StatementTokens, Token
 
 
@@ -61,11 +61,11 @@ class StatementLexer(Lexer, ABC):
     def lex(self):
         raise NotImplementedError
 
-    def _lex_options(self, *names: str, end_index: 'int|None' = None):
+    def _lex_options(self, *names: str, end_index: "int|None" = None):
         seen = set()
         for token in reversed(self.statement[:end_index]):
-            if '=' in token.value:
-                name = token.value.split('=')[0]
+            if "=" in token.value:
+                name = token.value.split("=")[0]
                 if name in names and name not in seen:
                     token.type = Token.OPTION
                     seen.add(name)
@@ -92,7 +92,7 @@ class SectionHeaderLexer(SingleType, ABC):
     ctx: FileContext
 
     def handles(self, statement: StatementTokens) -> bool:
-        return statement[0].value.startswith('*')
+        return statement[0].value.startswith("*")
 
 
 class SettingSectionHeaderLexer(SectionHeaderLexer):
@@ -135,16 +135,17 @@ class ImplicitCommentLexer(CommentLexer):
 
     def input(self, statement: StatementTokens):
         super().input(statement)
-        if statement[0].value.lower().startswith('language:'):
-            value = ' '.join(token.value for token in statement)
-            lang = value.split(':', 1)[1].strip()
+        if statement[0].value.lower().startswith("language:"):
+            value = " ".join(token.value for token in statement)
+            lang = value.split(":", 1)[1].strip()
             try:
                 self.ctx.add_language(lang)
             except DataError:
                 for token in statement:
-                    token.set_error(f"Invalid language configuration: "
-                                    f"Language '{lang}' not found nor importable "
-                                    f"as a language module.")
+                    token.set_error(
+                        f"Invalid language configuration: Language '{lang}' "
+                        f"not found nor importable as a language module."
+                    )
             else:
                 for token in statement:
                     token.type = Token.CONFIG
@@ -170,7 +171,7 @@ class TestCaseSettingLexer(StatementLexer):
 
     def handles(self, statement: StatementTokens) -> bool:
         marker = statement[0].value
-        return bool(marker and marker[0] == '[' and marker[-1] == ']')
+        return bool(marker and marker[0] == "[" and marker[-1] == "]")
 
 
 class KeywordSettingLexer(StatementLexer):
@@ -181,7 +182,7 @@ class KeywordSettingLexer(StatementLexer):
 
     def handles(self, statement: StatementTokens) -> bool:
         marker = statement[0].value
-        return bool(marker and marker[0] == '[' and marker[-1] == ']')
+        return bool(marker and marker[0] == "[" and marker[-1] == "]")
 
 
 class VariableLexer(TypeAndArguments):
@@ -190,12 +191,12 @@ class VariableLexer(TypeAndArguments):
 
     def lex(self):
         super().lex()
-        if self.statement[0].value[:1] == '$':
-            self._lex_options('separator')
+        if self.statement[0].value[:1] == "$":
+            self._lex_options("separator")
 
 
 class KeywordCallLexer(StatementLexer):
-    ctx: 'TestCaseContext|KeywordContext'
+    ctx: "TestCaseContext|KeywordContext"
 
     def lex(self):
         if self.ctx.template_set:
@@ -212,8 +213,9 @@ class KeywordCallLexer(StatementLexer):
         for token in self.statement:
             if keyword_seen:
                 token.type = Token.ARGUMENT
-            elif is_assign(token.value, allow_assign_mark=True, allow_nested=True,
-                           allow_items=True):
+            elif is_assign(
+                token.value, allow_assign_mark=True, allow_nested=True, allow_items=True
+            ):
                 token.type = Token.ASSIGN
             else:
                 token.type = Token.KEYWORD
@@ -221,10 +223,10 @@ class KeywordCallLexer(StatementLexer):
 
 
 class ForHeaderLexer(StatementLexer):
-    separators = ('IN', 'IN RANGE', 'IN ENUMERATE', 'IN ZIP')
+    separators = ("IN", "IN RANGE", "IN ENUMERATE", "IN ZIP")
 
     def handles(self, statement: StatementTokens) -> bool:
-        return statement[0].value == 'FOR'
+        return statement[0].value == "FOR"
 
     def lex(self):
         self.statement[0].type = Token.FOR
@@ -237,17 +239,17 @@ class ForHeaderLexer(StatementLexer):
                 separator = normalize_whitespace(token.value)
             else:
                 token.type = Token.VARIABLE
-        if separator == 'IN ENUMERATE':
-            self._lex_options('start')
-        elif separator == 'IN ZIP':
-            self._lex_options('mode', 'fill')
+        if separator == "IN ENUMERATE":
+            self._lex_options("start")
+        elif separator == "IN ZIP":
+            self._lex_options("mode", "fill")
 
 
 class IfHeaderLexer(TypeAndArguments):
     token_type = Token.IF
 
     def handles(self, statement: StatementTokens) -> bool:
-        return statement[0].value == 'IF' and len(statement) <= 2
+        return statement[0].value == "IF" and len(statement) <= 2
 
 
 class InlineIfHeaderLexer(StatementLexer):
@@ -255,10 +257,11 @@ class InlineIfHeaderLexer(StatementLexer):
 
     def handles(self, statement: StatementTokens) -> bool:
         for token in statement:
-            if token.value == 'IF':
+            if token.value == "IF":
                 return True
-            if not is_assign(token.value, allow_assign_mark=True, allow_nested=True,
-                             allow_items=True):
+            if not is_assign(
+                token.value, allow_assign_mark=True, allow_nested=True, allow_items=True
+            ):
                 return False
         return False
 
@@ -267,7 +270,7 @@ class InlineIfHeaderLexer(StatementLexer):
         for token in self.statement:
             if if_seen:
                 token.type = Token.ARGUMENT
-            elif token.value == 'IF':
+            elif token.value == "IF":
                 token.type = Token.INLINE_IF
                 if_seen = True
             else:
@@ -278,82 +281,82 @@ class ElseIfHeaderLexer(TypeAndArguments):
     token_type = Token.ELSE_IF
 
     def handles(self, statement: StatementTokens) -> bool:
-        return normalize_whitespace(statement[0].value) == 'ELSE IF'
+        return normalize_whitespace(statement[0].value) == "ELSE IF"
 
 
 class ElseHeaderLexer(TypeAndArguments):
     token_type = Token.ELSE
 
     def handles(self, statement: StatementTokens) -> bool:
-        return statement[0].value == 'ELSE'
+        return statement[0].value == "ELSE"
 
 
 class TryHeaderLexer(TypeAndArguments):
     token_type = Token.TRY
 
     def handles(self, statement: StatementTokens) -> bool:
-        return statement[0].value == 'TRY'
+        return statement[0].value == "TRY"
 
 
 class ExceptHeaderLexer(StatementLexer):
     token_type = Token.EXCEPT
 
     def handles(self, statement: StatementTokens) -> bool:
-        return statement[0].value == 'EXCEPT'
+        return statement[0].value == "EXCEPT"
 
     def lex(self):
         self.statement[0].type = Token.EXCEPT
-        as_index: 'int|None' = None
+        as_index: "int|None" = None
         for index, token in enumerate(self.statement[1:], start=1):
-            if token.value == 'AS':
+            if token.value == "AS":
                 token.type = Token.AS
                 as_index = index
             elif as_index:
                 token.type = Token.VARIABLE
             else:
                 token.type = Token.ARGUMENT
-        self._lex_options('type', end_index=as_index)
+        self._lex_options("type", end_index=as_index)
 
 
 class FinallyHeaderLexer(TypeAndArguments):
     token_type = Token.FINALLY
 
     def handles(self, statement: StatementTokens) -> bool:
-        return statement[0].value == 'FINALLY'
+        return statement[0].value == "FINALLY"
 
 
 class WhileHeaderLexer(StatementLexer):
     token_type = Token.WHILE
 
     def handles(self, statement: StatementTokens) -> bool:
-        return statement[0].value == 'WHILE'
+        return statement[0].value == "WHILE"
 
     def lex(self):
         self.statement[0].type = Token.WHILE
         for token in self.statement[1:]:
             token.type = Token.ARGUMENT
-        self._lex_options('limit', 'on_limit', 'on_limit_message')
+        self._lex_options("limit", "on_limit", "on_limit_message")
 
 
 class GroupHeaderLexer(TypeAndArguments):
     token_type = Token.GROUP
 
     def handles(self, statement: StatementTokens) -> bool:
-        return statement[0].value == 'GROUP'
+        return statement[0].value == "GROUP"
 
 
 class EndLexer(TypeAndArguments):
     token_type = Token.END
 
     def handles(self, statement: StatementTokens) -> bool:
-        return statement[0].value == 'END'
+        return statement[0].value == "END"
 
 
 class VarLexer(StatementLexer):
     token_type = Token.VAR
 
     def handles(self, statement: StatementTokens) -> bool:
-        return statement[0].value == 'VAR'
+        return statement[0].value == "VAR"
 
     def lex(self):
         self.statement[0].type = Token.VAR
@@ -362,7 +365,7 @@ class VarLexer(StatementLexer):
             name.type = Token.VARIABLE
             for value in values:
                 value.type = Token.ARGUMENT
-            options = ['scope', 'separator'] if name.value[:1] == '$' else ['scope']
+            options = ["scope", "separator"] if name.value[:1] == "$" else ["scope"]
             self._lex_options(*options)
 
 
@@ -370,32 +373,40 @@ class ReturnLexer(TypeAndArguments):
     token_type = Token.RETURN_STATEMENT
 
     def handles(self, statement: StatementTokens) -> bool:
-        return statement[0].value == 'RETURN'
+        return statement[0].value == "RETURN"
 
 
 class ContinueLexer(TypeAndArguments):
     token_type = Token.CONTINUE
 
     def handles(self, statement: StatementTokens) -> bool:
-        return statement[0].value == 'CONTINUE'
+        return statement[0].value == "CONTINUE"
 
 
 class BreakLexer(TypeAndArguments):
     token_type = Token.BREAK
 
     def handles(self, statement: StatementTokens) -> bool:
-        return statement[0].value == 'BREAK'
+        return statement[0].value == "BREAK"
 
 
 class SyntaxErrorLexer(TypeAndArguments):
     token_type = Token.ERROR
 
     def handles(self, statement: StatementTokens) -> bool:
-        return statement[0].value in {'ELSE', 'ELSE IF', 'EXCEPT', 'FINALLY',
-                                      'BREAK', 'CONTINUE', 'RETURN', 'END'}
+        return statement[0].value in {
+            "ELSE",
+            "ELSE IF",
+            "EXCEPT",
+            "FINALLY",
+            "BREAK",
+            "CONTINUE",
+            "RETURN",
+            "END",
+        }
 
     def lex(self):
         token = self.statement[0]
-        token.set_error(f'{token.value} is not allowed in this context.')
+        token.set_error(f"{token.value} is not allowed in this context.")
         for t in self.statement[1:]:
             t.type = Token.ARGUMENT

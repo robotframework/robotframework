@@ -26,4 +26,4 @@ It is highly recommended to use the public API via the :mod:`robot.api` package.
 This package is considered stable.
 """
 
-from .resultwriter import ResultWriter
+from .resultwriter import ResultWriter as ResultWriter

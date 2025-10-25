@@ -243,7 +243,7 @@ that the framework will instantiate. Also in this case it is possible to create
 variables as attributes or get them dynamically from the `get_variables`
 method. Variable files can also be created as YAML__ and JSON__.
 
-__ `Setting variables in command line`_
+__ `Command line variables`_
 __ `Implementing variable file as a class`_
 __ `Variable file as YAML`_
 __ `Variable file as JSON`_
@@ -343,7 +343,7 @@ set with the :option:`--variable` option. If both :option:`--variablefile` and
 names, those that are set individually with
 :option:`--variable` option take precedence.
 
-__ `Setting variables in command line`_
+__ `Command line variables`_
 
 Getting variables directly from a module
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -389,8 +389,8 @@ respectively:
 These prefixes will not be part of the final variable name, but they cause
 Robot Framework to validate that the value actually is list-like or
 dictionary-like. With dictionaries the actual stored value is also turned
-into a special dictionary that is used also when `creating dictionary
-variables`_ in the Variable section. Values of these dictionaries are accessible
+into a special dictionary that is used also when `creating dictionaries`_
+in the Variable section. Values of these dictionaries are accessible
 as attributes like `${FINNISH.cat}`. These dictionaries are also ordered, but
 preserving the source order requires also the original dictionary to be
 ordered.
@@ -682,7 +682,7 @@ types supported by YAML syntax. If names or values contain non-ASCII
 characters, YAML variables files must be UTF-8 encoded.
 
 Mappings used as values are automatically converted to special dictionaries
-that are used also when `creating dictionary variables`_ in the Variable section.
+that are used also when `creating dictionaries`_ in the Variable section.
 Most importantly, values of these dictionaries are accessible as attributes
 like `${DICT.one}`, assuming their names are valid as Python attribute names.
 If the name contains spaces or is otherwise not a valid attribute name, it is

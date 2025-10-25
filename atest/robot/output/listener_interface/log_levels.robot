@@ -16,10 +16,12 @@ Log messages are collected on INFO level by default
     ...    INFO: \${assign} = JUST TESTING...
     ...    INFO: \${expected} = JUST TESTING...
     ...    INFO: Hello, resource!
+    ...    INFO: Teardown!
     ...    INFO: Hello says "Fail"!
     ...    INFO: \${assign} = JUST TESTING...
     ...    INFO: \${expected} = JUST TESTING...
     ...    FAIL: Expected failure
+    ...    INFO: Teardown!
 
 Log messages are collected on specified level
     Run Tests    -L DEBUG --listener listeners.Messages;${MESSAGE FILE}    misc/pass_and_fail.robot
@@ -42,6 +44,7 @@ Log messages are collected on specified level
     ...    DEBUG: Argument types are:
     ...    <class 'str'>
     ...    <class 'str'>
+    ...    INFO: Teardown!
     ...    INFO: Hello says "Fail"!
     ...    DEBUG: Debug message
     ...    INFO: \${assign} = JUST TESTING...
@@ -53,6 +56,7 @@ Log messages are collected on specified level
     ...    DEBUG: Traceback (most recent call last):
     ...    ${SPACE*2}None
     ...    AssertionError: Expected failure
+    ...    INFO: Teardown!
 
 *** Keywords ***
 Logged messages should be

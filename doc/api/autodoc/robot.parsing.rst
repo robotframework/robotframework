@@ -3,8 +3,8 @@ robot.parsing package
 
 .. automodule:: robot.parsing
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 Subpackages
 -----------
@@ -24,5 +24,5 @@ robot.parsing.suitestructure module
 
 .. automodule:: robot.parsing.suitestructure
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

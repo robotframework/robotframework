@@ -39,7 +39,7 @@ Init arguments
 
 Init Source Info
     Keyword Should Not Have Source   0     xpath=inits/init
-    Keyword Lineno Should Be         0     9      xpath=inits/init
+    Keyword Lineno Should Be         0     10    xpath=inits/init
 
 Keyword names
     Keyword Name Should Be           0     0
@@ -101,7 +101,7 @@ No keyword source info
 Keyword source info
     Keyword Name Should Be           14    Source Info
     Keyword Should Not Have Source   14
-    Keyword Lineno Should Be         14    83
+    Keyword Lineno Should Be         14    90
 
 Keyword source info with different path than library
     Keyword Name Should Be           16    Source Path Only
