@@ -17,7 +17,7 @@ Run Process with Mixed Arguments Including Secret
 
 Run Process with Stdin as Secret
     ${result} =    Run Process    python    -c    import sys; print(sys.stdin.read())    stdin=${SECRET}    cwd=%{TEMPDIR}
-    Should Be Equal    ${result.stdout}    This is secret!
+    Script result should equal    ${result}    stdout=This is secret!    stderr=
 
 Start Process with Secret Argument
     ${handle} =    Start Process    python    ${SCRIPT}    ${SECRET}
@@ -27,17 +27,17 @@ Start Process with Secret Argument
 Start Process with Stdin as Secret
     ${handle} =    Start Process    python    -c    import sys; print(sys.stdin.read())    stdin=${SECRET}    cwd=%{TEMPDIR}
     ${result} =    Wait For Process    ${handle}
-    Result should equal    ${result}    stdout=This is secret!
+    Script result should equal    ${result}    stdout=This is secret!    stderr=
 
 Secret in environment variable via env Dict
     ${env} =    Create environ    v1=${SECRET}
     ${result} =    Run Process    @{COMMAND}    env=${env}
-    Result should equal    ${result}    stdout=This is secret! - -
+    Script result should equal    ${result}    stdout=This is secret! - -    stderr=
 
 Secret in environment variable via env:name Syntax
     ${result} =    Run Process    @{COMMAND}    env:v2=${SECRET}
-    Result should equal    ${result}    stdout=system This is secret! -
+    Script result should equal    ${result}    stdout=system This is secret! -    stderr=
 
 Multiple Secrets in environment variables
     ${result} =    Run Process    @{COMMAND}    env:v1=${SECRET}    env:v2=XX    env:v3=${SECRET}
-    Result should equal    ${result}    stdout=This is secret! XX This is secret!
+    Script result should equal    ${result}    stdout=This is secret! XX This is secret!    stderr=
