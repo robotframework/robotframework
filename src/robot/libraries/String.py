@@ -820,7 +820,7 @@ class String:
 
     def _convert_to_index(self, value, name):
         if value == "":
-            return 0
+            return None
         if value is None:
             return None
         return self._convert_to_integer(value, name)
