@@ -11,6 +11,7 @@ class MessageMock:
     def __init__(self, message, level="INFO"):
         self.message = message
         self.level = level
+        self.console = level.upper() in ("WARN", "ERROR")
 
 
 class LoggerMock(LoggerApi):

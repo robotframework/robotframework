@@ -99,6 +99,7 @@ class MessageStub:
     def __init__(self, message="Message", level="WARN"):
         self.message = message
         self.level = level
+        self.console = level.upper() in ("WARN", "ERROR")
 
 
 class StreamStub:

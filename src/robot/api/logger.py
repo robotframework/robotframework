@@ -78,7 +78,7 @@ def write(
     msg: str,
     level: LOGLEVEL = "INFO",
     html: bool = False,
-    also_console: bool = False,
+    also_console: "bool|None" = None,
 ):
     """Writes the message to the log file using the given level.
 
@@ -96,6 +96,9 @@ def write(
     The ``also_console`` parameter controls writing the message to the console
     in addition to the log file. This parameter is new in Robot Framework 7.4.
     """
+    if also_console is None:
+        also_console = level in ("WARN", "ERROR")
+
     if EXECUTION_CONTEXTS.current is not None:
         librarylogger.write(msg, level, html, also_console)
     else:
