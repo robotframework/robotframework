@@ -44,7 +44,6 @@ Log process config
     ...    stdin:${SPACE*3}None
     ...    alias:${SPACE*3}äliäs
     ...    env:${SPACE*5}None
-    ...    log_level:${SPACE*2}None
     Check Log Message    ${tc[0, 1]}    Process configuration:\n${config}    level=DEBUG
     ${cwd} =    Normalize Path    ${DATADIR}/standard_libraries/process
     ${config} =    Catenate    SEPARATOR=\n
@@ -55,7 +54,6 @@ Log process config
     ...    stdin:${SPACE*3}PIPE
     ...    alias:${SPACE*3}None
     ...    env:${SPACE*5}None
-    ...    log_level:${SPACE*2}None
     Check Log Message    ${tc[1, 1]}    Process configuration:\n${config}    level=DEBUG
 
 *** Keywords ***

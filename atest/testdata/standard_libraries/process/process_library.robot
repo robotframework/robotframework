@@ -28,9 +28,9 @@ Run process in shell
     Run Keyword And Expect Error    *    Run Process    python -c "print('hello')"    shell=false
 
 Running a process in a shell with log level
-    ${result}=    Run Process    python -c "print('hello')"    shell=True    log_level='info'
+    ${result}=    Run Process    python -c "print('hello')"    shell=True    env:env_extra={'log_level'='info'}
     Result should equal    ${result}    stdout=hello
-    ${result}=    Run Process    python -c "print('hello')"    shell=joojoo    log_level='DEBUG'
+    ${result}=    Run Process    python -c "print('hello')"    shell=joojoo    env:env_extra={'log_level'='DEBUG'}
     Result should equal    ${result}    stdout=hello
     Run Keyword And Expect Error    *    Run Process    python -c "print('hello')"    shell=${False}
     Run Keyword And Expect Error    *    Run Process    python -c "print('hello')"    shell=${0}
