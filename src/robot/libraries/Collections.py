@@ -17,7 +17,10 @@ import copy
 from ast import literal_eval
 from collections.abc import Hashable
 from itertools import chain
-from typing import Any, Generator, Iterable, Literal, Mapping, NoReturn, Protocol, Sequence, TypeVar, Union, overload
+from typing import (
+    Any, Generator, Iterable, Literal, Mapping, NoReturn, overload, Protocol, Sequence,
+    TypeVar, Union
+)
 
 from robot.api import logger
 from robot.utils import (
@@ -46,7 +49,9 @@ SV = TypeVar("SV", bound=SortableValue)  # Generic to refer to a sortable value
 KV = TypeVar("KV", Hashable, object)  # Generic to refer to either K or V
 D = TypeVar("D", bound=object)  # Generic for default return values
 LL = Literal["TRACE", "DEBUG", "INFO", "WARN"]
-IC = Union[bool, Literal["key", "KEY", "keys", "KEYS", "value", "VALUE", "values", "VALUES"]]
+IC = Union[
+    bool, Literal["key", "KEY", "keys", "KEYS", "value", "VALUE", "values", "VALUES"]
+]
 
 
 class _List:
@@ -217,7 +222,12 @@ class _List:
         except IndexError:
             self._index_error(list_, index)
 
-    def get_slice_from_list(self, list_: "list[LI]", start: int = 0, end: "int | None" = None) -> "list[LI]":
+    def get_slice_from_list(
+        self,
+        list_: "list[LI]",
+        start: int = 0,
+        end: "int | None" = None,
+    ) -> "list[LI]":
         """Returns a slice of the given list between ``start`` and ``end`` indexes.
 
         The given list is never altered by this keyword.
@@ -247,7 +257,13 @@ class _List:
             end = self._index_to_int(end)
         return list_[start:end]
 
-    def count_values_in_list(self, list_: "list[object]", value: object, start: int = 0, end: "int | None" = None) -> int:
+    def count_values_in_list(
+        self,
+        list_: "list[object]",
+        value: object,
+        start: int = 0,
+        end: "int | None" = None,
+    ) -> int:
         """Returns the number of occurrences of the given ``value`` in ``list``.
 
         The search can be narrowed to the selected sublist by the ``start`` and
@@ -263,7 +279,13 @@ class _List:
         self._validate_list(list_)
         return self.get_slice_from_list(list_, start, end).count(value)
 
-    def get_index_from_list(self, list_: "list[object]", value: object, start: int = 0, end: "int | None" = None) -> int:
+    def get_index_from_list(
+        self,
+        list_: "list[object]",
+        value: object,
+        start: int = 0,
+        end: "int | None" = None,
+    ) -> int:
         """Returns the index of the first occurrence of the ``value`` on the list.
 
         The search can be narrowed to the selected sublist by the ``start`` and
@@ -325,7 +347,13 @@ class _List:
         self._validate_list(list_)
         list_.sort()  # type: ignore
 
-    def list_should_contain_value(self, list_: "list[object]", value: object, msg: "str | None" = None, ignore_case: IC = False):
+    def list_should_contain_value(
+        self,
+        list_: "list[object]",
+        value: object,
+        msg: "str | None" = None,
+        ignore_case: IC = False,
+    ):
         """Fails if the ``value`` is not found from ``list``.
 
         Use the ``msg`` argument to override the default error message.
@@ -342,7 +370,13 @@ class _List:
             msg,
         )
 
-    def list_should_not_contain_value(self, list_: "list[object]", value: object, msg: "str | None" = None, ignore_case: IC = False):
+    def list_should_not_contain_value(
+        self,
+        list_: "list[object]",
+        value: object,
+        msg: "str | None" = None,
+        ignore_case: IC = False,
+    ):
         """Fails if the ``value`` is found from ``list``.
 
         Use the ``msg`` argument to override the default error message.
@@ -359,7 +393,12 @@ class _List:
             msg,
         )
 
-    def list_should_not_contain_duplicates(self, list_: "list[object] | Sequence[object]", msg: "str | None" = None, ignore_case: IC = False):
+    def list_should_not_contain_duplicates(
+        self,
+        list_: "list[object] | Sequence[object]",
+        msg: "str | None" = None,
+        ignore_case: IC = False,
+    ):
         """Fails if any element in the ``list`` is found from it more than once.
 
         The default error message lists all the elements that were found
@@ -465,14 +504,23 @@ class _List:
             values,
         )
 
-    def _get_list_index_name_mapping(self, names: "Iterable[str] | Mapping[int, str] | None", list_length: int) -> "dict[int, str]":
+    def _get_list_index_name_mapping(
+        self,
+        names: "Iterable[str] | Mapping[int, str] | None",
+        list_length: int,
+    ) -> "dict[int, str]":
         if not names:
             return {}
         if is_dict_like(names):
             return {int(index): names[index] for index in names}  # type: ignore
         return dict(zip(range(list_length), names))  # type: ignore
 
-    def _yield_list_diffs(self, list1: Sequence[object], list2: Sequence[object], names: "dict[int, str]") -> Generator[str, None, None]:
+    def _yield_list_diffs(
+        self,
+        list1: Sequence[object],
+        list2: Sequence[object],
+        names: "dict[int, str]",
+    ) -> Generator[str, None, None]:
         for index, (item1, item2) in enumerate(zip(list1, list2)):
             name = f" ({names[index]})" if index in names else ""
             try:
@@ -570,7 +618,12 @@ class _Dictionary:
         """
         return dict(item)
 
-    def set_to_dictionary(self, dictionary: "dict[Hashable, object]", *key_value_pairs: object, **items: object) -> "dict[Hashable, object]":
+    def set_to_dictionary(
+        self,
+        dictionary: "dict[Hashable, object]",
+        *key_value_pairs: object,
+        **items: object,
+    ) -> "dict[Hashable, object]":
         """Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.
 
         If given items already exist in the dictionary, their values are updated.
@@ -602,7 +655,11 @@ class _Dictionary:
         dictionary.update(items)
         return dictionary
 
-    def remove_from_dictionary(self, dictionary: "dict[Hashable, object]", *keys: Hashable):
+    def remove_from_dictionary(
+        self,
+        dictionary: "dict[Hashable, object]",
+        *keys: Hashable,
+    ):
         """Removes the given ``keys`` from the ``dictionary``.
 
         If the given ``key`` cannot be found from the ``dictionary``, it
@@ -621,7 +678,12 @@ class _Dictionary:
             else:
                 logger.info(f"Key '{key}' not found.")
 
-    def pop_from_dictionary(self, dictionary: "dict[Hashable, V]", key: Hashable, default: D = NOT_SET) -> "V | D":
+    def pop_from_dictionary(
+        self,
+        dictionary: "dict[Hashable, V]",
+        key: Hashable,
+        default: D = NOT_SET,
+    ) -> "V | D":
         """Pops the given ``key`` from the ``dictionary`` and returns its value.
 
         By default the keyword fails if the given ``key`` cannot be found from
@@ -655,7 +717,11 @@ class _Dictionary:
         remove_keys = [k for k in dictionary if k not in keys]
         self.remove_from_dictionary(dictionary, *remove_keys)
 
-    def copy_dictionary(self, dictionary: "dict[K, V]", deepcopy: bool = False) -> "dict[K, V]":
+    def copy_dictionary(
+        self,
+        dictionary: "dict[K, V]",
+        deepcopy: bool = False,
+    ) -> "dict[K, V]":
         """Returns a copy of the given dictionary.
 
         By default, returns a new dictionary with same items as in the original.
@@ -669,7 +735,11 @@ class _Dictionary:
             return copy.deepcopy(dictionary)
         return dictionary.copy()
 
-    def get_dictionary_keys(self, dictionary: "dict[SK, object] | Mapping[SK, object]", sort_keys: bool = True) -> "list[SK]":
+    def get_dictionary_keys(
+        self,
+        dictionary: "dict[SK, object] | Mapping[SK, object]",
+        sort_keys: bool = True,
+    ) -> "list[SK]":
         """Returns keys of the given ``dictionary`` as a list.
 
         By default, keys are returned in sorted order (assuming they are
@@ -690,7 +760,11 @@ class _Dictionary:
                 pass
         return list(dictionary)
 
-    def get_dictionary_values(self, dictionary: "dict[SK, V]", sort_keys: bool = True) -> "list[V]":
+    def get_dictionary_values(
+        self,
+        dictionary: "dict[SK, V]",
+        sort_keys: bool = True,
+    ) -> "list[V]":
         """Returns values of the given ``dictionary`` as a list.
 
         Uses `Get Dictionary Keys` to get keys and then returns corresponding
@@ -707,7 +781,11 @@ class _Dictionary:
         keys = self.get_dictionary_keys(dictionary, sort_keys=sort_keys)
         return [dictionary[k] for k in keys]
 
-    def get_dictionary_items(self, dictionary: "dict[SK, V]", sort_keys: bool = True) -> "list[SK | V]":
+    def get_dictionary_items(
+        self,
+        dictionary: "dict[SK, V]",
+        sort_keys: bool = True,
+    ) -> "list[SK | V]":
         """Returns items of the given ``dictionary`` as a list.
 
         Uses `Get Dictionary Keys` to get keys and then returns corresponding
@@ -728,7 +806,12 @@ class _Dictionary:
         keys = self.get_dictionary_keys(dictionary, sort_keys=sort_keys)
         return [i for key in keys for i in (key, dictionary[key])]
 
-    def get_from_dictionary(self, dictionary: "dict[Hashable, V]", key: Hashable, default: D = NOT_SET) -> "V | D":
+    def get_from_dictionary(
+        self,
+        dictionary: "dict[Hashable, V]",
+        key: Hashable,
+        default: D = NOT_SET,
+    ) -> "V | D":
         """Returns a value from the given ``dictionary`` based on the given ``key``.
 
         If the given ``key`` cannot be found from the ``dictionary``, this
@@ -920,7 +1003,14 @@ class _Dictionary:
         self._should_have_same_keys(dict1, dict2, msg, values)
         self._should_have_same_values(dict1, dict2, msg, values)
 
-    def _should_have_same_keys(self, dict1: Mapping[Hashable, object], dict2: Mapping[Hashable, object], message: "str | None", values: "str | bool", validate_both: bool = True):
+    def _should_have_same_keys(
+        self,
+        dict1: Mapping[Hashable, object],
+        dict2: Mapping[Hashable, object],
+        message: "str | None",
+        values: "str | bool",
+        validate_both: bool = True,
+    ):
         missing = seq2str([k for k in dict2 if k not in dict1])
         error = ""
         if missing:
@@ -932,7 +1022,13 @@ class _Dictionary:
         if error:
             _report_error(error.strip(), message, values)
 
-    def _should_have_same_values(self, dict1: Mapping[Hashable, object], dict2: Mapping[Hashable, object], message: "str | None", values: "str | bool"):
+    def _should_have_same_values(
+        self,
+        dict1: Mapping[Hashable, object],
+        dict2: Mapping[Hashable, object],
+        message: "str | None",
+        values: "str | bool",
+    ):
         errors = []
         for key in dict2:
             try:
@@ -976,7 +1072,11 @@ class _Dictionary:
         self._should_have_same_keys(dict1, dict2, msg, values, validate_both=False)
         self._should_have_same_values(dict1, dict2, msg, values)
 
-    def log_dictionary(self, dictionary: "dict[SortableKey, object]", level: LL = "INFO"):
+    def log_dictionary(
+        self,
+        dictionary: "dict[SortableKey, object]",
+        level: LL = "INFO",
+    ):
         """Logs the size and contents of the ``dictionary`` using given ``level``.
 
         Valid levels are TRACE, DEBUG, INFO (default), and WARN.
@@ -987,7 +1087,10 @@ class _Dictionary:
         self._validate_dictionary(dictionary)
         logger.write("\n".join(self._log_dictionary(dictionary)), level)
 
-    def _log_dictionary(self, dictionary: "dict[SortableKey, object]") -> Generator[str, None, None]:
+    def _log_dictionary(
+        self,
+        dictionary: "dict[SortableKey, object]",
+    ) -> Generator[str, None, None]:
         if not dictionary:
             yield "Dictionary is empty."
         elif len(dictionary) == 1:
@@ -1283,12 +1386,21 @@ class Collections(_List, _Dictionary):
         ]
 
 
-def _verify_condition(condition: object, default_message: str, message: "str | None", values: "str | bool" = False):
+def _verify_condition(
+    condition: object,
+    default_message: str,
+    message: "str | None",
+    values: "str | bool" = False,
+):
     if not condition:
         _report_error(default_message, message, values)
 
 
-def _report_error(default_message: str, message: "str | None", values: "str | bool" = False) -> NoReturn:
+def _report_error(
+    default_message: str,
+    message: "str | None",
+    values: "str | bool" = False,
+) -> NoReturn:
     if not message:
         message = default_message
     elif values and not (isinstance(values, str) and values.upper() == "NO VALUES"):
@@ -1298,7 +1410,12 @@ def _report_error(default_message: str, message: "str | None", values: "str | bo
 
 class Normalizer:
 
-    def __init__(self, ignore_case: IC = False, ignore_order: bool = False, ignore_keys: "Iterable[Hashable] | str | None" = None):
+    def __init__(
+        self,
+        ignore_case: IC = False,
+        ignore_order: bool = False,
+        ignore_keys: "Iterable[Hashable] | str | None" = None,
+    ):
         if isinstance(ignore_case, str):
             self.ignore_key_case = ignore_case.upper() not in ("VALUE", "VALUES")
             self.ignore_value_case = ignore_case.upper() not in ("KEY", "KEYS")
@@ -1308,7 +1425,10 @@ class Normalizer:
         self.ignore_order = ignore_order
         self.ignore_keys = self._parse_ignored_keys(ignore_keys)
 
-    def _parse_ignored_keys(self, ignore_keys: "Iterable[Hashable] | str | None") -> "set[Hashable]":
+    def _parse_ignored_keys(
+        self,
+        ignore_keys: "Iterable[Hashable] | str | None",
+    ) -> "set[Hashable]":
         if not ignore_keys:
             return set()
         try:
