@@ -38,7 +38,7 @@ class SortableValue(Protocol):
     def __lt__(self, other: "SortableValue") -> bool: ...
 
 
-I = TypeVar("I", bound=object)  # Generic to refer to list items
+LI = TypeVar("LI", bound=object)  # Generic to refer to list items
 K = TypeVar("K", bound=Hashable)  # Generic to refer to a key
 SK = TypeVar("SK", bound=SortableKey)  # Generic to refer a sortable key
 V = TypeVar("V", bound=object)  # Generic to refer to a value
@@ -51,7 +51,7 @@ IC = Union[bool, Literal["key", "KEY", "keys", "KEYS", "value", "VALUE", "values
 
 class _List:
 
-    def convert_to_list(self, item: Iterable[I]) -> "list[I]":
+    def convert_to_list(self, item: Iterable[LI]) -> "list[LI]":
         """Converts the given ``item`` to a Python ``list`` type.
 
         Mainly useful for converting tuples and other iterable to lists.
@@ -154,7 +154,7 @@ class _List:
             while value in list_:
                 list_.remove(value)
 
-    def remove_from_list(self, list_: "list[I]", index: int) -> I:
+    def remove_from_list(self, list_: "list[LI]", index: int) -> LI:
         """Removes and returns the value specified with an ``index`` from ``list``.
 
         Index ``0`` means the first position, ``1`` the second and so on.
@@ -175,7 +175,7 @@ class _List:
         except IndexError:
             self._index_error(list_, index)
 
-    def remove_duplicates(self, list_: "list[I]") -> "list[I]":
+    def remove_duplicates(self, list_: "list[LI]") -> "list[LI]":
         """Returns a list without duplicates based on the given ``list``.
 
         Creates and returns a new list that contains all items in the given
@@ -192,7 +192,7 @@ class _List:
         logger.info(f"{removed} duplicate{s(removed)} removed.")
         return ret
 
-    def get_from_list(self, list_: "list[I]", index: int) -> I:
+    def get_from_list(self, list_: "list[LI]", index: int) -> LI:
         """Returns the value specified with an ``index`` from ``list``.
 
         The given list is never altered by this keyword.
@@ -217,7 +217,7 @@ class _List:
         except IndexError:
             self._index_error(list_, index)
 
-    def get_slice_from_list(self, list_: "list[I]", start: int = 0, end: "int | None" = None) -> "list[I]":
+    def get_slice_from_list(self, list_: "list[LI]", start: int = 0, end: "int | None" = None) -> "list[LI]":
         """Returns a slice of the given list between ``start`` and ``end`` indexes.
 
         The given list is never altered by this keyword.
@@ -285,7 +285,7 @@ class _List:
         except ValueError:
             return -1
 
-    def copy_list(self, list_: "list[I]", deepcopy: bool = False) -> "list[I]":
+    def copy_list(self, list_: "list[LI]", deepcopy: bool = False) -> "list[LI]":
         """Returns a copy of the given list.
 
         By default, returns a new list with same items as in the original.
