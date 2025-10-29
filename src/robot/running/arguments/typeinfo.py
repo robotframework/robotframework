@@ -51,6 +51,7 @@ TYPE_NAMES = {
     "...": Ellipsis,
     "ellipsis": Ellipsis,
     "any": Any,
+    "object": object,
     "str": str,
     "string": str,
     "unicode": str,

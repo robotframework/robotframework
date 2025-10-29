@@ -1395,6 +1395,10 @@ Other types cause conversion failures.
    |              |               |            |              |                                                                |                                      |
    |              |               |            |              | New in Robot Framework 6.1.                                    |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
+   | object_      |               |            | Any          | Any value is accepted. No conversion is done.                  |                                      |
+   |              |               |            |              |                                                                |                                      |
+   |              |               |            |              | New in Robot Framework 7.4.                                    |                                      |
+   +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | list_        | Sequence_     | sequence   | str_,        | Strings must be Python list literals. They are converted       | | `['one', 'two']`                   |
    |              |               |            | Sequence_    | to actual lists using the `ast.literal_eval`_ function.        | | `[('one', 1), ('two', 2)]`         |
    |              |               |            |              | They can contain any values `ast.literal_eval` supports,       |                                      |
@@ -1445,6 +1449,7 @@ Other types cause conversion failures.
           explicit type or as a default value.
 
 .. _Any: https://docs.python.org/library/typing.html#typing.Any
+.. _object: https://docs.python.org/3/library/functions.html#object
 .. _bool: https://docs.python.org/library/functions.html#bool
 .. _int: https://docs.python.org/library/functions.html#int
 .. _Integral: https://docs.python.org/library/numbers.html#numbers.Integral

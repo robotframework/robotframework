@@ -138,7 +138,7 @@ class DataTypesLibrary:
         list_of_str: List[str],
         dict_str_int: Dict[str, int],
         whatever: Any,
-        *args: List[Any],
+        *args: List[object],
     ):
         pass
 

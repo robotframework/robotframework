@@ -255,7 +255,7 @@ class AnyConverter(TypeConverter):
 
     @classmethod
     def handles(cls, type_info: "TypeInfo"):
-        return type_info.type is Any
+        return type_info.type is cls.type
 
     def no_conversion_needed(self, value):
         return True
@@ -265,6 +265,13 @@ class AnyConverter(TypeConverter):
 
     def _handles_value(self, value):
         return True
+
+
+@TypeConverter.register
+class ObjectConverter(AnyConverter):
+    type = object
+    type_name = "object"
+    value_types = (Any,)
 
 
 @TypeConverter.register

@@ -222,6 +222,13 @@ Any
     Any                       None                        'None'
     Any                       ${None}                     None
 
+object
+    object                    hello                       'hello'
+    object                    42                          '42'
+    object                    ${42}                       42
+    object                    None                        'None'
+    object                    ${None}                     None
+
 None as default
     None as default
     None as default           [1, 2, 3, 4]                [1, 2, 3, 4]

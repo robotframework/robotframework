@@ -24,7 +24,7 @@ Keyword Arguments
     ${MODEL}[keywords][1][args]     arg: CustomType    arg2: CustomType2    arg3: CustomType    arg4: Unknown
     ${MODEL}[keywords][2][args]     funny: bool | int | float | str | AssertionOperator | Small | GeoLocation | None = equal
     ${MODEL}[keywords][3][args]     location: GeoLocation
-    ${MODEL}[keywords][4][args]     list_of_str: List[str]    dict_str_int: Dict[str, int]    whatever: Any    *args: List[Any]
+    ${MODEL}[keywords][4][args]     list_of_str: List[str]    dict_str_int: Dict[str, int]    whatever: Any    *args: List[object]
     ${MODEL}[keywords][5][args]     arg: Literal[1, 'xxx', b'yyy', True, None, one]
 
 TypedDict
@@ -113,8 +113,8 @@ Accepted types
     ${MODEL}[typedocs][7][accepts]    ['string', 'Mapping']
     ${MODEL}[typedocs][1][type]       Enum
     ${MODEL}[typedocs][1][accepts]    ['string']
-    ${MODEL}[typedocs][12][type]      Enum
-    ${MODEL}[typedocs][12][accepts]   ['string', 'integer']
+    ${MODEL}[typedocs][13][type]      Enum
+    ${MODEL}[typedocs][13][accepts]   ['string', 'integer']
 
 Usages
     ${MODEL}[typedocs][2][type]       Standard
@@ -125,8 +125,8 @@ Usages
     ${MODEL}[typedocs][3][usages]     ['Custom']
     ${MODEL}[typedocs][7][type]       TypedDict
     ${MODEL}[typedocs][7][usages]     ['Funny Unions', 'Set Location']
-    ${MODEL}[typedocs][12][type]      Enum
-    ${MODEL}[typedocs][12][usages]    ['__init__', 'Funny Unions']
+    ${MODEL}[typedocs][13][type]      Enum
+    ${MODEL}[typedocs][13][usages]    ['__init__', 'Funny Unions']
 
 Typedoc links in arguments
     ${MODEL}[keywords][0][args][1][type][name]                  Union
@@ -177,8 +177,8 @@ Typedoc links in arguments
     ${MODEL}[keywords][4][args][2][type][typedoc]               Any
     ${MODEL}[keywords][4][args][3][type][name]                  List
     ${MODEL}[keywords][4][args][3][type][typedoc]               list
-    ${MODEL}[keywords][4][args][3][type][nested][0][name]       Any
-    ${MODEL}[keywords][4][args][3][type][nested][0][typedoc]    Any
+    ${MODEL}[keywords][4][args][3][type][nested][0][name]       object
+    ${MODEL}[keywords][4][args][3][type][nested][0][typedoc]    object
 
 *** Keywords ***
 Verify Argument Models

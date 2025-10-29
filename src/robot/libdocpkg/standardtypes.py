@@ -29,6 +29,9 @@ STANDARD_TYPE_DOCS = {
     Any: """\
 Any value is accepted. No conversion is done.
 """,
+    object: """\
+Any value is accepted. No conversion is done.
+""",
     bool: """\
 Strings ``TRUE``, ``YES``, ``ON`` and ``1`` are converted to Boolean ``True``,
 the empty string as well as strings ``FALSE``, ``NO``, ``OFF`` and ``0``
