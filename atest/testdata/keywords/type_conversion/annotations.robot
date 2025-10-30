@@ -38,38 +38,38 @@ Integer
     Integer              ${-4.0}                   -4
 
 Integer as hex
-    Integer              0x0                        0
-    Integer              0 X 0 0 0 0 0              0
-    Integer              0_X_0_0_0_0_0              0
-    Integer              0x1000                     4096
-    Integer              -0x1000                    -4096
-    Integer              +0x1000                    4096
-    Integer              0x00FF                     255
-    Integer              - 0 X 00 ff                -255
-    Integer              -__0__X__00_ff__           -255
-    Integer              0 x BAD C0FFEE             50159747054
+    Integer              0x0                       0
+    Integer              0 X 0 0 0 0 0             0
+    Integer              0_X_0_0_0_0_0             0
+    Integer              0x1000                    4096
+    Integer              -0x1000                   -4096
+    Integer              +0x1000                   4096
+    Integer              0x00FF                    255
+    Integer              - 0 X 00 ff               -255
+    Integer              -__0__X__00_ff__          -255
+    Integer              0 x BAD C0FFEE            50159747054
 
 Integer as octal
-    Integer              0o0                        0
-    Integer              0 O 0 0 0 0 0              0
-    Integer              0_O_0_0_0_0_0              0
-    Integer              0o1000                     512
-    Integer              -0o1000                    -512
-    Integer              +0o1000                    512
-    Integer              0o0077                     63
-    Integer              - 0 o 00 77                -63
-    Integer              -__0__o__00_77__           -63
+    Integer              0o0                       0
+    Integer              0 O 0 0 0 0 0             0
+    Integer              0_O_0_0_0_0_0             0
+    Integer              0o1000                    512
+    Integer              -0o1000                   -512
+    Integer              +0o1000                   512
+    Integer              0o0077                    63
+    Integer              - 0 o 00 77               -63
+    Integer              -__0__o__00_77__          -63
 
 Integer as binary
-    Integer              0b0                        0
-    Integer              0 B 0 0 0 0 0              0
-    Integer              0_B_0_0_0_0_0              0
-    Integer              0b1000                     8
-    Integer              -0b1000                    -8
-    Integer              +0b1000                    8
-    Integer              0b0011                     3
-    Integer              - 0 b 00 11                -3
-    Integer              -__0__b__00_11__           -3
+    Integer              0b0                       0
+    Integer              0 B 0 0 0 0 0             0
+    Integer              0_B_0_0_0_0_0             0
+    Integer              0b1000                    8
+    Integer              -0b1000                   -8
+    Integer              +0b1000                   8
+    Integer              0b0011                    3
+    Integer              - 0 b 00 11               -3
+    Integer              -__0__b__00_11__          -3
 
 Invalid integer
     [Template]           Conversion Should Fail
@@ -239,10 +239,10 @@ Datetime with now and today
 
 Invalid datetime
     [Template]           Conversion Should Fail
-    DateTime             foobar                                          error=Invalid timestamp 'foobar'.
-    DateTime             1975:06                                         error=Invalid timestamp '1975:06'.
-    DateTime             2018                                            error=Invalid timestamp '2018'.
-    DateTime             201808081443421234567                           error=Invalid timestamp '201808081443421234567'.
+    DateTime             foobar                    error=Invalid timestamp 'foobar'.
+    DateTime             1975:06                   error=Invalid timestamp '1975:06'.
+    DateTime             2018                      error=Invalid timestamp '2018'.
+    DateTime             201808081443421234567     error=Invalid timestamp '201808081443421234567'.
 
 Date
     Date                 2014-06-11                date(2014, 6, 11)
@@ -256,13 +256,13 @@ Date with now and today
 
 Invalid date
     [Template]           Conversion Should Fail
-    Date                 foobar                                          error=Invalid timestamp 'foobar'.
-    Date                 1975:06                                         error=Invalid timestamp '1975:06'.
-    Date                 2018                                            error=Invalid timestamp '2018'.
-    Date                 2014-06-11T10:07:42                             error=Value is datetime, not date.
-    Date                 20180808000000000001                            error=Value is datetime, not date.
-    Date                 ${123}                                          arg_type=integer
-    Date                 ${12.3}                                         arg_type=float
+    Date                 foobar                    error=Invalid timestamp 'foobar'.
+    Date                 1975:06                   error=Invalid timestamp '1975:06'.
+    Date                 2018                      error=Invalid timestamp '2018'.
+    Date                 2014-06-11T10:07:42       error=Value is datetime, not date.
+    Date                 20180808000000000001      error=Value is datetime, not date.
+    Date                 ${123}                    arg_type=integer
+    Date                 ${12.3}                   arg_type=float
 
 Timedelta
     Timedelta            10                        timedelta(seconds=10)
@@ -287,16 +287,16 @@ Invalid timedelta
     Timedelta            ${LIST}                   arg_type=list
 
 Path
-    Path                 path                     Path('path')
-    Path                 two/components           Path(r'two${/}components')
-    Path                 two${/}components        Path(r'two${/}components')
-    Path                 ${PATH}                  Path('x/y')
-    Path                 ${PUREPATH}              Path('x/y')
-    PurePath             path                     Path('path')
-    PurePath             two/components           Path(r'two${/}components')
-    PurePath             two${/}components        Path(r'two${/}components')
-    PurePath             ${PATH}                  Path('x/y')
-    PurePath             ${PUREPATH}              PurePath('x/y')
+    Path                 path                      Path('path')
+    Path                 two/components            Path(r'two${/}components')
+    Path                 two${/}components         Path(r'two${/}components')
+    Path                 ${PATH}                   Path('x/y')
+    Path                 ${PUREPATH}               Path('x/y')
+    PurePath             path                      Path('path')
+    PurePath             two/components            Path(r'two${/}components')
+    PurePath             two${/}components         Path(r'two${/}components')
+    PurePath             ${PATH}                   Path('x/y')
+    PurePath             ${PUREPATH}               PurePath('x/y')
     PathLike             path                      Path('path')
     PathLike             two/components            Path(r'two${/}components')
     PathLike             two${/}components         Path(r'two${/}components')
@@ -305,7 +305,7 @@ Path
 
 Invalid Path
     [Template]           Conversion Should Fail
-    Path                 ${1}                     type=Path    arg_type=integer
+    Path                 ${1}                      type=Path    arg_type=integer
 
 Enum
     Enum                 FOO                       MyEnum.FOO
@@ -432,18 +432,18 @@ Invalid tuple
 
 Dictionary
     Dictionary           {}                        {}
-    Dictionary           {'foo': 1, "bar": 2}      dict(${DICT})
+    Dictionary           {'foo': 1, 'bar': 2}      dict(${DICT})
     Dictionary           {1: 2, 3.14: -42}         {1: 2, 3.14: -42}
     Dictionary           ${MAPPING}                {'a': 1}
 
 Invalid dictionary
     [Template]           Conversion Should Fail
-    Dictionary           {1: ooops}                                      error=Invalid expression.
-    Dictionary           []                                              error=Value is list, not dict.
-    Dictionary           ()                                              error=Value is tuple, not dict.
-    Dictionary           ooops                                           error=Invalid expression.
-    Dictionary           {{'not': 'hashable'}: 'xxx'}                    error=Evaluating expression failed: *
-    Dictionary           ${NONE}                                         arg_type=None
+    Dictionary           {1: ooops}                error=Invalid expression.
+    Dictionary           []                        error=Value is list, not dict.
+    Dictionary           ()                        error=Value is tuple, not dict.
+    Dictionary           ooops                     error=Invalid expression.
+    Dictionary           {{'not hashable'}: 1}     error=Evaluating expression failed: *
+    Dictionary           ${NONE}                   arg_type=None
 
 Mapping (abc)
     Mapping              {'foo': 1, 2: 'bar'}      {'foo': 1, 2: 'bar'}
@@ -563,7 +563,7 @@ Invalid positional as named
     [Template]           Conversion Should Fail
     Integer              argument=bad
     Float                argument=xxx
-    Dictionary           argument=[0]                                    error=Value is list, not dict.
+    Dictionary           argument=[0]              error=Value is list, not dict.
 
 Varargs
     Varargs              1    2    3               expected=(1, 2, 3)
@@ -572,7 +572,7 @@ Varargs
 Invalid varargs
     [Template]           Conversion Should Fail
     Varargs              foobar                    type=integer
-    Varargs              ${NONE}                   type=integer    arg_type=None
+    Varargs              ${NONE}                   type=integer          arg_type=None
 
 Kwargs
     Kwargs               a=1    b=2    c=3         expected={'a': 1, 'b': 2, 'c': 3}
@@ -581,7 +581,7 @@ Kwargs
 Invalid Kwargs
     [Template]           Conversion Should Fail
     Kwargs               kwarg=ooops               type=integer
-    Kwargs               kwarg=${1.2}              type=integer    arg_type=float    error=Conversion would lose precision.
+    Kwargs               kwarg=${1.2}              type=integer          arg_type=float    error=Conversion would lose precision.
 
 Kwonly
     Kwonly               argument=1.0              expected=1.0
@@ -590,72 +590,72 @@ Kwonly
 Invalid kwonly
     [Template]           Conversion Should Fail
     Kwonly               argument=foobar           type=float
-    Kwonly               argument=${NONE}          type=float    arg_type=None
+    Kwonly               argument=${NONE}          type=float            arg_type=None
 
 Return value annotation causes no error
-    Return value annotation                    42    42
+    Return value annotation                        42                    42
 
 None as default with known type
     None as default
-    None as default                            [1, 2]    [1, 2]
-    None as default                            None      None
+    None as default                                [1, 2]                [1, 2]
+    None as default                                None                  None
 
 None as default with unknown type
     None as default with unknown type
-    None as default with unknown type          hi!      'hi!'
-    None as default with unknown type          ${42}    42
-    None as default with unknown type          None     None
+    None as default with unknown type              hi!                   'hi!'
+    None as default with unknown type              ${42}                 42
+    None as default with unknown type              None                  None
 
 Forward references
-    Forward referenced concrete type           42         42
-    Forward referenced ABC                     [1, 2]     [1, 2]
-    Forward referenced ABC                     ${LIST}    ${LIST}
+    Forward referenced concrete type               42                    42
+    Forward referenced ABC                         [1, 2]                [1, 2]
+    Forward referenced ABC                         ${LIST}               ${LIST}
 
 Unknown forward references
-    Unknown forward reference                  42         '42'
-    Nested unknown forward reference           ${LIST}    ${LIST}
+    Unknown forward reference                      42                    '42'
+    Nested unknown forward reference               ${LIST}               ${LIST}
 
 @keyword decorator overrides annotations
-    Types via keyword deco override            42    timedelta(seconds=42)
-    None as types via @keyword disables        42    '42'
-    Empty types via @keyword doesn't override  42    42
-    @keyword without types doesn't override    42    42
+    Types via keyword deco override                42                    timedelta(seconds=42)
+    None as types via @keyword disables            42                    '42'
+    Empty types via @keyword doesn't override      42                    42
+    @keyword without types doesn't override        42                    42
 
 Type information mismatch caused by decorator
-    Mismatch caused by decorator               foo   'foo'
+    Mismatch caused by decorator                   foo                   'foo'
 
 Decorator with wraps
-    Keyword With Wraps                         42    42
+    Keyword With Wraps                             42                    42
 
 Decorator with wraps mismatched type
-    Conversion Should Fail
-    ...    Keyword With Wraps    argument=foobar    type=integer
+    [Template]    Conversion Should Fail
+    Keyword With Wraps                             argument=foobar       type=integer
 
 Value contains variable
     [Setup]       Set Environment Variable         PI_NUMBER    3.14
     [Teardown]    Remove Environment Variable      PI_NUMBER
     Float                %{PI_NUMBER}              ${3.14}
-    ${value} =           Set variable              42
+    VAR                  ${value}                  42
     Integer              ${value}                  ${42}
-    @{value} =           Create List               1    2    3
+    VAR                  @{value}                  1    2    3
     Varargs              @{value}                  expected=(1, 2, 3)
-    &{value} =           Create Dictionary         a=1    b=2    c=3
+    VAR                  &{value}                  a=1    b=2    c=3
     Kwargs               &{value}                  expected={'a': 1, 'b': 2, 'c': 3}
 
 Default value is not used if explicit type conversion succeeds
-    Type and default 1    [1, 2]    [1, 2]
-    Type and default 2    42        42
+    Type and default 1                             [1, 2]                [1, 2]
+    Type and default 2                             42                    42
 
 Default value is used if explicit type conversion fails
-    Type and default 1    none       None
-    Type and default 2    FALSE      False
-    Type and default 2    ok also    'ok also'
-    Type and default 3    10         ${{datetime.timedelta(seconds=10)}}
+    Type and default 1                             none                  None
+    Type and default 2                             FALSE                 False
+    Type and default 2                             ok also               'ok also'
+    Type and default 3                             10                    ${{datetime.timedelta(seconds=10)}}
 
 Explicit conversion failure is used if both conversions fail
     [Template]    Conversion Should Fail
-    Type and default 4    BANG!    type=list         error=Invalid expression.
-    Type and default 3    BANG!    type=timedelta    error=Invalid time string 'BANG!'.
+    Type and default 4                             BANG!                 type=list         error=Invalid expression.
+    Type and default 3                             BANG!                 type=timedelta    error=Invalid time string 'BANG!'.
 
 Deferred evaluation of annotations
     [Tags]    require-py3.14
