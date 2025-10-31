@@ -37,6 +37,15 @@ Homogenous tuple in union
 Incompatible tuple
     Check Test Case    ${TESTNAME}
 
+Sequence
+    Check Test Case    ${TESTNAME}
+
+MutableSequence
+    Check Test Case    ${TESTNAME}
+
+Invalid Sequence
+    Check Test Case    ${TESTNAME}
+
 Dict
     Check Test Case    ${TESTNAME}
 
@@ -47,6 +56,15 @@ Dict in union
     Check Test Case    ${TESTNAME}
 
 Incompatible dict
+    Check Test Case    ${TESTNAME}
+
+Mapping
+    Check Test Case    ${TESTNAME}
+
+MutableMapping
+    Check Test Case    ${TESTNAME}
+
+Invalid Mapping
     Check Test Case    ${TESTNAME}
 
 Set

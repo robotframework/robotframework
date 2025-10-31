@@ -15,7 +15,7 @@
 
 from ast import literal_eval
 from collections import OrderedDict
-from collections.abc import Container, Mapping, Sequence, Set
+from collections.abc import Container, Mapping, MutableSequence, Sequence, Set
 from datetime import date, datetime, timedelta
 from decimal import Decimal, InvalidOperation
 from enum import Enum
@@ -132,7 +132,7 @@ class TypeConverter:
         try:
             if not isinstance(value, str):
                 return self._non_string_convert(value)
-            return self._convert(value)
+            return self._string_convert(value)
         except ValueError as error:
             return self._handle_error(value, name, kind, error)
 
@@ -158,6 +158,9 @@ class TypeConverter:
         return isinstance(value, self.value_types)
 
     def _non_string_convert(self, value):
+        return self._convert(value)
+
+    def _string_convert(self, value):
         return self._convert(value)
 
     def _convert(self, value):
@@ -476,10 +479,50 @@ class NoneConverter(TypeConverter):
 
 
 @TypeConverter.register
+class SequenceConverter(TypeConverter):
+    type = Sequence
+    type_name = "Sequence"
+    value_types = (str, Sequence)
+
+    def no_conversion_needed(self, value):
+        if (
+            isinstance(value, str)
+            or not super().no_conversion_needed(value)
+            or self._must_make_mutable(value)
+        ):
+            return False
+        if not self.nested:
+            return True
+        no_conversion_needed = self.nested[0].no_conversion_needed
+        return all(no_conversion_needed(v) for v in value)
+
+    def _must_make_mutable(self, value):
+        return not isinstance(value, self.type_info.type)
+
+    def _string_convert(self, value):
+        return self._convert(self._literal_eval(value, Sequence))
+
+    def _convert(self, value):
+        if self._must_make_mutable(value):
+            value = list(value)
+        if self.nested:
+            value = self._convert_nested(value)
+        return value
+
+    def _convert_nested(self, value):
+        result_type = type(value)
+        convert = self.nested[0].convert
+        value = [convert(v, name=str(i), kind="Item") for i, v in enumerate(value)]
+        try:
+            return result_type(value)
+        except Exception:
+            raise ValueError("Cannot recreate object after converting items.")
+
+
+@TypeConverter.register
 class ListConverter(TypeConverter):
     type = list
     type_name = "list"
-    abc = Sequence
     value_types = (str, Sequence)
 
     def no_conversion_needed(self, value):
@@ -627,9 +670,56 @@ class TypedDictConverter(TypeConverter):
 
 
 @TypeConverter.register
+class MappingConverter(TypeConverter):
+    type = Mapping
+    type_name = "Mapping"
+    value_types = (str, Mapping)
+
+    def no_conversion_needed(self, value):
+        if (
+            isinstance(value, str)
+            or not super().no_conversion_needed(value)
+            or self._must_make_mutable(value)
+        ):
+            return False
+        if not self.nested:
+            return True
+        no_key_conversion = self.nested[0].no_conversion_needed
+        no_value_conversion = self.nested[1].no_conversion_needed
+        return all(
+            no_key_conversion(k) and no_value_conversion(value[k]) for k in value
+        )
+
+    def _must_make_mutable(self, value):
+        return not isinstance(value, self.type_info.type)
+
+    def _string_convert(self, value):
+        return self._convert(self._literal_eval(value, Mapping))
+
+    def _convert(self, value):
+        if self._must_make_mutable(value):
+            value = dict(value)
+        if self.nested:
+            value = self._convert_nested(value)
+        return value
+
+    def _convert_nested(self, value):
+        result_type = type(value)
+        convert_key = self._get_converter(self.nested[0], "Key")
+        convert_value = self._get_converter(self.nested[1], "Item")
+        value = {convert_key(None, k): convert_value(k, value[k]) for k in value}
+        try:
+            return result_type(value)
+        except Exception:
+            raise ValueError("Cannot recreate object after converting items.")
+
+    def _get_converter(self, converter, kind):
+        return lambda name, value: converter.convert(value, name, kind=kind)
+
+
+@TypeConverter.register
 class DictionaryConverter(TypeConverter):
     type = dict
-    abc = Mapping
     type_name = "dictionary"
     value_types = (str, Mapping)
 

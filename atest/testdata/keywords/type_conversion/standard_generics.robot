@@ -1,9 +1,10 @@
 language: fi
 
 *** Settings ***
-Library           StandardGenerics.py
-Resource          conversion.resource
-Test Tags         require-py3.9
+Library              StandardGenerics.py
+Variables            StandardGenerics.py
+Resource             conversion.resource
+Test Tags            require-py3.9
 
 *** Variables ***
 @{INTS}              ${1}      ${2}      ${3}
@@ -12,6 +13,12 @@ Test Tags         require-py3.9
 &{INT TO FLOAT}      ${1}=${2.3}
 &{STR TO STR}        a=1       b=2
 &{STR TO INT}        a=${1}    b=${2}
+${INT DEQUE}         ${{collections.deque([1, 2, 3])}}
+${STR DEQUE}         ${{collections.deque(['1', '2', '3'])}}
+${INT SEQUENCE}      ${CustomSequence([1, 2, 3])}
+${STR SEQUENCE}      ${CustomSequence(['1', '2', '3'])}
+${NUM MAPPING}       ${CustomMapping({1: 2.3})}
+${STR MAPPING}       ${CustomMapping({'1': '2.3'})}
 
 *** Test Cases ***
 List
@@ -84,11 +91,40 @@ Incompatible tuple
     Tuple                            ('too', 'few')           type=tuple[int, bool, float]    error=Expected 3 items, got 2.
     Tuple                            (1, True, 3.0, 4)        type=tuple[int, bool, float]    error=Expected 3 items, got 4.
 
+Sequence
+    Sequence                         []                       []
+    Sequence                         (1, 2, 3)                (1, 2, 3)
+    Sequence                         ['1', 2.0]               [1, 2]
+    Sequence                         ('1', 2.0)               (1, 2)
+    Sequence                         ${INTS}                  ${INTS}                   same=True
+    Sequence                         ${INT DEQUE}             ${INT DEQUE}              same=True
+    Sequence                         ${STR DEQUE}             ${INT DEQUE}
+    Sequence                         ${INT SEQUENCE}          ${INT SEQUENCE}           same=True
+    Sequence                         ${STR SEQUENCE}          ${INT SEQUENCE}
+
+MutableSequence
+    Mutable sequence                 []                       []
+    Mutable sequence                 (1, 2, 3)                [1, 2, 3]
+    Mutable sequence                 ['1', 2.0]               [1, 2]
+    Mutable sequence                 ('1', 2.0)               [1, 2]
+    Mutable sequence                 ${INTS}                  ${INTS}                   same=True
+    Mutable sequence                 ${INT DEQUE}             ${INT DEQUE}              same=True
+    Mutable sequence                 ${STR DEQUE}             ${INT DEQUE}
+    Mutable sequence                 ${INT SEQUENCE}          [1, 2, 3]
+    Mutable sequence                 ${STR SEQUENCE}          [1, 2, 3]
+
+Invalid Sequence
+    [Template]                       Conversion should fail
+    Sequence                         {}                       type=Sequence[int]        error=Value is dictionary, not Sequence.
+    Sequence                         [1, '2', 'bad']          type=Sequence[int]        error=Item '2' got value 'bad' that cannot be converted to integer.
+    Sequence                         ${NoArgsSequence.init(['1', '2'])}
+    ...                                                       type=Sequence[int]        error=Cannot recreate object after converting items.    arg_type=NoArgsSequence
+
 Dict
     Dict                             {}                       {}
     Dict                             {1: 2}                   {1: 2}
     Dict                             {1: 2, '3': 4.0}         {1: 2, 3: 4}
-    Dict                             ${INT TO FLOAT}          ${INT TO FLOAT}            same=True
+    Dict                             ${INT TO FLOAT}          ${INT TO FLOAT}           same=True
 
 Dict with unknown
     Dict with unknown key            {}                       {}
@@ -110,6 +146,29 @@ Incompatible dict
     [Template]                       Conversion should fail
     Dict                             {1: 2, 'bad': 'item'}    type=dict[int, float]     error=Key 'bad' cannot be converted to integer.
     Dict                             {1: 'bad'}               type=dict[int, float]     error=Item '1' got value 'bad' that cannot be converted to float.
+
+Mapping
+    Mapping                          {}                       {}
+    Mapping                          {1: 2.3}                 {1: 2.3}
+    Mapping                          {'1': '2.3'}             {1: 2.3}
+    Mapping                          ${INT TO FLOAT}          ${INT TO FLOAT}           same=True
+    Mapping                          ${NUM MAPPING}           ${NUM MAPPING}            same=True
+    Mapping                          ${STR MAPPING}           ${NUM MAPPING}
+
+MutableMapping
+    Mutable mapping                  {}                       {}
+    Mutable mapping                  {1: 2.3}                 {1: 2.3}
+    Mutable mapping                  {'1': '2.3'}             {1: 2.3}
+    Mutable mapping                  ${INT TO FLOAT}          ${INT TO FLOAT}           same=True
+    Mutable mapping                  ${NUM MAPPING}           {1: 2.3}
+    Mutable mapping                  ${STR MAPPING}           {1: 2.3}
+
+Invalid Mapping
+    [Template]                       Conversion should fail
+    Mapping                          []                       type=Mapping[int, float]    error=Value is list, not Mapping.
+    Mapping                          {'1': 'bad'}             type=Mapping[int, float]    error=Item '1' got value 'bad' that cannot be converted to float.
+    Mapping                          ${NoArgsMapping.init({'1': '2'})}
+    ...                                                       type=Mapping[int, float]    error=Cannot recreate object after converting items.    arg_type=NoArgsMapping
 
 Set
     Set                              set()                    set()

@@ -167,7 +167,7 @@ Invalid dictionary
     [Template]           Conversion Should Fail
     Dictionary           {1: ooops}                                      error=Invalid expression.
     Dict                 []                        type=dictionary       error=Value is list, not dict.
-    Map                  ()                        type=dictionary       error=Value is tuple, not dict.
+    Map                  ()                        type=Mapping          error=Value is tuple, not Mapping.
     Dict                 ooops                     type=dictionary       error=Invalid expression.
     Dictionary           {{'not': 'hashable'}: 'xxx'}                    error=Evaluating expression failed: *
 

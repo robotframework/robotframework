@@ -395,23 +395,27 @@ Invalid list
 
 Sequence (abc)
     Sequence             []                        []
-    Sequence             ['foo', 'bar']            ${LIST}
-    Sequence             ${DEQUE}                  collections.deque([1, 2, 3])
-    Sequence             ${SEQUENCE}               ${SEQUENCE}
-    Mutable sequence     [1, 2, 3.14, -42]         [1, 2, 3.14, -42]
-    Mutable sequence     ['\\x00', '\\x52']        ['\\x00', 'R']
-    Mutable sequence     ${DEQUE}                  collections.deque([1, 2, 3])
+    Sequence             ('\\x00', 1, 2, 'RF')     ('\\x00', 1, 2, 'RF')
+    Sequence             ${LIST}                   ${LIST}               same=True
+    Sequence             ${DEQUE}                  ${DEQUE}              same=True
+    Sequence             ${SEQUENCE}               ${SEQUENCE}           same=True
+
+MutableSequence (abc)
+    Mutable sequence     []                        []
+    Mutable sequence     ('\\x00', 1, 2, 'RF')     ['\\x00', 1, 2, 'RF']
+    Mutable sequence     ${LIST}                   ${LIST}               same=True
+    Mutable sequence     ${DEQUE}                  ${DEQUE}              same=True
     Mutable sequence     ${SEQUENCE}               ['x']
 
 Invalid sequence (abc)
     [Template]           Conversion Should Fail
-    Sequence             [1, ooops]                type=list             error=Invalid expression.
-    Mutable sequence     ()                        type=list             error=Value is tuple, not list.
-    Sequence             {}                        type=list             error=Value is dictionary, not list.
-    Mutable sequence     ooops                     type=list             error=Invalid expression.
-    Sequence             ${EMPTY}                  type=list             error=Invalid expression.
-    Mutable sequence     !"#¤%&/(inv expr)\=?      type=list             error=Invalid expression.
-    Sequence             1 / 0                     type=list             error=Invalid expression.
+    Sequence             [1, ooops]                type=Sequence         error=Invalid expression.
+    Mutable sequence     {666}                     type=Sequence         error=Value is set, not Sequence.
+    Sequence             {}                        type=Sequence         error=Value is dictionary, not Sequence.
+    Mutable sequence     ooops                     type=Sequence         error=Invalid expression.
+    Sequence             ${EMPTY}                  type=Sequence         error=Invalid expression.
+    Mutable sequence     !"#¤%&/(inv expr)\=?      type=Sequence         error=Invalid expression.
+    Sequence             1 / 0                     type=Sequence         error=Invalid expression.
 
 Tuple
     Tuple                ()                        ()
@@ -446,16 +450,21 @@ Invalid dictionary
     Dictionary           ${NONE}                   arg_type=None
 
 Mapping (abc)
-    Mapping              {'foo': 1, 2: 'bar'}      {'foo': 1, 2: 'bar'}
-    Mapping              ${MAPPING}                ${MAPPING}
-    Mutable mapping      {'foo': 1, 2: 'bar'}      {'foo': 1, 2: 'bar'}
-    Mutable mapping      ${MAPPING}                ${MAPPING}
+    Mapping              {}                        {}
+    Mapping              {'a': 1, 2: 'b'}          {'a': 1, 2: 'b'}
+    Mapping              ${DICT}                   ${DICT}               same=True
+    Mapping              ${MAPPING}                ${MAPPING}            same=True
+
+MutableMapping (abc)
+    Mutable mapping      {}                        {}
+    Mutable mapping      {'a': 1, 2: 'b'}          {'a': 1, 2: 'b'}
+    Mutable mapping      ${DICT}                   ${DICT}               same=True
+    Mutable mapping      ${MAPPING}                {'a': 1}
 
 Invalid mapping (abc)
     [Template]           Conversion Should Fail
-    Mapping              foobar                    type=dictionary       error=Invalid expression.
-    Mapping              []                        type=dictionary       error=Value is list, not dict.
-    Mutable mapping      barfoo                    type=dictionary       error=Invalid expression.
+    Mapping              foobar                    type=Mapping          error=Invalid expression.
+    Mutable mapping      []                        type=Mapping          error=Value is list, not Mapping.
 
 Set
     Set                  set()                     set()

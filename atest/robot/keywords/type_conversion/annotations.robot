@@ -141,6 +141,9 @@ Invalid list
 Sequence (abc)
     Check Test Case    ${TESTNAME}
 
+MutableSequence (abc)
+    Check Test Case    ${TESTNAME}
+
 Invalid sequence (abc)
     Check Test Case    ${TESTNAME}
 
@@ -157,6 +160,9 @@ Invalid dictionary
     Check Test Case    ${TESTNAME}
 
 Mapping (abc)
+    Check Test Case    ${TESTNAME}
+
+MutableMapping (abc)
     Check Test Case    ${TESTNAME}
 
 Invalid mapping (abc)

@@ -8,7 +8,7 @@ create new ones. This task is not too complicated because, as this
 chapter illustrates, Robot Framework's library API is simple
 and straightforward.
 
-.. contents::
+.. contents::Creat
    :depth: 2
    :local:
 
@@ -1308,7 +1308,7 @@ Other types cause conversion failures.
    |              |               |            |              | Starting from Robot Framework 4.1, spaces and underscores can  |                                      |
    |              |               |            |              | be used as visual separators for digit grouping purposes.      |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | str_         |               | string,    | Any          | All arguments are converted to Unicode strings.                |                                      |
+   | str_         |               | string,    | Anything     | All arguments are converted to Unicode strings.                |                                      |
    |              |               | unicode    |              |                                                                |                                      |
    |              |               |            |              | New in Robot Framework 4.0.                                    |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
@@ -1376,8 +1376,8 @@ Other types cause conversion failures.
    |              |               |            |              |                                                                | | `OFF` (PowerState.OFF)             |
    |              |               |            |              | New in Robot Framework 4.1.                                    | | `1` (PowerState.ON)                |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | Literal_     |               |            | Any          | Only specified values are accepted. Values can be strings,     | .. sourcecode:: python               |
-   |              |               |            |              | integers, bytes, Booleans, enums and `None`, and used arguments|                                      |
+   | Literal_     |               |            | Depends on   | Only specified values are accepted. Values can be strings,     | .. sourcecode:: python               |
+   |              |               |            | usage        | integers, bytes, Booleans, enums and `None`, and used arguments|                                      |
    |              |               |            |              | are converted using the value type specific conversion logic.  |    def kw(arg: Literal['ON', 'OFF']):|
    |              |               |            |              |                                                                |        ...                           |
    |              |               |            |              | Strings are case, space, underscore and hyphen insensitive,    |                                      |
@@ -1391,38 +1391,46 @@ Other types cause conversion failures.
    | None_        |               |            | str_         | String `NONE` (case-insensitive) is converted to the Python    | | `None`                             |
    |              |               |            |              | `None` object. Other values cause an error.                    |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | Any_         |               |            | Any          | Any value is accepted. No conversion is done.                  |                                      |
+   | Any_         |               |            | Anything     | Any value is accepted. No conversion is done.                  |                                      |
    |              |               |            |              |                                                                |                                      |
    |              |               |            |              | New in Robot Framework 6.1.                                    |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | object_      |               |            | Any          | Any value is accepted. No conversion is done.                  |                                      |
+   | object_      |               |            | Anything     | Any value is accepted. No conversion is done.                  |                                      |
    |              |               |            |              |                                                                |                                      |
    |              |               |            |              | New in Robot Framework 7.4.                                    |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | list_        | Sequence_     | sequence   | str_,        | Strings must be Python list literals. They are converted       | | `['one', 'two']`                   |
-   |              |               |            | Sequence_    | to actual lists using the `ast.literal_eval`_ function.        | | `[('one', 1), ('two', 2)]`         |
+   | list_        |               |            | str_,        | Converts strings and sequences to `list`.                      | | `['one', 'two']`                   |
+   |              |               |            | Sequence_    |                                                                | | `[('one', 1), ('two', 2)]`         |
+   |              |               |            |              | Strings must be Python list literals. They are converted       |                                      |
+   |              |               |            |              | to actual lists using the `ast.literal_eval`_ function.        |                                      |
    |              |               |            |              | They can contain any values `ast.literal_eval` supports,       |                                      |
    |              |               |            |              | including lists and other containers.                          |                                      |
-   |              |               |            |              |                                                                |                                      |
-   |              |               |            |              | If the used type hint is list_ (e.g. `arg: list`), sequences   |                                      |
-   |              |               |            |              | that are not lists are converted to lists. If the type hint is |                                      |
-   |              |               |            |              | generic Sequence_, sequences are used without conversion.      |                                      |
-   |              |               |            |              |                                                                |                                      |
-   |              |               |            |              | Alias `sequence` is new in Robot Framework 7.0.                |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | tuple_       |               |            | str_,        | Same as `list`, but string arguments must be tuple literals.   | | `('one', 'two')`                   |
+   | tuple_       |               |            | str_,        | Same as `list`, but the result is tuple_.                      | | `('one', 'two')`                   |
    |              |               |            | Sequence_    |                                                                |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | set_         | `Set          |            | str_,        | Same as `list`, but string arguments must be set literals or   | | `{1, 2, 3, 42}`                    |
-   |              | <abc.Set_>`__ |            | Container_   | `set()` to create an empty set.                                | | `set()`                            |
+   | Sequence_    |               |            | str_,        | Same as `list`, but the original sequence type is preserved.   | | `[1, 2, 3]` (result is `list`)     |
+   |              |               |            | Sequence_    |                                                                | | `(1, 2, 3)` (result is `tuple`)    |
+   |              |               |            |              | If type is MutableSequence_, immutable values are converted    |                                      |
+   |              |               |            |              | to `list`.                                                     |                                      |
+   +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
+   | set_         | `Set          |            | str_,        | Same as `list`, but string arguments must be set literals, or  | | `{1, 2, 3, 42}`                    |
+   |              | <abc.Set_>`__ |            | Container_   | `set()` to create an empty set, and the result is set_.        | | `set()`                            |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | frozenset_   |               |            | str_,        | Same as `set`, but the result is a frozenset_.                 | | `{1, 2, 3, 42}`                    |
    |              |               |            | Container_   |                                                                | | `frozenset()`                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | dict_        | Mapping_      | dictionary,| str_,        | Same as `list`, but string arguments must be dictionary        | | `{'a': 1, 'b': 2}`                 |
-   |              |               | mapping,   | Mapping_     | literals.                                                      | | `{'key': 1, 'nested': {'key': 2}}` |
-   |              |               | map        |              |                                                                |                                      |
-   |              |               |            |              | Alias `mapping` is new in Robot Framework 7.0.                 |                                      |
+   | dict_        |               | dictionary | str_,        | Converts strings and mappings to `dict`.                       | | `{'a': 1, 'b': 2}`                 |
+   |              |               |            | Mapping_     |                                                                | | `{'key': 1, 'nested': {'key': 2}}` |
+   |              |               |            |              | Strings must be Python dictionary literals. They are converted |                                      |
+   |              |               |            |              | to `dict` using the `ast.literal_eval`_ function.              |                                      |
+   |              |               |            |              | They can contain any values `ast.literal_eval` supports,       |                                      |
+   |              |               |            |              | including dictionaries and other containers.                   |                                      |
+   +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
+   | Mapping_     |               | map        | str_,        | Same as `dict`, but the original mapping type is preserved.    |                                      |
+   |              |               |            | Mapping_     |                                                                |                                      |
+   |              |               |            |              | If type is MutableMapping_, immutable values are converted     |                                      |
+   |              |               |            |              | to `dict`.                                                     |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | TypedDict_   |               |            | str_,        | Same as `dict`, but dictionary items are also converted        | .. sourcecode:: python               |
    |              |               |            | Mapping_     | to the specified types and items not included in the type      |                                      |
@@ -1432,7 +1440,7 @@ Other types cause conversion failures.
    |              |               |            |              | used earlier.                                                  |                                      |
    |              |               |            |              |                                                                | | `{'width': 1600, 'enabled': True}` |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | Secret_      |               |            |              | Using the `Secret type`_ as a type hint ensures that only      | .. sourcecode:: python               |
+   | Secret_      |               |            | Secret_      | Using the `Secret type`_ as a type hint ensures that only      | .. sourcecode:: python               |
    |              |               |            |              | `secret variables`_ are accepted as arguments.                 |                                      |
    |              |               |            |              |                                                                |    from robot.api.types import Secret|
    |              |               |            |              | New in Robot Framework 7.4.                                    |                                      |
@@ -1476,6 +1484,7 @@ Other types cause conversion failures.
 .. _tuple: https://docs.python.org/library/stdtypes.html#tuple
 .. _dict: https://docs.python.org/library/stdtypes.html#dict
 .. _Mapping: https://docs.python.org/library/collections.abc.html#collections.abc.Mapping
+.. _MutableMapping: https://docs.python.org/library/collections.abc.html#collections.abc.MutableMapping
 .. _set: https://docs.python.org/library/stdtypes.html#set
 .. _abc.Set: https://docs.python.org/library/collections.abc.html#collections.abc.Set
 .. _frozenset: https://docs.python.org/library/stdtypes.html#frozenset

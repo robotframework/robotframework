@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from collections.abc import Mapping, Sequence
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
@@ -137,12 +138,30 @@ Examples: ``/tmp/absolute/path``, ``relative/path/to/file.ext``, ``name.txt``
 String ``NONE`` (case-insensitive) is converted to Python ``None`` object.
 Other values cause an error.
 """,
+    Sequence: """\
+Strings must be Python [https://docs.python.org/library/stdtypes.html#list|list]
+or [https://docs.python.org/library/stdtypes.html#tuple|tuple] literals.
+They are converted to actual lists or tuples using the
+[https://docs.python.org/library/ast.html#ast.literal_eval|ast.literal_eval]
+function. They can contain any values ``ast.literal_eval`` supports, including
+lists and other containers.
+
+Any sequence is accepted without conversion. An exception is that if the type
+is ``MutableSequence``, immutable values are converted to ``list``.
+
+If the type has nested types like ``Sequence[int]``, items are converted
+to those types automatically. This in new in Robot Framework 6.0.
+
+Examples: ``['one', 'two']``, ``(1, 2, 3)``
+""",
     list: """\
 Strings must be Python [https://docs.python.org/library/stdtypes.html#list|list]
 literals. They are converted to actual lists using the
 [https://docs.python.org/library/ast.html#ast.literal_eval|ast.literal_eval]
 function. They can contain any values ``ast.literal_eval`` supports, including
 lists and other containers.
+
+Any sequence is accepted and converted to ``list``.
 
 If the type has nested types like ``list[int]``, items are converted
 to those types automatically. This in new in Robot Framework 6.0.
@@ -156,10 +175,27 @@ literals. They are converted to actual tuples using the
 function. They can contain any values ``ast.literal_eval`` supports, including
 tuples and other containers.
 
+Any sequence is accepted and converted to ``tuple``.
+
 If the type has nested types like ``tuple[str, int, int]``, items are converted
 to those types automatically. This in new in Robot Framework 6.0.
 
 Examples: ``('one', 'two')``, ``(('one', 1), ('two', 2))``
+""",
+    Mapping: """\
+Strings must be Python [https://docs.python.org/library/stdtypes.html#dict|dictionary]
+literals. They are converted to actual dictionaries using the
+[https://docs.python.org/library/ast.html#ast.literal_eval|ast.literal_eval]
+function. They can contain any values ``ast.literal_eval`` supports, including
+dictionaries and other containers.
+
+Any mapping is accepted without conversion. An exception is that if the type
+is ``MutableMapping``, immutable values are converted to ``dict``.
+
+If the type has nested types like ``Mapping[str, int]``, items are converted
+to those types automatically. This in new in Robot Framework 6.0.
+
+Examples: ``{'a': 1, 'b': 2}``, ``{'key': 1, 'nested': {'key': 2}}``
 """,
     dict: """\
 Strings must be Python [https://docs.python.org/library/stdtypes.html#dict|dictionary]
@@ -167,6 +203,8 @@ literals. They are converted to actual dictionaries using the
 [https://docs.python.org/library/ast.html#ast.literal_eval|ast.literal_eval]
 function. They can contain any values ``ast.literal_eval`` supports, including
 dictionaries and other containers.
+
+Any mapping is accepted and converted to ``dict``.
 
 If the type has nested types like ``dict[str, int]``, items are converted
 to those types automatically. This in new in Robot Framework 6.0.

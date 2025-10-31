@@ -90,8 +90,8 @@ Sequence with incompatible types
 
 Invalid sequence
     [Template]                Conversion Should Fail
-    Sequence                  [1, oops]                   type=list                     error=Invalid expression.
-    Mutable sequence          ()                          type=list                     error=Value is tuple, not list.
+    Sequence                  [1, oops]                   type=Sequence                 error=Invalid expression.
+    Mutable sequence          {}                          type=Sequence                 error=Value is dictionary, not Sequence.
     Sequence with types       ooops                       type=Sequence[int | float]    error=Invalid expression.
 
 Dict
@@ -141,8 +141,8 @@ Mapping with incompatible types
 
 Invalid mapping
     [Template]                Conversion Should Fail
-    Mapping                   {1: ooops}                  type=dictionary               error=Invalid expression.
-    Mutable mapping           []                          type=dictionary               error=Value is list, not dict.
+    Mapping                   {1: ooops}                  type=Mapping                  error=Invalid expression.
+    Mutable mapping           []                          type=Mapping                  error=Value is list, not Mapping.
     Mapping with types        ooops                       type=Mapping[int, float]      error=Invalid expression.
 
 TypedDict

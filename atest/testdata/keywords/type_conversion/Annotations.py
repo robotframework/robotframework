@@ -149,12 +149,12 @@ def list_(argument: list, expected=None):
     _validate_type(argument, expected)
 
 
-def sequence(argument: abc.Sequence, expected=None):
-    _validate_type(argument, expected)
+def sequence(argument: abc.Sequence, expected=None, same=False):
+    _validate_type(argument, expected, same)
 
 
-def mutable_sequence(argument: abc.MutableSequence, expected=None):
-    _validate_type(argument, expected)
+def mutable_sequence(argument: abc.MutableSequence, expected=None, same=False):
+    _validate_type(argument, expected, same)
 
 
 def tuple_(argument: tuple, expected=None):
@@ -165,12 +165,12 @@ def dictionary(argument: dict, expected=None):
     _validate_type(argument, expected)
 
 
-def mapping(argument: abc.Mapping, expected=None):
-    _validate_type(argument, expected)
+def mapping(argument: abc.Mapping, expected=None, same=False):
+    _validate_type(argument, expected, same)
 
 
-def mutable_mapping(argument: abc.MutableMapping, expected=None):
-    _validate_type(argument, expected)
+def mutable_mapping(argument: abc.MutableMapping, expected=None, same=False):
+    _validate_type(argument, expected, same)
 
 
 def set_(argument: set, expected=None):
@@ -315,10 +315,14 @@ def type_and_default_4(argument: list = [], expected=None):
     _validate_type(argument, expected)
 
 
-def _validate_type(argument, expected):
+def _validate_type(argument, expected, same=False):
     if isinstance(expected, str):
         expected = eval(expected)
     if argument != expected or type(argument) is not type(expected):
-        atype = type(argument).__name__
-        etype = type(expected).__name__
-        raise AssertionError(f"{argument!r} ({atype}) != {expected!r} ({etype})")
+        a_type = type(argument).__name__
+        e_type = type(expected).__name__
+        raise AssertionError(f"{argument!r} ({a_type}) != {expected!r} ({e_type})")
+    if same and argument is not expected:
+        a_id = hex(id(argument))
+        e_id = hex(id(expected))
+        raise AssertionError(f"{argument!r} (id: {a_id}) != {expected!r} (id: {e_id})")
