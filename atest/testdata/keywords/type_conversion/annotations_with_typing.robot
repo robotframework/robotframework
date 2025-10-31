@@ -8,7 +8,9 @@ Resource                      conversion.resource
 List
     List                      []                          []
     List                      ['foo', 'bar']              ['foo', 'bar']
-    List                      [1, 2, 3.14, -42]           [1, 2, 3.14, -42]
+    List                      (1, 2, 3.14, -42)           [1, 2, 3.14, -42]
+    List                      ${{[1, 2]}}                 [1, 2]
+    List                      ${{(1, 2)}}                 [1, 2]
 
 List with types
     List with types           []                          []
@@ -28,13 +30,15 @@ List with incompatible types
 Invalid list
     [Template]                Conversion Should Fail
     List                      [1, oops]                                                 error=Invalid expression.
-    List                      ()                                                        error=Value is tuple, not list.
+    List                      {}                                                        error=Value is dictionary, not list.
     List with types           ooops                       type=List[int]                error=Invalid expression.
 
 Tuple
     Tuple                     ()                          ()
     Tuple                     ('foo', 'bar')              ('foo', 'bar')
-    Tuple                     (1, 2, 3.14, -42)           (1, 2, 3.14, -42)
+    Tuple                     [1, 2, 3.14, -42]           (1, 2, 3.14, -42)
+    Tuple                     ${{(1, 2)}}                 (1, 2)
+    Tuple                     ${{[1, 2]}}                 (1, 2)
 
 Tuple with types
     Tuple with types          ('true', 1)                 (True, 1)
@@ -68,7 +72,7 @@ Tuple with wrong number of values
 Invalid tuple
     [Template]                Conversion Should Fail
     Tuple                     (1, oops)                                                 error=Invalid expression.
-    Tuple with types          []                          type=Tuple[bool, int]         error=Value is list, not tuple.
+    Tuple with types          {}                          type=Tuple[bool, int]         error=Value is dictionary, not tuple.
     Homogenous tuple          ooops                       type=Tuple[int, ...]          error=Invalid expression.
 
 Sequence

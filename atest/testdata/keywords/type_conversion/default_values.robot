@@ -227,12 +227,12 @@ List
     List                 []                        []
     List                 ['foo', 'bar']            ${LIST}
     List                 [1, 2, 3.14, -42]         [1, 2, 3.14, -42]
-    List                 ['\\x00', '\\x52']        ['\\x00', 'R']
+    List                 ('\\x00', '\\x52')        ['\\x00', 'R']
+    List                 ${LIST}                   ${LIST}
 
 Invalid list
     [Template]           Invalid value is passed as-is
     List                 [1, ooops]
-    List                 ()
     List                 {}
     List                 ooops
     List                 ${EMPTY}
@@ -241,20 +241,21 @@ Invalid list
 
 Tuple
     Tuple                ()                        ()
-    Tuple                ('foo', "bar")            tuple(${LIST})
-    Tuple                (1, 2, 3.14, -42)         (1, 2, 3.14, -42)
+    Tuple                ('foo', 'bar')            ('foo', 'bar')
+    Tuple                [1, 2, 3.14, -42]         (1, 2, 3.14, -42)
+    Tuple                ${LIST}                   ('foo', 'bar')
 
 Invalid tuple
     [Template]           Invalid value is passed as-is
     Tuple                (1, ooops)
-    Tuple                []
     Tuple                {}
     Tuple                ooops
 
 Dictionary
     Dictionary           {}                        {}
-    Dictionary           {'foo': 1, "bar": 2}      dict(${DICT})
+    Dictionary           {'foo': 1, 'bar': 2}      {'foo': 1, 'bar': 2}
     Dictionary           {1: 2, 3.14: -42}         {1: 2, 3.14: -42}
+    Dictionary           ${DICT}                   ${DICT}
 
 Invalid dictionary
     [Template]           Invalid value is passed as-is
@@ -268,13 +269,13 @@ Set
     Set                  set()                     set()
     Set                  {'foo', 'bar'}            {'foo', 'bar'}
     Set                  {1, 2, 3.14, -42}         {1, 2, 3.14, -42}
+    Set                  [1, 2, 3.14, -42]         {1, 2, 3.14, -42}
+    Set                  (1, 2, 3.14, -42)         {1, 2, 3.14, -42}
 
 Invalid set
     [Template]           Invalid value is passed as-is
     Set                  {1, ooops}
     Set                  {}
-    Set                  ()
-    Set                  []
     Set                  ooops
     Set                  {{'not', 'hashable'}}
     Set                  frozenset()

@@ -178,10 +178,7 @@ class TypeConverter:
             f"{kind} '{name}' got value '{value}'{typ} that {cannot_be_converted}"
         )
 
-    def _literal_eval(self, value, expected):
-        if expected is set and value == "set()":
-            # `ast.literal_eval` has no way to define an empty set.
-            return set()
+    def _literal_eval(self, value, expected, name=None):
         try:
             value = literal_eval(value)
         except (ValueError, SyntaxError):
@@ -190,7 +187,9 @@ class TypeConverter:
         except TypeError as err:
             raise ValueError(f"Evaluating expression failed: {err}")
         if not isinstance(value, expected):
-            raise ValueError(f"Value is {type_name(value)}, not {expected.__name__}.")
+            raise ValueError(
+                f"Value is {type_name(value)}, not {name or expected.__name__}."
+            )
         return value
 
     def _remove_number_separators(self, value):
@@ -528,7 +527,8 @@ class ListConverter(SequenceConverter):
         return False
 
     def _string_convert(self, value):
-        return self._convert(self._literal_eval(value, list))
+        value = self._literal_eval(value, Sequence, name="list")
+        return self._convert(list(value))
 
     def _non_string_convert(self, value):
         return self._convert(list(value))
@@ -558,18 +558,15 @@ class TupleConverter(TypeConverter):
         return all(c.no_conversion_needed(v) for c, v in zip(self.nested, value))
 
     def _string_convert(self, value):
-        value = self._literal_eval(value, tuple)
-        if self.nested:
-            value = self._convert_nested(value)
-        return value
+        value = self._literal_eval(value, Sequence, name="tuple")
+        return self._convert_nested(tuple(value))
 
     def _non_string_convert(self, value):
-        value = tuple(value)
-        if self.nested:
-            value = self._convert_nested(value)
-        return value
+        return self._convert_nested(tuple(value))
 
     def _convert_nested(self, value):
+        if not self.nested:
+            return value
         if self.homogenous:
             convert = self.nested[0].convert
             return tuple(
@@ -733,16 +730,19 @@ class SetConverter(TypeConverter):
             return False
         if not self.nested:
             return True
-        converter = self.nested[0]
-        return all(converter.no_conversion_needed(v) for v in value)
-
-    def _non_string_convert(self, value):
-        return self._convert(set(value))
+        no_conversion_needed = self.nested[0].no_conversion_needed
+        return all(no_conversion_needed(v) for v in value)
 
     def _string_convert(self, value):
-        return self._convert(self._literal_eval(value, set))
+        if value == "set()":  # literal_eval doesn't support "set()" with Python 3.8.
+            return set()
+        value = self._literal_eval(value, (set, Sequence), name="set")
+        return self._convert_nested(set(value))
 
-    def _convert(self, value):
+    def _non_string_convert(self, value):
+        return self._convert_nested(set(value))
+
+    def _convert_nested(self, value):
         if self.nested:
             convert = self.nested[0].convert
             value = {convert(v, kind="Item") for v in value}
@@ -754,14 +754,13 @@ class FrozenSetConverter(SetConverter):
     type = frozenset
     type_name = "frozenset"
 
-    def _non_string_convert(self, value):
-        return frozenset(super()._non_string_convert(value))
-
     def _string_convert(self, value):
-        # There are issues w/ literal_eval. See self._literal_eval for details.
-        if value == "frozenset()":
+        if value == "frozenset()":  # literal_eval doesn't support "frozenset()".
             return frozenset()
         return frozenset(super()._string_convert(value))
+
+    def _non_string_convert(self, value):
+        return frozenset(super()._non_string_convert(value))
 
 
 @TypeConverter.register

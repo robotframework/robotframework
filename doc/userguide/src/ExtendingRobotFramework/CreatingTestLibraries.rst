@@ -1401,24 +1401,32 @@ Other types cause conversion failures.
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | list_        |               |            | str_,        | Converts strings and sequences to `list`.                      | | `['one', 'two']`                   |
    |              |               |            | Sequence_    |                                                                | | `[('one', 1), ('two', 2)]`         |
-   |              |               |            |              | Strings must be Python list literals. They are converted       |                                      |
-   |              |               |            |              | to actual lists using the `ast.literal_eval`_ function.        |                                      |
+   |              |               |            |              | Strings must be Python list or tuple literals. They are        |                                      |
+   |              |               |            |              | converted using the `ast.literal_eval`_ function and possible  |                                      |
+   |              |               |            |              | tuples converted further to lists.                             |                                      |
    |              |               |            |              | They can contain any values `ast.literal_eval` supports,       |                                      |
    |              |               |            |              | including lists and other containers.                          |                                      |
+   |              |               |            |              |                                                                |                                      |
+   |              |               |            |              | Prior to Robot Framework 7.4, only list literals were          |                                      |
+   |              |               |            |              | supported.                                                     |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | tuple_       |               |            | str_,        | Same as `list`, but the result is tuple_.                      | | `('one', 'two')`                   |
    |              |               |            | Sequence_    |                                                                |                                      |
+   |              |               |            |              | Prior to Robot Framework 7.4, only tuple literals were         |                                      |
+   |              |               |            |              | supported.                                                     |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | Sequence_    |               |            | str_,        | Same as `list`, but the original sequence type is preserved.   | | `[1, 2, 3]` (result is `list`)     |
    |              |               |            | Sequence_    |                                                                | | `(1, 2, 3)` (result is `tuple`)    |
    |              |               |            |              | If type is MutableSequence_, immutable values are converted    |                                      |
    |              |               |            |              | to `list`.                                                     |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | set_         | `Set          |            | str_,        | Same as `list`, but string arguments must be set literals, or  | | `{1, 2, 3, 42}`                    |
-   |              | <abc.Set_>`__ |            | Container_   | `set()` to create an empty set, and the result is set_.        | | `set()`                            |
+   | set_         | `Set          |            | str_,        | Same as `list`, but also set literals are supported and        | | `{1, 2, 3, 42}`                    |
+   |              | <abc.Set_>`__ |            | Container_   | the result is set_.                                            | | `set()` (an empty set)             |
+   |              |               |            |              |                                                                |                                      |
+   |              |               |            |              | Prior to Robot Framework 7.4, only set literals were supported.|                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | frozenset_   |               |            | str_,        | Same as `set`, but the result is a frozenset_.                 | | `{1, 2, 3, 42}`                    |
-   |              |               |            | Container_   |                                                                | | `frozenset()`                      |
+   |              |               |            | Container_   |                                                                | | `frozenset()` (an empty set)       |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | dict_        |               | dictionary | str_,        | Converts strings and mappings to `dict`.                       | | `{'a': 1, 'b': 2}`                 |
    |              |               |            | Mapping_     |                                                                | | `{'key': 1, 'nested': {'key': 2}}` |
