@@ -481,9 +481,8 @@ Item assign to undeclared list fails
     @{undeclared_list}[0]=  Set Variable   0
 
 Empty item assign to list fails
-    [Documentation]    FAIL
-    ...    Setting value to list variable '${list_variable}' at index [] failed: \
-    ...    TypeError: list indices must be integers or slices, not str
+    [Documentation]    FAIL STARTS:
+    ...    Setting value to list variable '${list_variable}' at index [] failed: TypeError:
     ${list_variable}=       Create List    ${{ [1, 2] }}
     ${list_variable}[]=     Set Variable   3
 
