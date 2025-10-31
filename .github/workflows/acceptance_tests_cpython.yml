@@ -19,7 +19,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ 'ubuntu-latest', 'windows-latest' ]
-        python-version: [ '3.8', '3.9', '3.10', '3.11', '3.12', '3.13', '3.14-dev', 'pypy-3.10' ]
+        python-version: [ '3.8', '3.9', '3.10', '3.11', '3.12', '3.13', '3.14', 'pypy-3.11' ]
         include:
           - os: ubuntu-latest
             set_display: export DISPLAY=:99; Xvfb :99 -screen 0 1024x768x24 -ac -noreset & sleep 3
@@ -27,7 +27,7 @@ jobs:
             set_codepage: chcp 850
         exclude:
           - os: windows-latest
-            python-version: 'pypy-3.10'
+            python-version: 'pypy-3.11'
 
     runs-on: ${{ matrix.os }}
 
