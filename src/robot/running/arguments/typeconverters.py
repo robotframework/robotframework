@@ -15,7 +15,7 @@
 
 from ast import literal_eval
 from collections import OrderedDict
-from collections.abc import Container, Mapping, MutableSequence, Sequence, Set
+from collections.abc import Container, Mapping, Sequence, Set
 from datetime import date, datetime, timedelta
 from decimal import Decimal, InvalidOperation
 from enum import Enum
@@ -302,7 +302,7 @@ class BooleanConverter(TypeConverter):
     def _non_string_convert(self, value):
         return value
 
-    def _convert(self, value):
+    def _string_convert(self, value):
         normalized = value.title()
         if normalized == "None":
             return None
@@ -325,7 +325,7 @@ class IntegerConverter(TypeConverter):
             return int(value)
         raise ValueError("Conversion would lose precision.")
 
-    def _convert(self, value):
+    def _string_convert(self, value):
         value = self._remove_number_separators(value)
         value, base = self._get_base(value)
         try:
@@ -391,7 +391,7 @@ class BytesConverter(TypeConverter):
     def _non_string_convert(self, value):
         return bytes(value)
 
-    def _convert(self, value):
+    def _string_convert(self, value):
         try:
             return value.encode("latin-1")
         except UnicodeEncodeError as err:
@@ -408,7 +408,7 @@ class ByteArrayConverter(TypeConverter):
     def _non_string_convert(self, value):
         return bytearray(value)
 
-    def _convert(self, value):
+    def _string_convert(self, value):
         try:
             return bytearray(value, "latin-1")
         except UnicodeEncodeError as err:
@@ -520,32 +520,18 @@ class SequenceConverter(TypeConverter):
 
 
 @TypeConverter.register
-class ListConverter(TypeConverter):
+class ListConverter(SequenceConverter):
     type = list
     type_name = "list"
-    value_types = (str, Sequence)
 
-    def no_conversion_needed(self, value):
-        if isinstance(value, str) or not super().no_conversion_needed(value):
-            return False
-        if not self.nested:
-            return True
-        converter = self.nested[0]
-        return all(converter.no_conversion_needed(v) for v in value)
+    def _must_make_immutable(self):
+        return False
+
+    def _string_convert(self, value):
+        return self._convert(self._literal_eval(value, list))
 
     def _non_string_convert(self, value):
-        return self._convert_items(list(value))
-
-    def _convert(self, value):
-        return self._convert_items(self._literal_eval(value, list))
-
-    def _convert_items(self, value):
-        if not self.nested:
-            return value
-        converter = self.nested[0]
-        return [
-            converter.convert(v, name=str(i), kind="Item") for i, v in enumerate(value)
-        ]
+        return self._convert(list(value))
 
 
 @TypeConverter.register
@@ -571,20 +557,23 @@ class TupleConverter(TypeConverter):
             return False
         return all(c.no_conversion_needed(v) for c, v in zip(self.nested, value))
 
+    def _string_convert(self, value):
+        value = self._literal_eval(value, tuple)
+        if self.nested:
+            value = self._convert_nested(value)
+        return value
+
     def _non_string_convert(self, value):
-        return self._convert_items(tuple(value))
+        value = tuple(value)
+        if self.nested:
+            value = self._convert_nested(value)
+        return value
 
-    def _convert(self, value):
-        return self._convert_items(self._literal_eval(value, tuple))
-
-    def _convert_items(self, value):
-        if not self.nested:
-            return value
+    def _convert_nested(self, value):
         if self.homogenous:
-            converter = self.nested[0]
+            convert = self.nested[0].convert
             return tuple(
-                converter.convert(v, name=str(i), kind="Item")
-                for i, v in enumerate(value)
+                convert(v, name=str(i), kind="Item") for i, v in enumerate(value)
             )
         if len(value) != len(self.nested):
             raise ValueError(
@@ -718,43 +707,18 @@ class MappingConverter(TypeConverter):
 
 
 @TypeConverter.register
-class DictionaryConverter(TypeConverter):
+class DictionaryConverter(MappingConverter):
     type = dict
     type_name = "dictionary"
-    value_types = (str, Mapping)
 
-    def no_conversion_needed(self, value):
-        if isinstance(value, str) or not super().no_conversion_needed(value):
-            return False
-        if not self.nested:
-            return True
-        no_key_conversion_needed = self.nested[0].no_conversion_needed
-        no_value_conversion_needed = self.nested[1].no_conversion_needed
-        return all(
-            no_key_conversion_needed(k) and no_value_conversion_needed(v)
-            for k, v in value.items()
-        )
+    def _must_make_immutable(self):
+        return False
+
+    def _string_convert(self, value):
+        return self._convert(self._literal_eval(value, dict))
 
     def _non_string_convert(self, value):
-        if self._used_type_is_dict() and not isinstance(value, dict):
-            value = dict(value)
-        return self._convert_items(value)
-
-    def _used_type_is_dict(self):
-        return issubclass(self.type_info.type, dict)
-
-    def _convert(self, value):
-        return self._convert_items(self._literal_eval(value, dict))
-
-    def _convert_items(self, value):
-        if not self.nested:
-            return value
-        convert_key = self._get_converter(self.nested[0], "Key")
-        convert_value = self._get_converter(self.nested[1], "Item")
-        return {convert_key(None, k): convert_value(k, v) for k, v in value.items()}
-
-    def _get_converter(self, converter, kind):
-        return lambda name, value: converter.convert(value, name, kind=kind)
+        return self._convert(dict(value))
 
 
 @TypeConverter.register
@@ -773,16 +737,16 @@ class SetConverter(TypeConverter):
         return all(converter.no_conversion_needed(v) for v in value)
 
     def _non_string_convert(self, value):
-        return self._convert_items(set(value))
+        return self._convert(set(value))
+
+    def _string_convert(self, value):
+        return self._convert(self._literal_eval(value, set))
 
     def _convert(self, value):
-        return self._convert_items(self._literal_eval(value, set))
-
-    def _convert_items(self, value):
-        if not self.nested:
-            return value
-        converter = self.nested[0]
-        return {converter.convert(v, kind="Item") for v in value}
+        if self.nested:
+            convert = self.nested[0].convert
+            value = {convert(v, kind="Item") for v in value}
+        return value
 
 
 @TypeConverter.register
@@ -793,11 +757,11 @@ class FrozenSetConverter(SetConverter):
     def _non_string_convert(self, value):
         return frozenset(super()._non_string_convert(value))
 
-    def _convert(self, value):
+    def _string_convert(self, value):
         # There are issues w/ literal_eval. See self._literal_eval for details.
         if value == "frozenset()":
             return frozenset()
-        return frozenset(super()._convert(value))
+        return frozenset(super()._string_convert(value))
 
 
 @TypeConverter.register
