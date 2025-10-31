@@ -266,42 +266,12 @@ Strings are case, space, underscore and hyphen insensitive,
 but exact matches have precedence over normalized matches.
 """,
     Secret: """\
-The Secret type has two purposes. First, it is used to
-prevent putting the secret value in Robot Framework
-data as plain text. Second, it is used to hide secret
-from Robot Framework logs and reports.
-
-Usage of the Secret type does not fully prevent the value
-being from logged in libraries that uses the Secret type,
-because libraries will need pass the value as plain text
-to other libraries and system commands which may log the
-secret value. Also user may access the Secret type
-:attr:`value` attribute to get the actual secret and this can
-reveal the value in the logs. The only protection
-that is provided is the encapsulation of the value in a
-Secret class which prevents the value being directly logged in
-Robot Framework logs and reports.
-
-The creation of Secret is more restricted than normal variable
-types. Normal variable types can be created from anywhere,
-example in the variables section, but Secret type can not be
-created directly in the Robot Framework data. The exception
-to the rule is that an environment variable can be used to
-create secrets directly in the Robot Framework data.
-
-There are several ways to create Secret variables:
-- Secret can be created from command line
-- Secret can be returned from a library keyword
-- Secret can be created in a variable file
-- Secret can be created from environment variable.
-
-The Secret type can be used in user keywords argument types,
-like any other standard
-[https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#supported-conversions|supported conversion]
-types to enforce that the variable is actually a Secret type.
-But to exception to other supported conversion types, if the
-variable type is not Secret, an error is raised when keyword
-is called.
+    Encapsulates secrets to avoid them being shown in Robot Framework logs.
+The value is required to be
+[https://robot-framework.readthedocs.io/en/master/autodoc/robot.utils.html#robot.utils.secret.Secret|robot.api.types.Secret]
+object. These objects encapsulate confidential values so that they are not
+exposed in log files. How to create them is explained in the
+[https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#secret-variables|User Guide].
 """,
 }
 
