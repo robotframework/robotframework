@@ -18,7 +18,8 @@ from ast import literal_eval
 from collections.abc import Hashable
 from itertools import chain
 from typing import (
-    Any, Generator, Iterable, Literal, Mapping, MutableMapping, MutableSequence, NoReturn, overload, Sequence, Union
+    Any, Generator, Iterable, Literal, Mapping, MutableMapping, MutableSequence,
+    NoReturn, overload, Sequence, TypeVar, Union
 )
 
 from robot.api import logger
@@ -31,6 +32,8 @@ from robot.version import get_version
 
 NOT_SET = NotSet()
 
+I_ = TypeVar("I_", bound=Iterable)
+M_ = TypeVar("M_", bound=Mapping)
 LL = Literal["TRACE", "DEBUG", "INFO", "WARN"]
 IC = Union[
     bool, Literal["key", "KEY", "keys", "KEYS", "value", "VALUE", "values", "VALUES"]
@@ -499,8 +502,8 @@ class _List:
         if not names:
             return {}
         if is_dict_like(names):
-            return {int(index): names[index] for index in names}
-        return dict(zip(range(list_length), names))
+            return {int(index): names[index] for index in names}  # type: ignore
+        return dict(zip(range(list_length), names))  # type: ignore
 
     def _yield_list_diffs(
         self,
@@ -689,7 +692,7 @@ class _Dictionary:
         """
         self._validate_dictionary(dictionary)
         if default is NOT_SET:
-            self.dictionary_should_contain_key(dictionary, key)
+            self.dictionary_should_contain_key(dictionary, key)  # type: ignore
             return dictionary.pop(key)
         return dictionary.pop(key, default)
 
@@ -1078,7 +1081,7 @@ class _Dictionary:
             yield "Dictionary has one item:"
         else:
             yield f"Dictionary size is {len(dictionary)} and it contains following items:"
-        for key in self.get_dictionary_keys(dictionary):
+        for key in self.get_dictionary_keys(dictionary):  # type: ignore
             yield f"{key}: {dictionary[key]}"
 
     def _validate_dictionary(self, *dictionaries: Mapping):
@@ -1417,16 +1420,16 @@ class Normalizer:
             raise ValueError(
                 f"'ignore_keys' value '{ignore_keys}' cannot be converted to a list."
             )
-        return {self.normalize_key(k) for k in ignore_keys}
+        return {self.normalize_key(k) for k in ignore_keys}  # type: ignore
 
     @overload
     def normalize(self, value: str) -> str: ...
 
     @overload
-    def normalize(self, value: Iterable) -> Iterable: ...
+    def normalize(self, value: M_) -> M_: ...
 
     @overload
-    def normalize(self, value: Mapping) -> Mapping: ...
+    def normalize(self, value: I_) -> I_: ...
 
     @overload
     def normalize(self, value: object) -> object: ...
@@ -1450,7 +1453,7 @@ class Normalizer:
         value_list = [self.normalize(v) for v in value]
         if self.ignore_order:
             try:
-                value_list = sorted(value_list)
+                value_list = sorted(value_list)  # type: ignore
             except TypeError:
                 pass
         return self._try_to_preserve_type(value_list, cls)
