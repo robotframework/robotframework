@@ -15,7 +15,7 @@
 
 from ast import literal_eval
 from collections import OrderedDict
-from collections.abc import Container, Iterable, Mapping, Sequence, Set
+from collections.abc import Iterable, Mapping, Sequence, Set
 from datetime import date, datetime, timedelta
 from decimal import Decimal, InvalidOperation
 from enum import Enum
