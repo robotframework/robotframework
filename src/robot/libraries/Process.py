@@ -358,9 +358,12 @@ class Process:
         ``env_extra`` parameters that are documented in the `Process configuration`
         section.
 
-        Configuration related to waiting for processes consists of ``timeout``
-        and ``on_timeout`` parameters that have same semantics than with the
-        `Wait For Process` keyword.
+        The ``log_level`` parameter defines the logging verbosity
+        for process-related operations
+        (``Run Process``, ``Start Process``, and ``Wait For Process``).
+        Supported values are ``info``, ``debug``, and ``error``.
+        When not specified, the default value is info.
+        The ``log_level`` is set within the ``env_extra`` configuration.
 
         Process outputs are, by default, written into in-memory buffers.
         This typically works fine, but there can be problems if the amount of
@@ -371,6 +374,10 @@ class Process:
 
         Returns a `result object` containing information about the execution.
 
+        Note that possible equal signs in ``*arguments`` must be escaped
+        with a backslash (e.g. ``name\\=value``) to avoid them to be passed in
+        as ``**env_extra``.
+
         Note that possible equal signs in ``command`` and ``arguments`` must
         be escaped with a backslash (e.g. ``name\\=value``).
 
@@ -380,8 +387,11 @@ class Process:
         | ${result} = | Run Process | ${command} | stdout=${CURDIR}/stdout.txt | stderr=STDOUT |
         | ${result} = | Run Process | ${command} | timeout=1min | on_timeout=continue |
         | ${result} = | Run Process | java -Dname\\=value Example | shell=True | cwd=${EXAMPLE} |
+        | ${result} = | Run Process | java -Dname\\=value Example | shell=True | cwd=${EXAMPLE} | env:env_extra={'log_level'='info'} |
 
         This keyword does not change the `active process`.
+
+        ``log_level`` is new in Robot Framework 7.4.
         """
         current = self._processes.current
         try:
@@ -398,9 +408,26 @@ class Process:
                 env=env,
                 **env_extra,
             )
-            return self.wait_for_process(handle, timeout, on_timeout)
+            return self.wait_for_process(
+                handle, timeout, on_timeout, env_extra.pop("log_level", None)
+            )
         finally:
             self._processes.current = current
+
+    def _get_log_by_level(self, msg, log_level):
+        log_func_dic = {
+            "info": logger.info,
+            "Info": logger.info,
+            "INFO": logger.info,
+            "debug": logger.debug,
+            "Debug": logger.debug,
+            "DEBUG": logger.debug,
+            "error": logger.error,
+            "Error": logger.error,
+            "ERROR": logger.error,
+        }
+        log_func = log_func_dic.get(log_level, logger.info)
+        log_func(msg)
 
     def start_process(
         self,
@@ -429,6 +456,13 @@ class Process:
         subprocess.Popen] object which can be used later to activate this
         process. ``Popen`` attributes like ``pid`` can also be accessed directly.
 
+        The ``log_level`` parameter defines the logging verbosity
+        for process-related operations
+        (``Run Process``, ``Start Process``, and ``Wait For Process``).
+        Supported values are ``info``, ``debug``, and ``error``.
+        When not specified, the default value is info.
+        The ``log_level`` is set within the ``env_extra`` configuration.
+
         Processes are started so that they create a new process group. This
         allows terminating and sending signals to possible child processes.
 
@@ -443,7 +477,7 @@ class Process:
         | ${process} = | `Start Process` | ${command} |
         | `Log` | PID: ${process.pid} |
         | # Other keywords |
-        | ${result} = | `Terminate Process` | ${process} |
+        | ${result} = | `Terminate Process` | ${process} | env:env_extra={'log_level'='debug'} |
 
         Use started process in a pipeline with another process:
         | ${process} = | `Start Process` | python | -c | print('Hello, world!') |
@@ -454,6 +488,8 @@ class Process:
         Returning a ``subprocess.Popen`` object is new in Robot Framework 5.0.
         Earlier versions returned a generic handle and getting the process object
         required using `Get Process Object` separately.
+
+        ``log_level`` is new in RobotFramework 7.4.
         """
         conf = ProcessConfiguration(
             cwd=cwd,
@@ -467,17 +503,20 @@ class Process:
             **env_extra,
         )
         command = conf.get_command(command, list(arguments))
-        self._log_start(command, conf)
+        self._log_start(command, conf, **env_extra)
         process = subprocess.Popen(command, **conf.popen_config)
         self._results[process] = ExecutionResult(process, **conf.result_config)
         self._processes.register(process, alias=conf.alias)
         return self._processes.current
 
-    def _log_start(self, command, config):
+    def _log_start(self, command, config, **env_extra):
         if is_list_like(command):
             command = self.join_command_line(command)
-        logger.info(f"Starting process:\n{system_decode(command)}")
-        logger.debug(f"Process configuration:\n{config}")
+        log_level = env_extra.pop("log_level", None)
+        self._get_log_by_level(
+            f"Starting process:\n{system_decode(command)}", log_level
+        )
+        self._get_log_by_level(f"Process configuration:\n{config}", "debug")
 
     def is_process_running(self, handle=None):
         """Checks is the process running or not.
@@ -516,7 +555,9 @@ class Process:
         if self.is_process_running(handle):
             raise AssertionError(error_message)
 
-    def wait_for_process(self, handle=None, timeout=None, on_timeout="continue"):
+    def wait_for_process(
+        self, handle=None, timeout=None, on_timeout="continue", log_level=None
+    ):
         """Waits for the process to complete or to reach the given timeout.
 
         The process to wait for must have been started earlier with
@@ -548,9 +589,14 @@ class Process:
         the execution. If the process is left running, Python ``None`` is
         returned instead.
 
+        ``log_level`` defines the level of log when running processes,
+        starting processes and waiting for processes. Its value can
+        be ``info``,``debug`` or ``error``. When ``log_level`` is not defined,
+        then log level will be ``info`` as default.
+
         Examples:
         | # Process ends cleanly      |                  |                  |
-        | ${result} =                 | Wait For Process | example          |
+        | ${result} =                 | Wait For Process | example          | log_level='info' |
         | Process Should Be Stopped   | example          |                  |
         | Should Be Equal As Integers | ${result.rc}     | 0                |
         | # Process does not end      |                  |                  |
@@ -566,29 +612,34 @@ class Process:
         this keyword is waiting for the process to end, the process is killed
         to avoid leaving it running on the background. This is new in Robot
         Framework 7.3.
+
+        ``log_level`` is new in Robot Framework 7.4.
         """
         process = self._processes[handle]
-        logger.info("Waiting for process to complete.")
+        self._get_log_by_level("Waiting for process to complete.", log_level)
         timeout = self._get_timeout(timeout)
         if timeout > 0 and not self._process_is_stopped(process, timeout):
-            logger.info(f"Process did not complete in {secs_to_timestr(timeout)}.")
-            return self._manage_process_timeout(handle, on_timeout.lower())
-        return self._wait(process)
+            self._get_log_by_level(
+                f"Process did not complete in {secs_to_timestr(timeout)}.", log_level
+            )
+            return self._manage_process_timeout(handle, on_timeout.lower(), log_level)
+        return self._wait(process, log_level)
 
     def _get_timeout(self, timeout):
         if (isinstance(timeout, str) and timeout.upper() == "NONE") or not timeout:
             return -1
         return timestr_to_secs(timeout)
 
-    def _manage_process_timeout(self, handle, on_timeout):
+    def _manage_process_timeout(self, handle, on_timeout, log_level):
         if on_timeout == "terminate":
             return self.terminate_process(handle)
         if on_timeout == "kill":
             return self.terminate_process(handle, kill=True)
-        logger.info("Leaving process intact.")
-        return None
+        else:
+            self._get_log_by_level("Leaving process intact.", log_level)
+            return None
 
-    def _wait(self, process):
+    def _wait(self, process, log_level):
         result = self._results[process]
         # Popen.communicate() does not like closed stdin/stdout/stderr PIPEs.
         # Due to us using a timeout, we only need to care about stdin.
@@ -609,10 +660,10 @@ class Process:
                 break
         result.rc = process.returncode
         result.close_streams()
-        logger.info("Process completed.")
+        self._get_log_by_level("Process completed.", log_level)
         return result
 
-    def terminate_process(self, handle=None, kill=False):
+    def terminate_process(self, handle=None, kill=False, log_level=None):
         """Stops the process gracefully or forcefully.
 
         If ``handle`` is not given, uses the current `active process`.
@@ -634,14 +685,21 @@ class Process:
         On Windows graceful termination is done using ``CTRL_BREAK_EVENT``
         event and killing using Win32 API function ``TerminateProcess()``.
 
+        ``log_level`` defines the level of log when running processes,
+        starting processes and waiting for processes. Its value can
+        be ``info``,``debug`` or ``error``. When ``log_level`` is not defined,
+        then log level will be ``info`` as default.
+
         Examples:
         | ${result} =                 | Terminate Process |     |
         | Should Be Equal As Integers | ${result.rc}      | -15 | # On Unixes |
-        | Terminate Process           | myproc            | kill=true |
+        | Terminate Process           | myproc            | kill=true | log_level='info' |
 
         Limitations:
         - On Windows forceful kill only stops the main process, not possible
           child processes.
+
+        ``log_level`` is new in Robot Framework 7.4.
         """
         process = self._processes[handle]
         if not hasattr(process, "terminate"):
@@ -654,11 +712,13 @@ class Process:
         except OSError:
             if not self._process_is_stopped(process, self.KILL_TIMEOUT):
                 raise
-            logger.debug("Ignored OSError because process was stopped.")
-        return self._wait(process)
+            self._get_log_by_level(
+                "Ignored OSError because process was stopped.", log_level
+            )
+        return self._wait(process, log_level)
 
-    def _kill(self, process):
-        logger.info("Forcefully killing process.")
+    def _kill(self, process, log_level="info"):
+        self._get_log_by_level("Forcefully killing process.", log_level)
         if hasattr(os, "killpg"):
             os.killpg(process.pid, signal_module.SIGKILL)
         else:
@@ -666,8 +726,8 @@ class Process:
         if not self._process_is_stopped(process, self.KILL_TIMEOUT):
             raise RuntimeError("Failed to kill process.")
 
-    def _terminate(self, process):
-        logger.info("Gracefully terminating process.")
+    def _terminate(self, process, log_level="info"):
+        self._get_log_by_level("Gracefully terminating process.", log_level)
         # Sends signal to the whole process group both on POSIX and on Windows
         # if supported by the interpreter.
         if hasattr(os, "killpg"):
@@ -677,7 +737,7 @@ class Process:
         else:
             process.terminate()
         if not self._process_is_stopped(process, self.TERMINATE_TIMEOUT):
-            logger.info("Graceful termination failed.")
+            self._get_log_by_level("Graceful termination failed.", log_level)
             self._kill(process)
 
     def terminate_all_processes(self, kill=False):
@@ -692,10 +752,10 @@ class Process:
         """
         for handle in range(1, len(self._processes) + 1):
             if self.is_process_running(handle):
-                self.terminate_process(handle, kill=kill)
+                self.terminate_process(handle, kill=kill, log_level="info")
         self.__init__()
 
-    def send_signal_to_process(self, signal, handle=None, group=False):
+    def send_signal_to_process(self, signal, handle=None, group=False, log_level=None):
         """Sends the given ``signal`` to the specified process.
 
         If ``handle`` is not given, uses the current `active process`.
@@ -707,7 +767,7 @@ class Process:
 
         | Send Signal To Process | 2      |        | # Send to active process |
         | Send Signal To Process | INT    |        |                          |
-        | Send Signal To Process | SIGINT | myproc | # Send to named process  |
+        | Send Signal To Process | SIGINT | myproc | # Send to named process  | log_level='info' |
 
         This keyword is only supported on Unix-like machines, not on Windows.
         What signals are supported depends on the system. For a list of
@@ -721,12 +781,19 @@ class Process:
 
         To send the signal to the whole process group, ``group`` argument can
         be set to any true value (see `Boolean arguments`).
+
+        ``log_level`` defines the level of log when running processes,
+        starting processes and waiting for processes. Its value can
+        be ``info``,``debug`` or ``error``. When ``log_level`` is not defined,
+        then log level will be ``info`` as default.
+
+        ``log_level`` is new in Robot Framework 7.4.
         """
         if os.sep == "\\":
             raise RuntimeError("This keyword does not work on Windows.")
         process = self._processes[handle]
         signum = self._get_signal_number(signal)
-        logger.info(f"Sending signal {signal} ({signum}).")
+        self._get_log_by_level(f"Sending signal {signal} ({signum}).", log_level)
         if group and hasattr(os, "killpg"):
             os.killpg(process.pid, signum)
         elif hasattr(process, "send_signal"):

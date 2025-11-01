@@ -53,6 +53,13 @@ On timeout process can be left running
     ${result} =    Wait For Process    handle=exceed
     Should not be terminated    ${result}
 
+On timeout process can be left running with log_level
+    ${result} =    Run Process    @{COMMAND}    timeout=0.2 seconds
+    ...    on_timeout=CONTINUE    alias=exceed    log_level='Debug'
+    Should Be Equal    ${result}    ${None}
+    ${result} =    Wait For Process    handle=exceed    log_level='Info'
+    Should not be terminated    ${result}
+
 *** Keywords ***
 Should not be terminated
     [Arguments]    ${result}

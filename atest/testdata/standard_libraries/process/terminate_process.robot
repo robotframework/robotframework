@@ -18,6 +18,14 @@ Terminate process
     Should Be Empty    ${result.stdout}
     Should Be Empty    ${result.stderr}
 
+Terminate process with debug log level
+    ${handle}=    Some process
+    ${result} =    Terminate Process    ${handle}    log_level='debug'
+    Process Should Be Stopped    ${handle}
+    Should Not Be Equal As Integers     ${result.rc}    0
+    Should Be Empty    ${result.stdout}
+    Should Be Empty    ${result.stderr}
+
 Kill process
     ${handle}=    Some process
     ${result} =    Terminate Process    ${handle}    kill=true

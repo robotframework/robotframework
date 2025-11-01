@@ -11,6 +11,24 @@ Wait For Process
     Process Should Be Stopped    ${process}
     Should Be Equal As Integers    ${result.rc}    0
 
+Wait For Process With Info Log Level
+    ${process} =    Start Python Process    print('Robot Framework')
+    ${result} =    Wait For Process    ${process}    log_level='info'
+    Process Should Be Stopped    ${process}
+    Should Be Equal As Integers    ${result.rc}    0
+
+Wait For Process With Debug Log Level
+    ${process} =    Start Python Process    print('Robot Framework')
+    ${result} =    Wait For Process    ${process}    log_level='DEBUG'
+    Process Should Be Stopped    ${process}
+    Should Be Equal As Integers    ${result.rc}    0
+
+Wait For Process With Error Log Level
+    ${process} =    Start Python Process    print('Robot Framework')
+    ${result} =    Wait For Process    ${process}    log_level='Error'
+    Process Should Be Stopped    ${process}
+    Should Be Equal As Integers    ${result.rc}    0
+
 Wait For Process Timeout
     ${process} =    Start Python Process    while True: pass
     Process Should Be Running    ${process}

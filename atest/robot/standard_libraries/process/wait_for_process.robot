@@ -1,9 +1,24 @@
 *** Settings ***
-Suite Setup      Run Tests    ${EMPTY}    standard_libraries/process/wait_for_process.robot
-Resource         atest_resource.robot
+Suite Setup       Run Tests    ${EMPTY}    standard_libraries/process/wait_for_process.robot
+Resource          atest_resource.robot
 
 *** Test Cases ***
 Wait For Process
+    ${tc} =   Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc[1, 0]}    Waiting for process to complete.
+    Check Log Message    ${tc[1, 1]}    Process completed.
+
+Wait For Process With Info Log Level
+    ${tc} =   Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc[1, 0]}    Waiting for process to complete.
+    Check Log Message    ${tc[1, 1]}    Process completed.
+
+Wait For Process With Debug Log Level
+    ${tc} =   Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc[1, 0]}    Waiting for process to complete.
+    Check Log Message    ${tc[1, 1]}    Process completed.
+
+Wait For Process With Error Log Level
     ${tc} =   Check Test Case    ${TESTNAME}
     Check Log Message    ${tc[1, 0]}    Waiting for process to complete.
     Check Log Message    ${tc[1, 1]}    Process completed.
