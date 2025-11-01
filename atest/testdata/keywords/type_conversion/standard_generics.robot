@@ -10,7 +10,7 @@ Test Tags            require-py3.9
 @{INTS}              ${1}      ${2}      ${3}
 @{STRINGS}           one       2         kolme
 @{MIXED}             one       ${2}      kolme
-&{INT TO FLOAT}      ${1}=${2.3}
+&{INT TO FLOAT}      ${1}=${2.3}    ${4}=${5.6}    ${7}=${8.9}
 &{STR TO STR}        a=1       b=2
 &{STR TO INT}        a=${1}    b=${2}
 ${INT DEQUE}         ${{collections.deque([1, 2, 3])}}
@@ -25,7 +25,10 @@ List
     List                             []                       []
     List                             [1, 2, 3]                [1, 2, 3]
     List                             ['1', 2.0]               [1, 2]
+    List                             (1, 2, 3)                [1, 2, 3]
     List                             ${INTS}                  ${INTS}                   same=True
+    List                             ${INT TO FLOAT}          [1, 4, 7]
+    List                             ${{{'1'}}}               [1]
 
 List with unknown
     List with unknown                []                       []
@@ -47,7 +50,9 @@ Incompatible list
 
 Tuple
     Tuple                            (1, 'true', 3.14)        (1, True, 3.14)
-    Tuple                            ('1', 'ei', '3.14')      (1, False, 3.14)          # 'ei' -> False conversion is due to language config.
+    Tuple                            ['1', 'ei', '3.14']      (1, False, 3.14)          # 'ei' -> False conversion is due to language config.
+    Tuple                            ${INTS}                  (1, 2, 3)
+    Tuple                            ${INT TO FLOAT}          (1, 4, 7)
 
 Tuple with unknown
     Tuple with unknown               (1, '2')                 (1, 2)
@@ -65,9 +70,11 @@ Tuple in union
     Tuple in union 2                 ${MIXED}                 ${{tuple($STRINGS)}}
 
 Homogenous tuple
-    Homogenous Tuple                 ()                       ()
-    Homogenous Tuple                 (1,)                     (1,)
-    Homogenous Tuple                 (1, 2, '3', 4.0, 5)      (1, 2, 3, 4, 5)
+    Homogenous tuple                 ()                       ()
+    Homogenous tuple                 [1]                      (1,)
+    Homogenous tuple                 (1, 2, '3', 4.0, 5)      (1, 2, 3, 4, 5)
+    Homogenous tuple                 ${INTS}                  (1, 2, 3)
+    Homogenous tuple                 ${INT TO FLOAT}          (1, 4, 7)
 
 Homogenous tuple with unknown
     Homogenous tuple with unknown    (1, '2')                 (1, '2')
@@ -101,6 +108,8 @@ Sequence
     Sequence                         ${STR DEQUE}             ${INT DEQUE}
     Sequence                         ${INT SEQUENCE}          ${INT SEQUENCE}           same=True
     Sequence                         ${STR SEQUENCE}          ${INT SEQUENCE}
+    Sequence                         ${INT TO FLOAT}          [1, 4, 7]
+    Sequence                         ${{{'1'}}}               [1]
 
 MutableSequence
     Mutable sequence                 []                       []
@@ -112,6 +121,8 @@ MutableSequence
     Mutable sequence                 ${STR DEQUE}             ${INT DEQUE}
     Mutable sequence                 ${INT SEQUENCE}          [1, 2, 3]
     Mutable sequence                 ${STR SEQUENCE}          [1, 2, 3]
+    Mutable sequence                 ${INT TO FLOAT}          [1, 4, 7]
+    Mutable sequence                 ${{{'1'}}}               [1]
 
 Invalid Sequence
     [Template]                       Conversion should fail
@@ -174,6 +185,10 @@ Set
     Set                              set()                    set()
     Set                              {True}                   {True}
     Set                              {'kyllä', 'ei'}          {True, False}             # 'kyllä' and 'ei' conversions are due to language config.
+    Set                              ['True', False, '?']     {True, False, '?'}        # Boolean conversion leaves unrecognized values as-is.
+    Set                              ${{{'False', True}}}     {True, False}
+    Set                              ${INTS}                  {1, 2, 3}
+    Set                              ${INT TO FLOAT}          {1, 4, 7}
 
 Set with unknown
     Set with unknown                 set()                    set()

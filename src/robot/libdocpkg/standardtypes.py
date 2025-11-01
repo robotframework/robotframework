@@ -146,13 +146,17 @@ They are converted to actual lists or tuples using the
 function. They can contain any values ``ast.literal_eval`` supports, including
 lists and other containers.
 
-Any sequence is accepted without conversion. An exception is that if the type
-is ``MutableSequence``, immutable values are converted to ``list``.
+Iterables that are not sequences are converted to lists.
+Any sequence is accepted without conversion. An exception is that if the used
+type is ``MutableSequence``, immutable values are converted to lists.
 
 If the type has nested types like ``Sequence[int]``, items are converted
-to those types automatically. This in new in Robot Framework 6.0.
+to those types automatically.
 
 Examples: ``['one', 'two']``, ``(1, 2, 3)``
+
+Support to convert nested types is new in Robot Framework 6.0.
+Support for iterables and tuple literals is new in Robot Framework 7.4.
 """,
     list: """\
 Strings must be Python [https://docs.python.org/library/stdtypes.html#list|list]
@@ -162,15 +166,16 @@ They are converted using the
 function and possible tuples converted further to lists. They can contain any
 values ``ast.literal_eval`` supports, including lists and other containers.
 
-Any sequence is accepted and converted to a ``list``.
+If the argument is a list, it is used without conversion.
+Tuples and other iterables are converted to lists.
 
 If the type has nested types like ``list[int]``, items are converted
 to those types automatically.
 
 Examples: ``['one', 'two']``, ``[('one', 1), ('two', 2)]``
 
-Support to convert nested types is in new in Robot Framework 6.0 and
-support for tuple literals is new in Robot Framework 7.4.
+Support to convert nested types is new in Robot Framework 6.0.
+Support for iterables and tuple literals is new in Robot Framework 7.4.
 """,
     tuple: """\
 Strings must be Python [https://docs.python.org/library/stdtypes.html#tuple|tuple]
@@ -180,15 +185,16 @@ They are converted using the
 function and possible lists converted further to tuples. They can contain any
 values ``ast.literal_eval`` supports, including tuples and other containers.
 
-Any sequence is accepted and converted to a ``tuple``.
+If the argument is a tuple, it is used without conversion.
+Lists and other iterables are converted to tuples.
 
 If the type has nested types like ``tuple[str, int, int]``, items are converted
 to those types automatically.
 
 Examples: ``('one', 'two')``, ``(('one', 1), ('two', 2))``
 
-Support to convert nested types is in new in Robot Framework 6.0 and
-support for list literals is new in Robot Framework 7.4.
+Support to convert nested types is new in Robot Framework 6.0.
+Support for iterables and tuple literals is new in Robot Framework 7.4.
 """,
     Mapping: """\
 Strings must be Python [https://docs.python.org/library/stdtypes.html#dict|dictionary]
@@ -228,15 +234,16 @@ literals. They are converted using the
 function and possible lists and tuples converted further to sets. They can
 contain any values ``ast.literal_eval`` supports.
 
-Any container object is accepted and converted to a ``set``.
+If the argument is a set, it is used without conversion.
+Lists and other iterables are converted to sets.
 
 If the type has nested types like ``set[int]``, items are converted
 to those types automatically.
 
 Examples: ``{1, 2, 3, 42}``, ``set()`` (an empty set)
 
-Support to convert nested types is in new in Robot Framework 6.0 and
-support for list and tuple literals is new in Robot Framework 7.4.
+Support to convert nested types is new in Robot Framework 6.0.
+Support for iterables and tuple literals is new in Robot Framework 7.4.
 """,
     frozenset: """\
 Strings must be Python [https://docs.python.org/library/stdtypes.html#set|set],
@@ -247,15 +254,16 @@ literals. They are converted using the
 function and then converted further to ``frozenset``. They can
 contain any values ``ast.literal_eval`` supports.
 
-Any container object is accepted and converted to a ``frozenset``.
+If the argument is a frozenset, it is used without conversion.
+Lists and other iterables are converted to frozensets.
 
 If the type has nested types like ``frozenset[int]``, items are converted
 to those types automatically.
 
 Examples: ``{1, 2, 3, 42}``, ``frozenset()`` (an empty set)
 
-Support to convert nested types is in new in Robot Framework 6.0 and
-support for list and tuple literals is new in Robot Framework 7.4.
+Support to convert nested types is new in Robot Framework 6.0.
+Support for iterables and tuple literals is new in Robot Framework 7.4.
 """,
     Literal: """\
 Only specified values are accepted. Values can be strings,

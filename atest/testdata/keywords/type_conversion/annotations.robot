@@ -381,6 +381,8 @@ List
     List                 ${{(1, 2)}}               [1, 2]
     List                 ${DEQUE}                  [1, 2, 3]
     List                 ${SEQUENCE}               ['x']
+    List                 ${DICT}                   ['foo', 'bar']
+    List                 ${{(c for c in 'xy')}}    ['x', 'y']
 
 Invalid list
     [Template]           Conversion Should Fail
@@ -398,6 +400,8 @@ Sequence (abc)
     Sequence             ${LIST}                   ${LIST}               same=True
     Sequence             ${DEQUE}                  ${DEQUE}              same=True
     Sequence             ${SEQUENCE}               ${SEQUENCE}           same=True
+    Sequence             ${DICT}                   ['foo', 'bar']
+    Sequence             ${{(c for c in 'xy')}}    ['x', 'y']
 
 MutableSequence (abc)
     Mutable sequence     []                        []
@@ -405,6 +409,8 @@ MutableSequence (abc)
     Mutable sequence     ${LIST}                   ${LIST}               same=True
     Mutable sequence     ${DEQUE}                  ${DEQUE}              same=True
     Mutable sequence     ${SEQUENCE}               ['x']
+    Mutable sequence     ${DICT}                   ['foo', 'bar']
+    Mutable sequence     ${{(c for c in 'xy')}}    ['x', 'y']
 
 Invalid sequence (abc)
     [Template]           Conversion Should Fail
@@ -424,6 +430,8 @@ Tuple
     Tuple                ${{(1, 2)}}               (1, 2)
     Tuple                ${{[1, 2]}}               (1, 2)
     Tuple                ${DEQUE}                  (1, 2, 3)
+    Tuple                ${DICT}                   ('foo', 'bar')
+    Tuple                ${{(c for c in 'xy')}}    ('x', 'y')
 
 Invalid tuple
     [Template]           Conversion Should Fail
@@ -472,11 +480,13 @@ Set
     Set                  (1, 2, 3.14, -42)         {1, 2, 3.14, -42}
     Set                  ${{{1}}}                  {1}
     Set                  ${{frozenset({1})}}       {1}
-    Set                  ${{[1]}}                  {1}
-    Set                  ${{(1,)}}                 {1}
+    Set                  ${{[1, 2, 1]}}            {1, 2}
+    Set                  ${{(1, 2, 1)}}            {1, 2}
     Set                  ${{{1: 2}}}               {1}
     Set                  ${DEQUE}                  {1, 2, 3}
     Set                  ${MAPPING}                {'a'}
+    Set                  ${DICT}                   {'foo', 'bar'}
+    Set                  ${{(c for c in 'xy')}}    {'x', 'y'}
 
 Invalid set
     [Template]           Conversion Should Fail
@@ -493,11 +503,15 @@ Set (abc)
     Set abc              {1, 2, 3.14, -42}         {1, 2, 3.14, -42}
     Set abc              ${DEQUE}                  {1, 2, 3}
     Set abc              ${MAPPING}                {'a'}
+    Set abc              ${DICT}                   {'foo', 'bar'}
+    Set abc              ${{(c for c in 'xy')}}    {'x', 'y'}
     Mutable set          set()                     set()
     Mutable set          {'foo', 'bar'}            {'foo', 'bar'}
     Mutable set          {1, 2, 3.14, -42}         {1, 2, 3.14, -42}
     Mutable set          ${DEQUE}                  {1, 2, 3}
     Mutable set          ${MAPPING}                {'a'}
+    Mutable set          ${DICT}                   {'foo', 'bar'}
+    Mutable set          ${{(c for c in 'xy')}}    {'x', 'y'}
 
 Invalid set (abc)
     [Template]           Conversion Should Fail
