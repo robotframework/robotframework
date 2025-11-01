@@ -23,8 +23,8 @@ Log HTML
     Log HTML
     [Teardown]  Set log level  INFO
 
-Write messages to console
-    Write messages to console
+Write messages to log and console
+    Write messages to log and console
 
 Log Non-Strings
     Log Non Strings
