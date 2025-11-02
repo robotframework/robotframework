@@ -39,7 +39,7 @@ __all__ = [
 ]
 
 
-def pause_execution(message="Execution paused. Press OK to continue."):
+def pause_execution(message: str = "Execution paused. Press OK to continue."):
     """Pauses execution until user clicks ``Ok`` button.
 
     ``message`` is the message shown in the dialog.
@@ -47,7 +47,7 @@ def pause_execution(message="Execution paused. Press OK to continue."):
     MessageDialog(message).show()
 
 
-def execute_manual_step(message, default_error=""):
+def execute_manual_step(message: str, default_error: str = ""):
     """Pauses execution until user sets the keyword status.
 
     User can press either ``PASS`` or ``FAIL`` button. In the latter case execution
@@ -62,7 +62,11 @@ def execute_manual_step(message, default_error=""):
         raise AssertionError(msg)
 
 
-def get_value_from_user(message, default_value="", hidden=False):
+def get_value_from_user(
+    message: str,
+    default_value: str = "",
+    hidden: bool = False,
+) -> str:
     """Pauses execution and asks user to input a value.
 
     Value typed by the user, or the possible default value, is returned.
@@ -84,7 +88,11 @@ def get_value_from_user(message, default_value="", hidden=False):
     return _validate_user_input(InputDialog(message, default_value, hidden))
 
 
-def get_selection_from_user(message, *values, default=None):
+def get_selection_from_user(
+    message: str,
+    *values: str,
+    default: "str | int | None" = None,
+) -> str:
     """Pauses execution and asks user to select a value.
 
     The selected value is returned. Pressing ``Cancel`` fails the keyword.
@@ -106,7 +114,7 @@ def get_selection_from_user(message, *values, default=None):
     return _validate_user_input(SelectionDialog(message, values, default))
 
 
-def get_selections_from_user(message, *values):
+def get_selections_from_user(message: str, *values: str) -> "list[str]":
     """Pauses execution and asks user to select multiple values.
 
     The selected values are returned as a list. Selecting no values is OK
