@@ -457,14 +457,6 @@ class Process:
         Earlier versions returned a generic handle and getting the process object
         required using `Get Process Object` separately.
         """
-        has_secrets = any(isinstance(arg, Secret) for arg in arguments)
-        if has_secrets:
-            masked_arguments = [
-                str(arg) if isinstance(arg, Secret) else arg for arg in arguments
-            ]
-            arguments = [
-                arg.value if isinstance(arg, Secret) else arg for arg in arguments
-            ]
         conf = ProcessConfiguration(
             cwd=cwd,
             shell=shell,
@@ -476,13 +468,15 @@ class Process:
             env=env,
             **env_extra,
         )
-        actual_command = conf.get_command(command, arguments)
-        if has_secrets:
-            masked_command = conf.get_command(command, masked_arguments)
-            self._log_start(masked_command, conf)
-        else:
-            self._log_start(actual_command, conf)
-        process = subprocess.Popen(actual_command, **conf.popen_config)
+        actual_arguments = []
+        logged_arguments = []
+        for arg in arguments:
+            actual_arguments.append(arg.value if isinstance(arg, Secret) else arg)
+            logged_arguments.append(str(arg))
+        self._log_start(conf.get_command(command, logged_arguments), conf)
+        process = subprocess.Popen(
+            conf.get_command(command, actual_arguments), **conf.popen_config
+        )
         self._results[process] = ExecutionResult(process, **conf.result_config)
         self._processes.register(process, alias=conf.alias)
         return self._processes.current
