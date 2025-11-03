@@ -71,10 +71,13 @@ from typing import Literal
 from robot.output import librarylogger
 from robot.running.context import EXECUTION_CONTEXTS
 
-LOGLEVEL = Literal["TRACE", "DEBUG", "INFO", "CONSOLE", "HTML", "WARN", "ERROR"]
+# LOGLEVEL was introduced in RF 7.0 and more standard compliant LogLevel in RF 7.4.
+# The former is considered deprecated and will be removed in the future.
+LogLevel = Literal["TRACE", "DEBUG", "INFO", "CONSOLE", "HTML", "WARN", "ERROR"]
+LOGLEVEL = LogLevel
 
 
-def write(msg: str, level: LOGLEVEL = "INFO", html: bool = False):
+def write(msg: str, level: LogLevel = "INFO", html: bool = False):
     """Writes the message to the log file using the given level.
 
     Valid log levels are ``TRACE``, ``DEBUG``, ``INFO`` (default), ``WARN``,
@@ -85,8 +88,7 @@ def write(msg: str, level: LOGLEVEL = "INFO", html: bool = False):
     level is new in Robot Framework 6.1.
 
     Instead of using this method, it is generally better to use the level
-    specific methods such as ``info`` and ``debug`` that have separate
-    ``html`` argument to control the message format.
+    specific methods such as ``info`` and ``debug``.
     """
     if EXECUTION_CONTEXTS.current is not None:
         librarylogger.write(msg, level, html)
