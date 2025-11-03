@@ -159,10 +159,14 @@ class OperatingSystem:
     ROBOT_LIBRARY_SCOPE = "GLOBAL"
     ROBOT_LIBRARY_VERSION = __version__
 
-    def run(self, command):
-        """Runs the given command in the system and returns the output.
+    def run(self, command: str) -> str:
+        """_This keyword is considered deprecated. Use the
+        [http://robotframework.org/robotframework/latest/libraries/Process.html|
+        Process] library instead._
 
-        The execution status of the command *is not checked* by this
+        Runs the given command in the system and returns the output.
+
+        The execution status of the command _is not checked_ by this
         keyword, and it must be done separately based on the returned
         output. If the execution return code is needed, either `Run
         And Return RC` or `Run And Return RC And Output` can be used.
@@ -189,22 +193,21 @@ class OperatingSystem:
         | ${stdout} =        | Run       | /opt/script.sh 2>/tmp/stderr.txt |
         | Should Be Equal    | ${stdout} | TEST PASSED |
         | File Should Be Empty | /tmp/stderr.txt |
-
-        *TIP:* `Run Process` keyword provided by the
-        [http://robotframework.org/robotframework/latest/libraries/Process.html|
-        Process library] supports better process configuration and is generally
-        recommended as a replacement for this keyword.
         """
         return self._run(command)[1]
 
-    def run_and_return_rc(self, command):
-        """Runs the given command in the system and returns the return code.
+    def run_and_return_rc(self, command: str) -> int:
+        """_This keyword is considered deprecated. Use the
+        [http://robotframework.org/robotframework/latest/libraries/Process.html|
+        Process] library instead._
 
-        The return code (RC) is returned as a positive integer in
+        Runs the given command in the system and returns the return code (RC).
+
+        The return code is returned as a positive integer in
         range from 0 to 255 as returned by the executed command. On
         some operating systems (notable Windows) original return codes
         can be something else, but this keyword always maps them to
-        the 0-255 range. Since the RC is an integer, it must be
+        the 0-255 range. Since the return code is an integer, it must be
         checked e.g. with the keyword `Should Be Equal As Integers`
         instead of `Should Be Equal` (both are built-in keywords).
 
@@ -216,18 +219,16 @@ class OperatingSystem:
 
         See `Run` and `Run And Return RC And Output` if you need to get the
         output of the executed command.
-
-        *TIP:* `Run Process` keyword provided by the
-        [http://robotframework.org/robotframework/latest/libraries/Process.html|
-        Process library] supports better process configuration and is generally
-        recommended as a replacement for this keyword.
         """
         return self._run(command)[0]
 
-    def run_and_return_rc_and_output(self, command):
-        """Runs the given command in the system and returns the RC and output.
+    def run_and_return_rc_and_output(self, command: str) -> "tuple[int, str]":
+        """_This keyword is considered deprecated. Use the
+        [http://robotframework.org/robotframework/latest/libraries/Process.html|
+        Process] library instead._
 
-        The return code (RC) is returned similarly as with `Run And Return RC`
+        Runs the given command in the system and returns the return code (RC)
+        and output. The return code is returned similarly as with `Run And Return RC`
         and the output similarly as with `Run`.
 
         Examples:
@@ -238,11 +239,6 @@ class OperatingSystem:
         | Should Be True       | ${rc} > 42      |
         | Should Be Equal      | ${stdout}       | TEST PASSED |
         | File Should Be Empty | /tmp/stderr.txt |
-
-        *TIP:* `Run Process` keyword provided by the
-        [http://robotframework.org/robotframework/latest/libraries/Process.html|
-        Process library] supports better process configuration and is generally
-        recommended as a replacement for this keyword.
         """
         return self._run(command)
 
