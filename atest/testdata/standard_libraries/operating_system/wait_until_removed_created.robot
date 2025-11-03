@@ -69,9 +69,17 @@ Wait removal when using `pathlib.Path`
     Create File              ${PATH}
     Wait Until Removed       ${PATH}    0.042
 
+None disables remove timeout
+    [Documentation]    In practice this only validates that None is accepted.
+    ...                Waiting until the default timeout exceeds would take too much time.
+    ...                FAIL    Test timeout 100 milliseconds exceeded.
+    [Timeout]          0.1 s
+    Create File              ${FILE}
+    Wait Until Removed       ${FILE}    timeout=None
+
 Invalid remove timeout
-    [Documentation]    FAIL ValueError: Invalid time string 'invalid timeout'.
-    Wait Until Removed       non-existing    invalid timeout
+    [Documentation]    FAIL ValueError: Argument 'timeout' got value 'invalid' that cannot be converted to timedelta or None.
+    Wait Until Removed       non-existing    invalid
 
 Wait creation when already created
     Create Items
@@ -117,9 +125,16 @@ Wait creation when using `pathlib.Path`
     Remove File              ${PATH}
     Wait Until Created       ${PATH}    0.042
 
+None disables create timeout
+    [Documentation]    In practice this only validates that None is accepted.
+    ...                Waiting until the default timeout exceeds would take too much time.
+    ...                FAIL    Test timeout 100 milliseconds exceeded.
+    [Timeout]          0.1 s
+    Wait Until Created       ${FILE}    timeout=None
+
 Invalid create timeout
-    [Documentation]    FAIL ValueError: Invalid time string 'invalid timeout'.
-    Wait Until Created       ${CURDIR}    invalid timeout
+    [Documentation]    FAIL ValueError: Argument 'timeout' got value 'invalid' that cannot be converted to timedelta or None.
+    Wait Until Created       ${CURDIR}    invalid
 
 *** Keywords ***
 Remove Items

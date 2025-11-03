@@ -243,7 +243,10 @@ def format_time(
     return day + daytimesep + time_ + millis
 
 
-def get_time(format="timestamp", time_=None):
+def get_time(
+    format: str = "timestamp",
+    time_: "float | None" = None,
+) -> "int | str | list[str]":
     """Return the given or current time in requested format.
 
     If time is not given, current time is used. How time is returned is

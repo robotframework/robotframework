@@ -27,6 +27,9 @@ Wait removal when path itself contains glob charactes
 Wait removal when using `pathlib.Path`
     Check Test Case    ${TESTNAME}
 
+None disables remove timeout
+    Check Test Case    ${TESTNAME}
+
 Invalid remove timeout
     Check Test Case    ${TESTNAME}
 
@@ -52,6 +55,9 @@ Wait creation when path itself contains glob charactes
     Check Test Case    ${TESTNAME}
 
 Wait creation when using `pathlib.Path`
+    Check Test Case    ${TESTNAME}
+
+None disables create timeout
     Check Test Case    ${TESTNAME}
 
 Invalid create timeout
