@@ -18,19 +18,26 @@ import signal as signal_module
 import subprocess
 import sys
 import time
+from collections.abc import Sequence
+from datetime import timedelta
+from io import IOBase
 from pathlib import Path
-from tempfile import TemporaryFile
+from tempfile import NamedTemporaryFile
+from typing import Literal, Union
 
 from robot.api import logger
+from robot.api.types import Secret
 from robot.errors import TimeoutExceeded
 from robot.utils import (
-    cmdline2list, ConnectionCache, console_decode, console_encode, is_list_like,
-    NormalizedDict, secs_to_timestr, system_decode, system_encode, timestr_to_secs,
-    WINDOWS
+    cmdline2list, ConnectionCache, console_decode, console_encode, NormalizedDict,
+    secs_to_timestr, system_decode, system_encode, WINDOWS
 )
 from robot.version import get_version
 
 LOCALE_ENCODING = "locale" if sys.version_info >= (3, 10) else None
+Handle = Union[subprocess.Popen, "str", None]
+Stdin = Union[str, Secret, Path, int, IOBase, None]
+OnTimeout = Literal["continue", "terminate", "kill"]
 
 
 class Process:
@@ -284,27 +291,6 @@ class Process:
     need to see the original process output, redirect it to a file using
     `process configuration` and read it from there.
 
-    = Boolean arguments =
-
-    Some keywords accept arguments that are handled as Boolean values true or
-    false. If such an argument is given as a string, it is considered false if
-    it is an empty string or equal to ``FALSE``, ``NONE``, ``NO``, ``OFF`` or
-    ``0``, case-insensitively. Other strings are considered true regardless
-    their value, and other argument types are tested using the same
-    [http://docs.python.org/library/stdtypes.html#truth|rules as in Python].
-
-    True examples:
-    | `Terminate Process` | kill=True     | # Strings are generally true.    |
-    | `Terminate Process` | kill=yes      | # Same as the above.             |
-    | `Terminate Process` | kill=${TRUE}  | # Python ``True`` is true.       |
-    | `Terminate Process` | kill=${42}    | # Numbers other than 0 are true. |
-
-    False examples:
-    | `Terminate Process` | kill=False    | # String ``false`` is false.   |
-    | `Terminate Process` | kill=no       | # Also string ``no`` is false. |
-    | `Terminate Process` | kill=${EMPTY} | # Empty string is false.       |
-    | `Terminate Process` | kill=${FALSE} | # Python ``False`` is false.   |
-
     = Example =
 
     | ***** Settings *****
@@ -328,25 +314,25 @@ class Process:
     KILL_TIMEOUT = 10
 
     def __init__(self):
-        self._processes = ConnectionCache("No active process.")
-        self._results = {}
+        self._processes = ConnectionCache[subprocess.Popen]("No active process.")
+        self._results: dict[subprocess.Popen, ProcessResult] = {}
 
     def run_process(
         self,
-        command,
-        *arguments,
-        cwd=None,
-        shell=False,
-        stdout=None,
-        stderr=None,
-        stdin=None,
-        output_encoding="CONSOLE",
-        alias=None,
-        timeout=None,
-        on_timeout="terminate",
-        env=None,
-        **env_extra,
-    ):
+        command: str,
+        *arguments: "str | Secret",
+        cwd: "str | None" = None,
+        shell: bool = False,
+        stdout: "str | None" = None,
+        stderr: "str | None" = None,
+        stdin: Stdin = None,
+        output_encoding: str = "CONSOLE",
+        alias: "str | None" = None,
+        timeout: "timedelta | None" = None,
+        on_timeout: OnTimeout = "terminate",
+        env: "dict[str, str | Secret] | None" = None,
+        **env_extra: "str | Secret",
+    ) -> "ProcessResult":
         """Runs a process and waits for it to complete.
 
         ``command`` and ``arguments`` specify the command to execute and
@@ -404,18 +390,18 @@ class Process:
 
     def start_process(
         self,
-        command,
-        *arguments,
-        cwd=None,
-        shell=False,
-        stdout=None,
-        stderr=None,
-        stdin=None,
-        output_encoding="CONSOLE",
-        alias=None,
-        env=None,
-        **env_extra,
-    ):
+        command: str,
+        *arguments: "str | Secret",
+        cwd: "str | None" = None,
+        shell: bool = False,
+        stdout: "str | None" = None,
+        stderr: "str | None" = None,
+        stdin: Stdin = None,
+        output_encoding: str = "CONSOLE",
+        alias: "str | None" = None,
+        env: "dict[str, str | Secret] | None" = None,
+        **env_extra: "str | Secret",
+    ) -> subprocess.Popen:
         """Starts a new process on background.
 
         See `Specifying command and arguments` and `Process configuration` sections
@@ -455,7 +441,7 @@ class Process:
         Earlier versions returned a generic handle and getting the process object
         required using `Get Process Object` separately.
         """
-        conf = ProcessConfiguration(
+        config = ProcessConfiguration(
             cwd=cwd,
             shell=shell,
             stdout=stdout,
@@ -466,20 +452,26 @@ class Process:
             env=env,
             **env_extra,
         )
-        command = conf.get_command(command, list(arguments))
-        self._log_start(command, conf)
-        process = subprocess.Popen(command, **conf.popen_config)
-        self._results[process] = ExecutionResult(process, **conf.result_config)
-        self._processes.register(process, alias=conf.alias)
+        actual_arguments = []
+        logged_arguments = []
+        for arg in arguments:
+            actual_arguments.append(arg.value if isinstance(arg, Secret) else arg)
+            logged_arguments.append(str(arg))
+        self._log_start(config.get_command(command, logged_arguments), config)
+        process = subprocess.Popen(
+            config.get_command(command, actual_arguments), **config.popen_config
+        )
+        self._results[process] = ProcessResult(process, **config.result_config)
+        self._processes.register(process, alias=config.alias)
         return self._processes.current
 
-    def _log_start(self, command, config):
-        if is_list_like(command):
-            command = self.join_command_line(command)
+    def _log_start(self, command: "str | list[str]", config: "ProcessConfiguration"):
+        if isinstance(command, list):
+            command = self.join_command_line(*command)
         logger.info(f"Starting process:\n{system_decode(command)}")
         logger.debug(f"Process configuration:\n{config}")
 
-    def is_process_running(self, handle=None):
+    def is_process_running(self, handle: Handle = None) -> bool:
         """Checks is the process running or not.
 
         If ``handle`` is not given, uses the current `active process`.
@@ -490,8 +482,8 @@ class Process:
 
     def process_should_be_running(
         self,
-        handle=None,
-        error_message="Process is not running.",
+        handle: Handle = None,
+        error_message: str = "Process is not running.",
     ):
         """Verifies that the process is running.
 
@@ -504,8 +496,8 @@ class Process:
 
     def process_should_be_stopped(
         self,
-        handle=None,
-        error_message="Process is running.",
+        handle: Handle = None,
+        error_message: str = "Process is running.",
     ):
         """Verifies that the process is not running.
 
@@ -516,7 +508,12 @@ class Process:
         if self.is_process_running(handle):
             raise AssertionError(error_message)
 
-    def wait_for_process(self, handle=None, timeout=None, on_timeout="continue"):
+    def wait_for_process(
+        self,
+        handle: Handle = None,
+        timeout: "timedelta | None" = None,
+        on_timeout: OnTimeout = "continue",
+    ) -> "ProcessResult | None":
         """Waits for the process to complete or to reach the given timeout.
 
         The process to wait for must have been started earlier with
@@ -528,8 +525,7 @@ class Process:
         [http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#time-format|
         various time formats] supported by Robot Framework, for example, ``42``,
         ``42 s``, or ``1 minute 30 seconds``. The timeout is ignored if it is
-        Python ``None`` (default), string ``NONE`` (case-insensitively), zero,
-        or negative.
+        ``None`` (default), zero or negative.
 
         ``on_timeout`` defines what to do if the timeout occurs. Possible values
         and corresponding actions are explained in the table below. Notice
@@ -569,18 +565,17 @@ class Process:
         """
         process = self._processes[handle]
         logger.info("Waiting for process to complete.")
-        timeout = self._get_timeout(timeout)
+        timeout = timeout.total_seconds() if timeout else -1
         if timeout > 0 and not self._process_is_stopped(process, timeout):
             logger.info(f"Process did not complete in {secs_to_timestr(timeout)}.")
             return self._manage_process_timeout(handle, on_timeout.lower())
         return self._wait(process)
 
-    def _get_timeout(self, timeout):
-        if (isinstance(timeout, str) and timeout.upper() == "NONE") or not timeout:
-            return -1
-        return timestr_to_secs(timeout)
-
-    def _manage_process_timeout(self, handle, on_timeout):
+    def _manage_process_timeout(
+        self,
+        handle: subprocess.Popen,
+        on_timeout: str,
+    ) -> "ProcessResult | None":
         if on_timeout == "terminate":
             return self.terminate_process(handle)
         if on_timeout == "kill":
@@ -588,7 +583,7 @@ class Process:
         logger.info("Leaving process intact.")
         return None
 
-    def _wait(self, process):
+    def _wait(self, process: subprocess.Popen) -> "ProcessResult":
         result = self._results[process]
         # Popen.communicate() does not like closed stdin/stdout/stderr PIPEs.
         # Due to us using a timeout, we only need to care about stdin.
@@ -612,36 +607,38 @@ class Process:
         logger.info("Process completed.")
         return result
 
-    def terminate_process(self, handle=None, kill=False):
+    def terminate_process(
+        self,
+        handle: Handle = None,
+        kill: bool = False,
+    ) -> "ProcessResult":
         """Stops the process gracefully or forcefully.
 
         If ``handle`` is not given, uses the current `active process`.
 
         By default, first tries to stop the process gracefully. If the process
-        does not stop in 30 seconds, or ``kill`` argument is given a true value,
-        (see `Boolean arguments`) kills the process forcefully. Stops also all
-        the child processes of the originally started process.
+        does not stop in 30 seconds, or the ``kill`` argument is given a true
+        value, kills the process forcefully. Stops also all the child processes
+        of the originally started process.
 
         Waits for the process to stop after terminating it. Returns a `result
         object` containing information about the execution similarly as `Wait
         For Process`.
 
         On Unix-like machines graceful termination is done using ``TERM (15)``
-        signal and killing using ``KILL (9)``. Use `Send Signal To Process`
+        signal and forceful kill using ``KILL (9)``. Use `Send Signal To Process`
         instead if you just want to send either of these signals without
         waiting for the process to stop.
 
         On Windows graceful termination is done using ``CTRL_BREAK_EVENT``
-        event and killing using Win32 API function ``TerminateProcess()``.
+        event and forceful kill using Win32 API function ``TerminateProcess()``.
+        In this case forceful kill only stops the main process, not possible
+        child processes.
 
         Examples:
         | ${result} =                 | Terminate Process |     |
         | Should Be Equal As Integers | ${result.rc}      | -15 | # On Unixes |
         | Terminate Process           | myproc            | kill=true |
-
-        Limitations:
-        - On Windows forceful kill only stops the main process, not possible
-          child processes.
         """
         process = self._processes[handle]
         if not hasattr(process, "terminate"):
@@ -657,7 +654,7 @@ class Process:
             logger.debug("Ignored OSError because process was stopped.")
         return self._wait(process)
 
-    def _kill(self, process):
+    def _kill(self, process: subprocess.Popen):
         logger.info("Forcefully killing process.")
         if hasattr(os, "killpg"):
             os.killpg(process.pid, signal_module.SIGKILL)
@@ -666,7 +663,7 @@ class Process:
         if not self._process_is_stopped(process, self.KILL_TIMEOUT):
             raise RuntimeError("Failed to kill process.")
 
-    def _terminate(self, process):
+    def _terminate(self, process: subprocess.Popen):
         logger.info("Gracefully terminating process.")
         # Sends signal to the whole process group both on POSIX and on Windows
         # if supported by the interpreter.
@@ -680,7 +677,7 @@ class Process:
             logger.info("Graceful termination failed.")
             self._kill(process)
 
-    def terminate_all_processes(self, kill=False):
+    def terminate_all_processes(self, kill: bool = False):
         """Terminates all still running processes started by this library.
 
         This keyword can be used in suite teardown or elsewhere to make
@@ -690,12 +687,17 @@ class Process:
         configured to forcefully kill them immediately. See `Terminate Process`
         that this keyword uses internally for more details.
         """
-        for handle in range(1, len(self._processes) + 1):
-            if self.is_process_running(handle):
-                self.terminate_process(handle, kill=kill)
+        for process in self._processes:
+            if self.is_process_running(process):
+                self.terminate_process(process, kill=kill)
         self.__init__()
 
-    def send_signal_to_process(self, signal, handle=None, group=False):
+    def send_signal_to_process(
+        self,
+        signal: "int | str",
+        handle: Handle = None,
+        group: bool = False,
+    ):
         """Sends the given ``signal`` to the specified process.
 
         If ``handle`` is not given, uses the current `active process`.
@@ -714,13 +716,13 @@ class Process:
         existing signals on your system, see the Unix man pages related to
         signal handling (typically ``man signal`` or ``man 7 signal``).
 
-        By default sends the signal only to the parent process, not to possible
+        By default, sends the signal only to the parent process, not to possible
         child processes started by it. Notice that when `running processes in
-        shell`, the shell is the parent process and it depends on the system
+        shell`, the shell is the parent process, and it depends on the system
         does the shell propagate the signal to the actual started process.
 
-        To send the signal to the whole process group, ``group`` argument can
-        be set to any true value (see `Boolean arguments`).
+        To send the signal to the whole process group, give the ``group``
+        argument a true value.
         """
         if os.sep == "\\":
             raise RuntimeError("This keyword does not work on Windows.")
@@ -736,13 +738,13 @@ class Process:
                 "Sending signals is not supported by this Python version."
             )
 
-    def _get_signal_number(self, int_or_name):
+    def _get_signal_number(self, int_or_name: "int | str") -> int:
         try:
             return int(int_or_name)
         except ValueError:
             return self._convert_signal_name_to_number(int_or_name)
 
-    def _convert_signal_name_to_number(self, name):
+    def _convert_signal_name_to_number(self, name: str) -> int:
         try:
             return getattr(
                 signal_module, name if name.startswith("SIG") else "SIG" + name
@@ -750,7 +752,7 @@ class Process:
         except AttributeError:
             raise RuntimeError(f"Unsupported signal '{name}'.")
 
-    def get_process_id(self, handle=None):
+    def get_process_id(self, handle: Handle = None) -> int:
         """Returns the process ID (pid) of the process as an integer.
 
         If ``handle`` is not given, uses the current `active process`.
@@ -761,7 +763,7 @@ class Process:
         """
         return self._processes[handle].pid
 
-    def get_process_object(self, handle=None):
+    def get_process_object(self, handle: Handle = None) -> subprocess.Popen:
         """Return the underlying ``subprocess.Popen`` object.
 
         If ``handle`` is not given, uses the current `active process`.
@@ -774,13 +776,13 @@ class Process:
 
     def get_process_result(
         self,
-        handle=None,
-        rc=False,
-        stdout=False,
-        stderr=False,
-        stdout_path=False,
-        stderr_path=False,
-    ):
+        handle: Handle = None,
+        rc: bool = False,
+        stdout: bool = False,
+        stderr: bool = False,
+        stdout_path: bool = False,
+        stderr_path: bool = False,
+    ) -> "ProcessResult | int | str | tuple[int | str, ...]":
         """Returns the specified `result object` or some of its attributes.
 
         The given ``handle`` specifies the process whose results should be
@@ -796,8 +798,6 @@ class Process:
         are given any true value, only the specified attributes of the
         `result object` are returned. These attributes are always returned
         in the same order as arguments are specified in the keyword signature.
-        See `Boolean arguments` section for more details about true and false
-        values.
 
         Examples:
         | Run Process           | python             | -c            | print('Hello, world!') | alias=myproc |
@@ -826,12 +826,7 @@ class Process:
                 "Getting results of unfinished processes is not supported."
             )
         attributes = self._get_result_attributes(
-            result,
-            rc,
-            stdout,
-            stderr,
-            stdout_path,
-            stderr_path,
+            result, rc, stdout, stderr, stdout_path, stderr_path
         )
         if not attributes:
             return result
@@ -849,7 +844,7 @@ class Process:
         )
         return tuple(attr for attr, incl in zip(attributes, includes) if incl)
 
-    def switch_process(self, handle):
+    def switch_process(self, handle: Handle):
         """Makes the specified process the current `active process`.
 
         The handle can be an identifier returned by `Start Process` or
@@ -864,14 +859,14 @@ class Process:
         """
         self._processes.switch(handle)
 
-    def _process_is_stopped(self, process, timeout):
+    def _process_is_stopped(self, process: subprocess.Popen, timeout: float) -> bool:
         stopped = lambda: process.poll() is not None
         max_time = time.time() + timeout
         while time.time() <= max_time and not stopped():
             time.sleep(min(0.1, timeout))
         return stopped()
 
-    def split_command_line(self, args, escaping=False):
+    def split_command_line(self, command: str, escaping: bool = False) -> "list[str]":
         """Splits command line string into a list of arguments.
 
         String is split from spaces, but argument surrounded in quotes may
@@ -886,28 +881,36 @@ class Process:
         | @{cmd} = | Split Command Line | --option "value with spaces" |
         | Should Be True | $cmd == ['--option', 'value with spaces'] |
         """
-        return cmdline2list(args, escaping=escaping)
+        return cmdline2list(command, escaping=escaping)
 
-    def join_command_line(self, *args):
+    def join_command_line(self, *command: "Sequence[str] | str") -> str:
         """Joins arguments into one command line string.
 
         In resulting command line string arguments are delimited with a space,
         arguments containing spaces are surrounded with quotes, and possible
         quotes are escaped with a backslash.
 
-        If this keyword is given only one argument and that is a list-like
-        object, then the values of that list are joined instead.
+        Command to join can be given as individual arguments or as a list.
 
-        Example:
-        | ${cmd} = | Join Command Line | --option | value with spaces |
-        | Should Be Equal | ${cmd} | --option "value with spaces" |
+        Giving command as individual arguments:
+        | ${cmd} =        | Join Command Line | --option | value with spaces |
+        | Should Be Equal | ${cmd}            | --option "value with spaces" |
+
+        Giving command as a list:
+        | VAR             | @{arguments}      | --option | value with spaces |
+        | ${cmd} =        | Join Command Line | ${arguments}                 |
+        | Should Be Equal | ${cmd}            | --option "value with spaces" |
         """
-        if len(args) == 1 and is_list_like(args[0]):
-            args = args[0]
-        return subprocess.list2cmdline(str(a) for a in args)
+        parts = []
+        for part in command:
+            if isinstance(part, str):
+                parts.append(part)
+            else:
+                parts.extend(part)
+        return subprocess.list2cmdline(parts)
 
 
-class ExecutionResult:
+class ProcessResult:
 
     def __init__(
         self,
@@ -1028,6 +1031,7 @@ class ProcessConfiguration:
         self.stdout_stream = self._new_stream(stdout)
         self.stderr_stream = self._get_stderr(stderr, stdout, self.stdout_stream)
         self.stdin_stream = self._get_stdin(stdin)
+        self.secret_env_keys = []
         self.env = self._construct_env(env, env_extra)
 
     def _new_stream(self, name):
@@ -1048,6 +1052,8 @@ class ProcessConfiguration:
     def _get_stdin(self, stdin):
         if isinstance(stdin, Path):
             stdin = str(stdin)
+        elif isinstance(stdin, Secret):
+            stdin = stdin.value
         elif not isinstance(stdin, str):
             return stdin
         elif stdin.upper() == "NONE":
@@ -1057,7 +1063,7 @@ class ProcessConfiguration:
         path = os.path.normpath(os.path.join(self.cwd, stdin))
         if os.path.isfile(path):
             return open(path, encoding=LOCALE_ENCODING)
-        stdin_file = TemporaryFile()
+        stdin_file = NamedTemporaryFile(prefix="stdin-")
         stdin_file.write(console_encode(stdin, self.output_encoding, force=True))
         stdin_file.seek(0)
         return stdin_file
@@ -1075,18 +1081,31 @@ class ProcessConfiguration:
 
     def _get_initial_env(self, env, extra):
         if env:
-            return {system_encode(k): system_encode(env[k]) for k in env}
+            result = {}
+            for name, value in env.items():
+                name = system_encode(name)
+                if isinstance(value, Secret):
+                    result[name] = system_encode(value.value)
+                    self.secret_env_keys.append(name)
+                else:
+                    result[name] = system_encode(value)
+            return result
         if extra:
             return os.environ.copy()
         return None
 
     def _add_to_env(self, env, extra):
-        for name in extra:
+        for name, value in extra.items():
             if not name.startswith("env:"):
                 raise RuntimeError(
                     f"Keyword argument '{name}' is not supported by this keyword."
                 )
-            env[system_encode(name[4:])] = system_encode(extra[name])
+            name = system_encode(name[4:])
+            if isinstance(value, Secret):
+                env[name] = system_encode(value.value)
+                self.secret_env_keys.append(name)
+            else:
+                env[name] = system_encode(value)
 
     def get_command(self, command, arguments):
         command = [system_encode(item) for item in (command, *arguments)]
@@ -1125,6 +1144,11 @@ class ProcessConfiguration:
         }
 
     def __str__(self):
+        printable_env = self.env
+        if len(self.secret_env_keys):
+            printable_env = self.env.copy()
+            for k in self.secret_env_keys:
+                printable_env[k] = str(Secret(""))
         return f"""\
 cwd:     {self.cwd}
 shell:   {self.shell}
@@ -1132,7 +1156,7 @@ stdout:  {self._stream_name(self.stdout_stream)}
 stderr:  {self._stream_name(self.stderr_stream)}
 stdin:   {self._stream_name(self.stdin_stream)}
 alias:   {self.alias}
-env:     {self.env}"""
+env:     {printable_env}"""
 
     def _stream_name(self, stream):
         if hasattr(stream, "name"):

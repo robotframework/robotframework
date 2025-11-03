@@ -80,7 +80,7 @@ Accepted types
     ...    string    Mapping
     Accepted Types Should Be    1     Enum         AssertionOperator
     ...    string
-    Accepted Types Should Be    12    Enum         Small
+    Accepted Types Should Be    13    Enum         Small
     ...    string    integer
 
 Usages
@@ -88,13 +88,13 @@ Usages
     ...    Typing Types
     Usages Should Be    5     Standard     dictionary
     ...    Typing Types
-    Usages Should Be    13    Standard    string
+    Usages Should Be    14    Standard    string
     ...    Assert Something    Funny Unions    Typing Types
     Usages Should Be    3     Custom       CustomType
     ...    Custom
     Usages Should be    7     TypedDict    GeoLocation
     ...    Funny Unions    Set Location
-    Usages Should Be    12    Enum         Small
+    Usages Should Be    13    Enum         Small
     ...    __init__    Funny Unions
 
 Typedoc links in arguments
@@ -113,4 +113,4 @@ Typedoc links in arguments
     ...    str:string    int:integer
     Typedoc links should be    4    2    Any
     Typedoc links should be    4    3    List:list
-    ...    Any
+    ...    object

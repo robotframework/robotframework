@@ -1,3 +1,4 @@
+from collections.abc import Mapping, MutableMapping, MutableSequence, Sequence
 from typing import Union
 
 
@@ -53,6 +54,14 @@ def homogenous_tuple_in_union_2(argument: Union[tuple[str, ...], str], expected=
     _validate_type(argument, expected)
 
 
+def sequence(argument: Sequence[int], expected=None, same=False):
+    _validate_type(argument, expected, same)
+
+
+def mutable_sequence(argument: MutableSequence[int], expected=None, same=False):
+    _validate_type(argument, expected, same)
+
+
 def dict_(argument: dict[int, float], expected=None, same=False):
     _validate_type(argument, expected, same)
 
@@ -70,6 +79,14 @@ def dict_in_union_1(argument: Union[str, dict[str, str]], expected=None, same=Fa
 
 
 def dict_in_union_2(argument: Union[dict[str, str], str], expected=None, same=False):
+    _validate_type(argument, expected, same)
+
+
+def mapping(argument: Mapping[int, float], expected=None, same=False):
+    _validate_type(argument, expected, same)
+
+
+def mutable_mapping(argument: MutableMapping[int, float], expected=None, same=False):
     _validate_type(argument, expected, same)
 
 
@@ -113,11 +130,79 @@ def _validate_type(argument, expected, same=False):
     if isinstance(expected, str):
         expected = eval(expected)
     if argument != expected or type(argument) is not type(expected):
-        atype = type(argument).__name__
-        etype = type(expected).__name__
-        raise AssertionError(f"{argument!r} ({atype}) != {expected!r} ({etype})")
+        a_type = type(argument).__name__
+        e_type = type(expected).__name__
+        raise AssertionError(f"{argument!r} ({a_type}) != {expected!r} ({e_type})")
     if same and argument is not expected:
-        raise AssertionError(
-            f"{argument} (id: {id(argument)}) is not same "
-            f"as {expected} (id: {id(expected)})"
-        )
+        a_id = hex(id(argument))
+        e_id = hex(id(expected))
+        raise AssertionError(f"{argument!r} (id: {a_id}) != {expected!r} (id: {e_id})")
+
+
+class CustomSequence(Sequence):
+
+    def __init__(self, data):
+        self.data = data
+
+    def __getitem__(self, item):
+        return self.data[item]
+
+    def __len__(self):
+        return len(self.data)
+
+    def __eq__(self, other):
+        return self.data == other.data
+
+    def __str__(self):
+        return f"{type(self).__name__}({self.data})"
+
+
+class CustomMapping(Mapping):
+
+    def __init__(self, data):
+        self.data = data
+
+    def __getitem__(self, item):
+        return self.data[item]
+
+    def __len__(self):
+        return len(self.data)
+
+    def __iter__(self):
+        return iter(self.data)
+
+    def __str__(self):
+        return f"{type(self).__name__}({self.data})"
+
+
+class NoArgsSequence(CustomSequence):
+
+    def __init__(self):
+        super().__init__([])
+
+    @classmethod
+    def init(cls, data):
+        obj = cls()
+        obj.data = data
+        return obj
+
+
+class NoArgsMapping(CustomMapping):
+
+    def __init__(self):
+        super().__init__({1: 2.3})
+
+    @classmethod
+    def init(cls, data):
+        obj = cls()
+        obj.data = data
+        return obj
+
+
+def get_variables():
+    return {
+        "CustomSequence": CustomSequence,
+        "CustomMapping": CustomMapping,
+        "NoArgsSequence": NoArgsSequence,
+        "NoArgsMapping": NoArgsMapping,
+    }

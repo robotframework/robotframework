@@ -134,12 +134,14 @@ List
     List                 []                        []
     List                 ['foo', 'bar']            ${LIST}
     List                 [1, 2, 3.14, -42]         [1, 2, 3.14, -42]
-    List                 ['\\x00', '\\x52']        ['\\x00', 'R']
+    List                 [{'nested': True}]        [{'nested': True}]
+    List                 ('\\x00', '\\x52')        ['\\x00', 'R']
+    List                 ${LIST}                   ${LIST}
+    List                 ${{tuple($LIST)}}         ${LIST}
 
 Invalid list
     [Template]           Conversion Should Fail
     List                 [1, ooops]                                      error=Invalid expression.
-    List                 ()                                              error=Value is tuple, not list.
     List                 {}                                              error=Value is dictionary, not list.
     List                 ooops                                           error=Invalid expression.
     List                 ${EMPTY}                                        error=Invalid expression.
@@ -148,13 +150,15 @@ Invalid list
 
 Tuple
     Tuple                ()                        ()
-    Tuple                ('foo', "bar")            tuple(${LIST})
-    Tuple                (1, 2, 3.14, -42)         (1, 2, 3.14, -42)
+    Tuple                ('foo', 'bar')            ('foo', 'bar')
+    Tuple                ({'nested': True},)       ({'nested': True},)
+    Tuple                [1, 2, 3.14, -42]         (1, 2, 3.14, -42)
+    Tuple                ${{tuple($LIST)}}         ('foo', 'bar')
+    Tuple                ${LIST}                   ('foo', 'bar')
 
 Invalid tuple
     [Template]           Conversion Should Fail
     Tuple                (1, ooops)                                      error=Invalid expression.
-    Tuple                []                                              error=Value is list, not tuple.
     Tuple                {}                                              error=Value is dictionary, not tuple.
     Tuple                ooops                                           error=Invalid expression.
 
@@ -167,7 +171,7 @@ Invalid dictionary
     [Template]           Conversion Should Fail
     Dictionary           {1: ooops}                                      error=Invalid expression.
     Dict                 []                        type=dictionary       error=Value is list, not dict.
-    Map                  ()                        type=dictionary       error=Value is tuple, not dict.
+    Map                  ()                        type=Mapping          error=Value is tuple, not Mapping.
     Dict                 ooops                     type=dictionary       error=Invalid expression.
     Dictionary           {{'not': 'hashable'}: 'xxx'}                    error=Evaluating expression failed: *
 
@@ -175,13 +179,16 @@ Set
     Set                  set()                     set()
     Set                  {'foo', 'bar'}            {'foo', 'bar'}
     Set                  {1, 2, 3.14, -42}         {1, 2, 3.14, -42}
+    Set                  [1, 2, 3.14, -42]         {1, 2, 3.14, -42}
+    Set                  (1, 2, 3.14, -42)         {1, 2, 3.14, -42}
+    Set                  ${{{'a', 'b', 'c'}}}      {'a', 'b', 'c'}
+    Set                  ${{['a', 'b', 'c']}}      {'a', 'b', 'c'}
+    Set                  ${{('a', 'b', 'c')}}      {'a', 'b', 'c'}
 
 Invalid set
     [Template]           Conversion Should Fail
     Set                  {1, ooops}                                      error=Invalid expression.
     Set                  {}                                              error=Value is dictionary, not set.
-    Set                  ()                                              error=Value is tuple, not set.
-    Set                  []                                              error=Value is list, not set.
     Set                  ooops                                           error=Invalid expression.
     Set                  {{'not', 'hashable'}}                           error=Evaluating expression failed: *
     Set                  frozenset()                                     error=Invalid expression.
@@ -191,6 +198,11 @@ Frozenset
     Frozenset            set()                     frozenset()
     Frozenset            {'foo', 'bar'}            frozenset({'foo', 'bar'})
     Frozenset            {1, 2, 3.14, -42}         frozenset({1, 2, 3.14, -42})
+    Frozenset            [1, 2, 3.14, -42]         frozenset({1, 2, 3.14, -42})
+    Frozenset            (1, 2, 3.14, -42)         frozenset({1, 2, 3.14, -42})
+    Frozenset            ${{{'a', 'b', 'c'}}}      frozenset({'a', 'b', 'c'})
+    Frozenset            ${{['a', 'b', 'c']}}      frozenset({'a', 'b', 'c'})
+    Frozenset            ${{('a', 'b', 'c')}}      frozenset({'a', 'b', 'c'})
 
 Invalid frozenset
     [Template]           Conversion Should Fail

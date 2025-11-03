@@ -1,10 +1,10 @@
 import unittest
+from collections.abc import Mapping, Sequence
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
 from typing import (
-    Any, Dict, Generic, List, Literal, Mapping, Sequence, Set, Tuple, TypedDict,
-    TypeVar, Union
+    Any, Dict, Generic, List, Literal, Set, Tuple, TypedDict, TypeVar, Union
 )
 
 from robot.variables.search import search_variable
@@ -59,12 +59,12 @@ class TestTypeInfo(unittest.TestCase):
             ("path", Path),
             ("none", type(None)),
             ("list", list),
-            ("sequence", list),
+            ("sequence", Sequence),
             ("tuple", tuple),
             ("dictionary", dict),
             ("dict", dict),
-            ("map", dict),
-            ("mapping", dict),
+            ("map", Mapping),
+            ("mapping", Mapping),
             ("set", set),
             ("frozenset", frozenset),
             ("union", Union),
@@ -104,6 +104,8 @@ class TestTypeInfo(unittest.TestCase):
             )
 
     def test_valid_params(self):
+        from typing import Mapping, Sequence  # Python 3.8 compatibility
+
         for typ in (
             List[int],
             Sequence[int],
@@ -181,8 +183,9 @@ class TestTypeInfo(unittest.TestCase):
         )
 
     def test_params_with_invalid_type(self):
+        accepts_params = (Sequence, Mapping, list, tuple, dict, set, frozenset, Literal)
         for name in TYPE_NAMES:
-            if TYPE_NAMES[name] not in (list, tuple, dict, set, frozenset, Literal):
+            if TYPE_NAMES[name] not in accepts_params:
                 assert_raises_with_msg(
                     DataError,
                     f"'{name}' does not accept parameters, '{name}[int]' has 1.",

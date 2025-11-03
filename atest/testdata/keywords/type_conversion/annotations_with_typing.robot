@@ -8,7 +8,9 @@ Resource                      conversion.resource
 List
     List                      []                          []
     List                      ['foo', 'bar']              ['foo', 'bar']
-    List                      [1, 2, 3.14, -42]           [1, 2, 3.14, -42]
+    List                      (1, 2, 3.14, -42)           [1, 2, 3.14, -42]
+    List                      ${{[1, 2]}}                 [1, 2]
+    List                      ${{(1, 2)}}                 [1, 2]
 
 List with types
     List with types           []                          []
@@ -28,13 +30,15 @@ List with incompatible types
 Invalid list
     [Template]                Conversion Should Fail
     List                      [1, oops]                                                 error=Invalid expression.
-    List                      ()                                                        error=Value is tuple, not list.
+    List                      {}                                                        error=Value is dictionary, not list.
     List with types           ooops                       type=List[int]                error=Invalid expression.
 
 Tuple
     Tuple                     ()                          ()
     Tuple                     ('foo', 'bar')              ('foo', 'bar')
-    Tuple                     (1, 2, 3.14, -42)           (1, 2, 3.14, -42)
+    Tuple                     [1, 2, 3.14, -42]           (1, 2, 3.14, -42)
+    Tuple                     ${{(1, 2)}}                 (1, 2)
+    Tuple                     ${{[1, 2]}}                 (1, 2)
 
 Tuple with types
     Tuple with types          ('true', 1)                 (True, 1)
@@ -68,7 +72,7 @@ Tuple with wrong number of values
 Invalid tuple
     [Template]                Conversion Should Fail
     Tuple                     (1, oops)                                                 error=Invalid expression.
-    Tuple with types          []                          type=Tuple[bool, int]         error=Value is list, not tuple.
+    Tuple with types          {}                          type=Tuple[bool, int]         error=Value is dictionary, not tuple.
     Homogenous tuple          ooops                       type=Tuple[int, ...]          error=Invalid expression.
 
 Sequence
@@ -90,8 +94,8 @@ Sequence with incompatible types
 
 Invalid sequence
     [Template]                Conversion Should Fail
-    Sequence                  [1, oops]                   type=list                     error=Invalid expression.
-    Mutable sequence          ()                          type=list                     error=Value is tuple, not list.
+    Sequence                  [1, oops]                   type=Sequence                 error=Invalid expression.
+    Mutable sequence          {}                          type=Sequence                 error=Value is dictionary, not Sequence.
     Sequence with types       ooops                       type=Sequence[int | float]    error=Invalid expression.
 
 Dict
@@ -141,8 +145,8 @@ Mapping with incompatible types
 
 Invalid mapping
     [Template]                Conversion Should Fail
-    Mapping                   {1: ooops}                  type=dictionary               error=Invalid expression.
-    Mutable mapping           []                          type=dictionary               error=Value is list, not dict.
+    Mapping                   {1: ooops}                  type=Mapping                  error=Invalid expression.
+    Mutable mapping           []                          type=Mapping                  error=Value is list, not Mapping.
     Mapping with types        ooops                       type=Mapping[int, float]      error=Invalid expression.
 
 TypedDict
@@ -221,6 +225,13 @@ Any
     Any                       ${42}                       42
     Any                       None                        'None'
     Any                       ${None}                     None
+
+object
+    object                    hello                       'hello'
+    object                    42                          '42'
+    object                    ${42}                       42
+    object                    None                        'None'
+    object                    ${None}                     None
 
 None as default
     None as default

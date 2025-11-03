@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from collections.abc import Mapping, Sequence
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
@@ -27,6 +28,9 @@ from robot.utils import Secret
 
 STANDARD_TYPE_DOCS = {
     Any: """\
+Any value is accepted. No conversion is done.
+""",
+    object: """\
 Any value is accepted. No conversion is done.
 """,
     bool: """\
@@ -91,8 +95,8 @@ omitted altogether. Additionally, only the date part is
 mandatory, all possibly missing time components are considered
 to be zeros.
 
-A special value ``NOW`` (case-insensitive) can be used to get the
-current local date and time. This is new in Robot Framework 7.3.
+A special values ``NOW`` and ``TODAY`` (case-insensitive) can be used to get
+the current local ``datetime``. This is new in Robot Framework 7.3.
 
 Integers and floats are considered to represent seconds since
 the [https://en.wikipedia.org/wiki/Unix_time|Unix epoch].
@@ -107,8 +111,8 @@ String timestamps are expected to be in
 or separators can be omitted altogether. Possible time components are
 only allowed if they are zeros.
 
-A special value ``TODAY`` (case-insensitive) can be used to get
-the current local date. This is new in Robot Framework 7.3.
+A special value ``NOW`` and ``TODAY`` (case-insensitive) can be used to get
+the current local ``date``. This is new in Robot Framework 7.3.
 
 Examples: ``2022-02-09``, ``2022-02-09 00:00``, ``today``
 """,
@@ -134,29 +138,78 @@ Examples: ``/tmp/absolute/path``, ``relative/path/to/file.ext``, ``name.txt``
 String ``NONE`` (case-insensitive) is converted to Python ``None`` object.
 Other values cause an error.
 """,
-    list: """\
+    Sequence: """\
 Strings must be Python [https://docs.python.org/library/stdtypes.html#list|list]
-literals. They are converted to actual lists using the
+or [https://docs.python.org/library/stdtypes.html#tuple|tuple] literals.
+They are converted to actual lists or tuples using the
 [https://docs.python.org/library/ast.html#ast.literal_eval|ast.literal_eval]
 function. They can contain any values ``ast.literal_eval`` supports, including
 lists and other containers.
 
+Iterables that are not sequences are converted to lists.
+Any sequence is accepted without conversion. An exception is that if the used
+type is ``MutableSequence``, immutable values are converted to lists.
+
+If the type has nested types like ``Sequence[int]``, items are converted
+to those types automatically.
+
+Examples: ``['one', 'two']``, ``(1, 2, 3)``
+
+Support to convert nested types is new in Robot Framework 6.0.
+Support for iterables and tuple literals is new in Robot Framework 7.4.
+""",
+    list: """\
+Strings must be Python [https://docs.python.org/library/stdtypes.html#list|list]
+or [https://docs.python.org/library/stdtypes.html#tuple|tuple] literals.
+They are converted using the
+[https://docs.python.org/library/ast.html#ast.literal_eval|ast.literal_eval]
+function and possible tuples converted further to lists. They can contain any
+values ``ast.literal_eval`` supports, including lists and other containers.
+
+If the argument is a list, it is used without conversion.
+Tuples and other iterables are converted to lists.
+
 If the type has nested types like ``list[int]``, items are converted
-to those types automatically. This in new in Robot Framework 6.0.
+to those types automatically.
 
 Examples: ``['one', 'two']``, ``[('one', 1), ('two', 2)]``
+
+Support to convert nested types is new in Robot Framework 6.0.
+Support for iterables and tuple literals is new in Robot Framework 7.4.
 """,
     tuple: """\
 Strings must be Python [https://docs.python.org/library/stdtypes.html#tuple|tuple]
-literals. They are converted to actual tuples using the
+or [https://docs.python.org/library/stdtypes.html#list|list] literals.
+They are converted using the
 [https://docs.python.org/library/ast.html#ast.literal_eval|ast.literal_eval]
-function. They can contain any values ``ast.literal_eval`` supports, including
-tuples and other containers.
+function and possible lists converted further to tuples. They can contain any
+values ``ast.literal_eval`` supports, including tuples and other containers.
+
+If the argument is a tuple, it is used without conversion.
+Lists and other iterables are converted to tuples.
 
 If the type has nested types like ``tuple[str, int, int]``, items are converted
-to those types automatically. This in new in Robot Framework 6.0.
+to those types automatically.
 
 Examples: ``('one', 'two')``, ``(('one', 1), ('two', 2))``
+
+Support to convert nested types is new in Robot Framework 6.0.
+Support for iterables and tuple literals is new in Robot Framework 7.4.
+""",
+    Mapping: """\
+Strings must be Python [https://docs.python.org/library/stdtypes.html#dict|dictionary]
+literals. They are converted to actual dictionaries using the
+[https://docs.python.org/library/ast.html#ast.literal_eval|ast.literal_eval]
+function. They can contain any values ``ast.literal_eval`` supports, including
+dictionaries and other containers.
+
+Any mapping is accepted without conversion. An exception is that if the type
+is ``MutableMapping``, immutable values are converted to ``dict``.
+
+If the type has nested types like ``Mapping[str, int]``, items are converted
+to those types automatically. This in new in Robot Framework 6.0.
+
+Examples: ``{'a': 1, 'b': 2}``, ``{'key': 1, 'nested': {'key': 2}}``
 """,
     dict: """\
 Strings must be Python [https://docs.python.org/library/stdtypes.html#dict|dictionary]
@@ -165,33 +218,52 @@ literals. They are converted to actual dictionaries using the
 function. They can contain any values ``ast.literal_eval`` supports, including
 dictionaries and other containers.
 
+Any mapping is accepted and converted to a ``dict``.
+
 If the type has nested types like ``dict[str, int]``, items are converted
 to those types automatically. This in new in Robot Framework 6.0.
 
 Examples: ``{'a': 1, 'b': 2}``, ``{'key': 1, 'nested': {'key': 2}}``
 """,
     set: """\
-Strings must be Python [https://docs.python.org/library/stdtypes.html#set|set]
-literals. They are converted to actual sets using the
+Strings must be Python [https://docs.python.org/library/stdtypes.html#set|set],
+[https://docs.python.org/library/stdtypes.html#list|list]
+or [https://docs.python.org/library/stdtypes.html#tuple|tuple]
+literals. They are converted using the
 [https://docs.python.org/library/ast.html#ast.literal_eval|ast.literal_eval]
-function. They can contain any values ``ast.literal_eval`` supports.
+function and possible lists and tuples converted further to sets. They can
+contain any values ``ast.literal_eval`` supports.
+
+If the argument is a set, it is used without conversion.
+Lists and other iterables are converted to sets.
 
 If the type has nested types like ``set[int]``, items are converted
-to those types automatically. This in new in Robot Framework 6.0.
+to those types automatically.
 
 Examples: ``{1, 2, 3, 42}``, ``set()`` (an empty set)
+
+Support to convert nested types is new in Robot Framework 6.0.
+Support for iterables and tuple literals is new in Robot Framework 7.4.
 """,
     frozenset: """\
-Strings must be Python [https://docs.python.org/library/stdtypes.html#set|set]
-literals. They are converted to actual sets using the
+Strings must be Python [https://docs.python.org/library/stdtypes.html#set|set],
+[https://docs.python.org/library/stdtypes.html#list|list]
+or [https://docs.python.org/library/stdtypes.html#tuple|tuple]
+literals. They are converted using the
 [https://docs.python.org/library/ast.html#ast.literal_eval|ast.literal_eval]
-function and then converted to ``frozenset`` objects. They can contain
-any values ``ast.literal_eval`` supports.
+function and then converted further to ``frozenset``. They can
+contain any values ``ast.literal_eval`` supports.
+
+If the argument is a frozenset, it is used without conversion.
+Lists and other iterables are converted to frozensets.
 
 If the type has nested types like ``frozenset[int]``, items are converted
-to those types automatically. This in new in Robot Framework 6.0.
+to those types automatically.
 
-Examples: ``{1, 2, 3, 42}``, ``set()`` (an empty set)
+Examples: ``{1, 2, 3, 42}``, ``frozenset()`` (an empty set)
+
+Support to convert nested types is new in Robot Framework 6.0.
+Support for iterables and tuple literals is new in Robot Framework 7.4.
 """,
     Literal: """\
 Only specified values are accepted. Values can be strings,
@@ -202,42 +274,12 @@ Strings are case, space, underscore and hyphen insensitive,
 but exact matches have precedence over normalized matches.
 """,
     Secret: """\
-The Secret type has two purposes. First, it is used to
-prevent putting the secret value in Robot Framework
-data as plain text. Second, it is used to hide secret
-from Robot Framework logs and reports.
-
-Usage of the Secret type does not fully prevent the value
-being from logged in libraries that uses the Secret type,
-because libraries will need pass the value as plain text
-to other libraries and system commands which may log the
-secret value. Also user may access the Secret type
-:attr:`value` attribute to get the actual secret and this can
-reveal the value in the logs. The only protection
-that is provided is the encapsulation of the value in a
-Secret class which prevents the value being directly logged in
-Robot Framework logs and reports.
-
-The creation of Secret is more restricted than normal variable
-types. Normal variable types can be created from anywhere,
-example in the variables section, but Secret type can not be
-created directly in the Robot Framework data. The exception
-to the rule is that an environment variable can be used to
-create secrets directly in the Robot Framework data.
-
-There are several ways to create Secret variables:
-- Secret can be created from command line
-- Secret can be returned from a library keyword
-- Secret can be created in a variable file
-- Secret can be created from environment variable.
-
-The Secret type can be used in user keywords argument types,
-like any other standard
-[https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#supported-conversions|supported conversion]
-types to enforce that the variable is actually a Secret type.
-But to exception to other supported conversion types, if the
-variable type is not Secret, an error is raised when keyword
-is called.
+    Encapsulates secrets to avoid them being shown in Robot Framework logs.
+The value is required to be
+[https://robot-framework.readthedocs.io/en/master/autodoc/robot.utils.html#robot.utils.secret.Secret|robot.api.types.Secret]
+object. These objects encapsulate confidential values so that they are not
+exposed in log files. How to create them is explained in the
+[https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#secret-variables|User Guide].
 """,
 }
 
