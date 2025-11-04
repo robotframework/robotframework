@@ -414,7 +414,7 @@ class _List:
         list2: list,
         msg: "str | None" = None,
         values: bool = True,
-        names: "list[str] | dict[int, str] | None" = None,
+        names: "dict[int, str] | list[str] | None" = None,  # NOTE: order matters here
         ignore_order: bool = False,
         ignore_case: IC = False,
     ):
@@ -488,7 +488,7 @@ class _List:
 
     def _get_list_index_name_mapping(
         self,
-        names: "Iterable[str] | Mapping[int, str] | None",
+        names: "Mapping[int, str] | Iterable[str] | None",
         list_length: int,
     ) -> "dict[int, str]":
         if not names:
