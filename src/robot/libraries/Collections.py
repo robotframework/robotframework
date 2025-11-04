@@ -34,7 +34,6 @@ NOT_SET = NotSet()
 
 I_ = TypeVar("I_", bound=Iterable)
 M_ = TypeVar("M_", bound=Mapping)
-LL = Literal["TRACE", "DEBUG", "INFO", "WARN"]
 IC = Union[
     bool, Literal["key", "KEY", "keys", "KEYS", "value", "VALUE", "values", "VALUES"]
 ]
@@ -42,8 +41,15 @@ IC = Union[
 
 class _List:
 
-    # NOTE: annotation with `item: list` would make `list(item)` redundant
-    def convert_to_list(self, item: Iterable) -> list:
+    # NOTE: Annotation with list would cause the keyword to fail on string arguments.
+    # This would break current behavior. Annotation with "list | str" would however
+    # cause weird behvior with non-iterable arguments since their string representation
+    # would be converted to a list and returned. For this reason, object is used as an
+    # annotation, effectively preventing automatic argument conversion.
+    # In the future support for string arugments will be dropped;
+    # 'Split String To Characters' from the String library can be used instead.
+    # This change in behavior does however require a deprecation period.
+    def convert_to_list(self, item: object) -> list:
         """Converts the given ``item`` to a Python ``list`` type.
 
         Mainly useful for converting tuples and other iterable to lists.
@@ -51,7 +57,7 @@ class _List:
         """
         return list(item)
 
-    # NOTE: MutableSequence due to side-effects of the keyword
+    # NOTE: https://github.com/robotframework/robotframework/issues/5536
     def append_to_list(self, list_: MutableSequence, *values: object):
         """Adds ``values`` to the end of ``list``.
 
@@ -62,11 +68,10 @@ class _List:
         | ${L1} = ['a', 'xxx']
         | ${L2} = ['a', 'b', 'x', 'y', 'z']
         """
-        self._validate_list(list_)
         for value in values:
             list_.append(value)
 
-    # NOTE: MutableSequence due to side-effects of the keyword
+    # NOTE: https://github.com/robotframework/robotframework/issues/5536
     def insert_into_list(self, list_: MutableSequence, index: int, value: object):
         """Inserts ``value`` into ``list`` to the position specified with ``index``.
 
@@ -88,8 +93,6 @@ class _List:
         | ${L1} = ['xxx', 'a']
         | ${L2} = ['a', 'xxx', 'b']
         """
-        self._validate_list(list_)
-
         list_.insert(index, value)
 
     def combine_lists(self, *lists: list) -> list:
@@ -107,7 +110,7 @@ class _List:
         """
         return list(chain.from_iterable(lists))
 
-    # NOTE: MutableSequence due to side-effects of the keyword
+    # NOTE: https://github.com/robotframework/robotframework/issues/5536
     def set_list_value(self, list_: MutableSequence, index: int, value: object):
         """Sets the value of ``list`` specified by ``index`` to the given ``value``.
 
@@ -128,13 +131,12 @@ class _List:
         | ${L3}[1] =  | Set Variable | xxx |
         | ${L3}[-1] = | Set Variable | yyy |
         """
-        self._validate_list(list_)
         try:
             list_[index] = value
         except IndexError:
             self._index_error(list_, index)
 
-    # NOTE: MutableSequence due to side-effects of the keyword
+    # NOTE: https://github.com/robotframework/robotframework/issues/5536
     def remove_values_from_list(self, list_: MutableSequence, *values: object):
         """Removes all occurrences of given ``values`` from ``list``.
 
@@ -145,12 +147,11 @@ class _List:
         =>
         | ${L4} = ['b', 'd']
         """
-        self._validate_list(list_)
         for value in values:
             while value in list_:
                 list_.remove(value)
 
-    # NOTE: MutableSequence due to side-effects of the keyword
+    # NOTE: https://github.com/robotframework/robotframework/issues/5536
     def remove_from_list(self, list_: MutableSequence, index: int) -> object:
         """Removes and returns the value specified with an ``index`` from ``list``.
 
@@ -166,7 +167,6 @@ class _List:
         | ${x} = 'a'
         | ${L2} = ['b']
         """
-        self._validate_list(list_)
         try:
             return list_.pop(index)
         except IndexError:
@@ -290,8 +290,7 @@ class _List:
         except ValueError:
             return -1
 
-    # NOTE: Iterable to prevent always returning a list instead of the original type
-    def copy_list(self, list_: Iterable, deepcopy: bool = False) -> Iterable:
+    def copy_list(self, list_: Sequence, deepcopy: bool = False) -> Sequence:
         """Returns a copy of the given list.
 
         By default, returns a new list with same items as in the original.
@@ -300,12 +299,11 @@ class _List:
 
         The given list is never altered by this keyword.
         """
-        self._validate_list(list_)
         if deepcopy:
             return copy.deepcopy(list_)
-        return copy.copy(list_)
+        return list_[:]
 
-    # NOTE: MutableSequence due to side-effects of the keyword
+    # NOTE: https://github.com/robotframework/robotframework/issues/5536
     def reverse_list(self, list_: MutableSequence):
         """Reverses the given list in place.
 
@@ -316,19 +314,14 @@ class _List:
         =>
         | ${L3} = ['c', 'b', 'a']
         """
-        self._validate_list(list_)
         list_.reverse()
 
-    # NOTE: Iterable annotation to prevent confusing behavior; this keywords only works
-    # for lists. A `list` annotation would mean a string representation of a list
-    # (e.g. "[1, 3, 2]") would be accepted as argument, then sorted. There would however
-    # be no effect of the keyword since the (newly created and sorted) list is not
-    # returned.
-    # The Iterable annotation is chosen due to the `sorted()` function accepting any
-    # Iterable. A future change to this keyword can attempt an in-place `sort()` (to
-    # retain current behavior for lists being passed as argument) and catch
-    # AttributeError and then `return sorted(list_)` instead.
-    def sort_list(self, list_: Iterable):
+    # NOTE: https://github.com/robotframework/robotframework/issues/5536
+    # The list annotation means non-list arguments are converted, then sorted
+    # in-place and then discarded instead of an AttributeError (on .sort()).
+    # This silent "Do Nothing" behavior is accepted now. In the future, the keywords
+    # that perform mutation on the argument will also be updated to return the result.
+    def sort_list(self, list_: list):
         """Sorts the given list in place.
 
         Sorting fails if items in the list are not comparable with each others.
@@ -338,7 +331,6 @@ class _List:
         `Copy List` first, if you need to preserve the list also in the original
         order.
         """
-        self._validate_list(list_)
         list_.sort()
 
     def list_should_contain_value(
@@ -421,7 +413,7 @@ class _List:
         list1: list,
         list2: list,
         msg: "str | None" = None,
-        values: "str | bool" = True,
+        values: bool = True,
         names: "list[str] | dict[int, str] | None" = None,
         ignore_order: bool = False,
         ignore_case: IC = False,
@@ -523,7 +515,7 @@ class _List:
         list1: list,
         list2: list,
         msg: "str | None" = None,
-        values: "str | bool" = True,
+        values: bool = True,
         ignore_case: IC = False,
     ):
         """Fails if not all elements in ``list2`` are found in ``list1``.
@@ -549,7 +541,7 @@ class _List:
             values,
         )
 
-    def log_list(self, list_: list, level: LL = "INFO"):
+    def log_list(self, list_: list, level: logger.LogLevel = "INFO"):
         """Logs the length and contents of the ``list`` using given ``level``.
 
         Valid levels are TRACE, DEBUG, INFO (default), and WARN.
@@ -569,34 +561,14 @@ class _List:
             for index, item in enumerate(list_):
                 yield f"{index}: {item}"
 
-    # TODO: No longer used, remove?
-    def _index_to_int(self, index: "int | str", empty_to_zero: bool = False) -> int:
-        if empty_to_zero and not index:
-            return 0
-        try:
-            return int(index)
-        except ValueError:
-            raise ValueError(f"Cannot convert index '{index}' to an integer.")
-
     def _index_error(self, list_: Sequence, index: int) -> NoReturn:
         raise IndexError(f"Given index {index} is out of the range 0-{len(list_) - 1}.")
-
-    def _validate_list(self, list_: Iterable, position: int = 1):
-        if not is_list_like(list_):
-            raise TypeError(
-                f"Expected argument {position} to be a list or list-like, "
-                f"got {type_name(list_)} instead."
-            )
-
-    # TODO: No longer used, remove?
-    def _validate_lists(self, *lists: Iterable):
-        for index, item in enumerate(lists, start=1):
-            self._validate_list(item, index)
 
 
 class _Dictionary:
 
-    # NOTE: annotation with `item: dict` would make `dict(item)` redundant
+    # NOTE: Mapping annotation is used since dict annotation does not convert Robot
+    # Framework's DotDict when a dict annotation is used.
     def convert_to_dictionary(self, item: Mapping) -> dict:
         """Converts the given ``item`` to a Python ``dict`` type.
 
@@ -609,7 +581,7 @@ class _Dictionary:
         """
         return dict(item)
 
-    # NOTE: MutableMapping due to side-effects of the keyword
+    # NOTE: https://github.com/robotframework/robotframework/issues/5536
     def set_to_dictionary(
         self,
         dictionary: MutableMapping,
@@ -636,7 +608,6 @@ class _Dictionary:
         | ${D1}[key] =  | Set Variable | value |
         | ${D1}[${2}] = | Set Variable | value 2 |
         """
-        self._validate_dictionary(dictionary)
         if len(key_value_pairs) % 2 != 0:
             raise ValueError(
                 "Adding data to a dictionary failed. There should be even "
@@ -647,7 +618,7 @@ class _Dictionary:
         dictionary.update(items)
         return dictionary
 
-    # NOTE: MutableMapping due to side-effects of the keyword
+    # NOTE: https://github.com/robotframework/robotframework/issues/5536
     def remove_from_dictionary(
         self,
         dictionary: MutableMapping,
@@ -663,7 +634,6 @@ class _Dictionary:
         =>
         | ${D3} = {'a': 1, 'c': 3}
         """
-        self._validate_dictionary(dictionary)
         for key in keys:
             if key in dictionary:
                 value = dictionary.pop(key)
@@ -671,7 +641,7 @@ class _Dictionary:
             else:
                 logger.info(f"Key '{key}' not found.")
 
-    # NOTE: MutableMapping due to side-effects of the keyword
+    # NOTE: https://github.com/robotframework/robotframework/issues/5536
     def pop_from_dictionary(
         self,
         dictionary: MutableMapping,
@@ -690,13 +660,12 @@ class _Dictionary:
         | ${val} = 2
         | ${D3} = {'a': 1, 'c': 3}
         """
-        self._validate_dictionary(dictionary)
         if default is NOT_SET:
             self.dictionary_should_contain_key(dictionary, key)  # type: ignore
             return dictionary.pop(key)
         return dictionary.pop(key, default)
 
-    # NOTE: MutableMapping due to side-effects of the keyword
+    # NOTE: https://github.com/robotframework/robotframework/issues/5536
     def keep_in_dictionary(self, dictionary: MutableMapping, *keys: Hashable):
         """Keeps the given ``keys`` in the ``dictionary`` and removes all other.
 
@@ -708,7 +677,6 @@ class _Dictionary:
         =>
         | ${D5} = {'b': 2, 'd': 4}
         """
-        self._validate_dictionary(dictionary)
         remove_keys = [k for k in dictionary if k not in keys]
         self.remove_from_dictionary(dictionary, *remove_keys)
 
@@ -726,7 +694,6 @@ class _Dictionary:
 
         The given dictionary is never altered by this keyword.
         """
-        self._validate_dictionary(dictionary)
         if deepcopy:
             return copy.deepcopy(dictionary)
         return copy.copy(dictionary)
@@ -945,8 +912,8 @@ class _Dictionary:
         dict1: dict,
         dict2: dict,
         msg: "str | None" = None,
-        values: "str | bool" = True,
-        ignore_keys: "Iterable[Hashable] | str | None" = None,
+        values: bool = True,
+        ignore_keys: "Sequence[Hashable] | str | None" = None,
         ignore_case: IC = False,
         ignore_value_order: bool = False,
     ):
@@ -994,7 +961,7 @@ class _Dictionary:
         dict1: Mapping,
         dict2: Mapping,
         message: "str | None",
-        values: "str | bool",
+        values: "bool| str",
         validate_both: bool = True,
     ):
         missing = seq2str([k for k in dict2 if k not in dict1])
@@ -1013,7 +980,7 @@ class _Dictionary:
         dict1: Mapping,
         dict2: Mapping,
         message: "str | None",
-        values: "str | bool",
+        values: "bool | str",
     ):
         errors = []
         for key in dict2:
@@ -1030,7 +997,7 @@ class _Dictionary:
         dict1: dict,
         dict2: dict,
         msg: "str | None" = None,
-        values: "str | bool" = True,
+        values: bool = True,
         ignore_case: IC = False,
         ignore_value_order: bool = False,
     ):
@@ -1060,7 +1027,7 @@ class _Dictionary:
     def log_dictionary(
         self,
         dictionary: dict,
-        level: LL = "INFO",
+        level: logger.LogLevel = "INFO",
     ):
         """Logs the size and contents of the ``dictionary`` using given ``level``.
 
@@ -1083,14 +1050,6 @@ class _Dictionary:
             yield f"Dictionary size is {len(dictionary)} and it contains following items:"
         for key in self.get_dictionary_keys(dictionary):  # type: ignore
             yield f"{key}: {dictionary[key]}"
-
-    def _validate_dictionary(self, *dictionaries: Mapping):
-        for index, dictionary in enumerate(dictionaries, start=1):
-            if not is_dict_like(dictionary):
-                raise TypeError(
-                    f"Expected argument {index} to be a dictionary, "
-                    f"got {type_name(dictionary)} instead."
-                )
 
 
 class Collections(_List, _Dictionary):
@@ -1370,16 +1329,20 @@ def _verify_condition(
     condition: object,
     default_message: str,
     message: "str | None",
-    values: "str | bool" = False,
+    values: "bool | str" = False,
 ):
     if not condition:
         _report_error(default_message, message, values)
 
 
+# NOTE: Calling keywords have `values` annotated as `bool` but the bool-converter can
+# also return a string if the passed string is not a 'Boolean argument'. This is the
+# case for "NO VALUES". This special case should be removed in the future, but this
+# would need a deprecation period.
 def _report_error(
     default_message: str,
     message: "str | None",
-    values: "str | bool" = False,
+    values: "bool | str" = False,
 ) -> NoReturn:
     if not message:
         message = default_message
