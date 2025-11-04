@@ -44,6 +44,11 @@ changed with the ``--loglevel`` command line option. Warnings and errors are
 automatically written also to the console and to the *Test Execution Errors*
 section in the log file.
 
+If libraries accept arbitrary log levels and use type hints, they can use
+the :attr:`LogLevel` type alias as shown in the example_ below. It is new
+in Robot Framework 7.4, but :attr:`LOGLEVEL` with same content exists since
+Robot Framework 7.0 and will not be deprecated earlier than in Robot Framework 8.0.
+
 Logging HTML
 ------------
 
@@ -52,6 +57,19 @@ optional ``html`` argument. If a message to be logged is supposed to be
 shown as HTML, this argument should be set to ``True``. Alternatively,
 :func:`write` accepts a pseudo log level ``HTML``.
 
+Logging to console
+------------------
+
+Normal messages are written only to the log file, not to the console.
+There are, however, various ways to log to the console if needed:
+
+- Messages with ``WARN`` and ``ERROR`` levels are shown on the console automatically.
+- The :func:`console` function logs only to the console.
+- The :func:`info` function supports logging both to the log file and to
+  the console by using the ``also_console`` argument.
+- The :func:`write` function supports a pseudo log level ``CONSOLE`` that
+  can be used for logging both the log file and to the console.
+
 Example
 -------
 
@@ -59,10 +77,14 @@ Example
 
     from robot.api import logger
 
-    def my_keyword(arg):
-        logger.debug(f'Got argument {arg}.')
-        do_something()
-        logger.info('<i>This</i> is a boring example.', html=True)
+
+    def my_keyword(arg: str):
+        logger.debug(f"Got argument {arg}.")
+        logger.info("<b>Robot Framework</b> rocks!", html=True)
+
+
+    def another_keyword(arg: int, log_level: logger.LogLevel = "INFO"):
+        logger.write(f"Got argument {arg}.", log_level)
 """
 
 import logging
@@ -71,8 +93,8 @@ from typing import Literal
 from robot.output import librarylogger
 from robot.running.context import EXECUTION_CONTEXTS
 
-# LOGLEVEL was introduced in RF 7.0 and more standard compliant LogLevel in RF 7.4.
-# The former is considered deprecated and will be removed in the future.
+# LOGLEVEL was introduced in RF 7.0 and naming convention compliant LogLevel in RF 7.4.
+# TODO: Deprecate LOGLEVEL in RF 8.0. Update the above "Log levels" section as well.
 LogLevel = Literal["TRACE", "DEBUG", "INFO", "CONSOLE", "HTML", "WARN", "ERROR"]
 LOGLEVEL = LogLevel
 
@@ -84,11 +106,12 @@ def write(msg: str, level: LogLevel = "INFO", html: bool = False):
     and ``ERROR``. In addition to that, there are pseudo log levels ``HTML``
     and ``CONSOLE`` for logging messages as HTML and for logging messages
     both to the log file and to the console, respectively. With both of these
-    pseudo levels the level in the log file will be ``INFO``. The ``CONSOLE``
-    level is new in Robot Framework 6.1.
+    pseudo levels the level in the log file will be ``INFO``.
 
     Instead of using this method, it is generally better to use the level
     specific methods such as ``info`` and ``debug``.
+
+    The ``CONSOLE`` pseudo level is new in Robot Framework 6.1.
     """
     if EXECUTION_CONTEXTS.current is not None:
         librarylogger.write(msg, level, html)
