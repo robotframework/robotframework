@@ -43,19 +43,29 @@ OnTimeout = Literal["continue", "terminate", "kill"]
 class Process:
     """Robot Framework library for running processes.
 
+    The library has following main usages:
+
+    - Running processes in system and waiting for their completion using
+      the `Run Process` keyword.
+    - Starting processes on background using the `Start Process` keyword.
+    - Waiting started process to complete using `Wait For Process` or
+      stopping them with `Terminate Process` or `Terminate All Processes`.
+
+    This library provides various benefits over using ``Run`` and other similar
+    keywords in the
+    [http://robotframework.org/robotframework/latest/libraries/OperatingSystem.html|
+    OperatingSystem] library:
+
+    - Better `process configuration`.
+    - Convenient `result object` with all result information (rc, stdout, stderr).
+    - Support for background processes, process termination, sending signals
+      and so on.
+
     This library utilizes Python's
     [http://docs.python.org/library/subprocess.html|subprocess]
     module and its
     [http://docs.python.org/library/subprocess.html#popen-constructor|Popen]
     class.
-
-    The library has following main usages:
-
-    - Running processes in system and waiting for their completion using
-      `Run Process` keyword.
-    - Starting processes on background using `Start Process`.
-    - Waiting started process to complete using `Wait For Process` or
-      stopping them with `Terminate Process` or `Terminate All Processes`.
 
     == Table of contents ==
 

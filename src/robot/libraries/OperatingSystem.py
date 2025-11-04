@@ -20,17 +20,15 @@ import re
 import shutil
 import tempfile
 import time
-from datetime import datetime
-from pathlib import Path
+from datetime import datetime, timedelta
+from typing import NoReturn, Sequence
 
 from robot.api import logger
-from robot.api.deco import keyword
 from robot.api.types import Secret
 from robot.utils import (
     abspath, ConnectionCache, console_decode, CONSOLE_ENCODING, del_env_var,
-    get_env_var, get_env_vars, get_time, normpath, parse_time, plural_or_not as s,
-    PY_VERSION, safe_str, secs_to_timestr, seq2str, set_env_var, timestr_to_secs,
-    WINDOWS
+    get_env_var, get_env_vars, get_time, parse_time, plural_or_not as s, PY_VERSION,
+    safe_str, secs_to_timestr, seq2str, set_env_var, WINDOWS
 )
 from robot.version import get_version
 
@@ -117,29 +115,8 @@ class OperatingSystem:
     as [https://docs.python.org/3/library/pathlib.html|pathlib.Path] instances
     in addition to strings.
 
-    All keywords returning paths return them as strings. This may change in
-    the future so that the return value type matches the argument type.
-
-    = Boolean arguments =
-
-    Some keywords accept arguments that are handled as Boolean values true or
-    false. If such an argument is given as a string, it is considered false if
-    it is an empty string or equal to ``FALSE``, ``NONE``, ``NO``, ``OFF`` or
-    ``0``, case-insensitively. Other strings are considered true regardless
-    their value, and other argument types are tested using the same
-    [http://docs.python.org/library/stdtypes.html#truth|rules as in Python].
-
-    True examples:
-    | `Remove Directory` | ${path} | recursive=True    | # Strings are generally true.    |
-    | `Remove Directory` | ${path} | recursive=yes     | # Same as the above.             |
-    | `Remove Directory` | ${path} | recursive=${TRUE} | # Python ``True`` is true.       |
-    | `Remove Directory` | ${path} | recursive=${42}   | # Numbers other than 0 are true. |
-
-    False examples:
-    | `Remove Directory` | ${path} | recursive=False    | # String ``false`` is false.   |
-    | `Remove Directory` | ${path} | recursive=no       | # Also string ``no`` is false. |
-    | `Remove Directory` | ${path} | recursive=${EMPTY} | # Empty string is false.       |
-    | `Remove Directory` | ${path} | recursive=${FALSE} | # Python ``False`` is false.   |
+    For backwards compatibility reasons, all keywords returning paths return them
+    as strings.
 
     = Example =
 
@@ -159,10 +136,14 @@ class OperatingSystem:
     ROBOT_LIBRARY_SCOPE = "GLOBAL"
     ROBOT_LIBRARY_VERSION = __version__
 
-    def run(self, command):
-        """Runs the given command in the system and returns the output.
+    def run(self, command: str) -> str:
+        """_This keyword is considered deprecated. Use the
+        [http://robotframework.org/robotframework/latest/libraries/Process.html|
+        Process] library instead._
 
-        The execution status of the command *is not checked* by this
+        Runs the given command in the system and returns the output.
+
+        The execution status of the command _is not checked_ by this
         keyword, and it must be done separately based on the returned
         output. If the execution return code is needed, either `Run
         And Return RC` or `Run And Return RC And Output` can be used.
@@ -189,22 +170,21 @@ class OperatingSystem:
         | ${stdout} =        | Run       | /opt/script.sh 2>/tmp/stderr.txt |
         | Should Be Equal    | ${stdout} | TEST PASSED |
         | File Should Be Empty | /tmp/stderr.txt |
-
-        *TIP:* `Run Process` keyword provided by the
-        [http://robotframework.org/robotframework/latest/libraries/Process.html|
-        Process library] supports better process configuration and is generally
-        recommended as a replacement for this keyword.
         """
         return self._run(command)[1]
 
-    def run_and_return_rc(self, command):
-        """Runs the given command in the system and returns the return code.
+    def run_and_return_rc(self, command: str) -> int:
+        """_This keyword is considered deprecated. Use the
+        [http://robotframework.org/robotframework/latest/libraries/Process.html|
+        Process] library instead._
 
-        The return code (RC) is returned as a positive integer in
+        Runs the given command in the system and returns the return code (RC).
+
+        The return code is returned as a positive integer in
         range from 0 to 255 as returned by the executed command. On
         some operating systems (notable Windows) original return codes
         can be something else, but this keyword always maps them to
-        the 0-255 range. Since the RC is an integer, it must be
+        the 0-255 range. Since the return code is an integer, it must be
         checked e.g. with the keyword `Should Be Equal As Integers`
         instead of `Should Be Equal` (both are built-in keywords).
 
@@ -216,18 +196,16 @@ class OperatingSystem:
 
         See `Run` and `Run And Return RC And Output` if you need to get the
         output of the executed command.
-
-        *TIP:* `Run Process` keyword provided by the
-        [http://robotframework.org/robotframework/latest/libraries/Process.html|
-        Process library] supports better process configuration and is generally
-        recommended as a replacement for this keyword.
         """
         return self._run(command)[0]
 
-    def run_and_return_rc_and_output(self, command):
-        """Runs the given command in the system and returns the RC and output.
+    def run_and_return_rc_and_output(self, command: str) -> "tuple[int, str]":
+        """_This keyword is considered deprecated. Use the
+        [http://robotframework.org/robotframework/latest/libraries/Process.html|
+        Process] library instead._
 
-        The return code (RC) is returned similarly as with `Run And Return RC`
+        Runs the given command in the system and returns the return code (RC)
+        and output. The return code is returned similarly as with `Run And Return RC`
         and the output similarly as with `Run`.
 
         Examples:
@@ -238,22 +216,22 @@ class OperatingSystem:
         | Should Be True       | ${rc} > 42      |
         | Should Be Equal      | ${stdout}       | TEST PASSED |
         | File Should Be Empty | /tmp/stderr.txt |
-
-        *TIP:* `Run Process` keyword provided by the
-        [http://robotframework.org/robotframework/latest/libraries/Process.html|
-        Process library] supports better process configuration and is generally
-        recommended as a replacement for this keyword.
         """
         return self._run(command)
 
-    def _run(self, command):
+    def _run(self, command: str) -> "tuple[int, str]":
         process = _Process(command)
         self._info(f"Running command '{process}'.")
         stdout = process.read()
         rc = process.close()
         return rc, stdout
 
-    def get_file(self, path, encoding="UTF-8", encoding_errors="strict"):
+    def get_file(
+        self,
+        path: str,
+        encoding: str = "UTF-8",
+        encoding_errors: str = "strict",
+    ) -> str:
         """Returns the contents of a specified file.
 
         This keyword reads the specified file and returns the contents.
@@ -290,13 +268,13 @@ class OperatingSystem:
         with open(path, encoding=encoding, errors=encoding_errors, newline="") as f:
             return f.read().replace("\r\n", "\n")
 
-    def _map_encoding(self, encoding):
+    def _map_encoding(self, encoding: str) -> "str | None":
         return {
             "SYSTEM": "locale" if PY_VERSION > (3, 10) else None,
             "CONSOLE": CONSOLE_ENCODING,
         }.get(encoding.upper(), encoding)
 
-    def get_binary_file(self, path):
+    def get_binary_file(self, path: str) -> bytes:
         """Returns the contents of a specified file.
 
         This keyword reads the specified file and returns the contents as is.
@@ -309,12 +287,12 @@ class OperatingSystem:
 
     def grep_file(
         self,
-        path,
-        pattern,
-        encoding="UTF-8",
-        encoding_errors="strict",
-        regexp=False,
-    ):
+        path: str,
+        pattern: str,
+        encoding: str = "UTF-8",
+        encoding_errors: str = "strict",
+        regexp: bool = False,
+    ) -> str:
         r"""Returns the lines of the specified file that match the ``pattern``.
 
         This keyword reads a file from the file system using the defined
@@ -366,7 +344,12 @@ class OperatingSystem:
             self._info(f"{len(lines)} out of {total_lines} lines matched.")
             return "\n".join(lines)
 
-    def log_file(self, path, encoding="UTF-8", encoding_errors="strict"):
+    def log_file(
+        self,
+        path: str,
+        encoding: str = "UTF-8",
+        encoding_errors: str = "strict",
+    ) -> str:
         """Wrapper for `Get File` that also logs the returned file.
 
         The file is logged with the INFO level. If you want something else,
@@ -382,7 +365,7 @@ class OperatingSystem:
 
     # File and directory existence
 
-    def should_exist(self, path, msg=None):
+    def should_exist(self, path: str, msg: "str | None" = None):
         """Fails unless the given path (file or directory) exists.
 
         The path can be given as an exact path or as a glob pattern.
@@ -395,7 +378,7 @@ class OperatingSystem:
             self._fail(msg, f"Path '{path}' does not exist.")
         self._link("Path '%s' exists.", path)
 
-    def should_not_exist(self, path, msg=None):
+    def should_not_exist(self, path: str, msg: "str | None" = None):
         """Fails if the given path (file or directory) exists.
 
         The path can be given as an exact path or as a glob pattern.
@@ -409,18 +392,18 @@ class OperatingSystem:
             self._fail(msg, self._get_matches_error("Path", path, matches))
         self._link("Path '%s' does not exist.", path)
 
-    def _glob(self, path):
+    def _glob(self, path: str) -> "list[str]":
         return glob.glob(path) if not os.path.exists(path) else [path]
 
-    def _get_matches_error(self, kind, path, matches):
+    def _get_matches_error(self, kind: str, path: str, matches: "list[str]") -> str:
         if not self._is_glob_path(path):
             return f"{kind} '{path}' exists."
         return f"{kind} '{path}' matches {seq2str(sorted(matches))}."
 
-    def _is_glob_path(self, path):
+    def _is_glob_path(self, path: str) -> bool:
         return "*" in path or "?" in path or ("[" in path and "]" in path)
 
-    def file_should_exist(self, path, msg=None):
+    def file_should_exist(self, path: str, msg: "str | None" = None):
         """Fails unless the given ``path`` points to an existing file.
 
         The path can be given as an exact path or as a glob pattern.
@@ -434,7 +417,7 @@ class OperatingSystem:
             self._fail(msg, f"File '{path}' does not exist.")
         self._link("File '%s' exists.", path)
 
-    def file_should_not_exist(self, path, msg=None):
+    def file_should_not_exist(self, path: str, msg: "str | None" = None):
         """Fails if the given path points to an existing file.
 
         The path can be given as an exact path or as a glob pattern.
@@ -448,7 +431,7 @@ class OperatingSystem:
             self._fail(msg, self._get_matches_error("File", path, matches))
         self._link("File '%s' does not exist.", path)
 
-    def directory_should_exist(self, path, msg=None):
+    def directory_should_exist(self, path: str, msg: "str | None" = None):
         """Fails unless the given path points to an existing directory.
 
         The path can be given as an exact path or as a glob pattern.
@@ -462,7 +445,7 @@ class OperatingSystem:
             self._fail(msg, f"Directory '{path}' does not exist.")
         self._link("Directory '%s' exists.", path)
 
-    def directory_should_not_exist(self, path, msg=None):
+    def directory_should_not_exist(self, path: str, msg: "str | None" = None):
         """Fails if the given path points to an existing file.
 
         The path can be given as an exact path or as a glob pattern.
@@ -478,7 +461,11 @@ class OperatingSystem:
 
     # Waiting file/dir to appear/disappear
 
-    def wait_until_removed(self, path, timeout="1 minute"):
+    def wait_until_removed(
+        self,
+        path: str,
+        timeout: "timedelta | None" = timedelta(minutes=1),
+    ):
         """Waits until the given file or directory is removed.
 
         The path can be given as an exact path or as a glob pattern.
@@ -486,16 +473,18 @@ class OperatingSystem:
         If the path is a pattern, the keyword waits until all matching
         items are removed.
 
-        The optional ``timeout`` can be used to control the maximum time of
-        waiting. The timeout is given as a timeout string, e.g. in a format
-        ``15 seconds``, ``1min 10s`` or just ``10``. The time string format is
-        described in an appendix of Robot Framework User Guide.
+        Waits for 1 minute by default, but that can be changed by using the
+        ``timeout`` argument. Using a negative value or ``None`` disables the timeout.
 
-        If the timeout is negative, the keyword is never timed-out. The keyword
-        returns immediately, if the path does not exist in the first place.
+        Examples:
+        | Wait Until Removed | ${path} |
+        | Wait Until Removed | ${path} | 10 seconds |
+        | Wait Until Removed | ${path} | timeout=None |
+
+        Disabling timeout using ``None`` is new in Robot Framework 7.4.
         """
         path = self._absnorm(path)
-        timeout = timestr_to_secs(timeout)
+        timeout = timeout.total_seconds() if timeout else -1
         maxtime = time.time() + timeout
         while self._glob(path):
             if timeout >= 0 and time.time() > maxtime:
@@ -503,7 +492,11 @@ class OperatingSystem:
             time.sleep(0.1)
         self._link("'%s' was removed.", path)
 
-    def wait_until_created(self, path, timeout="1 minute"):
+    def wait_until_created(
+        self,
+        path: str,
+        timeout: "timedelta | None" = timedelta(minutes=1),
+    ):
         """Waits until the given file or directory is created.
 
         The path can be given as an exact path or as a glob pattern.
@@ -511,16 +504,19 @@ class OperatingSystem:
         If the path is a pattern, the keyword returns when an item matching
         it is created.
 
-        The optional ``timeout`` can be used to control the maximum time of
-        waiting. The timeout is given as a timeout string, e.g. in a format
-        ``15 seconds``, ``1min 10s`` or just ``10``. The time string format is
-        described in an appendix of Robot Framework User Guide.
+        Waits for 1 minute by default, but that can be changed by using
+        the ``timeout`` argument. Using a negative value or ``None`` disables
+        the timeout.
 
-        If the timeout is negative, the keyword is never timed-out. The keyword
-        returns immediately, if the path already exists.
+        Examples:
+        | Wait Until Created | ${path} |
+        | Wait Until Created | ${path} | 10 seconds |
+        | Wait Until Created | ${path} | timeout=None |
+
+        Disabling timeout using ``None`` is new in Robot Framework 7.4.
         """
         path = self._absnorm(path)
-        timeout = timestr_to_secs(timeout)
+        timeout = timeout.total_seconds() if timeout else -1
         maxtime = time.time() + timeout
         while not self._glob(path):
             if timeout >= 0 and time.time() > maxtime:
@@ -530,7 +526,7 @@ class OperatingSystem:
 
     # Dir/file empty
 
-    def directory_should_be_empty(self, path, msg=None):
+    def directory_should_be_empty(self, path: str, msg: "str | None" = None):
         """Fails unless the specified directory is empty.
 
         The default error message can be overridden with the ``msg`` argument.
@@ -542,7 +538,7 @@ class OperatingSystem:
             self._fail(msg, f"Directory '{path}' is not empty. Contents: {contents}.")
         self._link("Directory '%s' is empty.", path)
 
-    def directory_should_not_be_empty(self, path, msg=None):
+    def directory_should_not_be_empty(self, path: str, msg: "str | None" = None):
         """Fails if the specified directory is empty.
 
         The default error message can be overridden with the ``msg`` argument.
@@ -553,7 +549,7 @@ class OperatingSystem:
             self._fail(msg, f"Directory '{path}' is empty.")
         self._link(f"Directory '%s' contains {len(items)} item{s(items)}.", path)
 
-    def file_should_be_empty(self, path, msg=None):
+    def file_should_be_empty(self, path: str, msg: "str | None" = None):
         """Fails unless the specified file is empty.
 
         The default error message can be overridden with the ``msg`` argument.
@@ -566,7 +562,7 @@ class OperatingSystem:
             self._fail(msg, f"File '{path}' is not empty. Size: {size} byte{s(size)}.")
         self._link("File '%s' is empty.", path)
 
-    def file_should_not_be_empty(self, path, msg=None):
+    def file_should_not_be_empty(self, path: str, msg: "str | None" = None):
         """Fails if the specified file is empty.
 
         The default error message can be overridden with the ``msg`` argument.
@@ -583,7 +579,7 @@ class OperatingSystem:
 
     def create_file(
         self,
-        path: "Path",
+        path: str,
         content: "str | Secret" = "",
         encoding: str = "UTF-8",
     ):
@@ -614,7 +610,13 @@ class OperatingSystem:
         path = self._write_to_file(path, content, encoding)
         self._link("Created file '%s'.", path)
 
-    def _write_to_file(self, path, content, encoding=None, mode="w"):
+    def _write_to_file(
+        self,
+        path: str,
+        content: "str | bytes",
+        encoding: "str | None" = None,
+        mode: str = "w",
+    ) -> str:
         path = self._absnorm(path)
         parent = os.path.dirname(path)
         if not os.path.exists(parent):
@@ -625,7 +627,7 @@ class OperatingSystem:
             f.write(content)
         return path
 
-    def create_binary_file(self, path, content):
+    def create_binary_file(self, path: str, content: bytes):
         r"""Creates a binary file with the given content.
 
         If content is given as a Unicode string, it is first converted to bytes
@@ -646,14 +648,12 @@ class OperatingSystem:
         encoding. `File Should Not Exist` can be used to avoid overwriting
         existing files.
         """
-        if isinstance(content, str):
-            content = bytes(ord(c) for c in content)
         path = self._write_to_file(path, content, mode="wb")
         self._link("Created binary file '%s'.", path)
 
     def append_to_file(
         self,
-        path: "Path",
+        path: str,
         content: "str | Secret" = "",
         encoding: str = "UTF-8",
     ):
@@ -671,7 +671,7 @@ class OperatingSystem:
         path = self._write_to_file(path, content, encoding, mode="a")
         self._link("Appended to file '%s'.", path)
 
-    def remove_file(self, path):
+    def remove_file(self, path: str):
         """Removes a file with the given path.
 
         Passes if the file does not exist, but fails if the path does
@@ -691,7 +691,7 @@ class OperatingSystem:
             os.remove(match)
             self._link("Removed file '%s'.", match)
 
-    def remove_files(self, *paths):
+    def remove_files(self, *paths: str):
         """Uses `Remove File` to remove multiple files one-by-one.
 
         Example:
@@ -700,10 +700,10 @@ class OperatingSystem:
         for path in paths:
             self.remove_file(path)
 
-    def empty_directory(self, path):
+    def empty_directory(self, path: str):
         """Deletes all the content from the given directory.
 
-        Deletes both files and sub-directories, but the specified directory
+        Deletes both files and subdirectories, but the specified directory
         itself if not removed. Use `Remove Directory` if you want to remove
         the whole directory.
         """
@@ -715,10 +715,10 @@ class OperatingSystem:
                 os.remove(item)
         self._link("Emptied directory '%s'.", path)
 
-    def create_directory(self, path):
+    def create_directory(self, path: str):
         """Creates the specified directory.
 
-        Also possible intermediate directories are created. Passes if the
+        Possible intermediate directories are created as well. Passes if the
         directory already exists, but fails if the path exists and is not
         a directory.
         """
@@ -731,12 +731,12 @@ class OperatingSystem:
             os.makedirs(path)
             self._link("Created directory '%s'.", path)
 
-    def remove_directory(self, path, recursive=False):
+    def remove_directory(self, path: str, recursive: bool = False):
         """Removes the directory pointed to by the given ``path``.
 
-        If the second argument ``recursive`` is given a true value (see
-        `Boolean arguments`), the directory is removed recursively. Otherwise
-        removing fails if the directory is not empty.
+        If the second argument ``recursive`` is given a true value, the
+        directory is removed recursively. Otherwise, removing fails if
+        the directory is not empty.
 
         If the directory pointed to by the ``path`` does not exist, the keyword
         passes, but it fails, if the ``path`` points to a file.
@@ -744,21 +744,19 @@ class OperatingSystem:
         path = self._absnorm(path)
         if not os.path.exists(path):
             self._link("Directory '%s' does not exist.", path)
-        elif not os.path.isdir(path):
+            return
+        if not os.path.isdir(path):
             self._error(f"Path '{path}' is not a directory.")
+        if recursive:
+            shutil.rmtree(path)
         else:
-            if recursive:
-                shutil.rmtree(path)
-            else:
-                self.directory_should_be_empty(
-                    path, f"Directory '{path}' is not empty."
-                )
-                os.rmdir(path)
-            self._link("Removed directory '%s'.", path)
+            self.directory_should_be_empty(path, f"Directory '{path}' is not empty.")
+            os.rmdir(path)
+        self._link("Removed directory '%s'.", path)
 
     # Moving and copying files and directories
 
-    def copy_file(self, source, destination):
+    def copy_file(self, source: str, destination: str) -> str:
         r"""Copies the source file into the destination.
 
         Source must be a path to an existing file or a glob pattern (see
@@ -772,12 +770,12 @@ class OperatingSystem:
         copied into it. A possible file with the same name as the source is
         overwritten.
 
-        3) If the destination does not exist and it ends with a path
+        3) If the destination does not exist, and it ends with a path
         separator (``/`` or ``\``), it is considered a directory. That
         directory is created and a source file copied into it.
         Possible missing intermediate directories are also created.
 
-        4) If the destination does not exist and it does not end with a path
+        4) If the destination does not exist, and it does not end with a path
         separator, it is considered a file. If the path to the file does not
         exist, it is created.
 
@@ -785,20 +783,20 @@ class OperatingSystem:
 
         See also `Copy Files`, `Move File`, and `Move Files`.
         """
-        source, destination = self._prepare_copy_and_move_file(source, destination)
+        source, destination = self._prepare_copy_file(source, destination)
         if not self._are_source_and_destination_same_file(source, destination):
-            source, destination = self._atomic_copy(source, destination)
+            self._atomic_copy(source, destination)
             self._link("Copied file from '%s' to '%s'.", source, destination)
         return destination
 
-    def _prepare_copy_and_move_file(self, source, destination):
-        source = self._normalize_copy_and_move_source(source)
-        destination = self._normalize_copy_and_move_destination(destination)
-        if os.path.isdir(destination):
-            destination = os.path.join(destination, os.path.basename(source))
-        return source, destination
+    def _prepare_copy_file(self, source: str, dest: str) -> "tuple[str, str]":
+        source = self._normalize_source(source)
+        dest = self._normalize_destination(dest)
+        if os.path.isdir(dest):
+            dest = os.path.join(dest, os.path.basename(source))
+        return source, dest
 
-    def _normalize_copy_and_move_source(self, source):
+    def _normalize_source(self, source: str) -> str:
         source = self._absnorm(source)
         sources = self._glob(source)
         if len(sources) > 1:
@@ -811,37 +809,34 @@ class OperatingSystem:
             self._error(f"Source file '{source}' is not a regular file.")
         return source
 
-    def _normalize_copy_and_move_destination(self, destination):
-        if isinstance(destination, Path):
-            destination = str(destination)
-        is_dir = os.path.isdir(destination) or destination.endswith(("/", "\\"))
-        destination = self._absnorm(destination)
-        directory = destination if is_dir else os.path.dirname(destination)
+    def _normalize_destination(self, dest: str) -> str:
+        is_dir = os.path.isdir(dest) or dest.endswith(("/", "\\"))
+        dest = self._absnorm(dest)
+        directory = dest if is_dir else os.path.dirname(dest)
         self._ensure_destination_directory_exists(directory)
-        return destination
+        return dest
 
-    def _ensure_destination_directory_exists(self, path):
+    def _ensure_destination_directory_exists(self, path: str):
         if not os.path.exists(path):
             os.makedirs(path)
         elif not os.path.isdir(path):
             self._error(f"Destination '{path}' exists and is not a directory.")
 
-    def _are_source_and_destination_same_file(self, source, destination):
-        if self._force_normalize(source) == self._force_normalize(destination):
+    def _are_source_and_destination_same_file(self, source: str, dest: str) -> bool:
+        if (
+            os.path.exists(source)
+            and os.path.exists(dest)
+            and os.path.samefile(source, dest)
+        ):
             self._link(
                 "Source '%s' and destination '%s' point to the same file.",
                 source,
-                destination,
+                dest,
             )
             return True
         return False
 
-    def _force_normalize(self, path):
-        # TODO: Should normalize_path also support link normalization?
-        # TODO: Should we handle dos paths like 'exampl~1.txt'?
-        return os.path.realpath(normpath(path, case_normalize=True))
-
-    def _atomic_copy(self, source, destination):
+    def _atomic_copy(self, source: str, dest: str):
         """Copy file atomically (or at least try to).
 
         This method tries to ensure that a file copy operation will not fail
@@ -856,36 +851,35 @@ class OperatingSystem:
 
         See also https://github.com/robotframework/robotframework/issues/1502
         """
-        temp_directory = tempfile.mkdtemp(dir=os.path.dirname(destination))
+        temp_directory = tempfile.mkdtemp(dir=os.path.dirname(dest))
         temp_file = os.path.join(temp_directory, os.path.basename(source))
         try:
             shutil.copy(source, temp_file)
-            if os.path.exists(destination):
-                os.remove(destination)
-            shutil.move(temp_file, destination)
+            if os.path.exists(dest):
+                os.remove(dest)
+            shutil.move(temp_file, dest)
         finally:
             shutil.rmtree(temp_directory)
-        return source, destination
 
-    def move_file(self, source, destination):
+    def move_file(self, source: str, destination: str) -> str:
         """Moves the source file into the destination.
 
         Arguments have exactly same semantics as with `Copy File` keyword.
         Destination file path is returned.
 
         If the source and destination are on the same filesystem, rename
-        operation is used. Otherwise file is copied to the destination
+        operation is used. Otherwise, file is copied to the destination
         filesystem and then removed from the original filesystem.
 
         See also `Move Files`, `Copy File`, and `Copy Files`.
         """
-        source, destination = self._prepare_copy_and_move_file(source, destination)
+        source, destination = self._prepare_copy_file(source, destination)
         if not self._are_source_and_destination_same_file(destination, source):
             shutil.move(source, destination)
             self._link("Moved file from '%s' to '%s'.", source, destination)
         return destination
 
-    def copy_files(self, *sources_and_destination):
+    def copy_files(self, *sources_and_destination: str):
         """Copies specified files to the target directory.
 
         Source files can be given as exact paths and as glob patterns (see
@@ -901,11 +895,11 @@ class OperatingSystem:
 
         See also `Copy File`, `Move File`, and `Move Files`.
         """
-        sources, dest = self._prepare_copy_and_move_files(sources_and_destination)
+        sources, dest = self._prepare_copy_files(sources_and_destination)
         for source in sources:
             self.copy_file(source, dest)
 
-    def _prepare_copy_and_move_files(self, items):
+    def _prepare_copy_files(self, items: Sequence[str]) -> "tuple[list[str], str]":
         if len(items) < 2:
             self._error("Must contain destination and at least one source.")
         sources = self._glob_files(items[:-1])
@@ -913,35 +907,35 @@ class OperatingSystem:
         self._ensure_destination_directory_exists(destination)
         return sources, destination
 
-    def _glob_files(self, patterns):
+    def _glob_files(self, patterns: Sequence[str]) -> "list[str]":
         files = []
         for pattern in patterns:
             files.extend(self._glob(self._absnorm(pattern)))
         return files
 
-    def move_files(self, *sources_and_destination):
+    def move_files(self, *sources_and_destination: str):
         """Moves specified files to the target directory.
 
         Arguments have exactly same semantics as with `Copy Files` keyword.
 
         See also `Move File`, `Copy File`, and `Copy Files`.
         """
-        sources, dest = self._prepare_copy_and_move_files(sources_and_destination)
+        sources, dest = self._prepare_copy_files(sources_and_destination)
         for source in sources:
             self.move_file(source, dest)
 
     def copy_directory(self, source, destination):
         """Copies the source directory into the destination.
 
-        If the destination exists, the source is copied under it. Otherwise
+        If the destination exists, the source is copied under it. Otherwise,
         the destination directory and the possible missing intermediate
         directories are created.
         """
-        source, destination = self._prepare_copy_and_move_directory(source, destination)
+        source, destination = self._prepare_copy_dir(source, destination)
         shutil.copytree(source, destination)
         self._link("Copied directory from '%s' to '%s'.", source, destination)
 
-    def _prepare_copy_and_move_directory(self, source, destination):
+    def _prepare_copy_dir(self, source: str, destination: str) -> "tuple[str, str]":
         source = self._absnorm(source)
         destination = self._absnorm(destination)
         if not os.path.exists(source):
@@ -959,21 +953,20 @@ class OperatingSystem:
                 os.makedirs(parent)
         return source, destination
 
-    def move_directory(self, source, destination):
+    def move_directory(self, source: str, destination: str):
         """Moves the source directory into a destination.
 
         Uses `Copy Directory` keyword internally, and ``source`` and
         ``destination`` arguments have exactly same semantics as with
         that keyword.
         """
-        source, destination = self._prepare_copy_and_move_directory(source, destination)
+        source, destination = self._prepare_copy_dir(source, destination)
         shutil.move(source, destination)
         self._link("Moved directory from '%s' to '%s'.", source, destination)
 
     # Environment Variables
 
-    @keyword(types=None)
-    def get_environment_variable(self, name, default=None):
+    def get_environment_variable(self, name: str, default: "str | None" = None) -> str:
         """Returns the value of an environment variable with the given name.
 
         If no environment variable is found, returns possible default value.
@@ -1003,7 +996,7 @@ class OperatingSystem:
             secret = False
         self._set_environment_variable(name, value, secret)
 
-    def _set_environment_variable(self, name, value, secret=False):
+    def _set_environment_variable(self, name: str, value: str, secret: bool = False):
         set_env_var(name, value)
         set_to = "a secret value" if secret else f"value '{value}'"
         self._info(f"Environment variable '{name}' set to {set_to}.")
@@ -1033,9 +1026,8 @@ class OperatingSystem:
         | Append To Environment Variable | NAME2    | second | separator=-     |
         | Should Be Equal                | %{NAME2} | first-second             |
         """
-        sentinel = object()
-        initial = self.get_environment_variable(name, sentinel)
-        if initial is not sentinel:
+        initial = get_env_var(name)
+        if initial:
             values = (initial, *values)
         if any(isinstance(v, Secret) for v in values):
             values = [v.value if isinstance(v, Secret) else v for v in values]
@@ -1044,7 +1036,7 @@ class OperatingSystem:
             secret = False
         self._set_environment_variable(name, separator.join(values), secret)
 
-    def remove_environment_variable(self, *names):
+    def remove_environment_variable(self, *names: str):
         """Deletes the specified environment variable.
 
         Does nothing if the environment variable is not set.
@@ -1059,8 +1051,11 @@ class OperatingSystem:
             else:
                 self._info(f"Environment variable '{name}' does not exist.")
 
-    def environment_variable_should_be_set(self, name, msg=None):
+    def environment_variable_should_be_set(self, name: str, msg: "str | None" = None):
         """Fails if the specified environment variable is not set.
+
+        Environment variable is considered not to be set if it does not exist
+        or if its value is an empty string.
 
         The default error message can be overridden with the ``msg`` argument.
         """
@@ -1069,8 +1064,15 @@ class OperatingSystem:
             self._fail(msg, f"Environment variable '{name}' is not set.")
         self._info(f"Environment variable '{name}' is set to '{value}'.")
 
-    def environment_variable_should_not_be_set(self, name, msg=None):
+    def environment_variable_should_not_be_set(
+        self,
+        name: str,
+        msg: "str | None" = None,
+    ):
         """Fails if the specified environment variable is set.
+
+        Environment variable is considered not to be set if it does not exist
+        or if its value is an empty string.
 
         The default error message can be overridden with the ``msg`` argument.
         """
@@ -1079,7 +1081,7 @@ class OperatingSystem:
             self._fail(msg, f"Environment variable '{name}' is set to '{value}'.")
         self._info(f"Environment variable '{name}' is not set.")
 
-    def get_environment_variables(self):
+    def get_environment_variables(self) -> "dict[str, str]":
         """Returns currently available environment variables as a dictionary.
 
         Both keys and values are decoded to Unicode using the system encoding.
@@ -1088,7 +1090,9 @@ class OperatingSystem:
         """
         return get_env_vars()
 
-    def log_environment_variables(self, level="INFO"):
+    def log_environment_variables(
+        self, level: logger.LogLevel = "INFO"
+    ) -> "dict[str, str]":
         """Logs all environment variables using the given log level.
 
         Environment variables are also returned the same way as with
@@ -1101,7 +1105,7 @@ class OperatingSystem:
 
     # Path
 
-    def join_path(self, base, *parts):
+    def join_path(self, base: str, *parts: str) -> str:
         """Joins the given path part(s) to the given base path.
 
         The path separator (``/`` or ``\\``) is inserted when needed and
@@ -1121,14 +1125,9 @@ class OperatingSystem:
         - ${p4} = '/path'
         - ${p5} = '/my/path2'
         """
-        # FIXME: Is normalizing parts needed anymore?
-        parts = [
-            str(p) if isinstance(p, Path) else p.replace("/", os.sep)
-            for p in (base, *parts)
-        ]
-        return self.normalize_path(os.path.join(*parts))
+        return self.normalize_path(os.path.join(base, *parts))
 
-    def join_paths(self, base, *paths):
+    def join_paths(self, base: str, *paths: str) -> "list[str]":
         """Joins given paths with base and returns resulted paths.
 
         See `Join Path` for more information.
@@ -1144,14 +1143,14 @@ class OperatingSystem:
         """
         return [self.join_path(base, path) for path in paths]
 
-    def normalize_path(self, path, case_normalize=False):
+    def normalize_path(self, path: str, case_normalize=False) -> str:
         """Normalizes the given path.
 
         - Collapses redundant separators and up-level references.
         - Converts ``/`` to ``\\`` on Windows.
         - Replaces initial ``~`` or ``~user`` by that user's home directory.
-        - If ``case_normalize`` is given a true value (see `Boolean arguments`)
-          on Windows, converts the path to all lowercase.
+        - If ``case_normalize`` is given a true value on Windows, converts
+          the path to all lowercase.
         - Converts ``pathlib.Path`` instances to ``str``.
 
         Examples:
@@ -1168,10 +1167,6 @@ class OperatingSystem:
         On Windows result would use ``\\`` instead of ``/`` and home directory
         would be different.
         """
-        if isinstance(path, Path):
-            path = str(path)
-        else:
-            path = path.replace("/", os.sep)
         path = os.path.normpath(os.path.expanduser(path))
         # os.path.normcase doesn't normalize on OSX which also, by default,
         # has case-insensitive file system. Our robot.utils.normpath would
@@ -1181,7 +1176,7 @@ class OperatingSystem:
             path = os.path.normcase(path)
         return path or "."
 
-    def split_path(self, path):
+    def split_path(self, path: str) -> "tuple[str, str]":
         """Splits the given path from the last path separator (``/`` or ``\\``).
 
         The given path is first normalized (e.g. a possible trailing
@@ -1200,7 +1195,7 @@ class OperatingSystem:
         """
         return os.path.split(self.normalize_path(path))
 
-    def split_extension(self, path):
+    def split_extension(self, path: str) -> "tuple[str, str]":
         """Splits the extension from the given path.
 
         The given path is first normalized (e.g. possible trailing
@@ -1247,7 +1242,11 @@ class OperatingSystem:
 
     # Misc
 
-    def get_modified_time(self, path, format="timestamp"):
+    def get_modified_time(
+        self,
+        path: str,
+        format: str = "timestamp",
+    ) -> "int | str | list[str]":
         """Returns the last modification time of a file or directory.
 
         How time is returned is determined based on the given ``format``
@@ -1289,7 +1288,7 @@ class OperatingSystem:
         self._link(f"Last modified time of '%s' is {mtime}.", path)
         return mtime
 
-    def set_modified_time(self, path, mtime):
+    def set_modified_time(self, path: str, mtime: "int | str"):
         """Sets the file modification and access times.
 
         Changes the modification and access times of the given file to
@@ -1336,7 +1335,7 @@ class OperatingSystem:
         tstamp = datetime.fromtimestamp(mtime).isoformat(" ", timespec="seconds")
         self._link(f"Set modified time of '%s' to {tstamp}.", path)
 
-    def get_file_size(self, path):
+    def get_file_size(self, path: str) -> int:
         """Returns and logs file size as an integer in bytes."""
         path = self._absnorm(path)
         if not os.path.isfile(path):
@@ -1345,7 +1344,12 @@ class OperatingSystem:
         self._link(f"Size of file '%s' is {size} byte{s(size)}.", path)
         return size
 
-    def list_directory(self, path, pattern=None, absolute=False):
+    def list_directory(
+        self,
+        path: str,
+        pattern: "str | None" = None,
+        absolute: bool = False,
+    ) -> "list[str]":
         """Returns and logs items in a directory, optionally filtered with ``pattern``.
 
         File and directory names are returned in case-sensitive alphabetical
@@ -1356,7 +1360,7 @@ class OperatingSystem:
         File and directory names are returned relative to the given path
         (e.g. ``'file.txt'``) by default. If you want them be returned in
         absolute format (e.g. ``'/home/robot/file.txt'``), give the ``absolute``
-        argument a true value (see `Boolean arguments`).
+        argument a true value.
 
         If ``pattern`` is given, only items matching it are returned. The pattern
         is considered to be a _glob pattern_ and the full syntax is explained in
@@ -1372,20 +1376,30 @@ class OperatingSystem:
         self._info(f"{len(items)} item{s(items)}:\n" + "\n".join(items))
         return items
 
-    def list_files_in_directory(self, path, pattern=None, absolute=False):
+    def list_files_in_directory(
+        self,
+        path: str,
+        pattern: "str | None" = None,
+        absolute: bool = False,
+    ) -> "list[str]":
         """Wrapper for `List Directory` that returns only files."""
         files = self._list_files_in_dir(path, pattern, absolute)
         self._info(f"{len(files)} file{s(files)}:\n" + "\n".join(files))
         return files
 
-    def list_directories_in_directory(self, path, pattern=None, absolute=False):
+    def list_directories_in_directory(
+        self,
+        path: str,
+        pattern: "str | None" = None,
+        absolute: bool = False,
+    ) -> "list[str]":
         """Wrapper for `List Directory` that returns only directories."""
         dirs = self._list_dirs_in_dir(path, pattern, absolute)
         label = "directory" if len(dirs) == 1 else "directories"
         self._info(f"{len(dirs)} {label}:\n" + "\n".join(dirs))
         return dirs
 
-    def count_items_in_directory(self, path, pattern=None):
+    def count_items_in_directory(self, path: str, pattern: "str | None" = None) -> int:
         """Returns and logs the number of all items in the given directory.
 
         The argument ``pattern`` has the same semantics as with `List Directory`
@@ -1396,25 +1410,34 @@ class OperatingSystem:
         self._info(f"{count} item{s(count)}.")
         return count
 
-    def count_files_in_directory(self, path, pattern=None):
+    def count_files_in_directory(self, path: str, pattern: "str | None" = None) -> int:
         """Wrapper for `Count Items In Directory` returning only file count."""
         count = len(self._list_files_in_dir(path, pattern))
         self._info(f"{count} file{s(count)}.")
         return count
 
-    def count_directories_in_directory(self, path, pattern=None):
+    def count_directories_in_directory(
+        self,
+        path: str,
+        pattern: "str | None" = None,
+    ) -> int:
         """Wrapper for `Count Items In Directory` returning only directory count."""
         count = len(self._list_dirs_in_dir(path, pattern))
         label = "directory" if count == 1 else "directories"
         self._info(f"{count} {label}.")
         return count
 
-    def _list_dir(self, path, pattern=None, absolute=False):
+    def _list_dir(
+        self,
+        path: str,
+        pattern: "str | None" = None,
+        absolute: bool = False,
+    ) -> "list[str]":
         path = self._absnorm(path)
         self._link("Listing contents of directory '%s'.", path)
         if not os.path.isdir(path):
             self._error(f"Directory '{path}' does not exist.")
-        # result is already unicode but safe_str also handles NFC normalization
+        # Result is already a string, but safe_str also handles NFC normalization.
         items = sorted(safe_str(item) for item in os.listdir(path))
         if pattern:
             items = [i for i in items if fnmatch.fnmatchcase(i, pattern)]
@@ -1423,24 +1446,34 @@ class OperatingSystem:
             items = [os.path.join(path, item) for item in items]
         return items
 
-    def _list_files_in_dir(self, path, pattern=None, absolute=False):
+    def _list_files_in_dir(
+        self,
+        path: str,
+        pattern: "str | None" = None,
+        absolute: bool = False,
+    ) -> "list[str]":
         return [
             item
             for item in self._list_dir(path, pattern, absolute)
             if os.path.isfile(os.path.join(path, item))
         ]
 
-    def _list_dirs_in_dir(self, path, pattern=None, absolute=False):
+    def _list_dirs_in_dir(
+        self,
+        path: str,
+        pattern: "str | None" = None,
+        absolute: bool = False,
+    ) -> "list[str]":
         return [
             item
             for item in self._list_dir(path, pattern, absolute)
             if os.path.isdir(os.path.join(path, item))
         ]
 
-    def touch(self, path):
+    def touch(self, path: str):
         """Emulates the UNIX touch command.
 
-        Creates a file, if it does not exist. Otherwise changes its access and
+        Creates a file, if it does not exist. Otherwise, changes its access and
         modification times to the current time.
 
         Fails if used with the directories or the parent directory of the given
@@ -1461,26 +1494,26 @@ class OperatingSystem:
             open(path, "w", encoding="ASCII").close()
             self._link("Touched new file '%s'.", path)
 
-    def _absnorm(self, path):
+    def _absnorm(self, path: str) -> str:
         return abspath(self.normalize_path(path))
 
-    def _fail(self, *messages):
+    def _fail(self, *messages: str) -> NoReturn:
         raise AssertionError(next(msg for msg in messages if msg))
 
-    def _error(self, msg):
+    def _error(self, msg: str) -> NoReturn:
         raise RuntimeError(msg)
 
-    def _info(self, msg):
+    def _info(self, msg: str):
         self._log(msg, "INFO")
 
-    def _link(self, msg, *paths):
+    def _link(self, msg: str, *paths: str):
         paths = tuple(f'<a href="file://{p}">{p}</a>' for p in paths)
         self._log(msg % paths, "HTML")
 
-    def _warn(self, msg):
+    def _warn(self, msg: str):
         self._log(msg, "WARN")
 
-    def _log(self, msg, level):
+    def _log(self, msg: str, level: logger.LogLevel):
         logger.write(msg, level)
 
 

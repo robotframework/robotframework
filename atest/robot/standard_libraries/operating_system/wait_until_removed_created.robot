@@ -3,53 +3,62 @@ Suite Setup       Run Tests    ${EMPTY}    standard_libraries/operating_system/w
 Resource          atest_resource.robot
 
 *** Test Cases ***
-File And Dir Already Removed
+Wait removal when do not exist
     Check Test Case    ${TESTNAME}
 
-File And Dir Removed Before Timeout
+Removed before timeout
     Check Test Case    ${TESTNAME}
 
-File And Dir Removed With Pattern
+Removed before timeout when using glob pattern
     Check Test Case    ${TESTNAME}
 
-File Not Removed Before Timeout
+File not removed before timeout
     Check Test Case    ${TESTNAME}
 
-Dir Not Removed Before Timeout
+Directory not removed before timeout
     Check Test Case    ${TESTNAME}
 
-Not Removed Before Timeout With Pattern
+Not removed before timeout when using glob pattern
     Check Test Case    ${TESTNAME}
 
-Invalid Remove Timeout
+Wait removal when path itself contains glob charactes
     Check Test Case    ${TESTNAME}
 
-File And Dir Already Created
+Wait removal when using `pathlib.Path`
     Check Test Case    ${TESTNAME}
 
-File And Dir Created Before Timeout
+None disables remove timeout
     Check Test Case    ${TESTNAME}
 
-File And Dir Created With Pattern
+Invalid remove timeout
     Check Test Case    ${TESTNAME}
 
-File Not Created Before Timeout
+Wait creation when already created
     Check Test Case    ${TESTNAME}
 
-Dir Not Created Before Timeout
+Created before timeout
     Check Test Case    ${TESTNAME}
 
-Not Created Before Timeout With Pattern
+Created before timeout when using glob pattern
     Check Test Case    ${TESTNAME}
 
-Invalid Create Timeout
+File not created before timeout
     Check Test Case    ${TESTNAME}
 
-Wait Until File With Glob Like Name
+Directory not created before timeout
     Check Test Case    ${TESTNAME}
 
-Wait Until Removed File With Glob Like Name
+Not created before timeout when using glob pattern
     Check Test Case    ${TESTNAME}
 
-Path as `pathlib.Path`
+Wait creation when path itself contains glob charactes
+    Check Test Case    ${TESTNAME}
+
+Wait creation when using `pathlib.Path`
+    Check Test Case    ${TESTNAME}
+
+None disables create timeout
+    Check Test Case    ${TESTNAME}
+
+Invalid create timeout
     Check Test Case    ${TESTNAME}
