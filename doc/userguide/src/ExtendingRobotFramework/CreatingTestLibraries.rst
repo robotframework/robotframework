@@ -1598,17 +1598,34 @@ attempted in the order types are specified. If any conversion succeeds, the
 resulting value is used without attempting remaining conversions. If no individual
 conversion succeeds, the whole conversion fails.
 
+.. note:: The order of types changes the conversion result in cases where the used
+          value does not match any of the types, but conversion to multiple types
+          succeeds. In some cases results can be surprising.
+
+          For example, if typing is `list[str] | dict[int, str]` and the used value
+          is `{'1': 'x', '2': 'y'}`, the result will be `['1', '2']`. The reason
+          is that the value does not match either of the types and `list[str]`
+          conversion is attempted first. List conversion accepts any iterable
+          argument, and dictionaries are iterable, so list conversion converts
+          the dictionary into a list of keys. The resulting `['1', '2']`
+          matches `list[str]` without further conversion.
+
+          On the other hand, if the typing is `dict[int, str] | list[str]`, then
+          `{'1': 'x', '2': 'y'}` is converted to `{1: 'x', 2: 'y'}`. Also this time
+          the value does not match either of the types, but now `dict[int, str]`
+          is attempted first and that conversion succeeds.
+
 If a specified type is not recognized by Robot Framework, then the original argument
 value is used as-is. For example, with this keyword conversion would first be attempted
 to an integer, but if that fails the keyword would get the original argument:
 
 .. sourcecode:: python
 
-  def example(argument: Union[int, Unrecognized]):
+  def example(argument: int | Unrecognized):
       ...
 
 Starting from Robot Framework 6.1, the above logic works also if an unrecognized
-type is listed before a recognized type like `Union[Unrecognized, int]`.
+type is listed before a recognized type like `Unrecognized | int`.
 Also in this case `int` conversion is attempted, and the argument id passed as-is
 if it fails. With earlier Robot Framework versions, `int` conversion would not be
 attempted at all.
