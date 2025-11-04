@@ -55,7 +55,7 @@ class _List:
         Mainly useful for converting tuples and other iterable to lists.
         Use `Create List` from the BuiltIn library for constructing new lists.
         """
-        return list(item)
+        return list(item)  # type: ignore
 
     # NOTE: https://github.com/robotframework/robotframework/issues/5536
     def append_to_list(self, list_: MutableSequence, *values: object):
@@ -212,10 +212,11 @@ class _List:
         except IndexError:
             self._index_error(list_, index)
 
+    # NOTE: start is annotated with int | Literal[''] for backwards compatibility.
     def get_slice_from_list(
         self,
         list_: list,
-        start: int = 0,
+        start: "int | Literal['']" = 0,
         end: "int | None" = None,
     ) -> list:
         """Returns a slice of the given list between ``start`` and ``end`` indexes.
@@ -241,6 +242,8 @@ class _List:
         | ${z} = ['a', 'b', 'c']
         | ${L5} is not changed
         """
+        if not start:
+            start = 0
         return list_[start:end]
 
     def count_values_in_list(
@@ -264,11 +267,12 @@ class _List:
         """
         return self.get_slice_from_list(list_, start, end).count(value)
 
+    # NOTE: start is annotated with int | Literal[''] for backwards compatibility.
     def get_index_from_list(
         self,
         list_: list,
         value: object,
-        start: int = 0,
+        start: "int | Literal['']" = 0,
         end: "int | None" = None,
     ) -> int:
         """Returns the index of the first occurrence of the ``value`` on the list.
@@ -284,6 +288,8 @@ class _List:
         | ${x} = 3
         | ${L5} is not changed
         """
+        if not start:
+            start = 0
         list_ = self.get_slice_from_list(list_, start, end)
         try:
             return start + list_.index(value)
