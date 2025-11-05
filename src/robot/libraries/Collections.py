@@ -32,7 +32,7 @@ from robot.version import get_version
 
 NOT_SET = NotSet()
 
-IC = Union[bool, Literal["KEY", "KEYS", "VALUE", "VALUES"]]
+IgnoreCase = Union[bool, Literal["KEY", "KEYS", "VALUE", "VALUES"]]
 
 
 class _List:
@@ -322,7 +322,7 @@ class _List:
         list_: Sequence,
         value: object,
         msg: "str | None" = None,
-        ignore_case: IC = False,
+        ignore_case: IgnoreCase = False,
     ):
         """Fails if the ``value`` is not found from ``list``.
 
@@ -344,7 +344,7 @@ class _List:
         list_: Sequence,
         value: object,
         msg: "str | None" = None,
-        ignore_case: IC = False,
+        ignore_case: IgnoreCase = False,
     ):
         """Fails if the ``value`` is found from ``list``.
 
@@ -365,7 +365,7 @@ class _List:
         self,
         list_: Sequence,
         msg: "str | None" = None,
-        ignore_case: IC = False,
+        ignore_case: IgnoreCase = False,
     ):
         """Fails if any element in the ``list`` is found from it more than once.
 
@@ -400,7 +400,7 @@ class _List:
         values: bool = True,
         names: "dict[int, str] | list[str] | None" = None,
         ignore_order: bool = False,
-        ignore_case: IC = False,
+        ignore_case: IgnoreCase = False,
     ):
         """Fails if given lists are unequal.
 
@@ -500,7 +500,7 @@ class _List:
         list2: Sequence,
         msg: "str | None" = None,
         values: bool = True,
-        ignore_case: IC = False,
+        ignore_case: IgnoreCase = False,
     ):
         """Fails if not all elements in ``list2`` are found in ``list1``.
 
@@ -776,7 +776,7 @@ class _Dictionary:
         dictionary: Mapping,
         key: Hashable,
         msg: "str | None" = None,
-        ignore_case: IC = False,
+        ignore_case: IgnoreCase = False,
     ):
         """Fails if ``key`` is not found from ``dictionary``.
 
@@ -798,7 +798,7 @@ class _Dictionary:
         dictionary: Mapping,
         key: Hashable,
         msg: "str | None" = None,
-        ignore_case: IC = False,
+        ignore_case: IgnoreCase = False,
     ):
         """Fails if ``key`` is found from ``dictionary``.
 
@@ -821,7 +821,7 @@ class _Dictionary:
         key: Hashable,
         value: object,
         msg: "str | None" = None,
-        ignore_case: IC = False,
+        ignore_case: IgnoreCase = False,
     ):
         """An item of ``key`` / ``value`` must be found in a ``dictionary``.
 
@@ -845,7 +845,7 @@ class _Dictionary:
         dictionary: Mapping,
         value: object,
         msg: "str | None" = None,
-        ignore_case: IC = False,
+        ignore_case: IgnoreCase = False,
     ):
         """Fails if ``value`` is not found from ``dictionary``.
 
@@ -867,7 +867,7 @@ class _Dictionary:
         dictionary: Mapping,
         value: object,
         msg: "str | None" = None,
-        ignore_case: IC = False,
+        ignore_case: IgnoreCase = False,
     ):
         """Fails if ``value`` is found from ``dictionary``.
 
@@ -891,7 +891,7 @@ class _Dictionary:
         msg: "str | None" = None,
         values: bool = True,
         ignore_keys: "Sequence[Hashable] | str | None" = None,
-        ignore_case: IC = False,
+        ignore_case: IgnoreCase = False,
         ignore_value_order: bool = False,
     ):
         """Fails if the given dictionaries are not equal.
@@ -975,7 +975,7 @@ class _Dictionary:
         dict2: Mapping,
         msg: "str | None" = None,
         values: bool = True,
-        ignore_case: IC = False,
+        ignore_case: IgnoreCase = False,
         ignore_value_order: bool = False,
     ):
         """Fails unless all items in ``dict2`` are found from ``dict1``.
@@ -1328,7 +1328,7 @@ class Normalizer:
 
     def __init__(
         self,
-        ignore_case: IC = False,
+        ignore_case: IgnoreCase = False,
         ignore_order: bool = False,
         ignore_keys: "Iterable[Hashable] | str | None" = None,
     ):
