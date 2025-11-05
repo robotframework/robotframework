@@ -16,12 +16,13 @@
 import copy
 import os
 import re
+from typing import Protocol
 from xml.etree import ElementTree as ET
 
 try:
     from lxml import etree as lxml_etree
 except ImportError:
-    lxml_etree = None
+    lxml_etree: "LxmlProtocol | None" = None
 else:
     # `lxml.etree._Attrib` doesn't extend `Mapping` and thus our `is_dict_like`
     # doesn't recognize it unless we register it ourselves. Fixed in lxml 4.9.2:
@@ -41,6 +42,45 @@ from robot.version import get_version
 
 should_be_equal = asserts.assert_equal
 should_match = BuiltIn().should_match
+
+
+class CommentProtocol(Protocol): ...
+
+
+class ElementProtocol(Protocol): ...
+
+
+class InstructionProtocol(Protocol): ...
+
+
+class LxmlProtocol(Protocol):
+    @staticmethod
+    def parse() -> None: ...
+
+    @staticmethod
+    def tostring() -> None: ...
+
+    class Comment(CommentProtocol): ...
+
+    class ElementTree(ElementProtocol):
+        @property
+        def docinfo() -> None: ...
+
+        @staticmethod
+        def write() -> None: ...
+
+    class ProcessingInstruction(InstructionProtocol): ...
+
+
+class EtProtocol(LxmlProtocol):
+    @staticmethod
+    def strip_elements() -> None: ...
+
+    @staticmethod
+    def write() -> None: ...
+
+    @property
+    def docinfo() -> None: ...
 
 
 class XML:
@@ -451,7 +491,7 @@ class XML:
     ROBOT_LIBRARY_SCOPE = "GLOBAL"
     ROBOT_LIBRARY_VERSION = get_version()
 
-    def __init__(self, use_lxml=False):
+    def __init__(self, use_lxml: bool = False):
         """Import library with optionally lxml mode enabled.
 
         This library uses Python's standard
@@ -465,7 +505,7 @@ class XML:
         emits a warning and reverts back to using the standard ElementTree.
         """
         if use_lxml and lxml_etree:
-            self.etree = lxml_etree
+            self.etree: "EtProtocol | LxmlProtocol" = lxml_etree
             self.modern_etree = True
             self.lxml_etree = True
         else:
@@ -479,7 +519,7 @@ class XML:
             )
         self._ns_stripper = NameSpaceStripper(self.etree, self.lxml_etree)
 
-    def parse_xml(self, source, keep_clark_notation=False, strip_namespaces=False):
+    def parse_xml(self, source, keep_clark_notation: bool = False, strip_namespaces: bool = False):
         """Parses the given XML file or string into an element structure.
 
         The ``source`` can either be a path to an XML file or a string
@@ -1356,7 +1396,7 @@ class XML:
         """
         return copy.deepcopy(self.get_element(source, xpath))
 
-    def element_to_string(self, source, xpath=".", encoding=None):
+    def element_to_string(self, source, xpath: str = ".", encoding=None):
         """Returns the string representation of the specified element.
 
         The element to convert to a string is specified using ``source`` and
@@ -1378,7 +1418,7 @@ class XML:
             string = string.encode(encoding)
         return string
 
-    def log_element(self, source, level="INFO", xpath="."):
+    def log_element(self, source, level: logger.LogLevel = "INFO", xpath: str = ".") -> "bytes | str":
         """Logs the string representation of the specified element.
 
         The element specified with ``source`` and ``xpath`` is first converted
@@ -1418,7 +1458,7 @@ class XML:
         tree = self.etree.ElementTree(elem)
         config = {"encoding": encoding}
         if self.modern_etree:
-            config["xml_declaration"] = True
+            config["xml_declaration"] = "True"
         if self.lxml_etree:
             elem = self._ns_stripper.unstrip(elem)
             # https://bugs.launchpad.net/lxml/+bug/1660433
