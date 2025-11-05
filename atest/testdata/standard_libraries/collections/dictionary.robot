@@ -143,7 +143,7 @@ Pop From Dictionary With Default
 Check invalid dictionary argument errors
     [Template]    Validate invalid argument error
     VAR    ${invalid_arg}    I'm not a dict, I'm string.
-    Copy dictionary    annotation=Mapping
+    Copy dictionary
     Dictionary Should Contain Item             ${invalid_arg}    a    b
     Dictionaries Should Be Equal               ${invalid_arg}    ${D2}    arg_name=dict1
     Dictionaries Should Be Equal               ${D2}    ${invalid_arg}    arg_name=dict2   invalid_argument=${invalid_arg}
@@ -157,15 +157,15 @@ Check invalid dictionary argument errors
     Get Dictionary Keys
     Get Dictionary Values
     Get from dictionary                        ${invalid_arg}    a
-    Keep in dictionary                         ${invalid_arg}    a    annotation=Mapping
+    Keep in dictionary                         ${invalid_arg}    a
     Log Dictionary
-    Pop From Dictionary                        ${invalid_arg}    a    annotation=Mapping
-    Remove From Dictionary                     ${invalid_arg}    a    annotation=Mapping
-    Set To Dictionary                          ${invalid_arg}    a    b    annotation=Mapping
+    Pop From Dictionary                        ${invalid_arg}    a
+    Remove From Dictionary                     ${invalid_arg}    a
+    Set To Dictionary                          ${invalid_arg}    a    b
 
 *** Keywords ***
 Validate invalid argument error
-    [Arguments]  ${keyword}    ${argument}=I'm not a dict, I'm a string.    @{args}    ${arg_name}=dictionary    ${annotation}=dictionary    ${invalid_argument}=${NONE}
+    [Arguments]  ${keyword}    ${argument}=I'm not a dict, I'm a string.    @{args}    ${arg_name}=dictionary    ${annotation}=Mapping    ${invalid_argument}=${NONE}
     IF    not $invalid_argument
         VAR    ${invalid_argument}    ${argument}
     END

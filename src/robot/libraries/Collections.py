@@ -19,7 +19,7 @@ from collections.abc import Hashable
 from itertools import chain
 from typing import (
     Any, Generator, Iterable, Literal, Mapping, MutableMapping, MutableSequence,
-    NoReturn, overload, Sequence, TypeVar, Union
+    NoReturn, overload, Sequence, Union
 )
 
 from robot.api import logger
@@ -32,32 +32,22 @@ from robot.version import get_version
 
 NOT_SET = NotSet()
 
-I_ = TypeVar("I_", bound=Iterable)
-M_ = TypeVar("M_", bound=Mapping)
-IC = Union[
-    bool, Literal["key", "KEY", "keys", "KEYS", "value", "VALUE", "values", "VALUES"]
-]
+IC = Union[bool, Literal["KEY", "KEYS", "VALUE", "VALUES"]]
 
 
 class _List:
 
-    # NOTE: Annotation with list would cause the keyword to fail on string arguments.
-    # This would break current behavior. Annotation with "list | str" would however
-    # cause weird behvior with non-iterable arguments since their string representation
-    # would be converted to a list and returned. For this reason, object is used as an
-    # annotation, effectively preventing automatic argument conversion.
-    # In the future support for string arugments will be dropped;
-    # 'Split String To Characters' from the String library can be used instead.
-    # This change in behavior does however require a deprecation period.
     def convert_to_list(self, item: object) -> list:
         """Converts the given ``item`` to a Python ``list`` type.
 
         Mainly useful for converting tuples and other iterable to lists.
         Use `Create List` from the BuiltIn library for constructing new lists.
+
+        To split strings into characters, the `Split String To Characters` from
+        the String Library can be used.
         """
         return list(item)  # type: ignore
 
-    # NOTE: https://github.com/robotframework/robotframework/issues/5536
     def append_to_list(self, list_: MutableSequence, *values: object):
         """Adds ``values`` to the end of ``list``.
 
@@ -71,7 +61,6 @@ class _List:
         for value in values:
             list_.append(value)
 
-    # NOTE: https://github.com/robotframework/robotframework/issues/5536
     def insert_into_list(self, list_: MutableSequence, index: int, value: object):
         """Inserts ``value`` into ``list`` to the position specified with ``index``.
 
@@ -95,7 +84,7 @@ class _List:
         """
         list_.insert(index, value)
 
-    def combine_lists(self, *lists: list) -> list:
+    def combine_lists(self, *lists: Sequence) -> list:
         """Combines the given ``lists`` together and returns the result.
 
         The given lists are not altered by this keyword.
@@ -110,7 +99,6 @@ class _List:
         """
         return list(chain.from_iterable(lists))
 
-    # NOTE: https://github.com/robotframework/robotframework/issues/5536
     def set_list_value(self, list_: MutableSequence, index: int, value: object):
         """Sets the value of ``list`` specified by ``index`` to the given ``value``.
 
@@ -136,7 +124,6 @@ class _List:
         except IndexError:
             self._index_error(list_, index)
 
-    # NOTE: https://github.com/robotframework/robotframework/issues/5536
     def remove_values_from_list(self, list_: MutableSequence, *values: object):
         """Removes all occurrences of given ``values`` from ``list``.
 
@@ -151,7 +138,6 @@ class _List:
             while value in list_:
                 list_.remove(value)
 
-    # NOTE: https://github.com/robotframework/robotframework/issues/5536
     def remove_from_list(self, list_: MutableSequence, index: int) -> object:
         """Removes and returns the value specified with an ``index`` from ``list``.
 
@@ -172,7 +158,7 @@ class _List:
         except IndexError:
             self._index_error(list_, index)
 
-    def remove_duplicates(self, list_: list) -> list:
+    def remove_duplicates(self, list_: Sequence) -> list:
         """Returns a list without duplicates based on the given ``list``.
 
         Creates and returns a new list that contains all items in the given
@@ -188,7 +174,7 @@ class _List:
         logger.info(f"{removed} duplicate{s(removed)} removed.")
         return ret
 
-    def get_from_list(self, list_: list, index: int) -> object:
+    def get_from_list(self, list_: Sequence, index: int) -> object:
         """Returns the value specified with an ``index`` from ``list``.
 
         The given list is never altered by this keyword.
@@ -212,13 +198,12 @@ class _List:
         except IndexError:
             self._index_error(list_, index)
 
-    # NOTE: start is annotated with int | Literal[''] for backwards compatibility.
     def get_slice_from_list(
         self,
-        list_: list,
+        list_: Sequence,
         start: "int | Literal['']" = 0,
         end: "int | None" = None,
-    ) -> list:
+    ) -> Sequence:
         """Returns a slice of the given list between ``start`` and ``end`` indexes.
 
         The given list is never altered by this keyword.
@@ -248,7 +233,7 @@ class _List:
 
     def count_values_in_list(
         self,
-        list_: list,
+        list_: Sequence,
         value: object,
         start: int = 0,
         end: "int | None" = None,
@@ -267,10 +252,9 @@ class _List:
         """
         return self.get_slice_from_list(list_, start, end).count(value)
 
-    # NOTE: start is annotated with int | Literal[''] for backwards compatibility.
     def get_index_from_list(
         self,
-        list_: list,
+        list_: Sequence,
         value: object,
         start: "int | Literal['']" = 0,
         end: "int | None" = None,
@@ -309,7 +293,6 @@ class _List:
             return copy.deepcopy(list_)
         return list_[:]
 
-    # NOTE: https://github.com/robotframework/robotframework/issues/5536
     def reverse_list(self, list_: MutableSequence):
         """Reverses the given list in place.
 
@@ -322,11 +305,6 @@ class _List:
         """
         list_.reverse()
 
-    # NOTE: https://github.com/robotframework/robotframework/issues/5536
-    # The list annotation means non-list arguments are converted, then sorted
-    # in-place and then discarded instead of an AttributeError (on .sort()).
-    # This silent "Do Nothing" behavior is accepted now. In the future, the keywords
-    # that perform mutation on the argument will also be updated to return the result.
     def sort_list(self, list_: list):
         """Sorts the given list in place.
 
@@ -341,7 +319,7 @@ class _List:
 
     def list_should_contain_value(
         self,
-        list_: list,
+        list_: Sequence,
         value: object,
         msg: "str | None" = None,
         ignore_case: IC = False,
@@ -363,7 +341,7 @@ class _List:
 
     def list_should_not_contain_value(
         self,
-        list_: list,
+        list_: Sequence,
         value: object,
         msg: "str | None" = None,
         ignore_case: IC = False,
@@ -385,7 +363,7 @@ class _List:
 
     def list_should_not_contain_duplicates(
         self,
-        list_: list,
+        list_: Sequence,
         msg: "str | None" = None,
         ignore_case: IC = False,
     ):
@@ -416,11 +394,11 @@ class _List:
 
     def lists_should_be_equal(
         self,
-        list1: list,
-        list2: list,
+        list1: Sequence,
+        list2: Sequence,
         msg: "str | None" = None,
         values: bool = True,
-        names: "dict[int, str] | list[str] | None" = None,  # NOTE: order matters here
+        names: "dict[int, str] | list[str] | None" = None,
         ignore_order: bool = False,
         ignore_case: IC = False,
     ):
@@ -518,8 +496,8 @@ class _List:
 
     def list_should_contain_sub_list(
         self,
-        list1: list,
-        list2: list,
+        list1: Sequence,
+        list2: Sequence,
         msg: "str | None" = None,
         values: bool = True,
         ignore_case: IC = False,
@@ -547,7 +525,7 @@ class _List:
             values,
         )
 
-    def log_list(self, list_: list, level: logger.LogLevel = "INFO"):
+    def log_list(self, list_: Sequence, level: logger.LogLevel = "INFO"):
         """Logs the length and contents of the ``list`` using given ``level``.
 
         Valid levels are TRACE, DEBUG, INFO (default), and WARN.
@@ -573,8 +551,6 @@ class _List:
 
 class _Dictionary:
 
-    # NOTE: Mapping annotation is used since dict annotation does not convert Robot
-    # Framework's DotDict when a dict annotation is used.
     def convert_to_dictionary(self, item: Mapping) -> dict:
         """Converts the given ``item`` to a Python ``dict`` type.
 
@@ -587,7 +563,6 @@ class _Dictionary:
         """
         return dict(item)
 
-    # NOTE: https://github.com/robotframework/robotframework/issues/5536
     def set_to_dictionary(
         self,
         dictionary: MutableMapping,
@@ -624,7 +599,6 @@ class _Dictionary:
         dictionary.update(items)
         return dictionary
 
-    # NOTE: https://github.com/robotframework/robotframework/issues/5536
     def remove_from_dictionary(
         self,
         dictionary: MutableMapping,
@@ -647,7 +621,6 @@ class _Dictionary:
             else:
                 logger.info(f"Key '{key}' not found.")
 
-    # NOTE: https://github.com/robotframework/robotframework/issues/5536
     def pop_from_dictionary(
         self,
         dictionary: MutableMapping,
@@ -671,7 +644,6 @@ class _Dictionary:
             return dictionary.pop(key)
         return dictionary.pop(key, default)
 
-    # NOTE: https://github.com/robotframework/robotframework/issues/5536
     def keep_in_dictionary(self, dictionary: MutableMapping, *keys: Hashable):
         """Keeps the given ``keys`` in the ``dictionary`` and removes all other.
 
@@ -686,7 +658,6 @@ class _Dictionary:
         remove_keys = [k for k in dictionary if k not in keys]
         self.remove_from_dictionary(dictionary, *remove_keys)
 
-    # NOTE: Mapping to prevent always returning a dict instead of the original type
     def copy_dictionary(
         self,
         dictionary: Mapping,
@@ -706,7 +677,7 @@ class _Dictionary:
 
     def get_dictionary_keys(
         self,
-        dictionary: dict,
+        dictionary: Mapping,
         sort_keys: bool = True,
     ) -> list:
         """Returns keys of the given ``dictionary`` as a list.
@@ -730,7 +701,7 @@ class _Dictionary:
 
     def get_dictionary_values(
         self,
-        dictionary: dict,
+        dictionary: Mapping,
         sort_keys: bool = True,
     ) -> list:
         """Returns values of the given ``dictionary`` as a list.
@@ -750,7 +721,7 @@ class _Dictionary:
 
     def get_dictionary_items(
         self,
-        dictionary: dict,
+        dictionary: Mapping,
         sort_keys: bool = True,
     ) -> list:
         """Returns items of the given ``dictionary`` as a list.
@@ -774,7 +745,7 @@ class _Dictionary:
 
     def get_from_dictionary(
         self,
-        dictionary: dict,
+        dictionary: Mapping,
         key: Hashable,
         default: object = NOT_SET,
     ) -> object:
@@ -802,7 +773,7 @@ class _Dictionary:
 
     def dictionary_should_contain_key(
         self,
-        dictionary: dict,
+        dictionary: Mapping,
         key: Hashable,
         msg: "str | None" = None,
         ignore_case: IC = False,
@@ -824,7 +795,7 @@ class _Dictionary:
 
     def dictionary_should_not_contain_key(
         self,
-        dictionary: dict,
+        dictionary: Mapping,
         key: Hashable,
         msg: "str | None" = None,
         ignore_case: IC = False,
@@ -846,7 +817,7 @@ class _Dictionary:
 
     def dictionary_should_contain_item(
         self,
-        dictionary: dict,
+        dictionary: Mapping,
         key: Hashable,
         value: object,
         msg: "str | None" = None,
@@ -871,7 +842,7 @@ class _Dictionary:
 
     def dictionary_should_contain_value(
         self,
-        dictionary: dict,
+        dictionary: Mapping,
         value: object,
         msg: "str | None" = None,
         ignore_case: IC = False,
@@ -893,7 +864,7 @@ class _Dictionary:
 
     def dictionary_should_not_contain_value(
         self,
-        dictionary: dict,
+        dictionary: Mapping,
         value: object,
         msg: "str | None" = None,
         ignore_case: IC = False,
@@ -915,8 +886,8 @@ class _Dictionary:
 
     def dictionaries_should_be_equal(
         self,
-        dict1: dict,
-        dict2: dict,
+        dict1: Mapping,
+        dict2: Mapping,
         msg: "str | None" = None,
         values: bool = True,
         ignore_keys: "Sequence[Hashable] | str | None" = None,
@@ -1000,8 +971,8 @@ class _Dictionary:
 
     def dictionary_should_contain_sub_dictionary(
         self,
-        dict1: dict,
-        dict2: dict,
+        dict1: Mapping,
+        dict2: Mapping,
         msg: "str | None" = None,
         values: bool = True,
         ignore_case: IC = False,
@@ -1032,7 +1003,7 @@ class _Dictionary:
 
     def log_dictionary(
         self,
-        dictionary: dict,
+        dictionary: Mapping,
         level: logger.LogLevel = "INFO",
     ):
         """Logs the size and contents of the ``dictionary`` using given ``level``.
@@ -1106,17 +1077,17 @@ class Collections(_List, _Dictionary):
     Various keywords support ignoring case in comparisons by using the optional
     ``ignore_case`` argument. Case-insensitivity can be enabled by using
     ``ignore_case=True`` (see `Boolean arguments`) and it works recursively.
-    With dictionaries, it is also possible to use special values ``keys`` and
-    ``values`` to normalize only keys or values, respectively. These options
-    themselves are case-insensitive and also singular forms ``key`` and
-    ``value`` are supported.
+    With dictionaries, it is also possible to use special values ``KEYS`` and
+    ``VALUES`` to normalize only keys or values, respectively. These options
+    themselves are case-insensitive and also singular forms ``KEY`` and
+    ``VALUE`` are supported.
 
     If a dictionary contains keys that normalize to the same value, e.g.
     ``{'a': 1, 'A': 2}``, normalizing keys causes an error.
 
     Examples:
     | `Lists Should Be Equal`        | ${list1} | ${list2} | ignore_case=True   |
-    | `Dictionaries Should Be Equal` | ${dict1} | ${dict2} | ignore_case=values |
+    | `Dictionaries Should Be Equal` | ${dict1} | ${dict2} | ignore_case=VALUES |
 
     Notice that some keywords accept also an older ``case_insensitive`` argument
     in addition to ``ignore_case``. The latter is new in Robot Framework 7.0 and
@@ -1154,7 +1125,7 @@ class Collections(_List, _Dictionary):
 
     def should_contain_match(
         self,
-        list: list,
+        list: Sequence,
         pattern: str,
         msg: "str | None" = None,
         case_insensitive: "bool | None" = None,
@@ -1215,7 +1186,7 @@ class Collections(_List, _Dictionary):
 
     def should_not_contain_match(
         self,
-        list: list,
+        list: Sequence,
         pattern: str,
         msg: "str | None" = None,
         case_insensitive: "bool | None" = None,
@@ -1241,7 +1212,7 @@ class Collections(_List, _Dictionary):
 
     def get_matches(
         self,
-        list: list,
+        list: Sequence,
         pattern: str,
         case_insensitive: "bool | None" = None,
         whitespace_insensitive: "bool | None" = None,
@@ -1269,7 +1240,7 @@ class Collections(_List, _Dictionary):
 
     def get_match_count(
         self,
-        list: list,
+        list: Sequence,
         pattern: str,
         case_insensitive: "bool | None" = None,
         whitespace_insensitive: "bool | None" = None,
@@ -1341,10 +1312,6 @@ def _verify_condition(
         _report_error(default_message, message, values)
 
 
-# NOTE: Calling keywords have `values` annotated as `bool` but the bool-converter can
-# also return a string if the passed string is not a 'Boolean argument'. This is the
-# case for "NO VALUES". This special case should be removed in the future, but this
-# would need a deprecation period.
 def _report_error(
     default_message: str,
     message: "str | None",
@@ -1395,10 +1362,10 @@ class Normalizer:
     def normalize(self, value: str) -> str: ...
 
     @overload
-    def normalize(self, value: M_) -> M_: ...
+    def normalize(self, value: Mapping) -> Mapping: ...
 
     @overload
-    def normalize(self, value: I_) -> I_: ...
+    def normalize(self, value: Sequence) -> Sequence: ...
 
     @overload
     def normalize(self, value: object) -> object: ...
@@ -1417,7 +1384,7 @@ class Normalizer:
     def normalize_string(self, value: str) -> str:
         return value.casefold() if self.ignore_case else value
 
-    def normalize_list(self, value: Iterable) -> Iterable:
+    def normalize_list(self, value: Sequence) -> Sequence:
         cls = type(value)
         value_list = [self.normalize(v) for v in value]
         if self.ignore_order:
