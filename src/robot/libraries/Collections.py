@@ -1369,10 +1369,7 @@ class Normalizer:
         cls = type(value)
         value_list = [self.normalize(v) for v in value]
         if self.ignore_order:
-            try:
-                value_list = sorted(value_list)
-            except TypeError:
-                pass
+            value_list = sorted(value_list)
         return self._try_to_preserve_type(value_list, cls)
 
     def _try_to_preserve_type(self, value: Any, cls: "type") -> Any:
