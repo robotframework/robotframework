@@ -15,7 +15,7 @@
 
 from ast import literal_eval
 from collections import OrderedDict
-from collections.abc import Iterable, Mapping, Sequence, Set
+from collections.abc import Container, Mapping, Sequence, Set
 from datetime import date, datetime, timedelta
 from decimal import Decimal, InvalidOperation
 from enum import Enum
@@ -481,7 +481,7 @@ class NoneConverter(TypeConverter):
 class SequenceConverter(TypeConverter):
     type = Sequence
     type_name = "Sequence"
-    value_types = (str, Iterable)
+    value_types = (str, Sequence)
 
     def no_conversion_needed(self, value):
         if (
@@ -538,7 +538,7 @@ class ListConverter(SequenceConverter):
 class TupleConverter(TypeConverter):
     type = tuple
     type_name = "tuple"
-    value_types = (str, Iterable)
+    value_types = (str, Sequence)
 
     @property
     def homogenous(self) -> bool:
@@ -723,7 +723,7 @@ class SetConverter(TypeConverter):
     type = set
     abc = Set
     type_name = "set"
-    value_types = (str, Iterable)
+    value_types = (str, Container)
 
     def no_conversion_needed(self, value):
         if isinstance(value, str) or not super().no_conversion_needed(value):

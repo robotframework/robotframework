@@ -1399,8 +1399,8 @@ Other types cause conversion failures.
    |              |               |            |              |                                                                |                                      |
    |              |               |            |              | New in Robot Framework 7.4.                                    |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | list_        |               |            | str_,        | Converts strings and iterables to `list`.                      | | `['one', 'two']`                   |
-   |              |               |            | Iterable_    |                                                                | | `[('one', 1), ('two', 2)]`         |
+   | list_        |               |            | str_,        | Converts strings and sequences to `list`.                      | | `['one', 'two']`                   |
+   |              |               |            | Sequence_    |                                                                | | `[('one', 1), ('two', 2)]`         |
    |              |               |            |              | Strings must be Python list or tuple literals. They are        |                                      |
    |              |               |            |              | converted using the `ast.literal_eval`_ function and possible  |                                      |
    |              |               |            |              | tuples converted further to lists.                             |                                      |
@@ -1408,31 +1408,28 @@ Other types cause conversion failures.
    |              |               |            |              | including lists and other containers.                          |                                      |
    |              |               |            |              |                                                                |                                      |
    |              |               |            |              | If the argument is a list, it is used without conversion.      |                                      |
-   |              |               |            |              | Tuples and other iterables are converted to lists.             |                                      |
+   |              |               |            |              | Tuples and other sequences are converted to lists.             |                                      |
    |              |               |            |              |                                                                |                                      |
-   |              |               |            |              | Support for iterables and tuple literals is new in Robot       |                                      |
-   |              |               |            |              | Framework 7.4. Earlier versions only supported sequences and   |                                      |
-   |              |               |            |              | list literals.                                                 |                                      |
+   |              |               |            |              | Support for tuple literals is new in Robot Framework 7.4.      |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | tuple_       |               |            | str_,        | Same as `list`, but the result is tuple_.                      | | `('one', 'two')`                   |
-   |              |               |            | Iterable_    |                                                                |                                      |
+   |              |               |            | Sequence_    |                                                                |                                      |
    |              |               |            |              | Prior to Robot Framework 7.4, only tuple literals were         |                                      |
    |              |               |            |              | supported.                                                     |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | Sequence_    |               |            | str_,        | Same as `list`, but any sequence is accepted without           | | `[1, 2, 3]` (result is `list`)     |
-   |              |               |            | Iterable_    | conversion.                                                    | | `(1, 2, 3)` (result is `tuple`)    |
+   |              |               |            | Sequence_    | conversion.                                                    | | `(1, 2, 3)` (result is `tuple`)    |
    |              |               |            |              |                                                                |                                      |
-   |              |               |            |              | Iterables that are not sequences are converted to lists.       |                                      |
    |              |               |            |              | If the used type is MutableSequence_, immutable values are     |                                      |
    |              |               |            |              | converted to lists.                                            |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | set_         | `Set          |            | str_,        | Same as `list`, but also set literals are supported and        | | `{1, 2, 3, 42}`                    |
-   |              | <abc.Set_>`__ |            | Iterable_    | the result is set_.                                            | | `set()` (an empty set)             |
+   | set_         | `Set          |            | str_,        | Same as `list`, but also container objects and set literals    | | `{1, 2, 3, 42}`                    |
+   |              | <abc.Set_>`__ |            | Container_   | are supported and the result is set_.                          | | `set()` (an empty set)             |
    |              |               |            |              |                                                                |                                      |
    |              |               |            |              | Prior to Robot Framework 7.4, only set literals were supported.|                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | frozenset_   |               |            | str_,        | Same as `set`, but the result is a frozenset_.                 | | `{1, 2, 3, 42}`                    |
-   |              |               |            | Iterable_    |                                                                | | `frozenset()` (an empty set)       |
+   |              |               |            | Container_   |                                                                | | `frozenset()` (an empty set)       |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | dict_        |               | dictionary | str_,        | Converts strings and mappings to `dict`.                       | | `{'a': 1, 'b': 2}`                 |
    |              |               |            | Mapping_     |                                                                | | `{'key': 1, 'nested': {'key': 2}}` |
@@ -1495,7 +1492,6 @@ Other types cause conversion failures.
 .. _list: https://docs.python.org/library/stdtypes.html#list
 .. _Sequence: https://docs.python.org/library/collections.abc.html#collections.abc.Sequence
 .. _MutableSequence: https://docs.python.org/library/collections.abc.html#collections.abc.MutableSequence
-.. _Iterable: https://docs.python.org/library/collections.abc.html#collections.abc.Iterable
 .. _tuple: https://docs.python.org/library/stdtypes.html#tuple
 .. _dict: https://docs.python.org/library/stdtypes.html#dict
 .. _Mapping: https://docs.python.org/library/collections.abc.html#collections.abc.Mapping
@@ -1598,17 +1594,32 @@ attempted in the order types are specified. If any conversion succeeds, the
 resulting value is used without attempting remaining conversions. If no individual
 conversion succeeds, the whole conversion fails.
 
+.. note:: The order of types changes the conversion result in cases where the used
+          value does not match any of the types, but conversion to multiple types
+          would succeed.
+
+          For example, if typing is `float | int` and the used value is string `42`,
+          the result will be float `42.0` instead of integer `42`. The reason is
+          that a string does not match either of the types and `float` conversion
+          is attempted first. If the order is changed to `int | float`, the result
+          will be an integer.
+
+          String `3.14` would be converted to a float regardless the order, because
+          `int` conversion does not succeed. The order does not affect usages where
+          the value is already an integer or a float either, because there is no
+          need for conversion in such cases.
+
 If a specified type is not recognized by Robot Framework, then the original argument
 value is used as-is. For example, with this keyword conversion would first be attempted
 to an integer, but if that fails the keyword would get the original argument:
 
 .. sourcecode:: python
 
-  def example(argument: Union[int, Unrecognized]):
+  def example(argument: int | Unrecognized):
       ...
 
 Starting from Robot Framework 6.1, the above logic works also if an unrecognized
-type is listed before a recognized type like `Union[Unrecognized, int]`.
+type is listed before a recognized type like `Unrecognized | int`.
 Also in this case `int` conversion is attempted, and the argument id passed as-is
 if it fails. With earlier Robot Framework versions, `int` conversion would not be
 attempted at all.
