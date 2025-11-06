@@ -24,8 +24,7 @@ from typing import (
 
 from robot.api import logger
 from robot.utils import (
-    is_dict_like, is_list_like, Matcher, NotSet, plural_or_not as s, seq2str, seq2str2,
-    type_name
+    is_list_like, Matcher, NotSet, plural_or_not as s, seq2str, seq2str2, type_name
 )
 from robot.utils.asserts import assert_equal
 from robot.version import get_version
@@ -397,7 +396,7 @@ class _List:
         list2: Sequence,
         msg: "str | None" = None,
         values: bool = True,
-        names: "dict[int, str] | list[str] | None" = None,
+        names: "Mapping[int, str] | Sequence[str] | None" = None,
         ignore_order: bool = False,
         ignore_case: bool = False,
     ):
@@ -457,7 +456,11 @@ class _List:
             msg,
             values,
         )
-        names = self._get_list_index_name_mapping(names, len1)
+        if not names:
+            names = {}
+        elif not isinstance(names, Mapping):
+            names = dict(zip(range(len1), names))
+
         normalize = Normalizer(ignore_case, ignore_order).normalize
         diffs = "\n".join(
             self._yield_list_diffs(normalize(list1), normalize(list2), names)
@@ -469,22 +472,11 @@ class _List:
             values,
         )
 
-    def _get_list_index_name_mapping(
-        self,
-        names: "Mapping[int, str] | Iterable[str] | None",
-        list_length: int,
-    ) -> "dict[int, str]":
-        if not names:
-            return {}
-        if is_dict_like(names):
-            return {int(index): names[index] for index in names}  # type: ignore
-        return dict(zip(range(list_length), names))  # type: ignore
-
     def _yield_list_diffs(
         self,
         list1: Iterable,
         list2: Iterable,
-        names: "dict[int, str]",
+        names: "Mapping[int, str]",
     ) -> Generator[str, None, None]:
         for index, (item1, item2) in enumerate(zip(list1, list2)):
             name = f" ({names[index]})" if index in names else ""
@@ -1374,7 +1366,7 @@ class Normalizer:
             return value
         if isinstance(value, str):
             return self.normalize_string(value)
-        if is_dict_like(value):
+        if isinstance(value, Mapping):
             return self.normalize_dict(value)
         if is_list_like(value):
             return self.normalize_list(value)
