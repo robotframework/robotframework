@@ -3,7 +3,7 @@ import Handlebars from "handlebars";
 import Storage from "./storage";
 import Translations from "./i18n/translations";
 import { createModal, showModal } from "./modal";
-import { RuntimeLibdoc } from "./types";
+import { RuntimeLibdoc, ArgType } from "./types";
 import { regexpEscape, delay } from "./util";
 
 interface MatchInclude {
@@ -52,8 +52,43 @@ class View {
         ? options.fn(this)
         : options.inverse(this);
     });
+    Handlebars.registerHelper("renderTypeInfo", function (argType: ArgType) {
+      const renderTypeDocs = (argType: ArgType) => {
+        if (argType.union) {
+          let html = "";
+          argType.nested.forEach((nested, index) => {
+            if (index > 0) {
+              html += " ";
+            }
+            html += renderTypeDocs(nested);
+            if (index < argType.nested.length - 1) {
+              html += " |";
+            }
+          });
+          return html;
+        } else {
+          let html = "";
+          if (argType.typedoc) {
+            html += `<a style="cursor: pointer;" class="type" data-typedoc=${argType.typedoc} title=${translate.translate("typeInfoDialog")}>${argType.name}</a>`;
+          } else {
+            html += `<span class="type">${argType.name}</span>`;
+          }
+          if (argType.nested.length) {
+            html += "[";
+            argType.nested.forEach((nested, idx) => {
+              html += renderTypeDocs(nested);
+              if (idx < argType.nested.length - 1) {
+                html += ",&nbsp;";
+              }
+            });
+            html += "]";
+          }
+          return html;
+        }
+      };
+      return renderTypeDocs(argType);
+    });
     this.registerPartial("arg", "argument-template");
-    this.registerPartial("typeInfo", "type-info-template");
     this.registerPartial("keyword", "keyword-template");
     this.registerPartial("dataType", "data-type-template");
   }

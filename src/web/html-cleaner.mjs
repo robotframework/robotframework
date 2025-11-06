@@ -9,12 +9,12 @@ export default new Transformer({
     // Run it through some compiler, and set the results
     // on the asset.
     let cleaned = "";
-    source.split("\n").forEach(line => {
+    source.split("\n").forEach((line) => {
       cleaned += line.trim() + "\n";
     });
     asset.setCode(cleaned);
 
     // Return the asset
     return [asset];
-  }
+  },
 });

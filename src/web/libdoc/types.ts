@@ -80,4 +80,4 @@ interface RuntimeKeyword extends Keyword {
   hidden?: boolean;
 }
 
-export type { Libdoc, RuntimeLibdoc };
+export type { Libdoc, RuntimeLibdoc, ArgType };
