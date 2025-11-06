@@ -11,6 +11,12 @@ Convert To Dictionary
     Should Be True    type($normal) is dict
     Should Be Equal    ${dotted}    ${normal}
 
+    ${empty_list} =    Create List
+    ${from_empty_list} =    Convert To Dictionary    ${empty_list}
+    Should Be Equal    ${from_empty_list}    ${D0}
+    ${from_tuple_list} =    Convert To Dictionary    ${{[('a', 1), ('b', 2)]}}
+    Should Be Equal    ${from_tuple_list}    ${D2}
+
 Set To Dictionary
     Set To Dictionary    ${D0}    a    ${1}
     Should Be Equal    ${D0}    ${D1}

@@ -14,12 +14,11 @@
 #  limitations under the License.
 
 import copy
-from ast import literal_eval
 from collections.abc import Hashable
 from itertools import chain
 from typing import (
     Any, Iterable, Iterator, Literal, Mapping, MutableMapping, MutableSequence,
-    NoReturn, overload, Sequence, Union
+    NoReturn, overload, Sequence
 )
 
 from robot.api import logger
@@ -31,7 +30,8 @@ from robot.version import get_version
 
 NOT_SET = NotSet()
 
-IgnoreDictCase = Union[bool, Literal["KEY", "KEYS", "VALUE", "VALUES"]]
+IgnoreKeyCase = Literal["KEY", "KEYS"]
+IgnoreValueCase = Literal["VALUE", "VALUES"]
 
 
 class _List:
@@ -542,7 +542,7 @@ class _List:
 
 class _Dictionary:
 
-    def convert_to_dictionary(self, item: Mapping) -> dict:
+    def convert_to_dictionary(self, item: object) -> dict:
         """Converts the given ``item`` to a Python ``dict`` type.
 
         Mainly useful for converting other mappings to normal dictionaries.
@@ -552,7 +552,7 @@ class _Dictionary:
         Use `Create Dictionary` from the BuiltIn library for constructing new
         dictionaries.
         """
-        return dict(item)
+        return dict(item)  # type: ignore
 
     def set_to_dictionary(
         self,
@@ -631,7 +631,7 @@ class _Dictionary:
         | ${D3} = {'a': 1, 'c': 3}
         """
         if default is NOT_SET:
-            self.dictionary_should_contain_key(dictionary, key)  # type: ignore
+            self.dictionary_should_contain_key(dictionary, key)
             return dictionary.pop(key)
         return dictionary.pop(key, default)
 
@@ -714,7 +714,7 @@ class _Dictionary:
         self,
         dictionary: Mapping,
         sort_keys: bool = True,
-    ) -> list:
+    ) -> "list[tuple[Hashable, object]]":
         """Returns items of the given ``dictionary`` as a list.
 
         Uses `Get Dictionary Keys` to get keys and then returns corresponding
@@ -767,7 +767,7 @@ class _Dictionary:
         dictionary: Mapping,
         key: Hashable,
         msg: "str | None" = None,
-        ignore_case: IgnoreDictCase = False,
+        ignore_case: "IgnoreKeyCase | bool" = False,
     ):
         """Fails if ``key`` is not found from ``dictionary``.
 
@@ -789,7 +789,7 @@ class _Dictionary:
         dictionary: Mapping,
         key: Hashable,
         msg: "str | None" = None,
-        ignore_case: IgnoreDictCase = False,
+        ignore_case: "IgnoreKeyCase | bool" = False,
     ):
         """Fails if ``key`` is found from ``dictionary``.
 
@@ -812,7 +812,7 @@ class _Dictionary:
         key: Hashable,
         value: object,
         msg: "str | None" = None,
-        ignore_case: IgnoreDictCase = False,
+        ignore_case: "IgnoreKeyCase | IgnoreValueCase | bool" = False,
     ):
         """An item of ``key`` / ``value`` must be found in a ``dictionary``.
 
@@ -822,7 +822,7 @@ class _Dictionary:
         See the `Ignore case` section for more details. This option is new in
         Robot Framework 7.0.
         """
-        self.dictionary_should_contain_key(dictionary, key, msg, ignore_case)
+        self.dictionary_should_contain_key(dictionary, key, msg, ignore_case)  # type: ignore
         norm = Normalizer(ignore_case)
         assert_equal(
             norm.normalize(dictionary)[norm.normalize_key(key)],
@@ -836,7 +836,7 @@ class _Dictionary:
         dictionary: Mapping,
         value: object,
         msg: "str | None" = None,
-        ignore_case: IgnoreDictCase = False,
+        ignore_case: "IgnoreValueCase | bool" = False,
     ):
         """Fails if ``value`` is not found from ``dictionary``.
 
@@ -858,7 +858,7 @@ class _Dictionary:
         dictionary: Mapping,
         value: object,
         msg: "str | None" = None,
-        ignore_case: IgnoreDictCase = False,
+        ignore_case: "IgnoreValueCase | bool" = False,
     ):
         """Fails if ``value`` is found from ``dictionary``.
 
@@ -881,8 +881,8 @@ class _Dictionary:
         dict2: Mapping,
         msg: "str | None" = None,
         values: bool = True,
-        ignore_keys: "Sequence[Hashable] | str | None" = None,
-        ignore_case: IgnoreDictCase = False,
+        ignore_keys: "Sequence[Hashable] | None" = None,
+        ignore_case: "IgnoreKeyCase | IgnoreValueCase | bool" = False,
         ignore_value_order: bool = False,
     ):
         """Fails if the given dictionaries are not equal.
@@ -893,9 +893,8 @@ class _Dictionary:
         need to be same.
 
         ``ignore_keys`` can be used to provide a list of keys to ignore in the
-        comparison. It can be an actual list or a Python list literal. This
-        option is new in Robot Framework 6.1. It works recursively with nested
-        dictionaries starting from Robot Framework 7.0.
+        comparison. This option is new in Robot Framework 6.1. It works recursively
+        with nested dictionaries starting from Robot Framework 7.0.
 
         Examples:
         | Dictionaries Should Be Equal | ${dict} | ${expected} |
@@ -929,7 +928,7 @@ class _Dictionary:
         dict1: Mapping,
         dict2: Mapping,
         message: "str | None",
-        values: "bool| str",
+        values: "bool | str",
         validate_both: bool = True,
     ):
         missing = seq2str([k for k in dict2 if k not in dict1])
@@ -966,7 +965,7 @@ class _Dictionary:
         dict2: Mapping,
         msg: "str | None" = None,
         values: bool = True,
-        ignore_case: IgnoreDictCase = False,
+        ignore_case: "IgnoreKeyCase | IgnoreValueCase | bool" = False,
         ignore_value_order: bool = False,
     ):
         """Fails unless all items in ``dict2`` are found from ``dict1``.
@@ -1016,7 +1015,7 @@ class _Dictionary:
             yield "Dictionary has one item:"
         else:
             yield f"Dictionary size is {len(dictionary)} and it contains following items:"
-        for key in self.get_dictionary_keys(dictionary):  # type: ignore
+        for key in self.get_dictionary_keys(dictionary):
             yield f"{key}: {dictionary[key]}"
 
 
@@ -1173,7 +1172,7 @@ class Collections(_List, _Dictionary):
             ignore_whitespace=ignore_whitespace,
         )
         default = f"{seq2str2(list)} does not contain match for pattern '{pattern}'."
-        _verify_condition(matches, default, msg)
+        _verify_condition(bool(matches), default, msg)
 
     def should_not_contain_match(
         self,
@@ -1266,7 +1265,7 @@ class Collections(_List, _Dictionary):
         whitespace_insensitive: "bool | None" = None,
         ignore_case: bool = True,
         ignore_whitespace: bool = False,
-    ) -> list:
+    ) -> "list[str]":
         # `ignore_xxx` were added in RF 7.0 for consistency reasons.
         # The idea is that they eventually replace `xxx_insensitive`.
         # TODO: Emit deprecation warnings in RF 8.0.
@@ -1294,7 +1293,7 @@ class Collections(_List, _Dictionary):
 
 
 def _verify_condition(
-    condition: object,
+    condition: bool,
     default_message: str,
     message: "str | None",
     values: "bool | str" = False,
@@ -1319,9 +1318,9 @@ class Normalizer:
 
     def __init__(
         self,
-        ignore_case: IgnoreDictCase = False,
+        ignore_case: "IgnoreKeyCase | IgnoreValueCase | bool" = False,
         ignore_order: bool = False,
-        ignore_keys: "Iterable[Hashable] | str | None" = None,
+        ignore_keys: "Sequence[Hashable] | None" = None,
     ):
         if isinstance(ignore_case, str):
             self.ignore_key_case = ignore_case.upper() not in ("VALUE", "VALUES")
@@ -1334,20 +1333,11 @@ class Normalizer:
 
     def _parse_ignored_keys(
         self,
-        ignore_keys: "Iterable[Hashable] | str | None",
+        ignore_keys: "Sequence[Hashable] | None",
     ) -> "set[Hashable]":
         if not ignore_keys:
             return set()
-        try:
-            if isinstance(ignore_keys, str):
-                ignore_keys = literal_eval(ignore_keys)
-            if not is_list_like(ignore_keys):
-                raise ValueError
-        except Exception:
-            raise ValueError(
-                f"'ignore_keys' value '{ignore_keys}' cannot be converted to a list."
-            )
-        return {self.normalize_key(k) for k in ignore_keys}  # type: ignore
+        return {self.normalize_key(k) for k in ignore_keys}
 
     @overload
     def normalize(self, value: str) -> str: ...
@@ -1380,7 +1370,7 @@ class Normalizer:
         value_list = [self.normalize(v) for v in value]
         if self.ignore_order:
             try:
-                value_list = sorted(value_list)  # type: ignore
+                value_list = sorted(value_list)
             except TypeError:
                 pass
         return self._try_to_preserve_type(value_list, cls)
