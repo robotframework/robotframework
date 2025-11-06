@@ -18,7 +18,7 @@ from ast import literal_eval
 from collections.abc import Hashable
 from itertools import chain
 from typing import (
-    Any, Generator, Iterable, Literal, Mapping, MutableMapping, MutableSequence,
+    Any, Iterable, Iterator, Literal, Mapping, MutableMapping, MutableSequence,
     NoReturn, overload, Sequence, Union
 )
 
@@ -477,7 +477,7 @@ class _List:
         list1: Iterable,
         list2: Iterable,
         names: "Mapping[int, str]",
-    ) -> Generator[str, None, None]:
+    ) -> Iterator[str]:
         for index, (item1, item2) in enumerate(zip(list1, list2)):
             name = f" ({names[index]})" if index in names else ""
             try:
@@ -526,7 +526,7 @@ class _List:
         """
         logger.write("\n".join(self._log_list(list_)), level)
 
-    def _log_list(self, list_: Sequence) -> Generator[str, None, None]:
+    def _log_list(self, list_: Sequence) -> Iterator[str]:
         if not list_:
             yield "List is empty."
         elif len(list_) == 1:
@@ -1009,7 +1009,7 @@ class _Dictionary:
     def _log_dictionary(
         self,
         dictionary: Mapping,
-    ) -> Generator[str, None, None]:
+    ) -> Iterator[str]:
         if not dictionary:
             yield "Dictionary is empty."
         elif len(dictionary) == 1:
