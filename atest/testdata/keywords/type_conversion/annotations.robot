@@ -381,8 +381,6 @@ List
     List                 ${{(1, 2)}}               [1, 2]
     List                 ${DEQUE}                  [1, 2, 3]
     List                 ${SEQUENCE}               ['x']
-    List                 ${DICT}                   ['foo', 'bar']
-    List                 ${{(c for c in 'xy')}}    ['x', 'y']
 
 Invalid list
     [Template]           Conversion Should Fail
@@ -392,6 +390,7 @@ Invalid list
     List                 ${EMPTY}                  error=Invalid expression.
     List                 !"#¤%&/(inv expr)\=?      error=Invalid expression.
     List                 1 / 0                     error=Invalid expression.
+    List                 ${DICT}                   arg_type=DotDict
     List                 ${NONE}                   arg_type=None
 
 Sequence (abc)
@@ -400,8 +399,6 @@ Sequence (abc)
     Sequence             ${LIST}                   ${LIST}               same=True
     Sequence             ${DEQUE}                  ${DEQUE}              same=True
     Sequence             ${SEQUENCE}               ${SEQUENCE}           same=True
-    Sequence             ${DICT}                   ['foo', 'bar']
-    Sequence             ${{(c for c in 'xy')}}    ['x', 'y']
 
 MutableSequence (abc)
     Mutable sequence     []                        []
@@ -409,8 +406,6 @@ MutableSequence (abc)
     Mutable sequence     ${LIST}                   ${LIST}               same=True
     Mutable sequence     ${DEQUE}                  ${DEQUE}              same=True
     Mutable sequence     ${SEQUENCE}               ['x']
-    Mutable sequence     ${DICT}                   ['foo', 'bar']
-    Mutable sequence     ${{(c for c in 'xy')}}    ['x', 'y']
 
 Invalid sequence (abc)
     [Template]           Conversion Should Fail
@@ -421,6 +416,7 @@ Invalid sequence (abc)
     Sequence             ${EMPTY}                  type=Sequence         error=Invalid expression.
     Mutable sequence     !"#¤%&/(inv expr)\=?      type=Sequence         error=Invalid expression.
     Sequence             1 / 0                     type=Sequence         error=Invalid expression.
+    Mutable sequence     ${DICT}                   type=Sequence         arg_type=DotDict
 
 Tuple
     Tuple                ()                        ()
@@ -430,14 +426,13 @@ Tuple
     Tuple                ${{(1, 2)}}               (1, 2)
     Tuple                ${{[1, 2]}}               (1, 2)
     Tuple                ${DEQUE}                  (1, 2, 3)
-    Tuple                ${DICT}                   ('foo', 'bar')
-    Tuple                ${{(c for c in 'xy')}}    ('x', 'y')
 
 Invalid tuple
     [Template]           Conversion Should Fail
     Tuple                (1, ooops)                error=Invalid expression.
     Tuple                {}                        error=Value is dictionary, not tuple.
     Tuple                ooops                     error=Invalid expression.
+    Tuple                ${DICT}                   arg_type=DotDict
     Tuple                ${NONE}                   arg_type=None
 
 Dictionary
@@ -486,7 +481,6 @@ Set
     Set                  ${DEQUE}                  {1, 2, 3}
     Set                  ${MAPPING}                {'a'}
     Set                  ${DICT}                   {'foo', 'bar'}
-    Set                  ${{(c for c in 'xy')}}    {'x', 'y'}
 
 Invalid set
     [Template]           Conversion Should Fail
@@ -495,6 +489,7 @@ Invalid set
     Set                  ooops                     error=Invalid expression.
     Set                  {{'not', 'hashable'}}     error=Evaluating expression failed: *
     Set                  frozenset()               error=Invalid expression.
+    Set                  ${{(c for c in 'xy')}}    arg_type=generator
     Set                  ${NONE}                   arg_type=None
 
 Set (abc)
@@ -504,14 +499,12 @@ Set (abc)
     Set abc              ${DEQUE}                  {1, 2, 3}
     Set abc              ${MAPPING}                {'a'}
     Set abc              ${DICT}                   {'foo', 'bar'}
-    Set abc              ${{(c for c in 'xy')}}    {'x', 'y'}
     Mutable set          set()                     set()
     Mutable set          {'foo', 'bar'}            {'foo', 'bar'}
     Mutable set          {1, 2, 3.14, -42}         {1, 2, 3.14, -42}
     Mutable set          ${DEQUE}                  {1, 2, 3}
     Mutable set          ${MAPPING}                {'a'}
     Mutable set          ${DICT}                   {'foo', 'bar'}
-    Mutable set          ${{(c for c in 'xy')}}    {'x', 'y'}
 
 Invalid set (abc)
     [Template]           Conversion Should Fail
@@ -519,8 +512,8 @@ Invalid set (abc)
     Set abc              {}                        type=set              error=Value is dictionary, not set.
     Set abc              ooops                     type=set              error=Invalid expression.
     Mutable set          {1, ooops}                type=set              error=Invalid expression.
-    Mutable set          {}                        type=set              error=Value is dictionary, not set.
-    Mutable set          ooops                     type=set              error=Invalid expression.
+    Mutable set          ${{(c for c in 'xy')}}    type=set              arg_type=generator
+    Mutable set          ${NONE}                   type=set              arg_type=None
 
 Frozenset
     Frozenset            frozenset()               frozenset()

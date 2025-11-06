@@ -27,8 +27,6 @@ List
     List                             ['1', 2.0]               [1, 2]
     List                             (1, 2, 3)                [1, 2, 3]
     List                             ${INTS}                  ${INTS}                   same=True
-    List                             ${INT TO FLOAT}          [1, 4, 7]
-    List                             ${{{'1'}}}               [1]
 
 List with unknown
     List with unknown                []                       []
@@ -52,7 +50,6 @@ Tuple
     Tuple                            (1, 'true', 3.14)        (1, True, 3.14)
     Tuple                            ['1', 'ei', '3.14']      (1, False, 3.14)          # 'ei' -> False conversion is due to language config.
     Tuple                            ${INTS}                  (1, 2, 3)
-    Tuple                            ${INT TO FLOAT}          (1, 4, 7)
 
 Tuple with unknown
     Tuple with unknown               (1, '2')                 (1, 2)
@@ -74,7 +71,6 @@ Homogenous tuple
     Homogenous tuple                 [1]                      (1,)
     Homogenous tuple                 (1, 2, '3', 4.0, 5)      (1, 2, 3, 4, 5)
     Homogenous tuple                 ${INTS}                  (1, 2, 3)
-    Homogenous tuple                 ${INT TO FLOAT}          (1, 4, 7)
 
 Homogenous tuple with unknown
     Homogenous tuple with unknown    (1, '2')                 (1, '2')
@@ -108,8 +104,6 @@ Sequence
     Sequence                         ${STR DEQUE}             ${INT DEQUE}
     Sequence                         ${INT SEQUENCE}          ${INT SEQUENCE}           same=True
     Sequence                         ${STR SEQUENCE}          ${INT SEQUENCE}
-    Sequence                         ${INT TO FLOAT}          [1, 4, 7]
-    Sequence                         ${{{'1'}}}               [1]
 
 MutableSequence
     Mutable sequence                 []                       []
@@ -121,8 +115,6 @@ MutableSequence
     Mutable sequence                 ${STR DEQUE}             ${INT DEQUE}
     Mutable sequence                 ${INT SEQUENCE}          [1, 2, 3]
     Mutable sequence                 ${STR SEQUENCE}          [1, 2, 3]
-    Mutable sequence                 ${INT TO FLOAT}          [1, 4, 7]
-    Mutable sequence                 ${{{'1'}}}               [1]
 
 Invalid Sequence
     [Template]                       Conversion should fail

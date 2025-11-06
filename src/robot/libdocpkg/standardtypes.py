@@ -146,7 +146,6 @@ They are converted to actual lists or tuples using the
 function. They can contain any values ``ast.literal_eval`` supports, including
 lists and other containers.
 
-Iterables that are not sequences are converted to lists.
 Any sequence is accepted without conversion. An exception is that if the used
 type is ``MutableSequence``, immutable values are converted to lists.
 
@@ -156,7 +155,7 @@ to those types automatically.
 Examples: ``['one', 'two']``, ``(1, 2, 3)``
 
 Support to convert nested types is new in Robot Framework 6.0.
-Support for iterables and tuple literals is new in Robot Framework 7.4.
+Support for tuple literals is new in Robot Framework 7.4.
 """,
     list: """\
 Strings must be Python [https://docs.python.org/library/stdtypes.html#list|list]
@@ -167,7 +166,7 @@ function and possible tuples converted further to lists. They can contain any
 values ``ast.literal_eval`` supports, including lists and other containers.
 
 If the argument is a list, it is used without conversion.
-Tuples and other iterables are converted to lists.
+Tuples and other sequences are converted to lists.
 
 If the type has nested types like ``list[int]``, items are converted
 to those types automatically.
@@ -175,7 +174,7 @@ to those types automatically.
 Examples: ``['one', 'two']``, ``[('one', 1), ('two', 2)]``
 
 Support to convert nested types is new in Robot Framework 6.0.
-Support for iterables and tuple literals is new in Robot Framework 7.4.
+Support for tuple literals is new in Robot Framework 7.4.
 """,
     tuple: """\
 Strings must be Python [https://docs.python.org/library/stdtypes.html#tuple|tuple]
@@ -186,7 +185,7 @@ function and possible lists converted further to tuples. They can contain any
 values ``ast.literal_eval`` supports, including tuples and other containers.
 
 If the argument is a tuple, it is used without conversion.
-Lists and other iterables are converted to tuples.
+Lists and other sequences are converted to tuples.
 
 If the type has nested types like ``tuple[str, int, int]``, items are converted
 to those types automatically.
@@ -194,7 +193,7 @@ to those types automatically.
 Examples: ``('one', 'two')``, ``(('one', 1), ('two', 2))``
 
 Support to convert nested types is new in Robot Framework 6.0.
-Support for iterables and tuple literals is new in Robot Framework 7.4.
+Support for list literals is new in Robot Framework 7.4.
 """,
     Mapping: """\
 Strings must be Python [https://docs.python.org/library/stdtypes.html#dict|dictionary]
@@ -235,7 +234,7 @@ function and possible lists and tuples converted further to sets. They can
 contain any values ``ast.literal_eval`` supports.
 
 If the argument is a set, it is used without conversion.
-Lists and other iterables are converted to sets.
+Lists and other container objects are converted to sets.
 
 If the type has nested types like ``set[int]``, items are converted
 to those types automatically.
@@ -243,7 +242,7 @@ to those types automatically.
 Examples: ``{1, 2, 3, 42}``, ``set()`` (an empty set)
 
 Support to convert nested types is new in Robot Framework 6.0.
-Support for iterables and tuple literals is new in Robot Framework 7.4.
+Support for list and tuple literals is new in Robot Framework 7.4.
 """,
     frozenset: """\
 Strings must be Python [https://docs.python.org/library/stdtypes.html#set|set],
@@ -255,7 +254,7 @@ function and then converted further to ``frozenset``. They can
 contain any values ``ast.literal_eval`` supports.
 
 If the argument is a frozenset, it is used without conversion.
-Lists and other iterables are converted to frozensets.
+Lists and other container objects are converted to frozensets.
 
 If the type has nested types like ``frozenset[int]``, items are converted
 to those types automatically.
@@ -263,7 +262,7 @@ to those types automatically.
 Examples: ``{1, 2, 3, 42}``, ``frozenset()`` (an empty set)
 
 Support to convert nested types is new in Robot Framework 6.0.
-Support for iterables and tuple literals is new in Robot Framework 7.4.
+Support for list and tuple literals is new in Robot Framework 7.4.
 """,
     Literal: """\
 Only specified values are accepted. Values can be strings,
