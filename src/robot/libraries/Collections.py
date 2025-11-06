@@ -58,8 +58,7 @@ class _List:
         | ${L1} = ['a', 'xxx']
         | ${L2} = ['a', 'b', 'x', 'y', 'z']
         """
-        for value in values:
-            list_.append(value)
+        list_.extend(values)
 
     def insert_into_list(self, list_: MutableSequence, index: int, value: object):
         """Inserts ``value`` into ``list`` to the position specified with ``index``.
