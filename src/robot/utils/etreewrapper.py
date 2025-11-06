@@ -22,14 +22,14 @@ from pathlib import Path
 class ETSource:
 
     def __init__(self, source):
-        self._source = source
-        self._opened = None
+        self._source: "bytes | bytearray | Path | str" = source
+        self._opened: "BytesIO | None" = None
 
     def __enter__(self):
         self._opened = self._open_if_necessary(self._source)
         return self._opened or self._source
 
-    def _open_if_necessary(self, source):
+    def _open_if_necessary(self, source: "bytes | bytearray | Path | str") -> "BytesIO | None":
         if self._is_path(source) or self._is_already_open(source):
             return None
         if isinstance(source, (bytes, bytearray)):
@@ -37,7 +37,7 @@ class ETSource:
         encoding = self._find_encoding(source)
         return BytesIO(source.encode(encoding))
 
-    def _is_path(self, source):
+    def _is_path(self, source) -> bool:
         if isinstance(source, Path):
             return True
         if isinstance(source, str):
@@ -46,10 +46,10 @@ class ETSource:
             return not source.lstrip().startswith(b"<")
         return False
 
-    def _is_already_open(self, source):
+    def _is_already_open(self, source) -> bool:
         return not isinstance(source, (str, bytes, bytearray))
 
-    def _find_encoding(self, source):
+    def _find_encoding(self, source) -> str:
         match = re.match(r"\s*<\?xml .*encoding=(['\"])(.*?)\1.*\?>", source)
         return match.group(2) if match else "UTF-8"
 
@@ -57,7 +57,7 @@ class ETSource:
         if self._opened:
             self._opened.close()
 
-    def __str__(self):
+    def __str__(self) -> str:
         source = self._source
         if self._is_path(source):
             return self._path_to_string(source)
@@ -65,7 +65,7 @@ class ETSource:
             return self._path_to_string(source.name)
         return "<in-memory file>"
 
-    def _path_to_string(self, path):
+    def _path_to_string(self, path) -> str:
         if isinstance(path, Path):
             return str(path)
         if isinstance(path, bytes):

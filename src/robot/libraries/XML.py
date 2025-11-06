@@ -55,7 +55,10 @@ class InstructionProtocol(Protocol): ...
 
 class LxmlProtocol(Protocol):
     @staticmethod
-    def parse() -> None: ...
+    def parse(source, parser=None) -> ET.ElementTree: ...
+
+    @staticmethod
+    def strip_elements() -> None: ...
 
     @staticmethod
     def tostring() -> None: ...
@@ -519,7 +522,7 @@ class XML:
             )
         self._ns_stripper = NameSpaceStripper(self.etree, self.lxml_etree)
 
-    def parse_xml(self, source, keep_clark_notation: bool = False, strip_namespaces: bool = False):
+    def parse_xml(self, source: "os.PathLike | str | bytes", keep_clark_notation: bool = False, strip_namespaces: bool = False) -> "ET.Element[str] | None":
         """Parses the given XML file or string into an element structure.
 
         The ``source`` can either be a path to an XML file or a string
@@ -562,7 +565,7 @@ class XML:
             self._ns_stripper.strip(root, preserve=not strip_namespaces)
         return root
 
-    def get_element(self, source, xpath="."):
+    def get_element(self, source: "str | bytes | os.PathLike | ET.Element[str]", xpath=".") -> ET.Element:
         """Returns an element in the ``source`` matching the ``xpath``.
 
         The ``source`` can be a path to an XML file, a string containing XML, or
@@ -605,7 +608,7 @@ class XML:
             return f"One element matching '{xpath}' found."
         return f"Multiple elements ({count}) matching '{xpath}' found."
 
-    def get_elements(self, source, xpath):
+    def get_elements(self, source: "str | bytes | os.PathLike | ET.Element[str]", xpath: str) -> "list[ET.Element]":
         """Returns a list of elements in the ``source`` matching the ``xpath``.
 
         The ``source`` can be a path to an XML file, a string containing XML, or
@@ -1537,7 +1540,7 @@ class ElementFinder:
         self.modern = modern
         self.lxml = lxml
 
-    def find_all(self, elem, xpath):
+    def find_all(self, elem, xpath) -> list:
         xpath = self._get_xpath(xpath)
         if xpath == ".":  # ET < 1.3 does not support '.' alone.
             return [elem]
@@ -1546,7 +1549,7 @@ class ElementFinder:
         finder = self.etree.ETXPath(xpath)
         return finder(elem)
 
-    def _get_xpath(self, xpath):
+    def _get_xpath(self, xpath) -> str:
         if not xpath:
             raise RuntimeError("No xpath given.")
         if self.modern:
