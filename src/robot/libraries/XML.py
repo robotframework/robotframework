@@ -35,7 +35,6 @@ else:
     del Attrib, MutableMapping
 
 from robot.api import logger
-from robot.api.deco import keyword
 from robot.libraries.BuiltIn import BuiltIn
 from robot.utils import asserts, ETSource, plural_or_not as s
 from robot.version import get_version
@@ -44,7 +43,7 @@ should_be_equal = asserts.assert_equal
 should_match = BuiltIn().should_match
 
 # FIXME: should bytes be in here?
-Unparsed = Union[str, bytes, os.PathLike]
+Unparsed = Union[os.PathLike, bytes, str]
 
 
 class CommentProtocol(Protocol): ...
@@ -585,7 +584,7 @@ class XML:
         return root
 
     def get_element(
-        self, source: "Unparsed | ET.Element", xpath: str = "."
+        self, source: "ET.Element | Unparsed", xpath: str = "."
     ) -> ET.Element:
         """Returns an element in the ``source`` matching the ``xpath``.
 
@@ -632,7 +631,7 @@ class XML:
         return f"Multiple elements ({count}) matching '{xpath}' found."
 
     def get_elements(
-        self, source: "Unparsed | ET.Element", xpath: str
+        self, source: "ET.Element | Unparsed", xpath: str
     ) -> "list[ET.Element]":
         """Returns a list of elements in the ``source`` matching the ``xpath``.
 
@@ -656,7 +655,7 @@ class XML:
         return finder.find_all(source, xpath)
 
     def get_child_elements(
-        self, source: "str | bytes | os.PathLike | ET.Element", xpath: str = "."
+        self, source: "ET.Element | Unparsed", xpath: str = "."
     ) -> "list[ET.Element]":
         """Returns the child elements of the specified element as a list.
 
@@ -675,7 +674,7 @@ class XML:
         """
         return list(self.get_element(source, xpath))
 
-    def get_element_count(self, source, xpath="."):
+    def get_element_count(self, source: "ET.Element | Unparsed", xpath: str = ".")-> int:
         """Returns and logs how many elements the given ``xpath`` matches.
 
         Arguments ``source`` and ``xpath`` have exactly the same semantics as
@@ -762,10 +761,10 @@ class XML:
         if element.tail and not top:
             yield element.tail
 
-    def _normalize_whitespace(self, text):
+    def _normalize_whitespace(self, text: str) -> str:
         return " ".join(text.split())
 
-    def get_elements_texts(self, source, xpath: str, normalize_whitespace=False):
+    def get_elements_texts(self, source: "ET.Element | Unparsed", xpath: str, normalize_whitespace: bool = False) -> "list[str]":
         """Returns text of all elements matching ``xpath`` as a list.
 
         The elements whose text to return is specified using ``source`` and
@@ -846,8 +845,7 @@ class XML:
         text = self.get_element_text(source, xpath, normalize_whitespace)
         should_match(text, pattern, message, values=False)
 
-    @keyword(types=None)
-    def get_element_attribute(self, source, name, xpath=".", default=None):
+    def get_element_attribute(self, source: "ET.Element | Unparsed", name: str, xpath: str = ".", default: object = None) -> "str | object":
         """Returns the named attribute of the specified element.
 
         The element whose attribute to return is specified using ``source`` and
@@ -870,6 +868,7 @@ class XML:
         return self.get_element(source, xpath).get(name, default)
 
     def get_element_attributes(self, source, xpath="."):
+    # def get_element_attributes(self, source: "ET.Element | Unparsed", xpath: str = ".") -> "dict[str, str]":
         """Returns all attributes of the specified element.
 
         The element whose attributes to return is specified using ``source`` and
@@ -1073,13 +1072,13 @@ class XML:
         comparator = ElementComparator(comparator, normalizer, sorter, exclude_children)
         comparator.compare(self.get_element(source), self.get_element(expected))
 
-    def _sort_children(self, element):
+    def _sort_children(self, element: ET.Element):
         tails = [child.tail for child in element]
         element[:] = sorted(element, key=lambda child: child.tag)
         for child, tail in zip(element, tails):
             child.tail = tail
 
-    def set_element_tag(self, source, tag, xpath="."):
+    def set_element_tag(self, source: "ET.Element | Unparsed", tag: str, xpath: str = ".") -> ET.Element:
         """Sets the tag of the specified element.
 
         The element whose tag to set is specified using ``source`` and
@@ -1101,7 +1100,7 @@ class XML:
         self.get_element(source, xpath).tag = tag
         return source
 
-    def set_elements_tag(self, source, tag, xpath="."):
+    def set_elements_tag(self, source: "ET.Element | Unparsed", tag: str, xpath: str = ".") -> ET.Element:
         """Sets the tag of the specified elements.
 
         Like `Set Element Tag` but sets the tag of all elements matching
@@ -1112,8 +1111,7 @@ class XML:
             self.set_element_tag(elem, tag)
         return source
 
-    @keyword(types=None)
-    def set_element_text(self, source, text=None, tail=None, xpath="."):
+    def set_element_text(self, source: "ET.Element | Unparsed", text: "str | None" = None, tail: "str | None" = None, xpath: str = ".") -> ET.Element:
         """Sets text and/or tail text of the specified element.
 
         The element whose text to set is specified using ``source`` and
@@ -1144,8 +1142,7 @@ class XML:
             element.tail = tail
         return source
 
-    @keyword(types=None)
-    def set_elements_text(self, source, text=None, tail=None, xpath="."):
+    def set_elements_text(self, source: "ET.Element | Unparsed", text: "str | None" = None, tail: "str | None" = None, xpath: str = ".") -> ET.Element:
         """Sets text and/or tail text of the specified elements.
 
         Like `Set Element Text` but sets the text or tail of all elements
@@ -1183,7 +1180,7 @@ class XML:
         self.get_element(source, xpath).attrib[name] = value
         return source
 
-    def set_elements_attribute(self, source, name, value, xpath="."):
+    def set_elements_attribute(self, source: "ET.Element | Unparsed", name: str, value: str, xpath: str = ".") -> ET.Element:
         """Sets attribute ``name`` of the specified elements to ``value``.
 
         Like `Set Element Attribute` but sets the attribute of all elements
@@ -1194,7 +1191,7 @@ class XML:
             self.set_element_attribute(elem, name, value)
         return source
 
-    def remove_element_attribute(self, source, name, xpath="."):
+    def remove_element_attribute(self, source: "ET.Element | Unparsed", name: str, xpath: str = ".") -> ET.Element:
         """Removes attribute ``name`` from the specified element.
 
         The element whose attribute to remove is specified using ``source`` and
@@ -1219,7 +1216,7 @@ class XML:
             attrib.pop(name)
         return source
 
-    def remove_elements_attribute(self, source, name, xpath="."):
+    def remove_elements_attribute(self, source: "ET.Element | Unparsed", name: str, xpath: str = ".") -> ET.Element:
         """Removes attribute ``name`` from the specified elements.
 
         Like `Remove Element Attribute` but removes the attribute of all
@@ -1252,7 +1249,7 @@ class XML:
         self.get_element(source, xpath).attrib.clear()
         return source
 
-    def remove_elements_attributes(self, source, xpath="."):
+    def remove_elements_attributes(self, source: "ET.Element | Unparsed", xpath: str = ".") -> ET.Element:
         """Removes all attributes from the specified elements.
 
         Like `Remove Element Attributes` but removes all attributes of all
@@ -1263,7 +1260,7 @@ class XML:
             self.remove_element_attributes(elem)
         return source
 
-    def add_element(self, source, element, index=None, xpath="."):
+    def add_element(self, source: "Unparsed | ET.Element", element: "Unparsed | ET.Element", index: "int | None" = None, xpath: str = ".")-> ET.Element:
         """Adds a child element to the specified element.
 
         The element to whom to add the new element is specified using ``source``
@@ -1325,7 +1322,7 @@ class XML:
         self._remove_element(source, self.get_element(source, xpath), remove_tail)
         return source
 
-    def remove_elements(self, source, xpath="", remove_tail=False):
+    def remove_elements(self, source: "ET.Element | Unparsed", xpath: str = "", remove_tail: bool = False) -> ET.Element:
         """Removes all elements matching ``xpath`` from the ``source`` structure.
 
         The elements to remove from the ``source`` are specified with ``xpath``
@@ -1498,9 +1495,9 @@ class XML:
         )
         elem = self.get_element(source)
         tree = self.etree.ElementTree(elem)
-        config = {"encoding": encoding}
+        config: dict[str, object] = {"encoding": encoding}
         if self.modern_etree:
-            config["xml_declaration"] = "True"
+            config["xml_declaration"] = True
         if self.lxml_etree:
             elem = self._ns_stripper.unstrip(elem)
             # https://bugs.launchpad.net/lxml/+bug/1660433
