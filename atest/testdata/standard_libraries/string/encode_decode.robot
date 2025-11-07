@@ -47,9 +47,10 @@ Decode Non-ASCII Bytes To String Using Incompatible Encoding And Error Handler
     ${string} =    Decode Bytes To String    ${UTF-8}    ASCII    replace
     Should Be Equal    ${string}    Hyv\ufffd\ufffd
 
-Decoding String Fails
-    [Documentation]    FAIL TypeError: Cannot decode strings.
-    Decode Bytes To String    hello    ASCII
+Decoding String Does Not Fail
+    ${string} =    Decode Bytes To String    hello    ASCII
+    Should Be Equal    ${string}    hello
+
 
 *** Keywords ***
 Create Byte String Variables
