@@ -16,7 +16,7 @@
 import copy
 import os
 import re
-from typing import NoReturn, Protocol, overload, Union
+from typing import NoReturn, overload, Protocol, Union
 from xml.etree import ElementTree as ET
 
 try:
@@ -536,7 +536,12 @@ class XML:
             )
         self._ns_stripper = NameSpaceStripper(self.etree, self.lxml_etree)
 
-    def parse_xml(self, source: Unparsed, keep_clark_notation: bool = False, strip_namespaces: bool = False) -> "ET.Element | None":
+    def parse_xml(
+        self,
+        source: Unparsed,
+        keep_clark_notation: bool = False,
+        strip_namespaces: bool = False,
+    ) -> "ET.Element | None":
         """Parses the given XML file or string into an element structure.
 
         The ``source`` can either be a path to an XML file or a string
@@ -579,7 +584,9 @@ class XML:
             self._ns_stripper.strip(root, preserve=not strip_namespaces)
         return root
 
-    def get_element(self, source: "Unparsed | ET.Element", xpath: str = ".") -> ET.Element:
+    def get_element(
+        self, source: "Unparsed | ET.Element", xpath: str = "."
+    ) -> ET.Element:
         """Returns an element in the ``source`` matching the ``xpath``.
 
         The ``source`` can be a path to an XML file, a string containing XML, or
@@ -610,7 +617,9 @@ class XML:
             self._raise_wrong_number_of_matches(len(elements), xpath)
         return elements[0]
 
-    def _raise_wrong_number_of_matches(self, count: int, xpath: str, message: "str | None" = None) -> NoReturn:
+    def _raise_wrong_number_of_matches(
+        self, count: int, xpath: str, message: "str | None" = None
+    ) -> NoReturn:
         if not message:
             message = self._wrong_number_of_matches(count, xpath)
         raise AssertionError(message)
@@ -622,7 +631,9 @@ class XML:
             return f"One element matching '{xpath}' found."
         return f"Multiple elements ({count}) matching '{xpath}' found."
 
-    def get_elements(self, source: "Unparsed | ET.Element", xpath: str) -> "list[ET.Element]":
+    def get_elements(
+        self, source: "Unparsed | ET.Element", xpath: str
+    ) -> "list[ET.Element]":
         """Returns a list of elements in the ``source`` matching the ``xpath``.
 
         The ``source`` can be a path to an XML file, a string containing XML, or
@@ -644,7 +655,9 @@ class XML:
         finder = ElementFinder(self.etree, self.modern_etree, self.lxml_etree)
         return finder.find_all(source, xpath)
 
-    def get_child_elements(self, source: "str | bytes | os.PathLike | ET.Element", xpath: str = ".") -> "list[ET.Element]":
+    def get_child_elements(
+        self, source: "str | bytes | os.PathLike | ET.Element", xpath: str = "."
+    ) -> "list[ET.Element]":
         """Returns the child elements of the specified element as a list.
 
         The element whose children to return is specified using ``source`` and
@@ -1414,12 +1427,16 @@ class XML:
         return copy.deepcopy(self.get_element(source, xpath))
 
     @overload
-    def element_to_string(self, source, xpath: str = ".", encoding: None = None) -> str: ...
+    def element_to_string(
+        self, source, xpath: str = ".", encoding: None = None
+    ) -> str: ...
 
     @overload
     def element_to_string(self, source, xpath: str, encoding: str) -> bytes: ...
 
-    def element_to_string(self, source, xpath: str = ".", encoding: "str | None" = None) -> "str | bytes":
+    def element_to_string(
+        self, source, xpath: str = ".", encoding: "str | None" = None
+    ) -> "str | bytes":
         """Returns the string representation of the specified element.
 
         The element to convert to a string is specified using ``source`` and
@@ -1441,7 +1458,9 @@ class XML:
             string = string.encode(encoding)
         return string
 
-    def log_element(self, source, level: logger.LogLevel = "INFO", xpath: str = ".") -> str:
+    def log_element(
+        self, source, level: logger.LogLevel = "INFO", xpath: str = "."
+    ) -> str:
         """Logs the string representation of the specified element.
 
         The element specified with ``source`` and ``xpath`` is first converted
@@ -1528,7 +1547,13 @@ class NameSpaceStripper:
         self.etree = etree
         self.lxml_tree = lxml_etree
 
-    def strip(self, elem: ET.Element, preserve: bool = True, current_ns: "str | None" = None, top: bool = True):
+    def strip(
+        self,
+        elem: ET.Element,
+        preserve: bool = True,
+        current_ns: "str | None" = None,
+        top: bool = True,
+    ):
         if elem.tag.startswith("{") and "}" in elem.tag:
             ns, elem.tag = elem.tag[1:].split("}", 1)
             if preserve and ns != current_ns:
@@ -1542,7 +1567,9 @@ class NameSpaceStripper:
         if top and not preserve and self.lxml_tree:
             self.etree.cleanup_namespaces(elem)
 
-    def unstrip(self, elem: ET.Element, current_ns: "str | None" = None, copied: bool = False) -> ET.Element:
+    def unstrip(
+        self, elem: ET.Element, current_ns: "str | None" = None, copied: bool = False
+    ) -> ET.Element:
         if not copied:
             elem = copy.deepcopy(elem)
         ns = elem.attrib.pop("xmlns", current_ns)
@@ -1555,7 +1582,12 @@ class NameSpaceStripper:
 
 class ElementFinder:
 
-    def __init__(self, etree: "EtProtocol | LxmlProtocol", modern: bool = True, lxml: bool = False):
+    def __init__(
+        self,
+        etree: "EtProtocol | LxmlProtocol",
+        modern: bool = True,
+        lxml: bool = False,
+    ):
         self.etree = etree
         self.modern = modern
         self.lxml = lxml

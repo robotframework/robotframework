@@ -29,7 +29,9 @@ class ETSource:
         self._opened = self._open_if_necessary(self._source)
         return self._opened or self._source
 
-    def _open_if_necessary(self, source: "bytes | bytearray | Path | str") -> "BytesIO | None":
+    def _open_if_necessary(
+        self, source: "bytes | bytearray | Path | str"
+    ) -> "BytesIO | None":
         if self._is_path(source) or self._is_already_open(source):
             return None
         if isinstance(source, (bytes, bytearray)):
