@@ -82,7 +82,7 @@ class LineWriter(Writer):
 
 
 class GeneratorWriter(Writer):
-    handles_line = '<meta name="Generator" content='
+    handles_lines = ['<meta name="Generator" content=', '<meta name=Generator content']
 
     def __init__(self, writer: HtmlWriter):
         self.writer = writer
@@ -90,6 +90,9 @@ class GeneratorWriter(Writer):
     def write(self, line: str):
         version = get_full_version("Robot Framework")
         self.writer.start("meta", {"name": "Generator", "content": version})
+
+    def handles(self, line: str):
+        return any(line.strip().startswith(prefix) for prefix in self.handles_lines)
 
 
 class InliningWriter(Writer, ABC):
