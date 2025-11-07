@@ -82,7 +82,7 @@ class LineWriter(Writer):
 
 
 class GeneratorWriter(Writer):
-    handles_lines = ['<meta name="Generator" content=', '<meta name=Generator content']
+    handles_lines = ('<meta name="Generator" content=', "<meta name=Generator content")
 
     def __init__(self, writer: HtmlWriter):
         self.writer = writer
