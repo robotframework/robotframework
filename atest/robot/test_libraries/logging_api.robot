@@ -42,21 +42,26 @@ Log HTML
 
 Write messages to log and console
     ${tc} =    Check Test Case    ${TEST NAME}
-    Stdout Should Contain    To console only
-    Stdout Should Contain    To console in two parts
-    Stderr Should Contain    Info message to log and console
-    Stderr Should Contain    Warn message to log and console
-    Stderr Should Contain    Error message to log and console
-    Stderr Should Not Contain    Info message only to log
-    Stderr Should Not Contain    Warn message only to log
-    Stderr Should Not Contain    Error message only to log
-    Check Log Message    ${tc[0, 0]}    Info message to log and console    INFO
-    Check Log Message    ${tc[0, 1]}    Warn message to log and console    WARN
-    Check Log Message    ${tc[0, 2]}    Error message to log and console    ERROR
-    Check Log Message    ${ERRORS[5]}    Warn message to log and console    WARN
+    Stdout Should Contain                To console only
+    Stdout Should Contain                To console in two parts
+    Stdout Should Contain                Info message to log and console w/ 'also_console'
+    Stdout Should Contain                Info message to log and console w/ 'console'
+    Stderr Should Contain                Warn message to log and console
+    Stderr Should Contain                Error message to log and console
+    Stdout Should Not Contain            Info message only to log
+    Stderr Should Not Contain            Info message only to log
+    Stdout Should Not Contain            Warn message only to log
+    Stderr Should Not Contain            Warn message only to log
+    Stdout Should Not Contain            Error message only to log
+    Stderr Should Not Contain            Error message only to log
+    Check Log Message    ${tc[0, 0]}     Info message to log and console w/ 'also_console'
+    Check Log Message    ${tc[0, 1]}     Info message to log and console w/ 'console'
+    Check Log Message    ${tc[0, 2]}     Warn message to log and console     WARN
+    Check Log Message    ${tc[0, 3]}     Error message to log and console    ERROR
+    Check Log Message    ${ERRORS[5]}    Warn message to log and console     WARN
     Check Log Message    ${ERRORS[6]}    Error message to log and console    ERROR
-    Check Log Message    ${ERRORS[7]}    Warn message only to log    WARN
-    Check Log Message    ${ERRORS[8]}    Error message only to log    ERROR
+    Check Log Message    ${ERRORS[7]}    Warn message only to log            WARN
+    Check Log Message    ${ERRORS[8]}    Error message only to log           ERROR
 
 Log non-strings
     ${tc} =    Check Test Case    ${TEST NAME}

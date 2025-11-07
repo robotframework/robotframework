@@ -8,11 +8,11 @@ Log Levels
     [Teardown]  Set log level  INFO
 
 Invalid level
-    [Documentation]    FAIL Invalid log level 'INVALID'.
+    [Documentation]    FAIL ValueError: Invalid log level 'INVALID'.
     Write    This fails    INVALID
 
 FAIL is not valid log level
-    [Documentation]    FAIL Invalid log level 'FAIL'.
+    [Documentation]    FAIL ValueError: Invalid log level 'FAIL'.
     Write    This fails too    FAIL
 
 Timestamps are accurate

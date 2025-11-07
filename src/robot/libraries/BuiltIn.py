@@ -3308,7 +3308,7 @@ class _Misc(_BuiltInBase):
         message,
         level="INFO",
         html=False,
-        console=False,
+        console: "bool | None" = None,
         repr="DEPRECATED",
         formatter="str",
     ):
@@ -3334,11 +3334,14 @@ class _Misc(_BuiltInBase):
         otherwise the message is that exact string. When using the HTML pseudo
         level, the messages is logged using the INFO level.
 
-        If the ``console`` argument is true or the CONSOLE pseudo level is
-        used, the message is written both to the console and to the log file.
-        When using the CONSOLE pseudo level, the message is logged using the
-        INFO level. If the message should not be logged to the log file or there
-        are special formatting needs, use the `Log To Console` keyword instead.
+        The ``console`` argument controls logging messages to the console in
+        addition to the log file. Messages with the WARN and ERROR level are
+        logged to the console by default and others are not, but that can be
+        changed by setting ``console`` to ``True`` or ``False``. Another way
+        to log messages to the console is using the CONSOLE pseudo level in
+        which case the message is logged to the log file using the INFO level.
+        If the message should not be logged to the log file or there are special
+        formatting needs, the `Log To Console` keyword can be used instead.
 
         The ``formatter`` argument controls how to format the string
         representation of the message. Possible values are ``str`` (default),
@@ -3378,9 +3381,7 @@ class _Misc(_BuiltInBase):
             )
             formatter = prepr if is_truthy(repr) else self._get_formatter(formatter)
         message = formatter(message)
-        logger.write(message, level, html)
-        if console:
-            logger.console(message)
+        logger.write(message, level, html, console)
 
     def _get_formatter(self, name):
         formatters = {
