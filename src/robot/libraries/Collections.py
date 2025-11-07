@@ -18,7 +18,7 @@ from collections.abc import Hashable
 from itertools import chain
 from typing import (
     Any, Iterable, Iterator, Literal, Mapping, MutableMapping, MutableSequence,
-    NoReturn, overload, Sequence
+    NoReturn, overload, Sequence, Union
 )
 
 from robot.api import logger
@@ -32,6 +32,7 @@ NOT_SET = NotSet()
 
 IgnoreKeyCase = Literal["KEY", "KEYS"]
 IgnoreValueCase = Literal["VALUE", "VALUES"]
+ListLike = Union[Sequence, Mapping, set]
 
 
 class _List:
@@ -82,7 +83,7 @@ class _List:
         """
         list_.insert(index, value)
 
-    def combine_lists(self, *lists: Sequence) -> list:
+    def combine_lists(self, *lists: ListLike) -> list:
         """Combines the given ``lists`` together and returns the result.
 
         The given lists are not altered by this keyword.
@@ -156,7 +157,7 @@ class _List:
         except IndexError:
             self._index_error(list_, index)
 
-    def remove_duplicates(self, list_: Sequence) -> list:
+    def remove_duplicates(self, list_: ListLike) -> list:
         """Returns a list without duplicates based on the given ``list``.
 
         Creates and returns a new list that contains all items in the given
@@ -317,7 +318,7 @@ class _List:
 
     def list_should_contain_value(
         self,
-        list_: Sequence,
+        list_: ListLike,
         value: object,
         msg: "str | None" = None,
         ignore_case: bool = False,
@@ -339,7 +340,7 @@ class _List:
 
     def list_should_not_contain_value(
         self,
-        list_: Sequence,
+        list_: ListLike,
         value: object,
         msg: "str | None" = None,
         ignore_case: bool = False,
@@ -392,8 +393,8 @@ class _List:
 
     def lists_should_be_equal(
         self,
-        list1: Sequence,
-        list2: Sequence,
+        list1: ListLike,
+        list2: ListLike,
         msg: "str | None" = None,
         values: bool = True,
         names: "Mapping[int, str] | Sequence[str] | None" = None,
@@ -487,8 +488,8 @@ class _List:
 
     def list_should_contain_sub_list(
         self,
-        list1: Sequence,
-        list2: Sequence,
+        list1: ListLike,
+        list2: ListLike,
         msg: "str | None" = None,
         values: bool = True,
         ignore_case: bool = False,
@@ -1115,7 +1116,7 @@ class Collections(_List, _Dictionary):
 
     def should_contain_match(
         self,
-        list: Sequence,
+        list: ListLike,
         pattern: str,
         msg: "str | None" = None,
         case_insensitive: "bool | None" = None,
@@ -1176,7 +1177,7 @@ class Collections(_List, _Dictionary):
 
     def should_not_contain_match(
         self,
-        list: Sequence,
+        list: ListLike,
         pattern: str,
         msg: "str | None" = None,
         case_insensitive: "bool | None" = None,
@@ -1202,7 +1203,7 @@ class Collections(_List, _Dictionary):
 
     def get_matches(
         self,
-        list: Sequence,
+        list: ListLike,
         pattern: str,
         case_insensitive: "bool | None" = None,
         whitespace_insensitive: "bool | None" = None,
@@ -1230,7 +1231,7 @@ class Collections(_List, _Dictionary):
 
     def get_match_count(
         self,
-        list: Sequence,
+        list: ListLike,
         pattern: str,
         case_insensitive: "bool | None" = None,
         whitespace_insensitive: "bool | None" = None,
@@ -1349,6 +1350,9 @@ class Normalizer:
     def normalize(self, value: Sequence) -> Sequence: ...
 
     @overload
+    def normalize(self, value: ListLike) -> ListLike: ...
+
+    @overload
     def normalize(self, value: object) -> object: ...
 
     def normalize(self, value: Any) -> Any:
@@ -1365,7 +1369,7 @@ class Normalizer:
     def normalize_string(self, value: str) -> str:
         return value.casefold() if self.ignore_case else value
 
-    def normalize_list(self, value: Sequence) -> Sequence:
+    def normalize_list(self, value: ListLike) -> ListLike:
         cls = type(value)
         value_list = [self.normalize(v) for v in value]
         if self.ignore_order:

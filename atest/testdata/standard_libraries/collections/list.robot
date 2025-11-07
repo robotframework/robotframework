@@ -619,34 +619,34 @@ List Should Not Contain Value, Value Found And Own Error Message Glob
 Check List Error
     [Template]    Validate invalid argument error
     VAR    ${invalid_arg}    I am a string. Not a list.
-    Append to list                        xyz
-    Combine Lists                         ${invalid_arg}    arg_name=lists
-    Combine Lists                         ${L0}   ${invalid_arg}   arg_name=lists    invalid_argument=${invalid_arg}
-    Combine Lists                         ${invalid_arg}    ${L0}   arg_name=lists
-    Copy list
-    Count values in list                  ${invalid_arg}    xyz
-    Get from list                         ${invalid_arg}    0
-    Get Index From List                   ${invalid_arg}    a
-    Get Match Count                       ${invalid_arg}    abc    arg_name=list
-    Get Matches                           ${invalid_arg}    abc    arg_name=list
-    Get slice from list
-    Insert into list                      ${invalid_arg}    0    a
-    List Should Contain Sub List          ${invalid_arg}    ${L0}    arg_name=list1
-    List Should Contain Sub List          ${L0}    ${invalid_arg}    arg_name=list2    invalid_argument=${invalid_arg}
+    Append to list                        xyz                         annotation=Sequence: Invalid expression
+    Combine Lists                         ${invalid_arg}              arg_name=lists
+    Combine Lists                         ${L0}   ${invalid_arg}      arg_name=lists    invalid_argument=${invalid_arg}
+    Combine Lists                         ${invalid_arg}    ${L0}     arg_name=lists
+    Copy list                                                         annotation=Sequence: Invalid expression
+    Count values in list                  ${invalid_arg}    xyz       annotation=Sequence: Invalid expression
+    Get from list                         ${invalid_arg}    0         annotation=Sequence: Invalid expression
+    Get Index From List                   ${invalid_arg}    a         annotation=Sequence: Invalid expression
+    Get Match Count                       ${invalid_arg}    abc       arg_name=list
+    Get Matches                           ${invalid_arg}    abc       arg_name=list
+    Get slice from list                                               annotation=Sequence: Invalid expression
+    Insert into list                      ${invalid_arg}    0    a    annotation=Sequence: Invalid expression
+    List Should Contain Sub List          ${invalid_arg}    ${L0}     arg_name=list1
+    List Should Contain Sub List          ${L0}    ${invalid_arg}     arg_name=list2    invalid_argument=${invalid_arg}
     List should contain value             ${invalid_arg}    a
-    List Should Not Contain Duplicates    xyz
+    List Should Not Contain Duplicates    xyz                         annotation=Sequence: Invalid expression
     List Should Not Contain Value         ${invalid_arg}    x
-    Lists Should Be Equal                 ${invalid_arg}    ${L0}    arg_name=list1
-    Lists Should Be Equal                 ${L0}    ${invalid_arg}    arg_name=list2    invalid_argument=${invalid_arg}
-    Log List
+    Lists Should Be Equal                 ${invalid_arg}    ${L0}     arg_name=list1
+    Lists Should Be Equal                 ${L0}    ${invalid_arg}     arg_name=list2    invalid_argument=${invalid_arg}
+    Log List                                                          annotation=Sequence: Invalid expression
     Remove Duplicates
-    Remove From List                      ${invalid_arg}    0
-    Remove Values From List               ${invalid_arg}    a
-    Reverse List
-    Set List Value                        ${invalid_arg}    0    a
-    Should Contain Match                  ${invalid_arg}    a    arg_name=list
-    Should Not Contain Match              ${invalid_arg}    xyz    arg_name=list
-    Sort List                             annotation=list
+    Remove From List                      ${invalid_arg}    0         annotation=Sequence: Invalid expression
+    Remove Values From List               ${invalid_arg}    a         annotation=Sequence: Invalid expression
+    Reverse List                                                      annotation=Sequence: Invalid expression
+    Set List Value                        ${invalid_arg}    0    a    annotation=Sequence: Invalid expression
+    Should Contain Match                  ${invalid_arg}    a         arg_name=list
+    Should Not Contain Match              ${invalid_arg}    xyz       arg_name=list
+    Sort List                                                         annotation=list: Invalid expression
 
 Lists Should Be Equal With Ignore Case
     [Template]  Lists Should Be Equal
@@ -684,12 +684,12 @@ Lists Should be equal with Ignore Case and Order
 
 *** Keywords ***
 Validate invalid argument error
-    [Arguments]    ${keyword}    ${argument}=I'm not a list, I'm a string.    @{args}    ${arg_name}=list_    ${annotation}=Sequence    ${invalid_argument}=${NONE}
+    [Arguments]    ${keyword}    ${argument}=I'm not a list, I'm a string.    @{args}    ${arg_name}=list_    ${annotation}=Sequence, Mapping or set    ${invalid_argument}=${NONE}
     IF    not $invalid_argument
         VAR    ${invalid_argument}    ${argument}
     END
     Run keyword and expect error
-    ...    ValueError: Argument '${arg_name}' got value '${invalid_argument}' that cannot be converted to ${annotation}: Invalid expression.
+    ...    ValueError: Argument '${arg_name}' got value '${invalid_argument}' that cannot be converted to ${annotation}.
     ...    ${keyword}    ${argument}    @{args}
 
 Create Lists For The Tests
