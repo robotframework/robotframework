@@ -70,7 +70,7 @@ class VerboseOutput(LoggerApi):
             self.writer.keyword_marker(result.status)
 
     def message(self, msg):
-        if msg.level in ("WARN", "ERROR"):
+        if msg.console:
             self.writer.error(msg.message, msg.level, clear=self.running_test)
 
     def result_file(self, kind, path):

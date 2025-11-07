@@ -202,7 +202,7 @@ class Logger(AbstractLogger):
             and self._output_file.is_logged(msg)
         ):
             self._log_message_parents[-1].body.append(msg)
-        if msg.level in ("WARN", "ERROR"):
+        if msg.console or msg.level in ("WARN", "ERROR"):
             self.message(msg)
 
     def log_output(self, output):

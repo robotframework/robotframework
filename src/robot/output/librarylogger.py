@@ -32,7 +32,7 @@ from .loggerhelper import Message, write_to_console
 LOGGING_THREADS = ["MainThread", "RobotFrameworkTimeoutThread"]
 
 
-def write(msg: Any, level: str, html: bool = False):
+def write(msg: Any, level: str, html: bool = False, also_console: bool = None):
     if not isinstance(msg, str):
         msg = safe_str(msg)
     if level.upper() not in ("TRACE", "DEBUG", "INFO", "HTML", "WARN", "ERROR"):
@@ -42,7 +42,7 @@ def write(msg: Any, level: str, html: bool = False):
         else:
             raise RuntimeError(f"Invalid log level '{level}'.")
     if current_thread().name in LOGGING_THREADS:
-        LOGGER.log_message(Message(msg, level, html))
+        LOGGER.log_message(Message(msg, level, html, console=also_console))
 
 
 def trace(msg, html=False):
