@@ -32,7 +32,7 @@ to install exactly this version. Alternatively you can download the package
 from PyPI_ and install it manually. For more details and other installation
 approaches, see the `installation instructions`_.
 
-Robot Framework 7.4b2 was released on Saturday November 8, 2025.
+Robot Framework 7.4 beta 2 was released on Saturday November 8, 2025.
 
 .. _Robot Framework: http://robotframework.org
 .. _Robot Framework Foundation: http://robotframework.org/foundation
