@@ -314,7 +314,7 @@ community has provided some great contributions:
 - `@silentw0lf <https://github.com/silentw0lf>`_ added type hints to the Dialogs
   library (`#5373`_).
 
-- `Robot <https://github.com/robinmackaij>`_ added type hints to the Collections
+- `Robin <https://github.com/robinmackaij>`_ added type hints to the Collections
   library (`#5373`_).
 
 - `Menium <https://github.com/menium878>`__ added Polish and Arabic support to
