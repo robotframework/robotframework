@@ -611,14 +611,14 @@ Validate argument conversion errors
     Lists Should Be Equal                 ${invalid_arg}    ${L0}     arg_name=list1
     Lists Should Be Equal                 ${L0}    ${invalid_arg}     arg_name=list2    invalid_argument=${invalid_arg}
     Log List                                                          annotation=Sequence: Invalid expression
-    Remove Duplicates
+    Remove Duplicates                                                 annotation=Sequence: Invalid expression
     Remove From List                      ${invalid_arg}    0         annotation=Sequence: Invalid expression
     Remove Values From List               ${invalid_arg}    a         annotation=Sequence: Invalid expression
     Reverse List                                                      annotation=Sequence: Invalid expression
     Set List Value                        ${invalid_arg}    0    a    annotation=Sequence: Invalid expression
     Should Contain Match                  ${invalid_arg}    a         arg_name=list
     Should Not Contain Match              ${invalid_arg}    xyz       arg_name=list
-    Sort List                                                         annotation=list: Invalid expression
+    Sort List                                                         annotation=Sequence: Invalid expression
 
 *** Keywords ***
 Validate invalid argument error

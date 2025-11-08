@@ -14,24 +14,22 @@
 #  limitations under the License.
 
 import copy
-from collections.abc import Hashable
 from itertools import chain
 from typing import (
     Any, Iterable, Iterator, Literal, Mapping, MutableMapping, MutableSequence,
-    NoReturn, overload, Sequence, Union
+    NoReturn, Sequence, Union
 )
 
 from robot.api import logger
 from robot.utils import (
-    is_list_like, Matcher, NotSet, plural_or_not as s, seq2str, seq2str2, type_name
+    Matcher, NotSet, plural_or_not as s, seq2str, seq2str2, type_name
 )
 from robot.utils.asserts import assert_equal
 from robot.version import get_version
 
 NOT_SET = NotSet()
 
-IgnoreKeyCase = Literal["KEY", "KEYS"]
-IgnoreValueCase = Literal["VALUE", "VALUES"]
+IgnoreCase = Union[Literal["KEY", "KEYS", "VALUE", "VALUES"], bool]
 ListLike = Union[Sequence, Mapping, set]
 
 
@@ -157,7 +155,7 @@ class _List:
         except IndexError:
             self._index_error(list_, index)
 
-    def remove_duplicates(self, list_: ListLike) -> list:
+    def remove_duplicates(self, list_: Sequence) -> list:
         """Returns a list without duplicates based on the given ``list``.
 
         Creates and returns a new list that contains all items in the given
@@ -304,7 +302,7 @@ class _List:
         """
         list_.reverse()
 
-    def sort_list(self, list_: list):
+    def sort_list(self, list_: MutableSequence):
         """Sorts the given list in place.
 
         Sorting fails if items in the list are not comparable with each others.
@@ -314,7 +312,10 @@ class _List:
         `Copy List` first, if you need to preserve the list also in the original
         order.
         """
-        list_.sort()
+        if isinstance(list_, list):
+            list_.sort()
+        else:
+            list_ = sorted(list_)
 
     def list_should_contain_value(
         self,
@@ -412,8 +413,8 @@ class _List:
         The error message can be configured using ``msg`` and ``values``
         arguments:
         - If ``msg`` is not given, the default error message is used.
-        - If ``msg`` is given and ``values`` gets a value considered true
-          (see `Boolean arguments`), the error message starts with the given
+        - If ``msg`` is given and ``values`` gets a value considered true,
+          the error message starts with the given
           ``msg`` followed by a newline and the default message.
         - If ``msg`` is given and ``values``  is not given a true value,
           the error message is just the given ``msg``.
@@ -475,8 +476,8 @@ class _List:
 
     def _yield_list_diffs(
         self,
-        list1: Iterable,
-        list2: Iterable,
+        list1: Sequence,
+        list2: Sequence,
         names: "Mapping[int, str]",
     ) -> Iterator[str]:
         for index, (item1, item2) in enumerate(zip(list1, list2)):
@@ -594,7 +595,7 @@ class _Dictionary:
     def remove_from_dictionary(
         self,
         dictionary: MutableMapping,
-        *keys: Hashable,
+        *keys: object,
     ):
         """Removes the given ``keys`` from the ``dictionary``.
 
@@ -616,7 +617,7 @@ class _Dictionary:
     def pop_from_dictionary(
         self,
         dictionary: MutableMapping,
-        key: Hashable,
+        key: object,
         default: object = NOT_SET,
     ) -> object:
         """Pops the given ``key`` from the ``dictionary`` and returns its value.
@@ -636,7 +637,7 @@ class _Dictionary:
             return dictionary.pop(key)
         return dictionary.pop(key, default)
 
-    def keep_in_dictionary(self, dictionary: MutableMapping, *keys: Hashable):
+    def keep_in_dictionary(self, dictionary: MutableMapping, *keys: object):
         """Keeps the given ``keys`` in the ``dictionary`` and removes all other.
 
         If the given ``key`` cannot be found from the ``dictionary``, it
@@ -671,7 +672,7 @@ class _Dictionary:
         self,
         dictionary: Mapping,
         sort_keys: bool = True,
-    ) -> list:
+    ) -> "list[object]":
         """Returns keys of the given ``dictionary`` as a list.
 
         By default, keys are returned in sorted order (assuming they are
@@ -695,7 +696,7 @@ class _Dictionary:
         self,
         dictionary: Mapping,
         sort_keys: bool = True,
-    ) -> list:
+    ) -> "list[object]":
         """Returns values of the given ``dictionary`` as a list.
 
         Uses `Get Dictionary Keys` to get keys and then returns corresponding
@@ -715,7 +716,7 @@ class _Dictionary:
         self,
         dictionary: Mapping,
         sort_keys: bool = True,
-    ) -> "list[tuple[Hashable, object]]":
+    ) -> "list[tuple[object, object]]":
         """Returns items of the given ``dictionary`` as a list.
 
         Uses `Get Dictionary Keys` to get keys and then returns corresponding
@@ -738,7 +739,7 @@ class _Dictionary:
     def get_from_dictionary(
         self,
         dictionary: Mapping,
-        key: Hashable,
+        key: object,
         default: object = NOT_SET,
     ) -> object:
         """Returns a value from the given ``dictionary`` based on the given ``key``.
@@ -766,9 +767,9 @@ class _Dictionary:
     def dictionary_should_contain_key(
         self,
         dictionary: Mapping,
-        key: Hashable,
+        key: object,
         msg: "str | None" = None,
-        ignore_case: "IgnoreKeyCase | bool" = False,
+        ignore_case: IgnoreCase = False,
     ):
         """Fails if ``key`` is not found from ``dictionary``.
 
@@ -788,9 +789,9 @@ class _Dictionary:
     def dictionary_should_not_contain_key(
         self,
         dictionary: Mapping,
-        key: Hashable,
+        key: object,
         msg: "str | None" = None,
-        ignore_case: "IgnoreKeyCase | bool" = False,
+        ignore_case: IgnoreCase = False,
     ):
         """Fails if ``key`` is found from ``dictionary``.
 
@@ -810,10 +811,10 @@ class _Dictionary:
     def dictionary_should_contain_item(
         self,
         dictionary: Mapping,
-        key: Hashable,
+        key: object,
         value: object,
         msg: "str | None" = None,
-        ignore_case: "IgnoreKeyCase | IgnoreValueCase | bool" = False,
+        ignore_case: IgnoreCase = False,
     ):
         """An item of ``key`` / ``value`` must be found in a ``dictionary``.
 
@@ -837,7 +838,7 @@ class _Dictionary:
         dictionary: Mapping,
         value: object,
         msg: "str | None" = None,
-        ignore_case: "IgnoreValueCase | bool" = False,
+        ignore_case: IgnoreCase = False,
     ):
         """Fails if ``value`` is not found from ``dictionary``.
 
@@ -859,7 +860,7 @@ class _Dictionary:
         dictionary: Mapping,
         value: object,
         msg: "str | None" = None,
-        ignore_case: "IgnoreValueCase | bool" = False,
+        ignore_case: IgnoreCase = False,
     ):
         """Fails if ``value`` is found from ``dictionary``.
 
@@ -882,8 +883,8 @@ class _Dictionary:
         dict2: Mapping,
         msg: "str | None" = None,
         values: bool = True,
-        ignore_keys: "Sequence[Hashable] | None" = None,
-        ignore_case: "IgnoreKeyCase | IgnoreValueCase | bool" = False,
+        ignore_keys: "Sequence[object] | None" = None,
+        ignore_case: IgnoreCase = False,
         ignore_value_order: bool = False,
     ):
         """Fails if the given dictionaries are not equal.
@@ -966,7 +967,7 @@ class _Dictionary:
         dict2: Mapping,
         msg: "str | None" = None,
         values: bool = True,
-        ignore_case: "IgnoreKeyCase | IgnoreValueCase | bool" = False,
+        ignore_case: IgnoreCase = False,
         ignore_value_order: bool = False,
     ):
         """Fails unless all items in ``dict2`` are found from ``dict1``.
@@ -1067,7 +1068,8 @@ class Collections(_List, _Dictionary):
 
     Various keywords support ignoring case in comparisons by using the optional
     ``ignore_case`` argument. Case-insensitivity can be enabled by using
-    ``ignore_case=True`` (see `Boolean arguments`) and it works recursively.
+    ``ignore_case=True`` and it works recursively.
+
     With dictionaries, it is also possible to use special values ``KEYS`` and
     ``VALUES`` to normalize only keys or values, respectively. These options
     themselves are case-insensitive and also singular forms ``KEY`` and
@@ -1084,21 +1086,6 @@ class Collections(_List, _Dictionary):
     in addition to ``ignore_case``. The latter is new in Robot Framework 7.0 and
     should be used unless there is a need to support older versions. The old
     argument is considered deprecated and will eventually be removed.
-
-    = Boolean arguments =
-
-    Some keywords accept arguments that are handled as Boolean values true or
-    false. If such an argument is given as a string, it is considered false if
-    it is an empty string or equal to ``FALSE``, ``NONE``, ``NO``, ``OFF`` or
-    ``0``, case-insensitively. Keywords verifying something that allow dropping
-    actual and expected values from the possible error message also consider
-    string ``no values`` to be false. Other strings are considered true
-    regardless their value, and other argument types are tested using the same
-    [http://docs.python.org/library/stdtypes.html#truth|rules as in Python].
-
-    | `Should Contain Match` | ${list} | ${pattern} | ignore_case=True  |
-    | `Should Contain Match` | ${list} | ${pattern} | ignore_case=False |
-    | `Lists Should Be Equal` | ${list1} | ${list2} | Custom error | no values |
 
     = Data in examples =
 
@@ -1141,7 +1128,7 @@ class Collections(_List, _Dictionary):
         `BuiltIn.Should Match Regexp` for more details.
 
         Matching is case-sensitive by default, but that can be changed by giving
-        the ``ignore_case`` argument a true value (see `Boolean arguments`).
+        the ``ignore_case`` argument a true value.
         This argument is new in Robot Framework 7.0, but with earlier versions
         it is possible to use ``case_insensitive`` for the same purpose.
 
@@ -1319,9 +1306,9 @@ class Normalizer:
 
     def __init__(
         self,
-        ignore_case: "IgnoreKeyCase | IgnoreValueCase | bool" = False,
+        ignore_case: IgnoreCase = False,
         ignore_order: bool = False,
-        ignore_keys: "Sequence[Hashable] | None" = None,
+        ignore_keys: "Sequence[object] | None" = None,
     ):
         if isinstance(ignore_case, str):
             self.ignore_key_case = ignore_case.upper() not in ("VALUE", "VALUES")
@@ -1334,26 +1321,11 @@ class Normalizer:
 
     def _parse_ignored_keys(
         self,
-        ignore_keys: "Sequence[Hashable] | None",
-    ) -> "set[Hashable]":
+        ignore_keys: "Sequence[object] | None",
+    ) -> "set[object]":
         if not ignore_keys:
             return set()
         return {self.normalize_key(k) for k in ignore_keys}
-
-    @overload
-    def normalize(self, value: str) -> str: ...
-
-    @overload
-    def normalize(self, value: Mapping) -> Mapping: ...
-
-    @overload
-    def normalize(self, value: Sequence) -> Sequence: ...
-
-    @overload
-    def normalize(self, value: ListLike) -> ListLike: ...
-
-    @overload
-    def normalize(self, value: object) -> object: ...
 
     def normalize(self, value: Any) -> Any:
         if not self:
@@ -1362,21 +1334,21 @@ class Normalizer:
             return self.normalize_string(value)
         if isinstance(value, Mapping):
             return self.normalize_dict(value)
-        if is_list_like(value):
+        if isinstance(value, Sequence):
             return self.normalize_list(value)
         return value
 
     def normalize_string(self, value: str) -> str:
         return value.casefold() if self.ignore_case else value
 
-    def normalize_list(self, value: ListLike) -> ListLike:
+    def normalize_list(self, value: Sequence) -> Sequence:
         cls = type(value)
         value_list = [self.normalize(v) for v in value]
         if self.ignore_order:
             value_list = sorted(value_list)
         return self._try_to_preserve_type(value_list, cls)
 
-    def _try_to_preserve_type(self, value: Any, cls: "type") -> Any:
+    def _try_to_preserve_type(self, value: Any, cls: type) -> Any:
         # Try to preserve original type. Most importantly, preserve tuples to
         # allow using them as dictionary keys.
         try:
