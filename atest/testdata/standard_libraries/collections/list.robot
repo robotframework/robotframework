@@ -3,7 +3,9 @@ Test Setup        Create Lists for the Tests
 Resource          collections_resources.robot
 
 *** Variables ***
-${INDEX ERROR}          ValueError: Cannot convert index 'index' to an integer.
+${INDEX ERROR}          ValueError: Argument 'index' got value 'not_valid' that cannot be converted to integer.
+${START ERROR}          ValueError: Argument 'start' got value 'not_valid' that cannot be converted to integer
+${END ERROR}            ValueError: Argument 'end' got value 'not_valid' that cannot be converted to integer or None.
 ${LIST OUT OF RANGE}    IndexError: Given index 10 is out of the range 0-2.
 
 *** Test Cases ***
@@ -41,7 +43,7 @@ Insert Into List With Index Under Lists Size
 
 Insert Into List With Invalid Index
     [Documentation]    FAIL ${INDEX ERROR}
-    Insert Into List    ${L3}    index    value
+    Insert Into List    ${L3}    not_valid    value
 
 Combine Lists
     ${combined list} =    Combine Lists    ${L1}    ${L2}
@@ -59,7 +61,7 @@ Set List Value Index Out Of List
 
 Set List Value With Invalid Index
     [Documentation]    FAIL ${INDEX ERROR}
-    Set List Value    ${L3}    index    value
+    Set List Value    ${L3}    not_valid    value
 
 Remove Values From List
     Remove Values From List    ${LONG}    ${42}
@@ -85,7 +87,7 @@ Remove From List Index Out Of List
 
 Remove From List With Invalid Index
     [Documentation]    FAIL ${INDEX ERROR}
-    Remove From List    ${L3}    index
+    Remove From List    ${L3}    not_valid
 
 Remove Duplicates
     ${result} =    Remove Duplicates    ${L3}
@@ -104,12 +106,12 @@ Count Values In List
     Should Be Equal As Integers    ${count}    2
 
 Count Values In List With Invalid Start Index
-    [Documentation]    FAIL ${INDEX ERROR}
-    Count Values In List    ${LONG}    2    index    1
+    [Documentation]    FAIL STARTS: ${START ERROR}
+    Count Values In List    ${LONG}    2    not_valid    1
 
 Count Values In List With Invalid Stop Index
-    [Documentation]    FAIL ${INDEX ERROR}
-    Count Values In List    ${LONG}    2    1    index
+    [Documentation]    FAIL ${END ERROR}
+    Count Values In List    ${LONG}    2    1    not_valid
 
 Get Index From List
     ${position} =    Get Index From List    ${LONG}    ${2}
@@ -126,12 +128,12 @@ Get Index From List With Non Existing Value
     Should Be Equal As Integers    ${position}    -1
 
 Get Index From List With Invalid Start Index
-    [Documentation]    FAIL ${INDEX ERROR}
-    Get Index From List    ${LONG}    2    index    1
+    [Documentation]    FAIL STARTS: ${START ERROR}
+    Get Index From List    ${LONG}    2    not_valid    1
 
 Get Index From List With Invalid Stop Index
-    [Documentation]    FAIL ${INDEX ERROR}
-    Get Index From List    ${LONG}    2    1    index
+    [Documentation]    FAIL ${END ERROR}
+    Get Index From List    ${LONG}    2    1    not_valid
 
 Copy List
     ${copy} =    Copy List    ${L2}
@@ -181,7 +183,7 @@ Get From List
 
 Get From List With Invalid Index
     [Documentation]    FAIL ${INDEX ERROR}
-    Get From List    ${L3}    index
+    Get From List    ${L3}    not_valid
 
 Get From List Out Of List Index
     [Documentation]    FAIL ${LIST OUT OF RANGE}
@@ -198,12 +200,12 @@ Get Slice From List
     Should Be Equal    ${values}    ${L4}
 
 Get Slice From List With Invalid Start Index
-    [Documentation]    FAIL ${INDEX ERROR}
-    Get Slice From List    ${L4}    index    2
+    [Documentation]    FAIL STARTS: ${START ERROR}
+    Get Slice From List    ${L4}    not_valid    2
 
 Get Slice From List With Invalid Stop Index
-    [Documentation]    FAIL ${INDEX ERROR}
-    Get Slice From List    ${L4}    2    index
+    [Documentation]    FAIL ${END ERROR}
+    Get Slice From List    ${L4}    2    not_valid
 
 Get Slice From List With Out Of List Index
     ${values} =    Get Slice From List    ${L3}    10    10
@@ -616,34 +618,35 @@ List Should Not Contain Value, Value Found And Own Error Message Glob
 
 Check List Error
     [Template]    Validate invalid argument error
-    Append to list                        xyz
-    Combine Lists                         I am a string. Not a list.
-    Combine Lists                         ${L0}    I am a string. Not a list.    position=2
-    Combine Lists                         I am a string. Not a list.    ${L0}
-    Copy list
-    Count values in list                  I am a string. Not a list.    xyz
-    Get from list                         I am a string. Not a list.    0
-    Get Index From List                   I am a string. Not a list.    a
-    Get Match Count                       I am a string. Not a list.    abc
-    Get Matches                           I am a string. Not a list.    abc
-    Get slice from list
-    Insert into list                      I am a string. Not a list.    0    a
-    List Should Contain Sub List          I am a string. Not a list.    ${L0}
-    List Should Contain Sub List          ${L0}    I am a string. Not a list.    position=2
-    List should contain value             I am a string. Not a list.    a
-    List Should Not Contain Duplicates    xyz
-    List Should Not Contain Value         I am a string. Not a list.    x
-    Lists Should Be Equal                 I am a string. Not a list.    ${L0}
-    Lists Should Be Equal                 ${L0}    I am a string. Not a list.    position=2
-    Log List
+    VAR    ${invalid_arg}    I am a string. Not a list.
+    Append to list                        xyz                         annotation=Sequence: Invalid expression
+    Combine Lists                         ${invalid_arg}              arg_name=lists
+    Combine Lists                         ${L0}   ${invalid_arg}      arg_name=lists    invalid_argument=${invalid_arg}
+    Combine Lists                         ${invalid_arg}    ${L0}     arg_name=lists
+    Copy list                                                         annotation=Sequence: Invalid expression
+    Count values in list                  ${invalid_arg}    xyz       annotation=Sequence: Invalid expression
+    Get from list                         ${invalid_arg}    0         annotation=Sequence: Invalid expression
+    Get Index From List                   ${invalid_arg}    a         annotation=Sequence: Invalid expression
+    Get Match Count                       ${invalid_arg}    abc       arg_name=list
+    Get Matches                           ${invalid_arg}    abc       arg_name=list
+    Get slice from list                                               annotation=Sequence: Invalid expression
+    Insert into list                      ${invalid_arg}    0    a    annotation=Sequence: Invalid expression
+    List Should Contain Sub List          ${invalid_arg}    ${L0}     arg_name=list1
+    List Should Contain Sub List          ${L0}    ${invalid_arg}     arg_name=list2    invalid_argument=${invalid_arg}
+    List should contain value             ${invalid_arg}    a
+    List Should Not Contain Duplicates    xyz                         annotation=Sequence: Invalid expression
+    List Should Not Contain Value         ${invalid_arg}    x
+    Lists Should Be Equal                 ${invalid_arg}    ${L0}     arg_name=list1
+    Lists Should Be Equal                 ${L0}    ${invalid_arg}     arg_name=list2    invalid_argument=${invalid_arg}
+    Log List                                                          annotation=Sequence: Invalid expression
     Remove Duplicates
-    Remove From List                      I am a string. Not a list.    0
-    Remove Values From List               I am a string. Not a list.    a
-    Reverse List
-    Set List Value                        I am a string. Not a list.    0    a
-    Should Contain Match                  I am a string. Not a list.    a
-    Should Not Contain Match              I am a string. Not a list.    xyz
-    Sort List
+    Remove From List                      ${invalid_arg}    0         annotation=Sequence: Invalid expression
+    Remove Values From List               ${invalid_arg}    a         annotation=Sequence: Invalid expression
+    Reverse List                                                      annotation=Sequence: Invalid expression
+    Set List Value                        ${invalid_arg}    0    a    annotation=Sequence: Invalid expression
+    Should Contain Match                  ${invalid_arg}    a         arg_name=list
+    Should Not Contain Match              ${invalid_arg}    xyz       arg_name=list
+    Sort List                                                         annotation=list: Invalid expression
 
 Lists Should Be Equal With Ignore Case
     [Template]  Lists Should Be Equal
@@ -672,7 +675,7 @@ List Should Not Contain Duplicates With Ignore Case
 List Should Contain Value With Ignore Case And Nested List and Dictionary
     [Setup]    Create Lists For Testing Ignore Case
     List Should Contain Value  ${L4}  value=d    ignore_case=${True}
-    
+
 Lists Should be equal with Ignore Case and Order
     [Setup]    Create Lists For Testing Ignore Case
     [Template]    Lists Should Be Equal
@@ -681,9 +684,12 @@ Lists Should be equal with Ignore Case and Order
 
 *** Keywords ***
 Validate invalid argument error
-    [Arguments]    ${keyword}    ${argument}=I'm not a list, I'm a string.    @{args}    ${type}=string    ${position}=1
+    [Arguments]    ${keyword}    ${argument}=I'm not a list, I'm a string.    @{args}    ${arg_name}=list_    ${annotation}=Sequence, Mapping or set    ${invalid_argument}=${NONE}
+    IF    not $invalid_argument
+        VAR    ${invalid_argument}    ${argument}
+    END
     Run keyword and expect error
-    ...    TypeError: Expected argument ${position} to be a list or list-like, got ${type} instead.
+    ...    ValueError: Argument '${arg_name}' got value '${invalid_argument}' that cannot be converted to ${annotation}.
     ...    ${keyword}    ${argument}    @{args}
 
 Create Lists For The Tests

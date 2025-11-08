@@ -11,6 +11,12 @@ Convert To Dictionary
     Should Be True    type($normal) is dict
     Should Be Equal    ${dotted}    ${normal}
 
+    ${empty_list} =    Create List
+    ${from_empty_list} =    Convert To Dictionary    ${empty_list}
+    Should Be Equal    ${from_empty_list}    ${D0}
+    ${from_tuple_list} =    Convert To Dictionary    ${{[('a', 1), ('b', 2)]}}
+    Should Be Equal    ${from_tuple_list}    ${D2}
+
 Set To Dictionary
     Set To Dictionary    ${D0}    a    ${1}
     Should Be Equal    ${D0}    ${D1}
@@ -142,31 +148,35 @@ Pop From Dictionary With Default
 
 Check invalid dictionary argument errors
     [Template]    Validate invalid argument error
+    VAR    ${invalid_arg}    I'm not a dict, I'm string.
     Copy dictionary
-    Dictionary Should Contain Item             I'm not a dict, I'm string.    a    b
-    Dictionaries Should Be Equal               I'm not a dict, I'm string.    ${D2}
-    Dictionaries Should Be Equal               ${D2}    I'm not a dict, I'm string.    position=2
-    Dictionary Should Contain Key              I'm not a dict, I'm string.    a
-    Dictionary Should Contain Sub Dictionary   I'm not a dict, I'm string.    ${D2}
-    Dictionary Should Contain Sub Dictionary   ${D2}    I'm not a dict, I'm string.    position=2
-    Dictionary Should Contain Value            I'm not a dict, I'm string.    a
-    Dictionary Should Not Contain Key          I'm not a dict, I'm string.    a
-    Dictionary Should Not Contain Value        I'm not a dict, I'm string.    a
+    Dictionary Should Contain Item             ${invalid_arg}    a    b
+    Dictionaries Should Be Equal               ${invalid_arg}    ${D2}    arg_name=dict1
+    Dictionaries Should Be Equal               ${D2}    ${invalid_arg}    arg_name=dict2   invalid_argument=${invalid_arg}
+    Dictionary Should Contain Key              ${invalid_arg}    a
+    Dictionary Should Contain Sub Dictionary   ${invalid_arg}    ${D2}    arg_name=dict1
+    Dictionary Should Contain Sub Dictionary   ${D2}    ${invalid_arg}    arg_name=dict2    invalid_argument=${invalid_arg}
+    Dictionary Should Contain Value            ${invalid_arg}    a
+    Dictionary Should Not Contain Key          ${invalid_arg}    a
+    Dictionary Should Not Contain Value        ${invalid_arg}    a
     Get Dictionary Items
     Get Dictionary Keys
     Get Dictionary Values
-    Get from dictionary                        I'm not a dict, I'm string.    a
-    Keep in dictionary                         I'm not a dict, I'm string.    a
+    Get from dictionary                        ${invalid_arg}    a
+    Keep in dictionary                         ${invalid_arg}    a
     Log Dictionary
-    Pop From Dictionary                        I'm not a dict, I'm string.    a
-    Remove From Dictionary                     I'm not a dict, I'm string.    a
-    Set To Dictionary                          I'm not a dict, I'm string.    a    b
+    Pop From Dictionary                        ${invalid_arg}    a
+    Remove From Dictionary                     ${invalid_arg}    a
+    Set To Dictionary                          ${invalid_arg}    a    b
 
 *** Keywords ***
 Validate invalid argument error
-    [Arguments]  ${keyword}    ${argument}=I'm not a dict, I'm a string.    @{args}    ${type}=string    ${position}=1
+    [Arguments]  ${keyword}    ${argument}=I'm not a dict, I'm a string.    @{args}    ${arg_name}=dictionary    ${annotation}=Mapping    ${invalid_argument}=${NONE}
+    IF    not $invalid_argument
+        VAR    ${invalid_argument}    ${argument}
+    END
     Run keyword and expect error
-    ...    TypeError: Expected argument ${position} to be a dictionary, got ${type} instead.
+    ...    ValueError: Argument '${arg_name}' got value '${invalid_argument}' that cannot be converted to ${annotation}: Invalid expression.
     ...    ${keyword}    ${argument}    @{args}
 
 Create Dictionaries For Testing
