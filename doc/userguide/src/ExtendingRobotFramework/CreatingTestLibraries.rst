@@ -1674,6 +1674,7 @@ in the `value` attribute so keywords can access it easily:
 
 .. sourcecode:: python
 
+   from example import SUT
    from robot.api.types import Secret
 
 
@@ -1693,6 +1694,29 @@ using `variable type conversion`_ and, for example, `environment variables`_:
     *** Test Cases ***
     Example
         Login to SUT    ${USER}    ${TOKEN}
+
+Keywords can also accept `Secret` objects in addition to strings by using
+the union syntax like `str | Secret`:
+
+.. sourcecode:: python
+
+   from example import SUT
+   from robot.api import logger
+   from robot.api.types import Secret
+
+
+   def input_password(password: str | Secret):
+        logger.debug(f"Typing password: {password}")
+        if isinstance(password, Secret):
+            password = password.value
+        SUT.input_password(password)
+
+In this kind of cases it is important to not log or otherwise disclose actual
+secret values. The string representation of `Secret` objects is always
+`<secret>` and thus logging `f"Typing password: {password}"` in the above
+example is safe, but logging it at the end of the example would not be.
+The `repr()` of `Secret` objects is `Secret(value=<secret>)` so the real
+value is not shown in that string representation either.
 
 Using the `Secret` type in complex type hints works similarly as with other types.
 The following example is similar to the example above, but uses a `TypedDict`_
