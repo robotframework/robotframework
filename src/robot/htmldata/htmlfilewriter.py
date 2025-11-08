@@ -52,10 +52,10 @@ class HtmlFileWriter:
 
 
 class Writer(ABC):
-    handles_line = None
+    handles_lines: "str | tuple[str, ...]" = ()
 
-    def handles(self, line: str):
-        return line.startswith(self.handles_line)
+    def handles(self, line: str) -> bool:
+        return line.strip().startswith(self.handles_lines)
 
     @abstractmethod
     def write(self, line: str):
@@ -63,10 +63,7 @@ class Writer(ABC):
 
 
 class ModelWriter(Writer, ABC):
-    handles_line = "<!-- JS MODEL -->"
-
-    def handles(self, line: str):
-        return line.strip().startswith(self.handles_line)
+    handles_lines = "<!-- JS MODEL -->"
 
 
 class LineWriter(Writer):
@@ -74,7 +71,7 @@ class LineWriter(Writer):
     def __init__(self, output: TextIOBase):
         self.output = output
 
-    def handles(self, line: str):
+    def handles(self, line: str) -> bool:
         return True
 
     def write(self, line: str):
@@ -91,9 +88,6 @@ class GeneratorWriter(Writer):
         version = get_full_version("Robot Framework")
         self.writer.start("meta", {"name": "Generator", "content": version})
 
-    def handles(self, line: str):
-        return any(line.strip().startswith(prefix) for prefix in self.handles_lines)
-
 
 class InliningWriter(Writer, ABC):
 
@@ -109,7 +103,7 @@ class InliningWriter(Writer, ABC):
 
 
 class JsFileWriter(InliningWriter):
-    handles_line = '<script type="text/javascript" src='
+    handles_lines = '<script type="text/javascript" src='
 
     def write(self, line: str):
         src = re.search('src="([^"]+)"', line).group(1)
@@ -117,7 +111,7 @@ class JsFileWriter(InliningWriter):
 
 
 class CssFileWriter(InliningWriter):
-    handles_line = '<link rel="stylesheet"'
+    handles_lines = '<link rel="stylesheet"'
 
     def write(self, line: str):
         href, media = re.search('href="([^"]+)" media="([^"]+)"', line).groups()
