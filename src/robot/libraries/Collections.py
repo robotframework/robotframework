@@ -883,7 +883,7 @@ class _Dictionary:
         dict2: Mapping,
         msg: "str | None" = None,
         values: bool = True,
-        ignore_keys: "Sequence[object] | None" = None,
+        ignore_keys: "Sequence | None" = None,
         ignore_case: IgnoreCase = False,
         ignore_value_order: bool = False,
     ):
@@ -1308,7 +1308,7 @@ class Normalizer:
         self,
         ignore_case: IgnoreCase = False,
         ignore_order: bool = False,
-        ignore_keys: "Sequence[object] | None" = None,
+        ignore_keys: "Sequence | None" = None,
     ):
         if isinstance(ignore_case, str):
             self.ignore_key_case = ignore_case.upper() not in ("VALUE", "VALUES")
@@ -1319,10 +1319,7 @@ class Normalizer:
         self.ignore_order = ignore_order
         self.ignore_keys = self._parse_ignored_keys(ignore_keys)
 
-    def _parse_ignored_keys(
-        self,
-        ignore_keys: "Sequence[object] | None",
-    ) -> "set[object]":
+    def _parse_ignored_keys(self, ignore_keys: "Sequence | None") -> set:
         if not ignore_keys:
             return set()
         return {self.normalize_key(k) for k in ignore_keys}
