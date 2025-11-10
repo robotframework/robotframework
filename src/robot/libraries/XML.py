@@ -16,13 +16,15 @@
 import copy
 import os
 import re
+from io import BufferedWriter, BytesIO
+from pathlib import Path
 from typing import Iterator, Literal, NoReturn, overload, Protocol, Union
 from xml.etree import ElementTree as ET
 
 try:
     from lxml import etree as lxml_etree
 except ImportError:
-    lxml_etree: "LxmlProtocol | None" = None
+    lxml_etree = None
 else:
     # `lxml.etree._Attrib` doesn't extend `Mapping` and thus our `is_dict_like`
     # doesn't recognize it unless we register it ourselves. Fixed in lxml 4.9.2:
@@ -31,7 +33,7 @@ else:
 
     Attrib = getattr(lxml_etree, "_Attrib", None)
     if Attrib and not isinstance(Attrib, MutableMapping):
-        MutableMapping.register(Attrib)
+        MutableMapping.register(Attrib)  # type: ignore
     del Attrib, MutableMapping
 
 from robot.api import logger
@@ -42,8 +44,7 @@ from robot.version import get_version
 should_be_equal = asserts.assert_equal
 should_match = BuiltIn().should_match
 
-# TODO: should bytes be in here?
-Unparsed = Union[os.PathLike, bytes, str]
+Unparsed = Union[BytesIO, bytes, bytearray, Path, str]
 
 
 class Element(Protocol):
@@ -59,37 +60,49 @@ class Element(Protocol):
     @property
     def attrib(self) -> "dict[bytes | str, bytes | str]": ...
 
+    def append(self, subelement: "Element"): ...
+
+    def clear(self): ...
+
     def get(
-        self, key: "bytes | str", default: "None | bytes | str" = None
-    ) -> "None | bytes | str": ...
+        self, key: "bytes | str", default: object = None
+    ) -> object: ...
+
+    def remove(self, subelement: "Element"): ...
+
+    def insert(self, index: int, subelement: "Element"): ...
 
     def __iter__(self) -> "Iterator[Element]": ...
 
+    def __len__(self) -> int: ...
 
-class CommentProtocol(Protocol): ...
+    def __delitem__(self, index: int): ...
 
+    def __getitem__(self, index: int) -> "Element": ...
 
-class ElementProtocol(Protocol): ...
-
-
-class InstructionProtocol(Protocol): ...
-
-
-class ETXPathProtocol(Protocol):
-    def __init__(xpath: str): ...
-
-    def __call__(elem: Element) -> "list[Element]": ...
+    def __setitem__(self, index: int, element: "Element"): ...
 
 
-class LxmlProtocol(Protocol):
+class ElemTree(Protocol):
+    def getroot(self) -> Element: ...
+
+    def write(
+        self,
+        file: BufferedWriter,
+        encoding="us-ascii",
+        xml_declaration=None,
+        default_namespace=None,
+        method="xml",
+        short_empty_elements=True,
+    ): ...
+
+
+class EtreeProtocol(Protocol):
     @staticmethod
-    def cleanup_namespaces() -> None: ...
+    def parse(source: Unparsed, parser=None) -> ElemTree: ...
 
-    @staticmethod
-    def parse(source, parser=None) -> ET.ElementTree: ...
-
-    @staticmethod
-    def strip_elements() -> None: ...
+    class ElementTree(ElemTree):
+        def __init__(self, element: "Element | None" = None, file=None): ...
 
     @staticmethod
     @overload
@@ -122,30 +135,6 @@ class LxmlProtocol(Protocol):
         default_namespace: "None | str" = None,
         short_empty_elements: bool = True,
     ) -> "bytes | str": ...
-
-    class Comment(CommentProtocol): ...
-
-    class ElementTree(ElementProtocol):
-        @property
-        def docinfo() -> None: ...
-
-        @staticmethod
-        def write() -> None: ...
-
-    class ProcessingInstruction(InstructionProtocol): ...
-
-    class ETXPath(ETXPathProtocol): ...
-
-
-class EtProtocol(LxmlProtocol):
-    @staticmethod
-    def strip_elements() -> None: ...
-
-    @staticmethod
-    def write() -> None: ...
-
-    @property
-    def docinfo() -> None: ...
 
 
 class XML:
@@ -570,11 +559,11 @@ class XML:
         emits a warning and reverts back to using the standard ElementTree.
         """
         if use_lxml and lxml_etree:
-            self.etree: "EtProtocol | LxmlProtocol" = lxml_etree
+            self.etree: EtreeProtocol = lxml_etree  # type: ignore
             self.modern_etree = True
             self.lxml_etree = True
         else:
-            self.etree = ET
+            self.etree = ET  # type: ignore
             self.modern_etree = ET.VERSION >= "1.3"
             self.lxml_etree = False
         if use_lxml and not lxml_etree:
@@ -589,7 +578,7 @@ class XML:
         source: Unparsed,
         keep_clark_notation: bool = False,
         strip_namespaces: bool = False,
-    ) -> "Element | None":
+    ) -> Element:
         """Parses the given XML file or string into an element structure.
 
         The ``source`` can either be a path to an XML file or a string
@@ -625,8 +614,8 @@ class XML:
         with ETSource(source) as source:
             tree = self.etree.parse(source)
         if self.lxml_etree:
-            strip = (lxml_etree.Comment, lxml_etree.ProcessingInstruction)
-            lxml_etree.strip_elements(tree, *strip, with_tail=False)
+            strip = (lxml_etree.Comment, lxml_etree.ProcessingInstruction)  # type: ignore
+            lxml_etree.strip_elements(tree, *strip, with_tail=False)  # type: ignore
         root = tree.getroot()
         if not keep_clark_notation:
             self._ns_stripper.strip(root, preserve=not strip_namespaces)
@@ -694,7 +683,7 @@ class XML:
         | ${children} =    | Get Elements | ${XML} | first/child |
         | Should Be Empty  |  ${children} |        |             |
         """
-        if isinstance(source, (str, bytes, os.PathLike)):
+        if isinstance(source, (str, bytes, bytearray, os.PathLike, Path, BytesIO)):
             source = self.parse_xml(source)
         finder = ElementFinder(self.etree, self.modern_etree, self.lxml_etree)
         return finder.find_all(source, xpath)
@@ -916,7 +905,7 @@ class XML:
         name: "bytes | str",
         xpath: str = ".",
         default: object = None,
-    ) -> "None | bytes | str":
+    ) -> object:
         """Returns the named attribute of the specified element.
 
         The element whose attribute to return is specified using ``source`` and
@@ -1676,7 +1665,7 @@ class XML:
 
 class NameSpaceStripper:
 
-    def __init__(self, etree: "EtProtocol | LxmlProtocol", lxml_etree: bool = False):
+    def __init__(self, etree: EtreeProtocol, lxml_etree: bool = False):
         self.etree = etree
         self.lxml_tree = lxml_etree
 
@@ -1717,7 +1706,7 @@ class ElementFinder:
 
     def __init__(
         self,
-        etree: "EtProtocol | LxmlProtocol",
+        etree: EtreeProtocol,
         modern: bool = True,
         lxml: bool = False,
     ):
@@ -1805,8 +1794,8 @@ class ElementComparator:
 
     def _compare(
         self,
-        actual: Element,
-        expected: Element,
+        actual: object,
+        expected: object,
         message,
         location: Location,
         comparator=None,
