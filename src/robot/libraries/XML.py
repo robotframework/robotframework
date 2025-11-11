@@ -114,7 +114,7 @@ class EtreeModuleProtocol(Protocol):
     ElementTree: ElementTreeModuleProxy
 
     @staticmethod
-    def parse(source: Unparsed, parser=None) -> ElementTreeClass: ...
+    def parse(source: "BytesIO | os.PathLike", parser=None) -> ElementTreeClass: ...
 
     @staticmethod
     @overload
@@ -623,8 +623,8 @@ class XML:
         """
         if isinstance(source, os.PathLike):
             source = str(source)
-        with ETSource(source) as source:
-            tree = self.etree.parse(source)
+        with ETSource(source) as source_:
+            tree = self.etree.parse(source_)
         if self.lxml_etree:
             strip = (lxml_etree.Comment, lxml_etree.ProcessingInstruction)  # type: ignore
             lxml_etree.strip_elements(tree, *strip, with_tail=False)  # type: ignore
@@ -695,7 +695,7 @@ class XML:
         | ${children} =    | Get Elements | ${XML} | first/child |
         | Should Be Empty  |  ${children} |        |             |
         """
-        if isinstance(source, (str, bytes, bytearray, os.PathLike, Path, BytesIO)):
+        if isinstance(source, (str, bytes, bytearray, Path, BytesIO)):
             source = self.parse_xml(source)
         finder = ElementFinder(self.etree, self.modern_etree, self.lxml_etree)
         return finder.find_all(source, xpath)
@@ -1603,7 +1603,7 @@ class XML:
     def save_xml(
         self,
         source: "Element | Unparsed",
-        path: "os.PathLike | str",
+        path: "Path | bytes | str",
         encoding: str = "UTF-8",
     ):
         """Saves the given element to the specified file.

@@ -15,22 +15,22 @@
 
 import re
 from io import BytesIO
-from os import fsdecode
+from os import fsdecode, PathLike
 from pathlib import Path
 
 
 class ETSource:
 
     def __init__(self, source):
-        self._source: "bytes | bytearray | Path | str" = source
+        self._source: "BytesIO | bytes | bytearray | Path | str" = source
         self._opened: "BytesIO | None" = None
 
-    def __enter__(self):
+    def __enter__(self) -> "BytesIO | PathLike":
         self._opened = self._open_if_necessary(self._source)
         return self._opened or self._source
 
     def _open_if_necessary(
-        self, source: "bytes | bytearray | Path | str"
+        self, source: "BytesIO | bytes | bytearray | Path | str"
     ) -> "BytesIO | None":
         if self._is_path(source) or self._is_already_open(source):
             return None
