@@ -48,29 +48,29 @@ Unparsed = Union[BytesIO, bytes, bytearray, Path, str]
 
 
 class Element(Protocol):
-    @property
-    def tag(self) -> "bytes | str": ...
+    tag: "bytes | str"
 
-    @property
-    def text(self) -> "None | str": ...
+    text: "None | str"
 
-    @property
-    def tail(self) -> "None | str": ...
+    tail: "None | str"
 
-    @property
-    def attrib(self) -> "dict[bytes | str, bytes | str]": ...
+    attrib: "dict[bytes | str, bytes | str]"
 
     def append(self, subelement: "Element"): ...
 
     def clear(self): ...
 
-    def get(
-        self, key: "bytes | str", default: object = None
-    ) -> object: ...
+    def findall(
+        self, path: "bytes | str", namespaces: "None | bytes | str" = None
+    ) -> "list[Element]": ...
 
-    def remove(self, subelement: "Element"): ...
+    def get(self, key: "bytes | str", default: object = None) -> object: ...
 
     def insert(self, index: int, subelement: "Element"): ...
+
+    def iter(self, tag: "None | str" = None) -> "Iterator[Element]": ...
+
+    def remove(self, subelement: "Element"): ...
 
     def __iter__(self) -> "Iterator[Element]": ...
 
@@ -80,10 +80,18 @@ class Element(Protocol):
 
     def __getitem__(self, index: int) -> "Element": ...
 
+    @overload
     def __setitem__(self, index: int, element: "Element"): ...
 
+    @overload
+    def __setitem__(self, index: slice, element: "list[Element]"): ...
 
-class ElemTree(Protocol):
+    def __setitem__(self, index: "int | slice", element: "Element | list[Element]"): ...
+
+
+class ElementTreeClass(Protocol):
+    def __init__(self, element: "Element | None" = None, file=None): ...
+
     def getroot(self) -> Element: ...
 
     def write(
@@ -97,12 +105,16 @@ class ElemTree(Protocol):
     ): ...
 
 
-class EtreeProtocol(Protocol):
+class ElementTreeModuleProxy(Protocol):
     @staticmethod
-    def parse(source: Unparsed, parser=None) -> ElemTree: ...
+    def __call__(element: "Element | None" = None, file=None) -> ElementTreeClass: ...
 
-    class ElementTree(ElemTree):
-        def __init__(self, element: "Element | None" = None, file=None): ...
+
+class EtreeModuleProtocol(Protocol):
+    ElementTree: ElementTreeModuleProxy
+
+    @staticmethod
+    def parse(source: Unparsed, parser=None) -> ElementTreeClass: ...
 
     @staticmethod
     @overload
@@ -559,7 +571,7 @@ class XML:
         emits a warning and reverts back to using the standard ElementTree.
         """
         if use_lxml and lxml_etree:
-            self.etree: EtreeProtocol = lxml_etree  # type: ignore
+            self.etree: EtreeModuleProtocol = lxml_etree  # type: ignore
             self.modern_etree = True
             self.lxml_etree = True
         else:
@@ -1624,14 +1636,14 @@ class XML:
         if self.lxml_etree:
             elem = self._ns_stripper.unstrip(elem)
             # https://bugs.launchpad.net/lxml/+bug/1660433
-            if tree.docinfo.doctype:
-                config["doctype"] = tree.docinfo.doctype
+            if tree.docinfo.doctype:  # type: ignore
+                config["doctype"] = tree.docinfo.doctype  # type: ignore
             tree = self.etree.ElementTree(elem)
         with open(path, "wb") as output:
             if "doctype" in config:
-                output.write(self.etree.tostring(tree, **config))
+                output.write(self.etree.tostring(tree, **config))  # type: ignore
             else:
-                tree.write(output, **config)
+                tree.write(output, **config)  # type: ignore
         logger.info(f'XML saved to <a href="file://{path}">{path}</a>.', html=True)
 
     def evaluate_xpath(
@@ -1660,12 +1672,12 @@ class XML:
         """
         if not self.lxml_etree:
             raise RuntimeError("'Evaluate Xpath' keyword only works in lxml mode.")
-        return self.get_element(source, context).xpath(expression)
+        return self.get_element(source, context).xpath(expression)  # type: ignore
 
 
 class NameSpaceStripper:
 
-    def __init__(self, etree: EtreeProtocol, lxml_etree: bool = False):
+    def __init__(self, etree: EtreeModuleProtocol, lxml_etree: bool = False):
         self.etree = etree
         self.lxml_tree = lxml_etree
 
@@ -1673,7 +1685,7 @@ class NameSpaceStripper:
         self,
         elem: Element,
         preserve: bool = True,
-        current_ns: "None | str" = None,
+        current_ns: "None | bytes | str" = None,
         top: bool = True,
     ):
         if elem.tag.startswith("{") and "}" in elem.tag:
@@ -1687,10 +1699,13 @@ class NameSpaceStripper:
         for child in elem:
             self.strip(child, preserve, current_ns, top=False)
         if top and not preserve and self.lxml_tree:
-            self.etree.cleanup_namespaces(elem)
+            self.etree.cleanup_namespaces(elem)  # type: ignore
 
     def unstrip(
-        self, elem: Element, current_ns: "None | str" = None, copied: bool = False
+        self,
+        elem: Element,
+        current_ns: "None | bytes | str" = None,
+        copied: bool = False,
     ) -> Element:
         if not copied:
             elem = copy.deepcopy(elem)
@@ -1706,7 +1721,7 @@ class ElementFinder:
 
     def __init__(
         self,
-        etree: EtreeProtocol,
+        etree: EtreeModuleProtocol,
         modern: bool = True,
         lxml: bool = False,
     ):
@@ -1720,7 +1735,7 @@ class ElementFinder:
             return [elem]
         if not self.lxml:
             return elem.findall(xpath)
-        finder = self.etree.ETXPath(xpath)
+        finder = self.etree.ETXPath(xpath)  # type: ignore
         return finder(elem)
 
     def _get_xpath(self, xpath: str) -> str:
