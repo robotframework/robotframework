@@ -1631,7 +1631,7 @@ class XML:
         )
         elem = self.get_element(source)
         tree = self.etree.ElementTree(elem)
-        config: dict[str, object] = {"encoding": encoding}
+        config: "dict[str, object]" = {"encoding": encoding}
         if self.modern_etree:
             config["xml_declaration"] = True
         if self.lxml_etree:
@@ -1761,7 +1761,7 @@ class Location:
     def __init__(self, path: "bytes | str", is_root: bool = True):
         self.path = path
         self.is_not_root = not is_root
-        self.children = {}
+        self.children: "dict[bytes | str, int]" = {}
 
     def child(self, tag: "bytes | str") -> "Location":
         if tag not in self.children:
