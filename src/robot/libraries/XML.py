@@ -1285,7 +1285,11 @@ class XML:
         return source
 
     def set_elements_attribute(
-        self, source: Source, name: str, value: str, xpath: str = "."
+        self,
+        source: Source,
+        name: "bytes | str",
+        value: "bytes | str",
+        xpath: str = ".",
     ) -> Element:
         """Sets attribute ``name`` of the specified elements to ``value``.
 
@@ -1298,7 +1302,7 @@ class XML:
         return source
 
     def remove_element_attribute(
-        self, source: Source, name: str, xpath: str = "."
+        self, source: Source, name: "bytes | str", xpath: str = "."
     ) -> Element:
         """Removes attribute ``name`` from the specified element.
 
@@ -1325,7 +1329,7 @@ class XML:
         return source
 
     def remove_elements_attribute(
-        self, source: Source, name: str, xpath: str = "."
+        self, source: Source, name: "bytes | str", xpath: str = "."
     ) -> Element:
         """Removes attribute ``name`` from the specified elements.
 
