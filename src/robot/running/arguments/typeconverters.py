@@ -472,7 +472,7 @@ class NoneConverter(TypeConverter):
         return type_info.type in (NoneType, None)
 
     def _convert(self, value):
-        if value.upper() == "NONE":
+        if value.upper() in ("NONE", ""):
             return None
         raise ValueError
 

@@ -1388,8 +1388,11 @@ Other types cause conversion failures.
    |              |               |            |              |                                                                |                                      |
    |              |               |            |              | New in Robot Framework 7.0.                                    |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | None_        |               |            | str_         | String `NONE` (case-insensitive) is converted to the Python    | | `None`                             |
-   |              |               |            |              | `None` object. Other values cause an error.                    |                                      |
+   | None_        |               |            | str_         | String `NONE` (case-insensitive) and the empty string are      | | `None`                             |
+   |              |               |            |              | converted to the Python `None` object. Other values cause      |                                      |
+   |              |               |            |              | an error.                                                      |                                      |
+   |              |               |            |              |                                                                |                                      |
+   |              |               |            |              | Converting the empty string is new in Robot Framework 7.4.     |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | Any_         |               |            | Anything     | Any value is accepted. No conversion is done.                  |                                      |
    |              |               |            |              |                                                                |                                      |

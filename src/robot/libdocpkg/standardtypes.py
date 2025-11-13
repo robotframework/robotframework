@@ -135,8 +135,10 @@ On Windows ``/`` is converted to ``\\`` automatically.
 Examples: ``/tmp/absolute/path``, ``relative/path/to/file.ext``, ``name.txt``
 """,
     NoneType: """\
-String ``NONE`` (case-insensitive) is converted to Python ``None`` object.
-Other values cause an error.
+String ``NONE`` (case-insensitive) and the empty string are converted to
+the Python ``None`` object. Other values cause an error.
+
+Converting the empty string is new in Robot Framework 7.4.
 """,
     Sequence: """\
 Strings must be Python [https://docs.python.org/library/stdtypes.html#list|list]

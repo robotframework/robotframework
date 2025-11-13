@@ -126,10 +126,13 @@ Invalid Enum
 Invalid IntEnum
     Check Test Case    ${TESTNAME}
 
+None
+    Check Test Case    ${TESTNAME}
+
 NoneType
     Check Test Case    ${TESTNAME}
 
-Invalid NoneType
+Invalid None
     Check Test Case    ${TESTNAME}
 
 List
@@ -226,6 +229,9 @@ None as default with known type
     Check Test Case    ${TESTNAME}
 
 None as default with unknown type
+    Check Test Case    ${TESTNAME}
+
+Empty string is not converted to None based on default
     Check Test Case    ${TESTNAME}
 
 Forward references

@@ -219,6 +219,7 @@ Invalid enum
 None
     None                 None                      None
     None                 NONE                      None
+    None                 ${EMPTY}                  ''
     None                 Hello, world!             'Hello, world!'
     None                 True                      'True'
     None                 []                        '[]'
