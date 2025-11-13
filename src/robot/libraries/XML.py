@@ -18,7 +18,9 @@ import os
 import re
 from io import BufferedWriter, BytesIO
 from pathlib import Path
-from typing import Any, Iterator, Literal, NoReturn, overload, Protocol, Union
+from typing import (
+    Any, Iterator, Literal, NoReturn, overload, Protocol, runtime_checkable, Union
+)
 from xml.etree import ElementTree as ET
 
 try:
@@ -45,6 +47,7 @@ should_be_equal = asserts.assert_equal
 should_match = BuiltIn().should_match
 
 
+@runtime_checkable
 class Element(Protocol):
     tag: "bytes | str"
 
@@ -702,9 +705,7 @@ class XML:
         finder = ElementFinder(self.etree, self.modern_etree, self.lxml_etree)
         return finder.find_all(source, xpath)
 
-    def get_child_elements(
-        self, source: Source, xpath: str = "."
-    ) -> "list[Element]":
+    def get_child_elements(self, source: Source, xpath: str = ".") -> "list[Element]":
         """Returns the child elements of the specified element as a list.
 
         The element whose children to return is specified using ``source`` and
@@ -1159,9 +1160,7 @@ class XML:
         for child, tail in zip(element, tails):
             child.tail = tail
 
-    def set_element_tag(
-        self, source: Source, tag: str, xpath: str = "."
-    ) -> Element:
+    def set_element_tag(self, source: Source, tag: str, xpath: str = ".") -> Element:
         """Sets the tag of the specified element.
 
         The element whose tag to set is specified using ``source`` and
@@ -1183,9 +1182,7 @@ class XML:
         self.get_element(source, xpath).tag = tag
         return source
 
-    def set_elements_tag(
-        self, source: Source, tag: str, xpath: str = "."
-    ) -> Element:
+    def set_elements_tag(self, source: Source, tag: str, xpath: str = ".") -> Element:
         """Sets the tag of the specified elements.
 
         Like `Set Element Tag` but sets the tag of all elements matching
@@ -1336,9 +1333,7 @@ class XML:
             self.remove_element_attribute(elem, name)
         return source
 
-    def remove_element_attributes(
-        self, source: Source, xpath: str = "."
-    ) -> Element:
+    def remove_element_attributes(self, source: Source, xpath: str = ".") -> Element:
         """Removes all attributes from the specified element.
 
         The element whose attributes to remove is specified using ``source`` and
@@ -1360,9 +1355,7 @@ class XML:
         self.get_element(source, xpath).attrib.clear()
         return source
 
-    def remove_elements_attributes(
-        self, source: Source, xpath: str = "."
-    ) -> Element:
+    def remove_elements_attributes(self, source: Source, xpath: str = ".") -> Element:
         """Removes all attributes from the specified elements.
 
         Like `Remove Element Attributes` but removes all attributes of all
@@ -1556,9 +1549,7 @@ class XML:
     ) -> str: ...
 
     @overload
-    def element_to_string(
-        self, source: Source, xpath: str, encoding: str
-    ) -> bytes: ...
+    def element_to_string(self, source: Source, xpath: str, encoding: str) -> bytes: ...
 
     def element_to_string(
         self,
