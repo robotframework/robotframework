@@ -1408,7 +1408,7 @@ Other types cause conversion failures.
    |              |               |            |              | converted using the `ast.literal_eval`_ function and possible  |                                      |
    |              |               |            |              | tuples converted further to lists.                             |                                      |
    |              |               |            |              | They can contain any values `ast.literal_eval` supports,       |                                      |
-   |              |               |            |              | including lists and other containers.                          |                                      |
+   |              |               |            |              | including lists and other collections.                         |                                      |
    |              |               |            |              |                                                                |                                      |
    |              |               |            |              | If the argument is a list, it is used without conversion.      |                                      |
    |              |               |            |              | Tuples and other sequences are converted to lists.             |                                      |
@@ -1426,20 +1426,20 @@ Other types cause conversion failures.
    |              |               |            |              | If the used type is MutableSequence_, immutable values are     |                                      |
    |              |               |            |              | converted to lists.                                            |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | set_         | `Set          |            | str_,        | Same as `list`, but also container objects and set literals    | | `{1, 2, 3, 42}`                    |
-   |              | <abc.Set_>`__ |            | Container_   | are supported and the result is set_.                          | | `set()` (an empty set)             |
+   | set_         | `Set          |            | str_,        | Same as `list`, but also collection objects and set literals   | | `{1, 2, 3, 42}`                    |
+   |              | <abc.Set_>`__ |            | Collection_  | are supported and the result is set_.                          | | `set()` (an empty set)             |
    |              |               |            |              |                                                                |                                      |
    |              |               |            |              | Prior to Robot Framework 7.4, only set literals were supported.|                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | frozenset_   |               |            | str_,        | Same as `set`, but the result is a frozenset_.                 | | `{1, 2, 3, 42}`                    |
-   |              |               |            | Container_   |                                                                | | `frozenset()` (an empty set)       |
+   |              |               |            | Collection_  |                                                                | | `frozenset()` (an empty set)       |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | dict_        |               | dictionary | str_,        | Converts strings and mappings to `dict`.                       | | `{'a': 1, 'b': 2}`                 |
    |              |               |            | Mapping_     |                                                                | | `{'key': 1, 'nested': {'key': 2}}` |
    |              |               |            |              | Strings must be Python dictionary literals. They are converted |                                      |
    |              |               |            |              | to `dict` using the `ast.literal_eval`_ function.              |                                      |
    |              |               |            |              | They can contain any values `ast.literal_eval` supports,       |                                      |
-   |              |               |            |              | including dictionaries and other containers.                   |                                      |
+   |              |               |            |              | including dictionaries and other collections.                  |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | Mapping_     |               | map        | str_,        | Same as `dict`, but the original mapping type is preserved.    |                                      |
    |              |               |            | Mapping_     |                                                                |                                      |
@@ -1504,7 +1504,7 @@ Other types cause conversion failures.
 .. _frozenset: https://docs.python.org/library/stdtypes.html#frozenset
 .. _TypedDict: https://docs.python.org/library/typing.html#typing.TypedDict
 .. _Secret: https://robot-framework.readthedocs.io/en/master/autodoc/robot.utils.html#robot.utils.secret.Secret
-.. _Container: https://docs.python.org/library/collections.abc.html#collections.abc.Container
+.. _Collection: https://docs.python.org/library/collections.abc.html#collections.abc.Collection
 .. _typing: https://docs.python.org/library/typing.html
 .. _ISO 8601: https://en.wikipedia.org/wiki/ISO_8601
 .. _ast.literal_eval: https://docs.python.org/library/ast.html#ast.literal_eval

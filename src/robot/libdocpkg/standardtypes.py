@@ -146,7 +146,7 @@ or [https://docs.python.org/library/stdtypes.html#tuple|tuple] literals.
 They are converted to actual lists or tuples using the
 [https://docs.python.org/library/ast.html#ast.literal_eval|ast.literal_eval]
 function. They can contain any values ``ast.literal_eval`` supports, including
-lists and other containers.
+lists and other collections.
 
 Any sequence is accepted without conversion. An exception is that if the used
 type is ``MutableSequence``, immutable values are converted to lists.
@@ -165,7 +165,7 @@ or [https://docs.python.org/library/stdtypes.html#tuple|tuple] literals.
 They are converted using the
 [https://docs.python.org/library/ast.html#ast.literal_eval|ast.literal_eval]
 function and possible tuples converted further to lists. They can contain any
-values ``ast.literal_eval`` supports, including lists and other containers.
+values ``ast.literal_eval`` supports, including lists and other collections.
 
 If the argument is a list, it is used without conversion.
 Tuples and other sequences are converted to lists.
@@ -184,7 +184,7 @@ or [https://docs.python.org/library/stdtypes.html#list|list] literals.
 They are converted using the
 [https://docs.python.org/library/ast.html#ast.literal_eval|ast.literal_eval]
 function and possible lists converted further to tuples. They can contain any
-values ``ast.literal_eval`` supports, including tuples and other containers.
+values ``ast.literal_eval`` supports, including tuples and other collections.
 
 If the argument is a tuple, it is used without conversion.
 Lists and other sequences are converted to tuples.
@@ -202,7 +202,7 @@ Strings must be Python [https://docs.python.org/library/stdtypes.html#dict|dicti
 literals. They are converted to actual dictionaries using the
 [https://docs.python.org/library/ast.html#ast.literal_eval|ast.literal_eval]
 function. They can contain any values ``ast.literal_eval`` supports, including
-dictionaries and other containers.
+dictionaries and other collections.
 
 Any mapping is accepted without conversion. An exception is that if the type
 is ``MutableMapping``, immutable values are converted to ``dict``.
@@ -217,7 +217,7 @@ Strings must be Python [https://docs.python.org/library/stdtypes.html#dict|dicti
 literals. They are converted to actual dictionaries using the
 [https://docs.python.org/library/ast.html#ast.literal_eval|ast.literal_eval]
 function. They can contain any values ``ast.literal_eval`` supports, including
-dictionaries and other containers.
+dictionaries and other collections.
 
 Any mapping is accepted and converted to a ``dict``.
 
@@ -236,7 +236,7 @@ function and possible lists and tuples converted further to sets. They can
 contain any values ``ast.literal_eval`` supports.
 
 If the argument is a set, it is used without conversion.
-Lists and other container objects are converted to sets.
+Lists and other collection objects are converted to sets.
 
 If the type has nested types like ``set[int]``, items are converted
 to those types automatically.
@@ -256,7 +256,7 @@ function and then converted further to ``frozenset``. They can
 contain any values ``ast.literal_eval`` supports.
 
 If the argument is a frozenset, it is used without conversion.
-Lists and other container objects are converted to frozensets.
+Lists and other collection objects are converted to frozensets.
 
 If the type has nested types like ``frozenset[int]``, items are converted
 to those types automatically.

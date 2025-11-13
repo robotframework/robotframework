@@ -15,7 +15,7 @@
 
 from ast import literal_eval
 from collections import OrderedDict
-from collections.abc import Container, Mapping, Sequence, Set
+from collections.abc import Collection, Mapping, Sequence, Set
 from datetime import date, datetime, timedelta
 from decimal import Decimal, InvalidOperation
 from enum import Enum
@@ -724,7 +724,7 @@ class SetConverter(TypeConverter):
     type = set
     abc = Set
     type_name = "set"
-    value_types = (str, Container)
+    value_types = (str, Collection)
 
     def no_conversion_needed(self, value):
         if isinstance(value, str) or not super().no_conversion_needed(value):
