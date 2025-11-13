@@ -69,7 +69,7 @@ class Element(Protocol):
 
     def insert(self, index: int, subelement: "Element"): ...
 
-    def iter(self, tag: "None | str" = None) -> "Iterator[Element]": ...
+    def iter(self, tag: "None | bytes | str" = None) -> "Iterator[Element]": ...
 
     def remove(self, subelement: "Element"): ...
 
@@ -1160,7 +1160,9 @@ class XML:
         for child, tail in zip(element, tails):
             child.tail = tail
 
-    def set_element_tag(self, source: Source, tag: str, xpath: str = ".") -> Element:
+    def set_element_tag(
+        self, source: Source, tag: "bytes | str", xpath: str = "."
+    ) -> Element:
         """Sets the tag of the specified element.
 
         The element whose tag to set is specified using ``source`` and
@@ -1182,7 +1184,9 @@ class XML:
         self.get_element(source, xpath).tag = tag
         return source
 
-    def set_elements_tag(self, source: Source, tag: str, xpath: str = ".") -> Element:
+    def set_elements_tag(
+        self, source: Source, tag: "bytes | str", xpath: str = "."
+    ) -> Element:
         """Sets the tag of the specified elements.
 
         Like `Set Element Tag` but sets the tag of all elements matching
