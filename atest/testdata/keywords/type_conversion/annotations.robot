@@ -627,9 +627,18 @@ None as default with unknown type
     None as default with unknown type              ${42}                 42
     None as default with unknown type              None                  None
 
-Empty string is not converted to None based on default
-    Conversion Should Fail    None as default      ${EMPTY}              type=list    error=Invalid expression.
-    None as default with unknown type              ${EMPTY}              ''
+Empty string when None is used as default but not as explicit type
+    [Documentation]
+    ...    Behavior depends on how `typing.get_type_hints` handles `arg: list = None`.
+    ...    Python < 3.11 considers it same as `arg: list | None = None`, newer don't.
+    IF    sys.version_info < (3, 11)
+        None as default                            ${EMPTY}              None
+        None as default with unknown type          ${EMPTY}              None
+    ELSE
+        Conversion Should Fail
+        ...    None as default                     ${EMPTY}              type=list    error=Invalid expression.
+        None as default with unknown type          ${EMPTY}              ''
+    END
 
 Forward references
     Forward referenced concrete type               42                    42

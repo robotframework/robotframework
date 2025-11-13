@@ -231,7 +231,7 @@ None as default with known type
 None as default with unknown type
     Check Test Case    ${TESTNAME}
 
-Empty string is not converted to None based on default
+Empty string when None is used as default but not as explicit type
     Check Test Case    ${TESTNAME}
 
 Forward references
