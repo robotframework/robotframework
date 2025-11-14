@@ -138,4 +138,4 @@ Deprecation
 NOT_SET as default value
     Run Libdoc And Parse Output      Collections
     Keyword Name Should Be           17    Get From Dictionary
-    Keyword Arguments Should Be      17    dictionary    key    default=
+    Keyword Arguments Should Be      17    dictionary: Mapping    key: object    default: object = \

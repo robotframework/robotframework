@@ -17,7 +17,6 @@ import sys
 from datetime import datetime
 from typing import Callable, Literal
 
-from robot.errors import DataError
 from robot.model import MessageLevel
 from robot.result import Message as BaseMessage
 from robot.utils import console_encode
@@ -88,9 +87,14 @@ class Message(BaseMessage):
 
     Listeners can remove messages by setting the `message` attribute to `None`.
     These messages are not written to the output.xml at all.
+
+    The ``console`` parameter controls writing the message to the console in
+    addition to the log file. By default, messages with the ``WARN`` and
+    ``ERROR`` level are logged to the console and others are not.
+    This parameter is new in Robot Framework 7.4.
     """
 
-    __slots__ = ("_message",)
+    __slots__ = ("_message", "console")
 
     def __init__(
         self,
@@ -98,19 +102,28 @@ class Message(BaseMessage):
         level: "MessageLevel|PseudoLevel" = "INFO",
         html: bool = False,
         timestamp: "datetime|str|None" = None,
+        console: "bool|None" = None,
     ):
-        level, html = self._get_level_and_html(level, html)
+        level, html, console = self._get_level_html_console(level, html, console)
         super().__init__(message, level, html, timestamp or datetime.now())
+        self.console = console
 
-    def _get_level_and_html(self, level, html) -> "tuple[MessageLevel, bool]":
+    def _get_level_html_console(
+        self,
+        level: "MessageLevel | PseudoLevel",
+        html: bool,
+        console: "bool | None",
+    ) -> "tuple[MessageLevel, bool, bool]":
         level = level.upper()
+        if console is None:
+            console = level in ("WARN", "ERROR")
         if level == "HTML":
-            return "INFO", True
+            return "INFO", True, console
         if level == "CONSOLE":
-            return "INFO", html
+            return "INFO", html, True
         if level in LEVELS:
-            return level, html
-        raise DataError(f"Invalid log level '{level}'.")
+            return level, html, console
+        raise ValueError(f"Invalid log level '{level}'.")
 
     @property
     def message(self) -> "str|None":

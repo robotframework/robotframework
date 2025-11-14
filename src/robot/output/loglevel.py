@@ -15,8 +15,6 @@
 
 from typing import TYPE_CHECKING
 
-from robot.errors import DataError
-
 if TYPE_CHECKING:
     from .loggerhelper import Message
 
@@ -51,4 +49,4 @@ class LogLevel:
         try:
             return LEVELS[level.upper()]
         except KeyError:
-            raise DataError(f"Invalid log level '{level}'.")
+            raise ValueError(f"Invalid log level '{level}'.")

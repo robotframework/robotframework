@@ -141,6 +141,10 @@ def int_flag(argument: MyIntFlag, expected=None):
     _validate_type(argument, expected)
 
 
+def none(argument: None, expected=None):
+    _validate_type(argument, expected)
+
+
 def nonetype(argument: type(None), expected=None):
     _validate_type(argument, expected)
 

@@ -20,29 +20,29 @@ here to avoid cyclic imports.
 """
 
 from threading import current_thread
-from typing import Any
 
 from robot.utils import safe_str
 
 from .logger import LOGGER
-from .loggerhelper import Message, write_to_console
+from .loggerhelper import Message, MessageLevel, PseudoLevel, write_to_console
 
 # This constant is used by BackgroundLogger.
 # https://github.com/robotframework/robotbackgroundlogger
 LOGGING_THREADS = ["MainThread", "RobotFrameworkTimeoutThread"]
 
 
-def write(msg: Any, level: str, html: bool = False):
+def write(
+    msg: object,
+    level: "MessageLevel | PseudoLevel" = "INFO",
+    html: bool = False,
+    console: "bool | None" = None,
+):
     if not isinstance(msg, str):
         msg = safe_str(msg)
-    if level.upper() not in ("TRACE", "DEBUG", "INFO", "HTML", "WARN", "ERROR"):
-        if level.upper() == "CONSOLE":
-            level = "INFO"
-            console(msg)
-        else:
-            raise RuntimeError(f"Invalid log level '{level}'.")
+    if level == "FAIL":
+        raise ValueError(f"Invalid log level '{level}'.")
     if current_thread().name in LOGGING_THREADS:
-        LOGGER.log_message(Message(msg, level, html))
+        LOGGER.log_message(Message(msg, level, html=html, console=console))
 
 
 def trace(msg, html=False):
@@ -53,10 +53,8 @@ def debug(msg, html=False):
     write(msg, "DEBUG", html)
 
 
-def info(msg, html=False, also_console=False):
-    write(msg, "INFO", html)
-    if also_console:
-        console(msg)
+def info(msg, html=False, console=False):
+    write(msg, "INFO", html, console)
 
 
 def warn(msg, html=False):

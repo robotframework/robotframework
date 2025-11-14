@@ -361,15 +361,22 @@ Invalid IntEnum
     IntFlag              3                         type=MyIntFlag        error=MyIntFlag does not have member '3'. Available: 'R (4)', 'W (2)' and 'X (1)'
     IntFlag              ${-1}                     type=MyIntFlag        error=MyIntFlag does not have value '-1'. Available: '1', '2' and '4'    arg_type=integer
 
+None
+    None                 None                      None
+    None                 NONE                      None
+    None                 ${EMPTY}                  None
+
 NoneType
     NoneType             None                      None
     NoneType             NONE                      None
+    NoneType             ${EMPTY}                  None
 
-Invalid NoneType
+Invalid None
     [Template]           Conversion Should Fail
-    NoneType             Hello, world!             type=None
+    None                 Hello, world!             type=None
+    None                 ${42}                     type=None    arg_type=integer
     NoneType             True                      type=None
-    NoneType             []                        type=None
+    NoneType             ${{[]}}                   type=None    arg_type=list
 
 List
     List                 []                        []
@@ -619,6 +626,10 @@ None as default with unknown type
     None as default with unknown type              hi!                   'hi!'
     None as default with unknown type              ${42}                 42
     None as default with unknown type              None                  None
+
+Empty string is not converted to None based on default
+    Conversion Should Fail    None as default      ${EMPTY}              type=list    error=Invalid expression.
+    None as default with unknown type              ${EMPTY}              ''
 
 Forward references
     Forward referenced concrete type               42                    42

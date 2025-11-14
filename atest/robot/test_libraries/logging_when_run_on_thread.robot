@@ -17,7 +17,7 @@ logging
     VAR    ${tc}    ${SUITE.suites[1].tests[1]}
     Check Log Message    ${tc[0, 1]}      info message       INFO
     Check Log Message    ${tc[0, 2]}      warning message    WARN
-    Check Log Message    ${ERRORS[6]}     warning message    WARN
+    Check Log Message    ${ERRORS[10]}     warning message    WARN
 
 print
     VAR    ${tc}    ${SUITE.suites[2].tests[1]}

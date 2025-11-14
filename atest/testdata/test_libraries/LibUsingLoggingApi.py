@@ -26,11 +26,19 @@ def log_html():
     logger.warn("<b>warn</b>", html=True)
 
 
-def write_messages_to_console():
+def write_messages_to_log_and_console():
     logger.console("To console only")
     logger.console("To console ", newline=False)
     logger.console("in two parts")
-    logger.info("To log and console", also_console=True)
+    logger.info("Info message to log and console w/ 'also_console'", also_console=True)
+    logger.info("Info message to log and console w/ 'console'", also_console=True)
+    # Warnings and errors are also logged to console by default
+    logger.warn("Warn message to log and console")
+    logger.error("Error message to log and console")
+    # Info messages are only logged to log by default
+    logger.info("Info message only to log")
+    logger.warn("Warn message only to log", console=False)
+    logger.error("Error message only to log", console=False)
 
 
 def log_non_strings():

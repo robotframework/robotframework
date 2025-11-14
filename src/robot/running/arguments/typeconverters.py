@@ -208,10 +208,11 @@ class EnumConverter(TypeConverter):
     def value_types(self):
         return (str, int) if issubclass(self.type_info.type, int) else (str,)
 
-    def _convert(self, value):
+    def _non_string_convert(self, value):
+        return self._find_by_int_value(self.type_info.type, value)
+
+    def _string_convert(self, value):
         enum = self.type_info.type
-        if isinstance(value, int):
-            return self._find_by_int_value(enum, value)
         try:
             return enum[value]
         except KeyError:
@@ -285,7 +286,7 @@ class StringConverter(TypeConverter):
     def _handles_value(self, value):
         return True
 
-    def _convert(self, value):
+    def _non_string_convert(self, value):
         try:
             return str(value)
         except Exception:
@@ -471,8 +472,8 @@ class NoneConverter(TypeConverter):
     def handles(cls, type_info: "TypeInfo") -> bool:
         return type_info.type in (NoneType, None)
 
-    def _convert(self, value):
-        if value.upper() == "NONE":
+    def _string_convert(self, value):
+        if value.upper() in ("NONE", ""):
             return None
         raise ValueError
 
@@ -625,7 +626,7 @@ class TypedDictConverter(TypeConverter):
     def _non_string_convert(self, value):
         return self._convert_items(value)
 
-    def _convert(self, value):
+    def _string_convert(self, value):
         return self._convert_items(self._literal_eval(value, dict))
 
     def _convert_items(self, value):

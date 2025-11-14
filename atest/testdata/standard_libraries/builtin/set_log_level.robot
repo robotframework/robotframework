@@ -27,7 +27,7 @@ Set Log Level
     [Teardown]    Set Log Level    INFO
 
 Invalid Log Level Failure Is Catchable
-    [Documentation]    FAIL    Invalid log level 'INVALID'.
+    [Documentation]    FAIL    ValueError: Invalid log level 'INVALID'.
     Set Log Level    INVALID
 
 Reset Log Level

@@ -20,7 +20,7 @@ from robot.errors import DataError
 
 from .console import ConsoleOutput
 from .filelogger import FileLogger
-from .loggerhelper import AbstractLogger
+from .loggerhelper import AbstractLogger, write_to_console
 from .stdoutlogsplitter import StdoutLogSplitter
 
 
@@ -186,13 +186,13 @@ class Logger(AbstractLogger):
         finally:
             self._cache_only = False
 
-    def log_message(self, msg, no_cache=False):
+    def log_message(self, msg):
         if self._log_message_parents and not self._library_import_logging:
-            self._log_message(msg, no_cache)
+            self._log_message(msg)
         else:
             self.message(msg)
 
-    def _log_message(self, msg, no_cache=False):
+    def _log_message(self, msg):
         """Log messages written (mainly) by libraries."""
         for logger in self:
             logger.log_message(msg)
@@ -204,6 +204,8 @@ class Logger(AbstractLogger):
             self._log_message_parents[-1].body.append(msg)
         if msg.level in ("WARN", "ERROR"):
             self.message(msg)
+        elif msg.console:
+            write_to_console(msg.message)
 
     def log_output(self, output):
         for msg in StdoutLogSplitter(output):

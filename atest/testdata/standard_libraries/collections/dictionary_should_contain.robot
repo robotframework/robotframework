@@ -212,6 +212,11 @@ Should contain sub dictionary with missing keys
 Should contain sub dictionary with missing keys and custom error message
     [Documentation]    FAIL    The message.
     Dictionary Should Contain Sub Dictionary    ${D}    ${{{'x': 'a'}}}    The message.    False
+    Dictionary Should Contain Sub Dictionary    ${D}    ${{{'x': 'a'}}}    The message.    NONE
+    Dictionary Should Contain Sub Dictionary    ${D}    ${{{'x': 'a'}}}    The message.    OFF
+    Dictionary Should Contain Sub Dictionary    ${D}    ${{{'x': 'a'}}}    The message.    NO
+    Dictionary Should Contain Sub Dictionary    ${D}    ${{{'x': 'a'}}}    The message.    ${EMPTY}
+    Dictionary Should Contain Sub Dictionary    ${D}    ${{{'x': 'a'}}}    The message.    NO VALUES
 
 Should contain sub dictionary with missing keys and custom error message containig values
     [Documentation]    FAIL

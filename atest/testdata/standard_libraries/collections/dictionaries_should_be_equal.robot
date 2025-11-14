@@ -104,11 +104,11 @@ Different values and custom error message with values
     Dictionaries Should Be Equal    ${D3}    ${D3B}    ignore_keys=['c']
 
 `ignore_keys` as string must be valid expression
-    [Documentation]    FAIL     ValueError: 'ignore_keys' value 'b' cannot be converted to a list.
+    [Documentation]    FAIL     ValueError: Argument 'ignore_keys' got value 'b' that cannot be converted to Sequence or None.
     Dictionaries Should Be Equal    ${D3}    ${D1}    ignore_keys=b
 
 `ignore_keys` must be list
-    [Documentation]    FAIL     ValueError: 'ignore_keys' value '42' cannot be converted to a list.
+    [Documentation]    FAIL     ValueError: Argument 'ignore_keys' got value '42' that cannot be converted to Sequence or None.
     Dictionaries Should Be Equal    ${D3}    ${D1}    ignore_keys=42
 
 `ignore_case`
