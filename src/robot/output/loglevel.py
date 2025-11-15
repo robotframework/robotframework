@@ -46,7 +46,7 @@ class LogLevel:
         return old
 
     def _validate_level(self, level) -> "tuple[SettableLevel, int]":
-        level = level.upper()
-        if level not in LEVELS or level in ("SKIP", "FAIL"):
+        upper = level.upper()
+        if upper not in LEVELS or upper in ("SKIP", "FAIL"):
             raise ValueError(f"Invalid log level '{level}'.")
-        return level, LEVELS[level]
+        return upper, LEVELS[upper]

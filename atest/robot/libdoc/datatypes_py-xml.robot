@@ -53,7 +53,7 @@ Standard
     ...    Any value is accepted. No conversion is done.
     DataType Standard Should Be    1
     ...    boolean
-    ...    Strings ``TRUE``, ``YES``, ``ON`` and ``1`` are converted to Boolean ``True``,
+    ...    Strings ``TRUE``, ``YES``, ``ON``, ``1`` and
     DataType Standard Should Be    6
     ...    Literal
     ...    Only specified values are accepted.
