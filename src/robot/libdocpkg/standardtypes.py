@@ -34,12 +34,13 @@ Any value is accepted. No conversion is done.
 Any value is accepted. No conversion is done.
 """,
     bool: """\
-Strings ``TRUE``, ``YES``, ``ON`` and ``1`` are converted to Boolean ``True``,
-the empty string as well as strings ``FALSE``, ``NO``, ``OFF`` and ``0``
-are converted to Boolean ``False``, and the string ``NONE`` is converted
-to the Python ``None`` object. Other strings and other accepted values are
-passed as-is, allowing keywords to handle them specially if
-needed. All string comparisons are case-insensitive.
+Strings ``TRUE``, ``YES``, ``ON``, ``1`` and possible localization specific "true
+strings" are converted to Boolean ``True``, the empty string, strings ``FALSE``,
+``NO``, ``OFF`` and ``0`` and possibly localization specific "false strings"
+are converted to Boolean ``False``, and the string ``NONE`` is converted to
+the Python ``None`` object. Other strings and all other values are passed as-is,
+allowing keywords to handle them specially if needed. All string comparisons are
+case-insensitive.
 
 Examples: ``TRUE`` (converted to ``True``), ``off`` (converted to ``False``),
 ``example`` (used as-is)
@@ -50,11 +51,9 @@ built-in function. Floating point
 numbers are accepted only if they can be represented as integers exactly.
 For example, ``1.0`` is accepted and ``1.1`` is not.
 
-Starting from RF 4.1, it is possible to use hexadecimal, octal and binary
-numbers by prefixing values with ``0x``, ``0o`` and ``0b``, respectively.
-
-Starting from RF 4.1, spaces and underscores can be used as visual separators
-for digit grouping purposes.
+It is possible to use hexadecimal, octal and binary numbers by prefixing values
+with ``0x``, ``0o`` and ``0b``, respectively. Spaces and underscores can be used
+as visual separators for digit grouping purposes.
 
 Examples: ``42``, ``-1``, ``0b1010``, ``10 000 000``, ``0xBAD_C0FFEE``
 """,
@@ -62,8 +61,7 @@ Examples: ``42``, ``-1``, ``0b1010``, ``10 000 000``, ``0xBAD_C0FFEE``
 Conversion is done using Python's
 [https://docs.python.org/library/functions.html#float|float] built-in function.
 
-Starting from RF 4.1, spaces and underscores can be used as visual separators
-for digit grouping purposes.
+Spaces and underscores can be used as visual separators for digit grouping purposes.
 
 Examples: ``3.14``, ``2.9979e8``, ``10 000.000 01``
 """,
@@ -71,8 +69,7 @@ Examples: ``3.14``, ``2.9979e8``, ``10 000.000 01``
 Conversion is done using Python's
 [https://docs.python.org/library/decimal.html#decimal.Decimal|Decimal] class.
 
-Starting from RF 4.1, spaces and underscores can be used as visual separators
-for digit grouping purposes.
+Spaces and underscores can be used as visual separators for digit grouping purposes.
 
 Examples: ``3.14``, ``10 000.000 01``
 """,
@@ -275,12 +272,15 @@ Strings are case, space, underscore and hyphen insensitive,
 but exact matches have precedence over normalized matches.
 """,
     Secret: """\
-    Encapsulates secrets to avoid them being shown in Robot Framework logs.
+Encapsulates secret values to avoid them being shown in Robot Framework logs.
+
 The value is required to be
 [https://robot-framework.readthedocs.io/en/master/autodoc/robot.utils.html#robot.utils.secret.Secret|robot.api.types.Secret]
 object. These objects encapsulate confidential values so that they are not
 exposed in log files. How to create them is explained in the
 [https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#secret-variables|User Guide].
+
+New in Robot Framework 7.4.
 """,
 }
 
