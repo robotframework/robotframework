@@ -13,12 +13,13 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from typing import TYPE_CHECKING
+from typing import Literal, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from .loggerhelper import Message
 
 
+SettableLevel = Literal["TRACE", "DEBUG", "INFO", "WARN", "ERROR", "NONE"]
 LEVELS = {
     "NONE": 7,
     "SKIP": 6,
@@ -33,20 +34,19 @@ LEVELS = {
 
 class LogLevel:
 
-    def __init__(self, level):
-        self.priority = self._get_priority(level)
-        self.level = level.upper()
+    def __init__(self, level: SettableLevel):
+        self.level, self.priority = self._validate_level(level)
 
-    def is_logged(self, msg: "Message"):
+    def is_logged(self, msg: "Message") -> bool:
         return LEVELS[msg.level] >= self.priority and msg.message is not None
 
-    def set(self, level):
+    def set(self, level: SettableLevel) -> SettableLevel:
         old = self.level
         self.__init__(level)
         return old
 
-    def _get_priority(self, level):
-        try:
-            return LEVELS[level.upper()]
-        except KeyError:
+    def _validate_level(self, level) -> "tuple[SettableLevel, int]":
+        level = level.upper()
+        if level not in LEVELS or level in ("SKIP", "FAIL"):
             raise ValueError(f"Invalid log level '{level}'.")
+        return level, LEVELS[level]

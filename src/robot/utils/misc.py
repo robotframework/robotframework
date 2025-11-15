@@ -126,7 +126,7 @@ def isatty(stream):
         return False
 
 
-def parse_re_flags(flags=None):
+def parse_re_flags(flags: "str | None" = None) -> int:
     result = 0
     if not flags:
         return result
