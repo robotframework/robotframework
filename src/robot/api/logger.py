@@ -47,7 +47,7 @@ section in the log file.
 If libraries accept arbitrary log levels and use type hints, they can use
 the :attr:`LogLevel` type alias as shown in the example_ below. It is new
 in Robot Framework 7.4, but :attr:`LOGLEVEL` with same content exists since
-Robot Framework 7.0 and will not be deprecated earlier than in Robot Framework 8.0.
+Robot Framework 7.0 and will be available at least until in Robot Framework 9.0.
 
 Logging HTML
 ------------
