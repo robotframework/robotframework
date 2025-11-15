@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "/Users/soulsniper/robotframework/logs/.e0b4d3cecc61067bf318824d38b6444bf2fbbe27-audit.json",
+    "files": [
+        {
+            "date": 1762656359615,
+            "name": "/Users/soulsniper/robotframework/logs/mcp-puppeteer-2025-11-08.log",
+            "hash": "fd7fa9fade75e7b4aaff6aa1c47bc16a40c323abecd2641bb4497f1d27a8aeeb"
+        }
+    ],
+    "hashType": "sha256"
+}

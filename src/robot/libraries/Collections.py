@@ -14,6 +14,7 @@
 #  limitations under the License.
 
 import copy
+import warnings
 from itertools import chain
 from typing import (
     Any, Iterable, Iterator, Literal, Mapping, MutableMapping, MutableSequence,
@@ -44,6 +45,13 @@ class _List:
         To split strings into characters, the `Split String To Characters` from
         the String Library can be used.
         """
+        if isinstance(item, str):
+            warnings.warn(
+                "Using 'Convert To List' with strings is deprecated. "
+                "Use 'Split String To Characters' from the String library instead.",
+                UserWarning,
+                stacklevel=2,
+            )
         return list(item)  # type: ignore
 
     def append_to_list(self, list_: MutableSequence, *values: object):
