@@ -43,7 +43,7 @@ Should Match Regexp
     IGNORE CASE    (?i)case
     IGNORE CASE    case    flags=IGNORECASE
     abc\nDEFG      ab.*fg  flags=IGNORECASE|DOTALL
-    ${EMPTY}       whatever    Something failed    No values
+    ${EMPTY}       whatever    Something failed    values=False
 
 Should Match Regexp returns match and groups
     ${ret} =    Should Match Regexp    This is a multiline\nstring!!    (?im)^STR\\w+!!

@@ -306,7 +306,7 @@ List Should Contain Sub List When The Only Missing Value Is Empty String
 
 List Should Contain Sub List With Missing Values And Own Error Message
     [Documentation]    FAIL My error message!
-    List Should Contain Sub List    ${L4}    ${LONG}    My error message!    No Values
+    List Should Contain Sub List    ${L4}    ${LONG}    My error message!    values=no
 
 List Should Contain Sub List With Missing Values And Own And Default Error Messages
     [Documentation]    FAIL My error message!

@@ -42,7 +42,7 @@ Test Setup And Teardown Pass
 
 Test Teardown is Run When Setup Fails
     ${tc} =    Check Test Case    ${TEST NAME}
-    Should Not Be Equal    ${tc.teardown}         ${None}    Teardown not run    No values
+    Should Not Be Equal    ${tc.teardown}         ${None}    Teardown not run    values=False
     Length Should Be       ${tc.teardown.body}    1
     Check Log Message      ${tc.teardown[0]}      Hello from teardown!
 

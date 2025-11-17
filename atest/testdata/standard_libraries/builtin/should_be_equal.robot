@@ -77,7 +77,7 @@ Fails without values
     ...
     ...    4) -
     1    2    3    values=FALSE
-    a    b    c    No Values
+    a    b    c    values=none
     x    y    z    values=no
     .    ,    -    ${NONE}
 

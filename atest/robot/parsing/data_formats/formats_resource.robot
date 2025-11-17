@@ -17,7 +17,7 @@ ${RESOURCE DIR}    ${FORMATS DIR}/resources
 
 *** Keywords ***
 Previous Run Should Have Been Successful
-    Should Not Be Equal    ${SUITE}    ${None}    Running tests failed.    No Values
+    Should Not Be Equal    ${SUITE}    ${None}    Running tests failed.    values=False
 
 Run Sample File And Check Tests
     [Arguments]    ${options}    ${path}

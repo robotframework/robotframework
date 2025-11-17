@@ -20,7 +20,7 @@ Should Start With case-insensitive
 
 Should Start With without values
     [Documentation]    FAIL My message
-    Should Start With    ${LONG}    Nope    My message    values=No values
+    Should Start With    ${LONG}    Nope    My message    values=False
 
 Should Start With without leading spaces
     [Documentation]    FAIL    'YÖTÄ' does not start with 'yötä'
@@ -166,7 +166,7 @@ Should Not Start With and collapse spaces
 
 Should End With without values
     [Documentation]    FAIL My message
-    Should End With    ${LONG}    Nope    My message    values=No values
+    Should End With    ${LONG}    Nope    My message    values=False
 
 Should End With
     [Documentation]    FAIL 'Hello, world!' does not end with '?'
@@ -243,7 +243,7 @@ Should Not End With
     [Documentation]    FAIL Message only
     [Template]    Should Not End With
     Hello!    Hello
-    Hillo!    !    Message only    No Values
+    Hillo!    !    Message only    false
 
 Should Not End With case-insensitive
     [Documentation]     FAIL  'hello, ss!' ends with 'hello, ss!'

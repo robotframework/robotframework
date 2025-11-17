@@ -56,7 +56,7 @@ Both dictionaries missing keys
 
 Missing keys and custom error message
     [Documentation]    FAIL    The error.
-    Dictionaries Should Be Equal    ${D2}    ${D3}    The error.    NO values
+    Dictionaries Should Be Equal    ${D2}    ${D3}    The error.    values=False
 
 Missing keys and custom error message with values
     [Documentation]    FAIL
