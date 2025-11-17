@@ -40,11 +40,17 @@ Numeric conversions with long types
 
 Convert To String
     ${tc}=    Check Test Case    ${TEST NAME}
-    Verify argument type message    ${tc[0, 0]}
+    Verify argument type message    ${tc[0, 0, 0, 0]}    str
+    Verify argument type message    ${tc[0, 2, 0, 0]}    int
+
+Convert To String NFC normalizes
+    ${tc}=    Check Test Case    ${TEST NAME}
+    Verify argument type message    ${tc[0, 0]}    str
 
 Convert To Boolean
     ${tc}=    Check Test Case    ${TEST NAME}
-    Verify argument type message    ${tc[0, 0]}
+    Verify argument type message    ${tc[0, 0, 0, 0]}    str
+    Verify argument type message    ${tc[0, 6, 0, 0]}    int
 
 Create List
     Check Test Case    ${TEST NAME}

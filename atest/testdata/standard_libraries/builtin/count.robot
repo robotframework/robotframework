@@ -99,7 +99,7 @@ Should Contain X Times with invalid item
     ${10}    a    1
 
 Should Contain X Times with invalid count
-    [Documentation]    FAIL STARTS: 'invalid' cannot be converted to an integer: ValueError:
+    [Documentation]    FAIL ValueError: Argument 'count' got value 'invalid' that cannot be converted to integer.
     hello    l    invalid
 
 *** Keywords ***

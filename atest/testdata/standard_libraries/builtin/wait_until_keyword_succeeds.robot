@@ -19,7 +19,7 @@ Pass With Some Medium Try
     Wait Until Keyword Succeeds    ${42}    2 milliseconds    Fail Until Retried Often Enough
 
 Pass With Last Possible Try
-    Wait Until Keyword Succeeds    1.1 seconds    0.3 seconds    Fail Until Retried Often Enough
+    Wait Until Keyword Succeeds    ${{datetime.timedelta(seconds=1.1)}}    0.3 seconds    Fail Until Retried Often Enough
 
 Pass With Returning Value Correctly
     ${return value} =    Wait Until Keyword Succeeds    4 seconds    0 min 0 sec 1 ms
@@ -28,8 +28,8 @@ Pass With Returning Value Correctly
 
 Invalid Timeout Does Not Cause Uncatchable Failure
     Run Keyword And Expect Error
-    ...    ValueError: Invalid time string 'Not Time Value'.
-    ...    Wait Until Keyword Succeeds    Not Time Value    1 seconds    No Operation
+    ...    ValueError: Invalid retry value 'invalid'.
+    ...    Wait Until Keyword Succeeds    invalid    1 seconds    No Operation
 
 Invalid Retry Interval Does Not Cause Uncatchable Failure
     Run Keyword And Expect Error
@@ -91,11 +91,11 @@ Retry as count failing 2
     Wait Until Keyword Succeeds    1X    1 day    Fail Until Retried Often Enough
 
 Retry count must be integer 1
-    [Documentation]    FAIL STARTS: 'xx' cannot be converted to an integer: ValueError:
+    [Documentation]    FAIL ValueError: Invalid retry value 'XXX'.
     Wait Until Keyword Succeeds    XXX    0    No Operation
 
 Retry count must be integer 2
-    [Documentation]    FAIL STARTS: '3.14' cannot be converted to an integer: ValueError:
+    [Documentation]    FAIL ValueError: Invalid retry value '3.14 times'.
     Wait Until Keyword Succeeds    3.14 times    1s    No Operation
 
 Retry count must be positive 1

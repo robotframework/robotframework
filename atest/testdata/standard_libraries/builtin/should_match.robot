@@ -21,14 +21,6 @@ Should Match case-insensitive
     Hello!    heLLo!    ignore_case=True
     Hillo?    h?ll*     ignore_case=yes
 
-Should Match does not work with bytes
-    [Documentation]    FAIL    GLOB: Several failures occurred:\n\n
-    ...    1) TypeError: *\n\n
-    ...    2) TypeError: *
-    [Template]    Should Match
-    ${BYTES WITHOUT NON ASCII}    pattern
-    text                          ${BYTES WITHOUT NON ASCII}
-
 Should Not Match
     [Documentation]    FAIL    'Hello world' matches '?ello*'
     [Template]    Should Not Match
@@ -69,10 +61,12 @@ Should Match Regexp returns match and groups
     Should Be Equal    ${group1}    my
     Should Be Equal    ${group2}    !!!!!
 
-Should Match Regexp with bytes containing non-ascii characters
-    [Documentation]    FAIL    '${BYTES WITH NON ASCII}' does not match 'hyva'
+Should Match Regexp with bytes
+    [Documentation]    FAIL    'Hyvä!' does not match 'Paha!'
     [Template]    Should Match Regexp
-    ${BYTES WITH NON ASCII}    ${BYTES WITHOUT NON ASCII}
+    ${BYTES WITH NON ASCII}    ${BYTES WITH NON ASCII}
+    ${{b'Hyv\xe4!'}}           ${{b'H..\xe4!'}}
+    ${{b'Hyv\xe4!'}}           ${{b'Paha!'}}
 
 Should Not Match Regexp
     [Documentation]    FAIL    'James Bond 007' matches '^J\\w{4}\\sB[donkey]+ \\d*$'
@@ -80,3 +74,10 @@ Should Not Match Regexp
     this string does not    match this pattern
     James Bond 007          ^J\\w{4}\\sB[donkey]+ \\d*$
     this string does not    match this pattern    flags=DOTALL
+
+Should Not Match Regexp with bytes
+    [Documentation]    FAIL    'Hyvä!' matches 'H..ä!'
+    [Template]    Should Not Match Regexp
+    ${BYTES WITH NON ASCII}    ${BYTES WITHOUT NON ASCII}
+    ${{b'Hyv\xe4!'}}           ${{b'H..\xe4!'}}
+    ${{b'Hyv\xe4!'}}           ${{b'Paha!'}}

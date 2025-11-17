@@ -20,10 +20,11 @@ Sleep With Reason
     Sleep    42 ms    No good reason
 
 Invalid Time Does Not Cause Uncatchable Error
-    Run Keyword And Expect Error    ValueError: Invalid time string 'invalid time'.    Sleep    invalid time
+    Run Keyword And Expect Error
+    ...    ValueError: Argument 'time_' got value 'invalid' that cannot be converted to timedelta: Invalid time string 'invalid'.
+    ...    Sleep    invalid
 
 Can Stop Sleep With Timeout
     [Documentation]    FAIL Test timeout 10 milliseconds exceeded.
     [Timeout]    10 milliseconds
     Sleep    100 seconds
-

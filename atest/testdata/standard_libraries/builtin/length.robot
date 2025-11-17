@@ -36,8 +36,9 @@ Length Should Be with custom message
     ${LIST 2}    3    This fails
 
 Length Should Be with invalid length
-    [Documentation]    FAIL STARTS: 'This is not an integer' cannot be converted to an integer: ValueError:
-    Length Should Be    ${LIST 2}    This is not an integer
+    [Documentation]    FAIL
+    ...    ValueError: Argument 'length' got value 'invalid' that cannot be converted to integer.
+    Length Should Be    whatever    invalid
 
 Should Be Empty 1
     [Documentation]    FAIL '['a']' should be empty.

@@ -24,8 +24,8 @@ Times With 'x' Postfix
 Zero And Negative Times
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Repeated Messages    ${tc[0]}     0    name=This is not executed
-    Check Repeated Messages    ${tc[2]}     0    name=\${name}
-    Check Repeated Messages    ${tc[3]}     0    name=This is not executed
+    Check Repeated Messages    ${tc[1]}     0    name=\${nonex}
+    Check Repeated Messages    ${tc[2]}     0    name=This is not executed
 
 Invalid Times
     Check Test Case    Invalid Times 1
@@ -36,6 +36,10 @@ Repeat Keyword With Time String
     Check Repeated Messages With Time    ${tc[0]}    This is done for 00:00:00.003
     Check Repeated Messages With Time    ${tc[1]}    This is done for 3 milliseconds
     Check Repeated Messages With Time    ${tc[2]}    This is done for 3ms
+
+Repeat Keyword With `timedelta`
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Repeated Messages With Time    ${tc[0]}    This is done for `timedelta(milliseconds=3)`
 
 Repeat Keyword Arguments As Variables
     ${tc} =    Check Test Case    ${TEST_NAME}

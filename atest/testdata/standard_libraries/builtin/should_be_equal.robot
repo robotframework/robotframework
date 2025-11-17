@@ -254,7 +254,8 @@ formatter=repr/ascii with multiline and non-ASCII characters
     Å\nÄ\n\Ö\n    Å\nA\u0308\n\Ö\n    formatter=ascii
 
 Invalid formatter
-    [Documentation]    FAIL ValueError: Invalid formatter 'invalid'. Available 'str', 'repr', 'ascii', 'len' and 'type'.
+    [Documentation]    FAIL
+    ...    ValueError: Argument 'formatter' got value 'invalid' that cannot be converted to 'str', 'repr' or 'ascii'.
     1    1    formatter=invalid
 
 Tuple and list with same items fail

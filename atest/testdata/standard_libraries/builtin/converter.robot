@@ -3,17 +3,20 @@ Variables       numbers_to_convert.py
 
 *** Test Cases ***
 Convert To Integer
-    [Documentation]    FAIL STARTS: 'MyObject' cannot be converted to an integer: ZeroDivisionError:
+    [Documentation]    FAIL
+    ...    ValueError: 'MyObject' cannot be converted to an integer: integer division or modulo by zero
     [Template]    Test Convert To Integer
     1                    1
     -42                  -42
     10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
     ...                  10**100
+    125_134              125134
     ${OBJECT}            42
     ${OBJECT_FAILING}    This fails!
 
 Convert To Integer With Base
-    [Documentation]    FAIL STARTS: 'A' cannot be converted to an integer: ValueError:
+    [Documentation]    FAIL
+    ...    ValueError: 'A' cannot be converted to an integer: invalid literal for int() with base 10: 'a'
     [Template]    Test Convert To Integer
     10           10        10
     A            10        16
@@ -25,11 +28,13 @@ Convert To Integer With Base
     A            fails
 
 Convert To Integer With Invalid Base
-    [Documentation]    FAIL STARTS: '1' cannot be converted to an integer: 'invalid' cannot be converted to an integer: ValueError:
+    [Documentation]    FAIL
+    ...    ValueError: Argument 'base' got value 'invalid' that cannot be converted to integer or None.
     Convert To Integer    1    invalid
 
 Convert To Integer With Embedded Base
-    [Documentation]    FAIL STARTS: '0xXXX' cannot be converted to an integer: ValueError:
+    [Documentation]    FAIL STARTS:
+    ...    ValueError: '0xXXX' cannot be converted to an integer: invalid literal for int() with base 16: 'xxx'
     [Template]    Test Convert To Integer
     0xf00           3840
     -0XF00          -3840
@@ -41,7 +46,9 @@ Convert To Integer With Embedded Base
     0O102           66
     - 0x FF 00      -65280
     + 0x FF 00      65280
+    _ 0x FF 00      65280
     0b 1010 1010    170
+    0xBAD_C0FFEE    50159747054
     0xXXX           fails
 
 Convert To Binary
@@ -52,6 +59,7 @@ Convert To Binary
     0b10          2        prefix=0b
     -0b10         -2       prefix=0b
     0b10          +2       prefix=0b
+    1111111       1_2_7
     00001000      10       base=8     length=8
     11111111      0xFF
     -11111111     -0xFF
@@ -70,7 +78,8 @@ Convert To Octal
     00001000     200          base=16    length=8
     52746757     +0xABCDEF    length=5
     -52746757    -0xABCDEF    length=5
-    xXx007       111          base=2     prefix=xXx    length=3
+    52746757     _0xABCDEF    length=5
+    xXx007       1_1_1        base=2     prefix=xXx    length=3
 
 Convert To Hex
     [Template]    Test Convert To Hex
@@ -79,19 +88,25 @@ Convert To Hex
     -2         ${-2}
     0xA        10       prefix=0x    length=0
     -0xA       -10      prefix=0x    length=0
+    0xA        _10_     prefix=0x    length=0
     0xA        +0o12    prefix=0x    length=0
-    0000abcd   ABCD     base=16      length=8     lowercase=yes
+    0000acdc   AC_DC    base=16      length=8     lowercase=yes
     -0A0a      -10      base=10      prefix=0A    lowercase=please    length=2
 
 Convert To Number
-    [Documentation]    FAIL REGEXP: ^'MyObject' cannot be converted to a floating point number: (Attribute|Type)Error: .*$
+    [Documentation]    FAIL STARTS:
+    ...    ValueError: 'MyObject' cannot be converted to a floating point number: float() argument must be a string or
     [Template]    Test Convert To Number
     -10.000              -10
+    _10_000.000_01_       10000.00001
+    1E6                  1000000
+    - 1 e - 3            -0.001
     ${OBJECT}            42.0
     ${OBJECT_FAILING}    This fails!
 
 Convert To Number With Precision
-    [Documentation]    FAIL STARTS: 'invalid' cannot be converted to an integer: ValueError:
+    [Documentation]    FAIL
+    ...    ValueError: Argument 'precision' got value 'invalid' that cannot be converted to integer or None.
     [Template]    Test Convert To Number With Precision
     1.01      0          1
     1.02      ${0}       1
@@ -117,22 +132,30 @@ Numeric conversions with long types
     Convert To Binary     0x8000000000000000    1000000000000000000000000000000000000000000000000000000000000000
 
 Convert To String
-    ${int42} =    Convert To Integer    42
-    Should Not Be Equal    ${int42}    42
-    ${str42} =    Convert To String    ${int42}
-    Should Be Equal    ${str42}    42
+    FOR    ${inp}    IN    ${EMPTY}    xXx    ${42}    ${{{}}}    ${None}
+        ${str} =    Convert To String    ${inp}
+        Should Be Equal    ${str}    ${inp}    type=str
+    END
+
+Convert To String NFC normalizes
+    ${str} =    Convert To String    hyva\u0308
+    Should Be Equal    ${str}    hyvä
 
 Convert To Boolean
-    ${True} =    Convert To Boolean    True
-    ${False} =    Convert To Boolean    false
-    Should Be True    ${True} == True
-    Should Be True    ${False} == False
-    ${one} =    Convert To Integer    1
-    ${zero} =    Convert To Integer    0
-    ${True} =    Convert To Boolean    ${one}
-    ${False} =    Convert To Boolean    ${zero}
-    Should Be True    ${True} == True
-    Should Be True    ${False} == False
+    FOR    ${inp}    ${exp}    IN
+    ...    True      True
+    ...    FALSE     False
+    ...    false     False
+    ...    no        True
+    ...    0         True
+    ...    None      True
+    ...    ${1}      True
+    ...    ${0}      False
+    ...    ${None}   False
+    ...    ${{{}}}   False
+        ${bool} =    Convert To Boolean    ${inp}
+        Should Be Equal    ${bool}    ${exp}    type=bool
+    END
 
 Create List
     ${list} =    Create List    hello    world

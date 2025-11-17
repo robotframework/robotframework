@@ -25,8 +25,8 @@ Log with different levels
 
 Invalid log level failure is catchable
     Run Keyword And Expect Error
-    ...   ValueError: Invalid log level 'INVALID'.
-    ...   Log    Invalid level    INVALID
+    ...   ValueError: Argument 'level' got value 'invalid' that cannot be converted to 'TRACE', 'DEBUG', 'INFO', 'CONSOLE', 'HTML', 'WARN' or 'ERROR'.
+    ...   Log    Invalid level    invalid
 
 HTML is escaped by default
     Log    <b>not bold</b>
@@ -43,7 +43,8 @@ Explicit HTML
     Log    ${HTML}    html=${FALSE}    level=debug
 
 FAIL is not valid log level
-    [Documentation]    FAIL ValueError: Invalid log level 'FAIL'.
+    [Documentation]    FAIL
+    ...    ValueError: Argument 'level' got value 'FAIL' that cannot be converted to 'TRACE', 'DEBUG', 'INFO', 'CONSOLE', 'HTML', 'WARN' or 'ERROR'.
     Log    This fails    FAIL
 
 Log also to console
@@ -129,7 +130,8 @@ formatter=type
     Log    ${now}    formatter=type
 
 formatter=invalid
-    [Documentation]    FAIL ValueError: Invalid formatter 'invalid'. Available 'str', 'repr', 'ascii', 'len' and 'type'.
+    [Documentation]    FAIL
+    ...    ValueError: Argument 'formatter' got value 'invalid' that cannot be converted to 'str', 'repr', 'ascii', 'type' or 'len'.
     Log    x    formatter=invalid
 
 Log callable
