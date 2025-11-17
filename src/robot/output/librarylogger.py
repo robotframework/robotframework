@@ -20,6 +20,7 @@ here to avoid cyclic imports.
 """
 
 from threading import current_thread
+from typing import Literal
 
 from robot.utils import safe_str
 
@@ -65,5 +66,9 @@ def error(msg, html=False):
     write(msg, "ERROR", html)
 
 
-def console(msg: str, newline: bool = True, stream: str = "stdout"):
+def console(
+    msg: object,
+    newline: bool = True,
+    stream: Literal["stdout", "stderr"] = "stdout",
+):
     write_to_console(msg, newline, stream)

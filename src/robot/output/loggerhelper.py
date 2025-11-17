@@ -26,8 +26,13 @@ from .loglevel import LEVELS
 PseudoLevel = Literal["HTML", "CONSOLE"]
 
 
-def write_to_console(msg, newline=True, stream="stdout"):
-    msg = str(msg)
+def write_to_console(
+    msg: object,
+    newline: bool = True,
+    stream: Literal["stdout", "stderr"] = "stdout",
+):
+    if not isinstance(msg, str):
+        msg = str(msg)
     if newline:
         msg += "\n"
     stream = sys.__stdout__ if stream.lower() != "stderr" else sys.__stderr__

@@ -100,14 +100,14 @@ LOGLEVEL = LogLevel
 
 
 def write(
-    msg: str,
+    msg: object,
     level: LogLevel = "INFO",
     html: bool = False,
     console: "bool | None" = None,
 ):
     """Writes the message to the log file using the specified level.
 
-    :param msg: The message to be logged.
+    :param msg: The message to be logged. Converted to string automatically.
     :param level: Either the actual log level to use or a pseudo log level
         ``HTML`` or ``CONSOLE``.
     :param html: When set to ``True``, the message is considered to be HTML.
@@ -143,33 +143,33 @@ def write(
         logger.log(level_int, msg)
 
 
-def trace(msg: str, html: bool = False):
+def trace(msg: object, html: bool = False):
     """Writes the message to the log file using the ``TRACE`` level.
 
-    :param msg: The message to be logged.
+    :param msg: The message to be logged. Converted to string automatically.
     :param html: When set to ``True``, the message is considered to be HTML.
     """
     write(msg, "TRACE", html)
 
 
-def debug(msg: str, html: bool = False):
+def debug(msg: object, html: bool = False):
     """Writes the message to the log file using the ``DEBUG`` level.
 
-    :param msg: The message to be logged.
+    :param msg: The message to be logged. Converted to string automatically.
     :param html: When set to ``True``, the message is considered to be HTML.
     """
     write(msg, "DEBUG", html)
 
 
 def info(
-    msg: str,
+    msg: object,
     html: bool = False,
     also_console: bool = False,
     console: bool = False,
 ):
     """Writes the message to the log file using the ``INFO`` level.
 
-    :param msg: The message to be logged.
+    :param msg: The message to be logged. Converted to string automatically.
     :param html: When set to ``True``, the message is considered to be HTML.
     :param also_console: Deprecated alias for ``console``.
     :param console: When ``True``, the message is logged to the console in
@@ -182,10 +182,10 @@ def info(
     write(msg, "INFO", html, also_console or console)
 
 
-def warn(msg: str, html: bool = False, console: bool = True):
+def warn(msg: object, html: bool = False, console: bool = True):
     """Writes the message to the log file using the ``WARN`` level.
 
-    :param msg: The message to be logged.
+    :param msg: The message to be logged. Converted to string automatically.
     :param html: When set to ``True``, the message is considered to be HTML.
     :param console: When ``False``, the message is not logged to the console.
         New in Robot Framework 7.4.
@@ -193,10 +193,10 @@ def warn(msg: str, html: bool = False, console: bool = True):
     write(msg, "WARN", html, console)
 
 
-def error(msg: str, html: bool = False, console: bool = True):
+def error(msg: object, html: bool = False, console: bool = True):
     """Writes the message to the log file using the ``ERROR`` level.
 
-    :param msg: The message to be logged.
+    :param msg: The message to be logged. Converted to string automatically.
     :param html: When set to ``True``, the message is considered to be HTML.
     :param console: When ``False``, the message is not logged to the console.
         New in Robot Framework 7.4.
@@ -205,13 +205,13 @@ def error(msg: str, html: bool = False, console: bool = True):
 
 
 def console(
-    msg: str,
+    msg: object,
     newline: bool = True,
     stream: Literal["stdout", "stderr"] = "stdout",
 ):
     """Writes the message to the console.
 
-    :param msg: The message to be logged.
+    :param msg: The message to be logged. Converted to string automatically.
     :param newline: When ``True``, a newline character is automatically added
         to the message.
     :param stream: Name of the standard stream to write the message to.
