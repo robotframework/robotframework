@@ -444,6 +444,7 @@ class _List:
         See the `Ignore case` section for more details. This option is new in
         Robot Framework 7.0.
         """
+        values = deprecate_no_values(values)
         len1 = len(list1)
         len2 = len(list2)
         if len1 != len2:
@@ -490,6 +491,7 @@ class _List:
         See the `Ignore case` section for more details. This option is new in
         Robot Framework 7.0.
         """
+        values = deprecate_no_values(values)
         normalize = Normalizer(ignore_case).normalize
         list1 = normalize(list1)
         list2 = normalize(list2)
@@ -877,6 +879,7 @@ class _Dictionary:
         Using it requires items to be sortable.
         This option is new in Robot Framework 7.2.
         """
+        values = deprecate_no_values(values)
         normalize = Normalizer(
             ignore_case=ignore_case,
             ignore_keys=ignore_keys,
@@ -946,6 +949,7 @@ class _Dictionary:
         Using it requires items to be sortable.
         This option is new in Robot Framework 7.2.
         """
+        values = deprecate_no_values(values)
         normalizer = Normalizer(
             ignore_case=ignore_case,
             ignore_order=ignore_value_order,
@@ -1242,12 +1246,22 @@ class Collections(_List, _Dictionary):
         ]
 
 
-def report_error(
-    default: str, message: "str | None", values: "bool | str" = False
-) -> NoReturn:
+def deprecate_no_values(values: "bool | str") -> bool:
+    # "NO VALUES" was deprecated in RF 7.4. We must preserve it at least
+    # until RF 8, possibly until RF 9. See also BuiltIn.
+    if isinstance(values, str) and values.upper() == "NO VALUES":
+        logger.warn(
+            f"Using '{values}' for disabling the 'values' argument is deprecated. "
+            f"Use 'values=False' instead."
+        )
+        return False
+    return bool(values)
+
+
+def report_error(default: str, message: "str | None", values: bool = False) -> NoReturn:
     if not message:
         message = default
-    elif values and not (isinstance(values, str) and values.upper() == "NO VALUES"):
+    elif values:
         message += "\n" + default
     raise AssertionError(message)
 

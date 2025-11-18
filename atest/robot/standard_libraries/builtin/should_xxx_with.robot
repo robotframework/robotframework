@@ -92,3 +92,10 @@ Should Not End With and do not collapse spaces
 
 Should Not End With and collapse spaces
     Check test case    ${TESTNAME}
+
+NO VALUES is deprecated
+    ${tc} =    Check test case    ${TESTNAME}
+    Check Log Message    ${tc[0, 0]}   Using 'NO VALUES' for disabling the 'values' argument is deprecated. Use 'values=False' instead.    WARN
+    Check Log Message    ${tc[1, 0]}   Using 'no values' for disabling the 'values' argument is deprecated. Use 'values=False' instead.    WARN
+    Check Log Message    ${tc[2, 0]}   Using 'No values' for disabling the 'values' argument is deprecated. Use 'values=False' instead.    WARN
+    Check Log Message    ${tc[3, 0]}   Using 'No Values' for disabling the 'values' argument is deprecated. Use 'values=False' instead.    WARN

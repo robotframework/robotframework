@@ -81,6 +81,11 @@ Fails without values
     x    y    z    values=no
     .    ,    -    ${NONE}
 
+NO VALUES is deprecated
+    [Documentation]    FAIL Message
+    xxx    xxx    values=NO VALUES
+    xxx    yyy    Message    no values
+
 Multiline comparison uses diff
     [Documentation]    FAIL
     ...    Multiline strings are different:
@@ -291,6 +296,24 @@ Should Not Be Equal
     1      ${1}
     foo    foo
 
+Should Not Be Equal with custom message
+    [Documentation]    FAIL Message: foo == foo
+    [Template]    Should Not Be Equal
+    foo    bar    Not used
+    foo    foo    Message
+
+Should Not Be Equal with custom message without values
+    [Documentation]    FAIL Message
+    [Template]    Should Not Be Equal
+    foo    bar    values=False
+    foo    foo    Message     values=False
+
+Should Not Be Equal with deprecated NO VALUES
+    [Documentation]    FAIL Message
+    [Template]    Should Not Be Equal
+    foo    bar    values=no values
+    foo    foo    Message     NO VALUES
+
 Should Not Be Equal case-insensitive
     [Documentation]     FAIL fööss == fööss
     [Template]  Should Not Be Equal
@@ -346,12 +369,12 @@ Should Not Be Equal and do not collapse spaces
     ...
     ...    1) test\tit == test\tit
     ...
-    ...    2) repr=True: hyvää\ \nyötä == hyvää\ \nyötä
+    ...    2) message: hyvää\ \nyötä == hyvää\ \nyötä
     ...
     ...    3) \ \ 42 == \ \ 42
     [Template]  Should Not Be Equal
     test\tit         test\tit         collapse_spaces=No
-    hyvää\ \nyötä    hyvää\ \nyötä    repr=True    collapse_spaces=${FALSE}
+    hyvää\ \nyötä    hyvää\ \nyötä    message    collapse_spaces=${FALSE}
     \ test\t\nit     \tvalue\tit      collapse_spaces=${NONE}
     \ \ ${42}        \ \ ${42}        collapse_spaces=False
 
@@ -360,12 +383,12 @@ Should Not Be Equal and collapse spaces
     ...
     ...    1) test it == test it
     ...
-    ...    2) repr=True: hyvää yötä == hyvää yötä
+    ...    2) message: hyvää yötä == hyvää yötä
     ...
     ...    3) \ 42 == \ 42
     [Template]  Should Not Be Equal
     test\t\nit       test\ \tit       collapse_spaces=True
-    hyvää\ \ yötä    hyvää\ \ yötä    repr=True    collapse_spaces=${TRUE}
+    hyvää\ \ yötä    hyvää\ \ yötä    message    collapse_spaces=${TRUE}
     \ test\tit       \tvalue it       collapse_spaces=Maybe yes
     \ \ ${42}        \ \ ${42}        collapse_spaces=TruE
 

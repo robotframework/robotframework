@@ -313,6 +313,11 @@ List Should Contain Sub List With Missing Values And Own And Default Error Messa
     ...    Following values are missing: 'x' and 'y'
     List Should Contain Sub List    ${L4}    ${{'x', 'y'}}    My error message!    values=please
 
+'NO VALUES' is deprecated
+    [Documentation]    FAIL Message
+    Lists Should Be Equal    ${L4}    ${L4}    values=NO VALUES
+    List Should Contain Sub List    ${L4}    ${LONG}    Message    no values
+
 Log List
     Log List    ${L0}
     Log List    ${{tuple($L3)}}

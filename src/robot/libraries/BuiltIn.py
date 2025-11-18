@@ -756,7 +756,7 @@ class _Verify(_BuiltInBase):
         values: bool,
         formatter: Literal["str", "repr", "ascii"] = "str",
     ):
-        include_values = self._include_values(values)
+        include_values = self._deprecate_no_values(values)
         formatter = self._get_formatter(formatter)
         if first == second:
             return
@@ -795,9 +795,16 @@ class _Verify(_BuiltInBase):
             prefix = f"{msg}: {prefix}"
         raise AssertionError("\n".join([prefix, *diffs]))
 
-    def _include_values(self, values):
-        # FIXME: Deprecate using "NO VALUES"!
-        return is_truthy(values) and str(values).upper() != "NO VALUES"
+    def _deprecate_no_values(self, values: "bool | str") -> bool:
+        # "NO VALUES" was deprecated in RF 7.4. We must preserve it at least
+        # until RF 8, possibly until RF 9. See also Collections.
+        if isinstance(values, str) and values.upper() == "NO VALUES":
+            logger.warn(
+                f"Using '{values}' for disabling the 'values' argument is deprecated. "
+                f"Use 'values=False' instead."
+            )
+            return False
+        return bool(values)
 
     def _strip_spaces(
         self,
@@ -864,7 +871,7 @@ class _Verify(_BuiltInBase):
         msg: "str | None",
         values: bool,
     ):
-        assert_not_equal(first, second, msg, self._include_values(values))
+        assert_not_equal(first, second, msg, self._deprecate_no_values(values))
 
     def should_not_be_equal_as_integers(
         self,
@@ -1092,6 +1099,7 @@ class _Verify(_BuiltInBase):
         error message with ``msg`` and ``values``, as well as for semantics
         of the ``ignore_case``, ``strip_spaces``, and ``collapse_spaces`` options.
         """
+        values = self._deprecate_no_values(values)
         if ignore_case:
             str1 = str1.casefold()
             str2 = str2.casefold()
@@ -1122,6 +1130,7 @@ class _Verify(_BuiltInBase):
         error message with ``msg`` and ``values``, as well as for semantics
         of the ``ignore_case``, ``strip_spaces``, and ``collapse_spaces`` options.
         """
+        values = self._deprecate_no_values(values)
         if ignore_case:
             str1 = str1.casefold()
             str2 = str2.casefold()
@@ -1152,6 +1161,7 @@ class _Verify(_BuiltInBase):
         error message with ``msg`` and ``values``, as well as for semantics
         of the ``ignore_case``, ``strip_spaces``, and ``collapse_spaces`` options.
         """
+        values = self._deprecate_no_values(values)
         if ignore_case:
             str1 = str1.casefold()
             str2 = str2.casefold()
@@ -1182,6 +1192,7 @@ class _Verify(_BuiltInBase):
         error message with ``msg`` and ``values``, as well as for semantics
         of the ``ignore_case``, ``strip_spaces``, and ``collapse_spaces`` options.
         """
+        values = self._deprecate_no_values(values)
         if ignore_case:
             str1 = str1.casefold()
             str2 = str2.casefold()
@@ -1233,6 +1244,7 @@ class _Verify(_BuiltInBase):
         # and add separate '(case-insensitive)' not to the error message.
         # This same logic should be used with all keywords supporting
         # case-insensitive comparisons.
+        values = self._deprecate_no_values(values)
         orig_container = container
         if ignore_case and isinstance(item, str):
             item = item.casefold()
@@ -1301,6 +1313,7 @@ class _Verify(_BuiltInBase):
 
         Automatically converting ``item`` to bytes is new in Robot Framework 7.1.
         """
+        values = self._deprecate_no_values(values)
         orig_container = container
         if isinstance(container, (bytes, bytearray)):
             if isinstance(item, str):
@@ -1368,6 +1381,7 @@ class _Verify(_BuiltInBase):
         | Should Contain Any | ${list}   | item 1 | item 2 | item 3 | ignore_case=True |
         | Should Contain Any | ${list}   | @{items} | msg=Custom message | values=False |
         """
+        values = self._deprecate_no_values(values)
         if not items:
             raise RuntimeError("One or more item required.")
         orig_container = container
@@ -1430,6 +1444,7 @@ class _Verify(_BuiltInBase):
         | Should Not Contain Any | ${list}   | item 1 | item 2 | item 3 | ignore_case=True |
         | Should Not Contain Any | ${list}   | @{items} | msg=Custom message | values=False |
         """
+        values = self._deprecate_no_values(values)
         if not items:
             raise RuntimeError("One or more item required.")
         orig_container = container
@@ -1571,6 +1586,7 @@ class _Verify(_BuiltInBase):
 
         This keyword works only with strings, not with bytes.
         """
+        values = self._deprecate_no_values(values)
         if self._matches(string, pattern, caseless=ignore_case):
             raise AssertionError(
                 self._get_string_msg(string, pattern, msg, values, "matches")
@@ -1597,6 +1613,7 @@ class _Verify(_BuiltInBase):
 
         This keyword works only with strings, not with bytes.
         """
+        values = self._deprecate_no_values(values)
         if not self._matches(string, pattern, caseless=ignore_case):
             raise AssertionError(
                 self._get_string_msg(string, pattern, msg, values, "does not match")
@@ -1648,6 +1665,7 @@ class _Verify(_BuiltInBase):
 
         The ``flags`` argument is new in Robot Framework 6.0.
         """
+        values = self._deprecate_no_values(values)
         res = re.search(pattern, string, flags=parse_re_flags(flags))
         if res is None:
             raise AssertionError(
@@ -1671,6 +1689,7 @@ class _Verify(_BuiltInBase):
 
         See `Should Match Regexp` for more information about arguments.
         """
+        values = self._deprecate_no_values(values)
         if re.search(pattern, string, flags=parse_re_flags(flags)) is not None:
             raise AssertionError(
                 self._get_string_msg(string, pattern, msg, values, "matches")
@@ -1757,7 +1776,7 @@ class _Verify(_BuiltInBase):
         quote_item1: bool = True,
         quote_item2: bool = True,
     ):
-        if custom_message and not self._include_values(include_values):
+        if custom_message and not include_values:
             return custom_message
         item1 = f"'{safe_str(item1)}'" if quote_item1 else safe_str(item1)
         item2 = f"'{safe_str(item2)}'" if quote_item2 else safe_str(item2)

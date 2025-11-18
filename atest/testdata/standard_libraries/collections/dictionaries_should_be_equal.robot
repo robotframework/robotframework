@@ -83,6 +83,10 @@ Different values and custom error message with values
     ...    Key c: 3 (integer) != 3 (string)
     Dictionaries Should Be Equal    ${D3}    ${D3B}    The error.    values=yes
 
+NO VALUES is deprecated
+    [Documentation]    FAIL    The error.
+    Dictionaries Should Be Equal    ${D3}    ${D3B}    The error.    No values
+
 `ignore_keys`
     Dictionaries Should Be Equal    ${D2}    ${D3}     ignore_keys=${{['c']}}
     Dictionaries Should Be Equal    ${D3}    ${D3B}    ignore_keys=('c', 'a')

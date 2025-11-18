@@ -35,6 +35,11 @@ Fails with values
 Fails without values
     Check test case    ${TESTNAME}
 
+NO VALUES is deprecated
+    ${tc} =    Check test case    ${TESTNAME}
+    Check Log Message    ${tc[0, 1]}   Using 'NO VALUES' for disabling the 'values' argument is deprecated. Use 'values=False' instead.    WARN
+    Check Log Message    ${tc[1, 1]}   Using 'no values' for disabling the 'values' argument is deprecated. Use 'values=False' instead.    WARN
+
 Multiline comparison uses diff
     ${tc} =    Check test case    ${TESTNAME}
     Check Log Message    ${tc[0, 1]}    foo\nbar\ndar\n\n!=\n\nfoo\nbar\ngar\n\ndar
@@ -97,6 +102,17 @@ Should Not Be Equal
     Verify argument type message    ${tc[0, 0]}    str    str
     Verify argument type message    ${tc[1, 0]}    str    int
     Verify argument type message    ${tc[2, 0]}    str    str
+
+Should Not Be Equal with custom message
+    Check Test Case     ${TESTNAME}
+
+Should Not Be Equal with custom message without values
+    Check Test Case     ${TESTNAME}
+
+Should Not Be Equal with deprecated NO VALUES
+    ${tc} =    Check test case    ${TESTNAME}
+    Check Log Message    ${tc[0, 1]}   Using 'no values' for disabling the 'values' argument is deprecated. Use 'values=False' instead.    WARN
+    Check Log Message    ${tc[1, 1]}   Using 'NO VALUES' for disabling the 'values' argument is deprecated. Use 'values=False' instead.    WARN
 
 Should Not Be Equal case-insensitive
     Check Test Case     ${TESTNAME}

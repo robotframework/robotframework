@@ -321,3 +321,9 @@ Should Not End With and collapse spaces
     test\t\nvalue    e           collapse_spaces=${TRUE}
     \työtä\t         yötä\t      repr=yes    collapse_spaces=Yes
     some\ test       \ \ test    collapse_spaces=1
+
+NO VALUES is deprecated
+    Should Start With        xxx    x    values=NO VALUES
+    Should Not Start With    xxx    y    values=no values
+    Should End With          xxx    x    values=No values
+    Should Not End With      xxx    y    values=No Values

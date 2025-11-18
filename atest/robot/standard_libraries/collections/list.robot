@@ -178,6 +178,11 @@ List Should Contain Sub List With Missing Values And Own Error Message
 List Should Contain Sub List With Missing Values And Own and Default Error Messages
     Check Test Case    ${TEST NAME}
 
+'NO VALUES' is deprecated
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc[0, 0]}   Using 'NO VALUES' for disabling the 'values' argument is deprecated. Use 'values=False' instead.    WARN
+    Check Log Message    ${tc[1, 0]}   Using 'no values' for disabling the 'values' argument is deprecated. Use 'values=False' instead.    WARN
+
 Log List
     ${tc} =    Check Test Case    ${TEST NAME}
     VAR    ${three items}
