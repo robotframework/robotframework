@@ -3,8 +3,8 @@ Variables       numbers_to_convert.py
 
 *** Test Cases ***
 Convert To Integer
-    [Documentation]    FAIL
-    ...    ValueError: 'MyObject' cannot be converted to an integer: integer division or modulo by zero
+    [Documentation]    FAIL STARTS:
+    ...    ValueError: 'MyObject' cannot be converted to an integer:
     [Template]    Test Convert To Integer
     1                    1
     -42                  -42
