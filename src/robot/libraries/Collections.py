@@ -224,7 +224,11 @@ class _List:
         | ${z} = ['a', 'b', 'c']
         | ${L5} is not changed
         """
-        if not start:
+        if start == "":
+            logger.warn(
+                "Using an empty string as a start index with the 'Get Slice From List' "
+                "keyword is deprecated. Use '0' instead."
+            )
             start = 0
         return list_[start:end]
 
@@ -269,7 +273,11 @@ class _List:
         | ${x} = 3
         | ${L5} is not changed
         """
-        if not start:
+        if start == "":
+            logger.warn(
+                "Using an empty string as a start index with the 'Get Index From List' "
+                "keyword is deprecated. Use '0' instead."
+            )
             start = 0
         list_ = self.get_slice_from_list(list_, start, end)
         try:

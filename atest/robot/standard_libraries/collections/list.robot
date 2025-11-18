@@ -51,6 +51,12 @@ Count Values In List with invalid index
 Get Index From List
     Check Test Case    ${TEST NAME}
 
+Get Index From List with empty string as start index is deprecated
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc[0, 0, 0, 0]}
+    ...    Using an empty string as a start index with the 'Get Index From List' keyword is deprecated. Use '0' instead.
+    ...    WARN
+
 Get Index From List with invalid index
     Check Test Case    ${TEST NAME}
 
@@ -80,6 +86,12 @@ Get From List with invalid index
 
 Get Slice From List
     Check Test Case    ${TEST NAME}
+
+Get Slice From List with empty string as start index is deprecated
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc[0, 0, 0, 0]}
+    ...    Using an empty string as a start index with the 'Get Slice From List' keyword is deprecated. Use '0' instead.
+    ...    WARN
 
 Get Slice From List with invalid index
     Check Test Case    ${TEST NAME}
