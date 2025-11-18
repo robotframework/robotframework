@@ -333,11 +333,8 @@ class _List:
         Robot Framework 7.0.
         """
         normalize = Normalizer(ignore_case).normalize
-        _verify_condition(
-            normalize(value) in normalize(list_),
-            f"{seq2str2(list_)} does not contain value '{value}'.",
-            msg,
-        )
+        if normalize(value) not in normalize(list_):
+            report_error(f"{seq2str2(list_)} does not contain value '{value}'.", msg)
 
     def list_should_not_contain_value(
         self,
@@ -355,11 +352,8 @@ class _List:
         Robot Framework 7.0.
         """
         normalize = Normalizer(ignore_case).normalize
-        _verify_condition(
-            normalize(value) not in normalize(list_),
-            f"{seq2str2(list_)} contains value '{value}'.",
-            msg,
-        )
+        if normalize(value) in normalize(list_):
+            report_error(f"{seq2str2(list_)} contains value '{value}'.", msg)
 
     def list_should_not_contain_duplicates(
         self,
@@ -452,27 +446,16 @@ class _List:
         """
         len1 = len(list1)
         len2 = len(list2)
-        _verify_condition(
-            len1 == len2,
-            f"Lengths are different: {len1} != {len2}",
-            msg,
-            values,
-        )
+        if len1 != len2:
+            report_error(f"Lengths are different: {len1} != {len2}", msg, values)
         if not names:
             names = {}
         elif not isinstance(names, Mapping):
             names = dict(zip(range(len1), names))
-
         normalize = Normalizer(ignore_case, ignore_order).normalize
-        diffs = "\n".join(
-            self._yield_list_diffs(normalize(list1), normalize(list2), names)
-        )
-        _verify_condition(
-            not diffs,
-            f"Lists are different:\n{diffs}",
-            msg,
-            values,
-        )
+        diffs = list(self._yield_list_diffs(normalize(list1), normalize(list2), names))
+        if diffs:
+            report_error("Lists are different:\n" + "\n".join(diffs), msg, values)
 
     def _yield_list_diffs(
         self,
@@ -510,29 +493,20 @@ class _List:
         normalize = Normalizer(ignore_case).normalize
         list1 = normalize(list1)
         list2 = normalize(list2)
-        diffs = [item for item in list2 if item not in list1]
-        _verify_condition(
-            not diffs,
-            f"Following values are missing: {seq2str(diffs)}",
-            msg,
-            values,
-        )
+        diffs = seq2str([item for item in list2 if item not in list1])
+        if diffs:
+            report_error(f"Following values are missing: {diffs}", msg, values)
 
     def log_list(self, list_: Sequence, level: logger.LogLevel = "INFO"):
-        """Logs the length and contents of the ``list`` using given ``level``.
-
-        Valid levels are TRACE, DEBUG, INFO (default), and WARN.
-
-        If you only want to the length, use keyword `Get Length` from
-        the BuiltIn library.
-        """
+        """Logs contents of the ``list`` using the given ``level``."""
         logger.write("\n".join(self._log_list(list_)), level)
 
-    def _log_list(self, list_: Sequence) -> Iterator[str]:
+    def _log_list(self, list_: Sequence[object]) -> Iterator[str]:
         if not list_:
             yield "List is empty."
         elif len(list_) == 1:
-            yield f"List has one item:\n{list_[0]}"
+            yield "List has one item:"
+            yield str(list_[0])
         else:
             yield f"List length is {len(list_)} and it contains following items:"
             for index, item in enumerate(list_):
@@ -780,11 +754,8 @@ class _Dictionary:
         Robot Framework 7.0.
         """
         norm = Normalizer(ignore_case)
-        _verify_condition(
-            norm.normalize_key(key) in norm.normalize(dictionary),
-            f"Dictionary does not contain key '{key}'.",
-            msg,
-        )
+        if norm.normalize_key(key) not in norm.normalize(dictionary):
+            report_error(f"Dictionary does not contain key '{key}'.", msg)
 
     def dictionary_should_not_contain_key(
         self,
@@ -802,11 +773,8 @@ class _Dictionary:
         Robot Framework 7.0.
         """
         norm = Normalizer(ignore_case)
-        _verify_condition(
-            norm.normalize_key(key) not in norm.normalize(dictionary),
-            f"Dictionary contains key '{key}'.",
-            msg,
-        )
+        if norm.normalize_key(key) in norm.normalize(dictionary):
+            report_error(f"Dictionary contains key '{key}'.", msg)
 
     def dictionary_should_contain_item(
         self,
@@ -849,11 +817,8 @@ class _Dictionary:
         Robot Framework 7.0.
         """
         norm = Normalizer(ignore_case)
-        _verify_condition(
-            norm.normalize_value(value) in norm.normalize(dictionary).values(),
-            f"Dictionary does not contain value '{value}'.",
-            msg,
-        )
+        if norm.normalize_value(value) not in norm.normalize(dictionary).values():
+            report_error(f"Dictionary does not contain value '{value}'.", msg)
 
     def dictionary_should_not_contain_value(
         self,
@@ -871,11 +836,8 @@ class _Dictionary:
         Robot Framework 7.0.
         """
         norm = Normalizer(ignore_case)
-        _verify_condition(
-            norm.normalize_value(value) not in norm.normalize(dictionary).values(),
-            f"Dictionary contains value '{value}'.",
-            msg,
-        )
+        if norm.normalize_value(value) in norm.normalize(dictionary).values():
+            report_error(f"Dictionary contains value '{value}'.", msg)
 
     def dictionaries_should_be_equal(
         self,
@@ -915,13 +877,13 @@ class _Dictionary:
         Using it requires items to be sortable.
         This option is new in Robot Framework 7.2.
         """
-        normalizer = Normalizer(
+        normalize = Normalizer(
             ignore_case=ignore_case,
             ignore_keys=ignore_keys,
             ignore_order=ignore_value_order,
-        )
-        dict1 = normalizer.normalize(dict1)
-        dict2 = normalizer.normalize(dict2)
+        ).normalize
+        dict1 = normalize(dict1)
+        dict2 = normalize(dict2)
         self._should_have_same_keys(dict1, dict2, msg, values)
         self._should_have_same_values(dict1, dict2, msg, values)
 
@@ -930,7 +892,7 @@ class _Dictionary:
         dict1: Mapping,
         dict2: Mapping,
         message: "str | None",
-        values: "bool | str",
+        values: bool,
         validate_both: bool = True,
     ):
         missing = seq2str([k for k in dict2 if k not in dict1])
@@ -942,14 +904,14 @@ class _Dictionary:
             if missing:
                 error += f"\nFollowing keys missing from second dictionary: {missing}"
         if error:
-            _report_error(error.strip(), message, values)
+            report_error(error.strip(), message, values)
 
     def _should_have_same_values(
         self,
         dict1: Mapping,
         dict2: Mapping,
         message: "str | None",
-        values: "bool | str",
+        values: bool,
     ):
         errors = []
         for key in dict2:
@@ -959,7 +921,7 @@ class _Dictionary:
                 errors.append(str(err))
         if errors:
             error = "\n".join(["Following keys have different values:", *errors])
-            _report_error(error, message, values)
+            report_error(error, message, values)
 
     def dictionary_should_contain_sub_dictionary(
         self,
@@ -998,13 +960,7 @@ class _Dictionary:
         dictionary: Mapping,
         level: logger.LogLevel = "INFO",
     ):
-        """Logs the size and contents of the ``dictionary`` using given ``level``.
-
-        Valid levels are TRACE, DEBUG, INFO (default), and WARN.
-
-        If you only want to log the size, use keyword `Get Length` from
-        the BuiltIn library.
-        """
+        """Logs the contents of the ``dictionary`` using the given ``level``."""
         logger.write("\n".join(self._log_dictionary(dictionary)), level)
 
     def _log_dictionary(
@@ -1159,8 +1115,11 @@ class Collections(_List, _Dictionary):
             ignore_case=ignore_case,
             ignore_whitespace=ignore_whitespace,
         )
-        default = f"{seq2str2(list)} does not contain match for pattern '{pattern}'."
-        _verify_condition(bool(matches), default, msg)
+        if not matches:
+            report_error(
+                f"{seq2str2(list)} does not contain match for pattern '{pattern}'.",
+                msg,
+            )
 
     def should_not_contain_match(
         self,
@@ -1185,8 +1144,11 @@ class Collections(_List, _Dictionary):
             ignore_case=ignore_case,
             ignore_whitespace=ignore_whitespace,
         )
-        default = f"{seq2str2(list)} contains match for pattern '{pattern}'."
-        _verify_condition(not matches, default, msg)
+        if matches:
+            report_error(
+                f"{seq2str2(list)} contains match for pattern '{pattern}'.",
+                msg,
+            )
 
     def get_matches(
         self,
@@ -1280,25 +1242,13 @@ class Collections(_List, _Dictionary):
         ]
 
 
-def _verify_condition(
-    condition: bool,
-    default_message: str,
-    message: "str | None",
-    values: "bool | str" = False,
-):
-    if not condition:
-        _report_error(default_message, message, values)
-
-
-def _report_error(
-    default_message: str,
-    message: "str | None",
-    values: "bool | str" = False,
+def report_error(
+    default: str, message: "str | None", values: "bool | str" = False
 ) -> NoReturn:
     if not message:
-        message = default_message
+        message = default
     elif values and not (isinstance(values, str) and values.upper() == "NO VALUES"):
-        message += "\n" + default_message
+        message += "\n" + default
     raise AssertionError(message)
 
 
