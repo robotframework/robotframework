@@ -100,6 +100,12 @@ Should Contain and collapse spaces
     ${LIST4}      \tb\n     collapse_spaces=TRUE
     ${LIST4}      \tc\n     collapse_spaces=TRUE
 
+Should Contain with recursive normalization
+    [Template]    Should Contain
+    ${{(['a', 'B'], ['c'])}}                  ${{['A', 'b']}}       ignore_case=True
+    ${{([' a ', 'B '], ['c'])}}               ${{['a', ' B']}}      strip_spaces=True
+    ${{[['a${SPACE*7}a', 'B${SPACE*7}']]}}    ${{['a a', 'B ']}}    collapse_spaces=True
+
 Should Contain with bytes
     [Documentation]    FAIL Several failures occurred:
     ...

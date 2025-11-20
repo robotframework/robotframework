@@ -14,11 +14,9 @@
 #  limitations under the License.
 
 import copy
+from collections.abc import Iterator, Mapping, MutableMapping, MutableSequence, Sequence
 from itertools import chain
-from typing import (
-    Any, Iterable, Iterator, Literal, Mapping, MutableMapping, MutableSequence,
-    NoReturn, Sequence, Union
-)
+from typing import Literal, NoReturn, Union
 
 from robot.api import logger
 from robot.utils import (
@@ -27,9 +25,10 @@ from robot.utils import (
 from robot.utils.asserts import assert_equal
 from robot.version import get_version
 
+from .normalizer import IgnoreCase, Normalizer
+
 NOT_SET = NotSet()
 
-IgnoreCase = Union[Literal["KEY", "KEYS", "VALUE", "VALUES"], bool]
 ListLike = Union[Sequence, Mapping, set]
 
 
@@ -225,6 +224,7 @@ class _List:
         | ${L5} is not changed
         """
         if start == "":
+            # Deprecated in RF 7.4. Can be removed in RF 8 or latest in RF 9.
             logger.warn(
                 "Using an empty string as a start index with the 'Get Slice From List' "
                 "keyword is deprecated. Use '0' instead."
@@ -274,6 +274,7 @@ class _List:
         | ${L5} is not changed
         """
         if start == "":
+            # Deprecated in RF 7.4. Can be removed in RF 8 or latest in RF 9.
             logger.warn(
                 "Using an empty string as a start index with the 'Get Index From List' "
                 "keyword is deprecated. Use '0' instead."
@@ -461,7 +462,7 @@ class _List:
             names = {}
         elif not isinstance(names, Mapping):
             names = dict(zip(range(len1), names))
-        normalize = Normalizer(ignore_case, ignore_order).normalize
+        normalize = Normalizer(ignore_case, ignore_order=ignore_order).normalize
         diffs = list(self._yield_list_diffs(normalize(list1), normalize(list2), names))
         if diffs:
             report_error("Lists are different:\n" + "\n".join(diffs), msg, values)
@@ -471,7 +472,7 @@ class _List:
         list1: Sequence,
         list2: Sequence,
         names: "Mapping[int, str]",
-    ) -> Iterator[str]:
+    ) -> "Iterator[str]":
         for index, (item1, item2) in enumerate(zip(list1, list2)):
             name = f" ({names[index]})" if index in names else ""
             try:
@@ -511,7 +512,7 @@ class _List:
         """Logs contents of the ``list`` using the given ``level``."""
         logger.write("\n".join(self._log_list(list_)), level)
 
-    def _log_list(self, list_: Sequence[object]) -> Iterator[str]:
+    def _log_list(self, list_: "Sequence[object]") -> "Iterator[str]":
         if not list_:
             yield "List is empty."
         elif len(list_) == 1:
@@ -978,7 +979,7 @@ class _Dictionary:
     def _log_dictionary(
         self,
         dictionary: Mapping,
-    ) -> Iterator[str]:
+    ) -> "Iterator[str]":
         if not dictionary:
             yield "Dictionary is empty."
         elif len(dictionary) == 1:
@@ -1120,7 +1121,7 @@ class Collections(_List, _Dictionary):
         | Should Contain Match | ${list} | ab* | ignore_whitespace=true | ignore_case=true | # Same as the above but also ignore case. |
         """
         matches = self._get_matches(
-            iterable=list,
+            sequence=list,
             pattern=pattern,
             case_insensitive=case_insensitive,
             whitespace_insensitive=whitespace_insensitive,
@@ -1149,7 +1150,7 @@ class Collections(_List, _Dictionary):
         for information about arguments and usage in general.
         """
         matches = self._get_matches(
-            iterable=list,
+            sequence=list,
             pattern=pattern,
             case_insensitive=case_insensitive,
             whitespace_insensitive=whitespace_insensitive,
@@ -1182,7 +1183,7 @@ class Collections(_List, _Dictionary):
         | ${matches}= | Get Matches | ${list} | a* | ignore_case=True | # ${matches} will contain any string beginning with 'a' or 'A' |
         """
         return self._get_matches(
-            iterable=list,
+            sequence=list,
             pattern=pattern,
             case_insensitive=case_insensitive,
             whitespace_insensitive=whitespace_insensitive,
@@ -1221,7 +1222,7 @@ class Collections(_List, _Dictionary):
 
     def _get_matches(
         self,
-        iterable: Iterable,
+        sequence: Sequence,
         pattern: str,
         case_insensitive: "bool | None" = None,
         whitespace_insensitive: "bool | None" = None,
@@ -1249,9 +1250,7 @@ class Collections(_List, _Dictionary):
             spaceless=ignore_whitespace,
             regexp=regexp,
         )
-        return [
-            item for item in iterable if isinstance(item, str) and matcher.match(item)
-        ]
+        return [s for s in sequence if isinstance(s, str) and matcher.match(s)]
 
 
 def deprecate_no_values(values: "bool | str") -> bool:
@@ -1272,92 +1271,3 @@ def report_error(default: str, message: "str | None", values: bool = False) -> N
     elif values:
         message += "\n" + default
     raise AssertionError(message)
-
-
-class Normalizer:
-
-    def __init__(
-        self,
-        ignore_case: IgnoreCase = False,
-        ignore_order: bool = False,
-        ignore_keys: "Sequence | None" = None,
-    ):
-        if isinstance(ignore_case, str):
-            self.ignore_key_case = ignore_case.upper() not in ("VALUE", "VALUES")
-            self.ignore_value_case = ignore_case.upper() not in ("KEY", "KEYS")
-        else:
-            self.ignore_key_case = self.ignore_value_case = ignore_case
-        self.ignore_case = ignore_case
-        self.ignore_order = ignore_order
-        self.ignore_keys = self._parse_ignored_keys(ignore_keys)
-
-    def _parse_ignored_keys(self, ignore_keys: "Sequence | None") -> set:
-        if not ignore_keys:
-            return set()
-        return {self.normalize_key(k) for k in ignore_keys}
-
-    def normalize(self, value: Any) -> Any:
-        if not self:
-            return value
-        if isinstance(value, str):
-            return self.normalize_string(value)
-        if isinstance(value, Mapping):
-            return self.normalize_dict(value)
-        if isinstance(value, Sequence):
-            return self.normalize_list(value)
-        return value
-
-    def normalize_string(self, value: str) -> str:
-        return value.casefold() if self.ignore_case else value
-
-    def normalize_list(self, value: Sequence) -> Sequence:
-        cls = type(value)
-        value_list = [self.normalize(v) for v in value]
-        if self.ignore_order:
-            value_list = sorted(value_list)
-        return self._try_to_preserve_type(value_list, cls)
-
-    def _try_to_preserve_type(self, value: Any, cls: type) -> Any:
-        # Try to preserve original type. Most importantly, preserve tuples to
-        # allow using them as dictionary keys.
-        try:
-            return cls(value)
-        except TypeError:
-            return value
-
-    def normalize_dict(self, value: Mapping) -> Mapping:
-        cls = type(value)
-        result = {}
-        for key in value:
-            normalized = self.normalize_key(key)
-            if normalized in self.ignore_keys:
-                continue
-            if normalized in result:
-                raise AssertionError(
-                    f"Dictionary {value} contains multiple keys that are normalized "
-                    f"to '{normalized}'. Try normalizing only dictionary values like "
-                    f"'ignore_case=values'."
-                )
-            result[normalized] = self.normalize_value(value[key])
-        return self._try_to_preserve_type(result, cls)
-
-    def normalize_key(self, key: object) -> object:
-        ignore_case, self.ignore_case = self.ignore_case, self.ignore_key_case
-        try:
-            return self.normalize(key)
-        finally:
-            self.ignore_case = ignore_case
-
-    def normalize_value(self, value: object) -> object:
-        ignore_case, self.ignore_case = self.ignore_case, self.ignore_value_case
-        try:
-            return self.normalize(value)
-        finally:
-            self.ignore_case = ignore_case
-
-    def __bool__(self) -> bool:
-        return bool(
-            self.ignore_case
-            or self.ignore_order
-            or getattr(self, "ignore_keys", False)
-        )  # fmt: skip

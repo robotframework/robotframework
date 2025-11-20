@@ -27,6 +27,9 @@ Should Contain and do not collapse spaces
 Should Contain and collapse spaces
     Check Test Case    ${TESTNAME}
 
+Should Contain with recursive normalization
+    Check Test Case    ${TESTNAME}
+
 Should Contain with bytes
     Check Test Case    ${TESTNAME}
 

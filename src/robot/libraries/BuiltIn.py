@@ -30,9 +30,9 @@ from robot.running import Keyword, RUN_KW_REGISTER, TypeInfo
 from robot.running.context import EXECUTION_CONTEXTS
 from robot.utils import (
     DotDict, escape, format_assign_message, get_error_message, get_time, html_escape,
-    is_falsy, is_list_like, is_truthy, Matcher, normalize, normalize_whitespace,
-    NormalizedDict, parse_re_flags, parse_time, plural_or_not as s, prepr, safe_str,
-    secs_to_timestr, seq2str, split_from_equals, timestr_to_secs, type_name, unescape
+    is_truthy, Matcher, normalize, normalize_whitespace, NormalizedDict, parse_re_flags,
+    parse_time, plural_or_not as s, prepr, safe_str, secs_to_timestr, seq2str,
+    split_from_equals, timestr_to_secs, type_name, unescape
 )
 from robot.utils.asserts import assert_equal, assert_not_equal
 from robot.variables import (
@@ -40,6 +40,8 @@ from robot.variables import (
     search_variable, VariableResolver
 )
 from robot.version import get_version
+
+from .normalizer import Normalizer, StripSpaces
 
 # Type aliases representing names and arguments of keywords executed dynamically
 # by `Run Keyword` and other similar keywords. We may want to replace these with
@@ -653,7 +655,7 @@ class _Verify(_BuiltInBase):
         values: bool = True,
         ignore_case: bool = False,
         formatter: Literal["str", "repr", "ascii"] = "str",
-        strip_spaces: "Literal['leading', 'trailing'] | bool" = False,
+        strip_spaces: StripSpaces = False,
         collapse_spaces: bool = False,
         type: "type | str | Literal['auto'] | Any | None" = None,
         types: "type | str | Any | None" = None,
@@ -712,16 +714,14 @@ class _Verify(_BuiltInBase):
         if type or types:
             first, second = self._type_convert(first, second, type, types)
         self._log_types_at_info_if_different(first, second)
-        if isinstance(first, str) and isinstance(second, str):
-            if ignore_case:
-                first = first.casefold()
-                second = second.casefold()
-            if strip_spaces:
-                first = self._strip_spaces(first, strip_spaces)
-                second = self._strip_spaces(second, strip_spaces)
-            if collapse_spaces:
-                first = self._collapse_spaces(first)
-                second = self._collapse_spaces(second)
+        normalizer = Normalizer(
+            ignore_case=ignore_case,
+            strip_spaces=strip_spaces,
+            collapse_spaces=collapse_spaces,
+        )
+        if normalizer:
+            first = normalizer.normalize(first)
+            second = normalizer.normalize(second)
         self._should_be_equal(first, second, msg, values, formatter)
 
     def _type_convert(
@@ -806,24 +806,6 @@ class _Verify(_BuiltInBase):
             return False
         return bool(values)
 
-    def _strip_spaces(
-        self,
-        value: object,
-        strip_spaces: "Literal['leading', 'trailing'] | bool",
-    ) -> object:
-        if not isinstance(value, str):
-            return value
-        if not isinstance(strip_spaces, str):
-            return value.strip() if strip_spaces else value
-        if strip_spaces.upper() == "LEADING":
-            return value.lstrip()
-        if strip_spaces.upper() == "TRAILING":
-            return value.rstrip()
-        return value.strip() if strip_spaces else value
-
-    def _collapse_spaces(self, value: object) -> object:
-        return re.sub(r"\s+", " ", value) if isinstance(value, str) else value
-
     def should_not_be_equal(
         self,
         first: object,
@@ -831,7 +813,7 @@ class _Verify(_BuiltInBase):
         msg: "str | None" = None,
         values: bool = True,
         ignore_case: bool = False,
-        strip_spaces: "Literal['leading', 'trailing'] | bool" = False,
+        strip_spaces: StripSpaces = False,
         collapse_spaces: bool = False,
     ):
         """Fails if the given objects are equal.
@@ -852,16 +834,14 @@ class _Verify(_BuiltInBase):
         spaces are collapsed into a single space.
         """
         self._log_types_at_info_if_different(first, second)
-        if isinstance(first, str) and isinstance(second, str):
-            if ignore_case:
-                first = first.casefold()
-                second = second.casefold()
-            if strip_spaces:
-                first = self._strip_spaces(first, strip_spaces)
-                second = self._strip_spaces(second, strip_spaces)
-            if collapse_spaces:
-                first = self._collapse_spaces(first)
-                second = self._collapse_spaces(second)
+        normalizer = Normalizer(
+            ignore_case=ignore_case,
+            strip_spaces=strip_spaces,
+            collapse_spaces=collapse_spaces,
+        )
+        if normalizer:
+            first = normalizer.normalize(first)
+            second = normalizer.normalize(second)
         self._should_not_be_equal(first, second, msg, values)
 
     def _should_not_be_equal(
@@ -892,12 +872,9 @@ class _Verify(_BuiltInBase):
         See `Should Be Equal As Integers` for some usage examples.
         """
         self._log_types_at_info_if_different(first, second)
-        self._should_not_be_equal(
-            self._convert_to_integer(first, base),
-            self._convert_to_integer(second, base),
-            msg,
-            values,
-        )
+        first = self._convert_to_integer(first, base)
+        second = self._convert_to_integer(second, base)
+        self._should_not_be_equal(first, second, msg, values)
 
     def should_be_equal_as_integers(
         self,
@@ -921,12 +898,9 @@ class _Verify(_BuiltInBase):
         | Should Be Equal As Integers | 0b1011 | 11  |
         """
         self._log_types_at_info_if_different(first, second)
-        self._should_be_equal(
-            self._convert_to_integer(first, base),
-            self._convert_to_integer(second, base),
-            msg,
-            values,
-        )
+        first = self._convert_to_integer(first, base)
+        second = self._convert_to_integer(second, base)
+        self._should_be_equal(first, second, msg, values)
 
     def should_not_be_equal_as_numbers(
         self,
@@ -1002,7 +976,7 @@ class _Verify(_BuiltInBase):
         msg: "str | None" = None,
         values: bool = True,
         ignore_case: bool = False,
-        strip_spaces: "Literal['leading', 'trailing'] | bool" = False,
+        strip_spaces: StripSpaces = False,
         collapse_spaces: bool = False,
     ):
         """Fails if objects are equal after converting them to strings.
@@ -1027,15 +1001,14 @@ class _Verify(_BuiltInBase):
         self._log_types_at_info_if_different(first, second)
         first = safe_str(first)
         second = safe_str(second)
-        if ignore_case:
-            first = first.casefold()
-            second = second.casefold()
-        if strip_spaces:
-            first = self._strip_spaces(first, strip_spaces)
-            second = self._strip_spaces(second, strip_spaces)
-        if collapse_spaces:
-            first = self._collapse_spaces(first)
-            second = self._collapse_spaces(second)
+        normalizer = Normalizer(
+            ignore_case=ignore_case,
+            strip_spaces=strip_spaces,
+            collapse_spaces=collapse_spaces,
+        )
+        if normalizer:
+            first = normalizer.normalize(first)
+            second = normalizer.normalize(second)
         self._should_not_be_equal(first, second, msg, values)
 
     def should_be_equal_as_strings(
@@ -1045,7 +1018,7 @@ class _Verify(_BuiltInBase):
         msg: "str | None" = None,
         values: bool = True,
         ignore_case: bool = False,
-        strip_spaces: "Literal['leading', 'trailing'] | bool" = False,
+        strip_spaces: StripSpaces = False,
         formatter: Literal["str", "repr", "ascii"] = "str",
         collapse_spaces: bool = False,
     ):
@@ -1072,15 +1045,14 @@ class _Verify(_BuiltInBase):
         self._log_types_at_info_if_different(first, second)
         first = safe_str(first)
         second = safe_str(second)
-        if ignore_case:
-            first = first.casefold()
-            second = second.casefold()
-        if strip_spaces:
-            first = self._strip_spaces(first, strip_spaces)
-            second = self._strip_spaces(second, strip_spaces)
-        if collapse_spaces:
-            first = self._collapse_spaces(first)
-            second = self._collapse_spaces(second)
+        normalizer = Normalizer(
+            ignore_case=ignore_case,
+            strip_spaces=strip_spaces,
+            collapse_spaces=collapse_spaces,
+        )
+        if normalizer:
+            first = normalizer.normalize(first)
+            second = normalizer.normalize(second)
         self._should_be_equal(first, second, msg, values, formatter)
 
     def should_not_start_with(
@@ -1090,7 +1062,7 @@ class _Verify(_BuiltInBase):
         msg: "str | None" = None,
         values: bool = True,
         ignore_case: bool = False,
-        strip_spaces: "Literal['leading', 'trailing'] | bool" = False,
+        strip_spaces: StripSpaces = False,
         collapse_spaces: bool = False,
     ):
         """Fails if the string ``str1`` starts with the string ``str2``.
@@ -1100,15 +1072,14 @@ class _Verify(_BuiltInBase):
         of the ``ignore_case``, ``strip_spaces``, and ``collapse_spaces`` options.
         """
         values = self._deprecate_no_values(values)
-        if ignore_case:
-            str1 = str1.casefold()
-            str2 = str2.casefold()
-        if strip_spaces:
-            str1 = self._strip_spaces(str1, strip_spaces)
-            str2 = self._strip_spaces(str2, strip_spaces)
-        if collapse_spaces:
-            str1 = self._collapse_spaces(str1)
-            str2 = self._collapse_spaces(str2)
+        normalizer = Normalizer(
+            ignore_case=ignore_case,
+            strip_spaces=strip_spaces,
+            collapse_spaces=collapse_spaces,
+        )
+        if normalizer:
+            str1 = normalizer.normalize(str1)
+            str2 = normalizer.normalize(str2)
         if str1.startswith(str2):
             raise AssertionError(
                 self._get_string_msg(str1, str2, msg, values, "starts with")
@@ -1121,7 +1092,7 @@ class _Verify(_BuiltInBase):
         msg: "str | None" = None,
         values: bool = True,
         ignore_case: bool = False,
-        strip_spaces: "Literal['leading', 'trailing'] | bool" = False,
+        strip_spaces: StripSpaces = False,
         collapse_spaces: bool = False,
     ):
         """Fails if the string ``str1`` does not start with the string ``str2``.
@@ -1131,15 +1102,14 @@ class _Verify(_BuiltInBase):
         of the ``ignore_case``, ``strip_spaces``, and ``collapse_spaces`` options.
         """
         values = self._deprecate_no_values(values)
-        if ignore_case:
-            str1 = str1.casefold()
-            str2 = str2.casefold()
-        if strip_spaces:
-            str1 = self._strip_spaces(str1, strip_spaces)
-            str2 = self._strip_spaces(str2, strip_spaces)
-        if collapse_spaces:
-            str1 = self._collapse_spaces(str1)
-            str2 = self._collapse_spaces(str2)
+        normalizer = Normalizer(
+            ignore_case=ignore_case,
+            strip_spaces=strip_spaces,
+            collapse_spaces=collapse_spaces,
+        )
+        if normalizer:
+            str1 = normalizer.normalize(str1)
+            str2 = normalizer.normalize(str2)
         if not str1.startswith(str2):
             raise AssertionError(
                 self._get_string_msg(str1, str2, msg, values, "does not start with")
@@ -1152,7 +1122,7 @@ class _Verify(_BuiltInBase):
         msg: "str | None" = None,
         values: bool = True,
         ignore_case: bool = False,
-        strip_spaces: "Literal['leading', 'trailing'] | bool" = False,
+        strip_spaces: StripSpaces = False,
         collapse_spaces: bool = False,
     ):
         """Fails if the string ``str1`` ends with the string ``str2``.
@@ -1162,15 +1132,14 @@ class _Verify(_BuiltInBase):
         of the ``ignore_case``, ``strip_spaces``, and ``collapse_spaces`` options.
         """
         values = self._deprecate_no_values(values)
-        if ignore_case:
-            str1 = str1.casefold()
-            str2 = str2.casefold()
-        if strip_spaces:
-            str1 = self._strip_spaces(str1, strip_spaces)
-            str2 = self._strip_spaces(str2, strip_spaces)
-        if collapse_spaces:
-            str1 = self._collapse_spaces(str1)
-            str2 = self._collapse_spaces(str2)
+        normalizer = Normalizer(
+            ignore_case=ignore_case,
+            strip_spaces=strip_spaces,
+            collapse_spaces=collapse_spaces,
+        )
+        if normalizer:
+            str1 = normalizer.normalize(str1)
+            str2 = normalizer.normalize(str2)
         if str1.endswith(str2):
             raise AssertionError(
                 self._get_string_msg(str1, str2, msg, values, "ends with")
@@ -1183,7 +1152,7 @@ class _Verify(_BuiltInBase):
         msg: "str | None" = None,
         values: bool = True,
         ignore_case: bool = False,
-        strip_spaces: "Literal['leading', 'trailing'] | bool" = False,
+        strip_spaces: StripSpaces = False,
         collapse_spaces: bool = False,
     ):
         """Fails if the string ``str1`` does not end with the string ``str2``.
@@ -1193,15 +1162,14 @@ class _Verify(_BuiltInBase):
         of the ``ignore_case``, ``strip_spaces``, and ``collapse_spaces`` options.
         """
         values = self._deprecate_no_values(values)
-        if ignore_case:
-            str1 = str1.casefold()
-            str2 = str2.casefold()
-        if strip_spaces:
-            str1 = self._strip_spaces(str1, strip_spaces)
-            str2 = self._strip_spaces(str2, strip_spaces)
-        if collapse_spaces:
-            str1 = self._collapse_spaces(str1)
-            str2 = self._collapse_spaces(str2)
+        normalizer = Normalizer(
+            ignore_case=ignore_case,
+            strip_spaces=strip_spaces,
+            collapse_spaces=collapse_spaces,
+        )
+        if normalizer:
+            str1 = normalizer.normalize(str1)
+            str2 = normalizer.normalize(str2)
         if not str1.endswith(str2):
             raise AssertionError(
                 self._get_string_msg(str1, str2, msg, values, "does not end with")
@@ -1214,7 +1182,7 @@ class _Verify(_BuiltInBase):
         msg: "str | None" = None,
         values: bool = True,
         ignore_case: bool = False,
-        strip_spaces: "Literal['leading', 'trailing'] | bool" = False,
+        strip_spaces: StripSpaces = False,
         collapse_spaces: bool = False,
     ):
         """Fails if ``container`` contains ``item`` one or more times.
@@ -1246,26 +1214,14 @@ class _Verify(_BuiltInBase):
         # case-insensitive comparisons.
         values = self._deprecate_no_values(values)
         orig_container = container
-        if ignore_case and isinstance(item, str):
-            item = item.casefold()
-            if isinstance(container, str):
-                container = container.casefold()
-            elif is_list_like(container):
-                container = {
-                    x.casefold() if isinstance(x, str) else x for x in container
-                }
-        if strip_spaces and isinstance(item, str):
-            item = self._strip_spaces(item, strip_spaces)
-            if isinstance(container, str):
-                container = self._strip_spaces(container, strip_spaces)
-            elif is_list_like(container):
-                container = {self._strip_spaces(x, strip_spaces) for x in container}
-        if collapse_spaces and isinstance(item, str):
-            item = self._collapse_spaces(item)
-            if isinstance(container, str):
-                container = self._collapse_spaces(container)
-            elif is_list_like(container):
-                container = {self._collapse_spaces(x) for x in container}
+        normalizer = Normalizer(
+            ignore_case=ignore_case,
+            strip_spaces=strip_spaces,
+            collapse_spaces=collapse_spaces,
+        )
+        if normalizer:
+            container = normalizer.normalize(container, mapping_to_list=True)
+            item = normalizer.normalize(item)
         if item in container:
             raise AssertionError(
                 self._get_string_msg(orig_container, item, msg, values, "contains")
@@ -1278,7 +1234,7 @@ class _Verify(_BuiltInBase):
         msg: "str | None" = None,
         values: bool = True,
         ignore_case: bool = False,
-        strip_spaces: "Literal['leading', 'trailing'] | bool" = False,
+        strip_spaces: StripSpaces = False,
         collapse_spaces: bool = False,
     ):
         """Fails if ``container`` does not contain ``item`` one or more times.
@@ -1323,34 +1279,18 @@ class _Verify(_BuiltInBase):
                     raise ValueError(f"{item!r} cannot be encoded into bytes.")
             elif isinstance(item, int) and item not in range(256):
                 raise ValueError(f"Byte must be in range 0-255, got {item}.")
-        if ignore_case and isinstance(item, str):
-            item = item.casefold()
-            if isinstance(container, str):
-                container = container.casefold()
-            elif is_list_like(container):
-                container = {
-                    x.casefold() if isinstance(x, str) else x for x in container
-                }
-        if strip_spaces and isinstance(item, str):
-            item = self._strip_spaces(item, strip_spaces)
-            if isinstance(container, str):
-                container = self._strip_spaces(container, strip_spaces)
-            elif is_list_like(container):
-                container = {self._strip_spaces(x, strip_spaces) for x in container}
-        if collapse_spaces and isinstance(item, str):
-            item = self._collapse_spaces(item)
-            if isinstance(container, str):
-                container = self._collapse_spaces(container)
-            elif is_list_like(container):
-                container = {self._collapse_spaces(x) for x in container}
+        normalizer = Normalizer(
+            ignore_case=ignore_case,
+            strip_spaces=strip_spaces,
+            collapse_spaces=collapse_spaces,
+        )
+        if normalizer:
+            container = normalizer.normalize(container, mapping_to_list=True)
+            item = normalizer.normalize(item)
         if item not in container:
             raise AssertionError(
                 self._get_string_msg(
-                    orig_container,
-                    item,
-                    msg,
-                    values,
-                    "does not contain",
+                    orig_container, item, msg, values, "does not contain"
                 )
             )
 
@@ -1361,7 +1301,7 @@ class _Verify(_BuiltInBase):
         msg: "str | None" = None,
         values: bool = True,
         ignore_case: bool = False,
-        strip_spaces: "Literal['leading', 'trailing'] | bool" = False,
+        strip_spaces: StripSpaces = False,
         collapse_spaces: bool = False,
     ):
         """Fails if ``container`` does not contain any of the ``*items``.
@@ -1385,26 +1325,14 @@ class _Verify(_BuiltInBase):
         if not items:
             raise RuntimeError("One or more item required.")
         orig_container = container
-        if ignore_case:
-            items = [x.casefold() if isinstance(x, str) else x for x in items]
-            if isinstance(container, str):
-                container = container.casefold()
-            elif is_list_like(container):
-                container = {
-                    x.casefold() if isinstance(x, str) else x for x in container
-                }
-        if strip_spaces:
-            items = [self._strip_spaces(x, strip_spaces) for x in items]
-            if isinstance(container, str):
-                container = self._strip_spaces(container, strip_spaces)
-            elif is_list_like(container):
-                container = {self._strip_spaces(x, strip_spaces) for x in container}
-        if collapse_spaces:
-            items = [self._collapse_spaces(x) for x in items]
-            if isinstance(container, str):
-                container = self._collapse_spaces(container)
-            elif is_list_like(container):
-                container = {self._collapse_spaces(x) for x in container}
+        normalizer = Normalizer(
+            ignore_case=ignore_case,
+            strip_spaces=strip_spaces,
+            collapse_spaces=collapse_spaces,
+        )
+        if normalizer:
+            container = normalizer.normalize(container, mapping_to_list=True)
+            items = normalizer.normalize(items)
         if not any(item in container for item in items):
             raise AssertionError(
                 self._get_string_msg(
@@ -1424,7 +1352,7 @@ class _Verify(_BuiltInBase):
         msg: "str | None" = None,
         values: bool = True,
         ignore_case: bool = False,
-        strip_spaces: "Literal['leading', 'trailing'] | bool" = False,
+        strip_spaces: StripSpaces = False,
         collapse_spaces: bool = False,
     ):
         """Fails if ``container`` contains one or more of the ``*items``.
@@ -1448,26 +1376,14 @@ class _Verify(_BuiltInBase):
         if not items:
             raise RuntimeError("One or more item required.")
         orig_container = container
-        if ignore_case:
-            items = [x.casefold() if isinstance(x, str) else x for x in items]
-            if isinstance(container, str):
-                container = container.casefold()
-            elif is_list_like(container):
-                container = {
-                    x.casefold() if isinstance(x, str) else x for x in container
-                }
-        if strip_spaces:
-            items = [self._strip_spaces(x, strip_spaces) for x in items]
-            if isinstance(container, str):
-                container = self._strip_spaces(container, strip_spaces)
-            elif is_list_like(container):
-                container = {self._strip_spaces(x, strip_spaces) for x in container}
-        if collapse_spaces:
-            items = [self._collapse_spaces(x) for x in items]
-            if isinstance(container, str):
-                container = self._collapse_spaces(container)
-            elif is_list_like(container):
-                container = {self._collapse_spaces(x) for x in container}
+        normalizer = Normalizer(
+            ignore_case=ignore_case,
+            strip_spaces=strip_spaces,
+            collapse_spaces=collapse_spaces,
+        )
+        if normalizer:
+            container = normalizer.normalize(container, mapping_to_list=True)
+            items = normalizer.normalize(items)
         if any(item in container for item in items):
             raise AssertionError(
                 self._get_string_msg(
@@ -1487,7 +1403,7 @@ class _Verify(_BuiltInBase):
         count: int,
         msg: "str | None" = None,
         ignore_case: bool = False,
-        strip_spaces: "Literal['leading', 'trailing'] | bool" = False,
+        strip_spaces: StripSpaces = False,
         collapse_spaces: bool = False,
     ):
         """Fails if ``container`` does not contain ``item`` ``count`` times.
@@ -1515,27 +1431,14 @@ class _Verify(_BuiltInBase):
         """
         count = self._convert_to_integer(count)
         orig_container = container
-        if isinstance(item, str):
-            if ignore_case:
-                item = item.casefold()
-                if isinstance(container, str):
-                    container = container.casefold()
-                elif is_list_like(container):
-                    container = [
-                        x.casefold() if isinstance(x, str) else x for x in container
-                    ]
-            if strip_spaces:
-                item = self._strip_spaces(item, strip_spaces)
-                if isinstance(container, str):
-                    container = self._strip_spaces(container, strip_spaces)
-                elif is_list_like(container):
-                    container = [self._strip_spaces(x, strip_spaces) for x in container]
-            if collapse_spaces:
-                item = self._collapse_spaces(item)
-                if isinstance(container, str):
-                    container = self._collapse_spaces(container)
-                elif is_list_like(container):
-                    container = [self._collapse_spaces(x) for x in container]
+        normalizer = Normalizer(
+            ignore_case=ignore_case,
+            strip_spaces=strip_spaces,
+            collapse_spaces=collapse_spaces,
+        )
+        if normalizer:
+            container = normalizer.normalize(container, mapping_to_list=True)
+            item = normalizer.normalize(item)
         x = self.get_count(container, item)
         if not msg:
             msg = (
@@ -1813,7 +1716,7 @@ class _Variables(_BuiltInBase):
         | ${no decoration} =            | Get Variables | no_decoration=Yes |
         | Dictionary Should Contain Key | ${no decoration} | example_variable |
         """
-        return self._variables.as_dict(decoration=is_falsy(no_decoration))
+        return self._variables.as_dict(decoration=not no_decoration)
 
     @run_keyword_variant(resolve=0)
     def get_variable_value(self, name: str, default: object = None, /) -> object:
@@ -4077,7 +3980,7 @@ class _Misc(_BuiltInBase):
     def _get_new_text(self, old, new, append, handle_html=False, separator=" "):
         if not isinstance(new, str):
             new = str(new)
-        if not (is_truthy(append) and old):
+        if not (append and old):
             return new
         if handle_html:
             if new.startswith("*HTML*"):
