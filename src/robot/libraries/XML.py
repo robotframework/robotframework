@@ -600,9 +600,7 @@ class XML:
         finder = ElementFinder(self.etree, self.modern_etree, self.lxml_etree)
         return finder.find_all(source, xpath)
 
-    def get_child_elements(
-        self, source: Any, xpath: str = "."
-    ) -> "list[Element]":
+    def get_child_elements(self, source: Any, xpath: str = ".") -> "list[Element]":
         """Returns the child elements of the specified element as a list.
 
         The element whose children to return is specified using ``source`` and
@@ -814,7 +812,7 @@ class XML:
     def get_element_attribute(
         self,
         source: Any,
-        name: "bytes | str",
+        name: str,
         xpath: str = ".",
         default: object = None,
     ) -> object:
@@ -840,7 +838,9 @@ class XML:
         return self.get_element(source, xpath).get(name, default)
 
     def get_element_attributes(
-        self, source: Any, xpath: str = "."
+        self,
+        source: Any,
+        xpath: str = ".",
     ) -> "dict[bytes | str, bytes | str]":
         """Returns all attributes of the specified element.
 
@@ -864,8 +864,8 @@ class XML:
     def element_attribute_should_be(
         self,
         source: Any,
-        name: "bytes | str",
-        expected: "bytes | str | None",
+        name: str,
+        expected: "str | None",
         xpath: str = ".",
         message: "str | None" = None,
     ):
@@ -895,7 +895,7 @@ class XML:
     def element_attribute_should_match(
         self,
         source: Any,
-        name: "bytes | str",
+        name: str,
         pattern: str,
         xpath: str = ".",
         message: "str | None" = None,
@@ -922,7 +922,7 @@ class XML:
     def element_should_not_have_attribute(
         self,
         source: Any,
-        name: "bytes | str",
+        name: str,
         xpath: str = ".",
         message: "str | None" = None,
     ):
@@ -1057,9 +1057,7 @@ class XML:
         for child, tail in zip(element, tails):
             child.tail = tail
 
-    def set_element_tag(
-        self, source: Any, tag: "bytes | str", xpath: str = "."
-    ) -> Element:
+    def set_element_tag(self, source: Any, tag: str, xpath: str = ".") -> Element:
         """Sets the tag of the specified element.
 
         The element whose tag to set is specified using ``source`` and
@@ -1081,9 +1079,7 @@ class XML:
         self.get_element(source, xpath).tag = tag
         return source
 
-    def set_elements_tag(
-        self, source: Any, tag: "bytes | str", xpath: str = "."
-    ) -> Element:
+    def set_elements_tag(self, source: Any, tag: str, xpath: str = ".") -> Element:
         """Sets the tag of the specified elements.
 
         Like `Set Element Tag` but sets the tag of all elements matching
@@ -1151,8 +1147,8 @@ class XML:
     def set_element_attribute(
         self,
         source: Any,
-        name: "bytes | str",
-        value: "bytes | str",
+        name: str,
+        value: str,
         xpath: str = ".",
     ) -> Element:
         """Sets attribute ``name`` of the specified element to ``value``.
@@ -1184,8 +1180,8 @@ class XML:
     def set_elements_attribute(
         self,
         source: Any,
-        name: "bytes | str",
-        value: "bytes | str",
+        name: str,
+        value: str,
         xpath: str = ".",
     ) -> Element:
         """Sets attribute ``name`` of the specified elements to ``value``.
@@ -1199,7 +1195,10 @@ class XML:
         return source
 
     def remove_element_attribute(
-        self, source: Any, name: "bytes | str", xpath: str = "."
+        self,
+        source: Any,
+        name: str,
+        xpath: str = ".",
     ) -> Element:
         """Removes attribute ``name`` from the specified element.
 
@@ -1226,7 +1225,10 @@ class XML:
         return source
 
     def remove_elements_attribute(
-        self, source: Any, name: "bytes | str", xpath: str = "."
+        self,
+        source: Any,
+        name: str,
+        xpath: str = ".",
     ) -> Element:
         """Removes attribute ``name`` from the specified elements.
 
@@ -1238,9 +1240,7 @@ class XML:
             self.remove_element_attribute(elem, name)
         return source
 
-    def remove_element_attributes(
-        self, source: Any, xpath: str = "."
-    ) -> Element:
+    def remove_element_attributes(self, source: Any, xpath: str = ".") -> Element:
         """Removes all attributes from the specified element.
 
         The element whose attributes to remove is specified using ``source`` and
@@ -1262,9 +1262,7 @@ class XML:
         self.get_element(source, xpath).attrib.clear()
         return source
 
-    def remove_elements_attributes(
-        self, source: Any, xpath: str = "."
-    ) -> Element:
+    def remove_elements_attributes(self, source: Any, xpath: str = ".") -> Element:
         """Removes all attributes from the specified elements.
 
         Like `Remove Element Attributes` but removes all attributes of all
@@ -1318,7 +1316,10 @@ class XML:
         return source
 
     def remove_element(
-        self, source: Any, xpath: str = "", remove_tail: bool = False
+        self,
+        source: Any,
+        xpath: str = "",
+        remove_tail: bool = False,
     ) -> Element:
         """Removes the element matching ``xpath`` from the ``source`` structure.
 
@@ -1346,7 +1347,10 @@ class XML:
         return source
 
     def remove_elements(
-        self, source: Any, xpath: str = "", remove_tail: bool = False
+        self,
+        source: Any,
+        xpath: str = "",
+        remove_tail: bool = False,
     ) -> Element:
         """Removes all elements matching ``xpath`` from the ``source`` structure.
 
@@ -1372,7 +1376,10 @@ class XML:
         return source
 
     def _remove_element(
-        self, root: Element, element: Element, remove_tail: bool = False
+        self,
+        root: Element,
+        element: Element,
+        remove_tail: bool = False,
     ):
         parent = self._find_parent(root, element)
         if not remove_tail:
@@ -1397,7 +1404,10 @@ class XML:
             sibling.tail = (sibling.tail or "") + element.tail
 
     def clear_element(
-        self, source: Any, xpath: str = ".", clear_tail: bool = False
+        self,
+        source: Any,
+        xpath: str = ".",
+        clear_tail: bool = False,
     ) -> Element:
         """Clears the contents of the specified element.
 
@@ -1454,13 +1464,14 @@ class XML:
 
     @overload
     def element_to_string(
-        self, source: Any, xpath: str = ".", encoding: None = None
+        self,
+        source: Any,
+        xpath: str = ".",
+        encoding: None = None,
     ) -> str: ...
 
     @overload
-    def element_to_string(
-        self, source: Any, xpath: str, encoding: str
-    ) -> bytes: ...
+    def element_to_string(self, source: Any, xpath: str, encoding: str) -> bytes: ...
 
     def element_to_string(
         self,
@@ -1490,7 +1501,10 @@ class XML:
         return string
 
     def log_element(
-        self, source, level: logger.LogLevel = "INFO", xpath: str = "."
+        self,
+        source,
+        level: logger.LogLevel = "INFO",
+        xpath: str = ".",
     ) -> str:
         """Logs the string representation of the specified element.
 
@@ -1551,7 +1565,10 @@ class XML:
         logger.info(f'XML saved to <a href="file://{path}">{path}</a>.', html=True)
 
     def evaluate_xpath(
-        self, source: Any, expression: str, context: str = "."
+        self,
+        source: Any,
+        expression: str,
+        context: str = ".",
     ) -> object:
         """Evaluates the given xpath expression and returns results.
 
@@ -1661,12 +1678,12 @@ class ElementFinder:
 
 class Location:
 
-    def __init__(self, path: "bytes | str", is_root: bool = True):
+    def __init__(self, path: str, is_root: bool = True):
         self.path = path
         self.is_not_root = not is_root
-        self.children: "dict[bytes | str, int]" = {}
+        self.children: "dict[str, int]" = {}
 
-    def child(self, tag: "bytes | str") -> "Location":
+    def child(self, tag: str) -> "Location":
         if tag not in self.children:
             self.children[tag] = 1
         else:
@@ -1690,7 +1707,10 @@ class ElementComparator:
         self.exclude_children = exclude_children
 
     def compare(
-        self, actual: Element, expected: Element, location: "Location | None" = None
+        self,
+        actual: Element,
+        expected: Element,
+        location: "Location | None" = None,
     ):
         if not location:
             location = Location(actual.tag)
@@ -1726,7 +1746,10 @@ class ElementComparator:
         comparator(actual, expected, message)
 
     def _compare_attributes(
-        self, actual: Element, expected: Element, location: Location
+        self,
+        actual: Element,
+        expected: Element,
+        location: Location,
     ):
         self._compare(
             sorted(actual.attrib),
