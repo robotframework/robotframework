@@ -571,7 +571,7 @@ class XML:
         return elements[0]
 
     def _raise_wrong_number_of_matches(
-        self, count: int, xpath: str, message: "None | str" = None
+        self, count: int, xpath: str, message: "str | None" = None
     ) -> NoReturn:
         if not message:
             message = self._wrong_number_of_matches(count, xpath)
@@ -642,7 +642,7 @@ class XML:
         self,
         source: ElementOrUnparsed,
         xpath: str = ".",
-        message: "None | str" = None,
+        message: "str | None" = None,
     ):
         """Verifies that one or more element match the given ``xpath``.
 
@@ -662,7 +662,7 @@ class XML:
         self,
         source: ElementOrUnparsed,
         xpath: str = ".",
-        message: "None | str" = None,
+        message: "str | None" = None,
     ):
         """Verifies that no element match the given ``xpath``.
 
@@ -764,7 +764,7 @@ class XML:
         expected: str,
         xpath: str = ".",
         normalize_whitespace: bool = False,
-        message: "None | str" = None,
+        message: "str | None" = None,
     ):
         """Verifies that the text of the specified element is ``expected``.
 
@@ -797,7 +797,7 @@ class XML:
         pattern: str,
         xpath: str = ".",
         normalize_whitespace: bool = False,
-        message: "None | str" = None,
+        message: "str | None" = None,
     ):
         """Verifies that the text of the specified element matches ``expected``.
 
@@ -871,9 +871,9 @@ class XML:
         self,
         source: ElementOrUnparsed,
         name: "bytes | str",
-        expected: "None | bytes | str",
+        expected: "bytes | str | None",
         xpath: str = ".",
-        message: "None | str" = None,
+        message: "str | None" = None,
     ):
         """Verifies that the specified attribute is ``expected``.
 
@@ -904,7 +904,7 @@ class XML:
         name: "bytes | str",
         pattern: str,
         xpath: str = ".",
-        message: "None | str" = None,
+        message: "str | None" = None,
     ):
         """Verifies that the specified attribute matches ``expected``.
 
@@ -930,7 +930,7 @@ class XML:
         source: ElementOrUnparsed,
         name: "bytes | str",
         xpath: str = ".",
-        message: "None | str" = None,
+        message: "str | None" = None,
     ):
         """Verifies that the specified element does not have attribute ``name``.
 
@@ -1103,8 +1103,8 @@ class XML:
     def set_element_text(
         self,
         source: ElementOrUnparsed,
-        text: "None | str" = None,
-        tail: "None | str" = None,
+        text: "str | None" = None,
+        tail: "str | None" = None,
         xpath: str = ".",
     ) -> Element:
         """Sets text and/or tail text of the specified element.
@@ -1140,8 +1140,8 @@ class XML:
     def set_elements_text(
         self,
         source: ElementOrUnparsed,
-        text: "None | str" = None,
-        tail: "None | str" = None,
+        text: "str | None" = None,
+        tail: "str | None" = None,
         xpath: str = ".",
     ) -> Element:
         """Sets text and/or tail text of the specified elements.
@@ -1472,7 +1472,7 @@ class XML:
         self,
         source: ElementOrUnparsed,
         xpath: str = ".",
-        encoding: "None | str" = None,
+        encoding: "str | None" = None,
     ) -> "bytes | str":
         """Returns the string representation of the specified element.
 
@@ -1595,7 +1595,7 @@ class NameSpaceStripper:
         self,
         elem: Element,
         preserve: bool = True,
-        current_ns: "None | bytes | str" = None,
+        current_ns: "bytes | str | None" = None,
         top: bool = True,
     ):
         if elem.tag.startswith("{") and "}" in elem.tag:
@@ -1614,7 +1614,7 @@ class NameSpaceStripper:
     def unstrip(
         self,
         elem: Element,
-        current_ns: "None | bytes | str" = None,
+        current_ns: "bytes | str | None" = None,
         copied: bool = False,
     ) -> Element:
         if not copied:
@@ -1696,7 +1696,7 @@ class ElementComparator:
         self.exclude_children = exclude_children
 
     def compare(
-        self, actual: Element, expected: Element, location: "None | Location" = None
+        self, actual: Element, expected: Element, location: "Location | None" = None
     ):
         if not location:
             location = Location(actual.tag)
