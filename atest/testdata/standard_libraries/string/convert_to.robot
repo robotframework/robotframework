@@ -14,6 +14,7 @@ Convert To Upper Case
     a1b2C3d4e      A1B2C3D4E
     Hello world    HELLO WORLD
     ööääåå         ÖÖÄÄÅÅ
+    ${{b'foo'}}    ${{b'FOO'}}
 
 Convert To Lower Case
     [Template]    Test lower case
@@ -23,6 +24,7 @@ Convert To Lower Case
     A1B2c3D4E      a1b2c3d4e
     Hello world    hello world
     ÖÖÄÄÅÅ         ööääåå
+    ${{b'FOO'}}    ${{b'foo'}}
 
 Convert To Title Case
     [Template]    Test title case

@@ -51,7 +51,6 @@ Decoding String Does Not Fail
     ${string} =    Decode Bytes To String    hello    ASCII
     Should Be Equal    ${string}    hello
 
-
 *** Keywords ***
 Create Byte String Variables
     ${ASCII}=    Evaluate    b"Hello, world!"
