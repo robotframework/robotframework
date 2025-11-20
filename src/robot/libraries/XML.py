@@ -18,7 +18,7 @@ import os
 import re
 from io import BytesIO
 from pathlib import Path
-from typing import Iterator, NoReturn, overload, Union
+from typing import Any, Iterator, NoReturn, overload
 from xml.etree import ElementTree as ET
 
 try:
@@ -44,15 +44,9 @@ from robot.version import get_version
 should_be_equal = asserts.assert_equal
 should_match = BuiltIn().should_match
 
-Unparsed = Union[BytesIO, bytes, bytearray, Path, str]
-
 
 class Element:
     """An XML Element"""
-
-
-class ElementOrUnparsed:
-    """Element | Unparsed"""
 
 
 class XML:
@@ -493,7 +487,7 @@ class XML:
 
     def parse_xml(
         self,
-        source: Unparsed,
+        source: Any,
         keep_clark_notation: bool = False,
         strip_namespaces: bool = False,
     ) -> Element:
@@ -539,7 +533,7 @@ class XML:
             self._ns_stripper.strip(root, preserve=not strip_namespaces)
         return root
 
-    def get_element(self, source: ElementOrUnparsed, xpath: str = ".") -> Element:
+    def get_element(self, source: Any, xpath: str = ".") -> Element:
         """Returns an element in the ``source`` matching the ``xpath``.
 
         The ``source`` can be a path to an XML file, a string containing XML, or
@@ -584,7 +578,7 @@ class XML:
             return f"One element matching '{xpath}' found."
         return f"Multiple elements ({count}) matching '{xpath}' found."
 
-    def get_elements(self, source: ElementOrUnparsed, xpath: str) -> "list[Element]":
+    def get_elements(self, source: Any, xpath: str) -> "list[Element]":
         """Returns a list of elements in the ``source`` matching the ``xpath``.
 
         The ``source`` can be a path to an XML file, a string containing XML, or
@@ -607,7 +601,7 @@ class XML:
         return finder.find_all(source, xpath)
 
     def get_child_elements(
-        self, source: ElementOrUnparsed, xpath: str = "."
+        self, source: Any, xpath: str = "."
     ) -> "list[Element]":
         """Returns the child elements of the specified element as a list.
 
@@ -626,7 +620,7 @@ class XML:
         """
         return list(self.get_element(source, xpath))
 
-    def get_element_count(self, source: ElementOrUnparsed, xpath: str = ".") -> int:
+    def get_element_count(self, source: Any, xpath: str = ".") -> int:
         """Returns and logs how many elements the given ``xpath`` matches.
 
         Arguments ``source`` and ``xpath`` have exactly the same semantics as
@@ -640,7 +634,7 @@ class XML:
 
     def element_should_exist(
         self,
-        source: ElementOrUnparsed,
+        source: Any,
         xpath: str = ".",
         message: "str | None" = None,
     ):
@@ -660,7 +654,7 @@ class XML:
 
     def element_should_not_exist(
         self,
-        source: ElementOrUnparsed,
+        source: Any,
         xpath: str = ".",
         message: "str | None" = None,
     ):
@@ -680,7 +674,7 @@ class XML:
 
     def get_element_text(
         self,
-        source: ElementOrUnparsed,
+        source: Any,
         xpath: str = ".",
         normalize_whitespace: bool = False,
     ) -> str:
@@ -733,7 +727,7 @@ class XML:
 
     def get_elements_texts(
         self,
-        source: ElementOrUnparsed,
+        source: Any,
         xpath: str,
         normalize_whitespace: bool = False,
     ) -> "list[str]":
@@ -760,7 +754,7 @@ class XML:
 
     def element_text_should_be(
         self,
-        source: ElementOrUnparsed,
+        source: Any,
         expected: str,
         xpath: str = ".",
         normalize_whitespace: bool = False,
@@ -793,7 +787,7 @@ class XML:
 
     def element_text_should_match(
         self,
-        source: ElementOrUnparsed,
+        source: Any,
         pattern: str,
         xpath: str = ".",
         normalize_whitespace: bool = False,
@@ -819,7 +813,7 @@ class XML:
 
     def get_element_attribute(
         self,
-        source: ElementOrUnparsed,
+        source: Any,
         name: "bytes | str",
         xpath: str = ".",
         default: object = None,
@@ -846,7 +840,7 @@ class XML:
         return self.get_element(source, xpath).get(name, default)
 
     def get_element_attributes(
-        self, source: ElementOrUnparsed, xpath: str = "."
+        self, source: Any, xpath: str = "."
     ) -> "dict[bytes | str, bytes | str]":
         """Returns all attributes of the specified element.
 
@@ -869,7 +863,7 @@ class XML:
 
     def element_attribute_should_be(
         self,
-        source: ElementOrUnparsed,
+        source: Any,
         name: "bytes | str",
         expected: "bytes | str | None",
         xpath: str = ".",
@@ -900,7 +894,7 @@ class XML:
 
     def element_attribute_should_match(
         self,
-        source: ElementOrUnparsed,
+        source: Any,
         name: "bytes | str",
         pattern: str,
         xpath: str = ".",
@@ -927,7 +921,7 @@ class XML:
 
     def element_should_not_have_attribute(
         self,
-        source: ElementOrUnparsed,
+        source: Any,
         name: "bytes | str",
         xpath: str = ".",
         message: "str | None" = None,
@@ -956,8 +950,8 @@ class XML:
 
     def elements_should_be_equal(
         self,
-        source: ElementOrUnparsed,
-        expected: ElementOrUnparsed,
+        source: Any,
+        expected: Any,
         exclude_children: bool = False,
         normalize_whitespace: bool = False,
         sort_children: bool = False,
@@ -1012,8 +1006,8 @@ class XML:
 
     def elements_should_match(
         self,
-        source: ElementOrUnparsed,
-        expected: ElementOrUnparsed,
+        source: Any,
+        expected: Any,
         exclude_children: bool = False,
         normalize_whitespace: bool = False,
         sort_children: bool = False,
@@ -1045,8 +1039,8 @@ class XML:
 
     def _compare_elements(
         self,
-        source: ElementOrUnparsed,
-        expected: ElementOrUnparsed,
+        source: Any,
+        expected: Any,
         comparator,
         exclude_children: bool,
         sort_children: bool,
@@ -1064,7 +1058,7 @@ class XML:
             child.tail = tail
 
     def set_element_tag(
-        self, source: ElementOrUnparsed, tag: "bytes | str", xpath: str = "."
+        self, source: Any, tag: "bytes | str", xpath: str = "."
     ) -> Element:
         """Sets the tag of the specified element.
 
@@ -1088,7 +1082,7 @@ class XML:
         return source
 
     def set_elements_tag(
-        self, source: ElementOrUnparsed, tag: "bytes | str", xpath: str = "."
+        self, source: Any, tag: "bytes | str", xpath: str = "."
     ) -> Element:
         """Sets the tag of the specified elements.
 
@@ -1102,7 +1096,7 @@ class XML:
 
     def set_element_text(
         self,
-        source: ElementOrUnparsed,
+        source: Any,
         text: "str | None" = None,
         tail: "str | None" = None,
         xpath: str = ".",
@@ -1139,7 +1133,7 @@ class XML:
 
     def set_elements_text(
         self,
-        source: ElementOrUnparsed,
+        source: Any,
         text: "str | None" = None,
         tail: "str | None" = None,
         xpath: str = ".",
@@ -1156,7 +1150,7 @@ class XML:
 
     def set_element_attribute(
         self,
-        source: ElementOrUnparsed,
+        source: Any,
         name: "bytes | str",
         value: "bytes | str",
         xpath: str = ".",
@@ -1189,7 +1183,7 @@ class XML:
 
     def set_elements_attribute(
         self,
-        source: ElementOrUnparsed,
+        source: Any,
         name: "bytes | str",
         value: "bytes | str",
         xpath: str = ".",
@@ -1205,7 +1199,7 @@ class XML:
         return source
 
     def remove_element_attribute(
-        self, source: ElementOrUnparsed, name: "bytes | str", xpath: str = "."
+        self, source: Any, name: "bytes | str", xpath: str = "."
     ) -> Element:
         """Removes attribute ``name`` from the specified element.
 
@@ -1232,7 +1226,7 @@ class XML:
         return source
 
     def remove_elements_attribute(
-        self, source: ElementOrUnparsed, name: "bytes | str", xpath: str = "."
+        self, source: Any, name: "bytes | str", xpath: str = "."
     ) -> Element:
         """Removes attribute ``name`` from the specified elements.
 
@@ -1245,7 +1239,7 @@ class XML:
         return source
 
     def remove_element_attributes(
-        self, source: ElementOrUnparsed, xpath: str = "."
+        self, source: Any, xpath: str = "."
     ) -> Element:
         """Removes all attributes from the specified element.
 
@@ -1269,7 +1263,7 @@ class XML:
         return source
 
     def remove_elements_attributes(
-        self, source: ElementOrUnparsed, xpath: str = "."
+        self, source: Any, xpath: str = "."
     ) -> Element:
         """Removes all attributes from the specified elements.
 
@@ -1283,8 +1277,8 @@ class XML:
 
     def add_element(
         self,
-        source: ElementOrUnparsed,
-        element: ElementOrUnparsed,
+        source: Any,
+        element: Any,
         index: "int | None" = None,
         xpath: str = ".",
     ) -> Element:
@@ -1324,7 +1318,7 @@ class XML:
         return source
 
     def remove_element(
-        self, source: ElementOrUnparsed, xpath: str = "", remove_tail: bool = False
+        self, source: Any, xpath: str = "", remove_tail: bool = False
     ) -> Element:
         """Removes the element matching ``xpath`` from the ``source`` structure.
 
@@ -1352,7 +1346,7 @@ class XML:
         return source
 
     def remove_elements(
-        self, source: ElementOrUnparsed, xpath: str = "", remove_tail: bool = False
+        self, source: Any, xpath: str = "", remove_tail: bool = False
     ) -> Element:
         """Removes all elements matching ``xpath`` from the ``source`` structure.
 
@@ -1403,7 +1397,7 @@ class XML:
             sibling.tail = (sibling.tail or "") + element.tail
 
     def clear_element(
-        self, source: ElementOrUnparsed, xpath: str = ".", clear_tail: bool = False
+        self, source: Any, xpath: str = ".", clear_tail: bool = False
     ) -> Element:
         """Clears the contents of the specified element.
 
@@ -1437,7 +1431,7 @@ class XML:
             element.tail = tail
         return source
 
-    def copy_element(self, source: ElementOrUnparsed, xpath: str = ".") -> Element:
+    def copy_element(self, source: Any, xpath: str = ".") -> Element:
         """Returns a copy of the specified element.
 
         The element to copy is specified using ``source`` and ``xpath``. They
@@ -1460,17 +1454,17 @@ class XML:
 
     @overload
     def element_to_string(
-        self, source: ElementOrUnparsed, xpath: str = ".", encoding: None = None
+        self, source: Any, xpath: str = ".", encoding: None = None
     ) -> str: ...
 
     @overload
     def element_to_string(
-        self, source: ElementOrUnparsed, xpath: str, encoding: str
+        self, source: Any, xpath: str, encoding: str
     ) -> bytes: ...
 
     def element_to_string(
         self,
-        source: ElementOrUnparsed,
+        source: Any,
         xpath: str = ".",
         encoding: "str | None" = None,
     ) -> "bytes | str":
@@ -1512,7 +1506,7 @@ class XML:
 
     def save_xml(
         self,
-        source: ElementOrUnparsed,
+        source: Any,
         path: "Path | bytes | str",
         encoding: str = "UTF-8",
     ):
@@ -1557,7 +1551,7 @@ class XML:
         logger.info(f'XML saved to <a href="file://{path}">{path}</a>.', html=True)
 
     def evaluate_xpath(
-        self, source: ElementOrUnparsed, expression: str, context: str = "."
+        self, source: Any, expression: str, context: str = "."
     ) -> object:
         """Evaluates the given xpath expression and returns results.
 
