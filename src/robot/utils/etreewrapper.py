@@ -21,8 +21,8 @@ from pathlib import Path
 
 class ETSource:
 
-    def __init__(self, source):
-        self._source: "BytesIO | bytes | bytearray | Path | str" = source
+    def __init__(self, source: "BytesIO | bytes | bytearray | Path | str"):
+        self._source = source
         self._opened: "BytesIO | None" = None
 
     def __enter__(self) -> "BytesIO | PathLike":

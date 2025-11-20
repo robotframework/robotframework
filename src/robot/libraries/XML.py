@@ -16,9 +16,10 @@
 import copy
 import os
 import re
+from collections.abc import Iterator
 from io import BytesIO
 from pathlib import Path
-from typing import Any, Iterator, NoReturn, overload
+from typing import Any, Callable, NoReturn
 from xml.etree import ElementTree as ET
 
 try:
@@ -1041,15 +1042,17 @@ class XML:
         self,
         source: Any,
         expected: Any,
-        comparator,
+        comparator: Callable[[object, object, str], None],
         exclude_children: bool,
         sort_children: bool,
         normalize_whitespace: bool,
     ):
         normalizer = self._normalize_whitespace if normalize_whitespace else None
         sorter = self._sort_children if sort_children else None
-        comparator = ElementComparator(comparator, normalizer, sorter, exclude_children)
-        comparator.compare(self.get_element(source), self.get_element(expected))
+        element_comparator = ElementComparator(
+            comparator, normalizer, sorter, exclude_children
+        )
+        element_comparator.compare(self.get_element(source), self.get_element(expected))
 
     def _sort_children(self, element: Element):
         tails = [child.tail for child in element]
@@ -1462,17 +1465,6 @@ class XML:
         """
         return copy.deepcopy(self.get_element(source, xpath))
 
-    @overload
-    def element_to_string(
-        self,
-        source: Any,
-        xpath: str = ".",
-        encoding: None = None,
-    ) -> str: ...
-
-    @overload
-    def element_to_string(self, source: Any, xpath: str, encoding: str) -> bytes: ...
-
     def element_to_string(
         self,
         source: Any,
@@ -1502,7 +1494,7 @@ class XML:
 
     def log_element(
         self,
-        source,
+        source: Any,
         level: logger.LogLevel = "INFO",
         xpath: str = ".",
     ) -> str:
@@ -1521,7 +1513,7 @@ class XML:
     def save_xml(
         self,
         source: Any,
-        path: "Path | bytes | str",
+        path: Path,
         encoding: str = "UTF-8",
     ):
         """Saves the given element to the specified file.
@@ -1696,9 +1688,9 @@ class ElementComparator:
 
     def __init__(
         self,
-        comparator,
-        normalizer=None,
-        child_sorter=None,
+        comparator: Callable[[object, object, str], None],
+        normalizer: "Callable[[str], str] | None" = None,
+        child_sorter: "Callable[[Element], None] | None" = None,
         exclude_children: bool = False,
     ):
         self.comparator = comparator
@@ -1735,9 +1727,9 @@ class ElementComparator:
         self,
         actual: object,
         expected: object,
-        message,
+        message: str,
         location: Location,
-        comparator=None,
+        comparator: "Callable[[object, object, str], None] | None" = None,
     ):
         if location.is_not_root:
             message = f"{message} at '{location.path}'"
@@ -1774,7 +1766,7 @@ class ElementComparator:
             location,
         )
 
-    def _text(self, text):
+    def _text(self, text: str) -> str:
         return self.normalizer(text or "")
 
     def _compare_tails(self, actual: Element, expected: Element, location: Location):
