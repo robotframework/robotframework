@@ -48,6 +48,8 @@ class String:
     strings (e.g. `Replace String Using Regexp`, `Split To Lines`) and
     verifying their contents (e.g. `Should Be String`).
 
+    Some keywords also work with bytes in addition to strings.
+
     Following keywords from ``BuiltIn`` library can also be used with strings:
 
     - `Catenate`
