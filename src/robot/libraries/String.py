@@ -131,8 +131,6 @@ class String:
         apostrophes. It would, for example, convert "it's an OK iPhone"
         to "It'S An Ok Iphone".
         """
-        if not isinstance(string, str):
-            raise TypeError("This keyword works only with strings.")
         if isinstance(exclude, str):
             exclude = [e.strip() for e in exclude.split(",")]
         elif not exclude:
