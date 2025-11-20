@@ -201,8 +201,6 @@ class String:
         and `Convert To String` in ``BuiltIn`` if you need to
         convert arbitrary objects to strings.
         """
-        if isinstance(bytes, str):
-            raise TypeError("Cannot decode strings.")
         return bytes.decode(encoding, errors)
 
     def format_string(
