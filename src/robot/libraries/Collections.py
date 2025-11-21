@@ -1056,6 +1056,9 @@ class Collections(_List, _Dictionary):
     should be used unless there is a need to support older versions. The old
     argument is considered deprecated and will eventually be removed.
 
+    Starting from Robot Framework 7.4, case-insensitivity works also with
+    bytes, not only with strings.
+
     = Data in examples =
 
     List related keywords use variables in format ``${Lx}`` in their examples.
