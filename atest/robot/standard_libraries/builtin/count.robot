@@ -46,6 +46,12 @@ Should Contain X Times and do not collapse spaces
 Should Contain X Times and collapse spaces
     Check test case    ${TESTNAME}
 
+Should Contain X Times with recursive normalization
+    Check test case    ${TESTNAME}
+
+Should Contain X Times with bytes auto conversion
+    Check test case    ${TESTNAME}
+
 Should Contain X Times with invalid item
     Check test case    ${TESTNAME}
 

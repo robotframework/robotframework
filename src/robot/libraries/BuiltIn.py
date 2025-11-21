@@ -584,7 +584,7 @@ class _Verify(_BuiltInBase):
 
         Examples:
         | Fail | Test not ready   |             | | # Fails with the given message.    |
-        | Fail | *HTML*<b>Test not ready</b> | | | # Fails using HTML in the message. |
+        | Fail | *HTML* <b>Test not ready</b> | | | # Fails using HTML in the message. |
         | Fail | Test not ready   | not-ready   | | # Fails and adds 'not-ready' tag.  |
         | Fail | OS not supported | -regression | | # Removes tag 'regression'.        |
         | Fail | My message       | tag    | -t*  | # Removes all tags starting with 't' except the newly added 'tag'. |
@@ -657,36 +657,21 @@ class _Verify(_BuiltInBase):
         formatter: Literal["str", "repr", "ascii"] = "str",
         strip_spaces: StripSpaces = False,
         collapse_spaces: bool = False,
-        type: "type | str | Literal['auto'] | Any | None" = None,
+        type: "type | str | Literal['AUTO'] | Any | None" = None,
         types: "type | str | Any | None" = None,
     ):
         r"""Fails if the given objects are unequal.
 
-        Optional ``msg``, ``values`` and ``formatter`` arguments specify how
-        to construct the error message if this keyword fails:
+        See the `Controlling failure messages` section for information about
+        overriding the default failure message with ``msg`` and ``values``
+        arguments.
 
-        - If ``msg`` is not given, the error message is ``<first> != <second>``.
-        - If ``msg`` is given and ``values`` gets a true value (default),
-          the error message is ``<msg>: <first> != <second>``.
-        - If ``msg`` is given and ``values`` gets a false value, the error
-          message is simply ``<msg>``.
-        - ``formatter`` controls how to format the values. Possible values are
-          ``str`` (default), ``repr`` and ``ascii``, and they work similarly
-          as Python built-in functions with same names. See `String
-          representations` for more details.
+        The `String representations` section explains how ``formatter`` can
+        be used for formatting values shown in failure messages.
 
-        If ``ignore_case`` is given a true value and both arguments are strings,
-        comparison is done case-insensitively. If both arguments are multiline
-        strings, this keyword uses `multiline string comparison`.
-
-        If ``strip_spaces`` is given a true value and both arguments are strings,
-        comparison is done without leading and trailing spaces. If ``strip_spaces``
-        is given a string value ``leading`` or ``trailing`` (case-insensitive),
-        comparison is done without leading or trailing spaces, respectively.
-
-        If ``collapse_spaces`` is given a true value and both arguments are strings,
-        white space characters are normalized to ASCII spaces and consecutive
-        spaces are collapsed into a single space.
+        The `String and bytes normalization` section explains how ``ignore_case``,
+        ``strip_spaces`` and ``collapse_spaces`` can be used for normalizing
+        values before comparison.
 
         The ``type`` and ``types`` arguments control optional type conversion:
         - If ``type`` is used, the argument ``second`` is converted to that type.
@@ -697,9 +682,12 @@ class _Verify(_BuiltInBase):
           automatic argument conversion] such as ``int``, ``bytes`` and ``list``.
           Also parameterized types like ``list[int]`` and unions like ``int | float``
           are supported.
-        - When using ``type``, a special value ``auto`` can be used to convert
-          ``second`` to the same type that ``first`` has.
+        - When using ``type``, a special value ``AUTO`` (case-insensitive) can be
+          used to convert ``second`` to the same type that ``first`` has.
         - Using both ``type`` and ``types`` at the same time is an error.
+
+        If explicit type information is not given and the first argument is bytes,
+        the second argument is automatically converted to bytes as well.
 
         Examples:
         | Should Be Equal | ${x} | expected |
@@ -709,11 +697,15 @@ class _Verify(_BuiltInBase):
         | Should Be Equal | ${x} | \x00\x01 | type=bytes |
         | Should Be Equal | ${x} | ${y}     | types=int|float |
 
-        ``type`` and ``types`` are new in Robot Framework 7.2.
+        ``type`` and ``types`` are new in Robot Framework 7.2. Automatic bytes
+        conversion, bytes normalization support and recursive normalization
+        with collections are new in Robot Framework 7.4.
         """
+        self._log_types_at_info_if_different(first, second)
         if type or types:
             first, second = self._type_convert(first, second, type, types)
-        self._log_types_at_info_if_different(first, second)
+        elif isinstance(first, (bytes, bytearray)):
+            second = self._ensure_bytes(second)
         normalizer = Normalizer(
             ignore_case=ignore_case,
             strip_spaces=strip_spaces,
@@ -747,6 +739,11 @@ class _Verify(_BuiltInBase):
                 f"match type {type!r}."
             )
         return first, converter.convert(second, "second")
+
+    def _ensure_bytes(self, value: object) -> "bytes | bytearray":
+        if isinstance(value, (bytes, bytearray)):
+            return value
+        return TypeInfo.from_type(bytes).convert(value)  # type: ignore
 
     def _should_be_equal(
         self,
@@ -818,22 +815,23 @@ class _Verify(_BuiltInBase):
     ):
         """Fails if the given objects are equal.
 
-        See `Should Be Equal` for an explanation on how to override the default
-        error message with ``msg`` and ``values``.
+        See the `Controlling failure messages` section for information about
+        overriding the default failure message with ``msg`` and ``values``
+        arguments.
 
-        If ``ignore_case`` is given a true value and both arguments are strings,
-        comparison is done case-insensitively.
+        The `String and bytes normalization` section explains how ``ignore_case``,
+        ``strip_spaces`` and ``collapse_spaces`` can be used for normalizing
+        values before comparison.
 
-        If ``strip_spaces`` is given a true value and both arguments are strings,
-        comparison is done without leading and trailing spaces. If ``strip_spaces``
-        is given a string value ``leading`` or ``trailing`` (case-insensitive),
-        comparison is done without leading or trailing spaces, respectively.
+        If the first argument is bytes, the second argument is automatically
+        converted to bytes as well.
 
-        If ``collapse_spaces`` is given a true value and both arguments are strings,
-        white space characters are normalized to ASCII spaces and consecutive
-        spaces are collapsed into a single space.
+        Automatic bytes conversion, bytes normalization support and recursive
+        normalization with collections are new in Robot Framework 7.4.
         """
         self._log_types_at_info_if_different(first, second)
+        if isinstance(first, (bytes, bytearray)):
+            second = self._ensure_bytes(second)
         normalizer = Normalizer(
             ignore_case=ignore_case,
             strip_spaces=strip_spaces,
@@ -866,8 +864,9 @@ class _Verify(_BuiltInBase):
         See `Convert To Integer` for information how to convert integers from
         other bases than 10 using ``base`` argument or ``0b/0o/0x`` prefixes.
 
-        See `Should Be Equal` for an explanation on how to override the default
-        error message with ``msg`` and ``values``.
+        See the `Controlling failure messages` section for information about
+        overriding the default failure message with ``msg`` and ``values``
+        arguments.
 
         See `Should Be Equal As Integers` for some usage examples.
         """
@@ -889,8 +888,9 @@ class _Verify(_BuiltInBase):
         See `Convert To Integer` for information how to convert integers from
         other bases than 10 using ``base`` argument or ``0b/0o/0x`` prefixes.
 
-        See `Should Be Equal` for an explanation on how to override the default
-        error message with ``msg`` and ``values``.
+        See the `Controlling failure messages` section for information about
+        overriding the default failure message with ``msg`` and ``values``
+        arguments.
 
         Examples:
         | Should Be Equal As Integers | 42   | ${42} | Error message |
@@ -916,9 +916,11 @@ class _Verify(_BuiltInBase):
         given ``precision``.
 
         See `Should Be Equal As Numbers` for examples on how to use
-        ``precision`` and why it does not always work as expected. See also
-        `Should Be Equal` for an explanation on how to override the default
-        error message with ``msg`` and ``values``.
+        ``precision`` and why it does not always work as expected.
+
+        See the `Controlling failure messages` section for information about
+        overriding the default failure message with ``msg`` and ``values``
+        arguments.
         """
         self._log_types_at_info_if_different(first, second)
         first = self._convert_to_number(first, precision)
@@ -960,9 +962,9 @@ class _Verify(_BuiltInBase):
         [http://docs.python.org/library/decimal.html|decimal] or
         [http://docs.python.org/library/fractions.html|fractions] modules.
 
-        See `Should Not Be Equal As Numbers` for a negative version of this
-        keyword and `Should Be Equal` for an explanation on how to override
-        the default error message with ``msg`` and ``values``.
+        See the `Controlling failure messages` section for information about
+        overriding the default failure message with ``msg`` and ``values``
+        arguments.
         """
         self._log_types_at_info_if_different(first, second)
         first = self._convert_to_number(first, precision)
@@ -981,19 +983,13 @@ class _Verify(_BuiltInBase):
     ):
         """Fails if objects are equal after converting them to strings.
 
-        See `Should Be Equal` for an explanation on how to override the default
-        error message with ``msg`` and ``values``.
+        See the `Controlling failure messages` section for information about
+        overriding the default failure message with ``msg`` and ``values``
+        arguments.
 
-        If ``ignore_case`` is given a true value, comparison is done case-insensitively.
-
-        If ``strip_spaces`` is given a true value, comparison is done without
-        leading and trailing spaces. If ``strip_spaces`` is given a string value
-        ``leading`` or ``trailing`` (case-insensitive), comparison is done without
-        leading or trailing spaces, respectively.
-
-        If ``collapse_spaces`` is given a true value, white space characters are
-        normalized to ASCII spaces and consecutive spaces are collapsed into
-        a single space.
+        The `String and bytes normalization` section explains how ``ignore_case``,
+        ``strip_spaces`` and ``collapse_spaces`` can be used for normalizing
+        values before comparison.
 
         Strings are always [https://en.wikipedia.org/wiki/Unicode_equivalence|
         NFC normalized].
@@ -1024,21 +1020,13 @@ class _Verify(_BuiltInBase):
     ):
         """Fails if objects are unequal after converting them to strings.
 
-        See `Should Be Equal` for an explanation on how to override the default
-        error message with ``msg``, ``values`` and ``formatter``.
+        See the `Controlling failure messages` section for information about
+        overriding the default failure message with ``msg`` and ``values``
+        arguments.
 
-        If ``ignore_case`` is given a true value, comparison is done case-insensitively.
-        If both arguments are multiline strings, this keyword uses `multiline string
-        comparison`.
-
-        If ``strip_spaces`` is given a true, comparison is done without leading
-        and trailing spaces. If ``strip_spaces`` is given a string value
-        ``leading`` or ``trailing`` (case-insensitive), comparison is done
-        without leading or trailing spaces, respectively.
-
-        If ``collapse_spaces`` is given a true value, white space characters are
-        normalized to ASCII spaces and consecutive spaces are collapsed into
-        a single space.
+        The `String and bytes normalization` section explains how ``ignore_case``,
+        ``strip_spaces`` and ``collapse_spaces`` can be used for normalizing
+        values before comparison.
 
         Strings are always [https://en.wikipedia.org/wiki/Unicode_equivalence|NFC normalized].
         """
@@ -1067,11 +1055,23 @@ class _Verify(_BuiltInBase):
     ):
         """Fails if the string ``str1`` starts with the string ``str2``.
 
-        See `Should Be Equal` for an explanation on how to override the default
-        error message with ``msg`` and ``values``, as well as for semantics
-        of the ``ignore_case``, ``strip_spaces``, and ``collapse_spaces`` options.
+        See the `Controlling failure messages` section for information about
+        overriding the default failure message with ``msg`` and ``values``
+        arguments.
+
+        The `String and bytes normalization` section explains how ``ignore_case``,
+        ``strip_spaces`` and ``collapse_spaces`` can be used for normalizing
+        values before comparison.
+
+        If the first argument is bytes, the second argument is automatically
+        converted to bytes as well.
+
+        Support for bytes normalization and bytes auto conversion are new in
+        Robot Framework 7.4.
         """
         values = self._deprecate_no_values(values)
+        if isinstance(str1, (bytes, bytearray)):
+            str2 = self._ensure_bytes(str2)
         normalizer = Normalizer(
             ignore_case=ignore_case,
             strip_spaces=strip_spaces,
@@ -1081,9 +1081,7 @@ class _Verify(_BuiltInBase):
             str1 = normalizer.normalize(str1)
             str2 = normalizer.normalize(str2)
         if str1.startswith(str2):
-            raise AssertionError(
-                self._get_string_msg(str1, str2, msg, values, "starts with")
-            )
+            raise AssertionError(self._get_msg(str1, str2, msg, values, "starts with"))
 
     def should_start_with(
         self,
@@ -1097,11 +1095,23 @@ class _Verify(_BuiltInBase):
     ):
         """Fails if the string ``str1`` does not start with the string ``str2``.
 
-        See `Should Be Equal` for an explanation on how to override the default
-        error message with ``msg`` and ``values``, as well as for semantics
-        of the ``ignore_case``, ``strip_spaces``, and ``collapse_spaces`` options.
+        See the `Controlling failure messages` section for information about
+        overriding the default failure message with ``msg`` and ``values``
+        arguments.
+
+        The `String and bytes normalization` section explains how ``ignore_case``,
+        ``strip_spaces`` and ``collapse_spaces`` can be used for normalizing
+        values before comparison.
+
+        If the first argument is bytes, the second argument is automatically
+        converted to bytes as well.
+
+        Support for bytes normalization and bytes auto conversion are new in
+        Robot Framework 7.4.
         """
         values = self._deprecate_no_values(values)
+        if isinstance(str1, (bytes, bytearray)):
+            str2 = self._ensure_bytes(str2)
         normalizer = Normalizer(
             ignore_case=ignore_case,
             strip_spaces=strip_spaces,
@@ -1112,7 +1122,7 @@ class _Verify(_BuiltInBase):
             str2 = normalizer.normalize(str2)
         if not str1.startswith(str2):
             raise AssertionError(
-                self._get_string_msg(str1, str2, msg, values, "does not start with")
+                self._get_msg(str1, str2, msg, values, "does not start with")
             )
 
     def should_not_end_with(
@@ -1127,11 +1137,23 @@ class _Verify(_BuiltInBase):
     ):
         """Fails if the string ``str1`` ends with the string ``str2``.
 
-        See `Should Be Equal` for an explanation on how to override the default
-        error message with ``msg`` and ``values``, as well as for semantics
-        of the ``ignore_case``, ``strip_spaces``, and ``collapse_spaces`` options.
+        See the `Controlling failure messages` section for information about
+        overriding the default failure message with ``msg`` and ``values``
+        arguments.
+
+        The `String and bytes normalization` section explains how ``ignore_case``,
+        ``strip_spaces`` and ``collapse_spaces`` can be used for normalizing
+        values before comparison.
+
+        If the first argument is bytes, the second argument is automatically
+        converted to bytes as well.
+
+        Support for bytes normalization and bytes auto conversion are new in
+        Robot Framework 7.4.
         """
         values = self._deprecate_no_values(values)
+        if isinstance(str1, (bytes, bytearray)):
+            str2 = self._ensure_bytes(str2)
         normalizer = Normalizer(
             ignore_case=ignore_case,
             strip_spaces=strip_spaces,
@@ -1141,9 +1163,7 @@ class _Verify(_BuiltInBase):
             str1 = normalizer.normalize(str1)
             str2 = normalizer.normalize(str2)
         if str1.endswith(str2):
-            raise AssertionError(
-                self._get_string_msg(str1, str2, msg, values, "ends with")
-            )
+            raise AssertionError(self._get_msg(str1, str2, msg, values, "ends with"))
 
     def should_end_with(
         self,
@@ -1157,11 +1177,23 @@ class _Verify(_BuiltInBase):
     ):
         """Fails if the string ``str1`` does not end with the string ``str2``.
 
-        See `Should Be Equal` for an explanation on how to override the default
-        error message with ``msg`` and ``values``, as well as for semantics
-        of the ``ignore_case``, ``strip_spaces``, and ``collapse_spaces`` options.
+        See the `Controlling failure messages` section for information about
+        overriding the default failure message with ``msg`` and ``values``
+        arguments.
+
+        The `String and bytes normalization` section explains how ``ignore_case``,
+        ``strip_spaces`` and ``collapse_spaces`` can be used for normalizing
+        values before comparison.
+
+        If the first argument is bytes, the second argument is automatically
+        converted to bytes as well.
+
+        Support for bytes normalization and bytes auto conversion are new in
+        Robot Framework 7.4.
         """
         values = self._deprecate_no_values(values)
+        if isinstance(str1, (bytes, bytearray)):
+            str2 = self._ensure_bytes(str2)
         normalizer = Normalizer(
             ignore_case=ignore_case,
             strip_spaces=strip_spaces,
@@ -1172,7 +1204,7 @@ class _Verify(_BuiltInBase):
             str2 = normalizer.normalize(str2)
         if not str1.endswith(str2):
             raise AssertionError(
-                self._get_string_msg(str1, str2, msg, values, "does not end with")
+                self._get_msg(str1, str2, msg, values, "does not end with")
             )
 
     def should_not_contain(
@@ -1190,30 +1222,32 @@ class _Verify(_BuiltInBase):
         Works with strings, lists, and anything that supports Python's ``in``
         operator.
 
-        See `Should Be Equal` for an explanation on how to override the default
-        error message with arguments ``msg`` and ``values``. ``ignore_case``
-        has exactly the same semantics as with `Should Contain`.
+        See the `Controlling failure messages` section for information about
+        overriding the default failure message with ``msg`` and ``values``
+        arguments.
 
-        If ``strip_spaces`` is given a true value, comparison is done without
-        leading and trailing spaces. If ``strip_spaces`` is given a string value
-        ``leading`` or ``trailing`` (case-insensitive), comparison is done
-        without leading or trailing spaces, respectively.
+        The `String and bytes normalization` section explains how ``ignore_case``,
+        ``strip_spaces`` and ``collapse_spaces`` can be used for normalizing
+        values before comparison.
 
-        If ``collapse_spaces`` is given a true value, white space characters are
-        normalized to ASCII spaces and consecutive spaces are collapsed into
-        a single space.
+        If ``container`` is bytes, ``item`` is automatically converted to bytes as well.
 
         Examples:
         | Should Not Contain | ${some list} | value  |
         | Should Not Contain | ${output}    | FAILED | ignore_case=True |
+
+        Automatically converting ``item`` to bytes, bytes normalization support and
+        recursive normalization with collections are new in Robot Framework 7.4.
         """
         # TODO: It is inconsistent that errors show original case in 'container'
-        # 'item' is in lower case. Should rather show original case everywhere
-        # and add separate '(case-insensitive)' not to the error message.
+        # but 'item' is in lower case. Should rather show original case everywhere
+        # and add separate '(case-insensitive)' note to the error message.
         # This same logic should be used with all keywords supporting
         # case-insensitive comparisons.
         values = self._deprecate_no_values(values)
-        orig_container = container
+        orig = container
+        if isinstance(container, (bytes, bytearray)):
+            item = self._ensure_bytes(item)
         normalizer = Normalizer(
             ignore_case=ignore_case,
             strip_spaces=strip_spaces,
@@ -1223,9 +1257,7 @@ class _Verify(_BuiltInBase):
             container = normalizer.normalize(container, mapping_to_list=True)
             item = normalizer.normalize(item)
         if item in container:
-            raise AssertionError(
-                self._get_string_msg(orig_container, item, msg, values, "contains")
-            )
+            raise AssertionError(self._get_msg(orig, item, msg, values, "contains"))
 
     def should_contain(
         self,
@@ -1242,25 +1274,15 @@ class _Verify(_BuiltInBase):
         Works with strings, lists, bytes, and anything that supports Python's ``in``
         operator.
 
-        See `Should Be Equal` for an explanation on how to override the default
-        error message with arguments ``msg`` and ``values``.
+        See the `Controlling failure messages` section for information about
+        overriding the default failure message with ``msg`` and ``values``
+        arguments.
 
-        If ``ignore_case`` is given a true value and compared items are strings,
-        comparison is case-insensitive. If the ``container`` is a list-like object,
-        string items in it are compared case-insensitively.
+        The `String and bytes normalization` section explains how ``ignore_case``,
+        ``strip_spaces`` and ``collapse_spaces`` can be used for normalizing
+        values before comparison.
 
-        If ``strip_spaces`` is given a true value, comparison is done without
-        leading and trailing spaces. If ``strip_spaces`` is given a string value
-        ``leading`` or ``trailing`` (case-insensitive), comparison is done
-        without leading or trailing spaces, respectively.
-
-        If ``collapse_spaces`` is given a true value and both arguments are strings,
-        white space characters are normalized to ASCII spaces and consecutive
-        spaces are collapsed into a single space.
-
-        If the ``container`` is bytes and the ``item`` is a string, the ``item``
-        is automatically converted to bytes. Conversion is done using the ISO-8859-1
-        encoding that maps each Unicode code point directly to a matching byte.
+        If ``container`` is bytes, ``item`` is automatically converted to bytes as well.
 
         Examples:
         | Should Contain | ${output}    | PASS  |
@@ -1268,17 +1290,13 @@ class _Verify(_BuiltInBase):
         | Should Contain | ${some list} | value | ignore_case=True |
 
         Automatically converting ``item`` to bytes is new in Robot Framework 7.1.
+        Support for bytes normalization and recursive normalization with collections
+        are new in Robot Framework 7.4.
         """
         values = self._deprecate_no_values(values)
-        orig_container = container
+        orig = container
         if isinstance(container, (bytes, bytearray)):
-            if isinstance(item, str):
-                try:
-                    item = item.encode("ISO-8859-1")
-                except UnicodeEncodeError:
-                    raise ValueError(f"{item!r} cannot be encoded into bytes.")
-            elif isinstance(item, int) and item not in range(256):
-                raise ValueError(f"Byte must be in range 0-255, got {item}.")
+            item = self._ensure_bytes(item)
         normalizer = Normalizer(
             ignore_case=ignore_case,
             strip_spaces=strip_spaces,
@@ -1289,9 +1307,7 @@ class _Verify(_BuiltInBase):
             item = normalizer.normalize(item)
         if item not in container:
             raise AssertionError(
-                self._get_string_msg(
-                    orig_container, item, msg, values, "does not contain"
-                )
+                self._get_msg(orig, item, msg, values, "does not contain")
             )
 
     def should_contain_any(
@@ -1309,22 +1325,35 @@ class _Verify(_BuiltInBase):
         Works with strings, lists, and anything that supports Python's ``in``
         operator.
 
-        Supports additional configuration parameters ``msg``, ``values``,
-        ``ignore_case`` and ``strip_spaces``, and ``collapse_spaces``
-        which have exactly the same semantics as arguments with same
-        names have with `Should Contain`. These arguments must always
-        be given using ``name=value`` syntax after all ``items``.
+        See the `Controlling failure messages` section for information about
+        overriding the default failure message with ``msg`` and ``values``
+        arguments.
+
+        The `String and bytes normalization` section explains how ``ignore_case``,
+        ``strip_spaces`` and ``collapse_spaces`` can be used for normalizing
+        values before comparison.
+
+        All configuration arguments must be given using ``name=value`` syntax
+        after all ``items``.
+
+        If ``container`` is bytes, ``items`` are automatically converted to bytes
+        as well.
 
         Examples:
         | Should Contain Any | ${string} | substring 1 | substring 2 |
         | Should Contain Any | ${list}   | item 1 | item 2 | item 3 |
         | Should Contain Any | ${list}   | item 1 | item 2 | item 3 | ignore_case=True |
         | Should Contain Any | ${list}   | @{items} | msg=Custom message | values=False |
+
+        Automatically converting ``item`` to bytes, bytes normalization support and
+        recursive normalization with collections are new in Robot Framework 7.4.
         """
         values = self._deprecate_no_values(values)
         if not items:
             raise RuntimeError("One or more item required.")
-        orig_container = container
+        if isinstance(container, (bytes, bytearray)):
+            items = [self._ensure_bytes(i) for i in items]
+        orig = container
         normalizer = Normalizer(
             ignore_case=ignore_case,
             strip_spaces=strip_spaces,
@@ -1335,8 +1364,8 @@ class _Verify(_BuiltInBase):
             items = normalizer.normalize(items)
         if not any(item in container for item in items):
             raise AssertionError(
-                self._get_string_msg(
-                    orig_container,
+                self._get_msg(
+                    orig,
                     seq2str(items, lastsep=" or "),
                     msg,
                     values,
@@ -1360,22 +1389,35 @@ class _Verify(_BuiltInBase):
         Works with strings, lists, and anything that supports Python's ``in``
         operator.
 
-        Supports additional configuration parameters ``msg``, ``values``,
-        ``ignore_case`` and ``strip_spaces``, and ``collapse_spaces``
-        which have exactly the same semantics as arguments with same
-        names have with `Should Contain`. These arguments must always
-        be given using ``name=value`` syntax after all ``items``.
+        See the `Controlling failure messages` section for information about
+        overriding the default failure message with ``msg`` and ``values``
+        arguments.
+
+        The `String and bytes normalization` section explains how ``ignore_case``,
+        ``strip_spaces`` and ``collapse_spaces`` can be used for normalizing
+        values before comparison.
+
+        All configuration arguments must be given using ``name=value`` syntax
+        after all ``items``.
+
+        If ``container`` is bytes, ``items`` are automatically converted to bytes
+        as well.
 
         Examples:
         | Should Not Contain Any | ${string} | substring 1 | substring 2 |
         | Should Not Contain Any | ${list}   | item 1 | item 2 | item 3 |
         | Should Not Contain Any | ${list}   | item 1 | item 2 | item 3 | ignore_case=True |
         | Should Not Contain Any | ${list}   | @{items} | msg=Custom message | values=False |
+
+        Automatically converting ``item`` to bytes, bytes normalization support and
+        recursive normalization with collections are new in Robot Framework 7.4.
         """
         values = self._deprecate_no_values(values)
         if not items:
             raise RuntimeError("One or more item required.")
-        orig_container = container
+        orig = container
+        if isinstance(container, (bytes, bytearray)):
+            items = [self._ensure_bytes(i) for i in items]
         normalizer = Normalizer(
             ignore_case=ignore_case,
             strip_spaces=strip_spaces,
@@ -1386,8 +1428,8 @@ class _Verify(_BuiltInBase):
             items = normalizer.normalize(items)
         if any(item in container for item in items):
             raise AssertionError(
-                self._get_string_msg(
-                    orig_container,
+                self._get_msg(
+                    orig,
                     seq2str(items, lastsep=" or "),
                     msg,
                     values,
@@ -1408,29 +1450,29 @@ class _Verify(_BuiltInBase):
     ):
         """Fails if ``container`` does not contain ``item`` ``count`` times.
 
-        Works with strings, lists and all objects that `Get Count` works
-        with. The default error message can be overridden with ``msg`` and
-        the actual count is always logged.
+        Works with strings, lists and all objects that `Get Count` works with.
 
-        If ``ignore_case`` is given a true value and compared items are strings,
-        comparison is case-insensitive. If the ``container`` is a list-like object,
-        string items in it are compared case-insensitively.
+        See the `Controlling failure messages` section for information about
+        overriding the default failure message with ``msg`` and ``values``
+        arguments.
 
-        If ``strip_spaces`` is given a true value, comparison is done without leading
-        and trailing spaces. If ``strip_spaces`` is given a string value
-        ``leading`` or ``trailing`` (case-insensitive), comparison is done
-        without leading or trailing spaces, respectively.
+        The `String and bytes normalization` section explains how ``ignore_case``,
+        ``strip_spaces`` and ``collapse_spaces`` can be used for normalizing
+        values before comparison.
 
-        If ``collapse_spaces`` is given a true value, white space characters are
-        normalized to ASCII spaces and consecutive spaces are collapsed into
-        a single space.
+        If ``container`` is bytes, ``item`` is automatically converted to bytes as well.
 
         Examples:
         | Should Contain X Times | ${output}    | hello | 2 |
         | Should Contain X Times | ${some list} | value | 3 | ignore_case=True |
+
+        Automatically converting ``item`` to bytes, bytes normalization support and
+        recursive normalization with collections are new in Robot Framework 7.4.
         """
         count = self._convert_to_integer(count)
-        orig_container = container
+        orig = container
+        if isinstance(container, (bytes, bytearray)):
+            item = self._ensure_bytes(item)
         normalizer = Normalizer(
             ignore_case=ignore_case,
             strip_spaces=strip_spaces,
@@ -1442,7 +1484,7 @@ class _Verify(_BuiltInBase):
         x = self.get_count(container, item)
         if not msg:
             msg = (
-                f"{orig_container!r} contains '{item}' {x} time{s(x)}, "
+                f"{orig!r} contains '{item}' {x} time{s(x)}, "
                 f"not {count} time{s(count)}."
             )
         self.should_be_equal_as_integers(x, count, msg, values=False)
@@ -1484,16 +1526,15 @@ class _Verify(_BuiltInBase):
 
         If ``ignore_case`` is given a true value, comparison is case-insensitive.
 
-        See `Should Be Equal` for an explanation on how to override the default
-        error message with ``msg`` and ``values`.
+        See the `Controlling failure messages` section for information about
+        overriding the default failure message with ``msg`` and ``values``
+        arguments.
 
         This keyword works only with strings, not with bytes.
         """
         values = self._deprecate_no_values(values)
         if self._matches(string, pattern, caseless=ignore_case):
-            raise AssertionError(
-                self._get_string_msg(string, pattern, msg, values, "matches")
-            )
+            raise AssertionError(self._get_msg(string, pattern, msg, values, "matches"))
 
     def should_match(
         self,
@@ -1511,15 +1552,16 @@ class _Verify(_BuiltInBase):
 
         If ``ignore_case`` is given a true value, comparison is case-insensitive.
 
-        See `Should Be Equal` for an explanation on how to override the default
-        error message with ``msg`` and ``values``.
+        See the `Controlling failure messages` section for information about
+        overriding the default failure message with ``msg`` and ``values``
+        arguments.
 
         This keyword works only with strings, not with bytes.
         """
         values = self._deprecate_no_values(values)
         if not self._matches(string, pattern, caseless=ignore_case):
             raise AssertionError(
-                self._get_string_msg(string, pattern, msg, values, "does not match")
+                self._get_msg(string, pattern, msg, values, "does not match")
             )
 
     def should_match_regexp(
@@ -1550,8 +1592,12 @@ class _Verify(_BuiltInBase):
         matched the pattern. Additionally, the possible captured groups are
         returned.
 
-        See the `Should Be Equal` keyword for an explanation on how to override
-        the default error message with the ``msg`` and ``values`` arguments.
+        See the `Controlling failure messages` section for information about
+        overriding the default failure message with ``msg`` and ``values``
+        arguments.
+
+        If the first argument is bytes, the second is automatically converted to
+        bytes as well.
 
         Examples:
         | Should Match Regexp | ${output} | \\\\d{6}   | # Output contains six numbers  |
@@ -1567,12 +1613,15 @@ class _Verify(_BuiltInBase):
         | ${group2} = '43'
 
         The ``flags`` argument is new in Robot Framework 6.0.
+        Automatic bytes conversion is new in Robot Framework 7.4.
         """
         values = self._deprecate_no_values(values)
+        if isinstance(string, (bytes, bytearray)):
+            pattern = self._ensure_bytes(pattern)
         res = re.search(pattern, string, flags=parse_re_flags(flags))
         if res is None:
             raise AssertionError(
-                self._get_string_msg(string, pattern, msg, values, "does not match")
+                self._get_msg(string, pattern, msg, values, "does not match")
             )
         match = res.group(0)
         groups = res.groups()
@@ -1593,10 +1642,10 @@ class _Verify(_BuiltInBase):
         See `Should Match Regexp` for more information about arguments.
         """
         values = self._deprecate_no_values(values)
+        if isinstance(string, (bytes, bytearray)):
+            pattern = self._ensure_bytes(pattern)
         if re.search(pattern, string, flags=parse_re_flags(flags)) is not None:
-            raise AssertionError(
-                self._get_string_msg(string, pattern, msg, values, "matches")
-            )
+            raise AssertionError(self._get_msg(string, pattern, msg, values, "matches"))
 
     def get_length(self, item: Collection) -> int:
         """Returns and logs the length of the given item as an integer.
@@ -1669,7 +1718,7 @@ class _Verify(_BuiltInBase):
         if self.get_length(item) == 0:
             raise AssertionError(msg or f"'{item}' should not be empty.")
 
-    def _get_string_msg(
+    def _get_msg(
         self,
         item1: object,
         item2: object,
@@ -4204,13 +4253,122 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
 
     %TOC%
 
-    = HTML error messages =
+    = Controlling failure messages =
 
-    Many of the keywords accept an optional error message to use if the keyword
-    fails, and it is possible to use HTML in these messages by prefixing them
-    with ``*HTML*``. See `Fail` keyword for a usage example. Notice that using
-    HTML in messages is not limited to BuiltIn library but works with any
-    error message.
+    == Overriding default error message ==
+
+    Various validation keywords accept ``msg`` and ``values`` arguments that
+    can be used to override keyword specific default failure messages.
+
+    - If ``msg`` is given and ``values`` gets a true value (default),
+      the failure message is ``<msg>: <default-message>``.
+    - If ``msg`` is given and ``values`` gets a false value, the message
+      is simply ``<msg>``.
+
+    Examples:
+    | Should Be Equal    x    y                               # Fails with 'x != y'.
+    | Should Be Equal    x    y    Message                    # Fails with 'Message: x != y'.
+    | Should Be Equal    x    y    Message    values=False    # Fails with 'Message'.
+
+    == HTML messages ==
+
+    It is possible to use HTML formatting in failure messages by prefixing
+    messages with ``*HTML*``. Notice that this is not limited to the BuiltIn
+    library, but works with any error message.
+
+    Example:
+    | Fail    *HTML* <b>Message</b>    # Fails with '*Message*'.
+
+    = String and bytes normalization =
+
+    Various validation keywords accept ``ignore_case``, ``strip_spaces`` and
+    ``collapse_spaces`` arguments that make it possible to normalize strings
+    and bytes before comparison. They are all ``False`` by default, which means
+    that no normalization is done, but they can be individually enabled.
+
+    - If ``ignore_case`` is given a true value, comparison is case-insensitive.
+    -  If ``strip_spaces`` is given a value ``LEADING`` or ``TRAILING``
+       (case-insensitive), leading or trailing spaces, respectively, are removed
+       before comparison. This includes all white space characters such as
+       newlines and tabs.
+    - If ``strip_spaces`` is given any other true value, both leading and trailing
+      white space is removed.
+    - If ``collapse_spaces`` is given a true value, white space characters are
+      normalized to ASCII spaces and consecutive spaces are collapsed into
+      a single space.
+
+    If validated items are collections like lists or dictionaries, string and bytes
+    normalization is done recursively.
+
+    Support bytes normalization and recursive normalization with collectins
+    are new in Robot Framework 7.4.
+
+    = String representations =
+
+    Several keywords log values explicitly (e.g. `Log`) or implicitly (e.g.
+    `Should Be Equal` when there are failures). By default, keywords log values
+    using human-readable string representation, which means that strings
+    like ``Hello`` and numbers like ``42`` are logged as-is. Most of the time
+    this is the desired behavior, but there are some problems as well:
+
+    - It is not possible to see difference between different objects that
+      have the same string representation like string ``42`` and integer ``42``.
+      `Should Be Equal` and some other keywords add the type information to
+      the error message in these cases, though.
+
+    - Non-printable characters such as the null byte are not visible.
+
+    - Trailing whitespace is not visible.
+
+    - Different newlines (``\r\n`` on Windows, ``\n`` elsewhere) cannot
+      be separated from each others.
+
+    - There are several Unicode characters that are different but look the
+      same. One example is the Latin ``a`` (``\u0061``) and the Cyrillic
+      ``а`` (``\u0430``). Error messages like ``a != а`` are not very helpful.
+
+    - Some Unicode characters can be represented using
+      [https://en.wikipedia.org/wiki/Unicode_equivalence|different forms].
+      For example, ``ä`` can be represented either as a single code point
+      ``\u00e4`` or using two combined code points ``\u0061`` and ``\u0308``.
+      Such forms are considered canonically equivalent, but strings
+      containing them are not considered equal when compared in Python. Error
+      messages like ``ä != ä`` are not that helpful either.
+
+    - Containers such as lists and dictionaries are formatted into a single
+      line making it hard to see individual items they contain.
+
+    To overcome the above problems, some keywords such as `Log` and
+    `Should Be Equal` have an optional ``formatter`` argument that can be
+    used to configure the string representation. The supported values are
+    ``str`` (default), ``repr``, and ``ascii`` that work similarly as
+    [https://docs.python.org/library/functions.html|Python built-in functions]
+    with same names. More detailed semantics are explained below.
+
+    == str ==
+
+    Use the human-readable string representation. Equivalent to using ``str()``
+    in Python. This is the default.
+
+    == repr ==
+
+    Use the machine-readable string representation. Similar to using ``repr()``
+    in Python, which means that strings like ``Hello`` are logged like
+    ``'Hello'``, newlines and non-printable characters are escaped like ``\n``
+    and ``\x00``, and so on. Non-ASCII characters are shown as-is like ``ä``.
+
+    In this mode bigger lists, dictionaries and other collections are
+    pretty-printed so that there is one item per row.
+
+    == ascii ==
+
+    Same as using ``ascii()`` in Python. Similar to using ``repr`` explained above
+    but with the following differences:
+
+    - Non-ASCII characters are escaped like ``\xe4`` instead of
+      showing them as-is like ``ä``. This makes it easier to see differences
+      between Unicode characters that are not equal but look the same.
+    - Collections are not pretty-printed.
 
     = Evaluating expressions =
 
@@ -4373,73 +4531,6 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     | +Differs2
     |  Same
     | +Not in first
-
-    = String representations =
-
-    Several keywords log values explicitly (e.g. `Log`) or implicitly (e.g.
-    `Should Be Equal` when there are failures). By default, keywords log values
-    using human-readable string representation, which means that strings
-    like ``Hello`` and numbers like ``42`` are logged as-is. Most of the time
-    this is the desired behavior, but there are some problems as well:
-
-    - It is not possible to see difference between different objects that
-      have the same string representation like string ``42`` and integer ``42``.
-      `Should Be Equal` and some other keywords add the type information to
-      the error message in these cases, though.
-
-    - Non-printable characters such as the null byte are not visible.
-
-    - Trailing whitespace is not visible.
-
-    - Different newlines (``\r\n`` on Windows, ``\n`` elsewhere) cannot
-      be separated from each others.
-
-    - There are several Unicode characters that are different but look the
-      same. One example is the Latin ``a`` (``\u0061``) and the Cyrillic
-      ``а`` (``\u0430``). Error messages like ``a != а`` are not very helpful.
-
-    - Some Unicode characters can be represented using
-      [https://en.wikipedia.org/wiki/Unicode_equivalence|different forms].
-      For example, ``ä`` can be represented either as a single code point
-      ``\u00e4`` or using two combined code points ``\u0061`` and ``\u0308``.
-      Such forms are considered canonically equivalent, but strings
-      containing them are not considered equal when compared in Python. Error
-      messages like ``ä != ä`` are not that helpful either.
-
-    - Containers such as lists and dictionaries are formatted into a single
-      line making it hard to see individual items they contain.
-
-    To overcome the above problems, some keywords such as `Log` and
-    `Should Be Equal` have an optional ``formatter`` argument that can be
-    used to configure the string representation. The supported values are
-    ``str`` (default), ``repr``, and ``ascii`` that work similarly as
-    [https://docs.python.org/library/functions.html|Python built-in functions]
-    with same names. More detailed semantics are explained below.
-
-    == str ==
-
-    Use the human-readable string representation. Equivalent to using ``str()``
-    in Python. This is the default.
-
-    == repr ==
-
-    Use the machine-readable string representation. Similar to using ``repr()``
-    in Python, which means that strings like ``Hello`` are logged like
-    ``'Hello'``, newlines and non-printable characters are escaped like ``\n``
-    and ``\x00``, and so on. Non-ASCII characters are shown as-is like ``ä``.
-
-    In this mode bigger lists, dictionaries and other containers are
-    pretty-printed so that there is one item per row.
-
-    == ascii ==
-
-    Same as using ``ascii()`` in Python. Similar to using ``repr`` explained above
-    but with the following differences:
-
-    - Non-ASCII characters are escaped like ``\xe4`` instead of
-      showing them as-is like ``ä``. This makes it easier to see differences
-      between Unicode characters that look the same but are not equal.
-    - Containers are not pretty-printed.
     """
 
     ROBOT_LIBRARY_SCOPE = "GLOBAL"

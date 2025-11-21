@@ -326,3 +326,6 @@ Lists Should be equal with Ignore Case and Order
 
 Validate argument conversion errors
     Check Test Case    ${TEST NAME}
+
+Bytes normalization
+    Check Test Case    ${TEST NAME}

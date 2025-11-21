@@ -54,6 +54,20 @@ Collapse spaces
     ${42}                                ${42}                 collapse_spaces=${TRUE}
     Yo${SPACE * 5}yo                     Oy\toy                collapse_spaces=True
 
+Normalization with bytes
+    ${{b'RF'}}              ${{b'rf'}}               ignore_case=True
+    ${{b' RF'}}             ${{b'RF '}}              strip_spaces=True
+    ${{b' R\n\t F\t\n'}}    ${{b' R F '}}            collapse_spaces=True
+
+Auto conversion with bytes
+    [Documentation]    FAIL ValueError: Argument '666' (integer) cannot be converted to bytes: 666 is not in range 0-255.
+    ${{b'RF'}}              RF
+    ${{b' RF'}}             rf${SPACE}               ignore_case=True    strip_spaces=True
+    ${{b' R\n\t F\t\n'}}    ${SPACE}R F${SPACE*7}    collapse_spaces=True
+    ${{b'R F'}}             ${{[82, 32, 32, 70]}}    collapse_spaces=True
+    ${{b'R'}}               ${82}
+    ${{b'R'}}               ${666}
+
 Fails with values
     [Documentation]    FAIL Several failures occurred:
     ...
@@ -391,6 +405,29 @@ Should Not Be Equal and collapse spaces
     hyvää\ \ yötä    hyvää\ \ yötä    message    collapse_spaces=${TRUE}
     \ test\tit       \tvalue it       collapse_spaces=Maybe yes
     \ \ ${42}        \ \ ${42}        collapse_spaces=TruE
+
+Should Not Be Equal with bytes normalization
+    [Documentation]     FAIL r f == r f
+    [Template]  Should Not Be Equal
+    ${{b'Robot'}}    ${{b'Framework'}}
+    ...    ignore_case=True    strip_spaces=True    collapse_spaces=True
+    ${{b'\n\t R\n\t F\n\t '}}    ${{b'r f'}}
+    ...    ignore_case=True    strip_spaces=True    collapse_spaces=True
+
+Should Not Be Equal with bytes auto conversion
+    [Documentation]     FAIL Several failures occurred:
+    ...
+    ...    1) fails == fails
+    ...
+    ...    2) FAIL
+    ...
+    ...    3) ValueError: Argument '666' (integer) cannot be converted to bytes: 666 is not in range 0-255.
+    [Template]  Should Not Be Equal
+    ${{b'RF'}}              RBT
+    ${{b' fails'}}          FAILS${SPACE*100}        ignore_case=True    strip_spaces=True
+    ${{b'R F'}}             ${{[82, 32, 32, 70]}}    collapse_spaces=True    msg=FAIL    values=0
+    ${{b'R'}}               ${70}
+    ${{b'R'}}               ${666}
 
 Should Not Be Equal with bytes containing non-ascii characters
     [Documentation]    FAIL ${BYTES WITH NON ASCII} == ${BYTES WITH NON ASCII}

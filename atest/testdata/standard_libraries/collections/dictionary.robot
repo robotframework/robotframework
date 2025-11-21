@@ -169,6 +169,9 @@ Check invalid dictionary argument errors
     Remove From Dictionary                     ${invalid_arg}    a
     Set To Dictionary                          ${invalid_arg}    a    b
 
+Bytes normalization
+    Dictionary Should Contain Key             ${{{b'RF': 1}}}    ${{b'rf'}}      ignore_case=True
+
 *** Keywords ***
 Validate invalid argument error
     [Arguments]  ${keyword}    ${argument}=I'm not a dict, I'm a string.    @{args}    ${arg_name}=dictionary    ${annotation}=Mapping    ${invalid_argument}=${NONE}

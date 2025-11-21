@@ -68,6 +68,13 @@ Should Match Regexp with bytes
     ${{b'Hyv\xe4!'}}           ${{b'H..\xe4!'}}
     ${{b'Hyv\xe4!'}}           ${{b'Paha!'}}
 
+Should Match Regexp with bytes autoconversion
+    [Documentation]    FAIL    'Hyvä!' does not match 'Paha!'
+    [Template]    Should Match Regexp
+    ${BYTES WITH NON ASCII}    ä
+    ${{b'Hyv\xe4!'}}           H..ä!
+    ${{b'Hyv\xe4!'}}           Paha!
+
 Should Not Match Regexp
     [Documentation]    FAIL    'James Bond 007' matches '^J\\w{4}\\sB[donkey]+ \\d*$'
     [Template]    Should Not Match Regexp
@@ -81,3 +88,10 @@ Should Not Match Regexp with bytes
     ${BYTES WITH NON ASCII}    ${BYTES WITHOUT NON ASCII}
     ${{b'Hyv\xe4!'}}           ${{b'H..\xe4!'}}
     ${{b'Hyv\xe4!'}}           ${{b'Paha!'}}
+
+Should Not Match Regexp with bytes auto conversion
+    [Documentation]    FAIL    'Hyvä!' matches 'H..ä!'
+    [Template]    Should Not Match Regexp
+    ${BYTES WITH NON ASCII}    a
+    ${{b'Hyv\xe4!'}}           H..ä!
+    ${{b'Hyv\xe4!'}}           Paha!

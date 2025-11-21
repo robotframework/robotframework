@@ -118,6 +118,30 @@ Should Contain Any and collapse spaces
     ${DICT 5}     e e                    collapse_spaces=TRUE
     ${DICT 5}     e \n \t e              collapse_spaces=TRUE
 
+Should Contain Any with recursive normalization
+    [Template]    Should Contain Any
+    ${{(['a', 'B'], ['c'])}}                  no match    ${{['A', 'b']}}       ignore_case=True
+    ${{([' a ', 'B '], ['c'])}}               no match    ${{['a', ' B']}}      strip_spaces=True
+    ${{[['a${SPACE*7}a', 'B${SPACE*7}']]}}    no match    ${{['a a', 'B ']}}    collapse_spaces=True
+
+Should Contain Any with bytes auto conversion
+    [Documentation]    FAIL Several failures occurred:
+    ...
+    ...    1) ValueError: Argument 'ab\u0666' cannot be converted to bytes: Character '\u0666' cannot be mapped to a byte.
+    ...
+    ...    2) ValueError: Argument '666' (integer) cannot be converted to bytes: 666 is not in range 0-255.
+    ...
+    ...    3) 'this fails' does not contain any of 'no match', '' or ''
+    [Template]    Should Contain Any
+    ${{b'good'}}                 no match    oo
+    ${{b'h\xfcv\xe4'}}           no match    üvä
+    ${{bytes([0, 1, 2])}}        no match    \x00\x01
+    ${{bytes([0, 1, 2])}}        no match    ${1}
+    ${{bytearray([0, 1, 2])}}    no match    ${{[1, 2]}}
+    ${{bytes([0, 1, 2])}}        no match    ab\u0666
+    ${{bytearray([0, 1, 2])}}    no match    ${666}
+    ${{b'this fails'}}           no match    ${0}    ${{[0, 1, 2]}}
+
 Should Contain Any without items fails
     [Documentation]    FAIL    One or more item required.
     Should Contain Any    foo
@@ -248,6 +272,24 @@ Should Not Contain Any and collapse spaces
     ${DICT 5}    \ \ta     collapse_spaces=TRUE
     ${LIST 4}    b\n\t     collapse_spaces=Yes
     ${DICT 5}    e\te       collapse_spaces=TRUE
+
+Should Not Contain Any with bytes auto conversion
+    [Documentation]    FAIL Several failures occurred:
+    ...
+    ...    1) ValueError: Argument 'ab\u0666' cannot be converted to bytes: Character '\u0666' cannot be mapped to a byte.
+    ...
+    ...    2) ValueError: Argument '666' (integer) cannot be converted to bytes: 666 is not in range 0-255.
+    ...
+    ...    3) 'this fails' contains one or more of 'no match' or 'fails'
+    [Template]    Should Not Contain Any
+    ${{b'hyva'}}                 no match    ä
+    ${{bytearray(b'hyva')}}      no match    ä
+    ${{bytes([0, 1, 2])}}        no match    \x03
+    ${{bytes([0, 1, 2])}}        no match    ${3}
+    ${{bytearray([0, 1, 2])}}    no match    ${{[1, 2, 3]}}
+    ${{bytes([0, 1, 2])}}        no match    ab\u0666
+    ${{bytearray([0, 1, 2])}}    no match    ${666}
+    ${{b'this fails'}}           no match    fails
 
 Should Not Contain Any without items fails
     [Documentation]    FAIL    One or more item required.

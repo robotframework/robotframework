@@ -29,6 +29,12 @@ Do not collapse spaces
 Collapse spaces
     Check Test Case     ${TESTNAME}
 
+Normalization with bytes
+    Check Test Case     ${TESTNAME}
+
+Auto conversion with bytes
+    Check Test Case     ${TESTNAME}
+
 Fails with values
     Check test case    ${TESTNAME}
 
@@ -130,6 +136,12 @@ Should Not Be Equal and do not collapse spaces
     Check Test Case     ${TESTNAME}
 
 Should Not Be Equal and collapse spaces
+    Check Test Case     ${TESTNAME}
+
+Should Not Be Equal with bytes normalization
+    Check Test Case     ${TESTNAME}
+
+Should Not Be Equal with bytes auto conversion
     Check Test Case     ${TESTNAME}
 
 Should Not Be Equal with bytes containing non-ascii characters

@@ -601,7 +601,7 @@ Lists Should be equal with Ignore Case and Order
 
 Validate argument conversion errors
     [Template]    Validate invalid argument error
-    VAR    ${invalid_arg}    I am a string. Not a list.
+    VAR                                   ${invalid_arg}              I am a string. Not a list.
     Append to list                        xyz                         annotation=Sequence: Invalid expression
     Combine Lists                         ${invalid_arg}              arg_name=lists
     Combine Lists                         ${L0}   ${invalid_arg}      arg_name=lists    invalid_argument=${invalid_arg}
@@ -616,7 +616,7 @@ Validate argument conversion errors
     Insert into list                      ${invalid_arg}    0    a    annotation=Sequence: Invalid expression
     List Should Contain Sub List          ${invalid_arg}    ${L0}     arg_name=list1
     List Should Contain Sub List          ${L0}    ${invalid_arg}     arg_name=list2    invalid_argument=${invalid_arg}
-    List should contain value             ${invalid_arg}    a
+    List Should Contain Value             ${invalid_arg}    a
     List Should Not Contain Duplicates    xyz                         annotation=Sequence: Invalid expression
     List Should Not Contain Value         ${invalid_arg}    x
     Lists Should Be Equal                 ${invalid_arg}    ${L0}     arg_name=list1
@@ -630,6 +630,11 @@ Validate argument conversion errors
     Should Contain Match                  ${invalid_arg}    a         arg_name=list
     Should Not Contain Match              ${invalid_arg}    xyz       arg_name=list
     Sort List                                                         annotation=Sequence: Invalid expression
+
+Bytes normalization
+    [Documentation]    FAIL    'rf' found multiple times.
+    List Should Contain Value             ${{[b'\x00', b'RF']}}    ${{b'rf'}}      ignore_case=True
+    List Should Not Contain Duplicates    ${{[b'RF', b'rf']}}                      ignore_case=True
 
 *** Keywords ***
 Validate invalid argument error

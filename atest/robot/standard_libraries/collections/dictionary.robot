@@ -92,3 +92,6 @@ Pop From Dictionary With Default
 
 Check invalid dictionary argument errors
     Check Test Case    ${TEST NAME}
+
+Bytes normalization
+    Check Test Case    ${TEST NAME}

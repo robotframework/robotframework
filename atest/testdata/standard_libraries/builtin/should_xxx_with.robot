@@ -11,16 +11,16 @@ Should Start With
     Hello, world!    Hello, world!
     ${LONG}    Does not start    My message    values=true
 
+Should Start With without values
+    [Documentation]    FAIL My message
+    Should Start With    ${LONG}    Nope    My message    values=False
+
 Should Start With case-insensitive
     [Template]    Should Start With
     Hello!           hELLo            ignore_case=True
     HYVÄÄ YÖTÄ       hyvää            ignore_case=yeah
     Hello, world!    hello, WORLD!    ignore_case=True
     Straße           stras            ignore_case=True
-
-Should Start With without values
-    [Documentation]    FAIL My message
-    Should Start With    ${LONG}    Nope    My message    values=False
 
 Should Start With without leading spaces
     [Documentation]    FAIL    'YÖTÄ' does not start with 'yötä'
@@ -84,12 +84,28 @@ Should Start With and collapse spaces
     test\n\tvalue    no\ttest        collapse_spaces=TruE
     YÖTÄ\t           \työtä\ttest    collapse_spaces=1
 
+Should Start With with bytes normalization
+    [Template]    Should Start With
+    ${{b'RBT'}}              ${{b'rb'}}             ignore_case=True
+    ${{b' RBT'}}             ${{b'RB '}}            strip_spaces=True
+    ${{b'\n R\t B\t\nT'}}    ${{b' R B '}}          collapse_spaces=True
+
+Should Start With with bytes auto conversion
+    [Template]    Should Start With
+    ${{b'RBT'}}              rb                     ignore_case=True
+    ${{b' RBT'}}             RB${SPACE}             strip_spaces=True
+    ${{b'\n R\t B\t\nT'}}    ${SPACE}R B${SPACE}    collapse_spaces=True
+
 Should Not Start With
-    [Documentation]    FAIL 'Hello, world!' starts with 'Hello'
+    [Documentation]    FAIL Message: 'Hello, world!' starts with 'Hello'
     [Template]    Should Not Start With
     Hello, world!    Hi
     Hello, world!    HELLO
-    Hello, world!    Hello
+    Hello, world!    Hello    msg=Message
+
+Should Not Start With without values
+    [Documentation]    FAIL My message
+    Should Not Start With    x    x    My message    values=False
 
 Should Not Start With case-insensitive
     [Documentation]     FAIL  'hello, ss?' starts with 'hello, s'
@@ -164,16 +180,30 @@ Should Not Start With and collapse spaces
     \ttest \t\ value    \ttest      collapse_spaces=${TRUE}
     \t\ yötä\t\n        \ yötä\t    repr=yes    collapse_spaces=Sure
 
-Should End With without values
-    [Documentation]    FAIL My message
-    Should End With    ${LONG}    Nope    My message    values=False
+Should Not Start With with bytes normalization
+    [Documentation]    FAIL 'r b t' starts with 'r b'
+    [Template]    Should Not Start With
+    ${{b'Robot'}}    ${{b'Framework'}}
+    ...    ignore_case=True    strip_spaces=True    collapse_spaces=True
+    ${{b'\n\t R\n\t B\n\t T'}}    ${{b'r b'}}
+    ...    ignore_case=True    strip_spaces=True    collapse_spaces=True
+
+Should Not Start With with bytes conversion
+    [Documentation]    FAIL 'rf' starts with 'r'
+    [Template]    Should Not Start With
+    ${{b'RF'}}     F
+    ${{b' RF'}}    r${SPACE}    ignore_case=True    strip_spaces=True
 
 Should End With
-    [Documentation]    FAIL 'Hello, world!' does not end with '?'
+    [Documentation]    FAIL Message: 'Hello, world!' does not end with '?'
     [Template]    Should End With
     Hello, world!    !
     Hello, world!    Hello, world!
-    Hello, world!    ?
+    Hello, world!    ?    msg=Message
+
+Should End With without values
+    [Documentation]    FAIL My message
+    Should End With    ${LONG}    Nope    My message    values=False
 
 Should End With case-insensitive
     [Template]      Should End With
@@ -238,6 +268,18 @@ Should End With and collapse spaces
     \ttest\ \ ?       T\n?          collapse_spaces=True
     \t\nyötä\t        \ Yötä        repr=yes    collapse_spaces=${TRUE}
     some\ \ test\n    \t\ttest\t    collapse_spaces=Yes
+
+Should End With with bytes normalization
+    [Template]    Should End With
+    ${{b'RBT'}}              ${{b'bt'}}             ignore_case=True
+    ${{b' RBT'}}             ${{b'BT '}}            strip_spaces=True
+    ${{b'R\t B\t\nT\n '}}    ${{b' B T '}}          collapse_spaces=True
+
+Should End With with bytes auto conversion
+    [Template]    Should End With
+    ${{b'RBT'}}              bt                     ignore_case=True
+    ${{b' RBT'}}             BT${SPACE}             strip_spaces=True
+    ${{b'R\t B\t\nT\n '}}    ${SPACE}B T${SPACE}    collapse_spaces=True
 
 Should Not End With
     [Documentation]    FAIL Message only
@@ -321,6 +363,20 @@ Should Not End With and collapse spaces
     test\t\nvalue    e           collapse_spaces=${TRUE}
     \työtä\t         yötä\t      repr=yes    collapse_spaces=Yes
     some\ test       \ \ test    collapse_spaces=1
+
+Should Not End With with bytes normalization
+    [Documentation]    FAIL 'r b t' ends with 'b t'
+    [Template]    Should Not End With
+    ${{b'Robot'}}    ${{b'Framework'}}
+    ...    ignore_case=True    strip_spaces=True    collapse_spaces=True
+    ${{b'\n\t R\n\t B\n\t T'}}    ${{b'b t'}}
+    ...    ignore_case=True    strip_spaces=True    collapse_spaces=True
+
+Should Not End With with bytes conversion
+    [Documentation]    FAIL 'rf' ends with 'f'
+    [Template]    Should Not End With
+    ${{b'RF'}}     R
+    ${{b' RF'}}    f${SPACE}    ignore_case=True    strip_spaces=True
 
 NO VALUES is deprecated
     Should Start With        xxx    x    values=NO VALUES

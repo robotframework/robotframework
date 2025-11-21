@@ -56,6 +56,8 @@ class Normalizer:
             return value
         if isinstance(value, str):
             return self.normalize_string(value)
+        if isinstance(value, (bytes, bytearray)):
+            return self.normalize_bytes(value)
         if isinstance(value, Mapping):
             if mapping_to_list:
                 return self.normalize_list(list(value))
@@ -73,6 +75,17 @@ class Normalizer:
             value = value.rstrip()
         if self.collapse_spaces:
             value = re.sub(r"\s+", " ", value)
+        return value
+
+    def normalize_bytes(self, value: "bytes | bytearray") -> "bytes | bytearray":
+        if self.ignore_case:
+            value = value.lower()
+        if self.strip_leading_spaces:
+            value = value.lstrip()
+        if self.strip_trailing_spaces:
+            value = value.rstrip()
+        if self.collapse_spaces:
+            value = re.sub(rb"\s+", b" ", value)
         return value
 
     def normalize_list(self, value: Sequence) -> Sequence:
