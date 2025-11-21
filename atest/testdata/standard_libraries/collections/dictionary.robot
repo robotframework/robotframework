@@ -1,6 +1,6 @@
 *** Settings ***
 Test Setup        Create Dictionaries For Testing
-Resource          collections_resources.robot
+Library           Collections
 Library           CollectionsHelperLibrary.py
 
 *** Test Cases ***
@@ -29,23 +29,23 @@ Set To Dictionary With wrong number of arguments
 
 Set To Dictionary With **kwargs
     Set To Dictionary    ${D0}    k1    ${1}    over    write    k2=${2}    over=written
-    Compare To Expected String    ${D0}    {'k1': 1, 'k2': 2, 'over': 'written'}
+    Should Be Equal    ${D0}    {'k1': 1, 'k2': 2, 'over': 'written'}    type=dict
 
 Remove From Dictionary
     Remove From Dictionary    ${D3}    b    x    ${2}
-    Compare To Expected String    ${D3}    {'a': 1, 3: None}
+    Should Be Equal    ${D3}    {'a': 1, 3: None}    type=dict
     Remove From Dictionary    ${D3}    ${TUPLE}
-    Compare To Expected String    ${D3}    {'a': 1, 3: None}
+    Should Be Equal    ${D3}    {'a': 1, 3: None}    type=dict
 
 Keep In Dictionary
     Keep In Dictionary    ${D3}    a    x    ${2}    ${3}
-    Compare To Expected String    ${D3}    {'a': 1, 3: None}
+    Should Be Equal    ${D3}    {'a': 1, 3: None}    type=dict
 
 Copy Dictionary
     ${copy} =    Copy Dictionary    ${D3}
     Remove From Dictionary    ${copy}    a    ${3}
-    Compare To Expected String    ${copy}    {'b':2}
-    Compare To Expected String    ${D3}    {'a': 1, 'b': 2, 3: None}
+    Should Be Equal    ${copy}    {'b': 2}    type=dict
+    Should Be Equal    ${D3}      {'a': 1, 'b': 2, 3: None}    type=dict
 
 Shallow Copy Dictionary
     ${x2} =    Create Dictionary    x2    1
@@ -66,36 +66,36 @@ Deep Copy Dictionary
 
 Get Dictionary Keys Sorted
     ${keys} =    Get Dictionary Keys    ${D3B}
-    Compare To Expected String    ${keys}    ['a', 'b', 'c']
+    Should Be Equal    ${keys}    ['a', 'b', 'c']    type=list
 
 Get Dictionary Keys Unsorted
     ${keys} =    Get Dictionary Keys    ${D3B}    sort_keys=${False}
-    Compare To Expected String    ${keys}    ['b', 'a', 'c']
+    Should Be Equal    ${keys}    ['b', 'a', 'c']    type=list
 
 Get Dictionary Values Sorted
     ${values} =    Get Dictionary Values    ${D3B}
-    Compare To Expected String    ${values}    [1, 2, '']
+    Should Be Equal    ${values}    [1, 2, '']    type=list
 
 Get Dictionary Values Unsorted
     ${values} =    Get Dictionary Values    ${D3B}  sort_keys=False
-    Compare To Expected String    ${values}    [2, 1, '']
+    Should Be Equal    ${values}    [2, 1, '']    type=list
 
 Get Dictionary Items Sorted
     ${items} =    Get Dictionary Items    ${D3B}
-    Compare To Expected String    ${items}    ['a', 1, 'b', 2, 'c', '']
+    Should Be Equal    ${items}    ['a', 1, 'b', 2, 'c', '']    type=list
 
 Get Dictionary Items Unsorted
     ${items} =    Get Dictionary Items    ${D3B}    sort_keys=NO
-    Compare To Expected String    ${items}    ['b', 2, 'a', 1, 'c', '']
+    Should Be Equal    ${items}    ['b', 2, 'a', 1, 'c', '']    type=list
 
 Get Dictionary Keys/Values/Items When Keys Are Unorderable
     ${unorderable} =    Evaluate    {complex(1): 1, complex(2): 2, complex(3): 3}
-    ${keys} =    Get Dictionary Keys    ${unorderable}
-    Compare To Expected String    ${keys}    list(d)    d=${unorderable}
+    ${keys} =      Get Dictionary Keys      ${unorderable}
     ${values} =    Get Dictionary Values    ${unorderable}
-    Compare To Expected String    ${values}    list(d.values())    d=${unorderable}
-    ${items} =    Get Dictionary Items    ${unorderable}
-    Compare To Expected String    ${items}    [i for item in d.items() for i in item]    d=${unorderable}
+    ${items} =     Get Dictionary Items     ${unorderable}
+    Should Be Equal    ${keys}      ${{[complex(1), complex(2), complex(3)]}}
+    Should Be Equal    ${values}    ${{[1, 2, 3]}}
+    Should Be Equal    ${items}     ${{[complex(1), 1, complex(2), 2, complex(3), 3]}}
 
 Get From Dictionary
     ${value} =    Get From Dictionary    ${D3}    b

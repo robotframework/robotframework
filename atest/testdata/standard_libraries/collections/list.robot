@@ -1,6 +1,6 @@
 *** Settings ***
 Test Setup         Create Lists for the Tests
-Resource           collections_resources.robot
+Library            Collections
 
 *** Variables ***
 ${INDEX ERROR}     ValueError: Argument 'index' got value 'invalid' that cannot be converted to integer.
