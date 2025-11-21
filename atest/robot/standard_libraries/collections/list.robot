@@ -13,7 +13,13 @@ Convert To List With Invalid Type
 Append To List
     Check Test Case    ${TEST NAME}
 
+Append To List with immutable
+    Check Test Case    ${TEST NAME}
+
 Insert Into List
+    Check Test Case    ${TEST NAME}
+
+Insert Into List with immutable
     Check Test Case    ${TEST NAME}
 
 Insert Into List with invalid index
@@ -25,13 +31,22 @@ Combine Lists
 Set List Value
     Check Test Case    ${TEST NAME}
 
+Set List Value with immutable
+    Check Test Case    ${TEST NAME}
+
 Set List Value with invalid index
     Check Test Case    ${TEST NAME}
 
 Remove Values From List
     Check Test Case    ${TEST NAME}
 
+Remove Values From List with immutable
+    Check Test Case    ${TEST NAME}
+
 Remove From List
+    Check Test Case    ${TEST NAME}
+
+Remove From List with immutable
     Check Test Case    ${TEST NAME}
 
 Remove From List with invalid index
@@ -72,7 +87,13 @@ Deep Copy List
 Reverse List
     Check Test Case    ${TEST NAME}
 
+Reverse List with immutable
+    Check Test Case    ${TEST NAME}
+
 Sort List
+    Check Test Case    ${TEST NAME}
+
+Sort List with immutable
     Check Test Case    ${TEST NAME}
 
 Sorting Unsortable List Fails

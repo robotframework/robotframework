@@ -14,7 +14,9 @@
 #  limitations under the License.
 
 import copy
-from collections.abc import Iterator, Mapping, MutableMapping, MutableSequence, Sequence
+from collections.abc import (
+    Iterator, Mapping, MutableMapping, MutableSequence, Sequence, Set
+)
 from itertools import chain
 from typing import Literal, NoReturn, Union
 
@@ -29,7 +31,7 @@ from .normalizer import IgnoreCase, Normalizer
 
 NOT_SET = NotSet()
 
-ListLike = Union[Sequence, Mapping, set]
+ListLike = Union[Sequence, Mapping, Set]
 
 
 class _List:
@@ -45,8 +47,14 @@ class _List:
         """
         return list(item)  # type: ignore
 
-    def append_to_list(self, list_: MutableSequence, *values: object):
+    def append_to_list(
+        self,
+        list_: MutableSequence,
+        *values: object,
+    ) -> MutableSequence:
         """Adds ``values`` to the end of ``list``.
+
+        Starting from Robot Framework 7.4, the modified list is also returned.
 
         Example:
         | Append To List | ${L1} | xxx |   |   |
@@ -56,8 +64,14 @@ class _List:
         | ${L2} = ['a', 'b', 'x', 'y', 'z']
         """
         list_.extend(values)
+        return list_
 
-    def insert_into_list(self, list_: MutableSequence, index: int, value: object):
+    def insert_into_list(
+        self,
+        list_: MutableSequence,
+        index: int,
+        value: object,
+    ) -> MutableSequence:
         """Inserts ``value`` into ``list`` to the position specified with ``index``.
 
         Index ``0`` adds the value into the first position, ``1`` to the second,
@@ -71,6 +85,8 @@ class _List:
         can be given either as an integer or a string that can be
         converted to an integer.
 
+        Starting from Robot Framework 7.4, the modified list is also returned.
+
         Example:
         | Insert Into List | ${L1} | 0     | xxx |
         | Insert Into List | ${L2} | ${-1} | xxx |
@@ -79,6 +95,7 @@ class _List:
         | ${L2} = ['a', 'xxx', 'b']
         """
         list_.insert(index, value)
+        return list_
 
     def combine_lists(self, *lists: ListLike) -> list:
         """Combines the given ``lists`` together and returns the result.
@@ -95,7 +112,12 @@ class _List:
         """
         return list(chain.from_iterable(lists))
 
-    def set_list_value(self, list_: MutableSequence, index: int, value: object):
+    def set_list_value(
+        self,
+        list_: MutableSequence,
+        index: int,
+        value: object,
+    ) -> MutableSequence:
         """Sets the value of ``list`` specified by ``index`` to the given ``value``.
 
         Index ``0`` means the first position, ``1`` the second and so on.
@@ -103,6 +125,8 @@ class _List:
         Using an index that does not exist on the list causes an error.
         The index can be either an integer or a string that can be converted to
         an integer.
+
+        Starting from Robot Framework 7.4, the modified list is also returned.
 
         Example:
         | Set List Value | ${L3} | 1  | xxx |
@@ -119,11 +143,18 @@ class _List:
             list_[index] = value
         except IndexError:
             self._index_error(list_, index)
+        return list_
 
-    def remove_values_from_list(self, list_: MutableSequence, *values: object):
+    def remove_values_from_list(
+        self,
+        list_: MutableSequence,
+        *values: object,
+    ) -> MutableSequence:
         """Removes all occurrences of given ``values`` from ``list``.
 
         It is not an error if a value does not exist in the list at all.
+
+        Starting from Robot Framework 7.4, the modified list is also returned.
 
         Example:
         | Remove Values From List | ${L4} | a | c | e | f |
@@ -133,6 +164,7 @@ class _List:
         for value in values:
             while value in list_:
                 list_.remove(value)
+        return list_
 
     def remove_from_list(self, list_: MutableSequence, index: int) -> object:
         """Removes and returns the value specified with an ``index`` from ``list``.
@@ -299,19 +331,22 @@ class _List:
             return copy.deepcopy(list_)
         return list_[:]
 
-    def reverse_list(self, list_: MutableSequence):
+    def reverse_list(self, list_: MutableSequence) -> MutableSequence:
         """Reverses the given list in place.
 
         Note that the given list is changed and nothing is returned. Use
         `Copy List` first, if you need to keep also the original order.
+
+        Starting from Robot Framework 7.4, the reversed list is also returned.
 
         | Reverse List | ${L3} |
         =>
         | ${L3} = ['c', 'b', 'a']
         """
         list_.reverse()
+        return list_
 
-    def sort_list(self, list_: MutableSequence):
+    def sort_list(self, list_: MutableSequence) -> MutableSequence:
         """Sorts the given list in place.
 
         Sorting fails if items in the list are not comparable with each others.
@@ -320,11 +355,14 @@ class _List:
         Note that the given list is changed and nothing is returned. Use
         `Copy List` first, if you need to preserve the list also in the original
         order.
+
+        Starting from Robot Framework 7.4, the sorted list is also returned.
         """
         if isinstance(list_, list):
             list_.sort()
         else:
             list_ = sorted(list_)
+        return list_
 
     def list_should_contain_value(
         self,
@@ -551,6 +589,8 @@ class _Dictionary:
 
         If given items already exist in the dictionary, their values are updated.
 
+        The modified dictionary is also returned.
+
         It is easiest to specify items using the ``name=value`` syntax:
         | Set To Dictionary | ${D1} | key=value | second=${2} |
         =>
@@ -581,11 +621,12 @@ class _Dictionary:
         self,
         dictionary: MutableMapping,
         *keys: object,
-    ):
+    ) -> MutableMapping:
         """Removes the given ``keys`` from the ``dictionary``.
 
-        If the given ``key`` cannot be found from the ``dictionary``, it
-        is ignored.
+        If the given ``key`` does not exist in the ``dictionary``, it is ignored.
+
+        Starting from Robot Framework 7.4, the modified dictionary is also returned.
 
         Example:
         | Remove From Dictionary | ${D3} | b | x | y |
@@ -598,6 +639,7 @@ class _Dictionary:
                 logger.info(f"Removed item with key '{key}' and value '{value}'.")
             else:
                 logger.info(f"Key '{key}' not found.")
+        return dictionary
 
     def pop_from_dictionary(
         self,
@@ -607,9 +649,8 @@ class _Dictionary:
     ) -> object:
         """Pops the given ``key`` from the ``dictionary`` and returns its value.
 
-        By default the keyword fails if the given ``key`` cannot be found from
-        the ``dictionary``. If optional ``default`` value is given, it will be
-        returned instead of failing.
+        The keyword fails if the given ``key`` cannot be found from the ``dictionary``
+        by default. If optional ``default`` value is given, it will be returned instead.
 
         Example:
         | ${val}= | Pop From Dictionary | ${D3} | b |
@@ -622,11 +663,16 @@ class _Dictionary:
             return dictionary.pop(key)
         return dictionary.pop(key, default)
 
-    def keep_in_dictionary(self, dictionary: MutableMapping, *keys: object):
-        """Keeps the given ``keys`` in the ``dictionary`` and removes all other.
+    def keep_in_dictionary(
+        self,
+        dictionary: MutableMapping,
+        *keys: object,
+    ) -> MutableMapping:
+        """Keeps the given ``keys`` in the ``dictionary`` and removes all others.
 
-        If the given ``key`` cannot be found from the ``dictionary``, it
-        is ignored.
+        If the given ``key`` does not exist in the ``dictionary``, it is ignored.
+
+        Starting from Robot Framework 7.4, the modified dictionary is also returned.
 
         Example:
         | Keep In Dictionary | ${D5} | b | x | d |
@@ -635,6 +681,7 @@ class _Dictionary:
         """
         remove_keys = [k for k in dictionary if k not in keys]
         self.remove_from_dictionary(dictionary, *remove_keys)
+        return dictionary
 
     def copy_dictionary(
         self,
@@ -1024,14 +1071,26 @@ class Collections(_List, _Dictionary):
 
     = Using with list-like and dictionary-like objects =
 
-    List keywords that do not alter the given list can also be used
-    with tuples, and to some extent also with other iterables.
-    `Convert To List` can be used to convert tuples and other iterables
-    to Python ``list`` objects.
+    List related keywords can in general be used with tuples and other sequences,
+    not only with ``list`` objects. List keywords that validate something typically
+    even work with sets and mappings (with mappings they look only at keys).
+    If keywords that modify lists are used with immutable sequences such as tuples,
+    values are automatically converted to lists. In such cases the original value
+    obviously is not mutated, but these keywords also return the modified value
+    and that can be used instead.
 
-    Similarly, dictionary keywords can, for most parts, be used with other
-    mappings. `Convert To Dictionary` can be used if real Python ``dict``
-    objects are needed.
+    Dictionary related keywords also generally work with any mapping, not only
+    with ``dict`` objects. If keywords that modify dictionaries are used with
+    immutable mappings, values are automatically converted to dictionaries.
+    Original values cannot be modified in these cases either, but modified values
+    are returned and can be used instead.
+
+    What values each keyword actually accepts can be seen from argument types
+    and keyword documentation.
+
+    Returning values from keywords that modify lists or dictionaries is new
+    in Robot Framework 7.4. With earlier version these keywords could only
+    be used with mutable values.
 
     = Ignore case =
 
@@ -1132,10 +1191,8 @@ class Collections(_List, _Dictionary):
             ignore_whitespace=ignore_whitespace,
         )
         if not matches:
-            report_error(
-                f"{seq2str2(list)} does not contain match for pattern '{pattern}'.",
-                msg,
-            )
+            list = seq2str2(list)
+            report_error(f"{list} does not contain match for pattern '{pattern}'.", msg)
 
     def should_not_contain_match(
         self,
@@ -1161,10 +1218,8 @@ class Collections(_List, _Dictionary):
             ignore_whitespace=ignore_whitespace,
         )
         if matches:
-            report_error(
-                f"{seq2str2(list)} contains match for pattern '{pattern}'.",
-                msg,
-            )
+            list = seq2str2(list)
+            report_error(f"{list} contains match for pattern '{pattern}'.", msg)
 
     def get_matches(
         self,

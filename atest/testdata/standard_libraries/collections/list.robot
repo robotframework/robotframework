@@ -30,12 +30,21 @@ Append To List
     Append To List    ${L0}    1              expected=['1']
     Append To List    ${L0}    2    3    4    expected=['1', '2', '3', '4']
 
+Append To List with immutable
+    [Template]    Verify Result
+    Append To List    ('a', 'b')    c              expected=['a', 'b', 'c']
+    Append To List    ('a', 'b')    c    d    e    expected=['a', 'b', 'c', 'd', 'e']
+
 Insert Into List
     [Template]    Verify Modification
     Insert Into List    ${L2}    1       v1    expected=['1', 'v1', 2]
     Insert Into List    ${L2}    ${1}    v2    expected=['1', 'v2', 'v1', 2]
     Insert Into List    ${L2}    1000    v3    expected=['1', 'v2', 'v1', 2, 'v3']
     Insert Into List    ${L2}    -2      v4    expected=['1', 'v2', 'v1', 'v4', 2, 'v3']
+
+Insert Into List with immutable
+    [Template]    Verify Result
+    Insert Into List    ('a', 'c')    1    b    expected=['a', 'b', 'c']
 
 Insert Into List with invalid index
     [Template]    Verify Error
@@ -53,6 +62,10 @@ Set List Value
     Set List Value    ${L3}    ${1}    v2    expected=['11', 'v2', '13']
     Set List Value    ${L3}    -1      v3    expected=['11', 'v2', 'v3']
 
+Set List Value with immutable
+    [Template]    Verify Result
+    Set List Value    ('a', 'b', 'c')    1    B    expected=['a', 'B', 'c']
+
 Set List Value with invalid index
     [Template]    Verify Error
     Set List Value    ${L3}    10         whatever     expected=${OUT OF RANGE}
@@ -64,10 +77,19 @@ Remove Values From List
     Remove Values From List    ${LONG}    1    ${2}    expected=['41', '43', '44']
     Remove Values From List    ${LONG}    nonex        expected=['41', '43', '44']
 
+Remove Values From List with immutable
+    [Template]    Verify Result
+    Remove Values From List    (1, 2, 2, 3, 2, 4)    ${2}    expected=[1, 3, 4]
+
 Remove From List
     [Template]    Verify Modification
     Remove From List    ${L3}    ${1}    expected=['11', '13']    result=${12}
     Remove From List    ${L3}    -2      expected=['13']          result=11
+
+Remove From List with immutable
+    [Template]    Verify Result
+    Remove From List    ('a', 'b', 'c')    ${1}    expected=b     type=str
+    Remove From List    (-1, -2, -3)       1       expected=-2    type=int
 
 Remove From List with invalid index
     [Template]    Verify Error
@@ -93,11 +115,11 @@ Count Values In List with invalid index
 
 Get Index From List
     [Template]    Verify Result
-    Get Index From List    ${LONG}    ${2}                   expected=2     type=int
-    Get Index From List    ${LONG}    ${2}    3              expected=8     type=int
-    Get Index From List    ${LONG}    43    4    7           expected=5     type=int
-    Get Index From List    ${LONG}    43   end=8             expected=5     type=int
-    Get Index From List    ${LONG}    nonex                  expected=-1    type=int
+    Get Index From List    ${LONG}    ${2}            expected=2     type=int
+    Get Index From List    ${LONG}    ${2}    3       expected=8     type=int
+    Get Index From List    ${LONG}    43    4    7    expected=5     type=int
+    Get Index From List    ${LONG}    43   end=8      expected=5     type=int
+    Get Index From List    ${LONG}    nonex           expected=-1    type=int
 
 Get Index From List with empty string as start index is deprecated
     [Template]    Verify Result
@@ -134,10 +156,19 @@ Reverse List
     [Template]    Verify Modification
     Reverse List    ${LONG}    expected=[2, '1', '44', '43', 42, '41', 2, '1', '1']
 
+Reverse List with immutable
+    [Template]    Verify Result
+    Reverse List    (1, 'a', None)    expected=[None, 'a', 1]
+
 Sort List
     [Template]    Verify Modification
     Sort List    ${{[]}}                     expected=[]
     Sort List    ${{[3, -1, 0.1, 0, 42]}}    expected=[-1, 0, 0.1, 3, 42]
+
+Sort List with immutable
+    [Template]    Verify Result
+    Sort List    ()                     expected=[]
+    Sort List    (3, -1, 0.1, 0, 42)    expected=[-1, 0, 0.1, 3, 42]
 
 Sorting unsortable list fails
     [Template]    Verify Error
@@ -155,12 +186,12 @@ Get From List with invalid index
 
 Get Slice From List
     [Template]    Verify Result
-    Get Slice From List    ${L4}                     expected=${L4}
-    Get Slice From List    ${L4}    1                expected=[42, '43', '44']
-    Get Slice From List    ${L4}    1    2           expected=[42]
-    Get Slice From List    ${L4}    end=2            expected=['41', 42]
-    Get Slice From List    ${L4}    100              expected=[]
-    Get Slice From List    ${L4}    2    100         expected=['43', '44']
+    Get Slice From List    ${L4}                expected=${L4}
+    Get Slice From List    ${L4}    1           expected=[42, '43', '44']
+    Get Slice From List    ${L4}    1    2      expected=[42]
+    Get Slice From List    ${L4}    end=2       expected=['41', 42]
+    Get Slice From List    ${L4}    100         expected=[]
+    Get Slice From List    ${L4}    2    100    expected=['43', '44']
 
 Get Slice From List with empty string as start index is deprecated
     [Template]    Verify Result
@@ -679,7 +710,13 @@ Verify Modification
     [Arguments]    ${keyword}    ${list}    @{args}    ${expected}    ${result}=${None}
     ${actual} =    Run Keyword    ${keyword}    ${list}    @{args}
     Should Be Equal    ${list}      ${expected}    type=list
-    Should Be Equal    ${actual}    ${result}
+    IF    not $result
+        VAR    ${result}    ${expected}
+        VAR    ${type}      list
+    ELSE
+        VAR    ${type}      ${None}
+    END
+    Should Be Equal    ${actual}    ${result}    type=${type}
 
 Verify Result
     [Arguments]    ${keyword}    @{args}    ${expected}    ${type}=list    &{named}
