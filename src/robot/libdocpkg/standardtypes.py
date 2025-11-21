@@ -81,6 +81,13 @@ points are not allowed. Robot Framework's ``\\xHH`` escape syntax is
 convenient with bytes having non-printable values.
 
 Examples: ``good``, ``hyvä`` (same as ``hyv\\xE4``), ``\\x00`` (the null byte)
+
+Integers and sequences of integers are converted to matching bytes directly.
+They must be in range 0-255.
+
+Examples: ``0`` (converted to the null byte), ``[82, 70]`` (converted to ``RF``)
+
+Support for integers and sequences of integers is new in Robot Framework 7.4.
 """,
     bytearray: "Set below to same value as `bytes`.",
     datetime: """\

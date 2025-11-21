@@ -386,12 +386,25 @@ class DecimalConverter(TypeConverter):
 class BytesConverter(TypeConverter):
     type = bytes
     type_name = "bytes"
-    value_types = (str, bytearray)
+    value_types = (str, bytearray, Sequence, int)
 
-    def _non_string_convert(self, value):
-        return bytes(value)
+    def _non_string_convert(self, value: "bytearray | Sequence | int") -> bytes:
+        if isinstance(value, bytearray):
+            return bytes(value)
+        if isinstance(value, int):
+            value = [value]
+        return bytes([self._validate_int(v) for v in value])
 
-    def _string_convert(self, value):
+    def _validate_int(self, value: object) -> int:
+        try:
+            value = int(value)  # type: ignore
+        except Exception:
+            raise ValueError(f"{value!r} is not an integer.")
+        if value < 0 or value > 255:
+            raise ValueError(f"{value} is not in range 0-255.")
+        return value
+
+    def _string_convert(self, value: str) -> bytes:
         try:
             return value.encode("latin-1")
         except UnicodeEncodeError as err:
@@ -400,20 +413,18 @@ class BytesConverter(TypeConverter):
 
 
 @TypeConverter.register
-class ByteArrayConverter(TypeConverter):
+class ByteArrayConverter(BytesConverter):
     type = bytearray
     type_name = "bytearray"
-    value_types = (str, bytes)
+    value_types = (str, bytes, Sequence, int)
 
-    def _non_string_convert(self, value):
+    def _non_string_convert(self, value: "bytes | Sequence | int") -> bytearray:
+        if not isinstance(value, bytes):
+            value = super()._non_string_convert(value)
         return bytearray(value)
 
-    def _string_convert(self, value):
-        try:
-            return bytearray(value, "latin-1")
-        except UnicodeEncodeError as err:
-            invalid = value[err.start : err.start + 1]
-            raise ValueError(f"Character '{invalid}' cannot be mapped to a byte.")
+    def _string_convert(self, value: str) -> bytearray:
+        return bytearray(super()._string_convert(value))
 
 
 @TypeConverter.register

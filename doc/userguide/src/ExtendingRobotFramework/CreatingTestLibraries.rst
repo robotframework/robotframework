@@ -1312,9 +1312,16 @@ Other types cause conversion failures.
    |              |               | unicode    |              |                                                                |                                      |
    |              |               |            |              | New in Robot Framework 4.0.                                    |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
-   | bytes_       |               |            | str_,        | Strings are converted to bytes so that each Unicode code point | | `good`                             |
-   |              |               |            | bytearray_   | below 256 is directly mapped to a matching byte. Higher code   | | `hyvä` (converted to `hyv\xe4`)    |
-   |              |               |            |              | points are not allowed.                                        | | `\x00` (the null byte)             |
+   | bytes_       |               |            | str_,        | Strings are converted to bytes so that each Unicode code point | Strings:                             |
+   |              |               |            | bytearray_   | below 256 is directly mapped to a matching byte. Higher code   |                                      |
+   |              |               |            |              | points are not allowed.                                        | | `good`                             |
+   |              |               |            |              |                                                                | | `hyvä` (converted to `hyv\xe4`)    |
+   |              |               |            |              | Integers and sequences of integers are converted to matching   | | `\x00` (converted to the null byte)|
+   |              |               |            |              | bytes directly. They must be in range 0-255.                   |                                      |
+   |              |               |            |              |                                                                | Integers and sequences of integers:  |
+   |              |               |            |              | Support for integers and sequences of integers is new in       |                                      |
+   |              |               |            |              | Robot Framework 7.4.                                           | | `0` (converted to the null byte)   |
+   |              |               |            |              |                                                                | | `[82, 70, 33]` (converted to `RF!`)|
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | bytearray_   |               |            | str_,        | Same conversion as with bytes_, but the result is a bytearray_.|                                      |
    |              |               |            | bytes_       |                                                                |                                      |

@@ -184,6 +184,8 @@ Bytes
     Bytes                Hyvä esimerkki!           b'Hyv\\xE4 esimerkki!'
     Bytes                None                      b'None'
     Bytes                NONE                      b'NONE'
+    Bytes                ${82}                     b'R'
+    Bytes                ${{[82, '70', 33]}}       b'RF!'
     Bytes                ${{b'foo'}}               b'foo'
     Bytes                ${{bytearray(b'foo')}}    b'foo'
 
@@ -192,6 +194,9 @@ Invalid bytes
     Bytes                \u0100                    error=Character '\u0100' cannot be mapped to a byte.
     Bytes                \u00ff\u0100\u0101        error=Character '\u0100' cannot be mapped to a byte.
     Bytes                Hyvä esimerkki! \u2603    error=Character '\u2603' cannot be mapped to a byte.
+    Bytes                ${666}                    arg_type=integer    error=666 is not in range 0-255.
+    Bytes                ${{[1, '2', -3, 4]}}      arg_type=list       error=-3 is not in range 0-255.
+    Bytes                ${{[0, 'invalid']}}       arg_type=list       error='invalid' is not an integer.
     Bytes                ${1.3}                    arg_type=float
 
 Bytearray
@@ -200,6 +205,8 @@ Bytearray
     Bytearray            Hyvä esimerkki!           bytearray(b'Hyv\\xE4 esimerkki!')
     Bytearray            None                      bytearray(b'None')
     Bytearray            NONE                      bytearray(b'NONE')
+    Bytearray            ${82}                     bytearray(b'R')
+    Bytearray            ${{[82, '70', 33]}}       bytearray(b'RF!')
     Bytearray            ${{b'foo'}}               bytearray(b'foo')
     Bytearray            ${{bytearray(b'foo')}}    bytearray(b'foo')
 
@@ -208,6 +215,9 @@ Invalid bytearray
     Bytearray            \u0100                    error=Character '\u0100' cannot be mapped to a byte.
     Bytearray            \u00ff\u0100\u0101        error=Character '\u0100' cannot be mapped to a byte.
     Bytearray            Hyvä esimerkki! \u2603    error=Character '\u2603' cannot be mapped to a byte.
+    Bytearray            ${666}                    arg_type=integer    error=666 is not in range 0-255.
+    Bytearray            ${{[1, '2', -3, 4]}}      arg_type=list       error=-3 is not in range 0-255.
+    Bytearray            ${{[0, 'invalid']}}       arg_type=list       error='invalid' is not an integer.
     Bytearray            ${2123.1021}              arg_type=float
 
 Bytestring replacement
