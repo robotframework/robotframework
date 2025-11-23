@@ -6,10 +6,6 @@ ${NSN}            nokia_siemens_networks
 ${TEXT IN COLUMNS}    robot\tframework\nis\tgood\tfor\ttesting
 ${FIRST LINE}     robot\tframework
 ${SECOND LINE}    is\tgood\tfor\ttesting
-# bytes -> does not work
-${BYTES TEXT IN COLUMNS}    ${{b'robot\tframework\nis\tgood\tfor\ttesting'}}
-${BYTES FIRST LINE}     ${{b'robot\\tframework'}}
-${BYTES SECOND LINE}    ${{b'is\\tgood\\tfor\\ttesting'}}
 
 *** Test Cases ***
 Fetch From Left
@@ -26,12 +22,6 @@ Get Line
     ${result} =    Get Line    ${TEXT IN COLUMNS}    1
     Should be equal    ${result}    ${SECOND LINE}
 
-    # does not work
-    # ${result} =    Get Line    ${BYTES TEXT IN COLUMNS}    0
-    # Should be equal    ${result}    ${BYTES FIRST LINE}
-    # ${result} =    Get Line    ${BYTES TEXT IN COLUMNS}    1
-    # Should be equal    ${result}    ${BYTES SECOND LINE}
-
 Get Line Count
     ${result} =    Get Line Count    ${EMPTY}
     Should be equal as integers    ${result}    ${0}
@@ -39,8 +29,6 @@ Get Line Count
     Should be equal as integers    ${result}    ${1}
     ${result} =    Get Line Count    ${TEXT IN COLUMNS}
     Should be equal as integers    ${result}    2
-    # ${result} =    Get Line Count    ${{b'HEHE\nWOW'}}
-    # Should be equal as integers    ${result}    ${2}
 
 Split To Lines
     @{result} =    Split To Lines    ${TEXT IN COLUMNS}
@@ -89,21 +77,18 @@ Split To Lines With Invalid End
 Get Substring
     ${result} =    Get Substring    Robot    0    2
     Should be equal    ${result}    Ro
-    # not working? why
     ${result} =    Get Substring    ${{b'Robot'}}    0    2
     Should be equal    ${result}    ${{b'Ro'}}
 
 Get Substring With Negative Values
     ${result} =    Get Substring    Hello Robot    -3    -1
     Should be equal    ${result}    bo
-    
     ${result} =    Get Substring    ${{b'Hello Robot'}}    -3    -1
     Should be equal    ${result}    ${{b'bo'}}
 
 Get Substring With Start Only
     ${result} =    Get Substring    Hello Robot    6
     Should be equal    ${result}    Robot
-
     ${result} =    Get Substring    ${{b'Hello Robot'}}    6
     Should be equal    ${result}    ${{b'Robot'}}
 

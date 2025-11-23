@@ -89,9 +89,6 @@ Split String From Right With Invalid Max Split
 Split String To Characters
     @{chars} =    Split String To Characters    ab 12
     Result Should Contain Items In Given Order    ${chars}    a    b    ${SPACE}    1    2
-    # does not work
-    # @{chars} =    Split String To Characters    ${{b'ab 12'}}
-    # Result Should Contain Items In Given Order    ${chars}    ${{b'a'}}    ${{b'b'}}    ${SPACE}    ${{b'1'}}    ${{b'2'}}
 
 Split Empty String To Characters
     @{chars} =    Split String To Characters    ${EMPTY}
