@@ -17,7 +17,6 @@ import copy
 import os
 import re
 from collections.abc import Iterator
-from io import BytesIO
 from pathlib import Path
 from typing import Any, Callable, NoReturn
 from xml.etree import ElementTree as ET
@@ -596,7 +595,7 @@ class XML:
         | ${children} =    | Get Elements | ${XML} | first/child |
         | Should Be Empty  |  ${children} |        |             |
         """
-        if isinstance(source, (str, bytes, bytearray, Path, BytesIO)):
+        if isinstance(source, (str, bytes, os.PathLike)):
             source = self.parse_xml(source)
         finder = ElementFinder(self.etree, self.modern_etree, self.lxml_etree)
         return finder.find_all(source, xpath)
@@ -842,7 +841,7 @@ class XML:
         self,
         source: Any,
         xpath: str = ".",
-    ) -> "dict[bytes | str, bytes | str]":
+    ) -> "dict[str, str]":
         """Returns all attributes of the specified element.
 
         The element whose attributes to return is specified using ``source`` and
@@ -1598,7 +1597,7 @@ class NameSpaceStripper:
         self,
         elem: Element,
         preserve: bool = True,
-        current_ns: "bytes | str | None" = None,
+        current_ns: "str | None" = None,
         top: bool = True,
     ):
         if elem.tag.startswith("{") and "}" in elem.tag:
@@ -1617,7 +1616,7 @@ class NameSpaceStripper:
     def unstrip(
         self,
         elem: Element,
-        current_ns: "bytes | str | None" = None,
+        current_ns: "str | None" = None,
         copied: bool = False,
     ) -> Element:
         if not copied:
