@@ -740,9 +740,6 @@ the :option:`--prerebotmodifier` option multiple times. When executing tests,
 it is possible to use :option:`--prerunmodifier` and
 :option:`--prerebotmodifier` options together.
 
-.. note:: Argument conversion based on type hints like `max_seconds: float` in
-          the above example is new in Robot Framework 4.0 and requires Python 3.
-
 System log
 ----------
 

@@ -415,8 +415,8 @@ __ `Named-only arguments with user keywords`_
 Named-only arguments with user keywords
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Starting from Robot Framework 3.1, user keywords support `named-only
-arguments`_ that are inspired by `Python 3 keyword-only arguments`__.
+User keywords support `named-only arguments`_ that are inspired by Python's
+`keyword-only arguments`__.
 This syntax is typically used by having normal arguments *after*
 `variable number of arguments`__ (`@{varargs}`). If the keywords does not
 use varargs, it is possible to use just `@{}` to denote that the subsequent

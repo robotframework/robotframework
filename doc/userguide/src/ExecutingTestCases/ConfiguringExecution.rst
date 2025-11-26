@@ -725,9 +725,6 @@ the file is in the `module search path`_, it could be used like this::
     # Specify the modifier as a name. Run every third test, starting from the second.
     robot --prerunmodifier SelectEveryXthTest:3:1 tests.robot
 
-.. note:: Argument conversion based on type hints like `x: int` in the above
-          example is new in Robot Framework 4.0 and requires Python 3.
-
 Example: Exclude tests by name
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
