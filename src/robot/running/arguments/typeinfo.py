@@ -190,7 +190,7 @@ class TypeInfo(metaclass=SetterAwareType):
         return self.name == "Union"
 
     @classmethod
-    def from_type_hint(cls, hint: Any) -> "TypeInfo":
+    def from_type_hint(cls, hint: Any, sequence_is_union: bool = False) -> "TypeInfo":
         """Construct a ``TypeInfo`` based on a type hint.
 
         The type hint can be in various different formats:
@@ -200,11 +200,15 @@ class TypeInfo(metaclass=SetterAwareType):
         - a union such as ``int | float``
         - a string such as ``'int'``, ``'list[int]'`` or ``'int | float'``
         - a ``TypedDict`` (represented as a :class:`TypedDictInfo`)
-        - a sequence of supported type hints to create a union from such as
-          ``[int, float]`` or ``('int', 'list[int]')``
+        - if ``sequence_is_union`` is ``True``, a sequence of type hints like
+          ``[int, float]`` or ``('int', 'list[int]')`` creates a union
 
-        In special cases using a more specialized method like :meth:`from_sequence`
+        In special cases using a more specialized method like :meth:`from_type`
         may be more appropriate than using this generic method.
+
+        Prior to Robot Framework 7.4, sequences always created a union. If you
+        need to handle sequences as unions, it is recommended to call
+        :meth:`from_sequence` explicitly.
         """
         if hint is NOT_SET:
             return cls()
@@ -231,18 +235,23 @@ class TypeInfo(metaclass=SetterAwareType):
             return cls(type_repr(hint, nested=False), origin, nested)
         if isinstance(hint, str):
             return cls.from_string(hint)
-        if isinstance(hint, (tuple, list)):
-            return cls.from_sequence(hint)
-        if isinstance(hint, type):
-            return cls(type_repr(hint), hint)
-        if hint is None:
-            return cls("None", type(None))
-        if hint is Union:  # Plain `Union` without params.
-            return cls("Union")
         if hint is Any:
             return cls("Any", hint)
+        if hint is None:
+            return cls("None", type(None))
         if hint is Ellipsis:
             return cls("...", hint)
+        if hint is Union:  # Plain Union without params.
+            return cls("Union")
+        if isinstance(hint, type):
+            return cls(type_repr(hint), hint)
+        if isinstance(hint, Sequence):
+            if sequence_is_union:
+                return cls.from_sequence(hint)
+            if isinstance(hint, list):
+                # Better string representation with Callable params and other lists.
+                items = [t.__name__ if isinstance(t, type) else repr(t) for t in hint]
+                return cls(f"[{', '.join(items)}]")
         return cls(str(hint))
 
     @classmethod
@@ -250,7 +259,7 @@ class TypeInfo(metaclass=SetterAwareType):
         """Construct a ``TypeInfo`` based on an actual type.
 
         Use :meth:`from_type_hint` if the type hint can also be something else
-        than a concrete type such as a string.
+        than a concrete type such as a string or a type expression.
         """
         return cls(type_repr(hint), hint)
 
@@ -274,7 +283,7 @@ class TypeInfo(metaclass=SetterAwareType):
             raise DataError(str(err))
 
     @classmethod
-    def from_sequence(cls, sequence: "tuple|list") -> "TypeInfo":
+    def from_sequence(cls, sequence: Sequence) -> "TypeInfo":
         """Construct a ``TypeInfo`` based on a sequence of types.
 
         Types can be actual types, strings, or anything else accepted by
@@ -288,7 +297,7 @@ class TypeInfo(metaclass=SetterAwareType):
         """
         infos = []
         for typ in sequence:
-            info = cls.from_type_hint(typ)
+            info = cls.from_type_hint(typ, sequence_is_union=True)
             if info.is_union:
                 infos.extend(info.nested)
             else:
