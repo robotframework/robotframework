@@ -10,6 +10,10 @@ ${ENV1: SECRET}             %{TEMPDIR}
 ${ENV2: secret}             %{NONEX=kala}
 ${LITERAL: Secret}          this fails
 ${BAD: Secret}              ${666}
+${SECRET_STR: str}          ${SECRET}
+${SECRET_BOOL: bool}        ${SECRET}
+${SECRET_ANY: Any}          ${SECRET}
+${SECRET_OBJECT: object}    ${SECRET}
 ${JOIN1: Secret}            =${SECRET}=
 ${JOIN2: Secret}            =\=\\=%{TEMPDIR}=\\=\=\${ESCAPED}=
 ${JOIN3: Secret}            =${3}=${SECRET}=
@@ -30,6 +34,8 @@ Command line
 
 Variable section: Based on existing variable
     Should Be Equal    ${SECRET.value}    Secret value
+    Should Be Equal    ${SECRET_ANY.value}    Secret value
+    Should Be Equal    ${SECRET_OBJECT.value}    Secret value
 
 Variable section: Based on environment variable
     Should Be Equal    ${ENV1.value}    %{TEMPDIR}
@@ -43,6 +49,8 @@ Variable section: Joined
 Variable section: Scalar fail
     Variable Should Not Exist    ${LITERAL}
     Variable Should Not Exist    ${JOIN4}
+    Variable Should Not Exist    ${SECRET_STR}
+    Variable Should Not Exist    ${SECRET_BOOL}
 
 Variable section: List
     Should Be Equal
@@ -208,6 +216,24 @@ Arguments: User keyword non-secret 2
     ...    ValueError: Argument 'secret' must have type 'Secret', got integer.
     User Keyword: Receive secret    ${666}
 
+Arguments: User keyword fail str
+    [Documentation]    FAIL
+    ...    ValueError: Argument 'data' got value '<secret>' (Secret) that cannot be converted to string.
+    User Keyword: Receive string    ${SECRET}
+
+Arguments: User keyword fail bool
+    [Documentation]    FAIL
+    ...    ValueError: Argument 'data' got value '<secret>' (Secret) that cannot be converted to boolean.
+    User Keyword: Receive bool    ${SECRET}
+
+Arguments: User keyword Any
+    ${x} =    User Keyword: Receive Any    ${SECRET}
+    Should Be Equal    ${x.value}    Secret value
+
+Arguments: User keyword object
+    ${x} =    User Keyword: Receive object    ${SECRET}
+    Should Be Equal    ${x.value}    Secret value
+
 Arguments: Library keyword
     Library receive secret    ${SECRET}
 
@@ -220,6 +246,36 @@ Arguments: Library keyword non-secret 2
     [Documentation]    FAIL
     ...    ValueError: Argument 'secret' must have type 'Secret', got integer.
     Library receive secret    ${222}
+
+Arguments: Library keyword fail str
+    [Documentation]    FAIL
+    ...    ValueError: Argument 'arg' got value '<secret>' (Secret) that cannot be converted to string.
+    Library receive str    ${SECRET}
+
+Arguments: Library keyword fail bool
+    [Documentation]    FAIL
+    ...    ValueError: Argument 'arg' got value '<secret>' (Secret) that cannot be converted to boolean.
+    Library receive bool    ${SECRET}
+
+Arguments: Library keyword fail list str 1
+    [Documentation]    FAIL
+    ...    ValueError: Argument 'arg' got value '<secret>' (Secret) that cannot be converted to list[str].
+    Library receive list str    ${SECRET}
+
+Arguments: Library keyword fail list str 2
+    [Documentation]    FAIL
+    ...    ValueError: Argument 'arg' got value '[Secret(value=<secret>)]' (list) that cannot be converted to list[str]: \
+    ...    Item '0' got value '<secret>' (Secret) that cannot be converted to string.
+    VAR    @{x: Secret}    ${SECRET}
+    Library receive list str    ${x}
+
+Arguments: Library keyword any
+    ${value} =    Library receive any    ${SECRET}
+    Should Be Equal    ${value}    Secret value
+
+Arguments: Library keyword object
+    ${value} =    Library receive object    ${SECRET}
+    Should Be Equal    ${value}    Secret value
 
 Arguments: List of secrets
     VAR    @{secrets: secret}    ${SECRET}    ${ENV2}
@@ -249,3 +305,19 @@ User Keyword: Return secret
 
 User Keyword: Return string
     RETURN    This is a string
+
+User Keyword: Receive string
+    [Arguments]    ${data: str}
+    RETURN    ${data}
+
+User Keyword: Receive bool
+    [Arguments]    ${data: bool}
+    RETURN    ${data}
+
+User Keyword: Receive Any
+    [Arguments]    ${data: any}
+    RETURN    ${data}
+
+User Keyword: Receive object
+    [Arguments]    ${data: object}
+    RETURN    ${data}

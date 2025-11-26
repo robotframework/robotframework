@@ -26,9 +26,17 @@ Variable section: Scalar fail
     ...    Setting variable '\${BAD: Secret}' failed:
     ...    Value must have type 'Secret', got integer.
     Error In File
-    ...    3    keywords/type_conversion/secret.robot    16
+    ...    3    keywords/type_conversion/secret.robot    20
     ...    Setting variable '\${JOIN4: Secret}' failed:
     ...    Value must have type 'Secret', got string.
+    Error In File
+    ...    7    keywords/type_conversion/secret.robot    14
+    ...    Setting variable '\${SECRET_BOOL: bool}' failed:
+    ...    Value '<secret>' (Secret) cannot be converted to boolean.
+    Error In File
+    ...    8    keywords/type_conversion/secret.robot    13
+    ...    Setting variable '\${SECRET_STR: str}' failed:
+    ...    Value '<secret>' (Secret) cannot be converted to string.
 
 Variable section: List
     Check Test Case    ${TESTNAME}
@@ -36,14 +44,14 @@ Variable section: List
 Variable section: List fail
     Check Test Case    ${TESTNAME}
     Error In File
-    ...    4    keywords/type_conversion/secret.robot    19
+    ...    4    keywords/type_conversion/secret.robot    23
     ...    Setting variable '\@{LIST3: Secret}' failed:
     ...    Value '['this', Secret(value=<secret>), 'fails']' (list)
     ...    cannot be converted to list[Secret]:
     ...    Item '0' must have type 'Secret', got string.
     ...    pattern=False
     Error In File
-    ...    5    keywords/type_conversion/secret.robot    20
+    ...    5    keywords/type_conversion/secret.robot    24
     ...    Setting variable '\@{LIST4: Secret}' failed:
     ...    Value '[Secret(value=<secret>), 'this', 'fails', Secret(value=<secret>)]' (list)
     ...    cannot be converted to list[Secret]:
@@ -56,14 +64,14 @@ Variable section: Dict
 Variable section: Dict fail
     Check Test Case    ${TESTNAME}
     Error In File
-    ...    1    keywords/type_conversion/secret.robot    24
+    ...    1    keywords/type_conversion/secret.robot    28
     ...    Setting variable '\&{DICT4: Secret}' failed:
     ...    Value '{'ok': Secret(value=<secret>), 'this': 'fails'}' (DotDict)
     ...    cannot be converted to dict[Any, Secret]:
     ...    Item 'this' must have type 'Secret', got string.
     ...    pattern=False
     Error In File
-    ...    2    keywords/type_conversion/secret.robot    25
+    ...    2    keywords/type_conversion/secret.robot    29
     ...    Setting variable '\&{DICT5: str=Secret}' failed:
     ...    Value '{'ok': Secret(value=<secret>), 'var': Secret(value=<secret>),
     ...    'env': Secret(value=<secret>), 'join': Secret(value=<secret>), 'this': 'fails'}' (DotDict)
@@ -113,6 +121,18 @@ Arguments: User keyword non-secret
     Check Test Case    ${TESTNAME} 1
     Check Test Case    ${TESTNAME} 2
 
+Arguments: User keyword fail str
+    Check Test Case    ${TESTNAME}
+
+Arguments: User keyword fail bool
+    Check Test Case    ${TESTNAME}
+
+Arguments: User keyword Any
+    Check Test Case    ${TESTNAME}
+
+Arguments: User keyword object
+    Check Test Case    ${TESTNAME}
+
 Arguments: Library keyword
     ${tc} =    Check Test Case    ${TESTNAME}
     Check Log Message    ${tc[0, 0]}    Arguments: [ Secret(value=<secret>) ]    TRACE
@@ -120,6 +140,22 @@ Arguments: Library keyword
 Arguments: Library keyword non-secret
     Check Test Case    ${TESTNAME} 1
     Check Test Case    ${TESTNAME} 2
+
+Arguments: Library keyword fail str
+    Check Test Case    ${TESTNAME}
+
+Arguments: Library keyword fail bool
+    Check Test Case    ${TESTNAME}
+
+Arguments: Library keyword fail list str
+    Check Test Case    ${TESTNAME} 1
+    Check Test Case    ${TESTNAME} 2
+
+Arguments: Library keyword any
+    Check Test Case    ${TESTNAME}
+
+Arguments: Library keyword object
+    Check Test Case    ${TESTNAME}
 
 Arguments: List of secrets
     ${tc} =    Check Test Case    ${TESTNAME}

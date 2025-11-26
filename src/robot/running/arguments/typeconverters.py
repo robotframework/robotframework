@@ -287,6 +287,8 @@ class StringConverter(TypeConverter):
         return True
 
     def _non_string_convert(self, value):
+        if isinstance(value, Secret):
+            raise ValueError
         try:
             return str(value)
         except Exception:
