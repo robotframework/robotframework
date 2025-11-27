@@ -16,6 +16,9 @@
 import copy
 import os
 import re
+from collections.abc import Iterator
+from pathlib import Path
+from typing import Any, Callable, NoReturn
 from xml.etree import ElementTree as ET
 
 try:
@@ -30,17 +33,20 @@ else:
 
     Attrib = getattr(lxml_etree, "_Attrib", None)
     if Attrib and not isinstance(Attrib, MutableMapping):
-        MutableMapping.register(Attrib)
+        MutableMapping.register(Attrib)  # type: ignore
     del Attrib, MutableMapping
 
 from robot.api import logger
-from robot.api.deco import keyword
 from robot.libraries.BuiltIn import BuiltIn
 from robot.utils import asserts, ETSource, plural_or_not as s
 from robot.version import get_version
 
 should_be_equal = asserts.assert_equal
 should_match = BuiltIn().should_match
+
+
+class Element:
+    """An XML Element"""
 
 
 class XML:
@@ -451,7 +457,7 @@ class XML:
     ROBOT_LIBRARY_SCOPE = "GLOBAL"
     ROBOT_LIBRARY_VERSION = get_version()
 
-    def __init__(self, use_lxml=False):
+    def __init__(self, use_lxml: bool = False):
         """Import library with optionally lxml mode enabled.
 
         This library uses Python's standard
@@ -465,11 +471,11 @@ class XML:
         emits a warning and reverts back to using the standard ElementTree.
         """
         if use_lxml and lxml_etree:
-            self.etree = lxml_etree
+            self.etree = lxml_etree  # type: ignore
             self.modern_etree = True
             self.lxml_etree = True
         else:
-            self.etree = ET
+            self.etree = ET  # type: ignore
             self.modern_etree = ET.VERSION >= "1.3"
             self.lxml_etree = False
         if use_lxml and not lxml_etree:
@@ -479,7 +485,12 @@ class XML:
             )
         self._ns_stripper = NameSpaceStripper(self.etree, self.lxml_etree)
 
-    def parse_xml(self, source, keep_clark_notation=False, strip_namespaces=False):
+    def parse_xml(
+        self,
+        source: Any,
+        keep_clark_notation: bool = False,
+        strip_namespaces: bool = False,
+    ) -> Element:
         """Parses the given XML file or string into an element structure.
 
         The ``source`` can either be a path to an XML file or a string
@@ -512,17 +523,17 @@ class XML:
         """
         if isinstance(source, os.PathLike):
             source = str(source)
-        with ETSource(source) as source:
-            tree = self.etree.parse(source)
+        with ETSource(source) as source_:
+            tree = self.etree.parse(source_)
         if self.lxml_etree:
-            strip = (lxml_etree.Comment, lxml_etree.ProcessingInstruction)
-            lxml_etree.strip_elements(tree, *strip, with_tail=False)
+            strip = (lxml_etree.Comment, lxml_etree.ProcessingInstruction)  # type: ignore
+            lxml_etree.strip_elements(tree, *strip, with_tail=False)  # type: ignore
         root = tree.getroot()
         if not keep_clark_notation:
             self._ns_stripper.strip(root, preserve=not strip_namespaces)
         return root
 
-    def get_element(self, source, xpath="."):
+    def get_element(self, source: Any, xpath: str = ".") -> Element:
         """Returns an element in the ``source`` matching the ``xpath``.
 
         The ``source`` can be a path to an XML file, a string containing XML, or
@@ -553,19 +564,21 @@ class XML:
             self._raise_wrong_number_of_matches(len(elements), xpath)
         return elements[0]
 
-    def _raise_wrong_number_of_matches(self, count, xpath, message=None):
+    def _raise_wrong_number_of_matches(
+        self, count: int, xpath: str, message: "str | None" = None
+    ) -> NoReturn:
         if not message:
             message = self._wrong_number_of_matches(count, xpath)
         raise AssertionError(message)
 
-    def _wrong_number_of_matches(self, count, xpath):
+    def _wrong_number_of_matches(self, count: int, xpath: str) -> str:
         if not count:
             return f"No element matching '{xpath}' found."
         if count == 1:
             return f"One element matching '{xpath}' found."
         return f"Multiple elements ({count}) matching '{xpath}' found."
 
-    def get_elements(self, source, xpath):
+    def get_elements(self, source: Any, xpath: str) -> "list[Element]":
         """Returns a list of elements in the ``source`` matching the ``xpath``.
 
         The ``source`` can be a path to an XML file, a string containing XML, or
@@ -587,7 +600,7 @@ class XML:
         finder = ElementFinder(self.etree, self.modern_etree, self.lxml_etree)
         return finder.find_all(source, xpath)
 
-    def get_child_elements(self, source, xpath="."):
+    def get_child_elements(self, source: Any, xpath: str = ".") -> "list[Element]":
         """Returns the child elements of the specified element as a list.
 
         The element whose children to return is specified using ``source`` and
@@ -605,7 +618,7 @@ class XML:
         """
         return list(self.get_element(source, xpath))
 
-    def get_element_count(self, source, xpath="."):
+    def get_element_count(self, source: Any, xpath: str = ".") -> int:
         """Returns and logs how many elements the given ``xpath`` matches.
 
         Arguments ``source`` and ``xpath`` have exactly the same semantics as
@@ -617,7 +630,12 @@ class XML:
         logger.info(f"{count} element{s(count)} matched '{xpath}'.")
         return count
 
-    def element_should_exist(self, source, xpath=".", message=None):
+    def element_should_exist(
+        self,
+        source: Any,
+        xpath: str = ".",
+        message: "str | None" = None,
+    ):
         """Verifies that one or more element match the given ``xpath``.
 
         Arguments ``source`` and ``xpath`` have exactly the same semantics as
@@ -632,7 +650,12 @@ class XML:
         if not count:
             self._raise_wrong_number_of_matches(count, xpath, message)
 
-    def element_should_not_exist(self, source, xpath=".", message=None):
+    def element_should_not_exist(
+        self,
+        source: Any,
+        xpath: str = ".",
+        message: "str | None" = None,
+    ):
         """Verifies that no element match the given ``xpath``.
 
         Arguments ``source`` and ``xpath`` have exactly the same semantics as
@@ -647,7 +670,12 @@ class XML:
         if count:
             self._raise_wrong_number_of_matches(count, xpath, message)
 
-    def get_element_text(self, source, xpath=".", normalize_whitespace=False):
+    def get_element_text(
+        self,
+        source: Any,
+        xpath: str = ".",
+        normalize_whitespace: bool = False,
+    ) -> str:
         """Returns all text of the element, possibly whitespace normalized.
 
         The element whose text to return is specified using ``source`` and
@@ -684,7 +712,7 @@ class XML:
             text = self._normalize_whitespace(text)
         return text
 
-    def _yield_texts(self, element, top=True):
+    def _yield_texts(self, element: Element, top: bool = True) -> "Iterator[str]":
         if element.text:
             yield element.text
         for child in element:
@@ -692,10 +720,15 @@ class XML:
         if element.tail and not top:
             yield element.tail
 
-    def _normalize_whitespace(self, text):
+    def _normalize_whitespace(self, text: str) -> str:
         return " ".join(text.split())
 
-    def get_elements_texts(self, source, xpath, normalize_whitespace=False):
+    def get_elements_texts(
+        self,
+        source: Any,
+        xpath: str,
+        normalize_whitespace: bool = False,
+    ) -> "list[str]":
         """Returns text of all elements matching ``xpath`` as a list.
 
         The elements whose text to return is specified using ``source`` and
@@ -719,11 +752,11 @@ class XML:
 
     def element_text_should_be(
         self,
-        source,
-        expected,
-        xpath=".",
-        normalize_whitespace=False,
-        message=None,
+        source: Any,
+        expected: str,
+        xpath: str = ".",
+        normalize_whitespace: bool = False,
+        message: "str | None" = None,
     ):
         """Verifies that the text of the specified element is ``expected``.
 
@@ -752,11 +785,11 @@ class XML:
 
     def element_text_should_match(
         self,
-        source,
-        pattern,
-        xpath=".",
-        normalize_whitespace=False,
-        message=None,
+        source: Any,
+        pattern: str,
+        xpath: str = ".",
+        normalize_whitespace: bool = False,
+        message: "str | None" = None,
     ):
         """Verifies that the text of the specified element matches ``expected``.
 
@@ -776,8 +809,13 @@ class XML:
         text = self.get_element_text(source, xpath, normalize_whitespace)
         should_match(text, pattern, message, values=False)
 
-    @keyword(types=None)
-    def get_element_attribute(self, source, name, xpath=".", default=None):
+    def get_element_attribute(
+        self,
+        source: Any,
+        name: str,
+        xpath: str = ".",
+        default: object = None,
+    ) -> object:
         """Returns the named attribute of the specified element.
 
         The element whose attribute to return is specified using ``source`` and
@@ -799,7 +837,11 @@ class XML:
         """
         return self.get_element(source, xpath).get(name, default)
 
-    def get_element_attributes(self, source, xpath="."):
+    def get_element_attributes(
+        self,
+        source: Any,
+        xpath: str = ".",
+    ) -> "dict[str, str]":
         """Returns all attributes of the specified element.
 
         The element whose attributes to return is specified using ``source`` and
@@ -821,11 +863,11 @@ class XML:
 
     def element_attribute_should_be(
         self,
-        source,
-        name,
-        expected,
-        xpath=".",
-        message=None,
+        source: Any,
+        name: str,
+        expected: "str | None",
+        xpath: str = ".",
+        message: "str | None" = None,
     ):
         """Verifies that the specified attribute is ``expected``.
 
@@ -852,11 +894,11 @@ class XML:
 
     def element_attribute_should_match(
         self,
-        source,
-        name,
-        pattern,
-        xpath=".",
-        message=None,
+        source: Any,
+        name: str,
+        pattern: str,
+        xpath: str = ".",
+        message: "str | None" = None,
     ):
         """Verifies that the specified attribute matches ``expected``.
 
@@ -877,7 +919,13 @@ class XML:
             raise AssertionError(f"Attribute '{name}' does not exist.")
         should_match(attr, pattern, message, values=False)
 
-    def element_should_not_have_attribute(self, source, name, xpath=".", message=None):
+    def element_should_not_have_attribute(
+        self,
+        source: Any,
+        name: str,
+        xpath: str = ".",
+        message: "str | None" = None,
+    ):
         """Verifies that the specified element does not have attribute ``name``.
 
         The element whose attribute is verified is specified using ``source``
@@ -902,11 +950,11 @@ class XML:
 
     def elements_should_be_equal(
         self,
-        source,
-        expected,
-        exclude_children=False,
-        normalize_whitespace=False,
-        sort_children=False,
+        source: Any,
+        expected: Any,
+        exclude_children: bool = False,
+        normalize_whitespace: bool = False,
+        sort_children: bool = False,
     ):
         """Verifies that the given ``source`` element is equal to ``expected``.
 
@@ -958,11 +1006,11 @@ class XML:
 
     def elements_should_match(
         self,
-        source,
-        expected,
-        exclude_children=False,
-        normalize_whitespace=False,
-        sort_children=False,
+        source: Any,
+        expected: Any,
+        exclude_children: bool = False,
+        normalize_whitespace: bool = False,
+        sort_children: bool = False,
     ):
         """Verifies that the given ``source`` element matches ``expected``.
 
@@ -991,25 +1039,27 @@ class XML:
 
     def _compare_elements(
         self,
-        source,
-        expected,
-        comparator,
-        exclude_children,
-        sort_children,
-        normalize_whitespace,
+        source: Any,
+        expected: Any,
+        comparator: Callable[[object, object, str], None],
+        exclude_children: bool,
+        sort_children: bool,
+        normalize_whitespace: bool,
     ):
         normalizer = self._normalize_whitespace if normalize_whitespace else None
         sorter = self._sort_children if sort_children else None
-        comparator = ElementComparator(comparator, normalizer, sorter, exclude_children)
-        comparator.compare(self.get_element(source), self.get_element(expected))
+        element_comparator = ElementComparator(
+            comparator, normalizer, sorter, exclude_children
+        )
+        element_comparator.compare(self.get_element(source), self.get_element(expected))
 
-    def _sort_children(self, element):
+    def _sort_children(self, element: Element):
         tails = [child.tail for child in element]
         element[:] = sorted(element, key=lambda child: child.tag)
         for child, tail in zip(element, tails):
             child.tail = tail
 
-    def set_element_tag(self, source, tag, xpath="."):
+    def set_element_tag(self, source: Any, tag: str, xpath: str = ".") -> Element:
         """Sets the tag of the specified element.
 
         The element whose tag to set is specified using ``source`` and
@@ -1031,7 +1081,7 @@ class XML:
         self.get_element(source, xpath).tag = tag
         return source
 
-    def set_elements_tag(self, source, tag, xpath="."):
+    def set_elements_tag(self, source: Any, tag: str, xpath: str = ".") -> Element:
         """Sets the tag of the specified elements.
 
         Like `Set Element Tag` but sets the tag of all elements matching
@@ -1042,8 +1092,13 @@ class XML:
             self.set_element_tag(elem, tag)
         return source
 
-    @keyword(types=None)
-    def set_element_text(self, source, text=None, tail=None, xpath="."):
+    def set_element_text(
+        self,
+        source: Any,
+        text: "str | None" = None,
+        tail: "str | None" = None,
+        xpath: str = ".",
+    ) -> Element:
         """Sets text and/or tail text of the specified element.
 
         The element whose text to set is specified using ``source`` and
@@ -1074,8 +1129,13 @@ class XML:
             element.tail = tail
         return source
 
-    @keyword(types=None)
-    def set_elements_text(self, source, text=None, tail=None, xpath="."):
+    def set_elements_text(
+        self,
+        source: Any,
+        text: "str | None" = None,
+        tail: "str | None" = None,
+        xpath: str = ".",
+    ) -> Element:
         """Sets text and/or tail text of the specified elements.
 
         Like `Set Element Text` but sets the text or tail of all elements
@@ -1086,7 +1146,13 @@ class XML:
             self.set_element_text(elem, text, tail)
         return source
 
-    def set_element_attribute(self, source, name, value, xpath="."):
+    def set_element_attribute(
+        self,
+        source: Any,
+        name: str,
+        value: str,
+        xpath: str = ".",
+    ) -> Element:
         """Sets attribute ``name`` of the specified element to ``value``.
 
         The element whose attribute to set is specified using ``source`` and
@@ -1113,7 +1179,13 @@ class XML:
         self.get_element(source, xpath).attrib[name] = value
         return source
 
-    def set_elements_attribute(self, source, name, value, xpath="."):
+    def set_elements_attribute(
+        self,
+        source: Any,
+        name: str,
+        value: str,
+        xpath: str = ".",
+    ) -> Element:
         """Sets attribute ``name`` of the specified elements to ``value``.
 
         Like `Set Element Attribute` but sets the attribute of all elements
@@ -1124,7 +1196,12 @@ class XML:
             self.set_element_attribute(elem, name, value)
         return source
 
-    def remove_element_attribute(self, source, name, xpath="."):
+    def remove_element_attribute(
+        self,
+        source: Any,
+        name: str,
+        xpath: str = ".",
+    ) -> Element:
         """Removes attribute ``name`` from the specified element.
 
         The element whose attribute to remove is specified using ``source`` and
@@ -1149,7 +1226,12 @@ class XML:
             attrib.pop(name)
         return source
 
-    def remove_elements_attribute(self, source, name, xpath="."):
+    def remove_elements_attribute(
+        self,
+        source: Any,
+        name: str,
+        xpath: str = ".",
+    ) -> Element:
         """Removes attribute ``name`` from the specified elements.
 
         Like `Remove Element Attribute` but removes the attribute of all
@@ -1160,7 +1242,7 @@ class XML:
             self.remove_element_attribute(elem, name)
         return source
 
-    def remove_element_attributes(self, source, xpath="."):
+    def remove_element_attributes(self, source: Any, xpath: str = ".") -> Element:
         """Removes all attributes from the specified element.
 
         The element whose attributes to remove is specified using ``source`` and
@@ -1182,7 +1264,7 @@ class XML:
         self.get_element(source, xpath).attrib.clear()
         return source
 
-    def remove_elements_attributes(self, source, xpath="."):
+    def remove_elements_attributes(self, source: Any, xpath: str = ".") -> Element:
         """Removes all attributes from the specified elements.
 
         Like `Remove Element Attributes` but removes all attributes of all
@@ -1193,7 +1275,13 @@ class XML:
             self.remove_element_attributes(elem)
         return source
 
-    def add_element(self, source, element, index=None, xpath="."):
+    def add_element(
+        self,
+        source: Any,
+        element: Any,
+        index: "int | None" = None,
+        xpath: str = ".",
+    ) -> Element:
         """Adds a child element to the specified element.
 
         The element to whom to add the new element is specified using ``source``
@@ -1229,7 +1317,12 @@ class XML:
             parent.insert(int(index), element)
         return source
 
-    def remove_element(self, source, xpath="", remove_tail=False):
+    def remove_element(
+        self,
+        source: Any,
+        xpath: str = "",
+        remove_tail: bool = False,
+    ) -> Element:
         """Removes the element matching ``xpath`` from the ``source`` structure.
 
         The element to remove from the ``source`` is specified with ``xpath``
@@ -1255,7 +1348,12 @@ class XML:
         self._remove_element(source, self.get_element(source, xpath), remove_tail)
         return source
 
-    def remove_elements(self, source, xpath="", remove_tail=False):
+    def remove_elements(
+        self,
+        source: Any,
+        xpath: str = "",
+        remove_tail: bool = False,
+    ) -> Element:
         """Removes all elements matching ``xpath`` from the ``source`` structure.
 
         The elements to remove from the ``source`` are specified with ``xpath``
@@ -1279,20 +1377,25 @@ class XML:
             self._remove_element(source, element, remove_tail)
         return source
 
-    def _remove_element(self, root, element, remove_tail=False):
+    def _remove_element(
+        self,
+        root: Element,
+        element: Element,
+        remove_tail: bool = False,
+    ):
         parent = self._find_parent(root, element)
         if not remove_tail:
             self._preserve_tail(element, parent)
         parent.remove(element)
 
-    def _find_parent(self, root, element):
+    def _find_parent(self, root: Element, element: Element) -> Element:
         for parent in root.iter():
             for child in parent:
                 if child is element:
                     return parent
         raise RuntimeError("Cannot remove root element.")
 
-    def _preserve_tail(self, element, parent):
+    def _preserve_tail(self, element: Element, parent: Element):
         if not element.tail:
             return
         index = list(parent).index(element)
@@ -1302,7 +1405,12 @@ class XML:
             sibling = parent[index - 1]
             sibling.tail = (sibling.tail or "") + element.tail
 
-    def clear_element(self, source, xpath=".", clear_tail=False):
+    def clear_element(
+        self,
+        source: Any,
+        xpath: str = ".",
+        clear_tail: bool = False,
+    ) -> Element:
         """Clears the contents of the specified element.
 
         The element to clear is specified using ``source`` and ``xpath``. They
@@ -1335,7 +1443,7 @@ class XML:
             element.tail = tail
         return source
 
-    def copy_element(self, source, xpath="."):
+    def copy_element(self, source: Any, xpath: str = ".") -> Element:
         """Returns a copy of the specified element.
 
         The element to copy is specified using ``source`` and ``xpath``. They
@@ -1356,7 +1464,12 @@ class XML:
         """
         return copy.deepcopy(self.get_element(source, xpath))
 
-    def element_to_string(self, source, xpath=".", encoding=None):
+    def element_to_string(
+        self,
+        source: Any,
+        xpath: str = ".",
+        encoding: "str | None" = None,
+    ) -> "bytes | str":
         """Returns the string representation of the specified element.
 
         The element to convert to a string is specified using ``source`` and
@@ -1378,7 +1491,12 @@ class XML:
             string = string.encode(encoding)
         return string
 
-    def log_element(self, source, level="INFO", xpath="."):
+    def log_element(
+        self,
+        source: Any,
+        level: logger.LogLevel = "INFO",
+        xpath: str = ".",
+    ) -> str:
         """Logs the string representation of the specified element.
 
         The element specified with ``source`` and ``xpath`` is first converted
@@ -1391,7 +1509,12 @@ class XML:
         logger.write(string, level)
         return string
 
-    def save_xml(self, source, path, encoding="UTF-8"):
+    def save_xml(
+        self,
+        source: Any,
+        path: Path,
+        encoding: str = "UTF-8",
+    ):
         """Saves the given element to the specified file.
 
         The element to save is specified with ``source`` using the same
@@ -1416,23 +1539,28 @@ class XML:
         )
         elem = self.get_element(source)
         tree = self.etree.ElementTree(elem)
-        config = {"encoding": encoding}
+        config: "dict[str, object]" = {"encoding": encoding}
         if self.modern_etree:
             config["xml_declaration"] = True
         if self.lxml_etree:
             elem = self._ns_stripper.unstrip(elem)
             # https://bugs.launchpad.net/lxml/+bug/1660433
-            if tree.docinfo.doctype:
-                config["doctype"] = tree.docinfo.doctype
+            if tree.docinfo.doctype:  # type: ignore
+                config["doctype"] = tree.docinfo.doctype  # type: ignore
             tree = self.etree.ElementTree(elem)
         with open(path, "wb") as output:
             if "doctype" in config:
-                output.write(self.etree.tostring(tree, **config))
+                output.write(self.etree.tostring(tree, **config))  # type: ignore
             else:
-                tree.write(output, **config)
+                tree.write(output, **config)  # type: ignore
         logger.info(f'XML saved to <a href="file://{path}">{path}</a>.', html=True)
 
-    def evaluate_xpath(self, source, expression, context="."):
+    def evaluate_xpath(
+        self,
+        source: Any,
+        expression: str,
+        context: str = ".",
+    ) -> object:
         """Evaluates the given xpath expression and returns results.
 
         The element in which context the expression is executed is specified
@@ -1456,16 +1584,22 @@ class XML:
         """
         if not self.lxml_etree:
             raise RuntimeError("'Evaluate Xpath' keyword only works in lxml mode.")
-        return self.get_element(source, context).xpath(expression)
+        return self.get_element(source, context).xpath(expression)  # type: ignore
 
 
 class NameSpaceStripper:
 
-    def __init__(self, etree, lxml_etree=False):
+    def __init__(self, etree, lxml_etree: bool = False):
         self.etree = etree
         self.lxml_tree = lxml_etree
 
-    def strip(self, elem, preserve=True, current_ns=None, top=True):
+    def strip(
+        self,
+        elem: Element,
+        preserve: bool = True,
+        current_ns: "str | None" = None,
+        top: bool = True,
+    ):
         if elem.tag.startswith("{") and "}" in elem.tag:
             ns, elem.tag = elem.tag[1:].split("}", 1)
             if preserve and ns != current_ns:
@@ -1477,9 +1611,14 @@ class NameSpaceStripper:
         for child in elem:
             self.strip(child, preserve, current_ns, top=False)
         if top and not preserve and self.lxml_tree:
-            self.etree.cleanup_namespaces(elem)
+            self.etree.cleanup_namespaces(elem)  # type: ignore
 
-    def unstrip(self, elem, current_ns=None, copied=False):
+    def unstrip(
+        self,
+        elem: Element,
+        current_ns: "str | None" = None,
+        copied: bool = False,
+    ) -> Element:
         if not copied:
             elem = copy.deepcopy(elem)
         ns = elem.attrib.pop("xmlns", current_ns)
@@ -1492,21 +1631,26 @@ class NameSpaceStripper:
 
 class ElementFinder:
 
-    def __init__(self, etree, modern=True, lxml=False):
+    def __init__(
+        self,
+        etree,
+        modern: bool = True,
+        lxml: bool = False,
+    ):
         self.etree = etree
         self.modern = modern
         self.lxml = lxml
 
-    def find_all(self, elem, xpath):
+    def find_all(self, elem: Element, xpath: str) -> "list[Element]":
         xpath = self._get_xpath(xpath)
         if xpath == ".":  # ET < 1.3 does not support '.' alone.
             return [elem]
         if not self.lxml:
             return elem.findall(xpath)
-        finder = self.etree.ETXPath(xpath)
+        finder = self.etree.ETXPath(xpath)  # type: ignore
         return finder(elem)
 
-    def _get_xpath(self, xpath):
+    def _get_xpath(self, xpath: str) -> str:
         if not xpath:
             raise RuntimeError("No xpath given.")
         if self.modern:
@@ -1523,21 +1667,42 @@ class ElementFinder:
             return xpath
 
 
+class Location:
+
+    def __init__(self, path: str, is_root: bool = True):
+        self.path = path
+        self.is_not_root = not is_root
+        self.children: "dict[str, int]" = {}
+
+    def child(self, tag: str) -> "Location":
+        if tag not in self.children:
+            self.children[tag] = 1
+        else:
+            self.children[tag] += 1
+            tag += f"[{self.children[tag]}]"
+        return Location(f"{self.path}/{tag}", is_root=False)
+
+
 class ElementComparator:
 
     def __init__(
         self,
-        comparator,
-        normalizer=None,
-        child_sorter=None,
-        exclude_children=False,
+        comparator: Callable[[object, object, str], None],
+        normalizer: "Callable[[str], str] | None" = None,
+        child_sorter: "Callable[[Element], None] | None" = None,
+        exclude_children: bool = False,
     ):
         self.comparator = comparator
         self.normalizer = normalizer or (lambda text: text)
         self.child_sorter = child_sorter
         self.exclude_children = exclude_children
 
-    def compare(self, actual, expected, location=None):
+    def compare(
+        self,
+        actual: Element,
+        expected: Element,
+        location: "Location | None" = None,
+    ):
         if not location:
             location = Location(actual.tag)
         self._compare_tags(actual, expected, location)
@@ -1548,7 +1713,7 @@ class ElementComparator:
         if not self.exclude_children:
             self._compare_children(actual, expected, location)
 
-    def _compare_tags(self, actual, expected, location):
+    def _compare_tags(self, actual: Element, expected: Element, location: Location):
         self._compare(
             actual.tag,
             expected.tag,
@@ -1557,14 +1722,26 @@ class ElementComparator:
             should_be_equal,
         )
 
-    def _compare(self, actual, expected, message, location, comparator=None):
+    def _compare(
+        self,
+        actual: object,
+        expected: object,
+        message: str,
+        location: Location,
+        comparator: "Callable[[object, object, str], None] | None" = None,
+    ):
         if location.is_not_root:
             message = f"{message} at '{location.path}'"
         if not comparator:
             comparator = self.comparator
         comparator(actual, expected, message)
 
-    def _compare_attributes(self, actual, expected, location):
+    def _compare_attributes(
+        self,
+        actual: Element,
+        expected: Element,
+        location: Location,
+    ):
         self._compare(
             sorted(actual.attrib),
             sorted(expected.attrib),
@@ -1580,7 +1757,7 @@ class ElementComparator:
                 location,
             )
 
-    def _compare_texts(self, actual, expected, location):
+    def _compare_texts(self, actual: Element, expected: Element, location: Location):
         self._compare(
             self._text(actual.text),
             self._text(expected.text),
@@ -1588,10 +1765,10 @@ class ElementComparator:
             location,
         )
 
-    def _text(self, text):
+    def _text(self, text: str) -> str:
         return self.normalizer(text or "")
 
-    def _compare_tails(self, actual, expected, location):
+    def _compare_tails(self, actual: Element, expected: Element, location: Location):
         self._compare(
             self._text(actual.tail),
             self._text(expected.tail),
@@ -1599,7 +1776,7 @@ class ElementComparator:
             location,
         )
 
-    def _compare_children(self, actual, expected, location):
+    def _compare_children(self, actual: Element, expected: Element, location: Location):
         self._compare(
             len(actual),
             len(expected),
@@ -1612,19 +1789,3 @@ class ElementComparator:
             self.child_sorter(expected)
         for act, exp in zip(actual, expected):
             self.compare(act, exp, location.child(act.tag))
-
-
-class Location:
-
-    def __init__(self, path, is_root=True):
-        self.path = path
-        self.is_not_root = not is_root
-        self.children = {}
-
-    def child(self, tag):
-        if tag not in self.children:
-            self.children[tag] = 1
-        else:
-            self.children[tag] += 1
-            tag += f"[{self.children[tag]}]"
-        return Location(f"{self.path}/{tag}", is_root=False)
