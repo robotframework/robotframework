@@ -4,7 +4,7 @@ import Storage from "./storage";
 import Translations from "./i18n/translations";
 import { createModal, showModal } from "./modal";
 import { RuntimeLibdoc, ArgType } from "./types";
-import { regexpEscape, delay } from "./util";
+import { htmlEscape, regexpEscape, delay } from "./util";
 
 interface MatchInclude {
   args?: boolean;
@@ -68,10 +68,11 @@ class View {
           return html;
         } else {
           let html = "";
+          const name = htmlEscape(argType.name)
           if (argType.typedoc) {
-            html += `<a style="cursor: pointer;" class="type" data-typedoc=${argType.typedoc} title=${translate.translate("typeInfoDialog")}>${argType.name}</a>`;
+            html += `<a style="cursor: pointer;" class="type" data-typedoc=${argType.typedoc} title=${translate.translate("typeInfoDialog")}>${name}</a>`;
           } else {
-            html += `<span class="type">${argType.name}</span>`;
+            html += `<span class="type">${name}</span>`;
           }
           if (argType.nested.length) {
             html += "[";
