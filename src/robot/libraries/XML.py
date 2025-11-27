@@ -454,33 +454,12 @@ class XML:
     If an attribute has a namespace prefix, ElementTree will replace it with
     Clark Notation the same way it handles elements. Because stripping
     namespaces from attributes could cause attribute conflicts, this library
-    does not handle attribute namespaces at all. Thus the following example
+    does not handle attribute namespaces at all. The following example thus
     works the same way regardless how namespaces are handled.
 
     | ${root} = | `Parse XML` | <root id="1" ns:id="2" xmlns:ns="http://my.ns"/> |
     | `Element Attribute Should Be` | ${root} | id | 1 |
     | `Element Attribute Should Be` | ${root} | {http://my.ns}id | 2 |
-
-    = Boolean arguments =
-
-    Some keywords accept arguments that are handled as Boolean values true or
-    false. If such an argument is given as a string, it is considered false if
-    it is an empty string or equal to ``FALSE``, ``NONE``, ``NO``, ``OFF`` or
-    ``0``, case-insensitively. Other strings are considered true regardless
-    their value, and other argument types are tested using the same
-    [http://docs.python.org/library/stdtypes.html#truth|rules as in Python].
-
-    True examples:
-    | `Parse XML` | ${XML} | keep_clark_notation=True    | # Strings are generally true.    |
-    | `Parse XML` | ${XML} | keep_clark_notation=yes     | # Same as the above.             |
-    | `Parse XML` | ${XML} | keep_clark_notation=${TRUE} | # Python ``True`` is true.       |
-    | `Parse XML` | ${XML} | keep_clark_notation=${42}   | # Numbers other than 0 are true. |
-
-    False examples:
-    | `Parse XML` | ${XML} | keep_clark_notation=False    | # String ``false`` is false.   |
-    | `Parse XML` | ${XML} | keep_clark_notation=no       | # Also string ``no`` is false. |
-    | `Parse XML` | ${XML} | keep_clark_notation=${EMPTY} | # Empty string is false.       |
-    | `Parse XML` | ${XML} | keep_clark_notation=${FALSE} | # Python ``False`` is false.   |
 
     == Pattern matching ==
 
@@ -508,8 +487,8 @@ class XML:
         This library uses Python's standard
         [http://docs.python.org/library/xml.etree.elementtree.html|ElementTree]
         module for parsing XML by default. If ``use_lxml`` argument is given
-        a true value (see `Boolean arguments`), the [http://lxml.de|lxml] module
-        is used instead. See the `Using lxml` section for benefits provided by lxml.
+        a true value, the [http://lxml.de|lxml] module is used instead.
+        See the `Using lxml` section for benefits provided by lxml.
 
         Using lxml requires that the lxml module is installed on the system.
         If lxml mode is enabled but the module is not installed, this library
@@ -551,7 +530,7 @@ class XML:
         want that to happen, or want to avoid the small overhead of going
         through the element structure when your XML does not have namespaces,
         you can disable this feature by giving ``keep_clark_notation`` argument
-        a true value (see `Boolean arguments`).
+        a true value.
 
         If you want to strip namespace information altogether so that it is
         not included even if XML is saved, you can give a true value to
@@ -733,12 +712,11 @@ class XML:
         has no text, an empty string is returned. The returned text is thus not
         always the same as the `text` attribute of the element.
 
-        By default all whitespace, including newlines and indentation, inside
-        the element is returned as-is. If ``normalize_whitespace`` is given
-        a true value (see `Boolean arguments`), then leading and trailing
-        whitespace is stripped, newlines and tabs converted to spaces, and
-        multiple spaces collapsed into one. This is especially useful when
-        dealing with HTML data.
+        All whitespace, including newlines and indentation, inside the element
+        is returned as-is. If ``normalize_whitespace`` is given a true value,
+        then leading and trailing whitespace is stripped, newlines and tabs
+        converted to spaces, and multiple spaces collapsed into one. This is
+        especially useful when dealing with HTML data.
 
         Examples using ``${XML}`` structure from `Example`:
         | ${text} =       | Get Element Text | ${XML}       | first        |
@@ -1013,7 +991,7 @@ class XML:
         are equal. This includes testing the tag names, texts, and attributes
         of the elements. By default, also child elements are verified the same
         way, but this can be disabled by setting ``exclude_children`` to a
-        true value (see `Boolean arguments`). Child elements are expected to
+        true value. Child elements are expected to
         be in the same order, but that can be changed by giving ``sort_children``
         a true value. Notice that elements are sorted solely based on tag names.
 
@@ -1380,9 +1358,8 @@ class XML:
         Use `Remove Elements` to remove all matched elements.
 
         Element's tail text is not removed by default, but that can be changed
-        by giving ``remove_tail`` a true value (see `Boolean arguments`). See
-        `Element attributes` section for more information about `tail` in
-        general.
+        by giving ``remove_tail`` a true value. See the `Element attributes`
+        section for more information about ``tail`` in general.
 
         Examples using ``${XML}`` structure from `Example`:
         | Remove Element           | ${XML} | xpath=second |
@@ -1466,9 +1443,8 @@ class XML:
 
         Clearing the element means removing its text, attributes, and children.
         Element's tail text is not removed by default, but that can be changed
-        by giving ``clear_tail`` a true value (see `Boolean arguments`). See
-        `Element attributes` section for more information about tail in
-        general.
+        by giving ``clear_tail`` a true value. See the `Element attributes`
+        section for more information about ``tail`` in general.
 
         Examples using ``${XML}`` structure from `Example`:
         | Clear Element            | ${XML}   | xpath=first |
