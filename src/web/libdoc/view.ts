@@ -28,10 +28,10 @@ class View {
     this.libdoc = libdoc;
     this.storage = storage;
     this.translations = translations;
-    this.initTemplating(translations);
+    this.initTemplating(translations, libdoc);
   }
 
-  private initTemplating(translate: Translations) {
+  private initTemplating(translate: Translations, libdoc: RuntimeLibdoc) {
     Handlebars.registerHelper("t", function (key: string) {
       return translate.translate(key);
     });
@@ -52,43 +52,53 @@ class View {
         ? options.fn(this)
         : options.inverse(this);
     });
-    Handlebars.registerHelper("renderTypeInfo", function (argType: ArgType) {
-      const renderTypeDocs = (argType: ArgType) => {
-        if (argType.union) {
-          let html = "";
-          argType.nested.forEach((nested, index) => {
-            if (index > 0) {
-              html += " ";
-            }
-            html += renderTypeDocs(nested);
-            if (index < argType.nested.length - 1) {
-              html += " |";
-            }
-          });
-          return html;
-        } else {
-          let html = "";
-          const name = htmlEscape(argType.name)
-          if (argType.typedoc) {
-            html += `<a style="cursor: pointer;" class="type" data-typedoc=${argType.typedoc} title=${translate.translate("typeInfoDialog")}>${name}</a>`;
-          } else {
-            html += `<span class="type">${name}</span>`;
-          }
-          if (argType.nested.length) {
-            html += "[";
-            argType.nested.forEach((nested, idx) => {
+    Handlebars.registerHelper(
+      "renderTypeInfo",
+      function (argType: ArgType, isReturnType: boolean) {
+        const renderTypeDocs = (argType: ArgType) => {
+          if (argType.union) {
+            let html = "";
+            argType.nested.forEach((nested, index) => {
+              if (index > 0) {
+                html += " ";
+              }
               html += renderTypeDocs(nested);
-              if (idx < argType.nested.length - 1) {
-                html += ",&nbsp;";
+              if (index < argType.nested.length - 1) {
+                html += " |";
               }
             });
-            html += "]";
+            return html;
+          } else {
+            let html = "";
+            const name = htmlEscape(argType.name);
+            const renderTypeDocLink =
+              argType.typedoc &&
+              !(
+                isReturnType &&
+                libdoc.typedocs.find((td) => td.name === argType.typedoc)
+                  ?.type === "Standard"
+              );
+            if (renderTypeDocLink) {
+              html += `<a style="cursor: pointer;" class="type" data-typedoc=${argType.typedoc} title=${translate.translate("typeInfoDialog")}>${name}</a>`;
+            } else {
+              html += `<span class="type">${name}</span>`;
+            }
+            if (argType.nested.length) {
+              html += "[";
+              argType.nested.forEach((nested, idx) => {
+                html += renderTypeDocs(nested);
+                if (idx < argType.nested.length - 1) {
+                  html += ",&nbsp;";
+                }
+              });
+              html += "]";
+            }
+            return html;
           }
-          return html;
-        }
-      };
-      return renderTypeDocs(argType);
-    });
+        };
+        return renderTypeDocs(argType);
+      },
+    );
     this.registerPartial("arg", "argument-template");
     this.registerPartial("keyword", "keyword-template");
     this.registerPartial("dataType", "data-type-template");

@@ -1,5 +1,6 @@
 function htmlEscape(htmlStr) {
-  return htmlStr.replace(/&/g, "&amp;")
+  return htmlStr
+    .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")

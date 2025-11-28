@@ -276,7 +276,7 @@
               <div class="return-type">
                 <h4>{{t "returnType"}}</h4>
                 <span class="arg-type">
-                {{{renderTypeInfo returnType}}}
+                {{{renderTypeInfo returnType true}}}
                 </span>
               </div>
               {{/if}}
@@ -319,7 +319,7 @@
 
       {{#if type}}
         <span class="arg-type">
-            {{{renderTypeInfo type}}}
+            {{{renderTypeInfo type false}}}
         </span>
       {{/if}}
     </script>
