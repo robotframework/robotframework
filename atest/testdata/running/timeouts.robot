@@ -406,12 +406,12 @@ Teardown keyword
     Sleep    ${sleep}
 
 Keyword in teardown fails for timeout
-    [Timeout]    50ms
+    [Timeout]    99ms
     No Operation
     [Teardown]    Teardown keyword with keyword failing for timeout
 
 Teardown keyword with keyword failing for timeout
-    [Timeout]    90ms
+    [Timeout]    99ms
     Timeouted Keyword Timeouts
     Fail    I'm still run!
     [Teardown]    Teardown keyword    timeout=10ms    sleep=20ms
