@@ -73,19 +73,19 @@ Looping Forever And Timeouting
 
 Stopped After Test Timeout
     [Documentation]    Keyword that is stopped after test timeout should not write to a file.
-    ...    FAIL Test timeout 200 milliseconds exceeded.
-    [Timeout]    0.2s
+    ...    FAIL Test timeout 100 milliseconds exceeded.
+    [Timeout]    0.1s
     Write To File After Sleeping    ${TEST STOPPED}    2
 
 Stopped After Keyword Timeout
     [Documentation]    Keyword that is stopped after keyword timeout should not write to a file.
-    ...    FAIL Keyword timeout 200 milliseconds exceeded.
+    ...    FAIL Keyword timeout 100 milliseconds exceeded.
     [Timeout]    1 minute
     Timeouted Write To File After Sleeping    ${KW STOPPED}    2
 
 Timout Defined For One Test
-    [Documentation]    FAIL Test timeout 42 milliseconds exceeded.
-    [Timeout]    42 milliseconds
+    [Documentation]    FAIL Test timeout 11 milliseconds exceeded.
+    [Timeout]    11 milliseconds
     Sleep    3
 
 Timeouted Keyword Passes
@@ -99,7 +99,7 @@ Timeouted Keyword Fails Before Timeout
     Timeouted Keyword Fails Before Timeout
 
 Timeouted Keyword Timeouts
-    [Documentation]    FAIL Keyword timeout 99 milliseconds exceeded.
+    [Documentation]    FAIL Keyword timeout 11 milliseconds exceeded.
     [Timeout]    2 seconds
     Timeouted Keyword Timeouts
 
@@ -180,7 +180,7 @@ Timeouted Setup Passes
 
 Timeouted Setup Timeouts
     [Documentation]    FAIL Setup failed:
-    ...    Keyword timeout 99 milliseconds exceeded.
+    ...    Keyword timeout 11 milliseconds exceeded.
     [Setup]    Timeouted Keyword Timeouts
     [Timeout]
     Fail    This should not be executed
@@ -192,19 +192,19 @@ Timeouted Teardown Passes
 
 Timeouted Teardown Timeouts
     [Documentation]    FAIL Teardown failed:
-    ...    Keyword timeout 99 milliseconds exceeded.
+    ...    Keyword timeout 11 milliseconds exceeded.
     [Setup]    Timeouted Keyword Passes
     [Timeout]
     Timeouted Keyword Passes
     [Teardown]    Timeouted Keyword Timeouts
 
 Timeouted UK Using Non Timeouted UK
-    [Documentation]    FAIL Keyword timeout 222 milliseconds exceeded.
+    [Documentation]    FAIL Keyword timeout 111 milliseconds exceeded.
     [Timeout]
     Timeouted UK Using Non Timeouted UK
 
 Shortest UK Timeout Should Be Applied
-    [Documentation]    FAIL Keyword timeout 200 milliseconds exceeded.
+    [Documentation]    FAIL Keyword timeout 100 milliseconds exceeded.
     [Timeout]
     Timeouted UK Using Timeouted UK
 
@@ -214,7 +214,7 @@ Shortest Test Or UK Timeout Should Be Applied
     Timeouted UK Using Timeouted UK
 
 Timeouted Set Keyword
-    [Documentation]    FAIL Keyword timeout 99 milliseconds exceeded.
+    [Documentation]    FAIL Keyword timeout 11 milliseconds exceeded.
     ${msg} =    Timeouted Keyword Passes    0.01
     Should Be Equal    ${msg}    Slept 0.01s
     ${msg} =    Timeouted Keyword Timeouts
@@ -226,7 +226,7 @@ Test Timeout Should Not Be Active For Run Keyword Variants But To Keywords They 
     Run Keyword    Sleep Without Logging    2
 
 Keyword Timeout Should Not Be Active For Run Keyword Variants But To Keywords They Execute
-    [Documentation]    FAIL Keyword timeout 200 milliseconds exceeded.
+    [Documentation]    FAIL Keyword timeout 100 milliseconds exceeded.
     Run Keyword With Timeout
 
 Timeouted Keyword Called With Wrong Number of Arguments
@@ -273,7 +273,7 @@ Timeouted Keyword Fails Before Timeout
     Fail    Failure before keyword timeout
 
 Timeouted Keyword Timeouts
-    [Timeout]    99 milliseconds
+    [Timeout]    11 milliseconds
     Sleep Without Logging    2
     RETURN    Nothing, really
 
@@ -287,7 +287,7 @@ Timeouted Keyword Timeouts Due To Total Time
 
 Timeouted Write To File After Sleeping
     [Arguments]    ${path}    ${secs}
-    [Timeout]    200 milliseconds
+    [Timeout]    100 milliseconds
     Write To File After Sleeping    ${path}    ${secs}
     Fail    This should not be executed
 
@@ -301,7 +301,7 @@ Sleep And Log
     Log    ${msg}
 
 Timeouted UK Using Non Timeouted UK
-    [Timeout]    0.222
+    [Timeout]    0.111
     Non Timeouted UK
 
 Timeouted UK Using Non Timeouted UK 2
@@ -312,11 +312,11 @@ Non Timeouted UK
     Sleep    10
 
 Timeouted UK Using Timeouted UK
-    [Timeout]    0.2 seconds
+    [Timeout]    0.1 seconds
     Timeouted UK Using Non Timeouted UK 2
 
 Run Keyword With Timeout
-    [Timeout]    200 milliseconds
+    [Timeout]    100 milliseconds
     Run Keyword    Log    Hello
     Run Keyword If    True    Sleep    3
 

@@ -156,7 +156,7 @@ Keyword Timeout Logging
     ${tc} =    Check Test Case    Timeouted Keyword Fails Before Timeout
     Keyword timeout should have been active    ${tc[0, 0]}    2 hours 30 minutes    3
     ${tc} =    Check Test Case    Timeouted Keyword Timeouts
-    Keyword timeout should have been active    ${tc[0, 0]}    99 milliseconds       2    exceeded=True
+    Keyword timeout should have been active    ${tc[0, 0]}    11 milliseconds       2    exceeded=True
 
 Zero timeout is ignored
     ${tc} =    Check Test Case    ${TEST NAME}
