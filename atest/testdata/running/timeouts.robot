@@ -395,7 +395,7 @@ Keyword teardown fails due to total time
     [Teardown]    Teardown keyword    sleep=0.11s
 
 Keyword teardown fails for own timeout
-    [Timeout]    0.05s
+    [Timeout]    99ms
     No Operation
     [Teardown]    Teardown keyword    timeout=0.104s    sleep=0.11s
 
