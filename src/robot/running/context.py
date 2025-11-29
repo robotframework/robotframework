@@ -133,7 +133,7 @@ class _ExecutionContext:
         self.variables.set_test("${TEST_STATUS}", test.status)
         self.variables.set_test("${TEST_MESSAGE}", test.message)
         self.in_test_teardown = True
-        self._remove_timeout(test.timeout)
+        self.timeouts = []  # Clear current timeouts.
         try:
             yield
         finally:
@@ -144,10 +144,12 @@ class _ExecutionContext:
         self.variables.set_keyword("${KEYWORD_STATUS}", "FAIL" if error else "PASS")
         self.variables.set_keyword("${KEYWORD_MESSAGE}", str(error or ""))
         self.in_keyword_teardown += 1
+        self.timeouts, timeouts = [], self.timeouts  # Disable current timeouts.
         try:
             yield
         finally:
             self.in_keyword_teardown -= 1
+            self.timeouts = timeouts
 
     @contextmanager
     def user_keyword(self, handler):
@@ -281,7 +283,7 @@ class _ExecutionContext:
 
     def end_test(self, test):
         self.test = None
-        self._remove_timeout(test.timeout)
+        self.timeouts = []
         self.namespace.end_test()
         self.variables.set_suite("${PREV_TEST_NAME}", test.name)
         self.variables.set_suite("${PREV_TEST_STATUS}", test.status)

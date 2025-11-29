@@ -112,6 +112,30 @@ Timeouted Teardown Passes
 Timeouted Teardown Timeouts
     Check Test Case    ${TEST NAME}
 
+Keyword teardown after test timeout
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Should Be Equal      ${tc[0].teardown.status}    PASS
+    Check Log Message    ${tc[0].teardown[0, 0]}     I'm a teardown keyword
+
+Keyword teardown after keyword timeout
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Should Be Equal      ${tc[0].teardown.status}    PASS
+    Check Log Message    ${tc[0].teardown[0, 0]}     I'm a teardown keyword
+
+Keyword teardown fails due to total time
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Should Be Equal      ${tc[0].teardown.status}    PASS
+    Check Log Message    ${tc[0].teardown[0, 0]}     I'm a teardown keyword
+
+Keyword teardown fails for own timeout
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Should Be Equal      ${tc[0].teardown.status}    FAIL
+    Check Log Message    ${tc[0].teardown[0, 0]}     Keyword timeout 104 milliseconds active. 0.* seconds left.    level=DEBUG    pattern=True
+    Check Log Message    ${tc[0].teardown[0, 1]}     I'm a teardown keyword
+
+Keyword in teardown fails for timeout
+    Check Test Case    ${TEST NAME}
+
 Timeouted UK Using Non Timeouted UK
     Check Test Case    ${TEST NAME}
 

@@ -203,11 +203,23 @@ class UserKeywordRunner:
                 td_error = self._run_setup_or_teardown(
                     kw.teardown, result.teardown, context
                 )
+            if context.timeouts and not (error or td_error):
+                td_error = self._handle_timeout_exceeded_during_teardown(context)
         else:
             td_error = None
         if error or td_error:
             error = UserKeywordExecutionFailed(error, td_error)
         return error or success, return_value
+
+    def _handle_timeout_exceeded_during_teardown(self, context):
+        timeout = min(context.timeouts)
+        if timeout.timed_out():
+            return ExecutionFailed(
+                timeout.get_message(),
+                test_timeout=timeout.kind == "TEST",
+                keyword_timeout=timeout.kind == "KEYWORD",
+            )
+        return None
 
     def _handle_return_value(self, return_value, variables):
         if not return_value:

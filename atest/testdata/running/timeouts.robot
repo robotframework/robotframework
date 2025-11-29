@@ -198,6 +198,37 @@ Timeouted Teardown Timeouts
     Timeouted Keyword Passes
     [Teardown]    Timeouted Keyword Timeouts
 
+Keyword teardown after test timeout
+    [Documentation]    FAIL Test timeout 101 milliseconds exceeded.
+    [Timeout]    0.101s
+    Keyword with teardown
+
+Keyword teardown after keyword timeout
+    [Documentation]    FAIL Keyword timeout 102 milliseconds exceeded.
+    Keyword with timeout and teardown
+
+Keyword teardown fails due to total time
+    [Documentation]    FAIL Keyword teardown failed:
+    ...    Keyword timeout 103 milliseconds exceeded.
+    Keyword teardown fails due to total time
+
+Keyword teardown fails for own timeout
+    [Documentation]    FAIL Keyword teardown failed:
+    ...    Keyword timeout 104 milliseconds exceeded.
+    Keyword teardown fails for own timeout
+
+Keyword in teardown fails for timeout
+    [Documentation]    FAIL Keyword teardown failed:
+    ...    Several failures occurred:
+    ...
+    ...    1) Keyword timeout 11 milliseconds exceeded.
+    ...
+    ...    2) I'm still run!
+    ...
+    ...    Also keyword teardown failed:
+    ...    Keyword timeout 10 milliseconds exceeded.
+    Keyword in teardown fails for timeout
+
 Timeouted UK Using Non Timeouted UK
     [Documentation]    FAIL Keyword timeout 111 milliseconds exceeded.
     [Timeout]
@@ -348,3 +379,39 @@ Negative timeout is ignored
 Invalid keyword timeout
     [Timeout]    ¡Bäng!
     No Operation
+
+Keyword with teardown
+    Sleep    1s
+    [Teardown]    Teardown keyword
+
+Keyword with timeout and teardown
+    [Timeout]    0.102s
+    Sleep    1s
+    [Teardown]    Teardown keyword
+
+Keyword teardown fails due to total time
+    [Timeout]    0.103s
+    No Operation
+    [Teardown]    Teardown keyword    sleep=0.11s
+
+Keyword teardown fails for own timeout
+    [Timeout]    0.05s
+    No Operation
+    [Teardown]    Teardown keyword    timeout=0.104s    sleep=0.11s
+
+Teardown keyword
+    [Arguments]    ${timeout}=NONE    ${sleep}=0
+    [Timeout]    ${timeout}
+    Log    I'm a teardown keyword
+    Sleep    ${sleep}
+
+Keyword in teardown fails for timeout
+    [Timeout]    50ms
+    No Operation
+    [Teardown]    Teardown keyword with keyword failing for timeout
+
+Teardown keyword with keyword failing for timeout
+    [Timeout]    90ms
+    Timeouted Keyword Timeouts
+    Fail    I'm still run!
+    [Teardown]    Teardown keyword    timeout=10ms    sleep=20ms
