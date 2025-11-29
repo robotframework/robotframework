@@ -130,7 +130,7 @@ Keyword teardown fails due to total time
 Keyword teardown fails for own timeout
     ${tc} =    Check Test Case    ${TEST NAME}
     Should Be Equal      ${tc[0].teardown.status}    FAIL
-    Check Log Message    ${tc[0].teardown[0, 0]}     Keyword timeout 104 milliseconds active. 0.* seconds left.    level=DEBUG    pattern=True
+    Check Log Message    ${tc[0].teardown[0, 0]}     Keyword timeout 204 milliseconds active. 0.??? seconds left.    level=DEBUG    pattern=True
     Check Log Message    ${tc[0].teardown[0, 1]}     I'm a teardown keyword
 
 Keyword in teardown fails for timeout
@@ -203,7 +203,7 @@ Invalid keyword timeout
 *** Keywords ***
 Timeout should have been active
     [Arguments]    ${kw}    ${timeout}    ${msg count}    ${exceeded}=False    ${type}=Test
-    Check Log Message    ${kw[0]}    ${type} timeout ${timeout} active. * left.    DEBUG    pattern=True
+    Check Log Message    ${kw[0]}    ${type} timeout ${timeout} active. *.??? seconds left.    DEBUG    pattern=True
     Length Should Be     ${kw.body}       ${msg count}
     IF    ${exceeded}    Timeout should have exceeded    ${kw}    ${timeout}    ${type}
 

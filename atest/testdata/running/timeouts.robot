@@ -214,7 +214,7 @@ Keyword teardown fails due to total time
 
 Keyword teardown fails for own timeout
     [Documentation]    FAIL Keyword teardown failed:
-    ...    Keyword timeout 104 milliseconds exceeded.
+    ...    Keyword timeout 204 milliseconds exceeded.
     Keyword teardown fails for own timeout
 
 Keyword in teardown fails for timeout
@@ -395,9 +395,9 @@ Keyword teardown fails due to total time
     [Teardown]    Teardown keyword    sleep=0.11s
 
 Keyword teardown fails for own timeout
-    [Timeout]    99ms
+    [Timeout]    0.104s
     No Operation
-    [Teardown]    Teardown keyword    timeout=0.104s    sleep=0.11s
+    [Teardown]    Teardown keyword    timeout=0.204s    sleep=1s
 
 Teardown keyword
     [Arguments]    ${timeout}=NONE    ${sleep}=0
