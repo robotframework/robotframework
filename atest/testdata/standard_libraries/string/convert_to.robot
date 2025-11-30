@@ -14,6 +14,7 @@ Convert To Upper Case
     a1b2C3d4e      A1B2C3D4E
     Hello world    HELLO WORLD
     ööääåå         ÖÖÄÄÅÅ
+    ${{b'foo'}}    ${{b'FOO'}}
 
 Convert To Lower Case
     [Template]    Test lower case
@@ -23,6 +24,7 @@ Convert To Lower Case
     A1B2c3D4E      a1b2c3d4e
     Hello world    hello world
     ÖÖÄÄÅÅ         ööääåå
+    ${{b'FOO'}}    ${{b'foo'}}
 
 Convert To Title Case
     [Template]    Test title case
@@ -72,10 +74,6 @@ Convert To Title Case with regexp excludes
     a, b, and c.          a, b, And c.          exclude=${EXCLUDES2}
     full match only!      Full Match Only!      exclude=.
     full match only!      full Match Only!      exclude=....
-
-Convert To Title Case does not work with bytes
-    [Documentation]    FAIL    TypeError: This keyword works only with strings.
-    Convert To Title Case    ${{b'xxx'}}
 
 *** Keywords ***
 Test upper case

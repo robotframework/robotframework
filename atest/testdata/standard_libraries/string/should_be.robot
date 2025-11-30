@@ -104,14 +104,6 @@ Should Be Title Case With Regex Excludes
     Full Match Only!      exclude=.
     full Match Only!      exclude=....
 
-Should Be Title Case Does Not Work With ASCII Bytes
-    [Documentation]    FAIL    TypeError: This keyword works only with strings.
-    Should Be Title Case    ${BYTES}
-
-Should Be Title Case Does Not Work With Non-ASCII Bytes
-    [Documentation]    FAIL    TypeError: This keyword works only with strings.
-    Should Be Title Case    ${{b'\xe4iti'}}
-
 *** Keywords ***
 Test title case
     [Arguments]    ${string}    @{args}    &{kwargs}

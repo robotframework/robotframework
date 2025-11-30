@@ -53,9 +53,3 @@ Should Be Title Case With Excludes
 
 Should Be Title Case With Regex Excludes
     Check Test Case    ${TESTNAME}
-
-Should Be Title Case Does Not Work With ASCII Bytes
-    Check Test Case    ${TESTNAME}
-
-Should Be Title Case Does Not Work With Non-ASCII Bytes
-    Check Test Case    ${TESTNAME}
