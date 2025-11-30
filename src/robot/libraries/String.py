@@ -764,7 +764,7 @@ class String:
     def strip_string(
         self,
         string: str,
-        mode: Literal["left", "right", "both", "none"] | str = "both",
+        mode: "Literal['left', 'right', 'both', 'none'] | str" = "both",
         characters: "str | None" = None,
     ) -> str:
         """Remove leading and/or trailing whitespaces from the given string.
