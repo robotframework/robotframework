@@ -67,11 +67,11 @@ Split To Lines With Negative Values
     Should be equal    ${result}[0]    ${SECOND LINE}
 
 Split To Lines With Invalid Start
-    [Documentation]    FAIL ValueError: Cannot convert 'start' argument 'invalid' to an integer.
+    [Documentation]    FAIL ValueError: Argument 'start' got value 'invalid' that cannot be converted to integer, '' or None.
     Split To Lines    ${TEXT IN COLUMNS}    invalid
 
 Split To Lines With Invalid End
-    [Documentation]    FAIL ValueError: Cannot convert 'end' argument 'invalid' to an integer.
+    [Documentation]    FAIL ValueError: Argument 'end' got value 'invalid' that cannot be converted to integer, '' or None.
     Split To Lines    ${TEXT IN COLUMNS}    0    invalid
 
 Get Substring
@@ -100,12 +100,12 @@ Get Substring With Empty Start
     Should be equal    ${result}    ${{b'Hello'}}
 
 Get Substring With Invalid Start
-    [Documentation]    FAIL ValueError: Cannot convert 'start' argument 'invalid' to an integer.
+    [Documentation]    FAIL ValueError: Argument 'start' got value 'invalid' that cannot be converted to integer, '' or None.
     Get Substring    Hello Robot    invalid
     Get Substring    ${{b'Hello Robot'}}    invalid
 
 Get Substring With Invalid End
-    [Documentation]    FAIL ValueError: Cannot convert 'end' argument 'invalid' to an integer.
+    [Documentation]    FAIL ValueError: Argument 'end' got value 'invalid' that cannot be converted to integer, '' or None.
     Get Substring    Hello Robot    2    invalid
     Get Substring    ${{b'Hello Robot'}}    2    invalid
 

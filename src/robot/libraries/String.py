@@ -18,7 +18,7 @@ import re
 from fnmatch import fnmatchcase
 from random import randint
 from string import ascii_lowercase, ascii_uppercase, digits
-from typing import Callable, Iterable, Literal, Union
+from typing import Callable, Iterable, Literal
 
 from robot.api import logger
 from robot.utils import FileReader, parse_re_flags, plural_or_not as s, type_name
@@ -32,13 +32,6 @@ MARKERS = {
     "[ARABIC]": "".join(chr(c) for c in range(0x0600, 0x0700)),
     "[POLISH]": ascii_lowercase + ascii_uppercase + "ąćęłńóśźżĄĆĘŁŃÓŚŹŻ",
 }
-Error = Union[Literal["strict", "ignore", "replace"], str]
-Flags = Union[
-    Literal["IGNORECASE", "MULTILINE", "VERBOSE", "IGNORECASE | VERBOSE"], str, None
-]
-Markers = Union[
-    Literal["[LOWER]", "[UPPER]", "[LETTERS]", "[NUMBERS]", "[ARABIC]", "[POLISH]"], str
-]
 
 
 class String:
@@ -98,11 +91,9 @@ class String:
         """
         return string.upper()
 
-    # TODO(@pekkaklarck): some paramters could be string, some bytes -> risk of incompatibilies
-    # TODO(@pekkaklarck): there are some tests indicating that it should only work with str/ not bytes (at least in the past) e.g. Should Be Title Case Does Not Work With ASCII Bytes
     def convert_to_title_case(
         self,
-        string: str,
+        string: "str | bytes",
         exclude: "Iterable[str] | str | None" = None,
     ) -> str:
         """Converts string to title case.
@@ -142,6 +133,8 @@ class String:
         apostrophes. It would, for example, convert "it's an OK iPhone"
         to "It'S An Ok Iphone".
         """
+        if not isinstance(string, str):
+            raise TypeError("This keyword works only with strings.")
         if isinstance(exclude, str):
             exclude = [e.strip() for e in exclude.split(",")]
         elif not exclude:
@@ -163,7 +156,7 @@ class String:
         self,
         string: str,
         encoding: str,
-        errors: Error = "strict",
+        errors: str = "strict",
     ) -> bytes:
         """Encodes the given ``string`` to bytes using the given ``encoding``.
 
@@ -191,7 +184,7 @@ class String:
         self,
         bytes: bytes,
         encoding: str,
-        errors: Error = "strict",
+        errors: str = "strict",
     ) -> str:
         """Decodes the given ``bytes`` to a string using the given ``encoding``.
 
@@ -214,7 +207,6 @@ class String:
         """
         return bytes.decode(encoding, errors)
 
-    # TODO(@pekkaklarck): some paramters could be string, some bytes -> risk of incompatibilies
     def format_string(
         self,
         template: str,
@@ -262,13 +254,12 @@ class String:
         logger.info(f"{count} lines.")
         return count
 
-    # does not work with bytes: ${{b'hello\nworld'}} -> Length of '["b'hello\\nworld'"]' should be 2 but is 1.
     def split_to_lines(
         self,
         string: str,
-        start: "int | str | None" = 0,
-        end: "int | str | None" = None,
-    ) -> list[str]:
+        start: "int | Literal[''] | None" = 0,
+        end: "int | Literal[''] | None" = None,
+    ) -> "list[str]":
         """Splits the given string to lines.
 
         It is possible to get only a selection of lines from ``start``
@@ -295,8 +286,6 @@ class String:
         logger.info(f"{len(lines)} line{s(lines)} returned.")
         return lines
 
-    # TODO(@pekkaklarck):
-    # does not work with bytes: ${{b'hello\nworld'}} -> Length of '["b'hello\\nworld'"]' should be 2 but is 1.
     def get_line(self, string: str, line_number: int) -> str:
         """Returns the specified line from the given ``string``.
 
@@ -313,7 +302,6 @@ class String:
         line_number = self._convert_to_integer(line_number, "line_number")
         return string.splitlines()[line_number]
 
-    # TODO(@pekkaklarck): some paramters could be string, some bytes -> risk of incompatibilies
     def get_lines_containing_string(
         self,
         string: str,
@@ -352,7 +340,6 @@ class String:
             contains = lambda line: pattern in line
         return self._get_matching_lines(string, contains)
 
-    # TODO(@pekkaklarck): some paramters could be string, some bytes -> risk of incompatibilies
     def get_lines_matching_pattern(
         self,
         string: str,
@@ -396,13 +383,12 @@ class String:
             matches = lambda line: fnmatchcase(line, pattern)
         return self._get_matching_lines(string, matches)
 
-    # TODO(@pekkaklarck): some paramters could be string, some bytes -> risk of incompatibilies
     def get_lines_matching_regexp(
         self,
         string: str,
         pattern,
         partial_match: bool = False,
-        flags: Flags = None,
+        flags: "str | None" = None,
     ) -> str:
         """Returns lines of the given ``string`` that match the regexp ``pattern``.
 
@@ -441,7 +427,6 @@ class String:
         match = regexp.search if partial_match else regexp.fullmatch
         return self._get_matching_lines(string, match)
 
-    # TODO(@pekkaklarck): some paramters could be string, some bytes -> risk of incompatibilies
     def _get_matching_lines(
         self,
         string: str,
@@ -452,14 +437,13 @@ class String:
         logger.info(f"{len(matching)} out of {len(lines)} lines matched.")
         return "\n".join(matching)
 
-    # TODO(@pekkaklarck): some paramters could be string, some bytes -> risk of incompatibilies
     def get_regexp_matches(
         self,
         string: str,
         pattern: str,
         *groups: object,
-        flags: Flags = None,
-    ) -> list["str | tuple"]:
+        flags: "str | None" = None,
+    ) -> "list[str | tuple]":
         """Returns a list of all non-overlapping matches in the given string.
 
         ``string`` is the string to find matches from and ``pattern`` is the
@@ -504,7 +488,6 @@ class String:
         except ValueError:
             return group
 
-    # TODO(@pekkaklarck): some paramters could be string, some bytes -> risk of incompatibilies
     # e.g. b.replace(b"old", "new") -> TypeError
     def replace_string(
         self,
@@ -536,14 +519,13 @@ class String:
         count = self._convert_to_integer(count, "count")
         return string.replace(search_for, replace_with, count)
 
-    # TODO(@pekkaklarck): some paramters could be string, some bytes -> risk of incompatibilies
     def replace_string_using_regexp(
         self,
         string: str,
         pattern: str,
         replace_with: str,
         count: int = -1,
-        flags: Flags = None,
+        flags: "str | None" = None,
     ) -> str:
         """Replaces ``pattern`` in the given ``string`` with ``replace_with``.
 
@@ -578,7 +560,6 @@ class String:
             flags=parse_re_flags(flags),
         )
 
-    # TODO(@pekkaklarck): some paramters could be string, some bytes -> risk of incompatibilies
     def remove_string(self, string: str, *removables: str) -> str:
         """Removes all ``removables`` from the given ``string``.
 
@@ -603,12 +584,11 @@ class String:
             string = self.replace_string(string, removable, "")
         return string
 
-    # TODO(@pekkaklarck): some paramters could be string, some bytes -> risk of incompatibilies
     def remove_string_using_regexp(
         self,
         string: str,
         *patterns: object,
-        flags: Flags = None,
+        flags: "str | None" = None,
     ) -> str:
         """Removes ``patterns`` from the given ``string``.
 
@@ -630,13 +610,12 @@ class String:
             string = self.replace_string_using_regexp(string, pattern, "", flags=flags)
         return string
 
-    # TODO(@pekkaklarck): some paramters could be string, some bytes -> risk of incompatibilies
     def split_string(
         self,
         string: str,
         separator: "str | None" = None,
         max_split: int = -1,
-    ) -> list[str]:
+    ) -> "list[str]":
         """Splits the ``string`` using ``separator`` as a delimiter string.
 
         If a ``separator`` is not given, any whitespace string is a
@@ -661,13 +640,12 @@ class String:
         max_split = self._convert_to_integer(max_split, "max_split")
         return string.split(separator, max_split)
 
-    # TODO(@pekkaklarck): some paramters could be string, some bytes -> risk of incompatibilies
     def split_string_from_right(
         self,
         string: str,
         separator: "str | None" = None,
         max_split: int = -1,
-    ) -> list[str]:
+    ) -> "list[str]":
         """Splits the ``string`` using ``separator`` starting from right.
 
         Same as `Split String`, but splitting is started from right. This has
@@ -682,15 +660,7 @@ class String:
         max_split = self._convert_to_integer(max_split, "max_split")
         return string.rsplit(separator, max_split)
 
-    # TODO(@pekkaklarck):
-    # def split_string_to_characters(self, string: "str | bytes") -> list["str | bytes"]:
-    # does not work:  Split String To Characters    ${{b'ab 12'}} -> [97, 98, 32, 49, 50]   int represtantion in robot hmmm
-    #
-    # failing test
-    #   @{chars} =    Split String To Characters    ${{b'ab 12'}}
-    #   Result Should Contain Items In Given Order    ${chars}    ${{b'a'}}    ${{b'b'}}    ${SPACE}    ${{b'1'}}    ${{b'2'}}
-    # maybe the test ist just not correct
-    def split_string_to_characters(self, string: str) -> list[str]:
+    def split_string_to_characters(self, string: str) -> "list[str]":
         """Splits the given ``string`` to characters.
 
         Example:
@@ -699,7 +669,6 @@ class String:
 
         return list(string)
 
-    # TODO(@pekkaklarck): some paramters could be string, some bytes -> risk of incompatibilies
     def fetch_from_left(self, string: str, marker: str) -> str:
         """Returns contents of the ``string`` before the first occurrence of ``marker``.
 
@@ -710,7 +679,6 @@ class String:
         """
         return string.split(marker)[0]
 
-    # TODO(@pekkaklarck): some paramters could be string, some bytes -> risk of incompatibilies
     def fetch_from_right(self, string: str, marker: str) -> str:
         """Returns contents of the ``string`` after the last occurrence of ``marker``.
 
@@ -724,7 +692,7 @@ class String:
     def generate_random_string(
         self,
         length: "int | str" = 8,
-        chars: Markers = "[LETTERS][NUMBERS]",
+        chars: str = "[LETTERS][NUMBERS]",
     ) -> str:
         """Generates a string with a desired ``length`` from the given ``chars``.
 
@@ -773,8 +741,8 @@ class String:
     def get_substring(
         self,
         string: "str | bytes",
-        start: "int | str | None",
-        end: "int | str | None" = None,
+        start: "int | Literal[''] | None",
+        end: "int | Literal[''] | None" = None,
     ) -> "str | bytes":
         """Returns a substring from ``start`` index to ``end`` index.
 
@@ -793,7 +761,6 @@ class String:
         end = self._convert_to_index(end, "end")
         return string[start:end]
 
-    # TODO(@pekkaklarck): some paramters could be string, some bytes -> risk of incompatibilies
     def strip_string(
         self,
         string: str,
@@ -893,7 +860,6 @@ class String:
         if not string.isupper():
             raise AssertionError(msg or f"{string!r} is not upper case.")
 
-    # TODO(@pekkaklarck): some paramters could be string, some bytes -> risk of incompatibilies
     def should_be_title_case(
         self,
         string: "str | bytes",
