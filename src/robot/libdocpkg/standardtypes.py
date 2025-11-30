@@ -73,7 +73,15 @@ Spaces and underscores can be used as visual separators for digit grouping purpo
 
 Examples: ``3.14``, ``10 000.000 01``
 """,
-    str: "All arguments are converted to Unicode strings.",
+    str: """\
+All arguments are converted to Unicode strings.
+
+Most values are converted simply by using ``str(value)``. An exception is that
+bytes are mapped directly to Unicode code points with same ordinals. This means
+that, for example, ``b"hyv\\xe4"`` becomes ``"hyvä"``.
+
+Converting bytes specially is new Robot Framework 7.4.
+""",
     bytes: """\
 Strings are converted to bytes so that each Unicode code point
 below 256 is directly mapped to a matching byte. Higher code

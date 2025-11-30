@@ -289,6 +289,8 @@ class StringConverter(TypeConverter):
     def _non_string_convert(self, value):
         if isinstance(value, Secret):
             raise ValueError
+        if isinstance(value, (bytes, bytearray)):
+            return value.decode('latin-1')
         try:
             return str(value)
         except Exception:

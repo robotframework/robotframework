@@ -59,7 +59,11 @@ String
     String               åäö                       'åäö'
     String               None                      'None'
     String               True                      'True'
-    String               []                        '[]'
+    String               ${{b'hyv\xe4'}}           'hyvä'
+    String               ${{bytearray([0, 1])}}    '\\x00\\x01'
+    String               ${42}                     '42'
+    String               ${None}                   'None'
+    String               ${LIST}                   "['foo', 'bar']"
 
 Bytes
     Bytes                foo                       b'foo'

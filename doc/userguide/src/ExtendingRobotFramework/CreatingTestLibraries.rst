@@ -1310,7 +1310,14 @@ Other types cause conversion failures.
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | str_         |               | string,    | Anything     | All arguments are converted to Unicode strings.                |                                      |
    |              |               | unicode    |              |                                                                |                                      |
-   |              |               |            |              | New in Robot Framework 4.0.                                    |                                      |
+   |              |               |            |              | Most values are converted simply by using `str(value)`.        |                                      |
+   |              |               |            |              | An exception is that bytes are mapped directly to Unicode      |                                      |
+   |              |               |            |              | code points with same ordinals. This means that, for example,  |                                      |
+   |              |               |            |              | `b"hyv\xe4"` becomes `"hyvä"`. Another exception is that       |                                      |
+   |              |               |            |              | Secret_ objects are explicitly rejected.                       |                                      |
+   |              |               |            |              |                                                                |                                      |
+   |              |               |            |              | New in Robot Framework 4.0. Converting bytes specially and     |                                      |
+   |              |               |            |              | rejecting `Secret` objects are new in Robot Framework 7.4.     |                                      |
    +--------------+---------------+------------+--------------+----------------------------------------------------------------+--------------------------------------+
    | bytes_       |               |            | str_,        | Strings are converted to bytes so that each Unicode code point | Strings:                             |
    |              |               |            | bytearray_   | below 256 is directly mapped to a matching byte. Higher code   |                                      |
