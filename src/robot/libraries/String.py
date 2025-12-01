@@ -18,7 +18,7 @@ import re
 from fnmatch import fnmatchcase
 from random import randint
 from string import ascii_lowercase, ascii_uppercase, digits
-from typing import Callable, Iterable, Literal
+from typing import Callable, Literal
 
 from robot.api import logger
 from robot.utils import FileReader, parse_re_flags, plural_or_not as s, type_name
@@ -94,7 +94,7 @@ class String:
     def convert_to_title_case(
         self,
         string: "str | bytes",
-        exclude: "Iterable[str] | str | None" = None,
+        exclude: "list[str] | str | None" = None,
     ) -> str:
         """Converts string to title case.
 
@@ -864,7 +864,7 @@ class String:
         self,
         string: "str | bytes",
         msg: "str | None" = None,
-        exclude: "Iterable[str] | str | None" = None,
+        exclude: "list[str] | str | None" = None,
     ):
         """Fails if given ``string`` is not title.
 
