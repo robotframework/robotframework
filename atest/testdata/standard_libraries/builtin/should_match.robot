@@ -21,6 +21,15 @@ Should Match case-insensitive
     Hello!    heLLo!    ignore_case=True
     Hillo?    h?ll*     ignore_case=yes
 
+ Should Match with bytes
+    [Documentation]    FAIL    'Hyvä!' does not match 'Paha!'
+    [Template]    Should Match
+    ${BYTES WITH NON ASCII}    ${BYTES WITH NON ASCII}
+    ${{b'Hyv\xe4!'}}           ${{b'H??\xe4!'}}
+    ${{b'\x00RF!'}}            \x00rf!            ignore_case=True
+    ${{b'\x00RF!'}}            ${{b'\x00rf!'}}    ignore_case=True
+    ${{b'Hyv\xe4!'}}           ${{b'Paha!'}}
+
 Should Not Match
     [Documentation]    FAIL    'Hello world' matches '?ello*'
     [Template]    Should Not Match
@@ -35,6 +44,15 @@ Should Not Match case-insensitive
     [Template]    Should Not Match
     Hello!    heLLo    ignore_case=True
     Hillo?    h?ll*    ignore_case=yes    msg=Fails
+
+ Should Not Match with bytes
+    [Documentation]    FAIL    'Hyvä?' matches 'H*?'
+    [Template]    Should Not Match
+    ${BYTES WITH NON ASCII}    ${BYTES WITHOUT NON ASCII}
+    ${{b'Hyv\xe4?'}}           ${{b'H??\xe4!'}}
+    ${{b'\x00RF?'}}            \x00rf!            ignore_case=True
+    ${{b'\x00RF?'}}            ${{b'\x00rf!'}}    ignore_case=True
+    ${{b'Hyv\xe4?'}}           ${{b'H*?'}}
 
 Should Match Regexp
     [Documentation]    FAIL    Something failed

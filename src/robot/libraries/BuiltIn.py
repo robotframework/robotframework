@@ -1512,8 +1512,8 @@ class _Verify(_BuiltInBase):
 
     def should_not_match(
         self,
-        string: str,
-        pattern: str,
+        string: "str | bytes",
+        pattern: "str | bytes",
         msg: "str | None" = None,
         values: bool = True,
         ignore_case: bool = False,
@@ -1530,16 +1530,20 @@ class _Verify(_BuiltInBase):
         overriding the default failure message with ``msg`` and ``values``
         arguments.
 
-        This keyword works only with strings, not with bytes.
+        Support for bytes is new in Robot Framework 7.4.
         """
         values = self._deprecate_no_values(values)
+        if isinstance(string, bytes):
+            string = string.decode("latin-1")
+        if isinstance(pattern, bytes):
+            pattern = pattern.decode("latin-1")
         if self._matches(string, pattern, caseless=ignore_case):
             raise AssertionError(self._get_msg(string, pattern, msg, values, "matches"))
 
     def should_match(
         self,
-        string: str,
-        pattern: str,
+        string: "str | bytes",
+        pattern: "str | bytes",
         msg: "str | None" = None,
         values: bool = True,
         ignore_case: bool = False,
@@ -1556,9 +1560,13 @@ class _Verify(_BuiltInBase):
         overriding the default failure message with ``msg`` and ``values``
         arguments.
 
-        This keyword works only with strings, not with bytes.
+        Support for bytes is new in Robot Framework 7.4.
         """
         values = self._deprecate_no_values(values)
+        if isinstance(string, bytes):
+            string = string.decode("latin-1")
+        if isinstance(pattern, bytes):
+            pattern = pattern.decode("latin-1")
         if not self._matches(string, pattern, caseless=ignore_case):
             raise AssertionError(
                 self._get_msg(string, pattern, msg, values, "does not match")
