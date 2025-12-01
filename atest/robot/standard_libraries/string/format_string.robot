@@ -45,6 +45,9 @@ Item access
 Format Spec
     Check Test Case    ${TESTNAME}
 
+Format bytes
+    Check Test Case    ${TESTNAME}
+
 *** Keywords ***
 Check Reading Template Message
     [Arguments]    ${msg}    ${file}

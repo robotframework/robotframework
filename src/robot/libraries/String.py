@@ -73,6 +73,8 @@ class String:
         | ${str2} = | Convert To Lower Case | 1A2c3D |
         | Should Be Equal | ${str1} | abc |
         | Should Be Equal | ${str2} | 1a2c3d |
+
+        If this keyword is used with bytes, only ASCII characters are lower cased.
         """
         return string.lower()
 
@@ -88,13 +90,15 @@ class String:
         | ${str2} = | Convert To Upper Case | 1a2C3d |
         | Should Be Equal | ${str1} | ABC |
         | Should Be Equal | ${str2} | 1A2C3D |
+
+        If this keyword is used with bytes, only ASCII characters are upper cased.
         """
         return string.upper()
 
     def convert_to_title_case(
         self,
         string: "str | bytes",
-        exclude: "list[str] | str | None" = None,
+        exclude: "list[str | bytes] | str | bytes | None" = None,
     ) -> str:
         """Converts string to title case.
 
@@ -132,25 +136,38 @@ class String:
         strings contain upper case letters or special characters like
         apostrophes. It would, for example, convert "it's an OK iPhone"
         to "It'S An Ok Iphone".
+
+        If this keyword is used with bytes, only ASCII characters are title cased.
+        Bytes support is new in Robot Framework 7.4.
         """
-        if not isinstance(string, str):
-            raise TypeError("This keyword works only with strings.")
         if isinstance(exclude, str):
             exclude = [e.strip() for e in exclude.split(",")]
+        elif isinstance(exclude, bytes):
+            exclude = [e.strip() for e in exclude.split(b",")]
         elif not exclude:
             exclude = []
+        if isinstance(string, bytes):
+            exclude = [
+                e.encode("latin-1") if isinstance(e, str) else e for e in exclude
+            ]
+            split, join = rb"(\s+)", b""
+        else:
+            split, join = r"(\s+)", ""
         exclude = [re.compile(e) for e in exclude]
 
         def title(word):
             if any(e.fullmatch(word) for e in exclude) or not word.islower():
                 return word
-            for index, char in enumerate(word):
+            for i, char in enumerate(word):
+                if isinstance(char, int):  # iterating bytes
+                    char = bytes([char])
                 if char.isalpha():
-                    return word[:index] + word[index].title() + word[index + 1 :]
+                    j = i + 1
+                    return word[:i] + word[i:j].title() + word[j:]
             return word
 
-        tokens = re.split(r"(\s+)", string, flags=re.UNICODE)
-        return "".join(title(t) if i % 2 == 0 else t for i, t in enumerate(tokens))
+        tokens = re.split(split, string)
+        return join.join(title(t) if i % 2 == 0 else t for i, t in enumerate(tokens))
 
     def encode_string_to_bytes(
         self,
@@ -209,7 +226,7 @@ class String:
 
     def format_string(
         self,
-        template: str,
+        template: "str | bytes",
         /,
         *positional: object,
         **named: object,
@@ -235,8 +252,10 @@ class String:
         | ${yy} = | Format String | {0:{width}{base}}              | ${42}        | base=X | width=10 |
         | ${zz} = | Format String | ${CURDIR}/template.txt         | positional   | named=value |
 
-        Prior to Robot Framework 7.1, possible equal signs in the template string must
-        be escaped with a backslash like ``x\\={}`.
+        Prior to Robot Framework 7.1, possible equal signs in the template string
+        needed to be escaped with a backslash like ``x\\={}`.
+
+        Support for bytes is new in Robot Framework 7.4.
         """
         if os.path.isabs(template) and os.path.isfile(template):
             template = template.replace("/", os.sep)
@@ -246,7 +265,23 @@ class String:
             )
             with FileReader(template) as reader:
                 template = reader.read()
-        return template.format(*positional, **named)
+        if isinstance(template, bytes):
+            template = template.decode("latin-1")
+            positional = [
+                p.decode("latin-1") if isinstance(p, (bytes, bytearray)) else p
+                for p in positional
+            ]
+            named = {
+                n: v.decode("latin-1") if isinstance(v, (bytes, bytearray)) else v
+                for n, v in named.items()
+            }
+            return_bytes = True
+        else:
+            return_bytes = False
+        result = template.format(*positional, **named)
+        if return_bytes:
+            result = result.encode("latin-1")
+        return result
 
     def get_line_count(self, string: "str | bytes") -> int:
         """Returns and logs the number of lines in the given string."""
@@ -256,7 +291,7 @@ class String:
 
     def split_to_lines(
         self,
-        string: str,
+        string: "str | bytes",
         start: "int | Literal[''] | None" = 0,
         end: "int | Literal[''] | None" = None,
     ) -> "list[str]":
@@ -286,7 +321,7 @@ class String:
         logger.info(f"{len(lines)} line{s(lines)} returned.")
         return lines
 
-    def get_line(self, string: str, line_number: int) -> str:
+    def get_line(self, string: "str | bytes", line_number: int) -> "str | bytes":
         """Returns the specified line from the given ``string``.
 
         Line numbering starts from 0, and it is possible to use
@@ -301,13 +336,14 @@ class String:
         """
         return string.splitlines()[line_number]
 
+    # FIXME: Keywords below this aren't verified to work with bytes.
     def get_lines_containing_string(
         self,
-        string: str,
-        pattern: str,
+        string: "str | bytes",
+        pattern: "str | bytes",
         case_insensitive: "bool | None" = None,
         ignore_case: bool = False,
-    ) -> str:
+    ) -> "str | bytes":
         """Returns lines of the given ``string`` that contain the ``pattern``.
 
         The ``pattern`` is always considered to be a normal string, not a glob

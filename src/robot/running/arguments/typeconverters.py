@@ -290,7 +290,7 @@ class StringConverter(TypeConverter):
         if isinstance(value, Secret):
             raise ValueError
         if isinstance(value, (bytes, bytearray)):
-            return value.decode('latin-1')
+            return value.decode("latin-1")
         try:
             return str(value)
         except Exception:

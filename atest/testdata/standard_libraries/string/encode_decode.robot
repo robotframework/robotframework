@@ -27,6 +27,14 @@ Encode Non-ASCII String To Bytes Using Incompatible Encoding And Error Handler
     ${bytes} =    Encode String To Bytes    Hyvä    ASCII    replace
     Should Be Equal    ${bytes}    Hyv?    type=bytes
 
+Encode bytes
+    ${bytes} =    Encode String To Bytes    ${Latin1}    latin-1
+    Should Be Equal    ${bytes}    ${Latin1}
+    ${bytes} =    Encode String To Bytes    ${UTF8}    latin-1
+    Should Be Equal    ${bytes}    ${UTF8}
+    ${bytes} =    Encode String To Bytes    ${UTF8}    UTF-8
+    Should Be Equal    ${bytes}    ${{b"Hyv\xc3\x83\xc2\xa4"}}
+
 Decode ASCII Bytes To String
     ${string} =    Decode Bytes To String    ${ASCII}    UTF-8
     Should Be Equal    ${string}    Hello, world!
@@ -47,6 +55,8 @@ Decode Non-ASCII Bytes To String Using Incompatible Encoding And Error Handler
     ${string} =    Decode Bytes To String    ${UTF8}    ASCII    replace
     Should Be Equal    ${string}    Hyv\ufffd\ufffd
 
-Decoding String Does Not Fail
+Decode string
     ${string} =    Decode Bytes To String    hello    ASCII
     Should Be Equal    ${string}    hello
+    ${string} =    Decode Bytes To String    hyvä    latin-1
+    Should Be Equal    ${string}    hyvä

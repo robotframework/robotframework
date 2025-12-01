@@ -21,6 +21,8 @@ Get Line
     Should be equal    ${result}    ${FIRST LINE}
     ${result} =    Get Line    ${TEXT IN COLUMNS}    1
     Should be equal    ${result}    ${SECOND LINE}
+    ${result} =    Get Line    ${{b"L1\nL2\nL3\nL4\nL5"}}    -1
+    Should Be Equal    ${result}    L5    type=bytes
 
 Get Line Count
     ${result} =    Get Line Count    ${EMPTY}
@@ -29,6 +31,8 @@ Get Line Count
     Should Be Equal    ${result}    1    type=int
     ${result} =    Get Line Count    ${TEXT IN COLUMNS}
     Should Be Equal    ${result}    2    type=int
+    ${result} =    Get Line Count    ${{b"1\n2\n3\n4\n5"}}
+    Should Be Equal    ${result}    5    type=int
 
 Split To Lines
     @{result} =    Split To Lines    ${TEXT IN COLUMNS}
@@ -40,12 +44,9 @@ Split To Lines
     Should be equal    ${result}[0]    Just one line!
     @{result} =    Split To Lines    ${EMPTY}
     Length Should Be    ${result}    0
-
-    # does not work
-    # @{result} =    Split To Lines    ${BYTES TEXT IN COLUMNS}
-    # Length Should Be    ${result}    2
-    # Should be equal    ${result}[0]    ${BYTES FIRST LINE}
-    # Should be equal    ${result}[1]    ${BYTES SECOND LINE}
+    @{result} =    Split To Lines    ${{b"1\n2\n3\n4\n5"}}
+    Length Should Be    ${result}    5
+    Should be equal    ${result}    ["1", "2", "3", "4", "5"]    type=list[bytes]
 
 Split To Lines With Start Only
     @{result} =    Split To Lines    ${TEXT IN COLUMNS}    1
