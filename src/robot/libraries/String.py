@@ -741,7 +741,7 @@ class String:
     def get_substring(
         self,
         string: "str | bytes",
-        start: "int | Literal[''] | None",
+        start: "int | Literal[''] | None" = 0,
         end: "int | Literal[''] | None" = None,
     ) -> "str | bytes":
         """Returns a substring from ``start`` index to ``end`` index.
@@ -899,6 +899,10 @@ class String:
 
     def _convert_to_index(self, value: "int | str | None", name: str) -> "int | None":
         if value == "":
+            # Deprecated in RF 7.4. Can be removed in RF 8 or latest in RF 9.
+            logger.warn(
+                "Using an empty string as an index is deprecated. Use '0' instead."
+            )
             return 0
         if value is None:
             return None

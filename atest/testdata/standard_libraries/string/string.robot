@@ -57,6 +57,11 @@ Split To Lines With Start And End
     Should be equal    ${result}[0]    ${FIRST LINE}
 
 Split To Lines With End Only
+    @{result} =    Split To Lines    ${TEXT IN COLUMNS}    end=1
+    Length Should Be    ${result}    1
+    Should be equal    ${result}[0]    ${FIRST LINE}
+
+Split To Lines with empty string as start index
     @{result} =    Split To Lines    ${TEXT IN COLUMNS}    ${EMPTY}    1
     Length Should Be    ${result}    1
     Should be equal    ${result}[0]    ${FIRST LINE}
@@ -92,12 +97,13 @@ Get Substring With Start Only
     ${result} =    Get Substring    ${{b'Hello Robot'}}    6
     Should be equal    ${result}    ${{b'Robot'}}
 
-Get Substring With Empty Start
-    ${result} =    Get Substring    Hello Robot    ${EMPTY}    5
+Get Substring With End Only
+    ${result} =    Get Substring    Hello Robot    end=5
     Should be equal    ${result}    Hello
 
-    ${result} =    Get Substring    ${{b'Hello Robot'}}    ${EMPTY}    5
-    Should be equal    ${result}    ${{b'Hello'}}
+Get Substring with empty string as start index
+    ${result} =    Get Substring    Hello Robot    ${EMPTY}    5
+    Should be equal    ${result}    Hello
 
 Get Substring With Invalid Start
     [Documentation]    FAIL ValueError: Argument 'start' got value 'invalid' that cannot be converted to integer, '' or None.

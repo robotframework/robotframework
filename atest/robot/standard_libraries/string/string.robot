@@ -30,6 +30,10 @@ Split To Lines With Start And End
 Split To Lines With End Only
     Check Test Case    ${TESTNAME}
 
+Split To Lines with empty string as start index
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc[0, 0]}     Using an empty string as an index is deprecated. Use '0' instead.    WARN
+
 Split To Lines With Negative Values
     Check Test Case    ${TESTNAME}
 
@@ -47,6 +51,13 @@ Get Substring With Negative Values
 
 Get Substring With Start Only
     Check Test Case    ${TESTNAME}
+
+Get Substring with end only
+    Check Test Case    ${TESTNAME}
+
+Get Substring with empty string as start index
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc[0, 0]}     Using an empty string as an index is deprecated. Use '0' instead.    WARN
 
 Get Substring With Invalid Start
     Check Test Case    ${TESTNAME}
