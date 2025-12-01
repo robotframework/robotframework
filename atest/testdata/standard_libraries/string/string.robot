@@ -2,10 +2,10 @@
 Library           String
 
 *** Variables ***
-${NSN}            nokia_siemens_networks
+${NSN}                nokia_siemens_networks
 ${TEXT IN COLUMNS}    robot\tframework\nis\tgood\tfor\ttesting
-${FIRST LINE}     robot\tframework
-${SECOND LINE}    is\tgood\tfor\ttesting
+${FIRST LINE}         robot\tframework
+${SECOND LINE}        is\tgood\tfor\ttesting
 
 *** Test Cases ***
 Fetch From Left
@@ -24,11 +24,11 @@ Get Line
 
 Get Line Count
     ${result} =    Get Line Count    ${EMPTY}
-    Should be equal as integers    ${result}    ${0}
+    Should Be Equal    ${result}    0    type=int
     ${result} =    Get Line Count    ${SPACE}
-    Should be equal as integers    ${result}    ${1}
+    Should Be Equal    ${result}    1    type=int
     ${result} =    Get Line Count    ${TEXT IN COLUMNS}
-    Should be equal as integers    ${result}    2
+    Should Be Equal    ${result}    2    type=int
 
 Split To Lines
     @{result} =    Split To Lines    ${TEXT IN COLUMNS}
