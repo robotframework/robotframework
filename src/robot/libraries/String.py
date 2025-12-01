@@ -280,8 +280,8 @@ class String:
 
         Use `Get Line` if you only need to get a single line.
         """
-        start = self._convert_to_index(start, "start")
-        end = self._convert_to_index(end, "end")
+        start = self._convert_to_index(start)
+        end = self._convert_to_index(end)
         lines = string.splitlines()[start:end]
         logger.info(f"{len(lines)} line{s(lines)} returned.")
         return lines
@@ -299,7 +299,6 @@ class String:
 
         Use `Split To Lines` if all lines are needed.
         """
-        line_number = self._convert_to_integer(line_number, "line_number")
         return string.splitlines()[line_number]
 
     def get_lines_containing_string(
@@ -516,7 +515,6 @@ class String:
         | ${str} =        | Replace String | Hello, world!  | l     | ${EMPTY} | count=1 |
         | Should Be Equal | ${str}         | Helo, world!   |       |          |
         """
-        count = self._convert_to_integer(count, "count")
         return string.replace(search_for, replace_with, count)
 
     def replace_string_using_regexp(
@@ -548,7 +546,6 @@ class String:
 
         The ``flags`` argument is new in Robot Framework 6.0.
         """
-        count = self._convert_to_integer(count, "count")
         # re.sub handles 0 and negative counts differently than string.replace
         if count == 0:
             return string
@@ -637,7 +634,6 @@ class String:
         """
         if separator == "":
             separator = None
-        max_split = self._convert_to_integer(max_split, "max_split")
         return string.split(separator, max_split)
 
     def split_string_from_right(
@@ -657,7 +653,6 @@ class String:
         """
         if separator == "":
             separator = None
-        max_split = self._convert_to_integer(max_split, "max_split")
         return string.rsplit(separator, max_split)
 
     def split_string_to_characters(self, string: str) -> "list[str]":
@@ -757,8 +752,8 @@ class String:
         | ${first two} =    | Get Substring | ${string} | 0  | 1  |
         | ${last two} =     | Get Substring | ${string} | -2 |    |
         """
-        start = self._convert_to_index(start, "start")
-        end = self._convert_to_index(end, "end")
+        start = self._convert_to_index(start)
+        end = self._convert_to_index(end)
         return string[start:end]
 
     def strip_string(
@@ -897,16 +892,14 @@ class String:
         if string != self.convert_to_title_case(string, exclude):
             raise AssertionError(msg or f"{string!r} is not title case.")
 
-    def _convert_to_index(self, value: "int | str | None", name: str) -> "int | None":
+    def _convert_to_index(self, value: "int | Literal[''] | None") -> "int | None":
         if value == "":
             # Deprecated in RF 7.4. Can be removed in RF 8 or latest in RF 9.
             logger.warn(
                 "Using an empty string as an index is deprecated. Use '0' instead."
             )
             return 0
-        if value is None:
-            return None
-        return self._convert_to_integer(value, name)
+        return value
 
     def _convert_to_integer(self, value: "int | str", name: str) -> int:
         try:
