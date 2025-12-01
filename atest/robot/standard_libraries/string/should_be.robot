@@ -9,9 +9,6 @@ Should Be String Positive
 Should Be String Negative
     Check Test Case    ${TESTNAME}
 
-Bytes are not strings
-    Check Test Case    ${TESTNAME}
-
 Should Not Be String Positive
     Check Test Case    ${TESTNAME}
 

@@ -24,6 +24,8 @@ from robot.api import logger
 from robot.utils import FileReader, parse_re_flags, plural_or_not as s, type_name
 from robot.version import get_version
 
+from .normalizer import Normalizer
+
 MARKERS = {
     "[LOWER]": ascii_lowercase,
     "[UPPER]": ascii_uppercase,
@@ -41,11 +43,12 @@ class String:
     strings (e.g. `Replace String Using Regexp`, `Split To Lines`) and
     verifying their contents (e.g. `Should Be String`).
 
-    Some keywords also work with bytes in addition to strings.
+    In addition to strings, most of the keywords work also with bytes.
+    Bytes support was heavily enhanced in Robot Framework 7.4.
 
-    Following keywords from ``BuiltIn`` library can also be used with strings:
+    Following keywords from ``BuiltIn`` library can also be used with strings
+    and bytes:
 
-    - `Catenate`
     - `Get Length`
     - `Length Should Be`
     - `Should (Not) Be Empty`
@@ -98,8 +101,8 @@ class String:
     def convert_to_title_case(
         self,
         string: "str | bytes",
-        exclude: "list[str | bytes] | str | bytes | None" = None,
-    ) -> str:
+        exclude: "str | bytes | list[str | bytes] | None" = None,
+    ) -> "str | bytes":
         """Converts string to title case.
 
         Uses the following algorithm:
@@ -230,7 +233,7 @@ class String:
         /,
         *positional: object,
         **named: object,
-    ) -> str:
+    ) -> "str | bytes":
         """Formats a ``template`` using the given ``positional`` and ``named`` arguments.
 
         The template can be either be a string or an absolute path to
@@ -266,22 +269,24 @@ class String:
             with FileReader(template) as reader:
                 template = reader.read()
         if isinstance(template, bytes):
-            template = template.decode("latin-1")
-            positional = [
-                p.decode("latin-1") if isinstance(p, (bytes, bytearray)) else p
-                for p in positional
-            ]
-            named = {
-                n: v.decode("latin-1") if isinstance(v, (bytes, bytearray)) else v
-                for n, v in named.items()
-            }
+            template = self._bytes_to_string(template)
+            positional = [self._bytes_to_string(p) for p in positional]
+            named = {n: self._bytes_to_string(named[n]) for n in named}
             return_bytes = True
         else:
             return_bytes = False
         result = template.format(*positional, **named)
         if return_bytes:
-            result = result.encode("latin-1")
+            return self._ensure_bytes(result)
         return result
+
+    def _bytes_to_string(self, value: object) -> object:
+        return value.decode("latin-1") if isinstance(value, bytes) else value
+
+    def _ensure_bytes(self, value: "str | bytes | None") -> "bytes | None":
+        if isinstance(value, bytes) or value is None:
+            return value
+        return value.encode("latin-1")
 
     def get_line_count(self, string: "str | bytes") -> int:
         """Returns and logs the number of lines in the given string."""
@@ -294,7 +299,7 @@ class String:
         string: "str | bytes",
         start: "int | Literal[''] | None" = 0,
         end: "int | Literal[''] | None" = None,
-    ) -> "list[str]":
+    ) -> "list[str] | list[bytes]":
         """Splits the given string to lines.
 
         It is possible to get only a selection of lines from ``start``
@@ -336,7 +341,6 @@ class String:
         """
         return string.splitlines()[line_number]
 
-    # FIXME: Keywords below this aren't verified to work with bytes.
     def get_lines_containing_string(
         self,
         string: "str | bytes",
@@ -365,23 +369,27 @@ class String:
 
         See `Get Lines Matching Pattern` and `Get Lines Matching Regexp`
         if you need more complex pattern matching.
+
+        If the first argument is bytes, the second argument is automatically
+        converted to bytes as well.
+
+        Bytes support is new in Robot Framework 7.4.
         """
+        if isinstance(string, bytes):
+            pattern = self._ensure_bytes(pattern)
         if case_insensitive is not None:
             ignore_case = case_insensitive
-        if ignore_case:
-            pattern = pattern.casefold()
-            contains = lambda line: pattern in line.casefold()
-        else:
-            contains = lambda line: pattern in line
-        return self._get_matching_lines(string, contains)
+        normalize = Normalizer(ignore_case=ignore_case).normalize
+        pattern = normalize(pattern)
+        return self._get_matching_lines(string, lambda line: pattern in normalize(line))
 
     def get_lines_matching_pattern(
         self,
-        string: str,
-        pattern: str,
+        string: "str | bytes",
+        pattern: "str | bytes",
         case_insensitive: "bool | None" = None,
         ignore_case: bool = False,
-    ) -> str:
+    ) -> "str | bytes":
         """Returns lines of the given ``string`` that match the ``pattern``.
 
         The ``pattern`` is a _glob pattern_ where:
@@ -408,23 +416,30 @@ class String:
         See `Get Lines Matching Regexp` if you need more complex
         patterns and `Get Lines Containing String` if searching
         literal strings is enough.
+
+        If the first argument is bytes, the second argument is automatically
+        converted to bytes as well.
+
+        Bytes support is new in Robot Framework 7.4.
         """
+        if isinstance(string, bytes):
+            pattern = self._ensure_bytes(pattern)
         if case_insensitive is not None:
             ignore_case = case_insensitive
-        if ignore_case:
-            pattern = pattern.casefold()
-            matches = lambda line: fnmatchcase(line.casefold(), pattern)
-        else:
-            matches = lambda line: fnmatchcase(line, pattern)
-        return self._get_matching_lines(string, matches)
+        normalize = Normalizer(ignore_case=ignore_case).normalize
+        pattern = normalize(pattern)
+        return self._get_matching_lines(
+            string,
+            lambda line: fnmatchcase(normalize(line), pattern),
+        )
 
     def get_lines_matching_regexp(
         self,
-        string: str,
-        pattern,
+        string: "str | bytes",
+        pattern: "str | bytes",
         partial_match: bool = False,
         flags: "str | None" = None,
-    ) -> str:
+    ) -> "str | bytes":
         """Returns lines of the given ``string`` that match the regexp ``pattern``.
 
         See `BuiltIn.Should Match Regexp` for more information about
@@ -457,28 +472,33 @@ class String:
         do not need the full regular expression powers (and complexity).
 
         The ``flags`` argument is new in Robot Framework 6.0.
+
+        If the first argument is bytes, the second argument is automatically
+        converted to bytes as well. This is new in Robot Framework 7.4.
         """
+        if isinstance(string, bytes):
+            pattern = self._ensure_bytes(pattern)
         regexp = re.compile(pattern, flags=parse_re_flags(flags))
         match = regexp.search if partial_match else regexp.fullmatch
         return self._get_matching_lines(string, match)
 
     def _get_matching_lines(
         self,
-        string: str,
-        matches: Callable[[str], "bool | re.Match[str] | None"],
-    ) -> str:
+        string: "str | bytes",
+        matches: "Callable[[str | bytes], bool | re.Match[str] | None]",
+    ) -> "str | bytes":
         lines = string.splitlines()
         matching = [line for line in lines if matches(line)]
         logger.info(f"{len(matching)} out of {len(lines)} lines matched.")
-        return "\n".join(matching)
+        return ("\n" if isinstance(string, str) else b"\n").join(matching)
 
     def get_regexp_matches(
         self,
-        string: str,
-        pattern: str,
-        *groups: object,
+        string: "str | bytes",
+        pattern: "str | bytes",
+        *groups: "int | str",
         flags: "str | None" = None,
-    ) -> "list[str | tuple]":
+    ) -> "list[str] | list[tuple[str, ...]] | list[bytes] | list[tuple[bytes, ...]]":
         """Returns a list of all non-overlapping matches in the given string.
 
         ``string`` is the string to find matches from and ``pattern`` is the
@@ -511,8 +531,13 @@ class String:
         | ${named group} = ['he', 'ri']
         | ${two groups} = [('h', 'e'), ('r', 'i')]
 
+        If the first argument is bytes, the second argument is automatically
+        converted to bytes as well. This is new in Robot Framework 7.4.
+
         The ``flags`` argument is new in Robot Framework 6.0.
         """
+        if isinstance(string, bytes):
+            pattern = self._ensure_bytes(pattern)
         regexp = re.compile(pattern, flags=parse_re_flags(flags))
         groups = [self._parse_group(g) for g in groups]
         return [m.group(*groups) for m in regexp.finditer(string)]
@@ -523,14 +548,13 @@ class String:
         except ValueError:
             return group
 
-    # e.g. b.replace(b"old", "new") -> TypeError
     def replace_string(
         self,
-        string: str,
-        search_for: str,
-        replace_with: str,
+        string: "str | bytes",
+        search_for: "str | bytes",
+        replace_with: "str | bytes",
         count: int = -1,
-    ) -> str:
+    ) -> "str | bytes":
         """Replaces ``search_for`` in the given ``string`` with ``replace_with``.
 
         ``search_for`` is used as a literal string. See `Replace String
@@ -550,17 +574,23 @@ class String:
         | Should Be Equal | ${str}         | Hello, tellus! |       |          |
         | ${str} =        | Replace String | Hello, world!  | l     | ${EMPTY} | count=1 |
         | Should Be Equal | ${str}         | Helo, world!   |       |          |
+
+        If the first argument is bytes, the following two arguments are automatically
+        converted to bytes as well. This is new in Robot Framework 7.4.
         """
+        if isinstance(string, bytes):
+            search_for = self._ensure_bytes(search_for)
+            replace_with = self._ensure_bytes(replace_with)
         return string.replace(search_for, replace_with, count)
 
     def replace_string_using_regexp(
         self,
-        string: str,
-        pattern: str,
-        replace_with: str,
+        string: "str | bytes",
+        pattern: "str | bytes",
+        replace_with: "str | bytes",
         count: int = -1,
         flags: "str | None" = None,
-    ) -> str:
+    ) -> "str | bytes":
         """Replaces ``pattern`` in the given ``string`` with ``replace_with``.
 
         This keyword is otherwise identical to `Replace String`, but
@@ -580,11 +610,17 @@ class String:
         | ${str} = | Replace String Using Regexp | ${str} | 20\\\\d\\\\d-\\\\d\\\\d-\\\\d\\\\d | <DATE> |
         | ${str} = | Replace String Using Regexp | ${str} | (Hello|Hi) | ${EMPTY} | count=1 |
 
+        If the first argument is bytes, the following two arguments are automatically
+        converted to bytes as well. This is new in Robot Framework 7.4.
+
         The ``flags`` argument is new in Robot Framework 6.0.
         """
         # re.sub handles 0 and negative counts differently than string.replace
         if count == 0:
             return string
+        if isinstance(string, bytes):
+            pattern = self._ensure_bytes(pattern)
+            replace_with = self._ensure_bytes(replace_with)
         return re.sub(
             pattern,
             replace_with,
@@ -593,7 +629,11 @@ class String:
             flags=parse_re_flags(flags),
         )
 
-    def remove_string(self, string: str, *removables: str) -> str:
+    def remove_string(
+        self,
+        string: "str | bytes",
+        *removables: "str | bytes",
+    ) -> "str | bytes":
         """Removes all ``removables`` from the given ``string``.
 
         ``removables`` are used as literal strings. Each removable will be
@@ -612,6 +652,11 @@ class String:
         | Should Be Equal | ${str}        | Robot Frame     |
         | ${str} =        | Remove String | Robot Framework | o | bt |
         | Should Be Equal | ${str}        | R Framewrk      |
+
+        If the first argument is bytes, the second argument is automatically
+        converted to bytes as well.
+
+        Bytes support is new in Robot Framework 7.4.
         """
         for removable in removables:
             string = self.replace_string(string, removable, "")
@@ -619,10 +664,10 @@ class String:
 
     def remove_string_using_regexp(
         self,
-        string: str,
-        *patterns: object,
+        string: "str | bytes",
+        *patterns: "str | bytes",
         flags: "str | None" = None,
-    ) -> str:
+    ) -> "str | bytes":
         """Removes ``patterns`` from the given ``string``.
 
         This keyword is otherwise identical to `Remove String`, but
@@ -637,7 +682,11 @@ class String:
         ``flags=IGNORECASE | MULTILINE``) or embedded to the pattern (e.g.
         ``(?im)pattern``).
 
+        If the first argument is bytes, the second argument is automatically
+        converted to bytes as well.
+
         The ``flags`` argument is new in Robot Framework 6.0.
+        Bytes support is new in Robot Framework 7.4.
         """
         for pattern in patterns:
             string = self.replace_string_using_regexp(string, pattern, "", flags=flags)
@@ -645,10 +694,10 @@ class String:
 
     def split_string(
         self,
-        string: str,
-        separator: "str | None" = None,
+        string: "str | bytes",
+        separator: "str | bytes | None" = None,
         max_split: int = -1,
-    ) -> "list[str]":
+    ) -> "list[str] | list[bytes]":
         """Splits the ``string`` using ``separator`` as a delimiter string.
 
         If a ``separator`` is not given, any whitespace string is a
@@ -667,17 +716,23 @@ class String:
         See `Split String From Right` if you want to start splitting
         from right, and `Fetch From Left` and `Fetch From Right` if
         you only want to get first/last part of the string.
+
+        If the first argument is bytes, the second argument is automatically
+        converted to bytes as well. This is new in Robot Framework 7.4.
         """
         if separator == "":
+            # FIXME: Deprecate!
             separator = None
+        if isinstance(string, bytes) and separator is not None:
+            separator = self._ensure_bytes(separator)
         return string.split(separator, max_split)
 
     def split_string_from_right(
         self,
-        string: str,
-        separator: "str | None" = None,
+        string: "str | bytes",
+        separator: "str | bytes | None" = None,
         max_split: int = -1,
-    ) -> "list[str]":
+    ) -> "list[str] | list[bytes]":
         """Splits the ``string`` using ``separator`` starting from right.
 
         Same as `Split String`, but splitting is started from right. This has
@@ -686,38 +741,65 @@ class String:
         Examples:
         | ${first} | ${rest} = | Split String            | ${string} | - | 1 |
         | ${rest}  | ${last} = | Split String From Right | ${string} | - | 1 |
+
+        If the first argument is bytes, the second argument is automatically
+        converted to bytes as well. This is new in Robot Framework 7.4.
         """
         if separator == "":
+            # FIXME: Deprecate!
             separator = None
+        if isinstance(string, bytes) and separator is not None:
+            separator = self._ensure_bytes(separator)
         return string.rsplit(separator, max_split)
 
-    def split_string_to_characters(self, string: str) -> "list[str]":
+    def split_string_to_characters(
+        self, string: "str | bytes"
+    ) -> "list[str] | list[bytes]":
         """Splits the given ``string`` to characters.
 
         Example:
         | @{characters} = | Split String To Characters | ${string} |
-        """
 
+        Bytes support is new in Robot Framework 7.4.
+        """
+        if isinstance(string, bytes):
+            return [bytes([o]) for o in string]
         return list(string)
 
-    def fetch_from_left(self, string: str, marker: str) -> str:
+    def fetch_from_left(
+        self,
+        string: "str | bytes",
+        marker: "str | bytes",
+    ) -> "str | bytes":
         """Returns contents of the ``string`` before the first occurrence of ``marker``.
 
         If the ``marker`` is not found, whole string is returned.
 
-        See also `Fetch From Right`, `Split String` and `Split String
-        From Right`.
+        If the first argument is bytes, the second argument is automatically
+        converted to bytes as well. This is new in Robot Framework 7.4.
+
+        See also `Fetch From Right`, `Split String` and `Split String From Right`.
         """
+        if isinstance(string, bytes):
+            marker = self._ensure_bytes(marker)
         return string.split(marker)[0]
 
-    def fetch_from_right(self, string: str, marker: str) -> str:
+    def fetch_from_right(
+        self,
+        string: "str | bytes",
+        marker: "str | bytes",
+    ) -> "str | bytes":
         """Returns contents of the ``string`` after the last occurrence of ``marker``.
 
         If the ``marker`` is not found, whole string is returned.
 
-        See also `Fetch From Left`, `Split String` and `Split String
-        From Right`.
+        If the first argument is bytes, the second argument is automatically
+        converted to bytes as well. This is new in Robot Framework 7.4.
+
+        See also `Fetch From Left`, `Split String` and `Split String From Right`.
         """
+        if isinstance(string, bytes):
+            marker = self._ensure_bytes(marker)
         return string.split(marker)[-1]
 
     def generate_random_string(
@@ -755,6 +837,7 @@ class String:
         Support for markers ``[POLISH]`` and ``[ARABIC]`` is new in Robot Framework 7.4.
         """
         if length == "":
+            # FIXME: Deprecate. Also fix typing.
             length = 8
         if isinstance(length, str) and re.match(r"^\d+-\d+$", length):
             min_length, max_length = length.split("-")
@@ -794,10 +877,10 @@ class String:
 
     def strip_string(
         self,
-        string: str,
-        mode: "Literal['left', 'right', 'both', 'none'] | str" = "both",
-        characters: "str | None" = None,
-    ) -> str:
+        string: "str | bytes",
+        mode: Literal["left", "right", "both", "none"] = "both",
+        characters: "str | bytes | None" = None,
+    ) -> "str | bytes":
         """Remove leading and/or trailing whitespaces from the given string.
 
         ``mode`` is either ``left`` to remove leading characters, ``right`` to
@@ -817,16 +900,20 @@ class String:
         | Should Be Equal | ${stripped} | Hello${SPACE} | |
         | ${stripped}=  | Strip String | aabaHelloeee | characters=abe |
         | Should Be Equal | ${stripped} | Hello | |
+
+        If the first argument is bytes, the ``characters`` argument is automatically
+        converted to bytes as well.
+
+        Bytes support is new in Robot Framework 7.4.
         """
-        try:
-            method = {
-                "BOTH": string.strip,
-                "LEFT": string.lstrip,
-                "RIGHT": string.rstrip,
-                "NONE": lambda characters: string,
-            }[mode.upper()]
-        except KeyError:
-            raise ValueError(f"Invalid mode '{mode}'.")
+        if isinstance(string, bytes) and characters is not None:
+            characters = self._ensure_bytes(characters)
+        method = {
+            "both": string.strip,
+            "left": string.lstrip,
+            "right": string.rstrip,
+            "none": lambda chars: string,
+        }[mode.lower()]
         return method(characters)
 
     def should_be_string(self, item: object, msg: "str | None" = None):
@@ -895,7 +982,7 @@ class String:
         self,
         string: "str | bytes",
         msg: "str | None" = None,
-        exclude: "list[str] | str | None" = None,
+        exclude: "str | bytes | list[str | bytes] | None" = None,
     ):
         """Fails if given ``string`` is not title.
 

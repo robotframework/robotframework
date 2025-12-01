@@ -9,17 +9,17 @@ Remove String
 Remove String Non-ASCII characters
     Check Test Case    ${TESTNAME}
 
-Remove String Not Found
+Remove String Multiple Removables
     Check Test Case    ${TESTNAME}
 
-Remove String Multiple Removables
+Remove String with bytes
     Check Test Case    ${TESTNAME}
 
 Remove String Using Regexp
     Check Test Case    ${TESTNAME}
 
-Remove String Using Regexp Not Found
+Remove String Using Regexp Multiple Patterns
     Check Test Case    ${TESTNAME}
 
-Remove String Using Regexp Multiple Patterns
+Remove String Using Regexp with bytes
     Check Test Case    ${TESTNAME}

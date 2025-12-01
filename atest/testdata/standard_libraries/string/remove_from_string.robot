@@ -5,6 +5,8 @@ Library           String
 Remove String
     ${result} =    Remove String    RobotFramework    o
     Should Be Equal    ${result}    RbtFramewrk
+    ${result} =    Remove String    RobotFramework    no match
+    Should Be Equal    ${result}    RobotFramework
 
 Remove String Multiple Removables
     ${result} =    Remove String    RobotFramework    o    wrk
@@ -16,13 +18,9 @@ Remove String Non-ASCII characters
     ${result} =    Remove String    R\x00obotFramework    \x00
     Should Be Equal    ${result}    RobotFramework
 
-Remove String Not Found
-    ${result} =    Remove String    Robot    bit
-    Should Be Equal   ${result}    Robot
-
-Remove String Using Regexp Not Found
-    ${result} =    Remove String Using Regexp    Robot Framework    Fnot.*k
-    Should be equal    ${result}    Robot Framework
+Remove String with bytes
+    ${result} =    Remove String    ${{b"RobotFramework"}}    ${{b"o"}}    ${{b"ame"}}    rk
+    Should Be Equal    ${result}    RbtFrw    type=bytes
 
 Remove String Using Regexp
     ${result} =    Remove String Using Regexp    RobotFramework    F.*k
@@ -31,9 +29,15 @@ Remove String Using Regexp
     Should Be Equal    ${result}    Robot
     ${result} =    Remove String Using Regexp    RobotFrame\nwork    f.*k    flags=IGNORECASE|DOTALL
     Should Be Equal    ${result}    Robot
+    ${result} =    Remove String Using Regexp    RobotFramework    no match
+    Should be equal    ${result}    RobotFramework
 
 Remove String Using Regexp Multiple Patterns
     ${result} =    Remove String Using Regexp    RobotFramework    o.o    r.*w
     Should Be Equal    ${result}    RtFork
     ${result} =    Remove String Using Regexp    RobotFrame\nwork    o.o    f.*w    flags=IGNORECASE|DOTALL
     Should Be Equal    ${result}    Rtork
+
+Remove String Using Regexp with bytes
+    ${result} =    Remove String Using Regexp   ${{b"RobotFramework"}}    ${{b"o"}}    ${{b"a.."}}    [kr]{2}
+    Should Be Equal    ${result}    RbtFrw    type=bytes

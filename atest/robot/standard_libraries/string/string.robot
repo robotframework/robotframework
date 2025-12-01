@@ -6,13 +6,25 @@ Resource          atest_resource.robot
 Fetch From Left
     Check Test Case    ${TESTNAME}
 
+Fetch From Left with bytes
+    Check Test Case    ${TESTNAME}
+
 Fetch From Right
+    Check Test Case    ${TESTNAME}
+
+Fetch From Right with bytes
     Check Test Case    ${TESTNAME}
 
 Get Line
     Check Test Case    ${TESTNAME}
 
+Get Line with bytes
+    Check Test Case    ${TESTNAME}
+
 Get Line Count
+    Check Test Case    ${TESTNAME}
+
+Get Line Count with bytes
     Check Test Case    ${TESTNAME}
 
 Split To Lines
@@ -43,6 +55,10 @@ Split To Lines With Invalid Start
 Split To Lines With Invalid End
     Check Test Case    ${TESTNAME}
 
+Split To Lines with bytes
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc[0, 0]}    5 lines returned.
+
 Get Substring
     Check Test Case    ${TESTNAME}
 
@@ -65,6 +81,9 @@ Get Substring With Invalid Start
 Get Substring With Invalid End
     Check Test Case    ${TESTNAME}
 
+Get Substring with bytes
+    Check Test Case    ${TESTNAME}
+
 Strip String
     Check Test Case    ${TESTNAME}
 
@@ -84,4 +103,7 @@ Strip String With Given Characters
     Check Test Case    ${TESTNAME}
 
 Strip String With Given Characters none
+    Check Test Case    ${TESTNAME}
+
+Strip String with bytes
     Check Test Case    ${TESTNAME}

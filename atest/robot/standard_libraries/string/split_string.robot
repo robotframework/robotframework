@@ -33,6 +33,9 @@ Split String Separator not Found
 Split String With Invalid Max Split
     Check Test Case    ${TESTNAME}
 
+Split String with bytes
+    Check Test Case    ${TESTNAME}
+
 Split String From Right
     Check Test Case    ${TESTNAME}
 
@@ -63,9 +66,14 @@ Split String From Right Separator not Found
 Split String From Right With Invalid Max Split
     Check Test Case    ${TESTNAME}
 
+Split String From Right with bytes
+    Check Test Case    ${TESTNAME}
+
 Split String To Characters
     Check Test Case    ${TESTNAME}
 
 Split Empty String To Characters
     Check Test Case    ${TESTNAME}
 
+Split String To Characters with bytes
+    Check Test Case    ${TESTNAME}

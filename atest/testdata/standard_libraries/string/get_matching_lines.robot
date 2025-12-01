@@ -29,6 +29,15 @@ Get Lines Containing String With Case-Insensitive
     ${INPUT}                ROW     ${EMPTY}                      ${EMPTY}
     Straße\n...\nHassu\n    SS      Straße\nHassu                 True
 
+Get Lines Containing String with bytes
+    [Template]    Test Get Lines Containing String
+    ${{b""}}             ${{b"whatever"}}    ${EMPTY}    type=bytes
+    ${{b""}}             whatever            ${EMPTY}    type=bytes
+    ${{b"1\n2"}}         ${{b"1"}}           1           type=bytes
+    ${{b"1\n2"}}         1                   1           type=bytes
+    ${{b"A1\nB\na2"}}    ${{b"a"}}           A1\na2      type=bytes    ignore_case=True
+    ${{b"A1\nB\na2"}}    A                   A1\na2      type=bytes    ignore_case=True
+
 Get Lines Matching Pattern When Input Is Empty
     [Template]    Test Get Lines Matching Pattern
     ${EMPTY}    what*ever    ${EMPTY}
@@ -55,6 +64,15 @@ Get Lines Matching Pattern With Case-Insensitive
     ${INPUT}                *LINE     Third line                    True
     ${INPUT}                *LINE*    ${EMPTY}                      ${EMPTY}
     Straße\n...\nHassu\n    *SS?      Straße\nHassu                 True
+
+Get Lines Matching Pattern with bytes
+    [Template]    Test Get Lines Matching Pattern
+    ${{b""}}             ${{b"whatever"}}    ${EMPTY}    type=bytes
+    ${{b""}}             whatever            ${EMPTY}    type=bytes
+    ${{b"1\n2"}}         ${{b"1"}}           1           type=bytes
+    ${{b"1\n2"}}         1                   1           type=bytes
+    ${{b"A1\nB\na2"}}    ${{b"a?"}}          A1\na2      type=bytes    ignore_case=True
+    ${{b"A1\nB\na2"}}    A[1-2]              A1\na2      type=bytes    ignore_case=True
 
 Get Lines Matching Regexp When Input Is Empty
     [Template]    Test Get Lines Matching Regexp
@@ -118,22 +136,31 @@ Get Lines Matching Regexp With Partial Match When Pattern Is Empty
     ${INPUT}           ${EMPTY}    ${INPUT}         partial_match=True
     3 empty\n\n\n\n    ${EMPTY}    3 empty\n\n\n    partial_match=True
 
+Get Lines Matching Regexp with bytes
+    [Template]    Test Get Lines Matching Regexp
+    ${{b""}}             ${{b"whatever"}}    ${EMPTY}    type=bytes
+    ${{b""}}             whatever            ${EMPTY}    type=bytes
+    ${{b"1\n2"}}         ${{b"1"}}           1           type=bytes
+    ${{b"1\n2"}}         1                   1           type=bytes
+    ${{b"A1\nB\na2"}}    ${{b"a."}}          A1\na2      type=bytes    flags=IGNORECASE
+    ${{b"A1\nB\na2"}}    A[1-2]              A1\na2      type=bytes    flags=I | S
+
 *** Keywords ***
 Test Get Lines Containing String
-    [Arguments]    ${input}    ${pattern}    ${expected}    ${case-insensitive}=false    ${type}=str
-    ${actual} =    Get Lines Containing String    ${input}    ${pattern}    ${case-insensitive}
+    [Arguments]    ${input}    ${pattern}    ${expected}    ${ignore_case}=False    ${type}=str
+    ${actual} =    Get Lines Containing String    ${input}    ${pattern}    ${ignore_case}
     Should Be Equal    ${actual}    ${expected}    type=${type}
-    ${actual} =    Get Lines Containing String    ${input}    ${pattern}    ignore_case=${case-insensitive}
+    ${actual} =    Get Lines Containing String    ${input}    ${pattern}    ignore_case=${ignore_case}
     Should Be Equal    ${actual}    ${expected}    type=${type}
 
 Test Get Lines Matching Pattern
-    [Arguments]    ${input}    ${pattern}    ${expected}    ${case-insensitive}=no
-    ${actual} =    Get Lines Matching Pattern    ${input}    ${pattern}    ${case-insensitive}
-    Should Be Equal    ${actual}    ${expected}
-    ${actual} =    Get Lines Matching Pattern    ${input}    ${pattern}    ignore_case=${case-insensitive}
-    Should Be Equal    ${actual}    ${expected}
+    [Arguments]    ${input}    ${pattern}    ${expected}    ${ignore_case}=False    ${type}=str
+    ${actual} =    Get Lines Matching Pattern    ${input}    ${pattern}    ${ignore_case}
+    Should Be Equal    ${actual}    ${expected}    type=${type}
+    ${actual} =    Get Lines Matching Pattern    ${input}    ${pattern}    ignore_case=${ignore_case}
+    Should Be Equal    ${actual}    ${expected}    type=${type}
 
 Test Get Lines Matching Regexp
-    [Arguments]    ${input}    ${pattern}    ${expected}    &{config}
+    [Arguments]    ${input}    ${pattern}    ${expected}    ${type}=str    &{config}
     ${actual} =    Get Lines Matching Regexp    ${input}    ${pattern}    &{config}
-    Should Be Equal    ${actual}    ${expected}
+    Should Be Equal    ${actual}    ${expected}    type=${type}

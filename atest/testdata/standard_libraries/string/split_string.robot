@@ -46,6 +46,14 @@ Split String With Invalid Max Split
     [Documentation]    FAIL ValueError: Argument 'max_split' got value 'invalid' that cannot be converted to integer.
     ${result} =    Split String    ${NSN}    NSN    invalid
 
+Split String with bytes
+    ${result} =    Split String    ${{b"a b\nc"}}
+    Should Be Equal    ${result}    ["a", "b", "c"]    type=list[bytes]
+    ${result} =    Split String    ${{b"a,b,c"}}    ${{b","}}
+    Should Be Equal    ${result}    ["a", "b", "c"]    type=list[bytes]
+    ${result} =    Split String    ${{b"a,b,c"}}    ,    max_split=1
+    Should Be Equal    ${result}    ["a", "b,c"]    type=list[bytes]
+
 Split String From Right
     ${result} =    Split String From Right    ${NSN}    _
     Result Should Contain Items In Given Order    ${result}    nokia    siemens    networks
@@ -86,6 +94,14 @@ Split String From Right With Invalid Max Split
     [Documentation]    FAIL ValueError: Argument 'max_split' got value 'invalid' that cannot be converted to integer.
     ${result} =    Split String From Right    ${NSN}    NSN    invalid
 
+Split String From Right with bytes
+    ${result} =    Split String From Right    ${{b"a b\nc"}}
+    Should Be Equal    ${result}    ["a", "b", "c"]    type=list[bytes]
+    ${result} =    Split String From Right    ${{b"a,b,c"}}    ${{b","}}
+    Should Be Equal    ${result}    ["a", "b", "c"]    type=list[bytes]
+    ${result} =    Split String From Right    ${{b"a,b,c"}}    ,    max_split=1
+    Should Be Equal    ${result}    ["a,b", "c"]    type=list[bytes]
+
 Split String To Characters
     @{chars} =    Split String To Characters    ab 12
     Result Should Contain Items In Given Order    ${chars}    a    b    ${SPACE}    1    2
@@ -93,6 +109,10 @@ Split String To Characters
 Split Empty String To Characters
     @{chars} =    Split String To Characters    ${EMPTY}
     Result Should Contain Items In Given Order    ${chars}
+
+Split String To Characters with bytes
+    @{chars} =    Split String To Characters    ${{b"hi!"}}
+    Should Be Equal    ${chars}    ["h", "i", "!"]    type=list[bytes]
 
 *** Keywords ***
 Result Should Contain Items In Given Order

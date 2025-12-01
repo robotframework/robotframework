@@ -23,6 +23,15 @@ Get Lines Containing String With Case-Insensitive
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc[0, 0, 0]}    3 out of 5 lines matched.
 
+Get Lines Containing String with bytes
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc[0, 0, 0]}    0 out of 0 lines matched.
+    Check Log Message    ${tc[1, 0, 0]}    0 out of 0 lines matched.
+    Check Log Message    ${tc[2, 0, 0]}    1 out of 2 lines matched.
+    Check Log Message    ${tc[3, 0, 0]}    1 out of 2 lines matched.
+    Check Log Message    ${tc[4, 0, 0]}    2 out of 3 lines matched.
+    Check Log Message    ${tc[5, 0, 0]}    2 out of 3 lines matched.
+
 Get Lines Matching Pattern When Input Is Empty
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc[0, 0, 0]}    0 out of 0 lines matched.
@@ -42,6 +51,15 @@ Get Lines Matching Pattern Matching Some Lines
 Get Lines Matching Pattern With Case-Insensitive
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc[0, 0, 0]}    3 out of 5 lines matched.
+
+Get Lines Matching Pattern with bytes
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc[0, 0, 0]}    0 out of 0 lines matched.
+    Check Log Message    ${tc[1, 0, 0]}    0 out of 0 lines matched.
+    Check Log Message    ${tc[2, 0, 0]}    1 out of 2 lines matched.
+    Check Log Message    ${tc[3, 0, 0]}    1 out of 2 lines matched.
+    Check Log Message    ${tc[4, 0, 0]}    2 out of 3 lines matched.
+    Check Log Message    ${tc[5, 0, 0]}    2 out of 3 lines matched.
 
 Get Lines Matching Regexp When Input Is Empty
     ${tc} =    Check Test Case    ${TEST NAME}
@@ -88,3 +106,12 @@ Get Lines Matching Regexp With Partial Match When Pattern Is Empty
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc[0, 0, 0]}    5 out of 5 lines matched.
     Check Log Message    ${tc[1, 0, 0]}    4 out of 4 lines matched.
+
+Get Lines Matching Regexp with bytes
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc[0, 0, 0]}    0 out of 0 lines matched.
+    Check Log Message    ${tc[1, 0, 0]}    0 out of 0 lines matched.
+    Check Log Message    ${tc[2, 0, 0]}    1 out of 2 lines matched.
+    Check Log Message    ${tc[3, 0, 0]}    1 out of 2 lines matched.
+    Check Log Message    ${tc[4, 0, 0]}    2 out of 3 lines matched.
+    Check Log Message    ${tc[5, 0, 0]}    2 out of 3 lines matched.

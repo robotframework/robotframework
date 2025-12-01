@@ -12,15 +12,29 @@ Fetch From Left
     ${result} =    Fetch From Left    ${NSN}    _siemens
     Should be Equal    ${result}    nokia
 
+Fetch From Left with bytes
+    ${result} =    Fetch From Left    ${{b"Robot Framework Foundation"}}    ${{b"Frame"}}
+    Should be Equal    ${result}    Robot${SPACE}    type=bytes
+    ${result} =    Fetch From Left    ${{b"Robot Framework Foundation"}}    ${SPACE}F
+    Should be Equal    ${result}    Robot    type=bytes
+
 Fetch From Right
     ${result} =    Fetch From Right    ${NSN}    _siemens_
     Should Be Equal    ${result}    networks
+
+Fetch From Right with bytes
+    ${result} =    Fetch From Right    ${{b"Robot Framework Foundation"}}    ${{b"ork "}}
+    Should be Equal    ${result}    Foundation    type=bytes
+    ${result} =    Fetch From Right    ${{b"Robot Framework Foundation"}}    ${SPACE}
+    Should be Equal    ${result}    Foundation    type=bytes
 
 Get Line
     ${result} =    Get Line    ${TEXT IN COLUMNS}    0
     Should be equal    ${result}    ${FIRST LINE}
     ${result} =    Get Line    ${TEXT IN COLUMNS}    1
     Should be equal    ${result}    ${SECOND LINE}
+
+Get Line with bytes
     ${result} =    Get Line    ${{b"L1\nL2\nL3\nL4\nL5"}}    -1
     Should Be Equal    ${result}    L5    type=bytes
 
@@ -31,6 +45,8 @@ Get Line Count
     Should Be Equal    ${result}    1    type=int
     ${result} =    Get Line Count    ${TEXT IN COLUMNS}
     Should Be Equal    ${result}    2    type=int
+
+Get Line Count with bytes
     ${result} =    Get Line Count    ${{b"1\n2\n3\n4\n5"}}
     Should Be Equal    ${result}    5    type=int
 
@@ -44,9 +60,6 @@ Split To Lines
     Should be equal    ${result}[0]    Just one line!
     @{result} =    Split To Lines    ${EMPTY}
     Length Should Be    ${result}    0
-    @{result} =    Split To Lines    ${{b"1\n2\n3\n4\n5"}}
-    Length Should Be    ${result}    5
-    Should be equal    ${result}    ["1", "2", "3", "4", "5"]    type=list[bytes]
 
 Split To Lines With Start Only
     @{result} =    Split To Lines    ${TEXT IN COLUMNS}    1
@@ -80,23 +93,22 @@ Split To Lines With Invalid End
     [Documentation]    FAIL ValueError: Argument 'end' got value 'invalid' that cannot be converted to integer, '' or None.
     Split To Lines    ${TEXT IN COLUMNS}    0    invalid
 
+Split To Lines with bytes
+    @{result} =    Split To Lines    ${{b"1\n2\n3\n4\n5"}}
+    Length Should Be    ${result}    5
+    Should be equal    ${result}    ["1", "2", "3", "4", "5"]    type=list[bytes]
+
 Get Substring
     ${result} =    Get Substring    Robot    0    2
     Should be equal    ${result}    Ro
-    ${result} =    Get Substring    ${{b'Robot'}}    0    2
-    Should be equal    ${result}    ${{b'Ro'}}
 
 Get Substring With Negative Values
     ${result} =    Get Substring    Hello Robot    -3    -1
     Should be equal    ${result}    bo
-    ${result} =    Get Substring    ${{b'Hello Robot'}}    -3    -1
-    Should be equal    ${result}    ${{b'bo'}}
 
 Get Substring With Start Only
     ${result} =    Get Substring    Hello Robot    6
     Should be equal    ${result}    Robot
-    ${result} =    Get Substring    ${{b'Hello Robot'}}    6
-    Should be equal    ${result}    ${{b'Robot'}}
 
 Get Substring With End Only
     ${result} =    Get Substring    Hello Robot    end=5
@@ -116,6 +128,16 @@ Get Substring With Invalid End
     Get Substring    Hello Robot    2    invalid
     Get Substring    ${{b'Hello Robot'}}    2    invalid
 
+Get Substring with bytes
+    ${result} =    Get Substring    ${{b'Hi Robot'}}    0     2
+    Should be equal    ${result}    ${{b'Hi'}}
+    ${result} =    Get Substring    ${{b'Hi Robot'}}   -3    -1
+    Should be equal    ${result}    ${{b'bo'}}
+    ${result} =    Get Substring    ${{b'Hi Robot'}}    3
+    Should be equal    ${result}    ${{b'Robot'}}
+    ${result} =    Get Substring    ${{b'Hi Robot'}}    end=2
+    Should be equal    ${result}    ${{b'Hi'}}
+
 Strip String
     ${result} =    Strip String    ${SPACE}${SPACE}Hello${SPACE}
     Should be equal    ${result}    Hello
@@ -133,7 +155,7 @@ Strip String None
     Should be equal    ${result}    ${SPACE}${SPACE}Hello${SPACE}
 
 Strip String With Invalid Mode
-    [Documentation]    FAIL ValueError: Invalid mode 'invalid'.
+    [Documentation]    FAIL ValueError: Argument 'mode' got value 'invalid' that cannot be converted to 'left', 'right', 'both' or 'none'.
     Strip String  Hello  invalid
 
 Strip String With Given Characters
@@ -143,3 +165,11 @@ Strip String With Given Characters
 Strip String With Given Characters none
     ${result} =    Strip String    none123noneee    characters=none
     Should be equal    ${result}    123
+
+Strip String with bytes
+    ${result} =    Strip String    ${{b" Hello\t\n "}}
+    Should be equal    ${result}    Hello    type=bytes
+    ${result} =    Strip String    ${{b"-+-Hel-+-lo-+-"}}    left    ${{b"+-"}}
+    Should be equal    ${result}    Hel-+-lo-+-    type=bytes
+    ${result} =    Strip String    ${{b"-+-Hel-+-lo-+-"}}    right    +-=#%_
+    Should be equal    ${result}    -+-Hel-+-lo    type=bytes

@@ -72,3 +72,9 @@ Get Regexp Matches Insert Group Regex With Group Name And Index
     ${result}=    Get Regexp Matches    ${TEXT IN COLUMNS}    ${REGULAR EXPRESSION WITH GROUP}    2    group_name
     ${expect_result}=    Evaluate    [('${SECOND GROUP MATCH}', '${GROUP MATCH}') for i in range(${TEXT REPEAT COUNT})]
     Should be Equal    ${result}    ${expect_result}
+
+Get Regex Matches with bytes
+    ${result} =    Get Regexp Matches    ${{b"abc1-abc2+abcd"}}    ${{b"abc\\d"}}
+    Should Be Equal    ${result}    ["abc1", "abc2"]    type=list[bytes]
+    ${result} =    Get Regexp Matches    ${{b"abc1-abc2+abcd"}}    abc(\\d)([-+])    1    ${2}
+    Should Be Equal    ${result}    [("1", "-"), ("2", "+")]    type=list[tuple[bytes, bytes]]
