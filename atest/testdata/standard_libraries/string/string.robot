@@ -41,6 +41,12 @@ Split To Lines
     @{result} =    Split To Lines    ${EMPTY}
     Length Should Be    ${result}    0
 
+    # does not work
+    # @{result} =    Split To Lines    ${BYTES TEXT IN COLUMNS}
+    # Length Should Be    ${result}    2
+    # Should be equal    ${result}[0]    ${BYTES FIRST LINE}
+    # Should be equal    ${result}[1]    ${BYTES SECOND LINE}
+
 Split To Lines With Start Only
     @{result} =    Split To Lines    ${TEXT IN COLUMNS}    1
     Should be equal    ${result}[0]    ${SECOND LINE}
@@ -61,36 +67,47 @@ Split To Lines With Negative Values
     Should be equal    ${result}[0]    ${SECOND LINE}
 
 Split To Lines With Invalid Start
-    [Documentation]    FAIL ValueError: Cannot convert 'start' argument 'invalid' to an integer.
+    [Documentation]    FAIL ValueError: Argument 'start' got value 'invalid' that cannot be converted to integer, '' or None.
     Split To Lines    ${TEXT IN COLUMNS}    invalid
 
 Split To Lines With Invalid End
-    [Documentation]    FAIL ValueError: Cannot convert 'end' argument 'invalid' to an integer.
+    [Documentation]    FAIL ValueError: Argument 'end' got value 'invalid' that cannot be converted to integer, '' or None.
     Split To Lines    ${TEXT IN COLUMNS}    0    invalid
 
 Get Substring
     ${result} =    Get Substring    Robot    0    2
     Should be equal    ${result}    Ro
+    ${result} =    Get Substring    ${{b'Robot'}}    0    2
+    Should be equal    ${result}    ${{b'Ro'}}
 
 Get Substring With Negative Values
     ${result} =    Get Substring    Hello Robot    -3    -1
     Should be equal    ${result}    bo
+    ${result} =    Get Substring    ${{b'Hello Robot'}}    -3    -1
+    Should be equal    ${result}    ${{b'bo'}}
 
 Get Substring With Start Only
     ${result} =    Get Substring    Hello Robot    6
     Should be equal    ${result}    Robot
+    ${result} =    Get Substring    ${{b'Hello Robot'}}    6
+    Should be equal    ${result}    ${{b'Robot'}}
 
 Get Substring With Empty Start
     ${result} =    Get Substring    Hello Robot    ${EMPTY}    5
     Should be equal    ${result}    Hello
 
+    ${result} =    Get Substring    ${{b'Hello Robot'}}    ${EMPTY}    5
+    Should be equal    ${result}    ${{b'Hello'}}
+
 Get Substring With Invalid Start
-    [Documentation]    FAIL ValueError: Cannot convert 'start' argument 'invalid' to an integer.
+    [Documentation]    FAIL ValueError: Argument 'start' got value 'invalid' that cannot be converted to integer, '' or None.
     Get Substring    Hello Robot    invalid
+    Get Substring    ${{b'Hello Robot'}}    invalid
 
 Get Substring With Invalid End
-    [Documentation]    FAIL ValueError: Cannot convert 'end' argument 'invalid' to an integer.
+    [Documentation]    FAIL ValueError: Argument 'end' got value 'invalid' that cannot be converted to integer, '' or None.
     Get Substring    Hello Robot    2    invalid
+    Get Substring    ${{b'Hello Robot'}}    2    invalid
 
 Strip String
     ${result} =    Strip String    ${SPACE}${SPACE}Hello${SPACE}

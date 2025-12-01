@@ -27,5 +27,5 @@ Decode Non-ASCII Bytes To String Using Incompatible Encoding
 Decode Non-ASCII Bytes To String Using Incompatible Encoding And Error Handler
     Check Test Case    ${TESTNAME}
 
-Decoding String Fails
+Decoding String Does Not Fail
     Check Test Case    ${TESTNAME}
