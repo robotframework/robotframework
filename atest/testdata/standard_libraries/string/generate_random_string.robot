@@ -14,7 +14,7 @@ Generate Random String With Defaults
     ${result} =    Generate Random String
     String Length Should Be And It Should Consist Of    ${result}    8    ${LETTERS}${NUMBERS}
 
-Generate Random String With Empty Length
+Generate Random String with empty string as length is deprecated
     ${result} =    Generate Random String    ${EMPTY}    abc
     String Length Should Be And It Should Consist Of    ${result}    8    abc
 

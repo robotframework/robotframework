@@ -75,7 +75,7 @@ Split To Lines With End Only
     Length Should Be    ${result}    1
     Should be equal    ${result}[0]    ${FIRST LINE}
 
-Split To Lines with empty string as start index
+Split To Lines with empty string as start index is deprecated
     @{result} =    Split To Lines    ${TEXT IN COLUMNS}    ${EMPTY}    1
     Length Should Be    ${result}    1
     Should be equal    ${result}[0]    ${FIRST LINE}
@@ -114,7 +114,7 @@ Get Substring With End Only
     ${result} =    Get Substring    Hello Robot    end=5
     Should be equal    ${result}    Hello
 
-Get Substring with empty string as start index
+Get Substring with empty string as start index is deprecated
     ${result} =    Get Substring    Hello Robot    ${EMPTY}    5
     Should be equal    ${result}    Hello
 

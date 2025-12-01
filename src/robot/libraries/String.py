@@ -320,8 +320,8 @@ class String:
 
         Use `Get Line` if you only need to get a single line.
         """
-        start = self._convert_to_index(start)
-        end = self._convert_to_index(end)
+        start = self._deprecate_empty_string("start", start, 0)
+        end = self._deprecate_empty_string("end", end, 0)
         lines = string.splitlines()[start:end]
         logger.info(f"{len(lines)} line{s(lines)} returned.")
         return lines
@@ -720,9 +720,7 @@ class String:
         If the first argument is bytes, the second argument is automatically
         converted to bytes as well. This is new in Robot Framework 7.4.
         """
-        if separator == "":
-            # FIXME: Deprecate!
-            separator = None
+        separator = self._deprecate_empty_string("separator", separator, None)
         if isinstance(string, bytes) and separator is not None:
             separator = self._ensure_bytes(separator)
         return string.split(separator, max_split)
@@ -745,9 +743,7 @@ class String:
         If the first argument is bytes, the second argument is automatically
         converted to bytes as well. This is new in Robot Framework 7.4.
         """
-        if separator == "":
-            # FIXME: Deprecate!
-            separator = None
+        separator = self._deprecate_empty_string("separator", separator, None)
         if isinstance(string, bytes) and separator is not None:
             separator = self._ensure_bytes(separator)
         return string.rsplit(separator, max_split)
@@ -836,21 +832,27 @@ class String:
         Giving ``length`` as a range of values is new in Robot Framework 5.0.
         Support for markers ``[POLISH]`` and ``[ARABIC]`` is new in Robot Framework 7.4.
         """
-        if length == "":
-            # FIXME: Deprecate. Also fix typing.
-            length = 8
+        length = self._deprecate_empty_string("length", length, 8)
         if isinstance(length, str) and re.match(r"^\d+-\d+$", length):
             min_length, max_length = length.split("-")
             length = randint(
-                self._convert_to_integer(min_length, "length"),
-                self._convert_to_integer(max_length, "length"),
+                self._length_to_int(min_length),
+                self._length_to_int(max_length),
             )
         else:
-            length = self._convert_to_integer(length, "length")
+            length = self._length_to_int(length)
         for name, value in MARKERS.items():
             chars = chars.replace(name, value)
         maxi = len(chars) - 1
         return "".join(chars[randint(0, maxi)] for _ in range(length))
+
+    def _length_to_int(self, value: "int | str") -> int:
+        try:
+            return int(value)
+        except ValueError:
+            raise ValueError(
+                f"Cannot convert 'length' argument {value!r} to an integer."
+            )
 
     def get_substring(
         self,
@@ -871,8 +873,8 @@ class String:
         | ${first two} =    | Get Substring | ${string} | 0  | 1  |
         | ${last two} =     | Get Substring | ${string} | -2 |    |
         """
-        start = self._convert_to_index(start)
-        end = self._convert_to_index(end)
+        start = self._deprecate_empty_string("start", start, 0)
+        end = self._deprecate_empty_string("end", end, 0)
         return string[start:end]
 
     def strip_string(
@@ -1015,19 +1017,14 @@ class String:
         if string != self.convert_to_title_case(string, exclude):
             raise AssertionError(msg or f"{string!r} is not title case.")
 
-    def _convert_to_index(self, value: "int | Literal[''] | None") -> "int | None":
+    def _deprecate_empty_string(
+        self, name: str, value: object, instead: object
+    ) -> object:
+        # Empty strings were deprecated in RF 7.4. This support can be removed in RF 9.
         if value == "":
-            # Deprecated in RF 7.4. Can be removed in RF 8 or latest in RF 9.
             logger.warn(
-                "Using an empty string as an index is deprecated. Use '0' instead."
+                f"Using an empty string as a value with argument '{name}' is "
+                f"deprecated. Use '{instead}' instead."
             )
-            return 0
+            return instead
         return value
-
-    def _convert_to_integer(self, value: "int | str", name: str) -> int:
-        try:
-            return int(value)
-        except ValueError:
-            raise ValueError(
-                f"Cannot convert {name!r} argument {value!r} to an integer."
-            )
