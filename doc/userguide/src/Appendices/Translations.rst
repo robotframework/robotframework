@@ -931,7 +931,7 @@ Section headers
     * - Variables
       - Variables
     * - Test Cases
-      - Unités de test
+      - Cas de test
     * - Tasks
       - Tâches
     * - Keywords
