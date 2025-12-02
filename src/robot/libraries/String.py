@@ -1020,7 +1020,7 @@ class String:
     def _deprecate_empty_string(
         self, name: str, value: object, instead: object
     ) -> object:
-        # Empty strings were deprecated in RF 7.4. This support can be removed in RF 9.
+        # Deprecated in RF 7.4. TODO: Remove in RF 9.
         if value == "":
             logger.warn(
                 f"Using an empty string as a value with argument '{name}' is "

@@ -16,7 +16,7 @@
 import difflib
 import re
 import time
-from collections.abc import Collection, Mapping, Sequence
+from collections.abc import Collection, Mapping, Sequence, Sized
 from datetime import datetime, timedelta
 from typing import Any, Callable, Iterator, Literal, NoReturn
 
@@ -793,8 +793,7 @@ class _Verify(_BuiltInBase):
         raise AssertionError("\n".join([prefix, *diffs]))
 
     def _deprecate_no_values(self, values: "bool | str") -> bool:
-        # "NO VALUES" was deprecated in RF 7.4. We must preserve it at least
-        # until RF 8, possibly until RF 9. See also Collections.
+        # Deprecated in RF 7.4. TODO: Remove in RF 9.
         if isinstance(values, str) and values.upper() == "NO VALUES":
             logger.warn(
                 f"Using '{values}' for disabling the 'values' argument is deprecated. "
@@ -1655,16 +1654,14 @@ class _Verify(_BuiltInBase):
         if re.search(pattern, string, flags=parse_re_flags(flags)) is not None:
             raise AssertionError(self._get_msg(string, pattern, msg, values, "matches"))
 
-    def get_length(self, item: Collection) -> int:
+    def get_length(self, item: Sized) -> int:
         """Returns and logs the length of the given item as an integer.
 
-        The item can be anything that has a length, for example, a string,
-        a list, or a mapping. The keyword first tries to get the length with
-        the Python function ``len``, which calls the  item's ``__len__`` method
-        internally. If that fails, the keyword tries to call the item's
-        possible ``length`` and ``size`` methods directly. The final attempt is
-        trying to get the value of the item's ``length`` attribute. If all
-        these attempts are unsuccessful, the keyword fails.
+        The item can be anything that has length or size, for example, a string,
+        a list, or a dictionary. For legacy reasons, this keyword supports also
+        other ways to get item length than the standard ``len(item)``. These
+        other approaches are deprecated, though, and they will be removed in
+        the future.
 
         Examples:
         | ${length} = | Get Length    | Hello, world! |        |
@@ -1673,26 +1670,30 @@ class _Verify(_BuiltInBase):
         | ${length} = | Get Length    | ${list}       |        |
         | Should Be Equal As Integers | ${length}     | 2      |
 
-        See also `Length Should Be`, `Should Be Empty` and `Should Not Be
-        Empty`.
+        See also `Length Should Be`, `Should Be Empty` and `Should Not Be Empty`.
         """
-        length = self._get_length(item)
+        length, deprecated = self._get_length(item)
+        if deprecated:
+            # Deprecated in RF 7.4. TODO: Remove in RF 9.
+            logger.warn(
+                f"Using '{deprecated}' for getting object length is deprecated. "
+                f"Only 'len(obj)' will be supported in the future."
+            )
         logger.info(f"Length is {length}.")
         return length
 
-    def _get_length(self, item: Any) -> int:
-        # FIXME: Deprecate other ways to get length than using `len(item)`.
+    def _get_length(self, item: Any) -> "tuple[int, str | None]":
         try:
-            return len(item)
+            return len(item), None
         except Exception:
             try:
-                return item.length()
+                return item.length(), "item.length()"
             except Exception:
                 try:
-                    return item.size()
+                    return item.size(), "item.size()"
                 except Exception:
                     try:
-                        return item.length
+                        return item.length, "item.length"
                     except Exception:
                         raise RuntimeError(f"Could not get length of '{item}'.")
 

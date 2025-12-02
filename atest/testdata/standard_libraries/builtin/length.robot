@@ -84,21 +84,21 @@ Should Not Be Empty with custom message
     I'm not empty    This would be the error message but there's no failure yet
     ${TUPLE 0}    My fine error says ${TUPLE 0} is empty
 
-Getting length with `length` method
+Getting length with `length` method is deprecated
     [Documentation]    FAIL 'length()' should be empty.
     Verify Get Length      ${LENGTH METHOD}    40
     Length Should Be       ${LENGTH METHOD}    40
     Should Not Be Empty    ${LENGTH METHOD}
     Should Be Empty        ${LENGTH METHOD}
 
-Getting length with `size` method
+Getting length with `size` method is deprecated
     [Documentation]    FAIL 'size()' should be empty.
     Verify Get Length      ${SIZE METHOD}    41
     Length Should Be       ${SIZE METHOD}    41
     Should Not Be Empty    ${SIZE METHOD}
     Should Be Empty        ${SIZE METHOD}
 
-Getting length with `length` attribute
+Getting length with `length` attribute is deprecated
     [Documentation]    FAIL 'length' should be empty.
     Verify Get Length      ${LENGTH ATTRIBUTE}    42
     Length Should Be       ${LENGTH ATTRIBUTE}    ${42}
@@ -109,5 +109,4 @@ Getting length with `length` attribute
 Verify Get Length
     [Arguments]    ${item}    ${exp}
     ${length} =    Get Length    ${item}
-    ${exp} =    Convert To Integer    ${exp}
-    Should Be Equal    ${length}    ${exp}
+    Should Be Equal    ${length}    ${exp}    type=int

@@ -256,7 +256,7 @@ class _List:
         | ${L5} is not changed
         """
         if start == "":
-            # Deprecated in RF 7.4. Can be removed in RF 8 or latest in RF 9.
+            # Deprecated in RF 7.4. TODO: Remove in RF 9.
             logger.warn(
                 "Using an empty string as a start index with the 'Get Slice From List' "
                 "keyword is deprecated. Use '0' instead."
@@ -306,7 +306,7 @@ class _List:
         | ${L5} is not changed
         """
         if start == "":
-            # Deprecated in RF 7.4. Can be removed in RF 8 or latest in RF 9.
+            # Deprecated in RF 7.4. TODO: Remove in RF 9.
             logger.warn(
                 "Using an empty string as a start index with the 'Get Index From List' "
                 "keyword is deprecated. Use '0' instead."
@@ -1312,8 +1312,7 @@ class Collections(_List, _Dictionary):
 
 
 def deprecate_no_values(values: "bool | str") -> bool:
-    # "NO VALUES" was deprecated in RF 7.4. We must preserve it at least
-    # until RF 8, possibly until RF 9. See also BuiltIn.
+    # Deprecated in RF 7.4. TODO: Remove in RF 9.
     if isinstance(values, str) and values.upper() == "NO VALUES":
         logger.warn(
             f"Using '{values}' for disabling the 'values' argument is deprecated. "
