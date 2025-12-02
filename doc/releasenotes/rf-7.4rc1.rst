@@ -241,7 +241,7 @@ Backwards incompatible changes
 ==============================
 
 We try to avoid backwards incompatible changes especially with non-major releases,
-but big changes like in this release may affect someones
+but big changes like in this release may affect someone's
 `workflow <https://xkcd.com/1172/>`__. Changes that are known to possibly
 cause backwards compatibility issues are listed below:
 
@@ -630,7 +630,7 @@ Full list of fixes and enhancements
     * - `#5568`_
       - feature
       - low
-      - BuiltIn: Deprecate non-standard ways to get object length in `Get Length` and keyword using it
+      - BuiltIn: Deprecate non-standard ways to get object length with `Get Length` and related keywords
       - rc 1
 
 Altogether 47 issues. View on the `issue tracker <https://github.com/robotframework/robotframework/issues?q=milestone%3Av7.4>`__.
