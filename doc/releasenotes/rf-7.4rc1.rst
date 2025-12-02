@@ -6,8 +6,8 @@ Robot Framework 7.4 release candidate 1
 
 `Robot Framework`_ 7.4 is a new feature release with support for `secret
 variables`_, `typed standard library keywords`_, `enhancements to working with
-bytes`_ and various other enhancements and bug fixes. This release candidate
-contains all planned features and fixes.
+bytes`_ and various other features and fixes. This release candidate
+contains all planned code changes.
 
 Questions and comments related to the release can be sent to the `#devel`
 channel on `Robot Framework Slack`_ and possible bugs submitted to
@@ -30,6 +30,7 @@ from PyPI_ and install it manually. For more details and other installation
 approaches, see the `installation instructions`_.
 
 Robot Framework 7.4 release candidate 1 was released on Tuesday December 2, 2025.
+The final release is planned for Wednesday December 10, 2025.
 
 .. _Robot Framework: http://robotframework.org
 .. _Robot Framework Foundation: http://robotframework.org/foundation
