@@ -795,7 +795,13 @@ class UnionConverter(TypeConverter):
         return True
 
     def no_conversion_needed(self, value):
-        return any(converter.no_conversion_needed(value) for converter in self.nested)
+        for converter in self.nested:
+            if (
+                converter.no_conversion_needed(value)
+                and not isinstance(converter, ObjectConverter)
+            ):  # fmt:skip
+                return True
+        return False
 
     def _convert(self, value):
         unknown_types = False

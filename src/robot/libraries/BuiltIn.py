@@ -657,8 +657,9 @@ class _Verify(_BuiltInBase):
         formatter: Literal["str", "repr", "ascii"] = "str",
         strip_spaces: StripSpaces = False,
         collapse_spaces: bool = False,
-        type: "type | str | Literal['AUTO'] | Any | None" = None,
-        types: "type | str | Any | None" = None,
+        type: "Literal['AUTO'] | Any | None" = None,
+        types: "Any | None" = None,
+        # TODO: 'Any' -> 'TypeForm' with 'type' and 'types' once PEP 747 lands.
     ):
         r"""Fails if the given objects are unequal.
 

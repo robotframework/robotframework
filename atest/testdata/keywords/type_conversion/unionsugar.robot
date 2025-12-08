@@ -33,6 +33,24 @@ Union with ABC
     ${1}     ${1}
     1        ${1}
 
+Union with Any
+    [Documentation]    Any value is accepted without conversion
+    [Template]    Union with Any
+    ${1}       ${1}
+    ${1.2}     ${1.2}
+    ${None}    ${None}
+    1          1
+    1.2        1.2
+
+Union with object
+    [Documentation]    Any value is accepted but conversion is attempted
+    [Template]    Union with object
+    ${1}       ${1}
+    ${1.2}     ${1.2}
+    ${None}    ${None}
+    1          ${1}
+    1.2        1.2
+
 Union with subscripted generics
     [Template]    Union with subscripted generics
     \[1, 2]        [1, 2]

@@ -1526,13 +1526,16 @@ Other types cause conversion failures.
 Specifying multiple possible types
 ''''''''''''''''''''''''''''''''''
 
-Starting from Robot Framework 4.0, it is possible to specify that an argument
-has multiple possible types. In this situation argument conversion is attempted
-based on each type and the whole conversion fails if none of these conversions
-succeed.
+It is possible to specify that an argument has multiple possible types. In this
+situation argument conversion is attempted based on each type, from left to right,
+and the value of the first succeeding conversion is used. If none of these conversions
+succeeds, the whole conversion fails.
+
+Union syntax
+````````````
 
 When using function annotations, the natural syntax to specify that an argument
-has multiple possible types is using Union_:
+has multiple possible types is using a Union_:
 
 .. sourcecode:: python
 
@@ -1542,8 +1545,8 @@ has multiple possible types is using Union_:
   def example(length: Union[int, float], padding: Union[int, str, None] = None):
       ...
 
-When using Python 3.10 or newer, it is possible to use the native `type1 | type2`__
-syntax instead:
+When using Python 3.10 or newer, it is possible to use the `native union syntax`__
+like `int | float` instead:
 
 .. sourcecode:: python
 
@@ -1551,13 +1554,19 @@ syntax instead:
       ...
 
 Robot Framework 7.0 enhanced the support for the union syntax so that also
-"stringly typed" unions like `'type1 | type2'` work. This syntax works also
+"stringly typed" unions like `"int | float"` work. This syntax works also
 with older Python versions:
 
 .. sourcecode:: python
 
-  def example(length: 'int | float', padding: 'int | str | None' = None):
+  def example(length: "int | float", padding: "int | str | None" = None):
       ...
+
+__ https://peps.python.org/pep-0604/
+.. _Union: https://docs.python.org/3/library/typing.html#typing.Union
+
+Using tuples
+````````````
 
 An alternative is specifying types as a tuple. It is not recommended with annotations,
 because that syntax is not supported by other tools, but it works well with
@@ -1576,11 +1585,15 @@ With the above examples the `length` argument would first be converted to an
 integer and if that fails then to a float. The `padding` would be first
 converted to an integer, then to a string, and finally to `None`.
 
+When argument matches one of the types
+``````````````````````````````````````
+
 If the given argument has one of the accepted types, then no conversion is done
-and the argument is used as-is. For example, if the `length` argument gets
-value `1.5` as a float, it would not be converted to an integer. Notice that
-using non-string values like floats as an argument requires using variables as
-these examples giving different values to the `length` argument demonstrate:
+and the argument is used as-is. For example, if the `length` argument typed
+like `length: int | float` is used with a floating point number `1.5`, it is not
+converted to an integer. Notice that using non-string values like floats as an
+argument requires using variables as these examples giving different values to
+the `length` argument demonstrate:
 
 .. sourcecode:: robotframework
 
@@ -1591,10 +1604,10 @@ these examples giving different values to the `length` argument demonstrate:
        Example    ${10}     # Argument is an integer. Accepted as-is.
        Example    ${1.5}    # Argument is a float. Accepted as-is.
 
-If one of the accepted types is string, then no conversion is done if the given
-argument is a string. As the following examples giving different values to the
-`padding` argument demonstrate, also in these cases passing other types is
-possible using variables:
+If one of the accepted types is string like in `padding: int | str | None`,
+then no conversion is done if the given argument is a string. As the following
+examples giving different values to the `padding` argument demonstrate, also in
+these cases passing other types is possible using variables:
 
 .. sourcecode:: robotframework
 
@@ -1607,9 +1620,7 @@ possible using variables:
        Example    1    ${1.5}     # Argument is a float. Converted to an integer.
 
 If the given argument does not have any of the accepted types, conversion is
-attempted in the order types are specified. If any conversion succeeds, the
-resulting value is used without attempting remaining conversions. If no individual
-conversion succeeds, the whole conversion fails.
+attempted in the order types are specified.
 
 .. note:: The order of types changes the conversion result in cases where the used
           value does not match any of the types, but conversion to multiple types
@@ -1626,9 +1637,43 @@ conversion succeeds, the whole conversion fails.
           the value is already an integer or a float either, because there is no
           need for conversion in such cases.
 
-If a specified type is not recognized by Robot Framework, then the original argument
-value is used as-is. For example, with this keyword conversion would first be attempted
-to an integer, but if that fails the keyword would get the original argument:
+Handling `Any` and `object`
+```````````````````````````
+
+If `Any` or `object` is used as a type hint on its own like `arg: Any` or `arg: object`,
+any value is accepted without conversion. How they work when used in an union differs,
+though.
+
+If `Any` is used in a union like `arg: int | Any`, any value is accepted without
+conversion. This allows using `Any` as an escape hatch that disables argument conversion
+altogether.
+
+On the other hand, if `object` is used in an union like `arg: int | object`,
+conversion is attempted to types before `object`. This allows attempting conversion
+to certain type or types, but getting the original value if conversions fail.
+
+.. note:: Although this subtle difference in behavior may be useful, it is also
+          somewhat confusing and the plan is to change it in Robot Framework 8.0
+          so that `Any` behaves like `object`. See the issue `#5571`__ for more
+          information and comment the issue if you do not think the planned change
+          is a good idea.
+
+__ https://github.com/robotframework/robotframework/issues/5571
+
+Handling unrecognized types
+```````````````````````````
+
+If types that are not recognized by Robot Framework are used in an union, they are
+handled like this:
+
+- If a used value matches any of the types, including unrecognized types, the value
+  is used as-is without conversion.
+- Otherwise conversion is attempted to recognized types from left to right.
+- If any conversion succeeds, the converted value is returned.
+- If no conversion succeeds, the original value is returned.
+
+For example, with the following keyword string `"7"` would be converted to an integer,
+but string `"something"` would be used as-is:
 
 .. sourcecode:: python
 
@@ -1640,9 +1685,6 @@ type is listed before a recognized type like `Unrecognized | int`.
 Also in this case `int` conversion is attempted, and the argument id passed as-is
 if it fails. With earlier Robot Framework versions, `int` conversion would not be
 attempted at all.
-
-__ https://peps.python.org/pep-0604/
-.. _Union: https://docs.python.org/3/library/typing.html#typing.Union
 
 Parameterized types
 '''''''''''''''''''
