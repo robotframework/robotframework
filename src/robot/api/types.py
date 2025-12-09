@@ -18,8 +18,8 @@
 - The :class:`~robot.utils.secret.Secret` class is used for encapsulating
   passwords, tokens and other such secret information.
 
-- :class:`KeywordName` and :class:`KeywordArguments` is used in type hints
-  with keywords executing other keywords. External tools can recognize
+- :class:`KeywordName` and :class:`KeywordArguments` are used in type hints
+  with keywords executing other keywords. External tools can recognize special
   arguments using these types and handle them adequately.
 
 New in Robot Framework 7.4.
