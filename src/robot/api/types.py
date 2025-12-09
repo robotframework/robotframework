@@ -13,11 +13,24 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-"""Types for libraries and other extensions.
+"""Types that libraries and other extensions can utilize.
 
-Currently only exposes the :class:`~robot.utils.secret.Secret` type.
+- The :class:`~robot.utils.secret.Secret` class is used for encapsulating
+  passwords, tokens and other such secret information.
+
+- :class:`KeywordName` and :class:`KeywordArguments` is used in type hints
+  with keywords executing other keywords. External tools can recognize
+  arguments using these types and handle them adequately.
 
 New in Robot Framework 7.4.
 """
 
 from robot.utils.secret import Secret as Secret
+
+
+class KeywordName(str):
+    """Name of a keyword executed by another keyword."""
+
+
+class KeywordArgument:
+    """Argument of a keyword executed by another keyword."""

@@ -21,6 +21,8 @@ from datetime import datetime, timedelta
 from typing import Any, Callable, Iterator, Literal, NoReturn
 
 from robot.api import logger, SkipExecution
+from robot.api.deco import library
+from robot.api.types import KeywordArgument, KeywordName
 from robot.errors import (
     BreakLoop, ContinueLoop, DataError, ExecutionFailed, ExecutionFailures,
     ExecutionPassed, PassExecution, ReturnFromKeyword, VariableError
@@ -43,13 +45,8 @@ from robot.version import get_version
 
 from .normalizer import Normalizer, StripSpaces
 
-# Type aliases representing names and arguments of keywords executed dynamically
-# by `Run Keyword` and other similar keywords. We may want to replace these with
-# concrete types in the future.
-KeywordName = str
-KeywordArgument = object
 # Type alias for expressions that are evaluated in Python. We may want to replace
-# this with a concrete type with custom type documentation later.
+# this with a concrete type with a custom type documentation.
 Expression = object
 
 
@@ -4249,6 +4246,13 @@ class _Misc(_BuiltInBase):
             raise RuntimeError(str(err))
 
 
+@library(
+    converters={
+        KeywordName: lambda value: str(value),
+        KeywordArgument: lambda value: value,
+    },
+    auto_keywords=True,
+)
 class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     r"""An always available standard library with often needed keywords.
 
