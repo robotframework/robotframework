@@ -43,32 +43,34 @@ on the basis of how the keyword in question is created:
 Specifying a keyword explicitly
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Scopes alone are not a sufficient solution, because there can be
-keywords with the same name in several libraries or resources, and
-thus, they provide a mechanism to use only the keyword of the
-highest priority. In such cases, it is possible to use *the full name
-of the keyword*, where the keyword name is prefixed with the name of
-the resource or library and a dot is a delimiter.
+Scopes do not help if keywords with same names exists in two different libraries
+or in two different resource files. In addition to that, scopes do not help if
+a keyword in library should be used instead of a keyword with the same name in
+a resource file. In such cases, it is possible to use *the full keyword name*,
+where the keyword name is prefixed with the name of a library or a resource
+and a dot is used as a separator.
 
-With library keywords, the long format means only using the format
-:name:`LibraryName.Keyword Name`. For example, the keyword :name:`Run`
-from the OperatingSystem_ library could be used as
-:name:`OperatingSystem.Run`, even if there was another :name:`Run`
-keyword somewhere else. If the library is in a module or package, the
-full module or package name must be used (for example,
-:name:`com.company.Library.Some Keyword`). If a `custom name`__ is given
-to a library when importing it, the specified name must be
-used also in the full keyword name.
+With library keywords, the full name means using format
+:name:`LibraryName.Keyword Name`. For example, the keyword :name:`Get File`
+from the OperatingSystem_ library can be used as
+:name:`OperatingSystem.Get File`, even if there was another :name:`Get File`
+keyword somewhere else. If the library is implemented in a nested module, the
+full name must contain the full module name like :name:`root.sub.Library.Keyword`.
+If a `custom name`__ is given to a library when importing it, the specified
+name must be used also in the full keyword name.
 
-Resource files are specified in the full keyword name, similarly as
-library names. The name of the resource is derived from the basename
-of the resource file without the file extension. For example, the
-keyword :name:`Example` in a resource file :file:`myresources.html` can
-be used as :name:`myresources.Example`. Note that this syntax does not
-work, if several resource files have the same basename. In such
-cases, either the files or the keywords must be renamed. The full name
-of the keyword is case-, space- and underscore-insensitive, similarly
-as normal keyword names.
+With user keywords in resource files the full name is constructed the same
+way as with library keywords. The name of the resource is derived from
+the basename of the resource file without the file extension. For example,
+a keyword :name:`Some Keyword` in a resource file :file:`example.resource` can
+be used like :name:`example.Some Keyword`. Note that this syntax does not
+work if several resource files have the same basename. In such cases, either
+resource files or keywords must be renamed.
+
+With user keywords in a `suite file`_, the full name is just the keyword name.
+
+When comparing full keyword names, the library/resource part is case and
+space-insensitive and the keyword part is case, space and underscore-insensitive.
 
 __ `Setting custom name to library`_
 
