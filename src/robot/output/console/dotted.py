@@ -62,7 +62,7 @@ class DottedOutput(LoggerApi):
             self.stdout.write("\n")
 
     def message(self, msg):
-        if msg.console:
+        if msg.level in ("WARN", "ERROR") and msg.console:
             self.stderr.error(msg.message, msg.level)
 
     def result_file(self, kind, path):

@@ -35,6 +35,14 @@ Logging during init via logging API
     Stderr Should Contain    [ WARN ] Warning via API in init 1\n
     Stderr Should Contain    [ WARN ] Warning via API in init 2\n
 
+Logging to console during import
+    Syslog Should Contain    | INFO \ | To log and console in import\n
+    Stdout Should Contain    To log and console in import\nOnly to console in import\n
+
+Logging to console during init
+    Syslog Should Contain    | INFO \ | To log and console in init\n
+    Stdout Should Contain    To log and console in init\nOnly to console in init\n
+
 Importing and initializing libraries in init
     ${tc} =    Check Test Case  ${TEST NAME}
     Check log message    ${tc[0, 0]}    Keyword from library with importing __init__.
