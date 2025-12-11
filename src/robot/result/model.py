@@ -1223,7 +1223,9 @@ class TestSuite(model.TestSuite[Keyword, TestCase], StatusMixin):
         # the beginning and other at the end, and even preserving them both
         # would be hard.
         data.pop("body", None)
+        # Don't set attributes that are automatically calculated and unsettable.
         data.pop("id", None)
+        data.pop("status", None)
         return super().from_dict(data)
 
     @classmethod
