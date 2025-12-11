@@ -1,7 +1,7 @@
 *** Settings ***
 Documentation     Tests using test case and user keyword timeouts.
 Suite Setup       Clean Up Timeout Temp
-Test Timeout      1 second
+Test Timeout      10 seconds
 Library           ExampleLibrary
 Library           OperatingSystem
 
@@ -15,8 +15,8 @@ Passing
     No Operation
 
 Sleeping But Passing
-    Sleep Without Logging    0.1
-    Sleep Without Logging    0.1
+    Sleep Without Logging    0.01
+    Sleep Without Logging    0.01
 
 Failing Before Timeout
     [Documentation]    FAIL Failure before timeout
@@ -28,26 +28,20 @@ Show Correct Trace Back When Failing Before Timeout
     Exception    RuntimeError    Failure before timeout
 
 Sleeping And Timeouting
-    [Documentation]    FAIL Test timeout 1 second exceeded.
+    [Documentation]    FAIL Test timeout 5 milliseconds exceeded.
+    [Timeout]    0.005
     Sleep Without Logging    5
     Fail    This should not be executed
 
 Total Time Too Long 1
-    [Documentation]    FAIL Test timeout 300 milliseconds exceeded.
-    [Timeout]    300 milliseconds
+    [Documentation]    FAIL Test timeout 100 milliseconds exceeded.
+    [Timeout]    100 ms
+    Sleep Without Logging    0.01
+    Sleep Without Logging    0.02
     Sleep Without Logging    0.1
-    Sleep Without Logging    0.2
-    Sleep Without Logging    0.3
     Fail    This should not be executed
 
 Total Time Too Long 2
-    [Documentation]    FAIL Test timeout 300 milliseconds exceeded.
-    [Timeout]    300 milliseconds
-    Sleep Without Logging    0.1
-    Sleep Without Logging    0.3
-    Fail    This should not be executed
-
-Total Time Too Long 3
     [Documentation]    FAIL Test timeout 100 milliseconds exceeded.
     [Timeout]    0.1
     FOR    ${i}    IN RANGE    1000
@@ -55,7 +49,7 @@ Total Time Too Long 3
     END
     Fail    This should not be executed
 
-Total Time Too Long 4
+Total Time Too Long 3
     [Documentation]    FAIL Test timeout 100 milliseconds exceeded.
     [Timeout]    0.1
     FOR    ${i}    IN RANGE    1000
@@ -66,8 +60,8 @@ Total Time Too Long 4
     Fail    This should not be executed
 
 Looping Forever And Timeouting
-    [Documentation]    FAIL Test timeout 123 milliseconds exceeded.
-    [Timeout]    123 milliseconds
+    [Documentation]    FAIL Test timeout 15 milliseconds exceeded.
+    [Timeout]    15 milliseconds
     Loop Forever
     Fail    This should not be executed
 
@@ -104,16 +98,15 @@ Timeouted Keyword Timeouts
     Timeouted Keyword Timeouts
 
 Timeouted Keyword Timeouts Due To Total Time
-    [Documentation]    FAIL Keyword timeout 300 milliseconds exceeded.
-    [Timeout]    2 seconds
+    [Documentation]    FAIL Keyword timeout 100 milliseconds exceeded.
     Timeouted Keyword Timeouts Due To Total Time
 
 Test Timeouts When Also Keywords Are Timeouted
-    [Documentation]    FAIL Test timeout 300 milliseconds exceeded.
-    [Timeout]    300 milliseconds
-    Timeouted Keyword Passes    0.2
-    Timeouted Keyword Passes    0.2
-    Timeouted Keyword Passes    0.2
+    [Documentation]    FAIL Test timeout 99 milliseconds exceeded.
+    [Timeout]    0.099
+    Timeouted Keyword Passes    0.033
+    Timeouted Keyword Passes    0.033
+    Timeouted Keyword Passes    0.034
 
 Keyword Timeout From Variable
     [Documentation]    FAIL Keyword timeout 1 millisecond exceeded.
@@ -136,7 +129,7 @@ Local Variables Are Not Visible In Child Keyword Timeout
 
 Timeout Format
     [Documentation]    This is thoroughly tested on unit level so here are only some sanity checks
-    ...    FAIL Keyword timeout 1 second exceeded.
+    ...    FAIL Keyword timeout 3 milliseconds exceeded.
     [Timeout]    2 days 4 hours 56 minutes 18 seconds
     Timeout Format
 
@@ -148,8 +141,8 @@ Test Timeout During Setup
     Fail    This should not be executed
 
 Teardown After Test Timeout
-    [Documentation]    FAIL Test timeout 123 milliseconds exceeded.
-    [Timeout]    123 milliseconds
+    [Documentation]    FAIL Test timeout 14 milliseconds exceeded.
+    [Timeout]    14 milliseconds
     Sleep Without Logging    1s
     [Teardown]    Log    Teardown executed
 
@@ -163,16 +156,16 @@ Failing Teardown After Test Timeout
     [Teardown]    Timeouted Keyword Fails Before Timeout
 
 Teardown With Sleep After Test Timeout
-    [Documentation]    FAIL Test timeout 100 milliseconds exceeded.
-    [Timeout]    100 ms
+    [Documentation]    FAIL Test timeout 12 milliseconds exceeded.
+    [Timeout]    12 ms
     Sleep Without Logging    1
-    [Teardown]    Sleep And Log    0.5    Teardown executed
+    [Teardown]    Sleep And Log    0.01    Teardown executed
 
 Test Timeout During Teardown
     [Documentation]    FAIL Test timeout 100 milliseconds exceeded.
     [Timeout]    0.1 seconds
     Comment    No timeout here
-    [Teardown]    Sleep And Log    0.5    Teardown executed
+    [Teardown]    Sleep And Log    0.11    Teardown executed
 
 Timeouted Setup Passes
     [Setup]    Timeouted Keyword Passes    0.001
@@ -182,7 +175,6 @@ Timeouted Setup Timeouts
     [Documentation]    FAIL Setup failed:
     ...    Keyword timeout 11 milliseconds exceeded.
     [Setup]    Timeouted Keyword Timeouts
-    [Timeout]
     Fail    This should not be executed
 
 Timeouted Teardown Passes
@@ -194,7 +186,6 @@ Timeouted Teardown Timeouts
     [Documentation]    FAIL Teardown failed:
     ...    Keyword timeout 11 milliseconds exceeded.
     [Setup]    Timeouted Keyword Passes
-    [Timeout]
     Timeouted Keyword Passes
     [Teardown]    Timeouted Keyword Timeouts
 
@@ -214,7 +205,7 @@ Keyword teardown fails due to total time
 
 Keyword teardown fails for own timeout
     [Documentation]    FAIL Keyword teardown failed:
-    ...    Keyword timeout 204 milliseconds exceeded.
+    ...    Keyword timeout 14 milliseconds exceeded.
     Keyword teardown fails for own timeout
 
 Keyword in teardown fails for timeout
@@ -293,7 +284,7 @@ Clean Up Timeout Temp
     Create Directory    ${timeout_temp}
 
 Timeouted Keyword Passes
-    [Arguments]    ${secs}=0.1
+    [Arguments]    ${secs}=0.001
     [Timeout]    5 seconds
     Log    Testing logging in timeouted keyword
     Sleep Without Logging    ${secs}
@@ -309,12 +300,12 @@ Timeouted Keyword Timeouts
     RETURN    Nothing, really
 
 Timeouted Keyword Timeouts Due To Total Time
-    [Timeout]    0.3 seconds
-    Sleep Without Logging    0.1
-    Sleep Without Logging    0.1
-    Sleep Without Logging    0.1
-    Sleep Without Logging    0.1
-    Sleep Without Logging    0.1
+    [Timeout]    0.1 seconds
+    Sleep Without Logging    0.01
+    Sleep Without Logging    0.02
+    Sleep Without Logging    0.03
+    Sleep Without Logging    0.04
+    Sleep Without Logging    0.05
 
 Timeouted Write To File After Sleeping
     [Arguments]    ${path}    ${secs}
@@ -323,8 +314,8 @@ Timeouted Write To File After Sleeping
     Fail    This should not be executed
 
 Timeout Format
-    [Timeout]    1 second
-    Sleep Without Logging    2
+    [Timeout]    0.003 second
+    Sleep Without Logging    1
 
 Sleep And Log
     [Arguments]    ${secs}    ${msg}
@@ -353,28 +344,28 @@ Run Keyword With Timeout
 
 Keyword timeout from variable
     [Timeout]    ${0.001}
-    Sleep    0.1
+    Sleep    0.01
 
 Keyword timeout from argument
     [Arguments]   ${timeout}
     [Timeout]    ${timeout}
-    Sleep    0.1
+    Sleep    0.01
 
 Embedded args timeout '${timeout}' from arguments
     [Timeout]    ${timeout}
-    Sleep    0.1
+    Sleep    0.01
 
 Keyword that uses parent local variable for timeout
     [Timeout]    ${local}
-    Sleep    0.1
+    Sleep    0.01
 
 Zero timeout is ignored
     [Timeout]    0
-    Sleep    0.1
+    Sleep    0.01
 
 Negative timeout is ignored
     [Timeout]    -1
-    Sleep    0.1
+    Sleep    0.01
 
 Invalid keyword timeout
     [Timeout]    ¡Bäng!
@@ -395,9 +386,9 @@ Keyword teardown fails due to total time
     [Teardown]    Teardown keyword    sleep=0.11s
 
 Keyword teardown fails for own timeout
-    [Timeout]    0.104s
+    [Timeout]    1 hour
     No Operation
-    [Teardown]    Teardown keyword    timeout=0.204s    sleep=1s
+    [Teardown]    Teardown keyword    timeout=0.014s    sleep=1s
 
 Teardown keyword
     [Arguments]    ${timeout}=NONE    ${sleep}=0

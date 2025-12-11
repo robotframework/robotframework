@@ -33,7 +33,6 @@ Total Time Too Long
     Check Test Case    ${TEST NAME} 1
     Check Test Case    ${TEST NAME} 2
     Check Test Case    ${TEST NAME} 3
-    Check Test Case    ${TEST NAME} 4
 
 Timout Defined For One Test
     Check Test Case    ${TEST NAME}
@@ -130,7 +129,7 @@ Keyword teardown fails due to total time
 Keyword teardown fails for own timeout
     ${tc} =    Check Test Case    ${TEST NAME}
     Should Be Equal      ${tc[0].teardown.status}    FAIL
-    Check Log Message    ${tc[0].teardown[0, 0]}     Keyword timeout 204 milliseconds active. 0.??? seconds left.    level=DEBUG    pattern=True
+    Check Log Message    ${tc[0].teardown[0, 0]}     Keyword timeout 14 milliseconds active. 0.??? seconds left.    level=DEBUG    pattern=True
     Check Log Message    ${tc[0].teardown[0, 1]}     I'm a teardown keyword
 
 Keyword in teardown fails for timeout
@@ -168,11 +167,11 @@ Timeouted Keyword Called With Wrong Number of Arguments with Run Keyword
 
 Test Timeout Logging
     ${tc} =    Check Test Case    Passing
-    Timeout should have been active    ${tc[0]}    1 second     1
+    Timeout should have been active    ${tc[0]}    10 seconds     1
     ${tc} =    Check Test Case    Failing Before Timeout
     Timeout should have been active    ${tc[0]}    2 seconds    3
     ${tc} =    Check Test Case    Sleeping And Timeouting
-    Timeout should have been active    ${tc[0]}    1 second     2    exceeded=True
+    Timeout should have been active    ${tc[0]}    5 milliseconds     2    exceeded=True
 
 Keyword Timeout Logging
     ${tc} =    Check Test Case    Timeouted Keyword Passes
@@ -186,13 +185,13 @@ Zero timeout is ignored
     ${tc} =    Check Test Case    ${TEST NAME}
     Should Be Equal    ${tc.timeout}       ${None}
     Should Be Equal    ${tc[0].timeout}    ${None}
-    Elapsed Time Should Be Valid    ${tc[0].elapsed_time}    minimum=0.099
+    Elapsed Time Should Be Valid    ${tc[0].elapsed_time}    minimum=0.01
 
 Negative timeout is ignored
     ${tc} =    Check Test Case    ${TEST NAME}
     Should Be Equal    ${tc.timeout}       ${None}
     Should Be Equal    ${tc[0].timeout}    ${None}
-    Elapsed Time Should Be Valid    ${tc[0].elapsed_time}    minimum=0.099
+    Elapsed Time Should Be Valid    ${tc[0].elapsed_time}    minimum=0.01
 
 Invalid test timeout
     Check Test Case    ${TEST NAME}
