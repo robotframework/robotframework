@@ -109,18 +109,18 @@ Test Timeouts When Also Keywords Are Timeouted
     Timeouted Keyword Passes    0.034
 
 Keyword Timeout From Variable
-    [Documentation]    FAIL Keyword timeout 1 millisecond exceeded.
+    [Documentation]    FAIL Keyword timeout 10 milliseconds exceeded.
     Keyword timeout from variable
 
 Keyword Timeout From Argument
-    [Documentation]    FAIL Keyword timeout 2 milliseconds exceeded.
+    [Documentation]    FAIL Keyword timeout 11 milliseconds exceeded.
     Keyword timeout from argument   1s
-    Keyword timeout from argument   0.002
+    Keyword timeout from argument   0.011
 
 Embedded Arguments Timeout From Argument
-    [Documentation]    FAIL Keyword timeout 3 milliseconds exceeded.
+    [Documentation]    FAIL Keyword timeout 12 milliseconds exceeded.
     Embedded args timeout '1 second' from arguments
-    Embedded args timeout '0.003' from arguments
+    Embedded args timeout '0.012' from arguments
 
 Local Variables Are Not Visible In Child Keyword Timeout
     [Documentation]    FAIL Setting keyword timeout failed: Variable '\${local}' not found.
@@ -343,29 +343,29 @@ Run Keyword With Timeout
     Run Keyword If    True    Sleep    3
 
 Keyword timeout from variable
-    [Timeout]    ${0.001}
-    Sleep    0.01
+    [Timeout]    ${0.01}
+    Sleep    0.05
 
 Keyword timeout from argument
     [Arguments]   ${timeout}
     [Timeout]    ${timeout}
-    Sleep    0.01
+    Sleep    0.05
 
 Embedded args timeout '${timeout}' from arguments
     [Timeout]    ${timeout}
-    Sleep    0.01
+    Sleep    0.05
 
 Keyword that uses parent local variable for timeout
     [Timeout]    ${local}
-    Sleep    0.01
+    Sleep    0.05
 
 Zero timeout is ignored
     [Timeout]    0
-    Sleep    0.01
+    Sleep    0.05
 
 Negative timeout is ignored
     [Timeout]    -1
-    Sleep    0.01
+    Sleep    0.05
 
 Invalid keyword timeout
     [Timeout]    ¡Bäng!

@@ -62,17 +62,17 @@ Test Timeouts When Also Keywords Are Timeouted
 
 Keyword Timeout From Variable
     ${tc} =    Check Test Case    ${TEST NAME}
-    Should Be Equal    ${tc[0].timeout}    1 millisecond
+    Should Be Equal    ${tc[0].timeout}    10 milliseconds
 
 Keyword Timeout From Argument
     ${tc} =    Check Test Case    ${TEST NAME}
     Should Be Equal    ${tc[0].timeout}    1 second
-    Should Be Equal    ${tc[1].timeout}    2 milliseconds
+    Should Be Equal    ${tc[1].timeout}    11 milliseconds
 
 Embedded Arguments Timeout From Argument
     ${tc} =    Check Test Case    ${TEST NAME}
     Should Be Equal    ${tc[0].timeout}    1 second
-    Should Be Equal    ${tc[1].timeout}    3 milliseconds
+    Should Be Equal    ${tc[1].timeout}    12 milliseconds
 
 Local Variables Are Not Visible In Child Keyword Timeout
     Check Test Case    ${TEST NAME}
