@@ -1372,7 +1372,7 @@ environment variables::
 Many systems running tests or tasks also support hiding secret values used on
 the command line.
 
-__ `Variable conversion on command line`
+__ `Variable conversion on command line`_
 
 Creating secrets programmatically
 '''''''''''''''''''''''''''''''''
