@@ -311,12 +311,12 @@ class String:
         returned lines is automatically logged.
 
         Examples:
-        | @{lines} =        | Split To Lines | ${manylines} |    |    |
-        | @{ignore first} = | Split To Lines | ${manylines} | 1  |    |
-        | @{ignore last} =  | Split To Lines | ${manylines} |    | -1 |
-        | @{5th to 10th} =  | Split To Lines | ${manylines} | 4  | 10 |
-        | @{first two} =    | Split To Lines | ${manylines} |    | 1  |
-        | @{last two} =     | Split To Lines | ${manylines} | -2 |    |
+        | @{lines} =        | Split To Lines | ${manylines} |        |
+        | @{ignore first} = | Split To Lines | ${manylines} | 1      |
+        | @{ignore last} =  | Split To Lines | ${manylines} | end=-1 |
+        | @{5th to 10th} =  | Split To Lines | ${manylines} | 4      | 10 |
+        | @{first two} =    | Split To Lines | ${manylines} | end=1  |
+        | @{last two} =     | Split To Lines | ${manylines} | -2     |
 
         Use `Get Line` if you only need to get a single line.
         """
@@ -749,7 +749,8 @@ class String:
         return string.rsplit(separator, max_split)
 
     def split_string_to_characters(
-        self, string: "str | bytes"
+        self,
+        string: "str | bytes",
     ) -> "list[str] | list[bytes]":
         """Splits the given ``string`` to characters.
 
@@ -872,6 +873,8 @@ class String:
         | ${5th to 10th} =  | Get Substring | ${string} | 4  | 10 |
         | ${first two} =    | Get Substring | ${string} | 0  | 1  |
         | ${last two} =     | Get Substring | ${string} | -2 |    |
+
+        Default value with ``start`` is new in Robot Framework 7.4.
         """
         start = self._deprecate_empty_string("start", start, 0)
         end = self._deprecate_empty_string("end", end, 0)
