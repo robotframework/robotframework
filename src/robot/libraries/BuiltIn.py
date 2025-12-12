@@ -45,9 +45,49 @@ from robot.version import get_version
 
 from .normalizer import Normalizer, StripSpaces
 
-# Type alias for expressions that are evaluated in Python. We may want to replace
-# this with a concrete type with a custom type documentation.
-Expression = object
+
+class Expression:
+    """An expression evaluated in Python.
+
+    Expressions are evaluated using Python's
+    [http://docs.python.org/library/functions.html#eval|eval] function so
+    that all Python built-ins like ``len()`` and ``int()`` are available.
+    In addition to that, all unrecognized variables are considered to be
+    modules that are automatically imported. It is possible to use all
+    available Python modules, including the standard modules and the installed
+    third party modules.
+
+    Examples:
+    | `Should Be True`    len('${result}') > 3
+    | `Run Keyword If`    os.sep == '/'    Non-Windows Keyword
+    | ${version} =      `Evaluate`    robot.__version__
+
+    When a variable is used in the expressing using the normal ``${variable}``
+    syntax, its value is replaced before the expression is evaluated. This
+    means that the value used in the expression will be the string
+    representation of the variable value, not the variable value itself.
+    This is not a problem with numbers and other objects that have a string
+    representation that can be evaluated directly, but with other objects
+    the behavior depends on the string representation. Most importantly,
+    strings must always be quoted, and if they can contain newlines, they must
+    be triple quoted.
+
+    Examples:
+    | `Should Be True`    ${rc} < 10                   Return code greater than 10
+    | `Run Keyword If`    '${status}' == 'PASS'        `Log`    Passed
+    | `Run Keyword If`    'FAIL' in '''${output}'''    `Log`    Output contains FAIL
+
+    Actual variables values are also available in the evaluation namespace.
+    They can be accessed using special variable syntax without the curly
+    braces like ``$variable``. These variables should never be quoted.
+
+    Examples:
+    | `Should Be True`    $rc < 10             Return code greater than 10
+    | `Run Keyword If`    $status == 'PASS'    `Log`    Passed
+    | `Run Keyword If`    'FAIL' in $output    `Log`    Output contains FAIL
+    | `Should Be True`    len($result) > 1 and $result[1] == 'OK'
+    | `Should Be True`    $result is not None
+    """
 
 
 def run_keyword_variant(resolve, dry_run=False):
@@ -4250,6 +4290,7 @@ class _Misc(_BuiltInBase):
     converters={
         KeywordName: lambda value: str(value),
         KeywordArgument: lambda value: value,
+        Expression: lambda value: value,
     },
     auto_keywords=True,
 )
@@ -4402,7 +4443,7 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     Examples:
     | `Should Be True`    len('${result}') > 3
     | `Run Keyword If`    os.sep == '/'    Non-Windows Keyword
-    | ${version} =    `Evaluate`    robot.__version__
+    | ${version} =      `Evaluate`    robot.__version__
 
     `Evaluate` also allows configuring the execution namespace with a custom
     namespace and with custom modules to be imported. The latter functionality
@@ -4425,8 +4466,8 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
 
     Examples:
     | `Should Be True`    ${rc} < 10                   Return code greater than 10
-    | `Run Keyword If`    '${status}' == 'PASS'        Log    Passed
-    | `Run Keyword If`    'FAIL' in '''${output}'''    Log    Output contains FAIL
+    | `Run Keyword If`    '${status}' == 'PASS'        `Log`    Passed
+    | `Run Keyword If`    'FAIL' in '''${output}'''    `Log`    Output contains FAIL
 
     Actual variables values are also available in the evaluation namespace.
     They can be accessed using special variable syntax without the curly
