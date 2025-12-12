@@ -1,14 +1,14 @@
 {
   "specversion": 3,
   "name": "Collections",
-  "doc": "A library providing keywords for handling lists and dictionaries.\n\n``Collections`` is Robot Framework's standard library that provides a\nset of keywords for handling Python lists and dictionaries. This\nlibrary has keywords, for example, for modifying and getting\nvalues from lists and dictionaries (e.g. `Append To List`, `Get\nFrom Dictionary`) and for verifying their contents (e.g. `Lists\nShould Be Equal`, `Dictionary Should Contain Value`).\n\n== Table of contents ==\n\n- `Related keywords in BuiltIn`\n- `Using with list-like and dictionary-like objects`\n- `Ignore case`\n- `Boolean arguments`\n- `Data in examples`\n- `Keywords`\n\n= Related keywords in BuiltIn =\n\nFollowing keywords in the BuiltIn library can also be used with\nlists and dictionaries:\n\n| = Keyword Name =             | = Applicable With = |\n| `Create List`                | lists |\n| `Create Dictionary`          | dicts |\n| `Get Length`                 | both  |\n| `Length Should Be`           | both  |\n| `Should Be Empty`            | both  |\n| `Should Not Be Empty`        | both  |\n| `Should Contain`             | both  |\n| `Should Not Contain`         | both  |\n| `Should Contain X Times`     | lists |\n| `Should Not Contain X Times` | lists |\n| `Get Count`                  | lists |\n\n= Using with list-like and dictionary-like objects =\n\nList keywords that do not alter the given list can also be used\nwith tuples, and to some extent also with other iterables.\n`Convert To List` can be used to convert tuples and other iterables\nto Python ``list`` objects.\n\nSimilarly, dictionary keywords can, for most parts, be used with other\nmappings. `Convert To Dictionary` can be used if real Python ``dict``\nobjects are needed.\n\n= Ignore case =\n\nVarious keywords support ignoring case in comparisons by using the optional\n``ignore_case`` argument. Case-insensitivity can be enabled by using\n``ignore_case=True`` (see `Boolean arguments`) and it works recursively.\nWith dictionaries, it is also possible to use special values ``keys`` and\n``values`` to normalize only keys or values, respectively. These options\nthemselves are case-insensitive and also singular forms ``key`` and\n``value`` are supported.\n\nIf a dictionary contains keys that normalize to the same value, e.g.\n``{'a': 1, 'A': 2}``, normalizing keys causes an error.\n\nExamples:\n| `Lists Should Be Equal`        | ${list1} | ${list2} | ignore_case=True   |\n| `Dictionaries Should Be Equal` | ${dict1} | ${dict2} | ignore_case=values |\n\nNotice that some keywords accept also an older ``case_insensitive`` argument\nin addition to ``ignore_case``. The latter is new in Robot Framework 7.0 and\nshould be used unless there is a need to support older versions. The old\nargument is considered deprecated and will eventually be removed.\n\n= Boolean arguments =\n\nSome keywords accept arguments that are handled as Boolean values true or\nfalse. If such an argument is given as a string, it is considered false if\nit is an empty string or equal to ``FALSE``, ``NONE``, ``NO``, ``OFF`` or\n``0``, case-insensitively. Keywords verifying something that allow dropping\nactual and expected values from the possible error message also consider\nstring ``no values`` to be false. Other strings are considered true\nregardless their value, and other argument types are tested using the same\n[http://docs.python.org/library/stdtypes.html#truth|rules as in Python].\n\n| `Should Contain Match` | ${list} | ${pattern} | ignore_case=True  |\n| `Should Contain Match` | ${list} | ${pattern} | ignore_case=False |\n| `Lists Should Be Equal` | ${list1} | ${list2} | Custom error | no values |\n\n= Data in examples =\n\nList related keywords use variables in format ``${Lx}`` in their examples.\nThey mean lists with as many alphabetic characters as specified by ``x``.\nFor example, ``${L1}`` means ``['a']`` and ``${L3}`` means\n``['a', 'b', 'c']``.\n\nDictionary keywords use similar ``${Dx}`` variables. For example, ``${D1}``\nmeans ``{'a': 1}`` and ``${D3}`` means ``{'a': 1, 'b': 2, 'c': 3}``.",
-  "version": "7.3.2",
-  "generated": "2025-07-04T14:36:18+00:00",
+  "doc": "A library providing keywords for handling lists and dictionaries.\n\n``Collections`` is Robot Framework's standard library that provides a\nset of keywords for handling Python lists and dictionaries. This\nlibrary has keywords, for example, for modifying and getting\nvalues from lists and dictionaries (e.g. `Append To List`, `Get\nFrom Dictionary`) and for verifying their contents (e.g. `Lists\nShould Be Equal`, `Dictionary Should Contain Value`).\n\n== Table of contents ==\n\n- `Related keywords in BuiltIn`\n- `Using with list-like and dictionary-like objects`\n- `Ignore case`\n- `Data in examples`\n- `Keywords`\n\n= Related keywords in BuiltIn =\n\nFollowing keywords in the BuiltIn library can also be used with\nlists and dictionaries:\n\n| = Keyword Name =             | = Applicable With = |\n| `Create List`                | lists |\n| `Create Dictionary`          | dicts |\n| `Get Length`                 | both  |\n| `Length Should Be`           | both  |\n| `Should Be Empty`            | both  |\n| `Should Not Be Empty`        | both  |\n| `Should Contain`             | both  |\n| `Should Not Contain`         | both  |\n| `Should Contain X Times`     | lists |\n| `Should Not Contain X Times` | lists |\n| `Get Count`                  | lists |\n\n= Using with list-like and dictionary-like objects =\n\nList related keywords can in general be used with tuples and other sequences,\nnot only with ``list`` objects. List keywords that validate something typically\neven work with sets and mappings (with mappings they look only at keys).\nIf keywords that modify lists are used with immutable sequences such as tuples,\nvalues are automatically converted to lists. In such cases the original value\nobviously is not mutated, but these keywords also return the modified value\nand that can be used instead.\n\nDictionary related keywords also generally work with any mapping, not only\nwith ``dict`` objects. If keywords that modify dictionaries are used with\nimmutable mappings, values are automatically converted to dictionaries.\nOriginal values cannot be modified in these cases either, but modified values\nare returned and can be used instead.\n\nWhat values each keyword actually accepts can be seen from argument types\nand keyword documentation.\n\nReturning values from keywords that modify lists or dictionaries is new\nin Robot Framework 7.4. With earlier version these keywords could only\nbe used with mutable values.\n\n= Ignore case =\n\nVarious keywords support ignoring case in comparisons by using the optional\n``ignore_case`` argument. Case-insensitivity can be enabled by using\n``ignore_case=True`` and it works recursively.\n\nWith dictionaries, it is also possible to use special values ``KEYS`` and\n``VALUES`` to normalize only keys or values, respectively. These options\nthemselves are case-insensitive and also singular forms ``KEY`` and\n``VALUE`` are supported.\n\nIf a dictionary contains keys that normalize to the same value, e.g.\n``{'a': 1, 'A': 2}``, normalizing keys causes an error.\n\nExamples:\n| `Lists Should Be Equal`        | ${list1} | ${list2} | ignore_case=True   |\n| `Dictionaries Should Be Equal` | ${dict1} | ${dict2} | ignore_case=VALUES |\n\nNotice that some keywords accept also an older ``case_insensitive`` argument\nin addition to ``ignore_case``. The latter is new in Robot Framework 7.0 and\nshould be used unless there is a need to support older versions. The old\nargument is considered deprecated and will eventually be removed.\n\nStarting from Robot Framework 7.4, case-insensitivity works also with\nbytes, not only with strings.\n\n= Data in examples =\n\nList related keywords use variables in format ``${Lx}`` in their examples.\nThey mean lists with as many alphabetic characters as specified by ``x``.\nFor example, ``${L1}`` means ``['a']`` and ``${L3}`` means\n``['a', 'b', 'c']``.\n\nDictionary keywords use similar ``${Dx}`` variables. For example, ``${D1}``\nmeans ``{'a': 1}`` and ``${D3}`` means ``{'a': 1, 'b': 2, 'c': 3}``.",
+  "version": "7.4",
+  "generated": "2025-12-12T11:21:09+00:00",
   "type": "LIBRARY",
   "scope": "GLOBAL",
   "docFormat": "ROBOT",
   "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-  "lineno": 988,
+  "lineno": 1040,
   "tags": [],
   "inits": [],
   "keywords": [
@@ -17,173 +17,300 @@
       "args": [
         {
           "name": "list_",
-          "type": null,
+          "type": {
+            "name": "MutableSequence",
+            "typedoc": "Sequence",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "list_"
+          "repr": "list_: MutableSequence"
         },
         {
           "name": "values",
-          "type": null,
+          "type": {
+            "name": "object",
+            "typedoc": "object",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
-          "repr": "*values"
+          "repr": "*values: object"
         }
       ],
-      "returnType": null,
-      "doc": "Adds ``values`` to the end of ``list``.\n\nExample:\n| Append To List | ${L1} | xxx |   |   |\n| Append To List | ${L2} | x   | y | z |\n=>\n| ${L1} = ['a', 'xxx']\n| ${L2} = ['a', 'b', 'x', 'y', 'z']",
+      "returnType": {
+        "name": "MutableSequence",
+        "typedoc": "Sequence",
+        "nested": [],
+        "union": false
+      },
+      "doc": "Adds ``values`` to the end of ``list``.\n\nStarting from Robot Framework 7.4, the modified list is also returned.\n\nExample:\n| Append To List | ${L1} | xxx |   |   |\n| Append To List | ${L2} | x   | y | z |\n=>\n| ${L1} = ['a', 'xxx']\n| ${L2} = ['a', 'b', 'x', 'y', 'z']",
       "shortdoc": "Adds ``values`` to the end of ``list``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 41
+      "lineno": 50
     },
     {
       "name": "Combine Lists",
       "args": [
         {
           "name": "lists",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "Sequence",
+                "typedoc": "Sequence",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "Mapping",
+                "typedoc": "Mapping",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "Set",
+                "typedoc": "set",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
-          "repr": "*lists"
+          "repr": "*lists: Sequence | Mapping | Set"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "list",
+        "typedoc": "list",
+        "nested": [],
+        "union": false
+      },
       "doc": "Combines the given ``lists`` together and returns the result.\n\nThe given lists are not altered by this keyword.\n\nExample:\n| ${x} = | Combine Lists | ${L1} | ${L2} |       |\n| ${y} = | Combine Lists | ${L1} | ${L2} | ${L1} |\n=>\n| ${x} = ['a', 'a', 'b']\n| ${y} = ['a', 'a', 'b', 'a']\n| ${L1} and ${L2} are not changed.",
       "shortdoc": "Combines the given ``lists`` together and returns the result.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 79
+      "lineno": 100
     },
     {
       "name": "Convert To Dictionary",
       "args": [
         {
           "name": "item",
-          "type": null,
+          "type": {
+            "name": "object",
+            "typedoc": "object",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "item"
+          "repr": "item: object"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "dict",
+        "typedoc": "dictionary",
+        "nested": [],
+        "union": false
+      },
       "doc": "Converts the given ``item`` to a Python ``dict`` type.\n\nMainly useful for converting other mappings to normal dictionaries.\nThis includes converting Robot Framework's own ``DotDict`` instances\nthat it uses if variables are created using the ``&{var}`` syntax.\n\nUse `Create Dictionary` from the BuiltIn library for constructing new\ndictionaries.",
       "shortdoc": "Converts the given ``item`` to a Python ``dict`` type.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 540
+      "lineno": 570
     },
     {
       "name": "Convert To List",
       "args": [
         {
           "name": "item",
-          "type": null,
+          "type": {
+            "name": "object",
+            "typedoc": "object",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "item"
+          "repr": "item: object"
         }
       ],
-      "returnType": null,
-      "doc": "Converts the given ``item`` to a Python ``list`` type.\n\nMainly useful for converting tuples and other iterable to lists.\nUse `Create List` from the BuiltIn library for constructing new lists.",
+      "returnType": {
+        "name": "list",
+        "typedoc": "list",
+        "nested": [],
+        "union": false
+      },
+      "doc": "Converts the given ``item`` to a Python ``list`` type.\n\nMainly useful for converting tuples and other iterable to lists.\nUse `Create List` from the BuiltIn library for constructing new lists.\n\nTo split strings into characters, the `Split String To Characters` from\nthe String Library can be used.",
       "shortdoc": "Converts the given ``item`` to a Python ``list`` type.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 33
+      "lineno": 39
     },
     {
       "name": "Copy Dictionary",
       "args": [
         {
           "name": "dictionary",
-          "type": null,
+          "type": {
+            "name": "Mapping",
+            "typedoc": "Mapping",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "dictionary"
+          "repr": "dictionary: Mapping"
         },
         {
           "name": "deepcopy",
-          "type": null,
+          "type": {
+            "name": "bool",
+            "typedoc": "boolean",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "deepcopy=False"
+          "repr": "deepcopy: bool = False"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "Mapping",
+        "typedoc": "Mapping",
+        "nested": [],
+        "union": false
+      },
       "doc": "Returns a copy of the given dictionary.\n\nBy default, returns a new dictionary with same items as in the original.\nSet the ``deepcopy`` argument to a true value if also items should\nbe copied.\n\nThe given dictionary is never altered by this keyword.",
       "shortdoc": "Returns a copy of the given dictionary.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 637
+      "lineno": 686
     },
     {
       "name": "Copy List",
       "args": [
         {
           "name": "list_",
-          "type": null,
+          "type": {
+            "name": "Sequence",
+            "typedoc": "Sequence",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "list_"
+          "repr": "list_: Sequence"
         },
         {
           "name": "deepcopy",
-          "type": null,
+          "type": {
+            "name": "bool",
+            "typedoc": "boolean",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "deepcopy=False"
+          "repr": "deepcopy: bool = False"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "Sequence",
+        "typedoc": "Sequence",
+        "nested": [],
+        "union": false
+      },
       "doc": "Returns a copy of the given list.\n\nBy default, returns a new list with same items as in the original.\nSet the ``deepcopy`` argument to a true value if also items should\nbe copied.\n\nThe given list is never altered by this keyword.",
       "shortdoc": "Returns a copy of the given list.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 267
+      "lineno": 321
     },
     {
       "name": "Count Values In List",
       "args": [
         {
           "name": "list_",
-          "type": null,
+          "type": {
+            "name": "Sequence",
+            "typedoc": "Sequence",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "list_"
+          "repr": "list_: Sequence"
         },
         {
           "name": "value",
-          "type": null,
+          "type": {
+            "name": "object",
+            "typedoc": "object",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "value"
+          "repr": "value: object"
         },
         {
           "name": "start",
-          "type": null,
+          "type": {
+            "name": "int",
+            "typedoc": "integer",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": "0",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "start=0"
+          "repr": "start: int = 0"
         },
         {
           "name": "end",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "int",
+                "typedoc": "integer",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "None",
+                "typedoc": "None",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "end=None"
+          "repr": "end: int | None = None"
         }
       ],
       "returnType": null,
@@ -191,117 +318,292 @@
       "shortdoc": "Returns the number of occurrences of the given ``value`` in ``list``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 229
+      "lineno": 267
     },
     {
       "name": "Dictionaries Should Be Equal",
       "args": [
         {
           "name": "dict1",
-          "type": null,
+          "type": {
+            "name": "Mapping",
+            "typedoc": "Mapping",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "dict1"
+          "repr": "dict1: Mapping"
         },
         {
           "name": "dict2",
-          "type": null,
+          "type": {
+            "name": "Mapping",
+            "typedoc": "Mapping",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "dict2"
+          "repr": "dict2: Mapping"
         },
         {
           "name": "msg",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "str",
+                "typedoc": "string",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "None",
+                "typedoc": "None",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "msg=None"
+          "repr": "msg: str | None = None"
         },
         {
           "name": "values",
-          "type": null,
+          "type": {
+            "name": "bool",
+            "typedoc": "boolean",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": "True",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "values=True"
+          "repr": "values: bool = True"
         },
         {
           "name": "ignore_keys",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "Sequence",
+                "typedoc": "Sequence",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "None",
+                "typedoc": "None",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "ignore_keys=None"
+          "repr": "ignore_keys: Sequence | None = None"
         },
         {
           "name": "ignore_case",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "Literal",
+                "typedoc": "Literal",
+                "nested": [
+                  {
+                    "name": "'KEY'",
+                    "typedoc": null,
+                    "nested": [],
+                    "union": false
+                  },
+                  {
+                    "name": "'KEYS'",
+                    "typedoc": null,
+                    "nested": [],
+                    "union": false
+                  },
+                  {
+                    "name": "'VALUE'",
+                    "typedoc": null,
+                    "nested": [],
+                    "union": false
+                  },
+                  {
+                    "name": "'VALUES'",
+                    "typedoc": null,
+                    "nested": [],
+                    "union": false
+                  }
+                ],
+                "union": false
+              },
+              {
+                "name": "bool",
+                "typedoc": "boolean",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "ignore_case=False"
+          "repr": "ignore_case: Literal['KEY', 'KEYS', 'VALUE', 'VALUES'] | bool = False"
         },
         {
           "name": "ignore_value_order",
-          "type": null,
+          "type": {
+            "name": "bool",
+            "typedoc": "boolean",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "ignore_value_order=False"
+          "repr": "ignore_value_order: bool = False"
         }
       ],
       "returnType": null,
-      "doc": "Fails if the given dictionaries are not equal.\n\nFirst the equality of dictionaries' keys is checked and after that all\nthe key value pairs. If there are differences between the values, those\nare listed in the error message. The types of the dictionaries do not\nneed to be same.\n\n``ignore_keys`` can be used to provide a list of keys to ignore in the\ncomparison. It can be an actual list or a Python list literal. This\noption is new in Robot Framework 6.1. It works recursively with nested\ndictionaries starting from Robot Framework 7.0.\n\nExamples:\n| Dictionaries Should Be Equal | ${dict} | ${expected} |\n| Dictionaries Should Be Equal | ${dict} | ${expected} | ignore_keys=${ignored} |\n| Dictionaries Should Be Equal | ${dict} | ${expected} | ignore_keys=['key1', 'key2'] |\n\nSee `Lists Should Be Equal` for more information about configuring\nthe error message with ``msg`` and ``values`` arguments.\n\nThe ``ignore_case`` argument can be used to make comparison case-insensitive.\nSee the `Ignore case` section for more details. This option is new in\nRobot Framework 7.0.\n\nThe ``ignore_value_order`` argument can be used to make comparison in case of\nlist-like values to ignore the order of the elements in the lists.\nUsing it requires items to be sortable.\nThis option is new in Robot Framework 7.2.",
+      "doc": "Fails if the given dictionaries are not equal.\n\nFirst the equality of dictionaries' keys is checked and after that all\nthe key value pairs. If there are differences between the values, those\nare listed in the error message. The types of the dictionaries do not\nneed to be same.\n\n``ignore_keys`` can be used to provide a list of keys to ignore in the\ncomparison. This option is new in Robot Framework 6.1. It works recursively\nwith nested dictionaries starting from Robot Framework 7.0.\n\nExamples:\n| Dictionaries Should Be Equal | ${dict} | ${expected} |\n| Dictionaries Should Be Equal | ${dict} | ${expected} | ignore_keys=${ignored} |\n| Dictionaries Should Be Equal | ${dict} | ${expected} | ignore_keys=['key1', 'key2'] |\n\nSee `Lists Should Be Equal` for more information about configuring\nthe error message with ``msg`` and ``values`` arguments.\n\nThe ``ignore_case`` argument can be used to make comparison case-insensitive.\nSee the `Ignore case` section for more details. This option is new in\nRobot Framework 7.0.\n\nThe ``ignore_value_order`` argument can be used to make comparison in case of\nlist-like values to ignore the order of the elements in the lists.\nUsing it requires items to be sortable.\nThis option is new in Robot Framework 7.2.",
       "shortdoc": "Fails if the given dictionaries are not equal.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 852
+      "lineno": 900
     },
     {
       "name": "Dictionary Should Contain Item",
       "args": [
         {
           "name": "dictionary",
-          "type": null,
+          "type": {
+            "name": "Mapping",
+            "typedoc": "Mapping",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "dictionary"
+          "repr": "dictionary: Mapping"
         },
         {
           "name": "key",
-          "type": null,
+          "type": {
+            "name": "object",
+            "typedoc": "object",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "key"
+          "repr": "key: object"
         },
         {
           "name": "value",
-          "type": null,
+          "type": {
+            "name": "object",
+            "typedoc": "object",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "value"
+          "repr": "value: object"
         },
         {
           "name": "msg",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "str",
+                "typedoc": "string",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "None",
+                "typedoc": "None",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "msg=None"
+          "repr": "msg: str | None = None"
         },
         {
           "name": "ignore_case",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "Literal",
+                "typedoc": "Literal",
+                "nested": [
+                  {
+                    "name": "'KEY'",
+                    "typedoc": null,
+                    "nested": [],
+                    "union": false
+                  },
+                  {
+                    "name": "'KEYS'",
+                    "typedoc": null,
+                    "nested": [],
+                    "union": false
+                  },
+                  {
+                    "name": "'VALUE'",
+                    "typedoc": null,
+                    "nested": [],
+                    "union": false
+                  },
+                  {
+                    "name": "'VALUES'",
+                    "typedoc": null,
+                    "nested": [],
+                    "union": false
+                  }
+                ],
+                "union": false
+              },
+              {
+                "name": "bool",
+                "typedoc": "boolean",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "ignore_case=False"
+          "repr": "ignore_case: Literal['KEY', 'KEYS', 'VALUE', 'VALUES'] | bool = False"
         }
       ],
       "returnType": null,
@@ -309,42 +611,113 @@
       "shortdoc": "An item of ``key`` / ``value`` must be found in a ``dictionary``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 780
+      "lineno": 837
     },
     {
       "name": "Dictionary Should Contain Key",
       "args": [
         {
           "name": "dictionary",
-          "type": null,
+          "type": {
+            "name": "Mapping",
+            "typedoc": "Mapping",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "dictionary"
+          "repr": "dictionary: Mapping"
         },
         {
           "name": "key",
-          "type": null,
+          "type": {
+            "name": "object",
+            "typedoc": "object",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "key"
+          "repr": "key: object"
         },
         {
           "name": "msg",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "str",
+                "typedoc": "string",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "None",
+                "typedoc": "None",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "msg=None"
+          "repr": "msg: str | None = None"
         },
         {
           "name": "ignore_case",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "Literal",
+                "typedoc": "Literal",
+                "nested": [
+                  {
+                    "name": "'KEY'",
+                    "typedoc": null,
+                    "nested": [],
+                    "union": false
+                  },
+                  {
+                    "name": "'KEYS'",
+                    "typedoc": null,
+                    "nested": [],
+                    "union": false
+                  },
+                  {
+                    "name": "'VALUE'",
+                    "typedoc": null,
+                    "nested": [],
+                    "union": false
+                  },
+                  {
+                    "name": "'VALUES'",
+                    "typedoc": null,
+                    "nested": [],
+                    "union": false
+                  }
+                ],
+                "union": false
+              },
+              {
+                "name": "bool",
+                "typedoc": "boolean",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "ignore_case=False"
+          "repr": "ignore_case: Literal['KEY', 'KEYS', 'VALUE', 'VALUES'] | bool = False"
         }
       ],
       "returnType": null,
@@ -352,58 +725,139 @@
       "shortdoc": "Fails if ``key`` is not found from ``dictionary``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 734
+      "lineno": 799
     },
     {
       "name": "Dictionary Should Contain Sub Dictionary",
       "args": [
         {
           "name": "dict1",
-          "type": null,
+          "type": {
+            "name": "Mapping",
+            "typedoc": "Mapping",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "dict1"
+          "repr": "dict1: Mapping"
         },
         {
           "name": "dict2",
-          "type": null,
+          "type": {
+            "name": "Mapping",
+            "typedoc": "Mapping",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "dict2"
+          "repr": "dict2: Mapping"
         },
         {
           "name": "msg",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "str",
+                "typedoc": "string",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "None",
+                "typedoc": "None",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "msg=None"
+          "repr": "msg: str | None = None"
         },
         {
           "name": "values",
-          "type": null,
+          "type": {
+            "name": "bool",
+            "typedoc": "boolean",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": "True",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "values=True"
+          "repr": "values: bool = True"
         },
         {
           "name": "ignore_case",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "Literal",
+                "typedoc": "Literal",
+                "nested": [
+                  {
+                    "name": "'KEY'",
+                    "typedoc": null,
+                    "nested": [],
+                    "union": false
+                  },
+                  {
+                    "name": "'KEYS'",
+                    "typedoc": null,
+                    "nested": [],
+                    "union": false
+                  },
+                  {
+                    "name": "'VALUE'",
+                    "typedoc": null,
+                    "nested": [],
+                    "union": false
+                  },
+                  {
+                    "name": "'VALUES'",
+                    "typedoc": null,
+                    "nested": [],
+                    "union": false
+                  }
+                ],
+                "union": false
+              },
+              {
+                "name": "bool",
+                "typedoc": "boolean",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "ignore_case=False"
+          "repr": "ignore_case: Literal['KEY', 'KEYS', 'VALUE', 'VALUES'] | bool = False"
         },
         {
           "name": "ignore_value_order",
-          "type": null,
+          "type": {
+            "name": "bool",
+            "typedoc": "boolean",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "ignore_value_order=False"
+          "repr": "ignore_value_order: bool = False"
         }
       ],
       "returnType": null,
@@ -411,42 +865,113 @@
       "shortdoc": "Fails unless all items in ``dict2`` are found from ``dict1``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 925
+      "lineno": 985
     },
     {
       "name": "Dictionary Should Contain Value",
       "args": [
         {
           "name": "dictionary",
-          "type": null,
+          "type": {
+            "name": "Mapping",
+            "typedoc": "Mapping",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "dictionary"
+          "repr": "dictionary: Mapping"
         },
         {
           "name": "value",
-          "type": null,
+          "type": {
+            "name": "object",
+            "typedoc": "object",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "value"
+          "repr": "value: object"
         },
         {
           "name": "msg",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "str",
+                "typedoc": "string",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "None",
+                "typedoc": "None",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "msg=None"
+          "repr": "msg: str | None = None"
         },
         {
           "name": "ignore_case",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "Literal",
+                "typedoc": "Literal",
+                "nested": [
+                  {
+                    "name": "'KEY'",
+                    "typedoc": null,
+                    "nested": [],
+                    "union": false
+                  },
+                  {
+                    "name": "'KEYS'",
+                    "typedoc": null,
+                    "nested": [],
+                    "union": false
+                  },
+                  {
+                    "name": "'VALUE'",
+                    "typedoc": null,
+                    "nested": [],
+                    "union": false
+                  },
+                  {
+                    "name": "'VALUES'",
+                    "typedoc": null,
+                    "nested": [],
+                    "union": false
+                  }
+                ],
+                "union": false
+              },
+              {
+                "name": "bool",
+                "typedoc": "boolean",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "ignore_case=False"
+          "repr": "ignore_case: Literal['KEY', 'KEYS', 'VALUE', 'VALUES'] | bool = False"
         }
       ],
       "returnType": null,
@@ -454,42 +979,113 @@
       "shortdoc": "Fails if ``value`` is not found from ``dictionary``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 806
+      "lineno": 862
     },
     {
       "name": "Dictionary Should Not Contain Key",
       "args": [
         {
           "name": "dictionary",
-          "type": null,
+          "type": {
+            "name": "Mapping",
+            "typedoc": "Mapping",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "dictionary"
+          "repr": "dictionary: Mapping"
         },
         {
           "name": "key",
-          "type": null,
+          "type": {
+            "name": "object",
+            "typedoc": "object",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "key"
+          "repr": "key: object"
         },
         {
           "name": "msg",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "str",
+                "typedoc": "string",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "None",
+                "typedoc": "None",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "msg=None"
+          "repr": "msg: str | None = None"
         },
         {
           "name": "ignore_case",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "Literal",
+                "typedoc": "Literal",
+                "nested": [
+                  {
+                    "name": "'KEY'",
+                    "typedoc": null,
+                    "nested": [],
+                    "union": false
+                  },
+                  {
+                    "name": "'KEYS'",
+                    "typedoc": null,
+                    "nested": [],
+                    "union": false
+                  },
+                  {
+                    "name": "'VALUE'",
+                    "typedoc": null,
+                    "nested": [],
+                    "union": false
+                  },
+                  {
+                    "name": "'VALUES'",
+                    "typedoc": null,
+                    "nested": [],
+                    "union": false
+                  }
+                ],
+                "union": false
+              },
+              {
+                "name": "bool",
+                "typedoc": "boolean",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "ignore_case=False"
+          "repr": "ignore_case: Literal['KEY', 'KEYS', 'VALUE', 'VALUES'] | bool = False"
         }
       ],
       "returnType": null,
@@ -497,42 +1093,113 @@
       "shortdoc": "Fails if ``key`` is found from ``dictionary``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 757
+      "lineno": 818
     },
     {
       "name": "Dictionary Should Not Contain Value",
       "args": [
         {
           "name": "dictionary",
-          "type": null,
+          "type": {
+            "name": "Mapping",
+            "typedoc": "Mapping",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "dictionary"
+          "repr": "dictionary: Mapping"
         },
         {
           "name": "value",
-          "type": null,
+          "type": {
+            "name": "object",
+            "typedoc": "object",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "value"
+          "repr": "value: object"
         },
         {
           "name": "msg",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "str",
+                "typedoc": "string",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "None",
+                "typedoc": "None",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "msg=None"
+          "repr": "msg: str | None = None"
         },
         {
           "name": "ignore_case",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "Literal",
+                "typedoc": "Literal",
+                "nested": [
+                  {
+                    "name": "'KEY'",
+                    "typedoc": null,
+                    "nested": [],
+                    "union": false
+                  },
+                  {
+                    "name": "'KEYS'",
+                    "typedoc": null,
+                    "nested": [],
+                    "union": false
+                  },
+                  {
+                    "name": "'VALUE'",
+                    "typedoc": null,
+                    "nested": [],
+                    "union": false
+                  },
+                  {
+                    "name": "'VALUES'",
+                    "typedoc": null,
+                    "nested": [],
+                    "union": false
+                  }
+                ],
+                "union": false
+              },
+              {
+                "name": "bool",
+                "typedoc": "boolean",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "ignore_case=False"
+          "repr": "ignore_case: Literal['KEY', 'KEYS', 'VALUE', 'VALUES'] | bool = False"
         }
       ],
       "returnType": null,
@@ -540,26 +1207,36 @@
       "shortdoc": "Fails if ``value`` is found from ``dictionary``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 829
+      "lineno": 881
     },
     {
       "name": "Get Dictionary Items",
       "args": [
         {
           "name": "dictionary",
-          "type": null,
+          "type": {
+            "name": "Mapping",
+            "typedoc": "Mapping",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "dictionary"
+          "repr": "dictionary: Mapping"
         },
         {
           "name": "sort_keys",
-          "type": null,
+          "type": {
+            "name": "bool",
+            "typedoc": "boolean",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": "True",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "sort_keys=True"
+          "repr": "sort_keys: bool = True"
         }
       ],
       "returnType": null,
@@ -567,26 +1244,36 @@
       "shortdoc": "Returns items of the given ``dictionary`` as a list.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 689
+      "lineno": 747
     },
     {
       "name": "Get Dictionary Keys",
       "args": [
         {
           "name": "dictionary",
-          "type": null,
+          "type": {
+            "name": "Mapping",
+            "typedoc": "Mapping",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "dictionary"
+          "repr": "dictionary: Mapping"
         },
         {
           "name": "sort_keys",
-          "type": null,
+          "type": {
+            "name": "bool",
+            "typedoc": "boolean",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": "True",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "sort_keys=True"
+          "repr": "sort_keys: bool = True"
         }
       ],
       "returnType": null,
@@ -594,26 +1281,36 @@
       "shortdoc": "Returns keys of the given ``dictionary`` as a list.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 651
+      "lineno": 703
     },
     {
       "name": "Get Dictionary Values",
       "args": [
         {
           "name": "dictionary",
-          "type": null,
+          "type": {
+            "name": "Mapping",
+            "typedoc": "Mapping",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "dictionary"
+          "repr": "dictionary: Mapping"
         },
         {
           "name": "sort_keys",
-          "type": null,
+          "type": {
+            "name": "bool",
+            "typedoc": "boolean",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": "True",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "sort_keys=True"
+          "repr": "sort_keys: bool = True"
         }
       ],
       "returnType": null,
@@ -621,104 +1318,192 @@
       "shortdoc": "Returns values of the given ``dictionary`` as a list.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 672
+      "lineno": 727
     },
     {
       "name": "Get From Dictionary",
       "args": [
         {
           "name": "dictionary",
-          "type": null,
+          "type": {
+            "name": "Mapping",
+            "typedoc": "Mapping",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "dictionary"
+          "repr": "dictionary: Mapping"
         },
         {
           "name": "key",
-          "type": null,
+          "type": {
+            "name": "object",
+            "typedoc": "object",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "key"
+          "repr": "key: object"
         },
         {
           "name": "default",
-          "type": null,
+          "type": {
+            "name": "object",
+            "typedoc": "object",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": "",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "default="
+          "repr": "default: object = "
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "object",
+        "typedoc": "object",
+        "nested": [],
+        "union": false
+      },
       "doc": "Returns a value from the given ``dictionary`` based on the given ``key``.\n\nIf the given ``key`` cannot be found from the ``dictionary``, this\nkeyword fails. If optional ``default`` value is given, it will be\nreturned instead of failing.\n\nThe given dictionary is never altered by this keyword.\n\nExample:\n| ${value} = | Get From Dictionary | ${D3} | b |\n=>\n| ${value} = 2\n\nSupport for ``default`` is new in Robot Framework 6.0.",
       "shortdoc": "Returns a value from the given ``dictionary`` based on the given ``key``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 710
+      "lineno": 771
     },
     {
       "name": "Get From List",
       "args": [
         {
           "name": "list_",
-          "type": null,
+          "type": {
+            "name": "Sequence",
+            "typedoc": "Sequence",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "list_"
+          "repr": "list_: Sequence"
         },
         {
           "name": "index",
-          "type": null,
+          "type": {
+            "name": "int",
+            "typedoc": "integer",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "index"
+          "repr": "index: int"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "object",
+        "typedoc": "object",
+        "nested": [],
+        "union": false
+      },
       "doc": "Returns the value specified with an ``index`` from ``list``.\n\nThe given list is never altered by this keyword.\n\nIndex ``0`` means the first position, ``1`` the second, and so on.\nSimilarly, ``-1`` is the last position, ``-2`` the second last, and so on.\nUsing an index that does not exist on the list causes an error.\nThe index can be either an integer or a string that can be converted\nto an integer.\n\nExamples (including Python equivalents in comments):\n| ${x} = | Get From List | ${L5} | 0  | # L5[0]  |\n| ${y} = | Get From List | ${L5} | -2 | # L5[-2] |\n=>\n| ${x} = 'a'\n| ${y} = 'd'\n| ${L5} is not changed",
       "shortdoc": "Returns the value specified with an ``index`` from ``list``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 174
+      "lineno": 205
     },
     {
       "name": "Get Index From List",
       "args": [
         {
           "name": "list_",
-          "type": null,
+          "type": {
+            "name": "Sequence",
+            "typedoc": "Sequence",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "list_"
+          "repr": "list_: Sequence"
         },
         {
           "name": "value",
-          "type": null,
+          "type": {
+            "name": "object",
+            "typedoc": "object",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "value"
+          "repr": "value: object"
         },
         {
           "name": "start",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "int",
+                "typedoc": "integer",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "Literal",
+                "typedoc": "Literal",
+                "nested": [
+                  {
+                    "name": "''",
+                    "typedoc": null,
+                    "nested": [],
+                    "union": false
+                  }
+                ],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": "0",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "start=0"
+          "repr": "start: int | Literal[''] = 0"
         },
         {
           "name": "end",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "int",
+                "typedoc": "integer",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "None",
+                "typedoc": "None",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "end=None"
+          "repr": "end: int | None = None"
         }
       ],
       "returnType": null,
@@ -726,26 +1511,55 @@
       "shortdoc": "Returns the index of the first occurrence of the ``value`` on the list.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 245
+      "lineno": 288
     },
     {
       "name": "Get Match Count",
       "args": [
         {
           "name": "list",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "Sequence",
+                "typedoc": "Sequence",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "Mapping",
+                "typedoc": "Mapping",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "Set",
+                "typedoc": "set",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "list"
+          "repr": "list: Sequence | Mapping | Set"
         },
         {
           "name": "pattern",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "pattern"
+          "repr": "pattern: str"
         },
         {
           "name": "case_insensitive",
@@ -831,26 +1645,55 @@
       "shortdoc": "Returns the count of matches to ``pattern`` in ``list``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 1200
+      "lineno": 1252
     },
     {
       "name": "Get Matches",
       "args": [
         {
           "name": "list",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "Sequence",
+                "typedoc": "Sequence",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "Mapping",
+                "typedoc": "Mapping",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "Set",
+                "typedoc": "set",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "list"
+          "repr": "list: Sequence | Mapping | Set"
         },
         {
           "name": "pattern",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "pattern"
+          "repr": "pattern: str"
         },
         {
           "name": "case_insensitive",
@@ -936,34 +1779,82 @@
       "shortdoc": "Returns a list of matches to ``pattern`` in ``list``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 1171
+      "lineno": 1224
     },
     {
       "name": "Get Slice From List",
       "args": [
         {
           "name": "list_",
-          "type": null,
+          "type": {
+            "name": "Sequence",
+            "typedoc": "Sequence",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "list_"
+          "repr": "list_: Sequence"
         },
         {
           "name": "start",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "int",
+                "typedoc": "integer",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "Literal",
+                "typedoc": "Literal",
+                "nested": [
+                  {
+                    "name": "''",
+                    "typedoc": null,
+                    "nested": [],
+                    "union": false
+                  }
+                ],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": "0",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "start=0"
+          "repr": "start: int | Literal[''] = 0"
         },
         {
           "name": "end",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "int",
+                "typedoc": "integer",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "None",
+                "typedoc": "None",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "end=None"
+          "repr": "end: int | None = None"
         }
       ],
       "returnType": null,
@@ -971,112 +1862,223 @@
       "shortdoc": "Returns a slice of the given list between ``start`` and ``end`` indexes.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 199
+      "lineno": 229
     },
     {
       "name": "Insert Into List",
       "args": [
         {
           "name": "list_",
-          "type": null,
+          "type": {
+            "name": "MutableSequence",
+            "typedoc": "Sequence",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "list_"
+          "repr": "list_: MutableSequence"
         },
         {
           "name": "index",
-          "type": null,
+          "type": {
+            "name": "int",
+            "typedoc": "integer",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "index"
+          "repr": "index: int"
         },
         {
           "name": "value",
-          "type": null,
+          "type": {
+            "name": "object",
+            "typedoc": "object",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "value"
+          "repr": "value: object"
         }
       ],
-      "returnType": null,
-      "doc": "Inserts ``value`` into ``list`` to the position specified with ``index``.\n\nIndex ``0`` adds the value into the first position, ``1`` to the second,\nand so on. Inserting from right works with negative indices so that\n``-1`` is the second last position, ``-2`` third last, and so on. Use\n`Append To List` to add items to the end of the list.\n\nIf the absolute value of the index is greater than\nthe length of the list, the value is added at the end\n(positive index) or the beginning (negative index). An index\ncan be given either as an integer or a string that can be\nconverted to an integer.\n\nExample:\n| Insert Into List | ${L1} | 0     | xxx |\n| Insert Into List | ${L2} | ${-1} | xxx |\n=>\n| ${L1} = ['xxx', 'a']\n| ${L2} = ['a', 'xxx', 'b']",
+      "returnType": {
+        "name": "MutableSequence",
+        "typedoc": "Sequence",
+        "nested": [],
+        "union": false
+      },
+      "doc": "Inserts ``value`` into ``list`` to the position specified with ``index``.\n\nIndex ``0`` adds the value into the first position, ``1`` to the second,\nand so on. Inserting from right works with negative indices so that\n``-1`` is the second last position, ``-2`` third last, and so on. Use\n`Append To List` to add items to the end of the list.\n\nIf the absolute value of the index is greater than\nthe length of the list, the value is added at the end\n(positive index) or the beginning (negative index). An index\ncan be given either as an integer or a string that can be\nconverted to an integer.\n\nStarting from Robot Framework 7.4, the modified list is also returned.\n\nExample:\n| Insert Into List | ${L1} | 0     | xxx |\n| Insert Into List | ${L2} | ${-1} | xxx |\n=>\n| ${L1} = ['xxx', 'a']\n| ${L2} = ['a', 'xxx', 'b']",
       "shortdoc": "Inserts ``value`` into ``list`` to the position specified with ``index``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 55
+      "lineno": 69
     },
     {
       "name": "Keep In Dictionary",
       "args": [
         {
           "name": "dictionary",
-          "type": null,
+          "type": {
+            "name": "MutableMapping",
+            "typedoc": "Mapping",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "dictionary"
+          "repr": "dictionary: MutableMapping"
         },
         {
           "name": "keys",
-          "type": null,
+          "type": {
+            "name": "object",
+            "typedoc": "object",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
-          "repr": "*keys"
+          "repr": "*keys: object"
         }
       ],
-      "returnType": null,
-      "doc": "Keeps the given ``keys`` in the ``dictionary`` and removes all other.\n\nIf the given ``key`` cannot be found from the ``dictionary``, it\nis ignored.\n\nExample:\n| Keep In Dictionary | ${D5} | b | x | d |\n=>\n| ${D5} = {'b': 2, 'd': 4}",
-      "shortdoc": "Keeps the given ``keys`` in the ``dictionary`` and removes all other.",
+      "returnType": {
+        "name": "MutableMapping",
+        "typedoc": "Mapping",
+        "nested": [],
+        "union": false
+      },
+      "doc": "Keeps the given ``keys`` in the ``dictionary`` and removes all others.\n\nIf the given ``key`` does not exist in the ``dictionary``, it is ignored.\n\nStarting from Robot Framework 7.4, the modified dictionary is also returned.\n\nExample:\n| Keep In Dictionary | ${D5} | b | x | d |\n=>\n| ${D5} = {'b': 2, 'd': 4}",
+      "shortdoc": "Keeps the given ``keys`` in the ``dictionary`` and removes all others.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 622
+      "lineno": 666
     },
     {
       "name": "List Should Contain Sub List",
       "args": [
         {
           "name": "list1",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "Sequence",
+                "typedoc": "Sequence",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "Mapping",
+                "typedoc": "Mapping",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "Set",
+                "typedoc": "set",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "list1"
+          "repr": "list1: Sequence | Mapping | Set"
         },
         {
           "name": "list2",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "Sequence",
+                "typedoc": "Sequence",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "Mapping",
+                "typedoc": "Mapping",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "Set",
+                "typedoc": "set",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "list2"
+          "repr": "list2: Sequence | Mapping | Set"
         },
         {
           "name": "msg",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "str",
+                "typedoc": "string",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "None",
+                "typedoc": "None",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "msg=None"
+          "repr": "msg: str | None = None"
         },
         {
           "name": "values",
-          "type": null,
+          "type": {
+            "name": "bool",
+            "typedoc": "boolean",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": "True",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "values=True"
+          "repr": "values: bool = True"
         },
         {
           "name": "ignore_case",
-          "type": null,
+          "type": {
+            "name": "bool",
+            "typedoc": "boolean",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "ignore_case=False"
+          "repr": "ignore_case: bool = False"
         }
       ],
       "returnType": null,
@@ -1084,42 +2086,94 @@
       "shortdoc": "Fails if not all elements in ``list2`` are found in ``list1``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 462
+      "lineno": 521
     },
     {
       "name": "List Should Contain Value",
       "args": [
         {
           "name": "list_",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "Sequence",
+                "typedoc": "Sequence",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "Mapping",
+                "typedoc": "Mapping",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "Set",
+                "typedoc": "set",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "list_"
+          "repr": "list_: Sequence | Mapping | Set"
         },
         {
           "name": "value",
-          "type": null,
+          "type": {
+            "name": "object",
+            "typedoc": "object",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "value"
+          "repr": "value: object"
         },
         {
           "name": "msg",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "str",
+                "typedoc": "string",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "None",
+                "typedoc": "None",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "msg=None"
+          "repr": "msg: str | None = None"
         },
         {
           "name": "ignore_case",
-          "type": null,
+          "type": {
+            "name": "bool",
+            "typedoc": "boolean",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "ignore_case=False"
+          "repr": "ignore_case: bool = False"
         }
       ],
       "returnType": null,
@@ -1127,34 +2181,62 @@
       "shortdoc": "Fails if the ``value`` is not found from ``list``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 307
+      "lineno": 367
     },
     {
       "name": "List Should Not Contain Duplicates",
       "args": [
         {
           "name": "list_",
-          "type": null,
+          "type": {
+            "name": "Sequence",
+            "typedoc": "Sequence",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "list_"
+          "repr": "list_: Sequence"
         },
         {
           "name": "msg",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "str",
+                "typedoc": "string",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "None",
+                "typedoc": "None",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "msg=None"
+          "repr": "msg: str | None = None"
         },
         {
           "name": "ignore_case",
-          "type": null,
+          "type": {
+            "name": "bool",
+            "typedoc": "boolean",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "ignore_case=False"
+          "repr": "ignore_case: bool = False"
         }
       ],
       "returnType": null,
@@ -1162,42 +2244,94 @@
       "shortdoc": "Fails if any element in the ``list`` is found from it more than once.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 341
+      "lineno": 405
     },
     {
       "name": "List Should Not Contain Value",
       "args": [
         {
           "name": "list_",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "Sequence",
+                "typedoc": "Sequence",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "Mapping",
+                "typedoc": "Mapping",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "Set",
+                "typedoc": "set",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "list_"
+          "repr": "list_: Sequence | Mapping | Set"
         },
         {
           "name": "value",
-          "type": null,
+          "type": {
+            "name": "object",
+            "typedoc": "object",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "value"
+          "repr": "value: object"
         },
         {
           "name": "msg",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "str",
+                "typedoc": "string",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "None",
+                "typedoc": "None",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "msg=None"
+          "repr": "msg: str | None = None"
         },
         {
           "name": "ignore_case",
-          "type": null,
+          "type": {
+            "name": "bool",
+            "typedoc": "boolean",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "ignore_case=False"
+          "repr": "ignore_case: bool = False"
         }
       ],
       "returnType": null,
@@ -1205,379 +2339,782 @@
       "shortdoc": "Fails if the ``value`` is found from ``list``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 324
+      "lineno": 386
     },
     {
       "name": "Lists Should Be Equal",
       "args": [
         {
           "name": "list1",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "Sequence",
+                "typedoc": "Sequence",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "Mapping",
+                "typedoc": "Mapping",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "Set",
+                "typedoc": "set",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "list1"
+          "repr": "list1: Sequence | Mapping | Set"
         },
         {
           "name": "list2",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "Sequence",
+                "typedoc": "Sequence",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "Mapping",
+                "typedoc": "Mapping",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "Set",
+                "typedoc": "set",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "list2"
+          "repr": "list2: Sequence | Mapping | Set"
         },
         {
           "name": "msg",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "str",
+                "typedoc": "string",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "None",
+                "typedoc": "None",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "msg=None"
+          "repr": "msg: str | None = None"
         },
         {
           "name": "values",
-          "type": null,
+          "type": {
+            "name": "bool",
+            "typedoc": "boolean",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": "True",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "values=True"
+          "repr": "values: bool = True"
         },
         {
           "name": "names",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "Mapping",
+                "typedoc": "Mapping",
+                "nested": [
+                  {
+                    "name": "int",
+                    "typedoc": "integer",
+                    "nested": [],
+                    "union": false
+                  },
+                  {
+                    "name": "str",
+                    "typedoc": "string",
+                    "nested": [],
+                    "union": false
+                  }
+                ],
+                "union": false
+              },
+              {
+                "name": "Sequence",
+                "typedoc": "Sequence",
+                "nested": [
+                  {
+                    "name": "str",
+                    "typedoc": "string",
+                    "nested": [],
+                    "union": false
+                  }
+                ],
+                "union": false
+              },
+              {
+                "name": "None",
+                "typedoc": "None",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "names=None"
+          "repr": "names: Mapping[int, str] | Sequence[str] | None = None"
         },
         {
           "name": "ignore_order",
-          "type": null,
+          "type": {
+            "name": "bool",
+            "typedoc": "boolean",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "ignore_order=False"
+          "repr": "ignore_order: bool = False"
         },
         {
           "name": "ignore_case",
-          "type": null,
+          "type": {
+            "name": "bool",
+            "typedoc": "boolean",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "ignore_case=False"
+          "repr": "ignore_case: bool = False"
         }
       ],
       "returnType": null,
-      "doc": "Fails if given lists are unequal.\n\nThe keyword first verifies that the lists have equal lengths, and then\nit checks are all their values equal. Possible differences between the\nvalues are listed in the default error message like ``Index 4: ABC !=\nAbc``. The types of the lists do not need to be the same. For example,\nPython tuple and list with same content are considered equal.\n\nThe error message can be configured using ``msg`` and ``values``\narguments:\n- If ``msg`` is not given, the default error message is used.\n- If ``msg`` is given and ``values`` gets a value considered true\n  (see `Boolean arguments`), the error message starts with the given\n  ``msg`` followed by a newline and the default message.\n- If ``msg`` is given and ``values``  is not given a true value,\n  the error message is just the given ``msg``.\n\nThe optional ``names`` argument can be used for naming the indices\nshown in the default error message. It can either be a list of names\nmatching the indices in the lists or a dictionary where keys are\nindices that need to be named. It is not necessary to name all indices.\nWhen using a dictionary, keys can be either integers\nor strings that can be converted to integers.\n\nExamples:\n| ${names} = | Create List | First Name | Family Name | Email |\n| Lists Should Be Equal | ${people1} | ${people2} | names=${names} |\n| ${names} = | Create Dictionary | 0=First Name | 2=Email |\n| Lists Should Be Equal | ${people1} | ${people2} | names=${names} |\n\nIf the items in index 2 would differ in the above examples, the error\nmessage would contain a row like ``Index 2 (email): name@foo.com !=\nname@bar.com``.\n\nThe optional ``ignore_order`` argument can be used to ignore the order\nof the elements in the lists. Using it requires items to be sortable.\nThis option works recursively with nested lists starting from Robot\nFramework 7.0.\n\nExample:\n| ${list1} = | Create List | apple | cherry | banana |\n| ${list2} = | Create List | cherry | banana | apple |\n| Lists Should Be Equal | ${list1} | ${list2} | ignore_order=True |\n\nThe ``ignore_case`` argument can be used to make comparison case-insensitive.\nSee the `Ignore case` section for more details. This option is new in\nRobot Framework 7.0.",
+      "doc": "Fails if given lists are unequal.\n\nThe keyword first verifies that the lists have equal lengths, and then\nit checks are all their values equal. Possible differences between the\nvalues are listed in the default error message like ``Index 4: ABC !=\nAbc``. The types of the lists do not need to be the same. For example,\nPython tuple and list with same content are considered equal.\n\nThe error message can be configured using ``msg`` and ``values``\narguments:\n- If ``msg`` is not given, the default error message is used.\n- If ``msg`` is given and ``values`` gets a value considered true,\n  the error message starts with the given\n  ``msg`` followed by a newline and the default message.\n- If ``msg`` is given and ``values``  is not given a true value,\n  the error message is just the given ``msg``.\n\nThe optional ``names`` argument can be used for naming the indices\nshown in the default error message. It can either be a list of names\nmatching the indices in the lists or a dictionary where keys are\nindices that need to be named. It is not necessary to name all indices.\nWhen using a dictionary, keys can be either integers\nor strings that can be converted to integers.\n\nExamples:\n| ${names} = | Create List | First Name | Family Name | Email |\n| Lists Should Be Equal | ${people1} | ${people2} | names=${names} |\n| ${names} = | Create Dictionary | 0=First Name | 2=Email |\n| Lists Should Be Equal | ${people1} | ${people2} | names=${names} |\n\nIf the items in index 2 would differ in the above examples, the error\nmessage would contain a row like ``Index 2 (email): name@foo.com !=\nname@bar.com``.\n\nThe optional ``ignore_order`` argument can be used to ignore the order\nof the elements in the lists. Using it requires items to be sortable.\nThis option works recursively with nested lists starting from Robot\nFramework 7.0.\n\nExample:\n| ${list1} = | Create List | apple | cherry | banana |\n| ${list2} = | Create List | cherry | banana | apple |\n| Lists Should Be Equal | ${list1} | ${list2} | ignore_order=True |\n\nThe ``ignore_case`` argument can be used to make comparison case-insensitive.\nSee the `Ignore case` section for more details. This option is new in\nRobot Framework 7.0.",
       "shortdoc": "Fails if given lists are unequal.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 368
+      "lineno": 436
     },
     {
       "name": "Log Dictionary",
       "args": [
         {
           "name": "dictionary",
-          "type": null,
+          "type": {
+            "name": "Mapping",
+            "typedoc": "Mapping",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "dictionary"
+          "repr": "dictionary: Mapping"
         },
         {
           "name": "level",
-          "type": null,
+          "type": {
+            "name": "Literal",
+            "typedoc": "Literal",
+            "nested": [
+              {
+                "name": "'TRACE'",
+                "typedoc": null,
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "'DEBUG'",
+                "typedoc": null,
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "'INFO'",
+                "typedoc": null,
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "'CONSOLE'",
+                "typedoc": null,
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "'HTML'",
+                "typedoc": null,
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "'WARN'",
+                "typedoc": null,
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "'ERROR'",
+                "typedoc": null,
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": false
+          },
           "defaultValue": "INFO",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "level=INFO"
+          "repr": "level: Literal['TRACE', 'DEBUG', 'INFO', 'CONSOLE', 'HTML', 'WARN', 'ERROR'] = INFO"
         }
       ],
       "returnType": null,
-      "doc": "Logs the size and contents of the ``dictionary`` using given ``level``.\n\nValid levels are TRACE, DEBUG, INFO (default), and WARN.\n\nIf you only want to log the size, use keyword `Get Length` from\nthe BuiltIn library.",
-      "shortdoc": "Logs the size and contents of the ``dictionary`` using given ``level``.",
+      "doc": "Logs the contents of the ``dictionary`` using the given ``level``.",
+      "shortdoc": "Logs the contents of the ``dictionary`` using the given ``level``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 958
+      "lineno": 1018
     },
     {
       "name": "Log List",
       "args": [
         {
           "name": "list_",
-          "type": null,
+          "type": {
+            "name": "Sequence",
+            "typedoc": "Sequence",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "list_"
+          "repr": "list_: Sequence"
         },
         {
           "name": "level",
-          "type": null,
+          "type": {
+            "name": "Literal",
+            "typedoc": "Literal",
+            "nested": [
+              {
+                "name": "'TRACE'",
+                "typedoc": null,
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "'DEBUG'",
+                "typedoc": null,
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "'INFO'",
+                "typedoc": null,
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "'CONSOLE'",
+                "typedoc": null,
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "'HTML'",
+                "typedoc": null,
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "'WARN'",
+                "typedoc": null,
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "'ERROR'",
+                "typedoc": null,
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": false
+          },
           "defaultValue": "INFO",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "level=INFO"
+          "repr": "level: Literal['TRACE', 'DEBUG', 'INFO', 'CONSOLE', 'HTML', 'WARN', 'ERROR'] = INFO"
         }
       ],
       "returnType": null,
-      "doc": "Logs the length and contents of the ``list`` using given ``level``.\n\nValid levels are TRACE, DEBUG, INFO (default), and WARN.\n\nIf you only want to the length, use keyword `Get Length` from\nthe BuiltIn library.",
-      "shortdoc": "Logs the length and contents of the ``list`` using given ``level``.",
+      "doc": "Logs contents of the ``list`` using the given ``level``.",
+      "shortdoc": "Logs contents of the ``list`` using the given ``level``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 494
+      "lineno": 549
     },
     {
       "name": "Pop From Dictionary",
       "args": [
         {
           "name": "dictionary",
-          "type": null,
+          "type": {
+            "name": "MutableMapping",
+            "typedoc": "Mapping",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "dictionary"
+          "repr": "dictionary: MutableMapping"
         },
         {
           "name": "key",
-          "type": null,
+          "type": {
+            "name": "object",
+            "typedoc": "object",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "key"
+          "repr": "key: object"
         },
         {
           "name": "default",
-          "type": null,
+          "type": {
+            "name": "object",
+            "typedoc": "object",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": "",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "default="
+          "repr": "default: object = "
         }
       ],
-      "returnType": null,
-      "doc": "Pops the given ``key`` from the ``dictionary`` and returns its value.\n\nBy default the keyword fails if the given ``key`` cannot be found from\nthe ``dictionary``. If optional ``default`` value is given, it will be\nreturned instead of failing.\n\nExample:\n| ${val}= | Pop From Dictionary | ${D3} | b |\n=>\n| ${val} = 2\n| ${D3} = {'a': 1, 'c': 3}",
+      "returnType": {
+        "name": "object",
+        "typedoc": "object",
+        "nested": [],
+        "union": false
+      },
+      "doc": "Pops the given ``key`` from the ``dictionary`` and returns its value.\n\nThe keyword fails if the given ``key`` cannot be found from the ``dictionary``\nby default. If optional ``default`` value is given, it will be returned instead.\n\nExample:\n| ${val}= | Pop From Dictionary | ${D3} | b |\n=>\n| ${val} = 2\n| ${D3} = {'a': 1, 'c': 3}",
       "shortdoc": "Pops the given ``key`` from the ``dictionary`` and returns its value.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 603
+      "lineno": 644
     },
     {
       "name": "Remove Duplicates",
       "args": [
         {
           "name": "list_",
-          "type": null,
+          "type": {
+            "name": "Sequence",
+            "typedoc": "Sequence",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "list_"
+          "repr": "list_: Sequence"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "list",
+        "typedoc": "list",
+        "nested": [],
+        "union": false
+      },
       "doc": "Returns a list without duplicates based on the given ``list``.\n\nCreates and returns a new list that contains all items in the given\nlist so that one item can appear only once. Order of the items in\nthe new list is the same as in the original except for missing\nduplicates. Number of the removed duplicates is logged.",
       "shortdoc": "Returns a list without duplicates based on the given ``list``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 157
+      "lineno": 189
     },
     {
       "name": "Remove From Dictionary",
       "args": [
         {
           "name": "dictionary",
-          "type": null,
+          "type": {
+            "name": "MutableMapping",
+            "typedoc": "Mapping",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "dictionary"
+          "repr": "dictionary: MutableMapping"
         },
         {
           "name": "keys",
-          "type": null,
+          "type": {
+            "name": "object",
+            "typedoc": "object",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
-          "repr": "*keys"
+          "repr": "*keys: object"
         }
       ],
-      "returnType": null,
-      "doc": "Removes the given ``keys`` from the ``dictionary``.\n\nIf the given ``key`` cannot be found from the ``dictionary``, it\nis ignored.\n\nExample:\n| Remove From Dictionary | ${D3} | b | x | y |\n=>\n| ${D3} = {'a': 1, 'c': 3}",
+      "returnType": {
+        "name": "MutableMapping",
+        "typedoc": "Mapping",
+        "nested": [],
+        "union": false
+      },
+      "doc": "Removes the given ``keys`` from the ``dictionary``.\n\nIf the given ``key`` does not exist in the ``dictionary``, it is ignored.\n\nStarting from Robot Framework 7.4, the modified dictionary is also returned.\n\nExample:\n| Remove From Dictionary | ${D3} | b | x | y |\n=>\n| ${D3} = {'a': 1, 'c': 3}",
       "shortdoc": "Removes the given ``keys`` from the ``dictionary``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 584
+      "lineno": 620
     },
     {
       "name": "Remove From List",
       "args": [
         {
           "name": "list_",
-          "type": null,
+          "type": {
+            "name": "MutableSequence",
+            "typedoc": "Sequence",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "list_"
+          "repr": "list_: MutableSequence"
         },
         {
           "name": "index",
-          "type": null,
+          "type": {
+            "name": "int",
+            "typedoc": "integer",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "index"
+          "repr": "index: int"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "object",
+        "typedoc": "object",
+        "nested": [],
+        "union": false
+      },
       "doc": "Removes and returns the value specified with an ``index`` from ``list``.\n\nIndex ``0`` means the first position, ``1`` the second and so on.\nSimilarly, ``-1`` is the last position, ``-2`` the second last, and so on.\nUsing an index that does not exist on the list causes an error.\nThe index can be either an integer or a string that can be converted\nto an integer.\n\nExample:\n| ${x} = | Remove From List | ${L2} | 0 |\n=>\n| ${x} = 'a'\n| ${L2} = ['b']",
       "shortdoc": "Removes and returns the value specified with an ``index`` from ``list``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 136
+      "lineno": 169
     },
     {
       "name": "Remove Values From List",
       "args": [
         {
           "name": "list_",
-          "type": null,
+          "type": {
+            "name": "MutableSequence",
+            "typedoc": "Sequence",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "list_"
+          "repr": "list_: MutableSequence"
         },
         {
           "name": "values",
-          "type": null,
+          "type": {
+            "name": "object",
+            "typedoc": "object",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
-          "repr": "*values"
+          "repr": "*values: object"
         }
       ],
-      "returnType": null,
-      "doc": "Removes all occurrences of given ``values`` from ``list``.\n\nIt is not an error if a value does not exist in the list at all.\n\nExample:\n| Remove Values From List | ${L4} | a | c | e | f |\n=>\n| ${L4} = ['b', 'd']",
+      "returnType": {
+        "name": "MutableSequence",
+        "typedoc": "Sequence",
+        "nested": [],
+        "union": false
+      },
+      "doc": "Removes all occurrences of given ``values`` from ``list``.\n\nIt is not an error if a value does not exist in the list at all.\n\nStarting from Robot Framework 7.4, the modified list is also returned.\n\nExample:\n| Remove Values From List | ${L4} | a | c | e | f |\n=>\n| ${L4} = ['b', 'd']",
       "shortdoc": "Removes all occurrences of given ``values`` from ``list``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 121
+      "lineno": 148
     },
     {
       "name": "Reverse List",
       "args": [
         {
           "name": "list_",
-          "type": null,
+          "type": {
+            "name": "MutableSequence",
+            "typedoc": "Sequence",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "list_"
+          "repr": "list_: MutableSequence"
         }
       ],
-      "returnType": null,
-      "doc": "Reverses the given list in place.\n\nNote that the given list is changed and nothing is returned. Use\n`Copy List` first, if you need to keep also the original order.\n\n| Reverse List | ${L3} |\n=>\n| ${L3} = ['c', 'b', 'a']",
+      "returnType": {
+        "name": "MutableSequence",
+        "typedoc": "Sequence",
+        "nested": [],
+        "union": false
+      },
+      "doc": "Reverses the given list in place.\n\nNote that the given list is changed and nothing is returned. Use\n`Copy List` first, if you need to keep also the original order.\n\nStarting from Robot Framework 7.4, the reversed list is also returned.\n\n| Reverse List | ${L3} |\n=>\n| ${L3} = ['c', 'b', 'a']",
       "shortdoc": "Reverses the given list in place.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 281
+      "lineno": 334
     },
     {
       "name": "Set List Value",
       "args": [
         {
           "name": "list_",
-          "type": null,
+          "type": {
+            "name": "MutableSequence",
+            "typedoc": "Sequence",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "list_"
+          "repr": "list_: MutableSequence"
         },
         {
           "name": "index",
-          "type": null,
+          "type": {
+            "name": "int",
+            "typedoc": "integer",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "index"
+          "repr": "index: int"
         },
         {
           "name": "value",
-          "type": null,
+          "type": {
+            "name": "object",
+            "typedoc": "object",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "value"
+          "repr": "value: object"
         }
       ],
-      "returnType": null,
-      "doc": "Sets the value of ``list`` specified by ``index`` to the given ``value``.\n\nIndex ``0`` means the first position, ``1`` the second and so on.\nSimilarly, ``-1`` is the last position, ``-2`` second last, and so on.\nUsing an index that does not exist on the list causes an error.\nThe index can be either an integer or a string that can be converted to\nan integer.\n\nExample:\n| Set List Value | ${L3} | 1  | xxx |\n| Set List Value | ${L3} | -1 | yyy |\n=>\n| ${L3} = ['a', 'xxx', 'yyy']\n\nStarting from Robot Framework 6.1, it is also possible to use the native\nitem assignment syntax. This is equivalent to the above:\n| ${L3}[1] =  | Set Variable | xxx |\n| ${L3}[-1] = | Set Variable | yyy |",
+      "returnType": {
+        "name": "MutableSequence",
+        "typedoc": "Sequence",
+        "nested": [],
+        "union": false
+      },
+      "doc": "Sets the value of ``list`` specified by ``index`` to the given ``value``.\n\nIndex ``0`` means the first position, ``1`` the second and so on.\nSimilarly, ``-1`` is the last position, ``-2`` second last, and so on.\nUsing an index that does not exist on the list causes an error.\nThe index can be either an integer or a string that can be converted to\nan integer.\n\nStarting from Robot Framework 7.4, the modified list is also returned.\n\nExample:\n| Set List Value | ${L3} | 1  | xxx |\n| Set List Value | ${L3} | -1 | yyy |\n=>\n| ${L3} = ['a', 'xxx', 'yyy']\n\nStarting from Robot Framework 6.1, it is also possible to use the native\nitem assignment syntax. This is equivalent to the above:\n| ${L3}[1] =  | Set Variable | xxx |\n| ${L3}[-1] = | Set Variable | yyy |",
       "shortdoc": "Sets the value of ``list`` specified by ``index`` to the given ``value``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 95
+      "lineno": 115
     },
     {
       "name": "Set To Dictionary",
       "args": [
         {
           "name": "dictionary",
-          "type": null,
+          "type": {
+            "name": "MutableMapping",
+            "typedoc": "Mapping",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "dictionary"
+          "repr": "dictionary: MutableMapping"
         },
         {
           "name": "key_value_pairs",
-          "type": null,
+          "type": {
+            "name": "object",
+            "typedoc": "object",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
-          "repr": "*key_value_pairs"
+          "repr": "*key_value_pairs: object"
         },
         {
           "name": "items",
-          "type": null,
+          "type": {
+            "name": "object",
+            "typedoc": "object",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "VAR_NAMED",
           "required": false,
-          "repr": "**items"
+          "repr": "**items: object"
         }
       ],
-      "returnType": null,
-      "doc": "Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.\n\nIf given items already exist in the dictionary, their values are updated.\n\nIt is easiest to specify items using the ``name=value`` syntax:\n| Set To Dictionary | ${D1} | key=value | second=${2} |\n=>\n| ${D1} = {'a': 1, 'key': 'value', 'second': 2}\n\nA limitation of the above syntax is that keys must be strings.\nThat can be avoided by passing keys and values as separate arguments:\n| Set To Dictionary | ${D1} | key | value | ${2} | value 2 |\n=>\n| ${D1} = {'a': 1, 'key': 'value', 2: 'value 2'}\n\nStarting from Robot Framework 6.1, it is also possible to use the native\nitem assignment syntax. This is equivalent to the above:\n| ${D1}[key] =  | Set Variable | value |\n| ${D1}[${2}] = | Set Variable | value 2 |",
+      "returnType": {
+        "name": "MutableMapping",
+        "typedoc": "Mapping",
+        "nested": [],
+        "union": false
+      },
+      "doc": "Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.\n\nIf given items already exist in the dictionary, their values are updated.\n\nThe modified dictionary is also returned.\n\nIt is easiest to specify items using the ``name=value`` syntax:\n| Set To Dictionary | ${D1} | key=value | second=${2} |\n=>\n| ${D1} = {'a': 1, 'key': 'value', 'second': 2}\n\nA limitation of the above syntax is that keys must be strings.\nThat can be avoided by passing keys and values as separate arguments:\n| Set To Dictionary | ${D1} | key | value | ${2} | value 2 |\n=>\n| ${D1} = {'a': 1, 'key': 'value', 2: 'value 2'}\n\nStarting from Robot Framework 6.1, it is also possible to use the native\nitem assignment syntax. This is equivalent to the above:\n| ${D1}[key] =  | Set Variable | value |\n| ${D1}[${2}] = | Set Variable | value 2 |",
       "shortdoc": "Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 552
+      "lineno": 582
     },
     {
       "name": "Should Contain Match",
       "args": [
         {
           "name": "list",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "Sequence",
+                "typedoc": "Sequence",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "Mapping",
+                "typedoc": "Mapping",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "Set",
+                "typedoc": "set",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "list"
+          "repr": "list: Sequence | Mapping | Set"
         },
         {
           "name": "pattern",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "pattern"
+          "repr": "pattern: str"
         },
         {
           "name": "msg",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "str",
+                "typedoc": "string",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "None",
+                "typedoc": "None",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "msg=None"
+          "repr": "msg: str | None = None"
         },
         {
           "name": "case_insensitive",
@@ -1659,38 +3196,85 @@
         }
       ],
       "returnType": null,
-      "doc": "Fails if ``pattern`` is not found in ``list``.\n\nBy default, pattern matching is similar to matching files in a shell\nand is case-sensitive and whitespace-sensitive. In the pattern syntax,\n``*`` matches to anything and ``?`` matches to any single character. You\ncan also prepend ``glob=`` to your pattern to explicitly use this pattern\nmatching behavior.\n\nIf you prepend ``regexp=`` to your pattern, your pattern will be used\naccording to the Python\n[http://docs.python.org/library/re.html|re module] regular expression\nsyntax. Notice that the backslash character often used with regular\nexpressions is an escape character in Robot Framework data and needs\nto be escaped with another backslash like ``regexp=\\\\d{6}``. See\n`BuiltIn.Should Match Regexp` for more details.\n\nMatching is case-sensitive by default, but that can be changed by giving\nthe ``ignore_case`` argument a true value (see `Boolean arguments`).\nThis argument is new in Robot Framework 7.0, but with earlier versions\nit is possible to use ``case_insensitive`` for the same purpose.\n\nIt is possible to ignore all whitespace by giving the ``ignore_whitespace``\nargument a true value. This argument is new in Robot Framework 7.0 as well,\nand with earlier versions it is possible to use ``whitespace_insensitive``.\n\nNotice that both ``case_insensitive`` and ``whitespace_insensitive``\nare considered deprecated. They will eventually be removed.\n\nNon-string values in lists are ignored when matching patterns.\n\nUse the ``msg`` argument to override the default error message.\n\nExamples:\n| Should Contain Match | ${list} | a*              | | | # Match strings beginning with 'a'. |\n| Should Contain Match | ${list} | regexp=a.*      | | | # Same as the above but with regexp. |\n| Should Contain Match | ${list} | regexp=\\\\d{6} | | | # Match strings containing six digits. |\n| Should Contain Match | ${list} | a*  | ignore_case=True       | | # Match strings beginning with 'a' or 'A'. |\n| Should Contain Match | ${list} | ab* | ignore_whitespace=yes  | | # Match strings beginning with 'ab' with possible whitespace ignored. |\n| Should Contain Match | ${list} | ab* | ignore_whitespace=true | ignore_case=true | # Same as the above but also ignore case. |",
+      "doc": "Fails if ``pattern`` is not found in ``list``.\n\nBy default, pattern matching is similar to matching files in a shell\nand is case-sensitive and whitespace-sensitive. In the pattern syntax,\n``*`` matches to anything and ``?`` matches to any single character. You\ncan also prepend ``glob=`` to your pattern to explicitly use this pattern\nmatching behavior.\n\nIf you prepend ``regexp=`` to your pattern, your pattern will be used\naccording to the Python\n[http://docs.python.org/library/re.html|re module] regular expression\nsyntax. Notice that the backslash character often used with regular\nexpressions is an escape character in Robot Framework data and needs\nto be escaped with another backslash like ``regexp=\\\\d{6}``. See\n`BuiltIn.Should Match Regexp` for more details.\n\nMatching is case-sensitive by default, but that can be changed by giving\nthe ``ignore_case`` argument a true value.\nThis argument is new in Robot Framework 7.0, but with earlier versions\nit is possible to use ``case_insensitive`` for the same purpose.\n\nIt is possible to ignore all whitespace by giving the ``ignore_whitespace``\nargument a true value. This argument is new in Robot Framework 7.0 as well,\nand with earlier versions it is possible to use ``whitespace_insensitive``.\n\nNotice that both ``case_insensitive`` and ``whitespace_insensitive``\nare considered deprecated. They will eventually be removed.\n\nNon-string values in lists are ignored when matching patterns.\n\nUse the ``msg`` argument to override the default error message.\n\nExamples:\n| Should Contain Match | ${list} | a*              | | | # Match strings beginning with 'a'. |\n| Should Contain Match | ${list} | regexp=a.*      | | | # Same as the above but with regexp. |\n| Should Contain Match | ${list} | regexp=\\\\d{6} | | | # Match strings containing six digits. |\n| Should Contain Match | ${list} | a*  | ignore_case=True       | | # Match strings beginning with 'a' or 'A'. |\n| Should Contain Match | ${list} | ab* | ignore_whitespace=yes  | | # Match strings beginning with 'ab' with possible whitespace ignored. |\n| Should Contain Match | ${list} | ab* | ignore_whitespace=true | ignore_case=true | # Same as the above but also ignore case. |",
       "shortdoc": "Fails if ``pattern`` is not found in ``list``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 1082
+      "lineno": 1135
     },
     {
       "name": "Should Not Contain Match",
       "args": [
         {
           "name": "list",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "Sequence",
+                "typedoc": "Sequence",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "Mapping",
+                "typedoc": "Mapping",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "Set",
+                "typedoc": "set",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "list"
+          "repr": "list: Sequence | Mapping | Set"
         },
         {
           "name": "pattern",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "pattern"
+          "repr": "pattern: str"
         },
         {
           "name": "msg",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "str",
+                "typedoc": "string",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "None",
+                "typedoc": "None",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "msg=None"
+          "repr": "msg: str | None = None"
         },
         {
           "name": "case_insensitive",
@@ -1776,36 +3360,63 @@
       "shortdoc": "Fails if ``pattern`` is found in ``list``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 1144
+      "lineno": 1197
     },
     {
       "name": "Sort List",
       "args": [
         {
           "name": "list_",
-          "type": null,
+          "type": {
+            "name": "MutableSequence",
+            "typedoc": "Sequence",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "list_"
+          "repr": "list_: MutableSequence"
         }
       ],
-      "returnType": null,
-      "doc": "Sorts the given list in place.\n\nSorting fails if items in the list are not comparable with each others.\nFor example, sorting a list containing strings and numbers is not possible.\n\nNote that the given list is changed and nothing is returned. Use\n`Copy List` first, if you need to preserve the list also in the original\norder.",
+      "returnType": {
+        "name": "MutableSequence",
+        "typedoc": "Sequence",
+        "nested": [],
+        "union": false
+      },
+      "doc": "Sorts the given list in place.\n\nSorting fails if items in the list are not comparable with each others.\nFor example, sorting a list containing strings and numbers is not possible.\n\nNote that the given list is changed and nothing is returned. Use\n`Copy List` first, if you need to preserve the list also in the original\norder.\n\nStarting from Robot Framework 7.4, the sorted list is also returned.",
       "shortdoc": "Sorts the given list in place.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Collections.py",
-      "lineno": 294
+      "lineno": 349
     }
   ],
   "typedocs": [
     {
       "type": "Standard",
       "name": "boolean",
-      "doc": "Strings ``TRUE``, ``YES``, ``ON`` and ``1`` are converted to Boolean ``True``,\nthe empty string as well as strings ``FALSE``, ``NO``, ``OFF`` and ``0``\nare converted to Boolean ``False``, and the string ``NONE`` is converted\nto the Python ``None`` object. Other strings and other accepted values are\npassed as-is, allowing keywords to handle them specially if\nneeded. All string comparisons are case-insensitive.\n\nExamples: ``TRUE`` (converted to ``True``), ``off`` (converted to ``False``),\n``example`` (used as-is)\n",
+      "doc": "Strings ``TRUE``, ``YES``, ``ON``, ``1`` and possible localization specific \"true\nstrings\" are converted to Boolean ``True``, the empty string, strings ``FALSE``,\n``NO``, ``OFF`` and ``0`` and possibly localization specific \"false strings\"\nare converted to Boolean ``False``, and the string ``NONE`` is converted to\nthe Python ``None`` object. Other strings and all other values are passed as-is,\nallowing keywords to handle them specially if needed. All string comparisons are\ncase-insensitive.\n\nExamples: ``TRUE`` (converted to ``True``), ``off`` (converted to ``False``),\n``example`` (used as-is)\n",
       "usages": [
+        "Copy Dictionary",
+        "Copy List",
+        "Dictionaries Should Be Equal",
+        "Dictionary Should Contain Item",
+        "Dictionary Should Contain Key",
+        "Dictionary Should Contain Sub Dictionary",
+        "Dictionary Should Contain Value",
+        "Dictionary Should Not Contain Key",
+        "Dictionary Should Not Contain Value",
+        "Get Dictionary Items",
+        "Get Dictionary Keys",
+        "Get Dictionary Values",
         "Get Match Count",
         "Get Matches",
+        "List Should Contain Sub List",
+        "List Should Contain Value",
+        "List Should Not Contain Duplicates",
+        "List Should Not Contain Value",
+        "Lists Should Be Equal",
         "Should Contain Match",
         "Should Not Contain Match"
       ],
@@ -1818,16 +3429,248 @@
     },
     {
       "type": "Standard",
-      "name": "None",
-      "doc": "String ``NONE`` (case-insensitive) is converted to Python ``None`` object.\nOther values cause an error.\n",
+      "name": "dictionary",
+      "doc": "Strings must be Python [https://docs.python.org/library/stdtypes.html#dict|dictionary]\nliterals. They are converted to actual dictionaries using the\n[https://docs.python.org/library/ast.html#ast.literal_eval|ast.literal_eval]\nfunction. They can contain any values ``ast.literal_eval`` supports, including\ndictionaries and other collections.\n\nAny mapping is accepted and converted to a ``dict``.\n\nIf the type has nested types like ``dict[str, int]``, items are converted\nto those types automatically. This in new in Robot Framework 6.0.\n\nExamples: ``{'a': 1, 'b': 2}``, ``{'key': 1, 'nested': {'key': 2}}``\n",
       "usages": [
+        "Convert To Dictionary"
+      ],
+      "accepts": [
+        "string",
+        "Mapping"
+      ]
+    },
+    {
+      "type": "Standard",
+      "name": "integer",
+      "doc": "Conversion is done using Python's [https://docs.python.org/library/functions.html#int|int]\nbuilt-in function. Floating point\nnumbers are accepted only if they can be represented as integers exactly.\nFor example, ``1.0`` is accepted and ``1.1`` is not.\n\nIt is possible to use hexadecimal, octal and binary numbers by prefixing values\nwith ``0x``, ``0o`` and ``0b``, respectively. Spaces and underscores can be used\nas visual separators for digit grouping purposes.\n\nExamples: ``42``, ``-1``, ``0b1010``, ``10 000 000``, ``0xBAD_C0FFEE``\n",
+      "usages": [
+        "Count Values In List",
+        "Get From List",
+        "Get Index From List",
+        "Get Slice From List",
+        "Insert Into List",
+        "Lists Should Be Equal",
+        "Remove From List",
+        "Set List Value"
+      ],
+      "accepts": [
+        "string",
+        "float"
+      ]
+    },
+    {
+      "type": "Standard",
+      "name": "list",
+      "doc": "Strings must be Python [https://docs.python.org/library/stdtypes.html#list|list]\nor [https://docs.python.org/library/stdtypes.html#tuple|tuple] literals.\nThey are converted using the\n[https://docs.python.org/library/ast.html#ast.literal_eval|ast.literal_eval]\nfunction and possible tuples converted further to lists. They can contain any\nvalues ``ast.literal_eval`` supports, including lists and other collections.\n\nIf the argument is a list, it is used without conversion.\nTuples and other sequences are converted to lists.\n\nIf the type has nested types like ``list[int]``, items are converted\nto those types automatically.\n\nExamples: ``['one', 'two']``, ``[('one', 1), ('two', 2)]``\n\nSupport to convert nested types is new in Robot Framework 6.0.\nSupport for tuple literals is new in Robot Framework 7.4.\n",
+      "usages": [
+        "Combine Lists",
+        "Convert To List",
+        "Remove Duplicates"
+      ],
+      "accepts": [
+        "string",
+        "Sequence"
+      ]
+    },
+    {
+      "type": "Standard",
+      "name": "Literal",
+      "doc": "Only specified values are accepted. Values can be strings,\nintegers, bytes, Booleans, enums and None, and used arguments\nare converted using the value type specific conversion logic.\n\nStrings are case, space, underscore and hyphen insensitive,\nbut exact matches have precedence over normalized matches.\n",
+      "usages": [
+        "Dictionaries Should Be Equal",
+        "Dictionary Should Contain Item",
+        "Dictionary Should Contain Key",
+        "Dictionary Should Contain Sub Dictionary",
+        "Dictionary Should Contain Value",
+        "Dictionary Should Not Contain Key",
+        "Dictionary Should Not Contain Value",
+        "Get Index From List",
+        "Get Slice From List",
+        "Log Dictionary",
+        "Log List"
+      ],
+      "accepts": [
+        "Any"
+      ]
+    },
+    {
+      "type": "Standard",
+      "name": "Mapping",
+      "doc": "Strings must be Python [https://docs.python.org/library/stdtypes.html#dict|dictionary]\nliterals. They are converted to actual dictionaries using the\n[https://docs.python.org/library/ast.html#ast.literal_eval|ast.literal_eval]\nfunction. They can contain any values ``ast.literal_eval`` supports, including\ndictionaries and other collections.\n\nAny mapping is accepted without conversion. An exception is that if the type\nis ``MutableMapping``, immutable values are converted to ``dict``.\n\nIf the type has nested types like ``Mapping[str, int]``, items are converted\nto those types automatically. This in new in Robot Framework 6.0.\n\nExamples: ``{'a': 1, 'b': 2}``, ``{'key': 1, 'nested': {'key': 2}}``\n",
+      "usages": [
+        "Combine Lists",
+        "Copy Dictionary",
+        "Dictionaries Should Be Equal",
+        "Dictionary Should Contain Item",
+        "Dictionary Should Contain Key",
+        "Dictionary Should Contain Sub Dictionary",
+        "Dictionary Should Contain Value",
+        "Dictionary Should Not Contain Key",
+        "Dictionary Should Not Contain Value",
+        "Get Dictionary Items",
+        "Get Dictionary Keys",
+        "Get Dictionary Values",
+        "Get From Dictionary",
         "Get Match Count",
         "Get Matches",
+        "Keep In Dictionary",
+        "List Should Contain Sub List",
+        "List Should Contain Value",
+        "List Should Not Contain Value",
+        "Lists Should Be Equal",
+        "Log Dictionary",
+        "Pop From Dictionary",
+        "Remove From Dictionary",
+        "Set To Dictionary",
+        "Should Contain Match",
+        "Should Not Contain Match"
+      ],
+      "accepts": [
+        "string",
+        "Mapping"
+      ]
+    },
+    {
+      "type": "Standard",
+      "name": "None",
+      "doc": "String ``NONE`` (case-insensitive) and the empty string are converted to\nthe Python ``None`` object. Other values cause an error.\n\nConverting the empty string is new in Robot Framework 7.4.\n",
+      "usages": [
+        "Count Values In List",
+        "Dictionaries Should Be Equal",
+        "Dictionary Should Contain Item",
+        "Dictionary Should Contain Key",
+        "Dictionary Should Contain Sub Dictionary",
+        "Dictionary Should Contain Value",
+        "Dictionary Should Not Contain Key",
+        "Dictionary Should Not Contain Value",
+        "Get Index From List",
+        "Get Match Count",
+        "Get Matches",
+        "Get Slice From List",
+        "List Should Contain Sub List",
+        "List Should Contain Value",
+        "List Should Not Contain Duplicates",
+        "List Should Not Contain Value",
+        "Lists Should Be Equal",
         "Should Contain Match",
         "Should Not Contain Match"
       ],
       "accepts": [
         "string"
+      ]
+    },
+    {
+      "type": "Standard",
+      "name": "object",
+      "doc": "Any value is accepted. No conversion is done.\n",
+      "usages": [
+        "Append To List",
+        "Convert To Dictionary",
+        "Convert To List",
+        "Count Values In List",
+        "Dictionary Should Contain Item",
+        "Dictionary Should Contain Key",
+        "Dictionary Should Contain Value",
+        "Dictionary Should Not Contain Key",
+        "Dictionary Should Not Contain Value",
+        "Get From Dictionary",
+        "Get From List",
+        "Get Index From List",
+        "Insert Into List",
+        "Keep In Dictionary",
+        "List Should Contain Value",
+        "List Should Not Contain Value",
+        "Pop From Dictionary",
+        "Remove From Dictionary",
+        "Remove From List",
+        "Remove Values From List",
+        "Set List Value",
+        "Set To Dictionary"
+      ],
+      "accepts": [
+        "Any"
+      ]
+    },
+    {
+      "type": "Standard",
+      "name": "Sequence",
+      "doc": "Strings must be Python [https://docs.python.org/library/stdtypes.html#list|list]\nor [https://docs.python.org/library/stdtypes.html#tuple|tuple] literals.\nThey are converted to actual lists or tuples using the\n[https://docs.python.org/library/ast.html#ast.literal_eval|ast.literal_eval]\nfunction. They can contain any values ``ast.literal_eval`` supports, including\nlists and other collections.\n\nAny sequence is accepted without conversion. An exception is that if the used\ntype is ``MutableSequence``, immutable values are converted to lists.\n\nIf the type has nested types like ``Sequence[int]``, items are converted\nto those types automatically.\n\nExamples: ``['one', 'two']``, ``(1, 2, 3)``\n\nSupport to convert nested types is new in Robot Framework 6.0.\nSupport for tuple literals is new in Robot Framework 7.4.\n",
+      "usages": [
+        "Append To List",
+        "Combine Lists",
+        "Copy List",
+        "Count Values In List",
+        "Dictionaries Should Be Equal",
+        "Get From List",
+        "Get Index From List",
+        "Get Match Count",
+        "Get Matches",
+        "Get Slice From List",
+        "Insert Into List",
+        "List Should Contain Sub List",
+        "List Should Contain Value",
+        "List Should Not Contain Duplicates",
+        "List Should Not Contain Value",
+        "Lists Should Be Equal",
+        "Log List",
+        "Remove Duplicates",
+        "Remove From List",
+        "Remove Values From List",
+        "Reverse List",
+        "Set List Value",
+        "Should Contain Match",
+        "Should Not Contain Match",
+        "Sort List"
+      ],
+      "accepts": [
+        "string",
+        "Sequence"
+      ]
+    },
+    {
+      "type": "Standard",
+      "name": "set",
+      "doc": "Strings must be Python [https://docs.python.org/library/stdtypes.html#set|set],\n[https://docs.python.org/library/stdtypes.html#list|list]\nor [https://docs.python.org/library/stdtypes.html#tuple|tuple]\nliterals. They are converted using the\n[https://docs.python.org/library/ast.html#ast.literal_eval|ast.literal_eval]\nfunction and possible lists and tuples converted further to sets. They can\ncontain any values ``ast.literal_eval`` supports.\n\nIf the argument is a set, it is used without conversion.\nLists and other collection objects are converted to sets.\n\nIf the type has nested types like ``set[int]``, items are converted\nto those types automatically.\n\nExamples: ``{1, 2, 3, 42}``, ``set()`` (an empty set)\n\nSupport to convert nested types is new in Robot Framework 6.0.\nSupport for list and tuple literals is new in Robot Framework 7.4.\n",
+      "usages": [
+        "Combine Lists",
+        "Get Match Count",
+        "Get Matches",
+        "List Should Contain Sub List",
+        "List Should Contain Value",
+        "List Should Not Contain Value",
+        "Lists Should Be Equal",
+        "Should Contain Match",
+        "Should Not Contain Match"
+      ],
+      "accepts": [
+        "string",
+        "Collection"
+      ]
+    },
+    {
+      "type": "Standard",
+      "name": "string",
+      "doc": "All arguments are converted to Unicode strings.\n\nMost values are converted simply by using ``str(value)``. An exception is that\nbytes are mapped directly to Unicode code points with same ordinals. This means\nthat, for example, ``b\"hyv\\xe4\"`` becomes ``\"hyv\u00e4\"``.\n\nConverting bytes specially is new Robot Framework 7.4.\n",
+      "usages": [
+        "Dictionaries Should Be Equal",
+        "Dictionary Should Contain Item",
+        "Dictionary Should Contain Key",
+        "Dictionary Should Contain Sub Dictionary",
+        "Dictionary Should Contain Value",
+        "Dictionary Should Not Contain Key",
+        "Dictionary Should Not Contain Value",
+        "Get Match Count",
+        "Get Matches",
+        "List Should Contain Sub List",
+        "List Should Contain Value",
+        "List Should Not Contain Duplicates",
+        "List Should Not Contain Value",
+        "Lists Should Be Equal",
+        "Should Contain Match",
+        "Should Not Contain Match"
+      ],
+      "accepts": [
+        "Any"
       ]
     }
   ]

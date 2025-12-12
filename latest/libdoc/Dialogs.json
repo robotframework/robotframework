@@ -2,8 +2,8 @@
   "specversion": 3,
   "name": "Dialogs",
   "doc": "A library providing dialogs for interacting with users.\n\n``Dialogs`` is Robot Framework's standard library that provides means\nfor pausing the test or task execution and getting input from users.\n\nLong lines in the provided messages are wrapped automatically. If you want\nto wrap lines manually, you can add newlines using the ``\\n`` character\nsequence.",
-  "version": "7.3.2",
-  "generated": "2025-07-04T14:36:18+00:00",
+  "version": "7.4",
+  "generated": "2025-12-12T11:21:09+00:00",
   "type": "LIBRARY",
   "scope": "GLOBAL",
   "docFormat": "ROBOT",
@@ -17,19 +17,29 @@
       "args": [
         {
           "name": "message",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "message"
+          "repr": "message: str"
         },
         {
           "name": "default_error",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": "",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "default_error="
+          "repr": "default_error: str = "
         }
       ],
       "returnType": null,
@@ -44,27 +54,61 @@
       "args": [
         {
           "name": "message",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "message"
+          "repr": "message: str"
         },
         {
           "name": "values",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
-          "repr": "*values"
+          "repr": "*values: str"
         },
         {
           "name": "default",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "str",
+                "typedoc": "string",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "int",
+                "typedoc": "integer",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "None",
+                "typedoc": "None",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": "None",
           "kind": "NAMED_ONLY",
           "required": false,
-          "repr": "default=None"
+          "repr": "default: str | int | None = None"
         }
       ],
       "returnType": null,
@@ -72,26 +116,36 @@
       "shortdoc": "Pauses execution and asks user to select a value.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Dialogs.py",
-      "lineno": 87
+      "lineno": 91
     },
     {
       "name": "Get Selections From User",
       "args": [
         {
           "name": "message",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "message"
+          "repr": "message: str"
         },
         {
           "name": "values",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
-          "repr": "*values"
+          "repr": "*values: str"
         }
       ],
       "returnType": null,
@@ -99,37 +153,57 @@
       "shortdoc": "Pauses execution and asks user to select multiple values.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/Dialogs.py",
-      "lineno": 109
+      "lineno": 117
     },
     {
       "name": "Get Value From User",
       "args": [
         {
           "name": "message",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "message"
+          "repr": "message: str"
         },
         {
           "name": "default_value",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": "",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "default_value="
+          "repr": "default_value: str = "
         },
         {
           "name": "hidden",
-          "type": null,
+          "type": {
+            "name": "bool",
+            "typedoc": "boolean",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "hidden=False"
+          "repr": "hidden: bool = False"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "str",
+        "typedoc": "string",
+        "nested": [],
+        "union": false
+      },
       "doc": "Pauses execution and asks user to input a value.\n\nValue typed by the user, or the possible default value, is returned.\nReturning an empty value is fine, but pressing ``Cancel`` fails the keyword.\n\n``message`` is the instruction shown in the dialog and ``default_value`` is\nthe possible default value shown in the input field.\n\nIf ``hidden`` is given a true value, the value typed by the user is hidden.\n``hidden`` is considered true if it is a non-empty string not equal to\n``false``, ``none`` or ``no``, case-insensitively. If it is not a string,\nits truth value is got directly using same\n[http://docs.python.org/library/stdtypes.html#truth|rules as in Python].\n\nExample:\n| ${username} = | Get Value From User | Input user name | default    |\n| ${password} = | Get Value From User | Input password  | hidden=yes |",
       "shortdoc": "Pauses execution and asks user to input a value.",
       "tags": [],
@@ -141,11 +215,16 @@
       "args": [
         {
           "name": "message",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": "Execution paused. Press OK to continue.",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "message=Execution paused. Press OK to continue."
+          "repr": "message: str = Execution paused. Press OK to continue."
         }
       ],
       "returnType": null,
@@ -156,5 +235,58 @@
       "lineno": 42
     }
   ],
-  "typedocs": []
+  "typedocs": [
+    {
+      "type": "Standard",
+      "name": "boolean",
+      "doc": "Strings ``TRUE``, ``YES``, ``ON``, ``1`` and possible localization specific \"true\nstrings\" are converted to Boolean ``True``, the empty string, strings ``FALSE``,\n``NO``, ``OFF`` and ``0`` and possibly localization specific \"false strings\"\nare converted to Boolean ``False``, and the string ``NONE`` is converted to\nthe Python ``None`` object. Other strings and all other values are passed as-is,\nallowing keywords to handle them specially if needed. All string comparisons are\ncase-insensitive.\n\nExamples: ``TRUE`` (converted to ``True``), ``off`` (converted to ``False``),\n``example`` (used as-is)\n",
+      "usages": [
+        "Get Value From User"
+      ],
+      "accepts": [
+        "string",
+        "integer",
+        "float",
+        "None"
+      ]
+    },
+    {
+      "type": "Standard",
+      "name": "integer",
+      "doc": "Conversion is done using Python's [https://docs.python.org/library/functions.html#int|int]\nbuilt-in function. Floating point\nnumbers are accepted only if they can be represented as integers exactly.\nFor example, ``1.0`` is accepted and ``1.1`` is not.\n\nIt is possible to use hexadecimal, octal and binary numbers by prefixing values\nwith ``0x``, ``0o`` and ``0b``, respectively. Spaces and underscores can be used\nas visual separators for digit grouping purposes.\n\nExamples: ``42``, ``-1``, ``0b1010``, ``10 000 000``, ``0xBAD_C0FFEE``\n",
+      "usages": [
+        "Get Selection From User"
+      ],
+      "accepts": [
+        "string",
+        "float"
+      ]
+    },
+    {
+      "type": "Standard",
+      "name": "None",
+      "doc": "String ``NONE`` (case-insensitive) and the empty string are converted to\nthe Python ``None`` object. Other values cause an error.\n\nConverting the empty string is new in Robot Framework 7.4.\n",
+      "usages": [
+        "Get Selection From User"
+      ],
+      "accepts": [
+        "string"
+      ]
+    },
+    {
+      "type": "Standard",
+      "name": "string",
+      "doc": "All arguments are converted to Unicode strings.\n\nMost values are converted simply by using ``str(value)``. An exception is that\nbytes are mapped directly to Unicode code points with same ordinals. This means\nthat, for example, ``b\"hyv\\xe4\"`` becomes ``\"hyv\u00e4\"``.\n\nConverting bytes specially is new Robot Framework 7.4.\n",
+      "usages": [
+        "Execute Manual Step",
+        "Get Selection From User",
+        "Get Selections From User",
+        "Get Value From User",
+        "Pause Execution"
+      ],
+      "accepts": [
+        "Any"
+      ]
+    }
+  ]
 }

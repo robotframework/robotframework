@@ -1,14 +1,14 @@
 {
   "specversion": 3,
   "name": "OperatingSystem",
-  "doc": "A library providing keywords for operating system related tasks.\n\n``OperatingSystem`` is Robot Framework's standard library that\nenables various operating system related tasks to be performed in\nthe system where Robot Framework is running. It can, among other\nthings, execute commands (e.g. `Run`), create and remove files and\ndirectories (e.g. `Create File`, `Remove Directory`), check\nwhether files or directories exists or contain something\n(e.g. `File Should Exist`, `Directory Should Be Empty`) and\nmanipulate environment variables (e.g. `Set Environment Variable`).\n\n== Table of contents ==\n\n- `Path separators`\n- `Pattern matching`\n- `Tilde expansion`\n- `pathlib.Path support`\n- `Boolean arguments`\n- `Example`\n- `Keywords`\n\n= Path separators =\n\nBecause Robot Framework uses the backslash (``\\``) as an escape character\nin its data, using a literal backslash requires duplicating it like\nin ``c:\\\\path\\\\file.txt``. That can be inconvenient especially with\nlonger Windows paths, and thus all keywords expecting paths as arguments\nconvert forward slashes to backslashes automatically on Windows. This also\nmeans that paths like ``${CURDIR}/path/file.txt`` are operating system\nindependent.\n\nNotice that the automatic path separator conversion does not work if\nthe path is only a part of an argument like with the `Run` keyword.\nIn these cases the built-in variable ``${/}`` that contains ``\\`` or ``/``,\ndepending on the operating system, can be used instead.\n\n= Pattern matching =\n\nMany keywords accept arguments as either _glob_ or _regular expression_ patterns.\n\n== Glob patterns ==\n\nSome keywords, for example `List Directory`, support so called\n[http://en.wikipedia.org/wiki/Glob_(programming)|glob patterns] where:\n\n| ``*``        | matches any string, even an empty string                |\n| ``?``        | matches any single character                            |\n| ``[chars]``  | matches one character in the bracket                    |\n| ``[!chars]`` | matches one character not in the bracket                |\n| ``[a-z]``    | matches one character from the range in the bracket     |\n| ``[!a-z]``   | matches one character not from the range in the bracket |\n\nUnless otherwise noted, matching is case-insensitive on case-insensitive\noperating systems such as Windows.\n\n== Regular expressions ==\n\nSome keywords, for example `Grep File`, support\n[http://en.wikipedia.org/wiki/Regular_expression|regular expressions]\nthat are more powerful but also more complicated that glob patterns.\nThe regular expression support is implemented using Python's\n[http://docs.python.org/library/re.html|re module] and its documentation\nshould be consulted for more information about the syntax.\n\nBecause the backslash character (``\\``) is an escape character in\nRobot Framework data, possible backslash characters in regular\nexpressions need to be escaped with another backslash like ``\\\\d\\\\w+``.\nStrings that may contain special characters but should be handled\nas literal strings, can be escaped with the `Regexp Escape` keyword\nfrom the BuiltIn library.\n\n= Tilde expansion =\n\nPaths beginning with ``~`` or ``~username`` are expanded to the current or\nspecified user's home directory, respectively. The resulting path is\noperating system dependent, but typically e.g. ``~/robot`` is expanded to\n``C:\\Users\\<user>\\robot`` on Windows and ``/home/<user>/robot`` on Unixes.\n\n= pathlib.Path support =\n\nStarting from Robot Framework 6.0, arguments representing paths can be given\nas [https://docs.python.org/3/library/pathlib.html|pathlib.Path] instances\nin addition to strings.\n\nAll keywords returning paths return them as strings. This may change in\nthe future so that the return value type matches the argument type.\n\n= Boolean arguments =\n\nSome keywords accept arguments that are handled as Boolean values true or\nfalse. If such an argument is given as a string, it is considered false if\nit is an empty string or equal to ``FALSE``, ``NONE``, ``NO``, ``OFF`` or\n``0``, case-insensitively. Other strings are considered true regardless\ntheir value, and other argument types are tested using the same\n[http://docs.python.org/library/stdtypes.html#truth|rules as in Python].\n\nTrue examples:\n| `Remove Directory` | ${path} | recursive=True    | # Strings are generally true.    |\n| `Remove Directory` | ${path} | recursive=yes     | # Same as the above.             |\n| `Remove Directory` | ${path} | recursive=${TRUE} | # Python ``True`` is true.       |\n| `Remove Directory` | ${path} | recursive=${42}   | # Numbers other than 0 are true. |\n\nFalse examples:\n| `Remove Directory` | ${path} | recursive=False    | # String ``false`` is false.   |\n| `Remove Directory` | ${path} | recursive=no       | # Also string ``no`` is false. |\n| `Remove Directory` | ${path} | recursive=${EMPTY} | # Empty string is false.       |\n| `Remove Directory` | ${path} | recursive=${FALSE} | # Python ``False`` is false.   |\n\n= Example =\n\n| ***** Settings *****\n| Library         OperatingSystem\n|\n| ***** Variables *****\n| ${PATH}         ${CURDIR}/example.txt\n|\n| ***** Test Cases *****\n| Example\n|     `Create File`          ${PATH}    Some text\n|     `File Should Exist`    ${PATH}\n|     `Copy File`            ${PATH}    ~/file.txt",
-  "version": "7.3.2",
-  "generated": "2025-07-04T14:36:18+00:00",
+  "doc": "A library providing keywords for operating system related tasks.\n\n``OperatingSystem`` is Robot Framework's standard library that\nenables various operating system related tasks to be performed in\nthe system where Robot Framework is running. It can, among other\nthings, execute commands (e.g. `Run`), create and remove files and\ndirectories (e.g. `Create File`, `Remove Directory`), check\nwhether files or directories exists or contain something\n(e.g. `File Should Exist`, `Directory Should Be Empty`) and\nmanipulate environment variables (e.g. `Set Environment Variable`).\n\n== Table of contents ==\n\n- `Path separators`\n- `Pattern matching`\n- `Tilde expansion`\n- `pathlib.Path support`\n- `Example`\n- `Keywords`\n\n= Path separators =\n\nBecause Robot Framework uses the backslash (``\\``) as an escape character\nin its data, using a literal backslash requires duplicating it like\nin ``c:\\\\path\\\\file.txt``. That can be inconvenient especially with\nlonger Windows paths, and thus all keywords expecting paths as arguments\nconvert forward slashes to backslashes automatically on Windows. This also\nmeans that paths like ``${CURDIR}/path/file.txt`` are operating system\nindependent.\n\nNotice that the automatic path separator conversion does not work if\nthe path is only a part of an argument like with the `Run` keyword.\nIn these cases the built-in variable ``${/}`` that contains ``\\`` or ``/``,\ndepending on the operating system, can be used instead.\n\n= Pattern matching =\n\nMany keywords accept arguments as either _glob_ or _regular expression_ patterns.\n\n== Glob patterns ==\n\nSome keywords, for example `List Directory`, support so called\n[http://en.wikipedia.org/wiki/Glob_(programming)|glob patterns] where:\n\n| ``*``        | matches any string, even an empty string                |\n| ``?``        | matches any single character                            |\n| ``[chars]``  | matches one character in the bracket                    |\n| ``[!chars]`` | matches one character not in the bracket                |\n| ``[a-z]``    | matches one character from the range in the bracket     |\n| ``[!a-z]``   | matches one character not from the range in the bracket |\n\nUnless otherwise noted, matching is case-insensitive on case-insensitive\noperating systems such as Windows.\n\n== Regular expressions ==\n\nSome keywords, for example `Grep File`, support\n[http://en.wikipedia.org/wiki/Regular_expression|regular expressions]\nthat are more powerful but also more complicated that glob patterns.\nThe regular expression support is implemented using Python's\n[http://docs.python.org/library/re.html|re module] and its documentation\nshould be consulted for more information about the syntax.\n\nBecause the backslash character (``\\``) is an escape character in\nRobot Framework data, possible backslash characters in regular\nexpressions need to be escaped with another backslash like ``\\\\d\\\\w+``.\nStrings that may contain special characters but should be handled\nas literal strings, can be escaped with the `Regexp Escape` keyword\nfrom the BuiltIn library.\n\n= Tilde expansion =\n\nPaths beginning with ``~`` or ``~username`` are expanded to the current or\nspecified user's home directory, respectively. The resulting path is\noperating system dependent, but typically e.g. ``~/robot`` is expanded to\n``C:\\Users\\<user>\\robot`` on Windows and ``/home/<user>/robot`` on Unixes.\n\n= pathlib.Path support =\n\nStarting from Robot Framework 6.0, arguments representing paths can be given\nas [https://docs.python.org/3/library/pathlib.html|pathlib.Path] instances\nin addition to strings.\n\nFor backwards compatibility reasons, all keywords returning paths return them\nas strings.\n\n= Example =\n\n| ***** Settings *****\n| Library         OperatingSystem\n|\n| ***** Variables *****\n| ${PATH}         ${CURDIR}/example.txt\n|\n| ***** Test Cases *****\n| Example\n|     `Create File`          ${PATH}    Some text\n|     `File Should Exist`    ${PATH}\n|     `Copy File`            ${PATH}    ~/file.txt",
+  "version": "7.4",
+  "generated": "2025-12-12T11:21:09+00:00",
   "type": "LIBRARY",
   "scope": "GLOBAL",
   "docFormat": "ROBOT",
   "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-  "lineno": 40,
+  "lineno": 39,
   "tags": [],
   "inits": [],
   "keywords": [
@@ -17,27 +17,55 @@
       "args": [
         {
           "name": "name",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "name"
+          "repr": "name: str"
         },
         {
           "name": "values",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "str",
+                "typedoc": "string",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "Secret",
+                "typedoc": "Secret",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
-          "repr": "*values"
+          "repr": "*values: str | Secret"
         },
         {
           "name": "separator",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": ":",
           "kind": "NAMED_ONLY",
           "required": false,
-          "repr": "separator=:"
+          "repr": "separator: str = :"
         }
       ],
       "returnType": null,
@@ -45,34 +73,62 @@
       "shortdoc": "Appends given ``values`` to environment variable ``name``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 987
+      "lineno": 1004
     },
     {
       "name": "Append To File",
       "args": [
         {
           "name": "path",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "path"
+          "repr": "path: str"
         },
         {
           "name": "content",
-          "type": null,
-          "defaultValue": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "str",
+                "typedoc": "string",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "Secret",
+                "typedoc": "Secret",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
+          "defaultValue": "",
           "kind": "POSITIONAL_OR_NAMED",
-          "required": true,
-          "repr": "content"
+          "required": false,
+          "repr": "content: str | Secret = "
         },
         {
           "name": "encoding",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": "UTF-8",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "encoding=UTF-8"
+          "repr": "encoding: str = UTF-8"
         }
       ],
       "returnType": null,
@@ -80,7 +136,7 @@
       "shortdoc": "Appends the given content to the specified file.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 646
+      "lineno": 654
     },
     {
       "name": "Copy Directory",
@@ -103,49 +159,69 @@
         }
       ],
       "returnType": null,
-      "doc": "Copies the source directory into the destination.\n\nIf the destination exists, the source is copied under it. Otherwise\nthe destination directory and the possible missing intermediate\ndirectories are created.",
+      "doc": "Copies the source directory into the destination.\n\nIf the destination exists, the source is copied under it. Otherwise,\nthe destination directory and the possible missing intermediate\ndirectories are created.",
       "shortdoc": "Copies the source directory into the destination.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 918
+      "lineno": 927
     },
     {
       "name": "Copy File",
       "args": [
         {
           "name": "source",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "source"
+          "repr": "source: str"
         },
         {
           "name": "destination",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "destination"
+          "repr": "destination: str"
         }
       ],
-      "returnType": null,
-      "doc": "Copies the source file into the destination.\n\nSource must be a path to an existing file or a glob pattern (see\n`Glob patterns`) that matches exactly one file. How the\ndestination is interpreted is explained below.\n\n1) If the destination is an existing file, the source file is copied\nover it.\n\n2) If the destination is an existing directory, the source file is\ncopied into it. A possible file with the same name as the source is\noverwritten.\n\n3) If the destination does not exist and it ends with a path\nseparator (``/`` or ``\\``), it is considered a directory. That\ndirectory is created and a source file copied into it.\nPossible missing intermediate directories are also created.\n\n4) If the destination does not exist and it does not end with a path\nseparator, it is considered a file. If the path to the file does not\nexist, it is created.\n\nThe resulting destination path is returned.\n\nSee also `Copy Files`, `Move File`, and `Move Files`.",
+      "returnType": {
+        "name": "str",
+        "typedoc": "string",
+        "nested": [],
+        "union": false
+      },
+      "doc": "Copies the source file into the destination.\n\nSource must be a path to an existing file or a glob pattern (see\n`Glob patterns`) that matches exactly one file. How the\ndestination is interpreted is explained below.\n\n1) If the destination is an existing file, the source file is copied\nover it.\n\n2) If the destination is an existing directory, the source file is\ncopied into it. A possible file with the same name as the source is\noverwritten.\n\n3) If the destination does not exist, and it ends with a path\nseparator (``/`` or ``\\``), it is considered a directory. That\ndirectory is created and a source file copied into it.\nPossible missing intermediate directories are also created.\n\n4) If the destination does not exist, and it does not end with a path\nseparator, it is considered a file. If the path to the file does not\nexist, it is created.\n\nThe resulting destination path is returned.\n\nSee also `Copy Files`, `Move File`, and `Move Files`.",
       "shortdoc": "Copies the source file into the destination.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 746
+      "lineno": 759
     },
     {
       "name": "Copy Files",
       "args": [
         {
           "name": "sources_and_destination",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
-          "repr": "*sources_and_destination"
+          "repr": "*sources_and_destination: str"
         }
       ],
       "returnType": null,
@@ -153,26 +229,49 @@
       "shortdoc": "Copies specified files to the target directory.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 873
+      "lineno": 882
     },
     {
       "name": "Count Directories In Directory",
       "args": [
         {
           "name": "path",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "path"
+          "repr": "path: str"
         },
         {
           "name": "pattern",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "str",
+                "typedoc": "string",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "None",
+                "typedoc": "None",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "pattern=None"
+          "repr": "pattern: str | None = None"
         }
       ],
       "returnType": null,
@@ -180,26 +279,49 @@
       "shortdoc": "Wrapper for `Count Items In Directory` returning only directory count.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 1371
+      "lineno": 1419
     },
     {
       "name": "Count Files In Directory",
       "args": [
         {
           "name": "path",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "path"
+          "repr": "path: str"
         },
         {
           "name": "pattern",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "str",
+                "typedoc": "string",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "None",
+                "typedoc": "None",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "pattern=None"
+          "repr": "pattern: str | None = None"
         }
       ],
       "returnType": null,
@@ -207,26 +329,49 @@
       "shortdoc": "Wrapper for `Count Items In Directory` returning only file count.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 1365
+      "lineno": 1413
     },
     {
       "name": "Count Items In Directory",
       "args": [
         {
           "name": "path",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "path"
+          "repr": "path: str"
         },
         {
           "name": "pattern",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "str",
+                "typedoc": "string",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "None",
+                "typedoc": "None",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "pattern=None"
+          "repr": "pattern: str | None = None"
         }
       ],
       "returnType": null,
@@ -234,26 +379,36 @@
       "shortdoc": "Returns and logs the number of all items in the given directory.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 1354
+      "lineno": 1402
     },
     {
       "name": "Create Binary File",
       "args": [
         {
           "name": "path",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "path"
+          "repr": "path: str"
         },
         {
           "name": "content",
-          "type": null,
+          "type": {
+            "name": "bytes",
+            "typedoc": "bytes",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "content"
+          "repr": "content: bytes"
         }
       ],
       "returnType": null,
@@ -261,53 +416,86 @@
       "shortdoc": "Creates a binary file with the given content.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 620
+      "lineno": 630
     },
     {
       "name": "Create Directory",
       "args": [
         {
           "name": "path",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "path"
+          "repr": "path: str"
         }
       ],
       "returnType": null,
-      "doc": "Creates the specified directory.\n\nAlso possible intermediate directories are created. Passes if the\ndirectory already exists, but fails if the path exists and is not\na directory.",
+      "doc": "Creates the specified directory.\n\nPossible intermediate directories are created as well. Passes if the\ndirectory already exists, but fails if the path exists and is not\na directory.",
       "shortdoc": "Creates the specified directory.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 703
+      "lineno": 718
     },
     {
       "name": "Create File",
       "args": [
         {
           "name": "path",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "path"
+          "repr": "path: str"
         },
         {
           "name": "content",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "str",
+                "typedoc": "string",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "Secret",
+                "typedoc": "Secret",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": "",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "content="
+          "repr": "content: str | Secret = "
         },
         {
           "name": "encoding",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": "UTF-8",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "encoding=UTF-8"
+          "repr": "encoding: str = UTF-8"
         }
       ],
       "returnType": null,
@@ -315,26 +503,49 @@
       "shortdoc": "Creates a file with the given content and encoding.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 583
+      "lineno": 580
     },
     {
       "name": "Directory Should Be Empty",
       "args": [
         {
           "name": "path",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "path"
+          "repr": "path: str"
         },
         {
           "name": "msg",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "str",
+                "typedoc": "string",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "None",
+                "typedoc": "None",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "msg=None"
+          "repr": "msg: str | None = None"
         }
       ],
       "returnType": null,
@@ -342,26 +553,49 @@
       "shortdoc": "Fails unless the specified directory is empty.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 532
+      "lineno": 529
     },
     {
       "name": "Directory Should Exist",
       "args": [
         {
           "name": "path",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "path"
+          "repr": "path: str"
         },
         {
           "name": "msg",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "str",
+                "typedoc": "string",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "None",
+                "typedoc": "None",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "msg=None"
+          "repr": "msg: str | None = None"
         }
       ],
       "returnType": null,
@@ -369,26 +603,49 @@
       "shortdoc": "Fails unless the given path points to an existing directory.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 450
+      "lineno": 434
     },
     {
       "name": "Directory Should Not Be Empty",
       "args": [
         {
           "name": "path",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "path"
+          "repr": "path: str"
         },
         {
           "name": "msg",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "str",
+                "typedoc": "string",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "None",
+                "typedoc": "None",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "msg=None"
+          "repr": "msg: str | None = None"
         }
       ],
       "returnType": null,
@@ -396,26 +653,49 @@
       "shortdoc": "Fails if the specified directory is empty.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 544
+      "lineno": 541
     },
     {
       "name": "Directory Should Not Exist",
       "args": [
         {
           "name": "path",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "path"
+          "repr": "path: str"
         },
         {
           "name": "msg",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "str",
+                "typedoc": "string",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "None",
+                "typedoc": "None",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "msg=None"
+          "repr": "msg: str | None = None"
         }
       ],
       "returnType": null,
@@ -423,99 +703,173 @@
       "shortdoc": "Fails if the given path points to an existing file.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 464
+      "lineno": 448
     },
     {
       "name": "Empty Directory",
       "args": [
         {
           "name": "path",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "path"
+          "repr": "path: str"
         }
       ],
       "returnType": null,
-      "doc": "Deletes all the content from the given directory.\n\nDeletes both files and sub-directories, but the specified directory\nitself if not removed. Use `Remove Directory` if you want to remove\nthe whole directory.",
+      "doc": "Deletes all the content from the given directory.\n\nDeletes both files and subdirectories, but the specified directory\nitself if not removed. Use `Remove Directory` if you want to remove\nthe whole directory.",
       "shortdoc": "Deletes all the content from the given directory.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 688
+      "lineno": 703
     },
     {
       "name": "Environment Variable Should Be Set",
       "args": [
         {
           "name": "name",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "name"
+          "repr": "name: str"
         },
         {
           "name": "msg",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "str",
+                "typedoc": "string",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "None",
+                "typedoc": "None",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "msg=None"
+          "repr": "msg: str | None = None"
         }
       ],
       "returnType": null,
-      "doc": "Fails if the specified environment variable is not set.\n\nThe default error message can be overridden with the ``msg`` argument.",
+      "doc": "Fails if the specified environment variable is not set.\n\nEnvironment variable is considered not to be set if it does not exist\nor if its value is an empty string.\n\nThe default error message can be overridden with the ``msg`` argument.",
       "shortdoc": "Fails if the specified environment variable is not set.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 1028
+      "lineno": 1054
     },
     {
       "name": "Environment Variable Should Not Be Set",
       "args": [
         {
           "name": "name",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "name"
+          "repr": "name: str"
         },
         {
           "name": "msg",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "str",
+                "typedoc": "string",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "None",
+                "typedoc": "None",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "msg=None"
+          "repr": "msg: str | None = None"
         }
       ],
       "returnType": null,
-      "doc": "Fails if the specified environment variable is set.\n\nThe default error message can be overridden with the ``msg`` argument.",
+      "doc": "Fails if the specified environment variable is set.\n\nEnvironment variable is considered not to be set if it does not exist\nor if its value is an empty string.\n\nThe default error message can be overridden with the ``msg`` argument.",
       "shortdoc": "Fails if the specified environment variable is set.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 1038
+      "lineno": 1067
     },
     {
       "name": "File Should Be Empty",
       "args": [
         {
           "name": "path",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "path"
+          "repr": "path: str"
         },
         {
           "name": "msg",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "str",
+                "typedoc": "string",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "None",
+                "typedoc": "None",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "msg=None"
+          "repr": "msg: str | None = None"
         }
       ],
       "returnType": null,
@@ -523,26 +877,49 @@
       "shortdoc": "Fails unless the specified file is empty.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 555
+      "lineno": 552
     },
     {
       "name": "File Should Exist",
       "args": [
         {
           "name": "path",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "path"
+          "repr": "path: str"
         },
         {
           "name": "msg",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "str",
+                "typedoc": "string",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "None",
+                "typedoc": "None",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "msg=None"
+          "repr": "msg: str | None = None"
         }
       ],
       "returnType": null,
@@ -550,26 +927,49 @@
       "shortdoc": "Fails unless the given ``path`` points to an existing file.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 422
+      "lineno": 406
     },
     {
       "name": "File Should Not Be Empty",
       "args": [
         {
           "name": "path",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "path"
+          "repr": "path: str"
         },
         {
           "name": "msg",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "str",
+                "typedoc": "string",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "None",
+                "typedoc": "None",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "msg=None"
+          "repr": "msg: str | None = None"
         }
       ],
       "returnType": null,
@@ -577,26 +977,49 @@
       "shortdoc": "Fails if the specified file is empty.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 568
+      "lineno": 565
     },
     {
       "name": "File Should Not Exist",
       "args": [
         {
           "name": "path",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "path"
+          "repr": "path: str"
         },
         {
           "name": "msg",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "str",
+                "typedoc": "string",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "None",
+                "typedoc": "None",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "msg=None"
+          "repr": "msg: str | None = None"
         }
       ],
       "returnType": null,
@@ -604,45 +1027,78 @@
       "shortdoc": "Fails if the given path points to an existing file.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 436
+      "lineno": 420
     },
     {
       "name": "Get Binary File",
       "args": [
         {
           "name": "path",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "path"
+          "repr": "path: str"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "bytes",
+        "typedoc": "bytes",
+        "nested": [],
+        "union": false
+      },
       "doc": "Returns the contents of a specified file.\n\nThis keyword reads the specified file and returns the contents as is.\nSee also `Get File`.",
       "shortdoc": "Returns the contents of a specified file.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 298
+      "lineno": 277
     },
     {
       "name": "Get Environment Variable",
       "args": [
         {
           "name": "name",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "name"
+          "repr": "name: str"
         },
         {
           "name": "default",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "str",
+                "typedoc": "string",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "None",
+                "typedoc": "None",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "default=None"
+          "repr": "default: str | None = None"
         }
       ],
       "returnType": null,
@@ -650,7 +1106,7 @@
       "shortdoc": "Returns the value of an environment variable with the given name.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 961
+      "lineno": 969
     },
     {
       "name": "Get Environment Variables",
@@ -660,80 +1116,120 @@
       "shortdoc": "Returns currently available environment variables as a dictionary.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 1048
+      "lineno": 1084
     },
     {
       "name": "Get File",
       "args": [
         {
           "name": "path",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "path"
+          "repr": "path: str"
         },
         {
           "name": "encoding",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": "UTF-8",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "encoding=UTF-8"
+          "repr": "encoding: str = UTF-8"
         },
         {
           "name": "encoding_errors",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": "strict",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "encoding_errors=strict"
+          "repr": "encoding_errors: str = strict"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "str",
+        "typedoc": "string",
+        "nested": [],
+        "union": false
+      },
       "doc": "Returns the contents of a specified file.\n\nThis keyword reads the specified file and returns the contents.\nLine breaks in content are converted to platform independent form.\nSee also `Get Binary File`.\n\n``encoding`` defines the encoding of the file. The default value is\n``UTF-8``, which means that UTF-8 and ASCII encoded files are read\ncorrectly. In addition to the encodings supported by the underlying\nPython implementation, the following special encoding values can be\nused:\n\n- ``SYSTEM``: Use the default system encoding.\n- ``CONSOLE``: Use the console encoding. Outside Windows this is same\n  as the system encoding.\n\n``encoding_errors`` argument controls what to do if decoding some bytes\nfails. All values accepted by ``decode`` method in Python are valid, but\nin practice the following values are most useful:\n\n- ``strict``: Fail if characters cannot be decoded (default).\n- ``ignore``: Ignore characters that cannot be decoded.\n- ``replace``: Replace characters that cannot be decoded with\n  a replacement character.",
       "shortdoc": "Returns the contents of a specified file.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 255
+      "lineno": 229
     },
     {
       "name": "Get File Size",
       "args": [
         {
           "name": "path",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "path"
+          "repr": "path: str"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "int",
+        "typedoc": "integer",
+        "nested": [],
+        "union": false
+      },
       "doc": "Returns and logs file size as an integer in bytes.",
       "shortdoc": "Returns and logs file size as an integer in bytes.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 1305
+      "lineno": 1338
     },
     {
       "name": "Get Modified Time",
       "args": [
         {
           "name": "path",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "path"
+          "repr": "path: str"
         },
         {
           "name": "format",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": "timestamp",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "format=timestamp"
+          "repr": "format: str = timestamp"
         }
       ],
       "returnType": null,
@@ -741,104 +1237,159 @@
       "shortdoc": "Returns the last modification time of a file or directory.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 1216
+      "lineno": 1245
     },
     {
       "name": "Grep File",
       "args": [
         {
           "name": "path",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "path"
+          "repr": "path: str"
         },
         {
           "name": "pattern",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "pattern"
+          "repr": "pattern: str"
         },
         {
           "name": "encoding",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": "UTF-8",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "encoding=UTF-8"
+          "repr": "encoding: str = UTF-8"
         },
         {
           "name": "encoding_errors",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": "strict",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "encoding_errors=strict"
+          "repr": "encoding_errors: str = strict"
         },
         {
           "name": "regexp",
-          "type": null,
+          "type": {
+            "name": "bool",
+            "typedoc": "boolean",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "regexp=False"
+          "repr": "regexp: bool = False"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "str",
+        "typedoc": "string",
+        "nested": [],
+        "union": false
+      },
       "doc": "Returns the lines of the specified file that match the ``pattern``.\n\nThis keyword reads a file from the file system using the defined\n``path``, ``encoding`` and ``encoding_errors`` similarly as `Get File`.\nA difference is that only the lines that match the given ``pattern`` are\nreturned. Lines are returned as a single string concatenated back together\nwith newlines and the number of matched lines is automatically logged.\nPossible trailing newline is never returned.\n\nA line matches if it contains the ``pattern`` anywhere in it i.e. it does\nnot need to match the pattern fully. There are two supported pattern types:\n\n- By default the pattern is considered a _glob_ pattern where, for example,\n  ``*`` and ``?`` can be used as wildcards.\n- If the ``regexp`` argument is given a true value, the pattern is\n  considered to be a _regular expression_. These patterns are more\n  powerful but also more complicated than glob patterns. They often use\n  the backslash character and it needs to be escaped in Robot Framework\n  date like `\\\\`.\n\nFor more information about glob and regular expression syntax, see\nthe `Pattern matching` section. With this keyword matching is always\ncase-sensitive.\n\nExamples:\n| ${errors} = | Grep File | /var/log/myapp.log | ERROR |\n| ${ret} = | Grep File | ${CURDIR}/file.txt | [Ww]ildc??d ex*ple |\n| ${ret} = | Grep File | ${CURDIR}/file.txt | [Ww]ildc\\\\w+d ex.*ple | regexp=True |\n\nSpecial encoding values ``SYSTEM`` and ``CONSOLE`` that `Get File` supports\nare supported by this keyword only with Robot Framework 4.0 and newer.\n\nSupport for regular expressions is new in Robot Framework 5.0.",
       "shortdoc": "Returns the lines of the specified file that match the ``pattern``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 309
+      "lineno": 288
     },
     {
       "name": "Join Path",
       "args": [
         {
           "name": "base",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "base"
+          "repr": "base: str"
         },
         {
           "name": "parts",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
-          "repr": "*parts"
+          "repr": "*parts: str"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "str",
+        "typedoc": "string",
+        "nested": [],
+        "union": false
+      },
       "doc": "Joins the given path part(s) to the given base path.\n\nThe path separator (``/`` or ``\\``) is inserted when needed and\nthe possible absolute paths handled as expected. The resulted\npath is also normalized.\n\nExamples:\n| ${path} = | Join Path | my        | path  |\n| ${p2} =   | Join Path | my/       | path/ |\n| ${p3} =   | Join Path | my        | path  | my | file.txt |\n| ${p4} =   | Join Path | my        | /path |\n| ${p5} =   | Join Path | /my/path/ | ..    | path2 |\n=>\n- ${path} = 'my/path'\n- ${p2} = 'my/path'\n- ${p3} = 'my/path/my/file.txt'\n- ${p4} = '/path'\n- ${p5} = '/my/path2'",
       "shortdoc": "Joins the given path part(s) to the given base path.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 1070
+      "lineno": 1108
     },
     {
       "name": "Join Paths",
       "args": [
         {
           "name": "base",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "base"
+          "repr": "base: str"
         },
         {
           "name": "paths",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
-          "repr": "*paths"
+          "repr": "*paths: str"
         }
       ],
       "returnType": null,
@@ -846,34 +1397,62 @@
       "shortdoc": "Joins given paths with base and returns resulted paths.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 1097
+      "lineno": 1130
     },
     {
       "name": "List Directories In Directory",
       "args": [
         {
           "name": "path",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "path"
+          "repr": "path: str"
         },
         {
           "name": "pattern",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "str",
+                "typedoc": "string",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "None",
+                "typedoc": "None",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "pattern=None"
+          "repr": "pattern: str | None = None"
         },
         {
           "name": "absolute",
-          "type": null,
+          "type": {
+            "name": "bool",
+            "typedoc": "boolean",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "absolute=False"
+          "repr": "absolute: bool = False"
         }
       ],
       "returnType": null,
@@ -881,69 +1460,125 @@
       "shortdoc": "Wrapper for `List Directory` that returns only directories.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 1347
+      "lineno": 1390
     },
     {
       "name": "List Directory",
       "args": [
         {
           "name": "path",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "path"
+          "repr": "path: str"
         },
         {
           "name": "pattern",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "str",
+                "typedoc": "string",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "None",
+                "typedoc": "None",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "pattern=None"
+          "repr": "pattern: str | None = None"
         },
         {
           "name": "absolute",
-          "type": null,
+          "type": {
+            "name": "bool",
+            "typedoc": "boolean",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "absolute=False"
+          "repr": "absolute: bool = False"
         }
       ],
       "returnType": null,
-      "doc": "Returns and logs items in a directory, optionally filtered with ``pattern``.\n\nFile and directory names are returned in case-sensitive alphabetical\norder, e.g. ``['A Name', 'Second', 'a lower case name', 'one more']``.\nImplicit directories ``.`` and ``..`` are not returned. The returned\nitems are automatically logged.\n\nFile and directory names are returned relative to the given path\n(e.g. ``'file.txt'``) by default. If you want them be returned in\nabsolute format (e.g. ``'/home/robot/file.txt'``), give the ``absolute``\nargument a true value (see `Boolean arguments`).\n\nIf ``pattern`` is given, only items matching it are returned. The pattern\nis considered to be a _glob pattern_ and the full syntax is explained in\nthe `Glob patterns` section. With this keyword matching is always\ncase-sensitive.\n\nExamples (using also other `List Directory` variants):\n| @{items} = | List Directory           | ${TEMPDIR} |\n| @{files} = | List Files In Directory  | /tmp | *.txt | absolute |\n| ${count} = | Count Files In Directory | ${CURDIR} | ??? |",
+      "doc": "Returns and logs items in a directory, optionally filtered with ``pattern``.\n\nFile and directory names are returned in case-sensitive alphabetical\norder, e.g. ``['A Name', 'Second', 'a lower case name', 'one more']``.\nImplicit directories ``.`` and ``..`` are not returned. The returned\nitems are automatically logged.\n\nFile and directory names are returned relative to the given path\n(e.g. ``'file.txt'``) by default. If you want them be returned in\nabsolute format (e.g. ``'/home/robot/file.txt'``), give the ``absolute``\nargument a true value.\n\nIf ``pattern`` is given, only items matching it are returned. The pattern\nis considered to be a _glob pattern_ and the full syntax is explained in\nthe `Glob patterns` section. With this keyword matching is always\ncase-sensitive.\n\nExamples (using also other `List Directory` variants):\n| @{items} = | List Directory           | ${TEMPDIR} |\n| @{files} = | List Files In Directory  | /tmp | *.txt | absolute |\n| ${count} = | Count Files In Directory | ${CURDIR} | ??? |",
       "shortdoc": "Returns and logs items in a directory, optionally filtered with ``pattern``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 1314
+      "lineno": 1347
     },
     {
       "name": "List Files In Directory",
       "args": [
         {
           "name": "path",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "path"
+          "repr": "path: str"
         },
         {
           "name": "pattern",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "str",
+                "typedoc": "string",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "None",
+                "typedoc": "None",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "pattern=None"
+          "repr": "pattern: str | None = None"
         },
         {
           "name": "absolute",
-          "type": null,
+          "type": {
+            "name": "bool",
+            "typedoc": "boolean",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "absolute=False"
+          "repr": "absolute: bool = False"
         }
       ],
       "returnType": null,
@@ -951,18 +1586,66 @@
       "shortdoc": "Wrapper for `List Directory` that returns only files.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 1341
+      "lineno": 1379
     },
     {
       "name": "Log Environment Variables",
       "args": [
         {
           "name": "level",
-          "type": null,
+          "type": {
+            "name": "Literal",
+            "typedoc": "Literal",
+            "nested": [
+              {
+                "name": "'TRACE'",
+                "typedoc": null,
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "'DEBUG'",
+                "typedoc": null,
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "'INFO'",
+                "typedoc": null,
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "'CONSOLE'",
+                "typedoc": null,
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "'HTML'",
+                "typedoc": null,
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "'WARN'",
+                "typedoc": null,
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "'ERROR'",
+                "typedoc": null,
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": false
+          },
           "defaultValue": "INFO",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "level=INFO"
+          "repr": "level: Literal['TRACE', 'DEBUG', 'INFO', 'CONSOLE', 'HTML', 'WARN', 'ERROR'] = INFO"
         }
       ],
       "returnType": null,
@@ -970,61 +1653,91 @@
       "shortdoc": "Logs all environment variables using the given log level.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 1057
+      "lineno": 1093
     },
     {
       "name": "Log File",
       "args": [
         {
           "name": "path",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "path"
+          "repr": "path: str"
         },
         {
           "name": "encoding",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": "UTF-8",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "encoding=UTF-8"
+          "repr": "encoding: str = UTF-8"
         },
         {
           "name": "encoding_errors",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": "strict",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "encoding_errors=strict"
+          "repr": "encoding_errors: str = strict"
         }
       ],
-      "returnType": null,
+      "returnType": {
+        "name": "str",
+        "typedoc": "string",
+        "nested": [],
+        "union": false
+      },
       "doc": "Wrapper for `Get File` that also logs the returned file.\n\nThe file is logged with the INFO level. If you want something else,\njust use `Get File` and the built-in keyword `Log` with the desired\nlevel.\n\nSee `Get File` for more information about ``encoding`` and\n``encoding_errors`` arguments.",
       "shortdoc": "Wrapper for `Get File` that also logs the returned file.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 368
+      "lineno": 347
     },
     {
       "name": "Move Directory",
       "args": [
         {
           "name": "source",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "source"
+          "repr": "source: str"
         },
         {
           "name": "destination",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "destination"
+          "repr": "destination: str"
         }
       ],
       "returnType": null,
@@ -1032,45 +1745,65 @@
       "shortdoc": "Moves the source directory into a destination.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 947
+      "lineno": 956
     },
     {
       "name": "Move File",
       "args": [
         {
           "name": "source",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "source"
+          "repr": "source: str"
         },
         {
           "name": "destination",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "destination"
+          "repr": "destination: str"
         }
       ],
-      "returnType": null,
-      "doc": "Moves the source file into the destination.\n\nArguments have exactly same semantics as with `Copy File` keyword.\nDestination file path is returned.\n\nIf the source and destination are on the same filesystem, rename\noperation is used. Otherwise file is copied to the destination\nfilesystem and then removed from the original filesystem.\n\nSee also `Move Files`, `Copy File`, and `Copy Files`.",
+      "returnType": {
+        "name": "str",
+        "typedoc": "string",
+        "nested": [],
+        "union": false
+      },
+      "doc": "Moves the source file into the destination.\n\nArguments have exactly same semantics as with `Copy File` keyword.\nDestination file path is returned.\n\nIf the source and destination are on the same filesystem, rename\noperation is used. Otherwise, file is copied to the destination\nfilesystem and then removed from the original filesystem.\n\nSee also `Move Files`, `Copy File`, and `Copy Files`.",
       "shortdoc": "Moves the source file into the destination.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 855
+      "lineno": 864
     },
     {
       "name": "Move Files",
       "args": [
         {
           "name": "sources_and_destination",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
-          "repr": "*sources_and_destination"
+          "repr": "*sources_and_destination: str"
         }
       ],
       "returnType": null,
@@ -1078,18 +1811,23 @@
       "shortdoc": "Moves specified files to the target directory.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 907
+      "lineno": 916
     },
     {
       "name": "Normalize Path",
       "args": [
         {
           "name": "path",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "path"
+          "repr": "path: str"
         },
         {
           "name": "case_normalize",
@@ -1100,50 +1838,70 @@
           "repr": "case_normalize=False"
         }
       ],
-      "returnType": null,
-      "doc": "Normalizes the given path.\n\n- Collapses redundant separators and up-level references.\n- Converts ``/`` to ``\\`` on Windows.\n- Replaces initial ``~`` or ``~user`` by that user's home directory.\n- If ``case_normalize`` is given a true value (see `Boolean arguments`)\n  on Windows, converts the path to all lowercase.\n- Converts ``pathlib.Path`` instances to ``str``.\n\nExamples:\n| ${path1} = | Normalize Path | abc/           |\n| ${path2} = | Normalize Path | abc/../def     |\n| ${path3} = | Normalize Path | abc/./def//ghi |\n| ${path4} = | Normalize Path | ~robot/stuff   |\n=>\n- ${path1} = 'abc'\n- ${path2} = 'def'\n- ${path3} = 'abc/def/ghi'\n- ${path4} = '/home/robot/stuff'\n\nOn Windows result would use ``\\`` instead of ``/`` and home directory\nwould be different.",
+      "returnType": {
+        "name": "str",
+        "typedoc": "string",
+        "nested": [],
+        "union": false
+      },
+      "doc": "Normalizes the given path.\n\n- Collapses redundant separators and up-level references.\n- Converts ``/`` to ``\\`` on Windows.\n- Replaces initial ``~`` or ``~user`` by that user's home directory.\n- If ``case_normalize`` is given a true value on Windows, converts\n  the path to all lowercase.\n- Converts ``pathlib.Path`` instances to ``str``.\n\nExamples:\n| ${path1} = | Normalize Path | abc/           |\n| ${path2} = | Normalize Path | abc/../def     |\n| ${path3} = | Normalize Path | abc/./def//ghi |\n| ${path4} = | Normalize Path | ~robot/stuff   |\n=>\n- ${path1} = 'abc'\n- ${path2} = 'def'\n- ${path3} = 'abc/def/ghi'\n- ${path4} = '/home/robot/stuff'\n\nOn Windows result would use ``\\`` instead of ``/`` and home directory\nwould be different.",
       "shortdoc": "Normalizes the given path.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 1113
+      "lineno": 1146
     },
     {
       "name": "Remove Directory",
       "args": [
         {
           "name": "path",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "path"
+          "repr": "path: str"
         },
         {
           "name": "recursive",
-          "type": null,
+          "type": {
+            "name": "bool",
+            "typedoc": "boolean",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": "False",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "recursive=False"
+          "repr": "recursive: bool = False"
         }
       ],
       "returnType": null,
-      "doc": "Removes the directory pointed to by the given ``path``.\n\nIf the second argument ``recursive`` is given a true value (see\n`Boolean arguments`), the directory is removed recursively. Otherwise\nremoving fails if the directory is not empty.\n\nIf the directory pointed to by the ``path`` does not exist, the keyword\npasses, but it fails, if the ``path`` points to a file.",
+      "doc": "Removes the directory pointed to by the given ``path``.\n\nIf the second argument ``recursive`` is given a true value, the\ndirectory is removed recursively. Otherwise, removing fails if\nthe directory is not empty.\n\nIf the directory pointed to by the ``path`` does not exist, the keyword\npasses, but it fails, if the ``path`` points to a file.",
       "shortdoc": "Removes the directory pointed to by the given ``path``.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 719
+      "lineno": 734
     },
     {
       "name": "Remove Environment Variable",
       "args": [
         {
           "name": "names",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
-          "repr": "*names"
+          "repr": "*names: str"
         }
       ],
       "returnType": null,
@@ -1151,18 +1909,23 @@
       "shortdoc": "Deletes the specified environment variable.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 1013
+      "lineno": 1039
     },
     {
       "name": "Remove File",
       "args": [
         {
           "name": "path",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "path"
+          "repr": "path: str"
         }
       ],
       "returnType": null,
@@ -1170,18 +1933,23 @@
       "shortdoc": "Removes a file with the given path.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 659
+      "lineno": 674
     },
     {
       "name": "Remove Files",
       "args": [
         {
           "name": "paths",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
-          "repr": "*paths"
+          "repr": "*paths: str"
         }
       ],
       "returnType": null,
@@ -1189,83 +1957,131 @@
       "shortdoc": "Uses `Remove File` to remove multiple files one-by-one.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 679
+      "lineno": 694
     },
     {
       "name": "Run",
       "args": [
         {
           "name": "command",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "command"
+          "repr": "command: str"
         }
       ],
-      "returnType": null,
-      "doc": "Runs the given command in the system and returns the output.\n\nThe execution status of the command *is not checked* by this\nkeyword, and it must be done separately based on the returned\noutput. If the execution return code is needed, either `Run\nAnd Return RC` or `Run And Return RC And Output` can be used.\n\nThe standard error stream is automatically redirected to the standard\noutput stream by adding ``2>&1`` after the executed command. This\nautomatic redirection is done only when the executed command does not\ncontain additional output redirections. You can thus freely forward\nthe standard error somewhere else, for example, like\n``my_command 2>stderr.txt``.\n\nThe returned output contains everything written into the standard\noutput or error streams by the command (unless either of them\nis redirected explicitly). Many commands add an extra newline\n(``\\n``) after the output to make it easier to read in the\nconsole. To ease processing the returned output, this possible\ntrailing newline is stripped by this keyword.\n\nExamples:\n| ${output} =        | Run       | ls -lhF /tmp |\n| Log                | ${output} |\n| ${result} =        | Run       | ${CURDIR}${/}tester.py arg1 arg2 |\n| Should Not Contain | ${result} | FAIL |\n| ${stdout} =        | Run       | /opt/script.sh 2>/tmp/stderr.txt |\n| Should Be Equal    | ${stdout} | TEST PASSED |\n| File Should Be Empty | /tmp/stderr.txt |\n\n*TIP:* `Run Process` keyword provided by the\n[http://robotframework.org/robotframework/latest/libraries/Process.html|\nProcess library] supports better process configuration and is generally\nrecommended as a replacement for this keyword.",
-      "shortdoc": "Runs the given command in the system and returns the output.",
+      "returnType": {
+        "name": "str",
+        "typedoc": "string",
+        "nested": [],
+        "union": false
+      },
+      "doc": "_This keyword is considered deprecated. Use the\n[http://robotframework.org/robotframework/latest/libraries/Process.html|\nProcess] library instead._\n\nRuns the given command in the system and returns the output.\n\nThe execution status of the command _is not checked_ by this\nkeyword, and it must be done separately based on the returned\noutput. If the execution return code is needed, either `Run\nAnd Return RC` or `Run And Return RC And Output` can be used.\n\nThe standard error stream is automatically redirected to the standard\noutput stream by adding ``2>&1`` after the executed command. This\nautomatic redirection is done only when the executed command does not\ncontain additional output redirections. You can thus freely forward\nthe standard error somewhere else, for example, like\n``my_command 2>stderr.txt``.\n\nThe returned output contains everything written into the standard\noutput or error streams by the command (unless either of them\nis redirected explicitly). Many commands add an extra newline\n(``\\n``) after the output to make it easier to read in the\nconsole. To ease processing the returned output, this possible\ntrailing newline is stripped by this keyword.\n\nExamples:\n| ${output} =        | Run       | ls -lhF /tmp |\n| Log                | ${output} |\n| ${result} =        | Run       | ${CURDIR}${/}tester.py arg1 arg2 |\n| Should Not Contain | ${result} | FAIL |\n| ${stdout} =        | Run       | /opt/script.sh 2>/tmp/stderr.txt |\n| Should Be Equal    | ${stdout} | TEST PASSED |\n| File Should Be Empty | /tmp/stderr.txt |",
+      "shortdoc": "_This keyword is considered deprecated. Use the [http://robotframework.org/robotframework/latest/libraries/Process.html| Process] library instead._",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 161
+      "lineno": 139
     },
     {
       "name": "Run And Return Rc",
       "args": [
         {
           "name": "command",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "command"
+          "repr": "command: str"
         }
       ],
-      "returnType": null,
-      "doc": "Runs the given command in the system and returns the return code.\n\nThe return code (RC) is returned as a positive integer in\nrange from 0 to 255 as returned by the executed command. On\nsome operating systems (notable Windows) original return codes\ncan be something else, but this keyword always maps them to\nthe 0-255 range. Since the RC is an integer, it must be\nchecked e.g. with the keyword `Should Be Equal As Integers`\ninstead of `Should Be Equal` (both are built-in keywords).\n\nExamples:\n| ${rc} = | Run and Return RC | ${CURDIR}${/}script.py arg |\n| Should Be Equal As Integers | ${rc} | 0 |\n| ${rc} = | Run and Return RC | /path/to/example.rb arg1 arg2 |\n| Should Be True | 0 < ${rc} < 42 |\n\nSee `Run` and `Run And Return RC And Output` if you need to get the\noutput of the executed command.\n\n*TIP:* `Run Process` keyword provided by the\n[http://robotframework.org/robotframework/latest/libraries/Process.html|\nProcess library] supports better process configuration and is generally\nrecommended as a replacement for this keyword.",
-      "shortdoc": "Runs the given command in the system and returns the return code.",
+      "returnType": {
+        "name": "int",
+        "typedoc": "integer",
+        "nested": [],
+        "union": false
+      },
+      "doc": "_This keyword is considered deprecated. Use the\n[http://robotframework.org/robotframework/latest/libraries/Process.html|\nProcess] library instead._\n\nRuns the given command in the system and returns the return code (RC).\n\nThe return code is returned as a positive integer in\nrange from 0 to 255 as returned by the executed command. On\nsome operating systems (notable Windows) original return codes\ncan be something else, but this keyword always maps them to\nthe 0-255 range. Since the return code is an integer, it must be\nchecked e.g. with the keyword `Should Be Equal As Integers`\ninstead of `Should Be Equal` (both are built-in keywords).\n\nExamples:\n| ${rc} = | Run and Return RC | ${CURDIR}${/}script.py arg |\n| Should Be Equal As Integers | ${rc} | 0 |\n| ${rc} = | Run and Return RC | /path/to/example.rb arg1 arg2 |\n| Should Be True | 0 < ${rc} < 42 |\n\nSee `Run` and `Run And Return RC And Output` if you need to get the\noutput of the executed command.",
+      "shortdoc": "_This keyword is considered deprecated. Use the [http://robotframework.org/robotframework/latest/libraries/Process.html| Process] library instead._",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 199
+      "lineno": 176
     },
     {
       "name": "Run And Return Rc And Output",
       "args": [
         {
           "name": "command",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "command"
+          "repr": "command: str"
         }
       ],
       "returnType": null,
-      "doc": "Runs the given command in the system and returns the RC and output.\n\nThe return code (RC) is returned similarly as with `Run And Return RC`\nand the output similarly as with `Run`.\n\nExamples:\n| ${rc} | ${output} =  | Run and Return RC and Output | ${CURDIR}${/}mytool |\n| Should Be Equal As Integers | ${rc}    | 0    |\n| Should Not Contain   | ${output}       | FAIL |\n| ${rc} | ${stdout} =  | Run and Return RC and Output | /opt/script.sh 2>/tmp/stderr.txt |\n| Should Be True       | ${rc} > 42      |\n| Should Be Equal      | ${stdout}       | TEST PASSED |\n| File Should Be Empty | /tmp/stderr.txt |\n\n*TIP:* `Run Process` keyword provided by the\n[http://robotframework.org/robotframework/latest/libraries/Process.html|\nProcess library] supports better process configuration and is generally\nrecommended as a replacement for this keyword.",
-      "shortdoc": "Runs the given command in the system and returns the RC and output.",
+      "doc": "_This keyword is considered deprecated. Use the\n[http://robotframework.org/robotframework/latest/libraries/Process.html|\nProcess] library instead._\n\nRuns the given command in the system and returns the return code (RC)\nand output. The return code is returned similarly as with `Run And Return RC`\nand the output similarly as with `Run`.\n\nExamples:\n| ${rc} | ${output} =  | Run and Return RC and Output | ${CURDIR}${/}mytool |\n| Should Be Equal As Integers | ${rc}    | 0    |\n| Should Not Contain   | ${output}       | FAIL |\n| ${rc} | ${stdout} =  | Run and Return RC and Output | /opt/script.sh 2>/tmp/stderr.txt |\n| Should Be True       | ${rc} > 42      |\n| Should Be Equal      | ${stdout}       | TEST PASSED |\n| File Should Be Empty | /tmp/stderr.txt |",
+      "shortdoc": "_This keyword is considered deprecated. Use the [http://robotframework.org/robotframework/latest/libraries/Process.html| Process] library instead._",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 226
+      "lineno": 202
     },
     {
       "name": "Set Environment Variable",
       "args": [
         {
           "name": "name",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "name"
+          "repr": "name: str"
         },
         {
           "name": "value",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "str",
+                "typedoc": "string",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "Secret",
+                "typedoc": "Secret",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "value"
+          "repr": "value: str | Secret"
         }
       ],
       "returnType": null,
@@ -1273,26 +2089,49 @@
       "shortdoc": "Sets an environment variable to a specified value.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 978
+      "lineno": 986
     },
     {
       "name": "Set Modified Time",
       "args": [
         {
           "name": "path",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "path"
+          "repr": "path: str"
         },
         {
           "name": "mtime",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "int",
+                "typedoc": "integer",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "str",
+                "typedoc": "string",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "mtime"
+          "repr": "mtime: int | str"
         }
       ],
       "returnType": null,
@@ -1300,26 +2139,49 @@
       "shortdoc": "Sets the file modification and access times.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 1258
+      "lineno": 1291
     },
     {
       "name": "Should Exist",
       "args": [
         {
           "name": "path",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "path"
+          "repr": "path: str"
         },
         {
           "name": "msg",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "str",
+                "typedoc": "string",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "None",
+                "typedoc": "None",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "msg=None"
+          "repr": "msg: str | None = None"
         }
       ],
       "returnType": null,
@@ -1327,26 +2189,49 @@
       "shortdoc": "Fails unless the given path (file or directory) exists.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 384
+      "lineno": 368
     },
     {
       "name": "Should Not Exist",
       "args": [
         {
           "name": "path",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "path"
+          "repr": "path: str"
         },
         {
           "name": "msg",
-          "type": null,
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "str",
+                "typedoc": "string",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "None",
+                "typedoc": "None",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
           "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "msg=None"
+          "repr": "msg: str | None = None"
         }
       ],
       "returnType": null,
@@ -1354,18 +2239,23 @@
       "shortdoc": "Fails if the given path (file or directory) exists.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 397
+      "lineno": 381
     },
     {
       "name": "Split Extension",
       "args": [
         {
           "name": "path",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "path"
+          "repr": "path: str"
         }
       ],
       "returnType": null,
@@ -1373,18 +2263,23 @@
       "shortdoc": "Splits the extension from the given path.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 1169
+      "lineno": 1198
     },
     {
       "name": "Split Path",
       "args": [
         {
           "name": "path",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "path"
+          "repr": "path: str"
         }
       ],
       "returnType": null,
@@ -1392,81 +2287,313 @@
       "shortdoc": "Splits the given path from the last path separator (``/`` or ``\\``).",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 1150
+      "lineno": 1179
     },
     {
       "name": "Touch",
       "args": [
         {
           "name": "path",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "path"
+          "repr": "path: str"
         }
       ],
       "returnType": null,
-      "doc": "Emulates the UNIX touch command.\n\nCreates a file, if it does not exist. Otherwise changes its access and\nmodification times to the current time.\n\nFails if used with the directories or the parent directory of the given\nfile does not exist.",
+      "doc": "Emulates the UNIX touch command.\n\nCreates a file, if it does not exist. Otherwise, changes its access and\nmodification times to the current time.\n\nFails if used with the directories or the parent directory of the given\nfile does not exist.",
       "shortdoc": "Emulates the UNIX touch command.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 1406
+      "lineno": 1473
     },
     {
       "name": "Wait Until Created",
       "args": [
         {
           "name": "path",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "path"
+          "repr": "path: str"
         },
         {
           "name": "timeout",
-          "type": null,
-          "defaultValue": "1 minute",
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "timedelta",
+                "typedoc": "timedelta",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "None",
+                "typedoc": "None",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
+          "defaultValue": "0:01:00",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "timeout=1 minute"
+          "repr": "timeout: timedelta | None = 0:01:00"
         }
       ],
       "returnType": null,
-      "doc": "Waits until the given file or directory is created.\n\nThe path can be given as an exact path or as a glob pattern.\nSee the `Glob patterns` section for details about the supported syntax.\nIf the path is a pattern, the keyword returns when an item matching\nit is created.\n\nThe optional ``timeout`` can be used to control the maximum time of\nwaiting. The timeout is given as a timeout string, e.g. in a format\n``15 seconds``, ``1min 10s`` or just ``10``. The time string format is\ndescribed in an appendix of Robot Framework User Guide.\n\nIf the timeout is negative, the keyword is never timed-out. The keyword\nreturns immediately, if the path already exists.",
+      "doc": "Waits until the given file or directory is created.\n\nThe path can be given as an exact path or as a glob pattern.\nSee the `Glob patterns` section for details about the supported syntax.\nIf the path is a pattern, the keyword returns when an item matching\nit is created.\n\nWaits for 1 minute by default, but that can be changed by using\nthe ``timeout`` argument. Using a negative value or ``None`` disables\nthe timeout.\n\nExamples:\n| Wait Until Created | ${path} |\n| Wait Until Created | ${path} | 10 seconds |\n| Wait Until Created | ${path} | timeout=None |\n\nDisabling timeout using ``None`` is new in Robot Framework 7.4.",
       "shortdoc": "Waits until the given file or directory is created.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 505
+      "lineno": 495
     },
     {
       "name": "Wait Until Removed",
       "args": [
         {
           "name": "path",
-          "type": null,
+          "type": {
+            "name": "str",
+            "typedoc": "string",
+            "nested": [],
+            "union": false
+          },
           "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
-          "repr": "path"
+          "repr": "path: str"
         },
         {
           "name": "timeout",
-          "type": null,
-          "defaultValue": "1 minute",
+          "type": {
+            "name": "Union",
+            "typedoc": null,
+            "nested": [
+              {
+                "name": "timedelta",
+                "typedoc": "timedelta",
+                "nested": [],
+                "union": false
+              },
+              {
+                "name": "None",
+                "typedoc": "None",
+                "nested": [],
+                "union": false
+              }
+            ],
+            "union": true
+          },
+          "defaultValue": "0:01:00",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
-          "repr": "timeout=1 minute"
+          "repr": "timeout: timedelta | None = 0:01:00"
         }
       ],
       "returnType": null,
-      "doc": "Waits until the given file or directory is removed.\n\nThe path can be given as an exact path or as a glob pattern.\nSee the `Glob patterns` section for details about the supported syntax.\nIf the path is a pattern, the keyword waits until all matching\nitems are removed.\n\nThe optional ``timeout`` can be used to control the maximum time of\nwaiting. The timeout is given as a timeout string, e.g. in a format\n``15 seconds``, ``1min 10s`` or just ``10``. The time string format is\ndescribed in an appendix of Robot Framework User Guide.\n\nIf the timeout is negative, the keyword is never timed-out. The keyword\nreturns immediately, if the path does not exist in the first place.",
+      "doc": "Waits until the given file or directory is removed.\n\nThe path can be given as an exact path or as a glob pattern.\nSee the `Glob patterns` section for details about the supported syntax.\nIf the path is a pattern, the keyword waits until all matching\nitems are removed.\n\nWaits for 1 minute by default, but that can be changed by using the\n``timeout`` argument. Using a negative value or ``None`` disables the timeout.\n\nExamples:\n| Wait Until Removed | ${path} |\n| Wait Until Removed | ${path} | 10 seconds |\n| Wait Until Removed | ${path} | timeout=None |\n\nDisabling timeout using ``None`` is new in Robot Framework 7.4.",
       "shortdoc": "Waits until the given file or directory is removed.",
       "tags": [],
       "source": "/home/peke/Devel/robotframework/src/robot/libraries/OperatingSystem.py",
-      "lineno": 480
+      "lineno": 464
     }
   ],
-  "typedocs": []
+  "typedocs": [
+    {
+      "type": "Standard",
+      "name": "boolean",
+      "doc": "Strings ``TRUE``, ``YES``, ``ON``, ``1`` and possible localization specific \"true\nstrings\" are converted to Boolean ``True``, the empty string, strings ``FALSE``,\n``NO``, ``OFF`` and ``0`` and possibly localization specific \"false strings\"\nare converted to Boolean ``False``, and the string ``NONE`` is converted to\nthe Python ``None`` object. Other strings and all other values are passed as-is,\nallowing keywords to handle them specially if needed. All string comparisons are\ncase-insensitive.\n\nExamples: ``TRUE`` (converted to ``True``), ``off`` (converted to ``False``),\n``example`` (used as-is)\n",
+      "usages": [
+        "Grep File",
+        "List Directories In Directory",
+        "List Directory",
+        "List Files In Directory",
+        "Remove Directory"
+      ],
+      "accepts": [
+        "string",
+        "integer",
+        "float",
+        "None"
+      ]
+    },
+    {
+      "type": "Standard",
+      "name": "bytes",
+      "doc": "Strings are converted to bytes so that each Unicode code point\nbelow 256 is directly mapped to a matching byte. Higher code\npoints are not allowed. Robot Framework's ``\\xHH`` escape syntax is\nconvenient with bytes having non-printable values.\n\nExamples: ``good``, ``hyv\u00e4`` (same as ``hyv\\xE4``), ``\\x00`` (the null byte)\n\nIntegers and sequences of integers are converted to matching bytes directly.\nThey must be in range 0-255.\n\nExamples: ``0`` (converted to the null byte), ``[82, 70]`` (converted to ``RF``)\n\nSupport for integers and sequences of integers is new in Robot Framework 7.4.\n",
+      "usages": [
+        "Create Binary File",
+        "Get Binary File"
+      ],
+      "accepts": [
+        "string",
+        "bytearray",
+        "Sequence",
+        "integer"
+      ]
+    },
+    {
+      "type": "Standard",
+      "name": "integer",
+      "doc": "Conversion is done using Python's [https://docs.python.org/library/functions.html#int|int]\nbuilt-in function. Floating point\nnumbers are accepted only if they can be represented as integers exactly.\nFor example, ``1.0`` is accepted and ``1.1`` is not.\n\nIt is possible to use hexadecimal, octal and binary numbers by prefixing values\nwith ``0x``, ``0o`` and ``0b``, respectively. Spaces and underscores can be used\nas visual separators for digit grouping purposes.\n\nExamples: ``42``, ``-1``, ``0b1010``, ``10 000 000``, ``0xBAD_C0FFEE``\n",
+      "usages": [
+        "Get File Size",
+        "Run And Return Rc",
+        "Set Modified Time"
+      ],
+      "accepts": [
+        "string",
+        "float"
+      ]
+    },
+    {
+      "type": "Standard",
+      "name": "Literal",
+      "doc": "Only specified values are accepted. Values can be strings,\nintegers, bytes, Booleans, enums and None, and used arguments\nare converted using the value type specific conversion logic.\n\nStrings are case, space, underscore and hyphen insensitive,\nbut exact matches have precedence over normalized matches.\n",
+      "usages": [
+        "Log Environment Variables"
+      ],
+      "accepts": [
+        "Any"
+      ]
+    },
+    {
+      "type": "Standard",
+      "name": "None",
+      "doc": "String ``NONE`` (case-insensitive) and the empty string are converted to\nthe Python ``None`` object. Other values cause an error.\n\nConverting the empty string is new in Robot Framework 7.4.\n",
+      "usages": [
+        "Count Directories In Directory",
+        "Count Files In Directory",
+        "Count Items In Directory",
+        "Directory Should Be Empty",
+        "Directory Should Exist",
+        "Directory Should Not Be Empty",
+        "Directory Should Not Exist",
+        "Environment Variable Should Be Set",
+        "Environment Variable Should Not Be Set",
+        "File Should Be Empty",
+        "File Should Exist",
+        "File Should Not Be Empty",
+        "File Should Not Exist",
+        "Get Environment Variable",
+        "List Directories In Directory",
+        "List Directory",
+        "List Files In Directory",
+        "Should Exist",
+        "Should Not Exist",
+        "Wait Until Created",
+        "Wait Until Removed"
+      ],
+      "accepts": [
+        "string"
+      ]
+    },
+    {
+      "type": "Standard",
+      "name": "Secret",
+      "doc": "Encapsulates secret values to avoid them being shown in Robot Framework logs.\n\nThe value is required to be\n[https://robot-framework.readthedocs.io/en/master/autodoc/robot.utils.html#robot.utils.secret.Secret|robot.api.types.Secret]\nobject. These objects encapsulate confidential values so that they are not\nexposed in log files. How to create them is explained in the\n[https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#secret-variables|User Guide].\n\nNew in Robot Framework 7.4.\n",
+      "usages": [
+        "Append To Environment Variable",
+        "Append To File",
+        "Create File",
+        "Set Environment Variable"
+      ],
+      "accepts": [
+        "string"
+      ]
+    },
+    {
+      "type": "Standard",
+      "name": "string",
+      "doc": "All arguments are converted to Unicode strings.\n\nMost values are converted simply by using ``str(value)``. An exception is that\nbytes are mapped directly to Unicode code points with same ordinals. This means\nthat, for example, ``b\"hyv\\xe4\"`` becomes ``\"hyv\u00e4\"``.\n\nConverting bytes specially is new Robot Framework 7.4.\n",
+      "usages": [
+        "Append To Environment Variable",
+        "Append To File",
+        "Copy File",
+        "Copy Files",
+        "Count Directories In Directory",
+        "Count Files In Directory",
+        "Count Items In Directory",
+        "Create Binary File",
+        "Create Directory",
+        "Create File",
+        "Directory Should Be Empty",
+        "Directory Should Exist",
+        "Directory Should Not Be Empty",
+        "Directory Should Not Exist",
+        "Empty Directory",
+        "Environment Variable Should Be Set",
+        "Environment Variable Should Not Be Set",
+        "File Should Be Empty",
+        "File Should Exist",
+        "File Should Not Be Empty",
+        "File Should Not Exist",
+        "Get Binary File",
+        "Get Environment Variable",
+        "Get File",
+        "Get File Size",
+        "Get Modified Time",
+        "Grep File",
+        "Join Path",
+        "Join Paths",
+        "List Directories In Directory",
+        "List Directory",
+        "List Files In Directory",
+        "Log File",
+        "Move Directory",
+        "Move File",
+        "Move Files",
+        "Normalize Path",
+        "Remove Directory",
+        "Remove Environment Variable",
+        "Remove File",
+        "Remove Files",
+        "Run",
+        "Run And Return Rc",
+        "Run And Return Rc And Output",
+        "Set Environment Variable",
+        "Set Modified Time",
+        "Should Exist",
+        "Should Not Exist",
+        "Split Extension",
+        "Split Path",
+        "Touch",
+        "Wait Until Created",
+        "Wait Until Removed"
+      ],
+      "accepts": [
+        "Any"
+      ]
+    },
+    {
+      "type": "Standard",
+      "name": "timedelta",
+      "doc": "Strings are expected to represent a time interval in one of\nthe time formats Robot Framework supports:\n- a number representing seconds like ``42`` or ``10.5``\n- a time string like ``1 hour 2 seconds`` or ``1h 2s``\n- a \"timer\" string like ``01:02`` (1 minute 2 seconds) or ``01:00:03`` (1 hour 3 seconds)\n\nIntegers and floats are considered to be seconds.\n\nSee the [https://robotframework.org/robotframework/|Robot Framework User Guide]\nfor more details about the supported time formats.\n",
+      "usages": [
+        "Wait Until Created",
+        "Wait Until Removed"
+      ],
+      "accepts": [
+        "string",
+        "integer",
+        "float"
+      ]
+    }
+  ]
 }
