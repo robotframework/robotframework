@@ -1,13 +1,12 @@
-=======================================
-Robot Framework 7.4 release candidate 2
-=======================================
+===================
+Robot Framework 7.4
+===================
 
 .. default-role:: code
 
-`Robot Framework`_ 7.4 is a new feature release with support for `secret
-variables`_, `typed standard library keywords`_, `enhancements to working with
-bytes`_ and various other features and fixes. This release candidate
-contains all planned code changes.
+`Robot Framework`_ 7.4 is a new feature release with support for `secret variables`_,
+`typed standard library keywords`_, `enhancements to working with bytes`_,
+`argument conversion enhancements`_ and various other features and fixes.
 
 Questions and comments related to the release can be sent to the `#devel`
 channel on `Robot Framework Slack`_ and possible bugs submitted to
@@ -17,20 +16,19 @@ If you have pip_ installed, just run
 
 ::
 
-   pip install --pre --upgrade robotframework
+   pip install --upgrade robotframework
 
-to install the latest available release or use
+to install the latest available stable release or use
 
 ::
 
-   pip install robotframework==7.4rc2
+   pip install robotframework==7.4
 
 to install exactly this version. Alternatively you can download the package
 from PyPI_ and install it manually. For more details and other installation
 approaches, see the `installation instructions`_.
 
-Robot Framework 7.4 release candidate 2 was released on Tuesday December 9, 2025.
-`Robot Framework 7.4 final <rf-7.4rst>`_ was released on Friday December 12, 2025.
+Robot Framework 7.4 was released on Friday December 12, 2025.
 
 .. _Robot Framework: http://robotframework.org
 .. _Robot Framework Foundation: http://robotframework.org/foundation
@@ -216,10 +214,23 @@ value is not shown in that string representation either.
 Typed standard library keywords
 -------------------------------
 
-Standard library keywords have gotten type hints (`#5373`_). Types are shown
-in Libdoc outputs and they document what kind of arguments are accepted. They
-can also be useful for external tools like IDE plugins that can validate that
+Standard library keywords now have type hints (`#5373`_). Types are shown
+in Libdoc outputs and they document what kind of arguments are accepted.
+Types are also useful for external tools like editors that can validate that
 used values match the accepted types.
+
+Type documentation is shown for standard types like `int` and `datetime`
+automatically. Some custom types used as arguments and return values also
+got their own custom documentation (`#5575`_).
+
+`Run Keyword`, `Wait Until Keyword Succeeds` and other BuiltIn library keywords
+that execute other keywords utilize new custom types `KeywordName` and
+`KeywordArgument` (`#4857`_). These types are used to mark names and arguments
+of the executed keywords, respectively, to make it possible for editors and
+other tools to reliably recognize them. The new types are defined in the
+`robot.api.types`__ module and can be used also by external libraries.
+
+__ https://robot-framework.readthedocs.io/en/master/autodoc/robot.api.html#module-robot.api.types
 
 Enhancements to working with bytes
 ----------------------------------
@@ -229,8 +240,8 @@ There were several enhancements to working with bytes:
 - Many keywords in BuiltIn, String and Collections either got support for bytes
   or their existing bytes support was enhanced (`#5548`_).
 
-- If an argument has `bytes` or `bytestring` as its typing, it can be used
-  with an integer or with a list of integers (`#5557`_).
+- If an argument has `bytes` or `bytestring` as its typing, it can be used with an
+  integer or with a list of integers that are converted to matching bytes (`#5557`_).
 
 - If bytes are used with an argument having `str` as its typing, the value is
   converted to a string by mapping each byte to a matching Unicode code point
@@ -241,16 +252,16 @@ There were several enhancements to working with bytes:
 Argument conversion enhancements
 --------------------------------
 
-There have been various smallish enhancements to automatic argument conversion:
+There have been various small enhancements to automatic argument conversion:
 
 - `object` got an explicit no-op argument converter (`#5529`_).
 
 - Conversion to `bytes` and `bytearray` supports integers and lists of
   integers as input values (`#5557`_).
 
-- `bytes` and `bytearray` are converted to `str` using the same logic as when
-  converting `str` to `bytes` and `bytearray`. Earlier they were converted
-  using `str(value)` that produced unusable strings like `"b'example'"` (`#5567`_).
+- `bytes` and `bytearray` are converted to `str` by mapping bytes to matching
+  Unicode code points. Earlier conversion yielded unusable results like string
+  `"b'example'"` (`#5567`_).
 
 - `None` converter accepts an empty string as an input value (`#5545`_).
 
@@ -258,29 +269,10 @@ There have been various smallish enhancements to automatic argument conversion:
   `tuple` and `set` (`#5532`_).
 
 - `Sequence` and `Mapping` converters do not convert all arguments to `list` and
-  `dict`, but instead preserve the original type when feasible (`#5531`_).
+  `dict`, but instead preserve the original type when possible (`#5531`_).
 
 - Using `Callable` with empty argument list like `Callable[[], None]` has been
   fixed (`#5562`_).
-
-Possibility to detect names of keywords executed by other keywords
-------------------------------------------------------------------
-
-Various keywords in the BuiltIn library and also in some external libraries
-execute other keywords either directly or allow registering them to be executed
-on a certain event. So far external tools have not been able to reliably differentiate
-arguments containing names and arguments of executed keywords from other arguments.
-This has made it hard, for example, for editors to provide automatic completion
-for keyword names.
-
-Nowadays names of executed keywords can be typed with `KeywordName` and
-their arguments with `KeywordArgument`. Both of these new types are defined in
-the new `robot.api.types`__ module that also exposes the `Secret` type discussed
-earlier. All BuiltIn keywords executing other keywords, such as `Run Keyword`
-and `Wait Until Keyword Succeeds`, use these new type hints making it easy
-to detect them (`#4857`_).
-
-__ https://robot-framework.readthedocs.io/en/master/autodoc/robot.api.html#module-robot.api.types
 
 Backwards incompatible changes
 ==============================
@@ -372,13 +364,13 @@ been made more visible (`#5535`_).
 Deprecations with standard libraries
 ------------------------------------
 
-These deprecations have been done with standard library keywords:
+These features are deprecated with standard library keywords:
 
 - BuiltIn and Collections: Using `NO VALUES` to disable the `values` argument with
   various validation keywords (`#5550`_). `values=False` should be used instead.
 
 - String and Collections: Possibility to use an empty string with some keywords so
-  that it is interpreted the same way as if the argument was not used at all (`#5537`_).
+  that it is interpreted as if the argument was not used at all (`#5537`_).
 
 - BuiltIn: Non-standard ways to get object length with `Get Length`, `Length Should Be`,
   `Should Be Empty` and `Should Not Be Empty` (`#5568`_).
@@ -440,254 +432,212 @@ Full list of fixes and enhancements
       - Type
       - Priority
       - Summary
-      - Added
     * - `#4537`_
       - feature
       - critical
       - Support creating "secret" variables that hide their values in data and log files
-      - beta 1
     * - `#4857`_
       - feature
       - high
       - Enhance detecting keyword names used in arguments of other keywords (e.g. `Wait Until Keyword Succeeds`)
-      - rc 2
     * - `#5373`_
       - feature
       - high
       - Add type hints to standard libraries
-      - rc 1
     * - `#5439`_
       - feature
       - high
       - Deprecate using VAR without value to create empty scalar variable in non-local scope
-      - beta 1
     * - `#5512`_
       - feature
       - high
       - `Secret` support to OperatingSystem and Process library keywords
-      - beta 2
     * - `#5548`_
       - feature
       - high
       - Enhanced and explicit `bytes` support in BuiltIn, String and Collections
-      - rc 1
     * - `#5472`_
       - bug
       - medium
       - Libdoc: Code examples in keyword documentation are not formatted correctly
-      - beta 1
     * - `#5474`_
       - bug
       - medium
       - Keyword teardown fails if timeout has occurred when executing keyword
-      - rc 1
     * - `#5491`_
       - bug
       - medium
       - Libdoc: Importing section header is shown in HTML outputs even if library accepts no parameters
-      - beta 1
     * - `#5498`_
       - bug
       - medium
       - `robot.utils.restreader` module breaks API doc generation
-      - beta 1
     * - `#5500`_
       - bug
       - medium
       - Robot API `run` fails after the first run with async keywords
-      - beta 1
     * - `#5502`_
       - bug
       - medium
       - Disabling writing to output file programmatically using internal `LOGGER` does not work anymore
-      - beta 1
     * - `#5503`_
       - bug
       - medium
       - Using `-tag` syntax to remove keyword tags does not work with tags in documentation
-      - beta 1
     * - `#5504`_
       - bug
       - medium
       - Log: Items in element headers are slightly misaligned
-      - beta 1
     * - `#5508`_
       - bug
       - medium
       - Links to keywords in Libdoc code blocks only work after filtering but then the indentation is broken
-      - beta 1
     * - `#5522`_
       - bug
       - medium
       - Generator metadata missing from to Libdoc HTML outputs
-      - beta 2
     * - `#5523`_
       - bug
       - medium
       - Libdoc: Type information is not formatted properly
-      - beta 2
     * - `#5531`_
       - bug
       - medium
       - Argument conversion problems with `Sequence` and `Mapping`
-      - beta 2
     * - `#5562`_
       - bug
       - medium
       - Type hints with `Callable` with empty argument list causes "Union cannot be empty" error
-      - rc 1
+    * - `#5574`_
+      - bug
+      - medium
+      - Processing results fails when using JSON output if all tests pass and suite teardown fails
     * - `#3874`_
       - feature
       - medium
       - Support `--no-status-rc` with `--help` and `--version`
-      - beta 1
     * - `#4888`_
       - feature
       - medium
       - Support collapsing execution errors in log file
-      - beta 1
     * - `#5025`_
       - feature
       - medium
       - BuiltIn: Explicitly mark arguments that are positional-only
-      - beta 1
     * - `#5093`_
       - feature
       - medium
       - Add Arabic and Polish support to `Generate Random String` keyword
-      - beta 1
     * - `#5186`_
       - feature
       - medium
       - Support expanding environment variables in argument files
-      - beta 1
     * - `#5460`_
       - feature
       - medium
       - Support logging errors and warnings only to log file, not to console
-      - beta 2
     * - `#5492`_
       - feature
       - medium
       - Emit warning if library is re-imported with different arguments
-      - beta 1
     * - `#5529`_
       - feature
       - medium
       - Add explicit no-op argument converter for `object`
-      - beta 2
     * - `#5535`_
       - feature
       - medium
       - Make it more explicit that `Run` and other similar keywords in OperatingSystem are deprecated
-      - beta 2
     * - `#5536`_
       - feature
       - medium
       - Collections: Change keywords that mutate lists and dictionaries to also return them
-      - rc 1
     * - `#5537`_
       - feature
       - medium
       - Deprecate possibility to use empty string so that it is interpreted as default value with some standard library keywords
-      - rc 1
     * - `#5545`_
       - feature
       - medium
       - Support converting empty string to `None`
-      - rc 1
     * - `#5550`_
       - feature
       - medium
       - Deprecate using `NO VALUES` to disable `values` argument with some BuiltIn and Collections keywords
-      - rc 1
     * - `#5553`_
       - feature
       - medium
       - BuiltIn: Make normalization in validation keywords recursive
-      - rc 1
     * - `#5557`_
       - feature
       - medium
       - Enhance argument conversion to `bytes` so that integers and lists of integers are accepted as values
-      - rc 1
     * - `#5567`_
       - feature
       - medium
       - Convert bytes to `str` sanely in argument conversion
-      - rc 1
+    * - `#5575`_
+      - feature
+      - medium
+      - Add documentation to custom arguments and return values in Builtin, Process and XML
     * - `#5490`_
       - bug
       - low
       - Libdoc: Tags from private keywords are not excluded from HTML outputs
-      - beta 1
     * - `#5505`_
       - bug
       - low
       - Report: "Test Details" header background is wrong when viewing details
-      - beta 1
     * - `#5543`_
       - bug
       - low
       - Libdoc: keyword tags should have a space between them
-      - rc 1
     * - `#5563`_
       - bug
       - low
       - Argument types are not escaped in Libdoc HTML output
-      - rc 1
     * - `#5573`_
       - bug
       - low
       - User Guide explains normalizing full keyword names wrong
-      - rc 2
     * - `#3918`_
       - feature
       - low
       - Document that listeners can be used instead of pre-run modifiers to avoid filtering by `--include/--exclude`
-      - beta 2
     * - `#5122`_
       - feature
       - low
       - Enhance documentation related to importing same library multiple times
-      - beta 1
     * - `#5506`_
       - feature
       - low
       - Drop "Test/Task" prefixes from report and log headers
-      - beta 1
     * - `#5515`_
       - feature
       - low
       - Document that `--include/--exclude` and other such options do not affect tests added by listeners
-      - beta 2
     * - `#5532`_
       - feature
       - low
       - Allow any sequence literal when converting string arguments to lists, tuples and sets
-      - beta 2
     * - `#5534`_
       - feature
       - low
       - Allow disabling `Wait Until Removed/Created` timeout using `None`
-      - beta 2
     * - `#5546`_
       - feature
       - low
       - Add `timedelta` support to `Repeat Keyword`
-      - rc 1
     * - `#5565`_
       - feature
       - low
       - Libdoc: Don't show return type documentation with standard types
-      - rc 1
     * - `#5568`_
       - feature
       - low
       - BuiltIn: Deprecate non-standard ways to get object length with `Get Length` and related keywords
-      - rc 1
 
-Altogether 49 issues. View on the `issue tracker <https://github.com/robotframework/robotframework/issues?q=milestone%3Av7.4>`__.
+Altogether 51 issues. View on the `issue tracker <https://github.com/robotframework/robotframework/issues?q=milestone%3Av7.4>`__.
 
 .. _#4537: https://github.com/robotframework/robotframework/issues/4537
 .. _#4857: https://github.com/robotframework/robotframework/issues/4857
@@ -708,6 +658,7 @@ Altogether 49 issues. View on the `issue tracker <https://github.com/robotframew
 .. _#5523: https://github.com/robotframework/robotframework/issues/5523
 .. _#5531: https://github.com/robotframework/robotframework/issues/5531
 .. _#5562: https://github.com/robotframework/robotframework/issues/5562
+.. _#5574: https://github.com/robotframework/robotframework/issues/5574
 .. _#3874: https://github.com/robotframework/robotframework/issues/3874
 .. _#4888: https://github.com/robotframework/robotframework/issues/4888
 .. _#5025: https://github.com/robotframework/robotframework/issues/5025
@@ -724,6 +675,7 @@ Altogether 49 issues. View on the `issue tracker <https://github.com/robotframew
 .. _#5553: https://github.com/robotframework/robotframework/issues/5553
 .. _#5557: https://github.com/robotframework/robotframework/issues/5557
 .. _#5567: https://github.com/robotframework/robotframework/issues/5567
+.. _#5575: https://github.com/robotframework/robotframework/issues/5575
 .. _#5490: https://github.com/robotframework/robotframework/issues/5490
 .. _#5505: https://github.com/robotframework/robotframework/issues/5505
 .. _#5543: https://github.com/robotframework/robotframework/issues/5543
