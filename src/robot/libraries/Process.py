@@ -40,6 +40,264 @@ Stdin = Union[str, Secret, Path, int, IOBase, None]
 OnTimeout = Literal["continue", "terminate", "kill"]
 
 
+class ProcessResult:
+
+    def __init__(
+        self,
+        process,
+        stdout,
+        stderr,
+        stdin=None,
+        rc=None,
+        output_encoding=None,
+    ):
+        self._process = process
+        self.stdout_path = self._get_path(stdout)
+        self.stderr_path = self._get_path(stderr)
+        self.rc = rc
+        self._output_encoding = output_encoding
+        self._stdout = None
+        self._stderr = None
+        self._custom_streams = [
+            stream
+            for stream in (stdout, stderr, stdin)
+            if self._is_custom_stream(stream)
+        ]
+
+    def _get_path(self, stream):
+        return stream.name if self._is_custom_stream(stream) else None
+
+    def _is_custom_stream(self, stream):
+        return stream not in (subprocess.PIPE, subprocess.STDOUT, None)
+
+    @property
+    def stdout(self):
+        if self._stdout is None:
+            self._read_stdout()
+        return self._stdout
+
+    @stdout.setter
+    def stdout(self, stdout):
+        self._stdout = self._format_output(stdout)
+
+    @property
+    def stderr(self):
+        if self._stderr is None:
+            self._read_stderr()
+        return self._stderr
+
+    @stderr.setter
+    def stderr(self, stderr):
+        self._stderr = self._format_output(stderr)
+
+    def _read_stdout(self):
+        self._stdout = self._read_stream(self.stdout_path, self._process.stdout)
+
+    def _read_stderr(self):
+        self._stderr = self._read_stream(self.stderr_path, self._process.stderr)
+
+    def _read_stream(self, stream_path, stream):
+        if stream_path:
+            stream = open(stream_path, "rb")
+        elif not self._is_open(stream):
+            return ""
+        try:
+            content = stream.read()
+        except IOError:
+            content = ""
+        finally:
+            if stream_path:
+                stream.close()
+        return self._format_output(content)
+
+    def _is_open(self, stream):
+        return stream and not stream.closed
+
+    def _format_output(self, output):
+        if output is None:
+            return None
+        output = console_decode(output, self._output_encoding)
+        output = output.replace("\r\n", "\n")
+        if output.endswith("\n"):
+            output = output[:-1]
+        return output
+
+    def close_streams(self):
+        standard_streams = self._get_and_read_standard_streams(self._process)
+        for stream in standard_streams + self._custom_streams:
+            if self._is_open(stream):
+                stream.close()
+
+    def _get_and_read_standard_streams(self, process):
+        stdin, stdout, stderr = process.stdin, process.stdout, process.stderr
+        if self._is_open(stdout):
+            self._read_stdout()
+        if self._is_open(stderr):
+            self._read_stderr()
+        return [stdin, stdout, stderr]
+
+    def __str__(self):
+        return f"<result object with rc {self.rc}>"
+
+
+class ProcessConfiguration:
+
+    def __init__(
+        self,
+        cwd=None,
+        shell=False,
+        stdout=None,
+        stderr=None,
+        stdin=None,
+        output_encoding="CONSOLE",
+        alias=None,
+        env=None,
+        **env_extra,
+    ):
+        self.cwd = os.path.normpath(cwd) if cwd else os.path.abspath(".")
+        self.shell = shell
+        self.alias = alias
+        self.output_encoding = output_encoding
+        self.stdout_stream = self._new_stream(stdout)
+        self.stderr_stream = self._get_stderr(stderr, stdout, self.stdout_stream)
+        self.stdin_stream = self._get_stdin(stdin)
+        self.secret_env_keys = []
+        self.env = self._construct_env(env, env_extra)
+
+    def _new_stream(self, name):
+        if name == "DEVNULL":
+            return open(os.devnull, "w", encoding=LOCALE_ENCODING)
+        if name:
+            path = os.path.normpath(os.path.join(self.cwd, name))
+            return open(path, "w", encoding=LOCALE_ENCODING)
+        return subprocess.PIPE
+
+    def _get_stderr(self, stderr, stdout, stdout_stream):
+        if stderr and stderr in ["STDOUT", stdout]:
+            if stdout_stream != subprocess.PIPE:
+                return stdout_stream
+            return subprocess.STDOUT
+        return self._new_stream(stderr)
+
+    def _get_stdin(self, stdin):
+        if isinstance(stdin, Path):
+            stdin = str(stdin)
+        elif isinstance(stdin, Secret):
+            stdin = stdin.value
+        elif not isinstance(stdin, str):
+            return stdin
+        elif stdin.upper() == "NONE":
+            return None
+        elif stdin == "PIPE":
+            return subprocess.PIPE
+        path = os.path.normpath(os.path.join(self.cwd, stdin))
+        if os.path.isfile(path):
+            return open(path, encoding=LOCALE_ENCODING)
+        stdin_file = NamedTemporaryFile(prefix="stdin-")
+        stdin_file.write(console_encode(stdin, self.output_encoding, force=True))
+        stdin_file.seek(0)
+        return stdin_file
+
+    def _construct_env(self, env, extra):
+        env = self._get_initial_env(env, extra)
+        if env is None:
+            return None
+        if WINDOWS:
+            env = NormalizedDict(env, spaceless=False)
+        self._add_to_env(env, extra)
+        if WINDOWS:
+            env = {key.upper(): env[key] for key in env}
+        return env
+
+    def _get_initial_env(self, env, extra):
+        if env:
+            result = {}
+            for name, value in env.items():
+                name = system_encode(name)
+                if isinstance(value, Secret):
+                    result[name] = system_encode(value.value)
+                    self.secret_env_keys.append(name)
+                else:
+                    result[name] = system_encode(value)
+            return result
+        if extra:
+            return os.environ.copy()
+        return None
+
+    def _add_to_env(self, env, extra):
+        for name, value in extra.items():
+            if not name.startswith("env:"):
+                raise RuntimeError(
+                    f"Keyword argument '{name}' is not supported by this keyword."
+                )
+            name = system_encode(name[4:])
+            if isinstance(value, Secret):
+                env[name] = system_encode(value.value)
+                self.secret_env_keys.append(name)
+            else:
+                env[name] = system_encode(value)
+
+    def get_command(self, command, arguments):
+        command = [system_encode(item) for item in (command, *arguments)]
+        if not self.shell:
+            return command
+        if arguments:
+            return subprocess.list2cmdline(command)
+        return command[0]
+
+    @property
+    def popen_config(self):
+        config = {
+            "stdout": self.stdout_stream,
+            "stderr": self.stderr_stream,
+            "stdin": self.stdin_stream,
+            "shell": self.shell,
+            "cwd": self.cwd,
+            "env": self.env,
+        }
+        self._add_process_group_config(config)
+        return config
+
+    def _add_process_group_config(self, config):
+        if hasattr(os, "setsid"):
+            config["start_new_session"] = True
+        if hasattr(subprocess, "CREATE_NEW_PROCESS_GROUP"):
+            config["creationflags"] = subprocess.CREATE_NEW_PROCESS_GROUP
+
+    @property
+    def result_config(self):
+        return {
+            "stdout": self.stdout_stream,
+            "stderr": self.stderr_stream,
+            "stdin": self.stdin_stream,
+            "output_encoding": self.output_encoding,
+        }
+
+    def __str__(self):
+        printable_env = self.env
+        if len(self.secret_env_keys):
+            printable_env = self.env.copy()
+            for k in self.secret_env_keys:
+                printable_env[k] = str(Secret(""))
+        return f"""\
+cwd:     {self.cwd}
+shell:   {self.shell}
+stdout:  {self._stream_name(self.stdout_stream)}
+stderr:  {self._stream_name(self.stderr_stream)}
+stdin:   {self._stream_name(self.stdin_stream)}
+alias:   {self.alias}
+env:     {printable_env}"""
+
+    def _stream_name(self, stream):
+        if hasattr(stream, "name"):
+            return stream.name
+        return {
+            subprocess.PIPE: "PIPE",
+            subprocess.STDOUT: "STDOUT",
+            None: "None",
+        }.get(stream, stream)
+
+
 class Process:
     """Robot Framework library for running processes.
 
@@ -342,7 +600,7 @@ class Process:
         on_timeout: OnTimeout = "terminate",
         env: "dict[str, str | Secret] | None" = None,
         **env_extra: "str | Secret",
-    ) -> "ProcessResult":
+    ) -> ProcessResult:
         """Runs a process and waits for it to complete.
 
         ``command`` and ``arguments`` specify the command to execute and
@@ -475,7 +733,7 @@ class Process:
         self._processes.register(process, alias=config.alias)
         return self._processes.current
 
-    def _log_start(self, command: "str | list[str]", config: "ProcessConfiguration"):
+    def _log_start(self, command: "str | list[str]", config: ProcessConfiguration):
         if isinstance(command, list):
             command = self.join_command_line(*command)
         logger.info(f"Starting process:\n{system_decode(command)}")
@@ -593,7 +851,7 @@ class Process:
         logger.info("Leaving process intact.")
         return None
 
-    def _wait(self, process: subprocess.Popen) -> "ProcessResult":
+    def _wait(self, process: subprocess.Popen) -> ProcessResult:
         result = self._results[process]
         # Popen.communicate() does not like closed stdin/stdout/stderr PIPEs.
         # Due to us using a timeout, we only need to care about stdin.
@@ -621,7 +879,7 @@ class Process:
         self,
         handle: Handle = None,
         kill: bool = False,
-    ) -> "ProcessResult":
+    ) -> ProcessResult:
         """Stops the process gracefully or forcefully.
 
         If ``handle`` is not given, uses the current `active process`.
@@ -918,261 +1176,3 @@ class Process:
             else:
                 parts.extend(part)
         return subprocess.list2cmdline(parts)
-
-
-class ProcessResult:
-
-    def __init__(
-        self,
-        process,
-        stdout,
-        stderr,
-        stdin=None,
-        rc=None,
-        output_encoding=None,
-    ):
-        self._process = process
-        self.stdout_path = self._get_path(stdout)
-        self.stderr_path = self._get_path(stderr)
-        self.rc = rc
-        self._output_encoding = output_encoding
-        self._stdout = None
-        self._stderr = None
-        self._custom_streams = [
-            stream
-            for stream in (stdout, stderr, stdin)
-            if self._is_custom_stream(stream)
-        ]
-
-    def _get_path(self, stream):
-        return stream.name if self._is_custom_stream(stream) else None
-
-    def _is_custom_stream(self, stream):
-        return stream not in (subprocess.PIPE, subprocess.STDOUT, None)
-
-    @property
-    def stdout(self):
-        if self._stdout is None:
-            self._read_stdout()
-        return self._stdout
-
-    @stdout.setter
-    def stdout(self, stdout):
-        self._stdout = self._format_output(stdout)
-
-    @property
-    def stderr(self):
-        if self._stderr is None:
-            self._read_stderr()
-        return self._stderr
-
-    @stderr.setter
-    def stderr(self, stderr):
-        self._stderr = self._format_output(stderr)
-
-    def _read_stdout(self):
-        self._stdout = self._read_stream(self.stdout_path, self._process.stdout)
-
-    def _read_stderr(self):
-        self._stderr = self._read_stream(self.stderr_path, self._process.stderr)
-
-    def _read_stream(self, stream_path, stream):
-        if stream_path:
-            stream = open(stream_path, "rb")
-        elif not self._is_open(stream):
-            return ""
-        try:
-            content = stream.read()
-        except IOError:
-            content = ""
-        finally:
-            if stream_path:
-                stream.close()
-        return self._format_output(content)
-
-    def _is_open(self, stream):
-        return stream and not stream.closed
-
-    def _format_output(self, output):
-        if output is None:
-            return None
-        output = console_decode(output, self._output_encoding)
-        output = output.replace("\r\n", "\n")
-        if output.endswith("\n"):
-            output = output[:-1]
-        return output
-
-    def close_streams(self):
-        standard_streams = self._get_and_read_standard_streams(self._process)
-        for stream in standard_streams + self._custom_streams:
-            if self._is_open(stream):
-                stream.close()
-
-    def _get_and_read_standard_streams(self, process):
-        stdin, stdout, stderr = process.stdin, process.stdout, process.stderr
-        if self._is_open(stdout):
-            self._read_stdout()
-        if self._is_open(stderr):
-            self._read_stderr()
-        return [stdin, stdout, stderr]
-
-    def __str__(self):
-        return f"<result object with rc {self.rc}>"
-
-
-class ProcessConfiguration:
-
-    def __init__(
-        self,
-        cwd=None,
-        shell=False,
-        stdout=None,
-        stderr=None,
-        stdin=None,
-        output_encoding="CONSOLE",
-        alias=None,
-        env=None,
-        **env_extra,
-    ):
-        self.cwd = os.path.normpath(cwd) if cwd else os.path.abspath(".")
-        self.shell = shell
-        self.alias = alias
-        self.output_encoding = output_encoding
-        self.stdout_stream = self._new_stream(stdout)
-        self.stderr_stream = self._get_stderr(stderr, stdout, self.stdout_stream)
-        self.stdin_stream = self._get_stdin(stdin)
-        self.secret_env_keys = []
-        self.env = self._construct_env(env, env_extra)
-
-    def _new_stream(self, name):
-        if name == "DEVNULL":
-            return open(os.devnull, "w", encoding=LOCALE_ENCODING)
-        if name:
-            path = os.path.normpath(os.path.join(self.cwd, name))
-            return open(path, "w", encoding=LOCALE_ENCODING)
-        return subprocess.PIPE
-
-    def _get_stderr(self, stderr, stdout, stdout_stream):
-        if stderr and stderr in ["STDOUT", stdout]:
-            if stdout_stream != subprocess.PIPE:
-                return stdout_stream
-            return subprocess.STDOUT
-        return self._new_stream(stderr)
-
-    def _get_stdin(self, stdin):
-        if isinstance(stdin, Path):
-            stdin = str(stdin)
-        elif isinstance(stdin, Secret):
-            stdin = stdin.value
-        elif not isinstance(stdin, str):
-            return stdin
-        elif stdin.upper() == "NONE":
-            return None
-        elif stdin == "PIPE":
-            return subprocess.PIPE
-        path = os.path.normpath(os.path.join(self.cwd, stdin))
-        if os.path.isfile(path):
-            return open(path, encoding=LOCALE_ENCODING)
-        stdin_file = NamedTemporaryFile(prefix="stdin-")
-        stdin_file.write(console_encode(stdin, self.output_encoding, force=True))
-        stdin_file.seek(0)
-        return stdin_file
-
-    def _construct_env(self, env, extra):
-        env = self._get_initial_env(env, extra)
-        if env is None:
-            return None
-        if WINDOWS:
-            env = NormalizedDict(env, spaceless=False)
-        self._add_to_env(env, extra)
-        if WINDOWS:
-            env = {key.upper(): env[key] for key in env}
-        return env
-
-    def _get_initial_env(self, env, extra):
-        if env:
-            result = {}
-            for name, value in env.items():
-                name = system_encode(name)
-                if isinstance(value, Secret):
-                    result[name] = system_encode(value.value)
-                    self.secret_env_keys.append(name)
-                else:
-                    result[name] = system_encode(value)
-            return result
-        if extra:
-            return os.environ.copy()
-        return None
-
-    def _add_to_env(self, env, extra):
-        for name, value in extra.items():
-            if not name.startswith("env:"):
-                raise RuntimeError(
-                    f"Keyword argument '{name}' is not supported by this keyword."
-                )
-            name = system_encode(name[4:])
-            if isinstance(value, Secret):
-                env[name] = system_encode(value.value)
-                self.secret_env_keys.append(name)
-            else:
-                env[name] = system_encode(value)
-
-    def get_command(self, command, arguments):
-        command = [system_encode(item) for item in (command, *arguments)]
-        if not self.shell:
-            return command
-        if arguments:
-            return subprocess.list2cmdline(command)
-        return command[0]
-
-    @property
-    def popen_config(self):
-        config = {
-            "stdout": self.stdout_stream,
-            "stderr": self.stderr_stream,
-            "stdin": self.stdin_stream,
-            "shell": self.shell,
-            "cwd": self.cwd,
-            "env": self.env,
-        }
-        self._add_process_group_config(config)
-        return config
-
-    def _add_process_group_config(self, config):
-        if hasattr(os, "setsid"):
-            config["start_new_session"] = True
-        if hasattr(subprocess, "CREATE_NEW_PROCESS_GROUP"):
-            config["creationflags"] = subprocess.CREATE_NEW_PROCESS_GROUP
-
-    @property
-    def result_config(self):
-        return {
-            "stdout": self.stdout_stream,
-            "stderr": self.stderr_stream,
-            "stdin": self.stdin_stream,
-            "output_encoding": self.output_encoding,
-        }
-
-    def __str__(self):
-        printable_env = self.env
-        if len(self.secret_env_keys):
-            printable_env = self.env.copy()
-            for k in self.secret_env_keys:
-                printable_env[k] = str(Secret(""))
-        return f"""\
-cwd:     {self.cwd}
-shell:   {self.shell}
-stdout:  {self._stream_name(self.stdout_stream)}
-stderr:  {self._stream_name(self.stderr_stream)}
-stdin:   {self._stream_name(self.stdin_stream)}
-alias:   {self.alias}
-env:     {printable_env}"""
-
-    def _stream_name(self, stream):
-        if hasattr(stream, "name"):
-            return stream.name
-        return {
-            subprocess.PIPE: "PIPE",
-            subprocess.STDOUT: "STDOUT",
-            None: "None",
-        }.get(stream, stream)
