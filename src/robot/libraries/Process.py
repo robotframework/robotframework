@@ -26,6 +26,7 @@ from tempfile import NamedTemporaryFile
 from typing import Literal, Union
 
 from robot.api import logger
+from robot.api.deco import library
 from robot.api.types import Secret
 from robot.errors import TimeoutExceeded
 from robot.utils import (
@@ -41,6 +42,29 @@ OnTimeout = Literal["continue", "terminate", "kill"]
 
 
 class ProcessResult:
+    """An object containing process execution results in its attributes.
+
+    | = Attribute = |             = Explanation =               |
+    | rc            | Return code of the process as an integer. |
+    | stdout        | Contents of the standard output stream.   |
+    | stderr        | Contents of the standard error stream.    |
+    | stdout_path   | Path where stdout was redirected or ``None`` if not redirected. |
+    | stderr_path   | Path where stderr was redirected or ``None`` if not redirected. |
+
+    Example:
+    | ${result} =            | `Run Process`         | program               |
+    | `Should Be Equal     ` | ${result.rc}          | 0 | type=int          |
+    | `Should Match`         | ${result.stdout}      | Some t?xt*            |
+    | `Should Be Empty`      | ${result.stderr}      |                       |
+    | ${stdout} =            | `Get File`            | ${result.stdout_path} |
+    | `Should Be Equal`      | ${stdout}             | ${result.stdout}      |
+    | `File Should Be Empty` | ${result.stderr_path} |                       |
+
+    Notice that in ``stdout`` and ``stderr`` content possible trailing newline
+    is removed and ``\\r\\n`` converted to ``\\n`` automatically. If you
+    need to see the original process output, redirect it to a file using
+    `process configuration` and read it from there.
+    """
 
     def __init__(
         self,
@@ -298,6 +322,30 @@ env:     {printable_env}"""
         }.get(stream, stream)
 
 
+# Dummy argument converter for providing type documentation to Popen.
+def _popen_documentation(value):
+    """[https://docs.python.org/library/subprocess.html#popen-objects|subprocess.Popen] object.
+
+    Returned by `Start Process`. Can be used as a ``handle`` with keywords
+    like `Wait For Process` when working with multiple concurrent processes.
+    Attributes like ``pid`` and ``stdin`` can also be accessed directly.
+
+    Examples:
+    | ${process} = | `Start Process` | ${command} |
+    | `Log` | PID: ${process.pid} |
+    | # Oher keywords |
+    | ${result} = | `Terminate Process` | ${process} |
+    """
+    return value
+
+
+@library(
+    converters={
+        ProcessResult: lambda value: value,
+        subprocess.Popen: _popen_documentation,
+    },
+    auto_keywords=True,
+)
 class Process:
     """Robot Framework library for running processes.
 
@@ -547,7 +595,7 @@ class Process:
 
     Example:
     | ${result} =            | `Run Process`         | program               |
-    | `Should Be Equal As Integers` | ${result.rc}   | 0                     |
+    | `Should Be Equal     ` | ${result.rc}          | 0 | type=int          |
     | `Should Match`         | ${result.stdout}      | Some t?xt*            |
     | `Should Be Empty`      | ${result.stderr}      |                       |
     | ${stdout} =            | `Get File`            | ${result.stdout_path} |
@@ -679,7 +727,7 @@ class Process:
         full.
 
         Makes the started process new `active process`. Returns the created
-        [https://docs.python.org/3/library/subprocess.html#popen-constructor |
+        [https://docs.python.org/3/library/subprocess.html#popen-objects |
         subprocess.Popen] object which can be used later to activate this
         process. ``Popen`` attributes like ``pid`` can also be accessed directly.
 
