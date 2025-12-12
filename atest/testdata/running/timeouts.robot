@@ -217,7 +217,7 @@ Keyword in teardown fails for timeout
     ...    2) I'm still run!
     ...
     ...    Also keyword teardown failed:
-    ...    Keyword timeout 10 milliseconds exceeded.
+    ...    Keyword timeout 15 milliseconds exceeded.
     Keyword in teardown fails for timeout
 
 Timeouted UK Using Non Timeouted UK
@@ -405,4 +405,4 @@ Teardown keyword with keyword failing for timeout
     [Timeout]    99ms
     Timeouted Keyword Timeouts
     Fail    I'm still run!
-    [Teardown]    Teardown keyword    timeout=10ms    sleep=20ms
+    [Teardown]    Teardown keyword    timeout=15ms    sleep=1s
