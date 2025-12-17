@@ -285,6 +285,11 @@ cause backwards compatibility issues are listed below:
 - Automatic argument conversion done based on typing added to standard library
   keywords (`#5373`_) may cause subtle changes to how arguments are handled.
 
+- Explicitly marking arguments of some BuiltIn keywords to be positional-only
+  can affect their usage from Python (`#5025`). For example,
+  `BuiltIn().get_variable_value("${x}", default="value")` does not work anymore
+  and `BuiltIn().get_variable_value("${x}", "value")` needs to be used instead.
+
 - How bytes are converted to string if an argument has `str` as its typing has
   changed (`#5567`_). The old format was considered unusable.
 
