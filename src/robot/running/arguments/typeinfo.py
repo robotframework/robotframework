@@ -21,12 +21,21 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, ForwardRef, get_args, get_origin, get_type_hints, Literal, Union
 
+# Standard get_args and get_origin handle at least Annotated wrong in Python 3.8.
 if sys.version_info < (3, 9):
     try:
-        # get_args and get_origin handle at least Annotated wrong in Python 3.8.
         from typing_extensions import get_args, get_origin
     except ImportError:
         pass
+# typing_extensions.Literal is typing.Literal with Python 3.10.1 and newer.
+if sys.version_info < (3, 10, 1):
+    try:
+        from typing_extensions import Literal as ExtLiteral
+    except ImportError:
+        ExtLiteral = Literal
+else:
+    ExtLiteral = Literal
+# NotRequired and Required are new in Python 3.11.
 if sys.version_info >= (3, 11):
     from typing import NotRequired, Required
 else:
@@ -223,13 +232,14 @@ class TypeInfo(metaclass=SetterAwareType):
             return cls("Union", nested=nested)
         origin = get_origin(hint)
         if origin:
-            if origin is Literal:
+            args = get_args(hint)
+            if origin is Literal or origin is ExtLiteral:
+                origin = Literal
                 nested = [
-                    cls(repr(a) if not isinstance(a, Enum) else a.name, a)
-                    for a in get_args(hint)
+                    cls(a.name if isinstance(a, Enum) else repr(a), a) for a in args
                 ]
-            elif get_args(hint):
-                nested = [cls.from_type_hint(a) for a in get_args(hint)]
+            elif args:
+                nested = [cls.from_type_hint(a) for a in args]
             else:
                 nested = None
             return cls(type_repr(hint, nested=False), origin, nested)

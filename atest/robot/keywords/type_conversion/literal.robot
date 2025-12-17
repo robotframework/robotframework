@@ -59,3 +59,12 @@ Multiple matches with not exact match
 
 In parameters
     Check Test Case    ${TESTNAME}
+
+In parameters invalid
+    Check Test Case    ${TESTNAME}
+
+typing_extensions.Literal
+    Check Test Case    ${TESTNAME}
+
+typing_extensions.Literal invalid
+    Check Test Case    ${TESTNAME}

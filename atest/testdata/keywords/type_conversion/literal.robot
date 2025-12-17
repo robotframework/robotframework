@@ -117,13 +117,26 @@ Multiple matches with not exact match
     ${1.0}        arg_type=float
 
 In parameters
-    In params    []                           []
-    In params   ['R', 'F']                   ['R', 'F']
-    In params   ['R', 'r', 'f', 'R', 'F']    ['R', 'R', 'F', 'R', 'F']
-    Conversion Should Fail
-    ...    In params   ['R', 'F', 'W']
+    [Template]    In Params
+    \[]                           []
+    \['R', 'F']                   ['R', 'F']
+    \['R', 'r', 'f', 'R', 'F']    ['R', 'R', 'F', 'R', 'F']
+
+In parameters invalid
+    [Template]    Conversion Should Fail
+    In params   ['R', 'F', 'W']
     ...    type=List[Literal['R', 'F']]
     ...    error=Item '2' got value 'W' that cannot be converted to 'R' or 'F'.
+
+typing_extensions.Literal
+    [Template]    Typing Extensions Literal
+    rf     'RF'
+    42      42
+    NONE    None
+
+typing_extensions.Literal invalid
+    [Template]    Conversion Should Fail
+    Typing Extensions Literal    bad    type='RF', 42 or None
 
 *** Keywords ***
 No Unique Match
