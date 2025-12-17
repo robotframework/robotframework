@@ -79,22 +79,21 @@ Scopes
     Check Test Case    ${TESTNAME} 3
 
 Scalar without value when using non-local scope is deprecated
-    VAR    ${message}
-    ...    Using the VAR syntax to create a scalar variable without a value in
-    ...    other than the local scope like 'VAR \ \ \ \${scalar} \ \ \ scope=SUITE'
-    ...    is deprecated. In the future this syntax will promote an existing variable
-    ...    to the new scope. Use 'VAR \ \ \ \${scalar} \ \ \ \${EMPTY} \ \ \ scope=SUITE'
-    ...    instead.
     ${tc} =    Check Test Case    ${TESTNAME} 1
-    Check Log Message    ${tc[1, 0]}     ${message}    level=WARN
-    Check Log Message    ${tc[1, 1]}     \${scalar} =
-    Check Log Message    ${ERRORS}[0]    ${message}    level=WARN
+    Check Log Message    ${tc[0, 0]}    \${ok1} =
+    Check Log Message    ${tc[1, 0]}    \${ok2} =
+    Check Log Message    ${tc[2, 0]}    \${ok3} =
+    Check Log Message    ${tc[3, 0]}    \${ok4} =
+    Check Log Message    ${tc[4, 0]}    \${ok5} = False
+    Validate no value deprecation    ${tc[5]}    ${ERRORS[0]}    \${depr1}    TEST
+    Validate no value deprecation    ${tc[6]}    ${ERRORS[1]}    \${depr2: str}    suite
+    Validate no value deprecation    ${tc[7]}    ${ERRORS[2]}    \${depr3}    GloBal
     Check Test Case    ${TESTNAME} 2
 
 List and dict without value when using non-local scope creates empty value
     Check Test Case    ${TESTNAME} 1
     Check Test Case    ${TESTNAME} 2
-    Length Should Be    ${ERRORS}    1
+    Length Should Be    ${ERRORS}    3
 
 Invalid scope
     Check Test Case    ${TESTNAME}
@@ -146,3 +145,16 @@ Validate VAR
     Should Be Equal      ${var.scope}        ${scope}
     Should Be Equal      ${var.separator}    ${separator}
     Check Log Message    ${var[0]}           ${name} = ${log}
+
+Validate no value deprecation
+    [Arguments]    ${kw}    ${error}    ${name}    ${scope}
+    VAR    ${expected}
+    ...    Using the VAR syntax to create a scalar variable without a value in
+    ...    other than the local scope like 'VAR \ \ \ ${name} \ \ \ scope=${scope}'
+    ...    is deprecated. In the future this syntax will promote an existing variable
+    ...    to the new scope. Use 'VAR \ \ \ ${name} \ \ \ \${EMPTY} \ \ \ scope=${scope}'
+    ...    instead.
+    IF    ":" in $name    VAR    ${name}    ${name.split(":")[0]}}
+    Check Log Message    ${kw[0]}    ${expected}    level=WARN
+    Check Log Message    ${kw[1]}    ${name} =
+    Check Log Message    ${error}    ${expected}    level=WARN

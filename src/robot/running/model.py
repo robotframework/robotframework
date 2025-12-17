@@ -466,19 +466,19 @@ class Var(model.Var, WithSource):
             if not run or context.dry_run:
                 return
             scope, config = self._get_scope(context.variables)
+            if scope != "local" and not self.value and self.name[:1] == "$":
+                context.warn(
+                    f"Using the VAR syntax to create a scalar variable without "
+                    f"a value in other than the local scope like "
+                    f"'VAR    {self.name}    scope={self.scope}' "
+                    f"is deprecated. In the future this syntax will promote "
+                    f"an existing variable to the new scope. Use "
+                    f"'VAR    {self.name}    ${{EMPTY}}    scope={self.scope}' "
+                    f"instead."
+                )
             set_variable = getattr(context.variables, f"set_{scope}")
             try:
                 name, value = self._resolve_name_and_value(context.variables)
-                if scope != "local" and not value and name[:1] == "$":
-                    context.warn(
-                        f"Using the VAR syntax to create a scalar variable without "
-                        f"a value in other than the local scope like "
-                        f"'VAR    {name}    scope={scope.upper()}' "
-                        f"is deprecated. In the future this syntax will promote "
-                        f"an existing variable to the new scope. Use "
-                        f"'VAR    {name}    ${{EMPTY}}    scope={scope.upper()}' "
-                        f"instead."
-                    )
                 set_variable(name, value, **config)
                 context.info(format_assign_message(name, value))
             except DataError as err:

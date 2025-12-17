@@ -106,12 +106,28 @@ Scopes 2
     Should Be Equal    ${ROOT}      set in root suite setup
 
 Scalar without value when using non-local scope is deprecated 1
-    VAR    ${scalar}    value
-    VAR    ${scalar}    scope=SUITE
-    Should Be Equal    ${scalar}    ${EMPTY}
+    VAR    ${ok1}
+    VAR    ${ok2}                  scope=LOCAL
+    VAR    ${ok3}      ${EMPTY}    scope=TEST
+    VAR    ${ok4}      ${EMPTY}    scope=SUITE
+    VAR    ${ok5}      ${FALSE}    scope=GLOBAL
+    VAR    ${depr1}                scope=TEST
+    VAR    ${depr2: str}           scope=suite
+    VAR    ${depr3}                scope=GloBal
+    Should Be Equal    ${ok1}      ${EMPTY}
+    Should Be Equal    ${ok2}      ${EMPTY}
+    Should Be Equal    ${ok3}      ${EMPTY}
+    Should Be Equal    ${ok4}      ${EMPTY}
+    Should Be Equal    ${ok5}      ${FALSE}
+    Should Be Equal    ${depr1}    ${EMPTY}
+    Should Be Equal    ${depr2}    ${EMPTY}
+    Should Be Equal    ${depr3}    ${EMPTY}
 
 Scalar without value when using non-local scope is deprecated 2
-    Should Be Equal    ${scalar}    ${EMPTY}
+    Should Be Equal    ${ok4}      ${EMPTY}
+    Should Be Equal    ${ok5}      ${FALSE}
+    Should Be Equal    ${depr2}    ${EMPTY}
+    Should Be Equal    ${depr3}    ${EMPTY}
 
 List and dict without value when using non-local scope creates empty value 1
     VAR    @{LIST}    scope=SUITE
