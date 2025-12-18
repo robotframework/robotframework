@@ -44,7 +44,7 @@ class Tags(Sequence[str]):
         return self._normalize(tags)
 
     def _normalize(self, tags):
-        nd = NormalizedDict([(str(t), None) for t in tags], ignore="_")
+        nd = NormalizedDict.fromkeys([str(t) for t in tags], ignore="_")
         if "" in nd:
             del nd[""]
         if "NONE" in nd:
