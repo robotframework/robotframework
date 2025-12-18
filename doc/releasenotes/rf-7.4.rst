@@ -286,7 +286,7 @@ cause backwards compatibility issues are listed below:
   keywords (`#5373`_) may cause subtle changes to how arguments are handled.
 
 - Explicitly marking arguments of some BuiltIn keywords to be positional-only
-  can affect their usage from Python (`#5025`). For example,
+  can affect their usage from Python (`#5025`_). For example,
   `BuiltIn().get_variable_value("${x}", default="value")` does not work anymore
   and `BuiltIn().get_variable_value("${x}", "value")` needs to be used instead.
   This problem will be fixed in Robot Framework 7.4.1 (`#5580`__).
