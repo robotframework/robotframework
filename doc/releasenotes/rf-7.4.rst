@@ -289,6 +289,7 @@ cause backwards compatibility issues are listed below:
   can affect their usage from Python (`#5025`). For example,
   `BuiltIn().get_variable_value("${x}", default="value")` does not work anymore
   and `BuiltIn().get_variable_value("${x}", "value")` needs to be used instead.
+  This problem will be fixed in Robot Framework 7.4.1 (`#5580`__).
 
 - How bytes are converted to string if an argument has `str` as its typing has
   changed (`#5567`_). The old format was considered unusable.
@@ -310,6 +311,8 @@ cause backwards compatibility issues are listed below:
   setting (`#5503`_). This means that it is not anymore possible to use a literal
   tag like `-example` in keyword documentation. If such a tag is needed, the escaped
   format like `\-example` can be used.
+
+__ https://github.com/robotframework/robotframework/issues/5580
 
 Deprecated features
 ===================
