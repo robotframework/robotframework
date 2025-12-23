@@ -84,7 +84,7 @@ jobs:
           ${{ env.ATEST_PYTHON }} atest/run.py --interpreter ${{ env.BASE_PYTHON }} --exclude no-ci ${{ matrix.atest_args }} atest/robot
 
       - name: Archive acceptances test results
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: at-results-${{ matrix.python-version }}-${{ matrix.os }}
           path: atest/results
