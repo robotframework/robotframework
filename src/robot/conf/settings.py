@@ -30,6 +30,7 @@ from robot.utils import (
     abspath, create_destination_directory, escape, get_link_path, html_escape,
     is_list_like, plural_or_not as s, seq2str, split_args_from_name_or_path
 )
+from robot.version import get_full_version
 
 from .gatherfailed import gather_failed_suites, gather_failed_tests
 from .languages import Languages
@@ -756,6 +757,7 @@ class RebotSettings(_BaseSettings):
             "reportURL": self._url_from_path(self.log, self.report),
             "splitLogBase": os.path.basename(os.path.splitext(self.log)[0]),
             "defaultLevel": self["VisibleLogLevel"],
+            "generator": get_full_version("Robot Framework"),
         }
 
     @property
@@ -767,6 +769,7 @@ class RebotSettings(_BaseSettings):
             "title": html_escape(self["ReportTitle"] or ""),
             "logURL": self._url_from_path(self.report, self.log),
             "background": self._resolve_background_colors(),
+            "generator": get_full_version("Robot Framework"),
         }
 
     def _url_from_path(self, source, destination):
