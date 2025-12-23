@@ -28,7 +28,8 @@ to install exactly this version. Alternatively you can download the package
 from PyPI_ and install it manually. For more details and other installation
 approaches, see the `installation instructions`_.
 
-Robot Framework 7.4 was released on Friday December 12, 2025.
+Robot Framework 7.4 was released on Friday December 12, 2025. It was superseded
+by `Robot Framework 7.4.1 <rf-7.4.1.rst>`_ on Tuesday December 23, 2025.
 
 .. _Robot Framework: http://robotframework.org
 .. _Robot Framework Foundation: http://robotframework.org/foundation
