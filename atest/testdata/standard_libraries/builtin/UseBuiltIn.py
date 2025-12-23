@@ -23,6 +23,15 @@ def set_secret_variable():
     BuiltIn().set_test_variable("${SECRET}", "*****")
 
 
+def named_argument_syntax():
+    b = BuiltIn()
+    b.should_be_equal(b.get_variable_value("${existing}", default=123), 42)
+    b.should_be_equal(b.get_variable_value("${nonexisting}", default=123), 123)
+    b.variable_should_exist("${existing}", message="This succeeds!")
+    b.variable_should_not_exist("${nonexisting}", message="This succeeds!")
+    b.pass_execution_if(True, message="The end!")
+
+
 def use_run_keyword_with_non_string_values():
     BuiltIn().run_keyword("Log", 42)
     BuiltIn().run_keyword("Log", b"\xff")

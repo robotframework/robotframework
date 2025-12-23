@@ -11,6 +11,9 @@ Keywords Using BuiltIn
     Check Log Message    ${tc[0, 1]}    Hello, debug world!    DEBUG
     Length should be     ${tc[0].messages}    2
 
+Named argument syntax
+    Check Test Case    ${TESTNAME}
+
 Listener Using BuiltIn
     Check Test Case    ${TESTNAME}
 

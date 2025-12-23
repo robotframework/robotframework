@@ -12,6 +12,11 @@ Keywords Using BuiltIn
     Should Be Equal    ${SECRET}    *****
     Variable Should Not Exist    ${SET BY LISTENER}
 
+Named argument syntax
+    [Documentation]    PASS    The end!
+    VAR    ${existing}    ${42}
+    Named argument syntax
+
 Listener Using BuiltIn
     Should Be Equal    ${SET BY LISTENER}    quux
 
