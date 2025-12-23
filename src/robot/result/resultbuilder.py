@@ -166,6 +166,11 @@ class ExecutionResultBuilder:
             else:
                 end(elem)
                 elem.clear()
+        try:
+            # From Python 3.15 it is required to close the context
+            context.close()
+        except AttributeError:
+            pass    # Compatibility with old Python versions without close
 
     def _omit_keywords(self, context):
         omitted_elements = {"kw", "for", "while", "if", "try", "group", "variable"}
