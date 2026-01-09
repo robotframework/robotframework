@@ -299,6 +299,10 @@ Options
                                    `--removekeywords tag:<pattern>`
     --nostatusrc          Sets the return code to zero regardless of failures
                           in test cases. Error codes are returned normally.
+    --timeout time        Set an upper time limit for the entire test
+                          execution. The `time` is a Robot Framework time
+                          string like `1 minute`, `1h 30m 42s` or `42`.
+                          Default is no timeout.
     --dryrun              Verifies test data and runs tests so that library
                           keywords are not executed.
  -X --exitonfailure       Stops test execution if any test fails.
