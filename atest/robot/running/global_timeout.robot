@@ -90,3 +90,22 @@ Global Timeout with ExitOnFailure
     [Documentation]    Compatibility with --exitonfailure.
     Run Tests    --timeout 1s --exitonfailure --test "Long Sleep"    running/global_timeout/basic.robot
     Check Test Case    Long Sleep
+
+Global Timeout Via Listener
+    [Documentation]    Verify listener can set global timeout (0.1s) that overrides test timeout (default or none).
+    Run Tests    --listener TimeoutListener:0.1s --test "Long Sleep"    running/global_timeout/basic.robot
+    Check Test Case    Long Sleep    FAIL    Total Execution timeout 100 milliseconds exceeded.
+
+Increase Timeout Via Listener
+    [Documentation]    Verify listener can INCREASE global timeout (0.5s -> 3s) allowing a 2s test to pass.
+    Run Tests    --timeout 0.5s --listener TimeoutIncreaseListener:3s --test "Long Sleep"    running/global_timeout/basic.robot
+    Check Test Case    Long Sleep    PASS    ${EMPTY}
+    Stdout Should Contain    DEBUG: Timeout before: 500 milliseconds
+    Stdout Should Contain    DEBUG: Timeout after: 3 seconds
+
+Decrease Timeout Via Listener
+    [Documentation]    Verify listener can DECREASE global timeout (3s -> 0.1s) causing a 2s test to fail.
+    Run Tests    --timeout 3s --listener TimeoutIncreaseListener:0.1s --test "Long Sleep"    running/global_timeout/basic.robot
+    Check Test Case    Long Sleep    FAIL    Total Execution timeout 100 milliseconds exceeded.
+    Stdout Should Contain    DEBUG: Timeout before: 3 seconds
+    Stdout Should Contain    DEBUG: Timeout after: 100 milliseconds
