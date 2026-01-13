@@ -138,9 +138,6 @@ Verify Arguments Structure
     ${kws}=    Get Elements    ${LIBDOC}    xpath=${xpath}
     ${arg_elems}=    Get Elements    ${kws}[${index}]    xpath=arguments/arg
     FOR    ${arg_elem}    ${exp_repr}    IN ZIP     ${arg_elems}    ${expected}    mode=STRICT
-        IF    $INTERPRETER.version_info >= (3, 11)
-            ${exp_repr} =    Replace String    ${exp_repr}    | None = None    = None
-        END
         ${kind}=        Get Element Attribute        ${arg_elem}    kind
         ${required}=    Get Element Attribute        ${arg_elem}    required
         ${repr}=        Get Element Attribute        ${arg_elem}    repr
