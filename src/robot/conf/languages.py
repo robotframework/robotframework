@@ -544,7 +544,7 @@ class Fr(Language):
 
     settings_header = "Paramètres"
     variables_header = "Variables"
-    test_cases_header = "Unités de test"
+    test_cases_header = "Cas de test"
     tasks_header = "Tâches"
     keywords_header = "Mots-clés"
     comments_header = "Commentaires"
