@@ -67,7 +67,8 @@ be used like :name:`example.Some Keyword`. Note that this syntax does not
 work if several resource files have the same basename. In such cases, either
 resource files or keywords must be renamed.
 
-With user keywords in a `suite file`_, the full name is just the keyword name.
+With user keywords in a `suite file`_, the full name contains only the keyword
+name without any prefix.
 
 When comparing full keyword names, the library/resource part is case and
 space-insensitive and the keyword part is case, space and underscore-insensitive.
