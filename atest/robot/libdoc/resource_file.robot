@@ -60,11 +60,22 @@ Keyword Arguments
 
 Different Argument Types
     Keyword Arguments Should Be     2    mandatory    optional=default    *varargs
-    ...                                  kwo=default    another    **kwargs
+    ...                                  kwo: int = default    another    **kwargs
 
 Embedded Arguments
     Keyword Name Should Be          3    Embedded \${arguments}
     Keyword Arguments Should Be     3
+
+Argument Types
+    Keyword Arguments Should Be     9    a: int    b: Literal['R', 'F']    c: int | None = None
+
+Type Docs
+    DataType Standard Should Be     0    integer     Conversion is done using
+    Usages Should Be                0    Standard    integer    Different argument types    kw 6
+    DataType Standard Should Be     1    Literal     Only specified values are accepted.
+    Usages Should Be                1    Standard    Literal    kw 6
+    DataType Standard Should Be     2    None        String ``NONE`` (case-insensitive) and
+    Usages Should Be                2    Standard    None    kw 6
 
 Keyword Documentation
     Keyword Doc Should Be           0    $\{CURDIR}
@@ -111,7 +122,7 @@ Non ASCII
 Keyword Source Info
     Keyword Name Should Be            0    curdir
     Keyword Should Not Have Source    0
-    Keyword Lineno Should Be          0    71
+    Keyword Lineno Should Be          0    72
 
 '*.resource' extension is accepted
     Run Libdoc And Parse Output       ${TESTDATADIR}/resource.resource
