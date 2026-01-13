@@ -217,13 +217,13 @@ specified tests in specified suites are selected::
 
 Using the :option:`--suite` option is more or less the same as executing
 the appropriate suite file or directory directly. The main difference is
-that if a file or directory is run directly, possible suite setups and teardowns
-on higher level are not executed::
+that if a file or directory is run directly, possible higher level
+`suite initialization files`_ are ignored::
 
-  # Root suite is 'Tests' and its possible setup and teardown are run.
+  # Root suite is 'Tests' and its possible initialization file is used.
   robot --suite example path/to/tests
 
-  # Root suite is 'Example' and possible higher level setups and teardowns are ignored.
+  # Root suite is 'Example' and higher level initialization files are ignored.
   robot path/to/tests/example.robot
 
 Prior to Robot Framework 6.1, files not matching the :option:`--suite` option
