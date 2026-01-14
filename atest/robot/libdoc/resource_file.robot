@@ -65,6 +65,8 @@ Different Argument Types
 Embedded Arguments
     Keyword Name Should Be          3    Embedded \${arguments}
     Keyword Arguments Should Be     3
+    Keyword Name Should Be         12    With embedded \${arg: int} and normal arg
+    Keyword Arguments Should Be    12    normal
 
 Argument Types
     Keyword Arguments Should Be     9    a: int    b: Literal['R', 'F']    c: int | None = None
@@ -122,7 +124,7 @@ Non ASCII
 Keyword Source Info
     Keyword Name Should Be            0    curdir
     Keyword Should Not Have Source    0
-    Keyword Lineno Should Be          0    72
+    Keyword Lineno Should Be          0    76
 
 '*.resource' extension is accepted
     Run Libdoc And Parse Output       ${TESTDATADIR}/resource.resource

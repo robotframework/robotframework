@@ -26,6 +26,7 @@ List some keywords
     ...   Deprecation
     ...   Keyword with some "stuff" to <escape>
     ...   non ascii doc
+    ...   With embedded \${arg: int} and normal arg
     Run Libdoc And Verify Output    ${TESTDATADIR}/resource.robot LIST KW? C*R
     ...   curdir
     ...   kw 3

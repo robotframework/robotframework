@@ -69,6 +69,10 @@ Different argument types
 Embedded ${arguments}
     No Operation
 
+With embedded ${arg: int} and normal arg
+    [Arguments]    ${normal}
+    No Operation
+
 curdir  [Documentation]  ${CURDIR}
     No Operation
 
