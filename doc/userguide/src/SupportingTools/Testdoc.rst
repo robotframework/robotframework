@@ -13,6 +13,19 @@ format and it includes name, documentation and other metadata of each
 test suite and test case, as well as the top-level keywords and their
 arguments.
 
+Deprecation Warning
+-------------------
+
+The built-in Testdoc will be deprecated in Robot Framework 7.5 and
+removed with Robot Framework 8.0 because there is a new external tool
+available at robotframework-testdoc__ which already has more features
+as the built-in Testdoc.
+
+The reasons for the removal of the built-in tool are explained in (`#5591`__).
+
+__ https://github.com/MarvKler/robotframework-testdoc
+__ https://github.com/robotframework/robotframework/issues/5591
+
 General usage
 -------------
 
