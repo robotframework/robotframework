@@ -7,13 +7,16 @@ class InternalLinking:
     - `Library INTROduction`
     - `importing`
     - `Library Importing`
-    - `ShortCuts`
     - `Keywords`
 
     = Linking to keywords =
 
     - `Keyword`
     - `secoNd kEywoRD`
+
+    = Linking to type docs =
+
+    - `Integer`
 
     = Linking to headers =
 
@@ -52,7 +55,7 @@ class InternalLinking:
     def keyword(self):
         """First keyword here. See also `Importing` and `Second Keyword`."""
 
-    def second_keyword(self, arg):
+    def second_keyword(self, arg: int):
         """We got `arg`. And have `no link`. Except to `Second LEVEL`.
 
         = Not linkable =
