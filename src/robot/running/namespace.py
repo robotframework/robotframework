@@ -511,6 +511,12 @@ class KeywordStore:
     def _get_explicit_runner(self, name):
         kws_and_names = []
         for owner_name, kw_name in self._get_owner_and_kw_names(name):
+            # Check suite file first (if suite name matches)
+            if (self.suite_file and self.suite_file.owner 
+                    and eq(self.suite_file.owner.name, owner_name)):
+                for kw in self.suite_file.find_keywords(kw_name):
+                    kws_and_names.append((kw, kw_name))
+            # Then check libraries and resources
             for owner in (*self.libraries.values(), *self.resources.values()):
                 if eq(owner.name, owner_name):
                     for kw in owner.find_keywords(kw_name):
