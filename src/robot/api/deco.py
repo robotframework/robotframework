@@ -16,6 +16,8 @@
 from typing import Any, Callable, Literal, overload, Sequence, TypeVar, Union
 
 from .interfaces import TypeHints
+from robot.libdocpkg.standardtypes import STANDARD_TYPE_DOCS
+from robot.running.arguments import TypeConverter
 
 F = TypeVar("F", bound=Callable[..., Any])
 K = TypeVar("K", bound=Callable[..., Any])
@@ -200,4 +202,29 @@ def library(
         cls.ROBOT_AUTO_KEYWORDS = auto_keywords
         return cls
 
+    return decorator
+
+
+@not_keyword
+def register_converter(target_type, *args, type_name=None):
+    def decorator(func):
+        class ConverterProxy(TypeConverter):
+            type = target_type
+            if args: value_types = args
+            doc = func.__doc__ or target_type.__doc__ or target_type.__name__
+            type_name = target_type.__name__
+
+            def __init__(self, type_info, custom_converters=None, languages=None):
+                super().__init__(type_info, custom_converters, languages)
+                if type_name: self.type_info.name = type_name
+
+            def _convert(self, value):
+                if func.__code__.co_argcount == 2:
+                    return func(value, self.type_info)
+                else:
+                    return func(value)
+
+        STANDARD_TYPE_DOCS[target_type] = ConverterProxy.doc
+        TypeConverter.register(ConverterProxy)
+        return func
     return decorator
