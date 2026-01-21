@@ -52,17 +52,13 @@ Version:  <VERSION>
 
 Usage:  python -m robot.testdoc [options] data_sources output_file
 
-Deprecation Warning
-===================
-Testdoc will be deprecated in Robot Framework 7.5 and removed in Robot Framework 8.0.
-The reasons are explained in https://github.com/robotframework/robotframework/issues/5591.
-
-About Testdoc
-=============
 Testdoc generates a high level test documentation based on Robot Framework
 test data. Generated documentation includes name, documentation and other
 metadata of each test suite and test case, as well as the top-level keywords
 and their arguments.
+
+NOTE: Testdoc is deprecated and will be removed in Robot Framework 8.0.
+      Use https://github.com/MarvKler/robotframework-testdoc instead.
 
 Options
 =======
