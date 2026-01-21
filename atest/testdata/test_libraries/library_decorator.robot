@@ -2,6 +2,7 @@
 Library           LibraryDecorator.py
 Library           LibraryDecoratorWithArgs.py
 Library           LibraryDecoratorWithAutoKeywords.py
+Library           LibraryDecoratorWithAutoKeywordsNone.py
 Library           library_decorator_when_class_and_module_names_do_not_match.py
 Library           extend_decorated_library.py
 Library           multiple_library_decorators.Class2
@@ -26,6 +27,10 @@ Library decorator with arguments disables automatic keyword discovery by default
 Library decorator can enable automatic keyword discovery
     Undecorated method is keyword
     Decorated method is keyword as well
+
+Library decorator can signal possible absence of keywords
+    [Documentation]    FAIL No keyword with name 'Not keyword v3' found.
+    Not keyword v3
 
 When importing a module and there is one decorated class, the class is used as a library
     Class name does not match module name
