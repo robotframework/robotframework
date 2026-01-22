@@ -1,0 +1,128 @@
+from robot.result import ResultVisitor
+from robot.utils import roundup, XmlWriter
+
+class XUnitWriter(object):
+    def __init__(self, execution_result, skip_noncritical):
+        self._execution_result = execution_result
+        self._skip_noncritical = skip_noncritical
+
+    def write(self, output):
+        writer = XUnitFileWriter(XmlWriter(output), self._skip_noncritical)
+        self._execution_result.visit(writer)
+
+
+class XUnitFileWriter(ResultVisitor):
+    """Provides an xUnit v2 compatible result file.
+    Attempts to adhere to the schema supplied by https://github.com/xunit/xunit.github.io:
+    http://xunit.github.io/docs/format-xml-v2.html
+    """
+
+    def __init__(self, xml_writer, skip_noncritical=False):
+        self._writer = xml_writer
+        self._root_suite = None
+        self._skip_noncritical = skip_noncritical
+
+    def start_suite(self, suite):
+        if self._root_suite:
+            return
+        self._root_suite = suite
+
+        attrs_assemblies = {'timestamp': self._startdate(suite.starttime) + " " + self._starttime(suite.starttime)}
+        self._writer.start('assemblies', attrs_assemblies)
+
+        tests, failures, skipped, passed = self._get_stats(suite.statistics)
+        attrs_assembly = {'name': suite.name,
+                 'run-time': self._starttime(suite.starttime),
+                 'run-date': self._startdate(suite.starttime),
+                 'total': tests,
+                 'passed': passed,
+                 'failed': failures,
+                 'skipped': skipped,
+                 'time': self._time_as_seconds(suite.elapsedtime),
+                 'errors': '0'}
+        self._writer.start('assembly', attrs_assembly)
+
+        attrs_collection = {'name': suite.name,
+                 'time': self._time_as_seconds(suite.elapsedtime),
+                 'total': tests,
+                 'passed': passed,
+                 'failed': failures,
+                 'skipped': skipped}
+        self._writer.start('collection', attrs_collection)
+
+    def _get_stats(self, statistics):
+        if self._skip_noncritical:
+            failures = statistics.critical.failed
+            skipped = statistics.all.total - statistics.critical.total
+            passed = (statistics.all.total - skipped ) - failures
+        else:
+            failures = statistics.all.failed
+            passed = statistics.all.total - failures
+            skipped = 0
+        return str(statistics.all.total), str(failures), str(skipped), str(passed)
+
+    def end_suite(self, suite):
+        if suite is self._root_suite:
+            self._writer.end('collection')
+
+    def visit_test(self, test):
+        if self._skip_noncritical and not test.critical:
+            result = 'Skip'
+        elif not test.passed:
+            result = 'Fail'
+        elif test.passed:
+            result = 'Pass'
+
+        attrs_test = {'type': test.parent.longname,
+                'name': test.name,
+                'method': test.name,
+                'result': result,
+                'time': self._time_as_seconds(test.elapsedtime)}
+        self._writer.start('test', attrs_test)
+
+        self._writer.element('output', test.doc)
+
+        if self._skip_noncritical and not test.critical:
+            self._skip_test(test)
+        elif not test.passed:
+            self._fail_test(test)
+        self._writer.end('test')
+
+    def _skip_test(self, test):
+        self._writer.start('skipped')
+        self._writer.element('message', '%s: %s' % (test.status, test.message)
+                                        if test.message else test.status)
+        self._writer.end('skipped')
+
+    def _fail_test(self, test):
+        self._writer.start('failure')
+        self._writer.element('message', test.message)
+        self._writer.end('failure')
+
+    def _time_as_seconds(self, millis):
+        return str(roundup(millis, -3) // 1000)
+
+    def _starttime(self, datetime):
+        date_time = datetime.split(" ")
+        time = date_time[1][:8]
+        return str(time)
+
+    def _startdate(self, datetime):
+        date_time = datetime.split(" ")
+        date = date_time[0][:4] + "/" + date_time[0][4:6] + "/" + date_time[0][-2:]
+        return str(date)
+
+    def visit_keyword(self, kw):
+        pass
+
+    def visit_statistics(self, stats):
+        pass
+
+    def visit_errors(self, errors):
+        pass
+
+    def end_result(self, result):
+        self._writer.end('assembly')
+        self._writer.end('assemblies')
+        self._writer.close()
+
