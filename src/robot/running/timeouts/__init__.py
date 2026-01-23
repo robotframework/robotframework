@@ -13,4 +13,4 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from .timeout import KeywordTimeout as KeywordTimeout, TestTimeout as TestTimeout
+from .timeout import KeywordTimeout as KeywordTimeout, TestTimeout as TestTimeout, TotalTimeout as TotalTimeout

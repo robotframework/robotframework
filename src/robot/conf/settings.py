@@ -28,7 +28,7 @@ from robot.result.flattenkeywordmatcher import validate_flatten_keyword
 from robot.result.keywordremover import KeywordRemover
 from robot.utils import (
     abspath, create_destination_directory, escape, get_link_path, html_escape,
-    is_list_like, plural_or_not as s, seq2str, split_args_from_name_or_path
+    is_list_like, plural_or_not as s, seq2str, split_args_from_name_or_path, timestr_to_secs
 )
 
 from .gatherfailed import gather_failed_suites, gather_failed_tests
@@ -144,6 +144,8 @@ class _BaseSettings:
             self._validate_expandkeywords(value)
         if name == "Extension":
             return tuple("." + ext.lower().lstrip(".") for ext in value.split(":"))
+        if name == "Timeout":
+            return self._process_timeout(value)
         return value
 
     def _process_doc(self, value):
@@ -379,6 +381,20 @@ class _BaseSettings:
                     f"Expected 'TAG:<pattern>' or 'NAME:<pattern>', got '{opt}'.",
                 )
 
+    def _process_timeout(self, value):
+        from robot.variables.search import contains_variable
+        if not value or value.upper() == "NONE":
+            return None
+        if contains_variable(value):
+            return value
+        try:
+            secs = timestr_to_secs(value)
+            if secs <= 0:
+                raise ValueError("Timeout must be positive.")
+        except (DataError, ValueError) as err:
+            self._raise_invalid("Timeout", str(err))
+        return value
+
     def _raise_invalid(self, option, error):
         raise DataError(f"Invalid value for option '--{option.lower()}': {error}")
 
@@ -520,6 +536,7 @@ class RobotSettings(_BaseSettings):
         "ConsoleMarkers"     : ("consolemarkers", "AUTO"),
         "DebugFile"          : ("debugfile", None),
         "Language"           : ("language", []),
+        "Timeout"            : ("timeout", None),
     }  # fmt: skip
     _languages = None
 
