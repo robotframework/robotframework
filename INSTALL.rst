@@ -302,6 +302,14 @@ version.
    C:\>py -3.11 -m robot --version
    Robot Framework 7.0 (Python 3.11.7 on win32)
 
+Dependencies
+------------
+
+Robot Framework core functionality has no mandatory dependencies other than
+Python and its standard library. Some individual features may require optional
+dependencies to be installed, though. What dependencies are needed is always
+explained in the relevant documentation.
+
 Virtual environments
 --------------------
 
