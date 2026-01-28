@@ -55,6 +55,7 @@ function setTitle(suiteName, type) {
 
 function addHeader() {
     var generated = util.timestamp(window.output.generated);
+    var generator = window.settings.generator || '';
     $.tmpl('<h1>${title}</h1>' +
            '<button id=theme-toggle>' +
              lightModeIcon +
@@ -65,11 +66,13 @@ function addHeader() {
              '<span id="generated-ago">${ago} ago</span>' +
            '</div>' +
            '<div id="top-right-header">' +
+             '{{if generator}}<div id="generator-info">${generator}</div>{{/if}}' +
              '<div id="report-or-log-link"><a href="#"></a></div>' +
            '</div>', {
         generated: util.createGeneratedString(generated),
         ago: util.createGeneratedAgoString(generated),
-        title: document.title
+        title: document.title,
+        generator: generator
     }).appendTo($('#header'));
     document.getElementById('theme-toggle')?.addEventListener('click', theme.onClick);
 }
